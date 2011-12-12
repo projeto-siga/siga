@@ -1,0 +1,49 @@
+<?eclipse.ant.import?>
+<project basedir="." default="test" name="sigawfTest">
+	<property name="junit.output.dir" value="../reports/junit"/>
+	<path id="base.path">
+		<pathelement path="../ImportarXml/bin" />
+		<pathelement path="../siga/WebContent/WEB-INF/classes" />
+		<pathelement path="../siga-base/build/classes" />
+		<pathelement path="../siga-cd/bin" />
+		<pathelement path="../siga-cp/build/classes" />
+		<pathelement path="../siga-dep-tomcat/lib" />
+		<fileset dir="../siga-dep-tomcat/lib">
+		    <include name="*.jar"/>
+		</fileset>
+		<pathelement path="../siga-ex/build/classes" />
+		<pathelement path="../siga-ldap/build/classes" />
+		<pathelement path="../siga-libs/build" />
+		<pathelement path="../siga-rel/build/classes" />
+		<pathelement path="../siga-sinc-lib/bin" />
+		<pathelement path="../siga-wf/bin" />
+		<pathelement path="../siga-ws/build/classes" />
+		<pathelement path="../sigacd/WebContent/WEB-INF/classes" />
+		<pathelement path="../sigaex/WebContent/WEB-INF/classes" />
+		<pathelement path="../sigawf/WebContent/WEB-INF/classes" />
+		<pathelement path="../sigaws/bin" />
+	</path>
+	<target name="test">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<batchtest>
+				<!--
+				<fileset dir="./test">
+					<include name="**/*Test.java" />
+				</fileset>
+				-->
+				<fileset dir="./src">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+			<classpath refid="base.path" />
+		</junit>
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="../">
+                <include name="**/TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+	</target>
+</project>

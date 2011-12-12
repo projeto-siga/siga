@@ -1,0 +1,283 @@
+/*******************************************************************************
+ * Copyright (c) 2006 - 2011 SJRJ.
+ * 
+ *     This file is part of SIGA.
+ * 
+ *     SIGA is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     SIGA is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+/*
+ * Criado em  12/12/2005
+ *
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+package br.gov.jfrj.siga.cp;
+
+import java.io.Serializable;
+
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoLotacao;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
+import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
+
+/**
+ * A class that represents a row in the CP_CLASSIFICACAO table. You can
+ * customize the behavior of this class by editing the class, {@link
+ * CpClassificacao()}.
+ */
+public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
+		implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4514355304185987860L;
+
+	@Desconsiderar
+	private Long idConfiguracao;
+
+	@NaoRecursivo
+	private CpOrgaoUsuario orgaoUsuario;
+
+	@NaoRecursivo
+	private DpLotacao lotacao;
+
+	@NaoRecursivo
+	private DpCargo cargo;
+
+	@NaoRecursivo
+	private DpFuncaoConfianca funcaoConfianca;
+
+	@NaoRecursivo
+	private DpPessoa dpPessoa;
+
+	@NaoRecursivo
+	private CpSituacaoConfiguracao cpSituacaoConfiguracao;
+
+	@NaoRecursivo
+	private CpTipoConfiguracao cpTipoConfiguracao;
+
+	@NaoRecursivo
+	private CpServico cpServico;
+
+	@NaoRecursivo
+	private CpIdentidade cpIdentidade;
+
+	@NaoRecursivo
+	private CpGrupo cpGrupo;
+	
+	@NaoRecursivo
+	private String nmEmail;
+	
+	@NaoRecursivo
+	private String dscFormula;
+
+	@NaoRecursivo
+	private CpTipoLotacao cpTipoLotacao;
+
+	public CpIdentidade getCpIdentidade() {
+		return cpIdentidade;
+	}
+
+	public void setCpIdentidade(CpIdentidade cpIdentidade) {
+		this.cpIdentidade = cpIdentidade;
+	}
+
+	@Override
+	public boolean equals(final Object rhs) {
+		if ((rhs == null) || !(rhs instanceof CpConfiguracao))
+			return false;
+		final CpConfiguracao that = (CpConfiguracao) rhs;
+
+		if ((this.getIdConfiguracao() == null ? that.getIdConfiguracao() == null
+				: this.getIdConfiguracao().equals(that.getIdConfiguracao())))
+			return true;
+		return false;
+
+	}
+
+	public Long getIdConfiguracao() {
+		return idConfiguracao;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		int result = 17;
+		final int idValue = this.getIdConfiguracao() == null ? 0 : this
+				.getIdConfiguracao().hashCode();
+		result = result * 37 + idValue;
+
+		return result;
+
+	}
+
+	public void setIdConfiguracao(final Long idConfiguracao) {
+		this.idConfiguracao = idConfiguracao;
+	}
+
+	public CpOrgaoUsuario getOrgaoUsuario() {
+		return orgaoUsuario;
+	}
+
+	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
+		this.orgaoUsuario = orgaoUsuario;
+	}
+
+	public DpLotacao getLotacao() {
+		return lotacao;
+	}
+
+	public void setLotacao(DpLotacao lotacao) {
+		this.lotacao = lotacao;
+	}
+
+	public DpCargo getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(DpCargo cargo) {
+		this.cargo = cargo;
+	}
+
+	public DpFuncaoConfianca getFuncaoConfianca() {
+		return funcaoConfianca;
+	}
+
+	public void setFuncaoConfianca(DpFuncaoConfianca funcaoConfianca) {
+		this.funcaoConfianca = funcaoConfianca;
+	}
+
+	public DpPessoa getDpPessoa() {
+		return dpPessoa;
+	}
+
+	public void setDpPessoa(DpPessoa dpPessoa) {
+		this.dpPessoa = dpPessoa;
+	}
+
+	public CpSituacaoConfiguracao getCpSituacaoConfiguracao() {
+		return cpSituacaoConfiguracao;
+	}
+
+	public void setCpSituacaoConfiguracao(
+			CpSituacaoConfiguracao cpSituacaoConfiguracao) {
+		this.cpSituacaoConfiguracao = cpSituacaoConfiguracao;
+	}
+
+	public CpTipoConfiguracao getCpTipoConfiguracao() {
+		return cpTipoConfiguracao;
+	}
+
+	public void setCpTipoConfiguracao(CpTipoConfiguracao cpTipoConfiguracao) {
+		this.cpTipoConfiguracao = cpTipoConfiguracao;
+	}
+
+	public CpServico getCpServico() {
+		return cpServico;
+	}
+
+	public void setCpServico(CpServico cpServico) {
+		this.cpServico = cpServico;
+	}
+
+	/**
+	 * @return the cpGrupo
+	 */
+	public CpGrupo getCpGrupo() {
+		return cpGrupo;
+	}
+
+	/**
+	 * @param cpGrupo
+	 *            the cpGrupo to set
+	 */
+	public void setCpGrupo(CpGrupo cpGrupo) {
+		this.cpGrupo = cpGrupo;
+	}
+
+	/**
+	 * @return the nmEmail
+	 */
+	public String getNmEmail() {
+		return nmEmail;
+	}
+
+	/**
+	 * @param nmEmail
+	 *            the nmEmail to set
+	 */
+	public void setNmEmail(String nmEmail) {
+		this.nmEmail = nmEmail;
+	}
+
+	/**
+	 * @return the dscFormula
+	 */
+	public String getDscFormula() {
+		return dscFormula;
+	}
+
+	/**
+	 * @param dscFormula
+	 *            the dscFormula to set
+	 */
+	public void setDscFormula(String dscFormula) {
+		this.dscFormula = dscFormula;
+	}
+
+	/**
+	 * @return the cpTipoLotacao
+	 */
+	public CpTipoLotacao getCpTipoLotacao() {
+		return cpTipoLotacao;
+	}
+
+	/**
+	 * @param cpTipoLotacao
+	 *            the cpTipoLotacao to set
+	 */
+	public void setCpTipoLotacao(CpTipoLotacao cpTipoLotacao) {
+		this.cpTipoLotacao = cpTipoLotacao;
+	}
+
+	// Alterações necessárias para suportar a interface histórico em uma classe
+	// que não possui o flag "ativo" nem a "idInicial"
+	@Override
+	public int getHisAtivo() {
+		return getHisDtFim() == null ? 1 : 0;
+	}
+
+	@Override
+	public Long getHisIdIni() {
+		return null;
+	}
+
+	@Override
+	public void setHisAtivo(int hisAtivo) {
+	}
+
+	@Override
+	public void setHisIdIni(Long hisIdIni) {
+	}
+
+}

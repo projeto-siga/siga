@@ -1,0 +1,32 @@
+<Context crossContext="true" docBase="sigaex" path="/sigaex" debug="3" reloadable="true">
+	<Valve className="org.apache.catalina.valves.AccessLogValve"
+		prefix="sigaex_log." suffix=".txt" pattern="combined" />
+<!-- 		
+    <Environment name="isVersionTest" value="true"
+		type="java.lang.Boolean" />
+	<Environment name="isBaseTest" value="true"
+		type="java.lang.Boolean" />
+	<Environment name="isWorkflowEnabled" value="false"
+		type="java.lang.Boolean" /> 
+	<Resource name="jdbc/OraCon" auth="Container"
+		type="javax.sql.DataSource" maxActive="50" minIdle="0" maxIdle="10"
+		maxWait="20000" removeAbandoned="true" removeAbandonedTimeout="60"
+		driverClassName="oracle.jdbc.driver.OracleDriver"
+		url="jdbc:oracle:thin:@mclaren:1521:mcl" username="siga"
+		password="siga" validationQuery="select sysdate from dual"
+		testOnBorrow="true" testOnReturn="true" testWhileIdle="true" />
+ -->
+	<!-- 
+	<Environment name="isWorkflowEnabled" value="false"
+		type="java.lang.Boolean" /> 
+	<Environment name="isVersionTest" value="false"
+		type="java.lang.Boolean" />
+	<Environment name="isBaseTest" value="false"
+		type="java.lang.Boolean" />
+	<Resource name="jdbc/OraCon" auth="Container"
+		type="javax.sql.DataSource" maxActive="50" maxIdle="10"
+		maxWait="20000" driverClassName="oracle.jdbc.OracleDriver"
+		url="jdbc:oracle:thin:@acura:1521:apojfrj" username="siga"
+                validationQuery="select sysdate from dual"
+		password="siga" /> -->
+</Context>

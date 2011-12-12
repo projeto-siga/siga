@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+                            "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                            "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="br.gov.jfrj.siga.ex">
+	<joined-subclass name="ExConfiguracao" table="EX_CONFIGURACAO"
+		extends="br.gov.jfrj.siga.cp.CpConfiguracao">
+		<key column="ID_CONFIGURACAO_EX" />
+		<many-to-one name="exTipoMovimentacao" column="ID_TP_MOV" class="ExTipoMovimentacao" />
+		<many-to-one name="exTipoDocumento" column="ID_TP_DOC" class="ExTipoDocumento" />
+		<many-to-one name="exTipoFormaDoc" column="ID_TP_FORMA_DOC" class="br.gov.jfrj.siga.ex.ExTipoFormaDoc" />
+		<many-to-one name="exFormaDocumento" column="ID_FORMA_DOC" class="ExFormaDocumento" />
+		<many-to-one name="exModelo" column="ID_MOD" class="ExModelo" />
+		<many-to-one name="exClassificacao" column="ID_CLASSIFICACAO" class="ExClassificacao" />
+		<many-to-one name="exVia" column="ID_VIA" class="ExVia" />
+		<many-to-one name="exNivelAcesso" column="ID_NIVEL_ACESSO" class="ExNivelAcesso" />
+		<many-to-one name="exPapel" column="ID_PAPEL" class="br.gov.jfrj.siga.ex.ExPapel" />
+	</joined-subclass>
+	
+		<query name="consultarExConfiguracoes">
+		<![CDATA[
+			from ExConfiguracao excfg
+			where (:idTpConfiguracao is null or excfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)
+		]]>
+	</query>
+</hibernate-mapping>
+
+

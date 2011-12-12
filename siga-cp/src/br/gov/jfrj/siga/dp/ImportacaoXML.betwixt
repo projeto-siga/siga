@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<info primitiveTypes="element">
+	<element name="base">
+		<attribute name='sesb' property='sesb' />
+		<element name="lotacao" property="lotacoes" />
+		<element name="cargo" property="cargos" />
+		<element name="funcao" property="funcoesConfianca" />
+		<element name="pessoa" property="pessoas" />
+		<addDefaults add-properties="false"/> 
+	</element>
+</info>

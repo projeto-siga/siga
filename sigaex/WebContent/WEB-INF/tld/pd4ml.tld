@@ -1,0 +1,975 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE taglib
+    PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+    "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+	<tlibversion>1.0</tlibversion>
+	<jspversion>1.1</jspversion>
+	<shortname>pd4ml</shortname>
+	<uri>http://pd4ml.com/tlds/pd4ml/2.6</uri>
+	<!--%%PD4ML JSP to PDF Transformer Tag Library%%-->
+
+	<tag>
+		<name>attachment</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4Attachment</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%embeds external a resource as PDF attachment%%-->
+		<attribute>
+			<name>src</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%resource URL%%-->
+		</attribute>
+		<attribute>
+			<name>description</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%attachment description%%-->
+		</attribute>
+		<attribute>
+			<name>icon</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%icon type (Graph, PushPin, Paperclip, Tag, Area). "Area" is PD4ML-specific value hides the icon image%%-->
+		</attribute>
+		<attribute>
+			<name>height</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%area height. Ignored with an icon type other than "Area"%%-->
+		</attribute>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%area width. Ignored with an icon type other than "Area"%%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>page.break</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4MLPageBreakTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%PDF Page Break Tag%%-->
+		<attribute>
+			<name>htmlwidth</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%changes screenWidth for subsequent pages%%-->
+		</attribute>
+		<attribute>
+			<name>pageCounter</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%(re-)sets page counter to the given value. %%-->
+		</attribute>
+		<attribute>
+			<name>next</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% Accepted values: "even" or "odd". Inserts an extra page break if needed, to make the new page number match the given condition.
+			A typical usage is to make each document chapter starts from odd page ("duplex-print-friendly")%%-->
+		</attribute>
+		<attribute>
+			<name>pageFormat</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%changes page format for subsequent pages. Accepts values: "rotate" (to change portrait/landscape page orientation), 
+			"WWWxHHH" (for example, "842x595" for A4 landscape), "reset" %%-->
+		</attribute>
+		<attribute>
+			<name>ifSpaceBelowLessThan</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%page break condition. It breaks only if the free page space (below the tag) exceeds the given value%%-->
+		</attribute>
+		<attribute>
+			<name>multicolumn</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%if set to "true" breaks all columns (if PD4ML is in multicolumn mode)%%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>footnote</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4Footnote</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%% PDF Footnote Tag. Forces generation of a footnote at the bottom part of the current page. 
+		The tag content goes to the footnote area prefixed with an incremented footnote counter value.  
+		The counter value (as a reference) is also appears at the original location of the footnote tag.<p>
+		Important: If the footnote content does not fit the remaining page space, it is wrapped to the next page. 
+		If the footnote content does not fit entire single page, the footnote does not print at all.</p>  %%-->
+		<attribute>
+			<name>nr</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% sets footnote counter to the given value %%-->
+		</attribute>
+		<attribute>
+			<name>noref</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% disables a generation of footnote number in text %%-->
+		</attribute>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% corresponds to HTML tag "class" attribute %%-->
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% corresponds to HTML tag "id" attribute %%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>footnote.caption</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4FootnoteCaption</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%% PDF Footnote caption Tag allows to define a separator between the main content and footnotes. %%-->
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% corresponds to HTML tag "class" attribute %%-->
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% corresponds to HTML tag "id" attribute %%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>title</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4Title</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%% PD4ML title tag allows to override the original HTML's &lt;title&gt; %%-->
+	</tag>
+
+	<tag>
+		<name>page_break</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4MLPageBreakTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%PDF Page Break Tag alias (ColdFusion does not allow dots in JSP tag names)%%-->
+		<attribute>
+			<name>htmlwidth</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%changes screenWidth for subsequent pages%%-->
+		</attribute>
+		<attribute>
+			<name>pageCounter</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%(re-)sets page counter to the given value. %%-->
+		</attribute>
+		<attribute>
+			<name>next</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% Accepted values: "even" or "odd". Inserts an extra page break if needed, to make the new page number match the given condition.
+			A typical usage is to make each document chapter starts from odd page ("duplex-print-friendly")%%-->
+		</attribute>
+		<attribute>
+			<name>pageFormat</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%changes page format for subsequent pages. Accepts values: "rotate" (to change portrait/landscape page orientation), 
+			"WWWxHHH" (for example, "842x595" for A4 landscape), "reset" %%-->
+		</attribute>
+		<attribute>
+			<name>ifSpaceBelowLessThan</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%page break condition. It breaks only if the free page space (below the tag) exceeds the given value%%-->
+		</attribute>
+		<attribute>
+			<name>multicolumn</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%if set to "true" breaks all columns (if PD4ML is in multicolumn mode)%%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>clean_xhtml</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4MLCleanXhtmlTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%The tag converts XHTML-like syntax to be HTML3.2 compilant%%-->
+	</tag>
+
+	<tag>
+		<name>fix_base_path</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4FixBasePathTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%The tag allows to extend paths (to images, other resources) with protocol, server name, port,
+		session id in order to help PD4ML resource lookup procedure.%%-->
+		<attribute>
+			<name>pattern</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%path prefix ie "/my/absolute/path"%%-->
+		</attribute>
+		<attribute>
+			<name>basePath</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%path prefix to add, ie "http://myserver:8080"%%-->
+		</attribute>
+		<attribute>
+			<name>addSessionID</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%if "true", inserts session ID to the path: "...;jsessionid=XXXXXXX?..." %%-->
+		</attribute>
+		<attribute>
+			<name>debug</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%if "true", dumps to stdout debug information %%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>toc</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4TOC</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%The tag inserts document's table of content built from H1-H6 tag structure. Available since v3.03%%-->
+		<attribute>
+			<name>pncorr</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%correction value to be added to the page numbers%%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>parameters</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4ParametersTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%Dynamic parameters map. See &lt;pd4ml:parameter&gt; and PD4ML.setDynamicParams(); Available since v3.60%%-->
+	</tag>
+
+	<tag>
+		<name>parameter</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4ParameterTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%Dynamic parameter. Must be nested to &lt;pd4ml:parameters&gt; Available since v3.60%%-->
+		<attribute>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%parameter name%%-->
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%parameter vaue%%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>resolve_entities</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4MLReplaceEntitiesTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%The tag replaces decimal and hexadecimal HTML entities with their 
+		character representations. Fixes problems with right-to-left scripts 
+		written with entities.%%-->
+	</tag>
+
+	<tag>
+		<name>page.header</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4InlineHeaderTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>height</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<!--%%Inline page header. Taglib mapping to a proprietary HTML tag of PD4ML.%%-->
+	</tag>
+
+	<tag>
+		<name>page.footer</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4InlineFooterTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>height</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<!--%%Inline page footer. Taglib mapping to a proprietary HTML tag of PD4ML.%%-->
+	</tag>
+
+	<tag>
+		<name>page_header</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4InlineHeaderTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>height</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<!--%%Inline page header. Taglib mapping to a proprietary HTML tag of PD4ML (pd4ml:page.header).%%-->
+	</tag>
+
+	<tag>
+		<name>page_footer</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4InlineFooterTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>height</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<!--%%Inline page footer. Taglib mapping to a proprietary HTML tag of PD4ML (pd4ml:page.footer).%%-->
+	</tag>
+
+	<tag>
+		<name>transform</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4MLTransformerTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%JSP to PDF Transformer Tag%%-->
+		<attribute>
+			<name>authorName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%Author's name to be included to the document properties list%%-->
+		</attribute>
+		<attribute>
+			<name>pageFormat</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%Predefined document size values like "A4", "LETTER"%%-->
+		</attribute>
+		<attribute>
+			<name>fileName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%Desired pdf file name to appear in "Save as..." dialog (note: not all browsers interpret it correctly);
+			useful in combination with inline="false" attribute value%%-->
+		</attribute>
+		<attribute>
+			<name>pageInsets</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%"&lt;top&gt;,&lt;left&gt;,&lt;bottom&gt;,&lt;right&gt;,&lt;units&gt;"
+				coma-separated integer sizes in specified units ("mm" or "points")%%-->
+		</attribute>
+		<attribute>
+			<name>pageOrientation</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%"landscape" or "portrait"%%-->
+		</attribute>
+		<attribute>
+			<name>screenWidth</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%see PD4ML.setHtmlWidth()%%-->
+		</attribute>
+
+		<attribute>
+			<name>adjustScreenWidth</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%sets htmlWidth to the most right margin of the HTML content. Since 3.0.2. 
+			See PD4ML.adjustHtmlWidth()%%-->
+		</attribute>
+		<attribute>
+			<name>pdfa</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%"true" or "false"; see PD4ML.generatePdfa(boolean)%%-->
+		</attribute>
+		<attribute>
+			<name>enableImageSplit</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%"true" or "false"; see PD4ML.enableImgSplit()%%-->
+		</attribute>
+		<attribute>
+			<name>enableTableBreaks</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%"true" or "false"; see PD4ML.enableTableBreaks()%%-->
+		</attribute>
+		<attribute>
+			<name>inline</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%should the file be shown in the browser window ("true") or
+			offered to be saved to disk ("false")%%-->
+		</attribute>
+		<attribute>
+			<name>enableSwingPatch</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%"true" or "false"; DEPRECATED. See PD4ML.enableRenderingPatch()%%-->
+		</attribute>
+		<attribute>
+			<name>interpolateImages</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%"true" or "false"; see PD4ML.interpolateImages()%%-->
+		</attribute>
+		<attribute>
+			<name>encoding</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>url</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%external URL to be converted to PDF.
+			If the attribute is set, than the HTML/JSP content between &lt;pd4ml:transform&gt;
+			and &lt;/pd4ml:transform&gt; tags is ignored and the given URL is used as PDF source.
+			The URL should be in full form
+			http://server/path/to/file.jsp or in reduced /path/to/file.jsp (in the last case
+			current server address and port are used). Relative paths are not accepted.%%-->
+		</attribute>
+
+		<attribute>
+			<name>forward</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%URL of PD4ForwarderServlet to delegate PDF transport function to.
+			The forwarding is used to prevent IllegalStateException in some of servlet runtime 
+			and UI framework environments.
+			The servlet should have an access to the JSP session context.
+			Be carefull with big HTML sources: if "url" attribute is not given, 
+			they remain in a session context until the session expired %%-->
+		</attribute>
+
+		<attribute>
+			<name>useAFM</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%Available since version 1.1.0. DEPRECATED (always "true"). If set to true, it forces PD4ML to use Adobe font glyph widths instead of
+	             the font metrics provided by Java graphical environment. Usually resulting PDF is rendered more accurate.%%-->
+		</attribute>
+
+		<attribute>
+			<name>debug</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%Available since version 1.2.0. If set to true, it forces PD4ML to output absolute paths to images being loaded 
+			in order to determine base url or resource referencing problems.%%-->
+		</attribute>
+
+		<attribute>
+			<name>enable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%Available since version 2.1.4. If set to true (default), converts nested HTML to PDF. Otherwise outputs HTML "as is"%%-->
+		</attribute>
+
+		<attribute>
+			<name>outline</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%Available since version 1.2.0. Enables generation of PDF bookmarks (aka outlines). 
+			There are 3 supported values: 
+			"anchors" - generates bookmarks from named anchors, 
+			"headings" - converts headings h1-h6 structure to bookmarks tree, 
+			"none" - does not generate bookmarks %%-->
+		</attribute>
+
+		<attribute>
+			<name>fitPageVertically</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% Available since version 3.0.4 Forces PD4ML to downscale entire HTML layout to fit a single PDF page vertically %%-->
+		</attribute>
+
+		<attribute>
+			<name>protectPhysicalUnitDimensions</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%% Available since version 3.0.4 Makes PD4ML to output text respecting font sizes given in "in", "pt", "cm" etc.
+			Use carefully. See PD4ML.protectPhysicalUnitDimensions()
+			 %%-->
+		</attribute>
+
+		<attribute>
+			<name>generatePdfForms</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%Available since version 3.2.3. Enables/disables convertion of HTML forms to PDF forms (Acroforms)%%-->
+		</attribute>
+
+		<attribute>
+			<name>outputRange</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%Available since version 3.5.5.  %%-->
+		</attribute>
+
+		<attribute>
+			<name>outputFormat</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%Available since version 3.5.5.  %%-->
+		</attribute>
+
+		<attribute>
+			<name>generateHyperlinks</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%Available since version 1.2.0. Enables/disables convertion of HTML hyperlinks to PDF hyperlinks. 
+			Supports references to external as well as to internal resources %%-->
+		</attribute>
+
+		<attribute>
+			<name>multicolumn</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%Available since version 3.2.4. Forces PD4ML to output multicolumn PDF document. Examples: "2,10mm" (2 columns, 10mm gap), "3,25pt" (3 columns, 25pt gap) %%-->
+		</attribute>
+
+	</tag>
+	
+	<tag>
+		<name>header</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4HeaderTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%PDF Header Definition Tag (utilizes PD4ML API)%%-->
+		<attribute>
+			<name>titleAlignment</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			 <!--%%"left" or "center" or "right"%%-->
+		</attribute>
+		<attribute>
+			<name>titleTemplate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			 <!--%%a template string with placeholders: ${title} for title,
+			${page} for page number, ${total} for total number of pages%%-->
+		</attribute>
+		<attribute>
+			<name>pageNumberAlignment</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			 <!--%%"left" or "center" or "right"%%-->
+		</attribute>
+		<attribute>
+			<name>pageNumberTemplate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			 <!--%%a template string with placeholders: ${page} for page number,
+			 ${total} for total number of pages%%-->
+		</attribute>
+		<attribute>
+			<name>initialPageNumber</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%page number for the first generated page%%-->
+		</attribute>
+		<attribute>
+			<name>pagesToSkip</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%a number of pages from the document beginning, that
+			should not be marked with the header info%%-->
+		</attribute>
+		<attribute>
+			<name>areaHeight</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%height of heading area in points%%-->
+		</attribute>
+		<attribute>
+			<name>fontSize</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%header font size in points%%-->
+		</attribute>
+		<attribute>
+			<name>fontFace</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%header font name. Default: "Courier New". Available since version 1.2.0b2%%-->
+		</attribute>
+		<attribute>
+			<name>fontStyle</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%header font style. Possible values: "plain" (default), "italic", "bold", "bolditalic". Available since version 1.2.0b2%%-->
+		</attribute>
+		<attribute>
+			<name>color</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%RGB color value in "#rrggbb" hexadecimal form%%-->
+		</attribute>
+		<attribute>
+			<name>watermarkUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%watermark image url to be printed on every page. 
+			The feature available only in Pro version%%-->
+		</attribute>
+		<attribute>
+			<name>watermarkBounds</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%bounds image position and size in typographical points. 
+			Format: "x,y,width,height".
+			The feature available only in Pro version%%-->
+		</attribute>
+		<attribute>
+			<name>watermarkOpacity</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%opacity of watermark image in range from 0 to 100. 
+			The feature available only in Pro version%%-->
+		</attribute>
+
+		<attribute>
+			<name>pageBackgroundImageUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%defines default page background image (form, letterhead). 
+			The feature available only in Pro version%%-->
+		</attribute>
+		<attribute>
+			<name>pageBackgroundColor</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%defines default page background color. 
+			The feature available only in Pro version%%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>footer</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4FooterTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<!--%%PDF Footer Definition Tag (utilizes PD4ML API)%%-->
+		<attribute>
+			<name>titleAlignment</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%"left" or "center" or "right"%%-->
+		</attribute>
+		<attribute>
+			<name>titleTemplate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			 <!--%%a template string with placeholders: ${title} for title,
+			${page} for page number, ${total} for total number of pages%%-->
+		</attribute>
+		<attribute>
+			<name>pageNumberAlignment</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%"left" or "center" or "right"%%-->
+		</attribute>
+		<attribute>
+			<name>pageNumberTemplate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%a template string with placeholders: ${page} for page number,
+			${total} for total number of pages%%-->
+		</attribute>
+		<attribute>
+			<name>initialPageNumber</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%page number for the first generated page%%-->
+		</attribute>
+		<attribute>
+			<name>pagesToSkip</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%a number of pages from the document beginning, that
+			should not be marked with the footer info%%-->
+		</attribute>
+		<attribute>
+			<name>areaHeight</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%height of footer area in points%%-->
+		</attribute>
+		<attribute>
+			<name>fontSize</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%footer font size in points%%-->
+		</attribute>
+		<attribute>
+			<name>fontFace</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%footer font name. Default: "Courier New". Available since version 1.2.0b2%%-->
+		</attribute>
+		<attribute>
+			<name>fontStyle</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$String$$-->
+			<!--%%footer font style. Possible values: "plain" (default), "italic", "bold", "bolditalic". Available since version 1.2.0b2%%-->
+		</attribute>
+		<attribute>
+			<name>color</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%RGB color value in "#rrggbb" hexadecimal form%%-->
+		</attribute>
+		<attribute>
+			<name>watermarkUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%watermark image url to be printed on every page. 
+			The feature available only in Pro version%%-->
+		</attribute>
+		<attribute>
+			<name>watermarkBounds</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%bounds image position and size in typographical points. 
+			Format: "x,y,width,height".
+			The feature available only in Pro version%%-->
+		</attribute>
+		<attribute>
+			<name>watermarkOpacity</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%opacity of watermark image in range from 0 to 100. 
+			The feature available only in Pro version%%-->
+		</attribute>
+
+		<attribute>
+			<name>pageBackgroundImageUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%defines default page background image (form, letterhead). 
+			The feature available only in Pro version%%-->
+		</attribute>
+		<attribute>
+			<name>pageBackgroundColor</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%defines default page background color. 
+			The feature available only in Pro version%%-->
+		</attribute>
+	</tag>
+
+
+	<tag>
+		<name>permissions</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4PermissionsTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		 <!--%%PDF Permission Control tag. Available since version 1.1.0%%-->
+		<attribute>
+			<name>password</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%If the attribute is set, it forces the resulting document to be encrypted with
+			the given password. If the password is set to "empty", than the resulting document will be encrypted
+			without password, but still with the given rights (can be allowed to be shown, but not to be
+			printed for instance)%%-->
+		</attribute>
+		<attribute>
+			<name>rights</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$int$$-->
+			<!--%%Numeric value. Can be calculated using permissions constants from PD4Constants.java%%-->
+		</attribute>
+		<attribute>
+			<name>strongEncryption</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--$$boolean$$-->
+			<!--%%Boolean flag forces 128-bit encryption if true. Otherwise 40-bit encryption is used.%%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>savefile</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4SaveFile</tagclass>
+		<bodycontent>JSP</bodycontent>
+		 <!--%%Saves generated file to the specified location. Available since version 2.1.4%%-->
+		<attribute>
+			<name>dir</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%A local directory to store generated PDFs to%%-->
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%File name (optional). If the file with the given name already exists, than it appends
+			a number to the name and autoincrements. if the attribute not set, than autogenerated name 
+			is used.%%-->
+		</attribute>
+		<attribute>
+			<name>uri</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%External URI, that corresponds to the path given in the attribute "dir". 
+			Mandatory, if "redirect" attribute is set. 
+			is used.%%-->
+		</attribute>
+		<attribute>
+			<name>redirect</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%Can be set to one of the following values. "disabled" (default) - no redirect. "pdf" - 
+			redirects to the just created PDF file ("uri" attribute must be set). The last option is to 
+			assign an URL to the attribute. The URL will be called automatically with HTTP parameter
+			"filename" set to the just generated PDF file name%%-->
+		</attribute>
+		<attribute>
+			<name>redirectMethod</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%Specifies redirect method if appliable (see "redirect" attribute). Can be set to one 
+			of the following values. "redirect" - default, implicitely calls ServletResponse.sendRedirect(). 
+			"forward" - calls HttpServletRequest.getRequestDispatcher.forward()%%-->
+		</attribute>
+		<attribute>
+			<name>debug</name> 
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%if "true" than it dumps to STDOUT debug information%%-->
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>usettf</name>
+		<tagclass>org.zefer.pd4ml.taglib.PD4EmbedTtf</tagclass>
+		<bodycontent>JSP</bodycontent>
+		 <!--%%TTF Fonts Embedding Control tag. Available in professional version of PD4ML only%%-->
+		<attribute>
+			<name>from</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%location of embeddable TTF fonts. The directory should contain
+	  		pd4fonts.properties mapping file. See PD4ML.useTTF() for more info%%-->
+		</attribute>
+		<attribute>
+			<name>embed</name> 
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%if "true" (default) than used font glyphs are to be included to the resulting PDF. 
+			If false, than the referred fonts should exist on viewer's computer %%-->
+		</attribute>
+		<attribute>
+			<name>serif</name> 
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%defines deafult TTF font face to be used as a substritution for unknown serif fonts%%-->
+		</attribute>
+		<attribute>
+			<name>sansserif</name> 
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%defines deafult TTF font face to be used as a substritution for unknown sansserif fonts%%-->
+		</attribute>
+		<attribute>
+			<name>monospace</name> 
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<!--%%defines deafult TTF font face to be used as a substritution for unknown monospace fonts%%-->
+		</attribute>
+	</tag>
+</taglib>

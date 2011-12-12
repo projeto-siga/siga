@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	buffer="64kb"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/customtag" prefix="tags"%>
+<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
+<%@ taglib prefix="ww" uri="/webwork"%>
+<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+
+<siga:pagina titulo="Protocolo de Transferência" popup="true">
+
+	<script type="text/javascript" language="Javascript1.1"
+		src="<c:url value="/staticJavascript.action"/>"></script>
+
+	<ww:form name="frm" action="principal" namespace="/" method="GET"
+		theme="simple">
+		<h1>Protocolo de Transferência</h1>
+		<table>
+			<tr>
+			<tr>
+				<td>De:</td>
+				<td>${cadastrante.lotacao.descricao} - ${cadastrante.descricao}</td>
+			</tr>
+			<tr>
+				<td>Para:</td>
+				<td>${mov.respString}</td>
+			</tr>
+			<tr>
+				<td>Data:</td>
+				<td colspan="2">${mov.dtRegMovDDMMYYHHMMSS}</td>
+			</tr>
+			<table class="list" width="100%">
+				<tr class="header">
+					<td rowspan="2" align="right">Número</td>
+					<td colspan="3" align="center">Documento</td>
+					<td colspan="3" align="center">Última Movimentação</td>
+					<td colspan="2" align="center">Atendente</td>
+					<td rowspan="2">Descrição</td>
+				</tr>
+				<tr class="header">
+					<td align="center">Data</td>
+					<td align="center">Lotação</td>
+					<td align="center">Pessoa</td>
+					<td align="center">Data</td>
+					<td align="center">Lotação</td>
+					<td align="center">Pessoa</td>
+					<td align="center">Lotação</td>
+					<td align="center">Pessoa</td>
+				</tr>
+
+				<c:forEach var="documento" items="${itens}">
+					<c:choose>
+						<c:when test='${evenorodd == "even"}'>
+							<c:set var="evenorodd" value="odd" />
+						</c:when>
+						<c:otherwise>
+							<c:set var="evenorodd" value="even" />
+						</c:otherwise>
+					</c:choose>
+					<tr class="${evenorodd}">
+						<td width="11.5%" align="right">
+							<ww:url id="url" action="exibir" namespace="/expediente/doc">
+								<ww:hidden name="sigla" value="%{documento[1].sigla}" />
+							</ww:url>
+							<ww:a href="%{url}">${documento[1].exMobil.sigla}</ww:a>
+							<c:if test="${not documento[1].exMobil.geral}">
+								<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[0].lotaSubscritor.sigla}"
+									descricao="${documento[0].lotaSubscritor.descricao}" /></td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[0].subscritor.iniciais}"
+									descricao="${documento[0].subscritor.descricao}" /></td>
+								<td width="5%" align="center">${documento[1].dtMovDDMMYY}</td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[1].lotaSubscritor.sigla}"
+									descricao="${documento[1].lotaSubscritor.descricao}" /></td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[1].subscritor.iniciais}"
+									descricao="${documento[1].subscritor.descricao}" /></td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[1].lotaResp.sigla}"
+									descricao="${documento[1].lotaResp.descricao}" /></td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[1].resp.iniciais}"
+									descricao="${documento[1].resp.descricao}" /></td>
+							</c:if>
+							<c:if test="${documento[1].exMobil.geral}">
+								<td width="2%" align="center"></td>
+								<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[0].subscritor.iniciais}"
+									descricao="${documento[0].subscritor.descricao}" /></td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[0].lotaSubscritor.sigla}"
+									descricao="${documento[0].lotaSubscritor.descricao}" /></td>
+								<td width="5%" align="center"></td>
+								<td width="4%" align="center"></td>
+								<td width="4%" align="center"></td>
+								<td width="10.5%" align="center"></td>
+							</c:if>
+							<td width="44%">${f:descricaoConfidencial(documento[0],
+							lotaTitular)}</td>
+					</tr>
+				</c:forEach>
+			</table>
+			<br />
+			<input type="button" value="Imprimir"
+				onclick="javascript: document.body.offsetHeight; window.print();" />
+			<c:if test="${param.popup != true}">
+				<input type="button" value="Voltar"
+					onclick="javascript:history.back();" />
+			</c:if>
+			<br />
+			<br />
+			<p align="center">Recebido em: _____/_____/_____ às _____:_____</p>
+			<br />
+			<br />
+			<br />
+			<p align="center">________________________________________________</p>
+			<p align="center">Assinatura do Servidor</p>
+			</ww:form>
+
+			</siga:pagina>

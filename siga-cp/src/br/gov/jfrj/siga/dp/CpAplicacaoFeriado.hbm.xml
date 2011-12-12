@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+                            "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                            "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<!-- Criado em 21 Dez 2005       -->
+<hibernate-mapping package="br.gov.jfrj.siga.dp" schema="CORPORATIVO">
+	<class name="CpAplicacaoFeriado" table="CP_APLICACAO_FERIADO">
+		<id name="idAplicacao" column="ID_APLICACAO" type="long">
+			<generator class="assigned"></generator>
+		</id>
+		<property name="fgFeriado" column="FERIADO" type="string"
+			not-null="true" />
+		<many-to-one name="dpLotacao" column="ID_LOTACAO" class="DpLotacao" />
+		<many-to-one name="localidade" column="ID_LOCALIDADE" class="CpLocalidade" />
+		<many-to-one name="orgaoUsu" column="ID_ORGAO_USU" class="CpOrgaoUsuario" />
+		<many-to-one name="cpOcorrenciaFeriado" column="ID_OCORRENCIA_FERIADO" class="CpOcorrenciaFeriado" />
+	</class>
+</hibernate-mapping>

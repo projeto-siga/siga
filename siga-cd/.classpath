@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-base"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-ws"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
@@ -129,5 +128,10 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate-commons-annotations-3.2.0.Final.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jpa-api-2.0-cr-1.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-cd-base"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -148,16 +148,16 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jpa-api-2.0-cr-1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate-entitymanager.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate3.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/JBoss 4.2 RT">
+	<classpathentry combineaccessrules="false" kind="src" path="/siga-rel"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/Jboss-4.2.2.GA Runtime">
 		<attributes>
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">
 		<attributes>
-			<attribute name="owner.project.facets" value="jst.java"/>
+			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/siga-rel"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

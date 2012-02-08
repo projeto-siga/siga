@@ -33,6 +33,7 @@ import java.util.ArrayList;
 public enum TrustAnchorEnum {
 	AC_RAIZ_ICPBRASIL(CertificadoACEnum.AC_RAIZ_ICPBRASIL.toTrustAnchor()),
 	AC_RAIZ_ICPBRASIL_V1(CertificadoACEnum.AC_RAIZ_ICPBRASIL_V1.toTrustAnchor()),
+	AC_RAIZ_ICPBRASIL_V2(CertificadoACEnum.AC_RAIZ_ICPBRASIL_V2.toTrustAnchor()),
 	AC_CLEPSIDRE_TIME_STAMP(CertificadoACEnum.AC_CLEPSIDRE_TIME_STAMP.toTrustAnchor()),
 	AC_SZIKSZI_TIME_STAMP(CertificadoACEnum.AC_SZIKSZI_TIME_STAMP.toTrustAnchor())
 	;

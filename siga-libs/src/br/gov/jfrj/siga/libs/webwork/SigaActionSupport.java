@@ -20,8 +20,6 @@ package br.gov.jfrj.siga.libs.webwork;
 
 import java.util.List;
 
-import javax.swing.ActionMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,7 +35,6 @@ import br.gov.jfrj.siga.dp.DpSubstituicao;
 
 import com.opensymphony.webwork.interceptor.PrincipalAware;
 import com.opensymphony.webwork.interceptor.PrincipalProxy;
-import com.opensymphony.xwork.ActionInvocation;
 
 public class SigaActionSupport extends SigaAnonimoActionSupport implements
 		PrincipalAware, ConheceUsuario {
@@ -97,8 +94,10 @@ public class SigaActionSupport extends SigaAnonimoActionSupport implements
 			}
 		} catch (Exception e) {
 			setCadastrante(null);
-			if (!this.getClass().getName().equalsIgnoreCase("br.gov.jfrj.siga.libs.webwork.LogoffAction")) { 
-				throw new AplicacaoException("Não foi possível carregar o usuário :" + e.getMessage());
+			if (sePaginaNecessitaPrincipal()) {
+				throw new AplicacaoException(
+						"Não foi possível carregar o usuário :"
+								+ e.getMessage());
 			}
 			// if (SigaActionSupport.getLog().isErrorEnabled())
 			// SigaActionSupport.getLog().error(
@@ -107,6 +106,21 @@ public class SigaActionSupport extends SigaAnonimoActionSupport implements
 			// throw new AplicacaoException(
 			// "Não é possível carregar o usuário autenticado.", 0, e);
 		}
+	}
+
+	/**
+	 * verifica se a página necessita principal (userPrincipal). Atualmente não
+	 * há obrigatoriedade de verificação, assim, nenhuma necessita de
+	 * verificação. No entanto, no futuro seria interessante verificar quais as
+	 * páginas reamente não necessitam como
+	 * "br.gov.jfrj.webwork.action.UsuarioAction" e
+	 * "br.gov.jfrj.siga.libs.webwork.LogoffAction" , colcocando o default como 
+	 * true e estas subclasses como false.
+	 * 
+	 * @return
+	 */
+	protected boolean sePaginaNecessitaPrincipal() {
+		return false;
 	}
 
 	public void setPrincipalProxy(final PrincipalProxy principalProxy) {
@@ -165,8 +179,10 @@ public class SigaActionSupport extends SigaAnonimoActionSupport implements
 			Exception {
 		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
 				+ pathServico;
-		if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
-				getTitular(), getLotaTitular(), servico))
+		if (!Cp.getInstance()
+				.getConf()
+				.podeUtilizarServicoPorConfiguracao(getTitular(),
+						getLotaTitular(), servico))
 			throw new AplicacaoException("Acesso negado. Serviço: '" + servico
 					+ "' usuário: " + getTitular().getSigla() + " lotação: "
 					+ getLotaTitular().getSiglaCompleta());

@@ -966,8 +966,8 @@ public class CpDao extends ModeloDao {
 			// RJ
 			// por default
 
-			qry.setCacheable(true);
-			qry.setCacheRegion("query.IdentidadeCadastrante");
+//			qry.setCacheable(true);
+//			qry.setCacheRegion("query.IdentidadeCadastrante");
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
 			if (lista.size() == 0) {
 				throw new AplicacaoException(

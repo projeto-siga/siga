@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <mod:modelo>
@@ -124,7 +124,7 @@
 		</html>
 	</mod:documento>
 	<mod:assinatura>
-		<c:if test="${doc.lotaTitular.orgaoUsuario.idOrgaoUsu == '1'}">
+		<c:if test="${doc.orgaoUsuario.idOrgaoUsu == '1'}">
 			{SEC Assinada! Iniciando procedimento "Contratação: fase de análise".}
 			<c:set var="f" value="${f:criarWorkflow('Contratação: fase de análise', doc, cadastrante, titular, lotaCadastrante, lotaTitular)}" />
 	    </c:if>

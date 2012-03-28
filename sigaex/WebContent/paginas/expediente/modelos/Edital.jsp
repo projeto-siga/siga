@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 <mod:modelo>
 	<mod:entrevista>

@@ -28,7 +28,7 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	 */
 	@SuppressWarnings("unchecked")
 	public List obterMunicipios() throws  Exception {
-		return this.obterPropriedadeLista("cp.municipio");
+		return this.obterPropriedadeLista("siga.cp.municipio");
 	}
 	/*
 	 *  Propriedades de conexão
@@ -56,5 +56,9 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	}
 	public String c3poMaxStatements  ( ) throws Exception {
 		return this.obterPropriedade("c3p0.max_statements");
+	}
+	@Override
+	protected String getPrefixoModulo() {
+		return "siga.cp";
 	}
 }

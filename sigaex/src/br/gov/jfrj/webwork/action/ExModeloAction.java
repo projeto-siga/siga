@@ -22,18 +22,27 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.kxml2.io.KXmlSerializer;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
+import com.opensymphony.webwork.ServletActionContext;
 import com.opensymphony.xwork.Action;
 
 public class ExModeloAction extends ExSelecionavelActionSupport {
@@ -74,6 +83,113 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 		map.put("template/freemarker", "FreeMarker");
 		map.put("template-file/jsp", "JSP");
 		return map;
+	}
+
+	public String aExportar() throws Exception {
+		String MODELOS = "siga-doc-modelos";
+		String MODELO_GERAL = "modelo-geral";
+		String MODELO = "modelo";
+
+		assertAcesso("MOD:Gerenciar modelos");
+
+		KXmlSerializer serializer = new KXmlSerializer();
+		final ByteArrayOutputStream os = new ByteArrayOutputStream();
+		serializer.setOutput(os, "utf-8");
+		serializer.startDocument(null, null);
+
+		serializer.startTag(null, MODELOS);
+
+		serializer.flush();
+		os.write('\n');
+		os.write('\n');
+
+		List<CpModelo> lCp = dao().listarModelosOrdenarPorNome(null);
+
+		for (CpModelo m : lCp) {
+			serializer.startTag(null, MODELO_GERAL);
+			if (m.getCpOrgaoUsuario() != null)
+				serializer.attribute(null, "orgao", m.getCpOrgaoUsuario()
+						.getSigla());
+			String template = m.getConteudoBlobString();
+			if (template != null) {
+				serializer.flush();
+				os.write('\n');
+				serializer.cdsect(template);
+				serializer.flush();
+				os.write('\n');
+			}
+			serializer.endTag(null, MODELO_GERAL);
+
+			serializer.flush();
+			os.write('\n');
+			os.write('\n');
+		}
+
+
+		serializer.flush();
+		os.write('\n');
+		os.write('\n');
+
+		List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null);
+		
+		for (ExModelo m : l) {
+			serializer.startTag(null, MODELO);
+			if (m.getExFormaDocumento() != null)
+				serializer.attribute(null, "forma", m.getExFormaDocumento()
+						.getDescricao());
+			if (m.getNmMod() != null)
+				serializer.attribute(null, "nome", m.getNmMod());
+			if (m.getDescMod() != null)
+				serializer.attribute(null, "descricao", m.getDescMod());
+			if (m.getExClassificacao() != null)
+				serializer.attribute(null, "classificacao", m
+						.getExClassificacao().getSigla());
+			if (m.getExClassCriacaoVia() != null)
+				serializer.attribute(null, "classCriacaoVia", m
+						.getExClassCriacaoVia().getSigla());
+			if (m.getExNivelAcesso() != null)
+				serializer.attribute(null, "nivel", m.getExNivelAcesso()
+						.getNmNivelAcesso());
+			if (m.getNmArqMod() != null)
+				serializer.attribute(null, "arquivo", m.getNmArqMod());
+			if (m.getConteudoTpBlob() != null)
+				serializer.attribute(null, "tipo", m.getConteudoTpBlob());
+			byte[] template = m.getConteudoBlobMod2();
+			if (template != null) {
+				serializer.flush();
+				os.write('\n');
+				serializer.cdsect(new String(template, "utf-8"));
+				serializer.flush();
+				os.write('\n');
+			}
+			serializer.endTag(null, MODELO);
+
+			serializer.flush();
+			os.write('\n');
+			os.write('\n');
+		}
+
+		serializer.endTag(null, MODELOS);
+
+		serializer.endDocument();
+ 
+		serializer.flush();
+
+		HttpServletResponse res = ServletActionContext.getResponse();
+		OutputStream out = res.getOutputStream();
+
+		res.setContentType("text/xml");
+		res.setContentLength(os.size());
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(os.toByteArray());
+
+		int i;
+		while ((i = bais.read()) != -1) {
+			out.write(i);
+		}
+		bais.close();
+		out.close();
+		return Action.SUCCESS;
 	}
 
 	public String aListar() throws Exception {

@@ -1,6 +1,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
@@ -88,7 +88,7 @@
 						<tr><br /><br /><br /></tr>
 						<tr>
 							<td align="right"><font style="font-family:Arial;font-size:11pt;font-weight:bold;">
-							FORMULÁRIO N&ordm; ${doc.codigo}</font></td>
+							SOLICITAÇÃO N&ordm; ${doc.codigo}</font></td>
 						</tr>	
 						<tr>
 							<td align="right"><font style="font-family:Arial;font-size:11pt;font-weight:bold;">

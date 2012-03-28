@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>

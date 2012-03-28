@@ -30,6 +30,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 
 public class LdapDaoTest extends TestCase{
 
+	private static final String PASSWORD2 = "Password2";
+	private static final String PASSWORD1 = "Password1";
 	private static final String DN_GESTAO_IDENTIDADE_USUARIOS = "OU=Usuarios,OU=Gestao de Identidade,DC=csis,DC=local";
 	private static final String DN_GESTAO_IDENTIDADE = "OU=Gestao de Identidade,DC=csis,DC=local";
 	private static final String CN_USUARIO = "CN=NOME_USUARIO";
@@ -40,14 +42,14 @@ public class LdapDaoTest extends TestCase{
 			.valueOf(ILdapDao.PORTA_COMUM);
 	private static final String PORTA_SSL = String.valueOf(ILdapDao.PORTA_SSL);
 	private static final String USUARIO_CONEXAO = "siga-gi@csis.local";
-	private static final String USUARIO_CONEXAO_SENHA = "xxxxx";
+	private static final String USUARIO_CONEXAO_SENHA = PASSWORD1;
 	private static final String KEYSTORE = "C:\\Desenvolvimento\\jdk1.6.0\\jre\\lib\\security\\cacerts";
 
 	private static ILdapDao ldap = new LdapDaoImpl(false);
 
 	@Test
 	public void testVerificarConexao() {
-		assertTrue(ldap.verificarConexao("siga-gi", "csis.local", "xxxxx",
+		assertTrue(ldap.verificarConexao("siga-gi", "csis.local", PASSWORD1,
 				SERVIDOR, PORTA_COMUM));
 	}
 
@@ -113,28 +115,28 @@ public class LdapDaoTest extends TestCase{
 
 	@Test
 	public void testDefinirSenha() throws AplicacaoException {
-		ldap.definirSenha(DN_USUARIO, "yyyyy");
+		ldap.definirSenha(DN_USUARIO, PASSWORD2);
 		String siglaUsuario = dnToSamAccountName(DN_USUARIO);
 		assertTrue(ldap.verificarConexao(siglaUsuario, "csis.local",
-				"yyyyy", SERVIDOR, PORTA_COMUM));
-		ldap.definirSenha(DN_USUARIO, "xxxxx");
+				PASSWORD2, SERVIDOR, PORTA_COMUM));
+		ldap.definirSenha(DN_USUARIO, PASSWORD1);
 		assertTrue(ldap.verificarConexao(siglaUsuario, "csis.local",
-				"xxxxx", SERVIDOR, PORTA_COMUM));
+				PASSWORD1, SERVIDOR, PORTA_COMUM));
 	}
 
 	@Test
 	public void testAlterarSenha() throws AplicacaoException {
-		ldap.alterarSenha(DN_USUARIO, "xxxxx", "yyyyy");
+		ldap.alterarSenha(DN_USUARIO, PASSWORD1, PASSWORD2);
 		String siglaUsuario = dnToSamAccountName(DN_USUARIO);
 		assertTrue(ldap.verificarConexao(siglaUsuario, "csis.local",
-				"yyyyy", SERVIDOR, PORTA_COMUM));
-		ldap.alterarSenha(DN_USUARIO, "yyyyy", "xxxxx");
+				PASSWORD2, SERVIDOR, PORTA_COMUM));
+		ldap.alterarSenha(DN_USUARIO, PASSWORD2, PASSWORD1);
 		assertTrue(ldap.verificarConexao(siglaUsuario, "csis.local",
-				"xxxxx", SERVIDOR, PORTA_COMUM));
+				PASSWORD1, SERVIDOR, PORTA_COMUM));
 		// A alteração de senha seguinte deveria falhar. Porém o ldap armazena a
 		// senha em cache e ainda
 		// não foi descoberta uma maneira de desativar o cache
-		ldap.alterarSenha(DN_USUARIO, "yyyyy", "xxxxx");
+		ldap.alterarSenha(DN_USUARIO, PASSWORD2, PASSWORD1);
 	}
 
 	@Test

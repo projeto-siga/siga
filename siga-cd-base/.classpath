@@ -8,5 +8,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/siga-base"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

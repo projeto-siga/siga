@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -449,13 +450,13 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				null, null, null, exTpMov, null, null, null, null, null, null,
 				idTpConf);
 	}
-	
+
 	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
-			ExPapel exPapel, DpPessoa pessoa, ExTipoMovimentacao exTpMov, long idTpConf)
-			throws Exception {
+			ExPapel exPapel, DpPessoa pessoa, ExTipoMovimentacao exTpMov,
+			long idTpConf) throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
-				null, null, null, exTpMov, null, null, null, null, pessoa, null,
-				idTpConf);
+				null, null, null, exTpMov, null, null, null, null, pessoa,
+				null, idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
@@ -465,28 +466,19 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				idTpConf);
 	}
 
-	public void deduzFiltro(ExConfiguracao exConfiguracao) {
+	@Override
+	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
 
-		if (exConfiguracao.getDpPessoa() != null) {
-			if (exConfiguracao.getLotacao() == null)
-				exConfiguracao.setLotacao(exConfiguracao.getDpPessoa()
-						.getLotacao());
-			if (exConfiguracao.getCargo() == null)
-				exConfiguracao
-						.setCargo(exConfiguracao.getDpPessoa().getCargo());
-			if (exConfiguracao.getFuncaoConfianca() == null)
-				exConfiguracao.setFuncaoConfianca(exConfiguracao.getDpPessoa()
-						.getFuncaoConfianca());
-		}
-
-		if (exConfiguracao.getLotacao() != null)
-			if (exConfiguracao.getOrgaoUsuario() == null)
-				exConfiguracao.setOrgaoUsuario(exConfiguracao.getLotacao()
-						.getOrgaoUsuario());
+		super.deduzFiltro(cpConfiguracao);
 
 		// *************************************************
 		// Ver regrinha pra habilitar e desabilitar esses if's aí, talvez
 		// *************************************************
+
+		if (!(cpConfiguracao instanceof ExConfiguracao))
+			return;
+
+		ExConfiguracao exConfiguracao = (ExConfiguracao) cpConfiguracao;
 
 		if (exConfiguracao.getExTipoDocumento() != null)
 			if (exConfiguracao.getExFormaDocumento() == null) {
@@ -513,7 +505,17 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				exConfiguracao.setExFormaDocumento(exConfiguracao.getExModelo()
 						.getExFormaDocumento());
 		}
+		
+		cpConfiguracao = exConfiguracao;
 	}
+
+	/*
+	 * public ExConfiguracao buscaConfiguracao( ExConfiguracao
+	 * exConfiguracaoFiltro, int[] atributoDesconsideradoFiltro, Date dtEvn)
+	 * throws Exception { deduzFiltro(exConfiguracaoFiltro); return
+	 * super.buscaConfiguracao(exConfiguracaoFiltro,
+	 * atributoDesconsideradoFiltro, dtEvn); }
+	 */
 
 	public void destroy() {
 		// TODO Auto-generated method stub

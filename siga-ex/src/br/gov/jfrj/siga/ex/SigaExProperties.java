@@ -93,5 +93,36 @@ public class SigaExProperties extends ModeloPropriedade {
 			return true;
 		
 		return false;
-	}	
+	}
+
+	@Override
+	protected String getPrefixoModulo() {
+		return "siga.ex";
+	}
+
+	public static String getExtensaoConversorHTML() {
+		return getString("conversor.html.ext");
+	}
+	
+	public static String getAssinaturaDecodificador(){
+		return getString("siga.ex.assinatura.decodificador");
+	}
+
+	public static Object getAssinaturaCodebasePath() {
+		return getString("siga.ex.assinatura.codeBasePath");
+	}
+
+	public static Object getAssinaturaMessagesURLPath() {
+		return getString("siga.ex.assinatura.messagesUrlPath");
+	}
+
+	public static Object getAssinaturaPorlicyUrlPath() {
+		return getString("siga.ex.assinatura.policyUrlPath");
+	}
+
+	public static String getEnderecoAutenticidadeDocs() {
+		return getString("siga.ex.enderecoAutenticidadeDocs");
+	}
+
+
 }

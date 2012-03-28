@@ -22,4 +22,8 @@ import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
 
 public class Propriedades1 extends ModeloPropriedade {
 	
+	@Override
+	protected String getPrefixoModulo() {
+		return "siga.prop.teste";
+	}
 }

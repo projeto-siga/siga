@@ -35,13 +35,16 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * 
  * Procedimentos para criar relatorios no siga-ex<br />
  * 
- * RESUMO:<BR/> 1) Criar a classe do relatório (extends RelatorioTemplate)<br/>
- * 2) Implementar os métodos:<br/> 2.1) construtor passando um Map <-- Com o
- * parâmentros que podem ser usados no relatório.<br/> 2.2)
- * configurarRelatorio() <-- Para definir o layout do relatório.<br/> 2.3)
- * processarDados() <-- Para gerar um Set ou List contendo os dados do
- * relatório.<br/> 3) Usar o relatório:<br/> Exemplo: MeuRelatorio r = new
- * MeuRelatorio(null); r.gerar();
+ * RESUMO:<BR/>
+ * 1) Criar a classe do relatório (extends RelatorioTemplate)<br/>
+ * 2) Implementar os métodos:<br/>
+ * 2.1) construtor passando um Map <-- Com o parâmentros que podem ser usados no
+ * relatório.<br/>
+ * 2.2) configurarRelatorio() <-- Para definir o layout do relatório.<br/>
+ * 2.3) processarDados() <-- Para gerar um Set ou List contendo os dados do
+ * relatório.<br/>
+ * 3) Usar o relatório:<br/>
+ * Exemplo: MeuRelatorio r = new MeuRelatorio(null); r.gerar();
  * JasperViewer.viewReport(r.getRelatorioJasperPrint());
  * 
  * 
@@ -59,8 +62,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * <li><ww:url id="url" action="relRelatorios"<br />
  * namespace="/expediente/rel"><br />
  * <ww:param name="nomeArquivoRel">relModelos.jsp</ww:param><br />
- * </ww:url> <ww:a href="%{url}">Relatório de Modelos</ww:a></li>
- * <br />
+ * </ww:url> <ww:a href="%{url}">Relatório de Modelos</ww:a></li> <br />
  * 
  * 
  * 2) Insira o código de teste do .jsp no relatorio.jsp
@@ -114,18 +116,20 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * <br />
  * <br />
  * Obrigatório para
- * RelatórioRapido--->parametros.put("secaoUsuario",getRequest().getParameter("secaoUsuario"));<br />
+ * RelatórioRapido--->parametros.put("secaoUsuario",getRequest()
+ * .getParameter("secaoUsuario"));<br />
  * <br />
- * parametros.put("lotacao",getRequest().getParameter("lotacaoDestinatarioSel.sigla"));<br />
+ * parametros.put("lotacao",getRequest().getParameter(
+ * "lotacaoDestinatarioSel.sigla"));<br />
  * parametros.put("tipoFormaDoc", getRequest().getParameter("tipoFormaDoc"));<br />
  * parametros.put("incluirSubordinados",
  * getRequest().getParameter("incluirSubordinados"));<br />
  * parametros.put("lotacaoTitular",
  * getRequest().getParameter("lotacaoTitular"));<br />
  * parametros.put("orgaoUsuario",getRequest().getParameter("orgaoUsuario"));<br />
- * parametros.put("link_siga","http://" + getRequest().getServerName() + ":"
- * <br /> + getRequest().getServerPort() <br /> + getRequest().getContextPath() +
- * "/expediente/doc/exibir.action?id=");<br />
+ * parametros.put("link_siga","http://" + getRequest().getServerName() + ":" <br />
+ * + getRequest().getServerPort() <br />
+ * + getRequest().getContextPath() + "/expediente/doc/exibir.action?id=");<br />
  * <br />
  * RelatorioDocumentosSubordinados rel = new
  * RelatorioDocumentosSubordinados(parametros);<br />
@@ -134,28 +138,31 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * <br />
  * this.setInputStream(new ByteArrayInputStream( rel.getRelatorioPDF()));<br />
  * <br />
- * return "relatorio";<br /> }<br />
+ * return "relatorio";<br />
+ * <br />
  * <br />
  * 5.1) Na última linha do método coloque (return "relatorio";)<br />
  * <br />
  * 
  * DICA: Para testar o relatório na própria classe, use o método main. Exemplo <br/>
- * 	public static void main(String[] args){<br/>
-<br/>
-		try {<br/>
-			RelatorioEstatisticaProcedimento rep = new RelatorioEstatisticaProcedimento(null);<br/>
-			rep.gerar();<br/>
-			JasperViewer.viewReport(rep.getRelatorioJasperPrint());<br/>
-		} catch (JRException e) {<br/>
-			// TODO Auto-generated catch block<br/>
-			e.printStackTrace();<br/>
-		} catch (DJBuilderException e) {<br/>
-			// TODO Auto-generated catch block<br/>
-			e.printStackTrace();<br/>
-		} catch (Exception e) {<br/>
-			// TODO Auto-generated catch block<br/>
-			e.printStackTrace();<br/>
-		}<br/>
+ * public static void main(String[] args){<br/>
+ * <br/>
+ * try {<br/>
+ * RelatorioEstatisticaProcedimento rep = new
+ * RelatorioEstatisticaProcedimento(null);<br/>
+ * rep.gerar();<br/>
+ * JasperViewer.viewReport(rep.getRelatorioJasperPrint());<br/>
+ * } catch (JRException e) {<br/>
+ * // TODO Auto-generated catch block<br/>
+ * e.printStackTrace();<br/>
+ * } catch (DJBuilderException e) {<br/>
+ * // TODO Auto-generated catch block<br/>
+ * e.printStackTrace();<br/>
+ * } catch (Exception e) {<br/>
+ * // TODO Auto-generated catch block<br/>
+ * e.printStackTrace();<br/>
+ * }<br/>
+ * 
  * @author kpf
  * 
  */
@@ -176,8 +183,7 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	 * super(parametros); if (parametros.get("secaoUsuario") == null){ throw new
 	 * DJBuilderException("Parâmetro secaoUsuario não informado!"); } if
 	 * (parametros.get("link_siga") == null){ throw new
-	 * DJBuilderException("Parâmetro link_siga não informado!"); }
-	 *  }
+	 * DJBuilderException("Parâmetro link_siga não informado!"); } }
 	 */
 	public RelatorioTemplate(Map parametros) throws DJBuilderException {
 		super(parametros);
@@ -229,8 +235,8 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	 * Implemente este método para processar os dados que serão exibidos no
 	 * relatório. É neste método que se faz as consultas a um banco de dados,
 	 * por exemplo. <br />
-	 * CUIDADO: A coleção de dados deve ser ordenada, senão os dados vão aparecer desordenados no relatório.
-	 * Exemplo:<br />
+	 * CUIDADO: A coleção de dados deve ser ordenada, senão os dados vão
+	 * aparecer desordenados no relatório. Exemplo:<br />
 	 * public Collection processarDados() {
 	 * 
 	 * List<String> d = new LinkedList<String>(); Query q =
@@ -248,7 +254,7 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	 * 
 	 * @return Retorna um Collection contendo os dados do relatório.
 	 */
-	public abstract Collection processarDados();
+	public abstract Collection processarDados() throws Exception;
 
 	/**
 	 * Método que gera o relatório em PDF.<br>
@@ -264,8 +270,8 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	public StringBuffer getRelatorioHTML() throws JRException {
 		JRHtmlExporter htmlExp = new JRHtmlExporter();
 
-		htmlExp.setParameter(JRExporterParameter.JASPER_PRINT, relatorio
-				.getRelatorioJasperPrint());
+		htmlExp.setParameter(JRExporterParameter.JASPER_PRINT,
+				relatorio.getRelatorioJasperPrint());
 		StringBuffer sb = new StringBuffer();
 		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_DIR, new File(
 				RelatorioTemplate.class.getResource("/").getFile()));

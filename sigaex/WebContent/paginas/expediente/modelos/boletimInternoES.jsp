@@ -2,25 +2,26 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
+<%@page import="br.gov.jfrj.siga.ex.bl.ExDocumentoBL"%>
 <c:set var="esconderTexto" value="sim" scope="request" />
 
 <mod:modelo salvarViaAjax="N" acaoGravar="gravarBI" acaoExcluir="excluirBI" acaoCancelar="refazerBI" acaoFinalizar="finalizarBI">
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:texto titulo="Nome do Diretor do Foro" var="nmDiretorForoES" valor="Dr. Ricarlos Almagro Vitoriano Cunha" largura="40"/>
+			<mod:texto titulo="Nome do Diretor do Foro" var="nmDiretorForo" valor="Dr. Ricarlos Almagro Vitoriano Cunha" largura="40"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Nome do Diretor da SG" var="nmDiretorRHES" valor="Maria Cristina Natalli" largura="40" />
+			<mod:texto titulo="Nome do Diretor da SG" var="nmDiretorRH" valor="Maria Cristina Natalli" largura="40" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Setores Responsáveis" var="setoresResponsaveisES" valor="SAGAB-DIRFO / SEASG / NGP / NOF" largura="90"/>
+			<mod:texto titulo="Setores Responsáveis" var="setoresResponsaveis" valor="SAGAB-DIRFO / SEASG / NGP / NOF" largura="90"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Geração e impressão" var="geraImpressES" valor="SEDOD" largura="90"/>
+			<mod:texto titulo="Geração e impressão" var="geraImpress" valor="SEDOD" largura="90"/>
 		</mod:grupo>
 		
 		<mod:grupo titulo="Documentos a Publicar">
@@ -83,8 +84,8 @@
 		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
 			<table bgcolor="#FFFFFF">
 				<tr bgcolor="#FFFFFF">
-					<td valign="bottom" width="50%"><img
-						src="contextpath/imagens/Logomarca_JFES_reduzida.jpg" width="50%" /></td>
+					<td valign="bottom" width="30%"><img
+						src="contextpath/imagens/Logomarca_JFES_reduzida.jpg" width="30%" /></td>
 					<td align="left">
 						<h2>BOLETIM INTERNO</h2>
 						<h3>da Seção Judiciária do Espírito Santo</h3>

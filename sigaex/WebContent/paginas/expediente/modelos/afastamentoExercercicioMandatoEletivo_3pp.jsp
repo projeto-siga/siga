@@ -22,7 +22,7 @@ AFASTAMENTO PARA EXERCÍCIO DE MANDATO ELETIVO -->
 		
 		</mod:valor>
 		<mod:valor var="texto_requerimento2">
-			<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />
+			<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />
 	
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<br/>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
@@ -44,7 +44,7 @@ AFASTAMENTO PARA EXERCÍCIO DE MANDATO ELETIVO -->
 				
 		</mod:valor>	
 		
-		
+
 		<mod:valor var="texto_requerimento3">
 			<c:import url="/paginas/expediente/modelos/inc_tit_declaracao.jsp" />
 			<p style="TEXT-INDENT: 2cm" align="justify">
@@ -73,8 +73,7 @@ AFASTAMENTO PARA EXERCÍCIO DE MANDATO ELETIVO -->
 			<br/>
 			<br/>
 			<p align="center">${doc.dtExtenso}</p>
-			<c:import
-			url="/paginas/expediente/modelos/inc_assinatura.jsp?formatarOrgao=sim" />
+			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp?formatarOrgao=sim" />
 			<c:import url="/paginas/expediente/modelos/inc_classificacaoDocumental.jsp" />
 		</mod:valor>
 	</mod:documento>

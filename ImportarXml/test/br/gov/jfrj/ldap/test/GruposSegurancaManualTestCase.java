@@ -42,6 +42,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 public class GruposSegurancaManualTestCase extends TestCase {
 
+	private static final int MATRICULA = 0;
+	private static final long CPF = 0;
 	private boolean sincronizarLDAP = true;
 	private static CpDao dao;
 	private static Long idConfGravada;
@@ -85,7 +87,7 @@ public class GruposSegurancaManualTestCase extends TestCase {
 		HibernateUtil.iniciarTransacao();
 		CpConfiguracao conf = new CpConfiguracao();
 
-		DpPessoa pes = dao.consultarPorCpfMatricula(0L, 13286);
+		DpPessoa pes = dao.consultarPorCpfMatricula(CPF, MATRICULA);
 		CpSituacaoConfiguracao sitConf = dao.consultar(
 				CpSituacaoConfiguracao.SITUACAO_PODE,
 				CpSituacaoConfiguracao.class, false);
@@ -124,7 +126,7 @@ public class GruposSegurancaManualTestCase extends TestCase {
 	public void testVerificarConfiguracaoPode() throws Exception {
 		exibePermissoesConsole();
 
-		DpPessoa pes = dao.consultarPorCpfMatricula(0L, 13286);
+		DpPessoa pes = dao.consultarPorCpfMatricula(CPF, MATRICULA);
 		DpLotacao lot = dao.consultar(20643L, DpLotacao.class, false);
 		CpServico svc = dao.consultar(8L, CpServico.class, false);
 
@@ -162,7 +164,7 @@ public class GruposSegurancaManualTestCase extends TestCase {
 	public void testVerificarConfiguracaoNaoPode_LotacaoDiferente()
 			throws Exception {
 
-		DpPessoa pes = dao.consultarPorCpfMatricula(0L, 13286);
+		DpPessoa pes = dao.consultarPorCpfMatricula(CPF, MATRICULA);
 		DpLotacao lot = dao.consultar(20917L, DpLotacao.class, false);
 		CpServico svc = dao.consultar(8L, CpServico.class, false);
 
@@ -183,7 +185,7 @@ public class GruposSegurancaManualTestCase extends TestCase {
 
 		HibernateUtil.commitTransacao();
 
-		DpPessoa pes = dao.consultarPorCpfMatricula(0L, 13286);
+		DpPessoa pes = dao.consultarPorCpfMatricula(CPF, MATRICULA);
 		DpLotacao lot = dao.consultar(20643L, DpLotacao.class, false);
 		CpServico svc = dao.consultar(8L, CpServico.class, false);
 
@@ -204,7 +206,7 @@ public class GruposSegurancaManualTestCase extends TestCase {
 
 	public void testVerificarConfiguracaoNaoPode_ConfExcluida()
 			throws Exception {
-		DpPessoa pes = dao.consultarPorCpfMatricula(0L, 13286);
+		DpPessoa pes = dao.consultarPorCpfMatricula(CPF, MATRICULA);
 		DpLotacao lot = dao.consultar(20643L, DpLotacao.class, false);
 		CpServico svc = dao.consultar(8L, CpServico.class, false);
 

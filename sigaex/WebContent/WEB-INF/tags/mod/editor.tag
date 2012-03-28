@@ -1,7 +1,7 @@
 <%@ tag body-content="empty"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags"%>
 <%@ attribute name="titulo"%>
@@ -44,7 +44,7 @@
 		</c:choose>
 		<div><c:choose>
 			<c:when test="${f:podeUtilizarExtensaoEditor(lotaTitular, idMod)}">
-				<%@ include	file="/WEB-INF/ext/extensaoEditor.jsp" %>
+				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario)}
 			</c:when>
 			<c:otherwise>
 			<tags:fixeditor var="${var}">

@@ -64,4 +64,8 @@ public class SigaBaseProperties extends ModeloPropriedade {
 			return "";
 		}
 	}
+	@Override
+	protected String getPrefixoModulo() {
+		return "siga.base";
+	}
 }

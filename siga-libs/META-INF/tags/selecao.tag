@@ -231,9 +231,9 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	<script type="text/javascript">
 	document.getElementsByName('${propriedade}${tipoSel}Sel.id')[0].value = '${idSubst}';
 	document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value = '${siglaSubst}';
-	document.getElementsByName('${propriedade}${tipoSel}Sel.descricao')[0].value = '${descricaoSubst}';
+	document.getElementsByName('${propriedade}${tipoSel}Sel.descricao')[0].value = "${descricaoSubst}";
 	<c:if test="${ocultardescricao != 'sim'}">
-	document.getElementById('${propriedade}${tipoSel}SelSpan').innerHTML = '${descricaoSubst}';
+	document.getElementById('${propriedade}${tipoSel}SelSpan').innerHTML = "${descricaoSubst}";
 	</c:if>
 	</script>
 </c:if>

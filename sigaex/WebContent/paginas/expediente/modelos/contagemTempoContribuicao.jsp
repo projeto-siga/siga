@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>	
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de

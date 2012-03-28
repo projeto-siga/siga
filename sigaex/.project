@@ -7,10 +7,10 @@
 		<project>siga-ex</project>
 		<project>siga-ws</project>
 		<project>siga-sinc-lib</project>
+		<project>siga-libs</project>
 		<project>siga-cp</project>
 		<project>siga-rel</project>
 		<project>siga-cd-base</project>
-		<project>siga-libs</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

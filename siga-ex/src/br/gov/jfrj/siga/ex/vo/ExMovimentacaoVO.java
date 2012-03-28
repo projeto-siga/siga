@@ -209,7 +209,7 @@ public class ExMovimentacaoVO extends ExVO {
 								+ Texto.maiusculasEMinusculas(movRef.getObs());
 						fAssinaturas = true;
 					} else if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
-						complementoConferencias += (complemento.length() > 0 ? ", "
+						complementoConferencias += (complementoConferencias.length() > 0 ? ", "
 								: "")
 								+ Texto.maiusculasEMinusculas(movRef.getObs());
 						fConferencias = true;
@@ -434,8 +434,8 @@ public class ExMovimentacaoVO extends ExVO {
 		return dtRegMovDDMMYYHHMMSS;
 	}
 
-	public Object getDtRegMovDDMM() {
-		return dtRegMovDDMMYYHHMMSS.substring(0, 5);
+	public Object getDtRegMovDDMMYY() {
+		return dtRegMovDDMMYYHHMMSS.substring(0, 8);
 	}
 
 	public long getIdMov() {

@@ -1,7 +1,7 @@
 <%@ tag body-content="empty"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ attribute name="tipo"%>
 <%@ attribute name="titulo"%>
 <%@ attribute name="var"%>

@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
@@ -23,7 +23,7 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 		</mod:valor>
 		<mod:valor var="texto_requerimento2">
 		
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />
 
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência, nos termos do art. 84 da Lei nº 8.112/90, c/c alteração dada pela Lei nº 9.527/97, regulamentado pela Resolução nº 498/2006, do Conselho da Justiça Federal, <B>LICENÇA POR MOTIVO DE AFASTAMENTO DO CÔNJUGE COM EXERCÍCIO 

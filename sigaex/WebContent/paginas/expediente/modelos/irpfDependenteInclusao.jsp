@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <mod:modelo>
@@ -144,8 +144,7 @@
 					devidos fins, que meu(minha) pai(mãe) <b>${requestScope[f:concat('maepai',i)]}</b> não aufere
 					rendimentos, de quaisquer espécies, superiores ao limite
 					estabelecido pela legislação do Imposto de Renda, ou seja, R$
-					1.566,61 (mil, quinhentos e sessenta e seis reais e
-					 sessenta e um centavos) mensais.</p>
+					1.637,11 (mil, seiscentos e trinta e sete reais e onze centavos) mensais.</p>
 
 					<p style="TEXT-INDENT: 2cm" align="justify">Outrossim, declaro
 					estar ciente de que a legislação do Imposto de Renda - Lei n&ordm;

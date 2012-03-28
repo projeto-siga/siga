@@ -93,6 +93,8 @@
 				<td align="center">Pessoa</td>
 				<td align="center">Lotação</td>
 				<td align="center">Permissão</td>
+				<td align="center">Data de Fim de Vigência</td>
+				<td align="center"></td>
 				<td></td>
 			</tr>
 			<c:set var="evenorodd" value="" />
@@ -115,12 +117,17 @@
 						</c:otherwise>
 					</c:choose>
 
-					<td>${configuracao.exSituacaoConfiguracao.dscSitConfiguracao}</td>
-					<td><ww:url id="url"
-						action="excluir_configuracao_publicacao_boletim"
-						namespace="/expediente/configuracao">
-						<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
-					</ww:url> <ww:a href="%{url}">Excluir</ww:a></td>
+					<td>${configuracao.cpSituacaoConfiguracao.dscSitConfiguracao}</td>
+					<td>${configuracao.hisDtFimDDMMYY_HHMMSS}<td>
+					<td>
+						<c:if test="${configuracao.hisDtFim != null}">
+							<ww:url id="url"
+								action="excluir_configuracao_publicacao_boletim"
+								namespace="/expediente/configuracao">
+								<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
+							</ww:url> <ww:a href="%{url}">Excluir</ww:a>
+						</c:if>
+					</td>
 				</tr>
 				<c:choose>
 					<c:when test='${evenorodd == "even"}'>

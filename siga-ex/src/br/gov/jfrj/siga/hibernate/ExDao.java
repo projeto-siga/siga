@@ -82,6 +82,7 @@ import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -92,15 +93,17 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 public class ExDao extends CpDao {
 
-	MontadorQuery montadorQuery = null;
-	
+	IMontadorQuery montadorQuery = null;
+
 	public static ExDao getInstance() {
 		return ModeloDao.getInstance(ExDao.class);
 	}
-	
-	public ExDao(){
+
+	public ExDao() {
 		try {
-			montadorQuery = (MontadorQuery) Class.forName(SigaExProperties.getMontadorQuery()).newInstance();
+			montadorQuery = (IMontadorQuery) Class.forName(
+					SigaExProperties.getMontadorQuery()).newInstance();
+			montadorQuery.setMontadorPrincipal(new MontadorQuery());
 		} catch (Exception e) {
 			montadorQuery = new MontadorQuery();
 		}
@@ -200,9 +203,10 @@ public class ExDao extends CpDao {
 			query.setMaxResults(itemPagina);
 		}
 		query.setProperties(flt);
-		query.setLong("titular", titular.getIdPessoaIni() != null ? titular
-				.getIdPessoaIni() : 0);
-		query.setLong("lotaTitular",
+		query.setLong("titular",
+				titular.getIdPessoaIni() != null ? titular.getIdPessoaIni() : 0);
+		query.setLong(
+				"lotaTitular",
 				lotaTitular.getIdLotacaoIni() != null ? lotaTitular
 						.getIdLotacaoIni() : 0);
 		List l = query.list();
@@ -213,7 +217,8 @@ public class ExDao extends CpDao {
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
 		Query query = getSessao().createQuery(
-				montadorQuery.montaQueryConsultaporFiltro(flt, titular, lotaTitular, false));
+				montadorQuery.montaQueryConsultaporFiltro(flt, titular,
+						lotaTitular, false));
 		if (offset > 0) {
 			query.setFirstResult(offset);
 		}
@@ -227,7 +232,8 @@ public class ExDao extends CpDao {
 	public Integer consultarQuantidadePorFiltroOtimizado(
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		String s = montadorQuery.montaQueryConsultaporFiltro(flt, titular, lotaTitular, true);
+		String s = montadorQuery.montaQueryConsultaporFiltro(flt, titular,
+				lotaTitular, true);
 		Query query = getSessao().createQuery(s);
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
@@ -235,7 +241,7 @@ public class ExDao extends CpDao {
 				+ tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
 		return l.intValue();
 	}
-	
+
 	public List consultarPorFiltroOld(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
@@ -424,8 +430,8 @@ public class ExDao extends CpDao {
 				firstResult++;
 				if (doc.isIndexavel()
 						&& (fullTextSession.createFullTextQuery(
-								new TermQuery(new Term("idDoc", String
-										.valueOf(doc.getIdDoc()))),
+								new TermQuery(new Term("idDoc",
+										String.valueOf(doc.getIdDoc()))),
 								ExDocumento.class).getResultSize() == 0)) {
 
 					if (irIndexando) {
@@ -1003,10 +1009,8 @@ public class ExDao extends CpDao {
 			final Query query = getSessao().getNamedQuery(
 					"consultarPorFiltroExPreenchimento");
 			if (exPreenchimento.getNomePreenchimento() != null)
-				query
-						.setString("nomePreenchimento", exPreenchimento
-								.getNomePreenchimento().toUpperCase().replace(
-										' ', '%'));
+				query.setString("nomePreenchimento", exPreenchimento
+						.getNomePreenchimento().toUpperCase().replace(' ', '%'));
 			else
 				query.setString("nomePreenchimento", "");
 			if (exPreenchimento.getDpLotacao() != null)
@@ -1332,14 +1336,12 @@ public class ExDao extends CpDao {
 			final Query query = getSessao().getNamedQuery(
 					"consultarPorSiglaExClassificacao");
 			if (o.getCodAssuntoPrincipal() != null)
-				query
-						.setByte("codAssuntoPrincipal", o
-								.getCodAssuntoPrincipal());
+				query.setByte("codAssuntoPrincipal", o.getCodAssuntoPrincipal());
 			else
 				query.setInteger("codAssuntoPrincipal", -1);
 			if (o.getCodAssuntoSecundario() != null)
-				query.setByte("codAssuntoSecundario", o
-						.getCodAssuntoSecundario());
+				query.setByte("codAssuntoSecundario",
+						o.getCodAssuntoSecundario());
 			else
 				query.setInteger("codAssuntoSecundario", -1);
 			if (o.getCodAssunto() != null)
@@ -1593,10 +1595,8 @@ public class ExDao extends CpDao {
 				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExNivelAcesso",
 				"read-only", "ex");
-		cfg
-				.setCacheConcurrencyStrategy(
-						"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao",
-						"read-only", "ex");
+		cfg.setCacheConcurrencyStrategy(
+				"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao", "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
 				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDespacho",
@@ -1639,26 +1639,33 @@ public class ExDao extends CpDao {
 		cfg.setProperty("org.hibernate.worker.execution", "sync");
 		cfg.setProperty("org.hibernate.worker.batch_size", "1000");
 		cfg.setProperty("hibernate.search.indexing_strategy", "manual");
-		cfg
-		.getEventListeners()
-		.setPostUpdateEventListeners(
-				new PostUpdateEventListener[] { (PostUpdateEventListener) ReflectHelper
-						.classForName(
-								"org.hibernate.search.event.FullTextIndexEventListener")
-						.newInstance() });
-cfg
-		.getEventListeners()
-		.setPostInsertEventListeners(
-				new PostInsertEventListener[] { (PostInsertEventListener) ReflectHelper
-						.classForName(
-								"org.hibernate.search.event.FullTextIndexEventListener")
-						.newInstance() });
-cfg
-		.getEventListeners()
-		.setPostDeleteEventListeners(
-				new PostDeleteEventListener[] { (PostDeleteEventListener) ReflectHelper
-						.classForName(
-								"org.hibernate.search.event.FullTextIndexEventListener")
-						.newInstance() });
+		cfg.getEventListeners()
+				.setPostUpdateEventListeners(
+						new PostUpdateEventListener[] { (PostUpdateEventListener) ReflectHelper
+								.classForName(
+										"org.hibernate.search.event.FullTextIndexEventListener")
+								.newInstance() });
+		cfg.getEventListeners()
+				.setPostInsertEventListeners(
+						new PostInsertEventListener[] { (PostInsertEventListener) ReflectHelper
+								.classForName(
+										"org.hibernate.search.event.FullTextIndexEventListener")
+								.newInstance() });
+		cfg.getEventListeners()
+				.setPostDeleteEventListeners(
+						new PostDeleteEventListener[] { (PostDeleteEventListener) ReflectHelper
+								.classForName(
+										"org.hibernate.search.event.FullTextIndexEventListener")
+								.newInstance() });
+	}
+
+	public ExModelo consultarExModelo(String sForma, String sModelo) {
+		final Criteria crit = getSessao().createCriteria(ExModelo.class);
+		crit.add(Restrictions.eq("nmMod", sModelo));
+		if (sForma != null) {
+			crit.createAlias("exFormaDocumento", "f");
+			crit.add(Restrictions.eq("f.descrFormaDoc", sForma));
+		}
+		return (ExModelo) crit.uniqueResult();
 	}
 }

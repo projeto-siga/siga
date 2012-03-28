@@ -24,7 +24,12 @@
  */
 package br.gov.jfrj.siga.cp;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Store;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -119,5 +124,16 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 	}
 	public boolean ativaNaData(Date dt) {
 		return super.ativoNaData(dt);
+	}
+	
+	/**
+	 * Retorna a data de fim de vigência no formato dd/mm/aa HH:MM:SS, por exemplo, 01/02/10 17:52:23.
+	 */
+	public String getHisDtFimDDMMYY_HHMMSS() {
+		if (getHisDtFim() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+			return df.format(getHisDtFim());
+		}
+		return "";
 	}
 }

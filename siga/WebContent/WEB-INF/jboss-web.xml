@@ -17,7 +17,7 @@
 	<!--  Configuracao para login com certificado -->
 	<!-- ***************************************  -->
 	<!--  Nao alterar comentario _$(iniLogCert)$_ 
-    <security-domain flushOnSessionInvalidation="true">java:/jaas/sigaclientcert</security-domain> 
+    <security-domain flushOnSessionInvalidation="true">java:/jaas/SigaClientCertPolicy</security-domain> 
          _$(fimLogCert)$_ Nao alterar comentario  -->
 	<!-- ***************************************  -->
 	<!--  Fim da configuracao com certificado     -->

@@ -11,6 +11,9 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/siga-sinc-lib/siga-sinc-lib">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="siga-libs.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-libs/siga-libs">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="siga-ex.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-ex/siga-ex">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -24,9 +27,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="siga-cd-base.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-cd-base/siga-cd-base">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="siga-libs.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-libs/siga-libs">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path" value="/build/classes/"/>

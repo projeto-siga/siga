@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.model.prop;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -33,6 +34,46 @@ import java.util.Properties;
 public abstract class ModeloPropriedade {
 	private Properties propriedades = null;
 	protected String[] prefixo;
+
+	/**
+	 * Retorna o prefixo do módulo (programa), fazendo uma separação de
+	 * namespaces para cada projeto. Esse prefixo é adicionado à propriedade que
+	 * o usuário deseja buscar. Por exemplo, se for buscada uma propriedade "teste" no módulo siga.cd (projeto siga-cd), equivale à solicitar uma propriedade "siga.cd.teste" <br/>
+	 * Veja alguns exemplos:
+	 * <table border="1">
+	 * <tr>
+	 * <th>projeto</th>
+	 * <th>prefixo do módulo</th>
+	 * </tr>
+	 * <tr>
+	 * <td>siga-cp</td>
+	 * <td>siga.cp</td>
+	 * </tr>
+	 * <tr>
+	 * <td>siga-ex</td>
+	 * <td>siga.ex</td>
+	 * </tr>
+	 * <tr>
+	 * <td>siga-ldap</td>
+	 * <td>siga.ldap</td>
+	 * </tr>
+	 * <tr>
+	 * <td>siga-base</td>
+	 * <td>siga.base</td>
+	 * </tr>
+	 * <tr>
+	 * <td>siga-cd-base</td>
+	 * <td>siga.cd.base</td>
+	 * </tr>
+	 * </table>
+	 * 
+	 * @return
+	 */
+	protected abstract String getPrefixoModulo();
+
+	public ModeloPropriedade() {
+		setPrefixo(getPrefixoModulo());
+	}
 
 	/**
 	 * Carrega as propriedades

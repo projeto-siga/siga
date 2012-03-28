@@ -9,6 +9,7 @@
 		<project>siga-ws</project>
 		<project>siga-rel</project>
 		<project>siga-ldap</project>
+		<project>siga-cd</project>
 		<project>siga-cd-base</project>
 		<project>siga-libs</project>
 	</projects>

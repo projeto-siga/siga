@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
@@ -338,7 +338,7 @@
 		</c:choose>
 		
 			
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
+		<table style="float: none; clear: both"  width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 			<tr>
 				<th><b>Informações referentes aos suprimentos (exceto papel): </b></th>
 			</tr>

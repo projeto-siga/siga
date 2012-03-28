@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
@@ -177,7 +177,7 @@ var newwin = null;
 		<mod:valor var="texto_requerimento2">
 			<%--<c:set var="semEspacos" value="Sim" scope="request" />--%>
 			<c:import
-				url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />
+				url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegi.jsp" />
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<p style="TEXT-INDENT: 1.5cm; font-size: 12px" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo},

@@ -5,7 +5,7 @@
 	<!-- Criado em 21 Dez 2005       -->
 <hibernate-mapping package="br.gov.jfrj.siga.dp" schema="CORPORATIVO">
 	<class name="DpLotacao" mutable="true" table="DP_LOTACAO"
-		batch-size="20">
+		batch-size="500">
 		<id name="idLotacao" column="ID_LOTACAO" type="long">
 			<generator class="sequence">
 				<param name="sequence">DP_LOTACAO_SEQ</param>
@@ -42,7 +42,7 @@
 			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" not-null="false" />
 
 		<set name="dpLotacaoSubordinadosSet" order-by="ID_LOTACAO"
-			inverse="true" lazy="true" batch-size="20">
+			inverse="true" lazy="true" batch-size="500">
 			<key column="ID_LOTACAO_PAI" />
 			<one-to-many class="DpLotacao" />
 		</set>

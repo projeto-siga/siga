@@ -129,8 +129,7 @@
 							</mod:grupo>
 							<c:choose>
 								<c:when
-									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == '[Selecione o tipo de Ausência]'}">
-								</c:when>
+									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == '[Selecione o tipo de Ausência]'}">								</c:when>
 								<c:when
 									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensação de Trabalho no Recesso'}">
 									<mod:texto titulo="Datas" var="datas${i}${pes_sigla}"
@@ -138,12 +137,12 @@
 								</c:when>
 								<c:when
 									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/Saída Antecipada'}">
-									<mod:data titulo="Data" var="data${i}${pes_sigla}" reler="ajax"
-										idAjax="dataAjax${i}${pes_sigla}" />
+									<mod:data titulo="Data" var="data${i}${pes_sigla}"
+										reler="ajax" idAjax="dataAjax${i}${pes_sigla}" />
 									<mod:hora titulo="das" var="horaIni${i}${pes_sigla}"
 										reler="ajax" idAjax="horaIniAjax${i}${pes_sigla}" />
 									<mod:hora titulo="às" var="horaFim${i}${pes_sigla}"
-										reler="ajax" idAjax="horaFimAjax${i}${pes_sigla}" />
+										reler="ajax" idAjax="horaFimAjax${i}${pes_sigla}" />	
 								</c:when>
 								<c:otherwise>
 									<mod:grupo>
@@ -299,17 +298,6 @@
 		</c:if>
 	</mod:entrevista>
 	<mod:documento>
-		<c:set var="contadorDePessoasComLancamento" value="0" />
-		<c:forEach var="i" begin="1" end="${contadorDePessoas}">
-			<c:set var="pes_sigla" value="${requestScope[f:concat('sigla',i)]}" />
-			<c:if
-				test="${(requestScope[f:concat('freq',pes_sigla)] == 'Com lançamentos')}">
-				<c:set var="contadorDePessoasComLancamento"
-					value="${contadorDePessoasComLancamento + 1}" />
-			</c:if>
-		</c:forEach>
-
-
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
 		<style type="text/css">
@@ -354,114 +342,103 @@
 		<br />
 
 		<mod:letra tamanho="${t2}">
-			<c:choose>
-				<c:when
-					test="${not empty contadorDePessoasComLancamento and contadorDePessoasComLancamento ne 0}">
-					<table width="100%" border="1" cellpadding="2" cellspacing="1"
-						bgcolor="#000000">
-						<tr>
-							<td bgcolor="#FFFFFF" width="15%" align="center"><b>Matrícula</b></td>
-							<td bgcolor="#FFFFFF" width="35%" align="center"><b>Nome</b></td>
-							<td bgcolor="#FFFFFF" width="15%" align="center"><b>Frequência</b></td>
-							<td bgcolor="#FFFFFF" width="35%" align="center"><b>Período/Motivo</b></td>
-						</tr>
+			<table width="100%" border="1" cellpadding="2" cellspacing="1"
+				bgcolor="#000000">
+				<tr>
+					<td bgcolor="#FFFFFF" width="15%" align="center"><b>Matrícula</b></td>
+					<td bgcolor="#FFFFFF" width="35%" align="center"><b>Nome</b></td>
+					<td bgcolor="#FFFFFF" width="15%" align="center"><b>Frequência</b></td>
+					<td bgcolor="#FFFFFF" width="35%" align="center"><b>Período/Motivo</b></td>
+				</tr>
 
-						<c:forEach var="i" begin="1" end="${contadorDePessoas}">
-							<c:set var="pes_descricao"
-								value="${requestScope[f:concat('nome',i)]}" />
-							<c:set var="pes_sigla"
-								value="${requestScope[f:concat('sigla',i)]}" />
-							<c:if
-								test="${(requestScope[f:concat('freq',pes_sigla)] == 'Com lançamentos')}">
-								<tr>
-									<td bgcolor="#FFFFFF" width="15%" align="center">${pes_sigla}</td>
-									<td bgcolor="#FFFFFF" width="35%" align="center">${pes_descricao}</td>
-									<td bgcolor="#FFFFFF" width="15%" align="center">${requestScope[f:concat('freq',pes_sigla)]}</td>
-									<td bgcolor="#FFFFFF" width="35%" align="center"><c:forEach
-										var="i" begin="1"
-										end="${requestScope[f:concat('faltas',pes_sigla)]}">
-										<c:choose>
-											<c:when
-												test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == '[Selecione o tipo de Ausência]'}"> Não foi selecionado um tipo de ausência </c:when>
-											<c:when
-												test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensação de Trabalho no Recesso'}"> ${requestScope[f:concat(f:concat('datas',i),pes_sigla)]} - ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
+				<c:forEach var="i" begin="1" end="${contadorDePessoas}">
+					<c:set var="pes_descricao"
+						value="${requestScope[f:concat('nome',i)]}" />
+					<c:set var="pes_sigla" value="${requestScope[f:concat('sigla',i)]}" />
+					<c:if
+						test="${(requestScope[f:concat('freq',pes_sigla)] == 'Com lançamentos')}">
+						<tr>
+							<td bgcolor="#FFFFFF" width="15%" align="center">${pes_sigla}</td>
+							<td bgcolor="#FFFFFF" width="35%" align="center">${pes_descricao}</td>
+							<td bgcolor="#FFFFFF" width="15%" align="center">${requestScope[f:concat('freq',pes_sigla)]}</td>
+							<td bgcolor="#FFFFFF" width="35%" align="center"><c:forEach
+								var="i" begin="1"
+								end="${requestScope[f:concat('faltas',pes_sigla)]}">
+								<c:choose>
+									<c:when
+										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == '[Selecione o tipo de Ausência]'}"> Não foi selecionado um tipo de ausência </c:when>
+									<c:when
+										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensação de Trabalho no Recesso'}"> ${requestScope[f:concat(f:concat('datas',i),pes_sigla)]} - ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
 											<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensação de Trabalho no Recesso'}">
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensação de Trabalho no Recesso'}">
 												 	(PORTARIA DIRFO)	
 											</c:if>
-											</c:when>
-											<c:when
-												test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/Saída Antecipada'}"> ${requestScope[f:concat(f:concat('data',i),pes_sigla)]} - das ${requestScope[f:concat(f:concat('horaIni',i),pes_sigla)]} às ${requestScope[f:concat(f:concat('horaFim',i),pes_sigla)]} - ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
+									</c:when>
+									<c:when
+										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/Saída Antecipada'}"> ${requestScope[f:concat(f:concat('data',i),pes_sigla)]} - das ${requestScope[f:concat(f:concat('horaIni',i),pes_sigla)]} às ${requestScope[f:concat(f:concat('horaFim',i),pes_sigla)]} - ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
 											<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/Saída Antecipada'}">
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/Saída Antecipada'}">
 												 	(art.44, INCISO II LEI 8112/90)	
 											</c:if>
-											</c:when>
-											<c:otherwise>
+									</c:when>
+									<c:otherwise>
 													De ${requestScope[f:concat(f:concat('de',i),pes_sigla)]}
 													a ${requestScope[f:concat(f:concat('ate',i),pes_sigla)]}
 													- ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
 											
 										<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Falta Injustificada'}">
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Falta Injustificada'}">
 													(art.44, INCISO I LEI 8112/90)
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento por Júri e Outros Serv. Obrigat. por Lei'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento por Júri e Outros Serv. Obrigat. por Lei'}">
 													(art.102, INCISO VI, LEI 8112/90)
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento em Virtude de Particip. em Programa de Treinamento'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento em Virtude de Particip. em Programa de Treinamento'}">
 													(art.102, INCISO IV LEI 8112/90)
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Trabalho Prestado nas Eleições'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Trabalho Prestado nas Eleições'}">
 												 	(art.120, &sect;2º LEI 4737/65 C/C art.98 LEI 9504/97)	
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensação Decorrente de Trabalho nas Eleições'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensação Decorrente de Trabalho nas Eleições'}">
 												 	(arts.218 e 221/CPP e 412, &sect;2º /CPC)	
 											</c:if>
 
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Recesso'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Recesso'}">
 												 	(PORTARIA DIRFO)	
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento para Participar de Atividade Instrutória'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento para Participar de Atividade Instrutória'}">
 													(art.76-A, LEI 8112/90 C/C art.8º DECRETO 6114/07)	 		
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Ausência/Falta Justificada com Compensação'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Ausência/Falta Justificada com Compensação'}">
 													(art. 44, II da Lei 8112/90)
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Ausência/Falta Justificada sem Compensação'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Ausência/Falta Justificada sem Compensação'}">
 													(art. 44, II da Lei 8112/90)
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Ausência por motivo de greve com compensação'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Ausência por motivo de greve com compensação'}">
 													(art. 2º, II da Res. 419/2005 do CJF)
 											</c:if>
-												<c:if
-													test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Ausência por motivo de greve sem compensação'}">
+										<c:if
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Ausência por motivo de greve sem compensação'}">
 													(art. 2º, I da Res. 419/2005 do CJF)
 											</c:if>
-											</c:otherwise>
-										</c:choose>
-										<br>
-									</c:forEach></td>
-								</tr>
-							</c:if>
-						</c:forEach>
-					</table>
-				</c:when>
-				<c:otherwise>
-					<h3 align="center">Sem ocorrência dos lançamentos disponíveis no
-					formulário.</h3>
-				</c:otherwise>
-			</c:choose>
-
+									</c:otherwise>
+								</c:choose>
+								<br>
+							</c:forEach></td>
+						</tr>
+					</c:if>
+				</c:forEach>
+			</table>
 			<c:if test="${servIncluidos eq 'Sim'}">
 				<table width="100%" border="1" cellpadding="2" cellspacing="1"
 					bgcolor="#000000">

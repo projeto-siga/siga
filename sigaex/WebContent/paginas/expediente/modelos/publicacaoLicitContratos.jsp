@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
@@ -40,7 +40,9 @@
 			<mod:grupo>
 				<mod:texto titulo="Título da Matéria" var="tituloMateria"
 					largura="40" />
-			</mod:grupo>			
+			</mod:grupo>
+			<mod:caixaverif titulo="Matéria de Juiz Distribuidor"
+				var="juizDistribuidor" />
 		</mod:grupo>
 		<mod:grupo titulo="Texto a ser inserido no corpo da publicação">
 			<mod:grupo>

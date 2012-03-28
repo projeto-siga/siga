@@ -24,6 +24,7 @@ package br.gov.jfrj.webwork.action;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -285,7 +286,8 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 		try {
 			dao().iniciarTransacao();
-			dao().gravar(config);
+			config.setHisDtIni(dao().consultarDataEHoraDoServidor());
+			dao().gravarComHistorico(config, getIdentidadeCadastrante());
 			dao().commitTransacao();
 			// ExConfiguracaoBL.getHashListas().remove(
 			// config.getCpTipoConfiguracao().getIdTpConfiguracao());
@@ -303,7 +305,8 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			try {
 				dao().iniciarTransacao();
 				ExConfiguracao config = daoCon(getId());
-				dao().excluir(config);
+				config.setHisDtFim(dao().consultarDataEHoraDoServidor());
+				dao().gravarComHistorico(config, getIdentidadeCadastrante());
 				dao().commitTransacao();
 				// ExConfiguracaoBL.getHashListas().remove(
 				// config.getCpTipoConfiguracao().getIdTpConfiguracao());

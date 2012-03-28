@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
@@ -22,7 +22,7 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
     <head></head>
 	<body>
 	
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=DiretorForo" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForo.jsp" />
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
@@ -50,7 +50,7 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 		
 		
 
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />
 
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 

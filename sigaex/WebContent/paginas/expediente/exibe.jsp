@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
@@ -84,8 +84,8 @@
 				<td colspan="2" align="left">Cadastrante</td>
 				<c:if test="${ (exibirCompleto == 'true')}">
 					<td colspan="2" align="left">Responsável</td>
-					<td colspan="2" align="left">Atendente</td>
 				</c:if>
+				<td colspan="2" align="left">Atendente</td>
 				<td rowspan="2">Descrição</td>
 				<td align="center" rowspan="2">Duração</td>
 			</tr>
@@ -95,9 +95,9 @@
 				<c:if test="${ (exibirCompleto == 'true')}">
 					<td align="left">Lotação</td>
 					<td align="left">Pessoa</td>
-					<td align="left">Lotação</td>
-					<td align="left">Pessoa</td>
 				</c:if>
+				<td align="left">Lotação</td>
+				<td align="left">Pessoa</td>
 			</tr>
 			<c:set var="evenorodd" value="odd" />
 			<c:forEach var="mov" items="${m.movs}">
@@ -109,7 +109,7 @@
 							<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
 						</c:if>
 						<c:if test="${ (exibirCompleto != 'true')}">
-							<c:set var="dt" value="${mov.dtRegMovDDMM}" />
+							<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
 						</c:if>
 						<ww:if test="${dt == dtUlt}">
 							<c:set var="dt" value="" />
@@ -133,13 +133,13 @@
 							<td align="left"><siga:selecionado
 								sigla="${mov.parte.subscritor.nomeAbreviado}"
 								descricao="${mov.parte.subscritor.descricao} - ${mov.parte.subscritor.sigla}" /></td>
-							<td align="left"><siga:selecionado
-								sigla="${mov.parte.lotaResp.sigla}"
-								descricao="${mov.parte.lotaResp.descricaoAmpliada}" /></td>
-							<td align="left"><siga:selecionado
-								sigla="${mov.parte.resp.nomeAbreviado}"
-								descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" /></td>
 						</c:if>
+						<td align="left"><siga:selecionado
+							sigla="${mov.parte.lotaResp.sigla}"
+							descricao="${mov.parte.lotaResp.descricaoAmpliada}" /></td>
+						<td align="left"><siga:selecionado
+							sigla="${mov.parte.resp.nomeAbreviado}"
+							descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" /></td>
 						<td>${mov.descricao}<c:if test='${mov.idTpMov != 2}'> ${mov.complemento}</c:if>
 						<c:set var="assinadopor" value="${true}" /> <siga:links
 							inline="${true}"
@@ -281,6 +281,9 @@
 			<ww:a href="%{url}">${docVO.paiSigla}</ww:a>
 		</c:if></td>
 	</tr>
+	<c:if test="${not empty docVO.dadosComplementares}">
+	    ${docVO.dadosComplementares}   
+	</c:if>
 	<c:if test="${docVO.conteudoBlobHtmlString != null}">
 		<tr>
 			<td colspan="2"><tags:fixdocumenthtml>

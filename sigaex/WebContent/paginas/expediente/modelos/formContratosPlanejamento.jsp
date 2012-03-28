@@ -1,6 +1,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
@@ -238,7 +238,7 @@
 				</mod:grupo>
 				<mod:grupo>
 					<b>A contratação será por Registro de Preço? (consultar <a
-						href="http://intranet/documentos/grupo_97/rp_comentario_checklist_planej.pdf"><u>Prós
+						href="http://intranet/documentos/grupo_97/rp_comentario_checklist_planej.pdf" target="_blank"><u>Prós
 					e Contras do RP</u></a>):</b>
 					<mod:grupo largura="100">
 						<mod:radio titulo="Não." var="contratacao" valor="1" marcado="Sim"
@@ -307,7 +307,7 @@
 		<mod:grupo titulo="4. Vinculação estratégica:">
 			<mod:grupo>
 				<b>A contratação está vinculada a algum <a
-					href="http://intranet2/?id_info=5987"> <u>Projeto
+					href="http://intranet/documentos/grupo_113/Acompanhamento_de_Projetos_e_Acoes_%20Bienio%202011_2012.mht" target="_blank"> <u>Projeto
 				Estratégico Anual da SJRJ</u></a>?</b>
 				<mod:grupo>
 					<mod:grupo>
@@ -334,7 +334,7 @@
 			</mod:grupo>
 			<mod:grupo>
 				<b>A partir do <a
-					href="http://intranet/documentos/grupo_97/mapa_estrategico.pdf">
+					href="http://intranet/documentos/grupo_97/mapa_estrategico.pdf" target="_blank">
 				<u>Mapa Estratégico da Justiça Federal</u></a> elaborado pelo CJF,
 				identifique <u>um ou mais</u> objetivos estratégicos aos quais a
 				contratação está vinculada:</b>
@@ -670,10 +670,10 @@
 				<tr>
 					<td><span
 						onmouseover="javascript: var relDiv = document.getElementById('relDiv'); 
-				relDiv.style.visibility = 'visible'; relDiv.style.left = event.clientX + document.body.scrollLeft; 
-				relDiv.style.top = event.clientY + document.body.scrollTop - 100"
+						relDiv.style.visibility = 'visible'; relDiv.style.left = event.clientX + document.body.scrollLeft; 
+						relDiv.style.top = event.clientY + document.body.scrollTop - 100"
 						onmouseout="document.getElementById('relDiv').style.visibility = 'hidden'">
-					<img src="<c:url value='/imagens/interrogation.jpg'/>" width=20
+						<img src="<c:url value='/imagens/interrogation.jpg'/>" width=20
 						height=20 /></span></td>
 					<td><b>11. Relação com contratações anteriores:</b></td>
 				</tr>
@@ -1408,124 +1408,77 @@
 
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
-				<td>
-				<p style="font-family: Arial; font-size: 10pt;">11. Relação com
-				contratações anteriores:</p>
-				</td>
+				<td colspan="2"><p style="font-family: Arial; font-size: 10pt;">11. Relação com contratações anteriores:</p></td>
 			</tr>
 		</table>
-
-		<ww:if test="${not empty conAntProAdm || not empty vigValAtual}">
-			<table cellpadding="4" width="100%" border="1">
+		<table cellpadding="4" width="100%" border="1">
+			<ww:if test="${not empty conAntProAdm || not empty vigValAtual}">
 				<tr>
-					<td align="center" width="220">
-					<p style="font-family: Arial; font-size: 10pt;"><b>Contratação
-					anterior/Processo Administrativo</b></p>
-					</td>
-					<td align="center" width="80">
-					<p style="font-family: Arial; font-size: 10pt;"><b>Vigência
-					- Valor atual</b></p>
-					</td>
-				</tr>
-
-				<tr>
-					<td>
-					<p style="font-family: Arial; font-size: 8pt;">${conAntProAdm}</p>
-					</td>
-					<td align="center">
-					<p style="font-family: Arial; font-size: 8pt;">${vigValAtual}</p>
-					</td>
-				</tr>
-			</table>
-		</ww:if>
-		<ww:if test="${not empty difEncontrada}">
-			<table cellpadding="4" width="100%" border="1">
-				<tr>
-					<td colspan="2" align="center">
-					<p style="font-family: Arial; font-size: 10pt;"><b>Dificuldades
-					encontradas:</b></p>
-					</td>
+					<td align="left" width="220"><p style="font-family: Arial; font-size: 10pt;"><b>Contratação anterior/Processo Administrativo</b></p></td>
+					<td align="center" width="80"><p style="font-family: Arial; font-size: 10pt;"><b>Vigência - Valor atual</b></p></td>
 				</tr>
 				<tr>
-					<td colspan="2">
-					<p style="font-family: Arial; font-size: 8pt;">
-					${difEncontrada}</p>
-					</td>
+					<td><p style="font-family: Arial; font-size: 8pt;">${conAntProAdm}</p></td>
+					<td align="center"><p style="font-family: Arial; font-size: 8pt;">${vigValAtual}</p></td>
 				</tr>
-			</table>
-		</ww:if>
-		<ww:else>
-			<table cellpadding="4" width="100%" border="1">
+			</ww:if>
+			<ww:else>
 				<tr>
-					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">Não houve
-					contratações anteriores.</p>
-					</td>
+					<td colspan="2" align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">Não houve contratações anteriores.</p></td>
 				</tr>
-			</table>
-		</ww:else>
+			</ww:else>
+			
+			<ww:if test="${not empty difEncontrada}">
+				<tr>
+					<td colspan="2" align="center"><p style="font-family: Arial; font-size: 10pt;"><b>Dificuldades encontradas:</b></p></td>
+				</tr>
+				
+				<tr>
+					<td colspan="2"><p style="font-family: Arial; font-size: 8pt;">${difEncontrada}</p></td>
+				</tr>
+			</ww:if>
+			
+		</table>
 
 		<br />
 
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
-				<td>
-				<p style="font-family: Arial; font-size: 10pt;">12. Legislação
-				específica pertinente:</p>
-				</td>
+				<td><p style="font-family: Arial; font-size: 10pt;">12. Legislação específica pertinente:</p></td>
 			</tr>
 		</table>
-		<ww:if test="${not empty infComplementar}">
-			<table cellpadding="4" width="100%" border="1">
+		<table cellpadding="4" width="100%" border="1">
+			<ww:if test="${not empty legEspPertinente}">
 				<tr>
-					<td>
-					<p style="font-family: Arial; font-size: 8pt;">
-					${legEspPertinente}</p>
-					</td>
+					<td><p style="font-family: Arial; font-size: 8pt;">${legEspPertinente}</p></td>
 				</tr>
-			</table>
-		</ww:if>
-		<ww:else>
-			<table cellpadding="4" width="100%" border="1">
+			</ww:if>
+			<ww:else>
 				<tr>
-					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">Não há
-					legislação pertinente.</p>
-					</td>
+					<td align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">Não há legislação pertinente.</p></td>
 				</tr>
-			</table>
-		</ww:else>
+			</ww:else>			
+		</table>
 
 		<br />
 
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
-				<td>
-				<p style="font-family: Arial; font-size: 10pt;">13. Informações
-				complementares:</p>
-				</td>
+				<td><p style="font-family: Arial; font-size: 10pt;">13. Informações complementares:</p></td>
 			</tr>
+		</table>	
+		<table cellpadding="4" width="100%" border="1">
+			<ww:if test="${not empty infComplementar}">
+				<tr>
+					<td><p style="font-family: Arial; font-size: 8pt;">${infComplementar}</p></td>
+				</tr>
+			</ww:if>
+			<ww:else>
+				<tr>
+					<td align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">Não há informações complementares.</p></td>
+				</tr>
+			</ww:else>			
 		</table>
-		<ww:if test="${not empty infComplementar}">
-			<table cellpadding="4" width="100%" border="1">
-				<tr>
-					<td>
-					<p style="font-family: Arial; font-size: 8pt;">
-					${infComplementar}</p>
-					</td>
-				</tr>
-			</table>
-		</ww:if>
-		<ww:else>
-			<table cellpadding="4" width="100%" border="1">
-				<tr>
-					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">Não há
-					informações complementares.</p>
-					</td>
-				</tr>
-			</table>
-		</ww:else>
 
 		<br />
 

@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -93,8 +94,8 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.Notificador;
@@ -314,15 +315,15 @@ public class ExBL extends CpBL {
 	public void numerarTudo(int aPartirDe) throws Exception {
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
-		final Criteria countCrit = dao().getSessao().createCriteria(
-				ExDocumento.class).add(
-				Restrictions.gt("idDoc", new Long(aPartirDe)));
+		final Criteria countCrit = dao().getSessao()
+				.createCriteria(ExDocumento.class)
+				.add(Restrictions.gt("idDoc", new Long(aPartirDe)));
 		countCrit.setProjection(Projections.rowCount());
 		Integer totalDocs = ((Long) countCrit.uniqueResult()).intValue();
 
-		final Criteria crit = dao().getSessao().createCriteria(
-				ExDocumento.class).add(
-				Restrictions.gt("idDoc", new Long(aPartirDe)));
+		final Criteria crit = dao().getSessao()
+				.createCriteria(ExDocumento.class)
+				.add(Restrictions.gt("idDoc", new Long(aPartirDe)));
 		crit.setMaxResults(60);
 		crit.addOrder(Order.asc("idDoc"));
 
@@ -357,8 +358,7 @@ public class ExBL extends CpBL {
 					.format(new Date())
 					+ " "
 					+ String.valueOf(index)
-					+ " numerados de "
-					+ totalDocs);
+					+ " numerados de " + totalDocs);
 		} while (list.size() > 0);
 
 		System.gc();
@@ -368,15 +368,15 @@ public class ExBL extends CpBL {
 
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
-		final Criteria countCrit = dao().getSessao().createCriteria(
-				ExDocumento.class).add(
-				Restrictions.gt("idDoc", new Long(aPartirDe)));
+		final Criteria countCrit = dao().getSessao()
+				.createCriteria(ExDocumento.class)
+				.add(Restrictions.gt("idDoc", new Long(aPartirDe)));
 		countCrit.setProjection(Projections.rowCount());
 		Integer totalDocs = ((Long) countCrit.uniqueResult()).intValue();
 
-		final Criteria crit = dao().getSessao().createCriteria(
-				ExDocumento.class).add(
-				Restrictions.gt("idDoc", new Long(aPartirDe)));
+		final Criteria crit = dao().getSessao()
+				.createCriteria(ExDocumento.class)
+				.add(Restrictions.gt("idDoc", new Long(aPartirDe)));
 		crit.setMaxResults(60);
 		crit.addOrder(Order.asc("idDoc"));
 
@@ -408,13 +408,11 @@ public class ExBL extends CpBL {
 			dao().getSessao().clear();
 			long duracao = System.currentTimeMillis() - inicio;
 			System.out.println();
-			System.out
-					.println(new SimpleDateFormat("HH:mm:ss")
-							.format(new Date())
-							+ " "
-							+ String.valueOf(index)
-							+ " marcados de "
-							+ totalDocs);
+			System.out.println(new SimpleDateFormat("HH:mm:ss")
+					.format(new Date())
+					+ " "
+					+ String.valueOf(index)
+					+ " marcados de " + totalDocs);
 		} while (list.size() > 0);
 
 		System.gc();
@@ -459,8 +457,8 @@ public class ExBL extends CpBL {
 						}
 						if (m != null)
 							acrescentarMarca(set, mob, m, mov.getDtIniMov(),
-									mov.getSubscritor(), mov
-											.getLotaSubscritor());
+									mov.getSubscritor(),
+									mov.getLotaSubscritor());
 					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
 						mDje = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
 						movDje = mov;
@@ -561,16 +559,16 @@ public class ExBL extends CpBL {
 			if (!mob.doc().isEletronico()) {
 				m = CpMarcador.MARCADOR_A_RECEBER;
 				acrescentarMarca(set, mob, CpMarcador.MARCADOR_EM_TRANSITO, dt,
-						ultMovNaoCanc.getCadastrante(), ultMovNaoCanc
-								.getLotaCadastrante());
+						ultMovNaoCanc.getCadastrante(),
+						ultMovNaoCanc.getLotaCadastrante());
 			} else {
 				if (ultMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
 					m = CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA;
 				} else {
 					acrescentarMarca(set, mob,
 							CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO, dt,
-							ultMovNaoCanc.getCadastrante(), ultMovNaoCanc
-									.getLotaCadastrante());
+							ultMovNaoCanc.getCadastrante(),
+							ultMovNaoCanc.getLotaCadastrante());
 				}
 			}
 		}
@@ -582,11 +580,12 @@ public class ExBL extends CpBL {
 					.getSubscritor().getId()) {
 				if (ultMovNaoCanc.getLotaCadastrante().getIdLotacao() != ultMovNaoCanc
 						.getLotaSubscritor().getIdLotacao()) {
-					acrescentarMarca(set, mob, m, dt, ultMovNaoCanc
-							.getSubscritor(), ultMovNaoCanc.getLotaSubscritor());
+					acrescentarMarca(set, mob, m, dt,
+							ultMovNaoCanc.getSubscritor(),
+							ultMovNaoCanc.getLotaSubscritor());
 				} else {
-					acrescentarMarca(set, mob, m, dt, ultMovNaoCanc
-							.getSubscritor(), null);
+					acrescentarMarca(set, mob, m, dt,
+							ultMovNaoCanc.getSubscritor(), null);
 				}
 			}
 			acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getCadastrante(),
@@ -653,8 +652,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 
 			for (ExDocumento ex : obterDocumentosBoletim(doc))
-				notificarPublicacao(cadastrante, lotaCadastrante, ex, mov
-						.getDtMov(), doc);
+				notificarPublicacao(cadastrante, lotaCadastrante, ex,
+						mov.getDtMov(), doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(
@@ -727,28 +726,28 @@ public class ExBL extends CpBL {
 			mov.setCadernoPublicacaoDje(tipoMateria);
 
 			gravarMovimentacao(mov);
-			
-			//Verifica se está na base de teste
+
+			// Verifica se está na base de teste
 			String mensagemTeste = null;
-			if(!SigaExProperties.isAmbienteProducao())
+			if (!SigaExProperties.isAmbienteProducao())
 				mensagemTeste = SigaExProperties.getString("email.baseTeste");
 
 			StringBuffer sb = new StringBuffer(
 					"Foi feita uma solicitação de remessa do documento "
 							+ mob.getExDocumento().getCodigo()
 							+ " para publicação no DJE.\n ");
-			
-			if(mensagemTeste != null)
+
+			if (mensagemTeste != null)
 				sb.append("\n " + mensagemTeste + "\n");
 
 			StringBuffer sbHtml = new StringBuffer(
 					"<html><body><p>Foi feita uma solicitação de remessa do documento "
 							+ mob.getExDocumento().getCodigo()
 							+ " para publicação no DJE.</p> ");
-			
-			if(mensagemTeste != null)
+
+			if (mensagemTeste != null)
 				sbHtml.append("<p><b>" + mensagemTeste + "</b></p>");
-			
+
 			sbHtml.append("</body></html>");
 
 			TreeSet<CpConfiguracao> atendentes = getConf().getListaPorTipo(
@@ -781,13 +780,12 @@ public class ExBL extends CpBL {
 				}
 			}
 
-			Correio
-					.enviar("SIGA-DOC <sigaex@jfrj.jus.br>", emailsAtendentes
-							.toArray(new String[emailsAtendentes.size()]),
-							"Nova solicitação de publicação DJE ("
-									+ mov.getLotaCadastrante()
-											.getSiglaLotacao() + ") ", sb
-									.toString(), sbHtml.toString());
+			Correio.enviar(
+					SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+					emailsAtendentes.toArray(new String[emailsAtendentes.size()]),
+					"Nova solicitação de publicação DJE ("
+							+ mov.getLotaCadastrante().getSiglaLotacao() + ") ",
+					sb.toString(), sbHtml.toString());
 
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -865,10 +863,10 @@ public class ExBL extends CpBL {
 			// String nomeArq = "I-" + doc.getIdDoc();
 			// Gera o arquivo zip composto de RTF e XML
 			GeradorRTF gerador = new GeradorRTF();
-			mov.setConteudoBlobRTF("boletim", gerador.geraRTFFOP(mob
-					.getExDocumento()));
-			mov.setConteudoBlobXML("boletimadm", PublicacaoDJEBL
-					.gerarXMLPublicacao(mov, tipoMateria));
+			mov.setConteudoBlobRTF("boletim",
+					gerador.geraRTFFOP(mob.getExDocumento()));
+			mov.setConteudoBlobXML("boletimadm",
+					PublicacaoDJEBL.gerarXMLPublicacao(mov, tipoMateria));
 
 			// Verifica se o documento possui documentos filhos do tipo Anexo
 			if (mob.getExDocumentoFilhoSet() != null) {
@@ -1016,8 +1014,9 @@ public class ExBL extends CpBL {
 						.converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(pkcs7);
 				Service.throwExceptionIfError(cms);
 
-				sNome = client.validarAssinaturaCMS(MessageDigest.getInstance(
-						"SHA1").digest(data), SHA1, cms, dao().dt());
+				sNome = client.validarAssinaturaCMS(
+						MessageDigest.getInstance("SHA1").digest(data), SHA1,
+						cms, dao().dt());
 				Service.throwExceptionIfError(sNome);
 
 				String sCPF = client.recuperarCPF(cms);
@@ -1095,9 +1094,7 @@ public class ExBL extends CpBL {
 							.getExMovimentacaoSet()) {
 						if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 								&& m.getExMovimentacaoCanceladora() == null
-								&& lCPF
-										.equals(m.getSubscritor()
-												.getCpfPessoa())) {
+								&& lCPF.equals(m.getSubscritor().getCpfPessoa())) {
 							fValido = true;
 							continue;
 						}
@@ -1166,7 +1163,7 @@ public class ExBL extends CpBL {
 	 */
 	private String processarComandosEmTag(final ExDocumento doc, String tag)
 			throws Exception {
-		String s = processarModelo(doc, null, tag, null);
+		String s = processarModelo(doc, null, tag, null, null);
 
 		// retorna a resposta produzida pelo processamento da instrucao de
 		// assinatura
@@ -1232,8 +1229,9 @@ public class ExBL extends CpBL {
 						.converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(pkcs7);
 				Service.throwExceptionIfError(cms);
 
-				sNome = client.validarAssinaturaCMS(MessageDigest.getInstance(
-						"SHA1").digest(data), SHA1, cms, dao().dt());
+				sNome = client.validarAssinaturaCMS(
+						MessageDigest.getInstance("SHA1").digest(data), SHA1,
+						cms, dao().dt());
 				Service.throwExceptionIfError(sNome);
 
 				String sCPF = client.recuperarCPF(cms);
@@ -1254,6 +1252,62 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Erro na assinatura de uma movimentação", 0, e);
 		}
+		
+		boolean fValido = false;
+		Long lMatricula = null;
+
+		// Obtem a matricula do assinante
+		try {
+			if (sNome == null)
+				throw new AplicacaoException(
+						"Não foi possível acessar o nome do assinante");
+			String sMatricula = sNome.split(":")[1];
+			lMatricula = Long.valueOf(sMatricula);
+		} catch (final Exception e) {
+			// throw new AplicacaoException(
+			// "Não foi possível obter a matrícula do assinante", 0, e);
+		}
+		
+		// Verifica se a matrícula confere com o subscritor do Despacho ou do desentranhamento
+		if(movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO ||
+				movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA ||
+				movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA ||
+				movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+				
+			try {
+				if (lMatricula != null) {
+					fValido = movAlvo.getSubscritor() != null
+							&& lMatricula
+									.equals(movAlvo.getSubscritor().getMatricula());
+				}
+	
+				if (!fValido && lCPF != null) {
+					fValido = movAlvo.getSubscritor() != null
+							&& lCPF.equals(movAlvo.getSubscritor().getCpfPessoa());
+				}
+	
+				if (lMatricula == null && lCPF == null)
+					throw new AplicacaoException(
+							"Não foi possível recuperar nem a matrícula nem o CPF do assinante");
+				
+				if (fValido == false && movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)
+					throw new AplicacaoException(
+							"Assinante não é subscritor do desentranhamento");
+				if (fValido == false)
+					throw new AplicacaoException(
+							"Assinante não é subscritor do despacho");
+			} catch (final Exception e) {
+				if (fValido == false && movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)
+					throw new AplicacaoException(
+							"Só é permitida a assinatura digital do subscritor do desentranhamento",
+							0, e);
+				
+				throw new AplicacaoException(
+						"Só é permitida a assinatura digital do subscritor do despacho",
+						0, e);
+			}
+		}
+		
 
 		try {
 			iniciarAlteracao();
@@ -1408,11 +1462,10 @@ public class ExBL extends CpBL {
 							textoMotivo);
 				}
 			} else {
-				mov
-						.setExMovimentacaoRef(mov
-								.getExMobil()
-								.getUltimaMovimentacao(
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO));
+				mov.setExMovimentacaoRef(mov
+						.getExMobil()
+						.getUltimaMovimentacao(
+								ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO));
 				mov.setResp(mob.getExDocumento().getTitular());
 				mov.setLotaResp(mob.getExDocumento().getLotaTitular());
 			}
@@ -1476,7 +1529,7 @@ public class ExBL extends CpBL {
 
 		// Gravar o Html //Nato
 		final String strHtml = processarModelo(movCanceladora,
-				"processar_modelo", null);
+				"processar_modelo", null, null);
 		movCanceladora.setConteudoBlobHtmlString(strHtml);
 
 		// Gravar o Pdf
@@ -1495,7 +1548,7 @@ public class ExBL extends CpBL {
 	 * @throws IOException
 	 * @throws UnsupportedEncodingException
 	 */
-	public byte[] urlEncodedFormFromMap(Map<String, String> map)
+	public static byte[] urlEncodedFormFromMap(Map<String, String> map)
 			throws IOException, UnsupportedEncodingException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		for (String sKey : map.keySet()) {
@@ -1514,15 +1567,15 @@ public class ExBL extends CpBL {
 	 * @param map
 	 * @param form
 	 */
-	public void mapFromUrlEncodedForm(Map map, final byte[] form) {
+	public static void mapFromUrlEncodedForm(Map map, final byte[] form) {
 		if (form != null) {
 			final String as[] = new String(form).split("&");
 			for (final String s : as) {
 				final String param[] = s.split("=");
 				try {
 					if (param.length == 2) {
-						map.put(param[0], URLDecoder.decode(param[1],
-								"iso-8859-1"));
+						map.put(param[0],
+								URLDecoder.decode(param[1], "iso-8859-1"));
 					}
 				} catch (final UnsupportedEncodingException e) {
 				}
@@ -1536,7 +1589,8 @@ public class ExBL extends CpBL {
 		try {
 			boolean indexar = false;
 			SortedSet<ExMobil> set = null;
-			ExMovimentacao movACancelar = mob.getUltimaMovimentacaoNaoCancelada();
+			ExMovimentacao movACancelar = mob
+					.getUltimaMovimentacaoNaoCancelada();
 			switch ((int) (long) movACancelar.getExTipoMovimentacao()
 					.getIdTpMov()) {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE:
@@ -1612,9 +1666,7 @@ public class ExBL extends CpBL {
 					mov.setLotaDestinoFinal(penultMovNaoCancelada
 							.getLotaDestinoFinal());
 					// if (mov.getDestinoFinal() == null)
-					mov
-							.setDestinoFinal(penultMovNaoCancelada
-									.getDestinoFinal());
+					mov.setDestinoFinal(penultMovNaoCancelada.getDestinoFinal());
 				} else {
 					if (ultMovNaoCancelada != null) {
 						// if (mov.getLotaResp() == null)
@@ -1664,14 +1716,16 @@ public class ExBL extends CpBL {
 			if (!getComp().podeCancelarAnexo(titular, lotaTitular, mob,
 					movCancelar))
 				throw new AplicacaoException("Não é possível cancelar anexo");
-		} else if(movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
-			if(!getComp().podeAtenderPedidoPublicacao(titular, lotaTitular, mob))
-				throw new AplicacaoException("Usuário não tem permissão de cancelar pedido de publicação no DJE.");
+		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
+			if (!getComp().podeAtenderPedidoPublicacao(titular, lotaTitular,
+					mob))
+				throw new AplicacaoException(
+						"Usuário não tem permissão de cancelar pedido de publicação no DJE.");
 		} else if (ExTipoMovimentacao.hasDespacho(movCancelar.getIdTpMov())) {
 			if (!getComp().podeCancelarDespacho(titular, lotaTitular, mob,
 					movCancelar))
 				throw new AplicacaoException("Não é possível cancelar anexo");
-		} else if(movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM){
+		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
 			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException(
 						"Não é permitido cancelar esta movimentação.");
@@ -1690,8 +1744,8 @@ public class ExBL extends CpBL {
 
 			if ((ExTipoMovimentacao.hasDocumento(movCancelar.getIdTpMov()))
 					&& movCancelar.getExMobil().isNumeracaoUnicaAutomatica()) {
-				List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov
-						.getExMovimentacaoRef(), false);
+				List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(
+						mov.getExMovimentacaoRef(), false);
 				armazenarCertidaoDeDesentranhamento(mov, mob, ans, textoMotivo);
 				// if (ans.size() != 1)
 				// throw new AplicacaoException(
@@ -1705,7 +1759,7 @@ public class ExBL extends CpBL {
 			if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
 				cancelarPedidoBI(mob.doc());
 			}
-			
+
 			gravarMovimentacaoCancelamento(mov, movCancelar);
 			concluirAlteracao(mov.getExDocumento());
 
@@ -1841,8 +1895,8 @@ public class ExBL extends CpBL {
 
 			// Pega a data sem horas, minutos e segundos...
 			if (doc.getDtDoc() == null) {
-				c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c
-						.get(Calendar.DAY_OF_MONTH));
+				c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+						c.get(Calendar.DAY_OF_MONTH));
 				doc.setDtDoc(c.getTime());
 			}
 
@@ -1966,8 +2020,10 @@ public class ExBL extends CpBL {
 				values.add(doc.getCodigo() + "-" + (char) ('A' + n));
 			}
 			{
-				client.criarInstanciaDeProcesso(nomeProcesso, SiglaParser
-						.makeSigla(cadastrante, cadastrante.getLotacao()),
+				client.criarInstanciaDeProcesso(
+						nomeProcesso,
+						SiglaParser.makeSigla(cadastrante,
+								cadastrante.getLotacao()),
 						SiglaParser.makeSigla(titular, lotaTitular), keys,
 						values);
 			}
@@ -2093,6 +2149,7 @@ public class ExBL extends CpBL {
 				System.out.println("gravação doc " + doc.getCodigo() + ", "
 						+ new Date().toString() + " - erro na formatação - "
 						+ t.getMessage());
+				t.printStackTrace();
 			}
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -2147,7 +2204,7 @@ public class ExBL extends CpBL {
 
 	private void processarResumo(ExDocumento doc) throws Exception,
 			UnsupportedEncodingException {
-		String r = processarModelo(doc, null, "resumo", null);
+		String r = processarModelo(doc, null, "resumo", null, null);
 		String resumo = null;
 		if (r.contains("<!-- resumo -->") && r.contains("<!-- /resumo -->")) {
 			if (r.contains("<!-- topico -->") && r.contains("<!-- /topico -->")) {
@@ -2161,14 +2218,14 @@ public class ExBL extends CpBL {
 				String topico = null;
 				for (int i = 0; i < topicos.length; i++) {
 					if (!topicos[i].equals("")) {
-						String descr = topicos[i].substring(topicos[i]
-								.indexOf("name=\"")
-								+ "name=\"".length(), topicos[i]
-								.indexOf("\" value="));
-						String valor = topicos[i].substring(topicos[i]
-								.indexOf(" value=\"")
-								+ " value=\"".length(), topicos[i]
-								.indexOf("\"/>"));
+						String descr = topicos[i].substring(
+								topicos[i].indexOf("name=\"")
+										+ "name=\"".length(),
+								topicos[i].indexOf("\" value="));
+						String valor = topicos[i].substring(
+								topicos[i].indexOf(" value=\"")
+										+ " value=\"".length(),
+								topicos[i].indexOf("\"/>"));
 						topico = URLEncoder.encode(descr, "iso-8859-1") + "="
 								+ URLEncoder.encode(valor, "iso-8859-1") + "&";
 						if (resumo == null) {
@@ -2252,11 +2309,9 @@ public class ExBL extends CpBL {
 
 		mov.getExMobil().getExMovimentacaoSet().add(mov);
 
-		if (!mov
-				.getExTipoMovimentacao()
+		if (!mov.getExTipoMovimentacao()
 				.getIdTpMov()
-				.equals(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)) {
+				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)) {
 			Notificador.notificarPerfisVinculados(mov,
 					Notificador.TIPO_NOTIFICACAO_GRAVACAO);
 		}
@@ -2344,11 +2399,11 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"Não foi selecionado um documento para a juntada");
 
-			if (mob.getExDocumento().getIdDoc().equals(
-					mobPai.getExDocumento().getIdDoc())
+			if (mob.getExDocumento().getIdDoc()
+					.equals(mobPai.getExDocumento().getIdDoc())
 					&& mob.getNumSequencia().equals(mobPai.getNumSequencia())
-					&& mob.getExTipoMobil().getIdTipoMobil().equals(
-							mobPai.getExTipoMobil().getIdTipoMobil()))
+					&& mob.getExTipoMobil().getIdTipoMobil()
+							.equals(mobPai.getExTipoMobil().getIdTipoMobil()))
 				throw new AplicacaoException(
 						"Não é possível juntar um documento a ele mesmo");
 
@@ -2625,11 +2680,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não foi selecionado um documento para o vinculo");
 
-		if (mob.getExDocumento().getIdDoc().equals(
-				mobRef.getExDocumento().getIdDoc())
+		if (mob.getExDocumento().getIdDoc()
+				.equals(mobRef.getExDocumento().getIdDoc())
 				&& mob.getNumSequencia().equals(mobRef.getNumSequencia())
-				&& mob.getExTipoMobil().getIdTipoMobil().equals(
-						mobRef.getExTipoMobil().getIdTipoMobil()))
+				&& mob.getExTipoMobil().getIdTipoMobil()
+						.equals(mobRef.getExTipoMobil().getIdTipoMobil()))
 			throw new AplicacaoException(
 					"Não é possível vincular um documento a ele mesmo");
 
@@ -2832,8 +2887,9 @@ public class ExBL extends CpBL {
 							ExTipoMovimentacao.class, false);
 
 					mov = criarNovaMovimentacao(tpmov.getIdTpMov(),
-							cadastrante, lotaCadastrante, m, dtMov, subscritor,
-							titular, null, dt);
+							cadastrante, lotaCadastrante, m, dtMov,
+							(subscritor == null && fDespacho) ? cadastrante
+									: subscritor, titular, null, dt);
 
 					if (orgaoExterno != null || obsOrgao != null) {
 						mov.setOrgaoExterno(orgaoExterno);
@@ -2877,7 +2933,8 @@ public class ExBL extends CpBL {
 
 						// Gravar o Html //Nato
 						final String strHtml = processarModelo(mov,
-								"processar_modelo", null);
+								"processar_modelo", null, mov.getTitular()
+										.getOrgaoUsuario());
 						mov.setConteudoBlobHtmlString(strHtml);
 
 						// Gravar o Pdf
@@ -2911,8 +2968,8 @@ public class ExBL extends CpBL {
 					if (!fTranferencia)
 						return;
 
-					emailDeTransferência(responsavel, lotaResponsavel, m
-							.getSigla(), m.getExDocumento().getCodigoString(),
+					emailDeTransferência(responsavel, lotaResponsavel,
+							m.getSigla(), m.getExDocumento().getCodigoString(),
 							m.getExDocumento().getDescrDocumento());
 
 				} catch (final Exception e) {
@@ -3000,77 +3057,77 @@ public class ExBL extends CpBL {
 			}
 
 		}
-		
+
 		// Só envia email se possuir destinatários pois algumas lotações não
 		// possuem
 		// servidores cadastrados e não possuem email cadastrados na 'tabela
 		// siga.ex_email_notificacao'
-		if (dest.size() > 0) {		//Verifica se está na base de teste
+		if (dest.size() > 0) { // Verifica se está na base de teste
 			String mensagemTeste = null;
-			if(!SigaExProperties.isAmbienteProducao())
+			if (!SigaExProperties.isAmbienteProducao())
 				mensagemTeste = SigaExProperties.getString("email.baseTeste");
-	
+
 			StringBuilder sb = new StringBuilder();
-	
+
 			sb.append("O documento ");
-	
+
 			sb.append(codigo);
-	
+
 			sb.append(", com descrição '");
-	
+
 			sb.append(descricao);
-	
+
 			sb.append("', foi transferido para ");
-	
+
 			sb.append(sDestinatario);
-	
+
 			sb.append(" e aguarda recebimento.\n\n");
-	
+
 			sb.append("Para visualizar o documento, ");
-	
+
 			sb.append("clique no link abaixo:\n\n");
-	
+
 			sb.append("http://siga/sigaex/expediente/doc/exibir.action?sigla=");
-	
+
 			sb.append(sigla);
-			
-			if(mensagemTeste != null)
+
+			if (mensagemTeste != null)
 				sb.append("\n " + mensagemTeste + "\n");
-	
+
 			StringBuilder sbHTML = new StringBuilder();
-	
+
 			sbHTML.append("<html><body>");
-	
+
 			sbHTML.append("<p>O documento <b>");
-	
+
 			sbHTML.append(codigo);
-	
+
 			sbHTML.append("</b>, com descrição '<b>");
-	
+
 			sbHTML.append(descricao);
-	
+
 			sbHTML.append("</b>', foi transferido para ");
-	
+
 			sbHTML.append(sDestinatario);
-	
+
 			sbHTML.append(" e aguarda recebimento.</p>");
-	
+
 			sbHTML.append("<p>Para visualizar o documento, ");
-	
+
 			sbHTML.append("clique <a href=\"");
-	
+
 			sbHTML.append("http://siga/sigaex/expediente/doc/exibir.action?sigla=");
-	
+
 			sbHTML.append(sigla);
-	
+
 			sbHTML.append("\">aqui</a>.</p>");
-			
-			if(mensagemTeste != null)
+
+			if (mensagemTeste != null)
 				sbHTML.append("<p><b>" + mensagemTeste + "</b></p>");
-	
+
 			sbHTML.append("</body></html>");
 
-			Correio.enviar("SIGA-DOC <sigaex@jfrj.jus.br>", dest
+			Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), dest
 
 			.toArray(new String[dest.size()]),
 
@@ -3105,11 +3162,11 @@ public class ExBL extends CpBL {
 			e.printStackTrace(pw);
 			sStackTrace = sw.toString();
 		}
-		//Verifica se está na base de teste
+		// Verifica se está na base de teste
 		String mensagemTeste = null;
-		if(!SigaExProperties.isAmbienteProducao())
+		if (!SigaExProperties.isAmbienteProducao())
 			mensagemTeste = SigaExProperties.getString("email.baseTeste");
-	
+
 		sb.append("Erro no documento ");
 
 		sb.append(codigo);
@@ -3122,13 +3179,13 @@ public class ExBL extends CpBL {
 
 		sb.append("Causa: " + sCausa);
 
-		if(mensagemTeste != null)
+		if (mensagemTeste != null)
 			sb.append("\n " + mensagemTeste + "\n");
 
 		sb.append("\n\n");
 
 		sb.append("StackTrace: " + sStackTrace);
-		
+
 		StringBuilder sbHTML = new StringBuilder();
 
 		sbHTML.append("<html><body>");
@@ -3145,7 +3202,7 @@ public class ExBL extends CpBL {
 
 		sbHTML.append("Causa: " + sCausa);
 
-		if(mensagemTeste != null)
+		if (mensagemTeste != null)
 			sbHTML.append("<p><b>" + mensagemTeste + "</b></p>");
 
 		sbHTML.append("<br /><br />");
@@ -3154,9 +3211,9 @@ public class ExBL extends CpBL {
 
 		sbHTML.append("</body></html>");
 
-		Correio.enviar("SIGA-DOC <sigaex@jfrj.jus.br>", dest
-				.toArray(new String[dest.size()]), "Erro Siga-Doc", sb
-				.toString(), sbHTML.toString());
+		Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+				dest.toArray(new String[dest.size()]), "Erro Siga-Doc",
+				sb.toString(), sbHTML.toString());
 	}
 
 	public void registrarAcessoReservado(DpPessoa cadastrante,
@@ -3348,7 +3405,7 @@ public class ExBL extends CpBL {
 				final String strHtml;
 				try {
 					strHtml = processarModelo(doc, null, "processar_modelo",
-							null);
+							null, null);
 				} catch (Exception e) {
 					throw new AplicacaoException(
 							"Erro no processamento do modelo HTML.", 0, e);
@@ -3367,9 +3424,11 @@ public class ExBL extends CpBL {
 				doc.setConteudoBlobHtmlString(strHtml);
 
 				final byte pdf[];
-				AbstractConversorHTMLFactory fabricaConvHtml = AbstractConversorHTMLFactory.getInstance();
-				ConversorHtml conversor = fabricaConvHtml.getConversor(getConf(),doc, strHtml);
-				
+				AbstractConversorHTMLFactory fabricaConvHtml = AbstractConversorHTMLFactory
+						.getInstance();
+				ConversorHtml conversor = fabricaConvHtml.getConversor(
+						getConf(), doc, strHtml);
+
 				try {
 					pdf = Documento.generatePdf(strHtml, conversor);
 				} catch (Exception e) {
@@ -3400,20 +3459,22 @@ public class ExBL extends CpBL {
 		}
 	}
 
-
-
 	public String processarModelo(final ExDocumento doc, String acao,
-			Map<String, String> formParams) throws Exception {
-		return processarModelo(doc, null, acao, formParams);
+			Map<String, String> formParams, CpOrgaoUsuario orgaoUsu)
+			throws Exception {
+		return processarModelo(doc, null, acao, formParams, orgaoUsu);
 	}
 
 	public String processarModelo(final ExMovimentacao mov, final String acao,
-			Map<String, String> formParams) throws Exception {
-		return processarModelo(mov.getExDocumento(), mov, acao, formParams);
+			Map<String, String> formParams, CpOrgaoUsuario orgaoUsu)
+			throws Exception {
+		return processarModelo(mov.getExDocumento(), mov, acao, formParams,
+				orgaoUsu);
 	}
 
 	private String processarModelo(ExDocumento doc, ExMovimentacao mov,
-			String acao, Map<String, String> formParams) throws Exception {
+			String acao, Map<String, String> formParams, CpOrgaoUsuario orgaoUsu)
+			throws Exception {
 		Map<String, Object> attrs = new TreeMap<String, Object>();
 		Map<String, Object> params = new TreeMap<String, Object>();
 		ProcessadorModelo p = getProcessadorModeloJsp();
@@ -3453,12 +3514,14 @@ public class ExBL extends CpBL {
 		} else {
 			attrs.put("mov", mov);
 			attrs.put("mob", mov.getExMobil());
-			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO) {
+			if (mov.getExTipoMovimentacao() != null
+					&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO) {
 				attrs.put("nmArqMod", "certidaoEncerramentoVolume.jsp");
-			} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
-					|| (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO && ExTipoMovimentacao
-							.hasDocumento(mov.getExMovimentacaoRef()
-									.getIdTpMov()))) {
+			} else if (mov.getExTipoMovimentacao() != null
+					&& (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA || (mov
+							.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)
+							&& ExTipoMovimentacao.hasDocumento(mov
+									.getExMovimentacaoRef().getIdTpMov()))) {
 				attrs.put("nmArqMod", "certidaoDesentranhamento.jsp");
 			} else {
 				if (mov.getExTipoDespacho() != null) {
@@ -3472,7 +3535,13 @@ public class ExBL extends CpBL {
 				if (mov.getConteudoBlobHtmlString() != null) {
 					attrs.put("despachoHtml", mov.getConteudoBlobHtmlString());
 				}
-				attrs.put("nmArqMod", "despacho_mov.jsp");
+				// attrs.put("nmArqMod", "despacho_mov.jsp");
+				ExModelo m = dao().consultarExModelo(null,
+						"Despacho Automático");
+				attrs.put("nmMod", m.getNmMod());
+				attrs.put("template", new String(m.getConteudoBlobMod2(),
+						"utf-8"));
+				p = processadorModeloFreemarker;
 			}
 		}
 
@@ -3483,7 +3552,7 @@ public class ExBL extends CpBL {
 		if (mov != null && mov.getIdMov() != null) {
 			params.put("id", mov.getIdMov().toString());
 		}
-		CpOrgaoUsuario ou = null;
+		CpOrgaoUsuario ou = orgaoUsu;
 		if (doc != null)
 			ou = doc.getOrgaoUsuario();
 		if (mov != null && mov.getResp() != null
@@ -3511,9 +3580,9 @@ public class ExBL extends CpBL {
 					& getComp().podeSerJuntado(ultMov.getCadastrante(),
 							ultMov.getLotaCadastrante(), doc.getExMobilPai())) {
 				juntarDocumento(ultMov.getCadastrante(), ultMov.getTitular(),
-						ultMov.getLotaCadastrante(), null, mob, doc
-								.getExMobilPai(), dtMov,
-						ultMov.getSubscritor(), ultMov.getTitular(), "1");
+						ultMov.getLotaCadastrante(), null, mob,
+						doc.getExMobilPai(), dtMov, ultMov.getSubscritor(),
+						ultMov.getTitular(), "1");
 				break;
 			}
 		}
@@ -3699,11 +3768,11 @@ public class ExBL extends CpBL {
 		// Por enquanto, os parâmetros tipoForma e tipoDoc não podem ser
 		// preenchidos simultaneamente. Melhorar isso.
 		if (tipoDoc != null)
-			formasSet = new ArrayList<ExFormaDocumento>(tipoDoc
-					.getExFormaDocumentoSet());
+			formasSet = new ArrayList<ExFormaDocumento>(
+					tipoDoc.getExFormaDocumentoSet());
 		else if (tipoForma != null)
-			formasSet = new ArrayList<ExFormaDocumento>(tipoForma
-					.getExFormaDocSet());
+			formasSet = new ArrayList<ExFormaDocumento>(
+					tipoForma.getExFormaDocSet());
 		else
 			formasSet = ExDao.getInstance().listarTodosOrdenarPorDescricao();
 		if (despachando) {
@@ -3906,8 +3975,10 @@ public class ExBL extends CpBL {
 		if (doc == null)
 			throw new Exception(null, new Exception("Documento não encontrado"));
 
-		/*if (doc.getExNivelAcesso().getGrauNivelAcesso() > 20)
-			throw new Exception("Documento sigiloso");*/
+		/*
+		 * if (doc.getExNivelAcesso().getGrauNivelAcesso() > 20) throw new
+		 * Exception("Documento sigiloso");
+		 */
 
 		int hash = Integer.parseInt(m.group(3));
 
@@ -3917,8 +3988,7 @@ public class ExBL extends CpBL {
 			return doc;
 		} else {
 			for (ExMovimentacao mov : doc.getExMovimentacaoSet())
-				if (Math
-						.abs((doc.getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash)
+				if (Math.abs((doc.getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash)
 					move = mov;
 			if (move == null)
 				throw new Exception(null, new Exception("Número inválido"));
@@ -3957,11 +4027,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não foi selecionado um documento para a apensação");
 
-		if (mob.getExDocumento().getIdDoc().equals(
-				mobMestre.getExDocumento().getIdDoc())
+		if (mob.getExDocumento().getIdDoc()
+				.equals(mobMestre.getExDocumento().getIdDoc())
 				&& mob.getNumSequencia().equals(mobMestre.getNumSequencia())
-				&& mob.getExTipoMobil().getIdTipoMobil().equals(
-						mobMestre.getExTipoMobil().getIdTipoMobil()))
+				&& mob.getExTipoMobil().getIdTipoMobil()
+						.equals(mobMestre.getExTipoMobil().getIdTipoMobil()))
 			throw new AplicacaoException(
 					"Não é possível apensar um documento a ele mesmo");
 
@@ -4000,6 +4070,10 @@ public class ExBL extends CpBL {
 		if (mobMestre.isCancelada())
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento cancelado");
+
+		if (!mob.isEncerrado() && mobMestre.isEncerrado())
+			throw new AplicacaoException(
+					"Não é possível apensar um volume aberto a um volume encerrado");
 
 		for (ExMobil apenso : mobMestre.getMobilETodosOsApensos(false)) {
 			if (apenso.getIdMobil() == mob.getIdMobil()) {
@@ -4085,9 +4159,7 @@ public class ExBL extends CpBL {
 
 			mov.setLotaResp(mobMestre.getUltimaMovimentacaoNaoCancelada()
 					.getLotaResp());
-			mov
-					.setResp(mobMestre.getUltimaMovimentacaoNaoCancelada()
-							.getResp());
+			mov.setResp(mobMestre.getUltimaMovimentacaoNaoCancelada().getResp());
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
@@ -4141,7 +4213,7 @@ public class ExBL extends CpBL {
 
 			// Gravar o Html
 			final String strHtml = processarModelo(mov, "processar_modelo",
-					null);
+					null, null);
 			mov.setConteudoBlobHtmlString(strHtml);
 
 			// Gravar o Pdf
@@ -4168,9 +4240,9 @@ public class ExBL extends CpBL {
 		// try {
 		CdService client = Service.getCdService();
 
-		sNome = client.validarAssinatura(mimeType, MessageDigest.getInstance(
-				"SHA1").digest(conteudo), SHA1, assinatura, dtAssinatura,
-				VALIDAR_LCR);
+		sNome = client.validarAssinatura(mimeType,
+				MessageDigest.getInstance("SHA1").digest(conteudo), SHA1,
+				assinatura, dtAssinatura, VALIDAR_LCR);
 		Service.throwExceptionIfError(sNome);
 
 		String sCPF = client.recuperarCPF(assinatura);

@@ -24,6 +24,7 @@
 package br.gov.jfrj.webwork.action;
 
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
 import com.opensymphony.xwork.Action;
@@ -46,7 +47,7 @@ public class AdministracaoAction extends SigaActionSupport {
 									+ getOrigem());
 
 			// envia em formato text/html
-			Correio.enviar("SIGA-TESTE<sigadocs@jfrj.jus.br>", ds,
+			Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), ds,
 					"(text/html)Assunto Teste Email Ação!",
 					"Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda."
 							+ "Mensagem Enviada de " + getOrigem(),

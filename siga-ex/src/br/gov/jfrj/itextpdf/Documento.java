@@ -25,9 +25,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -109,7 +112,7 @@ public class Documento extends AbstractDocumento {
 					false, true, false, true);
 		} else {
 			sHtml = Ex.getInstance().getBL()
-					.processarModelo(doc, "processar_modelo", null);
+					.processarModelo(doc, "processar_modelo", null, null);
 		}
 
 		return sHtml;
@@ -142,6 +145,39 @@ public class Documento extends AbstractDocumento {
 		return n;
 	}
 
+	public static ArrayList<String> getAssinantesStringLista(
+			Set<ExMovimentacao> movsAssinatura) {
+		ArrayList<String> assinantes = new ArrayList<String>();
+		for (ExMovimentacao movAssinatura : movsAssinatura) {
+			String s = movAssinatura.getDescrMov().trim().toUpperCase();
+			s = s.split(":")[0];
+			s = s.intern();
+			if (!assinantes.contains(s)) {
+				assinantes.add(s);
+			}
+		}
+		return assinantes;
+	}
+
+	public static String getAssinantesString(Set<ExMovimentacao> movsAssinatura) {
+		ArrayList<String> als = getAssinantesStringLista(movsAssinatura);
+		String retorno = "";
+		if (als.size() > 0) {
+			for (int i = 0; i < als.size(); i++) {
+				String nome = als.get(i);
+				if (i > 0) {
+					if (i == als.size() - 1) {
+						retorno += " e ";
+					} else {
+						retorno += ", ";
+					}
+				}
+				retorno += nome;
+			}
+		}
+		return retorno;
+	}
+
 	private byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
 			boolean cancelado, String qrCode, String mensagem,
 			Integer paginaInicial, Integer paginaFinal,
@@ -170,8 +206,8 @@ public class Documento extends AbstractDocumento {
 
 			final Barcode39 code39 = new Barcode39();
 			// code39.setCode(doc.getCodigo());
-			code39.setCode(sigla.replace("-", "").replace("/", "").replace(".",
-					""));
+			code39.setCode(sigla.replace("-", "").replace("/", "")
+					.replace(".", ""));
 			code39.setStartStopText(false);
 			final Image image39 = code39.createImageWithBarcode(over, null,
 					null);
@@ -193,9 +229,8 @@ public class Documento extends AbstractDocumento {
 			over.setRGBColorFill(255, 255, 255);
 			mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - 0.8f
 					* CM_UNIT, 1.7f * CM_UNIT);
-			mask.scaleAbsolute(image39.getHeight() + 0.4f * CM_UNIT, image39
-					.getWidth()
-					+ 0.6f * CM_UNIT);
+			mask.scaleAbsolute(image39.getHeight() + 0.4f * CM_UNIT,
+					image39.getWidth() + 0.6f * CM_UNIT);
 			over.addImage(mask);
 
 			over.setRGBColorFill(0, 0, 0);
@@ -249,8 +284,8 @@ public class Documento extends AbstractDocumento {
 				over.setColorFill(Color.GRAY);
 				over.beginText();
 				over.setFontAndSize(helv, 72);
-				over.showTextAligned(Element.ALIGN_CENTER, "CANCELADO", r
-						.getWidth() / 2, r.getHeight() / 2, 45);
+				over.showTextAligned(Element.ALIGN_CENTER, "CANCELADO",
+						r.getWidth() / 2, r.getHeight() / 2, 45);
 				over.endText();
 				over.restoreState();
 			} else if (rascunho) {
@@ -261,23 +296,31 @@ public class Documento extends AbstractDocumento {
 				over.setColorFill(Color.GRAY);
 				over.beginText();
 				over.setFontAndSize(helv, 72);
-				over.showTextAligned(Element.ALIGN_CENTER, "RASCUNHO!", r
-						.getWidth() / 2, r.getHeight() / 2, 45);
+				over.showTextAligned(Element.ALIGN_CENTER, "MINUTA",
+						r.getWidth() / 2, r.getHeight() / 2, 45);
 				over.endText();
 				over.restoreState();
 			}
 
 			// if (!rascunho
 			// && request.getRequestURL().indexOf("http://laguna/") == -1) {
-			/*
-			 * if (!rascunho && (Boolean) Contexto.resource("isVersionTest") &&
-			 * !cancelado) { over.saveState(); final PdfGState gs = new
-			 * PdfGState(); gs.setFillOpacity(0.5f); over.setGState(gs);
-			 * over.setColorFill(Color.GRAY); over.beginText();
-			 * over.setFontAndSize(helv, 72);
-			 * over.showTextAligned(Element.ALIGN_CENTER, "INVÁLIDO", r .width()
-			 * / 2, r.height() / 2, 45); over.endText(); over.restoreState(); }
-			 */
+
+			if (!rascunho
+					&& !cancelado
+					&& ((!Contexto.resource("isVersionTest").equals("false")) || (!Contexto
+							.resource("isBaseTest").equals("false")))) {
+				over.saveState();
+				final PdfGState gs = new PdfGState();
+				gs.setFillOpacity(0.5f);
+				over.setGState(gs);
+				over.setColorFill(Color.GRAY);
+				over.beginText();
+				over.setFontAndSize(helv, 72);
+				over.showTextAligned(Element.ALIGN_CENTER, "INVÁLIDO",
+						r.getWidth() / 2, r.getHeight() / 2, 45);
+				over.endText();
+				over.restoreState();
+			}
 
 			// Imprime um circulo com o numero da pagina dentro.
 
@@ -296,9 +339,9 @@ public class Documento extends AbstractDocumento {
 					final float radius = 18f;
 
 					// Distancia entre o circulo interno e o externo
-					final float circleInterspace = Math.max(helv
-							.getAscentPoint(instancia, TEXT_HEIGHT), helv
-							.getAscentPoint(orgaoUsu, TEXT_HEIGHT))
+					final float circleInterspace = Math.max(
+							helv.getAscentPoint(instancia, TEXT_HEIGHT),
+							helv.getAscentPoint(orgaoUsu, TEXT_HEIGHT))
 							- Math.min(helv.getDescentPoint(instancia,
 									TEXT_HEIGHT), helv.getDescentPoint(
 									orgaoUsu, TEXT_HEIGHT))
@@ -491,21 +534,31 @@ public class Documento extends AbstractDocumento {
 
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov)
 			throws Exception {
-		return getDocumento(mob, mov, false, true);
+		return getDocumento(mob, mov, false, true, null);
 	}
 
 	protected byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
 			HttpServletRequest request) throws Exception {
 
-		boolean estampar = request.getRequestURI().indexOf("/semmarcas/") == -1;
-		boolean completo = request.getRequestURI().indexOf("/completo/") != -1;
+		String uri = request.getRequestURI();
+		boolean estampar = uri.indexOf("/semmarcas/") == -1;
+		boolean completo = uri.indexOf("/completo/") != -1;
+		boolean somenteHash = uri.indexOf("/hashSHA1/") != -1
+				|| uri.indexOf("/hashSHA-256/") != -1
+				|| uri.indexOf("/hashSHA-512/") != -1
+				|| uri.indexOf("/hashMD5/") != -1;
+		String hash = null;
+		if (somenteHash) {
+			hash = uri.substring(uri.indexOf("/hash") + 5,
+					uri.indexOf("/", uri.indexOf("/hash") + 5));
+		}
 
-		return getDocumento(mob, mov, completo, estampar);
+		return getDocumento(mob, mov, completo, estampar, hash);
 
 	}
 
 	protected byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
-			boolean completo, boolean estampar) throws Exception {
+			boolean completo, boolean estampar, String hash) throws Exception {
 		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
 		PdfReader reader;
 		int n;
@@ -524,9 +577,17 @@ public class Documento extends AbstractDocumento {
 
 		List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
 				completo);
-		
+
 		if (!completo && !estampar && ans.size() == 1) {
-			return ans.get(0).getArquivo().getPdf();
+			if (hash != null) {
+				// Calcula o hash do documento
+				String alg = hash;
+				MessageDigest md = MessageDigest.getInstance(alg);
+				md.update(ans.get(0).getArquivo().getPdf());
+				return md.digest();
+			} else {
+				return ans.get(0).getArquivo().getPdf();
+			}
 		}
 
 		try {
@@ -549,8 +610,8 @@ public class Documento extends AbstractDocumento {
 						.getArquivo().getPdf(), sigla, an.getArquivo()
 						.isRascunho(), an.getArquivo().isCancelado(), an
 						.getArquivo().getQRCode(), an.getArquivo()
-						.getMensagem(), an.getPaginaInicial(), an
-						.getPaginaFinal(), an.getOmitirNumeracao(),
+						.getMensagem(), an.getPaginaInicial(),
+						an.getPaginaFinal(), an.getOmitirNumeracao(),
 						"Justiça Federal", mob.getExDocumento()
 								.getOrgaoUsuario().getDescricao());
 
@@ -631,7 +692,7 @@ public class Documento extends AbstractDocumento {
 			//
 			// PdfOutline oline1 = new PdfOutline(root,
 			// PdfAction.gotoLocalPage("1", false),"Chapter 1");
-			//				
+			//
 			// PdfOutline oline2 = new PdfOutline(root,
 			// PdfAction.gotoLocalPage("2", false),"Chapter 2");
 			// oline2.setOpen(false);
@@ -639,7 +700,7 @@ public class Documento extends AbstractDocumento {
 			// PdfAction.gotoLocalPage("2.1", false),"Sub 2.1");
 			// PdfOutline oline2_2 = new PdfOutline(oline2,
 			// PdfAction.gotoLocalPage("2.2", false),"Sub 2.2");
-			//				
+			//
 			// PdfOutline oline3 = new PdfOutline(root,
 			// PdfAction.gotoLocalPage("3", false),"Chapter 3");
 
@@ -651,7 +712,8 @@ public class Documento extends AbstractDocumento {
 	}
 
 	public static byte[] generatePdf(String sHtml) throws Exception {
-		return generatePdf(sHtml, AbstractConversorHTMLFactory.getInstance().getConversor());
+		return generatePdf(sHtml, AbstractConversorHTMLFactory.getInstance()
+				.getConversorPadrao());
 	}
 
 	public static byte[] generatePdf(String sHtml, ConversorHtml parser)
@@ -749,14 +811,14 @@ public class Documento extends AbstractDocumento {
 					// blob = blob.replace("http://www.w3.org/TR/xhtml1/DTD/",
 					// "c:/Trabalhos/Java/siga/paginas/expediente/");
 
-					final StringBuilder sb = new StringBuilder(request
-							.getRequestURL());
+					final StringBuilder sb = new StringBuilder(
+							request.getRequestURL());
 					final int i = sb.indexOf(request.getServletPath());
 
 					sb.replace(i, sb.length(), "/w3c/");
 					// devemos implementar a validação se a url existe mesmo.
-					blob = blob.replace("http://www.w3.org/TR/xhtml1/DTD/", sb
-							.toString());
+					blob = blob.replace("http://www.w3.org/TR/xhtml1/DTD/",
+							sb.toString());
 
 					blob = blob.replace("\r\n", "*newline*");
 					blob = blob.replace("\n", "*newline*");
@@ -779,8 +841,8 @@ public class Documento extends AbstractDocumento {
 					{
 						String s1 = request.getRequestURL().toString();
 						s1 = request.getServletPath();
-						final StringBuilder sb2 = new StringBuilder(request
-								.getRequestURL());
+						final StringBuilder sb2 = new StringBuilder(
+								request.getRequestURL());
 						final int i2 = sb2.indexOf(request.getServletPath());
 						// sb.replace(i, sb.length(), "/imagens/escudo.jpg");
 						sb2.replace(i2, sb2.length(), "/imagens/brasao2.png");
@@ -789,8 +851,8 @@ public class Documento extends AbstractDocumento {
 								+ "\" width=\"50\" height=\"50\"/>";
 					}
 
-					HtmlParser.parse(doc, new ByteArrayInputStream(blob
-							.getBytes()));
+					HtmlParser.parse(doc,
+							new ByteArrayInputStream(blob.getBytes()));
 				}
 
 				String blob = new String(exp.getConteudoBlobDoc2(),
@@ -799,14 +861,14 @@ public class Documento extends AbstractDocumento {
 				// blob = blob.replace("http://www.w3.org/TR/xhtml1/DTD/",
 				// "c:/Trabalhos/Java/siga/paginas/expediente/");
 
-				final StringBuilder sb = new StringBuilder(request
-						.getRequestURL());
+				final StringBuilder sb = new StringBuilder(
+						request.getRequestURL());
 				final int i = sb.indexOf(request.getServletPath());
 
 				sb.replace(i, sb.length(), "/w3c/");
 				// devemos implementar a validação se a url existe mesmo.
-				blob = blob.replace("http://www.w3.org/TR/xhtml1/DTD/", sb
-						.toString());
+				blob = blob.replace("http://www.w3.org/TR/xhtml1/DTD/",
+						sb.toString());
 
 				blob = blob.replace("\r\n", "*newline*");
 				blob = blob.replace("\n", "*newline*");
@@ -882,8 +944,8 @@ public class Documento extends AbstractDocumento {
 
 			try {
 				// initialization of the header table
-				final StringBuilder sb = new StringBuilder(request
-						.getRequestURL());
+				final StringBuilder sb = new StringBuilder(
+						request.getRequestURL());
 				final int i = sb.indexOf(request.getServletPath());
 				// sb.replace(i, sb.length(), "/imagens/escudo.jpg");
 				sb.replace(i, sb.length(), "/imagens/brasao2.png");
@@ -970,9 +1032,7 @@ public class Documento extends AbstractDocumento {
 			// for even numbers, show the footer at the right
 			else {
 				final float adjust = helv.getWidthPoint("0", 12);
-				cb
-						.setTextMatrix(document.right() - textSize - adjust,
-								textBase);
+				cb.setTextMatrix(document.right() - textSize - adjust, textBase);
 				// cb.showText(text);
 				cb.endText();
 				cb.addTemplate(tpl, document.right() - adjust, textBase);

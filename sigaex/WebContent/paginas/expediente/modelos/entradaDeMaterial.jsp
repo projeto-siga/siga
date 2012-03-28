@@ -1,6 +1,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<c:set var="apenasNome" value="Sim" scope="request" />
@@ -8,7 +8,8 @@
 		<mod:grupo titulo="Tipo de Formulário">	
 			<mod:radio titulo="Entrada de Material" var="tipoFormulario" valor="1" marcado="Sim"/>
 			<mod:radio titulo="Saída de Material" var="tipoFormulario" valor="2"/>
-		</mod:grupo>		
+		</mod:grupo>
+		
 		<mod:data titulo="Data" var="data" obrigatorio="Sim"></mod:data>
 		
 		<mod:grupo titulo="Localidade">

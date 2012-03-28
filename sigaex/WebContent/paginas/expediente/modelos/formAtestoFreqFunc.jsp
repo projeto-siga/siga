@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
@@ -88,7 +88,7 @@
 				</mod:grupo>
 			</c:if>
 			<hr color="#FFFFFF" />
-			<mod:grupo titulo="O atesto está sendo encaminhado no prazo (2º dia útil a partir do envio da nota fiscal)?">
+			<mod:grupo titulo="O atesto está sendo encaminhado no prazo (entre o último dia útil do mês de competência e o segundo dia útil do mês subsequente)?">
 				<mod:radio titulo="Sim." var="noPrazo" valor="1" marcado="Sim"
 							reler="ajax" idAjax="noPrazoAjax" />
 				<mod:grupo largura="7">
@@ -102,7 +102,7 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="noPrazoAjax">
 						<c:if test="${noPrazoVal == 2}">
-							<mod:texto titulo="Justificar" var="jusNoPrazo" largura="70" maxcaracteres="70" obrigatorio="Sim" />
+							<mod:memo titulo="Justificar" var="jusNoPrazo" linhas="3" colunas="70" obrigatorio="Sim" />
 							<mod:oculto var="noPrazoNao" valor="não"/>	
 						</c:if>
 					</mod:grupo>						
@@ -152,7 +152,7 @@
 		<br>
 		<h3 align="center"> CONTRATOS: ATESTO DE SERVIÇOS COM FREQUÊNCIA DE FUNCIONÁRIOS </h3><br><br>
 
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
+		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 			<tr>
 				<td colspan="2">					
 					Unidade Gestora: <b>${unidGestora}</b>		
@@ -169,7 +169,7 @@
 			<tr><td colspan="2">Descrição do Objeto: <b>${objeto}</b></td></tr>
 		</table>
 		<br>
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">	
+		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">	
 			<ww:if test="${secao != 'SIE'}">
 				<c:if test="${not empty requestScope['fiscalTec_pessoaSel.id']}">
 					<tr>
@@ -204,15 +204,15 @@
 			</ww:else>	
 		</table>
 		<br>
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">				
+		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">				
 			<c:if test="${secao == 'SIE' or secao == 'SLO' or secao == 'STI' or secao == 'NSEG'}">
 				<tr>
 					<ww:if test="${not empty nota}">					
 						<td>Nota Fiscal: ${nota}</td>
-						<td>Período: ${dataIni} à ${dataFim}</td>
+						<td>Período: ${dataIni} a ${dataFim}</td>
 					</ww:if>						
 					<ww:else>
-						<td colspan="2">Período: ${dataIni} à ${dataFim}</td>
+						<td colspan="2">Período: ${dataIni} a ${dataFim}</td>
 					</ww:else>	
 				</tr>			
 				<c:if test="${not empty nota}">
@@ -227,11 +227,11 @@
 			</c:if>
 			<tr>
 				<td colspan="2">
-					O atesto ${noPrazoNao} está sendo encaminhado no prazo (2º dia útil a partir do envio da nota fiscal)
+				    O atesto ${noPrazoNao} está sendo encaminhado no prazo (entre o último dia útil do mês de competência e o segundo dia útil do mês subsequente)
 					<ww:if test="${noPrazo == '2'}">
 						${jusNoPrazo}
 					</ww:if>
-					<ww:else> . </ww:else>	
+					<ww:else>.</ww:else>	
 				</td>
 			</tr>			
 		</table>

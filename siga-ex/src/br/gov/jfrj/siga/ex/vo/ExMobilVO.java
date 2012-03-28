@@ -146,6 +146,8 @@ public class ExMobilVO extends ExVO {
 				long l = lFim.getUnixDay() - lIni.getUnixDay();
 				if (l == 0) {
 					d.setDuracao(lIni.diffCompact(lFim));
+					if (d.getDuracao().endsWith("m"))
+						d.setDuracao(d.getDuracao() + "in");
 				} else {
 					d.setDuracao(Long.toString(l) + " dia"
 							+ (l == 1L ? "" : "s"));

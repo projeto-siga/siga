@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <mod:modelo>
@@ -264,7 +264,7 @@
 		</style>
 		</head>
 		<body>
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=DiretorForo" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForo.jsp" />
 		<br>
 		<br>
 		<h2 align="center"><u><strong>DECLARAÇÃO DE BENS E

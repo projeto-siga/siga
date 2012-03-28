@@ -1,6 +1,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!-- este modelo trata de
 FORMULÁRIO DE EXCLUSÃO DE USUÁRIO-->
@@ -37,6 +37,13 @@ FORMULÁRIO DE EXCLUSÃO DE USUÁRIO-->
 			</mod:grupo>
 		</c:if>
 
+		<c:if test="${tipoUsuario == 'Servidor'}">
+			<mod:grupo>
+				<mod:mensagem titulo="Observação"
+					texto="O subscritor do formulário de exclusão de servidor será o Magistrado da vara."
+					vermelho="Sim" />
+			</mod:grupo>
+		</c:if>
 	</mod:entrevista>
 
 	<mod:documento>

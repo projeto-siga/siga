@@ -2,10 +2,11 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
+<%@page import="br.gov.jfrj.siga.ex.bl.ExBL"%>
 <c:set var="esconderTexto" value="sim" scope="request" />
 
 <mod:modelo salvarViaAjax="N" acaoGravar="gravarBI" acaoExcluir="excluirBI" acaoCancelar="refazerBI" acaoFinalizar="finalizarBI">
@@ -39,7 +40,7 @@
 								<ww:param name="sigla">${ex.sigla}</ww:param>
 							</ww:url>
 							<ww:a href="%{url}">Cancelar Pedido</ww:a>
-						</td>
+						</td>						
 					</tr>
 				</c:forEach>
 			</table>

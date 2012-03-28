@@ -43,7 +43,7 @@ public class Correio {
 			final String conteudo) throws Exception {
 		final String[] to = { destinatario };
 
-		Correio.enviar(SigaBaseProperties.getString("servidor.usuario.remetente"), to,
+		Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), to,
 				assunto, conteudo, null);
 	}
 
@@ -79,7 +79,7 @@ public class Correio {
 
 		final boolean debug = Boolean.parseBoolean("false");
 		// final boolean debug = Boolean.parseBoolean(Mensagens
-		// .getString("servidor.debug"));
+		// .getString("servidor.smtp.debug"));
 		session.setDebug(debug);
 		// Cria mensagem e seta alguns valores que constituem
 		// os seus headers.
@@ -151,5 +151,9 @@ public class Correio {
 	}
 
 
-
+	public static void enviar(String remetente, String[] destinatarios,
+			String assunto, String conteudo) throws Exception {
+		Correio.enviar(remetente, destinatarios,
+				assunto, conteudo, null);
+	}
 }

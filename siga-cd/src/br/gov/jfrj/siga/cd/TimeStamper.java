@@ -78,7 +78,7 @@ public class TimeStamper {
 	private static final Logger log = Logger.getLogger(TimeStamper.class);
 	// private static final String SERVIDOR_CARIMBO =
 	// "http://201.41.100.134:318";
-	private static final String SERVIDOR_CARIMBO = "http://187.48.40.134:318";
+	private static final String SERVIDOR_CARIMBO = SigaCdProperties.getServidorCarimbo();
 
 	public static TimeStampToken gerarCarimboTempo(byte[] assinatura)
 			throws URISyntaxException, IOException, TSPException,
@@ -114,11 +114,6 @@ public class TimeStamper {
 		int porta = uri.getPort();
 
 		byte[] token = timestampreq.getEncoded();
-
-		// Properties systemProperties = System.getProperties();
-		// systemProperties
-		// .setProperty("socksProxyHost", "localhost");
-		// systemProperties.setProperty("socksProxyPort", "8080");
 
 		TimeStampResponse tsptcpipresponse = null;
 		Socket socket = new Socket();
@@ -186,8 +181,8 @@ public class TimeStamper {
 
 		Properties systemProperties = System.getProperties();
 		systemProperties
-				.setProperty("http.proxyHost", "localhost");
-		systemProperties.setProperty("http.proxyPort", "8080");
+				.setProperty("http.proxyHost", SigaCdProperties.getProxyHost());
+		systemProperties.setProperty("http.proxyPort", SigaCdProperties.getProxyPort());
 
 		// URL of CGI-Bin script.
 		// url = new URL("http://www.cryptopro.ru/tsp/tsp.srf");
@@ -393,12 +388,12 @@ public class TimeStamper {
 
 			Properties systemProperties = System.getProperties();
 			systemProperties.setProperty("http.proxyHost",
-					"localhost");
-			systemProperties.setProperty("http.proxyPort", "8080");
+					SigaCdProperties.getProxyHost());
+			systemProperties.setProperty("http.proxyPort", SigaCdProperties.getProxyPort());
 
 			// URL of CGI-Bin script.
 			//url = new URL("http://www.edelweb.fr/cgi-bin/service-tsp");
-			url = new URL("http://tsp.iaik.at/tsp/TspRequest");
+			url = new URL(SigaCdProperties.getTSPUrl());
 			// url = new URL("http://www.cryptopro.ru/tsp/tsp.srf");
 			// url = new URL("http://ns.szikszi.hu:8080/tsa");
 			// url = new URL("http://time.certum.pl/");

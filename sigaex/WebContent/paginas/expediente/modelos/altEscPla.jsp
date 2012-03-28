@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -77,7 +77,7 @@
 			</c:choose> DO TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO</b>, no uso de suas
 			atribuições, <b>RESOLVE</b>:<br>
 			<br>
-			<b>ALTERAR</b> o Ato nº ${numact}, de ${dtato}, publicado no Diário
+			<b>ALTERAR</b> o Ato nº ${numact}, de ${dtato}, disponibilizado no Diário
 			da Justiça Eletrônico da 2ª Região, no dia ${dtpub}, às fls.
 			${folha}, que trata da escala de plantão dos Exmos. Magistrados deste
 			Tribunal, para o exercício de ${exerc}, relativa aos sábados,
@@ -99,6 +99,6 @@
 				<br>
 			</c:forEach>
 		</mod:valor>
-
+        
 	</mod:documento>
 </mod:modelo>

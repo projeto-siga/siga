@@ -131,7 +131,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
-	 * Retorna a data da movimentação no formato dd/mm/aa, por exemplo, 01/02/10.
+	 * Retorna a data da movimentação no formato dd/mm/aa, por exemplo,
+	 * 01/02/10.
 	 * 
 	 * @return Data da movimentação no formato dd/mm/aa, por exemplo, 01/02/10.
 	 * 
@@ -146,9 +147,11 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
-	 * Retorna a data de início da movimentação no formato dd/mm/aa, por exemplo, 01/02/10.
+	 * Retorna a data de início da movimentação no formato dd/mm/aa, por
+	 * exemplo, 01/02/10.
 	 * 
-	 * @return Data de início da movimentação no formato dd/mm/aa, por exemplo, 01/02/10.
+	 * @return Data de início da movimentação no formato dd/mm/aa, por exemplo,
+	 *         01/02/10.
 	 * 
 	 */
 	public String getDtRegMovDDMMYY() {
@@ -160,9 +163,11 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
-	 * Retorna a data de início da movimentação no formato dd/mm/aa HH:MI:SS, por exemplo, 01/02/10 14:10:00.
+	 * Retorna a data de início da movimentação no formato dd/mm/aa HH:MI:SS,
+	 * por exemplo, 01/02/10 14:10:00.
 	 * 
-	 * @return Data de início da movimentação no formato dd/mm/aa HH:MI:SS, por exemplo, 01/02/10 14:10:00.
+	 * @return Data de início da movimentação no formato dd/mm/aa HH:MI:SS, por
+	 *         exemplo, 01/02/10 14:10:00.
 	 * 
 	 */
 	public String getDtRegMovDDMMYYHHMMSS() {
@@ -175,9 +180,11 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
-	 * Retorna a data de início da movimentação no formato dd/mm/aaaa HH:MI:SS, por exemplo, 01/02/2010 14:10:00.
+	 * Retorna a data de início da movimentação no formato dd/mm/aaaa HH:MI:SS,
+	 * por exemplo, 01/02/2010 14:10:00.
 	 * 
-	 * @return Data de início da movimentação no formato dd/mm/aaaa HH:MI:SS, por exemplo, 01/02/2010 14:10:00.
+	 * @return Data de início da movimentação no formato dd/mm/aaaa HH:MI:SS,
+	 *         por exemplo, 01/02/2010 14:10:00.
 	 * 
 	 */
 	public String getDtRegMovDDMMYYYYHHMMSS() {
@@ -190,11 +197,11 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
-	 * Retorna a data da movimentação por extenso. no formato "Rio de Janeiro, 01
-	 * de fevereiro de 2010", por exemplo.
+	 * Retorna a data da movimentação por extenso. no formato "Rio de Janeiro,
+	 * 01 de fevereiro de 2010", por exemplo.
 	 * 
 	 * @return Data da movimentação por extenso. no formato "Rio de Janeiro, 01
-	 * de fevereiro de 2010", por exemplo.
+	 *         de fevereiro de 2010", por exemplo.
 	 */
 	public String getDtExtenso() {
 		SimpleDateFormat df1 = new SimpleDateFormat();
@@ -215,7 +222,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			if (s == null && lotaBase != null) {
 				s = lotaBase.getLocalidadeString();
 				/*
-				 * s = getLotaTitular().getOrgaoUsuario().getMunicipioOrgaoUsu() + ", ";
+				 * s = getLotaTitular().getOrgaoUsuario().getMunicipioOrgaoUsu()
+				 * + ", ";
 				 */
 			}
 
@@ -225,14 +233,13 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 	}
 
-	
 	/**
 	 * Retorna verdadeiro se a diferença entre a data de disponibilização no DJE
 	 * e a data atual for igual a 2 e falso caso contrário.
 	 * 
 	 * @return Verdadeiro se a diferença entre a data de disponibilização no DJE
-	 * e a data atual for igual a 2 e falso caso contrário.
-	*/
+	 *         e a data atual for igual a 2 e falso caso contrário.
+	 */
 	public boolean isARemeterHojeDJE() {
 		try {
 			DatasPublicacaoDJE d = new DatasPublicacaoDJE(getDtDispPublicacao());
@@ -246,7 +253,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna a descrição da movimentação.
 	 * 
 	 * @return Descrição da movimentação.
-	*/
+	 */
 	@Field(name = "descrMov", index = Index.TOKENIZED, store = Store.COMPRESS)
 	@Analyzer(impl = BrazilianAnalyzer.class)
 	@Override
@@ -256,12 +263,14 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
-	 * Retorna informações da movimentação como Nome do Órgão Externo, Observação do Órgão,
-	 * Descrição do Tipo de Movimentação e Descrição da Movimentação.
+	 * Retorna informações da movimentação como Nome do Órgão Externo,
+	 * Observação do Órgão, Descrição do Tipo de Movimentação e Descrição da
+	 * Movimentação.
 	 * 
-	 * @return Informações da movimentação como Nome do Órgão Externo, Observação do Órgão,
-	 * Descrição do Tipo de Movimentação e Descrição da Movimentação.
-	*/
+	 * @return Informações da movimentação como Nome do Órgão Externo,
+	 *         Observação do Órgão, Descrição do Tipo de Movimentação e
+	 *         Descrição da Movimentação.
+	 */
 	public String getObs() {
 		String s = "";
 		if (getOrgaoExterno() != null)
@@ -294,8 +303,9 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	/**
 	 * Retorna o número de sequência da via como um inteiro.
 	 * 
-	 * @return Número de sequência como um inteiro se for uma via e 0 caso contrário.
-	*/
+	 * @return Número de sequência como um inteiro se for uma via e 0 caso
+	 *         contrário.
+	 */
 	public int getNumVia2() {
 		return getExMobil().isVia() ? getExMobil().getNumSequencia().intValue()
 				: 0;
@@ -304,8 +314,9 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	/**
 	 * Retorna o número de sequência da via como uma String.
 	 * 
-	 * @return Número de sequência como uma String se for uma via e "" caso contrário.
-	*/
+	 * @return Número de sequência como uma String se for uma via e "" caso
+	 *         contrário.
+	 */
 	@Field(name = "numVia", index = Index.NO, store = Store.COMPRESS)
 	public String getNumViaString() {
 		if (getNumVia2() == 0)
@@ -330,7 +341,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o nome do responsável pela movimentação.
 	 * 
 	 * @return Nome do responsável pela movimentação.
-	*/
+	 */
 	public String getRespString() {
 		if (getOrgaoExterno() != null)
 			return getObs();
@@ -348,7 +359,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o nome do responsável pela movimentação.
 	 * 
 	 * @return Nome do responsável pela movimentação.
-	*/
+	 */
 	public String getCadastranteString() {
 		String strReturn = "";
 		if (getLotaResp() != null)
@@ -433,7 +444,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o documento relacionado a movimentação.
 	 * 
 	 * @return Documento relacionado a movimentação.
-	*/
+	 */
 	public ExDocumento getExDocumento() {
 		return super.getExMobil().getExDocumento();
 	}
@@ -488,7 +499,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o nome da Função do Subscritor da Movimentação.
 	 * 
 	 * @return Nome da Função do Subscritor da Movimentação.
-	*/
+	 */
 	public java.lang.String getNmFuncao() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
@@ -504,7 +515,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o nome do arquivo anexado a movimentação.
 	 * 
 	 * @return Nome do arquivo anexado a movimentação.
-	*/
+	 */
 	@Field(name = "nmArqmov", store = Store.COMPRESS)
 	public String getNmArqMov() {
 		String s = super.getNmArqMov();
@@ -521,7 +532,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o nome da lotação do subscritor da movimentação.
 	 * 
 	 * @return Nome da lotação do subscritor da movimentação.
-	*/
+	 */
 	public java.lang.String getNmLotacao() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
@@ -537,7 +548,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o nome da localidade da lotação do subscritor da movimentação.
 	 * 
 	 * @return Nome da localidade da lotação do subscritor da movimentação.
-	*/
+	 */
 	public java.lang.String getNmLocalidade() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
@@ -553,7 +564,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o nome do subscritor da movimentação.
 	 * 
 	 * @return Nome do subscritor da movimentação.
-	*/
+	 */
 	public java.lang.String getNmSubscritor() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
@@ -569,7 +580,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna o código da movimentação de referência da movimentação Atual.
 	 * 
 	 * @return Código da movimentação de referência da movimentação Atual.
-	*/
+	 */
 	public java.lang.String getReferencia() {
 		return getExMobil().getCodigoCompacto() + ":" + getIdMov();
 	}
@@ -611,19 +622,20 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna a data da movimentação.
 	 * 
 	 * @return Data da movimentação.
-	*/
+	 */
 	@Override
 	public Date getData() {
 		return getDtMov();
 	}
 
 	/**
-	 * verifica se uma movimentação está cancelada.
-	 * Uma movimentação está cancelada quando o seu atributo movimentacaoCanceladora está
-	 * preenchido com um código de movimentação de cancelamento.
+	 * verifica se uma movimentação está cancelada. Uma movimentação está
+	 * cancelada quando o seu atributo movimentacaoCanceladora está preenchido
+	 * com um código de movimentação de cancelamento.
 	 * 
-	 * @return Verdadeiro se a movimentação está cancelada e Falso caso contrário.
-	*/
+	 * @return Verdadeiro se a movimentação está cancelada e Falso caso
+	 *         contrário.
+	 */
 	public boolean isCancelada() {
 		return getExMovimentacaoCanceladora() != null;
 	}
@@ -637,19 +649,24 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 						.hashCode() % 10000);
 	}
 
+	public Set<ExMovimentacao> getAssinaturasDigitais() {
+		TreeSet<ExMovimentacao> movs = new TreeSet<ExMovimentacao>();
+		movs.addAll(getApenasAssinaturas());
+		movs.addAll(getApenasConferenciasCopia());
+		return movs;
+	}
+
 	/**
 	 * Retorna uma coleção de movimentações dos tipo:
-	 * ASSINATURA_DIGITAL_MOVIMENTACAO ou CONFERENCIA_COPIA_DOCUMENTO.
+	 * ASSINATURA_DIGITAL_MOVIMENTACAO.
 	 * 
 	 * @return Coleção de movimentações de assinaturas digitais.
-	*/
-	@Override
-	public Set<ExMovimentacao> getAssinaturasDigitais() {
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturas() {
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
-			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || m
-					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -658,12 +675,52 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
-	 * verifica se uma movimentação está cancelada.
-	 * Uma movimentação está cancelada quando o seu atributo movimentacaoCanceladora está
-	 * preenchido com um código de movimentação de cancelamento.
+	 * Retorna uma coleção de movimentações dos tipo
+	 * CONFERENCIA_COPIA_DOCUMENTO.
 	 * 
-	 * @return Verdadeiro se a movimentação está cancelada e Falso caso contrário.
-	*/
+	 * @return Coleção de movimentações de conferências de cópia.
+	 */
+	public Set<ExMovimentacao> getApenasConferenciasCopia() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	public String getAssinantesString(){
+		return Documento
+		.getAssinantesString(getApenasAssinaturas());
+	}
+	
+	public String getConferentesString(){
+		return Documento
+		.getAssinantesString(getApenasConferenciasCopia());
+	}
+
+	public String getAssinantesCompleto() {
+		String conferentes = getConferentesString();
+		String assinantes = getAssinantesString();
+		String retorno = "";
+		retorno += assinantes.length() > 0 ? "Assinado digitalmente por "
+				+ assinantes + ".\n" : "";
+		retorno += conferentes.length() > 0 ? "Cópia conferida por " 
+				+ conferentes + ".\n" : "";
+		return retorno;
+	}
+
+	/**
+	 * verifica se uma movimentação está cancelada. Uma movimentação está
+	 * cancelada quando o seu atributo movimentacaoCanceladora está preenchido
+	 * com um código de movimentação de cancelamento.
+	 * 
+	 * @return Verdadeiro se a movimentação está cancelada e Falso caso
+	 *         contrário.
+	 */
 	@Override
 	public boolean isCancelado() {
 		return getExMovimentacaoCanceladora() != null;
@@ -679,39 +736,39 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * Retorna da lotação do titular da movimentação.
 	 * 
 	 * @return Lotação do titular da movimentação.
-	*/
+	 */
 	@Override
 	public DpLotacao getLotacao() {
 		return getLotaTitular();
 	}
 
 	/**
-	 * Retorna uma descrição da movimentação formada pelos campos:
-	 * Sigla, Descrição do Tipo de Movimentação e Descrição da Movimentação.
+	 * Retorna uma descrição da movimentação formada pelos campos: Sigla,
+	 * Descrição do Tipo de Movimentação e Descrição da Movimentação.
 	 * 
 	 * @return Uma descrição da movimentação
-	*/
+	 */
 	@Override
 	public String toString() {
 		return getExMobil().getSigla() + ": "
 				+ getExTipoMovimentacao().getDescricao() + ": " + getDescrMov();
 	}
 
-	
 	/**
-	 * @return Verdadeiro se o tipo de movimentação for CANCELAMENTO_JUNTADA ou CANCELAMENTO_DE_MOVIMENTACAO
-	 * e Falso caso contrário
-	*/
+	 * @return Verdadeiro se o tipo de movimentação for CANCELAMENTO_JUNTADA ou
+	 *         CANCELAMENTO_DE_MOVIMENTACAO e Falso caso contrário
+	 */
 	public boolean isInserirDocumentoNoDossieDoMobilRef() {
 		return getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 				|| getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
 	}
 
 	/**
-	 * @return Data de início da movimentação de referência se o método isInserirDocumentoNoDossieDoMobilRef() for verdadeiro
-	 * ou retorna a data de início da movimentação caso contrário.  
+	 * @return Data de início da movimentação de referência se o método
+	 *         isInserirDocumentoNoDossieDoMobilRef() for verdadeiro ou retorna
+	 *         a data de início da movimentação caso contrário.
 	 * 
-	*/
+	 */
 	public Date getDtIniMovParaInsercaoEmDossie() {
 		if (getExTipoMovimentacao() == null)
 			return null;
@@ -723,11 +780,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	/**
 	 * Retorna o Mobil relacionado a movimentação atual.
-	 *
-	 * @return Data de início da movimentação de referência se o método isInserirDocumentoNoDossieDoMobilRef() for verdadeiro
-	 * ou retorna a data de início da movimentação caso contrário.  
 	 * 
-	*/
+	 * @return Data de início da movimentação de referência se o método
+	 *         isInserirDocumentoNoDossieDoMobilRef() for verdadeiro ou retorna
+	 *         a data de início da movimentação caso contrário.
+	 * 
+	 */
 	public ExMobil mob() {
 		// TODO Auto-generated method stub
 		return getExMobil();

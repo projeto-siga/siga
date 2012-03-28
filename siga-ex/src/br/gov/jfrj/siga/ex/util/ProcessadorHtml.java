@@ -51,12 +51,12 @@ public class ProcessadorHtml {
 	Boolean fTrimLeft;
 
 	static final String asTrimElements[] = { "html", "title", "head", "body",
-			"div", "hr", "table", "caption", "th", "tr", "td", "ol", "ul", "li", "p", "br", "hr",
-			"blockquote" };
+			"div", "hr", "table", "caption", "th", "tr", "td", "ol", "ul",
+			"li", "p", "br", "hr", "blockquote" };
 
 	static final String asKnownElements[] = { "html", "title", "head", "body",
-			"div", "hr", "table", "caption", "th", "tr", "td", "ol", "ul", "li", "p", "br", "hr",
-			"blockquote" };
+			"div", "hr", "table", "caption", "th", "tr", "td", "ol", "ul",
+			"li", "p", "br", "hr", "blockquote" };
 
 	private class Tag {
 		String name;
@@ -147,8 +147,9 @@ public class ProcessadorHtml {
 
 			String styleP = "font-family=arial,avantgarde bk bt\\, arial;font-size=6pt,7pt,8pt,9pt,10pt,11pt,12pt,13pt,14pt;font-weight=bold"
 					+ ";margin-left;text-decoration=italic;text-align=left,right,center,justify"
-					+ ";text-indent;font-size-no-fix=yes";
-			add(myTags, "div", "align;class", styleP + ";page-break-after;", true);
+					+ ";text-indent;font-size-no-fix=yes;float=none;clear=both";
+			add(myTags, "div", "align;class", styleP + ";page-break-after;",
+					true);
 			add(myTags, "span", "align;class", styleP, true);
 
 			add(myTags, "h1", null, null, true);
@@ -157,11 +158,12 @@ public class ProcessadorHtml {
 			add(myTags, "h4", null, null, true);
 			add(myTags, "h5", null, null, true);
 			add(myTags, "h6", null, null, true);
-			add(myTags, "p", "align=left,right,center,justify;class", styleP, true);
+			add(myTags, "p", "align=left,right,center,justify;class", styleP,
+					true);
 			add(myTags, "ol", "class", "list-style-type=roman", true);
 			add(myTags, "ul", "class", null, true);
 			add(myTags, "li", "class", null, true);
-			
+
 			add(myTags, "hr", "size;color", "color", false);
 
 			final String sWidth = "width="
@@ -171,18 +173,24 @@ public class ProcessadorHtml {
 					+ ",61%,62%,63%,64%,65%,66%,67%,68%,69%,70%,71%,72%,73%,74%,75%,76%,77%,78%,79%,80%"
 					+ ",81%,82%,83%,84%,85%,86%,87%,88%,89%,90%,91%,92%,93%,94%,95%,96%,97%,98%,99%,100%";
 
-			String styleT = "border-style=solid;border-color;border-width;border-collapse=collapse;";
-			
-			add(
-					myTags,
+			String styleT = "border-style=solid;border-color;border-width;border-collapse=collapse;float=none;clear=both";
+
+			add(myTags,
 					"table",
 					"align=left,right,center,justify;bgcolor;bordercolor;border=0,1;cellpadding;cellspacing;heigth;summary;class;"
 							+ sWidth, styleT, true);
 			add(myTags, "caption", null, null, true);
 			add(myTags, "tbody", null, null, true);
-			add(myTags, "tr", "class;bgcolor;align=left,right,center,justify;valign=bottom,top,middle;", null, true);
-			add(myTags, "th", "width;class;bgcoloralign=left,right,center,justify;valign=bottom,top,middle;id;", null, true);
-			add(myTags, "td",
+			add(myTags,
+					"tr",
+					"class;bgcolor;align=left,right,center,justify;valign=bottom,top,middle;",
+					null, true);
+			add(myTags,
+					"th",
+					"width;class;bgcoloralign=left,right,center,justify;valign=bottom,top,middle;id;",
+					null, true);
+			add(myTags,
+					"td",
 					"width;class;align=left,right,center,justify;valign=bottom,top,middle;bgcolor;headers;colspan;rowspan"
 							+ sWidth, styleP, true);
 			add(myTags, "thead", null, null, true);
@@ -236,9 +244,7 @@ public class ProcessadorHtml {
 		s = s.replace("FIM CABECALHO -->", "<!-- FIM CABECALHO -->");
 		s = s.replace("<!-- INICIO PRIMEIRO RODAPE",
 				"<!-- INICIO PRIMEIRO RODAPE -->");
-		s = s
-				.replace("FIM PRIMEIRO RODAPE -->",
-						"<!-- FIM PRIMEIRO RODAPE -->");
+		s = s.replace("FIM PRIMEIRO RODAPE -->", "<!-- FIM PRIMEIRO RODAPE -->");
 		s = s.replace("<!-- INICIO RODAPE", "<!-- INICIO RODAPE -->");
 		s = s.replace("FIM RODAPE -->", "<!-- FIM RODAPE -->");
 
@@ -296,9 +302,7 @@ public class ProcessadorHtml {
 		s = s.replace("<!-- FIM CABECALHO -->", "FIM CABECALHO -->");
 		s = s.replace("<!-- INICIO PRIMEIRO RODAPE -->",
 				"<!-- INICIO PRIMEIRO RODAPE");
-		s = s
-				.replace("<!-- FIM PRIMEIRO RODAPE -->",
-						"FIM PRIMEIRO RODAPE -->");
+		s = s.replace("<!-- FIM PRIMEIRO RODAPE -->", "FIM PRIMEIRO RODAPE -->");
 		s = s.replace("<!-- INICIO RODAPE -->", "<!-- INICIO RODAPE");
 		s = s.replace("<!-- FIM RODAPE -->", "FIM RODAPE -->");
 
@@ -315,14 +319,12 @@ public class ProcessadorHtml {
 
 		// s = s.replace("<head>", "");
 		// s = s.replace("</head>", "");
-		s = s
-				.replace(
-						"<meta name=\"generator\" content=\"HTML Tidy, see www.w3.org\" />",
-						"");
-		s = s
-				.replace(
-						"<meta content=\"HTML Tidy, see www.w3.org\" name=\"generator\" />",
-						"");
+		s = s.replace(
+				"<meta name=\"generator\" content=\"HTML Tidy, see www.w3.org\" />",
+				"");
+		s = s.replace(
+				"<meta content=\"HTML Tidy, see www.w3.org\" name=\"generator\" />",
+				"");
 		s = s.replace("<title></title>", "");
 
 		s = s.replace("\r\n", " \r\n");
@@ -382,8 +384,8 @@ public class ProcessadorHtml {
 		serializer.startTag(null, sName);
 
 		for (int i = 0; i < parser.getAttributeCount(); i++) {
-			serializer.attribute(parser.getAttributeNamespace(i), parser
-					.getAttributeName(i), parser.getAttributeValue(i));
+			serializer.attribute(parser.getAttributeNamespace(i),
+					parser.getAttributeName(i), parser.getAttributeValue(i));
 		}
 	}
 
@@ -539,8 +541,8 @@ public class ProcessadorHtml {
 					if (vals == null || vals.contains(val)
 							|| (val == "style" && t.styles != null)) {
 						serializer.attribute(parser.getAttributeNamespace(i),
-								parser.getAttributeName(i), parser
-										.getAttributeValue(i));
+								parser.getAttributeName(i),
+								parser.getAttributeValue(i));
 					}
 				} else {
 					StringBuilder sb = null;

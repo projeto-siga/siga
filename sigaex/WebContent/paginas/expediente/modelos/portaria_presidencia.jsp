@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
@@ -42,25 +42,16 @@
 		<c:if test="${empty tl}">
 			<c:set var="tl" value="11pt"></c:set>
 		</c:if>
-
-		<!-- INICIO PRIMEIRO CABECALHO
+        <!-- INICIO PRIMEIRO CABECALHO
 		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
 		</td></tr>
-		
-		<tr><td><br/>&nbsp;<br/></td></tr>
-			<tr bgcolor="#FFFFFF">
-				<td width="100%">
-					<table width="100%">
-						<tr>
-							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">PORTARIA N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
-
+		<br>
+		<p align="center" style="font-family:Arial;font-size:11pt;">
+		<!-- INICIO NUMERO --><span style="font-weight: bold;">PORTARIA N&ordm; ${doc.codigo}<!-- FIM NUMERO --> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
+		
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
@@ -68,7 +59,7 @@
 		<mod:letra tamanho="${tl}">
 		   	<!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
-		    <span style="font-size: ${tl};line-height: 1px"> ${texto_ato} </span>
+		    <span style="font-size: ${tl};line-height: 1px"> ${texto_ptp} </span>
 		    <!-- FIM CORPO -->
 		    <p align="center"><!-- INICIO FECHO -->PUBLIQUE-SE. REGISTRE-SE. CUMPRA-SE.<!-- FIM FECHO --><br/><br/><br></p>
 		    <!-- FIM MIOLO -->

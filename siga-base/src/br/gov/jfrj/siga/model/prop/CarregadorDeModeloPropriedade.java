@@ -18,6 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.model.prop;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
@@ -55,7 +58,7 @@ public class CarregadorDeModeloPropriedade {
 		Properties prpCache = cache.get(clsNme);
 		if (prpCache != null)
 			return prpCache;
-		// 
+		//
 		while (true) {
 			Properties prp = carregarPara(cls);
 			Enumeration ks = prp.keys();
@@ -89,24 +92,96 @@ public class CarregadorDeModeloPropriedade {
 	 * @throws ClassNotFoundException
 	 */
 	private static Properties carregarPara(Object obj) throws Exception {
-		Properties p = new Properties();
-		String nme = getClassNameOf(obj);
-		InputStream is;
+
+		// tenta carregar tentar carregar propriedades de um arquivo na no mesmo
+		// pacote da classe
 		try {
-			is = Class.forName(nme).getResourceAsStream(NOME_ARQ_PROPS);
-		} catch (ClassNotFoundException e1) {
-			throw new Exception("Classe de nome " + nme + "não encontrada !");
-		}
-		try {
-			p.load(is);
+			return carregarPropriedadesNoProprioCodigo(getClassNameOf(obj));
 		} catch (Exception e) {
-			throw new Exception("Arquivo de propriedades chamado '"
-					+ NOME_ARQ_PROPS
-					+ "' não conseguiu ser lido no pacote da classe " + nme
-					+ ": " + e.getMessage());
-		} finally {
-			is.close();
+
 		}
+
+		// tenta carregar tentar carregar propriedades um arquivo informado na
+		// linha de comando
+		try {
+			return carregarPropriedadesArquivoEspecifico(System
+					.getProperty(NOME_ARQ_PROPS + ".file"));
+		} catch (Exception e) {
+
+		}
+
+		// tentar carregar propriedades a partir diretorio do programa
+		try {
+			return carregarPropriedadesArquivoEspecifico("./" + NOME_ARQ_PROPS);
+		} catch (Exception e) {
+
+		}
+
+		// tenta carregar carregar propriedades registradas por um servidor de
+		// aplicações, por exemplo.
+		try {
+			return carregarPropriedadesDoSistema();
+		} catch (Exception e) {
+
+		}
+
+		throw new Exception(
+				"Não existem propriedades definidas! Para resolver esse problema: \n 1) Coloque um arquivo "
+						+ NOME_ARQ_PROPS
+						+ " no mesmo pacote da classe que estende ModeloPropriedade \n 2) Defina uma variável -D"
+						+ NOME_ARQ_PROPS
+						+ ".file=CAMINHO_COMPLETO_DO_ARQUIVO na inicialização do programa \n 3) Coloque um arquivo "
+						+ NOME_ARQ_PROPS
+						+ " no mesmo diretório do aplicativo \n 4) Se for uma aplicação web, coloque o arquivo "
+						+ NOME_ARQ_PROPS
+						+ " no diretório de configuração do servidor de aplicação e configure-o para ler tal arquivo");
+
+	}
+
+	private static Properties carregarPropriedadesDoSistema() throws Exception {
+		Properties p = System.getProperties();
+		if (p.containsKey("siga.properties.versao")) {
+			return System.getProperties();
+		} else {
+			throw new Exception("Propriedades inválidas!");
+		}
+	}
+
+	/**
+	 * Tenta carregar as propriedades em um arquivo localizado em um diretório
+	 * específico. Ess forma é ideal para compartilhar arquivos de propriedades
+	 * entre módulos web e não-web, mantendo-os em um arquivo único.
+	 * 
+	 * @param caminhoArquivo
+	 * @return
+	 * @throws IOException
+	 */
+	private static Properties carregarPropriedadesArquivoEspecifico(
+			String caminhoArquivo) throws IOException {
+		Properties p = new Properties();
+		File f = new File(caminhoArquivo);
+		InputStream is = new FileInputStream(f);
+		p.load(is);
+		is.close();
+		return p;
+	}
+
+	/**
+	 * Tenta carregar as propriedades em um arquivo que esteja no mesmo pacote
+	 * da classe. Essa forma é ideal para o desenvolvedor que queira definir uma
+	 * propriedade que só pode ser modificada por desenvolcedores.
+	 * 
+	 * @param nme
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	private static Properties carregarPropriedadesNoProprioCodigo(String nme)
+			throws ClassNotFoundException, IOException {
+		Properties p = new Properties();
+		InputStream is = Class.forName(nme).getResourceAsStream(NOME_ARQ_PROPS);
+		p.load(is);
+		is.close();
 		return p;
 	}
 

@@ -129,7 +129,7 @@
 								<mod:selecao
 									titulo="Motivo (As tabelas da Base Legal encontram-se na página da SECAD na Intranet)"
 									var="motivo${i}${pes_sigla}"
-									opcoes="[Selecione o tipo de Ausência];Afastamento em Virtude de Participação em Programa de Treinamento;Afastamento para Participar de Atividade Instrutória;Afastamento por júri e outros serviços obrigatórios por lei;Atraso/Saída Antecipada;Ausência/Falta Justificada com Compensação;Ausência/Falta Justificada sem Compensação;Ausência por motivo de greve com compensação;Ausência por motivo de greve sem compensação;Compensação de Trabalho no Recesso;Compensação Decorrente de Trabalho nas Eleições;Falta Injustificada;Recesso;Trabalho Prestado nas Eleições;Viagem a Serviço;"
+									opcoes="[Selecione o tipo de Ausência];Afastamento em Virtude de Participação em Programa de Treinamento;Afastamento para Participar de Atividade Instrutória;Afastamento por júri e outros serviços obrigatórios por lei;Atraso/Saída Antecipada;Ausência/Falta Justificada com Compensação;Ausência/Falta Justificada sem Compensação;Ausência por motivo de greve com compensação;Ausência por motivo de greve sem compensação;Compensação de Trabalho no Recesso;Compensação Decorrente de Trabalho nas Eleições;Falta Injustificada;Recesso;Trabalho Prestado nas Eleições;Viagem a Serviço;Horas extras (trabalhadas sem remuneração)"
 									reler="ajax" idAjax="ajax${pes_sigla}" />
 							</mod:grupo>
 							<c:choose>
@@ -155,6 +155,24 @@
 										reler="ajax" idAjax="horaFimAjax${i}${pes_sigla}" /> --%>
 										
 								</c:when>
+
+								<c:when
+									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Horas extras (trabalhadas sem remuneração)'}">
+									<mod:selecao titulo="Nº de dias com horas extras" var="numDiasHoras${pes_sigla}" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="ajax" idAjax="ajax${pes_sigla}" />
+									<c:forEach var="i" begin="1"
+										end="${requestScope[f:concat('numDiasHoras',pes_sigla)]}">	
+										<mod:grupo>
+											<mod:data titulo="Data" var="dataHoraExtra${i}${pes_sigla}" reler="ajax"
+												idAjax="dataAjax${i}${pes_sigla}" />
+											<mod:texto titulo="Quantidade de Horas" var="quantHoras${i}${pes_sigla}" largura="2" />
+											<mod:selecao titulo="Feriado ou Domingo ?"
+												var="feriadoOuDomingo${i}${pes_sigla}" 	opcoes="Não;Sim" />
+										</mod:grupo>
+									</c:forEach>
+									<mod:mensagem titulo="Obs"  texto="Máximo de duas horas em dias úteis e de dez em sábados, domingos e feriados." vermelho="Sim" />
+								</c:when>
+
+
 								<c:otherwise>
 									<mod:grupo>
 										<mod:data titulo="De" var="de${i}${pes_sigla}" reler="ajax"
@@ -407,6 +425,22 @@
 												 	(art.44, INCISO II LEI 8112/90)	
 											</c:if>
 											</c:when>
+											
+											
+											
+											<c:when
+												test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Horas extras (trabalhadas sem remuneração)'}">
+												Nº de dias com horas extras: ${requestScope[f:concat('numDiasHoras',pes_sigla)]}<br/>
+												<c:forEach var="i" begin="1"
+													end="${requestScope[f:concat('numDiasHoras',pes_sigla)]}">	
+													Data: ${requestScope[f:concat(f:concat('dataHoraExtra',i),pes_sigla)]}
+													Quantidade de Horas: ${requestScope[f:concat(f:concat('quantHoras',i),pes_sigla)]}
+													Feriado ou Domingo ? ${requestScope[f:concat(f:concat('feriadoOuDomingo',i),pes_sigla)]}<br/>
+												</c:forEach>
+											</c:when>
+											
+											
+											
 											<c:otherwise>
 													De ${requestScope[f:concat(f:concat('de',i),pes_sigla)]}
 													a ${requestScope[f:concat(f:concat('ate',i),pes_sigla)]}

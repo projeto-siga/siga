@@ -38,6 +38,8 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x509.CertificateList;
 import org.bouncycastle.jce.provider.X509CRLObject;
 
+import br.gov.jfrj.siga.cd.SigaCdProperties;
+
 
 /**
  * @author mparaiso
@@ -123,8 +125,8 @@ public class CRLLocator {
 		// systemProperties.setProperty("http.proxyHost", "10.10.1.55");
 		// systemProperties.setProperty("http.proxyHost", "10.10.1.191");
 		systemProperties
-				.setProperty("http.proxyHost", "localhost");
-		systemProperties.setProperty("http.proxyPort", "8080");
+				.setProperty("http.proxyHost", SigaCdProperties.getProxyHost());
+		systemProperties.setProperty("http.proxyPort", SigaCdProperties.getProxyPort());
 
 		url = new URL(this.uri);
 		con = (HttpURLConnection) url.openConnection();

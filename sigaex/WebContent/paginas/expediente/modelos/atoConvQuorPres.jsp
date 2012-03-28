@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -62,7 +62,7 @@
 				<c:when test="${pessoa_subst.sexo == 'M'}">Dr.</c:when>
 				<c:otherwise>Drª.</c:otherwise>
 			</c:choose>	
-    	${ pessoa_subst.nomePessoa} , para, 
+    	${ pessoa_subst.nomePessoa}, para, 
 			
 			<c:choose>
 				<c:when test="${preju == 'sim'}">com</c:when>

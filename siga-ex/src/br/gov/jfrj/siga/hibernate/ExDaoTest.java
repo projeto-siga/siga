@@ -37,9 +37,9 @@ import br.gov.jfrj.itextpdf.FOP;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
-import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
@@ -59,6 +59,16 @@ public class ExDaoTest extends TestCase {
 		dao = ExDao.getInstance();
 	}
 	
+	public void testaExtensaoConversorHTML(String html) throws Exception{
+		ConversorHtml ext = AbstractConversorHTMLFactory.getInstance().getExtensaoConversorHTML();
+		byte b[] = ext.converter(html, ConversorHtml.PDF);
+	}
+	
+	public static void main (String[] a) throws Exception{
+		ExDaoTest test = new ExDaoTest();
+		test.testaExtensaoConversorHTML("<html><body><table><caption>tabela 1</caption><thead><tr><th>vv</th><th>vv</th></tr></thead><tbody><tr><td>xx</td><td>xx</td></tr></tbody></table><p></p><table><caption>tabela 2</caption><thead><tr><th>xx</th><th>xx</th></tr></thead><tbody><tr><td>xx</td><td>xx</td></tr></tbody></table>");
+	}
+
 	/**
 	 * @param args
 	 */

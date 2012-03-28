@@ -113,5 +113,15 @@ public abstract class AbstractConversorHTMLFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract ConversorHtml getConversor() throws Exception;
+	public abstract ConversorHtml getConversorPadrao() throws Exception;
+
+	/**
+	 * Retorna a extensão do conversor HTML definido na propriedade "conversor.html.ext" do arquivo siga.properties
+	 * @return
+	 * @throws AplicacaoException
+	 */
+	public ConversorHtml getExtensaoConversorHTML() throws AplicacaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

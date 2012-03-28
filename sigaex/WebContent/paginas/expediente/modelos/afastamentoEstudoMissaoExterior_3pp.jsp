@@ -1,5 +1,5 @@
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!-- este modelo trata de AFASTAMENTO PARA ESTUDO OU MISSÃO NO EXTERIOR -->
 
@@ -24,7 +24,7 @@
 				</mod:valor>
 				<mod:valor var="texto_requerimento2">
 						
-					<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />
+					<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />
 						
 					<p style="TEXT-INDENT: 2cm" align="justify">
 					${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 

@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>	
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -20,7 +20,7 @@
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.funcaoString}, 
 		${doc.subscritor.padraoReferenciaInvertido}, matrícula nº ${doc.subscritor.sigla}, do Quadro de Pessoal Permanente da Justiça Federal de Primeiro Grau no Rio de Janeiro,
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, 
-		ramal ${ramal}, vem requerer a a V. Sa. a elaboração de projeção de aposentadoria.
+		ramal ${ramal}, vem requerer a V. Sa. a elaboração de projeção de aposentadoria.
 		</p>
 		</mod:valor>
 	</mod:documento>

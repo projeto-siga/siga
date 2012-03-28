@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
@@ -39,7 +39,7 @@ CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 		</style>
 		</head>
 		<body></body></html>
-		<center><c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" /></center>
+		<center><c:import url="/paginas/expediente/modelos/inc_tit_presidenteTrf.jsp" /></center>
 		<p style="TEXT-INDENT: 3cm" align="justify">
 		Eu, ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.sigla}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao},
 		venho por meio deste solicitar a VExa., s.m.j. o deferimento do pedido de inclusão de <b>${nomedep}</b> como meu/minha dependente no Plano de Saúde da Justiça Federal, na qualidae de ${parente}

@@ -118,9 +118,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "CONTEUDO_BLOB_DOC")
 	private Blob conteudoBlobDoc;
-	
+
 	private Integer numSequencia;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_SUBSCRITOR")
 	private DpPessoa subscritor;
@@ -189,24 +189,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private java.util.SortedSet<ExMobil> exMobilSet = new TreeSet<ExMobil>();
 
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
-	
+
 	private ExDocumento exDocAnterior;
-	
-	public Integer getNumSequencia() {
-		return numSequencia;
-	}
-
-	public void setNumSequencia(Integer numSequencia) {
-		this.numSequencia = numSequencia;
-	}
-
-	public String getFgEletronico() {
-		return fgEletronico;
-	}
-
-	public void setFgEletronico(String fgEletronico) {
-		this.fgEletronico = fgEletronico;
-	}
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -224,10 +208,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Implementation of the equals comparison on the basis of equality of the
+	 * Compara dois documentos por ID
 	 * 
-	 * @param rhs
-	 * @return boolean
 	 */
 	@Override
 	public boolean equals(final Object rhs) {
@@ -242,202 +224,325 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Return the value of the ANO_EMISSAO column.
-	 * 
-	 * @return java.lang.Long
+	 * Retornao ano de emissão do documento, que compõe o código
 	 */
 	public java.lang.Long getAnoEmissao() {
 		return this.anoEmissao;
 	}
 
 	/**
-	 * @return Retorna o atributo cadastrante.
+	 * Retorna o cadastrante do documento
 	 */
 	public DpPessoa getCadastrante() {
 		return cadastrante;
 	}
 
 	/**
-	 * Return the value of the CONTEUDO_BLOB_DOC column.
-	 * 
-	 * @return java.lang.String
+	 * COMPLETAR
 	 */
 	public Blob getConteudoBlobDoc() {
 		return this.conteudoBlobDoc;
 	}
 
 	/**
-	 * Return the value of the CONTEUDO_TP_DOC column.
-	 * 
-	 * @return java.lang.String
+	 * COMPLETAR
 	 */
 	public java.lang.String getConteudoTpDoc() {
 		return this.conteudoTpDoc;
 	}
 
 	/**
-	 * Return the value of the DESCR_DOCUMENTO column.
+	 * COMPLETAR
 	 * 
-	 * @return java.lang.String
+	 * @return
+	 */
+	public java.lang.String getDescrClassifNovo() {
+		return descrClassifNovo;
+	}
+
+	/**
+	 * Retorna a descrição do documento
 	 */
 	public java.lang.String getDescrDocumento() {
 		return this.descrDocumento;
 	}
 
 	/**
-	 * Return the value of the SESB_CADASTRANTE column.
-	 * 
-	 * @return RhFuncionario
-	 */
-
-	/**
-	 * @return Retorna o atributo destinatario.
+	 * Retorna a pessoa destinatária do documento
 	 */
 	public DpPessoa getDestinatario() {
 		return destinatario;
 	}
 
 	/**
-	 * Return the value of the DT_DOC column.
-	 * 
-	 * @return java.util.Date
+	 * Retorna a data do documento
 	 */
 	public java.util.Date getDtDoc() {
 		return this.dtDoc;
 	}
 
+	/**
+	 * Retorna a data de finalização do documento
+	 * 
+	 * @return
+	 */
 	public Date getDtFechamento() {
 		return dtFechamento;
 	}
 
 	/**
-	 * Return the value of the DT_REG_DOC column.
-	 * 
-	 * @return java.util.Date
+	 * Retorna a data de registro do documento
 	 */
 	public java.util.Date getDtRegDoc() {
 		return this.dtRegDoc;
 	}
 
+	/**
+	 * Retorna o objeto de relacionamento boletim x documentos relacionado a
+	 * este documento
+	 * 
+	 * @return
+	 */
+	public java.util.Set<ExBoletimDoc> getExBoletimDocSet() {
+		return exBoletimDocSet;
+	}
+
+	/**
+	 * Retorna a classificação do documento
+	 * 
+	 * @return
+	 */
 	public ExClassificacao getExClassificacao() {
 		return exClassificacao;
 	}
 
+	/**
+	 * Retorna o documento usado como base para gerar este, por meio do comando
+	 * Duplicar ou Refazer
+	 * 
+	 * @return
+	 */
+	public ExDocumento getExDocAnterior() {
+		return exDocAnterior;
+	}
+
+	/**
+	 * Retorna o tipo do documento (Ofício, Memorando, etc)
+	 * 
+	 * @return
+	 */
 	public ExFormaDocumento getExFormaDocumento() {
 		return exFormaDocumento;
 	}
 
+	/**
+	 * Retorna o móbil do qual o documento é filho
+	 * 
+	 * @return
+	 */
+	public ExMobil getExMobilPai() {
+		return exMobilPai;
+	}
+
+	/**
+	 * Retorna o conjunto de móbil's do documento
+	 * 
+	 * @return
+	 */
+	public java.util.SortedSet<ExMobil> getExMobilSet() {
+		return exMobilSet;
+	}
+
+	/**
+	 * Retorna o modelo do documento
+	 * 
+	 * @return
+	 */
 	public ExModelo getExModelo() {
 		return exModelo;
 	}
 
 	/**
-	 * Return the value of the ID_TP_DOC column.
+	 * Retorna o nível de acesso do documento
 	 * 
-	 * @return ExTipoDocumento
+	 * @return
+	 */
+	public ExNivelAcesso getExNivelAcesso() {
+		return exNivelAcesso;
+	}
+
+	/**
+	 * Retorna a origem do documento
 	 */
 	public ExTipoDocumento getExTipoDocumento() {
 		return this.exTipoDocumento;
 	}
 
-	/*
-	 * public String getFgPessoal() { return fgPessoal; }
+	/**
+	 * Retorna, no formato String (S/N) se o documento é eletrônico
+	 * 
+	 * @return
 	 */
+	public String getFgEletronico() {
+		return fgEletronico;
+	}
 
 	/**
-	 * Return the simple primary key value that identifies this object.
-	 * 
-	 * @return java.lang.Long
+	 * Retorna o id do documento
 	 */
 	public java.lang.Long getIdDoc() {
 		return idDoc;
 	}
 
 	/**
-	 * @return Retorna o atributo lotaCadastrante.
+	 * Retorna a lotação cadastrante do documento
 	 */
 	public DpLotacao getLotaCadastrante() {
 		return lotaCadastrante;
 	}
 
 	/**
-	 * @return Retorna o atributo lotaDestinatario.
-	 */
+	 * Retorna a lotação destinatária do documento
+	 * */
 	public DpLotacao getLotaDestinatario() {
 		return lotaDestinatario;
 	}
 
 	/**
-	 * @return Retorna o atributo lotaSubscritor.
-	 */
+	 * Retorna a lotação subscritora do documento
+	 * */
 	public DpLotacao getLotaSubscritor() {
 		return lotaSubscritor;
 	}
 
 	/**
-	 * Return the value of the NM_ARQ_DOC column.
+	 * Retorna a lotação titular do documento
 	 * 
-	 * @return java.lang.String
+	 * @return
+	 */
+	public DpLotacao getLotaTitular() {
+		return lotaTitular;
+	}
+
+	/**
+	 * COMPLETAR Retorna o nome do arquivo do documento
 	 */
 	public java.lang.String getNmArqDoc() {
 		return this.nmArqDoc;
 	}
 
 	/**
-	 * @return Retorna o atributo nomeDestinatario.
+	 * @return Retorna o nome do destinatário não tabelado digitado.
 	 */
 	public String getNmDestinatario() {
 		return nmDestinatario;
 	}
 
+	/**
+	 * Retorna o valor completo digitado no campo Função;Lotação;Localidade
+	 * 
+	 * @return
+	 */
+	public java.lang.String getNmFuncaoSubscritor() {
+		return nmFuncaoSubscritor;
+	}
+
+	/**
+	 * COMPLETAR Retorna o nome do órgão externo
+	 * 
+	 * @return
+	 */
 	public String getNmOrgaoExterno() {
 		return nmOrgaoExterno;
 	}
 
 	/**
-	 * Return the value of the NM_SUBSCRITOR_EXT column.
-	 * 
-	 * @return java.lang.String
+	 * Retorna o nome do subscritor externo digitado
 	 */
 	public java.lang.String getNmSubscritorExt() {
 		return this.nmSubscritorExt;
 	}
 
 	/**
-	 * Return the value of the NUM_EXPEDIENTE column.
+	 * Retorna o número antigo digitado
 	 * 
-	 * @return java.lang.Long
+	 * @return
+	 */
+	public java.lang.String getNumAntigoDoc() {
+		return numAntigoDoc;
+	}
+
+	/**
+	 * Retorna o número do expediente (não o código completo)
 	 */
 	public java.lang.Long getNumExpediente() {
 		return this.numExpediente;
 	}
 
 	/**
-	 * Return the value of the NUM_EXT_DOC column.
-	 * 
-	 * @return java.lang.String
+	 * Retorna o número externo digitado.
 	 */
 	public java.lang.String getNumExtDoc() {
 		return this.numExtDoc;
 	}
 
+	/**
+	 * Retorna o número de sequência do documento. Não é o número do expediente.
+	 * No caso de ser um subprocesso, retorna o número que gera o código .01,
+	 * .02, etc.
+	 * 
+	 * @return
+	 */
+	public Integer getNumSequencia() {
+		return numSequencia;
+	}
+
+	/**
+	 * retorna a observação sobre o órgão externo de origem do documento
+	 * 
+	 * @return
+	 */
 	public String getObsOrgao() {
 		return obsOrgao;
 	}
 
+	/**
+	 * Retorna o órgão externo de origem do documento
+	 * 
+	 * @return
+	 */
 	public CpOrgao getOrgaoExterno() {
 		return orgaoExterno;
 	}
 
+	/**
+	 * Retorna o órgão externo a que se destina o documento
+	 * 
+	 * @return
+	 */
 	public CpOrgao getOrgaoExternoDestinatario() {
 		return orgaoExternoDestinatario;
 	}
 
 	/**
-	 * @return Retorna o atributo subscritor.
+	 * @return Retorna o órgão usuário em que o documento foi produzido.
+	 */
+	public CpOrgaoUsuario getOrgaoUsuario() {
+		return orgaoUsuario;
+	}
+
+	/**
+	 * @return Retorna o subscritor do documento.
 	 */
 	public DpPessoa getSubscritor() {
 		return subscritor;
+	}
+
+	/**
+	 * @return Retorna o titular do documento.
+	 */
+	public DpPessoa getTitular() {
+		return titular;
 	}
 
 	/**
@@ -494,6 +599,15 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.conteudoTpDoc = conteudoTpDoc;
 	}
 
+	/*
+	 * public void setFgPessoal(final String fgPessoal) { this.fgPessoal =
+	 * fgPessoal; }
+	 */
+
+	public void setDescrClassifNovo(java.lang.String descrClassifNovo) {
+		this.descrClassifNovo = descrClassifNovo;
+	}
+
 	/**
 	 * Set the value of the DESCR_DOCUMENTO column.
 	 * 
@@ -533,16 +647,36 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.dtRegDoc = dtRegDoc;
 	}
 
+	public void setExBoletimDocSet(java.util.Set<ExBoletimDoc> exBoletimDocSet) {
+		this.exBoletimDocSet = exBoletimDocSet;
+	}
+
 	public void setExClassificacao(final ExClassificacao exClassificacao) {
 		this.exClassificacao = exClassificacao;
+	}
+
+	public void setExDocAnterior(ExDocumento exDocAnterior) {
+		this.exDocAnterior = exDocAnterior;
 	}
 
 	public void setExFormaDocumento(final ExFormaDocumento exFormaDocumento) {
 		this.exFormaDocumento = exFormaDocumento;
 	}
 
+	public void setExMobilPai(ExMobil exMobilPai) {
+		this.exMobilPai = exMobilPai;
+	}
+
+	public void setExMobilSet(java.util.SortedSet<ExMobil> exMobilSet) {
+		this.exMobilSet = exMobilSet;
+	}
+
 	public void setExModelo(final ExModelo exModelo) {
 		this.exModelo = exModelo;
+	}
+
+	public void setExNivelAcesso(ExNivelAcesso exNivelAcesso) {
+		this.exNivelAcesso = exNivelAcesso;
 	}
 
 	/**
@@ -554,10 +688,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.exTipoDocumento = exTipoDocumento;
 	}
 
-	/*
-	 * public void setFgPessoal(final String fgPessoal) { this.fgPessoal =
-	 * fgPessoal; }
-	 */
+	public void setFgEletronico(String fgEletronico) {
+		this.fgEletronico = fgEletronico;
+	}
 
 	/**
 	 * Set the simple primary key value that identifies this object.
@@ -593,6 +726,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.lotaSubscritor = lotaSubscritor;
 	}
 
+	public void setLotaTitular(DpLotacao lotaTitular) {
+		this.lotaTitular = lotaTitular;
+	}
+
 	/**
 	 * Set the value of the NM_ARQ_DOC column.
 	 * 
@@ -610,6 +747,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.nmDestinatario = nomeDestinatario;
 	}
 
+	public void setNmFuncaoSubscritor(java.lang.String nmSubscritorFuncao) {
+		this.nmFuncaoSubscritor = nmSubscritorFuncao;
+	}
+
 	public void setNmOrgaoExterno(String nmOrgaoExterno) {
 		this.nmOrgaoExterno = nmOrgaoExterno;
 	}
@@ -621,6 +762,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public void setNmSubscritorExt(final java.lang.String nmSubscritorExt) {
 		this.nmSubscritorExt = nmSubscritorExt;
+	}
+
+	public void setNumAntigoDoc(java.lang.String numAntigoDoc) {
+		this.numAntigoDoc = numAntigoDoc;
 	}
 
 	/**
@@ -641,6 +786,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.numExtDoc = numExtDoc;
 	}
 
+	public void setNumSequencia(Integer numSequencia) {
+		this.numSequencia = numSequencia;
+	}
+
 	public void setObsOrgao(final String obsOrgao) {
 		this.obsOrgao = obsOrgao;
 	}
@@ -653,6 +802,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.orgaoExternoDestinatario = cpOrgao;
 	}
 
+	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
+		this.orgaoUsuario = orgaoUsuario;
+	}
+
 	/**
 	 * @param subscritor
 	 *            Atribui a subscritor o valor.
@@ -661,91 +814,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.subscritor = subscritor;
 	}
 
-	public java.lang.String getNmFuncaoSubscritor() {
-		return nmFuncaoSubscritor;
-	}
-
-	public void setNmFuncaoSubscritor(java.lang.String nmSubscritorFuncao) {
-		this.nmFuncaoSubscritor = nmSubscritorFuncao;
-	}
-
-	public CpOrgaoUsuario getOrgaoUsuario() {
-		return orgaoUsuario;
-	}
-
-	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
-		this.orgaoUsuario = orgaoUsuario;
-	}
-
-	public DpLotacao getLotaTitular() {
-		return lotaTitular;
-	}
-
-	public void setLotaTitular(DpLotacao lotaTitular) {
-		this.lotaTitular = lotaTitular;
-	}
-
-	public DpPessoa getTitular() {
-		return titular;
-	}
-
 	public void setTitular(DpPessoa titular) {
 		this.titular = titular;
-	}
-
-	public java.lang.String getNumAntigoDoc() {
-		return numAntigoDoc;
-	}
-
-	public void setNumAntigoDoc(java.lang.String numAntigoDoc) {
-		this.numAntigoDoc = numAntigoDoc;
-	}
-
-	public java.lang.String getDescrClassifNovo() {
-		return descrClassifNovo;
-	}
-
-	public void setDescrClassifNovo(java.lang.String descrClassifNovo) {
-		this.descrClassifNovo = descrClassifNovo;
-	}
-
-	public ExNivelAcesso getExNivelAcesso() {
-		return exNivelAcesso;
-	}
-
-	public void setExNivelAcesso(ExNivelAcesso exNivelAcesso) {
-		this.exNivelAcesso = exNivelAcesso;
-	}
-
-	public java.util.SortedSet<ExMobil> getExMobilSet() {
-		return exMobilSet;
-	}
-
-	public void setExMobilSet(java.util.SortedSet<ExMobil> exMobilSet) {
-		this.exMobilSet = exMobilSet;
-	}
-
-	public ExMobil getExMobilPai() {
-		return exMobilPai;
-	}
-
-	public void setExMobilPai(ExMobil exMobilPai) {
-		this.exMobilPai = exMobilPai;
-	}
-	
-	public java.util.Set<ExBoletimDoc> getExBoletimDocSet() {
-		return exBoletimDocSet;
-	}
-
-	public void setExBoletimDocSet(java.util.Set<ExBoletimDoc> exBoletimDocSet) {
-		this.exBoletimDocSet = exBoletimDocSet;
-	}
-
-	public ExDocumento getExDocAnterior() {
-		return exDocAnterior;
-	}
-
-	public void setExDocAnterior(ExDocumento exDocAnterior) {
-		this.exDocAnterior = exDocAnterior;
 	}
 }

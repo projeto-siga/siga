@@ -94,12 +94,10 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 			<ww:hidden name="idOrgUsu" value="${modelo.cpOrgaoUsuario.id}" />
 
 			<tr class="header">
-				<td width="20%">Orgão Usuário:</td>
-				<td width="80%">${modelo.cpOrgaoUsuario.descricao}<c:if
+				<td><c:if test="${not empty modelo.cpOrgaoUsuario}">Orgão Usuário: ${modelo.cpOrgaoUsuario.descricao}</c:if><c:if
 					test="${empty modelo.cpOrgaoUsuario}">GERAL</c:if></td>
 			</tr>
 			<tr>
-				<td <c:if test="${true}">rowspan="2"</c:if>>Script</td>
 				<td>
 				<textarea id="conteudo${i}" style="width: 100%;" cols="1" rows="1"
 					name="conteudo"><c:if

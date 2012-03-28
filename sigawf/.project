@@ -8,9 +8,9 @@
 		<project>siga-sinc-lib</project>
 		<project>siga-cp</project>
 		<project>siga-base</project>
+		<project>siga-libs</project>
 		<project>siga-rel</project>
 		<project>siga-cd-base</project>
-		<project>siga-libs</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

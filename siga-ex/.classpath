@@ -5,8 +5,9 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-cp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-ws"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/siga-ext"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-sinc-lib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/activation.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/annotations-api-6.0.18.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/antlr-2.7.6.jar"/>

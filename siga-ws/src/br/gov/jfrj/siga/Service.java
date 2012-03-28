@@ -72,9 +72,7 @@ public abstract class Service {
 	public static CdService getCdService() {
 		if (cd == null)
 			cd = getService(CdService.class,
-					// "http://10.10.7.255:8080/sigacd/servicos/CdService?wsdl",
 					"http://localhost:8080/sigacd/servicos/CdService?wsdl",
-					// "http://homologar:8080/sigacd/servicos/CdService?wsdl",
 					"http://impl.service.cd.siga.jfrj.gov.br/",
 					"CdServiceImplService");
 		return cd;

@@ -202,7 +202,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (pessoaTemPerfilVinculado(mob.doc(), titular, lotaTitular)) {
 			return true;
 		}
-
+		
+		// Verifica se o titular é subscritor de algum despacho do documento
+		if (mob.doc().getSubscritorDespacho().contains(titular))
+            return true;
+		
 		// Verifica se o titular é subscritor ou cosignatário do documento
 		if (mob.doc().getSubscritorECosignatarios().contains(titular))
 			return true;
@@ -1044,6 +1048,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Despacho com transferência Externa</li>
 	 * <li>Despacho com Transferência</li>
 	 * <li>Recebimento Transitório</li>
+	 * <li>Recebimento</li>
 	 * <li><b>Registro de Assinatura do Documento (desnecessário)</li>
 	 * <li>Assinatura Digital do Documento (desnecessário)</b></li>
 	 * </ul>
@@ -1082,7 +1087,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		// Não deixa cancelar assinatura
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
-				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
 			return false;
 
 		// Não deixa cancelar a atualização (por enquanto, só ser resultar
@@ -1265,7 +1271,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Número da última via não pode ser maior ou igual a 21</li>
 	 * <li>Documento tem de estar finalizado</li>
 	 * <li>Documento tem de possuir alguma via não cancelada</li>
-	 * <li>Documento não pode ser eletrônico</li>
+	 * <li>Lotação do titular igual a do cadastrante ou a do subscritor ou 
+	 * o titular ser o próprio subscritor</li>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1278,9 +1285,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (!mob.doc().isExpediente())
 			return false;
-
-		if (mob.doc().isEletronico())
-			return false;
 		
 		if (mob.doc().getExMobilPai() != null)
 			return false;
@@ -1292,7 +1296,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		
 		if (mob.doc().getNumUltimaViaNaoCancelada() > 0
-				&& mob.doc().getDtFechamento() != null && podeMovimentar(titular, lotaTitular, mob)) {
+				&& mob.doc().getDtFechamento() != null && 
+				(podeMovimentar(titular, lotaTitular, mob) 
+				   || mob.doc().getLotaCadastrante().equivale(lotaTitular)				        
+				   || (mob.doc().getLotaSubscritor() != null && mob.doc().getLotaSubscritor().equivale(lotaTitular))
+			       || (mob.doc().getSubscritor() != null &&  mob.doc().getSubscritor().equivale(titular))) // subscritor é null para documentos externos		      
+			) {
+
 			return true;
 		}
 
@@ -2409,7 +2419,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 		if (ultMov == null)
 			return false;
-		if (ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA)
+		if (ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
+			|| ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
 			return false;
 		// Verifica se o despacho já está assinado
 		for (CpMarca marca : mob.getExMarcaSet()) {
@@ -2630,7 +2641,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return !mob.isCancelada() && !mob.isEncerrado()
 				&& mob.doc().isAssinado() && !mob.isJuntado()
-				&& !mob.isArquivado() && !mob.isEmTransito()
+				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob);
 	}
 

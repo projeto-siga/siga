@@ -22,6 +22,7 @@ import java.util.HashSet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -287,7 +288,7 @@ public class Notificador {
 			try {
 				Correio
 						.enviar(
-								"SIGA-DOC <sigaex@jfrj.jus.br>",
+								SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
 								destinatariosEmail
 										.toArray(new String[destinatariosEmail
 												.size()]),

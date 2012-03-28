@@ -128,8 +128,10 @@ public abstract class AbstractDocumento extends HttpServlet {
 						"Não foi possível carregar usuário" + e.toString());
 			}
 
-			if (!Ex.getInstance().getComp().podeAcessarDocumento(
-					cusr.getTitular(), cusr.getLotaTitular(), mob)) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeAcessarDocumento(cusr.getTitular(),
+							cusr.getLotaTitular(), mob)) {
 				throw new AplicacaoException(
 						"Documento inacessível ao usuário.");
 			}
@@ -142,7 +144,22 @@ public abstract class AbstractDocumento extends HttpServlet {
 			final byte ab[] = getDocumento(mob, mov, request);
 
 			response.reset();
-			response.setContentType(getContentType());
+			// Se o resultado for muito pequeno, entao trata-se de um hash
+			String filename;
+			if (mov != null) {
+				filename = mov.getReferencia();
+			} else {
+				filename = mob.getCodigoCompacto();
+			}
+			if (ab.length <= 64) {
+				response.setHeader("Content-Disposition",
+						"attachment; filename=" + filename + ".hash");
+				response.setContentType("application/octet-stream");
+			} else {
+				response.setHeader("Content-Disposition",
+						"filename=" + filename + ".pdf");
+				response.setContentType(getContentType());
+			}
 			response.setContentLength(ab.length);
 			if (getCharacterEncoding() != null)
 				response.setCharacterEncoding(getCharacterEncoding());

@@ -31,28 +31,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 public abstract class ExArquivo {
 	private Integer numPaginas;
 
-	/**
-	 * Retorna uma lista com o nome de todos os usuários que já assinaram um
-	 * documento.
-	 * 
-	 * @return Uma lista com o nome de todos os usuários que já assinaram um
-	 *         documento.
-	 * 
-	 */
-	public ArrayList<String> getAssinantes() {
-		Set<ExMovimentacao> set = getAssinaturasDigitais();
-		ArrayList<String> als = new ArrayList<String>();
-
-		for (ExMovimentacao movAssinatura : set) {
-			String s = movAssinatura.getDescrMov().trim().toUpperCase();
-			s = s.split(":")[0];
-			s = s.intern();
-			if (!als.contains(s)) {
-				als.add(s);
-			}
-		}
-		return als;
-	}
+	public abstract String getAssinantesCompleto();
 
 	public abstract Set<ExMovimentacao> getAssinaturasDigitais();
 
@@ -102,27 +81,11 @@ public abstract class ExArquivo {
 	 * 
 	 */
 	public String getMensagem() {
-		String sMensagem;
-		sMensagem = null;
-		ArrayList<String> als = getAssinantes();
-
-		if (als.size() > 0) {
-			String sSiglaAssinatura = getSiglaAssinatura();
-			sMensagem = "Assinado digitalmente por ";
-			for (int i = 0; i < als.size(); i++) {
-				String nome = als.get(i);
-				if (i > 0) {
-					if (i == als.size() - 1) {
-						sMensagem += " e ";
-					} else {
-						sMensagem += ", ";
-					}
-				}
-				sMensagem += nome;
-			}
-			sMensagem += ".\n";
-			sMensagem += "Documento Nº: " + sSiglaAssinatura
-					+ " - consulta à autenticidade em www.jfrj.jus.br/ex/docs.";
+		String sMensagem = "";
+		if (isAssinadoDigitalmente()) {
+			sMensagem += getAssinantesCompleto();
+			sMensagem += "Documento Nº: " + getSiglaAssinatura()
+					+ " - consulta à autenticidade em " + SigaExProperties.getEnderecoAutenticidadeDocs();
 		}
 		return sMensagem;
 	}
@@ -187,7 +150,7 @@ public abstract class ExArquivo {
 	public String getQRCode() {
 		if (isAssinadoDigitalmente()) {
 			String sQRCode;
-			sQRCode = "http://a.teste.com.br/" + getSiglaAssinatura();
+			sQRCode = "http://a.jfrj.jus.br/" + getSiglaAssinatura();
 			return sQRCode;
 		}
 		return null;

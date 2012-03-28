@@ -147,14 +147,14 @@ function verifica_data(data, naoObriga) {
 		}
 
 		// verifica o dia valido para cada mes
-		if (((dia < 01 || dia > 31) || (dia > 30)
-				&& (mes == 04 || mes == 06 || mes == 09 || mes == 11))
+		if (((dia < 1 || dia > 31) || (dia > 30)
+				&& (mes == 4 || mes == 6 || mes == 9 || mes == 11))
 				|| (mes == 2 && (dia > 29 || (dia > 28 && (parseInt(ano / 4) != ano / 4))))) {
 			msg = msg + "Dia inválido\n";
 		}
 
 		// verifica se o mes e valido
-		if (mes < 01 || mes > 12) {
+		if (mes < 1 || mes > 12) {
 			msg = msg + "Mês inválido\n";
 		}
 

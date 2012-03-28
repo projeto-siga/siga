@@ -2,13 +2,14 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <mod:modelo>
 	<mod:entrevista>
 	<br>
 	    <br>
+	    <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRIÇÃO COM NOME COMPLETO E ASSUNTO</b></span><br>
 		<span style="color:red"> <b>ESTE DOCUMENTO DEVERÁ SER ENVIADO À DIMED</b></span>
 		<br/><br/>
 		<mod:grupo titulo="DADOS DO MAGISTRADO/SERVIDOR BENEFICIÁRIO TITULAR">
@@ -39,9 +40,9 @@
 			               <mod:selecao titulo="Estado Civil" var="estado${i}" opcoes="Solteiro;Solteira;Casado;Casada;Viúvo;Viúva;Outros" reler="não" />
 			           </mod:grupo>
 			           <mod:grupo>
-				           <mod:texto titulo="Nº Identidade" var="iden${i}" largura="20" obrigatorio="Nao"/>
-				           <mod:texto titulo="Orgão Expedidor" var ="OrgExp${i}" obrigatorio="Nao"/>
-				           <mod:data titulo="Data de Expedição" var="dtExp${i}" obrigatorio="Nao"/>
+				           <mod:texto titulo="Nº Identidade" var="iden${i}" largura="20" obrigatorio="nao"/>
+				           <mod:texto titulo="Orgão Expedidor" var ="OrgExp${i}" obrigatorio="nao"/>
+				           <mod:data titulo="Data de Expedição" var="dtExp${i}" obrigatorio="nao"/>
 			           </mod:grupo>
 			       </mod:grupo> 
 			       <hr style="color: #FFFFFF;" />
@@ -52,30 +53,30 @@
 	        
 	        <hr style="color: #FFFFFF;" />
 		<mod:selecao var="contdoc"
-				titulo="Quantidade de Documentos Comprobatórios"
+				titulo="<b>Quantidade de Documentos Comprobatórios</b>"
 				opcoes="1;2;3;4;5"
 				reler="sim"  /><br/>
 		<mod:grupo depende="contDependAjax">
 				<c:forEach var="i" begin="1" end="${contdoc}">
 		              <mod:grupo>
-				          <mod:texto titulo="Documento nº ${i}" var="dcmt${i}" largura="60"/>
+				          <mod:texto titulo="<b>Documento nº ${i}</b>" var="dcmt${i}" largura="60"/>
 		               </mod:grupo>
 	            </c:forEach>    
 	    </mod:grupo>        
-	        
+	        <br></br>
 			<mod:grupo>			
 			<mod:caixaverif titulo="Declaro estar ciente dos termos do capitulo IV da resoluçao nª 2 de 2008 do Conselho da Justiça
 					Federal, que regulamenta a assistência à saude prevista no art. 2320 da lei nº &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.112, de 1990, 
 					com a redação dada pela lei 11.032, de 2006, e de que  o respectivo auxilio será pago mediante
 					reembolso.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, ainda que os beneficiários acima relacionados não recebem  auxílio semelhante, nem participam de outro 
 					programa de assistência saúde, custeado pelos cofres públicos, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ainda que em partes.<br><br>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, por fim, estar ciente de que a documentação sobre a operadora/contrato do contrato do plano de saude
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, por fim, estar ciente de que a documentação sobre a operadora/contrato do plano de saude
 					será apresentada após a regulamentação da matéria pelo TRF - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2ª Região." var="decl" marcado="Sim" obrigatorio="Sim" reler="Nao"/>
 			</mod:grupo>
 			<br>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<mod:obrigatorios />
 			<br><br>
-			
+			<br>
 			<mod:grupo titulo="Resolução 02/2008/CJF:<br/><br>
 					Art. 42. Só fará jus ao ressarcimento o
 					beneficiário que não receber auxílio semelhante e nem participar de outro 
@@ -142,16 +143,48 @@
 <br/>
 		<table border="1" cellpadding="5" width="96%"style="font-size:19" >
 			<tr>
-    			<th colspan="2" align="left" style="font-size:10"><b>1-DADOS DO MAGISTRADOS/SERVIDOR BENEFICIÁRIO(TITULAR)</b></th>
+    			<th colspan="2" align="left" style="font-size:10"><b>1-DADOS DO MAGISTRADO/SERVIDOR BENEFICIÁRIO (TITULAR)</b></th>
   			</tr>
   			<tr >
   				<td>
-  				<p style="font-family:Arial;font-size:9pt">
+  		<!--     <p style="font-family:Arial;font-size:9pt">  -->
+  				
+  				 <table width="100%" border="0" cellpadding="1" cellspacing="1" bgcolor="#FFFFFF">
+			        <tr>
+			      	<td width="70%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Nome &nbsp; :&nbsp;${doc.subscritor.descricao}</td>
+			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Matrícula &nbsp;:&nbsp;${doc.subscritor.matricula}</td>
+                    </tr>
+                 </table>
+                 
+                  <table width="100%" border="0" cellpadding="1" cellspacing="1" bgcolor="#FFFFFF">
+			        <tr>
+			      	<td width="70%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Cargo &nbsp; :&nbsp;${doc.subscritor.cargo.descricao}</td>
+			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Quadro de Pessoal &nbsp; :&nbsp; TRF</td>
+                    </tr>
+                 </table>
+                 
+                  <table width="100%" border="0" cellpadding="1" cellspacing="1" bgcolor="#FFFFFF">
+			        <tr>
+			      	<td width="70%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Lotação &nbsp; :&nbsp;${doc.subscritor.lotacao.descricao}</td>
+			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Ramal &nbsp;:&nbsp;${ramal}</td>
+                    </tr>
+                 </table>
+                 
+                 <table width="100%" border="0" cellpadding="1" cellspacing="0">
+			       <tr>
+     			   <td width="100%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" align="left">Plano de Saúde a que está ${vinc} &nbsp; : &nbsp;${plano}</td>
+			       </tr>
+		         </table>
+                 
+                <!--  
   				Nome: ${doc.subscritor.descricao}&nbsp;_________&nbsp; Matricula: ${doc.subscritor.matricula}<br/>
 				Cargo: ${doc.subscritor.cargo.descricao} &nbsp;_________&nbsp;Quadro de Pessoal:&nbsp;TRF<br/>
 				Lotação: ${doc.subscritor.lotacao.descricao}  &nbsp;_________&nbsp;Ramal: ${ramal}<br/>
 				Plano de Sa&uacute;de a que est&aacute; ${vinc}: ${plano}
-				</p>
+				-->
+				
+				
+		<!--	</p>    -->
 				</td>
   			</tr>
   		</table>
@@ -171,14 +204,38 @@
 	 		  
   			<tr>
   				<td>
-  				    <p style="font-family:Arial;font-size:9pt">
+  				    
+  			    <table width="100%" border="0" cellpadding="1" cellspacing="0">
+			      <tr>
+     			  <td width="100%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" align="left">Nome &nbsp; : &nbsp;${nomm}</td>
+			      </tr>
+		        </table>
+		        
+  				  <table width="100%" border="0" cellpadding="1" cellspacing="1" bgcolor="#FFFFFF">
+			        <tr>
+			      	<td width="34%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Parentesco &nbsp; :&nbsp;${parenn}</td>
+			        <td width="36%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Estado Civil &nbsp;:&nbsp;${estd}</td>
+			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Data de Nascimento &nbsp;:&nbsp;${dtNascc}</td>
+			        </tr>
+                 </table>
+                 
+                  <table width="100%" border="0" cellpadding="1" cellspacing="1" bgcolor="#FFFFFF">
+			        <tr>
+			      	<td width="34%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Nº Identidade &nbsp;:&nbsp;${idenn}</td>
+			        <td width="36%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Órgão Expedidor &nbsp;:&nbsp;${OrgExpp}</td>
+			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Data de Expedição &nbsp;&nbsp;&nbsp;:&nbsp;${dtExpp}</td>
+                    </tr>
+                 </table>
+  				 
+  				    
+  				    <!-- 
   					Nome: ${nomm}  <br> Parentesco: ${parenn} &nbsp;_____&nbsp;
   					Estado Civil: ${estd} &nbsp;_____&nbsp;
   					Data de Nascimento: ${dtNascc} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
   					Nº Identidade: ${idenn} &nbsp;_____&nbsp; 
   					&Oacute;rg&atilde;o Expedidor: ${OrgExpp} &nbsp;_____&nbsp;
   					Data de Expedi&ccedil;&atilde;o: ${dtExpp}<br/>
-  					</p>
+  					 -->
   				</td>
   			</tr>
   			</c:forEach>
@@ -192,20 +249,20 @@
 			</tr>
 			<tr >
 				<td >
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro estar ciente dos termos do capitulo IV da resolução nª 2 de 2008 do Conselho da Justiça
+					Declaro estar ciente dos termos do capitulo IV da resolução nª 2 de 2008 do Conselho da Justiça
 					Federal, que regulamenta a assistência à saude prevista no art. 2320 da lei nº 8.112, de 1990, 
 					com a redação dada pela lei 11.032, de 2006, e de que  o respectivo auxílio será pago mediante
-					reembolso.<br/>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, ainda que os beneficiados acima relacionados não recebem  auxílio semelhante, nem participam de outro 
-					programa de assistência saúde, custeado pelos cofres públicos, ainda que em partes.<br/>
+					reembolso.<br></br>
+					Declaro, ainda que os beneficiados acima relacionados não recebem  auxílio semelhante, nem participam de outro 
+					programa de assistência saúde, custeado pelos cofres públicos, ainda que em partes.<br></br>
 					<b>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, por fim, estar ciente de que a documentação sobre a operadora/contrato do contrato do plano de saúde
+					Declaro, por fim, estar ciente de que a documentação sobre a operadora/contrato do plano de saúde
 					será apresentada após a regulamentação da matéria pelo TRF - 2ª Região.
 					</b> 
 				</td>
 			</tr>
 		</table>
-		<br>
+		<br><c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" /><br>
 		<table border="1" cellpadding="5" width="96%"style="font-size:9">
 			<tr>
 				<th colspan="2" align="left" style="font-size:10"><b>4- ANEXOS </b></th>
@@ -216,7 +273,7 @@
 					<c:if test="${contdoc > '0'}">
 		        	   <c:forEach var="i" begin="1" end="${contdoc}">
 				          <c:set var="docs" value="${requestScope[(f:concat('dcmt',i))]}" />
-				          ${i})- <u>${docs}</u><br>		    
+				          ${i}) ${docs}<br>		    
 			           </c:forEach>
 		            </c:if>
 				</td>
@@ -226,7 +283,11 @@
 			</tr>
 		</table>
 		
-		<br><br><br>
+		<br><br>
+		
+		<!-- 
+		
+		<br>
 		<table border="1" cellpadding="5" width="96%"style="font-size:9">
 			<tr>
 				<th colspan="2" align="left" style="font-size:9"><b>5- OBSERVAÇÕES </b></th>
@@ -256,7 +317,9 @@
 				</td>
 			</tr>
 		</table>
-
+		 -->
+		
+        <br>/${doc.cadastrante.siglaPessoa}</br>
 		<!-- INICIO PRIMEIRO RODAPE
 		<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		FIM PRIMEIRO RODAPE -->

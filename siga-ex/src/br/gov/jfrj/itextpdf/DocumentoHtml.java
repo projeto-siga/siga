@@ -59,7 +59,7 @@ public class DocumentoHtml extends AbstractDocumento {
 			// border: medium double green;\" class=\"total\">");
 
 			sb
-					.append("<div style=\"margin-bottom:6pt; padding:6pt; width:100%; clear:both; border: thin solid black;\" class=\"documento\">");
+					.append("<div style=\"margin-bottom:6pt; padding:0pt; width:100%; clear:both; border: thin solid black;\" class=\"documento\">");
 
 			sb
 					.append("<table width=\"100%\" style=\"padding:3pt;\" border=0><tr><td>");

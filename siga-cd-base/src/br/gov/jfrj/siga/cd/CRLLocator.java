@@ -120,11 +120,11 @@ public class CRLLocator {
 		HttpURLConnection con = null;
 
 		Properties systemProperties = System.getProperties();
-		// systemProperties.setProperty("http.proxyHost", "127.0.0.1");
-		// systemProperties.setProperty("http.proxyHost", "127.0.0.1");
+		// systemProperties.setProperty("http.proxyHost", "10.10.1.55");
+		// systemProperties.setProperty("http.proxyHost", "10.10.1.191");
 		systemProperties
-				.setProperty("http.proxyHost", "localhost");
-		systemProperties.setProperty("http.proxyPort", "8080");
+				.setProperty("http.proxyHost", SigaCdProperties.getProxyHost());
+		systemProperties.setProperty("http.proxyPort", SigaCdProperties.getProxyHost());
 
 		url = new URL(this.uri);
 		con = (HttpURLConnection) url.openConnection();

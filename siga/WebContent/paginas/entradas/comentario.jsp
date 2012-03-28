@@ -6,6 +6,12 @@
 novidades.</font></p>
 
 <table>
+	<tr>
+		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
+			align="justify"> <b>Modelos padronizados</b><br>
+	
+	Está sendo realizada uma padronização dos modelos de expedientes usados pelo CJF e pelos TRF's da 2ª e 3ª Região. Alguns modelos, como o de ofício, já estão com um novo layout no Siga-Doc.
+	</font></td></tr>
 	
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'

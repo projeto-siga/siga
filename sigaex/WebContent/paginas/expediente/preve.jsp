@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <c:set var="titulo_pagina" scope="request">
 	Visualizar
@@ -21,7 +21,14 @@
 	<tr>
 		<td style="padding: 10;"><tags:fixdocumenthtml>
 			<c:if test="${modelo.conteudoTpBlob == 'template/freemarker'}">
-				${f:processarModelo(doc, 'processar_modelo', par)}
+			    <c:choose>
+				    <c:when test="${empty mov}">
+					    ${f:processarModelo(doc, 'processar_modelo', par, null)}
+					</c:when>
+					<c:otherwise>
+                        ${f:processarModelo(mov, 'processar_modelo', par, null)}
+					</c:otherwise>
+			    </c:choose>
 			</c:if>
 			<c:if test="${modelo.conteudoTpBlob != 'template/freemarker'}">
 				<c:import url="/paginas/expediente/modelos/${jsp}" />

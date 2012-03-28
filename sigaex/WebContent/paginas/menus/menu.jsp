@@ -1,5 +1,5 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
@@ -76,45 +76,51 @@
 	</div>
 	</li>
 
-	<li class="imatm" style="width: 176px;"><a href="#"> <span
-		class="imea imeam"><span></span></span>Relatórios</a>
-	<div class="imsc">
-	<div class="imsubc" style="width: 176px; top: 0px; left: 0px;">
-	<ul style="">
+    <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios')}">
+
+		<li class="imatm" style="width: 176px;"><a href="#"> <span
+			class="imea imeam"><span></span></span>Relatórios</a>
+		<div class="imsc">
+		<div class="imsubc" style="width: 176px; top: 0px; left: 0px;">
+		<ul style="">
+            <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;FORMS:Relação de formulários')}">
+				<li><ww:url id="url" action="relRelatorios"
+					namespace="/expediente/rel">
+					<ww:param name="nomeArquivoRel">relFormularios.jsp</ww:param>
+				</ww:url> <ww:a href="%{url}">Relação de formulários</ww:a></li>
+			</c:if>
+	
+			<%-- Substituído pelo pelo "relConsultaDocEntreDatas"
 		<li><ww:url id="url" action="relRelatorios"
-			namespace="/expediente/rel">
-			<ww:param name="nomeArquivoRel">relFormularios.jsp</ww:param>
-		</ww:url> <ww:a href="%{url}">Relação de formulários</ww:a></li>
+				namespace="/expediente/rel">
+				<ww:param name="nomeArquivoRel">relExpedientes.jsp</ww:param>
+			</ww:url> <ww:a href="%{url}">Relatório de Expedientes</ww:a></li>  --%>
+	
+	
+            <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DATAS:Relação de documentos entre datas')}">
+				<li><ww:url id="url" action="relRelatorios"
+					namespace="/expediente/rel">
+					<ww:param name="nomeArquivoRel">relConsultaDocEntreDatas.jsp</ww:param>
+				</ww:url> <ww:a href="%{url}">Relação de documentos entre datas</ww:a></li>
+	       </c:if>
+			<!-- 
+			<li><ww:url id="url" action="relRelatorios"
+				namespace="/expediente/rel">
+				<ww:param name="nomeArquivoRel">relModelos.jsp</ww:param>
+			</ww:url> <ww:a href="%{url}">Relatório de Modelos</ww:a></li>
+	-->
+            <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;SUBORD:Relatório de documentos em setores subordinados')}">
+				<li><ww:url id="url" action="relRelatorios"
+					namespace="/expediente/rel">
+					<ww:param name="nomeArquivoRel">relDocumentosSubordinados.jsp</ww:param>
+				</ww:url> <ww:a href="%{url}">Relatório de Documentos em Setores Subordinados</ww:a></li>
+           </c:if>
 
-		<%-- Substituído pelo pelo "relConsultaDocEntreDatas"
-	<li><ww:url id="url" action="relRelatorios"
-			namespace="/expediente/rel">
-			<ww:param name="nomeArquivoRel">relExpedientes.jsp</ww:param>
-		</ww:url> <ww:a href="%{url}">Relatório de Expedientes</ww:a></li>  --%>
-
-
-		<li><ww:url id="url" action="relRelatorios"
-			namespace="/expediente/rel">
-			<ww:param name="nomeArquivoRel">relConsultaDocEntreDatas.jsp</ww:param>
-		</ww:url> <ww:a href="%{url}">Relação de documentos entre datas</ww:a></li>
-
-		<!-- 
-		<li><ww:url id="url" action="relRelatorios"
-			namespace="/expediente/rel">
-			<ww:param name="nomeArquivoRel">relModelos.jsp</ww:param>
-		</ww:url> <ww:a href="%{url}">Relatório de Modelos</ww:a></li>
--->
-		<li><ww:url id="url" action="relRelatorios"
-			namespace="/expediente/rel">
-			<ww:param name="nomeArquivoRel">relDocumentosSubordinados.jsp</ww:param>
-		</ww:url> <ww:a href="%{url}">Relatório de Documentos em Setores Subordinados</ww:a></li>
-
-
-
-	</ul>
-	</div>
-	</div>
-	</li>
+		</ul>
+		</div>
+		</div>
+		</li>
+    </c:if>
 
 	<%--
 	<li class="imatm" style="width:146px;"><a class="" href="#"> <span

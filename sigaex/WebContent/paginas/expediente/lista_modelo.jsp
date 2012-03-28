@@ -34,7 +34,8 @@
 		<tr class="header">
 			<td>Forma</td>
 			<td>Modelo</td>
-			<td align="center">Nivel de Acesso</td>
+<!--            <td align="center">Nivel de Acesso</td> -->
+            <td align="center">Tecnologia</td>
 			<td align="center">Class. Documental</td>
 			<td align="center">Class. Documental para Vias</td>
 		</tr>
@@ -48,8 +49,12 @@
 						<ww:param name="id">${modelo.idMod}</ww:param>
 					</ww:url> <ww:a href="%{url}">${modelo.nmMod}
 				</ww:a></td>
-				<td align="center" width="10%">${modelo.exNivelAcesso.nmNivelAcesso}</td>
-				<td align="center" width="10%">${modelo.exClassificacao.sigla}</td>
+<!--				<td align="center" width="10%">${modelo.exNivelAcesso.nmNivelAcesso}</td> -->
+                <td align="center" width="10%">
+                    <c:if test="${modelo.conteudoTpBlob == 'template/freemarker'}">Freemarker</c:if>
+                    <c:if test="${empty modelo.conteudoTpBlob or modelo.conteudoTpBlob == 'template-file/jsp'}">JSP</c:if>
+                </td>
+                <td align="center" width="10%">${modelo.exClassificacao.sigla}</td>
 				<td align="center" width="10%">${modelo.exClassCriacaoVia.sigla}</td>
 			</tr>
 			<c:choose>
@@ -67,6 +72,7 @@
 	<ww:form name="frm" action="editar" namespace="/modelo" theme="simple"
 		method="GET">
 		<ww:submit value="Novo" />
+		<input type="button" value="Exportar XML" onclick="window.location.href = 'exportar.action'"/>
 	</ww:form>
 
 </siga:pagina>

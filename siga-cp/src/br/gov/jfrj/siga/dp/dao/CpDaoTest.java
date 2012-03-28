@@ -65,7 +65,7 @@ public class CpDaoTest extends TestCase {
 
 	private static final String NOVA_SENHA = "123456";
 	private static final String CPF = "11111111111";
-	private static final String LOGIN = "RJ13635";
+	private static final String LOGIN = "RJ11111";
 	private CpDao dao;
 
 	public CpDaoTest() throws Exception {
@@ -360,7 +360,6 @@ public class CpDaoTest extends TestCase {
 			NoSuchMethodException, Exception {
 
 		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
-				// "jdbc:oracle:thin:@mclaren:1521:mcl", "corporativo",
 				"jdbc:oracle:thin:@acura:1521:apojfrj", "corporativo",
 				"corporativo");
 		HibernateUtil.configurarHibernate(cfg, "");

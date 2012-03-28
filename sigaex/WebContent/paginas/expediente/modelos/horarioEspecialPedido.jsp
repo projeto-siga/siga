@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
@@ -23,7 +23,7 @@ CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 		${detalhesProposta}
 		</mod:valor>--%>
 		<mod:valor var="texto_requerimento2">
-			<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=diretoraRH" />
+			<c:import url="/paginas/expediente/modelos/inc_tit_SraDiretoraSubsecretariaRH.jsp" />
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria <B>HORÁRIO ESPECIAL AO SERVIDOR ESTUDANTE</B>, conforme o art. 98 e § 1º da Lei n.º 8.112/90, com a redação dada pela 
 			Lei n.º 9.527/97 e Resolução n.º 5/2008 do Conselho da Justiça 

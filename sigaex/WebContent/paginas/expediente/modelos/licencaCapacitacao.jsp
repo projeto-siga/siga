@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <mod:modelo>
@@ -33,7 +33,7 @@
 		</style>
 		</head>
 		<body>
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=diretoraRH" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_SraDiretoraSubsecretariaRH.jsp" />
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria, nos termos do art.87, da Lei n&ordm; 8.112/90, com a
 		redação da Lei n&ordm; 9.527/97, c/c Resolução n&ordm; 5/2008, do Conselho da Justiça Federal, e Resolução n&ordm; 22/2008, do TRF da 2ª Região, <b>LICENÇA PARA CAPACITAÇÃO</b> a que faz jus, para fruição 

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
@@ -52,7 +52,7 @@
 			</mod:grupo>
 		</mod:grupo>
 		
-		<mod:grupo titulo="DADOS DO CURSO UNIVERSITÁRIO" >
+		<mod:grupo titulo="DADOS DO CURSO" >
 			<mod:grupo>
 				<mod:selecao titulo="Período" var="periodo" opcoes="1;2;3;4;5;6;7;8;9;10" reler="não" />
 				<mod:texto titulo="Ano" var="ano" largura="5" /> 
@@ -62,19 +62,19 @@
 				<mod:texto titulo="Instituição de Ensino" var="instEnsino" largura="60" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Curso Universitário" opcoes="Ciências Contábeis;Direito" var="curso" />
+				<mod:selecao titulo="Curso" opcoes="Ciências Contábeis;Direito;Nível Médio" var="curso" />
 				<mod:selecao titulo="Turno" opcoes="Manhã;Tarde;Noite" var="turno" />
 				<mod:selecao titulo="Disponibilidade para Estágio" opcoes="Manhã;Tarde" var="dispEstagio" />
 			</mod:grupo>
 		</mod:grupo>
 		
 		<mod:grupo titulo="DADOS DO ESTÁGIO">
-				<mod:texto titulo="Unidade de Lotação" var="unidade" largura="60"/><font color="red"><b>(Preenchimento obrigatório!)</b></font><br>
+		        <mod:lotacao titulo="Unidade de Lotação" var="unidade" obrigatorio="Sim" /> <br>				
 				<mod:texto titulo="Telefone1" var="telEstagio" largura="15" maxcaracteres="11" />
+				<mod:texto titulo="Telefone2" var="telEstagio2" largura="15" maxcaracteres="11" />
 			<mod:grupo>
 				<mod:data titulo="Data início do Estágio" var="dataInicio" />
-				<mod:data titulo="Previsão de Término" var="previsaoTermino" />
-				<mod:texto titulo="Telefone2" var="telEstagio2" largura="15" maxcaracteres="11" />
+				<mod:data titulo="Previsão de Término" var="previsaoTermino" />				
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Supervisor" var="supervisor" />
@@ -175,7 +175,7 @@
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td bgcolor="#FFFFFF" width="100%" colspan="3"><b>2. CURSO UNIVERSITÁRIO: ${curso}</b></td>
+				<td bgcolor="#FFFFFF" width="100%" colspan="3"><b>2. CURSO: ${curso}</b></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
@@ -198,7 +198,7 @@
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 				<tr>
-					<td width="50%">Unidade de Lotação: <b>${unidade}</b></td>
+					<td width="50%">Unidade de Lotação: <b>${f:lotacao(requestScope['unidade_lotacaoSel.id']).descricao}</b></td>
 					<td width="25%">Telefone1: <b>${telEstagio}</b></td>
 					<td width="25%">Telefone2: <b>${telEstagio2}</b></td>
 				</tr>

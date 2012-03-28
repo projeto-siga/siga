@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
@@ -59,7 +59,7 @@
 		<br>
 		<p align="center" style="font-family: Arial; font-size: 11pt;"><!-- INICIO NUMERO --><span
 			style="font-weight: bold;">PORTARIA N&ordm; ${doc.codigo}</span><!-- FIM NUMERO -->
-		de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}</p>
+		<b>&nbsp; de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}</b></p>
 
 		<!-- INICIO TITULO 
 			<mod:letra tamanho="${tl}">
@@ -72,7 +72,7 @@
 			<!-- INICIO MIOLO -->
 
 			<!-- INICIO CORPO -->
-			<p><span style="TEXT-INDENT: 2cm; font-size:${tl};">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><c:choose>
+			<p align="justify"><span style="TEXT-INDENT: 2cm; font-size:${tl};">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><c:choose>
 				<c:when test="${doc.subscritor.sexo == 'M'}">O DIRETOR</c:when>
 				<c:otherwise>A DIRETORA</c:otherwise>
 			</c:choose> DA SECRETARIA DE RECURSOS HUMANOS DO TRIBUNAL REGIONAL FEDERAL DA 2ª

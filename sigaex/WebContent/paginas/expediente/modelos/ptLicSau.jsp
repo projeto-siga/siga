@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -47,7 +47,7 @@
 			de licença para tratamento de saúde ${licen} <b>${federal.nomePessoa}</b>,<c:choose><c:when test="${nume == '1'}"> em ${dtin}</c:when><c:otherwise> no 
 			período de ${dtin} a ${f:calculaData(nume,requestScope['dtin'])}</c:otherwise></c:choose>, nos termos
 			do art. 9, inciso I, da Lei Complementar nº 35, de 14/03/1979, que dispõe sobre a Lei Orgânica da Magistratura Nacional.
-			 
+			
 		</mod:valor>  	
 		</mod:documento>
 </mod:modelo>

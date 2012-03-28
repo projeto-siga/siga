@@ -29,12 +29,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.hibernate.Hibernate;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -52,14 +51,13 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreData
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.persistencia.oracle.JDBCUtilOracle;
 
 import com.opensymphony.webwork.ServletActionContext;
 import com.opensymphony.xwork.ActionInvocation;
 
-public class ExRelatorioAction extends SigaActionSupport {
+public class ExRelatorioAction extends ExActionSupport {
 
 	private List dataSource;
 
@@ -133,6 +131,9 @@ public class ExRelatorioAction extends SigaActionSupport {
 	}
 
 	public String aFormularios() throws Exception {
+
+		assertAcesso("FORMS:Relação de formulários");
+
 		List<ExModelo> l = dao().listarTodos(ExModelo.class);
 
 		LinkedList<FormulariosListItem> ll = new LinkedList<FormulariosListItem>();
@@ -225,6 +226,7 @@ public class ExRelatorioAction extends SigaActionSupport {
 						+ (String) parameters.get("tipoRelatorio"));
 
 				JasperReport jr = JasperCompileManager.compileReport(design);
+
 				JasperPrint relGerado = JasperFillManager.fillReport(jr,
 						parameters, HibernateUtil.getSessao().connection());
 				JasperExportManager.exportReportToPdfStream(relGerado,
@@ -317,23 +319,24 @@ public class ExRelatorioAction extends SigaActionSupport {
 
 	public String aRelDocumentosSubordinados() throws Exception {
 
+		assertAcesso("SUBORD:Relatório de documentos em setores subordinados");
+
 		Map parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter(
-				"lotacaoDestinatarioSel.sigla"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));
 		parametros.put("tipoFormaDoc", getRequest()
 				.getParameter("tipoFormaDoc"));
 		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
-		parametros.put("incluirSubordinados", getRequest().getParameter(
-				"incluirSubordinados"));
-		parametros.put("lotacaoTitular", getRequest().getParameter(
-				"lotacaoTitular"));
+		parametros.put("incluirSubordinados",
+				getRequest().getParameter("incluirSubordinados"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("secaoUsuario", getRequest()
 				.getParameter("secaoUsuario"));
 		parametros.put("orgaoUsuario", getRequest()
 				.getParameter("orgaoUsuario"));
-		parametros.put("idTit", getRequest()
-				.getParameter("idTit"));
+		parametros.put("idTit", getRequest().getParameter("idTit"));
 		parametros.put("link_siga", "http://" + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
@@ -345,10 +348,10 @@ public class ExRelatorioAction extends SigaActionSupport {
 		rel.gerar();
 
 		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
-//		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioHTML().toString().getBytes("utf-8")));
+		// this.setInputStream(new
+		// ByteArrayInputStream(rel.getRelatorioHTML().toString().getBytes("utf-8")));
 		return "relatorio";
 	}
-
 
 	public List<ExTipoFormaDoc> getListaExTipoFormaDoc() {
 		List<ExTipoFormaDoc> listaQry = (List<ExTipoFormaDoc>) HibernateUtil
@@ -364,10 +367,18 @@ public class ExRelatorioAction extends SigaActionSupport {
 
 	public String aRelDocEntreDatas() throws Exception {
 
+		assertAcesso("DATAS:Relação de documentos entre datas");
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
+		Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		if (dtFim.getTime() - dtIni.getTime() > 31536000000L)
+			throw new Exception ("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+
 		Map parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter(
-				"lotacaoDestinatarioSel.sigla"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));
 		parametros.put("secaoUsuario", getRequest()
 				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
@@ -376,9 +387,11 @@ public class ExRelatorioAction extends SigaActionSupport {
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/expediente/doc/exibir.action?sigla=");
-		
-		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
+
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 
 		RelConsultaDocEntreDatas rel = new RelConsultaDocEntreDatas(parametros);
@@ -389,4 +402,10 @@ public class ExRelatorioAction extends SigaActionSupport {
 
 		return "relatorio";
 	}
+
+	public void assertAcesso(String pathServico) throws AplicacaoException,
+			Exception {
+		super.assertAcesso("REL:Gerar relatórios;" + pathServico);
+	}
+
 }

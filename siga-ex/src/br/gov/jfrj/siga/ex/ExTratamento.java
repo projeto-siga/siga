@@ -38,8 +38,8 @@ public class ExTratamento extends AbstractExTratamento {
 	public static List<ExTratamento> todosTratamentos() {
 		ArrayList<ExTratamento> l = new ArrayList<ExTratamento>();
 		
-		l.add(new ExTratamento("Presidente da República", "F", "Vossa Excelência", null, "Excelentíssima Senhora Presidente da República", "Excelentíssima Senhora"));
-		l.add(new ExTratamento("Presidente da República", "M", "Vossa Excelência", null, "Excelentíssimo Senhor Presidente da República", "Excelentíssimo Senhor"));
+		l.add(new ExTratamento("Presidente da República", "F", "Vossa Excelência", "V. Exª.", "Excelentíssima Senhora Presidenta da República", "Excelentíssima Senhora"));
+		l.add(new ExTratamento("Presidente da República", "M", "Vossa Excelência", "V. Exª.", "Excelentíssimo Senhor Presidente da República", "Excelentíssimo Senhor"));
 		l.add(new ExTratamento("Vice-Presidente da República", "F", "Vossa Excelência", "V. Exª." , "Excelêntissima Senhora", "Exmª. Srª."));
 		l.add(new ExTratamento("Vice-Presidente da República", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor", "Exmº. Sr."));
 		l.add(new ExTratamento("Chefe de Gabinete Civil", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora", "Exmª. Srª."));

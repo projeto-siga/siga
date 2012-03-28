@@ -52,10 +52,16 @@ public class SincProperties extends LdapProperties{
 		return instancia;
 	}
 	
+	
 	public static SincProperties getInstancia() {
 		return getInstancia("");
 	}
 	
+	
+	@Override
+	protected String getPrefixoModulo() {
+		return "siga.cp.sinc.ldap";
+	}
 
 	public Boolean isModoExclusaoUsuarioAtivo() {
 		try {

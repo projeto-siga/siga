@@ -31,12 +31,12 @@ import java.util.Map;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.util.test.FuncoesEL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		TemplateLoader {
@@ -92,7 +92,9 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		Writer out = new OutputStreamWriter(baos);
 		try {
 			temp.process(root, out);
-		} catch (Exception e) {
+		} catch (TemplateException e) {
+			return (e.getMessage() + "\n" + e.getFTLInstructionStack()).replace("\n", "<br/>").replace("\r", "");
+		} catch (IOException e) {
 			return e.getMessage();
 		}
 		out.flush();

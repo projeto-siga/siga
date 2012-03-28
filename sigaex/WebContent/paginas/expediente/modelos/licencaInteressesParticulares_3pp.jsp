@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
@@ -26,7 +26,7 @@ LICENÇA PARA TRATAR DE INTERESSSES PARTICULARES -->
 		</mod:valor>
 		
 		<mod:valor var="texto_requerimento2">
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />		
+		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a)
 		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência, nos termos do artigo 91 da Lei n.º 8.112/90, 

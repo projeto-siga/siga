@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
@@ -47,19 +47,11 @@
 		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
 		</td></tr>
-		
-		<tr><td><br/>&nbsp;<br/></td></tr>
-			<tr bgcolor="#FFFFFF">
-				<td width="100%">
-					<table width="100%">
-						<tr>
-							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
+		<br>
+		<p align="center" style="font-family:Arial;font-size:11pt;">
+		<!-- INICIO NUMERO --><span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo}<!-- FIM NUMERO --> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
 
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />

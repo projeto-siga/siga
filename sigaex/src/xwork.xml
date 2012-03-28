@@ -1246,6 +1246,10 @@
 			<result name="aplicar" type="redirect-action">editar?id=${id}</result>
 			<result type="redirect-action">listar</result>
 		</action>
+		
+		<action name="exportar" class="br.gov.jfrj.webwork.action.ExModeloAction"
+			method="aExportar">
+		</action>
 	</package>
 
 </xwork>

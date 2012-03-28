@@ -39,6 +39,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import br.gov.jfrj.ldap.sinc.LdapDaoSinc;
 import br.gov.jfrj.ldap.sinc.SincProperties;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPapel;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
@@ -60,7 +62,6 @@ import br.gov.jfrj.siga.sinc.lib.OperadorSemHistorico;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelComparator;
-import br.gov.jfrj.siga.util.Correio;
 import br.gov.jfrj.siga.util.ImportarXmlProperties;
 
 public class SigaCpSinc {
@@ -276,8 +277,7 @@ public class SigaCpSinc {
 													.getIdCpTpIdentidade()
 													.equals(1)) {
 
-												cpId
-														.setDscSenhaIdentidadeCriptoSinc(null);
+												cpId.setDscSenhaIdentidadeCriptoSinc(null);
 											}
 										}
 									}
@@ -321,6 +321,7 @@ public class SigaCpSinc {
 		}
 		String url = pars[1];
 		if (!url.equalsIgnoreCase("-sjrj") && !url.equalsIgnoreCase("-trf2")
+				&& !url.equalsIgnoreCase("-cjf")
 				&& !url.equalsIgnoreCase("-sjes")) {
 
 			if (!url.equalsIgnoreCase("-url")) {
@@ -439,9 +440,9 @@ public class SigaCpSinc {
 		if (args.length >= 3 && args[2] != null && args[2].contains("ldap")) {
 			geraXml.log("Importando: BD");
 
-			SincProperties conf = SincProperties.getInstancia(geraXml.url
-					.replace("-", "")
-					+ "." + geraXml.servidor.replace("-", ""));
+			SincProperties conf = SincProperties
+					.getInstancia(geraXml.url.replace("-", "") + "."
+							+ geraXml.servidor.replace("-", ""));
 			AdModelo ge = AdModelo.getInstance(conf);
 			List<AdObjeto> l = ge.gerarModelo();
 			geraXml.setNovo.addAll(l);
@@ -508,11 +509,10 @@ public class SigaCpSinc {
 					String acron = geraXml.url.substring(1);
 					CpOrgaoUsuario orgu = obterOrgaoUsuario(acron);
 					if (orgu == null) {
-						geraXml
-								.log("Acrônimo '"
-										+ acron
-										+ "' do Órgão Usuário não encontrado no servidor '"
-										+ geraXml.servidor + "'");
+						geraXml.log("Acrônimo '"
+								+ acron
+								+ "' do Órgão Usuário não encontrado no servidor '"
+								+ geraXml.servidor + "'");
 						return;
 					}
 					urlOrigem = ImportarXmlProperties.getString("url."
@@ -804,8 +804,7 @@ public class SigaCpSinc {
 		}
 		if (unicidades.get(siglaOrgao) == null) {
 			unicidades
-					.put(
-							siglaOrgao,
+					.put(siglaOrgao,
 							new Hashtable<String, Hashtable<String, Hashtable<String, String>>>());
 		}
 		if (unicidades.get(siglaOrgao).get(nomeEntidade) == null) {
@@ -813,25 +812,21 @@ public class SigaCpSinc {
 					new Hashtable<String, Hashtable<String, String>>());
 		}
 		if (unicidades.get(siglaOrgao).get(nomeEntidade).get(nomeAtributo) == null) {
-			unicidades.get(siglaOrgao).get(nomeEntidade).put(nomeAtributo,
-					new Hashtable<String, String>());
+			unicidades.get(siglaOrgao).get(nomeEntidade)
+					.put(nomeAtributo, new Hashtable<String, String>());
 		}
-		if (unicidades.get(siglaOrgao).get(nomeEntidade).get(nomeAtributo).get(
-				valor) == null) {
-					try {
-				unicidades.get(siglaOrgao).get(nomeEntidade).get(nomeAtributo).put(
-						valor, identificador);
+		if (unicidades.get(siglaOrgao).get(nomeEntidade).get(nomeAtributo)
+				.get(valor) == null) {
+			try {
+				unicidades.get(siglaOrgao).get(nomeEntidade).get(nomeAtributo)
+						.put(valor, identificador);
 			} catch (Exception e) {
-				throw new Exception("Orgão usuário: "
-						+ siglaOrgao.toString()
-						+ "; Entidade: "
-						+ nomeEntidade.toString()
-						+ "; Atributo: "
-						+ nomeAtributo.toString()
-						+ "; Valor: "
-						+ valor.toString()
-						+ " Erro na tentativa de inserir a lotação. "
-						+ " => " + e.getMessage());
+				throw new Exception("Orgão usuário: " + siglaOrgao.toString()
+						+ "; Entidade: " + nomeEntidade.toString()
+						+ "; Atributo: " + nomeAtributo.toString()
+						+ "; Valor: " + valor.toString()
+						+ " Erro na tentativa de inserir a lotação. " + " => "
+						+ e.getMessage());
 			}
 		} else {
 			throw new Exception("Orgão usuário: "
@@ -843,8 +838,8 @@ public class SigaCpSinc {
 					+ "; Valor: "
 					+ valor
 					+ " => já existe para o identificador: "
-					+ unicidades.get(siglaOrgao).get(nomeEntidade).get(
-							nomeAtributo).get(valor)
+					+ unicidades.get(siglaOrgao).get(nomeEntidade)
+							.get(nomeAtributo).get(valor)
 					+ " na tentativa de inserir o identificador: "
 					+ identificador);
 		}
@@ -972,14 +967,16 @@ public class SigaCpSinc {
 			pessoa.setSesbPessoa(cpOrgaoUsuario.getSiglaOrgaoUsu());
 			pessoa.setDataInicioPessoa(new Date());
 			pessoa.setSiglaPessoa(parseStr(parser, "sigla"));
-			/*criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "pessoa",
-					"sigla", pessoa.getSiglaPessoa(), parseStr(parser, "id")); */
+			/*
+			 * criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "pessoa",
+			 * "sigla", pessoa.getSiglaPessoa(), parseStr(parser, "id"));
+			 */
 			pessoa.setPadraoReferencia(parseStr(parser, "padraoReferencia"));
 			pessoa.setMatricula(parseLong(parser, "matricula"));
 			criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "pessoa",
 					"matricula",
-					pessoa.getSesbPessoa() + pessoa.getMatricula(), parseStr(
-							parser, "id"));
+					pessoa.getSesbPessoa() + pessoa.getMatricula(),
+					parseStr(parser, "id"));
 			pessoa.setOrgaoUsuario(cpOrgaoUsuario);
 			// pessoa.setSituacaoFuncionalPessoa(parseStr(parser, "situacao"));
 			pessoa.setSituacaoFuncionalPessoa(situacaoFuncPessoa);
@@ -1091,7 +1088,7 @@ public class SigaCpSinc {
 			texto = texto + "Arquivo XML gerado em " + getDataHora() + "\n";
 		}
 		texto = texto + sbLog.toString();
-		Correio.enviar("SIGA", destinatarios, "Log de importação", texto);
+		Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), destinatarios, "Log de importação", texto,null);
 	}
 
 	private Date parseData(XmlPullParser parser, String campo) {
@@ -1208,9 +1205,7 @@ public class SigaCpSinc {
 		while (lotPaiJur != null) {
 			if (lotPaiJur.getIdeLotacao().equals(lotSJRJ.getIdeLotacao())) {
 				// é jurídico
-				lot
-						.setCpTipoLotacao(obterTipoLotacaoPorId(Long
-								.valueOf("100")));
+				lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("100")));
 				return;
 			} else {
 				// procura mais acima

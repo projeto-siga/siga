@@ -1,6 +1,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
@@ -65,9 +65,14 @@
 									var="fiscalTitular${i}" /></td>
 							</tr>
 							<tr>
-								<td align="left">Nome do Fiscal Suplente:</td>
+								<td align="left">Nome(s) do(s) Fiscal(is) Suplente(s):</td>
 								<td align="left"><mod:pessoa titulo=""
 									var="fiscalSuplente${i}" /></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td align="left"><mod:pessoa titulo=""
+									var="fiscalSuplente2${i}" /></td>
 							</tr>
 							<tr>
 								<td colspan="2">
@@ -246,11 +251,17 @@
 									<td width="27%" align="left">Matrícula:${f:pessoa(requestScope[f:concat(f:concat('fiscalTitular',i),'_pessoaSel.id')]).matricula}</td>
 								</tr>
 								<tr>
-									<td align="left">Suplente:
+									<td align="left">Suplente(s):
 									${f:maiusculasEMinusculas(requestScope[f:concat(f:concat('fiscalSuplente',i),'_pessoaSel.descricao')])}</td>
 									<td align="left">Matrícula:${f:pessoa(requestScope[f:concat(f:concat('fiscalSuplente',i),'_pessoaSel.id')]).matricula}</td>
 								</tr>
-
+								<c:if test="${not empty requestScope[f:concat(f:concat('fiscalSuplente2',i),'_pessoaSel.id')]}">
+									<tr>
+										<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;												
+										${f:maiusculasEMinusculas(requestScope[f:concat(f:concat('fiscalSuplente2',i),'_pessoaSel.descricao')])}</td>
+										<td align="left">Matrícula:${f:pessoa(requestScope[f:concat(f:concat('fiscalSuplente2',i),'_pessoaSel.id')]).matricula}</td>
+									</tr>
+								</c:if>
 							</table>
 							</td>
 						</tr>

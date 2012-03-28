@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
@@ -23,8 +23,8 @@
 			<mod:grupo largura="93">
 				<mod:grupo depende="comIdentifAjax">
 					<c:if test="${comIdentifVal == '2'}">
-						<mod:texto titulo="Observações" var="obsComIdentif" largura="60"
-							maxcaracteres="60" obrigatorio="Sim" />
+						<mod:memo titulo="Observações" var="obsComIdentif" linhas="3"
+							colunas="60" obrigatorio="Sim" />
 						<mod:oculto var="comIdentifNao" valor="não"/>		
 					</c:if>					
 				</mod:grupo>
@@ -72,8 +72,8 @@
 			</c:if>			
 			<mod:grupo depende="duracaoAjax"> 
 				<c:if test="${duracaoVal == '2' or duracaoVal == '3' }"> 
-					<mod:texto titulo="Observações" var="obsDuracao" largura="60"
-						maxcaracteres="60" obrigatorio="Sim" />					
+					<mod:memo titulo="Observações" var="obsDuracao" linhas="2"
+						colunas="60" obrigatorio="Sim" />					
 					<ww:if test="${duracaoVal == '2'}" >
 						<mod:oculto var="duracaoNao" valor="não" />	
 					</ww:if>
@@ -224,7 +224,7 @@
 			<mod:oculto var="freqFuncTipo" valor="parcial" />	
 		</ww:else>
 						
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
+		<table style="float:none; clear:both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 			<tr>
 				<th><b>Informações referentes ao profissional e aos serviços prestados: </b></th>
 			</tr>
@@ -243,7 +243,7 @@
 			<tr><td>O profissional ${orientacaoNao} costuma dar orientação quanto ao carregamento de pesos e às posturas adotadas no ambiente de trabalho.</td></tr>			
 		</table>
 		<br>
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
+		<table style="float:none; clear:both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 			<tr>
 				<th><b>Informações referentes aos materiais/equipamentos utilizados: </b></th>
 			</tr>
@@ -257,7 +257,7 @@
 		
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
 		
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
+		<table style="float:none; clear:both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 			<tr>
 				<th><b>Informações referentes à frequência de funcionários: </b></th>
 			</tr>			

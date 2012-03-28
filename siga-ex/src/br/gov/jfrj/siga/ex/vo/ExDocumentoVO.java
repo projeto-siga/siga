@@ -19,7 +19,9 @@
 package br.gov.jfrj.siga.ex.vo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -27,6 +29,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 
 public class ExDocumentoVO extends ExVO {
 	ExDocumento doc;
@@ -47,6 +50,7 @@ public class ExDocumentoVO extends ExVO {
 	String sigla;
 	String fisicoOuEletronico;
 	boolean fDigital;
+	String dadosComplementares;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo) throws Exception {
@@ -111,6 +115,8 @@ public class ExDocumentoVO extends ExVO {
 
 			addAcoes(doc, titular, lotaTitular);
 		}
+		
+		addDadosComplementares();
 	}
 
 	/**
@@ -123,13 +129,18 @@ public class ExDocumentoVO extends ExVO {
 			DpLotacao lotaTitular) throws Exception {
 		ExMobil mob = doc.getMobilGeral();
 
-		addAcao("Visualizar Dossiê", "/expediente/doc", "exibirProcesso", Ex
-				.getInstance().getComp().podeVisualizarImpressao(titular,
-						lotaTitular, mob));
+		addAcao("Visualizar Dossiê",
+				"/expediente/doc",
+				"exibirProcesso",
+				Ex.getInstance().getComp()
+						.podeVisualizarImpressao(titular, lotaTitular, mob));
 
-		addAcao("Visualizar Impressão", "/expediente/doc", "pdf", Ex
-				.getInstance().getComp().podeVisualizarImpressao(titular,
-						lotaTitular, mob), null, "&popup=true", null, null);
+		addAcao("Visualizar Impressão",
+				"/expediente/doc",
+				"pdf",
+				Ex.getInstance().getComp()
+						.podeVisualizarImpressao(titular, lotaTitular, mob),
+				null, "&popup=true", null, null);
 
 		addAcao("Finalizar", "/expediente/doc", "fechar", Ex.getInstance()
 				.getComp().podeFinalizar(titular, lotaTitular, mob),
@@ -155,37 +166,44 @@ public class ExDocumentoVO extends ExVO {
 		addAcao("Fazer Anotação", "/expediente/mov", "anotar", Ex.getInstance()
 				.getComp().podeFazerAnotacao(titular, lotaTitular, mob));
 
-		addAcao("Definir Perfil", "/expediente/mov", "vincularPapel", Ex
-				.getInstance().getComp().podeFazerVinculacaoPapel(titular,
-						lotaTitular, mob));
+		addAcao("Definir Perfil",
+				"/expediente/mov",
+				"vincularPapel",
+				Ex.getInstance().getComp()
+						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
-		addAcao("Download do Conteúdo", "/expediente/doc", "anexo", Ex
-				.getInstance().getComp().podeDownloadConteudo(titular,
-						lotaTitular, mob));
+		addAcao("Download do Conteúdo",
+				"/expediente/doc",
+				"anexo",
+				Ex.getInstance().getComp()
+						.podeDownloadConteudo(titular, lotaTitular, mob));
 
-		addAcao("Exibir Todas as Vias", "/expediente/doc", "exibir", doc
-				.isExpediente()
-				&& doc.getDtFechamento() != null, null,
+		addAcao("Exibir Todas as Vias", "/expediente/doc", "exibir",
+				doc.isExpediente() && doc.getDtFechamento() != null, null,
 				"&exibirCompleto=false", null, null);
 
-		addAcao("Exibir Todos os Volumes", "/expediente/doc", "exibir", doc
-				.isProcesso()
-				&& doc.getDtFechamento() != null, null,
+		addAcao("Exibir Todos os Volumes", "/expediente/doc", "exibir",
+				doc.isProcesso() && doc.getDtFechamento() != null, null,
 				"&exibirCompleto=false", null, null);
 
 		addAcao("Criar Via", "/expediente/doc", "criarVia", Ex.getInstance()
 				.getComp().podeCriarVia(titular, lotaTitular, mob));
 
-		addAcao("Abrir Novo Volume", "/expediente/doc", "criarVolume", Ex
-				.getInstance().getComp().podeCriarVolume(titular, lotaTitular,
-						mob), "Confirma a abertura de um novo volume?", null,
-				null, null);
+		addAcao("Abrir Novo Volume",
+				"/expediente/doc",
+				"criarVolume",
+				Ex.getInstance().getComp()
+						.podeCriarVolume(titular, lotaTitular, mob),
+				"Confirma a abertura de um novo volume?", null, null, null);
 
-		addAcao("Criar Subprocesso", "/expediente/doc", "editar", Ex
-				.getInstance().getComp().podeCriarSubprocesso(titular,
-						lotaTitular, mob), null, "mobilPaiSel.sigla="
-				+ getSigla() + "&idForma="
-				+ mob.doc().getExFormaDocumento().getIdFormaDoc(), null, null);
+		addAcao("Criar Subprocesso",
+				"/expediente/doc",
+				"editar",
+				Ex.getInstance().getComp()
+						.podeCriarSubprocesso(titular, lotaTitular, mob), null,
+				"mobilPaiSel.sigla=" + getSigla() + "&idForma="
+						+ mob.doc().getExFormaDocumento().getIdFormaDoc(),
+				null, null);
 
 		addAcao("Registrar Assinatura Manual", "/expediente/mov",
 				"registrar_assinatura", Ex.getInstance().getComp()
@@ -198,31 +216,35 @@ public class ExDocumentoVO extends ExVO {
 				"redefinir_nivel_acesso", Ex.getInstance().getComp()
 						.podeRedefinirNivelAcesso(titular, lotaTitular, mob));
 
-		addAcao("Solicitar Publicação no Boletim", "/expediente/mov",
-				"boletim_agendar", Ex.getInstance().getComp()
+		addAcao("Solicitar Publicação no Boletim",
+				"/expediente/mov",
+				"boletim_agendar",
+				Ex.getInstance()
+						.getComp()
 						.podeBotaoAgendarPublicacaoBoletim(titular,
 								lotaTitular, mob));
 
-		addAcao("Registrar Publicação do BIE", "/expediente/mov",
-				"boletim_publicar", Ex.getInstance().getComp()
+		addAcao("Registrar Publicação do BIE",
+				"/expediente/mov",
+				"boletim_publicar",
+				Ex.getInstance()
+						.getComp()
 						.podeBotaoAgendarPublicacaoBoletim(titular,
 								lotaTitular, mob));
 
-		addAcao(
-				"Refazer",
+		addAcao("Refazer",
 				"/expediente/doc",
 				"reabrir",
-				Ex.getInstance().getComp().podeReabrir(titular, lotaTitular,
-						mob),
+				Ex.getInstance().getComp()
+						.podeReabrir(titular, lotaTitular, mob),
 				"Esse documento será cancelado e seus dados serão copiados para um novo expediente em elaboração. Prosseguir?",
 				null, null, null);
 
-		addAcao(
-				"Duplicar",
+		addAcao("Duplicar",
 				"/expediente/doc",
 				"duplicar",
-				Ex.getInstance().getComp().podeDuplicar(titular, lotaTitular,
-						mob),
+				Ex.getInstance().getComp()
+						.podeDuplicar(titular, lotaTitular, mob),
 				"Esta operação criará um expediente com os mesmos dados do atual. Prosseguir?",
 				null, null, null);
 
@@ -241,10 +263,23 @@ public class ExDocumentoVO extends ExVO {
 						.podePedirPublicacao(titular, lotaTitular, mob));
 
 		// <ww:param name="idFormaDoc">60</ww:param>
-		addAcao("Criar Anexo", "/expediente/doc", "editar", Ex.getInstance()
-				.getComp().podeAnexarArquivoAlternativo(titular, lotaTitular,
-						mob), null, "criandoAnexo=true&mobilPaiSel.sigla="
-				+ getSigla(), null, null);
+		addAcao("Criar Anexo",
+				"/expediente/doc",
+				"editar",
+				Ex.getInstance()
+						.getComp()
+						.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
+				null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
+				null, null);
+	}
+
+	public void addDadosComplementares() throws Exception {
+		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
+		Map attrs = new HashMap();
+		attrs.put("nmMod", "macro dadosComplementares");
+		attrs.put("template", "[@dadosComplementares/]");
+		attrs.put("doc", this.getDoc());
+		dadosComplementares = p.processarModelo(doc.getOrgaoUsuario(), attrs, null);
 	}
 
 	public String getClasse() {
@@ -314,7 +349,7 @@ public class ExDocumentoVO extends ExVO {
 	public String getFisicoOuEletronico() {
 		return fisicoOuEletronico;
 	}
-	
+
 	public boolean isDigital() {
 		return fDigital;
 	}
@@ -326,5 +361,9 @@ public class ExDocumentoVO extends ExVO {
 			s += "\n" + m.toString();
 		}
 		return s;
+	}
+
+	public String getDadosComplementares() {
+		return dadosComplementares;
 	}
 }

@@ -6,12 +6,12 @@
 <%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Novo Documento">
 	<%--onLoad="javascript:autoSave();" --%>
 
-	<script type="text/javascript" language="Javascript1.1">
+	<script type="text/javascript">
 
 <ww:url id="url" action="testar_conexao" namespace="/expediente/doc">
 </ww:url>
@@ -48,12 +48,6 @@ function autoSave(){
 		clearTimeout(saveTimer);
 		saveTimer=setTimeout('salvaAjaxFCK(true)',70000);
 	}
-}
-
-function window.confirm(str)
-{
-    execScript('n = msgbox("'+str+'","4132")', "vbscript");
-    return(n == 6);
 }
 
 function tryAgain(){
@@ -552,7 +546,7 @@ function checkBoxMsg() {
 								<ww:if test="%{modelos.size > 1}">
 									<ww:select name="idMod"
 										onchange="document.getElementById('alterouModelo').value='true';sbmt();"
-										list="modelos" listKey="idMod" listValue="nmMod"
+										list="modelos" listKey="idMod" listValue="nmMod" 
 										cssStyle="${estiloTipo}" />
 									<c:if test="${not empty doc.exModelo}">
 										<span style="${estiloTipoSpan}">${doc.exModelo.nmMod}</span>
@@ -679,7 +673,7 @@ function checkBoxMsg() {
 								<td colspan="3"><siga:span id="spanEntrevista"
 									depende="tipoDestinatario;destinatario;forma;modelo">
 									<c:if test="${modelo.conteudoTpBlob == 'template/freemarker'}">
-										${f:processarModelo(doc, 'entrevista', par)}
+										${f:processarModelo(doc, 'entrevista', par, preenchRedirect)}
 									</c:if>
 									<c:if test="${modelo.conteudoTpBlob != 'template/freemarker'}">
 										<c:import

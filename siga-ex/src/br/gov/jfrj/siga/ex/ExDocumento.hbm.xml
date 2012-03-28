@@ -1,112 +1,100 @@
-<?xml version="1.0" encoding='UTF-8'?>
-
-<!DOCTYPE hibernate-mapping PUBLIC
-                            "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                            "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
-
-	<class name="ExDocumento" schema="SIGA" table="EX_DOCUMENTO">
-		<id name="idDoc" column="ID_DOC" type="java.lang.Long">
-			<generator class="sequence">
-				<param name="sequence">EX_DOCUMENTO_SEQ</param>
-			</generator>
-		</id>
-
-		<property name="numExpediente" column="NUM_EXPEDIENTE"
-			type="java.lang.Long" />
-		<property name="numPaginas" column="NUM_PAGINAS"
-			type="java.lang.Integer" />
-		<property name="anoEmissao" column="ANO_EMISSAO"
-			type="java.lang.Long" />
-		<property name="descrDocumento" column="DESCR_DOCUMENTO"
-			type="java.lang.String" />
-		<property name="descrDocumentoAI"
-			formula="REMOVE_ACENTO(DESCR_DOCUMENTO)" type="java.lang.String" />
-		<property name="dtDoc" column="DT_DOC" type="java.util.Date" />
-		<property name="dtRegDoc" column="DT_REG_DOC"
-			type="java.util.Date" not-null="true" />
-		<property name="dtFechamento" column="DT_FECHAMENTO"
-			type="java.util.Date" />
-		<property name="nmSubscritorExt" column="NM_SUBSCRITOR_EXT"
-			type="java.lang.String" />
-		<property name="nmFuncaoSubscritor"
-			column="NM_FUNCAO_SUBSCRITOR" type="java.lang.String" />
-		<property name="nmOrgaoExterno" column="NM_ORGAO_DESTINATARIO"
-			type="java.lang.String" />
-		<property name="numExtDoc" column="NUM_EXT_DOC"
-			type="java.lang.String" />
-		<property name="numAntigoDoc" column="NUM_ANTIGO_DOC"
-			type="java.lang.String" />
-		<property name="nmArqDoc" column="NM_ARQ_DOC"
-			type="java.lang.String" />
-		<property name="conteudoTpDoc" column="CONTEUDO_TP_DOC"
-			type="java.lang.String" />
-		<property name="nmDestinatario" column="NM_DESTINATARIO"
-			type="string" />
-		<property name="fgEletronico" column="FG_ELETRONICO"
-			type="java.lang.String" />
-		<!--<property name="fgPessoal" column="FG_PESSOAL" type="string" />!-->
-		<property name="obsOrgao" column="OBS_ORGAO_DOC" type="string" />
-		<property name="conteudoBlobDoc" column="CONTEUDO_BLOB_DOC"
-			type="java.sql.Blob" />
-		<property name="descrClassifNovo" column="DSC_CLASS_DOC"
-			type="java.lang.String" />
-		<property name="numSequencia" column="NUM_SEQUENCIA" type="int" />
-
-		<many-to-one name="exNivelAcesso" column="ID_NIVEL_ACESSO"
-			class="br.gov.jfrj.siga.ex.ExNivelAcesso" />
-		<many-to-one name="cadastrante" column="ID_CADASTRANTE"
-			class="br.gov.jfrj.siga.dp.DpPessoa" not-null="true" />
-		<many-to-one name="lotaCadastrante" column="ID_LOTA_CADASTRANTE"
-			class="br.gov.jfrj.siga.dp.DpLotacao" not-null="true" />
-		<many-to-one name="subscritor" column="ID_SUBSCRITOR"
-			class="br.gov.jfrj.siga.dp.DpPessoa" />
-		<many-to-one name="lotaSubscritor" column="ID_LOTA_SUBSCRITOR"
-			class="br.gov.jfrj.siga.dp.DpLotacao" />
-		<many-to-one name="titular" column="ID_TITULAR"
-			class="br.gov.jfrj.siga.dp.DpPessoa" />
-		<many-to-one name="lotaTitular" column="ID_LOTA_TITULAR"
-			class="br.gov.jfrj.siga.dp.DpLotacao" />
-		<many-to-one name="destinatario" column="ID_DESTINATARIO"
-			class="br.gov.jfrj.siga.dp.DpPessoa" />
-		<many-to-one name="lotaDestinatario"
-			column="ID_LOTA_DESTINATARIO" class="br.gov.jfrj.siga.dp.DpLotacao" />
-		<many-to-one name="exTipoDocumento" column="ID_TP_DOC"
-			class="ExTipoDocumento" not-null="true" />
-		<many-to-one name="exClassificacao" column="ID_CLASSIFICACAO"
-			class="ExClassificacao" not-null="false" />
-		<many-to-one name="exFormaDocumento" column="ID_FORMA_DOC"
-			class="ExFormaDocumento" not-null="false" />
-		<many-to-one name="exModelo" column="ID_MOD" class="ExModelo"
-			not-null="false" />
-		<many-to-one name="orgaoUsuario" column="ID_ORGAO_USU"
-			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" not-null="false" />
-		<many-to-one name="orgaoExternoDestinatario"
-			column="ID_ORGAO_DESTINATARIO" class="br.gov.jfrj.siga.dp.CpOrgao"
-			not-null="false" />
-		<many-to-one name="orgaoExterno" column="ID_ORGAO"
-			class="br.gov.jfrj.siga.dp.CpOrgao" not-null="false" />
-		<many-to-one name="exDocAnterior" column="ID_DOC_ANTERIOR"
-			class="br.gov.jfrj.siga.ex.ExDocumento" not-null="false"/>	
-		<many-to-one name="exMobilPai" column="ID_MOB_PAI"
-			class="br.gov.jfrj.siga.ex.ExMobil" not-null="false"/>	
-			
-		<set name="exBoletimDocSet" order-by="ID_DOC" inverse="true"
-			lazy="true" batch-size="20">
-			<key column="ID_DOC" />
-			<one-to-many class="ExBoletimDoc" />
-		</set>		
-
-		<set name="exMobilSet" inverse="true"
-			lazy="true" sort="natural" batch-size="20">
-			<key column="ID_DOC" />
-			<one-to-many class="ExMobil" />
-		</set>
-	</class>
-
-	<query name="obterProximoNumeroSub">
-		<![CDATA[
+ <class name="ExDocumento" schema="SIGA" table="EX_DOCUMENTO">
+  <id column="ID_DOC" name="idDoc" type="java.lang.Long">
+   <generator class="sequence">
+    <param name="sequence">EX_DOCUMENTO_SEQ</param>
+   </generator>
+  </id>
+  <property column="NUM_EXPEDIENTE" generated="never" lazy="false"
+   name="numExpediente" type="java.lang.Long"/>
+  <property column="NUM_PAGINAS" generated="never" lazy="false"
+   name="numPaginas" type="java.lang.Integer"/>
+  <property column="ANO_EMISSAO" generated="never" lazy="false"
+   name="anoEmissao" type="java.lang.Long"/>
+  <property column="DESCR_DOCUMENTO" generated="never" lazy="false"
+   name="descrDocumento" type="java.lang.String"/>
+  <property formula="REMOVE_ACENTO(DESCR_DOCUMENTO)" generated="never"
+   lazy="false" name="descrDocumentoAI" type="java.lang.String"/>
+  <property column="DT_DOC" generated="never" lazy="false" name="dtDoc" type="java.util.Date"/>
+  <property column="DT_REG_DOC" generated="never" lazy="false"
+   name="dtRegDoc" not-null="true" type="java.util.Date"/>
+  <property column="DT_FECHAMENTO" generated="never" lazy="false"
+   name="dtFechamento" type="java.util.Date"/>
+  <property column="NM_SUBSCRITOR_EXT" generated="never" lazy="false"
+   name="nmSubscritorExt" type="java.lang.String"/>
+  <property column="NM_FUNCAO_SUBSCRITOR" generated="never" lazy="false"
+   name="nmFuncaoSubscritor" type="java.lang.String"/>
+  <property column="NM_ORGAO_DESTINATARIO" generated="never"
+   lazy="false" name="nmOrgaoExterno" type="java.lang.String"/>
+  <property column="NUM_EXT_DOC" generated="never" lazy="false"
+   name="numExtDoc" type="java.lang.String"/>
+  <property column="NUM_ANTIGO_DOC" generated="never" lazy="false"
+   name="numAntigoDoc" type="java.lang.String"/>
+  <property column="NM_ARQ_DOC" generated="never" lazy="false"
+   name="nmArqDoc" type="java.lang.String"/>
+  <property column="CONTEUDO_TP_DOC" generated="never" lazy="false"
+   name="conteudoTpDoc" type="java.lang.String"/>
+  <property column="NM_DESTINATARIO" generated="never" lazy="false"
+   name="nmDestinatario" type="string"/>
+  <property column="FG_ELETRONICO" generated="never" lazy="false"
+   name="fgEletronico" type="java.lang.String"/>
+  <!--<property name="fgPessoal" column="FG_PESSOAL" type="string" />!-->
+  <property column="OBS_ORGAO_DOC" generated="never" lazy="false"
+   name="obsOrgao" type="string"/>
+  <property column="CONTEUDO_BLOB_DOC" generated="never" lazy="false"
+   name="conteudoBlobDoc" type="java.sql.Blob"/>
+  <property column="DSC_CLASS_DOC" generated="never" lazy="false"
+   name="descrClassifNovo" type="java.lang.String"/>
+  <property column="NUM_SEQUENCIA" generated="never" lazy="false"
+   name="numSequencia" type="int"/>
+  <many-to-one class="br.gov.jfrj.siga.ex.ExNivelAcesso"
+   column="ID_NIVEL_ACESSO" name="exNivelAcesso"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa"
+   column="ID_CADASTRANTE" name="cadastrante" not-null="true"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpLotacao"
+   column="ID_LOTA_CADASTRANTE" name="lotaCadastrante" not-null="true"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa"
+   column="ID_SUBSCRITOR" name="subscritor"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpLotacao"
+   column="ID_LOTA_SUBSCRITOR" name="lotaSubscritor"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa" column="ID_TITULAR" name="titular"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpLotacao"
+   column="ID_LOTA_TITULAR" name="lotaTitular"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa"
+   column="ID_DESTINATARIO" name="destinatario"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpLotacao"
+   column="ID_LOTA_DESTINATARIO" name="lotaDestinatario"/>
+  <many-to-one class="ExTipoDocumento" column="ID_TP_DOC"
+   name="exTipoDocumento" not-null="true"/>
+  <many-to-one class="ExClassificacao" column="ID_CLASSIFICACAO"
+   name="exClassificacao" not-null="false"/>
+  <many-to-one class="ExFormaDocumento" column="ID_FORMA_DOC"
+   name="exFormaDocumento" not-null="false"/>
+  <many-to-one class="ExModelo" column="ID_MOD" name="exModelo" not-null="false"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.CpOrgaoUsuario"
+   column="ID_ORGAO_USU" name="orgaoUsuario" not-null="false"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.CpOrgao"
+   column="ID_ORGAO_DESTINATARIO" name="orgaoExternoDestinatario" not-null="false"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.CpOrgao" column="ID_ORGAO"
+   name="orgaoExterno" not-null="false"/>
+  <many-to-one class="br.gov.jfrj.siga.ex.ExDocumento"
+   column="ID_DOC_ANTERIOR" name="exDocAnterior" not-null="false"/>
+  <many-to-one class="br.gov.jfrj.siga.ex.ExMobil" column="ID_MOB_PAI"
+   name="exMobilPai" not-null="false"/>
+  <set batch-size="500" inverse="true" lazy="true"
+   name="exBoletimDocSet" order-by="ID_DOC" sort="unsorted">
+   <key column="ID_DOC"/>
+   <one-to-many class="ExBoletimDoc"/>
+  </set>
+  <set batch-size="500" inverse="true" lazy="true" name="exMobilSet" sort="natural">
+   <key column="ID_DOC"/>
+   <one-to-many class="ExMobil"/>
+  </set>
+ </class>
+ <query name="obterProximoNumeroSub">
 			select max(doc.numExpediente)+1
 			from ExDocumento doc
 			inner join doc.subscritor sub 
@@ -114,11 +102,8 @@
 			where doc.anoEmissao = :anoEmissao
 			and sub.sesbPessoa = :sesb
 			and frm.idFormaDoc = :idFormaDoc
-		]]>
-	</query>
-
-	<query name="obterProximoNumeroCad">
-		<![CDATA[
+		</query>
+ <query name="obterProximoNumeroCad">
 			select max(doc.numExpediente)+1 
 			from ExDocumento doc
 			inner join doc.cadastrante sub 
@@ -126,52 +111,35 @@
 			where doc.anoEmissao = :anoEmissao
 			and sub.sesbPessoa = :sesb
 			and frm.idFormaDoc = :idFormaDoc
-		]]>
-	</query>
-
-	<query name="obterProximoNumero">
-		<![CDATA[
-			select max(doc.numExpediente)+1
+		</query>
+ <query name="obterProximoNumero">select max(doc.numExpediente)+1
 			from ExDocumento doc
 			inner join doc.exFormaDocumento frm
 			inner join doc.orgaoUsuario org
 			where org.idOrgaoUsu = :sesb
 			and frm.idFormaDoc = :idFormaDoc
-			and doc.anoEmissao = :anoEmissao
-			
-			
-		]]>
-	</query>
-
-	<query name="consultarPorSiglaDocumento">
-		<![CDATA[from ExDocumento doc
+			and doc.anoEmissao = :anoEmissao</query>
+ <query name="consultarPorSiglaDocumento">from ExDocumento doc
 		where (
 		doc.anoEmissao=:anoEmissao
 		and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)
 		and doc.exFormaDocumento.idFormaDoc=:idFormaDoc
 		and doc.numExpediente=:numExpediente
-		)]]>
-	</query>
-
-	<query name="consultarPorModeloEAssinatura">
-		<![CDATA[from ExDocumento d where d.idDoc in (select doc.idDoc from ExDocumento as doc join doc.exMobilSet as mob join mob.exMovimentacaoSet as mov
+		)</query>
+ <query name="consultarPorModeloEAssinatura">from ExDocumento d where d.idDoc in (select doc.idDoc from ExDocumento as doc join doc.exMobilSet as mob join mob.exMovimentacaoSet as mov
 			where (mov.exTipoMovimentacao.idTpMov = 11 or mov.exTipoMovimentacao.idTpMov = 25)
 			and mov.exMovimentacaoCanceladora = null
 			and doc.exModelo.idMod = :idMod
 			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
 			group by doc.idDoc
 			having min(mov.dtIniMov) between :dataIni and :dataFim)
-		]]>
-	</query>
-	
-	<query name="consultarPorFiltro">
-		<![CDATA[
-			select doc, mob, label 
+		</query>
+ <query name="consultarPorFiltro">select doc, mob, label 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			
 			where (
 				:descrDocumento = null or :descrDocumento = '' or (
-					doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10
+					doc.exNivelAcesso.grauNivelAcesso &lt; 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10
 				) or ( 
 					:lotaTitular!=null and :lotaTitular!=0 and doc.lotaCadastrante in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular)
 					or (:titular!=null and :titular!=0 and doc.subscritor in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))
@@ -200,8 +168,8 @@
 			and (:classificacaoSelId = null or :classificacaoSelId = 0 or doc.exClassificacao.idClassificacao = :classificacaoSelId)
 			and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))
 			
-			and (:dtDoc = null or doc.dtDoc >= :dtDoc)
-			and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)
+			and (:dtDoc = null or doc.dtDoc &gt;= :dtDoc)
+			and (:dtDocFinal = null or doc.dtDoc &lt;= :dtDocFinal)
 			
 			and (:numAntigoDoc = null or :numAntigoDoc = '' or upper (doc.numAntigoDoc) like upper('%' || :numAntigoDoc || '%'))	
 			
@@ -218,18 +186,14 @@
 			and (:orgaoExternoSelId = null or :orgaoExternoSelId = null or doc.orgaoExterno.idOrgao = :orgaoExternoSelId)
 			and (:numExtDoc = null or :numExtDoc = '' or upper(doc.numExtDoc) like upper('%' || :numExtDoc || '%'))
 			
-			order by doc.dtDoc desc
-		]]>
-	</query>
-	
-	<query name="consultarQuantidadePorFiltro">
-		<![CDATA[
+			order by doc.dtDoc desc</query>
+ <query name="consultarQuantidadePorFiltro">
 			select count(doc) 
 				from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 				
 				where (
 					:descrDocumento = null or :descrDocumento = '' or (
-						doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10
+						doc.exNivelAcesso.grauNivelAcesso &lt; 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10
 					) or ( 
 						:lotaTitular!=null and :lotaTitular!=0 and doc.lotaCadastrante in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular)
 						or (:titular!=null and :titular!=0 and doc.subscritor in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))
@@ -258,8 +222,8 @@
 				and (:classificacaoSelId = null or :classificacaoSelId = 0 or doc.exClassificacao.idClassificacao = :classificacaoSelId)
 				and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))
 				
-				and (:dtDoc = null or doc.dtDoc >= :dtDoc)
-				and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)
+				and (:dtDoc = null or doc.dtDoc &gt;= :dtDoc)
+				and (:dtDocFinal = null or doc.dtDoc &lt;= :dtDocFinal)
 				
 				and (:numAntigoDoc = null or :numAntigoDoc = '' or upper (doc.numAntigoDoc) like upper('%' || :numAntigoDoc || '%'))	
 				
@@ -276,23 +240,15 @@
 				and (:orgaoExternoSelId = null or :orgaoExternoSelId = null or doc.orgaoExterno.idOrgao = :orgaoExternoSelId)
 				and (:numExtDoc = null or :numExtDoc = '' or upper(doc.numExtDoc) like upper('%' || :numExtDoc || '%'))
 						
-		]]>
-	</query>
-	
-	<query name="listarSolicitados">
-		<![CDATA[select doc 
+		</query>
+ <query name="listarSolicitados">select doc 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			where label.cpMarcador.idMarcador = 21
 			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
-		]]>
-	</query>
-	
-	<query name="listarDisponibilizados">
-		<![CDATA[select doc 
+		</query>
+ <query name="listarDisponibilizados">select doc 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			where label.cpMarcador.idMarcador = 22
 			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
-		]]>
-	</query>
-
+		</query>
 </hibernate-mapping>

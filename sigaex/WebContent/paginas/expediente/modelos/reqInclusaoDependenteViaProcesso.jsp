@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!-- este modelo trata de
 REQUERIMENTO DE INCLUSAO DE DEPENDENTE VIA PROCESSO-->
@@ -31,7 +31,7 @@ REQUERIMENTO DE INCLUSAO DE DEPENDENTE VIA PROCESSO-->
 
 		<mod:valor var="texto_requerimento2">
 		
-			<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />
+			<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegi.jsp" />
 			
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			Eu, ${doc.subscritor.descricao}, matrícula RJ${doc.subscritor.matricula}, venho por meio deste solicitar a V.Exa., s.m.j., o deferimento do pedido de inclusão de ${dependente}, 

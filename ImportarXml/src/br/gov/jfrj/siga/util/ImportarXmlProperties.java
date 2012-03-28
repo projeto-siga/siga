@@ -24,9 +24,6 @@
  */
 package br.gov.jfrj.siga.util;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 
 public class ImportarXmlProperties extends SigaBaseProperties {
@@ -53,6 +50,10 @@ public class ImportarXmlProperties extends SigaBaseProperties {
 	*/
 	private ImportarXmlProperties() {
 		// construtor privado
+	}
+	@Override
+	protected String getPrefixoModulo() {
+		return "siga.cp.sinc.xml";
 	}
 	private static SigaBaseProperties instance = new ImportarXmlProperties();
 	public static String getString(final String key) {

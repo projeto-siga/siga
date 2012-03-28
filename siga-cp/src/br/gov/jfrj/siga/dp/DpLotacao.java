@@ -294,4 +294,18 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			return true;
 		return false;
 	}
+	/**
+	 * Retorna a lotação atual no histórico desta lotação
+	 * @return DpLotacao
+     */
+	public DpLotacao getLotacaoAtual() {
+		DpLotacao lotIni = getLotacaoInicial();
+		Set<DpLotacao> setLotas = lotIni.getLotacoesPosteriores();
+		if (setLotas != null)
+			for (DpLotacao l : setLotas)
+				return l;
+
+		return this;
+	}
+	
 }

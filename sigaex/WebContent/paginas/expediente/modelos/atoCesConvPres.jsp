@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -18,13 +18,8 @@
 			<mod:selecao titulo="<b>Acerto Gramatical</b>" var="acgra"
 				opcoes="do;da" reler="sim" />
 			<mod:lotacao titulo="<b> Lotação de Origem</b>" var="lota" />
-			<br>
-			<br>
-			<mod:selecao titulo="<b>Seção Judiciária</b>" var="sec"
-				opcoes="ES;RJ" reler="sim" />
-		</mod:grupo>
-		<br>
-
+			<br><br>
+		</mod:grupo>	
 		<mod:grupo>
 			<mod:data titulo="<b>Data de Vigência</b>" var="datfin" />
 		</mod:grupo>
@@ -36,6 +31,7 @@
 		<c:set var="federal" value="${f:pessoa(requestScope['jfc_pessoaSel.id'])}" />
 		<c:set var="lotac" value="${requestScope['lota_lotacaoSel.descricao']}" />
 		<c:set var="lotc" value="${f:maiusculasEMinusculas(lotac)}" />
+		
 		<mod:valor var="texto_ato">
 			<br />
 			<br />
@@ -56,8 +52,8 @@
 					<c:set var="el" value="da Juíza Federal"></c:set>
 					<c:set var="tit" value="Dra"></c:set>
 				</c:otherwise>
-			</c:choose> ${el} ${acgra} ${lotc} - SJ<c:choose><c:when test="${sec == 'ES'}">ES</c:when><c:otherwise>RJ</c:otherwise></c:choose>, ${tit} ${federal.nomePessoa}</b>. <br>
-			${f:pessoa(requestScope['matricula_pessoaSel.id']).lotacao.descricao}<br>
+			</c:choose> ${el} ${acgra} ${lotc} - ${federal.orgaoUsuario.nmOrgaoUsu}, ${tit} ${federal.nomePessoa}</b>. <br>
+			
 		</mod:valor>
 	</mod:documento>
 </mod:modelo>

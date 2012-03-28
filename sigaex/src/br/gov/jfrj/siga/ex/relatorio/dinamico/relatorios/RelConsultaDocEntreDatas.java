@@ -75,16 +75,38 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 				false);
 		this.addColuna("Lotação do Cadastrante", 20, RelatorioRapido.ESQUERDA,
 				false);
-		/*
-		 * this.addColuna("Data da criação", 30,RelatorioRapido.ESQUERDA,false);
-		 * this.addColuna("Situação", 30,RelatorioRapido.ESQUERDA,false);
-		 * this.addColuna ("ColTeste",20,RelatorioRapido.CENTRO,false);
-		 */
+
 		return this;
 	}
 
-	@Override
-	public Collection processarDados() {
+	public Collection processarDados() throws Exception {
+
+		ExDao dao = ExDao.getInstance();
+		final Query query = dao.getSessao().getNamedQuery(
+				"consultarMobilNoPeriodo");
+
+		DpLotacao lot = new DpLotacao();
+		lot.setSigla((String) parametros.get("lotacao"));
+		List<DpLotacao> listaLotacao = dao.consultar(lot, null);
+		query.setLong("idLotacao", new Long(listaLotacao.get(0).getId()));
+		query.setString("dataInicial", (String) parametros.get("dataInicial"));
+		query.setString("dataFinal", (String) parametros.get("dataFinal"));
+
+		query.setString("URL", (String) parametros.get("link_siga"));
+
+		List<Object[]> provResultList = query.list();
+
+		List<String> dados = new ArrayList<String>();
+
+		for (Object[] array : provResultList) {
+			for (Object value : array)
+				dados.add((String) value);
+		}
+
+		return dados;
+	}
+
+	public Collection processarDadosLento() throws Exception {
 		List<String> dados = new ArrayList<String>();
 		// HibernateUtil.configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml");
 
@@ -113,17 +135,20 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 				false);
 
 		ExMobil mob = null;
-		for (Iterator iterator = query.list().iterator(); iterator.hasNext();) {
+
+		List provResultList = query.list();
+
+		for (Iterator iterator = provResultList.iterator(); iterator.hasNext();) {
 			BigDecimal idMobil = (BigDecimal) iterator.next();
 			if (idMobil != null) {
 				mob = dao.consultar(new Long(idMobil.longValue()),
 						ExMobil.class, false);
 				dados.add(mob.getSigla());
-				dados
-						.add((String) parametros.get("link_siga")
-								+ mob.getSigla());
+				dados.add((String) parametros.get("link_siga") + mob.getSigla());
 				// dados.add(mob.getExDocumento().getDescrDocumento());
-				dados.add(Ex.getInstance().getBL()
+				dados.add(Ex
+						.getInstance()
+						.getBL()
 						.descricaoConfidencialDoDocumento(mob, titular,
 								lotaTitular));
 				dados.add(mob.getExDocumento().getLotaCadastrante().getSigla());

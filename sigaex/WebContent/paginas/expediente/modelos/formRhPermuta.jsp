@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <mod:modelo>
@@ -52,7 +52,7 @@
 		<br>
 		<br>
 		<c:import 
-			url="/paginas/expediente/modelos/inc_tit.jsp?para=diretorForo" />
+			url="/paginas/expediente/modelos/inc_tit_juizfedDirForoSolicit.jsp" />
 	
 		<p style="TEXT-INDENT: 2cm" align="justify">Solicito as providências necessárias para que seja realizada
 		a <b>remoção por permuta </b> entre os(as) servidores(as) <mod:identificacao pessoa="${requestScope['servidor1_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" />

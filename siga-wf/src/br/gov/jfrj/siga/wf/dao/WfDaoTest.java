@@ -46,7 +46,6 @@ public class WfDaoTest extends TestCase {
 	public WfDaoTest() throws Exception {
 		AnnotationConfiguration cfg = WfDao.criarHibernateCfg(
 				"jdbc:oracle:thin:@mclaren:1521:mcl", "sigawf", "sigawf");
-		// "jdbc:oracle:thin:@mclaren:1521:mcl", "sigawf", "sigawf");
 		CpDao.configurarHibernateParaDebug(cfg);
 		HibernateUtil.configurarHibernate(cfg, "");
 

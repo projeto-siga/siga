@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -72,9 +73,119 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 	}
 
-	@Override
-	public Collection processarDados() {
-		int MAX_RESULTS = 7500;
+	public Collection processarDados() throws Exception {
+
+		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
+		// para a forma
+		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
+				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
+						+ parametros.get("tipoFormaDoc") + "'");
+		ExTipoFormaDoc tipoFormaDoc = null;
+		if (qryTipoForma.list().size() > 0) {
+			tipoFormaDoc = (ExTipoFormaDoc) qryTipoForma.uniqueResult();
+		}
+		String trechoQryTipoForma = tipoFormaDoc == null ? ""
+				: " and tipoForma.idTipoFormaDoc = "
+						+ tipoFormaDoc.getIdTipoFormaDoc();
+
+		// Obtém todas as lotações do órgão com a sigla passada...
+		Query qrySetor = HibernateUtil.getSessao().createQuery(
+				"from DpLotacao lot where " + "lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario") + " "
+						+ "and lot.siglaLotacao = '"
+						+ parametros.get("lotacao") + "'");
+		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
+		for (Iterator iterator = qrySetor.list().iterator(); iterator.hasNext();) {
+			DpLotacao lot = (DpLotacao) iterator.next();
+			lotacaoSet.add(lot);
+		}
+
+		// ... e monta trecho da query para as lotações
+		String listaLotacoes = "";
+		Set<DpLotacao> todasLotas;
+		if (parametros.get("incluirSubordinados") != null)
+			todasLotas = getSetoresSubordinados(lotacaoSet);
+		else
+			todasLotas = lotacaoSet;
+		for (DpLotacao lot : todasLotas) {
+			if (listaLotacoes != "")
+				listaLotacoes += ",";
+			listaLotacoes += lot.getIdInicial().toString();
+		}
+
+		// Monta trecho da query para ocultar seletivamente a descrição do
+		// documento
+		String trechoQryDescrDocumento = "(case when ("
+				+ "	nivel.idNivelAcesso <> 1 "
+				+ "	and nivel.idNivelAcesso <> 6"
+				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
+
+		// Monta trecho da query para retornar o código do documento
+		String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
+				+ "|| '-' || " + "forma.siglaFormaDoc "
+				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "
+				+ "doc.numExpediente " + "|| "
+				+ "(case when (tipoMob.idTipoMobil = 4) "
+				+ "then ('-V' || marca.exMobil.numSequencia) " +
+						"else ('-' || chr(marca.exMobil.numSequencia+64)) end)";
+
+		// Monta query definitiva
+		String listaMarcadoresRelevantes = "2, 3, 5, 7, 14, 15"; // Ativos
+		if (parametros.get("tipoRel").equals("2")) {
+			listaMarcadoresRelevantes = "27"; // Como gestor
+		} else if (parametros.get("tipoRel").equals("3")) {
+			listaMarcadoresRelevantes = "28"; // Como interessado
+		}
+		Query qryMarcas = HibernateUtil
+				.getSessao()
+				.createQuery(
+						"select " + "	marca.dpLotacaoIni.nomeLotacao, "
+								+ trechoQryCodigoDoc
+								+ ","
+								+ " '"
+								+ parametros.get("link_siga")
+								+ "' ||"
+								+ trechoQryCodigoDoc
+								+ ","
+								+ trechoQryDescrDocumento
+								+ ","
+								+ "	pes.nomePessoa,"
+								+ "	marca.cpMarcador.descrMarcador "
+								+ "from ExMarca marca "
+								+ "inner join marca.exMobil as mob "
+								+ "inner join mob.exTipoMobil as tipoMob "
+								+ "inner join mob.exDocumento as doc "
+								+ "inner join doc.exNivelAcesso as nivel "
+								+ "inner join doc.orgaoUsuario as orgao "
+								+ "inner join doc.exFormaDocumento as forma "
+								+ "inner join forma.exTipoFormaDoc as tipoForma "
+								+ "inner join marca.dpLotacaoIni as lot "
+								+ "inner join marca.cpMarcador as marcador "
+								+ "left outer join marca.dpPessoaIni as pes "
+								+ "where lot.idLotacao in ("
+								+ listaLotacoes
+								+ ") "
+								+ "and marcador.idMarcador in ("
+								+ listaMarcadoresRelevantes
+								+ ")"
+								+ trechoQryTipoForma
+								+ " order by lot.siglaLotacao, doc.idDoc");
+
+		// Retorna
+		List<Object[]> lista = qryMarcas.list();
+
+		List<String> listaFinal = new ArrayList<String>();
+		for (Object[] array : lista) {
+			for (Object value : array)
+				listaFinal.add((String) value);
+		}
+
+		return listaFinal;
+
+	}
+
+	public Collection processarDadosLento() throws Exception {
 		List<String> d = new LinkedList<String>();
 		String lotacoes = "";
 
@@ -147,18 +258,18 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 									+ "doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = "
 									+ tipoFormaDoc.getIdTipoFormaDoc()
 									+ lotacoes
-									+ " order by lot.siglaLotacao,doc.idDoc")
-					.setMaxResults(MAX_RESULTS);
+									+ " order by lot.siglaLotacao,doc.idDoc");
 		} else {
-			qryMovimentacao = HibernateUtil.getSessao().createQuery(
-					"select mc from ExMarca mc "
-							+ "inner join fetch mc.exMobil mob "
-							+ "inner join mc.dpLotacaoIni lot "
-							+ "inner join fetch mob.exDocumento doc where "
-							+ "mc.cpMarcador.idMarcador in ("
-							+ marcadoresRelevantes + ") " + lotacoes
-							+ " order by lot.siglaLotacao,doc.idDoc")
-					.setMaxResults(MAX_RESULTS);
+			qryMovimentacao = HibernateUtil
+					.getSessao()
+					.createQuery(
+							"select mc from ExMarca mc "
+									+ "inner join fetch mc.exMobil mob "
+									+ "inner join mc.dpLotacaoIni lot "
+									+ "inner join fetch mob.exDocumento doc where "
+									+ "mc.cpMarcador.idMarcador in ("
+									+ marcadoresRelevantes + ") " + lotacoes
+									+ " order by lot.siglaLotacao,doc.idDoc");
 		}
 		int indice = 0;
 		qryMovimentacao.setFirstResult(indice);
@@ -186,7 +297,8 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 				d.add(mc.getExMobil().getSigla());
 				d.add((String) parametros.get("link_siga")
 						+ mc.getExMobil().getSigla());
-				d.add(Ex.getInstance().getBL()
+				d.add(Ex.getInstance()
+						.getBL()
 						.descricaoConfidencialDoDocumento(mc.getExMobil(),
 								titular, lotaTitular));
 				// d.add("");
@@ -203,14 +315,13 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 				System.out.println(indice);
 			}
 
-			if (indice < MAX_RESULTS) {
-				break;
-			} else {
-				System.out.println("Tamanho do resultado:" + d.size());
-				qryMovimentacao.setFirstResult(indice);
-				HibernateUtil.getSessao().clear();
-				listaMarcas = qryMovimentacao.list();
-			}
+			/*
+			 * if (indice < MAX_RESULTS) { break; } else {
+			 * System.out.println("Tamanho do resultado:" + d.size());
+			 * qryMovimentacao.setFirstResult(indice);
+			 * HibernateUtil.getSessao().clear(); listaMarcas =
+			 * qryMovimentacao.list(); }
+			 */
 		}
 
 		return d;

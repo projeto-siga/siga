@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
@@ -141,7 +141,7 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 		<%--<mod:valor var="texto_requerimento2">
 		<c:if test="${(requerente == 'Pai' and seraServidora == 'Não') or requerente == 'Mãe'}">
 	
-			<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=diretoraRH" />
+			<c:import url="/paginas/expediente/modelos/inc_tit_SraDiretoraSubsecretariaRH.jsp" />
 			
 			
 				<p style="TEXT-INDENT: 2cm" align="justify">

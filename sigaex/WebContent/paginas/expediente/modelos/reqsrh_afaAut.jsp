@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de AFASTAMENTOS AUTORIZADOS -->
@@ -36,6 +36,10 @@
 		 <mod:radio titulo="Outros" var="periodo" valor="5" reler="sim" />
 		 <c:set var="valorperiodo" value="${periodo}" />
 		 <c:if test="${empty valorperiodo}"><c:set var="valorperiodo" value="${param['periodo']}" /></c:if>
+		 <c:if test="${valorperiodo == 1}"><span style="color:red"><br><b>&nbsp; FAVOR USAR CLASSIFICA플O 20.06.02.02</b></span><br></c:if>
+		 <c:if test="${valorperiodo == 2}"><span style="color:red"><br><b>&nbsp; FAVOR USAR CLASSIFICA플O 20.06.02.05</b></span><br></c:if> 
+		 <c:if test="${valorperiodo == 3}"><span style="color:red"><br><b>&nbsp; FAVOR USAR CLASSIFICA플O 20.06.02.01</b></span><br></c:if> 
+		 <c:if test="${valorperiodo == 4}"><span style="color:red"><br><b>&nbsp; FAVOR USAR CLASSIFICA플O 20.06.02.03</b></span><br></c:if>      
 		 <c:if test="${valorperiodo == 5}"><mod:texto titulo="&nbsp; Motivo (por etc etc)" var="outromot" largura="40" obrigatorio="Sim" /><br><mod:texto titulo="&nbsp; Comprovante" var="comprov" largura="40" obrigatorio="Sim"/></c:if>     
 	  </mod:grupo>
 		<br>

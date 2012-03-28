@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Documento">
 
@@ -88,12 +89,7 @@ End Function
 						name="assinaturaB64" /> <ww:hidden name="assinante" />
 					<center>
 						<input type="button" value="Assinar" onclick="vbscript: assinar" />
-						<input type="button" name="cmdAssinar" id="cmdAssinar"
-							onClick="javascript: apptAssinar()"
-							value="Assinar com assinador da Certisign" class=botao> <input
-							type="button" name="cmdConfigurar" id="cmdConfigurar"
-							onClick="javascript: apptConfigurar()"
-							value="Configurar assinador da Certisign" class=botao>
+						${f:obterBotoesExtensaoAssinador(lotaTitular.orgaoUsuario)}
 					</center>
 				</td>
 			</tr>
@@ -101,9 +97,8 @@ End Function
 	</ww:form>
 
 	<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action?sigla=${sigla}" />
-	<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}"  />
-	<c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/doc/${doc.codigoCompacto}.pdf"  />
-	
-	<%@include file="/WEB-INF/ext/extensaoAssinador.jsp" %>
-
+    <c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}"  />
+    <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/hashSHA1/doc/${doc.codigoCompacto}.pdf"  />
+    <%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/doc/${doc.codigoCompacto}.pdf"  /> --%>
+	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
 </siga:pagina>

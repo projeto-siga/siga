@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <mod:modelo>
@@ -23,7 +23,7 @@
     <head></head>
 	<body>
 		
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=DiretorForo" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForo.jsp" />
 		
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
@@ -44,7 +44,7 @@
 		
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
 	
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegi.jsp" />
 
 
 		<p style="TEXT-INDENT: 2cm" align="justify">

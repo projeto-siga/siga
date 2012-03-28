@@ -154,6 +154,22 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+
+
+
+<!-- Sistema de gravação de assinatura da CertSign	
+    <servlet>
+        <servlet-name>gravarAssinatura</servlet-name>
+        <servlet-class>br.gov.jfrj.siga.util.GravarAssinatura</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>gravarAssinatura</servlet-name>
+        <url-pattern>/gravarAssinatura</url-pattern>
+    </servlet-mapping>
+-->
+	
+
 	<servlet-mapping>
 		<servlet-name>dwr</servlet-name>
 		<url-pattern>/dwr/*</url-pattern>

@@ -22,12 +22,10 @@ import java.text.SimpleDateFormat;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
-public class MontadorQuery  {
+public class MontadorQuery implements IMontadorQuery {
 
-	
-	public String montaQueryConsultaporFiltro(final ExMobilDaoFiltro flt,
+	public String montaQueryConsultaporFiltro(final IExMobilDaoFiltro flt,
 			DpPessoa titular, DpLotacao lotaTitular, boolean apenasCount) {
 
 		StringBuffer sbf = new StringBuffer();
@@ -199,20 +197,15 @@ public class MontadorQuery  {
 			sbf.append(flt.getIdMod());
 		}
 
-		encerraQuery(apenasCount, sbf);
+		if (!apenasCount)
+			sbf.append(" order by doc.idDoc desc");
 
 		return sbf.toString();
 
 	}
 
-	/**
-	 * Utilizado por subclasses que queiram sobrescrever o encerramento da query
-	 * @param apenasCount
-	 * @param sbf
-	 */
-	protected void encerraQuery(boolean apenasCount, StringBuffer sbf) {
-		if (!apenasCount)
-			sbf.append(" order by doc.idDoc desc");
+	public void setMontadorPrincipal(IMontadorQuery montadorQueryPrincipal) {
+		//Este médodo não faz nada. É utilizado apenas para a extensão da busca textual do SIGA.
 	}
 
 }

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
@@ -28,8 +28,8 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="entrNoPrazoAjax">
 						<c:if test="${entrNoPrazoVal == '2'}">
-							<mod:texto titulo="Ressalvas" var="ressalvaEntrNoPrazo" largura="60"
-								maxcaracteres="60" obrigatorio="Sim" />
+							<mod:memo titulo="Ressalvas" var="ressalvaEntrNoPrazo" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 							<mod:oculto var="entrNoPrazoNao" valor="não"/>								
 						</c:if>
 					</mod:grupo>
@@ -49,8 +49,8 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="entrQuantAjax">
 						<c:if test="${entrQuantVal == '2'}">
-							<mod:texto titulo="Ressalvas" var="ressalvaEntrQuant" largura="60"
-								maxcaracteres="60" obrigatorio="Sim" />
+							<mod:memo titulo="Ressalvas" var="ressalvaEntrQuant" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 							<mod:oculto var="entrQuantNao" valor="não"/>			
 						</c:if>
 					</mod:grupo>
@@ -73,8 +73,8 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="tempExecAjax">
 						<ww:if test="${tempExecVal == '2'}">
-							<mod:texto titulo="Ressalvas" var="ressalvaTempExec" largura="60"
-								maxcaracteres="60" obrigatorio="Sim" />
+							<mod:memo titulo="Ressalvas" var="ressalvaTempExec" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 							<mod:oculto var="tempExecNao" valor="Não foram"/>		
 						</ww:if>
 						<ww:else>
@@ -100,9 +100,9 @@
 			</c:if>		
 			<mod:grupo depende="qualidadeAjax">
 				<c:if test="${qualidadeVal == '2' or qualidadeVal == '3'}">
-					<mod:texto titulo="Justificar" var="jusQualidade" largura="60"
-							maxcaracteres="60" obrigatorio="Sim" />					
-				</c:if>
+					<mod:memo titulo="Justificar" var="jusQualidade" linhas="2"
+								colunas="60" obrigatorio="Sim" />	
+     			</c:if>
 			</mod:grupo>			
 		</mod:grupo>
 		<c:if test="${secao == 'STI'}">		
@@ -150,8 +150,8 @@
 								<mod:grupo largura="97">
 									<mod:grupo depende="substitEquipAjax">	
 										<c:if test="${substitEquipVal == '2'}">										 
-											<mod:texto titulo="Ressalvas" var="ressalvaSubstitEquip" largura="60"
-											maxcaracteres="60" obrigatorio="Sim" />
+											<mod:memo titulo="Ressalvas" var="ressalvaSubstitEquip" linhas="2"
+								             colunas="60" obrigatorio="Sim" />
 											<mod:oculto var="substitEquipNao" valor="não" />	
 										</c:if>									
 									</mod:grupo>
@@ -185,12 +185,12 @@
 				</c:if>
 				<mod:grupo depende="quantEquipAjax">
 					<c:if test="${quantEquipVal == '2' or quantEquipVal == '3' }">				
-						<mod:texto titulo="Justificar" var="jusQuantEquip" largura="60"
-							maxcaracteres="60" obrigatorio="Sim" />
+						<mod:memo titulo="Justificar" var="jusQuantEquip" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 				 	 </c:if>
 				</mod:grupo>			
 			</mod:grupo>	
-			<mod:grupo titulo="O total de imagens digitalizadas ultrapassou a franquia? ">	
+			<mod:grupo titulo="O total de cópias impressas/imagens digitalizadas ultrapassou a franquia? ">	
 				<mod:radio titulo="Não." var="totImag" valor="1" marcado="Sim"
 							reler="ajax" idAjax="totImagAjax" />		
 				<mod:grupo largura="7">
@@ -207,8 +207,8 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="totImagAjax">
 						<ww:if test="${totImagVal == '2'}">
-							<mod:texto titulo="Ressalvas" var="ressalvaTotImag" largura="60"
-								maxcaracteres="60" obrigatorio="Sim" />						
+							<mod:memo titulo="Ressalvas" var="ressalvaTotImag" linhas="2"
+								colunas="60" obrigatorio="Sim" />						
 						</ww:if>						
 						<ww:else>
 							<mod:oculto var="totImagNao" valor="não"/>	
@@ -229,7 +229,7 @@
 			<mod:grupo largura="93">
 				<mod:grupo depende="valeAlimAjax">
 					<c:if test="${valeAlimVal == '2'}">
-						<mod:texto titulo="Ressalvas" var="ressalvaValeAlim" largura="60" maxcaracteres="60" obrigatorio="Sim" />
+						<mod:memo titulo="Ressalvas" var="ressalvaValeAlim" linhas="2" colunas="60" obrigatorio="Sim" />
 						<mod:oculto var="valeAlimNao" valor="não"/>	
 					</c:if>
 				</mod:grupo>
@@ -251,8 +251,8 @@
 			<mod:grupo largura="93">
 				<mod:grupo depende="valeTranspAjax">
 					<c:if test="${valeTranspVal == '2'}">
-						<mod:texto titulo="Ressalvas" var="ressalvaValeTransp" largura="60"
-							maxcaracteres="60" obrigatorio="Sim" />
+						<mod:memo titulo="Ressalvas" var="ressalvaValeTransp" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 						<mod:oculto var="valeTranspNao" valor="não"/>		
 					</c:if>
 				</mod:grupo>
@@ -312,7 +312,8 @@
 								<mod:grupo largura="97">
 									<mod:grupo depende="substitUnifAjax">	
 										<c:if test="${substitUnifVal == '2'}">
-											<mod:texto titulo="Ressalvas" var="ressalvaSubstitUnif" largura="60" maxcaracteres="60" obrigatorio="Sim"/>
+											<mod:memo titulo="Ressalvas" var="ressalvaSubstitUnif" linhas="2"
+								             colunas="60" obrigatorio="Sim"/>
 											<mod:oculto var="substitUnifNao" valor="não"/>		
 										</c:if>
 									</mod:grupo>
@@ -341,8 +342,8 @@
 			<mod:grupo largura="93">
 				<mod:grupo depende="irregContCheqAjax">
 					<ww:if test="${irregContCheqVal == '2'}">
-						<mod:texto titulo="Ressalvas" var="ressalvaIrregContCheq" largura="60"
-							maxcaracteres="60" obrigatorio="Sim" />						
+						<mod:memo titulo="Ressalvas" var="ressalvaIrregContCheq" linhas="2"
+								colunas="60" obrigatorio="Sim" />						
 					</ww:if>
 					<ww:else>
 						<c:if test="${irregContCheqVal == '1'}">
@@ -376,8 +377,8 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="confEspecifAjax">
 						<c:if test="${confEspecifVal == '2'}">
-							<mod:texto titulo="Justificar" var="jusConfEspecif" largura="60"
-								maxcaracteres="60" obrigatorio="Sim" />
+							<mod:memo titulo="Justificar" var="jusConfEspecif" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 							<mod:oculto var="confEspecifNao" valor="não"/>		
 						</c:if>
 					</mod:grupo>
@@ -414,8 +415,8 @@
 								</c:if>								
 								<mod:grupo depende="avalVisitaAjax">	
 									<c:if test="${avalVisitaVal == '2' or avalVisitaVal == '3'}">										
-										<mod:texto titulo="Justificar" var="jusAvalVisita" largura="60"
-										maxcaracteres="60" obrigatorio="Sim" />										
+										<mod:memo titulo="Justificar" var="jusAvalVisita" linhas="2"
+										colunas="60" obrigatorio="Sim" />										
 									</c:if>										
 								</mod:grupo>						
 								</mod:grupo>	
@@ -444,8 +445,8 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="comIdentifAjax">
 						<c:if test="${comIdentifVal == '2'}">
-							<mod:texto titulo="Observações" var="obsComIdentif" largura="60"
-								maxcaracteres="60" obrigatorio="Sim" />
+							<mod:memo titulo="Observações" var="obsComIdentif" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 							<mod:oculto var="comIdentifNao" valor="não"/>		
 						</c:if>					
 					</mod:grupo>
@@ -465,8 +466,8 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="equipUtilAjax">
 						<ww:if test="${equipUtilVal == '2'}">
-							<mod:texto titulo="Ressalvas" var="ressalvaEquipUtil" largura="60"
-								maxcaracteres="60" obrigatorio="Sim" />
+							<mod:memo titulo="Ressalvas" var="ressalvaEquipUtil" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 							<mod:oculto var="equipUtilNao" valor="não"/>		
 						</ww:if>										
 					</mod:grupo>
@@ -494,8 +495,8 @@
 				<mod:grupo largura="93">
 					<mod:grupo depende="manutPreventAjax">
 						<c:if test="${manutPreventVal == '2'}">
-							<mod:texto titulo="Justificar" var="jusManutPrevent" largura="60"
-								maxcaracteres="60" obrigatorio="Sim" />
+							<mod:memo titulo="Justificar" var="jusManutPrevent" linhas="2"
+								colunas="60" obrigatorio="Sim" />
 							<mod:oculto var="manutPreventNao" valor="não"/>		
 						</c:if>
 					</mod:grupo>
@@ -534,7 +535,8 @@
 									<mod:grupo largura="93">
 										<mod:grupo depende="cronogramaAjax">	
 											<c:if test="${cronogramaVal == '2'}">
-												<mod:texto titulo="Justificar" var="jusCronograma" largura="60" maxcaracteres="60" obrigatorio="Sim"/>
+												<mod:memo titulo="Justificar" var="jusCronograma" linhas="2"
+								                 colunas="60" obrigatorio="Sim"/>
 												<mod:oculto var="cronogramaNao" valor="não"/>		
 											</c:if>
 										</mod:grupo>
@@ -554,8 +556,8 @@
 							</c:if>								
 							<mod:grupo depende="avalServicoAjax">	
 								<c:if test="${avalServicoVal == '2' or avalServicoVal == '3'}">										
-									<mod:texto titulo="Justificar" var="jusAvalServico" largura="60"
-									maxcaracteres="60" obrigatorio="Sim" />										
+									<mod:memo titulo="Justificar" var="jusAvalServico" linhas="2"
+								colunas="60" obrigatorio="Sim" />										
 								</c:if>										
 							</mod:grupo>
 							<b>Como avalia a qualidade e quantidade dos equipamentos/insumos?</b>								
@@ -571,8 +573,8 @@
 							</c:if>								
 							<mod:grupo depende="avalEquipAjax">	
 								<c:if test="${avalEquipVal == '2' or avalEquipVal == '3'}">										
-									<mod:texto titulo="Justificar" var="jusAvalEquip" largura="60"
-									maxcaracteres="60" obrigatorio="Sim" />										
+									<mod:memo titulo="Justificar" var="jusAvalEquip" linhas="2"
+								     colunas="60" obrigatorio="Sim" />										
 								</c:if>										
 							</mod:grupo>																											
 						</ww:if>
@@ -765,7 +767,7 @@
 			<mod:oculto var="freqFuncTipo" valor="parcial" />	
 		</ww:else>
 		
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">			
+		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">			
 			<tr><th><b>
 				<c:choose>
 				<c:when test="${secao == 'SEGRA'}">
@@ -846,7 +848,7 @@
 						<br>${jusQuantEquip}					
 					</c:if>
 				</td></tr>	
-				<tr><td>O total de imagens digitalizadas ${totImagNao} ultrapassou a franquia.
+				<tr><td>O total de cópias impressas/imagens digitalizadas ${totImagNao} ultrapassou a franquia.
 					<c:if test="${totImag == '2'}">	<%-- sim --%>		
 						<br>${ressalvaTotImag}					
 					</c:if>
@@ -980,7 +982,7 @@
 		
 		
 		
-		<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
+		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 			<tr>
 				<th><b>Informações referentes à frequência de funcionários: </b></th>
 			</tr>			
@@ -989,7 +991,7 @@
 			</tr>	
 		</table>						
 		<c:if test="${freqFunc eq 'Parcial'}">	
-			<table width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
+			<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 				<c:choose>
 				<c:when test="${secao == 'SEGRA' or secao == 'SLO' or secao == 'SIE'}">			
 					<c:forEach var="i" begin="1" end="${numCatProfis}">

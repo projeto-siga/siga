@@ -224,6 +224,9 @@
 	<security-role>
 		<role-name>sigadesenvolvimento</role-name>
 	</security-role>
+	<security-role>
+		<role-name>superusuario</role-name>
+	</security-role>
 	
 	<error-page>
 		<error-code>403</error-code>

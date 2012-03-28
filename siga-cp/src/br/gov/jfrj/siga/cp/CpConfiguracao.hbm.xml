@@ -73,7 +73,7 @@
 
 	<query name="consultarDataUltimaAtualizacao">
 		<![CDATA[
-			select max(cpcfg.hisDtIni) 
+			select max(cpcfg.hisDtIni), max(cpcfg.hisDtFim) 
 			from CpConfiguracao cpcfg
 		]]>
 	</query>

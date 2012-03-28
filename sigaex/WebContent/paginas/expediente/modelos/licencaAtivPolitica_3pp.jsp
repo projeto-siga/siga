@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="esconderTexto" value="sim" scope="request" />
 <c:set var="para" value="diretorForo" scope="request" />
@@ -28,7 +28,7 @@
 		</mod:valor>	
 		<mod:valor var="texto_requerimento2">
 		<c:set var="semEspacos" value="Sim" scope="request" />
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=presidenteTRF" />			
+		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />			
 			<p style="TEXT-INDENT: 2cm; font-size: 12px" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, 
 			vem requerer a Vossa Excelência, nos termos da LC n.º 64/90 c/c o 

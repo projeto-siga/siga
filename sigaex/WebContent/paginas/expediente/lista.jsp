@@ -7,7 +7,7 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <script type="text/javascript" language="Javascript1.1">
 
@@ -527,8 +527,8 @@ function limpaCampos()
 
 						<td width="5%" align="center">${documento[2].dtIniMarcaDDMMYYYY}</td>
 						<td width="4%" align="center"><siga:selecionado
-							sigla="${documento[2].dpLotacaoIni.sigla}"
-							descricao="${documento[2].dpLotacaoIni.descricao}" /></td>
+							sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
+							descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" /></td>
 						<td width="4%" align="center"><siga:selecionado
 							sigla="${documento[2].dpPessoaIni.iniciais}"
 							descricao="${documento[2].dpPessoaIni.descricao}" /></td>
@@ -821,7 +821,7 @@ function limpaCampos()
 				<siga:selecao titulo="Classificação:" propriedade="classificacao" />
 
 				<ww:textfield label="Descrição" name="descrDocumento" size="80" />
-				<%@ include file="/WEB-INF/ext/extensaoBusca.jsp"%>
+				${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario)}
 				<tr>
 					<td></td>
 					<td><siga:monobotao inputType="submit" value="Buscar" /> <%--<ww:submit name="pesquisar" value="Pesquisar" theme="simple" />--%>

@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -29,7 +29,7 @@
 			<br>
 		</mod:grupo>
 		<mod:selecao titulo="<b>Quantidade de Bens</b>" var="contitem"
-			opcoes="1;2;3;4;5;6;7;8;9;10" reler="sim" />
+			opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="sim" />
 		<br>
 		<mod:grupo depende="contDependAjax">
 			<c:forEach var="i" begin="1" end="${contitem}">

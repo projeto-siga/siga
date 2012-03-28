@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
@@ -49,7 +49,7 @@ Ultima atualização 14/03/2007
     	<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp"/>						
     </head>
 	<body>		
-		<c:import url="/paginas/expediente/modelos/inc_tit.jsp?para=DiretorForo" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForo.jsp" />
 			
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência a expedição da 2&ordm; via carteira funcional pelo 

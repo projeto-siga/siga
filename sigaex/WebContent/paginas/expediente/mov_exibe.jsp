@@ -5,7 +5,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Documento" popup="true">
 
@@ -304,8 +304,17 @@ frm.submit();
 				<input type="button" value="Assinar Despacho"
 					onclick="vbscript:assinar" />
 			</c:when>
+			<c:when
+				test="${mov.exTipoMovimentacao.idTpMov==13}">
+				<input type="button" value="Assinar Desentranhamento"
+					onclick="vbscript:assinar" />
+			</c:when>
+			<c:when
+				test="${mov.exTipoMovimentacao.idTpMov==43}">
+				<input type="button" value="Assinar Encerramento"
+					onclick="vbscript:assinar" />
+			</c:when>
 			<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
-				${copia}--
 				<c:choose>
 					<c:when test="${copia == true}">
 						<input type="button" value="Conferir Cópia"
@@ -320,19 +329,15 @@ frm.submit();
 			</c:when>
 		</c:choose>
 		
-		<input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: apptAssinar()"
-			value="Assinar com assinador da Certisign" class=botao>
-		<input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: apptConfigurar()" value="Configurar assinador da Certisign"
-			class=botao>
+		${f:obterBotoesExtensaoAssinador(lotaTitular.orgaoUsuario)}
 
 		</div>
 	</ww:form>
 
-	
 	<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action?id=${mov.idMov}&copia=${copia}"/>
 	<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
-	<c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/${mov.nmPdf}" />
-
-	<%@include file="/WEB-INF/ext/extensaoAssinador.jsp" %>
-	
+    <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}" />
+    <%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/${mov.nmPdf}" /> --%>
+	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
+ 
 </siga:pagina>

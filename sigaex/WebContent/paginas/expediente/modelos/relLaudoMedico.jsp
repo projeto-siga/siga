@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <mod:modelo>
@@ -62,8 +62,15 @@
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizado.jsp" />
 		FIM CABECALHO -->
+		
+		<br> <br>
+		<table width="100%" border="2" cellpadding="0" cellspacing="0">
+			<tr>
+		    	<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">LAUDO MÉDICO</p></td>
+			</tr>
+		</table>
 		<mod:letra tamanho="${tl}">
-	
+		
 		<div style="font-family:Arial;font-size:10pt;">
 			<p>&nbsp;</p>
 			<p style="TEXT-INDENT: 2cm">${forTratamento}</p>

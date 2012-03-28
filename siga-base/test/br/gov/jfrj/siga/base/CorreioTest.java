@@ -31,6 +31,6 @@ public class CorreioTest {
 		Correio.enviar(destinatatios[0], "(text/plain)Assunto Teste Email Ação!", "Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda.");
 		
 		//envia em formato text/html
-		Correio.enviar("SIGA-TESTE<seuemail@teste.com.br>",destinatatios,"(text/html)Assunto Teste Email Ação!", "Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda.", "Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda.");
+		Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),destinatatios,"(text/html)Assunto Teste Email Ação!", "Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda.", "Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda.");
 	}
 }

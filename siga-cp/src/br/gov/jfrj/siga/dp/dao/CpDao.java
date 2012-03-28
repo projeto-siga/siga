@@ -45,9 +45,11 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -164,16 +166,16 @@ public class CpDao extends ModeloDao {
 			SecurityException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
-		return (Integer) this.getClass().getMethod("consultarQuantidade",
-				argType).invoke(this, o);
+		return (Integer) this.getClass()
+				.getMethod("consultarQuantidade", argType).invoke(this, o);
 	}
 
 	public Selecionavel consultarPorSigla(final DaoFiltro o) throws Exception,
 			SecurityException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
-		return (Selecionavel) this.getClass().getMethod("consultarPorSigla",
-				argType).invoke(this, o);
+		return (Selecionavel) this.getClass()
+				.getMethod("consultarPorSigla", argType).invoke(this, o);
 	}
 
 	public int consultarQuantidade(final CpOrgaoDaoFiltro o) {
@@ -811,12 +813,12 @@ public class CpDao extends ModeloDao {
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			query.setString("nome", flt.getNome().toUpperCase().replace(' ',
-					'%'));
+			query.setString("nome",
+					flt.getNome().toUpperCase().replace(' ', '%'));
 
 			if (!flt.isBuscarFechadas())
-				query.setString("situacaoFuncionalPessoa", flt
-						.getSituacaoFuncionalPessoa());
+				query.setString("situacaoFuncionalPessoa",
+						flt.getSituacaoFuncionalPessoa());
 
 			if (flt.getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
@@ -862,12 +864,12 @@ public class CpDao extends ModeloDao {
 				query = getSessao().getNamedQuery(
 						"consultarQuantidadeDpPessoaInclusiveFechadas");
 
-			query.setString("nome", flt.getNome().toUpperCase().replace(' ',
-					'%'));
+			query.setString("nome",
+					flt.getNome().toUpperCase().replace(' ', '%'));
 
 			if (!flt.isBuscarFechadas())
-				query.setString("situacaoFuncionalPessoa", flt
-						.getSituacaoFuncionalPessoa());
+				query.setString("situacaoFuncionalPessoa",
+						flt.getSituacaoFuncionalPessoa());
 
 			if (flt.getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
@@ -921,9 +923,7 @@ public class CpDao extends ModeloDao {
 		try {
 			Query query = null;
 			query = getSessao().getNamedQuery("consultarOrdemData");
-			query
-					.setLong("idTitularIni", exemplo.getTitular()
-							.getIdPessoaIni());
+			query.setLong("idTitularIni", exemplo.getTitular().getIdPessoaIni());
 			query.setLong("idLotaTitularIni", exemplo.getLotaTitular()
 					.getIdLotacaoIni());
 			return query.list();
@@ -966,8 +966,10 @@ public class CpDao extends ModeloDao {
 			// RJ
 			// por default
 
-//			qry.setCacheable(true);
-//			qry.setCacheRegion("query.IdentidadeCadastrante");
+			// Cache was disabled because it would interfere with the
+			// "change password" action.
+			// qry.setCacheable(true);
+			// qry.setCacheRegion("query.IdentidadeCadastrante");
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
 			if (lista.size() == 0) {
 				throw new AplicacaoException(
@@ -1117,7 +1119,9 @@ public class CpDao extends ModeloDao {
 			throw new AplicacaoException(
 					"Não foi possível obter a data e a hora de atualização das configurações.");
 
-		return (Date) ((result.get(0)));
+		Date dtIni = (Date) ((Object[])(result.get(0)))[0];
+		Date dtFim = (Date) ((Object[])(result.get(0)))[1];
+		return DateUtils.max(dtIni,dtFim);
 	}
 
 	public Date dt() throws AplicacaoException {
@@ -1337,12 +1341,12 @@ public class CpDao extends ModeloDao {
 		prop.setPrefixo(ambiente.getSigla());
 		AnnotationConfiguration cfg = new AnnotationConfiguration();
 		cfg.setProperty("hibernate.connection.url", prop.urlConexao());
-		cfg.setProperty("hibernate.connection.username", prop
-				.usuarioCorporativo());
-		cfg.setProperty("hibernate.connection.password", prop
-				.senhaCorporativo());
-		cfg.setProperty("hibernate.connection.driver_class", prop
-				.driverConexao());
+		cfg.setProperty("hibernate.connection.username",
+				prop.usuarioCorporativo());
+		cfg.setProperty("hibernate.connection.password",
+				prop.senhaCorporativo());
+		cfg.setProperty("hibernate.connection.driver_class",
+				prop.driverConexao());
 		cfg.setProperty("c3p0.min_size", prop.c3poMinSize());
 		cfg.setProperty("c3p0.max_size", prop.c3poMaxSize());
 		cfg.setProperty("c3p0.timeout", prop.c3poTimeout());
@@ -1470,8 +1474,8 @@ public class CpDao extends ModeloDao {
 			for (CpModelo mod : lista) {
 				if ((mod.getCpOrgaoUsuario() == null && orgUsu == null)
 						|| (mod.getCpOrgaoUsuario() != null && orgUsu != null && mod
-								.getCpOrgaoUsuario().getId().equals(
-										orgUsu.getId()))) {
+								.getCpOrgaoUsuario().getId()
+								.equals(orgUsu.getId()))) {
 					listaFinal.add(mod);
 					fFound = true;
 				}
@@ -1484,4 +1488,22 @@ public class CpDao extends ModeloDao {
 		}
 		return listaFinal;
 	}
+
+	public List<CpModelo> listarModelosOrdenarPorNome(String script)
+			throws Exception {
+		final Criteria crit = getSessao().createCriteria(CpModelo.class);
+		crit.add(Property.forName("hisDtFim").isNull());
+		crit.createAlias("cpOrgaoUsuario", "o", Criteria.LEFT_JOIN);
+		crit.addOrder(Order.desc("o.siglaOrgaoUsu"));
+		List<CpModelo> l = new ArrayList<CpModelo>();
+		for (CpModelo mod : (List<CpModelo>) crit.list())
+			if (script != null && script.trim().length() != 0) {
+				if (mod.getConteudoBlobString() != null
+						&& mod.getConteudoBlobString().contains(script))
+					l.add(mod);
+			} else
+				l.add(mod);
+		return l;
+	}
+
 }

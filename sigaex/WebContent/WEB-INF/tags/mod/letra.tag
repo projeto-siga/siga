@@ -8,7 +8,7 @@
 	String s = (String) request.getAttribute("fixFontSize");
     String tamanho = (String) jspContext.getAttribute("tamanho");
     
-	s = br.gov.jfrj.siga.util.FuncoesEL.fixFontSize(s, tamanho);
+	s = br.gov.jfrj.siga.ex.util.FuncoesEL.fixFontSize(s, tamanho);
     
 	request.setAttribute("fixFontSize", s);
 %>

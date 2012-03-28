@@ -353,6 +353,11 @@ public class ExMobilAction extends
 			long tempoIni = System.currentTimeMillis();
 			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
 					getTitular(), getLotaTitular()));
+			
+			if(getTamanho() > 100) {
+				setTamanho(100);
+				itemPagina = 100;
+			}
 
 			System.out.println("Consulta dos por filtro: "
 					+ (System.currentTimeMillis() - tempoIni));

@@ -1,0 +1,4 @@
+#Thu Mar 29 15:06:15 BRT 2012
+eclipse.preferences.version=1
+encoding//src/db/migration=UTF-8
+encoding//src/db/migration/CORPORATIVO_UTF8_V1_criacao_do_banco.sql=UTF-8

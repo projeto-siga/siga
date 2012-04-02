@@ -3541,10 +3541,13 @@ public class ExBL extends CpBL {
 				attrs.put("nmMod", m.getNmMod());
 				attrs.put("template", new String(m.getConteudoBlobMod2(),
 						"utf-8"));
+				
 				p = processadorModeloFreemarker;
 			}
 		}
 
+		attrs.put("lotaTitular", doc.getLotaCadastrante());
+		
 		params.put("processar_modelo", "1");
 		params.put("finalizacao", "1");
 		if (doc != null && doc.getIdDoc() != null)

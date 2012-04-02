@@ -22,10 +22,12 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -671,6 +673,21 @@ public class ExDocumentoAction extends ExActionSupport {
 			getRequest().getSession().removeAttribute("preenchRedirect");
 		}
 
+		registraErroExtEditor();
+
+		// Usado pela extensão editor...
+		getPar().put(
+				"serverAndPort",
+				new String[] { getRequest().getServerName()
+						+ (getRequest().getServerPort() > 0 ? ":"
+								+ getRequest().getServerPort() : "") });
+
+		//...inclusive nas operações com preenchimento automático 
+		if (getPreenchRedirect() != null && getPreenchRedirect().length() > 2) {
+			setPreenchRedirect(getPreenchRedirect() + "&serverAndPort="
+					+ getPar().get("serverAndPort")[0]);
+		}
+
 		return Action.SUCCESS;
 	}
 
@@ -717,6 +734,24 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		return Action.SUCCESS;
+	}
+
+	private void registraErroExtEditor() {
+
+		try {
+			if (param("desconsiderarExtensao") != null
+					&& param("desconsiderarExtensao").equals("true")) {
+
+				String nomeArquivo = getRequest().getRemoteHost();
+				nomeArquivo = nomeArquivo.replaceAll(":", "_");
+
+				BufferedWriter out = new BufferedWriter(new FileWriter(
+						"./siga-ex-ext-editor-erro/" + nomeArquivo));
+				out.close();
+			}
+		} catch (IOException e) {
+			int a = 0;
+		}
 	}
 
 	private void obterMetodoPorString(String metodo, ExDocumento doc)

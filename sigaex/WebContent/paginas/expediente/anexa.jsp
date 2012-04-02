@@ -71,7 +71,7 @@
 					</td>
 		</tr>
 
-		<ww:textfield name="descrMov" label="Motivo" maxlength="80" size="80" />
+		<ww:textfield name="descrMov" label="Descrição" maxlength="80" size="80" />
 
 		<ww:file name="arquivo" label="Arquivo" accept="application/pdf"
 			onchange="testpdf(this.form)" />

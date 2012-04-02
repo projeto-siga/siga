@@ -51,11 +51,11 @@ public class ProcessadorHtml {
 	Boolean fTrimLeft;
 
 	static final String asTrimElements[] = { "html", "title", "head", "body",
-			"div", "hr", "table", "caption", "th", "tr", "td", "ol", "ul",
+			"div", "hr", "table", "caption", "colgroup", "col", "th", "tr", "td", "ol", "ul",
 			"li", "p", "br", "hr", "blockquote" };
 
 	static final String asKnownElements[] = { "html", "title", "head", "body",
-			"div", "hr", "table", "caption", "th", "tr", "td", "ol", "ul",
+			"div", "hr", "table", "caption", "colgroup", "col", "th", "tr", "td", "ol", "ul",
 			"li", "p", "br", "hr", "blockquote" };
 
 	private class Tag {
@@ -177,9 +177,11 @@ public class ProcessadorHtml {
 
 			add(myTags,
 					"table",
-					"align=left,right,center,justify;bgcolor;bordercolor;border=0,1;cellpadding;cellspacing;heigth;summary;class;"
+					"align=left,right,center,justify;bgcolor;bordercolor;border=0,1;cellpadding;cellspacing;heigth;summary;class;width;"
 							+ sWidth, styleT, true);
 			add(myTags, "caption", null, null, true);
+			add(myTags, "colgroup", null, null, true);
+			add(myTags, "col", "width", null, true);
 			add(myTags, "tbody", null, null, true);
 			add(myTags,
 					"tr",
@@ -191,7 +193,7 @@ public class ProcessadorHtml {
 					null, true);
 			add(myTags,
 					"td",
-					"width;class;align=left,right,center,justify;valign=bottom,top,middle;bgcolor;headers;colspan;rowspan"
+					"width;class;align=left,right,center,justify;valign=bottom,top,middle;bgcolor;headers;colspan;rowspan;"
 							+ sWidth, styleP, true);
 			add(myTags, "thead", null, null, true);
 			add(myTags, "tfoot", null, null, true);

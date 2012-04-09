@@ -75,7 +75,7 @@ public class ExMobilVO extends ExVO {
 
 		// byteCount, pagIni e pagFim
 		byteCount = mob.getByteCount();
-		if (byteCount != null)
+		if (byteCount != null && byteCount > 0)
 			tamanhoDeArquivo = FormataTamanhoDeArquivo
 					.converterEmTexto(byteCount);
 

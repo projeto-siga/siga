@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
+import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
 import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -75,6 +76,7 @@ public class FuncoesEL {
 			if (sAux.equals(s))
 				return true;
 		return false;
+		
 	}
 
 	public static Boolean extraiCamposDescrAutomatica(final String s) {
@@ -86,6 +88,12 @@ public class FuncoesEL {
 		return new HierarquizadorBoletimInterno(orgao, Ex.getInstance().getBL()
 				.obterDocumentosBoletim(d));
 
+	}
+	
+	public static HierarquizadorBoletimInternoTRF2 obterHierarquizadorBIETRF2(
+			CpOrgaoUsuario orgao, ExDocumento d) {
+		return new HierarquizadorBoletimInternoTRF2(orgao, Ex.getInstance().getBL()
+				.obterDocumentosBoletim(d));
 	}
 
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,

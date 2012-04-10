@@ -161,6 +161,11 @@
   <function-signature>br.gov.jfrj.siga.ex.bl.HierarquizadorBoletimInterno obterHierarquizadorBIE(br.gov.jfrj.siga.dp.CpOrgaoUsuario, br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
  </function>
  <function>
+  <name>obterHierarquizadorBIETRF2</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>br.gov.jfrj.siga.ex.bl.HierarquizadorBoletimInternoTRF2 obterHierarquizadorBIETRF2(br.gov.jfrj.siga.dp.CpOrgaoUsuario, br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
+ </function> 
+ <function>
   <name>buscaDocumentosAssinadosAgrupadosPorMetadado</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>Map&lt;String,List&lt;ExDocumento&gt;&gt; buscaDocumentosAssinadosAgrupadosPorMetadado(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.Long, java.lang.String, java.lang.String, java.lang.String)</function-signature>

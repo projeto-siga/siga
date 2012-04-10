@@ -35,23 +35,58 @@
 			<tr>
 				<td width="35%" align="left" valign="center" style="margin-left:4px; font-size: 10pt; border-width: 1px 1px 0px 0px; border-style: solid">
 					&nbsp;<br/>
-					${requestScope['nmDiretorForo']}<br/>
-					Juiz Federal - Diretor do Foro<br/>
-					<br/>&nbsp;<br/>
-					${requestScope['nmDiretorRH']}<br/>
-					Diretora da Secretaria Geral
+					<c:choose>
+						<c:when test="${idOrgaoUsu == 1 || idOrgaoUsu == 2}">
+							${requestScope['nmDiretorForo']}<br/>
+							Juiz Federal - Diretor do Foro<br/>
+							<br/>&nbsp;<br/>
+							${requestScope['nmDiretorRH']}<br/>
+							Diretora da Secretaria Geral
+						</c:when>
+						<c:otherwise>
+							PRESIDENTE:<br/>
+							${requestScope['nmPresidente']}<br/>
+							<br/>&nbsp;<br/>
+							VICE-PRESIDENTE<br/>
+							${requestScope['nmVicePresidente']}
+							<br/>&nbsp;<br/>
+							CORREGEDOR REGIONAL<br/>
+							${requestScope['nmCorregedorRegional']}
+						</c:otherwise>
+					</c:choose>
+					
+					
 				</td>
 				<td width="65%" align="right" style="margin-right:4px; font-size: 10pt; border-width: 1px 0px 0px 0px; border-style: solid">
-					${doc.codigo} - Geração e impressão: <br/>
-					${requestScope['geraImpress']}<br/>
-					Setores responsáveis pelas informações:<br/>
-					${requestScope['setoresResponsaveis']}<br/>
-					Publicação diária na intranet ${acronimoOrgaoUsu}<br/>
-					<br/>&nbsp;<br/>
-					 Justiça Federal - ${descricaoOrgaoUsu}<br/>
+					<c:choose>
+						<c:when test="${idOrgaoUsu == 1 || idOrgaoUsu == 2}">
+							${doc.codigo} - Geração e impressão: <br/>
+							${requestScope['geraImpress']}<br/>
+							Setores responsáveis pelas informações:<br/>
+							${requestScope['setoresResponsaveis']}<br/>
+							Publicação diária na intranet ${acronimoOrgaoUsu}<br/>
+							<br/>&nbsp;<br/>
+							 Justiça Federal - ${descricaoOrgaoUsu}<br/>
+						</c:when>
+						<c:otherwise>
+							DIRETOR GERAL: <br/>
+							${requestScope['diretorGeral']}<br/>
+							COORDENAÇÃO DE PRODUÇÃO:<br/>
+							${requestScope['coordenacaoDeProducao']}<br/>
+							PERIODICIDADE:<br/>
+							Diária
+							<br/>&nbsp;<br/>
+							 Tribunal Regional Federal da 2ªRegião<br/>
+						</c:otherwise>
+					</c:choose>
 					<c:choose>
 						<c:when test="${idOrgaoUsu == 1}">Av. Almirante Barroso, 78 - Centro / RJ</c:when>
-						<c:otherwise>Rua São Francisco, 52, Centro - Vitória-ES</c:otherwise>
+						<c:when test="${idOrgaoUsu == 2}">Rua São Francisco, 52, Centro - Vitória-ES</c:when>
+						<c:when test="${idOrgaoUsu == 3}">
+							Rua Acre, nº 80, Centro - Rio de Janeiro/RJ<br/>
+							Cep. 20081-000 - Tel. (21) 3261-8000<br/>
+							wwww.trf2.jus.br
+						</c:when>
 					</c:choose><br/>
 				</td>
 			</tr>

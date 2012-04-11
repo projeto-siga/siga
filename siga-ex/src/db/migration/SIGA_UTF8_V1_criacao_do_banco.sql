@@ -156,82 +156,30 @@ CREATE SEQUENCE  "SIGA"."HIBERNATE_SEQUENCE"  MINVALUE 1 MAXVALUE 99999999999999
 	"NUM_SEQUENCIA" NUMBER(4,0), 
 	"NUM_PAGINAS" NUMBER(4,0)
    ) ;
---------------------------------------------------------
---  DDL for Table EX_DOCUMENTO_INT
---------------------------------------------------------
 
-  CREATE TABLE "SIGA"."EX_DOCUMENTO_INT" 
-   (	"ID_DOC" NUMBER(10,0), 
-	"NUM_EXPEDIENTE" NUMBER(10,0), 
-	"ANO_EMISSAO" NUMBER(10,0), 
-	"ID_TP_DOC" NUMBER(10,0), 
-	"ID_CADASTRANTE" NUMBER(10,0), 
-	"ID_LOTA_CADASTRANTE" NUMBER(5,0), 
-	"ID_SUBSCRITOR" NUMBER(10,0), 
-	"ID_LOTA_SUBSCRITOR" NUMBER(5,0), 
-	"DESCR_DOCUMENTO" VARCHAR2(4000) DEFAULT NULL, 
-	"DT_DOC" DATE, 
-	"DT_REG_DOC" DATE, 
-	"NM_SUBSCRITOR_EXT" VARCHAR2(256), 
-	"NUM_EXT_DOC" VARCHAR2(32), 
-	"CONTEUDO_BLOB_DOC" BLOB, 
-	"NM_ARQ_DOC" VARCHAR2(256), 
-	"CONTEUDO_TP_DOC" VARCHAR2(128), 
-	"ID_DESTINATARIO" NUMBER(10,0), 
-	"ID_LOTA_DESTINATARIO" NUMBER(5,0), 
-	"NM_DESTINATARIO" VARCHAR2(256), 
-	"DT_FECHAMENTO" DATE, 
-	"ASSINATURA_BLOB_DOC" BLOB, 
-	"ID_MOD" NUMBER(15,0), 
-	"ID_ORGAO_USU" NUMBER(10,0), 
-	"ID_CLASSIFICACAO" NUMBER(10,0), 
-	"ID_FORMA_DOC" NUMBER(2,0), 
-	"FG_PESSOAL" VARCHAR2(1) DEFAULT 'N', 
-	"ID_ORGAO_DESTINATARIO" NUMBER(10,0), 
-	"ID_ORGAO" NUMBER(10,0), 
-	"OBS_ORGAO_DOC" VARCHAR2(256), 
-	"NM_ORGAO_DESTINATARIO" VARCHAR2(256), 
-	"FG_SIGILOSO" VARCHAR2(1) DEFAULT 'N', 
-	"NM_FUNCAO_SUBSCRITOR" VARCHAR2(128), 
-	"FG_ELETRONICO" VARCHAR2(1) DEFAULT 'N', 
-	"NUM_ANTIGO_DOC" VARCHAR2(32), 
-	"ID_LOTA_TITULAR" NUMBER(10,0), 
-	"ID_TITULAR" NUMBER(10,0), 
-	"NUM_AUX_DOC" VARCHAR2(32), 
-	"DSC_CLASS_DOC" VARCHAR2(4000), 
-	"ID_NIVEL_ACESSO" NUMBER(10,0), 
-	"ID_DOC_PAI" NUMBER, 
-	"NUM_VIA_DOC_PAI" NUMBER, 
-	"ID_DOC_ANTERIOR" NUMBER(10,0), 
-	"ID_MOB_PAI" NUMBER, 
-	"NUM_SEQUENCIA" NUMBER(4,0), 
-	"NUM_PAGINAS" NUMBER(4,0)
-   ) ;
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."ID_DOC" IS 'Numero sequencial de identificação interna do documento. É gerado automaticamente.';
  
-
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."ID_DOC" IS 'Numero sequencial de identificação interna do documento. É gerado automaticamente.';
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."NUM_EXPEDIENTE" IS 'Número de identificação do expediente para a consulta pelos usuários (sequencial zerado na mudança do ano).';
  
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."NUM_EXPEDIENTE" IS 'Número de identificação do expediente para a consulta pelos usuários (sequencial zerado na mudança do ano).';
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."ANO_EMISSAO" IS 'Ano de emissão do documento.';
  
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."ANO_EMISSAO" IS 'Ano de emissão do documento.';
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."FG_SIGILOSO" IS 'Flag que indica se o doccumento é sigiloso ou não, independente da lotação.';
  
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."FG_SIGILOSO" IS 'Flag que indica se o doccumento é sigiloso ou não, independente da lotação.';
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."NM_FUNCAO_SUBSCRITOR" IS 'Campo livre onde o usuario descreve uma função (pode ser informal ou temporaria) do subscritor';
  
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."NM_FUNCAO_SUBSCRITOR" IS 'Campo livre onde o usuario descreve uma função (pode ser informal ou temporaria) do subscritor';
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."FG_ELETRONICO" IS 'Esta flag indica se o documento é eletrînoco ou não.';
  
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."FG_ELETRONICO" IS 'Esta flag indica se o documento é eletrînoco ou não.';
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."ID_LOTA_TITULAR" IS 'identifica a lotação que está sofrendo a documentação.';
  
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."ID_LOTA_TITULAR" IS 'identifica a lotação que está sofrendo a documentação.';
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."ID_TITULAR" IS 'identifica o titular no caso de um documento gerado por substituto';
  
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."ID_TITULAR" IS 'identifica o titular no caso de um documento gerado por substituto';
- 
-   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO_INT"."DSC_CLASS_DOC" IS 'O campo é para guardar uma descrição de classificação (informada pelo
+   COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."DSC_CLASS_DOC" IS 'O campo é para guardar uma descrição de classificação (informada pelo
 usuário), quando o usuário selecionar uma classificação intermediária (sem
 vias). Isso vai ocorrer quando ele não encontrar uma classificação adequada
 ao documento, escolhendo uma classificação aproximada.
 ';
  
-   COMMENT ON TABLE "SIGA"."EX_DOCUMENTO_INT"  IS 'Esta tabela tem como objetivo armazenar os documentos cadastrados no sistema.';
+   COMMENT ON TABLE "SIGA"."EX_DOCUMENTO"  IS 'Esta tabela tem como objetivo armazenar os documentos cadastrados no sistema.';
 --------------------------------------------------------
 --  DDL for Table EX_EMAIL_NOTIFICACAO
 --------------------------------------------------------
@@ -277,8 +225,8 @@ ao documento, escolhendo uma classificação aproximada.
 --------------------------------------------------------
 
   CREATE TABLE "SIGA"."EX_FORMA_DOCUMENTO" 
-   (	"ID_FORMA_DOC" NUMBER(15,0), 
-	"DESCR_FORMA_DOC" VARCHAR2(80) DEFAULT NULL, 
+   (	"ID_FORMA_DOC" NUMBER(2,0), 
+	"DESCR_FORMA_DOC" VARCHAR2(64) DEFAULT NULL, 
 	"SIGLA_FORMA_DOC" VARCHAR2(3) DEFAULT NULL, 
 	"ID_TIPO_FORMA_DOC" NUMBER
    ) ;
@@ -2603,7 +2551,6 @@ GRANT SELECT ON CORPORATIVO.CP_CONFIGURACAO_SEQ TO SIGA;
 -- FIM EX_CONFIGURACAO+CP_CONFIGURACAO --
 
 --REM INSERTING into SIGA.EX_DOCUMENTO
---REM INSERTING into SIGA.EX_DOCUMENTO_INT
 --REM INSERTING into SIGA.EX_EMAIL_NOTIFICACAO
 --REM INSERTING into SIGA.EX_ESTADO_DOC
 --REM INSERTING into SIGA.EX_ESTADO_TP_MOV
@@ -8064,11 +8011,33 @@ Insert into SIGA.EX_VIA (ID_VIA,ID_CLASSIFICACAO,ID_TP_DESTINACAO,COD_VIA,ID_TMP
   CREATE INDEX "SIGA"."ID_MOBIL_IDX" ON "SIGA"."EX_MOVIMENTACAO" ("ID_MOBIL") 
   ;
 --------------------------------------------------------
+--  DDL for Index IDX_MOBIL_UNIQUE
+--------------------------------------------------------
+  
+  CREATE UNIQUE INDEX SIGA.IDX_MOBIL_UNIQUE ON SIGA.EX_MOBIL (ID_DOC ASC, ID_TIPO_MOBIL ASC, NUM_SEQUENCIA ASC);
+--------------------------------------------------------
 --  DDL for Index DOC_FORMA_NUM_ANO_IX
 --------------------------------------------------------
 
   CREATE INDEX "SIGA"."DOC_FORMA_NUM_ANO_IX" ON "SIGA"."EX_DOCUMENTO" ("ID_FORMA_DOC", "NUM_EXPEDIENTE", "ANO_EMISSAO") 
   ;
+  
+  --------------------------------------------------------
+--  DDL for Index UNIQUE_DOC_NUM_IDX
+--------------------------------------------------------
+  CREATE UNIQUE INDEX SIGA.UNIQUE_DOC_NUM_IDX ON SIGA.EX_DOCUMENTO (CASE 
+  WHEN ID_ORGAO_USU IS NULL OR ID_FORMA_DOC IS NULL OR ANO_EMISSAO IS NULL OR NUM_EXPEDIENTE IS NULL THEN NULL 
+  ELSE ID_ORGAO_USU 
+END ASC, CASE 
+  WHEN ID_ORGAO_USU IS NULL OR ID_FORMA_DOC IS NULL OR ANO_EMISSAO IS NULL OR NUM_EXPEDIENTE IS NULL THEN NULL 
+  ELSE ID_FORMA_DOC 
+END ASC, CASE 
+  WHEN ID_ORGAO_USU IS NULL OR ID_FORMA_DOC IS NULL OR ANO_EMISSAO IS NULL OR NUM_EXPEDIENTE IS NULL THEN NULL 
+  ELSE ANO_EMISSAO 
+END ASC, CASE 
+  WHEN ID_ORGAO_USU IS NULL OR ID_FORMA_DOC IS NULL OR ANO_EMISSAO IS NULL OR NUM_EXPEDIENTE IS NULL THEN NULL 
+  ELSE NUM_EXPEDIENTE 
+END ASC);
 --------------------------------------------------------
 --  DDL for Index EX_CLASSIFICACAO_IDX_019
 --------------------------------------------------------
@@ -8140,12 +8109,6 @@ Insert into SIGA.EX_VIA (ID_VIA,ID_CLASSIFICACAO,ID_TP_DESTINACAO,COD_VIA,ID_TMP
 --------------------------------------------------------
 
   CREATE UNIQUE INDEX "SIGA"."MODELO_PK" ON "SIGA"."EX_MODELO" ("ID_MOD") 
-  ;
---------------------------------------------------------
---  DDL for Index TMP$$_DOCUMENTO_PK0
---------------------------------------------------------
-
-  CREATE UNIQUE INDEX "SIGA"."TMP$$_DOCUMENTO_PK0" ON "SIGA"."EX_DOCUMENTO_INT" ("ID_DOC") 
   ;
 --------------------------------------------------------
 --  DDL for Index PREENCHIMENTO_FK
@@ -8462,19 +8425,7 @@ end if;
 end;
 /
 ALTER TRIGGER "SIGA"."EX_VIA_INSERT_TRG" ENABLE;
---------------------------------------------------------
---  DDL for Trigger TMP$$_EX_DOCUMENTO_INSERT_T0
---------------------------------------------------------
 
-  CREATE OR REPLACE TRIGGER "SIGA"."TMP$$_EX_DOCUMENTO_INSERT_T0" BEFORE
-INSERT ON "EX_DOCUMENTO_INT" FOR EACH ROW
-begin
-if :new.ID_DOC is null then
-select EX_DOCUMENTO_SEQ.nextval into :new.ID_DOC from dual;
-end if;
-end;
-/
-ALTER TRIGGER "SIGA"."TMP$$_EX_DOCUMENTO_INSERT_T0" ENABLE;
 --------------------------------------------------------
 --  DDL for Function NUM_EXPEDIENTE_FUN
 --------------------------------------------------------

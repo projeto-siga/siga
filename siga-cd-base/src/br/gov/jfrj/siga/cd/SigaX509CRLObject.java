@@ -40,6 +40,6 @@ public class SigaX509CRLObject extends X509CRLObject {
 	@Override
 	public Date getNextUpdate() {
 		//return new Date(120 , 0, 1);
-		return super.getThisUpdate();
+		return super.getNextUpdate();
 	}
 }

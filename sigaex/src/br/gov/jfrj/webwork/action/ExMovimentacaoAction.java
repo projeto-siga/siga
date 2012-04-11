@@ -1703,11 +1703,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeReceber(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Documento não pode ser recebido");
-
-		if (!mob.isEmTransito())
-			throw new AplicacaoException(
-					"Documento não disponível para recebimento");
+			throw new AplicacaoException("Documento não pode ser recebido");		
 
 		aReceberGravar();
 		return "pula";
@@ -1721,6 +1717,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// DpPessoaDao dao = getFabrica().createDpPessoaDao();
 		// mov.setResp(dao.consultar(getIdResp(), false));
 
+		if (!Ex.getInstance().getComp()
+				.podeReceber(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Documento não pode ser recebido");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1803,6 +1802,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		final Pattern p = Pattern.compile("chk_([0-9]+)");
 
 		try {
+			StringBuffer msgErro = new StringBuffer();
 			for (final String s : getPar().keySet()) {
 				if (s.startsWith("chk_") && param(s).equals("true")) {
 					final Matcher m = p.matcher(s);
@@ -1812,10 +1812,20 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					final ExMobil mob = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
 
-					Ex.getInstance()
-							.getBL()
-							.receber(getCadastrante(), getLotaTitular(), mob,
-									mov.getDtMov());
+					if (!Ex.getInstance().getComp()
+							.podeReceber(getTitular(), getLotaTitular(), mob)) {
+						if (msgErro == null)
+							msgErro = new StringBuffer(
+									"Alguns documentos não puderam ser recebidos:  ");
+						msgErro.append(doc.getCodigo());
+						msgErro.append("  ");
+					} else
+						Ex.getInstance()
+								.getBL()
+								.receber(getCadastrante(), getLotaTitular(),
+										mob, mov.getDtMov());
+
+
 				}
 			}
 		} catch (final Exception e) {
@@ -2133,13 +2143,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						.getResp().equivale(mov.getResp())))
 			throw new AplicacaoException(
 					"Novo responsável não pode ser igual ao atual");
-		/*
-		 * if (!(Ex.getInstance().getComp().podeTransferir(getTitular(),
-		 * getLotaTitular(), doc, numVia) ||
-		 * Ex.getInstance().getComp().podeDespachar(getTitular(),
-		 * getLotaTitular(), doc, numVia))) throw new AplicacaoException( "Não é
-		 * possível fazer despacho ou transferência");
-		 */
+		if (!(Ex.getInstance().getComp()
+				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex
+
+				.getInstance().getComp()
+				.podeDespachar(getTitular(), getLotaTitular(), mob)))
+			throw new AplicacaoException(
+					"Não é possível fazer despacho nem transferência");
+		
 		try {
 			Ex.getInstance()
 					.getBL()

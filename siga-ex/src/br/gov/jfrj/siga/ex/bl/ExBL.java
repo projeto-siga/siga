@@ -2809,7 +2809,7 @@ public class ExBL extends CpBL {
 					&& !getComp()
 							.podeDespachar(cadastrante, lotaCadastrante, m))
 				throw new AplicacaoException(
-						"Não é permitido fazer despacho em documento que ainda não foi assinado");
+						"Não é permitido fazer despacho.");
 
 			if (fTranferencia) {
 
@@ -2871,15 +2871,14 @@ public class ExBL extends CpBL {
 				}
 
 				// se for apensado e for despacho com transferência, não pode
-				if (m.isApensadoAVolumeDoMesmoProcesso()
-						&& (idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-								|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA || idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)) {
+				if (idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+								|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA || idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
 					throw new AplicacaoException(
 							"Não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. Faça primeiro o despacho e depois transfira o documento.");
 				}
 				// se não for apensado, pode.
 				// se for apenas tranferência, pode.
-				if (!m.isApensadoAVolumeDoMesmoProcesso()
+				if (m.equals(mob)
 						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
 

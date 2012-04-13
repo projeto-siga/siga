@@ -101,7 +101,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	@Analyzer(impl = BrazilianAnalyzer.class)
 	public String getDescrTipoMovimentacao() {
 		String s = getExTipoMovimentacao().getSigla();
-		if (getCadastrante() == null)
+		if (getCadastrante() == null || getSubscritor() == null)
 			return s;
 		if (getSubscritor().getId() != getCadastrante().getId())
 			s = s + " de Ordem";

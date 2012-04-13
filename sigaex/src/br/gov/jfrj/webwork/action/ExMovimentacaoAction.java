@@ -2304,12 +2304,23 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aVincularPapelGravar() throws Exception {
 		buscarDocumento(true);
 
-		lerForm(mov);
-		if (mov.getResp()==null){
-			throw new AplicacaoException("Responsável não definido!");
-		}
-		mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
+		lerForm(mov);	
+		
+		if (mov.getResp() == null && mov.getLotaResp() == null)
+			throw new AplicacaoException(
+			           "Não foi informado o responsável ou lotação responsável para a vinculação de papel ");	
+		
+		
+		if (mov.getResp() != null){
+		    mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
 				+ mov.getResp().getDescricaoIniciaisMaiusculas());
+		} else { 
+			if (mov.getLotaResp() != null) {
+				mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
+						+ mov.getLotaResp().getDescricaoIniciaisMaiusculas());
+			} 			
+		}
+			
 		final ExMovimentacao UltMov = mob.getUltimaMovimentacaoNaoCancelada();
 
 		if (!Ex.getInstance().getComp()
@@ -2614,6 +2625,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		map.put(1, "Órgão Integrado");
 		map.put(2, "Matrícula");
 		map.put(3, "Órgão Externo");
+		return map;
+	}
+	
+	public Map<Integer, String> getListaTipoRespPerfil() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, "Órgão Integrado");
+		map.put(2, "Matrícula");
 		return map;
 	}
 

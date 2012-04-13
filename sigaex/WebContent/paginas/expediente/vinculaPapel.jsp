@@ -103,26 +103,25 @@ function popitup_movimentacao() {
 					<td><ww:textfield name="dtMovString"
 						onblur="javascript:verifica_data(this,0);" /></td>
 				</tr>
+				
+				
 				<tr>
-					<td>Responsável:</td>
-					<td><siga:selecao tema="simple" propriedade="responsavel" />
-					&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
-						onclick="javascript:displayTitular(this);" />Substituto</td>
-				</tr>
-				<c:choose>
-					<c:when test="${!substituicao}">
-						<tr id="tr_titular" style="display: none">
-					</c:when>
-					<c:otherwise>
-						<tr id="tr_titular" style="">
-					</c:otherwise>
-				</c:choose>
+				    <td>Responsável:</td>
 
-				<td>Titular:</td>
-					<input type="hidden" name="campos" value="titularSel.id" />
-				<td colspan="3"><siga:selecao propriedade="titular"
-							tema="simple" /></td>
-				</tr>
+					<td><ww:select name="tipoResponsavel" list="listaTipoRespPerfil"
+						onchange="javascript:sbmt();" /> 
+     					<c:choose>
+							  <c:when test="${tipoResponsavel == 1}">
+								<siga:selecao propriedade="lotaResponsavel" tema="simple" />
+							  </c:when>
+							  <c:when test="${tipoResponsavel == 2}">
+								<siga:selecao propriedade="responsavel" tema="simple" />
+							  </c:when>							  
+						</c:choose>
+					</td>
+			    </tr>
+				
+
 				<tr>
 					<td>Perfil</td>
 					<td>
@@ -149,13 +148,13 @@ function popitup_movimentacao() {
 							</c:when>
 						</c:choose></td>
 					</tr>
-				</c:if>--%>
+				</c:if>
 				<c:if test="${tipoResponsavel == 3}">
 					<tr>
 						<td>Observação</td>
 						<td><ww:textfield size="30" name="obsOrgao" /></td>
 					</tr>
-				</c:if>
+				</c:if>--%>
 
 				<tr class="button">
 					<td></td>

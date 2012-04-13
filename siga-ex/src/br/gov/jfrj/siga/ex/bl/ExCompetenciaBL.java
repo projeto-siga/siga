@@ -85,14 +85,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !titular.equivale(mob.doc().getTitular())
 				&& !podeMovimentar(titular, lotaTitular, mob)) {
 
+			if (pessoaTemPerfilVinculado(mob.doc(), titular, lotaTitular)) {
+				return true;
+			}
+			
 			for (ExMovimentacao m : mob.doc().getMobilGeral()
 					.getExMovimentacaoSet()) {
 				if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 						&& m.getExMovimentacaoCanceladora() == null
 						&& (m.getSubscritor() != null && m.getSubscritor()
 								.equivale(titular))) {
-					return true;
-				}
+					return true;					
+				}			
 			}
 			return false;
 		}
@@ -913,8 +917,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 							.getIdTpMov()
 							.equals(
 									ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
-				if ((mov.getTitular().equivale(titular))) {
-					return true;
+				if (mov.getSubscritor() != null){
+					 if (mov.getSubscritor().equivale(titular)) {
+						 return true;
+				     }
+				}else {
+					if (mov.getLotaSubscritor().equivale(lotaTitular)){
+						return true;
+					}
 				}
 			}
 		}

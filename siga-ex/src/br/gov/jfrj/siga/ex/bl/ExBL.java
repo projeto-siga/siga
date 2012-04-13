@@ -2870,9 +2870,9 @@ public class ExBL extends CpBL {
 						idTpMov = ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA;
 				}
 
-				// se for apensado e for despacho com transferência, não pode
-				if (idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-								|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA || idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
+				// se for apensado e for despacho com transferência, interrompe toda a transferência
+				if (!m.equals(mob) && (idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+								|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA || idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)) {
 					throw new AplicacaoException(
 							"Não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. Faça primeiro o despacho e depois transfira o documento.");
 				}

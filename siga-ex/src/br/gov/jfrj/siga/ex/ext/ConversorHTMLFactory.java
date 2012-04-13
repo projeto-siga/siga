@@ -24,7 +24,11 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 		if (conf.podePorConfiguracao(doc.getCadastrante(),
 				doc.getLotaCadastrante(), doc.getExModelo(),
 				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML))
+			try {
 			conversor = getExtensaoConversorHTML();
+			} catch (Exception e) {
+				conversor = getConversorPadrao();
+			}
 		else if (strHtml.contains("<!-- FOP -->"))
 			conversor = new FOP();
 		else

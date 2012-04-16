@@ -29,6 +29,8 @@ import br.gov.jfrj.importar.AdObjeto;
 import br.gov.jfrj.importar.AdUsuario;
 import br.gov.jfrj.ldap.sinc.LdapDaoSinc;
 import br.gov.jfrj.ldap.sinc.SincProperties;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
@@ -48,9 +50,9 @@ public class InjetorLDAP {
 		SincProperties conf = SincProperties.getInstancia();
 		ldap = LdapDaoSinc.getInstance(conf);
 
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
-				"jdbc:oracle:thin:@mclaren:1521:mcl", "corporativo",
-				"corporativo");
+		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
+		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
+		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
 
 		HibernateUtil.configurarHibernate(cfg, "");
 

@@ -359,9 +359,10 @@ public class CpDaoTest extends TestCase {
 			IllegalAccessException, InvocationTargetException,
 			NoSuchMethodException, Exception {
 
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
-				"jdbc:oracle:thin:@acura:1521:apojfrj", "corporativo",
-				"corporativo");
+		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
+		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
+		
+		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 
 		CpDao dao = CpDao.getInstance();

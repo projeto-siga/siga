@@ -68,6 +68,8 @@ import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -296,8 +298,10 @@ public class ExBL extends CpBL {
 		Matcher m = p2.matcher(classificacao);
 		boolean a = m.find();
 
-		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(
-				"jdbc:oracle:thin:@mclaren:1521:mcl", "siga", "siga");
+		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
+		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
+		
+		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 		marcarTudo(90000);
 	}

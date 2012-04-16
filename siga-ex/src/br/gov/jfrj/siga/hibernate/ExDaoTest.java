@@ -34,6 +34,8 @@ import org.hibernate.cfg.AnnotationConfiguration;
 
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.FOP;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
@@ -51,9 +53,9 @@ public class ExDaoTest extends TestCase {
 		// HibernateUtil
 		// .configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml",
 		// ExMarca.class, CpMarca.class);
-
-		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(
-				"jdbc:oracle:thin:@mclaren:1521:mcl", "siga", "siga");
+		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
+		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
+		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 
 		dao = ExDao.getInstance();

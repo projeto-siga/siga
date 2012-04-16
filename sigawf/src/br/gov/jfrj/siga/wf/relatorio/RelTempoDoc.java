@@ -270,8 +270,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 		try {
 			CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 			Wf.getInstance().getProp().setPrefixo(ambiente.getSigla());
-			AnnotationConfiguration cfg = WfDao.criarHibernateCfg(
-					"jdbc:oracle:thin:@mclaren:1521:mcl", "sigawf", "sigawf");
+			AnnotationConfiguration cfg = WfDao.criarHibernateCfg(ambiente);
 			WfDao.configurarHibernateParaDebug(cfg);
 			HibernateUtil.configurarHibernate(cfg, "");
 

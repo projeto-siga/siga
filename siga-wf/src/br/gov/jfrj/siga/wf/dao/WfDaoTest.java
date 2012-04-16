@@ -26,6 +26,8 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpGrupo;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Objeto;
@@ -44,8 +46,10 @@ public class WfDaoTest extends TestCase {
 	private WfDao dao;
 
 	public WfDaoTest() throws Exception {
-		AnnotationConfiguration cfg = WfDao.criarHibernateCfg(
-				"jdbc:oracle:thin:@mclaren:1521:mcl", "sigawf", "sigawf");
+		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
+		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
+		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
+
 		CpDao.configurarHibernateParaDebug(cfg);
 		HibernateUtil.configurarHibernate(cfg, "");
 

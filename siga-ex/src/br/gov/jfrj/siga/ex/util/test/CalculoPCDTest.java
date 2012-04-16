@@ -24,6 +24,8 @@ import junit.framework.TestCase;
 
 import org.hibernate.cfg.AnnotationConfiguration;
 
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
@@ -55,8 +57,9 @@ public class CalculoPCDTest extends TestCase {
 	 * @throws Exception
 	 */
 	public CalculoPCDTest() throws Exception {
-		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(
-				"jdbc:oracle:thin:@mclaren:1521:mcl", "siga", "siga");
+		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
+		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
+		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 	}
 

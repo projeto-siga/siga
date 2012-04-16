@@ -17,6 +17,7 @@
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package br.gov.jfrj.xml.test;
+
 import java.io.InputStream;
 import java.util.Date;
 
@@ -27,44 +28,51 @@ import br.gov.jfrj.importar.SigaCpSinc;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
-public class ImportarXmlTest extends TestCase{
+
+public class ImportarXmlTest extends TestCase {
 	public static void testImportarXml() throws Exception {
-		// TODO: executar em homologação e produção : alter table corporativo.DP_PESSOA modify (SIGLA_PESSOA varchar2(20))
+		// TODO: executar em homologação e produção : alter table
+		// corporativo.DP_PESSOA modify (SIGLA_PESSOA varchar2(20))
 		// IMPLANTACAO
-		//testImportarXml("implanta.xml");
+		// testImportarXml("implanta.xml");
 		// Teste SJRJ
-		testImportarXml("exp.xml"); 
-		
-		
+		testImportarXml("exp.xml");
+
 		// Teste com ORGAO e PAPEL
-		/*testImportarXml("SigaCpSinc1.xml");
-		testImportarXml("SigaCpSinc2.xml");
-		testImportarXml("SigaCpSinc3.xml"); 
-		testImportarXml("SigaCpSinc4.xml");  */
-		
-		//Testes de duplicidade
-		//testImportarXml("SigaCpSincDup.xml");
-		
-		//Teste ANS
-		//testImportarXml("siga_ans.xml");
-		
-		//Teste TJ-PA
-		//testImportarXml("siga_tjpa.xml");
-		
+		/*
+		 * testImportarXml("SigaCpSinc1.xml");
+		 * testImportarXml("SigaCpSinc2.xml");
+		 * testImportarXml("SigaCpSinc3.xml");
+		 * testImportarXml("SigaCpSinc4.xml");
+		 */
+
+		// Testes de duplicidade
+		// testImportarXml("SigaCpSincDup.xml");
+
+		// Teste ANS
+		// testImportarXml("siga_ans.xml");
+
+		// Teste TJ-PA
+		// testImportarXml("siga_tjpa.xml");
+
 		// Teste do exemplo do Roteiro
-		//testImportarXml("exemplo-roteiro.xml");
+		// testImportarXml("exemplo-roteiro.xml");
 		//
 		assertTrue(true);
 	}
+
 	public static void testImportarXml(String nomeArquivo) throws Exception {
-		if (nomeArquivo == null) return;
-		//SigaCpSinc.processarTesteXML();
+		if (nomeArquivo == null)
+			return;
+		// SigaCpSinc.processarTesteXML();
 		AnnotationConfiguration cfg;
 		// desenvolvimento
-		/*cfg = CpDao.criarHibernateCfg("jdbc:oracle:thin:@mclaren:1521:mcl",
-					"corporativo", "corporativo"); */
+		/*
+		 * cfg = CpDao.criarHibernateCfg("jdbc:oracle:thin:@mclaren:1521:mcl",
+		 * "corporativo", "corporativo");
+		 */
 		cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
-		//cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);
+		// cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);
 		HibernateUtil.configurarHibernate(cfg, "");
 
 		SigaCpSinc geraXml = new SigaCpSinc();
@@ -73,20 +81,22 @@ public class ImportarXmlTest extends TestCase{
 		geraXml.log("--- Processando Teste " + dt + "--- ");
 		geraXml.log("--- Executando: CpDaoTest>>processarTesteXML()");
 		try {
-				geraXml.log("Importando: XML");
-				InputStream in = Class.forName("br.gov.jfrj.xml.test.ImportarXmlTest").getResourceAsStream( nomeArquivo );
-				geraXml.importarXml(in);
-				geraXml.log("Importando: BD");
-				geraXml.importarTabela();
-				geraXml.log("Gravando alterações");
-				geraXml.gravar(dt);
-				
+			geraXml.log("Importando: XML");
+			InputStream in = Class.forName(
+					"br.gov.jfrj.xml.test.ImportarXmlTest")
+					.getResourceAsStream(nomeArquivo);
+			geraXml.importarXml(in);
+			geraXml.log("Importando: BD");
+			geraXml.importarTabela();
+			geraXml.log("Gravando alterações");
+			geraXml.gravar(dt);
+
 		} catch (Exception e) {
-				e.printStackTrace();
-				geraXml.log(e.getMessage());
+			e.printStackTrace();
+			geraXml.log(e.getMessage());
 		}
 		geraXml.log(" ---- Fim do Processamento --- ");
 		geraXml.logEnd();
-		
+
 	}
 }

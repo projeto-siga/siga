@@ -33,7 +33,7 @@ public class IntegracaoLdapProperties extends LdapProperties {
 	}
 
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.ldap.integracao";
 	}
 

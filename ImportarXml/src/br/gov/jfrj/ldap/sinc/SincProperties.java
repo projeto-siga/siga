@@ -59,7 +59,7 @@ public class SincProperties extends LdapProperties{
 	
 	
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.cp.sinc.ldap";
 	}
 

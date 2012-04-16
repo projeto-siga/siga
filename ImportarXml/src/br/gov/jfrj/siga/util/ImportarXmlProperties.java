@@ -52,7 +52,7 @@ public class ImportarXmlProperties extends SigaBaseProperties {
 		// construtor privado
 	}
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.cp.sinc.xml";
 	}
 	private static SigaBaseProperties instance = new ImportarXmlProperties();

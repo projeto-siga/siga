@@ -425,7 +425,7 @@ public class SigaCpSinc {
 		logEnd();
 	}
 
-	protected void importxml() {
+	public void importxml() {
 		try {
 			log("Importando: XML");
 			/* -------------------------- */
@@ -466,10 +466,10 @@ public class SigaCpSinc {
 		}
 	}
 
-	protected void ldap() throws NamingException, AplicacaoException, Exception {
+	public void ldap() throws NamingException, AplicacaoException, Exception {
 		log("Importando: BD");
 
-		SincProperties conf = SincProperties.getInstancia(url.replace("-", "")
+		SincProperties conf = SincProperties.getInstancia(SincProperties.getInstancia().getPrefixoModulo() + "." + url.replace("-", "")
 				+ "." + servidor.replace("-", ""));
 		AdModelo ge = AdModelo.getInstance(conf);
 		List<AdObjeto> l = ge.gerarModelo();

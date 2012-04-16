@@ -30,10 +30,10 @@ import javax.naming.NamingException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.junit.Test;
 
-import br.gov.jfrj.importar.AdContato;
-import br.gov.jfrj.importar.AdGrupoDeDistribuicao;
-import br.gov.jfrj.importar.AdObjeto;
-import br.gov.jfrj.importar.AdUnidadeOrganizacional;
+import br.gov.jfrj.ldap.AdContato;
+import br.gov.jfrj.ldap.AdGrupoDeDistribuicao;
+import br.gov.jfrj.ldap.AdObjeto;
+import br.gov.jfrj.ldap.AdUnidadeOrganizacional;
 import br.gov.jfrj.ldap.sinc.LdapDaoSinc;
 import br.gov.jfrj.ldap.sinc.SincProperties;
 import br.gov.jfrj.ldap.util.LdapUtils;

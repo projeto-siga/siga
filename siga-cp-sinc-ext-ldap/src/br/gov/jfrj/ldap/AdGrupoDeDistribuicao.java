@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.importar;
+package br.gov.jfrj.ldap;
 
 public class AdGrupoDeDistribuicao extends AdGrupo {
 

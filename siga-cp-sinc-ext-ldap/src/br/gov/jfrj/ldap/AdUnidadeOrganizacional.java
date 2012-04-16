@@ -16,25 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.importar;
+package br.gov.jfrj.ldap;
 
-public class AdContato extends AdObjeto {
+public class AdUnidadeOrganizacional extends AdObjeto {
 
-	/**
-	 * Inicializa um objeto contato.
-	 * 
-	 * @param nome
-	 *            - Nome do Contato. Ex: Markenson Paulo França
-	 * @param idExterna
-	 *            - Email do contato. Ex: markenson@jfrj.jus.br
-	 */
-	public AdContato(String nome, String idExterna, String dnDominio) {
+	public AdUnidadeOrganizacional(String nome, String idExterna, String dnDominio) {
 		super(nome, idExterna, dnDominio);
+		// TODO Auto-generated constructor stub
 	}
 
-	public AdContato(String nome, String idExterna,
-			AdUnidadeOrganizacional uoPai, String dnDominio) {
-		super(nome, idExterna, uoPai, dnDominio);
+	public AdUnidadeOrganizacional(String nome, String idExterna,
+			AdUnidadeOrganizacional gr, String dnDominio) {
+		super(nome, idExterna, gr,dnDominio);
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getPrefixo() {
+		return "OU=";
 	}
 
 }

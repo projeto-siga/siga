@@ -16,25 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.importar;
+package br.gov.jfrj.ldap;
 
-public class AdGrupoDeSeguranca extends AdGrupo {
+public class AdContato extends AdObjeto {
 
-	@Override
-	public void acrescentarMembro(AdObjeto objeto) {
-		if (!(objeto instanceof AdGrupo)){
-			super.acrescentarMembro(objeto);
-		}
-		
+	/**
+	 * Inicializa um objeto contato.
+	 * 
+	 * @param nome
+	 *            - Nome do Contato. Ex: Markenson Paulo França
+	 * @param idExterna
+	 *            - Email do contato. Ex: markenson@jfrj.jus.br
+	 */
+	public AdContato(String nome, String idExterna, String dnDominio) {
+		super(nome, idExterna, dnDominio);
 	}
 
-	public AdGrupoDeSeguranca(String nome, String idExterna, String dnDominio) {
-		super(nome, idExterna,dnDominio);
-	}
-
-	public AdGrupoDeSeguranca(String nome, String idExterna,
-			AdUnidadeOrganizacional grPai, String dnDominio) {
-		super(nome, idExterna, grPai,dnDominio);
+	public AdContato(String nome, String idExterna,
+			AdUnidadeOrganizacional uoPai, String dnDominio) {
+		super(nome, idExterna, uoPai, dnDominio);
 	}
 
 }

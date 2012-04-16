@@ -55,13 +55,13 @@ import javax.naming.ldap.PagedResultsControl;
 import javax.naming.ldap.PagedResultsResponseControl;
 
 import sun.misc.BASE64Decoder;
-import br.gov.jfrj.importar.AdContato;
-import br.gov.jfrj.importar.AdGrupo;
-import br.gov.jfrj.importar.AdGrupoDeDistribuicao;
-import br.gov.jfrj.importar.AdGrupoDeSeguranca;
-import br.gov.jfrj.importar.AdObjeto;
-import br.gov.jfrj.importar.AdUnidadeOrganizacional;
-import br.gov.jfrj.importar.AdUsuario;
+import br.gov.jfrj.ldap.AdContato;
+import br.gov.jfrj.ldap.AdGrupo;
+import br.gov.jfrj.ldap.AdGrupoDeDistribuicao;
+import br.gov.jfrj.ldap.AdGrupoDeSeguranca;
+import br.gov.jfrj.ldap.AdObjeto;
+import br.gov.jfrj.ldap.AdUnidadeOrganizacional;
+import br.gov.jfrj.ldap.AdUsuario;
 import br.gov.jfrj.ldap.ILdapDao;
 import br.gov.jfrj.ldap.LdapDaoImpl;
 import br.gov.jfrj.ldap.sinc.resolvedores.RegraCaixaPostal;
@@ -72,6 +72,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Criptografia;
 import br.gov.jfrj.siga.sinc.lib.OperadorSemHistorico;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
+
+import com.lowagie.text.pdf.codec.Base64;
 
 /**
  * Classe que provê uma interface java para a árvore LDAP.
@@ -567,7 +569,7 @@ public class LdapDaoSinc implements OperadorSemHistorico {
 		Attributes attrs = montarAtributos(adUsuario);
 
 		BASE64Decoder dec = new BASE64Decoder();
-
+		
 		if (!ldap.existe(adUsuario.getNomeCompleto())) {
 
 			try {
@@ -664,7 +666,7 @@ public class LdapDaoSinc implements OperadorSemHistorico {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} 
 			ldap.definirSenha(adUsuario.getNomeCompleto(), senhaNova);
 			// definirSenhaAD(adUsuario.getNomeCompleto(), senhaNova);
 		}

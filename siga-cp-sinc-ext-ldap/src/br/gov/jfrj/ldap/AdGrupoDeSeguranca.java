@@ -16,23 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.importar;
+package br.gov.jfrj.ldap;
 
-public class AdUnidadeOrganizacional extends AdObjeto {
+public class AdGrupoDeSeguranca extends AdGrupo {
 
-	public AdUnidadeOrganizacional(String nome, String idExterna, String dnDominio) {
-		super(nome, idExterna, dnDominio);
-		// TODO Auto-generated constructor stub
+	@Override
+	public void acrescentarMembro(AdObjeto objeto) {
+		if (!(objeto instanceof AdGrupo)){
+			super.acrescentarMembro(objeto);
+		}
+		
 	}
 
-	public AdUnidadeOrganizacional(String nome, String idExterna,
-			AdUnidadeOrganizacional gr, String dnDominio) {
-		super(nome, idExterna, gr,dnDominio);
-		// TODO Auto-generated constructor stub
+	public AdGrupoDeSeguranca(String nome, String idExterna, String dnDominio) {
+		super(nome, idExterna,dnDominio);
 	}
 
-	public String getPrefixo() {
-		return "OU=";
+	public AdGrupoDeSeguranca(String nome, String idExterna,
+			AdUnidadeOrganizacional grPai, String dnDominio) {
+		super(nome, idExterna, grPai,dnDominio);
 	}
 
 }

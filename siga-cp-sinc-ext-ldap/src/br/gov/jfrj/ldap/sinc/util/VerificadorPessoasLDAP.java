@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 import org.hibernate.Session;
 import org.hibernate.cfg.AnnotationConfiguration;
 
-import br.gov.jfrj.importar.AdObjeto;
-import br.gov.jfrj.importar.AdUsuario;
+import br.gov.jfrj.ldap.AdObjeto;
+import br.gov.jfrj.ldap.AdUsuario;
 import br.gov.jfrj.ldap.sinc.LdapDaoSinc;
 import br.gov.jfrj.ldap.sinc.SincProperties;
 import br.gov.jfrj.siga.dp.DpPessoa;

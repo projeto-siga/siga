@@ -40,9 +40,15 @@ import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import br.gov.jfrj.ldap.AdModelo;
+import br.gov.jfrj.ldap.AdObjeto;
+import br.gov.jfrj.ldap.AdUsuario;
+import br.gov.jfrj.ldap.sinc.LdapDaoSinc;
+import br.gov.jfrj.ldap.sinc.SincProperties;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPapel;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
@@ -55,15 +61,17 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.OperadorComHistorico;
+import br.gov.jfrj.siga.sinc.lib.OperadorSemHistorico;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelComparator;
 import br.gov.jfrj.siga.util.ImportarXmlProperties;
 
-public class SigaCpSinc {
+public class SigaCpSincLdap extends SigaCpSinc{
 
 	// a rotina do Markenson está fazendo coisas demais
 	// a rotina de sync está atribuindo um nível de dependencia estranho para
@@ -212,6 +220,117 @@ public class SigaCpSinc {
 		}
 	}
 
+	private void gravarLDAP(Date dt) throws Exception {
+		Sincronizador sinc = new Sincronizador();
+		// sinc.religarListaPorIdExterna(setNovo);
+		sinc.setSetNovo(setNovo);
+		// sinc.religarListaPorIdExterna(setAntigo);
+		sinc.setSetAntigo(setAntigo);
+
+		List<Item> list = sinc.getOperacoes(dt);
+
+		try {
+			OperadorSemHistorico o = new OperadorSemHistorico() {
+				// @Override
+				// public Sincronizavel alterarAntigo(Sincronizavel antigo) {
+				// return antigo;
+				// }
+				//
+				// @Override
+				// public Sincronizavel alterarNovo(Sincronizavel novo) {
+				// }
+
+				@Override
+				public Sincronizavel excluir(Sincronizavel antigo) {
+					Sincronizavel o = LdapDaoSinc.getInstance().excluir(
+							(AdObjeto) antigo);
+					return o;
+				}
+
+				@Override
+				public Sincronizavel incluir(Sincronizavel novo) {
+					Sincronizavel o = LdapDaoSinc.getInstance().incluir(
+							(AdObjeto) novo);
+
+					limparSenhaSinc(novo);
+
+					return o;
+				}
+
+				@Override
+				public Sincronizavel alterar(Sincronizavel antigo,
+						Sincronizavel novo) {
+					Sincronizavel o = LdapDaoSinc.getInstance().alterar(
+							(AdObjeto) antigo, (AdObjeto) novo);
+
+					limparSenhaSinc(novo);
+					verificarAlteracaoCargo(antigo, novo);
+
+					return o;
+				}
+
+				private void verificarAlteracaoCargo(Sincronizavel antigo,
+						Sincronizavel novo) {
+					if (novo instanceof AdUsuario
+							&& !((AdUsuario) antigo).getHomeMDB().equals(
+									((AdUsuario) novo).getHomeMDB())) {
+						SigaCpSincLdap.this.log("Cargo Alterado: "
+								+ (((AdUsuario) antigo).getNome() + "\n\tDe:\t"
+										+ ((AdUsuario) antigo).getHomeMDB()
+										+ "\n\tPara:\t" + ((AdUsuario) novo)
+										.getHomeMDB()));
+					}
+				}
+
+				@SuppressWarnings("static-access")
+				private void limparSenhaSinc(Sincronizavel novo) {
+					if (LdapDaoSinc.getInstance().getConf().isModoEscrita()) {
+						try {
+							if (novo instanceof AdUsuario) {
+								CpDao dao = CpDao.getInstance();
+								dao.iniciarTransacao();
+								AdUsuario u = ((AdUsuario) novo);
+								if (u.getSenhaCripto() != null) {
+
+									DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+									flt.setNome(u.getNome());
+									List<DpPessoa> listaPessoa = dao
+											.consultarPorFiltro(flt);
+									for (DpPessoa p : listaPessoa) {
+										for (CpIdentidade cpId : dao
+												.consultaIdentidades(p)) {
+											if (cpId.getCpTipoIdentidade()
+													.getIdCpTpIdentidade()
+													.equals(1)) {
+
+												cpId.setDscSenhaIdentidadeCriptoSinc(null);
+											}
+										}
+									}
+									dao.commitTransacao();
+								}
+							}
+
+						} catch (AplicacaoException e) {
+							System.out.println(e);
+						}
+					}
+				}
+			};
+
+			for (Item opr : list) {
+				log(opr.getDescricao());
+				sinc.gravar(opr, o, true);
+			}
+
+		} catch (Exception e) {
+			throw new Exception("Erro na atualização do Active Directory.", e);
+		}
+
+		log("Total de alterações: " + list.size());
+		// ((GenericoHibernateDao) dao).getSessao().flush();
+	}
+
 	protected static int parseParametros(String[] pars) {
 
 		if (pars.length < 2) {
@@ -273,7 +392,7 @@ public class SigaCpSinc {
 	 * @throws CsisException
 	 */
 	public static void main(String[] args) throws Exception {
-		SigaCpSinc sinc = new SigaCpSinc(args);
+		SigaCpSincLdap sinc = new SigaCpSincLdap(args);
 		sinc.run(args);
 	}
 
@@ -350,7 +469,27 @@ public class SigaCpSinc {
 		}
 	}
 
-	public SigaCpSinc(String[] args) {
+	public void ldap() throws NamingException, AplicacaoException, Exception {
+		log("Importando: BD");
+
+		SincProperties conf = SincProperties.getInstancia(SincProperties.getInstancia().getPrefixoModulo() + "." + url.replace("-", "")
+				+ "." + servidor.replace("-", ""));
+		AdModelo ge = AdModelo.getInstance(conf);
+		List<AdObjeto> l = ge.gerarModelo();
+		setNovo.addAll(l);
+
+		log("Importando: Active Directory");
+		LdapDaoSinc ldap = LdapDaoSinc.getInstance(conf);
+
+		List<AdObjeto> lLDAP = ldap.pesquisarObjeto(conf
+				.getDnGestaoIdentidade());
+
+		setAntigo.addAll(lLDAP);
+
+		gravarLDAP(dt);
+	}
+
+	public SigaCpSincLdap(String[] args) {
 		int result = parseParametros(args);
 		if (result != 0)
 			System.exit(result);
@@ -366,7 +505,7 @@ public class SigaCpSinc {
 		this.url = aUrl;
 	}
 
-	public SigaCpSinc() {
+	public SigaCpSincLdap() {
 		this(new String[] { "-desenv", "-sjrj" });
 	}
 

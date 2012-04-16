@@ -25,10 +25,10 @@ import junit.framework.TestCase;
 
 import org.hibernate.cfg.AnnotationConfiguration;
 
-import br.gov.jfrj.importar.AdGrupo;
-import br.gov.jfrj.importar.AdGrupoDeSeguranca;
-import br.gov.jfrj.importar.AdUsuario;
-import br.gov.jfrj.importar.SigaCpSinc;
+import br.gov.jfrj.importar.SigaCpSincLdap;
+import br.gov.jfrj.ldap.AdGrupo;
+import br.gov.jfrj.ldap.AdGrupoDeSeguranca;
+import br.gov.jfrj.ldap.AdUsuario;
 import br.gov.jfrj.ldap.sinc.LdapDaoSinc;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -140,7 +140,7 @@ public class GruposSegurancaManualTestCase extends TestCase {
 		if (!sincronizarLDAP) {
 			fail("Sincronização com LDAP desativada!");
 		}
-		SigaCpSinc sinc = new SigaCpSinc();
+		SigaCpSincLdap sinc = new SigaCpSincLdap();
 		String[] params = { "-desenv", "-sjrj", "-ldap" };
 		sinc.main(params);
 

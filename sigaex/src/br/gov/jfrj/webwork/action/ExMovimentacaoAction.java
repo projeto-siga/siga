@@ -207,7 +207,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String mensagem;
 
 	private Long idPapel;
-	
+
 	public Long getNivelAcesso() {
 		return nivelAcesso;
 	}
@@ -394,12 +394,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aPedirPublicacao() throws Exception {
 		buscarDocumento(true);
-		
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO 
+
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO
 				&& doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
-				throw new AplicacaoException(
-				"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público ou" +
-				" Limitado ao órgão. Redefina o nível de acesso.");				
+			throw new AplicacaoException(
+					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público ou"
+							+ " Limitado ao órgão. Redefina o nível de acesso.");
 
 		if (!Ex.getInstance().getComp()
 				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
@@ -440,13 +440,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aAgendarPublicacao() throws Exception {
 		buscarDocumento(true);
-		
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO 
-			&& doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
-			throw new AplicacaoException(
-			"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público ou" +
-			" Limitado ao órgão. Redefina o nível de acesso.");
 
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO
+				&& doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
+			throw new AplicacaoException(
+					"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público ou"
+							+ " Limitado ao órgão. Redefina o nível de acesso.");
 
 		if (!Ex.getInstance().getComp()
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))
@@ -466,7 +465,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))
-			;
+			throw new AplicacaoException(
+					"Não foi possível o agendamento de publicação no DJE.");
 
 		validarDataGravacao(mov, false);
 
@@ -555,8 +555,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			emailsSolicitantes.add(movPedidoBI.getCadastrante()
 					.getEmailPessoa());
 
-			Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), emailsSolicitantes
-					.toArray(new String[emailsSolicitantes.size()]),
+			Correio.enviar(SigaBaseProperties
+					.getString("servidor.smtp.usuario.remetente"),
+					emailsSolicitantes.toArray(new String[emailsSolicitantes
+							.size()]),
 					"Cancelamento de pedido de publicação no DJE ("
 							+ movPedidoBI.getLotaCadastrante()
 									.getSiglaLotacao() + ") ", sb.toString(),
@@ -690,8 +692,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			emailsSolicitantes.add(movPedidoDJE.getCadastrante()
 					.getEmailPessoa());
 
-			Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), emailsSolicitantes
-					.toArray(new String[emailsSolicitantes.size()]),
+			Correio.enviar(SigaBaseProperties
+					.getString("servidor.smtp.usuario.remetente"),
+					emailsSolicitantes.toArray(new String[emailsSolicitantes
+							.size()]),
 					"Cancelamento de pedido de publicação no DJE ("
 							+ movPedidoDJE.getLotaCadastrante()
 									.getSiglaLotacao() + ") ", sb.toString(),
@@ -875,13 +879,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
 
-//		String sArquivoPolitica = getRequest().getRealPath("") + File.separator
-//				+ "policies-ICP-BRASIL" + File.separator + "PA_AD_RB.cer";
-//		assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
-//				doc.getConteudoBlobPdf(), sArquivoPolitica);
-		
-//		assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
-//				doc.getConteudoBlobPdf(), null);
+		// String sArquivoPolitica = getRequest().getRealPath("") +
+		// File.separator
+		// + "policies-ICP-BRASIL" + File.separator + "PA_AD_RB.cer";
+		// assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
+		// doc.getConteudoBlobPdf(), sArquivoPolitica);
+
+		// assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
+		// doc.getConteudoBlobPdf(), null);
 
 		try {
 			setMsg(Ex
@@ -905,7 +910,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	private String recuperarAssinaturaAppletB64() throws ServletException, AplicacaoException {
+	private String recuperarAssinaturaAppletB64() throws ServletException,
+			AplicacaoException {
 		HttpServletRequest request = getRequest();
 		String mensagem = null;
 
@@ -934,13 +940,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		Object tools = null;
 		byte[] decoded = null;
 		try {
-			tools = Class.forName(SigaExProperties.getAssinaturaDecodificador()).newInstance();
-			decoded = (byte[]) tools.getClass().getMethod("fromHexLine", String.class).invoke(tools, hexEncoded);
-		} catch (Exception e){
+			tools = Class
+					.forName(SigaExProperties.getAssinaturaDecodificador())
+					.newInstance();
+			decoded = (byte[]) tools.getClass()
+					.getMethod("fromHexLine", String.class)
+					.invoke(tools, hexEncoded);
+		} catch (Exception e) {
 			throw new AplicacaoException(e.getMessage());
 		}
-		
-		
+
 		return Base64.encode(decoded);
 
 		// Instanciar pacote de assinatura
@@ -1054,10 +1063,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
 
-//		String sArquivoPolitica = getRequest().getRealPath("") + File.separator
-//				+ "policies-ICP-BRASIL" + File.separator + "PA_AD_RB.cer";
-//		assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
-//				mov.getConteudoBlobpdf(), sArquivoPolitica);
+		// String sArquivoPolitica = getRequest().getRealPath("") +
+		// File.separator
+		// + "policies-ICP-BRASIL" + File.separator + "PA_AD_RB.cer";
+		// assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
+		// mov.getConteudoBlobpdf(), sArquivoPolitica);
 
 		verificaNivelAcesso(movAlvo.getExMobil());
 
@@ -1275,6 +1285,24 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		ExMovimentacao movForm = new ExMovimentacao();
 		buscarDocumento(true);
 		lerForm(movForm);
+
+		if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarAnexo(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar anexo");
+		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob,
+							mov))
+				throw new AplicacaoException("Não é possível cancelar anexo");
+		} else {
+			if (!Ex.getInstance().getComp()
+					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException(
+						"Não é permitido cancelar esta movimentação.");
+		}
 
 		try {
 			Ex.getInstance()
@@ -1703,7 +1731,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeReceber(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Documento não pode ser recebido");		
+			throw new AplicacaoException("Documento não pode ser recebido");
 
 		aReceberGravar();
 		return "pula";
@@ -1824,7 +1852,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 								.getBL()
 								.receber(getCadastrante(), getLotaTitular(),
 										mob, mov.getDtMov());
-
 
 				}
 			}
@@ -2146,11 +2173,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!(Ex.getInstance().getComp()
 				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex
 
-				.getInstance().getComp()
+		.getInstance().getComp()
 				.podeDespachar(getTitular(), getLotaTitular(), mob)))
 			throw new AplicacaoException(
 					"Não é possível fazer despacho nem transferência");
-		
+
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -2305,7 +2332,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		buscarDocumento(true);
 
 		lerForm(mov);
-		if (mov.getResp()==null){
+		if (mov.getResp() == null) {
 			throw new AplicacaoException("Responsável não definido!");
 		}
 		mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
@@ -3198,13 +3225,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aBoletimAgendar() throws Exception {
 		buscarDocumento(true);
-		
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO 
-			&& doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
+
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO
+				&& doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
 			throw new AplicacaoException(
-			"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público ou" +
-			" Limitado ao órgão. Redefina o nível de acesso.");
-		
+					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público ou"
+							+ " Limitado ao órgão. Redefina o nível de acesso.");
 
 		if (!Ex.getInstance()
 				.getComp()

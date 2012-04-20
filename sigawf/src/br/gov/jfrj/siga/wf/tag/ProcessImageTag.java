@@ -34,6 +34,7 @@ package br.gov.jfrj.siga.wf.tag;
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -249,8 +250,15 @@ public class ProcessImageTag extends TagSupport
 	 */
 	private int [] extractBoxConstraint ( Element root , Token token )
 	{
+		
 		int [] result = new int [ 4 ];
-		String nodeName = token.getNode ().getName ();
+		String nodeName = "";
+		try {
+			nodeName = new String(token.getNode ().getName ().getBytes("ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		XPath xPath = new DefaultXPath ( "//node[@name='" + nodeName + "']" );
 		Element node = ( Element ) xPath.selectSingleNode ( root );
 		result [ 0 ] = Integer.valueOf ( node.attribute ( "x" ).getValue () ).intValue ();

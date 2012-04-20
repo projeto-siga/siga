@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.webwork.action;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -275,8 +276,8 @@ public class WfTaskAction extends WfSigaActionSupport {
 		// }
 
 		logs = (List<ProcessLog>) WfContextBuilder.getJbpmContext()
-				.getJbpmContext().getLoggingSession().findLogsByToken(
-						taskInstance.getToken().getId());
+				.getJbpmContext().getLoggingSession()
+				.findLogsByToken(taskInstance.getToken().getId());
 
 		prioridade = taskInstance.getPriority();
 		carregarAtorEGrupo();
@@ -418,9 +419,12 @@ public class WfTaskAction extends WfSigaActionSupport {
 										+ " deve ser preenchido");
 							}
 
-							taskInstance.getToken().getProcessInstance()
-									.getContextInstance().setVariable(
-											variable.getMappedName(), value);
+							taskInstance
+									.getToken()
+									.getProcessInstance()
+									.getContextInstance()
+									.setVariable(variable.getMappedName(),
+											value);
 						}
 					}
 				}
@@ -429,16 +433,17 @@ public class WfTaskAction extends WfSigaActionSupport {
 
 		// Bloco que transfere a tarefa
 		if (transitionName != null && transitionName.contains(" » ")) {
-			transitionName = transitionName.substring(0, transitionName
-					.indexOf(" » "));
+			transitionName = transitionName.substring(0,
+					transitionName.indexOf(" » "));
 		}
-		/* código inserido para corrigir o caracter &raquo; (») contido no botão 
+		/*
+		 * código inserido para corrigir o caracter &raquo; (») contido no botão
 		 * e enviado pelo submit. Este, no caso de autenticação por certificado,
 		 * vem em conjunto com o caracter Â. (
 		 */
 		if (transitionName != null && transitionName.contains(" Â» ")) {
-			transitionName = transitionName.substring(0, transitionName
-					.indexOf(" Â» "));
+			transitionName = transitionName.substring(0,
+					transitionName.indexOf(" Â» "));
 		}
 		/*
 		 * fim do código inserido para corrigir o caracter &raquo;
@@ -451,14 +456,17 @@ public class WfTaskAction extends WfSigaActionSupport {
 				.getAvailableTransitions())) {
 			if ((transition.getName() == null && transitionName == null)
 					|| ((transition.getName() != null) && (transition.getName()
-							.equals(transitionName)))) {
+							.equals(new String(transitionName
+									.getBytes("ISO-8859-1")))))
+					|| ((transition.getName() != null) && (transition.getName()
+							.equals(new String(transitionName.getBytes("UTF-8")))))) {
 				taskInstance.end(transition);
 				break;
 			}
 		}
 
-		WfContextBuilder.getJbpmContext().getJbpmContext().save(
-				taskInstance.getToken().getProcessInstance());
+		WfContextBuilder.getJbpmContext().getJbpmContext()
+				.save(taskInstance.getToken().getProcessInstance());
 
 		// Service.getExService ().transferir ( "RJ-MEM-2007/00595-A" ,
 		// "@RJSCO" , "RJ13635@RJSESAD" );
@@ -475,7 +483,9 @@ public class WfTaskAction extends WfSigaActionSupport {
 		// página inicial.
 		{
 			long idToken = taskInstance.getToken().getId();
-			SortedSet<TaskInstance> tasks = Wf.getInstance().getBL()
+			SortedSet<TaskInstance> tasks = Wf
+					.getInstance()
+					.getBL()
 					.getTaskList(getCadastrante(), getTitular(),
 							getLotaTitular());
 			for (TaskInstance ti : tasks) {
@@ -574,8 +584,8 @@ public class WfTaskAction extends WfSigaActionSupport {
 				if (variable.getMappedName().startsWith("doc_")
 						&& variable.isReadable() && !variable.isWritable()) {
 					String value = (String) ti.getToken().getProcessInstance()
-							.getContextInstance().getVariable(
-									variable.getMappedName());
+							.getContextInstance()
+							.getVariable(variable.getMappedName());
 					if (value != null && value.trim().length() != 0)
 						if (!service.podeTransferir(value, siglaTitular)) {
 							throw new AplicacaoException(
@@ -903,6 +913,12 @@ public class WfTaskAction extends WfSigaActionSupport {
 	}
 
 	public String getConhecimento() {
+		try {
+			return new String(conhecimento.getBytes("ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return conhecimento;
 	}
 
@@ -913,8 +929,8 @@ public class WfTaskAction extends WfSigaActionSupport {
 	public String moveToken() throws Exception {
 		Long idToken = paramLong("idToken");
 		Long idNode = paramLong("idNode");
-		Token t = WfContextBuilder.getJbpmContext().getJbpmContext().getToken(
-				idToken);
+		Token t = WfContextBuilder.getJbpmContext().getJbpmContext()
+				.getToken(idToken);
 		if (idNode == 0) {
 			t.signal();
 			return Action.SUCCESS;
@@ -931,7 +947,8 @@ public class WfTaskAction extends WfSigaActionSupport {
 	}
 
 	public String endProcessInstance() throws Exception {
-		Wf.getInstance().getBL().encerrarProcessInstance(paramLong("idPI"), paramDate("dtFim"));
+		Wf.getInstance().getBL()
+				.encerrarProcessInstance(paramLong("idPI"), paramDate("dtFim"));
 		return Action.SUCCESS;
 	}
 

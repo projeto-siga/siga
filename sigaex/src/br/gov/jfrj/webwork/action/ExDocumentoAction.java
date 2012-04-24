@@ -150,6 +150,8 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	/** The value of the simple dtDoc property. */
 	private String dtDocString;
+	
+	private String dtDocOriginalString;
 
 	/** The value of the simple dtRegDoc property. */
 	private String dtRegDoc;
@@ -1727,6 +1729,10 @@ public class ExDocumentoAction extends ExActionSupport {
 		return dtDocString;
 	}
 
+	public String getDtDocOriginalString() {
+		return dtDocOriginalString;
+	}
+
 	public String getDtRegDoc() {
 		return dtRegDoc;
 	}
@@ -2250,6 +2256,10 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public void setDtDocString(final String dtDocString) {
 		this.dtDocString = dtDocString;
+	}
+
+	public void setDtDocOriginalString(String dtDocOriginalString) {
+		this.dtDocOriginalString = dtDocOriginalString;
 	}
 
 	public void setDtRegDoc(final String dtRegDoc) {

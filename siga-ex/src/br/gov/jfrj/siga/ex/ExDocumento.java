@@ -37,6 +37,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
+
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.Hibernate;
@@ -1685,7 +1687,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * Verifica se um documento foi assinado pelo subscritor e por todos os
 	 * cosignatários
 	 */
-	public boolean isAssinadoPorTodosOsSignatarios() {
+	public boolean isAssinadoEletronicoPorTodosOsSignatarios() {
 		// Interno antigo e externo são considerados como assinados
 		if (getExTipoDocumento().getIdTpDoc() != 1L) {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;
@@ -1695,25 +1697,36 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (mov == null)
 			return false;
 
-		String sMatricula = null;
-		List<Long> matriculasAssinatura = new ArrayList<Long>();
+		List<DpPessoa> todosQueJaAssinaram = new ArrayList<DpPessoa>();
 
 		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
-			if (assinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) {
-				sMatricula = assinatura.getDescrMov().split(":")[1];
-				matriculasAssinatura.add(Long.valueOf(sMatricula));
-			} else {
-				matriculasAssinatura.add(assinatura.getSubscritor()
-						.getMatricula());
-			}
+			if (assinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) 
+				todosQueJaAssinaram.add(assinatura.getSubscritor());
 		}
 
 		for (DpPessoa signatario : getSubscritorECosignatarios()) {
-			if (!matriculasAssinatura.contains(signatario.getMatricula()))
+			if (!todosQueJaAssinaram.contains(signatario))
 				return false;
 		}
 
 		return true;
+	}
+
+	/**
+	 * Verifica se um documento já foi transferido alguma vez
+	 */
+	public boolean jaTransferido() {
+		for (ExMovimentacao mov : getExMovimentacaoSet()) {
+			if(!mov.isCancelada() &&  
+					(mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA ||
+							mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA ||
+							mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA ||
+							mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA ||
+							mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA))
+				return true;
+		}
+		
+		return false;
 	}
 
 	public void setConteudoBlob(final String nome, final byte[] conteudo) {

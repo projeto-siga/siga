@@ -2114,6 +2114,14 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		if (doc.getDtRegDoc() == null)
 			doc.setDtRegDoc(dao().dt());
+		
+		try {
+			doc.setDtDocOriginal(df.parse(getDtDocOriginalString()));
+		} catch (final ParseException e) {
+			doc.setDtDocOriginal(null);
+		} catch (final NullPointerException e) {
+			doc.setDtDocOriginal(null);
+		}
 
 		if (getNumExpediente() != null) {
 			doc.setNumExpediente(new Long(getNumExpediente()));

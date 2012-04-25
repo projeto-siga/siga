@@ -25,16 +25,24 @@
 				<mod:lotacao titulo="<b>Setor Responsável</b>" var="secres" />
 		</mod:grupo>
 		 <br><hr style="color: #FFFFFF;" /><br>
-		<mod:grupo titulo="Texto da Nota de Auditoria (Constatação, Fato, Consequência, Recomendação)">
-			<mod:grupo>
-				<mod:editor titulo="" var="texto_audit" />
-			</mod:grupo>
+		<mod:grupo>
+		    <c:if test="${empty esconderTexto}">
+			    <mod:grupo titulo="<b>Texto da Nota de Auditoria (Constatação, Fato, Consequência, Recomendação)</b>">
+			    	<mod:grupo>
+					    <mod:editor titulo="" var="texto_audit" />
+				    </mod:grupo>
+			    </mod:grupo>
+			    <br>
+			    <mod:selecao titulo="<b>Tamanho da letra</b>" var="tamanhoLetra"
+				   opcoes="Normal;Pequeno;Grande" />
+	    	</c:if>
 		</mod:grupo>
-		<br>
-		<br><hr style="color: #FFFFFF;" /><br>
+		
+		<hr style="color: #FFFFFF;" />
 		<mod:grupo>  
 		     <mod:data titulo="Prazo para atendimento" var="dtprazo" obrigatorio="Sim"/>
         </mod:grupo><br>	
+        
 	</mod:entrevista>
 	
 	<mod:documento>
@@ -51,10 +59,10 @@
 		<head>
 		<style type="text/css">
 @page {
-	margin-left: 3cm;
-	margin-right: 2cm;
-	margin-top: 1cm;
-	margin-bottom: 2cm;
+	margin-left: 0.5cm;
+	margin-right: 0.5cm;
+	margin-top: 0.5cm;
+	margin-bottom: 0.5cm;
 }
 </style>
 		</head>
@@ -125,9 +133,11 @@
 			<br><br>
 			<!-- FIM FECHO -->
 			<!-- FIM MIOLO -->
+			<!-- INICIO ASSINATURA -->
 			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp?formatarOrgao=sim" />
+			<!-- FIM ASSINATURA -->
 		</mod:letra>
-		/${doc.cadastrante.siglaPessoa}</br>
+		/${doc.cadastrante.siglaPessoa}<br>
 		<!-- INICIO PRIMEIRO RODAPE
 		<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		FIM PRIMEIRO RODAPE -->

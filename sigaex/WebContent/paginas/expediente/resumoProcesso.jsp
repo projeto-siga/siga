@@ -109,9 +109,9 @@
 										</td>
 										<c:forEach var="topico" items="${arqNumerado.arquivo.resumo}">
 											<c:set var="em" value="" />
-											<c:if test="${f:dataFutura(topico.value)}">
+											<%-- <c:if test="${f:dataFutura(topico.value)}">--%>
 												<c:set var="em" value="background-color:#AfFFAf;" />
-											</c:if>
+											<%-- </c:if>--%>
 											<td style="text-align: center;${em}">${topico.value}</td>
 										</c:forEach>
 									</tr>

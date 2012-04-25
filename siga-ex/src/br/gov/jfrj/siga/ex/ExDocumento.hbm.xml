@@ -94,24 +94,20 @@
    <one-to-many class="ExMobil"/>
   </set>
  </class>
- <query name="obterProximoNumeroSub">
-			select max(doc.numExpediente)+1
+ <query name="obterProximoNumeroSub">select max(doc.numExpediente)+1
 			from ExDocumento doc
 			inner join doc.subscritor sub 
 			inner join doc.exFormaDocumento frm 
 			where doc.anoEmissao = :anoEmissao
 			and sub.sesbPessoa = :sesb
-			and frm.idFormaDoc = :idFormaDoc
-		</query>
- <query name="obterProximoNumeroCad">
-			select max(doc.numExpediente)+1 
+			and frm.idFormaDoc = :idFormaDoc</query>
+ <query name="obterProximoNumeroCad">select max(doc.numExpediente)+1 
 			from ExDocumento doc
 			inner join doc.cadastrante sub 
 			inner join doc.exFormaDocumento frm 
 			where doc.anoEmissao = :anoEmissao
 			and sub.sesbPessoa = :sesb
-			and frm.idFormaDoc = :idFormaDoc
-		</query>
+			and frm.idFormaDoc = :idFormaDoc</query>
  <query name="obterProximoNumero">select max(doc.numExpediente)+1
 			from ExDocumento doc
 			inner join doc.exFormaDocumento frm
@@ -132,8 +128,7 @@
 			and doc.exModelo.idMod = :idMod
 			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
 			group by doc.idDoc
-			having min(mov.dtIniMov) between :dataIni and :dataFim)
-		</query>
+			having min(mov.dtIniMov) between :dataIni and :dataFim)</query>
  <query name="consultarPorFiltro">select doc, mob, label 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			
@@ -187,8 +182,7 @@
 			and (:numExtDoc = null or :numExtDoc = '' or upper(doc.numExtDoc) like upper('%' || :numExtDoc || '%'))
 			
 			order by doc.dtDoc desc</query>
- <query name="consultarQuantidadePorFiltro">
-			select count(doc) 
+ <query name="consultarQuantidadePorFiltro">select count(doc) 
 				from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 				
 				where (
@@ -238,17 +232,13 @@
 				
 				and (:nmSubscritorExt = null or :nmSubscritorExt = '' or upper(doc.nmSubscritorExt) like '%' || :nmSubscritorExt || '%')
 				and (:orgaoExternoSelId = null or :orgaoExternoSelId = null or doc.orgaoExterno.idOrgao = :orgaoExternoSelId)
-				and (:numExtDoc = null or :numExtDoc = '' or upper(doc.numExtDoc) like upper('%' || :numExtDoc || '%'))
-						
-		</query>
+				and (:numExtDoc = null or :numExtDoc = '' or upper(doc.numExtDoc) like upper('%' || :numExtDoc || '%'))</query>
  <query name="listarSolicitados">select doc 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			where label.cpMarcador.idMarcador = 21
-			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
-		</query>
+			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu</query>
  <query name="listarDisponibilizados">select doc 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			where label.cpMarcador.idMarcador = 22
-			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
-		</query>
+			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu</query>
 </hibernate-mapping>

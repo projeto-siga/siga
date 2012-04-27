@@ -270,7 +270,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAcessarNivel20(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-
+		
 		if ((lotaTitular.getOrgaoUsuario().equivale(mob.doc()
 				.getLotaCadastrante().getOrgaoUsuario()))
 				|| (mob.doc().getSubscritor() != null && mob.doc()
@@ -896,11 +896,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se uma pessoa está vinculada a um documento por meio de algum
+	 * Retorna se uma pessoa/lotação está vinculada a um documento por meio de algum
 	 * perfil. Para isso, verifica cada movimentação não cancelada de vinculação
-	 * de perfil registrada no móbil geral do documento e analisa se a pessoa
-	 * passada por parâmetro é <i>titular</i> de alguma dessas movimentações.
-	 * <b>Obs.: o parâmetro lotaTitular não está sendo usado.</b>
+	 * de perfil registrada no móbil geral do documento e analisa se a pessoa/lotação
+	 * passada por parâmetro é <i>titular/lotaTitular</i> de alguma dessas movimentações.
 	 * 
 	 * @param doc
 	 * @param titular

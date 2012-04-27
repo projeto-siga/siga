@@ -2629,9 +2629,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 	
 	public Map<Integer, String> getListaTipoRespPerfil() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Órgão Integrado");
-		map.put(2, "Matrícula");
+		final Map<Integer, String> map = new TreeMap<Integer, String>();		
+		map.put(1, "Matrícula");
+		map.put(2, "Órgão Integrado");
 		return map;
 	}
 

@@ -396,6 +396,7 @@ function checkBoxMsg() {
 					<c:if test='${tipoDocumento == "externo"}'>
 						<tr>
 							<td>Data original do documento:</td>
+							<input type="hidden" name="campos" value="dtDocOriginalString" />
 							<td colspan="3"><ww:textfield name="dtDocOriginalString" size="10"
 							onblur="javascript:verifica_data(this, true);" /></td>
 						</tr>

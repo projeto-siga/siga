@@ -19,6 +19,7 @@
   <property formula="REMOVE_ACENTO(DESCR_DOCUMENTO)" generated="never"
    lazy="false" name="descrDocumentoAI" type="java.lang.String"/>
   <property column="DT_DOC" generated="never" lazy="false" name="dtDoc" type="java.util.Date"/>
+  <property column="DT_DOC_ORIGINAL" generated="never" lazy="false" name="dtDocOriginal" type="java.util.Date"/>
   <property column="DT_REG_DOC" generated="never" lazy="false"
    name="dtRegDoc" not-null="true" type="java.util.Date"/>
   <property column="DT_FECHAMENTO" generated="never" lazy="false"

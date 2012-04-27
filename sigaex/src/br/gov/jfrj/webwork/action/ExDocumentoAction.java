@@ -1589,6 +1589,11 @@ public class ExDocumentoAction extends ExActionSupport {
 			setDtDocString(df.format(doc.getDtDoc()));
 		} catch (final Exception e) {
 		}
+		
+		try {
+			setDtDocOriginalString(df.format(doc.getDtDocOriginal()));
+		} catch (final Exception e) {
+		}
 
 		if (doc.getAnoEmissao() != null)
 			setAnoEmissaoString(doc.getAnoEmissao().toString());

@@ -11,9 +11,7 @@
 
 
 <script type="text/javascript" language="Javascript1.1">
-<ww:url id="url" action="vincularPapel" namespace="/expediente/mov">
-	<ww:param name="id">${doc.idDoc}</ww:param>
-</ww:url>
+<ww:url id="url" action="vincularPapel" namespace="/expediente/mov" />
 function sbmt() {
 	<%--ExMovimentacaoForm.page.value='';
 	ExMovimentacaoForm.acao.value='aTransferir';
@@ -110,12 +108,12 @@ function popitup_movimentacao() {
 
 					<td><ww:select name="tipoResponsavel" list="listaTipoRespPerfil"
 						onchange="javascript:sbmt();" /> 
-     					<c:choose>
+     					<c:choose>							  
 							  <c:when test="${tipoResponsavel == 1}">
-								<siga:selecao propriedade="lotaResponsavel" tema="simple" />
+								<siga:selecao propriedade="responsavel" tema="simple" />
 							  </c:when>
 							  <c:when test="${tipoResponsavel == 2}">
-								<siga:selecao propriedade="responsavel" tema="simple" />
+								<siga:selecao propriedade="lotaResponsavel" tema="simple" />
 							  </c:when>							  
 						</c:choose>
 					</td>

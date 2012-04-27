@@ -455,10 +455,10 @@ public class WfTaskAction extends WfSigaActionSupport {
 		for (Transition transition : (List<Transition>) (taskInstance
 				.getAvailableTransitions())) {
 			if ((transition.getName() == null && transitionName == null)
-					|| ((transition.getName() != null) && (transition.getName()
+					|| ((transition.getName() != null && transitionName != null) && (transition.getName()
 							.equals(new String(transitionName
 									.getBytes("ISO-8859-1")))))
-					|| ((transition.getName() != null) && (transition.getName()
+					|| ((transition.getName() != null && transitionName != null) && (transition.getName()
 							.equals(new String(transitionName.getBytes("UTF-8")))))) {
 				taskInstance.end(transition);
 				break;

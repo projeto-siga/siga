@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
-<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
@@ -52,24 +52,19 @@
 			<c:set var="tl" value="11pt"></c:set>
 		</c:if>
 
-		<!-- INICIO PRIMEIRO CABECALHO
-		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
-		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		</td></tr>
-		
-		
-			<tr bgcolor="#FFFFFF">
-				<td width="100%">
-					<table width="100%">
-						<tr>
-							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>EDITAL N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
-		FIM PRIMEIRO CABECALHO -->
+                <!-- INICIO PRIMEIRO CABECALHO
 
+		<table width="100%" border="0" bgcolor="#FFFFFF">
+                   <tr><td>
+		       <c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
+		   </td></tr>
+		</table>
+
+		FIM PRIMEIRO CABECALHO -->
+                
+                <br>
+		<p align="center" style="font-family:Arial;font-size:11pt;">
+		<!-- INICIO NUMERO --><span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo}</span><!-- FIM NUMERO --> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>	
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
@@ -82,10 +77,12 @@
 			<!-- FIM CORPO -->
 			<br>
 			<p align="center"><!-- INICIO FECHO -->PUBLIQUE-SE. REGISTRE-SE. CUMPRA-SE.<!-- FIM FECHO --><br/><br/><br></p>
-            <!-- FIM MIOLO -->
-			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
+			<!-- INICIO ASSINATURA -->
+			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />   
+			<!-- FIM ASSINATURA -->
+                        <!-- FIM MIOLO -->
 		</mod:letra>
-         <br>/${doc.cadastrante.siglaPessoa}</br>
+        <br>/${doc.cadastrante.siglaPessoa}</br>
 		<!-- INICIO PRIMEIRO RODAPE
 		<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		FIM PRIMEIRO RODAPE -->

@@ -2312,8 +2312,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		
 		
 		if (mov.getResp() != null){
-		    mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
-				+ mov.getResp().getDescricaoIniciaisMaiusculas());
+		    mov.setDescrMov(mov.getExPapel().getDescPapel() + ":" 
+				+ mov.getResp().getDescricaoIniciaisMaiusculas() );
 		} else { 
 			if (mov.getLotaResp() != null) {
 				mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"

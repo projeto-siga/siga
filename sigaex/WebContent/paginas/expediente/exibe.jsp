@@ -56,7 +56,7 @@
 			<siga:links>
 				<c:forEach var="acao" items="${m.acoesOrdenadasPorNome}">
 					<ww:url id="url" action="${acao.acao}"
-						namespace="${acao.nameSpace}">
+						namespace="${acao.nameSpace}" >
 						<c:forEach var="p" items="${acao.params}">
 							<ww:param name="${p.key}">${p.value}</ww:param>
 						</c:forEach>

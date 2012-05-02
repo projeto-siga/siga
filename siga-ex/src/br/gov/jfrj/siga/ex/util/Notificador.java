@@ -19,14 +19,17 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.util.HashSet;
+import java.util.List;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Notificador {
 
@@ -37,7 +40,8 @@ public class Notificador {
 	// private static String servidor = "localhost:8080"; // teste
 
 	private static String servidor = "siga"; // produção
-
+	
+	
 	/**
 	 * Método que notifica as pessoas com perfis vinculados ao documento.
 	 * 
@@ -96,42 +100,108 @@ public class Notificador {
 	 * @param m
 	 * @throws AplicacaoException
 	 */
+	private static ExDao dao() {
+		return ExDao.getInstance();
+	}
 	private static void incluirDestinatarioPerfil(ExMovimentacao mov,
 			HashSet<String> destinatariosEmail, ExMovimentacao m)
 			throws AplicacaoException {
+		
 		try {
-			if (Ex.getInstance().getConf().podePorConfiguracao(
-					mov.getExDocumento().getExFormaDocumento()
-							.getExTipoFormaDoc(), m.getExPapel(), m.getTitular(),
-					mov.getExTipoMovimentacao(),
-					CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) {
-
-				destinatariosEmail.add(m.getTitular().getEmailPessoa());
-
+			
+			if (m.getSubscritor() != null) {
+				if (Ex.getInstance().getConf().podePorConfiguracao(
+						mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(), 
+						m.getExPapel(), m.getSubscritor(),
+						mov.getExTipoMovimentacao(),
+						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)
+						
+					/*
+					 * Se a movimentação é um cancelamento de uma movimentação que
+					 * pode ser notificada, adiciona o e-mail.
+					 */	
+				    || (mov.getExMovimentacaoRef() != null
+							&& Ex.getInstance().getConf().podePorConfiguracao(mov.getExDocumento()
+											                                     .getExFormaDocumento()
+											                                     .getExTipoFormaDoc(),
+							                                                  m.getExPapel(),
+							                                                  m.getSubscritor(),
+									                                          mov.getExMovimentacaoRef().getExTipoMovimentacao(),
+									                                          CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))) {
+					    destinatariosEmail.add(m.getSubscritor().getEmailPessoa());
+				 }								
 			} else {
-				/*
-				 * Se a movimentação é um cancelamento de uma movimentação que
-				 * pode ser notificada, adiciona o e-mail.
-				 */
-				if (mov.getExMovimentacaoRef() != null
-						&& Ex
-								.getInstance()
-								.getConf()
-								.podePorConfiguracao(
-										mov.getExDocumento()
-												.getExFormaDocumento()
-												.getExTipoFormaDoc(),
-										m.getExPapel(),
-										mov.getExMovimentacaoRef()
-												.getExTipoMovimentacao(),
-										CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) {
-					destinatariosEmail.add(m.getTitular().getEmailPessoa());
+				if (m.getLotaSubscritor() != null) {
+					if (Ex.getInstance().getConf().podePorConfiguracao(
+							mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(), 
+							m.getExPapel(), m.getLotaSubscritor().getLotacaoAtual() ,
+							mov.getExTipoMovimentacao(),
+							CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)
+							
+					/*
+					 * Se a movimentação é um cancelamento de uma movimentação que
+					 * pode ser notificada, adiciona o e-mail.
+					 */	
+				    || (mov.getExMovimentacaoRef() != null
+				    		&& Ex.getInstance().getConf().podePorConfiguracao(mov.getExDocumento()
+                                                                                 .getExFormaDocumento()
+                                                                                 .getExTipoFormaDoc(),
+                                                                              m.getExPapel(),
+                                                                              m.getLotaSubscritor().getLotacaoAtual(),
+                                                                              mov.getExMovimentacaoRef().getExTipoMovimentacao(),
+                                                                              CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))) {						
+						adicionarDestinatariosEmail(mov, destinatariosEmail, m);
+					}
+					
 				}
-			}
+					
+			}		
+			
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Erro ao enviar email de notificação de transferência.", 0,
+					"Erro ao enviar email de notificação de movimentação.", 0,
 					e);
+		}
+	}
+
+	private static void adicionarDestinatariosEmail(ExMovimentacao mov,
+			HashSet<String> destinatariosEmail, ExMovimentacao m)
+			throws AplicacaoException, Exception {
+		List<String> listaDeEmails =  dao().consultarEmailNotificacao(
+				m.getLotaSubscritor().getLotacaoAtual());
+		
+		if (listaDeEmails.size() > 0) {
+
+			for (String email : listaDeEmails) {
+
+				// Caso exista alguma configuração com email
+				// nulo, significa que deve ser enviado para
+				// todos da lotação
+
+				if (email == null) {
+					for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false)) {
+						
+						if (Ex.getInstance().getConf().podePorConfiguracao(
+								mov.getExDocumento().getExFormaDocumento()
+										.getExTipoFormaDoc(), m.getExPapel(), pes,
+								mov.getExTipoMovimentacao(),
+								CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) 				
+						destinatariosEmail.add(pes.getEmailPessoa());
+					}
+				} else {									
+					destinatariosEmail.add(email);
+				}
+			}
+		} else {
+			for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false)) {
+				if (Ex.getInstance().getConf().podePorConfiguracao(
+						mov.getExDocumento().getExFormaDocumento()
+								.getExTipoFormaDoc(), m.getExPapel(), pes,
+						mov.getExTipoMovimentacao(),
+						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) 
+				destinatariosEmail.add(pes.getEmailPessoa());
+			}
+			
 		}
 	}
 

@@ -89,7 +89,7 @@
 				<td width="75%">${doc.obsOrgao}</td>
 			</tr>
 			<tr>
-				<td>Data original do documento:</td>
+				<td>Data Original do Documento:</td>
 				<td>${doc.dtDocOriginalDDMMYYYY}</td>
 			</tr>
 			<tr>

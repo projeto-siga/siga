@@ -150,6 +150,8 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	/** The value of the simple dtDoc property. */
 	private String dtDocString;
+	
+	private String dtDocOriginalString;
 
 	/** The value of the simple dtRegDoc property. */
 	private String dtRegDoc;
@@ -1587,6 +1589,11 @@ public class ExDocumentoAction extends ExActionSupport {
 			setDtDocString(df.format(doc.getDtDoc()));
 		} catch (final Exception e) {
 		}
+		
+		try {
+			setDtDocOriginalString(df.format(doc.getDtDocOriginal()));
+		} catch (final Exception e) {
+		}
 
 		if (doc.getAnoEmissao() != null)
 			setAnoEmissaoString(doc.getAnoEmissao().toString());
@@ -1725,6 +1732,10 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public String getDtDocString() {
 		return dtDocString;
+	}
+
+	public String getDtDocOriginalString() {
+		return dtDocOriginalString;
 	}
 
 	public String getDtRegDoc() {
@@ -2108,6 +2119,14 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		if (doc.getDtRegDoc() == null)
 			doc.setDtRegDoc(dao().dt());
+		
+		try {
+			doc.setDtDocOriginal(df.parse(getDtDocOriginalString()));
+		} catch (final ParseException e) {
+			doc.setDtDocOriginal(null);
+		} catch (final NullPointerException e) {
+			doc.setDtDocOriginal(null);
+		}
 
 		if (getNumExpediente() != null) {
 			doc.setNumExpediente(new Long(getNumExpediente()));
@@ -2250,6 +2269,10 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public void setDtDocString(final String dtDocString) {
 		this.dtDocString = dtDocString;
+	}
+
+	public void setDtDocOriginalString(String dtDocOriginalString) {
+		this.dtDocOriginalString = dtDocOriginalString;
 	}
 
 	public void setDtRegDoc(final String dtRegDoc) {

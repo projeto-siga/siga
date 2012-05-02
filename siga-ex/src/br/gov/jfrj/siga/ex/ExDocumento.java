@@ -398,6 +398,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
+	 * Retorna a data original do documento externo no formato dd/mm/aa, por exemplo, 01/02/2010.
+	 */
+	@Field(name = "dtDocOriginalDDMMYYYY", index = Index.NO, store = Store.COMPRESS)
+	public String getDtDocOriginalDDMMYYYY() {
+		if (getDtDocOriginal() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(getDtDocOriginal());
+		}
+		return "";
+	}
+
+	/**
 	 * Retorna a data do documento no formato dd/mm/aaaa, por exemplo,
 	 * 01/02/2010.
 	 */

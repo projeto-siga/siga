@@ -84,7 +84,7 @@
 		    <c:set var="fdesig" value="05" />
 	</c:if>
 	
-		<mod:valor var="texto_ato">
+		<mod:valor var="texto_ptp">
 		
 		    <c:set var="acgrav" value="do" />
 		    <c:if test="${acgra == 'na'}">

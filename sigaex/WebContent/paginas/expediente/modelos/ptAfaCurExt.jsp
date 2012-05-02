@@ -38,7 +38,7 @@
 			<br>
 			<br>
 			<mod:selecao titulo="Acerto Gramatical" var="acgra"
-				opcoes="no;na;nos;nas" reler="sim" />
+				opcoes="em;no;na;nos;nas" reler="sim" />
 			<mod:texto titulo="País" var="pais" largura="30" />
 			<mod:texto titulo="Número de Dias" var="nume" largura="5" />
 			<br>
@@ -57,7 +57,7 @@
 	<mod:documento>
 		<c:set var="juiz_federal"
 			value="${f:pessoa(requestScope['partic_pessoaSel.id'])}" />
-		<mod:valor var="texto_ato">
+		<mod:valor var="texto_ptp">
 			<br />
 			<br />
 			<p style="TEXT-INDENT: 2cm" align="justify"><b><c:choose>

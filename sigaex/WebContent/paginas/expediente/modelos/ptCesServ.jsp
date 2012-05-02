@@ -37,7 +37,7 @@
 	
 	<mod:documento>
 	<c:set var="servidor" value ="${f:pessoa(requestScope['serv_pessoaSel.id'])}" />
-		<mod:valor var="texto_ato">
+		<mod:valor var="texto_ptp">
 			<br/>
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<b><c:choose><c:when test="${doc.subscritor.sexo == 'M'}">O PRESIDENTE</c:when><c:otherwise>A PRESIDENTE</c:otherwise></c:choose> 

@@ -33,7 +33,7 @@
 	
 	<mod:documento>
 	<c:set var="federal" value ="${f:pessoa(requestScope['deslic_pessoaSel.id'])}" />
-	    <mod:valor var="texto_ato">
+	    <mod:valor var="texto_ptp">
 			<br/><br/>
 			<c:set var="licen" value="à Excelentíssima Desembargadora Federal" />
 		    <c:if test="${federal.sexo == 'M'}">

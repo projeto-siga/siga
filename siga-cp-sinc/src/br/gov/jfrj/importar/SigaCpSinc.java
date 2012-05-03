@@ -21,27 +21,28 @@ package br.gov.jfrj.importar;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.naming.NamingException;
+
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import br.gov.jfrj.ldap.sinc.LdapDaoSinc;
-import br.gov.jfrj.ldap.sinc.SincProperties;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPapel;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
@@ -54,11 +55,9 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.OperadorComHistorico;
-import br.gov.jfrj.siga.sinc.lib.OperadorSemHistorico;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelComparator;
@@ -74,17 +73,30 @@ public class SigaCpSinc {
 
 	private String url = "";
 
+	public String getServidor() {
+		return servidor;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public Date getDt() {
+		return dt;
+	}
+
 	private String aditionalEmails = "";
 
 	private SincronizavelComparator sc = new SincronizavelComparator();
 
-	private SortedSet<Sincronizavel> setNovo = new TreeSet<Sincronizavel>(sc);
+	protected SortedSet<Sincronizavel> setNovo = new TreeSet<Sincronizavel>(sc);
 
-	private SortedSet<Sincronizavel> setAntigo = new TreeSet<Sincronizavel>(sc);
+	protected SortedSet<Sincronizavel> setAntigo = new TreeSet<Sincronizavel>(
+			sc);
 
-	private long orgaoUsuario;
+	public long orgaoUsuario;
 
-	private CpOrgaoUsuario cpOrgaoUsuario = null;
+	protected CpOrgaoUsuario cpOrgaoUsuario = null;
 
 	private DpPessoa dpPessoaCorrente = null;
 
@@ -116,6 +128,12 @@ public class SigaCpSinc {
 	 * nivel 1: entidade, nivel 2: atributo,valor
 	 */
 	Hashtable<String, Hashtable<String, Hashtable<String, Hashtable<String, String>>>> unicidades = new Hashtable<String, Hashtable<String, Hashtable<String, Hashtable<String, String>>>>();
+
+	protected Date dt;
+
+	protected void setOrgaoUsuario(long orgaoUsuario) {
+		this.orgaoUsuario = orgaoUsuario;
+	}
 
 	//
 	@SuppressWarnings("static-access")
@@ -194,118 +212,7 @@ public class SigaCpSinc {
 		}
 	}
 
-	private void gravarLDAP(Date dt) throws Exception {
-		Sincronizador sinc = new Sincronizador();
-		// sinc.religarListaPorIdExterna(setNovo);
-		sinc.setSetNovo(setNovo);
-		// sinc.religarListaPorIdExterna(setAntigo);
-		sinc.setSetAntigo(setAntigo);
-
-		List<Item> list = sinc.getOperacoes(dt);
-
-		try {
-			OperadorSemHistorico o = new OperadorSemHistorico() {
-				// @Override
-				// public Sincronizavel alterarAntigo(Sincronizavel antigo) {
-				// return antigo;
-				// }
-				//
-				// @Override
-				// public Sincronizavel alterarNovo(Sincronizavel novo) {
-				// }
-
-				@Override
-				public Sincronizavel excluir(Sincronizavel antigo) {
-					Sincronizavel o = LdapDaoSinc.getInstance().excluir(
-							(AdObjeto) antigo);
-					return o;
-				}
-
-				@Override
-				public Sincronizavel incluir(Sincronizavel novo) {
-					Sincronizavel o = LdapDaoSinc.getInstance().incluir(
-							(AdObjeto) novo);
-
-					limparSenhaSinc(novo);
-
-					return o;
-				}
-
-				@Override
-				public Sincronizavel alterar(Sincronizavel antigo,
-						Sincronizavel novo) {
-					Sincronizavel o = LdapDaoSinc.getInstance().alterar(
-							(AdObjeto) antigo, (AdObjeto) novo);
-
-					limparSenhaSinc(novo);
-					verificarAlteracaoCargo(antigo, novo);
-
-					return o;
-				}
-
-				private void verificarAlteracaoCargo(Sincronizavel antigo,
-						Sincronizavel novo) {
-					if (novo instanceof AdUsuario
-							&& !((AdUsuario) antigo).getHomeMDB().equals(
-									((AdUsuario) novo).getHomeMDB())) {
-						SigaCpSinc.this.log("Cargo Alterado: "
-								+ (((AdUsuario) antigo).getNome() + "\n\tDe:\t"
-										+ ((AdUsuario) antigo).getHomeMDB()
-										+ "\n\tPara:\t" + ((AdUsuario) novo)
-										.getHomeMDB()));
-					}
-				}
-
-				@SuppressWarnings("static-access")
-				private void limparSenhaSinc(Sincronizavel novo) {
-					if (LdapDaoSinc.getInstance().getConf().isModoEscrita()) {
-						try {
-							if (novo instanceof AdUsuario) {
-								CpDao dao = CpDao.getInstance();
-								dao.iniciarTransacao();
-								AdUsuario u = ((AdUsuario) novo);
-								if (u.getSenhaCripto() != null) {
-
-									DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-									flt.setNome(u.getNome());
-									List<DpPessoa> listaPessoa = dao
-											.consultarPorFiltro(flt);
-									for (DpPessoa p : listaPessoa) {
-										for (CpIdentidade cpId : dao
-												.consultaIdentidades(p)) {
-											if (cpId.getCpTipoIdentidade()
-													.getIdCpTpIdentidade()
-													.equals(1)) {
-
-												cpId.setDscSenhaIdentidadeCriptoSinc(null);
-											}
-										}
-									}
-									dao.commitTransacao();
-								}
-							}
-
-						} catch (AplicacaoException e) {
-							System.out.println(e);
-						}
-					}
-				}
-			};
-
-			for (Item opr : list) {
-				log(opr.getDescricao());
-				sinc.gravar(opr, o, true);
-			}
-
-		} catch (Exception e) {
-			throw new Exception("Erro na atualização do Active Directory.", e);
-		}
-
-		log("Total de alterações: " + list.size());
-		// ((GenericoHibernateDao) dao).getSessao().flush();
-	}
-
-	private static int parseParametros(String[] pars) {
+	protected static int parseParametros(String[] pars) {
 
 		if (pars.length < 2) {
 			System.err.println("Número de Parametros inválidos");
@@ -366,7 +273,84 @@ public class SigaCpSinc {
 	 * @throws CsisException
 	 */
 	public static void main(String[] args) throws Exception {
+		SigaCpSinc sinc = new SigaCpSinc(args);
+		sinc.run(args);
+	}
 
+	public void run(String[] args) throws Exception, NamingException,
+			AplicacaoException {
+		AnnotationConfiguration cfg;
+		if (servidor.contains("prod"))
+			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
+		else if (servidor.contains("homolo"))
+			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);
+		else if (servidor.contains("treina"))
+			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.TREINAMENTO);
+		else if (servidor.contains("desenv"))
+			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
+		else
+			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
+
+		HibernateUtil.configurarHibernate(cfg, "");
+
+		dt = new Date();
+		log("--- Processando  " + dt + "--- ");
+		log("--- Parametros: servidor= " + servidor + "  e url= " + url);
+
+		if (args.length >= 3 && args[2] != null) {
+			String method = args[2].trim().replace("-", "").toLowerCase();
+			Method m = this.getClass().getMethod(method, null);
+			m.invoke(this);
+		} else {
+			importxml();
+		}
+
+		log(" ---- Fim do Processamento --- ");
+		logEnd();
+	}
+
+	public void importxml() {
+		try {
+			log("Importando: XML");
+			/* -------------------------- */
+			// Mensagens.getString("url.origem")
+			String urlOrigem = "";
+			if (url.startsWith("-url")) {
+				urlOrigem = url.substring(5);
+
+			} else {
+				// Verificação do acônimo do orgão usuário
+				String acron = url.substring(1);
+				CpOrgaoUsuario orgu = obterOrgaoUsuario(acron);
+				if (orgu == null) {
+					log("Acrônimo '" + acron
+							+ "' do Órgão Usuário não encontrado no servidor '"
+							+ servidor + "'");
+					return;
+				}
+				urlOrigem = ImportarXmlProperties.getString("url."
+						.concat(acron));
+			}
+			URL urlMumps = new URL(urlOrigem);
+
+			URLConnection connMumps = urlMumps.openConnection();
+			connMumps.setReadTimeout(0);
+
+			/* */
+			@SuppressWarnings("unused")
+			InputStream st = connMumps.getInputStream();
+			importarXml(connMumps.getInputStream());
+			log("Importando: BD");
+			setAntigo.addAll(importarTabela());
+			log("Gravando alterações");
+			gravar(dt);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log(e.getMessage());
+		}
+	}
+
+	public SigaCpSinc(String[] args) {
 		int result = parseParametros(args);
 		if (result != 0)
 			System.exit(result);
@@ -375,210 +359,49 @@ public class SigaCpSinc {
 		String oServidor = args[0].toLowerCase();
 		if (args[1].equalsIgnoreCase("-url"))
 			aUrl = args[1].toLowerCase() + "=" + args[2];
-		else
+		else 
 			aUrl = args[1].toLowerCase();
 
-		// String con;
-		// if (oServidor.contains("prod"))
-		// con = "jdbc:oracle:thin:@acura:1521:apojfrj";
-		// else if (oServidor.contains("homolo"))
-		// con = "jdbc:oracle:thin:@sandero:1521:homolo";
-		// else if (oServidor.contains("treina"))
-		// con = "jdbc:oracle:thin:@sandero:1521:treina";
-		// else
-		// con = "jdbc:oracle:thin:@mclaren:1521:mcl";
-		//
-		// HibernateUtil.configurarHibernate(
-		// "/br/gov/jfrj/siga/dp/dao/hibernate.cfg.xml", con);
-
-		AnnotationConfiguration cfg;
-		if (oServidor.contains("prod"))
-			/*
-			 * cfg = CpDao.criarHibernateCfg(
-			 * "jdbc:oracle:thin:@acura:1521:apojfrj", "corporativo",
-			 * "corporativo");
-			 */
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
-		else if (oServidor.contains("homolo"))
-			/*
-			 * cfg = CpDao.criarHibernateCfg(
-			 * "jdbc:oracle:thin:@sandero:1521:homolo", "corporativo",
-			 * "corporativo");
-			 */
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);
-		else if (oServidor.contains("treina"))
-			/*
-			 * cfg = CpDao.criarHibernateCfg(
-			 * "jdbc:oracle:thin:@sandero:1521:treina", "corporativo",
-			 * "corporativo");
-			 */
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.TREINAMENTO);
-		else if (oServidor.contains("desenv"))
-			/*
-			 * cfg = CpDao.criarHibernateCfg(
-			 * "jdbc:oracle:thin:@sandero:1521:mcl", "corporativo",
-			 * "corporativo");
-			 */
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
-		else
-			/*
-			 * cfg =
-			 * CpDao.criarHibernateCfg("jdbc:oracle:thin:@mclaren:1521:mcl",
-			 * "corporativo", "corporativo");
-			 */
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
-
-		HibernateUtil.configurarHibernate(cfg, "");
-
-		SigaCpSinc geraXml = new SigaCpSinc(oServidor, aUrl);
-
-		Date dt = new Date();
-		geraXml.log("--- Processando  " + dt + "--- ");
-		geraXml.log("--- Parametros: servidor= " + geraXml.servidor
-				+ "  e url= " + geraXml.url);
-
-		if (args.length >= 3 && args[2] != null && args[2].contains("ldap")) {
-			geraXml.log("Importando: BD");
-
-			SincProperties conf = SincProperties
-					.getInstancia(geraXml.url.replace("-", "") + "."
-							+ geraXml.servidor.replace("-", ""));
-			AdModelo ge = AdModelo.getInstance(conf);
-			List<AdObjeto> l = ge.gerarModelo();
-			geraXml.setNovo.addAll(l);
-
-			geraXml.log("Importando: Active Directory");
-			LdapDaoSinc ldap = LdapDaoSinc.getInstance(conf);
-
-			List<AdObjeto> lLDAP = ldap.pesquisarObjeto(conf
-					.getDnGestaoIdentidade());
-
-			geraXml.setAntigo.addAll(lLDAP);
-
-			// AdObjeto renato = null;
-			// for (Sincronizavel s : geraXml.setAntigo) {
-			// AdObjeto o = (AdObjeto) s;
-			// if (o.getNome().equals("RENATO DO AMARAL CRIVANO MACHADO"))
-			// renato = o;
-			// }
-			// for (Sincronizavel s : geraXml.setAntigo) {
-			// if (s instanceof AdGrupo) {
-			// AdGrupo g = (AdGrupo) s;
-			// if (g.contemMembro(renato))
-			// g.removeMembro(renato);
-			// }
-			// }
-			// geraXml.setAntigo.remove(renato);
-
-			geraXml.gravarLDAP(dt);
-
-			// System.out.println(distr.toString());
-
-			// LDAPDao ldap = new LDAPDao();
-			//
-			// try {
-			// ldap.escreverAD(distr);
-			// } catch (NamingException e) {
-			// e.printStackTrace();
-			// }
-			// return null;
-
-			// diretoresadministrativos
-			// diretoresciveis
-			// diretorescriminais
-			// diretoresecretaria
-			// diretoresexefiscal
-			// diretoresexepenal
-			// diretoresint
-			// diretoresjuizados
-			// diretoresprev
-			// supervisoresint
-
-		} else {
-
-			try {
-				geraXml.log("Importando: XML");
-				/* -------------------------- */
-				// Mensagens.getString("url.origem")
-				String urlOrigem = "";
-				if (geraXml.url.startsWith("-url")) {
-					urlOrigem = geraXml.url.substring(5);
-
-				} else {
-					// Verificação do acônimo do orgão usuário
-					String acron = geraXml.url.substring(1);
-					CpOrgaoUsuario orgu = obterOrgaoUsuario(acron);
-					if (orgu == null) {
-						geraXml.log("Acrônimo '"
-								+ acron
-								+ "' do Órgão Usuário não encontrado no servidor '"
-								+ geraXml.servidor + "'");
-						return;
-					}
-					urlOrigem = ImportarXmlProperties.getString("url."
-							.concat(acron));
-				}
-				URL urlMumps = new URL(urlOrigem);
-
-				URLConnection connMumps = urlMumps.openConnection();
-				connMumps.setReadTimeout(0);
-
-				/* */
-				@SuppressWarnings("unused")
-				InputStream st = connMumps.getInputStream();
-				geraXml.importarXml(connMumps.getInputStream());
-				geraXml.log("Importando: BD");
-				geraXml.importarTabela();
-				geraXml.log("Gravando alterações");
-				geraXml.gravar(dt);
-			} catch (Exception e) {
-				e.printStackTrace();
-				geraXml.log(e.getMessage());
-			}
-		}
-
-		geraXml.log(" ---- Fim do Processamento --- ");
-		geraXml.logEnd();
-	}
-
-	public SigaCpSinc(String servidor, String url) {
-		this.servidor = servidor;
-		this.url = url;
+		this.servidor = oServidor;
+		this.url = aUrl;
 	}
 
 	public SigaCpSinc() {
-		this("-desenv", "-sjrj");
+		this(new String[] { "-desenv", "-sjrj" });
 	}
 
-	public void importarTabela() {
+	public List<Sincronizavel> importarTabela() {
+		List<Sincronizavel> l = new ArrayList<Sincronizavel>();
+
 		for (DpLotacao o : CpDao.getInstance().listarAtivos(DpLotacao.class,
 				"dataFimLotacao", orgaoUsuario)) {
-			setAntigo.add(o);
+			l.add(o);
 		}
 		for (DpCargo o : CpDao.getInstance().listarAtivos(DpCargo.class,
 				"dataFimCargo", orgaoUsuario)) {
-			setAntigo.add(o);
+			l.add(o);
 		}
 		for (DpFuncaoConfianca o : CpDao.getInstance().listarAtivos(
 				DpFuncaoConfianca.class, "dataFimFuncao", orgaoUsuario)) {
-			setAntigo.add(o);
+			l.add(o);
 		}
 		if (getVersaoInteira().intValue() >= 2) {
 			for (CpOrgao o : CpDao.getInstance().listarAtivos(CpOrgao.class,
 					"hisDtFim", orgaoUsuario)) {
-				setAntigo.add(o);
+				l.add(o);
 			}
 		}
 		for (DpPessoa o : CpDao.getInstance().listarAtivos(DpPessoa.class,
 				"dataFimPessoa", orgaoUsuario)) {
-			setAntigo.add(o);
+			l.add(o);
 		}
 		if (getVersaoInteira().intValue() >= 2) {
 			for (CpPapel o : CpDao.getInstance().listarAtivos(CpPapel.class,
 					"hisDtFim", orgaoUsuario)) {
-				setAntigo.add(o);
+				l.add(o);
 			}
 		}
+		return l;
 	}
 
 	private void importarListasDeTipos() {
@@ -662,7 +485,7 @@ public class SigaCpSinc {
 				+ "não encontrado !");
 	}
 
-	private static CpOrgaoUsuario obterOrgaoUsuario(String acronimo) {
+	protected static CpOrgaoUsuario obterOrgaoUsuario(String acronimo) {
 		CpOrgaoUsuario o = new CpOrgaoUsuario();
 		o.setSiglaOrgaoUsu(acronimo);
 		return CpDao.getInstance().consultarPorSigla(o);
@@ -1088,7 +911,9 @@ public class SigaCpSinc {
 			texto = texto + "Arquivo XML gerado em " + getDataHora() + "\n";
 		}
 		texto = texto + sbLog.toString();
-		Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), destinatarios, "Log de importação", texto,null);
+		Correio.enviar(
+				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+				destinatarios, "Log de importação", texto, null);
 	}
 
 	private Date parseData(XmlPullParser parser, String campo) {
@@ -1188,7 +1013,7 @@ public class SigaCpSinc {
 		DpLotacao lotDIRFO = getLotacaoDIRFO();
 		DpLotacao lotPaiAdm = lot;
 		while (lotPaiAdm != null) {
-			if (lotDIRFO!=null && lotPaiAdm.getIdeLotacao().equals(lotDIRFO.getIdLotacao())) {
+			if (lotPaiAdm.getIdeLotacao().equals(lotDIRFO.getIdLotacao())) {
 				// é administrativo
 				lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));
 				return;
@@ -1203,7 +1028,9 @@ public class SigaCpSinc {
 		DpLotacao lotSJRJ = getLotacaoSJRJ();
 		DpLotacao lotPaiJur = lot;
 		while (lotPaiJur != null) {
-			if (lotSJRJ!=null && lotPaiJur.getIdeLotacao().equals(lotSJRJ.getIdeLotacao())) {
+			if (lotSJRJ != null
+					&& lotPaiJur.getIdeLotacao()
+							.equals(lotSJRJ.getIdeLotacao())) {
 				// é jurídico
 				lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("100")));
 				return;

@@ -36,7 +36,7 @@ public class LdapProperties extends ModeloPropriedade {
 	private static final String CHAVE_CRIPTO = "MJywdb7udby7&4IKYGD5tg327";
 	
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.ldap";
 	}
 

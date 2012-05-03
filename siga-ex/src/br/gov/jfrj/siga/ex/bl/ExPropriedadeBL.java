@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 public class ExPropriedadeBL extends CpPropriedadeBL {
 
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.ex";
 	}
 	

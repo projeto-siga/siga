@@ -7,7 +7,7 @@ public class SigaCdProperties extends ModeloPropriedade {
 	private static SigaCdProperties instance = new SigaCdProperties();
 	
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.cd";
 	}
 	

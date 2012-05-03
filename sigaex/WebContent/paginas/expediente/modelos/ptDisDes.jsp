@@ -89,7 +89,7 @@
 	
 	
 	
-		<mod:valor var="texto_ato">
+		<mod:valor var="texto_ptp">
 		
 		    <c:set var="servd" value="a servidora" />
 		    <c:set var="desig" value="LA" />

@@ -21,6 +21,8 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -45,6 +47,7 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.lucene.HtmlBridge;
 import br.gov.jfrj.lucene.PDFBridge;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
@@ -627,7 +630,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public Date getData() {
 		return getDtMov();
 	}
-
+	
+	
 	/**
 	 * verifica se uma movimentação está cancelada. Uma movimentação está
 	 * cancelada quando o seu atributo movimentacaoCanceladora está preenchido
@@ -639,6 +643,26 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public boolean isCancelada() {
 		return getExMovimentacaoCanceladora() != null;
 	}
+	
+	/**
+	 * verifica se uma movimentação de anexação de arquivo está assinada e não está cancelada. 
+	 * Este tipo de movimentação está assinada quando existe alguma movimentação de assinatura 
+	 * de movimentação com o seu atributo movimentacaoReferenciadora igual ao código da movimentação 
+	 * de anexação de arquivo.  
+	 *  
+	 * @return Verdadeiro se a movimentação está assinada e Falso caso
+	 *         contrário.
+	 */
+	public boolean isAssinada() {	
+		if (!this.isCancelada()) {
+		  for (ExMovimentacao movRef : this.getExMovimentacaoReferenciadoraSet()) {
+			  if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
+				 return true;			     
+	      }
+		}  
+		return false;
+	}
+	
 
 	public String getSiglaAssinatura() {
 		return getExDocumento().getIdDoc()

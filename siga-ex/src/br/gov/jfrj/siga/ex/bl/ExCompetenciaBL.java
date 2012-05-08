@@ -1844,7 +1844,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mov.isCancelada())
 			return false;
 		
-		if (mov.getSubscritor().equivale(titular))
+		if ((mov.getSubscritor()!= null && mov.getSubscritor().equivale(titular))||( mov.getSubscritor()==null && mov.getLotaSubscritor().equivale(lotaTitular)))
 			return true;
 		
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))

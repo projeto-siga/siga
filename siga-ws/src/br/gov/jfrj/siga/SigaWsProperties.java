@@ -7,7 +7,7 @@ public class SigaWsProperties extends ModeloPropriedade {
 	private static SigaWsProperties instance = new SigaWsProperties();
 	
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.ws";
 	}
 	

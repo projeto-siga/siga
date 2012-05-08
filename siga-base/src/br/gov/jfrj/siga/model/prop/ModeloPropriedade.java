@@ -69,7 +69,7 @@ public abstract class ModeloPropriedade {
 	 * 
 	 * @return
 	 */
-	protected abstract String getPrefixoModulo();
+	public abstract String getPrefixoModulo();
 
 	public ModeloPropriedade() {
 		setPrefixo(getPrefixoModulo());

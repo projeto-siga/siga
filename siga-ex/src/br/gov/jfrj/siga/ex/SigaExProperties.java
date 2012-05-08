@@ -96,7 +96,7 @@ public class SigaExProperties extends ModeloPropriedade {
 	}
 
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.ex";
 	}
 

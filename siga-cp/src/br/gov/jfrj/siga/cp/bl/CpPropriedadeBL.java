@@ -58,7 +58,7 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 		return this.obterPropriedade("c3p0.max_statements");
 	}
 	@Override
-	protected String getPrefixoModulo() {
+	public String getPrefixoModulo() {
 		return "siga.cp";
 	}
 }

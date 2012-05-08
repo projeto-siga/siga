@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
-<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
@@ -50,7 +50,7 @@
 		FIM PRIMEIRO CABECALHO -->
 		<br>
 		<p align="center" style="font-family:Arial;font-size:11pt;">
-		<!-- INICIO NUMERO --><span style="font-weight: bold;">PORTARIA N&ordm; ${doc.codigo}<!-- FIM NUMERO --> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
+		<!-- INICIO NUMERO --><span style="font-weight: bold;">PORTARIA N&ordm; ${doc.codigo}</span><!-- FIM NUMERO --> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
 		
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
@@ -62,8 +62,10 @@
 		    <span style="font-size: ${tl};line-height: 1px"> ${texto_ptp} </span>
 		    <!-- FIM CORPO -->
 		    <p align="center"><!-- INICIO FECHO -->PUBLIQUE-SE. REGISTRE-SE. CUMPRA-SE.<!-- FIM FECHO --><br/><br/><br></p>
+		    <!-- INICIO ASSINATURA -->
+			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />   
+			<!-- FIM ASSINATURA -->
 		    <!-- FIM MIOLO -->
-			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
 		</mod:letra>
         <br></br>
         <br>/${doc.cadastrante.siglaPessoa}</br>

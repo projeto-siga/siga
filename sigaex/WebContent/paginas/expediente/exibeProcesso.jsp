@@ -13,7 +13,7 @@
 <%@page import="br.gov.jfrj.siga.ex.ExArquivoNumerado"%>
 <%@page import="br.gov.jfrj.siga.ex.ExArquivo"%>
 <%@page import="java.util.List"%>
-<siga:cabecalho titulo="Documento" popup="${param.popup}" />
+<siga:cabecalho titulo="Documento" popup="${param.popup}" onLoad="load();"/>
 
 <script type="text/javascript">
 	//Input the IDs of the IFRAMES you wish to dynamically resize to match its content height:
@@ -64,6 +64,12 @@
 		//	}else{
 		//		parent.document.getElementById('painel').style.height = painel.document.body.scrollHeight + 5;
 		//	}
+	}
+</script>
+
+<script type="text/javascript" language="Javascript1.1">
+	function load() {
+		document.location.href = "#final";
 	}
 </script>
 
@@ -188,14 +194,30 @@
 
 		<td valign="top" id="paipainel"
 			style="padding: 0px; border: 0px solid black; border-top: 0px;"
-			width="75%"><iframe
-				style="visibility: visible; margin: 0px; padding: 0px;"
-				name="painel" id="painel" src="" align="right" width="100%"
-				onload="resize();" frameborder="0" scrolling="auto"></iframe>
+			width="75%">
+			<table width="100%" border="0">
+				<tr>
+					<td valign="top" width="100%">
+						<a name="inicio" href="#final">Ir para o Final&nbsp;&darr;</a>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top" width="100%">
+						<iframe
+							style="visibility: visible; margin: 0px; padding: 0px;"
+							name="painel" id="painel" src="" align="right" width="100%"
+							onload="resize();" frameborder="0" scrolling="auto"></iframe>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top" width="100%">
+						<a name="final" href="#inicio">Ir para o Topo&nbsp;&uarr;</a>
+					</td>
+				</tr>
+			</table>
 		</td>
 	</tr>
 </table>
-
 
 <%--
 <c:forEach var="item" items="${doc.form}">

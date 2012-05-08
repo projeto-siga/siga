@@ -89,6 +89,10 @@
 				<td width="75%">${doc.obsOrgao}</td>
 			</tr>
 			<tr>
+				<td>Data Original do Documento:</td>
+				<td>${doc.dtDocOriginalDDMMYYYY}</td>
+			</tr>
+			<tr>
 				<td>Número Original:</td>
 				<td>${doc.numExtDoc}</td>
 			</tr>

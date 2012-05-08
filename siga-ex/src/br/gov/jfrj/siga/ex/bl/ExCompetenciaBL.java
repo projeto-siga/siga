@@ -85,14 +85,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !titular.equivale(mob.doc().getTitular())
 				&& !podeMovimentar(titular, lotaTitular, mob)) {
 
+			if (pessoaTemPerfilVinculado(mob.doc(), titular, lotaTitular)) {
+				return true;
+			}
+			
 			for (ExMovimentacao m : mob.doc().getMobilGeral()
 					.getExMovimentacaoSet()) {
 				if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 						&& m.getExMovimentacaoCanceladora() == null
 						&& (m.getSubscritor() != null && m.getSubscritor()
 								.equivale(titular))) {
-					return true;
-				}
+					return true;					
+				}			
 			}
 			return false;
 		}
@@ -266,7 +270,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAcessarNivel20(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-
+		
 		if ((lotaTitular.getOrgaoUsuario().equivale(mob.doc()
 				.getLotaCadastrante().getOrgaoUsuario()))
 				|| (mob.doc().getSubscritor() != null && mob.doc()
@@ -892,11 +896,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se uma pessoa está vinculada a um documento por meio de algum
+	 * Retorna se uma pessoa/lotação está vinculada a um documento por meio de algum
 	 * perfil. Para isso, verifica cada movimentação não cancelada de vinculação
-	 * de perfil registrada no móbil geral do documento e analisa se a pessoa
-	 * passada por parâmetro é <i>titular</i> de alguma dessas movimentações.
-	 * <b>Obs.: o parâmetro lotaTitular não está sendo usado.</b>
+	 * de perfil registrada no móbil geral do documento e analisa se a pessoa/lotação
+	 * passada por parâmetro é <i>titular/lotaTitular</i> de alguma dessas movimentações.
 	 * 
 	 * @param doc
 	 * @param titular
@@ -913,8 +916,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 							.getIdTpMov()
 							.equals(
 									ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
-				if ((mov.getTitular().equivale(titular))) {
-					return true;
+				if (mov.getSubscritor() != null){
+					 if (mov.getSubscritor().equivale(titular)) {
+						 return true;
+				     }
+				}else {
+					if (mov.getLotaSubscritor().equivale(lotaTitular)){
+						return true;
+					}
 				}
 			}
 		}

@@ -458,6 +458,14 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				null, null, null, exTpMov, null, null, null, null, pessoa,
 				null, idTpConf);
 	}
+	
+	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
+			ExPapel exPapel, DpLotacao lotacao, ExTipoMovimentacao exTpMov,
+			long idTpConf) throws Exception {
+		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
+				null, null, null, exTpMov, null, null, null, lotacao, null,
+				null, idTpConf);
+	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			CpServico cpServico, long idTpConf) throws Exception {

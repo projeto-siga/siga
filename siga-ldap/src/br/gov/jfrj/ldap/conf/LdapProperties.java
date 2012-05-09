@@ -42,7 +42,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getDnUsuarios()  {
 		try {
-			return this.obterPropriedade("ldap.dnUsuarios");
+			return this.obterPropriedade("dnUsuarios");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,7 +52,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getServidorLdap()  {
 		try {
-			return this.obterPropriedade("ldap.servidor");
+			return this.obterPropriedade("servidor");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,7 +62,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getPortaLdap()  {
 		try {
-			return this.obterPropriedade("ldap.porta");
+			return this.obterPropriedade("porta");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -72,7 +72,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getPortaSSLLdap()  {
 		try {
-			return this.obterPropriedade("ldap.ssl.porta");
+			return this.obterPropriedade("ssl.porta");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,7 +82,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getUsuarioLdap()  {
 		try {
-			return this.obterPropriedade("ldap.usuario");
+			return this.obterPropriedade("usuario");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,7 +93,7 @@ public class LdapProperties extends ModeloPropriedade {
 	public String getSenhaLdap()  {
 		try {
 			String senhaCriptografada = this.obterPropriedade(
-					"ldap.senha").trim();
+					"senha").trim();
 			return descriptografarSenha(senhaCriptografada);
 		} catch (Exception e) {
 
@@ -134,7 +134,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getKeyStore()  {
 		try {
-			return this.obterPropriedade("ldap.keystore");
+			return this.obterPropriedade("keystore");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -144,7 +144,7 @@ public class LdapProperties extends ModeloPropriedade {
 	
 	public Boolean isModoEscrita() {
 		try {
-			return Boolean.valueOf(this.obterPropriedade("ldap.modo_escrita")
+			return Boolean.valueOf(this.obterPropriedade("modo_escrita")
 					.trim());
 		} catch (Exception e) {
 			

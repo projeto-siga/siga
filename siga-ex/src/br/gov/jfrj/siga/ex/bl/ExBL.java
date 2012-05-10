@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 - 2011 SJRJ.
+* Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
  * 
@@ -472,13 +472,25 @@ public class ExBL extends CpBL {
 					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO) {
 						mDje = CpMarcador.MARCADOR_DISPONIBILIZADO;
 						movDje = mov;
-					}
+					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico()){
+						m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
+						for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+							if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+									&& movAss.getExMovimentacaoRef().getIdMov() == mov.getIdMov()) {
+								m = null;
+								break;
+							}
+						}
+						if (m != null)
+							acrescentarMarca(set, mob, m, mov.getDtIniMov(),
+									mov.getSubscritor(),
+									mov.getLotaSubscritor());
+					}				
 				}
 				if (mDje != null) {
 					acrescentarMarca(set, mob, mDje, movDje.getDtIniMov(),
 							movDje.getTitular(), movDje.getLotaTitular());
 				}
-
 			}
 			return set;
 		} else if (ultMovNaoCanc == null) {
@@ -548,6 +560,18 @@ public class ExBL extends CpBL {
 				} else {
 					m = CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA;
 				}
+			
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico()){
+				m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
+				for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+					if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+							&& movAss.getExMovimentacaoRef().getIdMov() == mov.getIdMov()) {
+						m = mAnterior;
+						break;
+					}
+				}				
+			}
+			
 			if (m != mAnterior) {
 				dt = mov.getDtIniMov();
 				mAnterior = m;
@@ -2796,6 +2820,8 @@ public class ExBL extends CpBL {
 		boolean fTranferencia = lotaResponsavel != null || responsavel != null;
 
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		
+		Date dtUltReceb = null; 
 
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
@@ -2824,13 +2850,27 @@ public class ExBL extends CpBL {
 				if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
 					throw new AplicacaoException("Transferência não permitida");
 
-				if (!m.getExDocumento().isAssinado()
+				if (!m.getExDocumento().isAssinado()						
 						&& !lotaResponsavel.equivale(m.getExDocumento()
 								.getLotaTitular())
 						&& !getComp().podeReceberDocumentoSemAssinatura(
 								responsavel, lotaResponsavel, m))
 					throw new AplicacaoException(
 							"Não é permitido fazer transferência em documento que ainda não foi assinado");
+				
+				if (m.doc().isEletronico()) {
+					for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
+						if (mov.getIdMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) 
+							dtUltReceb = mov.getDtMov();
+					}
+					for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
+						if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO 
+								&& mov.getDtMov().after(dtUltReceb) 
+								&& !mov.isCancelada() && !mov.isAssinada())
+							throw new AplicacaoException(
+							"Não é permitido fazer transferência em documento com anexo pendente de assinatura");
+					}
+				}
 			}
 
 			if (!fDespacho) {

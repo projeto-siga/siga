@@ -26,7 +26,7 @@
 		
         <mod:grupo titulo="Proposto pertencente aos quadros do Tribunal Regional Federal da 2ª Região (*)">
 
-			<mod:radio titulo="SIM" var="ppq" valor="1" reler="sim"/>
+			<mod:radio titulo="SIM" var="ppq" valor="1" marcado="Sim" reler="sim"/>
 			<mod:radio titulo="NÃO" var="ppq" valor="2" reler="sim"/>
 		</mod:grupo>
 		<c:set var="valorppq" value="${ppq}" />
@@ -43,10 +43,7 @@
 			<mod:texto titulo="Banco" var="banc" />
 			<mod:texto titulo="Agência" var="agen" />
 			<br>
-			<mod:grupo>
-			    <p align="left"><span style="color: red"> <br>Atenção : use ponto ao invés de vírgula nos valores abaixo, para que não ocorra erro</span></p>
-            </mod:grupo>
-            <!--
+			<!--
 			<mod:texto titulo="Valor Mensal do Auxílio-Alimentação" var="valref" />
 			<mod:texto titulo="Valor Mensal do Auxílio-Transporte" var="valtrans" />
 		    -->
@@ -154,7 +151,7 @@
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
 		</td></tr>
 		
-		<tr><td><br/>&nbsp;<br/></td></tr>
+		<tr><td>&nbsp;</td></tr>
 			<tr bgcolor="#FFFFFF">
 				<td width="100%">
 					<table width="100%">
@@ -176,7 +173,7 @@
            <c:set var="alm" value=""></c:set>
            <c:set var="trp" value=""></c:set>
            <c:set var="carg" value="${f:maiusculasEMinusculas(pessoa_prop.cargo.descricao)}"></c:set>
-           <c:set var="func" value="${pessoa_prop.funcaoConfianca.nomeFuncao}"></c:set>
+           <c:set var="func" value="${f:maiusculasEMinusculas(pessoa_prop.funcaoConfianca.nomeFuncao)}"></c:set>
            <c:set var="matr" value="${pessoa_prop.sesbPessoa}${pessoa_prop.matricula}"></c:set>
         </c:if>
        <!--
@@ -227,9 +224,16 @@
 
 
 						<table width="100%" border="0" cellpadding="3" cellspacing="0">
-							<tr>
+							<tr><c:choose>
+								<c:when test="${doc.subscritor.matricula > 9999}">
 								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Função
 								:</b>&nbsp;${f:maiusculasEMinusculas(doc.subscritor.funcaoConfianca.nomeFuncao)}</td>
+								</c:when>
+								<c:otherwise>
+								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Cargo&nbsp;&nbsp;&nbsp;
+								:</b>&nbsp;${f:maiusculasEMinusculas(doc.subscritor.cargo.descricao)}</td>
+								</c:otherwise>
+					            </c:choose>
 							</tr>
 						</table>
 				</table>
@@ -253,10 +257,11 @@
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
 							<tr>
 								<td width="75%" bgcolor="#FFFFFF" align="left"><b>Cargo
-								</b>&nbsp;:&nbsp;${carg}&nbsp;&nbsp;&nbsp;&nbsp;<b>Função
+								</b>&nbsp;:&nbsp;${carg}&nbsp;&nbsp;&nbsp;&nbsp;<c:choose>
+									<c:when test="${ppq == 1}"><b>Função
 								</b>&nbsp;:&nbsp;${func}</td>
 								<td width="25%" bgcolor="#FFFFFF" align="left"><b>Matrícula :
-								</b>&nbsp;&nbsp;${matr}</td>
+								</b>&nbsp;&nbsp;${matr}</c:when></c:choose></td>
 							</tr>
 						</table>
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
@@ -269,6 +274,8 @@
 								</b>&nbsp;${agen}</td>
 							</tr>
 						</table>
+						<c:choose>
+						<c:when test="${ppq == 2}">
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
 							<tr>
 								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Valor
@@ -279,6 +286,7 @@
 
 							</tr>
 						</table>
+						</c:when></c:choose>
 				</table>
 
 				<table width="100%" border="1" cellpadding="2" cellspacing="1">

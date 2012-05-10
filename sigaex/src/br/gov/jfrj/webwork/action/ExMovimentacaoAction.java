@@ -1255,12 +1255,20 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getComp()
 					.podeCancelarAnexo(getTitular(), getLotaTitular(), mob, mov))
 				throw new AplicacaoException("Não é possível cancelar anexo");
+			
 		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
 			if (!Ex.getInstance()
 					.getComp()
 					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob,
 							mov))
 				throw new AplicacaoException("Não é possível cancelar anexo");
+			
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoPapel(getTitular(), getLotaTitular(), mob,
+							mov))
+				throw new AplicacaoException("Não é possível cancelar definição de perfil");
 		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
@@ -1297,6 +1305,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob,
 							mov))
 				throw new AplicacaoException("Não é possível cancelar anexo");
+			
+		}	 else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+					if (!Ex.getInstance()
+							.getComp()
+							.podeCancelarVinculacaoPapel(getTitular(), getLotaTitular(), mob,
+									mov))
+						throw new AplicacaoException("Não é possível cancelar definição de perfil");
+			
 		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))

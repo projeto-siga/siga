@@ -1048,6 +1048,8 @@ public class ExBL extends CpBL {
 
 		boolean fValido = false;
 		Long lMatricula = null;
+		
+		DpPessoa usuarioDoToken = null;
 
 		// Obtem a matricula do assinante
 		try {
@@ -1065,9 +1067,12 @@ public class ExBL extends CpBL {
 		// cossignatario
 		try {
 			if (lMatricula != null) {
-				fValido = doc.getSubscritor() != null
+				if(doc.getSubscritor() != null
 						&& lMatricula
-								.equals(doc.getSubscritor().getMatricula());
+						.equals(doc.getSubscritor().getMatricula())){
+					fValido = true;
+					usuarioDoToken = doc.getSubscritor();
+				}
 				if (!fValido) {
 					fValido = (lMatricula.equals(doc.getCadastrante()
 							.getMatricula()))
@@ -1081,14 +1086,18 @@ public class ExBL extends CpBL {
 								&& lMatricula.equals(m.getSubscritor()
 										.getMatricula())) {
 							fValido = true;
+							usuarioDoToken = m.getSubscritor();
 							continue;
 						}
 					}
 			}
 
 			if (!fValido && lCPF != null) {
-				fValido = doc.getSubscritor() != null
-						&& lCPF.equals(doc.getSubscritor().getCpfPessoa());
+				if(doc.getSubscritor() != null
+						&& lCPF.equals(doc.getSubscritor().getCpfPessoa())) {
+					fValido = true;
+					usuarioDoToken = doc.getSubscritor();
+				}
 				if (!fValido) {
 					fValido = (lCPF.equals(doc.getCadastrante().getCpfPessoa()))
 							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO);
@@ -1100,6 +1109,7 @@ public class ExBL extends CpBL {
 								&& m.getExMovimentacaoCanceladora() == null
 								&& lCPF.equals(m.getSubscritor().getCpfPessoa())) {
 							fValido = true;
+							usuarioDoToken = m.getSubscritor();
 							continue;
 						}
 					}
@@ -1120,11 +1130,14 @@ public class ExBL extends CpBL {
 		String s = null;
 		try {
 			iniciarAlteracao();
+			
+			if(usuarioDoToken != null && usuarioDoToken.equivale(cadastrante))
+				usuarioDoToken = cadastrante;
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
-					null, null, null, null, null);
+					usuarioDoToken, null, null, null, null);
 
 			if (BUSCAR_CARIMBO_DE_TEMPO) {
 				mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
@@ -1729,6 +1742,17 @@ public class ExBL extends CpBL {
 			if (!getComp().podeCancelarDespacho(titular, lotaTitular, mob,
 					movCancelar))
 				throw new AplicacaoException("Não é possível cancelar anexo");
+			
+			
+		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+					if (!Ex.getInstance()
+							.getComp()
+							.podeCancelarVinculacaoPapel(titular, lotaTitular, mob,
+									movCancelar))
+						throw new AplicacaoException("Não é possível cancelar definição de perfil");
+			
+		
+			
 		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
 			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException(
@@ -2831,6 +2855,11 @@ public class ExBL extends CpBL {
 								responsavel, lotaResponsavel, m))
 					throw new AplicacaoException(
 							"Não é permitido fazer transferência em documento que ainda não foi assinado");
+				
+				if(m.getExDocumento().isEletronico() && !m.getExDocumento().jaTransferido() && 
+						!m.getExDocumento().isAssinadoEletronicoPorTodosOsSignatarios())
+					throw new AplicacaoException(
+					 "Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 			}
 
 			if (!fDespacho) {

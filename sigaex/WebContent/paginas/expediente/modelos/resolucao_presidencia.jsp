@@ -63,15 +63,19 @@
 		</td></tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
+
+                <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLUÇÃO N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
+
 		<br>
 		<p align="center" style="font-family:Arial;font-size:11pt;">
-		<!-- INICIO NUMERO --><span style="font-weight: bold;">RESOLUÇÃO N&ordm; ${doc.codigo}</span><!-- FIM NUMERO --> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
+		<!-- INICIO NUMERO <span style="font-weight: bold;">RESOLUÇÃO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
 
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
-
+              
 		<mod:letra tamanho="${tl}">
+                    
 		    <!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
 			<br>

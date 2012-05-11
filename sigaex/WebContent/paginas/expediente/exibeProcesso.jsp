@@ -13,7 +13,7 @@
 <%@page import="br.gov.jfrj.siga.ex.ExArquivoNumerado"%>
 <%@page import="br.gov.jfrj.siga.ex.ExArquivo"%>
 <%@page import="java.util.List"%>
-<siga:cabecalho titulo="Documento" popup="${param.popup}" onLoad="load();"/>
+<siga:cabecalho titulo="Documento" popup="${param.popup}"/>
 
 <script type="text/javascript">
 	//Input the IDs of the IFRAMES you wish to dynamically resize to match its content height:
@@ -64,12 +64,6 @@
 		//	}else{
 		//		parent.document.getElementById('painel').style.height = painel.document.body.scrollHeight + 5;
 		//	}
-	}
-</script>
-
-<script type="text/javascript" language="Javascript1.1">
-	function load() {
-		document.location.href = "#final";
 	}
 </script>
 

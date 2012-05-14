@@ -65,13 +65,20 @@
                 <br>
                 <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
 		<p align="center" style="font-family:Arial;font-size:11pt;">
+
+                 <!-- INICIO TITULO 
+			<mod:letra tamanho="${tl}">
+				<p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span></p>
+			</mod:letra>
+		      FIM TITULO -->
+
 		<!-- INICIO NUMERO <span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
                 
                 <mod:letra tamanho="${tl}">
-                        
+                        <p>&nbsp;</p>
 			<!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
 			<b><p align="center">${tit_edital}<br>${subtit_edital}</p></b>

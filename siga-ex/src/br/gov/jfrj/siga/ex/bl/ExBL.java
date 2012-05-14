@@ -71,6 +71,7 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
+import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -472,7 +473,8 @@ public class ExBL extends CpBL {
 					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO) {
 						mDje = CpMarcador.MARCADOR_DISPONIBILIZADO;
 						movDje = mov;
-					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico()){
+					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico() 
+							              && !mob.doc().jaTransferido()){
 						m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 						for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
 							if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
@@ -2883,19 +2885,21 @@ public class ExBL extends CpBL {
 							"Não é permitido fazer transferência em documento que ainda não foi assinado");
 				
 
-				if (m.doc().isEletronico()) {
-					for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
-						if (mov.getIdMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) 
-							dtUltReceb = mov.getDtMov();
+				if (m.doc().isEletronico()) { 	
+					if (!m.doc().jaTransferido()){
+						for(CpMarca marca : m.doc().getMobilGeral().getExMarcaSet())
+							if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
+								throw new AplicacaoException(
+								"Não é permitido fazer transferência em documento com anexo pendente de assinatura");
+						
 					}
-					for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
-						if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO 
-								&& mov.getDtMov().after(dtUltReceb) 
-								&& !mov.isCancelada() && !mov.isAssinada())
+						
+					for (CpMarca marca : m.getExMarcaSet()) {
+						if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
 							throw new AplicacaoException(
 							"Não é permitido fazer transferência em documento com anexo pendente de assinatura");
 					}
-				}
+     			}
 
 				if(m.getExDocumento().isEletronico() && !m.getExDocumento().jaTransferido() && 
 						!m.getExDocumento().isAssinadoEletronicoPorTodosOsSignatarios())
@@ -2903,6 +2907,7 @@ public class ExBL extends CpBL {
 					 "Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 
 			}
+			
 
 			if (!fDespacho) {
 				if (responsavel == null && lotaResponsavel == null)

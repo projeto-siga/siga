@@ -52,6 +52,13 @@
 		<br>
                 <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
 		<p align="center" style="font-family:Arial;font-size:11pt;">
+
+                 <!-- INICIO TITULO 
+			<mod:letra tamanho="${tl}">
+				<p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span></p>
+			</mod:letra>
+		      FIM TITULO -->
+
 		<!-- INICIO NUMERO <span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
 
 		<!-- INICIO CABECALHO
@@ -59,7 +66,7 @@
 		FIM CABECALHO -->
 
 		<mod:letra tamanho="${tl}">
-                        
+                        <p>&nbsp;</p>
                         <!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
 			<br>

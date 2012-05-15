@@ -1209,6 +1209,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (!mov.getLotaCadastrante().equivale(lotaTitular))
 			return false;
+		
+		if (!mov.getLotaCadastrante().equivale(mov.getLotaResp()))
+			return false;	
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),
@@ -2732,6 +2735,28 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		// return true;
 
+	}
+	
+
+	public boolean podeCancelarVinculacaoDocumento (final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob,
+			final ExMovimentacao mov) throws Exception {
+
+		if (mov.isCancelada())
+			return false;
+		
+		if ((mov.getCadastrante()!= null && mov.getCadastrante().equivale(titular))||( mov.getCadastrante()==null && mov.getLotaCadastrante().equivale(lotaTitular)))
+			return true;
+		
+		if ((mov.getSubscritor()!= null && mov.getSubscritor().equivale(titular))||( mov.getSubscritor()==null && mov.getLotaSubscritor().equivale(lotaTitular)))
+			return true;
+		
+		if ((mov.getLotaSubscritor().equivale(lotaTitular)))
+		return true;
+
+		return getConf().podePorConfiguracao(titular, lotaTitular,
+				mov.getIdTpMov(),
+				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
 	}
 
 	/**

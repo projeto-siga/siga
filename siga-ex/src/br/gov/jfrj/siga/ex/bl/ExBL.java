@@ -1751,9 +1751,15 @@ public class ExBL extends CpBL {
 									movCancelar))
 						throw new AplicacaoException("Não é possível cancelar definição de perfil");
 			
-		
-			
-		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
+		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoDocumento(titular, lotaTitular, mob,
+							movCancelar))
+				throw new AplicacaoException("Não é possível cancelar vinculação de documento");
+	
+}
+		else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
 			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException(
 						"Não é permitido cancelar esta movimentação.");

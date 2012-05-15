@@ -152,7 +152,15 @@ public class ExMovimentacaoVO extends ExVO {
 					.getComp().podeCancelarVinculacaoPapel(titular,
 							lotaTitular, mov.mob(), mov));
 		}
-
+		
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
+			addAcao("Cancelar", "/expediente/mov", "cancelar", Ex.getInstance()
+					.getComp().podeCancelarVinculacaoDocumento(titular,
+							lotaTitular, mov.mob(), mov));
+		}
+		
+		
 		if (mov.getNumPaginas() != null
 				|| idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {

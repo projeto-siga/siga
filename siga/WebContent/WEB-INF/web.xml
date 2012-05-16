@@ -63,6 +63,14 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
+	</listener>
 	<!-- ***************************************  -->
 	<!--  Configuracao para login com formulario  -->
 	<!-- ***************************************  -->

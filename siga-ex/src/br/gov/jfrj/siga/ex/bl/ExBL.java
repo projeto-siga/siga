@@ -1199,7 +1199,7 @@ public class ExBL extends CpBL {
 			if (doc == null || (!doc.isIndexavel()))
 				return;
 			BufferedWriter out = new BufferedWriter(new FileWriter(
-					"./siga-ex-lucene-index-fila/" + doc.getIdDoc()));
+					SigaExProperties.getString( "siga.lucene.index.path" ) + "/siga-ex-lucene-index-fila/" + doc.getIdDoc()));
 			out.close();
 		} catch (IOException e) {
 			//

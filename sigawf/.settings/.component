@@ -3,9 +3,6 @@
 <wb-module deploy-name="sigawf">
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/siga-ws/siga-ws">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/siga-wf/siga-wf">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -13,9 +10,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/siga-wf/lib/jbpm-integration-spec.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/siga-cp/siga-cp">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/siga-base/siga-base">
@@ -28,6 +22,12 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="siga-cd-base.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-cd-base/siga-cd-base">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="siga-ws.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-ws/siga-ws">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="siga-cp.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-cp/siga-cp">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="context-root" value="sigawf"/>

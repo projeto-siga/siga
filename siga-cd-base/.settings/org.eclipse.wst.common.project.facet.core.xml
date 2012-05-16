@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-  <runtime name="Jboss-4.2.2.GA Runtime"/>
+  <runtime name="JBoss SOA-P 5.x Runtime"/>
   <fixed facet="jst.utility"/>
   <fixed facet="jst.java"/>
   <installed facet="jst.java" version="6.0"/>

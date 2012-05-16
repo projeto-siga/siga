@@ -284,4 +284,5 @@ public class HibernateUtil {
 		if (s != null && s.isOpen())
 			fechaSessao();
 	}
+
 }

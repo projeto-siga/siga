@@ -35,6 +35,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+import br.gov.jfrj.siga.ex.SigaExProperties;
+
 public class LogThreadFilter implements Filter {
 
 	private static Logger logger = Logger.getLogger(LogThreadFilter.class);
@@ -43,7 +45,7 @@ public class LogThreadFilter implements Filter {
 		try {
 			BasicConfigurator.configure();
 			Appender fileAppender = new FileAppender(new PatternLayout(
-					"(%d{dd/MM/yy HH:mm:ss})	%m %n"), "sigaex.log");
+					"(%d{dd/MM/yy HH:mm:ss})	%m %n"), SigaExProperties.getString( "log.thread.filter.dir" ) + "/sigaex.log");
 			logger.setLevel(Level.INFO);
 			logger.addAppender(fileAppender);
 		} catch (IOException e) {

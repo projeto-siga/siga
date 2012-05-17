@@ -790,10 +790,11 @@ public class FuncoesEL {
 		return lotRetorno.getDescricao();
 	}
 
-	public static String obterExtensaoBuscaTextual(CpOrgaoUsuario orgao)
+	public static String obterExtensaoBuscaTextual(CpOrgaoUsuario orgao, String valFullText)
 			throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
-		Map attrs = new HashMap();
+		Map attrs = new HashMap();		
+		attrs.put("valFullText", valFullText);
 		attrs.put("nmMod", "macro extensaoBuscaTextual");
 		attrs.put("template", "[@extensaoBuscaTextual/]");
 		return p.processarModelo(orgao, attrs, null);

@@ -654,9 +654,9 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 *         contrário.
 	 */
 	public boolean isAssinada() {	
-		if (!this.isCancelada()) {
+		if (!this.isCancelada() && this.getExMovimentacaoReferenciadoraSet() != null) {
 		  for (ExMovimentacao movRef : this.getExMovimentacaoReferenciadoraSet()) {
-			  if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
+			  if (movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
 				 return true;			     
 	      }
 		}  

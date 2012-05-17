@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 - 2011 SJRJ.
+* Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
  * 
@@ -71,6 +71,7 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
+import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -472,13 +473,26 @@ public class ExBL extends CpBL {
 					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO) {
 						mDje = CpMarcador.MARCADOR_DISPONIBILIZADO;
 						movDje = mov;
-					}
+					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico() 
+							              && !mob.doc().jaTransferido()){
+						m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
+						for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+							if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+									&& movAss.getExMovimentacaoRef().getIdMov() == mov.getIdMov()) {
+								m = null;
+								break;
+							}
+						}
+						if (m != null)
+							acrescentarMarca(set, mob, m, mov.getDtIniMov(),
+									mov.getSubscritor(),
+									mov.getLotaSubscritor());
+					}				
 				}
 				if (mDje != null) {
 					acrescentarMarca(set, mob, mDje, movDje.getDtIniMov(),
 							movDje.getTitular(), movDje.getLotaTitular());
 				}
-
 			}
 			return set;
 		} else if (ultMovNaoCanc == null) {
@@ -548,6 +562,18 @@ public class ExBL extends CpBL {
 				} else {
 					m = CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA;
 				}
+			
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico()){
+				m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
+				for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+					if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+							&& movAss.getExMovimentacaoRef().getIdMov() == mov.getIdMov()) {
+						m = mAnterior;
+						break;
+					}
+				}				
+			}
+			
 			if (m != mAnterior) {
 				dt = mov.getDtIniMov();
 				mAnterior = m;
@@ -2826,6 +2852,8 @@ public class ExBL extends CpBL {
 		boolean fTranferencia = lotaResponsavel != null || responsavel != null;
 
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		
+		Date dtUltReceb = null; 
 
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
@@ -2854,7 +2882,7 @@ public class ExBL extends CpBL {
 				if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
 					throw new AplicacaoException("Transferência não permitida");
 
-				if (!m.getExDocumento().isAssinado()
+				if (!m.getExDocumento().isAssinado()						
 						&& !lotaResponsavel.equivale(m.getExDocumento()
 								.getLotaTitular())
 						&& !getComp().podeReceberDocumentoSemAssinatura(
@@ -2862,11 +2890,30 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException(
 							"Não é permitido fazer transferência em documento que ainda não foi assinado");
 				
+
+				if (m.doc().isEletronico()) { 	
+					if (!m.doc().jaTransferido()){
+						for(CpMarca marca : m.doc().getMobilGeral().getExMarcaSet())
+							if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
+								throw new AplicacaoException(
+								"Não é permitido fazer transferência em documento com anexo pendente de assinatura");
+						
+					}
+						
+					for (CpMarca marca : m.getExMarcaSet()) {
+						if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
+							throw new AplicacaoException(
+							"Não é permitido fazer transferência em documento com anexo pendente de assinatura");
+					}
+     			}
+
 				if(m.getExDocumento().isEletronico() && !m.getExDocumento().jaTransferido() && 
 						!m.getExDocumento().isAssinadoEletronicoPorTodosOsSignatarios())
 					throw new AplicacaoException(
 					 "Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
+
 			}
+			
 
 			if (!fDespacho) {
 				if (responsavel == null && lotaResponsavel == null)

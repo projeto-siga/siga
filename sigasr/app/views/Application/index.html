@@ -1,20 +1,69 @@
-#{extends 'main.html' /} 
-#{set title:'Abrir Solicitacao' /}
+#{extends 'main.html' /} #{set title:'Abrir Solicitacao' /}
 
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2>Cadastro de solicitação</h2>
+		<div class="gt-content-box gt-for-table">
 
-<h1>${title}</h1>
-<br />
-<form action="@{servico.gravar}">
-Item de Configuração: #{select name:'idItemConfiguracao', items:itensConfiguracao, labelProperty:'descrItemConfiguracao', value:idItemConfiguracao /}<br/>
-Forma de acompanhamento: #{select name:'idFormaAcompanhamento', items:formasAcompanhamento, labelProperty:'descrFormaAcompanhamento', value:idFormaAcompanhamento /}<br/>
-Solicitante: #{selecao  tipo:'pessoa', nome:'Solicitante' /}<br/><br/>
-Urgência: GUT aqui<br/>
-Telefone Principal: <input type="text" name="telPrincipal" id="telPrincipal" /><br/>
-Local: <input type="text" name="local" id=local" /><br/>
-Motivo fechamento: <input type="text" name="motivo" id=local" /><br/>
-Anexar arquivo: xxx <br/>
-Descricao: <textarea name="descrSolicitacao" id="descrSolicitacao" ></textarea><br/>
-
-<input type="submit" value="Gravar" />
-
-</form>
+			<form action="@{servico.gravar}">
+				<table class="gt-form-table">
+					<colgroup>
+						<col width="15%" />
+					</colgroup>
+					<tr class="header">
+						<td align="center" valign="top" colspan="4">Dados da
+							solicitação</td>
+					</tr>
+					<tr>
+						<td>Item de Configuração</td>
+						<td>#{select name:'idItemConfiguracao',
+							items:itensConfiguracao, labelProperty:'descrItemConfiguracao',
+							value:idItemConfiguracao /}</td>
+					</tr>
+					<tr>
+						<td>Forma de acompanhamento</td>
+						<td>#{select name:'idFormaAcompanhamento',
+							items:formasAcompanhamento,
+							labelProperty:'descrFormaAcompanhamento',
+							value:idFormaAcompanhamento /}</td>
+					</tr>
+					<tr>
+						<td>Solicitante</td>
+						<td>#{selecao tipo:'pessoa', nome:'Solicitante' /}</td>
+					</tr>
+					<tr>
+						<td>Urgência: GUT aqui</td>
+					</tr>
+					<tr>
+						<td>Telefone Principal</td>
+						<td><input type="text" name="telPrincipal" id="telPrincipal" />
+						</td>
+					</tr>
+					<tr>
+						<td>Local</td>
+						<td><input type="text" name="local" id=local " />
+						</td>
+					</tr>
+					<tr>
+						<td>Motivo fechamento</td>
+						<td><input type="text" name="motivo" id=local " />
+						</td>
+					</tr>
+					<tr>
+						<td>Anexar arquivo:</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Descricao:</td>
+						<td><textarea name="descrSolicitacao" id="descrSolicitacao"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"><input type="submit" value="Gravar"
+							class="gt-btn-medium gt-btn-left" /></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>

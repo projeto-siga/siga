@@ -15,6 +15,10 @@
 		<action name="principal" class="br.gov.jfrj.webwork.action.PrincipalAction">
 			<result>/paginas/principal.jsp</result>
 		</action>
+		
+		<action name="pagina_vazia" class="br.gov.jfrj.webwork.action.PaginaVaziaAction">
+			<result>/paginas/pagina_vazia.jsp</result>
+		</action>
 
 <!-- Renato: Comentei pois acho que não está sendo utilizado mais.
 		<action name="news" class="br.gov.jfrj.webwork.action.PrincipalAction">

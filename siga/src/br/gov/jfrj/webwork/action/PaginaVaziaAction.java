@@ -16,44 +16,29 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
 /*
- * Criado em  21/12/2005
- *
+ * Criado em 23/11/2005
  */
-package br.gov.jfrj.siga.dp;
 
-import java.io.Serializable;
-import java.util.Set;
+package br.gov.jfrj.webwork.action;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
-@Entity
-@Table(name = "CORPORATIVO.CP_TIPO_MARCA")
-public abstract class AbstractCpTipoMarca implements Serializable {
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
-	@Id
-	@Column(name = "ID_TP_MARCA", nullable = false)
-	private Long idTpMarca;
+import com.opensymphony.xwork.Action;
 
-	@Column(name = "DESCR_TP_MARCA")
-	private String descrTipoMarca;
-
-	public Long getIdTpMarca() {
-		return idTpMarca;
+public class PaginaVaziaAction extends SigaActionSupport {
+	
+	@Override
+	public String execute() throws Exception {
+		return Action.SUCCESS;
 	}
 
-	public void setIdTpMarca(Long idTpMarca) {
-		this.idTpMarca = idTpMarca;
-	}
-
-	public String getDescrTipoMarca() {
-		return descrTipoMarca;
-	}
-
-	public void setDescrTipoMarca(String descrTipoMarca) {
-		this.descrTipoMarca = descrTipoMarca;
-	}
 }

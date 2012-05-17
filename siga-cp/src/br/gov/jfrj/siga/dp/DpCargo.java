@@ -27,6 +27,8 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.Formula;
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -41,6 +43,7 @@ public class DpCargo extends AbstractDpCargo implements Serializable,
 	 */
 	private static final long serialVersionUID = -1727725732071861392L;
 
+	@Formula(value = "REMOVE_ACENTO(NOME_CARGO)")
 	@Desconsiderar
 	private String nomeCargoAI;
 

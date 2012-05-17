@@ -25,12 +25,25 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CP_TIPO_MARCADOR", schema = "CORPORATIVO")
 public abstract class AbstractCpTipoMarcador implements Serializable {
 
+	@Id
+	@Column(name = "ID_TP_MARCADOR", nullable = false)
 	private Long idTpMarcador;
 
+	@Column(name = "DESCR_TIPO_MARCADOR")
 	private String descrTipoMarcador;
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cpTipoMarcador")
 	private Set<CpMarcador> cpMarcadorSet;
 
 	public Long getIdTpMarcador() {

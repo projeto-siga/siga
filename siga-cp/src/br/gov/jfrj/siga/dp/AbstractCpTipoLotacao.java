@@ -18,10 +18,30 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.dp;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CORPORATIVO.CP_TIPO_LOTACAO")
 public class AbstractCpTipoLotacao {
+	
+	@Id
+	@Column(name = "ID_TP_LOTACAO", nullable = false)
 	private Long idTpLotacao;
+	
+	@Column(name = "SIGLA_TP_LOTACAO")
 	private String siglaTpLotacao;
+	
+	@Column(name = "DESC_TP_LOTACAO")
 	private String dscTpLotacao;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_LOTACAO_PAI")
 	private CpTipoLotacao tipoLotacaoPai;
 	
 	public Long getIdTpLotacao() {

@@ -28,6 +28,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import org.hibernate.annotations.Formula;
+
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
@@ -44,6 +46,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	 */
 	private static final long serialVersionUID = 5628179687234082413L;
 
+	@Formula(value = "REMOVE_ACENTO(NOME_LOTACAO)")
 	@Desconsiderar
 	private String nomeLotacaoAI;
 

@@ -24,34 +24,55 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CP_ORGAO_USUARIO", schema = "CORPORATIVO")
 public abstract class AbstractCpOrgaoUsuario implements Serializable {
 
+	@Column(name = "CGC_ORGAO_USU")
 	private Integer cgcOrgaoUsu;
 	
+	@Column(name = "COD_ORGAO_USU")
 	private Integer codOrgaoUsu;
 
+	@Id
+	@Column(name = "ID_ORGAO_USU", nullable = false)
 	private Long idOrgaoUsu;
 
+	@Column(name = "BAIRRO_ORGAO_USU")
 	private String bairroOrgaoUsu;
 
+	@Column(name = "CEP_ORGAO_USU")
 	private String cepOrgaoUsu;
 
+	@Column(name = "END_ORGAO_USU")
 	private String enderecoOrgaoUsu;
 
 	private String nmRespOrgaoUsu;
 
+	@Column(name = "RAZAO_SOCIAL_ORGAO_USU")
 	private String razaoSocialOrgaoUsu;
 
+	@Column(name = "UF_ORGAO_USU")
 	private String ufOrgaoUsu;
 
+	@Column(name = "SIGLA_ORGAO_USU")
 	private String siglaOrgaoUsu;
 
+	@Column(name = "MUNICIPIO_ORGAO_USU")
 	private String municipioOrgaoUsu;
 
+	@Column(name = "NM_ORGAO_USU", nullable = false)
 	private String nmOrgaoUsu;
 
+	@Column(name = "TEL_ORGAO_USU")
 	private String telOrgaoUsu;
 	
+	@Column(name = "ACRONIMO_ORGAO_USU")
 	private String acronimoOrgaoUsu;
 
 	/*

@@ -24,12 +24,27 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
 public abstract class AbstractCpMarcador implements Serializable {
 
+	@Id
+	@Column(name = "ID_MARCADOR", nullable = false)
 	private Long idMarcador;
 
+	@Column(name = "DESCR_MARCADOR")
 	private String descrMarcador;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_MARCADOR", nullable = false)
 	private CpTipoMarcador cpTipoMarcador;
 
 	public Long getIdMarcador() {

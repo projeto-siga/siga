@@ -27,6 +27,8 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.Formula;
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -34,12 +36,14 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
-public class CpOrgao extends AbstractCpOrgao implements Serializable, Selecionavel, Historico, Sincronizavel {
-	
+public class CpOrgao extends AbstractCpOrgao implements Serializable,
+		Selecionavel, Historico, Sincronizavel {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5119023571728936131L;
+	@Formula(value = "REMOVE_ACENTO(NM_ORGAO)")
 	@Desconsiderar
 	private String nmOrgaoAI;
 
@@ -78,7 +82,7 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable, Selecionav
 	}
 
 	public String getSigla() {
-		if (getSiglaOrgao()!=null)
+		if (getSiglaOrgao() != null)
 			return getSiglaOrgao();
 		return getIdOrgao().toString();
 	}
@@ -99,16 +103,14 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable, Selecionav
 		this.nmOrgaoAI = nmOrgaoAI;
 	}
 
-	
-
 	public Date getDataFim() {
 		return super.getHisDtFim();
-		
+
 	}
 
 	public Date getDataInicio() {
 		return super.getHisDtIni();
-		
+
 	}
 
 	public String getDescricaoExterna() {
@@ -121,7 +123,7 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable, Selecionav
 
 	public String getLoteDeImportacao() {
 		return String.valueOf(super.getIdOrgao());
-		//return getOrgaoUsuario().getId().toString();
+		// return getOrgaoUsuario().getId().toString();
 	}
 
 	public int getNivelDeDependencia() {
@@ -130,42 +132,43 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable, Selecionav
 
 	public void setDataFim(Date dataFim) {
 		super.setHisDtFim(dataFim);
-		
+
 	}
 
 	public void setDataInicio(Date dataInicio) {
 		super.setHisDtIni(dataInicio);
-		
+
 	}
 
 	public void setIdExterna(String idExterna) {
 		super.setIdeOrgao(idExterna);
-		
+
 	}
 
 	public void setIdInicial(Long idInicial) {
 		super.setHisIdIni(idInicial);
 	}
-	
+
 	public Long getIdInicial() {
 		return super.getHisIdIni();
 	}
-	
+
 	public void setLoteDeImportacao(String loteDeImportacao) {
 	}
-	
-	/*public boolean semelhante(Assemelhavel obj, int profundidade) {
-		return SincronizavelSuporte.semelhante(this, obj, profundidade);
-	}*/
+
+	/*
+	 * public boolean semelhante(Assemelhavel obj, int profundidade) { return
+	 * SincronizavelSuporte.semelhante(this, obj, profundidade); }
+	 */
 	public boolean semelhante(Assemelhavel obj, int nivel) {
 		return SincronizavelSuporte.semelhante(this, obj, nivel);
 	}
-	
+
 	public boolean equivale(Object other) {
 		if (other == null)
 			return false;
 		return this.getIdInicial().longValue() == ((CpOrgao) other)
 				.getIdInicial().longValue();
 	}
-	
+
 }

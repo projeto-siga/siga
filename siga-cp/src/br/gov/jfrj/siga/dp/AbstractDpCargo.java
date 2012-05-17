@@ -24,8 +24,20 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
@@ -33,27 +45,41 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
  * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
+@Entity
+@Table(name = "DP_CARGO", schema = "CORPORATIVO")
 public abstract class AbstractDpCargo implements Serializable {
 
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_CARGO", nullable = false)
+	@SequenceGenerator(name = "generator", sequenceName = "DP_CARGO_SEQ")
 	@Desconsiderar
 	private Long idCargo;
 
+	@Column(name = "NOME_CARGO", nullable = false)
 	private String nomeCargo;
 
+	@Column(name = "DT_FIM_CARGO")
 	@Desconsiderar
 	private Date dataFimCargo;
 
+	@Column(name = "DT_INI_CARGO")
 	@Desconsiderar
 	private Date dataInicioCargo;
 
+	@Column(name = "ID_CARGO_INICIAL")
 	@Desconsiderar
 	private Long idCargoIni;
 
+	@Column(name = "IDE_CARGO")
 	private String ideCargo;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 	
+	@Column(name = "SIGLA_CARGO")
 	@Desconsiderar
 	private String siglaCargo;
 

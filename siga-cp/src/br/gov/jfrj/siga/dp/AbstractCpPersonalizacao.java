@@ -22,12 +22,40 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CORPORATIVO.CP_PERSONALIZACAO")
 public abstract class AbstractCpPersonalizacao implements Serializable {
+	
+	@SequenceGenerator(name = "generator", sequenceName = "CP_PERSONALIZACAO_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_PERSONALIZACAO", nullable = false)
 	private Long idPersonalizacao;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PESSOA")
 	private DpPessoa pessoa;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SUBSTITUINDO_PESSOA")
 	private DpPessoa pesSubstituindo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SUBSTITUINDO_LOTACAO")
 	private DpLotacao lotaSubstituindo;
 
 	// private Usuario usuarioSimulando;

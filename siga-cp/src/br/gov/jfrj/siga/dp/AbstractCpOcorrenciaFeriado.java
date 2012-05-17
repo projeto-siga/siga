@@ -27,16 +27,34 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CORPORATIVO.CP_OCORRENCIA_FERIADO")
 public abstract class AbstractCpOcorrenciaFeriado implements Serializable {
 
+	@Id
+	@Column(name = "ID_OCORRENCIA", nullable = false)
 	private Long idOcorrencia;
 
+	@Column(name = "DT_INI_FERIADO", nullable = false)
 	private Date dtIniFeriado;
 	
+	@Column(name = "DT_FIM_FERIADO", nullable = false)
 	private Date dtFimFeriado;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_FERIADO")
 	private CpFeriado cpFeriado;
 	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cpOcorrenciaFeriado")
 	private java.util.Set<CpAplicacaoFeriado> cpAplicacaoFeriadoSet;
 
 	public java.util.Set<CpAplicacaoFeriado> getCpAplicacaoFeriadoSet() {

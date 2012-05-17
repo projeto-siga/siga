@@ -26,17 +26,33 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 
 /**
  * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
+
+@Entity
+@Table(name = "CP_LOCALIDADE", schema = "CORPORATIVO")
 public abstract class AbstractCpLocalidade implements Serializable {
 
+	@Id
+	@Column(name = "ID_LOCALIDADE", nullable = false)
 	private Long idLocalidade;
 
+	@Column(name = "NM_LOCALIDADE", nullable = false)
 	private String nmLocalidade;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_UF")
 	private CpUF UF;
 
 	public Long getIdLocalidade() {

@@ -22,29 +22,60 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
 public abstract class AbstractDpSubstituicao implements Serializable {
 
+	@Column(name = "DT_FIM_SUBST")
 	private Date dtFimSubst;
 
+	@Column(name = "DT_INI_SUBST")
 	private Date dtIniSubst;
 
+	@SequenceGenerator(name = "generator", sequenceName = "DP_SUBSTITUICAO_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_SUBSTITUICAO", nullable = false)
 	private Long idSubstituicao;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTA_SUBSTITUTO")
 	private DpLotacao lotaSubstituto;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTA_TITULAR")
 	private DpLotacao lotaTitular;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SUBSTITUTO")
 	private DpPessoa substituto;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TITULAR")
 	private DpPessoa titular;
 	
+	@Column(name = "DT_FIM_REG")
 	private Date dtFimRegistro;
 
+	@Column(name = "DT_INI_REG")
 	private Date dtIniRegistro;
 
+	@Column(name = "ID_REG_INI")
 	private Long idRegistroInicial;
 	
 

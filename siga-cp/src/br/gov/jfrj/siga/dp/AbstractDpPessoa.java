@@ -22,114 +22,146 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Formula;
+
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
+
 
 public abstract class AbstractDpPessoa extends DpResponsavel implements
 		Serializable {
 
-	private DpCargo cargo;
-
-	private Long cpfPessoa;
-
+	@SequenceGenerator(name = "generator", sequenceName = "DP_PESSOA_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_PESSOA", nullable = false)
+	@Desconsiderar
+	private long idPessoa;
+	@Column(name = "ID_PESSOA_INICIAL")
+	@Desconsiderar
+	private long idPessoaIni;
+	@Column(name = "DATA_FIM_PESSOA")
 	@Desconsiderar
 	private Date dataFimPessoa;
-
+	@Column(name = "DATA_INI_PESSOA")
 	@Desconsiderar
 	private Date dataInicioPessoa;
-
-	private Date dataNascimento;
-
-	private String emailPessoa;
-
-	private DpFuncaoConfianca funcaoConfianca;
-
-	@Desconsiderar
-	private Long idPessoa;
-
-	@Desconsiderar
-	private Long idPessoaIni;
-
+	@Column(name = "IDE_PESSOA")
 	private String idePessoa;
-
-	@Desconsiderar
-	private DpPessoa pessoaInicial;
-
-	private DpLotacao lotacao;
-
-	private Long matricula;
-
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_NASC_PESSOA")
+	private Date dataNascimento;
+	@Column(name = "NOME_PESSOA")
 	private String nomePessoa;
-
-	@Desconsiderar
-	private CpOrgaoUsuario orgaoUsuario;
-
+	@Column(name = "CPF_PESSOA")
+	private long cpfPessoa;
+	@Column(name = "MATRICULA")
+	private long matricula;
+	@Column(name = "SESB_PESSOA")
 	private String sesbPessoa;
-
-	private String padraoReferencia;
-
-	private String situacaoFuncionalPessoa;
-
-	private String grauInstrucao;
-
-	private String sexo;
-
+	@Column(name = "EMAIL_PESSOA")
+	private String emailPessoa;
+	@Column(name = "SIGLA_PESSOA")
 	private String siglaPessoa;
-
-	private String situacaoFuncional;
-
-	private Integer tipoServidor;
-
-	private String tipoSanguineo;
-
-	private String endereco;
-
-	private String bairro;
-
-	private String cidade;
-
-	private String cep;
-
-	private String telefone;
-
-	private String identidade;
-
-	private String orgaoIdentidade;
-
-	private Date dataExpedicaoIdentidade;
-
+	@Column(name = "DSC_PADRAO_REFERENCIA_PESSOA")
+	private String padraoReferencia;
+	@Column(name = "SITUACAO_FUNCIONAL_PESSOA")
+	private String situacaoFuncionalPessoa;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_INICIO_EXERCICIO_PESSOA")
 	private Date dataExercicioPessoa;
-
-	private Date dataNomeacao;
-
-	private Date dataPosse;
-
-	private Date dataPublicacao;
-
-	private String ufIdentidade;
-
+	@Column(name = "ATO_NOMEACAO_PESSOA")
 	private String atoNomeacao;
-
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_NOMEACAO_PESSOA")
+	private Date dataNomeacao;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_POSSE_PESSOA")
+	private Date dataPosse;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_PUBLICACAO_PESSOA")
+	private Date dataPublicacao;
+	@Column(name = "GRAU_INSTRUCAO_PESSOA")
+	private String grauInstrucao;
+	@Column(name = "ID_PROVIMENTO")
 	private Integer idProvimento;
-
+	@Column(name = "NACIONALIDADE_PESSOA")
 	private String nacionalidade;
-
+	@Column(name = "NATURALIDADE_PESSOA")
 	private String naturalidade;
-
+	@Column(name = "FG_IMPRIME_END")
 	private String imprimeEndereco;
-
+	@Column(name = "SEXO_PESSOA")
+	private String sexo;
+	@Column(name = "TP_SERVIDOR_PESSOA")
+	private Integer tipoServidor;
+	@Column(name = "TP_SANGUINEO_PESSOA")
+	private String tipoSanguineo;
+	@Column(name = "ENDERECO_PESSOA")
+	private String endereco;
+	@Column(name = "BAIRRO_PESSOA")
+	private String bairro;
+	@Column(name = "CIDADE_PESSOA")
+	private String cidade;
+	@Column(name = "CEP_PESSOA")
+	private String cep;
+	@Column(name = "TELEFONE_PESSOA")
+	private String telefone;
+	@Column(name = "RG_PESSOA")
+	private String identidade;
+	@Column(name = "RG_ORGAO_PESSOA")
+	private String orgaoIdentidade;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "RG_DATA_EXPEDICAO_PESSOA")
+	private Date dataExpedicaoIdentidade;
+	@Column(name = "RG_UF_PESSOA")
+	private String ufIdentidade;
+	@Column(name = "ID_ESTADO_CIVIL")
 	private Integer idEstadoCivil;
-
+	@Column(name = "NOME_EXIBICAO")
 	@Desconsiderar
 	private String nomeExibicao;
-
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PESSOA_INICIAL", insertable = false, updatable = false)
+	@Desconsiderar
+	private DpPessoa pessoaInicial;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO")
+	private DpLotacao lotacao;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_CARGO")
+	private DpCargo cargo;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_FUNCAO_CONFIANCA")
+	private DpFuncaoConfianca funcaoConfianca;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
+	@Desconsiderar
+	private CpOrgaoUsuario orgaoUsuario;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_PESSOA")
 	private CpTipoPessoa cpTipoPessoa;
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pessoaInicial")
 	@Desconsiderar
-	private Set<DpPessoa> pessoasPosteriores;
+	private Set<DpPessoa> pessoasPosteriores = new HashSet<DpPessoa>(0);
 
 	/**
 	 * @return the cpTipoPessoa
@@ -473,13 +505,13 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 		this.siglaPessoa = siglaPessoa;
 	}
 
-	public String getSituacaoFuncional() {
+	/*public String getSituacaoFuncional() {
 		return situacaoFuncional;
 	}
 
 	public void setSituacaoFuncional(String situacaoFuncional) {
 		this.situacaoFuncional = situacaoFuncional;
-	}
+	}*/
 
 	public Integer getTipoServidor() {
 		return tipoServidor;

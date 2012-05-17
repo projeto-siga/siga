@@ -22,8 +22,20 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
@@ -32,35 +44,53 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
  * customizar o comportamento desta classe editando a classe
  * {@link DpFuncaoConfianca}.
  */
+@Entity
+@Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
 public abstract class AbstractDpFuncaoConfianca implements Serializable {
 
+	@Column(name = "DT_FIM_FUNCAO_CONFIANCA")
 	@Desconsiderar
 	private Date dataFimFuncao;
 
+	@Column(name = "DT_INI_FUNCAO_CONFIANCA")
 	@Desconsiderar
 	private Date dataInicioFuncao;
 
+	@Column(name = "CATEGORIA_FUNCAO_CONFIANCA")
 	private String categoriaFuncao;
 
+	@Column(name = "COD_FOLHA_FUNCAO_CONFIANCA")
 	private Integer codFolhaFuncao;
 
+	@SequenceGenerator(name = "generator", sequenceName = "DP_FUNCAO_CONFIANCA_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_FUNCAO_CONFIANCA", nullable = false)
 	@Desconsiderar
 	private Long idFuncao;
 	
+	@Column(name = "ID_FUN_CONF_INI")
 	@Desconsiderar
 	private Long idFuncaoIni;
 
+	@Column(name = "IDE_FUNCAO_CONFIANCA")
 	private String ideFuncao;
 
+	@Column(name = "ID_FUNCAO_CONFIANCA_PAI")
 	private Long idFuncaoPai;
 
+	@Column(name = "NIVEL_FUNCAO_CONFIANCA")
 	private Integer nivelFuncao;
 
+	@Column(name = "NOME_FUNCAO_CONFIANCA", nullable = false)
 	private String nomeFuncao;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 	
+	@Column(name = "SIGLA_FUNCAO_CONFIANCA")
 	@Desconsiderar
 	private String siglaFuncaoConfianca;
 

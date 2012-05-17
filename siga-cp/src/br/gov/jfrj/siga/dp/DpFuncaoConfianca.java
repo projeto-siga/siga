@@ -27,6 +27,8 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.Formula;
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -41,6 +43,7 @@ public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 	 */
 	private static final long serialVersionUID = -2997532579401295172L;
 
+	@Formula(value = "REMOVE_ACENTO(NOME_FUNCAO_CONFIANCA)")
 	@Desconsiderar
 	private String nmFuncaoConfiancaAI;
 

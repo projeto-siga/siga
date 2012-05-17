@@ -26,14 +26,24 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
+@Entity
+@Table(name = "CP_UF", schema = "CORPORATIVO")
 public abstract class AbstractCpUF implements Serializable {
 
+	@Id
+	@Column(name = "ID_UF", nullable = false)
 	private Long idUF;
 
+	@Column(name = "NM_UF", nullable = false)
 	private String nmUF;
 
 	public Long getIdUF() {

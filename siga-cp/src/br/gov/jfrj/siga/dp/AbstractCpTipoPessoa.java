@@ -18,8 +18,20 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.dp;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CORPORATIVO.CP_TIPO_PESSOA")
 public abstract class AbstractCpTipoPessoa {
+	
+	@Id
+	@Column(name = "ID_TP_PESSOA", nullable = false)
 	private Integer idTpPessoa;
+	
+	@Column(name = "DESC_TP_PESSOA")
 	private String dscTpPessoa;
 	/**
 	 * @return the idTpPessoa

@@ -22,48 +22,83 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@Entity
+@Table(name = "CORPORATIVO.DP_LOTACAO")
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {
 
+	@SequenceGenerator(name = "generator", sequenceName = "DP_LOTACAO_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_LOTACAO", nullable = false)
+	@Desconsiderar
+	private long idLotacao;
+	@Column(name = "ID_LOTACAO_INI")
+	@Desconsiderar
+	private long idLotacaoIni;
+	@Column(name = "NOME_LOTACAO", nullable = false)
+	@Desconsiderar
+	private String nomeLotacao;
+	@Column(name = "SIGLA_LOTACAO")
+	@Desconsiderar
+	private String siglaLotacao;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_FIM_LOT")
 	@Desconsiderar
 	private Date dataFimLotacao;
-
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_INI_LOT")
 	@Desconsiderar
 	private Date dataInicioLotacao;
-
+	@Column(name = "IDE_LOTACAO")
 	@Desconsiderar
-	private Long idLotacao;
-
-	@Desconsiderar
-	private Long idLotacaoIni;
-
 	private String ideLotacao;
-
-	private DpLotacao lotacaoPai;
-
-	private String nomeLotacao;
-
-	private String siglaLotacao;
-
-	@Desconsiderar
-	private CpOrgaoUsuario orgaoUsuario;
-
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO_INI", insertable = false, updatable = false)
 	@Desconsiderar
 	private DpLotacao lotacaoInicial;
-
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO_PAI")
 	@Desconsiderar
-	private Set<DpLotacao> lotacoesPosteriores;
-
+	private DpLotacao lotacaoPai;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoInicial")
 	@Desconsiderar
-	private Set<DpLotacao> dpLotacaoSubordinadosSet;
-
+	private Set<DpLotacao> lotacoesPosteriores = new HashSet<DpLotacao>(0);
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
+	@Desconsiderar
+	private CpOrgaoUsuario orgaoUsuario;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoPai")
+	@Desconsiderar
+	private Set<DpLotacao> dpLotacaoSubordinadosSet = new HashSet<DpLotacao>(0);
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_LOTACAO")
 	private CpTipoLotacao cpTipoLotacao;
+	
 	/**
 	 * @return the cpTipoLotacao
 	 */

@@ -40,6 +40,8 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import java.util.Set;
 
+import org.hibernate.annotations.Formula;
+
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 	/**
@@ -47,6 +49,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	 */
 	private static final long serialVersionUID = -5743631829922578717L;
 
+	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
 	@Desconsiderar
 	private String nomePessoaAI;
 
@@ -273,8 +276,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	public boolean lotacaoSiglaIgual(String s) {
 		if (this.getLotacao() == null)
 			return false;
-		return this.getLotacao().getSigla().toLowerCase().equals(
-				s.toLowerCase());
+		return this.getLotacao().getSigla().toLowerCase()
+				.equals(s.toLowerCase());
 	}
 
 	public boolean lotacaoSiglaContem(String s) {
@@ -324,8 +327,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	public boolean funcaoSiglaIgual(String s) {
 		if (this.getFuncaoConfianca() == null)
 			return false;
-		return this.getFuncaoConfianca().getSigla().toLowerCase().equals(
-				s.toLowerCase());
+		return this.getFuncaoConfianca().getSigla().toLowerCase()
+				.equals(s.toLowerCase());
 	}
 
 	public boolean funcaoSiglaContem(String s) {

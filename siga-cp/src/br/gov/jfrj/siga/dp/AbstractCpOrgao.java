@@ -22,53 +22,105 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@Entity
+@Table(name = "CP_ORGAO", schema = "CORPORATIVO")
 public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 		Serializable {
 
+	@Column(name = "BAIRRO_ORGAO")
 	private String bairroOrgao;
 
+	@Column(name = "CEP_ORGAO")
 	private String cepOrgao;
 
+	@Column(name = "CGC_ORGAO")
 	private Integer cgcOrgao;
 
+	@Column(name = "DSC_TIPO_ORGAO")
 	private String dscTipoOrgao;
 
+	@Column(name = "EMAIL_CONTATO_ORGAO")
 	private String emailContatoOrgao;
 
+	@Column(name = "EMAIL_RESPONSAVEL_ORGAO")
 	private String emailRespOrgao;
 
+	@Column(name = "END_ORGAO")
 	private String enderecoOrgao;
 
+	@SequenceGenerator(name = "generator", sequenceName = "CP_ORGAO_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_ORGAO", nullable = false)
 	@Desconsiderar
 	private Long idOrgao;
 
+	@Column(name = "MUNICIPIO_ORGAO")
 	private String municipioOrgao;
 
+	@Column(name = "NOME_CONTATO_ORGAO")
 	private String nmContatoOrgao;
 
+	@Column(name = "NM_ORGAO", nullable = false)
 	private String nmOrgao;
 
+	@Column(name = "NOME_RESPONSAVEL_ORGAO")
 	private String nmRespOrgao;
 
+	@Column(name = "RAZAO_SOCIAL_ORGAO")
 	private String razaoSocialOrgao;
 
+	@Column(name = "SIGLA_ORGAO")
 	private String siglaOrgao;
 
+	@Column(name = "TEL_CONTATO_ORGAO")
 	private String telContatoOrgao;
 
+	@Column(name = "UF_ORGAO")
 	private String ufOrgao;
 
+	@Formula(value = "FG_ATIVO")
 	private String ativo;
 
-	private String ideOrgao;
-
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
+	
+	@Column(name = "HIS_ID_INI")
+	private Long hisIdIni;
+	
+	@Column(name = "HIS_DT_INI")
+	private Date hisDtIni;
+	
+	@Column(name = "HIS_DT_FIM")
+	private Date hisDtFim;
+	
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+	
+	@Column(name = "HIS_IDE")
+	private String ideOrgao;
 
 	/*
 	 * (non-Javadoc)
@@ -87,6 +139,38 @@ public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 	 * 
 	 * }
 	 */
+
+	public Long getHisIdIni() {
+		return hisIdIni;
+	}
+
+	public void setHisIdIni(Long hisIdIni) {
+		this.hisIdIni = hisIdIni;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	public Date getHisDtFim() {
+		return hisDtFim;
+	}
+
+	public void setHisDtFim(Date hisDtFim) {
+		this.hisDtFim = hisDtFim;
+	}
+
+	public int getHisAtivo() {
+		return hisAtivo;
+	}
+
+	public void setHisAtivo(Integer hisAtivo) {
+		this.hisAtivo = hisAtivo;
+	}
 
 	public String getBairroOrgao() {
 		return bairroOrgao;

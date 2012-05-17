@@ -1,97 +1,94 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
-<siga:cabecalho titulo="Login" onLoad="try{document.getElementById('j_username').focus();document.getElementById('j_username').select()}catch(e){};"/>
+<siga:pagina titulo="Login"
+	onLoad="try{document.getElementById('j_username').focus();document.getElementById('j_username').select()}catch(e){};">
 
-<script type="text/javascript" language="Javascript1.1">
-/*  converte para maiúscula a sigla do estado  */
-function converteUsuario(nomeusuario){
-  re= /^[a-zA-Z]{2}\d{4,6}$/;
-  ret2= /^[a-zA-Z]{1}\d{4,6}$/;
-  tmp = nomeusuario.value;
-  if (tmp.match(re)||tmp.match(ret2)){      
-      nomeusuario.value=tmp.toUpperCase();
-  }
-}
-</script>
-<c:set var="pagina" scope="session">${pageContext.request.requestURL}</c:set>
-<div>
-<form method="post" action="j_security_check">
-<table cellpadding="30%" width="100%" height="100%">
-	<tr>
-		<td align='left' valign='top'><jsp:include flush="true"
-			page="comentario.jsp" /></td>
-		<td align="right" valign="top">
-		<table class="login">
-			<tr class="header">
-				<td colspan="2">Identificação</td>
-			</tr>
-			<tr>
-				<td>Matrícula</td>
-				<td><input id="j_username" type="text" size=15
-					name="j_username" onblur="javascript:converteUsuario(this)"></td>
-			</tr>
-			<tr>
-				<td>Senha</td>
-				<td><input type="password" size=15 name="j_password"></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td><input type="submit" value="Acessar" name="btAcessar"></td>
-			</tr>
-		</table>
-		<br>
-		<br>
-		<table class="login" width="100%">
-			<tr>
-				<td>
-				<center><b><font size="2"><ww:a
-					href="incluir_usuario.action">Sou um novo usuário</ww:a></font></b></center>
-				</td>
-			</tr>
-			<tr>
-				<td>
-				<center><b><font size="2"><ww:a
-					href="esqueci_senha.action">Esqueci minha senha</ww:a></font></b></center>
-				</td>
-			</tr>
-		</table>
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{4,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{4,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>
 
-		<br>
-		<br>
-		<table class="login" width="100%">
-			<tr>
-				<td>
-				<center><b><font size="2"><a
-					href="apostila_sigaex.pdf">Apostila do SIGA-Documentos</a></font></b></center>
-				</td>
-			</tr>
-		</table>
-		<br>
-		<table class="login" width="100%">
-			<tr>
-				<td>
-				<center><b><font size="2"><a
-					href="apostila_sigawf.pdf">Apostila do SIGA-Workflow</a></font></b></center>
-				</td>
-			</tr>
-		</table>
-		<br>
-		<table class="login" width="100%">
-			<tr>
-				<td>
-				<center><b><font size="2"><a
-					href="apostila_sigase.pdf">Apostila do SIGA-Serviços</a></font></b></center>
-				</td>
-			</tr>
-		</table>
-	</tr>
-</table>
-</form>
-</div>
-<table width="100%" height="100%">
-</table>
-<c:import url="/paginas/rodape.jsp" />
+	<c:set var="pagina" scope="session">${pageContext.request.requestURL}</c:set>
+
+	<div class="gt-bd gt-cols clearfix">
+		<!-- main content -->
+		<div class="gt-content">
+			<c:import url="comentario.jsp" />
+		</div>
+		<!-- / main content -->
+
+
+		<!-- sidebar -->
+		<div class="gt-sidebar">
+
+
+			<!-- login form head -->
+			<div class="gt-mylogin-hd">Identificação</div>
+
+			<!-- login box -->
+			<div class="gt-mylogin-box">
+				<!-- login form -->
+				<form method="post" action="j_security_check" class="gt-form">
+					<!-- form row -->
+					<div class="gt-form-row">
+						<label class="gt-label">Matrícula</label> <input id="j_username"
+							type="text" name="j_username"
+							onblur="javascript:converteUsuario(this)" class="gt-form-text">
+					</div>
+					<!-- /form row -->
+
+					<!-- form row -->
+					<div class="gt-form-row">
+						<label class="gt-label">Senha</label> <input type="password"
+							name="j_password" class="gt-form-text">
+					</div>
+					<!-- /form row -->
+
+					<!-- form row -->
+					<div class="gt-form-row">
+						<input type="submit" value="Acessar"
+							class="gt-btn-medium gt-btn-right">
+					</div>
+					<!-- /form row -->
+
+					<p class="gt-forgot-password">
+						<ww:a href="incluir_usuario.action">Sou um novo usuário</ww:a>
+					</p>
+					<p class="gt-forgot-password">
+						<ww:a href="esqueci_senha.action">Esqueci minha senha</ww:a>
+					</p>
+
+				</form>
+				<!-- /login form -->
+			</div>
+			<!-- /login box -->
+
+			<!-- Sidebar Navigation -->
+			<div class="gt-sidebar-nav gt-sidebar-nav-blue">
+				<h3>Links Úteis</h3>
+				<ul>
+					<li><a href="/siga/apostila_sigaex.pdf">Apostila SIGA-Doc</a>
+					</li>
+					<li><a href="/siga/apostila_sigawf.pdf">Apostila
+							SIGA-Workflow</a>
+					</li>
+				</ul>
+			</div>
+			<!-- /Sidebar Navigation -->
+			<!-- Sidebar Content -->
+		</div>
+		<!-- / sidebar -->
+
+	</div>
+
+</siga:pagina>

@@ -55,6 +55,7 @@ public class PrincipalAction extends SigaActionSupport {
 	public String test() throws Exception {
 		DpPessoa pes = daoPes(param("matricula"));
 
+		super.getRequest().setAttribute("siga_test_url", "#");
 		super.getRequest().setAttribute("siga_test", ERRO);
 		if (pes != null)
 			super.getRequest().setAttribute("siga_test", OK);
@@ -64,18 +65,21 @@ public class PrincipalAction extends SigaActionSupport {
 
 		String siga_ex_test_url = url.replace(SIGA_TESTES_ACTION,
 				"/sigaex/testes/gadgetTest.action");
+		super.getRequest().setAttribute("siga_ex_test_url", siga_ex_test_url);
 		super.getRequest().setAttribute("siga_ex_test", ERRO);
 		if (httpTest(siga_ex_test_url, "Atendente"))
 			super.getRequest().setAttribute("siga_ex_test", OK);
 
 		String siga_wf_test_url = url.replace(SIGA_TESTES_ACTION,
 				"/sigawf/testes/gadgetTest.action");
+		super.getRequest().setAttribute("siga_wf_test_url", siga_wf_test_url);
 		super.getRequest().setAttribute("siga_wf_test", ERRO);
 		if (httpTest(siga_ex_test_url, "Atendente"))
 			super.getRequest().setAttribute("siga_wf_test", OK);
 
 		String siga_cd_test_url = url.replace(SIGA_TESTES_ACTION,
 				"/sigacd/testes/testes.action");
+		super.getRequest().setAttribute("siga_cd_test_url", siga_cd_test_url);
 		super.getRequest().setAttribute("siga_cd_test", ERRO);
 		if (httpTest(siga_ex_test_url, "OK!"))
 			super.getRequest().setAttribute("siga_cd_test", OK);

@@ -59,6 +59,16 @@ public class SigaActionSupport extends SigaAnonimoActionSupport implements
 
 	private PrincipalProxy principalProxy;
 
+	private String mensagem;
+
+	public String getMensagem() {
+		return mensagem;
+	}
+
+	public void setMensagem(String mensagem) {
+		this.mensagem = mensagem;
+	}
+
 	/**
 	 * Verifica se foi autenticado por um certificado de cliente
 	 * 

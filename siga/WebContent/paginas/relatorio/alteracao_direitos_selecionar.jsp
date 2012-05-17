@@ -5,52 +5,54 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<ww:url id="urlEmitir" action="emitir_alteracao_direitos" namespace="/gi/relatorio" />
- 
+<ww:url id="urlEmitir" action="emitir_alteracao_direitos"
+	namespace="/gi/relatorio" />
+
 <siga:pagina titulo="Relatório de Alteração de Direitos de Utilização">
-	<h1>Relatório de Alteração de Direitos de Utilização </h1>
-		<br/>
-			<table id="tblfrm" class="form100">
-				   <tr  class="">
-				   		<td>
-							<label>Data Inicial: </label>
-						</td>
-						<td>
-							<input name="itxDtInicio" id="itxDtInicio" tabindex="10" type="text" size="10" maxlength="10" onblur="javascript:verificarData(this);"></input>
-						</td>
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Relatório de Alteração de Direitos de Utilização</h2>
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-form-table">
+					<tr class="">
+						<td><label>Data Inicial: </label></td>
+						<td><input name="itxDtInicio" id="itxDtInicio" tabindex="10"
+							type="text" size="10" maxlength="10"
+							onblur="javascript:verificarData(this);"></input></td>
 					</tr>
-					<tr  class="">
-						<td>
-							<label>Data Final: </label>
-						</td>
-						<td>
-							<input name="itxDtFim" id="itxDtFim" tabindex="20" type="text" size="10" maxlength="10" onblur="javascript:verificarData(this);"></input>
-						</td>
+					<tr class="">
+						<td><label>Data Final: </label></td>
+						<td><input name="itxDtFim" id="itxDtFim" tabindex="20"
+							type="text" size="10" maxlength="10"
+							onblur="javascript:verificarData(this);"></input></td>
 					</tr>
 					<tr>
-						<td><label>Órgão Usuário:</label></td>
-						<td>
-							<select  name="idOrgaoUsuario"  id="idOrgaoUsuario" tabindex="30"	>
+						<td><label>Órgão Usuário:</label>
+						</td>
+						<td><select name="idOrgaoUsuario" id="idOrgaoUsuario"
+							tabindex="30">
 								<c:forEach var="ousu" items="${cpOrgaosUsuario}">
-									<option value="${ousu.idOrgaoUsu}">
-										${ousu.nmOrgaoUsu}
+									<option value="${ousu.idOrgaoUsu}">${ousu.nmOrgaoUsu}
 									</option>
 								</c:forEach>
-							</select>
-						</td>
+						</select></td>
 					</tr>
 					<tr>
-						<td>
-							<button tabindex="40"  onclick="javascript:submeter();">Gerar...</button>
-						</td>
-						<td>
+						<td colspan="2">
+							<button class="gt-btn-medium gt-btn-left" tabindex="40"
+								onclick="javascript:submeter();">Gerar...</button>
 						</td>
 					</tr>
-			</table>
-		<br/>
-		<div id="div-tempo" style="display:none; position:absolute ;text-align: center; filter:alpha(opacity=60); opacity:0.4; background-color: #dcdcdc; vertical-align:middle; border-width: 2px; border-color: darkblue; border-style: solid; " >
-        	<div  style="position:absolute; font-family:sans-serif50%; left:40%; top:50%; font-size:medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
-        </div>
+				</table>
+			</div>
+		</div>
+	</div>
+	<br />
+	<div id="div-tempo"
+		style="display: none; position: absolute; text-align: center; filter: alpha(opacity =         60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
+		<div
+			style="position: absolute; font-family: sans-serif50 %; left: 40%; top: 50%; font-size: medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
+	</div>
 </siga:pagina>
 <script type="text/javascript">
 	function submeter() {
@@ -216,7 +218,7 @@
 		}
 	}
  </script>
- <script type="text/javascript">
+<script type="text/javascript">
   	/*
  	* Impede o uso do F5
  	*/

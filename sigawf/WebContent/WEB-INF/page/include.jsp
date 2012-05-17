@@ -9,7 +9,8 @@
 <%@ taglib prefix="wf" uri="/META-INF/func.tld" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
+<%--
 <ww:url id="url" action="css" />
 <link rel="StyleSheet" href="${url}" type="text/css"
 	title="SIGA Estilos" media="screen" />
+ --%>	

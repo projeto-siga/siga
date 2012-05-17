@@ -7,4 +7,4 @@
 <%@ attribute name="onclique" required="false"%>
 
 <input type="${inputType}" onclick="javascript: ${onclique} if (isCarregando()) return false; carrega();"
-	cssClass="${cssClass}" value="${value}" />
+	class="${cssClass}" value="${value}" />

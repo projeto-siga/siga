@@ -104,56 +104,71 @@ function passwordStrength(password) {
 </script>
 
 <siga:pagina popup="false" titulo="Troca de Senha">
-	<h1><br />
-	<br />
-	&nbsp;Troca de senha!</h1>
+	<!-- main content -->
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h1 class="gt-form-head">${param.titulo}</h1>
 
-	<table>
-		<tr>
-			<td><ww:form action="trocar_senha_gravar"
-				onsubmit="return validateUsuarioForm(this);">
-				<h1>${mensagem }</h1>
-
-				<table class="form" width="100%">
+			<h2>${mensagem}</h2>
+			<h2 class="gt-form-head">Trocar senha</h2>
+			<div class="gt-form gt-content-box">
+				<ww:form action="trocar_senha_gravar"
+					onsubmit="return validateUsuarioForm(this);" method="post">
 					<ww:hidden name="page" value="1" />
-					<tr>
-						<td>Matrícula:</td>
-						<td><ww:textfield name="nomeUsuario"
-							onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
-						XX99999, onde XX é a sigla do seu órgão (T2, RJ e ES) e 99999 é o
-						número da sua matrícula.</td>
-					</tr>
-					<tr>
-						<td>Senha atual:</td>
-						<td><ww:password name="senhaAtual" theme="simple" /></td>
-					</tr>
-					<tr>
-						<td>Nova senha:</td>
-						<td><ww:password name="senhaNova" theme="simple" id="pass"
-							onkeyup="passwordStrength(this.value)" />&nbsp;&nbsp;Utilize
-						maiúsculas, minúsculas e números para aumentar a força da senha.</td>
-					</tr>
-					<tr>
-						<td>Força da senha:</td>
-						<td>
-						<div id="passwordDescription">Senha não informada</div>
-						<div id="passwordStrength" class="strength0"></div>
-						</td>
-					</tr>
-					<tr>
-						<td>Repetição da nova senha:</td>
-						<td><ww:password name="senhaConfirma" theme="simple"
-							id="pass2" /></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-						<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
-							label="Cancelar" value="Cancelar" theme="simple" /></td>
-					</tr>
-				</table>
-			</ww:form></td>
-		</tr>
-	</table>
+					<h1>${mensagem }</h1>
 
+					<div class="gt-form-row gt-width-100">
+						<div class="gt-left-col gt-width-33">
+							<label>Matrícula<a href="#"
+								title="Ex.:	XX99999, onde XX é a sigla do seu órgão (T2, RJ e ES) e 99999 é o número da sua matrícula."><img
+									style="position: relative; margin-top: -3px; top: +3px; left: +3px; z-index: 0;"
+									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
+							<ww:textfield name="nomeUsuario"
+								onblur="javascript:converteUsuario(this)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+
+						<div class="gt-left-col gt-width-33">
+							<label>Senha atual</label>
+							<ww:password name="senhaAtual" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+
+					</div>
+					<div class="gt-form-row gt-width-100">
+
+						<div class="gt-left-col gt-width-33">
+							<label>Nova Senha<a href="#"
+								title="Utilize maiúsculas, minúsculas e números para aumentar a força da senha."><img
+									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
+									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
+							<ww:password name="senhaNova" id="pass"
+								onkeyup="passwordStrength(this.value)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+
+						<div class="gt-left-col gt-width-33">
+							<label>Repetição da nova senha</label>
+							<ww:password name="senhaConfirma" id="pass2" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+
+						<div class="gt-left-col gt-width-33">
+							<label>Força da nova senha</label>
+							<div id="passwordDescription">Senha não informada</div>
+							<div id="passwordStrength" class="strength0"></div>
+						</div>
+					</div>
+
+					<div class="gt-form-row">
+						<ww:submit label="OK" value="OK" theme="simple"
+							cssClass="gt-btn-medium gt-btn-left" />
+						<ww:submit label="Cancelar" value="Cancelar" theme="simple"
+							cssClass="gt-btn-medium gt-btn-left" />
+					</div>
+				</ww:form>
+			</div>
+		</div>
+	</div>
 </siga:pagina>
 

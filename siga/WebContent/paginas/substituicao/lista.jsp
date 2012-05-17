@@ -7,70 +7,72 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
 <siga:pagina titulo="Lista Substituições">
-	<h1>Substituições cadastradas:</h1>
-	<ww:url id="url" action="editar" namespace="/substituicao">
-	</ww:url>
-	<input type="button" value="Incluir"
-		onclick="javascript:window.location.href='${url}'">
-	<br>
-	<br>
-	<table class="list" width="100%">
-		<tr class="header">
-			<td align="right">Titular</td>
-			<td align="right">Substituto</td>
-			<td align="right">Data inicial</td>
-			<td align="right">Data final</td>
-			<td align="center">Opções</td>
-		</tr>
-		<c:set var="evenorodd" value="" />
-		<c:set var="tamanho" value="0" />
-		<c:forEach var="substituicao" items="${itens}">
-			<tr class="${evenorodd}">
-				<td align="right"><c:choose>
-					<c:when test="${not empty substituicao.titular}">
+	<!-- main content -->
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2 class="gt-table-head">Substituições cadastradas</h2>
+			<div class="gt-content-box gt-for-table">
+				<table border="0" class="gt-table">
+					<thead>
+						<tr>
+							<th align="left">Titular</th>
+							<th align="left">Substituto</th>
+							<th align="center">Data inicial</th>
+							<th align="center">Data final</th>
+							<th align="center">Opções</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<c:forEach var="substituicao" items="${itens}">
+							<tr>
+								<td align="left"><c:choose>
+										<c:when test="${not empty substituicao.titular}">
 						${substituicao.titular.nomePessoa}
 					</c:when>
-					<c:otherwise>
+										<c:otherwise>
 						${substituicao.lotaTitular.nomeLotacao}
 					</c:otherwise>
-				</c:choose></td>
-				<td align="right"><c:choose>
-					<c:when test="${not empty substituicao.substituto}">
+									</c:choose>
+								</td>
+								<td align="left"><c:choose>
+										<c:when test="${not empty substituicao.substituto}">
 						${substituicao.substituto.nomePessoa}
 					</c:when>
-					<c:otherwise>
+										<c:otherwise>
 						${substituicao.lotaSubstituto.nomeLotacao}
 					</c:otherwise>
-				</c:choose></td>
-				<td align="right">${substituicao.dtIniSubstDDMMYY}</td>
-				<td align="right">${substituicao.dtFimSubstDDMMYY}</td>
-				<td align="center">
-				<c:if test="${!substituicao.terminada && !substituicao.excluida}">
-					<ww:url id="url" action="editar" namespace="/substituicao">
-						<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
-					</ww:url>
-					<ww:a href="%{url}">Alterar</ww:a>
-					<c:if test="${!substituicao.emVoga && !substituicao.excluida}">
-						<ww:url id="url" action="excluir" namespace="/substituicao">
-							<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
-						</ww:url>
-						<ww:a href="%{url}"> | Excluir</ww:a>
-				    </c:if>
-			    </c:if></td>
-			</tr>
-			<c:choose>
-				<c:when test='${evenorodd == "even"}'>
-					<c:set var="evenorodd" value="odd" />
-				</c:when>
-				<c:otherwise>
-					<c:set var="evenorodd" value="even" />
-				</c:otherwise>
-			</c:choose>
-			<c:set var="tamanho" value="${tamanho + 1 }" />
-		</c:forEach>
-		<tr class="footer">
-			<td align="right">Total Listado: ${tamanho}</td>
-		</tr>
-	</table>
-	<br />
+									</c:choose>
+								</td>
+								<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
+								<td align="center">${substituicao.dtFimSubstDDMMYY}</td>
+								<td align="center"><c:if
+										test="${!substituicao.terminada && !substituicao.excluida}">
+										<ww:url id="url" action="editar" namespace="/substituicao">
+											<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
+										</ww:url>
+										<ww:a href="%{url}">Alterar</ww:a>
+										<c:if test="${!substituicao.emVoga && !substituicao.excluida}">
+											<ww:url id="url" action="excluir" namespace="/substituicao">
+												<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
+											</ww:url>
+											<ww:a href="%{url}"> | Excluir</ww:a>
+										</c:if>
+									</c:if>
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="gt-table-buttons">
+				<ww:url id="url" action="editar" namespace="/substituicao">
+				</ww:url>
+				<input type="button" value="Incluir"
+					onclick="javascript:window.location.href='${url}'"
+					class="gt-btn-medium gt-btn-left">
+			</div>
+		</div>
+	</div>
 </siga:pagina>

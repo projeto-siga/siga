@@ -66,6 +66,12 @@
 	</function>
 		
 	<function>
+		<name>esperaSimples</name>
+		<function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
+		<function-signature>java.lang.String esperaSimples(java.util.Date)</function-signature>
+	</function>
+		
+	<function>
 		<name>podeAtenderPedidoPublicacaoPorConfiguracao</name>
 		<function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
 		<function-signature>java.lang.Boolean podeAtenderPedidoPublicacaoPorConfiguracao( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>

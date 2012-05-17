@@ -89,6 +89,20 @@ public class SigaLibsEL {
 				+ Long.toString(l) + " dia" + (l == 1L ? "" : "s") + ")";
 	}
 
+	public static String esperaSimples(Date dt) {
+		SigaCalendar c = new SigaCalendar();
+		SigaCalendar lAnterior = new SigaCalendar(dt.getTime());
+		// long l = -c.diffDayPeriods(lAnterior);
+		long l = c.getUnixDay() - lAnterior.getUnixDay();
+		if (l == 0) {
+			if (lAnterior.getJulianDay() == c.getJulianDay())
+				return lAnterior.get(Calendar.HOUR_OF_DAY) + ":"
+						+ (lAnterior.get(Calendar.MINUTE) < 10 ? "0" : "")
+						+ lAnterior.get(Calendar.MINUTE);
+		}
+		return Long.toString(l) + " dia" + (l == 1L ? "" : "s");
+	}
+
 	public static String intervalo(Date dtIni, Date dtFim) {
 		SigaCalendar lFim = new SigaCalendar(dtIni.getTime());
 		SigaCalendar lIni = new SigaCalendar(dtFim.getTime());

@@ -24,6 +24,7 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
@@ -191,35 +192,43 @@ public class UsuarioAction extends SigaActionSupport {
 		boolean senhaTrocadaAD = false;
 		switch (metodo) {
 		case 1:
-			
-			CpIdentidade idNovaAlterada = Cp.getInstance().getBL().alterarSenhaDeIdentidade(
-					matricula, cpf, getIdentidadeCadastrante());
-			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaAlterada);
+
+			CpIdentidade idNovaAlterada = Cp
+					.getInstance()
+					.getBL()
+					.alterarSenhaDeIdentidade(matricula, cpf,
+							getIdentidadeCadastrante());
+			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(
+					idNovaAlterada);
 			break;
 		case 2:
-			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
-				getRequest()
-				.setAttribute("mensagem",
-						"Não foi possível alterar a senha!<br/>" +
-						"1) As pessoas informadas não podem ser as mesmas;<br/>" +
-						"2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>" +
-						"3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>");
-				return Action.SUCCESS;
-			}else{
-				CpIdentidade idNovaDefinida = Cp.getInstance().getBL().definirSenhaDeIdentidade(senhaNova, senhaConfirma, matricula, auxiliar1, auxiliar2, getIdentidadeCadastrante());
-				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida);
+			if (!Cp.getInstance()
+					.getBL()
+					.podeAlterarSenha(auxiliar1, cpf1, senha1, auxiliar2, cpf2,
+							senha2, matricula, cpf, senhaNova)) {
+				throw new AplicacaoException(
+						"Não foi possível alterar a senha! "
+								+ "a) As pessoas informadas não podem ser as mesmas;"
+								+ "b) Verifique se as matrículas e senhas foram informadas corretamente; "
+								+ "b) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada.");
+			} else {
+				CpIdentidade idNovaDefinida = Cp
+						.getInstance()
+						.getBL()
+						.definirSenhaDeIdentidade(senhaNova, senhaConfirma,
+								matricula, auxiliar1, auxiliar2,
+								getIdentidadeCadastrante());
+				senhaTrocadaAD = IntegracaoLdap.getInstancia()
+						.atualizarSenhaLdap(idNovaDefinida);
 			}
 			break;
 		default:
-			getRequest()
-			.setAttribute("mensagem",
-					"Método inválido!");
-			return Action.SUCCESS;
+			throw new AplicacaoException("Método inválido!");
 		}
 
-		getRequest()
-		.setAttribute("mensagem",
-				"A Senha foi alterada com sucesso e foi enviada para seu email" + (senhaTrocadaAD?".<br/>OBS: A senha do AD também foi alterada.":""));
+		setMensagem("A Senha foi alterada com sucesso e foi enviada para seu email"
+				+ (senhaTrocadaAD ? ".<br/>OBS: A senha do AD também foi alterada."
+						: ""));
 
 		return Action.SUCCESS;
 	}
@@ -232,13 +241,10 @@ public class UsuarioAction extends SigaActionSupport {
 		getRequest().setAttribute("volta", "incluir");
 		getRequest().setAttribute("titulo", "Novo Usuário");
 
-		CpIdentidade id = Cp.getInstance().getBL().criarIdentidade(matricula,
-				cpf, getIdentidadeCadastrante());
+		CpIdentidade id = Cp.getInstance().getBL()
+				.criarIdentidade(matricula, cpf, getIdentidadeCadastrante());
 
-		getRequest()
-				.setAttribute(
-						"mensagem",
-						"Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email");
+		setMensagem("Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email");
 
 		return Action.SUCCESS;
 
@@ -249,7 +255,6 @@ public class UsuarioAction extends SigaActionSupport {
 	}
 
 	public String aTrocarSenhaGravar() throws Exception {
-		String mensagem = "";
 		getRequest().setAttribute("volta", "troca");
 		getRequest().setAttribute("titulo", "Troca de Senha");
 		String senhaAtual, senhaNova, senhaConfirma, nomeUsuario;
@@ -258,12 +263,16 @@ public class UsuarioAction extends SigaActionSupport {
 		senhaConfirma = getSenhaConfirma();
 		nomeUsuario = getNomeUsuario();
 
-		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
-				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
-				getIdentidadeCadastrante());
-		boolean senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova);
-		getRequest().setAttribute("mensagem",
-				"A Senha foi alterada com sucesso"+ (senhaTrocadaAD?"<br/>OBS: A senha do AD também foi alterada.":""));
+		CpIdentidade idNova = Cp
+				.getInstance()
+				.getBL()
+				.trocarSenhaDeIdentidade(senhaAtual, senhaNova, senhaConfirma,
+						nomeUsuario, getIdentidadeCadastrante());
+		boolean senhaTrocadaAD = IntegracaoLdap.getInstancia()
+				.atualizarSenhaLdap(idNova);
+		setMensagem("A Senha foi alterada com sucesso"
+				+ (senhaTrocadaAD ? "<br/>OBS: A senha do AD também foi alterada."
+						: ""));
 
 		return Action.SUCCESS;
 

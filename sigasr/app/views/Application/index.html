@@ -1,0 +1,20 @@
+#{extends 'main.html' /} 
+#{set title:'Abrir Solicitacao' /}
+
+
+<h1>${title}</h1>
+<br />
+<form action="@{servico.gravar}">
+Item de Configuração: #{select name:'idItemConfiguracao', items:itensConfiguracao, labelProperty:'descrItemConfiguracao', value:idItemConfiguracao /}<br/>
+Forma de acompanhamento: #{select name:'idFormaAcompanhamento', items:formasAcompanhamento, labelProperty:'descrFormaAcompanhamento', value:idFormaAcompanhamento /}<br/>
+Solicitante: #{selecao  tipo:'pessoa', nome:'Solicitante' /}<br/><br/>
+Urgência: GUT aqui<br/>
+Telefone Principal: <input type="text" name="telPrincipal" id="telPrincipal" /><br/>
+Local: <input type="text" name="local" id=local" /><br/>
+Motivo fechamento: <input type="text" name="motivo" id=local" /><br/>
+Anexar arquivo: xxx <br/>
+Descricao: <textarea name="descrSolicitacao" id="descrSolicitacao" ></textarea><br/>
+
+<input type="submit" value="Gravar" />
+
+</form>

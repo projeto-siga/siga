@@ -656,7 +656,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public boolean isAssinada() {	
 		if (!this.isCancelada() && this.getExMovimentacaoReferenciadoraSet() != null) {
 		  for (ExMovimentacao movRef : this.getExMovimentacaoReferenciadoraSet()) {
-			  if (movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
+			  if (movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+					  || movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
 				 return true;			     
 	      }
 		}  

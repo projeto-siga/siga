@@ -83,6 +83,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	public static final long MARCADOR_COMO_INTERESSADO = 28;
 	
 	final static public long MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA = 29;
+	
+	final static public long MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA = 30;
 
 	public CpMarcador() {
 		super();

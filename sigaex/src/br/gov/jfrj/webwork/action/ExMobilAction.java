@@ -402,7 +402,13 @@ public class ExMobilAction extends
 		flt.setClassificacaoSelId(paramLong("classificacaoSel.id"));
 		flt.setDescrDocumento(Texto
 				.removeAcentoMaiusculas(param("descrDocumento")));
-		flt.setFullText(param("fullText"));
+		String paramFullText = param("fullText");
+		if (paramFullText != null){				
+			paramFullText = paramFullText.trim();  /* retirando espaços em branco (inicio e final) e "" */ 
+			paramFullText = paramFullText.replace("\"", "");
+			setFullText(paramFullText);
+		}
+		flt.setFullText(paramFullText);
 		flt.setDestinatarioSelId(paramLong("destinatarioSel.id"));
 		if (flt.getDestinatarioSelId() != null)
 			flt.setDestinatarioSelId((daoPes(flt.getDestinatarioSelId()))

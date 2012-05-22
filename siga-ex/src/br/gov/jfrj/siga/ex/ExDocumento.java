@@ -1717,7 +1717,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 
 		for (DpPessoa signatario : getSubscritorECosignatarios()) {
-			if (!todosQueJaAssinaram.contains(signatario))
+			boolean encontrou = false;
+			
+			for (DpPessoa jaAssinou : todosQueJaAssinaram) {
+				if(jaAssinou.equivale(signatario)) {
+					encontrou = true;
+					break;
+				}
+			}
+			
+			if (!encontrou)
 				return false;
 		}
 

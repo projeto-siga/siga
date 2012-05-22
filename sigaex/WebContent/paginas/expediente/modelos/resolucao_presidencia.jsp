@@ -57,17 +57,40 @@
 			<c:set var="tl" value="11pt"></c:set>
 		</c:if>
 
+
+        <!-- INICIO PRIMEIRO CABECALHO
+		<table width="100%" border="0"  bgcolor="#FFFFFF"><tr><td>
+		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
+		</td></tr>
+			<tr bgcolor="#FFFFFF">
+				<td width="100%">
+				<br/><br/>
+					<table width="100%" border="0" >
+						<tr>
+							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >RESOLU플O N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		FIM PRIMEIRO CABECALHO -->
+
 		<!-- INICIO PRIMEIRO CABECALHO
 		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
 		</td></tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
-
-                <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLU플O N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
-
-		<br>
+        <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLU플O N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> -->
+		
 		<p align="center" style="font-family:Arial;font-size:11pt;">
+
+                 <!-- INICIO TITULO 
+			<mod:letra tamanho="${tl}">
+				<p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLU플O N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span></p>
+			</mod:letra>
+		      FIM TITULO -->
+
 		<!-- INICIO NUMERO <span style="font-weight: bold;">RESOLU플O N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
 
 		<!-- INICIO CABECALHO
@@ -75,16 +98,13 @@
 		FIM CABECALHO -->
               
 		<mod:letra tamanho="${tl}">
-                    
-		    <!-- INICIO MIOLO -->
-			<!-- INICIO CORPO -->
-			<br>
-			<table border="0"  bgcolor="#FFFFFF" cellpadding="5" width="40%"style="font-size:10" align="right" >
+          	<table border="0"  bgcolor="#FFFFFF" cellpadding="5" width="40%"style="font-size:10" align="right" >
 	  		   <tr>
   				   <td colspan="2" align="justify" style="font-size:10">${eme}</td>
   			   </tr>
   			</table>
-			
+			<!-- INICIO MIOLO -->
+			<!-- INICIO CORPO -->
 			<span style="font-size: ${tl};line-height: 1px"> ${texto_res} </span>
 			<!-- FIM CORPO -->
 			<p align="center"><!-- INICIO FECHO -->PUBLIQUE-SE. REGISTRE-SE. CUMPRA-SE.<!-- FIM FECHO --><br/><br/><br></p>

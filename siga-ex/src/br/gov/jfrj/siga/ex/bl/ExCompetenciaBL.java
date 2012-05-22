@@ -2021,13 +2021,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		if (mob.doc().getDtFechamento() != null)
 			return false;
+		if (lotaTitular.isFechada()) 
+			return false;
 		if (mob.doc().getExTipoDocumento().getIdTpDoc() != 2
 				&& mob.doc().getExTipoDocumento().getIdTpDoc() != 3)
 			if (!mob.doc().getLotaCadastrante().equivale(lotaTitular)
 					&& (mob.doc().getSubscritor() != null && !mob.doc()
 							.getSubscritor().equivale(titular))
 					&& (mob.doc().getTitular() != null && !mob.doc()
-							.getTitular().equivale(titular)))
+							.getTitular().equivale(titular))
+			)
 				return false;
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR);

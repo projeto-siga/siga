@@ -2415,6 +2415,7 @@ public class ExBL extends CpBL {
 		// }
 		// }
 		dao().excluir(mov);
+		mov.getExMobil().getExMovimentacaoSet().remove(mov);
 
 		Notificador.notificarPerfisVinculados(mov,
 				Notificador.TIPO_NOTIFICACAO_EXCLUSAO);

@@ -9,20 +9,16 @@ import javax.persistence.Table;
 import play.db.jpa.GenericModel;
 import play.db.jpa.Model;
 
-@Entity
-@Table(name="SR_FORMA_ACOMPANHAMEMNTO")
-public class SrFormaAcompanhamento extends GenericModel {
-	
-	@Id
-	@GeneratedValue
-	@Column(name = "ID_FORMA_ACOMPANHAMENTO")
+public enum SrFormaAcompanhamento {
+
+	ANDAMENTO(1, "A cada andamento"), FECHAMENTO(2,
+			"Quando o chamado for fechado");
+
 	public long id;
-	
-	@Column(name="DESCR_FORMA_ACOMPANHAMENTO")
 	public String descrFormaAcompanhamento;
 
-	public SrFormaAcompanhamento(String descricao) {
-		super();
+	SrFormaAcompanhamento(int id, String descricao) {
+		this.id = id;
 		this.descrFormaAcompanhamento = descricao;
 	}
 

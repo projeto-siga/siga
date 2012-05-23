@@ -18,26 +18,59 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@Entity
+@Table(name="CORPORATIVO.CP_IDENTIDADE"
+)
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
+	 @SequenceGenerator(name="generator", sequenceName="CORPORATIVO.CP_IDENTIDADE_SEQ")@Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
+
+	    
+	    @Column(name="ID_IDENTIDADE", nullable=false)
 	@Desconsiderar
 	private Long idIdentidade;
+	 
+	 @ManyToOne(fetch=FetchType.LAZY)
+	    @JoinColumn(name="ID_ORGAO_USU")
 	private CpOrgaoUsuario cpOrgaoUsuario;
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_TP_IDENTIDADE")
 	private CpTipoIdentidade cpTipoIdentidade;
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_PESSOA")
 	private DpPessoa dpPessoa;
+	@Column(name="SENHA_IDENTIDADE")
 	private String dscSenhaIdentidade;
+	@Column(name="SENHA_IDENTIDADE_CRIPTO")
 	private String dscSenhaIdentidadeCripto;
+	@Column(name="SENHA_IDENTIDADE_CRIPTO_SINC")
 	@Desconsiderar
 	private String dscSenhaIdentidadeCriptoSinc;
+	@Column(name="DATA_CANCELAMENTO_IDENTIDADE")
 	private Date dtCancelamentoIdentidade;
+	 @Column(name="DATA_CRIACAO_IDENTIDADE")
 	private Date dtCriacaoIdentidade;
+	 @Column(name="DATA_EXPIRACAO_IDENTIDADE")
 	private Date dtExpiracaoIdentidade;
+	 @Column(name="LOGIN_IDENTIDADE")
 	private String nmLoginIdentidade;
 
 	/*

@@ -27,6 +27,8 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Entity;
+
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -36,6 +38,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@Entity
 public class CpOrgao extends AbstractCpOrgao implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 

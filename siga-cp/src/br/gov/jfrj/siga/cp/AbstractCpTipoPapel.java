@@ -18,29 +18,46 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CORPORATIVO.CP_TIPO_PAPEL")
 public class AbstractCpTipoPapel {
+
+	@Id
+	@Column(name = "ID_TP_PAPEL", nullable = false)
 	private Integer idCpTpPapel;
+	@Column(name = "DESC_TP_PAPEL")
 	private String dscTpPapel;
+
 	/**
 	 * @return the idCpTpPapel
 	 */
 	public Integer getIdCpTpPapel() {
 		return idCpTpPapel;
 	}
+
 	/**
-	 * @param idCpTpPapel the idCpTpPapel to set
+	 * @param idCpTpPapel
+	 *            the idCpTpPapel to set
 	 */
 	public void setIdCpTpPapel(Integer idCpTpPapel) {
 		this.idCpTpPapel = idCpTpPapel;
 	}
+
 	/**
 	 * @return the dscTpPapel
 	 */
 	public String getDscTpPapel() {
 		return dscTpPapel;
 	}
+
 	/**
-	 * @param dscTpPapel the dscTpPapel to set
+	 * @param dscTpPapel
+	 *            the dscTpPapel to set
 	 */
 	public void setDscTpPapel(String dscTpPapel) {
 		this.dscTpPapel = dscTpPapel;

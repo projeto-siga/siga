@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.cp;
 
 import java.io.UnsupportedEncodingException;
 
+import javax.persistence.Entity;
 import javax.persistence.PostLoad;
 
 import org.hibernate.Hibernate;
@@ -28,6 +29,7 @@ import br.gov.jfrj.siga.cp.util.Blob;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@Entity
 public class CpModelo extends AbstractCpModelo {
 
 	private byte[] cacheConteudoBlobMod;

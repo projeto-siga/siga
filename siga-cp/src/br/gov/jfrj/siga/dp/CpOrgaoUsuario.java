@@ -26,10 +26,13 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@Entity
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 		Serializable, Selecionavel, Assemelhavel {
 

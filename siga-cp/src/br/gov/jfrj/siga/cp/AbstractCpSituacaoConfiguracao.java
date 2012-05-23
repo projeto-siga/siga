@@ -26,17 +26,37 @@ package br.gov.jfrj.siga.cp;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
+
+@MappedSuperclass
+@Table(name = "CORPORATIVO.CP_SITUACAO_CONFIGURACAO")
 public abstract class AbstractCpSituacaoConfiguracao implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@Column(name = "ID_SIT_CONFIGURACAO", nullable = false)
 	private Long idSitConfiguracao;
+	@Column(name = "DSC_SIT_CONFIGURACAO")
 	private String dscSitConfiguracao;
+	@Column(name = "RESTRITIVIDADE_SIT_CONF")
 	private Long restritividadeSitConfiguracao;
 	//private Set<CpTipoConfiguracao> cpTiposConfiguracaoSet;
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CP_TIPO_SERVICO_SITUACAO", joinColumns = { @JoinColumn(name = "ID_SIT_CONFIGURACAO", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_SERVICO", nullable = false, updatable = false) })
 	private Set<CpTipoServico> cpTiposServicoSet;
+
 	public Long getIdSitConfiguracao() {
 		return idSitConfiguracao;
 	}
@@ -57,7 +77,8 @@ public abstract class AbstractCpSituacaoConfiguracao implements Serializable {
 		return restritividadeSitConfiguracao;
 	}
 
-	public void setRestritividadeSitConfiguracao(Long restritividadeSitConfiguracao) {
+	public void setRestritividadeSitConfiguracao(
+			Long restritividadeSitConfiguracao) {
 		this.restritividadeSitConfiguracao = restritividadeSitConfiguracao;
 	}
 
@@ -69,12 +90,16 @@ public abstract class AbstractCpSituacaoConfiguracao implements Serializable {
 	}
 
 	/**
-	 * @param cpTiposServicoSet the cpTiposServicoSet to set
+	 * @param cpTiposServicoSet
+	 *            the cpTiposServicoSet to set
 	 */
 	public void setCpTiposServicoSet(Set<CpTipoServico> cpTiposServicoSet) {
 		this.cpTiposServicoSet = cpTiposServicoSet;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -83,12 +108,14 @@ public abstract class AbstractCpSituacaoConfiguracao implements Serializable {
 		int result = 1;
 		result = prime
 				* result
-				+ ((getIdSitConfiguracao() == null) ? 0 : getIdSitConfiguracao()
-						.hashCode());
+				+ ((getIdSitConfiguracao() == null) ? 0
+						: getIdSitConfiguracao().hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

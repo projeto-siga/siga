@@ -11,5 +11,9 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
+# Seleção
+*       /selecionar                  	Application.selecionar
+*       /{tipo}/buscar                  	Application.buscar{tipo}
+
 # Catch all
-*       /{controller}/{action}                  {controller}.{action}
+*       /Application/{action}                  Application.{action}

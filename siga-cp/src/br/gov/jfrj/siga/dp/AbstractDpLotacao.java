@@ -36,6 +36,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -46,7 +47,7 @@ import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
-@Entity
+@MappedSuperclass
 @Table(name = "CORPORATIVO.DP_LOTACAO")
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {

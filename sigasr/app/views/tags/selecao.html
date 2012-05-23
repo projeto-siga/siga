@@ -1,7 +1,19 @@
-#{set _base:'http://localhost:8080'/}
-<span id="${_idAjax}" depende=";tipo${_nome};"><!--ajax:${_idAjax}-->
-<input type="hidden" name="campos" value="${_tipo}${_nome}Sel.id" />
-<!-- A lista de par --> <script type="text/javascript">
+#{set _base:'http://10.34.5.90:8080'/}
+<span id="${_idAjax}" depende=";tipo${_nome};"> <!--ajax:${_idAjax}-->
+	<input type="hidden" name="campos" value="${_tipo}${_nome}Sel.id" /> <!-- A lista de par -->
+	<script type="text/javascript">
+
+	%{
+		String where = "";
+		try{
+			Class<models.SrSelecionavel> cl = Class.forName("models."+_tipo);
+			where = "play";
+		} catch(ClassNotFoundException cnfe) {
+			where = "siga";
+		}
+	}%
+	
+
 self.retorna_${_tipo}${_nome} = function(id, sigla, descricao) {
     try {
 		newwindow_${_tipo}${_nome}.close();
@@ -25,8 +37,12 @@ self.retorna_${_tipo}${_nome} = function(id, sigla, descricao) {
 self.newwindow_${_tipo}${_nome} = '';
 self.popitup_${_tipo}${_nome} = function(sigla) {
 	//var url = '${_base}/siga//${_tipo}/buscar.action?propriedade=${_tipo}${_nome}&sigla='+encodeURI(sigla) +'&=';
-	var url = '@{Application.proxy(_base + "/siga//" + _tipo + "/buscar.action?")}' + 'propriedade%3D${_tipo}${_nome}'+'%26sigla%3D' + sigla;
-	
+	#{if where == 'play'}	
+		var url = '/${_tipo}/buscar' + '?sigla=' + sigla + '&nome=${_nome}';
+	#{/if}
+	#{else}
+		var url = '@{Application.proxy(_base + "/siga//" + _tipo + "/buscar.action?")}' + 'propriedade%3D${_tipo}${_nome}'+'%26sigla%3D' + sigla;
+	#{/else}
 	if (!newwindow_${_tipo}${_nome}.closed && newwindow_${_tipo}${_nome}.location) {
 		newwindow_${_tipo}${_nome}.location.href = url;
 	} else {
@@ -61,19 +77,28 @@ self.ajax_${_tipo}${_nome} = function() {
 	if (sigla == '') {
 		return retorna_${_tipo}${_nome}('', '', '');
 	}
-	//var url = '${_base}/siga//${_tipo}/selecionar.action?propriedade=${_tipo}${_nome}'+'&=';
-	var url = '@{Application.proxy(_base + "/siga//" + _tipo + "/selecionar.action?")}' + 'propriedade%3D${_tipo}${_nome}'+'%26sigla%3D' + sigla;
+	#{if where == 'play'}	
+		var url = '@{Application.selecionar()}' + '?sigla=' + sigla + '&tipo=${_tipo}';
+	#{/if}
+	#{else}
+		var url = '@{Application.proxy(_base + "/siga//" + _tipo + "/selecionar.action?")}' + 'propriedade%3D${_tipo}${_nome}'+'%26sigla%3D' + sigla;
+	#{/else}
 	//url = url + '&sigla=' + sigla;
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${_tipo}${_nome}', false);
 }
-</script>
-<input type="hidden" name="${_tipo}${_nome}Sel.id" value="" id="frm_${_tipo}${_nome}Sel_id" /> 
-<input type="hidden" name="${_tipo}${_nome}Sel.descricao" value="" id="frm_${_tipo}${_nome}Sel_descricao" /> 
-<input type="hidden" name="${_tipo}${_nome}Sel.buscar" value="" id="frm_${_tipo}${_nome}Sel_buscar" /> 
-<input type="hidden" name="req${_tipo}${_nome}Sel" value="" id="frm_req${_tipo}${_nome}Sel" /> 
-<input type="hidden" name="alterouSel" value="" id="alterouSel" /> 
-<input type="text" name="${_tipo}${_nome}Sel.sigla" size="25" value="" id="frm_${_tipo}${_nome}Sel_sigla"
-	onblur="javascript: ajax_${_tipo}${_nome}();" onkeypress="return handleEnter(this, event)" />
-<input type="button" id="${_tipo}${_nome}SelButton" value="..." onclick="javascript: popitup_${_tipo}${_nome}('');" theme="simple">
-<span id="${_tipo}${_nome}SelSpan"></span>
-<!--  idAjax="${_idAjax}" --> <!--/ajax:${_idAjax}--></span>
+</script> <input type="hidden" name="${_tipo}${_nome}Sel.id" value=""
+	id="frm_${_tipo}${_nome}Sel_id" /> <input type="hidden"
+	name="${_tipo}${_nome}Sel.descricao" value=""
+	id="frm_${_tipo}${_nome}Sel_descricao" /> <input type="hidden"
+	name="${_tipo}${_nome}Sel.buscar" value=""
+	id="frm_${_tipo}${_nome}Sel_buscar" /> <input type="hidden"
+	name="req${_tipo}${_nome}Sel" value="" id="frm_req${_tipo}${_nome}Sel" />
+	<input type="hidden" name="alterouSel" value="" id="alterouSel" /> <input
+	type="text" name="${_tipo}${_nome}Sel.sigla" size="25" value=""
+	id="frm_${_tipo}${_nome}Sel_sigla"
+	onblur="javascript: ajax_${_tipo}${_nome}();"
+	onkeypress="return handleEnter(this, event)" /> <input type="button"
+	id="${_tipo}${_nome}SelButton" value="..."
+	onclick="javascript: popitup_${_tipo}${_nome}('');" theme="simple">
+	<span id="${_tipo}${_nome}SelSpan"></span> <!--  idAjax="${_idAjax}" -->
+	<!--/ajax:${_idAjax}--> </span>

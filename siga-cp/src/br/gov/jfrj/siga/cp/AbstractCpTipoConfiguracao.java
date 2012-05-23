@@ -27,28 +27,46 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CORPORATIVO.CP_TIPO_CONFIGURACAO")
 public abstract class AbstractCpTipoConfiguracao implements Serializable {
 
+	@Id
+	@Column(name = "ID_TP_CONFIGURACAO", nullable = false)
 	private Long idTpConfiguracao;
+	@Column(name = "DSC_TP_CONFIGURACAO")
 	private String dscTpConfiguracao;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
 	private CpSituacaoConfiguracao situacaoDefault;
-	private Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cpTipoConfiguracao")
+	//private Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet;
+
 	/**
 	 * @return the cpSituacoesConfiguracaoSet
 	 */
-	public Set<CpSituacaoConfiguracao> getCpSituacoesConfiguracaoSet() {
+	/*public Set<CpSituacaoConfiguracao> getCpSituacoesConfiguracaoSet() {
 		return cpSituacoesConfiguracaoSet;
 	}
 
 	/**
-	 * @param cpSituacoesConfiguracaoSet the cpSituacoesConfiguracaoSet to set
+	 * @param cpSituacoesConfiguracaoSet
+	 *            the cpSituacoesConfiguracaoSet to set
 	 */
-	public void setCpSituacoesConfiguracaoSet(
+	/*public void setCpSituacoesConfiguracaoSet(
 			Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet) {
 		this.cpSituacoesConfiguracaoSet = cpSituacoesConfiguracaoSet;
-	}
+	}*/
 
-	
 	public Long getIdTpConfiguracao() {
 		return idTpConfiguracao;
 	}
@@ -73,11 +91,11 @@ public abstract class AbstractCpTipoConfiguracao implements Serializable {
 	}
 
 	/**
-	 * @param situacaoDefault the situacaoDefault to set
+	 * @param situacaoDefault
+	 *            the situacaoDefault to set
 	 */
 	public void setSituacaoDefault(CpSituacaoConfiguracao situacaoDefault) {
 		this.situacaoDefault = situacaoDefault;
 	}
-
 
 }

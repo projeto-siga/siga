@@ -23,7 +23,19 @@
  */
 package br.gov.jfrj.siga.cp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -40,6 +52,8 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
  * customize the behavior of this class by editing the class, {@link
  * CpClassificacao()}.
  */
+@Entity
+@Table(name = "CORPORATIVO.CP_CONFIGURACAO")
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable {
 
@@ -48,45 +62,73 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	 */
 	private static final long serialVersionUID = 4514355304185987860L;
 
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_ORGAO_USU")
 	@NaoRecursivo
 	private CpOrgaoUsuario orgaoUsuario;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_LOTACAO")
 	@NaoRecursivo
 	private DpLotacao lotacao;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_CARGO")
 	@NaoRecursivo
 	private DpCargo cargo;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_FUNCAO_CONFIANCA")
 	@NaoRecursivo
 	private DpFuncaoConfianca funcaoConfianca;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_PESSOA")
 	@NaoRecursivo
 	private DpPessoa dpPessoa;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_SIT_CONFIGURACAO")
 	@NaoRecursivo
 	private CpSituacaoConfiguracao cpSituacaoConfiguracao;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_TP_CONFIGURACAO")
 	@NaoRecursivo
 	private CpTipoConfiguracao cpTipoConfiguracao;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_SERVICO")
 	@NaoRecursivo
 	private CpServico cpServico;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_IDENTIDADE")
 	@NaoRecursivo
 	private CpIdentidade cpIdentidade;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_GRUPO")
 	@NaoRecursivo
 	private CpGrupo cpGrupo;
-	
+
+	@Column(name="NM_EMAIL")
 	@NaoRecursivo
 	private String nmEmail;
-	
+
+	@Column(name="DESC_FORMULA")
 	@NaoRecursivo
 	private String dscFormula;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_TP_LOTACAO")
 	@NaoRecursivo
 	private CpTipoLotacao cpTipoLotacao;
 

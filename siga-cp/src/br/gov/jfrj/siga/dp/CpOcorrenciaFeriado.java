@@ -29,8 +29,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.persistence.Entity;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
+@Entity
 public class CpOcorrenciaFeriado extends AbstractCpOcorrenciaFeriado implements Serializable,
 		Selecionavel {
 

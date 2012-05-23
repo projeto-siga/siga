@@ -29,6 +29,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.Entity;
+
+@Entity
 public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
 
 	/**

@@ -18,6 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Entity;
+
+@Entity
 public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao {
 
 	/**

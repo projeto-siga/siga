@@ -107,18 +107,6 @@ public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 	
-	@Column(name = "HIS_ID_INI")
-	private Long hisIdIni;
-	
-	@Column(name = "HIS_DT_INI")
-	private Date hisDtIni;
-	
-	@Column(name = "HIS_DT_FIM")
-	private Date hisDtFim;
-	
-	@Column(name = "HIS_ATIVO")
-	private Integer hisAtivo;
-	
 	@Column(name = "HIS_IDE")
 	private String ideOrgao;
 
@@ -139,38 +127,6 @@ public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 	 * 
 	 * }
 	 */
-
-	public Long getHisIdIni() {
-		return hisIdIni;
-	}
-
-	public void setHisIdIni(Long hisIdIni) {
-		this.hisIdIni = hisIdIni;
-	}
-
-	public Date getHisDtIni() {
-		return hisDtIni;
-	}
-
-	public void setHisDtIni(Date hisDtIni) {
-		this.hisDtIni = hisDtIni;
-	}
-
-	public Date getHisDtFim() {
-		return hisDtFim;
-	}
-
-	public void setHisDtFim(Date hisDtFim) {
-		this.hisDtFim = hisDtFim;
-	}
-
-	public int getHisAtivo() {
-		return hisAtivo;
-	}
-
-	public void setHisAtivo(Integer hisAtivo) {
-		this.hisAtivo = hisAtivo;
-	}
 
 	public String getBairroOrgao() {
 		return bairroOrgao;

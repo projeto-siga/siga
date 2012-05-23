@@ -18,8 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Entity;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
+@Entity
 public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	/**

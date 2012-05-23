@@ -7,7 +7,6 @@
 <%@ attribute name="meta"%>
 <%@ attribute name="pagina_de_erro"%>
 <%@ attribute name="onLoad"%>
-
 <c:if test="${not empty pagina_de_erro}">
 	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}"/>
 </c:if>

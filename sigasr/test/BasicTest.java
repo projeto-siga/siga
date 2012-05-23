@@ -12,7 +12,7 @@ public class BasicTest extends UnitTest {
 
 	@Test
 	public void criarObjetosBasicos() {
-		new SrItemConfiguracao("Micro").save();
+	//	new SrItemConfiguracao("Micro").save();
 		SrItemConfiguracao itemConfig = SrItemConfiguracao.find("byDescricao",
 				"Micro").first();
 		assertNotNull(itemConfig);

@@ -51,8 +51,7 @@ public class SrSolicitacao extends GenericModel {
 	@JoinColumn(name = "ID_SOLICITACAO_PAI")
 	public SrSolicitacao solcitacaoPai;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_FORMA_ACOMPANHAMENTO")
+	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
 
 	@ManyToOne
@@ -72,8 +71,14 @@ public class SrSolicitacao extends GenericModel {
 	@Column(name = "DESCRICAO")
 	public String descrSolicitacao;
 
+	@Column(name = "GRAVIDADE")
+	public SrGravidade gravidade;
+
+	@Column(name = "TENDENCIA")
+	public SrTendencia tendencia;
+
 	@Column(name = "URGENCIA")
-	public String urgencia;
+	public SrUrgencia urgencia;
 
 	@Column(name = "DT_REG")
 	public Date dtReg;
@@ -100,6 +105,7 @@ public class SrSolicitacao extends GenericModel {
 			SrSolicitacao solcitacaoPai,
 			SrFormaAcompanhamento formaAcompanhamento,
 			SrItemConfiguracao itemConfiguracao, SrServico servico,
+			SrGravidade gravidade, SrUrgencia urgencia, SrTendencia tendencia,
 			String dscrSolcitacao, String local, String telPrincipal,
 			String motivoFechamentoAbertura) {
 		super();
@@ -111,6 +117,9 @@ public class SrSolicitacao extends GenericModel {
 		this.formaAcompanhamento = formaAcompanhamento;
 		this.itemConfiguracao = itemConfiguracao;
 		this.servico = servico;
+		this.urgencia = urgencia;
+		this.tendencia = tendencia;
+		this.gravidade = gravidade;
 		this.descrSolicitacao = dscrSolcitacao;
 		this.local = local;
 		this.telPrincipal = telPrincipal;

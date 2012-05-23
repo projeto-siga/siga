@@ -18,11 +18,14 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Entity;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@Entity
 public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 		Comparable<CpGrupo> {
 

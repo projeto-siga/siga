@@ -18,6 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Entity;
+
+@Entity
 public class CpTipoServico extends AbstractCpTipoServico {
 	public static final int TIPO_SERVICO_DIRETORIO = 1;
 	public static final int TIPO_CONFIG_SISTEMA = 2;

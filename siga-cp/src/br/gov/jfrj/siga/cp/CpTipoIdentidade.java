@@ -18,6 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Entity;
+
+@Entity
 public class CpTipoIdentidade extends AbstractCpTipoIdentidade {
 	public static final Integer FORMULARIO = new Integer(1);
 	public static final Integer CERTIFICADO = new Integer(2);

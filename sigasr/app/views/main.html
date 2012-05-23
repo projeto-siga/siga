@@ -41,12 +41,12 @@ function embedpage(request) {
 }
 
 //var mydomain="http://"+window.location.hostname + ":" + "8080";
-var mydomain='@{Application.proxy(_base + "/siga/pagina_vazia.action")}'
+var mydomain='@{Application.proxy(_base + "/siga/pagina_vazia.action?popup="+popup)}'
 
-HttpRequest(mydomain+"/pagina_vazia.action"); //include "external.htm" onto current page
+HttpRequest(mydomain); //include "external.htm" onto current page
 </script>
 
-<h3><a href="@{Application.index()}">Cadastrar</a> | <a href="@{Servico.listarTudo()}">Listar todas</a></h3>
+<!-- <h3><a href="@{Application.index()}">Cadastrar</a> | <a href="@{Application.listarTudo()}">Listar todas</a></h3> -->
 
 #{doLayout /}
 

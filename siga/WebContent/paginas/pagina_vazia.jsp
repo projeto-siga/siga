@@ -5,6 +5,6 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="${titulo}">
+<siga:pagina titulo="${titulo}" popup="${param.popup}">
 <!-- insert body -->
 </siga:pagina>

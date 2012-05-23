@@ -33,10 +33,12 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-@Entity
+//Essa anotação é necessária por causa do mappedBy em CpFeriado que aponta pra cá
+@MappedSuperclass
 @Table(name = "CORPORATIVO.CP_OCORRENCIA_FERIADO")
 public abstract class AbstractCpOcorrenciaFeriado implements Serializable {
 

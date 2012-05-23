@@ -18,48 +18,74 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CORPORATIVO.CP_TIPO_IDENTIDADE")
 public class AbstractCpTipoIdentidade {
+
+	@Id
+	@Column(name = "ID_TP_IDENTIDADE ", nullable = false)
 	private Integer idCpTpIdentidade;
+
+	@Column(name = " DESC_TP_IDENTIDADE")
 	private String dscCpTpIdentidade;
+
 	/**
 	 * @return the idCpTpIdentidade
 	 */
 	public Integer getIdCpTpIdentidade() {
 		return idCpTpIdentidade;
 	}
+
 	/**
-	 * @param idCpTpIdentidade the idCpTpIdentidade to set
+	 * @param idCpTpIdentidade
+	 *            the idCpTpIdentidade to set
 	 */
 	public void setIdCpTpIdentidade(Integer idCpTpIdentidade) {
 		this.idCpTpIdentidade = idCpTpIdentidade;
 	}
+
 	/**
 	 * @return the dscTpIdentidade
 	 */
 	public String getDscCpTpIdentidade() {
 		return dscCpTpIdentidade;
 	}
+
 	/**
-	 * @param dscTpIdentidade the dscTpIdentidade to set
+	 * @param dscTpIdentidade
+	 *            the dscTpIdentidade to set
 	 */
 	public void setDscCpTpIdentidade(String dscCpTpIdentidade) {
 		this.dscCpTpIdentidade = dscCpTpIdentidade;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((dscCpTpIdentidade == null) ? 0 : dscCpTpIdentidade.hashCode());
+		result = prime
+				* result
+				+ ((dscCpTpIdentidade == null) ? 0 : dscCpTpIdentidade
+						.hashCode());
 		result = prime
 				* result
 				+ ((idCpTpIdentidade == null) ? 0 : idCpTpIdentidade.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

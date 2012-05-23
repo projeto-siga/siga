@@ -20,6 +20,10 @@ package br.gov.jfrj.siga.cp.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+
+import org.hibernate.annotations.Formula;
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
@@ -28,15 +32,19 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class HistoricoSuporte extends Objeto implements Historico,
 		Assemelhavel {
 
+	@Column(name = "HIS_ID_INI")
 	@Desconsiderar
 	private Long hisIdIni;
 
+	@Column(name = "HIS_DT_INI")
 	@Desconsiderar
 	private Date hisDtIni;
 
+	@Column(name = "HIS_DT_FIM")
 	@Desconsiderar
 	private Date hisDtFim;
 
+	@Column(name = "HIS_ATIVO")
 	@Desconsiderar
 	private int hisAtivo;
 

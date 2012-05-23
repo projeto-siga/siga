@@ -23,16 +23,41 @@
  */
 package br.gov.jfrj.siga.cp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "CORPORATIVO.CP_SERVICO")
 public abstract class AbstractCpServico implements Serializable {
 
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_SERVICO_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_SERVICO", nullable = false)
 	private Long idServico;
+	@Column(name = "SIGLA_SERVICO")
 	private String siglaServico;
+	@Column(name = "DESC_SERVICO")
 	private String dscServico;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SERVICO_PAI")
 	private CpServico cpServicoPai;
-	private CpTipoServico cpTipoServico ;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_SERVICO")
+	private CpTipoServico cpTipoServico;
+
 	/**
 	 * @return the cpServicoPai
 	 */
@@ -41,7 +66,8 @@ public abstract class AbstractCpServico implements Serializable {
 	}
 
 	/**
-	 * @param cpServicoPai the cpServicoPai to set
+	 * @param cpServicoPai
+	 *            the cpServicoPai to set
 	 */
 	public void setCpServicoPai(CpServico cpServicoPai) {
 		this.cpServicoPai = cpServicoPai;
@@ -79,10 +105,11 @@ public abstract class AbstractCpServico implements Serializable {
 	}
 
 	/**
-	 * @param cpTipoServico the cpTipoServico to set
+	 * @param cpTipoServico
+	 *            the cpTipoServico to set
 	 */
 	public void setCpTipoServico(CpTipoServico cpTipoServico) {
 		this.cpTipoServico = cpTipoServico;
 	}
-	
+
 }

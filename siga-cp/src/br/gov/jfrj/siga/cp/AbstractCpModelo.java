@@ -18,22 +18,45 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.sql.Blob;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@Entity
+@Table(name="CORPORATIVO.CP_MODELO"
+)
 public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 	private static final long serialVersionUID = -3468035660039727667L;
 
 	/** The primary key value. */
+	
+@SequenceGenerator(name="generator", sequenceName="CORPORATIVO.CP_MODELO_SEQ")@Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
+
+    
+    @Column(name="ID_MODELO", nullable=false)
 	@Desconsiderar
 	private java.lang.Long idMod;
 
 	/** The value of the simple conteudoBlobMod property. */
+@Column(name="CONTEUDO_BLOB_MOD")
 	private Blob conteudoBlobMod;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_ORGAO_USU")
 	private CpOrgaoUsuario cpOrgaoUsuario;
 
 	/**

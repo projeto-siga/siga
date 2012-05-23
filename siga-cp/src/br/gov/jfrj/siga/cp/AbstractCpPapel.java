@@ -18,8 +18,20 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -30,21 +42,37 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@Entity
+@Table(name = "CP_PAPEL", schema = "CORPORATIVO")
 public abstract class AbstractCpPapel extends HistoricoSuporte implements
 		Serializable {
+	@SequenceGenerator(name = "generator", sequenceName = "CP_PAPEL_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_PAPEL", nullable = false)
 	@Desconsiderar
 	private Long idCpPapel;
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_PESSOA")
 	private DpPessoa dpPessoa;
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_LOTACAO")
 	private DpLotacao dpLotacao;
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_FUNCAO_CONFIANCA")
 	private DpFuncaoConfianca dpFuncaoConfianca;
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_CARGO")
 	private DpCargo dpCargo;
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_ORGAO_USU")
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
-	private String idePapel;
-	// private Date dataInicioPapel;
-	// private Date dataFimPapel;
-	// private Long idInicial;
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="ID_TP_PAPEL")
 	private CpTipoPapel cpTipoPapel;
+	@Column(name = "HIS_IDE")
+	private String idePapel;
 
 	/**
 	 * @return the idPapel

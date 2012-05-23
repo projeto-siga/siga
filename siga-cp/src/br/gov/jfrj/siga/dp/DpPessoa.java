@@ -40,8 +40,12 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Formula;
 
+@Entity
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 	/**

@@ -18,6 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.dp;
 
+import javax.persistence.Entity;
+
+@Entity
 public class CpTipoLotacao extends AbstractCpTipoLotacao {
 
 }

@@ -25,6 +25,9 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Entity;
+
+@Entity
 public class CpTipoMarca extends AbstractCpTipoMarca {
 
 	

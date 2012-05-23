@@ -21,6 +21,8 @@ package br.gov.jfrj.siga.cp;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Entity;
+
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -29,6 +31,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@Entity
 public class CpPapel extends AbstractCpPapel implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 

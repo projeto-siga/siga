@@ -20,42 +20,68 @@ package br.gov.jfrj.siga.cp;
 
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
+
+@MappedSuperclass
+@Table(name = "CORPORATIVO.CP_TIPO_SERVICO")
 public class AbstractCpTipoServico {
+
+	@Id
+	@Column(name = "ID_TP_SERVICO", nullable = false)
 	private Integer idCpTpServico;
+	@Column(name = "DESC_TP_SERVICO")
 	private String dscTpServico;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
 	private CpSituacaoConfiguracao situacaoDefault;
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "cpTiposServicoSet")
 	private Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet;
+
 	/**
 	 * @return the idCpTpServico
 	 */
 	public Integer getIdCpTpServico() {
 		return idCpTpServico;
 	}
-	
+
 	/**
-	 * @param idCpTpServico the idCpTpServico to set
+	 * @param idCpTpServico
+	 *            the idCpTpServico to set
 	 */
 	public void setIdCpTpServico(Integer idCpTpServico) {
 		this.idCpTpServico = idCpTpServico;
 	}
+
 	/**
 	 * @return the dscTpServico
 	 */
 	public String getDscTpServico() {
 		return dscTpServico;
 	}
+
 	/**
-	 * @param dscTpServico the dscTpServico to set
+	 * @param dscTpServico
+	 *            the dscTpServico to set
 	 */
 	public void setDscTpServico(String dscTpServico) {
 		this.dscTpServico = dscTpServico;
 	}
+
 	/**
 	 * @return the cpSituacoesConfiguracaoSet
 	 */
 	public Set<CpSituacaoConfiguracao> getCpSituacoesConfiguracaoSet() {
 		return cpSituacoesConfiguracaoSet;
 	}
+
 	/**
 	 * @return the situacaoDefault
 	 */
@@ -64,18 +90,20 @@ public class AbstractCpTipoServico {
 	}
 
 	/**
-	 * @param situacaoDefault the situacaoDefault to set
+	 * @param situacaoDefault
+	 *            the situacaoDefault to set
 	 */
 	public void setSituacaoDefault(CpSituacaoConfiguracao situacaoDefault) {
 		this.situacaoDefault = situacaoDefault;
 	}
 
 	/**
-	 * @param cpSituacoesConfiguracaoSet the cpSituacoesConfiguracaoSet to set
+	 * @param cpSituacoesConfiguracaoSet
+	 *            the cpSituacoesConfiguracaoSet to set
 	 */
 	public void setCpSituacoesConfiguracaoSet(
 			Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet) {
 		this.cpSituacoesConfiguracaoSet = cpSituacoesConfiguracaoSet;
 	}
-	
+
 }

@@ -20,6 +20,9 @@ package br.gov.jfrj.siga.cp;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+
+@Entity
 public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	/**

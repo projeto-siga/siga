@@ -18,12 +18,27 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import br.gov.jfrj.siga.model.Objeto;
 
+@Entity
+@Table(name = "CORPORATIVO.CP_TIPO_GRUPO")
 public class AbstractCpTipoGrupo extends Objeto {
+
+	@Id
+	@Column(name = "ID_TP_GRUPO", nullable = false)
 	private Integer idTpGrupo;
+
+	@Column(name = "DESC_TP_GRUPO")
 	private String dscTpGrupo;
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -36,7 +51,10 @@ public class AbstractCpTipoGrupo extends Objeto {
 				+ ((idTpGrupo == null) ? 0 : idTpGrupo.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -67,27 +85,32 @@ public class AbstractCpTipoGrupo extends Objeto {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @return the idTpGrupo
 	 */
 	public Integer getIdTpGrupo() {
 		return idTpGrupo;
 	}
+
 	/**
-	 * @param idTpGrupo the idTpGrupo to set
+	 * @param idTpGrupo
+	 *            the idTpGrupo to set
 	 */
 	public void setIdTpGrupo(Integer idTpGrupo) {
 		this.idTpGrupo = idTpGrupo;
 	}
+
 	/**
 	 * @return the dscTpGrupo
 	 */
 	public String getDscTpGrupo() {
 		return dscTpGrupo;
 	}
+
 	/**
-	 * @param dscTpGrupo the dscTpGrupo to set
+	 * @param dscTpGrupo
+	 *            the dscTpGrupo to set
 	 */
 	public void setDscTpGrupo(String dscTpGrupo) {
 		this.dscTpGrupo = dscTpGrupo;

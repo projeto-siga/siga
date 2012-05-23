@@ -26,8 +26,11 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
+@Entity
 public class CpUF extends AbstractCpUF implements Serializable,
 		Selecionavel {
 

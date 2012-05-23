@@ -4,6 +4,10 @@ File:		custom.css - Use this file to add any custom styles you need
 
 If you add styles to this template, be sure to include it in your template files.
 */
+.gt-form.gt-content-box {
+	margin-bottom: 20px !important;
+}
+
 .gt-for-table {
 	width: 100% !important;
 	padding: 0;
@@ -15,8 +19,8 @@ If you add styles to this template, be sure to include it in your template files
 }
 
 .gt-content-box {
-	width: 100% !important;
-	height: auto !important;
+	/*width: 100% !important;
+	height: auto !important;*/
 }
 
 .gt-table {

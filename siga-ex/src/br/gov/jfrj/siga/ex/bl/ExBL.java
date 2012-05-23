@@ -476,6 +476,9 @@ public class ExBL extends CpBL {
 					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico() 
 							              && !mob.doc().jaTransferido()){
 						m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
+						/* não é possível usar ExMovimentacao.isAssinada() pois não há tempo habil
+						 * no BD de efetivar a inclusao de movimentacao de assinatura de movimentção
+						 */
 						for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
 							if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
 									|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
@@ -566,6 +569,9 @@ public class ExBL extends CpBL {
 			
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico()){
 				m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
+				/* não é possível usar ExMovimentacao.isAssinada() pois não há tempo habil
+				 * no BD de efetivar a inclusao de movimentacao de assinatura de movimentção
+				 */
 				for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
 					if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
 							|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
@@ -2415,6 +2421,7 @@ public class ExBL extends CpBL {
 		// }
 		// }
 		dao().excluir(mov);
+		mov.getExMobil().getExMovimentacaoSet().remove(mov);
 
 		Notificador.notificarPerfisVinculados(mov,
 				Notificador.TIPO_NOTIFICACAO_EXCLUSAO);

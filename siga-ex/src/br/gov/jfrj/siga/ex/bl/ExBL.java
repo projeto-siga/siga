@@ -2592,8 +2592,19 @@ public class ExBL extends CpBL {
 		if (doc.getLotaDestinatario() != null
 				&& !doc.getLotaDestinatario().isFechada())
 			novoDoc.setLotaDestinatario(doc.getLotaDestinatario());
-
-		novoDoc.setLotaSubscritor(doc.getSubscritor().getPessoaAtual().getLotacao());
+		
+         //Orlando: Alteração feita para buscar a lotação atual do subscritor, 
+		 //ou atribuir "null" quando não existir o subscritor. 
+        if (doc.getSubscritor()!= null)
+		   novoDoc.setLotaSubscritor(doc.getSubscritor().getPessoaAtual().getLotacao());
+        else 
+           novoDoc.setSubscritor(null);
+        
+        if (doc.getSubscritor()!=null)
+  		  novoDoc.setSubscritor(doc.getSubscritor().getPessoaAtual());
+  		else
+  	    novoDoc.setSubscritor(null);
+  
 		novoDoc.setNmArqDoc(doc.getNmArqDoc());
 		novoDoc.setNmDestinatario(doc.getNmDestinatario());
 		novoDoc.setNmFuncaoSubscritor(doc.getNmFuncaoSubscritor());
@@ -2605,7 +2616,9 @@ public class ExBL extends CpBL {
 		novoDoc.setOrgaoExternoDestinatario(doc.getOrgaoExternoDestinatario());
 		novoDoc.setExMobilPai(doc.getExMobilPai());
 		novoDoc.setOrgaoUsuario(doc.getOrgaoUsuario());
-		novoDoc.setSubscritor(doc.getSubscritor().getPessoaAtual());
+		
+		
+		
 		novoDoc.setTitular(doc.getTitular());
 		novoDoc.setLotaTitular(doc.getLotaTitular());
 		novoDoc.setNumAntigoDoc(doc.getNumAntigoDoc());

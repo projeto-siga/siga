@@ -2060,10 +2060,16 @@ public class ExDocumentoAction extends ExActionSupport {
 					CpOrgao.class, false));
 		} else
 			doc.setOrgaoExterno(null);
+		
+//		Orlando: Alterei o IF abaixo incluindo a instrução "doc.setLotaCadastrante(getLotaTitular());".
+//		Esta linha estava "solta",após o IF, e era executada sempre. 
+//		Fiz esta modificação porque esta linha alterava a lotação do cadastrante, não permitindo que este,
+//		ao preencher o campo subscritor com a matrícula de outro usuário, tivesse acesso ao documento.
 
-		if (doc.getCadastrante() == null)
+		if (doc.getCadastrante() == null){
 			doc.setCadastrante(getCadastrante());
-		doc.setLotaCadastrante(getLotaTitular());
+		doc.setLotaCadastrante(getLotaTitular());}
+
 		if (doc.getLotaCadastrante() == null)
 			doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 		if (getSubscritorSel().getId() != null) {

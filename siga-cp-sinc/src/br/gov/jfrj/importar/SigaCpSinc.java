@@ -1157,4 +1157,12 @@ public class SigaCpSinc {
 	public DpLotacao getLotacaoDIRFO() {
 		return lotacaoDIRFO;
 	}
+	
+	protected void setServidor(String servidor) {
+		this.servidor = servidor;
+	}
+	
+	protected void setUrl(String url) {
+		this.url = url;
+	}
 }

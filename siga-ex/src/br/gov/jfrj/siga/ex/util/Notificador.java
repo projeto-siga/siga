@@ -112,7 +112,7 @@ public class Notificador {
 			if (m.getSubscritor() != null) {
 				if (Ex.getInstance().getConf().podePorConfiguracao(
 						mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(), 
-						m.getExPapel(), m.getSubscritor().getPessoaAtual(),
+						m.getExPapel(), m.getSubscritor().getPessoaAtual(), 
 						mov.getExTipoMovimentacao(),
 						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)
 						
@@ -128,8 +128,7 @@ public class Notificador {
 							                                                  m.getSubscritor().getPessoaAtual(),
 									                                          mov.getExMovimentacaoRef().getExTipoMovimentacao(),
 									                                          CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))) {
-					    destinatariosEmail.add(m.getSubscritor().getPessoaAtual().getEmailPessoa());
-					  //  destinatariosEmail.add(m.getSubscritor().getEmailPessoa());
+					    destinatariosEmail.add(m.getSubscritor().getPessoaAtual().getEmailPessoa());					 
 				 }								
 			} else {
 				if (m.getLotaSubscritor() != null) {
@@ -187,7 +186,7 @@ public class Notificador {
 										.getExTipoFormaDoc(), m.getExPapel(), pes,
 								mov.getExTipoMovimentacao(),
 								CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) 				
-						destinatariosEmail.add(pes.getEmailPessoa());
+						destinatariosEmail.add(pes.getPessoaAtual().getEmailPessoa());
 					}
 				} else {									
 					destinatariosEmail.add(email);
@@ -200,7 +199,7 @@ public class Notificador {
 								.getExTipoFormaDoc(), m.getExPapel(), pes,
 						mov.getExTipoMovimentacao(),
 						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) 
-				destinatariosEmail.add(pes.getEmailPessoa());
+				destinatariosEmail.add(pes.getPessoaAtual().getEmailPessoa());
 			}
 			
 		}

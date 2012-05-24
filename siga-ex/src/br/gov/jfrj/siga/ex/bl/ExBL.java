@@ -2918,14 +2918,14 @@ public class ExBL extends CpBL {
 						for(CpMarca marca : m.doc().getMobilGeral().getExMarcaSet())
 							if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
 								throw new AplicacaoException(
-								"Não é permitido fazer transferência em documento com anexo pendente de assinatura");
+								"Não é permitido fazer transferência em documento com anexo pendente de assinatura ou conferência");
 						
 					}
 						
 					for (CpMarca marca : m.getExMarcaSet()) {
 						if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
 							throw new AplicacaoException(
-							"Não é permitido fazer transferência em documento com anexo pendente de assinatura");
+							"Não é permitido fazer transferência em documento com anexo pendente de assinatura ou conferência");
 					}
      			}
 

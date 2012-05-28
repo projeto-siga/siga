@@ -1172,6 +1172,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				}
 			}
 		}
+		
+		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO 
+				&& !podeCancelarAnexo(titular, lotaTitular, mob, exUltMovNaoCanc)) {
+			return false;
+			
+		}
 
 		return getConf()
 				.podePorConfiguracao(

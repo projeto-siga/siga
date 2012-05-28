@@ -1523,9 +1523,14 @@ public class ExDocumentoAction extends ExActionSupport {
 		// Destino , Origem
 		DpLotacao backupLotaTitular = getLotaTitular();
 		DpPessoa backupTitular = getTitular();
+		DpPessoa backupCadastrante = getCadastrante();
+		
 		BeanUtils.copyProperties(this, doc);
+		
 		setTitular(backupTitular);
 		setLotaTitular(backupLotaTitular);
+		// Orlando: Inclusão da linha, abaixo, para preservar o cadastrante do ambiente.
+		setCadastrante(backupCadastrante);
 
 		if (doc.getConteudoBlob("doc.htm") != null)
 			setConteudo(new String(doc.getConteudoBlob("doc.htm")));

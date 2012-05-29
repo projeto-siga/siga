@@ -28,10 +28,10 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "CORPORATIVO.CP_TIPO_MARCA")
+@MappedSuperclass
 public abstract class AbstractCpTipoMarca implements Serializable {
 
 	@Id

@@ -27,12 +27,16 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
+@Table(name = "CP_ORGAO_USUARIO", schema = "CORPORATIVO")
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 		Serializable, Selecionavel, Assemelhavel {
 
@@ -41,6 +45,7 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 	 */
 	private static final long serialVersionUID = -5119023571728936131L;
 
+	@Formula(value = "REMOVE_ACENTO(NM_ORGAO_USU)")
 	private String nmOrgaoAI;
 
 	public CpOrgaoUsuario() {

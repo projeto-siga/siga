@@ -45,6 +45,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
+@Table(name = "DP_PESSOA", schema = "CORPORATIVO")
 @Entity
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel {

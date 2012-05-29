@@ -23,8 +23,10 @@
 package br.gov.jfrj.siga.dp;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
 public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_EM_ELABORACAO = 1;

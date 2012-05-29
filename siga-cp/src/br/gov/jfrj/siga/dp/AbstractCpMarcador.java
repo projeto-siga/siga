@@ -34,7 +34,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 @MappedSuperclass
-@Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
 public abstract class AbstractCpMarcador implements Serializable {
 
 	@Id

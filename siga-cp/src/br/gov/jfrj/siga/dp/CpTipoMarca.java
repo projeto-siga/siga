@@ -26,8 +26,10 @@ import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "CORPORATIVO.CP_TIPO_MARCA")
 public class CpTipoMarca extends AbstractCpTipoMarca {
 
 	

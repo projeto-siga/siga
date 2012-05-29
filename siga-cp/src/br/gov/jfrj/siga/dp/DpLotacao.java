@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
@@ -41,6 +42,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
+@Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 

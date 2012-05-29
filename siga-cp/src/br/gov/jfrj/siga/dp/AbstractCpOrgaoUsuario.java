@@ -27,10 +27,10 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "CP_ORGAO_USUARIO", schema = "CORPORATIVO")
+@MappedSuperclass
 public abstract class AbstractCpOrgaoUsuario implements Serializable {
 
 	@Column(name = "CGC_ORGAO_USU")
@@ -52,6 +52,7 @@ public abstract class AbstractCpOrgaoUsuario implements Serializable {
 	@Column(name = "END_ORGAO_USU")
 	private String enderecoOrgaoUsu;
 
+	@Column(name = "NM_RESP_ORGAO_USU")
 	private String nmRespOrgaoUsu;
 
 	@Column(name = "RAZAO_SOCIAL_ORGAO_USU")

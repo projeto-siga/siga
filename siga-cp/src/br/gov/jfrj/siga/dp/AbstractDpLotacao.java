@@ -48,7 +48,6 @@ import org.hibernate.annotations.Formula;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
-@Table(name = "CORPORATIVO.DP_LOTACAO")
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {
 

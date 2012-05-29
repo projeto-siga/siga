@@ -11,7 +11,7 @@
 					<tr>
 						<td>Categoria</td>
 						<td>#{select name:'categoria.idServico', items:opcoesNivel1,
-							labelProperty:'descrServico', value:categoria.idServico} #{option
+							labelProperty:'descrServico', value:categoria.idServico, onchange:'javascript:frm.submit()'} #{option
 							0}Todos#{/option} #{/select}</td>
 					</tr>
 					<tr>

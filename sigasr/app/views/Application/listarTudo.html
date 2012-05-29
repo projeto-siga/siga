@@ -1,11 +1,126 @@
-#{extends 'main.html' /} 
-#{set title:'Listando todas as solicitacoes' /}
+#{extends 'main.html' /} #{set title:'Listando todas as solicitacoes' /}
 
 
 <h1>${title}</h1>
-<br />
-<ul>
-#{list items:listaSolicitacao, as:'solicitacao'}
- <li>${solicitacao.codigo}, <span style="font-weight: bold">${solicitacao.descrSolicitacao}</span>, solicitada por ${solicitacao.solicitante.nomePessoa}</li>
-#{/list}
-</ul>
+
+<div class="gt-bd gt-cols clearfix">
+	<div class="gt-content">
+		<div class="gt-content-box">
+			<table border="0" class="gt-table gt-user-table">
+				<tbody>
+					#{list items:listaSolicitacao, as:'solicitacao'}
+					<tr>
+						<td>
+							<h4>
+								<a href="">Nº ${solicitacao.idSolicitacao} -
+									${solicitacao.itemConfiguracao.descrItemConfiguracao},
+									${solicitacao.servico.descrServico}</a>
+							</h4>
+							<p>${solicitacao.descrSolicitacao}</p>
+							<p>
+								<i>${solicitacao.solicitante.descricaoIniciaisMaiusculas},
+									${solicitacao.lotaSolicitante.siglaLotacao}
+									(${solicitacao.local})</i>
+							</p>
+							<p>
+								<i>Telefone: 2510-8793</i>
+							</p> <!-- <p class="gt-table-edit">
+							<a href="">Edit</a>
+						</p> --></td>
+						<td>
+							<!-- Categories Sub Table -->
+							<table border="0" class="gt-table-categories">
+								<tr>
+									<th>Aberto:</th>
+									<td>${solicitacao.dtRegString}</td>
+								</tr>
+								<tr>
+									<th>Urgência:</th>
+									<td>${solicitacao.gravidade.descrGravidade}.
+										${solicitacao.urgencia.descrUrgencia}.
+										${solicitacao.tendencia.descrTendencia}</td>
+								</tr>
+								<tr>
+									<th>Situação:</th>
+									<td>#{list items:solicitacao.marcaSet, as:'marca'}
+										${marca.descricao} #{/list}</a>
+									</td>
+								</tr>
+							</table></td>
+					</tr>
+					#{/list}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<div class="gt-content-box gt-for-table">
+			<form action="@{Application.listarTudo}">
+				<table class="gt-form-table">
+					<colgroup>
+						<col width="30%" />
+					</colgroup>
+					<tr class="header">
+						<td align="center" valign="top" colspan="4">Dados para busca</td>
+					</tr>
+					<tr>
+						<td>Situação:</td>
+						<td>#{select name:'filtro.situacao', items:marcadores, labelProperty:'descrMarcador',
+										value:filtro.situacao?.idMarcador} #{option
+							0}Todas#{/option} #{/select} com #{select name:'tpAtendente',
+							items:tipos /} #{selecao tipo:'pessoa', nome:'Atendente' /}</td>
+					</tr>
+					<tr>
+						<td>Cadastrante</td>
+						<td>#{select name:'filtro.tpCadastrante', items:tipos /}<span
+							id="pessoaCadastrante"> #{selecao tipo:'pessoa',
+								nome:'Cadastrante' /}</span>
+						</td>
+					</tr>
+					<tr>
+						<td>Solicitante</td>
+						<td>#{select name:'filtro.tpSolicitante', items:tipos /} #{selecao
+							tipo:'pessoa', nome:'Solicitante' /}</td>
+					</tr>
+					<tr>
+						<td>Data de abertura:</td>
+						<td><input type="text" name="filtro.dataIni" value = "${filtro.dtIni}" /> a <input
+							type="text" name="filtro.dtFim" value="${filtro.dtFim}" />
+						</td>
+					</tr>
+					<tr>
+						<td>Item:</td>
+						<td>#{selecao tipo:'SrItemConfiguracao', nome:'Item' /}</td>
+					</tr>
+					<tr>
+						<td>Serviço:</td>
+						<td>#{selecao tipo:'SrServico', nome:'Servico' /}</td>
+					</tr>
+					<tr>
+						<td>Urgência:</td>
+						<td colspan="3">#{select name:'filtro.urgencia',
+							items:urgencias, labelProperty:'descrUrgencia', value:filtro.urgencia?.nivelUrgencia
+							} #{option 0}Todas#{/option}#{/select} #{select
+							name:'filtro.gravidade', items:gravidades,
+							labelProperty:'descrGravidade', value:filtro.gravidade?.nivelGravidade }#{option
+							0}Todas#{/option}#{/select} #{select
+							name:'filtro.tendencia', items:tendencias,
+							labelProperty:'descrTendencia', value:filtro.tendencia?.nivelTendencia }#{option
+							0}Todas#{/option}#{/select}</td>
+					</tr>
+					<tr>
+						<td>Descrição:</td>
+						<td><textarea name="filtro.descrSolicitacao"
+								id="descrSolicitacao" value="${filtro.descrSolicitacao}"></textarea></td>
+					</tr>
+					<tr>
+						<td colspan="2"><input type="submit" value="Buscar"
+							class="gt-btn-medium gt-btn-left" /></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>

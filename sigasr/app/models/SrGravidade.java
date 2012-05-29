@@ -11,18 +11,25 @@ import play.db.jpa.Model;
 
 public enum SrGravidade {
 
-	EXTREMAMENTE_GRAVE(5,
-			"Extremamente graves"), MUITO_GRAVE(
-			4, "Muito graves"), GRAVE(3, "Graves"), POUCO_GRAVE(2,
-			"Pouco graves"), SEM_RGAVIDADE(1, "Sem gravidade");
-
-	public int idGravidade;
+	EXTREMAMENTE_GRAVE(5, "Extremamente grave", "Extremamente graves"), MUITO_GRAVE(4, "Muito grave", "Muito graves"), GRAVE(
+			3, "Grave", "Graves"), POUCO_GRAVE(2, "Pouco grave", "Pouco graves"), SEM_RGAVIDADE(1,
+			"Sem gravidade");
+	
+	public int nivelGravidade;
 
 	public String descrGravidade;
 
-	SrGravidade(int id, String descricao) {
-		this.idGravidade = id;
-		this.descrGravidade = descricao;
+	public String respostaEnunciado;
+
+	SrGravidade(int nivel, String descricao) {
+		this(nivel, descricao, descricao);
+	}
+
+	private SrGravidade(int nivel, String descrGravidade,
+			String respostaEnunciado) {
+		this.nivelGravidade = nivel;
+		this.descrGravidade = descrGravidade;
+		this.respostaEnunciado = respostaEnunciado;
 	}
 
 }

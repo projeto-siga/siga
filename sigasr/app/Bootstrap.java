@@ -1,4 +1,13 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.persistence.EntityManager;
+
+import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import play.*;
+import play.db.jpa.JPA;
 import play.jobs.*;
 import play.test.*;
 
@@ -19,34 +28,34 @@ public class Bootstrap extends Job {
 					"Sistemas de gestão do trabalho").save();
 			SrItemConfiguracao geRH = new SrItemConfiguracao("01.04.00.00",
 					"Sistemas de recursos humanos").save();
-			SrItemConfiguracao sigaex = new SrItemConfiguracao("01.01.01.00.",
+			SrItemConfiguracao sigaex = new SrItemConfiguracao("01.01.01.00",
 					"SIGA-EX - SIGA Expedientes").save();
-			SrItemConfiguracao malotes = new SrItemConfiguracao("01.01.02.00.",
+			SrItemConfiguracao malotes = new SrItemConfiguracao("01.01.02.00",
 					"CM - Sistemas de malotes").save();
-			SrItemConfiguracao sisapa = new SrItemConfiguracao("01.01.03.00.",
+			SrItemConfiguracao sisapa = new SrItemConfiguracao("01.01.03.00",
 					"SISAPA - Sistemas de processos administrativos").save();
-			SrItemConfiguracao sigasr = new SrItemConfiguracao("01.03.01.00.",
+			SrItemConfiguracao sigasr = new SrItemConfiguracao("01.03.01.00",
 					"SIGA-SE - SIGA Serviços").save();
-			SrItemConfiguracao carh = new SrItemConfiguracao("01.04.01.00.",
+			SrItemConfiguracao carh = new SrItemConfiguracao("01.04.01.00",
 					"Sistemas de Cadastro de Recursos Humanos").save();
-			SrItemConfiguracao bie = new SrItemConfiguracao("01.02.04.00.",
+			SrItemConfiguracao bie = new SrItemConfiguracao("01.02.04.00",
 					"Boletim Interno").save();
-			SrItemConfiguracao dou = new SrItemConfiguracao("01.01.05.00.",
+			SrItemConfiguracao dou = new SrItemConfiguracao("01.01.05.00",
 					"Publicacao no Diário Oficial").save();
 			SrServico soft = new SrServico("01.00",
 					"Serviços típicos de software").save();
 			SrServico hard = new SrServico("02.00",
-			"Serviços típicos de hardware").save();
-			SrServico buyhard = new SrServico("02.01",
-			"Comprar hardware").save();
+					"Serviços típicos de hardware").save();
+			SrServico buyhard = new SrServico("02.01", "Comprar hardware")
+					.save();
 			SrServico proj = new SrServico("01.01",
 					"Desenvolver projeto de software").save();
 			SrServico tecno = new SrServico("01.02", "Estudar tecnologia")
 					.save();
 			SrServico rel = new SrServico("01.03",
 					"Criar novo relatório ou consulta").save();
-			SrServico ext = new SrServico("01.04",
-					"Implantar software externo").save();
+			SrServico ext = new SrServico("01.04", "Implantar software externo")
+					.save();
 			SrServico aquis = new SrServico("01.05",
 					"Especificar software para aquisição").save();
 			SrServico corretiv = new SrServico("01.06",
@@ -78,10 +87,66 @@ public class Bootstrap extends Job {
 			SrServico install = new SrServico("01.19",
 					"Instalar software nos Servidores").save();
 
-			/*
-			 * if (SrItemConfiguracao.count() == 0) {
-			 * Fixtures.loadModels("initial-data.yml"); }
-			 */
+			CpMarcador aReceber = JPA.em().find(CpMarcador.class, 31L);
+			
+			DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
+			SrSolicitacao sol1 = new SrSolicitacao();
+			sol1.cadastrante = eeh;
+			sol1.descrSolicitacao = "Solicito testar bastante, para que depois não se dê a desculpa de não ter havido oportunidades suficientes para detecção de erros.";
+			sol1.formaAcompanhamento = SrFormaAcompanhamento.ANDAMENTO;
+			sol1.gravidade = SrGravidade.MUITO_GRAVE;
+			sol1.itemConfiguracao = sigasr;
+			sol1.servico = corretiv;
+			sol1.local = "Almirante Barroso";
+			sol1.lotaCadastrante = eeh.getLotacao();
+			sol1.orgaoUsuario = eeh.getOrgaoUsuario();
+			sol1.solicitante = eeh;
+			sol1.lotaSolicitante = eeh.getLotacao();
+			sol1.tendencia = SrTendencia.PIORA_CURTO_PRAZO;
+			sol1.urgencia = SrUrgencia.ALGUMA_URGENCIA;
+			sol1.dtReg = new Date();
+			sol1.save();
+			
+			SrMarca marca1 = new SrMarca();
+			marca1.setCpMarcador(aReceber);
+			marca1.setDpLotacaoIni(eeh.getLotacao());
+			marca1.setDpPessoaIni(null);
+			marca1.setDtIniMarca(new Date());
+			marca1.solicitacao = sol1;
+			JPA.em().persist(marca1);
+
+			DpPessoa kpf = JPA.em().find(DpPessoa.class, 10331L);
+			SrSolicitacao sol2 = new SrSolicitacao();
+			sol2.cadastrante = kpf;
+			sol2.descrSolicitacao = "Também solicito a execução de muitos testes, visto que é limitada a nossa paciência e capacidade de assimilação de alto nível de stress acarretado por reclamações enfurecidas.";
+			sol2.formaAcompanhamento = SrFormaAcompanhamento.FECHAMENTO;
+			sol2.gravidade = SrGravidade.EXTREMAMENTE_GRAVE;
+			sol2.itemConfiguracao = sigasr;
+			sol2.servico = install;
+			sol2.local = "Rio Branco";
+			sol2.lotaCadastrante = kpf.getLotacao();
+			sol2.orgaoUsuario = kpf.getOrgaoUsuario();
+			sol2.solicitante = kpf;
+			sol2.lotaSolicitante = kpf.getLotacao();
+			sol2.tendencia = SrTendencia.PIORA_IMEDIATA;
+			sol2.urgencia = SrUrgencia.AGIR_IMEDIATO;
+			try {
+				sol2.dtReg = new SimpleDateFormat("dd/MM/yyyy HH:mm")
+						.parse("21/05/2012 21:00");
+			} catch (ParseException pe) {
+				//
+			}
+			sol2.save();
+			
+			SrMarca marca2 = new SrMarca();
+			marca2.setCpMarcador(aReceber);
+			marca2.setDpLotacaoIni(eeh.getLotacao());
+			marca2.setDpPessoaIni(null);
+			marca2.setDtIniMarca(new Date());
+			marca2.solicitacao = sol2;
+			JPA.em().persist(marca2);
+			
+			//JPA.em().getTransaction().commit();
 		}
 	}
 

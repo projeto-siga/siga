@@ -1,18 +1,31 @@
 package models;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Where;
+
+import controllers.SrCalendar;
+
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import play.db.jpa.GenericModel;
@@ -45,7 +58,7 @@ public class SrSolicitacao extends GenericModel {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_ORGAO_USU")
-	public DpLotacao orgaoUsuario;
+	public CpOrgaoUsuario orgaoUsuario;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITACAO_PAI")
@@ -81,6 +94,7 @@ public class SrSolicitacao extends GenericModel {
 	public SrUrgencia urgencia;
 
 	@Column(name = "DT_REG")
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtReg;
 
 	public String local;
@@ -94,11 +108,16 @@ public class SrSolicitacao extends GenericModel {
 	@ManyToMany(cascade = CascadeType.PERSIST)
 	public List<SrAtributo> atributoSet;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy="solicitacao")
+	@Where(clause="ID_TP_MARCA=2")
 	public List<SrMarca> marcaSet;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
 	public List<SrAndamento> andamentoSet;
+
+	public SrSolicitacao() {
+
+	}
 
 	public SrSolicitacao(DpPessoa solicitante, DpLotacao lotaSolicitante,
 			DpPessoa cadastrante, DpLotacao lotaCadastrante,
@@ -128,6 +147,17 @@ public class SrSolicitacao extends GenericModel {
 
 	public String getCodigo() {
 		return "RJ-SOL-2012/0000" + idSolicitacao;
+	}
+
+	public String getDtRegString() {
+		SrCalendar cal = new SrCalendar();
+		cal.setTime(dtReg);
+		return cal.getTempoTranscorridoString();
+	}
+
+	public int getGUT() {
+		return gravidade.nivelGravidade * urgencia.nivelUrgencia
+				* tendencia.nivelTendencia;
 	}
 
 }

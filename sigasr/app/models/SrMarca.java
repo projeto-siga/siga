@@ -9,10 +9,15 @@ import br.gov.jfrj.siga.dp.CpMarca;
 
 @Entity
 @DiscriminatorValue("2")
-public class SrMarca extends CpMarca{
+public class SrMarca extends CpMarca {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
 	public SrSolicitacao solicitacao;
-	
+
+	public String getDescricao() {
+		return this.getCpMarcador().getDescrMarcador() + " ("
+				+ getDpLotacaoIni().getSigla() + ")";
+	}
+
 }

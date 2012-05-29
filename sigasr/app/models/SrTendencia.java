@@ -12,19 +12,30 @@ import play.db.jpa.Model;
 public enum SrTendencia {
 
 	PIORA_IMEDIATA(5,
-			"Vai piorar imediatamente"), PIORA_CURTO_PRAZO(
-			4, "Vai piorar em curto prazo"), PIORA_MEDIO_PRAZO(3,
-			"Vai piorar em médio prazo"), PIORA_LONGO_PRAZO(2,
-			"Vai piorar a longo prazo"), NAO_PIORA(1,
-			"Não vai piorar ou pode ate melhorar");
+			"Se não resolvido, vai piorar imedatamente", "Vai piorar imediatamente"), PIORA_CURTO_PRAZO(
+			4, "Se não resolvido, vai piorar em curto prazo", "Vai piorar em curto prazo"), PIORA_MEDIO_PRAZO(3,
+			"Se não resolvido, vai piorar em médio prazo", "Vai piorar em médio prazo"), PIORA_LONGO_PRAZO(2,
+			"Se não resolvido, vai piorar em longo prazo", "Vai piorar em longo prazo"), NAO_PIORA(1,
+			"Se não resolvido, não vai piorar", "Não vai piorar ou pode ate melhorar");
 
-	public int idTendencia;
+	public static String ENUNCIADO = "Se nada for feito, a situação vai piorar...";
+	
+	public int nivelTendencia;
 
 	public String descrTendencia;
+	
+	public String respostaEnunciado;
 
-	SrTendencia(int id, String descricao) {
-		this.idTendencia = id;
-		this.descrTendencia = descricao;
+	SrTendencia(int nivel, String descricao) {
+		this(nivel, descricao, descricao);
 	}
 
+	private SrTendencia(int nivel, String descrTendencia,
+			String respostaEnunciado) {
+		this.nivelTendencia = nivel;
+		this.descrTendencia = descrTendencia;
+		this.respostaEnunciado = respostaEnunciado;
+	}
+
+	
 }

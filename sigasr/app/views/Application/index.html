@@ -20,19 +20,19 @@
 					</tr>
 					<tr>
 						<td>Quando deseja receber notificação de andamento?</td>
-						<td>#{select name:'idFormaAcompanhamento',
+						<td>#{select name:'solicitacao.formaAcompanhamento',
 							items:formasAcompanhamento,
 							labelProperty:'descrFormaAcompanhamento',
 							value:idFormaAcompanhamento /}</td>
 					</tr>
 					<tr>
 						<td>Telefone Principal</td>
-						<td><input type="text" name="telPrincipal" id="telPrincipal" />
+						<td><input type="text" name="solicitacao.telPrincipal" id="telPrincipal" />
 						</td>
 					</tr>
 					<tr>
 						<td>Local</td>
-						<td><input type="text" name="local" id=local " /></td>
+						<td><input type="text" name="solicitacao.local" id=local " /></td>
 					</tr>
 					<tr>
 						<td>Item:</td>
@@ -44,34 +44,32 @@
 					</tr>
 					<tr>
 						<td>Os prejuízos ou dificuldades relativos ao problema são:</td>
-						<td>#{select name:'gravidade', items:gravidades,
-							labelProperty:'descrGravidade', value:idGravidade /}</td>
+						<td>#{select name:'solicitacao.gravidade', items:gravidades,
+							labelProperty:'respostaEnunciado', value:idGravidade /}</td>
 					</tr>
 					<tr>
 						<td>O problema deve ser resolvido:</td>
-						<td>#{select name:'urgencia', items:urgencias,
-							labelProperty:'descrUrgencia', value:idUrgencia /}</td>
+						<td>#{select name:'solicitacao.urgencia', items:urgencias,
+							labelProperty:'respostaEnunciado', value:idUrgencia /}</td>
 					</tr>
 					<tr>
 						<td>Se nada for feito, a situação:</td>
-						<td>#{select name:'tendencia', items:tendencias,
-							labelProperty:'descrTendencia', value:idTendencia /}</td>
+						<td>#{select name:'solicitacao.tendencia', items:tendencias,
+							labelProperty:'respostaEnunciado', value:idTendencia /}</td>
 					</tr>
 					<tr>
 						<td>Descrição:</td>
-						<td><textarea name="descrSolicitacao" id="descrSolicitacao"></textarea>
+						<td><textarea name="solicitacao.descrSolicitacao" id="descrSolicitacao"></textarea>
 						</td>
 					</tr>
-					<font color="red">
 					<tr>
 						<td>Anexar arquivo:</td>
 						<td></td>
 					</tr>
 					<tr>
 						<td>Motivo fechamento</td>
-						<td><input type="text" name="motivo" id=local " /></td>
+						<td><input type="text" name="solicitacao.motivoFechamentoAbertura" id="motivoFechamentoAbertura" /></td>
 					</tr>
-					</font>
 					<tr>
 						<td colspan="2"><input type="submit" value="Gravar"
 							class="gt-btn-medium gt-btn-left" />

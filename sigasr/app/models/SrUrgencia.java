@@ -11,18 +11,30 @@ import play.db.jpa.Model;
 
 public enum SrUrgencia {
 
-	AGIR_IMEDIATO(5, "Imediatamente"), ALGUMA_URGENCIA(4,
-			"Com alguma urgência"), MAIS_CEDO_POSSIVEL(3,
-			"O mais cedo possível"), PODE_ESPERAR(2, "Pode esperar um pouco"), SEM_PRESSA(
-			1, "Não tem pressa");
+	AGIR_IMEDIATO(5, "Resolver imediatamente", "Imediatamente"), ALGUMA_URGENCIA(4, "Resolver com urgência", "Com urgência"), MAIS_CEDO_POSSIVEL(
+			3, "Resolver o mais cedo possível", "O mais cedo possível"), PODE_ESPERAR(2, "Solução pode esperar um pouco", "Pode esperar um pouco"), SEM_PRESSA(
+			1, "Resolver sem pressa", "Não tem pressa");
 
-	public int idUrgencia;
+	public static String ENUNCIADO = "O problema deve ser resolvido...";
+
+	public int nivelUrgencia;
 
 	public String descrUrgencia;
 
-	SrUrgencia(int id, String descricao) {
-		this.idUrgencia = id;
+	public String respostaEnunciado;
+
+	
+	
+	private SrUrgencia(int nivelUrgencia, String descrUrgencia) {
+		this(nivelUrgencia, descrUrgencia, descrUrgencia);
+	}
+
+
+
+	SrUrgencia(int nivel, String descricao, String respostaEnunciado) {
+		this.nivelUrgencia = nivel;
 		this.descrUrgencia = descricao;
+		this.respostaEnunciado = respostaEnunciado;
 	}
 
 }

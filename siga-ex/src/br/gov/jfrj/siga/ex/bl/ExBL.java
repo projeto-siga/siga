@@ -317,6 +317,48 @@ public class ExBL extends CpBL {
 		ExDao.commitTransacao();
 	}
 
+	/**
+	 * Método criado para contar o número de páginas de um documento que foi criado antes da função que grava um documento com o total de páginas.
+	 * @param doc
+	 * @return
+	 * @throws Exception
+	 */
+	public Integer ContarNumeroDePaginas(ExDocumento doc) {
+		ExDao.iniciarTransacao();
+		Integer numeroDePaginas = doc.getContarNumeroDePaginas();
+		doc.setNumPaginas(numeroDePaginas);
+		dao().gravar(doc);
+		try {
+			ExDao.commitTransacao();
+		} catch (Throwable e) {
+			System.out.println("Erro ao contar o número de páginas do documento." + doc);
+			e.printStackTrace();
+		}
+		
+		return numeroDePaginas;
+	}
+
+	/**
+	 * Método criado para contar o número de páginas de uma movimentacao que foi criada antes da função que grava uma movimentacao com o total de páginas.
+	 * @param doc
+	 * @return
+	 * @throws Exception
+	 */
+	public Integer ContarNumeroDePaginas(ExMovimentacao mov) {
+		ExDao.iniciarTransacao();
+		Integer numeroDePaginas = mov.getContarNumeroDePaginas();
+		mov.setNumPaginas(numeroDePaginas);
+		dao().gravar(mov);
+		try {
+			ExDao.commitTransacao();
+		} catch (Throwable e) {
+			System.out.println("Erro ao contar o número de páginas da movimentação." + mov);
+			e.printStackTrace();
+		}
+		
+		return numeroDePaginas;
+	}
+
 	public void numerarTudo(int aPartirDe) throws Exception {
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 

@@ -42,7 +42,7 @@
 							href="javascript:${linkConfirm}location.href='${url}';">${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a class="button" href="${url}">${title}</a>
+						<a class="button once" href="${url}">${title}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

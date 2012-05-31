@@ -27,8 +27,6 @@ import java.io.DataInputStream;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 

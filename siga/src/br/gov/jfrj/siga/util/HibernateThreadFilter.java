@@ -29,6 +29,7 @@ import javax.servlet.ServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.cfg.AnnotationConfiguration;
 
@@ -41,7 +42,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class HibernateThreadFilter implements Filter {
 
-	private static Log log = LogFactory.getLog(HibernateThreadFilter.class);
+	private static final Logger log = Logger.getLogger( HibernateThreadFilter.class );
 
 	private static boolean fConfigured = false;
 
@@ -81,8 +82,8 @@ public class HibernateThreadFilter implements Filter {
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						log.error("Não foi possível configurar o hibernate.",
-								ex);
+						log.error( "Não foi possível configurar o hibernate. ", ex );
+						ex.printStackTrace();
 						throw new ExceptionInInitializerError(ex);
 					}
 				}

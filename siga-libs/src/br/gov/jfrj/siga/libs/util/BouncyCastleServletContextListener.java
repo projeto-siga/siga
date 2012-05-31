@@ -29,7 +29,9 @@ public class BouncyCastleServletContextListener implements ServletContextListene
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		// TODO Auto-generated method stub
+		if ( this.bouncyCastleProvider != null ) {
+			Security.removeProvider( this.bouncyCastleProvider.getName() );
+		}
 	}
 
 }

@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.cfg.AnnotationConfiguration;
 
@@ -42,6 +43,7 @@ public class ExThreadFilter implements Filter {
 	private static boolean fConfigured = false;
 
 	private static final Object classLock = ExThreadFilter.class;
+	private static final Logger log = Logger.getLogger( ExThreadFilter.class );
 
 	/**
 	 * Pega a sessão.
@@ -70,8 +72,9 @@ public class ExThreadFilter implements Filter {
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						// log.error("Não foi possível configurar o hibernate.",
 						// ex);
+						log.error( "Não foi possível configurar o Hibernate. ", ex );
+						ex.printStackTrace();
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -96,25 +99,26 @@ public class ExThreadFilter implements Filter {
 			try {
 				chain.doFilter(request, response);
 			} catch (RuntimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 				throw e;
 			}
 			ExDao.commitTransacao();
 
 		} catch (final Throwable ex) {
 			ExDao.rollbackTransacao();
+			log.error( ex.getMessage(), ex );
 			ex.printStackTrace();
 			throw new ServletException(ex);
 		} finally {
 			try {
 				HibernateUtil.fechaSessaoSeEstiverAberta();
 			} catch (Exception ex) {
+				log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
 				ex.printStackTrace();
 			}
 			try {
 				ModeloDao.freeInstance();
 			} catch (Exception ex) {
+				log.error( ex.getMessage(), ex );
 				ex.printStackTrace();
 			}
 		}

@@ -71,7 +71,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jstl.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jta-1.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/kxml2.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-analyzers-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-snowball-2.4.1.jar"/>
@@ -134,5 +133,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JBoss Log4j Library"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

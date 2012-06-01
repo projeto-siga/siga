@@ -65,6 +65,17 @@ public class WfThreadFilter implements Filter {
 						Wf.getInstance();
 						AnnotationConfiguration cfg = WfDao
 								.criarHibernateCfg("java:/SigaWfDS");
+						
+						
+						
+						
+						
+						// HibernateUtil.configuraListeners( cfg );
+						
+						
+						
+						
+						
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {

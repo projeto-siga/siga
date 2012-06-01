@@ -29,9 +29,12 @@ import javax.servlet.ServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.cfg.AnnotationConfiguration;
 
+import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
+import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -39,12 +42,12 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class HibernateThreadFilter implements Filter {
 
-	private static Log log = LogFactory.getLog(HibernateThreadFilter.class);
+	private static final Logger log = Logger.getLogger( HibernateThreadFilter.class );
 
 	private static boolean fConfigured = false;
 
 	private static final Object classLock = HibernateThreadFilter.class;
-
+	
 	// static {
 	// try {
 	// HibernateUtil.configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml");
@@ -69,20 +72,24 @@ public class HibernateThreadFilter implements Filter {
 						// TODO: _LAGS - Trocar para obter os parametros do "web.xml"
 						AnnotationConfiguration cfg = CpDao
 								.criarHibernateCfg("java:/SigaCpDS");
+						
+						// bruno.lacerda@avantiprima.com.br
+						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
+						SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
+						
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						log.error("Não foi possível configurar o hibernate.",
-								ex);
+						log.error( "Não foi possível configurar o hibernate. ", ex );
+						ex.printStackTrace();
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
-
 			}
 		}
-
+		
 		try {
 			HibernateUtil.getSessao();
 			ModeloDao.freeInstance();

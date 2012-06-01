@@ -2,11 +2,12 @@
 <web-app id="WebApp_ID" version="2.4"
 	xmlns="http://java.sun.com/xml/ns/j2ee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/controller-app_2_4.xsd">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<!-- chamadas são públicas: não necessárias as entradas de login-config para certificado -->
+	
 	<display-name>sigacd</display-name>
 
-	<jsp-config>
+	<!--jsp-config>
 		<taglib>
 			<taglib-uri>/core</taglib-uri>
 			<taglib-location>/META-INF/c.tld</taglib-location>
@@ -14,14 +15,13 @@
 		<taglib>
 			<taglib-uri>/fmt</taglib-uri>
 			<taglib-location>/META-INF/fmt.tld</taglib-location>
-		</taglib>
-		<!-- 	
-		-->
+		</taglib>		
 		<taglib>
 			<taglib-uri>/tags</taglib-uri>
 			<taglib-location>/META-INF/tags.tld</taglib-location>
 		</taglib>
-	</jsp-config>
+	</jsp-config-->
+	
 
 	<welcome-file-list>
 		<welcome-file>inbox.action</welcome-file>
@@ -39,21 +39,22 @@
 	</listener>
 
 	<servlet>
-		<servlet-name>CXFServlet</servlet-name>
 		<display-name>CXF Servlet</display-name>
+		<servlet-name>CXFServlet</servlet-name>
 		<servlet-class>
 			br.gov.jfrj.siga.cd.servlet.CdWsServlet
 		</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>CXFServlet</servlet-name>
 		<url-pattern>/servicos/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>testes</servlet-name>
 		<display-name>testes</display-name>
+		<servlet-name>testes</servlet-name>
 		<servlet-class>
 			br.gov.jfrj.siga.cd.servlet.CdTestesServlet
 		</servlet-class>

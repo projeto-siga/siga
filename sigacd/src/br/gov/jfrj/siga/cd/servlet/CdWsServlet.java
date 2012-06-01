@@ -38,13 +38,17 @@ public class CdWsServlet extends CXFNonSpringServlet {
 	@Override
 	public void loadBus(ServletConfig servletConfig) throws ServletException {
 		super.loadBus(servletConfig);
-
+		
+		// Desta forma dava erro na versão EAP 5.1.2: 
+		// Invalid endpoint address: /CdService
+		//
 		// You could add the endpoint publish codes here
 		Bus bus = getBus();
 		BusFactory.setDefaultBus(bus);
 		Endpoint.publish("/CdService", new CdServiceImpl());
 
 		// You can als use the simple frontend API to do this
+		// Desta forma funciona na versão EAP 5.1.2
 		// ServerFactoryBean factory = new ServerFactoryBean();
 		// factory.setBus(bus);
 		// factory.getInInterceptors().add(new LoggingInInterceptor());

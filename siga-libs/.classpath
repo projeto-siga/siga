@@ -75,7 +75,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jstl.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jta-1.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/kxml2.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-analyzers-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-snowball-2.4.1.jar"/>
@@ -130,8 +129,9 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate-commons-annotations-3.2.0.Final.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jpa-api-2.0-cr-1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate3.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/Jboss-4.2.2.GA Runtime"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/BouncyCastleJDK6"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/JBoss 4.2 Runtime"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>

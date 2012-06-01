@@ -18,12 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.integracao.ldap;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 import br.gov.jfrj.ldap.ILdapDao;
 import br.gov.jfrj.ldap.LdapDaoImpl;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Criptografia;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
@@ -42,10 +39,11 @@ public class IntegracaoLdap {
 		return instancia;
 	}
 	
-	public boolean atualizarSenhaLdap(CpIdentidade id) {
+
+	public boolean atualizarSenhaLdap(CpIdentidade id, String senha) {
 		String ambiente = System.getProperty("jfrj.ambiente", "");
 		IntegracaoLdapProperties prop = new IntegracaoLdapProperties();
-		String localidade = id.getPessoaAtual().getOrgaoUsuario().getAcronimoOrgaoUsu().toLowerCase();
+		String localidade = id.getDpPessoa().getOrgaoUsuario().getAcronimoOrgaoUsu().toLowerCase();
 		if (localidade.length()>0 && ambiente.length()>0){
 			prop.setPrefixo("siga.cp.sinc.ldap." + localidade + "." +ambiente) ;	
 		}
@@ -55,17 +53,12 @@ public class IntegracaoLdap {
 				return false;
 			}
 			
-			BASE64Encoder encoderBase64 = new BASE64Encoder();
-			BASE64Decoder dec = new BASE64Decoder();
 			ILdapDao ldap = new LdapDaoImpl(false);
 			ldap.conectarComSSL(prop.getServidorLdap(), prop.getPortaSSLLdap(), prop.getUsuarioLdap(), prop.getSenhaLdap(), prop.getKeyStore());
 			
-				String chave = encoderBase64.encode(id.getDpPessoa()
-						.getIdInicial().toString().getBytes());
-				String senhaNova = new String((Criptografia.desCriptografar(dec
-						.decodeBuffer(id.getDscSenhaIdentidadeCriptoSinc()), chave)));
-				String cnPessoa = id.getPessoaAtual().getSesbPessoa() + id.getPessoaAtual().getMatricula();
-				ldap.definirSenha("CN=" + cnPessoa +  "," + prop.getDnUsuarios() , senhaNova);
+
+				String cnPessoa = id.getDpPessoa().getSesbPessoa() + id.getDpPessoa().getMatricula();
+				ldap.definirSenha("CN=" + cnPessoa +  "," + prop.getDnUsuarios() , senha);
 				limparSenhaSincDB(id);
 			
 		} catch (Exception e) {

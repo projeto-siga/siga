@@ -191,10 +191,10 @@ public class UsuarioAction extends SigaActionSupport {
 		boolean senhaTrocadaAD = false;
 		switch (metodo) {
 		case 1:
-			
+			String[] senhaGerada = new String[1];
 			CpIdentidade idNovaAlterada = Cp.getInstance().getBL().alterarSenhaDeIdentidade(
-					matricula, cpf, getIdentidadeCadastrante());
-			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaAlterada);
+					matricula, cpf, getIdentidadeCadastrante(),senhaGerada);
+			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaAlterada,senhaGerada[0]);
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
@@ -207,7 +207,7 @@ public class UsuarioAction extends SigaActionSupport {
 				return Action.SUCCESS;
 			}else{
 				CpIdentidade idNovaDefinida = Cp.getInstance().getBL().definirSenhaDeIdentidade(senhaNova, senhaConfirma, matricula, auxiliar1, auxiliar2, getIdentidadeCadastrante());
-				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida);
+				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
 			}
 			break;
 		default:
@@ -231,14 +231,16 @@ public class UsuarioAction extends SigaActionSupport {
 	public String aIncluirUsuarioGravar() throws Exception {
 		getRequest().setAttribute("volta", "incluir");
 		getRequest().setAttribute("titulo", "Novo Usuário");
-
+		String[] senhaGerada = new String[1];
 		CpIdentidade id = Cp.getInstance().getBL().criarIdentidade(matricula,
-				cpf, getIdentidadeCadastrante());
-
-		getRequest()
-				.setAttribute(
-						"mensagem",
-						"Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email");
+				cpf, getIdentidadeCadastrante(),senhaGerada);
+		boolean senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(id,senhaGerada[0]);
+		getRequest().setAttribute("mensagem",
+				"Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ (senhaTrocadaAD?"<br/>OBS: A senha do AD também foi alterada.":""));
+//		getRequest()
+//				.setAttribute(
+//						"mensagem",
+//						"Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email");
 
 		return Action.SUCCESS;
 
@@ -261,7 +263,7 @@ public class UsuarioAction extends SigaActionSupport {
 		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
 				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
 				getIdentidadeCadastrante());
-		boolean senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova);
+		boolean senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
 		getRequest().setAttribute("mensagem",
 				"A Senha foi alterada com sucesso"+ (senhaTrocadaAD?"<br/>OBS: A senha do AD também foi alterada.":""));
 

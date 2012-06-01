@@ -253,8 +253,17 @@ public class CpBL {
 		}
 	}
 
+	/**
+	 * Altera a senha da identidade.
+	 * @param matricula
+	 * @param cpf
+	 * @param idCadastrante
+	 * @param senhaGerada - Usado para retornar a senha gerada. É um array para que o valor seja passado como referência e o método que o chama tenha a oportunidade de conhecer a senha)
+	 * @return
+	 * @throws AplicacaoException
+	 */
 	public CpIdentidade alterarSenhaDeIdentidade(String matricula, String cpf,
-			CpIdentidade idCadastrante) throws AplicacaoException {
+			CpIdentidade idCadastrante, String[] senhaGerada) throws AplicacaoException {
 		final long longmatricula = Long.parseLong(matricula.substring(2));
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
@@ -269,6 +278,9 @@ public class CpBL {
 					true);
 			if (id != null) {
 				final String novaSenha = GeraMessageDigest.geraSenha();
+				if (senhaGerada != null){
+					senhaGerada[0] = novaSenha;
+				}
 				try {
 					Date dt = dao().consultarDataEHoraDoServidor();
 					CpIdentidade idNova = new CpIdentidade();
@@ -286,8 +298,8 @@ public class CpBL {
 							.getIdInicial().toString().getBytes());
 					String senhaCripto = encoderBase64.encode(Criptografia
 							.criptografar(novaSenha, chave));
-					idNova.setDscSenhaIdentidadeCripto(senhaCripto);
-					idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+					idNova.setDscSenhaIdentidadeCripto(null);
+					idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
 					dao().iniciarTransacao();
 					dao().gravarComHistorico(idNova, id, dt, idCadastrante);
@@ -329,7 +341,7 @@ public class CpBL {
 	}
 
 	public CpIdentidade criarIdentidade(String matricula, String cpf,
-			CpIdentidade idCadastrante) throws AplicacaoException {
+			CpIdentidade idCadastrante, String[] senhaGerada) throws AplicacaoException {
 		final long longmatricula = Long.parseLong(matricula.substring(2));
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
@@ -344,6 +356,9 @@ public class CpBL {
 			if (id == null) {
 				if (pessoa.getEmailPessoa() != null) {
 					final String novaSenha = GeraMessageDigest.geraSenha();
+					if (senhaGerada != null){
+						senhaGerada[0] = novaSenha;
+					}
 					try {
 						CpIdentidade idNova = new CpIdentidade();
 						final String hashNova = GeraMessageDigest.executaHash(
@@ -364,8 +379,8 @@ public class CpBL {
 								.getBytes());
 						String senhaCripto = encoderBase64.encode(Criptografia
 								.criptografar(novaSenha, chave));
-						idNova.setDscSenhaIdentidadeCripto(senhaCripto);
-						idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+						idNova.setDscSenhaIdentidadeCripto(null);
+						idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
 						dao().iniciarTransacao();
 						dao().gravarComHistorico(idNova, idCadastrante);
@@ -475,8 +490,8 @@ public class CpBL {
 						.getIdInicial().toString().getBytes());
 				String senhaCripto = encoderBase64.encode(Criptografia
 						.criptografar(senhaNova, chave));
-				idNova.setDscSenhaIdentidadeCripto(senhaCripto);
-				idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+				idNova.setDscSenhaIdentidadeCripto(null);
+				idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
 				dao().iniciarTransacao();
 				dao().gravarComHistorico(idNova, id, dt, idCadastrante);
@@ -611,8 +626,8 @@ public class CpBL {
 						.getIdInicial().toString().getBytes());
 				String senhaCripto = encoderBase64.encode(Criptografia
 						.criptografar(senhaNova, chave));
-				idNova.setDscSenhaIdentidadeCripto(senhaCripto);
-				idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+				idNova.setDscSenhaIdentidadeCripto(null);
+				idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
 				dao().iniciarTransacao();
 				dao().gravarComHistorico(idNova, id, dt, idCadastrante);

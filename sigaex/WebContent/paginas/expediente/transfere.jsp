@@ -282,7 +282,7 @@ function popitup_movimentacao() {
 					</c:if>
 					<tr class="button">
 						<td></td>
-						<td><input type="submit" value="Ok" /> <input type="button"
+						<td><input type="submit" value="Ok" class="once"/> <input type="button"
 							value="Cancela" onclick="javascript:history.back();" /> <input
 							type="button" name="ver_doc"
 							value="Visualizar o modelo preenchido"

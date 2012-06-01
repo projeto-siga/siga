@@ -14,6 +14,8 @@
 		<span style="color: red"> <b>ESTE DOCUMENTO DEVERÁ SER
 		ENVIADO À CHEFIA IMEDIATA PARA ANUÊNCIA E, EM SEGUIDA, À DICRE</b></span>
 		<br>
+		<span style="color:red"> <b>NO CASO DE NECESSIDADE DE CONCESSÃO DE DIÁRIAS, NECESSÁRIO PREENCHER TAMBÉM O DOCUMENTO 
+		'PROPOSTA E CONCESSÃO DE DIÁRIAS' NO SIGA</b></span>	
 		<br>
 		
 		<mod:grupo>
@@ -75,7 +77,7 @@
 		</mod:grupo>
 		<hr style="color: #FFFFFF;" />
 		<mod:grupo titulo="Diárias/Passagens">
-			<mod:radio titulo="Sim" var="diapas" valor="1" reler="sim" />
+			<mod:radio titulo="Sim" var="diapas" valor="1" marcado="sim" reler="sim" />
 			<mod:radio titulo="Não" var="diapas" valor="2" reler="sim" />
 		</mod:grupo>
 
@@ -136,7 +138,7 @@
 			<c:set var="benef1" value="Beneficiária"></c:set>
 			<c:set var="benef2" value="beneficiária"></c:set>
 		</c:if>
-		<c:set var="diap" value="<b>Diárias/Passagens :</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[X] SIM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;] NÃO"></c:set>
+		
 	    <c:set var="sim" value="X" ></c:set>
 	    <c:set var="nao" value="&nbsp;&nbsp;" ></c:set>
 	    <c:if test="${diapas == '2'}">

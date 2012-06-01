@@ -11,8 +11,11 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<p align="left"><span style="color: red"> <br>
-			(os campos marcados com * são de preenchimento obrigatório)</span></p>
+		 
+		    <p align="left"><span style="color: red"> <br><b>
+			ATENÇÃO: EM CASO DE DÚVIDA NO PREENCHIMENTO, FAVOR OBTER AUXÍLIO NO RAMAL 8559 - SEPADI  (FALAR COM A SERVIDORA ROSA)
+			<br><br>
+			(os campos marcados com * são de preenchimento obrigatório)</b></span></p>
 
 		</mod:grupo>
 		<!-- 
@@ -26,7 +29,7 @@
 		
         <mod:grupo titulo="Proposto pertencente aos quadros do Tribunal Regional Federal da 2ª Região (*)">
 
-			<mod:radio titulo="SIM" var="ppq" valor="1" marcado="Sim" reler="sim"/>
+			<mod:radio titulo="SIM" var="ppq" valor="1" marcado= "Sim" reler="sim"/>
 			<mod:radio titulo="NÃO" var="ppq" valor="2" reler="sim"/>
 		</mod:grupo>
 		<c:set var="valorppq" value="${ppq}" />
@@ -70,7 +73,7 @@
 		 </c:if>
 		<hr style="color: #FFFFFF;" />
 		<mod:grupo>
-			<mod:memo titulo="<b>Local e Serviço a ser executado (*)</b>" var="texto_serv" colunas="70"
+			<mod:memo titulo="<b>Serviço a ser executado e Local (*)</b>" var="texto_serv" colunas="70"
 				linhas="3" />
 		</mod:grupo>
 		<br>
@@ -173,7 +176,7 @@
            <c:set var="alm" value=""></c:set>
            <c:set var="trp" value=""></c:set>
            <c:set var="carg" value="${f:maiusculasEMinusculas(pessoa_prop.cargo.descricao)}"></c:set>
-           <c:set var="func" value="${f:maiusculasEMinusculas(pessoa_prop.funcaoConfianca.nomeFuncao)}"></c:set>
+           <c:set var="func" value="${pessoa_prop.funcaoConfianca.nomeFuncao}"></c:set>
            <c:set var="matr" value="${pessoa_prop.sesbPessoa}${pessoa_prop.matricula}"></c:set>
         </c:if>
        <!--
@@ -227,7 +230,7 @@
 							<tr><c:choose>
 								<c:when test="${doc.subscritor.matricula > 9999}">
 								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Função
-								:</b>&nbsp;${f:maiusculasEMinusculas(doc.subscritor.funcaoConfianca.nomeFuncao)}</td>
+								:</b>&nbsp;${doc.subscritor.funcaoConfianca.nomeFuncao}</td>
 								</c:when>
 								<c:otherwise>
 								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Cargo&nbsp;&nbsp;&nbsp;
@@ -295,8 +298,7 @@
 
 						<table width="100%" border="1" cellpadding="2" cellspacing="1">
 							<tr>
-								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Local
-								e Serviço a ser executado:</b></td>
+								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Serviço a ser executado e Local:</b></td>
 							</tr>
 						</table>
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">

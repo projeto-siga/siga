@@ -24,7 +24,7 @@ function alteraForma(){
 }
 
 function sbmt(offset) {
-	if (offset==null) {
+	if (offset==null) {d
 		offset=0;
 	}
 	listar["p.offset"].value=offset;
@@ -821,7 +821,10 @@ function limpaCampos()
 				<siga:selecao titulo="Classificação:" propriedade="classificacao" />
 
 				<ww:textfield label="Descrição" name="descrDocumento" size="80" />
-				${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario)}
+							    
+				${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)}
+				 
+				
 				<tr>
 					<td></td>
 					<td><siga:monobotao inputType="submit" value="Buscar" /> <%--<ww:submit name="pesquisar" value="Pesquisar" theme="simple" />--%>

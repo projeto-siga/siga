@@ -27,6 +27,7 @@ import java.util.Set;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
 
 public abstract class ExArquivo {
 	private Integer numPaginas;
@@ -112,6 +113,7 @@ public abstract class ExArquivo {
 
 	/**
 	 * Retorna o número de páginas do documento para exibir no dossiê.
+	 * @throws Exception 
 	 * 
 	 */
 	public int getNumeroDePaginasParaInsercaoEmDossie() {
@@ -119,8 +121,13 @@ public abstract class ExArquivo {
 			ExMovimentacao mov = (ExMovimentacao) this;
 			if (mov.getNumPaginasOri() != null)
 				return mov.getNumPaginasOri();
+			else
+				return Ex.getInstance().getBL().ContarNumeroDePaginas(mov);
 		}
-		return getNumPaginas();
+		if(getNumPaginas() != null)
+			return getNumPaginas();
+		else
+			return Ex.getInstance().getBL().ContarNumeroDePaginas((ExDocumento) this);
 	}
 
 	public Integer getNumPaginas() {

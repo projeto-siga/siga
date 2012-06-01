@@ -1172,6 +1172,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				}
 			}
 		}
+		
+		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO 
+				&& !podeCancelarAnexo(titular, lotaTitular, mob, exUltMovNaoCanc)) {
+			return false;
+			
+		}
 
 		return getConf()
 				.podePorConfiguracao(
@@ -1209,6 +1215,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (!mov.getLotaCadastrante().equivale(lotaTitular))
 			return false;
+		
+		if (!mov.getLotaCadastrante().equivale(mov.getLotaResp()))
+			return false;	
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),
@@ -1725,7 +1734,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * Retorna se é possível excluir uma movimentação de anexação, representada
 	 * por mov, conforme as regras a seguir:
 	 * <ul>
-	 * <li>Anexação não pode estar cancelada</li>
+	 * <li>Anexação não pode estar cancelada</li>	
+	 * <li>Anexo não pode estar assinado</li>
 	 * <li>Se o documento for físico, não pode estar finalizado</li>
 	 * <li>Se o documento for eletrônico, não pode estar assinado</li>
 	 * <li>Lotação do usuário tem de ser a lotação cadastrante da movimentação</li>
@@ -1745,6 +1755,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final ExMovimentacao mov) throws Exception {
 
 		if (mov.isCancelada())
+			return false;
+		
+		if (mov.isAssinada())
 			return false;
 
 		if (mob.doc().getDtFechamento() != null && !mob.doc().isEletronico()) {
@@ -1767,11 +1780,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * arquivo. Regras:
 	 * <ul>
 	 * <li>Anexação não pode estar cancelada</li>
+	 * <li>Anexo não pode estar assinado>	
 	 * <li>Não pode mais ser possível <i>excluir</i> a anexação</li>
 	 * <li>Se o documento for físico, anexação não pode ter sido feita antes da
 	 * finalização</li>
 	 * <li>Se o documento for digital, anexação não pode ter sido feita antes da
-	 * assinatura</li>
+	 * assinatura</li>	
 	 * <li>Lotação do usuário tem de ser a lotação cadastrante da movimentação</li>
 	 * <li>Não pode haver configuração impeditiva. Tipo de configuração:
 	 * Cancelar Movimentação</li>
@@ -1789,6 +1803,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final ExMovimentacao mov) throws Exception {
 
 		if (mov.isCancelada())
+			return false;
+		
+		if (mov.isAssinada())
 			return false;
 
 		if (podeExcluirAnexo(titular, lotaTitular, mob, mov))
@@ -2010,13 +2027,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		if (mob.doc().getDtFechamento() != null)
 			return false;
+		if (lotaTitular.isFechada()) 
+			return false;
 		if (mob.doc().getExTipoDocumento().getIdTpDoc() != 2
 				&& mob.doc().getExTipoDocumento().getIdTpDoc() != 3)
 			if (!mob.doc().getLotaCadastrante().equivale(lotaTitular)
 					&& (mob.doc().getSubscritor() != null && !mob.doc()
 							.getSubscritor().equivale(titular))
 					&& (mob.doc().getTitular() != null && !mob.doc()
-							.getTitular().equivale(titular)))
+							.getTitular().equivale(titular))
+			)
 				return false;
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR);
@@ -2690,7 +2710,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeTransferir(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-
+		
 		return (mob.isVia() || mob.isVolume())
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isEmTransito()
@@ -2732,6 +2752,28 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		// return true;
 
+	}
+	
+
+	public boolean podeCancelarVinculacaoDocumento (final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob,
+			final ExMovimentacao mov) throws Exception {
+
+		if (mov.isCancelada())
+			return false;
+		
+		if ((mov.getCadastrante()!= null && mov.getCadastrante().equivale(titular))||( mov.getCadastrante()==null && mov.getLotaCadastrante().equivale(lotaTitular)))
+			return true;
+		
+		if ((mov.getSubscritor()!= null && mov.getSubscritor().equivale(titular))||( mov.getSubscritor()==null && mov.getLotaSubscritor().equivale(lotaTitular)))
+			return true;
+		
+		if ((mov.getLotaSubscritor().equivale(lotaTitular)))
+		return true;
+
+		return getConf().podePorConfiguracao(titular, lotaTitular,
+				mov.getIdTpMov(),
+				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
 	}
 
 	/**

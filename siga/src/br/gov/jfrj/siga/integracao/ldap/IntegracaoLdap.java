@@ -43,11 +43,11 @@ public class IntegracaoLdap {
 	}
 	
 	public boolean atualizarSenhaLdap(CpIdentidade id) {
-		String ambiente = System.getProperty("ambiente", "");
+		String ambiente = System.getProperty("jfrj.ambiente", "");
 		IntegracaoLdapProperties prop = new IntegracaoLdapProperties();
 		String localidade = id.getPessoaAtual().getOrgaoUsuario().getAcronimoOrgaoUsu().toLowerCase();
 		if (localidade.length()>0 && ambiente.length()>0){
-			prop.setPrefixo(localidade + "." +ambiente) ;	
+			prop.setPrefixo("siga.cp.sinc.ldap." + localidade + "." +ambiente) ;	
 		}
 		
 		try {

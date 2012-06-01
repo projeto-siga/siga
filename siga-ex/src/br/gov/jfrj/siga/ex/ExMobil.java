@@ -168,6 +168,35 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return penMov;
 	}
 
+	
+	/**
+	 * Retorna as  movimentações de um Mobil de acordo com um tipo
+	 * específico de movimentação.
+	 * 
+	 * @param tpMov
+	 * 
+	 * @return Lista de movimentações de um Mobil de acordo com um tipo específico
+	 *         de movimentação.
+	 * 
+	 */
+	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov) {
+		
+		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
+		List<ExMovimentacao> movsTp = new ArrayList<ExMovimentacao>();	
+		
+		if (movs != null)
+			for (final ExMovimentacao m : movs) {				
+				if (m.getExTipoMovimentacao().getIdTpMov().equals(tpMov))
+					movsTp.add(m);
+			}
+		return movsTp;	
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Verifica se um Mobil é do tipo Geral.
 	 * 

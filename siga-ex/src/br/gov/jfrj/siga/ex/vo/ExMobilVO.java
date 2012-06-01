@@ -65,6 +65,13 @@ public class ExMobilVO extends ExVO {
 
 	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
 			boolean completo) throws Exception {
+		this(mob, titular, lotaTitular,completo, null, false);
+	}
+
+		
+	
+	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
+			boolean completo, Long tpMov, boolean movAssinada ) throws Exception {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
 
@@ -108,9 +115,23 @@ public class ExMobilVO extends ExVO {
 						+ (System.currentTimeMillis() - tempoIni));
 
 		tempoIni = System.currentTimeMillis();
-		for (ExMovimentacao mov : mob.getCronologiaSet()) {
-			movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
-		}
+		
+		if (tpMov == null)
+		  for (ExMovimentacao mov : mob.getCronologiaSet()) {
+			  movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
+		  }
+		else
+		  for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov)) {
+			  if (!movAssinada) {
+				  if (!mov.isAssinada())
+			         movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
+			  }  	  
+			  else {		  
+				  if (mov.isAssinada())
+					  movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
+			  }	  
+		  }
+		 	
 
 		// Calcula o tempo que o documento ficou em cada uma das lotações por
 		// onde ele passou.

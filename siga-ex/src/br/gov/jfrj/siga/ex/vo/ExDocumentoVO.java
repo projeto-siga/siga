@@ -119,6 +119,26 @@ public class ExDocumentoVO extends ExVO {
 		addDadosComplementares();
 	}
 
+	
+	public ExDocumentoVO(ExDocumento doc) throws Exception {
+		this.doc = doc;
+		this.sigla = doc.getSigla();	
+		this.nomeCompleto = doc.getNomeCompleto();
+		this.dtDocDDMMYY = doc.getDtDocDDMMYY();		
+		this.descrDocumento = doc.getDescrDocumento();
+		if (doc.isEletronico()) {
+			this.classe = "header_eletronico";
+			this.fisicoOuEletronico = "Documento Eletrônico";
+			this.fDigital = true;
+		} else {
+			this.classe = "header";
+			this.fisicoOuEletronico = "Documento Físico";
+			this.fDigital = false;
+		}	
+		
+	}
+
+
 	/**
 	 * @param doc
 	 * @param titular

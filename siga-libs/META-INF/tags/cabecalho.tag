@@ -84,6 +84,12 @@ ${meta}
 		$('.links li p').click(function() {
 			$(this).next().slideToggle('fast');
 		});
+		$('.once').click(function(e) {
+			if (this.beenSubmitted)
+				e.preventDefault();
+			else
+				this.beenSubmitted = true;
+		});
 	});
 </script>
 

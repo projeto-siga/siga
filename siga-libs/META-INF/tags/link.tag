@@ -28,21 +28,21 @@
 	<c:if test="${not empty url}">
 		<c:choose>
 			<c:when test="${not empty popup and popup != false}">
-				<a class="button" href="javascript:${linkConfirm}popitup('${url}');">${title}</a>
+				<a class="button once" href="javascript:${linkConfirm}popitup('${url}');">${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
 				<span id="spanAjax_${idAjax}"> 
-					<a class="button" href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${title}</a>
+					<a class="button once" href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${title}</a>
 				</span>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
-						<a class="button"
+						<a class="button once"
 							href="javascript:${linkConfirm}location.href='${url}';">${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a class="button" href="${url}">${title}</a>
+						<a class="button once" href="${url}">${title}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

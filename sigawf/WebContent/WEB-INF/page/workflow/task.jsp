@@ -17,7 +17,9 @@
 						</div>
 						<div class="gt-form-row gt-width-100">
 							<input name="salvar_conhecimento" type="submit" value="Salvar"
-								class="gt-btn-medium gt-btn-left" />
+								class="gt-btn-medium gt-btn-left" /> <a
+								href="javascript: window.location.reload()"
+								class="gt-btn-medium gt-btn-left">Cancelar</a>
 						</div>
 					</form>
 				</div>
@@ -29,17 +31,18 @@
 				<h3>Execução da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<div class="gt-form-row gt-width-100">
-						<span id="desc_ver">${task.descricao}</span>
-						<c:if test="${task.conhecimentoEditavel}">
-							<tr>
-								<td><input name="editar_conhecimento" type="button"
-									value="Editar a descrição" id="desc_but_editar"
-									onclick="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display=''; " />
-									<input name="salvar_conhecimento" type="submit"
-									id="desc_but_gravar" value="Salvar" style="display: none"
-									onclick="javascript: this.form.action='${url}'; " /></td>
-							</tr>
-						</c:if>
+						<span id="desc_ver"> <c:choose>
+								<c:when test="${not empty task.descricao}">
+									<c:if test="${task.conhecimentoEditavel}">
+										<a
+											style="float: right; margin-left: 15px; margin-bottom: 15px;"
+											title="Editar a descrição"
+											href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';"><img
+											src="/siga/css/famfamfam/icons/pencil.png"> </a>
+									</c:if>${task.descricao}</c:when>
+								<c:otherwise>Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
+										href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';">aqui</a> para contribuir.</c:otherwise>
+							</c:choose> </span>
 					</div>
 					<div class="gt-form-row gt-width-100">
 						<table class="gt-form-table">
@@ -138,7 +141,8 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
 												</c:choose>
-											</ww:else></td>
+											</ww:else>
+										</td>
 									</tr>
 								</c:if>
 							</c:forEach>
@@ -245,14 +249,18 @@
 							<c:forEach var="c" items="${wf:ordenarComentarios(ti)}">
 								<tr>
 									<td>${f:espera(c.time)}</td>
-									<td><ww:property value="%{#attr.c.actorId}" /></td>
-									<td><ww:property value="%{#attr.c.message}" /></td>
+									<td><ww:property value="%{#attr.c.actorId}" />
+									</td>
+									<td><ww:property value="%{#attr.c.message}" />
+									</td>
 								</tr>
 							</c:forEach>
 							<tr>
 								<td>${f:espera(ti.create)}</td>
-								<td><ww:property value="%{#attr.ti.actorId}" /></td>
-								<td><b><ww:property value="%{#attr.ti.name}" /> </b></td>
+								<td><ww:property value="%{#attr.ti.actorId}" />
+								</td>
+								<td><b><ww:property value="%{#attr.ti.name}" /> </b>
+								</td>
 							</tr>
 						</c:forEach>
 					</table>
@@ -356,12 +364,9 @@
 			<div class="gt-sidebar-list">
 				<h3>Mapa do Procedimento</h3>
 				<ul class="gt-sidebar-list-content">
-					<li class="gt-sidebar-list-row">
-						<%--<div style="width: 251px">
-							<tags:wfImage task="${taskInstance.id}"
-								token="${taskInstance.token.id}" />
-						</div> --%>
-					</li>
+					<li class="gt-sidebar-list-row"><img style="width: 100%"
+						src="loadPhoto?tId=${taskInstance.id}" /> <%--<tags:wfImage task="${taskInstance.id}"
+								token="${taskInstance.token.id}" /> --%></li>
 				</ul>
 			</div>
 			<!-- /Sidebar List -->

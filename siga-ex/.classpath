@@ -131,7 +131,8 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jpa-api-2.0-cr-1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JBoss Log4j Library"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6">
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/log4j-1.2.11.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>

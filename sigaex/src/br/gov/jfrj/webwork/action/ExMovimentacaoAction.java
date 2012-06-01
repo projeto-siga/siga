@@ -74,6 +74,8 @@ import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
+import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
@@ -723,7 +725,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Arquivo não pode ser anexado");
-
+		
+		ExDocumentoVO docVO = new ExDocumentoVO(doc);
+		this.getRequest().setAttribute("docVO", docVO);
+		
+		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(), true,
+                ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
+		this.getRequest().setAttribute("mobilVO", mobilVO);
 		return Action.SUCCESS;
 	}
 

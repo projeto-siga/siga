@@ -787,9 +787,9 @@
 			method="aAnexarGravar">
 			<result type="redirect-action">
 				<param name="actionName">
-					exibir?sigla=${mob.sigla}
+					anexar?sigla=${mob.sigla}
 				</param>
-				<param name="namespace">/expediente/doc</param>
+				<param name="namespace">/expediente/mov</param>
 			</result>
 		</action>
 

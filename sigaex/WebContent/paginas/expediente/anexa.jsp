@@ -88,5 +88,107 @@
 		</td>
 		</tr>
 	</table>
+	
+	
+	<table border="0" cellpadding="0" cellspacing="0" width="80%" >
+		<tr>
+			<h1 colspan="4" > Anexos Pendentes de Assinatura </h1>
+		</tr> 
+	</table>
+	<table class="mov" width="80%">		
+		<tr class="${docVO.classe}">
+			<td align="center" rowspan="2">Data</td>			
+			<td colspan="2" align="left">Cadastrante</td>
+			<c:if test="${ (exibirCompleto == 'true')}">
+				<td colspan="2" align="left">Responsável</td>
+			</c:if>
+			<td colspan="2" align="left">Atendente</td>
+			<td rowspan="2">Descrição</td>			
+		</tr>
+		<tr class="${docVO.classe}">
+			<td align="left">Lotação</td>
+			<td align="left">Pessoa</td>
+			<c:if test="${ (exibirCompleto == 'true')}">
+				<td align="left">Lotação</td>
+				<td align="left">Pessoa</td>
+			</c:if>
+			<td align="left">Lotação</td>
+			<td align="left">Pessoa</td>
+		</tr>
+	    <c:forEach var="mov" items="${mobilVO.movs}">
+		<c:if
+			test="${(exibirCompleto == 'true') or (mov.idTpMov != 14 and
+					          not mov.cancelada)}">
+			<tr class="${mov.classe} ${mov.disabled}">
+				<c:if test="${ (exibirCompleto == 'true')}">
+					<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
+				</c:if>
+				<c:if test="${ (exibirCompleto != 'true')}">
+					<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
+				</c:if>
+				<ww:if test="${dt == dtUlt}">
+					<c:set var="dt" value="" />
+				</ww:if>
+				<ww:else>
+					<c:set var="dtUlt" value="${dt}" />
+				</ww:else>
+
+				<td align="center">${dt}</td>				
+				<td align="left"><siga:selecionado
+					sigla="${mov.parte.lotaCadastrante.sigla}"
+					descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}" /></td>
+				<td align="left"><siga:selecionado
+					sigla="${mov.parte.cadastrante.nomeAbreviado}"
+					descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}" /></td>
+				<c:if test="${ (exibirCompleto == 'true')}">
+					<td align="left"><siga:selecionado
+						sigla="${mov.parte.lotaSubscritor.sigla}"
+						descricao="${mov.parte.lotaSubscritor.descricaoAmpliada}" /></td>
+					<td align="left"><siga:selecionado
+						sigla="${mov.parte.subscritor.nomeAbreviado}"
+						descricao="${mov.parte.subscritor.descricao} - ${mov.parte.subscritor.sigla}" /></td>
+				</c:if>
+				<td align="left"><siga:selecionado
+					sigla="${mov.parte.lotaResp.sigla}"
+					descricao="${mov.parte.lotaResp.descricaoAmpliada}" /></td>
+				<td align="left"><siga:selecionado
+					sigla="${mov.parte.resp.nomeAbreviado}"
+					descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" /></td>
+				<td>${mov.descricao}<c:if test='${mov.idTpMov != 2}'> ${mov.complemento}</c:if>
+				<c:set var="assinadopor" value="${true}" /> <siga:links
+					inline="${true}"
+					separator="${not empty mov.descricao and mov.descricao != null}">
+					<c:forEach var="acao" items="${mov.acoes}">
+						<c:choose>
+							<c:when test='${mov.idTpMov == 32}'>
+								<ww:url id="url" value="${acao.nameSpace}/${acao.acao}">
+									<c:forEach var="p" items="${acao.params}">
+										<ww:param name="${p.key}">${p.value}</ww:param>
+									</c:forEach>
+								</ww:url>
+							</c:when>
+							<c:otherwise>
+								<ww:url id="url" action="${acao.acao}"
+									namespace="${acao.nameSpace}">
+									<c:forEach var="p" items="${acao.params}">
+										<ww:param name="${p.key}">${p.value}</ww:param>
+									</c:forEach>
+								</ww:url>
+							</c:otherwise>
+						</c:choose>
+						<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
+							pos="${acao.pos}" url="${url}" test="${true}"
+							popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
+							ajax="${acao.ajax}" idAjax="${mov.idMov}" />
+						<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
+							<c:set var="assinadopor" value="${false}" />
+						</c:if>
+					</c:forEach>
+				</siga:links></td>			
+			</tr>			
+		</c:if>
+	</c:forEach>
+	
+	</table>
 
 </siga:pagina>

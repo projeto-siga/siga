@@ -341,7 +341,7 @@ public class CpBL {
 	}
 
 	public CpIdentidade criarIdentidade(String matricula, String cpf,
-			CpIdentidade idCadastrante, String[] senhaGerada) throws AplicacaoException {
+			CpIdentidade idCadastrante, final String senhaDefinida, String[] senhaGerada) throws AplicacaoException {
 		final long longmatricula = Long.parseLong(matricula.substring(2));
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
@@ -355,7 +355,13 @@ public class CpBL {
 			}
 			if (id == null) {
 				if (pessoa.getEmailPessoa() != null) {
-					final String novaSenha = GeraMessageDigest.geraSenha();
+					String novaSenha = null;
+					if (senhaDefinida !=null){
+						novaSenha = senhaDefinida;
+					}else{
+						novaSenha = GeraMessageDigest.geraSenha();
+					}
+					
 					if (senhaGerada != null){
 						senhaGerada[0] = novaSenha;
 					}
@@ -516,14 +522,24 @@ public class CpBL {
 			final long matAux1 = Long.parseLong(auxiliar1.substring(2));
 			final DpPessoa pesAux1 = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf1), matAux1);
-
+			if (pesAux1 == null){
+				throw new AplicacaoException("Auxiliar 1 inválido!");
+			}
+			
 			final long matAux2 = Long.parseLong(auxiliar2.substring(2));
 			final DpPessoa pesAux2 = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf2), matAux2);
+			if (pesAux2 == null){
+				throw new AplicacaoException("Auxiliar 2 inválido!");
+			}
 
 			final long longmatricula = Long.parseLong(matricula.substring(2));
 			final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf), longmatricula);
+			if (pessoa == null){
+				throw new AplicacaoException("A pessoa que terá a senha definida inválida!");
+			}
+
 
 			CpIdentidade cpIdAux1 = null;
 			CpIdentidade cpIdAux2 = null;

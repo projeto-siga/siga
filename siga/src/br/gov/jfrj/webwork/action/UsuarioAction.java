@@ -236,15 +236,36 @@ public class UsuarioAction extends SigaActionSupport {
 		getRequest().setAttribute("volta", "incluir");
 		getRequest().setAttribute("titulo", "Novo Usuário");
 		String[] senhaGerada = new String[1];
+		boolean senhaTrocadaAD = false;
+		switch (metodo) {
+		case 1:
 		CpIdentidade id = Cp.getInstance().getBL().criarIdentidade(matricula,
-				cpf, getIdentidadeCadastrante(),senhaGerada);
-		boolean senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(id,senhaGerada[0]);
+				cpf, getIdentidadeCadastrante(),null,senhaGerada);
 		getRequest().setAttribute("mensagem",
 				"Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ (senhaTrocadaAD?"<br/>OBS: A senha do AD também foi alterada.":""));
-//		getRequest()
-//				.setAttribute(
-//						"mensagem",
-//						"Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email");
+		case 2:
+			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
+				getRequest()
+				.setAttribute("mensagem",
+						"Não foi possível alterar a senha!<br/>" +
+						"1) As pessoas informadas não podem ser as mesmas;<br/>" +
+						"2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>" +
+						"3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>");
+				return Action.SUCCESS;
+			}else{
+				CpIdentidade idNovaDefinida = Cp.getInstance().getBL().criarIdentidade(matricula,cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
+				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
+			}
+			break;
+		default:
+			getRequest()
+			.setAttribute("mensagem",
+					"Método inválido!");
+		}
+		
+		getRequest().setAttribute("mensagem",
+				"Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ (senhaTrocadaAD?"<br/>OBS: A senha do AD também foi alterada.":""));
+
 
 		return Action.SUCCESS;
 

@@ -1099,6 +1099,67 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
+	
+	//Aqui
+	public String aAssinarMovGravarLote() throws Exception {
+		boolean fApplet = getRequest().getParameter("QTYDATA") != null;
+		String b64Applet = null;
+		if (fApplet) {
+			b64Applet = recuperarAssinaturaAppletB64();
+		}
+		buscarDocumento(true);
+		if (b64Applet != null)
+			setAssinaturaB64(b64Applet);
+
+		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
+		if (getCopia() != null && getCopia())
+			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+
+		mob = dao().consultar(getId(), ExMobil.class, false);
+
+		Long idMob = paramLong("id");
+		if (idMob == null)
+			throw new AplicacaoException("Id do mobil não informado");
+		ExMobil mobAlvo = dao().consultar(idMob, ExMobil.class,false);
+
+		byte[] assinatura = Base64.decode(getAssinaturaB64());
+
+		// String sArquivoPolitica = getRequest().getRealPath("") +
+		// File.separator
+		// + "policies-ICP-BRASIL" + File.separator + "PA_AD_RB.cer";
+		// assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
+		// mov.getConteudoBlobpdf(), sArquivoPolitica);
+
+		verificaNivelAcesso(mobAlvo);
+
+		try {
+			for (ExMovimentacao mov : mobAlvo.getMovimentacoesPorTipo(tpMovAssinatura)){
+				if (!mov.isAssinada())
+						Ex.getInstance()
+							.getBL()
+							.assinarMovimentacao(getCadastrante(), getLotaTitular(),
+								mov, assinatura, tpMovAssinatura);
+			}	
+		} catch (final Exception e) {
+			if (fApplet) {
+				getRequest().setAttribute("err", e.getMessage());
+				return "ERRO";
+			}
+
+			throw e;
+		}		
+
+		if (fApplet) {
+			return "OK";
+		}
+
+		return Action.SUCCESS;
+	}
+
+	//Aqui
+	
+	
+	
 
 	public String aFecharPopup() throws Exception {
 		buscarDocumento(true);

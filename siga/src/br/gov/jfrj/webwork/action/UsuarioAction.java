@@ -26,6 +26,8 @@ package br.gov.jfrj.webwork.action;
 
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
@@ -57,6 +59,8 @@ public class UsuarioAction extends SigaActionSupport {
 	private String auxiliar2;
 	private String cpf2;
 	private String senha2;
+	
+	private Long idOrgao;
 	
 	public String getCpf1() {
 		return cpf1;
@@ -311,6 +315,22 @@ public class UsuarioAction extends SigaActionSupport {
 		this.senha2 = senha2;
 	}
 
+	public String isIntegradoLdap() {
+		CpOrgaoUsuario orgaoUsu = CpDao.getInstance().consultar(getIdOrgao(), CpOrgaoUsuario.class, false);
+		if (orgaoUsu!=null){
+			return IntegracaoLdap.getInstancia().integrarComLdap(orgaoUsu)==true?"ajax_retorno":"ajax_vazio";
+		}
+		return "ajax_vazio";
+	}
+
+	public Long getIdOrgao() {
+		return idOrgao;
+	}
+	
+	public void setIdOrgao(Long idOrgao) {
+		this.idOrgao = idOrgao;
+	}
+	
 }
 
 // falta: salvar o grupo; manter o histórico; eliminar "simulandoUsuario" e

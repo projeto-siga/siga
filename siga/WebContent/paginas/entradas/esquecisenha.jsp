@@ -42,6 +42,7 @@
 }
 </style>
 
+<ww:url action="integracaoLdap" id="integracao_url"></ww:url>
 <script type="text/javascript" language="Javascript1.1">
 
 /*  converte para maiúscula a sigla do estado  */
@@ -100,6 +101,30 @@ function validateUsuarioForm(form) {
 	}
 	return true;
 }
+
+function exibirSeIntegradoAoLdap(){
+	var estaIntegrado = "0";
+	if (exibirSeIntegradoAoLdap.arguments[0]==estaIntegrado){
+		document.getElementById('painelMetodo1').style.display = 'block';
+		document.getElementById('msg_integracaoAD').style.display = 'none';
+	}else{
+		document.getElementById('painelMetodo1').style.display = 'none';
+		document.getElementById('msg_integracaoAD').style.display = 'block';
+	}
+}
+
+function verificarIntegracaoAD(){
+	var selectionOrgao = document.getElementById('idOrgaoUsu');
+	var id_orgao = selectionOrgao.options[selectionOrgao.selectedIndex].value;
+	if (id_orgao!="-1"){
+		PassAjaxResponseToFunction('${integracao_url}?idOrgao='+id_orgao,'exibirSeIntegradoAoLdap');
+	}else{
+		document.getElementById('painelMetodo1').style.display = 'none';
+		document.getElementById('msg_integracaoAD').style.display = 'none';
+	}
+	
+	
+}
 </script>
 
 <siga:pagina titulo="${param.titulo}">
@@ -108,36 +133,41 @@ function validateUsuarioForm(form) {
 
 	<h2>&nbsp;${mensagem }</h2>
 	<h2>Método 1 - Envio de senha nova para o e-mail</h2>
-	<p style="font-size: x-small; font-style: italic;">O sistema gera
-	uma senha aleatoriamente e a envia para o email da pessoa informada.</p>
-	<ww:form action="${param.proxima_acao}" theme="simple">
-		<ww:hidden name="metodo" value="1" />
-		<table class="form" width="100%">
-			<ww:hidden name="page" value="1" />
-			<tr class="header">
-				<td colspan="2">Criar uma nova senha automaticamente e enviar
-				para o e-mail de:</td>
-			</tr>
-			<tr>
-				<td>Matrícula:</td>
-				<td><ww:textfield name="matricula"
-					onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
-				XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é
-				o número da sua matrícula.</td>
-			</tr>
-			<tr>
-				<td>CPF:</td>
-				<td><ww:textfield name="cpf" theme="simple" /></td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-				<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
-					label="Cancelar" value="Cancelar" theme="simple" /></td>
-			</tr>
-
-		</table>
-	</ww:form> <br />
-
+	
+	<ww:select name="idOrgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
+		listValue="nmOrgaoUsu" label="Órgão" theme="simple" onchange="javascript:verificarIntegracaoAD();" headerKey="-1" headerValue="Escolha seu órgão..." />
+	<span id="msg_integracaoAD" style="display: none;font-weight: bold;color: red;">Por favor, use o MÉTODO 2. <div style="font-size: xx-small;">O método 1 está indisponível para o seu órgão, pois o SIGA está integrado ao LDAP.</div></span>	
+	<div id="painelMetodo1" style="display: none;">
+		<p style="font-size: x-small; font-style: italic;">O sistema gera
+		uma senha aleatoriamente e a envia para o email da pessoa informada.</p>
+		<ww:form action="${param.proxima_acao}" theme="simple">
+			<ww:hidden name="metodo" value="1" />
+			<table class="form" width="100%">
+				<ww:hidden name="page" value="1" />
+				<tr class="header">
+					<td colspan="2">Criar uma nova senha automaticamente e enviar
+					para o e-mail de:</td>
+				</tr>
+				<tr>
+					<td>Matrícula:</td>
+					<td><ww:textfield name="matricula"
+						onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
+					XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é
+					o número da sua matrícula.</td>
+				</tr>
+				<tr>
+					<td>CPF:</td>
+					<td><ww:textfield name="cpf" theme="simple" /></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
+						label="Cancelar" value="Cancelar" theme="simple" /></td>
+				</tr>
+	
+			</table>
+		</ww:form> <br />
+	</div>
 	<h2>Método 2 - Alterar a senha com auxílio de 2 pessoas</h2>
 	<p style="font-size: x-small; font-style: italic;">O sistema altera
 	a senha da pessoa conforme solicitado, porém é necessário o apoio de

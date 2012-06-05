@@ -12,6 +12,7 @@
 		<project>siga-cd</project>
 		<project>siga-cd-base</project>
 		<project>siga-libs</project>
+		<project>siga-auditoria</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

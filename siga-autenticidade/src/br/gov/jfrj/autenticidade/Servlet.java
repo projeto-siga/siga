@@ -21,7 +21,8 @@ public class Servlet extends HttpServlet {
 		
 		try {
 			System.out.println(req.getRemoteHost() + " buscando " + num);
-			ExService service = Service.getExService("localhost", "8080");
+			// ExService service = Service.getExService("localhost", "8080");
+			ExService service = Service.getExService();
 
 			if (num == null)
 				throw new Exception("Número não informado");

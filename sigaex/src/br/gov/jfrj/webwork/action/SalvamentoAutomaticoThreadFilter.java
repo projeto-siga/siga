@@ -29,35 +29,38 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
 public class SalvamentoAutomaticoThreadFilter implements Filter {
 
 	private static ArrayList<String> requisicoes = new ArrayList<String>();
+	
+	private static final Logger log = Logger.getLogger( SalvamentoAutomaticoThreadFilter.class );
 
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		
 		HttpServletRequest httpRequest = ((HttpServletRequest) request);
 		String id = httpRequest.getRequestedSessionId();
-		if (httpRequest.getParameter("auto_save") != null) {
-			if (requisicoes.size() <= 3 && !requisicoes.contains(id)) {
-				requisicoes.add(id);
+		
+		try {
+			if (httpRequest.getParameter("auto_save") != null) {
+				if (requisicoes.size() <= 3 && !requisicoes.contains(id)) {
+					requisicoes.add(id);
+					chain.doFilter(request, response);
+					requisicoes.remove(id);
+				}
+			} else {			
 				chain.doFilter(request, response);
-				requisicoes.remove(id);
 			}
-		} else
-			chain.doFilter(request, response);
-		
+		} catch (Throwable ex) {
+			log.error( ex.getMessage(), ex );
+			ex.printStackTrace();
+		}
 
 	}
 
-	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void init(FilterConfig arg0) throws ServletException {}
+	public void destroy() {}
 
 }

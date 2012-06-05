@@ -6,7 +6,7 @@
 
 	<display-name>SIGA - Gestão Documental</display-name>
 
-	<!--
+	<!-- 
 		<jsp-config> <taglib>
 		<taglib-uri>http://jsptags.com/tags/navigation/pager</taglib-uri>
 		<taglib-location>/WEB-INF/jsp/pager-taglib.tld</taglib-location>
@@ -117,6 +117,13 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
+	</listener>
 
 	<!-- Standard Action Servlet Configuration  -->
 	<servlet>

@@ -25,8 +25,7 @@ ${cabecalho_meta}
 <link rel="shortcut icon" href="imagens/siga.ico" />
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
-<siga:cabecalho titulo="${titulo_pagina}" menu="menu" barra="nao"
-	ambiente="${ambiente}" />
+<siga:cabecalho titulo="${titulo_pagina}" menu="menu" barra="nao" ambiente="${ambiente}" />
 <TABLE WIDTH="100%" height="100%" BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR>
 		<c:if test="${titulo_pagina == 'Página Inicial'}">

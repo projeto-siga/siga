@@ -27,14 +27,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.StaleObjectStateException;
 import org.hibernate.cfg.AnnotationConfiguration;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
+import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -44,6 +43,7 @@ public class ExThreadFilter implements Filter {
 	private static boolean fConfigured = false;
 
 	private static final Object classLock = ExThreadFilter.class;
+	private static final Logger log = Logger.getLogger( ExThreadFilter.class );
 
 	/**
 	 * Pega a sessão.
@@ -62,13 +62,19 @@ public class ExThreadFilter implements Filter {
 						Ex.getInstance();
 						AnnotationConfiguration cfg = ExDao
 								.criarHibernateCfg("java:/SigaExDS");
+
+						// bruno.lacerda@avantiprima.com.br
+						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
+						SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
+						
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						// log.error("Não foi possível configurar o hibernate.",
 						// ex);
+						log.error( "Não foi possível configurar o Hibernate. ", ex );
+						ex.printStackTrace();
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -93,25 +99,26 @@ public class ExThreadFilter implements Filter {
 			try {
 				chain.doFilter(request, response);
 			} catch (RuntimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 				throw e;
 			}
 			ExDao.commitTransacao();
 
 		} catch (final Throwable ex) {
 			ExDao.rollbackTransacao();
+			log.error( ex.getMessage(), ex );
 			ex.printStackTrace();
 			throw new ServletException(ex);
 		} finally {
 			try {
 				HibernateUtil.fechaSessaoSeEstiverAberta();
 			} catch (Exception ex) {
+				log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
 				ex.printStackTrace();
 			}
 			try {
 				ModeloDao.freeInstance();
 			} catch (Exception ex) {
+				log.error( ex.getMessage(), ex );
 				ex.printStackTrace();
 			}
 		}

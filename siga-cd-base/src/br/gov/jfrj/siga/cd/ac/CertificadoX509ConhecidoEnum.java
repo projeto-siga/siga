@@ -38,10 +38,15 @@ public enum CertificadoX509ConhecidoEnum {
 
 	AC_RAIZ_ICPBRASIL_V2(CertificadoACEnum.AC_RAIZ_ICPBRASIL_V2.toX509Certificate()),
 	AC_JUS_V4(CertificadoACEnum.AC_JUS_V4.toX509Certificate()),
+	AC_JUS_V4_NOVO(CertificadoACEnum.AC_JUS_V4_NOVO.toX509Certificate()),
 	AC_SERPRO_JUS_V4(CertificadoACEnum.AC_SERPRO_JUS_V4.toX509Certificate()),
 	AC_SERASA_JUS_V2(CertificadoACEnum.AC_SERASA_JUS_V2.toX509Certificate()),
 	AC_CERTISIGN_JUS_G3(CertificadoACEnum.AC_CERTISIGN_JUS_G3.toX509Certificate()),
-	AC_CAIXA_JUS_V2(CertificadoACEnum.AC_CAIXA_JUS_V2.toX509Certificate())
+	AC_CERTISIGN_JUS_G3_NOVO(CertificadoACEnum.AC_CERTISIGN_JUS_G3_NOVO.toX509Certificate()),
+	AC_CAIXA_JUS_V2(CertificadoACEnum.AC_CAIXA_JUS_V2.toX509Certificate()),
+	AC_CERTISIGN_G6(CertificadoACEnum.AC_CERTISIGN_G6.toX509Certificate()),
+	AC_RFB_V3(CertificadoACEnum.AC_RFB_V3.toX509Certificate()),
+	AC_CERTISIGN_RFB_G4(CertificadoACEnum.AC_CERTISIGN_RFB_G4.toX509Certificate())
 	;
 	
 	

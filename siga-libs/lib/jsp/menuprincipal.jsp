@@ -143,6 +143,6 @@
 
 	</ul>
 </li>
-
+<!-- insert menu -->
 <c:import url="/paginas/menus/menu.jsp"></c:import>
 

@@ -221,12 +221,12 @@ body {
 .gt-table th {
 	font-weight: bold;
 	font-size: 100%;
-	padding: 7px 10px;
+	padding: 7px 5px;
 	color: #333;
 	border-bottom: 1px solid #ccc;
 }
 .gt-table td {
-	padding: 7px 10px;
+	padding: 7px 5px;
 	border-top: 1px solid #ccc;
 	color: #333;
 	vertical-align: top;
@@ -241,6 +241,12 @@ body {
 	font-size: 108%;
 	color: #365b6d;
 	margin-bottom: 0;
+}
+.gt-table h3 {
+	font-size: 120%;
+	color: #365b6d;
+	margin-bottom: 0;
+	padding-bottom: 7px;
 }
 .gt-table a:link, .gt-table a:visited {
 	color: #365b6d;
@@ -335,12 +341,12 @@ body {
 	text-align: right;
 	padding: 0 10px 5px 0;
 	vertical-align: top;
-	font-size: 85%;
+	font-size: 90%;
 	border: none;
 }
 .gt-table-categories td {
 	text-align: left;
-	font-size: 85%;
+	font-size: 90%;
 	font-weight: bold;
 	color: #666666;
 	vertical-align: top;
@@ -379,7 +385,10 @@ body {
 	width: 1%;
 }
 .gt-user-table p {
-	font-size: 85%;
+	font-size: 90%;
+}
+.gt-user-table h4 {
+	padding-bottom: 8px;
 }
 
 /* Login Box Styles */

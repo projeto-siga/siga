@@ -16,4 +16,6 @@ GET     /public/                                staticDir:public
 *       /{tipo}/buscar                  	Application.buscar{tipo}
 
 # Catch all
-*       /Application/{action}                  Application.{action}
+*		/exibir/{id}               Application.exibir
+*		/andamento/{id}            Application.andamento
+*       /{action}                  Application.{action}

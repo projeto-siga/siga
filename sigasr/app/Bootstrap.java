@@ -87,9 +87,12 @@ public class Bootstrap extends Job {
 			SrServico install = new SrServico("01.19",
 					"Instalar software nos Servidores").save();
 
-			CpMarcador aReceber = JPA.em().find(CpMarcador.class, 31L);
-			
 			DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
+			DpPessoa gmb = JPA.em().find(DpPessoa.class, 3558L);
+			DpPessoa simone = JPA.em().find(DpPessoa.class, 3729L);
+			DpPessoa lys = JPA.em().find(DpPessoa.class, 3853L);
+			DpPessoa kpf = JPA.em().find(DpPessoa.class, 10331L);
+
 			SrSolicitacao sol1 = new SrSolicitacao();
 			sol1.cadastrante = eeh;
 			sol1.descrSolicitacao = "Solicito testar bastante, para que depois não se dê a desculpa de não ter havido oportunidades suficientes para detecção de erros.";
@@ -100,34 +103,25 @@ public class Bootstrap extends Job {
 			sol1.local = "Almirante Barroso";
 			sol1.lotaCadastrante = eeh.getLotacao();
 			sol1.orgaoUsuario = eeh.getOrgaoUsuario();
-			sol1.solicitante = eeh;
-			sol1.lotaSolicitante = eeh.getLotacao();
+			sol1.solicitante = gmb;
+			sol1.lotaSolicitante = gmb.getLotacao();
 			sol1.tendencia = SrTendencia.PIORA_CURTO_PRAZO;
 			sol1.urgencia = SrUrgencia.ALGUMA_URGENCIA;
 			sol1.dtReg = new Date();
-			sol1.save();
-			
-			SrMarca marca1 = new SrMarca();
-			marca1.setCpMarcador(aReceber);
-			marca1.setDpLotacaoIni(eeh.getLotacao());
-			marca1.setDpPessoaIni(null);
-			marca1.setDtIniMarca(new Date());
-			marca1.solicitacao = sol1;
-			JPA.em().persist(marca1);
+			sol1.criar();
 
-			DpPessoa kpf = JPA.em().find(DpPessoa.class, 10331L);
 			SrSolicitacao sol2 = new SrSolicitacao();
-			sol2.cadastrante = kpf;
+			sol2.cadastrante = lys;
 			sol2.descrSolicitacao = "Também solicito a execução de muitos testes, visto que é limitada a nossa paciência e capacidade de assimilação de alto nível de stress acarretado por reclamações enfurecidas.";
 			sol2.formaAcompanhamento = SrFormaAcompanhamento.FECHAMENTO;
 			sol2.gravidade = SrGravidade.EXTREMAMENTE_GRAVE;
 			sol2.itemConfiguracao = sigasr;
 			sol2.servico = install;
 			sol2.local = "Rio Branco";
-			sol2.lotaCadastrante = kpf.getLotacao();
-			sol2.orgaoUsuario = kpf.getOrgaoUsuario();
-			sol2.solicitante = kpf;
-			sol2.lotaSolicitante = kpf.getLotacao();
+			sol2.lotaCadastrante = lys.getLotacao();
+			sol2.orgaoUsuario = lys.getOrgaoUsuario();
+			sol2.solicitante = simone;
+			sol2.lotaSolicitante = simone.getLotacao();
 			sol2.tendencia = SrTendencia.PIORA_IMEDIATA;
 			sol2.urgencia = SrUrgencia.AGIR_IMEDIATO;
 			try {
@@ -136,17 +130,8 @@ public class Bootstrap extends Job {
 			} catch (ParseException pe) {
 				//
 			}
-			sol2.save();
-			
-			SrMarca marca2 = new SrMarca();
-			marca2.setCpMarcador(aReceber);
-			marca2.setDpLotacaoIni(eeh.getLotacao());
-			marca2.setDpPessoaIni(null);
-			marca2.setDtIniMarca(new Date());
-			marca2.solicitacao = sol2;
-			JPA.em().persist(marca2);
-			
-			//JPA.em().getTransaction().commit();
+			sol2.criar();
+			// JPA.em().getTransaction().commit();
 		}
 	}
 

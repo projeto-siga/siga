@@ -71,4 +71,15 @@ public class SrServico extends SrCodigoHierarquicoSuporte {
 		this.descrServico = descr;
 	}
 
+	@Override
+	public void setId(Integer id) {
+		if (id != null)
+		this.idServico = id;
+	}
+
+	@Override
+	public void setDescricao(String descricao) {
+		this.descrServico = descricao;
+	}
+
 }

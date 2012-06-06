@@ -2,6 +2,7 @@ package models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -14,8 +15,9 @@ import play.db.jpa.Model;
 public class SrArquivo extends GenericModel{
 	
 	@Id
+	@GeneratedValue
 	@Column(name = "ID_ARQUIVO")
-	public long id;
+	public long idArquivo;
 	
 	@Lob
 	public byte[] blob;

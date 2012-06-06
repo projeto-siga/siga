@@ -1,6 +1,7 @@
 package models;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -17,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,10 +27,12 @@ import org.hibernate.annotations.Where;
 
 import controllers.SrCalendar;
 
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import play.db.jpa.GenericModel;
+import play.db.jpa.JPA;
 import play.db.jpa.Model;
 
 @Entity
@@ -71,11 +75,9 @@ public class SrSolicitacao extends GenericModel {
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	public SrItemConfiguracao itemConfiguracao;
 
-	// @ManyToMany(targetEntity=SrArquivo.class, cascade={ CascadeType.PERSIST }
-	// )
-	// @JoinTable(name="tblUserPermission",
-	// @JoinColumn(name = "ID_ARQUIVO")
-	// public SrArquivo arquivo;
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQUIVO")
+	public SrArquivo arquivo;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_SERVICO")
@@ -108,15 +110,16 @@ public class SrSolicitacao extends GenericModel {
 	@ManyToMany(cascade = CascadeType.PERSIST)
 	public List<SrAtributo> atributoSet;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy="solicitacao")
-	@Where(clause="ID_TP_MARCA=2")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "solicitacao")
+	@Where(clause = "ID_TP_MARCA=2")
 	public List<SrMarca> marcaSet;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "solicitacao")
+	@OrderBy("idAndamento DESC")
 	public List<SrAndamento> andamentoSet;
 
 	public SrSolicitacao() {
-
+		andamentoSet = new ArrayList<SrAndamento>();
 	}
 
 	public SrSolicitacao(DpPessoa solicitante, DpLotacao lotaSolicitante,
@@ -146,7 +149,7 @@ public class SrSolicitacao extends GenericModel {
 	}
 
 	public String getCodigo() {
-		return "RJ-SOL-2012/0000" + idSolicitacao;
+		return "RJ-SR-2012/0000" + idSolicitacao;
 	}
 
 	public String getDtRegString() {
@@ -160,4 +163,115 @@ public class SrSolicitacao extends GenericModel {
 				* tendencia.nivelTendencia;
 	}
 
+	public SrAndamento getUltimoAndamento() {
+		for (SrAndamento andamento : andamentoSet)
+			return andamento;
+		return null;
+	}
+	
+	public String getSituacao(){
+		return getUltimoAndamento().estado.descrEstado;
+	}
+
+	public SrAndamento getAndamentoAnterior(SrAndamento ref) {
+		boolean retorna = false;
+		for (SrAndamento andamento : andamentoSet) {
+			if (retorna)
+				return andamento;
+			if (andamento == ref)
+				retorna = true;
+		}
+		return null;
+	}
+
+	public void criar() {
+
+		if (lotaCadastrante == null)
+			lotaCadastrante = cadastrante.getLotacao();
+		if (solicitante != null && lotaSolicitante == null)
+			lotaSolicitante = solicitante.getLotacao();
+		else
+			lotaSolicitante = lotaCadastrante;
+
+		// substituir isso pelo cascade
+		this.save();
+
+		SrAndamento andamento = new SrAndamento();
+		andamento.descrAndamento = "Criação da solicitação";
+		andamento.cadastrante = cadastrante;
+		andamento.lotaCadastrante = lotaCadastrante;
+		andamento.estado = SrEstado.ANDAMENTO;
+
+		// Antes de existir configuração pro primeiro antendente...
+		DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
+		andamento.lotaAtendente = eeh.getLotacao();
+		darAndamento(andamento);
+	}
+
+	public void darAndamento(SrAndamento andamento) {
+		andamento.solicitacao = this;
+		andamento.dtReg = new Date();
+
+		DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
+		// Enquanto não há login...
+
+		andamento.cadastrante = eeh;
+		andamento.lotaCadastrante = eeh.getLotacao();
+
+		if (andamento.atendente != null && andamento.lotaAtendente == null)
+			andamento.lotaAtendente = andamento.atendente.getLotacao();
+		if (andamento.lotaAtendente == null)
+			andamento.lotaAtendente = getUltimoAndamento().lotaAtendente;
+		if (andamento.atendente == null && getUltimoAndamento() != null)
+			andamento.atendente = getUltimoAndamento().atendente;
+
+		andamento.save();
+		andamentoSet.add(andamento);
+		// atualizarMarcas();
+	}
+
+	public void marcar(Long idMarcador, DpLotacao lotacao, DpPessoa pessoa) {
+		CpMarcador marcador = JPA.em().find(CpMarcador.class, idMarcador);
+		marcar(marcador, lotacao, pessoa);
+	}
+
+	public void marcar(CpMarcador marcador, DpLotacao lotacao, DpPessoa pessoa) {
+		SrMarca marca2 = new SrMarca();
+		marca2.setCpMarcador(marcador);
+		marca2.setDpLotacaoIni(lotacao.getLotacaoInicial());
+		marca2.setDpPessoaIni(pessoa.getPessoaInicial());
+		marca2.setDtIniMarca(new Date());
+		marca2.solicitacao = this;
+		JPA.em().persist(marca2);
+	}
+
+	public void atualizarMarcas() {
+		/*
+		 * SrAndamento ultimoAndamento = getUltimoAndamento();
+		 * 
+		 * if (ultimoAndamento.isTransferenciaParaLotacao())
+		 * marcar(CpMarcador.MARCADOR_SOLICITACAO_A_RECEBER,
+		 * ultimoAndamento.lotaAtendente, ultimoAndamento.atendente); else if
+		 * (ultimoAndamento.isRecebimentoPorLotacao())
+		 * marcar(CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
+		 * ultimoAndamento.lotaAtendente, ultimoAndamento.atendente);
+		 */
+	}
+
+	public boolean podeReceber(DpLotacao lota, DpPessoa pess) {
+		/*
+		 * return ((getUltimoAndamento().isTransferenciaParaPessoa() &&
+		 * getUltimoAndamento().atendente.equivale(pess) ||
+		 * (getUltimoAndamento() .isTransferenciaParaLotacao() &&
+		 * getUltimoAndamento().lotaAtendente .equivale(lota))));
+		 */
+		return false;
+	}
+
+	public boolean podeAlterarAtendente(DpLotacao lota, DpPessoa pess) {
+
+		return ((getUltimoAndamento().atendente != null && getUltimoAndamento().atendente
+				.equivale(pess)) || getUltimoAndamento().lotaAtendente
+				.equivale(lota));
+	}
 }

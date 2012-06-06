@@ -1,11 +1,11 @@
-#{extends 'main.html' /} #{set title:'Abrir Solicitação' /}
+#{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2>Cadastro de solicitação</h2>
 		<div class="gt-content-box gt-for-table">
 
-			<form action="@{Application.gravar}">
+			#{form @Application.gravar(), enctype:'multipart/form-data' }
 				<table class="gt-form-table">
 					<colgroup>
 						<col width="30%" />
@@ -16,7 +16,7 @@
 					</tr>
 					<tr>
 						<td>Solicitante</td>
-						<td>#{selecao tipo:'pessoa', nome:'Solicitante' /}</td>
+						<td>#{selecao tipo:'pessoa', nome:'Solicitante', value:pessoaSolicitanteSel /}</td>
 					</tr>
 					<tr>
 						<td>Quando deseja receber notificação de andamento?</td>
@@ -27,12 +27,13 @@
 					</tr>
 					<tr>
 						<td>Telefone Principal</td>
-						<td><input type="text" name="solicitacao.telPrincipal" id="telPrincipal" />
-						</td>
+						<td><input type="text" name="solicitacao.telPrincipal"
+							id="telPrincipal" /></td>
 					</tr>
 					<tr>
 						<td>Local</td>
-						<td><input type="text" name="solicitacao.local" id=local " /></td>
+						<td><input type="text" name="solicitacao.local" id=local " />
+						</td>
 					</tr>
 					<tr>
 						<td>Item:</td>
@@ -59,24 +60,26 @@
 					</tr>
 					<tr>
 						<td>Descrição:</td>
-						<td><textarea name="solicitacao.descrSolicitacao" id="descrSolicitacao"></textarea>
-						</td>
+						<td><textarea name="solicitacao.descrSolicitacao"
+								id="descrSolicitacao"></textarea></td>
 					</tr>
 					<tr>
 						<td>Anexar arquivo:</td>
-						<td></td>
+						<td><input type="file" name="arquivo" /></td>
 					</tr>
 					<tr>
 						<td>Motivo fechamento</td>
-						<td><input type="text" name="solicitacao.motivoFechamentoAbertura" id="motivoFechamentoAbertura" /></td>
+						<td><input type="text"
+							name="solicitacao.motivoFechamentoAbertura"
+							id="motivoFechamentoAbertura" />
+						</td>
 					</tr>
 					<tr>
 						<td colspan="2"><input type="submit" value="Gravar"
-							class="gt-btn-medium gt-btn-left" />
-						</td>
+							class="gt-btn-medium gt-btn-left" /></td>
 					</tr>
 				</table>
-			</form>
+			#{/form}
 		</div>
 	</div>
 </div>

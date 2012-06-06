@@ -11,10 +11,10 @@ import play.db.jpa.Model;
 
 public enum SrGravidade {
 
-	EXTREMAMENTE_GRAVE(5, "Extremamente grave", "Extremamente graves"), MUITO_GRAVE(4, "Muito grave", "Muito graves"), GRAVE(
-			3, "Grave", "Graves"), POUCO_GRAVE(2, "Pouco grave", "Pouco graves"), SEM_RGAVIDADE(1,
-			"Sem gravidade");
-	
+	SEM_RGAVIDADE(1, "Sem gravidade"), POUCO_GRAVE(2, "Pouco grave",
+			"Pouco graves"), GRAVE(3, "Grave", "Graves"), MUITO_GRAVE(4,
+			"Muito grave", "Muito graves"), EXTREMAMENTE_GRAVE(5,
+			"Extremamente grave", "Extremamente graves");
 	public int nivelGravidade;
 
 	public String descrGravidade;

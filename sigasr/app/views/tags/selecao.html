@@ -1,6 +1,10 @@
 #{set _base:'http://10.34.5.90:8080'/}
 <span id="${_idAjax}" depende=";tipo${_nome};"> <!--ajax:${_idAjax}-->
 	<input type="hidden" name="campos" value="${_tipo}${_nome}Sel.id" /> <!-- A lista de par -->
+	
+	<!-- O campo abaixo é necessário por causa de um problema no Play (https://groups.google.com/group/play-framework/browse_thread/thread/c3463f0e062c1d4b/60dfb32db5bb3220) -->
+	<input type="hidden" id="${_tipo}${_nome}" name="${_tipo}${_nome}" value="${_value?.id}"/>
+	
 	<script type="text/javascript">
 
 	%{
@@ -22,6 +26,7 @@ self.retorna_${_tipo}${_nome} = function(id, sigla, descricao) {
     }
 
 	document.getElementsByName('${_tipo}${_nome}Sel.id')[0].value = id;
+	document.getElementById('${_tipo}${_nome}').value = id;
 	try {
 		document.getElementsByName('${_tipo}${_nome}Sel.descricao')[0].value = descricao;
 		document.getElementById('${_tipo}${_nome}SelSpan').innerHTML = descricao;
@@ -86,19 +91,20 @@ self.ajax_${_tipo}${_nome} = function() {
 	//url = url + '&sigla=' + sigla;
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${_tipo}${_nome}', false);
 }
-</script> <input type="hidden" name="${_tipo}${_nome}Sel.id" value=""
+</script> 
+<input type="hidden" name="${_tipo}${_nome}Sel.id" value="${_value?.id}"
 	id="frm_${_tipo}${_nome}Sel_id" /> <input type="hidden"
-	name="${_tipo}${_nome}Sel.descricao" value=""
+	name="${_tipo}${_nome}Sel.descricao" value="${_value?.descricao}"
 	id="frm_${_tipo}${_nome}Sel_descricao" /> <input type="hidden"
 	name="${_tipo}${_nome}Sel.buscar" value=""
 	id="frm_${_tipo}${_nome}Sel_buscar" /> <input type="hidden"
 	name="req${_tipo}${_nome}Sel" value="" id="frm_req${_tipo}${_nome}Sel" />
 	<input type="hidden" name="alterouSel" value="" id="alterouSel" /> <input
-	type="text" name="${_tipo}${_nome}Sel.sigla" size="25" value=""
+	type="text" name="${_tipo}${_nome}Sel.sigla" size="25" value="${_value?.sigla}"
 	id="frm_${_tipo}${_nome}Sel_sigla"
 	onblur="javascript: ajax_${_tipo}${_nome}();"
 	onkeypress="return handleEnter(this, event)" /> <input type="button"
 	id="${_tipo}${_nome}SelButton" value="..."
 	onclick="javascript: popitup_${_tipo}${_nome}('');" theme="simple">
-	<span id="${_tipo}${_nome}SelSpan"></span> <!--  idAjax="${_idAjax}" -->
+	<span id="${_tipo}${_nome}SelSpan">${_value?.descricao}</span> <!--  idAjax="${_idAjax}" -->
 	<!--/ajax:${_idAjax}--> </span>

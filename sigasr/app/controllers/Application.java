@@ -1,16 +1,28 @@
 package controllers;
 
 import play.*;
+import play.data.binding.As;
+import play.db.jpa.Blob;
 import play.db.jpa.JPA;
 import play.mvc.*;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
 import javax.persistence.Query;
+
+import org.apache.commons.io.IOUtils;
 
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -34,12 +46,25 @@ public class Application extends Controller {
 
 	@Before
 	static void addDefaults() {
-		renderArgs.put("_base", "http://10.34.5.90:8080");
-		// renderArgs.put("blogBaseline",
-		// Play.configuration.getProperty("blog.baseline"));
+		try {
+			renderArgs.put("_base", "http://10.34.5.90:8080");
+			URLConnection conn = new URL("http://localhost:8080")
+					.openConnection();
+			CookieManager manager = new CookieManager();
+			CookieHandler.setDefault(new CookieManager());
+			List l = manager.getCookieStore().getCookies();
+			int a = 0;
+
+		} catch (IOException ioe) {
+
+		}
 	}
 
 	public static void index() {
+		cadastrar();
+	}
+
+	public static void cadastrar() {
 		List<SrItemConfiguracao> itensConfiguracao = SrItemConfiguracao.all()
 				.fetch();
 		SrFormaAcompanhamento[] formasAcompanhamento = SrFormaAcompanhamento
@@ -48,72 +73,76 @@ public class Application extends Controller {
 		SrTendencia[] tendencias = SrTendencia.values();
 		SrGravidade[] gravidades = SrGravidade.values();
 		SrSolicitacao solicitacao = new SrSolicitacao();
+
+		// Enquanto não tem login...
+		DpPessoa pessoaSolicitanteSel = JPA.em().find(DpPessoa.class, 10374L);
+
 		render(itensConfiguracao, formasAcompanhamento, gravidades, urgencias,
-				tendencias, solicitacao);
+				tendencias, solicitacao, pessoaSolicitanteSel);
 	}
 
-	public static void gravar(SrSolicitacao solicitacao) {
-		Long idPessoa = Long.valueOf(params.get("pessoaSolicitanteSel.id"));
-		String idItem = params.get("SrItemConfiguracaoItemSel.id");
-		String idServico = params.get("SrServicoServicoSel.id");
+	public static void gravar(SrSolicitacao solicitacao, File arquivo,
+			@As(binder = DpPessoaBinder.class) DpPessoa pessoaSolicitante,
+			SrItemConfiguracao SrItemConfiguracaoItemSel,
+			SrServico SrServicoServicoSel) throws Exception {
 
-		DpPessoa solicitante = JPA.em().find(DpPessoa.class, idPessoa);
-		DpLotacao lotaSolicitante = solicitante.getLotacao();
-		SrItemConfiguracao item = SrItemConfiguracao.findById(Integer
-				.parseInt(idItem));
-		SrServico servico = SrServico.findById(Integer.parseInt(idServico));
+		if (arquivo != null) {
+			try {
+				solicitacao.arquivo = new SrArquivo();
+				solicitacao.arquivo.nomeArquivo = arquivo.getName();
+				solicitacao.arquivo.blob = IOUtils
+						.toByteArray(new FileInputStream(arquivo));
+				solicitacao.arquivo.mime = new javax.activation.MimetypesFileTypeMap()
+						.getContentType(arquivo);
+			} catch (IOException ioe) {
 
-		solicitacao.solicitante = solicitante;
-		solicitacao.lotaSolicitante = lotaSolicitante;
-		solicitacao.itemConfiguracao = item;
-		solicitacao.servico = servico;
+			}
+		}
+
+		// Enquanto não tem login...
+		DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
+
+		solicitacao.cadastrante = eeh;
+		solicitacao.lotaCadastrante = eeh.getLotacao();
+		solicitacao.solicitante = pessoaSolicitante;
+		solicitacao.itemConfiguracao = SrItemConfiguracaoItemSel;
+		solicitacao.servico = SrServicoServicoSel;
 		solicitacao.dtReg = new Date();
-		solicitacao.save();
+		solicitacao.criar();
 
-		listarTudo(null);
+		listar(null, null, null, null, null, null, null, null, null);
 
 	}
 
-	public static void listarTudo(SrSolicitacaoFiltro filtro) {
+	public static void listar(
+			SrSolicitacaoFiltro filtro,
+			@As(binder = DpPessoaBinder.class) DpPessoa pessoaSolicitante,
+			@As(binder = DpPessoaBinder.class) DpPessoa pessoaCadastrante,
+			@As(binder = DpPessoaBinder.class) DpPessoa pessoaAtendente,
+			@As(binder = DpLotacaoBinder.class) DpLotacao lotacaoLotaSolicitante,
+			@As(binder = DpLotacaoBinder.class) DpLotacao lotacaoLotaCadastrante,
+			@As(binder = DpLotacaoBinder.class) DpLotacao lotacaoLotaAtendente,
+			SrItemConfiguracao SrItemConfiguracaoItemSel,
+			SrServico SrServicoServicoSel) {
 
-		// Usando o filtro...
-		String idAtendente = params.get("pessoaAtendenteSel.id");
-		String idSolicitante = params.get("pessoaSolicitanteSel.id");
-		String idCadastrante = params.get("pessoaCadastranteSel.id");
-		String idLotaAtendente = params.get("lotacaoAtendenteSel.id");
-		String idLotaSolicitante = params.get("lotacaoSolicitanteSel.id");
-		String idLotaCadastrante = params.get("lotacaoCadastranteSel.id");
-		String idItem = params.get("SrItemConfiguracaoItemSel.id");
-		String idServico = params.get("SrServicoServicoSel.id");
+		filtro.cadastrante = pessoaCadastrante;
+		filtro.atendente = pessoaAtendente;
+		filtro.solicitante = pessoaSolicitante;
 
-		if (idCadastrante != null && !idCadastrante.trim().equals(""))
-			filtro.cadastrante = JPA.em().find(DpPessoa.class, Long.valueOf(idCadastrante));
-		if (idSolicitante != null && !idSolicitante.trim().equals(""))
-			filtro.solicitante = JPA.em().find(DpPessoa.class, Long.valueOf(idSolicitante));
-		if (idAtendente != null && !idAtendente.trim().equals(""))
-			filtro.atendente = JPA.em().find(DpPessoa.class, Long.valueOf(idAtendente));
-		if (idLotaCadastrante != null && !idLotaCadastrante.trim().equals(""))
-			filtro.lotaCadastrante = JPA.em().find(DpLotacao.class,
-					Long.valueOf(idLotaCadastrante));
-		if (idLotaSolicitante != null && !idLotaSolicitante.trim().equals(""))
-			filtro.lotaSolicitante = JPA.em().find(DpLotacao.class,
-					Long.valueOf(idLotaSolicitante));
-		if (idLotaAtendente != null && !idLotaAtendente.trim().equals(""))
-			filtro.lotaAtendente = JPA.em().find(DpLotacao.class,
-					Long.valueOf(idLotaAtendente));
-		if (idItem != null && !idItem.trim().equals(""))
-			filtro.itemConfiguracao = SrItemConfiguracao.findById(Integer
-					.parseInt(idItem));
-		if (idServico != null  && !idServico.trim().equals(""))
-			filtro.servico = SrServico.findById(Integer.parseInt(idServico));
+		filtro.lotaAtendente = lotacaoLotaAtendente;
+		filtro.lotaCadastrante = lotacaoLotaCadastrante;
+		filtro.lotaSolicitante = lotacaoLotaSolicitante;
 
-		List<SrSolicitacao> listaSolicitacao = filtro.buscarPorFiltro();
+		filtro.itemConfiguracao = SrItemConfiguracaoItemSel;
+		filtro.servico = SrServicoServicoSel;
+
+		List<SrSolicitacao> listaSolicitacao = filtro.buscar();
 
 		// Montando o filtro...
 		SrUrgencia[] urgencias = SrUrgencia.values();
 		SrTendencia[] tendencias = SrTendencia.values();
 		SrGravidade[] gravidades = SrGravidade.values();
-		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		String[] tipos = new String[] { "Pessoa", "LotaÃ§Ã£o" };
 		List<CpMarcador> marcadores = JPA
 				.em()
 				.createQuery(
@@ -123,8 +152,67 @@ public class Application extends Controller {
 		if (filtro == null)
 			filtro = new SrSolicitacaoFiltro();
 
+		renderArgs.put("pessoaAtendenteSel", pessoaAtendente);
+		renderArgs.put("lotacaoLotaAtendenteSel", lotacaoLotaAtendente);
+		renderArgs.put("pessoaCadastranteSel", pessoaCadastrante);
+		renderArgs.put("lotacaoLotaCadastranteSel", lotacaoLotaCadastrante);
+		renderArgs.put("pessoaSolicitanteSel", pessoaSolicitante);
+		renderArgs.put("lotacaoLotaSolicitanteSel", lotacaoLotaSolicitante);
 		render(listaSolicitacao, urgencias, tendencias, gravidades, tipos,
-				marcadores, filtro);
+				marcadores, filtro, SrItemConfiguracaoItemSel,
+				SrServicoServicoSel);
+	}
+
+	public static void exibir(Long id) {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		SrAndamento andamento = new SrAndamento();
+		andamento.estado = solicitacao.getUltimoAndamento().estado;
+		DpLotacao lotacaoLotaAtendenteSel = solicitacao.getUltimoAndamento().lotaAtendente;
+		DpPessoa pessoaAtendenteSel = solicitacao.getUltimoAndamento().atendente;
+
+		// Enquanto não tem login...
+		DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
+		boolean exibirAtendente = solicitacao.podeAlterarAtendente(
+				eeh.getLotacao(), eeh);
+
+		SrEstado[] estados = SrEstado.values();
+
+		render(solicitacao, andamento, exibirAtendente, pessoaAtendenteSel,
+				lotacaoLotaAtendenteSel, estados);
+	}
+
+	public static void baixarAnexo(Long idArquivo) {
+		SrArquivo arq = SrArquivo.findById(idArquivo);
+		if (arq != null)
+			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
+	}
+
+	public static void andamento(Long id, SrAndamento andamento,
+			@As(binder = DpPessoaBinder.class) DpPessoa pessoaAtendente,
+			@As(binder = DpLotacaoBinder.class) DpLotacao lotacaoLotaAtendente,
+			File arquivo) {
+
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		andamento.atendente = pessoaAtendente;
+		andamento.lotaAtendente = lotacaoLotaAtendente;
+
+		if (arquivo != null) {
+			try {
+				andamento.arquivo = new SrArquivo();
+				andamento.arquivo.nomeArquivo = arquivo.getName();
+				andamento.arquivo.blob = IOUtils
+						.toByteArray(new FileInputStream(arquivo));
+				andamento.arquivo.mime = new javax.activation.MimetypesFileTypeMap()
+						.getContentType(arquivo);
+			} catch (IOException ioe) {
+
+			}
+		}
+
+		sol.darAndamento(andamento);
+
+		exibir(id);
+
 	}
 
 	public static void proxy(String url) throws Exception {

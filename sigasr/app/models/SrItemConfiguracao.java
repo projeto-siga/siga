@@ -70,4 +70,15 @@ public class SrItemConfiguracao extends SrCodigoHierarquicoSuporte {
 		this.descrItemConfiguracao = descr;
 	}
 
+	@Override
+	public void setId(Integer id) {
+		if (id != null)
+			this.idItemConfiguracao = id;
+	}
+
+	@Override
+	public void setDescricao(String descricao) {
+		this.descrItemConfiguracao = descricao;
+	}
+
 }

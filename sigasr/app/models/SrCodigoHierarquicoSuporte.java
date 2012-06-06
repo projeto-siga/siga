@@ -114,14 +114,14 @@ public abstract class SrCodigoHierarquicoSuporte extends GenericModel implements
 					.em()
 					.createQuery(
 							"from " + getNomeClasse() + " where "
-									+ nomeCampoSigla + " = '" + getSigla()
+									+ nomeCampoSigla + " = '" + getSigla().toLowerCase()
 									+ "'", getClass()).getResultList();
 		else
 			itens = (List<SrCodigoHierarquicoSuporte>) JPA
 					.em()
 					.createQuery(
-							"from " + getNomeClasse() + " where "
-									+ nomeCampoDescricao + " like'%"
+							"from " + getNomeClasse() + " where lower("
+									+ nomeCampoDescricao + ") like'%"
 									+ getDescricao() + "%'", getClass())
 					.getResultList();
 		if (itens.size() == 0 || itens.size() > 1)
@@ -134,7 +134,7 @@ public abstract class SrCodigoHierarquicoSuporte extends GenericModel implements
 	public List<SrSelecionavel> buscar() {
 		String query = "from " + getNomeClasse() + " where 1=1";
 		if (getDescricao() != null && !getDescricao().equals(""))
-			query += " and " + nomeCampoDescricao + " like '%" + getDescricao()
+			query += " and lower(" + nomeCampoDescricao + ") like '%" + getDescricao().toLowerCase()
 					+ "%'";
 		if (getSigla() != null && !getSigla().equals(""))
 			query += " and " + nomeCampoSigla + " like '"

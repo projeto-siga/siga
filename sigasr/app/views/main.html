@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 
+<script id="codigoMenu">
+#{include "Application/menu.html" /}
+</script>
+
 <script>
 var pageText = null;
 
@@ -36,7 +40,16 @@ function embedpage(request) {
 	//if viewing page offline or the document was successfully retrieved online (status code=2000)
 	if (window.location.href.indexOf("http")==-1 || request.status==200) {
 		pageText = request.responseText.split("<!-- insert body -->");
-   		document.write(pageText[0]);
+		cabecalho = pageText[0].split("<!-- insert menu -->");
+		var codigoMenu;
+		#{if popup}
+		codigoMenu = '';
+		cabecalho[1] = '';
+		#{/if}
+		#{else}
+		codigoMenu = document.getElementById('codigoMenu').innerHTML;
+		#{/else}
+   		document.write(cabecalho[0] + codigoMenu + cabecalho[1]);
    	}
 }
 
@@ -45,8 +58,6 @@ var mydomain='@{Application.proxy(_base + "/siga/pagina_vazia.action?popup="+pop
 
 HttpRequest(mydomain); //include "external.htm" onto current page
 </script>
-
-<!-- <h3><a href="@{Application.index()}">Cadastrar</a> | <a href="@{Application.listarTudo()}">Listar todas</a></h3> -->
 
 #{doLayout /}
 

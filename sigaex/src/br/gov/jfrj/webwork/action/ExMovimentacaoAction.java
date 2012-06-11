@@ -1133,7 +1133,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		verificaNivelAcesso(mobAlvo);
 
 		try {
-			for (ExMovimentacao mov : mobAlvo.getMovimentacoesPorTipo(tpMovAssinatura)){
+			for (ExMovimentacao mov : mobAlvo.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)){
 				if (!mov.isAssinada())
 						Ex.getInstance()
 							.getBL()

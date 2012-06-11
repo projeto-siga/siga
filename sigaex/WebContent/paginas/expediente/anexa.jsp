@@ -6,6 +6,7 @@
 <%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Movimentação">
 
@@ -27,6 +28,50 @@
 			}
 		}
 	</script>
+	
+	<ww:url id="url" action="assinar_mov_gravar_lote"
+		namespace="/expediente/mov">
+		<ww:param name="id">${mobilVO.mob.id}</ww:param>
+	</ww:url>
+	<script language="VBScript">
+Function assinar()
+	prov = MsgBox("Confirma que o Anexo a ser assinado foi devidamente analisado?", vbYesNo, "Confirmação")
+	If prov = vbYes then
+		Dim Assinatura
+		Dim Configuracao
+		On Error Resume Next
+		Set Configuracao = CreateObject("CAPICOM.Settings")
+		Configuracao.EnablePromptForCertificateUI = True
+		Set Assinatura = CreateObject("CAPICOM.SignedData")
+		Set Util = CreateObject("CAPICOM.Utilities")
+		If Erro Then Exit Function
+		Assinatura.Content = Util.Base64Decode(frm.conteudo_b64.value)
+		frm.conteudo_b64.value = Null
+		frm.assinaturaB64.value = Assinatura.Sign(Nothing, True, 0)
+		If Erro Then Exit Function
+		Dim Assinante
+		Assinante = Assinatura.Signers(1).Certificate.SubjectName
+		Assinante = Split(Assinante, "CN=")(1)
+		Assinante = Split(Assinante, ",")(0)
+		frm.assinante.value = Assinante
+		If Erro Then Exit Function
+		frm.action="<ww:property value="%{url}"/>"
+		frm.Submit()
+	End If
+
+	
+End Function
+
+Function Erro() 
+	If Err.Number <> 0 then
+		MsgBox "Ocorreu um erro durante o processo de assinatura: " & Err.Description
+		Err.Clear
+		Erro = True
+	Else
+		Erro = False
+	End If
+End Function
+</script>
 
 	<table width="100%">
 		<tr>
@@ -88,7 +133,6 @@
 		</td>
 		</tr>
 	</table>
-	
 	
 	<c:if test="${(not empty mobilVO.movs)}">
 	
@@ -171,10 +215,24 @@
 		
 		</table>
 	</c:if>
+	<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
+	<ww:hidden name="assinaturaB64" />
+			<ww:hidden name="assinante" />
 	
 	<ww:url id="url" action="exibir" namespace="/expediente/doc">
 		<ww:param name="sigla" value="%{sigla}" />
 	</ww:url>
 	<siga:link title="Voltar" url="${url}" test="${true}" />
 
+  <!--   ${f:obterBotoesExtensaoAssinador(lotaTitular.orgaoUsuario)}   -->
+  <input type="button" value="Assinar Todos"
+							onclick="vbscript:assinar" />
+    
+<%--    <c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar_lote.action?id=${mobilVO.mob.id}&copia=${copia}"/>
+	<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
+    <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}" />
+   
+    
+	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
+ --%>
 </siga:pagina>

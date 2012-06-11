@@ -9,7 +9,8 @@
 	<mod:entrevista>
 		<mod:grupo largura="15">
 			<mod:selecao titulo="Seção" var="secao"
-				opcoes="CAMS;SEGRA;SIE;SLO;STI;NSEG" reler="sim" />			
+				opcoes="CAMS;SIE;SLO;STI;NSEG" reler="sim" />	 
+				<!-- retirado opcao SEGRA, mas as referencias não foram retiradas. (06/2012) -->		
 		</mod:grupo>
 		<mod:oculto var="idOrgaoUsu" valor="${doc.cadastrante.orgaoUsuario.idOrgaoUsu}" />
 		<mod:oculto var="unidGestora" valor="${f:buscarLotacaoPorSigla(secao,idOrgaoUsu)}" />	

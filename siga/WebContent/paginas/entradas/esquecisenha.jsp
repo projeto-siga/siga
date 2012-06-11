@@ -102,29 +102,6 @@ function validateUsuarioForm(form) {
 	return true;
 }
 
-function exibirSeIntegradoAoLdap(){
-	var estaIntegrado = "0";
-	if (exibirSeIntegradoAoLdap.arguments[0]==estaIntegrado){
-		document.getElementById('painelMetodo1').style.display = 'block';
-		document.getElementById('msg_integracaoAD').style.display = 'none';
-	}else{
-		document.getElementById('painelMetodo1').style.display = 'none';
-		document.getElementById('msg_integracaoAD').style.display = 'block';
-	}
-}
-
-function verificarIntegracaoAD(){
-	var selectionOrgao = document.getElementById('idOrgaoUsu');
-	var id_orgao = selectionOrgao.options[selectionOrgao.selectedIndex].value;
-	if (id_orgao!="-1"){
-		PassAjaxResponseToFunction('${integracao_url}?idOrgao='+id_orgao,'exibirSeIntegradoAoLdap');
-	}else{
-		document.getElementById('painelMetodo1').style.display = 'none';
-		document.getElementById('msg_integracaoAD').style.display = 'none';
-	}
-	
-	
-}
 </script>
 
 <siga:pagina titulo="${param.titulo}">
@@ -134,12 +111,10 @@ function verificarIntegracaoAD(){
 	<h2>&nbsp;${mensagem }</h2>
 	<h2>Método 1 - Envio de senha nova para o e-mail</h2>
 	
-	<ww:select name="idOrgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
-		listValue="nmOrgaoUsu" label="Órgão" theme="simple" onchange="javascript:verificarIntegracaoAD();" headerKey="-1" headerValue="Escolha seu órgão..." />
-	<span id="msg_integracaoAD" style="display: none;font-weight: bold;color: red;">Por favor, use o MÉTODO 2. <div style="font-size: xx-small;">O método 1 está indisponível para o seu órgão, pois o SIGA está integrado ao LDAP.</div></span>	
-	<div id="painelMetodo1" style="display: none;">
 		<p style="font-size: x-small; font-style: italic;">O sistema gera
 		uma senha aleatoriamente e a envia para o email da pessoa informada.</p>
+		<p style="font-size: x-small; font-style: italic;">Se o seu órgão estiver 
+		configurado com a apção de integração de senhas entre o SIGA, e-mail e rede (LDAP) esta opção estará indisponível.</p>
 		<ww:form action="${param.proxima_acao}" theme="simple">
 			<ww:hidden name="metodo" value="1" />
 			<table class="form" width="100%">
@@ -167,7 +142,7 @@ function verificarIntegracaoAD(){
 	
 			</table>
 		</ww:form> <br />
-	</div>
+
 	<h2>Método 2 - Alterar a senha com auxílio de 2 pessoas</h2>
 	<p style="font-size: x-small; font-style: italic;">O sistema altera
 	a senha da pessoa conforme solicitado, porém é necessário o apoio de

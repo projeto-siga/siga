@@ -7,7 +7,11 @@
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/DynamicJasper-3.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/DynamicJasper-3.0.6.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/DynamicJasper-3.0.6-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/DynamicJasper-3.0.6-sources.jar"/>
 	<classpathentry kind="lib" path="lib/DynamicJasper-3.0.6-test-sources.jar"/>

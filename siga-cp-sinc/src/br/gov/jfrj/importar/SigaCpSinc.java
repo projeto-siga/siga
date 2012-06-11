@@ -72,6 +72,8 @@ public class SigaCpSinc {
 	private String servidor = "";
 
 	private String url = "";
+	
+	private String destinatariosExtras = "";
 
 	public String getServidor() {
 		return servidor;
@@ -902,7 +904,7 @@ public class SigaCpSinc {
 	}
 
 	public void logEnd() throws Exception {
-		String sDest = ImportarXmlProperties.getString("lista.destinatario");
+		String sDest = ImportarXmlProperties.getString("lista.destinatario") + "," + destinatariosExtras;
 		if (sDest != null && aditionalEmails != null)
 			sDest = sDest + "," + aditionalEmails;
 		String destinatarios[] = sDest.split(",");
@@ -1164,5 +1166,13 @@ public class SigaCpSinc {
 	
 	protected void setUrl(String url) {
 		this.url = url;
+	}
+	
+	/**
+	 * Acrescenta destinatários a serem notificados da sincronização
+	 * @param destinatarios - lista de e-mails separados por vírgula
+	 */
+	protected void setDestinatariosExtras(String destinatarios){
+		this.destinatariosExtras = destinatarios;
 	}
 }

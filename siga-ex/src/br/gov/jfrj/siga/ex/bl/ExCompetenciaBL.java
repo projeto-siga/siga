@@ -1813,7 +1813,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		Calendar calMov = new GregorianCalendar();
 		Calendar cal2 = new GregorianCalendar();
-		calMov.setTime(mov.getDtMov());
+		calMov.setTime(mov.getDtIniMov());
 
 		if (mob.doc().getDtFechamento() != null && !mob.doc().isEletronico()) {
 			cal2.setTime(mob.doc().getDtFechamento());

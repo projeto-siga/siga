@@ -154,6 +154,7 @@ End Function
 				<td align="left">Lotação</td>
 				<td align="left">Pessoa</td>
 			</tr>
+			<c:set var="i" value="${0}" />
 		    <c:forEach var="mov" items="${mobilVO.movs}">
 				<c:if test="${(not mov.cancelada)}">
 					<tr class="${mov.classe} ${mov.disabled}">				   
@@ -211,13 +212,15 @@ End Function
 						</siga:links></td>			
 					</tr>			
 				</c:if>
+				<c:set var="i" value="${i+1}" />
+			    <ww:hidden name="conteudo_b64${i}" value="${mov.conteudoBlobPdfB64}" />	
+			    <ww:hidden name="assinaturaB64${i}" />
 			</c:forEach>
+			<ww:hidden name="numAnexacoes" value="${i}" />	
 		
 		</table>
 	</c:if>
-	<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
-	<ww:hidden name="assinaturaB64" />
-			<ww:hidden name="assinante" />
+    <ww:hidden name="assinante" />
 	
 	<ww:url id="url" action="exibir" namespace="/expediente/doc">
 		<ww:param name="sigla" value="%{sigla}" />

@@ -233,7 +233,7 @@
 		<ww:if test="${inclFiscais == 'Sim'}">
 <%--			<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" /> --%>
 			<br> <br> <br>
-			<table border="1" width="100%" align="left">
+			<table border="1" width="100%" align="left" style="float:none; clear:both;">
 				<tr>
 					<th bgcolor="#999999" colspan="2"><b>FISCAL DE SUBSEÇÃO
 					JUDICIÁRIA</b></th>

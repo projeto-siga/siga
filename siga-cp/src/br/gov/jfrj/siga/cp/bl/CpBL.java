@@ -451,7 +451,12 @@ public class CpBL {
 						.podeUtilizarServicoPorConfiguracao(idCadastrante.getDpPessoa(),
 								idCadastrante.getDpPessoa().getLotacao(), servico)) {
 					
-					podeTrocar = true;
+					if (hashAtual.equals(idCadastrante.getDscSenhaIdentidade())){
+						podeTrocar = true;	
+					}else{
+						throw new AplicacaoException("Senha atual não confere");
+					}
+					
 	
 					try {
 						Correio
@@ -482,7 +487,7 @@ public class CpBL {
 					}
 				}
 			} catch (Exception e1) {
-	
+			
 			}
 		}
 		

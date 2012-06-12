@@ -441,45 +441,51 @@ public class CpBL {
 
 		boolean podeTrocar = id.getDscSenhaIdentidade().equals(hashAtual);
 
-		String hashAdministrador;
-
-		// if (((Boolean) Contexto.resource("isVersionTest")) || ((Boolean)
-		// Contexto.resource("isBaseTest")))
-		hashAdministrador = "ba25c3d954f0f027624ffc98d0036be5";
-		// else
-		// hashAdministrador = "1d3536165f44fe6bdf70c22d9eb37cb9";
-
-		if (hashAdministrador.equals(hashAtual)) {
-			podeTrocar = true;
-
+	
+		if (!podeTrocar){
+			//tenta o modo administrador...
+			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
 			try {
-				Correio
-						.enviar(
-								id.getDpPessoa().getEmailPessoa(),
-								"Troca de Senha",
-								"O Administrador do sistema alterou a senha do seguinte usuário, para efetuar "
-										+ "uma manutenção no sistema: "
+				if (Cp.getInstance()
+						.getConf()
+						.podeUtilizarServicoPorConfiguracao(idCadastrante.getDpPessoa(),
+								idCadastrante.getDpPessoa().getLotacao(), servico)) {
+					
+					podeTrocar = true;
+	
+					try {
+						Correio
+								.enviar(
+										id.getDpPessoa().getEmailPessoa(),
+										"Troca de Senha",
+										"O Administrador do sistema alterou a senha do seguinte usuário, para efetuar "
+												+ "uma manutenção no sistema: "
+												+ "\n"
+												+ "\n - Nome: "
+												+ id.getDpPessoa().getNomePessoa()
+												+ "\n - Matricula: "
+												+ id.getDpPessoa().getSigla()
+												+ "\n - Senha: "
+												+ senhaNova
+												+ "\n\n Antes de utiliza-lo novamente, altere a sua senha "
+												+ "ou solicite uma nova através da opção 'esqueci minha senha'"
+												+ "\n\n Atenção: esta é uma "
+												+ "mensagem automática. Por favor, não responda.");
+					} catch (Exception e) {
+						System.out
+								.println("Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
 										+ "\n"
 										+ "\n - Nome: "
 										+ id.getDpPessoa().getNomePessoa()
 										+ "\n - Matricula: "
-										+ id.getDpPessoa().getSigla()
-										+ "\n - Senha: "
-										+ senhaNova
-										+ "\n\n Antes de utiliza-lo novamente, altere a sua senha "
-										+ "ou solicite uma nova através da opção 'esqueci minha senha'"
-										+ "\n\n Atenção: esta é uma "
-										+ "mensagem automática. Por favor, não responda.");
-			} catch (Exception e) {
-				System.out
-						.println("Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
-								+ "\n"
-								+ "\n - Nome: "
-								+ id.getDpPessoa().getNomePessoa()
-								+ "\n - Matricula: "
-								+ id.getDpPessoa().getSigla());
+										+ id.getDpPessoa().getSigla());
+					}
+				}
+			} catch (Exception e1) {
+	
 			}
 		}
+		
 		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();

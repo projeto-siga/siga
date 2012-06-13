@@ -106,7 +106,11 @@ function validateUsuarioForm(form) {
 
 <siga:pagina titulo="${param.titulo}">
 	<div>
+	<c:if test="${baseTeste}">
+		<div id="msgSenha" style="font-size: 12pt;color: red; font-weight: bold;">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</div>
+	</c:if>
 	<h1>${param.titulo}</h1>
+
 
 	<h2>&nbsp;${mensagem }</h2>
 	<h2>Método 1 - Envio de senha nova para o e-mail</h2>
@@ -114,7 +118,7 @@ function validateUsuarioForm(form) {
 		<p style="font-size: x-small; font-style: italic;">O sistema gera
 		uma senha aleatoriamente e a envia para o email da pessoa informada.</p>
 		<p style="font-size: x-small; font-style: italic;">Se o seu órgão estiver 
-		configurado com a apção de integração de senhas entre o SIGA, e-mail e rede (LDAP) esta opção estará indisponível.</p>
+		configurado com a apção de integração de senhas entre o SIGA, e-mail e rede esta opção estará indisponível.</p>
 		<ww:form action="${param.proxima_acao}" theme="simple">
 			<ww:hidden name="metodo" value="1" />
 			<table class="form" width="100%">

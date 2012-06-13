@@ -106,8 +106,10 @@ function passwordStrength(password) {
 <siga:pagina popup="false" titulo="Troca de Senha">
 	<h1><br />
 	<br />
+	<c:if test="${baseTeste}">
+		<div id="msgSenha" style="font-size: 12pt;color: red; font-weight: bold;">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</div>
+	</c:if>
 	&nbsp;Troca de senha!</h1>
-
 	<table>
 		<tr>
 			<td><ww:form action="trocar_senha_gravar"

@@ -404,6 +404,9 @@ public class UsuarioAction extends SigaActionSupport {
 		this.idOrgao = idOrgao;
 	}
 	
+	public boolean isBaseTeste() {
+		return  Boolean.valueOf(System.getProperty("isBaseTest").trim());
+	}
 }
 
 // falta: salvar o grupo; manter o histórico; eliminar "simulandoUsuario" e

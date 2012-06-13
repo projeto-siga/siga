@@ -1111,6 +1111,19 @@ public class ExDocumentoAction extends ExActionSupport {
 			if (!doc.isProcesso() && doc.getDescrDocumento().length() > 256)
 				throw new AplicacaoException(
 						"O campo descrição possui mais do que 256 caracteres.");
+			
+			if(doc.getDtFechamento() != null) {
+				Date dt = dao().dt();
+				Calendar c = Calendar.getInstance();
+				c.setTime(dt);
+				
+				Calendar dtDocCalendar = Calendar.getInstance();
+				dtDocCalendar.setTime(doc.getDtDoc());
+
+				if (c.before(dtDocCalendar))
+					throw new Exception(
+							"Não é permitido criar documento com data futura");
+			}
 
 			/*
 			 * if (getDoc().getExMobilPai() != null) { if

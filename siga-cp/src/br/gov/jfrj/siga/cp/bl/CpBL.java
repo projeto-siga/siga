@@ -568,7 +568,7 @@ public class CpBL {
 
 			if (cpIdAux1 == null || cpIdAux2 == null) {
 				throw new AplicacaoException(
-						"Problema ao localizar a identidade dos autiliares!");
+						"Problema ao localizar a identidade dos auxiliares!");
 			}
 
 			String hashSenha1 = null;

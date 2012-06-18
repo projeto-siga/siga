@@ -152,12 +152,14 @@ function popitup_movimentacao() {
 							listKey="idTpDespacho" listValue="descTpDespacho"
 							onchange="javascript:sbmt();" /></td>
 					</tr>
-
+					<!--Orlando: Substitui o textfield pelo textarea no choose, abaixo, para atender aos usuários, que disseram terem dificuldade
+					ao escrever, porque não viam o início da digitação na caixa de texto.-->
 					<c:choose>
 						<c:when test="${idTpDespacho == -1}">
 							<tr>
 								<td>Texto</td>
-								<td><ww:textfield name="descrMov" maxlength="400" size="80" /></td>
+                            <!--<td><ww:textfield name="descrMov"  maxlength="400" size="80"  /></td>-->
+                                <td><ww:textarea rows="3" cols="50"  name="descrMov"  /></td>
 							</tr>
 						</c:when>
 					</c:choose>

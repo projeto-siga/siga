@@ -33,11 +33,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "CORPORATIVO.CP_TIPO_CONFIGURACAO")
+@MappedSuperclass
 public abstract class AbstractCpTipoConfiguracao implements Serializable {
 
 	@Id

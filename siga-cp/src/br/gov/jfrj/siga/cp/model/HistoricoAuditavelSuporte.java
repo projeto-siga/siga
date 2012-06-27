@@ -18,6 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.model;
 
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
@@ -25,9 +30,13 @@ public abstract class HistoricoAuditavelSuporte extends HistoricoSuporte
 		implements HistoricoAuditavel {
 
 	@Desconsiderar
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_INI")
 	private CpIdentidade hisIdcIni;
 
 	@Desconsiderar
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_FIM")
 	private CpIdentidade hisIdcFim;
 
 	public CpIdentidade getHisIdcIni() {

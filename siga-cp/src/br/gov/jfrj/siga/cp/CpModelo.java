@@ -49,6 +49,10 @@ public class CpModelo extends AbstractCpModelo {
 	public Long getId() {
 		return getIdMod();
 	}
+	
+	public void setId(Long id){
+		setIdMod(id);
+	}
 
 	public boolean semelhante(Assemelhavel obj, int nivel) {
 		return SincronizavelSuporte.semelhante(this, obj, nivel);

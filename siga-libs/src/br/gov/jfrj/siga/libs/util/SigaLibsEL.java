@@ -21,9 +21,12 @@ package br.gov.jfrj.siga.libs.util;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaCalendar;
@@ -272,4 +275,5 @@ public class SigaLibsEL {
 		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
 				titular, lotaTitular, servicoPath);
 	}
+	
 }

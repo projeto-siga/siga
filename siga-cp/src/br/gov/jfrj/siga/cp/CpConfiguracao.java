@@ -27,7 +27,14 @@ package br.gov.jfrj.siga.cp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -40,6 +47,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
+@Table(name = "CP_CONFIGURACAO", schema = "CORPORATIVO")
+@Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({ @NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""
+		+ "select max(cpcfg.hisDtIni), max(cpcfg.hisDtFim) "
+		+ "from CpConfiguracao cpcfg") })
 public class CpConfiguracao extends AbstractCpConfiguracao {
 
 	/**
@@ -66,10 +78,15 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 	public Long getId() {
 		return getIdConfiguracao();
 	}
+	
+	public void setId(Long id){
+		setIdConfiguracao(id);
+	}
 
 	public boolean semelhante(Assemelhavel obj, int nivel) {
 		return SincronizavelSuporte.semelhante(this, obj, nivel);
 	}
+
 	/**
 	 * 
 	 * @return retorna o objeto que é a origem da configuração
@@ -87,6 +104,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 			return null;
 		}
 	}
+
 	/**
 	 * 
 	 * @return retorna uma string representativa da origem para exibições curtas
@@ -125,18 +143,30 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 			return new String();
 		}
 	}
+
 	public boolean ativaNaData(Date dt) {
 		return super.ativoNaData(dt);
 	}
-	
+
 	/**
-	 * Retorna a data de fim de vigência no formato dd/mm/aa HH:MM:SS, por exemplo, 01/02/10 17:52:23.
+	 * Retorna a data de fim de vigência no formato dd/mm/aa HH:MM:SS, por
+	 * exemplo, 01/02/10 17:52:23.
 	 */
 	public String getHisDtFimDDMMYY_HHMMSS() {
 		if (getHisDtFim() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+			final SimpleDateFormat df = new SimpleDateFormat(
+					"dd/MM/yy HH:mm:ss");
 			return df.format(getHisDtFim());
 		}
 		return "";
 	}
+
+	public String getHisDtIniDDMMYY() {
+		if (getHisDtIni() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			return df.format(getHisDtIni());
+		}
+		return "";
+	}
+
 }

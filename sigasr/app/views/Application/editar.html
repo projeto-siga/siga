@@ -1,0 +1,78 @@
+#{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2>Cadastro de solicitação</h2>
+		<div class="gt-content-box gt-form">
+
+			#{form @Application.gravar(), enctype:'multipart/form-data' }
+				<div class="gt-form-row gt-width-66">
+					<label>Solicitante</label>
+					#{selecao tipo:'pessoa', nome:'solicitacao.solicitante', value:solicitacao.solicitante /}
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Quando deseja receber notificação de andamento?</label>
+					#{select name:'solicitacao.formaAcompanhamento',
+							items:formasAcompanhamento,
+							labelProperty:'descrFormaAcompanhamento',
+							value:idFormaAcompanhamento /}
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Telefone Principal</label>
+					<input type="text" name="solicitacao.telPrincipal"
+							id="telPrincipal" />
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Local</label>
+					<input type="text" name="solicitacao.local" id=local " />
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Item</label>
+					#{selecao tipo:'item', nome:'solicitacao.itemConfiguracao' /}
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Serviço</label>
+					#{selecao tipo:'servico', nome:'solicitacao.servico' /}
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Os prejuízos ou dificuldades relativos ao problema são</label>
+					#{select name:'solicitacao.gravidade', items:gravidades,
+							labelProperty:'respostaEnunciado', value:idGravidade /}
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>O problema deve ser resolvido</label>
+					#{select name:'solicitacao.urgencia', items:urgencias,
+							labelProperty:'respostaEnunciado', value:idUrgencia /}
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Se nada for feito, a situação</label>
+					#{select name:'solicitacao.tendencia', items:tendencias,
+							labelProperty:'respostaEnunciado', value:idTendencia /}
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Descrição</label>
+					<textarea cols="100" rows="5" name="solicitacao.descrSolicitacao"
+								id="descrSolicitacao"></textarea>
+				</div>
+				<div class="gt-form-row gt-width-66"> 
+					<label>Anexar arquivo</label>
+					<input type="file" name="solicitacao.arquivo.file" />
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>#{checkbox name:'solicitacao.fechamentoAbertura', value:solicitacao.fechamentoAbertura, depende:'motivoFechamento' /} Fechar o chamado logo após a abertura</label>
+				</div>
+				
+				<div class="gt-form-row gt-width-66" id="motivoFechamento" style="display:none"> 
+					<label>Motivo do fechamento</label>
+					<input type="text" size="100"
+							name="solicitacao.motivoFechamentoAbertura"
+							id="motivoFechamentoAbertura" />
+				</div>
+				<div class="gt-form-row">
+				<input type="submit" value="Gravar"
+					class="gt-btn-medium gt-btn-left" />
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>

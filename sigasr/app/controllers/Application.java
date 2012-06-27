@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -22,49 +23,84 @@ import java.util.*;
 
 import javax.persistence.Query;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
+import org.hibernate.Session;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 import models.*;
 
 public class Application extends Controller {
 
-	// @Before(only = { "buscarSrServico" })
-	// static void parseParams() {
-	// String[] items = params.getAll("f");
-	// params.remove("items");
-	// for (int i = 0; i < items.length; i++) {
-	// Item item = Item.findById(Long.parseLong(items[i]));
-	// params.put("items[" + i + "].id", items[i]);
-	// params.put("items[" + i + "].propertyA", item.propertyA);
-	// params.put("items[" + i + "].propertyB", item.propertyB);
-	// }
-	// }
+	private static SrDao dao() {
+		return SrDao.getInstance();
+	}
 
 	@Before
 	static void addDefaults() {
+		
+		if (request.url.contains("proxy"))
+			return;
+		
 		try {
 			renderArgs.put("_base", "http://10.34.5.90:8080");
-			URLConnection conn = new URL("http://localhost:8080")
-					.openConnection();
-			CookieManager manager = new CookieManager();
-			CookieHandler.setDefault(new CookieManager());
-			List l = manager.getCookieStore().getCookies();
+
+			HashMap<String, String> atributos = new HashMap<String, String>();
+			for (Http.Header h : request.headers.values())
+				if (!h.name.equals("content-type"))
+					atributos.put(h.name, h.value());
+
+			String[] IDs = ConexaoHTTP.get(
+					"http://localhost:8080/siga/usuario_autenticado.action",
+					atributos).split(";");
+
+			renderArgs.put("cadastrante",
+					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
+
+			if (IDs[1] != null && !IDs[1].equals(""))
+				renderArgs.put("lotaCadastrante",
+						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
+
+			if (IDs[2] != null && !IDs[2].equals(""))
+				renderArgs.put("titular",
+						JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
+
+			if (IDs[3] != null && !IDs[3].equals(""))
+				renderArgs.put("lotaTitular",
+						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
+
 			int a = 0;
 
-		} catch (IOException ioe) {
-
+		} catch (Exception e) {
+			redirect("http://localhost:8080/siga");
 		}
+
 	}
 
 	public static void index() {
-		cadastrar();
+		editar();
 	}
 
-	public static void cadastrar() {
+	public static void gadget() {
+		Query query = JPA.em().createNamedQuery("contarSrMarcas");
+		query.setParameter("idPessoaIni",
+				((DpPessoa) renderArgs.get("cadastrante")).getIdInicial());
+		query.setParameter("idLotacaoIni",
+				((DpLotacao) renderArgs.get("lotaTitular")).getIdInicial());
+		List contagens = query.getResultList();
+		render(contagens);
+	}
+
+	public static void editar() {
 		List<SrItemConfiguracao> itensConfiguracao = SrItemConfiguracao.all()
 				.fetch();
 		SrFormaAcompanhamento[] formasAcompanhamento = SrFormaAcompanhamento
@@ -74,67 +110,24 @@ public class Application extends Controller {
 		SrGravidade[] gravidades = SrGravidade.values();
 		SrSolicitacao solicitacao = new SrSolicitacao();
 
-		// Enquanto não tem login...
-		DpPessoa pessoaSolicitanteSel = JPA.em().find(DpPessoa.class, 10374L);
+		solicitacao.solicitante = (DpPessoa) renderArgs.get("cadastrante");
 
 		render(itensConfiguracao, formasAcompanhamento, gravidades, urgencias,
-				tendencias, solicitacao, pessoaSolicitanteSel);
+				tendencias, solicitacao);
 	}
 
-	public static void gravar(SrSolicitacao solicitacao, File arquivo,
-			@As(binder = DpPessoaBinder.class) DpPessoa pessoaSolicitante,
-			SrItemConfiguracao SrItemConfiguracaoItemSel,
-			SrServico SrServicoServicoSel) throws Exception {
+	public static void gravar(SrSolicitacao solicitacao) throws Exception {
 
-		if (arquivo != null) {
-			try {
-				solicitacao.arquivo = new SrArquivo();
-				solicitacao.arquivo.nomeArquivo = arquivo.getName();
-				solicitacao.arquivo.blob = IOUtils
-						.toByteArray(new FileInputStream(arquivo));
-				solicitacao.arquivo.mime = new javax.activation.MimetypesFileTypeMap()
-						.getContentType(arquivo);
-			} catch (IOException ioe) {
+		solicitacao.cadastrante = (DpPessoa) renderArgs.get("cadastrante");
+		solicitacao.lotaCadastrante = (DpLotacao) renderArgs.get("lotaTitular");
 
-			}
-		}
-
-		// Enquanto não tem login...
-		DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
-
-		solicitacao.cadastrante = eeh;
-		solicitacao.lotaCadastrante = eeh.getLotacao();
-		solicitacao.solicitante = pessoaSolicitante;
-		solicitacao.itemConfiguracao = SrItemConfiguracaoItemSel;
-		solicitacao.servico = SrServicoServicoSel;
-		solicitacao.dtReg = new Date();
 		solicitacao.criar();
 
-		listar(null, null, null, null, null, null, null, null, null);
+		listar(null);
 
 	}
 
-	public static void listar(
-			SrSolicitacaoFiltro filtro,
-			@As(binder = DpPessoaBinder.class) DpPessoa pessoaSolicitante,
-			@As(binder = DpPessoaBinder.class) DpPessoa pessoaCadastrante,
-			@As(binder = DpPessoaBinder.class) DpPessoa pessoaAtendente,
-			@As(binder = DpLotacaoBinder.class) DpLotacao lotacaoLotaSolicitante,
-			@As(binder = DpLotacaoBinder.class) DpLotacao lotacaoLotaCadastrante,
-			@As(binder = DpLotacaoBinder.class) DpLotacao lotacaoLotaAtendente,
-			SrItemConfiguracao SrItemConfiguracaoItemSel,
-			SrServico SrServicoServicoSel) {
-
-		filtro.cadastrante = pessoaCadastrante;
-		filtro.atendente = pessoaAtendente;
-		filtro.solicitante = pessoaSolicitante;
-
-		filtro.lotaAtendente = lotacaoLotaAtendente;
-		filtro.lotaCadastrante = lotacaoLotaCadastrante;
-		filtro.lotaSolicitante = lotacaoLotaSolicitante;
-
-		filtro.itemConfiguracao = SrItemConfiguracaoItemSel;
-		filtro.servico = SrServicoServicoSel;
+	public static void listar(SrSolicitacaoFiltro filtro) {
 
 		List<SrSolicitacao> listaSolicitacao = filtro.buscar();
 
@@ -142,25 +135,16 @@ public class Application extends Controller {
 		SrUrgencia[] urgencias = SrUrgencia.values();
 		SrTendencia[] tendencias = SrTendencia.values();
 		SrGravidade[] gravidades = SrGravidade.values();
-		String[] tipos = new String[] { "Pessoa", "LotaÃ§Ã£o" };
-		List<CpMarcador> marcadores = JPA
-				.em()
-				.createQuery(
-						"select distinct cpMarcador.descrMarcador from SrMarca")
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		List<CpMarcador> marcadores = JPA.em()
+				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
 
 		if (filtro == null)
 			filtro = new SrSolicitacaoFiltro();
 
-		renderArgs.put("pessoaAtendenteSel", pessoaAtendente);
-		renderArgs.put("lotacaoLotaAtendenteSel", lotacaoLotaAtendente);
-		renderArgs.put("pessoaCadastranteSel", pessoaCadastrante);
-		renderArgs.put("lotacaoLotaCadastranteSel", lotacaoLotaCadastrante);
-		renderArgs.put("pessoaSolicitanteSel", pessoaSolicitante);
-		renderArgs.put("lotacaoLotaSolicitanteSel", lotacaoLotaSolicitante);
 		render(listaSolicitacao, urgencias, tendencias, gravidades, tipos,
-				marcadores, filtro, SrItemConfiguracaoItemSel,
-				SrServicoServicoSel);
+				marcadores, filtro);
 	}
 
 	public static void exibir(Long id) {
@@ -181,7 +165,7 @@ public class Application extends Controller {
 				lotacaoLotaAtendenteSel, estados);
 	}
 
-	public static void baixarAnexo(Long idArquivo) {
+	public static void baixar(Long idArquivo) {
 		SrArquivo arq = SrArquivo.findById(idArquivo);
 		if (arq != null)
 			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
@@ -215,121 +199,155 @@ public class Application extends Controller {
 
 	}
 
-	public static void proxy(String url) throws Exception {
-		URL u = new URL(url);
-		URLConnection conn = u.openConnection();
-		for (Http.Header h : request.headers.values())
-			conn.setRequestProperty(h.name, h.value());
+	public static void listarDesignacao() {
+		List<SrConfiguracao> designacoes = JPA
+				.em()
+				.createQuery(
+						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
+								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
+								+ " and hisDtFim is null", SrConfiguracao.class)
+				.getResultList();
 
-		// BufferedReader in = new BufferedReader(new InputStreamReader(u
-		// .openStream()));
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				conn.getInputStream()));
-		String inputLine;
-		StringBuilder sb = new StringBuilder();
-		while ((inputLine = in.readLine()) != null) {
-			sb.append(inputLine);
-		}
-		in.close();
-
-		renderHtml(sb.toString());
-
+		render(designacoes);
 	}
 
-	public static void selecionar(String sigla, String tipo) {
-		SrSelecionavel sel = null;
+	public static void editarDesignacao(Long id) {
+
+		SrConfiguracao designacao;
+
+		if (id != null)
+			designacao = JPA.em().find(SrConfiguracao.class, id);
+		else
+			designacao = new SrConfiguracao();
+
+		render(designacao);
+	}
+
+	public static void gravarDesignacao(SrConfiguracao designacao) {
+
 		try {
-			sel = (SrSelecionavel) Class.forName("models." + tipo)
-					.newInstance();
-			sel = sel.selecionar(sigla);
-		} catch (IllegalAccessException e) {
+			designacao.setCpTipoConfiguracao(JPA.em().find(
+					CpTipoConfiguracao.class,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 
-		} catch (ClassNotFoundException cnfe) {
-
-		} catch (InstantiationException ie) {
+			dao().salvar(designacao, "RJ13285");
+		} catch (AplicacaoException ae) {
 			int a = 0;
 		}
-		render(sel);
+
+		listarDesignacao();
 	}
 
-	public static void buscar(String sigla, String tipo, String nome,
-			SrServico filtro) {
-		render();
+	public static void listarItem() {
+		List<SrItemConfiguracao> itens = SrItemConfiguracao.find(
+				"byHisDtFimIsNull").fetch();
+		render(itens);
 	}
 
-	public static void buscarSrServico(String sigla, String tipo, String nome,
-			SrServico filtro, SrServico categoria) {
-		List<SrSelecionavel> itens;
+	public static void editarItem(Long id) {
+		SrItemConfiguracao item;
+		if (id != null)
+			item = SrItemConfiguracao.findById(id);
+		else
+			item = new SrItemConfiguracao();
 
+		render(item);
+	}
+
+	public static void gravarItem(SrItemConfiguracao item) {
 		try {
-			if (filtro == null)
-				filtro = new SrServico();
-			if (sigla != null && !sigla.trim().equals(""))
-				filtro.setSigla(sigla);
-			else if (categoria != null && categoria.siglaServico != null
-					&& !categoria.siglaServico.trim().equals(""))
-				filtro.siglaServico = categoria.siglaServico;
-
-			itens = filtro.buscar();
-		} catch (Exception e) {
-			itens = new ArrayList<SrSelecionavel>();
+			dao().salvar(item, "RJ13285");
+		} catch (AplicacaoException ae) {
+			int a = 0;
 		}
-
-		categoria = (SrServico) filtro.obterPorHierarquia(1);
-		if (categoria == null)
-			categoria = new SrServico();
-		List<SrCodigoHierarquicoSuporte> opcoesNivel1 = filtro
-				.obterOpcoesPorHierarquia(1);
-
-		render("Application/buscar" + tipo + ".html", itens, filtro, tipo,
-				nome, categoria, opcoesNivel1);
+		listarItem();
 	}
 
-	public static void buscarSrItemConfiguracao(String sigla, String tipo,
-			String nome, SrItemConfiguracao filtro,
-			SrItemConfiguracao categoria1, SrItemConfiguracao categoria2,
-			SrItemConfiguracao categoria3, String alterou) {
-		List<SrSelecionavel> itens = null;
+	public static void selecionarItem(String sigla) {
+		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla);
+		render("Application/selecionar.html", sel);
+	}
+
+	public static void buscarItem(String sigla, String nome,
+			SrItemConfiguracao filtro) {
+		List<SrItemConfiguracao> itens = null;
 
 		try {
 			if (filtro == null)
 				filtro = new SrItemConfiguracao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			else {
-				String nivelAlterado = params.get("alterou");
-				if (nivelAlterado != null)
-					if (nivelAlterado.equals("3"))
-						filtro.siglaItemConfiguracao = categoria3.siglaItemConfiguracao;
-					else if (nivelAlterado.equals("2"))
-						filtro.siglaItemConfiguracao = categoria2.siglaItemConfiguracao;
-					else if (nivelAlterado.equals("1"))
-						filtro.siglaItemConfiguracao = categoria1.siglaItemConfiguracao;
-			}
 			itens = filtro.buscar();
 		} catch (Exception e) {
-			itens = new ArrayList<SrSelecionavel>();
+			itens = new ArrayList<SrItemConfiguracao>();
 		}
 
-		categoria1 = (SrItemConfiguracao) filtro.obterPorHierarquia(1);
-		if (categoria1 == null)
-			categoria1 = new SrItemConfiguracao();
-		categoria2 = (SrItemConfiguracao) filtro.obterPorHierarquia(2);
-		if (categoria2 == null)
-			categoria2 = new SrItemConfiguracao();
-		categoria3 = (SrItemConfiguracao) filtro.obterPorHierarquia(3);
-		if (categoria3 == null)
-			categoria3 = new SrItemConfiguracao();
-		List<SrCodigoHierarquicoSuporte> opcoesNivel1 = filtro
-				.obterOpcoesPorHierarquia(1);
-		List<SrCodigoHierarquicoSuporte> opcoesNivel2 = filtro
-				.obterOpcoesPorHierarquia(2);
-		List<SrCodigoHierarquicoSuporte> opcoesNivel3 = filtro
-				.obterOpcoesPorHierarquia(3);
+		render(itens, filtro, nome);
+	}
 
-		render("Application/buscar" + tipo + ".html", itens, filtro, tipo,
-				nome, categoria1, opcoesNivel1, categoria2, opcoesNivel2,
-				categoria3, opcoesNivel3);
+	public static void listarServico() {
+		List<SrServico> servicos = SrServico.find("byHisDtFimIsNull").fetch();
+		render(servicos);
+	}
+
+	public static void editarServico(Long id) {
+		SrServico servico;
+		if (id != null)
+			servico = SrServico.findById(id);
+		else
+			servico = new SrServico();
+
+		render(servico);
+	}
+
+	public static void gravarServico(SrServico servico) {
+		try {
+			dao().salvar(servico, "RJ13285");
+		} catch (AplicacaoException ae) {
+			int a = 0;
+		}
+		listarItem();
+	}
+
+	public static void selecionarServico(String sigla) {
+		SrServico sel = new SrServico().selecionar(sigla);
+		render("Application/selecionar.html", sel);
+	}
+
+	public static void buscarServico(String sigla, String nome, SrServico filtro) {
+		List<SrServico> itens = null;
+
+		try {
+			if (filtro == null)
+				filtro = new SrServico();
+			if (sigla != null && !sigla.trim().equals(""))
+				filtro.setSigla(sigla);
+			itens = filtro.buscar();
+		} catch (Exception e) {
+			itens = new ArrayList<SrServico>();
+		}
+
+		render(itens, filtro, nome);
+	}
+
+	public static void proxy(String url) throws Exception {
+		HashMap<String, String> atributos = new HashMap<String, String>();
+		for (Http.Header h : request.headers.values())
+			atributos.put(h.name, h.value());
+
+		renderHtml(ConexaoHTTP.get(url, atributos));
+	}
+
+	public static void selecionarSiga(String sigla, String tipo, String nome)
+			throws Exception {
+		proxy("http://localhost:8080/siga//" + tipo + "/selecionar.action?"
+				+ "propriedade=" + tipo + nome + "&sigla=" + sigla);
+	}
+
+	public static void buscarSiga(String sigla, String tipo, String nome)
+			throws Exception {
+		proxy("http://localhost:8080/siga//" + tipo + "/buscar.action?"
+				+ "propriedade=" + tipo + nome + "&sigla=" + sigla);
 	}
 
 }

@@ -1299,7 +1299,7 @@ public class CpDao extends ModeloDao {
 		getSessao().saveOrUpdate(entidade);
 		if (entidade.getHisIdIni() == null && entidade.getId() != null) {
 			entidade.setHisIdIni(entidade.getId());
-			getSessao().update(entidade);
+			getSessao().saveOrUpdate(entidade);
 		}
 		try {
 			Cp.getInstance().getConf().limparCacheSeNecessario();

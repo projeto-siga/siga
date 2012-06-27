@@ -62,6 +62,16 @@
 							 -->
 							<!-- segunda metade da tela -->
 						</c:if>
+						<h2 class="gt-table-head">Quadro de Solicitações</h2>
+						<!-- content box -->
+						<span id='rightbottom' style="margin:0;padding:0;"></span>
+						<script type="text/javascript">
+							SetInnerHTMLFromAjaxResponse(
+									"/siga/proxy.action?URL=http://localhost:9000/gadget",
+									document.getElementById('rightbottom'));
+						</script>
+						<!-- Expedientes -->
+						<br/>
 					</div>
 				</div>
 			</div>

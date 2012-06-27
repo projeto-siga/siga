@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 - 2011 SJRJ.
+] * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
  * 
@@ -26,14 +26,18 @@ package br.gov.jfrj.siga.cp;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -44,6 +48,7 @@ import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 
@@ -52,8 +57,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
  * customize the behavior of this class by editing the class, {@link
  * CpClassificacao()}.
  */
-@Entity
-@Table(name = "CORPORATIVO.CP_CONFIGURACAO")
+@MappedSuperclass
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable {
 
@@ -69,68 +73,96 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Desconsiderar
 	private Long idConfiguracao;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_ORGAO_USU")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
 	@NaoRecursivo
 	private CpOrgaoUsuario orgaoUsuario;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_LOTACAO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO")
 	@NaoRecursivo
 	private DpLotacao lotacao;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_CARGO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_CARGO")
 	@NaoRecursivo
 	private DpCargo cargo;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_FUNCAO_CONFIANCA")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_FUNCAO_CONFIANCA")
 	@NaoRecursivo
 	private DpFuncaoConfianca funcaoConfianca;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_PESSOA")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PESSOA")
 	@NaoRecursivo
 	private DpPessoa dpPessoa;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_SIT_CONFIGURACAO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
 	@NaoRecursivo
 	private CpSituacaoConfiguracao cpSituacaoConfiguracao;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_TP_CONFIGURACAO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_CONFIGURACAO")
 	@NaoRecursivo
 	private CpTipoConfiguracao cpTipoConfiguracao;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_SERVICO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SERVICO")
 	@NaoRecursivo
 	private CpServico cpServico;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_IDENTIDADE")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_IDENTIDADE")
 	@NaoRecursivo
 	private CpIdentidade cpIdentidade;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_GRUPO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_GRUPO")
 	@NaoRecursivo
 	private CpGrupo cpGrupo;
 
-	@Column(name="NM_EMAIL")
+	@Column(name = "NM_EMAIL")
 	@NaoRecursivo
 	private String nmEmail;
 
-	@Column(name="DESC_FORMULA")
+	@Column(name = "DESC_FORMULA")
 	@NaoRecursivo
 	private String dscFormula;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_TP_LOTACAO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_LOTACAO")
 	@NaoRecursivo
 	private CpTipoLotacao cpTipoLotacao;
+
+	@Column(name = "DT_INI_VIG_CONFIGURACAO")
+	private Date dtIniVigConfiguracao;
+
+	@Column(name = "DT_FIM_VIG_CONFIGURACAO")
+	private Date dtFimVigConfiguracao;
+	
+	@Desconsiderar
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_INI")
+	private CpIdentidade hisIdcIni;
+
+	@Desconsiderar
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_FIM")
+	private CpIdentidade hisIdcFim;
+	
+	@Column(name = "HIS_ID_INI")
+	@Desconsiderar
+	private Long hisIdIni;
+
+	@Column(name = "DT_INI_REG")
+	@Desconsiderar
+	private Date hisDtIni;
+
+	@Column(name = "DT_FIM_REG")
+	@Desconsiderar
+	private Date hisDtFim;
 
 	public CpIdentidade getCpIdentidade() {
 		return cpIdentidade;
@@ -294,32 +326,68 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		return cpTipoLotacao;
 	}
 
+	public Date getDtIniVigConfiguracao() {
+		return dtIniVigConfiguracao;
+	}
+
+	public void setDtIniVigConfiguracao(Date dtIniVigConfiguracao) {
+		this.dtIniVigConfiguracao = dtIniVigConfiguracao;
+	}
+
+	public Date getDtFimVigConfiguracao() {
+		return dtFimVigConfiguracao;
+	}
+
+	public void setDtFimVigConfiguracao(Date dtFimVigConfiguracao) {
+		this.dtFimVigConfiguracao = dtFimVigConfiguracao;
+	}
+
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
+
+	public CpIdentidade getHisIdcFim() {
+		return hisIdcFim;
+	}
+
+	public void setHisIdcFim(CpIdentidade hisIdcFim) {
+		this.hisIdcFim = hisIdcFim;
+	}
+
+	public Long getHisIdIni() {
+		return hisIdIni;
+	}
+
+	public void setHisIdIni(Long hisIdIni) {
+		this.hisIdIni = hisIdIni;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	public Date getHisDtFim() {
+		return hisDtFim;
+	}
+
+	public void setHisDtFim(Date hisDtFim) {
+		this.hisDtFim = hisDtFim;
+	}
+
 	/**
 	 * @param cpTipoLotacao
 	 *            the cpTipoLotacao to set
 	 */
 	public void setCpTipoLotacao(CpTipoLotacao cpTipoLotacao) {
 		this.cpTipoLotacao = cpTipoLotacao;
-	}
-
-	// Alterações necessárias para suportar a interface histórico em uma classe
-	// que não possui o flag "ativo" nem a "idInicial"
-	@Override
-	public int getHisAtivo() {
-		return getHisDtFim() == null ? 1 : 0;
-	}
-
-	@Override
-	public Long getHisIdIni() {
-		return null;
-	}
-
-	@Override
-	public void setHisAtivo(int hisAtivo) {
-	}
-
-	@Override
-	public void setHisIdIni(Long hisIdIni) {
 	}
 
 }

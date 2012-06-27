@@ -3,9 +3,9 @@ package models;
 import java.util.List;
 
 public interface SrSelecionavel {
-	public Integer getId();
+	public Long getId();
 	
-	public void setId(Integer id);
+	public void setId(Long id);
 
 	public String getSigla();
 
@@ -17,5 +17,5 @@ public interface SrSelecionavel {
 
 	public SrSelecionavel selecionar(String sigla);
 
-	public List<SrSelecionavel> buscar();
+	public List<? extends SrSelecionavel> buscar();
 }

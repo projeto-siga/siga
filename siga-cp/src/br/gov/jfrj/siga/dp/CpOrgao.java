@@ -83,6 +83,10 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable,
 	public Long getId() {
 		return Long.valueOf(getIdOrgao());
 	}
+	
+	public void setId(Long id){
+		setIdOrgao(id);
+	}
 
 	public String getSigla() {
 		if (getSiglaOrgao() != null)

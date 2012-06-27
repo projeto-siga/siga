@@ -60,6 +60,10 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 	public Long getId() {
 		return getIdGrupo();
 	}
+	
+	public void setId(Long id){
+		setIdGrupo(id);
+	}
 
 	public String getSigla() {
 		return getSiglaGrupo();

@@ -53,6 +53,10 @@ public class CpPapel extends AbstractCpPapel implements Serializable,
 	public Long getId() {
 		return getIdCpPapel();
 	}
+	
+	public void setId(Long id){
+		setIdCpPapel(id);
+	}
 
 	public boolean equivale(Object other) {
 		if (other == null)

@@ -117,6 +117,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	public Long getId() {
 		return Long.valueOf(getIdLotacao());
 	}
+	
+	public void setId(Long id){
+		setIdLotacao(id);
+	}
 
 	public Long getIdLotacaoPai() {
 		if (getLotacaoPai() == null)
@@ -284,10 +288,12 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return SincronizavelSuporte.semelhante(this, obj, profundidade);
 	}
-	
+
 	/**
 	 * retorna se ativo na data
-	 * @param dt data quando ser saber se estava ativa
+	 * 
+	 * @param dt
+	 *            data quando ser saber se estava ativa
 	 * @return true or false
 	 */
 	public boolean ativaNaData(Date dt) {
@@ -302,10 +308,12 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			return true;
 		return false;
 	}
+
 	/**
 	 * Retorna a lotação atual no histórico desta lotação
+	 * 
 	 * @return DpLotacao
-     */
+	 */
 	public DpLotacao getLotacaoAtual() {
 		DpLotacao lotIni = getLotacaoInicial();
 		Set<DpLotacao> setLotas = lotIni.getLotacoesPosteriores();
@@ -315,5 +323,37 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 		return this;
 	}
-	
+
+	public Long getHisIdIni() {
+		return getIdLotacaoIni();
+	}
+
+	public void setHisIdIni(Long hisIdIni) {
+		setIdLotacaoIni(hisIdIni);
+	}
+
+	public Date getHisDtIni() {
+		return getDataInicioLotacao();
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		setDataInicio(hisDtIni);
+	}
+
+	public Date getHisDtFim() {
+		return getDataFimLotacao();
+	}
+
+	public void setHisDtFim(Date hisDtFim) {
+		setDataFimLotacao(hisDtFim);
+	}
+
+	public int getHisAtivo() {
+		return getDataFimLotacao() != null ? 1 : 0;
+	}
+
+	public void setHisAtivo(int hisAtivo) {
+		//
+	}
+
 }

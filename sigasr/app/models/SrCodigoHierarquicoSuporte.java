@@ -29,7 +29,6 @@ public abstract class SrCodigoHierarquicoSuporte extends GenericModel implements
 		this.nomeCampoDescricao = nomeCampoDescricao;
 		this.nomeCampoSigla = nomeCampoSigla;
 		this.mascaraZeros = mascaraZeros;
-
 	}
 
 	private String getNomeClasse() {
@@ -158,6 +157,36 @@ public abstract class SrCodigoHierarquicoSuporte extends GenericModel implements
 			setSiglaInterno(s);
 		} else
 			setDescricaoInterno(sigla);
+	}
+	
+	public List<SrCodigoHierarquicoSuporte> getParte(){
+		List<SrCodigoHierarquicoSuporte> lista = new ArrayList<SrCodigoHierarquicoSuporte>();
+		for (int i = 1; i<=getNiveis(); i++)
+			lista.add(obterPorHierarquia(i));
+		return lista;
+	}
+	
+	public void setParte(List<SrCodigoHierarquicoSuporte> lista){
+		//Fazer
+	}
+	
+	public List<List<SrCodigoHierarquicoSuporte>> getOpcoes(){
+		List<List<SrCodigoHierarquicoSuporte>> lista = new ArrayList<List<SrCodigoHierarquicoSuporte>>();
+		for (int i = 1; i<=getNivel(); i++)
+			lista.add(obterOpcoesPorHierarquia(i));
+		return lista;
+	}
+	
+	public void setOpcoes(List<List<SrCodigoHierarquicoSuporte>> lista){
+		//Fazer
+	}
+	
+	public String getSiglaCurta(){
+		return obterSiglaHierarquia(getNivel(), getNivel(), false, false);
+	}
+	
+	public String getSiglaEDescricao(){
+		return getSiglaCurta() + " - " + getDescricao(); 
 	}
 
 }

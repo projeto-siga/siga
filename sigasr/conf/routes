@@ -11,11 +11,31 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-# Seleção
-*       /selecionar                  	Application.selecionar
-*       /{tipo}/buscar                  	Application.buscar{tipo}
+*		/exibir/{id}              	Application.exibir
+*		/andamento					Application.andamento
+*		/baixar						Application.baixar
 
-# Catch all
-*		/exibir/{id}               Application.exibir
-*		/andamento/{id}            Application.andamento
+*		/editar						Application.editar
+*		/gravar						Application.gravar
+*		/listar						Application.listar
+
+*		/designacao/editar/{id}		Application.editarDesignacao
+*		/designacao/gravar			Application.gravarDesignacao
+*		/designacao/listar			Application.listarDesignacao
+
+*		/item/editar/{id}			Application.editarItem
+*		/item/gravar				Application.gravarItem
+*		/item/listar				Application.listarItem
+*		/item/selecionar			Application.selecionarItem
+*		/item/buscar				Application.buscarItem
+
+*		/servico/editar/{id}		Application.editarServico
+*		/servico/gravar				Application.gravarServico
+*		/servico/listar				Application.listarServico
+*		/servico/selecionar			Application.selecionarServico
+*		/servico/buscar				Application.buscarServico
+
+*		/{tipo}/buscar				Application.buscarSiga
+*		/{tipo}/selecionar			Application.selecionarSiga
+
 *       /{action}                  Application.{action}

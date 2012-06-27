@@ -16,8 +16,16 @@
 			<result>/paginas/principal.jsp</result>
 		</action>
 		
-		<action name="pagina_vazia" class="br.gov.jfrj.webwork.action.PaginaVaziaAction">
-			<result>/paginas/pagina_vazia.jsp</result>
+		<action name="pagina_vazia" class="br.gov.jfrj.webwork.action.PlayAction">
+			<result>/paginas/play_pagina_vazia.jsp</result>
+		</action>
+		
+		<action name="proxy" class="br.gov.jfrj.webwork.action.PlayAction" method="aProxy">
+			<result>/paginas/play_proxy.jsp</result>
+		</action>
+		
+		<action name="usuario_autenticado" class="br.gov.jfrj.webwork.action.PlayAction" method="aUsuarioAutenticado">
+			<result>/paginas/play_usuario_autenticado.jsp</result>
 		</action>
 
 <!-- Renato: Comentei pois acho que não está sendo utilizado mais.

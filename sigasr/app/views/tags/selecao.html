@@ -1,55 +1,37 @@
-#{set _base:'http://10.34.5.90:8080'/}
+#{set _base:'http://localhost:8080'/}
 <span id="${_idAjax}" depende=";tipo${_nome};"> <!--ajax:${_idAjax}-->
-	<input type="hidden" name="campos" value="${_tipo}${_nome}Sel.id" /> <!-- A lista de par -->
-	
-	<!-- O campo abaixo é necessário por causa de um problema no Play (https://groups.google.com/group/play-framework/browse_thread/thread/c3463f0e062c1d4b/60dfb32db5bb3220) -->
-	<input type="hidden" id="${_tipo}${_nome}" name="${_tipo}${_nome}" value="${_value?.id}"/>
-	
+
 	<script type="text/javascript">
 
 	%{
-		String where = "";
-		try{
-			Class<models.SrSelecionavel> cl = Class.forName("models."+_tipo);
-			where = "play";
-		} catch(ClassNotFoundException cnfe) {
-			where = "siga";
-		}
+		String _nomeClean = _nome.replaceAll("\\.","");
 	}%
 	
-
-self.retorna_${_tipo}${_nome} = function(id, sigla, descricao) {
+//O $tipo foi deixado aqui porque o seleção do Siga precisa enxergar este método
+self.retorna_${_tipo}${_nomeClean} = function(id, sigla, descricao) {
     try {
-		newwindow_${_tipo}${_nome}.close();
+		newwindow_${_nomeClean}.close();
     } catch (E) {
     } finally {
     }
-
-	document.getElementsByName('${_tipo}${_nome}Sel.id')[0].value = id;
-	document.getElementById('${_tipo}${_nome}').value = id;
+	document.getElementById('${_nomeClean}').value = id;
 	try {
-		document.getElementsByName('${_tipo}${_nome}Sel.descricao')[0].value = descricao;
-		document.getElementById('${_tipo}${_nome}SelSpan').innerHTML = descricao;
+		document.getElementById('${_nomeClean}_descricao').value = descricao;
+		document.getElementById('${_nomeClean}Span').innerHTML = descricao;
 	} catch (E) {
 	}
 
-	document.getElementsByName('${_tipo}${_nome}Sel.sigla')[0].value = sigla;
-	document.getElementsByName('req${_tipo}${_nome}Sel')[0].value = "sim";
-	document.getElementById('alterouSel').value='${_tipo}${_nome}';
-	//sbmt();
+	document.getElementById('${_nomeClean}_sigla').value = sigla;
+	document.getElementById('req${_nomeClean}').value = "sim";
+	document.getElementById('alterouSel').value='${_nome}';
 }
 
-self.newwindow_${_tipo}${_nome} = '';
-self.popitup_${_tipo}${_nome} = function(sigla) {
-	//var url = '${_base}/siga//${_tipo}/buscar.action?propriedade=${_tipo}${_nome}&sigla='+encodeURI(sigla) +'&=';
-	#{if where == 'play'}	
-		var url = '/${_tipo}/buscar' + '?sigla=' + sigla + '&nome=${_nome}';
-	#{/if}
-	#{else}
-		var url = '@{Application.proxy(_base + "/siga//" + _tipo + "/buscar.action?")}' + 'propriedade%3D${_tipo}${_nome}'+'%26sigla%3D' + sigla;
-	#{/else}
-	if (!newwindow_${_tipo}${_nome}.closed && newwindow_${_tipo}${_nome}.location) {
-		newwindow_${_tipo}${_nome}.location.href = url;
+self.newwindow_${_nomeClean} = '';
+self.popitup_${_nomeClean} = function(sigla) {
+	var url = '/${_tipo}/buscar' + '?sigla=' + sigla + '&nome=${_nomeClean}';
+	
+	if (!newwindow_${_nomeClean}.closed && newwindow_${_nomeClean}.location) {
+		newwindow_${_nomeClean}.location.href = url;
 	} else {
 		var popW;
 		var popH;
@@ -59,52 +41,46 @@ self.popitup_${_tipo}${_nome} = function(sigla) {
 		var winleft = (screen.width - popW) / 2;
 		var winUp = (screen.height - popH) / 2;	
 		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${_tipo}${_nome}=window.open(url,'${_tipo}${_nome}',winProp);
+		newwindow_${_nomeClean}=window.open(url,'${_nomeClean}',winProp);
 	}
-	newwindow_${_tipo}${_nome}.opener = self;
+	newwindow_${_nomeClean}.opener = self;
 	if (window.focus) {
-		newwindow_${_tipo}${_nome}.focus()
+		newwindow_${_nomeClean}.focus()
 	}
 	return false;
 }
 
-self.resposta_ajax_${_tipo}${_nome} = function(response, d1, d2, d3) {
-	var sigla = document.getElementsByName('${_tipo}${_nome}Sel.sigla')[0].value;
+self.resposta_ajax_${_nomeClean} = function(response, d1, d2, d3) {
+	var sigla = document.getElementById('${_nomeClean}_sigla').value;
     var data = response.split(';');
     if (data[0] == '1')
-	    return retorna_${_tipo}${_nome}(data[1], data[2], data[3]);
-    retorna_${_tipo}${_nome}('', '', '');
-	return popitup_${_tipo}${_nome}(sigla);
+	    return retorna_${_tipo}${_nomeClean}(data[1], data[2], data[3]);
+    retorna_${_tipo}${_nomeClean}('', '', '');
+	return popitup_${_nomeClean}(sigla);
 }
 
-self.ajax_${_tipo}${_nome} = function() {
-	var sigla = document.getElementsByName('${_tipo}${_nome}Sel.sigla')[0].value;
+self.ajax_${_nomeClean} = function() {
+	var sigla = document.getElementById('${_nomeClean}_sigla').value;
 	if (sigla == '') {
-		return retorna_${_tipo}${_nome}('', '', '');
+		return retorna_${_tipo}${_nomeClean}('', '', '');
 	}
-	#{if where == 'play'}	
-		var url = '@{Application.selecionar()}' + '?sigla=' + sigla + '&tipo=${_tipo}';
-	#{/if}
-	#{else}
-		var url = '@{Application.proxy(_base + "/siga//" + _tipo + "/selecionar.action?")}' + 'propriedade%3D${_tipo}${_nome}'+'%26sigla%3D' + sigla;
-	#{/else}
-	//url = url + '&sigla=' + sigla;
-	PassAjaxResponseToFunction(url, 'resposta_ajax_${_tipo}${_nome}', false);
+	var url = '/${_tipo}/selecionar' + '?sigla=' + sigla + '&nome=${_nomeClean}';
+	
+	PassAjaxResponseToFunction(url, 'resposta_ajax_${_nomeClean}', false);
 }
-</script> 
-<input type="hidden" name="${_tipo}${_nome}Sel.id" value="${_value?.id}"
-	id="frm_${_tipo}${_nome}Sel_id" /> <input type="hidden"
-	name="${_tipo}${_nome}Sel.descricao" value="${_value?.descricao}"
-	id="frm_${_tipo}${_nome}Sel_descricao" /> <input type="hidden"
-	name="${_tipo}${_nome}Sel.buscar" value=""
-	id="frm_${_tipo}${_nome}Sel_buscar" /> <input type="hidden"
-	name="req${_tipo}${_nome}Sel" value="" id="frm_req${_tipo}${_nome}Sel" />
-	<input type="hidden" name="alterouSel" value="" id="alterouSel" /> <input
-	type="text" name="${_tipo}${_nome}Sel.sigla" size="25" value="${_value?.sigla}"
-	id="frm_${_tipo}${_nome}Sel_sigla"
-	onblur="javascript: ajax_${_tipo}${_nome}();"
+
+</script> <input type="hidden" name="${_nome}"
+	value="${_value?.id}" id="${_nomeClean}" /> <input type="hidden"
+	value="${_value?.descricao}" id="${_nomeClean}_descricao" /> <input
+	type="hidden" name="${_nomeClean}_buscar" value=""
+	id="${_nomeClean}_buscar" /> <input type="hidden"
+	name="req${_nomeClean}" value="" id="req${_nomeClean}" /> <input
+	type="hidden" name="alterouSel" value="" id="alterouSel" /> <input
+	type="text" size="25"
+	value="${_value?.sigla}" id="${_nomeClean}_sigla"
+	onblur="javascript: ajax_${_nomeClean}();"
 	onkeypress="return handleEnter(this, event)" /> <input type="button"
-	id="${_tipo}${_nome}SelButton" value="..."
-	onclick="javascript: popitup_${_tipo}${_nome}('');" theme="simple">
-	<span id="${_tipo}${_nome}SelSpan">${_value?.descricao}</span> <!--  idAjax="${_idAjax}" -->
+	id="${_nomeClean}Button" value="..."
+	onclick="javascript: popitup_${_nomeClean}('');" theme="simple">
+	<span id="${_nomeClean}Span">${_value?.descricao}</span> <!--  idAjax="${_idAjax}" -->
 	<!--/ajax:${_idAjax}--> </span>

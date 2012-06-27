@@ -40,10 +40,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (lotaSolicitante != null)
 			wheres += "and sol.lotaSolicitante.idLotacaoIni = "
 					+ lotaSolicitante.getIdInicial();
-		if (itemConfiguracao != null && itemConfiguracao.idItemConfiguracao > 0)
+		if (itemConfiguracao != null && itemConfiguracao.idItemConfiguracao > 0L)
 			wheres += "and sol.itemConfiguracao.idItemConfiguracao = "
 					+ itemConfiguracao.idItemConfiguracao;
-		if (servico != null && servico.idServico > 0)
+		if (servico != null && servico.idServico > 0L)
 			wheres += "and sol.servico.idServico = " + servico.idServico;
 		if (urgencia != null && urgencia.nivelUrgencia > 0)
 			wheres += "and sol.urgencia = " + (urgencia.nivelUrgencia - 1);

@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.cp.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.Formula;
 

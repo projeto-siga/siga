@@ -41,12 +41,17 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.ColumnResult;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
 @Table(name = "DP_PESSOA", schema = "CORPORATIVO")
 @Entity
+@SqlResultSetMapping(name="scalar", columns=@ColumnResult(name="dt"))
+@NamedNativeQuery(name="consultarDataEHoraDoServidor", query="SELECT sysdate dt FROM dual", resultSetMapping="scalar")
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 	/**
@@ -116,6 +121,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	public Long getId() {
 		return super.getIdPessoa();
+	}
+	
+	public void setId(Long id){
+		setIdPessoa(id);
 	}
 
 	public String getSigla() {
@@ -395,6 +404,38 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 			// nomeAbreviado += " " + n.substring(0, 1) + ".";
 		}
 		return nomeAbreviado;
+	}
+
+	public Long getHisIdIni() {
+		return getIdPessoaIni();
+	}
+
+	public void setHisIdIni(Long hisIdIni) {
+		setIdPessoaIni(hisIdIni);
+	}
+
+	public Date getHisDtIni() {
+		return getDataInicioPessoa();
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		setDataInicioPessoa(hisDtIni);
+	}
+
+	public Date getHisDtFim() {
+		return getDataFimPessoa();
+	}
+
+	public void setHisDtFim(Date hisDtFim) {
+		setDataFimPessoa(hisDtFim);
+	}
+
+	public int getHisAtivo() {
+		return getHisDtFim() != null ? 1 : 0;
+	}
+
+	public void setHisAtivo(int hisAtivo) {
+		//
 	}
 
 }

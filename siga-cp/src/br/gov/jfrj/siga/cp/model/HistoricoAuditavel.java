@@ -24,23 +24,6 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.model.Historico;
 
 public interface HistoricoAuditavel extends Historico {
-	public Long getId();
-	
-	public Long getHisIdIni();
-
-	public void setHisIdIni(Long hisIdIni);
-
-	public Date getHisDtIni();
-
-	public void setHisDtIni(Date hisDtIni);
-
-	public Date getHisDtFim();
-
-	public void setHisDtFim(Date hisDtFim);
-
-	public int getHisAtivo();
-
-	public void setHisAtivo(int hisAtivo);
 
 	public CpIdentidade getHisIdcIni();
 

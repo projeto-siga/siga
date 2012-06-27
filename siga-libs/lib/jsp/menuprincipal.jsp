@@ -6,14 +6,16 @@
 
 <li><a class="" href="#">SIGA</a>
 	<ul>
-		<li><ww:url id="url" action="principal" namespace="/" /> <ww:a
-				href="%{url}">Página Inicial</ww:a>
+		<li><a href="${serverAndPort}/siga/principal.action">Página Inicial</a>
 		</li>
 		<c:if test="${empty pagina_de_erro}">
 			<li><a href="#">Módulos</a>
 				<ul>
 					<li><a
-						href="/sigaex/expediente/doc/listar.action?primeiraVez=sim">Documentos</a>
+						href="${serverAndPort}/sigaex/expediente/doc/listar.action?primeiraVez=sim">Documentos</a>
+					</li>
+					<li><a
+						href="http://localhost:9000" >Serviços</a>
 					</li>
 					<!-- <li><a href="/sigatr/">Treinamento</a>
 					</li> -->
@@ -25,7 +27,7 @@
 			</li>
 			<li><a href="#">Administração</a>
 				<ul>
-					<li><ww:a href="/siga/trocar_senha.action">Trocar senha</ww:a>
+					<li><ww:a href="${serverAndPort}/siga/trocar_senha.action">Trocar senha</ww:a>
 					</li>
 					<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar
@@ -43,7 +45,7 @@
 						</li>
 					</c:if>
 					 --%>
-					<li><ww:a href="/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+					<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
 					</li>
 				</ul>
 			</li>
@@ -55,32 +57,32 @@
 					<ul>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ID:Gerenciar identidades')}">
-							<li><ww:a href="/siga/gi/identidade/listar.action">Identidade</ww:a>
+							<li><ww:a href="${serverAndPort}/siga/gi/identidade/listar.action">Identidade</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERMISSAO:Gerenciar permissões')}">
-							<li><ww:a href="/siga/gi/acesso/listar.action">Configurar Permissões</ww:a>
+							<li><ww:a href="${serverAndPort}/siga/gi/acesso/listar.action">Configurar Permissões</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERFIL:Gerenciar perfis de acesso')}">
-							<li><ww:a href="/siga/gi/perfil/listar.action">Perfil de Acesso</ww:a>
+							<li><ww:a href="${serverAndPort}/siga/gi/perfil/listar.action">Perfil de Acesso</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERFILJEE:Gerenciar perfis do JEE')}">
-							<li><ww:a href="/siga/gi/perfiljee/listar.action">Perfil de Acesso do JEE</ww:a>
+							<li><ww:a href="${serverAndPort}/siga/gi/perfiljee/listar.action">Perfil de Acesso do JEE</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GEMAIL:Gerenciar grupos de email')}">
-							<li><ww:a href="/siga/gi/email/listar.action">Grupo de Email</ww:a>
+							<li><ww:a href="${serverAndPort}/siga/gi/email/listar.action">Grupo de Email</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;SELFSERVICE:Gerenciar serviços da própria lotação')}">
-							<li><ww:a href="/siga/gi/servico/acesso.action">Acesso a Serviços</ww:a>
+							<li><ww:a href="${serverAndPort}/siga/gi/servico/acesso.action">Acesso a Serviços</ww:a>
 							</li>
 						</c:if>
 						<c:if
@@ -88,16 +90,16 @@
 							<li><a href="#">Relatórios</a>
 								<ul>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_acesso_servico.action">Acesso aos Serviços</ww:a>
+											href="${serverAndPort}/siga/gi/relatorio/selecionar_acesso_servico.action">Acesso aos Serviços</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_permissao_usuario.action">Permissões de Usuário</ww:a>
+											href="${serverAndPort}/siga/gi/relatorio/selecionar_permissao_usuario.action">Permissões de Usuário</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_alteracao_direitos.action">Alteração de Direitos</ww:a>
+											href="${serverAndPort}/siga/gi/relatorio/selecionar_alteracao_direitos.action">Alteração de Direitos</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_historico_usuario.action">Histórico de Usuário</ww:a>
+											href="${serverAndPort}/siga/gi/relatorio/selecionar_historico_usuario.action">Histórico de Usuário</ww:a>
 									</li>
 								</ul></li>
 						</c:if>
@@ -111,7 +113,7 @@
 				<ul>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
-						<li><ww:a href="/siga/modelo/listar.action">Cadastro de modelos</ww:a>
+						<li><ww:a href="${serverAndPort}/siga/modelo/listar.action">Cadastro de modelos</ww:a>
 						</li>
 					</c:if>
 				</ul></li>
@@ -124,7 +126,7 @@
 			<ul class="navmenu-large">
 				<c:forEach var="substituicao" items="${meusTitulares}">
 					<li><a
-						href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
+						href="${serverAndPort}/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
 							<c:choose>
 								<c:when test="${not empty substituicao.titular}">
 						${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}
@@ -138,7 +140,7 @@
 			</ul>
 		</li>
 
-		<li><ww:a href="/siga/logoff.action">Logoff</ww:a>
+		<li><ww:a href="${serverAndPort}/siga/logoff.action">Logoff</ww:a>
 		</li>
 
 	</ul>

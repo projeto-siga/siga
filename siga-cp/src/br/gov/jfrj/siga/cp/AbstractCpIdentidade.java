@@ -29,6 +29,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -37,41 +38,112 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
-@Entity
-@Table(name="CORPORATIVO.CP_IDENTIDADE"
-)
+@MappedSuperclass
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
-	 @SequenceGenerator(name="generator", sequenceName="CORPORATIVO.CP_IDENTIDADE_SEQ")@Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
-
-	    
-	    @Column(name="ID_IDENTIDADE", nullable=false)
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_IDENTIDADE", nullable = false)
 	@Desconsiderar
 	private Long idIdentidade;
-	 
-	 @ManyToOne(fetch=FetchType.LAZY)
-	    @JoinColumn(name="ID_ORGAO_USU")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario cpOrgaoUsuario;
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_TP_IDENTIDADE")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_IDENTIDADE")
 	private CpTipoIdentidade cpTipoIdentidade;
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_PESSOA")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PESSOA")
 	private DpPessoa dpPessoa;
-	@Column(name="SENHA_IDENTIDADE")
+	@Column(name = "SENHA_IDENTIDADE")
 	private String dscSenhaIdentidade;
-	@Column(name="SENHA_IDENTIDADE_CRIPTO")
+	@Column(name = "SENHA_IDENTIDADE_CRIPTO")
 	private String dscSenhaIdentidadeCripto;
-	@Column(name="SENHA_IDENTIDADE_CRIPTO_SINC")
+	@Column(name = "SENHA_IDENTIDADE_CRIPTO_SINC")
 	@Desconsiderar
 	private String dscSenhaIdentidadeCriptoSinc;
-	@Column(name="DATA_CANCELAMENTO_IDENTIDADE")
+	@Column(name = "DATA_CANCELAMENTO_IDENTIDADE")
 	private Date dtCancelamentoIdentidade;
-	 @Column(name="DATA_CRIACAO_IDENTIDADE")
+	@Column(name = "DATA_CRIACAO_IDENTIDADE")
 	private Date dtCriacaoIdentidade;
-	 @Column(name="DATA_EXPIRACAO_IDENTIDADE")
+	@Column(name = "DATA_EXPIRACAO_IDENTIDADE")
 	private Date dtExpiracaoIdentidade;
-	 @Column(name="LOGIN_IDENTIDADE")
+	@Column(name = "LOGIN_IDENTIDADE")
 	private String nmLoginIdentidade;
+
+	@Desconsiderar
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_INI")
+	private CpIdentidade hisIdcIni;
+
+	@Desconsiderar
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_FIM")
+	private CpIdentidade hisIdcFim;
+	@Column(name = "HIS_ID_INI")
+	@Desconsiderar
+	private Long hisIdIni;
+
+	@Column(name = "HIS_DT_INI")
+	@Desconsiderar
+	private Date hisDtIni;
+
+	@Column(name = "HIS_DT_FIM")
+	@Desconsiderar
+	private Date hisDtFim;
+
+	@Column(name = "HIS_ATIVO")
+	@Desconsiderar
+	private int hisAtivo;
+
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
+
+	public CpIdentidade getHisIdcFim() {
+		return hisIdcFim;
+	}
+
+	public void setHisIdcFim(CpIdentidade hisIdcFim) {
+		this.hisIdcFim = hisIdcFim;
+	}
+
+	public Long getHisIdIni() {
+		return hisIdIni;
+	}
+
+	public void setHisIdIni(Long hisIdIni) {
+		this.hisIdIni = hisIdIni;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	public Date getHisDtFim() {
+		return hisDtFim;
+	}
+
+	public void setHisDtFim(Date hisDtFim) {
+		this.hisDtFim = hisDtFim;
+	}
+
+	public int getHisAtivo() {
+		return hisAtivo;
+	}
+
+	public void setHisAtivo(int hisAtivo) {
+		this.hisAtivo = hisAtivo;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -338,4 +410,5 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	public void setNmLoginIdentidade(String nmLoginIdentidade) {
 		this.nmLoginIdentidade = nmLoginIdentidade;
 	}
+
 }

@@ -3,21 +3,21 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">
-			<form action="@{Application.buscarSrServico}">
+			<form action="@{Application.buscarServico}">
 				<table class="gt-form-table">
 					<tr class="header">
 						<td align="center" valign="top" colspan="4">Dados do serviço</td>
 					</tr>
 					<tr>
-						<td>Categoria</td>
-						<td>#{select name:'categoria.idServico', items:opcoesNivel1,
-							labelProperty:'descrServico', value:categoria.idServico, onchange:'javascript:frm.submit()'} #{option
-							0}Todos#{/option} #{/select}</td>
+						<td>Código:</td>
+						<td><input type="text" name="filtro.siglaServico"
+							value="${filtro?.siglaServico}" />
+						</td>
 					</tr>
 					<tr>
-						<td>Descrição</td>
-						<td><input type="text" name="filtro.descrServico"
-							value="${filtro?.descrServico}" />  <input type="hidden" name="nome"
+						<td>Título</td>
+						<td><input type="text" name="filtro.tituloServico"
+							value="${filtro?.tituloServico}" />  <input type="hidden" name="nome"
 							value="${nome}" />
 						</td>
 					</tr>
@@ -39,7 +39,7 @@
 		</tr>
 		#{list items:itens, as:'servico'}
 		<tr>
-			<td><a href="javascript:opener.retorna_${tipo}${nome}('${servico.id}','${servico.sigla}','${servico.descricao}');window.close()">${servico.sigla}</a>
+			<td><a href="javascript:opener.retorna_servico${nome}('${servico.id}','${servico.sigla}','${servico.descricao}');window.close()">${servico.sigla}</a>
 			</td>
 			<td>${servico.descricao}</td>
 		</tr>

@@ -92,6 +92,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_SOLICITACAO_A_RECEBER = 31;
 	
 	final static public long MARCADOR_SOLICITACAO_EM_ANDAMENTO = 32;
+	
+	final static public long MARCADOR_SOLICITACAO_FECHADO = 33;
 
 	public CpMarcador() {
 		super();

@@ -21,8 +21,10 @@ package br.gov.jfrj.siga.cp;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "CORPORATIVO.CP_TIPO_CONFIGURACAO")
 public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	/**
@@ -97,6 +99,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_UTILIZAR_EXTENSAO_EDITOR = 32;
 	
 	public static final long TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML = 33;
+	
+	public static final long TIPO_CONFIG_SR_DESIGNACAO = 35;
 
 	// SIGA-WF
 

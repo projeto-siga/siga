@@ -1,0 +1,40 @@
+#{extends 'main.html' /} #{set title:'Serviços' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Serviços</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th>Código</th>
+						<th>Título</th>
+						<th>Descrição</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:servicos, as:'servico'}
+					<tr
+						onclick="javascript:window.location='@{Application.editarServico(servico.idServico)}'"
+						style="cursor: pointer;">
+						<td>${servico.siglaServico}</td>
+						<td>${servico.tituloServico}</td>
+						<td>${servico.descrServico}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarItem}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

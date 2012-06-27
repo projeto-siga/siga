@@ -1,0 +1,53 @@
+#{extends 'main.html' /} #{set title:'Designação de solicitações' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Designações</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Data</th>
+						<th>Item</th>
+						<th>Serviço</th>
+						<th>Atendente</th>
+						<th>Pré-atendente</th>
+						<th>Pós-atendente</th>
+						<th>Pesquisa de satisfação?</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:designacoes, as:'design'}
+					<tr
+						onclick="javascript:window.location='@{Application.editarDesignacao(design.idConfiguracao)}'"
+						style="cursor: pointer;">
+						<td>${design.hisIdIni}</td>
+						<td>${design.hisDtIniDDMMYY}</td>
+						<td>${design.itemConfiguracao.descrItemConfiguracao}</td>
+						<td>${design.servico.descrServico}</td>
+						<td>#{selecionado sigla:design.atendente?.siglaLotacao,
+							descricao:design.atendente?.nomeLotacao /}</td>
+						<td>#{selecionado sigla:design.preAtendente?.siglaLotacao,
+							descricao:design.preAtendente?.nomeLotacao /}</td>
+						<td>#{selecionado sigla:design.posAtendente?.siglaLotacao,
+							descricao:design.posAtendente?.nomeLotacao /}</td>
+						<td>${design.pesquisaSatisfacaoString}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarDesignacao}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

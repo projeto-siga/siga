@@ -1,0 +1,41 @@
+<script language="javascript">
+
+%{
+	String _nomeSelPessoaClean = _nomeSelPessoa.replaceAll("\\.","");
+	String _nomeSelLotacaoClean = _nomeSelLotacao.replaceAll("\\.","");
+}%
+
+function changeVisibility${_nomeSelPessoaClean}${_nomeSelLotacaoClean}(){
+	var select = document.getElementById('${_nomeSelPessoaClean}${_nomeSelLotacaoClean}');
+
+	if (select.value == '1'){
+		document.getElementById('spanLotacao${_nomeSelLotacaoClean}').style.display = 'none';
+		document.getElementById('spanPessoa${_nomeSelPessoaClean}').style.display = 'inline';
+		document.getElementById('${_nomeSelLotacaoClean}').value='';
+		document.getElementById('${_nomeSelLotacaoClean}_sigla').value='';
+		document.getElementById('${_nomeSelLotacaoClean}_descricao').value='';
+		document.getElementById('${_nomeSelLotacaoClean}Span').innerHTML='';
+	} else if (select.value == '2'){
+		document.getElementById('spanPessoa${_nomeSelPessoaClean}').style.display = 'none';
+		document.getElementById('spanLotacao${_nomeSelLotacaoClean}').style.display = 'inline';
+		document.getElementById('${_nomeSelPessoaClean}').value='';
+		document.getElementById('${_nomeSelPessoaClean}_sigla').value='';
+		document.getElementById('${_nomeSelPessoaClean}_descricao').value='';
+		document.getElementById('${_nomeSelPessoaClean}Span').innerHTML='';
+	}
+}
+</script>
+<select id="${_nomeSelPessoaClean}${_nomeSelLotacaoClean}" onchange="javascript: changeVisibility${_nomeSelPessoaClean}${_nomeSelLotacaoClean}()">
+  <option value="1">Pessoa</option>
+  <option value="2">Lotação</option>
+</select>
+<span id="spanPessoa${_nomeSelPessoaClean}">#{selecao
+	tipo:'pessoa', nome:_nomeSelPessoa, value:_valuePessoa /}</span>
+<span id="spanLotacao${_nomeSelLotacaoClean}">#{selecao
+	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao /}</span>
+<script language="javascript">
+var select = document.getElementById('${_nomeSelPessoaClean}${_nomeSelLotacaoClean}');
+if (document.getElementById('${_nomeSelLotacaoClean}').value)
+	select.value = 2;	
+select.onchange();
+</script>

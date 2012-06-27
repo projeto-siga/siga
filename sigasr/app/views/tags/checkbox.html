@@ -1,0 +1,10 @@
+ <script language="javascript">
+	function show(checked, divName){
+		var div = document.getElementById(divName);
+		if (checked)
+			div.style.display = 'inline';
+		else div.style.display = 'none';
+	}
+</script>
+ <input type="checkbox" name="${_name}" value="true" ${_value ? 'checked':''} onclick="javascript:show(this.checked, '${_depende}');" />
+ 

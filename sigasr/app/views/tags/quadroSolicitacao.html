@@ -1,0 +1,54 @@
+%{ if (_solicitacoes == null){ _solicitacoes = new ArrayList();
+_solicitacoes.add(_solicitacao); } }%
+<h2>${_titulo}</h2>
+<div class="gt-content-box">
+	<table border="0" class="gt-table gt-user-table">
+		<tbody>
+			#{list items:_solicitacoes, as:'sol'}
+			<tr>
+				<td style="width: 70%">
+					<h4>
+						#{if _clicavel}<a href="@{Application.exibir(sol.idSolicitacao)}">
+							#{/if}#{ifnot _ocultarCodigo}${sol.codigo} -#{/ifnot}
+							${sol.itemConfiguracao?.descricao},
+							${sol.servico?.descricao} #{if _clicavel} </a>#{/if}
+					</h4>
+					<p>${sol.descrSolicitacao}</p>
+					<p>
+						<i>${sol.solicitante.descricaoIniciaisMaiusculas},
+							${sol.lotaSolicitante.siglaLotacao} (${sol.local})</i>
+					</p>
+					<p>
+						<i>Telefone: 2510-8793</i>
+					</p> <!-- <p class="gt-table-edit">
+							<a href="">Edit</a>
+						</p> -->
+				</td>
+				<td style="padding-left: 60px">
+					<!-- Categories Sub Table -->
+					<table border="0" class="gt-table-categories">
+						<tr>
+							<th>Aberto:</th>
+							<td>${sol.dtRegString}</td>
+						</tr>
+						<tr>
+							<th>Urgência:</th>
+							<td width="60%">${sol.GUT}/125</td>
+						</tr>
+						<tr>
+							<th>Situação:</th>
+							<td>${sol.situacao}</a></td>
+						</tr>
+						#{if sol.arquivo}
+						<tr>
+							<th>Anexo:</th>
+							<td>#{arquivo arquivo:sol.arquivo /}</a></td>
+						</tr>
+						#{/if}
+					</table>
+				</td>
+			</tr>
+			#{/list}
+		</tbody>
+	</table>
+</div>

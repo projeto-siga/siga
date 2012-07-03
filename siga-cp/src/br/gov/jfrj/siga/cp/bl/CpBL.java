@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import sun.misc.BASE64Encoder;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -65,7 +65,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpIdentidade idNova = new CpIdentidade();
 			try {
-				BeanUtils.copyProperties(idNova, ident);
+				PropertyUtils.copyProperties(idNova, ident);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades da identidade anterior.");
@@ -91,7 +91,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpIdentidade idNova = new CpIdentidade();
 			try {
-				BeanUtils.copyProperties(idNova, ident);
+				PropertyUtils.copyProperties(idNova, ident);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades da identidade anterior.");
@@ -284,7 +284,7 @@ public class CpBL {
 				try {
 					Date dt = dao().consultarDataEHoraDoServidor();
 					CpIdentidade idNova = new CpIdentidade();
-					BeanUtils.copyProperties(idNova, id);
+					PropertyUtils.copyProperties(idNova, id);
 					idNova.setIdIdentidade(null);
 					idNova.setDtCancelamentoIdentidade(null);
 					idNova.setDtCriacaoIdentidade(dt);
@@ -478,7 +478,7 @@ public class CpBL {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				CpIdentidade idNova = new CpIdentidade();
-				BeanUtils.copyProperties(idNova, id);
+				PropertyUtils.copyProperties(idNova, id);
 				idNova.setIdIdentidade(null);
 				idNova.setDtCriacaoIdentidade(dt);
 				final String hashNova = GeraMessageDigest.executaHash(senhaNova
@@ -614,7 +614,7 @@ public class CpBL {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				CpIdentidade idNova = new CpIdentidade();
-				BeanUtils.copyProperties(idNova, id);
+				PropertyUtils.copyProperties(idNova, id);
 				idNova.setIdIdentidade(null);
 				idNova.setDtCriacaoIdentidade(dt);
 				final String hashNova = GeraMessageDigest.executaHash(senhaNova
@@ -666,7 +666,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpModelo modNew = new CpModelo();
 			try {
-				BeanUtils.copyProperties(modNew, mod);
+				PropertyUtils.copyProperties(modNew, mod);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades do modelo anterior.");

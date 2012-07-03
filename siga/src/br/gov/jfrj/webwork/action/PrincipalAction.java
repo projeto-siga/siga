@@ -27,6 +27,11 @@ import java.io.DataInputStream;
 import java.net.URL;
 import java.util.List;
 
+import javax.jms.IllegalStateException;
+
+import org.apache.log4j.Logger;
+
+import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
@@ -41,12 +46,13 @@ public class PrincipalAction extends SigaActionSupport {
 	 */
 	private static final long serialVersionUID = 1630775520737927455L;
 	private List listEstados;
-
+	
 	@Override
 	public String execute() throws Exception {
 		// super.getRequest ().setAttribute ( "_cadastrante" , super.getTitular
 		// ().getSigla () + "@" + super.getLotaTitular ().getOrgaoUsuario
 		// ().getSiglaOrgaoUsu ()+ super.getLotaTitular ().getSigla () );
+		
 		return Action.SUCCESS;
 	}
 

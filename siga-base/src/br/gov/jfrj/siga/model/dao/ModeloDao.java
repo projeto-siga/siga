@@ -31,6 +31,7 @@ import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
 import org.springframework.context.ApplicationContext;
@@ -84,7 +85,6 @@ public abstract class ModeloDao implements ApplicationContextAware {
 		return dao;
 	}
 
-	@SuppressWarnings("unchecked")
 	protected static <T extends ModeloDao> T getInstance(Class<T> clazz) {
 		return getInstance(clazz, null);
 	}
@@ -108,7 +108,7 @@ public abstract class ModeloDao implements ApplicationContextAware {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public <T> T consultar(final Serializable id, Class<T> clazz,
 			final boolean lock) {
 		T entidade;
@@ -165,7 +165,6 @@ public abstract class ModeloDao implements ApplicationContextAware {
 		return entidade;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> List<T> listarTodos(Class<T> clazz) {
 		// Criteria crit = getSessao().createCriteria(getPersistentClass());
 		// return crit.list();
@@ -217,4 +216,26 @@ public abstract class ModeloDao implements ApplicationContextAware {
 		appContext = applicationContext;
 	}
 
+	public static void configurarHibernateParaDebug(AnnotationConfiguration cfg) {
+		cfg.setProperty("hibernate.show_sql", "true");
+		cfg.setProperty("hibernate.format_sql", "true");
+		cfg.setProperty("generate_statistics", "true");
+		cfg.setProperty("hibernate.use_sql_comments", "true");		
+	}
+	
+	/**
+	 * @return true se a sessão do Hibernate não for nula e estiver aberta.
+	 */
+	public boolean sessaoEstahAberta(){
+		return this.getSessao() != null && this.getSessao().isOpen(); 
+	}
+	
+	/**
+	 * @return true se a transacao da sessão do Hibernate estiver ativa
+	 */
+	public boolean transacaoEstaAtiva(){
+		return this.getSessao() != null && 
+				this.getSessao().getTransaction() != null && 
+					this.getSessao().getTransaction().isActive();
+	}
 }

@@ -90,7 +90,7 @@ public class SigaHibernateAuditorLogUtil {
 	private static String formataPadraoDeHorasMinutosESegundos(long hora, long minuto, long segundo ) {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumIntegerDigits(2);
-		String tempoGasto = nf.format(hora) + ":" + nf.format(minuto) + ":" + nf.format(segundo) + "s";
+		String tempoGasto = nf.format(hora) + ":" + nf.format(minuto) + ":" + nf.format(segundo);
 		return tempoGasto;
 	}
 	
@@ -147,6 +147,25 @@ public class SigaHibernateAuditorLogUtil {
 
 	protected static Object getCategoriaLogada() {
 		return categoriaLogada;
+	}
+
+	public static String getTempoGasto() {
+		
+		tempoFinal = System.currentTimeMillis();
+		
+		if ( tempoInicial != 0 ) { 
+			tempoGasto = ( tempoFinal - tempoInicial ) / 1000;
+		}	
+		
+		long totalDeMinutos = obtemTotalDeMinutos( tempoGasto );                             // 00:80:00
+		
+		long segundosRestantes = obtemSegundosQueNaoFormamUmMinuto( tempoGasto );            // 00:00:45 <--
+		long minutosQueNaoFormamUmaHora = obtemMinutosQueNaoFormamUmaHora( totalDeMinutos ); // 00:20:00 <--
+		long totalDeHoras = converteTotalDeMinutosEmHoras( totalDeMinutos );                 // 01:00:00 <--
+		
+		String tempoGasto = formataPadraoDeHorasMinutosESegundos( totalDeHoras, minutosQueNaoFormamUmaHora, segundosRestantes ); // 01:20:40s
+		
+		return tempoGasto;
 	}
 
 }

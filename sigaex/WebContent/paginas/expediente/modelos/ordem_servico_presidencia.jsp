@@ -59,7 +59,7 @@
 			</tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
-		<br>
+		
                 <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> -->
 		<p align="center" style="font-family:Arial;font-size:11pt;">
 
@@ -76,10 +76,10 @@
 		FIM CABECALHO -->
 
 		<mod:letra tamanho="${tl}">
-                        <p>&nbsp;</p>
+                       
                         <!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
-			<br>
+			
 			<span style="font-size: ${tl};line-height: 1px"> ${texto_osp} </span>
 			<!-- FIM CORPO -->
 			<p align="center"><!-- INICIO FECHO -->CUMPRA-SE.<!-- FIM FECHO --><br /><br/><br></p>

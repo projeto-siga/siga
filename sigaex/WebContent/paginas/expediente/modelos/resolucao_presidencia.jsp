@@ -77,7 +77,6 @@
 
                 <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLUÇÃO N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> -->
 
-		<br>
 		<p align="center" style="font-family:Arial;font-size:11pt;">
 
                  <!-- INICIO TITULO 
@@ -93,10 +92,9 @@
 		FIM CABECALHO -->
               
 		<mod:letra tamanho="${tl}">
-                    <p>&nbsp;</p>
 		    <!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
-			<br>
+			
 			<table border="0"  bgcolor="#FFFFFF" cellpadding="5" width="40%"style="font-size:10" align="right" >
 	  		   <tr>
   				   <td colspan="2" align="justify" style="font-size:10">${eme}</td>

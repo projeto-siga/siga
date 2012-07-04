@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -114,7 +114,8 @@
 			<mod:radio var="antsalfer" titulo="Sim" valor="Sim" reler="sim" />
 			<mod:radio var="antsalfer" titulo="Não" valor="Não" reler="sim" />
 		</mod:grupo>
-		<br>
+		<mod:radio titulo="<b>Declaro ter ciência de que poderei NÃO receber antecipadamente o adicional e a remuneração de férias, em caso de requerimento</b>" marcado="Sim" reler="nao" />
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enviado fora do prazo previsto na Portaria nº 113/2005-Pres do TRF-2ª Região</b>
 		<br>
 	</mod:entrevista>
 
@@ -223,6 +224,11 @@
 
 		<br>
 		<br>
+		<p style="font-family:Arial;font-size:9pt">
+		<b>Declaro ter ciência de que poderei não receber antecipadamente o adicional e a remuneração de férias, em caso de requerimento enviado fora do prazo 
+		previsto na Portaria nº 113/2005-Pres do TRF-2ª Região.</b>
+		</p>
+		<br><br>
 
 
 

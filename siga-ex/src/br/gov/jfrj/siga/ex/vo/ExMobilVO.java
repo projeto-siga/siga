@@ -73,11 +73,20 @@ public class ExMobilVO extends ExVO {
 
 		long tempoIni = System.currentTimeMillis();
 
+		/*
+		 * Markenson: O código abaixo foi comentado por questões de desempenho.
+		 * Deve ser estudada uma maneira mais eficiente de calcular o tamanho dos PDFs
+		 * */
+		
 		// byteCount, pagIni e pagFim
-		byteCount = mob.getByteCount();
-		if (byteCount != null && byteCount > 0)
-			tamanhoDeArquivo = FormataTamanhoDeArquivo
-					.converterEmTexto(byteCount);
+//		if (mob.getExDocumento().isEletronico()){
+			
+//			byteCount = mob.getByteCount();
+//			if (byteCount != null && byteCount > 0)
+//				tamanhoDeArquivo = FormataTamanhoDeArquivo
+//						.converterEmTexto(byteCount);
+//		}
+
 
 		for (ExMobil m : mob.getApensosDiretosExcetoVolumeApensadoAoProximo()) {
 			apensos.add(new ExMobilVO(m, titular, lotaTitular, false));

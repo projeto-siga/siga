@@ -26,6 +26,8 @@ import java.util.Set;
 
 import org.hibernate.LockMode;
 
+import sun.security.action.GetLongAction;
+
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
@@ -1813,7 +1815,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		Calendar calMov = new GregorianCalendar();
 		Calendar cal2 = new GregorianCalendar();
-		calMov.setTime(mov.getDtMov());
+		calMov.setTime(mov.getDtIniMov());
 
 		if (mob.doc().getDtFechamento() != null && !mob.doc().isEletronico()) {
 			cal2.setTime(mob.doc().getDtFechamento());
@@ -2248,11 +2250,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 		if (mob.isCancelada() || mob.doc().getDtFechamento() == null)
 			return false;
+		
+		/*Orlando: Inclui a condição "&& !exMov.getResp().equivale(titular))" no IF ,abaixo, para permitir 
+		que um usuário possa transferir quando ele for o atendente do documento, mesmo que ele não esteja na lotação do documento*/
+		
 		if (exMov.getLotaResp() != null
-				&& !exMov.getLotaResp().equivale(lotaTitular))
+				&& !exMov.getLotaResp().equivale(lotaTitular) && exMov.getResp() !=null && !exMov.getResp().equivale(titular))
 			// && !exMov.getCadastrante().getLotacao().equivale(lotaTitular))
 			return false;
-
+	
+		
+		
+		
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
@@ -2400,6 +2409,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			if (!exMov.getLotaResp().equivale(lotaTitular))
 				return false;
 		}
+		
+		//Orlando: O IF abaixo foi incluído para não permitir que o documento seja recebido após ter sido transferido para um órgão externo, 
+		// inclusive no caso de despacho com transferência externa.
+		if (mob.isEmTransitoExterno() )
+			return false;
+		
 
 		// Verifica se o despacho já está assinado, em caso de documentos
 		// eletrônicos

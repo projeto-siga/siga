@@ -583,9 +583,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				continue;
 			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA)
 				b = true;
+			 // Orlando: O IF abaixo foi incluído para não permitir que o documento seja recebido após ter sido transferido para um órgão externo, 
+			// inclusive no caso de despacho com transferência externa.
+				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+					b = true;
 			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO)
 				b = false;
+		
 		}
+		
 		return b;
 	}
 

@@ -65,7 +65,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jfreechart.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jra-1.0-alpha-3.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/js-1.6R5.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jsr311-api-1.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jstl.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jta-1.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/kxml2.jar"/>
@@ -126,7 +125,8 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jpa-api-2.0-cr-1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/BouncyCastleJDK6"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6">
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jsr311-api-1.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>

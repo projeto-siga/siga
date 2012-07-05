@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
+  <runtime name="Jboss-4.2.2.GA Runtime"/>
   <fixed facet="java"/>
   <fixed facet="jst.utility"/>
   <installed facet="java" version="1.6"/>

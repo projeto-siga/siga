@@ -341,7 +341,7 @@ public class CpBL {
 	}
 
 	public CpIdentidade criarIdentidade(String matricula, String cpf,
-			CpIdentidade idCadastrante, String[] senhaGerada) throws AplicacaoException {
+			CpIdentidade idCadastrante, final String senhaDefinida, String[] senhaGerada) throws AplicacaoException {
 		final long longmatricula = Long.parseLong(matricula.substring(2));
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
@@ -355,7 +355,13 @@ public class CpBL {
 			}
 			if (id == null) {
 				if (pessoa.getEmailPessoa() != null) {
-					final String novaSenha = GeraMessageDigest.geraSenha();
+					String novaSenha = null;
+					if (senhaDefinida !=null){
+						novaSenha = senhaDefinida;
+					}else{
+						novaSenha = GeraMessageDigest.geraSenha();
+					}
+					
 					if (senhaGerada != null){
 						senhaGerada[0] = novaSenha;
 					}
@@ -435,45 +441,56 @@ public class CpBL {
 
 		boolean podeTrocar = id.getDscSenhaIdentidade().equals(hashAtual);
 
-		String hashAdministrador;
-
-		// if (((Boolean) Contexto.resource("isVersionTest")) || ((Boolean)
-		// Contexto.resource("isBaseTest")))
-		hashAdministrador = "ba25c3d954f0f027624ffc98d0036be5";
-		// else
-		// hashAdministrador = "1d3536165f44fe6bdf70c22d9eb37cb9";
-
-		if (hashAdministrador.equals(hashAtual)) {
-			podeTrocar = true;
-
+	
+		if (!podeTrocar){
+			//tenta o modo administrador...
+			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
 			try {
-				Correio
-						.enviar(
-								id.getDpPessoa().getEmailPessoa(),
-								"Troca de Senha",
-								"O Administrador do sistema alterou a senha do seguinte usuário, para efetuar "
-										+ "uma manutenção no sistema: "
+				if (Cp.getInstance()
+						.getConf()
+						.podeUtilizarServicoPorConfiguracao(idCadastrante.getDpPessoa(),
+								idCadastrante.getDpPessoa().getLotacao(), servico)) {
+					
+					if (hashAtual.equals(idCadastrante.getDscSenhaIdentidade())){
+						podeTrocar = true;	
+					}else{
+						throw new AplicacaoException("Senha atual não confere");
+					}
+					
+	
+					try {
+						Correio
+								.enviar(
+										id.getDpPessoa().getEmailPessoa(),
+										"Troca de Senha",
+										"O Administrador do sistema alterou a senha do seguinte usuário, para efetuar "
+												+ "uma manutenção no sistema: "
+												+ "\n"
+												+ "\n - Nome: "
+												+ id.getDpPessoa().getNomePessoa()
+												+ "\n - Matricula: "
+												+ id.getDpPessoa().getSigla()
+												+ "\n - Senha: "
+												+ senhaNova
+												+ "\n\n Antes de utiliza-lo novamente, altere a sua senha "
+												+ "ou solicite uma nova através da opção 'esqueci minha senha'"
+												+ "\n\n Atenção: esta é uma "
+												+ "mensagem automática. Por favor, não responda.");
+					} catch (Exception e) {
+						System.out
+								.println("Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
 										+ "\n"
 										+ "\n - Nome: "
 										+ id.getDpPessoa().getNomePessoa()
 										+ "\n - Matricula: "
-										+ id.getDpPessoa().getSigla()
-										+ "\n - Senha: "
-										+ senhaNova
-										+ "\n\n Antes de utiliza-lo novamente, altere a sua senha "
-										+ "ou solicite uma nova através da opção 'esqueci minha senha'"
-										+ "\n\n Atenção: esta é uma "
-										+ "mensagem automática. Por favor, não responda.");
-			} catch (Exception e) {
-				System.out
-						.println("Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
-								+ "\n"
-								+ "\n - Nome: "
-								+ id.getDpPessoa().getNomePessoa()
-								+ "\n - Matricula: "
-								+ id.getDpPessoa().getSigla());
+										+ id.getDpPessoa().getSigla());
+					}
+				}
+			} catch (Exception e1) {
+			
 			}
 		}
+		
 		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
@@ -516,14 +533,24 @@ public class CpBL {
 			final long matAux1 = Long.parseLong(auxiliar1.substring(2));
 			final DpPessoa pesAux1 = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf1), matAux1);
-
+			if (pesAux1 == null){
+				throw new AplicacaoException("Auxiliar 1 inválido!");
+			}
+			
 			final long matAux2 = Long.parseLong(auxiliar2.substring(2));
 			final DpPessoa pesAux2 = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf2), matAux2);
+			if (pesAux2 == null){
+				throw new AplicacaoException("Auxiliar 2 inválido!");
+			}
 
 			final long longmatricula = Long.parseLong(matricula.substring(2));
 			final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf), longmatricula);
+			if (pessoa == null){
+				throw new AplicacaoException("A pessoa que terá a senha definida inválida!");
+			}
+
 
 			CpIdentidade cpIdAux1 = null;
 			CpIdentidade cpIdAux2 = null;
@@ -541,7 +568,7 @@ public class CpBL {
 
 			if (cpIdAux1 == null || cpIdAux2 == null) {
 				throw new AplicacaoException(
-						"Problema ao localizar a identidade dos autiliares!");
+						"Problema ao localizar a identidade dos auxiliares!");
 			}
 
 			String hashSenha1 = null;

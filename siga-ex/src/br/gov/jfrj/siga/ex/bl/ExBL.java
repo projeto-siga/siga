@@ -531,8 +531,8 @@ public class ExBL extends CpBL {
 						}
 						if (m != null)
 							acrescentarMarca(set, mob, m, mov.getDtIniMov(),
-									mov.getSubscritor(),
-									mov.getLotaSubscritor());
+									mov.getCadastrante(), 
+									mov.getLotaCadastrante());
 					}				
 				}
 				if (mDje != null) {
@@ -2525,6 +2525,15 @@ public class ExBL extends CpBL {
 			if (mobPai.isGeral())
 				throw new AplicacaoException(
 						"É necessário informar a via à qual será feita a juntada");
+			
+			
+			if (mob.doc().isEletronico()) { 	
+				for (CpMarca marca : mob.getExMarcaSet()) {
+					if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
+						throw new AplicacaoException(
+						"Não é possível juntar documento com anexo pendente de assinatura ou conferência");
+				}
+ 			}
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(

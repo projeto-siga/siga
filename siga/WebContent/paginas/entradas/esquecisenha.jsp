@@ -42,6 +42,7 @@
 }
 </style>
 
+<ww:url action="integracaoLdap" id="integracao_url"></ww:url>
 <script type="text/javascript" language="Javascript1.1">
 
 /*  converte para maiúscula a sigla do estado  */
@@ -100,43 +101,51 @@ function validateUsuarioForm(form) {
 	}
 	return true;
 }
+
 </script>
 
 <siga:pagina titulo="${param.titulo}">
 	<div>
+	<c:if test="${baseTeste}">
+		<div id="msgSenha" style="font-size: 12pt;color: red; font-weight: bold;">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</div>
+	</c:if>
 	<h1>${param.titulo}</h1>
+
 
 	<h2>&nbsp;${mensagem }</h2>
 	<h2>Método 1 - Envio de senha nova para o e-mail</h2>
-	<p style="font-size: x-small; font-style: italic;">O sistema gera
-	uma senha aleatoriamente e a envia para o email da pessoa informada.</p>
-	<ww:form action="${param.proxima_acao}" theme="simple">
-		<ww:hidden name="metodo" value="1" />
-		<table class="form" width="100%">
-			<ww:hidden name="page" value="1" />
-			<tr class="header">
-				<td colspan="2">Criar uma nova senha automaticamente e enviar
-				para o e-mail de:</td>
-			</tr>
-			<tr>
-				<td>Matrícula:</td>
-				<td><ww:textfield name="matricula"
-					onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
-				XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é
-				o número da sua matrícula.</td>
-			</tr>
-			<tr>
-				<td>CPF:</td>
-				<td><ww:textfield name="cpf" theme="simple" /></td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-				<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
-					label="Cancelar" value="Cancelar" theme="simple" /></td>
-			</tr>
-
-		</table>
-	</ww:form> <br />
+	
+		<p style="font-size: x-small; font-style: italic;">O sistema gera
+		uma senha aleatoriamente e a envia para o email da pessoa informada.</p>
+		<p style="font-size: x-small; font-style: italic;">Se o seu órgão estiver 
+		configurado com a apção de integração de senhas entre o SIGA, e-mail e rede esta opção estará indisponível.</p>
+		<ww:form action="${param.proxima_acao}" theme="simple">
+			<ww:hidden name="metodo" value="1" />
+			<table class="form" width="100%">
+				<ww:hidden name="page" value="1" />
+				<tr class="header">
+					<td colspan="2">Criar uma nova senha automaticamente e enviar
+					para o e-mail de:</td>
+				</tr>
+				<tr>
+					<td>Matrícula:</td>
+					<td><ww:textfield name="matricula"
+						onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
+					XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é
+					o número da sua matrícula.</td>
+				</tr>
+				<tr>
+					<td>CPF:</td>
+					<td><ww:textfield name="cpf" theme="simple" /></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
+						label="Cancelar" value="Cancelar" theme="simple" /></td>
+				</tr>
+	
+			</table>
+		</ww:form> <br />
 
 	<h2>Método 2 - Alterar a senha com auxílio de 2 pessoas</h2>
 	<p style="font-size: x-small; font-style: italic;">O sistema altera

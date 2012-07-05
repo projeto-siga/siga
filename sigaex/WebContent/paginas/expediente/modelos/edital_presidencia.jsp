@@ -53,7 +53,7 @@
 		</c:if>
 
                 
-                <!-- INICIO PRIMEIRO CABECALHO
+        <!-- INICIO PRIMEIRO CABECALHO
 		<table width="100%" border="0"  bgcolor="#FFFFFF"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
 		</td></tr>
@@ -69,27 +69,22 @@
 			</tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
-                
-                <br>
-                <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> ->>
-		<p align="center" style="font-family:Arial;font-size:11pt;">
-
-                 <!-- INICIO TITULO 
+        <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> -->
+        
+		<!-- INICIO TITULO 
 			<mod:letra tamanho="${tl}">
 				<p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span></p>
 			</mod:letra>
-		      FIM TITULO -->
+		FIM TITULO -->
 
-		<!-- INICIO NUMERO <span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
+		<!-- INICIO NUMERO <span style="font-weight: bold;">EDITAL N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO -->	
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
-                
-                <mod:letra tamanho="${tl}">
-                        <p>&nbsp;</p>
-			<!-- INICIO MIOLO -->
+        <mod:letra tamanho="${tl}">
+        	<!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
-			<b><p align="center">${tit_edital}<br>${subtit_edital}</p></b>
+			<p align="center"><b>${tit_edital}</b><br><b>${subtit_edital}</b></p>
 			<span style="font-size: ${tl};line-height: 1px">${texto_edital}</span>
 			<!-- FIM CORPO -->
 			<br>
@@ -97,7 +92,7 @@
 			<!-- INICIO ASSINATURA -->
 			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />   
 			<!-- FIM ASSINATURA -->
-                        <!-- FIM MIOLO -->
+            <!-- FIM MIOLO -->
 		</mod:letra>
         <br>/${doc.cadastrante.siglaPessoa}</br>
 		<!-- INICIO PRIMEIRO RODAPE

@@ -8,13 +8,41 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
+
+
+
 <siga:pagina titulo="Transferência">
+
+
 
 	<script type="text/javascript" language="Javascript1.1">
 <ww:url id="url" action="transferir" namespace="/expediente/mov">
 </ww:url>
 <ww:url id="urlEditar" action="editar" namespace="/expediente/doc"> 
 </ww:url>
+
+function tamanho() {
+	var i = tamanho2();
+	if (i<0) {i=0};
+	document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
+}
+
+function tamanho2() {
+	nota= new String();
+	nota = this.frm.descrMov.value;
+	var i = 400 - nota.length;
+	return i;
+}
+function corrige() {
+	if (tamanho2()<0) {
+		alert('Descrição com mais de 400 caracteres');
+		nota = new String();
+		nota = document.getElementById("descrMov").value;
+		document.getElementById("descrMov").value = nota.substring(0,400);
+	}
+}
+
+
 function sbmt() {
 	<%--ExMovimentacaoForm.page.value='';
 	ExMovimentacaoForm.acao.value='aTransferir';
@@ -152,12 +180,16 @@ function popitup_movimentacao() {
 							listKey="idTpDespacho" listValue="descTpDespacho"
 							onchange="javascript:sbmt();" /></td>
 					</tr>
-
+					<!--Orlando: Substitui o textfield pelo textarea no choose, abaixo, para atender aos usuários, que disseram terem dificuldade
+					ao escrever, porque não viam o início da digitação na caixa de texto. Também incluí funções e um div para limitar o número de caracteres,
+					como ocorre na antoção (anotação JSP)-->
 					<c:choose>
 						<c:when test="${idTpDespacho == -1}">
 							<tr>
 								<td>Texto</td>
-								<td><ww:textfield name="descrMov" maxlength="400" size="80" /></td>
+                            <!--<td><ww:textfield name="descrMov"  maxlength="400" size="80"   /></td>-->
+                                <td><ww:textarea  rows="3" cols="50"  name="descrMov"  onkeyup="corrige();tamanho();" onblur="tamanho();"
+						onclick="tamanho();"/> <div id="Qtd">Restam&nbsp;400&nbsp;Caracteres</div></td>
 							</tr>
 						</c:when>
 					</c:choose>

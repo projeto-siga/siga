@@ -130,8 +130,8 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jpa-api-2.0-cr-1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/BouncyCastleJDK6"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/JBoss SOA-P 5.x Runtime"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6">
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/Jboss-4.2.2.GA Runtime"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>

@@ -298,12 +298,23 @@ frm.submit();
 			test="${mov.exTipoMovimentacao.idTpMov!=2}">
 			<input type="button" value="Visualizar Impressão"
 				onclick="javascript:visualizarImpressao();" />
-		</c:if><c:choose>
+		</c:if>
+		<!-- Orlando: Alterei o código abaixo para mudar o nome do botão para "Assinar Transferir", quando o idTpMov==6, Despacho com Transferência. -->
+		<c:choose>
+		
 			<c:when
-				test="${mov.exTipoMovimentacao.idTpMov==5 || mov.exTipoMovimentacao.idTpMov==6 || mov.exTipoMovimentacao.idTpMov==18}">
+				test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
 				<input type="button" value="Assinar Despacho"
 					onclick="vbscript:assinar" />
-			</c:when>
+			</c:when>	
+			
+	
+            <c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
+            <input type="button" value="Assinar Transferir"
+					onclick="vbscript:assinar" />
+            
+            </c:when>
+			
 			<c:when
 				test="${mov.exTipoMovimentacao.idTpMov==13}">
 				<input type="button" value="Assinar Desentranhamento"

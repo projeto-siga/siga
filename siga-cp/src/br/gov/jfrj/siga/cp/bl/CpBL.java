@@ -593,9 +593,10 @@ public class CpBL {
 			auxiliares.add(pesAux1);
 			auxiliares.add(pesAux2);
 
-			if (isAuxAdministradores(auxiliares)){
-				
+			if (isAuxAdministradores(pesAux1,pesAux2)){
+				return true;
 			}
+			
 			if (!pessoasMesmaLotacaoOuSuperior(pessoa, auxiliares)) {
 				throw new AplicacaoException(
 						"Os auxiliares devem ser da mesma lotação do usuário que terá a senha trocada!\n Também é permitido que pessoas da lotação imediatamente superior na hiearquia sejam auxiliares.");
@@ -608,9 +609,20 @@ public class CpBL {
 
 	}
 
-	private boolean isAuxAdministradores(List<DpPessoa> auxiliares) {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean isAuxAdministradores(DpPessoa aux1, DpPessoa aux2) {
+		
+		String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
+		try {	
+		
+			return
+					Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(aux1,	aux1.getLotacao(), servico) &&
+					Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(aux2,	aux2.getLotacao(), servico);
+	
+		
+		}catch (Exception e) {
+			return false;
+		}
+	
 	}
 
 	/**

@@ -593,6 +593,9 @@ public class CpBL {
 			auxiliares.add(pesAux1);
 			auxiliares.add(pesAux2);
 
+			if (isAuxAdministradores(auxiliares)){
+				
+			}
 			if (!pessoasMesmaLotacaoOuSuperior(pessoa, auxiliares)) {
 				throw new AplicacaoException(
 						"Os auxiliares devem ser da mesma lotação do usuário que terá a senha trocada!\n Também é permitido que pessoas da lotação imediatamente superior na hiearquia sejam auxiliares.");
@@ -603,6 +606,11 @@ public class CpBL {
 		}
 		return true;
 
+	}
+
+	private boolean isAuxAdministradores(List<DpPessoa> auxiliares) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/**

@@ -127,12 +127,14 @@ public class HibernateThreadFilter extends ThreadFilter {
 	}
 
 	private void doFiltro(final ServletRequest request,
-			final ServletResponse response, final FilterChain chain ) throws AplicacaoException {
+			final ServletResponse response, final FilterChain chain ) throws Exception {
 		try {
 			chain.doFilter(request, response);
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			if ( !CpDao.getInstance().transacaoEstaAtiva() ) {
-				throw new AplicacaoException( "A aplicação não conseguiu efetuar a operação em tempo hábil." );
+				throw new AplicacaoException( "A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
+			}else{
+				throw e;	
 			}
 		}
 	}

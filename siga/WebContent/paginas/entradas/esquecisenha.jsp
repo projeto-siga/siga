@@ -119,7 +119,7 @@ function validateUsuarioForm(form) {
 		uma senha aleatoriamente e a envia para o email da pessoa informada.</p>
 		<p style="font-size: x-small; font-style: italic;">Se o seu órgão estiver 
 		configurado com a apção de integração de senhas entre o SIGA, e-mail e rede esta opção estará indisponível.</p>
-		<ww:form action="${param.proxima_acao}" theme="simple">
+		<ww:form action="${param.proxima_acao}" theme="simple" method="POST">
 			<ww:hidden name="metodo" value="1" />
 			<table class="form" width="100%">
 				<ww:hidden name="page" value="1" />

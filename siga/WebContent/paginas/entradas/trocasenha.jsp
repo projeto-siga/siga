@@ -113,7 +113,7 @@ function passwordStrength(password) {
 	<table>
 		<tr>
 			<td><ww:form action="trocar_senha_gravar"
-				onsubmit="return validateUsuarioForm(this);">
+				onsubmit="return validateUsuarioForm(this);" method="POST">
 				<h1>${mensagem }</h1>
 
 				<table class="form" width="100%">

@@ -1658,6 +1658,7 @@ public class ExDao extends CpDao {
 								.classForName(
 										"org.hibernate.search.event.FullTextIndexEventListener")
 								.newInstance() });
+		
 	}
 
 	public ExModelo consultarExModelo(String sForma, String sModelo) {

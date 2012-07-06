@@ -20,7 +20,6 @@ package br.gov.jfrj.siga.hibernate;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -28,30 +27,53 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.hibernate.cfg.AnnotationConfiguration;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
 import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
 import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-public class ExThreadFilter implements Filter {
+public class ExThreadFilter extends ThreadFilter {
 
 	private static boolean fConfigured = false;
 
 	private static final Object classLock = ExThreadFilter.class;
+	
 	private static final Logger log = Logger.getLogger( ExThreadFilter.class );
-
+	
 	/**
 	 * Pega a sessão.
 	 */
 	public void doFilter(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
+		
+		//TODO Receber a String CSV
+		StringBuilder csv = super.iniciaAuditoria( request );
+		
+		this.configuraHibernate();
+		
+		try {
+			
+			this.executaFiltro( request, response, chain );
 
+		} catch (final Throwable ex) {
+			this.efetuaRollbackTransacao(ex);
+		} finally {
+			this.fechaSessaoHibernate();
+			this.liberaInstanciaDao();
+		}
+		
+		//TODO Passar a String CSV como parâmetro
+		super.terminaAuditoria( csv );
+		
+	}
+
+	private void configuraHibernate() throws ExceptionInInitializerError {
 		// Nato: usei um padrao de instanciacao de singleton para configurar a
 		// sessionFactory do Hibernate
 		// na primeira chamada ao filtro.
@@ -78,63 +100,72 @@ public class ExThreadFilter implements Filter {
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
-
 			}
 		}
+	}
 
+	private void executaFiltro(final ServletRequest request,
+			final ServletResponse response, final FilterChain chain)
+			throws Exception, AplicacaoException {
+		
+		HibernateUtil.getSessao();
+		ModeloDao.freeInstance();
+		ExDao.getInstance();
+		Ex.getInstance().getConf().limparCacheSeNecessario();
+
+		// Novo
+		if ( !ExDao.getInstance().sessaoEstahAberta() )
+			throw new AplicacaoException(
+					"Erro: sessão do Hibernate está fechada.");
+
+		ExDao.iniciarTransacao();
+		doFiltro( request, response, chain );
+		ExDao.commitTransacao();
+	}
+
+	private void doFiltro(final ServletRequest request,
+			final ServletResponse response, final FilterChain chain) throws AplicacaoException {
 		try {
-			HibernateUtil.getSessao();
-			ModeloDao.freeInstance();
-			ExDao.getInstance();
-			Ex.getInstance().getConf().limparCacheSeNecessario();
-
-			// Novo
-			Session session = ExDao.getInstance().getSessao();
-			if (!session.isOpen())
-				throw new AplicacaoException(
-						"Erro: sessão do Hibernate está fechada.");
-
-			ExDao.iniciarTransacao();
-
-			try {
-				chain.doFilter(request, response);
-			} catch (RuntimeException e) {
-				throw e;
+			chain.doFilter(request, response);
+		} catch (Throwable e) {
+			if ( !ExDao.getInstance().transacaoEstaAtiva() ) {
+				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.");
 			}
-			ExDao.commitTransacao();
-
-		} catch (final Throwable ex) {
-			ExDao.rollbackTransacao();
+		}
+	}
+	
+	private void efetuaRollbackTransacao(final Throwable ex) throws ServletException {
+		ExDao.rollbackTransacao();
+		log.error( ex.getMessage(), ex );
+		ex.printStackTrace();
+		throw new ServletException(ex);
+	}
+	
+	private void fechaSessaoHibernate() {
+		try {
+			HibernateUtil.fechaSessaoSeEstiverAberta();
+		} catch (Exception ex) {
+			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
+			ex.printStackTrace();
+		}
+	}
+	
+	private void liberaInstanciaDao() {
+		try {
+			ExDao.freeInstance();
+		} catch (Exception ex) {
 			log.error( ex.getMessage(), ex );
 			ex.printStackTrace();
-			throw new ServletException(ex);
-		} finally {
-			try {
-				HibernateUtil.fechaSessaoSeEstiverAberta();
-			} catch (Exception ex) {
-				log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
-				ex.printStackTrace();
-			}
-			try {
-				ModeloDao.freeInstance();
-			} catch (Exception ex) {
-				log.error( ex.getMessage(), ex );
-				ex.printStackTrace();
-			}
 		}
 	}
 
 	/**
 	 * Executa ao destruir o filtro.
 	 */
-	public void destroy() {
-
-	}
+	public void destroy() {}
 
 	/**
 	 * Executa ao inciar o filtro.
 	 */
-	public void init(FilterConfig arg0) throws ServletException {
-
-	}
+	public void init(FilterConfig arg0) throws ServletException {}
 }

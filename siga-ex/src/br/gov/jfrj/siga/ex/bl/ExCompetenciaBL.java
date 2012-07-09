@@ -2255,7 +2255,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		que um usuário possa transferir quando ele for o atendente do documento, mesmo que ele não esteja na lotação do documento*/
 		
 		if (exMov.getLotaResp() != null
-				&& !exMov.getLotaResp().equivale(lotaTitular) && !exMov.getResp().equivale(titular))
+				&& !exMov.getLotaResp().equivale(lotaTitular) && exMov.getResp() !=null && !exMov.getResp().equivale(titular))
 			// && !exMov.getCadastrante().getLotacao().equivale(lotaTitular))
 			return false;
 	

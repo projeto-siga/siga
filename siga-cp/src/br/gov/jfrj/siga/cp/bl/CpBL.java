@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import sun.misc.BASE64Encoder;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -65,7 +65,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpIdentidade idNova = new CpIdentidade();
 			try {
-				BeanUtils.copyProperties(idNova, ident);
+				PropertyUtils.copyProperties(idNova, ident);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades da identidade anterior.");
@@ -91,7 +91,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpIdentidade idNova = new CpIdentidade();
 			try {
-				BeanUtils.copyProperties(idNova, ident);
+				PropertyUtils.copyProperties(idNova, ident);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades da identidade anterior.");
@@ -284,7 +284,7 @@ public class CpBL {
 				try {
 					Date dt = dao().consultarDataEHoraDoServidor();
 					CpIdentidade idNova = new CpIdentidade();
-					BeanUtils.copyProperties(idNova, id);
+					PropertyUtils.copyProperties(idNova, id);
 					idNova.setIdIdentidade(null);
 					idNova.setDtCancelamentoIdentidade(null);
 					idNova.setDtCriacaoIdentidade(dt);
@@ -495,7 +495,7 @@ public class CpBL {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				CpIdentidade idNova = new CpIdentidade();
-				BeanUtils.copyProperties(idNova, id);
+				PropertyUtils.copyProperties(idNova, id);
 				idNova.setIdIdentidade(null);
 				idNova.setDtCriacaoIdentidade(dt);
 				final String hashNova = GeraMessageDigest.executaHash(senhaNova
@@ -593,6 +593,10 @@ public class CpBL {
 			auxiliares.add(pesAux1);
 			auxiliares.add(pesAux2);
 
+			if (isAuxAdministradores(pesAux1,pesAux2)){
+				return true;
+			}
+			
 			if (!pessoasMesmaLotacaoOuSuperior(pessoa, auxiliares)) {
 				throw new AplicacaoException(
 						"Os auxiliares devem ser da mesma lotação do usuário que terá a senha trocada!\n Também é permitido que pessoas da lotação imediatamente superior na hiearquia sejam auxiliares.");
@@ -603,6 +607,22 @@ public class CpBL {
 		}
 		return true;
 
+	}
+
+	private boolean isAuxAdministradores(DpPessoa aux1, DpPessoa aux2) {
+		
+		String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
+		try {	
+		
+			return
+					Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(aux1,	aux1.getLotacao(), servico) &&
+					Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(aux2,	aux2.getLotacao(), servico);
+	
+		
+		}catch (Exception e) {
+			return false;
+		}
+	
 	}
 
 	/**
@@ -641,7 +661,7 @@ public class CpBL {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				CpIdentidade idNova = new CpIdentidade();
-				BeanUtils.copyProperties(idNova, id);
+				PropertyUtils.copyProperties(idNova, id);
 				idNova.setIdIdentidade(null);
 				idNova.setDtCriacaoIdentidade(dt);
 				final String hashNova = GeraMessageDigest.executaHash(senhaNova
@@ -693,7 +713,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpModelo modNew = new CpModelo();
 			try {
-				BeanUtils.copyProperties(modNew, mod);
+				PropertyUtils.copyProperties(modNew, mod);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades do modelo anterior.");

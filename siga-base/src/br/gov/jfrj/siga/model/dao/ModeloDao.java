@@ -234,7 +234,7 @@ public abstract class ModeloDao implements ApplicationContextAware {
 	 * @return true se a transacao da sessão do Hibernate estiver ativa
 	 */
 	public boolean transacaoEstaAtiva(){
-		return this.getSessao() != null && 
+		return this.getSessao() != null && this.getSessao().isOpen() && 
 				this.getSessao().getTransaction() != null && 
 					this.getSessao().getTransaction().isActive();
 	}

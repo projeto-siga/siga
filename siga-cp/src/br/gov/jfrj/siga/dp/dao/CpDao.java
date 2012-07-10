@@ -437,6 +437,8 @@ public class CpDao extends ModeloDao {
 		return query.list();
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	public List<DpPessoa> consultarPessoasComCargo(Long idCargo) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPessoasComCargo");
@@ -444,7 +446,6 @@ public class CpDao extends ModeloDao {
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<DpLotacao> consultarPorFiltro(final DpLotacaoDaoFiltro o) {
 		return consultarPorFiltro(o, 0, 0);
 	}
@@ -1312,9 +1313,31 @@ public class CpDao extends ModeloDao {
 
 	static public AnnotationConfiguration criarHibernateCfg(String datasource)
 			throws Exception {
+		
 		AnnotationConfiguration cfg = new AnnotationConfiguration();
+		
 		cfg.setProperty("hibernate.connection.datasource", datasource);
+		
+		// bruno.lacerda@avantiprima.com.br
+		// Configuração do pool com c3p0.
+		/*
+		cfg.setProperty("hibernate.connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
+		cfg.setProperty("hibernate.connection.driver_class", "oracle.jdbc.driver.OracleDriver");
+		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle9iDialect");
+		
+		 TODO Verificar se realmente precisa reescrever os parametros de conexao
+		cfg.setProperty("hibernate.connection.url", "jdbc:oracle:thin:@mclaren:1521:mcl");
+		cfg.setProperty("hibernate.connection.username", "corporativo");
+		cfg.setProperty("hibernate.connection.password", "corporativo");
+		
+		cfg.setProperty("hibernate.c3p0.min_size", "5");  // MIN POOL SIZE
+		cfg.setProperty("hibernate.c3p0.max_size", "20"); // MAX POOL SIZE
+		cfg.setProperty("hibernate.c3p0.timeout", "1");   // 
+		cfg.setProperty("hibernate.c3p0.max_statements", "50");
+		cfg.setProperty("hibernate.c3p0.idle_test_periods", "50");
+		*/
 		configurarHibernate(cfg);
+		
 		return cfg;
 	}
 
@@ -1432,13 +1455,6 @@ public class CpDao extends ModeloDao {
 				"nonstrict-read-write", "corporativo");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico",
 				"nonstrict-read-write", "corporativo");
-	}
-
-	static public void configurarHibernateParaDebug(AnnotationConfiguration cfg) {
-		cfg.setProperty("hibernate.show_sql", "true");
-		cfg.setProperty("hibernate.format_sql", "true");
-		cfg.setProperty("generate_statistics", "true");
-		cfg.setProperty("hibernate.use_sql_comments", "true");
 	}
 
 	public DpPessoa getPessoaFromSigla(String sigla) {

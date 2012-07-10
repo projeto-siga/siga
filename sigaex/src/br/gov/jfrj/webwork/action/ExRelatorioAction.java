@@ -321,7 +321,7 @@ public class ExRelatorioAction extends ExActionSupport {
 
 		assertAcesso("SUBORD:Relatório de documentos em setores subordinados");
 
-		Map parametros = new HashMap<String, String>();
+		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao",
 				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));
@@ -361,7 +361,6 @@ public class ExRelatorioAction extends ExActionSupport {
 		todos.setDescTipoFormaDoc("(Todos)");
 		resultado.add(todos);
 		resultado.addAll(listaQry);
-
 		return resultado;
 	}
 
@@ -375,7 +374,7 @@ public class ExRelatorioAction extends ExActionSupport {
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L)
 			throw new Exception ("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 
-		Map parametros = new HashMap<String, String>();
+		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao",
 				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));

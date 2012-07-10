@@ -42,78 +42,77 @@
 }
 </style>
 
+<ww:url action="integracaoLdap" id="integracao_url"></ww:url>
 <script type="text/javascript" language="Javascript1.1">
-	/*  converte para maiúscula a sigla do estado  */
-	function converteUsuario(nomeusuario) {
-		re = /^[a-zA-Z0-9]{2}\d{4,6}$/;
-		tmp = nomeusuario.value;
-		if (tmp.match(re)) {
-			nomeusuario.value = tmp.toUpperCase();
-		}
+
+/*  converte para maiúscula a sigla do estado  */
+function converteUsuario(nomeusuario){
+  re= /^[a-zA-Z0-9]{2}\d{4,6}$/;
+  tmp = nomeusuario.value;
+  if (tmp.match(re)){      
+      nomeusuario.value=tmp.toUpperCase();
+  }
+}
+
+function passwordStrength(password) {
+        var desc = new Array();
+        desc[0] = "Inaceitável";
+        desc[1] = "Muito Fraca";
+        desc[2] = "Fraca";
+        desc[3] = "Razoável";
+        desc[4] = "Boa";
+        desc[5] = "Forte";
+        var score   = 0;
+        
+        //if password bigger than 6 give 1 point
+        if (password.length >= 6) score++;
+
+        //if password has both lower and uppercase characters give 1 point      
+        if ( ( password.match(/[a-z]/) ) && ( password.match(/[A-Z]/) ) ) score++;
+
+        //if password has at least one number give 1 point
+        if ( ( password.match(/[a-z]/) ||  password.match(/[A-Z]/) ) && (password.match(/\d+/))) score++;
+
+        //if password has at least one special caracther give 1 point
+        if ( password.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/) ) score++;
+
+        //if password bigger than 12 give another 1 point
+        if (password.length >= 12) score++;
+        
+        //mininum requirements to be accepted by the AD
+        if (score > 2 && (password.length < 6 || !password.match(/[a-z]/) || !password.match(/[A-Z]/) || !password.match(/\d+/)))
+        	score = 2;
+
+         document.getElementById("passwordDescription").innerHTML = desc[score];
+         document.getElementById("passwordStrength").className = "strength" + score;
+}
+
+function validateUsuarioForm(form) {
+	var s = document.getElementById("passwordStrength").className;
+	if (s == "strength0" || s == "strength1" || s == "strength2") {
+		alert("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
+		return false;
 	}
-
-	function passwordStrength(password) {
-		var desc = new Array();
-		desc[0] = "Inaceitável";
-		desc[1] = "Muito Fraca";
-		desc[2] = "Fraca";
-		desc[3] = "Razoável";
-		desc[4] = "Boa";
-		desc[5] = "Forte";
-		var score = 0;
-
-		//if password bigger than 6 give 1 point
-		if (password.length >= 6)
-			score++;
-
-		//if password has both lower and uppercase characters give 1 point      
-		if ((password.match(/[a-z]/)) && (password.match(/[A-Z]/)))
-			score++;
-
-		//if password has at least one number give 1 point
-		if ((password.match(/[a-z]/) || password.match(/[A-Z]/))
-				&& (password.match(/\d+/)))
-			score++;
-
-		//if password has at least one special caracther give 1 point
-		if (password.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/))
-			score++;
-
-		//if password bigger than 12 give another 1 point
-		if (password.length >= 12)
-			score++;
-
-		//mininum requirements to be accepted by the AD
-		if (score > 2
-				&& (password.length < 6 || !password.match(/[a-z]/)
-						|| !password.match(/[A-Z]/) || !password.match(/\d+/)))
-			score = 2;
-
-		document.getElementById("passwordDescription").innerHTML = desc[score];
-		document.getElementById("passwordStrength").className = "strength"
-				+ score;
+	var p1 = document.getElementById("pass").value;
+	var p2 = document.getElementById("pass2").value;
+	if (p1 != p2) {
+		alert("Repetição da nova senha não confere, favor redigitar.");
+		return false;
 	}
+	return true;
+}
 
-	function validateUsuarioForm(form) {
-		var s = document.getElementById("passwordStrength").className;
-		if (s == "strength0" || s == "strength1" || s == "strength2") {
-			alert("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
-			return false;
-		}
-		var p1 = document.getElementById("pass").value;
-		var p2 = document.getElementById("pass2").value;
-		if (p1 != p2) {
-			alert("Repetição da nova senha não confere, favor redigitar.");
-			return false;
-		}
-		return true;
-	}
 </script>
 
 <siga:pagina titulo="${param.titulo}">
 	<!-- main content -->
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
+		
+	<c:if test="${baseTeste}">
+		<div id="msgSenha" style="font-size: 12pt;color: red; font-weight: bold;">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</div>
+	</c:if>
+	
 			<h1 class="gt-form-head">${param.titulo}</h1>
 
 			<h2>${mensagem}</h2>

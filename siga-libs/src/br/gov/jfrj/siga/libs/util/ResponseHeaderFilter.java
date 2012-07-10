@@ -30,8 +30,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 public class ResponseHeaderFilter implements Filter {
+	
 	FilterConfig fc;
+	private static final Logger log = Logger.getLogger( ResponseHeaderFilter.class );
 
 	public void doFilter(ServletRequest req, ServletResponse res,
 			FilterChain chain) throws IOException, ServletException {
@@ -42,7 +46,13 @@ public class ResponseHeaderFilter implements Filter {
 			response.addHeader(headerName, fc.getInitParameter(headerName));
 		}
 		// pass the request/response on
-		chain.doFilter(req, response);
+		try {
+			chain.doFilter(req, response);
+		} catch (Throwable ex) {
+			log.error( ex.getMessage(), ex );
+			ex.printStackTrace();
+		}
+		
 	}
 
 	public void init(FilterConfig filterConfig) {

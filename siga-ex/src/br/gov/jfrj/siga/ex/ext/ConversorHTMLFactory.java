@@ -61,7 +61,6 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 
 	@Override
 	public ConversorHtml getExtensaoConversorHTML() throws AplicacaoException {
-
 		try {
 			return (ConversorHtml) Class.forName(
 					SigaExProperties.getExtensaoConversorHTML()).newInstance();
@@ -69,6 +68,5 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 			e.printStackTrace();
 			throw new AplicacaoException("Não foi possível carregar a extensão do conversor HTML para PDF: " + e.getMessage());
 		}
-
 	}
 }

@@ -19,7 +19,7 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/stax-1.2.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/Jboss-4.2.2.GA Runtime">
 		<attributes>
-			<attribute name="owner.project.facets" value="jst.web"/>
+			<attribute name="owner.project.facets" value="#system#;jst.web"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">

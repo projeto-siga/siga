@@ -29,6 +29,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.FOP;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 
@@ -170,56 +171,60 @@ public class GeradorRTF {
 	}
 
 	public byte[] geraRTFFOP(ExDocumento doc) throws Exception {
-		html = doc.getConteudoBlobHtmlString();
-		String htmlDocPrincipal;
-		
-		String inicioNumero = "<!-- INICIO NUMERO -->";
-		String fimNumero = "<!-- FIM NUMERO -->";
-		if(!html.contains(inicioNumero)) {
-			inicioNumero = "<!-- INICIO NUMERO";
-			fimNumero = "FIM NUMERO -->";
-		}
-		
-		htmlDocPrincipal = html.substring(html.indexOf(inicioNumero) + inicioNumero.length(),
-				html.indexOf(fimNumero)) + "<br />";
-		
-		String htmlTitulo = "";
-		String inicioTituloForm = "<!-- INICIO TITULO";
-		String fimTituloForm = "FIM TITULO -->";
-		
-		if(html.contains(inicioTituloForm))
-			htmlTitulo = html.substring(html.indexOf(inicioTituloForm) + inicioTituloForm.length(),
-				html.indexOf(fimTituloForm));
-		
-		String inicioMiolo = "<!-- INICIO MIOLO -->";
-		String fimMiolo = "<!-- FIM MIOLO -->";
-		html = htmlTitulo + html.substring(html.indexOf(inicioMiolo) + inicioMiolo.length(),
-				html.indexOf(fimMiolo));
-
-		
-		for (ExMobil mob : doc.getExMobilSet()) {
-			if (mob.getExDocumentoFilhoSet() != null) {
-				String inicioTitulo = "<!-- INICIO NUMERO -->";
-				String fimTitulo = "<!-- FIM NUMERO -->";
-			for (ExDocumento docFilho : mob.getExDocumentoFilhoSet()) {
-				//Verifica se docFilho é do tipo anexo
-				if(docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
-					String htmlFilho = docFilho.getConteudoBlobHtmlString();
-					html = html + htmlFilho.substring(htmlFilho.indexOf(inicioTitulo) + inicioTitulo.length(),
-							htmlFilho.indexOf(fimTitulo));
-					html = html + htmlFilho.substring(htmlFilho.indexOf(inicioMiolo) + inicioMiolo.length(),
-							htmlFilho.indexOf(fimMiolo));
+		try {
+			html = doc.getConteudoBlobHtmlString();
+			String htmlDocPrincipal;
+			
+			String inicioNumero = "<!-- INICIO NUMERO -->";
+			String fimNumero = "<!-- FIM NUMERO -->";
+			if(!html.contains(inicioNumero)) {
+				inicioNumero = "<!-- INICIO NUMERO";
+				fimNumero = "FIM NUMERO -->";
+			}
+			
+			htmlDocPrincipal = html.substring(html.indexOf(inicioNumero) + inicioNumero.length(),
+					html.indexOf(fimNumero)) + "<br />";
+			
+			String htmlTitulo = "";
+			String inicioTituloForm = "<!-- INICIO TITULO";
+			String fimTituloForm = "FIM TITULO -->";
+			
+			if(html.contains(inicioTituloForm))
+				htmlTitulo = html.substring(html.indexOf(inicioTituloForm) + inicioTituloForm.length(),
+					html.indexOf(fimTituloForm));
+			
+			String inicioMiolo = "<!-- INICIO MIOLO -->";
+			String fimMiolo = "<!-- FIM MIOLO -->";
+			html = htmlTitulo + html.substring(html.indexOf(inicioMiolo) + inicioMiolo.length(),
+					html.indexOf(fimMiolo));
+	
+			
+			for (ExMobil mob : doc.getExMobilSet()) {
+				if (mob.getExDocumentoFilhoSet() != null) {
+					String inicioTitulo = "<!-- INICIO NUMERO -->";
+					String fimTitulo = "<!-- FIM NUMERO -->";
+				for (ExDocumento docFilho : mob.getExDocumentoFilhoSet()) {
+					//Verifica se docFilho é do tipo anexo
+					if(docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
+						String htmlFilho = docFilho.getConteudoBlobHtmlString();
+						html = html + htmlFilho.substring(htmlFilho.indexOf(inicioTitulo) + inicioTitulo.length(),
+								htmlFilho.indexOf(fimTitulo));
+						html = html + htmlFilho.substring(htmlFilho.indexOf(inicioMiolo) + inicioMiolo.length(),
+								htmlFilho.indexOf(fimMiolo));
+					}
+				}
 				}
 			}
-			}
+	
+			html = (new ProcessadorHtml()).canonicalizarHtml(html, true, false,
+					true, true, false);
+			html = "<?xml version='1.0' encoding='utf-8' ?> <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><body>"
+					+ html + "</body></html>";
+			ConversorHtml conversor = new FOP("xhtml2foNovoSemStatic.xsl");
+			return conversor.converter(html, ConversorHtml.RTF);
+		} catch (Exception e) {
+			throw new AplicacaoException("Não foi possível ler o conteúdo do documento");
 		}
-
-		html = (new ProcessadorHtml()).canonicalizarHtml(html, true, false,
-				true, true, false);
-		html = "<?xml version='1.0' encoding='utf-8' ?> <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><body>"
-				+ html + "</body></html>";
-		ConversorHtml conversor = new FOP("xhtml2foNovoSemStatic.xsl");
-		return conversor.converter(html, ConversorHtml.RTF);
 	}
 
 	public byte[] geraRTF(ExDocumento doc) throws Exception {

@@ -26,7 +26,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.BasicConfigurator;
@@ -34,30 +33,41 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.jfree.util.Log;
+
+import br.gov.jfrj.siga.ex.SigaExProperties;
 
 public class LogThreadFilter implements Filter {
 
-	private static Logger logger = Logger.getLogger(LogThreadFilter.class);
+	private static final Logger logger = Logger.getLogger(LogThreadFilter.class);
 
 	static {
 		try {
 			BasicConfigurator.configure();
 			Appender fileAppender = new FileAppender(new PatternLayout(
-					"(%d{dd/MM/yy HH:mm:ss})	%m %n"), "sigaex.log");
+					"(%d{dd/MM/yy HH:mm:ss})	%m %n"), SigaExProperties.getString( "log.thread.filter.dir" ) + "/sigaex.log");
 			logger.setLevel(Level.INFO);
 			logger.addAppender(fileAppender);
-		} catch (IOException e) {
-			System.out.println("Erro log sigaex: ");
-			e.printStackTrace();
+		} catch (IOException ioe) {
+			logger.warn( "Erro log sigaex: ", ioe);
+			ioe.printStackTrace();
 		}
 	}
 
 	public void doFilter(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
-		long horaIni = System.currentTimeMillis();
-		chain.doFilter(request, response);
+		
+		try {
+			chain.doFilter(request, response);
+		} catch (RuntimeException rte) {
+			Log.error( "Ocorreu um erro ao executar o filtro. ", rte );
+			rte.printStackTrace();
+			throw new ServletException( rte );
+		}
+		
 		/*try {
+		 	long horaIni = System.currentTimeMillis();
 			logger.info(
 					new FormatadorLogOperacaoWeb((HttpServletRequest) request,
 							(System.currentTimeMillis() - horaIni)));

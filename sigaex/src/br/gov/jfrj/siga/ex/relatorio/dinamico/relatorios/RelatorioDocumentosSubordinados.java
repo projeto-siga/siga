@@ -30,6 +30,7 @@ import java.util.Set;
 import net.sf.jasperreports.engine.JRException;
 
 import org.hibernate.Query;
+import org.hibernate.Transaction;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
@@ -80,10 +81,12 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
 						+ parametros.get("tipoFormaDoc") + "'");
+		
 		ExTipoFormaDoc tipoFormaDoc = null;
 		if (qryTipoForma.list().size() > 0) {
 			tipoFormaDoc = (ExTipoFormaDoc) qryTipoForma.uniqueResult();
 		}
+		
 		String trechoQryTipoForma = tipoFormaDoc == null ? ""
 				: " and tipoForma.idTipoFormaDoc = "
 						+ tipoFormaDoc.getIdTipoFormaDoc();
@@ -95,6 +98,8 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 						+ parametros.get("orgaoUsuario") + " "
 						+ "and lot.siglaLotacao = '"
 						+ parametros.get("lotacao") + "'");
+		
+		
 		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
 		for (Iterator iterator = qrySetor.list().iterator(); iterator.hasNext();) {
 			DpLotacao lot = (DpLotacao) iterator.next();
@@ -137,6 +142,9 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		} else if (parametros.get("tipoRel").equals("3")) {
 			listaMarcadoresRelevantes = "28"; // Como interessado
 		}
+		
+		// bruno.lacerda@avantiprima.com.br
+		// int timeout = 1;
 		Query qryMarcas = HibernateUtil
 				.getSessao()
 				.createQuery(
@@ -170,7 +178,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 								+ listaMarcadoresRelevantes
 								+ ")"
 								+ trechoQryTipoForma
-								+ " order by lot.siglaLotacao, doc.idDoc");
+								+ " order by lot.siglaLotacao, doc.idDoc"/*, timeout*/);
 
 		// Retorna
 		List<Object[]> lista = qryMarcas.list();

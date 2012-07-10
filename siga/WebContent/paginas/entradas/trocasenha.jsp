@@ -107,6 +107,9 @@ function passwordStrength(password) {
 	<!-- main content -->
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
+	<c:if test="${baseTeste}">
+		<div id="msgSenha" style="font-size: 12pt;color: red; font-weight: bold;">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</div>
+	</c:if>
 			<h1 class="gt-form-head">${param.titulo}</h1>
 
 			<h2>${mensagem}</h2>

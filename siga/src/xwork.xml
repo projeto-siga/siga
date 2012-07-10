@@ -72,6 +72,12 @@
 			<result type="redirect-action">principal?mensagem=${mensagem}</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Novo Usuário </result> -->
 		</action>
+		
+		<action name="integracaoLdap" class="br.gov.jfrj.webwork.action.UsuarioAction"
+			method="isIntegradoLdap">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
+		</action>
 
 	</package>
 

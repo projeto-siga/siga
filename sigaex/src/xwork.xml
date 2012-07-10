@@ -3,11 +3,11 @@
 <xwork>
 	<include file="webwork-default.xml" />
 
-	<package name="default" extends="webwork-default">
+	<package name="default" extends="webwork-default">		
 		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 
-		<default-action-ref name="principal" />
-		<!-- <default-action-ref name="erroGeral" /> -->
+		<default-action-ref name="principal" />		
+		<!-- <default-action-ref name="erroGeral" /> -->		
 		<global-results>
 			<result name="erroGeral" type="dispatcher">
 				/sigalibs/erroGeral.jsp
@@ -23,11 +23,11 @@
 		<action name="modelo">
 			<result>/paginas/expediente/modelo_teste.jsp</result>
 		</action>
-
+		
 		<action name="principal" class="br.gov.jfrj.webwork.action.ExPrincipalAction">
 			<result>/sigalibs/erroGeral.jsp</result>
 			<result type="redirect">/../siga/principal.action</result>
-		</action>
+		</action>		
 		<!--
 			<action name="principal"
 			class="br.gov.jfrj.webwork.action.PrincipalAction">

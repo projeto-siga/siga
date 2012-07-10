@@ -24,8 +24,6 @@
 package br.gov.jfrj.webwork.action;
 
 import java.io.DataInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 

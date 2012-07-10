@@ -68,4 +68,9 @@ public class SigaBaseProperties extends ModeloPropriedade {
 	public String getPrefixoModulo() {
 		return "siga.base";
 	}
+	
+	public static boolean getBooleanValue(String key) {
+		String strAuditaThreadFilter = getString( key );
+		return Boolean.parseBoolean( strAuditaThreadFilter );
+	}
 }

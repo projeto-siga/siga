@@ -20,31 +20,32 @@ package br.gov.jfrj.siga.util;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.StaleObjectStateException;
+import org.apache.log4j.Logger;
 import org.hibernate.cfg.AnnotationConfiguration;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
+import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
+import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-public class HibernateThreadFilter implements Filter {
-
-	private static Log log = LogFactory.getLog(HibernateThreadFilter.class);
+public class HibernateThreadFilter extends ThreadFilter {
 
 	private static boolean fConfigured = false;
 
 	private static final Object classLock = HibernateThreadFilter.class;
-
+	
+	private static final Logger log = Logger.getLogger( HibernateThreadFilter.class );
+	
 	// static {
 	// try {
 	// HibernateUtil.configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml");
@@ -59,6 +60,25 @@ public class HibernateThreadFilter implements Filter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
+		StringBuilder csv = super.iniciaAuditoria( request );
+		
+		this.configuraHibernate();
+		
+		try {
+			
+			this.executaFiltro( request, response, chain );
+			
+		} catch (final Throwable ex) {
+			this.efetuaRollbackTransacao( ex );
+		} finally {
+			this.fechaSessaoHibernate();
+			this.liberaInstanciaDao();
+		}
+		
+		super.terminaAuditoria( csv );
+	}
+
+	private void configuraHibernate() throws ExceptionInInitializerError {
 		// Nato: usei um padrao de instanciacao de singleton para configurar a
 		// sessionFactory do Hibernate
 		// na primeira chamada ao filtro.
@@ -69,75 +89,81 @@ public class HibernateThreadFilter implements Filter {
 						// TODO: _LAGS - Trocar para obter os parametros do "web.xml"
 						AnnotationConfiguration cfg = CpDao
 								.criarHibernateCfg("java:/SigaCpDS");
+						
+						// bruno.lacerda@avantiprima.com.br
+						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
+						SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
+						
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						log.error("Não foi possível configurar o hibernate.",
-								ex);
+						log.error( "Não foi possível configurar o hibernate. ", ex );
+						ex.printStackTrace();
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
-
 			}
-		}
-
-		try {
-			HibernateUtil.getSessao();
-			ModeloDao.freeInstance();
-			CpDao.getInstance();
-			Cp.getInstance().getConf().limparCacheSeNecessario();
-			HibernateThreadFilter.log.debug("Starting a database transaction");
-			// HibernateUtil.iniciarTransacao();
-
-			// Call the next filter (continue request processing)
-			chain.doFilter(request, response);
-
-			// Commit and cleanup
-			HibernateThreadFilter.log
-					.debug("Committing the database transaction");
-			// HibernateUtil.commitTransacao();
-			HibernateUtil.fechaSessao();
-		} catch (final StaleObjectStateException staleEx) {
-			HibernateThreadFilter.log
-					.error("This interceptor does not implement optimistic concurrency control!");
-			HibernateThreadFilter.log
-					.error("Your application will not work until you add compensation actions!");
-			// Rollback, close everything, possibly compensate for any permanent
-			// changes
-			// during the conversation, and finally restart business
-			// conversation. Maybe
-			// give the user of the application a chance to merge some of his
-			// work with
-			// fresh data... what you do here depends on your applications
-			// design.
-			throw staleEx;
-		} catch (final Throwable ex) {
-			// Rollback only
-			ex.printStackTrace();
-			try {
-				// if
-				// (HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().isActive())
-				// {
-				HibernateThreadFilter.log
-						.debug("Trying to rollback database transaction after exception");
-				HibernateUtil.rollbackTransacao();
-				// }
-			} catch (final Throwable rbEx) {
-				HibernateThreadFilter.log
-						.error(
-								"Could not rollback transaction after exception!",
-								rbEx);
-			}
-
-			// Let others handle it... maybe another interceptor for exceptions?
-			throw new ServletException(ex);
-		} finally {
-			CpDao.freeInstance();
 		}
 	}
+	
+	private void executaFiltro(final ServletRequest request,
+			final ServletResponse response, final FilterChain chain)
+			throws Exception, AplicacaoException {
+		
+		HibernateUtil.getSessao();
+		ModeloDao.freeInstance();
+		CpDao.getInstance();
+		Cp.getInstance().getConf().limparCacheSeNecessario();
+		
+		if ( !CpDao.getInstance().sessaoEstahAberta() )
+			throw new AplicacaoException(
+					"Erro: sessão do Hibernate está fechada.");
+		
+		CpDao.iniciarTransacao();
+		doFiltro( request, response, chain );
+		CpDao.commitTransacao();
+	}
 
+	private void doFiltro(final ServletRequest request,
+			final ServletResponse response, final FilterChain chain ) throws Exception {
+		try {
+			chain.doFilter(request, response);
+		} catch (Exception e) {
+			if ( !CpDao.getInstance().transacaoEstaAtiva() ) {
+				throw new AplicacaoException( "A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
+			}else{
+				throw e;	
+			}
+		}
+	}
+	
+	private void efetuaRollbackTransacao(final Throwable ex) throws ServletException {
+		CpDao.rollbackTransacao();
+		log.error( ex.getMessage(), ex );
+		ex.printStackTrace();
+		throw new ServletException(ex);
+	}
+	
+	private void fechaSessaoHibernate() {
+		try {
+			HibernateUtil.fechaSessaoSeEstiverAberta();
+		} catch (Exception ex) {
+			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
+			ex.printStackTrace();
+		}
+	}
+		
+	private void liberaInstanciaDao() {
+		try {
+			CpDao.freeInstance();
+		} catch (Exception ex) {
+			log.error( ex.getMessage(), ex );
+			ex.printStackTrace();
+		}
+	}
+		
 	public void init(final FilterConfig filterConfig) throws ServletException {
 		HibernateThreadFilter.log
 				.debug("Initializing filter, obtaining Hibernate SessionFactory from HibernateUtil");

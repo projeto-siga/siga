@@ -454,9 +454,10 @@ public class ExDao extends CpDao {
 	}
 
 	public void indexarFila(String path) throws Exception {
-		if (path == null)
-			path = "./siga-ex-lucene-index-fila";
-		File dir = new File(path);
+		String _path = path;
+		if ( _path == null )
+			_path = SigaExProperties.getString( "siga.lucene.index.path" ) + "/siga-ex-lucene-index-fila";
+		File dir = new File( _path );
 		ExDocumento doc = null;
 		List<ExDocumento> listaDocs = new ArrayList<ExDocumento>();
 
@@ -1632,7 +1633,7 @@ public class ExDao extends CpDao {
 		cfg.setProperty("hibernate.search.default.directory_provider",
 				"org.hibernate.search.store.FSDirectoryProvider");
 		cfg.setProperty("hibernate.search.default.indexBase",
-				"./siga-ex-lucene-index/");
+				SigaExProperties.getString( "siga.lucene.index.path" ) + "/siga-ex-lucene-index/");
 		cfg.setProperty(
 				"hibernate.search.default.optimizer.operation_limit.max",
 				"2000");
@@ -1657,6 +1658,7 @@ public class ExDao extends CpDao {
 								.classForName(
 										"org.hibernate.search.event.FullTextIndexEventListener")
 								.newInstance() });
+		
 	}
 
 	public ExModelo consultarExModelo(String sForma, String sModelo) {

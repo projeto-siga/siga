@@ -102,11 +102,7 @@ frm.submit();
 
 </script>
 
-<%-- 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<div class="gt-content-box gt-for-table">
- --%>			
+
 	<ww:form name="frm" action="exibir" namespace="/expediente/mov"
 		theme="simple" method="POST">
 		<ww:hidden name="copia" value="${copia}"/>
@@ -302,12 +298,23 @@ frm.submit();
 			test="${mov.exTipoMovimentacao.idTpMov!=2}">
 			<input type="button" value="Visualizar Impressão"
 				onclick="javascript:visualizarImpressao();" />
-		</c:if><c:choose>
+		</c:if>
+		<!-- Orlando: Alterei o código abaixo para mudar o nome do botão para "Assinar Transferir", quando o idTpMov==6, Despacho com Transferência. -->
+		<c:choose>
+		
 			<c:when
-				test="${mov.exTipoMovimentacao.idTpMov==5 || mov.exTipoMovimentacao.idTpMov==6 || mov.exTipoMovimentacao.idTpMov==18}">
+				test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
 				<input type="button" value="Assinar Despacho"
 					onclick="vbscript:assinar" />
-			</c:when>
+			</c:when>	
+			
+	
+            <c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
+            <input type="button" value="Assinar Transferir"
+					onclick="vbscript:assinar" />
+            
+            </c:when>
+			
 			<c:when
 				test="${mov.exTipoMovimentacao.idTpMov==13}">
 				<input type="button" value="Assinar Desentranhamento"
@@ -343,5 +350,5 @@ frm.submit();
     <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}" />
     <%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/${mov.nmPdf}" /> --%>
 	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
-<%--  	</div></div></div>--%>
+ 
 </siga:pagina>

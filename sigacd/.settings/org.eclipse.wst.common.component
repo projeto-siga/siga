@@ -2,7 +2,7 @@
 <project-modules id="moduleCoreId" project-version="1.5.0">
 <wb-module deploy-name="sigacd">
 <wb-resource deploy-path="/" source-path="/WebContent"/>
-<wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/" source-path="/src"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/siga-ws/siga-ws">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -13,6 +13,9 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="siga-cd-base.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-cd-base/siga-cd-base">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="siga-auditoria.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-auditoria/siga-auditoria">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path" value="build/classes"/>

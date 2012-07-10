@@ -1,2 +1,2 @@
-update CORPORATIVO.cp_marcador set descr_marcador = 'Anexo Pendente de Assinatura/Conferência'
+update CORPORATIVO.cp_marcador set descr_marcador = 'Anexo Pendente Assinatura/Conferência'
 where id_marcador = 30;

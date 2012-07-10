@@ -113,7 +113,6 @@ public abstract class ExArquivo {
 
 	/**
 	 * Retorna o número de páginas do documento para exibir no dossiê.
-	 * @throws Exception 
 	 * 
 	 */
 	public int getNumeroDePaginasParaInsercaoEmDossie() {
@@ -121,13 +120,8 @@ public abstract class ExArquivo {
 			ExMovimentacao mov = (ExMovimentacao) this;
 			if (mov.getNumPaginasOri() != null)
 				return mov.getNumPaginasOri();
-			else
-				return Ex.getInstance().getBL().ContarNumeroDePaginas(mov);
 		}
-		if(getNumPaginas() != null)
-			return getNumPaginas();
-		else
-			return Ex.getInstance().getBL().ContarNumeroDePaginas((ExDocumento) this);
+		return getNumPaginas();
 	}
 
 	public Integer getNumPaginas() {

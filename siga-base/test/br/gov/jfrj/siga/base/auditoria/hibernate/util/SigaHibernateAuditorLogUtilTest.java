@@ -6,10 +6,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import br.gov.jfrj.siga.base.auditoria.hibernate.enums.SigaLogCategoryEnum;
-import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
 
 
-public class SigaHibernateAuditoriaLogUtilTest {
+public class SigaHibernateAuditorLogUtilTest {
 	
 	@Test
 	public void deveLogarSomenteSeOTempoDeEsperaUltrapasarOLimite() throws Exception {

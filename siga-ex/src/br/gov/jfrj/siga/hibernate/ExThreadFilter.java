@@ -52,7 +52,6 @@ public class ExThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 		
-		//TODO Receber a String CSV
 		StringBuilder csv = super.iniciaAuditoria( request );
 		
 		this.configuraHibernate();
@@ -68,7 +67,6 @@ public class ExThreadFilter extends ThreadFilter {
 			this.liberaInstanciaDao();
 		}
 		
-		//TODO Passar a String CSV como parâmetro
 		super.terminaAuditoria( csv );
 		
 	}
@@ -88,6 +86,10 @@ public class ExThreadFilter extends ThreadFilter {
 						// bruno.lacerda@avantiprima.com.br
 						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
 						SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
+						
+						// bruno.lacerda@avantiprima.com.br
+						cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
+						cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
 						
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;

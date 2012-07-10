@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.base.auditoria.filter;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -49,32 +51,29 @@ public abstract class ThreadFilter implements Filter {
 			
 			HttpServletRequest r = (HttpServletRequest) request;
 			
-			String serverName = r.getServerName();
-			String contexto = r.getContextPath();
+			String hostName = this.getHostName();
+			String contexto = this.getContexto( r );
 			String uri = r.getRequestURI();
-			String action = uri.substring( uri.indexOf( contexto ) );
+			String action = this.getAction( uri, contexto );
 			String queryString = r.getQueryString();
 			
 			csv.append( SEPARADOR )
 					.append( ASPAS )
-					.append( serverName )
+					.append( hostName )
 					.append( ASPAS )
 					.append( SEPARADOR )
-					.append( contexto.substring(1) )
+					.append( contexto )
 					.append( SEPARADOR )
 					.append( ASPAS )
-					.append( action.substring(1) )
+					.append( action )
 					.append( ASPAS )
 					.append( SEPARADOR );
-					
 			
 			if ( StringUtils.isNotBlank( queryString ) ) {				
 				csv.append( ASPAS )
 				   .append( queryString )
 				   .append( ASPAS );
 			} 
-			
-			
 			SigaHibernateAuditorLogUtil.iniciaMarcacaoDeTempoGasto();
 		}
 		
@@ -87,15 +86,48 @@ public abstract class ThreadFilter implements Filter {
 	 */
 	protected void terminaAuditoria(StringBuilder csv) {
 		if ( this.isAuditaThreadFilter && csv != null ) {
-			String tempoGasto = SigaHibernateAuditorLogUtil.getTempoGasto();
+			String tempoGastoFormatado = SigaHibernateAuditorLogUtil.getTempoGastoFormatado();
+			long tempoGastoMillisegundos = SigaHibernateAuditorLogUtil.getTempoGastoMilliSegundos();
 			log.info( csv.append( SEPARADOR )
 							  .append( ASPAS )
-							  .append( tempoGasto )
+							  .append( tempoGastoFormatado )
 							  .append( ASPAS )
-							  .append( SEPARADOR ));
+							  .append( SEPARADOR )							  
+							  .append( ASPAS )
+							  .append( tempoGastoMillisegundos )
+							  .append( ASPAS ));
 		}
 	}
+	
 
+	private String getContexto(HttpServletRequest r) {
+		String contexto = r.getContextPath();
+		if ( StringUtils.isNotBlank( contexto ) ) {
+			contexto = contexto.substring( 1 );
+		}
+		return contexto;
+	}
+
+	protected String getAction(String uri, String contexto) {
+		String action = null;
+		if ( StringUtils.isNotBlank( uri ) && 
+				StringUtils.isNotBlank( contexto ) ) {
+			action = uri.replaceFirst( contexto, "" );
+		}
+		return StringUtils.isNotBlank( action ) ? action.substring( 1 ) : action;
+	}
+
+	protected String getHostName() {
+		String hostName = null;
+		try {
+			hostName = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			log.warn( "Não foi possível identificar o nome do Host para adicioná-lo ao Log por CSV", e );
+			e.printStackTrace();
+		}
+		return hostName;
+	}
+	
 	public void init(FilterConfig arg0) throws ServletException {
 		log.info("INIT THREAD FILTER");
 	}

@@ -142,6 +142,10 @@ public class WfThreadFilter extends ThreadFilter {
 						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
 						// SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
 						
+						// bruno.lacerda@avantiprima.com.br
+						cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
+						cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+						
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {

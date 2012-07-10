@@ -23,19 +23,20 @@ function sbmt() {
 }			
 </script>
 
-<table width="100%">
-	<tr>
-		<td><ww:form name="frm" action="redefinir_nivel_acesso_gravar"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Redefinição de Nível de Acesso - ${doc.codigo} <c:if
+				test="${numVia != null && numVia != 0}">
+			- ${numVia}&ordf; Via
+			</c:if></h2>
+			<div class="gt-content-box gt-for-table">
+
+		<ww:form name="frm" action="redefinir_nivel_acesso_gravar"
 			namespace="/expediente/mov" theme="simple" method="POST">
 			<ww:hidden name="postback" value="1" />
 			<ww:hidden name="sigla" value="${sigla}"/>
 
-			<h1>Redefinição de Nível de Acesso - ${doc.codigo} <c:if
-				test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if></h1>
-
-			<table class="form" width="100%">
+			<table class="gt-form-table">
 				<tr class="header">
 					<td colspan="2">Redefinição de Nível de Acesso</td>
 				</tr>
@@ -92,9 +93,8 @@ function sbmt() {
 				</c:if>--%>
 
 				<tr class="button">
-					<td></td>
-					<td><input type="submit" value="Ok" /> <input type="button"
-						value="Cancela" onclick="javascript:history.back();" /> <%--input
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/> <%--input
 						type="button" name="ver_doc"
 						value="Visualizar o modelo preenchido"
 						onclick="javascript: popitup_movimentacao();" --%></td>

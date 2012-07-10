@@ -11,7 +11,8 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 <siga:cabecalho titulo="Documento" popup="${param.popup}" />
 
-<%--<div style="display: inline; top: 70px; right: 10px"></div> --%>
+	<div class="gt-bd" style="padding-bottom: 0px;">
+		<div class="gt-content">
 
 <c:if test="${not empty param.msg}">
 	<p align="center"><b>${param.msg}</b></p>
@@ -21,47 +22,31 @@
 	theme="simple" method="POST">
 	<ww:token />
 </ww:form>
-
+<h2><c:if test="${empty ocultarCodigo}">${docVO.sigla}</c:if></h2>
+<%--<div class="gt-sidebar" style="float:right; margin-top:-17px;"><div class="gt-sidebar-nav"><h3><c:if test="${empty ocultarCodigo}">${docVO.sigla}</c:if></h3></div></div>--%>
+<%--<div style="float:right; width:221px; margin-top:0px;"><h3 style="text-align:center;" style="margin-bottom:0px;"><c:if test="${empty ocultarCodigo}">${docVO.sigla}</c:if></h3></div> --%>
 <c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
 	<ww:if
 		test="%{#attr.m.mob.geral or true or (((mob.geral or (mob.id == #attr.m.mob.id)) and (exibirCompleto or (#attr.m.mob.getUltimaMovimentacaoNaoCancelada() != null))))}">
-		<table width="100%">
-			<tr>
-				<td>
-				<h1><c:if test="${empty ocultarCodigo}">${docVO.sigla} - </c:if><ww:property
+				<h3 style="margin-bottom:0px;"><ww:property
 			value="%{#attr.m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}"
-			escape="false" /><c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}"> - ${m.tamanhoDeArquivo}</c:if></h1>
-				</td>
-				<td align="right">
-				<c:if test="${loop.index == 0}">
-				<ww:form name="frm2"
-							cssStyle="display:inline" action="exibir"
-							namespace="/expediente/doc" method="post" theme="simple">
-				Ir para o documento:<siga:selecao tema="simple" buscar="nao"
-								propriedade="documentoVia" ocultardescricao="sim" />
-							<input style="display: inline" type="submit" name="ok" value="Ok"
-								onclick="javascript: var id=document.getElementById('editar_documentoViaSel_id').value; if (id==null || id=='') {return;}" />
-						
-				</ww:form>
-				</c:if>
-				</td>
-			</tr>
-
-		</table>
+			escape="false" /><c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}"> - ${m.tamanhoDeArquivo}</c:if></h3>
 
 		<c:set var="ocultarCodigo" value="${true}" />
 
 		<!-- Links para as ações de cada mobil -->
 		<c:if test='${param.popup!="true"}'>
+			<c:set var="acoes" value="${m.acoesOrdenadasPorNome}"/>
+<%-- 			<ww:if test="%{#attr.m.mob.geral}"><c:set var="acoes" value="${docVO.acoesOrdenadasPorNome}"/></ww:if>--%>
 			<siga:links>
-				<c:forEach var="acao" items="${m.acoesOrdenadasPorNome}">
+				<c:forEach var="acao" items="${acoes}">
 					<ww:url id="url" action="${acao.acao}"
 						namespace="${acao.nameSpace}" >
 						<c:forEach var="p" items="${acao.params}">
 							<ww:param name="${p.key}">${p.value}</ww:param>
 						</c:forEach>
 					</ww:url>
-					<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
+					<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}" pre="${acao.pre}"
 						pos="${acao.pos}" url="${url}" test="${true}"
 						popup="${acao.popup}" confirm="${acao.msgConfirmacao}" />
 				</c:forEach>
@@ -76,29 +61,42 @@
 
 		<c:set var="dtUlt" value="" />
 
+		<!-- Verifica se haverá alguma movimentação para ser exibida -->		
+		<c:set var="temmov" value="${false}" />
+		<c:forEach var="mov" items="${m.movs}">
+			<c:if test="${ (exibirCompleto == 'true') or (mov.idTpMov != 14 and
+							          not mov.cancelada)}">
+				<c:set var="temmov" value="${true}" />
+			</c:if>
+		</c:forEach>
+		
 		<!-- Tabela de movimentações -->
-		<table class="mov" width="100%">
-			<tr class="${docVO.classe}">
-				<td align="center" rowspan="2">Data</td>
-				<td rowspan="2">Evento</td>
-				<td colspan="2" align="left">Cadastrante</td>
+		<c:if test="${temmov}">
+		<div class="gt-content-box" style="margin-bottom: 25px;">
+		<table class="gt-table mov" width="100%">
+			<thead>
+				<tr>
+				<th align="center" rowspan="2">Data</th>
+				<th rowspan="2">Evento</th>
+				<th colspan="2" align="left">Cadastrante</th>
 				<c:if test="${ (exibirCompleto == 'true')}">
-					<td colspan="2" align="left">Responsável</td>
+					<th colspan="2" align="left">Responsável</th>
 				</c:if>
-				<td colspan="2" align="left">Atendente</td>
-				<td rowspan="2">Descrição</td>
-				<td align="center" rowspan="2">Duração</td>
-			</tr>
-			<tr class="${docVO.classe}">
-				<td align="left">Lotação</td>
-				<td align="left">Pessoa</td>
+				<th colspan="2" align="left">Atendente</th>
+				<th rowspan="2">Descrição</th>
+				<th align="center" rowspan="2">Duração</th>
+				</tr>
+				<tr>
+				<th align="left">Lotação</th>
+				<th align="left">Pessoa</th>
 				<c:if test="${ (exibirCompleto == 'true')}">
-					<td align="left">Lotação</td>
-					<td align="left">Pessoa</td>
+					<th align="left">Lotação</th>
+					<th align="left">Pessoa</th>
 				</c:if>
-				<td align="left">Lotação</td>
-				<td align="left">Pessoa</td>
-			</tr>
+				<th align="left">Lotação</th>
+				<th align="left">Pessoa</th>
+				</tr>
+			</thead>
 			<c:set var="evenorodd" value="odd" />
 			<c:forEach var="mov" items="${m.movs}">
 				<c:if
@@ -193,6 +191,8 @@
 				</c:if>
 			</c:forEach>
 		</table>
+		</div>
+		</c:if>
 
 		<!-- Lista sucinta de documentos filhos - Falta incluir -->
 		<c:if test="${not empty m.filhosNaoCancelados}">
@@ -233,65 +233,52 @@
 
 
 <!-- Visualização dos principais dados do documento em questão -->
-<h1>${docVO.nomeCompleto}</h1>
 
 <!-- Links para as ações de gerais do documento -->
-<c:if test='${param.popup!="true"}'>
-	<siga:links>
-		<c:forEach var="acao" items="${docVO.acoesOrdenadasPorNome}">
-			<ww:url id="url" action="${acao.acao}" namespace="${acao.nameSpace}">
-				<c:forEach var="p" items="${acao.params}">
-					<ww:param name="${p.key}">${p.value}</ww:param>
-				</c:forEach>
-			</ww:url>
-			<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
-				pos="${acao.pos}" url="${url}" test="${true}" popup="${acao.popup}"
-				confirm="${acao.msgConfirmacao}" />
-		</c:forEach>
-	</siga:links>
-</c:if>
+<%--
 
+ --%>
+</div>
+</div>
+
+<div class="gt-bd gt-cols clearfix" style="padding-top:0px;margin-top:25px;">
+<div class="gt-content">
 <!-- Dados do documento -->
-<table class="message" width="100%">
-	<tr class="${docVO.classe}">
-		<td width="50%"><b>${docVO.nomeCompleto}</td>
-		<td>
-		<div style="width: 100%;">
-		<div style="float: left;"><b>Data:</b> ${docVO.dtDocDDMMYY}</div>
-		<div style="width: 100%; text-align: right;"><b>${docVO.fisicoOuEletronico}</b>
-		</div>
-		</div>
-		</td>
-	</tr>
-	<tr class="${docVO.classe}">
-		<td><b>De:</b> ${docVO.subscritorString}</td>
-		<td><b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}</td>
-	</tr>
-	<tr class="${docVO.classe}">
-		<td><b>Para:</b> ${docVO.destinatarioString}</td>
-		<td><b>Descrição:</b> ${docVO.descrDocumento}</td>
-	</tr>
-	<tr class="${docVO.classe}">
-		<td><b>Nível de Acesso:</b> ${docVO.nmNivelAcesso}</td>
-		<td><c:if test="${not empty docVO.paiSigla}">
-			<b>Documento Pai:</b>
+<div class="gt-content-box" style="padding:10px;">
+	<table style="width:100%"><tr><td>
+	<c:if test="${docVO.conteudoBlobHtmlString != null}">
+		<tags:fixdocumenthtml>
+			${docVO.conteudoBlobHtmlString}
+		</tags:fixdocumenthtml>
+	</c:if>
+	</td></tr></table>
+</div>
+</div>
+
+<div class="gt-sidebar">
+	<div class="gt-sidebar-content"> 
+		<h3>${docVO.nomeCompleto}</h3> 
+                 <p><b>Suporte:</b> ${docVO.fisicoOuEletronico}</p>
+		<p><b>Nível de Acesso:</b> ${docVO.nmNivelAcesso}</p>
+                 <p><b>Data:</b> ${docVO.dtDocDDMMYY}</p>
+		<p><b>De:</b> ${docVO.subscritorString}</p>
+		<p><b>Para:</b> ${docVO.destinatarioString}</p>
+             	<p><b>Descrição:</b> ${docVO.descrDocumento}</p>
+		<p><b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}</p>
+		<c:if test="${not empty docVO.paiSigla}">
+			<p><b>Documento Pai:</b>
 			<ww:url id="url" action="exibir" namespace="/expediente/doc">
 				<ww:param name="sigla">${docVO.paiSigla}</ww:param>
 			</ww:url>
 			<ww:a href="%{url}">${docVO.paiSigla}</ww:a>
-		</c:if></td>
-	</tr>
-	<c:if test="${not empty docVO.dadosComplementares}">
-	    ${docVO.dadosComplementares}   
-	</c:if>
-	<c:if test="${docVO.conteudoBlobHtmlString != null}">
-		<tr>
-			<td colspan="2"><tags:fixdocumenthtml>
-			${docVO.conteudoBlobHtmlString}
-			</tags:fixdocumenthtml></td>
-		</tr>
-	</c:if>
-</table>
+			</p>
+		</c:if>
+		<c:if test="${not empty docVO.dadosComplementares}">
+	    	${docVO.dadosComplementares}
+		</c:if>
+		
+   </div><!-- / sidebar -->
+</div>
 
 <!-- Somente quando o workflow está ativado -->
 
@@ -299,4 +286,5 @@
 	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
 </c:if>
 
+</div>
 <siga:rodape />

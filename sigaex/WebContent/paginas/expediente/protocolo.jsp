@@ -12,11 +12,15 @@
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
+		
+		<div class="gt-bd clearfix">
+			<div class="gt-content clearfix">
+		
+			<h2>Protocolo de Transferência</h2>
 
-	<ww:form name="frm" action="principal" namespace="/" method="GET"
-		theme="simple">
-		<h1>Protocolo de Transferência</h1>
-		<table>
+			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
+	
+		<table class="gt-table">
 			<tr>
 			<tr>
 				<td>De:</td>
@@ -30,7 +34,14 @@
 				<td>Data:</td>
 				<td colspan="2">${mov.dtRegMovDDMMYYHHMMSS}</td>
 			</tr>
-			<table class="list" width="100%">
+		</table>
+		
+		</div>
+		
+		<h3>Documento(s)</h3>
+		
+		<div class="gt-content-box gt-for-table">
+		<table class="gt-table" style="table-layout:fixed; word-wrap:break-word; width:100%;">
 				<tr class="header">
 					<td rowspan="2" align="right">Número</td>
 					<td colspan="3" align="center">Documento</td>
@@ -105,8 +116,12 @@
 					</tr>
 				</c:forEach>
 			</table>
+			</div>
+			
 			<br />
-			<input type="button" value="Imprimir"
+			<ww:form name="frm" action="principal" namespace="/" method="GET"
+				theme="simple">
+			<input type="button" value="Imprimir" class="gt-btn-medium"
 				onclick="javascript: document.body.offsetHeight; window.print();" />
 			<c:if test="${param.popup != true}">
 				<input type="button" value="Voltar"
@@ -121,5 +136,5 @@
 			<p align="center">________________________________________________</p>
 			<p align="center">Assinatura do Servidor</p>
 			</ww:form>
-
+	</div></div>
 			</siga:pagina>

@@ -8,12 +8,16 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <siga:pagina titulo="Lista Tipo de Despacho">
-	<h1>Listagem dos tipos de despacho</h1>
-	<table class="list" width="100%">
-		<tr class="header">
-			<td align="right">Número</td>
-			<td colspan="3" align="center">Descrição</td>
-		</tr>
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Listagem dos tipos de despacho</h2>
+			
+	<div class="gt-content-box gt-for-table">
+		<table class="gt-table">
+		<thead>
+			<th align="right">Número</th>
+			<th colspan="3" align="center">Descrição</th>
+		</thead>
 		<c:set var="evenorodd" value="" />
 		<c:set var="tamanho" value="0" />
 		<c:forEach var="tipoDespacho" items="${tiposDespacho}">

@@ -17,7 +17,6 @@ function sbmt() {
 <c:set var="titulo_pagina" scope="request">Relação de documentos entre duas datas</c:set>
 <ww:hidden name="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
-<h1>${titulo_pagina}</h1>
 <tr>
 	<td>Lotação</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple"

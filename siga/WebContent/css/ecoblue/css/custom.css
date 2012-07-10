@@ -4,6 +4,16 @@ File:		custom.css - Use this file to add any custom styles you need
 
 If you add styles to this template, be sure to include it in your template files.
 */
+
+
+/* Left Sidebar, 2 Column */
+.gt-cols-2 .gt-sidebar {
+	width: 35% !important;
+}
+.gt-cols-2 .gt-content {
+	width: 60% !important;
+}
+
 .gt-form.gt-content-box {
 	margin-bottom: 20px !important;
 }
@@ -176,6 +186,23 @@ If you add styles to this template, be sure to include it in your template files
 		transparent;
 }
 
+.gt-form-table tr .gt-cancel {
+	color: #666666;
+}
+.gt-form-table tr .gt-cancel a:link, .gt-form-table tr .gt-cancel a:visited {
+	color: #cc0000;
+	text-decoration: underline;
+}
+.gt-form-table tr .gt-cancel a:hover {
+	text-decoration: none;
+}
+
+.gt-form-table tr .gt-cancel {
+	color: #666666;
+	line-height: 37px;
+	margin-bottom: 0;
+}
+
 .gt-form-table-buttons:after {
 	content: ".";
 	display: block;
@@ -337,3 +364,29 @@ ul#navmenu-h li:hover ul,ul#navmenu-h ul li:hover ul,ul#navmenu-h ul ul li:hover
 }
 
 .gt-content-box ol, ul, li {margin-left:1em; margin-bottom:0;padding-left:0em;}
+
+
+TABLE.entrevista {
+	padding: 0px;
+	background-color: #fff;
+	border-radius: 0px;
+}
+
+TABLE.entrevista TR.header {
+	font-weight: bold;
+	font-size: 100%;
+	padding: 0px;
+	color: #333;
+	border-bottom: 1px solid #ccc !important;
+	background-color: #fff;
+	border-radius: 0px;
+}
+
+TABLE.entrevista TR TD{
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+
+

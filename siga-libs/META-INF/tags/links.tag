@@ -16,7 +16,7 @@
 
 <c:if test="${not empty linkSeparator}">
 	<c:if test="${empty linkInline}">
-		<div class="buttons">
+		<p class="gt-table-action-list">
 	</c:if>
 </c:if>
 
@@ -24,7 +24,7 @@
 
 <c:if test="${not empty linkSeparator}">
 	<c:if test="${empty linkInline}">
-		</div>
+		</p>
 	</c:if>
 	<c:remove var="linkSeparator" scope="request" />
 </c:if>

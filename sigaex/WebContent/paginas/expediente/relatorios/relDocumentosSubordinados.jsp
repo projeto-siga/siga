@@ -16,7 +16,6 @@ function sbmt() {
 
 <c:set var="titulo_pagina" scope="request">Relação de Documentos em Setores Subordinados</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
-<h1>${titulo_pagina}</h1>
 <tr>
 	<td>Tipo de Relatório:</td>
 	<td><ww:select name="tipoRel"

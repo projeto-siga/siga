@@ -235,16 +235,6 @@
 			</result>
 		</action>
 
-		<action name="exibirProcessoHTML" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aExibir">
-			<result>
-				/paginas/expediente/painelProcesso.jsp?podeExibir="true"
-			</result>
-			<result name="reservado">
-				/paginas/expediente/cuidado_reserva.jsp?"
-			</result>
-		</action>
-
 		<action name="exibirResumoProcesso" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aExibir">
 			<result>

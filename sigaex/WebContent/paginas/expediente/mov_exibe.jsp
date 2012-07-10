@@ -102,7 +102,11 @@ frm.submit();
 
 </script>
 
-
+<%-- 
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<div class="gt-content-box gt-for-table">
+ --%>			
 	<ww:form name="frm" action="exibir" namespace="/expediente/mov"
 		theme="simple" method="POST">
 		<ww:hidden name="copia" value="${copia}"/>
@@ -339,5 +343,5 @@ frm.submit();
     <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}" />
     <%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/${mov.nmPdf}" /> --%>
 	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
- 
+<%--  	</div></div></div>--%>
 </siga:pagina>

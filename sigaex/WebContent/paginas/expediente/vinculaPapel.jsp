@@ -9,7 +9,6 @@
 
 <siga:pagina titulo="Movimentação">
 
-
 <script type="text/javascript" language="Javascript1.1">
 <ww:url id="url" action="vincularPapel" namespace="/expediente/mov" />
 function sbmt() {
@@ -73,9 +72,12 @@ function popitup_movimentacao() {
 }			
 </script>
 
-<table width="100%">
-	<tr>
-		<td><ww:form name="frm" action="vincularPapel_gravar"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Definição de Perfil - ${mob.siglaEDescricaoCompleta}</h2>
+			<div class="gt-content-box gt-for-table">
+			
+			<ww:form name="frm" action="vincularPapel_gravar"
 			namespace="/expediente/mov" theme="simple" method="POST">
 			<ww:token/>
 			<ww:hidden name="postback" value="1" />
@@ -90,9 +92,8 @@ function popitup_movimentacao() {
 			<html:hidden property="idDoc" />
 			<html:hidden property="numVia" /> --%>
 
-			<h1>Definição de Perfil - ${mob.siglaEDescricaoCompleta}</h1>
 
-			<table class="form" width="100%">
+			<table class="gt-form-table">
 				<tr class="header">
 					<td colspan="2">Vinculação</td>
 				</tr>
@@ -155,19 +156,14 @@ function popitup_movimentacao() {
 				</c:if>--%>
 
 				<tr class="button">
-					<td></td>
-					<td><input type="submit" value="Ok" /> <input type="button"
-						value="Cancela" onclick="javascript:history.back();" /> <%--input
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/> <%--input
 						type="button" name="ver_doc"
 						value="Visualizar o modelo preenchido"
 						onclick="javascript: popitup_movimentacao();" --%></td>
 				</tr>
 			</table>
 
-		</ww:form></td>
-	</tr>
-</table>
-</td>
-	</tr>
-
+		</ww:form>
+	</div></div></div>
 </siga:pagina>

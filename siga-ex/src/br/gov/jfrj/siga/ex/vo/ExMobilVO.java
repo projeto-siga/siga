@@ -221,73 +221,73 @@ public class ExMobilVO extends ExVO {
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
 		if (!mob.isGeral()) {
-			addAcao("Visualizar Dossiê",
+			addAcao("application_side_tree", "Visualizar Dossiê",
 					"/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()
 							.podeVisualizarImpressao(titular, lotaTitular, mob));
 
-			addAcao("Visualizar Impressão",
+			addAcao("printer", "Visualizar Impressão",
 					"/expediente/doc",
 					"pdf",
 					Ex.getInstance().getComp()
 							.podeVisualizarImpressao(titular, lotaTitular, mob),
 					null, "&popup=true", null, null);
 		}
-		addAcao("Desentranhar",
+		addAcao("link_break", "Desentranhar",
 				"/expediente/mov",
 				"cancelar_juntada",
 				Ex.getInstance().getComp()
 						.podeCancelarJuntada(titular, lotaTitular, mob));
 
-		addAcao("Desapensar", "/expediente/mov", "desapensar", Ex.getInstance()
+		addAcao("link_delete", "Desapensar", "/expediente/mov", "desapensar", Ex.getInstance()
 				.getComp().podeDesapensar(titular, lotaTitular, mob));
 
-		addAcao("Receber", "/expediente/mov", "receber", Ex.getInstance()
+		addAcao("email_open", "Receber", "/expediente/mov", "receber", Ex.getInstance()
 				.getComp().podeReceber(titular, lotaTitular, mob));
 
-		addAcao("Despachar/Transferir",
+		addAcao("email_edit", "Despachar/Transferir",
 				"/expediente/mov",
 				"transferir",
 				Ex.getInstance().getComp()
 						.podeDespachar(titular, lotaTitular, mob));
 
 		if (mob.isVia() || mob.isVolume()) {
-			addAcao("Anexar Arquivo",
+			addAcao("attach","Anexar Arquivo",
 					"/expediente/mov",
 					"anexar",
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));
-			addAcao("Fazer Anotação",
+			addAcao("tag_yellow", "Fazer Anotação",
 					"/expediente/mov",
 					"anotar",
 					Ex.getInstance().getComp()
 							.podeFazerAnotacao(titular, lotaTitular, mob));
 		}
 
-		addAcao("Arq. Corrente",
+		addAcao("package", "Arq. Corrente",
 				"/expediente/mov",
 				"arquivar_corrente_gravar",
 				Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob));
 
-		addAcao("Arq. Permanente", "/expediente/mov",
+		addAcao("box","Arq. Permanente", "/expediente/mov",
 				"arquivar_permanente_gravar", Ex.getInstance().getComp()
 						.podeArquivarPermanente(titular, lotaTitular, mob));
 
-		addAcao("Desarquivar",
+		addAcao("package_go","Desarquivar",
 				"/expediente/mov",
 				"desarquivar_gravar",
 				Ex.getInstance().getComp()
 						.podeDesarquivar(titular, lotaTitular, mob));
 
-		addAcao("Juntar", "/expediente/mov", "juntar", Ex.getInstance()
+		addAcao("link","Juntar", "/expediente/mov", "juntar", Ex.getInstance()
 				.getComp().podeJuntar(titular, lotaTitular, mob));
 
-		addAcao("Vincular", "/expediente/mov", "referenciar", Ex.getInstance()
+		addAcao("page_find","Vincular", "/expediente/mov", "referenciar", Ex.getInstance()
 				.getComp().podeReferenciar(titular, lotaTitular, mob));
 
-		addAcao("Apensar", "/expediente/mov", "apensar", Ex.getInstance()
+		addAcao("link_add","Apensar", "/expediente/mov", "apensar", Ex.getInstance()
 				.getComp().podeApensar(titular, lotaTitular, mob));
 
 		// Não aparece a opção de Cancelar Movimentação para documentos
@@ -296,7 +296,7 @@ public class ExMobilVO extends ExVO {
 				&& mob.getUltimaMovimentacaoNaoCancelada() != null
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 						.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)
-			addAcao("Desfazer "
+			addAcao("arrow_undo", "Desfazer "
 					+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),
 					"/expediente/mov",
 					"cancelarMovimentacao",
@@ -309,12 +309,12 @@ public class ExMobilVO extends ExVO {
 		// exibir+completo,
 		// confirmacao
 
-		addAcao("Encerrar Volume", "/expediente/mov", "encerrar_gravar", Ex
+		addAcao("folder_page_white", "Encerrar Volume", "/expediente/mov", "encerrar_gravar", Ex
 				.getInstance().getComp()
 				.podeEncerrar(titular, lotaTitular, mob),
 				"Confirma o encerramento do volume?", null, null, null);
 
-		addAcao("Cancelar Via",
+		addAcao("cancel", "Cancelar Via",
 				"/expediente/mov",
 				"cancelarMovimentacao",
 				Ex.getInstance().getComp()

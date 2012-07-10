@@ -59,8 +59,7 @@ public class DocumentoHtml extends AbstractDocumento {
 			// border: medium double green;\" class=\"total\">");
 
 			sb
-					.append("<div style=\"margin-bottom:6pt; padding:0pt; width:100%; clear:both; border: thin solid black;\" class=\"documento\">");
-
+				.append("<div style=\"margin-bottom:6pt; padding:0pt; width:100%; clear:both; background-color: #fff; border: 1px solid #ccc; border-radius: 5px;\" class=\"documento\">");
 			sb
 					.append("<table width=\"100%\" style=\"padding:3pt;\" border=0><tr><td>");
 			if (an.getPaginaInicial() != null) {
@@ -68,7 +67,7 @@ public class DocumentoHtml extends AbstractDocumento {
 				if (!an.getPaginaFinal().equals(an.getPaginaInicial()))
 					numeracao += " - " + an.getPaginaFinal();
 				sb
-						.append("<div style=\"margin:3pt; padding:3pt; float:right; border: thin solid black;\" class=\"numeracao\">");
+						.append("<div style=\"margin:3pt; padding:3pt; float:right; border: 1px solid #ccc; border-radius: 5px;\" class=\"numeracao\">");
 				sb.append(numeracao);
 				sb.append("</div>");
 			}
@@ -99,7 +98,7 @@ public class DocumentoHtml extends AbstractDocumento {
 			if (an.getArquivo().getMensagem() != null) {
 				sb.append("</td></tr><tr><td>");
 				sb
-						.append("<div style=\"margin:3pt; padding:3pt; border: thin solid green; background-color:lightgreen;\" class=\"anexo\">");
+						.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
 				sb.append(an.getArquivo().getMensagem());
 				sb.append("</div>");
 			}

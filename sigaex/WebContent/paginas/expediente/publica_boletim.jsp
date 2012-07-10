@@ -15,19 +15,25 @@ function confirma(){
  return confirm ('Essa movimentação não poderá ser desfeita. Prosseguir?');
 }
 </script>
-	<table width="100%">
-		<tr>
-			<td><ww:form action="boletim_publicar_gravar"
+
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Registro de Publica&ccedil;&atilde;o do Boletim Interno -
+				${doc.codigo}
+			</h2>
+
+			<div class="gt-content-box gt-for-table">
+			<ww:form action="boletim_publicar_gravar"
 				namespace="/expediente/mov" cssClass="form" method="GET">
 				<input type="hidden" name="postback" value="1" />
 				<ww:hidden name="sigla" value="${sigla}"/>
 
-				<h1>Registro de Publica&ccedil;&atilde;o do Boletim Interno -
-				${doc.codigo} <!--<c:if
-				test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if>--></h1>
-				<table class="form">
+				<table class="gt-form-table">
+					<colgroup>
+					<col style="width:30%;"/>
+					<col style="width:70%;"/>
+					</colgroup>
 					<tr class="header">
 						<td colspan="2">Dados da Publica&ccedil;&atilde;o</td>
 					</tr>
@@ -35,12 +41,10 @@ function confirma(){
 						onblur="javascript:verifica_data(this,0);"
 						label="Data da Publicação" />
 					<tr class="button">
-						<td></td>
-						<td><input type="submit" value="Ok" onclick="javascript: return confirma();"/> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" />
+						<td colspan="2"><input type="submit" value="Ok" onclick="javascript: return confirma();" class="gt-btn-medium gt-btn-left"/> <input type="button"
+							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
 					</tr>
 				</table>
-			</ww:form></td>
-		</tr>
-	</table>
+			</ww:form>
+	</div></div></div>			
 </siga:pagina>

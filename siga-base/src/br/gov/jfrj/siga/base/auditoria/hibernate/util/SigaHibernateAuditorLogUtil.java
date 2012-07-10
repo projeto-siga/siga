@@ -18,6 +18,7 @@ public class SigaHibernateAuditorLogUtil {
 	private static long tempoInicial;
 	private static long tempoFinal;
 	private static long tempoGasto;
+	private static long tempoGastoMilliSegundos;
 	
 	private static Boolean ultrapassouLimiteEstipulado;
 	private static String categoriaLogada;
@@ -149,12 +150,18 @@ public class SigaHibernateAuditorLogUtil {
 		return categoriaLogada;
 	}
 
-	public static String getTempoGasto() {
+	/**
+	 * 
+	 * @return Tempo gasto formatado
+	 * 
+	 */
+	public static String getTempoGastoFormatado() {
 		
 		tempoFinal = System.currentTimeMillis();
 		
 		if ( tempoInicial != 0 ) { 
-			tempoGasto = ( tempoFinal - tempoInicial ) / 1000;
+			tempoGastoMilliSegundos = tempoFinal - tempoInicial;
+			tempoGasto = tempoGastoMilliSegundos / 1000;
 		}	
 		
 		long totalDeMinutos = obtemTotalDeMinutos( tempoGasto );                             // 00:80:00
@@ -163,9 +170,13 @@ public class SigaHibernateAuditorLogUtil {
 		long minutosQueNaoFormamUmaHora = obtemMinutosQueNaoFormamUmaHora( totalDeMinutos ); // 00:20:00 <--
 		long totalDeHoras = converteTotalDeMinutosEmHoras( totalDeMinutos );                 // 01:00:00 <--
 		
-		String tempoGasto = formataPadraoDeHorasMinutosESegundos( totalDeHoras, minutosQueNaoFormamUmaHora, segundosRestantes ); // 01:20:40s
+		String tempoGastoFormatado = formataPadraoDeHorasMinutosESegundos( totalDeHoras, minutosQueNaoFormamUmaHora, segundosRestantes ); // 01:20:40s
 		
-		return tempoGasto;
+		return tempoGastoFormatado;
+	}
+
+	public static long getTempoGastoMilliSegundos() {
+		return tempoGastoMilliSegundos;
 	}
 
 }

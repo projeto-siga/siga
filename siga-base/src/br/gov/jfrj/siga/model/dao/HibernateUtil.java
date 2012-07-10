@@ -241,8 +241,6 @@ public class HibernateUtil {
 			}
 			
 			// bruno.lacerda@avantiprima.com.br
-			cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
-			cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
 			configurarHibernateParaDebug( cfg );
 			
 			//cfg.configure();

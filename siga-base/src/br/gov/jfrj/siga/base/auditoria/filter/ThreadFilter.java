@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.cfg.AnnotationConfiguration;
 
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
@@ -140,5 +141,11 @@ public abstract class ThreadFilter implements Filter {
 	public void destroy() {
 		log.info("DESTROY THREAD FILTER");
 	}	
+
+	public void registerTransactionClasses(AnnotationConfiguration cfg) {
+		// bruno.lacerda@avantiprima.com.br
+		//cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
+		//cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+	}
 
 }

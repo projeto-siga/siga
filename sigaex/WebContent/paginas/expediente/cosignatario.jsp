@@ -21,11 +21,7 @@
 		<div class="gt-content clearfix">
 
 			<h2>
-				Inclusão de Co-signatário - ${doc.codigo}
-				<c:if test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if>
-			</h2>
+				Inclusão de Co-signatário - ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 

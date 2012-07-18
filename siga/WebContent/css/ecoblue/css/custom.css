@@ -269,6 +269,15 @@ ul#navmenu-h ul {
 	font-size: 116%;
 }
 
+/* Login Box Styles */
+.gt-error-page-hd {
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 250px;
+	margin-bottom: 10px;
+}
+
 ul#navmenu-h ul ul {
 	top: 0;
 	left: 100%;

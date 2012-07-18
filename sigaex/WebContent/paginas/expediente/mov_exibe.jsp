@@ -102,17 +102,22 @@ frm.submit();
 
 </script>
 
+<div class="gt-bd" style="padding-bottom: 0px;">
+		<div class="gt-content">
+		
+		<h2>Documento ${doc.exTipoDocumento.descricao}:
+		${doc.codigo}</h2>
+		
+		<div class="gt-content-box" style="padding:10px;">
 
 	<ww:form name="frm" action="exibir" namespace="/expediente/mov"
 		theme="simple" method="POST">
 		<ww:hidden name="copia" value="${copia}"/>
 		<table width="100%" border="0">
 			<tr>
-				<td style="padding: 10;">
+				<td>
 
-				<h1><b>Documento ${doc.exTipoDocumento.descricao}:</b>
-				${doc.codigo}</h1>
-				<table border="0" width="100%">
+				<table border="0" style="width:100%;">
 					<tr>
 						<td><c:set var="exibemov" scope="request" value="" /> <c:set
 							var="exibemovvariante" scope="request" value="" /> <c:if
@@ -161,7 +166,7 @@ frm.submit();
 								</c:if>
 							</c:if>
 						</c:if> <c:if test='${not empty exibemov}'>
-							<table class="message" width="100%">
+							<table class="message" style="width:100%;">
 								<tr class="header_${exibemov}">
 									<td width="50%"><b>${mov.descrTipoMovimentacao}</b></td>
 									<td><b>Data:</b> ${mov.dtRegMovDDMMYY}</td>
@@ -211,7 +216,7 @@ frm.submit();
 											<td colspan=2><c:url var='anexo'
 												value='/anexo/${mov.idMov}/${mov.nmArqMov}' /> <c:url
 												var='anexo' value='/${mov.nmPdf}' /> <iframe src="${anexo}"
-												width="100%" height="600" align="center"> </iframe></td>
+												width="100%" height="600" align="center" style="margin-top:10px;"> </iframe></td>
 										</tr>
 									</c:if>
 
@@ -222,15 +227,15 @@ frm.submit();
 										<tr>
 											<c:choose>
 												<c:when test="${mov.conteudoTpMov == 'text/xhtml'}">
-													<td colspan="2">${mov.conteudoBlobString}</td>
+													<td colspan="2" style="margin-top:10px;">${mov.conteudoBlobString}</td>
 												</c:when>
 												<c:when test="${mov.conteudoTpMov == 'application/zip'}">
-													<td colspan="2"><tags:fixdocumenthtml>
+													<td colspan="2" style="margin-top:10px;"><tags:fixdocumenthtml>
 												${mov.conteudoBlobHtmlString}
 												</tags:fixdocumenthtml></td>
 												</c:when>
 												<c:otherwise>
-													<td colspan="2">${mov.obs}</td>
+													<td colspan="2" style="margin-top:10px;">${mov.obs}</td>
 												</c:otherwise>
 											</c:choose>
 									</c:if>
@@ -247,7 +252,7 @@ frm.submit();
 			<ww:hidden name="assinante" />
 
 			<c:if test="${not empty mov.exMovimentacaoReferenciadoraSet}">
-				<td style="padding: 10;">
+				<td>
 				<h1>Assinaturas para essa movimentação:</h1>
 				<table class="list" width="100%">
 
@@ -293,8 +298,10 @@ frm.submit();
 				</td>
 			</c:if>
 		</table>
+		
+		</div>
 
-		<div style="padding-left: 10;"><c:if
+		<div style="padding-left: 10; padding-top: 10px;"><c:if
 			test="${mov.exTipoMovimentacao.idTpMov!=2}">
 			<input type="button" value="Visualizar Impressão"
 				onclick="javascript:visualizarImpressao();" />
@@ -350,5 +357,5 @@ frm.submit();
     <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}" />
     <%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/${mov.nmPdf}" /> --%>
 	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
- 
+ 	</div></div>
 </siga:pagina>

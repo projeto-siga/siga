@@ -19,8 +19,7 @@ function sbmt() {
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Desapensamento de Documento -
-			${mob.siglaEDescricaoCompleta}</h2>
+			<h2>Desapensamento de Documento - ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 

@@ -19,10 +19,7 @@ function sbmt() {
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Registro de Assinatura de Documento - ${doc.codigo} <c:if
-					test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if></h2>
+			<h2>Registro de Assinatura de Documento - ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 

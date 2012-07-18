@@ -14,16 +14,16 @@
 							&& pageContext.getErrorData() != null
 							&& pageContext.getErrorData().getThrowable() != null) {
 						t = pageContext.getErrorData().getThrowable();
-						if (!t.getClass().getSimpleName().equals(
-								"AplicacaoException")
+						if (!t.getClass().getSimpleName()
+								.equals("AplicacaoException")
 								&& t.getCause() != null) {
-							if (t.getCause().getClass().getSimpleName().equals(
-									"AplicacaoException")) {
+							if (t.getCause().getClass().getSimpleName()
+									.equals("AplicacaoException")) {
 								t = t.getCause();
 							} else if (t.getCause().getCause() != null
 									&& t.getCause().getCause().getClass()
-											.getSimpleName().equals(
-													"AplicacaoException")) {
+											.getSimpleName()
+											.equals("AplicacaoException")) {
 								t = t.getCause().getCause();
 							}
 						}
@@ -40,9 +40,9 @@
 	</c:if>
 </c:catch>
 
-<c:catch  var ="catchException">
-	<siga:pagina titulo="Erro Geral">
-<!--
+<c:catch var="catchException">
+	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim">
+		<!--
 Unless this text is here, if your page is less than 513 bytes, Internet Explorer will display it's "Friendly HTTP Error Message",
 and your custom error will never be displayed.  This text is just used as filler.
 This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
@@ -50,49 +50,64 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
 -->
 
-<table width="100%" height="100%">
-	<tr>
-		<td align="center" valign="middle">
-		<table class="form" width="50%">
-			<tr class="header">
-				<td style="padding: 2pt; font-size: 14pt;">Não Foi Possível
-				Completar a Operação</td>
-			</tr>
-			<c:catch>
-				<c:if test="${not empty exception}">
-					<c:if test="${not empty exception.message}">
-						<tr>
-							<td style="text-align: center; padding: 8pt; font-size: 14pt;">${exception.message}</td>
-						</tr>
-					</c:if>
-					<c:if test="${not empty exception.cause}">
+		<div class="gt-bd clearfix">
+			<div class="gt-content clearfix">
 
-						<tr>
-							<td style="text-align: center; padding: 8pt; font-size: 14pt;">${exception.cause.message}</td>
-						</tr>
-					</c:if>
-				</c:if>
-			</c:catch>
-			<tr>
-				<td style="text-align: center; padding: 8pt; font-size: 14pt;"><input
-					type="button" id="show_stack" value="Mais detalhes"
-					onclick="javascript: document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
-				<div style="display: none" align="left" id="stack"><pre>${exceptionStack}</pre>
+				<div id="caption" class="gt-error-page-hd">
+					<h2>Não Foi Possível Completar a Operação</h2>
 				</div>
-				</td>
-			</tr>
 
-		</table>
-		</td>
-	</tr>
-</table>
+				<div class="gt-content-box">
+					<table width="100%">
+						<tr>
+							<td align="center" valign="middle">
+								<table class="form" width="50%">
+									<c:catch>
+										<c:if test="${not empty exception}">
+											<c:if test="${not empty exception.message}">
+												<tr>
+													<td style="text-align: center; padding-top: 10px;"><h3>${exception.message}</h3>
+													</td>
+												</tr>
+											</c:if>
+											<c:if test="${not empty exception.cause}">
+
+												<tr>
+													<td
+														style="text-align: center;"><h4>${exception.cause.message}</h4></td>
+												</tr>
+											</c:if>
+										</c:if>
+									</c:catch>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; padding:0;">
+								<div style="display: none; padding: 8pt;" align="left" id="stack">
+									<pre style="font-size: 8pt;">${exceptionStack}</pre>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div style="padding-top:10px;">
+				<input type="button" id="show_stack" value="Mais detalhes"
+					class="gt-btn-large gt-btn-right"
+					onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+				</div>
+			</div>
+		</div>
+
 	</siga:pagina>
 </c:catch>
 
-<c:if test = "${catchException!=null}">
-Erro: ${catchException.message}<br><br><br>
+<c:if test="${catchException!=null}">
+Erro: ${catchException.message}<br>
+	<br>
+	<br>
 
-<pre>
+	<pre>
 Erro original:
 ${exceptionStack}</pre>
 </c:if>

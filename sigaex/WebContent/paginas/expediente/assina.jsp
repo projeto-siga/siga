@@ -5,6 +5,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
 <siga:pagina titulo="Documento">
 
@@ -42,6 +43,39 @@ Function Erro()
 End Function
 </script>
 
+<div class="gt-bd" style="padding-bottom: 0px;">
+		<div class="gt-content">
+		
+		<h2>Confirme os dados do documento abaixo:</h2>
+		
+		<div class="gt-content-box" style="padding:10px;">
+
+		<table class="message" width="100%">
+			<tr class="header">
+				<td width="50%"><b>Documento
+						${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
+				<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
+			</tr>
+			<tr class="header">
+				<td><b>De:</b> ${doc.subscritorString}</td>
+				<td><b>Classificação:</b>
+					${doc.exClassificacao.descricaoCompleta}</td>
+			</tr>
+			<tr class="header">
+				<td><b>Para:</b> ${doc.destinatarioString}</td>
+				<td><b>Descrição:</b> ${doc.descrDocumento}</td>
+			</tr>
+			<c:if test="${doc.conteudo != ''}">
+				<tr>
+					<td colspan="2">
+						<div id="conteudo" style="padding-top: 10px;"><tags:fixdocumenthtml>${doc.conteudoBlobHtmlString}</tags:fixdocumenthtml></div>
+					</td>
+				</tr>
+			</c:if>
+		</table>
+		
+		</div>
+
 	<!--<c:choose>
 	<c:when test="${fechar eq true}"> 
 		<c:set var="acao" value="fechar_assinar_gravar" />
@@ -55,36 +89,10 @@ End Function
 		namespace="/expediente/mov" theme="simple" validate="false"
 		method="POST">
 		<ww:hidden name="sigla" value="${sigla}" />
-		<h1>
-			<b>Confirme os dados do documento abaixo:</b>
-		</h1>
-
 		<table border="0" width="100%">
 			<tr>
-				<td>
-					<table class="message" width="100%">
-						<tr class="header">
-							<td width="50%"><b>Documento
-									${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
-							<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
-						</tr>
-						<tr class="header">
-							<td><b>De:</b> ${doc.subscritorString}</td>
-							<td><b>Classificação:</b>
-								${doc.exClassificacao.descricaoCompleta}</td>
-						</tr>
-						<tr class="header">
-							<td><b>Para:</b> ${doc.destinatarioString}</td>
-							<td><b>Descrição:</b> ${doc.descrDocumento}</td>
-						</tr>
-						<c:if test="${doc.conteudo != ''}">
-							<tr>
-								<td colspan="2">
-									<div id="conteudo">${doc.conteudoBlobHtmlString}</div>
-								</td>
-							</tr>
-						</c:if>
-					</table> <br /> <ww:hidden name="conteudo_b64"
+				<td style="padding-top:10px">
+					<ww:hidden name="conteudo_b64"
 						value="${doc.conteudoBlobPdfB64}" /> <ww:hidden
 						name="assinaturaB64" /> <ww:hidden name="assinante" />
 					<center>
@@ -101,4 +109,6 @@ End Function
     <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/hashSHA1/doc/${doc.codigoCompacto}.pdf"  />
     <%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/doc/${doc.codigoCompacto}.pdf"  /> --%>
 	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
+	
+	</div></div>
 </siga:pagina>

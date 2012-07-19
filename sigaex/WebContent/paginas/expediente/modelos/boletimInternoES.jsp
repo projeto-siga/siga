@@ -91,7 +91,7 @@
 			<table width="100%" align="left" border="0" bgcolor="#FFFFFF">
 				<tr bgcolor="#FFFFFF">
 					<td align="left" valign="bottom" width="100%"><img
-						src="contextpath/imagens/cabecalhoBoletimInterno.gif" width="450" height="65" /></td>
+						src="contextpath/imagens/cabecalhoBoletimInternoES.gif" width="450" height="65" /></td>
 				</tr>
 			</table>
 		</td></tr>

@@ -19,7 +19,7 @@
 					</li> -->
 					<!-- <li><a href="/SigaServicos/">Serviços</a>
 					</li> -->
-					<li><a href="/siga-beneficios/">Benefícios</a>
+					<li><a href="http://siga-novo:9080/siga/principal.action?sistema=/siga-beneficios/">Benefícios</a>
 					</li>
 				</ul>
 			</li>

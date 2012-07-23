@@ -43,11 +43,9 @@ public abstract class ThreadFilter implements Filter {
 	 */
 	protected StringBuilder iniciaAuditoria(final ServletRequest request) {
 		
-		StringBuilder csv = null;
+		final StringBuilder csv = new StringBuilder();
 		
 		if ( this.isAuditaThreadFilter ) {
-			
-			csv = new StringBuilder();
 			
 			HttpServletRequest r = (HttpServletRequest) request;
 			
@@ -56,49 +54,47 @@ public abstract class ThreadFilter implements Filter {
 			String uri = r.getRequestURI();
 			String action = this.getAction( uri, contexto );
 			String queryString = r.getQueryString();
+			String userPrincipalName = this.getUserPrincipalName( r );
 			
-			csv.append( SEPARADOR )
-					.append( ASPAS )
-					.append( hostName )
-					.append( ASPAS )
-					.append( SEPARADOR )
-					.append( contexto )
-					.append( SEPARADOR )
-					.append( ASPAS )
-					.append( action )
-					.append( ASPAS )
-					.append( SEPARADOR );
+			appendEntreAspas( csv, hostName );
+			appendEntreAspas( csv, contexto );
+			appendEntreAspas( csv, action );
+			appendEntreAspas( csv, queryString );
+			appendEntreAspas( csv, userPrincipalName );
+			appendEntreAspas( csv, r.getRequestURL() );
 			
-			if ( StringUtils.isNotBlank( queryString ) ) {				
-				csv.append( ASPAS )
-				   .append( queryString )
-				   .append( ASPAS );
-			} 
 			SigaHibernateAuditorLogUtil.iniciaMarcacaoDeTempoGasto();
 		}
 		
 		return csv;
 	}
-	
+
+	/**
+	 * 
+	 * @param request
+	 * @return Matrícula do Usuário obtida através do método getName da implementação da interface Principal
+	 */
+	protected String getUserPrincipalName(HttpServletRequest request) {
+		return request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "";
+	}
+
 	/**
 	 * Marca o momento em que o ThreadFilter terminou a execução do método doFilter loga a URL que está sendo executada e o tempo gasto durante o processo.</br>
 	 * <b>Obs:</b> Para que funcione, é necessário que a propriedade <i>audita.thread.filter</i> esteja definida como <i>true</i> no arquivo <i>siga.properties</i>.	
 	 */
-	protected void terminaAuditoria(StringBuilder csv) {
+	protected void terminaAuditoria(final StringBuilder csv) {
+		
 		if ( this.isAuditaThreadFilter && csv != null ) {
+			
 			String tempoGastoFormatado = SigaHibernateAuditorLogUtil.getTempoGastoFormatado();
 			long tempoGastoMillisegundos = SigaHibernateAuditorLogUtil.getTempoGastoMilliSegundos();
-			log.info( csv.append( SEPARADOR )
-							  .append( ASPAS )
-							  .append( tempoGastoFormatado )
-							  .append( ASPAS )
-							  .append( SEPARADOR )							  
-							  .append( ASPAS )
-							  .append( tempoGastoMillisegundos )
-							  .append( ASPAS ));
+			
+			appendEntreAspas( csv, tempoGastoFormatado );
+			appendEntreAspas( csv, tempoGastoMillisegundos );
+			
+			log.info( csv );
 		}
 	}
-	
 
 	private String getContexto(HttpServletRequest r) {
 		String contexto = r.getContextPath();
@@ -126,6 +122,24 @@ public abstract class ThreadFilter implements Filter {
 			e.printStackTrace();
 		}
 		return hostName;
+	}
+	
+	private StringBuilder appendEntreAspas(StringBuilder csv, Object o) {
+		return csv.append( SEPARADOR )
+				  	.append( ASPAS )
+				  	.append( o )
+				  	.append( ASPAS );
+	}
+	
+	protected void logaExcecaoAoExecutarFiltro(final ServletRequest request,
+			final Exception ex) {
+		HttpServletRequest httpRequest = ( HttpServletRequest ) request;
+		String url = httpRequest.getRequestURL().toString();
+		String principalName = httpRequest.getUserPrincipal().getName();
+		String queryString = httpRequest.getQueryString() != null ? "?" + httpRequest.getQueryString() : ""; 
+		log.error( ex.getMessage() + "\nURL: " + url + queryString 
+		                           + "\nUser: " + principalName,
+		                           ex );
 	}
 	
 	public void init(FilterConfig arg0) throws ServletException {

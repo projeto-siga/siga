@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
 
@@ -96,8 +97,13 @@ public abstract class ThreadFilter implements Filter {
 		}
 	}
 
-	private String getContexto(HttpServletRequest r) {
-		String contexto = r.getContextPath();
+	/**
+	 * Extrai o contexto da aplicação a partir da requisição
+	 * @param request
+	 * @return Contexto da aplicação
+	 */
+	private String getContexto(HttpServletRequest request) {
+		String contexto = request.getContextPath();
 		if ( StringUtils.isNotBlank( contexto ) ) {
 			contexto = contexto.substring( 1 );
 		}
@@ -131,15 +137,24 @@ public abstract class ThreadFilter implements Filter {
 				  	.append( ASPAS );
 	}
 	
+	/**
+	 * Loga como error as exceções que vierem a acontecer durante a execução dos ThreadFiltesr 
+	 * @param request
+	 * @param ex
+	 */
 	protected void logaExcecaoAoExecutarFiltro(final ServletRequest request,
 			final Exception ex) {
+		
 		HttpServletRequest httpRequest = ( HttpServletRequest ) request;
+		
 		String url = httpRequest.getRequestURL().toString();
-		String principalName = httpRequest.getUserPrincipal().getName();
 		String queryString = httpRequest.getQueryString() != null ? "?" + httpRequest.getQueryString() : ""; 
-		log.error( ex.getMessage() + "\nURL: " + url + queryString 
-		                           + "\nUser: " + principalName,
-		                           ex );
+		String principalName = httpRequest.getUserPrincipal().getName();
+		
+		String mensagemErro = this.montaMensagemErroExcecoes( ex );
+		
+		log.error( mensagemErro + "\nURL: " + url + queryString 
+		                           + "\nUser: " + principalName );
 	}
 	
 	public void init(FilterConfig arg0) throws ServletException {
@@ -153,6 +168,19 @@ public abstract class ThreadFilter implements Filter {
 	
 	public void destroy() {
 		log.info("DESTROY THREAD FILTER");
+	}
+
+	protected String montaMensagemErroExcecoes(Exception ex) {
+		String mensagemErro = "";
+		if ( ex != null ) {
+			mensagemErro +=  ex.getMessage();
+			if ( ex instanceof AplicacaoException && 
+					ex.getCause() != null) {
+				mensagemErro += " Causa: " + ex.getCause().getMessage();
+			}
+		}
+		
+		return mensagemErro;
 	}	
 
 }

@@ -120,13 +120,12 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			super.logaExcecaoAoExecutarFiltro(request, e);
-			throw e;
-			/*if ( !WfDao.getInstance().transacaoEstaAtiva() ) {
-				throw new AplicacaoException( "A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
+			// TODO Verificar, pois que nem sempre que ocorre uma exceção no doFilter a mesma ocorreu por causa do timeout
+			if ( !WfDao.getInstance().transacaoEstaAtiva() ) {
+				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
 			}else{
 				throw e;	
-			}*/
+			}
 		}
 	}
 

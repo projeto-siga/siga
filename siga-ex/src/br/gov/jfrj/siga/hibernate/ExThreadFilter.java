@@ -132,14 +132,12 @@ public class ExThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			super.logaExcecaoAoExecutarFiltro(request, e);
-			throw e;
-			/*
+			// TODO Verificar, pois que nem sempre que ocorre uma exceção no doFilter a mesma ocorreu por causa do timeout
 			if ( !ExDao.getInstance().transacaoEstaAtiva() ) {
 				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
 			}else{
 				throw e;	
-			}*/
+			}
 		}
 	}
 	

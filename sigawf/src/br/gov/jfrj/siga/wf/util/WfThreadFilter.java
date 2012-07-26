@@ -57,7 +57,7 @@ public class WfThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		StringBuilder csv = super.iniciaAuditoria( request );
+		final StringBuilder csv = super.iniciaAuditoria( request );
 		
 		this.configuraHibernate();
 
@@ -65,8 +65,10 @@ public class WfThreadFilter extends ThreadFilter {
 			
 			this.executaFiltro( request, response, chain );
 
-		} catch (final Throwable ex) {
-			this.efetuaRollbackTransacao(ex);
+		} catch (final Exception ex) {
+			WfDao.rollbackTransacao();
+			super.logaExcecaoAoExecutarFiltro( request, ex );
+			throw new ServletException(ex);
 		} finally {
 			this.fechaContextoWorkflow();
 			this.fechaSessaoHibernate();
@@ -118,8 +120,9 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
+			// TODO Verificar, pois que nem sempre que ocorre uma exceção no doFilter a mesma ocorreu por causa do timeout
 			if ( !WfDao.getInstance().transacaoEstaAtiva() ) {
-				throw new AplicacaoException( "A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
+				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
 			}else{
 				throw e;	
 			}
@@ -159,13 +162,6 @@ public class WfThreadFilter extends ThreadFilter {
 
 			}
 		}
-	}
-	
-	private void efetuaRollbackTransacao(final Throwable ex) throws ServletException {
-		WfDao.rollbackTransacao();
-		log.error( ex.getMessage(), ex );
-		ex.printStackTrace();
-		throw new ServletException(ex);
 	}
 	
 	private void fechaContextoWorkflow() {

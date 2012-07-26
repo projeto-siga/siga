@@ -52,7 +52,7 @@ public class ExThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 		
-		StringBuilder csv = super.iniciaAuditoria( request );
+		final StringBuilder csv = super.iniciaAuditoria( request );
 		
 		this.configuraHibernate();
 		
@@ -60,8 +60,10 @@ public class ExThreadFilter extends ThreadFilter {
 			
 			this.executaFiltro( request, response, chain );
 
-		} catch (final Throwable ex) {
-			this.efetuaRollbackTransacao(ex);
+		} catch (final Exception ex) {
+			 ExDao.rollbackTransacao();
+             super.logaExcecaoAoExecutarFiltro( request, ex );
+             throw new ServletException(ex);
 		} finally {
 			this.fechaSessaoHibernate();
 			this.liberaInstanciaDao();
@@ -130,6 +132,7 @@ public class ExThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
+			// TODO Verificar, pois que nem sempre que ocorre uma exceção no doFilter a mesma ocorreu por causa do timeout
 			if ( !ExDao.getInstance().transacaoEstaAtiva() ) {
 				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
 			}else{
@@ -138,19 +141,12 @@ public class ExThreadFilter extends ThreadFilter {
 		}
 	}
 	
-	private void efetuaRollbackTransacao(final Throwable ex) throws ServletException {
-		ExDao.rollbackTransacao();
-		log.error( ex.getMessage(), ex );
-		ex.printStackTrace();
-		throw new ServletException(ex);
-	}
-	
 	private void fechaSessaoHibernate() {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
 			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
-			ex.printStackTrace();
+			// ex.printStackTrace();
 		}
 	}
 	
@@ -159,7 +155,7 @@ public class ExThreadFilter extends ThreadFilter {
 			ExDao.freeInstance();
 		} catch (Exception ex) {
 			log.error( ex.getMessage(), ex );
-			ex.printStackTrace();
+			// ex.printStackTrace();
 		}
 	}
 

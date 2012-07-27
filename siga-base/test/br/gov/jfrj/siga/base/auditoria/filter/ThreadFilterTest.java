@@ -1,9 +1,11 @@
 package br.gov.jfrj.siga.base.auditoria.filter;
 
+import static junit.framework.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.*;
+import br.gov.jfrj.siga.base.AplicacaoException;
 
 public class ThreadFilterTest {
 	
@@ -11,7 +13,7 @@ public class ThreadFilterTest {
 	
 	@Before
 	public void setUp(){
-		this.threadFilter = new TestThreadFilter();
+		this.threadFilter = new ThreadFilter(){};
 	}
 
 	@Test
@@ -34,6 +36,46 @@ public class ThreadFilterTest {
 		assertEquals( actionEsperada, actionResultado);
 	}
 	
-	class TestThreadFilter extends ThreadFilter {}
+	@Test
+	public void deveRetornarMensagemDaCausaEMensagemDaAplicacaoExceptionQuandoAplicacaoExceptionEncapsularException() throws Exception {
+		
+		String msgCausa = "causa";
+		Exception ex = new Exception( msgCausa );
+		
+		String msgAplicacaoException = "aplicacao exception";
+		AplicacaoException aex = new AplicacaoException( msgAplicacaoException, 0, ex );
+		
+		String retorno = this.threadFilter.montaMensagemErroExcecoes( aex );
+		
+		String msgEsperada = msgAplicacaoException + " Causa: " + msgCausa; 
+		
+		assertEquals( msgEsperada, retorno );
+	}
+	
+	@Test
+	public void deveRetornarSomenteMensagemDaCasuaQuandoSomenteACausaForLancada() throws Exception {
+		
+		String msgCausa = "causa";
+		Exception ex = new Exception( msgCausa );
+		
+		String retorno = this.threadFilter.montaMensagemErroExcecoes( ex );
+		assertEquals( msgCausa, retorno );
+	}
+	
+	@Test
+	public void deveRetornarSomenteMensagemQuandoSomenteAplicacaoExceptionForLancada() throws Exception {
+		
+		String msgAplicacaoException = "aplicacao exception";
+		AplicacaoException ex = new AplicacaoException( msgAplicacaoException );
+		
+		String retorno = this.threadFilter.montaMensagemErroExcecoes( ex );
+		assertEquals( msgAplicacaoException, retorno );
+	}
+	
+	@Test
+	public void deveRetornarStringVaziaQuandoExcecaoForNula() throws Exception {
+		String retorno = this.threadFilter.montaMensagemErroExcecoes( null );
+		assertEquals( "", retorno );
+	}
 	
 }

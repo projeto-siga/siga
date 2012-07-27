@@ -232,7 +232,7 @@ public class HierarquizadorBoletimInternoES {
 
 		// Se é matéria do Rio...
 		if ((doc.getExModelo().getIdMod() != 234 &&  doc.getLocalidadeString().trim().toLowerCase().equals(
-				"rio de janeiro")) ||
+				"vitória")) ||
 				(doc.getExModelo().getIdMod() == 234 &&  !doc.getForm().containsKey("orgOrigem_lotacaoSel.descricao"))) {
 
 			// Se não existe subtópico no boletim pro modelo desse doc...

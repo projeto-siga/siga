@@ -179,10 +179,11 @@ ${meta}
 								<siga:selecao propriedade="buscar" modulo="sigaex"
 									tipo="expediente" tema="simple" ocultardescricao="sim"
 									buscar="nao" siglaInicial="Buscar documento" />
-								<script>
+								<script type="text/javascript">
 									var fld = document
 											.getElementById("buscar_expedienteSel_sigla");
 									fld.setAttribute("class", "gt-search-text");
+									fld.className = "gt-search-text";
 									fld.onfocus = function() {
 										if (this.value == 'Buscar documento') {
 											this.value = '';
@@ -192,14 +193,16 @@ ${meta}
 										if (this.value == '') {
 											this.value = 'Buscar documento';
 											return;
-										}
+										} 
 										if (this.value != 'Buscar documento')
 											ajax_buscar_expediente();
 									};
 									fld.onkeypress = function(event) {
-										var keyCode = event.keyCode ? event.keyCode
-												: event.which ? event.which
-														: event.charCode;
+										event = (event) ? event : window.event
+										var keyCode = (event.which) ? event.which : event.keyCode										
+										//var keyCode = event.keyCode ? event.keyCode
+										//		: event.which ? event.which
+										//				: event.charCode;
 										var fid = document.getElementById("buscar_expedienteSel_id");
 										if (keyCode == 13) {
 											if (fid.value == null

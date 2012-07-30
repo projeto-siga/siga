@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
-public class ExTipoDespachoAction extends SigaActionSupport {
+public class ExTipoDespachoAction extends ExActionSupport {
 
 	private String descTpDespacho;
 
@@ -37,6 +37,7 @@ public class ExTipoDespachoAction extends SigaActionSupport {
 	private List<ExTipoDespacho> tiposDespacho;
 
 	public String aEditar() throws Exception {
+		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
 
 		tiposDespacho = dao().listarTodos(ExTipoDespacho.class);
 		if (getId() != null) {
@@ -52,6 +53,7 @@ public class ExTipoDespachoAction extends SigaActionSupport {
 	}
 
 	public String aGravar() throws Exception {
+		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
 
 		try {
 			ExTipoDespacho tipoDespacho;
@@ -85,6 +87,8 @@ public class ExTipoDespachoAction extends SigaActionSupport {
 	}
 
 	public String aListar() throws Exception {
+		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
+
 		tiposDespacho = dao().listarTodos(ExTipoDespacho.class);
 		return SUCCESS;
 	}

@@ -72,7 +72,7 @@ public class CdServiceImplTest2 extends TestCase {
 		System.out.println(Base64.encode(MessageDigest.getInstance("SHA1")
 				.digest(DATA)));
 	}
-
+/*
 	public void testValidarAssinaturaPKCS7() {
 		String s;
 		s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
@@ -220,4 +220,5 @@ public class CdServiceImplTest2 extends TestCase {
 		sCPF = c.recuperarCPF(CMS);
 		assertEquals(sCPF, "00489623760");
 	}
+*/	
 }

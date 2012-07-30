@@ -150,7 +150,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	/** The value of the simple dtDoc property. */
 	private String dtDocString;
-	
+
 	private String dtDocOriginalString;
 
 	/** The value of the simple dtRegDoc property. */
@@ -684,7 +684,7 @@ public class ExDocumentoAction extends ExActionSupport {
 						+ (getRequest().getServerPort() > 0 ? ":"
 								+ getRequest().getServerPort() : "") });
 
-		//...inclusive nas operações com preenchimento automático 
+		// ...inclusive nas operações com preenchimento automático
 		if (getPreenchRedirect() != null && getPreenchRedirect().length() > 2) {
 			setPreenchRedirect(getPreenchRedirect() + "&serverAndPort="
 					+ getPar().get("serverAndPort")[0]);
@@ -1050,7 +1050,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					.fechar(getCadastrante(), getLotaTitular(), doc));
 
 		} catch (final Throwable t) {
-			throw new AplicacaoException(t.getMessage());
+			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
 		}
 
 		return Action.SUCCESS;
@@ -1111,12 +1111,12 @@ public class ExDocumentoAction extends ExActionSupport {
 			if (!doc.isProcesso() && doc.getDescrDocumento().length() > 256)
 				throw new AplicacaoException(
 						"O campo descrição possui mais do que 256 caracteres.");
-			
-			if(doc.getDtFechamento() != null) {
+
+			if (doc.getDtFechamento() != null) {
 				Date dt = dao().dt();
 				Calendar c = Calendar.getInstance();
 				c.setTime(dt);
-				
+
 				Calendar dtDocCalendar = Calendar.getInstance();
 				dtDocCalendar.setTime(doc.getDtDoc());
 
@@ -1537,12 +1537,13 @@ public class ExDocumentoAction extends ExActionSupport {
 		DpLotacao backupLotaTitular = getLotaTitular();
 		DpPessoa backupTitular = getTitular();
 		DpPessoa backupCadastrante = getCadastrante();
-		
+
 		BeanUtils.copyProperties(this, doc);
-		
+
 		setTitular(backupTitular);
 		setLotaTitular(backupLotaTitular);
-		// Orlando: Inclusão da linha, abaixo, para preservar o cadastrante do ambiente.
+		// Orlando: Inclusão da linha, abaixo, para preservar o cadastrante do
+		// ambiente.
 		setCadastrante(backupCadastrante);
 
 		if (doc.getConteudoBlob("doc.htm") != null)
@@ -1607,7 +1608,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			setDtDocString(df.format(doc.getDtDoc()));
 		} catch (final Exception e) {
 		}
-		
+
 		try {
 			setDtDocOriginalString(df.format(doc.getDtDocOriginal()));
 		} catch (final Exception e) {
@@ -2078,15 +2079,19 @@ public class ExDocumentoAction extends ExActionSupport {
 					CpOrgao.class, false));
 		} else
 			doc.setOrgaoExterno(null);
-		
-//		Orlando: Alterei o IF abaixo incluindo a instrução "doc.setLotaCadastrante(getLotaTitular());".
-//		Esta linha estava "solta",após o IF, e era executada sempre. 
-//		Fiz esta modificação porque esta linha alterava a lotação do cadastrante, não permitindo que este,
-//		ao preencher o campo subscritor com a matrícula de outro usuário, tivesse acesso ao documento.
 
-		if (doc.getCadastrante() == null){
+		// Orlando: Alterei o IF abaixo incluindo a instrução
+		// "doc.setLotaCadastrante(getLotaTitular());".
+		// Esta linha estava "solta",após o IF, e era executada sempre.
+		// Fiz esta modificação porque esta linha alterava a lotação do
+		// cadastrante, não permitindo que este,
+		// ao preencher o campo subscritor com a matrícula de outro usuário,
+		// tivesse acesso ao documento.
+
+		if (doc.getCadastrante() == null) {
 			doc.setCadastrante(getCadastrante());
-		doc.setLotaCadastrante(getLotaTitular());}
+			doc.setLotaCadastrante(getLotaTitular());
+		}
 
 		if (doc.getLotaCadastrante() == null)
 			doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
@@ -2143,7 +2148,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		if (doc.getDtRegDoc() == null)
 			doc.setDtRegDoc(dao().dt());
-		
+
 		try {
 			doc.setDtDocOriginal(df.parse(getDtDocOriginalString()));
 		} catch (final ParseException e) {

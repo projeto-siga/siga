@@ -48,7 +48,7 @@ public class DocumentoHtml extends AbstractDocumento {
 
 		StringBuilder sb = new StringBuilder();
 		boolean fFirst = true;
-		sb.append("<html><body style=\"margin:2px; padding:0pt;\">");
+		sb.append("<html><body style=\"margin:2px; padding:0pt; background-color: #E2EAEE;overflow:visible;\">");
 		for (ExArquivoNumerado an : ans) {
 			String numeracao = null;
 			// if (fFirst)
@@ -95,7 +95,7 @@ public class DocumentoHtml extends AbstractDocumento {
 				sb.append("</div>");
 			}
 
-			if (an.getArquivo().getMensagem() != null) {
+			if (an.getArquivo().getMensagem() != null && an.getArquivo().getMensagem().trim().length() > 0) {
 				sb.append("</td></tr><tr><td>");
 				sb
 						.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");

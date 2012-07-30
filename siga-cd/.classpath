@@ -135,5 +135,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/siga-ext"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

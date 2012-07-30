@@ -68,7 +68,7 @@ If you add styles to this template, be sure to include it in your template files
 	margin: 0;
 	padding-bottom: 3px;
 	padding-left: 1px;
-	line-height: 150%;
+	line-height: 175% !important;
 }
 
 .gt-table-action-list img {

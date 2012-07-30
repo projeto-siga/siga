@@ -36,6 +36,10 @@
 
 		</action>
 
+		<action name="redirect"  class="br.gov.jfrj.siga.libs.webwork.LogoffAction" method="redirect">
+			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.localPort}${uri}</result>
+		</action>
+
 		<action name="trocar_senha" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aTrocarSenha">
 			<result>/paginas/entradas/trocasenha.jsp</result>

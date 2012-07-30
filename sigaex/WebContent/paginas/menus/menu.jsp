@@ -5,33 +5,26 @@
 <li><a href="#">Documentos</a>
 	<ul>
 		<li><ww:url id="url" action="editar" namespace="/expediente/doc" />
-			<ww:a href="%{url}">Novo</ww:a>
-		</li>
+			<ww:a href="%{url}">Novo</ww:a></li>
 		<li><ww:url id="url" action="listar" namespace="/expediente/doc">
 				<ww:param name="primeiraVez">sim</ww:param>
-			</ww:url> <ww:a href="%{url}">Pesquisar</ww:a>
-		</li>
+			</ww:url> <ww:a href="%{url}">Pesquisar</ww:a></li>
 		<li><ww:url id="url" action="full_search"
 				namespace="/expediente/doc">
-			</ww:url> <ww:a href="%{url}">Pesquisar por texto</ww:a>
-		</li>
+			</ww:url> <ww:a href="%{url}">Pesquisar por texto</ww:a></li>
 
 		<li><ww:url id="url" action="transferir_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Transferir em lote" />
-		</li>
+				texto="Transferir em lote" /></li>
 		<li><ww:url id="url" action="receber_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Receber em lote" />
-		</li>
+				texto="Receber em lote" /></li>
 		<li><ww:url id="url" action="arquivar_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Arquivar em lote" />
-		</li>
+				texto="Arquivar em lote" /></li>
 		<li><ww:url id="url" action="anotar_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Anotar em lote" />
-		</li>
+				texto="Anotar em lote" /></li>
 		<c:catch>
 			<c:if
 				test="${f:testaCompetencia('atenderPedidoPublicacao',titular,lotaTitular,null)}">
@@ -55,19 +48,22 @@
 				</li>
 			</c:if>
 		</c:catch>
-	</ul>
-</li>
+	</ul></li>
 
-<li><a href="#">Ferramentas</a>
-	<ul>
-		<li><ww:url id="url" action="listar" namespace="/modelo" /> <ww:a
-				href="%{url}">Cadastro de modelos</ww:a>
-		</li>
-		<li><ww:url id="url" action="listar"
-				namespace="/despacho/tipodespacho" /> <ww:a href="%{url}">Cadastro de tipos de despacho</ww:a>
-		</li>
-	</ul>
-</li>
+<c:if
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas')}">
+	<li><a href="#">Ferramentas</a>
+		<ul>
+			<li><ww:url id="url" action="listar" namespace="/modelo" /> <ww:a
+					href="%{url}">Cadastro de modelos</ww:a></li>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
+				<li><ww:url id="url" action="listar"
+						namespace="/despacho/tipodespacho" /> <ww:a href="%{url}">Cadastro de tipos de despacho</ww:a>
+				</li>
+			</c:if>
+		</ul></li>
+</c:if>
 
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios')}">
@@ -79,8 +75,7 @@
 				<li><ww:url id="url" action="relRelatorios"
 						namespace="/expediente/rel">
 						<ww:param name="nomeArquivoRel">relFormularios.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relação de formulários</ww:a>
-				</li>
+					</ww:url> <ww:a href="%{url}">Relação de formulários</ww:a></li>
 			</c:if>
 
 			<%-- Substituído pelo pelo "relConsultaDocEntreDatas"
@@ -95,8 +90,7 @@
 				<li><ww:url id="url" action="relRelatorios"
 						namespace="/expediente/rel">
 						<ww:param name="nomeArquivoRel">relConsultaDocEntreDatas.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relação de documentos entre datas</ww:a>
-				</li>
+					</ww:url> <ww:a href="%{url}">Relação de documentos entre datas</ww:a></li>
 			</c:if>
 			<!-- 
 			<li><ww:url id="url" action="relRelatorios"
@@ -113,5 +107,6 @@
 				</li>
 			</c:if>
 
-		</ul></li>
+		</ul>
+	</li>
 </c:if>

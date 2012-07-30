@@ -47,6 +47,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.fop.area.IDTracker;
+import org.apache.velocity.runtime.parser.node.GetExecutor;
 import org.hibernate.Criteria;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Order;
@@ -1140,6 +1142,9 @@ public class ExBL extends CpBL {
 			// .getInstance("SHA1").digest(data));
 			// writeB64File("c:/trabalhos/java/cd_teste_pkcs7.b64", pkcs7);
 			// writeB64File("c:/trabalhos/java/cd_teste_cms.b64", cms);
+			
+			
+			
 
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro na assinatura de um documento",
@@ -1360,6 +1365,13 @@ public class ExBL extends CpBL {
 				lCPF = Long.valueOf(sCPF);
 			}
 
+			//Orlando: Inseri o IF abaixo para que seja enviado um e-mail quando o despacho é assinado.
+			if (movAlvo.getIdTpMov()== ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA && movAlvo.getResp()!= null){
+				emailDeTransferência(movAlvo.getResp(), movAlvo.getLotaResp(),
+						movAlvo.getSiglaAssinatura(), movAlvo.getExDocumento().getCodigoString(),
+						movAlvo.getExDocumento().getDescrDocumento());
+			}
+			
 			// sNome = AssinaturaDigital.verificarAssinatura(movAlvo
 			// .getConteudoBlobpdf(), assinatura, null);
 
@@ -2934,6 +2946,8 @@ public class ExBL extends CpBL {
 	 * @throws Exception
 	 */
 	// Nato: retirei: final HttpServletRequest request,
+	
+		
 	public void transferir(final CpOrgao orgaoExterno, final String obsOrgao,
 			final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			final ExMobil mob, final Date dtMov, final Date dtMovIni,
@@ -2943,14 +2957,18 @@ public class ExBL extends CpBL {
 			final ExTipoDespacho tpDespacho, final boolean fInterno,
 			final String descrMov, final String conteudo,
 			String nmFuncaoSubscritor) throws AplicacaoException, Exception {
+		
+		
 		boolean fDespacho = tpDespacho != null || descrMov != null
 				|| conteudo != null;
+	
 		boolean fTranferencia = lotaResponsavel != null || responsavel != null;
+		
 
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
 
 		Date dtUltReceb = null;
-
+        
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
 					"Não é possível fazer despacho em um documento que faça parte de um apenso");
@@ -2976,7 +2994,6 @@ public class ExBL extends CpBL {
 
 				if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
 					throw new AplicacaoException("Transferência não permitida");
-
 				if (!m.getExDocumento().isAssinado()
 						&& !lotaResponsavel.equivale(m.getExDocumento()
 								.getLotaTitular())
@@ -3017,6 +3034,7 @@ public class ExBL extends CpBL {
 						throw new AplicacaoException(
 								"Não foram informados dados para o despacho/transferência");
 			}
+
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
@@ -3139,18 +3157,24 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao transferir documento.", 0, e);
 		}
 
+		
+
 		// Inicio envio e-mail
 		for (ExMobil m : set) {
-			// Se o documento for eletrônico e houve despacho, não envia email
+			// Se o documento for eletrônico e houve despacho, não envia
+			// email
 			// pois o despacho deve ser assinado primeiro
+			
 			if ((m.getExDocumento().isEletronico() && !fDespacho)
-					|| getConf().podePorConfiguracao(responsavel,
+						|| getConf().podePorConfiguracao(responsavel,
 							lotaResponsavel, m.doc().getExModelo(),
 							CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) {
+
 				try {
 					if (!fTranferencia)
 						return;
-
+					//Orlando: Inseri a condição abaixo para que o e-mail não seja enviado quando tratar-se de despacho com transferência que não estiver assinado.
+					if (tpDespacho == null )
 					emailDeTransferência(responsavel, lotaResponsavel,
 							m.getSigla(), m.getExDocumento().getCodigoString(),
 							m.getExDocumento().getDescrDocumento());
@@ -3165,12 +3189,13 @@ public class ExBL extends CpBL {
 
 					/*
 					 * throw new AplicacaoException(
-					 * "Erro ao enviar email de notificação de transferência.",
+					 * "Erro ao enviar email de notificação de transferência." ,
 					 * 0, e);
 					 */
 				}
 			}
 		}
+
 	}
 
 	private void emailDeTransferência(DpPessoa responsavel,

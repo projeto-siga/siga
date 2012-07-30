@@ -41,7 +41,7 @@ public class PrincipalAction extends SigaActionSupport {
 	 */
 	private static final long serialVersionUID = 1630775520737927455L;
 	private List listEstados;
-
+	
 	@Override
 	public String execute() throws Exception {
 		// super.getRequest ().setAttribute ( "_cadastrante" , super.getTitular

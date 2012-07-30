@@ -60,7 +60,7 @@ public class HibernateThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		StringBuilder csv = super.iniciaAuditoria( request );
+		final StringBuilder csv = super.iniciaAuditoria( request );
 		
 		this.configuraHibernate();
 		
@@ -68,8 +68,10 @@ public class HibernateThreadFilter extends ThreadFilter {
 			
 			this.executaFiltro( request, response, chain );
 			
-		} catch (final Throwable ex) {
-			this.efetuaRollbackTransacao( ex );
+		} catch (final Exception ex) {
+			CpDao.rollbackTransacao();
+			super.logaExcecaoAoExecutarFiltro( request, ex );
+			throw new ServletException(ex);
 		} finally {
 			this.fechaSessaoHibernate();
 			this.liberaInstanciaDao();
@@ -133,19 +135,13 @@ public class HibernateThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
+			// TODO Verificar, pois que nem sempre que ocorre uma exceção no doFilter a mesma ocorreu por causa do timeout
 			if ( !CpDao.getInstance().transacaoEstaAtiva() ) {
-				throw new AplicacaoException( "A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
+				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
 			}else{
 				throw e;	
 			}
 		}
-	}
-	
-	private void efetuaRollbackTransacao(final Throwable ex) throws ServletException {
-		CpDao.rollbackTransacao();
-		log.error( ex.getMessage(), ex );
-		ex.printStackTrace();
-		throw new ServletException(ex);
 	}
 	
 	private void fechaSessaoHibernate() {

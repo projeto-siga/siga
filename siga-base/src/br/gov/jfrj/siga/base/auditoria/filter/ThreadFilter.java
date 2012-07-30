@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.cfg.AnnotationConfiguration;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
 
@@ -44,11 +45,9 @@ public abstract class ThreadFilter implements Filter {
 	 */
 	protected StringBuilder iniciaAuditoria(final ServletRequest request) {
 		
-		StringBuilder csv = null;
+		final StringBuilder csv = new StringBuilder();
 		
 		if ( this.isAuditaThreadFilter ) {
-			
-			csv = new StringBuilder();
 			
 			HttpServletRequest r = (HttpServletRequest) request;
 			
@@ -57,52 +56,55 @@ public abstract class ThreadFilter implements Filter {
 			String uri = r.getRequestURI();
 			String action = this.getAction( uri, contexto );
 			String queryString = r.getQueryString();
+			String userPrincipalName = this.getUserPrincipalName( r );
 			
-			csv.append( SEPARADOR )
-					.append( ASPAS )
-					.append( hostName )
-					.append( ASPAS )
-					.append( SEPARADOR )
-					.append( contexto )
-					.append( SEPARADOR )
-					.append( ASPAS )
-					.append( action )
-					.append( ASPAS )
-					.append( SEPARADOR );
+			appendEntreAspas( csv, hostName );
+			appendEntreAspas( csv, contexto );
+			appendEntreAspas( csv, action );
+			appendEntreAspas( csv, queryString );
+			appendEntreAspas( csv, userPrincipalName );
+			appendEntreAspas( csv, r.getRequestURL() );
 			
-			if ( StringUtils.isNotBlank( queryString ) ) {				
-				csv.append( ASPAS )
-				   .append( queryString )
-				   .append( ASPAS );
-			} 
 			SigaHibernateAuditorLogUtil.iniciaMarcacaoDeTempoGasto();
 		}
 		
 		return csv;
 	}
-	
+
+	/**
+	 * 
+	 * @param request
+	 * @return Matrícula do Usuário obtida através do método getName da implementação da interface Principal
+	 */
+	protected String getUserPrincipalName(HttpServletRequest request) {
+		return request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "";
+	}
+
 	/**
 	 * Marca o momento em que o ThreadFilter terminou a execução do método doFilter loga a URL que está sendo executada e o tempo gasto durante o processo.</br>
 	 * <b>Obs:</b> Para que funcione, é necessário que a propriedade <i>audita.thread.filter</i> esteja definida como <i>true</i> no arquivo <i>siga.properties</i>.	
 	 */
-	protected void terminaAuditoria(StringBuilder csv) {
+	protected void terminaAuditoria(final StringBuilder csv) {
+		
 		if ( this.isAuditaThreadFilter && csv != null ) {
+			
 			String tempoGastoFormatado = SigaHibernateAuditorLogUtil.getTempoGastoFormatado();
 			long tempoGastoMillisegundos = SigaHibernateAuditorLogUtil.getTempoGastoMilliSegundos();
-			log.info( csv.append( SEPARADOR )
-							  .append( ASPAS )
-							  .append( tempoGastoFormatado )
-							  .append( ASPAS )
-							  .append( SEPARADOR )							  
-							  .append( ASPAS )
-							  .append( tempoGastoMillisegundos )
-							  .append( ASPAS ));
+			
+			appendEntreAspas( csv, tempoGastoFormatado );
+			appendEntreAspas( csv, tempoGastoMillisegundos );
+			
+			log.info( csv );
 		}
 	}
-	
 
-	private String getContexto(HttpServletRequest r) {
-		String contexto = r.getContextPath();
+	/**
+	 * Extrai o contexto da aplicação a partir da requisição
+	 * @param request
+	 * @return Contexto da aplicação
+	 */
+	private String getContexto(HttpServletRequest request) {
+		String contexto = request.getContextPath();
 		if ( StringUtils.isNotBlank( contexto ) ) {
 			contexto = contexto.substring( 1 );
 		}
@@ -129,6 +131,33 @@ public abstract class ThreadFilter implements Filter {
 		return hostName;
 	}
 	
+	private StringBuilder appendEntreAspas(StringBuilder csv, Object o) {
+		return csv.append( SEPARADOR )
+				  	.append( ASPAS )
+				  	.append( o )
+				  	.append( ASPAS );
+	}
+	
+	/**
+	 * Loga como error as exceções que vierem a acontecer durante a execução dos ThreadFiltesr 
+	 * @param request
+	 * @param ex
+	 */
+	protected void logaExcecaoAoExecutarFiltro(final ServletRequest request,
+			final Exception ex) {
+		
+		HttpServletRequest httpRequest = ( HttpServletRequest ) request;
+		
+		String url = httpRequest.getRequestURL().toString();
+		String queryString = httpRequest.getQueryString() != null ? "?" + httpRequest.getQueryString() : ""; 
+		String principalName = httpRequest.getUserPrincipal().getName();
+		
+		String mensagemErro = this.montaMensagemErroExcecoes( ex );
+		
+		log.error( mensagemErro + "\nURL: " + url + queryString 
+		                           + "\nUser: " + principalName );
+	}
+	
 	public void init(FilterConfig arg0) throws ServletException {
 		log.info("INIT THREAD FILTER");
 	}
@@ -140,6 +169,19 @@ public abstract class ThreadFilter implements Filter {
 	
 	public void destroy() {
 		log.info("DESTROY THREAD FILTER");
+	}
+
+	protected String montaMensagemErroExcecoes(Exception ex) {
+		String mensagemErro = "";
+		if ( ex != null ) {
+			mensagemErro +=  ex.getMessage();
+			if ( ex instanceof AplicacaoException && 
+					ex.getCause() != null) {
+				mensagemErro += " Causa: " + ex.getCause().getMessage();
+			}
+		}
+		
+		return mensagemErro;
 	}	
 
 	public void registerTransactionClasses(AnnotationConfiguration cfg) {

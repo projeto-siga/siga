@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
@@ -244,7 +245,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 			} else {
 				grp = (CpGrupo) Objeto
 						.getImplementation(daoGrupo(getIdCpGrupo()));
-				BeanUtils.copyProperties(grpNovo, grp);
+				PropertyUtils.copyProperties(grpNovo, grp);
 				grpNovo.setIdGrupo(null);
 			}
 			grpNovo.setCpGrupoPai(getGrupoPaiSel().getObjeto());

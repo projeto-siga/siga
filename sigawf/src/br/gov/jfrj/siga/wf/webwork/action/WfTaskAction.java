@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.jbpm.context.def.VariableAccess;
 import org.jbpm.graph.def.Node;
 import org.jbpm.graph.def.Transition;
@@ -522,7 +523,7 @@ public class WfTaskAction extends WfSigaActionSupport {
 
 		WfConhecimento cNovo = new WfConhecimento();
 		if (cAntigo != null) {
-			BeanUtils.copyProperties(cNovo, cAntigo);
+			PropertyUtils.copyProperties(cNovo, cAntigo);
 			cNovo.setId(null);
 		} else {
 			cNovo.setProcedimento(taskInstance.getProcessInstance()

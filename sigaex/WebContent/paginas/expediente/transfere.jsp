@@ -100,9 +100,14 @@ function popitup_movimentacao() {
 </script>
 
 
-	<table width="100%">
-		<tr>
-			<td><ww:form name="frm" action="transferir_gravar"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Despacho / Transferencia - ${mob.siglaEDescricaoCompleta}</h2>
+			
+			<div class="gt-content-box gt-for-table">
+			
+			<ww:form name="frm" action="transferir_gravar"
 				namespace="/expediente/mov" theme="simple" method="GET">
 				<ww:hidden name="postback" value="1" />
 				<ww:hidden name="docFilho" value="true" />
@@ -132,11 +137,7 @@ function popitup_movimentacao() {
 			<html:hidden property="idDoc" />
 			<html:hidden property="numVia" /> --%>
 
-				<h1>Despacho / Transferencia - ${doc.codigo} <c:if
-					test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if></h1>
-				<table class="form" width="100%">
+				<table class="gt-form-table">
 					<tr class="header">
 						<td colspan="2">Despacho</td>
 					</tr>
@@ -289,7 +290,7 @@ function popitup_movimentacao() {
 					</tr>
 					<tr>
 						<td colspan=2><input type="checkbox" name="protocolo"
-							value="mostrar" />Mostrar protocolo ao concluir a transferência</td>
+							value="mostrar" />&nbsp;Mostrar protocolo ao concluir a transferência</td>
 					</tr>
 
 					<%--<c:if test="${tipoResponsavel != 3}">
@@ -312,17 +313,12 @@ function popitup_movimentacao() {
 							<td><ww:textfield size="30" name="obsOrgao" /></td>
 						</tr>
 					</c:if>
-					<tr class="button">
-						<td></td>
-						<td><input type="submit" value="Ok" class="once"/> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" /> <input
-							type="button" name="ver_doc"
-							value="Visualizar o modelo preenchido"
-							onclick="javascript: popitup_movimentacao();" /></td>
+					<tr>
+						<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left once" /> <input type="button"
+							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
+							<input type="button" name="ver_doc"	value="Visualizar o despacho" class="gt-btn-large gt-btn-left" onclick="javascript: popitup_movimentacao();"/></td>
 					</tr>
 				</table>
-			</ww:form></td>
-		</tr>
-	</table>
-
+			</ww:form>
+	</div></div></div>
 </siga:pagina>

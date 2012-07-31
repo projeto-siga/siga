@@ -305,10 +305,24 @@ function checkBoxMsg() {
 
 </script>
 
-	<center>
-	<table border="0" width="100%">
-		<tr>
-			<td><ww:form id="frm" name="frm" action="editar"
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+	
+		<h2>
+			<c:choose>
+				<c:when test='${empty doc}'>
+					Novo Documento
+				</c:when>
+				<c:otherwise>
+					<span id="codigoDoc">${doc.codigo}</span>
+					<!-- de: <span id="dataDoc">${doc.dtRegDocDDMMYY}</span>-->
+				</c:otherwise>
+			</c:choose>
+		</h2>
+				
+		<div class="gt-content-box gt-for-table">
+
+			<ww:form id="frm" name="frm" action="editar"
 				namespace="/expediente/doc" theme="simple" method="POST">
 				<ww:token />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
@@ -320,16 +334,14 @@ function checkBoxMsg() {
 				<input type="hidden" name="campos" value="criandoAnexo" />
 				<ww:hidden name="criandoAnexo" value="${criandoAnexo}" />
 
-				<table class="form" width="100%">
+				<table class="gt-form-table">
 					<tr class="header">
 						<c:choose>
 							<c:when test='${empty doc}'>
 								<td colspan="4">Novo Documento</td>
 							</c:when>
 							<c:otherwise>
-								<td>Documento:</td>
-								<td colspan="3"><span id="codigoDoc">${doc.codigo}</span>
-								de: <span id="dataDoc">${doc.dtRegDocDDMMYY}</span></td>
+								<td colspan="4">Dados básicos:</td>
 							</c:otherwise>
 						</c:choose>
 					</tr>
@@ -463,7 +475,7 @@ function checkBoxMsg() {
 						tema="simple" /></td>
 					</tr>
 					<tr>
-						<td>Função;Lotação;Localidade:</td>
+						<td>Função;<wbr/>Lotação;<wbr/>Localidade:</td>
 						<td colspan="3"><input type="hidden" name="campos"
 							value="nmFuncaoSubscritor" /> <ww:textfield
 							name="nmFuncaoSubscritor" size="50" maxLength="128" />
@@ -642,7 +654,7 @@ function checkBoxMsg() {
 						<input type="hidden" name="campos" value="descrDocumento" />
 						<td>Descrição:</td>
 						<td colspan="3"><ww:textarea name="descrDocumento" cols="80"
-							rows="3" id="descrDocumento" /> <br>
+							rows="2" id="descrDocumento" cssClass="gt-form-textarea"/> <br>
 						<span><b>(preencher o campo acima com palavras-chave,
 						sempre usando substantivos, gênero masculino e singular)</b></span></td>
 					</tr>
@@ -674,9 +686,11 @@ function checkBoxMsg() {
 					<c:if test='${tipoDocumento == "interno"}'>
 						<c:if
 							test="${modelo.conteudoTpBlob == 'template/freemarker' or not empty modelo.nmArqMod}">
+							<tr class="header">
+								<td colspan="4">Dados complementares</td>
+							</tr>
 							<tr>
-								<td>Entrevista:</td>
-								<td colspan="3"><siga:span id="spanEntrevista"
+								<td colspan="4"><siga:span id="spanEntrevista"
 									depende="tipoDestinatario;destinatario;forma;modelo">
 									<c:if test="${modelo.conteudoTpBlob == 'template/freemarker'}">
 										${f:processarModelo(doc, 'entrevista', par, preenchRedirect)}
@@ -690,26 +704,25 @@ function checkBoxMsg() {
 						</c:if>
 					</c:if>
 					<tr>
-						<td></td>
-						<td colspan="3"><input type="button"
-							onclick="javascript: gravarDoc();" name="gravar" value="Ok" /> <c:if
-							test='${tipoDocumento == "interno"}'>
+						<td colspan="4"><input type="button"
+							onclick="javascript: gravarDoc();" name="gravar" value="Ok" class="gt-btn-small gt-btn-left"/>
+						 	<c:if test='${tipoDocumento == "interno"}'>
 							<c:if test="${not empty modelo.nmArqMod or modelo.conteudoTpBlob == 'template/freemarker'}">
 								<input type="button" name="ver_doc"
-									value="Visualizar o modelo preenchido"
-									onclick="javascript: popitup_documento(false);" />
-								<img valign="center" src="/sigaex/imagens/pdf.gif"
+									value="Visualizar o Documento"
+									onclick="javascript: popitup_documento(false);" class="gt-btn-large gt-btn-left"/>
+								<input type="button" 
 									name="ver_doc_pdf"
-									onmouseover="javascript:this.style.cursor='hand'"
-									onclick="javascript: popitup_documento(true);" />
+									onclick="javascript: popitup_documento(true);" value="Visualizar a Impressão" class="gt-btn-large gt-btn-left"/>
 							</c:if>
 						</c:if></td>
 					</tr>
 				</table>
-			</ww:form></td>
-		</tr>
-	</table>
-	</center>
+			</ww:form>
+
+		</div>	
+	</div>
+</div>
 
 	<!--  tabela do rodapé -->
 </siga:pagina>

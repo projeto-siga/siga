@@ -54,7 +54,7 @@ function visualizarRelatorio(rel) {
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relConsultaDocEntreDatas.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelDocEntreDatas</c:set>
-		<c:set var="titulo_pagina" scope="request">Relatório documentos entre datas</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de documentos entre datas</c:set>
 		<c:set var="nomeRelatorio" scope="request">relConsultaDocEntreDatas.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relModelos.jsp"}'>
@@ -76,33 +76,30 @@ function visualizarRelatorio(rel) {
 	</c:otherwise>
 </c:choose>
 
-<table width="100%">
-	<tr>
-		<td><ww:form name="frmRelatorios" action="${actionName}"
+<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>${titulo_pagina}</h2>
+			<div class="gt-content-box gt-for-table">
+			
+		<ww:form name="frmRelatorios" action="${actionName}"
 			theme="simple" namespace="/expediente/rel" method="POST"
 			enctype="multipart/form-data">
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="secaoUsuario"
 				value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 			<ww:hidden name="tipoRelatorio" value="${tipoRelatorio}" />
-			<tr>
-				<td>
-				<table class="form" width="100%">
-					<tr class="header">
-						<td colspan="2">Dados do Relatório</td>
-					</tr>
-					<c:import url="/paginas/expediente/relatorios/${nomeRelatorio}"/>
-				</td>
+			
+			<table class="gt-form-table">
+			<tr class="header">
+				<td colspan="2">Dados do Relatório</td>
 			</tr>
+			<c:import url="/paginas/expediente/relatorios/${nomeRelatorio}"/>
 			<tr class="button">
-				<td></td>
-				<td><ww:url id="url" action="${actionName}"
+				<td colspan="2"><ww:url id="url" action="${actionName}"
 					namespace="/expediente/rel" /> <input type="button"
-					value=" Gerar " onclick="javascript:visualizarRelatorio('${url}');" /></td>
+					value="Gerar" onclick="javascript:visualizarRelatorio('${url}');" /></td>
 			</tr>
-</table>
-</ww:form></td>
-</tr>
-</table>
-
+			</table>
+		</ww:form>
+</div></div></div>
 </siga:pagina>

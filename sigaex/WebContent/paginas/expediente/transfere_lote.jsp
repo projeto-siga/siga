@@ -88,11 +88,18 @@
 	
 </script>
 
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Transferência em Lote</h2>
+
+			<div class="gt-content-box gt-for-table">
+
 	<ww:form name="frm" action="transferir_lote_gravar"
 		namespace="/expediente/mov" method="POST" theme="simple">
 		<ww:token />
 		<ww:hidden name="postback" value="1" />
-		<table class="form">
+		<table class="gt-form-table">
 			<tr class="header">
 				<td colspan="2">Transferência</td>
 			</tr>
@@ -165,12 +172,11 @@
 					name="txtall" id="txtall" maxlength="255" /></div>
 				</td>
 			</tr>
-			<tr>
-				<td></td>
-				<td><input type="submit" value="Transferir"></td>
+			<tr class="button">
+				<td colspan="2"><input type="submit" value="Transferir"></td>
 			</tr>
 		</table>
-		<br />
+		</div>
 
 		<c:forEach var="secao" begin="0" end="1">
 			<c:remove var="primeiro" />
@@ -178,11 +184,13 @@
 				<c:if
 					test="${(secao==0 and titular.idPessoaIni==m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni) or (secao==1 and titular.idPessoaIni!=m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni)}">
 					<c:if test="${empty primeiro}">
-						<h1>Atendente: <c:choose>
+						<br />
+						<h2>Atendente: <c:choose>
 							<c:when test="${secao==0}">${titular.descricao}</c:when>
 							<c:otherwise>${lotaTitular.descricao}</c:otherwise>
-						</c:choose></h1>
-						<table class="list" width="100%">
+						</c:choose></h2>
+						<div class="gt-content-box gt-for-table">
+						<table class="gt-table">
 							<tr class="header">
 								<td rowspan="2" align="right">Número</td>
 								<td colspan="3" align="center">Documento</td>
@@ -291,8 +299,9 @@
 			</c:forEach>
 			<c:if test="${not empty primeiro}">
 				</table>
+				</div>
 			</c:if>
 		</c:forEach>
 	</ww:form>
-
+	</div></div>
 </siga:pagina>

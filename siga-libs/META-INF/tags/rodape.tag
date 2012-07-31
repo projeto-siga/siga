@@ -1,15 +1,13 @@
-
 <%@ tag body-content="scriptless"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ attribute name="popup"%>
 <%@ attribute name="pagina_de_erro"%>
 
+<%--
 <c:if test="${not empty pagina_de_erro}">
 	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}"/>
 </c:if>
-
-
 
 <c:if test="${popup!='true' and empty pagina_de_erro}">
 	<c:if test="${false}">
@@ -62,21 +60,17 @@
 			onMouseOver="javascript:this.style.visibility='visible';"
 			onMouseOut="javascript:this.style.visibility='hidden';"><c:forEach
 			var="substituicao" items="${meusTitulares}">
-			<%--	<ww:url id="url" action="substituir_gravar" namespace="/substituicao" >
-			<ww:param name="idTitular">${substituicao.titular.idPessoa}</ww:param>
-			<ww:param name="idLotaTitular">${substituicao.lotaTitular.idLotacao}</ww:param>
-		</ww:url> --%>
-			<a
-				href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}"
-				style="color: #FFFFFF;"> <c:choose>
-				<c:when test="${not empty substituicao.titular}">
+			
+<a
+	href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}"
+	style="color: #FFFFFF;"> <c:choose>
+		<c:when test="${not empty substituicao.titular}">
 						${substituicao.titular.nomePessoa}
 					</c:when>
-				<c:otherwise>
+		<c:otherwise>
 						${substituicao.lotaTitular.nomeLotacao}
 					</c:otherwise>
-			</c:choose> <a> <br />
-		</c:forEach> <c:if
+	</c:choose> <a> <br /> </c:forEach> <c:if
 			test="${(not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao) ||(not empty titular && titular.idPessoa!=cadastrante.idPessoa)}">
 			<ww:a cssStyle="color:#FFFFFF"
 				href="/siga/substituicao/finalizar.action">
@@ -87,7 +81,7 @@
 					<c:otherwise>${lotaTitular.siglaLotacao}</c:otherwise>
 				</c:choose>
 			</ww:a>
-		</c:if></div>
-	</c:if>
-	</body>
-	</html>
+		</c:if>
+		</div> </c:if> --%>
+</body>
+</html>

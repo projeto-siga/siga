@@ -216,40 +216,13 @@
 			<url-pattern>/administracao/*</url-pattern>
 			<url-pattern>/expediente/*</url-pattern>
 			<url-pattern>/modelo/*</url-pattern>
+			<url-pattern>/despacho/*</url-pattern>
 			<url-pattern>/administracao.action</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Area do Administrador</web-resource-name>
-			<url-pattern>/despacho/tipodespacho/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>sigaadministrador</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Area do Desenvolvedor</web-resource-name>
-			<url-pattern>/manutencao/desenvolvimento/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>sigadesenvolvimento</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Páginas Restritas</web-resource-name>
-			<url-pattern>/paginas/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>superusuario</role-name>
-		</auth-constraint>
-	</security-constraint>
-	
 	
 	<login-config>
 		<auth-method>FORM</auth-method>
@@ -261,15 +234,6 @@
 	
 	<security-role>
 		<role-name>sigausuario</role-name>
-	</security-role>
-	<security-role>
-		<role-name>sigaadministrador</role-name>
-	</security-role>
-	<security-role>
-		<role-name>sigadesenvolvimento</role-name>
-	</security-role>
-	<security-role>
-		<role-name>superusuario</role-name>
 	</security-role>
 	
 	<error-page>

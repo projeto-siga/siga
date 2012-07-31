@@ -263,18 +263,6 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aSubstituir() throws Exception {
-		/*
-		 * DpSubstituicao dpSubstituicao = new DpSubstituicao();
-		 * dpSubstituicao.setSubstituto(getCadastrante());
-		 * dpSubstituicao.setLotaSubstituto(getCadastrante().getLotacao()); List<DpSubstituicao>
-		 * itens = dao().consultarSubstituicoesPermitidas( dpSubstituicao);
-		 */
-		setItens(getMeusTitulares());
-
-		return Action.SUCCESS;
-	}
-
 	public String aSubstituirGravar() throws Exception {
 		aFinalizar();
 		if (getIdTitular() != null) {

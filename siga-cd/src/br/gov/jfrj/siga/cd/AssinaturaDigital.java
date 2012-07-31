@@ -84,7 +84,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 public class AssinaturaDigital {
 
-	public static String verificarAssinatura(final byte[] conteudo,
+	protected static String verificarAssinatura(final byte[] conteudo,
 			final byte[] assinatura, String sMimeType, Date dtAssinatura)
 			throws InvalidKeyException, SecurityException, CRLException,
 			CertificateException, NoSuchProviderException,
@@ -290,7 +290,7 @@ public class AssinaturaDigital {
 	 * String>(oid, conteudo); }
 	 */
 	@SuppressWarnings("unchecked")
-	public static Properties recuperaNomesAlternativos(final byte[] assinatura)
+	protected static Properties recuperaNomesAlternativos(final byte[] assinatura)
 			throws InvalidKeyException, SecurityException, CRLException,
 			CertificateException, NoSuchProviderException,
 			NoSuchAlgorithmException, SignatureException, AplicacaoException,
@@ -348,7 +348,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	static public SignedData includeCrls(byte[] assinatura, Collection crls)
+	static protected SignedData includeCrls(byte[] assinatura, Collection crls)
 			throws IOException, Exception, SecurityException, CRLException,
 			NoSuchProviderException, NoSuchAlgorithmException {
 
@@ -380,7 +380,7 @@ public class AssinaturaDigital {
 	/**
 	 * Read an existing PKCS#7 object from a DER encoded byte array
 	 */
-	public static org.bouncycastle.asn1.pkcs.SignedData pkcs7SignedData(
+	protected static org.bouncycastle.asn1.pkcs.SignedData pkcs7SignedData(
 			byte[] in) {
 		ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(in));
 
@@ -411,7 +411,7 @@ public class AssinaturaDigital {
 	/**
 	 * Read an existing PKCS#7 object from a DER encoded byte array
 	 */
-	public static org.bouncycastle.asn1.cms.SignedData cmsSignedData(byte[] in) {
+	protected static org.bouncycastle.asn1.cms.SignedData cmsSignedData(byte[] in) {
 		ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(in));
 
 		//
@@ -439,7 +439,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static CertStore buscarCrlParaCadaCertificado(CertStore certs)
+	protected static CertStore buscarCrlParaCadaCertificado(CertStore certs)
 			throws CertStoreException, Exception {
 		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta((Collection<X509Certificate>) (certs
 				.getCertificates(null)));
@@ -463,7 +463,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("static-access")
-	public static byte[] converterPkcs7EmCMSComCertificadosECRLs(
+	protected static byte[] converterPkcs7EmCMSComCertificadosECRLs(
 			final byte[] assinatura) throws Exception {
 		CMSSignedData cmssd = new CMSSignedData(assinatura);
 		CertStore certs = cmssd.getCertificatesAndCRLs("Collection", "BC");
@@ -474,7 +474,7 @@ public class AssinaturaDigital {
 		return cmssdcrl.getEncoded();
 	}
 
-	public static String asHex(byte buf[]) {
+	protected static String asHex(byte buf[]) {
 		StringBuffer strbuf = new StringBuffer(buf.length * 2);
 
 		for (int i = 0; i < buf.length; i++) {
@@ -486,7 +486,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void main(String[] args) throws Exception {
+	protected static void main(String[] args) throws Exception {
 		byte[] pdf;
 		{
 			File f = new File("c:/trabalhos/java/teste.pdf");
@@ -543,7 +543,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void addSignatureToPDF(byte[] pdf, byte[] signature)
+	protected static void addSignatureToPDF(byte[] pdf, byte[] signature)
 			throws Exception {
 		PdfReader reader = new PdfReader(pdf);
 		FileOutputStream fout = new FileOutputStream(
@@ -591,7 +591,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static byte[] getHasheableRangeFromPDF(byte[] pdf) throws Exception {
+	protected static byte[] getHasheableRangeFromPDF(byte[] pdf) throws Exception {
 		PdfReader reader = new PdfReader(pdf);
 		OutputStream fout = new NullOutputStream();
 
@@ -641,7 +641,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static String validarAssinaturaCMS(byte[] digest,
+	protected static String validarAssinaturaCMS(byte[] digest,
 			String digestAlgorithm, byte[] assinatura, Date dtAssinatura)
 			throws InvalidKeyException, SecurityException, CRLException,
 			CertificateException, NoSuchProviderException,
@@ -724,7 +724,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static String validarAssinaturaCMSeCarimboDeTempo(
+	protected static String validarAssinaturaCMSeCarimboDeTempo(
 			final byte[] digest, final String digestAlgorithm,
 			final byte[] assinatura, Date dtAssinatura)
 			throws InvalidKeyException, SecurityException, CRLException,
@@ -788,7 +788,8 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static String validarAssinaturaPKCS7(final byte[] digest,
+	public
+	static String validarAssinaturaPKCS7(final byte[] digest,
 			final String digestAlgorithm, final byte[] assinatura,
 			Date dtAssinatura, boolean verificarLCRs)
 			throws InvalidKeyException, SecurityException, CRLException,
@@ -864,7 +865,7 @@ public class AssinaturaDigital {
 
 	}
 
-	public static String verificarAssinaturaCMSeCarimboDeTempo(
+	protected static String verificarAssinaturaCMSeCarimboDeTempo(
 			final byte[] conteudo, final byte[] assinatura, Date dtAssinatura)
 			throws InvalidKeyException, SecurityException, CRLException,
 			CertificateException, NoSuchProviderException,
@@ -890,7 +891,7 @@ public class AssinaturaDigital {
 
 	}
 
-	public static byte[] converterPkcs7EmCMSComCertificadosCRLsECarimboDeTempo(
+	protected static byte[] converterPkcs7EmCMSComCertificadosCRLsECarimboDeTempo(
 			byte[] pkcs7) throws Exception {
 		byte[] A_CP = converterPkcs7EmCMSComCertificadosECRLs(pkcs7);
 		CMSSignedData A_T = TimeStamper.addTimestamp(new CMSSignedData(A_CP));
@@ -911,7 +912,7 @@ public class AssinaturaDigital {
 		// fout2.close();
 	}
 
-	public static String recuperarCPF(final byte[] assinatura) throws Exception {
+	protected static String recuperarCPF(final byte[] assinatura) throws Exception {
 		try {
 			Properties props = AssinaturaDigital
 					.recuperaNomesAlternativos(assinatura);

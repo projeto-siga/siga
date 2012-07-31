@@ -50,9 +50,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.xerces.impl.dv.util.Base64;
 
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -879,14 +881,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
 
-		// String sArquivoPolitica = getRequest().getRealPath("") +
-		// File.separator
-		// + "policies-ICP-BRASIL" + File.separator + "PA_AD_RB.cer";
-		// assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
-		// doc.getConteudoBlobPdf(), sArquivoPolitica);
+		if (param("politica") != null) {
+			CdService client = Service.getCdService();
 
-		// assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
-		// doc.getConteudoBlobPdf(), null);
+			assinatura = client
+					.validarECompletarAssinatura(assinatura,
+							doc.getConteudoBlobPdf(), param("politica"),
+							mov.getDtMov());
+		}
 
 		try {
 			setMsg(Ex
@@ -908,6 +910,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 
 		return Action.SUCCESS;
+	}
+	
+	private static byte[] hexStringToByteArray(String s) {
+	    int len = s.length();
+	    byte[] data = new byte[len / 2];
+	    for (int i = 0; i < len; i += 2) {
+	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+	                             + Character.digit(s.charAt(i+1), 16));
+	    }
+	    return data;
 	}
 
 	private String recuperarAssinaturaAppletB64() throws ServletException,
@@ -940,12 +952,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		Object tools = null;
 		byte[] decoded = null;
 		try {
-			tools = Class
-					.forName(SigaExProperties.getAssinaturaDecodificador())
-					.newInstance();
-			decoded = (byte[]) tools.getClass()
-					.getMethod("fromHexLine", String.class)
-					.invoke(tools, hexEncoded);
+			decoded = hexStringToByteArray(hexEncoded);
 		} catch (Exception e) {
 			throw new AplicacaoException(e.getMessage());
 		}
@@ -1255,30 +1262,31 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getComp()
 					.podeCancelarAnexo(getTitular(), getLotaTitular(), mob, mov))
 				throw new AplicacaoException("Não é possível cancelar anexo");
-			
+
 		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
 			if (!Ex.getInstance()
 					.getComp()
 					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob,
 							mov))
 				throw new AplicacaoException("Não é possível cancelar anexo");
-			
+
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			if (!Ex.getInstance()
 					.getComp()
-					.podeCancelarVinculacaoPapel(getTitular(), getLotaTitular(), mob,
-							mov))
-				throw new AplicacaoException("Não é possível cancelar definição de perfil");
-			
+					.podeCancelarVinculacaoPapel(getTitular(),
+							getLotaTitular(), mob, mov))
+				throw new AplicacaoException(
+						"Não é possível cancelar definição de perfil");
+
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance()
 					.getComp()
-					.podeCancelarVinculacaoDocumento(getTitular(),getLotaTitular() , mob,
-							mov))
-				throw new AplicacaoException("Não é possível cancelar o documento vinculado.");
-			
-		}
-			else {
+					.podeCancelarVinculacaoDocumento(getTitular(),
+							getLotaTitular(), mob, mov))
+				throw new AplicacaoException(
+						"Não é possível cancelar o documento vinculado.");
+
+		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
@@ -1314,22 +1322,24 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob,
 							mov))
 				throw new AplicacaoException("Não é possível cancelar anexo");
-			
-		}	 else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
-					if (!Ex.getInstance()
-							.getComp()
-							.podeCancelarVinculacaoPapel(getTitular(), getLotaTitular(), mob,
-									mov))
-						throw new AplicacaoException("Não é possível cancelar definição de perfil");
-			
+
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoPapel(getTitular(),
+							getLotaTitular(), mob, mov))
+				throw new AplicacaoException(
+						"Não é possível cancelar definição de perfil");
+
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance()
 					.getComp()
-					.podeCancelarVinculacaoDocumento(mov.getCadastrante(), mov.getLotaCadastrante(), mob,
-							mov))
-				throw new AplicacaoException("Não é possível cancelar o documento vinculado.");
-			
-		}  else {
+					.podeCancelarVinculacaoDocumento(mov.getCadastrante(),
+							mov.getLotaCadastrante(), mob, mov))
+				throw new AplicacaoException(
+						"Não é possível cancelar o documento vinculado.");
+
+		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
@@ -2363,23 +2373,22 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aVincularPapelGravar() throws Exception {
 		buscarDocumento(true);
 
-		lerForm(mov);	
-		
+		lerForm(mov);
+
 		if (mov.getResp() == null && mov.getLotaResp() == null)
 			throw new AplicacaoException(
-			           "Não foi informado o responsável ou lotação responsável para a vinculação de papel ");	
-		
-		
-		if (mov.getResp() != null){
-		    mov.setDescrMov(mov.getExPapel().getDescPapel() + ":" 
-				+ mov.getResp().getDescricaoIniciaisMaiusculas() );
-		} else { 
+					"Não foi informado o responsável ou lotação responsável para a vinculação de papel ");
+
+		if (mov.getResp() != null) {
+			mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
+					+ mov.getResp().getDescricaoIniciaisMaiusculas());
+		} else {
 			if (mov.getLotaResp() != null) {
 				mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
 						+ mov.getLotaResp().getDescricaoIniciaisMaiusculas());
-			} 			
+			}
 		}
-			
+
 		final ExMovimentacao UltMov = mob.getUltimaMovimentacaoNaoCancelada();
 
 		if (!Ex.getInstance().getComp()
@@ -2686,9 +2695,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		map.put(3, "Órgão Externo");
 		return map;
 	}
-	
+
 	public Map<Integer, String> getListaTipoRespPerfil() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();		
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
 		map.put(2, "Órgão Integrado");
 		return map;

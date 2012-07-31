@@ -4,7 +4,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 
 <script type="text/javascript">
 submitOk = function() {

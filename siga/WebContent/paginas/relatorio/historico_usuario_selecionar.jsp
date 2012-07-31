@@ -5,36 +5,39 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<ww:url id="urlEmitir" action="emitir_historico_usuario" namespace="/gi/relatorio" />
- 
+<ww:url id="urlEmitir" action="emitir_historico_usuario"
+	namespace="/gi/relatorio" />
+
 <siga:pagina titulo="Relatório de Histórico de Permissões do Usuário">
-	
-	<h1>Relatório de Histórico de Permissões do Usuário</h1>
-		<br/>
-		<form method="get" action="javascript:submeter()">
-			<table id="tblfrm" class="form100">
-				   <tr  class="">
-				   		<td>
-							<label>Matrícula: </label>
-						</td>
-						<td>
-							<siga:selecao tipo="pessoa" tema="simple"
-								propriedade="pessoa" />
-						</td>
-					</tr>
-					<tr  class="">
-						<td>
-							<input type="submit" value="Gerar..."></input>
-						</td>
-						<td>
-						</td>
-					</tr>
-			</table>
-		</form>
-		<br/>
-		<div id="div-tempo" style="display:none; position:absolute ;text-align: center; filter:alpha(opacity=60); opacity:0.4; background-color: #dcdcdc; vertical-align:middle; border-width: 2px; border-color: darkblue; border-style: solid; " >
-        	<div  style="position:absolute; font-family:sans-serif50%; left:40%; top:50%; font-size:medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
-        </div>
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Relatório de Histórico de Permissões do Usuário</h2>
+			<div class="gt-content-box gt-for-table">
+				<form method="get" action="javascript:submeter()">
+					<table class="gt-form-table">
+						<tr class="">
+							<td><label>Matrícula: </label>
+							</td>
+							<td><siga:selecao tipo="pessoa" tema="simple"
+									propriedade="pessoa" />
+							</td>
+						</tr>
+						<tr class="">
+							<td colspan="2"><input class="gt-btn-medium gt-btn-left"
+								type="submit" value="Gerar..."></input>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+	<br />
+	<div id="div-tempo"
+		style="display: none; position: absolute; text-align: center; filter: alpha(opacity =           60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
+		<div
+			style="position: absolute; font-family: sans-serif50 %; left: 40%; top: 50%; font-size: medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
+	</div>
 </siga:pagina>
 <script type="text/javascript">
 function submeter() { 
@@ -132,7 +135,7 @@ function submeter() {
 		}
 	}
  </script>
- <script type="text/javascript">
+<script type="text/javascript">
   	/*
  	* Impede o uso do F5
  	*/

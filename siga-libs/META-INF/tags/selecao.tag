@@ -33,28 +33,12 @@
 
 <c:choose>
 	<c:when test="${empty tipo}">
-		<c:choose>
-			<c:when test="${empty modulo}">
 				<ww:set name="acaoBusca"
 					value="%{[#attr.propriedade+'Sel'].acaoBusca}" />
-			</c:when>
-			<c:otherwise>
-				<ww:set name="acaoBusca"
-					value="%{'/../'+#attr.modulo+[#attr.propriedade+'Sel'].acaoBusca}" />
-			</c:otherwise>
-		</c:choose>
 		<ww:set name="tipoSel" value="" scope="request" />
 	</c:when>
 	<c:otherwise>
-		<c:choose>
-			<c:when test="${empty modulo}">
 				<ww:set name="acaoBusca" value="%{'/'+#attr.tipo}" />
-			</c:when>
-			<c:otherwise>
-				<ww:set name="acaoBusca"
-					value="%{'/../'+#attr.modulo+'/'+#attr.tipo}" />
-			</c:otherwise>
-		</c:choose>
 		<ww:set name="tipoSel" value="%{'_'+#attr.tipo}" scope="request" />
 	</c:otherwise>
 </c:choose>
@@ -88,14 +72,24 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 	</c:if>
 	<c:if test="${reler == 'ajax'}">
 	sbmt('${empty idAjax ? propriedade : idAjax}');
-	</c:if>
+	</c:if> 
 }
  
  
+<c:choose>
+<c:when test="${empty modulo}">
+<ww:set name="urlPrefix"><c:url value="/"/></ww:set>
+</c:when>
+<c:otherwise> 
+<ww:set name="urlPrefix" value="%{request.scheme+'://'+request.serverName+':'+request.localPort+'/'+#attr.modulo}"></ww:set>
+</c:otherwise>
+</c:choose>
+
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url = '<c:url value="/"/>${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+	//var url = '${request.scheme}://${request.serverName}:${request.localPort}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+	var url = '${urlPrefix}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
 	
 	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
 		newwindow_${propriedade}.location.href = url;
@@ -149,7 +143,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
-	var url = '<c:url value="/"/>${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+	var url = '${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 	url = url + '&sigla=' + sigla;
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 }

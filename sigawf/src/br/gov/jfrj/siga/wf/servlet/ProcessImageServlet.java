@@ -33,8 +33,9 @@ import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
  * Servlet que desenha o gráfico do processo.
+ * 
  * @author kpf
- *
+ * 
  */
 public class ProcessImageServlet extends HttpServlet {
 
@@ -52,6 +53,10 @@ public class ProcessImageServlet extends HttpServlet {
 				.loadProcessDefinition(processDefinitionId);
 		byte[] bytes = processDefinition.getFileDefinition().getBytes(
 				"processimage.jpg");
+		if (request.getParameter("tkId") != null) {
+			Long taskId = Long.parseLong(request.getParameter("tkId"));
+			
+		}
 		OutputStream out = response.getOutputStream();
 		out.write(bytes);
 		out.flush();

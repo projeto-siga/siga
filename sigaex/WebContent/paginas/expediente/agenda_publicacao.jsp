@@ -28,19 +28,24 @@
 <!-- A linha abaixo é temporária, pois está presente num dos cabeçalhos  -->
 <div id="carregando" style="position:absolute;top:0px;right:0px;background-color:red;font-weight:bold;padding:4px;color:white;display:none">Carregando...</div>
 
-<table width="100%">
-	<tr>
-		<td><form action="agendar_publicacao_gravar.action"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Agendamento de Publicação - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+
+		<form action="agendar_publicacao_gravar.action"
 			namespace="/expediente/mov" cssClass="form" method="GET">
 			<ww:token/>
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>
 
-			<h1>Agendamento de Publicação - ${doc.codigo} <!--<c:if
-				test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if>--></h1>
-			<table class="form">
+			<table class="gt-form-table">
+				<colgroup>
+				<col  style="width:30%"/>
+				<col  style="width:70%"/>
+				</colgroup>
 				<tr class="header">
 					<td colspan="2">Dados do Agendamento</td>
 				</tr>
@@ -73,13 +78,16 @@
 					<td>Data de publicação:</td>
 					<td><div id="dt_publ" /></td>
 				</tr>
-				<tr class="button">
-					<td></td>
-					<td><input type="submit" value="Ok" /> <input type="button"
-						value="Cancela" onclick="javascript:history.back();" />
+				<tr>
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left" /> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
 				</tr>
 			</table>
-			<p>Atenção:
+			</form>
+			</div>
+			
+			<br/>
+			<h3>Atenção:</h3>
 			<ul>
 				<li><span style="font-weight:bold">Data para
 				Disponibilização</span> - data em que a matéria efetivamente aparece no
@@ -88,9 +96,5 @@
 				a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
 				da Lei 11419 / 2006</li>
 			</ul>
-			</p>
-</form>
-</td>
-</tr>
-</table>
+</div></div>
 </siga:pagina>

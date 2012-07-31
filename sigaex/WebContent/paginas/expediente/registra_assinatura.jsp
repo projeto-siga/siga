@@ -16,19 +16,21 @@ function sbmt() {
 }
 </script>
 
-	<table width="100%">
-		<tr>
-			<td><ww:form action="registrar_assinatura_gravar"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Registro de Assinatura de Documento - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+
+
+			<ww:form action="registrar_assinatura_gravar"
 				enctype="multipart/form-data" namespace="/expediente/mov"
 				cssClass="form" method="POST">
 				<input type="hidden" name="postback" value="1" />
 				<ww:hidden name="sigla" value="${sigla}"/>
 
-				<h1>Registro de Assinatura de Documento - ${doc.codigo} <c:if
-					test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if></h1>
-				<table class="form" width="100%">
+				<table class="gt-form-table">
 					<tr class="header">
 						<td colspan="2">Dados da assinatura</td>
 					</tr>
@@ -53,23 +55,15 @@ function sbmt() {
 					<tr>
 						<td><span style="font-weight: bold">Atenção:</span></td>
 						<td>
-						<table width="50%">
-							<tr>
-
-								<td><span>Após o registro da assinatura não é mais possível editar ou excluir o documento.</span> <br>
-								<span style="font-weight: bold">Deseja registrar a assinatura ?</span></td>
-							</tr>
-						</table>
+							<span>Após o registro da assinatura não é mais possível editar ou excluir o documento.</span> <br>
+							<span style="font-weight: bold">Deseja registrar a assinatura?</span>
 						</td>
 					</tr>
-					<tr class="button">
-						<td></td>
-						<td><input type="submit" value="Sim" /> <input type="button"
-							value="Não" onclick="javascript:history.back();" /></td>
+					<tr>
+						<td colspan="2"><input type="submit" value="Sim" class="gt-btn-medium gt-btn-left"/> <input type="button"
+							value="Não" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/></td>
 					</tr>
 				</table>
-			</ww:form></td>
-		</tr>
-	</table>
-
+			</ww:form>
+	</div></div></div>
 </siga:pagina>

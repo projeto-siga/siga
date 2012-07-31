@@ -22,7 +22,9 @@
 	border: 1px solid #eee;
 }
 
-.activeline {background: #f7f7f7 !important;}
+.activeline {
+	background: #f7f7f7 !important;
+}
 
 .CodeMirror-scroll {
 	height: auto;
@@ -81,42 +83,39 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 </script>
 
 <siga:pagina titulo="Lista de Modelos">
-	<h1>Modelos:</h1>
+	<div class="gt-bd clearfix">
+		<div class="gt-content">
+			<c:set var="i" value="${0}" />
+			<c:forEach var="modelo" items="${itens}">
+				<c:set var="i" value="${i+1}" />
+				<h3 class="gt-form-head">
+					<c:if test="${not empty modelo.cpOrgaoUsuario}">Orgão Usuário: ${modelo.cpOrgaoUsuario.descricao}</c:if>
+					<c:if test="${empty modelo.cpOrgaoUsuario}">Edição de Modelos: GERAL</c:if>
+				</h3>
+				<div class="gt-form gt-content-box">
+					<form id="editar_${i}" name="editar_${i}"
+						action="/siga/modelo/editar_gravar.action" method="POST">
+						<div class="gt-form-row">
+							<ww:hidden name="id" value="${modelo.id}" />
+							<ww:hidden name="idOrgUsu" value="${modelo.cpOrgaoUsuario.id}" />
 
-	<c:set var="i" value="${0}" />
-	<c:forEach var="modelo" items="${itens}">
-		<c:set var="i" value="${i+1}" />
-		<form id="editar_${i}" name="editar_${i}"
-			action="/siga/modelo/editar_gravar.action" method="POST"
-			class="form100">
-		<table class="form100">
-			<ww:hidden name="id" value="${modelo.id}" />
-			<ww:hidden name="idOrgUsu" value="${modelo.cpOrgaoUsuario.id}" />
-
-			<tr class="header">
-				<td><c:if test="${not empty modelo.cpOrgaoUsuario}">Orgão Usuário: ${modelo.cpOrgaoUsuario.descricao}</c:if><c:if
-					test="${empty modelo.cpOrgaoUsuario}">GERAL</c:if></td>
-			</tr>
-			<tr>
-				<td>
-				<textarea id="conteudo${i}" style="width: 100%;" cols="1" rows="1"
-					name="conteudo"><c:if
-					test="${not empty modelo.conteudoBlobString}"><ww:property value="#attr.modelo.conteudoBlobString" escape="true" default="" /></c:if></textarea>
-				<script>
-					var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true,
-						onCursorActivity: function() {
-							editor${i}.setLineClass(hlLine, null);
-							hlLine = editor${i}.setLineClass(editor${i}.getCursor().line, "activeline");
-						}});
-					var hlLine = editor${i}.setLineClass(0, "activeline");
-				</script>
-				<br />
-				<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
-					value="Salvar"
-					onclick="javascript: this.form.action='/siga/modelo/editar_gravar.action'; " />
-				</td>
-			</tr>
-				<!-- 				
+							<textarea id="conteudo${i}" style="width: 100%;" cols="1" rows="1" name="conteudo"><c:if test="${not empty modelo.conteudoBlobString}"><ww:property value="#attr.modelo.conteudoBlobString" escape="true" default="" /></c:if></textarea>
+<script>
+	var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true,
+		onCursorActivity: function() {
+			editor${i}.setLineClass(hlLine, null);
+			hlLine = editor${i}.setLineClass(editor${i}.getCursor().line, "activeline");
+		}});
+	var hlLine = editor${i}.setLineClass(0, "activeline");
+</script>
+						</div>
+						<div class="gt-form-row">
+							<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
+								value="Salvar"
+								onclick="javascript: this.form.action='/siga/modelo/editar_gravar.action'; "
+								class="gt-btn-medium gt-btn-left" />
+						</div>
+						<!-- 				
 				<td><span id="desc_ver${i}">
 					<c:if test="${not empty modelo.conteudoBlobString}">
 						<pre><ww:property  value="#attr.modelo.conteudoBlobString" escape="true" default=""/></pre>
@@ -139,10 +138,10 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 				</tr>
 			</c:if>
 -->
-		</table>
-		</form>
+					</form>
+				</div>
+			</c:forEach>
 
-		<br />
-	</c:forEach>
-
+		</div>
+	</div>
 </siga:pagina>

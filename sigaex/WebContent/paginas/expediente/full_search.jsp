@@ -47,14 +47,21 @@ function popitup_movimentacao(url) {
 	}
 </script>
 
+	<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+	
+		<h2>Pesquisa de Documentos</h2>
+
+		<div class="gt-content-box gt-for-table">
+
 	<ww:form name="frm" action="full_search" namespace="/expediente/doc"
 		method="POST" theme="simple">
 		<ww:token />
 		<ww:hidden name="postback" value="1" />
 		<ww:hidden name="p.offset" value="0" />
-		<table class="form">
+		<table class="gt-form-table">
 			<tr class="header">
-				<td colspan="2">Pesquisa de Documentos</td>
+				<td colspan="2">Dados da Pesquisa</td>
 			</tr>
 			<tr>
 				<td><ww:textfield name="userQuery" size="30" />&nbsp;
@@ -96,6 +103,8 @@ function popitup_movimentacao(url) {
 		</ul>
 
 	</ww:form>
+	</div>
+	
 	<c:if test="${empty showedResults && postback==1}">
 		<p class="no_results">A pesquisa não retornou resultados</p>
 	</c:if>
@@ -207,4 +216,5 @@ function popitup_movimentacao(url) {
 		resultados. Favor, restringi-la um pouco mais.</p>
 	</c:if>
 	<br> --%>
+	</div></div>
 </siga:pagina>

@@ -8,44 +8,47 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <script type="text/javascript" language="Javascript1.1">
-function sbmt() {
-	ExMovimentacaoForm.page.value='';
-	ExMovimentacaoForm.acao.value='aJuntar';
-	ExMovimentacaoForm.submit();
-}
-
+	function sbmt() {
+		ExMovimentacaoForm.page.value = '';
+		ExMovimentacaoForm.acao.value = 'aJuntar';
+		ExMovimentacaoForm.submit();
+	}
 </script>
 
 <siga:pagina titulo="Movimentação">
-<table width="100%">
-	<tr>
-		<td><ww:form action="incluir_cosignatario_gravar"
-			namespace="/expediente/mov"
-			cssClass="form" method="POST">
-			<input type="hidden" name="postback" value="1" />
-			<ww:hidden name="sigla" value="%{sigla}"/>
 
-			<h1>Inclusão de Co-signatário - ${doc.codigo} <c:if
-				test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if></h1>
-			<table class="form" width="100%">
-				<tr class="header">
-					<td colspan="2">Dados do Co-signatário</td>
-				</tr>
-				<%--<ww:textfield name="dtMovString" label="Data"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+
+			<h2>
+				Inclusão de Co-signatário - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+
+				<ww:form action="incluir_cosignatario_gravar"
+					namespace="/expediente/mov" cssClass="form" method="POST">
+					<input type="hidden" name="postback" value="1" />
+					<ww:hidden name="sigla" value="%{sigla}" />
+					<table class="gt-form-table">
+						<tr class="header">
+							<td colspan="2">Dados do Co-signatário</td>
+						</tr>
+						<%--<ww:textfield name="dtMovString" label="Data"
 					onblur="javascript:verifica_data(this);" />--%>
-					
-				<siga:selecao titulo="Co-signatário:" propriedade="cosignatario" />
-				<ww:textfield name="funcaoCosignatario" label="Função;Lotação;Localidade" size="50" maxLength="128" />
-				
-				<tr class="button">
-					<td></td>
-					<td><input type="submit" value="Ok" /> <input type="button"
-						value="Cancela" onclick="javascript:history.back();" />
-				</tr>
-			</table>
-		</ww:form></td>
-	</tr>
-</table>
+
+						<siga:selecao titulo="Co-signatário:" propriedade="cosignatario" />
+						<ww:textfield name="funcaoCosignatario"
+							label="Função;Lotação;Localidade" size="50" maxLength="128" />
+
+						<tr class="button">
+							<td colspan="2"><input type="submit" value="Ok"
+								class="gt-btn-small gt-btn-left" /> <input type="button"
+								value="Cancela" onclick="javascript:history.back();"
+								class="gt-btn-small gt-btn-left" />
+						</tr>
+					</table>
+				</ww:form>
+			</div>
+		</div>
+	</div>
 </siga:pagina>

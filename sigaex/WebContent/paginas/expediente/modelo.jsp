@@ -34,10 +34,14 @@
 </style> 
 
 <siga:pagina titulo="Modelo">
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Edição de Modelo</h2>
 
-	<table width="100%">
-		<tr>
-			<td><ww:form name="frm" action="gravar" namespace="/modelo"
+			<div class="gt-content-box gt-for-table">
+			
+			<ww:form name="frm" action="gravar" namespace="/modelo"
 				theme="simple" method="POST">
 				<ww:hidden name="postback" value="1" />
 				<ww:hidden name="id" value="${id}" id="modelo_gravar_id" />
@@ -45,10 +49,9 @@
  				<ww:hidden name="mobilPaiSel.sigla" value=""
 					id="transferir_gravar_pai" />
 -->
-				<h1>Edição de Modelo</h1>
-				<table class="form" width="100%">
+				<table class="gt-form-table">
 					<tr class="header">
-						<td colspan="2">Modelo</td>
+						<td colspan="2">Dados do Modelo</td>
 					</tr>
 					<tr>
 						<td width="20%">Nome:</td>
@@ -95,15 +98,12 @@
 						</td>
 					</tr>
 					<tr class="button">
-						<td></td>
-						<td><input type="submit" value="Ok" /> <input type="submit" name="submit" value="Aplicar" /> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" /></td>
+						<td colspan="2"><input type="submit" value="Ok"  class="gt-btn-medium gt-btn-left"/> <input type="submit" name="submit" value="Aplicar"  class="gt-btn-medium gt-btn-left"/> <input type="button"
+							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/></td>
 					</tr>
 				</table>
-			</ww:form></td>
-		</tr>
-	</table>
-
+			</ww:form>
+		</div></div></div>
 	<ww:url id="urlEditar" action="editar" namespace="/modelo" /> 
 	<script> 
 		var editor = null;

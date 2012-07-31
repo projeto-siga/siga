@@ -8,52 +8,58 @@
 <ww:url id="url" action="editar" />
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt(offset) {
-		if (offset==null) {
-			offset=0;
+		if (offset == null) {
+			offset = 0;
 		}
-		frm.elements['p.offset'].value=offset;
+		frm.elements['p.offset'].value = offset;
 		frm.submit();
 	}
 	function editar(p_strId) {
 		var t_strUrl = '${url}';
 		if (p_strId) {
 			if (t_strUrl.indexOf('?') == -1) {
-				window.location.href = t_strUrl + '?' + 'idCpGrupo=' + p_strId ;
+				window.location.href = t_strUrl + '?' + 'idCpGrupo=' + p_strId;
 			} else {
-				window.location.href = t_strUrl + '&' + 'idCpGrupo=' + p_strId ;
+				window.location.href = t_strUrl + '&' + 'idCpGrupo=' + p_strId;
 			}
 		} else {
 			window.location.href = t_strUrl;
 		}
 	}
-	
 </script>
 
 <%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
 <siga:pagina titulo="Busca de ${cpTipoGrupo.dscTpGrupo}">
-	<h1>Cadastro de ${cpTipoGrupo.dscTpGrupo}:</h1>
-	<table class="list" width="100%">
-		<tr class="header">
-			<td align="left">Sigla</td>
-			<td align="left">Descrição</td>
-			<td align="left">Sigla Grupo Pai</td>
-		</tr>
-		<c:set var="evenorodd" value="" />
-		<c:set var="tamanho" value="0" />
-		<siga:paginador maxItens="1000" maxIndices="10" totalItens="${tamanho}"
-			itens="${itens}" var="grupoItem">
-			<tr class="${evenorodd}">
-				<td align="left"><a
-					href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.siglaGrupo
-				}</a></td>
-				<td align="left"><a
-					href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.dscGrupo
-				}</a></td>
-				<td align="left"><a
-					href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.cpGrupoPai.siglaGrupo
-				}</a></td>
-			</tr>
-		</siga:paginador>
-	<br/>
-	<input type="button" value="Incluir" onclick="javascript:editar()">
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Cadastro de ${cpTipoGrupo.dscTpGrupo}</h2>
+			<div class="gt-content-box">
+				<table class="gt-table" width="100%">
+					<theader>
+					<th align="left">Sigla</th>
+					<th align="left">Descrição</th>
+					<th align="left">Sigla Grupo Pai</th>
+					</theader>
+					<c:set var="evenorodd" value="" />
+					<c:set var="tamanho" value="0" />
+					<siga:paginador maxItens="1000" maxIndices="10"
+						totalItens="${tamanho}" itens="${itens}" var="grupoItem">
+						<tr class="${evenorodd}">
+							<td align="left"><a
+								href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.siglaGrupo
+									}</a></td>
+							<td align="left"><a
+								href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.dscGrupo
+									}</a></td>
+							<td align="left"><a
+								href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.cpGrupoPai.siglaGrupo
+									}</a></td>
+						</tr>
+					</siga:paginador>
+				</table>
+			</div>
+			<br /> <input type="button" value="Incluir"
+				onclick="javascript:editar()" class="gt-btn-medium">
+		</div>
+	</div>
 </siga:pagina>

@@ -5,6 +5,8 @@ Email: leafrink@hotmail.com
 */
 
 var debug = false;
+var active = 0;
+
 /**
 <summary>
 Browser Compatability function.
@@ -100,6 +102,7 @@ function PassAjaxResponseToFunction(url, callbackFunction, params, omitirCarrega
             {
               if (xmlhttp && xmlhttp.readyState==4)
               {//we got something back..
+                active--;
                 if (xmlhttp.status==200)
                 {
                   var response = xmlhttp.responseText;
@@ -129,6 +132,7 @@ function PassAjaxResponseToFunction(url, callbackFunction, params, omitirCarrega
 		xmlhttp.send(postParams);
     } else xmlhttp.send(null);
   }
+  active++;
 }
 
 
@@ -153,6 +157,7 @@ function SetInnerHTMLFromAjaxResponse(url, obj_id)
             {
               if (xmlhttp && xmlhttp.readyState==4)
               {//we got something back..
+                active--;
                 if (xmlhttp.status==200)
                 {
                 	var s = xmlhttp.responseText;
@@ -194,6 +199,7 @@ function SetInnerHTMLFromAjaxResponse(url, obj_id)
             }
     xmlhttp.open("GET",url,true);
     xmlhttp.send(null);
+    active++;
   }
 }
 
@@ -314,6 +320,7 @@ function ReplaceInnerHTMLFromAjaxResponse(url, frm, obj_id)
             {
               if (xmlhttp && xmlhttp.readyState==4)
               {//we got something back..
+                active--;
                 if (xmlhttp.status==200)
                 {
                                   if(debug)
@@ -345,6 +352,7 @@ function ReplaceInnerHTMLFromAjaxResponse(url, frm, obj_id)
     	xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
     	xmlhttp.send(ajax.serialize(frm));
     }
+    active++;
   }
 }
 

@@ -28,20 +28,20 @@
 		}
 	</script>
 
-	<table width="100%">
-		<tr>
-			<td><ww:form action="anexar_gravar" namespace="/expediente/mov"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Anexação de Arquivo - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+			
+		<ww:form action="anexar_gravar" namespace="/expediente/mov"
 					method="POST" enctype="multipart/form-data" cssClass="form">
+			<input type="hidden" name="postback" value="1" />
+			<ww:hidden name="sigla" value="%{sigla}"/>
+			
+			<table class="gt-form-table">
 
-					<input type="hidden" name="postback" value="1" />
-					<ww:hidden name="sigla" value="%{sigla}" />
-
-					<h1>
-						Anexação de Arquivo - ${doc.codigo}
-						<c:if test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if>
-					</h1>
 
 					<tr class="header">
 						<td colspan="2">Dados do Arquivo</td>
@@ -76,17 +76,12 @@
 		<ww:file name="arquivo" label="Arquivo" accept="application/pdf"
 			onchange="testpdf(this.form)" />
 
-		<!-- ww:datepicker tooltip="Select Your Birthday" label="Birthday"
-				name="birthday" / -->
-		<ww:submit value="Ok" cssClass="button" align="center" />
-		<!--  			<tr class="button"> teste
-				<td><ww:submit type="input" value="Cancela" theme="simple"
-					onclick="javascript:history.back(-1);" /></td>
-			</tr> 
--->
+				<tr class="button">
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" /></td>
+				</tr>
+			</table>
 		</ww:form>
-		</td>
-		</tr>
-	</table>
-
+		
+		</div></div></div>
 </siga:pagina>

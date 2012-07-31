@@ -13,11 +13,14 @@
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
 
-	<ww:form name="frm" action="principal" namespace="/" method="GET"
-		theme="simple">
-		<h1>Protocolo de Arquivamento</h1>
-		<table>
-			<tr>
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+		<h2>Protocolo de Arquivamento</h2>
+
+			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
+			
+		<table class="gt-table">
 			<tr>
 				<td>Cadastrante:</td>
 				<td>${mov.respString}</td>
@@ -26,25 +29,34 @@
 				<td>Data:</td>
 				<td colspan="2">${mov.dtRegMovDDMMYYHHMMSS}</td>
 			</tr>
-			<table class="list" width="100%">
-				<tr class="header">
-					<td rowspan="2" align="right">Número</td>
-					<td colspan="3" align="center">Documento</td>
-					<td colspan="3" align="center">Última Movimentação</td>
-					<td colspan="2" align="center">Atendente</td>
-					<td rowspan="2">Descrição</td>
+		</table>
+		
+		</div>
+		
+		<h3>Documento(s)</h3>
+		
+		<div class="gt-content-box gt-for-table">
+		<table class="gt-table" style="table-layout:fixed; word-wrap:break-word; width:100%;">
+				<thead>
+				<tr>
+					<th rowspan="2" align="right">Número</th>
+					<th colspan="3" align="center">Documento</th>
+					<th colspan="3" align="center">Última Movimentação</th>
+					<th colspan="2" align="center">Atendente</th>
+					<th rowspan="2">Descrição</th>
 				</tr>
-				<tr class="header">
-					<td align="center">Data</td>
-					<td align="center">Lotação</td>
-					<td align="center">Pessoa</td>
-					<td align="center">Data</td>
-					<td align="center">Lotação</td>
-					<td align="center">Pessoa</td>
-					<td align="center">Lotação</td>
-					<td align="center">Pessoa</td>
+				<tr>
+					<th align="center">Data</th>
+					<th align="center">Lotação</th>
+					<th align="center">Pessoa</th>
+					<th align="center">Data</th>
+					<th align="center">Lotação</th>
+					<th align="center">Pessoa</th>
+					<th align="center">Lotação</th>
+					<th align="center">Pessoa</th>
 				</tr>
-
+				</thead>
+				<tbody>
 				<c:forEach var="documento" items="${itens}">
 					<c:choose>
 						<c:when test='${evenorodd == "even"}'>
@@ -98,9 +110,14 @@
 						lotaTitular)}</td>
 					</tr>
 				</c:forEach>
+				</tbody>
 			</table>
+			</div>
+			
 			<br />
-			<input type="button" value="Imprimir"
+			<ww:form name="frm" action="principal" namespace="/" method="GET"
+				theme="simple">
+			<input type="button" value="Imprimir" class="gt-btn-medium"
 				onclick="javascript: document.body.offsetHeight; window.print();" />
 			<c:if test="${param.popup != true}">
 				<input type="button" value="Voltar"
@@ -116,4 +133,5 @@
 			<p align="center">Assinatura do Servidor</p>
 			</ww:form>
 
-			</siga:pagina>
+	</div></div>
+</siga:pagina>

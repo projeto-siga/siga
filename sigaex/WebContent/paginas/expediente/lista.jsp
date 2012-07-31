@@ -441,46 +441,39 @@ function limpaCampos()
 </script>
 
 <siga:pagina titulo="Lista de Expedientes" popup="${param.popup}">
-
-	<table width="100%">
-		<tr>
-			<td style="padding-right: 10px;" align="right">
-			<div style="display: inline &amp; amp;"><ww:form name="frm"
-				action="exibir" namespace="/expediente/doc" method="post"
-				theme="simple">
-				Ir para o documento: <siga:selecao tema="simple" buscar="nao"
-					propriedade="documentoVia" ocultardescricao="sim" />
-				<input type="submit" name="ok" value="Ok"
-					onclick="javascript: var id=document.getElementById('editar_documentoViaSel_id').value; if (id==null || id=='') {return;}" />
-			</ww:form></div>
-			</td>
-		</tr>
-	</table>
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Pesquisa de Documentos</h2>
 
 	<c:if
 		test="${((empty param.primeiraVez) or (param.primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
+		
+		<c:if test="${not empty tamanho and tamanho > 0}">
 
-		<table class="list" width="100%">
-			<tr class="header">
-				<td rowspan="3" align="right">Número</td>
-				<td colspan="3" align="center">Documento</td>
-				<td colspan="4" align="center">Situação</td>
-				<td rowspan="3">Tipo</td>
-				<td rowspan="3">Descrição</td>
+		<div class="gt-content-box gt-for-table">
+		<table class="gt-table">
+			<thead>
+			<tr>
+				<th rowspan="3" align="right">Número</th>
+				<th colspan="3" align="center">Documento</th>
+				<th colspan="4" align="center">Situação</th>
+				<th rowspan="3">Tipo</th>
+				<th rowspan="3">Descrição</th>
 			</tr>
-			<tr class="header">
-				<td rowspan="2" align="center">Data</td>
-				<td colspan="2" align="center">Subscritor</td>
-				<td rowspan="2" align="center">Data</td>
-				<td colspan="2" align="center">Atendente</td>
-				<td rowspan="2" align="center">Situação</td>
+			<tr>
+				<th rowspan="2" align="center">Data</th>
+				<th colspan="2" align="center">Subscritor</th>
+				<th rowspan="2" align="center">Data</th>
+				<th colspan="2" align="center">Atendente</th>
+				<th rowspan="2" align="center">Situação</th>
 			</tr>
-			<tr class="header">
-				<td align="center">Lotação</td>
-				<td align="center">Pessoa</td>
-				<td align="center">Lotação</td>
-				<td align="center">Pessoa</td>
+			<tr>
+				<th align="center">Lotação</th>
+				<th align="center">Pessoa</th>
+				<th align="center">Lotação</th>
+				<th align="center">Pessoa</th>
 			</tr>
+			</thead>
 
 			<siga:paginador maxItens="${itemPagina}" maxIndices="10"
 				totalItens="${tamanho}" itens="${itens}" var="documento">
@@ -572,20 +565,40 @@ function limpaCampos()
 					</c:choose>
 				</tr>
 			</siga:paginador>
-			<!-- </table> -->
+			<!-- </table></div> -->
+			<br/>
+			</c:if>
 			<c:if test="${empty tamanho or tamanho == 0}">
-				<br />
-				<span style="padding-left: 60px">A pesquisa não retornou
-				resultados.</span>
+				<p class="gt-notice-box">A pesquisa não retornou
+				resultados.</p>
 			</c:if>
-			<br />
 			</c:if>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<div class="gt-content-box gt-for-table">
 
 			<form id="listar" name="listar"
 				onsubmit="javascript: return limpaCampos()"
 				action="/sigaex/expediente/doc/listar.action" method="GET"
 				class="form100">
-			<table class="form100">
+			<table  class="gt-form-table">
+				<colgroup>
+					<col style="width:10em;" />
+					<col />
+				</colgroup>
 				<input type="hidden" name="popup" value="${param.popup}" />
 				<input type="hidden" name="propriedade" value="${param.propriedade}" />
 				<ww:hidden name="postback" value="1" />
@@ -596,7 +609,7 @@ function limpaCampos()
 					<td align="center" valign="top" colspan="4">Dados do Documento</td>
 				</tr>
 				<tr>
-					<td width="230px">Situação:</td>
+					<td>Situação:</td>
 					<td><ww:select label="Situação" name="ultMovIdEstadoDoc"
 						list="estados" listKey="idMarcador" listValue="descrMarcador"
 						headerKey="0" headerValue="[Todos]" theme="simple" />
@@ -606,11 +619,11 @@ function limpaCampos()
 						test="ultMovTipoResp == 1">
 						<span id="divUltMovResp" style="display: "><siga:selecao
 							propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" /></span>
-						<span id="divUltMovLotaResp" style="display: 'none'"><siga:selecao
+						<span id="divUltMovLotaResp" style="display: none"><siga:selecao
 							propriedade="ultMovLotaResp" tema="simple"
 							paramList="buscarFechadas=true" /></span>
 					</ww:if> <ww:elseif test="ultMovTipoResp == 2">
-						<span id="divUltMovResp" style="display: 'none'"><siga:selecao
+						<span id="divUltMovResp" style="display: none"><siga:selecao
 							propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" /></span>
 						<span id="divUltMovLotaResp" style="display: "><siga:selecao
 							propriedade="ultMovLotaResp" tema="simple"
@@ -641,7 +654,7 @@ function limpaCampos()
 						<tr id="trTipo" style="display: ">
 					</c:when>
 					<c:otherwise>
-						<tr id="trTipo" style="display: 'none'">
+						<tr id="trTipo" style="display: none">
 					</c:otherwise>
 				</c:choose>
 
@@ -683,7 +696,7 @@ function limpaCampos()
 						<tr id="trNumOrigDoc" style="display: ">
 					</c:when>
 					<c:otherwise>
-						<tr id="trNumOrigDoc" style="display: 'none'">
+						<tr id="trNumOrigDoc" style="display: none">
 					</c:otherwise>
 				</c:choose>
 
@@ -698,7 +711,7 @@ function limpaCampos()
 						<tr id="trOrgExterno" style="display: ">
 					</c:when>
 					<c:otherwise>
-						<tr id="trOrgExterno" style="display: 'none'">
+						<tr id="trOrgExterno" style="display: none">
 					</c:otherwise>
 				</c:choose>
 
@@ -713,7 +726,7 @@ function limpaCampos()
 						<tr id="trNumDocSistAntigo" style="display: ">
 					</c:when>
 					<c:otherwise>
-						<tr id="trNumDocSistAntigo" style="display: 'none'">
+						<tr id="trNumDocSistAntigo" style="display: none">
 					</c:otherwise>
 				</c:choose>
 
@@ -741,11 +754,11 @@ function limpaCampos()
 					<ww:if test="tipoCadastrante == 1">
 						<div id="divCadastrante" style="display: "><siga:selecao
 							propriedade="cadastrante" tema="simple" paramList="buscarFechadas=true" /></div>
-						<div id="divLotaCadastrante" style="display: 'none'"><siga:selecao
+						<div id="divLotaCadastrante" style="display: none"><siga:selecao
 							propriedade="lotaCadastrante" tema="simple"
 							paramList="buscarFechadas=true" /></div>
 					</ww:if> <ww:elseif test="tipoCadastrante == 2">
-						<div id="divCadastrante" style="display: 'none'"><siga:selecao
+						<div id="divCadastrante" style="display: none"><siga:selecao
 							propriedade="cadastrante" tema="simple" paramList="buscarFechadas=true" /></div>
 						<div id="divLotaCadastrante" style="display: "><siga:selecao
 							propriedade="lotaCadastrante" tema="simple"
@@ -763,51 +776,51 @@ function limpaCampos()
 						<c:when test='${tipoDestinatario == 1}'>
 							<div id="divDestinatario" style="display: "><siga:selecao
 								propriedade="destinatario" tema="simple" paramList="buscarFechadas=true"/></div>
-							<div id="divLotaDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divLotaDestinatario" style="display: none"><siga:selecao
 								propriedade="lotacaoDestinatario" tema="simple"
 								paramList="buscarFechadas=true" /></div>
-							<div id="divOrgaoExternoDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divOrgaoExternoDestinatario" style="display: none"><siga:selecao
 								propriedade="orgaoExternoDestinatario" tema="simple" /></div>
-							<div id="divNmDestinatario" style="display: 'none'"><ww:textfield
+							<div id="divNmDestinatario" style="display: none"><ww:textfield
 								name="nmDestinatario" size="80" theme="simple" /></div>
 
 							<%--<siga:selecao propriedade="destinatario" tema="simple" />--%>
 						</c:when>
 						<c:when test='${tipoDestinatario == 2}'>
-							<div id="divDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divDestinatario" style="display: none"><siga:selecao
 								propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" /></div>
 							<div id="divLotaDestinatario" style="display: "><siga:selecao
 								propriedade="lotacaoDestinatario" tema="simple"
 								paramList="buscarFechadas=true" /></div>
-							<div id="divOrgaoExternoDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divOrgaoExternoDestinatario" style="display: none"><siga:selecao
 								propriedade="orgaoExternoDestinatario" tema="simple" /></div>
-							<div id="divNmDestinatario" style="display: 'none'"><ww:textfield
+							<div id="divNmDestinatario" style="display: none"><ww:textfield
 								name="nmDestinatario" size="80" theme="simple" /></div>
 
 
 							<%--<siga:selecao propriedade="lotacaoDestinatario" tema="simple" />--%>
 						</c:when>
 						<c:when test='${tipoDestinatario == 3}'>
-							<div id="divDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divDestinatario" style="display: none"><siga:selecao
 								propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" /></div>
-							<div id="divLotaDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divLotaDestinatario" style="display: none"><siga:selecao
 								propriedade="lotacaoDestinatario" tema="simple"
 								paramList="buscarFechadas=true" /></div>
 							<div id="divOrgaoExternoDestinatario" style="display: "><siga:selecao
 								propriedade="orgaoExternoDestinatario" tema="simple" /></div>
-							<div id="divNmDestinatario" style="display: 'none'"><ww:textfield
+							<div id="divNmDestinatario" style="display: none"><ww:textfield
 								name="nmDestinatario" size="80" theme="simple" /></div>
 
 
 							<%--<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" />--%>
 						</c:when>
 						<c:otherwise>
-							<div id="divDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divDestinatario" style="display: none"><siga:selecao
 								propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" /></div>
-							<div id="divLotaDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divLotaDestinatario" style="display: none"><siga:selecao
 								propriedade="lotacaoDestinatario" tema="simple"
 								paramList="buscarFechadas=true" /></div>
-							<div id="divOrgaoExternoDestinatario" style="display: 'none'"><siga:selecao
+							<div id="divOrgaoExternoDestinatario" style="display: none"><siga:selecao
 								propriedade="orgaoExternoDestinatario" tema="simple" /></div>
 							<div id="divNmDestinatario" style="display: "><ww:textfield
 								name="nmDestinatario" size="80" theme="simple" /></div>
@@ -826,13 +839,12 @@ function limpaCampos()
 				 
 				
 				<tr>
-					<td></td>
-					<td><siga:monobotao inputType="submit" value="Buscar" /> <%--<ww:submit name="pesquisar" value="Pesquisar" theme="simple" />--%>
+					<td colspan="2"><siga:monobotao inputType="submit" value="Buscar" cssClass="gt-btn-medium gt-btn-left"/> <%--<ww:submit name="pesquisar" value="Pesquisar" theme="simple" />--%>
 					</td>
 				</tr>
 			</table>
 			</form>
-
-			<br />
-
+			</div>
+			</div>
+			</div>
 			</siga:pagina>

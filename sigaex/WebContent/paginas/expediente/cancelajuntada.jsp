@@ -15,19 +15,22 @@ function sbmt() {
 }
 </script>
 
-<siga:pagina titulo="Movimentação">
-<table width="100%">
-	<tr>
-		<td><ww:form action="cancelar_juntada_gravar"
+<siga:pagina titulo="Desentranhamento">
+
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Cancelamento de Juntada de Documento - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+			
+		<ww:form action="cancelar_juntada_gravar"
 			enctype="multipart/form-data" namespace="/expediente/mov"
 			method="post">
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>
-			<!-- Pedro : 20070326 -->
-			<h1>Cancelamento de Juntada de Documento - ${doc.codigo} <c:if
-				test="${numVia != null && numVia != 0}">-${viaChar}</c:if></h1>
-
-			<table class="form" width="100%">
+			
+			<table class="gt-form-table">
 				<tr class="header">
 					<td colspan="2">Dados do cancelamento de juntada</td>
 				</tr>
@@ -51,12 +54,11 @@ function sbmt() {
 				<ww:textfield name="descrMov" label="Motivo" maxlength="80" size="80" />
 
 				<tr class="button">
-					<td></td>
-					<td><input type="submit" value="Ok" /> <input type="button"
-						value="Cancela" onclick="javascript:history.back();" /></td>
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" /></td>
 				</tr>
 			</table>
-		</ww:form></td>
-	</tr>
-</table>
+		</ww:form>
+		
+		</div></div></div>
 </siga:pagina>

@@ -3,112 +3,134 @@
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <ww:url id="urlGravar" action="gravar!aGravar" namespace="/gi/servico" />
-<ww:url id="urlInserirPessoaExtra" action="inserirPessoaExtra!aInserirPessoaExtra" namespace="/gi/servico" />
+<ww:url id="urlInserirPessoaExtra"
+	action="inserirPessoaExtra!aInserirPessoaExtra" namespace="/gi/servico" />
 
-<siga:pagina titulo="Configuração de Pessoas a ${cpTipoConfiguracaoAConfigurar.dscTpConfiguracao}">
-	
-	<h1>Configuração de Pessoas a ${cpTipoConfiguracaoAConfigurar.dscTpConfiguracao}</h1>
-		<br />
-		<ww:set value="%{getIdTipoConfiguracaoUtilizarServico()}" name="idTpConfUtilizarSvc"/> 
-		<ww:set value="%{getIdTipoConfiguracaoUtilizarServicoOutraLotacao()}" name="idTpConfUtilizarSvcOutraLot"/> 
-		<table class="form100">
-			<tr class="header">
-					<td>Matrícula</td>
-					<td>Nome</td>
-				<c:forEach var="servico" items="${cpServicosDisponiveis}">
-					<td><a href="#" alt="${servico.descricao}" title="${servico.descricao}">${servico.siglaServico}</a></td> 
-				</c:forEach>
-			</tr>
-			<c:forEach var="pessoa" items="${dpPessoasDaLotacao}">
-				<tr class="">
-					<td>${pessoa.sesbPessoa}${pessoa.matricula}</td>
-					<td>${pessoa.nomePessoa}</td>
+<siga:pagina
+	titulo="Configuração de Pessoas a ${cpTipoConfiguracaoAConfigurar.dscTpConfiguracao}">
+	<ww:set value="%{getIdTipoConfiguracaoUtilizarServico()}"
+		name="idTpConfUtilizarSvc" />
+	<ww:set value="%{getIdTipoConfiguracaoUtilizarServicoOutraLotacao()}"
+		name="idTpConfUtilizarSvcOutraLot" />
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Configuração de Pessoas a
+				${cpTipoConfiguracaoAConfigurar.dscTpConfiguracao}</h2>
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-table">
+					<theader>
+					<th>Matrícula</th>
+					<th>Nome</th>
 					<c:forEach var="servico" items="${cpServicosDisponiveis}">
-						<c:forEach var="config"  items="${cpConfiguracoesAdotadas}">
-							<%--${config.dpPessoa.matricula} --- ${pessoa.matricula} :::: ${config.cpServico.idServico} --- ${servico.idServico}<br/> --%>
-							<c:if test="${(config.dpPessoa.matricula == pessoa.matricula) && (config.cpServico.idServico == servico.idServico) }">
-								<td>
-										<select name="configuracao_pessoa_servico"
-												         id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
-										         valorSalvo="${config.cpSituacaoConfiguracao.idSitConfiguracao}" 
-											       onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvc});"
-										 >
-										 		<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
-												<c:forEach var="sit" items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
-													<c:if test="${sit.idSitConfiguracao == config.cpSituacaoConfiguracao.idSitConfiguracao }"  >
-														<option value="${sit.idSitConfiguracao}" selected="selected" >
-																${sit.dscSitConfiguracao}
-														</option>
+						<th><a href="#" alt="${servico.descricao}"
+							title="${servico.descricao}">${servico.siglaServico}</a>
+						</th>
+					</c:forEach> </theader>
+					<c:forEach var="pessoa" items="${dpPessoasDaLotacao}">
+						<tr class="">
+							<td>${pessoa.sesbPessoa}${pessoa.matricula}</td>
+							<td>${pessoa.nomePessoa}</td>
+							<c:forEach var="servico" items="${cpServicosDisponiveis}">
+								<c:forEach var="config" items="${cpConfiguracoesAdotadas}">
+									<%--${config.dpPessoa.matricula} --- ${pessoa.matricula} :::: ${config.cpServico.idServico} --- ${servico.idServico}<br/> --%>
+									<c:if
+										test="${(config.dpPessoa.matricula == pessoa.matricula) && (config.cpServico.idServico == servico.idServico) }">
+										<td><select name="configuracao_pessoa_servico"
+											id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
+											valorSalvo="${config.cpSituacaoConfiguracao.idSitConfiguracao}"
+											onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvc});">
+												<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
+												<c:forEach var="sit"
+													items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
+													<c:if
+														test="${sit.idSitConfiguracao == config.cpSituacaoConfiguracao.idSitConfiguracao }">
+														<option value="${sit.idSitConfiguracao}"
+															selected="selected">${sit.dscSitConfiguracao}</option>
 													</c:if>
-													<c:if test="${sit.idSitConfiguracao != config.cpSituacaoConfiguracao.idSitConfiguracao }"  >
-														<option value="${sit.idSitConfiguracao}" >
-																${sit.dscSitConfiguracao}
-														</option>
+													<c:if
+														test="${sit.idSitConfiguracao != config.cpSituacaoConfiguracao.idSitConfiguracao }">
+														<option value="${sit.idSitConfiguracao}">
+															${sit.dscSitConfiguracao}</option>
 													</c:if>
 												</c:forEach>
-										</select>
-								</td>
-							</c:if>
-						</c:forEach>
+										</select></td>
+									</c:if>
+								</c:forEach>
+							</c:forEach>
+						</tr>
 					</c:forEach>
-				</tr>
-			</c:forEach>
-			<tr class="header">
-				<td>Pessoas extras</td>
-			</tr>
-				<c:forEach var="pessoa" items="${pessoasGrupoSegManual}">
-				<tr class="">
-					<ww:url id="urlExcluirPessoaExtra" action="excluirPessoaExtra!aExcluirPessoaExtra" namespace="/gi/servico">
-						<ww:param name="pessoaId">${pessoa.id}</ww:param>
-					</ww:url>				
-					<td>${pessoa.sesbPessoa}${pessoa.matricula}<a href=${urlExcluirPessoaExtra}>&nbsp(excluir)</a></td>
-					<td>${pessoa.nomePessoa}</td>
-					<c:forEach var="servico" items="${cpServicosDisponiveis}">
-							<td>
-										<ww:set value="%{getIdSitConfiguracaoConfManual(${pessoa.id},${servico.id})}" name="idSitConf"/> 
-										<select name="configuracao_pessoa_servico"
-												         id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
-										         valorSalvo="${idSitConf}" 
-											       onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvcOutraLot});"
-										 >
-										 		<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
-												<c:forEach var="sit" items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
-													<c:if test="${sit.idSitConfiguracao == idSitConf }"  >
-														<option value="${sit.idSitConfiguracao}" selected="selected" >
-																${sit.dscSitConfiguracao}
-														</option>
-													</c:if>
-													<c:if test="${sit.idSitConfiguracao != idSitConf }"  >
-														<option value="${sit.idSitConfiguracao}" >
-																${sit.dscSitConfiguracao}
-														</option>
-													</c:if>
-												</c:forEach>
-										</select>
-								</td>					
+					<c:if test="${fn:length(pessoasGrupoSegManual) > 0}">
+						<tr class="header">
+							<td colspan="${2 + fn:length(cpServicosDisponiveis)}">Pessoas
+								extras</td>
+						</tr>
+					</c:if>
+					<c:forEach var="pessoa" items="${pessoasGrupoSegManual}">
+						<tr class="">
+							<ww:url id="urlExcluirPessoaExtra"
+								action="excluirPessoaExtra!aExcluirPessoaExtra"
+								namespace="/gi/servico">
+								<ww:param name="pessoaId">${pessoa.id}</ww:param>
+							</ww:url>
+							<td>${pessoa.sesbPessoa}${pessoa.matricula}<a
+								href=${urlExcluirPessoaExtra}>&nbsp(excluir)</a>
+							</td>
+							<td>${pessoa.nomePessoa}</td>
+							<c:forEach var="servico" items="${cpServicosDisponiveis}">
+								<td><ww:set
+										value="%{getIdSitConfiguracaoConfManual(${pessoa.id},${servico.id})}"
+										name="idSitConf" /> <select
+									name="configuracao_pessoa_servico"
+									id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
+									valorSalvo="${idSitConf}"
+									onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvcOutraLot});">
+										<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
+										<c:forEach var="sit"
+											items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
+											<c:if test="${sit.idSitConfiguracao == idSitConf }">
+												<option value="${sit.idSitConfiguracao}" selected="selected">
+													${sit.dscSitConfiguracao}</option>
+											</c:if>
+											<c:if test="${sit.idSitConfiguracao != idSitConf }">
+												<option value="${sit.idSitConfiguracao}">
+													${sit.dscSitConfiguracao}</option>
+											</c:if>
+										</c:forEach>
+								</select></td>
+							</c:forEach>
+						</tr>
 					</c:forEach>
-				</tr>
-			</c:forEach>
-		</table>
-		<table class="form100">
-			<form id="frmPessoaExtra">
-			<tr>
-				<td colspan="2">
-				
-					Pessoa:<siga:selecao tipo="pessoa" tema="simple" propriedade="pessoaExtra"/>
-				</td>
-			</tr>
-			
-			<tr>
-				<td><input type="button" onclick="javascript:inserirPessoaExtra()" value="Inserir Pessoa"/></td>
-			</tr>
-			</form>
-		</table>		
-		
+				</table>
+			</div>
+			<br />
+			<div class="gt-content-box gt-for-table">
+				<form id="frmPessoaExtra">
+					<table class="gt-form-table">
+						<tr class="header">
+							<td>Inserir Pessoa Extra</td>
+						</tr>
+						<tr>
+							<td colspan="2">Pessoa:<siga:selecao tipo="pessoa"
+									tema="simple" propriedade="pessoaExtra" /></td>
+						</tr>
+
+						<tr>
+							<td><input type="button"
+								onclick="javascript:inserirPessoaExtra()"
+								class="gt-btn-medium gt-btn-left" value="Inserir Pessoa" />
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
 </siga:pagina>
+
 <script type="text/javascript">
 	alterar = function (p_strIdPessoa,p_strIdServico,p_strIdTpConf) {
 		var t_domSituacao = document.getElementById("configuracao_" + p_strIdPessoa + "_" + p_strIdServico);

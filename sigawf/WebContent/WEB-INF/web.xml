@@ -118,7 +118,7 @@
 	<servlet>
 		<servlet-name>loadPhoto</servlet-name>
 		<servlet-class>
-			br.gov.jfrj.siga.wf.servlet.ProcessImageServlet
+			br.gov.jfrj.siga.wf.servlet.SingleImageServlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>

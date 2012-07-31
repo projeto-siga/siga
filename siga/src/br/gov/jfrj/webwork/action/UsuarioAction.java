@@ -204,8 +204,7 @@ public class UsuarioAction extends SigaActionSupport {
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
-				getRequest()
-				.setAttribute("mensagem",
+				setMensagem(
 						"Não foi possível alterar a senha!<br/>" +
 						"1) As pessoas informadas não podem ser as mesmas;<br/>" +
 						"2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>" +
@@ -217,9 +216,7 @@ public class UsuarioAction extends SigaActionSupport {
 			}
 			break;
 		default:
-			getRequest()
-			.setAttribute("mensagem",
-					"Método inválido!");
+			setMensagem("Método inválido!");
 			return Action.SUCCESS;
 		}
 
@@ -231,9 +228,7 @@ public class UsuarioAction extends SigaActionSupport {
 			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
-		getRequest()
-		.setAttribute("mensagem",
-				"A Senha foi alterada com sucesso e foi enviada para seu email" + msgAD);
+		setMensagem("A Senha foi alterada com sucesso e foi enviada para seu email" + msgAD);
 
 		return Action.SUCCESS;
 	}
@@ -258,8 +253,7 @@ public class UsuarioAction extends SigaActionSupport {
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
-				getRequest()
-				.setAttribute("mensagem",
+				setMensagem(
 						"Não foi possível alterar a senha!<br/>" +
 						"1) As pessoas informadas não podem ser as mesmas;<br/>" +
 						"2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>" +
@@ -271,9 +265,7 @@ public class UsuarioAction extends SigaActionSupport {
 			}
 			break;
 		default:
-			getRequest()
-			.setAttribute("mensagem",
-					"Método inválido!");
+			setMensagem("Método inválido!");
 			return Action.SUCCESS;
 		}
 		
@@ -286,9 +278,7 @@ public class UsuarioAction extends SigaActionSupport {
 			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
-		getRequest()
-		.setAttribute("mensagem",
-				"Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ msgAD);
+		setMensagem("Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ msgAD);
 
 
 		return Action.SUCCESS;
@@ -340,9 +330,7 @@ public class UsuarioAction extends SigaActionSupport {
 			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
-		getRequest()
-		.setAttribute("mensagem",
-				"A senha foi alterada com sucesso" + msgAD);
+		setMensagem("A senha foi alterada com sucesso" + msgAD);
 		
 		return Action.SUCCESS;
 

@@ -13,8 +13,7 @@
 <%@page import="br.gov.jfrj.siga.ex.ExArquivoNumerado"%>
 <%@page import="br.gov.jfrj.siga.ex.ExArquivo"%>
 <%@page import="java.util.List"%>
-<siga:cabecalho titulo="Documento" popup="${param.popup}"/>
-
+<siga:cabecalho titulo="Documento" popup="${param.popup}" />
 <script type="text/javascript">
 	//Input the IDs of the IFRAMES you wish to dynamically resize to match its content height:
 	//Separate each ID with a comma. Examples: ["myframe1", "myframe2"] or ["myframe"] or [] for none:
@@ -48,6 +47,9 @@
 	function resize() {
 		var ifr = document.getElementById('painel');
 		var ifrp = document.getElementById('paipainel');
+
+		ifr.height = pageHeight() - 300;
+				
 		if (ifr && !window.opera) {
 			ifr.style.display = "block";
 			if (ifr.contentDocument && ifr.contentDocument.body.offsetHeight) //ns6 syntax
@@ -67,53 +69,84 @@
 	}
 </script>
 
-<c:choose>
-	<c:when test="${doc.eletronico}">
-		<c:set var="exibedoc" value="header_eletronico" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="exibedoc" value="header" />
-	</c:otherwise>
-</c:choose>
+<div class="gt-bd" style="padding-bottom: 0px;">
+	<div class="gt-content">
 
-<siga:links>
-	<ww:url id="url" action="exibir" namespace="/expediente/doc">
-		<ww:param name="sigla" value="%{sigla}" />
-	</ww:url>
-	<siga:link title="Visualizar&nbsp;Movimentações" url="${url}"
-		test="${true}" />
+		<h2>
+			<c:if test="${empty ocultarCodigo}">${docVO.sigla}</c:if>
+		</h2>
 
-	<siga:link title="Preferência:" test="${true}" />
-	<input type="radio" id="radioHTML" name="formato" value="html"
-		checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">HTML</input>
+		<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
+			<ww:if test="%{((((mob.id == #attr.m.mob.id))))}">
+				<h3 style="margin-bottom: 0px;">
+					<ww:property
+						value="%{#attr.m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}"
+						escape="false" />
+					<c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}"> - ${m.tamanhoDeArquivo}</c:if>
+				</h3>
+			</ww:if>
+		</c:forEach>
 
-	<input type="radio" id="radioPDF" name="formato" value="pdf"
-		" onclick="exibir(htmlAtual,pdfAtual,'');">PDF</input>
+		<c:choose>
+			<c:when test="${doc.eletronico}">
+				<c:set var="exibedoc" value="header_eletronico" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="exibedoc" value="header" />
+			</c:otherwise>
+		</c:choose>
 
-	<input type="radio" id="radioPDFSemMarcas" name="formato"
-		value="pdfsemmarcas"
-		" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">PDF sem marcas</input>
-</siga:links>
+		<p class="gt-table-action-list">
+		<siga:links inline="${true}">
+			<ww:url id="url" action="exibir" namespace="/expediente/doc">
+				<ww:param name="sigla" value="%{sigla}" />
+			</ww:url>
+			<a name="inicio" style="float: right; padding-right: 5pt;"
+				class="once" href="#final"><img
+				src="/siga/css/famfamfam/icons/arrow_down.png"
+				style="margin-right: 5px;">Ir para o Final</a>
+			<siga:link icon="application_view_list"
+				title="Visualizar&nbsp;Movimentações" url="${url}" test="${true}" />
+			<siga:link icon="page_white_acrobat" title="Preferência:"
+				test="${true}" />
+			<input type="radio" id="radioHTML" name="formato" value="html"
+				checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">HTML</input>
 
-<table width="100%" border="0">
-	<tr>
-		<td valign="top" width="25%">
-			<table class="list" width="100%">
-				<COL width="70%" />
-				<COL width="15%" />
+			<input type="radio" id="radioPDF" name="formato" value="pdf"
+				" onclick="exibir(htmlAtual,pdfAtual,'');">PDF</input>
+
+			<input type="radio" id="radioPDFSemMarcas" name="formato"
+				value="pdfsemmarcas"
+				" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">PDF sem marcas</input>
+		</siga:links>
+		</p>
+
+	</div>
+</div>
+
+<div class="gt-bd gt-cols-2 clearfix"
+	style="padding-top: 0px; margin-top: 0px;">
+
+	<div class="gt-sidebar">
+		<div class="gt-content-box gt-for-table">
+
+			<table class="gt-table"
+				style="table-layout: fixed; word-wrap: break-word">
+				<COL width="55%" />
+				<COL width="30%" />
 				<COL width="15%" />
 
 				<c:set var="arqsNum" value="${mob.arquivosNumerados}" />
 
 				<tr class="${exibedoc}">
-					<td align="center">Documentos&nbsp;do&nbsp;Dossiê</td>
+					<td align="center">Documentos do Dossiê</td>
 					<td align="center">Lotação</td>
-					<td align="center">Página</td>
+					<td align="center">Pág.</td>
 				</tr>
 
 				<c:forEach var="arqNumerado" items="${arqsNum}">
 					<tr>
-						<td style="padding-left: ${arqNumerado.nivel * 6}pt"><c:if
+						<td style="padding-left: ${arqNumerado.nivel * 5 + 5}pt"><c:if
 								test="${!empty arqNumerado.arquivo.resumo}">
 								<!-- <ul style="font-size: 9;font-style: italic;color: gray;list-style: disc;margin: 0px;margin-left: 25px">
 						   	-->
@@ -153,7 +186,7 @@
 
 				</c:forEach>
 				<tr>
-					<td style="background-color: silver">
+					<td style="padding-left: 5pt;">
 						<!-- 
 					<ww:url
 						id="urlProcessoHTML" action="exibirProcessoHTML"
@@ -168,8 +201,8 @@
 				 --> <a
 						href="javascript:exibir('completo/${arqsNum[0].referenciaHtml}','completo/${arqsNum[0].referenciaPDF}','')">COMPLETO</a>
 					</td>
-					<td align="center" style="background-color: silver"></td>
-					<td align="center" style="background-color: silver">
+					<td align="center" style="padding-left: 5pt;"></td>
+					<td align="center" style="padding-left: 5pt;">
 						${arqsNum[fn:length(arqsNum)-1].paginaFinal}</td>
 				</tr>
 
@@ -179,16 +212,17 @@
 							namespace="/expediente/doc">
 							<ww:param name="sigla">${mob.sigla}</ww:param>
 						</ww:url>
-						<td colspan="3" style="background-color: silver"><a
+						<td colspan="3" style="padding-left: 5pt;"><a
 							href="javascript:exibirNoIFrame('${url}')">RESUMO</a></td>
 					</tr>
 				</c:if>
 
-			</table></td>
+			</table>
+		</div>
+	</div>
 
-		<td valign="top" id="paipainel"
-			style="padding: 0px; border: 0px solid black; border-top: 0px;"
-			width="75%">
+	<div class="gt-content">
+		<%--
 			<table width="100%" border="0">
 				<tr>
 					<td valign="top" width="100%">
@@ -197,10 +231,24 @@
 				</tr>
 				<tr>
 					<td valign="top" width="100%">
-						<iframe
-							style="visibility: visible; margin: 0px; padding: 0px;"
-							name="painel" id="painel" src="" align="right" width="100%"
-							onload="resize();" frameborder="0" scrolling="auto"></iframe>
+ --%>
+
+		<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px;clear:both;">
+			<iframe style="visibility: visible; margin: 0px; padding: 0px;"
+				name="painel" id="painel" src="" align="right" width="100%"
+				onload="resize();" frameborder="0" scrolling="auto"></iframe>
+		</div>
+
+		<div style="margin: 0px; padding: 0px; border: 0px;clear:both;">
+		<p class="gt-table-action-list">
+			<a style="float: right; padding-right: 5pt; padding-top: 5pt;"
+				name="final" href="#inicio"><img
+				src="/siga/css/famfamfam/icons/arrow_up.png"
+				style="margin-right: 5px;">Ir para o Topo</a>
+		</p>
+		</div>
+
+		<%--							
 					</td>
 				</tr>
 				<tr>
@@ -209,18 +257,19 @@
 					</td>
 				</tr>
 			</table>
-		</td>
-	</tr>
-</table>
+ --%>
+	</div>
 
-<%--
+
+
+	<%--
 <c:forEach var="item" items="${doc.form}">
 	${item}<br/>
 </c:forEach>
 --%>
 
 
-<%--
+	<%--
 <!--  tabela do rodapé -->
 <c:choose>
 	<c:when test='${param.popup!="true"}'>
@@ -232,6 +281,8 @@
 </c:choose>
 --%>
 
+</div>
+</div>
 <siga:rodape />
 
 
@@ -259,7 +310,7 @@
 		} else {
 			ifr.src = "./" + semMarcas + refPDF;
 			ifrp.style.border = "1px solid black";
-			ifr.height = pageHeight() - 150;
+			ifr.height = pageHeight() - 300;
 		}
 
 		htmlAtual = refHTML;

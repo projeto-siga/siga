@@ -12,6 +12,7 @@
 <%@ attribute name="meta"%>
 <%@ attribute name="pagina_de_erro"%>
 <%@ attribute name="onLoad"%>
+<%@ attribute name="desabilitarbusca"%>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -34,10 +35,10 @@
 </c:if>
 
 <c:set var="ambiente">
-	<c:if test="${f:resource('isVersionTest') || f:resource('isBaseTest')}">
+	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">
 		<c:if test="${f:resource('isVersionTest')}">SISTEMA</c:if>
 		<c:if
-			test="${f:resource('isVersionTest') && f:resource('isBaseTest')}"> E </c:if>
+			test="${f:resource('isVersionTest') and f:resource('isBaseTest')}"> E </c:if>
 		<c:if test="${f:resource('isBaseTest')}">BASE</c:if> DE TESTES
 	</c:if>
 </c:set>
@@ -55,15 +56,23 @@
 ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
-<link rel="StyleSheet" href="${path}/sigalibs/siga.css" type="text/css"
-	title="SIGA Estilos" media="screen">
-<script src="${path}/sigalibs/ajax.js" language="JavaScript1.1"
+
+<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css"
+	type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css"
+	type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
+	type="text/css" media="screen, projection">
+
+<!-- <link rel="StyleSheet" href="${path}/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
+
+<script src="/siga/sigalibs/ajax.js" language="JavaScript1.1"
 	type="text/javascript"></script>
-<script src="${path}/sigalibs/static_javascript.js"
+<script src="/siga/sigalibs/static_javascript.js"
 	language="JavaScript1.1" type="text/javascript" charset="utf-8"></script>
 
-<link href="${pageContext.request.contextPath}/sigalibs/menu.css"
-	rel="stylesheet" type="text/css" />
+<!-- <link href="${pageContext.request.contextPath}/sigalibs/menu.css"
+	rel="stylesheet" type="text/css" /> -->
 
 <link rel="shortcut icon" href="/sigalibs/siga.ico" />
 
@@ -87,58 +96,141 @@ ${meta}
 
 </head>
 
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"
-	onload="${onLoad}" style="background: url(null) fixed no-repeat;">
+<body onload="${onLoad}">
 	<c:if test="${popup!='true'}">
-		<div style="background-color: #9DB1E5; height: 49px; width: 100%;">
-			<div style="float: left">
-				<img
-					src="${pageContext.request.contextPath}/sigalibs/toplogo1_70.png" />
+		<div class="gt-hd clearfix">
+			<!-- leaf watermark -->
+			<div class="gt-leaf-watermark clearfix">
+				<!-- head top -->
+				<div class="gt-hd-top clearfix">
+					<div class="gt-fixed-wrap clearfix">
+						<!-- utility box -->
+						<c:if test="${not empty cadastrante}">
+							<div class="gt-util-box">
+								<div class="gt-util-box-inner"
+									style="padding-top: 10px; font-size: 100%;">
+									<p style="text-align: right;">
+										Olá, <strong><c:catch>
+												<c:out default="Convidado"
+													value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
+												<c:choose>
+													<c:when test="${not empty cadastrante.lotacao}">
+						 - ${cadastrante.lotacao.sigla}</c:when>
+												</c:choose>
+											</c:catch> </strong> <span class="gt-util-separator">|</span> <a
+											href="/siga/logoff.action">sair</a>
+									</p>
+									<p style="text-align: right; padding-top: 10px;">
+										<c:catch>
+											<c:choose>
+												<c:when
+													test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
+													<span class="gt-util-separator">|</span>
+													<a href="/siga/substituicao/finalizar.action">finalizar</a>
+												</c:when>
+												<c:when
+													test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
+													<span class="gt-util-separator">|</span>
+													<a href="/siga/substituicao/finalizar.action">finalizar</a>
+												</c:when>
+												<c:otherwise></c:otherwise>
+											</c:choose>
+										</c:catch>
+									</p>
+								</div>
+							</div>
+						</c:if>
+						<!-- / utility box -->
+						<!-- logo -->
+						<div class="gt-logo" style="padding: 0;">
+							<img style="margin-top: 3px; margin-bottom: -13px;"
+								src="/siga/imagens/logo.png">
+						</div>
+						<div class="gt-company">
+							<strong>Justi&ccedil;a Federal <c:catch>
+									<c:if test="${not empty titular.orgaoUsuario.descricao}">
+- ${titular.orgaoUsuario.descricao}
+</c:if>
+								</c:catch> </strong>
+						</div>
+						<div class="gt-version">
+							Sistema Integrado de Gest&atilde;o Administrativa
+							<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
+							</c:if>
+						</div>
+						<!-- / logo -->
+					</div>
+				</div>
+				<!-- /head top -->
+				<!-- navbar -->
+				<div class="gt-navbar clearfix">
+					<div class="gt-fixed-wrap clearfix">
+						<!-- navigation -->
+						<div class="gt-nav">
+							<ul id="navmenu-h">
+								<c:import url="/sigalibs/menuprincipal.jsp" />
+							</ul>
+						</div>
+						<!-- / navigation -->
+						<!-- search -->
+						<c:if test="${desabilitarbusca != 'sim'}">
+							<div class="gt-search">
+							<div class="gt-search-inner">
+								<siga:selecao propriedade="buscar" modulo="sigaex"
+									tipo="expediente" tema="simple" ocultardescricao="sim"
+									buscar="nao" siglaInicial="Buscar documento" />
+								<script type="text/javascript">
+									var fld = document
+											.getElementById("buscar_expedienteSel_sigla");
+									fld.setAttribute("class", "gt-search-text");
+									fld.className = "gt-search-text";
+									fld.onfocus = function() {
+										if (this.value == 'Buscar documento') {
+											this.value = '';
+										}
+									};
+									fld.onblur = function() {
+										if (this.value == '') {
+											this.value = 'Buscar documento';
+											return;
+										} 
+										if (this.value != 'Buscar documento')
+											ajax_buscar_expediente();
+									};
+									fld.onkeypress = function(event) {
+										event = (event) ? event : window.event
+										var keyCode = (event.which) ? event.which : event.keyCode										
+										//var keyCode = event.keyCode ? event.keyCode
+										//		: event.which ? event.which
+										//				: event.charCode;
+										var fid = document.getElementById("buscar_expedienteSel_id");
+										if (keyCode == 13) {
+											if (fid.value == null
+													|| fid.value == "")
+												fld.onblur();
+											else
+												window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
+														+ fld.value;
+											return false;
+										} else {
+											fid.value = '';
+											return true;
+										}
+									};
+								</script>
+							</div></c:if>
+					</div>
+				</div>
 			</div>
-
-
-			<div style="float: left">
-				<p class="cabecalho-title">
-					<strong>Justi&ccedil;a Federal <c:catch>
-							<c:if test="${not empty titular.orgaoUsuario.descricao}">
-- ${titular.orgaoUsuario.descricao}</c:if>
-						</c:catch> </strong>
-				</p>
-				<p class="cabecalho-subtitle">
-					Sistema Integrado de Gest&atilde;o Administrativa
-					<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
-					</c:if>
-				</p>
-			</div>
-			<div style="float: right">
-				<img
-					src="${pageContext.request.contextPath}/sigalibs/toplogo2_70.png"
-					alt="Bandeira do Brasil">
-			</div>
+			<!-- /navbar -->
+		</div>
+		<!-- /leaf watermark -->
 		</div>
 
-		<div id="carregando"
-			style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
 		<div id="quadroAviso"
 			style="position: absolute; font-weight: bold; padding: 4px; color: white; visibility: hidden">-</div>
 
-		<c:import url="/sigalibs/menuprincipal.jsp" />
+	</c:if>
 
-
-		<TABLE WIDTH="100%" height="100%" BORDER=0 CELLPADDING=0 CELLSPACING=0>
-			<TR>
-				<c:if test="${titulo == 'P&aacute;gina Inicial'}">
-					<TD colspan="3" valign="top"
-						style="padding-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0;">
-				</c:if>
-				<c:if test="${titulo != 'P&aacute;gina Inicial'}">
-					<TD colspan="4" valign="top"
-						style="padding-left: 7; padding-top: 7; padding-right: 7; padding-bottom: 7;">
-				</c:if>
-<%--				<c:if test="${title=='false'}">
-			</TR>
-		</TABLE>
-</body>
-</html>
-</c:if>--%>
-</c:if>
+	<div id="carregando"
+		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>

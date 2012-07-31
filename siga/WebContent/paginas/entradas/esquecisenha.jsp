@@ -105,138 +105,162 @@ function validateUsuarioForm(form) {
 </script>
 
 <siga:pagina titulo="${param.titulo}">
-	<div>
+	<!-- main content -->
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
 	<c:if test="${baseTeste}">
 		<div id="msgSenha" style="font-size: 12pt;color: red; font-weight: bold;">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</div>
 	</c:if>
-	<h1>${param.titulo}</h1>
-
-
-	<h2>&nbsp;${mensagem }</h2>
-	<h2>Método 1 - Envio de senha nova para o e-mail</h2>
 	
-		<p style="font-size: x-small; font-style: italic;">O sistema gera
-		uma senha aleatoriamente e a envia para o email da pessoa informada.</p>
-		<p style="font-size: x-small; font-style: italic;">Se o seu órgão estiver 
-		configurado com a apção de integração de senhas entre o SIGA, e-mail e rede esta opção estará indisponível.</p>
-		<ww:form action="${param.proxima_acao}" theme="simple" method="POST">
-			<ww:hidden name="metodo" value="1" />
-			<table class="form" width="100%">
-				<ww:hidden name="page" value="1" />
-				<tr class="header">
-					<td colspan="2">Criar uma nova senha automaticamente e enviar
-					para o e-mail de:</td>
-				</tr>
-				<tr>
-					<td>Matrícula:</td>
-					<td><ww:textfield name="matricula"
-						onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
-					XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é
-					o número da sua matrícula.</td>
-				</tr>
-				<tr>
-					<td>CPF:</td>
-					<td><ww:textfield name="cpf" theme="simple" /></td>
-				</tr>
-				<tr>
-					<td>&nbsp;</td>
-					<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
-						label="Cancelar" value="Cancelar" theme="simple" /></td>
-				</tr>
-	
-			</table>
-		</ww:form> <br />
+			<h1 class="gt-form-head">${param.titulo}</h1>
 
-	<h2>Método 2 - Alterar a senha com auxílio de 2 pessoas</h2>
-	<p style="font-size: x-small; font-style: italic;">O sistema altera
-	a senha da pessoa conforme solicitado, porém é necessário o apoio de
-	mais 2 pessoas para completar o processo. <br />
-	As pessoas auxiliares devem estar na mesma lotação da pessoa indicada
-	para ter a senha substituída ou devem estar na lotação imediatamente
-	superior na hierarquia organizacional.</p>
-	<ww:form action="${param.proxima_acao}"
-		onsubmit="return validateUsuarioForm(this);" method="post"
-		theme="simple">
-		<ww:hidden name="metodo" value="2" />
+			<h2>${mensagem}</h2>
+			<h2 class="gt-form-head">Método 1 - Envio de senha nova para o
+				e-mail</h2>
+			<p>O sistema gera uma nova senha aleatoriamente e a envia para o
+				email da pessoa informada.</p>
+			<div class="gt-form gt-content-box">
+				<ww:form action="${param.proxima_acao}" theme="simple" method="post">
+					<ww:hidden name="metodo" value="1" />
+					<ww:hidden name="page" value="1" />
+					<div class="gt-form-row gt-width-100">
+						<div class="gt-left-col gt-width-33">
+							<label>Matrícula</label>
+							<ww:textfield name="matricula"
+								onblur="javascript:converteUsuario(this)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+						<div class="gt-right-col gt-width-66">
+							<label>&nbsp;</label>
+							<p>Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES,
+								etc.) e 99999 é o número da sua matrícula.</p>
+						</div>
+					</div>
 
-		<table class="form" width="100%">
-			<tr class="header">
-				<td colspan="2">Primeiro auxiliar</td>
-			</tr>
-			<tr>
-				<td>Matrícula:</td>
-				<td><ww:textfield name="auxiliar1"
-					onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
-				XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é
-				o número da matrícula da primeira pessoa que auxiliará na alteração
-				de senha.</td>
-			</tr>
-			<tr>
-				<td>CPF:</td>
-				<td><ww:textfield name="cpf1" theme="simple" /></td>
-			</tr>
-			<tr>
-				<td>Senha:</td>
-				<td><ww:password name="senha1"
-					onblur="javascript:converteUsuario(this)" theme="simple" /></td>
-			</tr>
-			<tr class="header">
-				<td colspan="2">Segundo auxiliar</td>
-			</tr>
-			<tr>
-				<td>Matrícula:</td>
-				<td><ww:textfield name="auxiliar2"
-					onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
-				XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é
-				o número da matrícula da segunda pessoa que auxiliará na alteração
-				de senha.</td>
-			</tr>
-			<tr>
-				<td>CPF:</td>
-				<td><ww:textfield name="cpf2" theme="simple" /></td>
-			</tr>
-			<tr>
-				<td>Senha:</td>
-				<td><ww:password name="senha2"
-					onblur="javascript:converteUsuario(this)" theme="simple" /></td>
-			</tr>
-			<tr class="header">
-				<td colspan="2">Alterar senha de:</td>
-			</tr>
-			<tr>
-				<td>Matrícula:</td>
-				<td><ww:textfield name="matricula"
-					onblur="javascript:converteUsuario(this)" theme="simple" />&nbsp;&nbsp;Ex.:
-				XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é
-				o número da matrícula do usuário que terá a senha alterada.</td>
-			</tr>
-			<tr>
-				<td>CPF:</td>
-				<td><ww:textfield name="cpf" theme="simple" /></td>
-			</tr>
-			<tr>
-				<td>Nova Senha:</td>
-				<td><ww:password name="senhaNova" id="pass"
-					onkeyup="passwordStrength(this.value)" theme="simple" /></td>
-			</tr>
-			<tr>
-				<td>Força da senha:</td>
-				<td>
-				<div id="passwordDescription">Senha não informada</div>
-				<div id="passwordStrength" class="strength0"></div>
-				</td>
-			</tr>
-			<tr>
-				<td>Repetição da nova senha:</td>
-				<td><ww:password name="senhaConfirma" id="pass2"
-					onblur="javascript:converteUsuario(this)" theme="simple" /></td>
-			</tr>
+					<div class="gt-form-row gt-width-33">
+						<label>CPF</label>
+						<ww:textfield name="cpf" theme="simple" cssClass="gt-form-text" />
+					</div>
+					<div class="gt-form-row">
+						<ww:submit label="OK" value="OK" theme="simple"
+							cssClass="gt-btn-medium gt-btn-left" />
+						<ww:submit label="Cancelar" value="Cancelar" theme="simple"
+							cssClass="gt-btn-medium gt-btn-left" />
+					</div>
 
-			<tr>
-				<td>&nbsp;</td>
-				<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
-					label="Cancelar" value="Cancelar" theme="simple" /></td>
-			</tr>
-		</table>
-	</ww:form></div>
+				</ww:form>
+			</div>
+
+			<h2 class="gt-form-head">Método 2 - Alterar a senha com auxílio
+				de 2 pessoas</h2>
+			<p>
+				O sistema altera a senha da pessoa conforme solicitado, porém é
+				necessário o apoio de mais 2 pessoas para completar o processo. <br />
+				As pessoas auxiliares devem estar na mesma lotação da pessoa
+				indicada para ter a senha substituída ou devem estar na lotação
+				imediatamente superior na hierarquia organizacional.
+			</p>
+			<div class="gt-form gt-content-box">
+				<ww:form action="${param.proxima_acao}"
+					onsubmit="return validateUsuarioForm(this);" method="post"
+					theme="simple">
+					<ww:hidden name="metodo" value="2" />
+
+					<h4>Dados do primeiro auxiliar:</h4>
+					<div class="gt-form-row gt-width-100">
+						<div class="gt-left-col gt-width-33">
+							<label>Matrícula<a href="#"
+								title="Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula da primeira pessoa que auxiliará na alteração de senha."><img
+									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
+									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
+							<ww:textfield name="auxiliar1"
+								onblur="javascript:converteUsuario(this)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+						<div class="gt-left-col gt-width-33">
+							<label>CPF</label>
+							<ww:textfield name="cpf1" theme="simple" cssClass="gt-form-text" />
+						</div>
+
+						<div class="gt-left-col gt-width-33">
+							<label>Senha</label>
+							<ww:password name="senha1"
+								onblur="javascript:converteUsuario(this)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+					</div>
+
+					<h4>Dados do segundo auxiliar:</h4>
+					<div class="gt-form-row gt-width-100">
+						<div class="gt-left-col gt-width-33">
+							<label>Matrícula<a href="#"
+								title="Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula da segunda pessoa que auxiliará na alteração de senha."><img
+									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
+									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
+							<ww:textfield name="auxiliar2"
+								onblur="javascript:converteUsuario(this)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+						<div class="gt-left-col gt-width-33">
+							<label>CPF</label>
+							<ww:textfield name="cpf2" theme="simple" cssClass="gt-form-text" />
+						</div>
+
+						<div class="gt-left-col gt-width-33">
+							<label>Senha</label>
+							<ww:password name="senha2"
+								onblur="javascript:converteUsuario(this)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+					</div>
+
+					<h4>Alterar senha de:</h4>
+					<div class="gt-form-row gt-width-100">
+						<div class="gt-left-col gt-width-33">
+							<label>Matrícula<a href="#"
+								title="Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula do usuário que terá a senha alterada."><img
+									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
+									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
+							<ww:textfield name="matricula"
+								onblur="javascript:converteUsuario(this)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+						<div class="gt-left-col gt-width-33">
+							<label>CPF</label>
+							<ww:textfield name="cpf" theme="simple" cssClass="gt-form-text" />
+						</div>
+					</div>
+					<div class="gt-form-row gt-width-100">
+
+						<div class="gt-left-col gt-width-33">
+							<label>Nova Senha</label>
+							<ww:password name="senhaNova" id="pass"
+								onkeyup="passwordStrength(this.value)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+
+						<div class="gt-left-col gt-width-33">
+							<label>Repetição da nova senha</label>
+							<ww:password name="senhaConfirma" id="pass2"
+								onblur="javascript:converteUsuario(this)" theme="simple"
+								cssClass="gt-form-text" />
+						</div>
+
+						<div class="gt-left-col gt-width-33">
+							<label>Força da senha</label>
+							<div id="passwordDescription">Senha não informada</div>
+							<div id="passwordStrength" class="strength0"></div>
+						</div>
+					</div>
+
+					<div class="gt-form-row">
+						<ww:submit label="OK" value="OK" theme="simple"
+							cssClass="gt-btn-medium gt-btn-left" />
+						<ww:submit label="Cancelar" value="Cancelar" theme="simple"
+							cssClass="gt-btn-medium gt-btn-left" />
+					</div>
+				</ww:form>
+			</div>
+		</div>
 </siga:pagina>

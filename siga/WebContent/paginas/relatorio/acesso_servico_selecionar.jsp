@@ -5,69 +5,64 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<ww:url id="urlEmitir" action="emitir_acesso_servico" namespace="/gi/relatorio" />
-<ww:url id="urlObterSituacoesServico" action="obterSituacoesServico!aObterSituacoesServico" namespace="/gi/relatorio" />
+<ww:url id="urlEmitir" action="emitir_acesso_servico"
+	namespace="/gi/relatorio" />
+<ww:url id="urlObterSituacoesServico"
+	action="obterSituacoesServico!aObterSituacoesServico"
+	namespace="/gi/relatorio" />
 
 <siga:pagina titulo="Relatório de Acesso à Utilização de Serviço">
-	
-	<h1>Relatório de Acesso à Utilização de Serviço</h1>
-		<br/>
-		<form id="frm" method="post" action="#">
-			<table class="form100">
-				   <tr  class="">
-				   		<td>
-							<label>Serviço: </label>
-						</td>
-						<td>
-							<select  name="idServico"  id="idServico" onchange="javascript: criarSituacoesServico()"	>
-								<c:forEach var="serv" items="${cpServicos}">
-									<option value="${serv.idServico}">
-										${serv.siglaServico} - ${serv.dscServico}
-									</option>
-								</c:forEach>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label>Situações: </label>
-						</td>
-						<td>
-							<input type="hidden" id="situacoesSelecionadas" name="situacoesSelecionadas"/>
-							<table id="situacoesServico"></table>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label>Pessoas: </label>
-						</td>
-						<td>
-							<select  name="idOrgaoUsuario"  id="idOrgaoUsuario" 	>
-								<option value="-1">Todos</option> 
-								<c:forEach var="ousu" items="${cpOrgaosUsuario}">
-									<option value="${ousu.idOrgaoUsu}">
-										${ousu.nmOrgaoUsu}
-									</option>
-								</c:forEach>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<button onClick="javascript:gerar(); return false;">Gerar...</button>
-						</td>
-						<td>
-							&nbsp;
-						</td>
-					</tr>
-			</table>
-		</form>
-		<br/>
-		<div id="div-tempo" style="display:none; position:absolute ;text-align: center; filter:alpha(opacity=60); opacity:0.4; background-color: #dcdcdc; vertical-align:middle; border-width: 2px; border-color: darkblue; border-style: solid; " >
-        	<div  style="position:absolute; font-family:sans-serif50%; left:40%; top:50%; font-size:medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
-        </div>
+
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Relatório de Acesso à Utilização de Serviço</h2>
+			<div class="gt-content-box gt-for-table">
+				<form id="frm" method="post" action="#">
+					<table class="gt-form-table">
+						<tr class="">
+							<td><label>Serviço: </label></td>
+							<td><select name="idServico" id="idServico"
+								onchange="javascript: criarSituacoesServico()">
+									<c:forEach var="serv" items="${cpServicos}">
+										<option value="${serv.idServico}">
+											${serv.siglaServico} - ${serv.dscServico}</option>
+									</c:forEach>
+							</select></td>
+						</tr>
+						<tr>
+							<td><label>Situações: </label></td>
+							<td><input type="hidden" id="situacoesSelecionadas"
+								name="situacoesSelecionadas" />
+								<table id="situacoesServico"></table></td>
+						</tr>
+						<tr>
+							<td><label>Pessoas: </label></td>
+							<td><select name="idOrgaoUsuario" id="idOrgaoUsuario">
+									<option value="-1">Todos</option>
+									<c:forEach var="ousu" items="${cpOrgaosUsuario}">
+										<option value="${ousu.idOrgaoUsu}">
+											${ousu.nmOrgaoUsu}</option>
+									</c:forEach>
+							</select></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<button class="gt-btn-medium gt-btn-left"
+									onClick="javascript:gerar(); return false;">Gerar...</button></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+	<br />
+	<div id="div-tempo"
+		style="display: none; position: absolute; text-align: center; filter: alpha(opacity =     60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
+		<div
+			style="position: absolute; font-family: sans-serif50 %; left: 40%; top: 50%; font-size: medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
+	</div>
 </siga:pagina>
- <script type="text/javascript">
+<script type="text/javascript">
  	 function gerar() {
  		atualizarSituacoesSelecionadas();
  	 	 if (seTemSituacaoSelecionada()) {
@@ -209,7 +204,7 @@
 			}
 	 }
  </script>
- <script type="text/javascript">
+<script type="text/javascript">
 	 /*
 		 ***** Exibição do  Aguarde **** 
 	*/
@@ -288,7 +283,7 @@
 		}
 	}
  </script>
- <script type="text/javascript">
+<script type="text/javascript">
  // inicialização
  	setTimeout(
  		 	function() {

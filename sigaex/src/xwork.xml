@@ -235,16 +235,6 @@
 			</result>
 		</action>
 
-		<action name="exibirProcessoHTML" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aExibir">
-			<result>
-				/paginas/expediente/painelProcesso.jsp?podeExibir="true"
-			</result>
-			<result name="reservado">
-				/paginas/expediente/cuidado_reserva.jsp?"
-			</result>
-		</action>
-
 		<action name="exibirResumoProcesso" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aExibir">
 			<result>
@@ -1173,6 +1163,7 @@
 		</action>
 	</package>
 
+<!-- 
 	<package name="manutencao/desenvolvimento" extends="default"
 		namespace="/manutencao/desenvolvimento">
 		<default-interceptor-ref name="defaultStack" />
@@ -1181,9 +1172,9 @@
 			method="aCancelarDocumento">
 			<result type="redirect-action">principal</result>
 		</action>
-
 	</package>
-
+ -->
+ 
 	<package name="despacho/tipodespacho" extends="default"
 		namespace="/despacho/tipodespacho">
 		<default-interceptor-ref name="defaultStack" />

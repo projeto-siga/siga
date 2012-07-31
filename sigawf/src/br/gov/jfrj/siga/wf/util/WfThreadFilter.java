@@ -117,15 +117,12 @@ public class WfThreadFilter extends ThreadFilter {
 
 	private void doFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain ) throws Exception {
+		
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			// TODO Verificar, pois que nem sempre que ocorre uma exceção no doFilter a mesma ocorreu por causa do timeout
-			if ( !WfDao.getInstance().transacaoEstaAtiva() ) {
-				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
-			}else{
-				throw e;	
-			}
+			log.info( "Ocorreu um erro durante a execução da operação: " + e.getMessage() );
+			throw e;
 		}
 	}
 
@@ -152,8 +149,7 @@ public class WfThreadFilter extends ThreadFilter {
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						// log.error("Não foi possível configurar o hibernate.",
-						// ex);
+						log.error("Não foi possível configurar o hibernate.", ex);
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -167,7 +163,7 @@ public class WfThreadFilter extends ThreadFilter {
 			WfContextBuilder.closeContext();
 		} catch (Exception ex) {
 			log.error( "Ocorreu um erro ao fechar o contexto do Workflow", ex );
-			ex.printStackTrace();
+			// ex.printStackTrace();
 		}
 	}
 	
@@ -176,7 +172,7 @@ public class WfThreadFilter extends ThreadFilter {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
 			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
-			ex.printStackTrace();
+			// ex.printStackTrace();
 		}
 	}
 
@@ -184,7 +180,8 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			ModeloDao.freeInstance();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			log.error( ex.getMessage(), ex );
+			// ex.printStackTrace();
 		}
 	}
 

@@ -150,12 +150,12 @@ public abstract class ThreadFilter implements Filter {
 		
 		String url = httpRequest.getRequestURL().toString();
 		String queryString = httpRequest.getQueryString() != null ? "?" + httpRequest.getQueryString() : ""; 
-		String principalName = httpRequest.getUserPrincipal().getName();
+		String principalName = httpRequest.getUserPrincipal()!=null?httpRequest.getUserPrincipal().getName():"convidado";
 		
 		String mensagemErro = this.montaMensagemErroExcecoes( ex );
 		
 		log.error( mensagemErro + "\nURL: " + url + queryString 
-		                           + "\nUser: " + principalName );
+		                           + "\nUser: " + principalName, ex );
 	}
 	
 	public void init(FilterConfig arg0) throws ServletException {

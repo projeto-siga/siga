@@ -77,5 +77,4 @@ public class ThreadFilterTest {
 		String retorno = this.threadFilter.montaMensagemErroExcecoes( null );
 		assertEquals( "", retorno );
 	}
-	
 }

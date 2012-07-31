@@ -28,10 +28,12 @@ import java.util.List;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
-import br.gov.jfrj.siga.model.dao.DaoSelecionavel;
 
 public abstract class SigaSelecionavelActionSupport<T extends Selecionavel, DaoFiltroT extends DaoFiltroSelecionavel>
 		extends SigaActionSupport {
+
+	private static final long serialVersionUID = 1L;
+
 	private Integer itemPagina;
 
 	private List itens;
@@ -88,7 +90,7 @@ public abstract class SigaSelecionavelActionSupport<T extends Selecionavel, DaoF
 				sel = null;
 			}
 		}
-
+				
 		if (sel != null)
 			sel = selecionarVerificar(sel);
 

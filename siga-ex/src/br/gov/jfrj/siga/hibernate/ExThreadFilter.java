@@ -98,7 +98,6 @@ public class ExThreadFilter extends ThreadFilter {
 						// swallowed
 						// ex);
 						log.error( "Não foi possível configurar o Hibernate. ", ex );
-						ex.printStackTrace();
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -127,15 +126,12 @@ public class ExThreadFilter extends ThreadFilter {
 
 	private void doFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain) throws Exception {
+		
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			// TODO Verificar, pois que nem sempre que ocorre uma exceção no doFilter a mesma ocorreu por causa do timeout
-			if ( !ExDao.getInstance().transacaoEstaAtiva() ) {
-				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
-			}else{
-				throw e;	
-			}
+			log.info( "Ocorreu um erro durante a execução da operação: " + e.getMessage() );
+			throw e;
 		}
 	}
 	
@@ -144,7 +140,6 @@ public class ExThreadFilter extends ThreadFilter {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
 			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
-			// ex.printStackTrace();
 		}
 	}
 	
@@ -153,7 +148,6 @@ public class ExThreadFilter extends ThreadFilter {
 			ExDao.freeInstance();
 		} catch (Exception ex) {
 			log.error( ex.getMessage(), ex );
-			// ex.printStackTrace();
 		}
 	}
 

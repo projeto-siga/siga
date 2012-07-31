@@ -1661,6 +1661,8 @@ public class ExDao extends CpDao {
 									.classForName(
 											"org.hibernate.search.event.FullTextIndexEventListener")
 									.newInstance() });
+		} else {
+			cfg.setProperty("hibernate.search.autoregister_listeners", "false");
 		}
 
 	}

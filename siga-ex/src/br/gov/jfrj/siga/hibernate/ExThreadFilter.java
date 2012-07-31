@@ -89,9 +89,7 @@ public class ExThreadFilter extends ThreadFilter {
 						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
 						SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
 						
-						// bruno.lacerda@avantiprima.com.br
-						cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
-						cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+						registerTransactionClasses(cfg);
 						
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
@@ -100,7 +98,6 @@ public class ExThreadFilter extends ThreadFilter {
 						// swallowed
 						// ex);
 						log.error( "Não foi possível configurar o Hibernate. ", ex );
-						ex.printStackTrace();
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -129,15 +126,12 @@ public class ExThreadFilter extends ThreadFilter {
 
 	private void doFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain) throws Exception {
+		
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			// TODO Verificar, pois que nem sempre que ocorre uma exceção no doFilter a mesma ocorreu por causa do timeout
-			if ( !ExDao.getInstance().transacaoEstaAtiva() ) {
-				throw new AplicacaoException("A aplicação não conseguiu efetuar a operação em tempo hábil.",0,e);
-			}else{
-				throw e;	
-			}
+			log.info( "Ocorreu um erro durante a execução da operação: " + e.getMessage() );
+			throw e;
 		}
 	}
 	
@@ -146,7 +140,6 @@ public class ExThreadFilter extends ThreadFilter {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
 			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
-			// ex.printStackTrace();
 		}
 	}
 	
@@ -155,7 +148,6 @@ public class ExThreadFilter extends ThreadFilter {
 			ExDao.freeInstance();
 		} catch (Exception ex) {
 			log.error( ex.getMessage(), ex );
-			// ex.printStackTrace();
 		}
 	}
 

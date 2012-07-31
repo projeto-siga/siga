@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.cfg.AnnotationConfiguration;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -149,12 +150,12 @@ public abstract class ThreadFilter implements Filter {
 		
 		String url = httpRequest.getRequestURL().toString();
 		String queryString = httpRequest.getQueryString() != null ? "?" + httpRequest.getQueryString() : ""; 
-		String principalName = httpRequest.getUserPrincipal().getName();
+		String principalName = httpRequest.getUserPrincipal()!=null?httpRequest.getUserPrincipal().getName():"convidado";
 		
 		String mensagemErro = this.montaMensagemErroExcecoes( ex );
 		
 		log.error( mensagemErro + "\nURL: " + url + queryString 
-		                           + "\nUser: " + principalName );
+		                           + "\nUser: " + principalName, ex );
 	}
 	
 	public void init(FilterConfig arg0) throws ServletException {
@@ -182,5 +183,11 @@ public abstract class ThreadFilter implements Filter {
 		
 		return mensagemErro;
 	}	
+
+	public void registerTransactionClasses(AnnotationConfiguration cfg) {
+		// bruno.lacerda@avantiprima.com.br
+		//cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
+		//cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+	}
 
 }

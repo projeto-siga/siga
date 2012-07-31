@@ -175,7 +175,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isGeral() {
-		return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 */
+		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
+		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
 	}
 
 	/**
@@ -185,7 +190,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isVia() {
-		return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 */
+		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
+		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
 	}
 
 	/**
@@ -195,7 +205,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isVolume() {
-		return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 */
+		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
+		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
 	}
 
 	/**
@@ -205,7 +220,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isCancelada() {
-		return (getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() == null);
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 */
+		// return (getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() == null);
+		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() == null;
 	}
 
 	/**
@@ -227,8 +247,18 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		String s = "<a href=\"javascript:void(0)\" onclick=\"window.open('/sigaex/expediente/doc/exibir.action?popup=true&idmob="
 				+ getIdMobil();
 
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExDocumento() é diferente de nulo antes de chamar o método getDescrCurta()() do objeto
+		 */
+		/*
 		s = s + "', 'documento', " + winProp + ")\">"
 				+ getExDocumento().getDescrCurta() + "</a>";
+		*/
+		String descricaoCurta = getExDocumento() != null ? getExDocumento().getDescrCurta() : "";
+		s = s + "', 'documento', " + winProp + ")\">"
+					+ descricaoCurta + "</a>";
+		
 		return s;
 	}
 

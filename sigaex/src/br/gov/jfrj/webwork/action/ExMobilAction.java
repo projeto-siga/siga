@@ -470,15 +470,30 @@ public class ExMobilAction extends
 	@Override
 	public Selecionavel selecionarPorNome(final ExMobilDaoFiltro flt)
 			throws AplicacaoException {
+		
+		final ExMobil docVia = new ExMobil();
+		
 		try {
-			final ExMobil docVia = new ExMobil();
-			final ExDocumento docdoc = dao().consultar(flt.getIdDoc(),
-					ExDocumento.class, false);
-			docVia.setExDocumento(docdoc);
-			return docVia;
+			/*
+			 * bruno.lacerda@avantiprima.com.br - 30/07/2012		  
+			 * Correcao problema id to load is required for loading. 
+			 * Verificando se o ID do documento não é nulo antes de pesquisar
+			 * 
+			 *  final ExDocumento docdoc = dao().consultar(flt.getIdDoc(),
+			 *			ExDocumento.class, false);	
+			 *	docVia.setExDocumento(docdoc);
+			 *	
+			 *	return docVia;
+			 */
+			if ( flt != null && flt.getIdDoc() != null ) {
+				final ExDocumento docdoc = dao().consultar(flt.getIdDoc(), ExDocumento.class, false);
+				docVia.setExDocumento(docdoc);
+			}			
 		} catch (final Exception e) {
 			throw new AplicacaoException(e.getMessage());
 		}
+
+		return docVia;
 	}
 
 	@Override

@@ -53,7 +53,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.stat.EntityStatistics;
@@ -1539,7 +1538,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		DpPessoa backupTitular = getTitular();
 		DpPessoa backupCadastrante = getCadastrante();
 
-		PropertyUtils.copyProperties(this, doc);
+		BeanUtils.copyProperties(this, doc);
 
 		setTitular(backupTitular);
 		setLotaTitular(backupLotaTitular);
@@ -2040,7 +2039,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			doc.setNmArqDoc(getNmArqDoc());
 		}
 
-		// PropertyUtils.copyProperties(doc, form);
+		// BeanUtils.copyProperties(doc, form);
 		// fabrica = DaoFactory.getDAOFactory();
 		doc.setDescrDocumento(getDescrDocumento());
 		doc.setNmSubscritorExt(getNmSubscritorExt());

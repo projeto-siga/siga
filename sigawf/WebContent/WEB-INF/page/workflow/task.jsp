@@ -1,5 +1,4 @@
-<%@ include file="/WEB-INF/page/include.jsp"%><!--  -->
-
+<%@ include file="/WEB-INF/page/include.jsp"%>
 <siga:pagina titulo="Tarefa">
 	<div class="gt-bd gt-cols clearfix">
 		<div class="gt-content clearfix">
@@ -8,7 +7,7 @@
 				<h3>Descrição da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<ww:url action="saveKnowledge" id="url"></ww:url>
-					<form method="GET" action="${url}">
+					<form method="POST" action="${url}">
 						<input name="tiId" type="hidden" value="${tiId}" />
 						<div class="gt-form-row gt-width-100">
 							<label>Descrição</label>
@@ -27,7 +26,7 @@
 
 			<!-- Adicionando a lista de Tarefas -->
 			<ww:url action="executeTask" id="url"></ww:url>
-			<form method="GET" action="${url}">
+			<form method="POST" action="${url}">
 				<h3>Execução da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<div class="gt-form-row gt-width-100">
@@ -200,7 +199,7 @@
 				<h3 class="gt-form-head">Designaçao da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<ww:url id="url" action="assignTask" />
-					<form method="GET" action="${url}">
+					<form method="POST" action="${url}">
 						<input name="tiId" type="hidden" value="${tiId}" />
 						<div class="gt-form-row gt-width-100">
 							<label>Pessoa</label>
@@ -267,7 +266,7 @@
 				</div>
 				<div class="gt-form gt-content-box">
 					<ww:url id="url" action="commentTask" />
-					<form method="GET" action="${url}">
+					<form method="POST" action="${url}">
 						<input name="tiId" type="hidden" value="${tiId}" /> <label>Comentário</label>
 						<div class="gt-form-row gt-width-100">
 							<input type="text" size="80" name="comentario"

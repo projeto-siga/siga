@@ -140,8 +140,7 @@ function validateUsuarioForm(form) {
 				</tr>
 				<tr>
 					<td>&nbsp;</td>
-					<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
-						label="Cancelar" value="Cancelar" theme="simple" /></td>
+					<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				</tr>
 	
 			</table>
@@ -234,8 +233,7 @@ function validateUsuarioForm(form) {
 
 			<tr>
 				<td>&nbsp;</td>
-				<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;<ww:submit
-					label="Cancelar" value="Cancelar" theme="simple" /></td>
+				<td><ww:submit label="OK" value="OK" theme="simple" />&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 		</table>
 	</ww:form></div>

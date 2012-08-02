@@ -9,9 +9,12 @@
 		<li><ww:url id="url" action="listar" namespace="/expediente/doc">
 				<ww:param name="primeiraVez">sim</ww:param>
 			</ww:url> <ww:a href="%{url}">Pesquisar</ww:a></li>
+			
+		<c:if test="${f:resource('siga.lucene.ativo')}">	
 		<li><ww:url id="url" action="full_search"
 				namespace="/expediente/doc">
 			</ww:url> <ww:a href="%{url}">Pesquisar por texto</ww:a></li>
+		</c:if>	
 
 		<li><ww:url id="url" action="transferir_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"

@@ -186,8 +186,8 @@ public abstract class ThreadFilter implements Filter {
 
 	public void registerTransactionClasses(AnnotationConfiguration cfg) {
 		// bruno.lacerda@avantiprima.com.br
-		//cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
-		//cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+		cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
+		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
 	}
 
 }

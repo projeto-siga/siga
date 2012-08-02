@@ -196,7 +196,7 @@ public class UsuarioAction extends SigaActionSupport {
 		switch (metodo) {
 		case 1:
 			
-			verificarMetodoIntegracaoAD(matricula);
+//			verificarMetodoIntegracaoAD(matricula);
 			
 			String[] senhaGerada = new String[1];
 			CpIdentidade idNovaAlterada = Cp.getInstance().getBL().alterarSenhaDeIdentidade(
@@ -212,7 +212,7 @@ public class UsuarioAction extends SigaActionSupport {
 				return Action.SUCCESS;
 			}else{
 				CpIdentidade idNovaDefinida = Cp.getInstance().getBL().definirSenhaDeIdentidade(senhaNova, senhaConfirma, matricula, auxiliar1, auxiliar2, getIdentidadeCadastrante());
-				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
+//				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
 			}
 			break;
 		default:

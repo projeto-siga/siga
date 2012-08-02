@@ -145,8 +145,6 @@ function validateUsuarioForm(form) {
 					<div class="gt-form-row">
 						<ww:submit label="OK" value="OK" theme="simple"
 							cssClass="gt-btn-medium gt-btn-left" />
-						<ww:submit label="Cancelar" value="Cancelar" theme="simple"
-							cssClass="gt-btn-medium gt-btn-left" />
 					</div>
 
 				</ww:form>
@@ -256,8 +254,6 @@ function validateUsuarioForm(form) {
 
 					<div class="gt-form-row">
 						<ww:submit label="OK" value="OK" theme="simple"
-							cssClass="gt-btn-medium gt-btn-left" />
-						<ww:submit label="Cancelar" value="Cancelar" theme="simple"
 							cssClass="gt-btn-medium gt-btn-left" />
 					</div>
 				</ww:form>

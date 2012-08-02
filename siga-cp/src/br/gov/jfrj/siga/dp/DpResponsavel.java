@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.dp;
 
-public abstract class DpResponsavel {
+public abstract class DpResponsavel{
 	abstract public String getSigla();
 
 	abstract public String getSiglaCompleta();

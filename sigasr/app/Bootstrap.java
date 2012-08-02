@@ -75,6 +75,10 @@ public class Bootstrap extends Job {
 				SrDao.getInstance().salvar(hard, "RJ13285");
 				SrServico buyhard = new SrServico("02.01", "Comprar hardware")
 						.save();
+				buyhard.descrServico = "Comprar hardware 2";
+				//buyhard.save();
+				JPA.em().flush();
+				
 				/*
 				 * SrServico proj = new SrServico("01.01",
 				 * "Desenvolver projeto de software");
@@ -174,7 +178,11 @@ public class Bootstrap extends Job {
 				}
 				sol2.criar();
 				
-				// JPA.em().getTransaction().commit();
+				sol2.descrSolicitacao = "asdf";
+				
+				JPA.em().persist(sol2);
+				JPA.em().flush();
+				
 			} catch (AplicacaoException ae) {
 				int a = 0;
 			}

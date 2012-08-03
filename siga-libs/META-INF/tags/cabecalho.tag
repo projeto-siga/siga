@@ -13,6 +13,7 @@
 <%@ attribute name="pagina_de_erro"%>
 <%@ attribute name="onLoad"%>
 <%@ attribute name="desabilitarbusca"%>
+<%@ attribute name="desabilitarmenu"%>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -163,64 +164,71 @@ ${meta}
 				</div>
 				<!-- /head top -->
 				<!-- navbar -->
-				<div class="gt-navbar clearfix">
-					<div class="gt-fixed-wrap clearfix">
-						<!-- navigation -->
-						<div class="gt-nav">
-							<ul id="navmenu-h">
-								<c:import url="/sigalibs/menuprincipal.jsp" />
-							</ul>
+				<c:if test="${desabilitarmenu != 'sim'}">
+					<div class="gt-navbar clearfix">
+						<div class="gt-fixed-wrap clearfix">
+							<!-- navigation -->
+							<div class="gt-nav">
+								<ul id="navmenu-h">
+									<c:import url="/sigalibs/menuprincipal.jsp" />
+								</ul>
+							</div>
+							<!-- / navigation -->
+							<!-- search -->
+							<c:if test="${desabilitarbusca != 'sim'}">
+								<div class="gt-search">
+									<div class="gt-search-inner">
+										<siga:selecao propriedade="buscar" modulo="sigaex"
+											tipo="expediente" tema="simple" ocultardescricao="sim"
+											buscar="nao" siglaInicial="Buscar documento" />
+										<script type="text/javascript">
+											var fld = document
+													.getElementById("buscar_expedienteSel_sigla");
+											fld.setAttribute("class",
+													"gt-search-text");
+											fld.className = "gt-search-text";
+											fld.onfocus = function() {
+												if (this.value == 'Buscar documento') {
+													this.value = '';
+												}
+											};
+											fld.onblur = function() {
+												if (this.value == '') {
+													this.value = 'Buscar documento';
+													return;
+												}
+												if (this.value != 'Buscar documento')
+													ajax_buscar_expediente();
+											};
+											fld.onkeypress = function(event) {
+												event = (event) ? event
+														: window.event
+												var keyCode = (event.which) ? event.which
+														: event.keyCode
+												//var keyCode = event.keyCode ? event.keyCode
+												//		: event.which ? event.which
+												//				: event.charCode;
+												var fid = document
+														.getElementById("buscar_expedienteSel_id");
+												if (keyCode == 13) {
+													if (fid.value == null
+															|| fid.value == "")
+														fld.onblur();
+													else
+														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
+																+ fld.value;
+													return false;
+												} else {
+													fid.value = '';
+													return true;
+												}
+											};
+										</script>
+									</div>
+							</c:if>
 						</div>
-						<!-- / navigation -->
-						<!-- search -->
-						<c:if test="${desabilitarbusca != 'sim'}">
-							<div class="gt-search">
-							<div class="gt-search-inner">
-								<siga:selecao propriedade="buscar" modulo="sigaex"
-									tipo="expediente" tema="simple" ocultardescricao="sim"
-									buscar="nao" siglaInicial="Buscar documento" />
-								<script type="text/javascript">
-									var fld = document
-											.getElementById("buscar_expedienteSel_sigla");
-									fld.setAttribute("class", "gt-search-text");
-									fld.className = "gt-search-text";
-									fld.onfocus = function() {
-										if (this.value == 'Buscar documento') {
-											this.value = '';
-										}
-									};
-									fld.onblur = function() {
-										if (this.value == '') {
-											this.value = 'Buscar documento';
-											return;
-										} 
-										if (this.value != 'Buscar documento')
-											ajax_buscar_expediente();
-									};
-									fld.onkeypress = function(event) {
-										event = (event) ? event : window.event
-										var keyCode = (event.which) ? event.which : event.keyCode										
-										//var keyCode = event.keyCode ? event.keyCode
-										//		: event.which ? event.which
-										//				: event.charCode;
-										var fid = document.getElementById("buscar_expedienteSel_id");
-										if (keyCode == 13) {
-											if (fid.value == null
-													|| fid.value == "")
-												fld.onblur();
-											else
-												window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
-														+ fld.value;
-											return false;
-										} else {
-											fid.value = '';
-											return true;
-										}
-									};
-								</script>
-							</div></c:if>
 					</div>
-				</div>
+				</c:if>
 			</div>
 			<!-- /navbar -->
 		</div>

@@ -86,7 +86,8 @@ public abstract class ExArquivo {
 		if (isAssinadoDigitalmente()) {
 			sMensagem += getAssinantesCompleto();
 			sMensagem += "Documento Nº: " + getSiglaAssinatura()
-					+ " - consulta à autenticidade em " + SigaExProperties.getEnderecoAutenticidadeDocs();
+					+ " - consulta à autenticidade em "
+					+ SigaExProperties.getEnderecoAutenticidadeDocs();
 		}
 		return sMensagem;
 	}
@@ -151,7 +152,8 @@ public abstract class ExArquivo {
 	public String getQRCode() {
 		if (isAssinadoDigitalmente()) {
 			String sQRCode;
-			sQRCode = "http://a.jfrj.jus.br/" + getSiglaAssinatura();
+			sQRCode = SigaExProperties.getEnderecoAutenticidadeDocs() + "?n="
+					+ getSiglaAssinatura();
 			return sQRCode;
 		}
 		return null;

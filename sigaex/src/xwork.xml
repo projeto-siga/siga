@@ -46,6 +46,11 @@
 			class="br.gov.jfrj.siga.libs.webwork.LogoffAction"> <result
 			type="redirect-action">principal</result> </action>
 		-->
+		
+		<action name="autenticar" method="exec" class="br.gov.jfrj.webwork.action.ExAutenticaAction">
+			<result name="autenticado">/paginas/autenticado.jsp</result>
+			<result>/paginas/autenticar.jsp</result>
+		</action>		
 	</package>
 
 

@@ -20,6 +20,58 @@
 	<session-config>
 		<session-timeout>120</session-timeout>
 	</session-config>
+	
+	    <servlet>
+        <servlet-name>AudioCaptcha</servlet-name>
+        <servlet-class>nl.captcha.servlet.AudioCaptchaServlet</servlet-class>
+    </servlet>
+
+	<servlet>
+		<servlet-name>SimpleCaptcha</servlet-name>
+		<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+        <init-param>
+            <param-name>captcha-width</param-name>
+            <param-value>250</param-value>
+        </init-param>
+        <init-param>
+            <param-name>captcha-height</param-name>
+            <param-value>75</param-value>
+        </init-param>
+	</servlet>
+	
+    <servlet>
+		<servlet-name>StickyCaptcha</servlet-name>
+		<servlet-class>nl.captcha.servlet.StickyCaptchaServlet</servlet-class>
+
+        <init-param>
+            <!-- Optional; defaults to 200. -->
+            <param-name>captcha-width</param-name>
+            <param-value>250</param-value>
+        </init-param>
+        <init-param>
+            <!-- Optional; defaults to 50. -->
+            <param-name>captcha-height</param-name>
+            <param-value>75</param-value>
+        </init-param>
+        <init-param>
+            <!-- Time To Live, in ms. Optional; Defaults to 600000ms. -->
+            <param-name>ttl</param-name>
+            <param-value>100000</param-value>
+        </init-param>
+    </servlet>
+
+	<servlet-mapping>
+		<servlet-name>AudioCaptcha</servlet-name>
+		<url-pattern>/autenticar.audiocaptcha.wav</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SimpleCaptcha</servlet-name>
+		<url-pattern>/autenticar.simplecaptcha.png</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>StickyCaptcha</servlet-name>
+		<url-pattern>/autenticar.stickycaptcha.png</url-pattern>
+	</servlet-mapping>
 
 	<filter>
 		<filter-name>ExFilter</filter-name>

@@ -4184,7 +4184,7 @@ public class ExBL extends CpBL {
 		Matcher m = p.matcher(num);
 
 		if (!m.matches())
-			throw new Exception(null, new Exception("Número inválido"));
+			throw new AplicacaoException("Número inválido");
 
 		Long idDoc = Long.parseLong(m.group(1));
 
@@ -4192,7 +4192,7 @@ public class ExBL extends CpBL {
 				ExDocumento.class, false);
 
 		if (doc == null)
-			throw new Exception(null, new Exception("Documento não encontrado"));
+			throw new AplicacaoException("Documento não encontrado");
 
 		/*
 		 * if (doc.getExNivelAcesso().getGrauNivelAcesso() > 20) throw new
@@ -4210,7 +4210,7 @@ public class ExBL extends CpBL {
 				if (Math.abs((doc.getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash)
 					move = mov;
 			if (move == null)
-				throw new Exception(null, new Exception("Número inválido"));
+				throw new AplicacaoException("Número inválido");
 
 			return move;
 		}

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -184,10 +184,18 @@ public abstract class ThreadFilter implements Filter {
 		return mensagemErro;
 	}	
 
-	public void registerTransactionClasses(AnnotationConfiguration cfg) {
+	public void registerTransactionClasses(Configuration cfg) {
 		// bruno.lacerda@avantiprima.com.br
-		//cfg.setProperty("hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory");
-		//cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+		this.registerTransactionClass( "hibernate.transaction.factory_class", cfg );
+		this.registerTransactionClass( "hibernate.transaction.manager_lookup_class", cfg );
+	}
+	
+	private void registerTransactionClass( String propertyName, Configuration cfg ){
+		String transactionFactoryClassName = System.getProperty( propertyName );
+		if ( StringUtils.isNotBlank( 
+				transactionFactoryClassName ))  {
+			cfg.setProperty( propertyName, transactionFactoryClassName );
+		}
 	}
 
 }

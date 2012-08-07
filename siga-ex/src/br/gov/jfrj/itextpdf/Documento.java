@@ -180,7 +180,7 @@ public class Documento extends AbstractDocumento {
 		return retorno;
 	}
 
-	private byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
+	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
 			boolean cancelado, String qrCode, String mensagem,
 			Integer paginaInicial, Integer paginaFinal,
 			Integer cOmitirNumeracao, String instancia, String orgaoUsu)
@@ -424,7 +424,7 @@ public class Documento extends AbstractDocumento {
 
 	// Desenha texto ao redor de um circulo, acima ou abaixo
 	//
-	private void showTextOnArc(PdfContentByte cb, String text, BaseFont font,
+	private static void showTextOnArc(PdfContentByte cb, String text, BaseFont font,
 			float textHeight, float xCenter, float yCenter, float radius,
 			boolean top) {
 		float fTotal = 0;

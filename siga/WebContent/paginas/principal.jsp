@@ -12,6 +12,17 @@
 		<!-- main content -->
 		<div class="gt-content">
 			<div style="width: 100%; display: block;">
+				<c:if test="${not empty mensagem}">
+					<div id="mensagem" class="gt-success">${mensagem}</div>
+					<script>
+						setTimeout(function() {
+							$('#mensagem').fadeTo(1000, 0, function() {
+								$('#mensagem').slideUp(1000);
+							});
+						}, 5000); // <-- time in milliseconds
+					</script>
+				</c:if>
+
 				<!-- Expedientes -->
 				<div
 					style="width: 49%; float: left; clear: both; padding:0; margin:0;">
@@ -66,17 +77,6 @@
 				</div>
 			</div>
 
-
-			<c:if test="${not empty mensagem}">
-				<div id="mensagem" class="gt-success">${mensagem}</div>
-				<script>
-					setTimeout(function() {
-						$('#mensagem').fadeTo(1000, 0, function() {
-							$('#mensagem').slideUp(1000);
-						});
-					}, 5000); // <-- time in milliseconds
-				</script>
-			</c:if>
 
 
 

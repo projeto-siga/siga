@@ -743,7 +743,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"Não é permitida a anexação de arquivos com mais de 10MB.");
 		mov.setConteudoBlobMov2(baArquivo);
 
-		if (mov.getContarNumeroDePaginas() == null)
+		if (mov.getContarNumeroDePaginas() == null || mov.getArquivoComStamp() == null)
 			throw new AplicacaoException(
 					"O arquivo "
 							+ getArquivoFileName()

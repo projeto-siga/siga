@@ -3,7 +3,7 @@
 <xwork>
 	<include file="webwork-default.xml" />
 
-	<package name="default" extends="webwork-default">
+	<package name="default" extends="webwork-default" namespace="/">
 		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 
 		<default-action-ref name="principal" />
@@ -47,7 +47,7 @@
 
 		<action name="trocar_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aTrocarSenhaGravar">
-			<result type="redirect-action">principal?mensagem=${mensagem}</result>
+			<result type="redirect-action">/principal?mensagem=${mensagem}</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Troca de Senha 
 				</result> -->
 		</action>

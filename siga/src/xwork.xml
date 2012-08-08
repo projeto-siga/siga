@@ -16,27 +16,20 @@
 			<result>/paginas/principal.jsp</result>
 		</action>
 
-<!-- Renato: Comentei pois acho que não está sendo utilizado mais.
-		<action name="news" class="br.gov.jfrj.webwork.action.PrincipalAction">
-			<result>/paginas/entradas/news.jsp?completo=true</result>
-		</action>
-
-		<action name="administracao" class="br.gov.jfrj.webwork.action.AdministracaoAction">
-			<result>/paginas/entradas/administracao.jsp</result>
-		</action>
-
-		<action name="simulacao" class="br.gov.jfrj.webwork.action.AdministracaoAction"
-			method="aSimular">
-			<result>/paginas/principal.jsp</result>
-		</action>
- -->
+		<!-- Renato: Comentei pois acho que não está sendo utilizado mais. <action 
+			name="news" class="br.gov.jfrj.webwork.action.PrincipalAction"> <result>/paginas/entradas/news.jsp?completo=true</result> 
+			</action> <action name="administracao" class="br.gov.jfrj.webwork.action.AdministracaoAction"> 
+			<result>/paginas/entradas/administracao.jsp</result> </action> <action name="simulacao" 
+			class="br.gov.jfrj.webwork.action.AdministracaoAction" method="aSimular"> 
+			<result>/paginas/principal.jsp</result> </action> -->
 		<action name="logoff" class="br.gov.jfrj.siga.libs.webwork.LogoffAction">
 			<result name="success" type="redirect-action">principal</result>
 			<result name="CLIENT_CERT_AUTH_LOGOFF">/sigalibs/client_cert_auth_logoff.jsp</result>
 
 		</action>
 
-		<action name="redirect"  class="br.gov.jfrj.siga.libs.webwork.LogoffAction" method="redirect">
+		<action name="redirect" class="br.gov.jfrj.siga.libs.webwork.LogoffAction"
+			method="redirect">
 			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.localPort}${uri}</result>
 		</action>
 
@@ -47,7 +40,12 @@
 
 		<action name="trocar_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aTrocarSenhaGravar">
-			<result type="redirect-action">/principal?mensagem=${mensagem}</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
+			<!--<result type="redirect-action">/principal?mensagem=${mensagem}</result> -->
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Troca de Senha 
 				</result> -->
 		</action>
@@ -76,7 +74,7 @@
 			<result type="redirect-action">principal?mensagem=${mensagem}</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Novo Usuário </result> -->
 		</action>
-		
+
 		<action name="integracaoLdap" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="isIntegradoLdap">
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
@@ -116,16 +114,11 @@
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
 			<result type="redirect-action">listar</result>
 		</action>
-<!-- Renato: Comentei pois acho que não está sendo utilizado mais.
-		<action name="simular" method="aSimular"
-			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
-			<result>/paginas/substituicao/simula.jsp</result>
-		</action>
-		<action name="simular_gravar" method="aSimularGravar"
-			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
-			<result type="redirect-action">principal</result>
-		</action>
--->		
+		<!-- Renato: Comentei pois acho que não está sendo utilizado mais. <action 
+			name="simular" method="aSimular" class="br.gov.jfrj.webwork.action.DpSubstituicaoAction"> 
+			<result>/paginas/substituicao/simula.jsp</result> </action> <action name="simular_gravar" 
+			method="aSimularGravar" class="br.gov.jfrj.webwork.action.DpSubstituicaoAction"> 
+			<result type="redirect-action">principal</result> </action> -->
 	</package>
 
 	<package name="gi/identidade" extends="default" namespace="/gi/identidade">

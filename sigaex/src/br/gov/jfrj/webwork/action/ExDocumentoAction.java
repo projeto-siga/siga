@@ -1122,6 +1122,11 @@ public class ExDocumentoAction extends ExActionSupport {
 				c.setTime(dt);
 
 				Calendar dtDocCalendar = Calendar.getInstance();
+				
+				if(doc.getDtDoc() == null)
+				   throw new Exception(
+					"A data do documento deve ser informada.");
+					
 				dtDocCalendar.setTime(doc.getDtDoc());
 
 				if (c.before(dtDocCalendar))

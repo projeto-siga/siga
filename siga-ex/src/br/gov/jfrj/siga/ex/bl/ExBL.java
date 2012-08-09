@@ -250,7 +250,7 @@ public class ExBL extends CpBL {
 		ia = null;
 	}
 
-	private void atualizarMarcas(ExDocumento doc) {
+	public void atualizarMarcas(ExDocumento doc) {
 		for (ExMobil mob : doc.getExMobilSet()) {
 			SortedSet<ExMarca> setA = mob.getExMarcaSet();
 			if (setA == null)

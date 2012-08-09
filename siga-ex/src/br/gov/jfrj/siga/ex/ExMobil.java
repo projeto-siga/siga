@@ -1018,6 +1018,27 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura
+	 * 
+	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso contrário.
+	 * 
+	 */	
+	public boolean temAnexosNaoAssinados(){		
+		boolean b = false;
+		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
+			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+				if (movAss.isAssinada())
+					continue;
+				else {
+					b = true;
+					break;					
+				}
+		}
+		return b;
+		
+	}
 
 	/**
 	 * Verifica se um Mobil do tipo Volume está Apensado a outro Mobil do mesmo
@@ -1147,4 +1168,5 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		return l;
 	}
+	
 }

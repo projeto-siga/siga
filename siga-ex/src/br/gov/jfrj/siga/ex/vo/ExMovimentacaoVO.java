@@ -74,7 +74,7 @@ public class ExMovimentacaoVO extends ExVO {
 	ExMobilVO mobVO;
 	int duracaoSpan;
 	int duracaoSpanExibirCompleto;
-	String duracao;
+	String duracao;	
 
 	public ExMobilVO getMobVO() {
 		return mobVO;
@@ -116,6 +116,7 @@ public class ExMovimentacaoVO extends ExVO {
 		desabilitada = mov.getExMovimentacaoCanceladora() != null
 				|| mov.getIdTpMov().equals(
 						TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
+		
 	}
 
 	/**

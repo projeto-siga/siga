@@ -586,6 +586,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	public java.lang.String getReferencia() {
 		return getExMobil().getCodigoCompacto() + ":" + getIdMov();
+		/* este atributo é utilizado p/ compor nmPdf (abaixo), não retirar o caracter ":" 
+		/* pois este é utilizado no método ExMovimentacaoAction.recuperarAssinaturaAppletB64() */
 	}
 
 	public java.lang.String getNmPdf() {
@@ -733,7 +735,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		String retorno = "";
 		retorno += assinantes.length() > 0 ? "Assinado digitalmente por "
 				+ assinantes + ".\n" : "";
-		retorno += conferentes.length() > 0 ? "Cópia conferida por " 
+		retorno += conferentes.length() > 0 ? "Cópia conferida com documento original por " 
 				+ conferentes + ".\n" : "";
 		return retorno;
 	}

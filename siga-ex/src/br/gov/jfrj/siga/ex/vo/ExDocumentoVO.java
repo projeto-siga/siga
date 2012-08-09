@@ -231,6 +231,12 @@ public class ExDocumentoVO extends ExVO {
 
 		addAcao("Assinar Digitalmente", "/expediente/mov", "assinar", Ex
 				.getInstance().getComp().podeAssinar(titular, lotaTitular, mob));
+		
+		if (doc.getDtFechamento() != null && doc.getNumExpediente() != null){
+			// documentos finalizados
+			if (mob.temAnexosNaoAssinados())
+				addAcao("Assinar Anexos", "/expediente/mov", "assinar_anexos_geral", true);
+		}
 
 		addAcao("Redefinir Nível de Acesso", "/expediente/mov",
 				"redefinir_nivel_acesso", Ex.getInstance().getComp()

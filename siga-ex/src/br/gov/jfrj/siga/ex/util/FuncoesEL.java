@@ -808,6 +808,40 @@ public class FuncoesEL {
 		attrs.put("template", "[@extensaoEditor/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
+	
+	public static String obterExtensaoAssinadorLote(CpOrgaoUsuario orgao,
+			String requestScheme, String requestServerName,
+			String requestLocalPort, String requestContextPath, String sigla,
+			String doc_codigoCompacto,String jspServer, String nextURL) throws Exception {
+		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
+		Map attrs = new HashMap();
+		String chaveUrl = null;
+		String urlStr = null;	
+		
+		attrs.put("code_base_path", SigaExProperties.getAssinaturaCodebasePath());
+		attrs.put("messages_url_path", SigaExProperties.getAssinaturaMessagesURLPath());
+		attrs.put("policy_url_path", SigaExProperties.getAssinaturaPorlicyUrlPath());
+		
+		attrs.put("request_scheme", requestScheme);
+		attrs.put("request_serverName", requestServerName);
+		attrs.put("request_localPort", requestLocalPort);
+		attrs.put("request_contextPath", requestContextPath);
+		attrs.put("sigla", sigla);
+		attrs.put("doc_codigoCompacto", doc_codigoCompacto);
+		attrs.put("jspServer", jspServer);
+		attrs.put("nextURL", nextURL);			
+		attrs.put("nmMod", "macro extensaoAssinadorLote");
+		attrs.put("template", "[@extensaoAssinadorLote/]");
+//		for (int i = 0;i<=pdfsAssinar.size()-1; i++){
+//			chaveUrl = "url." + i;
+//			urlStr = requestScheme+"://"+requestServerName+":"+requestLocalPort+"/"+
+//			         requestContextPath+"/semmarcas/hashSHA1/"+pdfsAssinar.get(i);
+//			attrs.put(chaveUrl, urlStr);
+			//		"${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}"
+//		}
+//		attrs.put("quantidade", (pdfsAssinar.size()-1));
+		return p.processarModelo(orgao, attrs, null);
+	}
 
 	public static String obterExtensaoAssinador(CpOrgaoUsuario orgao,
 			String requestScheme, String requestServerName,

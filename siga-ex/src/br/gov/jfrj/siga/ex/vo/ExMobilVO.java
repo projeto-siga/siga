@@ -123,7 +123,7 @@ public class ExMobilVO extends ExVO {
 		else
 		  for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov)) {
 			  if (!movAssinada) {
-				  if (!mov.isAssinada())
+				  if (!mov.isAssinada() && !mov.isCancelada())
 			         movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
 			  }  	  
 			  else {		  

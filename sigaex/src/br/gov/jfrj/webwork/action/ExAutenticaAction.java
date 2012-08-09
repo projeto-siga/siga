@@ -52,6 +52,8 @@ public class ExAutenticaAction extends ExActionSupport {
 	}
 
 	public String getAnswer() {
+		if (answer == null)
+			return "";
 		return answer;
 	}
 
@@ -120,7 +122,7 @@ public class ExAutenticaAction extends ExActionSupport {
 		getRequest().getSession().removeAttribute(Captcha.NAME);
 
 		if (captcha == null || n == null || n.trim().length() == 0) {
-			return SUCCESS;
+			return SUCCESS; 
 		}
 
 		// getRequest().setCharacterEncoding("UTF-8"); // Do this so we can

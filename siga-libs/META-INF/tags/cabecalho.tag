@@ -177,7 +177,7 @@ ${meta}
 							<!-- search -->
 							<c:if test="${desabilitarbusca != 'sim'}">
 								<div class="gt-search">
-									<div class="gt-search-inner">
+									<div class="gt-search-inner" onclick="">
 										<siga:selecao propriedade="buscar" modulo="sigaex"
 											tipo="expediente" tema="simple" ocultardescricao="sim"
 											buscar="nao" siglaInicial="Buscar documento" />
@@ -201,28 +201,51 @@ ${meta}
 													ajax_buscar_expediente();
 											};
 											fld.onkeypress = function(event) {
+												var fid = document
+												.getElementById("buscar_expedienteSel_id");
+												
 												event = (event) ? event
 														: window.event
 												var keyCode = (event.which) ? event.which
-														: event.keyCode
-												//var keyCode = event.keyCode ? event.keyCode
-												//		: event.which ? event.which
-												//				: event.charCode;
-												var fid = document
-														.getElementById("buscar_expedienteSel_id");
+														: event.keyCode;
 												if (keyCode == 13) {
 													if (fid.value == null
-															|| fid.value == "")
+															|| fid.value == "") {
 														fld.onblur();
-													else
+													} else {
+														window.alert("1");
 														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
 																+ fld.value;
+													}
 													return false;
 												} else {
 													fid.value = '';
 													return true;
 												}
 											};
+
+											self.resposta_ajax_buscar_expediente = function(
+													response, d1, d2, d3) {
+												var sigla = document
+														.getElementsByName('buscar_expedienteSel.sigla')[0].value;
+												var data = response.split(';');
+												if (data[0] == '1') {
+													retorna_buscar_expediente(
+															data[1], data[2],
+															data[3]);
+													if (data[1] != null
+															&& data[1] != "") {
+														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
+															+ data[2];
+													}
+													return
+												} 
+												retorna_buscar_expediente('',
+														'', '');
+
+												return;
+
+											}
 										</script>
 									</div>
 							</c:if>

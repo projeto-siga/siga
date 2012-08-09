@@ -851,7 +851,9 @@ public class ExDocumentoAction extends ExActionSupport {
 						.getComp()
 						.podeAcessarCancelado(getTitular(), getLotaTitular(),
 								mob)) {
-			throw new AplicacaoException("Documento inacessível ao usuário.");
+			throw new AplicacaoException("Documento " + mob.getSigla()
+					+ " inacessível ao usuário " + getTitular().getSigla()
+					+ "/" + getLotaTitular().getSiglaCompleta()+ ".");
 		}
 
 		if (!Ex.getInstance().getComp()
@@ -871,7 +873,9 @@ public class ExDocumentoAction extends ExActionSupport {
 						.getComp()
 						.podeAcessarCancelado(getTitular(), getLotaTitular(),
 								mob)) {
-			throw new AplicacaoException("Documento inacessível ao usuário.");
+			throw new AplicacaoException("Documento " + mob.getSigla()
+					+ " inacessível ao usuário " + getTitular().getSigla()
+					+ "/" + getLotaTitular().getSiglaCompleta()+ ".");
 		}
 
 		if (!Ex.getInstance().getComp()

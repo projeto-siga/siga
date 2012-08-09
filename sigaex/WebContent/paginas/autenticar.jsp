@@ -25,16 +25,15 @@
 						<tr>
 							<td width="30%" valign="top">Digite os caractéres conforme
 								são mostrados na imagem ao lado:</td>
-							<td><img src="<c:url value="/autenticar.action?sc=1" />"><br />
+							<td><jsp:useBean id="now" class="java.util.Date" /> <img
+								src="<c:url value="/autenticar.action?sc=1" />&ts=${now.time}"><br />
 								<input id="id_captcha" type="text" name="answer"
-								style="width: 150px; margin-top: 15px;" />
-							</td>
+								style="width: 150px; margin-top: 15px;" /></td>
 						</tr>
 
 						<tr class="button">
 							<td colspan="2"><input type="submit" value="Ok"
-								class="gt-btn-small gt-btn-left" />
-							</td>
+								class="gt-btn-small gt-btn-left" /></td>
 						</tr>
 					</table>
 				</ww:form>

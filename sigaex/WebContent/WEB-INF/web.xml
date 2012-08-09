@@ -270,6 +270,7 @@
 			<url-pattern>/modelo/*</url-pattern>
 			<url-pattern>/despacho/*</url-pattern>
 			<url-pattern>/administracao.action</url-pattern>
+			<url-pattern>/anexo/</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

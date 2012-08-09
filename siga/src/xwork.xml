@@ -3,7 +3,7 @@
 <xwork>
 	<include file="webwork-default.xml" />
 
-	<package name="default" extends="webwork-default">
+	<package name="default" extends="webwork-default" namespace="/">
 		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 
 		<default-action-ref name="principal" />
@@ -16,27 +16,23 @@
 			<result>/paginas/principal.jsp</result>
 		</action>
 
-<!-- Renato: Comentei pois acho que não está sendo utilizado mais.
-		<action name="news" class="br.gov.jfrj.webwork.action.PrincipalAction">
-			<result>/paginas/entradas/news.jsp?completo=true</result>
-		</action>
-
-		<action name="administracao" class="br.gov.jfrj.webwork.action.AdministracaoAction">
-			<result>/paginas/entradas/administracao.jsp</result>
-		</action>
-
-		<action name="simulacao" class="br.gov.jfrj.webwork.action.AdministracaoAction"
-			method="aSimular">
-			<result>/paginas/principal.jsp</result>
-		</action>
- -->
+		<!-- Renato: Comentei pois acho que não está sendo utilizado mais. <action 
+			name="news" class="br.gov.jfrj.webwork.action.PrincipalAction"> <result>/paginas/entradas/news.jsp?completo=true</result> 
+			</action> <action name="administracao" class="br.gov.jfrj.webwork.action.AdministracaoAction"> 
+			<result>/paginas/entradas/administracao.jsp</result> </action> <action name="simulacao" 
+			class="br.gov.jfrj.webwork.action.AdministracaoAction" method="aSimular"> 
+			<result>/paginas/principal.jsp</result> </action> -->
 		<action name="logoff" class="br.gov.jfrj.siga.libs.webwork.LogoffAction">
-			<result name="success" type="redirect-action">principal</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+			</result>
 			<result name="CLIENT_CERT_AUTH_LOGOFF">/sigalibs/client_cert_auth_logoff.jsp</result>
 
 		</action>
 
-		<action name="redirect"  class="br.gov.jfrj.siga.libs.webwork.LogoffAction" method="redirect">
+		<action name="redirect" class="br.gov.jfrj.siga.libs.webwork.LogoffAction"
+			method="redirect">
 			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.localPort}${uri}</result>
 		</action>
 
@@ -47,7 +43,12 @@
 
 		<action name="trocar_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aTrocarSenhaGravar">
-			<result type="redirect-action">principal?mensagem=${mensagem}</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
+			<!--<result type="redirect-action">/principal?mensagem=${mensagem}</result> -->
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Troca de Senha 
 				</result> -->
 		</action>
@@ -60,7 +61,11 @@
 
 		<action name="esqueci_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aEsqueciSenhaGravar">
-			<result type="redirect-action">principal?mensagem=${mensagem}</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Esqueci Minha Senha 
 				</result> -->
 		</action>
@@ -73,10 +78,14 @@
 
 		<action name="incluir_usuario_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aIncluirUsuarioGravar">
-			<result type="redirect-action">principal?mensagem=${mensagem}</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Novo Usuário </result> -->
 		</action>
-		
+
 		<action name="integracaoLdap" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="isIntegradoLdap">
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
@@ -94,7 +103,11 @@
 
 		<action name="substituir_gravar" method="aSubstituirGravar"
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
-			<result type="redirect-action">principal</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 		</action>
 		<action name="listar" method="aListarSubstitutos"
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
@@ -102,7 +115,11 @@
 		</action>
 		<action name="finalizar" method="aFinalizar"
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
-			<result type="redirect-action">principal</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 		</action>
 		<action name="editar" method="aEditarSubstituto"
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
@@ -110,22 +127,21 @@
 		</action>
 		<action name="editar_gravar" method="aEditarSubstitutoGravar"
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
-			<result type="redirect-action">listar</result>
+			<result type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>
 		</action>
 		<action name="excluir" method="aExcluirSubstituto"
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
-			<result type="redirect-action">listar</result>
+			<result type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>
 		</action>
-<!-- Renato: Comentei pois acho que não está sendo utilizado mais.
-		<action name="simular" method="aSimular"
-			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
-			<result>/paginas/substituicao/simula.jsp</result>
-		</action>
-		<action name="simular_gravar" method="aSimularGravar"
-			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
-			<result type="redirect-action">principal</result>
-		</action>
--->		
+		<!-- Renato: Comentei pois acho que não está sendo utilizado mais. <action 
+			name="simular" method="aSimular" class="br.gov.jfrj.webwork.action.DpSubstituicaoAction"> 
+			<result>/paginas/substituicao/simula.jsp</result> </action> <action name="simular_gravar" 
+			method="aSimularGravar" class="br.gov.jfrj.webwork.action.DpSubstituicaoAction"> 
+			<result type="redirect-action">principal</result> </action> -->
 	</package>
 
 	<package name="gi/identidade" extends="default" namespace="/gi/identidade">
@@ -189,7 +205,9 @@
 		</action>
 		<action name="editar_gravar" method="aEditarGravar"
 			class="br.gov.jfrj.webwork.action.CpModeloAction">
-			<result type="redirect-action">listar</result>
+			<result type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>
 		</action>
 	</package>
 
@@ -280,12 +298,16 @@
 		</action>
 		<action name="gravar" class="br.gov.jfrj.webwork.action.CpPerfilAction"
 			method="aGravar">
-			<result name="edita" type="redirect-action">editar?idCpGrupo=${idCpGrupo}
+			<result name="edita" type="redirect-action">
+				<param name="actionName">editar</param>
+				<param name="idCpGrupo">${idCpGrupo}</param>
 			</result>
 		</action>
 		<action name="excluir" class="br.gov.jfrj.webwork.action.CpPerfilAction"
 			method="aExcluir">
-			<result name="lista" type="redirect-action">listar</result>
+			<result name="lista" type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>
 		</action>
 	</package>
 
@@ -311,12 +333,17 @@
 		</action>
 		<action name="gravar" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aGravar">
-			<result name="edita" type="redirect-action">editar?idCpGrupo=${idCpGrupo}
+			<result name="edita" type="redirect-action">
+				<param name="actionName">editar</param>
+				<param name="idCpGrupo">${idCpGrupo}</param>
 			</result>
+
 		</action>
 		<action name="excluir" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aExcluir">
-			<result name="lista" type="redirect-action">listar</result>
+			<result name="lista" type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>
 		</action>
 	</package>
 
@@ -342,12 +369,16 @@
 		</action>
 		<action name="gravar" class="br.gov.jfrj.webwork.action.CpPerfilJEEAction"
 			method="aGravar">
-			<result name="edita" type="redirect-action">editar?idCpGrupo=${idCpGrupo}
+			<result name="edita" type="redirect-action">
+				<param name="actionName">editar</param>
+				<param name="idCpGrupo">${idCpGrupo}</param>
 			</result>
 		</action>
 		<action name="excluir" class="br.gov.jfrj.webwork.action.CpPerfilJEEAction"
 			method="aExcluir">
-			<result name="lista" type="redirect-action">listar</result>
+			<result name="lista" type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>
 		</action>
 	</package>
 	<package name="gi/servico" extends="default" namespace="/gi/servico">
@@ -360,9 +391,6 @@
 		<action name="gravar" class="br.gov.jfrj.webwork.action.SelfConfigAction"
 			method="aGravar">
 			<!-- <result name="grava">/paginas/servico/ajax_retorno_servico.jsp</result> -->
-
-
-
 			<result name="grava">/sigalibs/rpc_retorno.jsp</result>
 		</action>
 		<action name="acesso" class="br.gov.jfrj.webwork.action.SelfConfigAction">

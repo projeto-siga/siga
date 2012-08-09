@@ -76,7 +76,13 @@ public abstract class SigaSelecionavelActionSupport<T extends Selecionavel, DaoF
 
 	public String aSelecionar() throws Exception {
 		final DaoFiltroT flt = createDaoFiltro();
-		flt.setSigla(param("sigla"));
+		
+		try {
+			flt.setSigla(param("sigla"));
+		} catch (final Exception ex) {
+			sel = null;
+		}
+		
 		try {
 			sel = dao().consultarPorSigla(flt);
 		} catch (final Exception ex) {

@@ -3171,7 +3171,7 @@ public class ExBL extends CpBL {
 					// Orlando: Inseri a condição abaixo para que o e-mail não
 					// seja enviado quando tratar-se de despacho com
 					// transferência que não estiver assinado.
-					if (tpDespacho == null)
+					if (tpDespacho == null && descrMov== null)
 						emailDeTransferência(responsavel, lotaResponsavel,
 								m.getSigla(), m.getExDocumento()
 										.getCodigoString(), m.getExDocumento()
@@ -3600,14 +3600,16 @@ public class ExBL extends CpBL {
 					iniciarAlteracao();
 				}
 
-				// Internos antigos devem usar sempre o modelo 29L
+				// Internos antigos devem usar sempre o modelo 778L
 				Long backupID = null;
 				if (doc.getExTipoDocumento().getIdTpDoc() == 2) {
 					if (doc.getExModelo() != null)
 						backupID = doc.getExModelo().getIdMod();
 					doc.setExModelo(dao().consultar(
-							doc.isProcesso() ? 544L : 29L, ExModelo.class,
-							false));
+							doc.isProcesso() ? SigaExProperties.getIdModPA()
+									: SigaExProperties
+											.getIdModInternoImportado(),
+							ExModelo.class, false));
 				}
 
 				final String strHtml;

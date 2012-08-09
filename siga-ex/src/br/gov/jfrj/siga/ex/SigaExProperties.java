@@ -123,6 +123,28 @@ public class SigaExProperties extends ModeloPropriedade {
 	public static String getEnderecoAutenticidadeDocs() {
 		return getString("siga.ex.enderecoAutenticidadeDocs");
 	}
+	
+	public static Long getIdModInternoImportado() throws Exception{
+		String s = getStringComAmbiente("modelos.interno_importado");
+		if (s == null)
+			throw new Exception("Propriedade para o identificador do modelo Interno Importado não encontrada");
+		try{
+			return Long.valueOf(s);
+		} catch (NumberFormatException nfe){
+			throw new Exception("Erro ao obter propriedade para o identificador do modelo Interno Importado");
+		}
+	}
+	
+	public static Long getIdModPA() throws Exception{
+		String s = getStringComAmbiente("modelos.processo_administrativo");
+		if (s == null)
+			throw new Exception("Propriedade para o identificador do modelo Processo Administrativo não encontrada");
+		try{
+			return Long.valueOf(s);
+		} catch (NumberFormatException nfe){
+			throw new Exception("Erro ao obter propriedade para o identificador do modelo Processo Administrativo");
+		}
+	}
 
 
 }

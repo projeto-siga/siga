@@ -1493,12 +1493,11 @@ public class ExDao extends CpDao {
 
 	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script)
 			throws Exception {
-		final Criteria crit = getSessao().createCriteria(ExModelo.class);
-		crit.createAlias("exFormaDocumento", "f");
-		crit.addOrder(Order.asc("f.descrFormaDoc"));
-		crit.addOrder(Order.asc("nmMod"));
+		final Query q = getSessao().createQuery(
+				"select m from ExModelo m left join m.exFormaDocumento as f "
+						+ "order by f.descrFormaDoc, m.nmMod");
 		List<ExModelo> l = new ArrayList<ExModelo>();
-		for (ExModelo mod : (List<ExModelo>) crit.list())
+		for (ExModelo mod : (List<ExModelo>) q.list())
 			if (script != null && script.trim().length() != 0) {
 				if ("template/freemarker".equals(mod.getConteudoTpBlob())
 						&& mod.getConteudoBlobMod2() != null

@@ -47,16 +47,19 @@ public class ExActionSupport extends SigaActionSupport {
 
 	static {
 		if (Ex.getInstance().getBL().getProcessadorModeloJsp() == null) {
-			Ex.getInstance().getBL().setProcessadorModeloJsp(
-					new ExProcessadorModelo());
+			Ex.getInstance().getBL()
+					.setProcessadorModeloJsp(new ExProcessadorModelo());
 		}
 	}
 
 	protected void verificaNivelAcesso(ExMobil mob) throws Exception {
-		if (!Ex.getInstance().getComp().podeAcessarPorNivel(getTitular(),
-				getLotaTitular(), mob)) {
-			throw new AplicacaoException(
-					"Acesso permitido somente a usuários autorizados.");
+		if (!Ex.getInstance().getComp()
+				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Acesso ao documento "
+					+ mob.getSigla()
+					+ " permitido somente a usuários autorizados. ("
+					+ getTitular().getSigla() + "/"
+					+ getLotaTitular().getSiglaCompleta() + ")");
 		}
 	}
 
@@ -90,14 +93,18 @@ public class ExActionSupport extends SigaActionSupport {
 		exTpConfig
 				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
 		config.setCpTipoConfiguracao(exTpConfig);
-		int nivelMinimo = ((ExConfiguracao) Ex.getInstance().getConf()
+		int nivelMinimo = ((ExConfiguracao) Ex
+				.getInstance()
+				.getConf()
 				.buscaConfiguracao(config,
 						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt))
 				.getExNivelAcesso().getGrauNivelAcesso();
 		exTpConfig
 				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
 		config.setCpTipoConfiguracao(exTpConfig);
-		int nivelMaximo = ((ExConfiguracao) Ex.getInstance().getConf()
+		int nivelMaximo = ((ExConfiguracao) Ex
+				.getInstance()
+				.getConf()
 				.buscaConfiguracao(config,
 						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt))
 				.getExNivelAcesso().getGrauNivelAcesso();
@@ -112,8 +119,8 @@ public class ExActionSupport extends SigaActionSupport {
 	}
 
 	public String getDescrDocConfidencial(ExDocumento doc) {
-		return Ex.getInstance().getBL().descricaoConfidencial(doc,
-				getLotaTitular());
+		return Ex.getInstance().getBL()
+				.descricaoConfidencial(doc, getLotaTitular());
 	}
 
 	public List<ExTipoDocumento> getTiposDocumento() throws AplicacaoException {

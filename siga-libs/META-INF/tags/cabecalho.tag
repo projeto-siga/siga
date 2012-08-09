@@ -66,6 +66,10 @@ ${meta}
 	rel="stylesheet" type="text/css" />
 
 <link rel="shortcut icon" href="/sigalibs/siga.ico" />
+
+<script language="JavaScript"
+  src="/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript">
+</script>
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"

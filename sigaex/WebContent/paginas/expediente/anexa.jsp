@@ -8,9 +8,11 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
+
 <siga:pagina titulo="Movimentação">
 
-	<script type="text/javascript" language="Javascript1.1">
+   <script type="text/javascript" language="Javascript1.1">
+		var frm = document.getElementById('frm');
 		function sbmt() {
 			ExMovimentacaoForm.page.value = '';
 			ExMovimentacaoForm.acao.value = 'aAnexar';
@@ -27,74 +29,52 @@
 				x.arquivo.focus();
 			}
 		}
+		
+		function checkUncheckAll(theElement) {
+			var theForm = theElement.form, z = 0;		
+			for(z=0; z<theForm.length;z++) {
+		    	if(theForm[z].type == 'checkbox' && theForm[z].name != 'checkall') {
+					theForm[z].checked = !(theElement.checked);
+					theForm[z].click();
+				}
+			}
+		}
+
+		function displaySel(chk, el) {
+			document.getElementById('div_' + el).style.display=chk.checked ? '' : 'none';
+			if (chk.checked == -2) 
+				document.getElementById(el).focus();
+		}
+		
+		function displayTxt(sel, el) {					
+			document.getElementById('div_' + el).style.display=sel.value == -1 ? '' : 'none';
+			document.getElementById(el).focus();
+		}	
+
 	</script>
 	
-	<ww:url id="url" action="assinar_mov_gravar_lote"
-		namespace="/expediente/mov">
-		<ww:param name="id">${mobilVO.mob.id}</ww:param>
-	</ww:url>
-	<script language="VBScript">
-Function assinar()
-	prov = MsgBox("Confirma que o Anexo a ser assinado foi devidamente analisado?", vbYesNo, "Confirmação")
-	If prov = vbYes then
-		Dim Assinatura
-		Dim Configuracao
-		On Error Resume Next
-		Set Configuracao = CreateObject("CAPICOM.Settings")
-		Configuracao.EnablePromptForCertificateUI = True
-		Set Assinatura = CreateObject("CAPICOM.SignedData")
-		Set Util = CreateObject("CAPICOM.Utilities")
-		If Erro Then Exit Function
-		Assinatura.Content = Util.Base64Decode(frm.conteudo_b64.value)
-		frm.conteudo_b64.value = Null
-		frm.assinaturaB64.value = Assinatura.Sign(Nothing, True, 0)
-		If Erro Then Exit Function
-		Dim Assinante
-		Assinante = Assinatura.Signers(1).Certificate.SubjectName
-		Assinante = Split(Assinante, "CN=")(1)
-		Assinante = Split(Assinante, ",")(0)
-		frm.assinante.value = Assinante
-		If Erro Then Exit Function
-		frm.action="<ww:property value="%{url}"/>"
-		frm.Submit()
-	End If
-
-	
-End Function
-
-Function Erro() 
-	If Err.Number <> 0 then
-		MsgBox "Ocorreu um erro durante o processo de assinatura: " & Err.Description
-		Err.Clear
-		Erro = True
-	Else
-		Erro = False
-	End If
-End Function
-</script>
-
+		
+    <c:if test="${!assinandoAnexosGeral}">
 	<table width="100%">
 		<tr>
-			<td><ww:form action="anexar_gravar" namespace="/expediente/mov"
+			<td><ww:form name="frm" id="frm" action="anexar_gravar" namespace="/expediente/mov"
 					method="POST" enctype="multipart/form-data" cssClass="form">
+           
+                    <input type="hidden" name="postback" value="1" />
+	                <ww:hidden name="sigla" value="%{sigla}" />
 
-					<input type="hidden" name="postback" value="1" />
-					<ww:hidden name="sigla" value="%{sigla}" />
-
+					
 					<h1>
-						Anexação de Arquivo - ${doc.codigo}
-						<c:if test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if>
+						Anexação de Arquivo - ${mobilVO.sigla}
+						
 					</h1>
 
 					<tr class="header">
 						<td colspan="2">Dados do Arquivo</td>
-					</tr>
+					</tr>					
 					<ww:textfield name="dtMovString" label="Data"
-						onblur="javascript:verifica_data(this, true);" />
-
-					<tr>
+				    	onblur="javascript:verifica_data(this, true);" />
+				   	<tr>
 						<td>Responsável:</td>
 						<td><siga:selecao tema="simple" propriedade="subscritor" />
 							&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
@@ -120,35 +100,48 @@ End Function
 
 		<ww:file name="arquivo" label="Arquivo" accept="application/pdf"
 			onchange="testpdf(this.form)" />
-
-		<!-- ww:datepicker tooltip="Select Your Birthday" label="Birthday"
-				name="birthday" / -->
-		<ww:submit value="Ok" cssClass="button" align="center" />
-		<!--  			<tr class="button"> teste
-				<td><ww:submit type="input" value="Cancela" theme="simple"
-					onclick="javascript:history.back(-1);" /></td>
-			</tr> 
--->
-		</ww:form>
+	<%--		<ww:checkbox theme="simple" name="copiaOriginal"/>Cópia de original  --%>
+				
+		<ww:submit value="Ok" cssClass="button" align="center" />	
+		</ww:form>			
 		</td>
 		</tr>
+		
+	
 	</table>
+    </c:if>	
 	
+	
+	<ww:form name="frm_anexo" id="frm_anexo" cssClass="form" theme="simple">
+		
+	
+	<ww:hidden name="idMob" value="${mobilVO.mob.id}" />
+	<ww:hidden name="popup" value="true" />
+	<ww:hidden name="copia" id = "copia" value="false" />	
+		
 	<c:if test="${(not empty mobilVO.movs)}">
-	
+		
 		<table border="0" cellpadding="0" cellspacing="0" width="80%" >
-			<tr>
-				<h1 colspan="4" > Anexos Pendentes de Assinatura </h1>
+			<tr>  
+			   <ww:if test="${!assinandoAnexosGeral}">
+				    <h1 colspan="4" > Anexos Pendentes de Assinatura </h1>
+			   </ww:if>
+			   <ww:else>	    
+				    <h1 colspan="4" > Anexos Pendentes de Assinatura - ${docVO.sigla}</h1>				     
+		       </ww:else>				
 			</tr> 
 		</table>
 		<table class="mov" width="80%">		
 			<tr class="${docVO.classe}">
+				<td></td>			    
 				<td align="center" rowspan="2">Data</td>			
 				<td colspan="2" align="left">Cadastrante</td>			
 				<td colspan="2" align="left">Atendente</td>
 				<td rowspan="2">Descrição</td>			
 			</tr>
-			<tr class="${docVO.classe}">
+			<tr class="${docVO.classe}">			   
+				<td align="center"><input type="checkbox"
+									name="checkall" onclick="checkUncheckAll(this)" /></td>
 				<td align="left">Lotação</td>
 				<td align="left">Pessoa</td>			
 				<td align="left">Lotação</td>
@@ -165,7 +158,13 @@ End Function
 						<ww:else>
 							<c:set var="dtUlt" value="${dt}" />
 						</ww:else>
-		
+						<c:set var="x" scope="request">chk_${mov.mov.idMov}</c:set>
+			    		<c:remove var="x_checked" scope="request" />
+						<c:if test="${param[x] == 'true'}">
+							<c:set var="x_checked" scope="request">checked</c:set>
+						</c:if>						
+		                <td align="center"><input type="checkbox"
+									name="${x}" value="true" ${x_checked} /></td>		          
 						<td align="center">${dt}</td>				
 						<td align="left"><siga:selecionado
 							sigla="${mov.parte.lotaCadastrante.sigla}"
@@ -209,33 +208,32 @@ End Function
 									<c:set var="assinadopor" value="${false}" />
 								</c:if>
 							</c:forEach>
+							<ww:hidden name="pdf${x}" value="${mov.mov.nmPdf}" />							
 						</siga:links></td>			
-					</tr>			
-				</c:if>
-				<c:set var="i" value="${i+1}" />
-			    <ww:hidden name="conteudo_b64${i}" value="${mov.conteudoBlobPdfB64}" />	
-			    <ww:hidden name="assinaturaB64${i}" />
-			</c:forEach>
-			<ww:hidden name="numAnexacoes" value="${i}" />	
-		
-		</table>
-	</c:if>
-    <ww:hidden name="assinante" />
-	
+					</tr>										
+				</c:if>			
+				
+			</c:forEach>	
+		</table>	
+		<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action"/>
+	    <c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
+		<table border="0" cellpadding="0" cellspacing="0" width="80%" >
+			<tr><td colspan="4" align="right"> 
+			  ${f:obterExtensaoAssinadorLote(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL)}
+			</td></tr> 
+		</table>	
+	</c:if>	
+	   
 	<ww:url id="url" action="exibir" namespace="/expediente/doc">
 		<ww:param name="sigla" value="%{sigla}" />
-	</ww:url>
-	<siga:link title="Voltar" url="${url}" test="${true}" />
+	</ww:url>	
+	
+	<siga:link title="Voltar" url="${url}" test="${true}" />	
 
-  <!--   ${f:obterBotoesExtensaoAssinador(lotaTitular.orgaoUsuario)}   -->
-  <input type="button" value="Assinar Todos"
-							onclick="vbscript:assinar" />
-    
-<%--    <c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar_lote.action?id=${mobilVO.mob.id}&copia=${copia}"/>
-	<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
-    <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}" />
-   
-    
-	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
- --%>
+	</ww:form>
+	
+	
+	
+	
+ 
 </siga:pagina>

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,6 +77,7 @@ import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
+import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
@@ -209,6 +211,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String mensagem;
 
 	private Long idPapel;
+	
+	private boolean assinandoAnexosGeral = false;
+	
+	public boolean isAssinandoAnexosGeral() {
+		return assinandoAnexosGeral;
+	}
 
 	public Long getNivelAcesso() {
 		return nivelAcesso;
@@ -721,10 +729,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aAnexar() throws Exception {
 		buscarDocumento(true);
-
-		if (!Ex.getInstance().getComp()
-				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Arquivo não pode ser anexado");
+        
+		if (!(mob.isGeral() && mob.doc().getDtFechamento() != null))
+		   if (!Ex.getInstance().getComp()
+			    	.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
+		    	throw new AplicacaoException("Arquivo não pode ser anexado");
 		
 		ExDocumentoVO docVO = new ExDocumentoVO(doc);
 		this.getRequest().setAttribute("docVO", docVO);
@@ -788,6 +797,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
+	
+	
+	public String aAssinarAnexosGeral() throws Exception {
+		
+		this.assinandoAnexosGeral = true;
+		
+		return aAnexar();
+		
+	}
+	
 
 	public String aArquivarCorrenteGravar() throws Exception {
 		buscarDocumento(true);
@@ -920,7 +939,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	private String recuperarAssinaturaAppletB64() throws ServletException,
 			AplicacaoException {
-		HttpServletRequest request = getRequest();
+ 		HttpServletRequest request = getRequest();
 		String mensagem = null;
 
 		// Recupera a quantidade de pacotes enviados
@@ -938,11 +957,21 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		String hexEncoded = request.getParameter(ENCDATA).toString();
 
 		// Recupera nome do arquivo
-		String ALIAS_NOME = "#Nome." + IDDATA;
+		String ALIAS_NOME = "#arquivo." + IDDATA;
 		String ARQUIVO = request.getParameter(ALIAS_NOME);
 		if (ARQUIVO == null || ARQUIVO.equals("")) {
 			ARQUIVO = "texto.txt";
 		}
+		
+		//Recupera o Id da movimentacao
+		// #arquivo é alimentado com ExMovimentacao.nmPdf. Se existir ":" é uma assinatura de movimentação
+		// caso contrário, é uma assinatura de documento
+		
+		if (ARQUIVO.contains(":")) {
+			String[] partesArq= ARQUIVO.split(":");
+			this.setId(Long.parseLong(partesArq[1]));
+		}
+		
 
 		// Converte para binario
 		Object tools = null;
@@ -1061,13 +1090,15 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (getCopia() != null && getCopia())
 			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
 
-		mov = dao().consultar(getId(), ExMovimentacao.class, false);
-
-		Long idMov = paramLong("id");
-		if (idMov == null)
-			throw new AplicacaoException("Id da movimentação não informada");
-		ExMovimentacao movAlvo = dao().consultar(idMov, ExMovimentacao.class,
-				false);
+		/* mov == null quando o id é passado pela url (ver/assinar)
+		/* Quando o id é alimentado no metodo this.recuperarAssinaturaAppletB64(), mov é instanciada
+		 * no método buscarDocumento()  */
+		if (mov == null) {
+			Long idMov = paramLong("id");
+			if (idMov == null)
+				throw new AplicacaoException("Id da movimentação não informada");
+			mov = dao().consultar(idMov, ExMovimentacao.class,false);
+		}
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
 
@@ -1077,13 +1108,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
 		// mov.getConteudoBlobpdf(), sArquivoPolitica);
 
-		verificaNivelAcesso(movAlvo.getExMobil());
+		verificaNivelAcesso(mov.getExMobil());
 
 		try {
 			Ex.getInstance()
 					.getBL()
 					.assinarMovimentacao(getCadastrante(), getLotaTitular(),
-							movAlvo, assinatura, tpMovAssinatura);
+							mov, assinatura, tpMovAssinatura);
 		} catch (final Exception e) {
 			if (fApplet) {
 				getRequest().setAttribute("err", e.getMessage());
@@ -1100,73 +1131,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 	
-	//Aqui
-	public String aAssinarMovGravarLote() throws Exception {
-		boolean fApplet = getRequest().getParameter("QTYDATA") != null;
-		String b64Applet = null;
-		if (fApplet) {
-			b64Applet = recuperarAssinaturaAppletB64();
-		}
-		buscarDocumento(true);
-		if (b64Applet != null)
-			setAssinaturaB64(b64Applet);
-
-		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
-		if (getCopia() != null && getCopia())
-			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
-
-		mob = dao().consultar(getId(), ExMobil.class, false);
-
-		Long idMob = paramLong("id");
-		if (idMob == null)
-			throw new AplicacaoException("Id do mobil não informado");
-		ExMobil mobAlvo = dao().consultar(idMob, ExMobil.class,false);
-
-		byte[] assinatura = Base64.decode(getAssinaturaB64());
-
-		// String sArquivoPolitica = getRequest().getRealPath("") +
-		// File.separator
-		// + "policies-ICP-BRASIL" + File.separator + "PA_AD_RB.cer";
-		// assinatura = GravarAssinatura.validarECompletarAssinatura(assinatura,
-		// mov.getConteudoBlobpdf(), sArquivoPolitica);
-
-		verificaNivelAcesso(mobAlvo);
-
-		try {
-			for (ExMovimentacao mov : mobAlvo.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)){
-				if (!mov.isAssinada())
-						Ex.getInstance()
-							.getBL()
-							.assinarMovimentacao(getCadastrante(), getLotaTitular(),
-								mov, assinatura, tpMovAssinatura);
-			}	
-		} catch (final Exception e) {
-			if (fApplet) {
-				getRequest().setAttribute("err", e.getMessage());
-				return "ERRO";
-			}
-
-			throw e;
-		}		
-
-		if (fApplet) {
-			return "OK";
-		}
-
-		return Action.SUCCESS;
-	}
-
-	//Aqui
-	
-	
-	
-
 	public String aFecharPopup() throws Exception {
 		buscarDocumento(true);
 		return Action.SUCCESS;
 	}
 
 	public String aRedefinirNivelAcesso() throws Exception {
+		
 		buscarDocumento(true);
 
 		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
@@ -3394,7 +3365,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setItensSolicitados(List<ExDocumento> itensSolicitados) {
 		this.itensSolicitados = itensSolicitados;
 	}
-
+	
 	public String getDtPrevPubl() {
 		return dtPrevPubl;
 	}

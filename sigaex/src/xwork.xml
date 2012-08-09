@@ -419,6 +419,15 @@
 			</result>
 
 		</action>
+		
+		<action name="atualizar_marcas" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aAtualizarMarcasDoc">
+			<result type="redirect-action">
+				exibir?sigla=${sigla}
+			</result>
+		</action>
+		
+		
 	</package>
 
 	<package name="expediente/mov" extends="default" namespace="/expediente/mov">
@@ -426,6 +435,10 @@
 		<action name="assinar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinar">
 			<result>/paginas/expediente/assina.jsp</result>
+		</action>		
+		<action name="assinar_anexos_geral" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAssinarAnexosGeral">
+			<result>/paginas/expediente/anexa.jsp</result>
 		</action>
 		<action name="pedir_publicacao" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aPedirPublicacao">
@@ -1003,24 +1016,7 @@
 				/paginas/erro.jsp
 			</result>
 			<result>/paginas/expediente/assinado.jsp?id=786</result>
-		</action>
-		<action name="assinar_mov_gravar_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aAssinarMovGravarLote">
-			<result name="OK">
-				/paginas/ok.jsp
-			</result>
-			<result name="ERRO">
-				/paginas/erro.jsp
-			</result>
-			<interceptor-ref name="token-session" />
-			<interceptor-ref name="basicStack" />
-			<result type="redirect-action">
-				<param name="actionName">
-					exibir?sigla=${mob.sigla}
-				</param>
-				<param name="namespace">/expediente/doc</param>
-			</result>	
-		</action>
+		</action>		
 		<action name="prever" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aPrever">
 			<result name="processa_modelo">

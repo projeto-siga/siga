@@ -55,5 +55,6 @@ function sbmt() {
 	</tr>
 </table>
 
+
 <!--  tabela do rodapé -->
 <c:import url="/rodape.jf" />

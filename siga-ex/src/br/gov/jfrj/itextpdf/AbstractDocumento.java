@@ -132,8 +132,10 @@ public abstract class AbstractDocumento extends HttpServlet {
 					.getComp()
 					.podeAcessarDocumento(cusr.getTitular(),
 							cusr.getLotaTitular(), mob)) {
-				throw new AplicacaoException(
-						"Documento inacessível ao usuário.");
+				throw new AplicacaoException("Documento " + mob.getSigla()
+						+ " inacessível ao usuário "
+						+ cusr.getTitular().getSigla() + "/"
+						+ cusr.getLotaTitular().getSiglaCompleta() + ".");
 			}
 
 			ExMovimentacao mov = getMov(mob, request.getRequestURI());
@@ -156,8 +158,8 @@ public abstract class AbstractDocumento extends HttpServlet {
 						"attachment; filename=" + filename + ".hash");
 				response.setContentType("application/octet-stream");
 			} else {
-				response.setHeader("Content-Disposition",
-						"filename=" + filename + ".pdf");
+				response.setHeader("Content-Disposition", "filename="
+						+ filename + ".pdf");
 				response.setContentType(getContentType());
 			}
 			response.setContentLength(ab.length);

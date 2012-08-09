@@ -67,6 +67,23 @@
 		//		parent.document.getElementById('painel').style.height = painel.document.body.scrollHeight + 5;
 		//	}
 	}
+
+	function telaCheia(b) {
+		var divMain = document.getElementById('main');
+		var divSidebar = document.getElementById('sidebar');
+		//var divDoc = document.getElementById('paipainel');
+
+		if (b) {
+			divMain.setAttribute("class", "gt-bd clearfix");
+			divMain.className = "gt-bd clearfix";		
+			divSidebar.style.display="none";
+		} else {
+			divMain.setAttribute("class", "gt-bd gt-cols-2 clearfix");
+			divMain.className = "gt-bd gt-cols-2 clearfix";		
+			divSidebar.style.display="block";
+		}		
+		resize();
+	}
 </script>
 
 <div class="gt-bd" style="padding-bottom: 0px;">
@@ -97,37 +114,40 @@
 		</c:choose>
 
 		<p class="gt-table-action-list">
-		<siga:links inline="${true}">
-			<ww:url id="url" action="exibir" namespace="/expediente/doc">
-				<ww:param name="sigla" value="%{sigla}" />
-			</ww:url>
-			<a name="inicio" style="float: right; padding-right: 5pt;"
-				class="once" href="#final"><img
-				src="/siga/css/famfamfam/icons/arrow_down.png"
-				style="margin-right: 5px;">Ir para o Final</a>
-			<siga:link icon="application_view_list"
-				title="Visualizar&nbsp;Movimentações" url="${url}" test="${true}" />
-			<siga:link icon="page_white_acrobat" title="Preferência:"
-				test="${true}" />
-			<input type="radio" id="radioHTML" name="formato" value="html"
-				checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">HTML</input>
+			<siga:links inline="${true}">
+				<ww:url id="url" action="exibir" namespace="/expediente/doc">
+					<ww:param name="sigla" value="%{sigla}" />
+				</ww:url>
+				<a name="inicio" style="float: right; padding-right: 5pt;"
+					class="once" href="#final"><img
+					src="/siga/css/famfamfam/icons/arrow_down.png"
+					style="margin-right: 5px;">Ir para o Final</a>
+				<siga:link icon="application_view_list"
+					title="Visualizar&nbsp;Movimentações" url="${url}" test="${true}" />
+				<siga:link icon="page_white_acrobat" title="Preferência:"
+					test="${true}" />
+				<input type="radio" id="radioHTML" name="formato" value="html"
+					checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">&nbsp;HTML</input>
 
-			<input type="radio" id="radioPDF" name="formato" value="pdf"
-				" onclick="exibir(htmlAtual,pdfAtual,'');">PDF</input>
+				<input type="radio" id="radioPDF" name="formato" value="pdf"
+					" onclick="exibir(htmlAtual,pdfAtual,'');">&nbsp;PDF</input>
 
-			<input type="radio" id="radioPDFSemMarcas" name="formato"
-				value="pdfsemmarcas"
-				" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">PDF sem marcas</input>
-		</siga:links>
+				<input type="radio" id="radioPDFSemMarcas" name="formato"
+					value="pdfsemmarcas"
+					" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">&nbsp;PDF sem marcas</input>
+
+				<input type="checkbox" id="TelaCheia" name="telacheia"
+					value="telacheia" " onclick="javascript: telaCheia(this.checked);">&nbsp;Tela cheia</input>
+			</siga:links>
 		</p>
 
 	</div>
 </div>
 
-<div class="gt-bd gt-cols-2 clearfix"
+<div id="main" class="gt-bd gt-cols-2 clearfix"
 	style="padding-top: 0px; margin-top: 0px;">
 
-	<div class="gt-sidebar">
+	<div id="sidebar" class="gt-sidebar">
 		<div class="gt-content-box gt-for-table">
 
 			<table class="gt-table"
@@ -160,7 +180,8 @@
 							</c:if> <a
 							title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}"
 							href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nome}</a>
-							<c:set var="tooltipResumo" value="" /></td>
+							<c:set var="tooltipResumo" value="" />
+						</td>
 						<td align="center">${arqNumerado.arquivo.lotacao.sigla}</td>
 						<td align="center">${arqNumerado.paginaInicial}</td>
 					</tr>
@@ -213,7 +234,8 @@
 							<ww:param name="sigla">${mob.sigla}</ww:param>
 						</ww:url>
 						<td colspan="3" style="padding-left: 5pt;"><a
-							href="javascript:exibirNoIFrame('${url}')">RESUMO</a></td>
+							href="javascript:exibirNoIFrame('${url}')">RESUMO</a>
+						</td>
 					</tr>
 				</c:if>
 
@@ -233,19 +255,20 @@
 					<td valign="top" width="100%">
  --%>
 
-		<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px;clear:both;">
+		<div id="paipainel"
+			style="margin: 0px; padding: 0px; border: 0px; clear: both;">
 			<iframe style="visibility: visible; margin: 0px; padding: 0px;"
 				name="painel" id="painel" src="" align="right" width="100%"
 				onload="resize();" frameborder="0" scrolling="auto"></iframe>
 		</div>
 
-		<div style="margin: 0px; padding: 0px; border: 0px;clear:both;">
-		<p class="gt-table-action-list">
-			<a style="float: right; padding-right: 5pt; padding-top: 5pt;"
-				name="final" href="#inicio"><img
-				src="/siga/css/famfamfam/icons/arrow_up.png"
-				style="margin-right: 5px;">Ir para o Topo</a>
-		</p>
+		<div style="margin: 0px; padding: 0px; border: 0px; clear: both;">
+			<p class="gt-table-action-list">
+				<a style="float: right; padding-right: 5pt; padding-top: 5pt;"
+					name="final" href="#inicio"><img
+					src="/siga/css/famfamfam/icons/arrow_up.png"
+					style="margin-right: 5px;">Ir para o Topo</a>
+			</p>
 		</div>
 
 		<%--							

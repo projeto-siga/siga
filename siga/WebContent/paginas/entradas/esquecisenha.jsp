@@ -5,7 +5,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <style>
-#passwordStrength {
+#passwordStrengthMet1, #passwordStrengthMet2 {
 	height: 10px;
 	display: block;
 	float: left;
@@ -45,6 +45,26 @@
 <ww:url action="integracaoLdap" id="integracao_url"></ww:url>
 <script type="text/javascript" language="Javascript1.1">
 
+function checkIntegradoAD(){
+	
+	if ('${param.proxima_acao}' == 'incluir_usuario_gravar'){
+		var matricula = document.getElementById('txtMatricula').value;
+		PassAjaxResponseToFunction('${integracao_url}?matricula=' + matricula, 'exibirDadosIntegracaoAD',  false,true, null);
+	}
+}
+
+function exibirDadosIntegracaoAD(response,param){
+	if (response != "0"){
+		document.getElementById('dadosIntegracaoAD').style.display = 'block';
+		document.getElementById('msgExplicacao').innerHTML = 'Seu órgão está integrado ao AD. Sua senha de rede email serão alteradas.';
+	}else{
+		document.getElementById('dadosIntegracaoAD').style.display = 'none';
+		document.getElementById('passMet1').value = "";
+		document.getElementById('pass2Met1').value = "";
+		document.getElementById('msgExplicacao').innerHTML = 'O sistema gera uma nova senha aleatoriamente e a envia para o email da pessoa informada.';
+	}
+}
+
 /*  converte para maiúscula a sigla do estado  */
 function converteUsuario(nomeusuario){
   re= /^[a-zA-Z0-9]{2}\d{4,6}$/;
@@ -54,7 +74,7 @@ function converteUsuario(nomeusuario){
   }
 }
 
-function passwordStrength(password) {
+function passwordStrength(password,metodo) {
         var desc = new Array();
         desc[0] = "Inaceitável";
         desc[1] = "Muito Fraca";
@@ -83,52 +103,80 @@ function passwordStrength(password) {
         if (score > 2 && (password.length < 6 || !password.match(/[a-z]/) || !password.match(/[A-Z]/) || !password.match(/\d+/)))
         	score = 2;
 
-         document.getElementById("passwordDescription").innerHTML = desc[score];
-         document.getElementById("passwordStrength").className = "strength" + score;
+         document.getElementById('passwordDescription' + metodo).innerHTML = desc[score];
+         document.getElementById('passwordStrength' + metodo).className = "strength" + score;
 }
 
-function validateUsuarioForm(form) {
-	var s = document.getElementById("passwordStrength").className;
+function validateUsuarioForm(form,metodo) {
+	
+	if ('${param.proxima_acao}' != 'incluir_usuario_gravar' && (metodo == 'Met1')){
+		return;
+	}
+	var s = document.getElementById('passwordStrength' + metodo).className;
 	if (s == "strength0" || s == "strength1" || s == "strength2") {
 		alert("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
 		return false;
 	}
-	var p1 = document.getElementById("pass").value;
-	var p2 = document.getElementById("pass2").value;
+	var p1 = document.getElementById("pass" + metodo).value;
+	var p2 = document.getElementById("pass2" + metodo).value;
 	if (p1 != p2) {
 		alert("Repetição da nova senha não confere, favor redigitar.");
-		return false;
+		return false; 
 	}
 	return true;
 }
 
+
+function refreshWindow(){
+	var e=document.getElementById("refreshed");
+	if(e.value=="no")e.value="yes";
+	else{
+		e.value="no";
+		document.getElementById('txtMatricula').value = '';
+		if ('${param.proxima_acao}' == 'incluir_usuario_gravar'){
+			document.getElementById('incluir_usuario_gravar_cpf').value = '';
+		} else {
+			document.getElementById('esqueci_senha_gravar_cpf').value = '';
+		}
+		window.location.reload();
+	}
+}
+
 </script>
+
+<%-- Controle de refresh  --%>
+
+<input type="hidden" id="refreshed" value="no">
+<body onload="javascript:refreshWindow()" />
+
 
 <siga:pagina titulo="${param.titulo}">
 	<!-- main content -->
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-	<c:if test="${baseTeste}">
-		<div id="msgSenha" style="font-size: 12pt;color: red; font-weight: bold;">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</div>
-	</c:if>
+			<c:if test="${baseTeste}">
+					<p id="msgSenha" class="gt-error">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</p>
+			</c:if>
 	
 			<h1 class="gt-form-head">${param.titulo}</h1>
 
 			<h2>${mensagem}</h2>
+	
 			<h2 class="gt-form-head">Método 1 - Envio de senha nova para o
 				e-mail</h2>
-			<p>O sistema gera uma nova senha aleatoriamente e a envia para o
+			<p id="msgExplicacao">O sistema gera uma nova senha aleatoriamente e a envia para o
 				email da pessoa informada.</p>
 			<div class="gt-form gt-content-box">
-				<ww:form action="${param.proxima_acao}" theme="simple" method="post">
+			
+				<ww:form action="${param.proxima_acao}" onsubmit="return validateUsuarioForm(this,'Met1');" theme="simple" method="post">
 					<ww:hidden name="metodo" value="1" />
 					<ww:hidden name="page" value="1" />
 					<div class="gt-form-row gt-width-100">
 						<div class="gt-left-col gt-width-33">
 							<label>Matrícula</label>
-							<ww:textfield name="matricula"
-								onblur="javascript:converteUsuario(this)" theme="simple"
+							<ww:textfield name="matricula" id="txtMatricula"
+								onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);" theme="simple"
 								cssClass="gt-form-text" />
 						</div>
 						<div class="gt-right-col gt-width-66">
@@ -142,9 +190,34 @@ function validateUsuarioForm(form) {
 						<label>CPF</label>
 						<ww:textfield name="cpf" theme="simple" cssClass="gt-form-text" />
 					</div>
+					
+					<div class="gt-form-row gt-width-100" id="dadosIntegracaoAD" style="display: none;">
+
+							<div class="gt-left-col gt-width-33">
+								<label>Nova Senha</label>
+								<ww:password name="senhaNova" id="passMet1"
+									onkeyup="passwordStrength(this.value,'Met1')" theme="simple"
+									cssClass="gt-form-text" />
+							</div>
+
+
+							<div class="gt-left-col gt-width-33">
+								<label>Repetição da nova senha</label>
+								<ww:password name="senhaConfirma" id="pass2Met1"
+									onblur="javascript:converteUsuario(this)" theme="simple"
+									cssClass="gt-form-text" />
+							</div>
+
+							<div class="gt-left-col gt-width-33">
+								<label>Força da senha</label>
+								<div id="passwordDescriptionMet1">Senha não informada</div>
+								<div id="passwordStrengthMet1" class="strength0"></div>
+							</div>
+					</div>
+					
 					<div class="gt-form-row">
 						<ww:submit label="OK" value="OK" theme="simple"
-							cssClass="gt-btn-medium gt-btn-left" />
+							cssClass="gt-btn-medium gt-btn-left"/>
 					</div>
 
 				</ww:form>
@@ -161,7 +234,7 @@ function validateUsuarioForm(form) {
 			</p>
 			<div class="gt-form gt-content-box">
 				<ww:form action="${param.proxima_acao}"
-					onsubmit="return validateUsuarioForm(this);" method="post"
+					onsubmit="return validateUsuarioForm(this,'Met2');" method="post"
 					theme="simple">
 					<ww:hidden name="metodo" value="2" />
 
@@ -233,22 +306,22 @@ function validateUsuarioForm(form) {
 
 						<div class="gt-left-col gt-width-33">
 							<label>Nova Senha</label>
-							<ww:password name="senhaNova" id="pass"
-								onkeyup="passwordStrength(this.value)" theme="simple"
+							<ww:password name="senhaNova" id="passMet2"
+								onkeyup="passwordStrength(this.value,'Met2')" theme="simple"
 								cssClass="gt-form-text" />
 						</div>
 
 						<div class="gt-left-col gt-width-33">
 							<label>Repetição da nova senha</label>
-							<ww:password name="senhaConfirma" id="pass2"
+							<ww:password name="senhaConfirma" id="pass2Met2"
 								onblur="javascript:converteUsuario(this)" theme="simple"
 								cssClass="gt-form-text" />
 						</div>
 
 						<div class="gt-left-col gt-width-33">
 							<label>Força da senha</label>
-							<div id="passwordDescription">Senha não informada</div>
-							<div id="passwordStrength" class="strength0"></div>
+							<div id="passwordDescriptionMet2">Senha não informada</div>
+							<div id="passwordStrengthMet2" class="strength0"></div>
 						</div>
 					</div>
 

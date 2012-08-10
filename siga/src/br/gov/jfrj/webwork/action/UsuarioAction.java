@@ -243,13 +243,12 @@ public class UsuarioAction extends SigaActionSupport {
 		getRequest().setAttribute("titulo", "Novo Usuário");
 		String[] senhaGerada = new String[1];
 		boolean senhaTrocadaAD = false;
+		CpIdentidade idNova = null;
 		switch (metodo) {
 		case 1:
 			
-			verificarMetodoIntegracaoAD(matricula);
-			
-			CpIdentidade id = Cp.getInstance().getBL().criarIdentidade(matricula,
-					cpf, getIdentidadeCadastrante(),null,senhaGerada);
+			idNova = Cp.getInstance().getBL().criarIdentidade(matricula,
+					cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
@@ -260,8 +259,8 @@ public class UsuarioAction extends SigaActionSupport {
 						"3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>");
 				return Action.SUCCESS;
 			}else{
-				CpIdentidade idNovaDefinida = Cp.getInstance().getBL().criarIdentidade(matricula,cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
-				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
+				idNova = Cp.getInstance().getBL().criarIdentidade(matricula,cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
+				
 			}
 			break;
 		default:
@@ -269,6 +268,9 @@ public class UsuarioAction extends SigaActionSupport {
 			return Action.SUCCESS;
 		}
 		
+		if (isIntegradoAD(matricula)){
+			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
+		}
 		
 		if (isIntegradoAD(matricula) && senhaTrocadaAD){
 			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.";
@@ -376,13 +378,10 @@ public class UsuarioAction extends SigaActionSupport {
 		this.senha2 = senha2;
 	}
 
-//	public String isIntegradoLdap() {
-//		CpOrgaoUsuario orgaoUsu = CpDao.getInstance().consultar(getIdOrgao(), CpOrgaoUsuario.class, false);
-//		if (orgaoUsu!=null){
-//			return IntegracaoLdap.getInstancia().integrarComLdap(orgaoUsu)==true?"ajax_retorno":"ajax_vazio";
-//		}
-//		return "ajax_vazio";
-//	}
+	public String isIntegradoLdap() {
+		return isIntegradoAD(getMatricula())==true?"ajax_retorno":"ajax_vazio";
+	}
+	
 
 	public Long getIdOrgao() {
 		return idOrgao;

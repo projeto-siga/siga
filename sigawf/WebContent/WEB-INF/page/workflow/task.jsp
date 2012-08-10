@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 <siga:pagina titulo="Tarefa">
-	<div class="gt-bd gt-cols clearfix">
+	<div class="gt-bd gt-cols clearfix" id="page">
 		<div class="gt-content clearfix">
 
 			<div id="desc_editar" style="display: none;">
@@ -166,33 +166,6 @@
 						</ww:if>
 					</c:forEach>
 				</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			</form>
 			<c:if
 				test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance))}">
@@ -230,7 +203,7 @@
 								</ww:url>
 								<input type="button" value="Pegar tarefa para mim"
 									onclick="javascript:window.location.href='${url}'"
-									class="gt-btn-medium gt-btn-left">
+									class="gt-btn-large gt-btn-left">
 							</c:if>
 						</div>
 					</form>
@@ -363,8 +336,9 @@
 			<div class="gt-sidebar-list">
 				<h3>Mapa do Procedimento</h3>
 				<ul class="gt-sidebar-list-content">
-					<li class="gt-sidebar-list-row"><img style="width: 100%"
-						src="loadPhoto?tId=${taskInstance.id}" /> <%--<tags:wfImage task="${taskInstance.id}"
+					<li class="gt-sidebar-list-row"><a title="Zoom"
+						href="javascript: document.getElementById('page').style.display='none'; document.getElementById('map').style.display='block';"><img
+							style="width: 100%" src="loadPhoto?tId=${taskInstance.id}" /> </a> <%--<tags:wfImage task="${taskInstance.id}"
 								token="${taskInstance.token.id}" /> --%></li>
 				</ul>
 			</div>
@@ -372,4 +346,20 @@
 
 		</div>
 		<!-- / sidebar -->
+	</div>
+
+	<div class="gt-bd clearfix" style="display: none" id="map">
+		<div class="gt-content clearfix">
+			<div id="desc_editar">
+				<h3>Mapa do Procedimento</h3>
+				<div class="gt-form gt-content-box" style="padding-bottom: 15px;">
+					<img style="width: 100%" src="loadPhoto?tId=${taskInstance.id}" />
+				</div>
+			</div>
+		</div>
+		<a
+			href="javascript: document.getElementById('map').style.display='none'; document.getElementById('page').style.display='block';"
+			class="gt-btn-large gt-btn-left">Voltar</a>
+
+	</div>
 </siga:pagina>

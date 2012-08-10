@@ -59,8 +59,8 @@ function exibirDadosIntegracaoAD(response,param){
 		document.getElementById('msgExplicacao').innerHTML = 'Seu órgão está integrado ao AD. Sua senha de rede email serão alteradas.';
 	}else{
 		document.getElementById('dadosIntegracaoAD').style.display = 'none';
-		document.getElementById('pass').value = "";
-		document.getElementById('pass2').value = "";
+		document.getElementById('passMet1').value = "";
+		document.getElementById('pass2Met1').value = "";
 		document.getElementById('msgExplicacao').innerHTML = 'O sistema gera uma nova senha aleatoriamente e a envia para o email da pessoa informada.';
 	}
 }
@@ -109,7 +109,7 @@ function passwordStrength(password,metodo) {
 
 function validateUsuarioForm(form,metodo) {
 	
-	if ('${param.proxima_acao}' != 'incluir_usuario_gravar'){
+	if ('${param.proxima_acao}' != 'incluir_usuario_gravar' && (metodo == 'Met1')){
 		return;
 	}
 	var s = document.getElementById('passwordStrength' + metodo).className;
@@ -117,8 +117,8 @@ function validateUsuarioForm(form,metodo) {
 		alert("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
 		return false;
 	}
-	var p1 = document.getElementById("pass").value;
-	var p2 = document.getElementById("pass2").value;
+	var p1 = document.getElementById("pass" + metodo).value;
+	var p2 = document.getElementById("pass2" + metodo).value;
 	if (p1 != p2) {
 		alert("Repetição da nova senha não confere, favor redigitar.");
 		return false; 
@@ -195,7 +195,7 @@ function refreshWindow(){
 
 							<div class="gt-left-col gt-width-33">
 								<label>Nova Senha</label>
-								<ww:password name="senhaNova" id="pass"
+								<ww:password name="senhaNova" id="passMet1"
 									onkeyup="passwordStrength(this.value,'Met1')" theme="simple"
 									cssClass="gt-form-text" />
 							</div>
@@ -203,7 +203,7 @@ function refreshWindow(){
 
 							<div class="gt-left-col gt-width-33">
 								<label>Repetição da nova senha</label>
-								<ww:password name="senhaConfirma" id="pass2"
+								<ww:password name="senhaConfirma" id="pass2Met1"
 									onblur="javascript:converteUsuario(this)" theme="simple"
 									cssClass="gt-form-text" />
 							</div>
@@ -306,14 +306,14 @@ function refreshWindow(){
 
 						<div class="gt-left-col gt-width-33">
 							<label>Nova Senha</label>
-							<ww:password name="senhaNova" id="pass"
+							<ww:password name="senhaNova" id="passMet2"
 								onkeyup="passwordStrength(this.value,'Met2')" theme="simple"
 								cssClass="gt-form-text" />
 						</div>
 
 						<div class="gt-left-col gt-width-33">
 							<label>Repetição da nova senha</label>
-							<ww:password name="senhaConfirma" id="pass2"
+							<ww:password name="senhaConfirma" id="pass2Met2"
 								onblur="javascript:converteUsuario(this)" theme="simple"
 								cssClass="gt-form-text" />
 						</div>

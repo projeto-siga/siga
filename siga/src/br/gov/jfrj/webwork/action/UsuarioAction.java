@@ -243,12 +243,11 @@ public class UsuarioAction extends SigaActionSupport {
 		getRequest().setAttribute("titulo", "Novo Usuário");
 		String[] senhaGerada = new String[1];
 		boolean senhaTrocadaAD = false;
+		CpIdentidade idNova = null;
 		switch (metodo) {
 		case 1:
 			
-//			verificarMetodoIntegracaoAD(matricula);
-			
-			CpIdentidade id = Cp.getInstance().getBL().criarIdentidade(matricula,
+			idNova = Cp.getInstance().getBL().criarIdentidade(matricula,
 					cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
 			break;
 		case 2:
@@ -260,8 +259,8 @@ public class UsuarioAction extends SigaActionSupport {
 						"3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>");
 				return Action.SUCCESS;
 			}else{
-				CpIdentidade idNovaDefinida = Cp.getInstance().getBL().criarIdentidade(matricula,cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
-				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
+				idNova = Cp.getInstance().getBL().criarIdentidade(matricula,cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
+				
 			}
 			break;
 		default:
@@ -269,6 +268,9 @@ public class UsuarioAction extends SigaActionSupport {
 			return Action.SUCCESS;
 		}
 		
+		if (isIntegradoAD(matricula)){
+			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
+		}
 		
 		if (isIntegradoAD(matricula) && senhaTrocadaAD){
 			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.";

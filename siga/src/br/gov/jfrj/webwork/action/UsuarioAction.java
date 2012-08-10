@@ -246,10 +246,10 @@ public class UsuarioAction extends SigaActionSupport {
 		switch (metodo) {
 		case 1:
 			
-			verificarMetodoIntegracaoAD(matricula);
+//			verificarMetodoIntegracaoAD(matricula);
 			
 			CpIdentidade id = Cp.getInstance().getBL().criarIdentidade(matricula,
-					cpf, getIdentidadeCadastrante(),null,senhaGerada);
+					cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
@@ -376,13 +376,10 @@ public class UsuarioAction extends SigaActionSupport {
 		this.senha2 = senha2;
 	}
 
-//	public String isIntegradoLdap() {
-//		CpOrgaoUsuario orgaoUsu = CpDao.getInstance().consultar(getIdOrgao(), CpOrgaoUsuario.class, false);
-//		if (orgaoUsu!=null){
-//			return IntegracaoLdap.getInstancia().integrarComLdap(orgaoUsu)==true?"ajax_retorno":"ajax_vazio";
-//		}
-//		return "ajax_vazio";
-//	}
+	public String isIntegradoLdap() {
+		return isIntegradoAD(getMatricula())==true?"ajax_retorno":"ajax_vazio";
+	}
+	
 
 	public Long getIdOrgao() {
 		return idOrgao;

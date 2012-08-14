@@ -109,7 +109,7 @@ function passwordStrength(password,metodo) {
 
 function validateUsuarioForm(form,metodo) {
 	
-	if (('${param.proxima_acao}' == 'incluir_usuario_gravar') && (metodo == 'Met1') && document.getElementById('dadosIntegracaoAD').style.display == 'none'){
+	if ((metodo == 'Met1') && document.getElementById('dadosIntegracaoAD').style.display == 'none'){
 		return;
 	}
 	var s = document.getElementById('passwordStrength' + metodo).className;

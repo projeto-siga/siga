@@ -21,8 +21,7 @@
 								</ww:url>
 								<a href="${url}">(pegar)</a>
 							</c:if>
-						</ww:else>
-					</td>
+						</ww:else></td>
 				</tr>
 				</c:when>
 				<c:otherwise>
@@ -42,8 +41,7 @@
 									<span id="desc_editar" style="display: none"><textarea
 											cols="80" rows="15" name="conhecimento">${task.conhecimento}</textarea>
 									</span>
-								</c:if>
-							</td>
+								</c:if></td>
 						</tr>
 						<c:if test="${task.conhecimentoEditavel}">
 							<tr>
@@ -52,8 +50,7 @@
 									onclick="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display=''; " />
 									<input name="salvar_conhecimento" type="submit"
 									id="desc_but_gravar" value="Salvar" style="display: none"
-									onclick="javascript: this.form.action='${url}'; " />
-								</td>
+									onclick="javascript: this.form.action='${url}'; " /></td>
 							</tr>
 						</c:if>
 
@@ -149,8 +146,7 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
 											</c:choose>
-										</ww:else>
-									</td>
+										</ww:else></td>
 								</tr>
 							</c:if>
 						</c:forEach>
@@ -159,16 +155,13 @@
 							<tr>
 								<td colspan="2"><siga:links>
 										<c:forEach var="transition" items="${task.transitions}">
-											<%--									<input id="transitionName" name="transitionName" type="hidden"
-										value="" />
-											<a
-												href="javascript: var h = document.getElementByID('transitionName'); h.value='${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}'; this.form.submit();" />${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}</a> --%>
 											<siga:link icon="${transition.icon}"
 												title="${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}"
-												url="javascript: var h = document.getElementByID('transitionName'); h.value='${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}'; this.form.submit();"
+												url="javascript: var h = document.getElementById('transitionName'); h.value='${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}'; var form = document.getElementById('form${tiId}'); form.submit();"
 												test="${true}" />
 										</c:forEach>
-									</siga:links></td>
+									</siga:links>
+								</td>
 							</tr>
 						</c:if>
 						</td>
@@ -178,10 +171,10 @@
 								<!-- 							<c:if test="${variable.aviso}">  -->
 								<!-- 							</c:if>	-->
 								<c:if test="${not empty task.msgAviso}">
-								<tr>
-									<td colspan="2" style="color: red; font-weight: bold;">
-										${task.msgAviso}</td>
-								</tr>
+									<tr>
+										<td colspan="2" style="color: red; font-weight: bold;">
+											${task.msgAviso}</td>
+									</tr>
 								</c:if>
 							</ww:if>
 						</c:forEach>

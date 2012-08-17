@@ -356,7 +356,7 @@ public class CpBL {
 			if (id == null) {
 				if (pessoa.getEmailPessoa() != null) {
 					String novaSenha = null;
-					if (senhaDefinida !=null){
+					if (senhaDefinida !=null && senhaDefinida.length() > 0){
 						novaSenha = senhaDefinida;
 					}else{
 						novaSenha = GeraMessageDigest.geraSenha();

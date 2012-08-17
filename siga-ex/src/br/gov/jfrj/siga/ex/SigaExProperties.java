@@ -72,7 +72,7 @@ public class SigaExProperties extends ModeloPropriedade {
 	public static String getStringComAmbiente(String key){
 		String ambiente = System.getProperty("jfrj.ambiente");
 		if (ambiente != null && ambiente.length() > 0)
-			return getString(ambiente+"."+key);
+			return getString(ambiente+"."+key).trim();
 		return "";
 	}
 	

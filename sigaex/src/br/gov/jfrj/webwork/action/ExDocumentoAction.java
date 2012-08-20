@@ -1254,6 +1254,14 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
+	
+	public String aAtualizarMarcasDoc() throws Exception{
+		
+		buscarDocumento(false);
+		Ex.getInstance().getBL().atualizarMarcas(getDoc());
+		
+		return Action.SUCCESS;
+	}
 
 	public String aTestarPdf() throws Exception {
 		return Action.SUCCESS;

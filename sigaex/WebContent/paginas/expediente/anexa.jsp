@@ -130,36 +130,38 @@
 	<br>
 
 	<ww:if test="${(not empty mobilVO.movs)}">
+		<c:if test="${assinandoAnexosGeral}">
+			<div class="gt-bd clearfix">
+		</c:if>
 		<div class="gt-content clearfix">
 			<ww:form name="frm_anexo" id="frm_anexo" cssClass="form"
 				theme="simple">
 				<ww:hidden name="popup" value="true" />
 				<ww:hidden name="copia" id="copia" value="false" />
 
-				<table border="0" cellpadding="0" cellspacing="0" width="80%">
-					<tr>
-						<h2>
-							Anexos Pendentes de Assinatura
-							<c:if test="${assinandoAnexosGeral}">
-						 	  - ${mob.siglaEDescricaoCompleta}
-						</c:if>
-						</h2>
-					</tr>
-				</table>
+				<h2>Anexos Pendentes de Assinatura
+					<c:if test="${assinandoAnexosGeral}">
+					 	  - ${mob.siglaEDescricaoCompleta}
+					</c:if>
+				</h2>
+				
 				<div class="gt-content-box gt-for-table"
 					style="margin-bottom: 25px;">
 					<table class="gt-table mov">
 						<thead>
 							<tr>
 								<td></td>
-								<th align="center" rowspan="2">Data</th>
+								<th align="right" rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Data</th>
 								<th colspan="2" align="center">Cadastrante</th>
 								<th colspan="2" align="center">Atendente</th>
 								<th rowspan="2">Descrição</th>
 							</tr>
 							<tr>
-								<td align="center"><input type="checkbox" name="checkall"
-									onclick="checkUncheckAll(this)" /></td>
+							    <ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+									<td align="center"><input type="checkbox" name="checkall"
+										onclick="checkUncheckAll(this)" /></td>
+								</ww:if>
+								<ww:else><td></td></ww:else>	
 								<th align="left">Lotação</th>
 								<th align="left">Pessoa</th>
 								<th align="left">Lotação</th>
@@ -177,13 +179,16 @@
 										<ww:else>
 											<c:set var="dtUlt" value="${dt}" />
 										</ww:else>
-										<c:set var="x" scope="request">chk_${mov.mov.idMov}</c:set>
-										<c:remove var="x_checked" scope="request" />
-										<c:if test="${param[x] == 'true'}">
-											<c:set var="x_checked" scope="request">checked</c:set>
-										</c:if>
-										<td align="center"><input type="checkbox" name="${x}"
-											value="true" ${x_checked} /></td>
+										<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+											<c:set var="x" scope="request">chk_${mov.mov.idMov}</c:set>
+											<c:remove var="x_checked" scope="request" />
+											<c:if test="${param[x] == 'true'}">
+												<c:set var="x_checked" scope="request">checked</c:set>
+											</c:if>
+											<td align="center"><input type="checkbox" name="${x}"
+												value="true" ${x_checked} /></td>
+										</ww:if>
+										<ww:else><td></td></ww:else>		
 										<td align="center">${dt}</td>
 										<td align="left"><siga:selecionado
 												sigla="${mov.parte.lotaCadastrante.sigla}"
@@ -230,7 +235,9 @@
 										<c:set var="assinadopor" value="${false}" />
 													</c:if>
 												</c:forEach>
-												<ww:hidden name="pdf${x}" value="${mov.mov.nmPdf}" />
+												<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+													<ww:hidden name="pdf${x}" value="${mov.mov.nmPdf}" />
+												</c:if>	
 											</siga:links></td>
 									</tr>
 								</c:if>
@@ -238,13 +245,16 @@
 							</c:forEach>
 					</table>
 				</div>
+				<c:if test="${assinandoAnexosGeral}">
+					</div>
+				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
 					<c:set var="jspServer"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 					<c:set var="nextURL"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />		
-								${f:obterExtensaoAssinadorLote(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL)}
+					${f:obterExtensaoAssinadorLote(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL)}
 				</c:if>
 
 			</ww:form>

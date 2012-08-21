@@ -735,10 +735,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!(mob.isGeral() && mob.doc().getDtFechamento() != null))
 		   if (!Ex.getInstance().getComp()
 			    	.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
-		    	throw new AplicacaoException("Arquivo não pode ser anexado");
+		    	throw new AplicacaoException("Arquivo não pode ser anexado");		
 		
-		ExDocumentoVO docVO = new ExDocumentoVO(doc);
-		this.getRequest().setAttribute("docVO", docVO);
 		
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(), true,
                 ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);

@@ -151,7 +151,7 @@
 						<thead>
 							<tr>
 								<td></td>
-								<th align="right" rowspan="2">&nbsp;&nbsp;&nbsp;Data</th>
+								<th align="center" rowspan="2">&nbsp;&nbsp;&nbsp;Data</th>
 								<th colspan="2" align="center">Cadastrante</th>
 								<th colspan="2" align="center">Atendente</th>
 								<th rowspan="2">Descrição</th>

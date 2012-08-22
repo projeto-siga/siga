@@ -38,24 +38,7 @@
 					theForm[z].click();
 				}
 			}
-		}
-
-		function displaySel(chk, el) {
-			document.getElementById('div_' + el).style.display=chk.checked ? '' : 'none';
-			if (chk.checked == -2) 
-				document.getElementById(el).focus();
-		}
-		
-		function displayTxt(sel, el) {					
-			document.getElementById('div_' + el).style.display=sel.value == -1 ? '' : 'none';
-			document.getElementById(el).focus();
-		}	
-
-		
-		function voltar() {
-			frm.action = '${url}';
-			frm.submit();
-		}
+		}		
 
 	</script>
 

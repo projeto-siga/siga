@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="nheengatu"/>
-	<classpathentry kind="src" path="test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-cp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-ws"/>

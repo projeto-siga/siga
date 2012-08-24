@@ -215,7 +215,7 @@ public class WfExpressionAssignmentHandler {
 			while (group != null) {
 				try {
 					for (DpPessoa pes : WfDao.getInstance().pessoasPorLotacao(
-							group.getIdLotacao(), false)) {
+							group.getIdLotacao(), false,true)) {
 						if (isChief(pes)) {
 							entity = pes;
 							return entity;
@@ -252,7 +252,7 @@ public class WfExpressionAssignmentHandler {
 
 			try {
 				for (DpPessoa pes : WfDao.getInstance().pessoasPorLotacao(
-						group.getIdLotacao(), false)) {
+						group.getIdLotacao(), false,true)) {
 					if ((pes.getCargo() != null && Texto.removeAcento(
 							pes.getCargo().getDescricao().trim())
 							.contains(role))

@@ -179,7 +179,7 @@ public class Notificador {
 				// todos da lotação
 
 				if (email == null) {
-					for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false)) {
+					for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false,true)) {
 						
 						if (Ex.getInstance().getConf().podePorConfiguracao(
 								mov.getExDocumento().getExFormaDocumento()
@@ -193,7 +193,7 @@ public class Notificador {
 				}
 			}
 		} else {
-			for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false)) {
+			for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false,true)) {
 				if (Ex.getInstance().getConf().podePorConfiguracao(
 						mov.getExDocumento().getExFormaDocumento()
 								.getExTipoFormaDoc(), m.getExPapel(), pes,

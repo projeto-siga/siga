@@ -1033,7 +1033,7 @@ public class CpDao extends ModeloDao {
 	 * lancadas aqui. // } catch (Throwable e) { // block //
 	 * e.printStackTrace(); // return null; // } }
 	 */
-	public List<DpPessoa> pessoasPorLotacao(Long id, Boolean incluirSublotacoes)
+	public List<DpPessoa> pessoasPorLotacao(Long id, Boolean incluirSublotacoes, Boolean somenteServidor)
 			throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
@@ -1078,14 +1078,18 @@ public class CpDao extends ModeloDao {
 					continue;
 				}
 				String cargo = pes.getCargo().getNomeCargo().toUpperCase();
-				if (!cargo.contains(juizFederal)
-						&& !cargo.contains(juizFederalSubstituto)
-						&& !(cargo.contains(estagiario)))
+				if (somenteServidor){
+					if (!cargo.contains(juizFederal)
+							&& !cargo.contains(juizFederalSubstituto)
+							&& !(cargo.contains(estagiario))){
+						lstCompleta.add(pes);
+					}
+				}else{
 					lstCompleta.add(pes);
+				}
+					
 			}
-
 		}
-
 		return lstCompleta;
 	}
 

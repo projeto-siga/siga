@@ -11,31 +11,34 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-*		/exibir/{id}              	Application.exibir
-*		/andamento					Application.andamento
-*		/baixar						Application.baixar
+*		/exibir/{id}              			Application.exibir
+*		/andamento							Application.andamento
+*		/baixar								Application.baixar
 
-*		/editar						Application.editar
-*		/gravar						Application.gravar
-*		/listar						Application.listar
+*		/editar								Application.editar
+*		/gravar								Application.gravar
+*		/listar								Application.listar
 
-*		/designacao/editar/{id}		Application.editarDesignacao
-*		/designacao/gravar			Application.gravarDesignacao
-*		/designacao/listar			Application.listarDesignacao
+*		/designacao/editar/{id}				Application.editarDesignacao
+*		/designacao/gravar					Application.gravarDesignacao
+*		/designacao/listar					Application.listarDesignacao
 
-*		/item/editar/{id}			Application.editarItem
-*		/item/gravar				Application.gravarItem
-*		/item/listar				Application.listarItem
-*		/item/selecionar			Application.selecionarItem
-*		/item/buscar				Application.buscarItem
+*		/item/editar/{id}					Application.editarItem
+*		/item/gravar						Application.gravarItem
+*		/item/listar						Application.listarItem
+*		/item/selecionar					Application.selecionarItem
+*		/item/buscar						Application.buscarItem
+		/item/desativar/{id}				Application.desativarItem
 
-*		/servico/editar/{id}		Application.editarServico
-*		/servico/gravar				Application.gravarServico
-*		/servico/listar				Application.listarServico
-*		/servico/selecionar			Application.selecionarServico
-*		/servico/buscar				Application.buscarServico
+*		/servico/editar/{id}				Application.editarServico
+*		/servico/gravar						Application.gravarServico
+*		/servico/listar						Application.listarServico
+*		/servico/selecionar					Application.selecionarServico
+*		/servico/buscar						Application.buscarServico
+		/servico/desativar/{id}				Application.desativarServico	
 
-*		/{tipo}/buscar				Application.buscarSiga
-*		/{tipo}/selecionar			Application.selecionarSiga
+*		/{tipo}/buscar						Application.buscarSiga
+*		/siga/{tipo}/buscar.action			Application.buscarSigaFromPopup
+*		/{tipo}/selecionar					Application.selecionarSiga
 
-*       /{action}                  Application.{action}
+*       /{action}                  			Application.{action}

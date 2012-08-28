@@ -5,28 +5,31 @@
 		<h2>Item de Configuração</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarItem()} #{if
-			item?.idItemConfiguracao} <input type="hidden"
-				name="item.idItemConfiguracao" value="${item.idItemConfiguracao}">
-			#{/if}
+			#{form @Application.gravarItem()} #{if item?.idItemConfiguracao} <input
+				type="hidden" name="item.idItemConfiguracao"
+				value="${item.idItemConfiguracao}"> #{/if}
 			<div class="gt-form-row gt-width-66">
 				<label>Código</label> <input type="text"
-					name="item.sigla"
-					value="${item?.sigla}" />
+					name="item.siglaItemConfiguracao"
+					value="${item?.siglaItemConfiguracao}" />
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Título</label> <input type="text"
 					name="item.tituloItemConfiguracao"
-					value="${item?.tituloItemConfiguracao}" size="100"/>
+					value="${item?.tituloItemConfiguracao}" size="100" />
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label> <input type="text"
 					name="item.descrItemConfiguracao"
-					value="${item?.descrItemConfiguracao}" size="100"/>
+					value="${item?.descrItemConfiguracao}" size="100" />
 			</div>
 			<div class="gt-form-row">
 				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" />
+					class="gt-btn-medium gt-btn-left" /> #{if
+				item?.idItemConfiguracao} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarItem()}?id=${item.idItemConfiguracao}'" />
+				#{/if}
 			</div>
 			#{/form}
 		</div>

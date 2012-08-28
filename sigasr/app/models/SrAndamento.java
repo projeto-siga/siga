@@ -40,7 +40,7 @@ public class SrAndamento extends GenericModel {
 	@JoinColumn(name = "ID_ESTADO", nullable = false)
 	public SrEstado estado;
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQUIVO")
 	public SrArquivo arquivo;
 
@@ -123,6 +123,10 @@ public class SrAndamento extends GenericModel {
 
 	public String getCadastranteString() {
 		return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
+	}
+
+	public boolean temAtendente() {
+		return (atendente != null || lotaAtendente != null);
 	}
 
 }

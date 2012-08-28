@@ -11,8 +11,8 @@
 			#{/if}
 			<div class="gt-form-row gt-width-66">
 				<label>Código</label> <input type="text"
-					name="servico.sigla"
-					value="${servico?.sigla}" />
+					name="servico.siglaServico"
+					value="${servico?.siglaServico}" />
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Título</label> <input type="text"
@@ -26,7 +26,11 @@
 			</div>
 			<div class="gt-form-row">
 				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" />
+					class="gt-btn-medium gt-btn-left" />#{if
+				servico?.idServico} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarServico()}?id=${servico.idServico}'" />
+				#{/if}
 			</div>
 			#{/form}
 		</div>

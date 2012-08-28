@@ -3,93 +3,82 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 
-		#{quadroSolicitacao solicitacao:solicitacao, ocultarCodigo:true,
-		titulo:'Solicitação '+solicitacao.codigo /}
+		<h2>Solicitação ${solicitacao.codigo}</h2>
+		#{quadroSolicitacao solicitacao:solicitacao, ocultarCodigo:true /}
 
-		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-			#{form @Application.andamento(solicitacao.idSolicitacao),
-			enctype:'multipart/form-data'}
-			<table class="gt-form-table">
-				<colgroup>
-					<col width="30%" />
-				</colgroup>
-				<tr class="header">
-					<td align="center" valign="top" colspan="4">Cadastrar
-						andamento</td>
-				</tr>
-				#{if exibirAtendente}
-				<tr>
-					<td>Atendente</td>
-					<td>#{pessoaLotaSelecao nomeSelPessoa:'Atendente',
-						nomeSelLotacao:'LotaAtendente', valuePessoa:pessoaAtendenteSel,
-						valueLotacao:lotacaoLotaAtendenteSel /}</td>
-				</tr>
-				#{/if}
-				<tr>
-					<td>Descrição:</td>
-					<td><textarea name="andamento.descrAndamento"
-							id="descrSolicitacao" cols="70" rows="4"
-							value="${andamento.descrAndamento}"></textarea></td>
-				</tr>
-				<tr>
-					<td>Anexar arquivo:</td>
-					<td><input type="file" name="arquivo"></td>
-				</tr>
-				<tr>
-					<td>Situação:</td>
-					<td>#{select 'andamento.estado', items:estados,
-						labelProperty:'descrEstado', value:andamento.estado,
-						valueProperty:idEstado} #{/select}</td>
-				</tr>
-				<tr>
-					<td colspan="2"><input type="submit" value="Gravar"
-						class="gt-btn-medium gt-btn-left" /></td>
-				</tr>
-			</table>
-			#{/form}
+		<div class="gt-content-box gt-form" style="margin-top: 15px;">
+			#{form @Application.andamento(), enctype:'multipart/form-data'} <input
+				type="hidden" name="andamento.solicitacao.idSolicitacao"
+				value="${solicitacao.idSolicitacao}"> #{if exibirAtendente}
+			<div class="gt-form-row gt-width-66">
+				<label>Atendente</label> #{pessoaLotaSelecao
+				nomeSelPessoa:'andamento.atendente',
+				nomeSelLotacao:'andamento.lotaAtendente',
+				valuePessoa:andamento.atendente,
+				valueLotacao:andamento.lotaAtendente /}
+			</div>
+			#{/if}
+			<div class="gt-form-row gt-width-66">
+				<label>Descrição</label>
+				<textarea name="andamento.descrAndamento" id="descrSolicitacao"
+					cols="70" rows="4" value="${andamento.descrAndamento}"></textarea>
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Anexar arquivo</label> <input type="file"
+					name="andamento.arquivo.file">
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Situação</label> #{select 'andamento.estado', items:estados,
+				labelProperty:'descrEstado', value:andamento.estado,
+				valueProperty:idEstado} #{/select} </div>
+
+				<div class="gt-form-row">
+					<input type="submit" value="Gravar"
+						class="gt-btn-medium gt-btn-left" />
+				</div>
+				#{/form}
+			</div>
+
+			<!-- content box -->
+			<div class="gt-content-box" style="margin-top: 15px;">
+				<table border="0" class="gt-table">
+					<thead>
+						<tr>
+							<th>Momento</th>
+							<th>Situação</th>
+							<th colspan="2">Atendente</th>
+							<th colspan="2">Cadastrante</th>
+							<th>Anexo</th>
+							<th>Descrição</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						#{list items:solicitacao.andamentoSet, as:'andamento'}
+						<tr>
+							<td>${andamento.dtRegString}</td>
+							<td>${andamento.estado.descrEstado}</td>
+							<td>#{selecionado
+								sigla:andamento.lotaAtendente?.siglaLotacao,
+								descricao:andamento.lotaAtendente?.nomeLotacao /}</td>
+							<td>#{selecionado sigla:andamento.atendente?.nomeAbreviado,
+								descricao:andamento.atendente?.descricaoIniciaisMaiusculas /}</td>
+							<td>#{selecionado
+								sigla:andamento.lotaCadastrante?.siglaLotacao,
+								descricao:andamento.lotaCadastrante?.nomeLotacao /}</td>
+							<td>#{selecionado
+								sigla:andamento.cadastrante?.nomeAbreviado,
+								descricao:andamento.cadastrante?.descricaoIniciaisMaiusculas /}</td>
+							<td>#{arquivo arquivo:andamento.arquivo /}</td>
+							<td>${andamento.descrAndamento}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			<!-- /content box -->
+
 		</div>
-
-		<!-- content box -->
-		<div class="gt-content-box" style="margin-top: 15px;">
-			<table border="0" class="gt-table">
-				<thead>
-					<tr>
-						<th>Momento</th>
-						<th>Situação</th>
-						<th colspan="2">Atendente</th>
-						<th colspan="2">Cadastrante</th>
-						<th>Anexo</th>
-						<th>Descrição</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					#{list items:solicitacao.andamentoSet, as:'andamento'}
-					<tr>
-						<td>${andamento.dtRegString}</td>
-						<td>${andamento.estado.descrEstado}</td>
-						<td>#{selecionado
-							sigla:andamento.lotaAtendente?.siglaLotacao,
-							descricao:andamento.lotaAtendente?.nomeLotacao /}</td>
-						<td>#{selecionado sigla:andamento.atendente?.nomeAbreviado,
-							descricao:andamento.atendente?.descricaoIniciaisMaiusculas /}</td>
-						<td>#{selecionado
-							sigla:andamento.lotaCadastrante?.siglaLotacao,
-							descricao:andamento.lotaCadastrante?.nomeLotacao /}</td>
-						<td>#{selecionado sigla:andamento.cadastrante?.nomeAbreviado,
-							descricao:andamento.cadastrante?.descricaoIniciaisMaiusculas /}</td>
-						<td>#{arquivo arquivo:andamento.arquivo /}</td>
-						<td>${andamento.descrAndamento}</td>
-					</tr>
-					#{/list}
-				</tbody>
-			</table>
-		</div>
-		<!-- /content box -->
-
 	</div>
-</div>
 
-<br />
-<br />
-<br />
+	<br /> <br /> <br />

@@ -180,21 +180,7 @@ public class SrServico extends GenericModel implements SrSelecionavel,
 	@Override
 	public SrServico selecionar(String sigla) {
 		setSigla(sigla);
-		List<SrServico> itens;
-		if (getSigla() != null)
-			itens = (List<SrServico>) JPA
-					.em()
-					.createQuery(
-							"from SrServico where siglaServico like '%"
-									+ getSigla() + "%'", SrServico.class)
-					.getResultList();
-		else
-			itens = (List<SrServico>) JPA
-					.em()
-					.createQuery(
-							"from SrServico where lower(tituloServico) like '%"
-									+ getDescricao().toLowerCase() + "%'", getClass())
-					.getResultList();
+		List<SrServico> itens = buscar();
 		if (itens.size() == 0 || itens.size() > 1)
 			return null;
 		return itens.get(0);
@@ -204,28 +190,45 @@ public class SrServico extends GenericModel implements SrSelecionavel,
 	@Override
 	public List<SrServico> buscar() {
 		String query = "from SrServico where 1=1";
-		if (getDescricao() != null && !getDescricao().equals(""))
-			query += " and lower(tituloServico) like '%"
-					+ getDescricao().toLowerCase() + "%'";
-		if (getSigla() != null && !getSigla().equals(""))
-			query += " and siglaServico like '%" + getSigla() + "%'";
+		if (tituloServico != null && !tituloServico.equals("")) {
+			for (String s : tituloServico.toLowerCase().split("\\s"))
+				query += " and lower(tituloServico) like '%" + s + "%'";
+		}
+		if (siglaServico != null && !siglaServico.equals(""))
+			query += " and siglaServico like '%" + siglaServico + "%' ";
+		query += " and hisDtFim is null";
 		return SrServico.find(query).fetch();
 	}
 
 	@Override
 	public void setSigla(String sigla) {
-		String padrao = "([0-9][0-9]).?([0-9][0-9])";
-		final Pattern p1 = Pattern.compile("^" + padrao);
-		final Matcher m1 = p1.matcher(sigla);
-		if (m1.find()) {
-			String s = "";
-			for (int i = 1; i <= m1.groupCount(); i++) {
-				s += m1.group(i);
-				s += (i < m1.groupCount()) ? "." : "";
-			}
-			siglaServico = s;
-		} else
-			tituloServico = sigla;
+		if (sigla == null) {
+			tituloServico = "";
+			siglaServico = "";
+		} else {
+			String padrao = "([0-9][0-9]).?([0-9][0-9])";
+			final Pattern p1 = Pattern.compile("^" + padrao);
+			final Matcher m1 = p1.matcher(sigla);
+			if (m1.find()) {
+				String s = "";
+				for (int i = 1; i <= m1.groupCount(); i++) {
+					s += m1.group(i);
+					s += (i < m1.groupCount()) ? "." : "";
+				}
+				siglaServico = s;
+			} else
+				tituloServico = sigla;
+		}
+	}
+
+	public int getNivel() {
+		int camposVazios = 0;
+		int pos = getSigla().indexOf(".00", 0);
+		while (pos > -1) {
+			camposVazios++;
+			pos = getSigla().indexOf(".00", pos + 1);
+		}
+		return 2 - camposVazios;
 	}
 
 }

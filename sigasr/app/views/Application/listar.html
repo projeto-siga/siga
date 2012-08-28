@@ -3,8 +3,13 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 
-		#{quadroSolicitacao solicitacoes:listaSolicitacao, titulo:'Pesquisa de
-		solicitações', clicavel:true /}
+		<h2>Pesquisa de solicitações</h2>
+		#{if listaSolicitacao} #{quadroSolicitacao
+		solicitacoes:listaSolicitacao, titulo:'', clicavel:true /} #{/if}
+		#{else} <br />
+		<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum
+			item foi encontrado.</div>
+		#{/else}
 
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 			<form action="@{Application.listar}">
@@ -16,10 +21,11 @@
 						<td align="center" valign="top" colspan="4">Dados para busca</td>
 					</tr>
 					<tr>
-						<td>Situação:</td>
+						<td>Situação</td>
 						<td>#{select name:'filtro.situacao', items:marcadores,
-							labelProperty:'descrMarcador', valueProperty:'idMarcador', value:filtro.situacao?.idMarcador} #{option
-							0}Todas#{/option} #{/select} com #{pessoaLotaSelecao
+							labelProperty:'descrMarcador', valueProperty:'idMarcador',
+							value:filtro.situacao?.idMarcador} #{option 0}Todas#{/option}
+							#{/select} com #{pessoaLotaSelecao
 							nomeSelPessoa:'filtro.atendente',
 							nomeSelLotacao:'filtro.lotaAtendente',
 							valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente
@@ -30,7 +36,8 @@
 						<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.cadastrante',
 							nomeSelLotacao:'filtro.lotaCadastrante',
 							valuePessoa:filtro.cadastrante,
-							valueLotacao:filtro.lotaCadastrante /}</span></td>
+							valueLotacao:filtro.lotaCadastrante /}</span>
+						</td>
 					</tr>
 					<tr>
 						<td>Solicitante</td>
@@ -40,24 +47,25 @@
 							valueLotacao:filtro.lotaSolicitante /}</td>
 					</tr>
 					<tr>
-						<td>Data de abertura:</td>
+						<td>Data de abertura</td>
 						<td><input type="text" name="filtro.dtIni"
 							value="${filtro.dtIni}" id="filtro.dtIni" /> a <input
 							type="text" name="filtro.dtFim" value="${filtro.dtFim}"
-							id="filtro.dtFim" /></td>
+							id="filtro.dtFim" />
+						</td>
 					</tr>
 					<tr>
-						<td>Item:</td>
-						<td>#{selecao tipo:'item',
-							nome:'filtro.itemConfiguracao', value:filtro.itemConfiguracao /}</td>
+						<td>Item</td>
+						<td>#{selecao tipo:'item', nome:'filtro.itemConfiguracao',
+							value:filtro.itemConfiguracao /}</td>
 					</tr>
 					<tr>
-						<td>Serviço:</td>
+						<td>Serviço</td>
 						<td>#{selecao tipo:'servico', nome:'filtro.servico',
 							value:filtro.servico /}</td>
 					</tr>
 					<tr>
-						<td>Urgência:</td>
+						<td>Prioridade</td>
 						<td colspan="3">#{select 'filtro.urgencia', items:urgencias,
 							labelProperty:'descrUrgencia', value:filtro.urgencia,
 							valueProperty:nivelUrgencia } #{option
@@ -70,15 +78,14 @@
 							0}Todas#{/option}#{/select}</td>
 					</tr>
 					<tr>
-						<td>Descrição:</td>
+						<td>Descrição</td>
 						<td><input type="text" name="filtro.descrSolicitacao"
 							id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}"></input>
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2"><input type="submit" value="Buscar"
-							class="gt-btn-medium gt-btn-left" />
-						</td>
+							class="gt-btn-medium gt-btn-left" /></td>
 					</tr>
 				</table>
 			</form>

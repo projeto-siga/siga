@@ -7,7 +7,7 @@
 		#{/if} #{else}
 		<h2 class="gt-form-head">Nova designação</h2>
 		#{/else}
-		
+
 		<div class="gt-form gt-content-box">
 			#{form @Application.gravarDesignacao()} #{if
 			designacao?.idConfiguracao} <input type="hidden"
@@ -15,29 +15,33 @@
 				value="${designacao.idConfiguracao}"> #{/if}
 
 			<div class="gt-form-row gt-width-66">
-				<label>Item</label> #{selecao tipo:'SrItemConfiguracao',
-				nome:'designacao.itemConfiguracao', value:designacao.itemConfiguracao /}
+				<label>Item</label> #{selecao tipo:'item',
+					nome:'designacao.itemConfiguracao',
+					value:designacao.itemConfiguracao /}
 			</div>
 
 			<div class="gt-form-row gt-width-66">
-				<label>Serviço</label> #{selecao tipo:'SrServico', nome:'designacao.servico',
-				value:designacao.servico /}
+				<label>Serviço</label> #{selecao tipo:'servico',
+					nome:'designacao.servico', value:designacao.servico /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Atendente</label> #{selecao tipo:'lotacao', nome:'designacao.atendente',
-				value:designacao.atendente /}
+				<label>Atendente</label>#{selecao tipo:'lotacao',
+					nome:'designacao.atendente', value:designacao.atendente /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Pré-atendente</label> #{selecao tipo:'lotacao',
-				nome:'designacao.preAtendente', value:designacao.preAtendente /}
+				<label>Pré-atendente</label>#{selecao
+					tipo:'lotacao', nome:'designacao.preAtendente',
+					value:designacao.preAtendente /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Pós-atendente</label> #{selecao tipo:'lotacao',
-				nome:'designacao.posAtendente', value:designacao.posAtendente /}
+				<label>Pós-atendente</label> #{selecao
+					tipo:'lotacao', nome:'designacao.posAtendente',
+					value:designacao.posAtendente /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Exibir pesquisa de satisfação</label>
-				#{radioSN name:'designacao.pesquisaSatisfacao', value:designacao.pesquisaSatisfacao /}
+				<label>Exibir pesquisa de satisfação</label> #{radioSN
+				name:'designacao.pesquisaSatisfacao',
+				value:designacao.pesquisaSatisfacao /}
 			</div>
 			<div class="gt-form-row">
 				<input type="submit" value="Salvar"

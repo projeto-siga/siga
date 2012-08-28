@@ -30,6 +30,8 @@ import play.db.jpa.Model;
 public class SrItemConfiguracao extends GenericModel implements SrSelecionavel,
 		HistoricoAuditavel {
 
+	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
+
 	@Id
 	@GeneratedValue
 	@Column(name = "ID_ITEM_CONFIGURACAO")
@@ -179,53 +181,56 @@ public class SrItemConfiguracao extends GenericModel implements SrSelecionavel,
 	@Override
 	public SrItemConfiguracao selecionar(String sigla) {
 		setSigla(sigla);
-		List<SrItemConfiguracao> itens;
-		if (getSigla() != null)
-			itens = (List<SrItemConfiguracao>) JPA
-					.em()
-					.createQuery(
-							"from SrItemConfiguracao where siglaItemConfiguracao like '%"
-									+ getSigla() + "%'",
-							SrItemConfiguracao.class).getResultList();
-		else
-			itens = (List<SrItemConfiguracao>) JPA
-					.em()
-					.createQuery(
-							"from SrItemConfiguracao where lower(tituloItemConfiguracao) like '%"
-									+ getDescricao().toLowerCase() + "%'", getClass())
-					.getResultList();
+		List<SrItemConfiguracao> itens = buscar();
 		if (itens.size() == 0 || itens.size() > 1)
 			return null;
 		return itens.get(0);
 
 	}
-	
+
 	@Override
 	public List<SrItemConfiguracao> buscar() {
 		String query = "from SrItemConfiguracao where 1=1";
-		if (getDescricao() != null && !getDescricao().equals(""))
-			query += " and lower(tituloItemConfiguracao) like '%" + getDescricao().toLowerCase()
-					+ "%'";
-		if (getSigla() != null && !getSigla().equals(""))
-			query += " and siglaItemConfiguracao like '%"
-					+ getSigla() + "%'";
+		if (tituloItemConfiguracao != null && !tituloItemConfiguracao.equals("")) {
+			for (String s : tituloItemConfiguracao.toLowerCase().split("\\s"))
+				query += " and lower(tituloItemConfiguracao) like '%" + s
+						+ "%'";
+		}
+		if (siglaItemConfiguracao != null && !siglaItemConfiguracao.equals(""))
+			query += " and siglaItemConfiguracao like '%" + getSigla() + "%' ";
+		query += " and hisDtFim is null order by siglaItemConfiguracao";
+
 		return SrServico.find(query).fetch();
 	}
 
 	@Override
 	public void setSigla(String sigla) {
-		String padrao = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
-		final Pattern p1 = Pattern.compile("^" + padrao);
-		final Matcher m1 = p1.matcher(sigla);
-		if (m1.find()) {
-			String s = "";
-			for (int i = 1; i <= m1.groupCount(); i++) {
-				s += m1.group(i);
-				s += (i < m1.groupCount()) ? "." : "";
-			}
-			siglaItemConfiguracao = s;
-		} else
-			tituloItemConfiguracao = sigla;
+		if (sigla == null) {
+			siglaItemConfiguracao = "";
+			tituloItemConfiguracao = "";
+		} else {
+			final Pattern p1 = Pattern.compile("^" + MASCARA_JAVA);
+			final Matcher m1 = p1.matcher(sigla);
+			if (m1.find()) {
+				String s = "";
+				for (int i = 1; i <= m1.groupCount(); i++) {
+					s += m1.group(i);
+					s += (i < m1.groupCount()) ? "." : "";
+				}
+				siglaItemConfiguracao = s;
+			} else
+				tituloItemConfiguracao = sigla;
+		}
+	}
+
+	public int getNivel() {
+		int camposVazios = 0;
+		int pos = getSigla().indexOf(".00", 0);
+		while (pos > -1) {
+			camposVazios++;
+			pos = getSigla().indexOf(".00", pos + 1);
+		}
+		return 4 - camposVazios;
 	}
 
 }

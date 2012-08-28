@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Distinct;
+
 import play.db.jpa.JPA;
 
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -26,35 +29,36 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public DpLotacao lotaAtendente;
 
 	public List<SrSolicitacao> buscar() {
-		String wheres = "where 1=1 ";
+		String query = "from SrSolicitacao sol where 1=1 ";
 
 		if (cadastrante != null)
-			wheres += "and sol.cadastrante.idPessoaIni = "
+			query += " and sol.cadastrante.idPessoaIni = "
 					+ cadastrante.getIdInicial();
 		if (lotaCadastrante != null)
-			wheres += "and sol.lotaCadastrante.idLotacaoIni = "
+			query += " and sol.lotaCadastrante.idLotacaoIni = "
 					+ lotaCadastrante.getIdInicial();
 		if (solicitante != null)
-			wheres += "and sol.solicitante.idPessoaIni = "
+			query += " and sol.solicitante.idPessoaIni = "
 					+ solicitante.getIdInicial();
 		if (lotaSolicitante != null)
-			wheres += "and sol.lotaSolicitante.idLotacaoIni = "
+			query += " and sol.lotaSolicitante.idLotacaoIni = "
 					+ lotaSolicitante.getIdInicial();
-		if (itemConfiguracao != null && itemConfiguracao.idItemConfiguracao > 0L)
-			wheres += "and sol.itemConfiguracao.idItemConfiguracao = "
+		if (itemConfiguracao != null
+				&& itemConfiguracao.idItemConfiguracao > 0L)
+			query += " and sol.itemConfiguracao.idItemConfiguracao = "
 					+ itemConfiguracao.idItemConfiguracao;
 		if (servico != null && servico.idServico > 0L)
-			wheres += "and sol.servico.idServico = " + servico.idServico;
+			query += " and sol.servico.idServico = " + servico.idServico;
 		if (urgencia != null && urgencia.nivelUrgencia > 0)
-			wheres += "and sol.urgencia = " + (urgencia.nivelUrgencia - 1);
+			query += " and sol.urgencia = " + (urgencia.nivelUrgencia - 1);
 		if (tendencia != null && tendencia.nivelTendencia > 0)
-			wheres += "and sol.tendencia = " + (tendencia.nivelTendencia -1);
+			query += " and sol.tendencia = " + (tendencia.nivelTendencia - 1);
 		if (gravidade != null && gravidade.nivelGravidade > 0)
-			wheres += "and sol.gravidade = " + (gravidade.nivelGravidade -1);
+			query += " and sol.gravidade = " + (gravidade.nivelGravidade - 1);
 
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
 			for (String s : descrSolicitacao.split(" "))
-				wheres += "and lower(sol.descrSolicitacao) like '%"
+				query += " and lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ";
 		}
 
@@ -63,7 +67,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 		if (dtIni != null)
 			try {
-				wheres += "and sol.dtReg >= to_date('"
+				query += " and sol.dtReg >= to_date('"
 						+ dfHibernate.format(dfUsuario.parse(dtIni))
 						+ "', 'yyyy-MM-dd') ";
 			} catch (ParseException e) {
@@ -72,34 +76,32 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 		if (dtFim != null)
 			try {
-				wheres += "and sol.dtReg <= to_date('"
+				query += " and sol.dtReg <= to_date('"
 						+ dfHibernate.format(dfUsuario.parse(dtFim))
-						+ "', 'yyyy-MM-dd') ";
+						+ " 23:59', 'yyyy-MM-dd HH24:mi') ";
 			} catch (ParseException e) {
 				//
 			}
 
-		String wheresSituacao = "";
+		String subquery = "";
 
 		if (situacao != null && situacao.getIdMarcador() != null
 				&& situacao.getIdMarcador() > 0)
-			wheresSituacao += " and situacao.cpMarcador.idMarcador = "
+			subquery += " and situacao.cpMarcador.idMarcador = "
 					+ situacao.getIdMarcador();
 		if (atendente != null)
-			wheresSituacao += "and situacao.dpPessoaIni.idPessoa = "
+			subquery += "and situacao.dpPessoaIni.idPessoa = "
 					+ atendente.getIdInicial();
 		else if (lotaAtendente != null)
-			wheresSituacao += "and situacao.dpLotacaoIni.idLotacao = "
+			subquery += "and situacao.dpLotacaoIni.idLotacao = "
 					+ lotaAtendente.getIdInicial();
 
-		wheres += wheresSituacao;
+		if (subquery.length() > 0)
+			subquery = " and exists (from SrMarca situacao where situacao.solicitacao = sol "
+					+ subquery + " )";
 
-		String from = "select distinct(sol) from SrSolicitacao sol ";
-
-		if (wheresSituacao.length() > 0)
-			from += "inner join sol.marcaSet situacao ";
-
-		List listaRetorno = JPA.em().createQuery(from + wheres).getResultList();
+		List listaRetorno = JPA.em().createQuery(query + subquery)
+				.getResultList();
 
 		return listaRetorno;
 	}

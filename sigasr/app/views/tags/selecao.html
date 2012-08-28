@@ -52,6 +52,7 @@ self.popitup_${_nomeClean} = function(sigla) {
 
 self.resposta_ajax_${_nomeClean} = function(response, d1, d2, d3) {
 	var sigla = document.getElementById('${_nomeClean}_sigla').value;
+	alert(response);
     var data = response.split(';');
     if (data[0] == '1')
 	    return retorna_${_tipo}${_nomeClean}(data[1], data[2], data[3]);
@@ -65,7 +66,7 @@ self.ajax_${_nomeClean} = function() {
 		return retorna_${_tipo}${_nomeClean}('', '', '');
 	}
 	var url = '/${_tipo}/selecionar' + '?sigla=' + sigla + '&nome=${_nomeClean}';
-	
+
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${_nomeClean}', false);
 }
 

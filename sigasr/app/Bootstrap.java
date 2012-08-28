@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 
+import controllers.SrBL;
 import controllers.SrDao;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -21,16 +22,20 @@ public class Bootstrap extends Job {
 
 	public void doJob() {
 		if (SrItemConfiguracao.count() == 0) {
+
+			SrItemConfiguracao geDoc;
+			SrItemConfiguracao gePat;
 			try {
 				SrItemConfiguracao softwares = new SrItemConfiguracao(
 						"01.00.00.00", "Softwares");
-				SrDao.getInstance().salvar(softwares, "RJ13285");
-				SrItemConfiguracao geDoc = new SrItemConfiguracao(
-						"01.01.00.00", "Sistemas de gestão documental");
-				SrDao.getInstance().salvar(geDoc, "RJ13285");
-				SrItemConfiguracao gePat = new SrItemConfiguracao(
-						"01.02.00.00", "Sistemas de gestão patrimonial");
-				SrDao.getInstance().salvar(gePat, "RJ13285");
+				softwares = SrDao.getInstance().salvar(softwares, "RJ13285");
+				geDoc = new SrItemConfiguracao("01.01.00.00",
+						"Sistemas de gestão documental");
+				geDoc = SrDao.getInstance().salvar(geDoc, "RJ13285");
+				gePat = new SrItemConfiguracao("01.02.00.00",
+						"Sistemas de gestão patrimonial");
+				gePat = SrDao.getInstance().salvar(gePat, "RJ13285");
+
 				/*
 				 * SrItemConfiguracao geTrab = new
 				 * SrItemConfiguracao("01.03.00.00",
@@ -69,16 +74,11 @@ public class Bootstrap extends Job {
 				 */
 				SrServico soft = new SrServico("01.00",
 						"Serviços típicos de software");
-				SrDao.getInstance().salvar(soft, "RJ13285");
+				soft = SrDao.getInstance().salvar(soft, "RJ13285");
 				SrServico hard = new SrServico("02.00",
 						"Serviços típicos de hardware");
-				SrDao.getInstance().salvar(hard, "RJ13285");
-				SrServico buyhard = new SrServico("02.01", "Comprar hardware")
-						.save();
-				buyhard.descrServico = "Comprar hardware 2";
-				//buyhard.save();
-				JPA.em().flush();
-				
+				hard = SrDao.getInstance().salvar(hard, "RJ13285");
+
 				/*
 				 * SrServico proj = new SrServico("01.01",
 				 * "Desenvolver projeto de software");
@@ -154,10 +154,10 @@ public class Bootstrap extends Job {
 				sol1.tendencia = SrTendencia.PIORA_CURTO_PRAZO;
 				sol1.urgencia = SrUrgencia.ALGUMA_URGENCIA;
 				sol1.dtReg = new Date();
-				sol1.criar();
+				sol1 = SrBL.criar(sol1);
 
 				SrSolicitacao sol2 = new SrSolicitacao();
-				sol2.cadastrante = lys;
+				sol2.cadastrante = eeh;
 				sol2.descrSolicitacao = "Também solicito a execução de muitos testes, visto que é limitada a nossa paciência e capacidade de assimilação de alto nível de stress acarretado por reclamações enfurecidas.";
 				sol2.formaAcompanhamento = SrFormaAcompanhamento.FECHAMENTO;
 				sol2.gravidade = SrGravidade.EXTREMAMENTE_GRAVE;
@@ -176,15 +176,10 @@ public class Bootstrap extends Job {
 				} catch (ParseException pe) {
 					//
 				}
-				sol2.criar();
-				
-				sol2.descrSolicitacao = "asdf";
-				
-				JPA.em().persist(sol2);
-				JPA.em().flush();
-				
-			} catch (AplicacaoException ae) {
-				int a = 0;
+				sol2 = SrBL.criar(sol2);
+			} catch (AplicacaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

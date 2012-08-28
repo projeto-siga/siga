@@ -19,6 +19,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.*;
 
 import javax.persistence.Query;
@@ -47,10 +48,10 @@ public class Application extends Controller {
 
 	@Before
 	static void addDefaults() {
-		
+
 		if (request.url.contains("proxy"))
 			return;
-		
+
 		try {
 			renderArgs.put("_base", "http://10.34.5.90:8080");
 
@@ -118,11 +119,8 @@ public class Application extends Controller {
 
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
 
-		solicitacao.cadastrante = (DpPessoa) renderArgs.get("cadastrante");
-		solicitacao.lotaCadastrante = (DpLotacao) renderArgs.get("lotaTitular");
-
-		solicitacao.criar();
-
+		SrBL.criar(solicitacao, (DpPessoa) renderArgs.get("cadastrante"),
+				(DpLotacao) renderArgs.get("lotaTitular"));
 		listar(null);
 
 	}
@@ -151,18 +149,16 @@ public class Application extends Controller {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		SrAndamento andamento = new SrAndamento();
 		andamento.estado = solicitacao.getUltimoAndamento().estado;
-		DpLotacao lotacaoLotaAtendenteSel = solicitacao.getUltimoAndamento().lotaAtendente;
-		DpPessoa pessoaAtendenteSel = solicitacao.getUltimoAndamento().atendente;
 
-		// Enquanto não tem login...
+		// Enquanto nÃ£o tem login...
 		DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
 		boolean exibirAtendente = solicitacao.podeAlterarAtendente(
 				eeh.getLotacao(), eeh);
 
 		SrEstado[] estados = SrEstado.values();
 
-		render(solicitacao, andamento, exibirAtendente, pessoaAtendenteSel,
-				lotacaoLotaAtendenteSel, estados);
+		render(solicitacao, andamento, exibirAtendente, estados);
+
 	}
 
 	public static void baixar(Long idArquivo) {
@@ -171,31 +167,20 @@ public class Application extends Controller {
 			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
 	}
 
-	public static void andamento(Long id, SrAndamento andamento,
-			@As(binder = DpPessoaBinder.class) DpPessoa pessoaAtendente,
-			@As(binder = DpLotacaoBinder.class) DpLotacao lotacaoLotaAtendente,
-			File arquivo) {
+	public static void andamento(SrAndamento andamento) {
 
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		andamento.atendente = pessoaAtendente;
-		andamento.lotaAtendente = lotacaoLotaAtendente;
-
-		if (arquivo != null) {
-			try {
-				andamento.arquivo = new SrArquivo();
-				andamento.arquivo.nomeArquivo = arquivo.getName();
-				andamento.arquivo.blob = IOUtils
-						.toByteArray(new FileInputStream(arquivo));
-				andamento.arquivo.mime = new javax.activation.MimetypesFileTypeMap()
-						.getContentType(arquivo);
-			} catch (IOException ioe) {
-
-			}
+		if (andamento.solicitacao != null
+				&& !andamento.solicitacao.podeAlterarAtendente(
+						(DpLotacao) renderArgs.get("lotaTitular"),
+						(DpPessoa) renderArgs.get("cadastrante"))) {
+			andamento.atendente = null;
+			andamento.lotaAtendente = null;
 		}
 
-		sol.darAndamento(andamento);
+		SrBL.darAndamento(andamento, (DpPessoa) renderArgs.get("cadastrante"),
+				(DpLotacao) renderArgs.get("lotaTitular"));
 
-		exibir(id);
+		exibir(andamento.solicitacao.idSolicitacao);
 
 	}
 
@@ -263,6 +248,16 @@ public class Application extends Controller {
 		listarItem();
 	}
 
+	public static void desativarItem(Long id) {
+		try {
+			SrItemConfiguracao item = SrItemConfiguracao.findById(id);
+			SrDao.getInstance().finalizar(item);
+		} catch (AplicacaoException ae) {
+			int a = 0;
+		}
+		listarItem();
+	}
+
 	public static void selecionarItem(String sigla) {
 		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla);
 		render("Application/selecionar.html", sel);
@@ -306,7 +301,17 @@ public class Application extends Controller {
 		} catch (AplicacaoException ae) {
 			int a = 0;
 		}
-		listarItem();
+		listarServico();
+	}
+
+	public static void desativarServico(Long id) {
+		try {
+			SrServico servico = SrServico.findById(id);
+			SrDao.getInstance().finalizar(servico);
+		} catch (AplicacaoException ae) {
+			int a = 0;
+		}
+		listarServico();
 	}
 
 	public static void selecionarServico(String sigla) {
@@ -340,14 +345,27 @@ public class Application extends Controller {
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("http://localhost:8080/siga//" + tipo + "/selecionar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla=" + sigla);
+		proxy("http://localhost:8080/siga/" + tipo + "/selecionar.action?"
+				+ "propriedade=" + tipo + nome + "&sigla="
+				+ URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("http://localhost:8080/siga//" + tipo + "/buscar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla=" + sigla);
+		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action?"
+				+ "propriedade=" + tipo + nome + "&sigla="
+				+ URLEncoder.encode(sigla, "UTF-8"));
+	}
+
+	public static void buscarSigaFromPopup(String tipo) throws Exception {
+		String paramString = "?";
+		for (String s : request.params.all().keySet())
+			if (!s.equals("body"))
+				paramString += s + "="
+						+ URLEncoder.encode(request.params.get(s), "UTF-8")
+						+ "&";
+		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action"
+				+ paramString);
 	}
 
 }

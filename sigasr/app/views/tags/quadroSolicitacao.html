@@ -1,6 +1,5 @@
 %{ if (_solicitacoes == null){ _solicitacoes = new ArrayList();
 _solicitacoes.add(_solicitacao); } }%
-<h2>${_titulo}</h2>
 <div class="gt-content-box">
 	<table border="0" class="gt-table gt-user-table">
 		<tbody>
@@ -10,19 +9,14 @@ _solicitacoes.add(_solicitacao); } }%
 					<h4>
 						#{if _clicavel}<a href="@{Application.exibir(sol.idSolicitacao)}">
 							#{/if}#{ifnot _ocultarCodigo}${sol.codigo} -#{/ifnot}
-							${sol.itemConfiguracao?.descricao},
-							${sol.servico?.descricao} #{if _clicavel} </a>#{/if}
+							${sol.itemConfiguracao?.descricao}, ${sol.servico?.descricao}
+							#{if _clicavel} </a>#{/if}
 					</h4>
 					<p>${sol.descrSolicitacao}</p>
 					<p>
 						<i>${sol.solicitante.descricaoIniciaisMaiusculas},
-							${sol.lotaSolicitante.siglaLotacao} (${sol.local})</i>
-					</p>
-					<p>
-						<i>Telefone: 2510-8793</i>
-					</p> <!-- <p class="gt-table-edit">
-							<a href="">Edit</a>
-						</p> -->
+							${sol.lotaSolicitante.siglaLotacao}#{if
+							sol.local}&nbsp;(${sol.local})#{/if}, <i>Tel.: 2510-8793</i>
 				</td>
 				<td style="padding-left: 60px">
 					<!-- Categories Sub Table -->
@@ -31,22 +25,26 @@ _solicitacoes.add(_solicitacao); } }%
 							<th>Aberto:</th>
 							<td>${sol.dtRegString}</td>
 						</tr>
-						<tr>
-							<th>Urgência:</th>
-							<td width="60%">${sol.GUT}/125</td>
+						#{if (sol.GUT > 80)} #{set priorColor:'red' /} #{/if}
+						#{elseif (sol.GUT > 60)} #{set priorColor:'orange' /} #{/elseif}
+						#{else} #{set priorColor:'black' /} #{/else}
+						<tr >
+							<th style="color: ${priorColor}">Prioridade:</th> 
+							<td width="60%" style="color: ${priorColor}" >${sol.GUTPercent}</td>
 						</tr>
 						<tr>
 							<th>Situação:</th>
-							<td>${sol.situacao}</a></td>
+							<td>${sol.situacao}</a>
+							</td>
 						</tr>
 						#{if sol.arquivo}
 						<tr>
 							<th>Anexo:</th>
-							<td>#{arquivo arquivo:sol.arquivo /}</a></td>
+							<td>#{arquivo arquivo:sol.arquivo /}</a>
+							</td>
 						</tr>
 						#{/if}
-					</table>
-				</td>
+					</table></td>
 			</tr>
 			#{/list}
 		</tbody>

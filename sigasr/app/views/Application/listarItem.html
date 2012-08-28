@@ -19,7 +19,7 @@
 					<tr
 						onclick="javascript:window.location='@{Application.editaritem(item.idItemConfiguracao)}'"
 						style="cursor: pointer;">
-						<td>${item.siglaItemConfiguracao}</td>
+						<td style="padding-left: ${item.nivel*13}px;">${item.siglaItemConfiguracao}</td>
 						<td>${item.tituloItemConfiguracao}</td>
 						<td>${item.descrItemConfiguracao}</td>
 					</tr>

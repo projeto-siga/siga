@@ -71,6 +71,20 @@
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
 	</listener>
+	
+	<servlet>
+		<display-name>CXF Servlet</display-name>
+		<servlet-name>CXFServlet</servlet-name>
+		<servlet-class>
+			br.gov.jfrj.siga.gi.servlet.GiWsServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CXFServlet</servlet-name>
+		<url-pattern>/servicos/*</url-pattern>
+	</servlet-mapping>
 	<!-- ***************************************  -->
 	<!--  Configuracao para login com formulario  -->
 	<!-- ***************************************  -->

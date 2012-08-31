@@ -133,5 +133,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="/siga-ws"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

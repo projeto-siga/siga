@@ -25,6 +25,6 @@ import br.gov.jfrj.siga.Remote;
 @WebService
 public interface GiService extends Remote {
 
-	public String login(String cpf, String matricula, String senha);
+	public String login(String matricula, String senha);
 
 }

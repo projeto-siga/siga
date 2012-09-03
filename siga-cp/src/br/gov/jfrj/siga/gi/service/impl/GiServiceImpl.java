@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.service.GiService;
 
 /**
@@ -47,14 +48,16 @@ import br.gov.jfrj.siga.gi.service.GiService;
 @WebService(endpointInterface = "br.gov.jfrj.siga.gi.service.GiService")
 public class GiServiceImpl implements GiService {
 
-	public String login(String cpf, String matricula, String senha) {
+	public String login(String matricula, String senha) {
 		String resultado = "";
 		try {
 			final String hashAtual = GeraMessageDigest.executaHash(senha.getBytes(), "MD5");
-			String orgao = matricula.substring(0, 2);
-			String numMatricula = matricula.substring(2);
 			CpDao dao = CpDao.getInstance();
-			DpPessoa p = dao.consultarPorCpfMatricula(Long.valueOf(cpf),Long.valueOf(numMatricula));
+			
+			DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+			flt.setSigla(matricula);
+			
+			DpPessoa p = (DpPessoa)dao.consultarPorSigla(flt);
 			CpIdentidade id = null;
 			id = dao.consultaIdentidadeCadastrante(matricula, true);
 			if (id != null && id.getDscSenhaIdentidade().equals(hashAtual)){

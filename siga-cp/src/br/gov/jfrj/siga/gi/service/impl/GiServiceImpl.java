@@ -22,7 +22,6 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.jws.WebService;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 

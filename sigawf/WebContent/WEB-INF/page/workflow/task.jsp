@@ -336,8 +336,8 @@
 			<div class="gt-sidebar-list">
 				<h3>Mapa do Procedimento</h3>
 				<ul class="gt-sidebar-list-content">
-					<li class="gt-sidebar-list-row"><a title="Zoom"
-						href="javascript: document.getElementById('page').style.display='none'; document.getElementById('map').style.display='block';"><img
+					<li class="gt-sidebar-list-row"><a onclick="javascript: document.getElementById('page').style.display='none'; document.getElementById('map').style.display='block';" title="Zoom"
+						href="#"><img
 							style="width: 100%" src="loadPhoto?tId=${taskInstance.id}" /> </a> <%--<tags:wfImage task="${taskInstance.id}"
 								token="${taskInstance.token.id}" /> --%></li>
 				</ul>
@@ -358,7 +358,7 @@
 			</div>
 		</div>
 		<a
-			href="javascript: document.getElementById('map').style.display='none'; document.getElementById('page').style.display='block';"
+			href="task.action?tiId=${taskInstance.id}"
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
 	</div>

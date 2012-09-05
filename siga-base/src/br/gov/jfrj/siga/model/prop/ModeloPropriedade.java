@@ -138,10 +138,13 @@ public abstract class ModeloPropriedade {
 				}
 				String value = propriedades.getProperty(prop + nome);
 				if (value != null)
-					return value;
+					return value.trim();
 			}
 		}
-		return propriedades.getProperty(nome);
+		if (propriedades.getProperty(nome) !=null){
+			return propriedades.getProperty(nome).trim();
+		}
+		return null;
 	}
 
 	/**
@@ -165,7 +168,7 @@ public abstract class ModeloPropriedade {
 			String prp = obterPropriedade(nome + "." + String.valueOf(i));
 			if (prp == null)
 				break;
-			lista.add(prp);
+			lista.add(prp.trim());
 		}
 		return lista;
 	}

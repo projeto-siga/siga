@@ -243,12 +243,13 @@ public class UsuarioAction extends SigaActionSupport {
 		getRequest().setAttribute("titulo", "Novo Usuário");
 		String[] senhaGerada = new String[1];
 		boolean senhaTrocadaAD = false;
+		boolean isIntegradoAoAD = isIntegradoAD(matricula);
 		CpIdentidade idNova = null;
 		switch (metodo) {
 		case 1:
 			
 			idNova = Cp.getInstance().getBL().criarIdentidade(matricula,
-					cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
+					cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada,isIntegradoAoAD);
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
@@ -259,7 +260,8 @@ public class UsuarioAction extends SigaActionSupport {
 						"3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>");
 				return Action.SUCCESS;
 			}else{
-				idNova = Cp.getInstance().getBL().criarIdentidade(matricula,cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada);
+				idNova = Cp.getInstance().getBL().criarIdentidade(matricula,cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada,
+						isIntegradoAoAD);
 				
 			}
 			break;
@@ -268,20 +270,22 @@ public class UsuarioAction extends SigaActionSupport {
 			return Action.SUCCESS;
 		}
 		
-		if (isIntegradoAD(matricula)){
-			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
+		if (isIntegradoAoAD){
+//			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
+			msgAD = "<br/> Atenção: Seu usuário de rede e caixa postal serão criados na rede em até 1 hora.";
 		}
-		
-		if (isIntegradoAD(matricula) && senhaTrocadaAD){
-			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.";
-		}
-		
-		if (isIntegradoAD(matricula) && !senhaTrocadaAD){
-			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
-		}
-		
-		setMensagem("Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ msgAD);
+//		
+//		if (isIntegradoAD(matricula) && senhaTrocadaAD){
+//			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.";
+//		}
+//		
+//		if (isIntegradoAD(matricula) && !senhaTrocadaAD){
+//			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
+//		}
+//		
+//		setMensagem("Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ msgAD);
 
+		setMensagem("Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ msgAD);
 
 		return Action.SUCCESS;
 

@@ -580,7 +580,13 @@ public class ExDocumentoAction extends ExActionSupport {
 			tipoDestinatario = 2;
 			idFormaDoc = 2;
 			idTpDoc = 1L;
-			nivelAcesso = 1L;
+			
+			ExNivelAcesso nivelDefault = getNivelAcessoDefault();
+			if(nivelDefault != null) {
+				nivelAcesso = nivelDefault.getIdNivelAcesso();
+			} else 
+				nivelAcesso = 1L;
+			
 			idMod = 26L;
 		}
 
@@ -1254,6 +1260,14 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
+	
+	public String aAtualizarMarcasDoc() throws Exception{
+		
+		buscarDocumento(false);
+		Ex.getInstance().getBL().atualizarMarcas(getDoc());
+		
+		return Action.SUCCESS;
+	}
 
 	public String aTestarPdf() throws Exception {
 		return Action.SUCCESS;
@@ -1861,6 +1875,34 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		return getListaNivelAcesso(exTipo, exForma, exMod, exClassif);
+	}
+	
+	public ExNivelAcesso getNivelAcessoDefault() throws Exception {
+		ExFormaDocumento exForma = new ExFormaDocumento();
+		ExClassificacao exClassif = new ExClassificacao();
+		ExTipoDocumento exTipo = new ExTipoDocumento();
+		ExModelo exMod = new ExModelo();
+
+		if (getIdTpDoc() != null) {
+			exTipo = dao()
+					.consultar(getIdTpDoc(), ExTipoDocumento.class, false);
+		}
+
+		if (getIdFormaDoc() != null) {
+			exForma = dao().consultar(getIdFormaDoc(), ExFormaDocumento.class,
+					false);
+		}
+
+		if (getIdMod() != null) {
+			exMod = dao().consultar(getIdMod(), ExModelo.class, false);
+		}
+
+		if (getClassificacaoSel().getId() != null) {
+			exClassif = dao().consultar(getClassificacaoSel().getId(),
+					ExClassificacao.class, false);
+		}
+
+		return getNivelAcessoDefault(exTipo, exForma, exMod, exClassif);
 	}
 
 	public Map<Integer, String> getListaVias() {

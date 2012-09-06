@@ -252,7 +252,7 @@ public class ExBL extends CpBL {
 		ia = null;
 	}
 
-	private void atualizarMarcas(ExDocumento doc) {
+	public void atualizarMarcas(ExDocumento doc) {
 		for (ExMobil mob : doc.getExMobilSet()) {
 			SortedSet<ExMarca> setA = mob.getExMarcaSet();
 			if (setA == null)
@@ -868,7 +868,7 @@ public class ExBL extends CpBL {
 						List<DpPessoa> pessoasLotacao = CpDao
 								.getInstance()
 								.pessoasPorLotacao(
-										conf.getLotacao().getIdLotacao(), false);
+										conf.getLotacao().getIdLotacao(), false,true);
 						for (DpPessoa pessoa : pessoasLotacao) {
 							if (!emailsAtendentes.contains(pessoa
 									.getEmailPessoa()))
@@ -3236,7 +3236,7 @@ public class ExBL extends CpBL {
 
 						for (DpPessoa pes : dao().pessoasPorLotacao(
 
-						lotaResponsavel.getIdLotacao(), false)) {
+						lotaResponsavel.getIdLotacao(), false,true)) {
 
 							dest.add(pes.getEmailPessoa());
 
@@ -3254,7 +3254,7 @@ public class ExBL extends CpBL {
 
 				for (DpPessoa pes : dao().pessoasPorLotacao(
 
-				lotaResponsavel.getIdLotacao(), false)) {
+				lotaResponsavel.getIdLotacao(), false,true)) {
 
 					dest.add(pes.getEmailPessoa());
 

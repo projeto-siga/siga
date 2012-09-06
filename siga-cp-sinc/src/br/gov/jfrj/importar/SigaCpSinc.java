@@ -1015,7 +1015,7 @@ public class SigaCpSinc {
 		DpLotacao lotDIRFO = getLotacaoDIRFO();
 		DpLotacao lotPaiAdm = lot;
 		while (lotPaiAdm != null) {
-			if (lotPaiAdm.getIdeLotacao().equals(lotDIRFO.getIdLotacao())) {
+			if (lotDIRFO != null && lotPaiAdm.getIdeLotacao().equals(lotDIRFO.getIdLotacao())) {
 				// é administrativo
 				lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));
 				return;

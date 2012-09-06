@@ -168,6 +168,35 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return penMov;
 	}
 
+	
+	/**
+	 * Retorna as  movimentações de um Mobil de acordo com um tipo
+	 * específico de movimentação.
+	 * 
+	 * @param tpMov
+	 * 
+	 * @return Lista de movimentações de um Mobil de acordo com um tipo específico
+	 *         de movimentação.
+	 * 
+	 */
+	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov) {
+		
+		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
+		List<ExMovimentacao> movsTp = new ArrayList<ExMovimentacao>();	
+		
+		if (movs != null)
+			for (final ExMovimentacao m : movs) {				
+				if (m.getExTipoMovimentacao().getIdTpMov().equals(tpMov))
+					movsTp.add(m);
+			}
+		return movsTp;	
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Verifica se um Mobil é do tipo Geral.
 	 * 
@@ -1025,6 +1054,27 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura
+	 * 
+	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso contrário.
+	 * 
+	 */	
+	public boolean temAnexosNaoAssinados(){		
+		boolean b = false;
+		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
+			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+				if (movAss.isAssinada())
+					continue;
+				else {
+					b = true;
+					break;					
+				}
+		}
+		return b;
+		
+	}
 
 	/**
 	 * Verifica se um Mobil do tipo Volume está Apensado a outro Mobil do mesmo
@@ -1154,4 +1204,5 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		return l;
 	}
+	
 }

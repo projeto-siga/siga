@@ -341,7 +341,7 @@ public class CpBL {
 	}
 
 	public CpIdentidade criarIdentidade(String matricula, String cpf,
-			CpIdentidade idCadastrante, final String senhaDefinida, String[] senhaGerada) throws AplicacaoException {
+			CpIdentidade idCadastrante, final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc ) throws AplicacaoException {
 		final long longmatricula = Long.parseLong(matricula.substring(2));
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
@@ -356,7 +356,7 @@ public class CpBL {
 			if (id == null) {
 				if (pessoa.getEmailPessoa() != null) {
 					String novaSenha = null;
-					if (senhaDefinida !=null){
+					if (senhaDefinida !=null && senhaDefinida.length() > 0){
 						novaSenha = senhaDefinida;
 					}else{
 						novaSenha = GeraMessageDigest.geraSenha();
@@ -379,15 +379,21 @@ public class CpBL {
 								CpTipoIdentidade.class, false));
 						idNova.setHisDtIni(idNova.getDtCriacaoIdentidade());
 
-						BASE64Encoder encoderBase64 = new BASE64Encoder();
-						String chave = encoderBase64.encode(idNova
-								.getDpPessoa().getIdInicial().toString()
-								.getBytes());
-						String senhaCripto = encoderBase64.encode(Criptografia
-								.criptografar(novaSenha, chave));
-						idNova.setDscSenhaIdentidadeCripto(null);
-						idNova.setDscSenhaIdentidadeCriptoSinc(null);
+						//somente se integrado ao AD
+						if (marcarParaSinc){
+							BASE64Encoder encoderBase64 = new BASE64Encoder();
+							
+							String chave = encoderBase64.encode(idNova
+									.getDpPessoa().getIdInicial().toString()
+									.getBytes());
+							String senhaCripto = encoderBase64.encode(Criptografia
+									.criptografar(novaSenha, chave));
 
+							idNova.setDscSenhaIdentidadeCripto(null);
+							idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+						}
+						
+						
 						dao().iniciarTransacao();
 						dao().gravarComHistorico(idNova, idCadastrante);
 						Correio

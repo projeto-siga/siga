@@ -1392,6 +1392,8 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.cache.use_query_cache", "true");
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
+		cfg.setProperty("hibernate.default_batch_fetch_size", "20");
+		
 		// descomentar para inpecionar o SQL
 		// cfg.setProperty("hibernate.show_sql", "true");
 		// Disable second-level cache.

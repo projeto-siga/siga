@@ -357,23 +357,43 @@ frm.submit();
 
 						</c:when>
 					</c:choose>
-				</c:if>
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
-				${f:obterBotoesExtensaoAssinador(lotaTitular.orgaoUsuario)}
-</c:if>				
-			</div>
+				</c:if>			
+			</div>			
+			
+			
 			</ww:form>
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
-			<c:set var="jspServer"
+<%--<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
+			<c:set var="jspServer"-->
 				value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action?id=${mov.idMov}&copia=${copia}" />
-			<c:set var="nextURL"
+			<c:set var="nextURL"-->
 				value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
-			<c:set var="url_0"
+			<c:set var="url_0"-->
 				value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}" />
-			<%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/${mov.nmPdf}" /> --%>
-			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0
-			)}
+			<%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/${mov.nmPdf}" /> 
+			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0)}
 </c:if>
+--%>
+
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+	<c:set var="x" scope="request">chk_${mov.idMov}</c:set>	
+<%--	<input type="checkbox" name="${x}" value="true" checked style="display:none"/>  --%>	
+	<ww:hidden name="pdf${x}" value="${mov.nmPdf}" />
+	<c:set var="jspServer"
+			value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+	<c:set var="nextURL"
+			value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
+	<ww:if test="${copia == true}">
+	    <c:set var="botao" value="copia"/>
+	</ww:if>    
+	<ww:else>
+	    <c:set var="botao" value=""/>
+	</ww:else>
+		
+	${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL,botao)}
+</c:if>
+				
+				
+
 		</div>
 	</div>
 </siga:pagina>

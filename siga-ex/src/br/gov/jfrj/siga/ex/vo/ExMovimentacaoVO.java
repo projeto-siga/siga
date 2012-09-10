@@ -203,7 +203,7 @@ public class ExMovimentacaoVO extends ExVO {
 					&& idTpMov != TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
 				if (!mov.isCancelada())
 					addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir", true,
-							null, "&popup=true", null, null);
+							null, "&popup=true&copia=false", null, null);
 			}
 
 			if (mov.getExMovimentacaoReferenciadoraSet() != null) {

@@ -236,7 +236,8 @@
 					<c:set var="jspServer"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 					<c:set var="nextURL"
-						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />		
+						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />					
+					<c:set var="botao" value="ambos" />			
 					${f:obterExtensaoAssinadorLote(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL)}
 				</c:if>
 

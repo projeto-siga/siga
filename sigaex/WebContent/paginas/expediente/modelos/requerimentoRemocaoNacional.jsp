@@ -7,17 +7,17 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:selecao titulo="Ano da Remoção" opcoes="2011;2012;2013;2014;2015;2016;2017;2018"
+			<mod:selecao titulo="Ano da Remoção" opcoes="2012;2013;2014;2015;2016;2017;2018"
 			var="anoRemocao" />
 			&nbsp;&nbsp;&nbsp;
 			<mod:data  var="dataEdital" titulo="Data de publicação do Edital" obrigatorio="Sim"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:selecao titulo="Área do cargo de Analista Judiciário" opcoes="administrativa;judiciária"
+			<mod:selecao titulo="Área do cargo" opcoes="apoio especializado;administrativa;judiciária"
 			var="area" /> 
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<mod:texto obrigatorio="Sim" var="email" titulo="E-mail"
-			largura="30" maxcaracteres="50" />
+			largura="50" maxcaracteres="50" />
 		</mod:grupo>	
 		<mod:grupo>
 			<mod:texto var="qtdFilhos" titulo="Quantidade de Filhos"

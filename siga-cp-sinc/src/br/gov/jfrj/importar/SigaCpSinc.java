@@ -27,6 +27,7 @@ import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -69,6 +70,8 @@ public class SigaCpSinc {
 	// a rotina de sync está atribuindo um nível de dependencia estranho para
 	// renato (8)
 
+	private static boolean modoLog = false;
+	
 	private String servidor = "";
 
 	private String url = "";
@@ -191,8 +194,17 @@ public class SigaCpSinc {
 			 * "select * from corporativo.cp_papel where ID_ORGAO_USU = 9999"
 			 * ).list()
 			 */
-			CpDao.getInstance().commitTransacao();
-			log("Transação confirmada");
+			if (modoLog){
+				log("");
+				log("*********MODO LOG **********");
+				log("As alterações não serão efetivadas! Executando rollback...");
+				log("");
+				log("");
+				CpDao.getInstance().rollbackTransacao();
+			}else{
+				CpDao.getInstance().commitTransacao();
+				log("Transação confirmada");
+			}
 		} catch (Exception e) {
 			CpDao.getInstance().rollbackTransacao();
 			log("Transação abortada por erro: " + e.getMessage());
@@ -243,6 +255,12 @@ public class SigaCpSinc {
 				return 12;
 			}
 
+		}
+		
+		for (String param : Arrays.asList(pars)) {
+			if (param.equals("-modoLog=true")) {
+				modoLog = true;
+			}
 		}
 
 		return 0;
@@ -313,6 +331,11 @@ public class SigaCpSinc {
 
 	public void importxml() {
 		try {
+			if (modoLog){
+				log("");
+				log(">>>Iniciando em modo LOG!<<<");
+				log("");
+			}
 			log("Importando: XML");
 			/* -------------------------- */
 			// Mensagens.getString("url.origem")

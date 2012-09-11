@@ -187,7 +187,7 @@ public class ExMovimentacaoVO extends ExVO {
 						.getInstance().getComp().podeCancelarAnexo(titular,
 								lotaTitular, mov.mob(), mov));
 				if (!mov.isCancelada())
-					addAcao(null, "Conferir cópia", "/expediente/mov", "exibir",
+					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov", "exibir",
 							true, null, "&popup=true&copia=true", null, null);
 			}
 
@@ -200,7 +200,8 @@ public class ExMovimentacaoVO extends ExVO {
 			if (idTpMov != TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
 					&& idTpMov != TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 					&& idTpMov != TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-					&& idTpMov != TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
+					&& idTpMov != TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO
+					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO) {
 				if (!mov.isCancelada())
 					addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir", true,
 							null, "&popup=true&copia=false", null, null);

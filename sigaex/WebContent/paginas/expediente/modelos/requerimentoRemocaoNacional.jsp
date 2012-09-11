@@ -13,7 +13,7 @@
 			<mod:data  var="dataEdital" titulo="Data de publicação do Edital" obrigatorio="Sim"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:selecao titulo="Área do cargo" opcoes="administrativa;judiciária"
+			<mod:selecao titulo="Área do cargo de Analista Judiciário" opcoes="administrativa;judiciária"
 			var="area" /> 
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<mod:texto obrigatorio="Sim" var="email" titulo="E-mail"
@@ -25,7 +25,7 @@
 		</mod:grupo>
 		<mod:grupo>	
 			<mod:mensagem vermelho="Sim"
-			texto="ATENÇÃO: Transferir para Seção de Apoio da Subsecretaria de Gestão de Pessoas 
+			texto="ATENÇÃO: Transferir para Subsecretaria de Gestão de Pessoas 
 			após finalização."></mod:mensagem>
 		</mod:grupo>
 
@@ -82,7 +82,7 @@ first-page-body {
 		no art. 20 da Lei nº 11.416/2006 c/c a Lei nº 8.112/1990, e nos termos
 		da Portaria Conjunta nº 3/2007, da Resolução 3/2008 alterada pela
 		Resolução nº 66/2009 do Conselho da Justiça Federal e declaro que
-		concordo com os termos do Edital do CJF publicado em ${dataEdital}.</p>
+		concordo com os termos do Edital do CJF de ${dataEdital}.</p>
 		<br />
 		<br />
 		<p>Nestes termos,</p>

@@ -151,6 +151,17 @@ public class SigaCpSinc {
 			// sinc.religarListaPorIdExterna(setAntigo);
 			sinc.setSetAntigo(setAntigo);
 
+			//verifica se as pessoas possuem lotação
+			if (modoLog){
+				for (Sincronizavel item : setNovo) {
+					if (item instanceof DpPessoa){
+						DpPessoa p = ((DpPessoa)item);
+						if (p.getLotacao() == null){
+							log("Pessoa sem lotação! " + p.getSigla());	
+						}
+					}
+				}
+			}
 			list = sinc.getOperacoes(dt);
 		} catch (Exception e) {
 			log("Transação abortada por erro: " + e.getMessage());

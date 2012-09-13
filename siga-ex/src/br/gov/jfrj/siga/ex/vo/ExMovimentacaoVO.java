@@ -188,7 +188,7 @@ public class ExMovimentacaoVO extends ExVO {
 								lotaTitular, mov.mob(), mov));
 				if (!mov.isCancelada())
 					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov", "exibir",
-							true, null, "&popup=true&copia=true", null, null);
+							true, null, "&popup=true&copia=false", null, null);
 			}
 
 			if (hasDespacho(idTpMov)) {

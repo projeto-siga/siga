@@ -21,6 +21,12 @@ function fechaJanela(){
 	<ww:url id="url" action="assinar_mov_gravar"
 		namespace="/expediente/mov">
 		<ww:param name="id">${mov.idMov}</ww:param>
+		<ww:param name="copia">false</ww:param>
+	</ww:url>
+	<ww:url id="url2" action="assinar_mov_gravar"
+		namespace="/expediente/mov">
+		<ww:param name="id">${mov.idMov}</ww:param>
+		<ww:param name="copia">true</ww:param>
 	</ww:url>
 	<c:choose>
 		<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
@@ -40,7 +46,7 @@ function fechaJanela(){
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 		<script language="VBScript">
-Function assinar()
+Function assinar(copia)
 	prov = MsgBox("Confirma que o ${msgScript} a ser assinado foi devidamente analisado?", vbYesNo, "Confirmação")
 	If prov = vbYes then
 		Dim Assinatura
@@ -60,8 +66,11 @@ Function assinar()
 		Assinante = Split(Assinante, "CN=")(1)
 		Assinante = Split(Assinante, ",")(0)
 		frm.assinante.value = Assinante
-		If Erro Then Exit Function
-		frm.action="<ww:property value="%{url}"/>"
+		If Erro Then Exit Function    
+        If copia  = "copia"
+		  Then frm.action="<ww:property value="%{url2}"/>"
+		  Else frm.action="<ww:property value="%{url}"/>"
+        End If
 		frm.Submit()
 	End If
 
@@ -96,14 +105,6 @@ function visualizarImpressao(via) {
 	frm.action=a;
 }
 
-<ww:url id="url" action="assinar_mov" namespace="/expediente/mov">
-	<ww:param name="id">${mov.idMov}</ww:param>
-</ww:url>
-function assinarMov(){
-frm.action='<ww:property value="%{url}"/>';
-frm.submit();
-}
-
 </script>
 
 	<div class="gt-bd" style="padding-bottom: 0px;">
@@ -114,8 +115,7 @@ frm.submit();
 			<div class="gt-content-box" style="padding: 10px;">
 
 				<ww:form name="frm" action="exibir" namespace="/expediente/mov"
-					theme="simple" method="POST">
-					<ww:hidden name="copia" value="${copia}" />
+					theme="simple" method="POST">					
 					<table width="100%" border="0">
 						<tr>
 							<td>
@@ -325,36 +325,29 @@ frm.submit();
 						<c:when
 							test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
 							<input type="button" value="Assinar Despacho"
-								onclick="vbscript:assinar" />
+								onclick="vbscript:assinar()" />								
 						</c:when>
 
 
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
 							<input type="button" value="Assinar Transferir"
-								onclick="vbscript:assinar" />
+								onclick="vbscript:assinar('')" />
 
 						</c:when>
 
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
 							<input type="button" value="Assinar Desentranhamento"
-								onclick="vbscript:assinar" />
+								onclick="vbscript:assinar('')" />
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
 							<input type="button" value="Assinar Encerramento"
-								onclick="vbscript:assinar" />
+								onclick="vbscript:assinar('')" />
 						</c:when>
-						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
-							<c:choose>
-								<c:when test="${copia == true}">
+						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
 									<input type="button" value="Conferir Cópia"
-										onclick="vbscript:assinar" />
-								</c:when>
-								<c:otherwise>
+										onclick="vbscript:assinar('copia')" />							
 									<input type="button" value="Assinar Anexo"
-										onclick="vbscript:assinar" />
-								</c:otherwise>
-							</c:choose>
-
+										onclick="vbscript:assinar('')" />
 						</c:when>
 					</c:choose>
 				</c:if>			
@@ -362,18 +355,7 @@ frm.submit();
 			
 			
 			</ww:form>
-<%--<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
-			<c:set var="jspServer"-->
-				value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action?id=${mov.idMov}&copia=${copia}" />
-			<c:set var="nextURL"-->
-				value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
-			<c:set var="url_0"-->
-				value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/hashSHA1/${mov.nmPdf}" />
-			<%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/semmarcas/${mov.nmPdf}" /> 
-			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0)}
-</c:if>
---%>
-
+			
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
 	<c:set var="x" scope="request">chk_${mov.idMov}</c:set>	
 <%--	<input type="checkbox" name="${x}" value="true" checked style="display:none"/>  --%>	
@@ -382,17 +364,15 @@ frm.submit();
 			value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 	<c:set var="nextURL"
 			value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
-	<ww:if test="${copia == true}">
-	    <c:set var="botao" value="copia"/>
+	<ww:if test="${mov.exTipoMovimentacao.idTpMov==2}">
+	    <c:set var="botao" value="ambosS"/>
 	</ww:if>    
 	<ww:else>
 	    <c:set var="botao" value=""/>
 	</ww:else>
 		
 	${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL,botao)}
-</c:if>
-				
-				
+</c:if>			
 
 		</div>
 	</div>

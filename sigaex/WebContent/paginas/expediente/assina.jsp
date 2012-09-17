@@ -109,11 +109,16 @@ End Function
 		</table>
 	</ww:form>
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
+	<ww:hidden name="pdfchk_${doc.idDoc}" value="doc/${doc.codigoCompacto}.pdf" />
 	<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action?sigla=${sigla}" />
     <c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}"  />
-    <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/hashSHA1/doc/${doc.codigoCompacto}.pdf"  />
-    <%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/doc/${doc.codigoCompacto}.pdf"  /> --%>
-	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
+    <c:set var="urlPath" value="/${request.contextPath}/expediente" />
+  <%--   <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/hashSHA1/doc/${doc.codigoCompacto}.pdf"  />
+    <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/doc/${doc.codigoCompacto}.pdf"  /> --%>
+    <c:set var="botao" value=""/>
+	<c:set var="lote" value="false"/>
+	
+	${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL,botao,lote)}	
 </c:if>	
 	</div></div>
 </siga:pagina>

@@ -325,7 +325,7 @@ function visualizarImpressao(via) {
 						<c:when
 							test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
 							<input type="button" value="Assinar Despacho"
-								onclick="vbscript:assinar()" />								
+								onclick="vbscript:assinar('')" />								
 						</c:when>
 
 
@@ -344,9 +344,9 @@ function visualizarImpressao(via) {
 								onclick="vbscript:assinar('')" />
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
-									<input type="button" value="Conferir Cópia"
+							<input type="button" value="Conferir Cópia"
 										onclick="vbscript:assinar('copia')" />							
-									<input type="button" value="Assinar Anexo"
+							<input type="button" value="Assinar Anexo"
 										onclick="vbscript:assinar('')" />
 						</c:when>
 					</c:choose>
@@ -357,21 +357,23 @@ function visualizarImpressao(via) {
 			</ww:form>
 			
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
-	<c:set var="x" scope="request">chk_${mov.idMov}</c:set>	
-<%--	<input type="checkbox" name="${x}" value="true" checked style="display:none"/>  --%>	
-	<ww:hidden name="pdf${x}" value="${mov.nmPdf}" />
+<%--	<c:set var="x" scope="request">chk_${mov.idMov}</c:set>	
+	<input type="checkbox" name="${x}" value="true" checked style="display:none"/>  --%>	
+	<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.nmPdf}" />
 	<c:set var="jspServer"
 			value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 	<c:set var="nextURL"
 			value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
+	<c:set var="urlPath" value="/${request.contextPath}" />		
 	<ww:if test="${mov.exTipoMovimentacao.idTpMov==2}">
-	    <c:set var="botao" value="ambosS"/>
+	    <c:set var="botao" value="ambos"/>
 	</ww:if>    
 	<ww:else>
 	    <c:set var="botao" value=""/>
 	</ww:else>
+	<c:set var="lote" value="false"/>
 		
-	${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL,botao)}
+	${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL,botao,lote)}
 </c:if>			
 
 		</div>

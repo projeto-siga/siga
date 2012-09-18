@@ -46,7 +46,7 @@ function fechaJanela(){
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 		<script language="VBScript">
-Function assinar
+Function assinar()
 	prov = MsgBox("Confirma que o ${msgScript} a ser assinado foi devidamente analisado?", vbYesNo, "Confirmação")
 	If prov = vbYes then
 		Dim Assinatura
@@ -323,29 +323,29 @@ function visualizarImpressao(via) {
 						<c:when
 							test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
 							<input type="button" value="Assinar Despacho"
-								onclick="vbscript:assinar('')" />								
+								onclick="vbscript:assinar" />								
 						</c:when>
 
 
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
 							<input type="button" value="Assinar Transferir"
-								onclick="vbscript:assinar('')" />
+								onclick="vbscript:assinar" />
 
 						</c:when>
 
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
 							<input type="button" value="Assinar Desentranhamento"
-								onclick="vbscript:assinar('')" />
+								onclick="vbscript:assinar" />
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
 							<input type="button" value="Assinar Encerramento"
-								onclick="vbscript:assinar('')" />
+								onclick="vbscript:assinar" />
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
 							<input type="button" value="Conferir Cópia"
-										onclick="vbscript:assinar()" />							
+										onclick="vbscript:assinar" />							
 							<input type="button" value="Assinar Anexo"
-										onclick="vbscript:assinar('')" />
+										onclick="vbscript:assinar" />
 						</c:when>
 					</c:choose>
 				</c:if>			

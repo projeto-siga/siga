@@ -979,8 +979,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		
 		if (ARQUIVO.contains(":")) {
 			String[] partesArq= ARQUIVO.split(":");
-			this.setId(Long.parseLong(partesArq[1]));
-		}
+			this.setId(Long.parseLong(partesArq[1]));	
+		}else
+			this.setSigla(ARQUIVO);
+		
 		
 
 		// Converte para binario
@@ -1094,16 +1096,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
 		if (getCopia() != null && getCopia())
 			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
-
-		/* mov == null quando o id é passado pela url (ver/assinar)
-		/* Quando o id é alimentado no metodo this.recuperarAssinaturaAppletB64(), mov é instanciada
-		 * no método buscarDocumento()  */
-		if (mov == null) {
-			Long idMov = paramLong("id");
-			if (idMov == null)
-				throw new AplicacaoException("Id da movimentação não informada");
-			mov = dao().consultar(idMov, ExMovimentacao.class,false);
-		}
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
 
@@ -3122,7 +3114,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public void setId(final Long id) {
 		this.id = id;
-	}
+	}	
 
 	public void setIdResp(final Long idResp) {
 		this.idResp = idResp;

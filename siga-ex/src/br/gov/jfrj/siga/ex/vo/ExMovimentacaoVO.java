@@ -188,7 +188,7 @@ public class ExMovimentacaoVO extends ExVO {
 								lotaTitular, mov.mob(), mov));
 				if (!mov.isCancelada())
 					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov", "exibir",
-							true, null, "&popup=true&copia=false", null, null);
+							true, null, "&popup=true", null, null);
 			}
 
 			if (hasDespacho(idTpMov)) {
@@ -204,7 +204,7 @@ public class ExMovimentacaoVO extends ExVO {
 					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO) {
 				if (!mov.isCancelada())
 					addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir", true,
-							null, "&popup=true&copia=false", null, null);
+							null, "&popup=true", null, null);
 			}
 
 			if (mov.getExMovimentacaoReferenciadoraSet() != null) {

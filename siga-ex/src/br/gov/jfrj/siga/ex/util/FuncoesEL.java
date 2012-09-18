@@ -844,8 +844,8 @@ public class FuncoesEL {
 	
 	public static String obterExtensaoAssinadorLote1(CpOrgaoUsuario orgao,
 			String requestScheme, String requestServerName,
-			String requestLocalPort, String urlPath, String sigla,
-			String doc_codigoCompacto,String jspServer, String nextURL, String botao, String lote) throws Exception {
+			String requestLocalPort, String urlPath, 
+			String jspServer, String nextURL, String botao, String lote) throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
 		Map attrs = new HashMap();
 		String chaveUrl = null;
@@ -858,9 +858,7 @@ public class FuncoesEL {
 		attrs.put("request_scheme", requestScheme);
 		attrs.put("request_serverName", requestServerName);
 		attrs.put("request_localPort", requestLocalPort);
-		attrs.put("urlPath", urlPath);
-		attrs.put("sigla", sigla);
-		attrs.put("doc_codigoCompacto", doc_codigoCompacto);
+		attrs.put("urlPath", urlPath);		
 		attrs.put("jspServer", jspServer);
 		attrs.put("nextURL", nextURL);		
 		attrs.put("botao", botao);

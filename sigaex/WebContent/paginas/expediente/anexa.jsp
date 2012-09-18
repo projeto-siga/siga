@@ -219,7 +219,8 @@
 													</c:if>
 												</c:forEach>
 												<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
-													<ww:hidden name="pdf${x}" value="${mov.mov.nmPdf}" />
+													<ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
+													<ww:hidden name="url${x}" value="${mov.mov.nmPdf}" />
 												</c:if>	
 											</siga:links></td>
 									</tr>
@@ -240,7 +241,7 @@
 					<c:set var="urlPath" value="/${request.contextPath}" />						
 					<c:set var="botao" value="ambos" />
 					<c:set var="lote" value="true" />			
-					${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL,botao,lote)}
+					${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
 				</c:if>
 
 			</ww:form>

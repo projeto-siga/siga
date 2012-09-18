@@ -46,7 +46,7 @@ function fechaJanela(){
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 		<script language="VBScript">
-Function assinar(copia)
+Function assinar
 	prov = MsgBox("Confirma que o ${msgScript} a ser assinado foi devidamente analisado?", vbYesNo, "Confirmação")
 	If prov = vbYes then
 		Dim Assinatura
@@ -239,8 +239,8 @@ function visualizarImpressao(via) {
 																	<c:when
 																		test="${mov.conteudoTpMov == 'application/zip'}">
 																		<td colspan="2" style="margin-top: 10px;"><tags:fixdocumenthtml>
-												${mov.conteudoBlobHtmlString}
-												</tags:fixdocumenthtml></td>
+																			${mov.conteudoBlobHtmlString}
+																		</tags:fixdocumenthtml></td>
 																	</c:when>
 																	<c:otherwise>
 																		<td colspan="2" style="margin-top: 10px;">${mov.obs}</td>
@@ -287,14 +287,12 @@ function visualizarImpressao(via) {
 								</c:otherwise>
 							</c:choose>
 							<tr class="${evenorodd}">
-
-
-								<td width="16%" align="center">${movReferenciadora.dtRegMovDDMMYYHHMMSS}</td>
-								<td width="4%" align="center"><siga:selecionado
+								<td width="16%" align="left">${movReferenciadora.dtRegMovDDMMYYHHMMSS}</td>
+								<td width="4%" align="left"><siga:selecionado
 										sigla="${movReferenciadora.lotaCadastrante.sigla}"
 										descricao="${movReferenciadora.lotaCadastrante.descricao}" />
 								</td>
-								<td width="4%" align="center"><siga:selecionado
+								<td width="4%" align="left"><siga:selecionado
 										sigla="${movReferenciadora.cadastrante.iniciais}"
 										descricao="${movReferenciadora.cadastrante.descricao}" /></td>
 								<td width="44%"><tags:assinatura_mov
@@ -345,7 +343,7 @@ function visualizarImpressao(via) {
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
 							<input type="button" value="Conferir Cópia"
-										onclick="vbscript:assinar('copia')" />							
+										onclick="vbscript:assinar()" />							
 							<input type="button" value="Assinar Anexo"
 										onclick="vbscript:assinar('')" />
 						</c:when>
@@ -356,10 +354,9 @@ function visualizarImpressao(via) {
 			
 			</ww:form>
 			
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
-<%--	<c:set var="x" scope="request">chk_${mov.idMov}</c:set>	
-	<input type="checkbox" name="${x}" value="true" checked style="display:none"/>  --%>	
-	<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.nmPdf}" />
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">	
+	<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
+	<ww:hidden name="urlchk_${mov.idMov}" value="${mov.nmPdf}" />
 	<c:set var="jspServer"
 			value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 	<c:set var="nextURL"
@@ -371,9 +368,9 @@ function visualizarImpressao(via) {
 	<ww:else>
 	    <c:set var="botao" value=""/>
 	</ww:else>
-	<c:set var="lote" value="false"/>
+	<c:set var="lote" value="false"/>	
 		
-	${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL,botao,lote)}
+	${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
 </c:if>			
 
 		</div>

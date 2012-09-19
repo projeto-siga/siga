@@ -62,6 +62,9 @@ public class UsuarioAction extends SigaActionSupport {
 	
 	private Long idOrgao;
 	
+	private String trocarSenhaRede;
+	
+	
 	public String getCpf1() {
 		return cpf1;
 	}
@@ -312,7 +315,7 @@ public class UsuarioAction extends SigaActionSupport {
 	public String aTrocarSenha() throws Exception {
 		return Action.SUCCESS;
 	}
-
+	
 	public String aTrocarSenhaGravar() throws Exception {
 		String msgAD = "";
 		getRequest().setAttribute("volta", "troca");
@@ -326,7 +329,11 @@ public class UsuarioAction extends SigaActionSupport {
 		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
 				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
 				getIdentidadeCadastrante());
-		boolean senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
+		boolean senhaTrocadaAD = false;
+		
+		if (trocarSenhaRede!=null && trocarSenhaRede.equals("on")){
+			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);	
+		}
 
 		if (isIntegradoAD(nomeUsuario) && senhaTrocadaAD){
 			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.";
@@ -397,6 +404,14 @@ public class UsuarioAction extends SigaActionSupport {
 	
 	public boolean isBaseTeste() {
 		return  Boolean.valueOf(System.getProperty("isBaseTest").trim());
+	}
+
+	public void setTrocarSenhaRede(String trocarSenhaRede) {
+		this.trocarSenhaRede = trocarSenhaRede;
+	}
+
+	public String isTrocarSenhaRede() {
+		return trocarSenhaRede;
 	}
 }
 

@@ -45,8 +45,8 @@ function fechaJanela(){
 
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-		<script language="VBScript">
-Function assinar()
+		<script type="text/vbscript">
+Function assinar1()
 	prov = MsgBox("Confirma que o ${msgScript} a ser assinado foi devidamente analisado?", vbYesNo, "Confirmação")
 	If prov = vbYes then
 		Dim Assinatura
@@ -76,6 +76,35 @@ Function assinar()
 
 	
 End Function
+
+Function assinar()
+	Dim Assinatura
+	Dim Configuracao
+	On Error Resume Next
+	Set Configuracao = CreateObject("CAPICOM.Settings")
+	Configuracao.EnablePromptForCertificateUI = True
+	Set Assinatura = CreateObject("CAPICOM.SignedData")
+	Set Util = CreateObject("CAPICOM.Utilities")
+	If Erro Then Exit Function
+	Assinatura.Content = Util.Base64Decode(frm.conteudo_b64.value)
+	frm.conteudo_b64.value = Null
+	frm.assinaturaB64.value = Assinatura.Sign(Nothing, True, 0)
+	If Erro Then Exit Function
+	Dim Assinante
+	Assinante = Assinatura.Signers(1).Certificate.SubjectName
+	Assinante = Split(Assinante, "CN=")(1)
+	Assinante = Split(Assinante, ",")(0)
+	frm.assinante.value = Assinante
+	If Erro Then Exit Function
+	frm.Submit()
+End Function
+
+Function aloMundo()
+  document.write("Alo Mundo")
+End Function
+
+
+
 
 Function Erro() 
 	If Err.Number <> 0 then
@@ -343,9 +372,9 @@ function visualizarImpressao(via) {
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
 							<input type="button" value="Conferir Cópia"
-										onclick="vbscript:assinar" />							
-							<input type="button" value="Assinar Anexo"
-										onclick="vbscript:assinar" />
+										onclick="vbscript: aloMundo" />						
+							<input type="button" value="Assinar" onclick="vbscript: assinar()" />						
+										
 						</c:when>
 					</c:choose>
 				</c:if>			

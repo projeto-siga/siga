@@ -42,7 +42,7 @@ function fechaJanela(){
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 		<script type="text/vbscript">
-Function assinar1(copia)
+Function assinar(copia)
 	prov = MsgBox("Confirma que o ${msgScript} a ser assinado foi devidamente analisado?", vbYesNo, "Confirmação")
 	If prov = vbYes then
 		Dim Assinatura
@@ -71,36 +71,7 @@ Function assinar1(copia)
 		frm.Submit()
 	End If
 
-	
 End Function
-
-Function assinar()
-	Dim Assinatura
-	Dim Configuracao
-	On Error Resume Next
-	Set Configuracao = CreateObject("CAPICOM.Settings")
-	Configuracao.EnablePromptForCertificateUI = True
-	Set Assinatura = CreateObject("CAPICOM.SignedData")
-	Set Util = CreateObject("CAPICOM.Utilities")
-	If Erro Then Exit Function
-	Assinatura.Content = Util.Base64Decode(frm.conteudo_b64.value)
-	frm.conteudo_b64.value = Null
-	frm.assinaturaB64.value = Assinatura.Sign(Nothing, True, 0)
-	If Erro Then Exit Function
-	Dim Assinante
-	Assinante = Assinatura.Signers(1).Certificate.SubjectName
-	Assinante = Split(Assinante, "CN=")(1)
-	Assinante = Split(Assinante, ",")(0)
-	frm.assinante.value = Assinante
-	If Erro Then Exit Function
-	frm.Submit()
-End Function
-
-Function aloMundo(mundo)
-  document.write("Alo " + mundo )
-End Function
-
-
 
 
 Function Erro() 
@@ -349,28 +320,29 @@ function visualizarImpressao(via) {
 						<c:when
 							test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
 							<input type="button" value="Assinar Despacho"
-								onclick="vbscript:assinar" />								
+								onclick="vbscript: assinar('false')" />								
 						</c:when>
 
 
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
 							<input type="button" value="Assinar Transferir"
-								onclick="vbscript:assinar" />
+								onclick="vbscript: assinar('false')" />
 
 						</c:when>
 
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
 							<input type="button" value="Assinar Desentranhamento"
-								onclick="vbscript:assinar" />
+								onclick="vbscript: assinar('false')" />
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
 							<input type="button" value="Assinar Encerramento"
-								onclick="vbscript:assinar" />
+								onclick="vbscript: assinar('false')" />
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
 							<input type="button" value="Conferir Cópia"
-										onclick="vbscript: assinar1('true')" />						
-							<input type="button" value="Assinar" onclick="vbscript: assinar1('false')" />						
+										onclick="vbscript: assinar('true')" />						
+							<input type="button" value="Assinar" 
+							            onclick="vbscript: assinar('false')" />						
 										
 						</c:when>
 					</c:choose>

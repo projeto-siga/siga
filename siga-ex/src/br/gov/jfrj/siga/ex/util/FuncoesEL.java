@@ -815,34 +815,9 @@ public class FuncoesEL {
 		return p.processarModelo(orgao, attrs, null);
 	}
 	
-	public static String obterExtensaoAssinadorLote(CpOrgaoUsuario orgao,
-			String requestScheme, String requestServerName,
-			String requestLocalPort, String requestContextPath, String sigla,
-			String doc_codigoCompacto,String jspServer, String nextURL) throws Exception {
-		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
-		Map attrs = new HashMap();
-		String chaveUrl = null;
-		String urlStr = null;	
-		
-		attrs.put("code_base_path", SigaExProperties.getAssinaturaCodebasePath());
-		attrs.put("messages_url_path", SigaExProperties.getAssinaturaMessagesURLPath());
-		attrs.put("policy_url_path", SigaExProperties.getAssinaturaPorlicyUrlPath());
-		
-		attrs.put("request_scheme", requestScheme);
-		attrs.put("request_serverName", requestServerName);
-		attrs.put("request_localPort", requestLocalPort);
-		attrs.put("request_contextPath", requestContextPath);
-		attrs.put("sigla", sigla);
-		attrs.put("doc_codigoCompacto", doc_codigoCompacto);
-		attrs.put("jspServer", jspServer);
-		attrs.put("nextURL", nextURL);		
-		attrs.put("nmMod", "macro extensaoAssinadorLote");
-		attrs.put("template", "[@extensaoAssinadorLote/]");
-
-		return p.processarModelo(orgao, attrs, null);
-	}
 	
-	public static String obterExtensaoAssinadorLote1(CpOrgaoUsuario orgao,
+	
+	public static String obterExtensaoAssinador(CpOrgaoUsuario orgao,
 			String requestScheme, String requestServerName,
 			String requestLocalPort, String urlPath, 
 			String jspServer, String nextURL, String botao, String lote) throws Exception {
@@ -863,39 +838,12 @@ public class FuncoesEL {
 		attrs.put("nextURL", nextURL);		
 		attrs.put("botao", botao);
 		attrs.put("lote", lote);
-		attrs.put("nmMod", "macro extensaoAssinadorLote1");
-		attrs.put("template", "[@extensaoAssinadorLote1/]");
+		attrs.put("nmMod", "macro extensaoAssinador");
+		attrs.put("template", "[@extensaoAssinador/]");
 
 		return p.processarModelo(orgao, attrs, null);
 	}
 	
-
-	public static String obterExtensaoAssinador(CpOrgaoUsuario orgao,
-			String requestScheme, String requestServerName,
-			String requestLocalPort, String requestContextPath, String sigla,
-			String doc_codigoCompacto,String jspServer, String nextURL, String url_0) throws Exception {
-		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
-		Map attrs = new HashMap();
-
-		
-		attrs.put("code_base_path", SigaExProperties.getAssinaturaCodebasePath());
-		attrs.put("messages_url_path", SigaExProperties.getAssinaturaMessagesURLPath());
-		attrs.put("policy_url_path", SigaExProperties.getAssinaturaPorlicyUrlPath());
-		
-		attrs.put("request_scheme", requestScheme);
-		attrs.put("request_serverName", requestServerName);
-		attrs.put("request_localPort", requestLocalPort);
-		attrs.put("request_contextPath", requestContextPath);
-		attrs.put("sigla", sigla);
-		attrs.put("doc_codigoCompacto", doc_codigoCompacto);
-		attrs.put("jspServer", jspServer);
-		attrs.put("nextURL", nextURL);
-		attrs.put("url_0", url_0);
-
-		attrs.put("nmMod", "macro extensaoAssinador");
-		attrs.put("template", "[@extensaoAssinador/]");
-		return p.processarModelo(orgao, attrs, null);
-	}
 
 	public static String obterBotoesExtensaoAssinador(CpOrgaoUsuario orgao)
 			throws Exception {

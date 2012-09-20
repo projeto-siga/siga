@@ -116,7 +116,7 @@ End Function
    		<c:set var="botao" value=""/>
 		<c:set var="lote" value="false"/>
 	
-		${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
+		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
 	</c:if>	
 	</div></div>
 </siga:pagina>

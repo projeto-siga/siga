@@ -18,15 +18,11 @@ function fechaJanela(){
 }
 </script>
 
-	<ww:url id="url" action="assinar_mov_gravar"
-		namespace="/expediente/mov">
-		<ww:param name="id">${mov.idMov}</ww:param>
-		<ww:param name="copia">false</ww:param>
+	<ww:url id="url" value="assinar_mov_gravar.action?id=${mov.idMov}&copia=false"
+		namespace="/expediente/mov" escapeAmp="false" >
 	</ww:url>
-	<ww:url id="url2" action="assinar_mov_gravar"
-		namespace="/expediente/mov">
-		<ww:param name="id">${mov.idMov}</ww:param>
-		<ww:param name="copia">true</ww:param>
+	<ww:url id="url2" value="assinar_mov_gravar.action?id=${mov.idMov}&copia=true"
+		namespace="/expediente/mov" escapeAmp="false" >
 	</ww:url>
 	<c:choose>
 		<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
@@ -46,11 +42,11 @@ function fechaJanela(){
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 		<script type="text/vbscript">
-Function assinar1()
+Function assinar1(copia)
 	prov = MsgBox("Confirma que o ${msgScript} a ser assinado foi devidamente analisado?", vbYesNo, "Confirmação")
 	If prov = vbYes then
 		Dim Assinatura
-		Dim Configuracao
+		Dim Configuracao		        
 		On Error Resume Next
 		Set Configuracao = CreateObject("CAPICOM.Settings")
 		Configuracao.EnablePromptForCertificateUI = True
@@ -67,9 +63,10 @@ Function assinar1()
 		Assinante = Split(Assinante, ",")(0)
 		frm.assinante.value = Assinante
 		If Erro Then Exit Function    
-        If copia  = "copia"
-		  Then frm.action="<ww:property value="%{url2}"/>"
-		  Else frm.action="<ww:property value="%{url}"/>"
+        If copia  = "true" Then 
+            frm.action="${url2}"
+		Else 
+            frm.action="${url}"
         End If
 		frm.Submit()
 	End If
@@ -99,8 +96,8 @@ Function assinar()
 	frm.Submit()
 End Function
 
-Function aloMundo()
-  document.write("Alo Mundo")
+Function aloMundo(mundo)
+  document.write("Alo " + mundo )
 End Function
 
 
@@ -372,8 +369,8 @@ function visualizarImpressao(via) {
 						</c:when>
 						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
 							<input type="button" value="Conferir Cópia"
-										onclick="vbscript: aloMundo" />						
-							<input type="button" value="Assinar" onclick="vbscript: assinar()" />						
+										onclick="vbscript: assinar1('true')" />						
+							<input type="button" value="Assinar" onclick="vbscript: assinar1('false')" />						
 										
 						</c:when>
 					</c:choose>
@@ -399,7 +396,7 @@ function visualizarImpressao(via) {
 	</ww:else>
 	<c:set var="lote" value="false"/>	
 		
-	${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
+	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
 </c:if>			
 
 		</div>

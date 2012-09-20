@@ -241,7 +241,7 @@
 					<c:set var="urlPath" value="/${request.contextPath}" />						
 					<c:set var="botao" value="ambos" />
 					<c:set var="lote" value="true" />			
-					${f:obterExtensaoAssinadorLote1(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
+					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
 				</c:if>
 
 			</ww:form>

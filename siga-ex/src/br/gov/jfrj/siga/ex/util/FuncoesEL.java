@@ -842,16 +842,6 @@ public class FuncoesEL {
 		attrs.put("template", "[@extensaoAssinador/]");
 
 		return p.processarModelo(orgao, attrs, null);
-	}
-	
-
-	public static String obterBotoesExtensaoAssinador(CpOrgaoUsuario orgao)
-			throws Exception {
-		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
-		Map attrs = new HashMap();
-		attrs.put("nmMod", "macro botoesExtensaoAssinador");
-		attrs.put("template", "[@botoesExtensaoAssinador/]");
-		return p.processarModelo(orgao, attrs, null);
-	}
+	}	
 
 }

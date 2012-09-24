@@ -286,9 +286,5 @@
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.String obterExtensaoAssinador(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)</function-signature>
  </function> 
- <function>
-  <name>obterBotoesExtensaoAssinador</name>
-  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.String obterBotoesExtensaoAssinador(br.gov.jfrj.siga.dp.CpOrgaoUsuario)</function-signature>
- </function>    
+     
 </taglib>

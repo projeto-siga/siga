@@ -86,34 +86,37 @@ End Function
 	<!--</c:otherwise>
 </c:choose>-->
 
-	<ww:form name="frm" id="frm" action="${acao}"
-		namespace="/expediente/mov" theme="simple" validate="false"
-		method="POST">
+		<ww:form name="frm" id="frm" action="${acao}"
+			namespace="/expediente/mov" theme="simple" validate="false"
+			method="POST">
 		<ww:hidden name="sigla" value="${sigla}" />
 		<table border="0" width="100%">
 			<tr>
 				<td style="padding-top:10px">
-					<center>
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
-					<ww:hidden name="conteudo_b64"
-						value="${doc.conteudoBlobPdfB64}" /> <ww:hidden
-						name="assinaturaB64" /> <ww:hidden name="assinante" />
-						<input type="button" value="Assinar" onclick="vbscript: assinar" />
-</c:if>						
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
-						${f:obterBotoesExtensaoAssinador(lotaTitular.orgaoUsuario)}
-</c:if>						
-					</center>
+					<left>
+						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
+							<ww:hidden name="conteudo_b64"
+								value="${doc.conteudoBlobPdfB64}" /> <ww:hidden
+								name="assinaturaB64" /> <ww:hidden name="assinante" />
+								<input type="button" value="Assinar" onclick="vbscript: assinar" />
+						</c:if>						
+						
+					</left>
 				</td>
 			</tr>
 		</table>
 	</ww:form>
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
-	<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action?sigla=${sigla}" />
-    <c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}"  />
-    <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/hashSHA1/doc/${doc.codigoCompacto}.pdf"  />
-    <%-- <c:set var="url_0" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/semmarcas/doc/${doc.codigoCompacto}.pdf"  /> --%>
-	${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,sigla,doc.codigoCompacto,jspServer,nextURL,url_0 )}
-</c:if>	
+	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
+		<ww:hidden name="pdfchk_${doc.idDoc}" value="${sigla}" />
+		<ww:hidden name="urlchk_${doc.idDoc}" value="doc/${doc.codigoCompacto}.pdf" />
+		<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action" />
+   	 	<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}"  />
+    	<c:set var="urlPath" value="/${request.contextPath}/expediente" />
+  
+   		<c:set var="botao" value=""/>
+		<c:set var="lote" value="false"/>
+	
+		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
+	</c:if>	
 	</div></div>
 </siga:pagina>

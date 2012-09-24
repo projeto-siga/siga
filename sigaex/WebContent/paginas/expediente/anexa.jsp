@@ -215,11 +215,12 @@
 														popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 														ajax="${acao.ajax}" idAjax="${mov.idMov}" />
 													<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
-										<c:set var="assinadopor" value="${false}" />
+														<c:set var="assinadopor" value="${false}" />
 													</c:if>
 												</c:forEach>
 												<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
-													<ww:hidden name="pdf${x}" value="${mov.mov.nmPdf}" />
+													<ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
+													<ww:hidden name="url${x}" value="${mov.mov.nmPdf}" />
 												</c:if>	
 											</siga:links></td>
 									</tr>
@@ -236,8 +237,11 @@
 					<c:set var="jspServer"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 					<c:set var="nextURL"
-						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />		
-					${f:obterExtensaoAssinadorLote(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,request.contextPath,mobilVO.sigla,doc.codigoCompacto,jspServer,nextURL)}
+						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
+					<c:set var="urlPath" value="/${request.contextPath}" />						
+					<c:set var="botao" value="ambos" />
+					<c:set var="lote" value="true" />			
+					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
 				</c:if>
 
 			</ww:form>

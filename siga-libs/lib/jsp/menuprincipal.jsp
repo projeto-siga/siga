@@ -19,7 +19,24 @@
 					</li> -->
 					<!-- <li><a href="/SigaServicos/">Serviços</a>
 					</li> -->
-					<li><a href="http://siga-novo:9080/siga/principal.action?sistema=/siga-beneficios/">Benefícios</a>
+					<li><a href="http://siga-novo:9080/siga/principal.action?sistema=/siga-beneficios/">Pessoas</a>
+							<ul>
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro')}">
+									<li><a href="${f:getURLSistema('siga.sgp.cad')}">Siga&nbsp;SGP&nbsp;-&nbsp;Cadastro</a></li>
+								</c:if>
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação')}">
+									<li><a href="${f:getURLSistema('siga.sgp.lot')}">Siga&nbsp;SGP&nbsp;-&nbsp;Lotação</a></li>
+								</c:if>
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios')}">
+									<li><a href="${f:getURLSistema('siga.sgp.bnf')}">Siga&nbsp;SGP&nbsp;-&nbsp;Benefícios</a></li>
+								</c:if>
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
+									<li><a href="${f:getURLSistema('siga.sgp.aq')}">Siga&nbsp;SGP&nbsp;-&nbsp;AQ</a></li>
+								</c:if>
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento')}">
+									<li><a href="${f:getURLSistema('siga.sgp.trn')}">Siga&nbsp;SGP&nbsp;-&nbsp;Treinamento</a></li>
+								</c:if>
+							</ul>
 					</li>
 				</ul>
 			</li>

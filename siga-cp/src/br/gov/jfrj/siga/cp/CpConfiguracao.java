@@ -49,9 +49,15 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Table(name = "CP_CONFIGURACAO", schema = "CORPORATIVO")
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQueries({ @NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""
-		+ "select max(cpcfg.hisDtIni), max(cpcfg.hisDtFim) "
-		+ "from CpConfiguracao cpcfg") })
+@NamedQueries({
+		@NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""
+				+ "select max(cpcfg.hisDtIni), max(cpcfg.hisDtFim) "
+				+ "from CpConfiguracao cpcfg"),
+		@NamedQuery(name = "consultarCpConfiguracoes", query = "from "
+				+ "CpConfiguracao cpcfg where (:idTpConfiguracao is null or "
+				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)")
+
+})
 public class CpConfiguracao extends AbstractCpConfiguracao {
 
 	/**
@@ -78,8 +84,8 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 	public Long getId() {
 		return getIdConfiguracao();
 	}
-	
-	public void setId(Long id){
+
+	public void setId(Long id) {
 		setIdConfiguracao(id);
 	}
 

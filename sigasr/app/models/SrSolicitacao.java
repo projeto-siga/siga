@@ -1,16 +1,20 @@
 package models;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,6 +37,7 @@ import controllers.SrDao;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -45,7 +50,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_SOLICITACAO")
-public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
+public class SrSolicitacao extends EntidadePlay {
 
 	@Id
 	@GeneratedValue
@@ -92,13 +97,11 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 	@JoinColumn(name = "ID_ORGAO_USU")
 	public CpOrgaoUsuario orgaoUsuario;
 
-	// Não entendi o porquê de ser necessário o insertable e o updatable. Ocorre
-	// erro de ID repetido
 	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO_PAI", insertable = false, updatable = false)
-	public SrSolicitacao solcitacaoPai;
+	@JoinColumn(name = "ID_SOLICITACAO_PAI")
+	public SrSolicitacao solicitacaoPai;
 
-	@Column(name = "FORMA_ACOMPANHAMENTO")
+	@Enumerated
 	public SrFormaAcompanhamento formaAcompanhamento;
 
 	@ManyToOne
@@ -117,13 +120,13 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 	@Column(name = "DESCR_SOLICITACAO", length = 8192)
 	public String descrSolicitacao;
 
-	@Column(name = "GRAVIDADE")
+	@Enumerated
 	public SrGravidade gravidade;
 
-	@Column(name = "TENDENCIA")
+	@Enumerated
 	public SrTendencia tendencia;
 
-	@Column(name = "URGENCIA")
+	@Enumerated
 	public SrUrgencia urgencia;
 
 	@Column(name = "DT_REG")
@@ -135,39 +138,39 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 	@Column(name = "TEL_PRINCIPAL")
 	public String telPrincipal;
 
-	@Column(name = "FECHAMENTO_ABERTURA")
-	@Type(type = "yes_no")
-	public boolean fechamentoAbertura;
+	@Transient
+	public boolean fecharAoAbrir;
 
-	@Column(name = "MOTIVO_FECHAMENTO_ABERTURA")
+	@Transient
 	public String motivoFechamentoAbertura;
 
 	@Column(name = "NUM_SOLICITACAO")
 	public Long numSolicitacao;
 
-	@Column(name = "ANO_EMISSAO")
-	public Integer anoEmissao;
-
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
 
-	@ManyToOne()
-	@JoinColumn(name = "ID_SOLICITACAO_PAI")
-	public SrSolicitacao solicitacaoPai;
+	@Column(name = "DT_INICIO_ATENDIMENTO")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date dtInicioAtendimento;
+
+	@Column(name = "DT_FECHAMENTO")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date dtFimAtendimento;
 
 	@ManyToMany(cascade = CascadeType.PERSIST)
 	public List<SrAtributo> atributoSet;
 
-	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	// O where abaixo teve de ser explícito porque os id_refs conflitam, e
 	// o Hibernate, por estranho que pareça, não consegue retornar os
 	// registros corretos
 	@Where(clause = "ID_TP_MARCA=2")
-	public List<SrMarca> marcaSet;
+	public Set<SrMarca> marcaSet;
 
-	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@OrderBy("idAndamento DESC")
-	public List<SrAndamento> andamentoSet;
+	public Set<SrAndamento> andamentoSet;
 
 	@OneToMany(mappedBy = "solicitacaoPai", cascade = CascadeType.PERSIST)
 	public List<SrSolicitacao> solicitacaoFilhaSet;
@@ -189,7 +192,7 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 		this.lotaSolicitante = lotaSolicitante;
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
-		this.solcitacaoPai = solcitacaoPai;
+		this.solicitacaoPai = solcitacaoPai;
 		this.formaAcompanhamento = formaAcompanhamento;
 		this.itemConfiguracao = itemConfiguracao;
 		this.servico = servico;
@@ -205,9 +208,7 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 	public String getCodigo() {
 
 		if (solicitacaoPai != null)
-			return solicitacaoPai.getCodigo()
-					+ (numSequencia < 10 ? ".0" : ".")
-					+ numSequencia.toString();
+			return solicitacaoPai.getCodigo() + "." + getNumSequenciaString();
 
 		String numString = numSolicitacao.toString();
 
@@ -293,6 +294,11 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 		idSolicitacao = id;
 	}
 
+	// Necessário porque não há binder para arquivo
+	public void setArquivo(File file) {
+		this.arquivo = SrArquivo.newInstance(file);
+	}
+
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		// TODO Auto-generated method stub
@@ -309,19 +315,36 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 	}
 
 	public SrAndamento getUltimoAndamento() {
-		if (andamentoSet != null)
-			for (SrAndamento andamento : andamentoSet)
-				return andamento;
+		if (getHistoricoAndamentoSet() == null)
+			return null;
+		for (SrAndamento andamento : getHistoricoAndamentoSet())
+			return andamento;
 		return null;
 	}
 
+	public DpLotacao getLotaAtendente() {
+		return getUltimoAndamento().lotaAtendente;
+	}
+
+	public DpPessoa getAtendente() {
+		return getUltimoAndamento().atendente;
+	}
+
 	public String getSituacao() {
-		return getUltimoAndamento().estado.descrEstado;
+		return getUltimoAndamento().getSituacao();
+	}
+
+	public String getDtRegDDMMYYYYHHMM() {
+		if (dtReg != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return df.format(dtReg);
+		}
+		return "";
 	}
 
 	public SrAndamento getAndamentoAnterior(SrAndamento ref) {
 		boolean retorna = false;
-		for (SrAndamento andamento : andamentoSet) {
+		for (SrAndamento andamento : getHistoricoAndamentoSet()) {
 			if (retorna)
 				return andamento;
 			if (andamento == ref)
@@ -330,15 +353,13 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 		return null;
 	}
 
-	public boolean podeAlterarAtendente(DpLotacao lota, DpPessoa pess) {
-
-		return ((getUltimoAndamento().atendente != null && getUltimoAndamento().atendente
-				.equivale(pess)) || getUltimoAndamento().lotaAtendente
-				.equivale(lota));
+	public boolean houveQualquerAndamento() {
+		return getHistoricoAndamentoSet(true).size() > 0;
 	}
 
-	public boolean houveAndamentos() {
-		return getUltimoAndamento() != null;
+	public boolean houveAndamentosSemContarCriacao() {
+		return getHistoricoAndamentoSet(true).size() > 1;
+
 	}
 
 	public Long buscarProximoNumero() {
@@ -350,9 +371,233 @@ public class SrSolicitacao extends GenericModel implements HistoricoAuditavel {
 		return (num != null) ? num : 1;
 	}
 
+	public Long getNumeroProximaFilha() {
+		Long num = find(
+				"select max(numSequencia)+1 from SrSolicitacao where solicitacaoPai.idSolicitacao = "
+						+ idSolicitacao).first();
+		return (num != null) ? num : 1;
+	}
+
 	public String getAnoEmissao() {
 		if (dtReg == null)
 			return null;
 		return new SimpleDateFormat("yyyy").format(dtReg);
 	}
+
+	public String getNumSequenciaString() {
+		if (numSequencia == null)
+			return null;
+		return (numSequencia < 10 ? "0" : "") + numSequencia.toString();
+	}
+
+	public SrSolicitacao getSolicitacaoIniciai() {
+		if (getHisIdIni() != null)
+			return findById(getHisIdIni());
+		return null;
+	}
+
+	public List<SrSolicitacao> getHistoricoSolicitacao() {
+		if (getHisIdIni() == null)
+			return null;
+		return find(
+				"from SrSolicitacao where hisIdIni = " + getHisIdIni()
+						+ " order by idSolicitacao desc").fetch();
+	}
+
+	public SrSolicitacao getSolicitacaoAtual() {
+		List<SrSolicitacao> sols = getHistoricoSolicitacao();
+		if (sols == null)
+			return null;
+		return sols.get(0);
+	}
+
+	// Nao pude chamar de getAndamentoSet porque houve conflito com
+	// o atributo de mesmo nome
+	public List<SrAndamento> getHistoricoAndamentoSet() {
+		return getHistoricoAndamentoSet(false);
+	}
+
+	public List<SrAndamento> getHistoricoAndamentoSet(
+			boolean considerarCancelados) {
+		if (getHisIdIni() == null)
+			return null;
+		ArrayList<SrAndamento> listaCompleta = new ArrayList<SrAndamento>();
+		for (SrSolicitacao sol : getHistoricoSolicitacao())
+			if (sol.andamentoSet != null)
+				if (considerarCancelados)
+					listaCompleta.addAll(sol.andamentoSet);
+				else
+					for (SrAndamento andamento : sol.andamentoSet)
+						if (!andamento.isCancelado()
+								&& !andamento.isCancelador())
+							listaCompleta.add(andamento);
+
+		return listaCompleta;
+	}
+
+	public DpLotacao getPreAtendente() throws Exception {
+
+		return getConfiguracao(itemConfiguracao, servico,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO).preAtendente;
+	}
+
+	public DpLotacao getPosAtendente() throws Exception {
+
+		return getConfiguracao(itemConfiguracao, servico,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO).posAtendente;
+	}
+
+	public boolean isFechado() {
+		return dtFimAtendimento != null;
+	}
+
+	public boolean isPreAtendido() {
+		return dtInicioAtendimento != null;
+	}
+
+	public boolean isEmAtendimento() {
+		return isPreAtendido() && !isFechado();
+	}
+
+	public boolean temPreAtendente() throws Exception {
+		return (getPreAtendente() != null);
+	}
+
+	public boolean podeMovimentar(DpLotacao lota, DpPessoa pess) {
+
+		return ((getUltimoAndamento().atendente != null && getUltimoAndamento().atendente
+				.equivale(pess)) || getUltimoAndamento().lotaAtendente
+				.equivale(lota));
+	}
+
+	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
+		return podeMovimentar(lota, pess) && solicitacaoPai == null;
+	}
+
+	public boolean podeDesfazerAndamento(DpLotacao lota, DpPessoa pess) {
+		return getUltimoAndamento().lotaCadastrante.equivale(lota)
+				&& houveAndamentosSemContarCriacao();
+	}
+
+	public SrSolicitacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
+			throws Exception {
+		this.cadastrante = cadastrante;
+		this.lotaCadastrante = lotaCadastrante;
+		return salvar();
+	}
+
+	public void completarCampos() {
+		dtReg = new Date();
+
+		if (lotaCadastrante == null)
+			lotaCadastrante = cadastrante.getLotacao();
+
+		if (solicitante == null)
+			solicitante = cadastrante;
+
+		if (lotaSolicitante == null)
+			lotaSolicitante = solicitante.getLotacao();
+
+		if (orgaoUsuario == null)
+			orgaoUsuario = lotaSolicitante.getOrgaoUsuario();
+
+		if (numSolicitacao == null && solicitacaoPai == null)
+			numSolicitacao = buscarProximoNumero();
+	}
+
+	public void nova() throws Exception {
+
+		completarCampos();
+
+		super.salvar();
+
+		if (fecharAoAbrir)
+			finalizarAtendimento();
+		else if (temPreAtendente())
+			iniciarPreAtendimento();
+		else
+			iniciarAtendimento();
+	}
+
+	public SrSolicitacao salvar() throws Exception {
+
+		if (idSolicitacao == null)
+			nova();
+		else
+			super.salvar();
+
+		return this;
+	}
+
+	public void iniciarPreAtendimento() {
+
+	}
+
+	public void finalizarPreAtendimento() {
+
+	}
+
+	public void iniciarAtendimento() {
+
+	}
+
+	public void finalizarAtendimento() throws Exception {
+		darAndamento(SrEstado.FECHADO, motivoFechamentoAbertura,
+				getPosAtendente());
+	}
+
+	public void darAndamento(SrEstado estado, String descricao,
+			DpLotacao lotaAtendente) throws Exception {
+
+		darAndamento(estado, descricao, null, lotaAtendente, cadastrante,
+				lotaCadastrante);
+
+	}
+
+	public void darAndamento(SrEstado estado, String descricao,
+			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
+			DpLotacao lotaCadastrante) throws Exception {
+
+		new SrAndamento(estado, descricao, atendente,
+				lotaAtendente, cadastrante, lotaCadastrante).salvar();
+
+	}
+
+	public void atualizarMarcas() {
+
+		for (SrSolicitacao sol : getHistoricoSolicitacao())
+			sol.removerMarcas();
+
+		marcar(getUltimoAndamento());
+
+	}
+
+	public void marcar(SrAndamento andamento) {
+
+		Long marcador;
+
+		if (andamento.estado == SrEstado.FECHADO)
+			marcador = CpMarcador.MARCADOR_SOLICITACAO_FECHADO;
+		else if (andamento.estado == SrEstado.PENDENTE)
+			marcador = CpMarcador.MARCADOR_SOLICITACAO_PENDENTE;
+		else if (andamento.estado == SrEstado.CANCELADO)
+			marcador = CpMarcador.MARCADOR_SOLICITACAO_CANCELADO;
+		else
+			marcador = CpMarcador.MARCADOR_SOLICITACAO_A_RECEBER;
+
+		marcar(marcador, andamento.lotaAtendente, andamento.atendente);
+
+	}
+
+	public void marcar(Long marcador, DpLotacao lotacao, DpPessoa pessoa) {
+
+		new SrMarca(marcador, pessoa, lotacao, this).salvar();
+	}
+
+	public void removerMarcas() {
+		if (marcaSet != null)
+			for (SrMarca marca : marcaSet)
+				JPA.em().remove(marca);
+	}
+
 }

@@ -4,11 +4,14 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 
+import controllers.Sr;
 import controllers.SrBL;
 import controllers.SrDao;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import play.*;
 import play.db.jpa.JPA;
@@ -28,13 +31,14 @@ public class Bootstrap extends Job {
 			try {
 				SrItemConfiguracao softwares = new SrItemConfiguracao(
 						"01.00.00.00", "Softwares");
-				softwares = SrDao.getInstance().salvar(softwares, "RJ13285");
+				softwares.salvar();
+				//softwares = SrDao.getInstance().salvar(softwares, "RJ13285");
 				geDoc = new SrItemConfiguracao("01.01.00.00",
 						"Sistemas de gestão documental");
-				geDoc = SrDao.getInstance().salvar(geDoc, "RJ13285");
+				geDoc.salvar();
 				gePat = new SrItemConfiguracao("01.02.00.00",
 						"Sistemas de gestão patrimonial");
-				gePat = SrDao.getInstance().salvar(gePat, "RJ13285");
+				gePat.salvar();
 
 				/*
 				 * SrItemConfiguracao geTrab = new
@@ -74,10 +78,10 @@ public class Bootstrap extends Job {
 				 */
 				SrServico soft = new SrServico("01.00",
 						"Serviços típicos de software");
-				soft = SrDao.getInstance().salvar(soft, "RJ13285");
+				soft.salvar();
 				SrServico hard = new SrServico("02.00",
 						"Serviços típicos de hardware");
-				hard = SrDao.getInstance().salvar(hard, "RJ13285");
+				hard.salvar();
 
 				/*
 				 * SrServico proj = new SrServico("01.01",
@@ -134,11 +138,14 @@ public class Bootstrap extends Job {
 				 */
 
 				DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
+				DpPessoa tah = JPA.em().find(DpPessoa.class, 21254L);
 				DpPessoa gmb = JPA.em().find(DpPessoa.class, 3558L);
 				DpPessoa simone = JPA.em().find(DpPessoa.class, 3729L);
 				DpPessoa lys = JPA.em().find(DpPessoa.class, 3853L);
 				DpPessoa kpf = JPA.em().find(DpPessoa.class, 10331L);
 
+				SrDao.getInstance();
+				
 				SrSolicitacao sol1 = new SrSolicitacao();
 				sol1.cadastrante = eeh;
 				sol1.descrSolicitacao = "Solicito testar bastante, para que depois não se dê a desculpa de não ter havido oportunidades suficientes para detecção de erros.";
@@ -149,12 +156,12 @@ public class Bootstrap extends Job {
 				sol1.local = "Almirante Barroso";
 				sol1.lotaCadastrante = eeh.getLotacao();
 				sol1.orgaoUsuario = eeh.getOrgaoUsuario();
-				sol1.solicitante = gmb;
+				sol1.solicitante = tah;
 				sol1.lotaSolicitante = gmb.getLotacao();
 				sol1.tendencia = SrTendencia.PIORA_CURTO_PRAZO;
 				sol1.urgencia = SrUrgencia.ALGUMA_URGENCIA;
 				sol1.dtReg = new Date();
-				sol1 = SrBL.criar(sol1);
+				sol1.salvar();
 
 				SrSolicitacao sol2 = new SrSolicitacao();
 				sol2.cadastrante = eeh;
@@ -166,7 +173,7 @@ public class Bootstrap extends Job {
 				sol2.local = "Rio Branco";
 				sol2.lotaCadastrante = lys.getLotacao();
 				sol2.orgaoUsuario = lys.getOrgaoUsuario();
-				sol2.solicitante = simone;
+				sol2.solicitante = eeh;
 				sol2.lotaSolicitante = simone.getLotacao();
 				sol2.tendencia = SrTendencia.PIORA_IMEDIATA;
 				sol2.urgencia = SrUrgencia.AGIR_IMEDIATO;
@@ -176,8 +183,22 @@ public class Bootstrap extends Job {
 				} catch (ParseException pe) {
 					//
 				}
-				sol2 = SrBL.criar(sol2);
-			} catch (AplicacaoException e) {
+				sol2.salvar();
+				
+				SrConfiguracao desig = new SrConfiguracao();
+				desig.setCpTipoConfiguracao(JPA.em().find(
+						CpTipoConfiguracao.class,
+						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+				desig.servico = hard;
+				desig.itemConfiguracao = geDoc;
+				desig.preAtendente = eeh.getLotacao();
+				desig.salvar();
+				
+				DpLotacao preAtendente = sol2.getPreAtendente();
+				
+				int a = 0;
+				
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

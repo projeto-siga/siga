@@ -25,22 +25,36 @@ _solicitacoes.add(_solicitacao); } }%
 							<th>Aberto:</th>
 							<td>${sol.dtRegString}</td>
 						</tr>
-						#{if (sol.GUT > 80)} #{set priorColor:'red' /} #{/if}
-						#{elseif (sol.GUT > 60)} #{set priorColor:'orange' /} #{/elseif}
-						#{else} #{set priorColor:'black' /} #{/else}
+						#{if (sol.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
+						#{elseif (sol.GUT > 60)} #{set priorColor:'color: orange' /} #{/elseif}
+						#{else} #{set priorColor:'' /} #{/else}
 						<tr >
 							<th style="color: ${priorColor}">Prioridade:</th> 
-							<td width="60%" style="color: ${priorColor}" >${sol.GUTPercent}</td>
+							<td width="60%" style="${priorColor}" >${sol.GUTPercent}</td>
 						</tr>
 						<tr>
 							<th>Situação:</th>
-							<td>${sol.situacao}</a>
+							<td>${sol.situacao}</td>
 							</td>
 						</tr>
 						#{if sol.arquivo}
 						<tr>
 							<th>Anexo:</th>
-							<td>#{arquivo arquivo:sol.arquivo /}</a>
+							<td>#{arquivo arquivo:sol.arquivo /}</td>
+							</td>
+						</tr>
+						#{/if}
+						#{if sol.solicitacaoPai}
+						<tr>
+							<th>Solicitação mãe:</th>
+							<td><a href="@{Application.exibir(sol.solicitacaoPai.idSolicitacao)}">${sol.solicitacaoPai.codigo}</a></td>
+							</td>
+						</tr>
+						#{/if}
+						#{if sol.solicitacaoFilhaSet}
+						<tr>
+							<th>Solicitações filhas:</th>
+							<td>#{list items:sol.solicitacaoFilhaSet, as:'filha'}<a href="@{Application.exibir(filha.idSolicitacao)}">${filha.numSequenciaString}</a>&nbsp;#{/list}</td>
 							</td>
 						</tr>
 						#{/if}

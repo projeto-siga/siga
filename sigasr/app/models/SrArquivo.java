@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import org.apache.commons.io.IOUtils;
 
 import play.db.jpa.GenericModel;
+import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 
 @Entity
@@ -23,7 +24,7 @@ public class SrArquivo extends GenericModel {
 	@Id
 	@GeneratedValue
 	@Column(name = "ID_ARQUIVO")
-	public long idArquivo;
+	public Long idArquivo;
 
 	@Lob
 	public byte[] blob;
@@ -37,19 +38,31 @@ public class SrArquivo extends GenericModel {
 	@Column(name = "DESCRICAO")
 	public String descricao;
 
-	// Necessário porque não há binder para arquivo
-	public void setFile(File file) {
+	private SrArquivo() {
+
+	}
+
+	private SrArquivo(File file) {
+		try {
+
+			nomeArquivo = file.getName();
+			blob = IOUtils.toByteArray(new FileInputStream(file));
+			mime = new javax.activation.MimetypesFileTypeMap()
+					.getContentType(file);
+		} catch (IOException ioe) {
+			// Ver o que fazer aqui
+		}
+	}
+
+	// Necessário porque é preciso garantir
+	// que o SrArquivo não seja instanciado a não ser que realmente tenha sido
+	// selecionado um arquivo no form (para que não surja um registro SrArquivo
+	// sem conteúdo no banco)
+	public static SrArquivo newInstance(File file) {
 		if (file != null)
-
-			try {
-
-				nomeArquivo = file.getName();
-				blob = IOUtils.toByteArray(new FileInputStream(file));
-				mime = new javax.activation.MimetypesFileTypeMap()
-						.getContentType(file);
-			} catch (IOException ioe) {
-				//Ver o que fazer aqui
-			}
+			return new SrArquivo(file);
+		else
+			return null;
 	}
 
 }

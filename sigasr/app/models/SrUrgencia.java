@@ -11,13 +11,11 @@ import play.db.jpa.Model;
 
 public enum SrUrgencia {
 
-	SEM_PRESSA(1, "Resolver sem pressa", "Não tem pressa"), PODE_ESPERAR(2,
-			"Solução pode esperar um pouco", "Pode esperar um pouco"), MAIS_CEDO_POSSIVEL(
+	SEM_PRESSA(1, "Resolver sem pressa", "Sem pressa"), PODE_ESPERAR(2,
+			"Solução pode esperar um pouco", "Quando for oportuno"), MAIS_CEDO_POSSIVEL(
 			3, "Resolver o mais cedo possível", "O mais cedo possível"), ALGUMA_URGENCIA(
 			4, "Resolver com urgência", "Com urgência"), AGIR_IMEDIATO(5,
 			"Resolver imediatamente", "Imediatamente");
-
-	public static String ENUNCIADO = "O problema deve ser resolvido...";
 
 	public int nivelUrgencia;
 

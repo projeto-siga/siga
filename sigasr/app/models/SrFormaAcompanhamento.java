@@ -14,11 +14,11 @@ public enum SrFormaAcompanhamento {
 	ANDAMENTO(1, "A cada andamento"), FECHAMENTO(2,
 			"Quando o chamado for fechado");
 
-	public long id;
+	public long idFormaAcompanhamento;
 	public String descrFormaAcompanhamento;
 
 	SrFormaAcompanhamento(int id, String descricao) {
-		this.id = id;
+		this.idFormaAcompanhamento = id;
 		this.descrFormaAcompanhamento = descricao;
 	}
 

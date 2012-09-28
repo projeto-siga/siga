@@ -1,28 +1,20 @@
 package controllers;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
+import java.lang.reflect.Method;
+import java.util.Collection;
 
-import javax.persistence.FlushModeType;
+import models.HistoricoPersistivel;
 
-import models.SrConfiguracao;
-import models.SrSolicitacao;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
-import play.db.jpa.JPABase;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.model.Historico;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class SrDao extends CpDao {
 
@@ -40,6 +32,16 @@ public class SrDao extends CpDao {
 	public <T extends HistoricoAuditavel> T salvar(T o, DpPessoa pessoa)
 			throws AplicacaoException {
 		return salvar(o, idAtiva(pessoa.getSigla()));
+	}
+
+	public <T extends HistoricoPersistivel> T salvar(T o, DpPessoa pessoa)
+			throws AplicacaoException {
+		return null;
+	}
+
+	public <T extends HistoricoPersistivel> T salvar(T o, String principal)
+			throws AplicacaoException {
+		return null;
 	}
 
 	public <T extends HistoricoAuditavel> T salvar(T o, String principal)
@@ -63,9 +65,10 @@ public class SrDao extends CpDao {
 			// persistida, invalidando o flush.
 			oNovo = persist(oNovo);
 			Long idNovo = oNovo.getId();
-			PropertyUtils.copyProperties(oNovo, o);
+			copiar(oNovo, o);
 			oNovo.setId(idNovo);
 			oNovo.setHisDtIni(consultarDataEHoraDoServidor());
+			oNovo.setHisDtFim(null);
 
 			if (o.getId() == null) {
 				oNovo.setHisIdIni(oNovo.getId());
@@ -85,12 +88,6 @@ public class SrDao extends CpDao {
 		} catch (IllegalAccessException iae) {
 			// Erro no copyPoperties ou newInstance
 			int a = 0;
-		} catch (NoSuchMethodException nsme) {
-			// Erro no copyPoperties
-			int a = 0;
-		} catch (InvocationTargetException ite) {
-			// Erro no copyPoperties
-			int a = 0;
 		} catch (InstantiationException ie) {
 			// Erro no newInstance
 			int a = 0;
@@ -100,14 +97,14 @@ public class SrDao extends CpDao {
 
 	}
 
-	public <T> T salvarSemHistorico(T o) {
+	public <T> T salvar(T o) {
 		JPA.em().persist(o);
 		JPA.em().flush();
 
 		return o;
 	}
 
-	private <T extends HistoricoAuditavel> T persist(T o) {
+	public <T extends HistoricoAuditavel> T persist(T o) {
 		if (o instanceof GenericModel) {
 			((GenericModel) o).save();
 		} else {
@@ -116,13 +113,13 @@ public class SrDao extends CpDao {
 		return o;
 	}
 
-	private <T extends HistoricoAuditavel> T flushIfNeeded(T o) {
+	public <T extends HistoricoAuditavel> T flushIfNeeded(T o) {
 		if (!(o instanceof GenericModel))
 			JPA.em().flush();
 		return o;
 	}
 
-	private <T extends HistoricoAuditavel> T refresh(T o) {
+	public <T extends HistoricoAuditavel> T refresh(T o) {
 
 		if (o instanceof GenericModel) {
 			((GenericModel) o).refresh();
@@ -132,7 +129,8 @@ public class SrDao extends CpDao {
 		return o;
 	}
 
-	public <T extends HistoricoAuditavel> T finalizar(T o) throws AplicacaoException{
+	public <T extends HistoricoAuditavel> T finalizar(T o)
+			throws AplicacaoException {
 		o.setHisDtFim(consultarDataEHoraDoServidor());
 		o = persist(o);
 		o = flushIfNeeded(o);
@@ -141,6 +139,37 @@ public class SrDao extends CpDao {
 
 	public CpIdentidade idAtiva(String principal) throws AplicacaoException {
 		return consultaIdentidadeCadastrante(principal, true);
+	}
+	
+	public void copiar(HistoricoPersistivel dest, HistoricoPersistivel orig) {
+		
+	}
+
+	public void copiar(HistoricoAuditavel dest, HistoricoAuditavel orig) {
+
+		for (Method getter : orig.getClass().getDeclaredMethods()) {
+			try {
+				String getterName = getter.getName();
+				if (!getterName.startsWith("get"))
+					continue;
+				if (Collection.class.isAssignableFrom(getter.getReturnType()))
+					continue;
+				String setterName = getterName.replace("get", "set");
+				Object origValue = getter.invoke(orig);
+				dest.getClass().getMethod(setterName, getter.getReturnType())
+						.invoke(dest, origValue);
+			} catch (NoSuchMethodException nSME) {
+				int a = 0;
+			} catch (IllegalAccessException iae) {
+				int a = 0;
+			} catch (IllegalArgumentException iae) {
+				int a = 0;
+			} catch (InvocationTargetException nfe) {
+				int a = 0;
+			}
+
+		}
+
 	}
 
 }

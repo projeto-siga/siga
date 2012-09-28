@@ -6,5 +6,5 @@
 		else div.style.display = 'none';
 	}
 </script>
- <input type="checkbox" name="${_name}" value="true" ${_value ? 'checked':''} onclick="javascript:show(this.checked, '${_depende}');" />
+ <input ${_disabled ? disabled="disabled" : "" } type="checkbox" name="${_name}" value="true" ${_value ? 'checked':''} onchange="javascript:show(this.checked, '${_depende}');" />
  

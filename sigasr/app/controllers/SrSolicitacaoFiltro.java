@@ -29,7 +29,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public DpLotacao lotaAtendente;
 
 	public List<SrSolicitacao> buscar() {
-		String query = "from SrSolicitacao sol where 1=1 ";
+		String query = "from SrSolicitacao sol where sol.hisDtFim is null ";
 
 		if (cadastrante != null)
 			query += " and sol.cadastrante.idPessoaIni = "
@@ -50,11 +50,11 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (servico != null && servico.idServico > 0L)
 			query += " and sol.servico.idServico = " + servico.idServico;
 		if (urgencia != null && urgencia.nivelUrgencia > 0)
-			query += " and sol.urgencia = " + (urgencia.nivelUrgencia - 1);
+			query += " and sol.urgencia = " + urgencia.ordinal();
 		if (tendencia != null && tendencia.nivelTendencia > 0)
-			query += " and sol.tendencia = " + (tendencia.nivelTendencia - 1);
+			query += " and sol.tendencia = " + tendencia.ordinal();
 		if (gravidade != null && gravidade.nivelGravidade > 0)
-			query += " and sol.gravidade = " + (gravidade.nivelGravidade - 1);
+			query += " and sol.gravidade = " + gravidade.ordinal();
 
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
 			for (String s : descrSolicitacao.split(" "))

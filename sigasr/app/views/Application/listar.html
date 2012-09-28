@@ -67,14 +67,13 @@
 					<tr>
 						<td>Prioridade</td>
 						<td colspan="3">#{select 'filtro.urgencia', items:urgencias,
-							labelProperty:'descrUrgencia', value:filtro.urgencia,
-							valueProperty:nivelUrgencia } #{option
+							labelProperty:'descrUrgencia', value:filtro.urgencia } #{option
 							0}Todas#{/option}#{/select} #{select 'filtro.gravidade',
 							items:gravidades, labelProperty:'descrGravidade',
-							value:filtro.gravidade, valueProperty:nivelGravidade }#{option
+							value:filtro.gravidade }#{option
 							0}Todas#{/option}#{/select} #{select 'filtro.tendencia',
 							items:tendencias, labelProperty:'descrTendencia',
-							value:filtro.tendencia, valueProperty:nivelTendencia}#{option
+							value:filtro.tendencia}#{option
 							0}Todas#{/option}#{/select}</td>
 					</tr>
 					<tr>

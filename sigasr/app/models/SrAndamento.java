@@ -1,6 +1,10 @@
 package models;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,9 +13,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import notifiers.Correio;
 
 import controllers.SrCalendar;
 
@@ -64,12 +71,45 @@ public class SrAndamento extends GenericModel {
 	@JoinColumn(name = "ID_SOLICITACAO")
 	public SrSolicitacao solicitacao;
 
+	@OneToOne
+	@JoinColumn(name = "ID_ANDAMENTO_CANCELADOR")
+	public SrAndamento andamentoCancelador;
+
+	@OneToOne(mappedBy = "andamentoCancelador")
+	public SrAndamento andamentoCancelado;
+
 	public SrAndamento() {
 		descrAndamento = "Dando andamento ao chamado...";
 	}
 
+	public SrAndamento(SrEstado estado, String descricao, DpPessoa atendente,
+			DpLotacao lotaAtendente, DpPessoa cadastrante,
+			DpLotacao lotaCadastrante) {
+
+		this.cadastrante = cadastrante;
+		this.lotaCadastrante = lotaCadastrante;
+		this.atendente = atendente;
+		this.lotaAtendente = lotaAtendente;
+		this.descrAndamento = descricao;
+		this.estado = estado;
+
+	}
+
 	public SrAndamento getAndamentoAnterior() {
 		return solicitacao.getAndamentoAnterior(this);
+	}
+
+	public boolean isCancelador() {
+		return andamentoCancelado != null;
+	}
+
+	public boolean isCancelado() {
+		return andamentoCancelador != null;
+	}
+
+	public boolean isCriacao() {
+		return !solicitacao.houveAndamentosSemContarCriacao();
+
 	}
 
 	/*
@@ -121,12 +161,75 @@ public class SrAndamento extends GenericModel {
 			return lotaAtendente.getSigla();
 	}
 
+	public String getDtRegDDMMYYYYHHMM() {
+		if (dtReg != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return df.format(dtReg);
+		}
+		return "";
+	}
+
 	public String getCadastranteString() {
 		return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
 	}
 
-	public boolean temAtendente() {
+	public String getSituacao() {
+		return estado.descrEstado + " (" + lotaAtendente.getSigla() + ")";
+	}
+
+	// Necessário porque não há binder para arquivo
+	public void setArquivo(File file) {
+		this.arquivo = SrArquivo.newInstance(file);
+	}
+
+	public boolean temAtendenteOuLota() {
 		return (atendente != null || lotaAtendente != null);
+	}
+
+	public SrAndamento salvar() throws Exception {
+
+		completarCampos();
+
+		save();
+
+		// O refresh é ecessário para o hibernate incluir o novo andamento na
+		// coleção de andamentos da solicitação
+		// Plim
+		refresh();
+
+		solicitacao.atualizarMarcas();
+
+		if (solicitacao.isPreAtendido())
+			notificar();
+
+		return this;
+	}
+
+	public void completarCampos() {
+
+		dtReg = new Date();
+
+		if (atendente != null && lotaAtendente == null)
+			lotaAtendente = atendente.getLotacao();
+
+		if (solicitacao.houveQualquerAndamento()) {
+
+			SrAndamento anterior = solicitacao.getUltimoAndamento();
+
+			if (!temAtendenteOuLota()) {
+
+				lotaAtendente = anterior.lotaAtendente;
+
+				atendente = anterior.atendente;
+			}
+			if (estado == null)
+				estado = anterior.estado;
+
+		}
+	}
+
+	public void notificar() {
+		Correio.notificarAndamento(this);
 	}
 
 }

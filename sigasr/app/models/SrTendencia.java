@@ -21,7 +21,6 @@ public enum SrTendencia {
 			"Vai piorar em curto prazo"), PIORA_IMEDIATA(5,
 			"Se não resolvido, vai piorar imedatamente",
 			"Vai piorar imediatamente");
-	public static String ENUNCIADO = "Se nada for feito, a situação vai piorar...";
 
 	public int nivelTendencia;
 

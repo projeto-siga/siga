@@ -27,8 +27,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO")
-public class SrItemConfiguracao extends GenericModel implements SrSelecionavel,
-		HistoricoAuditavel {
+public class SrItemConfiguracao extends EntidadePlay implements SrSelecionavel {
 
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
 
@@ -159,26 +158,6 @@ public class SrItemConfiguracao extends GenericModel implements SrSelecionavel,
 	}
 
 	@Override
-	public CpIdentidade getHisIdcIni() {
-		return hisIdcIni;
-	}
-
-	@Override
-	public void setHisIdcIni(CpIdentidade hisIdcIni) {
-		this.hisIdcIni = hisIdcIni;
-	}
-
-	@Override
-	public CpIdentidade getHisIdcFim() {
-		return hisIdcFim;
-	}
-
-	@Override
-	public void setHisIdcFim(CpIdentidade hisIdcFim) {
-		this.hisIdcFim = hisIdcFim;
-	}
-
-	@Override
 	public SrItemConfiguracao selecionar(String sigla) {
 		setSigla(sigla);
 		List<SrItemConfiguracao> itens = buscar();
@@ -191,7 +170,8 @@ public class SrItemConfiguracao extends GenericModel implements SrSelecionavel,
 	@Override
 	public List<SrItemConfiguracao> buscar() {
 		String query = "from SrItemConfiguracao where 1=1";
-		if (tituloItemConfiguracao != null && !tituloItemConfiguracao.equals("")) {
+		if (tituloItemConfiguracao != null
+				&& !tituloItemConfiguracao.equals("")) {
 			for (String s : tituloItemConfiguracao.toLowerCase().split("\\s"))
 				query += " and lower(tituloItemConfiguracao) like '%" + s
 						+ "%'";
@@ -231,6 +211,19 @@ public class SrItemConfiguracao extends GenericModel implements SrSelecionavel,
 			pos = getSigla().indexOf(".00", pos + 1);
 		}
 		return 4 - camposVazios;
+	}
+
+	public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
+		if (outroItem == null || outroItem.getSigla() == null)
+			return false;
+		if (this.equals(outroItem))
+			return true;
+		return outroItem.getSigla().contains(
+				getSigla().substring(0, getSigla().indexOf(".00") + 1));
+	}
+
+	public boolean isFilhoDeOuIgualA(SrItemConfiguracao outroItem) {
+		return outroItem.isPaiDeOuIgualA(this);
 	}
 
 }

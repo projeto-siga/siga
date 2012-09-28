@@ -27,7 +27,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_SERVICO")
-public class SrServico extends GenericModel implements SrSelecionavel,
+public class SrServico extends EntidadePlay implements SrSelecionavel,
 		HistoricoAuditavel {
 
 	@Id
@@ -229,6 +229,19 @@ public class SrServico extends GenericModel implements SrSelecionavel,
 			pos = getSigla().indexOf(".00", pos + 1);
 		}
 		return 2 - camposVazios;
+	}
+	
+	public boolean isPaiDeOuIgualA(SrServico outroServico) {
+		if (outroServico == null || outroServico.getSigla() == null)
+			return false;
+		if (this.equals(outroServico))
+			return true;
+		return outroServico.getSigla().contains(
+				getSigla().substring(0, getSigla().indexOf(".00") + 1));
+	}
+
+	public boolean isFilhoDeOuIgualA(SrServico outroItem) {
+		return outroItem.isPaiDeOuIgualA(this);
 	}
 
 }

@@ -278,7 +278,7 @@
  <function>
   <name>obterExtensaoEditor</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.String obterExtensaoEditor(br.gov.jfrj.siga.dp.CpOrgaoUsuario)</function-signature>
+  <function-signature>java.lang.String obterExtensaoEditor(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.String, java.lang.String, java.lang.String)</function-signature>
  </function>
   
  <function>

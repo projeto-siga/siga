@@ -806,10 +806,13 @@ public class FuncoesEL {
 		return p.processarModelo(orgao, attrs, null);
 	}
 
-	public static String obterExtensaoEditor(CpOrgaoUsuario orgao)
+	public static String obterExtensaoEditor(CpOrgaoUsuario orgao, String nome, String conteudo, String serverAndPort)
 			throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
 		Map attrs = new HashMap();
+		attrs.put("serverAndPort", serverAndPort);
+		attrs.put("nomeExtensaoJsp", nome);
+		attrs.put("conteudoExtensaoJsp", conteudo);
 		attrs.put("nmMod", "macro extensaoEditor");
 		attrs.put("template", "[@extensaoEditor/]");
 		return p.processarModelo(orgao, attrs, null);

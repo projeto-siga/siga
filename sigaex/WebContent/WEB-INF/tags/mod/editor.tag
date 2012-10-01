@@ -43,8 +43,8 @@
 			</c:otherwise>
 		</c:choose>
 		<div><c:choose>
-			<c:when test="${f:podeUtilizarExtensaoEditor(lotaTitular, idMod)}">
-				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario)}
+			<c:when test="${f:podeUtilizarExtensaoEditor(lotaTitular, idMod) && !desconsiderarExtensao}">
+				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario, var, conteudo, par.serverAndPort[0])}
 			</c:when>
 			<c:otherwise>
 			<tags:fixeditor var="${var}">

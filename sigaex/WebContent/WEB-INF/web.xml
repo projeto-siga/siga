@@ -16,7 +16,12 @@
 
 		</jsp-config>
 	-->
-
+	
+	<taglib>  
+		<taglib-uri>http://cheditor.com</taglib-uri>  
+		<taglib-location>tld/ckeditor.tld</taglib-location>  
+	</taglib>  
+	
 	<session-config>
 		<session-timeout>120</session-timeout>
 	</session-config>

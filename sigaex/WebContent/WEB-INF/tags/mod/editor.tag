@@ -1,8 +1,9 @@
+<%@tag import="com.ckeditor.CKEditorConfig"%>
 <%@ tag body-content="empty"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+<%@ taglib uri="http://ckeditor.com" prefix="FCK"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags"%>
 <%@ attribute name="titulo"%>
 <%@ attribute name="var"%>
@@ -30,6 +31,8 @@
 					String var1 = (String) jspContext.getAttribute("var");
 					request.setAttribute(var1, jspContext.getAttribute("v"));
 		%>
+		
+
 		<script type="text/javascript">
 		FCKeditorAPI = null;
 		__FCKeditorNS = null;
@@ -47,13 +50,137 @@
 				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario)}
 			</c:when>
 			<c:otherwise>
+			<% 
+				com.ckeditor.CKEditorConfig ckconfig = new com.ckeditor.CKEditorConfig();
+				ckconfig.addConfigValue("height","300");
+
+				java.util.List<Object> mainList = new java.util.ArrayList<Object>();				
+				
+				// barra de estilos
+				java.util.HashMap<String, Object> toolbarSectionMap = new java.util.HashMap<String, Object>();
+				java.util.List<String> subList = new java.util.ArrayList<String>();
+				subList.add("Styles");
+				
+				toolbarSectionMap.put("name", "styles");	
+				toolbarSectionMap.put("items", subList);	
+				
+				mainList.add(toolbarSectionMap);		
+				
+				//botão salvar
+				toolbarSectionMap = new java.util.HashMap<String, Object>();
+				subList = new java.util.ArrayList<String>();
+				subList.add("Save");
+				
+				toolbarSectionMap.put("name", "document");	
+				toolbarSectionMap.put("items", subList);	
+				
+				mainList.add(toolbarSectionMap);	
+				
+				//barra de área de transferência
+				toolbarSectionMap = new java.util.HashMap<String, Object>();
+				subList = new java.util.ArrayList<String>();
+				subList.add("Cut");
+				subList.add("Copy");
+				subList.add("Paste");
+				subList.add("PasteText");
+				subList.add("PasteFromWord");
+				subList.add("-");
+				subList.add("Undo");
+				subList.add("Redo");
+				
+				toolbarSectionMap.put("name", "clipboard");	
+				toolbarSectionMap.put("items", subList);	
+				
+				mainList.add(toolbarSectionMap);		
+				
+				//barra de edição
+				toolbarSectionMap = new java.util.HashMap<String, Object>();
+				subList = new java.util.ArrayList<String>();
+				subList.add("Find");
+				subList.add("Replace");
+				subList.add("-");
+				subList.add("SelectAll");
+				subList.add("-");
+				subList.add("Scayt");
+				
+				toolbarSectionMap.put("name", "editing");	
+				toolbarSectionMap.put("items", subList);	
+				
+				mainList.add(toolbarSectionMap);
+				mainList.add("/");
+				
+				//barra de estilos básicos
+				toolbarSectionMap = new java.util.HashMap<String, Object>();
+				subList = new java.util.ArrayList<String>();
+				subList.add("Bold");
+				subList.add("Italic");
+				subList.add("Strike");
+				subList.add("-");
+				subList.add("RemoveFormat");
+				
+				toolbarSectionMap.put("name", "basicstyles");	
+				toolbarSectionMap.put("items", subList);	
+				
+				mainList.add(toolbarSectionMap);		
+				
+				//barra de parágrafos
+				toolbarSectionMap = new java.util.HashMap<String, Object>();
+				subList = new java.util.ArrayList<String>();
+				subList.add("NumberedList");
+				subList.add("BulletedList");
+				subList.add("-");
+				subList.add("Outdent");
+				subList.add("Indent");
+				subList.add("-");
+				subList.add("JustifyLeft");
+				subList.add("JustifyBlock");
+				subList.add("JustifyRight");
+				
+				toolbarSectionMap.put("name", "paragraph");	
+				toolbarSectionMap.put("items", subList);	
+				
+				mainList.add(toolbarSectionMap);		
+				
+				//barra de inserções
+				toolbarSectionMap = new java.util.HashMap<String, Object>();
+				subList = new java.util.ArrayList<String>();
+				subList.add("Table");
+				subList.add("-");
+				subList.add("SpecialChar");
+				subList.add("-");
+				subList.add("PageBreak");
+				
+				toolbarSectionMap.put("name", "insert");	
+				toolbarSectionMap.put("items", subList);	
+				
+				mainList.add(toolbarSectionMap);		
+				
+				//barra de documento
+				toolbarSectionMap = new java.util.HashMap<String, Object>();
+				subList = new java.util.ArrayList<String>();
+				subList.add("Source");
+				
+				toolbarSectionMap.put("name", "document");	
+				toolbarSectionMap.put("items", subList);	
+				
+				mainList.add(toolbarSectionMap);		
+				
+				ckconfig.addConfigValue("toolbar", mainList);
+				
+				java.util.Map<String, String> attrTxtArea = new java.util.HashMap<String, String>();
+				attrTxtArea.put("rows", "20");
+				attrTxtArea.put("cols", "100");
+				request.setAttribute("ckconfig", ckconfig);
+				request.setAttribute("attrTxtArea", attrTxtArea);
+				
+				
+				
+			%>
 			<tags:fixeditor var="${var}">
-					<td colspan="3"><FCK:editor id="xxxeditorxxx"
-						basePath="/fckeditor/" height="300" toolbarSet="${toolbarSet}">${v}<c:if
-							test="${empty v}">
-							<p style="TEXT-INDENT: 2cm" align="justify">&nbsp;</p>
-						</c:if>
-					</FCK:editor></td>
+					<FCK:editor editor="xxxeditorxxx"
+						basePath="/ckeditor/ckeditor" config="${ckconfig}" textareaAttributes="${attrTxtArea}" value="${v}">
+					</FCK:editor>
+					</td>
 				</tags:fixeditor>
 			</c:otherwise>
 		</c:choose></div>

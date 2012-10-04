@@ -10,9 +10,10 @@
 
 <siga:pagina titulo="Novo Documento">
 	<%--onLoad="javascript:autoSave();" --%>
-
+		<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
+	
 	<script type="text/javascript">
-
+	
 <ww:url id="url" action="testar_conexao" namespace="/expediente/doc">
 </ww:url>
 var conexaoTimer;

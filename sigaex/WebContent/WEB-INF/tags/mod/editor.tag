@@ -1,3 +1,5 @@
+<%@tag import="com.ckeditor.CKEditorInsertTag"%>
+<%@tag import="com.ckeditor.CKEditorTag"%>
 <%@tag import="com.ckeditor.CKEditorConfig"%>
 <%@ tag body-content="empty"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
@@ -33,18 +35,6 @@
 		%>
 		
 
-		<script type="text/javascript">
-		FCKeditorAPI = null;
-		__FCKeditorNS = null;
-	</script>
-		<c:choose>
-			<c:when test="${semBotaoSalvar eq 'Sim'}">
-				<c:set var="toolbarSet">DefaultSemSave</c:set>
-			</c:when>
-			<c:otherwise>
-				<c:set var="tolobarSet">Default</c:set>
-			</c:otherwise>
-		</c:choose>
 		<div><c:choose>
 			<c:when test="${f:podeUtilizarExtensaoEditor(lotaTitular, idMod)}">
 				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario)}
@@ -65,16 +55,6 @@
 				toolbarSectionMap.put("items", subList);	
 				
 				mainList.add(toolbarSectionMap);		
-				
-				//botão salvar
-				toolbarSectionMap = new java.util.HashMap<String, Object>();
-				subList = new java.util.ArrayList<String>();
-				subList.add("Save");
-				
-				toolbarSectionMap.put("name", "document");	
-				toolbarSectionMap.put("items", subList);	
-				
-				mainList.add(toolbarSectionMap);	
 				
 				//barra de área de transferência
 				toolbarSectionMap = new java.util.HashMap<String, Object>();
@@ -167,15 +147,20 @@
 				
 				ckconfig.addConfigValue("toolbar", mainList);
 				
+				
 				java.util.Map<String, String> attrTxtArea = new java.util.HashMap<String, String>();
 				attrTxtArea.put("rows", "20");
 				attrTxtArea.put("cols", "100");
+				
+				ckconfig.addConfigValue("stylesSet","siga_ckeditor_styles:/sigaex/sigalibs/siga_ckeditor_styles.js");
+								
 				request.setAttribute("ckconfig", ckconfig);
 				request.setAttribute("attrTxtArea", attrTxtArea);
 				
 				
 				
 			%>
+			
 			<tags:fixeditor var="${var}">
 					<FCK:editor editor="xxxeditorxxx"
 						basePath="/ckeditor/ckeditor" config="${ckconfig}" textareaAttributes="${attrTxtArea}" value="${v}">

@@ -34,6 +34,7 @@
 		FCKeditorAPI = null;
 		__FCKeditorNS = null;
 	</script>
+		<input type="hidden" id="${var}" name="${var}" value="${v}">
 		<c:choose>
 			<c:when test="${semBotaoSalvar eq 'Sim'}">
 				<c:set var="toolbarSet">DefaultSemSave</c:set>

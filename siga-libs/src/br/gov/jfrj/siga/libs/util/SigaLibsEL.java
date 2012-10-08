@@ -276,10 +276,10 @@ public class SigaLibsEL {
 	
 	public static String getURLSistema(String nome){
 		String ambiente = SigaBaseProperties.getString("jfrj.ambiente");
-		String url = System.getProperty(nome + "." + ambiente + ".url").trim();
+		String url = System.getProperty(nome + "." + ambiente + ".url");
 		if (url == null || url.length() == 0){
 			url = "#";
 		}
-		return url;
+		return url.trim();
 	}
 }

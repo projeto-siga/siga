@@ -16,6 +16,9 @@
 <c:if test="${empty v}">
 	<c:set var="v" value="${requestScope[var]}" />
 </c:if>
+<c:if test="${empty v}">
+	<c:set var="v" value="${conteudo}" />
+</c:if>
 
 <input type="hidden" name="vars" value="${var}" />
 <div><c:if test="${not empty titulo}">
@@ -34,6 +37,7 @@
 		FCKeditorAPI = null;
 		__FCKeditorNS = null;
 	</script>
+		<input type="hidden" id="${var}" name="${var}" value="<c:out value="${v}" escapeXml="true" />" >
 		<c:choose>
 			<c:when test="${semBotaoSalvar eq 'Sim'}">
 				<c:set var="toolbarSet">DefaultSemSave</c:set>
@@ -43,8 +47,8 @@
 			</c:otherwise>
 		</c:choose>
 		<div><c:choose>
-			<c:when test="${f:podeUtilizarExtensaoEditor(lotaTitular, idMod)}">
-				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario)}
+			<c:when test="${f:podeUtilizarExtensaoEditor(lotaTitular, idMod) && !desconsiderarExtensao}">
+				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario, var, v, par.serverAndPort[0])}
 			</c:when>
 			<c:otherwise>
 			<tags:fixeditor var="${var}">

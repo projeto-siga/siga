@@ -12,6 +12,12 @@
 	<uri>http://localhost/libstag</uri>
 
 	<function>
+		<name>getURLSistema</name>
+		<function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
+		<function-signature>java.lang.String getURLSistema(java.lang.String)</function-signature>
+	</function>
+	
+	<function>
 		<name>podeUtilizarServicoPorConfiguracao</name>
 		<function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
 		<function-signature>java.lang.Boolean podeUtilizarServicoPorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, java.lang.String)</function-signature>

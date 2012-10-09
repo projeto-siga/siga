@@ -244,11 +244,8 @@
 				solicitação? <b>${motivo}</b></p>
 			</ww:else>
 		</c:if> <c:if test="${(opcao eq 'Alteração') or (opcao eq 'Marcação')}">
-			<p style="TEXT-INDENT: 2cm" align="justify">Conforme o
-			Art.8&ordm; Parágrafo 7&ordm; da Res. 14/CJF de 19/05/2008, estou
-			CIENTE de que perderei o direito às férias relativas ao período
-			aquisitivo em que n&atilde;o começar a usufruí-las até o último dia
-			do período subsequente, que está disponível na INTRANET.</p>
+			<p style="TEXT-INDENT: 2cm" align="justify">Conforme o art.8º, parágrafo 7º, da Res. 14/CJF de 19/05/2008, estou CIENTE de que
+			 perderei o direito às férias quando não gozá-las até o último dia do segundo período aquisitivo subsequente, segundo quadro disponível na INTRANET.</p>
 		</c:if> <c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" /> <c:import
 			url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" /> <c:import
 			url="/paginas/expediente/modelos/inc_deAcordoAssSupHierarquico.jsp" />

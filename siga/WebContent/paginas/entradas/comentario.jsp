@@ -7,6 +7,12 @@
 
 <h3 class="gt-table-head">Veja abaixo as últimas novidades:</h3>
 
+<h4>Novos Módulos</h4>
+<p>O SIGA agora está integrado com os módulos do Siga SGP. 
+Foram integrados: Cadastro, Benefícios, AQ e Lotações (fase final de testes). 
+Podem ser acessados pelo menu, na seguinte opção: Módulos / Pessoas. 
+Os módulos estarão disponíveis de acordo com as permissões dos usuários logados. Em breve, mais novidades.</p>
+	
 <h4>Novo Design</h4>
 <p>O SIGA apresenta, agora, um design muito mais simples e moderno.
 	Além das mudanças estéticas, também foram simplificadas algumas páginas

@@ -28,6 +28,9 @@
 		<li><ww:url id="url" action="anotar_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
 				texto="Anotar em lote" /></li>
+		<li><ww:url id="url" action="assinar_lote"
+				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+				texto="Assinar em lote" /></li>		
 		<c:catch>
 			<c:if
 				test="${f:testaCompetencia('atenderPedidoPublicacao',titular,lotaTitular,null)}">

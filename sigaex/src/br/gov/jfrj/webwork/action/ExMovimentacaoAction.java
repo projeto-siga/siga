@@ -1978,6 +1978,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
+	
+	
+	public String aAssinarLote() throws Exception {		
+		setItensSolicitados(dao().listarDocPendenteAssinatura(getTitular()));
+		return Action.SUCCESS;
+	}
 
 	public String aReferenciar() throws Exception {
 		buscarDocumento(true);

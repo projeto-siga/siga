@@ -420,7 +420,7 @@
 			<result type="redirect-action">
 				exibir?sigla=${sigla}
 			</result>
-		</action>
+		</action>	
 		
 		
 	</package>
@@ -1032,6 +1032,11 @@
 			method="aFecharPopup">
 			<result>/paginas/fechar_popup.jsp</result>
 		</action>
+		<action name="assinar_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAssinarLote">
+			<result>/paginas/expediente/assina_lote.jsp</result>
+		</action>
+		
 	</package>
 	<!-- Pedro:02052007 -->
 	<package name="expediente/rel" extends="default" namespace="/expediente/rel">

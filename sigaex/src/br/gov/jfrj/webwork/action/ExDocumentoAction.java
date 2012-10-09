@@ -580,13 +580,13 @@ public class ExDocumentoAction extends ExActionSupport {
 			tipoDestinatario = 2;
 			idFormaDoc = 2;
 			idTpDoc = 1L;
-			
+
 			ExNivelAcesso nivelDefault = getNivelAcessoDefault();
-			if(nivelDefault != null) {
+			if (nivelDefault != null) {
 				nivelAcesso = nivelDefault.getIdNivelAcesso();
-			} else 
+			} else
 				nivelAcesso = 1L;
-			
+
 			idMod = 26L;
 		}
 
@@ -859,7 +859,7 @@ public class ExDocumentoAction extends ExActionSupport {
 								mob)) {
 			throw new AplicacaoException("Documento " + mob.getSigla()
 					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta()+ ".");
+					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}
 
 		if (!Ex.getInstance().getComp()
@@ -881,7 +881,7 @@ public class ExDocumentoAction extends ExActionSupport {
 								mob)) {
 			throw new AplicacaoException("Documento " + mob.getSigla()
 					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta()+ ".");
+					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}
 
 		if (!Ex.getInstance().getComp()
@@ -1128,11 +1128,11 @@ public class ExDocumentoAction extends ExActionSupport {
 				c.setTime(dt);
 
 				Calendar dtDocCalendar = Calendar.getInstance();
-				
-				if(doc.getDtDoc() == null)
-				   throw new Exception(
-					"A data do documento deve ser informada.");
-					
+
+				if (doc.getDtDoc() == null)
+					throw new Exception(
+							"A data do documento deve ser informada.");
+
 				dtDocCalendar.setTime(doc.getDtDoc());
 
 				if (c.before(dtDocCalendar))
@@ -1260,12 +1260,12 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
-	
-	public String aAtualizarMarcasDoc() throws Exception{
-		
+
+	public String aAtualizarMarcasDoc() throws Exception {
+
 		buscarDocumento(false);
 		Ex.getInstance().getBL().atualizarMarcas(getDoc());
-		
+
 		return Action.SUCCESS;
 	}
 
@@ -1876,7 +1876,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		return getListaNivelAcesso(exTipo, exForma, exMod, exClassif);
 	}
-	
+
 	public ExNivelAcesso getNivelAcessoDefault() throws Exception {
 		ExFormaDocumento exForma = new ExFormaDocumento();
 		ExClassificacao exClassif = new ExClassificacao();

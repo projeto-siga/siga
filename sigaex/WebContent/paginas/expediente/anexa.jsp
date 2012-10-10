@@ -7,6 +7,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
 
 <siga:pagina titulo="Movimentação">
@@ -106,12 +107,24 @@
 								</td>
 							</tr>
 						</table>
+						
+						<mod:grupo>
+	
+	<mod:caixaverif var="arqAssinados" reler="ajax" idAjax="inclAssinados"
+				titulo="Mostrar assinados"  marcado="Sim"/>			
+    </mod:grupo>
 					</ww:form>
+					
 				</div>
 			</div>
 	</c:if>
+	
 	<br>
-
+	
+	<input type="checkbox"  theme="simple" name="assinados_chk"			
+			onclick="javascript: if (this.checked) document.getElementById(this).value = 'Sim'; else document.getElementById(this ).value = 'Nao'; ${onclique}${jreler} " /> 	
+	
+	
 	<ww:if test="${(not empty mobilVO.movs)}">
 		<c:if test="${assinandoAnexosGeral}">
 			<div class="gt-bd clearfix">
@@ -243,7 +256,6 @@
 					<c:set var="lote" value="true" />			
 					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
 				</c:if>
-
 			</ww:form>
 		</div>
 		</div>
@@ -255,5 +267,13 @@
 				</script>
 		</c:if>
 	</ww:else>
+	<div id="tableAssinados" depende=";${depende};">
+	
+	<mod:grupo depende="inclAssinados">
+		<c:if test="${requestScope['arqAssinados'] eq 'Sim'}">
+		    Aqui os assinados
+		</c:if>
+	</mod:grupo>		
+				
 
 </siga:pagina>

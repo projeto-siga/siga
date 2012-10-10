@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ckeditor-java-core-3.5.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-rel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-cp"/>
@@ -17,11 +22,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/xwork.jar" sourcepath="C:/Documents and Settings/eeh/Desktop/trunk-xwork/core/src/main/java">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FCKeditor-2.3.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>

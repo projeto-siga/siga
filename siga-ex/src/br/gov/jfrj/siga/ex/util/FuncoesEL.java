@@ -872,7 +872,7 @@ public class FuncoesEL {
 		attrs.put("url_0", url_0);
 
 		attrs.put("nmMod", "macro extensaoAssinador");
-		attrs.put("template", "[@extensaoAssinador/]");
+		attrs.put("template", "[@extensaoAssinadorDesenv/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
 

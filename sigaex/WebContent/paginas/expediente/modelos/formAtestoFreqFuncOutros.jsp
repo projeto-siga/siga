@@ -7,7 +7,7 @@
 
 <mod:modelo>
 	<mod:entrevista>		
-		<c:if test="${secao == 'SEGRA' or secao == 'SLO'}">	
+		<c:if test="${secao == 'SEGRA' or secao == 'SGS'}">	
 			<ww:if test="${secao == 'SEGRA'}">			
 				<p><b>Quanto aos suprimentos (exceto papel):</b></p>
 			</ww:if>
@@ -84,7 +84,7 @@
 				</mod:grupo>			
 			</mod:grupo>
 		</c:if>		
-		<c:if test="${secao == 'STI' or secao == 'NSEG'}">
+		<c:if test="${secao == 'STI' or secao == 'DSEG'}">
 			<mod:oculto var="servicos" valor="dos serviços prestados"/>	
 		</c:if>
 		<mod:grupo titulo="Como avalia a qualidade ${servicos}?">
@@ -111,12 +111,12 @@
 							 var="numChamados" largura="5" maxcaracteres="5" valor="0"/></b>
 			</mod:grupo>
 		</c:if>	
-		<c:if test="${secao == 'SEGRA' or secao == 'SLO' or secao == 'SIE'}">	
+		<c:if test="${secao == 'SEGRA' or secao == 'SGS' or secao == 'SIE'}">	
 			<c:choose>
 				<c:when test="${secao == 'SEGRA'}">			
 					<mod:oculto var="tipoEquip" valor="equipamentos"/>	
 				</c:when>			
-				<c:when test="${secao == 'SLO' or secao == 'SIE'}">
+				<c:when test="${secao == 'SGS' or secao == 'SIE'}">
 					<mod:oculto var="tipoEquip" valor="mobiliários e eletrodomésticos"/>	
 				</c:when>
 			</c:choose>
@@ -355,14 +355,14 @@
 			<mod:radio titulo="Não se aplica (cópias encaminhada diretamente para a sede)." var="irregContCheq" valor="3" 
 						reler="ajax" idAjax="irregContCheqAjax" />		
 		</mod:grupo>
-		<c:if test="${secao == 'NSEG'}">
+		<c:if test="${secao == 'DSEG'}">
 			<mod:grupo>
 				<b><mod:memo titulo="Liste abaixo quaisquer observações adicionais (rondas, 
 							manuteções de armamentos, etc.)" 
 							var="obsAdicionais" linhas="3" colunas="80" /></b>
 			</mod:grupo>
 		</c:if>
-		<c:if test="${secao == 'SEGRA' or secao == 'SLO' or secao == 'SIE'}">
+		<c:if test="${secao == 'SEGRA' or secao == 'SGS' or secao == 'SIE'}">
 			<mod:grupo titulo="Os funcionários prestaram os serviços em conformidade com a especificação?">		
 				<mod:radio titulo="Sim." var="confEspecif" valor="1" marcado="Sim"
 							reler="ajax" idAjax="confEspecifAjax" />	
@@ -385,7 +385,7 @@
 				</mod:grupo>
 			</mod:grupo>	
 		</c:if>
-		<c:if test="${secao == 'SLO'}">
+		<c:if test="${secao == 'SGS'}">
 			<mod:grupo titulo="Ocorreu a visita mensal do supervisor da empresa contratada?">	
 				<mod:radio titulo="Não." var="visitaSup" valor="1" marcado="Sim"
 						reler="ajax" idAjax="visitaSupAjax" />
@@ -503,8 +503,8 @@
 				</mod:grupo>
 			</mod:grupo>	
 		</c:if>
-		<c:if test="${secao == 'SLO' or secao == 'SIE'}">
-			<ww:if test="${secao == 'SLO'}">
+		<c:if test="${secao == 'SGS' or secao == 'SIE'}">
+			<ww:if test="${secao == 'SGS'}">
 				<mod:oculto var="tipoServico" valor="jardinagem"/>	
 			</ww:if>
 			<ww:else>
@@ -590,7 +590,7 @@
 			<mod:grupo depende="freqFuncAjax">
 				<c:if test="${freqFunc eq 'Parcial'}">
 					<c:choose>
-					<c:when test="${secao == 'SEGRA' or secao == 'SLO' or secao == 'SIE'}">					
+					<c:when test="${secao == 'SEGRA' or secao == 'SGS' or secao == 'SIE'}">					
 						<mod:selecao titulo="Nº de categorias profissionais a gerenciar" var="numCatProfis" opcoes="1;2;3" 
 						reler="ajax" idAjax="numCatProfisAjax" />
 						<mod:grupo depende="numCatProfisAjax">
@@ -620,7 +620,7 @@
 									 					var="quantMinutos" largura="10" valor="0" />
 						</mod:grupo>			 					
 					</c:when>			
-					<c:when test="${secao == 'NSEG'}">
+					<c:when test="${secao == 'DSEG'}">
 						<mod:grupo>
 							<mod:selecao titulo="Informação simplificada" var="infSimpl" opcoes="Sim;Não"
 							reler="ajax" idAjax="infSimplAjax" />
@@ -682,7 +682,7 @@
 						</mod:grupo> 
 					</c:when>
 					</c:choose>	
-					<ww:if test="${secao == 'NSEG'}">
+					<ww:if test="${secao == 'DSEG'}">
 						<mod:oculto var="titMemo" valor="Informações adicionais"/>						
 					</ww:if>
 					<ww:else>	
@@ -699,7 +699,7 @@
 			<c:if test="${secao == 'SIE'}">
 				<b><mod:mensagem titulo="Observação" texto="comunicar diariamente ao gestor as faltas e os atrasos."> </mod:mensagem></b>
 			</c:if>
-			<c:if test="${secao == 'NSEG'}">
+			<c:if test="${secao == 'DSEG'}">
 				<b><mod:mensagem titulo="Observação" texto="anexar a Planilha de Freqüência a este formulário no SIGA-DOC, em formato Pdf, e enviá-la também por e-mail ao gestor, em formato Excel."> </mod:mensagem></b>
 			</c:if>
 		</mod:grupo>	
@@ -773,10 +773,10 @@
 				<c:when test="${secao == 'SEGRA'}">
 					Informações referentes aos suprimentos (exceto papel):
 				</c:when>
-				<c:when test="${secao == 'SLO'}">
+				<c:when test="${secao == 'SGS'}">
 					Informações referentes aos materiais/equipamentos de limpeza:
 				</c:when>
-				<c:when test="${secao == 'STI' or secao == 'NSEG'}">
+				<c:when test="${secao == 'STI' or secao == 'DSEG'}">
 					Informações referentes aos serviços:
 				</c:when>
 				<c:when test="${secao == 'SIE'}">
@@ -784,7 +784,7 @@
 				</c:when>
 				</c:choose>					
 			</b></th></tr>
-			<c:if test="${secao == 'SEGRA' or secao == 'SLO'}">		
+			<c:if test="${secao == 'SEGRA' or secao == 'SGS'}">		
 				<tr><td>A entrega ${entrNoPrazoNao} foi realizada no prazo.
 					<c:if test="${entrNoPrazo == '2'}">	
 					<br>${ressalvaEntrNoPrazo} 					
@@ -819,7 +819,7 @@
 				</ww:else>
 				</td></tr>	
 			</c:if>	
-			<c:if test="${secao == 'SEGRA' or secao == 'SLO' or secao == 'SIE'}">
+			<c:if test="${secao == 'SEGRA' or secao == 'SGS' or secao == 'SIE'}">
 				<ww:if test="${boaCondEquip == '3'}">
 					<tr><td>A informação referente às condições dos ${tipoEquip} não se aplica .</td></tr>
 				</ww:if>
@@ -900,21 +900,21 @@
 				<br>${ressalvaIrregContCheq} 					
 				</c:if>
 			</td></tr>	
-			<c:if test="${secao == 'SEGRA' or secao == 'SLO' or secao == 'SIE'}">
+			<c:if test="${secao == 'SEGRA' or secao == 'SGS' or secao == 'SIE'}">
 				<tr><td>Os funcionários ${confEspecifNao} prestaram os serviços em conformidade com a especificação.
 					<c:if test="${confEspecif == '2'}">	
 					<br>${jusConfEspecif} 					
 					</c:if>
 				</td></tr>	
 			</c:if>	
-			<c:if test="${secao == 'NSEG'}">
+			<c:if test="${secao == 'DSEG'}">
 				<c:if test="${not empty obsAdicionais}">
 					<tr>
 						<td>${obsAdicionais}</td>
 					</tr>					
 				</c:if>					
 			</c:if>						
-			<c:if test="${secao == 'SLO'}">
+			<c:if test="${secao == 'SGS'}">
 				<tr><td>A visita mensal do supervisor da empresa contratada ${visitaSupNao} ocorreu.
 					<c:if test="${visitaSup == '2'}">	
 						<br>A visita foi avaliada como ${avalVisitaNao}. 		
@@ -957,7 +957,7 @@
 					</c:if>
 				</td></tr>	
 			</c:if>
-			<c:if test="${secao == 'SLO' or secao == 'SIE'}">
+			<c:if test="${secao == 'SGS' or secao == 'SIE'}">
 				<tr><td>${possuiTipoNao} serviço de ${tipoServico}. 
 					<c:if test="${possuiTipo == '2'}">			
 						<br>&nbsp; - O cronograma ${cronogramaNao} foi cumprido. 		
@@ -993,7 +993,7 @@
 		<c:if test="${freqFunc eq 'Parcial'}">	
 			<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 				<c:choose>
-				<c:when test="${secao == 'SEGRA' or secao == 'SLO' or secao == 'SIE'}">			
+				<c:when test="${secao == 'SEGRA' or secao == 'SGS' or secao == 'SIE'}">			
 					<c:forEach var="i" begin="1" end="${numCatProfis}">
 						<tr><td width="5%">${i}.</td>
 							<td width="95%">Categoria profissional: ${requestScope[f:concat('catProfis',i)]}</td>  																
@@ -1018,7 +1018,7 @@
 						</td></tr>						
 					</c:forEach>
 				</c:when>				
-				<c:when test="${(secao == 'STI') or (secao == 'NSEG' and infSimpl == 'Sim')}">
+				<c:when test="${(secao == 'STI') or (secao == 'DSEG' and infSimpl == 'Sim')}">
 					<tr><td>	
 						<ww:if test="${not empty numFaltas and numFaltas != '0'}">					
 								Número de faltas sem reposição: ${numFaltas} 			
@@ -1036,7 +1036,7 @@
 						</ww:else>
 					</td></tr>				
 				</c:when>	
-				<c:when test="${secao == 'NSEG' and infSimpl == 'Não'}">
+				<c:when test="${secao == 'DSEG' and infSimpl == 'Não'}">
 					<c:forEach var="i" begin="1" end="${numFuncParcial}">
 						<tr><td width="5%">${i}.</td>
 							<td width="95%">Nome do funcionário faltoso: ${requestScope[f:concat('nomeFunc',i)]}</td>  																

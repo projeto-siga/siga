@@ -25,7 +25,7 @@
 		<action name="logoff" class="br.gov.jfrj.siga.libs.webwork.LogoffAction">
 			<result name="success" type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 			</result>
 			<result name="CLIENT_CERT_AUTH_LOGOFF">/sigalibs/client_cert_auth_logoff.jsp</result>
 

@@ -34,16 +34,12 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/oscore.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/rife-continuations.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FCKeditor-2.3.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/Jboss-4.2.2.GA Runtime">
-		<attributes>
-			<attribute name="owner.project.facets" value="#system#;jst.web"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-rel"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/Jboss-4.2.2.GA Runtime"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

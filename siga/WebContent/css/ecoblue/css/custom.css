@@ -374,6 +374,9 @@ ul#navmenu-h li:hover ul,ul#navmenu-h ul li:hover ul,ul#navmenu-h ul ul li:hover
 
 .gt-content-box ol, ul, li {margin-left:1em; margin-bottom:0;padding-left:0em;}
 
+p.indent-first {
+	text-indent: 2cm;
+}
 
 TABLE.entrevista {
 	padding: 0px;

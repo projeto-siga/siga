@@ -1022,7 +1022,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (getExFormaDocumento() == null)
 			return null;
 		return getExFormaDocumento().getDescrFormaDoc()
-				+ (isEletronico() ? " (digital)" : "");
+				+ (isEletronico() ? "" : " (físico)");
 	}
 
 	/**

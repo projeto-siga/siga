@@ -8,6 +8,11 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
 <siga:pagina titulo="Documento">
+
+<c:if test="${not doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 	<script language="VBScript">
 Function assinar()

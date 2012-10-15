@@ -9,6 +9,9 @@
 
 <siga:pagina titulo="Movimentação">
 
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
 
 <script type="text/javascript" language="Javascript1.1">
 <ww:url id="url" action="anotar" namespace="/expediente/mov">

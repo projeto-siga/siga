@@ -480,10 +480,10 @@ function limpaCampos()
 
 				<c:choose>
 					<c:when test="${documento[0].eletronico}">
-						<c:set var="exibedoc" value="eletronicoeven" />
+						<c:set var="exibedoc" value="even" />
 					</c:when>
 					<c:otherwise>
-						<c:set var="exibedoc" value="even" />
+						<c:set var="exibedoc" value="fisicoeven" />
 					</c:otherwise>
 				</c:choose>
 

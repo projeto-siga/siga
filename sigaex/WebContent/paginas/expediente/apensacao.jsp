@@ -17,6 +17,10 @@ function sbmt() {
 
 <siga:pagina titulo="Apensar Documento">
 
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		

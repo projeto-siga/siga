@@ -8,6 +8,10 @@
 
 <siga:pagina titulo="Registro de Assinatura">
 
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 	<script type="text/javascript" language="Javascript1.1">
 function sbmt() {
 	ExMovimentacaoForm.page.value='';

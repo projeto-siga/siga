@@ -164,6 +164,9 @@
 			%>
 			
 			<tags:fixeditor var="${var}">
+					<c:if test="${empty v}">
+							<c:set var="v" value='<p style="TEXT-INDENT: 2cm" align="justify">&nbsp;</p>'/>
+					</c:if>
 					<FCK:editor editor="xxxeditorxxx"
 						basePath="/ckeditor/ckeditor" config="${ckconfig}" textareaAttributes="${attrTxtArea}" value="${v}">
 					</FCK:editor>

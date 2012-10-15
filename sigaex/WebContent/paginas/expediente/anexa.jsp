@@ -42,10 +42,11 @@
 		}		
 
 	</script>
-
+	
 	<ww:url id="urlExibir" action="exibir" namespace="/expediente/doc">
 		<ww:param name="sigla">${mobilVO.sigla}</ww:param>
 	</ww:url>
+	
 	<c:if test="${!assinandoAnexosGeral}">
 
 		<div class="gt-bd clearfix">
@@ -106,13 +107,8 @@
 									class="gt-btn-small gt-btn-left" />
 								</td>
 							</tr>
-						</table>
+						</table>						
 						
-						<mod:grupo>
-	
-	<mod:caixaverif var="arqAssinados" reler="ajax" idAjax="inclAssinados"
-				titulo="Mostrar assinados"  marcado="Sim"/>			
-    </mod:grupo>
 					</ww:form>
 					
 				</div>
@@ -120,9 +116,11 @@
 	</c:if>
 	
 	<br>
+	<mod:caixaverif var="arqAssinados" reler="ajax" idAjax="arqAssinadosAjax"
+				titulo="Mostrar assinados"  marcado="Sim"/>			
 	
 	<input type="checkbox"  theme="simple" name="assinados_chk"			
-			onclick="javascript: if (this.checked) document.getElementById(this).value = 'Sim'; else document.getElementById(this ).value = 'Nao'; ${onclique}${jreler} " /> 	
+			onclick="javascript: if (this.checked) document.getElementById(this).value = 'Sim'; else document.getElementById(this ).value = 'Nao'; " /> 	
 	
 	
 	<ww:if test="${(not empty mobilVO.movs)}">
@@ -267,13 +265,13 @@
 				</script>
 		</c:if>
 	</ww:else>
-	<div id="tableAssinados" depende=";${depende};">
-	
-	<mod:grupo depende="inclAssinados">
-		<c:if test="${requestScope['arqAssinados'] eq 'Sim'}">
-		    Aqui os assinados
+	<div id="tableAssinados" depende=";${assinados_chk};">
+		<c:if test="${requestScope['assinados_chk'] eq 'Sim'}">
+		  Mostrar tabela
 		</c:if>
-	</mod:grupo>		
+	
+	</div>	
+	
 				
 
 </siga:pagina>

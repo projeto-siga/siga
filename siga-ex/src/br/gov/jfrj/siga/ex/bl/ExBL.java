@@ -1094,6 +1094,11 @@ public class ExBL extends CpBL {
 			final Date dtMov, final byte[] pkcs7) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
+		
+		if(doc.isCancelado())
+			throw new AplicacaoException(
+				"Não é possível assinar um documento cancelado.");
+		
 		boolean fPreviamenteAssinado = doc.isAssinado();
 
 		final byte[] cms;
@@ -1333,6 +1338,11 @@ public class ExBL extends CpBL {
 		Long lCPF = null;
 
 		final byte[] cms;
+		
+		if(movAlvo.isCancelada())
+			throw new AplicacaoException(
+				"Não é possível assinar uma movimentação cancelada.");
+		
 		try {
 			final byte[] data = movAlvo.getConteudoBlobpdf();
 

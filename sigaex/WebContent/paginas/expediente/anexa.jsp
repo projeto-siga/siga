@@ -7,7 +7,6 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
-<%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
 
 <siga:pagina titulo="Movimentação">
@@ -39,6 +38,19 @@
 					theForm[z].click();
 				}
 			}
+		}
+
+		function montaTableAssinados(chk){	
+			if(chk.checked == true) {
+				$('#tableAssinados').html('<h1>Carregando...</h1>');			
+				$.ajax({
+					  url:'/sigaex/expediente/mov/mostrar_anexos_assinados.action?sigla=${mobilVO.sigla}',
+					  success: function(data) {
+				    	$('#tableAssinados').html(data);				    
+				 	 }
+				});
+			}	
+			else ($('#tableAssinados').html(''));		
 		}		
 
 	</script>
@@ -115,13 +127,7 @@
 			</div>
 	</c:if>
 	
-	<br>
-	<mod:caixaverif var="arqAssinados" reler="ajax" idAjax="arqAssinadosAjax"
-				titulo="Mostrar assinados"  marcado="Sim"/>			
-	
-	<input type="checkbox"  theme="simple" name="assinados_chk"			
-			onclick="javascript: if (this.checked) document.getElementById(this).value = 'Sim'; else document.getElementById(this ).value = 'Nao'; " /> 	
-	
+	<br>	
 	
 	<ww:if test="${(not empty mobilVO.movs)}">
 		<c:if test="${assinandoAnexosGeral}">
@@ -243,6 +249,8 @@
 				<c:if test="${assinandoAnexosGeral}">
 					</div>
 				</c:if>
+				<div id="tableAssinados"></div>
+				
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
 					<c:set var="jspServer"
@@ -254,6 +262,10 @@
 					<c:set var="lote" value="true" />			
 					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
 				</c:if>
+				<table align="center"><tr><td><input type="checkbox"  theme="simple"
+	                   onclick="javascript:montaTableAssinados(this);" /> <b>Exibir anexos assinados</b> 	
+	            </td></tr></table>
+				
 			</ww:form>
 		</div>
 		</div>
@@ -264,14 +276,6 @@
 					window.location.href='${urlExibir}';
 				</script>
 		</c:if>
-	</ww:else>
-	<div id="tableAssinados" depende=";${assinados_chk};">
-		<c:if test="${requestScope['assinados_chk'] eq 'Sim'}">
-		  Mostrar tabela
-		</c:if>
-	
-	</div>	
-	
-				
+	</ww:else>			
 
 </siga:pagina>

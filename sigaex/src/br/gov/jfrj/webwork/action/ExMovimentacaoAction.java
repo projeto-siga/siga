@@ -807,6 +807,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		
 	}
 	
+	
+	public String aMostrarAnexosAssinados() throws Exception {
+		buscarDocumento(true);       
+				
+		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(), true,
+                ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
+		this.getRequest().setAttribute("mobilVO", mobilVO);
+		return Action.SUCCESS;
+	}
+	
 
 	public String aArquivarCorrenteGravar() throws Exception {
 		buscarDocumento(true);

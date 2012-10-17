@@ -3,16 +3,17 @@
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+<%@ taglib uri="http://cheditor.com" prefix="FCK"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Novo Documento">
 	<%--onLoad="javascript:autoSave();" --%>
-
+		<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
+	
 	<script type="text/javascript">
-
+	
 <ww:url id="url" action="testar_conexao" namespace="/expediente/doc">
 </ww:url>
 var conexaoTimer;
@@ -380,13 +381,16 @@ function checkBoxMsg() {
 								<input type="hidden" name="eletronico" id="eletronicoHidden"
 									value="${eletronico}" />
 								${eletronicoString}
+								<c:if test="${not eletronico}">
+									<script type="text/javascript">$("html").addClass("fisico");</script>
+								</c:if>
 							</c:when>
 							<c:otherwise>
 								<ww:radio list="%{#{1:'Digital',2:'Físico'}}" name="eletronico"
 									id="eletronicoCheck" label="" value="${eletronico}"
-									disabled="${eletronicoFixo}" />
+									disabled="${eletronicoFixo}" onchange="setFisico();"/>
+								<script type="text/javascript">function setFisico() {if ($('input[name=eletronico]:checked').val() == 2) $('html').addClass('fisico'); else $('html').removeClass('fisico');}; setFisico();</script>									
 							</c:otherwise>
-
 						</c:choose></td>
 					</tr>
 					<c:if test='${tipoDocumento == "antigo"}'>

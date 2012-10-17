@@ -92,7 +92,7 @@ public class MenuServletContextListener implements ServletContextListener {
 	private static final List JS_RESOURCE_NAMES = Arrays.asList(new String[] {
 			"staticjsdefmenu0.jsp", "staticjsdefmenu1.jsp",
 			"staticjssrcmenu0.jsp", "staticjssrcmenu1.jsp", "ajax.js",
-			"static_javascript.js", "mensagensremotas.js" });
+			"static_javascript.js", "mensagensremotas.js", "siga_ckeditor_styles.js" });
 
 	private static final String CSS_RESOURCE_FOLDER = "/lib/css/";
 

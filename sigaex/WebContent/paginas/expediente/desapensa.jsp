@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+<%@ taglib uri="http://cheditor.com" prefix="FCK"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
@@ -16,6 +16,11 @@ function sbmt() {
 </script>
 
 <siga:pagina titulo="Movimentação">
+
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		

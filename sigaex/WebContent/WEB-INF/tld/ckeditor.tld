@@ -1,0 +1,276 @@
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+   "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+
+<!-- a tab library descriptor -->
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+	<tlib-version>3.5.3</tlib-version>
+	<display-name>CKEditor for Java Tag Library</display-name>
+	<jsp-version>1.2</jsp-version>
+	<short-name>ckeditor</short-name>
+	<uri>http://ckeditor.com</uri>
+
+	<description>
+		The CKEditor Tag Library offers a convenient way to create
+		several CKEditor instances with different configurations.
+		Additionally, you can check for user-based capabilities.
+	</description>
+
+	<tag>
+		<display-name>replace</display-name>
+		<name>replace</name>
+		<tag-class>com.ckeditor.CKEditorReplaceTag</tag-class>
+		<body-content>JSP</body-content>
+		<example><![CDATA[
+			<ckeditor:replace replace="editor1" basePath="ckeditor/" />]]></example>
+
+		<attribute>
+			<name>basePath</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Path to the CKEditor directory.</description>
+		</attribute>
+
+		<attribute>
+			<name>replace</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of the HTML textarea element to replace.</description>
+		</attribute>
+
+		<attribute>
+			<name>timestamp</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+
+		<attribute>
+			<name>initialized</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+			<description>Initalization of ckeditor.js. If set to "false", ckeditor.js is
+			included on the page.</description>
+		</attribute>
+
+		<attribute>
+			<name>config</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.CKEditorConfig</type>
+			<description>
+				CKEditor configuration. Example:
+				<![CDATA[
+				CKEditorConfig config2 = new CKEditorConfig();
+				config2.addConfigValue("toolbar","[[ 'Source', '-', 'Bold', 'Italic' ]]");
+				]]>				
+			</description>
+		</attribute>
+
+		<attribute>
+			<name>events</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.EventHandler</type>
+			<description>CKEditor events. Example:
+				<![CDATA[
+				EventHandler eventHandler = new EventHandler();
+				eventHandler.addEventHandler("instanceReady","function (ev) {
+						          alert(\"Loaded: \" + ev.editor.name); }");
+				]]>
+			</description>
+		</attribute>
+
+		<attribute>
+			<name>globalEvents</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.GlobalEventHandler</type>
+			<description>CKEditor global events. Example:
+				<![CDATA[GlobalEventHandler globalEventHandler = new GlobalEventHandler();
+				globalEventHandler.addEventHandler("dialogDefinition","function (ev) {  alert(\"Loading dialog window: \" + ev.data.name); }");
+				]]>
+			</description>
+		</attribute>
+
+	</tag>
+
+	<tag>
+		<display-name>editor</display-name>
+		<name>editor</name>
+		<tag-class>com.ckeditor.CKEditorInsertTag</tag-class>
+		<body-content>JSP</body-content>
+		<example><![CDATA[
+			<ckeditor:editor basePath="../../ckeditor/" editor="editor1" value="This is CKEditor." />]]></example>
+
+		<attribute>
+			<name>basePath</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Path to the CKEditor directory.</description>
+		</attribute>
+
+		<attribute>
+			<name>editor</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of the textarea element inserted and replaced with CKEditor.</description>
+		</attribute>
+
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Default CKEditor text value.</description>
+		</attribute>
+		
+		<attribute>
+			<name>textareaAttributes</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Map</type>
+			<description>Attributes of the textarea element to insert. Example:
+				
+				<![CDATA[Map<String, String> attr = new HashMap<String, String>();
+				attr.put("rows", "8");
+				attr.put("cols", "50");]]>			
+			</description>
+		</attribute>
+
+		<attribute>
+			<name>timestamp</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+
+		<attribute>
+			<name>initialized</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+			<description>Initalization of ckeditor.js. If set to "false", ckeditor.js is
+			included on the page.</description>
+		</attribute>
+
+		<attribute>
+			<name>config</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.CKEditorConfig</type>
+			<description>
+				CKEditor configuration. Example:
+				<![CDATA[
+				CKEditorConfig config2 = new CKEditorConfig();
+				config2.addConfigValue("toolbar","[[ 'Source', '-', 'Bold', 'Italic' ]]");
+				]]>				
+			</description>
+		</attribute>
+
+		<attribute>
+			<name>events</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.EventHandler</type>
+			<description>CKEditor events. Example:
+				<![CDATA[
+				EventHandler eventHandler = new EventHandler();
+				eventHandler.addEventHandler("instanceReady","function (ev) {
+						          alert(\"Loaded: \" + ev.editor.name); }");
+				]]>
+			</description>
+		</attribute>
+
+		<attribute>
+			<name>globalEvents</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.GlobalEventHandler</type>
+			<description>CKEditor global events. Example:
+				<![CDATA[GlobalEventHandler globalEventHandler = new GlobalEventHandler();
+				globalEventHandler.addEventHandler("dialogDefinition","function (ev) {  alert(\"Loading dialog window: \" + ev.data.name); }");
+				]]>
+			</description>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<display-name>replaceAll</display-name>
+		<name>replaceAll</name>
+		<tag-class>com.ckeditor.CKEditorReplaceAllTag</tag-class>
+		<body-content>JSP</body-content>
+
+		<attribute>
+			<name>basePath</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Path to the CKEditor directory.</description>
+		</attribute>
+
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>CSS class name for the textarea elements to be replaced.</description>
+		</attribute>
+
+		<attribute>
+			<name>timestamp</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+
+		<attribute>
+			<name>initialized</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+			<description>Initalization of ckeditor.js. If set to "false", ckeditor.js is
+			included on the page.</description>
+		</attribute>
+
+		<attribute>
+			<name>config</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.CKEditorConfig</type>
+			<description>
+				CKEditor configuration. Example:
+				<![CDATA[
+				CKEditorConfig config2 = new CKEditorConfig();
+				config2.addConfigValue("toolbar","[[ 'Source', '-', 'Bold', 'Italic' ]]");
+				]]>				
+			</description>
+		</attribute>
+
+		<attribute>
+			<name>events</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.EventHandler</type>
+			<description>CKEditor events. Example:
+				<![CDATA[
+				EventHandler eventHandler = new EventHandler();
+				eventHandler.addEventHandler("instanceReady","function (ev) {
+						          alert(\"Loaded: \" + ev.editor.name); }");
+				]]>
+			</description>
+		</attribute>
+
+		<attribute>
+			<name>globalEvents</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.ckeditor.GlobalEventHandler</type>
+			<description>CKEditor global events. Example:
+				<![CDATA[GlobalEventHandler globalEventHandler = new GlobalEventHandler();
+				globalEventHandler.addEventHandler("dialogDefinition","function (ev) {  alert(\"Loading dialog window: \" + ev.data.name); }");
+				]]>
+			</description>
+		</attribute>
+
+	</tag>
+</taglib>

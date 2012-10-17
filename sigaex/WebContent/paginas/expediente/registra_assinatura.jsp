@@ -3,10 +3,14 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+<%@ taglib uri="http://cheditor.com" prefix="FCK"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <siga:pagina titulo="Registro de Assinatura">
+
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
 
 	<script type="text/javascript" language="Javascript1.1">
 function sbmt() {

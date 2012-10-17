@@ -91,8 +91,8 @@
 							</li>
 						</c:if>
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GEMAIL:Gerenciar grupos de email')}">
-							<li><ww:a href="/siga/gi/email/listar.action">Grupo de Email</ww:a>
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GEMAIL:Gerenciar grupos de distribuição')}">
+							<li><ww:a href="/siga/gi/email/listar.action">Grupo de Distribuição</ww:a>
 							</li>
 						</c:if>
 						<c:if

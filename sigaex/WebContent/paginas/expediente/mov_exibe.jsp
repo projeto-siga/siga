@@ -9,6 +9,10 @@
 
 <siga:pagina titulo="Documento" popup="true">
 
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 	<script language="javascript">
 function fechaJanela(){
 	if (frm.fechaJanela=='sim'){

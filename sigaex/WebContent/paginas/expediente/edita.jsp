@@ -3,16 +3,17 @@
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+<%@ taglib uri="http://cheditor.com" prefix="FCK"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Novo Documento">
 	<%--onLoad="javascript:autoSave();" --%>
-
+		<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
+	
 	<script type="text/javascript">
-
+	
 <ww:url id="url" action="testar_conexao" namespace="/expediente/doc">
 </ww:url>
 var conexaoTimer;

@@ -1,6 +1,7 @@
 import models.SrAndamento;
 import models.SrArquivo;
 import models.SrAtributo;
+import models.SrConfiguracao;
 import models.SrFormaAcompanhamento;
 import models.SrItemConfiguracao;
 import models.SrMarca;
@@ -22,6 +23,7 @@ public class DoDiagram {
 		d.addClass(DpLotacao.class, fI, false, false);
 		d.addClass(CpOrgaoUsuario.class, fI, false, false);
 
+		d.addClass(SrConfiguracao.class, false);
 		d.addClass(SrAndamento.class, false);
 		d.addClass(SrArquivo.class, false);
 		d.addClass(SrAtributo.class, false);

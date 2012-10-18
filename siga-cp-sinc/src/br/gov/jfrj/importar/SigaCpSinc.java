@@ -328,7 +328,7 @@ public class SigaCpSinc {
 		log("--- Processando  " + dt + "--- ");
 		log("--- Parametros: servidor= " + servidor + "  e url= " + url);
 
-		if (args.length > 4 && args[2] != null) {
+		if (args.length >= 3 && args[2] != null) {
 			String method = args[2].trim().replace("-", "").toLowerCase();
 			Method m = this.getClass().getMethod(method, null);
 			m.invoke(this);

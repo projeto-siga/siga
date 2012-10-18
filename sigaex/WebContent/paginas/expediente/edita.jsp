@@ -381,7 +381,7 @@ function checkBoxMsg() {
 								<input type="hidden" name="eletronico" id="eletronicoHidden"
 									value="${eletronico}" />
 								${eletronicoString}
-								<c:if test="${not eletronico}">
+								<c:if test="${eletronico == 2}">
 									<script type="text/javascript">$("html").addClass("fisico");</script>
 								</c:if>
 							</c:when>

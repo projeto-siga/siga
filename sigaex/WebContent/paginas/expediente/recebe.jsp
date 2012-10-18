@@ -8,6 +8,10 @@
 
 <siga:pagina titulo="Recebimento">
 
+<c:if test="${not doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 <script type="text/javascript" language="Javascript1.1">
 function sbmt() {
 	ExMovimentacaoForm.page.value='';

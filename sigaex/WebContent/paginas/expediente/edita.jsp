@@ -381,13 +381,16 @@ function checkBoxMsg() {
 								<input type="hidden" name="eletronico" id="eletronicoHidden"
 									value="${eletronico}" />
 								${eletronicoString}
+								<c:if test="${not eletronico}">
+									<script type="text/javascript">$("html").addClass("fisico");</script>
+								</c:if>
 							</c:when>
 							<c:otherwise>
 								<ww:radio list="%{#{1:'Digital',2:'Físico'}}" name="eletronico"
 									id="eletronicoCheck" label="" value="${eletronico}"
-									disabled="${eletronicoFixo}" />
+									disabled="${eletronicoFixo}" onchange="setFisico();"/>
+								<script type="text/javascript">function setFisico() {if ($('input[name=eletronico]:checked').val() == 2) $('html').addClass('fisico'); else $('html').removeClass('fisico');}; setFisico();</script>									
 							</c:otherwise>
-
 						</c:choose></td>
 					</tr>
 					<c:if test='${tipoDocumento == "antigo"}'>

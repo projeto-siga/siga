@@ -14,6 +14,11 @@
 <%@page import="br.gov.jfrj.siga.ex.ExArquivo"%>
 <%@page import="java.util.List"%>
 <siga:cabecalho titulo="Documento" popup="${param.popup}" />
+
+<c:if test="${not docVO.digital}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 <script type="text/javascript">
 	//Input the IDs of the IFRAMES you wish to dynamically resize to match its content height:
 	//Separate each ID with a comma. Examples: ["myframe1", "myframe2"] or ["myframe"] or [] for none:

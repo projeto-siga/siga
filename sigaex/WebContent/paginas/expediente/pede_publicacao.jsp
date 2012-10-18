@@ -10,6 +10,10 @@
 
 <siga:pagina titulo="Movimentação">
 
+<c:if test="${not doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 <ww:url id="url" action="prever_data" namespace="/expediente/mov">
 </ww:url>
 <script type="text/javascript">

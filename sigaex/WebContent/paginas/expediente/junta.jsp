@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://cheditor.com" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 

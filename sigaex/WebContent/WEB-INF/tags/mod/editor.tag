@@ -15,6 +15,7 @@
 <%@ attribute name="conteudo"%>
 <%@ attribute name="semBotaoSalvar"%>
 
+
 <c:set var="v" value="${param[var]}" />
 <c:if test="${empty v}">
 	<c:set var="v" value="${requestScope[var]}" />
@@ -42,134 +43,74 @@
 				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario, var, v, par.serverAndPort[0])}
 			</c:when>
 			<c:otherwise>
-			<% 
-				com.ckeditor.CKEditorConfig ckconfig = new com.ckeditor.CKEditorConfig();
-				ckconfig.addConfigValue("height","300");
-
-				java.util.List<Object> mainList = new java.util.ArrayList<Object>();				
-				
-				// barra de estilos
-				java.util.HashMap<String, Object> toolbarSectionMap = new java.util.HashMap<String, Object>();
-				java.util.List<String> subList = new java.util.ArrayList<String>();
-				subList.add("Styles");
-				
-				toolbarSectionMap.put("name", "styles");	
-				toolbarSectionMap.put("items", subList);	
-				
-				mainList.add(toolbarSectionMap);		
-				
-				//barra de área de transferência
-				toolbarSectionMap = new java.util.HashMap<String, Object>();
-				subList = new java.util.ArrayList<String>();
-				subList.add("Cut");
-				subList.add("Copy");
-				subList.add("Paste");
-				subList.add("PasteText");
-				subList.add("PasteFromWord");
-				subList.add("-");
-				subList.add("Undo");
-				subList.add("Redo");
-				
-				toolbarSectionMap.put("name", "clipboard");	
-				toolbarSectionMap.put("items", subList);	
-				
-				mainList.add(toolbarSectionMap);		
-				
-				//barra de edição
-				toolbarSectionMap = new java.util.HashMap<String, Object>();
-				subList = new java.util.ArrayList<String>();
-				subList.add("Find");
-				subList.add("Replace");
-				subList.add("-");
-				subList.add("SelectAll");
-				subList.add("-");
-				subList.add("Scayt");
-				
-				toolbarSectionMap.put("name", "editing");	
-				toolbarSectionMap.put("items", subList);	
-				
-				mainList.add(toolbarSectionMap);
-				mainList.add("/");
-				
-				//barra de estilos básicos
-				toolbarSectionMap = new java.util.HashMap<String, Object>();
-				subList = new java.util.ArrayList<String>();
-				subList.add("Bold");
-				subList.add("Italic");
-				subList.add("Strike");
-				subList.add("-");
-				subList.add("RemoveFormat");
-				
-				toolbarSectionMap.put("name", "basicstyles");	
-				toolbarSectionMap.put("items", subList);	
-				
-				mainList.add(toolbarSectionMap);		
-				
-				//barra de parágrafos
-				toolbarSectionMap = new java.util.HashMap<String, Object>();
-				subList = new java.util.ArrayList<String>();
-				subList.add("NumberedList");
-				subList.add("BulletedList");
-				subList.add("-");
-				subList.add("Outdent");
-				subList.add("Indent");
-				subList.add("-");
-				subList.add("JustifyLeft");
-				subList.add("JustifyBlock");
-				subList.add("JustifyRight");
-				
-				toolbarSectionMap.put("name", "paragraph");	
-				toolbarSectionMap.put("items", subList);	
-				
-				mainList.add(toolbarSectionMap);		
-				
-				//barra de inserções
-				toolbarSectionMap = new java.util.HashMap<String, Object>();
-				subList = new java.util.ArrayList<String>();
-				subList.add("Table");
-				subList.add("-");
-				subList.add("SpecialChar");
-				subList.add("-");
-				subList.add("PageBreak");
-				
-				toolbarSectionMap.put("name", "insert");	
-				toolbarSectionMap.put("items", subList);	
-				
-				mainList.add(toolbarSectionMap);		
-				
-				//barra de documento
-				toolbarSectionMap = new java.util.HashMap<String, Object>();
-				subList = new java.util.ArrayList<String>();
-				subList.add("Source");
-				
-				toolbarSectionMap.put("name", "document");	
-				toolbarSectionMap.put("items", subList);	
-				
-				mainList.add(toolbarSectionMap);		
-				
-				ckconfig.addConfigValue("toolbar", mainList);
-				
-				
-				java.util.Map<String, String> attrTxtArea = new java.util.HashMap<String, String>();
-				attrTxtArea.put("rows", "20");
-				attrTxtArea.put("cols", "100");
-				
-				ckconfig.addConfigValue("stylesSet","siga_ckeditor_styles:/sigaex/sigalibs/siga_ckeditor_styles.js");
-								
-				request.setAttribute("ckconfig", ckconfig);
-				request.setAttribute("attrTxtArea", attrTxtArea);
-				
-				
-				
-			%>
-			
 			<tags:fixeditor var="${var}">
 					<c:if test="${empty v}">
-							<c:set var="v" value='<p style="TEXT-INDENT: 2cm" align="justify">&nbsp;</p>'/>
+							<c:set var="v" value='<p style="TEXT-INDENT: 2cm" align="justify"></p>'/>
 					</c:if>
-					<FCK:editor editor="xxxeditorxxx"
-						basePath="/ckeditor/ckeditor" config="${ckconfig}" textareaAttributes="${attrTxtArea}" value="${v}">
-					</FCK:editor>
+					<textarea cols="100" id="xxxeditorxxx" name="xxxeditorxxx" rows="20">${v}</textarea>
+					
+					
+					 <script type="text/javascript">
+
+CKEDITOR.config.scayt_autoStartup = true;
+CKEDITOR.config.scayt_sLang = 'pt_BR';
+
+CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
+
+
+
+CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
+                                               {
+                                            	   name:'Título',
+                                            	   element:'h1',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
+                                               },
+                                               {
+                                            	   name:'Subtítulo',
+                                            	   element:'h2',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
+                                               },
+                                               {
+                                            	   name:'Com recuo',
+                                            	   element:'p',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
+                                               }]);
+	CKEDITOR.config.toolbar = 'SigaToolbar';
+ 
+	CKEDITOR.config.toolbar_SigaToolbar =
+	[
+		{ name: 'styles', items : [ 'Styles' ] },
+		{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+		'/',
+		{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','-','RemoveFormat' ] },
+		{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyBlock','JustifyRight' ] },
+		{ name: 'insert', items : [ 'Table','-','SpecialChar','-','PageBreak' ] },
+		{ name: 'document', items : [ 'Source' ] }
+	];
+
+window.onload = function(){
+
+	CKEDITOR.replace( '${var}',
+			{
+				toolbar : 'SigaToolbar'
+			});
+
+	
+}
+                            </script>
+                            
+                            
+					<!-- <FCK:replace replace="xxxeditorxxx" basePath="/ckeditor/ckeditor" config="${ckconfig}"></FCK:replace> -->
 					</td>
 				</tags:fixeditor>
 			</c:otherwise>

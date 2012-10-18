@@ -24,7 +24,8 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
-public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements IExMobilDaoFiltro {
+public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
+		IExMobilDaoFiltro {
 	@Override
 	public void setSigla(final String nome) {
 		// Se receber valor nulo, zerar todos os campos
@@ -115,6 +116,16 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements IExMobilD
 	private Long ultMovLotaRespSelId;
 
 	private Long ultMovRespSelId;
+
+	private Integer ordem;
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
+	}
 
 	public Long getAnoEmissao() {
 		return anoEmissao;

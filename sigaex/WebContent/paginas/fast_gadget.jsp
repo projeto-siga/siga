@@ -40,6 +40,7 @@ submitOk = function() {
 					<c:set var="titulo1" value=""></c:set>
 					<c:set var="titulo2" value=""></c:set>
 					<c:set var="titulo3" value=""></c:set>
+					<c:set var="ordem" value="0"/>
 					<c:choose>
 						<c:when test="${listEstado[0]==1}">
 							<c:set var="titulo1"
@@ -61,6 +62,7 @@ submitOk = function() {
 							<c:set var="titulo2"
 								value="Documentos não eletrônicos transferidos para o usuário ${titular.nomePessoa} que estão aguardando recebimento."></c:set>
 							<c:set var="titulo3" value="${titulo1}"></c:set>
+							<c:set var="ordem" value="1"/>
 						</c:when>
 						<c:when test="${listEstado[0]==14}">
 							<c:set var="titulo1"
@@ -68,6 +70,7 @@ submitOk = function() {
 							<c:set var="titulo2"
 								value="Documentos eletrônicos transferidos para o usuário ${titular.nomePessoa} que estão aguardando recebimento."></c:set>
 							<c:set var="titulo3" value="${titulo1}"></c:set>
+							<c:set var="ordem" value="1"/>
 						</c:when>
 						<c:when test="${listEstado[0]==15}">
 							<c:set var="titulo1"
@@ -75,6 +78,7 @@ submitOk = function() {
 							<c:set var="titulo2"
 								value="Documentos que foram finalizados mas ainda não foram assinados."></c:set>
 							<c:set var="titulo3" value="${titulo1}"></c:set>
+							<c:set var="ordem" value="1"/>
 						</c:when>
 						<c:when test="${listEstado[0]==23}">
 							<c:set var="titulo1"
@@ -82,6 +86,7 @@ submitOk = function() {
 							<c:set var="titulo2"
 								value="Documentos não eletrônicos que foram transferidos, pelo usuário ${titular.nomePessoa}, para outra lotação/pessoa mas ainda não foram recebidos."></c:set>
 							<c:set var="titulo3" value="${titulo1}"></c:set>
+							<c:set var="ordem" value="1"/>
 						</c:when>
 						<c:when test="${listEstado[0]==24}">
 							<c:set var="titulo1"
@@ -89,12 +94,14 @@ submitOk = function() {
 							<c:set var="titulo2"
 								value="Documentos eletrônicos que foram transferidos, pelo usuário ${titular.nomePessoa}, para outra lotação/pessoa mas ainda não foram recebidos."></c:set>
 							<c:set var="titulo3" value="${titulo1}"></c:set>
+							<c:set var="ordem" value="1"/>
 						</c:when>
 						<c:when test="${listEstado[0]==25}">
 							<c:set var="titulo1"
 								value="Documentos pendentes de assinatura cujo subscritor é o usuário ${titular.nomePessoa}."></c:set>
 							<c:set var="titulo2" value="${titulo1}"></c:set>
 							<c:set var="titulo3" value=""></c:set>
+							<c:set var="ordem" value="1"/>
 						</c:when>
 					</c:choose>
 					<tr>
@@ -104,6 +111,7 @@ submitOk = function() {
 								<ww:param name="ultMovLotaRespSel.id">${lotaTitular.idLotacao}</ww:param>
 								<ww:param name="orgaoUsu">0</ww:param>
 								<ww:param name="idTipoFormaDoc">${idTpFormaDoc}</ww:param>
+								<ww:param name="ordem">${ordem}</ww:param>
 							</ww:url> <siga:monolink titulo="${titulo1}" texto="${listEstado[1]}"
 								href="%{url}" />
 						<td align="right" class="count"><ww:url id="url"
@@ -112,6 +120,7 @@ submitOk = function() {
 								<ww:param name="ultMovRespSel.id">${titular.idPessoa}</ww:param>
 								<ww:param name="orgaoUsu">0</ww:param>
 								<ww:param name="idTipoFormaDoc">${idTpFormaDoc}</ww:param>
+								<ww:param name="ordem">${ordem}</ww:param>
 							</ww:url> <siga:monolink titulo="${titulo2}" texto="${listEstado[2]}"
 								href="%{url}" />
 						<td align="right" class="count"><ww:url id="url"
@@ -120,6 +129,7 @@ submitOk = function() {
 								<ww:param name="ultMovLotaRespSel.id">${lotaTitular.idLotacao}</ww:param>
 								<ww:param name="orgaoUsu">0</ww:param>
 								<ww:param name="idTipoFormaDoc">${idTpFormaDoc}</ww:param>
+								<ww:param name="ordem">${ordem}</ww:param>
 							</ww:url> <siga:monolink titulo="${titulo3}" texto="${listEstado[3]}"
 								href="%{url}" /> <%--<ww:a href="%{url}" title="${titulo1}">${listEstado[3]}</ww:a>--%>
 						</td>

@@ -1387,7 +1387,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			log.error("Ocorreu um erro na assinatura em lote de anexos", e.getCause());
-			log.error("Dados da movimentacao: " + movAlvo.toString() + movAlvo.getIdMov());
+			log.error("Dados da movimentacao: " + movAlvo.toString() + " " + movAlvo.getIdMov());
 			e.printStackTrace();
 			throw new AplicacaoException(
 					"Erro na assinatura de uma movimentação", 0, e);

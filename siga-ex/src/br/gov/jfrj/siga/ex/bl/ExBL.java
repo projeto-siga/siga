@@ -31,7 +31,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,8 +46,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.fop.area.IDTracker;
-import org.apache.velocity.runtime.parser.node.GetExecutor;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Order;
@@ -127,6 +125,8 @@ public class ExBL extends CpBL {
 
 	private ProcessadorModelo processadorModeloJsp;
 	private ProcessadorModelo processadorModeloFreemarker = new ProcessadorModeloFreemarker();
+	
+	private final static Logger log = Logger.getLogger(ExBL.class);
 
 	public ThreadLocal<SortedSet<ExMobil>> getThreadAlteracaoParcial() {
 		return threadAlteracaoParcial;
@@ -1386,6 +1386,9 @@ public class ExBL extends CpBL {
 			// .getConteudoBlobpdf(), assinatura, null);
 
 		} catch (final Exception e) {
+			log.error("Ocorreu um erro na assinatura em lote de anexos", e.getCause());
+			log.error("Dados da movimentacao: " + movAlvo.toString() + movAlvo.getIdMov());
+			e.printStackTrace();
 			throw new AplicacaoException(
 					"Erro na assinatura de uma movimentação", 0, e);
 		}

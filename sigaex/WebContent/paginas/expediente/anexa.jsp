@@ -42,7 +42,7 @@
 
 		function montaTableAssinados(chk){	
 			if(chk.checked == true) {
-				$('#tableAssinados').html('<h1>Carregando...</h1>');			
+				$('#tableAssinados').html('Carregando...');			
 				$.ajax({
 					  url:'/sigaex/expediente/mov/mostrar_anexos_assinados.action?sigla=${mobilVO.sigla}',
 					  success: function(data) {

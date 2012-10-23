@@ -44,7 +44,10 @@
 			if(chk.checked == true) {
 				$('#tableAssinados').html('Carregando...');			
 				$.ajax({
+				      type: "POST",					  
 					  url:'/sigaex/expediente/mov/mostrar_anexos_assinados.action?sigla=${mobilVO.sigla}',
+					  data: {jaCarregouBotoes:"true"}, 
+					  beforeSend: function(xhr, settings){ if(${carregouBotoes} data: {botoes="true"}; },  					   					 
 					  success: function(data) {
 				    	$('#tableAssinados').html(data);				    
 				 	 }
@@ -59,6 +62,7 @@
 		<ww:param name="sigla">${mobilVO.sigla}</ww:param>
 	</ww:url>
 	
+			
 	<c:if test="${!assinandoAnexosGeral}">
 
 		<div class="gt-bd clearfix">
@@ -67,7 +71,6 @@
 				<h2>Anexação de Arquivo - ${mob.siglaEDescricaoCompleta}</h2>
 
 				<div class="gt-content-box gt-for-table">
-
 					<ww:form action="anexar_gravar" namespace="/expediente/mov"
 						method="POST" enctype="multipart/form-data" cssClass="form">
 
@@ -105,29 +108,30 @@
 							</tr>
 							<tr>
 								<ww:textfield name="descrMov" label="Descrição" maxlength="80"
-									size="80" />
+									          size="80" />
 							</tr>
 							<tr>
 								<ww:file name="arquivo" label="Arquivo" accept="application/pdf"
-									onchange="testpdf(this.form)" />
+									     onchange="testpdf(this.form)" />
 							</tr>
-							<tr class="button">
+							<tr>
 								<td colspan="2"><input type="submit" value="Ok"
-									class="gt-btn-small gt-btn-left" /> <input type="button"
-									value="Voltar"
-									onclick="javascript:window.location.href='${urlExibir}'"
-									class="gt-btn-small gt-btn-left" />
+									class="gt-btn-medium gt-btn-left" /> 
+									<input  type="button" value="Voltar" onclick="javascript:window.location.href='${urlExibir}'"
+									        class="gt-btn-medium gt-btn-left" />	
+									<br/>        								
+									<input type="checkbox"  theme="simple" 
+	                                       onclick="javascript:montaTableAssinados(this);" /> <b>Exibir anexos assinados</b>
 								</td>
 							</tr>
 						</table>						
-						
-					</ww:form>
-					
+					</ww:form>							
 				</div>
 			</div>
 	</c:if>
 	
-	<br>	
+	
+	<div id="tableAssinados"></div>
 	
 	<ww:if test="${(not empty mobilVO.movs)}">
 		<c:if test="${assinandoAnexosGeral}">
@@ -247,12 +251,10 @@
 					</table>
 				</div>
 				<c:if test="${assinandoAnexosGeral}">
-					</div>
-				</c:if>
-				<div id="tableAssinados"></div>
+					</div>		
+				</c:if>				
 				
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
 					<c:set var="jspServer"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 					<c:set var="nextURL"
@@ -261,11 +263,9 @@
 					<c:set var="botao" value="ambos" />
 					<c:set var="lote" value="true" />			
 					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
-				</c:if>
-				<table align="center"><tr><td><input type="checkbox"  theme="simple"
-	                   onclick="javascript:montaTableAssinados(this);" /> <b>Exibir anexos assinados</b> 	
-	            </td></tr></table>
-				
+					<ww:hidden name="carregouBotoes" id="carregouBotoes" value="true" />			
+						 
+				</c:if>			
 			</ww:form>
 		</div>
 		</div>

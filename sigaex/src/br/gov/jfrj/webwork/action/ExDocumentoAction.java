@@ -575,7 +575,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aEditar() throws Exception {
 
 		buscarDocumentoOuNovo(true);
-
+		
 		if ((getPostback() == null) || (param("docFilho") != null)) {
 			tipoDestinatario = 2;
 			idFormaDoc = 2;

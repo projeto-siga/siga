@@ -25,10 +25,17 @@
 </c:if>
 
 <input type="hidden" name="vars" value="${var}" />
+<input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${par.desconsiderarExtensao[0]}" />
+
 <div><c:if test="${not empty titulo}">
 	<b>${titulo}</b>
 </c:if> <c:choose>
 	<c:when test="${param.entrevista == 1}">
+	
+		<c:if test="${empty v}">
+							<c:set var="v" value='<p style="TEXT-INDENT: 2cm" align="justify">&nbsp;</p>'/>
+					</c:if>
+	
 		<%
 			String s = (String) jspContext.getAttribute("v");
 					jspContext.setAttribute("v",
@@ -39,7 +46,8 @@
 		%>
 
 		<div><c:choose>
-			<c:when test="${f:podeUtilizarExtensaoEditor(lotaTitular, idMod) && !desconsiderarExtensao}">
+			<c:when test="${f:podeUtilizarExtensaoEditor(lotaTitular, idMod) && !par.desconsiderarExtensao[0]}">
+				<input type="hidden" id="${var}" name="${var}" value="<c:out value="${v}" escapeXml="true" />" >
 				${f:obterExtensaoEditor(lotaTitular.orgaoUsuario, var, v, par.serverAndPort[0])}
 			</c:when>
 			<c:otherwise>

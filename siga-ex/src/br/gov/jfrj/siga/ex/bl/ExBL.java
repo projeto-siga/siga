@@ -2555,7 +2555,7 @@ public class ExBL extends CpBL {
 
 		try {
 			if (subscritor == null) {
-				throw new AplicacaoException("Co-signatário não foi informado");
+				throw new AplicacaoException("Cossignatário não foi informado");
 			}
 
 			iniciarAlteracao();
@@ -2573,7 +2573,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao incluir co-signatário.", 0, e);
+			throw new AplicacaoException("Erro ao incluir Cossignatário.", 0, e);
 		}
 	}
 
@@ -2794,7 +2794,7 @@ public class ExBL extends CpBL {
 		}
 
 		// É necessário gravar novamente pois uma movimentação de inclusão
-		// de co-signatário pode ter sido introduzida, gerando a necessidade
+		// de cossignatário pode ter sido introduzida, gerando a necessidade
 		// de refazer o HTML e o PDF.
 		novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc);
 

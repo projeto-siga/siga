@@ -25,7 +25,7 @@
 		<div class="gt-content clearfix">
 
 			<h2>
-				Inclusão de Co-signatário - ${mob.siglaEDescricaoCompleta}</h2>
+				Inclusão de Cossignatário- ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -35,12 +35,12 @@
 					<ww:hidden name="sigla" value="%{sigla}" />
 					<table class="gt-form-table">
 						<tr class="header">
-							<td colspan="2">Dados do Co-signatário</td>
+							<td colspan="2">Dados do Cossignatário</td>
 						</tr>
 						<%--<ww:textfield name="dtMovString" label="Data"
 					onblur="javascript:verifica_data(this);" />--%>
 
-						<siga:selecao titulo="Co-signatário:" propriedade="cosignatario" />
+						<siga:selecao titulo="Cossignatário:" propriedade="cosignatario" />
 						<ww:textfield name="funcaoCosignatario"
 							label="Função;Lotação;Localidade" size="50" maxLength="128" />
 

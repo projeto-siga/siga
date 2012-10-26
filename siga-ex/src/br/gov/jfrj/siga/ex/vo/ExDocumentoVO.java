@@ -183,7 +183,7 @@ public class ExDocumentoVO extends ExVO {
 				.getComp().podeExcluir(titular, lotaTitular, mob),
 				"Confirma a exclusão do documento?", null, null, null);
 
-		vo.addAcao("user_add", "Incluir Co-signatário", "/expediente/mov",
+		vo.addAcao("user_add", "Incluir Cossignatário", "/expediente/mov",
 				"incluir_cosignatario", Ex.getInstance().getComp()
 						.podeIncluirCosignatario(titular, lotaTitular, mob));
 

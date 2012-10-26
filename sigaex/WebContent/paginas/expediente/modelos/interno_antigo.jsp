@@ -120,18 +120,23 @@
 		</div>
 
 		<!-- INICIO PRIMEIRO RODAPE
-		<table width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
-			<tr>
-				<td>
-					<table align="right" width="30%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
-						<tr bgcolor="#FFFFFF">
-							<td align="center" style="font-family:Arial;font-size:8pt;text-decoration:italic;" width="60%">Classif. documental</td>
-							<td align="center" style="font-family:Arial;font-size:8pt;" width="40%">${doc.exClassificacao.sigla}</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
+		
+		<table align="left" width="100%" bgcolor="#FFFFFF">
+		    <tr>
+		        <td width="70%">
+		        </td>
+		        <td width="30%" >
+		        <table align="right" width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" bgcolor="#000000">
+		            <tr>
+		                <td align="center" width="60%" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;" bgcolor="#FFFFFF"><i>Classif. documental</i></td>
+		                <td align="center" width="40%" style="border-collapse: collapse; border-color: black; font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">${doc.exClassificacao.sigla}</td>
+		            </tr>
+		        </table>
+		        </td>
+		    </tr>
+		    
 		</table>
+		
 		FIM PRIMEIRO RODAPE -->
 
 		<!-- INICIO RODAPE

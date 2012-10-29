@@ -106,6 +106,9 @@ public abstract class AbstractDocumento extends HttpServlet {
 			final HttpServletResponse response) throws IOException,
 			ServletException {
 		try {
+			
+			log.info("[AbstractDocumento] - Iniciando servlet de documentos...");
+			
 			@SuppressWarnings("unused")
 			ExDao dao = ExDao.getInstance();
 
@@ -153,6 +156,9 @@ public abstract class AbstractDocumento extends HttpServlet {
 			} else {
 				filename = mob.getCodigoCompacto();
 			}
+			
+			log.info("[AbstractDocumento] - Acessando documento " + filename);
+			
 			if (ab.length <= 64) {
 				response.setHeader("Content-Disposition",
 						"attachment; filename=" + filename + ".hash");

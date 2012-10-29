@@ -96,8 +96,9 @@ public class HibernateUtil {
 				tx.setTimeout( Integer.parseInt( strTimeout ) );
 			}
 			
-			HibernateUtil.threadTransaction.set(tx);
+			
 		}
+		HibernateUtil.threadTransaction.set(tx);
 	}
 
 	public static void commitTransacao() throws AplicacaoException {

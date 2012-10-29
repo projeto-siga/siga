@@ -1,0 +1,63 @@
+package controllers;
+
+import java.util.Set;
+import java.util.SortedSet;
+
+import models.SrConfiguracao;
+import models.SrItemConfiguracao;
+import models.SrServico;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpPerfil;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+
+public class SrConfiguracaoBL extends CpConfiguracaoBL {
+
+	private static SrConfiguracaoBL instancia = new SrConfiguracaoBL();
+
+	public static SrConfiguracaoBL get() {
+		return instancia;
+	}
+
+	public SrConfiguracaoBL() {
+		super();
+		setComparator(new SrConfiguracaoComparator());
+	}
+
+	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)
+			throws Exception {
+		return (SrConfiguracao) buscaConfiguracao(conf, new int[] { 0 }, null);
+	}
+
+	@Override
+	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
+		super.deduzFiltro(cpConfiguracao);
+	}
+
+	@Override
+	public boolean atendeExigencias(CpConfiguracao cfgFiltro,
+			Set<Integer> atributosDesconsiderados, CpConfiguracao cfg,
+			SortedSet<CpPerfil> perfis) {
+		if (!super.atendeExigencias(cfgFiltro, atributosDesconsiderados, cfg,
+				perfis))
+			return false;
+
+		if (cfg instanceof SrConfiguracao
+				&& cfgFiltro instanceof SrConfiguracao) {
+			SrConfiguracao conf = (SrConfiguracao) cfg;
+			SrConfiguracao filtro = (SrConfiguracao) cfgFiltro;
+
+			if (conf.servico != null && filtro.servico != null
+					&& !conf.servico.isPaiDeOuIgualA(filtro.servico))
+				return false;
+
+			if (conf.itemConfiguracao != null
+					&& filtro.itemConfiguracao != null
+					&& !conf.itemConfiguracao
+							.isPaiDeOuIgualA(filtro.itemConfiguracao))
+				return false;
+
+		}
+		return true;
+	}
+
+}

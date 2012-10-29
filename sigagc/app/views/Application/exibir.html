@@ -1,0 +1,16 @@
+#{extends 'main.html' /} #{set title:'Exibição de Tópico de
+Informação'/}
+
+<h1>${title}</h1>
+<br />
+Título: ${informacao?.titulo}
+<br />
+
+Conteúdo: ${informacao?.desc}
+<br />
+
+<br />
+<input type="button" value="Voltar"
+	onclick="javascript: window.location='@{Application.index()}';" />
+<input type="button" value="Editar"
+	onclick="javascript: window.location='@{Application.editar(informacao.id)}';" />

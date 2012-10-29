@@ -1,0 +1,13 @@
+#{extends 'main.html' /} #{set title:'Edição de Tópico de Informação' /}
+
+<h1>${title}</h1>
+<br />
+<form action="@{Application.gravar}"><input type="hidden"
+	name="informacao.id" value="${informacao?.id}" /> <input type="text"
+	name="informacao.titulo" value="${informacao?.titulo}" /> <br />
+<textarea name="informacao.desc" cols="80" rows="5">${informacao?.desc}</textarea>
+<br />
+<input type="submit" value="Gravar" /> <input type="button"
+	value="Remover"
+	onclick="javascript: window.location='@{Application.remover(informacao?.id)}';" />
+</form>

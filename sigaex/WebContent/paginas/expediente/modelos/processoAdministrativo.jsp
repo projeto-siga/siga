@@ -22,7 +22,7 @@
 @page {
 	margin-left: 1cm;
 	margin-right: 2 cm;
-	margin-top: 0.5cm;
+	margin-top: 1cm;
 	margin-bottom: 2 cm;
 }
 </style>
@@ -34,7 +34,7 @@
 		</c:if>
 
 		<!-- INICIO PRIMEIRO CABECALHO
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table width="100%">
 			<tr>
 				<td>
 					<table border="0" align="center" bgcolor="#ffffff" width="100%">
@@ -45,25 +45,42 @@
 						</tr>
 					</table>
 				</td>
-			<tr>
-			<tr>
-				<td>
-					<br><br/><c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-				</td>
 			</tr>
-			<tr bgcolor="#FFFFFF">
-				<td cellpadding="5">
-					&nbsp;
-				</td>
-			</tr>
+			<tr><td align="center"><img src="contextpath/imagens/brasao2.png" width="64" height="64" /></td></tr>
 		</table>
+		
 		FIM PRIMEIRO CABECALHO -->
 
-		<%--      <!-- INICIO CABECALHO
-		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizado.jsp" />
-		<br/><br/>
-		FIM CABECALHO --> --%>
+		<!-- INICIO CABECALHO
+		<c:if
+			test="${not doc.eletronico and doc.exTipoDocumento.idTpDoc == 1}">
+			<c:if test="${doc.exFormaDocumento.idFormaDoc=='57'}">
+				<c:import url="/paginas/expediente/modelos/inc_cabecalhoFolhaInicialVolumeEof.jsp" />
+			</c:if>
+		</c:if>
+		FIM CABECALHO -->
 
+		<table align="center" width="100%">
+						<tr>
+							<td width="100%" align="center" style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">
+							PODER
+							JUDICIÁRIO
+							</td>
+						</tr>
+			<tr>
+							<td width="100%" align="center" style="font-family: Arial; font-size: 10pt; font-weight: bold;">
+								JUSTIÇA FEDERAL
+							</td>
+						</tr>
+						<tr>
+							<td width="100%" align="center" style="font-family: Arial; font-size: 10pt; font-weight: bold;">
+								<c:choose>
+								<c:when test="${empty mov}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when>
+								<c:otherwise>${mov.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:otherwise>
+								</c:choose>
+							</td>
+						</tr>
+		</table>
 		<br />
 		<%-- Não serão necessários os campos Apenso e volume abaixo, por isto estão comentados  --%>
 		<table align="center" width="60%" border="1" cellspacing="1"
@@ -78,9 +95,8 @@
 			</tr>
 
 			<tr>
-				<td bgcolor="#FFFFFF" align="center"><br />
-				${doc.codigo}<br />
-				<br />
+				<td bgcolor="#FFFFFF" align="center" ><p>
+				<br/>${doc.codigo}<br/>&nbsp;</p>
 				</td>
 			</tr>
 		</table>
@@ -113,9 +129,8 @@
 		<table align="center" width="50%" border="1" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF" align="center"><br />
-				<b>Data de abertura</b><br />
-				<br />
+				<td bgcolor="#FFFFFF" align="center"><p><br/>
+				<b>Data de abertura</b><br/>&nbsp;</p>
 				</td>
 				<td bgcolor="#FFFFFF" align="center">${doc.dtDocDDMMYYYY}</td>
 			</tr>

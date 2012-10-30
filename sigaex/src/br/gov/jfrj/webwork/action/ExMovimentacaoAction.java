@@ -1765,7 +1765,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeIncluirCosignatario(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível incluir co-signatário");
+			throw new AplicacaoException("Não é possível incluir cossignatário");
 
 		return Action.SUCCESS;
 	}
@@ -1784,7 +1784,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeIncluirCosignatario(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível incluir co-signatário");
+			throw new AplicacaoException("Não é possível incluir cossignatário");
 
 		try {
 			Ex.getInstance()

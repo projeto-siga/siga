@@ -6,6 +6,9 @@
 	<!-- chamadas são públicas: não necessárias as entradas de login-config para certificado -->
 	
 	<display-name>sigacd</display-name>
+	
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
 
 	<!--jsp-config>
 		<taglib>

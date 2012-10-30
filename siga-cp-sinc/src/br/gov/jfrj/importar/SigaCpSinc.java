@@ -328,7 +328,7 @@ public class SigaCpSinc {
 		log("--- Processando  " + dt + "--- ");
 		log("--- Parametros: servidor= " + servidor + "  e url= " + url);
 
-		if (args.length >= 3 && args[2] != null) {
+		if (args.length > 5 && args[2] != null) {
 			String method = args[2].trim().replace("-", "").toLowerCase();
 			Method m = this.getClass().getMethod(method, null);
 			m.invoke(this);
@@ -769,7 +769,7 @@ public class SigaCpSinc {
 		}
 		lotacao.setDataInicioLotacao(new Date());
 		lotacao.setOrgaoUsuario(cpOrgaoUsuario);
-		if (parseStr(parser, "idPai") != null) {
+		if (parseStr(parser, "idPai") != null && !parseStr(parser, "idPai").equals(lotacao.getIdExterna())) {
 			DpLotacao o = new DpLotacao();
 			o.setIdExterna(parseStr(parser, "idPai"));
 			lotacao.setLotacaoPai(o);
@@ -947,9 +947,9 @@ public class SigaCpSinc {
 			texto = texto + "Arquivo XML gerado em " + getDataHora() + "\n";
 		}
 		texto = texto + sbLog.toString();
-		Correio.enviar(
+		/*Correio.enviar(
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
-				destinatarios, "Log de importação", texto, null);
+				destinatarios, "Log de importação", texto, null);*/
 	}
 
 	private Date parseData(XmlPullParser parser, String campo) {

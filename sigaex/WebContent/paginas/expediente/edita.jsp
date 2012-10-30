@@ -3,7 +3,7 @@
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://cheditor.com" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
@@ -381,7 +381,7 @@ function checkBoxMsg() {
 								<input type="hidden" name="eletronico" id="eletronicoHidden"
 									value="${eletronico}" />
 								${eletronicoString}
-								<c:if test="${not eletronico}">
+								<c:if test="${eletronico == 2}">
 									<script type="text/javascript">$("html").addClass("fisico");</script>
 								</c:if>
 							</c:when>

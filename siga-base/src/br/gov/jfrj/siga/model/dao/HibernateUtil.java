@@ -78,7 +78,15 @@ public class HibernateUtil {
 	}
 
 	public static void iniciarTransacao() {
-		Transaction tx = HibernateUtil.threadTransaction.get();
+		
+		// bruno.lacerda@avantiprima.com.br
+		// Resolucao do erro Session is Closed ao comitar uma transacao pois se o ThreadTransaction
+		// nao for nulo a threadTransaction pode ter sido obtida em uma sessao do hibernate diferente 
+		// da atual e por este motivo a sessao pode estar fechada.
+		
+		// Transaction tx = HibernateUtil.threadTransaction.get();		
+		Transaction tx = HibernateUtil.getSessao().beginTransaction();
+		
 		if (tx == null) {
 			tx = HibernateUtil.getSessao().beginTransaction();
 			
@@ -88,8 +96,9 @@ public class HibernateUtil {
 				tx.setTimeout( Integer.parseInt( strTimeout ) );
 			}
 			
-			HibernateUtil.threadTransaction.set(tx);
+			
 		}
+		HibernateUtil.threadTransaction.set(tx);
 	}
 
 	public static void commitTransacao() throws AplicacaoException {

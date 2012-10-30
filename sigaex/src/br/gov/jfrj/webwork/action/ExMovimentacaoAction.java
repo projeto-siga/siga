@@ -103,8 +103,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String assinaturaB64;
 
 	private Boolean copia;
-	
-	private Boolean jaCarregouBotoes;
 
 	private String contentType;
 
@@ -3478,14 +3476,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.copia = copia;
 	}
 	
-	public Boolean getJaCarregouBotoes() {
-		return jaCarregouBotoes;
-	}
-
-	public void setJaCarregouBotoes(Boolean jaCarregouBotoes) {
-		this.jaCarregouBotoes = jaCarregouBotoes;
-	}
-
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}

@@ -1420,13 +1420,16 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao", 0, e);
 		}
 
-		// Obtem a matricula do assinante
-		if (sNome == null) {
-			throw new AplicacaoException(
-			"Não foi possível acessar o nome do assinante");
-		}			
-		String sMatricula = sNome.split(":")[1];
-		lMatricula = Long.valueOf(sMatricula);
+		try {
+			if (sNome == null)
+				throw new AplicacaoException(
+						"Não foi possível acessar o nome do assinante");
+			String sMatricula = sNome.split(":")[1];
+			lMatricula = Long.valueOf(sMatricula);
+		} catch (final Exception e) {
+			// throw new AplicacaoException(
+			// "Não foi possível obter a matrícula do assinante", 0, e);
+		}
 		
 		// Verifica se a matrícula confere com o subscritor do Despacho ou do
 		// desentranhamento

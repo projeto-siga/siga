@@ -29,8 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import br.gov.jfrj.siga.acesso.ConheceUsuarioSupport;
 import br.gov.jfrj.siga.acesso.UsuarioAutenticado;
@@ -54,7 +53,7 @@ public abstract class AbstractDocumento extends HttpServlet {
 	private static final long serialVersionUID = -600880073954336881L;
 
 	@SuppressWarnings("unused")
-	private static Log log = LogFactory.getLog(AbstractDocumento.class);
+	private static Logger log = Logger.getLogger(AbstractDocumento.class);
 
 	private ExMobil getMobil(String requestURI) throws SecurityException,
 			IllegalAccessException, InvocationTargetException,

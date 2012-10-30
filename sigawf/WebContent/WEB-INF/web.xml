@@ -5,7 +5,7 @@
 	<display-name>sigawf</display-name>
 	
 	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
-	<distributable/>
+	<!--distributable/-->
 	
 	<jsp-config>
 		<taglib>

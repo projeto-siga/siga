@@ -8,7 +8,7 @@
 	<display-name>Sistema Integrado de Gestão Administrativa</display-name>
 	
 	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
-	<distributable/>
+	<!--distributable/-->
 	
 	<session-config>
 		<session-timeout>120</session-timeout>

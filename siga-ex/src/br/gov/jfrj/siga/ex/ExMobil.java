@@ -1075,6 +1075,24 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return b;
 		
 	}
+	
+	/**
+	 * Verifica se um Mobil possui arquivos anexados  
+	 * 
+	 * @return Verdadeiro se o Mobil possui arquivos anexados e False caso contrário.
+	 * 
+	 */	
+	public boolean temAnexos(){		
+		boolean b = false;
+		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
+			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+				b = true;
+				break;
+			}
+		return b;
+		
+	}
+	
 
 	/**
 	 * Verifica se um Mobil do tipo Volume está Apensado a outro Mobil do mesmo

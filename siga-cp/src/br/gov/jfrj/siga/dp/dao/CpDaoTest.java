@@ -30,6 +30,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -131,7 +132,7 @@ public class CpDaoTest extends TestCase {
 
 		CpGrupo grp = grpNovo;
 		grpNovo = grp.getClass().newInstance();
-		BeanUtils.copyProperties(grpNovo, grp);
+		PropertyUtils.copyProperties(grpNovo, grp);
 		grpNovo.setIdGrupo(null);
 		grpNovo.setCpGrupoPai(null);
 		grpNovo.setDscGrupo("Teste");
@@ -153,7 +154,7 @@ public class CpDaoTest extends TestCase {
 				.getId(), CpGrupo.class, false));
 		CpGrupo grpNovo = ((CpGrupo) Objeto.getImplementation(grp)).getClass()
 				.newInstance();
-		BeanUtils.copyProperties(grpNovo, grp);
+		PropertyUtils.copyProperties(grpNovo, grp);
 		grpNovo.setIdGrupo(null);
 		CpGrupo grpRecebido = (CpGrupo) dao.gravarComHistorico(grpNovo, grp,
 				null, null);
@@ -172,7 +173,7 @@ public class CpDaoTest extends TestCase {
 				.getId(), CpGrupo.class, false));
 		CpGrupo grpNovo = ((CpGrupo) Objeto.getImplementation(grp)).getClass()
 				.newInstance();
-		BeanUtils.copyProperties(grpNovo, grp);
+		PropertyUtils.copyProperties(grpNovo, grp);
 		grpNovo.setIdGrupo(null);
 		grpNovo.setDscGrupo(grp.getDscGrupo() + ".");
 		CpGrupo grpRecebido = (CpGrupo) dao.gravarComHistorico(grpNovo, grp,
@@ -231,7 +232,7 @@ public class CpDaoTest extends TestCase {
 
 		// Cria uma nova identidade
 		CpIdentidade idNova = Cp.getInstance().getBL().criarIdentidade(LOGIN,
-				CPF, null);
+				CPF, null,null,null,false);
 		assertTrue(idNova.getDscSenhaIdentidade().length() > 0);
 
 		// Altera a identidade

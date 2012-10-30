@@ -800,6 +800,11 @@
 				<param name="namespace">/expediente/mov</param>
 			</result>
 		</action>
+		
+		<action name="mostrar_anexos_assinados" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aMostrarAnexosAssinados">
+			<result>/paginas/expediente/mostraAnexosAssinados.jsp</result>
+		</action>
 
 		<action name="registrar_assinatura" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aRegistrarAssinatura">

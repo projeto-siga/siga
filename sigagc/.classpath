@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/play-1.2/framework/play-1.2.5.jar" sourcepath="C:/play-1.2/framework/src"/>
-	<classpathentry kind="lib" path="C:/Trabalhos/Workspaces/Java_integracao/sigagc/lib/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="C:/play-1.2/framework/lib/activation-1.1.1.jar"/>
 	<classpathentry kind="lib" path="C:/play-1.2/framework/lib/antlr-2.7.7.jar"/>
 	<classpathentry kind="lib" path="C:/play-1.2/framework/lib/asm-all-3.3.1.jar"/>
@@ -74,5 +73,6 @@
 	<classpathentry kind="lib" path="C:/play-1.2/framework/lib/xstream-1.4.2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-cp"/>
+	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
 	<classpathentry kind="output" path="eclipse/classes"/>
 </classpath>

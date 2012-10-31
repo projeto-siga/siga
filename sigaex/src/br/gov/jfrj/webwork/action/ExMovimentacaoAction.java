@@ -807,6 +807,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		
 	}
 	
+	
+	public String aMostrarAnexosAssinados() throws Exception {
+		buscarDocumento(true);       
+				
+		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(), true,
+                ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
+		this.getRequest().setAttribute("mobilVO", mobilVO);
+		return Action.SUCCESS;
+	}
+	
 
 	public String aArquivarCorrenteGravar() throws Exception {
 		buscarDocumento(true);
@@ -1976,6 +1986,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		} catch (final Exception e) {
 			throw e;
 		}
+		return Action.SUCCESS;
+	}
+	
+	
+	public String aAssinarLote() throws Exception {		
+		setItensSolicitados(dao().listarDocPendenteAssinatura(getTitular()));
 		return Action.SUCCESS;
 	}
 
@@ -3465,7 +3481,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setCopia(Boolean copia) {
 		this.copia = copia;
 	}
-
+	
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}

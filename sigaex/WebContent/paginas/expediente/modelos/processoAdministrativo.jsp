@@ -22,7 +22,7 @@
 @page {
 	margin-left: 1cm;
 	margin-right: 2 cm;
-	margin-top: 1cm;
+	margin-top: 0.5cm;
 	margin-bottom: 2 cm;
 }
 </style>
@@ -34,7 +34,7 @@
 		</c:if>
 
 		<!-- INICIO PRIMEIRO CABECALHO
-		<table width="100%">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
 					<table border="0" align="center" bgcolor="#ffffff" width="100%">
@@ -45,10 +45,18 @@
 						</tr>
 					</table>
 				</td>
+			<tr>
+			<tr>
+				<td>
+					<br><br/><c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
+				</td>
 			</tr>
-			<tr><td align="center"><img src="contextpath/imagens/brasao2.png" width="64" height="64" /></td></tr>
+			<tr bgcolor="#FFFFFF">
+				<td cellpadding="5">
+					&nbsp;
+				</td>
+			</tr>
 		</table>
-		
 		FIM PRIMEIRO CABECALHO -->
 
 		<!-- INICIO CABECALHO
@@ -60,27 +68,6 @@
 		</c:if>
 		FIM CABECALHO -->
 
-		<table align="center" width="100%">
-						<tr>
-							<td width="100%" align="center" style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">
-							PODER
-							JUDICIÁRIO
-							</td>
-						</tr>
-			<tr>
-							<td width="100%" align="center" style="font-family: Arial; font-size: 10pt; font-weight: bold;">
-								JUSTIÇA FEDERAL
-							</td>
-						</tr>
-						<tr>
-							<td width="100%" align="center" style="font-family: Arial; font-size: 10pt; font-weight: bold;">
-								<c:choose>
-								<c:when test="${empty mov}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when>
-								<c:otherwise>${mov.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:otherwise>
-								</c:choose>
-							</td>
-						</tr>
-		</table>
 		<br />
 		<%-- Não serão necessários os campos Apenso e volume abaixo, por isto estão comentados  --%>
 		<table align="center" width="60%" border="1" cellspacing="1"

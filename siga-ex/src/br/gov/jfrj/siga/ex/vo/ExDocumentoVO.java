@@ -240,7 +240,7 @@ public class ExDocumentoVO extends ExVO {
 		
 		if (doc.getDtFechamento() != null && doc.getNumExpediente() != null){
 			// documentos finalizados
-			if (mob.temAnexosNaoAssinados())
+			if (mob.temAnexos())
 				vo.addAcao("script_key","Assinar Anexos", "/expediente/mov", "assinar_anexos_geral", true);
 		}
 

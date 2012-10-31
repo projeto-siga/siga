@@ -118,7 +118,14 @@ public class SingleImageServlet extends HttpServlet {
 	private int[] extractBoxConstraint(Element root, Token token) {
 
 		int[] result = new int[4];
-		String nodeName = token.getNode().getName();
+		String nodeName = "";
+		try {
+			nodeName = new String(token.getNode().getName()
+					.getBytes("ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		XPath xPath = new DefaultXPath("//node[@name='" + nodeName + "']");
 		Element node = (Element) xPath.selectSingleNode(root);
 		result[0] = Integer.valueOf(node.attribute("x").getValue()).intValue();
@@ -189,11 +196,7 @@ public class SingleImageServlet extends HttpServlet {
 			pd = jbpmContext.getGraphSession().loadProcessDefinition(pdId);
 		}
 
-		/*
-		 * Para evitar problemas relacionados ao bug https://issues.jboss.org/browse/JBDS-2047 o charset
-		 * do gpd.xml está sendo forçado a ser cp1252.
-		 * */
-		byte[] gpdBytes = new String(pd.getFileDefinition().getBytes("gpd.xml"),"windows-1252").getBytes();
+		byte[] gpdBytes = pd.getFileDefinition().getBytes("gpd.xml");
 		byte[] imageBytes = pd.getFileDefinition().getBytes("processimage.jpg");
 		if (gpdBytes == null && imageBytes == null) {
 			throw new ServletException(

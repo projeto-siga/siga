@@ -125,6 +125,8 @@ public class ExBL extends CpBL {
 
 	private ProcessadorModelo processadorModeloJsp;
 	private ProcessadorModelo processadorModeloFreemarker = new ProcessadorModeloFreemarker();
+	
+	private final static Logger log = Logger.getLogger(ExBL.class);
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
 	
@@ -547,6 +549,19 @@ public class ExBL extends CpBL {
 							acrescentarMarca(set, mob, m, mov.getDtIniMov(),
 									mov.getCadastrante(),
 									mov.getLotaCadastrante());
+					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
+						if (mob.getDoc().isEletronico()){						
+						    m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
+						    for (ExMovimentacao assinatura : mob.getDoc().getTodasAsAssinaturas()) {
+							    if(assinatura.getSubscritor().equivale(mov.getSubscritor())){
+						    		m = null;
+							    	break;
+						    	}							
+						    }
+						    if (m != null)						
+						        acrescentarMarca(set, mob, m, mov.getDtIniMov(),
+							    	mov.getSubscritor(), null);
+						}
 					}
 				}
 				if (mDje != null) {
@@ -612,14 +627,15 @@ public class ExBL extends CpBL {
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
-				if (mob.doc().isAssinado()
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)				
+				if (!mob.doc().isEletronico() && (mob.doc().isAssinado())
+						|| (mob.doc().isEletronico() && mob.doc().isAssinadoEletronicoPorTodosOsSignatarios())
 						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
 					m = CpMarcador.MARCADOR_EM_ANDAMENTO;
 				} else if (mob.isApensado()) {
 					m = CpMarcador.MARCADOR_APENSADO;
-				} else {
+				} else {					
 					m = CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA;
 				}
 
@@ -649,8 +665,16 @@ public class ExBL extends CpBL {
 		}
 
 		if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
-			acrescentarMarca(set, mob, CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt,
-					mob.getExDocumento().getSubscritor(), null);
+			Long mSubs = CpMarcador.MARCADOR_COMO_SUBSCRITOR; 
+			for (ExMovimentacao assinatura : mob.getDoc().getTodasAsAssinaturas()) {				
+			    if(assinatura.getSubscritor().equivale(mob.getExDocumento().getSubscritor())){	
+			    	mSubs = null;
+			        break;
+			    }  			   
+			}    
+			if (mSubs != null)
+			   acrescentarMarca(set, mob, mSubs, dt,
+	                 mob.getExDocumento().getSubscritor(), null);
 		}
 
 		if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {

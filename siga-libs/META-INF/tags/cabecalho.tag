@@ -78,15 +78,10 @@ ${meta}
 
 <link rel="shortcut icon" href="/sigalibs/siga.ico" />
 
-<<<<<<< HEAD
 <script language="JavaScript"
 	src="${serverAndPort}/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
 <!--[if gte IE 5.5]><script language="JavaScript" src="${serverAndPort}/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
-=======
-<script language="JavaScript"
-	src="/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
-<!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
->>>>>>> master
+
 <script language="JavaScript" type="text/javascript">
 	$(document).ready(function() {
 		$('.links li code').hide();

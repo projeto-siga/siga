@@ -39,7 +39,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 
-public abstract class ModeloDao implements ApplicationContextAware {
+public abstract class ModeloDao { // implements ApplicationContextAware {
 
 	protected Session sessao;
 

@@ -3,11 +3,15 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <siga:pagina titulo="Referência">
+
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
 
 <script type="text/javascript" language="Javascript1.1">
 function sbmt() {
@@ -18,20 +22,21 @@ function sbmt() {
 
 </script>
 
-<table width="100%">
-	<tr>
-		<td><ww:form action="referenciar_gravar"
+<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Vinculação de Documento - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+
+			<ww:form action="referenciar_gravar"
 			enctype="multipart/form-data" namespace="/expediente/mov"
 			cssClass="form" method="POST">
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="${sigla}"/>
 			<ww:token />
-
-			<h1>Vinculação de Documento - ${doc.codigo}<c:if 
-			test="${numVia != null && numVia != 0}">-${viaChar}</c:if>
-			<%--Bernardo Antigo era -> "- ${numVia}&ordf; Via" --%>
-			</h1>
-			<table class="form" width="100%">
+			
+			<table class="gt-form-table">
 				<tr class="header">
 					<td colspan="2">Dados da Vinculação</td>
 				</tr>
@@ -69,13 +74,10 @@ function sbmt() {
 
 				<siga:selecao titulo="Documento:" propriedade="documentoRef" />
 				<tr class="button">
-					<td></td>
-					<td><input type="submit" value="Ok" /> <input type="button"
-						value="Cancela" onclick="javascript:history.back();" />
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
 				</tr>
 			</table>
-		</ww:form></td>
-	</tr>
-</table>
-
+		</ww:form>
+	</div></div></div>
 </siga:pagina>

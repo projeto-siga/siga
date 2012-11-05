@@ -150,7 +150,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	/** The value of the simple dtDoc property. */
 	private String dtDocString;
-	
+
 	private String dtDocOriginalString;
 
 	/** The value of the simple dtRegDoc property. */
@@ -575,12 +575,18 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aEditar() throws Exception {
 
 		buscarDocumentoOuNovo(true);
-
+		
 		if ((getPostback() == null) || (param("docFilho") != null)) {
 			tipoDestinatario = 2;
 			idFormaDoc = 2;
 			idTpDoc = 1L;
-			nivelAcesso = 1L;
+
+			ExNivelAcesso nivelDefault = getNivelAcessoDefault();
+			if (nivelDefault != null) {
+				nivelAcesso = nivelDefault.getIdNivelAcesso();
+			} else
+				nivelAcesso = 1L;
+
 			idMod = 26L;
 		}
 
@@ -684,7 +690,7 @@ public class ExDocumentoAction extends ExActionSupport {
 						+ (getRequest().getServerPort() > 0 ? ":"
 								+ getRequest().getServerPort() : "") });
 
-		//...inclusive nas operações com preenchimento automático 
+		// ...inclusive nas operações com preenchimento automático
 		if (getPreenchRedirect() != null && getPreenchRedirect().length() > 2) {
 			setPreenchRedirect(getPreenchRedirect() + "&serverAndPort="
 					+ getPar().get("serverAndPort")[0]);
@@ -851,7 +857,9 @@ public class ExDocumentoAction extends ExActionSupport {
 						.getComp()
 						.podeAcessarCancelado(getTitular(), getLotaTitular(),
 								mob)) {
-			throw new AplicacaoException("Documento inacessível ao usuário.");
+			throw new AplicacaoException("Documento " + mob.getSigla()
+					+ " inacessível ao usuário " + getTitular().getSigla()
+					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}
 
 		if (!Ex.getInstance().getComp()
@@ -871,7 +879,9 @@ public class ExDocumentoAction extends ExActionSupport {
 						.getComp()
 						.podeAcessarCancelado(getTitular(), getLotaTitular(),
 								mob)) {
-			throw new AplicacaoException("Documento inacessível ao usuário.");
+			throw new AplicacaoException("Documento " + mob.getSigla()
+					+ " inacessível ao usuário " + getTitular().getSigla()
+					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}
 
 		if (!Ex.getInstance().getComp()
@@ -1050,7 +1060,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					.fechar(getCadastrante(), getLotaTitular(), doc));
 
 		} catch (final Throwable t) {
-			throw new AplicacaoException(t.getMessage());
+			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
 		}
 
 		return Action.SUCCESS;
@@ -1111,6 +1121,24 @@ public class ExDocumentoAction extends ExActionSupport {
 			if (!doc.isProcesso() && doc.getDescrDocumento().length() > 256)
 				throw new AplicacaoException(
 						"O campo descrição possui mais do que 256 caracteres.");
+
+			if (doc.getDtFechamento() != null) {
+				Date dt = dao().dt();
+				Calendar c = Calendar.getInstance();
+				c.setTime(dt);
+
+				Calendar dtDocCalendar = Calendar.getInstance();
+
+				if (doc.getDtDoc() == null)
+					throw new Exception(
+							"A data do documento deve ser informada.");
+
+				dtDocCalendar.setTime(doc.getDtDoc());
+
+				if (c.before(dtDocCalendar))
+					throw new Exception(
+							"Não é permitido criar documento com data futura");
+			}
 
 			/*
 			 * if (getDoc().getExMobilPai() != null) { if
@@ -1230,6 +1258,14 @@ public class ExDocumentoAction extends ExActionSupport {
 		} catch (final Exception e) {
 			throw e;
 		}
+		return Action.SUCCESS;
+	}
+
+	public String aAtualizarMarcasDoc() throws Exception {
+
+		buscarDocumento(false);
+		Ex.getInstance().getBL().atualizarMarcas(getDoc());
+
 		return Action.SUCCESS;
 	}
 
@@ -1523,9 +1559,15 @@ public class ExDocumentoAction extends ExActionSupport {
 		// Destino , Origem
 		DpLotacao backupLotaTitular = getLotaTitular();
 		DpPessoa backupTitular = getTitular();
+		DpPessoa backupCadastrante = getCadastrante();
+
 		BeanUtils.copyProperties(this, doc);
+
 		setTitular(backupTitular);
 		setLotaTitular(backupLotaTitular);
+		// Orlando: Inclusão da linha, abaixo, para preservar o cadastrante do
+		// ambiente.
+		setCadastrante(backupCadastrante);
 
 		if (doc.getConteudoBlob("doc.htm") != null)
 			setConteudo(new String(doc.getConteudoBlob("doc.htm")));
@@ -1589,7 +1631,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			setDtDocString(df.format(doc.getDtDoc()));
 		} catch (final Exception e) {
 		}
-		
+
 		try {
 			setDtDocOriginalString(df.format(doc.getDtDocOriginal()));
 		} catch (final Exception e) {
@@ -1835,6 +1877,34 @@ public class ExDocumentoAction extends ExActionSupport {
 		return getListaNivelAcesso(exTipo, exForma, exMod, exClassif);
 	}
 
+	public ExNivelAcesso getNivelAcessoDefault() throws Exception {
+		ExFormaDocumento exForma = new ExFormaDocumento();
+		ExClassificacao exClassif = new ExClassificacao();
+		ExTipoDocumento exTipo = new ExTipoDocumento();
+		ExModelo exMod = new ExModelo();
+
+		if (getIdTpDoc() != null) {
+			exTipo = dao()
+					.consultar(getIdTpDoc(), ExTipoDocumento.class, false);
+		}
+
+		if (getIdFormaDoc() != null) {
+			exForma = dao().consultar(getIdFormaDoc(), ExFormaDocumento.class,
+					false);
+		}
+
+		if (getIdMod() != null) {
+			exMod = dao().consultar(getIdMod(), ExModelo.class, false);
+		}
+
+		if (getClassificacaoSel().getId() != null) {
+			exClassif = dao().consultar(getClassificacaoSel().getId(),
+					ExClassificacao.class, false);
+		}
+
+		return getNivelAcessoDefault(exTipo, exForma, exMod, exClassif);
+	}
+
 	public Map<Integer, String> getListaVias() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		for (byte k = 1; k <= 20; k++) {
@@ -2061,9 +2131,19 @@ public class ExDocumentoAction extends ExActionSupport {
 		} else
 			doc.setOrgaoExterno(null);
 
-		if (doc.getCadastrante() == null)
+		// Orlando: Alterei o IF abaixo incluindo a instrução
+		// "doc.setLotaCadastrante(getLotaTitular());".
+		// Esta linha estava "solta",após o IF, e era executada sempre.
+		// Fiz esta modificação porque esta linha alterava a lotação do
+		// cadastrante, não permitindo que este,
+		// ao preencher o campo subscritor com a matrícula de outro usuário,
+		// tivesse acesso ao documento.
+
+		if (doc.getCadastrante() == null) {
 			doc.setCadastrante(getCadastrante());
-		doc.setLotaCadastrante(getLotaTitular());
+			doc.setLotaCadastrante(getLotaTitular());
+		}
+
 		if (doc.getLotaCadastrante() == null)
 			doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 		if (getSubscritorSel().getId() != null) {
@@ -2119,7 +2199,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		if (doc.getDtRegDoc() == null)
 			doc.setDtRegDoc(dao().dt());
-		
+
 		try {
 			doc.setDtDocOriginal(df.parse(getDtDocOriginalString()));
 		} catch (final ParseException e) {

@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
+import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoES;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
 import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -96,6 +97,11 @@ public class FuncoesEL {
 				.obterDocumentosBoletim(d));
 	}
 
+	public static HierarquizadorBoletimInternoES obterHierarquizadorBIEES(
+			CpOrgaoUsuario orgao, ExDocumento d) {
+		return new HierarquizadorBoletimInternoES(orgao, Ex.getInstance().getBL()
+				.obterDocumentosBoletim(d));
+	}	
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
 		if (lotaTitular == null)
@@ -790,31 +796,38 @@ public class FuncoesEL {
 		return lotRetorno.getDescricao();
 	}
 
-	public static String obterExtensaoBuscaTextual(CpOrgaoUsuario orgao)
+	public static String obterExtensaoBuscaTextual(CpOrgaoUsuario orgao, String valFullText)
 			throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
-		Map attrs = new HashMap();
+		Map attrs = new HashMap();		
+		attrs.put("valFullText", valFullText);
 		attrs.put("nmMod", "macro extensaoBuscaTextual");
 		attrs.put("template", "[@extensaoBuscaTextual/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
 
-	public static String obterExtensaoEditor(CpOrgaoUsuario orgao)
+	public static String obterExtensaoEditor(CpOrgaoUsuario orgao, String nome, String conteudo, String serverAndPort)
 			throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
 		Map attrs = new HashMap();
+		attrs.put("serverAndPort", serverAndPort);
+		attrs.put("nomeExtensaoJsp", nome);
+		attrs.put("conteudoExtensaoJsp", conteudo);
 		attrs.put("nmMod", "macro extensaoEditor");
 		attrs.put("template", "[@extensaoEditor/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
-
+	
+	
+	
 	public static String obterExtensaoAssinador(CpOrgaoUsuario orgao,
 			String requestScheme, String requestServerName,
-			String requestLocalPort, String requestContextPath, String sigla,
-			String doc_codigoCompacto,String jspServer, String nextURL, String url_0) throws Exception {
+			String requestLocalPort, String urlPath, 
+			String jspServer, String nextURL, String botao, String lote) throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
 		Map attrs = new HashMap();
-
+		String chaveUrl = null;
+		String urlStr = null;	
 		
 		attrs.put("code_base_path", SigaExProperties.getAssinaturaCodebasePath());
 		attrs.put("messages_url_path", SigaExProperties.getAssinaturaMessagesURLPath());
@@ -823,25 +836,15 @@ public class FuncoesEL {
 		attrs.put("request_scheme", requestScheme);
 		attrs.put("request_serverName", requestServerName);
 		attrs.put("request_localPort", requestLocalPort);
-		attrs.put("request_contextPath", requestContextPath);
-		attrs.put("sigla", sigla);
-		attrs.put("doc_codigoCompacto", doc_codigoCompacto);
+		attrs.put("urlPath", urlPath);		
 		attrs.put("jspServer", jspServer);
-		attrs.put("nextURL", nextURL);
-		attrs.put("url_0", url_0);
-
+		attrs.put("nextURL", nextURL);		
+		attrs.put("botao", botao);
+		attrs.put("lote", lote);
 		attrs.put("nmMod", "macro extensaoAssinador");
 		attrs.put("template", "[@extensaoAssinador/]");
-		return p.processarModelo(orgao, attrs, null);
-	}
 
-	public static String obterBotoesExtensaoAssinador(CpOrgaoUsuario orgao)
-			throws Exception {
-		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
-		Map attrs = new HashMap();
-		attrs.put("nmMod", "macro botoesExtensaoAssinador");
-		attrs.put("template", "[@botoesExtensaoAssinador/]");
 		return p.processarModelo(orgao, attrs, null);
-	}
+	}	
 
 }

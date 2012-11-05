@@ -237,9 +237,12 @@
  <query name="listarSolicitados">select doc 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			where label.cpMarcador.idMarcador = 21
-			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu</query>
+			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu</query>			
  <query name="listarDisponibilizados">select doc 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			where label.cpMarcador.idMarcador = 22
 			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu</query>
+<query name="listarDocPendenteAssinatura">select doc 
+			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in 
+			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc</query>			  
 </hibernate-mapping>

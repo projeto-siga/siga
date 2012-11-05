@@ -8,39 +8,40 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <siga:pagina titulo="Tipo de Despacho">
-	<h1>Cadastro de Tipos de despacho</h1>
-	<center>
-	<table border="0" width="100%">
-		<tr>
-			<td><ww:form name="frm" action="gravar"
-				namespace="/despacho/tipodespacho" theme="simple" method="POST">
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Cadastro de Tipos de despacho</h2>
 
-				<table class="form" width="100%">
-					<c:if test="${!empty param.id}">
-						<ww:hidden name="idTpDespacho" />
+			<div class="gt-content-box gt-for-table">
+				<ww:form name="frm" action="gravar"
+					namespace="/despacho/tipodespacho" theme="simple" method="POST">
+
+					<table class="gt-form-table">
+						<c:if test="${!empty param.id}">
+							<ww:hidden name="idTpDespacho" />
+							<tr>
+								<td width="10%">Código:</td>
+								<td><fmt:formatNumber pattern="0000000"
+										value="${idTpDespacho }" /></td>
+							</tr>
+						</c:if>
 						<tr>
-							<td width="10%">código:</td>
-							<td><fmt:formatNumber pattern="0000000"
-								value="${idTpDespacho }" /></td>
+							<td width="10%">Descrição:</td>
+							<td><ww:textarea cols="60" rows="5" name="descTpDespacho" cssClass="gt-text-area" />
+							</td>
 						</tr>
-					</c:if>
-					<tr>
-						<td width="10%">Descrição:</td>
-						<td><ww:textarea cols="60" rows="5" name="descTpDespacho" /></td>
-					</tr>
-					<tr>
-						<td width="10%">Ativo:</td>
-						<td><ww:checkbox name="ativo" fieldValue="false" /></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-						<td><ww:submit value="OK" /></td>
-					</tr>
-				</table>
-			</ww:form></td>
-		</tr>
-
-	</table>
-	</center>
+						<tr>
+							<td width="10%">Ativo:</td>
+							<td><ww:checkbox name="ativo" fieldValue="false" /></td>
+						</tr>
+						<tr>
+							<td colspan="2"><ww:submit value="OK"
+									cssClass="gt-btn-small" /></td>
+						</tr>
+					</table>
+				</ww:form>
+			</div>
+		</div>
+	</div>
 </siga:pagina>
 

@@ -402,7 +402,13 @@ public class ExMobilAction extends
 		flt.setClassificacaoSelId(paramLong("classificacaoSel.id"));
 		flt.setDescrDocumento(Texto
 				.removeAcentoMaiusculas(param("descrDocumento")));
-		flt.setFullText(param("fullText"));
+		String paramFullText = param("fullText");
+		if (paramFullText != null){				
+			paramFullText = paramFullText.trim();  /* retirando espaços em branco (inicio e final) e "" */ 
+			paramFullText = paramFullText.replace("\"", "");
+			setFullText(paramFullText);
+		}
+		flt.setFullText(paramFullText);
 		flt.setDestinatarioSelId(paramLong("destinatarioSel.id"));
 		if (flt.getDestinatarioSelId() != null)
 			flt.setDestinatarioSelId((daoPes(flt.getDestinatarioSelId()))
@@ -464,15 +470,30 @@ public class ExMobilAction extends
 	@Override
 	public Selecionavel selecionarPorNome(final ExMobilDaoFiltro flt)
 			throws AplicacaoException {
+		
+		final ExMobil docVia = new ExMobil();
+		
 		try {
-			final ExMobil docVia = new ExMobil();
-			final ExDocumento docdoc = dao().consultar(flt.getIdDoc(),
-					ExDocumento.class, false);
-			docVia.setExDocumento(docdoc);
-			return docVia;
+			/*
+			 * bruno.lacerda@avantiprima.com.br - 30/07/2012		  
+			 * Correcao problema id to load is required for loading. 
+			 * Verificando se o ID do documento não é nulo antes de pesquisar
+			 * 
+			 *  final ExDocumento docdoc = dao().consultar(flt.getIdDoc(),
+			 *			ExDocumento.class, false);	
+			 *	docVia.setExDocumento(docdoc);
+			 *	
+			 *	return docVia;
+			 */
+			if ( flt != null && flt.getIdDoc() != null ) {
+				final ExDocumento docdoc = dao().consultar(flt.getIdDoc(), ExDocumento.class, false);
+				docVia.setExDocumento(docdoc);
+			}			
 		} catch (final Exception e) {
 			throw new AplicacaoException(e.getMessage());
 		}
+
+		return docVia;
 	}
 
 	@Override

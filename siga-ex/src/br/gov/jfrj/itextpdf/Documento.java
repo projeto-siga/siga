@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,6 +80,7 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
+import com.opensymphony.webwork.ServletActionContext;
 import com.swetake.util.Qrcode;
 
 /**
@@ -178,7 +180,7 @@ public class Documento extends AbstractDocumento {
 		return retorno;
 	}
 
-	private byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
+	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
 			boolean cancelado, String qrCode, String mensagem,
 			Integer paginaInicial, Integer paginaFinal,
 			Integer cOmitirNumeracao, String instancia, String orgaoUsu)
@@ -422,7 +424,7 @@ public class Documento extends AbstractDocumento {
 
 	// Desenha texto ao redor de um circulo, acima ou abaixo
 	//
-	private void showTextOnArc(PdfContentByte cb, String text, BaseFont font,
+	private static void showTextOnArc(PdfContentByte cb, String text, BaseFont font,
 			float textHeight, float xCenter, float yCenter, float radius,
 			boolean top) {
 		float fTotal = 0;
@@ -724,14 +726,16 @@ public class Documento extends AbstractDocumento {
 		sHtml = (new ProcessadorHtml()).canonicalizarHtml(sHtml, true, false,
 				true, false, true);
 
-		System.out.println("Processamento: terminou canonicalizar");
+		log.info("Processamento: terminou canonicalizar");
 
-		HttpServletRequest req = com.opensymphony.webwork.ServletActionContext
-				.getRequest();
-		sHtml = sHtml.replace("contextpath", "http://" + req.getServerName()
-				+ ":" + req.getServerPort() + req.getContextPath());
-
-		System.out.println("Processamento: prestes a entrar no nheengatu");
+		/* bruno.lacerda@avantiprima.com.br - 01/08/2012 
+		 * correcao para carregar a imagem do brasao independente do protocolo
+		 */
+		// HttpServletRequest req = ServletActionContext.getRequest();
+		// sHtml = sHtml.replace("contextpath", "http://" + req.getServerName()+  ":" + req.getServerPort() + req.getContextPath());
+		sHtml = sHtml.replace("contextpath", ServletActionContext.getServletContext().getRealPath(""));
+		
+		log.info("Processamento: prestes a entrar no nheengatu");
 
 		return parser.converter(sHtml, ConversorHtml.PDF);
 

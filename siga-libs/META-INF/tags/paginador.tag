@@ -8,6 +8,7 @@
 <%@ attribute name="itens" type="java.util.List"%>
 <%@ attribute name="var"%>
 
+<%-- 
 <c:if test="${totalItens>0}">
 	<c:if test="${totalItens==1}">
 		Total: ${totalItens} Item 
@@ -16,9 +17,10 @@
 		Total: ${totalItens} Itens 
 	</c:if>
 </c:if>
+--%>
 <pg:pager id="p" maxPageItems="${maxItens}"
 	maxIndexPages="${maxIndices}" scope="request" isOffset="true"
-	items="${totalItens}" export="offset,pageOffset;">
+	items="${totalItens}" export="offset,pageOffset;currentPageNumber=pageNumber">
 	<c:set var="evenorodd" value="odd" />
 	<c:forEach var="item" items="${itens}" varStatus="statusTeste">
 		<pg:item>
@@ -44,6 +46,21 @@
 			</c:choose>--%>
 		</pg:item>
 	</c:forEach>
+	
+	</table>
+	<div class="gt-table-controls gt-table-controls-btm clearfix">
+		<p class="gt-table-pager">
+		 	<c:set var="firstpgpages" value="${true}"/>
+			<pg:pages>
+			 	<c:if test="${not firstpgpages}"> | </c:if>
+			 	<c:set var="firstpgpages" value="${false}"/>
+				<a href="javascript:sbmt(${(pageNumber-1)*maxItens});" <c:if test="${pageNumber == currentPageNumber}">class="current"</c:if>><c:out value="${pageNumber}" /></a>
+			</pg:pages>
+		</p>
+	</div>
+</div>
+	
+<%-- 	
 	<table width="100%" border="0">
 	<!-- Indice do paginador -->
 	<pg:index>
@@ -97,6 +114,6 @@
 
 		</tr>
 	</pg:index>
-	</table>
+--%>	
 </pg:pager>
 

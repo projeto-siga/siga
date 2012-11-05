@@ -1022,7 +1022,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (getExFormaDocumento() == null)
 			return null;
 		return getExFormaDocumento().getDescrFormaDoc()
-				+ (isEletronico() ? " (digital)" : "");
+				+ (isEletronico() ? "" : " (físico)");
 	}
 
 	/**
@@ -1717,7 +1717,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 
 		for (DpPessoa signatario : getSubscritorECosignatarios()) {
-			if (!todosQueJaAssinaram.contains(signatario))
+			boolean encontrou = false;
+			
+			for (DpPessoa jaAssinou : todosQueJaAssinaram) {
+				if(jaAssinou.equivale(signatario)) {
+					encontrou = true;
+					break;
+				}
+			}
+			
+			if (!encontrou)
 				return false;
 		}
 

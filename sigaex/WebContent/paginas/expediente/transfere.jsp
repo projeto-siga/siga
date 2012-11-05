@@ -3,18 +3,49 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
+
+
+
 <siga:pagina titulo="Transferência">
+
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 
 	<script type="text/javascript" language="Javascript1.1">
 <ww:url id="url" action="transferir" namespace="/expediente/mov">
 </ww:url>
 <ww:url id="urlEditar" action="editar" namespace="/expediente/doc"> 
 </ww:url>
+
+function tamanho() {
+	var i = tamanho2();
+	if (i<0) {i=0};
+	document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
+}
+
+function tamanho2() {
+	nota= new String();
+	nota = this.frm.descrMov.value;
+	var i = 400 - nota.length;
+	return i;
+}
+function corrige() {
+	if (tamanho2()<0) {
+		alert('Descrição com mais de 400 caracteres');
+		nota = new String();
+		nota = document.getElementById("descrMov").value;
+		document.getElementById("descrMov").value = nota.substring(0,400);
+	}
+}
+
+
 function sbmt() {
 	<%--ExMovimentacaoForm.page.value='';
 	ExMovimentacaoForm.acao.value='aTransferir';
@@ -72,9 +103,14 @@ function popitup_movimentacao() {
 </script>
 
 
-	<table width="100%">
-		<tr>
-			<td><ww:form name="frm" action="transferir_gravar"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Despacho / Transferencia - ${mob.siglaEDescricaoCompleta}</h2>
+			
+			<div class="gt-content-box gt-for-table">
+			
+			<ww:form name="frm" action="transferir_gravar"
 				namespace="/expediente/mov" theme="simple" method="GET">
 				<ww:hidden name="postback" value="1" />
 				<ww:hidden name="docFilho" value="true" />
@@ -104,11 +140,7 @@ function popitup_movimentacao() {
 			<html:hidden property="idDoc" />
 			<html:hidden property="numVia" /> --%>
 
-				<h1>Despacho / Transferencia - ${doc.codigo} <c:if
-					test="${numVia != null && numVia != 0}">
-			- ${numVia}&ordf; Via
-			</c:if></h1>
-				<table class="form" width="100%">
+				<table class="gt-form-table">
 					<tr class="header">
 						<td colspan="2">Despacho</td>
 					</tr>
@@ -152,12 +184,16 @@ function popitup_movimentacao() {
 							listKey="idTpDespacho" listValue="descTpDespacho"
 							onchange="javascript:sbmt();" /></td>
 					</tr>
-
+					<!--Orlando: Substitui o textfield pelo textarea no choose, abaixo, para atender aos usuários, que disseram terem dificuldade
+					ao escrever, porque não viam o início da digitação na caixa de texto. Também incluí funções e um div para limitar o número de caracteres,
+					como ocorre na antoção (anotação JSP)-->
 					<c:choose>
 						<c:when test="${idTpDespacho == -1}">
 							<tr>
 								<td>Texto</td>
-								<td><ww:textfield name="descrMov" maxlength="400" size="80" /></td>
+                            <!--<td><ww:textfield name="descrMov"  maxlength="400" size="80"   /></td>-->
+                                <td><ww:textarea  rows="3" cols="50"  name="descrMov"  onkeyup="corrige();tamanho();" onblur="tamanho();"
+						onclick="tamanho();"/> <div id="Qtd">Restam&nbsp;400&nbsp;Caracteres</div></td>
 							</tr>
 						</c:when>
 					</c:choose>
@@ -257,7 +293,7 @@ function popitup_movimentacao() {
 					</tr>
 					<tr>
 						<td colspan=2><input type="checkbox" name="protocolo"
-							value="mostrar" />Mostrar protocolo ao concluir a transferência</td>
+							value="mostrar" />&nbsp;Mostrar protocolo ao concluir a transferência</td>
 					</tr>
 
 					<%--<c:if test="${tipoResponsavel != 3}">
@@ -280,17 +316,12 @@ function popitup_movimentacao() {
 							<td><ww:textfield size="30" name="obsOrgao" /></td>
 						</tr>
 					</c:if>
-					<tr class="button">
-						<td></td>
-						<td><input type="submit" value="Ok" /> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" /> <input
-							type="button" name="ver_doc"
-							value="Visualizar o modelo preenchido"
-							onclick="javascript: popitup_movimentacao();" /></td>
+					<tr>
+						<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left once" /> <input type="button"
+							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
+							<input type="button" name="ver_doc"	value="Visualizar o despacho" class="gt-btn-large gt-btn-left" onclick="javascript: popitup_movimentacao();"/></td>
 					</tr>
 				</table>
-			</ww:form></td>
-		</tr>
-	</table>
-
+			</ww:form>
+	</div></div></div>
 </siga:pagina>

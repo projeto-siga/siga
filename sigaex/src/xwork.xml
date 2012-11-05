@@ -3,11 +3,11 @@
 <xwork>
 	<include file="webwork-default.xml" />
 
-	<package name="default" extends="webwork-default">
+	<package name="default" extends="webwork-default">		
 		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 
-		<default-action-ref name="principal" />
-		<!-- <default-action-ref name="erroGeral" /> -->
+		<default-action-ref name="principal" />		
+		<!-- <default-action-ref name="erroGeral" /> -->		
 		<global-results>
 			<result name="erroGeral" type="dispatcher">
 				/sigalibs/erroGeral.jsp
@@ -23,11 +23,11 @@
 		<action name="modelo">
 			<result>/paginas/expediente/modelo_teste.jsp</result>
 		</action>
-
+		
 		<action name="principal" class="br.gov.jfrj.webwork.action.ExPrincipalAction">
 			<result>/sigalibs/erroGeral.jsp</result>
 			<result type="redirect">/../siga/principal.action</result>
-		</action>
+		</action>		
 		<!--
 			<action name="principal"
 			class="br.gov.jfrj.webwork.action.PrincipalAction">
@@ -46,6 +46,11 @@
 			class="br.gov.jfrj.siga.libs.webwork.LogoffAction"> <result
 			type="redirect-action">principal</result> </action>
 		-->
+		
+		<action name="autenticar" method="exec" class="br.gov.jfrj.webwork.action.ExAutenticaAction">
+			<result name="autenticado">/paginas/autenticado.jsp</result>
+			<result>/paginas/autenticar.jsp</result>
+		</action>		
 	</package>
 
 
@@ -235,16 +240,6 @@
 			</result>
 		</action>
 
-		<action name="exibirProcessoHTML" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aExibir">
-			<result>
-				/paginas/expediente/painelProcesso.jsp?podeExibir="true"
-			</result>
-			<result name="reservado">
-				/paginas/expediente/cuidado_reserva.jsp?"
-			</result>
-		</action>
-
 		<action name="exibirResumoProcesso" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aExibir">
 			<result>
@@ -419,6 +414,15 @@
 			</result>
 
 		</action>
+		
+		<action name="atualizar_marcas" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aAtualizarMarcasDoc">
+			<result type="redirect-action">
+				exibir?sigla=${sigla}
+			</result>
+		</action>	
+		
+		
 	</package>
 
 	<package name="expediente/mov" extends="default" namespace="/expediente/mov">
@@ -426,6 +430,10 @@
 		<action name="assinar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinar">
 			<result>/paginas/expediente/assina.jsp</result>
+		</action>		
+		<action name="assinar_anexos_geral" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAssinarAnexosGeral">
+			<result>/paginas/expediente/anexa.jsp</result>
 		</action>
 		<action name="pedir_publicacao" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aPedirPublicacao">
@@ -787,10 +795,15 @@
 			method="aAnexarGravar">
 			<result type="redirect-action">
 				<param name="actionName">
-					exibir?sigla=${mob.sigla}
+					anexar?sigla=${mob.sigla}
 				</param>
-				<param name="namespace">/expediente/doc</param>
+				<param name="namespace">/expediente/mov</param>
 			</result>
+		</action>
+		
+		<action name="mostrar_anexos_assinados" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aMostrarAnexosAssinados">
+			<result>/paginas/expediente/mostraAnexosAssinados.jsp</result>
 		</action>
 
 		<action name="registrar_assinatura" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
@@ -1003,7 +1016,7 @@
 				/paginas/erro.jsp
 			</result>
 			<result>/paginas/expediente/assinado.jsp?id=786</result>
-		</action>
+		</action>		
 		<action name="prever" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aPrever">
 			<result name="processa_modelo">
@@ -1024,6 +1037,11 @@
 			method="aFecharPopup">
 			<result>/paginas/fechar_popup.jsp</result>
 		</action>
+		<action name="assinar_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAssinarLote">
+			<result>/paginas/expediente/assina_lote.jsp</result>
+		</action>
+		
 	</package>
 	<!-- Pedro:02052007 -->
 	<package name="expediente/rel" extends="default" namespace="/expediente/rel">
@@ -1173,6 +1191,7 @@
 		</action>
 	</package>
 
+<!-- 
 	<package name="manutencao/desenvolvimento" extends="default"
 		namespace="/manutencao/desenvolvimento">
 		<default-interceptor-ref name="defaultStack" />
@@ -1181,9 +1200,9 @@
 			method="aCancelarDocumento">
 			<result type="redirect-action">principal</result>
 		</action>
-
 	</package>
-
+ -->
+ 
 	<package name="despacho/tipodespacho" extends="default"
 		namespace="/despacho/tipodespacho">
 		<default-interceptor-ref name="defaultStack" />

@@ -6,22 +6,22 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
-<%@page import="br.gov.jfrj.siga.ex.bl.ExDocumentoBL"%>
+<%@page import="br.gov.jfrj.siga.ex.bl.ExBL"%>
 <c:set var="esconderTexto" value="sim" scope="request" />
 
 <mod:modelo salvarViaAjax="N" acaoGravar="gravarBI" acaoExcluir="excluirBI" acaoCancelar="refazerBI" acaoFinalizar="finalizarBI">
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:texto titulo="Nome do Diretor do Foro" var="nmDiretorForo" valor="Dr. Ricarlos Almagro Vitoriano Cunha" largura="40"/>
+			<mod:texto titulo="Nome do Diretor do Foro" var="nmDiretorForo" valor="Dr. Marcelo Leonardo Tavares" largura="40"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Nome do Diretor da SG" var="nmDiretorRH" valor="Maria Cristina Natalli" largura="40" />
+			<mod:texto titulo="Nome do Diretor da SG" var="nmDiretorRH" valor="Patrícia Reis Longhi" largura="40" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Setores Responsáveis" var="setoresResponsaveis" valor="SAGAB-DIRFO / SEASG / NGP / NOF" largura="90"/>
+			<mod:texto titulo="Setores Responsáveis" var="setoresResponsaveis" valor="DIRFO: NSDF / SGP: SEPRF, SEBEN, SECAD, SELEG, SELOT, SESAU / SOF / SG" largura="90"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Geração e impressão" var="geraImpress" valor="SEDOD" largura="90"/>
+			<mod:texto titulo="Geração e impressão" var="geraImpress" valor="SID/CIPE" largura="90"/>
 		</mod:grupo>
 		
 		<mod:grupo titulo="Documentos a Publicar">
@@ -35,6 +35,12 @@
 						<td style="padding-left: 30px">${ex.dtFechamentoDDMMYY}</td>
 						<td style="padding-left: 30px">${ex.lotaCadastrante.sigla}</td>
 						<td style="padding-left: 30px">${ex.descrDocumento}</td>
+						<td style="padding-left: 30px">
+							<ww:url id="url" action="cancelar_pedido_publicacao_boletim" namespace="/expediente/mov">
+								<ww:param name="sigla">${ex.sigla}</ww:param>
+							</ww:url>
+							<ww:a href="%{url}">Cancelar Pedido</ww:a>
+						</td>						
 					</tr>
 				</c:forEach>
 			</table>
@@ -60,6 +66,7 @@
 	<mod:documento>
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
+
 		<style type="text/css">
 			@page {
 				margin-left: 3cm;
@@ -73,23 +80,18 @@
 			}
 			@first-page-body {
 				margin-top: 4cm;
-				margin-bottom: 6cm; 
+				margin-bottom: 8cm; 
 			}
 		</style>
-
 		</head>
 		<body>
 		<!-- FOP -->
 		<!-- INICIO PRIMEIRO CABECALHO
 		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
-			<table bgcolor="#FFFFFF">
+			<table width="100%" align="left" border="0" bgcolor="#FFFFFF">
 				<tr bgcolor="#FFFFFF">
-					<td valign="bottom" width="30%"><img
-						src="contextpath/imagens/Logomarca_JFES_reduzida.jpg" width="30%" /></td>
-					<td align="left">
-						<h2>BOLETIM INTERNO</h2>
-						<h3>da Seção Judiciária do Espírito Santo</h3>
-					</td>
+					<td align="left" valign="bottom" width="100%"><img
+						src="contextpath/imagens/cabecalhoBoletimInternoES.gif" width="450" height="65" /></td>
 				</tr>
 			</table>
 		</td></tr>
@@ -124,7 +126,7 @@
 		FIM CABECALHO -->
 
 		<c:set var="hBIE"
-			value="${f:obterHierarquizadorBIE(lotaTitular.orgaoUsuario, doc)}"></c:set>
+			value="${f:obterHierarquizadorBIEES(lotaTitular.orgaoUsuario, doc)}"></c:set>
 
 		<c:forEach var="topico" items="${hBIE.nodosPrincipais}"
 			varStatus="loop">
@@ -212,4 +214,6 @@
 
 	</mod:finalizacao>--%>
 </mod:modelo>
+
+
 

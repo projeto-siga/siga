@@ -82,8 +82,13 @@
 		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp" />
 		</td></tr>
-			<tr bgcolor="#FFFFFF">
-				<td width="100%">
+		</table>
+		FIM PRIMEIRO CABECALHO -->
+
+		<!-- INICIO CABECALHO
+		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
+		FIM CABECALHO -->
+
 					<table width="100%">
 						<tr>
 							<td align="right"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">
@@ -98,14 +103,6 @@
 							<br /><br />N&ordm; ${doc.codigo}</p></td>
 						</tr>
 					</table>
-				</td>
-			</tr>
-		</table>
-		FIM PRIMEIRO CABECALHO -->
-
-		<!-- INICIO CABECALHO
-		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
-		FIM CABECALHO -->
 
 		<br />
 

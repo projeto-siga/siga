@@ -65,6 +65,7 @@ public class LdapDaoImpl implements ILdapDao {
 		environment.put(Context.SECURITY_PRINCIPAL, usuario);
 		environment.put(Context.SECURITY_CREDENTIALS, senha);
 		environment.put(Context.BATCHSIZE, "10000");
+		environment.put(Context.REFERRAL, "follow");
 
 		if (isSSL) {
 			System.setProperty("javax.net.ssl.trustStore", caminhoKeystore);

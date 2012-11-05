@@ -2,7 +2,7 @@
 page
 	language="java" contentType="text/html; charset=UTF-8" buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+<!--   -->
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <script type="text/javascript" language="Javascript1.1">

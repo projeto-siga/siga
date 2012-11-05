@@ -82,24 +82,24 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
 		
 		<ul>
 		<c:if test="${alterarEscolaridade == 'Sim'}">
-		<li><b>
-		<u>Escolaridade:</u></b> (Com documento autenticado em anexo)<br>${escolaridade}</li>
+		<li>
+		Escolaridade: (Com documento autenticado em anexo)<br/>${escolaridade}</li>
 		</c:if>
 		
 		
 		<c:if test="${alterarEstadoCivil == 'Sim'}">
-			<li><b><u>Estado Civil:</u></b> (Com documento autenticado em anexo)<br>
+			<li>Estado Civil: (Com documento autenticado em anexo)<br/>
 			${estadocivil}</li>	
 		</c:if>
 
 			
 		<c:if test="${alterarEndereco == 'Sim'}">
-			<li><b><u>Endereco:</u></b><br />
+			<li>Endereco:<br />
 						${endereco}</li>
-				<b>Bairro: </b> ${bairro}<br />
-				<b>Cidade: </b> ${cidade}<br />
-				<b>UF: </b> ${uf}<br />
-				<b>CEP: </b> ${cep}<br />
+				Bairro:  ${bairro}<br />
+				Cidade: ${cidade}<br />
+				UF: ${uf}<br />
+				CEP:  ${cep}<br />
 				<b>Atenção: &quot;Se comprovadamente falsa a declaração, 
 				sujeitar-se-á o declarante às sanções civis, administrativas e criminais 
 				previstas na legislação aplicável.&quot; (Lei 7115/1983, art. 2º)</b> 
@@ -108,19 +108,19 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
 			
 		
 		<c:if test="${tel1 != null || tel2 != null || tel3 != null }">
-			<li><b><u>TELEFONE(S)</u></b><br>
+			<li>TELEFONE(S)<br/>
 			
 			
 					<c:if test="${tel1 != ''}">	
-					${tel1}<br>
+					${tel1}<br/>
 					</c:if>	
 				
 					<c:if test="${tel2 != ''}">	
-					${tel2}<br>
+					${tel2}<br/>
 					</c:if>	
 					
 					<c:if test="${tel3 != ''}">					
-					${tel3}<br>
+					${tel3}<br/>
 					</c:if>	
 		</c:if>
 		</ul>

@@ -2924,6 +2924,7 @@ Insert into SIGA.EX_MODELO (ID_MOD,NM_MOD,DESC_MOD,CONTEUDO_TP_BLOB,NM_ARQ_MOD,I
 Insert into SIGA.EX_MODELO (ID_MOD,NM_MOD,DESC_MOD,CONTEUDO_TP_BLOB,NM_ARQ_MOD,ID_CLASSIFICACAO,ID_FORMA_DOC,ID_CLASS_CRIACAO_VIA,ID_NIVEL_ACESSO) values (143,'SGP: Licença para Afastamento do Cônjuge','SGP: Licença para Afastamento do Cônjuge','template-file/jsp','licencaAfastamentoConjuge.jsp',2103,12,null,null);
 Insert into SIGA.EX_MODELO (ID_MOD,NM_MOD,DESC_MOD,CONTEUDO_TP_BLOB,NM_ARQ_MOD,ID_CLASSIFICACAO,ID_FORMA_DOC,ID_CLASS_CRIACAO_VIA,ID_NIVEL_ACESSO) values (55,'SGP: Horário Especial ao Servidor Público (Estudante) - Cancelamento','SGP: Horário Especial ao Servidor Público (Estudante) - Cancelamento','template-file/jsp','horarioEspecialCancel.jsp',2117,12,null,1);
 Insert into SIGA.EX_MODELO (ID_MOD,NM_MOD,DESC_MOD,CONTEUDO_TP_BLOB,NM_ARQ_MOD,ID_CLASSIFICACAO,ID_FORMA_DOC,ID_CLASS_CRIACAO_VIA,ID_NIVEL_ACESSO) values (11,'SID: Cartão de Estacionamento - Diretor (Rua do Passeio)','SID: Cartão de Estacionamento - Diretor (Rua do Passeio)','template-file/jsp','interno_antigo.jsp',2257,3,null,null);
+Insert into SIGA.EX_MODELO (ID_MOD,NM_MOD,DESC_MOD,CONTEUDO_TP_BLOB,NM_ARQ_MOD,ID_CLASSIFICACAO,ID_FORMA_DOC,ID_CLASS_CRIACAO_VIA,ID_NIVEL_ACESSO) values (740,'Interno Importado','Interno Importado Freemarker','template/freemarker',null,null,null,null,null);
 
 DECLARE
   dest_blob_ex_mod BLOB;
@@ -5058,6 +5059,83 @@ src_blob_ex_mod := utl_raw.cast_to_raw(convert('
     [/@estiloBrasaoCentralizado]
 [/@documento]
 
+','AL32UTF8'));
+dbms_lob.append(dest_blob_ex_mod, src_blob_ex_mod);
+
+
+update SIGA.EX_MODELO set conteudo_blob_mod = utl_raw.cast_to_raw(' ') where id_mod = 740;
+select conteudo_blob_mod into dest_blob_ex_mod from SIGA.EX_MODELO where id_mod = 740 for update;
+src_blob_ex_mod := utl_raw.cast_to_raw(convert('
+[@entrevista]
+[/@entrevista]
+
+[@documento]
+    [@primeiroCabecalho]
+        [@cabecalhoCentralizadoPrimeiraPagina/]
+    [/@primeiroCabecalho]
+
+    [@cabecalho]
+        [@cabecalhoCentralizado/]
+    [/@cabecalho]
+
+        <table width="100%" border="0" cellpadding="12" cellspacing="12" bgcolor="#FFFFFF">
+            <tr>
+              <td width="50%" align="left" style="font-family:Arial;font-size:10pt;font-weight: bold;"><b>Expediente Interno N&ordm; ${doc.codigo}</b></td>
+              <td width="50%" align="right" style="font-family:Arial;font-size:10pt;font-weight: bold;"><b>${doc.dtExtenso!}</b></td>
+            </tr>
+        </table>
+
+        <br/>
+        <div style="font-family:Arial;font-size:10pt;">
+            <table width="100%" border="0" cellpadding="12" cellspacing="12" bgcolor="#FFFFFF">
+                <tr>
+                    <td width="25%">Número Original:</td>
+                    <td width="75%">${doc.numExtDoc!}</td>
+                </tr>
+                <tr>
+                    <td>Número no Sistema Antigo:</td>
+                    <td>${doc.numAntigoDoc!}</td>
+                </tr>
+                <tr>
+                    <td>Forma:</td>
+                    <td>${doc.exFormaDocumento.descrFormaDoc!}</td>
+                </tr>
+                <tr>
+                    <td>Modelo:</td>
+                    <td>${doc.exModelo.nmMod!}</td>
+                </tr>
+                <tr>
+                    <td>Subscritor:</td>
+                    <td>${doc.subscritorString!}</td>
+                </tr>
+                <tr>
+                    <td>Destinatário:</td>
+                    <td>${doc.destinatarioString!}</td>
+                </tr>
+                <tr>
+                    <td>Descrição:</td>
+                    <td>${doc.descrDocumento!}</td>
+                </tr>
+                <tr>
+                    <td>Cadastrante:</td>
+                    <td>${doc.cadastrante.descricao!}</td>
+                </tr>
+                <tr>
+                    <td>Data do cadastro:</td>
+                    <td>${doc.dtRegDocDDMMYYHHMMSS!}</td>
+                </tr>
+            </table>
+        </div>   
+
+    [@primeiroRodape]
+        [@rodapeClassificacaoDocumental/]
+    [/@primeiroRodape]
+
+    [@rodape]
+        [@rodapeNumeracaoADireita/]
+    [/@rodape]    
+
+[/@documento]
 ','AL32UTF8'));
 dbms_lob.append(dest_blob_ex_mod, src_blob_ex_mod);
 

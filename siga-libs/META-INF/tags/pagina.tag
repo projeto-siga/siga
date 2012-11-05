@@ -7,13 +7,18 @@
 <%@ attribute name="meta"%>
 <%@ attribute name="pagina_de_erro"%>
 <%@ attribute name="onLoad"%>
+<%@ attribute name="desabilitarbusca"%>
+<%@ attribute name="desabilitarmenu"%>
+
 <c:if test="${not empty pagina_de_erro}">
-	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}"/>
+	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}" />
 </c:if>
 
 <c:set var="titulo_pagina" scope="request">${titulo}</c:set>
-<siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}" onLoad="${onLoad}"/>
+<siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}"
+	onLoad="${onLoad}" desabilitarbusca="${desabilitarbusca}"
+	desabilitarmenu="${desabilitarmenu}" />
 
-<jsp:doBody/>
+<jsp:doBody />
 
-<siga:rodape popup="${popup}"/>
+<siga:rodape popup="${popup}" />

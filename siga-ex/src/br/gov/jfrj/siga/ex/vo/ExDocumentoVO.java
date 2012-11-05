@@ -115,9 +115,29 @@ public class ExDocumentoVO extends ExVO {
 
 			addAcoes(doc, titular, lotaTitular);
 		}
-		
+
 		addDadosComplementares();
 	}
+
+	
+	public ExDocumentoVO(ExDocumento doc) throws Exception {
+		this.doc = doc;
+		this.sigla = doc.getSigla();	
+		this.nomeCompleto = doc.getNomeCompleto();
+		this.dtDocDDMMYY = doc.getDtDocDDMMYY();		
+		this.descrDocumento = doc.getDescrDocumento();
+		if (doc.isEletronico()) {
+			this.classe = "header_eletronico";
+			this.fisicoOuEletronico = "Documento Eletrônico";
+			this.fDigital = true;
+		} else {
+			this.classe = "header";
+			this.fisicoOuEletronico = "Documento Físico";
+			this.fDigital = false;
+		}	
+		
+	}
+
 
 	/**
 	 * @param doc
@@ -127,22 +147,28 @@ public class ExDocumentoVO extends ExVO {
 	 */
 	private void addAcoes(ExDocumento doc, DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
+		ExVO vo = this;
+		for (ExMobilVO mobvo : mobs) {
+			if (mobvo.getMob().isGeral())
+				vo = mobvo;
+		}
+
 		ExMobil mob = doc.getMobilGeral();
 
-		addAcao("Visualizar Dossiê",
+		vo.addAcao("folder_magnify", "Visualizar Dossiê",
 				"/expediente/doc",
 				"exibirProcesso",
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob));
 
-		addAcao("Visualizar Impressão",
+		vo.addAcao("printer", "Visualizar Impressão",
 				"/expediente/doc",
 				"pdf",
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob),
 				null, "&popup=true", null, null);
 
-		addAcao("Finalizar", "/expediente/doc", "fechar", Ex.getInstance()
+		vo.addAcao("lock", "Finalizar", "/expediente/doc", "fechar", Ex.getInstance()
 				.getComp().podeFinalizar(titular, lotaTitular, mob),
 				"Confirma a finalização do documento?", null, null, null);
 
@@ -150,53 +176,53 @@ public class ExDocumentoVO extends ExVO {
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
 		// "Confirma a finalização do documento?", null, null, null);
 
-		addAcao("Editar", "/expediente/doc", "editar", Ex.getInstance()
+		vo.addAcao("pencil", "Editar", "/expediente/doc", "editar", Ex.getInstance()
 				.getComp().podeEditar(titular, lotaTitular, mob));
 
-		addAcao("Excluir", "/expediente/doc", "excluir", Ex.getInstance()
+		vo.addAcao("delete", "Excluir", "/expediente/doc", "excluir", Ex.getInstance()
 				.getComp().podeExcluir(titular, lotaTitular, mob),
 				"Confirma a exclusão do documento?", null, null, null);
 
-		addAcao("Incluir Co-signatário", "/expediente/mov",
+		vo.addAcao("user_add", "Incluir Cossignatário", "/expediente/mov",
 				"incluir_cosignatario", Ex.getInstance().getComp()
 						.podeIncluirCosignatario(titular, lotaTitular, mob));
 
-		addAcao("Anexar Arquivo", "/expediente/mov", "anexar", Ex.getInstance()
+		vo.addAcao("attach", "Anexar Arquivo", "/expediente/mov", "anexar", Ex.getInstance()
 				.getComp().podeAnexarArquivo(titular, lotaTitular, mob));
-		addAcao("Fazer Anotação", "/expediente/mov", "anotar", Ex.getInstance()
+		vo.addAcao("tag_yellow","Fazer Anotação", "/expediente/mov", "anotar", Ex.getInstance()
 				.getComp().podeFazerAnotacao(titular, lotaTitular, mob));
 
-		addAcao("Definir Perfil",
+		vo.addAcao("folder_user","Definir Perfil",
 				"/expediente/mov",
 				"vincularPapel",
 				Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
-		addAcao("Download do Conteúdo",
+		vo.addAcao("cd", "Download do Conteúdo",
 				"/expediente/doc",
 				"anexo",
 				Ex.getInstance().getComp()
 						.podeDownloadConteudo(titular, lotaTitular, mob));
 
-		addAcao("Exibir Todas as Vias", "/expediente/doc", "exibir",
+		vo.addAcao("sitemap_color","Exibir Todas as Vias", "/expediente/doc", "exibir",
 				doc.isExpediente() && doc.getDtFechamento() != null, null,
 				"&exibirCompleto=false", null, null);
 
-		addAcao("Exibir Todos os Volumes", "/expediente/doc", "exibir",
+		vo.addAcao("sitemap_color","Exibir Todos os Volumes", "/expediente/doc", "exibir",
 				doc.isProcesso() && doc.getDtFechamento() != null, null,
 				"&exibirCompleto=false", null, null);
 
-		addAcao("Criar Via", "/expediente/doc", "criarVia", Ex.getInstance()
+		vo.addAcao("add","Criar Via", "/expediente/doc", "criarVia", Ex.getInstance()
 				.getComp().podeCriarVia(titular, lotaTitular, mob));
 
-		addAcao("Abrir Novo Volume",
+		vo.addAcao("add","Abrir Novo Volume",
 				"/expediente/doc",
 				"criarVolume",
 				Ex.getInstance().getComp()
 						.podeCriarVolume(titular, lotaTitular, mob),
 				"Confirma a abertura de um novo volume?", null, null, null);
 
-		addAcao("Criar Subprocesso",
+		vo.addAcao("link_add","Criar Subprocesso",
 				"/expediente/doc",
 				"editar",
 				Ex.getInstance().getComp()
@@ -205,18 +231,24 @@ public class ExDocumentoVO extends ExVO {
 						+ mob.doc().getExFormaDocumento().getIdFormaDoc(),
 				null, null);
 
-		addAcao("Registrar Assinatura Manual", "/expediente/mov",
+		vo.addAcao("script_edit","Registrar Assinatura Manual", "/expediente/mov",
 				"registrar_assinatura", Ex.getInstance().getComp()
 						.podeRegistrarAssinatura(titular, lotaTitular, mob));
 
-		addAcao("Assinar Digitalmente", "/expediente/mov", "assinar", Ex
+		vo.addAcao("script_key","Assinar Digitalmente", "/expediente/mov", "assinar", Ex
 				.getInstance().getComp().podeAssinar(titular, lotaTitular, mob));
+		
+		if (doc.getDtFechamento() != null && doc.getNumExpediente() != null){
+			// documentos finalizados
+			if (mob.temAnexos())
+				vo.addAcao("script_key","Assinar Anexos", "/expediente/mov", "assinar_anexos_geral", true);
+		}
 
-		addAcao("Redefinir Nível de Acesso", "/expediente/mov",
+		vo.addAcao("shield","Redefinir Nível de Acesso", "/expediente/mov",
 				"redefinir_nivel_acesso", Ex.getInstance().getComp()
 						.podeRedefinirNivelAcesso(titular, lotaTitular, mob));
 
-		addAcao("Solicitar Publicação no Boletim",
+		vo.addAcao("book_add","Solicitar Publicação no Boletim",
 				"/expediente/mov",
 				"boletim_agendar",
 				Ex.getInstance()
@@ -224,7 +256,7 @@ public class ExDocumentoVO extends ExVO {
 						.podeBotaoAgendarPublicacaoBoletim(titular,
 								lotaTitular, mob));
 
-		addAcao("Registrar Publicação do BIE",
+		vo.addAcao("book_link","Registrar Publicação do BIE",
 				"/expediente/mov",
 				"boletim_publicar",
 				Ex.getInstance()
@@ -232,7 +264,7 @@ public class ExDocumentoVO extends ExVO {
 						.podeBotaoAgendarPublicacaoBoletim(titular,
 								lotaTitular, mob));
 
-		addAcao("Refazer",
+		vo.addAcao("error_go","Refazer",
 				"/expediente/doc",
 				"reabrir",
 				Ex.getInstance().getComp()
@@ -240,7 +272,7 @@ public class ExDocumentoVO extends ExVO {
 				"Esse documento será cancelado e seus dados serão copiados para um novo expediente em elaboração. Prosseguir?",
 				null, null, null);
 
-		addAcao("Duplicar",
+		vo.addAcao("arrow_divide","Duplicar",
 				"/expediente/doc",
 				"duplicar",
 				Ex.getInstance().getComp()
@@ -249,21 +281,21 @@ public class ExDocumentoVO extends ExVO {
 				null, null, null);
 
 		// test="${exibirCompleto != true}" />
-		addAcao("Exibir Informações Completas", "/expediente/doc", "exibir", Ex
+		vo.addAcao("eye","Exibir Informações Completas", "/expediente/doc", "exibir", Ex
 				.getInstance().getComp()
 				.podeDuplicar(titular, lotaTitular, mob), null,
 				"&exibirCompleto=true", null, null);
 
-		addAcao("Agendar Publicação no DJE", "/expediente/mov",
+		vo.addAcao("report_link","Agendar Publicação no DJE", "/expediente/mov",
 				"agendar_publicacao", Ex.getInstance().getComp()
 						.podeAgendarPublicacao(titular, lotaTitular, mob));
 
-		addAcao("Solicitar Publicação no DJE", "/expediente/mov",
+		vo.addAcao("report_add","Solicitar Publicação no DJE", "/expediente/mov",
 				"pedir_publicacao", Ex.getInstance().getComp()
 						.podePedirPublicacao(titular, lotaTitular, mob));
 
 		// <ww:param name="idFormaDoc">60</ww:param>
-		addAcao("Criar Anexo",
+		vo.addAcao("link_add","Criar Anexo",
 				"/expediente/doc",
 				"editar",
 				Ex.getInstance()
@@ -279,7 +311,8 @@ public class ExDocumentoVO extends ExVO {
 		attrs.put("nmMod", "macro dadosComplementares");
 		attrs.put("template", "[@dadosComplementares/]");
 		attrs.put("doc", this.getDoc());
-		dadosComplementares = p.processarModelo(doc.getOrgaoUsuario(), attrs, null);
+		dadosComplementares = p.processarModelo(doc.getOrgaoUsuario(), attrs,
+				null);
 	}
 
 	public String getClasse() {

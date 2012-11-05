@@ -7,6 +7,9 @@
 
 	<display-name>Sistema Integrado de Gestão Administrativa</display-name>
 	
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
+	
 	<session-config>
 		<session-timeout>120</session-timeout>
 	</session-config>
@@ -63,6 +66,14 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
+	</listener>
 	<!-- ***************************************  -->
 	<!--  Configuracao para login com formulario  -->
 	<!-- ***************************************  -->
@@ -79,6 +90,7 @@
 			<url-pattern>/modelo/*</url-pattern>
 			<url-pattern>/gi/*</url-pattern>
 			<url-pattern>/administracao.action</url-pattern>
+			<url-pattern>/redirect.action</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

@@ -31,6 +31,7 @@ import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.webwork.action.ExMobilSelecao;
 
 //@WebService(endpointInterface = "br.gov.jfrj.siga.ex.service.ExService")
 @Path("/servicos")
@@ -75,11 +76,13 @@ public class ExServiceImpl implements ExService {
 							.equivale(
 									mob.getUltimaMovimentacaoNaoCancelada()
 											.getResp())))) {
-				Ex.getInstance().getBL().transferir(null, null,
-						cadastranteParser.getPessoa(),
-						cadastranteParser.getLotacao(), mob, null, null,
-						destinoParser.getLotacao(), destinoParser.getPessoa(),
-						null, null, null, null, null, false, null, null, null);
+				Ex.getInstance()
+						.getBL()
+						.transferir(null, null, cadastranteParser.getPessoa(),
+								cadastranteParser.getLotacao(), mob, null,
+								null, destinoParser.getLotacao(),
+								destinoParser.getPessoa(), null, null, null,
+								null, null, false, null, null, null);
 			}
 			return true;
 		} catch (Exception e) {
@@ -116,10 +119,11 @@ public class ExServiceImpl implements ExService {
 					siglaCadastrante);
 			PessoaLotacaoParser destinoParser = new PessoaLotacaoParser(
 					siglaDestino);
-			Ex.getInstance().getBL().arquivarCorrente(
-					cadastranteParser.getPessoa(),
-					cadastranteParser.getLotacao(), mob, null, null,
-					destinoParser.getPessoa());
+			Ex.getInstance()
+					.getBL()
+					.arquivarCorrente(cadastranteParser.getPessoa(),
+							cadastranteParser.getLotacao(), mob, null, null,
+							destinoParser.getPessoa());
 			return true;
 		} catch (Exception e) {
 			if (!isHideStackTrace())
@@ -140,12 +144,13 @@ public class ExServiceImpl implements ExService {
 			PessoaLotacaoParser destinoParser = new PessoaLotacaoParser(
 					siglaDestino);
 
-			Ex.getInstance().getBL().juntarDocumento(
-					cadastranteParser.getPessoa(),
-					cadastranteParser.getPessoa(),
-					cadastranteParser.getLotacao(), null, mobFilho, mobPai,
-					null, destinoParser.getPessoa(), destinoParser.getPessoa(),
-					"1");
+			Ex.getInstance()
+					.getBL()
+					.juntarDocumento(cadastranteParser.getPessoa(),
+							cadastranteParser.getPessoa(),
+							cadastranteParser.getLotacao(), null, mobFilho,
+							mobPai, null, destinoParser.getPessoa(),
+							destinoParser.getPessoa(), "1");
 			return true;
 		} catch (Exception e) {
 			if (!isHideStackTrace())
@@ -172,11 +177,14 @@ public class ExServiceImpl implements ExService {
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
 			ExMobil mob = buscarMobil(codigoDocumento);
-			return Ex.getInstance().getComp().podeMovimentar(
-					cadastranteParser.getPessoa(),
-					cadastranteParser.getLotacao() == null ? cadastranteParser
-							.getPessoa().getLotacao() : cadastranteParser
-							.getLotacao(), mob);
+			return Ex
+					.getInstance()
+					.getComp()
+					.podeMovimentar(
+							cadastranteParser.getPessoa(),
+							cadastranteParser.getLotacao() == null ? cadastranteParser
+									.getPessoa().getLotacao()
+									: cadastranteParser.getLotacao(), mob);
 		} catch (Exception e) {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);
@@ -190,9 +198,11 @@ public class ExServiceImpl implements ExService {
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
 			ExMobil mob = buscarMobil(codigoDocumento);
-			return Ex.getInstance().getComp().podeTransferir(
-					cadastranteParser.getPessoa(),
-					cadastranteParser.getLotacao(), mob);
+			return Ex
+					.getInstance()
+					.getComp()
+					.podeTransferir(cadastranteParser.getPessoa(),
+							cadastranteParser.getLotacao(), mob);
 		} catch (Exception e) {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);
@@ -240,6 +250,16 @@ public class ExServiceImpl implements ExService {
 
 	public byte[] obterPdfPorNumeroAssinatura(String num) throws Exception {
 		return Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(num);
+	}
+
+	public String buscarPorCodigo(String codigo) throws Exception {
+		ExMobilSelecao sel = new ExMobilSelecao();
+		sel.setSigla(codigo);
+		sel.buscarPorSigla();
+		String s = sel.getSigla();
+		if (s != null && s.length() > 0)
+			return s;
+		return null;
 	}
 
 }

@@ -5,8 +5,11 @@
         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
+	
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
 
-	<!--
+	<!-- 
 		<jsp-config> <taglib>
 		<taglib-uri>http://jsptags.com/tags/navigation/pager</taglib-uri>
 		<taglib-location>/WEB-INF/jsp/pager-taglib.tld</taglib-location>
@@ -20,6 +23,58 @@
 	<session-config>
 		<session-timeout>120</session-timeout>
 	</session-config>
+	
+	    <servlet>
+        <servlet-name>AudioCaptcha</servlet-name>
+        <servlet-class>nl.captcha.servlet.AudioCaptchaServlet</servlet-class>
+    </servlet>
+
+	<servlet>
+		<servlet-name>SimpleCaptcha</servlet-name>
+		<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+        <init-param>
+            <param-name>captcha-width</param-name>
+            <param-value>250</param-value>
+        </init-param>
+        <init-param>
+            <param-name>captcha-height</param-name>
+            <param-value>75</param-value>
+        </init-param>
+	</servlet>
+	
+    <servlet>
+		<servlet-name>StickyCaptcha</servlet-name>
+		<servlet-class>nl.captcha.servlet.StickyCaptchaServlet</servlet-class>
+
+        <init-param>
+            <!-- Optional; defaults to 200. -->
+            <param-name>captcha-width</param-name>
+            <param-value>250</param-value>
+        </init-param>
+        <init-param>
+            <!-- Optional; defaults to 50. -->
+            <param-name>captcha-height</param-name>
+            <param-value>75</param-value>
+        </init-param>
+        <init-param>
+            <!-- Time To Live, in ms. Optional; Defaults to 600000ms. -->
+            <param-name>ttl</param-name>
+            <param-value>100000</param-value>
+        </init-param>
+    </servlet>
+
+	<servlet-mapping>
+		<servlet-name>AudioCaptcha</servlet-name>
+		<url-pattern>/autenticar.audiocaptcha.wav</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SimpleCaptcha</servlet-name>
+		<url-pattern>/autenticar.simplecaptcha.png</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>StickyCaptcha</servlet-name>
+		<url-pattern>/autenticar.stickycaptcha.png</url-pattern>
+	</servlet-mapping>
 
 	<filter>
 		<filter-name>ExFilter</filter-name>
@@ -117,6 +172,13 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
+	</listener>
 
 	<!-- Standard Action Servlet Configuration  -->
 	<servlet>
@@ -209,40 +271,16 @@
 			<url-pattern>/administracao/*</url-pattern>
 			<url-pattern>/expediente/*</url-pattern>
 			<url-pattern>/modelo/*</url-pattern>
+			<url-pattern>/despacho/*</url-pattern>
 			<url-pattern>/administracao.action</url-pattern>
+			<url-pattern>/anexo/*</url-pattern>
+			<url-pattern>*.pdf</url-pattern>
+			<url-pattern>*.html</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Area do Administrador</web-resource-name>
-			<url-pattern>/despacho/tipodespacho/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>sigaadministrador</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Area do Desenvolvedor</web-resource-name>
-			<url-pattern>/manutencao/desenvolvimento/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>sigadesenvolvimento</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Páginas Restritas</web-resource-name>
-			<url-pattern>/paginas/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>superusuario</role-name>
-		</auth-constraint>
-	</security-constraint>
-	
 	
 	<login-config>
 		<auth-method>FORM</auth-method>
@@ -254,15 +292,6 @@
 	
 	<security-role>
 		<role-name>sigausuario</role-name>
-	</security-role>
-	<security-role>
-		<role-name>sigaadministrador</role-name>
-	</security-role>
-	<security-role>
-		<role-name>sigadesenvolvimento</role-name>
-	</security-role>
-	<security-role>
-		<role-name>superusuario</role-name>
 	</security-role>
 	
 	<error-page>

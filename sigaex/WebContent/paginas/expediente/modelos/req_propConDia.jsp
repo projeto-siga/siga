@@ -11,8 +11,11 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<p align="left"><span style="color: red"> <br>
-			(os campos marcados com * são de preenchimento obrigatório)</span></p>
+		 
+		    <p align="left"><span style="color: red"> <br><b>
+			ATENÇÃO: EM CASO DE DÚVIDA NO PREENCHIMENTO, FAVOR OBTER AUXÍLIO NO RAMAL 8559 - SEPADI  (FALAR COM A SERVIDORA ROSA)
+			<br><br>
+			(os campos marcados com * são de preenchimento obrigatório)</b></span></p>
 
 		</mod:grupo>
 		<!-- 
@@ -24,15 +27,17 @@
          -->
 		<hr style="color: #FFFFFF;" />
 		
-        <mod:grupo titulo="Proposto pertencente aos quadros do Tribunal Regional Federal da 2ª Região (*)">
+          <mod:grupo titulo="Proposto pertencente ao quadro do Tribunal Regional Federal da 2ª Região (*)">
 
-			<mod:radio titulo="SIM" var="ppq" valor="1" marcado="Sim" reler="sim"/>
+			<mod:radio titulo="SIM" var="ppq" valor="1" reler="sim"/>
 			<mod:radio titulo="NÃO" var="ppq" valor="2" reler="sim"/>
 		</mod:grupo>
 		<c:set var="valorppq" value="${ppq}" />
 	        <c:if test="${empty valorppq}">
 	           <c:set var="valorppq" value="${param['ppq']}" />
 	        </c:if>
+		
+	   
 		<c:if test="${valorppq == '1'}">
 		<mod:grupo titulo="Proposto (*)">
 		    <mod:pessoa titulo="Nome" var="prop" />
@@ -64,13 +69,15 @@
 			<mod:grupo>
 			    <p align="left"><span style="color: red"> <br>Atenção : use ponto ao invés de vírgula nos valores abaixo, para que não ocorra erro</span></p>
             </mod:grupo>
-			<mod:texto titulo="Valor Mensal do Auxílio-Alimentação" var="valref" />
-			<mod:texto titulo="Valor Mensal do Auxílio-Transporte" var="valtrans" />
+			<mod:texto titulo="Valor Mensal do Auxílio-Alimentação R$" var="valref" />
+			<mod:texto titulo="Valor Mensal do Auxílio-Transporte R$" var="valtrans" />
 		</mod:grupo>
 		 </c:if>
+	
+	   
 		<hr style="color: #FFFFFF;" />
 		<mod:grupo>
-			<mod:memo titulo="<b>Local e Serviço a ser executado (*)</b>" var="texto_serv" colunas="70"
+			<mod:memo titulo="<b>Serviço a ser executado e Local (*)</b>" var="texto_serv" colunas="70"
 				linhas="3" />
 		</mod:grupo>
 		<br>
@@ -78,16 +85,36 @@
 		<mod:grupo titulo="Solicitação de passagem aérea (*)">
 
 			<mod:radio titulo="SIM" var="opc" valor="1" reler="sim" />
-			<mod:radio titulo="NÃO" var="opc" valor="2" reler="sim" marcado="Sim"/>
+			<mod:radio titulo="NÃO" var="opc" valor="2" reler="sim"/>
 		</mod:grupo>
+		
+		<c:set var="valoropc" value="${opc}" />
+	        <c:if test="${empty valoropc}">
+	           <c:set var="valoropc" value="${param['opc']}" />
+	        </c:if>
+		
+		<c:if test="${valoropc == '1'}">
+		   <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A não devolução dos cartões de embarque no prazo de 05 dias do retorno à sede ensejará a restituição do valor pago a título de diárias (arts. 112 e 114 da Resolução 4/2008/CJF)</font>
+		</c:if>
+		
+		
+		
 		<hr style="color: #FFFFFF;" />
 		<mod:grupo titulo="Uso de Carro Oficial (*)">
 
-			<mod:radio titulo="SIM" var="opcr" valor="1" reler="sim"
-				/>
-			<mod:radio titulo="NÃO" var="opcr" valor="2" reler="sim" marcado="Sim" />
-		</mod:grupo>
-
+			<mod:radio titulo="SIM" var="opcr" valor="1" reler="sim"/>
+			<mod:radio titulo="NÃO" var="opcr" valor="2" reler="sim"/>
+		</mod:grupo>	
+			<c:set var="valoropcr" value="${opcr}" />
+	        <c:if test="${empty valoropcr}">
+	           <c:set var="valoropcr" value="${param['opcr']}" />
+	        </c:if>
+		
+		<c:if test="${valoropcr == '2' && valoropc == '1'}">
+		   <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;É devida a concessão do adicional de deslocamento previsto no § 2º do art. 107 da Resolução 4/2008/CJF</font>
+		</c:if>
+			
+		
 		<hr style="color: #FFFFFF;" />
 		<mod:grupo titulo="Itinerários (*)">
 			<mod:texto titulo="Origem/Destino" var="dest" largura="40" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></br>
@@ -111,7 +138,7 @@
 		<span style="color: red"> <b>OBS.: O afastamento que se
 		iniciar a partir da sexta-feira ou que inclua sábado, domingo ou
 		feriado deverá ser acompanhado de justificativa, condicionando-se o
-		pagamento à aceitação da justificativa pelo ordenador de despesas(art 111,II,§2º Res. 4/2008/CJF). O mesmo se dará quando houver
+		pagamento à aceitação da justificativa pelo ordenador de despesas (art 111,II,§2º Res. 4/2008/CJF). O mesmo se dará quando houver
 		necessidade de pernoite na noite anterior e/ou posterior ao evento.</b> </span>
 
 
@@ -125,7 +152,7 @@
 	</mod:entrevista>
 
 	<mod:documento>
-		<head>
+<head>
 		<style type="text/css">
 @page {
 	margin-left: 0.5cm;
@@ -173,8 +200,12 @@
            <c:set var="alm" value=""></c:set>
            <c:set var="trp" value=""></c:set>
            <c:set var="carg" value="${f:maiusculasEMinusculas(pessoa_prop.cargo.descricao)}"></c:set>
-           <c:set var="func" value="${f:maiusculasEMinusculas(pessoa_prop.funcaoConfianca.nomeFuncao)}"></c:set>
+           <c:set var="func" value="${pessoa_prop.funcaoConfianca.nomeFuncao}"></c:set>
            <c:set var="matr" value="${pessoa_prop.sesbPessoa}${pessoa_prop.matricula}"></c:set>
+        </c:if>
+        <c:set var="observ" value="Observação"></c:set>
+        <c:if test="${opc == '1' || opcr == '2'}">
+           <c:set var="observ" value="Observações"></c:set>
         </c:if>
        <!--
         <b>
@@ -227,7 +258,7 @@
 							<tr><c:choose>
 								<c:when test="${doc.subscritor.matricula > 9999}">
 								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Função
-								:</b>&nbsp;${f:maiusculasEMinusculas(doc.subscritor.funcaoConfianca.nomeFuncao)}</td>
+								:</b>&nbsp;${doc.subscritor.funcaoConfianca.nomeFuncao}</td>
 								</c:when>
 								<c:otherwise>
 								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Cargo&nbsp;&nbsp;&nbsp;
@@ -295,8 +326,7 @@
 
 						<table width="100%" border="1" cellpadding="2" cellspacing="1">
 							<tr>
-								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Local
-								e Serviço a ser executado:</b></td>
+								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Serviço a ser executado e Local:</b></td>
 							</tr>
 						</table>
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
@@ -394,13 +424,54 @@
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
 							<tr>
 								<td width="100%" bgcolor="#FFFFFF">${just}</td>
-
-
 							</tr>
 						</table>
 				</table>
 			     
-			  </table>   
+			     
+			    <table width="100%" border="1" cellpadding="2" cellspacing="1">
+					<tr>
+						<td>
+
+						<table width="100%" border="1" cellpadding="2" cellspacing="1">
+							<tr>
+								<td width="100%" bgcolor="#FFFFFF" align="left"><b>${observ}</b></td>
+							</tr>
+						</table>
+						<table width="100%" border="0" cellpadding="5" cellspacing="0">
+							<tr>
+								<td width="100%" bgcolor="#FFFFFF">O afastamento que se
+		iniciar a partir da sexta-feira ou que inclua sábado, domingo ou
+		feriado deverá ser acompanhado de justificativa, condicionando-se o
+		pagamento à aceitação da justificativa pelo ordenador de despesas (art 111,II,§2º Res. 4/2008/CJF). O mesmo se dará quando houver
+		necessidade de pernoite na noite anterior e/ou posterior ao evento.</td>
+							</tr>
+						</table>
+						
+						<c:if test="${opc == '1'}">
+						
+						<table width="100%" border="0" cellpadding="5" cellspacing="0">
+							<tr>
+								<td width="100%" bgcolor="#FFFFFF">A não devolução dos cartões de embarque no prazo de 05 dias do retorno à sede ensejará a restituição do valor pago a título de diárias (arts. 112 e 114 da Resolução 4/2008/CJF).</td>
+							</tr>
+						</table>
+						</c:if>
+						
+						<c:if test="${opcr == '2' && opc == '1'}">
+						
+						<table width="100%" border="0" cellpadding="5" cellspacing="0">
+							<tr>
+								<td width="100%" bgcolor="#FFFFFF">É devida a concessão do adicional de deslocamento previsto no § 2º do art. 107 da Resolução 4/2008/CJF.</td>
+							</tr>
+						</table>
+						
+						</c:if>
+			    	</table> 
+			    </table>     
+			     
+			
+			     
+			 
 		    
 		
 
@@ -415,7 +486,7 @@
 		<p align="center">${doc.dtExtenso}</p>
 	    <!-- FIM FECHO -->
 	    
-	    <br>
+	    
 	    
 		<!-- INICIO ASSINATURA -->
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp?formatarOrgao=sim" />

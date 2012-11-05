@@ -53,7 +53,7 @@
 			bgcolor="#FFFFFF">
 			<tr>
 				<td bgcolor="#FFFFFF" align="center">
-				<h1>Remessa de Documentos Físicos</h1>
+				<h2>Remessa de Documentos Físicos</h2>
 				</td>
 			</tr>
 		</table>
@@ -65,40 +65,40 @@
 				<td align="right"><b>${doc.codigo}</b></td>
 			</tr>
 			<tr>
-				<td align="left"><b>DE:&nbsp</b>${doc.subscritor.lotacao.descricao}</td>
+				<td align="left">DE:&nbsp;${doc.subscritor.lotacao.descricao}</td>
 			</tr>
 			<tr>
-				<td align="left"><b>PARA:&nbsp</b>${doc.destinatarioString}</td>
+				<td align="left">PARA:&nbsp;${doc.destinatarioString}</td>
 			</tr>
 		</table>
 		</br>
 
-		<table bgcolor="#000000" width="100%" border="2" cellpadding="3">
+		<table width="100%" cellpadding="3" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 			<tr>
-				<td bgcolor="#FFFFFF" width="10%" align="center" colspan="1">Item</td>
-				<td bgcolor="#FFFFFF" width="40%" align="center" colspan="1">Documento</td>
-				<td bgcolor="#FFFFFF" width="35%" align="center" colspan="1">Assinatura/Matrícula</td>
-				<td bgcolor="#FFFFFF" width="15%" align="center" colspan="1">Data</td>
+				<td width="10%" align="center"  style="border-collapse: collapse; border-color: black;">Item</td>
+				<td width="40%" align="center"  style="border-collapse: collapse; border-color: black;">Documento</td>
+				<td width="35%" align="center"  style="border-collapse: collapse; border-color: black;">Assinatura/Matrícula</td>
+				<td width="15%" align="center"  style="border-collapse: collapse; border-color: black;">Data</td>
 			</tr>
 		</table>
 
-		<table bgcolor="#000000" width="100%" border="2" cellpadding="3">
+		<table width="100%" cellpadding="3" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 			<c:forEach var="i" begin="1" end="${quantidadeDocumentos}">
 				<tr>
-					<td bgcolor="#FFFFFF" width="10%" align="center">${i}</td>
-					<td bgcolor="#FFFFFF" width="40%" align="left">${requestScope[f:concat('str_doc',i)]}</td>
-					<td bgcolor="#FFFFFF" width="35%" align="left" colspan="1"></td>
-					<td bgcolor="#FFFFFF" width="15%" align="left" colspan="1"></td>
+					<td width="10%" align="center" style="border-collapse: collapse; border-color: black;">${i}</td>
+					<td width="40%" align="left" style="border-collapse: collapse; border-color: black;">${requestScope[f:concat('str_doc',i)]}</td>
+					<td width="35%" align="left" style="border-collapse: collapse; border-color: black;"></td>
+					<td width="15%" align="left" style="border-collapse: collapse; border-color: black;"></td>
 				</tr>
 			</c:forEach>
 		</table>
 		<br />
-		<table bgcolor="#000000" width="100%" border="2" cellpadding="3">
+		<table width="100%" border="1" cellpadding="3" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 			<tr>
-				<th bgcolor="#FFFFFF">Observação</th>
+				<th style="border-collapse: collapse; border-color: black;">Observação</th>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF"><c:if test="${empty obs}">&nbsp;</c:if>${obs}</td>
+				<td style="border-collapse: collapse; border-color: black;"><c:if test="${empty obs}">&nbsp;</c:if>${obs}</td>
 			</tr>
 		</table>
 

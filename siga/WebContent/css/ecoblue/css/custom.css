@@ -4,6 +4,38 @@ File:		custom.css - Use this file to add any custom styles you need
 
 If you add styles to this template, be sure to include it in your template files.
 */
+
+html.fisico {
+	background-color: #f1e9c6 !important;
+}
+
+tr.fisicoeven td {
+/*
+	background-color: #f1e9c6 !important;
+	color: #917c1e !important;
+*/
+	color: #bba226 !important;
+}
+
+tr.fisicoeven:hover td {
+	background-color: #faf7e7;
+}
+
+
+
+
+/* Left Sidebar, 2 Column */
+.gt-cols-2 .gt-sidebar {
+	width: 35% !important;
+}
+.gt-cols-2 .gt-content {
+	width: 60% !important;
+}
+
+.gt-form.gt-content-box {
+	margin-bottom: 20px !important;
+}
+
 .gt-for-table {
 	width: 100% !important;
 	padding: 0;
@@ -15,8 +47,8 @@ If you add styles to this template, be sure to include it in your template files
 }
 
 .gt-content-box {
-	width: 100% !important;
-	height: auto !important;
+	/*width: 100% !important;
+	height: auto !important;*/
 }
 
 .gt-table {
@@ -54,7 +86,7 @@ If you add styles to this template, be sure to include it in your template files
 	margin: 0;
 	padding-bottom: 3px;
 	padding-left: 1px;
-	line-height: 150%;
+	line-height: 175% !important;
 }
 
 .gt-table-action-list img {
@@ -172,6 +204,23 @@ If you add styles to this template, be sure to include it in your template files
 		transparent;
 }
 
+.gt-form-table tr .gt-cancel {
+	color: #666666;
+}
+.gt-form-table tr .gt-cancel a:link, .gt-form-table tr .gt-cancel a:visited {
+	color: #cc0000;
+	text-decoration: underline;
+}
+.gt-form-table tr .gt-cancel a:hover {
+	text-decoration: none;
+}
+
+.gt-form-table tr .gt-cancel {
+	color: #666666;
+	line-height: 37px;
+	margin-bottom: 0;
+}
+
 .gt-form-table-buttons:after {
 	content: ".";
 	display: block;
@@ -236,6 +285,15 @@ ul#navmenu-h ul {
 	float: left;
 	display: inline;
 	font-size: 116%;
+}
+
+/* Login Box Styles */
+.gt-error-page-hd {
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 250px;
+	margin-bottom: 10px;
 }
 
 ul#navmenu-h ul ul {
@@ -333,3 +391,29 @@ ul#navmenu-h li:hover ul,ul#navmenu-h ul li:hover ul,ul#navmenu-h ul ul li:hover
 }
 
 .gt-content-box ol, ul, li {margin-left:1em; margin-bottom:0;padding-left:0em;}
+
+
+TABLE.entrevista {
+	padding: 0px;
+	background-color: #fff;
+	border-radius: 0px;
+}
+
+TABLE.entrevista TR.header {
+	font-weight: bold;
+	font-size: 100%;
+	padding: 0px;
+	color: #333;
+	border-bottom: 1px solid #ccc !important;
+	background-color: #fff;
+	border-radius: 0px;
+}
+
+TABLE.entrevista TR TD{
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+
+

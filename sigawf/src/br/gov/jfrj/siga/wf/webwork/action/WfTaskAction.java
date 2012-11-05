@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.jbpm.context.def.VariableAccess;
 import org.jbpm.graph.def.Node;
 import org.jbpm.graph.def.Transition;
@@ -522,7 +523,7 @@ public class WfTaskAction extends WfSigaActionSupport {
 
 		WfConhecimento cNovo = new WfConhecimento();
 		if (cAntigo != null) {
-			BeanUtils.copyProperties(cNovo, cAntigo);
+			PropertyUtils.copyProperties(cNovo, cAntigo);
 			cNovo.setId(null);
 		} else {
 			cNovo.setProcedimento(taskInstance.getProcessInstance()
@@ -913,12 +914,15 @@ public class WfTaskAction extends WfSigaActionSupport {
 	}
 
 	public String getConhecimento() {
+		// Corrige o proble do encoding ao editar a descrição da Tarefa - 01/08/2012
+		/*
 		try {
 			return new String(conhecimento.getBytes("ISO-8859-1"));
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 		return conhecimento;
 	}
 

@@ -36,10 +36,11 @@ import org.hibernate.SQLQuery;
 import org.hibernate.type.CalendarType;
 import org.hibernate.type.StringType;
 
-import ar.com.fdvs.dj.domain.builders.DJBuilderException;
+
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 

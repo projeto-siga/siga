@@ -112,7 +112,7 @@ public class Notificador {
 			if (m.getSubscritor() != null) {
 				if (Ex.getInstance().getConf().podePorConfiguracao(
 						mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(), 
-						m.getExPapel(), m.getSubscritor(),
+						m.getExPapel(), m.getSubscritor().getPessoaAtual(), 
 						mov.getExTipoMovimentacao(),
 						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)
 						
@@ -125,10 +125,10 @@ public class Notificador {
 											                                     .getExFormaDocumento()
 											                                     .getExTipoFormaDoc(),
 							                                                  m.getExPapel(),
-							                                                  m.getSubscritor(),
+							                                                  m.getSubscritor().getPessoaAtual(),
 									                                          mov.getExMovimentacaoRef().getExTipoMovimentacao(),
 									                                          CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))) {
-					    destinatariosEmail.add(m.getSubscritor().getEmailPessoa());
+					    destinatariosEmail.add(m.getSubscritor().getPessoaAtual().getEmailPessoa());					 
 				 }								
 			} else {
 				if (m.getLotaSubscritor() != null) {
@@ -179,27 +179,27 @@ public class Notificador {
 				// todos da lotação
 
 				if (email == null) {
-					for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false)) {
+					for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false,true)) {
 						
 						if (Ex.getInstance().getConf().podePorConfiguracao(
 								mov.getExDocumento().getExFormaDocumento()
 										.getExTipoFormaDoc(), m.getExPapel(), pes,
 								mov.getExTipoMovimentacao(),
 								CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) 				
-						destinatariosEmail.add(pes.getEmailPessoa());
+						destinatariosEmail.add(pes.getPessoaAtual().getEmailPessoa());
 					}
 				} else {									
 					destinatariosEmail.add(email);
 				}
 			}
 		} else {
-			for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false)) {
+			for (DpPessoa pes : dao().pessoasPorLotacao(m.getLotaSubscritor().getLotacaoAtual().getIdLotacao(), false,true)) {
 				if (Ex.getInstance().getConf().podePorConfiguracao(
 						mov.getExDocumento().getExFormaDocumento()
 								.getExTipoFormaDoc(), m.getExPapel(), pes,
 						mov.getExTipoMovimentacao(),
 						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) 
-				destinatariosEmail.add(pes.getEmailPessoa());
+				destinatariosEmail.add(pes.getPessoaAtual().getEmailPessoa());
 			}
 			
 		}

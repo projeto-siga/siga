@@ -8,6 +8,11 @@
 
 <siga:pagina titulo="Despacho" popup="true">
 
+<c:if test="${not doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 	<script language="VBScript">
 Function assinar()
 	Dim Assinatura
@@ -41,6 +46,7 @@ Function Erro()
 	End If
 End Function
 </script>
+</c:if>
 	<c:if test="">
 		<c:set var="" value="" />
 	</c:if>
@@ -79,9 +85,10 @@ End Function
 				</table>
 
 				<br />
+				<ww:hidden name="copia" value="${copia}" />
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">				
 				<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
 				<ww:hidden name="assinaturaB64" /> <ww:hidden name="assinante" />
-				<ww:hidden name="copia" value="${copia}" />
 				<c:choose>
 					<c:when test="${copia == true}">
 						<input type="button" value="Conferir" onclick="vbscript: assinar" />
@@ -90,6 +97,7 @@ End Function
 						<input type="button" value="Assinar" onclick="vbscript: assinar" />
 					</c:otherwise>
 				</c:choose>
+</c:if>				
 				</td>
 			</tr>
 		</table>

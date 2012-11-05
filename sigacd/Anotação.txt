@@ -1,1 +1,0 @@
-O Bin fica em WebContent/WEB-INF/classes

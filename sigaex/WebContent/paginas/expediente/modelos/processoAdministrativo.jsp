@@ -59,10 +59,14 @@
 		</table>
 		FIM PRIMEIRO CABECALHO -->
 
-		<%--      <!-- INICIO CABECALHO
-		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizado.jsp" />
-		<br/><br/>
-		FIM CABECALHO --> --%>
+		<!-- INICIO CABECALHO
+		<c:if
+			test="${not doc.eletronico and doc.exTipoDocumento.idTpDoc == 1}">
+			<c:if test="${doc.exFormaDocumento.idFormaDoc=='57'}">
+				<c:import url="/paginas/expediente/modelos/inc_cabecalhoFolhaInicialVolumeEof.jsp" />
+			</c:if>
+		</c:if>
+		FIM CABECALHO -->
 
 		<br />
 		<%-- Não serão necessários os campos Apenso e volume abaixo, por isto estão comentados  --%>
@@ -78,9 +82,8 @@
 			</tr>
 
 			<tr>
-				<td bgcolor="#FFFFFF" align="center"><br />
-				${doc.codigo}<br />
-				<br />
+				<td bgcolor="#FFFFFF" align="center" ><p>
+				<br/>${doc.codigo}<br/>&nbsp;</p>
 				</td>
 			</tr>
 		</table>
@@ -113,9 +116,8 @@
 		<table align="center" width="50%" border="1" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF" align="center"><br />
-				<b>Data de abertura</b><br />
-				<br />
+				<td bgcolor="#FFFFFF" align="center"><p><br/>
+				<b>Data de abertura</b><br/>&nbsp;</p>
 				</td>
 				<td bgcolor="#FFFFFF" align="center">${doc.dtDocDDMMYYYY}</td>
 			</tr>

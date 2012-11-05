@@ -28,39 +28,39 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 
 public class ExVO {
 	List<ExAcaoVO> acoes = new ArrayList<ExAcaoVO>();
-	
+
 	private class NomeExAcaoVOComparator implements Comparator<ExAcaoVO> {
 
 		public int compare(ExAcaoVO o1, ExAcaoVO o2) {
 			return o1.getNome().compareTo(o2.getNome());
 		}
-	}	
+	}
 
 	public List<ExAcaoVO> getAcoes() {
 		return acoes;
 	}
-	
+
 	public List<ExAcaoVO> getAcoesOrdenadasPorNome() {
 		return ExAcaoVO.ordena(getAcoes(), new NomeExAcaoVOComparator());
-	}	
+	}
 
 	public void setAcoes(List<ExAcaoVO> acoes) {
 		this.acoes = acoes;
 	}
 
-	protected void addAcao(String nome, String nameSpace, String action,
-			boolean pode) {
-		addAcao(nome, nameSpace, action, pode, null, null, null, null);
+	protected void addAcao(String icone, String nome, String nameSpace,
+			String action, boolean pode) {
+		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null);
 	}
 
-	protected void addAcao(String nome, String nameSpace, String action,
-			boolean pode, String msgConfirmacao, String parametros, String pre,
-			String pos) {
+	protected void addAcao(String icone, String nome, String nameSpace,
+			String action, boolean pode, String msgConfirmacao,
+			String parametros, String pre, String pos) {
 		TreeMap<String, String> params = new TreeMap<String, String>();
 
 		if (this instanceof ExMovimentacaoVO) {
-			params.put("id", Long
-					.toString(((ExMovimentacaoVO) this).getIdMov()));
+			params.put("id",
+					Long.toString(((ExMovimentacaoVO) this).getIdMov()));
 			// params.put("sigla", ((ExMovimentacaoVO)
 			// this).getMobilVO().getSigla());
 		} else if (this instanceof ExMobilVO) {
@@ -75,14 +75,16 @@ public class ExVO {
 			else
 				params.clear();
 			try {
-				Ex.getInstance().getBL().mapFromUrlEncodedForm(params,
-						parametros.getBytes("iso-8859-1"));
+				Ex.getInstance()
+						.getBL()
+						.mapFromUrlEncodedForm(params,
+								parametros.getBytes("iso-8859-1"));
 			} catch (UnsupportedEncodingException e) {
 			}
 		}
 
 		if (pode) {
-			ExAcaoVO acao = new ExAcaoVO(nome, nameSpace, action, pode,
+			ExAcaoVO acao = new ExAcaoVO(icone, nome, nameSpace, action, pode,
 					msgConfirmacao, params, pre, pos);
 			acoes.add(acao);
 		}

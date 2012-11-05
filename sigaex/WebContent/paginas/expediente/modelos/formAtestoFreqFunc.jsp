@@ -9,7 +9,7 @@
 	<mod:entrevista>
 		<mod:grupo largura="15">
 			<mod:selecao titulo="Seção" var="secao"
-				opcoes="CAMS;SIE;SLO;STI;NSEG" reler="sim" />	 
+				opcoes="CAMS;SIE;SGS;STI;DSEG" reler="sim" />	 
 				<!-- retirado opcao SEGRA, mas as referencias não foram retiradas. (06/2012) -->		
 		</mod:grupo>
 		<mod:oculto var="idOrgaoUsu" valor="${doc.cadastrante.orgaoUsuario.idOrgaoUsu}" />
@@ -75,7 +75,7 @@
 				</mod:grupo>			
 			</ww:else>
 							
-			<c:if test="${secao == 'SIE' or secao == 'SLO' or secao == 'STI' or secao == 'NSEG'}">
+			<c:if test="${secao == 'SIE' or secao == 'SGS' or secao == 'STI' or secao == 'DSEG'}">
 				<hr color="#FFFFFF" />
 				<mod:grupo>
 					<mod:numero titulo="Número da Nota Fiscal" var="nota" />
@@ -206,7 +206,7 @@
 		</table>
 		<br>
 		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">				
-			<c:if test="${secao == 'SIE' or secao == 'SLO' or secao == 'STI' or secao == 'NSEG'}">
+			<c:if test="${secao == 'SIE' or secao == 'SGS' or secao == 'STI' or secao == 'DSEG'}">
 				<tr>
 					<ww:if test="${not empty nota}">					
 						<td>Nota Fiscal: ${nota}</td>

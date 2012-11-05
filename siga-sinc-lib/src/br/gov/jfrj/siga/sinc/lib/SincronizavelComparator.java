@@ -30,6 +30,3 @@ public class SincronizavelComparator implements Comparator<Sincronizavel> {
 	}
 
 }
-
-
-

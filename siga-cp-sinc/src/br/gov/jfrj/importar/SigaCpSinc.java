@@ -421,12 +421,14 @@ public class SigaCpSinc {
 				DpFuncaoConfianca.class, "dataFimFuncao", orgaoUsuario)) {
 			l.add(o);
 		}
-		if (getVersaoInteira().intValue() >= 2) {
+		//Comentado por Edson, pois precisa ser resolvido problema dos órgãos (do CJF) 
+		//cadastrados manualmente mas que não constam são enviados pelo XML
+		/*if (getVersaoInteira().intValue() >= 2) {
 			for (CpOrgao o : CpDao.getInstance().listarAtivos(CpOrgao.class,
 					"hisDtFim", orgaoUsuario)) {
 				l.add(o);
 			}
-		}
+		}*/
 		for (DpPessoa o : CpDao.getInstance().listarAtivos(DpPessoa.class,
 				"dataFimPessoa", orgaoUsuario)) {
 			l.add(o);
@@ -947,9 +949,9 @@ public class SigaCpSinc {
 			texto = texto + "Arquivo XML gerado em " + getDataHora() + "\n";
 		}
 		texto = texto + sbLog.toString();
-		/*Correio.enviar(
+		Correio.enviar(
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
-				destinatarios, "Log de importação", texto, null);*/
+				destinatarios, "Log de importação", texto, null);
 	}
 
 	private Date parseData(XmlPullParser parser, String campo) {

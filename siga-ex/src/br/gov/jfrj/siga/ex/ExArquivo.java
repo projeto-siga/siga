@@ -27,6 +27,7 @@ import java.util.Set;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
 
 public abstract class ExArquivo {
 	private Integer numPaginas;
@@ -49,6 +50,33 @@ public abstract class ExArquivo {
 				return null;
 			return Documento.getNumberOfPages(abPdf);
 		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Retorna o pdf do documento com stamp. Método criado para tentar stampar um documento que está sendo anexado.
+	 * 
+	 * @return pdf com stamp.
+	 * 
+	 */
+	public byte[] getArquivoComStamp() {
+		try {
+			byte[] abPdf = null;
+			abPdf = getPdf();
+			if (abPdf == null)
+				return null;
+			
+			//Verifica se é possível estampar o documento
+			try {
+				byte[] documentoComStamp = Documento.stamp(abPdf, "", true, false, null, null, null, null, null, null, null);
+				
+				return documentoComStamp;
+				
+			} catch (Exception e) {
+				return null;
+			}
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -85,7 +113,8 @@ public abstract class ExArquivo {
 		if (isAssinadoDigitalmente()) {
 			sMensagem += getAssinantesCompleto();
 			sMensagem += "Documento Nº: " + getSiglaAssinatura()
-					+ " - consulta à autenticidade em " + SigaExProperties.getEnderecoAutenticidadeDocs();
+					+ " - consulta à autenticidade em "
+					+ SigaExProperties.getEnderecoAutenticidadeDocs();
 		}
 		return sMensagem;
 	}
@@ -150,7 +179,8 @@ public abstract class ExArquivo {
 	public String getQRCode() {
 		if (isAssinadoDigitalmente()) {
 			String sQRCode;
-			sQRCode = "http://a.jfrj.jus.br/" + getSiglaAssinatura();
+			sQRCode = SigaExProperties.getEnderecoAutenticidadeDocs() + "?n="
+					+ getSiglaAssinatura();
 			return sQRCode;
 		}
 		return null;

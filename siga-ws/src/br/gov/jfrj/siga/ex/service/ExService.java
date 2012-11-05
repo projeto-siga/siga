@@ -47,5 +47,7 @@ public interface ExService extends Remote {
 			throws Exception;
 
 	public byte[] obterPdfPorNumeroAssinatura(String num) throws Exception;
+	
+	public String buscarPorCodigo(String codigo) throws Exception;
 
 }

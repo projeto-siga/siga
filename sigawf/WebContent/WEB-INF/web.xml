@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.4"
 	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/controller-app_2_4.xsd">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>sigawf</display-name>
+	
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
 	
 	<jsp-config>
 		<taglib>
@@ -12,9 +15,7 @@
 		<taglib>
 			<taglib-uri>/fmt</taglib-uri>
 			<taglib-location>/META-INF/fmt.tld</taglib-location>
-		</taglib>
-		<!-- 	
-		-->
+		</taglib>		
 		<taglib>
 			<taglib-uri>/tags</taglib-uri>
 			<taglib-location>/META-INF/tags.tld</taglib-location>
@@ -120,7 +121,7 @@
 	<servlet>
 		<servlet-name>loadPhoto</servlet-name>
 		<servlet-class>
-			br.gov.jfrj.siga.wf.servlet.ProcessImageServlet
+			br.gov.jfrj.siga.wf.servlet.SingleImageServlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>
@@ -138,10 +139,18 @@
 			org.springframework.web.context.ContextLoaderListener
 		</listener-class>
 	</listener>
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
+	</listener>
 
 	<servlet>
-		<servlet-name>CXFServlet</servlet-name>
 		<display-name>CXF Servlet</display-name>
+		<servlet-name>CXFServlet</servlet-name>
 		<servlet-class>
 			br.gov.jfrj.siga.wf.servlet.WfWsServlet
 		</servlet-class>

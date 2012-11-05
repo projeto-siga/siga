@@ -101,14 +101,12 @@
 				[&nbsp;&nbsp;] de médico da SJRJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;] de médico externo
 			</c:otherwise>
 		</c:choose>
-		<table width="100%" border="1" cellpadding="3" cellspacing="1"
-			bgcolor="#000000">
+		<table width="100%" border="1" cellpadding="3" cellspacing="1">
 			<tr>
 				<td bgcolor="#C0C0C0" colspan="2"><b>SERVIDOR</b></td>
 			</tr>
 		</table>
-		<table width="100%" border="1" cellpadding="3" cellspacing="1"
-			bgcolor="#000000">
+		<table width="100%" border="1" cellpadding="3" cellspacing="1">
 			<tr>
 				<td width="70%" bgcolor="#FFFFFF">Nome: <b>${doc.subscritor.descricao}</b></td>
 				<td width="30%" bgcolor="#FFFFFF">Matrícula: <b>${doc.subscritor.sigla}</b></td>
@@ -211,7 +209,6 @@
 				extenso; período de afastamento recomendado e nome completo do
 				médico; assinatura, carimbo e nº de registro do CRM.<br />
 				</p>
-				<br />
 				<p align="justify" style="font-size: 8pt;">Caso sejam concedidos
 				ao servidor <b>licenças ou afastamentos durante o periodo de
 				férias</b>, estas serão suspensas e o período remanescente será
@@ -230,14 +227,7 @@
 				<p align="center" style="font-size: 8pt;"><b>Observações da
 				chefia para a perícia médica</b><br />
 				(preenchimento obrigatório, mesmo que seja com "nada a declarar").<br />
-				<br />
 				OBS:<br />
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
 				<br />
 				<br />
 				</p>
@@ -245,10 +235,7 @@
 				solicitação de Licença por Motivo de Doença em Pessoa da Família -
 				LTPF, há possibilidade do servidor compensar os dias não
 				trabalhados?(conforme §2º do art. 2º da Resolução nº447/2005 - CJF)</p>
-				<br />
-				<br />
 				<font size="3"> [&nbsp;&nbsp;]sim [&nbsp;&nbsp;]não</font><br />
-				<br />
 				</td>
 				<td valign="top">
 				<p align="center" style="font-size: 8pt;">Último dia de trabalho
@@ -257,10 +244,6 @@
 				<br />
 				_______/_______/_______<br />
 				Carimbo e assinatura da chefia<br />
-				<br />
-				<br />
-				<br />
-				<br />
 				<br />
 				<br />
 				<br />

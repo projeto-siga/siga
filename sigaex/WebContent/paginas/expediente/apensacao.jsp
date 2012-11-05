@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
@@ -17,17 +17,25 @@ function sbmt() {
 
 <siga:pagina titulo="Apensar Documento">
 
-	<table width="100%">
-		<tr>
-			<td><ww:form action="apensar_gravar"
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Apensação de Documento - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+			
+			<ww:form action="apensar_gravar"
 				enctype="multipart/form-data" namespace="/expediente/mov"
 				cssClass="form" method="POST">
+				
 				<input type="hidden" name="postback" value="1" />
 				<ww:hidden name="sigla" value="%{sigla}" />
 
-				<h1>Apensação de Documento - ${mob.siglaEDescricaoCompleta}</h1>
-
-				<table class="form" width="100%">
+				<table class="gt-form-table">
 					<tr class="header">
 						<td colspan="2">Dados da apensação</td>
 					</tr>
@@ -67,14 +75,14 @@ function sbmt() {
 						<td><siga:selecao tema='simple' titulo="Documento Mestre:"
 							propriedade="documentoRef" /></td>
 					</tr>
-					<tr class="button">
-						<td></td>
-						<td><input type='submit' value="Ok" /> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" />
-					</tr>
-				</table>
-			</ww:form></td>
-		</tr>
-	</table>
+					
+				<tr class="button">
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" /></td>
+				</tr>
+			</table>
 
+		</ww:form>
+		
+	</div></div></div>
 </siga:pagina>

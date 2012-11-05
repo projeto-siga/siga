@@ -369,7 +369,16 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return sigla.toLowerCase().contains(s)
 				|| descricao.toLowerCase().contains(s);
 	}
-
+	
+	public DpPessoa getPessoaAtual () {
+		DpPessoa pesIni = getPessoaInicial();
+		Set<DpPessoa> setPessoas = pesIni.getPessoasPosteriores();
+		if (setPessoas != null)
+			for (DpPessoa p : setPessoas)
+				return p;
+		return this;
+	}
+	
 	/**
 	 * retorna se ativo na data
 	 * 

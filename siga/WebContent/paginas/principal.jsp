@@ -12,6 +12,17 @@
 		<!-- main content -->
 		<div class="gt-content">
 			<div style="width: 100%; display: block;">
+				<c:if test="${not empty mensagem}">
+					<div id="mensagem" class="gt-success">${mensagem}</div>
+					<script>
+						setTimeout(function() {
+							$('#mensagem').fadeTo(1000, 0, function() {
+								$('#mensagem').slideUp(1000);
+							});
+						}, 5000); // <-- time in milliseconds
+					</script>
+				</c:if>
+
 				<!-- Expedientes -->
 				<div
 					style="width: 49%; float: left; clear: both; padding:0; margin:0;">
@@ -62,6 +73,7 @@
 							 -->
 							<!-- segunda metade da tela -->
 						</c:if>
+						<br/>
 						<h2 class="gt-table-head">Quadro de Solicitações</h2>
 						<!-- content box -->
 						<span id='rightbottom' style="margin:0;padding:0;"></span>
@@ -76,17 +88,6 @@
 				</div>
 			</div>
 
-
-			<c:if test="${not empty mensagem}">
-				<div id="mensagem" class="gt-success">${mensagem}</div>
-				<script>
-					setTimeout(function() {
-						$('#mensagem').fadeTo(1000, 0, function() {
-							$('#mensagem').slideUp(1000);
-						});
-					}, 5000); // <-- time in milliseconds
-				</script>
-			</c:if>
 
 
 

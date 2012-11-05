@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/siga-sinc-lib"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-sinc-lib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-rel"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/activation.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/annotations-api-6.0.18.jar"/>
@@ -39,7 +39,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ehcache-1.5.0.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FastInfoset-1.2.7.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FCKeditor-2.3.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FontBox-0.1.0.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/fop.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/freemarker.jar"/>
@@ -70,7 +69,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jstl.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jta-1.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/kxml2.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-analyzers-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-snowball-2.4.1.jar"/>
@@ -134,5 +132,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ckeditor-java-core-3.5.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

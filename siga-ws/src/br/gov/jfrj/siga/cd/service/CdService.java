@@ -50,26 +50,35 @@ public interface CdService extends Remote {
 	 *         mensagem de erro.
 	 * @throws Exception
 	 */
+
+	byte[] validarECompletarAssinatura(byte[] assinatura, byte[] documento,
+			String sArquivoPolitica, Date dtAssinatura) throws Exception;
+
+	String validarAssinatura(byte[] assinatura, byte[] documento,
+			Date dtAssinatura, boolean verificarLCRs) throws Exception;
+
 	String validarAssinaturaPKCS7(byte[] digest, String digestAlgorithm,
 			byte[] assinatura, Date dtAssinatura, boolean verificarLCRs)
 			throws Exception;
 
-	String validarAssinaturaCMS(byte[] digest, String digestAlgorithm,
-			byte[] assinatura, Date dtAssinatura) throws Exception;
-
-	String validarAssinaturaCMSECarimboDeTempo(byte[] digest,
-			String digestAlgorithm, byte[] assinatura, Date dtAssinatura)
-			throws Exception;
-
-	String validarAssinatura(String mimeType, byte[] digest,
-			String digestAlgorithm, byte[] assinatura, Date dtAssinatura,
-			boolean verificarLCRs) throws Exception;
-
-	byte[] converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(byte[] pkcs7)
-			throws Exception;
-
-	byte[] converterPkcs7EmCMSComCertificadosLCRs(byte[] pkcs7)
-			throws Exception;
+	//
+	// String validarAssinaturaCMS(byte[] digest, String digestAlgorithm,
+	// byte[] assinatura, Date dtAssinatura) throws Exception;
+	//
+	// String validarAssinaturaCMSECarimboDeTempo(byte[] digest,
+	// String digestAlgorithm, byte[] assinatura, Date dtAssinatura)
+	// throws Exception;
+	//
+	// String validarAssinatura(String mimeType, byte[] digest,
+	// String digestAlgorithm, byte[] assinatura, Date dtAssinatura,
+	// boolean verificarLCRs) throws Exception;
+	//
+	// byte[] converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(byte[]
+	// pkcs7)
+	// throws Exception;
+	//
+	// byte[] converterPkcs7EmCMSComCertificadosLCRs(byte[] pkcs7)
+	// throws Exception;
 
 	String recuperarCPF(byte[] cms);
 

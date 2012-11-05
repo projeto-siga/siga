@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <script type="text/javascript" language="Javascript1.1">
@@ -17,7 +17,6 @@ function sbmt() {
 <c:set var="titulo_pagina" scope="request">Relação de documentos entre duas datas</c:set>
 <ww:hidden name="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
-<h1>${titulo_pagina}</h1>
 <tr>
 	<td>Lotação</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple"

@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import br.gov.jfrj.siga.ex.bl.BIE.Nodo;
 
 public class ExAcaoVO {
+	String icone;
 	String nome;
 	String nameSpace;
 	String acao;
@@ -46,6 +47,10 @@ public class ExAcaoVO {
 
 	public String getPos() {
 		return pos;
+	}
+
+	public String getIcone() {
+		return icone;
 	}
 
 	public String getNome() {
@@ -80,10 +85,11 @@ public class ExAcaoVO {
 		return msgConfirmacao;
 	}
 
-	public ExAcaoVO(String nome, String nameSpace, String acao, boolean pode,
+	public ExAcaoVO(String icone, String nome, String nameSpace, String acao, boolean pode,
 			String msgConfirmacao, TreeMap<String, String> params, String pre,
 			String pos) {
 		super();
+		this.icone = icone;
 		this.nome = nome;
 		this.nameSpace = nameSpace;
 		// if (acao.equals("exibir"))

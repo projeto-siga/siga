@@ -43,7 +43,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ehcache-1.5.0.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FastInfoset-1.2.7.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FCKeditor-2.3.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FontBox-0.1.0.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/fop.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/freemarker.jar"/>
@@ -74,7 +73,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jstl.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jta-1.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/kxml2.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-analyzers-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/lucene-snowball-2.4.1.jar"/>
@@ -131,10 +129,14 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate-commons-annotations-3.2.0.Final.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/jpa-api-2.0-cr-1.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/hibernate3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JBoss Log4j Library"/>
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ckeditor-java-core-3.5.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

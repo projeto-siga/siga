@@ -23,15 +23,17 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package br.gov.jfrj.siga.libs.webwork;
- 
+
 import java.util.List;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
-import br.gov.jfrj.siga.model.dao.DaoSelecionavel;
 
 public abstract class SigaSelecionavelActionSupport<T extends Selecionavel, DaoFiltroT extends DaoFiltroSelecionavel>
 		extends SigaActionSupport {
+
+	private static final long serialVersionUID = 1L;
+
 	private Integer itemPagina;
 
 	private List itens;
@@ -48,7 +50,7 @@ public abstract class SigaSelecionavelActionSupport<T extends Selecionavel, DaoF
 
 	public String aBuscar() throws Exception {
 		if (param("postback") == null) {
-			
+
 		}
 		if (param("sigla") != null) {
 			setNome(param("sigla").toUpperCase());
@@ -74,7 +76,13 @@ public abstract class SigaSelecionavelActionSupport<T extends Selecionavel, DaoF
 
 	public String aSelecionar() throws Exception {
 		final DaoFiltroT flt = createDaoFiltro();
-		flt.setSigla(param("sigla"));
+		
+		try {
+			flt.setSigla(param("sigla"));
+		} catch (final Exception ex) {
+			sel = null;
+		}
+		
 		try {
 			sel = dao().consultarPorSigla(flt);
 		} catch (final Exception ex) {
@@ -82,9 +90,13 @@ public abstract class SigaSelecionavelActionSupport<T extends Selecionavel, DaoF
 		}
 
 		if (sel == null) {
-			sel = selecionarPorNome(flt);
+			try {
+				sel = selecionarPorNome(flt);
+			} catch (final Exception ex) {
+				sel = null;
+			}
 		}
-
+				
 		if (sel != null)
 			sel = selecionarVerificar(sel);
 

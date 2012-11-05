@@ -46,7 +46,9 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
@@ -271,7 +273,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 			CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 			Wf.getInstance().getProp().setPrefixo(ambiente.getSigla());
 			AnnotationConfiguration cfg = WfDao.criarHibernateCfg(ambiente);
-			WfDao.configurarHibernateParaDebug(cfg);
+			CpDao.configurarHibernateParaDebug(cfg);
 			HibernateUtil.configurarHibernate(cfg, "");
 
 			RelTempoDoc rep = new RelTempoDoc(parametros);

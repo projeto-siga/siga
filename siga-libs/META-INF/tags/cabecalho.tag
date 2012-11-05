@@ -12,6 +12,9 @@
 <%@ attribute name="meta"%>
 <%@ attribute name="pagina_de_erro"%>
 <%@ attribute name="onLoad"%>
+<%@ attribute name="desabilitarbusca"%>
+<%@ attribute name="desabilitarmenu"%>
+
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
 </c:if>
@@ -78,11 +81,18 @@ ${meta}
 <script language="JavaScript"
 	src="${serverAndPort}/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
 <!--[if gte IE 5.5]><script language="JavaScript" src="${serverAndPort}/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
+
 <script language="JavaScript" type="text/javascript">
 	$(document).ready(function() {
 		$('.links li code').hide();
 		$('.links li p').click(function() {
 			$(this).next().slideToggle('fast');
+		});
+		$('.once').click(function(e) {
+			if (this.beenSubmitted)
+				e.preventDefault();
+			else
+				this.beenSubmitted = true;
 		});
 	});
 </script>
@@ -156,29 +166,98 @@ ${meta}
 				</div>
 				<!-- /head top -->
 				<!-- navbar -->
-				<div class="gt-navbar clearfix">
-					<div class="gt-fixed-wrap clearfix">
-						<!-- navigation -->
-						<div class="gt-nav">
-							<ul id="navmenu-h">
-								<c:import url="/sigalibs/menuprincipal.jsp" />
-							</ul>
-						</div>
-						<!-- / navigation -->
-						<!-- search -->
-						<div class="gt-search">
-							<div class="gt-search-inner">
-								<input type="text" class="gt-search-text"
-									value="Buscar documento"
-									onfocus="javascript:if(this.value=='Buscar documento')this.value='';"
-									onblur="javascript:if(this.value=='')this.value='Buscar documento';">
+				<c:if test="${desabilitarmenu != 'sim'}">
+					<div class="gt-navbar clearfix">
+						<div class="gt-fixed-wrap clearfix">
+							<!-- navigation -->
+							<div class="gt-nav">
+								<ul id="navmenu-h">
+									<c:import url="/sigalibs/menuprincipal.jsp" />
+								</ul>
 							</div>
+							<!-- / navigation -->
+							<!-- search -->
+							<c:if test="${desabilitarbusca != 'sim'}">
+								<div class="gt-search">
+									<div class="gt-search-inner" onclick="">
+										<siga:selecao propriedade="buscar" modulo="sigaex"
+											tipo="expediente" tema="simple" ocultardescricao="sim"
+											buscar="nao" siglaInicial="Buscar documento" />
+										<script type="text/javascript">
+											var fld = document
+													.getElementById("buscar_expedienteSel_sigla");
+											fld.setAttribute("class",
+													"gt-search-text");
+											fld.className = "gt-search-text";
+											fld.onfocus = function() {
+												if (this.value == 'Buscar documento') {
+													this.value = '';
+												}
+											};
+											fld.onblur = function() {
+												if (this.value == '') {
+													this.value = 'Buscar documento';
+													return;
+												}
+												if (this.value != 'Buscar documento')
+													ajax_buscar_expediente();
+											};
+											fld.onkeypress = function(event) {
+												var fid = document
+												.getElementById("buscar_expedienteSel_id");
+												
+												event = (event) ? event
+														: window.event
+												var keyCode = (event.which) ? event.which
+														: event.keyCode;
+												if (keyCode == 13) {
+													if (fid.value == null
+															|| fid.value == "") {
+														fld.onblur();
+													} else {
+														window.alert("1");
+														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
+																+ fld.value;
+													}
+													return false;
+												} else {
+													fid.value = '';
+													return true;
+												}
+											};
+
+											self.resposta_ajax_buscar_expediente = function(
+													response, d1, d2, d3) {
+												var sigla = document
+														.getElementsByName('buscar_expedienteSel.sigla')[0].value;
+												var data = response.split(';');
+												if (data[0] == '1') {
+													retorna_buscar_expediente(
+															data[1], data[2],
+															data[3]);
+													if (data[1] != null
+															&& data[1] != "") {
+														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
+															+ data[2];
+													}
+													return
+												} 
+												retorna_buscar_expediente('',
+														'', '');
+
+												return;
+
+											}
+										</script>
+									</div>
+							</c:if>
 						</div>
 					</div>
-				</div>
-				<!-- /navbar -->
+				</c:if>
 			</div>
-			<!-- /leaf watermark -->
+			<!-- /navbar -->
+		</div>
+		<!-- /leaf watermark -->
 		</div>
 
 		<div id="quadroAviso"

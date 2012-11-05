@@ -25,7 +25,7 @@ public class IntegracaoLdapProperties extends LdapProperties {
 
 	public boolean sincronizarSenhaLdap() {
 		try {
-			return this.obterPropriedade("siga.integracao.ldap").equals("true");
+			return this.obterPropriedade("integracao").equals("true");
 		} catch (Exception e) {
 			return false;
 		}
@@ -34,7 +34,7 @@ public class IntegracaoLdapProperties extends LdapProperties {
 
 	@Override
 	public String getPrefixoModulo() {
-		return "siga.ldap.integracao";
+		return "siga.integracao";
 	}
 
 }

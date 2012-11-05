@@ -36,18 +36,41 @@ import org.jbpm.graph.def.Transition;
 public class WfTransitionVO implements Comparable {
 	private String name;
 	private String resp;
+	private boolean stop;
+	private boolean yes;
+	private boolean no;
+	private boolean next;
 
 	public WfTransitionVO(Transition t, Set<String> lResp)
 			throws IllegalAccessException, InvocationTargetException {
 		this.name = t.getName();
+		if (name != null) {
+			if (name.equalsIgnoreCase("sim"))
+				yes = true;
+			if (name.equalsIgnoreCase("não") || name.equalsIgnoreCase("nao"))
+				no = true;
+		}
+
 		this.resp = "";
 		for (String s : lResp) {
+			if (s.equals("FIM"))
+				stop = true;
 			if (this.resp.length() > 0)
 				this.resp += ", ";
 			this.resp += s;
 		}
 		if (this.resp.length() > 0)
 			this.resp = " &raquo; " + this.resp;
+	}
+
+	public String getIcon() {
+		if (stop)
+			return "stop";
+		if (yes)
+			return "accept";
+		if (no)
+			return "cancel";
+		return "bullet_go";
 	}
 
 	public String getName() {
@@ -68,6 +91,19 @@ public class WfTransitionVO implements Comparable {
 
 	public int compareTo(Object o) {
 		WfTransitionVO other = (WfTransitionVO) o;
+		if (this.stop && !other.stop)
+			return 1;
+		if (!this.stop && other.stop)
+			return -1;
+		if (!this.yes && other.yes)
+			return 1;
+		if (this.yes && !other.yes)
+			return -1;
+		if (!this.no && other.no)
+			return 1;
+		if (this.no && !other.no)
+			return -1;
+
 		if (this.getName() == null) {
 			return 1;
 		}

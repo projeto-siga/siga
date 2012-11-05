@@ -3,12 +3,15 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <siga:pagina titulo="Movimentação">
 
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
 
 <script type="text/javascript" language="Javascript1.1">
 <ww:url id="url" action="anotar" namespace="/expediente/mov">
@@ -75,9 +78,14 @@ function popitup_movimentacao() {
 }			
 </script>
 
-<table width="100%">
-	<tr>
-		<td><ww:form name="frm" action="anotar_gravar"
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Anotação - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+
+		<ww:form name="frm" action="anotar_gravar"
 			namespace="/expediente/mov" theme="simple" method="POST">
 			<ww:token/>
 			<ww:hidden name="postback" value="1" />
@@ -92,9 +100,7 @@ function popitup_movimentacao() {
 			<html:hidden property="idDoc" />
 			<html:hidden property="numVia" /> --%>
 
-			<h1>Anotação - ${mob.siglaEDescricaoCompleta}</h1>
-
-			<table class="form" width="100%">
+			<table class="gt-form-table">
 				<tr class="header">
 					<td colspan="2">Anotação</td>
 				</tr>
@@ -166,19 +172,12 @@ function popitup_movimentacao() {
 				</c:if>
 
 				<tr class="button">
-					<td></td>
-					<td><input type="submit" value="Ok" /> <input type="button"
-						value="Cancela" onclick="javascript:history.back();" /> <%--input
-						type="button" name="ver_doc"
-						value="Visualizar o modelo preenchido"
-						onclick="javascript: popitup_movimentacao();" --%></td>
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" /></td>
 				</tr>
 			</table>
 
-		</ww:form></td>
-	</tr>
-</table>
-</td>
-	</tr>
-
+		</ww:form>
+		
+	</div></div></div>
 </siga:pagina>

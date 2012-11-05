@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
@@ -17,21 +17,23 @@ function sbmt() {
 
 <siga:pagina titulo="Juntar Documento">
 
-<table width="100%">
-	<tr>
-		<td><ww:form action="juntar_gravar" enctype="multipart/form-data" namespace="/expediente/mov"
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Juntada de Documento - ${mob.siglaEDescricaoCompleta}</h2>
+			
+			<div class="gt-content-box gt-for-table">
+
+            <ww:form action="juntar_gravar" enctype="multipart/form-data" namespace="/expediente/mov"
 						cssClass="form" method="POST">
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>
 
-			<!-- Bernardo Inicio -->
-			<h1>Juntada de Documento - ${doc.codigo}<c:if 
-			test="${numVia != null && numVia != 0}">-${viaChar}</c:if>
-			</h1>
-			<!-- Bernardo Fim -->
-			
-			</h1>
-			<table class="form" width="100%">
+			<table class="gt-form-table">
 				<tr class="header">
 					<td colspan="2">Dados da juntada</td>
 				</tr>
@@ -81,14 +83,13 @@ function sbmt() {
 					</td>
 				</tr>
 				<tr class="button">
-					<td></td>
-					<td><input type='submit' value="Ok"  /> 
+					<td colspan="2"><input type='submit' value="Ok"  class="gt-btn-medium gt-btn-left"/>
 						<input type="button"
-						value="Cancela" onclick="javascript:history.back();" />
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
 				</tr>
 			</table>
-		</ww:form></td>
-	</tr>
-</table>
+		</ww:form>
+
+	</div></div></div>
 
 </siga:pagina>

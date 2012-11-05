@@ -168,6 +168,35 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return penMov;
 	}
 
+	
+	/**
+	 * Retorna as  movimentações de um Mobil de acordo com um tipo
+	 * específico de movimentação.
+	 * 
+	 * @param tpMov
+	 * 
+	 * @return Lista de movimentações de um Mobil de acordo com um tipo específico
+	 *         de movimentação.
+	 * 
+	 */
+	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov) {
+		
+		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
+		List<ExMovimentacao> movsTp = new ArrayList<ExMovimentacao>();	
+		
+		if (movs != null)
+			for (final ExMovimentacao m : movs) {				
+				if (m.getExTipoMovimentacao().getIdTpMov().equals(tpMov))
+					movsTp.add(m);
+			}
+		return movsTp;	
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Verifica se um Mobil é do tipo Geral.
 	 * 
@@ -175,7 +204,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isGeral() {
-		return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 */
+		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
+		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
 	}
 
 	/**
@@ -185,7 +219,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isVia() {
-		return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 */
+		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
+		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
 	}
 
 	/**
@@ -195,7 +234,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isVolume() {
-		return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 */
+		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
+		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
 	}
 
 	/**
@@ -205,7 +249,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isCancelada() {
-		return (getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() == null);
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 */
+		// return (getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() == null);
+		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() == null;
 	}
 
 	/**
@@ -227,8 +276,18 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		String s = "<a href=\"javascript:void(0)\" onclick=\"window.open('/sigaex/expediente/doc/exibir.action?popup=true&idmob="
 				+ getIdMobil();
 
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
+		 * Verifica se getExDocumento() é diferente de nulo antes de chamar o método getDescrCurta()() do objeto
+		 */
+		/*
 		s = s + "', 'documento', " + winProp + ")\">"
 				+ getExDocumento().getDescrCurta() + "</a>";
+		*/
+		String descricaoCurta = getExDocumento() != null ? getExDocumento().getDescrCurta() : "";
+		s = s + "', 'documento', " + winProp + ")\">"
+					+ descricaoCurta + "</a>";
+		
 		return s;
 	}
 
@@ -583,9 +642,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				continue;
 			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA)
 				b = true;
+			 // Orlando: O IF abaixo foi incluído para não permitir que o documento seja recebido após ter sido transferido para um órgão externo, 
+			// inclusive no caso de despacho com transferência externa.
+				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+					b = true;
 			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO)
 				b = false;
+		
 		}
+		
 		return b;
 	}
 
@@ -989,6 +1054,45 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura
+	 * 
+	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso contrário.
+	 * 
+	 */	
+	public boolean temAnexosNaoAssinados(){		
+		boolean b = false;
+		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
+			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+				if (movAss.isAssinada())
+					continue;
+				else {
+					b = true;
+					break;					
+				}
+		}
+		return b;
+		
+	}
+	
+	/**
+	 * Verifica se um Mobil possui arquivos anexados  
+	 * 
+	 * @return Verdadeiro se o Mobil possui arquivos anexados e False caso contrário.
+	 * 
+	 */	
+	public boolean temAnexos(){		
+		boolean b = false;
+		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
+			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+				b = true;
+				break;
+			}
+		return b;
+		
+	}
+	
 
 	/**
 	 * Verifica se um Mobil do tipo Volume está Apensado a outro Mobil do mesmo
@@ -1118,4 +1222,5 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		return l;
 	}
+	
 }

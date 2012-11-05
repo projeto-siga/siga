@@ -130,6 +130,11 @@ submitOk = function() {
 </div>
 <c:if test="${apenasQuadro != true}">
 	<br />
+	<ww:url id="url" action="editar" namespace="/expediente/doc" />
+	<a class="gt-btn-small gt-btn-right"
+		href="javascript: window.location.href='${url}'"
+		title="Criar Novo Expediente">Novo</a>
+	<%-- 
 	<ww:form name="frmSigaEx" action="editar" namespace="/expediente/doc"
 		method="post" theme="simple">
 		<table>
@@ -137,15 +142,22 @@ submitOk = function() {
 				<td><ww:url id="url1" action="exibir"
 						namespace="/expediente/doc" /> <ww:url id="url2" action="receber"
 						namespace="/expediente/mov" /> <ww:url id="url3"
-						action="arquivar" namespace="/expediente/doc" /> <%--<c:if
+						action="arquivar" namespace="/expediente/doc" />
+						--%>
+	<%--<c:if
 						test="${f:podeRemeterPorConfiguracao(titular,lotaTitular)}">
 						<ww:url id="url7" action="remeter_para_publicacao"
 							namespace="/expediente/mov" />
 						<c:set var="itemRemeter">'07':'Gerenciar Publicação',</c:set>
-					</c:if> --%> <ww:url id="url4" action="transferir_lote"
+					</c:if> --%>
+
+	<%-- 
+					<ww:url id="url4" action="transferir_lote"
 						namespace="/expediente/mov" /> <ww:url id="url5"
 						action="receber_lote" namespace="/expediente/mov" /> <ww:url
-						id="url6" action="via_protocolo" namespace="/expediente/mov" /> <%-- <ww:select name="docAcao" list="#{%{url1}:'Exibir', %{url2}:'Receber', %{url3}:'Arquivar'}" /> --%>
+						id="url6" action="via_protocolo" namespace="/expediente/mov" />--%>
+	<%-- <ww:select name="docAcao" list="#{%{url1}:'Exibir', %{url2}:'Receber', %{url3}:'Arquivar'}" /> --%>
+	<%--						
 					<ww:select name="docAcao"
 						list="#{'/sigaex/expediente/doc/exibir.action':'Exibir', '/sigaex/expediente/mov/receber.action':'Receber', '/sigaex/expediente/mov/arquivar.action':'Arquivar'}"
 						onchange="javascript: if (this.value == '04') window.location='${url4}'; if (this.value == '05') window.location='${url5}'; if (this.value == '06') window.location='${url6}'; if (this.value == '07') window.location='${url7}';" />
@@ -160,4 +172,5 @@ submitOk = function() {
 			</tr>
 		</table>
 	</ww:form>
+--%>
 </c:if>

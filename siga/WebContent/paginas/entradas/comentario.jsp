@@ -7,7 +7,19 @@
 
 <h3 class="gt-table-head">Veja abaixo as últimas novidades:</h3>
 
-<h4>Modelos padronizados</h4>
+<h4>Novos Módulos</h4>
+<p>O SIGA agora está integrado com os módulos do Siga SGP. 
+Foram integrados: Cadastro, Benefícios, AQ e Lotações (fase final de testes). 
+Podem ser acessados pelo menu, na seguinte opção: Módulos / Pessoas. 
+Os módulos estarão disponíveis de acordo com as permissões dos usuários logados. Em breve, mais novidades.</p>
+	
+<h4>Novo Design</h4>
+<p>O SIGA apresenta, agora, um design muito mais simples e moderno.
+	Além das mudanças estéticas, também foram simplificadas algumas páginas
+	e operações, o que beneficia principalmente as pessoas que utilizam
+	muito o sistema.</p>
+
+<h4>Modelos Padronizados</h4>
 <p>Está sendo realizada uma padronização dos modelos de expedientes
 	usados pelo CJF e pelos TRF's da 2ª e 3ª Região. Alguns modelos, como o
 	de ofício, já estão com um novo layout no Siga-Doc.</p>
@@ -25,16 +37,16 @@
 <p>A busca de documentos por conteúdo agora pode ser feita na
 	própria tela de pesquisa por filtros, por meio do campo Conteúdo.</p>
 
-<h4>Assinador da Certisign</h4>
-<p>
-	Agora a assinatura digital pode ser feita por meio de um recurso
-	desenvolvido pela Certisign. Basta clicar em <b>Assinar com
-		assinador da Certisign</b>, na tela de assinatura. A tecnologia
-	facilitará, principalmente, o uso do Siga-Doc com certificado digital
-	em outros órgãos.
-</p>
-
 <c:if test="${param['completo'] eq 'true'}">
+
+	<h4>Assinador da Certisign</h4>
+	<p>
+		Agora a assinatura digital pode ser feita por meio de um recurso
+		desenvolvido pela Certisign. Basta clicar em <b>Assinar com
+			assinador da Certisign</b>, na tela de assinatura. A tecnologia
+		facilitará, principalmente, o uso do Siga-Doc com certificado digital
+		em outros órgãos.
+	</p>
 
 
 	<tr>

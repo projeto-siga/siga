@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
@@ -47,16 +48,19 @@ public class ExActionSupport extends SigaActionSupport {
 
 	static {
 		if (Ex.getInstance().getBL().getProcessadorModeloJsp() == null) {
-			Ex.getInstance().getBL().setProcessadorModeloJsp(
-					new ExProcessadorModelo());
+			Ex.getInstance().getBL()
+					.setProcessadorModeloJsp(new ExProcessadorModelo());
 		}
 	}
 
 	protected void verificaNivelAcesso(ExMobil mob) throws Exception {
-		if (!Ex.getInstance().getComp().podeAcessarPorNivel(getTitular(),
-				getLotaTitular(), mob)) {
-			throw new AplicacaoException(
-					"Acesso permitido somente a usuários autorizados.");
+		if (!Ex.getInstance().getComp()
+				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Acesso ao documento "
+					+ mob.getSigla()
+					+ " permitido somente a usuários autorizados. ("
+					+ getTitular().getSigla() + "/"
+					+ getLotaTitular().getSiglaCompleta() + ")");
 		}
 	}
 
@@ -90,14 +94,18 @@ public class ExActionSupport extends SigaActionSupport {
 		exTpConfig
 				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
 		config.setCpTipoConfiguracao(exTpConfig);
-		int nivelMinimo = ((ExConfiguracao) Ex.getInstance().getConf()
+		int nivelMinimo = ((ExConfiguracao) Ex
+				.getInstance()
+				.getConf()
 				.buscaConfiguracao(config,
 						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt))
 				.getExNivelAcesso().getGrauNivelAcesso();
 		exTpConfig
 				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
 		config.setCpTipoConfiguracao(exTpConfig);
-		int nivelMaximo = ((ExConfiguracao) Ex.getInstance().getConf()
+		int nivelMaximo = ((ExConfiguracao) Ex
+				.getInstance()
+				.getConf()
 				.buscaConfiguracao(config,
 						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt))
 				.getExNivelAcesso().getGrauNivelAcesso();
@@ -110,10 +118,43 @@ public class ExActionSupport extends SigaActionSupport {
 
 		return niveisFinal;
 	}
+	
+	public ExNivelAcesso getNivelAcessoDefault(ExTipoDocumento exTpDoc,
+			ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif)
+			throws Exception {
+		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+		
+		ExConfiguracao config = new ExConfiguracao();
+		CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
+		CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
+		config.setDpPessoa(getTitular());
+		config.setLotacao(getLotaTitular());
+		config.setExTipoDocumento(exTpDoc);
+		config.setExFormaDocumento(forma);
+		config.setExModelo(exMod);
+		config.setExClassificacao(classif);
+		exTpConfig
+				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
+		config.setCpTipoConfiguracao(exTpConfig);
+		exStConfig
+			.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
+		config.setCpSituacaoConfiguracao(exStConfig);
+		
+		ExConfiguracao exConfig = ((ExConfiguracao) Ex
+				.getInstance()
+				.getConf()
+				.buscaConfiguracao(config,
+						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
+		
+		if(exConfig != null)
+			return exConfig.getExNivelAcesso();
+		
+		return null;
+	}
 
 	public String getDescrDocConfidencial(ExDocumento doc) {
-		return Ex.getInstance().getBL().descricaoConfidencial(doc,
-				getLotaTitular());
+		return Ex.getInstance().getBL()
+				.descricaoConfidencial(doc, getLotaTitular());
 	}
 
 	public List<ExTipoDocumento> getTiposDocumento() throws AplicacaoException {

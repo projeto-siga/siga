@@ -96,15 +96,6 @@
 		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp" />
 		</td></tr>
-			<tr bgcolor="#FFFFFF">
-				<td width="100%">
-					<table width="100%">
-						<tr>
-							<td align="right"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ENTRADA DE PESSOAL<br /><br />N&ordm; ${doc.codigo}</p></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
 
@@ -112,7 +103,11 @@
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
 
-		<br />
+		<table width="100%" border="0" bgcolor="#FFFFFF">
+		<tr>
+			<td align="right"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ENTRADA DE PESSOAL<br /><br />N&ordm; ${doc.codigo}</p></td>
+		</tr>
+		</table>
 
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
@@ -180,14 +175,14 @@
 
 		<br />
 
-		<table width="100%" height="270px" border="1" cellpadding="2"
+		<table width="100%" border="1" cellpadding="2"
 			cellspacing="1" bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF" height="20px"><b>4 - RELAÇÃO DE
+				<td bgcolor="#FFFFFF" ><b>4 - RELAÇÃO DE
 				PESSOAL</b></td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" height="20px"><b>Empresa:&nbsp;</b>${empresa}</td>
+				<td bgcolor="#FFFFFF">Empresa:&nbsp;${empresa}</td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"

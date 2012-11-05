@@ -68,6 +68,8 @@ public class ExClassificacaoAction
 	@Override
 	public ExClassificacaoDaoFiltro createDaoFiltro() {
 		final ExClassificacaoDaoFiltro flt = new ExClassificacaoDaoFiltro();
+		if (assunto != null)
+			flt.setAssunto(String.valueOf(assunto));
 		if (assuntoPrincipal != null)
 			flt.setAssuntoPrincipal(String.valueOf(assuntoPrincipal));
 		if (assuntoSecundario != null)

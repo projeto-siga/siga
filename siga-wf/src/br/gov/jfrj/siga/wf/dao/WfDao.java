@@ -29,8 +29,6 @@ import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.WfConfiguracao;
@@ -342,5 +340,7 @@ public class WfDao extends CpDao {
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.tasks",
 				"nonstrict-read-write", "wf");
+
+		// ModeloDao.configurarHibernateParaDebug(cfg);
 	}
 }

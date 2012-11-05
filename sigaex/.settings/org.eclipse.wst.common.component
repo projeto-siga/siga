@@ -29,6 +29,9 @@
         <dependent-module archiveName="siga-cd-base.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-cd-base/siga-cd-base">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="siga-auditoria.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/siga-auditoria/siga-auditoria">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 <property name="java-output-path" value="/build/classes/"/>
         <property name="context-root" value="sigaex"/>
 </wb-module>

@@ -55,7 +55,7 @@ public class WfAddressResolver implements AddressResolver {
 		if (lota != null) {
 			List<DpPessoa> l = null;
 			try {
-				l = WfDao.getInstance().pessoasPorLotacao(lota.getId(), false);
+				l = WfDao.getInstance().pessoasPorLotacao(lota.getId(), false,true);
 			} catch (AplicacaoException e) {
 				e.printStackTrace();
 				return null;

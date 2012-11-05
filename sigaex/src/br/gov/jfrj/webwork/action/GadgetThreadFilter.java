@@ -33,7 +33,7 @@ public class GadgetThreadFilter implements Filter {
 
 	private static long requisicoes = 0;
 	private static long contadorGeral = 0;
-
+	
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 

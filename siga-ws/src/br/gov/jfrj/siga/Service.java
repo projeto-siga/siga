@@ -24,9 +24,6 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import br.gov.jfrj.siga.cd.service.CdService;
@@ -43,19 +40,25 @@ public abstract class Service {
 	static ExService ex = null;
 	static CdService cd = null;
 
+	/* Externalização das informacoes dos servicos
+	 * bruno.lacerda@avantiprima.com.br
+	 */
 	public static WfService getWfService() {
 		if (wf == null)
 			wf = getService(WfService.class,
-					"http://localhost:8080/sigawf/servicos/WfService?wsdl",
-					"http://impl.service.wf.siga.jfrj.gov.br/",
-					"WfServiceImplService");
+					SigaWsProperties.getString( "wfservice.endpoint" ),
+					SigaWsProperties.getString( "wfservice.qname" ),
+					SigaWsProperties.getString( "wfservice.servicename" ));
 		return wf;
 	}
-
+	
+	/* Refactoring do GetExService já que o método getExService com argumentos só era chamado pelo getExService sem argumentos
+	 * bruno.lacerda@avantiprima.com.br
+	 */	 
+	/*
 	public static ExService getExService() {
-		return getExService("localhost", "8080");
+		return getExService("evasion", "80");
 	}
-
 	public static ExService getExService(String remoteHost, String remotePort) {
 		if (remoteHost == null)
 			remoteHost = "localhost";
@@ -68,13 +71,29 @@ public abstract class Service {
 					"ExServiceImplService");
 		return ex;
 	}
+	*/
+	
+	/* Externalização das informacoes dos servicos
+	 * bruno.lacerda@avantiprima.com.br
+	 */
+	public static ExService getExService() {
+		if (ex == null)
+			ex = getService(ExService.class, 
+					SigaWsProperties.getString( "exservice.endpoint" ),
+					SigaWsProperties.getString( "exservice.qname" ),
+					SigaWsProperties.getString( "exservice.servicename" ));
+		return ex;
+	}
 
+	/* Externalização das informacoes dos servicos
+	 * bruno.lacerda@avantiprima.com.br
+	 */
 	public static CdService getCdService() {
 		if (cd == null)
 			cd = getService(CdService.class,
-					"http://localhost:8080/sigacd/servicos/CdService?wsdl",
-					"http://impl.service.cd.siga.jfrj.gov.br/",
-					"CdServiceImplService");
+					SigaWsProperties.getString( "cdservice.endpoint" ),
+					SigaWsProperties.getString( "cdservice.qname" ),
+					SigaWsProperties.getString( "cdservice.servicename" ));
 		return cd;
 	}
 

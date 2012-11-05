@@ -57,4 +57,9 @@ public class ServiceTest extends TestCase {
 
 		assertEquals(sCPF, "00489623760");
 	}
+
+	public void testExBuscarPorCodigo() throws Exception {
+		String s = Service.getExService().buscarPorCodigo("sec25");
+		assertEquals(s, "RJ-SEC-2012/00025");
+	}
 }

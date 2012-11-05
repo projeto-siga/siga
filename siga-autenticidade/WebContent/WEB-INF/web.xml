@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="http://java.sun.com/xml/ns/javaee"
+		xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID"
+		version="2.5">
+	-->
+	
+	<!-- É necessário declarar como 2.4 para a EL ser habilitada para tomcat5 -->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+	<display-name>The name of the application</display-name>
+	
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
+	
+	<description>
+     Aplicação utilizada por órgãos externos para verificar autenticidade de documentos emitidos pelo Siga-Doc. Acessa o sistema por webservice.
+    </description>
+	<servlet>
+		<servlet-name>servlet</servlet-name>
+		<servlet-class>br.gov.jfrj.autenticidade.Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>servlet</servlet-name>
+		<url-pattern>/busca</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ attribute name="pre"%>
+<%@ attribute name="icon"%>
 <%@ attribute name="title"%>
 <%@ attribute name="pos"%>
 <%@ attribute name="url"%>
@@ -15,34 +16,39 @@
 	<c:set var="linkConfirm" value="if (confirm('${confirm}')) " />
 </c:if>
 
+<c:set var="img" value=""/>
+<c:if test="${not empty icon}">
+<c:set var="img"><img src="/siga/css/famfamfam/icons/${icon}.png" style="margin-right:5px;"></c:set>
+</c:if>
+
 <c:if test="${empty test or test}">
-	<c:if test="${not empty linkSeparator}">|</c:if>
+	<c:if test="${not empty linkSeparator}"><span class="gt-separator">|</span> </c:if>
 	<c:if test="${empty linkSeparator}">
 		<c:if test="${empty linkInline}">
-			<div class="buttons">
+			<p class="gt-table-action-list">
 		</c:if>
 		<c:set var="linkSeparator" value="${true}" scope="request" />
 	</c:if>
-	<c:if test="${empty url}">${title}</c:if>
+	<c:if test="${empty url}">${img}${title}</c:if>
 	${pre}
 	<c:if test="${not empty url}">
 		<c:choose>
 			<c:when test="${not empty popup and popup != false}">
-				<a class="button" href="javascript:${linkConfirm}popitup('${url}');">${title}</a>
+				<a class="once" href="javascript:${linkConfirm}popitup('${url}');">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
 				<span id="spanAjax_${idAjax}"> 
-					<a class="button" href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${title}</a>
+					<a class="once" href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${img}${title}</a>
 				</span>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
-						<a class="button"
-							href="javascript:${linkConfirm}location.href='${url}';">${title}</a>
+						<a class="once"
+							href="javascript:${linkConfirm}location.href='${url}';">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a class="button" href="${url}">${title}</a>
+						<a class="once" href="${url}">${img}${title}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

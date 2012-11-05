@@ -209,7 +209,7 @@ public class WfBL extends CpBL {
 		// substituindo uma lotação, seu actorId deve ser adicionado à lista
 		// posteriormente.
 		List<DpPessoa> pessoas = dao().pessoasPorLotacao(lotaTitular.getId(),
-				false);
+				false,true);
 		if (pessoas != null) {
 			List<String> aActorIds = new ArrayList<String>(pessoas.size());
 			int i = 0;

@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
@@ -16,19 +16,26 @@ function sbmt() {
 </script>
 
 <siga:pagina titulo="Movimentação">
-	<table width="100%">
-		<tr>
-			<td><ww:form action="cancelar_movimentacao_gravar"
+
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+			<h2>Cancelamento de Movimentação - ${mob.siglaEDescricaoCompleta}</h2>
+
+			<div class="gt-content-box gt-for-table">
+			
+		<ww:form action="cancelar_movimentacao_gravar"
 				enctype="multipart/form-data" namespace="/expediente/mov"
 				method="post">
-				<input type="hidden" name="postback" value="1" />
+			<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="id" value="${id}" />
-				<ww:hidden name="sigla" value="%{sigla}" />
-				<!-- Pedro : 20070326 -->
-				<h1>Cancelamento de Movimentação - ${doc.codigo} <c:if
-					test="${numVia != null && numVia != 0}">-${viaChar}</c:if></h1>
-
-				<table class="form" width="100%">
+			<ww:hidden name="sigla" value="%{sigla}"/>
+			
+			<table class="gt-form-table">
 					<tr class="header">
 						<td colspan="2">Dados do cancelamento de movimentacao</td>
 					</tr>
@@ -52,13 +59,12 @@ function sbmt() {
 					<ww:textfield name="descrMov" label="Motivo" maxlength="80"
 						size="80" />
 
-					<tr class="button">
-						<td></td>
-						<td><input type="submit" value="Ok" /> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" /></td>
-					</tr>
-				</table>
-			</ww:form></td>
-		</tr>
-	</table>
+				<tr class="button">
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> <input type="button"
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" /></td>
+				</tr>
+			</table>
+		</ww:form>
+		
+		</div></div></div>
 </siga:pagina>

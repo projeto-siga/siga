@@ -89,6 +89,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	
 	final static public long MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA = 29;
 	
+	final static public long MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA = 30;
+	
 	final static public long MARCADOR_SOLICITACAO_A_RECEBER = 31;
 	
 	final static public long MARCADOR_SOLICITACAO_EM_ANDAMENTO = 32;

@@ -2,17 +2,22 @@
 <xwork>
 	<include file="webwork-default.xml" />
 	<package name="default" extends="webwork-default">
+	
 		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
+
 		<default-action-ref name="principal" />
+		
+		<!-- <default-action-ref name="erroGeral" /> -->
 		
 		<global-results>
 			<result name="erroGeral" type="dispatcher">/sigalibs/erroGeral.jsp</result>
 		</global-results>
-
+		
 		<action name="principal"
 			class="br.gov.jfrj.siga.wf.webwork.action.WfInboxAction">
 			<result type="redirect">/../siga/principal.action</result>
 		</action>
+		
 		<action name="css">
 			<result>/sigalibs/siga.css</result>
 		</action>

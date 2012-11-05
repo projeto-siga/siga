@@ -3,7 +3,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
-<siga:pagina titulo="Login"
+<siga:pagina titulo="Login" desabilitarbusca="sim"
 	onLoad="try{document.getElementById('j_username').focus();document.getElementById('j_username').select()}catch(e){};">
 
 	<script type="text/javascript" language="Javascript1.1">

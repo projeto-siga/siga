@@ -45,6 +45,9 @@
 	
 </script>
 
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+
 <ww:form name="frm" action="atender_pedido_publicacao_gravar"
 	namespace="/expediente/mov" method="GET" theme="simple">
 	<ww:hidden name="postback" value="1" />
@@ -53,24 +56,33 @@
 	<c:set var="i" value="1" />
 	<c:choose>
 		<c:when test="${i == 1}">
-			<h1>Documentos com solicitação de publicação</h1>
+			<h2>Documentos com solicitação de publicação</h2>
 			<c:set var="elementos" value="${itensSolicitados}" />
-			<table class="form">
+		<div class="gt-content-box gt-for-table">
+			<table class="gt-form-table">
+				<tr class="header">
+					<td colspan="2">Envio</td>
+				</tr>
 				<tr>
-					<td><ww:submit value="Remeter para publicação" /></td>
+					<td colspan="2"><ww:submit value="Remeter para publicação" cssClass="gt-btn-large gt-btn-left"/></td>
 				</tr>
 			</table>
+		</div>
+		<br/>
+			
 		</c:when>
 		<c:when test="${i == 2}">
-			<h1>Documentos remetidos para publicação</h1>
+			<h2>Documentos remetidos para publicação</h2>
 			<c:set var="elementos" value="${itensRemetidos}" />
 		</c:when>
 		<c:when test="${i == 3}">
-			<h1>Documentos publicados</h1>
+			<h2>Documentos publicados</h2>
 			<c:set var="elementos" value="${itensPublicados}" />
 		</c:when>
 	</c:choose>
-	<table class="list" width="100%">
+	
+			<div class="gt-content-box gt-for-table">
+	<table class="gt-table">
 		<tr class="header">
 			<c:if test="${i == 1}">
 				<td rowspan="2" align="center"><input type="checkbox"
@@ -159,9 +171,10 @@
 			</tr>
 		</c:forEach>
 	</table>
+	</div>
 	<br />
 	<%--</c:forEach>--%>
 </ww:form>
 
-
+</div></div>
 </siga:pagina>

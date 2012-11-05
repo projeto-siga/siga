@@ -454,9 +454,11 @@ public class ExDao extends CpDao {
 	}
 
 	public void indexarFila(String path) throws Exception {
-		if (path == null)
-			path = "./siga-ex-lucene-index-fila";
-		File dir = new File(path);
+		String _path = path;
+		if (_path == null)
+			_path = SigaExProperties.getString("siga.lucene.index.path")
+					+ "/siga-ex-lucene-index-fila";
+		File dir = new File(_path);
 		ExDocumento doc = null;
 		List<ExDocumento> listaDocs = new ArrayList<ExDocumento>();
 
@@ -1491,12 +1493,11 @@ public class ExDao extends CpDao {
 
 	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script)
 			throws Exception {
-		final Criteria crit = getSessao().createCriteria(ExModelo.class);
-		crit.createAlias("exFormaDocumento", "f");
-		crit.addOrder(Order.asc("f.descrFormaDoc"));
-		crit.addOrder(Order.asc("nmMod"));
+		final Query q = getSessao().createQuery(
+				"select m from ExModelo m left join m.exFormaDocumento as f "
+						+ "order by f.descrFormaDoc, m.nmMod");
 		List<ExModelo> l = new ArrayList<ExModelo>();
-		for (ExModelo mod : (List<ExModelo>) crit.list())
+		for (ExModelo mod : (List<ExModelo>) q.list())
 			if (script != null && script.trim().length() != 0) {
 				if ("template/freemarker".equals(mod.getConteudoTpBlob())
 						&& mod.getConteudoBlobMod2() != null
@@ -1629,34 +1630,40 @@ public class ExDao extends CpDao {
 
 		// Hibernate search configuration
 		//
-		cfg.setProperty("hibernate.search.default.directory_provider",
-				"org.hibernate.search.store.FSDirectoryProvider");
-		cfg.setProperty("hibernate.search.default.indexBase",
-				"./siga-ex-lucene-index/");
-		cfg.setProperty(
-				"hibernate.search.default.optimizer.operation_limit.max",
-				"2000");
-		cfg.setProperty("org.hibernate.worker.execution", "sync");
-		cfg.setProperty("org.hibernate.worker.batch_size", "1000");
-		cfg.setProperty("hibernate.search.indexing_strategy", "manual");
-		cfg.getEventListeners()
-				.setPostUpdateEventListeners(
-						new PostUpdateEventListener[] { (PostUpdateEventListener) ReflectHelper
-								.classForName(
-										"org.hibernate.search.event.FullTextIndexEventListener")
-								.newInstance() });
-		cfg.getEventListeners()
-				.setPostInsertEventListeners(
-						new PostInsertEventListener[] { (PostInsertEventListener) ReflectHelper
-								.classForName(
-										"org.hibernate.search.event.FullTextIndexEventListener")
-								.newInstance() });
-		cfg.getEventListeners()
-				.setPostDeleteEventListeners(
-						new PostDeleteEventListener[] { (PostDeleteEventListener) ReflectHelper
-								.classForName(
-										"org.hibernate.search.event.FullTextIndexEventListener")
-								.newInstance() });
+		if ("true".equals(SigaExProperties.getString("siga.lucene.ativo"))) {
+			cfg.setProperty("hibernate.search.default.directory_provider",
+					"org.hibernate.search.store.FSDirectoryProvider");
+			cfg.setProperty("hibernate.search.default.indexBase",
+					SigaExProperties.getString("siga.lucene.index.path")
+							+ "/siga-ex-lucene-index/");
+			cfg.setProperty(
+					"hibernate.search.default.optimizer.operation_limit.max",
+					"2000");
+			cfg.setProperty("org.hibernate.worker.execution", "sync");
+			cfg.setProperty("org.hibernate.worker.batch_size", "1000");
+			cfg.setProperty("hibernate.search.indexing_strategy", "manual");
+			cfg.getEventListeners()
+					.setPostUpdateEventListeners(
+							new PostUpdateEventListener[] { (PostUpdateEventListener) ReflectHelper
+									.classForName(
+											"org.hibernate.search.event.FullTextIndexEventListener")
+									.newInstance() });
+			cfg.getEventListeners()
+					.setPostInsertEventListeners(
+							new PostInsertEventListener[] { (PostInsertEventListener) ReflectHelper
+									.classForName(
+											"org.hibernate.search.event.FullTextIndexEventListener")
+									.newInstance() });
+			cfg.getEventListeners()
+					.setPostDeleteEventListeners(
+							new PostDeleteEventListener[] { (PostDeleteEventListener) ReflectHelper
+									.classForName(
+											"org.hibernate.search.event.FullTextIndexEventListener")
+									.newInstance() });
+		} else {
+			cfg.setProperty("hibernate.search.autoregister_listeners", "false");
+		}
+
 	}
 
 	public ExModelo consultarExModelo(String sForma, String sModelo) {
@@ -1667,5 +1674,11 @@ public class ExDao extends CpDao {
 			crit.add(Restrictions.eq("f.descrFormaDoc", sForma));
 		}
 		return (ExModelo) crit.uniqueResult();
+	}
+	
+	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa) {
+		final Query query = getSessao().getNamedQuery("listarDocPendenteAssinatura");
+		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
+		return query.list();
 	}
 }

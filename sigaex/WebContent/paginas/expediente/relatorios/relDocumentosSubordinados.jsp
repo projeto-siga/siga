@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
@@ -16,7 +16,6 @@ function sbmt() {
 
 <c:set var="titulo_pagina" scope="request">Relação de Documentos em Setores Subordinados</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
-<h1>${titulo_pagina}</h1>
 <tr>
 	<td>Tipo de Relatório:</td>
 	<td><ww:select name="tipoRel"

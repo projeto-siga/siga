@@ -8,12 +8,17 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <siga:pagina titulo="Lista de Modelos">
-	<h1>Cadastro de Modelos</h1>
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		
+		<h2>Cadastro de Modelos</h2>
+
+			<div class="gt-content-box gt-for-table">
 
 	<form id="listar" name="listar" method="GET" class="form100">
-		<table class="form100">
+		<table class="gt-form-table">
 			<tr class="header">
-				<td align="center" valign="top" colspan="4">Dados do Modelo</td>
+				<td align="center" valign="top" colspan="4">Dados para a pesquisa</td>
 			</tr>
 			<tr>
 				<td class="tdLabel"><label for="script" class="label">Script:</label>
@@ -22,23 +27,26 @@
 					id="script" /></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td><siga:monobotao inputType="submit" value="Buscar" />
+				<td colspan="2"><siga:monobotao inputType="submit" value="Buscar" cssClass="gt-btn-small gt-btn-left" />
 				</td>
 			</tr>
 		</table>
 	</form>
+	</div>
 
-
-	<table class="list" width="100%">
+	<h3 style="margin-top: 25px;">Lista de Modelos</h3>
+	<div class="gt-content-box" style="margin-bottom: 25px;">
+	<table class="gt-table" width="100%">
+	<thead>
 		<tr class="header">
-			<td>Forma</td>
-			<td>Modelo</td>
+			<th>Forma</th>
+			<th>Modelo</th>
 <!--            <td align="center">Nivel de Acesso</td> -->
-            <td align="center">Tecnologia</td>
-			<td align="center">Class. Documental</td>
-			<td align="center">Class. Documental para Vias</td>
+            <th align="center">Tecnologia</th>
+			<th align="center">Class. Documental</th>
+			<th align="center">Class. Documental para Vias</th>
 		</tr>
+		</thead>
 		<c:set var="evenorodd" value="" />
 		<c:set var="tamanho" value="0" />
 		<c:forEach var="modelo" items="${itens}">
@@ -68,11 +76,11 @@
 			<c:set var="tamanho" value="${tamanho + 1 }" />
 		</c:forEach>
 	</table>
-	<br />
+	</div>
 	<ww:form name="frm" action="editar" namespace="/modelo" theme="simple"
 		method="GET">
-		<ww:submit value="Novo" />
-		<input type="button" value="Exportar XML" onclick="window.location.href = 'exportar.action'"/>
+		<ww:submit value="Novo" cssClass="gt-btn-medium gt-btn-left"/>
+		<input type="button" value="Exportar XML" onclick="window.location.href = 'exportar.action'" class="gt-btn-medium gt-btn-left"/>
 	</ww:form>
-
+</div></div>
 </siga:pagina>

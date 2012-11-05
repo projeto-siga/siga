@@ -24,8 +24,6 @@
 package br.gov.jfrj.webwork.action;
 
 import java.io.DataInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -43,7 +41,7 @@ public class PrincipalAction extends SigaActionSupport {
 	 */
 	private static final long serialVersionUID = 1630775520737927455L;
 	private List listEstados;
-
+	
 	@Override
 	public String execute() throws Exception {
 		// super.getRequest ().setAttribute ( "_cadastrante" , super.getTitular

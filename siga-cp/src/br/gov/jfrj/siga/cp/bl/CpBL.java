@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import sun.misc.BASE64Encoder;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -65,7 +65,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpIdentidade idNova = new CpIdentidade();
 			try {
-				BeanUtils.copyProperties(idNova, ident);
+				PropertyUtils.copyProperties(idNova, ident);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades da identidade anterior.");
@@ -91,7 +91,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpIdentidade idNova = new CpIdentidade();
 			try {
-				BeanUtils.copyProperties(idNova, ident);
+				PropertyUtils.copyProperties(idNova, ident);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades da identidade anterior.");
@@ -253,8 +253,17 @@ public class CpBL {
 		}
 	}
 
+	/**
+	 * Altera a senha da identidade.
+	 * @param matricula
+	 * @param cpf
+	 * @param idCadastrante
+	 * @param senhaGerada - Usado para retornar a senha gerada. É um array para que o valor seja passado como referência e o método que o chama tenha a oportunidade de conhecer a senha)
+	 * @return
+	 * @throws AplicacaoException
+	 */
 	public CpIdentidade alterarSenhaDeIdentidade(String matricula, String cpf,
-			CpIdentidade idCadastrante) throws AplicacaoException {
+			CpIdentidade idCadastrante, String[] senhaGerada) throws AplicacaoException {
 		final long longmatricula = Long.parseLong(matricula.substring(2));
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
@@ -269,10 +278,13 @@ public class CpBL {
 					true);
 			if (id != null) {
 				final String novaSenha = GeraMessageDigest.geraSenha();
+				if (senhaGerada != null){
+					senhaGerada[0] = novaSenha;
+				}
 				try {
 					Date dt = dao().consultarDataEHoraDoServidor();
 					CpIdentidade idNova = new CpIdentidade();
-					BeanUtils.copyProperties(idNova, id);
+					PropertyUtils.copyProperties(idNova, id);
 					idNova.setIdIdentidade(null);
 					idNova.setDtCancelamentoIdentidade(null);
 					idNova.setDtCriacaoIdentidade(dt);
@@ -286,8 +298,8 @@ public class CpBL {
 							.getIdInicial().toString().getBytes());
 					String senhaCripto = encoderBase64.encode(Criptografia
 							.criptografar(novaSenha, chave));
-					idNova.setDscSenhaIdentidadeCripto(senhaCripto);
-					idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+					idNova.setDscSenhaIdentidadeCripto(null);
+					idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
 					dao().iniciarTransacao();
 					dao().gravarComHistorico(idNova, id, dt, idCadastrante);
@@ -329,7 +341,7 @@ public class CpBL {
 	}
 
 	public CpIdentidade criarIdentidade(String matricula, String cpf,
-			CpIdentidade idCadastrante) throws AplicacaoException {
+			CpIdentidade idCadastrante, final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc ) throws AplicacaoException {
 		final long longmatricula = Long.parseLong(matricula.substring(2));
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
@@ -343,7 +355,16 @@ public class CpBL {
 			}
 			if (id == null) {
 				if (pessoa.getEmailPessoa() != null) {
-					final String novaSenha = GeraMessageDigest.geraSenha();
+					String novaSenha = null;
+					if (senhaDefinida !=null && senhaDefinida.length() > 0){
+						novaSenha = senhaDefinida;
+					}else{
+						novaSenha = GeraMessageDigest.geraSenha();
+					}
+					
+					if (senhaGerada != null){
+						senhaGerada[0] = novaSenha;
+					}
 					try {
 						CpIdentidade idNova = new CpIdentidade();
 						final String hashNova = GeraMessageDigest.executaHash(
@@ -358,15 +379,21 @@ public class CpBL {
 								CpTipoIdentidade.class, false));
 						idNova.setHisDtIni(idNova.getDtCriacaoIdentidade());
 
-						BASE64Encoder encoderBase64 = new BASE64Encoder();
-						String chave = encoderBase64.encode(idNova
-								.getDpPessoa().getIdInicial().toString()
-								.getBytes());
-						String senhaCripto = encoderBase64.encode(Criptografia
-								.criptografar(novaSenha, chave));
-						idNova.setDscSenhaIdentidadeCripto(senhaCripto);
-						idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+						//somente se integrado ao AD
+						if (marcarParaSinc){
+							BASE64Encoder encoderBase64 = new BASE64Encoder();
+							
+							String chave = encoderBase64.encode(idNova
+									.getDpPessoa().getIdInicial().toString()
+									.getBytes());
+							String senhaCripto = encoderBase64.encode(Criptografia
+									.criptografar(novaSenha, chave));
 
+							idNova.setDscSenhaIdentidadeCripto(null);
+							idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+						}
+						
+						
 						dao().iniciarTransacao();
 						dao().gravarComHistorico(idNova, idCadastrante);
 						Correio
@@ -420,50 +447,61 @@ public class CpBL {
 
 		boolean podeTrocar = id.getDscSenhaIdentidade().equals(hashAtual);
 
-		String hashAdministrador;
-
-		// if (((Boolean) Contexto.resource("isVersionTest")) || ((Boolean)
-		// Contexto.resource("isBaseTest")))
-		hashAdministrador = "ba25c3d954f0f027624ffc98d0036be5";
-		// else
-		// hashAdministrador = "1d3536165f44fe6bdf70c22d9eb37cb9";
-
-		if (hashAdministrador.equals(hashAtual)) {
-			podeTrocar = true;
-
+	
+		if (!podeTrocar){
+			//tenta o modo administrador...
+			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
 			try {
-				Correio
-						.enviar(
-								id.getDpPessoa().getEmailPessoa(),
-								"Troca de Senha",
-								"O Administrador do sistema alterou a senha do seguinte usuário, para efetuar "
-										+ "uma manutenção no sistema: "
+				if (Cp.getInstance()
+						.getConf()
+						.podeUtilizarServicoPorConfiguracao(idCadastrante.getDpPessoa(),
+								idCadastrante.getDpPessoa().getLotacao(), servico)) {
+					
+					if (hashAtual.equals(idCadastrante.getDscSenhaIdentidade())){
+						podeTrocar = true;	
+					}else{
+						throw new AplicacaoException("Senha atual não confere");
+					}
+					
+	
+					try {
+						Correio
+								.enviar(
+										id.getDpPessoa().getEmailPessoa(),
+										"Troca de Senha",
+										"O Administrador do sistema alterou a senha do seguinte usuário, para efetuar "
+												+ "uma manutenção no sistema: "
+												+ "\n"
+												+ "\n - Nome: "
+												+ id.getDpPessoa().getNomePessoa()
+												+ "\n - Matricula: "
+												+ id.getDpPessoa().getSigla()
+												+ "\n - Senha: "
+												+ senhaNova
+												+ "\n\n Antes de utiliza-lo novamente, altere a sua senha "
+												+ "ou solicite uma nova através da opção 'esqueci minha senha'"
+												+ "\n\n Atenção: esta é uma "
+												+ "mensagem automática. Por favor, não responda.");
+					} catch (Exception e) {
+						System.out
+								.println("Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
 										+ "\n"
 										+ "\n - Nome: "
 										+ id.getDpPessoa().getNomePessoa()
 										+ "\n - Matricula: "
-										+ id.getDpPessoa().getSigla()
-										+ "\n - Senha: "
-										+ senhaNova
-										+ "\n\n Antes de utiliza-lo novamente, altere a sua senha "
-										+ "ou solicite uma nova através da opção 'esqueci minha senha'"
-										+ "\n\n Atenção: esta é uma "
-										+ "mensagem automática. Por favor, não responda.");
-			} catch (Exception e) {
-				System.out
-						.println("Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
-								+ "\n"
-								+ "\n - Nome: "
-								+ id.getDpPessoa().getNomePessoa()
-								+ "\n - Matricula: "
-								+ id.getDpPessoa().getSigla());
+										+ id.getDpPessoa().getSigla());
+					}
+				}
+			} catch (Exception e1) {
+			
 			}
 		}
+		
 		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				CpIdentidade idNova = new CpIdentidade();
-				BeanUtils.copyProperties(idNova, id);
+				PropertyUtils.copyProperties(idNova, id);
 				idNova.setIdIdentidade(null);
 				idNova.setDtCriacaoIdentidade(dt);
 				final String hashNova = GeraMessageDigest.executaHash(senhaNova
@@ -475,8 +513,8 @@ public class CpBL {
 						.getIdInicial().toString().getBytes());
 				String senhaCripto = encoderBase64.encode(Criptografia
 						.criptografar(senhaNova, chave));
-				idNova.setDscSenhaIdentidadeCripto(senhaCripto);
-				idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+				idNova.setDscSenhaIdentidadeCripto(null);
+				idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
 				dao().iniciarTransacao();
 				dao().gravarComHistorico(idNova, id, dt, idCadastrante);
@@ -501,14 +539,24 @@ public class CpBL {
 			final long matAux1 = Long.parseLong(auxiliar1.substring(2));
 			final DpPessoa pesAux1 = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf1), matAux1);
-
+			if (pesAux1 == null){
+				throw new AplicacaoException("Auxiliar 1 inválido!");
+			}
+			
 			final long matAux2 = Long.parseLong(auxiliar2.substring(2));
 			final DpPessoa pesAux2 = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf2), matAux2);
+			if (pesAux2 == null){
+				throw new AplicacaoException("Auxiliar 2 inválido!");
+			}
 
 			final long longmatricula = Long.parseLong(matricula.substring(2));
 			final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf), longmatricula);
+			if (pessoa == null){
+				throw new AplicacaoException("A pessoa que terá a senha definida inválida!");
+			}
+
 
 			CpIdentidade cpIdAux1 = null;
 			CpIdentidade cpIdAux2 = null;
@@ -526,7 +574,7 @@ public class CpBL {
 
 			if (cpIdAux1 == null || cpIdAux2 == null) {
 				throw new AplicacaoException(
-						"Problema ao localizar a identidade dos autiliares!");
+						"Problema ao localizar a identidade dos auxiliares!");
 			}
 
 			String hashSenha1 = null;
@@ -551,6 +599,10 @@ public class CpBL {
 			auxiliares.add(pesAux1);
 			auxiliares.add(pesAux2);
 
+			if (isAuxAdministradores(pesAux1,pesAux2)){
+				return true;
+			}
+			
 			if (!pessoasMesmaLotacaoOuSuperior(pessoa, auxiliares)) {
 				throw new AplicacaoException(
 						"Os auxiliares devem ser da mesma lotação do usuário que terá a senha trocada!\n Também é permitido que pessoas da lotação imediatamente superior na hiearquia sejam auxiliares.");
@@ -561,6 +613,22 @@ public class CpBL {
 		}
 		return true;
 
+	}
+
+	private boolean isAuxAdministradores(DpPessoa aux1, DpPessoa aux2) {
+		
+		String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
+		try {	
+		
+			return
+					Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(aux1,	aux1.getLotacao(), servico) &&
+					Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(aux2,	aux2.getLotacao(), servico);
+	
+		
+		}catch (Exception e) {
+			return false;
+		}
+	
 	}
 
 	/**
@@ -599,7 +667,7 @@ public class CpBL {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				CpIdentidade idNova = new CpIdentidade();
-				BeanUtils.copyProperties(idNova, id);
+				PropertyUtils.copyProperties(idNova, id);
 				idNova.setIdIdentidade(null);
 				idNova.setDtCriacaoIdentidade(dt);
 				final String hashNova = GeraMessageDigest.executaHash(senhaNova
@@ -611,8 +679,8 @@ public class CpBL {
 						.getIdInicial().toString().getBytes());
 				String senhaCripto = encoderBase64.encode(Criptografia
 						.criptografar(senhaNova, chave));
-				idNova.setDscSenhaIdentidadeCripto(senhaCripto);
-				idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+				idNova.setDscSenhaIdentidadeCripto(null);
+				idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
 				dao().iniciarTransacao();
 				dao().gravarComHistorico(idNova, id, dt, idCadastrante);
@@ -651,7 +719,7 @@ public class CpBL {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpModelo modNew = new CpModelo();
 			try {
-				BeanUtils.copyProperties(modNew, mod);
+				PropertyUtils.copyProperties(modNew, mod);
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades do modelo anterior.");

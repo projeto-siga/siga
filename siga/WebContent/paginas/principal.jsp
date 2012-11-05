@@ -73,6 +73,7 @@
 							 -->
 							<!-- segunda metade da tela -->
 						</c:if>
+						<br/>
 						<h2 class="gt-table-head">Quadro de Solicitações</h2>
 						<!-- content box -->
 						<span id='rightbottom' style="margin:0;padding:0;"></span>

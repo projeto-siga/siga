@@ -103,7 +103,8 @@ End Function
 							<ww:hidden name="conteudo_b64"
 								value="${doc.conteudoBlobPdfB64}" /> <ww:hidden
 								name="assinaturaB64" /> <ww:hidden name="assinante" />
-								<input type="button" value="Assinar" onclick="vbscript: assinar" />
+								<input type="button" value="Assinar" onclick="vbscript: assinar" 
+								       class="gt-btn-alternate-large gt-btn-center"/>
 						</c:if>						
 						
 					</left>

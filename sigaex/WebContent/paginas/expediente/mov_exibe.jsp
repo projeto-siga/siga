@@ -257,86 +257,86 @@ function visualizarImpressao(via) {
 					</table>
 				</div>
 
-					<c:if test="${not empty mov.exMovimentacaoReferenciadoraSet}">
-						<h1>Assinaturas para essa movimentação:</h1>
-						<div class="gt-content-box" style="padding:0">
-							<table border="0" class="gt-table">
-								<thead>
-								<tr>
-									<th rowspan="2">Data</th>
-									<th colspan="2">Cadastrante</th>
-									<th rowspan="2">Descrição</th>
-								</tr>
-								<tr>
-									<th>Lotação</th>
-									<th>Pessoa</th>
-								</tr>
-								</thead>
-								<c:set var="evenorodd" value="odd" />
+				<c:if test="${not empty mov.exMovimentacaoReferenciadoraSet}">
+					<h1>Assinaturas para essa movimentação:</h1>
+					<div class="gt-content-box" style="padding:0">
+						<table border="0" class="gt-table">
+							<thead>
+							<tr>
+								<th rowspan="2">Data</th>
+								<th colspan="2">Cadastrante</th>
+								<th rowspan="2">Descrição</th>
+							</tr>
+							<tr>
+								<th>Lotação</th>
+								<th>Pessoa</th>
+							</tr>
+							</thead>
+							<c:set var="evenorodd" value="odd" />
 
-								<c:forEach var="movReferenciadora" items="${mov.exMovimentacaoReferenciadoraSet}">
-									<c:choose>
-										<c:when test='${evenorodd == "even"}'>
-											<c:set var="evenorodd" value="odd" />
-										</c:when>
-										<c:otherwise>
-											<c:set var="evenorodd" value="even" />
-										</c:otherwise>
-									</c:choose>
-									<tr class="${evenorodd}">
-										<td width="16%" align="left">${movReferenciadora.dtRegMovDDMMYYHHMMSS}</td>
-										<td width="4%" align="left"><siga:selecionado
+							<c:forEach var="movReferenciadora" items="${mov.exMovimentacaoReferenciadoraSet}">
+								<c:choose>
+									<c:when test='${evenorodd == "even"}'>
+										<c:set var="evenorodd" value="odd" />
+									</c:when>
+									<c:otherwise>
+										<c:set var="evenorodd" value="even" />
+									</c:otherwise>
+								</c:choose>
+								<tr class="${evenorodd}">
+									<td width="16%" align="left">${movReferenciadora.dtRegMovDDMMYYHHMMSS}</td>
+									<td width="4%" align="left"><siga:selecionado
 											sigla="${movReferenciadora.lotaCadastrante.sigla}"
 											descricao="${movReferenciadora.lotaCadastrante.descricao}" /></td>
-										<td width="4%" align="left"><siga:selecionado
+									<td width="4%" align="left"><siga:selecionado
 											sigla="${movReferenciadora.cadastrante.iniciais}"
 											descricao="${movReferenciadora.cadastrante.descricao}" /></td>
-										<td width="44%"><tags:assinatura_mov
+									<td width="44%"><tags:assinatura_mov
 											assinante="${movReferenciadora.obs}"
 											idmov="${movReferenciadora.idMov}" /></td>
-									</tr>
-								</c:forEach>
-							</table>
-						</div>
-					</c:if>
+								</tr>
+							</c:forEach>
+						</table>
+					</div>
+				</c:if>
 
 
-					<div style="padding-left: 10; padding-top: 10px;">
-						<c:if test="${mov.exTipoMovimentacao.idTpMov!=2}">
-							<input type="button" value="Visualizar Impressão" class="gt-btn-large gt-btn-left" 
+				<div style="padding-left: 10; padding-top: 10px;">
+					<c:if test="${mov.exTipoMovimentacao.idTpMov!=2}">
+						<input type="button" value="Visualizar Impressão" class="gt-btn-large gt-btn-left" 
 							       onclick="javascript:visualizarImpressao();" />						      
-						</c:if>
-						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
-							<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
-							<ww:hidden name="assinaturaB64" />
-							<ww:hidden name="assinante" />
-							<!-- Orlando: Alterei o código abaixo para mudar o nome do botão para "Assinar Transferir", quando o idTpMov==6, Despacho com Transferência. -->
-							<c:choose>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
-									<input type="button" value="Assinar Despacho" class="gt-btn-alternate-large gt-btn-center" 
+					</c:if>
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
+						<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
+						<ww:hidden name="assinaturaB64" />
+						<ww:hidden name="assinante" />
+						<!-- Orlando: Alterei o código abaixo para mudar o nome do botão para "Assinar Transferir", quando o idTpMov==6, Despacho com Transferência. -->
+						<c:choose>
+							<c:when test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
+								<input type="button" value="Assinar Despacho" class="gt-btn-alternate-large gt-btn-center" 
 									       onclick="vbscript: assinar('false')" />								
-						    	</c:when>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
-									<input type="button" value="Assinar Transferir" class="gt-btn-alternate-large gt-btn-center" 
+						    </c:when>
+							<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
+								<input type="button" value="Assinar Transferir" class="gt-btn-alternate-large gt-btn-center" 
 									       onclick="vbscript: assinar('false')" />
-								</c:when>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
-									<input type="button" value="Assinar Desentranhamento" class="gt-btn-alternate-large gt-btn-center" 
+							</c:when>
+							<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
+								<input type="button" value="Assinar Desentranhamento" class="gt-btn-alternate-large gt-btn-center" 
 									       onclick="vbscript: assinar('false')" />
-								</c:when>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
-									<input type="button" value="Assinar Encerramento" class="gt-btn-alternate-large gt-btn-center" 
+							</c:when>
+							<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
+								<input type="button" value="Assinar Encerramento" class="gt-btn-alternate-large gt-btn-center" 
 									       onclick="vbscript: assinar('false')" />
-								</c:when>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
-									<input type="button" value="Conferir Cópia" class="gt-btn-alternate-large gt-btn-left"
+							</c:when>
+							<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
+								<input type="button" value="Conferir Cópia" class="gt-btn-alternate-large gt-btn-left"
 											onclick="vbscript: assinar('true')" />								
-									<input type="button" value="Assinar Anexo"  class="gt-btn-alternate-large gt-btn-left"
+								<input type="button" value="Assinar Anexo"  class="gt-btn-alternate-large gt-btn-left"
 							        	    onclick="vbscript: assinar('false')" />										
-								</c:when>						
-							</c:choose>
-						</c:if>			
-					</div>		
+							</c:when>						
+						</c:choose>
+					</c:if>			
+				</div>		
 			</ww:form>			
 			
 			<div style="padding-left: 10;>		

@@ -50,47 +50,39 @@ End Function
 </c:if>
 
 <div class="gt-bd" style="padding-bottom: 0px;">
-		<div class="gt-content">
+	<div class="gt-content">
 		
-		<h2>Confirme os dados do documento abaixo:</h2>
+	<h2>Confirme os dados do documento abaixo:</h2>
 		
-		<div class="gt-content-box" style="padding:10px;">
+	<div class="gt-content-box" style="padding:10px;">
 
-		<table class="message" width="100%">
-			<tr class="header">
-				<td width="50%"><b>Documento
-						${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
-				<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
-			</tr>
-			<tr class="header">
-				<td><b>De:</b> ${doc.subscritorString}</td>
-				<td><b>Classificação:</b>
+	<table class="message" width="100%">
+		<tr class="header">
+			<td width="50%"><b>Documento
+					${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
+			<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
+		</tr>
+		<tr class="header">
+			<td><b>De:</b> ${doc.subscritorString}</td>
+			<td><b>Classificação:</b>
 					${doc.exClassificacao.descricaoCompleta}</td>
+		</tr>
+		<tr class="header">
+			<td><b>Para:</b> ${doc.destinatarioString}</td>
+			<td><b>Descrição:</b> ${doc.descrDocumento}</td>
+		</tr>
+		<c:if test="${doc.conteudo != ''}">
+			<tr>
+				<td colspan="2">
+					<div id="conteudo" style="padding-top: 10px;"><tags:fixdocumenthtml>${doc.conteudoBlobHtmlString}</tags:fixdocumenthtml></div>
+				</td>
 			</tr>
-			<tr class="header">
-				<td><b>Para:</b> ${doc.destinatarioString}</td>
-				<td><b>Descrição:</b> ${doc.descrDocumento}</td>
-			</tr>
-			<c:if test="${doc.conteudo != ''}">
-				<tr>
-					<td colspan="2">
-						<div id="conteudo" style="padding-top: 10px;"><tags:fixdocumenthtml>${doc.conteudoBlobHtmlString}</tags:fixdocumenthtml></div>
-					</td>
-				</tr>
-			</c:if>
-		</table>
+		</c:if>
+	</table>
 		
-		</div>
-
-	<!--<c:choose>
-	<c:when test="${fechar eq true}"> 
-		<c:set var="acao" value="fechar_assinar_gravar" />
-	</c:when>
-	<c:otherwise>-->
+</div>
+	
 	<c:set var="acao" value="assinar_gravar" />
-	<!--</c:otherwise>
-</c:choose>-->
-
 		<ww:form name="frm" id="frm" action="${acao}"
 			namespace="/expediente/mov" theme="simple" validate="false"
 			method="POST">

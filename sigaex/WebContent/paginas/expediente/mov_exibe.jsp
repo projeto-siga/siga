@@ -339,7 +339,7 @@ function visualizarImpressao(via) {
 				</div>		
 			</ww:form>			
 			
-			<div style="padding-left: 10;>		
+			<div style="padding-left: 10;">		
     			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">	
 	  				<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
 	    			<ww:hidden name="urlchk_${mov.idMov}" value="${mov.nmPdf}" />

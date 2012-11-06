@@ -113,19 +113,17 @@ function visualizarImpressao(via) {
 
 			<h2>Documento ${doc.exTipoDocumento.descricao}: ${doc.codigo}</h2>
 
-			<div class="gt-content-box" style="padding: 10px;">
-
-				<ww:form name="frm" action="exibir" namespace="/expediente/mov"
-					theme="simple" method="POST">					
+			<ww:form name="frm" action="exibir" namespace="/expediente/mov"
+					theme="simple" method="POST">	
+				<div class="gt-content-box" style="padding: 10px;">					
 					<table width="100%" border="0">
 						<tr>
-							<td>
-
+					    	<td>
 								<table border="0" style="width: 100%;">
 									<tr>
-										<td><c:set var="exibemov" scope="request" value="" /> <c:set
-												var="exibemovvariante" scope="request" value="" /> <c:if
-												test='${empty mov.exMovimentacaoCanceladora}'>
+										<td><c:set var="exibemov" scope="request" value="" /> 
+										    <c:set var="exibemovvariante" scope="request" value="" /> 
+										    <c:if  test='${empty mov.exMovimentacaoCanceladora}'>
 												<%-- Esse documento e essa via --%>
 												<c:if test="${(doc.idDoc == mov.exDocumento.idDoc)}">
 													<%-- Anexacao --%>
@@ -143,15 +141,13 @@ function visualizarImpressao(via) {
 												<c:if test='${mov.exTipoMovimentacao.idTpMov == 16}'>
 													<c:set var="exibemov" scope="request" value="vinculo" />
 													<c:if test="${mov.exDocumento.idDoc == doc.idDoc}">
-														<c:set var="exibemovvariante" scope="request"
-															value="vinculoOriginadoAqui" />
+														<c:set var="exibemovvariante" scope="request" value="vinculoOriginadoAqui" />
 													</c:if>
 												</c:if>
 
 												<c:if test="${(doc.idDoc == mov.exDocumento.idDoc)}">
 													<%-- Despacho --%>
-													<c:if
-														test='${(mov.exTipoMovimentacao.idTpMov == 5) || (mov.exTipoMovimentacao.idTpMov == 6) || (mov.exTipoMovimentacao.idTpMov == 18)}'>
+													<c:if test='${(mov.exTipoMovimentacao.idTpMov == 5) || (mov.exTipoMovimentacao.idTpMov == 6) || (mov.exTipoMovimentacao.idTpMov == 18)}'>
 														<c:set var="exibemov" scope="request" value="despacho" />
 													</c:if>
 
@@ -170,7 +166,8 @@ function visualizarImpressao(via) {
 														<c:set var="exibemov" scope="request" value="cancelamento" />
 													</c:if>
 												</c:if>
-											</c:if> <c:if test='${not empty exibemov}'>
+											</c:if> <%-- fim do if empty mov.exMovimentacaoCanceladora --%>
+											<c:if test='${not empty exibemov}'>
 												<table class="message" style="width: 100%;">
 													<tr class="header_${exibemov}">
 														<td width="50%"><b>${mov.descrTipoMovimentacao}</b></td>
@@ -181,8 +178,7 @@ function visualizarImpressao(via) {
 
 														<%-- TIPO_MOVIMENTACAO_ANEXACAO --%>
 														<c:if test="${exibemov == 'anexacao'}">
-															<c:url var='anexo'
-																value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
+															<c:url var='anexo' value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
 															<td><b>Arquivo:</b> <a class="attached"
 																href="${anexo}" target="_blank">${mov.nmArqMov}</a></td>
 														</c:if>
@@ -214,7 +210,8 @@ function visualizarImpressao(via) {
 																			<c:set var="link">${mov.exDocumento.codigo}-${mov.numViaToChar}</c:set>
 																		</c:otherwise>
 																	</c:choose>
-																</ww:url> <ww:a href="%{url}">${link}</ww:a></td>
+																</ww:url> <ww:a href="%{url}">${link}</ww:a>
+															</td>
 														</c:if>
 
 														<%-- TIPO_MOVIMENTACAO_ANEXACAO --%>
@@ -224,14 +221,14 @@ function visualizarImpressao(via) {
 																		value='/anexo/${mov.idMov}/${mov.nmArqMov}' /> <c:url
 																		var='anexo' value='/${mov.nmPdf}' /> <iframe
 																		src="${anexo}" width="100%" height="600"
-																		align="center" style="margin-top: 10px;"> </iframe></td>
+																		align="center" style="margin-top: 10px;"> </iframe>
+																</td>
 															</tr>
 														</c:if>
 
 														<%-- TIPO_MOVIMENTACAO_DESPACHO --%>
-														<c:if
-															test="${exibemov == 'despacho' or exibemov == 'desentranhamento' or exibemov == 'encerramento' or exibemov == 'cancelamento'}">
-															<td></td>
+														<c:if test="${exibemov == 'despacho' or exibemov == 'desentranhamento' or exibemov == 'encerramento' or exibemov == 'cancelamento'}">
+																<td></td>
 															<tr>
 																<c:choose>
 																	<c:when test="${mov.conteudoTpMov == 'text/xhtml'}">
@@ -247,136 +244,120 @@ function visualizarImpressao(via) {
 																		<td colspan="2" style="margin-top: 10px;">${mov.obs}</td>
 																	</c:otherwise>
 																</c:choose>
+															</tr>	
 														</c:if>
-
 													</tr>
 												</table>
-											</c:if></td>
+											</c:if>
+										</td>
 									</tr>
 								</table>
 							</td>
 						</tr>
 					</table>
-			</div>
-
-			<c:if test="${not empty mov.exMovimentacaoReferenciadoraSet}">
-				<h1>Assinaturas para essa movimentação:</h1>
-				<div class="gt-content-box" style="padding:0">
-					<table border="0" class="gt-table">
-						<thead>
-							<tr>
-								<th rowspan="2">Data</th>
-								<th colspan="2">Cadastrante</th>
-								<th rowspan="2">Descrição</th>
-							</tr>
-							<tr>
-								<th>Lotação</th>
-								<th>Pessoa</th>
-							</tr>
-						</thead>
-						<c:set var="evenorodd" value="odd" />
-
-						<c:forEach var="movReferenciadora"
-							items="${mov.exMovimentacaoReferenciadoraSet}">
-
-							<c:choose>
-								<c:when test='${evenorodd == "even"}'>
-									<c:set var="evenorodd" value="odd" />
-								</c:when>
-								<c:otherwise>
-									<c:set var="evenorodd" value="even" />
-								</c:otherwise>
-							</c:choose>
-							<tr class="${evenorodd}">
-								<td width="16%" align="left">${movReferenciadora.dtRegMovDDMMYYHHMMSS}</td>
-								<td width="4%" align="left"><siga:selecionado
-										sigla="${movReferenciadora.lotaCadastrante.sigla}"
-										descricao="${movReferenciadora.lotaCadastrante.descricao}" />
-								</td>
-								<td width="4%" align="left"><siga:selecionado
-										sigla="${movReferenciadora.cadastrante.iniciais}"
-										descricao="${movReferenciadora.cadastrante.descricao}" /></td>
-								<td width="44%"><tags:assinatura_mov
-										assinante="${movReferenciadora.obs}"
-										idmov="${movReferenciadora.idMov}" /></td>
-							</tr>
-						</c:forEach>
-					</table>
 				</div>
-			</c:if>
+
+					<c:if test="${not empty mov.exMovimentacaoReferenciadoraSet}">
+						<h1>Assinaturas para essa movimentação:</h1>
+						<div class="gt-content-box" style="padding:0">
+							<table border="0" class="gt-table">
+								<thead>
+								<tr>
+									<th rowspan="2">Data</th>
+									<th colspan="2">Cadastrante</th>
+									<th rowspan="2">Descrição</th>
+								</tr>
+								<tr>
+									<th>Lotação</th>
+									<th>Pessoa</th>
+								</tr>
+								</thead>
+								<c:set var="evenorodd" value="odd" />
+
+								<c:forEach var="movReferenciadora" items="${mov.exMovimentacaoReferenciadoraSet}">
+									<c:choose>
+										<c:when test='${evenorodd == "even"}'>
+											<c:set var="evenorodd" value="odd" />
+										</c:when>
+										<c:otherwise>
+											<c:set var="evenorodd" value="even" />
+										</c:otherwise>
+									</c:choose>
+									<tr class="${evenorodd}">
+										<td width="16%" align="left">${movReferenciadora.dtRegMovDDMMYYHHMMSS}</td>
+										<td width="4%" align="left"><siga:selecionado
+											sigla="${movReferenciadora.lotaCadastrante.sigla}"
+											descricao="${movReferenciadora.lotaCadastrante.descricao}" /></td>
+										<td width="4%" align="left"><siga:selecionado
+											sigla="${movReferenciadora.cadastrante.iniciais}"
+											descricao="${movReferenciadora.cadastrante.descricao}" /></td>
+										<td width="44%"><tags:assinatura_mov
+											assinante="${movReferenciadora.obs}"
+											idmov="${movReferenciadora.idMov}" /></td>
+									</tr>
+								</c:forEach>
+							</table>
+						</div>
+					</c:if>
 
 
-			<div style="padding-left: 10; padding-top: 10px;">
-				<c:if test="${mov.exTipoMovimentacao.idTpMov!=2}">
-					<input type="button" value="Visualizar Impressão"
-						onclick="javascript:visualizarImpressao();" />
-				</c:if>
-
-
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
-					<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
-					<ww:hidden name="assinaturaB64" />
-					<ww:hidden name="assinante" />
-					<!-- Orlando: Alterei o código abaixo para mudar o nome do botão para "Assinar Transferir", quando o idTpMov==6, Despacho com Transferência. -->
-					<c:choose>
-
-						<c:when
-							test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
-							<input type="button" value="Assinar Despacho"
-								onclick="vbscript: assinar('false')" />								
-						</c:when>
-
-
-						<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
-							<input type="button" value="Assinar Transferir"
-								onclick="vbscript: assinar('false')" />
-
-						</c:when>
-
-						<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
-							<input type="button" value="Assinar Desentranhamento"
-								onclick="vbscript: assinar('false')" />
-						</c:when>
-						<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
-							<input type="button" value="Assinar Encerramento"
-								onclick="vbscript: assinar('false')" />
-						</c:when>
-						<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
-							<input type="button" value="Conferir Cópia"
-										onclick="vbscript: assinar('true')" />	
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							&nbsp;&nbsp;&nbsp;&nbsp;								
-							<input type="button" value="Assinar" 
-							            onclick="vbscript: assinar('false')" />						
-										
-						</c:when>
-					</c:choose>
-				</c:if>			
-			</div>			
+					<div style="padding-left: 10; padding-top: 10px;">
+						<c:if test="${mov.exTipoMovimentacao.idTpMov!=2}">
+							<input type="button" value="Visualizar Impressão" class="gt-btn-large gt-btn-left" 
+							       onclick="javascript:visualizarImpressao();" />						      
+						</c:if>
+						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
+							<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
+							<ww:hidden name="assinaturaB64" />
+							<ww:hidden name="assinante" />
+							<!-- Orlando: Alterei o código abaixo para mudar o nome do botão para "Assinar Transferir", quando o idTpMov==6, Despacho com Transferência. -->
+							<c:choose>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
+									<input type="button" value="Assinar Despacho" class="gt-btn-alternate-large gt-btn-center" 
+									       onclick="vbscript: assinar('false')" />								
+						    	</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
+									<input type="button" value="Assinar Transferir" class="gt-btn-alternate-large gt-btn-center" 
+									       onclick="vbscript: assinar('false')" />
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
+									<input type="button" value="Assinar Desentranhamento" class="gt-btn-alternate-large gt-btn-center" 
+									       onclick="vbscript: assinar('false')" />
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
+									<input type="button" value="Assinar Encerramento" class="gt-btn-alternate-large gt-btn-center" 
+									       onclick="vbscript: assinar('false')" />
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">							
+									<input type="button" value="Conferir Cópia" class="gt-btn-alternate-large gt-btn-left"
+											onclick="vbscript: assinar('true')" />								
+									<input type="button" value="Assinar Anexo"  class="gt-btn-alternate-large gt-btn-left"
+							        	    onclick="vbscript: assinar('false')" />										
+								</c:when>						
+							</c:choose>
+						</c:if>			
+					</div>		
+			</ww:form>			
 			
-			
-			</ww:form>
-			
-    <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">	
-	    <ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
-	    <ww:hidden name="urlchk_${mov.idMov}" value="${mov.nmPdf}" />
-	    <c:set var="jspServer"
-		    	value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
-	    <c:set var="nextURL"
-		    	value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
-	    <c:set var="urlPath" value="/${request.contextPath}" />		
-	    <ww:if test="${mov.exTipoMovimentacao.idTpMov==2}">
-	        <c:set var="botao" value="ambos"/>
-	    </ww:if>    
-	    <ww:else>
-	        <c:set var="botao" value=""/>
-	    </ww:else>
-	    <c:set var="lote" value="false"/>	
-		
-	    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
-    </c:if>			
-
+			<div style="padding-left: 10;>		
+    			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">	
+	  				<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
+	    			<ww:hidden name="urlchk_${mov.idMov}" value="${mov.nmPdf}" />
+	   				<c:set var="jspServer" 
+		    	           value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+	    			<c:set var="nextURL"
+		    				value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
+	    			<c:set var="urlPath" value="/${request.contextPath}" />		
+	    			<ww:if test="${mov.exTipoMovimentacao.idTpMov==2}">
+	        			<c:set var="botao" value="ambos"/>
+	   				</ww:if>    
+	    			<ww:else>
+	        			<c:set var="botao" value=""/>
+	   				</ww:else>
+	    			<c:set var="lote" value="false"/>		
+	    			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
+			    </c:if>			
+    		</div>
 		</div>
 	</div>
 </siga:pagina>

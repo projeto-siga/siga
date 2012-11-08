@@ -67,7 +67,7 @@
 		</c:if>
 		<c:set var="opt" value="${f:classNivPadr(doc.subscritor.padraoReferencia)}"/>	
 		<!-- INICIO PRIMEIRO CABECALHO
-		<table width="100%" border="2" bgcolor="#ffffff"><tr><td>
+		<table width="100%" border="0" bgcolor="#ffffff"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
 		</td></tr>
 		   <tr bgcolor="#FFFFFF">

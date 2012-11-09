@@ -76,7 +76,7 @@ ${meta}
 <!-- <link href="${pageContext.request.contextPath}/sigalibs/menu.css"
 	rel="stylesheet" type="text/css" /> -->
 
-<link rel="shortcut icon" href="/sigalibs/siga.ico" />
+<link rel="shortcut icon" href="${serverAndPort}/siga/sigalibs/siga.ico" />
 
 <script language="JavaScript"
 	src="${serverAndPort}/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>

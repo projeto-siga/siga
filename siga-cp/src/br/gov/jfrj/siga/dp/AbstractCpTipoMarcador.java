@@ -32,9 +32,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = "CP_TIPO_MARCADOR", schema = "CORPORATIVO")
-public abstract class AbstractCpTipoMarcador implements Serializable {
+public abstract class AbstractCpTipoMarcador extends Objeto implements Serializable {
 
 	@Id
 	@Column(name = "ID_TP_MARCADOR", nullable = false)

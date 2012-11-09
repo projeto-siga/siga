@@ -36,10 +36,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 //Essa anotação é necessária por causa do mappedBy em CpOcorrenciaFeriado que aponta pra cá 
 @MappedSuperclass
 @Table(name = "CORPORATIVO.CP_APLICACAO_FERIADO")
-public abstract class AbstractCpAplicacaoFeriado implements Serializable {
+public abstract class AbstractCpAplicacaoFeriado extends Objeto implements Serializable {
 
 	@Id
 	@Column(name = "ID_APLICACAO", nullable = false)

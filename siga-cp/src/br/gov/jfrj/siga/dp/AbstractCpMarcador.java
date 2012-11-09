@@ -33,8 +33,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @MappedSuperclass
-public abstract class AbstractCpMarcador implements Serializable {
+public abstract class AbstractCpMarcador extends Objeto implements Serializable {
 
 	@Id
 	@Column(name = "ID_MARCADOR", nullable = false)

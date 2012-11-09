@@ -34,9 +34,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = " CORPORATIVO.CP_FERIADO")
-public abstract class AbstractCpFeriado implements Serializable {
+public abstract class AbstractCpFeriado extends Objeto implements Serializable {
 
 	@Id
 	@Column(name = "ID_FERIADO", nullable = false)

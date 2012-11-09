@@ -37,9 +37,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
-public abstract class AbstractDpSubstituicao implements Serializable {
+public abstract class AbstractDpSubstituicao extends Objeto implements Serializable {
 
 	@Column(name = "DT_FIM_SUBST")
 	private Date dtFimSubst;

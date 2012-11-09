@@ -31,8 +31,10 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @MappedSuperclass
-public abstract class AbstractCpTipoMarca implements Serializable {
+public abstract class AbstractCpTipoMarca extends Objeto implements Serializable {
 
 	@Id
 	@Column(name = "ID_TP_MARCA", nullable = false)

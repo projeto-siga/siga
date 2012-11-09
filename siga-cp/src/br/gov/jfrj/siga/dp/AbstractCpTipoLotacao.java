@@ -26,9 +26,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = "CORPORATIVO.CP_TIPO_LOTACAO")
-public class AbstractCpTipoLotacao {
+public class AbstractCpTipoLotacao extends Objeto {
 	
 	@Id
 	@Column(name = "ID_TP_LOTACAO", nullable = false)

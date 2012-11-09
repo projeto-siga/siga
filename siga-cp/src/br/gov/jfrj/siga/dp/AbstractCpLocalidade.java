@@ -34,6 +34,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 
 /**
  * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
@@ -42,7 +44,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "CP_LOCALIDADE", schema = "CORPORATIVO")
-public abstract class AbstractCpLocalidade implements Serializable {
+public abstract class AbstractCpLocalidade extends Objeto implements Serializable {
 
 	@Id
 	@Column(name = "ID_LOCALIDADE", nullable = false)

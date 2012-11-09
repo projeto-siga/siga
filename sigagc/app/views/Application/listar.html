@@ -1,0 +1,317 @@
+#{extends 'main.html' /} #{set title:'Informações' /}
+
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2>Pesquisa de Conhecimento</h2>
+
+		<div class="gt-content-box gt-for-table">
+			<table class="gt-table">
+				<thead>
+					<tr>
+						<th rowspan="3" align="right">Número</th>
+						<th colspan="3" align="center">Tópico de Informação</th>
+						<th colspan="4" align="center">Situação</th>
+						<th rowspan="3">Tipo</th>
+						<th rowspan="3">Título</th>
+					</tr>
+					<tr>
+						<th rowspan="2" align="center">Data</th>
+						<th colspan="2" align="center">Autor</th>
+						<th rowspan="2" align="center">Data</th>
+						<th colspan="2" align="center">Responsável</th>
+						<th rowspan="2" align="center">Situação</th>
+					</tr>
+					<tr>
+						<th align="center">Lotação</th>
+						<th align="center">Pessoa</th>
+						<th align="center">Lotação</th>
+						<th align="center">Pessoa</th>
+					</tr>
+				</thead>
+
+				<tbody>
+
+					#{list items:informacoes, as:'i'}
+
+
+
+					<tr class="even">
+						<td width="11.5%" align="right"><a
+							href="@{Application.exibir(i.id)}">${i.id}</a></td>
+						<td width="5%" align="center">04/07/12</td>
+						<td width="4%" align="center"><span title="Sem Lotacao">SLOT</span>
+						</td>
+						<td width="4%" align="center"><span
+							title="ABIMAEL MESSIAS GONÇALVES SILVA">RJ43270</span>
+						</td>
+
+						<td width="5%" align="center">04/07/2012</td>
+						<td width="4%" align="center"><span
+							title="Seção de Sistemas Especializados">SESIE (extinta)</span>
+						</td>
+						<td width="4%" align="center"><span
+							title="ORLANDO GOMES DA SILVA">RJ13939</span>
+						</td>
+
+						<td width="10.5%" align="center">Em Elaboração</td>
+
+						<td width="6%">${i.tipo.nome}</td>
+
+						<td><a href="@{Application.exibir(i.id)}">${i.titulo}</a>
+						</td>
+					</tr>
+					#{/list}
+
+				</tbody>
+			</table>
+		</div>
+
+		<!-- </table></div> -->
+		<br>
+		<div class="gt-content-box gt-for-table">
+
+			<form id="listar" name="listar"
+				onsubmit="javascript: return limpaCampos()"
+				action="/sigaex/expediente/doc/listar.action" method="GET"
+				class="form100">
+				<table class="gt-form-table">
+					<colgroup>
+						<col style="width: 10em;">
+						<col>
+					</colgroup>
+					<input type="hidden" name="popup" value="">
+					<input type="hidden" name="propriedade" value="">
+					<input type="hidden" name="postback" value="1" id="postback">
+					<input type="hidden" name="apenasRefresh" value="0"
+						id="apenasRefresh">
+					<input type="hidden" name="p.offset" value="0" id="p_offset">
+					<tbody>
+						<tr class="header">
+							<td align="center" valign="top" colspan="4">Dados da
+								Informação</td>
+						</tr>
+						<tr>
+							<td>Situação:</td>
+							<td>#{select name:'filtro.situacao', items:marcadores,
+							labelProperty:'descrMarcador', valueProperty:'idMarcador',
+							value:filtro?.situacao?.idMarcador} #{option 0}Todas#{/option}
+							#{/select} &nbsp;&nbsp;&nbsp;&nbsp;Pessoa/Lotação: #{pessoaLotaSelecao
+								nomeSelPessoa:'marcado', nomeSelLotacao:'lotaMarcado',
+								value:informacao?.autor /}</td>
+						</tr>
+						<tr>
+							<td>Órgão:</td>
+							<td><select name="orgaoUsu" id="orgaoUsu">
+									<option value="0">[Todos]</option>
+									<option value="9999999999">ORGAO TESTE ZZ</option>
+									<option value="1">Seção Judiciária do Rio de Janeiro</option>
+									<option value="2">Seção Judiciária do Espírito Santo</option>
+									<option value="3">Tribunal Regional Federal - 2ª
+										Região</option>
+									<option value="4">Conselho da Justiça Federal</option>
+									<option value="200">Tribunal Regional Federal 3a
+										Região</option>
+									<option value="300">Seção Judiciária do Mato Groso do
+										Sul</option>
+									<option value="400">Seção Judiciária de São Paulo</option>
+
+
+							</select></td>
+						</tr>
+						<tr>
+							<td>Criação:</td>
+							<td>Data Inicial: <input type="text" name="dtDocString"
+								value="" id="dtDocString"
+								onblur="javascript:verifica_data(this,0);">
+								&nbsp;&nbsp;Data Final: <input type="text"
+								name="dtDocFinalString" value="" id="dtDocFinalString"
+								onblur="javascript:verifica_data(this,0);"></td>
+						</tr>
+
+						<tr id="trTipo" style="display: ">
+							<td>Tipo:</td>
+							<td><select name="idTipoFormaDoc" id="tipoForma"
+								onchange="javascript:alteraTipoDaForma();">
+									<option value="0">[Todos]</option>
+									<option value="1" selected="selected">Expediente</option>
+									<option value="2">Processo Administrativo</option>
+							</select>
+						</tr>
+						<tr>
+							<td>Ano de Emissão:</td>
+							<td><select name="anoEmissaoString" id="anoEmissaoString">
+									<option value="">[Todos]</option>
+									<option value="2012">2012</option>
+									<option value="2011">2011</option>
+									<option value="2010">2010</option>
+									<option value="2009">2009</option>
+									<option value="2008">2008</option>
+									<option value="2007">2007</option>
+									<option value="2006">2006</option>
+									<option value="2005">2005</option>
+									<option value="2004">2004</option>
+									<option value="2003">2003</option>
+									<option value="2002">2002</option>
+									<option value="2001">2001</option>
+									<option value="2000">2000</option>
+									<option value="1999">1999</option>
+									<option value="1998">1998</option>
+									<option value="1997">1997</option>
+									<option value="1996">1996</option>
+									<option value="1995">1995</option>
+									<option value="1994">1994</option>
+									<option value="1993">1993</option>
+									<option value="1992">1992</option>
+									<option value="1991">1991</option>
+									<option value="1990">1990</option>
+
+
+							</select> &nbsp;&nbsp;&nbsp;&nbsp;Número: <input type="text"
+								name="numExpediente" size="7" maxlength="6" value=""
+								id="numExpediente"></td>
+						</tr>
+
+						<tr>
+							<td>Autor:</td>
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'autor',
+								nomeSelLotacao:'lotaAutor', value:informacao?.autor /}</td>
+						</tr>
+						<tr>
+							<td>Cadastrante:</td>
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'cadastrante',
+								nomeSelLotacao:'lotaCadastrante', value:informacao?.autor /}</td>
+						</tr>
+						<tr>
+							<td>Responsável:</td>
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'responsavel',
+								nomeSelLotacao:'lotaResponsavel', value:informacao?.autor /}</td>
+						</tr>
+
+						<!-- A lista de par -->
+
+						<script type="text/javascript">
+
+self.retorna_classificacao = function(id, sigla, descricao) {
+    try {
+		newwindow_classificacao.close();
+    } catch (E) {
+    } finally {
+    }
+	document.getElementsByName('classificacaoSel.id')[0].value = id;
+	
+		try {
+			document.getElementsByName('classificacaoSel.descricao')[0].value = descricao;
+			document.getElementById('classificacaoSelSpan').innerHTML = descricao;
+		} catch (E) {
+		}
+	
+	document.getElementsByName('classificacaoSel.sigla')[0].value = sigla;
+	 
+}
+ 
+ 
+
+
+self.newwindow_classificacao = '';
+self.popitup_classificacao = function(sigla) {
+
+	//var url = 'http://localhost:8080/classificacao/buscar.action?propriedade=classificacao&sigla='+encodeURI(sigla) +'&=';
+	var url = '/sigaex//classificacao/buscar.action?propriedade=classificacao&sigla='+encodeURI(sigla) +'&=';
+	
+	if (!newwindow_classificacao.closed && newwindow_classificacao.location) {
+		newwindow_classificacao.location.href = url;
+	} else {
+	
+		var popW;
+		var popH;
+		
+		
+				 popW = screen.width*0.75;
+				 popH = screen.height*0.75;
+			
+			var winleft = (screen.width - popW) / 2;
+			var winUp = (screen.height - popH) / 2;	
+		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
+		newwindow_classificacao=window.open(url,'classificacao',winProp);
+	}
+	newwindow_classificacao.opener = self;
+	
+	if (window.focus) {
+		newwindow_classificacao.focus()
+	}
+	return false;
+}
+
+self.resposta_ajax_classificacao = function(response, d1, d2, d3) {
+	var sigla = document.getElementsByName('classificacaoSel.sigla')[0].value;
+    var data = response.split(';');
+    if (data[0] == '1')
+	    return retorna_classificacao(data[1], data[2], data[3]);
+    retorna_classificacao('', '', '');
+    
+    
+			return popitup_classificacao(sigla);
+		
+}
+
+self.ajax_classificacao = function() {
+	var sigla = document.getElementsByName('classificacaoSel.sigla')[0].value;
+	if (sigla == '') {
+		return retorna_classificacao('', '', '');
+	}
+	var url = '/sigaex//classificacao/selecionar.action?propriedade=classificacao'+'&=';
+	url = url + '&sigla=' + sigla;
+	PassAjaxResponseToFunction(url, 'resposta_ajax_classificacao', false);
+}
+
+</script>
+
+						<tr>
+							<td>Classificação:</td>
+							<td><input type="hidden" name="classificacaoSel.id" value=""
+								id="classificacaoSel_id"> <input type="hidden"
+								name="classificacaoSel.descricao" value=""
+								id="classificacaoSel_descricao"> <input type="hidden"
+								name="classificacaoSel.buscar" value=""
+								id="classificacaoSel_buscar"> <input type="hidden"
+								name="reqclassificacaoSel" value="" id="reqclassificacaoSel">
+								<input type="hidden" name="alterouSel" value="" id="alterouSel">
+								<input type="text" name="classificacaoSel.sigla" size="25"
+								value="" id="classificacaoSel_sigla"
+								onblur="javascript: ajax_classificacao();"
+								onkeypress="return handleEnter(this, event)"> <input
+								type="button" id="classificacaoSelButton" value="..."
+								onclick="javascript: popitup_classificacao('');" theme="simple">
+								<span id="classificacaoSelSpan"> </span></td>
+						</tr>
+						<tr>
+							<td class="tdLabel"><label for="descrDocumento"
+								class="label">Título:</label>
+							</td>
+							<td><input type="text" name="descrDocumento" size="80"
+								value="" id="descrDocumento"></td>
+						</tr>
+						<tr>
+							<td class="tdLabel"><label class="label" for="fullText">Conteudo:</label>
+							</td>
+							<td><input type="text" id="fullText" value="" size="80"
+								name="fullText"></td>
+						</tr>
+						<tr>
+							<td colspan="2"><input type="submit"
+								onclick="javascript:  if (isCarregando()) return false; carrega();"
+								class="gt-btn-medium gt-btn-left" value="Buscar"></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+	<br /> <input type="button" value="Novo"
+		onclick="javascript: window.location='@{Application.editar(0)}';"
+		class="gt-btn-medium gt-btn-right" />
+
+</div>
+
+

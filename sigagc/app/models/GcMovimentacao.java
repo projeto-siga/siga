@@ -33,7 +33,7 @@ public class GcMovimentacao extends GenericModel {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
-	public GcTipoMovimentacao tpMov;
+	public GcTipoMovimentacao tipo;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_INFORMACAO")
@@ -47,17 +47,13 @@ public class GcMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_MOVIMENTACAO_CANCELADORA")
 	public GcMovimentacao movCanceladora;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_PESSOA")
-	public DpPessoa autor;
-
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "ID_LOTACAO")
-	public DpLotacao lotacao;
+	public DpPessoa pessoa;
 
 	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_SERVICO")
-	public CpServico servico;
+	@JoinColumn(name = "ID_LOTACAO")
+	public DpLotacao lotacao;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_CLASSIFICACAO")
@@ -66,18 +62,34 @@ public class GcMovimentacao extends GenericModel {
 	@Column(name = "TITULO_MOVIMENTACAO")
 	public String titulo;
 
-	@Column(name = "DESC_MOVIMENTACAO")
-	public String desc;
-
-	@Column(name = "PUBLICACAO_DT_INI")
-	public Date publicacaoDtIni;
-
-	@Column(name = "PUBLICACAO_DT_FIM")
-	public Date publicacaoDtFim;
+	@Column(name = "CONTEUDO_MOVIMENTACAO")
+	public String conteudo;
 
 	@Column(name = "HIS_DT_INI")
 	public Date hisDtIni;
 
-	@Column(name = "HIS_IDC_INI")
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "HIS_IDC_INI")
 	public CpIdentidade hisIdcIni;
+
+	/**
+	 * verifica se uma movimentação está cancelada. Uma movimentação está
+	 * cancelada quando o seu atributo movimentacaoCanceladora está preenchido
+	 * com um código de movimentação de cancelamento.
+	 * 
+	 * @return Verdadeiro se a movimentação está cancelada e Falso caso
+	 *         contrário.
+	 */
+	public boolean isCancelada() {
+		return movCanceladora != null;
+	}
+
+	public boolean isCanceladora() {
+		switch ((int) this.tipo.id) {
+		case (int) GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE:
+		case (int) GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO:
+			return true;
+		}
+		return false;
+	}
 }

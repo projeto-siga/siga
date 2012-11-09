@@ -1,16 +1,100 @@
 #{extends 'main.html' /} #{set title:'Exibição de Tópico de
 Informação'/}
 
-<h1>${title}</h1>
-<br />
-Título: ${informacao?.titulo}
-<br />
+<div class="gt-bd" style="padding-bottom: 0px;">
+	<div class="gt-content">
 
-Conteúdo: ${informacao?.desc}
-<br />
+		<h2>TMP-432</h2>
 
-<br />
-<input type="button" value="Voltar"
-	onclick="javascript: window.location='@{Application.index()}';" />
-<input type="button" value="Editar"
-	onclick="javascript: window.location='@{Application.editar(informacao.id)}';" />
+		<h3 style="margin-bottom: 0px;">Em Elaboração [SESIE (extinta),
+			RJ13939]</h3>
+
+		<!-- Links para as ações de cada mobil -->
+		<p class="gt-table-action-list">
+			<!-- <a class="once"
+				href="/sigaex/expediente/mov/anexar.action?sigla=TMP-432"><img
+				src="${_base}/siga/css/famfamfam/icons/attach.png"
+				style="margin-right: 5px;">Anexar&nbsp;Arquivo</a> <span
+				class="gt-separator">|</span> <a class="once"
+				href="/sigaex/expediente/mov/vincularPapel.action?sigla=TMP-432"><img
+				src="${_base}/siga/css/famfamfam/icons/folder_user.png"
+				style="margin-right: 5px;">Definir&nbsp;Perfil</a> <span
+				class="gt-separator">|</span> <a class="once"
+				href="javascript:if (confirm('Esta operação criará um expediente com os mesmos dados do atual. Prosseguir?')) location.href='/sigaex/expediente/doc/duplicar.action?sigla=TMP-432';"><img
+				src="${_base}/siga/css/famfamfam/icons/arrow_divide.png"
+				style="margin-right: 5px;">Duplicar</a> <span class="gt-separator">|</span> -->
+			<a class="once" href="@{Application.editar(informacao.id)}"><img
+				src="${_base}/siga/css/famfamfam/icons/pencil.png"
+				style="margin-right: 5px;">Dar Ciência</a> <span
+				class="gt-separator">|</span> <a class="once"
+				href="@{Application.editar(informacao.id)}"><img
+				src="${_base}/siga/css/famfamfam/icons/bell.png"
+				style="margin-right: 5px;">Editar</a> <span class="gt-separator">|</span>
+			<a class="once"
+				href="javascript:if (confirm('Confirma a exclusão de tópico de informação?')) window.location='@{Application.remover(informacao?.id)}';"><img
+				src="${_base}/siga/css/famfamfam/icons/delete.png"
+				style="margin-right: 5px;">Excluir</a> <span class="gt-separator">|</span>
+			<a class="once"
+				href="/sigaex/expediente/doc/exibir.action?exibirCompleto=true&amp;sigla=TMP-432"><img
+				src="${_base}/siga/css/famfamfam/icons/eye.png"
+				style="margin-right: 5px;">Exibir&nbsp;Informações&nbsp;Completas</a>
+			<span class="gt-separator">|</span> <a class="once"
+				href="javascript:if (confirm('Confirma a finalização da elaboração deste tópico de informação?')) location.href='@{Application.fechar(informacao.id)}';"><img
+				src="${_base}/siga/css/famfamfam/icons/lock.png"
+				style="margin-right: 5px;">Finalizar Elaboração</a> <span
+				class="gt-separator">|</span> <a class="once"
+				href="javascript:popitup('/sigaex/expediente/doc/pdf.action?sigla=TMP-432&popup=true');"><img
+				src="${_base}/siga/css/famfamfam/icons/printer.png"
+				style="margin-right: 5px;">Visualizar&nbsp;Impressão</a> <span
+				class="gt-separator">|</span> <a class="once"
+				href="javascript:popitup('/sigaex/expediente/doc/pdf.action?sigla=TMP-432&popup=true');"><img
+				src="${_base}/siga/css/famfamfam/icons/eye.png"
+				style="margin-right: 5px;">Solicitar&nbsp;Revisão</a>
+		</p>
+	</div>
+</div>
+
+
+
+
+<div class="gt-bd gt-cols clearfix"
+	style="padding-top: 0px; margin-top: 25px;">
+	<div class="gt-content">
+		<!-- Dados do documento -->
+		<div class="gt-content-box" style="padding: 10px;">
+			<h2>${informacao?.titulo}</h2>
+
+			${informacao?.conteudo}
+		</div>
+	</div>
+
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Tópico de Informação:TMP-432</h3>
+			<p>
+				<b>Suporte:</b> Documento Eletrônico
+			</p>
+			<p>
+				<b>Nível de Acesso:</b> Limitado ao órgão
+			</p>
+			<p>
+				<b>Data:</b> 31/10/12
+			</p>
+			<p>
+				<b>De:</b> Orlando Gomes da Silva
+			</p>
+			<p>
+				<b>Para:</b> Seção de Sistemas Especializados
+			</p>
+			<p>
+				<b>Descrição:</b> Teste Exceção
+			</p>
+			<p>
+				<b>Classificação:</b> 00.01.01.01 - ORGANIZAÇÃO E FUNCIONAMENTO:
+				ADMINISTRAÇÃO JUDICIÁRIA: ORGANIZAÇÃO ADMINISTRATIVA: Modernização
+				Administrativa
+			</p>
+		</div>
+		<!-- / sidebar -->
+	</div>
+</div>

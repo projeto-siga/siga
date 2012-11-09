@@ -16,7 +16,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-public class GcDao extends CpDao {
+public class GcDao extends CpDao { 
 
 	public static GcDao getInstance() {
 		// Isso aqui está péssimo. Melhorar.

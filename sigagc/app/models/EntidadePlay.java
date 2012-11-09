@@ -1,9 +1,5 @@
 package models;
 
-import controllers.SrConfiguracaoBL;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 
@@ -49,13 +45,13 @@ public abstract class EntidadePlay extends GenericModel implements
 		return (Persistivel) findById(id);
 	}
 
-	public SrConfiguracao getConfiguracao(SrItemConfiguracao item,
-			SrServico servico, long idTipo) throws Exception {
-
-		SrConfiguracao conf = new SrConfiguracao(item, servico, JPA.em().find(
-				CpTipoConfiguracao.class, idTipo));
-
-		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
-	}
+//	public SrConfiguracao getConfiguracao(SrItemConfiguracao item,
+//			SrServico servico, long idTipo) throws Exception {
+//
+//		SrConfiguracao conf = new SrConfiguracao(item, servico, JPA.em().find(
+//				CpTipoConfiguracao.class, idTipo));
+//
+//		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
+//	}
 
 }

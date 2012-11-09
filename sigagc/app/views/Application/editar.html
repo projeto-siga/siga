@@ -1,13 +1,78 @@
 #{extends 'main.html' /} #{set title:'Edição de Tópico de Informação' /}
 
-<h1>${title}</h1>
-<br />
-<form action="@{Application.gravar}"><input type="hidden"
-	name="informacao.id" value="${informacao?.id}" /> <input type="text"
-	name="informacao.titulo" value="${informacao?.titulo}" /> <br />
-<textarea name="informacao.desc" cols="80" rows="5">${informacao?.desc}</textarea>
-<br />
-<input type="submit" value="Gravar" /> <input type="button"
-	value="Remover"
-	onclick="javascript: window.location='@{Application.remover(informacao?.id)}';" />
-</form>
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2>
+			<span id="codigoInf">NOVO</span>
+		</h2>
+
+		<div class="gt-form gt-content-box">
+			<form action="@{Application.gravar}">
+				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
+				<div class="gt-form-row gt-width-100">
+					<label>Tópico pai:</label> #{selecao tipo:'pessoa',
+					nome:'informacao.informacaoPai', value:informacao?.informacaoPai /}
+					<span style="color: red">#{error 'informacao.informacaoPai'
+						/}</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<div class="gt-left-col gt-width-25">
+						<label>Tipo</label>#{select name:'informacao.tipo',
+						items:tiposInformacao, labelProperty:'nome', valueProperty:'id',
+						value:informacao.tipo?.id} #{/select}
+					</div>
+					<div class="gt-left-col gt-width-25">
+						<label>Acesso</label><select name="nivelAcesso"
+							id="frm_nivelAcesso">
+							<option value="1" selected="selected">Público</option>
+							<option value="2">Limitado ao órgão</option>
+							<option value="3">Limitado a lotação</option>
+							<option value="4">Limitado a pessoa</option>
+						</select>
+					</div>
+					<div class="gt-left-col gt-width-25">
+						<label>Data Início</label><input type="text" name="dtDocString"
+							size="10" value="" id="frm_dtDocString"
+							onblur="javascript:verifica_data(this, true);">
+					</div>
+					<div class="gt-left-col gt-width-25">
+						<label>Data Fim</label><input type="text" name="dtDocString"
+							size="10" value="" id="frm_dtDocString"
+							onblur="javascript:verifica_data(this, true);">
+					</div>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Responsável</label> #{selecao tipo:'pessoa',
+					nome:'informacao.autor', value:informacao.autor /} <span
+						style="color: red">#{error 'informacao.autor' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Lotação Responsável</label> #{selecao tipo:'lotacao',
+					nome:'informacao.lotacao', value:informacao.lotacao /} <span
+						style="color: red">#{error 'informacao.lotacao' /}</span>
+				</div>
+
+				<div class="gt-form-row gt-width-100">
+					<label>Titulo</label> <input type="text" name="informacao.titulo"
+						value="${informacao?.titulo}" class="gt-form-text" /><span
+						style="color: red">#{error 'informacao.lotacao' /}</span>
+				</div>
+
+				<div class="gt-form-row gt-width-100">
+					<label>Texto</label>
+					<textarea name="informacao.desc" cols="80" rows="20"
+						class="gt-form-textarea">${informacao?.conteudo}</textarea>
+					<span style="color: red">#{error 'informacao.lotacao' /}</span>
+				</div>
+
+				<div class="gt-form-row gt-width-100">
+					<input type="submit" value="Gravar"
+						class="gt-btn-medium gt-btn-left" />
+					<p class="gt-cancel">
+						ou <a href="">cancelar alterações</a>
+					</p>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

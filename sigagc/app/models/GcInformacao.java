@@ -5,22 +5,21 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+
 import play.db.jpa.GenericModel;
-import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.Historico;
 
 @Entity
 @Table(name = "CP_INFOMACAO")
@@ -53,6 +52,29 @@ public class GcInformacao extends GenericModel {
 	@JoinColumn(name = "ID_LOTACAO")
 	public DpLotacao lotacao;
 
-	@Column(name = "DT_INI")
-	public Date dtIni;
+	@Column(name = "DT_ELABORACAO_FIM")
+	public Date elaboracaoFim;
+
+	@Column(name = "TITULO_TEMP")
+	public String titulo;
+
+	@Column(name = "CONTEUDO_TEMP1")
+	public String conteudo;
+
+	@Sort(type = SortType.NATURAL)
+	@OneToMany(mappedBy = "inf")
+	public java.util.SortedSet<GcMarca> marcas;
+
+	@OneToMany(mappedBy = "inf")
+	public Set<GcMovimentacao> movs;
+
+	@Column(name = "HIS_DT_INI")
+	public Date hisDtIni;
+
+	@Column(name = "HIS_DT_FIM")
+	public Date hisDtFim;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "HIS_IDC_INI")
+	public CpIdentidade hisIdcIni;
 }

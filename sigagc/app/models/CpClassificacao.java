@@ -35,7 +35,7 @@ public class CpClassificacao extends GenericModel implements Historico {
 
 	@ManyToOne(optional = false)
 	public CpTipoClassificacao tipo;
-	
+
 	@Column(name = "IDE_CLASSIFICACAO")
 	public String ide;
 
@@ -73,5 +73,55 @@ public class CpClassificacao extends GenericModel implements Historico {
 	@Override
 	public Long getIdInicial() {
 		return hisIdIni;
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public Long getHisIdIni() {
+		return hisIdIni;
+	}
+
+	@Override
+	public void setHisIdIni(Long hisIdIni) {
+		this.hisIdIni = hisIdIni;
+	}
+
+	@Override
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	@Override
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	@Override
+	public Date getHisDtFim() {
+		return hisDtFim;
+	}
+
+	@Override
+	public void setHisDtFim(Date hisDtFim) {
+		this.hisDtFim = hisDtFim;
+	}
+
+	@Override
+	public int getHisAtivo() {
+		return hisAtivo;
+	}
+
+	@Override
+	public void setHisAtivo(int hisAtivo) {
+		this.hisAtivo = hisAtivo;
 	}
 }

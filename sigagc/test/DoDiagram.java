@@ -1,3 +1,6 @@
+import play.Play;
+import javassist.ClassPool;
+import javassist.CtClass;
 import models.CpClassificacao;
 import models.CpTipoClassificacao;
 import models.GcConfiguracao;
@@ -13,6 +16,19 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class DoDiagram {
+	static {
+		// ClassPool pool = ClassPool.getDefault();
+		// CtClass cc;
+		// try {
+		// cc = pool.get("br.gov.jfrj.siga.model.Objeto");
+		// cc.setSuperclass(pool.get("play.db.jpa.GenericModel"));
+		// cc.writeFile();
+		//
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		System.out.println("*** Classe alterada.");
+	}
 
 	public static void testGeraDiagramaGC() throws Exception {
 		Diagram d = new Diagram();
@@ -22,7 +38,7 @@ public class DoDiagram {
 		d.addClass(DpPessoa.class, fI, false, false);
 		d.addClass(DpLotacao.class, fI, false, false);
 		d.addClass(CpOrgaoUsuario.class, fI, false, false);
-		d.addClass(CpMarca.class, fI, false, false);
+		d.addClass(CpMarca.class, fI, true, false);
 		d.addClass(CpConfiguracao.class, false, false, false);
 
 		d.addClass(GcInformacao.class, false);
@@ -35,6 +51,9 @@ public class DoDiagram {
 		d.addClass(GcConfiguracao.class, false);
 
 		d.createGraphML("sigagc.graphml", true, false);
+
+		GcMarca m = new GcMarca();
+		System.out.println(m.toString());
 	}
 
 	/**

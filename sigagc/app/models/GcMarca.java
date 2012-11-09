@@ -1,5 +1,9 @@
 package models;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
+
 import javax.persistence.ColumnResult;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -9,7 +13,6 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 
 import play.db.jpa.JPA;
-
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -33,19 +36,38 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		+ "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
 		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
 		+ "		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
-		+ "		AND id_tp_marca = 2" + "		GROUP BY id_marcador" + "	) c "
+		+ "		AND id_tp_marca = 3" + "		GROUP BY id_marcador" + "	) c "
 		+ "WHERE m.id_marcador = c.id_marcador", resultSetMapping = "colunas_contagem")
-public class GcMarca extends CpMarca {
+public class GcMarca extends CpMarca implements Comparable<GcMarca> {
+
+	final static public long MARCADOR_EM_ELABORACAO = 1;
+
+	final static public long MARCADOR_ATIVO = 2;
+
+	final static public long MARCADOR_CANCELADO = 3;
+
+	final static public long MARCADOR_NOVO = 4;
+
+	final static public long MARCADOR_POPULAR = 5;
+
+	final static public long MARCADOR_REVISAR = 6;
+
+	final static public long MARCADOR_TOMAR_CIENCIA = 7;
+
+	public static final long MARCADOR_COMO_GESTOR = 8;
+
+	public static final long MARCADOR_COMO_INTERESSADO = 9;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
-	public GcInformacao informacao;
-	
-	public GcMarca(){
-		
+	public GcInformacao inf;
+
+	public GcMarca() {
+
 	}
 
-	public GcMarca(Long idMarcador, DpPessoa pessoa, DpLotacao lota, GcInformacao inf) {
+	public GcMarca(Long idMarcador, DpPessoa pessoa, DpLotacao lota,
+			GcInformacao inf) {
 		if (pessoa != null)
 			setDpPessoaIni(pessoa.getPessoaInicial());
 		setDpLotacaoIni(lota.getLotacaoInicial());
@@ -56,10 +78,46 @@ public class GcMarca extends CpMarca {
 		return this.getCpMarcador().getDescrMarcador() + " ("
 				+ getDpLotacaoIni().getSigla() + ")";
 	}
-	
-	public GcMarca salvar(){
+
+	public GcMarca salvar() {
 		JPA.em().persist(this);
 		return this;
+	}
+
+	public int compareTo(GcMarca other) {
+		int i = getCpMarcador().getIdMarcador().compareTo(
+				other.getCpMarcador().getIdMarcador());
+		if (i != 0)
+			return i;
+		if (getDpLotacaoIni() == null) {
+			if (other.getDpLotacaoIni() == null)
+				i = 0;
+			else
+				i = -1;
+		} else {
+			if (other.getDpLotacaoIni() == null)
+				i = 1;
+			else
+				i = getDpLotacaoIni().getIdLotacao().compareTo(
+						other.getDpLotacaoIni().getIdLotacao());
+		}
+		if (i != 0)
+			return i;
+		if (getDpPessoaIni() == null) {
+			if (other.getDpPessoaIni() == null)
+				i = 0;
+			else
+				i = -1;
+		} else {
+			if (other.getDpPessoaIni() == null)
+				i = 1;
+			else
+				i = getDpPessoaIni().getIdPessoa().compareTo(
+						other.getDpPessoaIni().getIdPessoa());
+		}
+		if (i != 0)
+			return i;
+		return 0;
 	}
 
 }

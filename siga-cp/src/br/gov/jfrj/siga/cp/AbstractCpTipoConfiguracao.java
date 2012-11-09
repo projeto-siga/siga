@@ -37,8 +37,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @MappedSuperclass
-public abstract class AbstractCpTipoConfiguracao implements Serializable {
+public abstract class AbstractCpTipoConfiguracao extends Objeto implements Serializable {
 
 	@Id
 	@Column(name = "ID_TP_CONFIGURACAO", nullable = false)

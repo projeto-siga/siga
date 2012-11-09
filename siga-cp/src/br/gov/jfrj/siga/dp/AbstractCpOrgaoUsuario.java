@@ -30,8 +30,10 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @MappedSuperclass
-public abstract class AbstractCpOrgaoUsuario implements Serializable {
+public abstract class AbstractCpOrgaoUsuario extends Objeto implements Serializable {
 
 	@Column(name = "CGC_ORGAO_USU")
 	private Integer cgcOrgaoUsu;

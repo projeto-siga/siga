@@ -39,6 +39,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 /**
@@ -47,7 +48,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
  */
 @Entity
 @Table(name = "DP_CARGO", schema = "CORPORATIVO")
-public abstract class AbstractDpCargo implements Serializable {
+public abstract class AbstractDpCargo extends Objeto implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = SEQUENCE, generator = "generator")

@@ -37,6 +37,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 /**
@@ -46,7 +47,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
  */
 @Entity
 @Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
-public abstract class AbstractDpFuncaoConfianca implements Serializable {
+public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serializable {
 
 	@Column(name = "DT_FIM_FUNCAO_CONFIANCA")
 	@Desconsiderar

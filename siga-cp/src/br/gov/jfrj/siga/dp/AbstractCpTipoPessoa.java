@@ -23,9 +23,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = "CORPORATIVO.CP_TIPO_PESSOA")
-public abstract class AbstractCpTipoPessoa {
+public abstract class AbstractCpTipoPessoa extends Objeto{
 	
 	@Id
 	@Column(name = "ID_TP_PESSOA", nullable = false)

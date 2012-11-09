@@ -38,9 +38,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = "CORPORATIVO.CP_SERVICO")
-public abstract class AbstractCpServico implements Serializable {
+public abstract class AbstractCpServico extends Objeto implements Serializable {
 
 	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_SERVICO_SEQ")
 	@Id

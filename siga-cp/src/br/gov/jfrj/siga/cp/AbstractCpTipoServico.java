@@ -30,9 +30,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @MappedSuperclass
 @Table(name = "CORPORATIVO.CP_TIPO_SERVICO")
-public class AbstractCpTipoServico {
+public class AbstractCpTipoServico extends Objeto{
 
 	@Id
 	@Column(name = "ID_TP_SERVICO", nullable = false)

@@ -24,8 +24,10 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @MappedSuperclass
-public class AbstractCpTipoIdentidade {
+public class AbstractCpTipoIdentidade extends Objeto{
 
 	@Id
 	@Column(name = "ID_TP_IDENTIDADE ", nullable = false)

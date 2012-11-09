@@ -18,7 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.dp;
 
-public abstract class DpResponsavel{
+import br.gov.jfrj.siga.model.Objeto;
+
+public abstract class DpResponsavel extends Objeto{
 	abstract public String getSigla();
 
 	abstract public String getSiglaCompleta();

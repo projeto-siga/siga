@@ -35,6 +35,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
@@ -45,7 +47,7 @@ import javax.persistence.Table;
 @DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.STRING
 
 )
-public abstract class AbstractCPMarca implements Serializable {
+public abstract class AbstractCPMarca extends Objeto implements Serializable {
 
 	@Id
 	@SequenceGenerator(name="my_seq", sequenceName="CORPORATIVO.CP_MARCA_SEQ")

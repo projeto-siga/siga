@@ -36,9 +36,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = "CORPORATIVO.CP_PERSONALIZACAO")
-public abstract class AbstractCpPersonalizacao implements Serializable {
+public abstract class AbstractCpPersonalizacao extends Objeto implements Serializable {
 	
 	@SequenceGenerator(name = "generator", sequenceName = "CP_PERSONALIZACAO_SEQ")
 	@Id

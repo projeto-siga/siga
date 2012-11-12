@@ -14,6 +14,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.Where;
 
 import play.db.jpa.GenericModel;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -58,11 +59,12 @@ public class GcInformacao extends GenericModel {
 	@Column(name = "TITULO_TEMP")
 	public String titulo;
 
-	@Column(name = "CONTEUDO_TEMP1")
+	@Column(name = "CONTEUDO_TEMP")
 	public String conteudo;
 
 	@Sort(type = SortType.NATURAL)
 	@OneToMany(mappedBy = "inf")
+	@Where(clause="id_tp_marca = 3")
 	public java.util.SortedSet<GcMarca> marcas;
 
 	@OneToMany(mappedBy = "inf")

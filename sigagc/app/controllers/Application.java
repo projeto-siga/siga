@@ -10,7 +10,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import models.GcInformacao;
-import models.GcMovimentacao;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 import play.db.jpa.JPA;
@@ -19,9 +18,11 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import utils.GcBL;
 import utils.GcDao;
+import utils.GcInformacaoFiltro;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -122,24 +123,28 @@ public class Application extends Controller {
 	}
 
 	public static void index() {
-		listar();
+		listar(null);
 	}
 
-	public static void listar() {
-		if (GcTipoInformacao.find("nome_tipo_informacao = ?",
-				"Registro de Conhecimento").first() == null) {
-			GcTipoInformacao tinf = new GcTipoInformacao();
-			tinf.nome = "Registro de Conhecimento";
-			tinf.save();
+	public static void listar(GcInformacaoFiltro filtro) {
+		List<GcInformacao> lista = filtro.buscar();
 
-			// GcTipoInteracao tint = new GcTipoInteracao();
-			// tint.desc_tipo_interacao = "Registro de Conhecimento";
-			// tint.save();
+		// Montando o filtro...
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		List<CpMarcador> marcadores = JPA.em()
+				.createQuery("select distinct cpMarcador from GcMarca")
+				.getResultList();
 
-		}
-		List<GcInformacao> informacoes = GcInformacao.all().fetch();
-		render(informacoes);
+		if (filtro == null)
+			filtro = new GcInformacaoFiltro();
+
+		render(lista, tipos, marcadores, filtro);
 	}
+
+	// public static void listar() {
+	// List<GcInformacao> informacoes = GcInformacao.all().fetch();
+	// render(informacoes);
+	// }
 
 	public static void exibir(long id, boolean fContabilizar) {
 		GcInformacao informacao = GcInformacao.findById(id);
@@ -164,7 +169,7 @@ public class Application extends Controller {
 		exibir(id, false);
 	}
 
-	public static void gravar(GcInformacao informacao) {
+	public static void gravar(GcInformacao informacao) throws Exception {
 		if (informacao.autor == null) {
 			informacao.autor = (DpPessoa) renderArgs.get("cadastrante");
 			informacao.lotacao = informacao.autor.getLotacao();

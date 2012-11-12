@@ -39,25 +39,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		+ "		AND id_tp_marca = 3" + "		GROUP BY id_marcador" + "	) c "
 		+ "WHERE m.id_marcador = c.id_marcador", resultSetMapping = "colunas_contagem")
 public class GcMarca extends CpMarca implements Comparable<GcMarca> {
-
-	final static public long MARCADOR_EM_ELABORACAO = 1;
-
-	final static public long MARCADOR_ATIVO = 2;
-
-	final static public long MARCADOR_CANCELADO = 3;
-
-	final static public long MARCADOR_NOVO = 4;
-
-	final static public long MARCADOR_POPULAR = 5;
-
-	final static public long MARCADOR_REVISAR = 6;
-
-	final static public long MARCADOR_TOMAR_CIENCIA = 7;
-
-	public static final long MARCADOR_COMO_GESTOR = 8;
-
-	public static final long MARCADOR_COMO_INTERESSADO = 9;
-
+ 
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
 	public GcInformacao inf;

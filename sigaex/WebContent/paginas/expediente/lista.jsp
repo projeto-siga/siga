@@ -633,11 +633,11 @@ function limpaCampos()
 													list="estados" listKey="idMarcador"
 													listValue="descrMarcador" headerKey="0"
 													headerValue="[Todos]" theme="simple" />
-												&nbsp;&nbsp;&nbsp;&nbsp;<span style="float: right">Ordenação:
+												<span style="float: right; padding-left: 2em;">Ordenação:
 													<ww:select name="ordem"
 														list="#{0:'Data do documento', 1:'Data da situação', 2:'Ano e número', 3:'Data de finalização', 4:'Data de criação do temporário'}"
-														theme="simple" /> </span> &nbsp;&nbsp;&nbsp;&nbsp;<span
-												style="float: right">Visualização: <ww:select
+														theme="simple" /> </span> <span
+												style="float: right; padding-left: 2em;">Visualização: <ww:select
 														name="visualizacao" onchange="javascript:sbmt();"
 														list="#{0:'Normal', 1:'Última anotação'}" theme="simple" />
 											</span></td>

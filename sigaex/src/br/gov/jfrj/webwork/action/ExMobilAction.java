@@ -235,6 +235,8 @@ public class ExMobilAction extends
 
 	private Boolean fullSearchTambemSigilosos;
 
+	private Integer ordem;
+
 	public ExMobilAction() {
 
 		classificacaoSel = new ExClassificacaoSelecao();
@@ -353,8 +355,8 @@ public class ExMobilAction extends
 			long tempoIni = System.currentTimeMillis();
 			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
 					getTitular(), getLotaTitular()));
-			
-			if(getTamanho() > 100) {
+
+			if (getTamanho() > 100) {
 				setTamanho(100);
 				itemPagina = 100;
 			}
@@ -403,8 +405,11 @@ public class ExMobilAction extends
 		flt.setDescrDocumento(Texto
 				.removeAcentoMaiusculas(param("descrDocumento")));
 		String paramFullText = param("fullText");
-		if (paramFullText != null){				
-			paramFullText = paramFullText.trim();  /* retirando espaços em branco (inicio e final) e "" */ 
+		if (paramFullText != null) {
+			paramFullText = paramFullText.trim(); /*
+												 * retirando espaços em branco
+												 * (inicio e final) e ""
+												 */
 			paramFullText = paramFullText.replace("\"", "");
 			setFullText(paramFullText);
 		}
@@ -427,8 +432,7 @@ public class ExMobilAction extends
 		flt.setNumExtDoc(param("numExtDoc"));
 		flt.setNumAntigoDoc(param("numAntigoDoc"));
 		flt.setOrgaoExternoSelId(paramLong("cpOrgaoSel.id"));
-		flt
-				.setOrgaoExternoDestinatarioSelId(paramLong("orgaoExternoDestinatarioSel.id"));
+		flt.setOrgaoExternoDestinatarioSelId(paramLong("orgaoExternoDestinatarioSel.id"));
 		flt.setSubscritorSelId(paramLong("subscritorSel.id"));
 		if (flt.getSubscritorSelId() != null)
 			flt.setSubscritorSelId((daoPes(flt.getSubscritorSelId()))
@@ -462,6 +466,7 @@ public class ExMobilAction extends
 			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario()
 					.getIdOrgaoUsu());
 		flt.setIdMod(paramLong("idMod"));
+		flt.setOrdem(ordem);
 
 		return flt;
 
@@ -470,25 +475,25 @@ public class ExMobilAction extends
 	@Override
 	public Selecionavel selecionarPorNome(final ExMobilDaoFiltro flt)
 			throws AplicacaoException {
-		
+
 		final ExMobil docVia = new ExMobil();
-		
+
 		try {
 			/*
-			 * bruno.lacerda@avantiprima.com.br - 30/07/2012		  
-			 * Correcao problema id to load is required for loading. 
-			 * Verificando se o ID do documento não é nulo antes de pesquisar
+			 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Correcao problema
+			 * id to load is required for loading. Verificando se o ID do
+			 * documento não é nulo antes de pesquisar
 			 * 
-			 *  final ExDocumento docdoc = dao().consultar(flt.getIdDoc(),
-			 *			ExDocumento.class, false);	
-			 *	docVia.setExDocumento(docdoc);
-			 *	
-			 *	return docVia;
+			 * final ExDocumento docdoc = dao().consultar(flt.getIdDoc(),
+			 * ExDocumento.class, false); docVia.setExDocumento(docdoc);
+			 * 
+			 * return docVia;
 			 */
-			if ( flt != null && flt.getIdDoc() != null ) {
-				final ExDocumento docdoc = dao().consultar(flt.getIdDoc(), ExDocumento.class, false);
+			if (flt != null && flt.getIdDoc() != null) {
+				final ExDocumento docdoc = dao().consultar(flt.getIdDoc(),
+						ExDocumento.class, false);
 				docVia.setExDocumento(docdoc);
-			}			
+			}
 		} catch (final Exception e) {
 			throw new AplicacaoException(e.getMessage());
 		}
@@ -615,9 +620,11 @@ public class ExMobilAction extends
 					ExDocumento doque = dao().consultar(id, ExDocumento.class,
 							false);
 					if (nivel <= 20
-							|| Ex.getInstance().getComp().podeAcessarPorNivel(
-									getTitular(), getLotaTitular(),
-									doque.getMobilGeral())) {
+							|| Ex.getInstance()
+									.getComp()
+									.podeAcessarPorNivel(getTitular(),
+											getLotaTitular(),
+											doque.getMobilGeral())) {
 						if ((i >= offset) && (i < offset + itemPagina))
 							newShowedResults.add(o);
 						i++;
@@ -928,8 +935,11 @@ public class ExMobilAction extends
 			tipoForma = dao().consultar(getIdTipoFormaDoc(),
 					ExTipoFormaDoc.class, false);
 
-		return Ex.getInstance().getBL().obterFormasDocumento(getTitular(),
-				getLotaTitular(), null, tipoForma, false, false);
+		return Ex
+				.getInstance()
+				.getBL()
+				.obterFormasDocumento(getTitular(), getLotaTitular(), null,
+						tipoForma, false, false);
 	}
 
 	public List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {
@@ -943,8 +953,11 @@ public class ExMobilAction extends
 			forma = dao().consultar(this.getIdFormaDoc(),
 					ExFormaDocumento.class, false);
 
-		return Ex.getInstance().getBL().obterListaModelos(forma, false,
-				"Todos", false, getTitular(), getLotaTitular());
+		return Ex
+				.getInstance()
+				.getBL()
+				.obterListaModelos(forma, false, "Todos", false, getTitular(),
+						getLotaTitular());
 	}
 
 	public String getAnexarString() {
@@ -1402,6 +1415,14 @@ public class ExMobilAction extends
 
 	public void setDocsNaoIndexados(List<Long> docsNaoIndexados) {
 		this.docsNaoIndexados = docsNaoIndexados;
+	}
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
 	}
 
 }

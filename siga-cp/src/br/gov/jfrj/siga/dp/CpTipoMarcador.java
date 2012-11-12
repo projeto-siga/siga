@@ -22,13 +22,11 @@
  */
 package br.gov.jfrj.siga.dp;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "CP_TIPO_MARCADOR", schema = "CORPORATIVO")
 public class CpTipoMarcador extends AbstractCpTipoMarcador {
 
-	
 }

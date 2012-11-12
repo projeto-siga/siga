@@ -237,6 +237,16 @@ public class ExMobilAction extends
 
 	private Integer ordem;
 
+	private Integer visualizacao;
+
+	public Integer getVisualizacao() {
+		return visualizacao;
+	}
+
+	public void setVisualizacao(Integer visualizacao) {
+		this.visualizacao = visualizacao;
+	}
+
 	public ExMobilAction() {
 
 		classificacaoSel = new ExClassificacaoSelecao();
@@ -469,7 +479,6 @@ public class ExMobilAction extends
 		flt.setOrdem(ordem);
 
 		return flt;
-
 	}
 
 	@Override

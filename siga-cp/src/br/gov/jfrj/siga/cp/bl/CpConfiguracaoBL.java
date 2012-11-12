@@ -534,6 +534,10 @@ public class CpConfiguracaoBL {
 				cpIdentidade, idTpConf);
 	}
 
+	/**
+	 * Infere configurações óbvias. Por exemplo, se for informada a pessoa, a lotação, órgão etc. já serão preenchidos automaticamente.
+	 * @param cpConfiguracao
+	 */
 	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
 
 		if (cpConfiguracao == null)

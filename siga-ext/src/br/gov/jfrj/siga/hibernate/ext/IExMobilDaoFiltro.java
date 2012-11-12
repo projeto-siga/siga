@@ -149,8 +149,11 @@ public interface IExMobilDaoFiltro {
 
 	public abstract void setIdMod(Long idMod);
 
+	public abstract void setOrdem(Integer ordem);
+
+	public abstract Integer getOrdem();
+	
 	public abstract boolean buscarPorCamposMarca();
 
 	public abstract boolean buscarPorCamposDoc();
-
 }

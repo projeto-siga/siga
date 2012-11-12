@@ -22,7 +22,11 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -86,23 +90,41 @@ public class CpMarcador extends AbstractCpMarcador {
 	public static final long MARCADOR_COMO_GESTOR = 27;
 
 	public static final long MARCADOR_COMO_INTERESSADO = 28;
-	
+
 	final static public long MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA = 29;
-	
+
 	final static public long MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA = 30;
-	
+
 	final static public long MARCADOR_SOLICITACAO_A_RECEBER = 31;
-	
+
 	final static public long MARCADOR_SOLICITACAO_EM_ANDAMENTO = 32;
-	
+
 	final static public long MARCADOR_SOLICITACAO_FECHADO = 33;
-	
+
 	final static public long MARCADOR_SOLICITACAO_PENDENTE = 34;
-	
+
 	final static public long MARCADOR_SOLICITACAO_CANCELADO = 35;
+
+	final static public long MARCADOR_ATIVO = 36;
+
+	final static public long MARCADOR_NOVO = 37;
+
+	final static public long MARCADOR_POPULAR = 38;
+
+	final static public long MARCADOR_REVISAR = 39;
+
+	final static public long MARCADOR_TOMAR_CIENCIA = 40;
 
 	public CpMarcador() {
 		super();
+	}
+
+	public CpMarcador(Long idMarcador, String descrMarcador,
+			CpTipoMarcador cpTipoMarcador) {
+		super();
+		setIdMarcador(idMarcador);
+		setDescrMarcador(descrMarcador);
+		setCpTipoMarcador(cpTipoMarcador);
 	}
 
 }

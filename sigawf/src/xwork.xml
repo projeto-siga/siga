@@ -57,15 +57,27 @@
 		</action>
 		<action name="moveToken" method='moveToken'
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
-			<result type="redirect">/../siga/principal.action</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 		</action>
 		<action name="endProcessInstance" method='endProcessInstance'
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
-			<result type="redirect">/../siga/principal.action</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 		</action>
 		<action name="deleteProcessInstance" method='deleteProcessInstance'
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
-			<result type="redirect">/../siga/principal.action</result>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 		</action>		
 		
 		

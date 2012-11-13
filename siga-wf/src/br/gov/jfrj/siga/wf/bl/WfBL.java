@@ -424,4 +424,15 @@ public class WfBL extends CpBL {
 
 	}
 
+	/**
+	 * Encerra o processo da tarefa especificada.
+	 * @param idTI
+	 * @param dtFim
+	 * @throws AplicacaoException
+	 */
+	public void encerrarProcessInstanceDaTarefa(Long idTI, Date dtFim) throws AplicacaoException {
+		TaskInstance ti = WfContextBuilder.getJbpmContext().getJbpmContext().getTaskInstance(idTI);
+		encerrarProcessInstance(ti.getProcessInstance().getId(), dtFim);
+	}
+
 }

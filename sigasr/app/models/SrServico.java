@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Objeto;
 
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
@@ -27,7 +28,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_SERVICO")
-public class SrServico extends EntidadePlay implements SrSelecionavel,
+public class SrServico extends Objeto implements SrSelecionavel,
 		HistoricoAuditavel {
 
 	@Id

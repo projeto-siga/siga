@@ -58,7 +58,7 @@ public class SrMarca extends CpMarca {
 	}
 	
 	public SrMarca salvar(){
-		JPA.em().persist(this);
+		save();
 		return this;
 	}
 

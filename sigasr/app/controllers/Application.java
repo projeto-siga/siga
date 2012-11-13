@@ -1,49 +1,43 @@
 package controllers;
 
-import play.*;
-import play.data.binding.As;
-import play.db.jpa.Blob;
-import play.db.jpa.JPA;
-import play.mvc.*;
-
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.persistence.Query;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.io.IOUtils;
 import org.hibernate.Session;
 
+import models.SrAndamento;
+import models.SrArquivo;
+import models.SrConfiguracao;
+import models.SrEstado;
+import models.SrFormaAcompanhamento;
+import models.SrGravidade;
+import models.SrItemConfiguracao;
+import models.SrServico;
+import models.SrSolicitacao;
+import models.SrTendencia;
+import models.SrUrgencia;
+import play.db.jpa.JPA;
+import play.mvc.Before;
+import play.mvc.Controller;
+import play.mvc.Http;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-import models.*;
-
 public class Application extends Controller {
 
-	private static SrDao dao() {
-		return SrDao.getInstance();
+	static void prepararCpDao() {
+		Session playSession = (Session) JPA.em().getDelegate();
+		CpDao dao = CpDao.getInstance(playSession);
 	}
 
 	@Before
@@ -78,15 +72,21 @@ public class Application extends Controller {
 			if (IDs[3] != null && !IDs[3].equals(""))
 				renderArgs.put("lotaTitular",
 						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
-
-			int a = 0;
 			
-			dao();
+			prepararCpDao();
 
 		} catch (Exception e) {
 			redirect("http://localhost:8080/siga");
 		}
 
+	}
+
+	static DpPessoa getCadastrante() {
+		return (DpPessoa) renderArgs.get("cadastrante");
+	}
+
+	static DpLotacao getLotaTitular() {
+		return (DpLotacao) renderArgs.get("lotaTitular");
 	}
 
 	public static void index() {
@@ -95,10 +95,8 @@ public class Application extends Controller {
 
 	public static void gadget() {
 		Query query = JPA.em().createNamedQuery("contarSrMarcas");
-		query.setParameter("idPessoaIni",
-				((DpPessoa) renderArgs.get("cadastrante")).getIdInicial());
-		query.setParameter("idLotacaoIni",
-				((DpLotacao) renderArgs.get("lotaTitular")).getIdInicial());
+		query.setParameter("idPessoaIni", getCadastrante().getIdInicial());
+		query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
 	}
@@ -110,7 +108,7 @@ public class Application extends Controller {
 		else
 			solicitacao = SrSolicitacao.findById(id);
 
-		solicitacao.solicitante = (DpPessoa) renderArgs.get("cadastrante");
+		solicitacao.solicitante = getCadastrante();
 		formEditar(solicitacao);
 	}
 
@@ -155,8 +153,7 @@ public class Application extends Controller {
 
 		validarFormEditar(solicitacao);
 
-		solicitacao.salvar((DpPessoa) renderArgs.get("cadastrante"),
-				(DpLotacao) renderArgs.get("lotaTitular"));
+		solicitacao.salvar(getCadastrante(), getLotaTitular());
 
 		listar(null);
 
@@ -208,21 +205,17 @@ public class Application extends Controller {
 			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
 	}
 
-	public static void andamento(SrAndamento andamento) {
+	public static void andamento(SrAndamento andamento) throws Exception {
 
 		if (andamento.solicitacao != null
-				&& !andamento.solicitacao.podeMovimentar(
-						(DpLotacao) renderArgs.get("lotaTitular"),
-						(DpPessoa) renderArgs.get("cadastrante"))) {
+				&& !andamento.solicitacao.podeMovimentar(getLotaTitular(),
+						getCadastrante())) {
 			andamento.atendente = null;
 			andamento.lotaAtendente = null;
 		}
 
-		Sr.getInstance()
-				.getBL()
-				.darAndamento(andamento,
-						(DpPessoa) renderArgs.get("cadastrante"),
-						(DpLotacao) renderArgs.get("lotaTitular"));
+		// tem que fazer referência ao cadastrante e lotaTitular
+		andamento.salvar();
 
 		exibir(andamento.solicitacao.idSolicitacao);
 
@@ -230,11 +223,10 @@ public class Application extends Controller {
 
 	public static void desfazerUltimoAndamento(Long id) {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		Sr.getInstance()
-				.getBL()
-				.desfazerUltimoAndamento(sol,
-						(DpPessoa) renderArgs.get("cadastrante"),
-						(DpLotacao) renderArgs.get("lotaTitular"));
+		/*
+		 * Sr.getInstance() .getBL() .desfazerUltimoAndamento(sol,
+		 * getCadastrante(), getLotaTitular());
+		 */
 		exibir(id);
 	}
 
@@ -242,7 +234,7 @@ public class Application extends Controller {
 
 		SrSolicitacao pai = SrSolicitacao.findById(id);
 		SrSolicitacao solicitacao = new SrSolicitacao();
-		SrDao.getInstance().copiar(solicitacao, pai);
+		// SrDao.getInstance().copiar(solicitacao, pai);
 		solicitacao.idSolicitacao = null;
 		solicitacao.solicitacaoPai = pai;
 		solicitacao.numSequencia = pai.getNumeroProximaFilha();
@@ -318,11 +310,12 @@ public class Application extends Controller {
 	}
 
 	public static void gravarItem(SrItemConfiguracao item) {
-		try {
-			dao().salvar(item, "RJ13285");
-		} catch (AplicacaoException ae) {
-			int a = 0;
-		}
+		// try {
+		item.save();
+		// dao().salvar(item, "RJ13285");
+		// } catch (AplicacaoException ae) {
+		// int a = 0;
+		// }
 		listarItem();
 	}
 
@@ -385,12 +378,9 @@ public class Application extends Controller {
 	}
 
 	public static void desativarServico(Long id) {
-		try {
-			SrServico servico = SrServico.findById(id);
-			dao().finalizar(servico);
-		} catch (AplicacaoException ae) {
-			int a = 0;
-		}
+		SrServico servico = SrServico.findById(id);
+		servico.delete();
+
 		listarServico();
 	}
 

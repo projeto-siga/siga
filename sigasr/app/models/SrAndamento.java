@@ -188,9 +188,9 @@ public class SrAndamento extends GenericModel {
 
 	public SrAndamento salvar() throws Exception {
 
-		completarCampos();
+		checarECompletarCampos();
 
-		save();
+		super.save();
 
 		// O refresh é ecessário para o hibernate incluir o novo andamento na
 		// coleção de andamentos da solicitação
@@ -203,9 +203,13 @@ public class SrAndamento extends GenericModel {
 			notificar();
 
 		return this;
+
 	}
 
-	public void completarCampos() {
+	public void checarECompletarCampos() throws Exception {
+
+		if (cadastrante == null)
+			throw new Exception("Cadastrante não pode ser nulo");
 
 		dtReg = new Date();
 
@@ -226,6 +230,9 @@ public class SrAndamento extends GenericModel {
 				estado = anterior.estado;
 
 		}
+
+		if (atendente == null)
+			throw new Exception("Atendente não pode ser nulo");
 	}
 
 	public void notificar() {

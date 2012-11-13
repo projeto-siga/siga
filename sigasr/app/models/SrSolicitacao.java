@@ -3,17 +3,13 @@ package models;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,53 +25,24 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
-import controllers.SrCalendar;
-import controllers.SrDao;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpIdentidade;
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.Assemelhavel;
-import play.db.jpa.GenericModel;
-import play.db.jpa.JPA;
-import play.db.jpa.Model;
+import controllers.SrCalendar;
 
 @Entity
 @Table(name = "SR_SOLICITACAO")
-public class SrSolicitacao extends EntidadePlay {
+public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 	@Id
 	@GeneratedValue
 	@Column(name = "ID_SOLICITACAO")
 	public Long idSolicitacao;
-
-	@Column(name = "HIS_ID_INI")
-	private Long hisIdIni;
-
-	@Column(name = "HIS_DT_INI")
-	private Date hisDtIni;
-
-	@Column(name = "HIS_DT_FIM")
-	private Date hisDtFim;
-
-	@Column(name = "HIS_ATIVO")
-	private int hisAtivo;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_INI")
-	private CpIdentidade hisIdcIni;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_FIM")
-	private CpIdentidade hisIdcFim;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITANTE")
@@ -162,8 +129,8 @@ public class SrSolicitacao extends EntidadePlay {
 	public List<SrAtributo> atributoSet;
 
 	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	// O where abaixo teve de ser explícito porque os id_refs conflitam, e
-	// o Hibernate, por estranho que pareça, não consegue retornar os
+	// O where abaixo teve de ser explÃ­cito porque os id_refs conflitam, e
+	// o Hibernate, por estranho que pareÃ§a, nÃ£o consegue retornar os
 	// registros corretos
 	@Where(clause = "ID_TP_MARCA=2")
 	public Set<SrMarca> marcaSet;
@@ -225,84 +192,9 @@ public class SrSolicitacao extends EntidadePlay {
 		return cal.getTempoTranscorridoString();
 	}
 
-	public Long getHisIdIni() {
-		return hisIdIni;
-	}
-
-	public void setHisIdIni(Long hisIdIni) {
-		this.hisIdIni = hisIdIni;
-	}
-
-	public Date getHisDtIni() {
-		return hisDtIni;
-	}
-
-	public void setHisDtIni(Date hisDtIni) {
-		this.hisDtIni = hisDtIni;
-	}
-
-	public Date getHisDtFim() {
-		return hisDtFim;
-	}
-
-	public void setHisDtFim(Date hisDtFim) {
-		this.hisDtFim = hisDtFim;
-	}
-
-	public int getHisAtivo() {
-		return hisAtivo;
-	}
-
-	public void setHisAtivo(int hisAtivo) {
-		this.hisAtivo = hisAtivo;
-	}
-
-	public CpIdentidade getHisIdcIni() {
-		return hisIdcIni;
-	}
-
-	public void setHisIdcIni(CpIdentidade hisIdcIni) {
-		this.hisIdcIni = hisIdcIni;
-	}
-
-	public CpIdentidade getHisIdcFim() {
-		return hisIdcFim;
-	}
-
-	public void setHisIdcFim(CpIdentidade hisIdcFim) {
-		this.hisIdcFim = hisIdcFim;
-	}
-
-	@Override
-	public Long getIdInicial() {
-		return getHisIdIni();
-	}
-
-	@Override
-	public boolean equivale(Object other) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Long getId() {
-		return idSolicitacao;
-	}
-
-	@Override
-	public void setId(Long id) {
-		idSolicitacao = id;
-	}
-
-	// Necessário porque não há binder para arquivo
+	// NecessÃ¡rio porque nÃ£o hÃ¡ binder para arquivo
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
-	}
-
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public int getGUT() {
@@ -479,6 +371,16 @@ public class SrSolicitacao extends EntidadePlay {
 				&& houveAndamentosSemContarCriacao();
 	}
 
+	@Override
+	public SrSolicitacao save() {
+		try {
+			salvar();
+		} catch (Exception e) {
+			//
+		}
+		return this;
+	}
+
 	public SrSolicitacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
 			throws Exception {
 		this.cadastrante = cadastrante;
@@ -486,7 +388,30 @@ public class SrSolicitacao extends EntidadePlay {
 		return salvar();
 	}
 
-	public void completarCampos() {
+	public SrSolicitacao salvar() throws Exception {
+
+		checarECompletarCampos();
+
+		super.save();
+
+		if (!isPreAtendido()) {
+			if (fecharAoAbrir)
+				finalizarAtendimento();
+			else if (temPreAtendente())
+				iniciarPreAtendimento();
+			else
+				iniciarAtendimento();
+		}
+
+		return this;
+
+	}
+
+	public void checarECompletarCampos() throws Exception {
+
+		if (cadastrante == null)
+			throw new Exception("Cadastrante nÃ£o pode ser nulo");
+
 		dtReg = new Date();
 
 		if (lotaCadastrante == null)
@@ -503,30 +428,6 @@ public class SrSolicitacao extends EntidadePlay {
 
 		if (numSolicitacao == null && solicitacaoPai == null)
 			numSolicitacao = buscarProximoNumero();
-	}
-
-	public void nova() throws Exception {
-
-		completarCampos();
-
-		super.salvar();
-
-		if (fecharAoAbrir)
-			finalizarAtendimento();
-		else if (temPreAtendente())
-			iniciarPreAtendimento();
-		else
-			iniciarAtendimento();
-	}
-
-	public SrSolicitacao salvar() throws Exception {
-
-		if (idSolicitacao == null)
-			nova();
-		else
-			super.salvar();
-
-		return this;
 	}
 
 	public void iniciarPreAtendimento() {
@@ -549,17 +450,19 @@ public class SrSolicitacao extends EntidadePlay {
 	public void darAndamento(SrEstado estado, String descricao,
 			DpLotacao lotaAtendente) throws Exception {
 
-		darAndamento(estado, descricao, null, lotaAtendente, cadastrante,
-				lotaCadastrante);
-
+		darAndamento(estado, descricao, null, lotaAtendente, this.cadastrante,
+				this.lotaCadastrante);
 	}
 
 	public void darAndamento(SrEstado estado, String descricao,
 			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
 			DpLotacao lotaCadastrante) throws Exception {
 
-		new SrAndamento(estado, descricao, atendente,
-				lotaAtendente, cadastrante, lotaCadastrante).salvar();
+		// O refresh é necessário para o hibernate incluir o novo andamento na
+		// coleção de andamentos da solicitação
+		SrAndamento novoAndamento = new SrAndamento(estado, descricao,
+				atendente, lotaAtendente, cadastrante, lotaCadastrante)
+				.salvar();
 
 	}
 
@@ -598,6 +501,16 @@ public class SrSolicitacao extends EntidadePlay {
 		if (marcaSet != null)
 			for (SrMarca marca : marcaSet)
 				JPA.em().remove(marca);
+	}
+
+	@Override
+	public Long getId() {
+		return idSolicitacao;
+	}
+
+	@Override
+	public void setId(Long id) {
+		setId(id);
 	}
 
 }

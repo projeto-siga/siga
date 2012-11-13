@@ -19,6 +19,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
+import br.gov.jfrj.siga.model.Objeto;
 
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
@@ -27,7 +28,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO")
-public class SrItemConfiguracao extends EntidadePlay implements SrSelecionavel {
+public class SrItemConfiguracao extends Objeto implements SrSelecionavel {
 
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
 
@@ -98,63 +99,6 @@ public class SrItemConfiguracao extends EntidadePlay implements SrSelecionavel {
 
 	public void setDescricao(String descricao) {
 		this.tituloItemConfiguracao = descricao;
-	}
-
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Long getIdInicial() {
-		return hisIdIni;
-	}
-
-	@Override
-	public boolean equivale(Object other) {
-		return false;
-	}
-
-	@Override
-	public Long getHisIdIni() {
-		return hisIdIni;
-	}
-
-	@Override
-	public void setHisIdIni(Long hisIdIni) {
-		this.hisIdIni = hisIdIni;
-	}
-
-	@Override
-	public Date getHisDtIni() {
-		return hisDtIni;
-	}
-
-	@Override
-	public void setHisDtIni(Date hisDtIni) {
-		this.hisDtIni = hisDtIni;
-	}
-
-	@Override
-	public Date getHisDtFim() {
-		return hisDtFim;
-	}
-
-	@Override
-	public void setHisDtFim(Date hisDtFim) {
-		this.hisDtFim = hisDtFim;
-	}
-
-	@Override
-	public int getHisAtivo() {
-		return getHisDtFim() != null ? 1 : 0;
-	}
-
-	@Override
-	public void setHisAtivo(int hisAtivo) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

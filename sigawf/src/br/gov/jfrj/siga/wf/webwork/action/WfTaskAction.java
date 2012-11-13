@@ -18,23 +18,18 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.webwork.action;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jbpm.context.def.VariableAccess;
-import org.jbpm.graph.def.Node;
 import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.Comment;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
-import org.jbpm.graph.exe.Token;
 import org.jbpm.logging.log.ProcessLog;
 import org.jbpm.taskmgmt.exe.PooledActor;
 import org.jbpm.taskmgmt.exe.TaskInstance;
@@ -928,37 +923,6 @@ public class WfTaskAction extends WfSigaActionSupport {
 
 	public void setConhecimento(String conhecimento) {
 		this.conhecimento = conhecimento;
-	}
-
-	public String moveToken() throws Exception {
-		Long idToken = paramLong("idToken");
-		Long idNode = paramLong("idNode");
-		Token t = WfContextBuilder.getJbpmContext().getJbpmContext()
-				.getToken(idToken);
-		if (idNode == 0) {
-			t.signal();
-			return Action.SUCCESS;
-		}
-		List<Node> nodes = t.getProcessInstance().getProcessDefinition()
-				.getNodes();
-		for (Node n : nodes) {
-			if (idNode.equals(n.getId())) {
-				t.setNode(n);
-				return Action.SUCCESS;
-			}
-		}
-		throw new AplicacaoException("Nenhuma ação realizada");
-	}
-
-	public String endProcessInstance() throws Exception {
-		Wf.getInstance().getBL()
-				.encerrarProcessInstance(paramLong("idPI"), paramDate("dtFim"));
-		return Action.SUCCESS;
-	}
-
-	public String deleteProcessInstance() {
-		Wf.getInstance().getBL().excluirProcessInstance(paramLong("idPI"));
-		return Action.SUCCESS;
 	}
 
 	public WfTaskVO getTask() {

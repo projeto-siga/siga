@@ -49,18 +49,38 @@
 				task?tiId=${tiId}
 			</result>
 		</action>
+		
+		<!-- Administracao de WF -->
+		<action name="administrar" method='administrar'
+			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
+			<result>/WEB-INF/page/workflow/administrar.jsp</result>
+		</action>
 		<action name="moveToken" method='moveToken'
-			class='br.gov.jfrj.siga.wf.webwork.action.WfTaskAction'>
-			<result type="redirect">/../siga/principal.action</result>
+			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 		</action>
 		<action name="endProcessInstance" method='endProcessInstance'
-			class='br.gov.jfrj.siga.wf.webwork.action.WfTaskAction'>
-			<result type="redirect">/../siga/principal.action</result>
+			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 		</action>
 		<action name="deleteProcessInstance" method='deleteProcessInstance'
-			class='br.gov.jfrj.siga.wf.webwork.action.WfTaskAction'>
-			<result type="redirect">/../siga/principal.action</result>
+			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
+			<result type="redirect-action">
+				<param name="actionName">principal</param>
+				<param name="namespace=">/</param>
+				<param name="mensagem">${mensagem}</param>
+			</result>
 		</action>		
+		
+		
 		<action name="executeTask" method='executeTask'
 			class='br.gov.jfrj.siga.wf.webwork.action.WfTaskAction'>
 			<result type="redirect">../siga/principal.action</result>

@@ -5,10 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
-                
-		<mod:grupo>
-				<mod:memo titulo="<b>Ementa</b>" var="eme" colunas="60" linhas="3" />
-		</mod:grupo>
 		<br>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo
@@ -19,7 +15,6 @@
 			</mod:grupo>
 		</c:if>
 		<br></br>
-
 	</mod:entrevista>
 	
 	<mod:documento>
@@ -59,14 +54,16 @@
 				<td width="100%">
 					<table width="100%">
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">Portaria N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
+							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">PORTARIA N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
 						</tr>
 					</table>
 				</td>
 			</tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
-
+        <br>
+		<p align="center" style="font-family:Arial;font-size:11pt;">
+		<!-- INICIO NUMERO --><span style="font-weight: bold;">PORTARIA N&ordm; ${doc.codigo}<!-- FIM NUMERO --> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p>
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
@@ -74,18 +71,13 @@
 		<mod:letra tamanho="${tl}">
 		    <!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
-			<br>
-			<table border="0"  bgcolor="#FFFFFF" cellpadding="5" width="40%"style="font-size:10" align="right" >
-	  		   <tr>
-  				   <td colspan="2" align="justify" style="font-size:10">${eme}</td>
-  			   </tr>
-  			</table>
-			
 			<span style="font-size: ${tl};line-height: 1px"> ${texto_pte} </span>
 			<!-- FIM CORPO -->
 			<p align="center"><!-- INICIO FECHO -->PUBLIQUE-SE. REGISTRE-SE. CUMPRA-SE.<!-- FIM FECHO --><br/><br/><br></p>
+			<!-- INICIO ASSINATURA -->
+			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />   
+			<!-- FIM ASSINATURA -->
 			<!-- FIM MIOLO -->
-			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp?formatarOrgao=sim" />
 		</mod:letra>
 		/${doc.cadastrante.siglaPessoa}</br>
 		<!-- INICIO PRIMEIRO RODAPE

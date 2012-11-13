@@ -41,6 +41,7 @@ submitOk = function() {
 					<c:set var="titulo2" value=""></c:set>
 					<c:set var="titulo3" value=""></c:set>
 					<c:set var="ordem" value="0"/>
+					<c:set var="visualizacao" value="0"/>
 					<c:choose>
 						<c:when test="${listEstado[0]==1}">
 							<c:set var="titulo1"
@@ -55,6 +56,7 @@ submitOk = function() {
 							<c:set var="titulo2"
 								value="Documentos que já foram assinados ou tiveram a assinatura manual registrada. Também contém os documentos que já foram recebidos pelo usuário ${titular.nomePessoa}."></c:set>
 							<c:set var="titulo3" value="${titulo1}"></c:set>
+							<c:set var="visualizacao" value="1"/>
 						</c:when>
 						<c:when test="${listEstado[0]==3}">
 							<c:set var="titulo1"
@@ -112,6 +114,7 @@ submitOk = function() {
 								<ww:param name="orgaoUsu">0</ww:param>
 								<ww:param name="idTipoFormaDoc">${idTpFormaDoc}</ww:param>
 								<ww:param name="ordem">${ordem}</ww:param>
+								<ww:param name="visualizacao">${visualizacao}</ww:param>
 							</ww:url> <siga:monolink titulo="${titulo1}" texto="${listEstado[1]}"
 								href="%{url}" />
 						<td align="right" class="count"><ww:url id="url"
@@ -121,6 +124,7 @@ submitOk = function() {
 								<ww:param name="orgaoUsu">0</ww:param>
 								<ww:param name="idTipoFormaDoc">${idTpFormaDoc}</ww:param>
 								<ww:param name="ordem">${ordem}</ww:param>
+								<ww:param name="visualizacao">${visualizacao}</ww:param>
 							</ww:url> <siga:monolink titulo="${titulo2}" texto="${listEstado[2]}"
 								href="%{url}" />
 						<td align="right" class="count"><ww:url id="url"
@@ -130,6 +134,7 @@ submitOk = function() {
 								<ww:param name="orgaoUsu">0</ww:param>
 								<ww:param name="idTipoFormaDoc">${idTpFormaDoc}</ww:param>
 								<ww:param name="ordem">${ordem}</ww:param>
+								<ww:param name="visualizacao">${visualizacao}</ww:param>
 							</ww:url> <siga:monolink titulo="${titulo3}" texto="${listEstado[3]}"
 								href="%{url}" /> <%--<ww:a href="%{url}" title="${titulo1}">${listEstado[3]}</ww:a>--%>
 						</td>

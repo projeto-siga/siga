@@ -459,6 +459,9 @@ function limpaCampos()
 									<th colspan="4" align="center">Situação</th>
 									<th rowspan="3">Tipo</th>
 									<th rowspan="3">Descrição</th>
+									<c:if test="${visualizacao == 1}"> 
+										<th rowspan="3">Última Anotação</th>
+									</c:if>
 								</tr>
 								<tr>
 									<th rowspan="2" align="center">Data</th>
@@ -566,9 +569,16 @@ function limpaCampos()
 											</c:if>
 											<td class="${estilo}" width="44%">${f:descricaoConfidencial(documento[0],
 												lotaTitular)}</td>
+											<c:if test="${visualizacao == 1}"> 
+												<td class="${estilo}" width="44%">${f:anotacaoConfidencial(documento[1],
+													lotaTitular)}</td>
+											</c:if>
 										</c:when>
 										<c:otherwise>
 											<td>[Descrição Inacessível]</td>
+											<c:if test="${visualizacao == 1}"> 
+												<td>[Anotação Inacessível]</td>
+											</c:if>
 										</c:otherwise>
 									</c:choose>
 								</tr>
@@ -623,34 +633,35 @@ function limpaCampos()
 													list="estados" listKey="idMarcador"
 													listValue="descrMarcador" headerKey="0"
 													headerValue="[Todos]" theme="simple" />
-												&nbsp;&nbsp;&nbsp;&nbsp;<span style="float:right">Ordenação: <ww:select name="ordem"
-													list="#{0:'Data do documento', 1:'Data da situação', 2:'Ano e número', 3:'Data de finalização', 4:'Data de criação do temporário'}"
-													theme="simple" /></span></td>
+												<span style="float: right; padding-left: 2em;">Ordenação:
+													<ww:select name="ordem"
+														list="#{0:'Data do documento', 1:'Data da situação', 2:'Ano e número', 3:'Data de finalização', 4:'Data de criação do temporário'}"
+														theme="simple" /> </span> <span
+												style="float: right; padding-left: 2em;">Visualização: <ww:select
+														name="visualizacao" onchange="javascript:sbmt();"
+														list="#{0:'Normal', 1:'Última anotação'}" theme="simple" />
+											</span></td>
 										</tr>
 										<tr>
-											<td>Pessoa/Lotação:</td><td>
-											<ww:select name="ultMovTipoResp" list="listaTipoResp"
-												theme="simple" onchange="javascript:alteraAtendente();" />
-											<ww:if test="ultMovTipoResp == 1">
-												<span id="divUltMovResp" style="display: "><siga:selecao
-														propriedade="ultMovResp" tema="simple"
-														paramList="buscarFechadas=true" />
-												</span>
-												<span id="divUltMovLotaResp" style="display: none"><siga:selecao
-														propriedade="ultMovLotaResp" tema="simple"
-														paramList="buscarFechadas=true" />
-												</span>
-											</ww:if>
-											<ww:elseif test="ultMovTipoResp == 2">
-												<span id="divUltMovResp" style="display: none"><siga:selecao
-														propriedade="ultMovResp" tema="simple"
-														paramList="buscarFechadas=true" />
-												</span>
-												<span id="divUltMovLotaResp" style="display: "><siga:selecao
-														propriedade="ultMovLotaResp" tema="simple"
-														paramList="buscarFechadas=true" />
-												</span>
-											</ww:elseif>
+											<td>Pessoa/Lotação:</td>
+											<td><ww:select name="ultMovTipoResp"
+													list="listaTipoResp" theme="simple"
+													onchange="javascript:alteraAtendente();" /> <ww:if
+													test="ultMovTipoResp == 1">
+													<span id="divUltMovResp" style="display: "><siga:selecao
+															propriedade="ultMovResp" tema="simple"
+															paramList="buscarFechadas=true" /> </span>
+													<span id="divUltMovLotaResp" style="display: none"><siga:selecao
+															propriedade="ultMovLotaResp" tema="simple"
+															paramList="buscarFechadas=true" /> </span>
+												</ww:if> <ww:elseif test="ultMovTipoResp == 2">
+													<span id="divUltMovResp" style="display: none"><siga:selecao
+															propriedade="ultMovResp" tema="simple"
+															paramList="buscarFechadas=true" /> </span>
+													<span id="divUltMovLotaResp" style="display: "><siga:selecao
+															propriedade="ultMovLotaResp" tema="simple"
+															paramList="buscarFechadas=true" /> </span>
+												</ww:elseif>
 											</td>
 										</tr>
 										<tr>
@@ -711,8 +722,7 @@ function limpaCampos()
 													list="listaAnos" headerKey="" headerValue="[Todos]"
 													theme="simple" /> &nbsp;&nbsp;&nbsp;&nbsp;Número: <ww:textfield
 													size="7" label="" name="numExpediente" maxlength="6"
-													theme="simple" />
-												<%--
+													theme="simple" /> <%--
 			&nbsp;&nbsp;&nbsp;&nbsp;Via: <ww:select list="listaVias" label="Via"
 				name="numVia" headerKey="0" headerValue="[Todas]" theme="simple" />--%>
 											</td>

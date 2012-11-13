@@ -57,6 +57,19 @@
 			else ($('#tableAssinados').html(''));		
 		}		
 
+		/**
+		 * Valida se o anexo foi selecionado ao clicar em OK
+		 */
+		function validaSelecaoAnexo( form ) {
+			var result = true;
+			var arquivo = form.arquivo;
+			if ( arquivo == null || arquivo.value == '' ) {
+				alert("O arquivo a ser anexado não foi selecionado!");
+				result = false;
+			}
+			return result;
+		}	
+
 	</script>
 	
 	<ww:url id="urlExibir" action="exibir" namespace="/expediente/doc">
@@ -113,7 +126,7 @@
 							</tr>
 							<tr>
 								<td colspan="2"><input type="submit" value="Ok"
-									class="gt-btn-medium gt-btn-left" /> 
+									class="gt-btn-medium gt-btn-left" onclick="javascript: return validaSelecaoAnexo( this.form );" /> 
 									<input  type="button" value="Voltar" onclick="javascript:window.location.href='${urlExibir}'"
 									        class="gt-btn-medium gt-btn-left" />	
 									<br/>        								

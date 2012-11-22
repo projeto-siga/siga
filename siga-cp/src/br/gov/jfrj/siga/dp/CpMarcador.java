@@ -114,6 +114,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_REVISAR = 39;
 
 	final static public long MARCADOR_TOMAR_CIENCIA = 40;
+	
+	final static public long MARCADOR_SOLICITACAO_PRE_ATENDIMENTO = 41;
 
 	public CpMarcador() {
 		super();

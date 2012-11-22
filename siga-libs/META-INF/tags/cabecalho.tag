@@ -94,7 +94,9 @@ ${meta}
 		});
 	});
 </script>
-
+<c:if test="${not empty titular}">
+	${f:getComplementoHead(cadastrante.orgaoUsuario)}
+</c:if>
 </head>
 
 <body onload="${onLoad}">

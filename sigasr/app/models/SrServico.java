@@ -237,7 +237,7 @@ public class SrServico extends Objeto implements SrSelecionavel,
 			return false;
 		if (this.equals(outroServico))
 			return true;
-		return outroServico.getSigla().contains(
+		return outroServico.getSigla().startsWith(
 				getSigla().substring(0, getSigla().indexOf(".00") + 1));
 	}
 

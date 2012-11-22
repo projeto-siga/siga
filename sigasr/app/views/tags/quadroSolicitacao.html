@@ -16,7 +16,13 @@ _solicitacoes.add(_solicitacao); } }%
 					<p>
 						<i>${sol.solicitante.descricaoIniciaisMaiusculas},
 							${sol.lotaSolicitante.siglaLotacao}#{if
-							sol.local}&nbsp;(${sol.local})#{/if}, <i>Tel.: 2510-8793</i>
+							sol.local}&nbsp;(${sol.local})#{/if}, Tel.: 2510-8793</i>
+						<br/>
+						#{if _ocultarCodigo && sol.solicitante != sol.cadastrante}
+						<i>Cadastrado por ${sol.cadastrante.descricaoIniciaisMaiusculas},
+							${sol.lotaCadastrante.siglaLotacao}</i>
+						#{/if}
+					</p>
 				</td>
 				<td style="padding-left: 60px">
 					<!-- Categories Sub Table -->
@@ -25,16 +31,18 @@ _solicitacoes.add(_solicitacao); } }%
 							<th>Aberto:</th>
 							<td>${sol.dtRegString}</td>
 						</tr>
+						<tr>
+							<th>Situação:</th>
+							<td>${sol.situacao}</td>
+							</td>
+						</tr>
 						#{if (sol.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
 						#{elseif (sol.GUT > 60)} #{set priorColor:'color: orange' /} #{/elseif}
 						#{else} #{set priorColor:'' /} #{/else}
 						<tr >
 							<th style="color: ${priorColor}">Prioridade:</th> 
-							<td width="60%" style="${priorColor}" >${sol.GUTPercent}</td>
-						</tr>
-						<tr>
-							<th>Situação:</th>
-							<td>${sol.situacao}</td>
+							<td width="60%" style="${priorColor}" >${sol.GUTPercent}
+							#{if _ocultarCodigo} &nbsp;&nbsp;${sol.GUTString}#{/if}
 							</td>
 						</tr>
 						#{if sol.arquivo}

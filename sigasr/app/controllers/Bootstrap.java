@@ -31,10 +31,13 @@ public class Bootstrap extends Job {
 						"Sistemas de gestão documental").save();
 
 				gePat = new SrItemConfiguracao("01.02.00.00",
-						"Sistemas de gestão patrimonial").save();
+						"Sistemas de gestão pcabo yatrimonial").save();
 
 				SrServico soft = new SrServico("01.00",
 						"Serviços típicos de software").save();
+				
+				SrServico manutSoft = new SrServico("01.01",
+				"Manutenção de software").save();
 
 				SrServico hard = new SrServico("02.00",
 						"Serviços típicos de hardware").save();
@@ -42,7 +45,9 @@ public class Bootstrap extends Job {
 				SrConfiguracao design = new SrConfiguracao();
 				design.itemConfiguracao = softwares;
 				design.servico = soft;
-				design.posAtendente = JPA.em().find(DpLotacao.class, 5053L);
+				design.preAtendente = JPA.em().find(DpLotacao.class, 5046L); // SEGEP
+				design.atendente = JPA.em().find(DpLotacao.class, 4961L); // CSIS
+				design.posAtendente = JPA.em().find(DpLotacao.class, 4457L); // STI
 				design.setCpTipoConfiguracao(JPA.em().find(
 						CpTipoConfiguracao.class,
 						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));

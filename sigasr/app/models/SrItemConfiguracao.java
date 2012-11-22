@@ -162,7 +162,7 @@ public class SrItemConfiguracao extends Objeto implements SrSelecionavel {
 			return false;
 		if (this.equals(outroItem))
 			return true;
-		return outroItem.getSigla().contains(
+		return outroItem.getSigla().startsWith(
 				getSigla().substring(0, getSigla().indexOf(".00") + 1));
 	}
 

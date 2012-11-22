@@ -7,18 +7,31 @@
 		#{quadroSolicitacao solicitacao:solicitacao, ocultarCodigo:true /}
 		<br/>
 		<p class="gt-table-action-list">
-				#{if criarFilha}<a class="once" href="@{Application.criarFilha(solicitacao.idSolicitacao)}">Criar solicitação filha</a>
+				#{if criarFilha}<a class="once" href="@{Application.criarFilha(solicitacao.idSolicitacao)}">
+				<img src="http://localhost:8080/siga/css/famfamfam/icons/arrow_divide.png" style="margin-right:5px;">
+				Criar solicitação filha
+				</a>
 				&nbsp;&nbsp;&nbsp;#{/if}
-				<a class="once" href="@{Application.editar(solicitacao.idSolicitacao)}">Editar solicitação</a>
+				#{if editar}
+				<a class="once" href="@{Application.editar(solicitacao.idSolicitacao)}">
+					<img src="http://localhost:8080/siga/css/famfamfam/icons/pencil.png" style="margin-right:5px;">
+					Editar solicitação
+				</a>
 				&nbsp;&nbsp;&nbsp;
-				#{if desfazerAndamento}
-				<a class="once" href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}">Desfazer último andamento</a>
 				#{/if}
 			</p>
 		<div class="gt-content-box gt-form" style="margin-top: 15px;">
 			#{form @Application.andamento(), enctype:'multipart/form-data'} <input
 				type="hidden" name="andamento.solicitacao.idSolicitacao"
-				value="${solicitacao.idSolicitacao}"> #{if exibirAtendente}
+				value="${solicitacao.idSolicitacao}"> 
+				
+			#{if trocarSituacao}
+			<div class="gt-form-row gt-width-66">
+				<label>Situação</label> #{select 'andamento.estado', items:estados,
+				labelProperty:'descrEstado', value:andamento.estado,
+				valueProperty:idEstado} #{/select} </div> #{/if}
+					
+			#{if trocarAtendente}
 			<div class="gt-form-row gt-width-66">
 				<label>Atendente</label> #{pessoaLotaSelecao
 				nomeSelPessoa:'andamento.atendente',
@@ -27,6 +40,7 @@
 				valueLotacao:andamento.lotaAtendente /}
 			</div>
 			#{/if}
+			
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label>
 				<textarea name="andamento.descrAndamento" id="descrSolicitacao"
@@ -36,11 +50,6 @@
 				<label>Anexar arquivo</label> <input type="file"
 					name="andamento.arquivo">
 			</div>
-			#{if exibirAtendente}
-			<div class="gt-form-row gt-width-66">
-				<label>Situação</label> #{select 'andamento.estado', items:estados,
-				labelProperty:'descrEstado', value:andamento.estado,
-				valueProperty:idEstado} #{/select} </div> #{/if}
 
 				<div class="gt-form-row">
 					<input type="submit" value="Gravar"
@@ -60,11 +69,12 @@
 							<th colspan="2">Cadastrante</th>
 							<th>Anexo</th>
 							<th>Descrição</th>
+							<th></th>
 						</tr>
 					</thead>
 
 					<tbody>
-						#{list items:solicitacao.historicoAndamentoSet, as:'andamento'}
+						#{list items:solicitacao.andamentoSet, as:'andamento'}
 						<tr>
 							<td>${andamento.dtRegString}</td>
 							<td>${andamento.estado.descrEstado}</td>
@@ -81,6 +91,10 @@
 								descricao:andamento.cadastrante?.descricaoIniciaisMaiusculas /}</td>
 							<td>#{arquivo arquivo:andamento.arquivo /}</td>
 							<td>${andamento.descrAndamento}</td>
+							<td>#{if andamento_isFirst && desfazerAndamento}
+								<a class="once" href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}">
+									<img src="http://localhost:8080/siga/css/famfamfam/icons/cancel.png" style="margin-right:5px;">
+								</a>#{/if}</td>
 						</tr>
 						#{/list}
 					</tbody>

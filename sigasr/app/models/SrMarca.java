@@ -56,10 +56,5 @@ public class SrMarca extends CpMarca {
 		return this.getCpMarcador().getDescrMarcador() + " ("
 				+ getDpLotacaoIni().getSigla() + ")";
 	}
-	
-	public SrMarca salvar(){
-		save();
-		return this;
-	}
 
 }

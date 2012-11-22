@@ -84,7 +84,7 @@ public class SrAndamento extends GenericModel {
 
 	public SrAndamento(SrEstado estado, String descricao, DpPessoa atendente,
 			DpLotacao lotaAtendente, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante) {
+			DpLotacao lotaCadastrante, SrSolicitacao sol) {
 
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
@@ -92,11 +92,8 @@ public class SrAndamento extends GenericModel {
 		this.lotaAtendente = lotaAtendente;
 		this.descrAndamento = descricao;
 		this.estado = estado;
+		this.solicitacao = sol;
 
-	}
-
-	public SrAndamento getAndamentoAnterior() {
-		return solicitacao.getAndamentoAnterior(this);
 	}
 
 	public boolean isCancelador() {
@@ -107,47 +104,6 @@ public class SrAndamento extends GenericModel {
 		return andamentoCancelador != null;
 	}
 
-	public boolean isCriacao() {
-		return !solicitacao.houveAndamentosSemContarCriacao();
-
-	}
-
-	/*
-	 * public boolean isTransferenciaParaPessoa() { return (atendente != null &&
-	 * (getAndamentoAnterior() == null || getAndamentoAnterior().atendente ==
-	 * null || !getAndamentoAnterior().atendente .equivale(atendente))); }
-	 * 
-	 * public boolean isTransferenciaParaLotacao() { return (atendente == null
-	 * && (getAndamentoAnterior() == null ||
-	 * (!getAndamentoAnterior().lotaAtendente .equivale(lotaAtendente)))); }
-	 * 
-	 * public boolean isRecebimentoPorPessoa() { return getAndamentoAnterior()
-	 * != null && getAndamentoAnterior().isTransferenciaParaPessoa() &&
-	 * cadastrante.equivale(getAndamentoAnterior().atendente); }
-	 * 
-	 * public boolean isRecebimentoPorLotacao() { return getAndamentoAnterior()
-	 * != null && getAndamentoAnterior().isTransferenciaParaLotacao() &&
-	 * lotaCadastrante .equivale(getAndamentoAnterior().lotaAtendente); }
-	 * 
-	 * public String getTitulo() { String titulo = "";
-	 * 
-	 * if (isRecebimentoPorPessoa()) titulo += "Recebimento por " +
-	 * cadastrante.getDescricaoIniciaisMaiusculas() + ". ";
-	 * 
-	 * if (isRecebimentoPorLotacao()) titulo += "Recebimento por " +
-	 * lotaCadastrante.getSigla() + ". ";
-	 * 
-	 * if (isTransferenciaParaPessoa()) titulo += "Transferência para " +
-	 * atendente.getDescricaoIniciaisMaiusculas() + " (" +
-	 * lotaAtendente.getSigla() + ")";
-	 * 
-	 * if (isTransferenciaParaLotacao()) titulo += "Transferência para " +
-	 * lotaAtendente.getSigla();
-	 * 
-	 * if (titulo.length() == 0) titulo = "Comentário";
-	 * 
-	 * return titulo; }
-	 */
 	public String getDtRegString() {
 		SrCalendar cal = new SrCalendar();
 		cal.setTime(dtReg);
@@ -186,53 +142,84 @@ public class SrAndamento extends GenericModel {
 		return (atendente != null || lotaAtendente != null);
 	}
 
+	@Override
+	public SrAndamento save() {
+		try {
+			salvar();
+		} catch (Exception e) {
+			//
+		}
+		return this;
+	}
+
+	public SrAndamento salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
+			throws Exception {
+		this.cadastrante = cadastrante;
+		this.lotaCadastrante = lotaCadastrante;
+		return salvar();
+	}
+
 	public SrAndamento salvar() throws Exception {
 
-		checarECompletarCampos();
+		checarCampos();
 
 		super.save();
 
-		// O refresh é ecessário para o hibernate incluir o novo andamento na
-		// coleção de andamentos da solicitação
-		// Plim
-		refresh();
+		// O refresh é necessário para o hibernate incluir o novo andamento na
+		// coleção de andamentos desta solicitação
+		solicitacao.refresh();
 
 		solicitacao.atualizarMarcas();
 
-		if (solicitacao.isPreAtendido())
+		if (solicitacao.temMaisDeUmAndamento())
 			notificar();
 
 		return this;
 
 	}
 
-	public void checarECompletarCampos() throws Exception {
+	private void checarCampos() throws Exception {
+
+		if (solicitacao == null)
+			throw new Exception(
+					"Andamento precisa fazer parte de uma solicitação");
 
 		if (cadastrante == null)
 			throw new Exception("Cadastrante não pode ser nulo");
 
 		dtReg = new Date();
 
-		if (atendente != null && lotaAtendente == null)
+		checarCamposConsiderandoSolicitacao();
+
+		if (atendente == null && lotaAtendente == null)
+			throw new Exception("Atendente não pode ser nulo");
+		
+		if (lotaAtendente == null)
 			lotaAtendente = atendente.getLotacao();
+	}
 
-		if (solicitacao.houveQualquerAndamento()) {
+	private void checarCamposConsiderandoSolicitacao() throws Exception {
 
-			SrAndamento anterior = solicitacao.getUltimoAndamento();
+		if (!solicitacao.temAndamento())
+			return;
 
-			if (!temAtendenteOuLota()) {
+		SrAndamento anterior = solicitacao.getUltimoAndamento();
 
-				lotaAtendente = anterior.lotaAtendente;
-
-				atendente = anterior.atendente;
-			}
-			if (estado == null)
-				estado = anterior.estado;
-
+		if (solicitacao.isEmPreAtendimento() && estado == SrEstado.ANDAMENTO) {
+			atendente = null;
+			lotaAtendente = solicitacao.getAtendenteDesignado();
+		} else if (!solicitacao.isFechado() && estado == SrEstado.FECHADO) {
+			atendente = null;
+			lotaAtendente = solicitacao.getPosAtendenteDesignado();
 		}
 
-		if (atendente == null)
-			throw new Exception("Atendente não pode ser nulo");
+		if (!temAtendenteOuLota()) {
+			lotaAtendente = anterior.lotaAtendente;
+			atendente = anterior.atendente;
+		}
+		if (estado == null)
+			estado = anterior.estado;
+
 	}
 
 	public void notificar() {

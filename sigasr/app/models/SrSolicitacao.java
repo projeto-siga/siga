@@ -25,9 +25,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.spy.memcached.protocol.GetCallbackWrapper;
+import notifiers.Correio;
+
 import org.hibernate.annotations.Where;
 
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -117,30 +121,31 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
 
-	@Column(name = "DT_INICIO_ATENDIMENTO")
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date dtInicioAtendimento;
-
-	@Column(name = "DT_FECHAMENTO")
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date dtFimAtendimento;
-
 	@ManyToMany(cascade = CascadeType.PERSIST)
-	public List<SrAtributo> atributoSet;
+	protected List<SrAtributo> meuAtributoSet;
 
-	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	// O where abaixo teve de ser explÃ­cito porque os id_refs conflitam, e
 	// o Hibernate, por estranho que pareÃ§a, nÃ£o consegue retornar os
 	// registros corretos
+	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@Where(clause = "ID_TP_MARCA=2")
-	public Set<SrMarca> marcaSet;
+	protected Set<SrMarca> meuMarcaSet;
 
 	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@OrderBy("idAndamento DESC")
-	public Set<SrAndamento> andamentoSet;
+	protected Set<SrAndamento> meuAndamentoSet;
 
 	@OneToMany(mappedBy = "solicitacaoPai", cascade = CascadeType.PERSIST)
-	public List<SrSolicitacao> solicitacaoFilhaSet;
+	protected List<SrSolicitacao> meuSolicitacaoFilhaSet;
+
+	@Transient
+	private DpLotacao cachePreAtendenteDesignado;
+
+	@Transient
+	private DpLotacao cacheAtendenteDesignado;
+
+	@Transient
+	private DpLotacao cachePosAtendenteDesignado;
 
 	public SrSolicitacao() {
 
@@ -192,7 +197,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return cal.getTempoTranscorridoString();
 	}
 
-	// NecessÃ¡rio porque nÃ£o hÃ¡ binder para arquivo
+	// Necessário porque não há binder para arquivo
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
@@ -202,28 +207,13 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 				* tendencia.nivelTendencia;
 	}
 
+	public String getGUTString() {
+		return gravidade.descrGravidade + " " + urgencia.descrUrgencia + " "
+				+ tendencia.descrTendencia;
+	}
+
 	public String getGUTPercent() {
 		return (int) ((getGUT() / 125.0) * 100) + "%";
-	}
-
-	public SrAndamento getUltimoAndamento() {
-		if (getHistoricoAndamentoSet() == null)
-			return null;
-		for (SrAndamento andamento : getHistoricoAndamentoSet())
-			return andamento;
-		return null;
-	}
-
-	public DpLotacao getLotaAtendente() {
-		return getUltimoAndamento().lotaAtendente;
-	}
-
-	public DpPessoa getAtendente() {
-		return getUltimoAndamento().atendente;
-	}
-
-	public String getSituacao() {
-		return getUltimoAndamento().getSituacao();
 	}
 
 	public String getDtRegDDMMYYYYHHMM() {
@@ -234,27 +224,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return "";
 	}
 
-	public SrAndamento getAndamentoAnterior(SrAndamento ref) {
-		boolean retorna = false;
-		for (SrAndamento andamento : getHistoricoAndamentoSet()) {
-			if (retorna)
-				return andamento;
-			if (andamento == ref)
-				retorna = true;
-		}
-		return null;
-	}
-
-	public boolean houveQualquerAndamento() {
-		return getHistoricoAndamentoSet(true).size() > 0;
-	}
-
-	public boolean houveAndamentosSemContarCriacao() {
-		return getHistoricoAndamentoSet(true).size() > 1;
-
-	}
-
-	public Long buscarProximoNumero() {
+	public Long getProximoNumero() {
 		if (orgaoUsuario == null)
 			return 0L;
 		Long num = find(
@@ -282,12 +252,6 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return (numSequencia < 10 ? "0" : "") + numSequencia.toString();
 	}
 
-	public SrSolicitacao getSolicitacaoIniciai() {
-		if (getHisIdIni() != null)
-			return findById(getHisIdIni());
-		return null;
-	}
-
 	public List<SrSolicitacao> getHistoricoSolicitacao() {
 		if (getHisIdIni() == null)
 			return null;
@@ -303,23 +267,30 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return sols.get(0);
 	}
 
-	// Nao pude chamar de getAndamentoSet porque houve conflito com
-	// o atributo de mesmo nome
-	public List<SrAndamento> getHistoricoAndamentoSet() {
-		return getHistoricoAndamentoSet(false);
+	public SrSolicitacao getSolicitacaoIniciai() {
+		if (getHisIdIni() != null)
+			return findById(getHisIdIni());
+		return null;
 	}
 
-	public List<SrAndamento> getHistoricoAndamentoSet(
-			boolean considerarCancelados) {
+	public List<SrAndamento> getAndamentoSet() {
+		return getAndamentoSet(false);
+	}
+
+	public List<SrAndamento> getAndamentoSetComCancelados() {
+		return getAndamentoSet(true);
+	}
+
+	public List<SrAndamento> getAndamentoSet(boolean considerarCancelados) {
 		if (getHisIdIni() == null)
 			return null;
 		ArrayList<SrAndamento> listaCompleta = new ArrayList<SrAndamento>();
 		for (SrSolicitacao sol : getHistoricoSolicitacao())
-			if (sol.andamentoSet != null)
+			if (sol.meuAndamentoSet != null)
 				if (considerarCancelados)
-					listaCompleta.addAll(sol.andamentoSet);
+					listaCompleta.addAll(sol.meuAndamentoSet);
 				else
-					for (SrAndamento andamento : sol.andamentoSet)
+					for (SrAndamento andamento : sol.meuAndamentoSet)
 						if (!andamento.isCancelado()
 								&& !andamento.isCancelador())
 							listaCompleta.add(andamento);
@@ -327,48 +298,166 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return listaCompleta;
 	}
 
-	public DpLotacao getPreAtendente() throws Exception {
-
-		return getConfiguracao(itemConfiguracao, servico,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO).preAtendente;
+	public SrAndamento getUltimoAndamento() {
+		if (getAndamentoSet() == null)
+			return null;
+		for (SrAndamento andamento : getAndamentoSet())
+			return andamento;
+		return null;
 	}
 
-	public DpLotacao getPosAtendente() throws Exception {
+	public DpLotacao getLotaAtendente() {
+		return getUltimoAndamento().lotaAtendente;
+	}
 
-		return getConfiguracao(itemConfiguracao, servico,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO).posAtendente;
+	public DpPessoa getAtendente() {
+		return getUltimoAndamento().atendente;
+	}
+
+	public String getSituacao() {
+		return getUltimoAndamento().getSituacao();
+	}
+
+	public boolean temAndamento() {
+		return getAndamentoSetComCancelados() != null
+				&& getAndamentoSetComCancelados().size() > 0;
+	}
+
+	public boolean temMaisDeUmAndamento() {
+		return getAndamentoSetComCancelados() != null
+				&& getAndamentoSetComCancelados().size() > 1;
+
+	}
+
+	public DpLotacao getPreAtendenteDesignado() throws Exception {
+		if (cachePreAtendenteDesignado == null) {
+			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+			if (conf != null)
+				cachePreAtendenteDesignado = conf.preAtendente;
+		}
+		return cachePreAtendenteDesignado;
+	}
+
+	public DpLotacao getAtendenteDesignado() throws Exception {
+		if (cacheAtendenteDesignado == null) {
+			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+			if (conf != null)
+				cacheAtendenteDesignado = conf.atendente;
+		}
+		return cacheAtendenteDesignado;
+	}
+
+	public DpLotacao getPosAtendenteDesignado() throws Exception {
+		if (cachePosAtendenteDesignado == null) {
+			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+			if (conf != null)
+				cachePosAtendenteDesignado = conf.posAtendente;
+		}
+		return cachePosAtendenteDesignado;
+	}
+
+	public List<SrAtributo> getAtributoSet() {
+		if (getHisIdIni() == null)
+			return null;
+		ArrayList<SrAtributo> listaCompleta = new ArrayList<SrAtributo>();
+		for (SrSolicitacao sol : getHistoricoSolicitacao()) {
+			if (sol.meuAtributoSet != null)
+				listaCompleta.addAll(sol.meuAtributoSet);
+		}
+		return listaCompleta;
+	}
+
+	public List<SrSolicitacao> getSolicitacaoFilhaSet() {
+		if (getHisIdIni() == null)
+			return null;
+		ArrayList<SrSolicitacao> listaCompleta = new ArrayList<SrSolicitacao>();
+		for (SrSolicitacao sol : getHistoricoSolicitacao()) {
+			if (sol.meuSolicitacaoFilhaSet != null)
+				listaCompleta.addAll(sol.meuSolicitacaoFilhaSet);
+		}
+		return listaCompleta;
+	}
+
+	public List<SrEstado> getEstadosSelecionaveis() {
+		List<SrEstado> listaFinal = new ArrayList<SrEstado>();
+		for (SrEstado e : SrEstado.values()) {
+			if (isEmPreAtendimento() && e == SrEstado.PENDENTE)
+				continue;
+			if (!isEmPreAtendimento() && e == SrEstado.PRE_ATENDIMENTO)
+				continue;
+			listaFinal.add(e);
+		}
+		return listaFinal;
+	}
+
+	public List<SrMarca> getMarcaSet() {
+		if (getHisIdIni() == null)
+			return null;
+		ArrayList<SrMarca> listaCompleta = new ArrayList<SrMarca>();
+		for (SrSolicitacao sol : getHistoricoSolicitacao()) {
+			if (sol.meuMarcaSet != null)
+				listaCompleta.addAll(sol.meuMarcaSet);
+		}
+		return listaCompleta;
 	}
 
 	public boolean isFechado() {
-		return dtFimAtendimento != null;
+		return temAndamento()
+				&& getUltimoAndamento().estado == SrEstado.FECHADO;
 	}
 
-	public boolean isPreAtendido() {
-		return dtInicioAtendimento != null;
+	public boolean isEmPreAtendimento() {
+		return temAndamento()
+				&& getUltimoAndamento().estado == SrEstado.PRE_ATENDIMENTO;
 	}
 
 	public boolean isEmAtendimento() {
-		return isPreAtendido() && !isFechado();
+		return !isEmPreAtendimento() && !isFechado();
 	}
 
 	public boolean temPreAtendente() throws Exception {
-		return (getPreAtendente() != null);
+		return (getPreAtendenteDesignado() != null);
 	}
 
-	public boolean podeMovimentar(DpLotacao lota, DpPessoa pess) {
+	public boolean estaCom(DpLotacao lota, DpPessoa pess) {
 
-		return ((getUltimoAndamento().atendente != null && getUltimoAndamento().atendente
-				.equivale(pess)) || getUltimoAndamento().lotaAtendente
-				.equivale(lota));
+		return temAndamento()
+				&& ((getUltimoAndamento().atendente != null && getUltimoAndamento().atendente
+						.equivale(pess)) || getUltimoAndamento().lotaAtendente
+						.equivale(lota));
 	}
 
 	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
-		return podeMovimentar(lota, pess) && solicitacaoPai == null;
+		return estaCom(lota, pess) && solicitacaoPai == null
+				&& isEmAtendimento();
 	}
 
 	public boolean podeDesfazerAndamento(DpLotacao lota, DpPessoa pess) {
 		return getUltimoAndamento().lotaCadastrante.equivale(lota)
-				&& houveAndamentosSemContarCriacao();
+				&& temMaisDeUmAndamento();
+	}
+
+	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
+		return isEmPreAtendimento() && estaCom(lota, pess);
+	}
+
+	public boolean podeTrocarAtendente(DpLotacao lota, DpPessoa pess) {
+		return estaCom(lota, pess) && !isEmPreAtendimento();
+	}
+
+	public boolean podeTrocarSituacao(DpLotacao lota, DpPessoa pess) {
+		return estaCom(lota, pess);
+	}
+
+	public boolean podePriorizar(DpLotacao lota, DpPessoa pess) {
+		return estaCom(lota, pess) && isEmPreAtendimento();
+	}
+
+	public boolean podeAbrirJaFechando(DpLotacao lota, DpPessoa pess) {
+		return false;
 	}
 
 	@Override
@@ -390,24 +479,21 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 	public SrSolicitacao salvar() throws Exception {
 
-		checarECompletarCampos();
+		checarCampos();
 
-		super.save();
+		super.salvar();
 
-		if (!isPreAtendido()) {
+		if (!temAndamento()) {
 			if (fecharAoAbrir)
-				finalizarAtendimento();
-			else if (temPreAtendente())
-				iniciarPreAtendimento();
+				iniciarFechando();
 			else
-				iniciarAtendimento();
+				iniciar();
+			notificar();
 		}
-
 		return this;
-
 	}
 
-	public void checarECompletarCampos() throws Exception {
+	public void checarCampos() throws Exception {
 
 		if (cadastrante == null)
 			throw new Exception("Cadastrante nÃ£o pode ser nulo");
@@ -427,24 +513,30 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			orgaoUsuario = lotaSolicitante.getOrgaoUsuario();
 
 		if (numSolicitacao == null && solicitacaoPai == null)
-			numSolicitacao = buscarProximoNumero();
+			numSolicitacao = getProximoNumero();
+
+		if (gravidade == null)
+			gravidade = SrGravidade.POUCO_GRAVE;
+
+		if (urgencia == null)
+			urgencia = SrUrgencia.PODE_ESPERAR;
+
+		if (tendencia == null)
+			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
 	}
 
-	public void iniciarPreAtendimento() {
-
+	public void iniciar() throws Exception {
+		if (temPreAtendente())
+			darAndamento(SrEstado.PRE_ATENDIMENTO,
+					"Iniciando pré-atendimento...", getPreAtendenteDesignado());
+		else
+			darAndamento(SrEstado.ANDAMENTO, "Iniciando atendimento...",
+					getAtendenteDesignado());
 	}
 
-	public void finalizarPreAtendimento() {
-
-	}
-
-	public void iniciarAtendimento() {
-
-	}
-
-	public void finalizarAtendimento() throws Exception {
+	public void iniciarFechando() throws Exception {
 		darAndamento(SrEstado.FECHADO, motivoFechamentoAbertura,
-				getPosAtendente());
+				getPosAtendenteDesignado());
 	}
 
 	public void darAndamento(SrEstado estado, String descricao,
@@ -458,21 +550,25 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
 			DpLotacao lotaCadastrante) throws Exception {
 
-		// O refresh é necessário para o hibernate incluir o novo andamento na
-		// coleção de andamentos da solicitação
-		SrAndamento novoAndamento = new SrAndamento(estado, descricao,
-				atendente, lotaAtendente, cadastrante, lotaCadastrante)
-				.salvar();
+		new SrAndamento(estado, descricao, atendente, lotaAtendente,
+				cadastrante, lotaCadastrante, this).salvar();
+	}
 
+	public void notificar() {
+		Correio.notificarAbertura(this);
 	}
 
 	public void atualizarMarcas() {
 
-		for (SrSolicitacao sol : getHistoricoSolicitacao())
-			sol.removerMarcas();
+		removerMarcas();
 
 		marcar(getUltimoAndamento());
 
+	}
+
+	public void removerMarcas() {
+		for (SrMarca marca : getMarcaSet())
+			JPA.em().remove(marca);
 	}
 
 	public void marcar(SrAndamento andamento) {
@@ -485,6 +581,8 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_PENDENTE;
 		else if (andamento.estado == SrEstado.CANCELADO)
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_CANCELADO;
+		else if (andamento.estado == SrEstado.PRE_ATENDIMENTO)
+			marcador = CpMarcador.MARCADOR_SOLICITACAO_PRE_ATENDIMENTO;
 		else
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_A_RECEBER;
 
@@ -494,13 +592,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 	public void marcar(Long marcador, DpLotacao lotacao, DpPessoa pessoa) {
 
-		new SrMarca(marcador, pessoa, lotacao, this).salvar();
-	}
-
-	public void removerMarcas() {
-		if (marcaSet != null)
-			for (SrMarca marca : marcaSet)
-				JPA.em().remove(marca);
+		new SrMarca(marcador, pessoa, lotacao, this).save();
 	}
 
 	@Override
@@ -510,7 +602,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 	@Override
 	public void setId(Long id) {
-		setId(id);
+		this.idSolicitacao = id;
 	}
 
 }

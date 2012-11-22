@@ -48,6 +48,7 @@
 				nome:'solicitacao.servico', value:solicitacao.servico /}
 				<span style="color: red">#{error 'solicitacao.servico' /}</span>
 			</div>
+			#{if priorizar}
 			<div class="gt-form-row gt-width-66">
 				<label>Os prejuízos ou dificuldades relativos ao problema
 					são</label> #{select name:'solicitacao.gravidade', items:gravidades,
@@ -63,6 +64,7 @@
 				name:'solicitacao.tendencia', items:tendencias,
 				labelProperty:'respostaEnunciado', value:solicitacao.tendencia /}
 			</div>
+			#{/if}
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label>
 				<textarea cols="70" rows="5" name="solicitacao.descrSolicitacao"
@@ -74,11 +76,13 @@
 					name="solicitacao.arquivo" />
 			</div>
 
+			#{if abrirFechando}
 			<div class="gt-form-row gt-width-66">
 				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
 					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',
 					disabled: alterando /} Fechar o chamado logo após a abertura</label>
 			</div>
+			#{/if}
 
 			<div class="gt-form-row gt-width-66" id="motivoFechamento"
 				style="display: none">

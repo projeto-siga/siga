@@ -37,7 +37,8 @@ public class Application extends Controller {
 
 	static void prepararCpDao() {
 		Session playSession = (Session) JPA.em().getDelegate();
-		CpDao dao = CpDao.getInstance(playSession);
+		CpDao.freeInstance();
+		CpDao.getInstance(playSession);
 	}
 
 	@Before
@@ -72,7 +73,7 @@ public class Application extends Controller {
 			if (IDs[3] != null && !IDs[3].equals(""))
 				renderArgs.put("lotaTitular",
 						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
-			
+
 			prepararCpDao();
 
 		} catch (Exception e) {
@@ -121,10 +122,14 @@ public class Application extends Controller {
 		SrUrgencia[] urgencias = SrUrgencia.values();
 		SrTendencia[] tendencias = SrTendencia.values();
 		SrGravidade[] gravidades = SrGravidade.values();
-		boolean alterando = solicitacao.idSolicitacao != null;
+		boolean abrirFechando = solicitacao.podeAbrirJaFechando(
+				getLotaTitular(), getCadastrante());
+		boolean priorizar = solicitacao.podePriorizar(getLotaTitular(),
+				getCadastrante());
 
 		render("@editar", solicitacao, itensConfiguracao, formasAcompanhamento,
-				gravidades, urgencias, tendencias, solicitacao, alterando);
+				gravidades, urgencias, tendencias, solicitacao, priorizar,
+				abrirFechando);
 	}
 
 	private static void validarFormEditar(SrSolicitacao solicitacao) {
@@ -184,18 +189,21 @@ public class Application extends Controller {
 		SrAndamento andamento = new SrAndamento();
 		andamento.estado = solicitacao.getUltimoAndamento().estado;
 
-		// Enquanto nÃ£o tem login...
-		DpPessoa eeh = JPA.em().find(DpPessoa.class, 10374L);
-		boolean exibirAtendente = solicitacao.podeMovimentar(eeh.getLotacao(),
-				eeh);
-		boolean criarFilha = solicitacao.podeCriarFilha(eeh.getLotacao(), eeh);
+		boolean trocarAtendente = solicitacao.podeTrocarAtendente(
+				getLotaTitular(), getCadastrante());
+		boolean criarFilha = solicitacao.podeCriarFilha(getLotaTitular(),
+				getCadastrante());
 		boolean desfazerAndamento = solicitacao.podeDesfazerAndamento(
-				eeh.getLotacao(), eeh);
+				getLotaTitular(), getCadastrante());
+		boolean editar = solicitacao.podeEditar(getLotaTitular(),
+				getCadastrante());
+		boolean trocarSituacao = solicitacao.podeTrocarSituacao(
+				getLotaTitular(), getCadastrante());
 
-		SrEstado[] estados = SrEstado.values();
+		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
 
-		render(solicitacao, desfazerAndamento, andamento, exibirAtendente,
-				criarFilha, estados);
+		render(solicitacao, editar, desfazerAndamento, trocarSituacao,
+				andamento, trocarAtendente, criarFilha, estados);
 
 	}
 
@@ -207,15 +215,7 @@ public class Application extends Controller {
 
 	public static void andamento(SrAndamento andamento) throws Exception {
 
-		if (andamento.solicitacao != null
-				&& !andamento.solicitacao.podeMovimentar(getLotaTitular(),
-						getCadastrante())) {
-			andamento.atendente = null;
-			andamento.lotaAtendente = null;
-		}
-
-		// tem que fazer referência ao cadastrante e lotaTitular
-		andamento.salvar();
+		andamento.salvar(getCadastrante(), getLotaTitular());
 
 		exibir(andamento.solicitacao.idSolicitacao);
 
@@ -223,10 +223,6 @@ public class Application extends Controller {
 
 	public static void desfazerUltimoAndamento(Long id) {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		/*
-		 * Sr.getInstance() .getBL() .desfazerUltimoAndamento(sol,
-		 * getCadastrante(), getLotaTitular());
-		 */
 		exibir(id);
 	}
 

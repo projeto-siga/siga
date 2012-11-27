@@ -750,6 +750,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		mov.setNmArqMov(getArquivoFileName());
 		mov.setConteudoTpMov(getArquivoContentType());
+
+		// bruno.lacerda@avantiprima.com.br
+		if ( this.arquivo == null ) {
+			throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
+		}
+		
 		byte[] baArquivo = toByteArray(getArquivo());
 		if (baArquivo == null)
 			throw new AplicacaoException("Arquivo vazio não pode ser anexado.");

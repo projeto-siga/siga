@@ -982,8 +982,11 @@ public class ExDocumentoAction extends ExActionSupport {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
 			mob = (ExMobil) dao().consultarPorSigla(filter);
-			doc = mob.getExDocumento();
-			setIdMob(mob.getId());
+			// bruno.lacerda@avantiprima.com.br
+			if ( mob != null ) {
+				doc = mob.getExDocumento();
+				setIdMob(mob.getId());
+			}
 		} else if (mob == null && getDocumentoViaSel().getId() != null) {
 			setIdMob(getDocumentoViaSel().getId());
 			mob = dao().consultar(idMob, ExMobil.class, false);

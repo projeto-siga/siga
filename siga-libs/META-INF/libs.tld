@@ -18,6 +18,12 @@
 	</function>
 	
 	<function>
+		<name>getComplementoHead</name>
+		<function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
+		<function-signature>java.lang.String getComplementoHead(br.gov.jfrj.siga.dp.CpOrgaoUsuario)</function-signature>
+	</function>
+	
+	<function>
 		<name>podeUtilizarServicoPorConfiguracao</name>
 		<function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
 		<function-signature>java.lang.Boolean podeUtilizarServicoPorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, java.lang.String)</function-signature>

@@ -40,6 +40,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -133,7 +134,7 @@ public class CpDao extends ModeloDao {
 		query.setString("siglaServico", o.getSiglaServico());
 		query.setLong("idServicoPai", o.getCpServicoPai() == null ? 0 : o
 				.getCpServicoPai().getIdServico());
-
+		query.setFlushMode(FlushMode.MANUAL);
 		final List<CpServico> l = query.list();
 		if (l.size() != 1)
 			return null;

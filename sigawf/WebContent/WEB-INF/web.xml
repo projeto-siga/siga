@@ -179,7 +179,7 @@
 			<url-pattern>/expediente/*</url-pattern>
 			<url-pattern>/modelo/*</url-pattern>
 			<url-pattern>/gi/*</url-pattern>
-			<url-pattern>/administracao.action</url-pattern>
+			<url-pattern>/administrar.action</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

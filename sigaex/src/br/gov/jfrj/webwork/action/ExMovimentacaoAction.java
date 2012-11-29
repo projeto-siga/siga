@@ -213,9 +213,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String mensagem;
 
 	private Long idPapel;
-	
+
 	private boolean assinandoAnexosGeral = false;
-	
+
 	public boolean isAssinandoAnexosGeral() {
 		return assinandoAnexosGeral;
 	}
@@ -731,15 +731,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aAnexar() throws Exception {
 		buscarDocumento(true);
-        
+
 		if (!(mob.isGeral() && mob.doc().getDtFechamento() != null))
-		   if (!Ex.getInstance().getComp()
-			    	.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
-		    	throw new AplicacaoException("Arquivo não pode ser anexado");		
-		
-		
-		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(), true,
-                ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
+			if (!Ex.getInstance().getComp()
+					.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
+				throw new AplicacaoException("Arquivo não pode ser anexado");
+
+		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
+				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
 		this.getRequest().setAttribute("mobilVO", mobilVO);
 		return Action.SUCCESS;
 	}
@@ -764,7 +763,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"Não é permitida a anexação de arquivos com mais de 10MB.");
 		mov.setConteudoBlobMov2(baArquivo);
 
-		if (mov.getContarNumeroDePaginas() == null || mov.getArquivoComStamp() == null)
+		if (mov.getContarNumeroDePaginas() == null
+				|| mov.getArquivoComStamp() == null)
 			throw new AplicacaoException(
 					"O arquivo "
 							+ getArquivoFileName()
@@ -803,16 +803,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
-	
-	
+
 	public String aAssinarAnexosGeral() throws Exception {
-		
+
 		this.assinandoAnexosGeral = true;
-		
+
 		return aAnexar();
-		
+
 	}
-	
 	
 	public String aMostrarAnexosAssinados() throws Exception {
 		buscarDocumento(true);       
@@ -823,7 +821,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 	
-
 	public String aArquivarCorrenteGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
@@ -922,14 +919,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
 
-		if (param("politica") != null) {
-			CdService client = Service.getCdService();
-
-			assinatura = client
-					.validarECompletarAssinatura(assinatura,
-							doc.getConteudoBlobPdf(), param("politica"),
-							mov.getDtMov());
-		}
+		// if ("true".equals(getRequest().getParameter("politica"))) {
+//		CdService client = Service.getCdService();
+//
+//		assinatura = client.validarECompletarAssinatura(assinatura,
+//				doc.getConteudoBlobPdf(), true, mov.getDtMov());
+		// }
 
 		try {
 			setMsg(Ex
@@ -952,20 +947,20 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
-	
+
 	private static byte[] hexStringToByteArray(String s) {
-	    int len = s.length();
-	    byte[] data = new byte[len / 2];
-	    for (int i = 0; i < len; i += 2) {
-	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-	                             + Character.digit(s.charAt(i+1), 16));
-	    }
-	    return data;
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character
+					.digit(s.charAt(i + 1), 16));
+		}
+		return data;
 	}
 
 	private String recuperarAssinaturaAppletB64() throws ServletException,
 			AplicacaoException {
- 		HttpServletRequest request = getRequest();
+		HttpServletRequest request = getRequest();
 		String mensagem = null;
 
 		// Recupera a quantidade de pacotes enviados
@@ -988,18 +983,17 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (ARQUIVO == null || ARQUIVO.equals("")) {
 			ARQUIVO = "texto.txt";
 		}
-		
-		//Recupera o Id da movimentacao
-		// #arquivo é alimentado com ExMovimentacao.nmPdf. Se existir ":" é uma assinatura de movimentação
+
+		// Recupera o Id da movimentacao
+		// #arquivo é alimentado com ExMovimentacao.nmPdf. Se existir ":" é uma
+		// assinatura de movimentação
 		// caso contrário, é uma assinatura de documento
-		
+
 		if (ARQUIVO.contains(":")) {
-			String[] partesArq= ARQUIVO.split(":");
-			this.setId(Long.parseLong(partesArq[1]));	
-		}else
+			String[] partesArq = ARQUIVO.split(":");
+			this.setId(Long.parseLong(partesArq[1]));
+		} else
 			this.setSigla(ARQUIVO);
-		
-		
 
 		// Converte para binario
 		Object tools = null;
@@ -1143,14 +1137,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
-	
+
 	public String aFecharPopup() throws Exception {
 		buscarDocumento(true);
 		return Action.SUCCESS;
 	}
 
 	public String aRedefinirNivelAcesso() throws Exception {
-		
+
 		buscarDocumento(true);
 
 		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
@@ -3136,7 +3130,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public void setId(final Long id) {
 		this.id = id;
-	}	
+	}
 
 	public void setIdResp(final Long idResp) {
 		this.idResp = idResp;
@@ -3386,7 +3380,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setItensSolicitados(List<ExDocumento> itensSolicitados) {
 		this.itensSolicitados = itensSolicitados;
 	}
-	
+
 	public String getDtPrevPubl() {
 		return dtPrevPubl;
 	}

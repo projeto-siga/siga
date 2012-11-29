@@ -41,14 +41,15 @@ public class ClassUtils {
 		AccessibleObject.setAccessible(f, true);
 		for (int i = 0; i < f.length; i++) {
 			if (!f[i].getName().equals("grPai")) {
-				try {
-					list.add(f[i].getName() + "=" + f[i].get(o));
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
+//				try {
+//					list.add(f[i].getName() + "=" + f[i].get(o));
+//				} catch (IllegalAccessException e) {
+//					e.printStackTrace();
+//				}
 			}
 		}
 		if (clazz.getSuperclass().getSuperclass() != null) {
+			System.out.println("*** Classe: " + clazz.getName() + " - " + clazz.getSuperclass().getName());
 			toString(o, clazz.getSuperclass(), list);
 		}
 	}

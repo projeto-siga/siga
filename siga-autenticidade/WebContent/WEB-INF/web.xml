@@ -13,6 +13,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
 	<display-name>The name of the application</display-name>
+	
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
+	
 	<description>
      Aplicação utilizada por órgãos externos para verificar autenticidade de documentos emitidos pelo Siga-Doc. Acessa o sistema por webservice.
     </description>

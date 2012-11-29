@@ -147,7 +147,7 @@ public class ProcessadorHtml {
 
 			String styleP = "font-family=arial,avantgarde bk bt\\, arial;font-size=6pt,7pt,8pt,9pt,10pt,11pt,12pt,13pt,14pt;font-weight=bold"
 					+ ";margin-left;text-decoration=italic;text-align=left,right,center,justify"
-					+ ";text-indent;font-size-no-fix=yes;float=none;clear=both";
+					+ ";text-indent;text-decoration;font-size-no-fix=yes;float=none;clear=both";
 			add(myTags, "div", "align;class", styleP + ";page-break-after;",
 					true);
 			add(myTags, "span", "align;class", styleP, true);

@@ -109,7 +109,7 @@ public class ExThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws Exception, AplicacaoException {
 		
-		HibernateUtil.getSessao();
+		// HibernateUtil.getSessao();
 		ModeloDao.freeInstance();
 		ExDao.getInstance();
 		Ex.getInstance().getConf().limparCacheSeNecessario();

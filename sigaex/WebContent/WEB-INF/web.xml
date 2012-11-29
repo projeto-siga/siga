@@ -5,6 +5,9 @@
         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
+	
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
 
 	<!-- 
 		<jsp-config> <taglib>
@@ -271,6 +274,8 @@
 			<url-pattern>/despacho/*</url-pattern>
 			<url-pattern>/administracao.action</url-pattern>
 			<url-pattern>/anexo/*</url-pattern>
+			<url-pattern>*.pdf</url-pattern>
+			<url-pattern>*.html</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

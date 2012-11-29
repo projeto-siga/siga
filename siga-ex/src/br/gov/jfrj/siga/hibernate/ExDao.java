@@ -1675,4 +1675,10 @@ public class ExDao extends CpDao {
 		}
 		return (ExModelo) crit.uniqueResult();
 	}
+	
+	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa) {
+		final Query query = getSessao().getNamedQuery("listarDocPendenteAssinatura");
+		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
+		return query.list();
+	}
 }

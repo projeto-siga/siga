@@ -40,7 +40,7 @@
 		<style type="text/css">
 @page {
 	margin-left: 3cm;
-	margin-right: 2cm;
+	margin-right: 3cm;
 	margin-top: 1cm;
 	margin-bottom: 2cm;
     }
@@ -48,19 +48,9 @@
 		</head>
 		<body>
 		<!-- INICIO PRIMEIRO CABECALHO
-		<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
+		<table width="100%" border="0" bgcolor="#FFFFFF" cellpadding="0" cellspacing="0" ><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
 		</td></tr>
-			<tr bgcolor="#FFFFFF">
-				<td width="100%">
-					<br />
-					<table width="100%">
-						<tr>
-							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight: bold;">CERTIDÃO N&ordm; ${doc.codigo}</p></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
 		</table>
 		FIM PRIMEIRO CABECALHO -->
 
@@ -68,6 +58,8 @@
 				<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizado.jsp" />
 				<br/><br/>
 			FIM CABECALHO -->
+		<br/>
+		<p align="center" style="font-family:Arial;font-size:11pt;font-weight: bold;">CERTIDÃO N&ordm; ${doc.codigo}</p>
 		<mod:letra tamanho="${tl}">		
 		<br />
 		<br />
@@ -89,14 +81,13 @@
 	
 			<br />
 		<p align="center" style="TEXT-INDENT: 0 cm">${doc.dtExtenso}</p>
-		<br />
 		<c:import
 			url="/paginas/expediente/modelos/inc_assinatura.jsp?formatarOrgao=sim" />
 
+		</mod:letra>	
 		<!-- INICIO PRIMEIRO RODAPE
 			<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 			FIM PRIMEIRO RODAPE -->
-		</mod:letra>	
 		</body>
 		</html>
 	</mod:documento>

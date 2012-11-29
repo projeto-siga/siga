@@ -117,7 +117,7 @@
 		</c:if>
 		
 		<!-- INICIO PRIMEIRO CABECALHO
-		<table width="100%" border="2" bgcolor="#ffffff"><tr><td>
+		<table width="100%" border="0" bgcolor="#ffffff"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
 		</td></tr>
 				<tr bgcolor="#FFFFFF">
@@ -142,8 +142,8 @@
           <c:set var="mud" value="Mudanças Solicitadas"></c:set>
         </c:if>
 			<c:set var="opt" value="${f:classNivPadr(doc.subscritor.padraoReferencia)}"/>           
-			<p style="font-family:Arial;font-weight:bold;font-size:9pt;"> <b><center> ${ilustrissimo} DA SECRETARIA DE RECURSOS HUMANOS</center></b></p>
-						
+			<p style="font-family:Arial;font-weight:bold;font-size:8pt;"> <b><center> ${ilustrissimo} DA SECRETARIA DE RECURSOS HUMANOS</center></b></p>
+			<p style="font-family:Arial;font-size:9pt;">			
 			${doc.subscritor.descricao}, matrícula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
 			do Quadro de Pessoal deste Tribunal, 
 			<c:if test="${ doc.subscritor.sexo == 'M'}">
@@ -184,7 +184,8 @@
 			</c:forEach>
 	        <br>
 			Termos em que <br/>
-			Espera deferimento.<p>
+			Espera deferimento.</p>
+		<p>
 		    
 		
 		<!-- INICIO FECHO -->

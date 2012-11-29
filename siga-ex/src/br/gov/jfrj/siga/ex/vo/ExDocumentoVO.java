@@ -183,7 +183,7 @@ public class ExDocumentoVO extends ExVO {
 				.getComp().podeExcluir(titular, lotaTitular, mob),
 				"Confirma a exclusão do documento?", null, null, null);
 
-		vo.addAcao("user_add", "Incluir Co-signatário", "/expediente/mov",
+		vo.addAcao("user_add", "Incluir Cossignatário", "/expediente/mov",
 				"incluir_cosignatario", Ex.getInstance().getComp()
 						.podeIncluirCosignatario(titular, lotaTitular, mob));
 
@@ -240,7 +240,7 @@ public class ExDocumentoVO extends ExVO {
 		
 		if (doc.getDtFechamento() != null && doc.getNumExpediente() != null){
 			// documentos finalizados
-			if (mob.temAnexosNaoAssinados())
+			if (mob.temAnexos())
 				vo.addAcao("script_key","Assinar Anexos", "/expediente/mov", "assinar_anexos_geral", true);
 		}
 

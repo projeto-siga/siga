@@ -8,14 +8,10 @@
 	<tr>
 		<td width="70%"></td>
 		<td width="30%">
-		<table align="right" width="100%" border="1" cellspacing="1"
-			bgcolor="#000000">
+		<table align="right" width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" bgcolor="#000000">
 			<tr>
-				<td align="center" width="60%"
-					style="font-family:Arial;font-size:8pt;text-decoration:italic;"
-					bgcolor="#FFFFFF">Classif. documental</td>
-				<td align="center" width="40%"
-					style="font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">${doc.exClassificacao.sigla}</td>
+				<td align="center" width="60%" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;" bgcolor="#FFFFFF"><i>Classif. documental</i></td>
+				<td align="center" width="40%" style="border-collapse: collapse; border-color: black; font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">${doc.exClassificacao.sigla}</td>
 			</tr>
 		</table>
 		</td>

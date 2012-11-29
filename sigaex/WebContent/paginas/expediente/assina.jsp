@@ -8,6 +8,11 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
 <siga:pagina titulo="Documento">
+
+<c:if test="${not doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 	<script language="VBScript">
 Function assinar()
@@ -45,78 +50,79 @@ End Function
 </c:if>
 
 <div class="gt-bd" style="padding-bottom: 0px;">
-		<div class="gt-content">
+	<div class="gt-content">
 		
-		<h2>Confirme os dados do documento abaixo:</h2>
+	<h2>Confirme os dados do documento abaixo:</h2>
 		
-		<div class="gt-content-box" style="padding:10px;">
+	<div class="gt-content-box" style="padding:10px;">
 
-		<table class="message" width="100%">
-			<tr class="header">
-				<td width="50%"><b>Documento
-						${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
-				<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
-			</tr>
-			<tr class="header">
-				<td><b>De:</b> ${doc.subscritorString}</td>
-				<td><b>Classificação:</b>
+	<table class="message" width="100%">
+		<tr class="header">
+			<td width="50%"><b>Documento
+					${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
+			<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
+		</tr>
+		<tr class="header">
+			<td><b>De:</b> ${doc.subscritorString}</td>
+			<td><b>Classificação:</b>
 					${doc.exClassificacao.descricaoCompleta}</td>
-			</tr>
-			<tr class="header">
-				<td><b>Para:</b> ${doc.destinatarioString}</td>
-				<td><b>Descrição:</b> ${doc.descrDocumento}</td>
-			</tr>
-			<c:if test="${doc.conteudo != ''}">
-				<tr>
-					<td colspan="2">
-						<div id="conteudo" style="padding-top: 10px;"><tags:fixdocumenthtml>${doc.conteudoBlobHtmlString}</tags:fixdocumenthtml></div>
-					</td>
-				</tr>
-			</c:if>
-		</table>
-		
-		</div>
-
-	<!--<c:choose>
-	<c:when test="${fechar eq true}"> 
-		<c:set var="acao" value="fechar_assinar_gravar" />
-	</c:when>
-	<c:otherwise>-->
-	<c:set var="acao" value="assinar_gravar" />
-	<!--</c:otherwise>
-</c:choose>-->
-
-		<ww:form name="frm" id="frm" action="${acao}"
-			namespace="/expediente/mov" theme="simple" validate="false"
-			method="POST">
-		<ww:hidden name="sigla" value="${sigla}" />
-		<table border="0" width="100%">
+		</tr>
+		<tr class="header">
+			<td><b>Para:</b> ${doc.destinatarioString}</td>
+			<td><b>Descrição:</b> ${doc.descrDocumento}</td>
+		</tr>
+		<c:if test="${doc.conteudo != ''}">
 			<tr>
-				<td style="padding-top:10px">
-					<left>
-						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
-							<ww:hidden name="conteudo_b64"
-								value="${doc.conteudoBlobPdfB64}" /> <ww:hidden
-								name="assinaturaB64" /> <ww:hidden name="assinante" />
-								<input type="button" value="Assinar" onclick="vbscript: assinar" />
-						</c:if>						
-						
-					</left>
+				<td colspan="2">
+					<div id="conteudo" style="padding-top: 10px;"><tags:fixdocumenthtml>${doc.conteudoBlobHtmlString}</tags:fixdocumenthtml></div>
 				</td>
 			</tr>
-		</table>
-	</ww:form>
-	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
-		<ww:hidden name="pdfchk_${doc.idDoc}" value="${sigla}" />
-		<ww:hidden name="urlchk_${doc.idDoc}" value="doc/${doc.codigoCompacto}.pdf" />
-		<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action" />
-   	 	<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}"  />
-    	<c:set var="urlPath" value="/${request.contextPath}/expediente" />
-  
-   		<c:set var="botao" value=""/>
-		<c:set var="lote" value="false"/>
+		</c:if>
+	</table>
+		
+</div>
 	
-		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
-	</c:if>	
+	<c:set var="acao" value="assinar_gravar" />
+	<div class="gt-form-row gt-width-50">
+		<div class="gt-left-col gt-width-25">
+				<ww:form name="frm" id="frm" action="${acao}"
+					namespace="/expediente/mov" theme="simple" validate="false"
+					method="POST">
+				<ww:hidden name="sigla" value="${sigla}" />
+				<table border="0" width="100%">
+					<tr>
+						<td style="padding-top:10px">
+							<left>
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
+									<ww:hidden name="conteudo_b64"
+										value="${doc.conteudoBlobPdfB64}" /> <ww:hidden
+										name="assinaturaB64" /> <ww:hidden name="assinante" />
+										<input type="button" value="Assinar" onclick="vbscript: assinar" 
+										       class="gt-btn-alternate-large gt-btn-center"/>
+								</c:if>						
+								
+							</left>
+						</td>
+					</tr>
+				</table>
+			</ww:form>
+		</div>
+		<div class="gt-left-col gt-width-25">
+			<div style="padding-top: 10px; padding-left: 40px;">
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
+					<ww:hidden name="pdfchk_${doc.idDoc}" value="${sigla}" />
+					<ww:hidden name="urlchk_${doc.idDoc}" value="doc/${doc.codigoCompacto}.pdf" />
+					<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action" />
+			   	 	<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}"  />
+			    	<c:set var="urlPath" value="/${request.contextPath}/expediente" />
+			  
+			   		<c:set var="botao" value=""/>
+					<c:set var="lote" value="false"/>
+				
+					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
+				</c:if>
+			</div>
+		</div>
+	</div>
 	</div></div>
 </siga:pagina>

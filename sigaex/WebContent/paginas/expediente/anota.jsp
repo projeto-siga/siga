@@ -3,12 +3,15 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <siga:pagina titulo="Movimentação">
 
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
 
 <script type="text/javascript" language="Javascript1.1">
 <ww:url id="url" action="anotar" namespace="/expediente/mov">

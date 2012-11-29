@@ -114,7 +114,10 @@ public class Style {
 		String s = null;
 		while (stk.hasMoreTokens()) {
 			s = stk.nextToken();
-			setProperty(s.substring(0, s.indexOf(':')).trim(), s.substring(s.indexOf(':') + 1, s.length()).trim());
+			if (s!=null && s.trim().length() >0){
+				setProperty(s.substring(0, s.indexOf(':')).trim(), s.substring(s.indexOf(':') + 1, s.length()).trim());	
+			}
+			
 		}
 	}
 

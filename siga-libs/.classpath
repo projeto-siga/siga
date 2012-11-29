@@ -44,7 +44,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ehcache-1.5.0.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FastInfoset-1.2.7.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FCKeditor-2.3.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/FontBox-0.1.0.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/fop.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/freemarker.jar"/>
@@ -136,5 +135,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ckeditor-java-core-3.5.3.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

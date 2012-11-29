@@ -865,10 +865,10 @@ public class ExBL extends CpBL {
 									.getEmailPessoa());
 						}
 					} else if (conf.getLotacao() != null) {
-						List<DpPessoa> pessoasLotacao = CpDao
-								.getInstance()
+						List<DpPessoa> pessoasLotacao = CpDao.getInstance()
 								.pessoasPorLotacao(
-										conf.getLotacao().getIdLotacao(), false,true);
+										conf.getLotacao().getIdLotacao(),
+										false, true);
 						for (DpPessoa pessoa : pessoasLotacao) {
 							if (!emailsAtendentes.contains(pessoa
 									.getEmailPessoa()))
@@ -1104,15 +1104,12 @@ public class ExBL extends CpBL {
 
 			String s;
 
-			// s =
-			// client.validarAssinaturaPKCS7(MessageDigest.getInstance("SHA1")
-			// .digest(data), SHA1, pkcs7, dao().dt(), VALIDAR_LCR);
-			s = client.validarAssinatura(pkcs7, data, dao().dt(), VALIDAR_LCR);
-			Service.throwExceptionIfError(s);
-
-			if (BUSCAR_CARIMBO_DE_TEMPO) {
-				cms = client.validarECompletarAssinatura(pkcs7, data, null,
-						dao().dt());
+//			s = client.validarAssinatura(pkcs7, data, dao().dt(), VALIDAR_LCR);
+//			Service.throwExceptionIfError(s);
+//
+//			if (BUSCAR_CARIMBO_DE_TEMPO) {
+				cms = client.validarECompletarAssinatura(pkcs7, data, true,
+						dtMov);
 				sNome = client.validarAssinatura(cms, data, dao().dt(),
 						VALIDAR_LCR);
 
@@ -1129,12 +1126,12 @@ public class ExBL extends CpBL {
 				Service.throwExceptionIfError(sCPF);
 
 				lCPF = Long.valueOf(sCPF);
-			} else {
-				sNome = s;
-				String sCPF = client.recuperarCPF(pkcs7);
-				Service.throwExceptionIfError(sCPF);
-				lCPF = Long.valueOf(sCPF);
-			}
+//			} else {
+//				sNome = s;
+//				String sCPF = client.recuperarCPF(pkcs7);
+//				Service.throwExceptionIfError(sCPF);
+//				lCPF = Long.valueOf(sCPF);
+//			}
 
 			// writeB64File("c:/trabalhos/java/cd_teste_doc.b64", data);
 			// writeB64File("c:/trabalhos/java/cd_teste_hash.b64",
@@ -1241,13 +1238,13 @@ public class ExBL extends CpBL {
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					usuarioDoToken, null, null, null, null);
 
-			if (BUSCAR_CARIMBO_DE_TEMPO) {
-				mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
+//			if (BUSCAR_CARIMBO_DE_TEMPO) {
+//				mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
 				mov.setConteudoBlobMov2(cms);
-			} else {
+//			} else {
 				mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
-				mov.setConteudoBlobMov2(pkcs7);
-			}
+//				mov.setConteudoBlobMov2(pkcs7);
+//			}
 
 			mov.setDescrMov(sNome);
 
@@ -1340,11 +1337,11 @@ public class ExBL extends CpBL {
 
 			String s;
 
-			s = client.validarAssinatura(pkcs7, data, dao().dt(), VALIDAR_LCR);
-			Service.throwExceptionIfError(s);
-
-			if (BUSCAR_CARIMBO_DE_TEMPO) {
-				cms = client.validarECompletarAssinatura(pkcs7, data, null,
+//			s = client.validarAssinatura(pkcs7, data, dao().dt(), VALIDAR_LCR);
+//			Service.throwExceptionIfError(s);
+//
+//			if (BUSCAR_CARIMBO_DE_TEMPO) {
+				cms = client.validarECompletarAssinatura(pkcs7, data, true,
 						dao().dt());
 				sNome = client.validarAssinatura(cms, data, dao().dt(),
 						VALIDAR_LCR);
@@ -1355,12 +1352,12 @@ public class ExBL extends CpBL {
 				Service.throwExceptionIfError(sCPF);
 
 				lCPF = Long.valueOf(sCPF);
-			} else {
-				sNome = s;
-				String sCPF = client.recuperarCPF(pkcs7);
-				Service.throwExceptionIfError(sCPF);
-				lCPF = Long.valueOf(sCPF);
-			}
+//			} else {
+//				sNome = s;
+//				String sCPF = client.recuperarCPF(pkcs7);
+//				Service.throwExceptionIfError(sCPF);
+//				lCPF = Long.valueOf(sCPF);
+//			}
 
 			// Orlando: Inseri o IF abaixo para que seja enviado um e-mail
 			// quando o despacho é assinado.
@@ -1450,13 +1447,13 @@ public class ExBL extends CpBL {
 
 			mov.setExMovimentacaoRef(movAlvo);
 
-			if (BUSCAR_CARIMBO_DE_TEMPO) {
-				mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
+//			if (BUSCAR_CARIMBO_DE_TEMPO) {
+//				mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
 				mov.setConteudoBlobMov2(cms);
-			} else {
+//			} else {
 				mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
-				mov.setConteudoBlobMov2(pkcs7);
-			}
+//				mov.setConteudoBlobMov2(pkcs7);
+//			}
 
 			mov.setDescrMov(sNome);
 
@@ -3171,7 +3168,7 @@ public class ExBL extends CpBL {
 					// Orlando: Inseri a condição abaixo para que o e-mail não
 					// seja enviado quando tratar-se de despacho com
 					// transferência que não estiver assinado.
-					if (tpDespacho == null && descrMov== null)
+					if (tpDespacho == null && descrMov == null)
 						emailDeTransferência(responsavel, lotaResponsavel,
 								m.getSigla(), m.getExDocumento()
 										.getCodigoString(), m.getExDocumento()
@@ -3236,7 +3233,7 @@ public class ExBL extends CpBL {
 
 						for (DpPessoa pes : dao().pessoasPorLotacao(
 
-						lotaResponsavel.getIdLotacao(), false,true)) {
+						lotaResponsavel.getIdLotacao(), false, true)) {
 
 							dest.add(pes.getEmailPessoa());
 
@@ -3254,7 +3251,7 @@ public class ExBL extends CpBL {
 
 				for (DpPessoa pes : dao().pessoasPorLotacao(
 
-				lotaResponsavel.getIdLotacao(), false,true)) {
+				lotaResponsavel.getIdLotacao(), false, true)) {
 
 					dest.add(pes.getEmailPessoa());
 

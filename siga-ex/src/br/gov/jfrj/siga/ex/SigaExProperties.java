@@ -27,7 +27,7 @@ package br.gov.jfrj.siga.ex;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 */
-import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
+import br.gov.jfrj.siga.model.prop.ext.ModeloPropriedade;
 
 public class SigaExProperties extends ModeloPropriedade {
 	/*

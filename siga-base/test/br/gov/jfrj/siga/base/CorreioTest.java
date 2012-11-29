@@ -18,7 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.base;
 
-import br.gov.jfrj.siga.base.Correio;
 
 public class CorreioTest {
 	/**

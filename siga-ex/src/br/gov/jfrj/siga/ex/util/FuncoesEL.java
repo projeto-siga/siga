@@ -842,7 +842,7 @@ public class FuncoesEL {
 		attrs.put("botao", botao);
 		attrs.put("lote", lote);
 		attrs.put("nmMod", "macro extensaoAssinador");
-		attrs.put("template", "[@extensaoAssinadorDesenv/]");
+		attrs.put("template", "[@extensaoAssinador/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
 

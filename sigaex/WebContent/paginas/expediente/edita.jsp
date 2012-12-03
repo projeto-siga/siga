@@ -536,11 +536,13 @@ function checkBoxMsg() {
 							<!-- idAjax="destinatario" -->
 							<br>
 							<ww:textfield name="nmOrgaoExterno" size="120" maxLength="256" />
+							<input type="hidden" name="campos" value="nmOrgaoExterno" />
 							</td>
 
 						</c:when>
 						<c:otherwise>
 							<ww:textfield name="nmDestinatario" size="80" maxLength="256" />
+							<input type="hidden" name="campos" value="nmDestinatario" />
 							</td>
 						</c:otherwise>
 						</c:choose>

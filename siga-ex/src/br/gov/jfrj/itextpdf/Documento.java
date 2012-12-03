@@ -424,9 +424,9 @@ public class Documento extends AbstractDocumento {
 
 	// Desenha texto ao redor de um circulo, acima ou abaixo
 	//
-	private static void showTextOnArc(PdfContentByte cb, String text, BaseFont font,
-			float textHeight, float xCenter, float yCenter, float radius,
-			boolean top) {
+	private static void showTextOnArc(PdfContentByte cb, String text,
+			BaseFont font, float textHeight, float xCenter, float yCenter,
+			float radius, boolean top) {
 		float fTotal = 0;
 		float aPos[] = new float[text.length()];
 		for (int i = 0; i < text.length(); i++) {
@@ -545,14 +545,18 @@ public class Documento extends AbstractDocumento {
 		String uri = request.getRequestURI();
 		boolean estampar = uri.indexOf("/semmarcas/") == -1;
 		boolean completo = uri.indexOf("/completo/") != -1;
-		boolean somenteHash = uri.indexOf("/hashSHA1/") != -1
+		boolean somenteHash = uri.indexOf("/hash/") != -1
+				|| uri.indexOf("/hashSHA1/") != -1
 				|| uri.indexOf("/hashSHA-256/") != -1
 				|| uri.indexOf("/hashSHA-512/") != -1
 				|| uri.indexOf("/hashMD5/") != -1;
 		String hash = null;
 		if (somenteHash) {
-			hash = uri.substring(uri.indexOf("/hash") + 5,
-					uri.indexOf("/", uri.indexOf("/hash") + 5));
+			if (uri.indexOf("/hash/") != -1)
+				hash = request.getParameter("HASH_ALGORITHM");
+			else
+				hash = uri.substring(uri.indexOf("/hash") + 5,
+						uri.indexOf("/", uri.indexOf("/hash") + 5));
 		}
 
 		return getDocumento(mob, mov, completo, estampar, hash);
@@ -728,13 +732,16 @@ public class Documento extends AbstractDocumento {
 
 		log.info("Processamento: terminou canonicalizar");
 
-		/* bruno.lacerda@avantiprima.com.br - 01/08/2012 
-		 * correcao para carregar a imagem do brasao independente do protocolo
+		/*
+		 * bruno.lacerda@avantiprima.com.br - 01/08/2012 correcao para carregar
+		 * a imagem do brasao independente do protocolo
 		 */
 		// HttpServletRequest req = ServletActionContext.getRequest();
-		// sHtml = sHtml.replace("contextpath", "http://" + req.getServerName()+  ":" + req.getServerPort() + req.getContextPath());
-		sHtml = sHtml.replace("contextpath", ServletActionContext.getServletContext().getRealPath(""));
-		
+		// sHtml = sHtml.replace("contextpath", "http://" + req.getServerName()+
+		// ":" + req.getServerPort() + req.getContextPath());
+		sHtml = sHtml.replace("contextpath", ServletActionContext
+				.getServletContext().getRealPath(""));
+
 		log.info("Processamento: prestes a entrar no nheengatu");
 
 		return parser.converter(sHtml, ConversorHtml.PDF);

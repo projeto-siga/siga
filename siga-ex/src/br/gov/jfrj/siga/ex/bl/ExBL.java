@@ -125,7 +125,7 @@ public class ExBL extends CpBL {
 
 	private ProcessadorModelo processadorModeloJsp;
 	private ProcessadorModelo processadorModeloFreemarker = new ProcessadorModeloFreemarker();
-	
+
 	private final static Logger log = Logger.getLogger(ExBL.class);
 
 	public ThreadLocal<SortedSet<ExMobil>> getThreadAlteracaoParcial() {
@@ -548,17 +548,20 @@ public class ExBL extends CpBL {
 									mov.getCadastrante(),
 									mov.getLotaCadastrante());
 					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
-						if (mob.getDoc().isEletronico()){						
-						    m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-						    for (ExMovimentacao assinatura : mob.getDoc().getTodasAsAssinaturas()) {
-							    if(assinatura.getSubscritor().equivale(mov.getSubscritor())){
-						    		m = null;
-							    	break;
-						    	}							
-						    }
-						    if (m != null)						
-						        acrescentarMarca(set, mob, m, mov.getDtIniMov(),
-							    	mov.getSubscritor(), null);
+						if (mob.getDoc().isEletronico()) {
+							m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
+							for (ExMovimentacao assinatura : mob.getDoc()
+									.getTodasAsAssinaturas()) {
+								if (assinatura.getSubscritor().equivale(
+										mov.getSubscritor())) {
+									m = null;
+									break;
+								}
+							}
+							if (m != null)
+								acrescentarMarca(set, mob, m,
+										mov.getDtIniMov(), mov.getSubscritor(),
+										null);
 						}
 					}
 				}
@@ -625,15 +628,17 @@ public class ExBL extends CpBL {
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)				
-				if (!mob.doc().isEletronico() && (mob.doc().isAssinado())
-						|| (mob.doc().isEletronico() && mob.doc().isAssinadoEletronicoPorTodosOsSignatarios())
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
+				if (!mob.doc().isEletronico()
+						&& (mob.doc().isAssinado())
+						|| (mob.doc().isEletronico() && mob.doc()
+								.isAssinadoEletronicoPorTodosOsSignatarios())
 						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
 					m = CpMarcador.MARCADOR_EM_ANDAMENTO;
 				} else if (mob.isApensado()) {
 					m = CpMarcador.MARCADOR_APENSADO;
-				} else {					
+				} else {
 					m = CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA;
 				}
 
@@ -663,16 +668,18 @@ public class ExBL extends CpBL {
 		}
 
 		if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
-			Long mSubs = CpMarcador.MARCADOR_COMO_SUBSCRITOR; 
-			for (ExMovimentacao assinatura : mob.getDoc().getTodasAsAssinaturas()) {				
-			    if(assinatura.getSubscritor().equivale(mob.getExDocumento().getSubscritor())){	
-			    	mSubs = null;
-			        break;
-			    }  			   
-			}    
+			Long mSubs = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
+			for (ExMovimentacao assinatura : mob.getDoc()
+					.getTodasAsAssinaturas()) {
+				if (assinatura.getSubscritor().equivale(
+						mob.getExDocumento().getSubscritor())) {
+					mSubs = null;
+					break;
+				}
+			}
 			if (mSubs != null)
-			   acrescentarMarca(set, mob, mSubs, dt,
-	                 mob.getExDocumento().getSubscritor(), null);
+				acrescentarMarca(set, mob, mSubs, dt, mob.getExDocumento()
+						.getSubscritor(), null);
 		}
 
 		if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
@@ -887,10 +894,10 @@ public class ExBL extends CpBL {
 									.getEmailPessoa());
 						}
 					} else if (conf.getLotacao() != null) {
-						List<DpPessoa> pessoasLotacao = CpDao
-								.getInstance()
+						List<DpPessoa> pessoasLotacao = CpDao.getInstance()
 								.pessoasPorLotacao(
-										conf.getLotacao().getIdLotacao(), false,true);
+										conf.getLotacao().getIdLotacao(),
+										false, true);
 						for (DpPessoa pessoa : pessoasLotacao) {
 							if (!emailsAtendentes.contains(pessoa
 									.getEmailPessoa()))
@@ -1116,11 +1123,11 @@ public class ExBL extends CpBL {
 			final Date dtMov, final byte[] pkcs7) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
-		
-		if(doc.isCancelado())
+
+		if (doc.isCancelado())
 			throw new AplicacaoException(
-				"Não é possível assinar um documento cancelado.");
-		
+					"Não é possível assinar um documento cancelado.");
+
 		boolean fPreviamenteAssinado = doc.isAssinado();
 
 		final byte[] cms;
@@ -1131,37 +1138,34 @@ public class ExBL extends CpBL {
 
 			String s;
 
-			// s =
-			// client.validarAssinaturaPKCS7(MessageDigest.getInstance("SHA1")
-			// .digest(data), SHA1, pkcs7, dao().dt(), VALIDAR_LCR);
-			s = client.validarAssinatura(pkcs7, data, dao().dt(), VALIDAR_LCR);
-			Service.throwExceptionIfError(s);
+			// s = client.validarAssinatura(pkcs7, data, dao().dt(),
+			// VALIDAR_LCR);
+			// Service.throwExceptionIfError(s);
+			//
+			// if (BUSCAR_CARIMBO_DE_TEMPO) {
+			cms = client.validarECompletarAssinatura(pkcs7, data, true, dtMov);
+			sNome = client
+					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
 
-			if (BUSCAR_CARIMBO_DE_TEMPO) {
-				cms = client.validarECompletarAssinatura(pkcs7, data, null,
-						dao().dt());
-				sNome = client.validarAssinatura(cms, data, dao().dt(),
-						VALIDAR_LCR);
+			// cms = client
+			// .converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(pkcs7);
+			// Service.throwExceptionIfError(cms);
+			//
+			// sNome = client.validarAssinaturaCMS(
+			// MessageDigest.getInstance("SHA1").digest(data), SHA1,
+			// cms, dao().dt());
+			Service.throwExceptionIfError(sNome);
 
-				// cms = client
-				// .converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(pkcs7);
-				// Service.throwExceptionIfError(cms);
-				//
-				// sNome = client.validarAssinaturaCMS(
-				// MessageDigest.getInstance("SHA1").digest(data), SHA1,
-				// cms, dao().dt());
-				Service.throwExceptionIfError(sNome);
+			String sCPF = client.recuperarCPF(cms);
+			Service.throwExceptionIfError(sCPF);
 
-				String sCPF = client.recuperarCPF(cms);
-				Service.throwExceptionIfError(sCPF);
-
-				lCPF = Long.valueOf(sCPF);
-			} else {
-				sNome = s;
-				String sCPF = client.recuperarCPF(pkcs7);
-				Service.throwExceptionIfError(sCPF);
-				lCPF = Long.valueOf(sCPF);
-			}
+			lCPF = Long.valueOf(sCPF);
+			// } else {
+			// sNome = s;
+			// String sCPF = client.recuperarCPF(pkcs7);
+			// Service.throwExceptionIfError(sCPF);
+			// lCPF = Long.valueOf(sCPF);
+			// }
 
 			// writeB64File("c:/trabalhos/java/cd_teste_doc.b64", data);
 			// writeB64File("c:/trabalhos/java/cd_teste_hash.b64",
@@ -1268,13 +1272,13 @@ public class ExBL extends CpBL {
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					usuarioDoToken, null, null, null, null);
 
-			if (BUSCAR_CARIMBO_DE_TEMPO) {
-				mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
-				mov.setConteudoBlobMov2(cms);
-			} else {
-				mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
-				mov.setConteudoBlobMov2(pkcs7);
-			}
+			// if (BUSCAR_CARIMBO_DE_TEMPO) {
+			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
+			mov.setConteudoBlobMov2(cms);
+			// } else {
+			mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
+			// mov.setConteudoBlobMov2(pkcs7);
+			// }
 
 			mov.setDescrMov(sNome);
 
@@ -1356,176 +1360,175 @@ public class ExBL extends CpBL {
 	public void assinarMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final byte[] pkcs7, long tpMovAssinatura) throws AplicacaoException {
-		
-		String sNome;
-		Long lCPF = null;
-		final byte[] cms;
-		String sCPF = null;
-		final byte[] data;
-		CdService client;
-		String s = null;
-		boolean fValido = false;
-		Long lMatricula = null;
-		
-		if ( movAlvo != null ) {
-			log.info("Assinando movimentacao: " + movAlvo.toString() + " Id da movimentação: " + movAlvo.getIdMov());
+
+		if (movAlvo != null) {
+			log.info("Assinando movimentacao: " + movAlvo.toString()
+					+ " Id da movimentação: " + movAlvo.getIdMov());
 		} else {
 			log.warn("A movimentacao a ser assinada nao pode ser nula");
-			throw new AplicacaoException("Não é possível assinar uma movimentação cancelada.");
+			throw new AplicacaoException(
+					"Não é possível assinar uma movimentação cancelada.");
 		}
-		
-		if(movAlvo.isCancelada()) {
+
+		if (movAlvo.isCancelada()) {
 			log.warn("A movimentacao a ser assinada está cancelada");
-			throw new AplicacaoException("Não é possível assinar uma movimentação cancelada.");
+			throw new AplicacaoException(
+					"Não é possível assinar uma movimentação cancelada.");
 		}
-		
-		data = movAlvo.getConteudoBlobpdf();
-		client = Service.getCdService();
 
+		String sNome;
+		Long lCPF = null;
+
+		final byte[] cms;
 		try {
-			s = client.validarAssinatura(pkcs7, data, dao().dt(), VALIDAR_LCR);
-			Service.throwExceptionIfError(s);
-		} catch (Exception e) {
-			log.warn("Nao foi possivel validar a assinatura da movimentacao", e);
-			throw new AplicacaoException("Erro ao validar a assinatura da movimentação", 0, e);
-		}
-		
-		if ( BUSCAR_CARIMBO_DE_TEMPO ) {
-			
-			try {
-				cms = client.validarECompletarAssinatura(pkcs7, data, null, dao().dt());
-			} catch (Exception e) {
-				log.warn("Nao foi possivel validar e completar assinatura da movimentacao", e);
-				throw new AplicacaoException("Erro ao validar e completar assinatura de uma movimentação", 0, e);
-			}
-			
-			try {
-				sNome = client.validarAssinatura(cms, data, dao().dt(),	VALIDAR_LCR);
-				Service.throwExceptionIfError(sNome);
-				
-				sCPF = client.recuperarCPF(cms);
-				Service.throwExceptionIfError(sCPF);
+			final byte[] data = movAlvo.getConteudoBlobpdf();
 
-			} catch (Exception e) {
-				log.warn("Nao foi possivel validar a assinatura da movimentacao", e);
-				throw new AplicacaoException("Erro ao validar e completar assinatura de uma movimentação", 0, e);
-			}
-			
+			CdService client = Service.getCdService();
+
+			String s;
+
+			// s = client.validarAssinatura(pkcs7, data, dao().dt(),
+			// VALIDAR_LCR);
+			// Service.throwExceptionIfError(s);
+			//
+			// if (BUSCAR_CARIMBO_DE_TEMPO) {
+			cms = client.validarECompletarAssinatura(pkcs7, data, true,
+
+			dao().dt());
+
+			sNome = client
+					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
+
+			Service.throwExceptionIfError(sNome);
+
+			String sCPF = client.recuperarCPF(cms);
+			Service.throwExceptionIfError(sCPF);
+
 			lCPF = Long.valueOf(sCPF);
-			
-		} else {
-			sNome = s;
-			sCPF = client.recuperarCPF(pkcs7);
+
+			boolean fValido = false;
+			Long lMatricula = null;
+
+			// } else {
+			// sNome = s;
+			// String sCPF = client.recuperarCPF(pkcs7);
+			// Service.throwExceptionIfError(sCPF);
+			// lCPF = Long.valueOf(sCPF);
+			// }
 			try {
-				Service.throwExceptionIfError(sCPF);
-				lCPF = Long.valueOf(sCPF);
-			} catch(Exception e){
-				log.warn("Nao foi possivel vrecuperar o CPF da movimentacao ", e);
-				throw new AplicacaoException("Erro na recuperacao do CPF de uma movimentação", 0, e);
-			}
-		}
-		
-		try {
-			// Orlando: Inseri o IF abaixo para que seja enviado um e-mail
-			// quando o despacho é assinado.
-			if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-					&& movAlvo.getResp() != null) {
-				emailDeTransferência(movAlvo.getResp(), movAlvo.getLotaResp(),
-						movAlvo.getSiglaAssinatura(), movAlvo.getExDocumento()
-								.getCodigoString(), movAlvo.getExDocumento()
-								.getDescrDocumento());
-			}
-			// sNome = AssinaturaDigital.verificarAssinatura(movAlvo
-			// .getConteudoBlobpdf(), assinatura, null);
-		} catch (final Exception e) {
-			log.error("Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao", e);
-			throw new AplicacaoException("Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao", 0, e);
-		}
-
-		try {
-			if (sNome == null)
-				throw new AplicacaoException(
-						"Não foi possível acessar o nome do assinante");
-			String sMatricula = sNome.split(":")[1];
-			lMatricula = Long.valueOf(sMatricula);
-		} catch (final Exception e) {
-			// throw new AplicacaoException(
-			// "Não foi possível obter a matrícula do assinante", 0, e);
-		}
-		
-		// Verifica se a matrícula confere com o subscritor do Despacho ou do
-		// desentranhamento
-		if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
-				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
-
-			try {
-				if (lMatricula != null) {
-					fValido = movAlvo.getSubscritor() != null
-							&& lMatricula.equals(movAlvo.getSubscritor()
-									.getMatricula());
+				// Orlando: Inseri o IF abaixo para que seja enviado um e-mail
+				// quando o despacho é assinado.
+				if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+						&& movAlvo.getResp() != null) {
+					emailDeTransferência(movAlvo.getResp(),
+							movAlvo.getLotaResp(),
+							movAlvo.getSiglaAssinatura(), movAlvo
+									.getExDocumento().getCodigoString(),
+							movAlvo.getExDocumento().getDescrDocumento());
 				}
-
-				if (!fValido && lCPF != null) {
-					fValido = movAlvo.getSubscritor() != null
-							&& lCPF.equals(movAlvo.getSubscritor()
-									.getCpfPessoa());
-				}
-
-				if (lMatricula == null && lCPF == null){
-					log.warn("Não foi possível recuperar nem a matrícula nem o CPF do assinante");
-					throw new AplicacaoException("Não foi possível recuperar nem a matrícula nem o CPF do assinante");
-				}
-
-				if (fValido == false
-						&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
-					log.warn("Assinante não é subscritor do desentranhamento");
-					throw new AplicacaoException("Assinante não é subscritor do desentranhamento");
-				}
-					
-				if (fValido == false) {
-					log.warn("Assinante não é subscritor do despacho");
-					throw new AplicacaoException("Assinante não é subscritor do despacho");
-				}
-					
+				// sNome = AssinaturaDigital.verificarAssinatura(movAlvo
+				// .getConteudoBlobpdf(), assinatura, null);
 			} catch (final Exception e) {
-				if (fValido == false
-						&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
-					log.warn("Só é permitida a assinatura digital do subscritor do desentranhamento");
-					throw new AplicacaoException("Só é permitida a assinatura digital do subscritor do desentranhamento",0, e);
+				log.error(
+						"Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao",
+						e);
+				throw new AplicacaoException(
+						"Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao",
+						0, e);
+			}
+
+			try {
+				if (sNome == null)
+					throw new AplicacaoException(
+							"Não foi possível acessar o nome do assinante");
+				String sMatricula = sNome.split(":")[1];
+				lMatricula = Long.valueOf(sMatricula.replace("-", ""));
+			} catch (final Exception e) {
+				// throw new AplicacaoException(
+				// "Não foi possível obter a matrícula do assinante", 0, e);
+			}
+
+			// Verifica se a matrícula confere com o subscritor do Despacho ou
+			// do
+			// desentranhamento
+			if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
+					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+
+				try {
+					if (lMatricula != null) {
+						fValido = movAlvo.getSubscritor() != null
+								&& lMatricula.equals(movAlvo.getSubscritor()
+										.getMatricula());
+					}
+
+					if (!fValido && lCPF != null) {
+						fValido = movAlvo.getSubscritor() != null
+								&& lCPF.equals(movAlvo.getSubscritor()
+										.getCpfPessoa());
+					}
+
+					if (lMatricula == null && lCPF == null) {
+						log.warn("Não foi possível recuperar nem a matrícula nem o CPF do assinante");
+						throw new AplicacaoException(
+								"Não foi possível recuperar nem a matrícula nem o CPF do assinante");
+					}
+
+					if (fValido == false
+							&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+						log.warn("Assinante não é subscritor do desentranhamento");
+						throw new AplicacaoException(
+								"Assinante não é subscritor do desentranhamento");
+					}
+
+					if (fValido == false) {
+						log.warn("Assinante não é subscritor do despacho");
+						throw new AplicacaoException(
+								"Assinante não é subscritor do despacho");
+					}
+
+				} catch (final Exception e) {
+					if (fValido == false
+							&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+						log.warn("Só é permitida a assinatura digital do subscritor do desentranhamento");
+						throw new AplicacaoException(
+								"Só é permitida a assinatura digital do subscritor do desentranhamento",
+								0, e);
+					}
+					log.warn("Só é permitida a assinatura digital do subscritor do despacho");
+					throw new AplicacaoException(
+							"Só é permitida a assinatura digital do subscritor do despacho",
+							0, e);
 				}
-				log.warn("Só é permitida a assinatura digital do subscritor do despacho");
-				throw new AplicacaoException("Só é permitida a assinatura digital do subscritor do despacho",0, e);
 			}
-		}
-			
-		log.info("Iniciando alteração da movimentação " + movAlvo.toString() + " Id da movimentação: " + movAlvo.getIdMov() );
-		iniciarAlteracao();
 
-		// Nato: isso esta errado. Deveriamos estar recebendo o cadastrante
-		// e sua lotacao.
-		final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
-				cadastrante, lotaCadastrante, movAlvo.getExMobil(), null,
-				null, null, null, null, null);
+			log.info("Iniciando alteração da movimentação "
+					+ movAlvo.toString() + " Id da movimentação: "
+					+ movAlvo.getIdMov());
+			iniciarAlteracao();
 
-		mov.setExMovimentacaoRef(movAlvo);
-			
-		
-		try {
-			if (BUSCAR_CARIMBO_DE_TEMPO) {
-				mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
-				mov.setConteudoBlobMov2(cms);
-			} else {
-				mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
-				mov.setConteudoBlobMov2(pkcs7);
-			}
+			// Nato: isso esta errado. Deveriamos estar recebendo o cadastrante
+			// e sua lotacao.
+			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
+					cadastrante, lotaCadastrante, movAlvo.getExMobil(), null,
+					null, null, null, null, null);
+
+			mov.setExMovimentacaoRef(movAlvo);
+
+			// if (BUSCAR_CARIMBO_DE_TEMPO) {
+			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
+			mov.setConteudoBlobMov2(cms);
+			// } else {
+			mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
+			// mov.setConteudoBlobMov2(pkcs7);
+			// }
 
 			mov.setDescrMov(sNome);
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
-			
+
 		} catch (final Exception e) {
 			log.error("Ocorreu um erro durante a finalização do processo de gravação da movimentação");
 			log.info("Cancelando alterações da movimentação");
@@ -1535,7 +1538,7 @@ public class ExBL extends CpBL {
 
 		// Caso o documento seja eletrônico e a movimentação foi de assinatura
 		// envia email para o atendente.
-		if (movAlvo.getExDocumento().isEletronico() 
+		if (movAlvo.getExDocumento().isEletronico()
 				&& movAlvo.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
 			try {
 				log.info("Enviando email de transferencia para o atendente");
@@ -1548,7 +1551,8 @@ public class ExBL extends CpBL {
 				log.warn("Ocorreu um erro ao enviar email de transferencia para o atendente");
 				try {
 					log.info("Enviando email de transferencia para o administrador");
-					emailDeTransferênciaAdministrador(movAlvo.getExDocumento().getSigla(), e);
+					emailDeTransferênciaAdministrador(movAlvo.getExDocumento()
+							.getSigla(), e);
 				} catch (final Exception e1) {
 					log.warn("Ocorreu um erro ao enviar email de transferencia para o administrador");
 				}
@@ -2141,7 +2145,7 @@ public class ExBL extends CpBL {
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			dao().gravar(doc);
 
-			if (doc.getExModelo().getExFormaDocumento().getExTipoFormaDoc()
+			if (doc.getExFormaDocumento().getExTipoFormaDoc()
 					.isExpediente()) {
 				for (final ExVia via : setVias) {
 					Integer numVia = null;
@@ -2314,6 +2318,22 @@ public class ExBL extends CpBL {
 						.getOrgaoUsuario().getIdOrgaoUsu()))
 			return true;
 		return false;
+	}
+
+	public static String anotacaoConfidencial(ExMobil mob, DpLotacao lotaTitular) {
+		if (mostraDescricaoConfidencial(mob.doc(), lotaTitular))
+			return "CONFIDENCIAL";
+		else {
+			String s = "";
+			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+				if (mov.isCancelada())
+					continue;
+				if (mov.getExTipoMovimentacao().getIdTpMov()
+						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO))
+					s = mov.getDescrMov();
+			}
+			return s;
+		}
 	}
 
 	public ExDocumento gravar(final DpPessoa cadastrante,
@@ -3238,7 +3258,7 @@ public class ExBL extends CpBL {
 					// Orlando: Inseri a condição abaixo para que o e-mail não
 					// seja enviado quando tratar-se de despacho com
 					// transferência que não estiver assinado.
-					if (tpDespacho == null && descrMov== null)
+					if (tpDespacho == null && descrMov == null)
 						emailDeTransferência(responsavel, lotaResponsavel,
 								m.getSigla(), m.getExDocumento()
 										.getCodigoString(), m.getExDocumento()
@@ -3303,7 +3323,7 @@ public class ExBL extends CpBL {
 
 						for (DpPessoa pes : dao().pessoasPorLotacao(
 
-						lotaResponsavel.getIdLotacao(), false,true)) {
+						lotaResponsavel.getIdLotacao(), false, true)) {
 
 							dest.add(pes.getEmailPessoa());
 
@@ -3321,7 +3341,7 @@ public class ExBL extends CpBL {
 
 				for (DpPessoa pes : dao().pessoasPorLotacao(
 
-				lotaResponsavel.getIdLotacao(), false,true)) {
+				lotaResponsavel.getIdLotacao(), false, true)) {
 
 					dest.add(pes.getEmailPessoa());
 

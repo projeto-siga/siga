@@ -474,6 +474,10 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				idTpConf);
 	}
 
+	/**
+	 * Infere configurações óbvias. Por exemplo, se for informado o tipo de documento e só existir uma forma de documento para este tipo, a forma será preenchida automaticamente.
+	 * @param cpConfiguracao
+	 */
 	@Override
 	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
 

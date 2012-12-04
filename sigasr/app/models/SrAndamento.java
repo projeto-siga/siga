@@ -2,6 +2,7 @@ package models;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -78,8 +79,18 @@ public class SrAndamento extends GenericModel {
 	@OneToOne(mappedBy = "andamentoCancelador")
 	public SrAndamento andamentoCancelado;
 
-	public SrAndamento() {
-		descrAndamento = "Dando andamento ao chamado...";
+	public SrAndamento() throws Exception {
+		this(null);
+	}
+
+	// O objetivo de ter um construtor com parâmetro é evitar que os
+	// valores default setados dentro dele acabem sendo chamados pelo
+	// framework a cada request, pois a ideia é esses valores serem
+	// definidos só no início da operação
+	public SrAndamento(SrSolicitacao sol) throws Exception {
+		this.solicitacao = sol;
+		if (solicitacao != null && solicitacao.temAndamento())
+			estado = solicitacao.getUltimoAndamento().estado;
 	}
 
 	public SrAndamento(SrEstado estado, String descricao, DpPessoa atendente,
@@ -142,6 +153,29 @@ public class SrAndamento extends GenericModel {
 		return (atendente != null || lotaAtendente != null);
 	}
 
+	public boolean isProxAtendenteAlteravel() throws Exception {
+		return (deduzirProxAtendentePorDesignacao() == null || (solicitacao
+				.isEmAtendimento() && estado == SrEstado.ANDAMENTO));
+	}
+
+	private DpLotacao deduzirProxAtendentePorDesignacao() throws Exception {
+		if (estado == SrEstado.FECHADO)
+			return solicitacao.getPosAtendenteDesignado();
+		if (estado == SrEstado.PRE_ATENDIMENTO)
+			return solicitacao.getPreAtendenteDesignado();
+		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento())
+			return solicitacao.getAtendenteDesignado();
+		return null;
+	}
+
+	public SrAndamento deduzirProxAtendente() throws Exception {
+		DpLotacao lot = deduzirProxAtendentePorDesignacao();
+		if (lot == null && solicitacao != null)
+			lot = solicitacao.getLotaAtendente();
+		this.lotaAtendente = lot;
+		return this;
+	}
+
 	@Override
 	public SrAndamento save() {
 		try {
@@ -193,7 +227,7 @@ public class SrAndamento extends GenericModel {
 
 		if (atendente == null && lotaAtendente == null)
 			throw new Exception("Atendente não pode ser nulo");
-		
+
 		if (lotaAtendente == null)
 			lotaAtendente = atendente.getLotacao();
 	}

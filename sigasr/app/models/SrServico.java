@@ -28,8 +28,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_SERVICO")
-public class SrServico extends Objeto implements SrSelecionavel,
-		HistoricoAuditavel {
+public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
 
 	@Id
 	@GeneratedValue
@@ -44,26 +43,6 @@ public class SrServico extends Objeto implements SrSelecionavel,
 
 	@Column(name = "TITULO_SERVICO")
 	public String tituloServico;
-
-	@Column(name = "HIS_ID_INI")
-	private Long hisIdIni;
-
-	@Column(name = "HIS_DT_INI")
-	private Date hisDtIni;
-
-	@Column(name = "HIS_DT_FIM")
-	private Date hisDtFim;
-
-	@Column(name = "HIS_ATIVO")
-	private int hisAtivo;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_INI")
-	private CpIdentidade hisIdcIni;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_FIM")
-	private CpIdentidade hisIdcFim;
 
 	public SrServico() {
 		this(null, null);
@@ -103,46 +82,6 @@ public class SrServico extends Objeto implements SrSelecionavel,
 	}
 
 	@Override
-	public Long getIdInicial() {
-		return hisIdIni;
-	}
-
-	@Override
-	public boolean equivale(Object other) {
-		return false;
-	}
-
-	@Override
-	public Long getHisIdIni() {
-		return hisIdIni;
-	}
-
-	@Override
-	public void setHisIdIni(Long hisIdIni) {
-		this.hisIdIni = hisIdIni;
-	}
-
-	@Override
-	public Date getHisDtIni() {
-		return hisDtIni;
-	}
-
-	@Override
-	public void setHisDtIni(Date hisDtIni) {
-		this.hisDtIni = hisDtIni;
-	}
-
-	@Override
-	public Date getHisDtFim() {
-		return hisDtFim;
-	}
-
-	@Override
-	public void setHisDtFim(Date hisDtFim) {
-		this.hisDtFim = hisDtFim;
-	}
-
-	@Override
 	public int getHisAtivo() {
 		return getHisDtFim() != null ? 1 : 0;
 	}
@@ -151,26 +90,6 @@ public class SrServico extends Objeto implements SrSelecionavel,
 	public void setHisAtivo(int hisAtivo) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public CpIdentidade getHisIdcIni() {
-		return hisIdcIni;
-	}
-
-	@Override
-	public void setHisIdcIni(CpIdentidade hisIdcIni) {
-		this.hisIdcIni = hisIdcIni;
-	}
-
-	@Override
-	public CpIdentidade getHisIdcFim() {
-		return hisIdcFim;
-	}
-
-	@Override
-	public void setHisIdcFim(CpIdentidade hisIdcFim) {
-		this.hisIdcFim = hisIdcFim;
 	}
 
 	@Override

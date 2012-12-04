@@ -1,4 +1,9 @@
 #{set _base:'http://localhost:8080'/}
+#{if _disabled == "true"}
+	#{set 'selecaoDisabled'}
+		disabled="disabled" 
+	#{/set}
+#{/if}
 <span id="${_idAjax}" depende=";tipo${_nome};"> <!--ajax:${_idAjax}-->
 
 	<script type="text/javascript">
@@ -79,8 +84,8 @@ self.ajax_${_nomeClean} = function() {
 	type="text" size="25"
 	value="${_value?.sigla}" id="${_nomeClean}_sigla"
 	onblur="javascript: ajax_${_nomeClean}();"
-	onkeypress="return handleEnter(this, event)" /> <input type="button"
+	onkeypress="return handleEnter(this, event)" ${selecaoDisabled} /> <input type="button"
 	id="${_nomeClean}Button" value="..."
-	onclick="javascript: popitup_${_nomeClean}('');" theme="simple">
+	onclick="javascript: popitup_${_nomeClean}('');" theme="simple" ${selecaoDisabled} >
 	<span id="${_nomeClean}Span">${_value?.descricao}</span> <!--  idAjax="${_idAjax}" -->
 	<!--/ajax:${_idAjax}--> </span>

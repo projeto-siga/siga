@@ -50,6 +50,7 @@ public class SrMarca extends CpMarca {
 			setDpPessoaIni(pessoa.getPessoaInicial());
 		setDpLotacaoIni(lota.getLotacaoInicial());
 		setCpMarcador(JPA.em().find(CpMarcador.class, idMarcador));
+		this.solicitacao = sol.solicitacaoInicial;
 	}
 
 	public String getDescricao() {

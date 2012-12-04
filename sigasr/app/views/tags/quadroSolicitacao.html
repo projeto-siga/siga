@@ -23,6 +23,18 @@ _solicitacoes.add(_solicitacao); } }%
 							${sol.lotaCadastrante.siglaLotacao}</i>
 						#{/if}
 					</p>
+					<p class="gt-table-action-list">
+						#{if _criarFilha}<a class="once"
+							href="@{Application.criarFilha(sol.idSolicitacao)}"
+							title="Criar solicitação filha"> <img
+							src="http://localhost:8080/siga/css/famfamfam/icons/arrow_divide.png"
+							style="margin-right: 5px;"> </a> &nbsp;&nbsp;&nbsp;#{/if} #{if
+							_editar} <a class="once"
+							href="@{Application.editar(sol.idSolicitacao)}"
+							title="Editar solicitação"> <img
+							src="http://localhost:8080/siga/css/famfamfam/icons/pencil.png"
+							style="margin-right: 5px;"> </a> &nbsp;&nbsp;&nbsp; #{/if}
+					</p>
 				</td>
 				<td style="padding-left: 60px">
 					<!-- Categories Sub Table -->
@@ -49,20 +61,6 @@ _solicitacoes.add(_solicitacao); } }%
 						<tr>
 							<th>Anexo:</th>
 							<td>#{arquivo arquivo:sol.arquivo /}</td>
-							</td>
-						</tr>
-						#{/if}
-						#{if sol.solicitacaoPai}
-						<tr>
-							<th>Solicitação mãe:</th>
-							<td><a href="@{Application.exibir(sol.solicitacaoPai.idSolicitacao)}">${sol.solicitacaoPai.codigo}</a></td>
-							</td>
-						</tr>
-						#{/if}
-						#{if sol.solicitacaoFilhaSet}
-						<tr>
-							<th>Solicitações filhas:</th>
-							<td>#{list items:sol.solicitacaoFilhaSet, as:'filha'}<a href="@{Application.exibir(filha.idSolicitacao)}">${filha.numSequenciaString}</a>&nbsp;#{/list}</td>
 							</td>
 						</tr>
 						#{/if}

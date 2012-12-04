@@ -1,11 +1,30 @@
-<script language="javascript">
 
 %{
 	String _nomeSelPessoaClean = _nomeSelPessoa.replaceAll("\\.","");
 	String _nomeSelLotacaoClean = _nomeSelLotacao.replaceAll("\\.","");
 }%
+#{if _disabled == "true"}
+	#{set 'pessoaLotaSelecaoDisabled'}
+		disabled="disabled" 
+	#{/set}
+#{/if}
 
-function changeVisibility${_nomeSelPessoaClean}${_nomeSelLotacaoClean}(){
+<select id="${_nomeSelPessoaClean}${_nomeSelLotacaoClean}" onchange="" ${pessoaLotaSelecaoDisabled} >
+  <option value="1">Pessoa</option>
+  <option value="2">Lotação</option>
+</select>
+<span id="spanPessoa${_nomeSelPessoaClean}">#{selecao
+	tipo:'pessoa', nome:_nomeSelPessoa, value:_valuePessoa, disabled:_disabled /}</span>
+<span id="spanLotacao${_nomeSelLotacaoClean}">#{selecao
+	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao, disabled:_disabled /}</span>
+<script language="javascript">
+var select = document.getElementById('${_nomeSelPessoaClean}${_nomeSelLotacaoClean}');
+if (document.getElementById('${_nomeSelLotacaoClean}').value)
+	select.value = 2;
+// O onchange tem de ser definido da forma abaixo porque, quando esta tag está dentro de um código
+// carregado por ajax, não funciona o tratamento do modo tradicional (onchange="", etc)
+// http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
+select.onchange = function(){
 	var select = document.getElementById('${_nomeSelPessoaClean}${_nomeSelLotacaoClean}');
 
 	if (select.value == '1'){
@@ -24,18 +43,5 @@ function changeVisibility${_nomeSelPessoaClean}${_nomeSelLotacaoClean}(){
 		document.getElementById('${_nomeSelPessoaClean}Span').innerHTML='';
 	}
 }
-</script>
-<select id="${_nomeSelPessoaClean}${_nomeSelLotacaoClean}" onchange="javascript: changeVisibility${_nomeSelPessoaClean}${_nomeSelLotacaoClean}()">
-  <option value="1">Pessoa</option>
-  <option value="2">Lotação</option>
-</select>
-<span id="spanPessoa${_nomeSelPessoaClean}">#{selecao
-	tipo:'pessoa', nome:_nomeSelPessoa, value:_valuePessoa /}</span>
-<span id="spanLotacao${_nomeSelLotacaoClean}">#{selecao
-	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao /}</span>
-<script language="javascript">
-var select = document.getElementById('${_nomeSelPessoaClean}${_nomeSelLotacaoClean}');
-if (document.getElementById('${_nomeSelLotacaoClean}').value)
-	select.value = 2;	
 select.onchange();
 </script>

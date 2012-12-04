@@ -6,6 +6,7 @@ import java.util.SortedSet;
 import models.SrConfiguracao;
 import models.SrItemConfiguracao;
 import models.SrServico;
+import models.SrSubTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -37,6 +38,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	public boolean atendeExigencias(CpConfiguracao cfgFiltro,
 			Set<Integer> atributosDesconsiderados, CpConfiguracao cfg,
 			SortedSet<CpPerfil> perfis) {
+
 		if (!super.atendeExigencias(cfgFiltro, atributosDesconsiderados, cfg,
 				perfis))
 			return false;
@@ -45,6 +47,18 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				&& cfgFiltro instanceof SrConfiguracao) {
 			SrConfiguracao conf = (SrConfiguracao) cfg;
 			SrConfiguracao filtro = (SrConfiguracao) cfgFiltro;
+
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE
+					&& conf.preAtendente == null)
+				return false;
+
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE
+					&& conf.atendente == null)
+				return false;
+
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE
+					&& conf.posAtendente == null)
+				return false;
 
 			if (conf.servico != null && filtro.servico != null
 					&& !conf.servico.isPaiDeOuIgualA(filtro.servico))

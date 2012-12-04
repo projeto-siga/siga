@@ -97,7 +97,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 					+ lotaAtendente.getIdInicial();
 
 		if (subquery.length() > 0)
-			subquery = " and exists (from SrMarca situacao where situacao.solicitacao = sol "
+			subquery = " and exists (from SrMarca situacao where situacao.solicitacao = sol.solicitacaoInicial "
 					+ subquery + " )";
 
 		List listaRetorno = JPA.em().createQuery(query + subquery)

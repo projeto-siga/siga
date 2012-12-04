@@ -28,7 +28,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO")
-public class SrItemConfiguracao extends Objeto implements SrSelecionavel {
+public class SrItemConfiguracao extends ObjetoPlayComHistorico implements SrSelecionavel {
 
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
 
@@ -45,26 +45,6 @@ public class SrItemConfiguracao extends Objeto implements SrSelecionavel {
 
 	@Column(name = "TITULO_ITEM_CONFIGURACAO")
 	public String tituloItemConfiguracao;
-
-	@Column(name = "HIS_ID_INI")
-	private Long hisIdIni;
-
-	@Column(name = "HIS_DT_INI")
-	private Date hisDtIni;
-
-	@Column(name = "HIS_DT_FIM")
-	private Date hisDtFim;
-
-	@Column(name = "HIS_ATIVO")
-	private int hisAtivo;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_INI")
-	private CpIdentidade hisIdcIni;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_FIM")
-	private CpIdentidade hisIdcFim;
 
 	public SrItemConfiguracao() {
 		this(null, null);

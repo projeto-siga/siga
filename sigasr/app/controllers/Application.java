@@ -35,20 +35,18 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class Application extends Controller {
 
+	@Before
 	static void prepararCpDao() {
 		Session playSession = (Session) JPA.em().getDelegate();
 		CpDao.freeInstance();
 		CpDao.getInstance(playSession);
 	}
 
-	@Before
+	@Before(unless = { "proxy", "exibirAtendente" })
 	static void addDefaults() {
 
-		if (request.url.contains("proxy"))
-			return;
-
 		try {
-			renderArgs.put("_base", "http://10.34.5.90:8080");
+			renderArgs.put("_base", "http://localhost:8080");
 
 			HashMap<String, String> atributos = new HashMap<String, String>();
 			for (Http.Header h : request.headers.values())
@@ -73,8 +71,6 @@ public class Application extends Controller {
 			if (IDs[3] != null && !IDs[3].equals(""))
 				renderArgs.put("lotaTitular",
 						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
-
-			prepararCpDao();
 
 		} catch (Exception e) {
 			redirect("http://localhost:8080/siga");
@@ -155,13 +151,9 @@ public class Application extends Controller {
 	}
 
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
-
 		validarFormEditar(solicitacao);
-
 		solicitacao.salvar(getCadastrante(), getLotaTitular());
-
-		listar(null);
-
+		exibir(solicitacao.idSolicitacao);
 	}
 
 	public static void listar(SrSolicitacaoFiltro filtro) {
@@ -184,27 +176,28 @@ public class Application extends Controller {
 				marcadores, filtro);
 	}
 
-	public static void exibir(Long id) {
+	public static void exibir(Long id) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		SrAndamento andamento = new SrAndamento();
-		andamento.estado = solicitacao.getUltimoAndamento().estado;
+		SrAndamento andamento = new SrAndamento(solicitacao);
+		andamento.deduzirProxAtendente();
 
-		boolean trocarAtendente = solicitacao.podeTrocarAtendente(
-				getLotaTitular(), getCadastrante());
 		boolean criarFilha = solicitacao.podeCriarFilha(getLotaTitular(),
 				getCadastrante());
 		boolean desfazerAndamento = solicitacao.podeDesfazerAndamento(
 				getLotaTitular(), getCadastrante());
 		boolean editar = solicitacao.podeEditar(getLotaTitular(),
 				getCadastrante());
-		boolean trocarSituacao = solicitacao.podeTrocarSituacao(
-				getLotaTitular(), getCadastrante());
+		boolean movimentarPlenamente = solicitacao.estaCom(getLotaTitular(),
+				getCadastrante());
 
 		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
 
-		render(solicitacao, editar, desfazerAndamento, trocarSituacao,
-				andamento, trocarAtendente, criarFilha, estados);
+		render(solicitacao, editar, desfazerAndamento, movimentarPlenamente,
+				andamento, criarFilha, estados);
+	}
 
+	public static void exibirAtendente(SrAndamento andamento) throws Exception {
+		render(andamento.deduzirProxAtendente());
 	}
 
 	public static void baixar(Long idArquivo) {
@@ -214,39 +207,20 @@ public class Application extends Controller {
 	}
 
 	public static void andamento(SrAndamento andamento) throws Exception {
-
 		andamento.salvar(getCadastrante(), getLotaTitular());
-
 		exibir(andamento.solicitacao.idSolicitacao);
-
 	}
 
-	public static void desfazerUltimoAndamento(Long id) {
+	public static void desfazerUltimoAndamento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.desfazerUltimoAndamento(getCadastrante(), getLotaTitular());
 		exibir(id);
 	}
 
-	public static void criarFilha(Long id) {
-
-		SrSolicitacao pai = SrSolicitacao.findById(id);
-		SrSolicitacao solicitacao = new SrSolicitacao();
-		// SrDao.getInstance().copiar(solicitacao, pai);
-		solicitacao.idSolicitacao = null;
-		solicitacao.solicitacaoPai = pai;
-		solicitacao.numSequencia = pai.getNumeroProximaFilha();
-
-		List<SrItemConfiguracao> itensConfiguracao = SrItemConfiguracao.all()
-				.fetch();
-		SrFormaAcompanhamento[] formasAcompanhamento = SrFormaAcompanhamento
-				.values();
-		SrUrgencia[] urgencias = SrUrgencia.values();
-		SrTendencia[] tendencias = SrTendencia.values();
-		SrGravidade[] gravidades = SrGravidade.values();
-
-		render("Application/editar.html", solicitacao, itensConfiguracao,
-				formasAcompanhamento, gravidades, urgencias, tendencias,
-				solicitacao);
-
+	public static void criarFilha(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		SrSolicitacao filha = sol.criarFilhaSemSalvar();
+		formEditar(filha);
 	}
 
 	public static void listarDesignacao() {
@@ -274,18 +248,9 @@ public class Application extends Controller {
 	}
 
 	public static void gravarDesignacao(SrConfiguracao designacao) {
-
-		// Plim
-		// try {
 		designacao.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-
-		// dao().salvar(designacao, "RJ13285");
-		// } catch (AplicacaoException ae) {
-		int a = 0;
-		// }
-
 		listarDesignacao();
 	}
 
@@ -296,39 +261,26 @@ public class Application extends Controller {
 	}
 
 	public static void editarItem(Long id) {
-		SrItemConfiguracao item;
+		SrItemConfiguracao item = new SrItemConfiguracao();
 		if (id != null)
 			item = SrItemConfiguracao.findById(id);
-		else
-			item = new SrItemConfiguracao();
-
 		render(item);
 	}
 
-	public static void gravarItem(SrItemConfiguracao item) {
-		// try {
-		item.save();
-		// dao().salvar(item, "RJ13285");
-		// } catch (AplicacaoException ae) {
-		// int a = 0;
-		// }
+	public static void gravarItem(SrItemConfiguracao item) throws Exception {
+		item.salvar();
 		listarItem();
 	}
 
-	public static void desativarItem(Long id) {
-		// Plim
-		// try {
+	public static void desativarItem(Long id) throws Exception {
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
-		// dao().finalizar(item);
-		// } catch (AplicacaoException ae) {
-		int a = 0;
-		// }
+		item.finalizar();
 		listarItem();
 	}
 
 	public static void selecionarItem(String sigla) {
 		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla);
-		render("Application/selecionar.html", sel);
+		render("@selecionar", sel);
 	}
 
 	public static void buscarItem(String sigla, String nome,
@@ -349,45 +301,35 @@ public class Application extends Controller {
 	}
 
 	public static void listarServico() {
-		List<SrServico> servicos = SrServico.find("byHisDtFimIsNull").fetch();
+		List<SrServico> servicos = SrServico.find("byHisDtFimIsNull").fetch(); 
 		render(servicos);
 	}
 
 	public static void editarServico(Long id) {
-		SrServico servico;
+		SrServico servico = new SrServico();
 		if (id != null)
 			servico = SrServico.findById(id);
-		else
-			servico = new SrServico();
-
 		render(servico);
 	}
 
-	public static void gravarServico(SrServico servico) {
-		// Plim
-		// try {
-		// dao().salvar(servico, "RJ13285");
-		// } catch (AplicacaoException ae) {
-		int a = 0;
-		// }
+	public static void gravarServico(SrServico servico) throws Exception {
+		servico.salvar();
 		listarServico();
 	}
 
-	public static void desativarServico(Long id) {
+	public static void desativarServico(Long id) throws Exception {
 		SrServico servico = SrServico.findById(id);
-		servico.delete();
-
+		servico.finalizar();
 		listarServico();
 	}
 
 	public static void selecionarServico(String sigla) {
 		SrServico sel = new SrServico().selecionar(sigla);
-		render("Application/selecionar.html", sel);
+		render("@selecionar", sel);
 	}
 
 	public static void buscarServico(String sigla, String nome, SrServico filtro) {
 		List<SrServico> itens = null;
-
 		try {
 			if (filtro == null)
 				filtro = new SrServico();

@@ -24,36 +24,42 @@ public class Bootstrap extends Job {
 			SrItemConfiguracao geDoc;
 			SrItemConfiguracao gePat;
 			try {
-				SrItemConfiguracao softwares = new SrItemConfiguracao(
-						"01.00.00.00", "Softwares").save();
+				SrItemConfiguracao softwares = (SrItemConfiguracao) new SrItemConfiguracao(
+						"01.00.00.00", "Softwares").salvar();
 
-				geDoc = new SrItemConfiguracao("01.01.00.00",
-						"Sistemas de gestão documental").save();
+				geDoc = (SrItemConfiguracao) new SrItemConfiguracao("01.01.00.00",
+						"Sistemas de gestão documental").salvar();
 
-				gePat = new SrItemConfiguracao("01.02.00.00",
-						"Sistemas de gestão pcabo yatrimonial").save();
+				gePat = (SrItemConfiguracao) new SrItemConfiguracao("01.02.00.00",
+						"Sistemas de gestão pcabo yatrimonial").salvar();
 
-				SrServico soft = new SrServico("01.00",
-						"Serviços típicos de software").save();
+				SrServico soft = (SrServico) new SrServico("01.00",
+						"Serviços típicos de software").salvar();
 				
-				SrServico manutSoft = new SrServico("01.01",
-				"Manutenção de software").save();
+				SrServico manutSoft = (SrServico) new SrServico("01.01",
+				"Manutenção de software").salvar();
 
-				SrServico hard = new SrServico("02.00",
-						"Serviços típicos de hardware").save();
+				SrServico hard = (SrServico) new SrServico("02.00",
+						"Serviços típicos de hardware").salvar();
 
-				SrConfiguracao design = new SrConfiguracao();
-				design.itemConfiguracao = softwares;
-				design.servico = soft;
-				design.preAtendente = JPA.em().find(DpLotacao.class, 5046L); // SEGEP
-				design.atendente = JPA.em().find(DpLotacao.class, 4961L); // CSIS
-				design.posAtendente = JPA.em().find(DpLotacao.class, 4457L); // STI
-				design.setCpTipoConfiguracao(JPA.em().find(
+				SrConfiguracao atenEPos = new SrConfiguracao();
+				atenEPos.itemConfiguracao = geDoc;
+				atenEPos.servico = manutSoft;
+				atenEPos.atendente = JPA.em().find(DpLotacao.class, 4961L); // CSIS
+				atenEPos.posAtendente = JPA.em().find(DpLotacao.class, 4901L); // STI
+				atenEPos.setCpTipoConfiguracao(JPA.em().find(
 						CpTipoConfiguracao.class,
 						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-				design.save();
-
-				System.out.println(design.getIdConfiguracao());
+				atenEPos.save();
+				
+				SrConfiguracao pre = new SrConfiguracao();
+				pre.itemConfiguracao = softwares;
+				pre.servico = soft;
+				pre.preAtendente = JPA.em().find(DpLotacao.class, 5046L); // SEGEP
+				pre.setCpTipoConfiguracao(JPA.em().find(
+						CpTipoConfiguracao.class,
+						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+				pre.save();
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

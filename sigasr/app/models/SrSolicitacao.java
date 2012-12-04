@@ -37,6 +37,7 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import controllers.SrCalendar;
 
 @Entity
@@ -120,6 +121,10 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
+	
+	@ManyToOne()
+	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+	public SrSolicitacao solicitacaoInicial;
 
 	@ManyToMany(cascade = CascadeType.PERSIST)
 	protected List<SrAtributo> meuAtributoSet;
@@ -267,11 +272,11 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return sols.get(0);
 	}
 
-	public SrSolicitacao getSolicitacaoIniciai() {
+	/*public SrSolicitacao getSolicitacaoIniciai() {
 		if (getHisIdIni() != null)
 			return findById(getHisIdIni());
 		return null;
-	}
+	}*/
 
 	public List<SrAndamento> getAndamentoSet() {
 		return getAndamentoSet(false);
@@ -332,7 +337,8 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (cachePreAtendenteDesignado == null) {
 			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+					SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
 			if (conf != null)
 				cachePreAtendenteDesignado = conf.preAtendente;
 		}
@@ -342,7 +348,8 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	public DpLotacao getAtendenteDesignado() throws Exception {
 		if (cacheAtendenteDesignado == null) {
 			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
 			if (conf != null)
 				cacheAtendenteDesignado = conf.atendente;
 		}
@@ -352,7 +359,8 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (cachePosAtendenteDesignado == null) {
 			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+					SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
 			if (conf != null)
 				cachePosAtendenteDesignado = conf.posAtendente;
 		}
@@ -381,6 +389,17 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return listaCompleta;
 	}
 
+	public List<SrMarca> getMarcaSet() {
+		if (getHisIdIni() == null)
+			return null;
+		ArrayList<SrMarca> listaCompleta = new ArrayList<SrMarca>();
+		for (SrSolicitacao sol : getHistoricoSolicitacao()) {
+			if (sol.meuMarcaSet != null)
+				listaCompleta.addAll(sol.meuMarcaSet);
+		}
+		return listaCompleta;
+	}
+
 	public List<SrEstado> getEstadosSelecionaveis() {
 		List<SrEstado> listaFinal = new ArrayList<SrEstado>();
 		for (SrEstado e : SrEstado.values()) {
@@ -391,17 +410,6 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			listaFinal.add(e);
 		}
 		return listaFinal;
-	}
-
-	public List<SrMarca> getMarcaSet() {
-		if (getHisIdIni() == null)
-			return null;
-		ArrayList<SrMarca> listaCompleta = new ArrayList<SrMarca>();
-		for (SrSolicitacao sol : getHistoricoSolicitacao()) {
-			if (sol.meuMarcaSet != null)
-				listaCompleta.addAll(sol.meuMarcaSet);
-		}
-		return listaCompleta;
 	}
 
 	public boolean isFechado() {
@@ -430,6 +438,20 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 						.equivale(lota));
 	}
 
+	public boolean isParteDeArvore() {
+		return solicitacaoPai != null
+				|| (getSolicitacaoFilhaSet() != null && !getSolicitacaoFilhaSet()
+						.isEmpty());
+	}
+	
+	public SrSolicitacao getPaiDaArvore(){
+		SrSolicitacao pai = this;
+		while (pai.solicitacaoPai != null){
+			pai = pai.solicitacaoPai;
+		}
+		return pai;
+	}
+
 	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess) && solicitacaoPai == null
 				&& isEmAtendimento();
@@ -444,30 +466,12 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return isEmPreAtendimento() && estaCom(lota, pess);
 	}
 
-	public boolean podeTrocarAtendente(DpLotacao lota, DpPessoa pess) {
-		return estaCom(lota, pess) && !isEmPreAtendimento();
-	}
-
-	public boolean podeTrocarSituacao(DpLotacao lota, DpPessoa pess) {
-		return estaCom(lota, pess);
-	}
-
 	public boolean podePriorizar(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess) && isEmPreAtendimento();
 	}
 
 	public boolean podeAbrirJaFechando(DpLotacao lota, DpPessoa pess) {
 		return false;
-	}
-
-	@Override
-	public SrSolicitacao save() {
-		try {
-			salvar();
-		} catch (Exception e) {
-			//
-		}
-		return this;
 	}
 
 	public SrSolicitacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
@@ -552,6 +556,30 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 		new SrAndamento(estado, descricao, atendente, lotaAtendente,
 				cadastrante, lotaCadastrante, this).salvar();
+	}
+
+	// Poderia esta ação passar a estar na classe SrAndamento, prevendo-se a
+	// possibilidade de outros andamentos poderem ser cancelados, além do
+	// último??
+	public void desfazerUltimoAndamento(DpPessoa cadastrante,
+			DpLotacao lotaCadastrante) throws Exception {
+
+		SrAndamento andamento = getUltimoAndamento();
+		SrAndamento cancelamento = new SrAndamento(null,
+				"Cancelando movimentação...", null, null, cadastrante,
+				lotaCadastrante, this).salvar();
+
+		andamento.andamentoCancelador = cancelamento;
+		andamento.salvar();
+	}
+
+	public SrSolicitacao criarFilhaSemSalvar() throws Exception {
+		SrSolicitacao filha = new SrSolicitacao();
+		copiarPara(filha);
+		filha.idSolicitacao = null;
+		filha.solicitacaoPai = this;
+		filha.numSequencia = getNumeroProximaFilha();
+		return filha;
 	}
 
 	public void notificar() {

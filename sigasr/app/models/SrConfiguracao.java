@@ -19,7 +19,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 @Table(name = "SR_CONFIGURACAO")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
-
+	
 	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
 
@@ -55,16 +55,20 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Column(name = "PESQUISA_SATISFACAO")
 	@Type(type = "yes_no")
 	public boolean pesquisaSatisfacao;
+	
+	@Transient
+	public SrSubTipoConfiguracao subTipoConfig;
 
 	public SrConfiguracao() {
 
 	}
 
 	public SrConfiguracao(SrItemConfiguracao item, SrServico servico,
-			CpTipoConfiguracao tipo) {
+			CpTipoConfiguracao tipo, SrSubTipoConfiguracao subTipoConfig) {
 		this.itemConfiguracao = item;
 		this.servico = servico;
 		this.setCpTipoConfiguracao(tipo);
+		this.subTipoConfig = subTipoConfig;
 	}
 
 	public String getPesquisaSatisfacaoString() {

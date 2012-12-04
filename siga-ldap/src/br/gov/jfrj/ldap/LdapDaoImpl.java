@@ -690,7 +690,7 @@ public class LdapDaoImpl implements ILdapDao {
 		atributos.put("objectClass", "group");
 		atributos.put("cn", nome);
 		atributos.put("groupType", Integer
-				.toString(ADS_GROUP_TYPE_GLOBAL_GROUP));
+				.toString(ADS_GROUP_TYPE_UNIVERSAL_GROUP));
 		atributos.put("distinguishedName", dn);
 		atributos.put("samAccountName", nome);
 

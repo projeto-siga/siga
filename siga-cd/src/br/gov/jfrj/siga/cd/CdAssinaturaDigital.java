@@ -5,10 +5,9 @@ import java.util.Date;
 
 public class CdAssinaturaDigital implements ICdAssinaturaDigital {
 	public byte[] validarECompletarAssinatura(byte[] assinatura,
-			byte[] documento, String sArquivoPolitica, Date dtAssinatura)
+			byte[] documento, boolean politica, Date dtAssinatura)
 			throws Exception {
-		validarAssinatura(assinatura, documento, dtAssinatura,
-				sArquivoPolitica != null);
+		validarAssinatura(assinatura, documento, dtAssinatura, false);
 		return assinatura;
 	}
 

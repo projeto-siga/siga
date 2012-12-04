@@ -1862,9 +1862,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if ((mov.getSubscritor()!= null && mov.getSubscritor().equivale(titular))||( mov.getSubscritor()==null && mov.getLotaSubscritor().equivale(lotaTitular)))
 			return true;
-		
-		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
-			return false;
+
+		if ((mov.getCadastrante()!= null && mov.getCadastrante().equivale(titular))||( mov.getCadastrante()==null && mov.getLotaCadastrante().equivale(lotaTitular)))
+			return true;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),

@@ -121,7 +121,8 @@ public class CdServiceImpl implements CdService {
 
 	public String recuperarCPF(byte[] cms) {
 		try {
-			return Cd.getInstance().getAssinaturaDigital().recuperarCPF(cms);
+			return AssinaturaDigital.recuperarCPF(cms);
+			// return Cd.getInstance().getAssinaturaDigital().recuperarCPF(cms);
 		} catch (Exception e) {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);
@@ -130,12 +131,12 @@ public class CdServiceImpl implements CdService {
 	}
 
 	public byte[] validarECompletarAssinatura(byte[] assinatura,
-			byte[] documento, String sArquivoPolitica, Date dtAssinatura)
+			byte[] documento, boolean politica, Date dtAssinatura)
 			throws Exception {
 		return Cd
 				.getInstance()
 				.getAssinaturaDigital()
-				.validarECompletarAssinatura(assinatura, documento,
-						sArquivoPolitica, dtAssinatura);
+				.validarECompletarAssinatura(assinatura, documento, politica,
+						dtAssinatura);
 	}
 }

@@ -88,8 +88,9 @@
 		      <c:otherwise>
 		      </c:otherwise>
 		   </c:choose>
-				<p align="center">Certifico que, nesta data, iniciei o volume ${mob.numSequencia} do processo em epígrafe.</p>
-				<p align="center" >${doc.dtExtenso}</p>
+				<p align="center" style="font-size: 9pt">Certifico que, nesta data, iniciei o volume ${mob.numSequencia} do processo em epígrafe.</p>
+				<p align="center" style="font-size: 9pt">${doc.dtExtenso}</p>
+				<br/>
 				<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp"/>
 				
 				<!-- INICIO PRIMEIRO RODAPE

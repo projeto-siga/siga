@@ -40,7 +40,7 @@ FORMULARIO DE inclusao de USUÁRIO-->
 				<mod:mensagem
 					texto="Para indicação de novo usuário, no caso de remoção do
 					magistrado para outra Seção Judiciária ou Tribunal, deverá ser
-					preenchido e encaminhado à CJUD o respectivo formulário de
+					preenchido e encaminhado à SEJUD o respectivo formulário de
 					exclusão. Caso o magistrado já tenha sido removido, o formulário de
 					solicitação de exclusão poderá ser encaminhado pelo Diretor de
 					Secretaria."
@@ -55,7 +55,7 @@ FORMULARIO DE inclusao de USUÁRIO-->
 			<mod:grupo titulo="Observações:">
 				<ol style="list-style-type: decimal; font-weight: bold;">
 					<li>No caso de remoção do servidor, para indicação de novo
-					usuário, deverá ser preenchido e encaminhado à CJUD o respectivo
+					usuário, deverá ser preenchido e encaminhado à SEJUD o respectivo
 					formulário de exclusão;</li>
 					<li>Antes de finalizar o documento, deverá ser incluído o nome
 					do magistrado como cossignatário.</li>
@@ -249,7 +249,7 @@ FORMULARIO DE inclusao de USUÁRIO-->
 				<table bgcolor="#000000" border="1" cellpadding="2" width="900" align="center">
 					<tr>
 						<td bgcolor="#FFFFFF" colspan="2" align="left"><b>3- CADASTRAMENTO - CAMPO
-						RESTRITO À COORDENADORIA DE ASSUNTOS JUDICIÁRIOS (CJUD)</b></td>
+						RESTRITO À SEJUD</b></td>
 					</tr>
 
 					<tr>
@@ -283,7 +283,7 @@ FORMULARIO DE inclusao de USUÁRIO-->
 				<table bgcolor="#000000" border="1" cellpadding="2" width="900" align="center">
 					<tr>
 						<td bgcolor="#FFFFFF" colspan="2" align="left"><b>2- CADASTRAMENTO - CAMPO
-						RESTRITO À COORDENADORIA DE ASSUNTOS JUDICIÁRIOS (CJUD)</b></td>
+						RESTRITO À SEJUD</b></td>
 					</tr>
 
 					<tr>

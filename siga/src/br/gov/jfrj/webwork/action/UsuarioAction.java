@@ -24,6 +24,8 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import org.apache.log4j.Logger;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -34,6 +36,8 @@ import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 import com.opensymphony.xwork.Action;
 
 public class UsuarioAction extends SigaActionSupport {
+	
+	private static final Logger log = Logger.getLogger( UsuarioAction.class );
 
 	private String cpf;
 
@@ -300,15 +304,25 @@ public class UsuarioAction extends SigaActionSupport {
 		}
 	}
 	
-	private boolean isIntegradoAD(String matricula){
+	private boolean isIntegradoAD(String matricula) throws AplicacaoException {
+
+		boolean result = false;
+		
 		CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
-		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));
-		CpOrgaoUsuario orgaoUsu = dao().consultarPorSigla(orgaoFlt);
-		if (orgaoUsu!=null){
-			return IntegracaoLdap.getInstancia().integrarComLdap(orgaoUsu);
-		}else{
-			return false;
+		
+		if ( matricula == null || matricula.length() < 2 ) {
+			log.warn( "A matrícula informada é nula ou inválida" );
+			throw new AplicacaoException( "A matrícula informada é nula ou inválida." );
 		}
+		
+		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
+		CpOrgaoUsuario orgaoUsu = dao().consultarPorSigla(orgaoFlt);
+
+		if ( orgaoUsu != null ) {
+			result = IntegracaoLdap.getInstancia().integrarComLdap(orgaoUsu);
+		}
+		
+		return result;
 	}
 	
 
@@ -389,7 +403,7 @@ public class UsuarioAction extends SigaActionSupport {
 		this.senha2 = senha2;
 	}
 
-	public String isIntegradoLdap() {
+	public String isIntegradoLdap() throws AplicacaoException {
 		return isIntegradoAD(getMatricula())==true?"ajax_retorno":"ajax_vazio";
 	}
 	

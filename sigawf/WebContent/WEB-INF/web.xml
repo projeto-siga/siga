@@ -170,7 +170,7 @@
 	
 	
 	<security-constraint>
-		<web-resource-collection>
+		<!--web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>
 			<url-pattern>/principal.action</url-pattern>
 			<url-pattern>/substituicao/*</url-pattern>
@@ -180,6 +180,19 @@
 			<url-pattern>/modelo/*</url-pattern>
 			<url-pattern>/gi/*</url-pattern>
 			<url-pattern>/administrar.action</url-pattern>
+		</web-resource-collection-->
+		<web-resource-collection>
+			<web-resource-name>Paginas do Sistema</web-resource-name>
+			<url-pattern>/inbox.action</url-pattern>
+			<url-pattern>/task.action</url-pattern>
+			<url-pattern>/doc.action</url-pattern>
+			<url-pattern>/pesquisarDesignacao.action</url-pattern>
+			<url-pattern>/gravarDesignacao.action</url-pattern>
+			<url-pattern>/gerarRelatorioDesignacao.action</url-pattern>
+			<url-pattern>/configurar.action</url-pattern>
+			<url-pattern>/gravarConfiguracao.action</url-pattern>
+			<url-pattern>/medir.action</url-pattern>
+			<url-pattern>/emitirRelatorio.action</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

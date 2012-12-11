@@ -53,6 +53,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.stat.EntityStatistics;
@@ -1460,31 +1461,35 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		// Fim das questões referentes a doc pai--------------------
 
-		if (getIdFormaDoc() == 0) {
-			setIdMod(0L);
-		} else {
-
-			// Mudou origem? Escolhe um tipo automaticamente--------
-			// Vê se usuário alterou campo Origem. Caso sim, seleciona um tipo
-			// automaticamente, dentro daquela origem
-
-			final List<ExFormaDocumento> formasDoc = getFormasDocPorTipo();
-
-			ExFormaDocumento forma = dao().consultar(getIdFormaDoc(),
-					ExFormaDocumento.class, false);
-
-			if (!formasDoc.contains(forma)) {
-				setIdFormaDoc(getFormaDocPorTipo().getIdFormaDoc());
-				forma = dao().consultar(getIdFormaDoc(),
-						ExFormaDocumento.class, false);
-			}
-
-			// Fim -- Mudou origem? Escolhe um tipo automaticamente--------
-
-			if (forma.getExModeloSet().size() == 0) {
+		Integer idFormaDoc = getIdFormaDoc();
+		if ( idFormaDoc != null ) {
+			if (idFormaDoc == 0) {
 				setIdMod(0L);
+			} else {
+
+				// Mudou origem? Escolhe um tipo automaticamente--------
+				// Vê se usuário alterou campo Origem. Caso sim, seleciona um tipo
+				// automaticamente, dentro daquela origem
+
+				final List<ExFormaDocumento> formasDoc = getFormasDocPorTipo();
+
+				ExFormaDocumento forma = dao().consultar(getIdFormaDoc(),
+						ExFormaDocumento.class, false);
+
+				if (!formasDoc.contains(forma)) {
+					setIdFormaDoc(getFormaDocPorTipo().getIdFormaDoc());
+					forma = dao().consultar(getIdFormaDoc(),
+							ExFormaDocumento.class, false);
+				}
+
+				// Fim -- Mudou origem? Escolhe um tipo automaticamente--------
+
+				if (forma.getExModeloSet().size() == 0) {
+					setIdMod(0L);
+				}
 			}
 		}
+
 
 		ExModelo mod = null;
 		if (getIdMod() != null && getIdMod() != 0) {
@@ -1520,16 +1525,18 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		boolean naLista = false;
 		final Set<ExPreenchimento> preenchimentos = getPreenchimentos();
-		for (ExPreenchimento exp : preenchimentos) {
-			if (exp.getIdPreenchimento().equals(getPreenchimento())) {
-				naLista = true;
-				break;
-
+		if ( CollectionUtils.isNotEmpty( preenchimentos ) ) {
+			for (ExPreenchimento exp : preenchimentos) {
+				if (exp.getIdPreenchimento().equals(getPreenchimento())) {
+					naLista = true;
+					break;
+				}
 			}
+			if ( !naLista )
+				setPreenchimento(((ExPreenchimento) (preenchimentos.toArray())[0])
+						.getIdPreenchimento());
 		}
-		if (!naLista)
-			setPreenchimento(((ExPreenchimento) (preenchimentos.toArray())[0])
-					.getIdPreenchimento());
+		
 
 		modelo = mod;
 		if (mod.getExClassificacao() != null
@@ -1574,8 +1581,10 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		if (doc.getConteudoBlob("doc.htm") != null)
 			setConteudo(new String(doc.getConteudoBlob("doc.htm")));
+		
 		setIdTpDoc(doc.getExTipoDocumento().getIdTpDoc());
-		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
+		setNivelAcesso(doc.getIdExNivelAcesso());
+		
 		if (doc.getExFormaDocumento() != null) {
 			setIdFormaDoc(doc.getExFormaDocumento().getIdFormaDoc());
 		}
@@ -1605,7 +1614,11 @@ public class ExDocumentoAction extends ExActionSupport {
 			getTitularSel().buscarPorObjeto(doc.getTitular());
 			setSubstituicao(true);
 		}
-		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
+		
+		// TODO Verificar se ha realmente a necessidade de setar novamente o nível de acesso do documento
+		// tendo em vista que o nível de acesso já foi setado anteriormente neste mesmo método sem que o documento fosse alterado
+		setNivelAcesso(doc.getIdExNivelAcesso());
+		
 		if (doc.getOrgaoExternoDestinatario() != null) {
 			getOrgaoExternoDestinatarioSel().buscarPorObjeto(
 					doc.getOrgaoExternoDestinatario());

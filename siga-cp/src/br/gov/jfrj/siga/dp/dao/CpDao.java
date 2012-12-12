@@ -40,6 +40,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -133,7 +134,7 @@ public class CpDao extends ModeloDao {
 		query.setString("siglaServico", o.getSiglaServico());
 		query.setLong("idServicoPai", o.getCpServicoPai() == null ? 0 : o
 				.getCpServicoPai().getIdServico());
-
+		query.setFlushMode(FlushMode.MANUAL);
 		final List<CpServico> l = query.list();
 		if (l.size() != 1)
 			return null;
@@ -1396,6 +1397,8 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.cache.use_query_cache", "true");
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
+		cfg.setProperty("hibernate.default_batch_fetch_size", "20");
+		
 		// descomentar para inpecionar o SQL
 		// cfg.setProperty("hibernate.show_sql", "true");
 		// Disable second-level cache.

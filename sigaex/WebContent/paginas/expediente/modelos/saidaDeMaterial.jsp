@@ -72,57 +72,53 @@
 
 		<br />
 
-		<table width="100%" border="1" cellpadding="2" cellspacing="1"
-			bgcolor="#000000">
+		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1">
 			<tr>
-				<td bgcolor="#FFFFFF" align="center"><b>Fica autorizado a SAÍDA do(s) material(is), abaixo relacionado(s)<br />
+				<td style="border-collapse: collapse; border-color: black; " align="center"><b>Fica autorizada a SAÍDA do(s) material(is), abaixo relacionado(s)<br />
 					nesta Seção Judiciária.</b></td>
 			</tr>
 		</table>
 		
 		<br />
 		
-		<table width="100%" border="1" cellpadding="2" cellspacing="1"
-			bgcolor="#000000">
+		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1">
 			<tr>
-				<td width="50%" bgcolor="#FFFFFF"><b>Origem</b></td>
-				<td width="50%" bgcolor="#FFFFFF"><b>Destino</b></td>
+				<td width="50%" style="border-collapse: collapse; border-color: black; "><b>Origem</b></td>
+				<td width="50%" style="border-collapse: collapse; border-color: black; "><b>Destino</b></td>
 			</tr>
 			<tr>
-				<td width="50%" bgcolor="#FFFFFF" align="center">${requestScope['origem_lotacaoSel.sigla']}</td>
-				<td width="50%" bgcolor="#FFFFFF" align="center">${requestScope['destino_lotacaoSel.sigla']}</td>
+				<td width="50%" style="border-collapse: collapse; border-color: black; " align="center">${requestScope['origem_lotacaoSel.sigla']}</td>
+				<td width="50%" style="border-collapse: collapse; border-color: black; " align="center">${requestScope['destino_lotacaoSel.sigla']}</td>
 			</tr>
 		</table>
 
 		<br />
 		
-		<table width="100%" border="1" cellpadding="2" cellspacing="1"
-			bgcolor="#000000">
+		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1">
 			<tr>
-				<td width="50%" bgcolor="#FFFFFF" align="center"><b>Descrição do Material</b></td>
-				<td width="35%" bgcolor="#FFFFFF" align="center"><b>Nº de Série</b></td>
-				<td width="15%" bgcolor="#FFFFFF" align="center"><b>Quantidade</b></td>
+				<td width="50%" style="border-collapse: collapse; border-color: black; " align="center"><b>Descrição do Material</b></td>
+				<td width="35%" style="border-collapse: collapse; border-color: black; " align="center"><b>Nº de Série</b></td>
+				<td width="15%" style="border-collapse: collapse; border-color: black; " align="center"><b>Quantidade</b></td>
 			</tr>
 		</table>
 		<c:forEach var="i" begin="1" end="${totalDeMaterial}">
-				<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
+				<table width="100%" border="1" cellpadding="2" cellspacing="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 					<tr>
-						<td width="50%" bgcolor="#FFFFFF" align="center">${requestScope[f:concat('descricao',i)]}</td>
-						<td width="35%" bgcolor="#FFFFFF" align="center">${requestScope[f:concat('serie',i)]}</td>
-						<td width="15%" bgcolor="#FFFFFF" align="center">${requestScope[f:concat('quantidade',i)]}</td>
+						<td width="50%" style="border-collapse: collapse; border-color: black; " align="center">${requestScope[f:concat('descricao',i)]}</td>
+						<td width="35%" style="border-collapse: collapse; border-color: black; " align="center">${requestScope[f:concat('serie',i)]}</td>
+						<td width="15%" style="border-collapse: collapse; border-color: black; " align="center">${requestScope[f:concat('quantidade',i)]}</td>
 					</tr>
 				</table>
 			</c:forEach>
 
 		<br />
 		
-		<table width="100%" border="1" cellpadding="2" cellspacing="1"
-			bgcolor="#000000">
+		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1">
 			<tr>
-				<td bgcolor="#FFFFFF" ><b>Observações</b></td>
+				<td style="border-collapse: collapse; border-color: black; " ><b>Observações</b></td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF">
+				<td style="border-collapse: collapse; border-color: black; ">
 				<p>&nbsp ${obs}</p>
 				</td>
 			</tr>
@@ -130,41 +126,39 @@
 
 		<br />
 
-		<table width="100%" height="270px" border="1" cellpadding="2" cellspacing="1"
-			bgcolor="#000000">
+		<table width="100%"  border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1">
 			<tr>
-				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Autorizado por</b></td>
-				<td bgcolor="#FFFFFF" width="70%" align="center"><c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" /></td>
+				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Autorizado por</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="70%" align="center"><c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" /></td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Responsável</b></td>
-				<td bgcolor="#FFFFFF" width="70%">&nbsp ${responsavel}</td>
+				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Responsável</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="70%">&nbsp ${responsavel}</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Identidade</b></td>
-				<td bgcolor="#FFFFFF" width="70%">&nbsp ${identidade}</td>
+				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Identidade</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="70%">&nbsp ${identidade}</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Assinatura</b></td>
-				<td bgcolor="#FFFFFF" width="70%">&nbsp</td>
+				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Assinatura</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="70%">&nbsp</td>
 			</tr>
 		</table>
-		<table width="100%" height="270px" border="1" cellpadding="2" cellspacing="1"
-			bgcolor="#000000">
+		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1" >
 			<tr>
-				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Controle Portaria</b></td>
-				<td bgcolor="#FFFFFF" width="35%" align="center"><b>SAÍDA</b></td>
-				<td bgcolor="#FFFFFF" width="35%" align="center"><b>ENTRADA</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Controle Portaria</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="35%" align="center"><b>SAÍDA</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="35%" align="center"><b>ENTRADA</b></td>
 			</tr>
 				<tr>
-				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Conferido por</b></td>
-				<td bgcolor="#FFFFFF" width="35%">&nbsp</td>
-				<td bgcolor="#FFFFFF" width="35%">&nbsp</td>
+				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Conferido por</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="35%">&nbsp</td>
+				<td style="border-collapse: collapse; border-color: black; " width="35%">&nbsp</td>
 			</tr>
 				<tr>
-				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Data/Hora</b></td>
-				<td bgcolor="#FFFFFF" width="35%">&nbsp</td>
-				<td bgcolor="#FFFFFF" width="35%">&nbsp</td>
+				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Data/Hora</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="35%">&nbsp</td>
+				<td style="border-collapse: collapse; border-color: black; " width="35%">&nbsp</td>
 			</tr>
 		</table>
 		

@@ -53,6 +53,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.stat.EntityStatistics;
@@ -481,7 +482,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					final String mName = "set"
 							+ paramName.substring(0, 1).toUpperCase()
 							+ paramName.substring(1);
-					if (getPar().get(paramName) != null) {
+					if (getPar().get(paramName) != null || (paramName.contains("nmOrgaoExterno")) || (paramName.contains("nmDestinatario"))) {
 						Class paramType = this.getClass()
 								.getDeclaredField(paramName).getType();
 						Constructor paramTypeContructor = paramType
@@ -497,7 +498,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					final String mName = "get"
 							+ paramName.substring(0, 1).toUpperCase()
 							+ paramName.substring(1, paramName.indexOf(".id"));
-					if (getPar().get(paramName) != null) {
+					if (getPar().get(paramName) != null || (paramName.contains("estinatarioSel.id"))) {
 						final Method method = this.getClass().getMethod(mName);
 						Selecao sel = (Selecao) method.invoke(this);
 						sel.setId(Long.parseLong(paramValue));
@@ -575,12 +576,18 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aEditar() throws Exception {
 
 		buscarDocumentoOuNovo(true);
-
+		
 		if ((getPostback() == null) || (param("docFilho") != null)) {
 			tipoDestinatario = 2;
 			idFormaDoc = 2;
 			idTpDoc = 1L;
-			nivelAcesso = 1L;
+
+			ExNivelAcesso nivelDefault = getNivelAcessoDefault();
+			if (nivelDefault != null) {
+				nivelAcesso = nivelDefault.getIdNivelAcesso();
+			} else
+				nivelAcesso = 1L;
+
 			idMod = 26L;
 		}
 
@@ -853,7 +860,7 @@ public class ExDocumentoAction extends ExActionSupport {
 								mob)) {
 			throw new AplicacaoException("Documento " + mob.getSigla()
 					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta()+ ".");
+					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}
 
 		if (!Ex.getInstance().getComp()
@@ -875,7 +882,7 @@ public class ExDocumentoAction extends ExActionSupport {
 								mob)) {
 			throw new AplicacaoException("Documento " + mob.getSigla()
 					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta()+ ".");
+					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}
 
 		if (!Ex.getInstance().getComp()
@@ -976,8 +983,11 @@ public class ExDocumentoAction extends ExActionSupport {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
 			mob = (ExMobil) dao().consultarPorSigla(filter);
-			doc = mob.getExDocumento();
-			setIdMob(mob.getId());
+			// bruno.lacerda@avantiprima.com.br
+			if ( mob != null ) {
+				doc = mob.getExDocumento();
+				setIdMob(mob.getId());
+			}
 		} else if (mob == null && getDocumentoViaSel().getId() != null) {
 			setIdMob(getDocumentoViaSel().getId());
 			mob = dao().consultar(idMob, ExMobil.class, false);
@@ -1122,11 +1132,11 @@ public class ExDocumentoAction extends ExActionSupport {
 				c.setTime(dt);
 
 				Calendar dtDocCalendar = Calendar.getInstance();
-				
-				if(doc.getDtDoc() == null)
-				   throw new Exception(
-					"A data do documento deve ser informada.");
-					
+
+				if (doc.getDtDoc() == null)
+					throw new Exception(
+							"A data do documento deve ser informada.");
+
 				dtDocCalendar.setTime(doc.getDtDoc());
 
 				if (c.before(dtDocCalendar))
@@ -1254,12 +1264,12 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
-	
-	public String aAtualizarMarcasDoc() throws Exception{
-		
+
+	public String aAtualizarMarcasDoc() throws Exception {
+
 		buscarDocumento(false);
 		Ex.getInstance().getBL().atualizarMarcas(getDoc());
-		
+
 		return Action.SUCCESS;
 	}
 
@@ -1451,31 +1461,35 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		// Fim das questões referentes a doc pai--------------------
 
-		if (getIdFormaDoc() == 0) {
-			setIdMod(0L);
-		} else {
-
-			// Mudou origem? Escolhe um tipo automaticamente--------
-			// Vê se usuário alterou campo Origem. Caso sim, seleciona um tipo
-			// automaticamente, dentro daquela origem
-
-			final List<ExFormaDocumento> formasDoc = getFormasDocPorTipo();
-
-			ExFormaDocumento forma = dao().consultar(getIdFormaDoc(),
-					ExFormaDocumento.class, false);
-
-			if (!formasDoc.contains(forma)) {
-				setIdFormaDoc(getFormaDocPorTipo().getIdFormaDoc());
-				forma = dao().consultar(getIdFormaDoc(),
-						ExFormaDocumento.class, false);
-			}
-
-			// Fim -- Mudou origem? Escolhe um tipo automaticamente--------
-
-			if (forma.getExModeloSet().size() == 0) {
+		Integer idFormaDoc = getIdFormaDoc();
+		if ( idFormaDoc != null ) {
+			if (idFormaDoc == 0) {
 				setIdMod(0L);
+			} else {
+
+				// Mudou origem? Escolhe um tipo automaticamente--------
+				// Vê se usuário alterou campo Origem. Caso sim, seleciona um tipo
+				// automaticamente, dentro daquela origem
+
+				final List<ExFormaDocumento> formasDoc = getFormasDocPorTipo();
+
+				ExFormaDocumento forma = dao().consultar(getIdFormaDoc(),
+						ExFormaDocumento.class, false);
+
+				if (!formasDoc.contains(forma)) {
+					setIdFormaDoc(getFormaDocPorTipo().getIdFormaDoc());
+					forma = dao().consultar(getIdFormaDoc(),
+							ExFormaDocumento.class, false);
+				}
+
+				// Fim -- Mudou origem? Escolhe um tipo automaticamente--------
+
+				if (forma.getExModeloSet().size() == 0) {
+					setIdMod(0L);
+				}
 			}
 		}
+
 
 		ExModelo mod = null;
 		if (getIdMod() != null && getIdMod() != 0) {
@@ -1511,16 +1525,18 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		boolean naLista = false;
 		final Set<ExPreenchimento> preenchimentos = getPreenchimentos();
-		for (ExPreenchimento exp : preenchimentos) {
-			if (exp.getIdPreenchimento().equals(getPreenchimento())) {
-				naLista = true;
-				break;
-
+		if ( CollectionUtils.isNotEmpty( preenchimentos ) ) {
+			for (ExPreenchimento exp : preenchimentos) {
+				if (exp.getIdPreenchimento().equals(getPreenchimento())) {
+					naLista = true;
+					break;
+				}
 			}
+			if ( !naLista )
+				setPreenchimento(((ExPreenchimento) (preenchimentos.toArray())[0])
+						.getIdPreenchimento());
 		}
-		if (!naLista)
-			setPreenchimento(((ExPreenchimento) (preenchimentos.toArray())[0])
-					.getIdPreenchimento());
+		
 
 		modelo = mod;
 		if (mod.getExClassificacao() != null
@@ -1565,8 +1581,10 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		if (doc.getConteudoBlob("doc.htm") != null)
 			setConteudo(new String(doc.getConteudoBlob("doc.htm")));
+		
 		setIdTpDoc(doc.getExTipoDocumento().getIdTpDoc());
-		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
+		setNivelAcesso(doc.getIdExNivelAcesso());
+		
 		if (doc.getExFormaDocumento() != null) {
 			setIdFormaDoc(doc.getExFormaDocumento().getIdFormaDoc());
 		}
@@ -1596,7 +1614,11 @@ public class ExDocumentoAction extends ExActionSupport {
 			getTitularSel().buscarPorObjeto(doc.getTitular());
 			setSubstituicao(true);
 		}
-		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
+		
+		// TODO Verificar se ha realmente a necessidade de setar novamente o nível de acesso do documento
+		// tendo em vista que o nível de acesso já foi setado anteriormente neste mesmo método sem que o documento fosse alterado
+		setNivelAcesso(doc.getIdExNivelAcesso());
+		
 		if (doc.getOrgaoExternoDestinatario() != null) {
 			getOrgaoExternoDestinatarioSel().buscarPorObjeto(
 					doc.getOrgaoExternoDestinatario());
@@ -1869,6 +1891,34 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		return getListaNivelAcesso(exTipo, exForma, exMod, exClassif);
+	}
+
+	public ExNivelAcesso getNivelAcessoDefault() throws Exception {
+		ExFormaDocumento exForma = new ExFormaDocumento();
+		ExClassificacao exClassif = new ExClassificacao();
+		ExTipoDocumento exTipo = new ExTipoDocumento();
+		ExModelo exMod = new ExModelo();
+
+		if (getIdTpDoc() != null) {
+			exTipo = dao()
+					.consultar(getIdTpDoc(), ExTipoDocumento.class, false);
+		}
+
+		if (getIdFormaDoc() != null) {
+			exForma = dao().consultar(getIdFormaDoc(), ExFormaDocumento.class,
+					false);
+		}
+
+		if (getIdMod() != null) {
+			exMod = dao().consultar(getIdMod(), ExModelo.class, false);
+		}
+
+		if (getClassificacaoSel().getId() != null) {
+			exClassif = dao().consultar(getClassificacaoSel().getId(),
+					ExClassificacao.class, false);
+		}
+
+		return getNivelAcessoDefault(exTipo, exForma, exMod, exClassif);
 	}
 
 	public Map<Integer, String> getListaVias() {

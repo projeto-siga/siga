@@ -98,7 +98,7 @@ public class SelfConfigAction 	extends SigaActionSupport
 			setDpLotacaoConsiderada(t_dltLotacao);
 			if (t_dltLotacao != null) {
 				// TODO: _LAGS - verificar opção para sublotações
-				setDpPessoasDaLotacao(dao().pessoasPorLotacao(t_dltLotacao.getIdLotacao(), false,true));
+				setDpPessoasDaLotacao(dao().pessoasPorLotacao(t_dltLotacao.getIdLotacao(), false,false));
 				setCpConfiguracoesAdotadas(obterConfiguracoesDasPessoasDaLotacaoConsiderada());
 			}
 			return "edita";

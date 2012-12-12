@@ -27,7 +27,7 @@ package br.gov.jfrj.siga.ex;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 */
-import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
+import br.gov.jfrj.siga.model.prop.ext.ModeloPropriedade;
 
 public class SigaExProperties extends ModeloPropriedade {
 	/*
@@ -66,11 +66,11 @@ public class SigaExProperties extends ModeloPropriedade {
 	}
 	
 	public static String getAmbiente() {
-		return System.getProperty("jfrj.ambiente");
+		return System.getProperty("ambiente");
 	}
 	
 	public static String getStringComAmbiente(String key){
-		String ambiente = System.getProperty("jfrj.ambiente");
+		String ambiente = System.getProperty("ambiente");
 		if (ambiente != null && ambiente.length() > 0)
 			return getString(ambiente+"."+key).trim();
 		return "";

@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib uri="http://fckeditor.net/tags-fckeditor" prefix="FCK"%>
+
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
@@ -17,11 +17,15 @@
 
 <siga:pagina titulo="Movimentação">
 
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 
 			<h2>
-				Inclusão de Co-signatário - ${mob.siglaEDescricaoCompleta}</h2>
+				Inclusão de Cossignatário- ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -31,12 +35,12 @@
 					<ww:hidden name="sigla" value="%{sigla}" />
 					<table class="gt-form-table">
 						<tr class="header">
-							<td colspan="2">Dados do Co-signatário</td>
+							<td colspan="2">Dados do Cossignatário</td>
 						</tr>
 						<%--<ww:textfield name="dtMovString" label="Data"
 					onblur="javascript:verifica_data(this);" />--%>
 
-						<siga:selecao titulo="Co-signatário:" propriedade="cosignatario" />
+						<siga:selecao titulo="Cossignatário:" propriedade="cosignatario" />
 						<ww:textfield name="funcaoCosignatario"
 							label="Função;Lotação;Localidade" size="50" maxLength="128" />
 

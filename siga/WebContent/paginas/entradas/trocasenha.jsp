@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <style>
 #passwordStrength {
 	height: 10px;
@@ -162,11 +162,21 @@ function passwordStrength(password) {
 							<div id="passwordStrength" class="strength0"></div>
 						</div>
 					</div>
-
+					
 					<div class="gt-form-row">
-						<ww:submit label="OK" value="OK" theme="simple"
-							cssClass="gt-btn-medium gt-btn-left" />
+						<div class="gt-left-col gt-width-100">
+							<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;INT_LDAP:Integrar ao Ldap')}">
+								<input type="checkbox" checked="checked" id="trocarSenhaRede" name="trocarSenhaRede" style="float: left" class="gt-form-checkbox"></input>
+								<label>Trocar também a senha do computador, da rede e do e-mail</label>
+							</c:if>
+						
+							<ww:submit label="OK" value="OK" theme="simple"
+								cssClass="gt-btn-medium gt-btn-left" />
+						</div>
+						
 					</div>
+
+					
 				</ww:form>
 			</div>
 		</div>

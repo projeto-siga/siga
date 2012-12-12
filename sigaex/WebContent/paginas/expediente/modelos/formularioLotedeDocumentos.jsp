@@ -52,19 +52,18 @@
 				<td><c:import	url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp" /></td>
 			</tr>
 		</table>
-<br>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"
 			bgcolor="#FFFFFF">
 			<tr>
-				<td align="center">
-				<h1>Lote de Documentos Digitalizados</h1>
+				<td align="center" style="font-family: Arial">
+				<h2>Lote de Documentos Digitalizados</h2>
 				</td>
 			</tr>
 		</table>
-		<br>
-		<table width="50%" align="left" border="0" cellpadding="0" cellspacing="0"	bgcolor="#FFFFFF">
+		<br />
+		<table width="100%" align="left" border="0" cellpadding="0" cellspacing="0"	bgcolor="#FFFFFF">
 		<tr>
-			<td align="left"><b>Tipo de Documento:&nbsp</b>${tipoPeticao}</td>
+			<td align="left" >Tipo de Documento:&nbsp;${tipoPeticao}</td>
 		</tr>
 		</table>
 		<br>
@@ -77,38 +76,38 @@
 				<td align="right">${doc.dtDocDDMMYY}</td>
 			</tr>
 			<tr>
-				<td align="left"><b>DE:&nbsp</b>${requestScope['lotacao_lotacaoSel.nomeLotacao']}</td>
+				<td align="left">DE:&nbsp;${requestScope['lotacao_lotacaoSel.nomeLotacao']}</td>
 			</tr>
 			<tr>
-				<td align="left"><b>PARA:&nbsp</b>${doc.destinatarioString}</td>	
+				<td align="left">PARA:&nbsp;${doc.destinatarioString}</td>	
 			</tr>
 		</table>
 		</br>
 		
 		<c:if test="${quantidadeProcessos > '0'}">
        
-			<table width="100%" border="2" cellpadding="3">
+			<table width="100%" cellpadding="3" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 				<tr>
-					<td width="15%" align="center" colspan="1">ITEM</td>
-					<td width="35%" align="center" colspan="1">Nº PROCESSO</td>
-					<td width="15%" align="center" colspan="1">ITEM</td>
-					<td width="35%" align="center" colspan="1"">Nº PROCESSO</td>
+					<td width="15%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">ITEM</td>
+					<td width="35%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">Nº PROCESSO</td>
+					<td width="15%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">ITEM</td>
+					<td width="35%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">Nº PROCESSO</td>
 				</tr> 
 			</table>
 			
-			<table width="100%" border="2" cellpadding="3">
+			<table width="100%" cellpadding="3" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 				<tr>
 					<c:if test="${quantidadeProcessos mod 2 == 0}">
 						<c:forEach var="i" begin="1" end="${quantidadeProcessos}">
-							<td width="15%" align="center">${i}</td>
-							<td width="35%" align="center">${requestScope[f:concat('str_proc',i)]}</td>
+							<td width="15%" align="center" style="border-collapse: collapse; border-color: black;">${i}</td>
+							<td width="35%" align="center" style="border-collapse: collapse; border-color: black;">${requestScope[f:concat('str_proc',i)]}</td>
 							<c:if test="${i mod 2 == 0}"></tr><tr></c:if>					
 						</c:forEach>
 					</c:if>
 					<c:if test="${quantidadeProcessos mod 2 == 1}">
 						<c:forEach var="i" begin="1" end="${quantidadeProcessos + '1'}">
-							<td width="15%" align="center">${i}</td>
-							<td width="35%" align="center">${requestScope[f:concat('str_proc',i)]}</td>
+							<td width="15%" align="center" style="border-collapse: collapse; border-color: black;">${i}</td>
+							<td width="35%" align="center" style="border-collapse: collapse; border-color: black;">${requestScope[f:concat('str_proc',i)]}</td>
 							<c:if test="${i mod 2 == 0}"></tr><tr></c:if>		
 						</c:forEach>
 					</c:if>

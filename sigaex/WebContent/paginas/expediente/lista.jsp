@@ -445,134 +445,151 @@ function limpaCampos()
 		<div class="gt-content clearfix">
 			<h2>Pesquisa de Documentos</h2>
 
-	<c:if
-		test="${((empty param.primeiraVez) or (param.primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
-		
-		<c:if test="${not empty tamanho and tamanho > 0}">
+			<c:if
+				test="${((empty param.primeiraVez) or (param.primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
 
-		<div class="gt-content-box gt-for-table">
-		<table class="gt-table">
-			<thead>
-			<tr>
-				<th rowspan="3" align="right">Número</th>
-				<th colspan="3" align="center">Documento</th>
-				<th colspan="4" align="center">Situação</th>
-				<th rowspan="3">Tipo</th>
-				<th rowspan="3">Descrição</th>
-			</tr>
-			<tr>
-				<th rowspan="2" align="center">Data</th>
-				<th colspan="2" align="center">Subscritor</th>
-				<th rowspan="2" align="center">Data</th>
-				<th colspan="2" align="center">Atendente</th>
-				<th rowspan="2" align="center">Situação</th>
-			</tr>
-			<tr>
-				<th align="center">Lotação</th>
-				<th align="center">Pessoa</th>
-				<th align="center">Lotação</th>
-				<th align="center">Pessoa</th>
-			</tr>
-			</thead>
+				<c:if test="${not empty tamanho and tamanho > 0}">
 
-			<siga:paginador maxItens="${itemPagina}" maxIndices="10"
-				totalItens="${tamanho}" itens="${itens}" var="documento">
+					<div class="gt-content-box gt-for-table">
+						<table class="gt-table">
+							<thead>
+								<tr>
+									<th rowspan="3" align="right">Número</th>
+									<th colspan="3" align="center">Documento</th>
+									<th colspan="4" align="center">Situação</th>
+									<th rowspan="3">Tipo</th>
+									<th rowspan="3">Descrição</th>
+									<c:if test="${visualizacao == 1}"> 
+										<th rowspan="3">Última Anotação</th>
+									</c:if>
+								</tr>
+								<tr>
+									<th rowspan="2" align="center">Data</th>
+									<th colspan="2" align="center">Subscritor</th>
+									<th rowspan="2" align="center">Data</th>
+									<th colspan="2" align="center">Atendente</th>
+									<th rowspan="2" align="center">Situação</th>
+								</tr>
+								<tr>
+									<th align="center">Lotação</th>
+									<th align="center">Pessoa</th>
+									<th align="center">Lotação</th>
+									<th align="center">Pessoa</th>
+								</tr>
+							</thead>
 
-				<c:choose>
-					<c:when test="${documento[0].eletronico}">
-						<c:set var="exibedoc" value="eletronicoeven" />
-					</c:when>
-					<c:otherwise>
-						<c:set var="exibedoc" value="even" />
-					</c:otherwise>
-				</c:choose>
+							<siga:paginador maxItens="${itemPagina}" maxIndices="10"
+								totalItens="${tamanho}" itens="${itens}" var="documento">
 
-				<tr class="${exibedoc}">
-					<c:set var="podeAcessar"
-						value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular, documento[1])}" />
-					<td width="11.5%" align="right"><c:choose>
-						<c:when test='${param.popup!="true"}'>
-							<c:choose>
-								<c:when test="${podeAcessar eq true}">
-									<ww:url id="url" action="exibir" namespace="/expediente/doc">
-										<ww:param name="sigla">${documento[1].sigla}</ww:param>
-									</ww:url>
-									<ww:a href="%{url}">${documento[1].codigo}</ww:a>
-								</c:when>
-								<c:otherwise> 
+								<c:choose>
+									<c:when test="${documento[0].eletronico}">
+										<c:set var="exibedoc" value="even" />
+									</c:when>
+									<c:otherwise>
+										<c:set var="exibedoc" value="fisicoeven" />
+									</c:otherwise>
+								</c:choose>
+
+								<tr class="${exibedoc}">
+									<c:set var="podeAcessar"
+										value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular, documento[1])}" />
+									<td width="11.5%" align="right"><c:choose>
+											<c:when test='${param.popup!="true"}'>
+												<c:choose>
+													<c:when test="${podeAcessar eq true}">
+														<ww:url id="url" action="exibir"
+															namespace="/expediente/doc">
+															<ww:param name="sigla">${documento[1].sigla}</ww:param>
+														</ww:url>
+														<ww:a href="%{url}">${documento[1].codigo}</ww:a>
+													</c:when>
+													<c:otherwise> 
 							${documento[1].codigo}
 						</c:otherwise>
-							</c:choose>
-						</c:when>
-						<c:otherwise>
-							<a
-								href="javascript:opener.retorna_${param.propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">${documento[1].codigo}</a>
-						</c:otherwise>
-					</c:choose></td>
-					<c:if test="${documento[1].numSequencia != 0}">
-						<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
-						<td width="4%" align="center"><siga:selecionado
-							sigla="${documento[0].lotaSubscritor.sigla}"
-							descricao="${documento[0].lotaSubscritor.descricao}" /></td>
-						<td width="4%" align="center"><siga:selecionado
-							sigla="${documento[0].subscritor.iniciais}"
-							descricao="${documento[0].subscritor.descricao}" /></td>
+												</c:choose>
+											</c:when>
+											<c:otherwise>
+												<a
+													href="javascript:opener.retorna_${param.propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">${documento[1].codigo}</a>
+											</c:otherwise>
+										</c:choose>
+									</td>
+									<c:if test="${documento[1].numSequencia != 0}">
+										<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[0].lotaSubscritor.sigla}"
+												descricao="${documento[0].lotaSubscritor.descricao}" />
+										</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[0].subscritor.iniciais}"
+												descricao="${documento[0].subscritor.descricao}" />
+										</td>
 
-						<td width="5%" align="center">${documento[2].dtIniMarcaDDMMYYYY}</td>
-						<td width="4%" align="center"><siga:selecionado
-							sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
-							descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" /></td>
-						<td width="4%" align="center"><siga:selecionado
-							sigla="${documento[2].dpPessoaIni.iniciais}"
-							descricao="${documento[2].dpPessoaIni.descricao}" /></td>
+										<td width="5%" align="center">${documento[2].dtIniMarcaDDMMYYYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
+												descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" />
+										</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[2].dpPessoaIni.iniciais}"
+												descricao="${documento[2].dpPessoaIni.descricao}" />
+										</td>
 
-						<td width="10.5%" align="center">${documento[2].cpMarcador.descrMarcador}</td>
+										<td width="10.5%" align="center">${documento[2].cpMarcador.descrMarcador}</td>
 
-					</c:if>
-					<c:if test="${documento[1].numSequencia == 0}">
-						<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
-						<td width="4%" align="center"><siga:selecionado
-							sigla="${documento[0].lotaSubscritor.sigla}"
-							descricao="${documento[0].lotaSubscritor.descricao}" /></td>
-						<td width="4%" align="center"><siga:selecionado
-							sigla="${documento[0].subscritor.iniciais}"
-							descricao="${documento[0].subscritor.descricao}" /></td>
-						<td width="5%" align="center">tag1</td>
-						<td width="4%" align="center"></td>
-						<td width="4%" align="center"></td>
-						<td width="10.5%" align="center">tag4</td>
-					</c:if>
+									</c:if>
+									<c:if test="${documento[1].numSequencia == 0}">
+										<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[0].lotaSubscritor.sigla}"
+												descricao="${documento[0].lotaSubscritor.descricao}" />
+										</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[0].subscritor.iniciais}"
+												descricao="${documento[0].subscritor.descricao}" />
+										</td>
+										<td width="5%" align="center">tag1</td>
+										<td width="4%" align="center"></td>
+										<td width="4%" align="center"></td>
+										<td width="10.5%" align="center">tag4</td>
+									</c:if>
 
-					<td width="6%">${documento[0].descrFormaDoc}</td>
+									<td width="6%">${documento[0].descrFormaDoc}</td>
 
-					<c:set var="acessivel" value="" />
-					<c:set var="acessivel"
-						value="${f:testaCompetencia('acessarAberto',titular,lotaTitular,documento[1])}" />
+									<c:set var="acessivel" value="" />
+									<c:set var="acessivel"
+										value="${f:testaCompetencia('acessarAberto',titular,lotaTitular,documento[1])}" />
 
-					<c:choose>
-						<c:when test="${acessivel eq true}">
-							<c:set var="estilo" value="" />
-							<c:if
-								test="${f:mostraDescricaoConfidencial(documento[0], lotaTitular) eq true}">
-								<c:set var="estilo" value="confidencial" />
+									<c:choose>
+										<c:when test="${acessivel eq true}">
+											<c:set var="estilo" value="" />
+											<c:if
+												test="${f:mostraDescricaoConfidencial(documento[0], lotaTitular) eq true}">
+												<c:set var="estilo" value="confidencial" />
+											</c:if>
+											<td class="${estilo}" width="44%">${f:descricaoConfidencial(documento[0],
+												lotaTitular)}</td>
+											<c:if test="${visualizacao == 1}"> 
+												<td class="${estilo}" width="44%">${f:anotacaoConfidencial(documento[1],
+													lotaTitular)}</td>
+											</c:if>
+										</c:when>
+										<c:otherwise>
+											<td>[Descrição Inacessível]</td>
+											<c:if test="${visualizacao == 1}"> 
+												<td>[Anotação Inacessível]</td>
+											</c:if>
+										</c:otherwise>
+									</c:choose>
+								</tr>
+							</siga:paginador>
+							<!-- </table></div> -->
+							<br />
 							</c:if>
-							<td class="${estilo}" width="44%">${f:descricaoConfidencial(documento[0],
-							lotaTitular)}</td>
-						</c:when>
-						<c:otherwise>
-							<td>[Descrição Inacessível]</td>
-						</c:otherwise>
-					</c:choose>
-				</tr>
-			</siga:paginador>
-			<!-- </table></div> -->
-			<br/>
-			</c:if>
-			<c:if test="${empty tamanho or tamanho == 0}">
-				<p class="gt-notice-box">A pesquisa não retornou
-				resultados.</p>
-			</c:if>
-			</c:if>
+							<c:if test="${empty tamanho or tamanho == 0}">
+								<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
+							</c:if>
+							</c:if>
 
 
 
@@ -588,263 +605,336 @@ function limpaCampos()
 
 
 
-			<div class="gt-content-box gt-for-table">
+							<div class="gt-content-box gt-for-table">
 
-			<form id="listar" name="listar"
-				onsubmit="javascript: return limpaCampos()"
-				action="/sigaex/expediente/doc/listar.action" method="GET"
-				class="form100">
-			<table  class="gt-form-table">
-				<colgroup>
-					<col style="width:10em;" />
-					<col />
-				</colgroup>
-				<input type="hidden" name="popup" value="${param.popup}" />
-				<input type="hidden" name="propriedade" value="${param.propriedade}" />
-				<ww:hidden name="postback" value="1" />
-				<ww:hidden name="apenasRefresh" value="0" />
-				<ww:hidden name="p.offset" value="0" />
+								<form id="listar" name="listar"
+									onsubmit="javascript: return limpaCampos()"
+									action="/sigaex/expediente/doc/listar.action" method="GET"
+									class="form100">
+									<table class="gt-form-table">
+										<colgroup>
+											<col style="width: 10em;" />
+											<col />
+										</colgroup>
+										<input type="hidden" name="popup" value="${param.popup}" />
+										<input type="hidden" name="propriedade"
+											value="${param.propriedade}" />
+										<ww:hidden name="postback" value="1" />
+										<ww:hidden name="apenasRefresh" value="0" />
+										<ww:hidden name="p.offset" value="0" />
 
-				<tr class="header">
-					<td align="center" valign="top" colspan="4">Dados do Documento</td>
-				</tr>
-				<tr>
-					<td>Situação:</td>
-					<td><ww:select label="Situação" name="ultMovIdEstadoDoc"
-						list="estados" listKey="idMarcador" listValue="descrMarcador"
-						headerKey="0" headerValue="[Todos]" theme="simple" />
-					&nbsp;&nbsp;&nbsp;&nbsp;Pessoa/Lotação: <ww:select
-						name="ultMovTipoResp" list="listaTipoResp" theme="simple"
-						onchange="javascript:alteraAtendente();" /> <ww:if
-						test="ultMovTipoResp == 1">
-						<span id="divUltMovResp" style="display: "><siga:selecao
-							propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" /></span>
-						<span id="divUltMovLotaResp" style="display: none"><siga:selecao
-							propriedade="ultMovLotaResp" tema="simple"
-							paramList="buscarFechadas=true" /></span>
-					</ww:if> <ww:elseif test="ultMovTipoResp == 2">
-						<span id="divUltMovResp" style="display: none"><siga:selecao
-							propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" /></span>
-						<span id="divUltMovLotaResp" style="display: "><siga:selecao
-							propriedade="ultMovLotaResp" tema="simple"
-							paramList="buscarFechadas=true" /></span>
-					</ww:elseif></td>
-				</tr>
-				<tr>
-					<td>Órgão:</td>
-					<td><ww:select name="orgaoUsu" list="orgaosUsu"
-						listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
-						headerKey="0" headerValue="[Todos]" /></td>
-				</tr>
-				<tr>
-					<td>Origem:</td>
-					<td><ww:select name="idTpDoc" label="" headerKey="0"
-						headerValue="[Todos]" list="tiposDocumento" listKey="idTpDoc"
-						listValue="descrTipoDocumento"
-						onchange="javascript:alteraOrigem();" theme="simple" />
-					&nbsp;&nbsp;&nbsp;&nbsp;Data Inicial: <ww:textfield label=""
-						name="dtDocString" onblur="javascript:verifica_data(this,0);"
-						theme="simple" /> &nbsp;&nbsp;Data Final: <ww:textfield label=""
-						name="dtDocFinalString" onblur="javascript:verifica_data(this,0);"
-						theme="simple" /></td>
-				</tr>
+										<tr class="header">
+											<td align="center" valign="top" colspan="4">Dados do
+												Documento</td>
+										</tr>
+										<tr>
+											<td>Situação:</td>
+											<td><ww:select label="Situação" name="ultMovIdEstadoDoc"
+													list="estados" listKey="idMarcador"
+													listValue="descrMarcador" headerKey="0"
+													headerValue="[Todos]" theme="simple" />
+												<span style="float: right; padding-left: 2em;">Ordenação:
+													<ww:select name="ordem"
+														list="#{0:'Data do documento', 1:'Data da situação', 2:'Ano e número', 3:'Data de finalização', 4:'Data de criação do temporário'}"
+														theme="simple" /> </span> <span
+												style="float: right; padding-left: 2em;">Visualização: <ww:select
+														name="visualizacao" onchange="javascript:sbmt();"
+														list="#{0:'Normal', 1:'Última anotação'}" theme="simple" />
+											</span></td>
+										</tr>
+										<tr>
+											<td>Pessoa/Lotação:</td>
+											<td><ww:select name="ultMovTipoResp"
+													list="listaTipoResp" theme="simple"
+													onchange="javascript:alteraAtendente();" /> <ww:if
+													test="ultMovTipoResp == 1">
+													<span id="divUltMovResp" style="display: "><siga:selecao
+															propriedade="ultMovResp" tema="simple"
+															paramList="buscarFechadas=true" /> </span>
+													<span id="divUltMovLotaResp" style="display: none"><siga:selecao
+															propriedade="ultMovLotaResp" tema="simple"
+															paramList="buscarFechadas=true" /> </span>
+												</ww:if> <ww:elseif test="ultMovTipoResp == 2">
+													<span id="divUltMovResp" style="display: none"><siga:selecao
+															propriedade="ultMovResp" tema="simple"
+															paramList="buscarFechadas=true" /> </span>
+													<span id="divUltMovLotaResp" style="display: "><siga:selecao
+															propriedade="ultMovLotaResp" tema="simple"
+															paramList="buscarFechadas=true" /> </span>
+												</ww:elseif>
+											</td>
+										</tr>
+										<tr>
+											<td>Órgão:</td>
+											<td><ww:select name="orgaoUsu" list="orgaosUsu"
+													listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+													headerKey="0" headerValue="[Todos]" />
+											</td>
+										</tr>
+										<tr>
+											<td>Origem:</td>
+											<td><ww:select name="idTpDoc" label="" headerKey="0"
+													headerValue="[Todos]" list="tiposDocumento"
+													listKey="idTpDoc" listValue="descrTipoDocumento"
+													onchange="javascript:alteraOrigem();" theme="simple" />
+												&nbsp;&nbsp;&nbsp;&nbsp;Data Inicial: <ww:textfield label=""
+													name="dtDocString"
+													onblur="javascript:verifica_data(this,0);" theme="simple" />
+												&nbsp;&nbsp;Data Final: <ww:textfield label=""
+													name="dtDocFinalString"
+													onblur="javascript:verifica_data(this,0);" theme="simple" />
+											</td>
+										</tr>
 
-				<c:choose>
-					<c:when test="${tipoDocumento != 'externo'}">
-						<tr id="trTipo" style="display: ">
-					</c:when>
-					<c:otherwise>
-						<tr id="trTipo" style="display: none">
-					</c:otherwise>
-				</c:choose>
+										<c:choose>
+											<c:when test="${tipoDocumento != 'externo'}">
+												<tr id="trTipo" style="display: ">
+											</c:when>
+											<c:otherwise>
+												<tr id="trTipo" style="display: none">
+											</c:otherwise>
+										</c:choose>
 
-				<td>Tipo:</td>
-				<td><ww:select name="idTipoFormaDoc" list="tiposFormaDoc"
-					listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
-					theme="simple" headerKey="0" headerValue="[Todos]"
-					onchange="javascript:alteraTipoDaForma();" id="tipoForma" />&nbsp;&nbsp;&nbsp;
-				<div style="display: inline" id="comboFormaDiv"><script
-					type="text/javascript">alteraTipoDaForma();</script></div>
-				</td>
-				</tr>
+										<td>Tipo:</td>
+										<td><ww:select name="idTipoFormaDoc" list="tiposFormaDoc"
+												listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
+												theme="simple" headerKey="0" headerValue="[Todos]"
+												onchange="javascript:alteraTipoDaForma();" id="tipoForma" />&nbsp;&nbsp;&nbsp;
+											<div style="display: inline" id="comboFormaDiv">
+												<script type="text/javascript">alteraTipoDaForma();</script>
+											</div></td>
+										</tr>
 
-				<!-- Esse timeout no modelo está estranho. Está sendo necessário porque primeiro
+										<!-- Esse timeout no modelo está estranho. Está sendo necessário porque primeiro
 				 precisa ser executado o request ajax referente à FormaDocumento, da qual a lista 
 				 de modelos depende. Talvez seria bom tornar síncronos esses dois requests ajax -->
-				<tr>
-					<td>Modelo:</td>
-					<td>
-					<div style="display: inline" id="comboModeloDiv"><script
-						type="text/javascript">setTimeout("alteraForma()",500);</script></div>
-					</td>
-				</tr>
+										<tr>
+											<td>Modelo:</td>
+											<td>
+												<div style="display: inline" id="comboModeloDiv">
+													<script type="text/javascript">setTimeout("alteraForma()",500);</script>
+												</div></td>
+										</tr>
 
-				<tr>
-					<td>Ano de Emissão:</td>
-					<td><ww:select label="" name="anoEmissaoString"
-						list="listaAnos" headerKey="" headerValue="[Todos]" theme="simple" />
-					&nbsp;&nbsp;&nbsp;&nbsp;Número: <ww:textfield size="7" label=""
-						name="numExpediente" maxlength="6" theme="simple" /><%--
+										<tr>
+											<td>Ano de Emissão:</td>
+											<td><ww:select label="" name="anoEmissaoString"
+													list="listaAnos" headerKey="" headerValue="[Todos]"
+													theme="simple" /> &nbsp;&nbsp;&nbsp;&nbsp;Número: <ww:textfield
+													size="7" label="" name="numExpediente" maxlength="6"
+													theme="simple" /> <%--
 			&nbsp;&nbsp;&nbsp;&nbsp;Via: <ww:select list="listaVias" label="Via"
 				name="numVia" headerKey="0" headerValue="[Todas]" theme="simple" />--%>
-					</td>
-				</tr>
+											</td>
+										</tr>
 
-				<c:choose>
-					<c:when
-						test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
-						<tr id="trNumOrigDoc" style="display: ">
-					</c:when>
-					<c:otherwise>
-						<tr id="trNumOrigDoc" style="display: none">
-					</c:otherwise>
-				</c:choose>
+										<c:choose>
+											<c:when
+												test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
+												<tr id="trNumOrigDoc" style="display: ">
+											</c:when>
+											<c:otherwise>
+												<tr id="trNumOrigDoc" style="display: none">
+											</c:otherwise>
+										</c:choose>
 
-				<td class="tdLabel"><label for="numExtDoc" class="label">Nº
-				Original do Documento:</label></td>
-				<td><input type="text" name="numExtDoc" size="16" value=""
-					id="numExtDoc" /></td>
-				</tr>
+										<td class="tdLabel"><label for="numExtDoc" class="label">Nº
+												Original do Documento:</label>
+										</td>
+										<td><input type="text" name="numExtDoc" size="16"
+											value="" id="numExtDoc" />
+										</td>
+										</tr>
 
-				<c:choose>
-					<c:when test='${tipoDocumento == "externo"}'>
-						<tr id="trOrgExterno" style="display: ">
-					</c:when>
-					<c:otherwise>
-						<tr id="trOrgExterno" style="display: none">
-					</c:otherwise>
-				</c:choose>
+										<c:choose>
+											<c:when test='${tipoDocumento == "externo"}'>
+												<tr id="trOrgExterno" style="display: ">
+											</c:when>
+											<c:otherwise>
+												<tr id="trOrgExterno" style="display: none">
+											</c:otherwise>
+										</c:choose>
 
-				<td>Órgão Externo:</td>
-				<td><siga:selecao propriedade="cpOrgao" titulo="Órgão Externo"
-					tema="simple" /></td>
-				</tr>
+										<td>Órgão Externo:</td>
+										<td><siga:selecao propriedade="cpOrgao"
+												titulo="Órgão Externo" tema="simple" />
+										</td>
+										</tr>
 
-				<c:choose>
-					<c:when
-						test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
-						<tr id="trNumDocSistAntigo" style="display: ">
-					</c:when>
-					<c:otherwise>
-						<tr id="trNumDocSistAntigo" style="display: none">
-					</c:otherwise>
-				</c:choose>
+										<c:choose>
+											<c:when
+												test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
+												<tr id="trNumDocSistAntigo" style="display: ">
+											</c:when>
+											<c:otherwise>
+												<tr id="trNumDocSistAntigo" style="display: none">
+											</c:otherwise>
+										</c:choose>
 
-				<td class="tdLabel"><label for="numAntigoDoc" class="label">Nº
-				do Documento no Sistema Antigo:</label></td>
-				<td><input type="text" name="numAntigoDoc" size="16" value=""
-					id="numAntigoDoc" /></td>
-				</tr>
+										<td class="tdLabel"><label for="numAntigoDoc"
+											class="label">Nº do Documento no Sistema Antigo:</label>
+										</td>
+										<td><input type="text" name="numAntigoDoc" size="16"
+											value="" id="numAntigoDoc" />
+										</td>
+										</tr>
 
-				<c:choose>
-					<c:when test="${tipoDocumento == 'externo'}">
-						<ww:textfield label="Subscritor" name="nmSubscritorExt" size="80" />
-					</c:when>
-					<c:otherwise>
-						<siga:selecao titulo="Subscritor:" propriedade="subscritor" paramList="buscarFechadas=true" />
-					</c:otherwise>
-				</c:choose>
+										<c:choose>
+											<c:when test="${tipoDocumento == 'externo'}">
+												<ww:textfield label="Subscritor" name="nmSubscritorExt"
+													size="80" />
+											</c:when>
+											<c:otherwise>
+												<siga:selecao titulo="Subscritor:" propriedade="subscritor"
+													paramList="buscarFechadas=true" />
+											</c:otherwise>
+										</c:choose>
 
-				<tr>
-					<td>Cadastrante:</td>
-					<td>
-					<div style="float: left"><ww:select name="tipoCadastrante"
-						list="listaTipoResp" theme="simple"
-						onchange="javascript:alteraCadastranteDocumento();" /></div>
-					<ww:if test="tipoCadastrante == 1">
-						<div id="divCadastrante" style="display: "><siga:selecao
-							propriedade="cadastrante" tema="simple" paramList="buscarFechadas=true" /></div>
-						<div id="divLotaCadastrante" style="display: none"><siga:selecao
-							propriedade="lotaCadastrante" tema="simple"
-							paramList="buscarFechadas=true" /></div>
-					</ww:if> <ww:elseif test="tipoCadastrante == 2">
-						<div id="divCadastrante" style="display: none"><siga:selecao
-							propriedade="cadastrante" tema="simple" paramList="buscarFechadas=true" /></div>
-						<div id="divLotaCadastrante" style="display: "><siga:selecao
-							propriedade="lotaCadastrante" tema="simple"
-							paramList="buscarFechadas=true" /></div>
-					</ww:elseif></td>
-				</tr>
+										<tr>
+											<td>Cadastrante:</td>
+											<td>
+												<div style="float: left">
+													<ww:select name="tipoCadastrante" list="listaTipoResp"
+														theme="simple"
+														onchange="javascript:alteraCadastranteDocumento();" />
+												</div> <ww:if test="tipoCadastrante == 1">
+													<div id="divCadastrante" style="display: ">
+														<siga:selecao propriedade="cadastrante" tema="simple"
+															paramList="buscarFechadas=true" />
+													</div>
+													<div id="divLotaCadastrante" style="display: none">
+														<siga:selecao propriedade="lotaCadastrante" tema="simple"
+															paramList="buscarFechadas=true" />
+													</div>
+												</ww:if> <ww:elseif test="tipoCadastrante == 2">
+													<div id="divCadastrante" style="display: none">
+														<siga:selecao propriedade="cadastrante" tema="simple"
+															paramList="buscarFechadas=true" />
+													</div>
+													<div id="divLotaCadastrante" style="display: ">
+														<siga:selecao propriedade="lotaCadastrante" tema="simple"
+															paramList="buscarFechadas=true" />
+													</div>
+												</ww:elseif>
+											</td>
+										</tr>
 
-				<tr>
-					<td>Destinatário:</td>
-					<td>
-					<div style="float: left"><ww:select label="Destinatário"
-						name="tipoDestinatario" list="listaTipoDest" theme="simple"
-						onchange="javascript:alteraDestinatarioDocumento();" /></div>
-					<c:choose>
-						<c:when test='${tipoDestinatario == 1}'>
-							<div id="divDestinatario" style="display: "><siga:selecao
-								propriedade="destinatario" tema="simple" paramList="buscarFechadas=true"/></div>
-							<div id="divLotaDestinatario" style="display: none"><siga:selecao
-								propriedade="lotacaoDestinatario" tema="simple"
-								paramList="buscarFechadas=true" /></div>
-							<div id="divOrgaoExternoDestinatario" style="display: none"><siga:selecao
-								propriedade="orgaoExternoDestinatario" tema="simple" /></div>
-							<div id="divNmDestinatario" style="display: none"><ww:textfield
-								name="nmDestinatario" size="80" theme="simple" /></div>
+										<tr>
+											<td>Destinatário:</td>
+											<td>
+												<div style="float: left">
+													<ww:select label="Destinatário" name="tipoDestinatario"
+														list="listaTipoDest" theme="simple"
+														onchange="javascript:alteraDestinatarioDocumento();" />
+												</div> <c:choose>
+													<c:when test='${tipoDestinatario == 1}'>
+														<div id="divDestinatario" style="display: ">
+															<siga:selecao propriedade="destinatario" tema="simple"
+																paramList="buscarFechadas=true" />
+														</div>
+														<div id="divLotaDestinatario" style="display: none">
+															<siga:selecao propriedade="lotacaoDestinatario"
+																tema="simple" paramList="buscarFechadas=true" />
+														</div>
+														<div id="divOrgaoExternoDestinatario"
+															style="display: none">
+															<siga:selecao propriedade="orgaoExternoDestinatario"
+																tema="simple" />
+														</div>
+														<div id="divNmDestinatario" style="display: none">
+															<ww:textfield name="nmDestinatario" size="80"
+																theme="simple" />
+														</div>
 
-							<%--<siga:selecao propriedade="destinatario" tema="simple" />--%>
-						</c:when>
-						<c:when test='${tipoDestinatario == 2}'>
-							<div id="divDestinatario" style="display: none"><siga:selecao
-								propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" /></div>
-							<div id="divLotaDestinatario" style="display: "><siga:selecao
-								propriedade="lotacaoDestinatario" tema="simple"
-								paramList="buscarFechadas=true" /></div>
-							<div id="divOrgaoExternoDestinatario" style="display: none"><siga:selecao
-								propriedade="orgaoExternoDestinatario" tema="simple" /></div>
-							<div id="divNmDestinatario" style="display: none"><ww:textfield
-								name="nmDestinatario" size="80" theme="simple" /></div>
-
-
-							<%--<siga:selecao propriedade="lotacaoDestinatario" tema="simple" />--%>
-						</c:when>
-						<c:when test='${tipoDestinatario == 3}'>
-							<div id="divDestinatario" style="display: none"><siga:selecao
-								propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" /></div>
-							<div id="divLotaDestinatario" style="display: none"><siga:selecao
-								propriedade="lotacaoDestinatario" tema="simple"
-								paramList="buscarFechadas=true" /></div>
-							<div id="divOrgaoExternoDestinatario" style="display: "><siga:selecao
-								propriedade="orgaoExternoDestinatario" tema="simple" /></div>
-							<div id="divNmDestinatario" style="display: none"><ww:textfield
-								name="nmDestinatario" size="80" theme="simple" /></div>
-
-
-							<%--<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" />--%>
-						</c:when>
-						<c:otherwise>
-							<div id="divDestinatario" style="display: none"><siga:selecao
-								propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" /></div>
-							<div id="divLotaDestinatario" style="display: none"><siga:selecao
-								propriedade="lotacaoDestinatario" tema="simple"
-								paramList="buscarFechadas=true" /></div>
-							<div id="divOrgaoExternoDestinatario" style="display: none"><siga:selecao
-								propriedade="orgaoExternoDestinatario" tema="simple" /></div>
-							<div id="divNmDestinatario" style="display: "><ww:textfield
-								name="nmDestinatario" size="80" theme="simple" /></div>
+														<%--<siga:selecao propriedade="destinatario" tema="simple" />--%>
+													</c:when>
+													<c:when test='${tipoDestinatario == 2}'>
+														<div id="divDestinatario" style="display: none">
+															<siga:selecao propriedade="destinatario" tema="simple"
+																paramList="buscarFechadas=true" />
+														</div>
+														<div id="divLotaDestinatario" style="display: ">
+															<siga:selecao propriedade="lotacaoDestinatario"
+																tema="simple" paramList="buscarFechadas=true" />
+														</div>
+														<div id="divOrgaoExternoDestinatario"
+															style="display: none">
+															<siga:selecao propriedade="orgaoExternoDestinatario"
+																tema="simple" />
+														</div>
+														<div id="divNmDestinatario" style="display: none">
+															<ww:textfield name="nmDestinatario" size="80"
+																theme="simple" />
+														</div>
 
 
-							<%--<ww:textfield name="nmDestinatario" size="80" theme="simple" />--%>
-						</c:otherwise>
-					</c:choose></td>
-				</tr>
+														<%--<siga:selecao propriedade="lotacaoDestinatario" tema="simple" />--%>
+													</c:when>
+													<c:when test='${tipoDestinatario == 3}'>
+														<div id="divDestinatario" style="display: none">
+															<siga:selecao propriedade="destinatario" tema="simple"
+																paramList="buscarFechadas=true" />
+														</div>
+														<div id="divLotaDestinatario" style="display: none">
+															<siga:selecao propriedade="lotacaoDestinatario"
+																tema="simple" paramList="buscarFechadas=true" />
+														</div>
+														<div id="divOrgaoExternoDestinatario" style="display: ">
+															<siga:selecao propriedade="orgaoExternoDestinatario"
+																tema="simple" />
+														</div>
+														<div id="divNmDestinatario" style="display: none">
+															<ww:textfield name="nmDestinatario" size="80"
+																theme="simple" />
+														</div>
 
-				<siga:selecao titulo="Classificação:" propriedade="classificacao" />
 
-				<ww:textfield label="Descrição" name="descrDocumento" size="80" />
-							    
-				${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)}
-				 
-				
-				<tr>
-					<td colspan="2"><siga:monobotao inputType="submit" value="Buscar" cssClass="gt-btn-medium gt-btn-left"/> <%--<ww:submit name="pesquisar" value="Pesquisar" theme="simple" />--%>
-					</td>
-				</tr>
-			</table>
-			</form>
-			</div>
-			</div>
-			</div>
-			</siga:pagina>
+														<%--<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" />--%>
+													</c:when>
+													<c:otherwise>
+														<div id="divDestinatario" style="display: none">
+															<siga:selecao propriedade="destinatario" tema="simple"
+																paramList="buscarFechadas=true" />
+														</div>
+														<div id="divLotaDestinatario" style="display: none">
+															<siga:selecao propriedade="lotacaoDestinatario"
+																tema="simple" paramList="buscarFechadas=true" />
+														</div>
+														<div id="divOrgaoExternoDestinatario"
+															style="display: none">
+															<siga:selecao propriedade="orgaoExternoDestinatario"
+																tema="simple" />
+														</div>
+														<div id="divNmDestinatario" style="display: ">
+															<ww:textfield name="nmDestinatario" size="80"
+																theme="simple" />
+														</div>
+
+
+														<%--<ww:textfield name="nmDestinatario" size="80" theme="simple" />--%>
+													</c:otherwise>
+												</c:choose>
+											</td>
+										</tr>
+
+										<siga:selecao titulo="Classificação:"
+											propriedade="classificacao" />
+
+										<ww:textfield label="Descrição" name="descrDocumento"
+											size="80" />
+
+										${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario,
+										fullText)}
+
+
+										<tr>
+											<td colspan="2"><siga:monobotao inputType="submit"
+													value="Buscar" cssClass="gt-btn-medium gt-btn-left" /> <%--<ww:submit name="pesquisar" value="Pesquisar" theme="simple" />--%>
+											</td>
+										</tr>
+									</table>
+								</form>
+							</div>
+							</div>
+							</div>
+							</siga:pagina>

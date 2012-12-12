@@ -21,16 +21,20 @@ package br.gov.jfrj.siga.libs.util;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -272,4 +276,31 @@ public class SigaLibsEL {
 		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
 				titular, lotaTitular, servicoPath);
 	}
+	
+	public static String getURLSistema(String nome){
+		String ambiente = SigaBaseProperties.getString("ambiente");
+		String url = System.getProperty(nome + "." + ambiente + ".url");
+		if (url == null || url.length() == 0){
+			url = "#";
+		}
+		return url.trim();
+	}
+	
+	public static String getComplementoHead(CpOrgaoUsuario oragaoUsu){
+			ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
+			Map attrs = new HashMap();
+			attrs.put("nmMod", "macro complementoHEAD");
+			attrs.put("template", "[@complementoHEAD/]");
+			try {
+				return p.processarModelo(oragaoUsu, attrs, null).trim() ;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return "";
+	}
+
+
 }
+
+

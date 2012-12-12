@@ -111,6 +111,11 @@
   <function-signature>java.lang.Boolean mostraDescricaoConfidencial( br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
+  <name>anotacaoConfidencial</name>
+  <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
+  <function-signature>java.lang.String anotacaoConfidencial(br.gov.jfrj.siga.ex.ExMobil, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>
+ <function>
   <name>pessoa</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>br.gov.jfrj.siga.dp.DpPessoa pessoa(java.lang.Long)</function-signature>
@@ -278,21 +283,13 @@
  <function>
   <name>obterExtensaoEditor</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.String obterExtensaoEditor(br.gov.jfrj.siga.dp.CpOrgaoUsuario)</function-signature>
+  <function-signature>java.lang.String obterExtensaoEditor(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.String, java.lang.String, java.lang.String)</function-signature>
  </function>
+  
  <function>
   <name>obterExtensaoAssinador</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.String obterExtensaoAssinador(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)</function-signature>
+  <function-signature>java.lang.String obterExtensaoAssinador(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)</function-signature>
  </function> 
- <function>
-  <name>obterExtensaoAssinadorLote</name>
-  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.String obterExtensaoAssinadorLote(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)</function-signature>
- </function> 
- <function>
-  <name>obterBotoesExtensaoAssinador</name>
-  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.String obterBotoesExtensaoAssinador(br.gov.jfrj.siga.dp.CpOrgaoUsuario)</function-signature>
- </function>    
+     
 </taglib>

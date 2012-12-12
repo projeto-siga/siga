@@ -4,6 +4,9 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>sigawf</display-name>
 	
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
+	
 	<jsp-config>
 		<taglib>
 			<taglib-uri>/core</taglib-uri>
@@ -167,7 +170,7 @@
 	
 	
 	<security-constraint>
-		<web-resource-collection>
+		<!--web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>
 			<url-pattern>/principal.action</url-pattern>
 			<url-pattern>/substituicao/*</url-pattern>
@@ -176,7 +179,20 @@
 			<url-pattern>/expediente/*</url-pattern>
 			<url-pattern>/modelo/*</url-pattern>
 			<url-pattern>/gi/*</url-pattern>
-			<url-pattern>/administracao.action</url-pattern>
+			<url-pattern>/administrar.action</url-pattern>
+		</web-resource-collection-->
+		<web-resource-collection>
+			<web-resource-name>Paginas do Sistema</web-resource-name>
+			<url-pattern>/inbox.action</url-pattern>
+			<url-pattern>/task.action</url-pattern>
+			<url-pattern>/doc.action</url-pattern>
+			<url-pattern>/pesquisarDesignacao.action</url-pattern>
+			<url-pattern>/gravarDesignacao.action</url-pattern>
+			<url-pattern>/gerarRelatorioDesignacao.action</url-pattern>
+			<url-pattern>/configurar.action</url-pattern>
+			<url-pattern>/gravarConfiguracao.action</url-pattern>
+			<url-pattern>/medir.action</url-pattern>
+			<url-pattern>/emitirRelatorio.action</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

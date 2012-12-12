@@ -8,7 +8,7 @@
 		<mod:texto titulo="E-mail Institucional (alias)"  var="email" largura="30" maxcaracteres="30" obrigatorio="Sim" />@jfrj.jus.br
 		<br /><br />
 		<mod:mensagem vermelho="Sim" texto="Para indicação de novo usuário, no caso de remoção do magistrado para outra Seção Judiciária ou Tribunal, 
-		deverá ser preenchido e encaminhado à CJUD o respectivo formulário de exclusão. Caso o magistrado já 
+		deverá ser preenchido e encaminhado à SEJUD o respectivo formulário de exclusão. Caso o magistrado já 
 		tenha sido removido, o formulário de solicitação de exclusão poderá ser encaminhado 
 		pelo Diretor de Secretaria." titulo="OBS" />
 	</mod:entrevista>
@@ -111,7 +111,7 @@
 					
 
                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-               Declaro estar ciente da necessidade de encaminhar à Coordenadoria de Assuntos Judiciários, para arquivamento, os termos de responsabilidade dos servidores a serem por mim cadastrados no sistema INFOJUD, bem como de excluir do cadastro desse sistema os servidores que vierem a ser removidos para outra unidade.
+               Declaro estar ciente da necessidade de manter arquivados os termos de responsabilidade dos servidores a serem por mim cadastrados para acessar o referido sistema, para controle dos acessos concedidos, bem como de excluir do cadastro desse sistema os servidores que vierem a ser removidos para outra unidade.
 					 <br />
 					<br />
 

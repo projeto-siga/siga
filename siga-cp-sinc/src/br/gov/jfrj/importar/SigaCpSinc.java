@@ -27,6 +27,7 @@ import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -69,10 +70,12 @@ public class SigaCpSinc {
 	// a rotina de sync está atribuindo um nível de dependencia estranho para
 	// renato (8)
 
+	private static boolean modoLog = false;
+
 	private String servidor = "";
 
 	private String url = "";
-	
+
 	private String destinatariosExtras = "";
 
 	public String getServidor() {
@@ -148,6 +151,17 @@ public class SigaCpSinc {
 			// sinc.religarListaPorIdExterna(setAntigo);
 			sinc.setSetAntigo(setAntigo);
 
+			// verifica se as pessoas possuem lotação
+			if (modoLog) {
+				for (Sincronizavel item : setNovo) {
+					if (item instanceof DpPessoa) {
+						DpPessoa p = ((DpPessoa) item);
+						if (p.getLotacao() == null) {
+							log("Pessoa sem lotação! " + p.getSigla());
+						}
+					}
+				}
+			}
 			list = sinc.getOperacoes(dt);
 		} catch (Exception e) {
 			log("Transação abortada por erro: " + e.getMessage());
@@ -191,8 +205,17 @@ public class SigaCpSinc {
 			 * "select * from corporativo.cp_papel where ID_ORGAO_USU = 9999"
 			 * ).list()
 			 */
-			CpDao.getInstance().commitTransacao();
-			log("Transação confirmada");
+			if (modoLog) {
+				log("");
+				log("*********MODO LOG **********");
+				log("As alterações não serão efetivadas! Executando rollback...");
+				log("");
+				log("");
+				CpDao.getInstance().rollbackTransacao();
+			} else {
+				CpDao.getInstance().commitTransacao();
+				log("Transação confirmada");
+			}
 		} catch (Exception e) {
 			CpDao.getInstance().rollbackTransacao();
 			log("Transação abortada por erro: " + e.getMessage());
@@ -243,6 +266,12 @@ public class SigaCpSinc {
 				return 12;
 			}
 
+		}
+
+		for (String param : Arrays.asList(pars)) {
+			if (param.equals("-modoLog=true")) {
+				modoLog = true;
+			}
 		}
 
 		return 0;
@@ -299,7 +328,7 @@ public class SigaCpSinc {
 		log("--- Processando  " + dt + "--- ");
 		log("--- Parametros: servidor= " + servidor + "  e url= " + url);
 
-		if (args.length >= 3 && args[2] != null) {
+		if (args.length >= 3 && !args[1].equals("-url") && args[2] != null) {
 			String method = args[2].trim().replace("-", "").toLowerCase();
 			Method m = this.getClass().getMethod(method, null);
 			m.invoke(this);
@@ -313,6 +342,11 @@ public class SigaCpSinc {
 
 	public void importxml() {
 		try {
+			if (modoLog) {
+				log("");
+				log(">>>Iniciando em modo LOG!<<<");
+				log("");
+			}
 			log("Importando: XML");
 			/* -------------------------- */
 			// Mensagens.getString("url.origem")
@@ -361,7 +395,7 @@ public class SigaCpSinc {
 		String oServidor = args[0].toLowerCase();
 		if (args[1].equalsIgnoreCase("-url"))
 			aUrl = args[1].toLowerCase() + "=" + args[2];
-		else 
+		else
 			aUrl = args[1].toLowerCase();
 
 		this.servidor = oServidor;
@@ -387,12 +421,14 @@ public class SigaCpSinc {
 				DpFuncaoConfianca.class, "dataFimFuncao", orgaoUsuario)) {
 			l.add(o);
 		}
-		if (getVersaoInteira().intValue() >= 2) {
-			for (CpOrgao o : CpDao.getInstance().listarAtivos(CpOrgao.class,
-					"hisDtFim", orgaoUsuario)) {
-				l.add(o);
-			}
-		}
+		// Comentado por Edson, pois precisa ser resolvido problema dos órgãos
+		// (do CJF)
+		// cadastrados manualmente mas que não constam são enviados pelo XML
+		/*
+		 * if (getVersaoInteira().intValue() >= 2) { for (CpOrgao o :
+		 * CpDao.getInstance().listarAtivos(CpOrgao.class, "hisDtFim",
+		 * orgaoUsuario)) { l.add(o); } }
+		 */
 		for (DpPessoa o : CpDao.getInstance().listarAtivos(DpPessoa.class,
 				"dataFimPessoa", orgaoUsuario)) {
 			l.add(o);
@@ -735,7 +771,8 @@ public class SigaCpSinc {
 		}
 		lotacao.setDataInicioLotacao(new Date());
 		lotacao.setOrgaoUsuario(cpOrgaoUsuario);
-		if (parseStr(parser, "idPai") != null) {
+		if (parseStr(parser, "idPai") != null
+				&& !parseStr(parser, "idPai").equals(lotacao.getIdExterna())) {
 			DpLotacao o = new DpLotacao();
 			o.setIdExterna(parseStr(parser, "idPai"));
 			lotacao.setLotacaoPai(o);
@@ -904,9 +941,13 @@ public class SigaCpSinc {
 	}
 
 	public void logEnd() throws Exception {
-		String sDest = ImportarXmlProperties.getString("lista.destinatario") + "," + destinatariosExtras;
+		String sDest = ImportarXmlProperties.getString("lista.destinatario")
+				+ (!destinatariosExtras.trim().equals("") ? ","
+						+ destinatariosExtras : "");
 		if (sDest != null && aditionalEmails != null)
-			sDest = sDest + "," + aditionalEmails;
+			sDest = sDest
+					+ (!aditionalEmails.trim().equals("") ? ","
+							+ aditionalEmails : "");
 		String destinatarios[] = sDest.split(",");
 		String texto = new String();
 		if (getDataHora() != null) {
@@ -1015,7 +1056,9 @@ public class SigaCpSinc {
 		DpLotacao lotDIRFO = getLotacaoDIRFO();
 		DpLotacao lotPaiAdm = lot;
 		while (lotPaiAdm != null) {
-			if (lotDIRFO != null && lotPaiAdm.getIdeLotacao().equals(lotDIRFO.getIdLotacao())) {
+			if (lotDIRFO != null
+					&& lotPaiAdm.getIdeLotacao()
+							.equals(lotDIRFO.getIdLotacao())) {
 				// é administrativo
 				lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));
 				return;
@@ -1159,20 +1202,22 @@ public class SigaCpSinc {
 	public DpLotacao getLotacaoDIRFO() {
 		return lotacaoDIRFO;
 	}
-	
+
 	protected void setServidor(String servidor) {
 		this.servidor = servidor;
 	}
-	
+
 	protected void setUrl(String url) {
 		this.url = url;
 	}
-	
+
 	/**
 	 * Acrescenta destinatários a serem notificados da sincronização
-	 * @param destinatarios - lista de e-mails separados por vírgula
+	 * 
+	 * @param destinatarios
+	 *            - lista de e-mails separados por vírgula
 	 */
-	protected void setDestinatariosExtras(String destinatarios){
+	protected void setDestinatariosExtras(String destinatarios) {
 		this.destinatariosExtras = destinatarios;
 	}
 }

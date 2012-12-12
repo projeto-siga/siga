@@ -5,12 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
-                
-		<mod:grupo>
-				<mod:memo titulo="<b>Ementa</b>" var="eme" colunas="60" linhas="3" />
-		</mod:grupo>
-		<br>
-		<c:if test="${empty esconderTexto}">
+              	<c:if test="${empty esconderTexto}">
 			<mod:grupo
 				titulo="Texto a ser inserido no corpo da Portaria da EMARF">
 				<mod:grupo>
@@ -75,12 +70,6 @@
 		    <!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
 			<br>
-			<table border="0"  bgcolor="#FFFFFF" cellpadding="5" width="40%"style="font-size:10" align="right" >
-	  		   <tr>
-  				   <td colspan="2" align="justify" style="font-size:10">${eme}</td>
-  			   </tr>
-  			</table>
-			
 			<span style="font-size: ${tl};line-height: 1px"> ${texto_pte} </span>
 			<!-- FIM CORPO -->
 			<p align="center"><!-- INICIO FECHO -->PUBLIQUE-SE. REGISTRE-SE. CUMPRA-SE.<!-- FIM FECHO --><br/><br/><br></p>

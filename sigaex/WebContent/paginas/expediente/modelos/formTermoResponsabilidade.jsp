@@ -6,9 +6,9 @@
 	<mod:entrevista>
 
 		<br />
-		<mod:mensagem titulo="OBS" texto="O Termo de Responsabilidade de servidor deve ser encaminhado à CJUD tão somente para 
-		arquivamento no processo. O cadastramento de servidores no sistema INFOJUD-e-CAC deve ser
-		feito pelo próprio magistrado." vermelho="Sim" />
+		<mod:mensagem titulo="OBS" texto="O cadastramento de servidores no sistema INFOJUD-e-CAC 
+		deve ser feito pelo próprio magistrado. O Termo de Responsabilidade de servidor deve ser arquivado 
+		na própria vara, para controle dos acessos concedidos." vermelho="Sim" />
 		<br /><br />
 		
 	</mod:entrevista>

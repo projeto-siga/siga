@@ -11,6 +11,10 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 <siga:cabecalho titulo="Documento" popup="${param.popup}" />
 
+<c:if test="${not docVO.digital}">
+	<script type="text/javascript">$("html").addClass("fisico");</script>
+</c:if>
+
 <div class="gt-bd" style="padding-bottom: 0px;">
 	<div class="gt-content">
 

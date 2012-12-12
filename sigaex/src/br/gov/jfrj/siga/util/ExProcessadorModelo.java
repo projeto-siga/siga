@@ -21,7 +21,10 @@ package br.gov.jfrj.siga.util;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -115,8 +118,13 @@ class MyHttpRequest extends HttpServletRequestWrapper {
 	}
 
 	public void clearAttributes() {
-		while (getAttributeNames().hasMoreElements()) {
-			String s = getAttributeNames().nextElement().toString();
+		Enumeration e = getAttributeNames();
+		List<String> l = new ArrayList<String>();
+		while (e.hasMoreElements()) {
+			String s = e.nextElement().toString();
+			l.add(s);
+		}
+		for (String s : l) {
 			removeAttribute(s);
 		}
 	}

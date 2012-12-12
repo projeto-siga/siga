@@ -85,7 +85,7 @@ public class IntegracaoLdap {
 	}
 
 	private IntegracaoLdapProperties configurarProperties(String localidade) {
-		String ambiente = System.getProperty("jfrj.ambiente", "");
+		String ambiente = System.getProperty("ambiente", "");
 		IntegracaoLdapProperties prop = new IntegracaoLdapProperties();
 		if (localidade.length()>0 && ambiente.length()>0){
 			prop.setPrefixo("siga.cp.sinc.ldap." + localidade + "." +ambiente) ;	

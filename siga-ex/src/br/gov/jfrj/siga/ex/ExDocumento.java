@@ -37,8 +37,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
-
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.Hibernate;
@@ -72,6 +71,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1462217739890785344L;
+	
+	private static final Logger log = Logger.getLogger( ExDocumento.class );
 
 	private byte[] cacheConteudoBlobDoc;
 
@@ -104,6 +105,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	// @Override
 	public ExNivelAcesso getExNivelAcesso() {
+		log.info( "Obtendo nível de acesso atual do documento..." );
 		ExNivelAcesso nivel = null;
 		if (getMobilGeral() != null
 				&& getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
@@ -343,7 +345,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Field(index = Index.TOKENIZED, name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		return getExNivelAcesso().getGrauNivelAcesso().toString();
+		log.info( "Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo" );
+		String nivel = null;
+		ExNivelAcesso nivelAcesso = getExNivelAcesso();
+		
+		if ( nivelAcesso != null 
+				&& nivelAcesso.getGrauNivelAcesso() != null ) {
+			nivel = nivelAcesso.getGrauNivelAcesso().toString();
+			
+		} else {
+			log.warn( "O nível de acesso ou o grau do nível de acesso do documento é nulo." );
+		}
+		
+		return nivel;
 	}
 
 	/**
@@ -1817,5 +1831,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			setFgEletronico("S");
 		else
 			setFgEletronico("N");
+	}
+	
+	/**
+	 * 
+	 * @return o id do ExNivelAcesso quando o ExNivelAcesso não for nulo.
+	 */
+	public Long getIdExNivelAcesso() {
+		log.info( "Obtendo IdExNivelAcesso..." );
+		Long idExNivelAcesso = null;
+		String nivelAcesso = this.getNivelAcesso(); 
+		if ( nivelAcesso != null ) {
+			idExNivelAcesso = this.getExNivelAcesso().getIdNivelAcesso();
+		}
+		return idExNivelAcesso;
 	}
 }

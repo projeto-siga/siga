@@ -41,6 +41,7 @@ import java.util.List;
 
 import oracle.jdbc.OracleTypes;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
@@ -93,6 +94,8 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 public class ExDao extends CpDao {
 
+	private static final Logger log = Logger.getLogger( ExDao.class );
+	
 	IMontadorQuery montadorQuery = null;
 
 	public static ExDao getInstance() {
@@ -1477,6 +1480,12 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
+		
+		if ( pes == null || dt == null ) {
+			log.error( "[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentações não podem ser nulos." );
+			throw new IllegalStateException( "A pessoa e/ou a data informada para a realização da consulta é nula." );
+		}
+		
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		final Query query = getSessao().getNamedQuery("consultarMovimentacoes");
 		ExMovimentacao mov = consultar(1122650L, ExMovimentacao.class, false);

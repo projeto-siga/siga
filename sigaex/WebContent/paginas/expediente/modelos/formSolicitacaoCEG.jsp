@@ -38,11 +38,11 @@ FORMULARIO BANCO DE DADOS DA CEG-->
 		<c:if test="${valorTipoDeForm == 1}">
 			<c:if test="${tipoUsuario == 'Magistrado'}">
 				<b>Para indicação de novo usuário, no caso de remoção do magistrado para órgão externo à SJRJ, deverá ser 
-				preenchido e encaminhado à CJUD, pelo diretor de secretaria, o respectivo formulário de exclusão. </b>
+				preenchido e encaminhado à SEJUD, pelo diretor de secretaria, o respectivo formulário de exclusão. </b>
 			</c:if>
 			<c:if test="${tipoUsuario == 'Diretor/Substituto'}">
 				<b>Para indicação de novo usuário, no caso de dispensa do cargo ou remoção do Diretor de Secretaria e/ou de 
-				seu substituto, deverá ser preenchido e encaminhado à CJUD, pelo diretor de secretaria, 
+				seu substituto, deverá ser preenchido e encaminhado à SEJUD, pelo diretor de secretaria, 
 				o respectivo formulário de exclusão. </b>
 			</c:if>
 	</c:if>
@@ -170,7 +170,7 @@ FORMULARIO BANCO DE DADOS DA CEG-->
 			<table border="1" cellpadding="2" width="900" align="center">
 			<tr>
 				<td colspan="2" align="center">
-				<b>2. CAMPO RESTRITO À COORDENADORIA DE ASSUNTOS JUDICIÁRIOS (CJUD)</b>
+				<b>2. CAMPO RESTRITO À SEJUD</b>
 				</td>
 			</tr>
 			<tr><td width="400" align="left">

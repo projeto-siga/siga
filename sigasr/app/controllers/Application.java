@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.hibernate.Session;
-
 import models.SrAndamento;
 import models.SrArquivo;
 import models.SrConfiguracao;
@@ -20,14 +18,16 @@ import models.SrItemConfiguracao;
 import models.SrServico;
 import models.SrSolicitacao;
 import models.SrTendencia;
+import models.SrTipoAtributo;
 import models.SrUrgencia;
+
+import org.hibernate.Session;
+
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.Http;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -36,13 +36,14 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 public class Application extends Controller {
 
 	@Before
-	static void prepararCpDao() {
+	static void prepararCpDao() throws Exception {
 		Session playSession = (Session) JPA.em().getDelegate();
 		CpDao.freeInstance();
 		CpDao.getInstance(playSession);
+		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(unless = { "proxy", "exibirAtendente" })
+	@Before(unless = { "proxy", "exibirAtendente", "exibirAtributos" })
 	static void addDefaults() {
 
 		try {
@@ -100,13 +101,18 @@ public class Application extends Controller {
 
 	public static void editar(Long id) {
 		SrSolicitacao solicitacao;
-		if (id == null)
+		if (id == null) {
 			solicitacao = new SrSolicitacao();
-		else
+		} else
 			solicitacao = SrSolicitacao.findById(id);
 
 		solicitacao.solicitante = getCadastrante();
 		formEditar(solicitacao);
+	}
+
+	public static void exibirAtributos(SrSolicitacao solicitacao)
+			throws Exception {
+		render(solicitacao);
 	}
 
 	private static void formEditar(SrSolicitacao solicitacao) {
@@ -132,7 +138,7 @@ public class Application extends Controller {
 
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
-					"Item não informado");
+					"Item nÃ£o informado");
 		}
 
 		if (solicitacao.servico == null) {
@@ -145,6 +151,14 @@ public class Application extends Controller {
 					"Descrição não informada");
 		}
 
+		/*for (SrAtributo att : solicitacao.getAtributoSet()) {
+			if (att.valorAtributo.trim().equals(""))
+				validation.addError("solicitacao.atributoMap["
+						+ att.tipoAtributo.idTipoAtributo + "]",
+						att.tipoAtributo.nomeTipoAtributo + " não informado");
+			int a = 0;
+		}*/
+
 		if (validation.hasErrors()) {
 			formEditar(solicitacao);
 		}
@@ -153,7 +167,8 @@ public class Application extends Controller {
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
 		validarFormEditar(solicitacao);
 		solicitacao.salvar(getCadastrante(), getLotaTitular());
-		exibir(solicitacao.idSolicitacao);
+		Long id = solicitacao.idSolicitacao;
+		exibir(id);
 	}
 
 	public static void listar(SrSolicitacaoFiltro filtro) {
@@ -164,7 +179,7 @@ public class Application extends Controller {
 		SrUrgencia[] urgencias = SrUrgencia.values();
 		SrTendencia[] tendencias = SrTendencia.values();
 		SrGravidade[] gravidades = SrGravidade.values();
-		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		String[] tipos = new String[] { "Pessoa", "LotaÃ§Ã£o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -207,8 +222,10 @@ public class Application extends Controller {
 	}
 
 	public static void andamento(SrAndamento andamento) throws Exception {
-		andamento.salvar(getCadastrante(), getLotaTitular());
-		exibir(andamento.solicitacao.idSolicitacao);
+		andamento.solicitacao.darAndamento(andamento, getCadastrante(),
+				getLotaTitular());
+		Long id = andamento.solicitacao.idSolicitacao;
+		exibir(id);
 	}
 
 	public static void desfazerUltimoAndamento(Long id) throws Exception {
@@ -224,39 +241,57 @@ public class Application extends Controller {
 	}
 
 	public static void listarDesignacao() {
-		List<SrConfiguracao> designacoes = JPA
-				.em()
-				.createQuery(
-						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and hisDtFim is null", SrConfiguracao.class)
-				.getResultList();
-
+		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes();
 		render(designacoes);
 	}
 
 	public static void editarDesignacao(Long id) {
-
-		SrConfiguracao designacao;
-
+		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
-		else
-			designacao = new SrConfiguracao();
-
 		render(designacao);
 	}
 
-	public static void gravarDesignacao(SrConfiguracao designacao) {
-		designacao.setCpTipoConfiguracao(JPA.em().find(
-				CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+	public static void gravarDesignacao(SrConfiguracao designacao)
+			throws Exception {
+		designacao.salvarComoDesignacao();
 		listarDesignacao();
 	}
 
+	public static void desativarDesignacao(Long id) throws Exception {
+		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
+		designacao.finalizar();
+		listarDesignacao();
+	}
+
+	public static void listarAssociacao() {
+		List<SrConfiguracao> associacoes = SrConfiguracao
+				.listarAssociacoesTipoAtributo();
+		render(associacoes);
+	}
+
+	public static void editarAssociacao(Long id) {
+		SrConfiguracao associacao = new SrConfiguracao();
+		if (id != null)
+			associacao = JPA.em().find(SrConfiguracao.class, id);
+		List<SrTipoAtributo> tiposAtributo = SrTipoAtributo.listar();
+		render(associacao, tiposAtributo);
+	}
+
+	public static void gravarAssociacao(SrConfiguracao associacao)
+			throws Exception {
+		associacao.salvarComoAssociacaoTipoAtributo();
+		listarAssociacao();
+	}
+
+	public static void desativarAssociacao(Long id) throws Exception {
+		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
+		associacao.finalizar();
+		listarAssociacao();
+	}
+
 	public static void listarItem() {
-		List<SrItemConfiguracao> itens = SrItemConfiguracao.find(
-				"byHisDtFimIsNull").fetch();
+		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar();
 		render(itens);
 	}
 
@@ -300,8 +335,31 @@ public class Application extends Controller {
 		render(itens, filtro, nome);
 	}
 
+	public static void listarTipoAtributo() {
+		List<SrTipoAtributo> atts = SrTipoAtributo.listar();
+		render(atts);
+	}
+
+	public static void editarTipoAtributo(Long id) {
+		SrTipoAtributo att = new SrTipoAtributo();
+		if (id != null)
+			att = SrTipoAtributo.findById(id);
+		render(att);
+	}
+
+	public static void gravarTipoAtributo(SrTipoAtributo att) throws Exception {
+		att.salvar();
+		listarTipoAtributo();
+	}
+
+	public static void desativarTipoAtributo(Long id) throws Exception {
+		SrTipoAtributo item = SrTipoAtributo.findById(id);
+		item.finalizar();
+		listarTipoAtributo();
+	}
+
 	public static void listarServico() {
-		List<SrServico> servicos = SrServico.find("byHisDtFimIsNull").fetch(); 
+		List<SrServico> servicos = SrServico.listar();
 		render(servicos);
 	}
 

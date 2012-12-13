@@ -34,7 +34,7 @@ function HttpRequest(url) {
    		embedpage(pageRequest);
    	}
 }
-
+ 
 function embedpage(request) {
 	//if viewing page offline or the document was successfully retrieved online (status code=2000)
 	if (window.location.href.indexOf("http")==-1 || request.status==200) {

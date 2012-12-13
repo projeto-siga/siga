@@ -12,7 +12,7 @@ _solicitacoes.add(_solicitacao); } }%
 							${sol.itemConfiguracao?.descricao}, ${sol.servico?.descricao}
 							#{if _clicavel} </a>#{/if}
 					</h4>
-					<p>${sol.descrSolicitacao}</p>
+					<p>${sol.descrSolicitacao}<br/><b>${sol.atributosString}</b></p>
 					<p>
 						<i>${sol.solicitante.descricaoIniciaisMaiusculas},
 							${sol.lotaSolicitante.siglaLotacao}#{if
@@ -22,18 +22,6 @@ _solicitacoes.add(_solicitacao); } }%
 						<i>Cadastrado por ${sol.cadastrante.descricaoIniciaisMaiusculas},
 							${sol.lotaCadastrante.siglaLotacao}</i>
 						#{/if}
-					</p>
-					<p class="gt-table-action-list">
-						#{if _criarFilha}<a class="once"
-							href="@{Application.criarFilha(sol.idSolicitacao)}"
-							title="Criar solicitação filha"> <img
-							src="http://localhost:8080/siga/css/famfamfam/icons/arrow_divide.png"
-							style="margin-right: 5px;"> </a> &nbsp;&nbsp;&nbsp;#{/if} #{if
-							_editar} <a class="once"
-							href="@{Application.editar(sol.idSolicitacao)}"
-							title="Editar solicitação"> <img
-							src="http://localhost:8080/siga/css/famfamfam/icons/pencil.png"
-							style="margin-right: 5px;"> </a> &nbsp;&nbsp;&nbsp; #{/if}
 					</p>
 				</td>
 				<td style="padding-left: 60px">

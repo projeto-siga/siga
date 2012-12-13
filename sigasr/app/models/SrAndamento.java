@@ -72,18 +72,23 @@ public class SrAndamento extends GenericModel {
 	@JoinColumn(name = "ID_SOLICITACAO")
 	public SrSolicitacao solicitacao;
 
-	@OneToOne
-	@JoinColumn(name = "ID_ANDAMENTO_CANCELADOR")
-	public SrAndamento andamentoCancelador;
+	@ManyToOne
+	@JoinColumn(name = "ID_CANCELADOR")
+	public DpPessoa cancelador;
 
-	@OneToOne(mappedBy = "andamentoCancelador")
-	public SrAndamento andamentoCancelado;
+	@ManyToOne
+	@JoinColumn(name = "ID_LOTA_CANCELADOR")
+	public DpLotacao lotaCancelador;
+
+	@Column(name = "DT_CANCELAMENTO")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date dtCancelamento;
 
 	public SrAndamento() throws Exception {
 		this(null);
 	}
 
-	// O objetivo de ter um construtor com parâmetro é evitar que os
+	// Edson: O objetivo de ter um construtor com parâmetro é evitar que os
 	// valores default setados dentro dele acabem sendo chamados pelo
 	// framework a cada request, pois a ideia é esses valores serem
 	// definidos só no início da operação
@@ -107,12 +112,13 @@ public class SrAndamento extends GenericModel {
 
 	}
 
-	public boolean isCancelador() {
-		return andamentoCancelado != null;
+	public boolean isCancelado() {
+		return dtCancelamento != null;
 	}
 
-	public boolean isCancelado() {
-		return andamentoCancelador != null;
+	public boolean isPrimeiroAndamento() {
+		List<SrAndamento> andamentos = solicitacao.getAndamentoSet();
+		return (andamentos.indexOf(this) == andamentos.size() - 1);
 	}
 
 	public String getDtRegString() {
@@ -132,6 +138,14 @@ public class SrAndamento extends GenericModel {
 		if (dtReg != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			return df.format(dtReg);
+		}
+		return "";
+	}
+
+	public String getDtCancelamentoDDMMYYYYHHMM() {
+		if (dtCancelamento != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return df.format(dtCancelamento);
 		}
 		return "";
 	}
@@ -194,22 +208,16 @@ public class SrAndamento extends GenericModel {
 	}
 
 	public SrAndamento salvar() throws Exception {
-
 		checarCampos();
-
 		super.save();
-
-		// O refresh é necessário para o hibernate incluir o novo andamento na
-		// coleção de andamentos desta solicitação
-		solicitacao.refresh();
-
-		solicitacao.atualizarMarcas();
-
-		if (solicitacao.temMaisDeUmAndamento())
-			notificar();
-
 		return this;
+	}
 
+	public void desfazer(DpPessoa pessoa, DpLotacao lota) throws Exception {
+		dtCancelamento = new Date();
+		lotaCancelador = lota;
+		cancelador = pessoa;
+		salvar();
 	}
 
 	private void checarCampos() throws Exception {
@@ -257,7 +265,10 @@ public class SrAndamento extends GenericModel {
 	}
 
 	public void notificar() {
-		Correio.notificarAndamento(this);
+		if (!isCancelado())
+			Correio.notificarAndamento(this);
+		else
+			Correio.notificarCancelamentoAndamento(this);
 	}
 
 }

@@ -45,7 +45,11 @@
 			</div>
 			<div class="gt-form-row">
 				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" />
+					class="gt-btn-medium gt-btn-left" />#{if
+				designacao?.idConfiguracao} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarDesignacao()}?id=${designacao.idConfiguracao}'" />
+				#{/if}
 			</div>
 			#{/form}
 		</div>

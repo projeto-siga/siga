@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import controllers.SrItemConfiguracaoBinder;
+
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -28,7 +30,8 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO")
-public class SrItemConfiguracao extends ObjetoPlayComHistorico implements SrSelecionavel {
+public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
+		SrSelecionavel {
 
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
 
@@ -148,6 +151,10 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements SrSele
 
 	public boolean isFilhoDeOuIgualA(SrItemConfiguracao outroItem) {
 		return outroItem.isPaiDeOuIgualA(this);
+	}
+
+	public static List<SrItemConfiguracao> listar() {
+		return SrItemConfiguracao.find("byHisDtFimIsNull").fetch();
 	}
 
 }

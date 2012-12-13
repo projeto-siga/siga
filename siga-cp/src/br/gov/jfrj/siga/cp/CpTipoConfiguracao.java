@@ -101,6 +101,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML = 33;
 	
 	public static final long TIPO_CONFIG_SR_DESIGNACAO = 35;
+	
+	public static final long TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO = 36;
 
 	// SIGA-WF
 

@@ -54,7 +54,7 @@ public class SrArquivo extends GenericModel {
 		}
 	}
 
-	// Necessário porque é preciso garantir
+	// Edson: Necessário porque é preciso garantir
 	// que o SrArquivo não seja instanciado a não ser que realmente tenha sido
 	// selecionado um arquivo no form (para que não surja um registro SrArquivo
 	// sem conteúdo no banco)

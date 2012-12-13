@@ -1,5 +1,7 @@
 package models;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
+import play.db.jpa.JPA;
+
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -19,7 +23,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 @Table(name = "SR_CONFIGURACAO")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
-	
+
 	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
 
@@ -51,11 +55,15 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToOne
 	@JoinColumn(name = "ID_POS_ATENDENTE")
 	public DpLotacao posAtendente;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_TIPO_ATRIBUTO")
+	public SrTipoAtributo tipoAtributo;
 
 	@Column(name = "PESQUISA_SATISFACAO")
 	@Type(type = "yes_no")
 	public boolean pesquisaSatisfacao;
-	
+
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;
 
@@ -73,6 +81,39 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	public String getPesquisaSatisfacaoString() {
 		return pesquisaSatisfacao ? "Sim" : "Não";
+	}
+
+	public void salvarComoDesignacao() throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		salvar();
+	}
+
+	public static List<SrConfiguracao> listarDesignacoes() {
+		return JPA
+				.em()
+				.createQuery(
+						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
+								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
+								+ " and hisDtFim is null", SrConfiguracao.class)
+				.getResultList();
+	}
+
+	public void salvarComoAssociacaoTipoAtributo() throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+		salvar();
+	}
+
+	public static List<SrConfiguracao> listarAssociacoesTipoAtributo() {
+		long k = CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO;
+		return JPA
+				.em()
+				.createQuery(
+						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
+								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
+								+ " and hisDtFim is null", SrConfiguracao.class)
+				.getResultList();
 	}
 
 }

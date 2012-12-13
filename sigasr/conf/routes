@@ -12,13 +12,11 @@ GET     /favicon.ico                            404
 GET     /public/                                staticDir:public
 
 *		/exibir/{id}              			Application.exibir
-*		/andamento							Application.andamento
 		/desfazer_ultimo/{id}				Application.desfazerUltimoAndamento
 *		/baixar								Application.baixar
 *		/filha/{id}							Application.criarFilha
 
 *		/editar/{id}						Application.editar
-*		/gravar								Application.gravar
 *		/listar								Application.listar
 
 *		/designacao/editar/{id}				Application.editarDesignacao
@@ -31,6 +29,15 @@ GET     /public/                                staticDir:public
 *		/item/selecionar					Application.selecionarItem
 *		/item/buscar						Application.buscarItem
 		/item/desativar/{id}				Application.desativarItem
+		
+*		/tipo_atributo/editar/{id}			Application.editarTipoAtributo
+*		/tipo_atributo/gravar				Application.gravarTipoAtributo
+*		/tipo_atributo/listar				Application.listarTipoAtributo
+		/tipo_atributo/desativar/{id}		Application.desativarTipoAtributo
+		
+*		/associacao/editar/{id}				Application.editarAssociacao
+*		/associacao/gravar					Application.gravarAssociacao
+*		/associacao/listar					Application.listarAssociacao
 
 *		/servico/editar/{id}				Application.editarServico
 *		/servico/gravar						Application.gravarServico

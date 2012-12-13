@@ -16,7 +16,7 @@ public enum SrEstado {
 			1, "Pendente"), FECHADO(2,
 			"Fechado"), CANCELADO(3,
 			"Cancelado"), PRE_ATENDIMENTO(4,
-			"Pré-atendimento");
+			"Pré-atendimento"), POS_ATENDIMENTO(5, "Fechado parcialmente");
 			
 	public String descrEstado;
 	

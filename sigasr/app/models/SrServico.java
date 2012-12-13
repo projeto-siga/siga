@@ -163,5 +163,9 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
 	public boolean isFilhoDeOuIgualA(SrServico outroItem) {
 		return outroItem.isPaiDeOuIgualA(this);
 	}
+	
+	public static List<SrServico> listar(){
+		return SrServico.find("byHisDtFimIsNull").fetch();
+	}
 
 }

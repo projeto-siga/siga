@@ -4,8 +4,12 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -121,27 +125,28 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrSolicitacao solicitacaoInicial;
 
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	protected List<SrAtributo> meuAtributoSet;
 
-	// O where abaixo teve de ser explÃ­cito porque os id_refs conflitam, e
+	// Edson: O where abaixo teve de ser explÃ­cito porque os id_refs conflitam,
+	// e
 	// o Hibernate, por estranho que pareÃ§a, nÃ£o consegue retornar os
 	// registros corretos
 	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@Where(clause = "ID_TP_MARCA=2")
 	protected Set<SrMarca> meuMarcaSet;
 
-	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = SrAndamento.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@OrderBy("idAndamento DESC")
 	protected Set<SrAndamento> meuAndamentoSet;
 
 	@OneToMany(mappedBy = "solicitacaoPai", cascade = CascadeType.PERSIST)
-	protected List<SrSolicitacao> meuSolicitacaoFilhaSet;
+	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
 	@Transient
 	private DpLotacao cachePreAtendenteDesignado;
@@ -202,7 +207,16 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return cal.getTempoTranscorridoString();
 	}
 
-	// Necessário porque não há binder para arquivo
+	public String getAtributosString() {
+		String s = "";
+		for (SrAtributo att : getAtributoSet()) {
+			s += att.tipoAtributo.nomeTipoAtributo + ": " + att.valorAtributo
+					+ ". ";
+		}
+		return s;
+	}
+
+	// Edson: Necessário porque não há binder para arquivo
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
@@ -272,14 +286,16 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return sols.get(0);
 	}
 
-	/*public SrSolicitacao getSolicitacaoIniciai() {
-		if (getHisIdIni() != null)
-			return findById(getHisIdIni());
-		return null;
-	}*/
-
 	public List<SrAndamento> getAndamentoSet() {
 		return getAndamentoSet(false);
+	}
+
+	// Edson: futuramente, talvez trazer os do histórico inteiro
+	// da solicitação, tal como o getAndamentoSet()
+	public List<SrAtributo> getAtributoSet() {
+		if (meuAtributoSet == null)
+			return new ArrayList<SrAtributo>();
+		return meuAtributoSet;
 	}
 
 	public List<SrAndamento> getAndamentoSetComCancelados() {
@@ -296,8 +312,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 					listaCompleta.addAll(sol.meuAndamentoSet);
 				else
 					for (SrAndamento andamento : sol.meuAndamentoSet)
-						if (!andamento.isCancelado()
-								&& !andamento.isCancelador())
+						if (!andamento.isCancelado())
 							listaCompleta.add(andamento);
 
 		return listaCompleta;
@@ -328,12 +343,6 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 				&& getAndamentoSetComCancelados().size() > 0;
 	}
 
-	public boolean temMaisDeUmAndamento() {
-		return getAndamentoSetComCancelados() != null
-				&& getAndamentoSetComCancelados().size() > 1;
-
-	}
-
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (cachePreAtendenteDesignado == null) {
 			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
@@ -356,6 +365,19 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return cacheAtendenteDesignado;
 	}
 
+	public List<SrTipoAtributo> getTiposAtributoAssociados() throws Exception {
+		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
+
+		for (SrConfiguracao conf : getConfiguracoes(itemConfiguracao, servico,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
+				null)) {
+			if (conf.tipoAtributo.getHisDtFim() == null
+					&& !listaFinal.contains(conf.tipoAtributo))
+				listaFinal.add(conf.tipoAtributo);
+		}
+		return listaFinal;
+	}
+
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (cachePosAtendenteDesignado == null) {
 			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
@@ -367,15 +389,26 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return cachePosAtendenteDesignado;
 	}
 
-	public List<SrAtributo> getAtributoSet() {
-		if (getHisIdIni() == null)
-			return null;
-		ArrayList<SrAtributo> listaCompleta = new ArrayList<SrAtributo>();
-		for (SrSolicitacao sol : getHistoricoSolicitacao()) {
-			if (sol.meuAtributoSet != null)
-				listaCompleta.addAll(sol.meuAtributoSet);
+	// Edson: poderia também guardar num HashMap transiente e, ao salvar(),
+	// mandar criar os atributos, caso se quisesse permitir um
+	// solicitacao.getAtributoSet().put...
+	public void setAtributoMap(HashMap<Long, String> atributos) {
+		meuAtributoSet = new ArrayList<SrAtributo>();
+		for (Long idTipoAtt : atributos.keySet()) {
+			SrTipoAtributo tipoAtt = SrTipoAtributo.findById(idTipoAtt);
+			SrAtributo att = new SrAtributo(tipoAtt, atributos.get(idTipoAtt),
+					this);
+			meuAtributoSet.add(att);
 		}
-		return listaCompleta;
+	}
+
+	public HashMap<Long, String> getAtributoMap() {
+		HashMap<Long, String> map = new HashMap<Long, String>();
+		if (meuAtributoSet != null)
+			for (SrAtributo att : meuAtributoSet) {
+				map.put(att.tipoAtributo.idTipoAtributo, att.valorAtributo);
+			}
+		return map;
 	}
 
 	public List<SrSolicitacao> getSolicitacaoFilhaSet() {
@@ -400,12 +433,20 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return listaCompleta;
 	}
 
-	public List<SrEstado> getEstadosSelecionaveis() {
+	public List<SrEstado> getEstadosSelecionaveis() throws Exception {
 		List<SrEstado> listaFinal = new ArrayList<SrEstado>();
 		for (SrEstado e : SrEstado.values()) {
-			if (isEmPreAtendimento() && e == SrEstado.PENDENTE)
+			if (e == SrEstado.ANDAMENTO && temPreAtendenteDesignado()
+					&& !getLotaAtendente().equivale(getPreAtendenteDesignado()))
 				continue;
-			if (!isEmPreAtendimento() && e == SrEstado.PRE_ATENDIMENTO)
+			if (e == SrEstado.PENDENTE && isEmPreAtendimento())
+				continue;
+			if (e == SrEstado.PRE_ATENDIMENTO && !isEmPreAtendimento())
+				continue;
+			if (e == SrEstado.FECHADO && !isEmPosAtendimento()
+					&& temPosAtendenteDesignado())
+				continue;
+			if (e == SrEstado.POS_ATENDIMENTO && !temPosAtendenteDesignado())
 				continue;
 			listaFinal.add(e);
 		}
@@ -417,6 +458,11 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 				&& getUltimoAndamento().estado == SrEstado.FECHADO;
 	}
 
+	public boolean isEmPosAtendimento() {
+		return temAndamento()
+				&& getUltimoAndamento().estado == SrEstado.POS_ATENDIMENTO;
+	}
+
 	public boolean isEmPreAtendimento() {
 		return temAndamento()
 				&& getUltimoAndamento().estado == SrEstado.PRE_ATENDIMENTO;
@@ -426,8 +472,16 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return !isEmPreAtendimento() && !isFechado();
 	}
 
-	public boolean temPreAtendente() throws Exception {
+	public boolean temPreAtendenteDesignado() throws Exception {
 		return (getPreAtendenteDesignado() != null);
+	}
+
+	public boolean temPosAtendenteDesignado() throws Exception {
+		return (getPosAtendenteDesignado() != null);
+	}
+
+	public boolean temAtendenteDesignado() throws Exception {
+		return (getAtendenteDesignado() != null);
 	}
 
 	public boolean estaCom(DpLotacao lota, DpPessoa pess) {
@@ -443,10 +497,10 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 				|| (getSolicitacaoFilhaSet() != null && !getSolicitacaoFilhaSet()
 						.isEmpty());
 	}
-	
-	public SrSolicitacao getPaiDaArvore(){
+
+	public SrSolicitacao getPaiDaArvore() {
 		SrSolicitacao pai = this;
-		while (pai.solicitacaoPai != null){
+		while (pai.solicitacaoPai != null) {
 			pai = pai.solicitacaoPai;
 		}
 		return pai;
@@ -458,8 +512,9 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	}
 
 	public boolean podeDesfazerAndamento(DpLotacao lota, DpPessoa pess) {
-		return getUltimoAndamento().lotaCadastrante.equivale(lota)
-				&& temMaisDeUmAndamento();
+		SrAndamento ultimoAndamento = getUltimoAndamento();
+		return ultimoAndamento.lotaCadastrante.equivale(lota)
+				&& !ultimoAndamento.isPrimeiroAndamento();
 	}
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
@@ -474,14 +529,14 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return false;
 	}
 
-	public SrSolicitacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
+	public void salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
 			throws Exception {
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
-		return salvar();
+		salvar();
 	}
 
-	public SrSolicitacao salvar() throws Exception {
+	public void salvar() throws Exception {
 
 		checarCampos();
 
@@ -494,13 +549,13 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 				iniciar();
 			notificar();
 		}
-		return this;
+		// return this;
 	}
 
 	public void checarCampos() throws Exception {
 
 		if (cadastrante == null)
-			throw new Exception("Cadastrante nÃ£o pode ser nulo");
+			throw new Exception("Cadastrante não pode ser nulo");
 
 		dtReg = new Date();
 
@@ -527,10 +582,16 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
+
+		if (!temAtendenteDesignado() && !temPreAtendenteDesignado())
+			throw new Exception(
+					"Não foi encontrado nenhum atendente designado "
+							+ "para esta solicitação. Sugestão: alterar item de "
+							+ "configuração e/ou serviço");
 	}
 
 	public void iniciar() throws Exception {
-		if (temPreAtendente())
+		if (temPreAtendenteDesignado())
 			darAndamento(SrEstado.PRE_ATENDIMENTO,
 					"Iniciando pré-atendimento...", getPreAtendenteDesignado());
 		else
@@ -543,6 +604,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 				getPosAtendenteDesignado());
 	}
 
+	// Usado aqui pela própria solicitação
 	public void darAndamento(SrEstado estado, String descricao,
 			DpLotacao lotaAtendente) throws Exception {
 
@@ -554,23 +616,37 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
 			DpLotacao lotaCadastrante) throws Exception {
 
-		new SrAndamento(estado, descricao, atendente, lotaAtendente,
-				cadastrante, lotaCadastrante, this).salvar();
+		darAndamento(new SrAndamento(estado, descricao, atendente,
+				lotaAtendente, cadastrante, lotaCadastrante, this));
 	}
 
-	// Poderia esta ação passar a estar na classe SrAndamento, prevendo-se a
-	// possibilidade de outros andamentos poderem ser cancelados, além do
-	// último??
+	// Usado por Application
+	public void darAndamento(SrAndamento andamento, DpPessoa cadastrante,
+			DpLotacao lotaCadastrante) throws Exception {
+		andamento.cadastrante = cadastrante;
+		andamento.lotaCadastrante = lotaCadastrante;
+		darAndamento(andamento);
+	}
+
+	// Todos os darAndamento caem aqui
+	public void darAndamento(SrAndamento andamento) throws Exception {
+		andamento.salvar();
+		// Edson: O refresh é necessário para o hibernate incluir o novo
+		// andamento na
+		// coleção de andamentos desta solicitação
+		refresh();
+		atualizarMarcas();
+		if (!andamento.isPrimeiroAndamento())
+			andamento.notificar();
+	}
+
 	public void desfazerUltimoAndamento(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante) throws Exception {
-
 		SrAndamento andamento = getUltimoAndamento();
-		SrAndamento cancelamento = new SrAndamento(null,
-				"Cancelando movimentação...", null, null, cadastrante,
-				lotaCadastrante, this).salvar();
-
-		andamento.andamentoCancelador = cancelamento;
-		andamento.salvar();
+		andamento.desfazer(cadastrante, lotaCadastrante);
+		refresh();
+		atualizarMarcas();
+		andamento.notificar();
 	}
 
 	public SrSolicitacao criarFilhaSemSalvar() throws Exception {
@@ -586,23 +662,12 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		Correio.notificarAbertura(this);
 	}
 
-	public void atualizarMarcas() {
+	public void atualizarMarcas() throws Exception {
 
 		removerMarcas();
 
-		marcar(getUltimoAndamento());
-
-	}
-
-	public void removerMarcas() {
-		for (SrMarca marca : getMarcaSet())
-			JPA.em().remove(marca);
-	}
-
-	public void marcar(SrAndamento andamento) {
-
 		Long marcador;
-
+		SrAndamento andamento = getUltimoAndamento();
 		if (andamento.estado == SrEstado.FECHADO)
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_FECHADO;
 		else if (andamento.estado == SrEstado.PENDENTE)
@@ -611,16 +676,26 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_CANCELADO;
 		else if (andamento.estado == SrEstado.PRE_ATENDIMENTO)
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_PRE_ATENDIMENTO;
+		else if (andamento.estado == SrEstado.POS_ATENDIMENTO)
+			marcador = CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO;
 		else
-			marcador = CpMarcador.MARCADOR_SOLICITACAO_A_RECEBER;
-
+			marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
 		marcar(marcador, andamento.lotaAtendente, andamento.atendente);
+
+		Long marcadorCadastrante = CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE;
+		marcar(marcadorCadastrante, lotaCadastrante, cadastrante);
 
 	}
 
-	public void marcar(Long marcador, DpLotacao lotacao, DpPessoa pessoa) {
+	public void removerMarcas() {
+		for (SrMarca marca : getMarcaSet())
+			JPA.em().remove(marca);
+	}
 
-		new SrMarca(marcador, pessoa, lotacao, this).save();
+	public void marcar(Long marcador, DpLotacao lotacao, DpPessoa pessoa)
+			throws Exception {
+
+		new SrMarca(marcador, pessoa, lotacao, this).salvar();
 	}
 
 	@Override

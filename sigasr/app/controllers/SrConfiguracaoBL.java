@@ -1,7 +1,10 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import models.SrConfiguracao;
 import models.SrItemConfiguracao;
@@ -60,18 +63,32 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.posAtendente == null)
 				return false;
 
-			if (conf.servico != null && filtro.servico != null
-					&& !conf.servico.isPaiDeOuIgualA(filtro.servico))
+			if (conf.servico != null
+					&& (filtro.servico == null || (filtro.servico != null && !conf.servico
+							.isPaiDeOuIgualA(filtro.servico))))
 				return false;
 
 			if (conf.itemConfiguracao != null
-					&& filtro.itemConfiguracao != null
-					&& !conf.itemConfiguracao
-							.isPaiDeOuIgualA(filtro.itemConfiguracao))
+					&& (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null && !conf.itemConfiguracao
+							.isPaiDeOuIgualA(filtro.itemConfiguracao))))
 				return false;
 
 		}
 		return true;
+	}
+
+	public List<SrConfiguracao> listarConfiguracoesAtivasPorFiltro(
+			SrConfiguracao confFiltro) throws Exception {
+		List<SrConfiguracao> listaFinal = new ArrayList<SrConfiguracao>();
+		TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
+				.getCpTipoConfiguracao().getIdTpConfiguracao());
+		for (CpConfiguracao cpConfiguracao : lista) {
+			if (cpConfiguracao.getHisDtFim() == null
+					&& atendeExigencias(confFiltro, null,
+							(SrConfiguracao) cpConfiguracao, null))
+				listaFinal.add((SrConfiguracao) cpConfiguracao);
+		}
+		return listaFinal;
 	}
 
 }

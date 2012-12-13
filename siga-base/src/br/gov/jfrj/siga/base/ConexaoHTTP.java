@@ -52,7 +52,9 @@ public class ConexaoHTTP {
 			URLConnection conn = new URL(URL).openConnection();
 
 			for (String s : header.keySet())
-				conn.setRequestProperty(s, header.get(s));
+					conn.setRequestProperty(s, header.get(s));
+			
+			System.setProperty("http.keepAlive", "false");
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					conn.getInputStream()));

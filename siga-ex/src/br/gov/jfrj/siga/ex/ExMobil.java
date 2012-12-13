@@ -302,9 +302,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			try {
 				descricaoCurta = exDocumento.getDescrCurta();
 			}catch (Exception e) {
-				log.warn( "Não foi possível recuperar a descrição curta do ExDocumento. Retornando descrição em branco.", e );
+				log.warn( "[getDescricao] - Não foi possível recuperar a descrição curta do Documento. Retornando descrição em branco.", e );
 				descricaoCurta = "";
 			}
+		} else {
+			log.warn( "[getDescricao] - O Documento informado é nulo." );
+		}
+		
+		if ( descricaoCurta == null ) {
+			descricaoCurta = "";
 		}
 
 		s = s + "', 'documento', " + winProp + ")\">"

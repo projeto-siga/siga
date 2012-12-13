@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.apache.log4j.Logger;
+
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -43,6 +45,13 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 public class ExMobil extends AbstractExMobil implements Serializable,
 		Selecionavel, Comparable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private static final Logger log = Logger.getLogger( ExMobil.class );
+	
 	private class CronologiaComparator implements Comparator<ExMovimentacao> {
 
 		public int compare(ExMovimentacao o1, ExMovimentacao o2) {
@@ -286,18 +295,21 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		String s = "<a href=\"javascript:void(0)\" onclick=\"window.open('/sigaex/expediente/doc/exibir.action?popup=true&idmob="
 				+ getIdMobil();
 
-		/*
-		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
-		 * getExDocumento() é diferente de nulo antes de chamar o método
-		 * getDescrCurta()() do objeto
-		 */
-		/*
-		 * s = s + "', 'documento', " + winProp + ")\">" +
-		 * getExDocumento().getDescrCurta() + "</a>";
-		 */
-		String descricaoCurta = getExDocumento() != null ? getExDocumento()
-				.getDescrCurta() : "";
-		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
+		String descricaoCurta = null;
+		ExDocumento exDocumento = getExDocumento();
+		
+		if ( exDocumento != null ) {
+			try {
+				descricaoCurta = exDocumento.getDescrCurta();
+			}catch (Exception e) {
+				log.warn( "Não foi possível recuperar a descrição curta do ExDocumento. Retornando descrição em branco.", e );
+				descricaoCurta = "";
+			}
+		}
+
+		s = s + "', 'documento', " + winProp + ")\">"
+					+ descricaoCurta + "</a>";
+		
 
 		return s;
 	}

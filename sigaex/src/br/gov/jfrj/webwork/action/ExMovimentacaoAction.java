@@ -262,10 +262,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	private void buscarDocumento(boolean fVerificarAcesso,
 			boolean fPodeNaoExistir) throws Exception {
+		
 		if (id != null) {
-			mov = dao().consultar(id, ExMovimentacao.class, false);
-			mob = mov.getExMobil();
+			mov = dao().consultar( id, ExMovimentacao.class, false );
+			mob = getMov( mov );
 		}
+		
 		if (mob == null && sigla != null) {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
@@ -292,6 +294,20 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException("Documento não informado");
 		if (fVerificarAcesso && mob != null)
 			verificaNivelAcesso(mob);
+	}
+
+	private ExMobil getMov(ExMovimentacao movimentacao) throws AplicacaoException {
+		ExMobil mobil = null;
+		if ( movimentacao != null ) {
+			try {
+				mobil = movimentacao.getExMobil();
+			}catch (Exception e) {
+				log.warn( "[getMov] - Não foi possível recuperar o mobil da movimentação" );
+				throw new AplicacaoException( "Ocorreu um erro ao recuperar o mobil da movimentação.", 0, e );
+			}
+		}
+		
+		return mobil;
 	}
 
 	public String abCorrigirDataFimMovGravar() throws Exception {

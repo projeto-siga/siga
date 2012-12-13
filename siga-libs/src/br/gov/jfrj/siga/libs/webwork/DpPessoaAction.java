@@ -28,6 +28,8 @@ import java.util.List;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
@@ -47,8 +49,11 @@ public class DpPessoaAction extends
 	private Long orgaoUsu;
 
 	public String aBuscar() throws Exception {
-		if (param("postback") == null)
-			setOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
+		DpLotacao lotacaoTitular = getLotaTitular();
+		if ( param("postback") == null 
+				&& lotacaoTitular != null ) {
+			setOrgaoUsu( lotacaoTitular.getIdOrgaoUsuario() );
+		}
 		return super.aBuscar();
 	}
 

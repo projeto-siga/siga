@@ -308,4 +308,17 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return this;
 	}
 	
+	/**
+	 * 
+	 * @return o id do órgão do usuário
+	 */
+	public Long getIdOrgaoUsuario() {
+		Long idOrgaoUsuario = null;
+		CpOrgaoUsuario orgaoUsuario = super.getOrgaoUsuario(); 
+		if ( orgaoUsuario != null ) {
+			idOrgaoUsuario = orgaoUsuario.getId();
+		}
+		return idOrgaoUsuario;
+	}
+	
 }

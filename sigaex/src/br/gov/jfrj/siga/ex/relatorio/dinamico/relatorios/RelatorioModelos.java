@@ -19,13 +19,9 @@
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
 
 import org.hibernate.Query;
 
@@ -36,59 +32,52 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
-public class RelatorioModelos extends RelatorioTemplate{
-
+public class RelatorioModelos extends RelatorioTemplate {
 
 	public RelatorioModelos(Map parametros) throws DJBuilderException {
 		super(parametros);
 	}
 
-	public AbstractRelatorioBaseBuilder configurarRelatorio() throws DJBuilderException {
+	public AbstractRelatorioBaseBuilder configurarRelatorio()
+			throws DJBuilderException {
 		this.setTitle("Relatório de Modelos");
-		this.addColuna("Forma", 20,RelatorioRapido.ESQUERDA,false);
-		this.addColuna("Modelo", 50,RelatorioRapido.ESQUERDA,false);
-		this.addColuna("Class Documental", 15,RelatorioRapido.CENTRO,false);
-		this.addColuna("Class Criação", 15,RelatorioRapido.CENTRO,false);
+		this.addColuna("Forma", 27, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Modelo", 50, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Class Documental", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Class Criação", 15, RelatorioRapido.CENTRO, false);
 		return this;
 	}
 
 	@Override
-	public byte[] getRelatorioPDF() throws JRException {
-//		JasperViewer.viewReport(relatorio.getRelatorio());
-		return JasperExportManager.exportReportToPdf(relatorio.getRelatorioJasperPrint());
-	}
-
-	@Override
 	public Collection processarDados() {
-		
+
 		List<String> d = new LinkedList<String>();
-		Query q = HibernateUtil.getSessao().createQuery("from ExModelo order by exFormaDocumento.descrFormaDoc");
-		
-		for (Iterator<ExModelo> iterator = q.list().iterator(); iterator.hasNext();) {
-			ExModelo modelo = (ExModelo) iterator.next();
-			if (modelo.getExFormaDocumento() != null){
+		Query q = HibernateUtil.getSessao().createQuery(
+				"from ExModelo order by exFormaDocumento.descrFormaDoc");
+
+		for (ExModelo modelo : (List<ExModelo>) q.list()) {
+			if (modelo.getExFormaDocumento() != null) {
 				d.add(modelo.getExFormaDocumento().getDescrFormaDoc());
-			} else{
+			} else {
 				d.add("");
 			}
-			if (modelo.getNmMod() != null){
+			if (modelo.getNmMod() != null) {
 				d.add(modelo.getNmMod());
-			} else{
+			} else {
 				d.add("");
 			}
-			
-			if (modelo.getExClassificacao() != null){
+
+			if (modelo.getExClassificacao() != null) {
 				d.add(modelo.getExClassificacao().getSigla());
-			}else{
+			} else {
 				d.add("");
 			}
-			if (modelo.getExClassCriacaoVia()!= null){
+			if (modelo.getExClassCriacaoVia() != null) {
 				d.add(modelo.getExClassCriacaoVia().getSigla());
-			}else{
+			} else {
 				d.add("");
 			}
 		}
-
 		return d;
 	}
 

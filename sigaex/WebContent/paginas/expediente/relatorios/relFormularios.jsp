@@ -2,20 +2,24 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
+<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <script type="text/javascript" language="Javascript1.1">
+
 function sbmt() {
-	frm.action='<ww:property value="%{url}"/>';
-	frm.submit();
+	frmRelExpedientes.action='<ww:property value="%{url}"/>';
+	frmRelExpedientes.submit();	
 }
 </script>
-
 <c:set var="titulo_pagina" scope="request">Relação de formulários</c:set>
-<c:set var="nomeRel" scope="request">"relFormularios.jrxml"</c:set>
-<c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
-<input type="hidden" name="secaoUsuario"
-			value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" /> <input
-			type="hidden" name="tipoRelatorio" value="relFormularios.jrxml" />
+<ww:hidden name="secaoUsuario"
+	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
+
+<input type="hidden" name="lotacaoTitular"
+	value="${lotaTitular.siglaLotacao}" />
+<input type="hidden" name="orgaoUsuario"
+	value="${lotaTitular.orgaoUsuario.idOrgaoUsu}" />
+<input type="hidden" name="idTit" value="${titular.id}" />

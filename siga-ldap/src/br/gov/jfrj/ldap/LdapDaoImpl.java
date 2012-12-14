@@ -317,14 +317,14 @@ public class LdapDaoImpl implements ILdapDao {
 	 * 
 	 * @param dn
 	 * @param novoDN
-	 * @throws AplicacaoException 
+	 * @throws AplicacaoException
 	 */
 	public void mover(String dn, String novoDN) throws AplicacaoException {
 		try {
 			this.contexto.rename(dn, novoDN);
 		} catch (NamingException e) {
-			throw new AplicacaoException("Não foi possível mover " + dn + " para "
-					+ novoDN + "\n" + e.getMessage());
+			throw new AplicacaoException("Não foi possível mover " + dn
+					+ " para " + novoDN + "\n" + e.getMessage());
 		}
 	}
 
@@ -602,8 +602,8 @@ public class LdapDaoImpl implements ILdapDao {
 	private String getPortaServidorContexto() throws AplicacaoException {
 		String urlServidor = null;
 		try {
-			urlServidor = contexto.getEnvironment().get(
-					"java.naming.provider.url").toString();
+			urlServidor = contexto.getEnvironment()
+					.get("java.naming.provider.url").toString();
 		} catch (NamingException e) {
 			throw new AplicacaoException(
 					"Não foi possível determinar o servidor do contexto!");
@@ -614,8 +614,8 @@ public class LdapDaoImpl implements ILdapDao {
 	private String getServidorContexto() throws AplicacaoException {
 		String urlServidor = null;
 		try {
-			urlServidor = contexto.getEnvironment().get(
-					"java.naming.provider.url").toString();
+			urlServidor = contexto.getEnvironment()
+					.get("java.naming.provider.url").toString();
 		} catch (NamingException e) {
 			throw new AplicacaoException(
 					"Não foi possível determinar o servidor do contexto!");
@@ -627,8 +627,8 @@ public class LdapDaoImpl implements ILdapDao {
 	private String getDominioContexto() throws AplicacaoException {
 		String usuarioAutenticadoContexto = null;
 		try {
-			usuarioAutenticadoContexto = contexto.getEnvironment().get(
-					"java.naming.security.principal").toString();
+			usuarioAutenticadoContexto = contexto.getEnvironment()
+					.get("java.naming.security.principal").toString();
 		} catch (NamingException e) {
 			throw new AplicacaoException(
 					"Não foi possível determinar o domínio do contexto!");
@@ -671,8 +671,10 @@ public class LdapDaoImpl implements ILdapDao {
 		atributos.put("objectClass", "group");
 		atributos.put("cn", nome);
 		atributos.put("samAccountName", nome);
-		atributos.put("groupType", Integer.toString(ADS_GROUP_TYPE_GLOBAL_GROUP
-				| ADS_GROUP_TYPE_SECURITY_ENABLED));
+		atributos.put(
+				"groupType",
+				Integer.toString(ADS_GROUP_TYPE_GLOBAL_GROUP
+						| ADS_GROUP_TYPE_SECURITY_ENABLED));
 		atributos.put("distinguishedName", dn);
 
 		atributos.put("displayName", nome);
@@ -689,8 +691,8 @@ public class LdapDaoImpl implements ILdapDao {
 
 		atributos.put("objectClass", "group");
 		atributos.put("cn", nome);
-		atributos.put("groupType", Integer
-				.toString(ADS_GROUP_TYPE_UNIVERSAL_GROUP));
+		atributos.put("groupType",
+				Integer.toString(ADS_GROUP_TYPE_UNIVERSAL_GROUP));
 		atributos.put("distinguishedName", dn);
 		atributos.put("samAccountName", nome);
 
@@ -725,6 +727,21 @@ public class LdapDaoImpl implements ILdapDao {
 		atributos.put("distinguishedName", dn);
 
 		incluir(dn, atributos);
+	}
+
+	@Override
+	public void excluirAtributo(String dn, String nomeAtributo)
+			throws AplicacaoException {
+		ModificationItem member[] = new ModificationItem[1];
+		member[0] = new ModificationItem(DirContext.REMOVE_ATTRIBUTE,
+				new BasicAttribute(nomeAtributo));
+		try {
+			this.contexto.modifyAttributes(dn, member);
+		} catch (NamingException e) {
+			throw new AplicacaoException("Não foi possível excluir o atributo "
+					+ nomeAtributo + " do objeto " + dn + "!");
+		}
+
 	}
 
 }

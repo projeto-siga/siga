@@ -150,6 +150,8 @@ public interface ILdapDao {
 
 	public abstract void alterarAtributo(String dn, String nomeAtributo,
 			Object valorAtributo) throws AplicacaoException;
+	
+	public abstract void excluirAtributo(String dn, String nomeAtributo) throws AplicacaoException;
 
 	public abstract LdapContext getContexto();
 

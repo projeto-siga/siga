@@ -89,7 +89,7 @@ public class ExRelatorioAction extends ExActionSupport {
 	 * Action.SUCCESS; }
 	 */
 
-	public String aRelFormularios() throws Exception {
+	public String aRelFormulariosOld() throws Exception {
 
 		final Map<String, String> parameters = new HashMap();
 		parameters.put("tipoRelatorio", param("tipoRelatorio"));
@@ -101,6 +101,38 @@ public class ExRelatorioAction extends ExActionSupport {
 			throw e;
 		}
 		return "relForPag";
+	}
+
+	public String aRelFormularios() throws Exception {
+
+		assertAcesso("FORMS:Relação de formulários");
+
+		Map<String, String> parametros = new HashMap<String, String>(); 
+		
+		//parametros.put("lotacao",
+//				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		//parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		//parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+//		parametros.put("link_siga", "http://" + getRequest().getServerName()
+//				+ ":" + getRequest().getServerPort()
+//				+ getRequest().getContextPath()
+//				+ "/expediente/doc/exibir.action?sigla=");
+
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("idTit", getRequest().getParameter("idTit"));
+
+		RelatorioModelos rel = new RelatorioModelos(parametros);
+
+		rel.gerar();
+
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+
+		return "relatorio";
 	}
 
 	private class FormulariosListItem {
@@ -212,7 +244,7 @@ public class ExRelatorioAction extends ExActionSupport {
 		} catch (final Exception e) {
 			throw e;
 		}
-		return "relExpPag";
+		return "relExpPag"; 
 	}
 
 	public String aGeraRelatorio(Map parameters) throws JRException, Exception {
@@ -372,7 +404,8 @@ public class ExRelatorioAction extends ExActionSupport {
 		Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L)
-			throw new Exception ("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 
 		Map<String, String> parametros = new HashMap<String, String>();
 

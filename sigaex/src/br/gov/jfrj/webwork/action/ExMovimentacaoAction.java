@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,13 +48,12 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.xerces.impl.dv.util.Base64;
 
-import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -77,9 +75,7 @@ import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
-import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
-import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
@@ -95,6 +91,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	 * 
 	 */
 	private static final long serialVersionUID = -8223202120027622708L;
+	
+	private static final Logger log = Logger.getLogger( ExMovimentacaoAction.class );
 
 	private ExMobil mob;
 
@@ -264,10 +262,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	private void buscarDocumento(boolean fVerificarAcesso,
 			boolean fPodeNaoExistir) throws Exception {
+		
 		if (id != null) {
-			mov = dao().consultar(id, ExMovimentacao.class, false);
-			mob = mov.getExMobil();
+			mov = dao().consultar( id, ExMovimentacao.class, false );
+			mob = getMov( mov );
 		}
+		
 		if (mob == null && sigla != null) {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
@@ -294,6 +294,20 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException("Documento não informado");
 		if (fVerificarAcesso && mob != null)
 			verificaNivelAcesso(mob);
+	}
+
+	private ExMobil getMov(ExMovimentacao movimentacao) throws AplicacaoException {
+		ExMobil mobil = null;
+		if ( movimentacao != null ) {
+			try {
+				mobil = movimentacao.getExMobil();
+			}catch (Exception e) {
+				log.warn( "[getMov] - Não foi possível recuperar o mobil da movimentação" );
+				throw new AplicacaoException( "Ocorreu um erro ao recuperar o mobil da movimentação.", 0, e );
+			}
+		}
+		
+		return mobil;
 	}
 
 	public String abCorrigirDataFimMovGravar() throws Exception {
@@ -1520,16 +1534,25 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// buscarDocumento(true);
 		mov = null;
 
-		final ArrayList al = new ArrayList();
-
 		final DpPessoa pes;
-		if (!param("pessoa").equals("null")) {
-			final DpPessoa oExemplo = new DpPessoa();
-			oExemplo.setSigla(param("pessoa"));
-			pes = CpDao.getInstance().consultarPorSigla(oExemplo);
-		} else {
-			pes = null;
+		final ArrayList al = new ArrayList();
+		final DpPessoa oExemplo = new DpPessoa();
+		
+		String siglaPessoa = param("pessoa");
+		
+		if ( siglaPessoa == null || siglaPessoa.trim() == "" ) {
+			log.warn( "[aGerarProtocoloArq] - A sigla informada é nula ou inválida" );
+			throw new AplicacaoException( "A sigla informada é nula ou inválida." );
 		}
+		
+		oExemplo.setSigla( siglaPessoa );
+		pes = CpDao.getInstance().consultarPorSigla(oExemplo);
+
+		if ( pes == null ) {
+			log.warn( "[aGerarProtocoloArq] - Não foi possível localizar DpPessoa com a sigla " + oExemplo.getSigla() );
+			throw new AplicacaoException( "Não foi localizada pessoa com a sigla informada." );
+		}
+		
 		Date dt = paramDate("dt");
 		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
 		for (ExMovimentacao m : movs) {

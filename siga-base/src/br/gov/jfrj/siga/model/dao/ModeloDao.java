@@ -27,6 +27,7 @@ package br.gov.jfrj.siga.model.dao;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
@@ -40,6 +41,8 @@ import org.springframework.context.ApplicationContextAware;
 import br.gov.jfrj.siga.base.AplicacaoException;
 
 public abstract class ModeloDao implements ApplicationContextAware {
+	
+	private static final Logger log = Logger.getLogger( ModeloDao.class );
 
 	protected Session sessao;
 
@@ -111,6 +114,12 @@ public abstract class ModeloDao implements ApplicationContextAware {
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	public <T> T consultar(final Serializable id, Class<T> clazz,
 			final boolean lock) {
+		
+		if ( id == null ) {
+			log.warn( "[aConsultar] - O ID recebido para efetuar a consulta é nulo. ID: " + id );
+			throw new IllegalArgumentException( "O identificador do objeto é nulo ou inválido." );
+		}
+		
 		T entidade;
 		if (lock)
 			entidade = (T) getSessao().load(clazz, id, LockMode.UPGRADE);

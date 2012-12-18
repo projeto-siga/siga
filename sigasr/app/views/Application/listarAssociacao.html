@@ -13,6 +13,7 @@
 						<th>Item</th>
 						<th>Serviço</th>
 						<th>Tipo de atributo</th>
+						<th>Obrigatório</th>
 					</tr>
 				</thead>
 
@@ -26,6 +27,7 @@
 						<td>${assoc.itemConfiguracao?.tituloItemConfiguracao}</td>
 						<td>${assoc.servico?.tituloServico}</td>
 						<td>${assoc.tipoAtributo?.nomeTipoAtributo}</td>
+						<td>${assoc.atributoObrigatorioString}</td>
 					</tr>
 					</a> #{/list}
 				</tbody>

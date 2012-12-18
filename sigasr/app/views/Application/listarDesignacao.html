@@ -10,6 +10,11 @@
 					<tr>
 						<th></th>
 						<th>Data</th>
+						<th>Órgão</th>
+						<th>Lotação</th>
+						<th>Pessoa</th>
+						<th>Cargo</th>
+						<th>Função</th>
 						<th>Item</th>
 						<th>Serviço</th>
 						<th>Atendente</th>
@@ -26,6 +31,11 @@
 						style="cursor: pointer;">
 						<td>${design.hisIdIni}</td>
 						<td>${design.hisDtIniDDMMYY}</td>
+						<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
+						<td>${design.lotacao?.siglaLotacao}</td>
+						<td>${design.dpPessoa?.nomeAbreviado}</td>
+						<td>${design.cargo?.descricao}</td>
+						<td>${design.funcaoConfianca?.descricao}</td>
 						<td>${design.itemConfiguracao?.tituloItemConfiguracao}</td>
 						<td>${design.servico?.tituloServico}</td>
 						<td>#{selecionado sigla:design.atendente?.siglaLotacao,

@@ -13,6 +13,38 @@
 			designacao?.idConfiguracao} <input type="hidden"
 				name="designacao.idConfiguracao"
 				value="${designacao.idConfiguracao}"> #{/if}
+				
+			<div class="gt-form-row gt-width-66">
+				<label>Órgão</label> 
+				#{select name:'designacao.orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
+				labelProperty:'nmOrgaoUsu', value:designacao.orgaoUsuario?.idOrgaoUsu}
+				#{option 0}Nenhum#{/option} 
+				#{/select}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Lotação</label>#{selecao
+					tipo:'lotacao', nome:'designacao.lotacao',
+					value:designacao.lotacao /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Pessoa</label>#{selecao
+					tipo:'pessoa', nome:'designacao.dpPessoa',
+					value:designacao.dpPessoa /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Cargo</label>#{selecao
+					tipo:'cargo', nome:'designacao.cargo',
+					value:designacao.cargo /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Função</label>#{selecao
+					tipo:'funcao', nome:'designacao.funcaoConfianca',
+					value:designacao.funcaoConfianca /}
+			</div>
 
 			<div class="gt-form-row gt-width-66">
 				<label>Item</label> #{selecao tipo:'item',

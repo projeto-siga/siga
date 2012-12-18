@@ -13,6 +13,11 @@ import controllers.SrConfiguracaoBL;
 
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
@@ -94,22 +99,27 @@ public abstract class ObjetoPlayComHistorico extends Objeto implements
 
 	public abstract void setId(Long id);
 
-	// Edson: Assim que for resolvido o problema no ObjetoBase, colocar esse
+	// Edson: Assim que for resolvido o problema no ObjetoBase, colocar este
 	// getConfiguracao() lá.
-	public SrConfiguracao getConfiguracao(SrItemConfiguracao item,
-			SrServico servico, long idTipo, SrSubTipoConfiguracao subTipo)
-			throws Exception {
+	public SrConfiguracao getConfiguracao(DpPessoa pess,
+			SrItemConfiguracao item, SrServico servico, long idTipo,
+			SrSubTipoConfiguracao subTipo) throws Exception {
 
-		SrConfiguracao conf = new SrConfiguracao(item, servico, JPA.em().find(
-				CpTipoConfiguracao.class, idTipo), subTipo);
+		SrConfiguracao conf = new SrConfiguracao(pess.getOrgaoUsuario(),
+				pess.getLotacao(), pess, pess.getCargo(),
+				pess.getFuncaoConfianca(), item, servico, JPA.em().find(
+						CpTipoConfiguracao.class, idTipo), subTipo);
 
 		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
 	}
 
-	public List<SrConfiguracao> getConfiguracoes(SrItemConfiguracao item,
-			SrServico servico, long idTipo, SrSubTipoConfiguracao subTipo) throws Exception{
-		SrConfiguracao conf = new SrConfiguracao(item, servico, JPA.em().find(
-				CpTipoConfiguracao.class, idTipo), subTipo);
+	public List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
+			SrItemConfiguracao item, SrServico servico, long idTipo,
+			SrSubTipoConfiguracao subTipo) throws Exception {
+		SrConfiguracao conf = new SrConfiguracao(pess.getOrgaoUsuario(),
+				pess.getLotacao(), pess, pess.getCargo(),
+				pess.getFuncaoConfianca(), item, servico, JPA.em().find(
+						CpTipoConfiguracao.class, idTipo), subTipo);
 		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf);
 	}
 

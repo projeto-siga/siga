@@ -39,6 +39,10 @@
 					onclick="location.href='@{Application.desativarAssociacao()}?id=${associacao.idConfiguracao}'" />
 				#{/if}
 			</div>
+			<div class="gt-form-row">
+				<label>#{checkbox name:'associacao.atributoObrigatorio',
+					value:associacao.atributoObrigatorio /} Obrigatório</label>
+			</div>
 			#{/form}
 		</div>
 	</div>

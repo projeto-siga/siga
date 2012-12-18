@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
@@ -38,6 +39,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
+@Table(name = "DP_CARGO", schema = "CORPORATIVO")
 public class DpCargo extends AbstractDpCargo implements Serializable,
 		Selecionavel, Sincronizavel {
 

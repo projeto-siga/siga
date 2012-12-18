@@ -36,6 +36,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -46,8 +47,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
  * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
-@Entity
-@Table(name = "DP_CARGO", schema = "CORPORATIVO")
+@MappedSuperclass
 public abstract class AbstractDpCargo extends Objeto implements Serializable {
 
 	@Id

@@ -34,6 +34,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -45,8 +46,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
  * customizar o comportamento desta classe editando a classe
  * {@link DpFuncaoConfianca}.
  */
-@Entity
-@Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
+@MappedSuperclass
 public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serializable {
 
 	@Column(name = "DT_FIM_FUNCAO_CONFIANCA")

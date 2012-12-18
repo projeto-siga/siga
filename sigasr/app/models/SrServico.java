@@ -156,8 +156,11 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
 			return false;
 		if (this.equals(outroServico))
 			return true;
+		int posFimComparacao = getSigla().indexOf(".00");
+		if (posFimComparacao < 0)
+			posFimComparacao = getSigla().length()-1;
 		return outroServico.getSigla().startsWith(
-				getSigla().substring(0, getSigla().indexOf(".00") + 1));
+				getSigla().substring(0, posFimComparacao + 1));
 	}
 
 	public boolean isFilhoDeOuIgualA(SrServico outroItem) {

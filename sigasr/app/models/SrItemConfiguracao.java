@@ -145,8 +145,11 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 			return false;
 		if (this.equals(outroItem))
 			return true;
+		int posFimComparacao = getSigla().indexOf(".00");
+		if (posFimComparacao < 0)
+			posFimComparacao = getSigla().length()-1;
 		return outroItem.getSigla().startsWith(
-				getSigla().substring(0, getSigla().indexOf(".00") + 1));
+				getSigla().substring(0, posFimComparacao + 1));
 	}
 
 	public boolean isFilhoDeOuIgualA(SrItemConfiguracao outroItem) {

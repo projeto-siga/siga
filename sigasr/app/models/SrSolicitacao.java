@@ -24,10 +24,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.TypedQuery;
 
 import net.spy.memcached.protocol.GetCallbackWrapper;
 import notifiers.Correio;
@@ -36,6 +38,7 @@ import org.hibernate.annotations.Where;
 
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
+import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -109,7 +112,9 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtReg;
 
-	public String local;
+	@ManyToOne
+	@JoinColumn(name = "ID_COMPLEXO")
+	public CpComplexo local;
 
 	@Column(name = "TEL_PRINCIPAL")
 	public String telPrincipal;
@@ -167,7 +172,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			SrFormaAcompanhamento formaAcompanhamento,
 			SrItemConfiguracao itemConfiguracao, SrServico servico,
 			SrGravidade gravidade, SrUrgencia urgencia, SrTendencia tendencia,
-			String dscrSolcitacao, String local, String telPrincipal,
+			String dscrSolcitacao, CpComplexo local, String telPrincipal,
 			String motivoFechamentoAbertura) {
 		super();
 		this.solicitante = solicitante;
@@ -334,8 +339,12 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return getUltimoAndamento().atendente;
 	}
 
-	public String getSituacao() {
-		return getUltimoAndamento().getSituacao();
+	public String getSituacaoString() {
+		return getUltimoAndamento().getSituacaoString();
+	}
+
+	public SrEstado getEstado() {
+		return getUltimoAndamento().estado;
 	}
 
 	public boolean temAndamento() {
@@ -344,8 +353,11 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	}
 
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
+		if (solicitante == null)
+			return null;
 		if (cachePreAtendenteDesignado == null) {
-			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
+			SrConfiguracao conf = getConfiguracao(solicitante,
+					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
 			if (conf != null)
@@ -355,8 +367,11 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	}
 
 	public DpLotacao getAtendenteDesignado() throws Exception {
+		if (solicitante == null)
+			return null;
 		if (cacheAtendenteDesignado == null) {
-			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
+			SrConfiguracao conf = getConfiguracao(solicitante,
+					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
 			if (conf != null)
@@ -365,22 +380,42 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return cacheAtendenteDesignado;
 	}
 
+	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados()
+			throws Exception {
+		HashMap<Long, Boolean> map = new HashMap<Long, Boolean>();
+		getTiposAtributoAssociados(map);
+		return map;
+	}
+
 	public List<SrTipoAtributo> getTiposAtributoAssociados() throws Exception {
+		return getTiposAtributoAssociados(null);
+	}
+
+	private List<SrTipoAtributo> getTiposAtributoAssociados(
+			HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
-		for (SrConfiguracao conf : getConfiguracoes(itemConfiguracao, servico,
+		for (SrConfiguracao conf : getConfiguracoes(solicitante,
+				itemConfiguracao, servico,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
 				null)) {
 			if (conf.tipoAtributo.getHisDtFim() == null
-					&& !listaFinal.contains(conf.tipoAtributo))
+					&& !listaFinal.contains(conf.tipoAtributo)) {
 				listaFinal.add(conf.tipoAtributo);
+				if (map != null)
+					map.put(conf.tipoAtributo.idTipoAtributo,
+							conf.atributoObrigatorio);
+			}
 		}
 		return listaFinal;
 	}
 
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
+		if (solicitante == null)
+			return null;
 		if (cachePosAtendenteDesignado == null) {
-			SrConfiguracao conf = getConfiguracao(itemConfiguracao, servico,
+			SrConfiguracao conf = getConfiguracao(solicitante,
+					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
 			if (conf != null)
@@ -422,6 +457,11 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return listaCompleta;
 	}
 
+	public boolean isPai() {
+		return getSolicitacaoFilhaSet() != null
+				&& getSolicitacaoFilhaSet().size() > 0;
+	}
+
 	public List<SrMarca> getMarcaSet() {
 		if (getHisIdIni() == null)
 			return null;
@@ -436,21 +476,24 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	public List<SrEstado> getEstadosSelecionaveis() throws Exception {
 		List<SrEstado> listaFinal = new ArrayList<SrEstado>();
 		for (SrEstado e : SrEstado.values()) {
-			if (e == SrEstado.ANDAMENTO && temPreAtendenteDesignado()
+			if (e == SrEstado.ANDAMENTO
+					&& getEstado() == SrEstado.PRE_ATENDIMENTO
 					&& !getLotaAtendente().equivale(getPreAtendenteDesignado()))
 				continue;
 			if (e == SrEstado.PENDENTE && isEmPreAtendimento())
 				continue;
 			if (e == SrEstado.PRE_ATENDIMENTO && !isEmPreAtendimento())
 				continue;
-			if (e == SrEstado.FECHADO && !isEmPosAtendimento()
-					&& temPosAtendenteDesignado())
-				continue;
-			if (e == SrEstado.POS_ATENDIMENTO && !temPosAtendenteDesignado())
+			if (e == SrEstado.POS_ATENDIMENTO && !isEmPosAtendimento())
 				continue;
 			listaFinal.add(e);
 		}
 		return listaFinal;
+	}
+
+	public boolean isCancelado() {
+		return temAndamento()
+				&& getUltimoAndamento().estado == SrEstado.CANCELADO;
 	}
 
 	public boolean isFechado() {
@@ -469,7 +512,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	}
 
 	public boolean isEmAtendimento() {
-		return !isEmPreAtendimento() && !isFechado();
+		return !isEmPreAtendimento() && !isEmPosAtendimento() && !isFechado();
 	}
 
 	public boolean temPreAtendenteDesignado() throws Exception {
@@ -507,8 +550,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	}
 
 	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
-		return estaCom(lota, pess) && solicitacaoPai == null
-				&& isEmAtendimento();
+		return estaCom(lota, pess) && isEmAtendimento();
 	}
 
 	public boolean podeDesfazerAndamento(DpLotacao lota, DpPessoa pess) {
@@ -527,6 +569,49 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 	public boolean podeAbrirJaFechando(DpLotacao lota, DpPessoa pess) {
 		return false;
+	}
+
+	public SrSolicitacao deduzirLocalERamal() {
+
+		if (solicitante == null)
+			return this;
+
+		if (lotaSolicitante == null)
+			lotaSolicitante = solicitante.getLotacao();
+
+		String queryString = "select sol from SrSolicitacao sol where sol.idSolicitacao = ("
+				+ "	select max(idSolicitacao) from SrSolicitacao "
+				+ "	where solicitante.idPessoa in ("
+				+ "		select idPessoa from DpPessoa "
+				+ "		where idPessoaIni = :idInicial" + "	)" + ")";
+		TypedQuery<SrSolicitacao> query = JPA.em().createQuery(queryString,
+				SrSolicitacao.class);
+		query.setParameter("idInicial", solicitante.getIdPessoaIni());
+		List<SrSolicitacao> listaProvisoria = query.getResultList();
+		SrSolicitacao sol = null;
+		if (listaProvisoria != null && listaProvisoria.size() > 0)
+			sol = listaProvisoria.get(0);
+
+		if (sol == null && lotaSolicitante != null) {
+			queryString = queryString.replace("solicitante.idPessoa",
+					"lotaSolicitante.idLotacao");
+			queryString = queryString.replace("Pessoa", "Lotacao");
+			query = JPA.em().createQuery(queryString, SrSolicitacao.class);
+			query.setParameter("idInicial", lotaSolicitante.getIdLotacaoIni());
+			listaProvisoria = query.getResultList();
+			if (listaProvisoria != null && listaProvisoria.size() > 0)
+				sol = listaProvisoria.get(0);
+		}
+
+		if (sol != null) {
+			telPrincipal = sol.telPrincipal;
+			local = sol.local;
+		} else {
+			telPrincipal = "";
+			local = null;
+		}
+
+		return this;
 	}
 
 	public void salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
@@ -668,6 +753,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 		Long marcador;
 		SrAndamento andamento = getUltimoAndamento();
+
 		if (andamento.estado == SrEstado.FECHADO)
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_FECHADO;
 		else if (andamento.estado == SrEstado.PENDENTE)
@@ -680,10 +766,15 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO;
 		else
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
+		System.out.println(andamento.lotaAtendente.getNomeLotacao());
 		marcar(marcador, andamento.lotaAtendente, andamento.atendente);
 
-		Long marcadorCadastrante = CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE;
-		marcar(marcadorCadastrante, lotaCadastrante, cadastrante);
+		if (!isFechado() && !isCancelado()) {
+			marcar(CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE,
+					lotaCadastrante, cadastrante);
+			marcar(CpMarcador.MARCADOR_SOLICITACAO_COMO_SOLICITANTE,
+					lotaSolicitante, solicitante);
+		}
 
 	}
 

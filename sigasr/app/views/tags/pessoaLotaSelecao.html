@@ -19,8 +19,9 @@
 	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao, disabled:_disabled /}</span>
 <script language="javascript">
 var select = document.getElementById('${_nomeSelPessoaClean}${_nomeSelLotacaoClean}');
-if (document.getElementById('${_nomeSelLotacaoClean}').value)
-	select.value = 2;
+if (document.getElementById('${_nomeSelPessoaClean}').value)
+	select.value = 1;
+else select.value= 2;
 // O onchange tem de ser definido da forma abaixo porque, quando esta tag está dentro de um código
 // carregado por ajax, não funciona o tratamento do modo tradicional (onchange="", etc)
 // http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined

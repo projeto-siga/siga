@@ -17,7 +17,11 @@ import play.db.jpa.JPA;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO")
@@ -45,17 +49,17 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrUrgencia urgencia;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_PRE_ATENDENTE")
-	public DpLotacao preAtendente;
-
-	@ManyToOne
 	@JoinColumn(name = "ID_ATENENTE")
 	public DpLotacao atendente;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_POS_ATENDENTE")
 	public DpLotacao posAtendente;
-	
+
+	@ManyToOne
+	@JoinColumn(name = "ID_PRE_ATENDENTE")
+	public DpLotacao preAtendente;
+
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_ATRIBUTO")
 	public SrTipoAtributo tipoAtributo;
@@ -64,6 +68,10 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Type(type = "yes_no")
 	public boolean pesquisaSatisfacao;
 
+	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
+	@Type(type = "yes_no")
+	public boolean atributoObrigatorio;
+
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;
 
@@ -71,8 +79,15 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	}
 
-	public SrConfiguracao(SrItemConfiguracao item, SrServico servico,
-			CpTipoConfiguracao tipo, SrSubTipoConfiguracao subTipoConfig) {
+	public SrConfiguracao(CpOrgaoUsuario orgao, DpLotacao lota, DpPessoa pess,
+			DpCargo cargo, DpFuncaoConfianca funcao, SrItemConfiguracao item,
+			SrServico servico, CpTipoConfiguracao tipo,
+			SrSubTipoConfiguracao subTipoConfig) {
+		this.setOrgaoUsuario(orgao);
+		this.setLotacao(lota);
+		this.setDpPessoa(pess);
+		this.setCargo(cargo);
+		this.setFuncaoConfianca(funcao);
 		this.itemConfiguracao = item;
 		this.servico = servico;
 		this.setCpTipoConfiguracao(tipo);
@@ -81,6 +96,10 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	public String getPesquisaSatisfacaoString() {
 		return pesquisaSatisfacao ? "Sim" : "Não";
+	}
+
+	public String getAtributoObrigatorioString() {
+		return atributoObrigatorio ? "Sim" : "Não";
 	}
 
 	public void salvarComoDesignacao() throws Exception {

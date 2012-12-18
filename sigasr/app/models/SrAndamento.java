@@ -154,7 +154,7 @@ public class SrAndamento extends GenericModel {
 		return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
 	}
 
-	public String getSituacao() {
+	public String getSituacaoString() {
 		return estado.descrEstado + " (" + lotaAtendente.getSigla() + ")";
 	}
 
@@ -168,25 +168,26 @@ public class SrAndamento extends GenericModel {
 	}
 
 	public boolean isProxAtendenteAlteravel() throws Exception {
-		return (deduzirProxAtendentePorDesignacao() == null || (solicitacao
-				.isEmAtendimento() && estado == SrEstado.ANDAMENTO));
-	}
-
-	private DpLotacao deduzirProxAtendentePorDesignacao() throws Exception {
-		if (estado == SrEstado.FECHADO)
-			return solicitacao.getPosAtendenteDesignado();
-		if (estado == SrEstado.PRE_ATENDIMENTO)
-			return solicitacao.getPreAtendenteDesignado();
-		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento())
-			return solicitacao.getAtendenteDesignado();
-		return null;
+		return estado == SrEstado.ANDAMENTO
+				&& (!solicitacao.isEmPreAtendimento() || !solicitacao
+						.temAtendenteDesignado());
 	}
 
 	public SrAndamento deduzirProxAtendente() throws Exception {
-		DpLotacao lot = deduzirProxAtendentePorDesignacao();
-		if (lot == null && solicitacao != null)
-			lot = solicitacao.getLotaAtendente();
-		this.lotaAtendente = lot;
+
+		this.lotaAtendente = null;
+		this.atendente = null;
+		if (estado == SrEstado.FECHADO || estado == SrEstado.POS_ATENDIMENTO)
+			this.lotaAtendente = solicitacao.getPosAtendenteDesignado();
+		if (estado == SrEstado.PRE_ATENDIMENTO)
+			this.lotaAtendente = solicitacao.getPreAtendenteDesignado();
+		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento())
+			this.lotaAtendente = solicitacao.getAtendenteDesignado();
+
+		if (this.lotaAtendente == null && solicitacao != null) {
+			this.lotaAtendente = solicitacao.getLotaAtendente();
+			this.atendente = solicitacao.getAtendente();
+		}
 		return this;
 	}
 
@@ -246,13 +247,19 @@ public class SrAndamento extends GenericModel {
 			return;
 
 		SrAndamento anterior = solicitacao.getUltimoAndamento();
-
-		if (solicitacao.isEmPreAtendimento() && estado == SrEstado.ANDAMENTO) {
+		
+		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento()) {
 			atendente = null;
 			lotaAtendente = solicitacao.getAtendenteDesignado();
-		} else if (!solicitacao.isFechado() && estado == SrEstado.FECHADO) {
+		} else if (estado == SrEstado.FECHADO
+				&& !solicitacao.getLotaAtendente().equivale(
+						solicitacao.getPosAtendenteDesignado())) {
 			atendente = null;
 			lotaAtendente = solicitacao.getPosAtendenteDesignado();
+			estado = SrEstado.POS_ATENDIMENTO;
+		} else if (estado == SrEstado.PRE_ATENDIMENTO) {
+			atendente = null;
+			lotaAtendente = solicitacao.getPreAtendenteDesignado();
 		}
 
 		if (!temAtendenteOuLota()) {

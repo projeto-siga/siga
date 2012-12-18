@@ -10,6 +10,7 @@ import javax.persistence.Query;
 
 import models.SrAndamento;
 import models.SrArquivo;
+import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrEstado;
 import models.SrFormaAcompanhamento;
@@ -28,6 +29,7 @@ import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.Http;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -43,7 +45,8 @@ public class Application extends Controller {
 		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(unless = { "proxy", "exibirAtendente", "exibirAtributos" })
+	@Before(unless = { "proxy", "exibirAtendente", "exibirAtributos",
+			"exibirLocalERamal" })
 	static void addDefaults() {
 
 		try {
@@ -107,7 +110,12 @@ public class Application extends Controller {
 			solicitacao = SrSolicitacao.findById(id);
 
 		solicitacao.solicitante = getCadastrante();
-		formEditar(solicitacao);
+		formEditar(solicitacao.deduzirLocalERamal());
+	}
+
+	public static void exibirLocalERamal(SrSolicitacao solicitacao)
+			throws Exception {
+		render(solicitacao.deduzirLocalERamal());
 	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao)
@@ -124,6 +132,8 @@ public class Application extends Controller {
 		SrUrgencia[] urgencias = SrUrgencia.values();
 		SrTendencia[] tendencias = SrTendencia.values();
 		SrGravidade[] gravidades = SrGravidade.values();
+		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
+				.getResultList();
 		boolean abrirFechando = solicitacao.podeAbrirJaFechando(
 				getLotaTitular(), getCadastrante());
 		boolean priorizar = solicitacao.podePriorizar(getLotaTitular(),
@@ -131,10 +141,11 @@ public class Application extends Controller {
 
 		render("@editar", solicitacao, itensConfiguracao, formasAcompanhamento,
 				gravidades, urgencias, tendencias, solicitacao, priorizar,
-				abrirFechando);
+				abrirFechando, locais);
 	}
 
-	private static void validarFormEditar(SrSolicitacao solicitacao) {
+	private static void validarFormEditar(SrSolicitacao solicitacao)
+			throws Exception {
 
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
@@ -151,13 +162,15 @@ public class Application extends Controller {
 					"Descrição não informada");
 		}
 
-		/*for (SrAtributo att : solicitacao.getAtributoSet()) {
-			if (att.valorAtributo.trim().equals(""))
+		HashMap<Long, Boolean> obrigatorio = solicitacao
+				.getObrigatoriedadeTiposAtributoAssociados();
+		for (SrAtributo att : solicitacao.getAtributoSet()) {
+			if (att.valorAtributo.trim().equals("")
+					&& obrigatorio.get(att.tipoAtributo.idTipoAtributo))
 				validation.addError("solicitacao.atributoMap["
 						+ att.tipoAtributo.idTipoAtributo + "]",
 						att.tipoAtributo.nomeTipoAtributo + " não informado");
-			int a = 0;
-		}*/
+		}
 
 		if (validation.hasErrors()) {
 			formEditar(solicitacao);
@@ -246,10 +259,12 @@ public class Application extends Controller {
 	}
 
 	public static void editarDesignacao(Long id) {
+		List<CpComplexo> orgaos = JPA.em().createQuery("from CpOrgaoUsuario")
+				.getResultList();
 		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
-		render(designacao);
+		render(designacao, orgaos);
 	}
 
 	public static void gravarDesignacao(SrConfiguracao designacao)

@@ -7,18 +7,18 @@ _solicitacoes.add(_solicitacao); } }%
 			<tr>
 				<td style="width: 70%">
 					<h4>
-						#{if _clicavel}<a href="@{Application.exibir(sol.idSolicitacao)}">
-							#{/if}#{ifnot _ocultarCodigo}${sol.codigo} -#{/ifnot}
+						#{ifnot _modoCompleto}<a href="@{Application.exibir(sol.idSolicitacao)}">
+							${sol.codigo} -#{/ifnot}
 							${sol.itemConfiguracao?.descricao}, ${sol.servico?.descricao}
-							#{if _clicavel} </a>#{/if}
+							#{ifnot _modoCompleto} </a>#{/ifnot}
 					</h4>
-					<p>${sol.descrSolicitacao}<br/><b>${sol.atributosString}</b></p>
-					<p>
+					<p style="font-size: 9pt; padding-top: 3pt">${sol.descrSolicitacao}<br/><b>${sol.atributosString}</b></p>
+					<p style="font-size: 9pt">
 						<i>${sol.solicitante.descricaoIniciaisMaiusculas},
 							${sol.lotaSolicitante.siglaLotacao}#{if
-							sol.local}&nbsp;(${sol.local})#{/if}, Tel.: 2510-8793</i>
+							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}</i>
 						<br/>
-						#{if _ocultarCodigo && sol.solicitante != sol.cadastrante}
+						#{if _modoCompleto && sol.solicitante != sol.cadastrante}
 						<i>Cadastrado por ${sol.cadastrante.descricaoIniciaisMaiusculas},
 							${sol.lotaCadastrante.siglaLotacao}</i>
 						#{/if}
@@ -33,7 +33,7 @@ _solicitacoes.add(_solicitacao); } }%
 						</tr>
 						<tr>
 							<th>Situação:</th>
-							<td>${sol.situacao}</td>
+							<td>${sol.situacaoString}</td>
 							</td>
 						</tr>
 						#{if (sol.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
@@ -42,13 +42,20 @@ _solicitacoes.add(_solicitacao); } }%
 						<tr >
 							<th style="color: ${priorColor}">Prioridade:</th> 
 							<td width="60%" style="${priorColor}" >${sol.GUTPercent}
-							#{if _ocultarCodigo} &nbsp;&nbsp;${sol.GUTString}#{/if}
+							#{if _modoCompleto} &nbsp;&nbsp;${sol.GUTString}#{/if}
 							</td>
 						</tr>
 						#{if sol.arquivo}
 						<tr>
 							<th>Anexo:</th>
 							<td>#{arquivo arquivo:sol.arquivo /}</td>
+							</td>
+						</tr>
+						#{/if}
+						#{if _modoCompleto && sol.parteDeArvore}
+						<tr>
+							<th>Contexto:</th>
+							<td>#{listaArvore solicitacao:sol.paiDaArvore, visualizando:sol /}</td>
 							</td>
 						</tr>
 						#{/if}

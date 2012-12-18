@@ -5,6 +5,14 @@
 			div.style.display = 'inline';
 		else div.style.display = 'none';
 	}
+	
+	function change(){
+		if (document.getElementById('check${_name}').checked)
+			document.getElementById('${_name}').value='true';
+		else document.getElementById('${_name}').value='false';
+	}
+
 </script>
- <input ${_disabled ? disabled="disabled" : "" } type="checkbox" name="${_name}" value="true" ${_value ? 'checked':''} onchange="javascript:show(this.checked, '${_depende}');" />
+<input type="hidden" name="${_name}" id="${_name}" value="${_value ? 'true':'false'}" />
+<input id="check${_name}" ${_disabled ? disabled="disabled" : "" } type="checkbox" value="true" ${_value ? 'checked':''} onchange="javascript:change(); show(this.checked, '${_depende}');" />
  

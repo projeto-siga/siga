@@ -57,7 +57,7 @@ public class Bootstrap extends Job {
 				SrTipoAtributo attPrazo = new SrTipoAtributo();
 				attPrazo.nomeTipoAtributo = "Prazo";
 				attPrazo.salvar();
-				/*
+				
 				SrConfiguracao asso = new SrConfiguracao();
 				asso.servico = desenv;
 				asso.tipoAtributo = attPrazo;
@@ -69,18 +69,28 @@ public class Bootstrap extends Job {
 				SrConfiguracao asso2 = new SrConfiguracao();
 				asso2.itemConfiguracao = geDoc;
 				asso2.tipoAtributo = attNomeSys;
+				asso2.atributoObrigatorio = true;
 				asso2.setCpTipoConfiguracao(JPA.em().find(
 						CpTipoConfiguracao.class,
 						CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 				asso2.salvar();
 
 				SrConfiguracao atenEPre = new SrConfiguracao();
+				atenEPre.preAtendente = JPA.em().find(DpLotacao.class, 5046L); //SEGEP
 				atenEPre.atendente = JPA.em().find(DpLotacao.class, 4961L); // CSIS
-				atenEPre.preAtendente = JPA.em().find(DpLotacao.class, 4901L); // STI
 				atenEPre.setCpTipoConfiguracao(JPA.em().find(
 						CpTipoConfiguracao.class,
 						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-				atenEPre.salvar();*/
+				atenEPre.salvar();
+				
+				SrConfiguracao pos = new SrConfiguracao();
+				pos.posAtendente = JPA.em().find(DpLotacao.class, 4901L); // STI
+				pos.servico = manutSoft;
+				pos.setCpTipoConfiguracao(JPA.em().find(
+						CpTipoConfiguracao.class,
+						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+				pos.salvar();
+				
 	
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

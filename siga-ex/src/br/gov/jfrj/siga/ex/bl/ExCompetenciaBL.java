@@ -1123,6 +1123,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeAtenderPedidoPublicacao(titular, lotaTitular, mob))
 			return true;
 
+
 		// Não deixa cancelar a mov se a via estiver cancelada ou há um
 		// cancelamento imediatamente anterior, a não ser se este for
 		// cancelamento de receb transitório ou de atualização
@@ -1306,7 +1307,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!mob.doc().isExpediente())
 			return false;
 		
-		if (mob.doc().getExMobilPai() != null)
+		if (mob.doc().getExMobilPai() != null && !mob.doc().isAssinado())
 			return false;
 
 		if (mob.doc().getNumUltimaVia() >= 21)
@@ -2941,4 +2942,20 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return resposta.booleanValue();
 	}
+	
+	/**
+	 * 
+	 */
+	public boolean podeDesfazerCancelamentoDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		ExDocumento documento = mob.getDoc();
+		
+		if(documento.isEletronico() &&
+				documento.isCancelado() && 
+				(documento.getLotaCadastrante().equivale(lotaTitular) || documento.getSubscritor().equivale(titular)))
+			return true;
+		
+		return false;
+	}	
 }

@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.Remote;
 @WebService
 public interface CdService extends Remote {
 
-	public final static String MIME_TYPE_CMS = "application/cms-signature";
+	//public final static String MIME_TYPE_CMS = "application/cms-signature";
 	public final static String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 
 	/**
@@ -52,7 +52,7 @@ public interface CdService extends Remote {
 	 */
 
 	byte[] validarECompletarAssinatura(byte[] assinatura, byte[] documento,
-			String sArquivoPolitica, Date dtAssinatura) throws Exception;
+			boolean politica, Date dtAssinatura) throws Exception;
 
 	String validarAssinatura(byte[] assinatura, byte[] documento,
 			Date dtAssinatura, boolean verificarLCRs) throws Exception;

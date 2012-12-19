@@ -912,7 +912,7 @@ public class AssinaturaDigital {
 		// fout2.close();
 	}
 
-	protected static String recuperarCPF(final byte[] assinatura) throws Exception {
+	public static String recuperarCPF(final byte[] assinatura) throws Exception {
 		try {
 			Properties props = AssinaturaDigital
 					.recuperaNomesAlternativos(assinatura);

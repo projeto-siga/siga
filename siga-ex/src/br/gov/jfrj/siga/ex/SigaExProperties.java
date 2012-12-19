@@ -27,7 +27,7 @@ package br.gov.jfrj.siga.ex;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 */
-import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
+import br.gov.jfrj.siga.model.prop.ext.ModeloPropriedade;
 
 public class SigaExProperties extends ModeloPropriedade {
 	/*
@@ -146,5 +146,16 @@ public class SigaExProperties extends ModeloPropriedade {
 		}
 	}
 
+	public static Long getAnoInicioAcronimoNoCodigoDoDocumento() throws Exception{
+		String s = getString("siga.ex.anoInicioAcronimoNoCodigoDoDocumento");
+		if (s == null)
+			return 9999L;
+		try{
+			return Long.valueOf(s);
+		} catch (NumberFormatException nfe){
+			throw new Exception("Erro ao obter propriedade para o ano inicial para a utilização do acrônimo no código do documento");
+		}
+	}
+	
 
 }

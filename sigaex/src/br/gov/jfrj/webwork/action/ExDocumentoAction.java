@@ -53,6 +53,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.stat.EntityStatistics;
@@ -481,7 +482,9 @@ public class ExDocumentoAction extends ExActionSupport {
 					final String mName = "set"
 							+ paramName.substring(0, 1).toUpperCase()
 							+ paramName.substring(1);
-					if (getPar().get(paramName) != null) {
+					if (getPar().get(paramName) != null
+							|| (paramName.contains("nmOrgaoExterno"))
+							|| (paramName.contains("nmDestinatario"))) {
 						Class paramType = this.getClass()
 								.getDeclaredField(paramName).getType();
 						Constructor paramTypeContructor = paramType
@@ -497,7 +500,8 @@ public class ExDocumentoAction extends ExActionSupport {
 					final String mName = "get"
 							+ paramName.substring(0, 1).toUpperCase()
 							+ paramName.substring(1, paramName.indexOf(".id"));
-					if (getPar().get(paramName) != null) {
+					if (getPar().get(paramName) != null
+							|| (paramName.contains("estinatarioSel.id"))) {
 						final Method method = this.getClass().getMethod(mName);
 						Selecao sel = (Selecao) method.invoke(this);
 						sel.setId(Long.parseLong(paramValue));
@@ -575,7 +579,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aEditar() throws Exception {
 
 		buscarDocumentoOuNovo(true);
-		
+
 		if ((getPostback() == null) || (param("docFilho") != null)) {
 			tipoDestinatario = 2;
 			idFormaDoc = 2;
@@ -983,7 +987,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			filter.setSigla(sigla);
 			mob = (ExMobil) dao().consultarPorSigla(filter);
 			// bruno.lacerda@avantiprima.com.br
-			if ( mob != null ) {
+			if (mob != null) {
 				doc = mob.getExDocumento();
 				setIdMob(mob.getId());
 			}
@@ -1404,6 +1408,20 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 		}
 	}
+	
+	public String aDesfazerCancelamentoDocumento() throws Exception {
+		buscarDocumento(true);
+		if (!Ex.getInstance().getComp()
+				.podeDesfazerCancelamentoDocumento(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível desfazer o cancelamento deste documento");
+		try {
+			Ex.getInstance().getBL()
+					.DesfazerCancelamentoDocumento(getCadastrante(), getLotaTitular(), doc);
+		} catch (final Exception e) {
+			throw e;
+		}
+		return Action.SUCCESS;
+	}
 
 	private void carregarBeans() throws Exception {
 		ExMobil mobPai = null;
@@ -1460,29 +1478,33 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		// Fim das questões referentes a doc pai--------------------
 
-		if (getIdFormaDoc() == 0) {
-			setIdMod(0L);
-		} else {
-
-			// Mudou origem? Escolhe um tipo automaticamente--------
-			// Vê se usuário alterou campo Origem. Caso sim, seleciona um tipo
-			// automaticamente, dentro daquela origem
-
-			final List<ExFormaDocumento> formasDoc = getFormasDocPorTipo();
-
-			ExFormaDocumento forma = dao().consultar(getIdFormaDoc(),
-					ExFormaDocumento.class, false);
-
-			if (!formasDoc.contains(forma)) {
-				setIdFormaDoc(getFormaDocPorTipo().getIdFormaDoc());
-				forma = dao().consultar(getIdFormaDoc(),
-						ExFormaDocumento.class, false);
-			}
-
-			// Fim -- Mudou origem? Escolhe um tipo automaticamente--------
-
-			if (forma.getExModeloSet().size() == 0) {
+		Integer idFormaDoc = getIdFormaDoc();
+		if (idFormaDoc != null) {
+			if (idFormaDoc == 0) {
 				setIdMod(0L);
+			} else {
+
+				// Mudou origem? Escolhe um tipo automaticamente--------
+				// Vê se usuário alterou campo Origem. Caso sim, seleciona um
+				// tipo
+				// automaticamente, dentro daquela origem
+
+				final List<ExFormaDocumento> formasDoc = getFormasDocPorTipo();
+
+				ExFormaDocumento forma = dao().consultar(getIdFormaDoc(),
+						ExFormaDocumento.class, false);
+
+				if (!formasDoc.contains(forma)) {
+					setIdFormaDoc(getFormaDocPorTipo().getIdFormaDoc());
+					forma = dao().consultar(getIdFormaDoc(),
+							ExFormaDocumento.class, false);
+				}
+
+				// Fim -- Mudou origem? Escolhe um tipo automaticamente--------
+
+				if (forma.getExModeloSet().size() == 0) {
+					setIdMod(0L);
+				}
 			}
 		}
 
@@ -1520,16 +1542,17 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		boolean naLista = false;
 		final Set<ExPreenchimento> preenchimentos = getPreenchimentos();
-		for (ExPreenchimento exp : preenchimentos) {
-			if (exp.getIdPreenchimento().equals(getPreenchimento())) {
-				naLista = true;
-				break;
-
+		if (preenchimentos != null && preenchimentos.size() > 0) {
+			for (ExPreenchimento exp : preenchimentos) {
+				if (exp.getIdPreenchimento().equals(getPreenchimento())) {
+					naLista = true;
+					break;
+				}
 			}
+			if (!naLista)
+				setPreenchimento(((ExPreenchimento) (preenchimentos.toArray())[0])
+						.getIdPreenchimento());
 		}
-		if (!naLista)
-			setPreenchimento(((ExPreenchimento) (preenchimentos.toArray())[0])
-					.getIdPreenchimento());
 
 		modelo = mod;
 		if (mod.getExClassificacao() != null
@@ -1574,8 +1597,10 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		if (doc.getConteudoBlob("doc.htm") != null)
 			setConteudo(new String(doc.getConteudoBlob("doc.htm")));
+
 		setIdTpDoc(doc.getExTipoDocumento().getIdTpDoc());
-		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
+		setNivelAcesso(doc.getIdExNivelAcesso());
+
 		if (doc.getExFormaDocumento() != null) {
 			setIdFormaDoc(doc.getExFormaDocumento().getIdFormaDoc());
 		}
@@ -1605,7 +1630,13 @@ public class ExDocumentoAction extends ExActionSupport {
 			getTitularSel().buscarPorObjeto(doc.getTitular());
 			setSubstituicao(true);
 		}
-		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
+
+		// TODO Verificar se ha realmente a necessidade de setar novamente o
+		// nível de acesso do documento
+		// tendo em vista que o nível de acesso já foi setado anteriormente
+		// neste mesmo método sem que o documento fosse alterado
+		setNivelAcesso(doc.getIdExNivelAcesso());
+
 		if (doc.getOrgaoExternoDestinatario() != null) {
 			getOrgaoExternoDestinatarioSel().buscarPorObjeto(
 					doc.getOrgaoExternoDestinatario());

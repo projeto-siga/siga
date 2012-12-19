@@ -48,6 +48,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The cached hash code value for this instance. Settting to 0 triggers
 	 * re-calculation.

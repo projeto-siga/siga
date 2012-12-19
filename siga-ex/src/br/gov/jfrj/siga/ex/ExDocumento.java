@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 
@@ -71,8 +72,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1462217739890785344L;
-	
-	private static final Logger log = Logger.getLogger( ExDocumento.class );
+
+	private static final Logger log = Logger.getLogger(ExDocumento.class);
 
 	private byte[] cacheConteudoBlobDoc;
 
@@ -105,7 +106,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	// @Override
 	public ExNivelAcesso getExNivelAcesso() {
-		log.info( "[getExNivelAcesso] - Obtendo nível de acesso atual do documento..." );
+		log.info("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
 		ExNivelAcesso nivel = null;
 		if (getMobilGeral() != null
 				&& getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
@@ -145,6 +146,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * Retorna o código do documento.
+	 * 
+	 * @throws Exception
 	 */
 	public String getCodigo() {
 		if (getExMobilPai() != null && getNumSequencia() != null) {
@@ -160,14 +163,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				s = "0" + s;
 
 			if (getOrgaoUsuario() != null) {
-				if (getAnoEmissao() >= 2013) {
-					return getOrgaoUsuario().getAcronimoOrgaoUsu() + "-"
-							+ getExFormaDocumento().getSiglaFormaDoc() + "-"
-							+ getAnoEmissao() + "/" + s;
-				} else {
-					return getOrgaoUsuario().getSiglaOrgaoUsu() + "-"
-							+ getExFormaDocumento().getSiglaFormaDoc() + "-"
-							+ getAnoEmissao() + "/" + s;
+				try {
+					if (getAnoEmissao() >= SigaExProperties
+							.getAnoInicioAcronimoNoCodigoDoDocumento()) {
+						return getOrgaoUsuario().getAcronimoOrgaoUsu() + "-"
+								+ getExFormaDocumento().getSiglaFormaDoc()
+								+ "-" + getAnoEmissao() + "/" + s;
+					} else {
+						return getOrgaoUsuario().getSiglaOrgaoUsu() + "-"
+								+ getExFormaDocumento().getSiglaFormaDoc()
+								+ "-" + getAnoEmissao() + "/" + s;
+					}
+				} catch (Exception ex) {
+					throw new Error(ex);
 				}
 			}
 		}
@@ -345,18 +353,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Field(index = Index.TOKENIZED, name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		log.info( "[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo" );
+		log.info("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
 		String nivel = null;
 		ExNivelAcesso nivelAcesso = getExNivelAcesso();
-		
-		if ( nivelAcesso != null 
-				&& nivelAcesso.getGrauNivelAcesso() != null ) {
+
+		if (nivelAcesso != null && nivelAcesso.getGrauNivelAcesso() != null) {
 			nivel = nivelAcesso.getGrauNivelAcesso().toString();
-			
+
 		} else {
-			log.warn( "[getNivelAcesso] - O nível de acesso ou o grau do nível de acesso do documento é nulo." );
+			log.warn("[getNivelAcesso] - O nível de acesso ou o grau do nível de acesso do documento é nulo.");
 		}
-		
+
 		return nivel;
 	}
 
@@ -1832,16 +1839,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		else
 			setFgEletronico("N");
 	}
-	
+
 	/**
 	 * 
 	 * @return o id do ExNivelAcesso quando o ExNivelAcesso não for nulo.
 	 */
 	public Long getIdExNivelAcesso() {
-		log.info( "Obtendo IdExNivelAcesso..." );
+		log.info("Obtendo IdExNivelAcesso...");
 		Long idExNivelAcesso = null;
-		String nivelAcesso = this.getNivelAcesso(); 
-		if ( nivelAcesso != null ) {
+		String nivelAcesso = this.getNivelAcesso();
+		if (nivelAcesso != null) {
 			idExNivelAcesso = this.getExNivelAcesso().getIdNivelAcesso();
 		}
 		return idExNivelAcesso;

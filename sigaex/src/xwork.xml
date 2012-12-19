@@ -361,6 +361,12 @@
 				exibir?conviteEletronico=true&amp;sigla=${doc.sigla}
 			</result>
 		</action>
+		<action name="desfazerCancelamentoDocumento" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aDesfazerCancelamentoDocumento">
+			<result type="redirect-action">
+				exibir?sigla=${doc.sigla}
+			</result>
+		</action>
 		<action name="reabrir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aReabrir">
 			<result type="redirect-action">

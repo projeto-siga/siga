@@ -1272,5 +1272,24 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		return l;
 	}
+	
+	/**
+	 * Retorna as  movimentações de um Mobil que estão canceladas.
+	 * 
+	 * @return Lista de movimentações de um Mobil que estão canceladas.
+	 * 
+	 */
+	public List<ExMovimentacao> getMovimentacoesCanceladas() {
+		
+		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
+		List<ExMovimentacao> movsCanceladas = new ArrayList<ExMovimentacao>();	
+		
+		if (movs != null)
+			for (final ExMovimentacao mov : movs) {				
+				if (mov.isCancelada())
+					movsCanceladas.add(mov);
+			}
+		return movsCanceladas;	
+	}
 
 }

@@ -1408,6 +1408,20 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 		}
 	}
+	
+	public String aDesfazerCancelamentoDocumento() throws Exception {
+		buscarDocumento(true);
+		if (!Ex.getInstance().getComp()
+				.podeDesfazerCancelamentoDocumento(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível desfazer o cancelamento deste documento");
+		try {
+			Ex.getInstance().getBL()
+					.DesfazerCancelamentoDocumento(getCadastrante(), getLotaTitular(), doc);
+		} catch (final Exception e) {
+			throw e;
+		}
+		return Action.SUCCESS;
+	}
 
 	private void carregarBeans() throws Exception {
 		ExMobil mobPai = null;

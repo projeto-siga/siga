@@ -28,6 +28,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public abstract class Service {
@@ -39,6 +40,7 @@ public abstract class Service {
 	static WfService wf = null;
 	static ExService ex = null;
 	static CdService cd = null;
+	static GiService gi = null;
 
 	/* Externalização das informacoes dos servicos
 	 * bruno.lacerda@avantiprima.com.br
@@ -95,6 +97,18 @@ public abstract class Service {
 					SigaWsProperties.getString( "cdservice.qname" ),
 					SigaWsProperties.getString( "cdservice.servicename" ));
 		return cd;
+	}
+	
+	/* Externalização das informacoes dos servicos
+	 * 
+	 */
+	public static GiService getGiService() {
+		if (gi == null)
+			gi = getService(GiService.class,
+					SigaWsProperties.getString( "giservice.endpoint" ),
+					SigaWsProperties.getString( "giservice.qname" ),
+					SigaWsProperties.getString( "giservice.servicename" ));
+		return gi;
 	}
 
 	@SuppressWarnings("unchecked")

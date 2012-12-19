@@ -19,6 +19,20 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 	
+	<servlet>
+		<display-name>CXF Servlet</display-name>
+		<servlet-name>CXFServlet</servlet-name>
+		<servlet-class>
+			br.gov.jfrj.siga.gi.servlet.GiWsServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CXFServlet</servlet-name>
+		<url-pattern>/servicos/*</url-pattern>
+	</servlet-mapping>
+	
 	<filter>
 		<filter-name>HibernateFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.util.HibernateThreadFilter</filter-class>
@@ -74,6 +88,8 @@
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
 	</listener>
+	
+
 	<!-- ***************************************  -->
 	<!--  Configuracao para login com formulario  -->
 	<!-- ***************************************  -->

@@ -113,7 +113,7 @@
 			from ExDocumento doc
 			inner join doc.exFormaDocumento frm
 			inner join doc.orgaoUsuario org
-			where org.idOrgaoUsu = :sesb
+			where org.idOrgaoUsu = :idOrgaoUsu
 			and frm.idFormaDoc = :idFormaDoc
 			and doc.anoEmissao = :anoEmissao</query>
  <query name="consultarPorSiglaDocumento">from ExDocumento doc

@@ -94,6 +94,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_UTILIZAR_EXTENSAO_EDITOR = 32;
 	
 	public static final long TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML = 33;
+	
+	public static final long TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO = 34;
 
 	// SIGA-WF
 

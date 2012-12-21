@@ -144,25 +144,14 @@ public class ExDao extends CpDao {
 		return null;
 	}
 
-	public ExDocumento obterProximoNumero(final ExDocumento doc)
+	public Long obterProximoNumero(final ExDocumento doc, Long anoEmissao)
 			throws SQLException {
-		Long num = null;
-		Connection conn = getSessao().connection();
-		doc.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
-
-		CallableStatement stproc_stmt = conn
-				.prepareCall("{? = call num_expediente_fun(?,?,?)}");
-		stproc_stmt.registerOutParameter(1, OracleTypes.NUMBER);
-		stproc_stmt.setLong(2, doc.getOrgaoUsuario().getId());
-		stproc_stmt.setLong(3, doc.getExFormaDocumento().getId());
-		stproc_stmt.setLong(4, doc.getAnoEmissao());
-		stproc_stmt.executeUpdate();
-		num = stproc_stmt.getLong(1);
-		stproc_stmt.close();
-
-		doc.setNumExpediente(num);
-
-		return doc;
+		Query query = getSessao().getNamedQuery("obterProximoNumero");
+		query.setLong("idOrgaoUsu", doc.getOrgaoUsuario().getId());
+		query.setLong("idFormaDoc", doc.getExFormaDocumento().getId());
+		query.setLong("anoEmissao", anoEmissao);
+		
+		return (Long) query.uniqueResult();
 	}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {

@@ -46,6 +46,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.batik.apps.rasterizer.Main.NoValueOptionHandler;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.cfg.AnnotationConfiguration;
@@ -71,6 +72,7 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
+import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -2120,9 +2122,9 @@ public class ExBL extends CpBL {
 
 			if (doc.getOrgaoUsuario() == null)
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
-
-			if (doc.getNumExpediente() == null)
-				doc = dao().obterProximoNumero(doc);
+			
+			if (doc.getNumExpediente() == null) 
+				doc.setNumExpediente(obterProximoNumero(doc));
 
 			doc.setDtFechamento(dt);
 
@@ -2174,6 +2176,31 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao fechar documento: "
 					+ e.getMessage(), 0, e);
 		}
+	}
+	
+	public Long obterProximoNumero(ExDocumento doc) throws Exception {
+		doc.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
+		
+		Long num = dao().obterProximoNumero(doc, doc.getAnoEmissao());
+		
+		if(num == null) {
+			//Verifica se reiniciar a numeração ou continua com a numeração anterior
+			if(getComp().podeReiniciarNumeracao(doc)) {
+				num = 1L;
+			} else {
+				//Obtém o próximo número considerando os anos anteriores até 2006
+				Long anoEmissao = doc.getAnoEmissao();
+				while (num == null && anoEmissao > 2005) {
+					anoEmissao = anoEmissao - 1;
+					num = dao().obterProximoNumero(doc, anoEmissao);
+				}
+				//Se continuar null é porque nunca foi criado documento para este formato.
+				if(num == null) 
+					num = 1L;
+			}
+		}
+		
+		return num;
 	}
 
 	public void criarVolume(DpPessoa cadastrante, DpLotacao lotaCadastrante,
@@ -2656,6 +2683,13 @@ public class ExBL extends CpBL {
 						throw new AplicacaoException(
 								"Não é possível juntar documento com anexo pendente de assinatura ou conferência");
 				}
+			}
+			
+			//Verifica se o documeto pai já está apensado a este documento
+			for (ExMobil apenso : mob.getApensos()) {
+				if(apenso.getId() == mobPai.getId())
+					throw new AplicacaoException(
+						"Não é possível juntar um documento a um documento que está apensado a ele.");
 			}
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
@@ -4583,5 +4617,45 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao salvar um modelo.", 0, e);
 		}
 	}
+	
+	public void DesfazerCancelamentoDocumento(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 
+		try {
+			SortedSet<ExMobil> set = doc.getExMobilSet();
+			
+			iniciarAlteracao();
+			
+			for (ExMobil mob : set) {
+				
+				List<ExMovimentacao> movsCanceladas = mob.getMovimentacoesCanceladas();
+				
+				for (ExMovimentacao movARecuperar : movsCanceladas) {
+					ExMovimentacao movCanceladora = movARecuperar.getExMovimentacaoCanceladora();
+						
+					movARecuperar.setExMovimentacaoCanceladora(null);
+						
+					gravarMovimentacao(movARecuperar);
+						
+					final ExMovimentacao novaMov = criarNovaMovimentacao(
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+							cadastrante, lotaCadastrante, mob, null, null, null,
+							null, null, null);
+						
+
+					novaMov.setExMovimentacaoRef(movCanceladora);
+						
+					gravarMovimentacaoCancelamento(novaMov, movCanceladora);
+				}
+				concluirAlteracaoParcial(mob);
+			}
+			
+			concluirAlteracao(null);
+			
+			
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao anular cancelamento do documento.", 0, e);
+		}
+	}
 }

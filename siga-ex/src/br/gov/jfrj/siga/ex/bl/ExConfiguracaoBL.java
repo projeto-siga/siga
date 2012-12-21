@@ -373,6 +373,18 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				exMod, exClassif, null, null, null, null, null, lotacao,
 				dpPessoa, nivelAcesso, idTpConf);
 	}
+	
+
+	/**
+	 * 
+	 * Usado para se saber se deve reiniciar a numeração de um tipo de documento para um órgão
+	 * 
+	 * @throws Exception
+	 */
+	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu, ExFormaDocumento exFormaDoc, Long idTpConf) throws Exception {
+		return podePorConfiguracao(null, null, null, null, exFormaDoc, null, null, null,
+				null, null, cpOrgaoUsu, null, null, null, null, idTpConf); 
+	}
 
 	/**
 	 * 

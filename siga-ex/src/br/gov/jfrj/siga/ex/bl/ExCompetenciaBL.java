@@ -2957,5 +2957,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return true;
 		
 		return false;
-	}	
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean podeReiniciarNumeracao(ExDocumento doc) throws Exception {
+		if (doc == null || doc.getOrgaoUsuario() == null || doc.getExFormaDocumento() == null)
+			return false;
+
+		return getConf().podePorConfiguracao(doc.getOrgaoUsuario(), doc.getExFormaDocumento(),CpTipoConfiguracao.TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO);
+	}
 }

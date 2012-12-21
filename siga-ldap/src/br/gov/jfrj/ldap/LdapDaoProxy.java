@@ -52,7 +52,8 @@ public class LdapDaoProxy extends LdapDaoImpl {
 		if (!isSomenteLeitura()) {
 			super.alterarAtributo(dn, nomeAtributo, valorAtributo);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Alterando \nObjeto: " + dn + "\nAtributo: " + nomeAtributo);
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Alterando \nObjeto: " + dn
+					+ "\nAtributo: " + nomeAtributo);
 		}
 
 	}
@@ -62,7 +63,8 @@ public class LdapDaoProxy extends LdapDaoImpl {
 		if (!isSomenteLeitura()) {
 			super.ativarUsuario(dnUsuario);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Ativando usuário: " + dnUsuario);
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Ativando usuário: "
+					+ dnUsuario);
 		}
 	}
 
@@ -72,7 +74,8 @@ public class LdapDaoProxy extends LdapDaoImpl {
 		if (!isSomenteLeitura()) {
 			super.definirSenha(dnUsuario, senhaNova);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Definindo senha usuário: " + dnUsuario);
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Definindo senha usuário: "
+					+ dnUsuario);
 		}
 	}
 
@@ -81,7 +84,8 @@ public class LdapDaoProxy extends LdapDaoImpl {
 		if (!isSomenteLeitura()) {
 			super.desativarUsuario(dnUsuario);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Desativando usuário: " + dnUsuario);
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Desativando usuário: "
+					+ dnUsuario);
 		}
 	}
 
@@ -113,7 +117,8 @@ public class LdapDaoProxy extends LdapDaoImpl {
 			super.inserirValorAtributoMultivalorado(dn, nomeAtributo,
 					valorAtributo);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Inserindo atributo \nObjeto: " + dn + "\nAtributo: " + nomeAtributo);
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Inserindo atributo \nObjeto: "
+					+ dn + "\nAtributo: " + nomeAtributo);
 		}
 	}
 
@@ -122,7 +127,8 @@ public class LdapDaoProxy extends LdapDaoImpl {
 		if (!isSomenteLeitura()) {
 			super.mover(dn, novoDN);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Movendo...\nOrigem:" + dn + "\nDestino:" + novoDN);
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Movendo...\nOrigem:" + dn
+					+ "\nDestino:" + novoDN);
 		}
 	}
 
@@ -131,13 +137,24 @@ public class LdapDaoProxy extends LdapDaoImpl {
 			String nomeAtributo, Object valorAtributo)
 			throws AplicacaoException {
 		if (!isSomenteLeitura()) {
-			super
-			.removerValorAtributoMultivalorado(dn, nomeAtributo,
+			super.removerValorAtributoMultivalorado(dn, nomeAtributo,
 					valorAtributo);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Removendo atributo \nObjeto: " + dn + "\nAtributo: " + nomeAtributo);
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Removendo valor do \nObjeto: "
+					+ dn + "\nAtributo: " + nomeAtributo);
 		}
 	}
 
+	@Override
+	public void excluirAtributo(String dn, String nomeAtributo)
+			throws AplicacaoException {
+		if (!isSomenteLeitura()) {
+			super.excluirAtributo(dn, nomeAtributo);
+		} else {
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Removendo atributo \nObjeto: "
+					+ dn + "\nAtributo: " + nomeAtributo);
+		}
+
+	}
 
 }

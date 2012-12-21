@@ -251,22 +251,6 @@ public class SigaCpSinc {
 			System.err.println("Servidor não informado");
 			return 11;
 		}
-		String url = pars[1];
-		if (!url.equalsIgnoreCase("-sjrj") && !url.equalsIgnoreCase("-trf2")
-				&& !url.equalsIgnoreCase("-cjf")
-				&& !url.equalsIgnoreCase("-sjes")) {
-
-			if (!url.equalsIgnoreCase("-url")) {
-				System.err.println("url informada é inválida");
-				return 13;
-			}
-
-			if (url.equalsIgnoreCase("-url") && pars.length < 3) {
-				System.err.println("url não informada");
-				return 12;
-			}
-
-		}
 
 		for (String param : Arrays.asList(pars)) {
 			if (param.equals("-modoLog=true")) {
@@ -324,6 +308,8 @@ public class SigaCpSinc {
 
 		HibernateUtil.configurarHibernate(cfg, "");
 
+		verificarOrigemDeDados();
+		
 		dt = new Date();
 		log("--- Processando  " + dt + "--- ");
 		log("--- Parametros: servidor= " + servidor + "  e url= " + url);
@@ -338,6 +324,25 @@ public class SigaCpSinc {
 
 		log(" ---- Fim do Processamento --- ");
 		logEnd();
+	}
+
+	private void verificarOrigemDeDados() throws AplicacaoException {
+		boolean orgaoValido = false;
+		for (CpOrgaoUsuario orgao : CpDao.getInstance().consultaCpOrgaoUsuario()) {
+			if (orgao.getAcronimoOrgaoUsu().equalsIgnoreCase(url.replace("-", ""))){
+				orgaoValido =true;
+				break;
+			}
+		}
+		
+		if (!orgaoValido){
+			
+			if (url==null || (!url.startsWith("-url") && url.length() < 3) || (url.replace("-url=", "").startsWith("-"))) {
+				throw new AplicacaoException(("url não informada"));
+			}
+			
+		}
+		
 	}
 
 	public void importxml() {

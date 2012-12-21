@@ -1089,8 +1089,14 @@ public class SigaCpSinc {
 				lotPaiJur = lotPaiJur.getLotacaoPai();
 			}
 		}
-		// Se é exceção, trata como administrativo
-		lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));
+		
+		//se for turma recursal, trata como judicial
+		if(lot.getSiglaLotacao().contains("TR-")){
+			lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("100")));
+		}else{
+			// Se é exceção, trata como administrativo
+			lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));	
+		}
 		return;
 	}
 

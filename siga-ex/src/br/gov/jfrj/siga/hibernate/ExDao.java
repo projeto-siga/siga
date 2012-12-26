@@ -1080,7 +1080,7 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExConfiguracao> consultar(final ExConfiguracao exemplo) {
-		Query query = getSessao().getNamedQuery("consultarConfiguracoes");
+		Query query = getSessao().getNamedQuery("consultarExConfiguracoes");
 
 		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
 				.getIdTpConfiguracao());

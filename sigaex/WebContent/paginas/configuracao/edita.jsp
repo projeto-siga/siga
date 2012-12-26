@@ -15,6 +15,18 @@
 
 <script type="text/javascript" language="Javascript1.1">
 
+<ww:url id="urlForma" action="carregar_lista_formas" namespace="/expediente/doc">
+</ww:url>
+function alteraTipoDaForma(){
+	ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{urlForma}"/>'+'?tipoForma='+document.getElementById('tipoForma').value+'&idFormaDoc='+'${idFormaDoc}', null, document.getElementById('comboFormaDiv'))
+}
+
+<ww:url id="urlModelo" action="carregar_lista_modelos" namespace="/expediente/doc">
+</ww:url>
+function alteraForma(){
+	ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{urlModelo}"/>'+'?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
+}
+
 function sbmt() {
 	editar_gravar.action='<ww:property value="%{url}"/>';
 	editar_gravar.submit();
@@ -42,6 +54,12 @@ function sbmt() {
 					list="listaTiposConfiguracao" listKey="idTpConfiguracao"
 					listValue="dscTpConfiguracao" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" /></td>
+			</tr>
+			<tr>
+				<td><b>Situação</b></td>
+				<td><ww:select name="idSituacao" list="listaSituacao"
+					listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
+					theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
 			</tr>
 			<tr>
 				<td>Nível de acesso</td>
@@ -84,33 +102,56 @@ function sbmt() {
 					headerKey="0" /></td>
 			</tr> --%>
 			<tr>
+				<td>Tipo:</td>
+				<td><ww:select name="idTpFormaDoc" list="tiposFormaDoc"
+		                       listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
+				      		   theme="simple" headerKey="0" headerValue="[Indefinido]"
+							   onchange="javascript:alteraTipoDaForma();" id="tipoForma" />&nbsp;&nbsp;&nbsp;
+						       <div style="display: inline" id="comboFormaDiv">
+							   		<script type="text/javascript">alteraTipoDaForma();</script>
+							   </div>
+				</td>
+			</tr>
+			<!-- Esse timeout no modelo está estranho. Está sendo necessário porque primeiro
+      		 precisa ser executado o request ajax referente à FormaDocumento, da qual a lista 
+		     de modelos depende. Talvez seria bom tornar síncronos esses dois requests ajax -->
+			<tr>
+				<td>Modelo:</td>
+				<td>
+					<div style="display: inline" id="comboModeloDiv">
+						<script type="text/javascript">setTimeout("alteraForma()",500);</script>
+					</div>
+				</td>
+			</tr>
+			
+			
+			<%--  Antigo
+			<tr>
 				<td>Modelo</td>
 				<td><ww:select name="idMod" list="listaModelos" listKey="idMod"
 					listValue="nmMod" theme="simple" headerValue="[Indefinido]"
 					headerKey="0" /></td>
 			</tr>
+			--%>
 			<tr>
 				<td>Classificação</td>
 				<td><siga:selecao propriedade="classificacao" tema="simple" /></td>
 			</tr>
+			<%--	Antigo
 			<tr>
 				<td>Forma de documento</td>
 				<td><ww:select name="idFormaDoc" list="listaFormas"
 					listKey="idFormaDoc" listValue="descrFormaDoc" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" /></td>
 			</tr>
+			 --%>
+			
 			<tr>
-				<td>Tipo de Documento</td>
+				<td>Origem</td>
 				<td><ww:select name="idTpDoc" list="listaTiposDocumento"
 					listKey="idTpDoc" listValue="descrTipoDocumento" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" /></td>
-			</tr>
-			<tr>
-				<td><b>Situação</b></td>
-				<td><ww:select name="idSituacao" list="listaSituacao"
-					listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
-					theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
-			</tr>
+			</tr>			
 			<tr>
 			</tr>
 			<tr class="button">

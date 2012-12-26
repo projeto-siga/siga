@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -74,6 +75,8 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	private Long idTpMov;
 
 	private Long idTpDoc;
+	
+	private Long idTpFormaDoc;
 
 	private Integer tipoPublicador;
 
@@ -151,6 +154,11 @@ public class ExConfiguracaoAction extends ExActionSupport {
 					ExTipoDocumento.class, false));
 		} else
 			c.setExTipoDocumento(null);
+		
+		if (getIdTpFormaDoc() != null && getIdTpFormaDoc() != 0){
+			c.setExTipoFormaDoc(dao().consultar(getIdTpFormaDoc(), ExTipoFormaDoc.class, false));			
+		} else
+			c.setExTipoFormaDoc(null);
 
 		if (getIdFormaDoc() != null && getIdFormaDoc() != 0) {
 			c.setExFormaDocumento(dao().consultar(getIdFormaDoc(),
@@ -221,6 +229,9 @@ public class ExConfiguracaoAction extends ExActionSupport {
 		if (c.getExTipoDocumento() != null)
 			setIdTpDoc(c.getExTipoDocumento().getIdTpDoc());
 
+		if (c.getExTipoFormaDoc() != null)
+			setIdTpFormaDoc(c.getExTipoFormaDoc().getIdTipoFormaDoc());
+
 		if (c.getExFormaDocumento() != null)
 			setIdFormaDoc(c.getExFormaDocumento().getIdFormaDoc());
 
@@ -256,6 +267,32 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			getClassificacaoSel().buscarPorObjeto(c.getExClassificacao());
 		}
 	}
+	
+	public Long getIdTpFormaDoc() {
+		return idTpFormaDoc;
+	}
+
+	public void setIdTpFormaDoc(Long idTpFormaDoc) {
+		this.idTpFormaDoc = idTpFormaDoc;
+	}
+
+	public List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {
+		List<ExTipoFormaDoc> lista = new ArrayList<ExTipoFormaDoc>();
+		return dao().listarTodos(ExTipoFormaDoc.class);
+	}
+
+	public List<ExModelo> getModelos() throws Exception {
+		ExFormaDocumento forma = null;
+		if (getIdFormaDoc() != null && getIdFormaDoc() != 0)
+			forma = dao().consultar(this.getIdFormaDoc(),
+					ExFormaDocumento.class, false);
+
+		return Ex
+				.getInstance()
+				.getBL()
+				.obterListaModelos(forma, false, "Todos", false, getTitular(),
+						getLotaTitular());
+	}
 
 	public String aEditarGravar() throws Exception {
 		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(),
@@ -265,10 +302,9 @@ public class ExConfiguracaoAction extends ExActionSupport {
 						CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES)
 						&& param("define_publicadores") != null && param(
 						"define_publicadores").equals("sim"))
-				&& !(Ex
-						.getInstance()
-						.getConf()
-						.podePorConfiguracao(
+				&& !(Ex.getInstance()
+					   .getConf()
+					   .podePorConfiguracao(
 								getTitular(),
 								getLotaTitular(),
 								CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM)
@@ -325,22 +361,27 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	public String aListar() throws Exception {
-
+		
+		
 		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(),
 				getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR))
-			throw new AplicacaoException("Operação restrita");
-
+			throw new AplicacaoException("Operação restrita");				
+        
+        
 		ExConfiguracao config = new ExConfiguracao();
 
 		List<CpTipoConfiguracao> exTiposConfig = dao().listarTodos(
-				CpTipoConfiguracao.class);
-		for (CpTipoConfiguracao tipo : exTiposConfig) {
+				CpTipoConfiguracao.class);	
+		
+		for (CpTipoConfiguracao tipo : exTiposConfig) {			
 			config.setCpTipoConfiguracao(tipo);
 			Object[] obj = new Object[2];
-			obj[0] = tipo;
-			obj[1] = Ex.getInstance().getConf().getListaPorTipo(
-					tipo.getIdTpConfiguracao());
-			itens.add(obj);
+			obj[0] = tipo;			
+			List<ExConfiguracao> cfg = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);
+			if (cfg.isEmpty())
+				continue;
+			obj[1] = cfg;
+			  itens.add(obj);
 		}
 		return Action.SUCCESS;
 	}
@@ -604,22 +645,23 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	public List<ExTipoDocumento> getListaTiposDocumento() throws Exception {
 		return dao().listarTodos(ExTipoDocumento.class);
 	}
-
+	
+	
 	@SuppressWarnings("all")
-	public Set<ExSituacaoConfiguracao> getListaSituacao() throws Exception {
-		TreeSet<ExSituacaoConfiguracao> s = new TreeSet<ExSituacaoConfiguracao>(
+	public Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
+		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(
 				new Comparator() {
 
 					public int compare(Object o1, Object o2) {
-						return ((ExSituacaoConfiguracao) o1)
+						return ((CpSituacaoConfiguracao) o1)
 								.getDscSitConfiguracao().compareTo(
-										((ExSituacaoConfiguracao) o2)
+										((CpSituacaoConfiguracao) o2)
 												.getDscSitConfiguracao());
 					}
 
 				});
 
-		s.addAll(dao().listarTodos(ExSituacaoConfiguracao.class));
+		s.addAll(dao().listarTodos(CpSituacaoConfiguracao.class));
 
 		return s;
 	}

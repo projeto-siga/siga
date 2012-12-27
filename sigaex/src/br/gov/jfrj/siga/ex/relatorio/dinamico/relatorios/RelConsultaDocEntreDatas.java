@@ -85,10 +85,12 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 		final Query query = dao.getSessao().getNamedQuery(
 				"consultarMobilNoPeriodo");
 
-		DpLotacao lot = new DpLotacao();
-		lot.setSigla((String) parametros.get("lotacao"));
-		List<DpLotacao> listaLotacao = dao.consultar(lot, null);
-		query.setLong("idLotacao", new Long(listaLotacao.get(0).getId()));
+		//DpLotacao lot = new DpLotacao();
+		//lot.setSigla((String) parametros.get("lotacao"));
+		//List<DpLotacao> listaLotacao = dao.consultar(lot, null);
+		
+		Long idLotacao = Long.valueOf((String)parametros.get("lotacao"));
+		query.setLong("idLotacao", idLotacao);
 		query.setString("dataInicial", (String) parametros.get("dataInicial"));
 		query.setString("dataFinal", (String) parametros.get("dataFinal"));
 

@@ -356,7 +356,7 @@ public class ExRelatorioAction extends ExActionSupport {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao",
-				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
 		parametros.put("tipoFormaDoc", getRequest()
 				.getParameter("tipoFormaDoc"));
 		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
@@ -410,7 +410,7 @@ public class ExRelatorioAction extends ExActionSupport {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao",
-				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
 		parametros.put("secaoUsuario", getRequest()
 				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));

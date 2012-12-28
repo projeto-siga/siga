@@ -91,20 +91,16 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 				: " and tipoForma.idTipoFormaDoc = "
 						+ tipoFormaDoc.getIdTipoFormaDoc();
 
-		// Obtém todas as lotações do órgão com a sigla passada...
+			
+		// Obtém a lotação com o id passado...
 		Query qrySetor = HibernateUtil.getSessao().createQuery(
-				"from DpLotacao lot where " + "lot.dataFimLotacao is null "
-						+ "and lot.orgaoUsuario = "
-						+ parametros.get("orgaoUsuario") + " "
-						+ "and lot.siglaLotacao = '"
-						+ parametros.get("lotacao") + "'");
-		
-		
+				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
+			
 		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-		for (Iterator iterator = qrySetor.list().iterator(); iterator.hasNext();) {
-			DpLotacao lot = (DpLotacao) iterator.next();
-			lotacaoSet.add(lot);
-		}
+		DpLotacao lotacao = (DpLotacao)qrySetor.list().get(0);
+		lotacaoSet.add(lotacao);
+		
+	
 
 		// ... e monta trecho da query para as lotações
 		String listaLotacoes = "";

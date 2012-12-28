@@ -282,8 +282,15 @@ public class PublicacaoDJEBL {
 		attIdentificacao.addAttribute("", "", "TIPOARQ", "String", "A");
 
 		attIdentificacao.addAttribute("", "", "CADERNO", "String", tipoMateria);
-
-		attIdentificacao.addAttribute("", "", "SECAO", "String", String
+		
+		if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFRJ"))
+			attIdentificacao.addAttribute("", "", "SECAO", "String", String
+					.valueOf("SJRJ"));
+		else if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFES"))
+			attIdentificacao.addAttribute("", "", "SECAO", "String", String
+					.valueOf("SJES"));
+		else
+			attIdentificacao.addAttribute("", "", "SECAO", "String", String
 				.valueOf(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu()));
 
 		String auxStr = obterUnidadeDocumento(mov);

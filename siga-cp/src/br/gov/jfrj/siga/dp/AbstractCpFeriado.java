@@ -31,13 +31,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-@Entity
-@Table(name = " CORPORATIVO.CP_FERIADO")
+@MappedSuperclass
 public abstract class AbstractCpFeriado extends Objeto implements Serializable {
 
 	@Id

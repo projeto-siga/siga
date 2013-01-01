@@ -19,8 +19,10 @@
 package br.gov.jfrj.siga.dp;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "CP_PERSONALIZACAO", schema="CORPORATIVO")
 public class CpPersonalizacao extends AbstractCpPersonalizacao {
 
 }

@@ -18,6 +18,8 @@ import models.SrSolicitacao;
 
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
+	public boolean pesquisar = false;
+	
 	public String dtIni;
 
 	public String dtFim;
@@ -28,7 +30,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public DpLotacao lotaAtendente;
 
-	public List<SrSolicitacao> buscar() {
+	public List<SrSolicitacao> buscar() throws Exception{
+		
 		String query = "from SrSolicitacao sol where sol.hisDtFim is null ";
 
 		if (cadastrante != null)
@@ -100,7 +103,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			subquery = " and exists (from SrMarca situacao where situacao.solicitacao = sol.solicitacaoInicial "
 					+ subquery + " )";
 
-		List listaRetorno = JPA.em().createQuery(query + subquery)
+		List listaRetorno = JPA.em().createQuery(query + subquery + " order by sol.idSolicitacao desc")
 				.getResultList();
 
 		return listaRetorno;

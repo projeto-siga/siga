@@ -22,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 
 import javax.persistence.Entity;
 import javax.persistence.PostLoad;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.Hibernate;
 
@@ -30,9 +32,12 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
+@Table(name="CP_MODELO", schema="CORPORATIVO")
 public class CpModelo extends AbstractCpModelo {
 
+	@Transient
 	private byte[] cacheConteudoBlobMod;
+	@Transient
 	private String cacheConteudo;
 
 	public boolean equivale(Object other) {

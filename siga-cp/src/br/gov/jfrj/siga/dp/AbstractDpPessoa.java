@@ -61,9 +61,11 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	@Desconsiderar
 	private long idPessoaIni;
 	@Column(name = "DATA_FIM_PESSOA")
+	@Temporal(TemporalType.DATE)
 	@Desconsiderar
 	private Date dataFimPessoa;
 	@Column(name = "DATA_INI_PESSOA")
+	@Temporal(TemporalType.DATE)
 	@Desconsiderar
 	private Date dataInicioPessoa;
 	@Column(name = "IDE_PESSOA")
@@ -105,7 +107,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	private String grauInstrucao;
 	@Column(name = "ID_PROVIMENTO")
 	private Integer idProvimento;
-	@Column(name = "NACIONALIDADE_PESSOA")
+	@Column(name = "NACIONALIDADE_PESSOA", columnDefinition="CHAR(60)")
 	private String nacionalidade;
 	@Column(name = "NATURALIDADE_PESSOA")
 	private String naturalidade;
@@ -134,7 +136,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	@Temporal(TemporalType.DATE)
 	@Column(name = "RG_DATA_EXPEDICAO_PESSOA")
 	private Date dataExpedicaoIdentidade;
-	@Column(name = "RG_UF_PESSOA")
+	@Column(name = "RG_UF_PESSOA", columnDefinition="CHAR(255)")
 	private String ufIdentidade;
 	@Column(name = "ID_ESTADO_CIVIL")
 	private Integer idEstadoCivil;

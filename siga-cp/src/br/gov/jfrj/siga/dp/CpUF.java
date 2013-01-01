@@ -27,10 +27,12 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
+@Table(name = "CP_UF", schema = "CORPORATIVO")
 public class CpUF extends AbstractCpUF implements Serializable,
 		Selecionavel {
 

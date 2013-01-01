@@ -24,18 +24,29 @@ import models.SrUrgencia;
 
 import org.hibernate.Session;
 
+import play.Logger;
+import play.data.binding.As;
 import play.db.jpa.JPA;
 import play.mvc.Before;
+import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class Application extends Controller {
+
+	/*
+	 * @Catch public static void catchExceptions(Exception e) {
+	 * //MailUtils.sendErrorMail(e); Logger.error(e, "sigasr - erro");
+	 * error(e.getMessage()); }
+	 */
 
 	@Before
 	static void prepararCpDao() throws Exception {
@@ -46,9 +57,8 @@ public class Application extends Controller {
 	}
 
 	@Before(unless = { "proxy", "exibirAtendente", "exibirAtributos",
-			"exibirLocalERamal" })
-	static void addDefaults() {
-
+			"exibirLocalERamal", "exibirItemConfiguracao", "exibirServico" })
+	static void addDefaults() throws Exception {
 		try {
 			renderArgs.put("_base", "http://localhost:8080");
 
@@ -56,6 +66,18 @@ public class Application extends Controller {
 			for (Http.Header h : request.headers.values())
 				if (!h.name.equals("content-type"))
 					atributos.put(h.name, h.value());
+
+			String popup = params.get("popup");
+			if (popup == null
+					|| (!popup.equals("true") && !popup.equals("false")))
+				popup = "false";
+			String paginaVazia = ConexaoHTTP.get(
+					"http://localhost:8080/siga/pagina_vazia.action?popup="
+							+ popup, atributos);
+			String[] pageText = paginaVazia.split("<!-- insert body -->");
+			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
+			renderArgs.put("_cabecalho", cabecalho);
+			renderArgs.put("_rodape", pageText[1]);
 
 			String[] IDs = ConexaoHTTP.get(
 					"http://localhost:8080/siga/usuario_autenticado.action",
@@ -75,9 +97,16 @@ public class Application extends Controller {
 			if (IDs[3] != null && !IDs[3].equals(""))
 				renderArgs.put("lotaTitular",
 						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
-
-		} catch (Exception e) {
+		} catch (ArrayIndexOutOfBoundsException aioob) {
+			// Informações não vieram
 			redirect("http://localhost:8080/siga");
+		}
+
+		try {
+			assertAcesso("ADM:Administrar");
+			renderArgs.put("exibirMenuAdministrar", true);
+		} catch (Exception e) {
+			renderArgs.put("exibirMenuAdministrar", false);
 		}
 
 	}
@@ -90,7 +119,19 @@ public class Application extends Controller {
 		return (DpLotacao) renderArgs.get("lotaTitular");
 	}
 
-	public static void index() {
+	private static void assertAcesso(String pathServico) throws Exception {
+		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;SR:Módulo de Serviços;"
+				+ pathServico;
+		if (!Cp.getInstance()
+				.getConf()
+				.podeUtilizarServicoPorConfiguracao(getCadastrante(),
+						getLotaTitular(), servico))
+			throw new Exception("Acesso negado. Serviço: '" + servico
+					+ "' usuário: " + getCadastrante().getSigla()
+					+ " lotação: " + getLotaTitular().getSiglaCompleta());
+	}
+
+	public static void index() throws Exception {
 		editar(null);
 	}
 
@@ -102,20 +143,22 @@ public class Application extends Controller {
 		render(contagens);
 	}
 
-	public static void editar(Long id) {
+	public static void editar(Long id) throws Exception {
 		SrSolicitacao solicitacao;
 		if (id == null) {
 			solicitacao = new SrSolicitacao();
+			solicitacao.solicitante = getCadastrante();
 		} else
 			solicitacao = SrSolicitacao.findById(id);
 
-		solicitacao.solicitante = getCadastrante();
 		formEditar(solicitacao.deduzirLocalERamal());
 	}
 
 	public static void exibirLocalERamal(SrSolicitacao solicitacao)
 			throws Exception {
-		render(solicitacao.deduzirLocalERamal());
+		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
+				.getResultList();
+		render(solicitacao.deduzirLocalERamal(), locais);
 	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao)
@@ -123,10 +166,34 @@ public class Application extends Controller {
 		render(solicitacao);
 	}
 
-	private static void formEditar(SrSolicitacao solicitacao) {
+	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
+			throws Exception {
+		if (!SrItemConfiguracao.listarPorPessoa(solicitacao.solicitante)
+				.contains(solicitacao.itemConfiguracao))
+			solicitacao.itemConfiguracao = null;
 
-		List<SrItemConfiguracao> itensConfiguracao = SrItemConfiguracao.all()
-				.fetch();
+		solicitacao.servico = null;
+
+		render(solicitacao);
+	}
+
+	public static void exibirServico(SrSolicitacao solicitacao)
+			throws Exception {
+		List<SrServico> servicos = SrServico.listarPorPessoaEItem(
+				solicitacao.solicitante, solicitacao.itemConfiguracao);
+		if (solicitacao.servico == null
+				|| !servicos.contains(solicitacao.servico)) {
+			if (servicos.size() > 0)
+				solicitacao.servico = servicos.get(0);
+			else
+				solicitacao.servico = null;
+		}
+
+		render(solicitacao, servicos);
+	}
+
+	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
+
 		SrFormaAcompanhamento[] formasAcompanhamento = SrFormaAcompanhamento
 				.values();
 		SrUrgencia[] urgencias = SrUrgencia.values();
@@ -139,9 +206,19 @@ public class Application extends Controller {
 		boolean priorizar = solicitacao.podePriorizar(getLotaTitular(),
 				getCadastrante());
 
-		render("@editar", solicitacao, itensConfiguracao, formasAcompanhamento,
-				gravidades, urgencias, tendencias, solicitacao, priorizar,
-				abrirFechando, locais);
+		List<SrServico> servicos = SrServico.listarPorPessoaEItem(
+				solicitacao.solicitante, solicitacao.itemConfiguracao);
+		if (solicitacao.servico == null
+				|| !servicos.contains(solicitacao.servico)) {
+			if (servicos.size() > 0)
+				solicitacao.servico = servicos.get(0);
+			else
+				solicitacao.servico = null;
+		}
+
+		render("@editar", solicitacao, formasAcompanhamento, gravidades,
+				urgencias, tendencias, priorizar, abrirFechando, locais,
+				servicos);
 	}
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
@@ -149,7 +226,7 @@ public class Application extends Controller {
 
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
-					"Item nÃ£o informado");
+					"Item não informado");
 		}
 
 		if (solicitacao.servico == null) {
@@ -184,21 +261,23 @@ public class Application extends Controller {
 		exibir(id);
 	}
 
-	public static void listar(SrSolicitacaoFiltro filtro) {
+	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
 
-		List<SrSolicitacao> listaSolicitacao = filtro.buscar();
-
+		List<SrSolicitacao> listaSolicitacao;
+		
+		if (filtro.pesquisar)
+			listaSolicitacao = filtro.buscar();
+		else 
+			listaSolicitacao = new ArrayList<SrSolicitacao>();
+		
 		// Montando o filtro...
 		SrUrgencia[] urgencias = SrUrgencia.values();
 		SrTendencia[] tendencias = SrTendencia.values();
 		SrGravidade[] gravidades = SrGravidade.values();
-		String[] tipos = new String[] { "Pessoa", "LotaÃ§Ã£o" };
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
-
-		if (filtro == null)
-			filtro = new SrSolicitacaoFiltro();
 
 		render(listaSolicitacao, urgencias, tendencias, gravidades, tipos,
 				marcadores, filtro);
@@ -253,7 +332,7 @@ public class Application extends Controller {
 		formEditar(filha);
 	}
 
-	public static void listarDesignacao() {
+	public static void listarDesignacao() throws Exception {
 		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes();
 		render(designacoes);
 	}
@@ -328,13 +407,16 @@ public class Application extends Controller {
 		listarItem();
 	}
 
-	public static void selecionarItem(String sigla) {
-		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla);
+	public static void selecionarItem(String sigla, Long pessoa)
+			throws Exception {
+		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
+				pessoa != null ? JPA.em().find(DpPessoa.class, pessoa) : null);
 		render("@selecionar", sel);
 	}
 
 	public static void buscarItem(String sigla, String nome,
-			SrItemConfiguracao filtro) {
+			SrItemConfiguracao filtro, Long pessoa) {
+
 		List<SrItemConfiguracao> itens = null;
 
 		try {
@@ -342,12 +424,13 @@ public class Application extends Controller {
 				filtro = new SrItemConfiguracao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar();
+			itens = filtro.buscar(pessoa != null ? JPA.em().find(
+					DpPessoa.class, pessoa) : null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrItemConfiguracao>();
 		}
 
-		render(itens, filtro, nome);
+		render(itens, filtro, nome, pessoa);
 	}
 
 	public static void listarTipoAtributo() {
@@ -396,24 +479,34 @@ public class Application extends Controller {
 		listarServico();
 	}
 
-	public static void selecionarServico(String sigla) {
-		SrServico sel = new SrServico().selecionar(sigla);
+	public static void selecionarServico(String sigla, Long pessoa, Long item)
+			throws Exception {
+		SrServico sel = new SrServico().selecionar(
+				sigla,
+				pessoa != null ? JPA.em().find(DpPessoa.class, pessoa) : null,
+				item != null ? (SrItemConfiguracao) SrItemConfiguracao
+						.findById(item) : null);
 		render("@selecionar", sel);
 	}
 
-	public static void buscarServico(String sigla, String nome, SrServico filtro) {
+	public static void buscarServico(String sigla, String nome,
+			SrServico filtro, Long pessoa, Long item) {
 		List<SrServico> itens = null;
 		try {
 			if (filtro == null)
 				filtro = new SrServico();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar();
+			itens = filtro.buscar(
+					pessoa != null ? JPA.em().find(DpPessoa.class, pessoa)
+							: null,
+					item != null ? (SrItemConfiguracao) SrItemConfiguracao
+							.findById(item) : null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrServico>();
 		}
 
-		render(itens, filtro, nome);
+		render(itens, filtro, nome, pessoa, item);
 	}
 
 	public static void proxy(String url) throws Exception {

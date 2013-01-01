@@ -29,6 +29,40 @@ function carregouLocalERamal(response, param){
 	div.innerHTML = response;
 }
 
+function carregarItem(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+	}
+	PassAjaxResponseToFunction('@{Application.exibirItemConfiguracao()}', 'carregouItem', null, false, params);
+}
+
+function carregouItem(response, param){
+	var div = document.getElementById('divItem');
+	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
+}
+
+function carregarServico(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+	}
+	PassAjaxResponseToFunction('@{Application.exibirServico()}', 'carregouServico', null, false, params);
+}
+
+function carregouServico(response, param){
+	var div = document.getElementById('divServico');
+	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
+}
+
 </script>
 
 <div class="gt-bd clearfix">
@@ -54,7 +88,8 @@ function carregouLocalERamal(response, param){
 
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
-				nome:'solicitacao.solicitante', value:solicitacao.solicitante, onchange:'carregarLocalERamal()' /}
+				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
+				onchange:'carregarLocalERamal();carregarItem();' /}
 			</div>
 
 			<div class="gt-form-row gt-width-66">
@@ -64,27 +99,12 @@ function carregouLocalERamal(response, param){
 				labelProperty:'descrFormaAcompanhamento',
 				value:solicitacao.formaAcompanhamento /}
 			</div>
-			
+
 			<div id="divLocalERamal">#{include
 				'Application/exibirLocalERamal.html' /}</div>
 
-			<div class="gt-form-row gt-width-66">
-				<label>Item</label> #{selecao tipo:'item',
-				nome:'solicitacao.itemConfiguracao',
-				value:solicitacao.itemConfiguracao, onchange:'carregarAtributos()'
-				/} <span style="color: red">#{error
-					'solicitacao.itemConfiguracao' /}</span>
-			</div>
-
-			<div class="gt-form-row gt-width-66">
-				<label>Serviço</label> #{selecao tipo:'servico',
-				nome:'solicitacao.servico', value:solicitacao.servico,
-				onchange:'carregarAtributos()' /} <span style="color: red">#{error
-					'solicitacao.servico' /}</span>
-			</div>
-
-			<div id="divAtributos">#{include
-				'Application/exibirAtributos.html' /}</div>
+			<div id="divItem">#{include
+				'Application/exibirItemConfiguracao.html' /}</div>
 
 			#{if priorizar}
 			<div class="gt-form-row gt-width-66">

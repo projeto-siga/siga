@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -32,6 +33,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
+@Table(name = "CP_PAPEL", schema = "CORPORATIVO")
 public class CpPapel extends AbstractCpPapel implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 

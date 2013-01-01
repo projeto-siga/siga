@@ -18,13 +18,14 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "CORPORATIVO.CP_GRUPO")
+@DiscriminatorValue("3")
 public class CpPerfilJEE extends CpGrupo implements Selecionavel {
 
 }

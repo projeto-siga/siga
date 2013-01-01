@@ -25,6 +25,7 @@ package br.gov.jfrj.siga.cp;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -35,16 +36,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-@Entity
-@Table(name = "CORPORATIVO.CP_SERVICO")
+@MappedSuperclass
 public abstract class AbstractCpServico extends Objeto implements Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_SERVICO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CP_SERVICO_SEQ")
 	@Id
 	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
 	@Column(name = "ID_SERVICO", nullable = false)

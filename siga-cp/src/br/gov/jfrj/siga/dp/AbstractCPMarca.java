@@ -34,6 +34,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -42,23 +44,25 @@ import br.gov.jfrj.siga.model.Objeto;
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
 @Entity()
-@Table(name = "CORPORATIVO.CP_MARCA")
+@Table(name = "CP_MARCA", schema="CORPORATIVO")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.STRING
+@DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.INTEGER
 
 )
 public abstract class AbstractCPMarca extends Objeto implements Serializable {
 
 	@Id
-	@SequenceGenerator(name="my_seq", sequenceName="CORPORATIVO.CP_MARCA_SEQ")
-	@GeneratedValue(generator = "my_seq")
+	@SequenceGenerator(name="my_seq", sequenceName="CP_MARCA_SEQ")
+	//Desabilitando sequence. Ver comentário em sigasr.controllers.Util.nextVal() @GeneratedValue(generator = "my_seq")
 	@Column(name = "ID_MARCA")
 	private java.lang.Long idMarca;
 
 	@Column(name = "DT_INI_MARCA")
+	@Temporal(TemporalType.DATE)
 	private Date dtIniMarca;
 
 	@Column(name = "DT_FIM_MARCA")
+	@Temporal(TemporalType.DATE)
 	private Date dtFimMarca;
 
 	@ManyToOne

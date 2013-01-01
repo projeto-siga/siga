@@ -6,13 +6,14 @@
 		<h2>Pesquisa de solicitações</h2>
 		#{if listaSolicitacao} #{quadroSolicitacao
 		solicitacoes:listaSolicitacao, titulo:'' /} #{/if}
-		#{else} <br />
+		#{elseif filtro?.pesquisar} <br />
 		<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum
 			item foi encontrado.</div>
-		#{/else}
+		#{/elseif }
 
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 			<form action="@{Application.listar}">
+				<input type="hidden" name="filtro.pesquisar" value="true" />
 				<table class="gt-form-table">
 					<colgroup>
 						<col width="30%" />
@@ -56,11 +57,11 @@
 					</tr>
 					<tr>
 						<td>Item</td>
-						<td>#{selecao tipo:'item', nome:'filtro.itemConfiguracao',
+						<td>#{selecao tipo:'item', grande:true, nome:'filtro.itemConfiguracao',
 							value:filtro.itemConfiguracao /}</td>
 					</tr>
 					<tr>
-						<td>Serviço</td>
+						<td>Ação</td>
 						<td>#{selecao tipo:'servico', nome:'filtro.servico',
 							value:filtro.servico /}</td>
 					</tr>

@@ -30,10 +30,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
+@Table(name = "CP_FERIADO", schema="CORPORATIVO")
 public class CpFeriado extends AbstractCpFeriado implements Serializable,
 		Selecionavel {
 

@@ -34,6 +34,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -42,8 +43,7 @@ import org.hibernate.annotations.Formula;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
-@Entity
-@Table(name = "CP_ORGAO", schema = "CORPORATIVO")
+@MappedSuperclass
 public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 		Serializable {
 

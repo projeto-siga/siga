@@ -10,7 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 import controllers.SrConfiguracaoBL;
+import controllers.Util;
 
+import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -21,10 +23,11 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.model.ObjetoBase;
 
 @MappedSuperclass
-public abstract class ObjetoPlayComHistorico extends Objeto implements
-		Historico {
+public abstract class ObjetoPlayComHistorico extends GenericModel implements
+		Historico, ManipuladorHistorico {
 
 	@Column(name = "HIS_ID_INI")
 	private Long hisIdIni;
@@ -95,57 +98,13 @@ public abstract class ObjetoPlayComHistorico extends Objeto implements
 		this.hisAtivo = hisAtivo;
 	}
 
-	public abstract Long getId();
-
-	public abstract void setId(Long id);
-
-	// Edson: Assim que for resolvido o problema no ObjetoBase, colocar este
-	// getConfiguracao() lá.
-	public SrConfiguracao getConfiguracao(DpPessoa pess,
-			SrItemConfiguracao item, SrServico servico, long idTipo,
-			SrSubTipoConfiguracao subTipo) throws Exception {
-
-		SrConfiguracao conf = new SrConfiguracao(pess.getOrgaoUsuario(),
-				pess.getLotacao(), pess, pess.getCargo(),
-				pess.getFuncaoConfianca(), item, servico, JPA.em().find(
-						CpTipoConfiguracao.class, idTipo), subTipo);
-
-		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
+	@Override
+	public void salvar() throws Exception{
+		Util.salvar(this);
 	}
 
-	public List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
-			SrItemConfiguracao item, SrServico servico, long idTipo,
-			SrSubTipoConfiguracao subTipo) throws Exception {
-		SrConfiguracao conf = new SrConfiguracao(pess.getOrgaoUsuario(),
-				pess.getLotacao(), pess, pess.getCargo(),
-				pess.getFuncaoConfianca(), item, servico, JPA.em().find(
-						CpTipoConfiguracao.class, idTipo), subTipo);
-		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf);
+	@Override
+	public void finalizar() throws Exception {
+		Util.finalizar(this);
 	}
-
-	public void copiarPara(Object o) {
-		for (Method getter : this.getClass().getDeclaredMethods()) {
-			try {
-				String getterName = getter.getName();
-				if (!getterName.startsWith("get"))
-					continue;
-				if (Collection.class.isAssignableFrom(getter.getReturnType()))
-					continue;
-				String setterName = getterName.replace("get", "set");
-				Object origValue = getter.invoke(this);
-				o.getClass().getMethod(setterName, getter.getReturnType())
-						.invoke(o, origValue);
-			} catch (NoSuchMethodException nSME) {
-				int a = 0;
-			} catch (IllegalAccessException iae) {
-				int a = 0;
-			} catch (IllegalArgumentException iae) {
-				int a = 0;
-			} catch (InvocationTargetException nfe) {
-				int a = 0;
-			}
-
-		}
-	}
-
 }

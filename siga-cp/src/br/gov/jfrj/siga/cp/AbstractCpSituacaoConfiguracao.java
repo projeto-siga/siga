@@ -39,7 +39,6 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-@Table(name = "CORPORATIVO.CP_SITUACAO_CONFIGURACAO")
 public abstract class AbstractCpSituacaoConfiguracao extends Objeto implements Serializable {
 
 	/**

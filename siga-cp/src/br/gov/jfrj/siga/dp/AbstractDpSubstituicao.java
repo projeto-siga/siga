@@ -34,19 +34,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-@Entity
-@Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
+@MappedSuperclass
 public abstract class AbstractDpSubstituicao extends Objeto implements Serializable {
 
 	@Column(name = "DT_FIM_SUBST")
+	@Temporal(TemporalType.DATE)
 	private Date dtFimSubst;
 
 	@Column(name = "DT_INI_SUBST")
+	@Temporal(TemporalType.DATE)
 	private Date dtIniSubst;
 
 	@SequenceGenerator(name = "generator", sequenceName = "DP_SUBSTITUICAO_SEQ")
@@ -72,9 +76,11 @@ public abstract class AbstractDpSubstituicao extends Objeto implements Serializa
 	private DpPessoa titular;
 	
 	@Column(name = "DT_FIM_REG")
+	@Temporal(TemporalType.DATE)
 	private Date dtFimRegistro;
 
 	@Column(name = "DT_INI_REG")
+	@Temporal(TemporalType.DATE)
 	private Date dtIniRegistro;
 
 	@Column(name = "ID_REG_INI")

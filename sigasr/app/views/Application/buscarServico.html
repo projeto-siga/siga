@@ -1,12 +1,11 @@
 #{extends 'main.html' /}
-#{set popup='true' /}
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">
 			<form action="@{Application.buscarServico}">
 				<table class="gt-form-table">
 					<tr class="header">
-						<td align="center" valign="top" colspan="4">Dados do serviço</td>
+						<td align="center" valign="top" colspan="4">Dados da ação</td>
 					</tr>
 					<tr>
 						<td>Código:</td>
@@ -22,6 +21,8 @@
 						</td>
 					</tr>
 					<tr>
+						<input type="hidden" name="pessoa" value="${pessoa}" />
+						<input type="hidden" name="item" value="${item}" />
 						<td><input type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" /></td>
 					</tr>
 				</table>

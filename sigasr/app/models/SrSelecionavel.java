@@ -15,7 +15,7 @@ public interface SrSelecionavel {
 	
 	public void setDescricao(String descricao);
 
-	public SrSelecionavel selecionar(String sigla);
+	public SrSelecionavel selecionar(String sigla) throws Exception;
 
-	public List<? extends SrSelecionavel> buscar();
+	public List<? extends SrSelecionavel> buscar() throws Exception;
 }

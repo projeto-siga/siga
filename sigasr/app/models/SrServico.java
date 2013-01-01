@@ -2,8 +2,11 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,8 +19,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import controllers.SrConfiguracaoBL;
+import controllers.Util;
+
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -28,7 +36,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_SERVICO")
-public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
+public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel {
 
 	@Id
 	@GeneratedValue
@@ -98,17 +106,21 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
 	}
 
 	@Override
-	public SrServico selecionar(String sigla) {
+	public SrServico selecionar(String sigla) throws Exception {
+		return selecionar(sigla, null, null);
+	}
+
+	public SrServico selecionar(String sigla, DpPessoa pess,
+			SrItemConfiguracao item) throws Exception {
 		setSigla(sigla);
-		List<SrServico> itens = buscar();
+		List<SrServico> itens = buscar(pess, item);
 		if (itens.size() == 0 || itens.size() > 1)
 			return null;
 		return itens.get(0);
 
 	}
 
-	@Override
-	public List<SrServico> buscar() {
+	public List<SrServico> buscarOld() {
 		String query = "from SrServico where 1=1";
 		if (tituloServico != null && !tituloServico.equals("")) {
 			for (String s : tituloServico.toLowerCase().split("\\s"))
@@ -118,6 +130,43 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
 			query += " and siglaServico like '%" + siglaServico + "%' ";
 		query += " and hisDtFim is null";
 		return SrServico.find(query).fetch();
+	}
+
+	@Override
+	public List<SrServico> buscar() throws Exception {
+		return buscar(null, null);
+	}
+
+	public List<SrServico> buscar(DpPessoa pess, SrItemConfiguracao item)
+			throws Exception {
+
+		List<SrServico> lista = new ArrayList<SrServico>();
+		List<SrServico> listaFinal = new ArrayList<SrServico>();
+
+		if (pess == null)
+			lista = listar();
+		else
+			lista = listarPorPessoaEItem(pess, item);
+
+		if ((siglaServico == null || siglaServico.equals(""))
+				&& (tituloServico == null || tituloServico.equals("")))
+			return lista;
+
+		for (SrServico servico : lista) {
+			if (siglaServico != null && !siglaServico.equals("")
+					&& !(servico.siglaServico.contains(getSigla())))
+				continue;
+			if (tituloServico != null && !tituloServico.equals("")) {
+				boolean naoAtende = false;
+				for (String s : tituloServico.toLowerCase().split("\\s"))
+					if (!servico.tituloServico.toLowerCase().contains(s))
+						naoAtende = true;
+				if (naoAtende)
+					continue;
+			}
+			listaFinal.add(servico);
+		}
+		return listaFinal;
 	}
 
 	@Override
@@ -150,7 +199,14 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
 		}
 		return 2 - camposVazios;
 	}
-	
+
+	public String getSiglaSemZeros() {
+		int posFimComparacao = getSigla().indexOf(".00");
+		if (posFimComparacao < 0)
+			posFimComparacao = getSigla().length() - 1;
+		return getSigla().substring(0, posFimComparacao + 1);
+	}
+
 	public boolean isPaiDeOuIgualA(SrServico outroServico) {
 		if (outroServico == null || outroServico.getSigla() == null)
 			return false;
@@ -158,7 +214,7 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
 			return true;
 		int posFimComparacao = getSigla().indexOf(".00");
 		if (posFimComparacao < 0)
-			posFimComparacao = getSigla().length()-1;
+			posFimComparacao = getSigla().length() - 1;
 		return outroServico.getSigla().startsWith(
 				getSigla().substring(0, posFimComparacao + 1));
 	}
@@ -166,9 +222,39 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel{
 	public boolean isFilhoDeOuIgualA(SrServico outroItem) {
 		return outroItem.isPaiDeOuIgualA(this);
 	}
-	
-	public static List<SrServico> listar(){
-		return SrServico.find("byHisDtFimIsNull").fetch();
+
+	public List<SrServico> listarServicoETodosDescendentes() {
+		return SrServico.find("byHisDtFimIsNullAndSiglaServicoLike",
+				getSiglaSemZeros() + "%").fetch();
 	}
 
+	public static List<SrServico> listar() {
+		return SrServico.find("hisDtFim is null order by siglaServico").fetch();
+	}
+
+	public static List<SrServico> listarPorPessoaEItem(DpPessoa pess,
+			SrItemConfiguracao item) throws Exception {
+		Set<SrServico> listaFinal = new TreeSet<SrServico>(
+				new Comparator<SrServico>() {
+					@Override
+					public int compare(SrServico o1, SrServico o2) {
+						if (o1 != null && o2 != null
+								&& o1.idServico == o2.idServico)
+							return 0;
+						return o1.siglaServico.compareTo(o2.siglaServico);
+					}
+				});
+		List<SrConfiguracao> confs = Util.getConfiguracoes(pess, item,
+				null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
+				new int[] { SrConfiguracaoBL.SERVICO });
+		for (SrConfiguracao conf : confs) {
+			if (conf.servico == null)
+				listaFinal.addAll(listar());
+			else
+				listaFinal.addAll(conf.servico
+						.listarServicoETodosDescendentes());
+		}
+		return new ArrayList(listaFinal);
+	}
 }

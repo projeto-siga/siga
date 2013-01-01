@@ -21,8 +21,7 @@ public class Bootstrap extends Job {
 
 	public void doJob() {
 		
-		if (SrItemConfiguracao.count() == 0) {
-
+/*
 			SrItemConfiguracao geDoc;
 			SrItemConfiguracao gePat;
 			try {
@@ -46,7 +45,7 @@ public class Bootstrap extends Job {
 				"Manutenção");
 				manutSoft.salvar();
 
-				SrServico desenv = (SrServico) new SrServico("02.00",
+				SrServico desenv = (SrServico) new SrServico("01.02",
 						"Desenvolvimento");
 				desenv.salvar();
 				
@@ -75,28 +74,32 @@ public class Bootstrap extends Job {
 						CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 				asso2.salvar();
 
-				SrConfiguracao atenEPre = new SrConfiguracao();
-				atenEPre.preAtendente = JPA.em().find(DpLotacao.class, 5046L); //SEGEP
-				atenEPre.atendente = JPA.em().find(DpLotacao.class, 4961L); // CSIS
-				atenEPre.setCpTipoConfiguracao(JPA.em().find(
+				SrConfiguracao paraCSIS = new SrConfiguracao();
+				//atenEPre.preAtendente = JPA.em().find(DpLotacao.class, 5046L); //SEGEP
+				paraCSIS.atendente = JPA.em().find(DpLotacao.class, 4961L); // CSIS
+				paraCSIS.setLotacao(JPA.em().find(DpLotacao.class, 4961L)); // CSIS
+				paraCSIS.setCpTipoConfiguracao(JPA.em().find(
 						CpTipoConfiguracao.class,
 						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-				atenEPre.salvar();
+				paraCSIS.itemConfiguracao = gePat;
+				paraCSIS.salvar();
+				System.out.println("primeiro: " + paraCSIS.getIdConfiguracao());
 				
-				SrConfiguracao pos = new SrConfiguracao();
-				pos.posAtendente = JPA.em().find(DpLotacao.class, 4901L); // STI
-				pos.servico = manutSoft;
-				pos.setCpTipoConfiguracao(JPA.em().find(
+				SrConfiguracao paraSESIA = new SrConfiguracao();
+				paraSESIA.atendente = JPA.em().find(DpLotacao.class, 5053L); // SESIA
+				paraSESIA.setLotacao(JPA.em().find(DpLotacao.class, 5053L)); // SESIA
+				paraSESIA.itemConfiguracao = geDoc;
+				paraSESIA.setCpTipoConfiguracao(JPA.em().find(
 						CpTipoConfiguracao.class,
 						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-				pos.salvar();
+				paraSESIA.salvar();
+				System.out.println("segundo:" + paraSESIA.getIdConfiguracao());
 				
 	
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+*/
 		}
 	}
-}

@@ -40,6 +40,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -66,9 +68,9 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	 */
 	private static final long serialVersionUID = 4514355304185987860L;
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CP_CONFIGURACAO_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	//Desabilitando sequence. Ver comentário em sigasr.controllers.Util.nextVal() //Desabilitando sequence. Ver comentário em sigasr.controllers.Util.nextVal() @GeneratedValue(strategy = SEQUENCE, generator = "generator")
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;
@@ -137,9 +139,11 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	private CpTipoLotacao cpTipoLotacao;
 
 	@Column(name = "DT_INI_VIG_CONFIGURACAO")
+	@Temporal(TemporalType.DATE)
 	private Date dtIniVigConfiguracao;
 
 	@Column(name = "DT_FIM_VIG_CONFIGURACAO")
+	@Temporal(TemporalType.DATE)
 	private Date dtFimVigConfiguracao;
 	
 	@Desconsiderar

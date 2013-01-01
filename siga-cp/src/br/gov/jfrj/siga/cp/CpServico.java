@@ -19,10 +19,17 @@
 package br.gov.jfrj.siga.cp;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Selecionavel;
 
+@NamedQuery(name = "consultarPorSiglaCpServico", query = "select org from CpServico org "
+	+ "where upper(org.siglaServico) like upper(:siglaServico) "
+	+ "and ((:idServicoPai = 0 and org.cpServicoPai is null) or org.cpServicoPai.idServico = :idServicoPai)")
 @Entity
+@Table(name = "CP_SERVICO", schema="CORPORATIVO")
 public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	/**
@@ -63,8 +70,10 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 	public void setSigla(String sigla) {
 		setSiglaServico(sigla);
 	}
+
 	/**
-	 * @return retorna a sigla retirando a parte inicial pertencente ao seviço pai. 
+	 * @return retorna a sigla retirando a parte inicial pertencente ao seviço
+	 *         pai.
 	 * 
 	 */
 	public String getSiglaSemPartePai() {
@@ -82,6 +91,7 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 		}
 		return siglaSrv;
 	}
+
 	/**
 	 * @return retorna o nível hierárquico do serviço
 	 */

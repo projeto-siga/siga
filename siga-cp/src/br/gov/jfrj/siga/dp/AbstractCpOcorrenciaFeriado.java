@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.model.Objeto;
 
 //Essa anotação é necessária por causa do mappedBy em CpFeriado que aponta pra cá
 @MappedSuperclass
-@Table(name = "CORPORATIVO.CP_OCORRENCIA_FERIADO")
+@Table(schema="CORPORATIVO", name="CP_OCORRENCIA_FERIADO")
 public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Serializable {
 
 	@Id

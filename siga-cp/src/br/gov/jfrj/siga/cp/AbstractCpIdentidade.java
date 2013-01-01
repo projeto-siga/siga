@@ -32,6 +32,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -40,7 +42,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CP_IDENTIDADE_SEQ")
 	@Id
 	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
 	@Column(name = "ID_IDENTIDADE", nullable = false)
@@ -64,10 +66,13 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	@Desconsiderar
 	private String dscSenhaIdentidadeCriptoSinc;
 	@Column(name = "DATA_CANCELAMENTO_IDENTIDADE")
+	@Temporal(TemporalType.DATE)
 	private Date dtCancelamentoIdentidade;
 	@Column(name = "DATA_CRIACAO_IDENTIDADE")
+	@Temporal(TemporalType.DATE)
 	private Date dtCriacaoIdentidade;
 	@Column(name = "DATA_EXPIRACAO_IDENTIDADE")
+	@Temporal(TemporalType.DATE)
 	private Date dtExpiracaoIdentidade;
 	@Column(name = "LOGIN_IDENTIDADE")
 	private String nmLoginIdentidade;
@@ -87,10 +92,12 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 
 	@Column(name = "HIS_DT_INI")
 	@Desconsiderar
+	@Temporal(TemporalType.DATE)
 	private Date hisDtIni;
 
 	@Column(name = "HIS_DT_FIM")
 	@Desconsiderar
+	@Temporal(TemporalType.DATE)
 	private Date hisDtFim;
 
 	@Column(name = "HIS_ATIVO")

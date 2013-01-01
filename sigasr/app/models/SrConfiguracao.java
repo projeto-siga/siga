@@ -13,7 +13,10 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
+import controllers.Util;
+
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -26,7 +29,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @Entity
 @Table(name = "SR_CONFIGURACAO")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
-public class SrConfiguracao extends CpConfiguracao {
+public class SrConfiguracao extends CpConfiguracao implements
+		ManipuladorHistorico {
 
 	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
@@ -79,15 +83,10 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	}
 
-	public SrConfiguracao(CpOrgaoUsuario orgao, DpLotacao lota, DpPessoa pess,
-			DpCargo cargo, DpFuncaoConfianca funcao, SrItemConfiguracao item,
+	public SrConfiguracao(DpPessoa pess, SrItemConfiguracao item,
 			SrServico servico, CpTipoConfiguracao tipo,
 			SrSubTipoConfiguracao subTipoConfig) {
-		this.setOrgaoUsuario(orgao);
-		this.setLotacao(lota);
 		this.setDpPessoa(pess);
-		this.setCargo(cargo);
-		this.setFuncaoConfianca(funcao);
 		this.itemConfiguracao = item;
 		this.servico = servico;
 		this.setCpTipoConfiguracao(tipo);
@@ -135,4 +134,21 @@ public class SrConfiguracao extends CpConfiguracao {
 				.getResultList();
 	}
 
+	@Override
+	public void salvar() throws Exception {
+		Util.salvar(this);
+	}
+
+	@Override
+	public void finalizar() throws Exception {
+		Util.finalizar(this);
+	}
+	
+	@Override
+	public <T extends JPABase> T save() {
+		//Edson: Ver no Util o comentário sobre a chamada abaixo
+		if (getIdConfiguracao() == null)
+			setIdConfiguracao(Util.nextVal("CORPORATIVO.CP_CONFIGURACAO_SEQ"));
+		return super.save();
+	}
 }

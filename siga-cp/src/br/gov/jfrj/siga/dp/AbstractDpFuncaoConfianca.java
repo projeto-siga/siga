@@ -37,6 +37,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -51,10 +53,12 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serial
 
 	@Column(name = "DT_FIM_FUNCAO_CONFIANCA")
 	@Desconsiderar
+	@Temporal(TemporalType.DATE)
 	private Date dataFimFuncao;
 
 	@Column(name = "DT_INI_FUNCAO_CONFIANCA")
 	@Desconsiderar
+	@Temporal(TemporalType.DATE)
 	private Date dataInicioFuncao;
 
 	@Column(name = "CATEGORIA_FUNCAO_CONFIANCA")

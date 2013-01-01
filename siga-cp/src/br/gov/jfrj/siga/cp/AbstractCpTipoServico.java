@@ -33,7 +33,7 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-@Table(name = "CORPORATIVO.CP_TIPO_SERVICO")
+@Table(schema="CORPORATIVO", name="CP_TIPO_SERVICO")
 public class AbstractCpTipoServico extends Objeto{
 
 	@Id

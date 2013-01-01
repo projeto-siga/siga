@@ -8,7 +8,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 
+import controllers.Util;
+
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -34,7 +37,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
 		+ "		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
 		+ "		AND id_tp_marca = 2" + "		GROUP BY id_marcador" + "	) c "
-		+ "WHERE m.id_marcador = c.id_marcador", resultSetMapping = "colunas_contagem")
+		+ "WHERE m.id_marcador = c.id_marcador order by m.descr_marcador", resultSetMapping = "colunas_contagem")
 public class SrMarca extends CpMarca {
 
 	@ManyToOne
@@ -56,6 +59,14 @@ public class SrMarca extends CpMarca {
 	public String getDescricao() {
 		return this.getCpMarcador().getDescrMarcador() + " ("
 				+ getDpLotacaoIni().getSigla() + ")";
+	}
+	
+	@Override
+	public <T extends JPABase> T save() {
+		//Edson: Ver no Util o comentário sobre a chamada abaixo
+		if (getIdMarca() == null)
+			setIdMarca(Util.nextVal("CORPORATIVO.CP_MARCA_SEQ"));
+		return super.save();
 	}
 
 }

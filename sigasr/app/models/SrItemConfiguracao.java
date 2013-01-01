@@ -1,8 +1,12 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,10 +19,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import controllers.SrConfiguracaoBL;
 import controllers.SrItemConfiguracaoBinder;
+import controllers.Util;
 
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
@@ -85,17 +93,20 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 	}
 
 	@Override
-	public SrItemConfiguracao selecionar(String sigla) {
+	public SrItemConfiguracao selecionar(String sigla) throws Exception {
+		return selecionar(sigla, null);
+	}
+
+	public SrItemConfiguracao selecionar(String sigla, DpPessoa pess)
+			throws Exception {
 		setSigla(sigla);
-		List<SrItemConfiguracao> itens = buscar();
+		List<SrItemConfiguracao> itens = buscar(pess);
 		if (itens.size() == 0 || itens.size() > 1)
 			return null;
 		return itens.get(0);
-
 	}
 
-	@Override
-	public List<SrItemConfiguracao> buscar() {
+	public List<SrItemConfiguracao> buscarOld() {
 		String query = "from SrItemConfiguracao where 1=1";
 		if (tituloItemConfiguracao != null
 				&& !tituloItemConfiguracao.equals("")) {
@@ -107,7 +118,48 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 			query += " and siglaItemConfiguracao like '%" + getSigla() + "%' ";
 		query += " and hisDtFim is null order by siglaItemConfiguracao";
 
-		return SrServico.find(query).fetch();
+		return SrItemConfiguracao.find(query).fetch();
+	}
+
+	@Override
+	public List<SrItemConfiguracao> buscar() throws Exception {
+		return buscar(null);
+	}
+
+	public List<SrItemConfiguracao> buscar(DpPessoa pess) throws Exception {
+
+		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
+		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
+
+		if (pess == null)
+			lista = listar();
+		else
+			lista = listarPorPessoa(pess);
+
+		if ((siglaItemConfiguracao == null || siglaItemConfiguracao.equals(""))
+				&& (tituloItemConfiguracao == null || tituloItemConfiguracao
+						.equals("")))
+			return lista;
+
+		for (SrItemConfiguracao item : lista) {
+			if (siglaItemConfiguracao != null
+					&& !siglaItemConfiguracao.equals("")
+					&& !(item.siglaItemConfiguracao.toLowerCase()
+							.contains(getSigla())))
+				continue;
+			if (tituloItemConfiguracao != null
+					&& !tituloItemConfiguracao.equals("")) {
+				boolean naoAtende = false;
+				for (String s : tituloItemConfiguracao.toLowerCase().split(
+						"\\s"))
+					if (!item.tituloItemConfiguracao.toLowerCase().contains(s))
+						naoAtende = true;
+				if (naoAtende)
+					continue;
+			}
+			listaFinal.add(item);
+		}
+		return listaFinal;
 	}
 
 	@Override
@@ -140,24 +192,63 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 		return 4 - camposVazios;
 	}
 
+	public String getSiglaSemZeros() {
+		int posFimComparacao = getSigla().indexOf(".00");
+		if (posFimComparacao < 0)
+			posFimComparacao = getSigla().length() - 1;
+		return getSigla().substring(0, posFimComparacao + 1);
+	}
+
 	public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
 		if (outroItem == null || outroItem.getSigla() == null)
 			return false;
 		if (this.equals(outroItem))
 			return true;
-		int posFimComparacao = getSigla().indexOf(".00");
-		if (posFimComparacao < 0)
-			posFimComparacao = getSigla().length()-1;
-		return outroItem.getSigla().startsWith(
-				getSigla().substring(0, posFimComparacao + 1));
+
+		return outroItem.getSigla().startsWith(getSiglaSemZeros());
 	}
 
 	public boolean isFilhoDeOuIgualA(SrItemConfiguracao outroItem) {
 		return outroItem.isPaiDeOuIgualA(this);
 	}
 
-	public static List<SrItemConfiguracao> listar() {
-		return SrItemConfiguracao.find("byHisDtFimIsNull").fetch();
+	public List<SrItemConfiguracao> listarItemETodosDescendentes() {
+		return SrItemConfiguracao.find(
+				"byHisDtFimIsNullAndSiglaItemConfiguracaoLike",
+				getSiglaSemZeros() + "%").fetch();
 	}
 
+	public static List<SrItemConfiguracao> listar() {
+		return SrItemConfiguracao.find("hisDtFim is null order by siglaItemConfiguracao").fetch();
+	}
+
+	public static List<SrItemConfiguracao> listarPorPessoa(DpPessoa pess)
+			throws Exception {
+		Set<SrItemConfiguracao> listaFinal = new TreeSet<SrItemConfiguracao>(
+				new Comparator<SrItemConfiguracao>() {
+					@Override
+					public int compare(SrItemConfiguracao o1,
+							SrItemConfiguracao o2) {
+						if (o1 != null
+								&& o2 != null
+								&& o1.idItemConfiguracao == o2.idItemConfiguracao)
+							return 0;
+						return o1.siglaItemConfiguracao
+								.compareTo(o2.siglaItemConfiguracao);
+					}
+				});
+		List<SrConfiguracao> confs = Util.getConfiguracoes(pess,
+				null, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
+						SrConfiguracaoBL.ITEM_CONFIGURACAO,
+						SrConfiguracaoBL.SERVICO });
+		for (SrConfiguracao conf : confs) {
+			if (conf.itemConfiguracao == null)
+				listaFinal.addAll(listar());
+			else
+				listaFinal.addAll(conf.itemConfiguracao
+						.listarItemETodosDescendentes());
+		}
+		return new ArrayList(listaFinal);
+	}
 }

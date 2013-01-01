@@ -30,8 +30,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
 public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
 
 	/**

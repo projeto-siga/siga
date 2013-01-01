@@ -19,8 +19,10 @@
 package br.gov.jfrj.siga.cp;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(schema="CORPORATIVO", name="CP_TIPO_PAPEL")
 public class CpTipoPapel extends AbstractCpTipoPapel {
 
 }

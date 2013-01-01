@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import controllers.SrCalendar;
+import controllers.Util;
 
 @Entity
 @Table(name = "SR_SOLICITACAO")
@@ -151,6 +152,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	protected Set<SrAndamento> meuAndamentoSet;
 
 	@OneToMany(mappedBy = "solicitacaoPai", cascade = CascadeType.PERSIST)
+	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
 	@Transient
@@ -202,7 +204,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		for (int i = 0; i < 4 - ((int) Math.floor(numSolicitacao / 10)); i++)
 			numString = "0" + numString;
 
-		return orgaoUsuario.getSiglaOrgaoUsu() + "-SS-" + getAnoEmissao() + "/"
+		return orgaoUsuario.getSiglaOrgaoUsu() + "-SR-" + getAnoEmissao() + "/"
 				+ numString;
 	}
 
@@ -356,7 +358,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		if (solicitante == null)
 			return null;
 		if (cachePreAtendenteDesignado == null) {
-			SrConfiguracao conf = getConfiguracao(solicitante,
+			SrConfiguracao conf = Util.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
@@ -370,7 +372,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		if (solicitante == null)
 			return null;
 		if (cacheAtendenteDesignado == null) {
-			SrConfiguracao conf = getConfiguracao(solicitante,
+			SrConfiguracao conf = Util.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
@@ -395,7 +397,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
-		for (SrConfiguracao conf : getConfiguracoes(solicitante,
+		for (SrConfiguracao conf : Util.getConfiguracoes(solicitante,
 				itemConfiguracao, servico,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
 				null)) {
@@ -414,7 +416,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		if (solicitante == null)
 			return null;
 		if (cachePosAtendenteDesignado == null) {
-			SrConfiguracao conf = getConfiguracao(solicitante,
+			SrConfiguracao conf = Util.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
@@ -447,12 +449,23 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	}
 
 	public List<SrSolicitacao> getSolicitacaoFilhaSet() {
+		return getSolicitacaoFilhaSet(false);
+	}
+
+	private List<SrSolicitacao> getSolicitacaoFilhaSet(
+			boolean considerarFinadasHistorico) {
 		if (getHisIdIni() == null)
 			return null;
 		ArrayList<SrSolicitacao> listaCompleta = new ArrayList<SrSolicitacao>();
 		for (SrSolicitacao sol : getHistoricoSolicitacao()) {
 			if (sol.meuSolicitacaoFilhaSet != null)
-				listaCompleta.addAll(sol.meuSolicitacaoFilhaSet);
+				if (considerarFinadasHistorico)
+					listaCompleta.addAll(sol.meuSolicitacaoFilhaSet);
+				else
+					for (SrSolicitacao filha : sol.meuSolicitacaoFilhaSet)
+						if (filha.getHisDtFim() == null)
+							listaCompleta.add(filha);
+
 		}
 		return listaCompleta;
 	}
@@ -736,7 +749,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 
 	public SrSolicitacao criarFilhaSemSalvar() throws Exception {
 		SrSolicitacao filha = new SrSolicitacao();
-		copiarPara(filha);
+		Util.copiar(filha, this);
 		filha.idSolicitacao = null;
 		filha.solicitacaoPai = this;
 		filha.numSequencia = getNumeroProximaFilha();
@@ -786,7 +799,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 	public void marcar(Long marcador, DpLotacao lotacao, DpPessoa pessoa)
 			throws Exception {
 
-		new SrMarca(marcador, pessoa, lotacao, this).salvar();
+		new SrMarca(marcador, pessoa, lotacao, this).save();
 	}
 
 	@Override

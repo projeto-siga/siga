@@ -19,6 +19,9 @@
 package br.gov.jfrj.siga.cp;
 
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -60,8 +63,8 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 	public Long getId() {
 		return getIdGrupo();
 	}
-	
-	public void setId(Long id){
+
+	public void setId(Long id) {
 		setIdGrupo(id);
 	}
 

@@ -1,21 +1,40 @@
-<!DOCTYPE html>
+#{extends 'main.html' /} #{set title:'Erro Geral' /}
 
-<html>
-    <head>
-        <title>Application error</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=${_response_encoding}"/>	
-    </head>
-    <body>
-        #{if play.mode.name() == 'DEV'}
-            #{500 exception /}
-        #{/if}
-        #{else}
-            <h1>Oops, an error occured</h1>
-            #{if exception instanceof play.exceptions.PlayException}
-                <p>
-                    This exception has been logged with id <strong>${exception.id}</strong>.
-                </p>
-            #{/if}
-        #{/else}
-    </body>
-</html>
+<!--
+Unless this text is here, if your page is less than 513 bytes, Internet Explorer will display it's "Friendly HTTP Error Message",
+and your custom error will never be displayed.  This text is just used as filler.
+This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
+This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
+This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
+-->
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+			<h2>Não Foi Possível Completar a Operação</h2>
+		</div>
+			<div class="gt-content-box">
+			<table width="100%">
+				<tr>
+					<td align="center" valign="middle">
+						<table class="form" width="50%">
+							<tr>
+								<td style="text-align: center; padding-top: 10px;">
+									 #{if play.mode.name() == 'DEV'}
+                						#{500 exception /}
+            						#{/if}
+            						#{else}
+										<h3>${exception?.message}</h3>
+									#{/else}
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: center;"><h4></h4>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>

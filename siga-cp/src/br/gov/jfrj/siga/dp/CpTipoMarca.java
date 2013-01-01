@@ -29,7 +29,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "CORPORATIVO.CP_TIPO_MARCA")
+@Table(schema="CORPORATIVO", name="CP_TIPO_MARCA")
 public class CpTipoMarca extends AbstractCpTipoMarca {
 
 	

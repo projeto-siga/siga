@@ -24,12 +24,12 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-@Entity
-@Table(name = "CORPORATIVO.CP_TIPO_LOTACAO")
+@MappedSuperclass
 public class AbstractCpTipoLotacao extends Objeto {
 	
 	@Id

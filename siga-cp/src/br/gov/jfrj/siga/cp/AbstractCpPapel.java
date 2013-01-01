@@ -30,6 +30,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -42,8 +43,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
-@Entity
-@Table(name = "CP_PAPEL", schema = "CORPORATIVO")
+@MappedSuperclass
 public abstract class AbstractCpPapel extends HistoricoSuporte implements
 		Serializable {
 	@SequenceGenerator(name = "generator", sequenceName = "CP_PAPEL_SEQ")

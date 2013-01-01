@@ -31,13 +31,11 @@ public class ClassUtils {
 	}
 
 	public static String toString(Object o) {
-		ArrayList list = new ArrayList();
-		ClassUtils.toString(o, o.getClass(), list);
-		return o.getClass().getSimpleName().concat(printList(list));
+		return "";
 	}
 
 	private static void toString(Object o, Class clazz, List list) {
-		Field f[] = clazz.getDeclaredFields();
+		/*Field f[] = clazz.getDeclaredFields();
 		AccessibleObject.setAccessible(f, true);
 		for (int i = 0; i < f.length; i++) {
 			if (!f[i].getName().equals("grPai")) {
@@ -50,7 +48,7 @@ public class ClassUtils {
 		}
 		if (clazz.getSuperclass().getSuperclass() != null) {
 			toString(o, clazz.getSuperclass(), list);
-		}
+		}*/
 	}
 
 	public static String printList(List l) {

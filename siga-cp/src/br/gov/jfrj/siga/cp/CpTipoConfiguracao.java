@@ -24,7 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "CORPORATIVO.CP_TIPO_CONFIGURACAO")
+@Table(name = "CP_TIPO_CONFIGURACAO", schema="CORPORATIVO")
 public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	/**
@@ -100,9 +100,9 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	
 	public static final long TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML = 33;
 	
-	public static final long TIPO_CONFIG_SR_DESIGNACAO = 35;
+	public static final long TIPO_CONFIG_SR_DESIGNACAO = 300;
 	
-	public static final long TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO = 36;
+	public static final long TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO = 301;
 
 	// SIGA-WF
 

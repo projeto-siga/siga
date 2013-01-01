@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set popup='true' /}
+#{extends 'main.html' /} 
 <script language="javascript">
 function sbmt(nivel){
 	document.getElementById('alterou').value=nivel;
@@ -26,7 +26,9 @@ function sbmt(nivel){
 							value="${filtro?.tituloItemConfiguracao}" /></td>
 					</tr>
 					<tr>
-						<td><input type="hidden" name="nome" value="${nome}" /><input
+						<td><input type="hidden" name="nome" value="${nome}" />
+							<input type="hidden" name="pessoa" value="${pessoa}" />
+							<input
 							type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" />
 						</td>
 					</tr>

@@ -1,67 +1,12 @@
 <!DOCTYPE html>
-<script id="codigoMenu">
-#{include "Application/menu.html" /}
-</script>
 
-<script>
-var pageText = null;
+${_cabecalho[0].raw()}
 
-function HttpRequest(url) {
-	var pageRequest = false; //variable to hold ajax object
-/*@cc_on
-   @if (@_jscript_version >= 5)
-      try {
-	      pageRequest = new ActiveXObject("Msxml2.XMLHTTP");
-      }
-      catch (e){
-         try {
-    	     pageRequest = new ActiveXObject("Microsoft.XMLHTTP");
-         }
-         catch (e2){
-        	 pageRequest = false;
-         }
-      }
-   @end
- */
-
-	if (!pageRequest && typeof XMLHttpRequest != 'undefined'){
-   		pageRequest = new XMLHttpRequest();
-   	}
-	
-	if (pageRequest){ //if pageRequest is not false
-   		pageRequest.open('GET', url, false); //get page synchronously 
-   		pageRequest.send(null);
-   		embedpage(pageRequest);
-   	}
-}
- 
-function embedpage(request) {
-	//if viewing page offline or the document was successfully retrieved online (status code=2000)
-	if (window.location.href.indexOf("http")==-1 || request.status==200) {
-		pageText = request.responseText.split("<!-- insert body -->");
-		cabecalho = pageText[0].split("<!-- insert menu -->");
-		var codigoMenu;
-		#{if popup}
-		codigoMenu = '';
-		cabecalho[1] = '';
-		#{/if}
-		#{else}
-		codigoMenu = document.getElementById('codigoMenu').innerHTML;
-		#{/else}
-   		document.write(cabecalho[0] + codigoMenu + cabecalho[1]);
-   	}
-}
-
-//var mydomain="http://"+window.location.hostname + ":" + "8080";
-var mydomain='@{Application.proxy(_base + "/siga/pagina_vazia.action?popup="+popup)}'
-
-HttpRequest(mydomain); //include "external.htm" onto current page
-</script>
+#{if params['popup'] != 'true'}
+	#{include "Application/menu.html" /}
+	${_cabecalho[1].raw()}
+#{/if}
 
 #{doLayout /}
 
-<script>
-   		document.write(pageText[1]);
-</script>
-
-</html>
+${_rodape.raw()}

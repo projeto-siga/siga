@@ -30,10 +30,10 @@ import br.gov.jfrj.siga.model.Objeto;
 public class AbstractCpTipoIdentidade extends Objeto{
 
 	@Id
-	@Column(name = "ID_TP_IDENTIDADE ", nullable = false)
+	@Column(name = "ID_TP_IDENTIDADE", nullable = false)
 	private Integer idCpTpIdentidade;
 
-	@Column(name = " DESC_TP_IDENTIDADE")
+	@Column(name = "DESC_TP_IDENTIDADE")
 	private String dscCpTpIdentidade;
 
 	/**

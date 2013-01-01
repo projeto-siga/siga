@@ -79,7 +79,7 @@
 						<span id='rightbottom' style="margin:0;padding:0;"></span>
 						<script type="text/javascript">
 							SetInnerHTMLFromAjaxResponse(
-									"/siga/proxy.action?URL=http://localhost:9000/gadget",
+									"/siga/proxy.action?URL=${f:resource('siga.sr.url')}/gadget",
 									document.getElementById('rightbottom'));
 						</script>
 						<!-- Expedientes -->

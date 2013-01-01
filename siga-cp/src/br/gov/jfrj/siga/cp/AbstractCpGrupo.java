@@ -21,12 +21,17 @@ package br.gov.jfrj.siga.cp;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -35,27 +40,28 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @Entity
-@Table(name="CORPORATIVO.CP_GRUPO"
-)
+@Table(name = "CP_GRUPO", schema = "CORPORATIVO")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "ID_TP_GRUPO", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class AbstractCpGrupo extends HistoricoAuditavelSuporte {
-	 @SequenceGenerator(name="generator", sequenceName="CP_GRUPO_SEQ")@Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
-
-	    
-	    @Column(name="ID_GRUPO", nullable=false)
+	@SequenceGenerator(name = "generator", sequenceName = "CP_GRUPO_SEQ")
+	@Id
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@Column(name = "ID_GRUPO", nullable = false)
 	@Desconsiderar
 	private Long idGrupo;
-	 @Column(name="SIGLA_GRUPO")
+	@Column(name = "SIGLA_GRUPO")
 	private String siglaGrupo;
-	 @Column(name="DESC_GRUPO")
+	@Column(name = "DESC_GRUPO")
 	private String dscGrupo;
-	 @ManyToOne(fetch=FetchType.LAZY)
-	    @JoinColumn(name="ID_TP_GRUPO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_GRUPO", insertable = false, updatable = false)
 	private CpTipoGrupo cpTipoGrupo;
-	 @ManyToOne(fetch=FetchType.LAZY)
-	    @JoinColumn(name="ID_GRUPO_PAI")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_GRUPO_PAI")
 	private CpGrupo cpGrupoPai;
-	 @ManyToOne(fetch=FetchType.LAZY)
-	    @JoinColumn(name="ID_ORGAO_USU")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario orgaoUsuario;
 
 	/*

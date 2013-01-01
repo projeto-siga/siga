@@ -19,8 +19,11 @@
 package br.gov.jfrj.siga.cp;
 
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "CP_SITUACAO_CONFIGURACAO", schema="CORPORATIVO")
 public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao {
 
 	/**

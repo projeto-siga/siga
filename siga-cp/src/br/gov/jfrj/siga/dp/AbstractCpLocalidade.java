@@ -32,6 +32,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
@@ -42,8 +43,7 @@ import br.gov.jfrj.siga.model.Objeto;
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
 
-@Entity
-@Table(name = "CP_LOCALIDADE", schema = "CORPORATIVO")
+@MappedSuperclass
 public abstract class AbstractCpLocalidade extends Objeto implements Serializable {
 
 	@Id

@@ -35,15 +35,20 @@ self.retorna_${_tipo}${_nomeClean} = function(id, sigla, descricao) {
 
 self.newwindow_${_nomeClean} = '';
 self.popitup_${_nomeClean} = function(sigla) {
-	var url = '/${_tipo}/buscar' + '?sigla=' + sigla + '&nome=${_nomeClean}';
+	var url = '@@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${_nomeClean}&'+'${_params.raw()}';
 	
 	if (!newwindow_${_nomeClean}.closed && newwindow_${_nomeClean}.location) {
 		newwindow_${_nomeClean}.location.href = url;
 	} else {
-		var popW;
-		var popH;
-		popW = 600;
-		popH = 400;	
+
+		#{if _grande == true}
+		var popW = screen.width*0.75;
+		var popH = screen.height*0.75;
+		#{/if}
+		#{else}
+		var popW = 600;
+		var popH = 400;
+		#{/else}	
 	
 		var winleft = (screen.width - popW) / 2;
 		var winUp = (screen.height - popH) / 2;	
@@ -71,7 +76,7 @@ self.ajax_${_nomeClean} = function() {
 	if (sigla == '') {
 		return retorna_${_tipo}${_nomeClean}('', '', '');
 	}
-	var url = '/${_tipo}/selecionar' + '?sigla=' + sigla + '&nome=${_nomeClean}';
+	var url = '@@{Application.index()}${_tipo}/selecionar?sigla=' + sigla + '&nome=${_nomeClean}&'+'${_params.raw()}';
 
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${_nomeClean}', false);
 }

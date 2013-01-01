@@ -29,6 +29,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
@@ -37,8 +38,7 @@ import br.gov.jfrj.siga.model.Objeto;
  * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
-@Entity
-@Table(name = "CP_UF", schema = "CORPORATIVO")
+@MappedSuperclass
 public abstract class AbstractCpUF extends Objeto implements Serializable {
 
 	@Id

@@ -15,7 +15,7 @@
 						href="${serverAndPort}/sigaex/expediente/doc/listar.action?primeiraVez=sim">Documentos</a>
 					</li>
 					<li><a
-						href="http://localhost:9000" >Serviços</a>
+						href="${f:resource('siga.sr.url')}" >Serviços</a>
 					</li>
 					<!-- <li><a href="/sigatr/">Treinamento</a>
 					</li> -->

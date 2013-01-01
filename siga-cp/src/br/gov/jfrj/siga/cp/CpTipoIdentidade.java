@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "CORPORATIVO.CP_TIPO_IDENTIDADE")
+@Table(schema="CORPORATIVO", name="CP_TIPO_IDENTIDADE")
 public class CpTipoIdentidade extends AbstractCpTipoIdentidade {
 	public static final Integer FORMULARIO = new Integer(1);
 	public static final Integer CERTIFICADO = new Integer(2);

@@ -21,12 +21,12 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-@Entity
-@Table(name = "CORPORATIVO.CP_TIPO_GRUPO")
+@MappedSuperclass
 public class AbstractCpTipoGrupo extends Objeto {
 
 	@Id

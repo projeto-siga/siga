@@ -1,10 +1,13 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.hibernate.Hibernate;
 
 import models.SrConfiguracao;
 import models.SrItemConfiguracao;
@@ -18,6 +21,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
 	private static SrConfiguracaoBL instancia = new SrConfiguracaoBL();
 
+	public static int ITEM_CONFIGURACAO = 31;
+
+	public static int SERVICO = 32;
+
 	public static SrConfiguracaoBL get() {
 		return instancia;
 	}
@@ -25,6 +32,21 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	public SrConfiguracaoBL() {
 		super();
 		setComparator(new SrConfiguracaoComparator());
+	}
+
+	private void evitaSessionClosed(SrConfiguracao conf) {
+		if (conf.preAtendente != null)
+			conf.preAtendente.getSigla();
+		if (conf.atendente != null)
+			conf.atendente.getSigla();
+		if (conf.posAtendente != null)
+			conf.posAtendente.getSigla();
+		if (conf.itemConfiguracao != null)
+			conf.itemConfiguracao.getSigla();
+		if (conf.servico != null)
+			conf.servico.getSigla();
+		if (conf.tipoAtributo != null)
+			conf.tipoAtributo.getId();
 	}
 
 	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)
@@ -63,12 +85,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.posAtendente == null)
 				return false;
 
-			if (conf.servico != null
+			if (!atributosDesconsiderados.contains(SERVICO)
+					&& conf.servico != null
 					&& (filtro.servico == null || (filtro.servico != null && !conf.servico
 							.isPaiDeOuIgualA(filtro.servico))))
 				return false;
 
-			if (conf.itemConfiguracao != null
+			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO)
+					&& conf.itemConfiguracao != null
 					&& (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null && !conf.itemConfiguracao
 							.isPaiDeOuIgualA(filtro.itemConfiguracao))))
 				return false;
@@ -78,17 +102,37 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	}
 
 	public List<SrConfiguracao> listarConfiguracoesAtivasPorFiltro(
-			SrConfiguracao confFiltro) throws Exception {
+			SrConfiguracao confFiltro, int atributoDesconsideradoFiltro[])
+			throws Exception {
+
+		deduzFiltro(confFiltro);
+		Set<Integer> atributosDesconsiderados = new LinkedHashSet<Integer>();
+		for (int i = 0; i < atributoDesconsideradoFiltro.length; i++) {
+			atributosDesconsiderados.add(atributoDesconsideradoFiltro[i]);
+		}
+
 		List<SrConfiguracao> listaFinal = new ArrayList<SrConfiguracao>();
 		TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
 				.getCpTipoConfiguracao().getIdTpConfiguracao());
+
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if (cpConfiguracao.getHisDtFim() == null
-					&& atendeExigencias(confFiltro, null,
+					&& atendeExigencias(confFiltro, atributosDesconsiderados,
 							(SrConfiguracao) cpConfiguracao, null))
 				listaFinal.add((SrConfiguracao) cpConfiguracao);
 		}
 		return listaFinal;
+	}
+
+	@Override
+	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig)
+			throws Exception {
+		TreeSet<CpConfiguracao> lista = super.getListaPorTipo(idTipoConfig);
+		for (CpConfiguracao conf : lista) {
+			if (conf instanceof SrConfiguracao)
+				evitaSessionClosed((SrConfiguracao) conf);
+		}
+		return lista;
 	}
 
 }

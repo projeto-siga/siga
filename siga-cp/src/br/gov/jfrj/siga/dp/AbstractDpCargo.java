@@ -39,6 +39,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -62,10 +64,12 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable {
 
 	@Column(name = "DT_FIM_CARGO")
 	@Desconsiderar
+	@Temporal(TemporalType.DATE)
 	private Date dataFimCargo;
 
 	@Column(name = "DT_INI_CARGO")
 	@Desconsiderar
+	@Temporal(TemporalType.DATE)
 	private Date dataInicioCargo;
 
 	@Column(name = "ID_CARGO_INICIAL")

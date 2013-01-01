@@ -46,6 +46,7 @@ import javax.persistence.Table;
 public abstract class AbstractExMobil implements Serializable {
 	@Id
 	@SequenceGenerator(name = "EX_MOBIL_SEQ")
+	
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EX_MOBIL_SEQ")
 	@Column(name = "ID_MOBIL")
 	private java.lang.Long IdMobil;

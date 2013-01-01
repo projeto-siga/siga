@@ -29,11 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
+@Table(name = "CP_LOCALIDADE", schema = "CORPORATIVO")
 @SuppressWarnings("serial")
 public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 		Selecionavel {

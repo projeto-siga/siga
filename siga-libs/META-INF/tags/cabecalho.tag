@@ -180,31 +180,31 @@ ${meta}
 							<c:if test="${desabilitarbusca != 'sim'}">
 								<div class="gt-search">
 									<div class="gt-search-inner" onclick="">
-										<siga:selecao propriedade="buscar" modulo="sigaex"
-											tipo="expediente" tema="simple" ocultardescricao="sim"
-											buscar="nao" siglaInicial="Buscar documento" />
+										<siga:selecao propriedade="buscar" modulo="siga"
+											tipo="generico" tema="simple" ocultardescricao="sim"
+											buscar="nao" siglaInicial="Buscar" />
 										<script type="text/javascript">
 											var fld = document
-													.getElementById("buscar_expedienteSel_sigla");
+													.getElementById("buscar_genericoSel_sigla");
 											fld.setAttribute("class",
 													"gt-search-text");
 											fld.className = "gt-search-text";
 											fld.onfocus = function() {
-												if (this.value == 'Buscar documento') {
+												if (this.value == 'Buscar') {
 													this.value = '';
 												}
 											};
 											fld.onblur = function() {
 												if (this.value == '') {
-													this.value = 'Buscar documento';
+													this.value = 'Buscar';
 													return;
 												}
-												if (this.value != 'Buscar documento')
-													ajax_buscar_expediente();
+												if (this.value != 'Buscar')
+													ajax_buscar_generico();
 											};
 											fld.onkeypress = function(event) {
 												var fid = document
-												.getElementById("buscar_expedienteSel_id");
+												.getElementById("buscar_genericoSel_id");
 												
 												event = (event) ? event
 														: window.event
@@ -226,23 +226,22 @@ ${meta}
 												}
 											};
 
-											self.resposta_ajax_buscar_expediente = function(
+											self.resposta_ajax_buscar_generico = function(
 													response, d1, d2, d3) {
 												var sigla = document
-														.getElementsByName('buscar_expedienteSel.sigla')[0].value;
+														.getElementsByName('buscar_genericoSel.sigla')[0].value;
 												var data = response.split(';');
 												if (data[0] == '1') {
-													retorna_buscar_expediente(
+													retorna_buscar_generico(
 															data[1], data[2],
 															data[3]);
 													if (data[1] != null
 															&& data[1] != "") {
-														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
-															+ data[2];
+														window.location.href = data[3];
 													}
 													return
 												} 
-												retorna_buscar_expediente('',
+												retorna_buscar_generico('',
 														'', '');
 
 												return;

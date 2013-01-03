@@ -105,6 +105,16 @@
 		</action>
 
 	</package>
+	
+	<package name="generico" extends="default" namespace="/generico">
+		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
+		<default-action-ref name="selecionar" />
+		<action name="selecionar" class="br.gov.jfrj.webwork.action.PrincipalAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
+		</action>
+	</package>
 
 	<package name="substituicao" extends="default" namespace="/substituicao">
 		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>

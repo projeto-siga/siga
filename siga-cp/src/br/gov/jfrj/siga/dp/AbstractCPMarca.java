@@ -52,7 +52,7 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCPMarca extends Objeto implements Serializable {
 
 	@Id
-	@SequenceGenerator(name="my_seq", sequenceName="CP_MARCA_SEQ")
+	//@SequenceGenerator(name="my_seq", sequenceName="CP_MARCA_SEQ")
 	//Desabilitando sequence. Ver comentário em sigasr.controllers.Util.nextVal() @GeneratedValue(generator = "my_seq")
 	@Column(name = "ID_MARCA")
 	private java.lang.Long idMarca;

@@ -1,8 +1,12 @@
 #{if servicos && solicitacao.itemConfiguracao} 
 <div class="gt-form-row gt-width-66">
 	<label>Ação</label> 
-	#{select name:'solicitacao.servico', items:servicos, valueProperty:'idServico',
-				labelProperty:'tituloServico', value:solicitacao.servico?.idServico, onchange:'carregarAtributos();' /}
+	#{select name:'solicitacao.servico', value:solicitacao.servico?.idServico, onchange:'carregarAtributos();'}
+		#{list items:servicos, as:'servico' }
+			#{option servico.idServico}
+			${servico.tituloServico}#{/option}
+		#{/list}
+	#{/select}
 	
 	 <span
 		style="color: red">#{error 'solicitacao.servico' /}</span>

@@ -8,7 +8,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
 -->
 
-<div class="gt-bd clearfix">
+<div class="gt-bd clearfix" id="divPrincipal" style="margin-top: 200px">
 	<div class="gt-content clearfix">
 			<h2>Não Foi Possível Completar a Operação</h2>
 		</div>
@@ -19,16 +19,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 						<table class="form" width="50%">
 							<tr>
 								<td style="text-align: center; padding-top: 10px;">
-									 #{if play.mode.name() == 'DEV'}
-                						#{500 exception /}
-            						#{/if}
-            						#{else}
-										<h3>${exception?.message}</h3>
-									#{/else}
-								</td>
-							</tr>
-							<tr>
-								<td style="text-align: center;"><h4></h4>
+									<h3>${exception?.message}</h3>
 								</td>
 							</tr>
 						</table>
@@ -38,3 +29,6 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 		</div>
 	</div>
 </div>
+<script language="javascript">
+	document.getElementById('divPrincipal').style.marginTop = screen.height * 0.2 + 'px';
+</script>

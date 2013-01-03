@@ -25,14 +25,53 @@ package br.gov.jfrj.webwork.action;
 
 import java.io.DataInputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
+import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
 import com.opensymphony.xwork.Action;
 
 public class PrincipalAction extends SigaActionSupport {
+
+	// Nem será necessário herdar de Selecao
+	public class GenericoSelecao {
+
+		private Long id;
+
+		private String sigla;
+
+		private String descricao;
+
+		public String getDescricao() {
+			return descricao;
+		}
+
+		public void setDescricao(String descricao) {
+			this.descricao = descricao;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getSigla() {
+			return sigla;
+		}
+
+		public void setSigla(String sigla) {
+			this.sigla = sigla;
+		}
+	}
+
 	private static final String OK = "<span style=\"color: green;\">OK</span>";
 	private static final String ERRO = "<span style=\"color: red;\">ERRO</span>";
 	private static final String SIGA_TESTES_ACTION = "/siga/testes/testes.action";
@@ -40,14 +79,95 @@ public class PrincipalAction extends SigaActionSupport {
 	 * 
 	 */
 	private static final long serialVersionUID = 1630775520737927455L;
+
 	private List listEstados;
-	
+
+	private String sigla;
+
+	private GenericoSelecao sel;
+
+	public String getSigla() {
+		return sigla;
+	}
+
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
+	}
+
+	public GenericoSelecao getSel() {
+		return sel;
+	}
+
+	public void setSel(GenericoSelecao sel) {
+		this.sel = sel;
+	}
+
+	public PrincipalAction() {
+		sel = new GenericoSelecao();
+	}
+
 	@Override
 	public String execute() throws Exception {
 		// super.getRequest ().setAttribute ( "_cadastrante" , super.getTitular
 		// ().getSigla () + "@" + super.getLotaTitular ().getOrgaoUsuario
 		// ().getSiglaOrgaoUsu ()+ super.getLotaTitular ().getSigla () );
 		return Action.SUCCESS;
+	}
+
+	public String aSelecionar() throws Exception {
+
+		try {
+
+			String URLSistema = "", uRLExibir = "";
+			List<String> orgaos = new ArrayList<String>();
+			String copiaSigla = getSigla().toUpperCase();
+
+			for (CpOrgaoUsuario o : dao().consultaCpOrgaoUsuario()) {
+				orgaos.add(o.getSiglaOrgaoUsu());
+				orgaos.add(o.getAcronimoOrgaoUsu());
+			}
+
+			for (String s : orgaos)
+				if (copiaSigla.startsWith(s)) {
+					copiaSigla = copiaSigla.substring(s.length());
+					break;
+				}
+
+			if (copiaSigla.startsWith("-"))
+				copiaSigla = copiaSigla.substring(1);
+
+			if (copiaSigla.startsWith("SR")
+					&& Cp.getInstance()
+							.getConf()
+							.podeUtilizarServicoPorConfiguracao(getTitular(),
+									getLotaTitular(), "SIGA;SR"))
+				URLSistema = System.getProperty("siga.sr.url")
+						+ "/selecionar?sigla=" + getSigla();
+			else
+				// Edson: Esta URL também tem que vir do properties
+				URLSistema = "http://localhost:8080/sigaex/expediente/selecionar.action?sigla="
+						+ getSigla();
+
+			String[] response = ConexaoHTTP.get(URLSistema, getHeaders())
+					.split(";");
+
+			if (copiaSigla.startsWith("SR"))
+				uRLExibir = System.getProperty("siga.sr.url") + "/exibir/"
+						+ response[1];
+			else
+				// Edson: Esta URL também tem que vir do properties
+				uRLExibir = "http://localhost:8080/sigaex/expediente/doc/exibir.action?sigla="
+						+ response[2];
+
+			sel.setId(Long.valueOf(response[1]));
+			sel.setSigla(response[2]);
+			sel.setDescricao(uRLExibir);
+
+			return "ajax_retorno";
+
+		} catch (Exception e) {
+			return "ajax_vazio";
+		}
 	}
 
 	public String test() throws Exception {

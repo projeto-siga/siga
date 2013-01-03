@@ -42,18 +42,12 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class Application extends Controller {
 
-	/*
-	 * @Catch public static void catchExceptions(Exception e) {
-	 * //MailUtils.sendErrorMail(e); Logger.error(e, "sigasr - erro");
-	 * error(e.getMessage()); }
-	 */
-
 	@Before
-	static void prepararCpDao() throws Exception {
+	static void addDefaultsSempre() throws Exception {
 		Session playSession = (Session) JPA.em().getDelegate();
 		CpDao.freeInstance();
 		CpDao.getInstance(playSession);
-		SrConfiguracaoBL.get().limparCacheSeNecessario();
+		SrConfiguracaoBL.get().limparCache(null);
 	}
 
 	@Before(unless = { "proxy", "exibirAtendente", "exibirAtributos",
@@ -79,6 +73,13 @@ public class Application extends Controller {
 			renderArgs.put("_cabecalho", cabecalho);
 			renderArgs.put("_rodape", pageText[1]);
 
+			/*
+			 * String lixo =
+			 * cabecalho[0].substring(cabecalho[0].indexOf("udic"),
+			 * cabecalho[0].indexOf("Rio")); Logger.info("testando encoding: " +
+			 * lixo);
+			 */
+
 			String[] IDs = ConexaoHTTP.get(
 					"http://localhost:8080/siga/usuario_autenticado.action",
 					atributos).split(";");
@@ -97,6 +98,9 @@ public class Application extends Controller {
 			if (IDs[3] != null && !IDs[3].equals(""))
 				renderArgs.put("lotaTitular",
 						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
+
+			assertAcesso("");
+
 		} catch (ArrayIndexOutOfBoundsException aioob) {
 			// Informações não vieram
 			redirect("http://localhost:8080/siga");
@@ -109,6 +113,16 @@ public class Application extends Controller {
 			renderArgs.put("exibirMenuAdministrar", false);
 		}
 
+	}
+
+	@Catch
+	public static void catchExceptions(Exception e) {
+		// MailUtils.sendErrorMail(e);
+		if (getCadastrante() != null)
+			Logger.error("Erro Siga-SR; Pessoa: " + getCadastrante().getSigla()
+					+ "; Lotação: " + getLotaTitular().getSigla(), e);
+		e.printStackTrace();
+		error(e.getMessage());
 	}
 
 	static DpPessoa getCadastrante() {
@@ -264,12 +278,12 @@ public class Application extends Controller {
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
 
 		List<SrSolicitacao> listaSolicitacao;
-		
+
 		if (filtro.pesquisar)
 			listaSolicitacao = filtro.buscar();
-		else 
+		else
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
-		
+
 		// Montando o filtro...
 		SrUrgencia[] urgencias = SrUrgencia.values();
 		SrTendencia[] tendencias = SrTendencia.values();
@@ -301,6 +315,12 @@ public class Application extends Controller {
 
 		render(solicitacao, editar, desfazerAndamento, movimentarPlenamente,
 				andamento, criarFilha, estados);
+	}
+
+	public static void selecionar(String sigla) throws Exception {
+		SrSolicitacao sel = new SrSolicitacao();
+		sel = (SrSolicitacao) sel.selecionar(sigla);
+		render("@selecionar", sel);
 	}
 
 	public static void exibirAtendente(SrAndamento andamento) throws Exception {

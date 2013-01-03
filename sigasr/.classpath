@@ -68,6 +68,8 @@
 	<classpathentry kind="lib" path="C:/Desenvolvimento/play-1.2.5rc3/framework/lib/snakeyaml-1.7.jar"/>
 	<classpathentry kind="lib" path="C:/Desenvolvimento/play-1.2.5rc3/framework/lib/xmlpull-1.1.3.1.jar"/>
 	<classpathentry kind="lib" path="C:/Desenvolvimento/play-1.2.5rc3/framework/lib/xstream-1.4.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/siga-cp"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-cp"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-base"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-sinc-lib"/>
 	<classpathentry kind="output" path="eclipse/classes"/>
 </classpath>

@@ -43,6 +43,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -68,9 +70,10 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	 */
 	private static final long serialVersionUID = 4514355304185987860L;
 
-	@SequenceGenerator(name = "generator", sequenceName = "CP_CONFIGURACAO_SEQ")
 	@Id
-	//Desabilitando sequence. Ver comentário em sigasr.controllers.Util.nextVal() //Desabilitando sequence. Ver comentário em sigasr.controllers.Util.nextVal() @GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	//Ver comentário em sigasr.controllers.Util.nextVal() 
+	//@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	//@SequenceGenerator(name = "generator", sequenceName = "CP_CONFIGURACAO_SEQ")
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;

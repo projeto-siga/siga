@@ -3,6 +3,7 @@ package models;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,13 +47,15 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import controllers.SrCalendar;
 import controllers.Util;
 
 @Entity
 @Table(name = "SR_SOLICITACAO")
-public class SrSolicitacao extends ObjetoPlayComHistorico {
+public class SrSolicitacao extends ObjetoPlayComHistorico implements
+		SrSelecionavel {
 
 	@Id
 	@GeneratedValue
@@ -192,6 +197,99 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		this.local = local;
 		this.telPrincipal = telPrincipal;
 		this.motivoFechamentoAbertura = motivoFechamentoAbertura;
+	}
+
+	@Override
+	public Long getId() {
+		return idSolicitacao;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.idSolicitacao = id;
+	}
+
+	@Override
+	public String getSigla() {
+		return getCodigo();
+	}
+
+	@Override
+	public void setSigla(String sigla) {
+		sigla = sigla.trim().toUpperCase();
+		final Pattern p = Pattern
+				.compile("^([A-Za-z0-9]{2})?-?(SR)?-?(?:([0-9]{4})/?)??([0-9]{1,5})?$");
+		final Matcher m = p.matcher(sigla);
+
+		if (m.find()) {
+
+			if (m.group(1) != null) {
+				try {
+					CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+					orgaoUsuario.setSiglaOrgaoUsu(m.group(1));
+					orgaoUsuario = (CpOrgaoUsuario) JPA
+							.em()
+							.createQuery(
+									"from CpOrgaoUsuario where siglaOrgaoUsu = '"
+											+ m.group(1) + "'")
+							.getSingleResult();
+					this.orgaoUsuario = orgaoUsuario;
+				} catch (final Exception ce) {
+
+				}
+			} 
+
+			if (m.group(3) != null) {
+				Calendar c1 = Calendar.getInstance();
+				c1.set(Calendar.YEAR, Integer.valueOf(m.group(3)));
+				c1.set(Calendar.DAY_OF_YEAR, 1);
+				this.dtReg = c1.getTime();
+			} else this.dtReg = new Date();
+
+			if (m.group(4) != null)
+				numSolicitacao = Long.valueOf(m.group(4));
+		}
+
+	}
+
+	@Override
+	public String getDescricao() {
+		if (descrSolicitacao.length() > 40)
+			return descrSolicitacao.substring(0, 39) + "...";
+		return descrSolicitacao;
+	}
+
+	@Override
+	public void setDescricao(String descricao) {
+		this.descrSolicitacao = descricao;
+	}
+
+	@Override
+	public SrSelecionavel selecionar(String sigla) throws Exception {
+		setSigla(sigla);
+		String query = "from SrSolicitacao where hisDtFim is null ";
+		if (orgaoUsuario != null) {
+			query += " and orgaoUsuario.idOrgaoUsu = "
+					+ orgaoUsuario.getIdOrgaoUsu();
+		}
+		if (dtReg != null) {
+			Calendar c1 = Calendar.getInstance();
+			c1.setTime(dtReg);
+			int year = c1.get(Calendar.YEAR);
+			query += " and dtReg between to_date('01/01/" + year
+					+ " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/"
+					+ year + " 23:59','dd/mm/yyyy HH24:mi')";
+		}
+		query += " and numSolicitacao = " + numSolicitacao;
+		SrSolicitacao sol = (SrSolicitacao) JPA.em().createQuery(query)
+				.getSingleResult();
+		return sol;
+	}
+
+	@Override
+	public List<? extends SrSelecionavel> buscar() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public String getCodigo() {
@@ -504,6 +602,10 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		return listaFinal;
 	}
 
+	public boolean isEditado() {
+		return idSolicitacao != getHisIdIni();
+	}
+
 	public boolean isCancelado() {
 		return temAndamento()
 				&& getUltimoAndamento().estado == SrEstado.CANCELADO;
@@ -645,7 +747,8 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 				iniciarFechando();
 			else
 				iniciar();
-			notificar();
+			if (!isEditado())
+				notificar();
 		}
 		// return this;
 	}
@@ -734,7 +837,9 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		// coleção de andamentos desta solicitação
 		refresh();
 		atualizarMarcas();
-		if (!andamento.isPrimeiroAndamento())
+		if (!andamento.isPrimeiroAndamento()
+				&& !(formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
+						&& andamento.estado != SrEstado.FECHADO && andamento.estado != SrEstado.POS_ATENDIMENTO))
 			andamento.notificar();
 	}
 
@@ -744,7 +849,9 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 		andamento.desfazer(cadastrante, lotaCadastrante);
 		refresh();
 		atualizarMarcas();
-		andamento.notificar();
+		if (!(formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
+				&& andamento.estado != SrEstado.FECHADO && andamento.estado != SrEstado.POS_ATENDIMENTO))
+			andamento.notificar();
 	}
 
 	public SrSolicitacao criarFilhaSemSalvar() throws Exception {
@@ -800,16 +907,6 @@ public class SrSolicitacao extends ObjetoPlayComHistorico {
 			throws Exception {
 
 		new SrMarca(marcador, pessoa, lotacao, this).save();
-	}
-
-	@Override
-	public Long getId() {
-		return idSolicitacao;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.idSolicitacao = id;
 	}
 
 }

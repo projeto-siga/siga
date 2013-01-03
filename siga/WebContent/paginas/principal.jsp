@@ -74,6 +74,8 @@
 							<!-- segunda metade da tela -->
 						</c:if>
 						<br/>
+						<c:if
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
 						<h2 class="gt-table-head">Quadro de Solicitações</h2>
 						<!-- content box -->
 						<span id='rightbottom' style="margin:0;padding:0;"></span>
@@ -82,7 +84,7 @@
 									"/siga/proxy.action?URL=${f:resource('siga.sr.url')}/gadget",
 									document.getElementById('rightbottom'));
 						</script>
-						<!-- Expedientes -->
+						</c:if>
 						<br/>
 					</div>
 				</div>

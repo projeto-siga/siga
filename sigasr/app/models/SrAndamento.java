@@ -247,11 +247,12 @@ public class SrAndamento extends GenericModel {
 			return;
 
 		SrAndamento anterior = solicitacao.getUltimoAndamento();
-		
+
 		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento()) {
 			atendente = null;
 			lotaAtendente = solicitacao.getAtendenteDesignado();
 		} else if (estado == SrEstado.FECHADO
+				&& solicitacao.temPosAtendenteDesignado()
 				&& !solicitacao.getLotaAtendente().equivale(
 						solicitacao.getPosAtendenteDesignado())) {
 			atendente = null;

@@ -111,7 +111,7 @@
 					
 
                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-               Declaro estar ciente da necessidade de encaminhar à Coordenadoria de Assuntos Judiciários, para arquivamento, os termos de responsabilidade dos servidores a serem por mim cadastrados no sistema INFOJUD, bem como de excluir do cadastro desse sistema os servidores que vierem a ser removidos para outra unidade.
+               Declaro estar ciente da necessidade de manter arquivados os termos de responsabilidade dos servidores a serem por mim cadastrados para acessar o referido sistema, para controle dos acessos concedidos, bem como de excluir do cadastro desse sistema os servidores que vierem a ser removidos para outra unidade.
 					 <br />
 					<br />
 

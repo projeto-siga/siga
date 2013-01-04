@@ -197,8 +197,18 @@ public class MontadorQuery implements IMontadorQuery {
 			sbf.append(flt.getIdMod());
 		}
 
-		if (!apenasCount)
-			sbf.append(" order by doc.idDoc desc");
+		if (!apenasCount) {
+			if (flt.getOrdem() == null || flt.getOrdem() == 0)
+				sbf.append(" order by doc.dtDoc desc");
+			else if (flt.getOrdem() == 1)
+				sbf.append(" order by label.dtIniMarca desc");
+			else if (flt.getOrdem() == 2)
+				sbf.append(" order by doc.anoEmissao desc, doc.numExpediente desc, mob.numSequencia");
+			else if (flt.getOrdem() == 3)
+				sbf.append(" order by doc.dtFechamento desc");
+			else if (flt.getOrdem() == 4)
+				sbf.append(" order by doc.idDoc desc");
+		}
 
 		return sbf.toString();
 

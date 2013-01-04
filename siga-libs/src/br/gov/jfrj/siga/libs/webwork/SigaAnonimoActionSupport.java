@@ -32,6 +32,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,11 +48,12 @@ import br.gov.jfrj.siga.libs.util.Paginador;
 
 import com.opensymphony.webwork.interceptor.ParameterAware;
 import com.opensymphony.webwork.interceptor.ServletRequestAware;
+import com.opensymphony.webwork.interceptor.ServletResponseAware;
 import com.opensymphony.webwork.util.ServletContextAware;
 import com.opensymphony.xwork.ActionSupport;
 
 public class SigaAnonimoActionSupport extends ActionSupport implements
-		ParameterAware, ServletRequestAware, ServletContextAware {
+		ParameterAware, ServletRequestAware, ServletContextAware, ServletResponseAware {
 	/**
 	 * 
 	 */
@@ -70,6 +72,7 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 	private Integer postback;
 
 	private HttpServletRequest request;
+	private HttpServletResponse response;
 
 	private ServletContext context;
 
@@ -133,6 +136,10 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 
 	public HttpServletRequest getRequest() {
 		return request;
+	}
+	
+	public HttpServletResponse getResponse() {
+		return response;
 	}
 
 	public String getDtAtualDDMMYYHHMMSS() {
@@ -216,7 +223,12 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 	public void setServletRequest(final HttpServletRequest request) {
 		this.request = request;
 	}
-
+	
+	
+	public void setServletResponse(final HttpServletResponse response) {
+		this.response = response;
+	}
+	
 	public String getUrlEncodedParameters()
 			throws UnsupportedEncodingException, IOException {
 		if (getPar() != null) {

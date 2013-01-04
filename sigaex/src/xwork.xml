@@ -840,7 +840,7 @@
 
 		<action name="assinar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarGravar">
-			<result name="OK">
+			<result name="OK" type="plaintext">
 				/paginas/ok.jsp
 			</result>
 			<result name="ERRO">
@@ -1009,7 +1009,7 @@
 		</action>
 		<action name="assinar_mov_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarMovGravar">
-			<result name="OK">
+			<result name="OK" type="plaintext">
 				/paginas/ok.jsp
 			</result>
 			<result name="ERRO">

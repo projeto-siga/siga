@@ -481,7 +481,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					final String mName = "set"
 							+ paramName.substring(0, 1).toUpperCase()
 							+ paramName.substring(1);
-					if (getPar().get(paramName) != null) {
+					if (getPar().get(paramName) != null || (paramName.contains("nmOrgaoExterno")) || (paramName.contains("nmDestinatario"))) {
 						Class paramType = this.getClass()
 								.getDeclaredField(paramName).getType();
 						Constructor paramTypeContructor = paramType
@@ -497,7 +497,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					final String mName = "get"
 							+ paramName.substring(0, 1).toUpperCase()
 							+ paramName.substring(1, paramName.indexOf(".id"));
-					if (getPar().get(paramName) != null) {
+					if (getPar().get(paramName) != null || (paramName.contains("estinatarioSel.id"))) {
 						final Method method = this.getClass().getMethod(mName);
 						Selecao sel = (Selecao) method.invoke(this);
 						sel.setId(Long.parseLong(paramValue));
@@ -982,8 +982,11 @@ public class ExDocumentoAction extends ExActionSupport {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
 			mob = (ExMobil) dao().consultarPorSigla(filter);
-			doc = mob.getExDocumento();
-			setIdMob(mob.getId());
+			// bruno.lacerda@avantiprima.com.br
+			if ( mob != null ) {
+				doc = mob.getExDocumento();
+				setIdMob(mob.getId());
+			}
 		} else if (mob == null && getDocumentoViaSel().getId() != null) {
 			setIdMob(getDocumentoViaSel().getId());
 			mob = dao().consultar(idMob, ExMobil.class, false);

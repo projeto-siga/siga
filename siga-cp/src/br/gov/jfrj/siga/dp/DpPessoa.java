@@ -180,11 +180,17 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	public String getPadraoReferenciaInvertido() {
 		if (getPadraoReferencia() != null && !getPadraoReferencia().equals("")) {
-			String partes[] = getPadraoReferencia().split("-");
-			String partesConcat = partes[1] + "-" + partes[0];
-			if (partes.length > 2)
-				partesConcat += "-" + partes[2];
-			return partesConcat;
+			//Caso o padrão de referência não esteja no formado utilizado pela SJRJ.
+			//Retorna o padrão cadastrado no BD sem inverter.
+			try {
+				String partes[] = getPadraoReferencia().split("-");
+				String partesConcat = partes[1] + "-" + partes[0];
+				if (partes.length > 2)
+					partesConcat += "-" + partes[2];
+				return partesConcat;
+			} catch (Exception e) {
+				return getPadraoReferencia();
+			}
 		} else
 			return "";
 	}

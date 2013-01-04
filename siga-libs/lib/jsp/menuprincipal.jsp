@@ -135,6 +135,11 @@
 						<li><ww:a href="${serverAndPort}/siga/modelo/listar.action">Cadastro de modelos</ww:a>
 						</li>
 					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
+						<li><ww:a href="/sigawf/administrar.action">Administrar SIGA WF</ww:a>
+						</li>
+					</c:if>
 				</ul></li>
 		</c:if>
 

@@ -57,13 +57,13 @@ public class ConexaoHTTP {
 			System.setProperty("http.keepAlive", "false");
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					conn.getInputStream()));
+					conn.getInputStream(), "UTF-8"));
 
 			String inputLine;
 			StringBuilder sb = new StringBuilder();
 
 			while ((inputLine = in.readLine()) != null) {
-				sb.append(inputLine);
+				sb.append(inputLine+"\n");
 			}
 			in.close();
 

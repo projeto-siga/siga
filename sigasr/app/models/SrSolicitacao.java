@@ -237,14 +237,15 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 				} catch (final Exception ce) {
 
 				}
-			} 
+			}
 
 			if (m.group(3) != null) {
 				Calendar c1 = Calendar.getInstance();
 				c1.set(Calendar.YEAR, Integer.valueOf(m.group(3)));
 				c1.set(Calendar.DAY_OF_YEAR, 1);
 				this.dtReg = c1.getTime();
-			} else this.dtReg = new Date();
+			} else
+				this.dtReg = new Date();
 
 			if (m.group(4) != null)
 				numSolicitacao = Long.valueOf(m.group(4));
@@ -315,8 +316,9 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 	public String getAtributosString() {
 		String s = "";
 		for (SrAtributo att : getAtributoSet()) {
-			s += att.tipoAtributo.nomeTipoAtributo + ": " + att.valorAtributo
-					+ ". ";
+			if (att.valorAtributo != null)
+				s += att.tipoAtributo.nomeTipoAtributo + ": "
+						+ att.valorAtributo + ". ";
 		}
 		return s;
 	}

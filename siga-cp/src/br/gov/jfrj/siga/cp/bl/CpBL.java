@@ -30,6 +30,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Criptografia;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.util.CPFUtils;
+import br.gov.jfrj.siga.base.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
@@ -342,11 +344,13 @@ public class CpBL {
 
 	public CpIdentidade criarIdentidade(String matricula, String cpf,
 			CpIdentidade idCadastrante, final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc ) throws AplicacaoException {
-		final long longmatricula = Long.parseLong(matricula.substring(2));
-		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
-				Long.parseLong(cpf), longmatricula);
-
-		if (pessoa != null && pessoa.getSigla().equals(matricula)) {
+		
+		final long longMatricula = MatriculaUtils.getParteNumerica( matricula );
+		Long longCpf = CPFUtils.getLongValueValidaSimples( cpf );
+		
+		final DpPessoa pessoa = dao().consultarPorCpfMatricula( longCpf, longMatricula );
+		
+		if ( pessoa != null && matricula.equals( pessoa.getSigla() )) {
 			CpIdentidade id;
 			try {
 				id = dao().consultaIdentidadeCadastrante(matricula, true);
@@ -427,6 +431,7 @@ public class CpBL {
 		} else {
 			throw new AplicacaoException("Dados Incorretos!");
 		}
+
 	}
 
 	public CpIdentidade trocarSenhaDeIdentidade(String senhaAtual,

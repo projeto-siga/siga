@@ -50,7 +50,6 @@ function visualizarRelatorio(rel) {
 		<c:set var="actionName" scope="request">emiteRelFormularios</c:set>
 		<c:set var="titulo_pagina" scope="request">Relação de Formulários</c:set>
 		<c:set var="nomeRelatorio" scope="request">relFormularios.jsp</c:set>
-		<c:set var="tipoRelatorio" scope="request">relFormularios.jrxml</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relConsultaDocEntreDatas.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelDocEntreDatas</c:set>
@@ -82,7 +81,7 @@ function visualizarRelatorio(rel) {
 			<div class="gt-content-box gt-for-table">
 			
 		<ww:form name="frmRelatorios" action="${actionName}"
-			theme="simple" namespace="/expediente/rel" method="POST"
+			theme="simple" namespace="/expediente/rel" method="GET"
 			enctype="multipart/form-data">
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="secaoUsuario"

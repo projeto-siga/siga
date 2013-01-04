@@ -19,6 +19,7 @@
 package br.gov.jfrj.itextpdf;
 
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
@@ -90,6 +91,12 @@ import com.swetake.util.Qrcode;
  */
 public class Documento extends AbstractDocumento {
 
+	private static final float QRCODE_LEFT_MARGIN_IN_CM = 3.0f;
+
+	private static final float QRCODE_SIZE_IN_CM = 1.5f;
+
+	private static final float BARCODE_HEIGHT_IN_CM = 2.0f;
+
 	private static final int TEXT_TO_CIRCLE_INTERSPACE = 2;
 
 	private static final int TEXT_HEIGHT = 5;
@@ -100,6 +107,10 @@ public class Documento extends AbstractDocumento {
 	private static final long serialVersionUID = -6008800739543368811L;
 
 	private static final float CM_UNIT = 72.0f / 2.54f;
+
+	private static final float PAGE_BORDER_IN_CM = 0.8f;
+
+	private static final float STAMP_BORDER_IN_CM = 0.2f;
 
 	private static Log log = LogFactory.getLog(Documento.class);
 
@@ -185,11 +196,72 @@ public class Documento extends AbstractDocumento {
 			Integer paginaInicial, Integer paginaFinal,
 			Integer cOmitirNumeracao, String instancia, String orgaoUsu)
 			throws DocumentException, IOException {
+
+		PdfReader pdfIn = new PdfReader(abPdf);
+		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
+		final ByteArrayOutputStream boA4 = new ByteArrayOutputStream();
+		PdfWriter writer = PdfWriter.getInstance(doc, boA4);
+		doc.open();
+		PdfContentByte cb = writer.getDirectContent();
+
+		// Resize every page to A4 size
+		//
+		// double thetaRotation = 0.0;
+		for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
+			PdfImportedPage page = writer.getImportedPage(pdfIn, i);
+			int rot = pdfIn.getPageRotation(i);
+			float w = page.getWidth();
+			float h = page.getHeight();
+			float left = pdfIn.getPageSize(i).getLeft();
+			float bottom = pdfIn.getPageSize(i).getBottom();
+			if (rot != 0) {
+				float swap = w;
+				w = h;
+				h = swap;
+			}
+			doc.setPageSize(w > h ? PageSize.A4.rotate() : PageSize.A4);
+			float pw = doc.getPageSize().getWidth();
+			float ph = doc.getPageSize().getHeight();
+			double scale = Math.min(pw / w, ph / h);
+			doc.newPage();
+
+			if (rot != 0) {
+				double theta = -rot * (Math.PI / 180);
+				cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
+						w / 2));
+				cb.transform(AffineTransform.getTranslateInstance((h - w) / 2,
+						(h - w) / 2));
+			}
+
+			// do my transformations :
+			cb.transform(AffineTransform.getScaleInstance(scale, scale));
+
+			cb.transform(AffineTransform.getTranslateInstance(
+					((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
+
+			// put the page
+			cb.addTemplate(page, 0, 0);
+
+			// draw a red rectangle at the page borders
+			//
+			// cb.saveState();
+			// cb.setColorStroke(Color.red);
+			// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
+			// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
+			// .getPageSize(i).getTop());
+			// cb.stroke();
+			// cb.restoreState();
+		}
+		doc.close();
+
+		abPdf = boA4.toByteArray();
+
 		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
 
 		final PdfReader reader = new PdfReader(abPdf);
 		final int n = reader.getNumberOfPages();
 		final PdfStamper stamp = new PdfStamper(reader, bo2);
+
 		// adding content to each page
 		int i = 0;
 		PdfContentByte under;
@@ -200,6 +272,12 @@ public class Documento extends AbstractDocumento {
 		// Image img = Image.getInstance("watermark.jpg");
 		final BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA,
 				BaseFont.WINANSI, BaseFont.EMBEDDED);
+
+		byte maskr[] = { (byte) 0xff };
+		Image mask = Image.getInstance(1, 1, 1, 1, maskr);
+		mask.makeMask();
+		mask.setInverted(true);
+
 		while (i < n) {
 			i++;
 			// watermark under the existing page
@@ -213,26 +291,26 @@ public class Documento extends AbstractDocumento {
 			code39.setStartStopText(false);
 			final Image image39 = code39.createImageWithBarcode(over, null,
 					null);
-			Rectangle r = stamp.getReader().getPageSizeWithRotation(1);
+			Rectangle r = stamp.getReader().getPageSizeWithRotation(i);
+
 			image39.setInitialRotation((float) Math.PI / 2.0f);
 			image39.setAbsolutePosition(r.getWidth() - image39.getHeight()
-					- 0.6f * CM_UNIT, 2.0f * CM_UNIT);
+					- PAGE_BORDER_IN_CM * CM_UNIT, BARCODE_HEIGHT_IN_CM
+					* CM_UNIT);
 
 			image39.setBackgroundColor(Color.green);
 			image39.setBorderColor(Color.RED);
 			image39.setBorderWidth(0.5f * CM_UNIT);
 
-			byte maskr[] = { (byte) 0xff };
-			Image mask = Image.getInstance(1, 1, 1, 1, maskr);
-			mask.makeMask();
-			mask.setInverted(true);
 			image39.setImageMask(mask);
 
 			over.setRGBColorFill(255, 255, 255);
-			mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - 0.8f
-					* CM_UNIT, 1.7f * CM_UNIT);
-			mask.scaleAbsolute(image39.getHeight() + 0.4f * CM_UNIT,
-					image39.getWidth() + 0.6f * CM_UNIT);
+			mask.setAbsolutePosition(r.getWidth() - image39.getHeight()
+					- (PAGE_BORDER_IN_CM + STAMP_BORDER_IN_CM) * CM_UNIT,
+					(BARCODE_HEIGHT_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+			mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM
+					* CM_UNIT, image39.getWidth() + 2 * STAMP_BORDER_IN_CM
+					* CM_UNIT);
 			over.addImage(mask);
 
 			over.setRGBColorFill(0, 0, 0);
@@ -245,12 +323,19 @@ public class Documento extends AbstractDocumento {
 				java.awt.Image imgQRCode = createQRCodeImage(qrCode);
 				Image imageQRCode = Image.getInstance(imgQRCode, Color.BLACK,
 						true);
-				imageQRCode.scaleAbsolute(1.5f * CM_UNIT, 1.5f * CM_UNIT);
-				imageQRCode.setAbsolutePosition(3.0f * CM_UNIT, 1.0f * CM_UNIT);
+				imageQRCode.scaleAbsolute(QRCODE_SIZE_IN_CM * CM_UNIT,
+						QRCODE_SIZE_IN_CM * CM_UNIT);
+				imageQRCode.setAbsolutePosition(QRCODE_LEFT_MARGIN_IN_CM
+						* CM_UNIT, PAGE_BORDER_IN_CM * CM_UNIT);
 
 				over.setRGBColorFill(255, 255, 255);
-				mask.setAbsolutePosition(2.7f * CM_UNIT, 0.7f * CM_UNIT);
-				mask.scaleAbsolute(2.1f * CM_UNIT, 2.1f * CM_UNIT);
+				mask.setAbsolutePosition(
+						(QRCODE_LEFT_MARGIN_IN_CM - STAMP_BORDER_IN_CM)
+								* CM_UNIT,
+						(PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+				mask.scaleAbsolute((QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
+						* CM_UNIT, (QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
+						* CM_UNIT);
 				over.addImage(mask);
 
 				over.setRGBColorFill(0, 0, 0);
@@ -259,7 +344,10 @@ public class Documento extends AbstractDocumento {
 
 			if (mensagem != null) {
 				PdfPTable table = new PdfPTable(1);
-				table.setTotalWidth(r.getWidth() - (5.0f + 2.0f + 0.3f)
+				table.setTotalWidth(r.getWidth()
+						- image39.getHeight()
+						- (QRCODE_LEFT_MARGIN_IN_CM + QRCODE_SIZE_IN_CM + 4
+								* STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM)
 						* CM_UNIT);
 				PdfPCell cell = new PdfPCell(new Paragraph(mensagem,
 						FontFactory.getFont(FontFactory.HELVETICA, 8,
@@ -268,14 +356,21 @@ public class Documento extends AbstractDocumento {
 				table.addCell(cell);
 
 				over.setRGBColorFill(255, 255, 255);
-				mask.setAbsolutePosition(4.8f * CM_UNIT, 0.7f * CM_UNIT);
-				mask.scaleAbsolute(0.5f * CM_UNIT + table.getTotalWidth(), 0.3f
-						* CM_UNIT + table.getTotalHeight());
+				mask.setAbsolutePosition((QRCODE_LEFT_MARGIN_IN_CM
+						+ QRCODE_SIZE_IN_CM + STAMP_BORDER_IN_CM)
+						* CM_UNIT, (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM)
+						* CM_UNIT);
+				mask.scaleAbsolute(
+						2 * STAMP_BORDER_IN_CM * CM_UNIT
+								+ table.getTotalWidth(), 2 * STAMP_BORDER_IN_CM
+								* CM_UNIT + table.getTotalHeight());
 				over.addImage(mask);
 
 				over.setRGBColorFill(0, 0, 0);
-				table.writeSelectedRows(0, -1, 5.0f * CM_UNIT, 1.0f * CM_UNIT
-						+ table.getTotalHeight(), over);
+				table.writeSelectedRows(0, -1, (QRCODE_LEFT_MARGIN_IN_CM
+						+ QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
+						* CM_UNIT, table.getTotalHeight() + PAGE_BORDER_IN_CM
+						* CM_UNIT, over);
 			}
 
 			if (cancelado) {

@@ -121,8 +121,8 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			log.info( "Ocorreu um erro durante a execução da operação: " + e.getMessage() );
-			throw e;
+			log.warn( "[doFiltro] - Ocorreu um erro durante a execução da operação: " + e.getMessage() );
+			throw new AplicacaoException( "Ocorreu um erro inesperado", 0, e );
 		}
 	}
 
@@ -149,7 +149,7 @@ public class WfThreadFilter extends ThreadFilter {
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						log.error("Não foi possível configurar o hibernate.", ex);
+						log.error("[configuraHibernate] - Não foi possível configurar o hibernate.", ex);
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -162,7 +162,7 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			WfContextBuilder.closeContext();
 		} catch (Exception ex) {
-			log.error( "Ocorreu um erro ao fechar o contexto do Workflow", ex );
+			log.error( "[fechaContextoWorkflow] - Ocorreu um erro ao fechar o contexto do Workflow", ex );
 			// ex.printStackTrace();
 		}
 	}
@@ -171,7 +171,7 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
+			log.error( "[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
 			// ex.printStackTrace();
 		}
 	}

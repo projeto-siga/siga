@@ -128,7 +128,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	public String getSigla() {
-		return getSesbPessoa() + getMatricula().toString();
+		String sesbPessoa = getSesbPessoa();
+		Long matricula = getMatricula();
+		
+		return sesbPessoa != null && matricula != null ? getSesbPessoa() + getMatricula().toString() : "";
 	}
 
 	public String getIniciais() {

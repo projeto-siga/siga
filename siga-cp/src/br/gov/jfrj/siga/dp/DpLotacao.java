@@ -117,8 +117,8 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	public Long getId() {
 		return Long.valueOf(getIdLotacao());
 	}
-	
-	public void setId(Long id){
+
+	public void setId(Long id) {
 		setIdLotacao(id);
 	}
 
@@ -354,6 +354,19 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	public void setHisAtivo(int hisAtivo) {
 		//
+	}
+
+	/**
+	 * 
+	 * @return o id do órgão do usuário
+	 */
+	public Long getIdOrgaoUsuario() {
+		Long idOrgaoUsuario = null;
+		CpOrgaoUsuario orgaoUsuario = super.getOrgaoUsuario();
+		if (orgaoUsuario != null) {
+			idOrgaoUsuario = orgaoUsuario.getId();
+		}
+		return idOrgaoUsuario;
 	}
 
 }

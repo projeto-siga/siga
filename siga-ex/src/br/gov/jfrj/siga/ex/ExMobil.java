@@ -22,14 +22,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import org.apache.log4j.Logger;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -41,6 +45,13 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 public class ExMobil extends AbstractExMobil implements Serializable,
 		Selecionavel, Comparable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private static final Logger log = Logger.getLogger( ExMobil.class );
+	
 	private class CronologiaComparator implements Comparator<ExMovimentacao> {
 
 		public int compare(ExMovimentacao o1, ExMovimentacao o2) {
@@ -168,35 +179,29 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return penMov;
 	}
 
-	
 	/**
-	 * Retorna as  movimentações de um Mobil de acordo com um tipo
-	 * específico de movimentação.
+	 * Retorna as movimentações de um Mobil de acordo com um tipo específico de
+	 * movimentação.
 	 * 
 	 * @param tpMov
 	 * 
-	 * @return Lista de movimentações de um Mobil de acordo com um tipo específico
-	 *         de movimentação.
+	 * @return Lista de movimentações de um Mobil de acordo com um tipo
+	 *         específico de movimentação.
 	 * 
 	 */
 	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov) {
-		
+
 		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
-		List<ExMovimentacao> movsTp = new ArrayList<ExMovimentacao>();	
-		
+		List<ExMovimentacao> movsTp = new ArrayList<ExMovimentacao>();
+
 		if (movs != null)
-			for (final ExMovimentacao m : movs) {				
+			for (final ExMovimentacao m : movs) {
 				if (m.getExTipoMovimentacao().getIdTpMov().equals(tpMov))
 					movsTp.add(m);
 			}
-		return movsTp;	
+		return movsTp;
 	}
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * Verifica se um Mobil é do tipo Geral.
 	 * 
@@ -205,11 +210,14 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean isGeral() {
 		/*
-		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
-		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
+		 * getExTipoMobil() é diferente de nulo antes de chamar o método
+		 * getIdTipoMobil() do objeto
 		 */
-		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
-		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
+		// return getExTipoMobil().getIdTipoMobil() ==
+		// ExTipoMobil.TIPO_MOBIL_GERAL;
+		return getExTipoMobil() != null
+				&& getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL;
 	}
 
 	/**
@@ -220,11 +228,14 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean isVia() {
 		/*
-		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
-		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
+		 * getExTipoMobil() é diferente de nulo antes de chamar o método
+		 * getIdTipoMobil() do objeto
 		 */
-		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
-		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
+		// return getExTipoMobil().getIdTipoMobil() ==
+		// ExTipoMobil.TIPO_MOBIL_VIA;
+		return getExTipoMobil() != null
+				&& getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA;
 	}
 
 	/**
@@ -235,11 +246,14 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean isVolume() {
 		/*
-		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
-		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
+		 * getExTipoMobil() é diferente de nulo antes de chamar o método
+		 * getIdTipoMobil() do objeto
 		 */
-		// return getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
-		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
+		// return getExTipoMobil().getIdTipoMobil() ==
+		// ExTipoMobil.TIPO_MOBIL_VOLUME;
+		return getExTipoMobil() != null
+				&& getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
 	}
 
 	/**
@@ -250,11 +264,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean isCancelada() {
 		/*
-		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
-		 * Verifica se getExTipoMobil() é diferente de nulo antes de chamar o método getIdTipoMobil() do objeto
+		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
+		 * getExTipoMobil() é diferente de nulo antes de chamar o método
+		 * getIdTipoMobil() do objeto
 		 */
-		// return (getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() == null);
-		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() == null;
+		// return (getExTipoMobil().getIdTipoMobil() ==
+		// ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() ==
+		// null);
+		return getExTipoMobil() != null
+				&& getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA
+				&& getUltimaMovimentacaoNaoCancelada() == null;
 	}
 
 	/**
@@ -276,18 +295,28 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		String s = "<a href=\"javascript:void(0)\" onclick=\"window.open('/sigaex/expediente/doc/exibir.action?popup=true&idmob="
 				+ getIdMobil();
 
-		/*
-		 * bruno.lacerda@avantiprima.com.br - 30/07/2012
-		 * Verifica se getExDocumento() é diferente de nulo antes de chamar o método getDescrCurta()() do objeto
-		 */
-		/*
-		s = s + "', 'documento', " + winProp + ")\">"
-				+ getExDocumento().getDescrCurta() + "</a>";
-		*/
-		String descricaoCurta = getExDocumento() != null ? getExDocumento().getDescrCurta() : "";
+		String descricaoCurta = null;
+		ExDocumento exDocumento = getExDocumento();
+		
+		if ( exDocumento != null ) {
+			try {
+				descricaoCurta = exDocumento.getDescrCurta();
+			}catch (Exception e) {
+				log.warn( "[getDescricao] - Não foi possível recuperar a descrição curta do Documento. Retornando descrição em branco.", e );
+				descricaoCurta = "";
+			}
+		} else {
+			log.warn( "[getDescricao] - O Documento informado é nulo." );
+		}
+		
+		if ( descricaoCurta == null ) {
+			descricaoCurta = "";
+		}
+
 		s = s + "', 'documento', " + winProp + ")\">"
 					+ descricaoCurta + "</a>";
 		
+
 		return s;
 	}
 
@@ -350,9 +379,22 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
+
+		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
+		for (CpOrgaoUsuario ou : ExDao.getInstance().listarTodos(
+				CpOrgaoUsuario.class)) {
+			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+		}
+		String acronimos = "";
+		for (String s : mapAcronimo.keySet()) {
+			acronimos += "|" + s;
+		}
+
 		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
 		final Pattern p1 = Pattern
-				.compile("^([A-Za-z0-9]{2})?-?([A-Za-z]{3})?-?(?:([0-9]{4})/?)??([0-9]{1,5})(\\.?[0-9]{1,3})?(?:((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|((?:-?V[0-9]{1,2})))?$");
+				.compile("^([A-Za-z0-9]{2}"
+						+ acronimos
+						+ ")?-?([A-Za-z]{3})?-?(?:([0-9]{4})/?)??([0-9]{1,5})(\\.?[0-9]{1,3})?(?:((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|((?:-?V[0-9]{1,2})))?$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 
@@ -369,13 +411,18 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 			if (m1.group(1) != null) {
 				try {
-					CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-					orgaoUsuario.setSiglaOrgaoUsu(m1.group(1));
+					if (mapAcronimo.containsKey(m1.group(1))) {
+						getExDocumento().setOrgaoUsuario(
+								mapAcronimo.get(m1.group(1)));
+					} else {
+						CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+						orgaoUsuario.setSiglaOrgaoUsu(m1.group(1));
 
-					orgaoUsuario = ExDao.getInstance().consultarPorSigla(
-							orgaoUsuario);
+						orgaoUsuario = ExDao.getInstance().consultarPorSigla(
+								orgaoUsuario);
 
-					getExDocumento().setOrgaoUsuario(orgaoUsuario);
+						getExDocumento().setOrgaoUsuario(orgaoUsuario);
+					}
 				} catch (final Exception ce) {
 
 				}
@@ -642,15 +689,17 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				continue;
 			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA)
 				b = true;
-			 // Orlando: O IF abaixo foi incluído para não permitir que o documento seja recebido após ter sido transferido para um órgão externo, 
+			// Orlando: O IF abaixo foi incluído para não permitir que o
+			// documento seja recebido após ter sido transferido para um órgão
+			// externo,
 			// inclusive no caso de despacho com transferência externa.
-				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
-					b = true;
+			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+				b = true;
 			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO)
 				b = false;
-		
+
 		}
-		
+
 		return b;
 	}
 
@@ -1054,14 +1103,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			return false;
 		return true;
 	}
-	
+
 	/**
 	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura
 	 * 
-	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso contrário.
+	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
+	 *         contrário.
 	 * 
-	 */	
-	public boolean temAnexosNaoAssinados(){		
+	 */
+	public boolean temAnexosNaoAssinados() {
 		boolean b = false;
 		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
 			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
@@ -1069,30 +1119,30 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 					continue;
 				else {
 					b = true;
-					break;					
+					break;
 				}
 		}
 		return b;
-		
+
 	}
-	
+
 	/**
-	 * Verifica se um Mobil possui arquivos anexados  
+	 * Verifica se um Mobil possui arquivos anexados
 	 * 
-	 * @return Verdadeiro se o Mobil possui arquivos anexados e False caso contrário.
+	 * @return Verdadeiro se o Mobil possui arquivos anexados e False caso
+	 *         contrário.
 	 * 
-	 */	
-	public boolean temAnexos(){		
+	 */
+	public boolean temAnexos() {
 		boolean b = false;
 		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
 			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
 				b = true;
-				break;
-			}
+			break;
+		}
 		return b;
-		
+
 	}
-	
 
 	/**
 	 * Verifica se um Mobil do tipo Volume está Apensado a outro Mobil do mesmo
@@ -1223,4 +1273,23 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return l;
 	}
 	
+	/**
+	 * Retorna as  movimentações de um Mobil que estão canceladas.
+	 * 
+	 * @return Lista de movimentações de um Mobil que estão canceladas.
+	 * 
+	 */
+	public List<ExMovimentacao> getMovimentacoesCanceladas() {
+		
+		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
+		List<ExMovimentacao> movsCanceladas = new ArrayList<ExMovimentacao>();	
+		
+		if (movs != null)
+			for (final ExMovimentacao mov : movs) {				
+				if (mov.isCancelada())
+					movsCanceladas.add(mov);
+			}
+		return movsCanceladas;	
+	}
+
 }

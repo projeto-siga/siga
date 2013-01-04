@@ -199,8 +199,9 @@ public class ExDaoTest extends TestCase {
 
 	/**
 	 * @param dao
+	 * @throws Exception
 	 */
-	private static String confereAssinaturasDeDocumentos(ExDao dao) {
+	private static String confereAssinaturasDeDocumentos(ExDao dao) throws Exception {
 		long cDoc = 0;
 		long cErr = 0;
 		// Rotina para validar todas as assinaturas digitais de documentos

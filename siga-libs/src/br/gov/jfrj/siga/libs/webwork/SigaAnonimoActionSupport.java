@@ -34,6 +34,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -141,6 +142,10 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 	public HttpServletResponse getResponse() {
 		return response;
 	}
+	
+	public HttpServletResponse getResponse() {
+		return response;
+	}
 
 	public String getDtAtualDDMMYYHHMMSS() {
 		final Date dt = new Date();
@@ -161,14 +166,14 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 
 	public Integer paramInteger(final String parameterName) {
 		final String s = param(parameterName);
-		if (s == null || s.equals(""))
+		if (s == null || s.equals("") || !StringUtils.isNumeric( s ))
 			return null;
 		return Integer.parseInt(s);
 	}
 
 	public Long paramLong(final String parameterName) {
 		final String s = param(parameterName);
-		if (s == null || s.equals(""))
+		if (s == null || s.equals("") || !StringUtils.isNumeric( s ))
 			return null;
 		return Long.parseLong(s);
 	}

@@ -132,6 +132,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="/siga-ws"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ckeditor-java-core-3.5.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -16,7 +16,6 @@
 	<classpathentry exported="true" kind="lib" path="/siga-dep-tomcat/lib/axis.jar"/>
 	<classpathentry exported="true" kind="lib" path="/siga-dep-tomcat/lib/backport-util-concurrent.jar"/>
 	<classpathentry exported="true" kind="lib" path="/siga-dep-tomcat/lib/batik-all-1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="/siga-dep-tomcat/lib/bsh-2.0b4.jar"/>
 	<classpathentry exported="true" kind="lib" path="/siga-dep-tomcat/lib/c3p0-0.9.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="/siga-dep-tomcat/lib/cglib-nodep-2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="/siga-dep-tomcat/lib/commons-attributes-api.jar"/>

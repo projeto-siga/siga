@@ -41,6 +41,7 @@ import java.util.List;
 
 import oracle.jdbc.OracleTypes;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
@@ -93,6 +94,8 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 public class ExDao extends CpDao {
 
+	private static final Logger log = Logger.getLogger( ExDao.class );
+	
 	IMontadorQuery montadorQuery = null;
 
 	public static ExDao getInstance() {
@@ -141,25 +144,14 @@ public class ExDao extends CpDao {
 		return null;
 	}
 
-	public ExDocumento obterProximoNumero(final ExDocumento doc)
+	public Long obterProximoNumero(final ExDocumento doc, Long anoEmissao)
 			throws SQLException {
-		Long num = null;
-		Connection conn = getSessao().connection();
-		doc.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
-
-		CallableStatement stproc_stmt = conn
-				.prepareCall("{? = call num_expediente_fun(?,?,?)}");
-		stproc_stmt.registerOutParameter(1, OracleTypes.NUMBER);
-		stproc_stmt.setLong(2, doc.getOrgaoUsuario().getId());
-		stproc_stmt.setLong(3, doc.getExFormaDocumento().getId());
-		stproc_stmt.setLong(4, doc.getAnoEmissao());
-		stproc_stmt.executeUpdate();
-		num = stproc_stmt.getLong(1);
-		stproc_stmt.close();
-
-		doc.setNumExpediente(num);
-
-		return doc;
+		Query query = getSessao().getNamedQuery("obterProximoNumero");
+		query.setLong("idOrgaoUsu", doc.getOrgaoUsuario().getId());
+		query.setLong("idFormaDoc", doc.getExFormaDocumento().getId());
+		query.setLong("anoEmissao", anoEmissao);
+		
+		return (Long) query.uniqueResult();
 	}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {
@@ -1477,6 +1469,12 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
+		
+		if ( pes == null || dt == null ) {
+			log.error( "[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentações não podem ser nulos." );
+			throw new IllegalStateException( "A pessoa e/ou a data informada para a realização da consulta é nula." );
+		}
+		
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		final Query query = getSessao().getNamedQuery("consultarMovimentacoes");
 		ExMovimentacao mov = consultar(1122650L, ExMovimentacao.class, false);

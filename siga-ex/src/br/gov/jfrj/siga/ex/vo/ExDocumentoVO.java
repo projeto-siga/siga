@@ -303,6 +303,15 @@ public class ExDocumentoVO extends ExVO {
 						.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
 				null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
 				null, null);
+		
+		vo.addAcao("arrow_undo","Desfazer Cancelamento",
+				"/expediente/doc",
+				"desfazerCancelamentoDocumento",
+				Ex.getInstance().getComp()
+						.podeDesfazerCancelamentoDocumento(titular, lotaTitular, mob),
+				"Esta operação anulará o cancelamento do documento e tornará o documento novamente editável. Prosseguir?",
+				null, null, null);
+		
 	}
 
 	public void addDadosComplementares() throws Exception {

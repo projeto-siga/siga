@@ -93,6 +93,42 @@ public class SrConfiguracao extends CpConfiguracao implements
 		this.subTipoConfig = subTipoConfig;
 	}
 
+	public SrItemConfiguracao getItemConfiguracao() {
+		if (itemConfiguracao != null)
+			return itemConfiguracao.getAtual();
+		return null;
+	}
+
+	public SrServico getServico() {
+		if (servico != null)
+			return servico.getAtual();
+		return null;
+	}
+	
+	public SrTipoAtributo getTipoAtributo() {
+		if (tipoAtributo != null)
+			return tipoAtributo.getAtual();
+		return null;
+	}
+
+	public DpLotacao getAtendente() {
+		if (atendente != null)
+			return atendente.getLotacaoAtual();
+		return null;
+	}
+
+	public DpLotacao getPosAtendente() {
+		if (posAtendente != null)
+			return posAtendente.getLotacaoAtual();
+		return null;
+	}
+
+	public DpLotacao getPreAtendente() {
+		if (preAtendente != null)
+			return preAtendente.getLotacaoAtual();
+		return null;
+	}
+
 	public String getPesquisaSatisfacaoString() {
 		return pesquisaSatisfacao ? "Sim" : "Não";
 	}

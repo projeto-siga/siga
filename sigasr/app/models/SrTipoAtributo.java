@@ -7,11 +7,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
@@ -22,7 +24,8 @@ import play.db.jpa.Model;
 public class SrTipoAtributo extends ObjetoPlayComHistorico {
 	
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SR_TIPO_ATRIBUTO_SEQ", name = "SR_TIPO_ATRIBUTO_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_TIPO_ATRIBUTO_SEQ")
 	@Column(name = "ID_TIPO_ATRIBUTO")
 	public Long idTipoAtributo;
 	
@@ -46,6 +49,21 @@ public class SrTipoAtributo extends ObjetoPlayComHistorico {
 	
 	public static List<SrTipoAtributo> listar() {
 		return SrTipoAtributo.find("byHisDtFimIsNull").fetch();
+	}
+	
+	public List<SrTipoAtributo> getHistoricoTipoAtributo() {
+		if (getHisIdIni() == null)
+			return null;
+		return find(
+				"from SrTipoAtributo where hisIdIni = " + getHisIdIni()
+						+ " order by idTipoAtributo desc").fetch();
+	}
+
+	public SrTipoAtributo getAtual() {
+		List<SrTipoAtributo> sols = getHistoricoTipoAtributo();
+		if (sols == null)
+			return null;
+		return sols.get(0);
 	}
 
 }

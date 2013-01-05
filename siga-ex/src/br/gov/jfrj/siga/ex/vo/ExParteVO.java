@@ -48,11 +48,21 @@ public class ExParteVO {
 		return iniciais;
 	}
 
-	/*
-	 * 
-	 * ATENÇÃO: VAI DAR ERRO NO JSP
-	 * 
-	 */
+	public String getNomeAbreviado() {
+		if (descricao == null)
+			return "";
+		String a[] = descricao.split(" ");
+
+		String nomeAbreviado = "";
+		for (String n : a) {
+			if (nomeAbreviado.length() == 0)
+				nomeAbreviado = n.substring(0, 1).toUpperCase()
+						+ n.substring(1).toLowerCase();
+			// else if (!"|DA|DE|DO|DAS|DOS|E|".contains("|" + n + "|"))
+			// nomeAbreviado += " " + n.substring(0, 1) + ".";
+		}
+		return nomeAbreviado;
+	}
 
 	public ExParteVO(DpLotacao lota) {
 		sigla = lota.getSigla();

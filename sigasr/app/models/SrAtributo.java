@@ -3,9 +3,11 @@ package models;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
@@ -16,7 +18,8 @@ import play.db.jpa.Model;
 public class SrAtributo extends GenericModel {
 	
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SR_ATRIBUTO_SEQ", name = "SR_ATRIBUTO_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ATRIBUTO_SEQ")
 	@Column(name = "ID_ATRIBUTO")
 	public long id;
 	

@@ -25,6 +25,7 @@ import models.SrUrgencia;
 import org.hibernate.Session;
 
 import play.Logger;
+import play.Play;
 import play.data.binding.As;
 import play.db.jpa.JPA;
 import play.mvc.Before;
@@ -54,7 +55,9 @@ public class Application extends Controller {
 			"exibirLocalERamal", "exibirItemConfiguracao", "exibirServico" })
 	static void addDefaults() throws Exception {
 		try {
-			renderArgs.put("_base", "http://localhost:8080");
+			
+			renderArgs.put("base", getBaseSiga());
+			renderArgs.put("baseSr", getBaseSigaSr());
 
 			HashMap<String, String> atributos = new HashMap<String, String>();
 			for (Http.Header h : request.headers.values())
@@ -65,24 +68,16 @@ public class Application extends Controller {
 			if (popup == null
 					|| (!popup.equals("true") && !popup.equals("false")))
 				popup = "false";
-			String paginaVazia = ConexaoHTTP.get(
-					"http://localhost:8080/siga/pagina_vazia.action?popup="
-							+ popup, atributos);
+			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
+					+ "/siga/pagina_vazia.action?popup=" + popup, atributos);
 			String[] pageText = paginaVazia.split("<!-- insert body -->");
 			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
 			renderArgs.put("_cabecalho", cabecalho);
 			renderArgs.put("_rodape", pageText[1]);
 
-			/*
-			 * String lixo =
-			 * cabecalho[0].substring(cabecalho[0].indexOf("udic"),
-			 * cabecalho[0].indexOf("Rio")); Logger.info("testando encoding: " +
-			 * lixo);
-			 */
-
 			String[] IDs = ConexaoHTTP.get(
-					"http://localhost:8080/siga/usuario_autenticado.action",
-					atributos).split(";");
+					getBaseSiga() + "/siga/usuario_autenticado.action", atributos)
+					.split(";");
 
 			renderArgs.put("cadastrante",
 					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
@@ -103,7 +98,7 @@ public class Application extends Controller {
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
 			// Informações não vieram
-			redirect("http://localhost:8080/siga");
+			redirect(getBaseSiga() + "/siga");
 		}
 
 		try {
@@ -123,6 +118,14 @@ public class Application extends Controller {
 					+ "; Lotação: " + getLotaTitular().getSigla(), e);
 		e.printStackTrace();
 		error(e.getMessage());
+	}
+
+	public static String getBaseSiga() {
+		return Play.configuration.getProperty("siga.base.url");
+	}
+	
+	public static String getBaseSigaSr(){
+		return Play.configuration.getProperty("siga.sr.url.cliente");
 	}
 
 	static DpPessoa getCadastrante() {
@@ -539,14 +542,14 @@ public class Application extends Controller {
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("http://localhost:8080/siga/" + tipo + "/selecionar.action?"
+		proxy(getBaseSiga() + "/siga/" + tipo + "/selecionar.action?"
 				+ "propriedade=" + tipo + nome + "&sigla="
 				+ URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action?"
+		proxy(getBaseSiga()+"/siga/" + tipo + "/buscar.action?"
 				+ "propriedade=" + tipo + nome + "&sigla="
 				+ URLEncoder.encode(sigla, "UTF-8"));
 	}
@@ -558,7 +561,7 @@ public class Application extends Controller {
 				paramString += s + "="
 						+ URLEncoder.encode(request.params.get(s), "UTF-8")
 						+ "&";
-		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action"
+		proxy(getBaseSiga()+"/siga/" + tipo + "/buscar.action"
 				+ paramString);
 	}
 

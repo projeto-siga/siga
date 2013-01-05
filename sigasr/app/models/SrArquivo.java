@@ -7,8 +7,10 @@ import java.io.IOException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.io.IOUtils;
@@ -22,7 +24,8 @@ import play.db.jpa.Model;
 public class SrArquivo extends GenericModel {
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SR_ARQUIVO_SEQ", name = "SR_ARQUIVO_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ARQUIVO_SEQ")
 	@Column(name = "ID_ARQUIVO")
 	public Long idArquivo;
 

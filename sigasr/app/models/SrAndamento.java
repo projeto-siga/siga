@@ -11,10 +11,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +36,8 @@ import play.db.jpa.Model;
 public class SrAndamento extends GenericModel {
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SR_ANDAMENTO_SEQ", name = "SR_ANDAMENTO_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ANDAMENTO_SEQ")
 	@Column(name = "ID_ANDAMENTO")
 	public long idAndamento;
 

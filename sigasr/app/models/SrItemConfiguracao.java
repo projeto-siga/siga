@@ -1,9 +1,7 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -12,29 +10,16 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import controllers.SrConfiguracaoBL;
-import controllers.SrItemConfiguracaoBinder;
-import controllers.Util;
-
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.Historico;
-import br.gov.jfrj.siga.model.Objeto;
-
-import play.db.jpa.GenericModel;
-import play.db.jpa.JPA;
-import play.db.jpa.JPABase;
-import play.db.jpa.Model;
+import controllers.SrConfiguracaoBL;
+import controllers.Util;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO")
@@ -44,7 +29,8 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SR_ITEM_CONFIGURACAO_SEQ", name = "SR_ITEM_CONFIGURACAO_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ITEM_CONFIGURACAO_SEQ")
 	@Column(name = "ID_ITEM_CONFIGURACAO")
 	public Long idItemConfiguracao;
 
@@ -92,6 +78,21 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 		this.tituloItemConfiguracao = descricao;
 	}
 
+	public List<SrItemConfiguracao> getHistoricoItemConfiguracao() {
+		if (getHisIdIni() == null)
+			return null;
+		return find(
+				"from SrItemConfiguracao where hisIdIni = " + getHisIdIni()
+						+ " order by idItemConfiguracao desc").fetch();
+	}
+
+	public SrItemConfiguracao getAtual() {
+		List<SrItemConfiguracao> sols = getHistoricoItemConfiguracao();
+		if (sols == null)
+			return null;
+		return sols.get(0);
+	}
+
 	@Override
 	public SrItemConfiguracao selecionar(String sigla) throws Exception {
 		return selecionar(sigla, null);
@@ -101,7 +102,8 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 			throws Exception {
 		setSigla(sigla);
 		List<SrItemConfiguracao> itens = buscar(pess);
-		if (itens.size() == 0 || itens.size() > 1)
+		if (itens.size() == 0 || itens.size() > 1
+				|| !itens.get(0).isEspecifico())
 			return null;
 		return itens.get(0);
 	}
@@ -192,6 +194,10 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 		return 4 - camposVazios;
 	}
 
+	public boolean isEspecifico() {
+		return getNivel() == 4;
+	}
+
 	public String getSiglaSemZeros() {
 		int posFimComparacao = getSigla().indexOf(".00");
 		if (posFimComparacao < 0)
@@ -219,7 +225,8 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 	}
 
 	public static List<SrItemConfiguracao> listar() {
-		return SrItemConfiguracao.find("hisDtFim is null order by siglaItemConfiguracao").fetch();
+		return SrItemConfiguracao.find(
+				"hisDtFim is null order by siglaItemConfiguracao").fetch();
 	}
 
 	public static List<SrItemConfiguracao> listarPorPessoa(DpPessoa pess)
@@ -237,8 +244,8 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 								.compareTo(o2.siglaItemConfiguracao);
 					}
 				});
-		List<SrConfiguracao> confs = Util.getConfiguracoes(pess,
-				null, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+		List<SrConfiguracao> confs = Util.getConfiguracoes(pess, null, null,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
 						SrConfiguracaoBL.ITEM_CONFIGURACAO,
 						SrConfiguracaoBL.SERVICO });

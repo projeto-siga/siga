@@ -81,7 +81,7 @@
 						<span id='rightbottom' style="margin:0;padding:0;"></span>
 						<script type="text/javascript">
 							SetInnerHTMLFromAjaxResponse(
-									"/siga/proxy.action?URL=${f:resource('siga.sr.url')}/gadget",
+									"/siga/proxy.action?URL=${f:resource('siga.sr.url.servidor')}/gadget",
 									document.getElementById('rightbottom'));
 						</script>
 						</c:if>

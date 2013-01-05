@@ -142,10 +142,6 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 	public HttpServletResponse getResponse() {
 		return response;
 	}
-	
-	public HttpServletResponse getResponse() {
-		return response;
-	}
 
 	public String getDtAtualDDMMYYHHMMSS() {
 		final Date dt = new Date();

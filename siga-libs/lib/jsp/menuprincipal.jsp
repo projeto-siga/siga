@@ -16,7 +16,7 @@
 					</li>
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
 						<li><a
-							href="${f:resource('siga.sr.url')}" >Serviços</a>
+							href="${f:resource('siga.sr.url.cliente')}" >Serviços</a>
 						</li>
 					</c:if>
 					<!-- <li><a href="/sigatr/">Treinamento</a>

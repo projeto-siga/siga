@@ -20,6 +20,7 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -28,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Query;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -58,7 +60,8 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 		SrSelecionavel {
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", name = "SR_SOLICITACAO_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_SOLICITACAO_SEQ")
 	@Column(name = "ID_SOLICITACAO")
 	public Long idSolicitacao;
 

@@ -118,7 +118,7 @@ public class PrincipalAction extends SigaActionSupport {
 
 		try {
 
-			String URLSistema = "", uRLExibir = "";
+			String URLSelecionar = "", uRLExibir = "";
 			List<String> orgaos = new ArrayList<String>();
 			String copiaSigla = getSigla().toUpperCase();
 
@@ -141,22 +141,21 @@ public class PrincipalAction extends SigaActionSupport {
 							.getConf()
 							.podeUtilizarServicoPorConfiguracao(getTitular(),
 									getLotaTitular(), "SIGA;SR"))
-				URLSistema = System.getProperty("siga.sr.url")
-						+ "/selecionar?sigla=" + getSigla();
+				URLSelecionar = System.getProperty("siga.sr.url.servidor")+"/selecionar?sigla=" + getSigla();
 			else
-				// Edson: Esta URL também tem que vir do properties
-				URLSistema = "http://localhost:8080/sigaex/expediente/selecionar.action?sigla="
+				URLSelecionar = "http://localhost:8080/sigaex/expediente/selecionar.action?sigla="
 						+ getSigla();
 
-			String[] response = ConexaoHTTP.get(URLSistema, getHeaders())
+			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
 					.split(";");
 
 			if (copiaSigla.startsWith("SR"))
-				uRLExibir = System.getProperty("siga.sr.url") + "/exibir/"
+				uRLExibir = System.getProperty("siga.sr.url.cliente") + "/exibir/"
 						+ response[1];
 			else
-				// Edson: Esta URL também tem que vir do properties
-				uRLExibir = "http://localhost:8080/sigaex/expediente/doc/exibir.action?sigla="
+				uRLExibir = "http://" + getRequest().getServerName() + ":"
+						+ getRequest().getServerPort()
+						+ "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];
 
 			sel.setId(Long.valueOf(response[1]));

@@ -14,9 +14,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import controllers.SrConfiguracaoBL;
@@ -39,7 +41,8 @@ import play.db.jpa.Model;
 public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel {
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SR_SERVICO_SEQ", name = "SR_SERVICO_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_SERVICO_SEQ")
 	@Column(name = "ID_SERVICO")
 	public Long idServico;
 
@@ -87,6 +90,21 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel 
 	@Override
 	public void setDescricao(String descricao) {
 		this.tituloServico = descricao;
+	}
+
+	public List<SrServico> getHistoricoServico() {
+		if (getHisIdIni() == null)
+			return null;
+		return find(
+				"from SrServico where hisIdIni = " + getHisIdIni()
+						+ " order by idServico desc").fetch();
+	}
+
+	public SrServico getAtual() {
+		List<SrServico> sols = getHistoricoServico();
+		if (sols == null)
+			return null;
+		return sols.get(0);
 	}
 
 	@Override
@@ -200,6 +218,10 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel 
 		return 2 - camposVazios;
 	}
 
+	public boolean isEspecifico() {
+		return getNivel() == 2;
+	}
+
 	public String getSiglaSemZeros() {
 		int posFimComparacao = getSigla().indexOf(".00");
 		if (posFimComparacao < 0)
@@ -244,16 +266,21 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel 
 						return o1.siglaServico.compareTo(o2.siglaServico);
 					}
 				});
-		List<SrConfiguracao> confs = Util.getConfiguracoes(pess, item,
-				null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+		List<SrConfiguracao> confs = Util.getConfiguracoes(pess, item, null,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
 				new int[] { SrConfiguracaoBL.SERVICO });
 		for (SrConfiguracao conf : confs) {
-			if (conf.servico == null)
-				listaFinal.addAll(listar());
-			else
-				listaFinal.addAll(conf.servico
-						.listarServicoETodosDescendentes());
+			if (conf.servico == null) {
+				for (SrServico serv : listar())
+					if (serv.isEspecifico())
+						listaFinal.add(serv);
+				break;
+			} else
+				for (SrServico serv : conf.servico
+						.listarServicoETodosDescendentes())
+					if (serv.isEspecifico())
+						listaFinal.add(serv);
 		}
 		return new ArrayList(listaFinal);
 	}

@@ -47,8 +47,13 @@ function sbmt(nivel){
 		</tr>
 		#{list items:itens, as:'item'}
 		<tr>
-			<td style="padding-left: ${item.nivel*13}px;"><a
+			<td style="padding-left: ${item.nivel*13}px;">
+			#{if item.especifico}<a
 				href="javascript:opener.retorna_item${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.sigla}</a>
+			#{/if}
+			#{else}
+				${item.sigla}
+			#{/else}
 			</td>
 			<td>${item.tituloItemConfiguracao}</td>
 		</tr>

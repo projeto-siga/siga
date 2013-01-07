@@ -7,6 +7,26 @@
 
 <%@ taglib prefix="ww" uri="/webwork"%>
 <siga:pagina titulo="Lista Configurações">
+
+<script type="text/javascript">
+<ww:url id="url" action="listarConfiguracoes" namespace="/expediente/configuracao">
+</ww:url>
+function sbmt(id) {
+	
+	var frm = document.getElementById('frm');	
+	
+	if (id == null || IsRunningAjaxRequest()) {
+		frm.action='<ww:property value="%{url}"/>';
+		frm.submit();
+	} else {
+		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
+	}
+	return;
+}	
+
+</script>
+
+
 	<h1>Configurações cadastradas (listagem por tipo):</h1>
 	<br />
 	<ww:url id="url" action="editar" namespace="/expediente/configuracao">
@@ -15,6 +35,14 @@
 		onclick="javascript:window.location.href='${url}'">
 	<br>	
 	<br>
+	
+	<b>Tipo de Configuração</b>
+		<ww:select name="idTpConfiguracao"
+				   list="listaTiposConfiguracao" listKey="idTpConfiguracao"
+				   listValue="dscTpConfiguracao" onchange="javascript:sbmt();"  theme="simple"
+				   headerValue="[Indefinido]" headerKey="0" />
+			
+	
 	
 	Tipos de Configuração: <ww:select name="idTpConfiguracao"	   
 	   list="descrTiposConf" listKey="idTpConfiguracao" listValue="dscTpConfiguracao" />

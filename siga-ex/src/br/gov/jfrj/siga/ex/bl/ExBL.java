@@ -290,6 +290,8 @@ public class ExBL extends CpBL {
 		if (lota != null)
 			mar.setDpLotacaoIni(lota.getLotacaoInicial());
 		mar.setDtIniMarca(dt);
+		//Isto é provisório
+		mar.setIdMarca(ExDao.getInstance().obterProximoIdMarca());
 		set.add(mar);
 	}
 
@@ -2122,8 +2124,8 @@ public class ExBL extends CpBL {
 
 			if (doc.getOrgaoUsuario() == null)
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
-			
-			if (doc.getNumExpediente() == null) 
+
+			if (doc.getNumExpediente() == null)
 				doc.setNumExpediente(obterProximoNumero(doc));
 
 			doc.setDtFechamento(dt);
@@ -2147,8 +2149,7 @@ public class ExBL extends CpBL {
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			dao().gravar(doc);
 
-			if (doc.getExFormaDocumento().getExTipoFormaDoc()
-					.isExpediente()) {
+			if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 				for (final ExVia via : setVias) {
 					Integer numVia = null;
 					if (via.getCodVia() != null)
@@ -2177,29 +2178,32 @@ public class ExBL extends CpBL {
 					+ e.getMessage(), 0, e);
 		}
 	}
-	
+
 	public Long obterProximoNumero(ExDocumento doc) throws Exception {
 		doc.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
-		
+
 		Long num = dao().obterProximoNumero(doc, doc.getAnoEmissao());
-		
-		if(num == null) {
-			//Verifica se reiniciar a numeração ou continua com a numeração anterior
-			if(getComp().podeReiniciarNumeracao(doc)) {
+
+		if (num == null) {
+			// Verifica se reiniciar a numeração ou continua com a numeração
+			// anterior
+			if (getComp().podeReiniciarNumeracao(doc)) {
 				num = 1L;
 			} else {
-				//Obtém o próximo número considerando os anos anteriores até 2006
+				// Obtém o próximo número considerando os anos anteriores até
+				// 2006
 				Long anoEmissao = doc.getAnoEmissao();
 				while (num == null && anoEmissao > 2005) {
 					anoEmissao = anoEmissao - 1;
 					num = dao().obterProximoNumero(doc, anoEmissao);
 				}
-				//Se continuar null é porque nunca foi criado documento para este formato.
-				if(num == null) 
+				// Se continuar null é porque nunca foi criado documento para
+				// este formato.
+				if (num == null)
 					num = 1L;
 			}
 		}
-		
+
 		return num;
 	}
 
@@ -2684,12 +2688,12 @@ public class ExBL extends CpBL {
 								"Não é possível juntar documento com anexo pendente de assinatura ou conferência");
 				}
 			}
-			
-			//Verifica se o documeto pai já está apensado a este documento
+
+			// Verifica se o documeto pai já está apensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {
-				if(apenso.getId() == mobPai.getId())
+				if (apenso.getId() == mobPai.getId())
 					throw new AplicacaoException(
-						"Não é possível juntar um documento a um documento que está apensado a ele.");
+							"Não é possível juntar um documento a um documento que está apensado a ele.");
 			}
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
@@ -4617,45 +4621,46 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao salvar um modelo.", 0, e);
 		}
 	}
-	
+
 	public void DesfazerCancelamentoDocumento(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 
 		try {
 			SortedSet<ExMobil> set = doc.getExMobilSet();
-			
+
 			iniciarAlteracao();
-			
+
 			for (ExMobil mob : set) {
-				
-				List<ExMovimentacao> movsCanceladas = mob.getMovimentacoesCanceladas();
-				
+
+				List<ExMovimentacao> movsCanceladas = mob
+						.getMovimentacoesCanceladas();
+
 				for (ExMovimentacao movARecuperar : movsCanceladas) {
-					ExMovimentacao movCanceladora = movARecuperar.getExMovimentacaoCanceladora();
-						
+					ExMovimentacao movCanceladora = movARecuperar
+							.getExMovimentacaoCanceladora();
+
 					movARecuperar.setExMovimentacaoCanceladora(null);
-						
+
 					gravarMovimentacao(movARecuperar);
-						
+
 					final ExMovimentacao novaMov = criarNovaMovimentacao(
 							ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-							cadastrante, lotaCadastrante, mob, null, null, null,
-							null, null, null);
-						
+							cadastrante, lotaCadastrante, mob, null, null,
+							null, null, null, null);
 
 					novaMov.setExMovimentacaoRef(movCanceladora);
-						
+
 					gravarMovimentacaoCancelamento(novaMov, movCanceladora);
 				}
 				concluirAlteracaoParcial(mob);
 			}
-			
+
 			concluirAlteracao(null);
-			
-			
+
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao anular cancelamento do documento.", 0, e);
+			throw new AplicacaoException(
+					"Erro ao anular cancelamento do documento.", 0, e);
 		}
 	}
 }

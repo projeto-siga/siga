@@ -18,6 +18,7 @@
  ******************************************************************************/
 /*
  * Criado em  23/11/2005
+ * 
  *
  */
 package br.gov.jfrj.webwork.action;
@@ -367,22 +368,24 @@ public class ExConfiguracaoAction extends ExActionSupport {
 				getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR))
 			throw new AplicacaoException("Operação restrita");				
         
-        
-		ExConfiguracao config = new ExConfiguracao();
-
-		List<CpTipoConfiguracao> exTiposConfig = dao().listarTodos(
-				CpTipoConfiguracao.class);	
+	    return Action.SUCCESS;
+	}
+	
+	public String aListarCadastradas() {        
 		
-		for (CpTipoConfiguracao tipo : exTiposConfig) {			
-			config.setCpTipoConfiguracao(tipo);
-			Object[] obj = new Object[2];
-			obj[0] = tipo;			
-			List<ExConfiguracao> cfg = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);
-			if (cfg.isEmpty())
-				continue;
-			obj[1] = cfg;
-			  itens.add(obj);
-		}
+		ExConfiguracao config = new ExConfiguracao();	
+		
+		if (getIdTpConfiguracao() != null && getIdTpConfiguracao() != 0) {
+			config.setCpTipoConfiguracao(dao().consultar(getIdTpConfiguracao(),
+					CpTipoConfiguracao.class, false));
+												
+		    List<ExConfiguracao> listConfig = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);		
+		
+		
+		this.getRequest().setAttribute("listConfig", listConfig);
+		this.getRequest().setAttribute("tpConfiguracao", config.getCpTipoConfiguracao());
+		}		
+			
 		return Action.SUCCESS;
 	}
 

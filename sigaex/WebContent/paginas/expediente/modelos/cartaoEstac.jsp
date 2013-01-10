@@ -52,7 +52,8 @@
 		</mod:grupo>
 		<mod:grupo>
 			<mod:mensagem titulo="Atenção"
-				texto="preencha o destinatário com NSEG e, após finalizar, transfira para a NSEG." vermelho="Sim" />
+				texto="Preencha o destinatário com DSEG e, após finalizar, transfira para a DSEG.
+				       Anexar o CRLV, de acordo com a portaria n° RJ-PDG-2012/5 de 14 de março de 2012." vermelho="Sim" />
 		</mod:grupo>	
 	</mod:entrevista>
 

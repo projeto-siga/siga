@@ -9,9 +9,6 @@
 <siga:pagina titulo="Lista Configurações">
 
 <script type="text/javascript">
-<ww:url id="url" action="listarConfiguracoes" namespace="/expediente/configuracao">
-	<ww:param name="idTpConfiguracao">${idTpConfiguracao}</ww:param>
-</ww:url>
 
 function sbmt(id) {
 	
@@ -51,7 +48,7 @@ function montaTableCadastradas(idTpConfiguracao){
 	
 	<b>Tipo de Configuração</b>
 		<ww:select name="idTpConfiguracao"
-				   list="listaTiposConfiguracao" listKey="idTpConfiguracao"
+				   list="listaTiposConfiguracao" listKey="idTpConfiguracao" id="idTpConfiguracao"
 				   listValue="dscTpConfiguracao" onchange="javascript:montaTableCadastradas(idTpConfiguracao);"  theme="simple"
 				   headerValue="[Indefinido]" headerKey="0" />
 			

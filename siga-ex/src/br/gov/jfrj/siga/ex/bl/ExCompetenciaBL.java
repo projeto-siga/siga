@@ -513,6 +513,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.isGeral()
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
+					&& !mob.isSobrestado()
 					&& !mob.isEncerrado()
 					&& podeMovimentar(titular, lotaTitular, mob)
 					&& podePorConfiguracao(titular, lotaTitular,
@@ -644,6 +645,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& (mob.isVia() || mob.isVolume())
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
 				&& !mob.isEmTransito()
 				&& getConf()
@@ -652,6 +654,47 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/**
+	 * Retorna se é possível fazer sobrestar um móbil, segundo as
+	 * regras a seguir:
+	 * <ul>
+	 * <li>Documento tem de estar assinado</li>
+	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
+	 * <li>Móbil não pode estar arquivado</li>
+	 * <li>Móbil não pode estar juntado</li>
+	 * <li>Móbil não pode estar em trânsito</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeSobrestar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		final ExMovimentacao ultMovNaoCancelada = mob
+				.getUltimaMovimentacaoNaoCancelada();
+		
+		return false;
+		
+		/*return mob.doc().isAssinado()
+				&& (mob.isVia() || mob.isVolume())
+				&& podeMovimentar(titular, lotaTitular, mob)
+				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
+				&& !mob.isJuntado()
+				&& !mob.isEmTransito()
+				&& getConf()
+						.podePorConfiguracao(
+								titular,
+								lotaTitular,
+								ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);*/
 	}
 
 	/**
@@ -1427,6 +1470,38 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
+	 * Retorna se é possível desobrestar um móbil, segundo as seguintes regras:
+	 * <ul>
+	 * <li>Móbil tem de ser via ou volume. Não pode ser geral</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
+	 * <li>Móbil tem de estar sobrestado</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeDesobrestar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		return false;
+		
+		/*if (!(mob.isVia() || mob.isVolume()))
+			return false;
+		final ExMovimentacao ultMovNaoCancelada = mob
+				.getUltimaMovimentacaoNaoCancelada();
+		if (ultMovNaoCancelada == null)
+			return false;
+		return podeMovimentar(titular, lotaTitular, mob)
+				&& (mob.isSobrestado())
+				&& getConf().podePorConfiguracao(titular, lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);*/
+	}	
+	
+	/**
 	 * Retorna se é possível fazer despacho no móbil, conforme as regras a
 	 * seguir:
 	 * <ul>
@@ -1461,6 +1536,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
 				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
 						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
@@ -2128,6 +2204,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& mob.doc().isAssinado()
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
 				&& podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -2167,6 +2244,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isApensado()
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -2401,7 +2479,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
 
-		if (mob.isCancelada() || mob.isArquivado() || (!mob.isEmTransito()))
+		if (mob.isCancelada() || mob.isArquivado() || mob.isSobrestado() || (!mob.isEmTransito()))
 			return false;
 		else if (!mob.isEmTransitoExterno()) {
 			if (!exMov.getLotaResp().equivale(lotaTitular))
@@ -2729,6 +2807,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);

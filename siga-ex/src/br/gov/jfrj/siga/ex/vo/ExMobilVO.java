@@ -300,6 +300,12 @@ public class ExMobilVO extends ExVO {
 				"arquivar_corrente_gravar",
 				Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob));
+		
+		addAcao("package", "Sobrestar",
+				"/expediente/mov",
+				"sobrestar_gravar",
+				Ex.getInstance().getComp()
+						.podeSobrestar(titular, lotaTitular, mob));
 
 		addAcao("box","Arq. Permanente", "/expediente/mov",
 				"arquivar_permanente_gravar", Ex.getInstance().getComp()
@@ -310,6 +316,12 @@ public class ExMobilVO extends ExVO {
 				"desarquivar_gravar",
 				Ex.getInstance().getComp()
 						.podeDesarquivar(titular, lotaTitular, mob));
+		
+		addAcao("package_go","Desobrestar",
+				"/expediente/mov",
+				"desobrestar_gravar",
+				Ex.getInstance().getComp()
+						.podeDesobrestar(titular, lotaTitular, mob));
 
 		addAcao("link","Juntar", "/expediente/mov", "juntar", Ex.getInstance()
 				.getComp().podeJuntar(titular, lotaTitular, mob));

@@ -601,6 +601,8 @@ public class ExBL extends CpBL {
 				m = CpMarcador.MARCADOR_ARQUIVADO_CORRENTE;
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE)
 				m = CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE;
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR)
+				m = CpMarcador.MARCADOR_SOBRESTADO;
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
 				m = CpMarcador.MARCADOR_JUNTADO;
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO)
@@ -628,6 +630,7 @@ public class ExBL extends CpBL {
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
@@ -1117,6 +1120,36 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException(
 					"Erro ao arquivar permanentemente um documento.", 0, e);
+		}
+	}
+	
+	public void sobrestar(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
+			Date dtMovIni, DpPessoa subscritor) throws AplicacaoException {
+
+		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		for (ExMobil m : set) {
+			if (m.getExDocumento().getDtFechamento() == null)
+				throw new AplicacaoException(
+						"Não é possível sobrestar um documento não finalizado");
+		}
+
+		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
+		try {
+			iniciarAlteracao();
+
+			for (ExMobil m : set) {
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
+						cadastrante, lotaCadastrante, m, dtMov, subscritor,
+						null, null, null, dt);
+				gravarMovimentacao(mov);
+				concluirAlteracaoParcial(m);
+			}
+			concluirAlteracao(null);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao sobrestar documento.", 0, e);
 		}
 	}
 
@@ -2056,6 +2089,36 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao desarquivar.", 0, e);
+		}
+	}
+	
+	public void desobrestar(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor)
+			throws AplicacaoException {
+		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		for (ExMobil m : set) {
+			if (!m.isSobrestado())
+				throw new AplicacaoException(
+						"Não é possível desobrestar um documento que não esteja sobrestado");
+		}
+
+		Date dt = dao().dt();
+		try {
+			iniciarAlteracao();
+
+			for (ExMobil m : set) {
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR,
+						cadastrante, lotaCadastrante, m, dtMov, subscritor,
+						null, null, null, dt);
+				gravarMovimentacao(mov);
+				concluirAlteracaoParcial(m);
+			}
+			concluirAlteracao(null);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao desobrestar.", 0, e);
 		}
 	}
 

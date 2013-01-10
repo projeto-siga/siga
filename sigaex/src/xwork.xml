@@ -657,6 +657,24 @@
 				<param name="namespace">/expediente/doc</param>
 			</result>
 		</action>
+		<action name="sobrestar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSobrestarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="desobrestar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aDesobrestarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
 		<action name="receber_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aReceberLote">
 			<result>/paginas/expediente/recebe_lote.jsp</result>

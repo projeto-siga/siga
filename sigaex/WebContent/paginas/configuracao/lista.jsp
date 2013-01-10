@@ -24,7 +24,7 @@ function sbmt(id) {
 }
 
 function montaTableCadastradas(idTpConfiguracao){	
-	
+	    document.write("Aqui");
 		$('#tableCadastradas').html('Carregando...');			
 		$.ajax({				     				  
 			  url:'/sigaex/expediente/configuracao/listar_cadastradas.action?idTpConfiguracao=${idTpConfiguracao}',					    					   					 

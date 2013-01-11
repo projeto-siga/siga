@@ -680,9 +680,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
 		
-		return false;
-		
-		/*return mob.doc().isAssinado()
+		return mob.doc().isAssinado()
 				&& (mob.isVia() || mob.isVolume())
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isArquivado()
@@ -694,7 +692,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);*/
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 
 	/**
@@ -1486,9 +1484,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeDesobrestar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-		return false;
 		
-		/*if (!(mob.isVia() || mob.isVolume()))
+		if (!(mob.isVia() || mob.isVolume()))
 			return false;
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
@@ -1498,7 +1495,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& (mob.isSobrestado())
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);*/
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}	
 	
 	/**

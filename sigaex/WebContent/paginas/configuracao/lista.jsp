@@ -23,11 +23,13 @@ function sbmt(id) {
 	return;
 }
 
-function montaTableCadastradas(idTpConfiguracao){	
-	    document.write("Aqui");
+function montaTableCadastradas(){	
+	    
+	    alert($('#idTpConfiguracao').val());
+	    var idTpConf = $('#idTpConfiguracao').val();
 		$('#tableCadastradas').html('Carregando...');			
 		$.ajax({				     				  
-			  url:'/sigaex/expediente/configuracao/listar_cadastradas.action?idTpConfiguracao=${idTpConfiguracao}',					    					   					 
+			  url:'/sigaex/expediente/configuracao/listar_cadastradas.action?idTpConfiguracao='+idTpConf,					    					   					 
 			  success: function(data) {
 		    	$('#tableCadastradas').html(data);				    
 		 	 }
@@ -49,7 +51,7 @@ function montaTableCadastradas(idTpConfiguracao){
 	<b>Tipo de Configuração</b>
 		<ww:select name="idTpConfiguracao"
 				   list="listaTiposConfiguracao" listKey="idTpConfiguracao" id="idTpConfiguracao"
-				   listValue="dscTpConfiguracao" onchange="javascript:montaTableCadastradas(idTpConfiguracao);"  theme="simple"
+				   listValue="dscTpConfiguracao" onchange="javascript:montaTableCadastradas();"  theme="simple"
 				   headerValue="[Indefinido]" headerKey="0" />
 			
 	

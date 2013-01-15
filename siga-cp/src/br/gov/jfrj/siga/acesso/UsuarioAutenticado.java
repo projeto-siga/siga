@@ -38,24 +38,35 @@ public class UsuarioAutenticado {
 	@SuppressWarnings("static-access")
 	public static void carregarUsuarioAutenticadoClientCert(String principal,
 			ConheceUsuario ioc) throws Exception {
-		
-		List<CpIdentidade> ids = dao().consultaIdentidadesCadastrante(principal, true);
+
+		List<CpIdentidade> ids = dao().consultaIdentidadesCadastrante(
+				principal, true);
 		CpIdentidade idCertEncontrada = null;
 		for (CpIdentidade idCert : ids) {
-			if (idCert.getCpTipoIdentidade().isTipoCertificado() ) {
+			if (idCert.getCpTipoIdentidade().isTipoCertificado()) {
 				idCertEncontrada = idCert;
 				break;
 			}
 		}
-		
+
 		if (idCertEncontrada == null) {
 			CpIdentidade idCertNova;
 			try {
-				// cria uma nova identidade para o caso de não existir para o certificado.
-				DpPessoa pessoa = CpDao.getInstance().getPessoaPorPrincipal(principal );
-				if (pessoa == null)  throw new AplicacaoException("Pessoa não identificada para a matrícula '" + principal + "'.");
-				CpTipoIdentidade tpId = CpDao.getInstance().consultar(CpTipoIdentidade.CERTIFICADO, CpTipoIdentidade.class, false);
-				if (tpId == null)  throw new AplicacaoException("Tipo de identidade não encontrado para o id '" + CpTipoIdentidade.CERTIFICADO + "'.");
+				// cria uma nova identidade para o caso de não existir para o
+				// certificado.
+				DpPessoa pessoa = CpDao.getInstance().getPessoaPorPrincipal(
+						principal);
+				if (pessoa == null)
+					throw new AplicacaoException(
+							"Pessoa não identificada para a matrícula '"
+									+ principal + "'.");
+				CpTipoIdentidade tpId = CpDao.getInstance().consultar(
+						CpTipoIdentidade.CERTIFICADO, CpTipoIdentidade.class,
+						false);
+				if (tpId == null)
+					throw new AplicacaoException(
+							"Tipo de identidade não encontrado para o id '"
+									+ CpTipoIdentidade.CERTIFICADO + "'.");
 				idCertNova = new CpIdentidade();
 				idCertNova.setDpPessoa(pessoa);
 				idCertNova.setCpTipoIdentidade(tpId);
@@ -68,27 +79,29 @@ public class UsuarioAutenticado {
 				idCertNova.setDscSenhaIdentidade(null);
 				idCertNova.setDscSenhaIdentidadeCripto(null);
 				idCertNova.setDscSenhaIdentidadeCriptoSinc(null);
-				//TODO: verificar o porquê da não gravação da identidade 
+				// TODO: verificar o porquê da não gravação da identidade
 				dao().iniciarTransacao();
-				//dao().gravar(idCertNova);
+				// dao().gravar(idCertNova);
 				dao().gravarComHistorico(idCertNova, null, dt, null);
 				dao().commitTransacao();
 			} catch (Exception e) {
 				throw new AplicacaoException(
-					"Não foi possível criar uma identidade para o certificado." );
+						"Não foi possível criar uma identidade para o certificado.");
 			}
-			carregarUsuario (idCertNova, ioc);
+			carregarUsuario(idCertNova, ioc);
 		} else {
-			carregarUsuario (idCertEncontrada, ioc);
+			carregarUsuario(idCertEncontrada, ioc);
 		}
 	}
-	
+
 	@SuppressWarnings("static-access")
-	public static void carregarUsuario (CpIdentidade id, ConheceUsuario ioc) throws AplicacaoException, SQLException  {
+	public static void carregarUsuario(CpIdentidade id, ConheceUsuario ioc)
+			throws AplicacaoException, SQLException {
 		Date dt = dao().consultarDataEHoraDoServidor();
-		if ( ! id.ativaNaData(dt)) {
+		if (!id.ativaNaData(dt)) {
 			throw new AplicacaoException(
-					"O acesso não será permitido porque identidade está inativa desde '" + id.getDtExpiracaoDDMMYYYY() + "'.");
+					"O acesso não será permitido porque identidade está inativa desde '"
+							+ id.getDtExpiracaoDDMMYYYY() + "'.");
 		}
 		if (id.isBloqueada()) {
 			throw new AplicacaoException(
@@ -122,19 +135,23 @@ public class UsuarioAutenticado {
 					.consultarSubstituicoesPermitidas(dpSubstituicao);
 
 			for (final DpSubstituicao substituicao : substituicoesPermitidas) {
-				if (per.getPesSubstituindo() != null)
+				if (per.getPesSubstituindo() != null) {
 					if (per.getPesSubstituindo().equivale(
-							substituicao.getTitular())) {
+							substituicao.getTitular())
+							&& per.getLotaSubstituindo().equivale(
+									substituicao.getLotaTitular())) {
 						ioc.setTitular(per.getPesSubstituindo());
-						break;
-					}
-
-				if (per.getLotaSubstituindo() != null)
-					if (per.getLotaSubstituindo().equivale(
-							substituicao.getLotaTitular())) {
 						ioc.setLotaTitular(per.getLotaSubstituindo());
 						break;
 					}
+				} else {
+					if (per.getLotaSubstituindo() != null)
+						if (per.getLotaSubstituindo().equivale(
+								substituicao.getLotaTitular())) {
+							ioc.setLotaTitular(per.getLotaSubstituindo());
+							break;
+						}
+				}
 
 			}
 
@@ -155,7 +172,6 @@ public class UsuarioAutenticado {
 			ioc.setLotaTitular(ioc.getTitular().getLotacao());
 	}
 
-	
 	/**
 	 * @param principal
 	 * @throws SQLException
@@ -166,70 +182,55 @@ public class UsuarioAutenticado {
 		CpIdentidade id = dao().consultaIdentidadeCadastrante(principal, true);
 		carregarUsuario(id, ioc);
 		/*
-		if (id.isBloqueada()) {
-			throw new AplicacaoException(
-					"O acesso não será permitido porque esta identidade está bloqueada.");
-		}
-
-		ioc.setIdentidadeCadastrante(id);
-		ioc.setCadastrante(id.getPessoaAtual());
-
-		CpPersonalizacao per = dao().consultarPersonalizacao(
-				ioc.getCadastrante());
-
-		// // Verifica se o usuário está simulando alguém.
-		// if (per != null && per.getUsuarioSimulando() != null) {
-		// principal = per.getUsuarioSimulando().getNmUsuario();
-		// usu = dao().consultaUsuarioCadastranteAtivo(principal);
-		// ioc.setCadastrante(usu.getPessoa());
-		//
-		// per = dao().consultarPersonalizacao(ioc.getCadastrante());
-		// }
-
-		if ((per != null)
-				&& ((per.getPesSubstituindo() != null) || (per
-						.getLotaSubstituindo() != null))) {
-
-			DpSubstituicao dpSubstituicao = new DpSubstituicao();
-			dpSubstituicao.setSubstituto(ioc.getCadastrante());
-			dpSubstituicao.setLotaSubstituto(ioc.getCadastrante().getLotacao());
-
-			List<DpSubstituicao> substituicoesPermitidas = dao()
-					.consultarSubstituicoesPermitidas(dpSubstituicao);
-
-			for (final DpSubstituicao substituicao : substituicoesPermitidas) {
-				if (per.getPesSubstituindo() != null)
-					if (per.getPesSubstituindo().equivale(
-							substituicao.getTitular())) {
-						ioc.setTitular(per.getPesSubstituindo());
-						break;
-					}
-
-				if (per.getLotaSubstituindo() != null)
-					if (per.getLotaSubstituindo().equivale(
-							substituicao.getLotaTitular())) {
-						ioc.setLotaTitular(per.getLotaSubstituindo());
-						break;
-					}
-
-			}
-
-			if (ioc.getTitular() == null && ioc.getLotaTitular() == null) {
-				per.setPesSubstituindo(null);
-				per.setLotaSubstituindo(null);
-				dao().iniciarTransacao();
-				dao().gravar(per);
-				dao().commitTransacao();
-			}
-		}
-
-		if (ioc.getLotaTitular() == null && ioc.getTitular() != null)
-			ioc.setLotaTitular(ioc.getTitular().getLotacao());
-		if (ioc.getTitular() == null)
-			ioc.setTitular(ioc.getCadastrante());
-		if (ioc.getLotaTitular() == null)
-			ioc.setLotaTitular(ioc.getTitular().getLotacao());
-	*/
+		 * if (id.isBloqueada()) { throw new AplicacaoException(
+		 * "O acesso não será permitido porque esta identidade está bloqueada."
+		 * ); }
+		 * 
+		 * ioc.setIdentidadeCadastrante(id);
+		 * ioc.setCadastrante(id.getPessoaAtual());
+		 * 
+		 * CpPersonalizacao per = dao().consultarPersonalizacao(
+		 * ioc.getCadastrante());
+		 * 
+		 * // // Verifica se o usuário está simulando alguém. // if (per != null
+		 * && per.getUsuarioSimulando() != null) { // principal =
+		 * per.getUsuarioSimulando().getNmUsuario(); // usu =
+		 * dao().consultaUsuarioCadastranteAtivo(principal); //
+		 * ioc.setCadastrante(usu.getPessoa()); // // per =
+		 * dao().consultarPersonalizacao(ioc.getCadastrante()); // }
+		 * 
+		 * if ((per != null) && ((per.getPesSubstituindo() != null) || (per
+		 * .getLotaSubstituindo() != null))) {
+		 * 
+		 * DpSubstituicao dpSubstituicao = new DpSubstituicao();
+		 * dpSubstituicao.setSubstituto(ioc.getCadastrante());
+		 * dpSubstituicao.setLotaSubstituto(ioc.getCadastrante().getLotacao());
+		 * 
+		 * List<DpSubstituicao> substituicoesPermitidas = dao()
+		 * .consultarSubstituicoesPermitidas(dpSubstituicao);
+		 * 
+		 * for (final DpSubstituicao substituicao : substituicoesPermitidas) {
+		 * if (per.getPesSubstituindo() != null) if
+		 * (per.getPesSubstituindo().equivale( substituicao.getTitular())) {
+		 * ioc.setTitular(per.getPesSubstituindo()); break; }
+		 * 
+		 * if (per.getLotaSubstituindo() != null) if
+		 * (per.getLotaSubstituindo().equivale( substituicao.getLotaTitular()))
+		 * { ioc.setLotaTitular(per.getLotaSubstituindo()); break; }
+		 * 
+		 * }
+		 * 
+		 * if (ioc.getTitular() == null && ioc.getLotaTitular() == null) {
+		 * per.setPesSubstituindo(null); per.setLotaSubstituindo(null);
+		 * dao().iniciarTransacao(); dao().gravar(per); dao().commitTransacao();
+		 * } }
+		 * 
+		 * if (ioc.getLotaTitular() == null && ioc.getTitular() != null)
+		 * ioc.setLotaTitular(ioc.getTitular().getLotacao()); if
+		 * (ioc.getTitular() == null) ioc.setTitular(ioc.getCadastrante()); if
+		 * (ioc.getLotaTitular() == null)
+		 * ioc.setLotaTitular(ioc.getTitular().getLotacao());
+		 */
 	}
 
 	/**
@@ -275,7 +276,7 @@ public class UsuarioAutenticado {
 	 * 
 	 * @return o Sesb concatendo com a matrícula para um usuário com certificado
 	 * @param request
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static String obterSesbMatriculaUsuarioComCertificado(
 			HttpServletRequest request) throws Exception {

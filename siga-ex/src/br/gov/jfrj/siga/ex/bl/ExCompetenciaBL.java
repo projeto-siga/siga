@@ -762,6 +762,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return !mob.doc().isCancelado()
+				&& !mob.doc().isSemEfeito()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
 						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO);
@@ -788,6 +789,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 
 		return !mob.doc().isCancelado()
+				&& !mob.doc().isSemEfeito()
 				&& !mob.isEncerrado()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
@@ -897,6 +899,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				// doc em papel, a pedido do Dr Libonati.
 				&& (mob.doc().getDtFechamento() != null)
 				&& !mob.doc().isCancelado()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -1633,7 +1636,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (mob.doc().getDtFechamento() != null && !mob.doc().isEletronico())
 			return false;
-		if (mob.doc().isCancelado())
+		if (mob.doc().isCancelado() || mob.doc().isSemEfeito())
 			return false;
 		if (mob.doc().isAssinado() && mob.doc().isEletronico())
 			return false;

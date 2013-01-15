@@ -696,6 +696,43 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
+	 * Retorna se é possível tornar um documento sem efeito, segundo as
+	 * regras a seguir:
+	 * <ul>
+	 * <li>Documento tem de estar assinado</li>
+	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
+	 * <li>Móbil não pode estar arquivado</li>
+	 * <li>Móbil não pode estar juntado</li>
+	 * <li>Móbil não pode estar em trânsito</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeTornarDocumentoSemEfeito(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		final ExMovimentacao ultMovNaoCancelada = mob
+				.getUltimaMovimentacaoNaoCancelada();
+		
+		return mob.doc().isEletronico()
+				&& mob.doc().isAssinado()
+				&& mob.doc().isSubscritorOuCosignatario(titular)
+				&& podeMovimentar(titular, lotaTitular, mob)
+				&& !mob.isEmTransito()
+				&& getConf()
+						.podePorConfiguracao(
+								titular,
+								lotaTitular,
+								ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}	
+	
+	/**
 	 * Retorna se é possível criar subprocesso, segundo as regras abaixo:
 	 * <ul>
 	 * <li>Documento tem de ser processo</li>

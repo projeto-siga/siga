@@ -603,6 +603,8 @@ public class ExBL extends CpBL {
 				m = CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE;
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR)
 				m = CpMarcador.MARCADOR_SOBRESTADO;
+			if(t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
+				m = CpMarcador.MARCADOR_SEM_EFEITO;
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
 				m = CpMarcador.MARCADOR_JUNTADO;
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO)
@@ -4721,4 +4723,29 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao anular cancelamento do documento.", 0, e);
 		}
 	}
+	
+	public void TornarDocumentoSemEfeito(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+		try {
+			iniciarAlteracao();
+			
+			for (ExMobil mobil : doc.getExMobilSet()) {
+
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
+						cadastrante, lotaCadastrante, mobil, null,
+						null, null, null, null, null);
+
+				gravarMovimentacao(mov);
+				concluirAlteracaoParcial(mobil);
+			}
+			
+			concluirAlteracao(null);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException(
+					"Erro ao tornar o documento sem efeito.", 0, e);
+		}
+	}
+	
 }

@@ -1460,6 +1460,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public boolean isRascunho() {
 		return getDtFechamento() == null || (isEletronico() && !isAssinado());
 	}
+	
+	/**
+	 * verifica se um documento está sem efeito.
+	 */
+	@Override
+	public boolean isSemEfeito() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+
+		for (final ExMovimentacao mov : movs) {
+			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
+					&& mov.getExMovimentacaoCanceladora() == null) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Vide getLotaSubscritor()
@@ -1775,6 +1791,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				return true;
 		}
 
+		return false;
+	}
+
+	/**
+	 * Verifica se uma pessoa é subscritor ou cosignatário de um documento
+	 */
+	public boolean isSubscritorOuCosignatario(DpPessoa subscritor) {
+		for (DpPessoa signatario : getSubscritorECosignatarios()) {
+			if(signatario.equivale(subscritor))
+				return true;
+		}
+		
 		return false;
 	}
 

@@ -192,7 +192,7 @@ public class Documento extends AbstractDocumento {
 	}
 
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
-			boolean cancelado, String qrCode, String mensagem,
+			boolean cancelado, boolean semEfeito ,String qrCode, String mensagem,
 			Integer paginaInicial, Integer paginaFinal,
 			Integer cOmitirNumeracao, String instancia, String orgaoUsu)
 			throws DocumentException, IOException {
@@ -397,6 +397,18 @@ public class Documento extends AbstractDocumento {
 						r.getWidth() / 2, r.getHeight() / 2, 45);
 				over.endText();
 				over.restoreState();
+			} else if (semEfeito) {
+				over.saveState();
+				final PdfGState gs = new PdfGState();
+				gs.setFillOpacity(0.5f);
+				over.setGState(gs);
+				over.setColorFill(Color.GRAY);
+				over.beginText();
+				over.setFontAndSize(helv, 72);
+				over.showTextAligned(Element.ALIGN_CENTER, "SEM EFEITO",
+						r.getWidth() / 2, r.getHeight() / 2, 45);
+				over.endText();
+				over.restoreState();
 			}
 
 			// if (!rascunho
@@ -404,6 +416,7 @@ public class Documento extends AbstractDocumento {
 
 			if (!rascunho
 					&& !cancelado
+					&& !semEfeito
 					&& ((!Contexto.resource("isVersionTest").equals("false")) || (!Contexto
 							.resource("isBaseTest").equals("false")))) {
 				over.saveState();
@@ -709,7 +722,7 @@ public class Documento extends AbstractDocumento {
 
 				byte[] ab = !estampar ? an.getArquivo().getPdf() : stamp(an
 						.getArquivo().getPdf(), sigla, an.getArquivo()
-						.isRascunho(), an.getArquivo().isCancelado(), an
+						.isRascunho(), an.getArquivo().isCancelado(), an.getArquivo().isSemEfeito(),an
 						.getArquivo().getQRCode(), an.getArquivo()
 						.getMensagem(), an.getPaginaInicial(),
 						an.getPaginaFinal(), an.getOmitirNumeracao(),

@@ -21,13 +21,13 @@
 					<b><mod:mensagem
 						texto="Somente para Diretores de Secretaria/ Subsecretaria e Coordenadores."
 						vermelho="Nao"></mod:mensagem>
-					<mod:oculto var="observacao" valor="Obs: Diretores de Secretaria/ Subsecretaria e Coordenadores deverão anexar cópia do CRLV atualizado."/>							
+					<mod:oculto var="observacao" valor=" "/>							
 				</c:when>
 				<c:when test="${local eq 'Av. Barão de Teffé'}">
 					<b><mod:mensagem
 						texto="Somente para Juízes Federais e Diretores de Secretaria/ Subsecretaria."
 						vermelho="Nao"></mod:mensagem> </b>
-					<mod:oculto var="observacao" valor="Obs: Diretores de Secretaria/ Subsecretaria deverão anexar cópia do CRLV atualizado."/>
+					<mod:oculto var="observacao" valor=" "/>
 					</c:when>
 			</c:choose>
         

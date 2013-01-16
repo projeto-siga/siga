@@ -137,11 +137,8 @@ public class UsuarioAutenticado {
 			for (final DpSubstituicao substituicao : substituicoesPermitidas) {
 				if (per.getPesSubstituindo() != null) {
 					if (per.getPesSubstituindo().equivale(
-							substituicao.getTitular())
-							&& per.getLotaSubstituindo().equivale(
-									substituicao.getLotaTitular())) {
+							substituicao.getTitular())									) {
 						ioc.setTitular(per.getPesSubstituindo());
-						ioc.setLotaTitular(per.getLotaSubstituindo());
 						break;
 					}
 				} else {

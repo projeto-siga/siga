@@ -139,8 +139,11 @@ public class WfExpressionAssignmentHandler {
 						+ variableName + "' is null");
 
 			} else if (value instanceof String) {
-				entity = getUserByName((String) value);
-
+				try {
+					entity = getUserByName((String) value);
+				} catch (Exception ex) {
+					entity = getGroupByName((String) value);
+				}
 			} else if (value instanceof DpResponsavel) {
 				entity = (DpResponsavel) value;
 			}

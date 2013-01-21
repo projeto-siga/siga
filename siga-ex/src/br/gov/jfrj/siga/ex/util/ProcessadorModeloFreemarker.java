@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -78,6 +79,8 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			root.put("gerar_finalizacao", true);
 		if (attrs.containsKey("assinatura"))
 			root.put("gerar_assinatura", true);
+		if (attrs.containsKey("pre_assinatura"))
+			root.put("gerar_pre_assinatura", true);
 
 		String sTemplate = "[#compress]\n[#include \"GERAL\"]\n";
 		if (ou != null) {
@@ -93,6 +96,8 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		try {
 			temp.process(root, out);
 		} catch (TemplateException e) {
+			if (e.getCauseException() != null && e.getCauseException() instanceof AplicacaoException)
+				throw e.getCauseException();
 			return (e.getMessage() + "\n" + e.getFTLInstructionStack()).replace("\n", "<br/>").replace("\r", "");
 		} catch (IOException e) {
 			return e.getMessage();

@@ -18,10 +18,30 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import br.gov.jfrj.siga.base.Texto;
+
 public class ExPapel extends AbstractExPapel {
 
 	final static public long PAPEL_GESTOR = 1;
 
 	final static public long PAPEL_INTERESSADO = 2;
+	
+	final static public long PAPEL_FISCAL_ADMINISTRATIVO = 3;
+	
+	final static public long PAPEL_FISCAL_TECNICO = 4;
+
+	public String getComoNomeDeVariavel() {
+		String s = getDescPapel().trim().toLowerCase();
+		s = Texto.removeAcento(s);
+		StringBuilder sb = new StringBuilder();
+		for (char ch : s.toCharArray()) {
+			if (ch >='a' && ch <='z') {
+				sb.append(ch);
+			} else if (ch == ' ' || ch == '-'){
+				sb.append('_');
+			}
+		}
+		return sb.toString();
+	}
 
 }

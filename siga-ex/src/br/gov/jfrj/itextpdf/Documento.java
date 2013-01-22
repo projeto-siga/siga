@@ -208,39 +208,51 @@ public class Documento extends AbstractDocumento {
 		//
 		// double thetaRotation = 0.0;
 		for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
-			PdfImportedPage page = writer.getImportedPage(pdfIn, i);
 			int rot = pdfIn.getPageRotation(i);
-			float w = page.getWidth();
-			float h = page.getHeight();
 			float left = pdfIn.getPageSize(i).getLeft();
 			float bottom = pdfIn.getPageSize(i).getBottom();
+			
+			PdfImportedPage page = writer.getImportedPage(pdfIn, i);
+			float w = page.getWidth();
+			float h = page.getHeight();
+
+			doc.newPage();
+			doc.setPageSize(w > h ? PageSize.A4.rotate() : PageSize.A4);
+
+			cb.saveState();
+			
+			if (rot != 0) {
+				double theta = -rot * (Math.PI / 180);
+				cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
+						h / 2));
+				if (rot == 90) {
+					cb.transform(AffineTransform.getTranslateInstance(
+							(h - w) / 2, (h - w) / 2));
+				} else if (rot == 270) {
+					cb.transform(AffineTransform.getTranslateInstance(
+							(w - h) / 2, (w - h) / 2));
+				}
+			}
 			if (rot != 0) {
 				float swap = w;
 				w = h;
 				h = swap;
 			}
-			doc.setPageSize(w > h ? PageSize.A4.rotate() : PageSize.A4);
 			float pw = doc.getPageSize().getWidth();
 			float ph = doc.getPageSize().getHeight();
 			double scale = Math.min(pw / w, ph / h);
-			doc.newPage();
-
-			if (rot != 0) {
-				double theta = -rot * (Math.PI / 180);
-				cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
-						w / 2));
-				cb.transform(AffineTransform.getTranslateInstance((h - w) / 2,
-						(h - w) / 2));
-			}
 
 			// do my transformations :
 			cb.transform(AffineTransform.getScaleInstance(scale, scale));
 
-			cb.transform(AffineTransform.getTranslateInstance(
-					((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
+			// cb.transform(AffineTransform.getTranslateInstance(
+			// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
 
 			// put the page
 			cb.addTemplate(page, 0, 0);
+			
+			cb.restoreState();
+
 
 			// draw a red rectangle at the page borders
 			//
@@ -250,7 +262,6 @@ public class Documento extends AbstractDocumento {
 			// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
 			// .getPageSize(i).getTop());
 			// cb.stroke();
-			// cb.restoreState();
 		}
 		doc.close();
 

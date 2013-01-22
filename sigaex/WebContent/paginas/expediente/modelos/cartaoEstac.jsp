@@ -9,7 +9,7 @@
 	<mod:entrevista>
 		<mod:grupo>
 			<mod:selecao titulo="Local" var="local" reler="sim"
-				opcoes="Selecione;Passeio;Av. México;Av. Barão de Teffé" />
+				opcoes="Selecione;Passeio;Av. México;Av. Barão de Teffé;Almirante Barroso" />
 
 			<c:choose>
 				<c:when test="${local eq 'Av. México'}">
@@ -28,12 +28,15 @@
 						texto="Somente para Juízes Federais e Diretores de Secretaria/ Subsecretaria."
 						vermelho="Nao"></mod:mensagem> </b>
 					<mod:oculto var="observacao" valor=" "/>
-					</c:when>
+				</c:when>
+				<c:when test="${local eq 'Almirante Barroso'}">
+					<b><mod:mensagem
+						texto="Somente para Diretores."
+						vermelho="Nao"></mod:mensagem> </b>
+					<mod:oculto var="observacao" valor=" "/>
+				</c:when>
 			</c:choose>
         
-		</mod:grupo>
-		<mod:grupo>
-			<mod:selecao titulo="Validade" var="validade" opcoes="2011;2012;2013;2014;2015;2016" />		
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto titulo="Marca/Modelo" var="marcaModelo" largura="50"
@@ -108,10 +111,6 @@
 		</table>
 		<br />
 		<br />
-
-
-		&nbsp;<b>ANO: ${validade}</b>
-
 		<table border="1" width="100%">
 			<tr bgcolor="#999999">
 				<td><b>DADOS DO SOLICITANTE</b></td>

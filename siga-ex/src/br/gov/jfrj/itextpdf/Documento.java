@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -211,14 +212,18 @@ public class Documento extends AbstractDocumento {
 			int rot = pdfIn.getPageRotation(i);
 			float left = pdfIn.getPageSize(i).getLeft();
 			float bottom = pdfIn.getPageSize(i).getBottom();
+			float top = pdfIn.getPageSize(i).getTop();
+			float right = pdfIn.getPageSize(i).getRight();
 			
 			PdfImportedPage page = writer.getImportedPage(pdfIn, i);
 			float w = page.getWidth();
 			float h = page.getHeight();
+			
+			//Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w + ", " + h);
 
+			doc.setPageSize((rot != 0) ^ (w > h) ? PageSize.A4.rotate() : PageSize.A4);
 			doc.newPage();
-			doc.setPageSize(w > h ? PageSize.A4.rotate() : PageSize.A4);
-
+			
 			cb.saveState();
 			
 			if (rot != 0) {
@@ -233,11 +238,13 @@ public class Documento extends AbstractDocumento {
 							(w - h) / 2, (w - h) / 2));
 				}
 			}
+			
 			if (rot != 0) {
 				float swap = w;
 				w = h;
 				h = swap;
 			}
+
 			float pw = doc.getPageSize().getWidth();
 			float ph = doc.getPageSize().getHeight();
 			double scale = Math.min(pw / w, ph / h);

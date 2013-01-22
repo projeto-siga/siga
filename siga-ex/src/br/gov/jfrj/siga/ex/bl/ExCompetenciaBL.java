@@ -719,12 +719,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
 		
-		return mob.doc().isEletronico()
-				&& mob.doc().isAssinado()
-				&& mob.doc().isSubscritorOuCosignatario(titular)
-				&& podeMovimentar(titular, lotaTitular, mob)
-				&& !mob.isEmTransito()
-				&& getConf()
+		if(!mob.doc().isEletronico() || !mob.doc().isAssinado() || !mob.doc().getSubscritor().equivale(titular))
+			return false;
+		
+		//Verifica se o subscritor pode movimentar todos os mobils
+		for (ExMobil m : mob.doc().getExMobilSet()) {
+			if (!m.isGeral() && !podeMovimentar(titular, lotaTitular, m))
+				return false;
+		}
+	
+		
+		return  getConf()
 						.podePorConfiguracao(
 								titular,
 								lotaTitular,

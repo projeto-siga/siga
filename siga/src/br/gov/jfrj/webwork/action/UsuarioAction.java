@@ -218,7 +218,8 @@ public class UsuarioAction extends SigaActionSupport {
 						"3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>");
 				return Action.SUCCESS;
 			}else{
-				CpIdentidade idNovaDefinida = Cp.getInstance().getBL().definirSenhaDeIdentidade(senhaNova, senhaConfirma, matricula, auxiliar1, auxiliar2, getIdentidadeCadastrante());
+				CpIdentidade idAux1 = dao().consultaIdentidadeCadastrante(auxiliar1, true);
+				CpIdentidade idNovaDefinida = Cp.getInstance().getBL().definirSenhaDeIdentidade(senhaNova, senhaConfirma, matricula, auxiliar1, auxiliar2, idAux1);
 //				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
 			}
 			break;

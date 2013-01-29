@@ -516,6 +516,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.isSobrestado()
 					&& !mob.isEncerrado()
 					&& podeMovimentar(titular, lotaTitular, mob)
+					&& !mob.doc().isSemEfeito()
 					&& podePorConfiguracao(titular, lotaTitular,
 							ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
 							CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -648,6 +649,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
 				&& !mob.isEmTransito()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -687,6 +689,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
 				&& !mob.isEmTransito()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -718,6 +721,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
+		
+		if(mob.doc().isSemEfeito())
+			return false;
 		
 		if(!mob.doc().isEletronico() || !mob.doc().isAssinado() || !mob.doc().getSubscritor().equivale(titular))
 			return false;
@@ -836,6 +842,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
+		
+		if(mob.doc().isSemEfeito())
+			return false;
 
 		return podeArquivarCorrente(titular, lotaTitular, mob)
 				&& getConf()
@@ -937,6 +946,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& mob.doc().isAssinado()
 				&& !mob.doc().isBoletimPublicado()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -1054,6 +1064,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeBotaoCriarVia(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
 
 		if (!mob.isEmTransito() && podeCriarVia(titular, lotaTitular, mob)
 				&& podeMovimentar(titular, lotaTitular, mob))
@@ -1579,6 +1592,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
+				&& !mob.doc().isSemEfeito()
 				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
 						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
@@ -2117,6 +2131,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeFazerVinculacaoPapel(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL,
@@ -2247,6 +2264,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
+				&& !mob.doc().isSemEfeito()
 				&& podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -2280,6 +2298,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return !mob.isCancelada()
+				&& !mob.doc().isSemEfeito()
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& mob.doc().isAssinado()
@@ -2632,6 +2651,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isJuntado()
 				&& !mob.doc().isCancelado()
+				&& !mob.doc().isSemEfeito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -2850,6 +2870,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
+				&& !mob.doc().isSemEfeito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);

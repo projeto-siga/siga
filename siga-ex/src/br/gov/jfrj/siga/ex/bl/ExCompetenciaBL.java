@@ -728,6 +728,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(!mob.doc().isEletronico() || !mob.doc().isAssinado() || !mob.doc().getSubscritor().equivale(titular))
 			return false;
 		
+		//Verifica se o documento está com pedido de publicação no DJE ou BIE.
+		if(mob.doc().isPublicacaoSolicitada() ||  
+				mob.doc().isPublicacaoAgendada() || 	
+				mob.doc().isPublicacaoBoletimSolicitada() ||
+				mob.doc().isBoletimPublicado() ||
+				mob.doc().isDJEPublicado()) 
+			return false;
+		
+		
 		//Verifica se o subscritor pode movimentar todos os mobils
 		for (ExMobil m : mob.doc().getExMobilSet()) {
 			if (!m.isGeral() && !podeMovimentar(titular, lotaTitular, m))

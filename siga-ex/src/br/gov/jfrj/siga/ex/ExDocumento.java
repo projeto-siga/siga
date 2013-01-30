@@ -971,11 +971,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Verifica se um documento possui movimentação de publicação de boletim.
-	 * Naturalmente, será verdadeiro apenas para documentos do tipo BIE, apesar
-	 * de isto não constar no código.
-	 */
+	
 	public boolean isBoletimPublicado() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
@@ -987,6 +983,25 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return false;
 	}
+
+	
+	/**
+	 * Verifica se um documento já foi publicado no DJE.
+	 */
+	public boolean isDJEPublicado() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+
+		for (final ExMovimentacao mov : movs) {
+			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
+					&& mov.getExMovimentacaoCanceladora() == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
 
 	/**
 	 * Retorna se uma determinada via está cancelada.

@@ -27,6 +27,9 @@
 		<mod:grupo>
 			<mod:texto titulo="Coordenação de Produção" var="coordenacaoDeProducao" valor="Secretaria de Documentação e Disseminação da Informação (SED)" largura="90"/>
 		</mod:grupo>
+		<mod:grupo>
+			<mod:texto titulo="Coordenação de Produção" var="diagramacaoEImpressao" valor="Coordenadoria de Produção Gráfica e Editorial (CPGRAF)" largura="90"/>
+		</mod:grupo>
 		
 		
 		<mod:grupo titulo="Documentos a Publicar">

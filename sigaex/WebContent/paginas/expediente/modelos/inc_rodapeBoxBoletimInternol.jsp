@@ -73,6 +73,8 @@
 							${requestScope['diretorGeral']}<br/>
 							COORDENAÇÃO DE PRODUÇÃO:<br/>
 							${requestScope['coordenacaoDeProducao']}<br/>
+							DIAGRAMAÇÃO E IMPRESSÃO:<br/>
+							${requestScope['diagramacaoEImpressao']}<br/>
 							PERIODICIDADE:<br/>
 							Diária
 							<br/>&nbsp;<br/>

@@ -33,10 +33,15 @@ function sbmt() {
 }
 
 </script>
+
+
+
 <body onload="aviso()">
-<table width="100%">
-	<tr>
-		<td>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">		
+
+
 		<form action="editar_gravar.action">
 		<input type="hidden" name="postback" value="1" /> <ww:hidden
 			name="id" /> <c:set var="dataFim" value="" />
@@ -44,7 +49,8 @@ function sbmt() {
 			test="${not empty configuracao}">
 			para ${configuracao.cpTipoConfiguracao.dscTpConfiguracao}
 		</c:if></h1>
-		<table class="form" width="100%">
+		<div class="gt-content-box gt-for-table">
+		<table class="gt-form-table" width="100%">
 			<tr class="header">
 				<td colspan="2">Dados da configuração</td>
 			</tr>
@@ -122,30 +128,11 @@ function sbmt() {
 						<script type="text/javascript">setTimeout("alteraForma()",500);</script>
 					</div>
 				</td>
-			</tr>
-			
-			
-			<%--  Antigo
-			<tr>
-				<td>Modelo</td>
-				<td><ww:select name="idMod" list="listaModelos" listKey="idMod"
-					listValue="nmMod" theme="simple" headerValue="[Indefinido]"
-					headerKey="0" /></td>
-			</tr>
-			--%>
+			</tr>		
 			<tr>
 				<td>Classificação</td>
 				<td><siga:selecao propriedade="classificacao" tema="simple" /></td>
-			</tr>
-			<%--	Antigo
-			<tr>
-				<td>Forma de documento</td>
-				<td><ww:select name="idFormaDoc" list="listaFormas"
-					listKey="idFormaDoc" listValue="descrFormaDoc" theme="simple"
-					headerValue="[Indefinido]" headerKey="0" /></td>
-			</tr>
-			 --%>
-			
+			</tr>			
 			<tr>
 				<td>Origem</td>
 				<td><ww:select name="idTpDoc" list="listaTiposDocumento"
@@ -155,16 +142,14 @@ function sbmt() {
 			<tr>
 			</tr>
 			<tr class="button">
+				<td><input type="submit" value="Ok" class="gt-btn-large gt-btn-left" /> <input type="button"
+					value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>
 				<td></td>
-				<td><input type="submit" value="Ok" /> <input type="button"
-					value="Cancela" onclick="javascript:history.back();" />
 			</tr>
 		</table>
-		</form>
-		</td>
-	</tr>
-</table>
-<body>
+		</div>
 <br />
+</div></div>
+</body>
 
 </siga:pagina>

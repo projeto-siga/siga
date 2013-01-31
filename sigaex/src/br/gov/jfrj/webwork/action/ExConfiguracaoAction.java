@@ -371,20 +371,30 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	    return Action.SUCCESS;
 	}
 	
-	public String aListarCadastradas() {        
+	public String aListarCadastradas() throws Exception {        
 		
 		ExConfiguracao config = new ExConfiguracao();	
 		
 		if (getIdTpConfiguracao() != null && getIdTpConfiguracao() != 0) {
 			config.setCpTipoConfiguracao(dao().consultar(getIdTpConfiguracao(),
 					CpTipoConfiguracao.class, false));
+		} else {			
+			getRequest().setAttribute("err", "Tipo de configuração não informado");
+			return "ERRO";
+		}
+			
+		if (getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0) {
+			config.setOrgaoUsuario(dao().consultar(getIdOrgaoUsu(),
+					CpOrgaoUsuario.class, false));
+		} else
+			config.setOrgaoUsuario(null);
 												
-		    List<ExConfiguracao> listConfig = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);		
+		List<ExConfiguracao> listConfig = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);		
 		
 		
 		this.getRequest().setAttribute("listConfig", listConfig);
 		this.getRequest().setAttribute("tpConfiguracao", config.getCpTipoConfiguracao());
-		}		
+				
 			
 		return Action.SUCCESS;
 	}

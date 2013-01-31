@@ -1189,10 +1189,22 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeCancelarMovimentacao(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		//Não deixa cancelar movimentação de um mobil diferente de geral quando um documento está sem efeito.
+		if(!mob.isGeral() && mob.doc().isSemEfeito())
+			return false;
+		
 		final ExMovimentacao exUltMovNaoCanc = mob
 				.getUltimaMovimentacaoNaoCancelada();
 		final ExMovimentacao exUltMov = mob.getUltimaMovimentacao();
 		if (exUltMov == null || exUltMovNaoCanc == null)
+			return false;
+		
+		//Só deixa cancelar movimentação de tornar documento sem efeito, se o titular for o subscritor do documento
+		//Também não é permitido os cosignatários cancelar essa movimentação
+		if(mob.isGeral() && 
+				exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO &&
+				!exUltMovNaoCanc.getSubscritor().equivale(titular))
 			return false;
 
 		// Não deixa cancelar apensação ou desapensação
@@ -1411,6 +1423,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeCriarVia(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
 
 		if (!mob.doc().isExpediente())
 			return false;
@@ -1708,6 +1723,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& mob.doc().isAssinado()
 				&& !mob.doc().isPublicacaoAgendada()
 				&& !mob.doc().isPublicacaoSolicitada()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -1769,6 +1785,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.doc().isPublicacaoSolicitada()
 					&& !mob.doc().isPublicacaoBoletimSolicitada()
 					&& !mob.doc().isPublicacaoAgendada()
+					&& !mob.doc().isSemEfeito()
 					&& getConf()
 							.podePorConfiguracao(
 									titular,
@@ -1795,6 +1812,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAnexarArquivoAlternativo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
+		
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 		final boolean gerenteBIE = podeGerenciarPublicacaoBoletimPorConfiguracao(
 				titular, lotaTitular, mob);
@@ -2380,6 +2401,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeMovimentar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
+		
 		if (mob.isGeral()) {
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				if (!m.isGeral() && podeMovimentar(titular, lotaTitular, m))

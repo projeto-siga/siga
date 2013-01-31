@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -29,5 +31,9 @@ public interface IMontadorQuery {
 			DpLotacao lotaTitular, boolean apenasCount);
 
 	public abstract void setMontadorPrincipal(IMontadorQuery montadorQueryPrincipal);
+
+	public abstract String montaQueryExConfiguracao(
+			CpTipoConfiguracao cpTipoConfiguracao, CpOrgaoUsuario orgaoUsuario);
+
 
 }

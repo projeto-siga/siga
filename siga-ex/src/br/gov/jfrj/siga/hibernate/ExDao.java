@@ -1080,11 +1080,10 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExConfiguracao> consultar(final ExConfiguracao exemplo) {
-		Query query = getSessao().getNamedQuery("consultarExConfiguracoes");
-
-		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
-				.getIdTpConfiguracao());
-
+		
+		Query query = getSessao().createSQLQuery(
+				montadorQuery.montaQueryExConfiguracao(exemplo.getCpTipoConfiguracao(), exemplo.getOrgaoUsuario())).addEntity(ExConfiguracao.class);
+		
 		query.setCacheable(true);
 		query.setCacheRegion("query.ExConfiguracao");
 		return query.list();
@@ -1624,6 +1623,7 @@ public class ExDao extends CpDao {
 				"ex");
 		// cfg.setCollectionCacheConcurrencyStrategy(
 		// "br.gov.jfrj.siga.ex.ExFormaDocumento.exModeloSet",
+		
 		// "nonstrict-read-write", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExModelo",
 		// "nonstrict-read-write", "ex");

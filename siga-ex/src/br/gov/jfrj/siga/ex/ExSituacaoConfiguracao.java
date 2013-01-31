@@ -31,7 +31,7 @@ public class ExSituacaoConfiguracao extends AbstractExSituacaoConfiguracao {
 
 	public static final long SITUACAO_OBRIGATORIO = 3;
 
-	public static final long SITUACAO_POPCIONAL = 4;
+	public static final long SITUACAO_OPCIONAL = 4;
 
 	public static final long SITUACAO_DEFAULT = 5;
 

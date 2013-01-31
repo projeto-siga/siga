@@ -1782,8 +1782,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * Retorna se é possível cancelar uma movimentação mov, de anexação de
 	 * arquivo. Regras:
 	 * <ul>
-	 * <li>Anexação não pode estar cancelada</li>
-	 * <li>Anexo não pode estar assinado>	
+	 * <li>Anexação não pode estar cancelada</li>	
 	 * <li>Não pode mais ser possível <i>excluir</i> a anexação</li>
 	 * <li>Se o documento for físico, anexação não pode ter sido feita antes da
 	 * finalização</li>

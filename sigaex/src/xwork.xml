@@ -68,6 +68,13 @@
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
 			<result>/paginas/configuracao/lista.jsp</result>
 		</action>
+		<action name="listar_cadastradas" method="aListarCadastradas"
+			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
+			<result>/paginas/configuracao/listaCadastradas.jsp</result>
+			<result name="ERRO">
+				/paginas/erro.jsp
+			</result>
+		</action>
 		<action name="editar" method="aEditar"
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
 			<result>/paginas/configuracao/edita.jsp</result>

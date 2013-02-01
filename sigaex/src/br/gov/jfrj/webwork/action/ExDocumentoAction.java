@@ -1422,6 +1422,20 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
+	
+	public String aTornarDocumentoSemEfeito() throws Exception {
+		buscarDocumento(true);
+		if (!Ex.getInstance().getComp()
+				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível tornar documento sem efeito.");
+		try {
+			Ex.getInstance().getBL()
+					.TornarDocumentoSemEfeito(getCadastrante(), getLotaTitular(), doc);
+		} catch (final Exception e) {
+			throw e;
+		}
+		return Action.SUCCESS;
+	}	
 
 	private void carregarBeans() throws Exception {
 		ExMobil mobPai = null;

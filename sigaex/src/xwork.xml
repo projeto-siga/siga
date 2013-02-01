@@ -344,6 +344,12 @@
 				exibir?sigla=${doc.sigla}
 			</result>
 		</action>
+		<action name="tornarDocumentoSemEfeito" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aTornarDocumentoSemEfeito">
+			<result type="redirect-action">
+				exibir?sigla=${doc.sigla}
+			</result>
+		</action>
 		<action name="reabrir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aReabrir">
 			<result type="redirect-action">
@@ -627,6 +633,24 @@
 		</action>
 		<action name="desarquivar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aDesarquivarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="sobrestar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSobrestarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="desobrestar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aDesobrestarGravar">
 			<result type="redirect-action">
 				<param name="actionName">
 					exibir?sigla=${mob.sigla}

@@ -156,21 +156,25 @@ public class ExConfiguracaoAction extends ExActionSupport {
 		} else
 			c.setExTipoDocumento(null);
 		
-		if (getIdTpFormaDoc() != null && getIdTpFormaDoc() != 0){
-			c.setExTipoFormaDoc(dao().consultar(getIdTpFormaDoc(), ExTipoFormaDoc.class, false));			
-		} else
-			c.setExTipoFormaDoc(null);
-
-		if (getIdFormaDoc() != null && getIdFormaDoc() != 0) {
-			c.setExFormaDocumento(dao().consultar(getIdFormaDoc(),
-					ExFormaDocumento.class, false));
-		} else
-			c.setExFormaDocumento(null);
-
 		if (getIdMod() != null && getIdMod() != 0) {
 			c.setExModelo(dao().consultar(getIdMod(), ExModelo.class, false));
-		} else
+			c.setExFormaDocumento(null);
+			c.setExTipoFormaDoc(null);
+		} else {
 			c.setExModelo(null);
+			if (getIdFormaDoc() != null && getIdFormaDoc() != 0) {
+				c.setExFormaDocumento(dao().consultar(getIdFormaDoc(),
+						ExFormaDocumento.class, false));
+				c.setExTipoFormaDoc(null);
+			} else {
+				c.setExFormaDocumento(null);
+				if (getIdTpFormaDoc() != null && getIdTpFormaDoc() != 0){
+					c.setExTipoFormaDoc(dao().consultar(getIdTpFormaDoc(), ExTipoFormaDoc.class, false));			
+				} else
+					c.setExTipoFormaDoc(null);
+			}
+			
+		}			
 
 		if (getIdNivelAcesso() != null && getIdNivelAcesso() != 0) {
 			c.setExNivelAcesso(dao().consultar(getIdNivelAcesso(),
@@ -296,6 +300,13 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	public String aEditarGravar() throws Exception {
+		
+		if(getIdTpConfiguracao() == null || getIdTpConfiguracao() == 0)
+			throw new AplicacaoException("Tipo de configuracao não informado");
+		
+		if(getIdSituacao() == null || getIdSituacao() == 0)
+			throw new AplicacaoException("Situação de Configuracao não informada");
+		
 		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(),
 				getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)
 				&& !(Ex.getInstance().getConf().podePorConfiguracao(
@@ -318,7 +329,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			config = new ExConfiguracao();
 		else
 			config = daoCon(getId());
-
+ 
 		lerForm(config);
 
 		try {

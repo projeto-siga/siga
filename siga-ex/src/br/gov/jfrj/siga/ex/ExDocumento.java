@@ -1482,11 +1482,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	@Override
 	public boolean isSemEfeito() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
-
-		for (final ExMovimentacao mov : movs) {
-			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
-					&& mov.getExMovimentacaoCanceladora() == null) {
-				return true;
+		
+		if(movs != null) {
+			for (final ExMovimentacao mov : movs) {
+				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
+						&& mov.getExMovimentacaoCanceladora() == null) {
+					return true;
+				}
 			}
 		}
 		return false;

@@ -1855,6 +1855,31 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar;
 
 	}
+	
+	/**
+	 * Retorna se é possível autuar um expediente, com base nas
+	 * seguintes regras:
+	 * <ul>
+	 * <li>Documento tem de estar Assinada</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAutuar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
+		
+		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
+
+		return (mob.doc().isExpediente() && mob.doc().isAssinado() && podeMovimentar);
+	}
 
 	/**
 	 * Retorna se é possível, com base em configuração, utilizar a rotina de

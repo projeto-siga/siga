@@ -739,10 +739,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		//Verifica se o subscritor pode movimentar todos os mobils
 		for (ExMobil m : mob.doc().getExMobilSet()) {
-			if (!m.isGeral() && !podeMovimentar(titular, lotaTitular, m))
-				return false;
+			if(!m.isGeral()) {
+				if (!podeMovimentar(titular, lotaTitular, m))
+					return false;
+				
+				if(mob.isJuntado())
+					return false;
+				
+				if(mob.isApensado() && !mob.isApensadoAVolumeDoMesmoProcesso())
+					return false;
+			}
 		}
-	
 		
 		return  getConf()
 						.podePorConfiguracao(

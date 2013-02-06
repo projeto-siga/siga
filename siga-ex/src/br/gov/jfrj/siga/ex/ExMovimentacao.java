@@ -758,6 +758,11 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public boolean isSemEfeito() {
+		return false;
+	}
 
 	/**
 	 * Retorna da lotação do titular da movimentação.

@@ -761,7 +761,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	
 	@Override
 	public boolean isSemEfeito() {
-		return false;
+		return getExDocumento().isSemEfeito();
 	}
 
 	/**

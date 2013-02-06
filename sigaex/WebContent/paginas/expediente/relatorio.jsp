@@ -66,7 +66,21 @@ function visualizarRelatorio(rel) {
 		<c:set var="titulo_pagina" scope="request">Relação de Documentos em Setores Subordinados</c:set>
 		<c:set var="nomeRelatorio" scope="request">relDocumentosSubordinados.jsp</c:set>
 	</c:when>
-	
+	<c:when test='${param.nomeArquivoRel eq "relMovimentacao.jsp"}'>
+		<c:set var="actionName" scope="request">emiteRelMovimentacao</c:set>
+		<c:set var="titulo_pagina" scope="request">Relatório de Movimentação</c:set>
+		<c:set var="nomeRelatorio" scope="request">relMovimentacao.jsp</c:set>
+	</c:when>
+	<c:when test='${param.nomeArquivoRel eq "relOrgao.jsp"}'>
+		<c:set var="actionName" scope="request">emiteRelOrgao</c:set>
+		<c:set var="titulo_pagina" scope="request">Relatórios de Despachos e Transferências</c:set>
+		<c:set var="nomeRelatorio" scope="request">relOrgao.jsp</c:set>
+	</c:when>
+	<c:when test='${param.nomeArquivoRel eq "relTipoDoc.jsp"}'>
+		<c:set var="actionName" scope="request">emiteRelTipoDoc</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de Documentos Criados</c:set>
+		<c:set var="nomeRelatorio" scope="request">relTipoDoc.jsp</c:set>
+	</c:when>
 	<c:otherwise>
 		<c:set var="actionName" scope="request">emiteRelExpedientes</c:set>
 		<c:set var="titulo_pagina" scope="request">Relatório de Expedientes</c:set>

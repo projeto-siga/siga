@@ -971,11 +971,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Verifica se um documento possui movimentação de publicação de boletim.
-	 * Naturalmente, será verdadeiro apenas para documentos do tipo BIE, apesar
-	 * de isto não constar no código.
-	 */
+	
 	public boolean isBoletimPublicado() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
@@ -987,6 +983,25 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return false;
 	}
+
+	
+	/**
+	 * Verifica se um documento já foi publicado no DJE.
+	 */
+	public boolean isDJEPublicado() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+
+		for (final ExMovimentacao mov : movs) {
+			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
+					&& mov.getExMovimentacaoCanceladora() == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
 
 	/**
 	 * Retorna se uma determinada via está cancelada.
@@ -1460,6 +1475,24 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public boolean isRascunho() {
 		return getDtFechamento() == null || (isEletronico() && !isAssinado());
 	}
+	
+	/**
+	 * verifica se um documento está sem efeito.
+	 */
+	@Override
+	public boolean isSemEfeito() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+		
+		if(movs != null) {
+			for (final ExMovimentacao mov : movs) {
+				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
+						&& mov.getExMovimentacaoCanceladora() == null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Vide getLotaSubscritor()
@@ -1775,6 +1808,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				return true;
 		}
 
+		return false;
+	}
+
+	/**
+	 * Verifica se uma pessoa é subscritor ou cosignatário de um documento
+	 */
+	public boolean isSubscritorOuCosignatario(DpPessoa subscritor) {
+		for (DpPessoa signatario : getSubscritorECosignatarios()) {
+			if(signatario.equivale(subscritor))
+				return true;
+		}
+		
 		return false;
 	}
 

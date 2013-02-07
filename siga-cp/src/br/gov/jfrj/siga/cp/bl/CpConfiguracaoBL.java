@@ -482,7 +482,7 @@ public class CpConfiguracaoBL {
 		cfgFiltro.setDpPessoa(dpPessoa);
 		cfgFiltro.setCpServico(cpServico);
 		cfgFiltro.setCpIdentidade(cpIdentidade);
-		cfgFiltro.setCpTipoLotacao(dpLotacao.getCpTipoLotacao());
+		cfgFiltro.setCpTipoLotacao(dpLotacao!=null?dpLotacao.getCpTipoLotacao():null);
 
 		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
 				CpTipoConfiguracao.class, false));

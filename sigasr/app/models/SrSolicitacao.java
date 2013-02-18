@@ -43,6 +43,7 @@ import org.hibernate.annotations.Where;
 
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
+import util.Util;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -52,7 +53,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import controllers.SrCalendar;
-import controllers.Util;
 
 @Entity
 @Table(name = "SR_SOLICITACAO")

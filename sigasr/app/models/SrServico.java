@@ -22,7 +22,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import controllers.SrConfiguracaoBL;
-import controllers.Util;
 
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -35,6 +34,7 @@ import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
 import play.db.jpa.Model;
+import util.Util;
 
 @Entity
 @Table(name = "SR_SERVICO")

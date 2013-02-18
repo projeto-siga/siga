@@ -13,10 +13,10 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
-import controllers.Util;
 
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
+import util.Util;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;

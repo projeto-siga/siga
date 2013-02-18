@@ -129,17 +129,23 @@
 					style="margin-right: 5px;">Ir para o Final</a>
 				<siga:link icon="application_view_list"
 					title="Visualizar&nbsp;Movimentações" url="${url}" test="${true}" />
-				<siga:link icon="page_white_acrobat" title="Preferência:"
-					test="${true}" />
+				<siga:link icon="wrench" title="Preferência:" test="${true}" />
 				<input type="radio" id="radioHTML" name="formato" value="html"
-					checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">&nbsp;HTML</input>
+					checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">&nbsp;HTML<!-- <a
+					id="htmllink"><img src="/siga/css/famfamfam/icons/zoom.png" />
+				</a> -->
+				</input>
 
 				<input type="radio" id="radioPDF" name="formato" value="pdf"
-					" onclick="exibir(htmlAtual,pdfAtual,'');">&nbsp;PDF</input>
+					" onclick="exibir(htmlAtual,pdfAtual,'');">&nbsp;PDF - <a
+					id="pdflink">abrir&nbsp;</a>
+				</input>
 
 				<input type="radio" id="radioPDFSemMarcas" name="formato"
 					value="pdfsemmarcas"
-					" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">&nbsp;PDF sem marcas</input>
+					" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">&nbsp;PDF sem marcas - <a
+					id="pdfsemmarcaslink">abrir&nbsp;</a>
+				</input>
 
 				<input type="checkbox" id="TelaCheia" name="telacheia"
 					value="telacheia" " onclick="javascript: telaCheia(this.checked);">&nbsp;Tela cheia</input>
@@ -185,8 +191,7 @@
 							</c:if> <a
 							title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}"
 							href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nome}</a>
-							<c:set var="tooltipResumo" value="" />
-						</td>
+							<c:set var="tooltipResumo" value="" /></td>
 						<td align="center">${arqNumerado.arquivo.lotacao.sigla}</td>
 						<td align="center">${arqNumerado.paginaInicial}</td>
 					</tr>
@@ -239,8 +244,7 @@
 							<ww:param name="sigla">${mob.sigla}</ww:param>
 						</ww:url>
 						<td colspan="3" style="padding-left: 5pt;"><a
-							href="javascript:exibirNoIFrame('${url}')">RESUMO</a>
-						</td>
+							href="javascript:exibirNoIFrame('${url}')">RESUMO</a></td>
 					</tr>
 				</c:if>
 
@@ -319,6 +323,12 @@
 	var htmlAtual = 'completo/${arqsNum[0].referenciaHtml}';
 	var pdfAtual = 'completo/${arqsNum[0].referenciaPDF}';
 
+	function fixlinks(refHTML, refPDF) {
+//		document.getElementById('htmllink').href = "./" + refHTML;
+		document.getElementById('pdflink').href = "./" + refPDF;
+		document.getElementById('pdfsemmarcaslink').href = "./semmarcas/" + refPDF;
+	}
+
 	function exibir(refHTML, refPDF, semMarcas) {
 		var ifr = document.getElementById('painel');
 		var ifrp = document.getElementById('paipainel');
@@ -343,9 +353,12 @@
 
 		htmlAtual = refHTML;
 		pdfAtual = refPDF;
+
+		fixlinks(refHTML, refPDF);
 	}
 
 	exibir(window.htmlAtual, window.pdfAtual);
+	fixlinks(window.htmlAtual, window.pdfAtual);
 	resize();
 
 	function exibirNoIFrame(url) {

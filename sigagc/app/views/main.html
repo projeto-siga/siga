@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 
-${_cabecalho.raw()}
-
-#{doLayout /}
-
-${_rodape.raw()}
+${_cabecalho_pre.raw()}
+<li><a class="" href="@{Application.top10}">Conhecimentos</a>
+	<ul>
+		<li><a class="" href="@{Application.editar}">Novo</a>
+		</li>
+		<li><a class="" href="@{Application.listar}">Pesquisar</a>
+		</li>
+		<li><a class="" href="@{Application.top10}">Estatísticas</a>
+		</li>
+	</ul>
+</li>
+${_cabecalho_pos.raw()} #{doLayout /} ${_rodape.raw()}

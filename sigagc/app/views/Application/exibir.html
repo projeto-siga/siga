@@ -1,100 +1,104 @@
 #{extends 'main.html' /} #{set title:'Exibição de Tópico de
 Informação'/}
 
-<div class="gt-bd" style="padding-bottom: 0px;">
+<div class="gt-bd gt-cols clearfix">
 	<div class="gt-content">
-
-		<h2>TMP-432</h2>
-
-		<h3 style="margin-bottom: 0px;">Em Elaboração [SESIE (extinta),
-			RJ13939]</h3>
-
+		<h2>${informacao.getSigla()}</h2>
+		<h3 style="margin-bottom: 0px;">${informacao.getMarcadoresEmHtml(titular,lotaTitular)}</h3>
 		<!-- Links para as ações de cada mobil -->
-		<p class="gt-table-action-list">
-			<!-- <a class="once"
-				href="/sigaex/expediente/mov/anexar.action?sigla=TMP-432"><img
-				src="${_base}/siga/css/famfamfam/icons/attach.png"
-				style="margin-right: 5px;">Anexar&nbsp;Arquivo</a> <span
-				class="gt-separator">|</span> <a class="once"
-				href="/sigaex/expediente/mov/vincularPapel.action?sigla=TMP-432"><img
-				src="${_base}/siga/css/famfamfam/icons/folder_user.png"
-				style="margin-right: 5px;">Definir&nbsp;Perfil</a> <span
-				class="gt-separator">|</span> <a class="once"
-				href="javascript:if (confirm('Esta operação criará um expediente com os mesmos dados do atual. Prosseguir?')) location.href='/sigaex/expediente/doc/duplicar.action?sigla=TMP-432';"><img
-				src="${_base}/siga/css/famfamfam/icons/arrow_divide.png"
-				style="margin-right: 5px;">Duplicar</a> <span class="gt-separator">|</span> -->
-			<a class="once" href="@{Application.editar(informacao.id)}"><img
-				src="${_base}/siga/css/famfamfam/icons/pencil.png"
-				style="margin-right: 5px;">Dar Ciência</a> <span
-				class="gt-separator">|</span> <a class="once"
-				href="@{Application.editar(informacao.id)}"><img
-				src="${_base}/siga/css/famfamfam/icons/bell.png"
-				style="margin-right: 5px;">Editar</a> <span class="gt-separator">|</span>
-			<a class="once"
-				href="javascript:if (confirm('Confirma a exclusão de tópico de informação?')) window.location='@{Application.remover(informacao?.id)}';"><img
-				src="${_base}/siga/css/famfamfam/icons/delete.png"
-				style="margin-right: 5px;">Excluir</a> <span class="gt-separator">|</span>
-			<a class="once"
-				href="/sigaex/expediente/doc/exibir.action?exibirCompleto=true&amp;sigla=TMP-432"><img
-				src="${_base}/siga/css/famfamfam/icons/eye.png"
-				style="margin-right: 5px;">Exibir&nbsp;Informações&nbsp;Completas</a>
-			<span class="gt-separator">|</span> <a class="once"
-				href="javascript:if (confirm('Confirma a finalização da elaboração deste tópico de informação?')) location.href='@{Application.fechar(informacao.id)}';"><img
-				src="${_base}/siga/css/famfamfam/icons/lock.png"
-				style="margin-right: 5px;">Finalizar Elaboração</a> <span
-				class="gt-separator">|</span> <a class="once"
-				href="javascript:popitup('/sigaex/expediente/doc/pdf.action?sigla=TMP-432&popup=true');"><img
-				src="${_base}/siga/css/famfamfam/icons/printer.png"
-				style="margin-right: 5px;">Visualizar&nbsp;Impressão</a> <span
-				class="gt-separator">|</span> <a class="once"
-				href="javascript:popitup('/sigaex/expediente/doc/pdf.action?sigla=TMP-432&popup=true');"><img
-				src="${_base}/siga/css/famfamfam/icons/eye.png"
-				style="margin-right: 5px;">Solicitar&nbsp;Revisão</a>
-		</p>
-	</div>
-</div>
-
-
-
-
-<div class="gt-bd gt-cols clearfix"
-	style="padding-top: 0px; margin-top: 25px;">
-	<div class="gt-content">
+		#{links acoes:informacao.acoes(idc,titular,lotaTitular), base:_base /}
 		<!-- Dados do documento -->
 		<div class="gt-content-box" style="padding: 10px;">
-			<h2>${informacao?.titulo}</h2>
-
-			${informacao?.conteudo}
+			<h2>${informacao?.arq?.titulo}</h2>
+			${informacao?.arq?.conteudo}
 		</div>
 	</div>
 
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
-			<h3>Tópico de Informação:TMP-432</h3>
+			<h3>${informacao?.tipo?.nome}</h3>
 			<p>
-				<b>Suporte:</b> Documento Eletrônico
+				<b>Órgão Usuário:</b> ${informacao?.ou?.acronimoOrgaoUsu}
 			</p>
 			<p>
-				<b>Nível de Acesso:</b> Limitado ao órgão
+				<b>Autor:</b> ${informacao?.autor?.descricaoIniciaisMaiusculas} -
+				${informacao?.autor?.sigla}
 			</p>
 			<p>
-				<b>Data:</b> 31/10/12
+				<b>Lotação:</b> ${informacao?.lotacao?.descricaoIniciaisMaiusculas}
+				- ${informacao?.lotacao?.sigla}
 			</p>
 			<p>
-				<b>De:</b> Orlando Gomes da Silva
+				<b>Data:</b> ${informacao?.dtIniString}
 			</p>
 			<p>
-				<b>Para:</b> Seção de Sistemas Especializados
+				<b>Finalizado em:</b> ${informacao?.elaboracaoFim}
 			</p>
+			<!--  -->
+			#{set cls = informacao?.arq?.classificacao?.split(";") /}
+			<!--  -->
+			#{if cls != null && cls.size() > 1}
 			<p>
-				<b>Descrição:</b> Teste Exceção
+				<b>Classificações:</b>
+			<ul>
+				#{list items:cls, as:'cl'}
+				<li>${cl}</li> #{/list}
+			</ul>
 			</p>
+			#{/if}#{else}
 			<p>
-				<b>Classificação:</b> 00.01.01.01 - ORGANIZAÇÃO E FUNCIONAMENTO:
-				ADMINISTRAÇÃO JUDICIÁRIA: ORGANIZAÇÃO ADMINISTRATIVA: Modernização
-				Administrativa
+				<b>Classificação:</b> ${informacao?.arq?.classificacao}
 			</p>
+			#{/else}
+
 		</div>
 		<!-- / sidebar -->
 	</div>
+</div>
+
+<div class="gt-bd" style="padding-bottom: 0px;">
+	<div class="gt-content">
+		<h3>Movimentações</h3>
+	</div>
+
+	<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
+		<table class="gt-table mov">
+			<thead>
+				<tr>
+					<th align="center" rowspan="2">Data</th>
+					<th rowspan="2">Evento</th>
+					<th colspan="2" align="left">Cadastrante</th>
+					<th colspan="2" align="left">Referente</th>
+					<th rowspan="2">Descrição</th>
+				</tr>
+				<tr>
+					<th align="left">Lotação</th>
+					<th align="left">Pessoa</th>
+					<th align="left">Lotação</th>
+					<th align="left">Pessoa</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:informacao.movs, as:'m'}
+				<tr class="juntada ">
+					<td align="center">${m.hisDtIni.format()}</td>
+					<td>${m.tipo.nome}</td>
+					<td align="left"><span
+						title="${m.hisIdcIni.dpPessoa.lotacao.descricao}">${m.hisIdcIni.dpPessoa.lotacao.sigla}</span>
+					</td>
+					<td align="left"><span
+						title="${m.hisIdcIni.dpPessoa.descricao}">${m.hisIdcIni.dpPessoa.nomeAbreviado}</span>
+					</td>
+
+					<td align="left"><span title="${m.lotacao?.descricao}">${m.lotacao?.sigla}</span>
+					</td>
+					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span>
+					</td>
+					<td></td>
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+	</div>
+
 </div>

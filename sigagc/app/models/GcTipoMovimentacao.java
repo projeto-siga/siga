@@ -23,17 +23,19 @@ public class GcTipoMovimentacao extends GenericModel {
 
 	final static public long TIPO_MOVIMENTACAO_REVISADO = 5;
 
-	final static public long TIPO_MOVIMENTACAO_PEDIDO_DE_CIENCIA = 6;
+	final static public long TIPO_MOVIMENTACAO_NOTIFICAR = 6;
 
 	final static public long TIPO_MOVIMENTACAO_CIENTE = 7;
 
 	final static public long TIPO_MOVIMENTACAO_CLASSIFICACAO = 8;
 
-	final static public long TIPO_MOVIMENTACAO_DEFINICAO_DE_PERFIL = 9;
+	final static public long TIPO_MOVIMENTACAO_INTERESSADO = 9;
 
-	final static public long TIPO_MOVIMENTACAO_ALTERACAO_TITULO = 10;
+	final static public long TIPO_MOVIMENTACAO_EDICAO = 10;
 
-	final static public long TIPO_MOVIMENTACAO_ALTERACAO_CONTEUDO = 11;
+	public static final long TIPO_MOVIMENTACAO_VISITA = 11;
+
+	public static final long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO = 12;
 
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")

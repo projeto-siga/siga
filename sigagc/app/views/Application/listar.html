@@ -32,36 +32,47 @@
 
 				<tbody>
 
-					#{list items:lista, as:'i'}
-
-
+					#{list items:lista, as:'i'} #{set cmarcas = i.marcas.size()/} #{set
+					m0 = cmarcas > 0 ? i.marcas.first() : null /}
 
 					<tr class="even">
-						<td width="11.5%" align="right"><a
-							href="@{Application.exibir(i.id)}">${i.id}</a></td>
-						<td width="5%" align="center">04/07/12</td>
-						<td width="4%" align="center"><span title="Sem Lotacao">SLOT</span>
+						<td width="11.5%" align="right" rowspan="${cmarcas}"><a
+							href="@{Application.exibir(i.id)}">${i.sigla}</a></td>
+						<td width="5%" align="center" rowspan="${cmarcas}">${i.dtIniString}</td>
+						<td width="4%" align="center" rowspan="${cmarcas}"><span
+							title="${i.lotacao.descricao}">${i.lotacao.sigla}</span>
+						</td>
+						<td width="4%" align="center" rowspan="${cmarcas}"><span
+							title="${i.autor.descricao} - ${i.autor.sigla}">${i.autor.nomeAbreviado}</span>
+						</td>
+
+						<td width="5%" align="center">${m0?.dtIniMarcaDDMMYYYY}</td>
+						<td width="4%" align="center"><span
+							title="${m0?.dpLotacaoIni?.descricao}">${m0?.dpLotacaoIni?.sigla}</span>
 						</td>
 						<td width="4%" align="center"><span
-							title="ABIMAEL MESSIAS GONÇALVES SILVA">RJ43270</span>
+							title="${m0?.dpPessoaIni?.descricao}">${m0?.dpPessoaIni?.sigla}</span>
 						</td>
+						<td width="10.5%" align="center">${m0?.cpMarcador?.descrMarcador}</td>
 
-						<td width="5%" align="center">04/07/2012</td>
-						<td width="4%" align="center"><span
-							title="Seção de Sistemas Especializados">SESIE (extinta)</span>
-						</td>
-						<td width="4%" align="center"><span
-							title="ORLANDO GOMES DA SILVA">RJ13939</span>
-						</td>
+						<td width="6%" rowspan="${cmarcas}">${i.tipo.nome}</td>
 
-						<td width="10.5%" align="center">Em Elaboração</td>
-
-						<td width="6%">${i.tipo.nome}</td>
-
-						<td><a href="@{Application.exibir(i.id)}">${i.titulo}</a>
+						<td rowspan="${cmarcas}"><a
+							href="@{Application.exibir(i.id)}">${i.arq.titulo}</a>
 						</td>
 					</tr>
-					#{/list}
+					#{list items:i.marcas, as:'m'} #{if m != m0}
+					<tr>
+						<td width="5%" align="center">${m.dtIniMarcaDDMMYYYY}</td>
+						<td width="4%" align="center"><span
+							title="${m.dpLotacaoIni?.descricao}">${m.dpLotacaoIni?.sigla}</span>
+						</td>
+						<td width="4%" align="center"><span
+							title="${m.dpPessoaIni?.descricao}">${m.dpPessoaIni?.sigla}</span>
+						</td>
+						<td width="10.5%" align="center">${m.cpMarcador.descrMarcador}</td>
+					</tr>
+					#{/if} #{/list} #{/list}
 
 				</tbody>
 			</table>
@@ -72,8 +83,7 @@
 		<div class="gt-content-box gt-for-table">
 
 			<form id="listar" name="listar"
-				onsubmit="javascript: return limpaCampos()"
-				action="/sigaex/expediente/doc/listar.action" method="GET"
+				onsubmit="javascript: return limpaCampos()" method="GET"
 				class="form100">
 				<table class="gt-form-table">
 					<colgroup>
@@ -94,82 +104,43 @@
 						<tr>
 							<td>Situação:</td>
 							<td>#{select name:'filtro.situacao', items:marcadores,
-							labelProperty:'descrMarcador', valueProperty:'idMarcador',
-							value:filtro?.situacao?.idMarcador} #{option 0}Todas#{/option}
-							#{/select} &nbsp;&nbsp;&nbsp;&nbsp;Pessoa/Lotação: #{pessoaLotaSelecao
-								nomeSelPessoa:'marcado', nomeSelLotacao:'lotaMarcado',
-								value:informacao?.autor /}</td>
+								labelProperty:'descrMarcador', valueProperty:'idMarcador',
+								value:filtro?.situacao?.idMarcador} #{option 0}Todas#{/option}
+								#{/select} &nbsp;&nbsp;&nbsp;&nbsp;Pessoa/Lotação:
+								#{pessoaLotaSelecao nomeSelPessoa:'marcado',
+								nomeSelLotacao:'lotaMarcado', value:informacao?.autor /}</td>
 						</tr>
 						<tr>
 							<td>Órgão:</td>
-							<td><select name="orgaoUsu" id="orgaoUsu">
-									<option value="0">[Todos]</option>
-									<option value="9999999999">ORGAO TESTE ZZ</option>
-									<option value="1">Seção Judiciária do Rio de Janeiro</option>
-									<option value="2">Seção Judiciária do Espírito Santo</option>
-									<option value="3">Tribunal Regional Federal - 2ª
-										Região</option>
-									<option value="4">Conselho da Justiça Federal</option>
-									<option value="200">Tribunal Regional Federal 3a
-										Região</option>
-									<option value="300">Seção Judiciária do Mato Groso do
-										Sul</option>
-									<option value="400">Seção Judiciária de São Paulo</option>
-
-
-							</select></td>
+							<td>#{select name:'filtro.orgaoUsu', items:orgaosusuarios,
+								labelProperty:'descricao', valueProperty:'id',
+								value:filtro?.ou?.id} #{option 0}Todas#{/option} #{/select}</td>
 						</tr>
 						<tr>
 							<td>Criação:</td>
-							<td>Data Inicial: <input type="text" name="dtDocString"
-								value="" id="dtDocString"
+							<td>Data Inicial: <input type="text" name="dtIniString"
+								value="" id="dtIniString"
 								onblur="javascript:verifica_data(this,0);">
-								&nbsp;&nbsp;Data Final: <input type="text"
-								name="dtDocFinalString" value="" id="dtDocFinalString"
+								&nbsp;&nbsp;Data Final: <input type="text" name="dtFimString"
+								value="" id="dtFimString"
 								onblur="javascript:verifica_data(this,0);"></td>
 						</tr>
 
 						<tr id="trTipo" style="display: ">
 							<td>Tipo:</td>
-							<td><select name="idTipoFormaDoc" id="tipoForma"
-								onchange="javascript:alteraTipoDaForma();">
-									<option value="0">[Todos]</option>
-									<option value="1" selected="selected">Expediente</option>
-									<option value="2">Processo Administrativo</option>
-							</select>
+							<td>#{select name:'filtro.tipo', items:tiposinformacao,
+								labelProperty:'nome', valueProperty:'id',
+								value:filtro?.tipo?.id} #{option 0}Todas#{/option} #{/select}</td>
 						</tr>
 						<tr>
 							<td>Ano de Emissão:</td>
-							<td><select name="anoEmissaoString" id="anoEmissaoString">
-									<option value="">[Todos]</option>
-									<option value="2012">2012</option>
-									<option value="2011">2011</option>
-									<option value="2010">2010</option>
-									<option value="2009">2009</option>
-									<option value="2008">2008</option>
-									<option value="2007">2007</option>
-									<option value="2006">2006</option>
-									<option value="2005">2005</option>
-									<option value="2004">2004</option>
-									<option value="2003">2003</option>
-									<option value="2002">2002</option>
-									<option value="2001">2001</option>
-									<option value="2000">2000</option>
-									<option value="1999">1999</option>
-									<option value="1998">1998</option>
-									<option value="1997">1997</option>
-									<option value="1996">1996</option>
-									<option value="1995">1995</option>
-									<option value="1994">1994</option>
-									<option value="1993">1993</option>
-									<option value="1992">1992</option>
-									<option value="1991">1991</option>
-									<option value="1990">1990</option>
-
-
-							</select> &nbsp;&nbsp;&nbsp;&nbsp;Número: <input type="text"
+							<td>#{select name:'filtro.ano', items:anos,
+								labelProperty:'toString()', valueProperty:'toString()',
+								value:filtro?.tipo?.ano} #{option 0}Todos#{/option} #{/select}
+								&nbsp;&nbsp;&nbsp;&nbsp;Número: <input type="text"
 								name="numExpediente" size="7" maxlength="6" value=""
-								id="numExpediente"></td>
+								id="numExpediente">
+							</td>
 						</tr>
 
 						<tr>
@@ -189,84 +160,6 @@
 						</tr>
 
 						<!-- A lista de par -->
-
-						<script type="text/javascript">
-
-self.retorna_classificacao = function(id, sigla, descricao) {
-    try {
-		newwindow_classificacao.close();
-    } catch (E) {
-    } finally {
-    }
-	document.getElementsByName('classificacaoSel.id')[0].value = id;
-	
-		try {
-			document.getElementsByName('classificacaoSel.descricao')[0].value = descricao;
-			document.getElementById('classificacaoSelSpan').innerHTML = descricao;
-		} catch (E) {
-		}
-	
-	document.getElementsByName('classificacaoSel.sigla')[0].value = sigla;
-	 
-}
- 
- 
-
-
-self.newwindow_classificacao = '';
-self.popitup_classificacao = function(sigla) {
-
-	//var url = 'http://localhost:8080/classificacao/buscar.action?propriedade=classificacao&sigla='+encodeURI(sigla) +'&=';
-	var url = '/sigaex//classificacao/buscar.action?propriedade=classificacao&sigla='+encodeURI(sigla) +'&=';
-	
-	if (!newwindow_classificacao.closed && newwindow_classificacao.location) {
-		newwindow_classificacao.location.href = url;
-	} else {
-	
-		var popW;
-		var popH;
-		
-		
-				 popW = screen.width*0.75;
-				 popH = screen.height*0.75;
-			
-			var winleft = (screen.width - popW) / 2;
-			var winUp = (screen.height - popH) / 2;	
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_classificacao=window.open(url,'classificacao',winProp);
-	}
-	newwindow_classificacao.opener = self;
-	
-	if (window.focus) {
-		newwindow_classificacao.focus()
-	}
-	return false;
-}
-
-self.resposta_ajax_classificacao = function(response, d1, d2, d3) {
-	var sigla = document.getElementsByName('classificacaoSel.sigla')[0].value;
-    var data = response.split(';');
-    if (data[0] == '1')
-	    return retorna_classificacao(data[1], data[2], data[3]);
-    retorna_classificacao('', '', '');
-    
-    
-			return popitup_classificacao(sigla);
-		
-}
-
-self.ajax_classificacao = function() {
-	var sigla = document.getElementsByName('classificacaoSel.sigla')[0].value;
-	if (sigla == '') {
-		return retorna_classificacao('', '', '');
-	}
-	var url = '/sigaex//classificacao/selecionar.action?propriedade=classificacao'+'&=';
-	url = url + '&sigla=' + sigla;
-	PassAjaxResponseToFunction(url, 'resposta_ajax_classificacao', false);
-}
-
-</script>
-
 						<tr>
 							<td>Classificação:</td>
 							<td><input type="hidden" name="classificacaoSel.id" value=""

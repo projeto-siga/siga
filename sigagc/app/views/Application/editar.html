@@ -3,24 +3,27 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2>
-			<span id="codigoInf">NOVO</span>
+			<span id="codigoInf">${informacao?.sigla}</span>
 		</h2>
 
 		<div class="gt-form gt-content-box">
 			<form action="@{Application.gravar}">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
+				*{
 				<div class="gt-form-row gt-width-100">
 					<label>Tópico pai:</label> #{selecao tipo:'pessoa',
 					nome:'informacao.informacaoPai', value:informacao?.informacaoPai /}
 					<span style="color: red">#{error 'informacao.informacaoPai'
 						/}</span>
 				</div>
+				}*
 				<div class="gt-form-row gt-width-100">
 					<div class="gt-left-col gt-width-25">
 						<label>Tipo</label>#{select name:'informacao.tipo',
 						items:tiposInformacao, labelProperty:'nome', valueProperty:'id',
 						value:informacao.tipo?.id} #{/select}
 					</div>
+					*{
 					<div class="gt-left-col gt-width-25">
 						<label>Acesso</label><select name="nivelAcesso"
 							id="frm_nivelAcesso">
@@ -40,6 +43,7 @@
 							size="10" value="" id="frm_dtDocString"
 							onblur="javascript:verifica_data(this, true);">
 					</div>
+					}*
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Responsável</label> #{selecao tipo:'pessoa',
@@ -53,16 +57,22 @@
 				</div>
 
 				<div class="gt-form-row gt-width-100">
-					<label>Titulo</label> <input type="text" name="informacao.titulo"
-						value="${informacao?.titulo}" class="gt-form-text" /><span
-						style="color: red">#{error 'informacao.lotacao' /}</span>
+					<label>Titulo</label> <input type="text" name="titulo"
+						value="${titulo}" class="gt-form-text" /><span style="color: red">#{error
+						'titulo' /}</span>
 				</div>
 
 				<div class="gt-form-row gt-width-100">
 					<label>Texto</label>
-					<textarea name="informacao.desc" cols="80" rows="20"
-						class="gt-form-textarea">${informacao?.conteudo}</textarea>
-					<span style="color: red">#{error 'informacao.lotacao' /}</span>
+					<textarea name="conteudo" cols="80" rows="20"
+						class="gt-form-textarea">${conteudo}</textarea>
+					<span style="color: red">#{error 'conteudo' /}</span>
+				</div>
+
+				<div class="gt-form-row gt-width-100">
+					<label>Classificação</label> <input type="text"
+						name="classificacao" value="${classificacao}" class="gt-form-text" /><span
+						style="color: red">#{error 'classificacao' /}</span>
 				</div>
 
 				<div class="gt-form-row gt-width-100">

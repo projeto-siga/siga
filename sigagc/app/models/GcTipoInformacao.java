@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name = "CP_TIPO_INFORMACAO")
+@Table(name = "GC_TIPO_INFORMACAO")
 public class GcTipoInformacao extends GenericModel {
 	@Id
 	@GeneratedValue

@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import models.HistoricoPersistivel;
-
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.proxy.HibernateProxy;
 
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
@@ -16,7 +16,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-public class GcDao extends CpDao { 
+public class GcDao extends CpDao {
 
 	public static GcDao getInstance() {
 		// Isso aqui está péssimo. Melhorar.
@@ -32,16 +32,6 @@ public class GcDao extends CpDao {
 	public <T extends HistoricoAuditavel> T salvar(T o, DpPessoa pessoa)
 			throws AplicacaoException {
 		return salvar(o, idAtiva(pessoa.getSigla()));
-	}
-
-	public <T extends HistoricoPersistivel> T salvar(T o, DpPessoa pessoa)
-			throws AplicacaoException {
-		return null;
-	}
-
-	public <T extends HistoricoPersistivel> T salvar(T o, String principal)
-			throws AplicacaoException {
-		return null;
 	}
 
 	public <T extends HistoricoAuditavel> T salvar(T o, String principal)
@@ -140,10 +130,6 @@ public class GcDao extends CpDao {
 	public CpIdentidade idAtiva(String principal) throws AplicacaoException {
 		return consultaIdentidadeCadastrante(principal, true);
 	}
-	
-	public void copiar(HistoricoPersistivel dest, HistoricoPersistivel orig) {
-		
-	}
 
 	public void copiar(HistoricoAuditavel dest, HistoricoAuditavel orig) {
 
@@ -170,6 +156,16 @@ public class GcDao extends CpDao {
 
 		}
 
+	}
+
+	public static Object getImplementation(Object o) {
+		Hibernate.initialize(o);
+		if (o instanceof HibernateProxy) {
+			return ((HibernateProxy) o).getHibernateLazyInitializer()
+					.getImplementation();
+		} else {
+			return o;
+		}
 	}
 
 }

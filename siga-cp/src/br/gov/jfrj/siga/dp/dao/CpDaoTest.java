@@ -23,13 +23,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -58,8 +55,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.relatorio.AlteracaoDireitosRelatorio;
-import br.gov.jfrj.siga.relatorio.HistoricoUsuarioRelatorio;
 
 
 public class CpDaoTest extends TestCase {
@@ -328,25 +323,25 @@ public class CpDaoTest extends TestCase {
 	// dao.commitTransacao();
 	// }
 
-	public void testRelAlteracaoDeAcesso() throws AplicacaoException,
-			Exception, IllegalAccessException {
-		Map<String, String> listaParametros = new HashMap<String, String>();
-		listaParametros.put("dataInicio", "06/01/2011");
-		listaParametros.put("dataFim", "06/01/2011");
-		listaParametros.put("idOrgaoUsuario", "1");
-		AlteracaoDireitosRelatorio rel = new AlteracaoDireitosRelatorio(
-				listaParametros);
-		rel.gerar();
-	}
+//	public void testRelAlteracaoDeAcesso() throws AplicacaoException,
+//			Exception, IllegalAccessException {
+//		Map<String, String> listaParametros = new HashMap<String, String>();
+//		listaParametros.put("dataInicio", "06/01/2011");
+//		listaParametros.put("dataFim", "06/01/2011");
+//		listaParametros.put("idOrgaoUsuario", "1");
+//		AlteracaoDireitosRelatorio rel = new AlteracaoDireitosRelatorio(
+//				listaParametros);
+//		rel.gerar();
+//	}
 
-	public void testRelHistoricoUsuario() throws AplicacaoException,
-			Exception, IllegalAccessException {
-		Map<String, String> listaParametros = new HashMap<String, String>();
-		listaParametros.put("idPessoa", "160632");
-		HistoricoUsuarioRelatorio rel = new HistoricoUsuarioRelatorio(
-				listaParametros);
-		rel.gerar();
-	}
+//	public void testRelHistoricoUsuario() throws AplicacaoException,
+//			Exception, IllegalAccessException {
+//		Map<String, String> listaParametros = new HashMap<String, String>();
+//		listaParametros.put("idPessoa", "160632");
+//		HistoricoUsuarioRelatorio rel = new HistoricoUsuarioRelatorio(
+//				listaParametros);
+//		rel.gerar();
+//	}
 	
 	/**
 	 * @param args
@@ -372,7 +367,7 @@ public class CpDaoTest extends TestCase {
 				+ dao.consultarDataUltimaAtualizacao());
 
 		dao.iniciarTransacao();
-		dao.importarAcessoTomcat();
+//		dao.importarAcessoTomcat();
 		dao.commitTransacao();
 
 		if (true)

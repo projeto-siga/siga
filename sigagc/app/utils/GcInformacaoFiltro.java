@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import models.GcInformacao;
+import models.GcTipoInformacao;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -17,6 +19,12 @@ public class GcInformacaoFiltro extends GcInformacao {
 	public String dtFim;
 
 	public CpMarcador situacao;
+	
+	public CpOrgaoUsuario orgaoUsu;
+	
+	public GcTipoInformacao tipo;
+	
+	public String conteudo;
 
 	public List<GcInformacao> buscar() {
 		String query = "from GcInformacao inf where inf.hisDtFim is null ";
@@ -29,7 +37,7 @@ public class GcInformacaoFiltro extends GcInformacao {
 
 		if (conteudo != null && !conteudo.trim().equals("")) {
 			for (String s : conteudo.split(" "))
-				query += " and lower(inf.conteudo) like '%" + s.toLowerCase()
+				query += " and lower(inf.arq.conteudo) like '%" + s.toLowerCase()
 						+ "%' ";
 		}
 

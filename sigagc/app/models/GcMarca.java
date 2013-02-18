@@ -1,9 +1,5 @@
 package models;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
-
 import javax.persistence.ColumnResult;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -13,10 +9,12 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import controllers.Util;
 
 @Entity
 @DiscriminatorValue("3")
@@ -39,7 +37,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		+ "		AND id_tp_marca = 3" + "		GROUP BY id_marcador" + "	) c "
 		+ "WHERE m.id_marcador = c.id_marcador", resultSetMapping = "colunas_contagem")
 public class GcMarca extends CpMarca implements Comparable<GcMarca> {
- 
+
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
 	public GcInformacao inf;
@@ -61,9 +59,17 @@ public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 				+ getDpLotacaoIni().getSigla() + ")";
 	}
 
-	public GcMarca salvar() {
-		JPA.em().persist(this);
-		return this;
+	// public GcMarca salvar() {
+	// JPA.em().persist(this);
+	// return this;
+	// }
+
+	@Override
+	public <T extends JPABase> T save() {
+		// Edson: Ver no Util o comentÃ¡rio sobre a chamada abaixo
+		if (getIdMarca() == null)
+			setIdMarca(Util.nextVal("CORPORATIVO.CP_MARCA_SEQ"));
+		return super.save();
 	}
 
 	public int compareTo(GcMarca other) {
@@ -100,6 +106,11 @@ public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 		if (i != 0)
 			return i;
 		return 0;
+	}
+
+	@Override
+	public String toString() {
+		return getDescricao();
 	}
 
 }

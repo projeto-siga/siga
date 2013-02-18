@@ -1,8 +1,3 @@
-import play.Play;
-import javassist.ClassPool;
-import javassist.CtClass;
-import models.CpClassificacao;
-import models.CpTipoClassificacao;
 import models.GcConfiguracao;
 import models.GcInformacao;
 import models.GcMarca;
@@ -43,8 +38,6 @@ public class DoDiagram {
 
 		d.addClass(GcInformacao.class, false);
 		d.addClass(GcTipoInformacao.class, false);
-		d.addClass(CpClassificacao.class, false);
-		d.addClass(CpTipoClassificacao.class, false);
 		d.addClass(GcMovimentacao.class, false);
 		d.addClass(GcTipoMovimentacao.class, false);
 		d.addClass(GcMarca.class, false);

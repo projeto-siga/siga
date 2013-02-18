@@ -1,31 +1,24 @@
 package models;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.Historico;
 
 @Entity
 @Table(name = "GC_MOVIMENTACAO")
-public class GcMovimentacao extends GenericModel {
+public class GcMovimentacao extends GenericModel implements
+		Comparable<GcMovimentacao> {
 	@Id
 	@GeneratedValue
 	@Column(name = "ID_MOVIMENTACAO")
@@ -56,14 +49,8 @@ public class GcMovimentacao extends GenericModel {
 	public DpLotacao lotacao;
 
 	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_CLASSIFICACAO")
-	public CpClassificacao classificacao;
-
-	@Column(name = "TITULO_MOVIMENTACAO")
-	public String titulo;
-
-	@Column(name = "CONTEUDO_MOVIMENTACAO")
-	public String conteudo;
+	@JoinColumn(name = "ID_CONTEUDO")
+	public GcArquivo arq;
 
 	@Column(name = "HIS_DT_INI")
 	public Date hisDtIni;
@@ -91,5 +78,21 @@ public class GcMovimentacao extends GenericModel {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int compareTo(GcMovimentacao o) {
+		return compare(this, o);
+	}
+
+	public static int compare(GcMovimentacao o1, GcMovimentacao o2) {
+		int i = o2.hisDtIni.compareTo(o1.hisDtIni);
+		if (i != 0)
+			return i;
+		if (o2.id > o1.id)
+			return 1;
+		if (o2.id < o1.id)
+			return -1;
+		return 0;
 	}
 }

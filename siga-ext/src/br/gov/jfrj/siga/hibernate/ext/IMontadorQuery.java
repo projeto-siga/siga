@@ -29,5 +29,4 @@ public interface IMontadorQuery {
 			DpLotacao lotaTitular, boolean apenasCount);
 
 	public abstract void setMontadorPrincipal(IMontadorQuery montadorQueryPrincipal);
-
 }

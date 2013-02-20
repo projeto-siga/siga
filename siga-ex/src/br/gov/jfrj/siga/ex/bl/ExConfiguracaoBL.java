@@ -18,7 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -571,5 +573,27 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	public boolean isDiretorForo(DpPessoa quem) throws Exception {
 		return (quem.equivale(getDiretorForo()));
 	}
-
+	
+	
+	/**
+	 * 
+	 * Retorna uma lista de (ex)configurações vigentes de acordo com um certo tipo
+	 * 
+	 * @param ExConfiguracao
+	 * 
+	 */
+	
+	public List<ExConfiguracao> buscarConfiguracoesVigentes(final ExConfiguracao exemplo) {		
+		Date hoje = new Date(); 
+		List<ExConfiguracao> todasConfig = ExDao.getInstance().consultar(exemplo);
+		List<ExConfiguracao> configVigentes = new ArrayList<ExConfiguracao>();
+		
+		for (ExConfiguracao cfg : todasConfig ) {
+			if (cfg.getHisDtIni() != null) // retirar????
+			  if (!cfg.ativaNaData(hoje)) 
+				  continue;			
+			configVigentes.add(cfg);			
+		}
+		return(configVigentes);		
+	}
 }

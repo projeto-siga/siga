@@ -20,8 +20,11 @@ package br.gov.jfrj.siga.hibernate.ext;
 
 import java.text.SimpleDateFormat;
 
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpOrgaoUsuarioDaoFiltro;
 
 public class MontadorQuery implements IMontadorQuery {
 
@@ -217,5 +220,4 @@ public class MontadorQuery implements IMontadorQuery {
 	public void setMontadorPrincipal(IMontadorQuery montadorQueryPrincipal) {
 		//Este médodo não faz nada. É utilizado apenas para a extensão da busca textual do SIGA.
 	}
-
 }

@@ -3,36 +3,30 @@
 <xwork>
 	<include file="webwork-default.xml" />
 
-	<package name="default" extends="webwork-default">		
+	<package name="default" extends="webwork-default">
 		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 
-		<default-action-ref name="principal" />		
-		<!-- <default-action-ref name="erroGeral" /> -->		
+		<default-action-ref name="principal" />
+		<!-- <default-action-ref name="erroGeral" /> -->
 		<global-results>
 			<result name="erroGeral" type="dispatcher">
 				/sigalibs/erroGeral.jsp
 			</result>
 		</global-results>
 
-		<!--
-			<action name="administracao"
-			class="br.gov.jfrj.webwork.action.AdministracaoAction">
-			<result>/paginas/entradas/administracao.jsp</result> </action>
-		-->
+		<!-- <action name="administracao" class="br.gov.jfrj.webwork.action.AdministracaoAction"> 
+			<result>/paginas/entradas/administracao.jsp</result> </action> -->
 
 		<action name="modelo">
 			<result>/paginas/expediente/modelo_teste.jsp</result>
 		</action>
-		
+
 		<action name="principal" class="br.gov.jfrj.webwork.action.ExPrincipalAction">
 			<result>/sigalibs/erroGeral.jsp</result>
 			<result type="redirect">/../siga/principal.action</result>
-		</action>		
-		<!--
-			<action name="principal"
-			class="br.gov.jfrj.webwork.action.PrincipalAction">
-			<result>/paginas/principal.jsp</result> </action>
-		-->
+		</action>
+		<!-- <action name="principal" class="br.gov.jfrj.webwork.action.PrincipalAction"> 
+			<result>/paginas/principal.jsp</result> </action> -->
 
 		<action name="gadget" class="br.gov.jfrj.webwork.action.ExGadgetAction">
 			<result>/paginas/fast_gadget.jsp</result>
@@ -41,16 +35,14 @@
 			method="slowExecute">
 			<result>/paginas/gadget.jsp</result>
 		</action>
-		<!--
-			<action name="logoff"
-			class="br.gov.jfrj.siga.libs.webwork.LogoffAction"> <result
-			type="redirect-action">principal</result> </action>
-		-->
-		
-		<action name="autenticar" method="exec" class="br.gov.jfrj.webwork.action.ExAutenticaAction">
+		<!-- <action name="logoff" class="br.gov.jfrj.siga.libs.webwork.LogoffAction"> 
+			<result type="redirect-action">principal</result> </action> -->
+
+		<action name="autenticar" method="exec"
+			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
 			<result name="autenticado">/paginas/autenticado.jsp</result>
 			<result>/paginas/autenticar.jsp</result>
-		</action>		
+		</action>
 	</package>
 
 
@@ -68,16 +60,21 @@
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
 			<result>/paginas/configuracao/lista.jsp</result>
 		</action>
+		<action name="listar_cadastradas" method="aListarCadastradas"
+			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
+			<result>/paginas/configuracao/listaCadastradas.jsp</result>
+			<result name="ERRO">
+				/paginas/erro.jsp
+			</result>
+		</action>
 		<action name="editar" method="aEditar"
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
 			<result>/paginas/configuracao/edita.jsp</result>
 		</action>
 		<action name="editar_gravar" method="aEditarGravar"
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
-			<!--
-				<interceptor-ref name="token-session" /> <interceptor-ref
-				name="basicStack" />
-			-->
+			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
+				/> -->
 			<result type="redirect-action">listar</result>
 
 		</action>
@@ -122,10 +119,8 @@
 	<package name="expediente" extends="default" namespace="/expediente">
 		<action name="buscar" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aBuscar">
-			<!--
-				<interceptor-ref name="token-session" /> <interceptor-ref
-				name="basicStack" />
-			-->
+			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
+				/> -->
 			<result>/paginas/expediente/lista.jsp?popup=true</result>
 		</action>
 		<action name="selecionar" class="br.gov.jfrj.webwork.action.ExMobilAction"
@@ -194,10 +189,8 @@
 		</action>
 		<action name="full_search" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aFullSearch">
-			<!--
-				<interceptor-ref name="token" /> <interceptor-ref name="basicStack"
-				/>
-			-->
+			<!-- <interceptor-ref name="token" /> <interceptor-ref name="basicStack" 
+				/> -->
 			<result>/paginas/expediente/full_search.jsp</result>
 		</action>
 		<action name="otimizar_indices" class="br.gov.jfrj.webwork.action.ExMobilAction"
@@ -206,10 +199,8 @@
 		</action>
 		<action name="listar" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aListar">
-			<!--
-				<interceptor-ref name="token" /> <interceptor-ref name="basicStack"
-				/>
-			-->
+			<!-- <interceptor-ref name="token" /> <interceptor-ref name="basicStack" 
+				/> -->
 			<result>/paginas/expediente/lista.jsp</result>
 		</action>
 		<action name="carregar_lista_formas" class="br.gov.jfrj.webwork.action.ExMobilAction"
@@ -261,10 +252,8 @@
 		</action>
 		<action name="fix_table_cols" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aFixTableCols">
-			<!--
-				<interceptor-ref name="static-params" /> <interceptor-ref
-				name="params" />
-			-->
+			<!-- <interceptor-ref name="static-params" /> <interceptor-ref name="params" 
+				/> -->
 			<interceptor-ref name="basicStack" />
 			<result>/paginas/expediente/fix_table_cols_result.jsp</result>
 		</action>
@@ -298,10 +287,8 @@
 		</action>
 		<action name="gravar_ajax" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aGravar">
-			<!--
-				<interceptor-ref name="static-params" /> <interceptor-ref
-				name="params" />
-			-->
+			<!-- <interceptor-ref name="static-params" /> <interceptor-ref name="params" 
+				/> -->
 			<interceptor-ref name="basicStack" />
 			<result>
 				/paginas/expediente/retorno_salvamento_ajax.jsp
@@ -310,34 +297,24 @@
 
 		<action name="gravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aGravar">
-			<!--
-				<interceptor-ref name="completeStack"/> <interceptor-ref
-				name="execAndWait"> <param name="delay">3000</param>
-				</interceptor-ref> <result name="wait" type="redirect-action">
-				exibir?id=${idDoc} </result>
-			-->
-			<!--
-				<interceptor-ref name="token-session" /> <interceptor-ref
-				name="basicStack" />
-			-->
+			<!-- <interceptor-ref name="completeStack"/> <interceptor-ref name="execAndWait"> 
+				<param name="delay">3000</param> </interceptor-ref> <result name="wait" type="redirect-action"> 
+				exibir?id=${idDoc} </result> -->
+			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
+				/> -->
 			<result name="success" type="redirect-action">
 				exibir?sigla=${doc.sigla}${desativ}
 			</result>
 			<result name="form_incompleto">
 				/paginas/expediente/edita.jsp
 			</result>
-			<!--
-				<result name="form_incompleto" type="redirect-action">
-				editar?${urlEncodedParameters}&amp;alerta=Sim </result>
-			-->
+			<!-- <result name="form_incompleto" type="redirect-action"> editar?${urlEncodedParameters}&amp;alerta=Sim 
+				</result> -->
 		</action>
-		<!--
-			<result name="wait">longRunningAction-wait.jsp</result> <result
-			name="success">longRunningAction-success.jsp</result> <action
-			name="gravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aGravar"> <result type="redirect-action">
-			exibir?id=${doc.idDoc} </result> </action>
-		-->
+		<!-- <result name="wait">longRunningAction-wait.jsp</result> <result name="success">longRunningAction-success.jsp</result> 
+			<action name="gravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction" 
+			method="aGravar"> <result type="redirect-action"> exibir?id=${doc.idDoc} 
+			</result> </action> -->
 
 		<action name="excluir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aExcluirDocMovimentacoes">
@@ -363,6 +340,12 @@
 		</action>
 		<action name="desfazerCancelamentoDocumento" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aDesfazerCancelamentoDocumento">
+			<result type="redirect-action">
+				exibir?sigla=${doc.sigla}
+			</result>
+		</action>
+		<action name="tornarDocumentoSemEfeito" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aTornarDocumentoSemEfeito">
 			<result type="redirect-action">
 				exibir?sigla=${doc.sigla}
 			</result>
@@ -420,15 +403,15 @@
 			</result>
 
 		</action>
-		
+
 		<action name="atualizar_marcas" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aAtualizarMarcasDoc">
 			<result type="redirect-action">
 				exibir?sigla=${sigla}
 			</result>
-		</action>	
-		
-		
+		</action>
+
+
 	</package>
 
 	<package name="expediente/mov" extends="default" namespace="/expediente/mov">
@@ -436,7 +419,7 @@
 		<action name="assinar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinar">
 			<result>/paginas/expediente/assina.jsp</result>
-		</action>		
+		</action>
 		<action name="assinar_anexos_geral" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarAnexosGeral">
 			<result>/paginas/expediente/anexa.jsp</result>
@@ -578,7 +561,7 @@
 				<param name="actionName">editar</param>
 				<param name="namespace">/expediente/doc</param>
 			</result>
-		</action>		
+		</action>
 		<action name="referenciar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aReferenciar">
 			<result>/paginas/expediente/referencia.jsp</result>
@@ -650,6 +633,24 @@
 		</action>
 		<action name="desarquivar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aDesarquivarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="sobrestar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSobrestarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="desobrestar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aDesobrestarGravar">
 			<result type="redirect-action">
 				<param name="actionName">
 					exibir?sigla=${mob.sigla}
@@ -751,11 +752,8 @@
 		</action>
 		<action name="cancelar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aCancelar">
-			<!--
-				<result type="redirect-action"> <param
-				name="namespace">/expediente/doc</param> <param name="actionName">
-				exibir?sigla=${doc.sigla} </param> </result>
-			-->
+			<!-- <result type="redirect-action"> <param name="namespace">/expediente/doc</param> 
+				<param name="actionName"> exibir?sigla=${doc.sigla} </param> </result> -->
 			<result>/paginas/expediente/cancelamovimentacao.jsp</result>
 		</action>
 		<!-- Pedro : 20070328 -->
@@ -806,7 +804,7 @@
 				<param name="namespace">/expediente/mov</param>
 			</result>
 		</action>
-		
+
 		<action name="mostrar_anexos_assinados" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aMostrarAnexosAssinados">
 			<result>/paginas/expediente/mostraAnexosAssinados.jsp</result>
@@ -879,13 +877,9 @@
 			<result>/paginas/expediente/assina.jsp</result>
 		</action>
 
-		<!--
-			<action name="fechar_assinar_gravar"
-			class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aFecharAssinarGravar"> <result type="redirect-action"> <param
-			name="actionName">exibir?id=${doc.idDoc}</param> <param
-			name="namespace">/expediente/doc</param> </result> </action>
-		-->
+		<!-- <action name="fechar_assinar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction" 
+			method="aFecharAssinarGravar"> <result type="redirect-action"> <param name="actionName">exibir?id=${doc.idDoc}</param> 
+			<param name="namespace">/expediente/doc</param> </result> </action> -->
 
 		<action name="transferir" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aTransferir">
@@ -893,10 +887,8 @@
 		</action>
 		<action name="transferir_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aTransferirGravar">
-			<!--
-				<interceptor-ref name="token-session" /> <interceptor-ref
-				name="basicStack" />
-			-->
+			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
+				/> -->
 			<result type="redirect-action">
 				<param name="actionName">
 					exibir?sigla=${mob.sigla}
@@ -1022,7 +1014,7 @@
 				/paginas/erro.jsp
 			</result>
 			<result>/paginas/expediente/assinado.jsp?id=786</result>
-		</action>		
+		</action>
 		<action name="prever" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aPrever">
 			<result name="processa_modelo">
@@ -1047,7 +1039,7 @@
 			method="aAssinarLote">
 			<result>/paginas/expediente/assina_lote.jsp</result>
 		</action>
-		
+
 	</package>
 	<!-- Pedro:02052007 -->
 	<package name="expediente/rel" extends="default" namespace="/expediente/rel">
@@ -1096,6 +1088,30 @@
 
 		<action name="emiteRelDocEntreDatas" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelDocEntreDatas">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+
+		<action name="emiteRelMovimentacao" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelMovimentacao">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+
+		<action name="emiteRelOrgao" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelOrgao">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+
+		<action name="emiteRelTipoDoc" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelTipoDoc">
 			<result name="relatorio" type="stream">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
@@ -1197,18 +1213,11 @@
 		</action>
 	</package>
 
-<!-- 
-	<package name="manutencao/desenvolvimento" extends="default"
-		namespace="/manutencao/desenvolvimento">
-		<default-interceptor-ref name="defaultStack" />
+	<!-- <package name="manutencao/desenvolvimento" extends="default" namespace="/manutencao/desenvolvimento"> 
+		<default-interceptor-ref name="defaultStack" /> <action name="cancelar" class="br.gov.jfrj.webwork.action.ExDocumentoAction" 
+		method="aCancelarDocumento"> <result type="redirect-action">principal</result> 
+		</action> </package> -->
 
-		<action name="cancelar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aCancelarDocumento">
-			<result type="redirect-action">principal</result>
-		</action>
-	</package>
- -->
- 
 	<package name="despacho/tipodespacho" extends="default"
 		namespace="/despacho/tipodespacho">
 		<default-interceptor-ref name="defaultStack" />
@@ -1271,7 +1280,7 @@
 			<result name="aplicar" type="redirect-action">editar?id=${id}</result>
 			<result type="redirect-action">listar</result>
 		</action>
-		
+
 		<action name="exportar" class="br.gov.jfrj.webwork.action.ExModeloAction"
 			method="aExportar">
 		</action>

@@ -24,4 +24,10 @@
 			and ((:idServicoPai = 0 and org.cpServicoPai is null) or org.cpServicoPai.idServico = :idServicoPai)
 		]]>
 	</query>
+	
+	<query name="consultarPorSiglaStringCpServico">
+		<![CDATA[select org from CpServico org where
+			upper(org.siglaServico) like upper(:siglaServico)
+		]]>
+	</query>
 </hibernate-mapping>

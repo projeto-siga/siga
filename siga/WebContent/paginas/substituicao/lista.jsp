@@ -46,19 +46,15 @@
 								</td>
 								<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
 								<td align="center">${substituicao.dtFimSubstDDMMYY}</td>
-								<td align="center"><c:if
-										test="${!substituicao.terminada && !substituicao.excluida}">
-										<ww:url id="url" action="editar" namespace="/substituicao">
+								<td align="center"><ww:url id="url" action="editar" namespace="/substituicao">
 											<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
 										</ww:url>
 										<ww:a href="%{url}">Alterar</ww:a>
-										<c:if test="${!substituicao.emVoga && !substituicao.excluida}">
-											<ww:url id="url" action="excluir" namespace="/substituicao">
+										<ww:url id="url" action="excluir" namespace="/substituicao">
 												<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
-											</ww:url>
-											<ww:a href="%{url}"> | Excluir</ww:a>
-										</c:if>
-									</c:if>
+										</ww:url>
+										<ww:a href="%{url}"> | Excluir</ww:a>
+																
 								</td>
 							</tr>
 						</c:forEach>

@@ -25,12 +25,14 @@ package br.gov.jfrj.webwork.action;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
@@ -249,10 +251,23 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 
 	public String aListarSubstitutos() throws Exception {
 
+		List<DpSubstituicao> todasSubst = new ArrayList<DpSubstituicao>();
+		List<DpSubstituicao> substVigentes = new ArrayList<DpSubstituicao>();
 		DpSubstituicao dpSubstituicao = new DpSubstituicao();
 		dpSubstituicao.setTitular(getCadastrante());
 		dpSubstituicao.setLotaTitular(getCadastrante().getLotacao());
-		setItens(dao().consultarOrdemData(dpSubstituicao));
+	    todasSubst = dao().consultarOrdemData(dpSubstituicao);	
+	    for (DpSubstituicao subst : todasSubst) {
+	    	if (subst.getLotaSubstituto().isFechada() || subst.getSubstituto().isFechada() 
+	    			|| subst.getSubstituto().isBloqueada())
+	    		continue;
+	    	if (subst.isEmVoga()) {
+	    		substVigentes.add(subst);	    		
+	    	}
+	    }
+
+		
+		setItens(substVigentes);
 		/*
 		 * TreeMap tree = new TreeMap(); for (Object dps : getItens()) {
 		 * DpSubstituicao trueDps = (DpSubstituicao) dps;

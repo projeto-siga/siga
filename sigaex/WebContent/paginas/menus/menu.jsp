@@ -83,6 +83,12 @@
 						namespace="/despacho/tipodespacho" /> <ww:a href="%{url}">Cadastro de tipos de despacho</ww:a>
 				</li>
 			</c:if>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações')}">
+				<li><ww:url id="url" action="listar"
+						namespace="/expediente/configuracao" /> <ww:a href="%{url}">Cadastro de configurações</ww:a>
+				</li>
+			</c:if>
 		</ul>
 	</li>
 </c:if>

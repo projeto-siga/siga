@@ -725,7 +725,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.doc().isSemEfeito())
 			return false;
 		
-		if(!mob.doc().isEletronico() || !mob.doc().isAssinado() || !mob.doc().getSubscritor().equivale(titular))
+		if(!mob.doc().isEletronico() || !mob.doc().isAssinado() || ((mob.doc().getSubscritor()!=null) && !mob.doc().getSubscritor().equivale(titular)))
 			return false;
 		
 		//Verifica se o documento está com pedido de publicação no DJE ou BIE.

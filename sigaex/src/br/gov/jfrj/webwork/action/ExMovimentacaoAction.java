@@ -947,7 +947,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		
 		boolean fPreviamenteAssinado = doc.isAssinado();
 
-		if (!fPreviamenteAssinado) {
+		if (!fPreviamenteAssinado && (doc.getExModelo() != null && ("template/freemarker".equals(doc.getExModelo().getConteudoTpBlob())))) {
 			Ex.getInstance().getBL().processarComandosEmTag(doc, "pre_assinatura");
 		}
 

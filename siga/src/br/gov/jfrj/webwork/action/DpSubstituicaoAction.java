@@ -70,6 +70,8 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	private String dtIniSubst;
 
 	private String dtFimSubst;
+	
+	private String strBuscarFechadas;
 
 	public Date getDtAtual() {
 		return new Date();
@@ -89,6 +91,16 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	}
 
 	public String aEditarSubstituto() throws Exception {
+		if(Cp.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+						getCadastrante(),
+						CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST))
+			{
+				strBuscarFechadas = "buscarFechadas=true";
+			}else
+				strBuscarFechadas = "buscarFechadas=false";
+		
 		if (getId() != null) {
 			DpSubstituicao subst = dao().consultar(getId(),
 					DpSubstituicao.class, false);
@@ -258,8 +270,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		dpSubstituicao.setLotaTitular(getCadastrante().getLotacao());
 	    todasSubst = dao().consultarOrdemData(dpSubstituicao);	
 	    for (DpSubstituicao subst : todasSubst) {
-	    	if (subst.getLotaSubstituto().isFechada() || subst.getSubstituto().isFechada() 
-	    			|| subst.getSubstituto().isBloqueada())
+	    	if (subst.getLotaSubstituto() != null && subst.getLotaSubstituto().isFechada())
+	    		continue;
+	    	if (subst.getSubstituto() != null && (subst.getSubstituto().isFechada() 
+	    			|| subst.getSubstituto().isBloqueada()))
 	    		continue;
 	    	if (subst.isEmVoga()) {
 	    		substVigentes.add(subst);	    		

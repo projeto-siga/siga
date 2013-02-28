@@ -93,9 +93,9 @@
 										<c:set var="lotaTitularStyle" value="" />
 									</c:when>
 								</c:choose> <span id="spanTitular" style="${titularStyle}"> <siga:selecao
-										propriedade="titular" tema="simple" /> </span> <span
+										propriedade="titular" tema="simple" paramList="buscarFechadas=true"/> </span> <span
 								id="spanLotaTitular" style="${lotaTitularStyle}"> <siga:selecao
-										propriedade="lotaTitular" tema="simple" /> </span>
+										propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> </span>
 							</td>
 						</tr>
 

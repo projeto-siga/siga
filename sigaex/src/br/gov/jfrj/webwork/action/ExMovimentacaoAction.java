@@ -944,6 +944,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aAssinar() throws Exception {
 		buscarDocumento(true);
+		
+		boolean fPreviamenteAssinado = doc.isAssinado();
+
+		if (!fPreviamenteAssinado) {
+			Ex.getInstance().getBL().processarComandosEmTag(doc, "pre_assinatura");
+		}
 
 		return Action.SUCCESS;
 	}

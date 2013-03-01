@@ -57,6 +57,8 @@ public class ExServiceImpl implements ExService {
 			return false;
 		try {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			if (mob.isGeral() && mob.doc().isProcesso())
+				mob = mob.doc().getUltimoVolume();
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
 			PessoaLotacaoParser destinoParser = new PessoaLotacaoParser(
@@ -198,6 +200,8 @@ public class ExServiceImpl implements ExService {
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
 			ExMobil mob = buscarMobil(codigoDocumento);
+			if (mob.isGeral() && mob.doc().isProcesso())
+				mob = mob.doc().getUltimoVolume();
 			return Ex
 					.getInstance()
 					.getComp()

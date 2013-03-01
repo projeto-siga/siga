@@ -76,6 +76,8 @@ public class CpConfiguracaoBL {
 	public static int SERVICO = 6;
 
 	public static int IDENTIDADE = 7;
+	
+	public static int TIPO_LOTACAO = 8;
 
 	public Comparator<CpConfiguracao> getComparator() {
 		return comparator;
@@ -435,6 +437,14 @@ public class CpConfiguracaoBL {
 						.getCargo() == null) && !atributosDesconsiderados
 						.contains(CARGO))))
 			return false;
+		
+		if (cfg.getCpTipoLotacao() != null
+				&& ((cfgFiltro.getCpTipoLotacao() != null && !cfg.getCpTipoLotacao()
+						.getIdTpLotacao().equals(cfgFiltro.getCpTipoLotacao().getIdTpLotacao())) || ((cfgFiltro
+						.getCpTipoLotacao() == null) && !atributosDesconsiderados
+						.contains(TIPO_LOTACAO))))
+			return false;
+		
 		return true;
 	}
 
@@ -472,6 +482,7 @@ public class CpConfiguracaoBL {
 		cfgFiltro.setDpPessoa(dpPessoa);
 		cfgFiltro.setCpServico(cpServico);
 		cfgFiltro.setCpIdentidade(cpIdentidade);
+		cfgFiltro.setCpTipoLotacao(dpLotacao!=null?dpLotacao.getCpTipoLotacao():null);
 
 		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
 				CpTipoConfiguracao.class, false));

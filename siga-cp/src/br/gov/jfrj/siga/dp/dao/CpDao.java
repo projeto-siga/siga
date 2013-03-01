@@ -140,7 +140,9 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
-
+	
+	
+	
 	public Selecionavel consultarPorSigla(final CpOrgaoDaoFiltro flt) {
 		final CpOrgao o = new CpOrgao();
 		o.setSigla(flt.getSigla());
@@ -1527,6 +1529,18 @@ public class CpDao extends ModeloDao {
 			} else
 				l.add(mod);
 		return l;
+	}
+
+	public CpServico consultarPorSiglaCpServico(String siglaServico) {
+		final Query query = getSessao().getNamedQuery("consultarPorSiglaStringCpServico");
+		query.setString("siglaServico", siglaServico);
+//		query.setFlushMode(FlushMode.MANUAL);
+		final List<CpServico> l = query.list();
+		if (l.size() != 1){
+			return null;
+		}
+			
+		return l.get(0);
 	}
 
 }

@@ -56,9 +56,10 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
  * A class that represents a row in the 'EX_DOCUMENTO' table. This class may be
@@ -1897,5 +1898,32 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			idExNivelAcesso = this.getExNivelAcesso().getIdNivelAcesso();
 		}
 		return idExNivelAcesso;
+	}
+
+	public List<DpResponsavel> getResponsaveisPorPapel(
+			String papelComoNomeDeVariavel) {
+		List<ExPapel> papeis = ExDao.getInstance().listarTodos(ExPapel.class);
+		for (ExPapel papel : papeis) {
+			if (papel.getComoNomeDeVariavel().equals(papelComoNomeDeVariavel))
+				return getResponsaveisPorPapel(papel);
+		}
+		return null;
+	}
+
+	public List<DpResponsavel> getResponsaveisPorPapel(ExPapel papel) {
+		List<DpResponsavel> lista = new ArrayList<DpResponsavel>();
+		List<ExMovimentacao> movs = getMobilGeral().getMovimentacoesPorTipo(
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+		for (ExMovimentacao mov : movs) {
+			if (mov.isCancelada()
+					|| !papel.getIdPapel()
+							.equals(mov.getExPapel().getIdPapel()))
+				continue;
+			if (mov.getSubscritor() != null)
+				lista.add(mov.getSubscritor());
+			else if (mov.getLotaSubscritor() != null)
+				lista.add(mov.getLotaSubscritor());
+		}
+		return lista.size() == 0 ? null : lista;
 	}
 }

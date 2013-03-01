@@ -307,6 +307,12 @@
 				<b>Para:</b> ${docVO.destinatarioString}
 			</p>
 			<p>
+				<b>Tipo:</b> ${docVO.forma}
+			</p>
+			<p>
+				<b>Modelo:</b> ${docVO.modelo}
+			</p>
+			<p>
 				<b>Descrição:</b> ${docVO.descrDocumento}
 			</p>
 			<p>

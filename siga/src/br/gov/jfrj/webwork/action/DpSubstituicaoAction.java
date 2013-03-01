@@ -97,9 +97,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 						getCadastrante(),
 						CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST))
 			{
-				strBuscarFechadas = "buscarFechadas=true";
+				setStrBuscarFechadas("buscarFechadas=true");
+				
 			}else
-				strBuscarFechadas = "buscarFechadas=false";
+				setStrBuscarFechadas("buscarFechadas=false");
 		
 		if (getId() != null) {
 			DpSubstituicao subst = dao().consultar(getId(),
@@ -510,6 +511,14 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 
 	public void setTipoTitular(Integer tipoTitular) {
 		this.tipoTitular = tipoTitular;
+	}
+
+	public String getStrBuscarFechadas() {
+		return strBuscarFechadas;
+	}
+
+	public void setStrBuscarFechadas(String strBuscarFechadas) {
+		this.strBuscarFechadas = strBuscarFechadas;
 	}
 
 	public void setTitularSel(DpPessoaSelecao titularSel) {

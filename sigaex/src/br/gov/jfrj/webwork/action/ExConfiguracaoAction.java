@@ -300,6 +300,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	public String aEditarGravar() throws Exception {
+		assertAcesso("FE:Ferramentas;CFG:Configurações");
 		
 		if(getIdTpConfiguracao() == null || getIdTpConfiguracao() == 0)
 			throw new AplicacaoException("Tipo de configuracao não informado");
@@ -307,22 +308,22 @@ public class ExConfiguracaoAction extends ExActionSupport {
 		if(getIdSituacao() == null || getIdSituacao() == 0)
 			throw new AplicacaoException("Situação de Configuracao não informada");
 		
-		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(),
-				getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)
-				&& !(Ex.getInstance().getConf().podePorConfiguracao(
-						getTitular(), getLotaTitular(),
-						CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES)
-						&& param("define_publicadores") != null && param(
-						"define_publicadores").equals("sim"))
-				&& !(Ex.getInstance()
-					   .getConf()
-					   .podePorConfiguracao(
-								getTitular(),
-								getLotaTitular(),
-								CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM)
-						&& param("gerencia_publicacao") != null && param(
-						"gerencia_publicacao").equals("sim")))
-			throw new AplicacaoException("Operação restrita");
+//		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(),
+//				getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)
+//				&& !(Ex.getInstance().getConf().podePorConfiguracao(
+//						getTitular(), getLotaTitular(),
+//						CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES)
+//						&& param("define_publicadores") != null && param(
+//						"define_publicadores").equals("sim"))
+//				&& !(Ex.getInstance()
+//					   .getConf()
+//					   .podePorConfiguracao(
+//								getTitular(),
+//								getLotaTitular(),
+//								CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM)
+//						&& param("gerencia_publicacao") != null && param(
+//						"gerencia_publicacao").equals("sim")))
+//			throw new AplicacaoException("Operação restrita");
 
 		ExConfiguracao config;
 		if (getId() == null)
@@ -348,6 +349,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	public String aExcluir() throws Exception {
+		assertAcesso("FE:Ferramentas;CFG:Configurações");
 
 		if (getId() != null) {
 			try {
@@ -373,16 +375,13 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	public String aListar() throws Exception {
-		
-		
-		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(),
-				getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR))
-			throw new AplicacaoException("Operação restrita");				
-        
+		assertAcesso("FE:Ferramentas;CFG:Configurações");
+
 	    return Action.SUCCESS;
 	}
 	
 	public String aListarCadastradas() throws Exception {        
+		assertAcesso("FE:Ferramentas;CFG:Configurações");
 		
 		ExConfiguracao config = new ExConfiguracao();	
 		

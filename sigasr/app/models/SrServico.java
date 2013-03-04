@@ -1,9 +1,7 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -12,33 +10,24 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import controllers.SrConfiguracaoBL;
+import util.Util;
 
-import br.gov.jfrj.siga.cp.CpIdentidade;
+import models.siga.PlayHistoricoSuporte;
+
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.Objeto;
-
-import play.db.jpa.GenericModel;
-import play.db.jpa.JPA;
-import play.db.jpa.JPABase;
-import play.db.jpa.Model;
-import util.Util;
 
 @Entity
 @Table(name = "SR_SERVICO")
-public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel {
+public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
 	@SequenceGenerator(sequenceName = "SR_SERVICO_SEQ", name = "SR_SERVICO_SEQ")
@@ -266,7 +255,7 @@ public class SrServico extends ObjetoPlayComHistorico implements SrSelecionavel 
 						return o1.siglaServico.compareTo(o2.siglaServico);
 					}
 				});
-		List<SrConfiguracao> confs = Util.getConfiguracoes(pess, item, null,
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess, item, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
 				new int[] { SrConfiguracaoBL.SERVICO });

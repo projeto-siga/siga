@@ -2,7 +2,6 @@ package models;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -11,26 +10,22 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
+import models.siga.PlayConfiguracao;
 
+import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
 import util.Util;
-
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpCargo;
-import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
-public class SrConfiguracao extends CpConfiguracao implements
-		ManipuladorHistorico {
+public class SrConfiguracao extends CpConfiguracao {
 
 	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
@@ -104,7 +99,7 @@ public class SrConfiguracao extends CpConfiguracao implements
 			return servico.getAtual();
 		return null;
 	}
-	
+
 	public SrTipoAtributo getTipoAtributo() {
 		if (tipoAtributo != null)
 			return tipoAtributo.getAtual();
@@ -171,20 +166,47 @@ public class SrConfiguracao extends CpConfiguracao implements
 	}
 
 	@Override
-	public void salvar() throws Exception {
-		Util.salvar(this);
-	}
-
-	@Override
-	public void finalizar() throws Exception {
-		Util.finalizar(this);
-	}
-	
-	@Override
 	public <T extends JPABase> T save() {
-		//Edson: Ver no Util o comentário sobre a chamada abaixo
+		// Edson: Ver no Util o comentário sobre a chamada abaixo
 		if (getIdConfiguracao() == null)
 			setIdConfiguracao(Util.nextVal("CORPORATIVO.CP_CONFIGURACAO_SEQ"));
 		return super.save();
+	}
+	
+	public static SrConfiguracao getConfiguracao(DpPessoa pess,
+			SrItemConfiguracao item, SrServico servico, long idTipo,
+			SrSubTipoConfiguracao subTipo) throws Exception {
+
+		SrConfiguracao conf = new SrConfiguracao(pess, item, servico, JPA.em()
+				.find(CpTipoConfiguracao.class, idTipo), subTipo);
+
+		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
+	}
+
+	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
+			SrItemConfiguracao item, SrServico servico, long idTipo,
+			SrSubTipoConfiguracao subTipo) throws Exception {
+		return getConfiguracoes(pess, item, servico, idTipo, subTipo,
+				new int[] {});
+	}
+
+	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
+			SrItemConfiguracao item, SrServico servico, long idTipo,
+			SrSubTipoConfiguracao subTipo, int atributoDesconsideradoFiltro[])
+			throws Exception {
+		SrConfiguracao conf = new SrConfiguracao(pess, item, servico, JPA.em()
+				.find(CpTipoConfiguracao.class, idTipo), subTipo);
+		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf,
+				atributoDesconsideradoFiltro);
+	}
+
+	@Override
+	public Long getId() {
+		return getIdConfiguracao();
+	}
+
+	@Override
+	public void setId(Long id) {
+		setIdConfiguracao(id);
 	}
 }

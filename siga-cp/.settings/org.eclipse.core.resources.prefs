@@ -1,5 +1,5 @@
-#Mon Feb 18 14:21:31 BRT 2013
+#Tue Feb 26 13:19:24 BRT 2013
 eclipse.preferences.version=1
-encoding//src/br/gov/jfrj/siga/dp/dao/CpDao.java=ISO-8859-1
-encoding//src/db/migration=UTF-8
-encoding//src/db/migration/CORPORATIVO_UTF8_V1_criacao_do_banco.sql=UTF-8
+encoding//app/br/gov/jfrj/siga/dp/dao/CpDao.java=ISO-8859-1
+encoding//app/db/migration=UTF-8
+encoding//app/db/migration/CORPORATIVO_UTF8_V1_criacao_do_banco.sql=UTF-8

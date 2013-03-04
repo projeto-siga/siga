@@ -12,6 +12,7 @@ import models.SrAndamento;
 import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
+import models.SrConfiguracaoBL;
 import models.SrEstado;
 import models.SrFormaAcompanhamento;
 import models.SrGravidade;
@@ -32,6 +33,7 @@ import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
+import util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -55,7 +57,8 @@ public class Application extends Controller {
 			"exibirLocalERamal", "exibirItemConfiguracao", "exibirServico" })
 	static void addDefaults() throws Exception {
 		try {
-			
+
+			//Poderia ser mais fácil, mas request.url não está trazendo a url completa
 			renderArgs.put("base", getBaseSiga());
 			renderArgs.put("baseSr", getBaseSigaSr());
 
@@ -76,8 +79,8 @@ public class Application extends Controller {
 			renderArgs.put("_rodape", pageText[1]);
 
 			String[] IDs = ConexaoHTTP.get(
-					getBaseSiga() + "/siga/usuario_autenticado.action", atributos)
-					.split(";");
+					getBaseSiga() + "/siga/usuario_autenticado.action",
+					atributos).split(";");
 
 			renderArgs.put("cadastrante",
 					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
@@ -123,9 +126,10 @@ public class Application extends Controller {
 	public static String getBaseSiga() {
 		return Play.configuration.getProperty("siga.base.url");
 	}
-	
-	public static String getBaseSigaSr(){
-		return Play.configuration.getProperty("siga.sr.url.cliente");
+
+	public static String getBaseSigaSr() {
+		return "http://" + request.domain
+		+ ":" + request.port;
 	}
 
 	static DpPessoa getCadastrante() {
@@ -549,7 +553,7 @@ public class Application extends Controller {
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy(getBaseSiga()+"/siga/" + tipo + "/buscar.action?"
+		proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action?"
 				+ "propriedade=" + tipo + nome + "&sigla="
 				+ URLEncoder.encode(sigla, "UTF-8"));
 	}
@@ -561,8 +565,7 @@ public class Application extends Controller {
 				paramString += s + "="
 						+ URLEncoder.encode(request.params.get(s), "UTF-8")
 						+ "&";
-		proxy(getBaseSiga()+"/siga/" + tipo + "/buscar.action"
-				+ paramString);
+		proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action" + paramString);
 	}
 
 }

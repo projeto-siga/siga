@@ -6,11 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,11 +21,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -36,27 +31,26 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 
-import net.spy.memcached.protocol.GetCallbackWrapper;
 import notifiers.Correio;
 
 import org.hibernate.annotations.Where;
 
 import play.db.jpa.JPA;
-import play.db.jpa.JPABase;
+import util.SigaPlayCalendar;
 import util.Util;
+import models.siga.PlayHistoricoSuporte;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
-import controllers.SrCalendar;
+import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_SOLICITACAO")
-public class SrSolicitacao extends ObjetoPlayComHistorico implements
+public class SrSolicitacao extends HistoricoSuporte implements
 		SrSelecionavel {
 
 	@Id
@@ -311,9 +305,9 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 	}
 
 	public String getDtRegString() {
-		SrCalendar cal = new SrCalendar();
+		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtReg);
-		return cal.getTempoTranscorridoString();
+		return cal.getTempoTranscorridoString(false);
 	}
 
 	public String getAtributosString() {
@@ -461,7 +455,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 		if (solicitante == null)
 			return null;
 		if (cachePreAtendenteDesignado == null) {
-			SrConfiguracao conf = Util.getConfiguracao(solicitante,
+			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
@@ -475,7 +469,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 		if (solicitante == null)
 			return null;
 		if (cacheAtendenteDesignado == null) {
-			SrConfiguracao conf = Util.getConfiguracao(solicitante,
+			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
@@ -500,7 +494,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 			HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
-		for (SrConfiguracao conf : Util.getConfiguracoes(solicitante,
+		for (SrConfiguracao conf : SrConfiguracao.getConfiguracoes(solicitante,
 				itemConfiguracao, servico,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
 				null)) {
@@ -519,7 +513,7 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 		if (solicitante == null)
 			return null;
 		if (cachePosAtendenteDesignado == null) {
-			SrConfiguracao conf = Util.getConfiguracao(solicitante,
+			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
@@ -912,6 +906,12 @@ public class SrSolicitacao extends ObjetoPlayComHistorico implements
 			throws Exception {
 
 		new SrMarca(marcador, pessoa, lotacao, this).save();
+	}
+
+	@Override
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

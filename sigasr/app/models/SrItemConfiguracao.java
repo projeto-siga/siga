@@ -16,14 +16,18 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import util.Util;
+
+import models.siga.PlayHistoricoSuporte;
+
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import controllers.SrConfiguracaoBL;
-import controllers.Util;
+import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO")
-public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
+public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel {
 
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
@@ -244,7 +248,7 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 								.compareTo(o2.siglaItemConfiguracao);
 					}
 				});
-		List<SrConfiguracao> confs = Util.getConfiguracoes(pess, null, null,
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess, null, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
 						SrConfiguracaoBL.ITEM_CONFIGURACAO,
@@ -257,5 +261,11 @@ public class SrItemConfiguracao extends ObjetoPlayComHistorico implements
 						.listarItemETodosDescendentes());
 		}
 		return new ArrayList(listaFinal);
+	}
+
+	@Override
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

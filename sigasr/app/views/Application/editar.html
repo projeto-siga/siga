@@ -5,7 +5,8 @@ function carregarAtributos(){
 	frm = document.getElementById('formSolicitacao');
 	params = '';
 	for (i = 0; i < frm.length; i++){
-		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+		if (frm[i].name && frm[i].value)
+			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
 	}
 	PassAjaxResponseToFunction('@{Application.exibirAtributos()}', 'carregouAtributos', null, false, params);
 }
@@ -19,7 +20,8 @@ function carregarLocalERamal(){
 	frm = document.getElementById('formSolicitacao');
 	params = '';
 	for (i = 0; i < frm.length; i++){
-		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+		if (frm[i].name && frm[i].value)
+			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
 	}
 	PassAjaxResponseToFunction('@{Application.exibirLocalERamal()}', 'carregouLocalERamal', null, false, params);
 }
@@ -33,7 +35,8 @@ function carregarItem(){
 	frm = document.getElementById('formSolicitacao');
 	params = '';
 	for (i = 0; i < frm.length; i++){
-		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+		if (frm[i].name && frm[i].value)
+			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
 	}
 	PassAjaxResponseToFunction('@{Application.exibirItemConfiguracao()}', 'carregouItem', null, false, params);
 }
@@ -50,8 +53,10 @@ function carregarServico(){
 	frm = document.getElementById('formSolicitacao');
 	params = '';
 	for (i = 0; i < frm.length; i++){
-		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+		if (frm[i].name && frm[i].value)
+			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
 	}
+	alert(params);
 	PassAjaxResponseToFunction('@{Application.exibirServico()}', 'carregouServico', null, false, params);
 }
 
@@ -74,11 +79,17 @@ function carregouServico(response, param){
 		<div class="gt-content-box gt-form">
 
 			#{form @Application.gravar(),
-			enctype:'multipart/form-data',id:'formSolicitacao' } <input
-				type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao"
-				value="${solicitacao.solicitacaoPai?.idSolicitacao}" /> <input
+			enctype:'multipart/form-data',id:'formSolicitacao' } 
+				#{if solicitacao.solicitacaoPai}
+				<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao"
+				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
+				#{/if}
+				#{if solicitacao.idSolicitacao}
+				<input
 				type="hidden" name="solicitacao.idSolicitacao"
-				value="${solicitacao.idSolicitacao}" /> <input type="hidden"
+				value="${solicitacao.idSolicitacao}" /> 
+				#{/if}
+				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 
 			#{ifErrors}

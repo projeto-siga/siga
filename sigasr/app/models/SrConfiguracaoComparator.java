@@ -1,6 +1,5 @@
-package controllers;
+package models;
 
-import models.SrConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
 

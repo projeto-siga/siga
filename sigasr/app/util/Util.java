@@ -1,4 +1,4 @@
-package controllers;
+package util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,8 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 
-import models.ManipuladorHistorico;
 import models.SrConfiguracao;
+import models.SrConfiguracaoBL;
 import models.SrItemConfiguracao;
 import models.SrServico;
 import models.SrSubTipoConfiguracao;
@@ -22,32 +22,7 @@ public class Util {
 
 
 
-	public static SrConfiguracao getConfiguracao(DpPessoa pess,
-			SrItemConfiguracao item, SrServico servico, long idTipo,
-			SrSubTipoConfiguracao subTipo) throws Exception {
-
-		SrConfiguracao conf = new SrConfiguracao(pess, item, servico, JPA.em()
-				.find(CpTipoConfiguracao.class, idTipo), subTipo);
-
-		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
-	}
-
-	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
-			SrItemConfiguracao item, SrServico servico, long idTipo,
-			SrSubTipoConfiguracao subTipo) throws Exception {
-		return getConfiguracoes(pess, item, servico, idTipo, subTipo,
-				new int[] {});
-	}
-
-	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
-			SrItemConfiguracao item, SrServico servico, long idTipo,
-			SrSubTipoConfiguracao subTipo, int atributoDesconsideradoFiltro[])
-			throws Exception {
-		SrConfiguracao conf = new SrConfiguracao(pess, item, servico, JPA.em()
-				.find(CpTipoConfiguracao.class, idTipo), subTipo);
-		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf,
-				atributoDesconsideradoFiltro);
-	}
+	
 
 	public static void copiar(Object dest, Object orig) {
 		for (Method getter : orig.getClass().getDeclaredMethods()) {

@@ -1,4 +1,4 @@
-package controllers;
+package models;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -7,12 +7,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.hibernate.Hibernate;
-
-import models.SrConfiguracao;
-import models.SrItemConfiguracao;
-import models.SrServico;
-import models.SrSubTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;

@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 
+import models.siga.PlayMarca;
+
 
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;

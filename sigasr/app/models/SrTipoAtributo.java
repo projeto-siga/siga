@@ -16,12 +16,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+import br.gov.jfrj.siga.model.Assemelhavel;
+
 import play.db.jpa.GenericModel;
 import play.db.jpa.Model;
+import models.siga.PlayHistoricoSuporte;
 
 @Entity
 @Table(name="SR_TIPO_ATRIBUTO")
-public class SrTipoAtributo extends ObjetoPlayComHistorico {
+public class SrTipoAtributo extends HistoricoSuporte {
 	
 	@Id
 	@SequenceGenerator(sequenceName = "SR_TIPO_ATRIBUTO_SEQ", name = "SR_TIPO_ATRIBUTO_SEQ")
@@ -64,6 +68,12 @@ public class SrTipoAtributo extends ObjetoPlayComHistorico {
 		if (sols == null)
 			return null;
 		return sols.get(0);
+	}
+
+	@Override
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

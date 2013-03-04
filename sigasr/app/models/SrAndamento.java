@@ -23,13 +23,13 @@ import javax.persistence.TemporalType;
 
 import notifiers.Correio;
 
-import controllers.SrCalendar;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 import play.db.jpa.GenericModel;
 import play.db.jpa.Model;
+import util.SigaPlayCalendar;
 
 @Entity
 @Table(name = "SR_ANDAMENTO")
@@ -125,9 +125,9 @@ public class SrAndamento extends GenericModel {
 	}
 
 	public String getDtRegString() {
-		SrCalendar cal = new SrCalendar();
+		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtReg);
-		return cal.getTempoTranscorridoString();
+		return cal.getTempoTranscorridoString(false);
 	}
 
 	public String getAtendenteString() {

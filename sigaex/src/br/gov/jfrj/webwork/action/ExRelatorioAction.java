@@ -48,6 +48,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
@@ -477,6 +478,45 @@ public class ExRelatorioAction extends ExActionSupport {
 		return "relatorio";
 	}
 
+	public String aRelMovCad() throws Exception {
+
+		assertAcesso("MOVCAD:Relação de movimentações por cadastrante");
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
+		Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		if (dtFim.getTime() - dtIni.getTime() > 31536000000L)
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+
+		Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
+				+ "/expediente/doc/exibir.action?sigla=");
+
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("idTit", getRequest().getParameter("idTit"));
+
+		RelMovCad rel = new RelMovCad(parametros);
+
+		rel.gerar();
+
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+
+		return "relatorio";
+	}
+	
 	public String aRelOrgao() throws Exception {
 
 		assertAcesso("DATAS:Relação de documentos entre datas");

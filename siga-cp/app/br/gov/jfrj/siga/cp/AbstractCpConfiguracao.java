@@ -137,28 +137,6 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Column(name = "DT_FIM_VIG_CONFIGURACAO")
 	@Temporal(TemporalType.DATE)
 	private Date dtFimVigConfiguracao;
-	
-	@Desconsiderar
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="HIS_IDC_INI")
-	private CpIdentidade hisIdcIni;
-
-	@Desconsiderar
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="HIS_IDC_FIM")
-	private CpIdentidade hisIdcFim;
-	
-	@Column(name = "HIS_ID_INI")
-	@Desconsiderar
-	private Long hisIdIni;
-
-	@Column(name = "DT_INI_REG")
-	@Desconsiderar
-	private Date hisDtIni;
-
-	@Column(name = "DT_FIM_REG")
-	@Desconsiderar
-	private Date hisDtFim;
 
 	public CpIdentidade getCpIdentidade() {
 		return cpIdentidade;
@@ -336,46 +314,6 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	public void setDtFimVigConfiguracao(Date dtFimVigConfiguracao) {
 		this.dtFimVigConfiguracao = dtFimVigConfiguracao;
-	}
-
-	public CpIdentidade getHisIdcIni() {
-		return hisIdcIni;
-	}
-
-	public void setHisIdcIni(CpIdentidade hisIdcIni) {
-		this.hisIdcIni = hisIdcIni;
-	}
-
-	public CpIdentidade getHisIdcFim() {
-		return hisIdcFim;
-	}
-
-	public void setHisIdcFim(CpIdentidade hisIdcFim) {
-		this.hisIdcFim = hisIdcFim;
-	}
-
-	public Long getHisIdIni() {
-		return hisIdIni;
-	}
-
-	public void setHisIdIni(Long hisIdIni) {
-		this.hisIdIni = hisIdIni;
-	}
-
-	public Date getHisDtIni() {
-		return hisDtIni;
-	}
-
-	public void setHisDtIni(Date hisDtIni) {
-		this.hisDtIni = hisDtIni;
-	}
-
-	public Date getHisDtFim() {
-		return hisDtFim;
-	}
-
-	public void setHisDtFim(Date hisDtFim) {
-		this.hisDtFim = hisDtFim;
 	}
 
 	/**

@@ -21,12 +21,15 @@ package br.gov.jfrj.siga.cp.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@MappedSuperclass
 public abstract class HistoricoSuporte extends Objeto implements Historico,
 		Assemelhavel {
 
@@ -42,7 +45,8 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	@Desconsiderar
 	private Date hisDtFim;
 
-	@Column(name = "HIS_ATIVO")
+	@Transient
+	//@Column(name = "HIS_ATIVO")
 	@Desconsiderar
 	private int hisAtivo;
 

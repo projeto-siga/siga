@@ -61,6 +61,8 @@
 							<h2 class="gt-table-head">Quadro de Tarefas</h2>
 							<!-- content box -->
 							<span id='right' style="margin:0;padding:0;"></span>
+							<c:if test="${f:resource('siga.sr.')}">
+								</c:if>
 							<script type="text/javascript">
 								SetInnerHTMLFromAjaxResponse(
 										"/sigawf/inbox.action?ts=${currentTimeMillis}",
@@ -79,9 +81,10 @@
 						<h2 class="gt-table-head">Quadro de Solicitações</h2>
 						<!-- content box -->
 						<span id='rightbottom' style="margin:0;padding:0;"></span>
+						<c:set var="url" value="${f:getURLSistema('siga.sr')}" />
 						<script type="text/javascript">
 							SetInnerHTMLFromAjaxResponse(
-									"/siga/proxy.action?URL=${f:resource('siga.sr.url.servidor')}/gadget",
+									"/siga/ajax_proxy.action?URL=${url}/gadget",
 									document.getElementById('rightbottom'));
 						</script>
 						</c:if>

@@ -69,6 +69,7 @@ public class CpModelo extends AbstractCpModelo {
 		return cacheConteudo;
 	}
 
+	//**
 	public void setConteudoBlobString(String conteudo)
 			throws UnsupportedEncodingException {
 		if (conteudo != null && conteudo.trim().length() == 0)

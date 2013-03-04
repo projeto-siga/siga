@@ -21,10 +21,12 @@ package br.gov.jfrj.siga.cp.model;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@MappedSuperclass
 public abstract class HistoricoAuditavelSuporte extends HistoricoSuporte
 		implements HistoricoAuditavel {
 

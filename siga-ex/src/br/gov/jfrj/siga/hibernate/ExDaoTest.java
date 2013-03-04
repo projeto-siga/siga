@@ -58,22 +58,23 @@ public class ExDaoTest extends TestCase {
 		// HibernateUtil
 		// .configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml",
 		// ExMarca.class, CpMarca.class);
-		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
+		/*CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 
-		dao = ExDao.getInstance();
+		dao = ExDao.getInstance();*/
 	}
 
-	public void testaPattern(String sigla) {
-
+	public void testaPattern() {
+		Matcher m = Pattern.compile("(https?://)([a-zA-Z_0-9]+)(:[0-9]{1,5})?(/.*)?").matcher("http://localhost:9000/sigasr");
+		System.out.println(m.find() + "  --" + m.group(1) + "--" + m.group(2) + "--" + m.group(3) + "--" + m.group(4)+"--");
 
 	}
 
 	public static void main(String[] a) throws Exception {
 		ExDaoTest test = new ExDaoTest();
-		test.testaPattern("mem32");
+		test.testaPattern();
 	}
 
 	/**

@@ -20,7 +20,7 @@
 			<result>/paginas/play_pagina_vazia.jsp</result>
 		</action>
 		
-		<action name="proxy" class="br.gov.jfrj.webwork.action.PlayAction" method="aProxy">
+		<action name="ajax_proxy" class="br.gov.jfrj.webwork.action.PlayAction" method="aAjaxProxy">
 			<result>/paginas/play_proxy.jsp</result>
 		</action>
 		

@@ -36,6 +36,8 @@ import java.nio.charset.CharsetEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.codec.EncoderException;
 
@@ -57,20 +59,37 @@ public class PlayAction extends SigaActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aProxy() throws AplicacaoException {
+	/**
+	 * Recebe chamadas Ajax do Siga e repassa a aplicações Play. É necessário um
+	 * proxy porque nem sempre a aplicação Play chamada está na mesma porta que
+	 * o Siga.
+	 * 
+	 * @return
+	 * @throws AplicacaoException
+	 */
+	public String aAjaxProxy() throws AplicacaoException {
 		try {
+			String URL = param("URL");
+			/*
+			 * Matcher m = Pattern.compile(
+			 * "(https?://)([a-zA-Z_0-9]+)(:[0-9]{1,5})?(/.*)?").matcher( URL);
+			 * if (m.find()) URL = m.group(1) + "localhost" + m.group(3) +
+			 * m.group(4);
+			 */
+
 			HashMap<String, String> header = new HashMap<String, String>();
 			Enumeration<String> headerNames = getRequest().getHeaderNames();
 			while (headerNames.hasMoreElements()) {
 				String headerName = (String) headerNames.nextElement();
-				header.put(headerName, getRequest().getHeader(headerName));
+				if (!headerName.equals("host"))
+					header.put(headerName, getRequest().getHeader(headerName));
 			}
 
-			getRequest().setAttribute(
-					"result",
-					new String(
-							ConexaoHTTP.get(param("URL"), header).getBytes(),
-							"UTF-8"));
+			getRequest()
+					.setAttribute(
+							"result",
+							new String(ConexaoHTTP.get(URL, header).getBytes(),
+									"UTF-8"));
 
 			return Action.SUCCESS;
 		} catch (Exception e) {
@@ -78,5 +97,4 @@ public class PlayAction extends SigaActionSupport {
 		}
 		return "";
 	}
-
 }

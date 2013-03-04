@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -118,43 +119,46 @@ public class PrincipalAction extends SigaActionSupport {
 
 		try {
 
-			String URLSelecionar = "", uRLExibir = "";
+			String URLSigaSr = System.getProperty("siga.sr."
+					+ SigaBaseProperties.getString("ambiente") + ".url");
+			String URLSigaDoc = "http://" + getRequest().getServerName() + ":"
+					+ getRequest().getLocalPort() + "/sigaex";
+			String URLSelecionar = "";
+			String uRLExibir = "";
+
 			List<String> orgaos = new ArrayList<String>();
 			String copiaSigla = getSigla().toUpperCase();
-
 			for (CpOrgaoUsuario o : dao().consultaCpOrgaoUsuario()) {
 				orgaos.add(o.getSiglaOrgaoUsu());
 				orgaos.add(o.getAcronimoOrgaoUsu());
 			}
-
 			for (String s : orgaos)
 				if (copiaSigla.startsWith(s)) {
 					copiaSigla = copiaSigla.substring(s.length());
 					break;
 				}
-
 			if (copiaSigla.startsWith("-"))
 				copiaSigla = copiaSigla.substring(1);
 
-			if (copiaSigla.startsWith("SR")
-					&& Cp.getInstance()
-							.getConf()
-							.podeUtilizarServicoPorConfiguracao(getTitular(),
-									getLotaTitular(), "SIGA;SR"))
-				URLSelecionar = System.getProperty("siga.sr.url.servidor")+"/selecionar?sigla=" + getSigla();
-			else
-				URLSelecionar = "http://localhost:8080/sigaex/expediente/selecionar.action?sigla="
-						+ getSigla();
+			if (copiaSigla.startsWith("SR")) {
+				if (Cp.getInstance()
+						.getConf()
+						.podeUtilizarServicoPorConfiguracao(getTitular(),
+								getLotaTitular(), "SIGA;SR"))
+					URLSelecionar = URLSigaSr + "/selecionar?sigla="
+							+ getSigla();
+			} else
+				URLSelecionar = URLSigaDoc
+						+ "/expediente/selecionar.action?sigla=" + getSigla();
 
 			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
 					.split(";");
 
 			if (copiaSigla.startsWith("SR"))
-				uRLExibir = System.getProperty("siga.sr.url.cliente") + "/exibir/"
-						+ response[1];
+				uRLExibir = URLSigaSr + "/exibir/" + response[1];
 			else
 				uRLExibir = "http://" + getRequest().getServerName() + ":"
-						+ getRequest().getServerPort()
+						+ getRequest().getLocalPort()
 						+ "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];
 

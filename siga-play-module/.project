@@ -31,24 +31,19 @@
 			<location>C:/Trabalhos/Repositorios/_git_google/siga-cp/app</location>
 		</link>
 		<link>
-			<name>siga-cp-src</name>
-			<type>2</type>
-			<location>C:/Trabalhos/Repositorios/_git_google/siga-cp/src</location>
-		</link>
-		<link>
 			<name>siga-sinc-lib-src</name>
 			<type>2</type>
 			<location>C:/Trabalhos/Repositorios/_git_google/siga-sinc-lib/src</location>
 		</link>
 		<link>
-			<name>src-1</name>
+			<name>src</name>
 			<type>2</type>
 			<location>C:/Trabalhos/Repositorios/_git_google/siga-base/src</location>
 		</link>
 		<link>
-			<name>src-10</name>
+			<name>src-1</name>
 			<type>2</type>
-			<location>C:/Trabalhos/Repositorios/_git_google/siga-cd-base/src</location>
+			<location>C:/Trabalhos/Repositorios/_git_google/siga-sinc-lib/src</location>
 		</link>
 		<link>
 			<name>src-2</name>
@@ -58,17 +53,12 @@
 		<link>
 			<name>src-3</name>
 			<type>2</type>
-			<location>C:/Trabalhos/Repositorios/_git_google/siga-cp/src</location>
-		</link>
-		<link>
-			<name>src-6</name>
-			<type>2</type>
 			<location>C:/Trabalhos/Repositorios/_git_google/siga-cd-base/src</location>
 		</link>
 		<link>
-			<name>src-7</name>
+			<name>src-4</name>
 			<type>2</type>
-			<location>C:/Trabalhos/Repositorios/_git_google/siga-cp/src</location>
+			<location>C:/Trabalhos/Repositorios/_git_google/siga-cp/app</location>
 		</link>
 	</linkedResources>
 </projectDescription>

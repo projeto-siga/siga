@@ -1,4 +1,4 @@
-package models;
+package models.siga;
 
 import java.util.Date;
 
@@ -11,8 +11,8 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 
 @MappedSuperclass
-public abstract class ObjetoPlayComHistorico extends GenericModel implements
-		Historico, ManipuladorHistorico {
+public abstract class PlayHistoricoSuporte extends GenericModel implements
+		Historico {
 
 	@Column(name = "HIS_ID_INI")
 	private Long hisIdIni;
@@ -83,7 +83,6 @@ public abstract class ObjetoPlayComHistorico extends GenericModel implements
 		this.hisAtivo = hisAtivo;
 	}
 
-	@Override
 	public void salvar() throws Exception {
 		this.setHisDtIni(new Date());
 		this.setHisDtFim(null);
@@ -96,16 +95,28 @@ public abstract class ObjetoPlayComHistorico extends GenericModel implements
 			// relacionado a esse esquema de sobrescrever o ObjetoBase
 			Historico oAntigo = (Historico) JPA.em().find(this.getClass(),
 					this.getId());
-			((ManipuladorHistorico) oAntigo).finalizar();
+			((PlayHistoricoSuporte) oAntigo).finalizar();
 			this.setHisIdIni(oAntigo.getHisIdIni());
 			this.setId(null);
 		}
 		this.save();
 	}
 
-	@Override
 	public void finalizar() throws Exception {
 		this.setHisDtFim(new Date());
 		this.save();
+	}
+	
+	public boolean ativoNaData(Date dt) {
+		if (dt == null)
+			return this.getHisDtFim() == null;
+		if (dt.before(this.getHisDtIni()))
+			return false;
+		// dt >= DtIni
+		if (this.getHisDtFim() == null)
+			return true;
+		if (dt.before(this.getHisDtFim()))
+			return true;
+		return false;
 	}
 }

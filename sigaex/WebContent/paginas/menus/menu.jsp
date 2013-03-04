@@ -83,6 +83,12 @@
 						namespace="/despacho/tipodespacho" /> <ww:a href="%{url}">Cadastro de tipos de despacho</ww:a>
 				</li>
 			</c:if>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações')}">
+				<li><ww:url id="url" action="listar"
+						namespace="/expediente/configuracao" /> <ww:a href="%{url}">Cadastro de configurações</ww:a>
+				</li>
+			</c:if>
 		</ul>
 	</li>
 </c:if>
@@ -132,15 +138,23 @@
 			</c:if>
 
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;SUBORD:Relatório de documentos em setores subordinados')}">
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;MOVLOT:Relação de movimentações')}">
 				<li><ww:url id="url" action="relRelatorios"
 						namespace="/expediente/rel">
 						<ww:param name="nomeArquivoRel">relMovimentacao.jsp</ww:param>
 					</ww:url> <ww:a href="%{url}">Relatório de Movimentações</ww:a></li>
 			</c:if>
+			
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;MOVCAD:Relação de movimentações por cadastrante')}">
+				<li><ww:url id="url" action="relRelatorios"
+						namespace="/expediente/rel">
+						<ww:param name="nomeArquivoRel">relMovCad.jsp</ww:param>
+					</ww:url> <ww:a href="%{url}">Relatório de Movimentações por Cadastrante</ww:a></li>
+			</c:if>
 
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;SUBORD:Relatório de documentos em setores subordinados')}">
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DSPEXP:Relação de despachos e transferências')}">
 				<li><ww:url id="url" action="relRelatorios"
 						namespace="/expediente/rel">
 						<ww:param name="nomeArquivoRel">relOrgao.jsp</ww:param>
@@ -149,7 +163,7 @@
 			</c:if>
 
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;SUBORD:Relatório de documentos em setores subordinados')}">
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DOCCRD:Relação de documentos criados')}">
 				<li><ww:url id="url" action="relRelatorios"
 						namespace="/expediente/rel">
 						<ww:param name="nomeArquivoRel">relTipoDoc.jsp</ww:param>

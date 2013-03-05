@@ -354,7 +354,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Field(index = Index.TOKENIZED, name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		log.info("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
+		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
 		String nivel = null;
 		ExNivelAcesso nivelAcesso = getExNivelAcesso();
 

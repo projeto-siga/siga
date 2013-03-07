@@ -2898,7 +2898,7 @@ public class ExBL extends CpBL {
 		novoDoc.setDescrDocumento(doc.getDescrDocumento());
 
 		if (doc.getDestinatario() != null && !doc.getDestinatario().isFechada())
-			novoDoc.setDestinatario(doc.getDestinatario());
+			novoDoc.setDestinatario(doc.getDestinatario().getPessoaAtual());
 
 		novoDoc.setFgEletronico(doc.getFgEletronico());
 		novoDoc.setExNivelAcesso(doc.getExNivelAcesso());
@@ -2914,20 +2914,14 @@ public class ExBL extends CpBL {
 
 		if (doc.getLotaDestinatario() != null
 				&& !doc.getLotaDestinatario().isFechada())
-			novoDoc.setLotaDestinatario(doc.getLotaDestinatario());
+			novoDoc.setLotaDestinatario(doc.getLotaDestinatario().getLotacaoAtual());
 
-		// Orlando: Alteração feita para buscar a lotação atual do subscritor,
-		// ou atribuir "null" quando não existir o subscritor.
-		if (doc.getSubscritor() != null)
+		if (doc.getSubscritor() != null
+				&& !doc.getSubscritor().isFechada()) {
+			novoDoc.setSubscritor(doc.getSubscritor().getPessoaAtual());
 			novoDoc.setLotaSubscritor(doc.getSubscritor().getPessoaAtual()
 					.getLotacao());
-		else
-			novoDoc.setSubscritor(null);
-
-		if (doc.getSubscritor() != null)
-			novoDoc.setSubscritor(doc.getSubscritor().getPessoaAtual());
-		else
-			novoDoc.setSubscritor(null);
+		}
 
 		novoDoc.setNmArqDoc(doc.getNmArqDoc());
 		novoDoc.setNmDestinatario(doc.getNmDestinatario());
@@ -2941,8 +2935,14 @@ public class ExBL extends CpBL {
 		novoDoc.setExMobilPai(doc.getExMobilPai());
 		novoDoc.setOrgaoUsuario(doc.getOrgaoUsuario());
 
-		novoDoc.setTitular(doc.getTitular());
-		novoDoc.setLotaTitular(doc.getLotaTitular());
+		if(doc.getTitular() != null
+				&& !doc.getTitular().isFechada())
+			novoDoc.setTitular(doc.getTitular().getPessoaAtual());
+		
+		if(doc.getLotaTitular() != null
+				&& !doc.getLotaTitular().isFechada())
+			novoDoc.setLotaTitular(doc.getLotaTitular().getLotacaoAtual());
+		
 		novoDoc.setNumAntigoDoc(doc.getNumAntigoDoc());
 		novoDoc.setExDocAnterior(doc);
 		// novoDoc.setNumPaginas(novoDoc.getContarNumeroDePaginas());

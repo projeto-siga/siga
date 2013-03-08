@@ -19,10 +19,8 @@ function carregouAtendente(response, param){
 }
 
 </script>
-
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-
 		<h2>Solicitação ${solicitacao.codigo}</h2>
 		<p class="gt-table-action-list">
 			#{if editar} <a class="once"
@@ -36,7 +34,6 @@ function carregouAtendente(response, param){
 			#{/if}
 		</p>
 		#{quadroSolicitacao solicitacao:solicitacao, modoCompleto:true /} <br />
-
 		<div class="gt-content-box gt-form" style="margin-top: 15px;">
 			#{form @Application.andamento(), enctype:'multipart/form-data',
 			id:'formAndamento'} <input type="hidden"
@@ -72,7 +69,6 @@ function carregouAtendente(response, param){
 			</div>
 			#{/form}
 		</div>
-
 		<!-- content box -->
 		<div class="gt-content-box" style="margin-top: 15px;">
 			<table border="0" class="gt-table">

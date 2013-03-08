@@ -53,15 +53,15 @@ public class Application extends Controller {
 		SrConfiguracaoBL.get().limparCache(null);
 	}
 
-	@Before(unless = { "proxy", "exibirAtendente", "exibirAtributos",
+	@Before(unless = { "exibirAtendente", "exibirAtributos",
 			"exibirLocalERamal", "exibirItemConfiguracao", "exibirServico" })
 	static void addDefaults() throws Exception {
 		try {
 
-			//Poderia ser mais fácil, mas request.url não está trazendo a url completa
 			renderArgs.put("base", getBaseSiga());
 			renderArgs.put("baseSr", getBaseSigaSr());
 
+			// Obter cabeçalho e rodapé do Siga
 			HashMap<String, String> atributos = new HashMap<String, String>();
 			for (Http.Header h : request.headers.values())
 				if (!h.name.equals("content-type"))
@@ -78,6 +78,7 @@ public class Application extends Controller {
 			renderArgs.put("_cabecalho", cabecalho);
 			renderArgs.put("_rodape", pageText[1]);
 
+			// Obter usuário logado
 			String[] IDs = ConexaoHTTP.get(
 					getBaseSiga() + "/siga/usuario_autenticado.action",
 					atributos).split(";");
@@ -97,11 +98,19 @@ public class Application extends Controller {
 				renderArgs.put("lotaTitular",
 						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
 
-			assertAcesso("");
-
 		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Informações não vieram
+			// Edson: Quando as informações não puderam ser obtidas do Siga,
+			// manda para a página de login
 			redirect(getBaseSiga() + "/siga");
+		}
+
+		// Edson: Este bloco não deveria ser necessário, mas o Play,
+		// pelo visto, não joga automaticamente para o
+		// método @Catch as exceções geradas no @Before
+		try {
+			assertAcesso("");
+		} catch (Exception e) {
+			catchExceptions(e);
 		}
 
 		try {
@@ -128,8 +137,7 @@ public class Application extends Controller {
 	}
 
 	public static String getBaseSigaSr() {
-		return "http://" + request.domain
-		+ ":" + request.port;
+		return "http://" + request.domain + ":" + request.port;
 	}
 
 	static DpPessoa getCadastrante() {
@@ -305,9 +313,10 @@ public class Application extends Controller {
 	}
 
 	public static void exibir(Long id) throws Exception {
-		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		SrAndamento andamento = new SrAndamento(solicitacao);
-		andamento.deduzirProxAtendente();
+		// antes: 8 queries
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id); // 3 queries
+		SrAndamento andamento = new SrAndamento(solicitacao); // 1query
+		andamento.deduzirProxAtendente(); // 318 queries
 
 		boolean criarFilha = solicitacao.podeCriarFilha(getLotaTitular(),
 				getCadastrante());
@@ -536,26 +545,31 @@ public class Application extends Controller {
 		render(itens, filtro, nome, pessoa, item);
 	}
 
-	public static void proxy(String url) throws Exception {
+	private static String proxy(String url) throws Exception {
 		HashMap<String, String> atributos = new HashMap<String, String>();
 		for (Http.Header h : request.headers.values())
 			atributos.put(h.name, h.value());
 
-		renderHtml(ConexaoHTTP.get(url, atributos));
+		return ConexaoHTTP.get(url, atributos);
 	}
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy(getBaseSiga() + "/siga/" + tipo + "/selecionar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla="
-				+ URLEncoder.encode(sigla, "UTF-8"));
+		renderHtml(proxy(getBaseSiga() + "/siga/" + tipo
+				+ "/selecionar.action?" + "propriedade=" + tipo + nome
+				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8")));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action?"
+		String html = proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action?"
 				+ "propriedade=" + tipo + nome + "&sigla="
 				+ URLEncoder.encode(sigla, "UTF-8"));
+		// Edson: impedir que os links internos à popup de busca vinda
+		// do Siga chame http://localhost:9000/siga/... em vez de
+		// http://localhost:9000/sigasr/siga/...
+		html = html.replace("\"/siga", "\"/sigasr/siga").replace("'/siga//", "'/sigasr/siga/");
+		renderHtml(html);
 	}
 
 	public static void buscarSigaFromPopup(String tipo) throws Exception {
@@ -565,7 +579,10 @@ public class Application extends Controller {
 				paramString += s + "="
 						+ URLEncoder.encode(request.params.get(s), "UTF-8")
 						+ "&";
-		proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action" + paramString);
+		String html = proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action"
+				+ paramString);
+		html = html.replace("\"/siga", "\"/sigasr/siga").replace("'/siga//", "'/sigasr/siga/");
+		renderHtml(html);
 	}
 
 }

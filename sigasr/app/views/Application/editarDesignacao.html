@@ -25,13 +25,13 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Lotação</label>#{selecao
 					tipo:'lotacao', nome:'designacao.lotacao',
-					value:designacao.lotacao /}
+					value:designacao.lotacao?.lotacaoAtual /}
 			</div>
 			
 			<div class="gt-form-row gt-width-66">
 				<label>Pessoa</label>#{selecao
 					tipo:'pessoa', nome:'designacao.dpPessoa',
-					value:designacao.dpPessoa /}
+					value:designacao.dpPessoa?.pessoalAtual /}
 			</div>
 			
 			<div class="gt-form-row gt-width-66">
@@ -49,26 +49,26 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Item</label> #{selecao tipo:'item',
 					nome:'designacao.itemConfiguracao',
-					value:designacao.itemConfiguracao /}
+					value:designacao.itemConfiguracao?.atual /}
 			</div>
 
 			<div class="gt-form-row gt-width-66">
 				<label>Ação</label> #{selecao tipo:'servico',
-					nome:'designacao.servico', value:designacao.servico /}
+					nome:'designacao.servico', value:designacao.servico?.atual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Atendente</label>#{selecao tipo:'lotacao',
-					nome:'designacao.atendente', value:designacao.atendente /}
+					nome:'designacao.atendente', value:designacao.atendente?.lotacaoAtual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Pré-atendente</label>#{selecao
 					tipo:'lotacao', nome:'designacao.preAtendente',
-					value:designacao.preAtendente /}
+					value:designacao.preAtendente?.lotacaoAtual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Pós-atendente</label> #{selecao
 					tipo:'lotacao', nome:'designacao.posAtendente',
-					value:designacao.posAtendente /}
+					value:designacao.posAtendente?.lotacaoAtual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Exibir pesquisa de satisfação</label> #{radioSN

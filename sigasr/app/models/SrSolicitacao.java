@@ -35,6 +35,7 @@ import notifiers.Correio;
 
 import org.hibernate.annotations.Where;
 
+import play.cache.Cache;
 import play.db.jpa.JPA;
 import util.SigaPlayCalendar;
 import util.Util;
@@ -50,8 +51,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_SOLICITACAO")
-public class SrSolicitacao extends HistoricoSuporte implements
-		SrSelecionavel {
+public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
 	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", name = "SR_SOLICITACAO_SEQ")
@@ -138,7 +138,11 @@ public class SrSolicitacao extends HistoricoSuporte implements
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrSolicitacao solicitacaoInicial;
 
-	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrSolicitacao.class, mappedBy = "solicitacaoInicial", cascade = CascadeType.PERSIST)
+	@OrderBy("idSolicitacao desc")
+	public List<SrSolicitacao> meuSolicitacaoHistoricoSet;
+
+	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST)
 	protected List<SrAtributo> meuAtributoSet;
 
 	// Edson: O where abaixo teve de ser explÃ­cito porque os id_refs conflitam,
@@ -156,15 +160,6 @@ public class SrSolicitacao extends HistoricoSuporte implements
 	@OneToMany(mappedBy = "solicitacaoPai", cascade = CascadeType.PERSIST)
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
-
-	@Transient
-	private DpLotacao cachePreAtendenteDesignado;
-
-	@Transient
-	private DpLotacao cacheAtendenteDesignado;
-
-	@Transient
-	private DpLotacao cachePosAtendenteDesignado;
 
 	public SrSolicitacao() {
 
@@ -375,12 +370,16 @@ public class SrSolicitacao extends HistoricoSuporte implements
 		return (numSequencia < 10 ? "0" : "") + numSequencia.toString();
 	}
 
+	/*
+	 * public List<SrSolicitacao> getHistoricoSolicitacao() { if (getHisIdIni()
+	 * == null) return null; return find( "from SrSolicitacao where hisIdIni = "
+	 * + getHisIdIni() + " order by idSolicitacao desc").fetch(); }
+	 */
+
 	public List<SrSolicitacao> getHistoricoSolicitacao() {
-		if (getHisIdIni() == null)
-			return null;
-		return find(
-				"from SrSolicitacao where hisIdIni = " + getHisIdIni()
-						+ " order by idSolicitacao desc").fetch();
+		if (solicitacaoInicial != null)
+			return solicitacaoInicial.meuSolicitacaoHistoricoSet;
+		return null;
 	}
 
 	public SrSolicitacao getSolicitacaoAtual() {
@@ -407,7 +406,7 @@ public class SrSolicitacao extends HistoricoSuporte implements
 	}
 
 	public List<SrAndamento> getAndamentoSet(boolean considerarCancelados) {
-		if (getHisIdIni() == null)
+		if (solicitacaoInicial == null)
 			return null;
 		ArrayList<SrAndamento> listaCompleta = new ArrayList<SrAndamento>();
 		for (SrSolicitacao sol : getHistoricoSolicitacao())
@@ -454,29 +453,37 @@ public class SrSolicitacao extends HistoricoSuporte implements
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		if (cachePreAtendenteDesignado == null) {
+		DpLotacao pre = Cache.get("preAtendenteDesignado_" + idSolicitacao,
+				DpLotacao.class);
+		if (pre == null) {
 			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
-			if (conf != null)
-				cachePreAtendenteDesignado = conf.preAtendente;
+			if (conf != null){
+				pre = conf.preAtendente.getLotacaoAtual();
+				Cache.set("preAtendenteDesignado_" + idSolicitacao, pre, "8mn");
+			}
 		}
-		return cachePreAtendenteDesignado;
+		return pre;
 	}
 
 	public DpLotacao getAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		if (cacheAtendenteDesignado == null) {
+		DpLotacao aten = Cache.get("atendenteDesignado_" + idSolicitacao,
+				DpLotacao.class);
+		if (aten == null) {
 			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
-			if (conf != null)
-				cacheAtendenteDesignado = conf.atendente;
+			if (conf != null){
+				aten = conf.atendente.getLotacaoAtual();
+				Cache.set("atendenteDesignado_" + idSolicitacao, aten, "8mn");
+			}
 		}
-		return cacheAtendenteDesignado;
+		return aten;
 	}
 
 	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados()
@@ -498,11 +505,11 @@ public class SrSolicitacao extends HistoricoSuporte implements
 				itemConfiguracao, servico,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
 				null)) {
-			if (conf.tipoAtributo.getHisDtFim() == null
-					&& !listaFinal.contains(conf.tipoAtributo)) {
-				listaFinal.add(conf.tipoAtributo);
+			SrTipoAtributo tipo = conf.tipoAtributo.getAtual();
+			if (!listaFinal.contains(tipo)) {
+				listaFinal.add(tipo);
 				if (map != null)
-					map.put(conf.tipoAtributo.idTipoAtributo,
+					map.put(tipo.idTipoAtributo,
 							conf.atributoObrigatorio);
 			}
 		}
@@ -512,15 +519,19 @@ public class SrSolicitacao extends HistoricoSuporte implements
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		if (cachePosAtendenteDesignado == null) {
+		DpLotacao pos = Cache.get("posAtendenteDesignado_" + idSolicitacao,
+				DpLotacao.class);
+		if (pos == null) {
 			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
-			if (conf != null)
-				cachePosAtendenteDesignado = conf.posAtendente;
+			if (conf != null){
+				pos = conf.posAtendente.getLotacaoAtual();
+				Cache.set("posAtendenteDesignado_" + idSolicitacao, pos, "8mn");
+			}
 		}
-		return cachePosAtendenteDesignado;
+		return pos;
 	}
 
 	// Edson: poderia também guardar num HashMap transiente e, ao salvar(),
@@ -602,7 +613,7 @@ public class SrSolicitacao extends HistoricoSuporte implements
 	}
 
 	public boolean isEditado() {
-		return idSolicitacao != getHisIdIni();
+		return !idSolicitacao.equals(getHisIdIni());
 	}
 
 	public boolean isCancelado() {

@@ -17,17 +17,17 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Item</label> #{selecao tipo:'item',
 				nome:'associacao.itemConfiguracao',
-				value:associacao.itemConfiguracao /}
+				value:associacao.itemConfiguracao?.atual /}
 			</div>
 
 			<div class="gt-form-row gt-width-66">
 				<label>Serviço</label> #{selecao tipo:'servico',
-				nome:'associacao.servico', value:associacao.servico /}
+				nome:'associacao.servico', value:associacao.servico?.atual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Tipo de atributo</label> #{select 'associacao.tipoAtributo',
 				items:tiposAtributo, labelProperty:'nomeTipoAtributo',
-				value:associacao.tipoAtributo?.idTipoAtributo, valueProperty:'idTipoAtributo'}
+				value:associacao.tipoAtributo?.atual?.idTipoAtributo, valueProperty:'idTipoAtributo'}
 				#{/select}
 				
 			</div>

@@ -88,7 +88,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		this.subTipoConfig = subTipoConfig;
 	}
 
-	public SrItemConfiguracao getItemConfiguracao() {
+	/*public SrItemConfiguracao getItemConfiguracao() {
 		if (itemConfiguracao != null)
 			return itemConfiguracao.getAtual();
 		return null;
@@ -122,7 +122,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		if (preAtendente != null)
 			return preAtendente.getLotacaoAtual();
 		return null;
-	}
+	}*/
 
 	public String getPesquisaSatisfacaoString() {
 		return pesquisaSatisfacao ? "Sim" : "Não";

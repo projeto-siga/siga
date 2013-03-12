@@ -54,8 +54,8 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", name = "SR_SOLICITACAO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_SOLICITACAO_SEQ")
+	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", name = "srSeq")
+	@GeneratedValue(generator = "srSeq")
 	@Column(name = "ID_SOLICITACAO")
 	public Long idSolicitacao;
 

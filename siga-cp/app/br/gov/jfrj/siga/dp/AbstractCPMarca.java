@@ -25,11 +25,13 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -49,8 +51,8 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCPMarca extends Objeto implements Serializable {
 
 	@Id
-	//@SequenceGenerator(name="my_seq", sequenceName="CP_MARCA_SEQ")
-	//Desabilitando sequence. Ver comentário em sigasr.controllers.Util.nextVal() @GeneratedValue(generator = "my_seq")
+	@SequenceGenerator(name="my_seq", sequenceName="CORPORATIVO.CP_MARCA_SEQ")
+	@GeneratedValue(generator = "my_seq")
 	@Column(name = "ID_MARCA")
 	private java.lang.Long idMarca;
 

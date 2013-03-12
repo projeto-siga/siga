@@ -56,7 +56,6 @@ function carregarServico(){
 		if (frm[i].name && frm[i].value)
 			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
 	}
-	alert(params);
 	PassAjaxResponseToFunction('@{Application.exibirServico()}', 'carregouServico', null, false, params);
 }
 

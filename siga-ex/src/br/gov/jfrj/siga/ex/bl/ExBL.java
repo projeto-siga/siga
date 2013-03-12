@@ -290,8 +290,6 @@ public class ExBL extends CpBL {
 		if (lota != null)
 			mar.setDpLotacaoIni(lota.getLotacaoInicial());
 		mar.setDtIniMarca(dt);
-		//Isto é provisório
-		mar.setIdMarca(ExDao.getInstance().obterProximoIdMarca());
 		set.add(mar);
 	}
 

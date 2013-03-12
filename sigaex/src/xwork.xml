@@ -40,8 +40,14 @@
 
 		<action name="autenticar" method="exec"
 			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
+			<result name="imagem">/paginas/imagemCaptcha.jsp</result>
 			<result name="autenticado">/paginas/autenticado.jsp</result>
 			<result>/paginas/autenticar.jsp</result>
+		</action>
+		
+		<action name="arquivoAutenticado" method="arquivo"
+			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
+			<result name="autenticado">/paginas/imagemCaptcha.jsp</result>
 		</action>
 	</package>
 

@@ -31,6 +31,8 @@
 						<li><a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}</a></li>
 					</c:forEach>
 				</ul>
+				<br/>
+				<a href="/sigaex/autenticar.action" class="gt-btn-large gt-btn-left">Autenticar outro Documento</a>
 			</div>
 		</div>
 	</div>

@@ -184,18 +184,18 @@ public class ExAutenticaAction extends ExActionSupport {
 		if (captcha.isCorrect(getAnswer())) {
 			ExArquivo arq = Ex.getInstance().getBL()
 					.buscarPorNumeroAssinatura(n);
-			fileName = arq.getReferenciaPDF();
 			
 			if(idMov != null && idMov != 0) {
 				ExMovimentacao mov = dao().consultar( idMov, ExMovimentacao.class, false );
 				
-				contentType = "application/zip";
-				fileName = mov.getIdMov() + "_" + fileName + ".zip";
+				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
+				contentType = mov.getConteudoTpMov();
 				
 				bytes = mov.getConteudoBlobMov2();
 				
 				return "autenticado";
 			} else {
+				fileName = arq.getReferenciaPDF();
 				contentType = "application/pdf";
 				
 				if(isAssinado())

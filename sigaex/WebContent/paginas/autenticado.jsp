@@ -12,18 +12,25 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Autenticação de Documentos</h2>
-			<div class="gt-content-box gt-for-table">
+			<div>
 				<c:url	var='pdfAssinado' value='arquivoAutenticado.action?n=${n}&answer=${answer}&assinado=true' /> 
 				<c:url	var='pdf' value='arquivoAutenticado.action?n=${n}&answer=${answer}&assinado=false' />
 				<iframe	src="${pdfAssinado}" width="100%" height="600" align="center" style="margin-top: 10px;"> </iframe>
 			</div>
-			<div class="gt-content-box gt-for-table">
-				<a href="${pdf}" target="_blank">PDF do documento</a><br/><br/>
-				<c:forEach var="assinatura" items="${assinaturas}" varStatus="loop">
-					<c:url	var='arqAssinatura' value='arquivoAutenticado.action?n=${n}&answer=${answer}&idMov=${assinatura.idMov}' /> 
-					<a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}</a><br/>
-				</c:forEach>
-				
+			<div>	
+				<br/>
+				<h2>Arquivos para Download</h2>
+				<ul>
+					<li><a href="${pdf}" target="_blank">PDF do documento</a></li>
+				</ul>
+				<br/>
+				<h3>Assinaturas:</h3>
+				<ul>
+					<c:forEach var="assinatura" items="${assinaturas}" varStatus="loop">
+						<c:url	var='arqAssinatura' value='arquivoAutenticado.action?n=${n}&answer=${answer}&idMov=${assinatura.idMov}' /> 
+						<li><a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}</a></li>
+					</c:forEach>
+				</ul>
 			</div>
 		</div>
 	</div>

@@ -189,7 +189,8 @@ public class ExAutenticaAction extends ExActionSupport {
 			if(idMov != null && idMov != 0) {
 				ExMovimentacao mov = dao().consultar( idMov, ExMovimentacao.class, false );
 				
-				fileName = mov.getIdMov() + fileName + ".p7s";
+				contentType = "application/zip";
+				fileName = mov.getIdMov() + "_" + fileName + ".zip";
 				
 				bytes = mov.getConteudoBlobMov2();
 				
@@ -207,7 +208,7 @@ public class ExAutenticaAction extends ExActionSupport {
 			
 			
 		} else {
-			setMensagem("Caracteres digitados não conferem com os apresentados na imagem. Por favor, tente novamente.");
+			setMensagem("Não foi possível fazer o Download do arquivo. Por favor, tente novamente.");
 		}
 		return SUCCESS;
 	}

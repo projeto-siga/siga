@@ -48,6 +48,7 @@
 		<action name="arquivoAutenticado" method="arquivo"
 			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
 			<result name="autenticado">/paginas/imagemCaptcha.jsp</result>
+			<result>/paginas/autenticar.jsp</result>
 		</action>
 	</package>
 

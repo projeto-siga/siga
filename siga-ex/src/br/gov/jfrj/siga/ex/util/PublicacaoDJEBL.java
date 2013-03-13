@@ -536,15 +536,22 @@ public class PublicacaoDJEBL {
 				+ ", "
 				+ movCancelamento.getLotaCadastrante().getOrgaoUsuario()
 						.getAcronimoOrgaoUsu());
+		
+		String sAcronimoOrgaoUsu = null;
+		
+		if(movCancelamento.getLotaCadastrante().getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFRJ"))
+			sAcronimoOrgaoUsu = "SJRJ";
+		else if(movCancelamento.getLotaCadastrante().getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFES"))
+			sAcronimoOrgaoUsu = "SJES";
+		else
+			sAcronimoOrgaoUsu = movCancelamento.getLotaCadastrante().getOrgaoUsuario().getAcronimoOrgaoUsu();
 
 		String xmlRetorno = new String((byte[]) call.invoke((new Object[] {
 				mov.getExDocumento().getCodigo(),
 				"Administrativo",
 				movCancelamento.getCadastrante().getSigla(),
 				Boolean.TRUE,
-				siglaUnidade,
-				movCancelamento.getLotaCadastrante().getOrgaoUsuario()
-						.getAcronimoOrgaoUsu() }))).substring(3);
+				siglaUnidade, sAcronimoOrgaoUsu }))).substring(3);
 
 		System.out
 				.println("\n\n DJE exclusao "

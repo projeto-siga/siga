@@ -18,6 +18,11 @@
 			<result type="redirect">/../siga/principal.action</result>
 		</action>
 		
+		<action name="resumo" method='loadInbox'
+			class="br.gov.jfrj.siga.wf.webwork.action.WfInboxAction">
+			<result>/WEB-INF/page/workflow/resumo.jsp</result>
+		</action>
+		
 		<action name="css">
 			<result>/sigalibs/siga.css</result>
 		</action>
@@ -119,8 +124,8 @@
 
 		<action name="gravarDesignacao" method="aGravarDesignacao"
 			class='br.gov.jfrj.siga.wf.webwork.action.WfDesignacaoAction'>
-			<result name="SUCESS">
-				/WEB-INF/page/workflow/pesquisarDesignacao.jsp
+			<result name="SUCESS" type="redirect-action">
+				pesquisarDesignacao?orgao=${orgao}&amp;procedimento=${procedimento}
 			</result>
 		</action>
 

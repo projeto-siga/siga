@@ -56,9 +56,10 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
  * A class that represents a row in the 'EX_DOCUMENTO' table. This class may be
@@ -106,7 +107,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	// @Override
 	public ExNivelAcesso getExNivelAcesso() {
-		log.info("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
+		log.debug("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
 		ExNivelAcesso nivel = null;
 		if (getMobilGeral() != null
 				&& getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
@@ -353,7 +354,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Field(index = Index.TOKENIZED, name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		log.info("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
+		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
 		String nivel = null;
 		ExNivelAcesso nivelAcesso = getExNivelAcesso();
 
@@ -971,11 +972,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Verifica se um documento possui movimentação de publicação de boletim.
-	 * Naturalmente, será verdadeiro apenas para documentos do tipo BIE, apesar
-	 * de isto não constar no código.
-	 */
+	
 	public boolean isBoletimPublicado() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
@@ -987,6 +984,25 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return false;
 	}
+
+	
+	/**
+	 * Verifica se um documento já foi publicado no DJE.
+	 */
+	public boolean isDJEPublicado() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+
+		for (final ExMovimentacao mov : movs) {
+			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
+					&& mov.getExMovimentacaoCanceladora() == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
 
 	/**
 	 * Retorna se uma determinada via está cancelada.
@@ -1460,6 +1476,24 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public boolean isRascunho() {
 		return getDtFechamento() == null || (isEletronico() && !isAssinado());
 	}
+	
+	/**
+	 * verifica se um documento está sem efeito.
+	 */
+	@Override
+	public boolean isSemEfeito() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+		
+		if(movs != null) {
+			for (final ExMovimentacao mov : movs) {
+				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
+						&& mov.getExMovimentacaoCanceladora() == null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Vide getLotaSubscritor()
@@ -1778,6 +1812,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
+	/**
+	 * Verifica se uma pessoa é subscritor ou cosignatário de um documento
+	 */
+	public boolean isSubscritorOuCosignatario(DpPessoa subscritor) {
+		for (DpPessoa signatario : getSubscritorECosignatarios()) {
+			if(signatario.equivale(subscritor))
+				return true;
+		}
+		
+		return false;
+	}
+
 	public void setConteudoBlob(final String nome, final byte[] conteudo) {
 		final Compactador zip = new Compactador();
 		final byte[] arqZip = getConteudoBlobDoc2();
@@ -1852,5 +1898,32 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			idExNivelAcesso = this.getExNivelAcesso().getIdNivelAcesso();
 		}
 		return idExNivelAcesso;
+	}
+
+	public List<DpResponsavel> getResponsaveisPorPapel(
+			String papelComoNomeDeVariavel) {
+		List<ExPapel> papeis = ExDao.getInstance().listarTodos(ExPapel.class);
+		for (ExPapel papel : papeis) {
+			if (papel.getComoNomeDeVariavel().equals(papelComoNomeDeVariavel))
+				return getResponsaveisPorPapel(papel);
+		}
+		return null;
+	}
+
+	public List<DpResponsavel> getResponsaveisPorPapel(ExPapel papel) {
+		List<DpResponsavel> lista = new ArrayList<DpResponsavel>();
+		List<ExMovimentacao> movs = getMobilGeral().getMovimentacoesPorTipo(
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+		for (ExMovimentacao mov : movs) {
+			if (mov.isCancelada()
+					|| !papel.getIdPapel()
+							.equals(mov.getExPapel().getIdPapel()))
+				continue;
+			if (mov.getSubscritor() != null)
+				lista.add(mov.getSubscritor());
+			else if (mov.getLotaSubscritor() != null)
+				lista.add(mov.getLotaSubscritor());
+		}
+		return lista.size() == 0 ? null : lista;
 	}
 }

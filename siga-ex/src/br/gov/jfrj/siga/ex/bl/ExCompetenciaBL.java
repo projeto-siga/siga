@@ -513,8 +513,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.isGeral()
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
+					&& !mob.isSobrestado()
 					&& !mob.isEncerrado()
 					&& podeMovimentar(titular, lotaTitular, mob)
+					&& !mob.doc().isSemEfeito()
 					&& podePorConfiguracao(titular, lotaTitular,
 							ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
 							CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -644,8 +646,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& (mob.isVia() || mob.isVolume())
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
 				&& !mob.isEmTransito()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -653,7 +657,108 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
+	
+	/**
+	 * Retorna se é possível fazer sobrestar um móbil, segundo as
+	 * regras a seguir:
+	 * <ul>
+	 * <li>Documento tem de estar assinado</li>
+	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
+	 * <li>Móbil não pode estar arquivado</li>
+	 * <li>Móbil não pode estar juntado</li>
+	 * <li>Móbil não pode estar em trânsito</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeSobrestar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		final ExMovimentacao ultMovNaoCancelada = mob
+				.getUltimaMovimentacaoNaoCancelada();
+		
+		return mob.doc().isAssinado()
+				&& (mob.isVia() || mob.isVolume())
+				&& podeMovimentar(titular, lotaTitular, mob)
+				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
+				&& !mob.isJuntado()
+				&& !mob.isEmTransito()
+				&& !mob.doc().isSemEfeito()
+				&& getConf()
+						.podePorConfiguracao(
+								titular,
+								lotaTitular,
+								ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
 
+	/**
+	 * Retorna se é possível tornar um documento sem efeito, segundo as
+	 * regras a seguir:
+	 * <ul>
+	 * <li>Documento tem de estar assinado</li>
+	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
+	 * <li>Móbil não pode estar arquivado</li>
+	 * <li>Móbil não pode estar juntado</li>
+	 * <li>Móbil não pode estar em trânsito</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeTornarDocumentoSemEfeito(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		final ExMovimentacao ultMovNaoCancelada = mob
+				.getUltimaMovimentacaoNaoCancelada();
+		
+		if(mob.doc().isSemEfeito())
+			return false;
+		
+		if(!mob.doc().isEletronico() || !mob.doc().isAssinado() || ((mob.doc().getSubscritor()!=null) && !mob.doc().getSubscritor().equivale(titular)))
+			return false;
+		
+		//Verifica se o documento está com pedido de publicação no DJE ou BIE.
+		if(mob.doc().isPublicacaoSolicitada() ||  
+				mob.doc().isPublicacaoAgendada() || 	
+				mob.doc().isPublicacaoBoletimSolicitada() ||
+				mob.doc().isBoletimPublicado() ||
+				mob.doc().isDJEPublicado()) 
+			return false;
+		
+		
+		//Verifica se o subscritor pode movimentar todos os mobils
+		for (ExMobil m : mob.doc().getExMobilSet()) {
+			if(!m.isGeral()) {
+				if (!podeMovimentar(titular, lotaTitular, m))
+					return false;
+				
+				if(mob.isJuntado())
+					return false;
+				
+				if(mob.isApensado() && !mob.isApensadoAVolumeDoMesmoProcesso())
+					return false;
+			}
+		}
+		
+		return  getConf()
+						.podePorConfiguracao(
+								titular,
+								lotaTitular,
+								ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}	
+	
 	/**
 	 * Retorna se é possível criar subprocesso, segundo as regras abaixo:
 	 * <ul>
@@ -684,6 +789,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return !mob.doc().isCancelado()
+				&& !mob.doc().isSemEfeito()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
 						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO);
@@ -710,6 +816,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 
 		return !mob.doc().isCancelado()
+				&& !mob.doc().isSemEfeito()
 				&& !mob.isEncerrado()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
@@ -750,6 +857,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 
 		if (!(mob.isVia() || mob.isVolume()))
+			return false;
+		
+		if(mob.doc().isSemEfeito())
 			return false;
 
 		return podeArquivarCorrente(titular, lotaTitular, mob)
@@ -819,6 +929,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				// doc em papel, a pedido do Dr Libonati.
 				&& (mob.doc().getDtFechamento() != null)
 				&& !mob.doc().isCancelado()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -851,6 +962,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& mob.doc().isAssinado()
 				&& !mob.doc().isBoletimPublicado()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -968,6 +1080,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeBotaoCriarVia(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
 
 		if (!mob.isEmTransito() && podeCriarVia(titular, lotaTitular, mob)
 				&& podeMovimentar(titular, lotaTitular, mob))
@@ -1081,10 +1196,22 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeCancelarMovimentacao(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		//Não deixa cancelar movimentação de um mobil diferente de geral quando um documento está sem efeito.
+		if(!mob.isGeral() && mob.doc().isSemEfeito())
+			return false;
+		
 		final ExMovimentacao exUltMovNaoCanc = mob
 				.getUltimaMovimentacaoNaoCancelada();
 		final ExMovimentacao exUltMov = mob.getUltimaMovimentacao();
 		if (exUltMov == null || exUltMovNaoCanc == null)
+			return false;
+		
+		//Só deixa cancelar movimentação de tornar documento sem efeito, se o titular for o subscritor do documento
+		//Também não é permitido os cosignatários cancelar essa movimentação
+		if(mob.isGeral() && 
+				exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO &&
+				!exUltMovNaoCanc.getSubscritor().equivale(titular))
 			return false;
 
 		// Não deixa cancelar apensação ou desapensação
@@ -1303,6 +1430,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeCriarVia(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
 
 		if (!mob.doc().isExpediente())
 			return false;
@@ -1427,6 +1557,37 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
+	 * Retorna se é possível desobrestar um móbil, segundo as seguintes regras:
+	 * <ul>
+	 * <li>Móbil tem de ser via ou volume. Não pode ser geral</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
+	 * <li>Móbil tem de estar sobrestado</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeDesobrestar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if (!(mob.isVia() || mob.isVolume()))
+			return false;
+		final ExMovimentacao ultMovNaoCancelada = mob
+				.getUltimaMovimentacaoNaoCancelada();
+		if (ultMovNaoCancelada == null)
+			return false;
+		return podeMovimentar(titular, lotaTitular, mob)
+				&& (mob.isSobrestado())
+				&& getConf().podePorConfiguracao(titular, lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}	
+	
+	/**
 	 * Retorna se é possível fazer despacho no móbil, conforme as regras a
 	 * seguir:
 	 * <ul>
@@ -1461,6 +1622,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
+				&& !mob.doc().isSemEfeito()
 				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
 						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
@@ -1523,7 +1686,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (mob.doc().getDtFechamento() != null && !mob.doc().isEletronico())
 			return false;
-		if (mob.doc().isCancelado())
+		if (mob.doc().isCancelado() || mob.doc().isSemEfeito())
 			return false;
 		if (mob.doc().isAssinado() && mob.doc().isEletronico())
 			return false;
@@ -1567,6 +1730,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& mob.doc().isAssinado()
 				&& !mob.doc().isPublicacaoAgendada()
 				&& !mob.doc().isPublicacaoSolicitada()
+				&& !mob.doc().isSemEfeito()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -1628,6 +1792,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.doc().isPublicacaoSolicitada()
 					&& !mob.doc().isPublicacaoBoletimSolicitada()
 					&& !mob.doc().isPublicacaoAgendada()
+					&& !mob.doc().isSemEfeito()
 					&& getConf()
 							.podePorConfiguracao(
 									titular,
@@ -1654,6 +1819,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAnexarArquivoAlternativo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
+		
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 		final boolean gerenteBIE = podeGerenciarPublicacaoBoletimPorConfiguracao(
 				titular, lotaTitular, mob);
@@ -1686,7 +1855,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar;
 
 	}
-
+	
 	/**
 	 * Retorna se é possível, com base em configuração, utilizar a rotina de
 	 * atendimento de pedidos indiretos de publicação no DJE. Não é utilizado o
@@ -1782,8 +1951,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * Retorna se é possível cancelar uma movimentação mov, de anexação de
 	 * arquivo. Regras:
 	 * <ul>
-	 * <li>Anexação não pode estar cancelada</li>
-	 * <li>Anexo não pode estar assinado>	
+	 * <li>Anexação não pode estar cancelada</li>	
 	 * <li>Não pode mais ser possível <i>excluir</i> a anexação</li>
 	 * <li>Se o documento for físico, anexação não pode ter sido feita antes da
 	 * finalização</li>
@@ -1999,6 +2167,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeFazerVinculacaoPapel(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL,
@@ -2128,6 +2299,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& mob.doc().isAssinado()
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
+				&& !mob.doc().isSemEfeito()
 				&& podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -2161,12 +2334,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return !mob.isCancelada()
+				&& !mob.doc().isSemEfeito()
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& mob.doc().isAssinado()
 				&& !mob.isApensado()
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -2232,6 +2407,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeMovimentar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
+		
 		if (mob.isGeral()) {
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				if (!m.isGeral() && podeMovimentar(titular, lotaTitular, m))
@@ -2401,7 +2580,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
 
-		if (mob.isCancelada() || mob.isArquivado() || (!mob.isEmTransito()))
+		if (mob.isCancelada() || mob.isArquivado() || mob.isSobrestado() || (!mob.isEmTransito()))
 			return false;
 		else if (!mob.isEmTransitoExterno()) {
 			if (!exMov.getLotaResp().equivale(lotaTitular))
@@ -2512,6 +2691,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isJuntado()
 				&& !mob.doc().isCancelado()
+				&& !mob.doc().isSemEfeito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -2729,6 +2909,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
+				&& !mob.doc().isSemEfeito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);

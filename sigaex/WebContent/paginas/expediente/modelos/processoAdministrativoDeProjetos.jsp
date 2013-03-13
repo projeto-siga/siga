@@ -154,8 +154,8 @@
 			bgcolor="#000000">
 			<tr>
 				<td bgcolor="#FFFFFF" align="left">
-				Findo este processo, deverá ser encaminhado à Seção de Arquivo Geral (SID/CDOC/SEARQ), 
-				para arquivo permanente, não cabendo eliminação.
+				Findo este processo, deve-se encaminhá-lo ao Arquivo para guarda permanente, 
+				não cabendo eliminação.
 				<br />
 				<br />
 				</td>

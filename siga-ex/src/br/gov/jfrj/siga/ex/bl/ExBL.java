@@ -79,6 +79,7 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
@@ -487,6 +488,8 @@ public class ExBL extends CpBL {
 		SortedSet<ExMarca> set = new TreeSet<ExMarca>();
 
 		ExMovimentacao ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
+		
+		Boolean isDocumentoSemEfeito = mob.doc().isSemEfeito();
 
 		if (mob.isGeral()) {
 			if (mob.doc().getDtFechamento() == null) {
@@ -497,79 +500,94 @@ public class ExBL extends CpBL {
 			}
 
 			if (mob.getExMovimentacaoSet() != null) {
-				// Verificar a situação no DJE
-				Long mDje = null;
-				ExMovimentacao movDje = null;
-				for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
-					if (mov.isCancelada())
-						continue;
-					Long m = null;
-					Long t = mov.getIdTpMov();
-					if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
-						switch ((int) (long) mov.getExPapel().getIdPapel()) {
-						case (int) ExPapel.PAPEL_GESTOR:
-							m = CpMarcador.MARCADOR_COMO_GESTOR;
-							break;
-						case (int) ExPapel.PAPEL_INTERESSADO:
-							m = CpMarcador.MARCADOR_COMO_INTERESSADO;
-							break;
-						}
-						if (m != null)
-							acrescentarMarca(set, mob, m, mov.getDtIniMov(),
-									mov.getSubscritor(),
-									mov.getLotaSubscritor());
-					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
-						mDje = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
-						movDje = mov;
-					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
-						mDje = CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO;
-						movDje = mov;
-					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO) {
-						mDje = CpMarcador.MARCADOR_DISPONIBILIZADO;
-						movDje = mov;
-					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
-							&& mob.doc().isEletronico()
-							&& !mob.doc().jaTransferido()) {
-						m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
-						/*
-						 * não é possível usar ExMovimentacao.isAssinada() pois
-						 * não há tempo habil no BD de efetivar a inclusao de
-						 * movimentacao de assinatura de movimentção
-						 */
-						for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-							if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
-									.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
-									&& movAss.getExMovimentacaoRef().getIdMov() == mov
-											.getIdMov()) {
-								m = null;
-								break;
-							}
-						}
-						if (m != null)
-							acrescentarMarca(set, mob, m, mov.getDtIniMov(),
+				if(isDocumentoSemEfeito) {
+					for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+						if (mov.isCancelada())
+							continue;
+
+						Long t = mov.getIdTpMov();
+						if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+							acrescentarMarca(set, mob, CpMarcador.MARCADOR_SEM_EFEITO, mov.getDtIniMov(),
 									mov.getCadastrante(),
 									mov.getLotaCadastrante());
-					} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
-						if (mob.getDoc().isEletronico()) {
-							m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-							for (ExMovimentacao assinatura : mob.getDoc()
-									.getTodasAsAssinaturas()) {
-								if (assinatura.getSubscritor().equivale(
-										mov.getSubscritor())) {
+						}
+					}
+						
+				} else {
+					// Verificar a situação no DJE
+					Long mDje = null;
+					ExMovimentacao movDje = null;
+					for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+						if (mov.isCancelada())
+							continue;
+						Long m = null;
+						Long t = mov.getIdTpMov();
+						if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+							switch ((int) (long) mov.getExPapel().getIdPapel()) {
+							case (int) ExPapel.PAPEL_GESTOR:
+								m = CpMarcador.MARCADOR_COMO_GESTOR;
+								break;
+							case (int) ExPapel.PAPEL_INTERESSADO:
+								m = CpMarcador.MARCADOR_COMO_INTERESSADO;
+								break;
+							}
+							if (m != null)
+								acrescentarMarca(set, mob, m, mov.getDtIniMov(),
+										mov.getSubscritor(),
+										mov.getLotaSubscritor());
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
+							mDje = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
+							movDje = mov;
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
+							mDje = CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO;
+							movDje = mov;
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO) {
+							mDje = CpMarcador.MARCADOR_DISPONIBILIZADO;
+							movDje = mov;
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
+								&& mob.doc().isEletronico()
+								&& !mob.doc().jaTransferido()) {
+							m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
+							/*
+							 * não é possível usar ExMovimentacao.isAssinada() pois
+							 * não há tempo habil no BD de efetivar a inclusao de
+							 * movimentacao de assinatura de movimentção
+							 */
+							for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+								if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
+										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+										&& movAss.getExMovimentacaoRef().getIdMov() == mov
+												.getIdMov()) {
 									m = null;
 									break;
 								}
 							}
 							if (m != null)
-								acrescentarMarca(set, mob, m,
-										mov.getDtIniMov(), mov.getSubscritor(),
-										null);
-						}
+								acrescentarMarca(set, mob, m, mov.getDtIniMov(),
+										mov.getCadastrante(),
+										mov.getLotaCadastrante());
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
+							if (mob.getDoc().isEletronico()) {
+								m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
+								for (ExMovimentacao assinatura : mob.getDoc()
+										.getTodasAsAssinaturas()) {
+									if (assinatura.getSubscritor().equivale(
+											mov.getSubscritor())) {
+										m = null;
+										break;
+									}
+								}
+								if (m != null)
+									acrescentarMarca(set, mob, m,
+											mov.getDtIniMov(), mov.getSubscritor(),
+											null);
+							}
+						} 
 					}
-				}
-				if (mDje != null) {
-					acrescentarMarca(set, mob, mDje, movDje.getDtIniMov(),
-							movDje.getTitular(), movDje.getLotaTitular());
+					if (mDje != null) {
+						acrescentarMarca(set, mob, mDje, movDje.getDtIniMov(),
+								movDje.getTitular(), movDje.getLotaTitular());
+					}
 				}
 			}
 			return set;
@@ -583,148 +601,154 @@ public class ExBL extends CpBL {
 					.doc().getCadastrante(), mob.doc().getLotaCadastrante());
 			return set;
 		}
-
-		long m = CpMarcador.MARCADOR_CANCELADO;
-		long mAnterior = m;
-		Date dt = null;
-		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
-			if (mov.isCancelada())
-				continue;
-			Long t = mov.getIdTpMov();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO)
-				m = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
-				m = CpMarcador.MARCADOR_DISPONIBILIZADO;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
-				m = CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
-				m = CpMarcador.MARCADOR_ARQUIVADO_CORRENTE;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE)
-				m = CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
-				m = CpMarcador.MARCADOR_JUNTADO;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO)
-				m = CpMarcador.MARCADOR_JUNTADO_EXTERNO;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO)
-				m = CpMarcador.MARCADOR_APENSADO;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
-				m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
-				m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
-					&& mob.doc().isEletronico()) {
-				m = CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA;
-				for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-					if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-							&& movAss.getExMovimentacaoRef().getIdMov() == mov
-									.getIdMov()) {
-						m = mAnterior;
+		
+		if(!isDocumentoSemEfeito) {
+	
+			long m = CpMarcador.MARCADOR_CANCELADO;
+			long mAnterior = m;
+			Date dt = null;
+			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+				if (mov.isCancelada())
+					continue;
+				Long t = mov.getIdTpMov();
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO)
+					m = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
+					m = CpMarcador.MARCADOR_DISPONIBILIZADO;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
+					m = CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+					m = CpMarcador.MARCADOR_ARQUIVADO_CORRENTE;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE)
+					m = CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR)
+					m = CpMarcador.MARCADOR_SOBRESTADO;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+					m = CpMarcador.MARCADOR_JUNTADO;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO)
+					m = CpMarcador.MARCADOR_JUNTADO_EXTERNO;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO)
+					m = CpMarcador.MARCADOR_APENSADO;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+					m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
+					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
+						&& mob.doc().isEletronico()) {
+					m = CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA;
+					for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+						if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+								&& movAss.getExMovimentacaoRef().getIdMov() == mov
+										.getIdMov()) {
+							m = mAnterior;
+						}
 					}
 				}
-			}
-
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
-				if (!mob.doc().isEletronico()
-						&& (mob.doc().isAssinado())
-						|| (mob.doc().isEletronico() && mob.doc()
-								.isAssinadoEletronicoPorTodosOsSignatarios())
-						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
-						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
-					m = CpMarcador.MARCADOR_EM_ANDAMENTO;
-				} else if (mob.isApensado()) {
-					m = CpMarcador.MARCADOR_APENSADO;
-				} else {
-					m = CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA;
+	
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
+					if (!mob.doc().isEletronico()
+							&& (mob.doc().isAssinado())
+							|| (mob.doc().isEletronico() && mob.doc()
+									.isAssinadoEletronicoPorTodosOsSignatarios())
+							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
+							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
+						m = CpMarcador.MARCADOR_EM_ANDAMENTO;
+					} else if (mob.isApensado()) {
+						m = CpMarcador.MARCADOR_APENSADO;
+					} else {
+						m = CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA;
+					}
+	
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
+						&& mob.doc().isEletronico()) {
+					m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
+					/*
+					 * não é possível usar ExMovimentacao.isAssinada() pois não há
+					 * tempo habil no BD de efetivar a inclusao de movimentacao de
+					 * assinatura de movimentção
+					 */
+					for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+						if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
+								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+								&& movAss.getExMovimentacaoRef().getIdMov() == mov
+										.getIdMov()) {
+							m = mAnterior;
+							break;
+						}
+					}
 				}
-
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
-					&& mob.doc().isEletronico()) {
-				m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
-				/*
-				 * não é possível usar ExMovimentacao.isAssinada() pois não há
-				 * tempo habil no BD de efetivar a inclusao de movimentacao de
-				 * assinatura de movimentção
-				 */
-				for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-					if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
-							.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
-							&& movAss.getExMovimentacaoRef().getIdMov() == mov
-									.getIdMov()) {
-						m = mAnterior;
+	
+				if (m != mAnterior) {
+					dt = mov.getDtIniMov();
+					mAnterior = m;
+				}
+			}
+	
+			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
+				Long mSubs = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
+				for (ExMovimentacao assinatura : mob.getDoc()
+						.getTodasAsAssinaturas()) {
+					if (assinatura.getSubscritor().equivale(
+							mob.getExDocumento().getSubscritor())) {
+						mSubs = null;
 						break;
 					}
 				}
+				if (mSubs != null)
+					acrescentarMarca(set, mob, mSubs, dt, mob.getExDocumento()
+							.getSubscritor(), null);
 			}
-
-			if (m != mAnterior) {
-				dt = mov.getDtIniMov();
-				mAnterior = m;
-			}
-		}
-
-		if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
-			Long mSubs = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-			for (ExMovimentacao assinatura : mob.getDoc()
-					.getTodasAsAssinaturas()) {
-				if (assinatura.getSubscritor().equivale(
-						mob.getExDocumento().getSubscritor())) {
-					mSubs = null;
-					break;
-				}
-			}
-			if (mSubs != null)
-				acrescentarMarca(set, mob, mSubs, dt, mob.getExDocumento()
-						.getSubscritor(), null);
-		}
-
-		if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
-			if (!mob.doc().isEletronico()) {
-				m = CpMarcador.MARCADOR_A_RECEBER;
-				acrescentarMarca(set, mob, CpMarcador.MARCADOR_EM_TRANSITO, dt,
-						ultMovNaoCanc.getCadastrante(),
-						ultMovNaoCanc.getLotaCadastrante());
-			} else {
-				if (ultMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
-					m = CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA;
-				} else {
-					acrescentarMarca(set, mob,
-							CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO, dt,
+	
+			if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
+				if (!mob.doc().isEletronico()) {
+					m = CpMarcador.MARCADOR_A_RECEBER;
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_EM_TRANSITO, dt,
 							ultMovNaoCanc.getCadastrante(),
 							ultMovNaoCanc.getLotaCadastrante());
-				}
-			}
-		}
-		if (m == CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO) {
-			acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getCadastrante(),
-					ultMovNaoCanc.getLotaCadastrante());
-		} else if (m == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA) {
-			if (ultMovNaoCanc.getCadastrante().getId() != ultMovNaoCanc
-					.getSubscritor().getId()) {
-				if (ultMovNaoCanc.getLotaCadastrante().getIdLotacao() != ultMovNaoCanc
-						.getLotaSubscritor().getIdLotacao()) {
-					acrescentarMarca(set, mob, m, dt,
-							ultMovNaoCanc.getSubscritor(),
-							ultMovNaoCanc.getLotaSubscritor());
 				} else {
-					acrescentarMarca(set, mob, m, dt,
-							ultMovNaoCanc.getSubscritor(), null);
+					if (ultMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
+						m = CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA;
+					} else {
+						acrescentarMarca(set, mob,
+								CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO, dt,
+								ultMovNaoCanc.getCadastrante(),
+								ultMovNaoCanc.getLotaCadastrante());
+					}
 				}
 			}
-			acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getCadastrante(),
-					ultMovNaoCanc.getLotaCadastrante());
-		} else if (m == CpMarcador.MARCADOR_JUNTADO
-				|| m == CpMarcador.MARCADOR_APENSADO) {
-			acrescentarMarca(set, mob, m, dt, null, null);
-		} else {
-			acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getResp(),
-					ultMovNaoCanc.getLotaResp());
+			if (m == CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO) {
+				acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getCadastrante(),
+						ultMovNaoCanc.getLotaCadastrante());
+			} else if (m == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA) {
+				if (ultMovNaoCanc.getCadastrante().getId() != ultMovNaoCanc
+						.getSubscritor().getId()) {
+					if (ultMovNaoCanc.getLotaCadastrante().getIdLotacao() != ultMovNaoCanc
+							.getLotaSubscritor().getIdLotacao()) {
+						acrescentarMarca(set, mob, m, dt,
+								ultMovNaoCanc.getSubscritor(),
+								ultMovNaoCanc.getLotaSubscritor());
+					} else {
+						acrescentarMarca(set, mob, m, dt,
+								ultMovNaoCanc.getSubscritor(), null);
+					}
+				}
+				acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getCadastrante(),
+						ultMovNaoCanc.getLotaCadastrante());
+			} else if (m == CpMarcador.MARCADOR_JUNTADO
+					|| m == CpMarcador.MARCADOR_APENSADO) {
+				acrescentarMarca(set, mob, m, dt, null, null);
+			} else {
+				acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getResp(),
+						ultMovNaoCanc.getLotaResp());
+			}
 		}
 		return set;
 	}
@@ -1119,6 +1143,36 @@ public class ExBL extends CpBL {
 					"Erro ao arquivar permanentemente um documento.", 0, e);
 		}
 	}
+	
+	public void sobrestar(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
+			Date dtMovIni, DpPessoa subscritor) throws AplicacaoException {
+
+		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		for (ExMobil m : set) {
+			if (m.getExDocumento().getDtFechamento() == null)
+				throw new AplicacaoException(
+						"Não é possível sobrestar um documento não finalizado");
+		}
+
+		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
+		try {
+			iniciarAlteracao();
+
+			for (ExMobil m : set) {
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
+						cadastrante, lotaCadastrante, m, dtMov, subscritor,
+						null, null, null, dt);
+				gravarMovimentacao(mov);
+				concluirAlteracaoParcial(m);
+			}
+			concluirAlteracao(null);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao sobrestar documento.", 0, e);
+		}
+	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
@@ -1131,6 +1185,16 @@ public class ExBL extends CpBL {
 					"Não é possível assinar um documento cancelado.");
 
 		boolean fPreviamenteAssinado = doc.isAssinado();
+
+		if (!fPreviamenteAssinado) {
+			try {
+				processarComandosEmTag(doc, "pre_assinatura");
+			} catch (AplicacaoException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new Error(e);
+			}
+		}
 
 		final byte[] cms;
 		try {
@@ -1295,8 +1359,9 @@ public class ExBL extends CpBL {
 						cadastrante, cadastrante, mov);
 			}
 
-			if (!fPreviamenteAssinado && doc.isAssinado())
-				s = processarComandosEmTag(doc, "assinatura");
+			if (!fPreviamenteAssinado && doc.isAssinado()) {
+				processarComandosEmTag(doc, "assinatura");
+			}
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -1313,7 +1378,7 @@ public class ExBL extends CpBL {
 	 * @param tag
 	 * @throws Exception
 	 */
-	private String processarComandosEmTag(final ExDocumento doc, String tag)
+	public String processarComandosEmTag(final ExDocumento doc, String tag)
 			throws Exception {
 		String s = processarModelo(doc, null, tag, null, null);
 
@@ -2058,6 +2123,36 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao desarquivar.", 0, e);
 		}
 	}
+	
+	public void desobrestar(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor)
+			throws AplicacaoException {
+		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		for (ExMobil m : set) {
+			if (!m.isSobrestado())
+				throw new AplicacaoException(
+						"Não é possível desobrestar um documento que não esteja sobrestado");
+		}
+
+		Date dt = dao().dt();
+		try {
+			iniciarAlteracao();
+
+			for (ExMobil m : set) {
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR,
+						cadastrante, lotaCadastrante, m, dtMov, subscritor,
+						null, null, null, dt);
+				gravarMovimentacao(mov);
+				concluirAlteracaoParcial(m);
+			}
+			concluirAlteracao(null);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao desobrestar.", 0, e);
+		}
+	}
 
 	public void excluirMovimentacao(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExMobil mob, Long idMov)
@@ -2260,11 +2355,29 @@ public class ExBL extends CpBL {
 				keys.add("doc_document");
 				values.add(doc.getCodigo());
 			}
+			for (ExMobil mob : doc.getExMobilSet()) {
+				if (mob.isGeral())
+					continue;
+				if (mob.isVia() || mob.isVolume()) {
+					keys.add("doc_" + (char) ('a' + mob.getNumSequencia()));
+					values.add((String) mob.getSigla());
+				}
+			}
+
 			for (int n = 0; n < doc.getSetVias().size(); n++) { // Adiciona no
 				// contexto a
 				// via 'n'
 				keys.add("doc_" + (char) ('a' + n));
 				values.add(doc.getCodigo() + "-" + (char) ('A' + n));
+			}
+			List<ExPapel> papeis = dao().listarTodos(ExPapel.class);
+			for (ExPapel papel : papeis) {
+				List<DpResponsavel> responsaveis = doc
+						.getResponsaveisPorPapel(papel);
+				if (responsaveis != null && responsaveis.size() > 0) {
+					keys.add("_doc_perfil_" + papel.getComoNomeDeVariavel());
+					values.add(responsaveis.get(0).getSiglaCompleta());
+				}
 			}
 			{
 				client.criarInstanciaDeProcesso(
@@ -2785,7 +2898,7 @@ public class ExBL extends CpBL {
 		novoDoc.setDescrDocumento(doc.getDescrDocumento());
 
 		if (doc.getDestinatario() != null && !doc.getDestinatario().isFechada())
-			novoDoc.setDestinatario(doc.getDestinatario());
+			novoDoc.setDestinatario(doc.getDestinatario().getPessoaAtual());
 
 		novoDoc.setFgEletronico(doc.getFgEletronico());
 		novoDoc.setExNivelAcesso(doc.getExNivelAcesso());
@@ -2801,20 +2914,14 @@ public class ExBL extends CpBL {
 
 		if (doc.getLotaDestinatario() != null
 				&& !doc.getLotaDestinatario().isFechada())
-			novoDoc.setLotaDestinatario(doc.getLotaDestinatario());
+			novoDoc.setLotaDestinatario(doc.getLotaDestinatario().getLotacaoAtual());
 
-		// Orlando: Alteração feita para buscar a lotação atual do subscritor,
-		// ou atribuir "null" quando não existir o subscritor.
-		if (doc.getSubscritor() != null)
+		if (doc.getSubscritor() != null
+				&& !doc.getSubscritor().isFechada()) {
+			novoDoc.setSubscritor(doc.getSubscritor().getPessoaAtual());
 			novoDoc.setLotaSubscritor(doc.getSubscritor().getPessoaAtual()
 					.getLotacao());
-		else
-			novoDoc.setSubscritor(null);
-
-		if (doc.getSubscritor() != null)
-			novoDoc.setSubscritor(doc.getSubscritor().getPessoaAtual());
-		else
-			novoDoc.setSubscritor(null);
+		}
 
 		novoDoc.setNmArqDoc(doc.getNmArqDoc());
 		novoDoc.setNmDestinatario(doc.getNmDestinatario());
@@ -2828,8 +2935,14 @@ public class ExBL extends CpBL {
 		novoDoc.setExMobilPai(doc.getExMobilPai());
 		novoDoc.setOrgaoUsuario(doc.getOrgaoUsuario());
 
-		novoDoc.setTitular(doc.getTitular());
-		novoDoc.setLotaTitular(doc.getLotaTitular());
+		if(doc.getTitular() != null
+				&& !doc.getTitular().isFechada())
+			novoDoc.setTitular(doc.getTitular().getPessoaAtual());
+		
+		if(doc.getLotaTitular() != null
+				&& !doc.getLotaTitular().isFechada())
+			novoDoc.setLotaTitular(doc.getLotaTitular().getLotacaoAtual());
+		
 		novoDoc.setNumAntigoDoc(doc.getNumAntigoDoc());
 		novoDoc.setExDocAnterior(doc);
 		// novoDoc.setNumPaginas(novoDoc.getContarNumeroDePaginas());
@@ -2858,6 +2971,7 @@ public class ExBL extends CpBL {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL:
 				ExMovimentacao novaMov = duplicarMovimentacao(cadastrante,
 						lotaCadastrante, mov);
 				novaMov.setExMobil(novoDoc.getMobilGeral());
@@ -2905,6 +3019,7 @@ public class ExBL extends CpBL {
 		novaMov.setResp(mov.getResp());
 		novaMov.setSubscritor(mov.getSubscritor());
 		novaMov.setTitular(mov.getTitular());
+		novaMov.setExPapel(mov.getExPapel());
 		return novaMov;
 	}
 
@@ -3879,7 +3994,13 @@ public class ExBL extends CpBL {
 			}
 		}
 
-		attrs.put("lotaTitular", doc.getLotaCadastrante());
+		// Nato: alterei essas linhas para que os modelos possam conhecer o
+		// cadastrante e o titular
+		// attrs.put("lotaTitular", doc.getLotaTitular());
+		attrs.put("cadastrante", doc.getCadastrante());
+		attrs.put("lotaCadastrante", doc.getLotaCadastrante());
+		attrs.put("titular", doc.getTitular());
+		attrs.put("lotaTitular", doc.getLotaTitular());
 
 		params.put("processar_modelo", "1");
 		params.put("finalizacao", "1");
@@ -4661,4 +4782,25 @@ public class ExBL extends CpBL {
 					"Erro ao anular cancelamento do documento.", 0, e);
 		}
 	}
+	
+	public void TornarDocumentoSemEfeito(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+		try {
+			iniciarAlteracao();
+			
+			final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
+						cadastrante, lotaCadastrante, doc.getMobilGeral(), null,
+						null, null, null, null, null);
+
+			gravarMovimentacao(mov);
+			
+			concluirAlteracao(doc);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException(
+					"Erro ao tornar o documento sem efeito.", 0, e);
+		}
+	}
+	
 }

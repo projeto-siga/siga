@@ -62,9 +62,9 @@
 		<p align="center"><!-- INICIO FECHO -->CUMPRA-SE.<!-- FIM FECHO --><br />
 		<br />
 		</p>
-		<!-- FIM MIOLO -->
 		<!-- INICIO ASSINATURA -->
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" /><!-- FIM ASSINATURA -->
+		<!-- FIM MIOLO -->
 		</mod:letra>
 		
 		<!-- INICIO PRIMEIRO RODAPE

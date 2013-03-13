@@ -9,7 +9,7 @@
 	<mod:entrevista>
 		<mod:grupo>
 			<mod:selecao titulo="Local" var="local" reler="sim"
-				opcoes="Selecione;Passeio;Av. México;Av. Barão de Teffé" />
+				opcoes="Selecione;Passeio;Av. México;Av. Barão de Teffé;Almirante Barroso" />
 
 			<c:choose>
 				<c:when test="${local eq 'Av. México'}">
@@ -21,19 +21,22 @@
 					<b><mod:mensagem
 						texto="Somente para Diretores de Secretaria/ Subsecretaria e Coordenadores."
 						vermelho="Nao"></mod:mensagem>
-					<mod:oculto var="observacao" valor="Obs: Diretores de Secretaria/ Subsecretaria e Coordenadores deverão anexar cópia do CRLV atualizado."/>							
+					<mod:oculto var="observacao" valor=" "/>							
 				</c:when>
 				<c:when test="${local eq 'Av. Barão de Teffé'}">
 					<b><mod:mensagem
 						texto="Somente para Juízes Federais e Diretores de Secretaria/ Subsecretaria."
 						vermelho="Nao"></mod:mensagem> </b>
-					<mod:oculto var="observacao" valor="Obs: Diretores de Secretaria/ Subsecretaria deverão anexar cópia do CRLV atualizado."/>
-					</c:when>
+					<mod:oculto var="observacao" valor=" "/>
+				</c:when>
+				<c:when test="${local eq 'Almirante Barroso'}">
+					<b><mod:mensagem
+						texto="Somente para Diretores."
+						vermelho="Nao"></mod:mensagem> </b>
+					<mod:oculto var="observacao" valor=" "/>
+				</c:when>
 			</c:choose>
         
-		</mod:grupo>
-		<mod:grupo>
-			<mod:selecao titulo="Validade" var="validade" opcoes="2011;2012;2013;2014;2015;2016" />		
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto titulo="Marca/Modelo" var="marcaModelo" largura="50"
@@ -52,7 +55,8 @@
 		</mod:grupo>
 		<mod:grupo>
 			<mod:mensagem titulo="Atenção"
-				texto="preencha o destinatário com NSEG e, após finalizar, transfira para a NSEG." vermelho="Sim" />
+				texto="Preencha o destinatário com DSEG e, após finalizar, transfira para a DSEG.
+				       Anexar o CRLV, de acordo com a portaria n° RJ-PDG-2012/5 de 14 de março de 2012." vermelho="Sim" />
 		</mod:grupo>	
 	</mod:entrevista>
 
@@ -107,10 +111,6 @@
 		</table>
 		<br />
 		<br />
-
-
-		&nbsp;<b>ANO: ${validade}</b>
-
 		<table border="1" width="100%">
 			<tr bgcolor="#999999">
 				<td><b>DADOS DO SOLICITANTE</b></td>

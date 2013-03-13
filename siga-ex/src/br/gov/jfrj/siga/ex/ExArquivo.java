@@ -69,7 +69,7 @@ public abstract class ExArquivo {
 			
 			//Verifica se é possível estampar o documento
 			try {
-				byte[] documentoComStamp = Documento.stamp(abPdf, "", true, false, null, null, null, null, null, null, null);
+				byte[] documentoComStamp = Documento.stamp(abPdf, "", true, false, false,null, null, null, null, null, null, null);
 				
 				return documentoComStamp;
 				
@@ -247,6 +247,8 @@ public abstract class ExArquivo {
 	public abstract boolean isCancelado();
 
 	public abstract boolean isRascunho();
+	
+	public abstract boolean isSemEfeito();
 
 	public void setNumPaginas(Integer numPaginas) {
 		this.numPaginas = numPaginas;

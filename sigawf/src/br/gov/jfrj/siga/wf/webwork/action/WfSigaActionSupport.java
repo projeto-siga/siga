@@ -18,9 +18,17 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.webwork.action;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.jbpm.db.GraphSession;
+import org.jbpm.graph.def.ProcessDefinition;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 public class WfSigaActionSupport extends SigaActionSupport {
 
@@ -39,4 +47,24 @@ public class WfSigaActionSupport extends SigaActionSupport {
 	public WfDao dao() {
 		return WfDao.getInstance();
 	}
+
+	/**
+	 * Retorna as definições de processos.
+	 * 
+	 * @return
+	 */
+	public List<ProcessDefinition> getProcessDefinitions() {
+		List<ProcessDefinition> processDefinitions = new ArrayList<ProcessDefinition>();
+		GraphSession graph = WfContextBuilder.getJbpmContext()
+				.getGraphSession();
+
+		for (ProcessDefinition pd : (Collection<ProcessDefinition>) graph
+				.findLatestProcessDefinitions()) {
+			// if (Wf.getInstance().getComp().podeInstanciarProcedimento(
+			// getTitular(), getLotaTitular(), pd.getName()))
+			processDefinitions.add(pd);
+		}
+		return processDefinitions;
+	}
+
 }

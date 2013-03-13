@@ -24,8 +24,12 @@
 package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +57,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
@@ -135,7 +140,9 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
-
+	
+	
+	
 	public Selecionavel consultarPorSigla(final CpOrgaoDaoFiltro flt) {
 		final CpOrgao o = new CpOrgao();
 		o.setSigla(flt.getSigla());
@@ -433,6 +440,7 @@ public class CpDao extends ModeloDao {
 		return query.list();
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	public List<DpPessoa> consultarPessoasComCargo(Long idCargo) {
 		final Query query = getSessao().getNamedQuery(
@@ -934,14 +942,14 @@ public class CpDao extends ModeloDao {
 			boolean fAtiva) throws AplicacaoException {
 		List<CpIdentidade> lista = consultaIdentidadesCadastrante(nmUsuario,
 				fAtiva);
-		// obtï¿½m preferencialmente identidade de formulï¿½rio - ï¿½nico formato que
+		// obtém preferencialmente identidade de formulário - único formato que
 		// existia anteriormente
 		for (CpIdentidade idLista : lista) {
 			if (idLista.getCpTipoIdentidade().isTipoFormulario()) {
 				return idLista;
 			}
 		}
-		// se nï¿½o encontrar, retorna o primeiro, como era antes.
+		// se não encontrar, retorna o primeiro, como era antes.
 		final CpIdentidade id = lista.get(0);
 		return id;
 	}
@@ -954,11 +962,11 @@ public class CpDao extends ModeloDao {
 					fAtiva ? "consultarIdentidadeCadastranteAtiva"
 							: "consultarIdentidadeCadastrante");
 			qry.setString("nmUsuario", nmUsuario);
-			// Verifica se existe numeros no login do usuï¿½rio
+			// Verifica se existe numeros no login do usuário
 			if (nmUsuario.substring(2).matches("^[0-9]*$"))
 				qry.setString("sesbPessoa", nmUsuario.substring(0, 2));
 			else
-				qry.setString("sesbPessoa", "RJ"); // se nï¿½o hï¿½ nï¿½meros atribui
+				qry.setString("sesbPessoa", "RJ"); // se não há números atribui
 			// RJ
 			// por default
 
@@ -994,14 +1002,14 @@ public class CpDao extends ModeloDao {
 	 * consultaUsuarioCadastrante(final String nmUsuario) { try { final Query
 	 * qry = getSessao().getNamedQuery( "consultarUsuarioCadastrante");
 	 * qry.setString("nmUsuario", nmUsuario); // Verifica se existe numeros no
-	 * login do usuï¿½rio if (nmUsuario.substring(2).matches("^[0-9]*$"))
+	 * login do usuário if (nmUsuario.substring(2).matches("^[0-9]*$"))
 	 * qry.setString("sesbPessoa", nmUsuario.substring(0, 2)); else
-	 * qry.setString("sesbPessoa", "RJ"); // se nï¿½o hï¿½ nï¿½meros atribui // RJ //
+	 * qry.setString("sesbPessoa", "RJ"); // se não há números atribui // RJ //
 	 * por default
 	 * 
 	 * qry.setCacheable(true); qry.setCacheRegion("query.UsuarioCadastrante");
 	 * final List<Object[]> lista = qry.list(); if (lista.size() == 0) { throw
-	 * new AplicacaoException( "Não foi possível localizar o usuï¿½rio '" +
+	 * new AplicacaoException( "Não foi possível localizar o usuário '" +
 	 * nmUsuario + "'."); } final Object[] par = lista.get(0); final Usuario usu
 	 * = (Usuario) par[0]; final DpPessoa pess = (DpPessoa) par[1];
 	 * usu.setPessoa(pess); return usu; } catch (Throwable e) { Auto-generated
@@ -1012,15 +1020,15 @@ public class CpDao extends ModeloDao {
 	 * debugar erros de banco // de dados quando as excecoes nao sao lancadas
 	 * aqui. // try { final Query qry = getSessao().getNamedQuery(
 	 * "consultarUsuarioCadastranteAtivo"); qry.setString("nmUsuario",
-	 * nmUsuario); // Verifica se existe numeros no login do usuï¿½rio if
+	 * nmUsuario); // Verifica se existe numeros no login do usuário if
 	 * (nmUsuario.substring(2).matches("^[0-9]*$")) qry.setString("sesbPessoa",
 	 * nmUsuario.substring(0, 2)); else qry.setString("sesbPessoa", "RJ"); // se
-	 * nï¿½o hï¿½ nï¿½meros atribui // RJ // por default
+	 * não há números atribui // RJ // por default
 	 * 
 	 * qry.setCacheable(true);
 	 * qry.setCacheRegion("query.UsuarioCadastranteAtivo"); final List<Object[]>
 	 * lista = qry.list(); if (lista.size() == 0) { throw new
-	 * AplicacaoException( "Não foi possível localizar o usuï¿½rio '" + nmUsuario
+	 * AplicacaoException( "Não foi possível localizar o usuário '" + nmUsuario
 	 * + "'."); } final Object[] par = lista.get(0); final Usuario usu =
 	 * (Usuario) par[0]; final DpPessoa pess = (DpPessoa) par[1];
 	 * usu.setPessoa(pess); return usu; // Nato: comentei porque estava muito
@@ -1028,8 +1036,7 @@ public class CpDao extends ModeloDao {
 	 * lancadas aqui. // } catch (Throwable e) { // block //
 	 * e.printStackTrace(); // return null; // } }
 	 */
-	public List<DpPessoa> pessoasPorLotacao(Long id,
-			Boolean incluirSublotacoes, Boolean somenteServidor)
+	public List<DpPessoa> pessoasPorLotacao(Long id, Boolean incluirSublotacoes, Boolean somenteServidor)
 			throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
@@ -1074,16 +1081,16 @@ public class CpDao extends ModeloDao {
 					continue;
 				}
 				String cargo = pes.getCargo().getNomeCargo().toUpperCase();
-				if (somenteServidor) {
+				if (somenteServidor){
 					if (!cargo.contains(juizFederal)
 							&& !cargo.contains(juizFederalSubstituto)
-							&& !(cargo.contains(estagiario))) {
+							&& !(cargo.contains(estagiario))){
 						lstCompleta.add(pes);
 					}
-				} else {
+				}else{
 					lstCompleta.add(pes);
 				}
-
+					
 			}
 		}
 		return lstCompleta;
@@ -1120,9 +1127,9 @@ public class CpDao extends ModeloDao {
 			throw new AplicacaoException(
 					"Não foi possível obter a data e a hora de atualização das configurações.");
 
-		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
-		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
-		return DateUtils.max(dtIni, dtFim);
+		Date dtIni = (Date) ((Object[])(result.get(0)))[0];
+		Date dtFim = (Date) ((Object[])(result.get(0)))[1];
+		return DateUtils.max(dtIni,dtFim);
 	}
 
 	public Date dt() throws AplicacaoException {
@@ -1149,8 +1156,8 @@ public class CpDao extends ModeloDao {
 		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
 				.getIdTpConfiguracao());
 		query.setLong("idServico", exemplo.getCpServico().getIdServico());
-		// kpf: com o cache true, as configuraï¿½ï¿½es sï¿½o exibidas de forma forma
-		// errada apï¿½s a primeira
+		// kpf: com o cache true, as configurações são exibidas de forma forma
+		// errada após a primeira
 		query.setCacheable(false);
 		// query.setCacheRegion("query.CpConfiguracao");
 		return query.list();
@@ -1200,75 +1207,75 @@ public class CpDao extends ModeloDao {
 	 * @throws InvalidKeyException
 	 * @throws AplicacaoException
 	 */
-//	public void importarAcessoTomcat() throws SQLException,
-//			InvalidKeyException, NoSuchAlgorithmException,
-//			NoSuchPaddingException, IllegalBlockSizeException,
-//			BadPaddingException, AplicacaoException {
-//		final Date dt = consultarDataEHoraDoServidor();
-//		String s = "SELECT * FROM ACESSO_TOMCAT.USUARIO";
-//
-//		final Connection conn = getSessao().connection();
-//		final PreparedStatement ps = conn.prepareStatement(s);
-//		final String j = ps.toString();
-//
-//		final ResultSet rset = ps.executeQuery();
-//
-//		CpTipoIdentidade tid = consultar(1, CpTipoIdentidade.class, false);
-//		while (rset.next()) {
-//			final String login = (String) rset.getObject(1);
-//			final String senha = (String) rset.getObject(2);
-//			Long cpf;
-//			try {
-//				cpf = ((BigDecimal) rset.getObject(4)).longValue();
-//			} catch (NullPointerException e1) {
-//				System.out.println("CPF nulo:" + login);
-//				continue;
-//			}
-//			if (!Character.isDigit(login.charAt(2))) {
-//				System.out.println("Login sem matrï¿½cula:" + login);
-//				continue;
-//			}
-//			final long longmatricula = Long.parseLong(login.substring(2));
-//
-//			DpPessoa pessoa;
-//			try {
-//				pessoa = consultarPorCpfMatricula(cpf, longmatricula);
-//			} catch (org.hibernate.NonUniqueResultException e) {
-//				System.out.println("Mais de um registro retornado:" + login);
-//				continue;
-//			}
-//			if (pessoa == null) {
-//				System.out.println("Pessoa nï¿½o localizada:" + login);
-//				continue;
-//			}
-//
-//			CpIdentidade id = new CpIdentidade();
-//			id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
-//			id.setCpTipoIdentidade(tid);
-//			id.setDpPessoa(pessoa);
-//			id.setDscSenhaIdentidade(senha);
-//
-//			// BASE64Encoder encoderBase64 = new BASE64Encoder();
-//			// String chave =
-//			// encoderBase64.encode(id.getDpPessoa().getIdInicial()
-//			// .toString().getBytes());
-//			// String senhaCripto = encoderBase64.encode(Criptografia
-//			// .criptografar(senha, chave));
-//			// id.setDscSenhaIdentidadeCripto(senhaCripto);
-//			// id.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
-//
-//			id.setDtCancelamentoIdentidade(null);
-//			id.setDtCriacaoIdentidade(dt);
-//			id.setDtExpiracaoIdentidade(null);
-//			id.setHisDtFim(null);
-//			id.setHisDtIni(dt);
-//			// id.setIdCpIdentidade(null);
-//			id.setNmLoginIdentidade(login);
-//			gravar(id);
-//			id.setHisIdIni(id.getIdIdentidade());
-//			gravar(id);
-//		}
-//	}
+	public void importarAcessoTomcat() throws SQLException,
+			InvalidKeyException, NoSuchAlgorithmException,
+			NoSuchPaddingException, IllegalBlockSizeException,
+			BadPaddingException, AplicacaoException {
+		final Date dt = consultarDataEHoraDoServidor();
+		String s = "SELECT * FROM ACESSO_TOMCAT.USUARIO";
+
+		final Connection conn = getSessao().connection();
+		final PreparedStatement ps = conn.prepareStatement(s);
+		final String j = ps.toString();
+
+		final ResultSet rset = ps.executeQuery();
+
+		CpTipoIdentidade tid = consultar(1, CpTipoIdentidade.class, false);
+		while (rset.next()) {
+			final String login = (String) rset.getObject(1);
+			final String senha = (String) rset.getObject(2);
+			Long cpf;
+			try {
+				cpf = ((BigDecimal) rset.getObject(4)).longValue();
+			} catch (NullPointerException e1) {
+				System.out.println("CPF nulo:" + login);
+				continue;
+			}
+			if (!Character.isDigit(login.charAt(2))) {
+				System.out.println("Login sem matrícula:" + login);
+				continue;
+			}
+			final long longmatricula = Long.parseLong(login.substring(2));
+
+			DpPessoa pessoa;
+			try {
+				pessoa = consultarPorCpfMatricula(cpf, longmatricula);
+			} catch (org.hibernate.NonUniqueResultException e) {
+				System.out.println("Mais de um registro retornado:" + login);
+				continue;
+			}
+			if (pessoa == null) {
+				System.out.println("Pessoa não localizada:" + login);
+				continue;
+			}
+
+			CpIdentidade id = new CpIdentidade();
+			id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
+			id.setCpTipoIdentidade(tid);
+			id.setDpPessoa(pessoa);
+			id.setDscSenhaIdentidade(senha);
+
+			// BASE64Encoder encoderBase64 = new BASE64Encoder();
+			// String chave =
+			// encoderBase64.encode(id.getDpPessoa().getIdInicial()
+			// .toString().getBytes());
+			// String senhaCripto = encoderBase64.encode(Criptografia
+			// .criptografar(senha, chave));
+			// id.setDscSenhaIdentidadeCripto(senhaCripto);
+			// id.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+
+			id.setDtCancelamentoIdentidade(null);
+			id.setDtCriacaoIdentidade(dt);
+			id.setDtExpiracaoIdentidade(null);
+			id.setHisDtFim(null);
+			id.setHisDtIni(dt);
+			// id.setIdCpIdentidade(null);
+			id.setNmLoginIdentidade(login);
+			gravar(id);
+			id.setHisIdIni(id.getIdIdentidade());
+			gravar(id);
+		}
+	}
 
 	public HistoricoAuditavel gravarComHistorico(HistoricoAuditavel oNovo,
 			HistoricoAuditavel oAntigo, Date dt,
@@ -1300,7 +1307,7 @@ public class CpDao extends ModeloDao {
 		getSessao().saveOrUpdate(entidade);
 		if (entidade.getHisIdIni() == null && entidade.getId() != null) {
 			entidade.setHisIdIni(entidade.getId());
-			getSessao().saveOrUpdate(entidade);
+			getSessao().update(entidade);
 		}
 		try {
 			Cp.getInstance().getConf().limparCacheSeNecessario();
@@ -1313,35 +1320,31 @@ public class CpDao extends ModeloDao {
 
 	static public AnnotationConfiguration criarHibernateCfg(String datasource)
 			throws Exception {
-
+		
 		AnnotationConfiguration cfg = new AnnotationConfiguration();
-
+		
 		cfg.setProperty("hibernate.connection.datasource", datasource);
-
+		
 		// bruno.lacerda@avantiprima.com.br
 		// Configuração do pool com c3p0.
 		/*
-		 * cfg.setProperty("hibernate.connection.provider_class",
-		 * "org.hibernate.connection.C3P0ConnectionProvider");
-		 * cfg.setProperty("hibernate.connection.driver_class",
-		 * "oracle.jdbc.driver.OracleDriver");
-		 * cfg.setProperty("hibernate.dialect",
-		 * "org.hibernate.dialect.Oracle9iDialect");
-		 * 
-		 * TODO Verificar se realmente precisa reescrever os parametros de
-		 * conexao cfg.setProperty("hibernate.connection.url",
-		 * "jdbc:oracle:thin:@mclaren:1521:mcl");
-		 * cfg.setProperty("hibernate.connection.username", "corporativo");
-		 * cfg.setProperty("hibernate.connection.password", "corporativo");
-		 * 
-		 * cfg.setProperty("hibernate.c3p0.min_size", "5"); // MIN POOL SIZE
-		 * cfg.setProperty("hibernate.c3p0.max_size", "20"); // MAX POOL SIZE
-		 * cfg.setProperty("hibernate.c3p0.timeout", "1"); //
-		 * cfg.setProperty("hibernate.c3p0.max_statements", "50");
-		 * cfg.setProperty("hibernate.c3p0.idle_test_periods", "50");
-		 */
+		cfg.setProperty("hibernate.connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
+		cfg.setProperty("hibernate.connection.driver_class", "oracle.jdbc.driver.OracleDriver");
+		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle9iDialect");
+		
+		 TODO Verificar se realmente precisa reescrever os parametros de conexao
+		cfg.setProperty("hibernate.connection.url", "jdbc:oracle:thin:@mclaren:1521:mcl");
+		cfg.setProperty("hibernate.connection.username", "corporativo");
+		cfg.setProperty("hibernate.connection.password", "corporativo");
+		
+		cfg.setProperty("hibernate.c3p0.min_size", "5");  // MIN POOL SIZE
+		cfg.setProperty("hibernate.c3p0.max_size", "20"); // MAX POOL SIZE
+		cfg.setProperty("hibernate.c3p0.timeout", "1");   // 
+		cfg.setProperty("hibernate.c3p0.max_statements", "50");
+		cfg.setProperty("hibernate.c3p0.idle_test_periods", "50");
+		*/
 		configurarHibernate(cfg);
-
+		
 		return cfg;
 	}
 
@@ -1397,7 +1400,7 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
 		cfg.setProperty("hibernate.default_batch_fetch_size", "20");
-
+		
 		// descomentar para inpecionar o SQL
 		// cfg.setProperty("hibernate.show_sql", "true");
 		// Disable second-level cache.
@@ -1526,6 +1529,18 @@ public class CpDao extends ModeloDao {
 			} else
 				l.add(mod);
 		return l;
+	}
+
+	public CpServico consultarPorSiglaCpServico(String siglaServico) {
+		final Query query = getSessao().getNamedQuery("consultarPorSiglaStringCpServico");
+		query.setString("siglaServico", siglaServico);
+//		query.setFlushMode(FlushMode.MANUAL);
+		final List<CpServico> l = query.list();
+		if (l.size() != 1){
+			return null;
+		}
+			
+		return l.get(0);
 	}
 
 }

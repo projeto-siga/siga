@@ -66,6 +66,8 @@ import org.hibernate.search.Search;
 import org.hibernate.util.ReflectHelper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -1072,11 +1074,44 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExConfiguracao> consultar(final ExConfiguracao exemplo) {
-		Query query = getSessao().getNamedQuery("consultarConfiguracoes");
+		CpTipoConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
+		CpOrgaoUsuario orgao = exemplo.getOrgaoUsuario();
+		
+		StringBuffer sbf = new StringBuffer();
 
-		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
-				.getIdTpConfiguracao());
+		sbf.append("select * from siga.ex_configuracao ex inner join corporativo.cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
 
+		sbf.append("" + "where 1 = 1");
+
+		if (tpConf != null && tpConf.getIdTpConfiguracao() != null && tpConf.getIdTpConfiguracao() != 0) {
+			sbf.append(" and cp.id_tp_configuracao = ");
+			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+		} 
+		
+		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
+			sbf.append(" and (cp.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(" or cp.id_lotacao in (select id_lotacao from corporativo.dp_lotacao lot where lot.id_orgao_usu= ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_pessoa in (select id_pessoa from corporativo.dp_pessoa pes where pes.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_cargo in (select id_cargo from corporativo.dp_cargo cr where cr.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from corporativo.dp_funcao_confianca fc where fc.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");			
+			sbf.append(" or (cp.id_orgao_usu is null and cp.id_lotacao is null and cp.id_pessoa is null and cp.id_cargo is null and cp.id_funcao_confianca is null");			
+			sbf.append(")");		
+			sbf.append(")");
+			sbf.append("order by ex.id_configuracao_ex");			
+			
+		}		
+		
+		Query query = getSessao().createSQLQuery(sbf.toString()).addEntity(ExConfiguracao.class);
+		
 		query.setCacheable(true);
 		query.setCacheRegion("query.ExConfiguracao");
 		return query.list();
@@ -1623,6 +1658,7 @@ public class ExDao extends CpDao {
 				"ex");
 		// cfg.setCollectionCacheConcurrencyStrategy(
 		// "br.gov.jfrj.siga.ex.ExFormaDocumento.exModeloSet",
+		
 		// "nonstrict-read-write", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExModelo",
 		// "nonstrict-read-write", "ex");

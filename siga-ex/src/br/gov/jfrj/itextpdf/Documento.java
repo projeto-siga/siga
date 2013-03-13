@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -192,8 +193,8 @@ public class Documento extends AbstractDocumento {
 	}
 
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
-			boolean cancelado, String qrCode, String mensagem,
-			Integer paginaInicial, Integer paginaFinal,
+			boolean cancelado, boolean semEfeito, String qrCode,
+			String mensagem, Integer paginaInicial, Integer paginaFinal,
 			Integer cOmitirNumeracao, String instancia, String orgaoUsu)
 			throws DocumentException, IOException {
 
@@ -208,39 +209,58 @@ public class Documento extends AbstractDocumento {
 		//
 		// double thetaRotation = 0.0;
 		for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
-			PdfImportedPage page = writer.getImportedPage(pdfIn, i);
 			int rot = pdfIn.getPageRotation(i);
-			float w = page.getWidth();
-			float h = page.getHeight();
 			float left = pdfIn.getPageSize(i).getLeft();
 			float bottom = pdfIn.getPageSize(i).getBottom();
+			float top = pdfIn.getPageSize(i).getTop();
+			float right = pdfIn.getPageSize(i).getRight();
+
+			PdfImportedPage page = writer.getImportedPage(pdfIn, i);
+			float w = page.getWidth();
+			float h = page.getHeight();
+
+			// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
+			// + ", " + h);
+
+			doc.setPageSize((rot != 0) ^ (w > h) ? PageSize.A4.rotate()
+					: PageSize.A4);
+			doc.newPage();
+
+			cb.saveState();
+
+			if (rot != 0) {
+				double theta = -rot * (Math.PI / 180);
+				cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
+						h / 2));
+				if (rot == 90) {
+					cb.transform(AffineTransform.getTranslateInstance(
+							(h - w) / 2, (h - w) / 2));
+				} else if (rot == 270) {
+					cb.transform(AffineTransform.getTranslateInstance(
+							(w - h) / 2, (w - h) / 2));
+				}
+			}
+
 			if (rot != 0) {
 				float swap = w;
 				w = h;
 				h = swap;
 			}
-			doc.setPageSize(w > h ? PageSize.A4.rotate() : PageSize.A4);
+
 			float pw = doc.getPageSize().getWidth();
 			float ph = doc.getPageSize().getHeight();
 			double scale = Math.min(pw / w, ph / h);
-			doc.newPage();
-
-			if (rot != 0) {
-				double theta = -rot * (Math.PI / 180);
-				cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
-						w / 2));
-				cb.transform(AffineTransform.getTranslateInstance((h - w) / 2,
-						(h - w) / 2));
-			}
 
 			// do my transformations :
 			cb.transform(AffineTransform.getScaleInstance(scale, scale));
 
-			cb.transform(AffineTransform.getTranslateInstance(
-					((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
+			// cb.transform(AffineTransform.getTranslateInstance(
+			// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
 
 			// put the page
 			cb.addTemplate(page, 0, 0);
+
+			cb.restoreState();
 
 			// draw a red rectangle at the page borders
 			//
@@ -250,7 +270,6 @@ public class Documento extends AbstractDocumento {
 			// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
 			// .getPageSize(i).getTop());
 			// cb.stroke();
-			// cb.restoreState();
 		}
 		doc.close();
 
@@ -295,8 +314,8 @@ public class Documento extends AbstractDocumento {
 
 			image39.setInitialRotation((float) Math.PI / 2.0f);
 			image39.setAbsolutePosition(r.getWidth() - image39.getHeight()
-					- PAGE_BORDER_IN_CM * CM_UNIT, BARCODE_HEIGHT_IN_CM
-					* CM_UNIT);
+					+ (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
+					BARCODE_HEIGHT_IN_CM * CM_UNIT);
 
 			image39.setBackgroundColor(Color.green);
 			image39.setBorderColor(Color.RED);
@@ -306,7 +325,7 @@ public class Documento extends AbstractDocumento {
 
 			over.setRGBColorFill(255, 255, 255);
 			mask.setAbsolutePosition(r.getWidth() - image39.getHeight()
-					- (PAGE_BORDER_IN_CM + STAMP_BORDER_IN_CM) * CM_UNIT,
+					- (PAGE_BORDER_IN_CM) * CM_UNIT,
 					(BARCODE_HEIGHT_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
 			mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM
 					* CM_UNIT, image39.getWidth() + 2 * STAMP_BORDER_IN_CM
@@ -316,8 +335,8 @@ public class Documento extends AbstractDocumento {
 			over.setRGBColorFill(0, 0, 0);
 			over.addImage(image39);
 
-			// over.addImage(mask, mask.scaledWidth() * 8, 0, 0, mask
-			// .scaledHeight() * 8, 100, 450);
+			// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
+			// mask.getScaledHeight() * 8, 100, 450);
 
 			if (qrCode != null) {
 				java.awt.Image imgQRCode = createQRCodeImage(qrCode);
@@ -397,6 +416,18 @@ public class Documento extends AbstractDocumento {
 						r.getWidth() / 2, r.getHeight() / 2, 45);
 				over.endText();
 				over.restoreState();
+			} else if (semEfeito) {
+				over.saveState();
+				final PdfGState gs = new PdfGState();
+				gs.setFillOpacity(0.5f);
+				over.setGState(gs);
+				over.setColorFill(Color.GRAY);
+				over.beginText();
+				over.setFontAndSize(helv, 72);
+				over.showTextAligned(Element.ALIGN_CENTER, "SEM EFEITO",
+						r.getWidth() / 2, r.getHeight() / 2, 45);
+				over.endText();
+				over.restoreState();
 			}
 
 			// if (!rascunho
@@ -404,6 +435,7 @@ public class Documento extends AbstractDocumento {
 
 			if (!rascunho
 					&& !cancelado
+					&& !semEfeito
 					&& ((!Contexto.resource("isVersionTest").equals("false")) || (!Contexto
 							.resource("isBaseTest").equals("false")))) {
 				over.saveState();
@@ -710,11 +742,12 @@ public class Documento extends AbstractDocumento {
 				byte[] ab = !estampar ? an.getArquivo().getPdf() : stamp(an
 						.getArquivo().getPdf(), sigla, an.getArquivo()
 						.isRascunho(), an.getArquivo().isCancelado(), an
-						.getArquivo().getQRCode(), an.getArquivo()
-						.getMensagem(), an.getPaginaInicial(),
-						an.getPaginaFinal(), an.getOmitirNumeracao(),
-						"Justiça Federal", mob.getExDocumento()
-								.getOrgaoUsuario().getDescricao());
+						.getArquivo().isSemEfeito(), an.getArquivo()
+						.getQRCode(), an.getArquivo().getMensagem(),
+						an.getPaginaInicial(), an.getPaginaFinal(),
+						an.getOmitirNumeracao(), "Justiça Federal", mob
+								.getExDocumento().getOrgaoUsuario()
+								.getDescricao());
 
 				// we create a reader for a certain document
 

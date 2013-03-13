@@ -26,7 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
+@Table(name = "CP_MARCADOR", schema="CORPORATIVO")
 public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_EM_ELABORACAO = 1;
@@ -86,20 +86,14 @@ public class CpMarcador extends AbstractCpMarcador {
 	public static final long MARCADOR_COMO_GESTOR = 27;
 
 	public static final long MARCADOR_COMO_INTERESSADO = 28;
-
+	
 	final static public long MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA = 29;
-
+	
 	final static public long MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA = 30;
-
-	final static public long MARCADOR_SOLICITACAO_A_RECEBER = 30;
-
-	final static public long MARCADOR_SOLICITACAO_EM_ANDAMENTO = 301;
-
-	final static public long MARCADOR_SOLICITACAO_FECHADO = 302;
-
-	final static public long MARCADOR_SOLICITACAO_PENDENTE = 303;
-
-	final static public long MARCADOR_SOLICITACAO_CANCELADO = 304;
+	
+	final static public long MARCADOR_SOBRESTADO = 31;
+	
+	final static public long MARCADOR_SEM_EFEITO = 32;	
 
 	final static public long MARCADOR_ATIVO = 36;
 
@@ -111,6 +105,14 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_TOMAR_CIENCIA = 40;
 	
+	final static public long MARCADOR_SOLICITACAO_EM_ANDAMENTO = 301;
+
+	final static public long MARCADOR_SOLICITACAO_FECHADO = 302;
+
+	final static public long MARCADOR_SOLICITACAO_PENDENTE = 303;
+
+	final static public long MARCADOR_SOLICITACAO_CANCELADO = 304;
+	
 	final static public long MARCADOR_SOLICITACAO_PRE_ATENDIMENTO = 305;
 	
 	final static public long MARCADOR_SOLICITACAO_POS_ATENDIMENTO = 306;
@@ -121,14 +123,6 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	public CpMarcador() {
 		super();
-	}
-
-	public CpMarcador(Long idMarcador, String descrMarcador,
-			CpTipoMarcador cpTipoMarcador) {
-		super();
-		setIdMarcador(idMarcador);
-		setDescrMarcador(descrMarcador);
-		setCpTipoMarcador(cpTipoMarcador);
 	}
 
 }

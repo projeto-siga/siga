@@ -897,9 +897,59 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
+	
+	public String aDesobrestarGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance().getComp()
+				.podeDesobrestar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Via não pode ser desobrestada");
+		try {
+			Ex.getInstance()
+					.getBL()
+					.desobrestar(getCadastrante(), getLotaTitular(), mob,
+							mov.getDtMov(), mov.getSubscritor());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}
+	
+	public String aSobrestarGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance().getComp()
+				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException(
+					"Acesso permitido a usuários autorizados.");
+		}
+
+		if (!Ex.getInstance().getComp()
+				.podeSobrestar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Via não pode ser sobrestada");
+		try {
+			Ex.getInstance()
+					.getBL()
+					.sobrestar(getCadastrante(), getLotaTitular(), mob,
+							mov.getDtMov(), null, mov.getSubscritor());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}
 
 	public String aAssinar() throws Exception {
 		buscarDocumento(true);
+		
+		boolean fPreviamenteAssinado = doc.isAssinado();
+
+		if (!fPreviamenteAssinado && (doc.getExModelo() != null && ("template/freemarker".equals(doc.getExModelo().getConteudoTpBlob())))) {
+			Ex.getInstance().getBL().processarComandosEmTag(doc, "pre_assinatura");
+		}
 
 		return Action.SUCCESS;
 	}

@@ -635,7 +635,7 @@ public class FuncoesEL {
 						titular == null ? cadastrante : titular,
 						lotaTitular == null ? lotaCadastrante : lotaTitular, d,
 						nomeProcesso);
-		return null;
+		return true;
 	}
 
 	public static String processarModelo(ExArquivo docOuMov, String acao,

@@ -74,7 +74,7 @@
 		<br />
 		
 		<p style="font-size: 11pt; text-indent: 3cm; font-weight: bold;">
-		Ilma. Sra. Diretora da Subsecretaria de Gestão de Pessoas:</p>
+		Exmo. Juiz Federal - Diretor do Foro:</p>
 		
 		
 		<p style="text-align: justify; text-indent: 3cm;">
@@ -129,8 +129,7 @@
 		
 		<p style="text-align: justify; text-indent: 3cm;">Destaca-se que,
 		no que se refere às ações de treinamento custeadas por esta Seção 
-		Judiciária, os registros são averbados automaticamente pela Seção de 
-		Capacitação/SGP.</p>
+		Judiciária, os registros são averbados automaticamente pelo Núcleo-Escola Judicial da SJRJ - NEJU.</p>
 		
 		<p style="text-align: justify; text-indent: 3cm;">No que tange às ações 
 		de treinamento não custeadas pela Administração, deve ser observado 
@@ -139,7 +138,7 @@
 		<p style="text-align: justify; text-indent: 3cm;">Norteando-se
 		pelas normas legais anteriormente mencionadas, após a análise de todos
 		os certificados e declarações enviadas, bem como dos registros
-		constantes na Seção de Capacitação/SGP, sugiro a <b>concessão e/ou
+		constantes no NEJU, sugiro a <b>concessão e/ou
 		alteração</b> do Adicional de Qualificação decorrente de Ações de
 		Treinamento, conforme especificado no <b>Anexo I</b> (fls. ${folhas }), 
 		nos percentuais indicados para cada servidor, observando-se os respectivos
@@ -157,7 +156,7 @@
 		<c:import url="/paginas/expediente/modelos/inc_assinaturaSemCosig.jsp?formatarOrgao=sim" />
 		
 		<p style="text-align: justify; text-indent: 3cm;">Ratifico o
-		parecer. À SGP.</p>
+		parecer. À DIRFO.</p>
 		
 		<p style="text-align: justify; text-indent: 3cm;">RJ,
 		${doc.dtDocDDMMYY}.</p>

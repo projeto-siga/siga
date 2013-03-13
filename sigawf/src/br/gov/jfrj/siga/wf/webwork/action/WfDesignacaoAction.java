@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.wf.webwork.action;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,11 +52,13 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 	private static int TIPO_RESP_LOTACAO = 2;
 	private static int TIPO_RESP_LOTA_SUP = 3;
 	private static int TIPO_RESP_SUP_HIER = 4;
+	private static int TIPO_RESP_EXPRESSAO = 5;
 
 	private List<Designacao> listaDesignacao = new ArrayList<Designacao>();
 	private List<Designacao> listaDesignacaoRaia = new ArrayList<Designacao>();
 	private List<Designacao> listaDesignacaoTarefa = new ArrayList<Designacao>();
 	private List<TipoResponsavel> listaTipoResponsavel = new ArrayList<TipoResponsavel>();
+	private Map<Integer, TipoResponsavel> mapaTipoResponsavel = new HashMap<Integer, TipoResponsavel>();
 
 	private Set<String> raiaProcessada = new HashSet();
 
@@ -70,7 +73,6 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 	 * houver.
 	 */
 	public WfDesignacaoAction() {
-
 		TipoResponsavel tpIndefinido = new TipoResponsavel(
 				TIPO_RESP_INDEFINIDO, "[Indefinido]", "");
 		TipoResponsavel tpMatricula = new TipoResponsavel(TIPO_RESP_MATRICULA,
@@ -82,13 +84,19 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 				"previous --> group() --> superior_group");
 		TipoResponsavel tpSupHier = new TipoResponsavel(TIPO_RESP_SUP_HIER,
 				"Superior Hierárquico", "previous --> chief");
+		TipoResponsavel tpExpressao = new TipoResponsavel(TIPO_RESP_EXPRESSAO,
+				"Expressão", "");
 
 		listaTipoResponsavel.add(tpIndefinido);
 		listaTipoResponsavel.add(tpMatricula);
 		listaTipoResponsavel.add(tpLotacao);
 		listaTipoResponsavel.add(tpLotaSuperior);
 		listaTipoResponsavel.add(tpSupHier);
+		listaTipoResponsavel.add(tpExpressao);
 
+		for (TipoResponsavel tr : listaTipoResponsavel) {
+			mapaTipoResponsavel.put(tr.id, tr);
+		}
 	}
 
 	/**
@@ -251,42 +259,32 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 	private String extrairExpressao(long id) {
 
 		String keyExpressao = "tipoResponsavel_" + id;
-		String responsavel = null;
+		String expressaoId = "expressao_" + id;
 		Map parametros = this.getRequest().getParameterMap();
 		String expressao = null;
 
-		if (this.getRequest().getParameterMap().containsKey(keyExpressao)) {
-			responsavel = ((String[]) parametros.get(keyExpressao))[0];
-			if (!responsavel.equals("")) {
+		if (!this.getRequest().getParameterMap().containsKey(keyExpressao))
+			return null;
 
-				for (TipoResponsavel tr : listaTipoResponsavel) {
+		String responsavel = ((String[]) parametros.get(keyExpressao))[0];
+		if (responsavel == null || responsavel.equals(""))
+			return null;
 
-					if (tr.getId() == TIPO_RESP_LOTA_SUP
-							|| tr.getId() == TIPO_RESP_SUP_HIER) {
+		int idResp = new Integer(responsavel).intValue();
 
-						if (tr.getTexto().equals(responsavel)) {
-							expressao = tr.getValor();
-						} else {
-							// esse try foi cololcado porque o parâmetro
-							// tipoResponsável às vezes vêm como nº ou como
-							// texto.
-							try {
-								Integer idResp = new Integer(responsavel);
-								if (tr.getId() == idResp) {
-									expressao = tr.getValor();
-								}
-							} catch (NumberFormatException e) {
-								// ignora
-							}
-						}
-					}
+		if (idResp != TIPO_RESP_LOTA_SUP && idResp != TIPO_RESP_SUP_HIER
+				&& idResp != TIPO_RESP_EXPRESSAO)
+			return null;
+
+		for (TipoResponsavel tr : listaTipoResponsavel) {
+			if (tr.getId() == idResp) {
+				expressao = tr.getValor();
+				if (expressao == null || expressao.length() == 0) {
+					expressao = ((String[]) parametros.get(expressaoId))[0];
 				}
-
 			}
 		}
-
 		return expressao;
-
 	}
 
 	/**
@@ -401,8 +399,8 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 				cfgFiltro.setRaia(raia.getName());
 
 				WfConfiguracao cfg = (WfConfiguracao) Wf.getInstance()
-						.getConf().buscaConfiguracao(cfgFiltro,
-								new int[] { 0 }, null);
+						.getConf()
+						.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
 				if (cfg != null) {
 					d.setAtor(cfg.getAtor());
@@ -415,8 +413,11 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 								d.setTipoResponsavel(tr.getId());
 							}
 						}
+						if (d.getTipoResponsavel() == null) {
+							d.setTipoResponsavel(TIPO_RESP_EXPRESSAO);
+							d.setExpressao(cfg.getExpressao());
+						}
 					}
-
 				}
 
 				if (d.getAtor() != null) {
@@ -473,8 +474,8 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 				cfgFiltro.setTarefa(d.getTarefa());
 
 				WfConfiguracao cfg = (WfConfiguracao) Wf.getInstance()
-						.getConf().buscaConfiguracao(cfgFiltro,
-								new int[] { 0 }, null);
+						.getConf()
+						.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
 				if (cfg != null) {
 					d.setAtor(cfg.getAtor());
@@ -487,10 +488,12 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 								d.setTipoResponsavel(tr.getId());
 							}
 						}
+						if (d.getTipoResponsavel() == null) {
+							d.setTipoResponsavel(TIPO_RESP_EXPRESSAO);
+							d.setExpressao(cfg.getExpressao());
+						}
 					}
-
 				}
-
 				if (d.getAtor() != null) {
 					d.setTipoResponsavel(TIPO_RESP_MATRICULA);
 				}
@@ -717,8 +720,8 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 					cfg.setRaia(raia.getName());
 					cfg.setHisDtIni(horaDoBD);
 
-					WfConfiguracao cfgExistente = getConfiguracaoExistente(raia
-							.getName(), true);
+					WfConfiguracao cfgExistente = getConfiguracaoExistente(
+							raia.getName(), true);
 					invalidarConfiguracao(cfgExistente, horaDoBD);
 
 					gravarNovaConfig(cfg);
@@ -753,8 +756,8 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 					break;
 
 				} else { // configuracao indefinida
-					WfConfiguracao cfgExistente = getConfiguracaoExistente(raia
-							.getName(), true);
+					WfConfiguracao cfgExistente = getConfiguracaoExistente(
+							raia.getName(), true);
 					invalidarConfiguracao(cfgExistente, horaDoBD);
 				}
 

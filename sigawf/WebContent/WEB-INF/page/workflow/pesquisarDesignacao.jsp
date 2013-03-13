@@ -37,14 +37,19 @@
 		//Lotação superior	
 		case 3:
 			break;
-		//Superior hierárquico	
+			//Superior hierárquico	
 		case 4:
+			break;
+			//Expressão	
+		case 5:
+			var tipo = "expressao";
 			break;
 		}
 
 		var div = tipo + '_' + tarefa;
 		document.getElementById('lotacao_' + tarefa).style.display = "none";
 		document.getElementById('matricula_' + tarefa).style.display = "none";
+		document.getElementById('expressao_' + tarefa).style.display = "none";
 
 		if (document.getElementById(div) != null) {
 			document.getElementById(div).style.display = "inline"
@@ -93,7 +98,8 @@
 						<tr>
 							<td colspan="2"><input type="button" value="Pesquisar"
 								onclick="javascript:pesquisarProcedimento()"
-								class="gt-btn-medium gt-btn-left" /></td>
+								class="gt-btn-medium gt-btn-left" />
+							</td>
 						</tr>
 					</table>
 			</div>
@@ -133,90 +139,36 @@
 											<span style="cursor: help;" title="${d.nomeDoNo}">${d.tarefa}</span>
 											<br />
 										</c:if>
-									</c:forEach>
-								</td>
+									</c:forEach></td>
 
-								<c:choose>
-									<c:when test="${not empty r.lotaAtor}">
-										<td><ww:select id="tipoResponsavel_${idRaia}"
-												name="tipoResponsavel_${idRaia}" list="listaTipoResponsavel"
-												theme="simple" listValue="Texto" listKey="id"
-												value="${tipoResponsavel}"
-												onchange="javascript:solicitarInformacao('${idRaia}');" />
-									</c:when>
-									<c:when test="${not empty r.ator}">
-										<td><ww:select id="tipoResponsavel_${idRaia}"
-												name="tipoResponsavel_${idRaia}" list="listaTipoResponsavel"
-												theme="simple" listValue="Texto" listKey="id"
-												value="${tipoResponsavel}"
-												onchange="javascript:solicitarInformacao('${idRaia}');" />
-									</c:when>
-									<c:when test="${not empty expressao}">
-										<td><ww:select id="tipoResponsavel_${idRaia}"
-												name="tipoResponsavel_${idRaia}" list="listaTipoResponsavel"
-												theme="simple" listValue="Texto" listKey="id"
-												value="${tipoResponsavel}"
-												onchange="javascript:solicitarInformacao('${idRaia}');" />
-									</c:when>
-									<c:otherwise>
-										<td><ww:select id="tipoResponsavel_${idRaia}"
-												name="tipoResponsavel_${idRaia}" list="listaTipoResponsavel"
-												theme="simple"
-												onchange="javascript:solicitarInformacao('${idRaia}');" />
-									</c:otherwise>
-
-								</c:choose>
-
-								<c:choose>
-									<c:when test="${tipoResponsavel == 1}">
-										<!-- MATRÍCULA RAIA-->
-										<div style="display: none;" id="lotacao_${idRaia}">
-											<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
-												propriedade="lotacao_${idRaia}"
-												siglaInicial="${r.lotaAtor.sigla}"
-												idInicial="${r.lotaAtor.id}"
-												descricaoInicial="${r.lotaAtor.descricao}" />
-										</div>
-										<div style="display: inline;" id="matricula_${idRaia}">
-											<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
-												propriedade="matricula_${idRaia}"
-												siglaInicial="${r.ator.sigla}" idInicial="${r.ator.id}"
-												descricaoInicial="${r.ator.descricao}" />
-										</div>
-									</c:when>
-									<c:when test="${tipoResponsavel == 2}">
-										<!-- LOTAÇÃO RAIA-->
-										<div style="display: inline;" id="lotacao_${idRaia}">
-											<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
-												propriedade="lotacao_${idRaia}"
-												siglaInicial="${r.lotaAtor.sigla}"
-												idInicial="${r.lotaAtor.id}"
-												descricaoInicial="${r.lotaAtor.descricao}" />
-										</div>
-										<div style="display: none;" id="matricula_${idRaia}">
-											<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
-												propriedade="matricula_${idRaia}"
-												siglaInicial="${r.ator.sigla}" idInicial="${r.lotaAtor.id}"
-												descricaoInicial="${r.ator.descricao}" />
-										</div>
-									</c:when>
-									<c:otherwise>
-										<div style="display: none;" id="lotacao_${idRaia}">
-											<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
-												propriedade="lotacao_${idRaia}"
-												siglaInicial="${r.lotaAtor.sigla}"
-												idInicial="${r.lotaAtor.id}"
-												descricaoInicial="${r.lotaAtor.descricao}" />
-										</div>
-										<div style="display: none;" id="matricula_${idRaia}">
-											<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
-												propriedade="matricula_${idRaia}"
-												siglaInicial="${r.ator.sigla}" idInicial="${r.lotaAtor.id}"
-												descricaoInicial="${r.ator.descricao}" />
-										</div>
-									</c:otherwise>
-								</c:choose>
-
+								<td><ww:select id="tipoResponsavel_${idRaia}"
+										name="tipoResponsavel_${idRaia}" list="listaTipoResponsavel"
+										theme="simple" listValue="Texto" listKey="id"
+										value="${tipoResponsavel}"
+										onchange="javascript:solicitarInformacao('${idRaia}');" />
+									<div
+										style="display: ${(tipoResponsavel == 1) ? 'inline' : 'none'};"
+										id="matricula_${idRaia}">
+										<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
+											propriedade="matricula_${idRaia}"
+											siglaInicial="${r.ator.sigla}" idInicial="${r.ator.id}"
+											descricaoInicial="${r.ator.descricao}" />
+									</div>
+									<div
+										style="display: ${(tipoResponsavel == 2) ? 'inline' : 'none'};"
+										id="lotacao_${idRaia}">
+										<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
+											propriedade="lotacao_${idRaia}"
+											siglaInicial="${r.lotaAtor.sigla}"
+											idInicial="${r.lotaAtor.id}"
+											descricaoInicial="${r.lotaAtor.descricao}" />
+									</div>
+									<div
+										style="display: ${(tipoResponsavel == 5) ? 'inline' : 'none'};"
+										id="expressao_${idRaia}">
+										<input type="text" width="200" name="expressao_${idRaia}"
+											value="${r.expressao}" />
+									</div>
 								</td>
 
 							</tr>
@@ -233,101 +185,41 @@
 							<td><span style="cursor: help;" title="${dTarefa.nomeDoNo}">${dTarefa.tarefa}</span>
 							</td>
 
-							<c:choose>
-								<c:when test="${not empty dTarefa.lotaAtor}">
-									<td><ww:select id="tipoResponsavel_${dTarefa.id}"
-											name="tipoResponsavel_${dTarefa.id}"
-											list="listaTipoResponsavel" theme="simple" listValue="Texto"
-											listKey="id" value="${dTarefa.tipoResponsavel}"
-											onchange="javascript:solicitarInformacao('${dTarefa.id}');" />
-								</c:when>
-								<c:when test="${not empty dTarefa.ator}">
-									<td><ww:select id="tipoResponsavel_${dTarefa.id}"
-											name="tipoResponsavel_${dTarefa.id}"
-											list="listaTipoResponsavel" theme="simple" listValue="Texto"
-											listKey="id" value="${dTarefa.tipoResponsavel}"
-											onchange="javascript:solicitarInformacao('${dTarefa.id}');" />
-								</c:when>
-								<c:when test="${not empty dTarefa.expressao}">
-									<td><ww:select id="tipoResponsavel_${dTarefa.id}"
-											name="tipoResponsavel_${dTarefa.id}"
-											list="listaTipoResponsavel" theme="simple" listValue="Texto"
-											listKey="id" value="${dTarefa.tipoResponsavel}"
-											onchange="javascript:solicitarInformacao('${dTarefa.id}');" />
-								</c:when>
-								<c:otherwise>
-									<td><ww:select id="tipoResponsavel_${dTarefa.id}"
-											name="tipoResponsavel_${dTarefa.id}"
-											list="listaTipoResponsavel" theme="simple"
-											onchange="javascript:solicitarInformacao('${dTarefa.id}');" />
-								</c:otherwise>
-
-							</c:choose>
-
-							<c:choose>
-								<c:when test="${dTarefa.tipoResponsavel == 1}">
-									<!-- MATRÍCULA -->
-									<div style="display: none;" id="lotacao_${dTarefa.id}">
-										<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
-											propriedade="lotacao_${dTarefa.id}"
-											siglaInicial="${dTarefa.lotaAtor.sigla}"
-											idInicial="${dTarefa.lotaAtor.id}"
-											descricaoInicial="${dTarefa.lotaAtor.descricao}" />
-									</div>
-									<div style="display: inline;" id="matricula_${dTarefa.id}">
-										<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
-											propriedade="matricula_${dTarefa.id}"
-											siglaInicial="${dTarefa.ator.sigla}"
-											idInicial="${dTarefa.ator.id}"
-											descricaoInicial="${dTarefa.ator.descricao}" />
-									</div>
-								</c:when>
-								<c:when test="${dTarefa.tipoResponsavel == 2}">
-									<!-- LOTAÇÃO -->
-									<div style="display: inline;" id="lotacao_${dTarefa.id}">
-										<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
-											propriedade="lotacao_${dTarefa.id}"
-											siglaInicial="${dTarefa.lotaAtor.sigla}"
-											idInicial="${dTarefa.lotaAtor.id}"
-											descricaoInicial="${dTarefa.lotaAtor.descricao}" />
-									</div>
-									<div style="display: none;" id="matricula_${dTarefa.id}">
-										<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
-											propriedade="matricula_${dTarefa.id}"
-											siglaInicial="${dTarefa.ator.sigla}"
-											idInicial="${dTarefa.ator.id}"
-											descricaoInicial="${dTarefa.ator.descricao}" />
-									</div>
-								</c:when>
-								<c:otherwise>
-									<div style="display: none;" id="lotacao_${dTarefa.id}">
-										<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
-											propriedade="lotacao_${dTarefa.id}"
-											siglaInicial="${dTarefa.lotaAtor.sigla}"
-											idInicial="${dTarefa.lotaAtor.id}"
-											descricaoInicial="${dTarefa.lotaAtor.descricao}" />
-									</div>
-									<div style="display: none;" id="matricula_${dTarefa.id}">
-										<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
-											propriedade="matricula_${dTarefa.id}"
-											siglaInicial="${dTarefa.ator.sigla}"
-											idInicial="${dTarefa.ator.id}"
-											descricaoInicial="${dTarefa.ator.descricao}" />
-									</div>
-								</c:otherwise>
-							</c:choose>
-
-
-							</td>
-
+							<td><ww:select id="tipoResponsavel_${dTarefa.id}"
+									name="tipoResponsavel_${dTarefa.id}"
+									list="listaTipoResponsavel" theme="simple" listValue="Texto"
+									listKey="id" value="${dTarefa.tipoResponsavel}"
+									onchange="javascript:solicitarInformacao('${dTarefa.id}');" />
+								<div
+									style="display: ${(dTarefa.tipoResponsavel == 1) ? 'inline' : 'none'};"
+									id="matricula_${dTarefa.id}">
+									<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
+										propriedade="matricula_${dTarefa.id}"
+										siglaInicial="${dTarefa.ator.sigla}"
+										idInicial="${dTarefa.ator.id}"
+										descricaoInicial="${dTarefa.ator.descricao}" />
+								</div>
+								<div
+									style="display: ${(dTarefa.tipoResponsavel == 2) ? 'inline' : 'none'};"
+									id="lotacao_${dTarefa.id}">
+									<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
+										propriedade="lotacao_${dTarefa.id}"
+										siglaInicial="${dTarefa.lotaAtor.sigla}"
+										idInicial="${dTarefa.lotaAtor.id}"
+										descricaoInicial="${dTarefa.lotaAtor.descricao}" />
+								</div>
+								<div
+									style="display: ${(dTarefa.tipoResponsavel == 5) ? 'inline' : 'none'};"
+									id="expressao_${dTarefa.id}">
+									<input type="text" name="expressao_${dTarefa.id}"
+										value="${dTarefa.expressao}" />
+								</div></td>
 						</tr>
-
 					</c:forEach>
 					<tr>
 						<td align="right" width="90%"><input type="button"
 							value="Gravar" onclick="javascript:gravarResponsabilidade()"
-							class="gt-btn-medium gt-btn-left" />
-						</td>
+							class="gt-btn-medium gt-btn-left" /></td>
 						<!-- 
 				<td align="right" width="10%"><input type="button"
 					value="Gerar Relatório" onclick="javascript:gerarRelatorio()" /></td>

@@ -21,26 +21,12 @@ package br.gov.jfrj.siga.base;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
-import org.bouncycastle.util.encoders.Base64;
+import org.apache.commons.io.IOUtils;
 
 public class ConexaoHTTP {
 
@@ -54,18 +40,23 @@ public class ConexaoHTTP {
 			for (String s : header.keySet())
 				conn.setRequestProperty(s, header.get(s));
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					conn.getInputStream()));
+			System.setProperty("http.keepAlive", "false");
 
-			String inputLine;
-			StringBuilder sb = new StringBuilder();
-
-			while ((inputLine = in.readLine()) != null) {
-				sb.append(inputLine);
-			}
-			in.close();
-
-			return sb.toString();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
+			return writer.toString();
+			// BufferedReader in = new BufferedReader(new InputStreamReader(
+			// conn.getInputStream(), "UTF-8"));
+			//
+			// String inputLine;
+			// StringBuilder sb = new StringBuilder();
+			//
+			// while ((inputLine = in.readLine()) != null) {
+			// sb.append(inputLine);
+			// }
+			// in.close();
+			//
+			// return sb.toString();
 		} catch (IOException ioe) {
 			throw new AplicacaoException("Não foi possível abrir conexão", 1,
 					ioe);

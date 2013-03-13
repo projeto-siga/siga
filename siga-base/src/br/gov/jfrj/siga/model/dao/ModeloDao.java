@@ -35,21 +35,18 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 
-public abstract class ModeloDao implements ApplicationContextAware {
-	
-	private static final Logger log = Logger.getLogger( ModeloDao.class );
+public abstract class ModeloDao {
+
+	private static final Logger log = Logger.getLogger(ModeloDao.class);
 
 	protected Session sessao;
 
 	protected String cacheRegion = null;
 
 	private static final ThreadLocal<ModeloDao> threadDao = new ThreadLocal<ModeloDao>();
-	private static ApplicationContext appContext;
 
 	protected ModeloDao() {
 
@@ -72,10 +69,7 @@ public abstract class ModeloDao implements ApplicationContextAware {
 			try {
 				dao = clazz.newInstance();
 				if (sessao == null) {
-					Session s = getSpringSession();
-					if (s == null) {
-						s = HibernateUtil.getSessao();
-					}
+					Session s = HibernateUtil.getSessao();
 					dao.sessao = s;
 				} else {
 					dao.sessao = sessao;
@@ -92,20 +86,12 @@ public abstract class ModeloDao implements ApplicationContextAware {
 		return getInstance(clazz, null);
 	}
 
-	protected static Session getSpringSession() {
-		if (appContext != null) {
-			return ((SessionFactory) appContext.getBean("sessionFactory"))
-					.getCurrentSession();
-		}
-		return (null);
-	}
-
 	public synchronized static void freeInstance() {
 		HibernateUtil.fechaSessaoSeEstiverAberta();
 
 		final ModeloDao dao = ModeloDao.threadDao.get();
 
-		// fecha o dao e a seção do hibernate
+		// fecha o dao e a seï¿½ï¿½o do hibernate
 		if (dao != null) {
 			ModeloDao.threadDao.remove();
 		}
@@ -114,12 +100,13 @@ public abstract class ModeloDao implements ApplicationContextAware {
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	public <T> T consultar(final Serializable id, Class<T> clazz,
 			final boolean lock) {
-		
-		if ( id == null ) {
-			log.warn( "[aConsultar] - O ID recebido para efetuar a consulta é nulo. ID: " + id );
-			throw new IllegalArgumentException( "O identificador do objeto é nulo ou inválido." );
+
+		if (id == null) {
+			log.warn("[aConsultar] - O ID recebido para efetuar a consulta é nulo. ID: "
+					+ id);
+			throw new IllegalArgumentException(
+					"O identificador do objeto é nulo ou inválido.");
 		}
-		
 		T entidade;
 		if (lock)
 			entidade = (T) getSessao().load(clazz, id, LockMode.UPGRADE);
@@ -157,7 +144,7 @@ public abstract class ModeloDao implements ApplicationContextAware {
 	public Session getSessao() {
 		if (sessao == null)
 			throw new IllegalStateException(
-					"Variável Session não foi atribuída para este DAO");
+					"Variï¿½vel Session nï¿½o foi atribuï¿½da para este DAO");
 		return sessao;
 	}
 
@@ -221,30 +208,26 @@ public abstract class ModeloDao implements ApplicationContextAware {
 		HibernateUtil.rollbackTransacao();
 	}
 
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		appContext = applicationContext;
-	}
-
 	public static void configurarHibernateParaDebug(AnnotationConfiguration cfg) {
 		cfg.setProperty("hibernate.show_sql", "true");
 		cfg.setProperty("hibernate.format_sql", "true");
 		cfg.setProperty("generate_statistics", "true");
-		cfg.setProperty("hibernate.use_sql_comments", "true");		
+		cfg.setProperty("hibernate.use_sql_comments", "true");
 	}
-	
+
 	/**
 	 * @return true se a sessão do Hibernate não for nula e estiver aberta.
 	 */
-	public boolean sessaoEstahAberta(){
-		return this.getSessao() != null && this.getSessao().isOpen(); 
+	public boolean sessaoEstahAberta() {
+		return this.getSessao() != null && this.getSessao().isOpen();
 	}
-	
+
 	/**
 	 * @return true se a transacao da sessão do Hibernate estiver ativa
 	 */
-	public boolean transacaoEstaAtiva(){
-		return this.getSessao() != null && this.getSessao().isOpen() && 
-				this.getSessao().getTransaction() != null && 
-					this.getSessao().getTransaction().isActive();
+	public boolean transacaoEstaAtiva() {
+		return this.getSessao() != null && this.getSessao().isOpen()
+				&& this.getSessao().getTransaction() != null
+				&& this.getSessao().getTransaction().isActive();
 	}
 }

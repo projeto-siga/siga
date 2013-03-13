@@ -1,0 +1,19 @@
+<html>
+<body>
+	<p>
+		Informamos que a solicitação <b>${sol.codigo}</b>
+		recebeu o seguinte andamento em ${andamento.dtRegDDMMYYYYHHMM}:
+	</p>
+	<blockquote>
+		<p><b>Situação:</b> ${andamento.situacaoString}</p>
+		<p>${andamento.descrAndamento}</p>
+		<p>
+			Por ${andamento.cadastrante.descricaoIniciaisMaiusculas}
+				(${andamento.lotaCadastrante.siglaLotacao})
+		</p>
+	</blockquote>
+	<p>
+		Para acessar a solicitação, clique <a href="@@{Application.exibir(sol.idSolicitacao)}">aqui</a>.
+	</p>
+</body>
+</html>

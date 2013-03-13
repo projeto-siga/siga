@@ -1,0 +1,50 @@
+#{extends 'main.html' /} #{set title:'Associação de tipo de atributo' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		#{if associacao?.idConfiguracao}
+		<h2 class="gt-form-head">Associação Nº ${associacao.hisIdIni}</h2>
+		#{/if} #{else}
+		<h2 class="gt-form-head">Nova associação</h2>
+		#{/else}
+
+		<div class="gt-form gt-content-box">
+			#{form @Application.gravarAssociacao()} #{if
+			associacao?.idConfiguracao} <input type="hidden"
+				name="associacao.idConfiguracao"
+				value="${associacao.idConfiguracao}"> #{/if}
+
+			<div class="gt-form-row gt-width-66">
+				<label>Item</label> #{selecao tipo:'item',
+				nome:'associacao.itemConfiguracao',
+				value:associacao.itemConfiguracao?.atual /}
+			</div>
+
+			<div class="gt-form-row gt-width-66">
+				<label>Serviço</label> #{selecao tipo:'servico',
+				nome:'associacao.servico', value:associacao.servico?.atual /}
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Tipo de atributo</label> #{select 'associacao.tipoAtributo',
+				items:tiposAtributo, labelProperty:'nomeTipoAtributo',
+				value:associacao.tipoAtributo?.atual?.idTipoAtributo, valueProperty:'idTipoAtributo'}
+				#{/select}
+				
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" value="Salvar"
+					class="gt-btn-medium gt-btn-left" />#{if
+				associacao?.idConfiguracao} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarAssociacao()}?id=${associacao.idConfiguracao}'" />
+				#{/if}
+			</div>
+			<div class="gt-form-row">
+				<label>#{checkbox name:'associacao.atributoObrigatorio',
+					value:associacao.atributoObrigatorio /} Obrigatório</label>
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>
+

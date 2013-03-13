@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+
+${_cabecalho[0].raw()}
+
+#{if params['popup'] != 'true'}
+	#{include "Application/menu.html" /}
+	${_cabecalho[1].raw()}
+#{/if}
+
+#{doLayout /}
+
+${_rodape.raw()}

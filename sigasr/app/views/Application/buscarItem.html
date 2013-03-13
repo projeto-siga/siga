@@ -1,0 +1,62 @@
+#{extends 'main.html' /} 
+<script language="javascript">
+function sbmt(nivel){
+	document.getElementById('alterou').value=nivel;
+	frm.submit();
+}
+</script>
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<div class="gt-content-box gt-for-table">
+			<form action="@{Application.buscarItem}" id="frm">
+				<input type="hidden" name="popup" value="true" />
+				<table class="gt-form-table">
+					<tr class="header">
+						<td align="center" valign="top" colspan="4">Dados do item</td>
+					</tr>
+					<tr>
+						<td>Código:</td>
+						<td><input type="text" name="filtro.siglaItemConfiguracao"
+							value="${filtro?.siglaItemConfiguracao}" />
+						</td>
+					</tr>
+					<tr>
+						<td>Título</td>
+						<td><input type="text" name="filtro.tituloItemConfiguracao"
+							value="${filtro?.tituloItemConfiguracao}" /></td>
+					</tr>
+					<tr>
+						<td><input type="hidden" name="nome" value="${nome}" />
+							<input type="hidden" name="pessoa" value="${pessoa}" />
+							<input
+							type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" />
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="gt-content-box">
+	<table class="gt-table">
+		<tr>
+			<th>Código
+			</td>
+			<th>Título
+			</td>
+		</tr>
+		#{list items:itens, as:'item'}
+		<tr>
+			<td style="padding-left: ${item.nivel*13}px;">
+			#{if item.especifico || !params.pessoa}<a
+				href="javascript:opener.retorna_item${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.sigla}</a>
+			#{/if}
+			#{else}
+				${item.sigla}
+			#{/else}
+			</td>
+			<td>${item.tituloItemConfiguracao}</td>
+		</tr>
+		#{/list}
+	</table>
+</div>

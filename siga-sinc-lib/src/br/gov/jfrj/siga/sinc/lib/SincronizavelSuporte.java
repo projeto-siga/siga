@@ -23,9 +23,9 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Set;
 
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
 
 public abstract class SincronizavelSuporte extends Objeto implements

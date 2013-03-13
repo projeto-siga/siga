@@ -1,0 +1,94 @@
+#{extends 'main.html' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+
+		<h2>Pesquisa de solicitações</h2>
+		#{if listaSolicitacao} #{quadroSolicitacao
+		solicitacoes:listaSolicitacao, titulo:'' /} #{/if}
+		#{elseif filtro?.pesquisar} <br />
+		<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum
+			item foi encontrado.</div>
+		#{/elseif }
+
+		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
+			<form action="@{Application.listar}">
+				<input type="hidden" name="filtro.pesquisar" value="true" />
+				<table class="gt-form-table">
+					<colgroup>
+						<col width="30%" />
+					</colgroup>
+					<tr class="header">
+						<td align="center" valign="top" colspan="4">Dados para busca</td>
+					</tr>
+					<tr>
+						<td>Situação</td>
+						<td>#{select name:'filtro.situacao', items:marcadores,
+							labelProperty:'descrMarcador', valueProperty:'idMarcador',
+							value:filtro.situacao?.idMarcador} #{option 0}Todas#{/option}
+							#{/select} com #{pessoaLotaSelecao
+							nomeSelPessoa:'filtro.atendente',
+							nomeSelLotacao:'filtro.lotaAtendente',
+							valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente
+							/}</td>
+					</tr>
+					<tr>
+						<td>Cadastrante</td>
+						<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.cadastrante',
+							nomeSelLotacao:'filtro.lotaCadastrante',
+							valuePessoa:filtro.cadastrante,
+							valueLotacao:filtro.lotaCadastrante /}</span>
+						</td>
+					</tr>
+					<tr>
+						<td>Solicitante</td>
+						<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.solicitante',
+							nomeSelLotacao:'filtro.lotaSolicitante',
+							valuePessoa:filtro.solicitante,
+							valueLotacao:filtro.lotaSolicitante /}</td>
+					</tr>
+					<tr>
+						<td>Data de abertura</td>
+						<td><input type="text" name="filtro.dtIni"
+							value="${filtro.dtIni}" id="filtro.dtIni" /> a <input
+							type="text" name="filtro.dtFim" value="${filtro.dtFim}"
+							id="filtro.dtFim" />
+						</td>
+					</tr>
+					<tr>
+						<td>Item</td>
+						<td>#{selecao tipo:'item', grande:true, nome:'filtro.itemConfiguracao',
+							value:filtro.itemConfiguracao /}</td>
+					</tr>
+					<tr>
+						<td>Ação</td>
+						<td>#{selecao tipo:'servico', nome:'filtro.servico',
+							value:filtro.servico /}</td>
+					</tr>
+					<tr>
+						<td>Prioridade</td>
+						<td colspan="3">#{select 'filtro.urgencia', items:urgencias,
+							labelProperty:'descrUrgencia', value:filtro.urgencia } #{option
+							0}Todas#{/option}#{/select} #{select 'filtro.gravidade',
+							items:gravidades, labelProperty:'descrGravidade',
+							value:filtro.gravidade }#{option
+							0}Todas#{/option}#{/select} #{select 'filtro.tendencia',
+							items:tendencias, labelProperty:'descrTendencia',
+							value:filtro.tendencia}#{option
+							0}Todas#{/option}#{/select}</td>
+					</tr>
+					<tr>
+						<td>Descrição</td>
+						<td><input type="text" name="filtro.descrSolicitacao"
+							id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}"></input>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"><input type="submit" value="Buscar"
+							class="gt-btn-medium gt-btn-left" /></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>

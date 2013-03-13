@@ -96,8 +96,8 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 public class ExDao extends CpDao {
 
-	private static final Logger log = Logger.getLogger( ExDao.class );
-	
+	private static final Logger log = Logger.getLogger(ExDao.class);
+
 	IMontadorQuery montadorQuery = null;
 
 	public static ExDao getInstance() {
@@ -152,7 +152,7 @@ public class ExDao extends CpDao {
 		query.setLong("idOrgaoUsu", doc.getOrgaoUsuario().getId());
 		query.setLong("idFormaDoc", doc.getExFormaDocumento().getId());
 		query.setLong("anoEmissao", anoEmissao);
-		
+
 		return (Long) query.uniqueResult();
 	}
 
@@ -1504,12 +1504,13 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
-		
-		if ( pes == null || dt == null ) {
-			log.error( "[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentações não podem ser nulos." );
-			throw new IllegalStateException( "A pessoa e/ou a data informada para a realização da consulta é nula." );
+
+		if (pes == null || dt == null) {
+			log.error("[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentações não podem ser nulos.");
+			throw new IllegalStateException(
+					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
-		
+
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		final Query query = getSessao().getNamedQuery("consultarMovimentacoes");
 		ExMovimentacao mov = consultar(1122650L, ExMovimentacao.class, false);
@@ -1709,9 +1710,10 @@ public class ExDao extends CpDao {
 		}
 		return (ExModelo) crit.uniqueResult();
 	}
-	
+
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa) {
-		final Query query = getSessao().getNamedQuery("listarDocPendenteAssinatura");
+		final Query query = getSessao().getNamedQuery(
+				"listarDocPendenteAssinatura");
 		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
 		return query.list();
 	}

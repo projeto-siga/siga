@@ -1,0 +1,46 @@
+#{extends 'main.html' /} #{set title:'Associações de tipo de atributo' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Associações de tipo de atributo</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Data</th>
+						<th>Item</th>
+						<th>Serviço</th>
+						<th>Tipo de atributo</th>
+						<th>Obrigatório</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:associacoes, as:'assoc'}
+					<tr
+						onclick="javascript:window.location='@{Application.editarAssociacao(assoc.idConfiguracao)}'"
+						style="cursor: pointer;">
+						<td>${assoc.hisIdIni}</td>
+						<td>${assoc.hisDtIniDDMMYY}</td>
+						<td style="color: ${assoc.itemConfiguracao?.hisDtFim ? 'red' : 'black'}">${assoc.itemConfiguracao?.tituloItemConfiguracao}</td>
+						<td style="color: ${assoc.servico?.hisDtFim ? 'red' : 'black'}">${assoc.servico?.tituloServico}</td>
+						<td style="color: ${assoc.tipoAtributo?.hisDtFim ? 'red' : 'black'}">${assoc.tipoAtributo?.nomeTipoAtributo}</td>
+						<td>${assoc.atributoObrigatorioString}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarAssociacao}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

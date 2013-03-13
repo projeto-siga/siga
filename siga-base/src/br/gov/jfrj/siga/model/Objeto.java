@@ -20,7 +20,7 @@ package br.gov.jfrj.siga.model;
 
 import org.hibernate.proxy.HibernateProxy;
 
-public class Objeto {
+public class Objeto extends ObjetoBase{
 
 	@Override
 	public String toString() {

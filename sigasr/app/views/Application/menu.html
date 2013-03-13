@@ -1,0 +1,15 @@
+<li><a href="@{Application.editar}">Cadastrar</a>
+</li>
+<li><a href="@{Application.listar}">Listar</a>
+</li>
+#{if exibirMenuAdministrar}
+<li><a href="#">Administrar</a>
+<ul>
+<li><a href="@{Application.listarDesignacao}">Designação</a></li>
+<li><a href="@{Application.listarItem}">Item de configuração</a></li>
+<li><a href="@{Application.listarServico}">Ação</a></li>
+<li><a href="@{Application.listarTipoAtributo}">Tipo de atributo</a></li>
+<li><a href="@{Application.listarAssociacao}">Associaçao de tipo de atributo</a></li>
+</ul>
+</li>
+#{/if}

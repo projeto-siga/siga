@@ -1,0 +1,104 @@
+#{extends 'main.html' /} #{set title:'Exibição de Tópico de
+Informação'/}
+
+<div class="gt-bd gt-cols clearfix">
+	<div class="gt-content">
+		<h2>${informacao.getSigla()}</h2>
+		<h3 style="margin-bottom: 0px;">${informacao.getMarcadoresEmHtml(titular,lotaTitular)}</h3>
+		<!-- Links para as ações de cada mobil -->
+		#{links acoes:informacao.acoes(idc,titular,lotaTitular), base:_base /}
+		<!-- Dados do documento -->
+		<div class="gt-content-box" style="padding: 10px;">
+			<h2>${informacao?.arq?.titulo}</h2>
+			${informacao?.arq?.conteudo}
+		</div>
+	</div>
+
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>${informacao?.tipo?.nome}</h3>
+			<p>
+				<b>Órgão Usuário:</b> ${informacao?.ou?.acronimoOrgaoUsu}
+			</p>
+			<p>
+				<b>Autor:</b> ${informacao?.autor?.descricaoIniciaisMaiusculas} -
+				${informacao?.autor?.sigla}
+			</p>
+			<p>
+				<b>Lotação:</b> ${informacao?.lotacao?.descricaoIniciaisMaiusculas}
+				- ${informacao?.lotacao?.sigla}
+			</p>
+			<p>
+				<b>Data:</b> ${informacao?.dtIniString}
+			</p>
+			<p>
+				<b>Finalizado em:</b> ${informacao?.elaboracaoFim}
+			</p>
+			<!--  -->
+			#{set cls = informacao?.arq?.classificacao?.split(";") /}
+			<!--  -->
+			#{if cls != null && cls.size() > 1}
+			<p>
+				<b>Classificações:</b>
+			<ul>
+				#{list items:cls, as:'cl'}
+				<li>${cl}</li> #{/list}
+			</ul>
+			</p>
+			#{/if}#{else}
+			<p>
+				<b>Classificação:</b> ${informacao?.arq?.classificacao}
+			</p>
+			#{/else}
+
+		</div>
+		<!-- / sidebar -->
+	</div>
+</div>
+
+<div class="gt-bd" style="padding-bottom: 0px;">
+	<div class="gt-content">
+		<h3>Movimentações</h3>
+	</div>
+
+	<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
+		<table class="gt-table mov">
+			<thead>
+				<tr>
+					<th align="center" rowspan="2">Data</th>
+					<th rowspan="2">Evento</th>
+					<th colspan="2" align="left">Cadastrante</th>
+					<th colspan="2" align="left">Referente</th>
+					<th rowspan="2">Descrição</th>
+				</tr>
+				<tr>
+					<th align="left">Lotação</th>
+					<th align="left">Pessoa</th>
+					<th align="left">Lotação</th>
+					<th align="left">Pessoa</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:informacao.movs, as:'m'}
+				<tr class="juntada ">
+					<td align="center">${m.hisDtIni.format()}</td>
+					<td>${m.tipo.nome}</td>
+					<td align="left"><span
+						title="${m.hisIdcIni.dpPessoa.lotacao.descricao}">${m.hisIdcIni.dpPessoa.lotacao.sigla}</span>
+					</td>
+					<td align="left"><span
+						title="${m.hisIdcIni.dpPessoa.descricao}">${m.hisIdcIni.dpPessoa.nomeAbreviado}</span>
+					</td>
+
+					<td align="left"><span title="${m.lotacao?.descricao}">${m.lotacao?.sigla}</span>
+					</td>
+					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span>
+					</td>
+					<td></td>
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+	</div>
+
+</div>

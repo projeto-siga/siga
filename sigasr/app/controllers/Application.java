@@ -335,6 +335,7 @@ public class Application extends Controller {
 
 	public static void selecionar(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
+		sel.cadastrante = getCadastrante();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
 	}

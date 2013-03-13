@@ -191,6 +191,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		this.motivoFechamentoAbertura = motivoFechamentoAbertura;
 	}
 
+	public static void main(String[] args) {
+		final Pattern p = Pattern.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?$");
+		// .compile("^([A-Z0-9]{2})?-?([SR])?-?(?:([0-9]{4})/?)??([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?((?:\\.).*([0-9]{1,2}))*$");
+				//.compile("^([A-Z0-9]{2})?-?([SR])?-?(?:([0-9]{4})/?)??([0-9]{1,5})?(?:\\.).*([0-9]{1,2})*$"); --funciona para SR-
+		final Matcher m = p.matcher("RJ-SR-2013/");
+		System.out.println(m.groupCount());
+		System.out.println(m.find());
+		System.out.println("Grupo 1: " + m.group(1));
+		System.out.println("Grupo 2: " + m.group(2));
+		System.out.println("Grupo 3: " + m.group(3));
+		System.out.println("Grupo 4: " + m.group(4));
+		System.out.println("Grupo 5: " + m.group(5));
+		System.out.println("Grupo 6: " + m.group(6));
+	}
+
 	@Override
 	public Long getId() {
 		return idSolicitacao;
@@ -210,7 +225,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
 		final Pattern p = Pattern
-				.compile("^([A-Za-z0-9]{2})?-?(SR)?-?(?:([0-9]{4})/?)??([0-9]{1,5})?$");
+				.compile("^([A-Z0-9]{2})?-?([SR])?-?(?:([0-9]{4})/?)??([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -241,6 +256,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 			if (m.group(4) != null)
 				numSolicitacao = Long.valueOf(m.group(4));
+
+			if (m.group(6) != null)
+				numSequencia = Long.valueOf(m.group(6));
 		}
 
 	}
@@ -260,7 +278,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Override
 	public SrSelecionavel selecionar(String sigla) throws Exception {
 		setSigla(sigla);
+		if (orgaoUsuario == null && cadastrante != null)
+			orgaoUsuario = cadastrante.getOrgaoUsuario();
+		
 		String query = "from SrSolicitacao where hisDtFim is null ";
+
 		if (orgaoUsuario != null) {
 			query += " and orgaoUsuario.idOrgaoUsu = "
 					+ orgaoUsuario.getIdOrgaoUsu();
@@ -273,7 +295,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					+ " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/"
 					+ year + " 23:59','dd/mm/yyyy HH24:mi')";
 		}
-		query += " and numSolicitacao = " + numSolicitacao;
+		if (numSequencia != null) {
+			query += " and solicitacaoPai.idSolicitacao = (select idSolicitacao from SrSolicitacao where numSolicitacao = "
+					+ numSolicitacao + " )";
+			query += " and numSequencia = " + numSequencia;
+		} else {
+			query += " and numSolicitacao = " + numSolicitacao;
+		}
 		SrSolicitacao sol = (SrSolicitacao) JPA.em().createQuery(query)
 				.getSingleResult();
 		return sol;
@@ -460,7 +488,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
-			if (conf != null){
+			if (conf != null) {
 				pre = conf.preAtendente.getLotacaoAtual();
 				Cache.set("preAtendenteDesignado_" + idSolicitacao, pre, "8mn");
 			}
@@ -478,7 +506,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
-			if (conf != null){
+			if (conf != null) {
 				aten = conf.atendente.getLotacaoAtual();
 				Cache.set("atendenteDesignado_" + idSolicitacao, aten, "8mn");
 			}
@@ -509,8 +537,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (!listaFinal.contains(tipo)) {
 				listaFinal.add(tipo);
 				if (map != null)
-					map.put(tipo.idTipoAtributo,
-							conf.atributoObrigatorio);
+					map.put(tipo.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
 		return listaFinal;
@@ -526,7 +553,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
-			if (conf != null){
+			if (conf != null) {
 				pos = conf.posAtendente.getLotacaoAtual();
 				Cache.set("posAtendenteDesignado_" + idSolicitacao, pos, "8mn");
 			}

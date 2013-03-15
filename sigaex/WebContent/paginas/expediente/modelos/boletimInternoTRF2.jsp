@@ -102,7 +102,7 @@
 			<table width="100%" align="left" border="0" bgcolor="#FFFFFF">
 				<tr bgcolor="#FFFFFF">
 					<td align="left" valign="bottom" width="100%"><img
-						src="contextpath/imagens/cabecalhoBoletimInternoTRF2.gif" width="450" height="65" /></td>
+						src="contextpath/imagens/cabecalhoBoletimInternoTRF2.gif" width="448" height="287" /></td>
 				</tr>
 			</table>
 		</td></tr>
@@ -206,12 +206,11 @@
 		<center><span style="font-size: 15px;">********************************* FIM *********************************</span></center>
 
 		<!-- INICIO PRIMEIRO RODAPE
-		<%--<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental2.jsp" />--%>
-		<c:import url="/paginas/expediente/modelos/inc_rodapeBoxBoletimInternol.jsp" />
+		
 		FIM PRIMEIRO RODAPE -->
 
 		<!-- INICIO RODAPE
-		<c:import url="/paginas/expediente/modelos/inc_rodapeNumeracaoADireita2.jsp" />
+		
 		FIM RODAPE -->
 	</mod:documento>
 

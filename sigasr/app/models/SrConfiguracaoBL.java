@@ -51,6 +51,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	@Override
 	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
 		super.deduzFiltro(cpConfiguracao);
+		if (cpConfiguracao instanceof SrConfiguracao) {
+			SrConfiguracao srConf = (SrConfiguracao) cpConfiguracao;
+			if (srConf.itemConfiguracao != null)
+				srConf.itemConfiguracao = srConf.itemConfiguracao.getAtual();
+			if (srConf.servico != null)
+				srConf.servico = srConf.servico.getAtual();
+		}
+
 	}
 
 	@Override
@@ -82,12 +90,13 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (!atributosDesconsiderados.contains(SERVICO)
 					&& conf.servico != null
 					&& (filtro.servico == null || (filtro.servico != null && !conf.servico
-							.isPaiDeOuIgualA(filtro.servico))))
+							.getAtual().isPaiDeOuIgualA(filtro.servico))))
 				return false;
 
 			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO)
 					&& conf.itemConfiguracao != null
 					&& (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null && !conf.itemConfiguracao
+							.getAtual()
 							.isPaiDeOuIgualA(filtro.itemConfiguracao))))
 				return false;
 

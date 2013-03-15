@@ -18,8 +18,8 @@ import play.db.jpa.Model;
 public class SrAtributo extends GenericModel {
 	
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ATRIBUTO_SEQ", name = "SR_ATRIBUTO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ATRIBUTO_SEQ")
+	@SequenceGenerator(sequenceName = "SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
+	@GeneratedValue(generator = "srAtributoSeq")
 	@Column(name = "ID_ATRIBUTO")
 	public long id;
 	

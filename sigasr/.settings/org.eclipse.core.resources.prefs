@@ -1,4 +1,4 @@
-#Wed Feb 20 14:53:58 BRT 2013
+#Wed Mar 13 14:04:20 BRT 2013
 eclipse.preferences.version=1
 encoding//app/controllers/Application.java=UTF-8
 encoding//app/controllers/Bootstrap.java=UTF-8
@@ -30,5 +30,4 @@ encoding//app/views/main.html=UTF-8
 encoding//app/views/tags/pessoaLotaSelecao.html=UTF-8
 encoding//app/views/tags/quadroSolicitacao.html=UTF-8
 encoding//app/views/tags/radioSN.html=UTF-8
-encoding//conf/application.conf.desenv=UTF-8
 encoding/<project>=UTF-8

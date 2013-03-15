@@ -40,7 +40,12 @@ def after(**kargs):
     print "siga-play-module after"
     if command == "war":
         diminish_siga_play_module(app=app)
-
+        war_path = None
+        optlist, args = getopt.getopt(args, 'o:', ['output=', 'zip','exclude='])
+        for o, a in optlist:
+            if o in ('-o', '--output'):
+                war_path = os.path.normpath(os.path.abspath(a))
+        delete_jta(war_path);
     if command == "new":
         pass
 
@@ -102,8 +107,8 @@ def diminish_siga_play_module(app):
 #            print "~ Deleting corporative java files from app folder ..."
 #            app_directory(src, dest, 0)
 
-    jta_jar_path = os.path.join(war_path, 'WEB-INF\lib\jta-1.1.jar');
-    print "Deleting %s" % jta_jar_path
-    if os.path.exists(jta_jar_path):
-        os.remove(jta_jar_path)
-
+def delete_jta(war_path):
+   jta_jar_path = os.path.join(war_path, 'WEB-INF\lib\jta-1.1.jar')
+   print "Deleting %s" % jta_jar_path
+   if os.path.exists(jta_jar_path):
+       os.remove(jta_jar_path)

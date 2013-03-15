@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -28,8 +30,8 @@ import models.siga.PlayHistoricoSuporte;
 public class SrTipoAtributo extends HistoricoSuporte {
 	
 	@Id
-	@SequenceGenerator(sequenceName = "SR_TIPO_ATRIBUTO_SEQ", name = "SR_TIPO_ATRIBUTO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_TIPO_ATRIBUTO_SEQ")
+	@SequenceGenerator(sequenceName = "SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
+	@GeneratedValue(generator = "srTipoAtributoSeq")
 	@Column(name = "ID_TIPO_ATRIBUTO")
 	public Long idTipoAtributo;
 	
@@ -38,6 +40,14 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	
 	@Column(name="DESCRICAO")
 	public String descrTipoAtributo;
+	
+	@ManyToOne()
+	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+	public SrTipoAtributo tipoAtributoInicial;
+
+	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial", cascade = CascadeType.PERSIST)
+	@OrderBy("hisDtIni desc")
+	public List<SrTipoAtributo> meuTipoAtributoHistoricoSet;
 
 	@Override
 	public Long getId() {
@@ -56,11 +66,9 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	}
 	
 	public List<SrTipoAtributo> getHistoricoTipoAtributo() {
-		if (getHisIdIni() == null)
-			return null;
-		return find(
-				"from SrTipoAtributo where hisIdIni = " + getHisIdIni()
-						+ " order by idTipoAtributo desc").fetch();
+		if (tipoAtributoInicial != null)
+			return tipoAtributoInicial.meuTipoAtributoHistoricoSet;
+		return null;
 	}
 
 	public SrTipoAtributo getAtual() {

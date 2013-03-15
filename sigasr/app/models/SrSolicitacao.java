@@ -54,8 +54,8 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", name = "srSeq")
-	@GeneratedValue(generator = "srSeq")
+	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", name = "srSolicitacaoSeq")
+	@GeneratedValue(generator = "srSolicitacaoSeq")
 	@Column(name = "ID_SOLICITACAO")
 	public Long idSolicitacao;
 
@@ -139,7 +139,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrSolicitacao solicitacaoInicial;
 
 	@OneToMany(targetEntity = SrSolicitacao.class, mappedBy = "solicitacaoInicial", cascade = CascadeType.PERSIST)
-	@OrderBy("idSolicitacao desc")
+	@OrderBy("hisDtIni desc")
 	public List<SrSolicitacao> meuSolicitacaoHistoricoSet;
 
 	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST)
@@ -154,7 +154,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	protected Set<SrMarca> meuMarcaSet;
 
 	@OneToMany(targetEntity = SrAndamento.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	@OrderBy("idAndamento DESC")
+	@OrderBy("dtReg DESC")
 	protected Set<SrAndamento> meuAndamentoSet;
 
 	@OneToMany(mappedBy = "solicitacaoPai", cascade = CascadeType.PERSIST)
@@ -460,7 +460,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
-			if (conf != null){
+			if (conf != null) {
 				pre = conf.preAtendente.getLotacaoAtual();
 				Cache.set("preAtendenteDesignado_" + idSolicitacao, pre, "8mn");
 			}
@@ -478,7 +478,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
-			if (conf != null){
+			if (conf != null) {
 				aten = conf.atendente.getLotacaoAtual();
 				Cache.set("atendenteDesignado_" + idSolicitacao, aten, "8mn");
 			}
@@ -509,8 +509,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (!listaFinal.contains(tipo)) {
 				listaFinal.add(tipo);
 				if (map != null)
-					map.put(tipo.idTipoAtributo,
-							conf.atributoObrigatorio);
+					map.put(tipo.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
 		return listaFinal;
@@ -526,7 +525,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					itemConfiguracao, servico,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
-			if (conf != null){
+			if (conf != null) {
 				pos = conf.posAtendente.getLotacaoAtual();
 				Cache.set("posAtendenteDesignado_" + idSolicitacao, pos, "8mn");
 			}
@@ -757,7 +756,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				iniciarFechando();
 			else
 				iniciar();
-			if (!isEditado())
+			if (!isEditado()
+					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
+					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
 				notificar();
 		}
 		// return this;
@@ -848,6 +849,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		refresh();
 		atualizarMarcas();
 		if (!andamento.isPrimeiroAndamento()
+				&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 				&& !(formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
 						&& andamento.estado != SrEstado.FECHADO && andamento.estado != SrEstado.POS_ATENDIMENTO))
 			andamento.notificar();
@@ -859,8 +861,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		andamento.desfazer(cadastrante, lotaCadastrante);
 		refresh();
 		atualizarMarcas();
-		if (!(formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
-				&& andamento.estado != SrEstado.FECHADO && andamento.estado != SrEstado.POS_ATENDIMENTO))
+		if (formaAcompanhamento != SrFormaAcompanhamento.NUNCA
+				&& !(formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
+						&& andamento.estado != SrEstado.FECHADO && andamento.estado != SrEstado.POS_ATENDIMENTO))
 			andamento.notificar();
 	}
 

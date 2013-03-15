@@ -55,10 +55,10 @@
 		<many-to-one name="hisIdIni" column="HIS_ID_INI" class="CpGrupo" />
 		<property name="hisAtivo" column="HIS_ATIVO" type="java.lang.Integer" />
 		-->
-		<property name="hisDtIni" column="DT_INI_VIG_CONFIGURACAO"
+		<property name="hisDtIni" column="HIS_DT_INI"
 			type="java.util.Date" />
 		<many-to-one name="hisIdcIni" column="HIS_IDC_INI" class="CpIdentidade" />
-		<property name="hisDtFim" column="DT_FIM_VIG_CONFIGURACAO"
+		<property name="hisDtFim" column="HIS_DT_FIM"
 			type="java.util.Date" />
 		<many-to-one name="hisIdcFim" column="HIS_IDC_FIM" class="CpIdentidade" />
 			

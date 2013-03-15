@@ -488,6 +488,9 @@ public class LdapDaoImpl implements ILdapDao {
 		Attributes ats = pesquisar(dn);
 		ModificationItem member[] = new ModificationItem[1];
 		Attribute at = ats.get(nomeAtributo);
+		if (at==null){
+			throw new AplicacaoException("Atributo [" + nomeAtributo + "] não existe para [+ " + dn + "]!");
+		}
 		at.clear();
 		at.add(valorAtributo);
 		member[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, at);

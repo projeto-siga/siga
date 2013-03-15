@@ -365,6 +365,9 @@ public class Application extends Controller {
 
 	public static void criarFilha(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
+		if (sol.idSolicitacao == sol.solicitacaoPai.idSolicitacao){
+			
+		}
 		SrSolicitacao filha = sol.criarFilhaSemSalvar();
 		formEditar(filha);
 	}

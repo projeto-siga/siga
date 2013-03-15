@@ -339,14 +339,6 @@ public class ExDao extends CpDao {
 		return crit.list();
 	}
 
-	// Provisório
-	public Long obterProximoIdMarca() {
-		return Long.valueOf(getSessao()
-				.createSQLQuery(
-						"select CORPORATIVO.CP_MARCA_SEQ.nextval from dual")
-				.list().get(0).toString());
-	}
-
 	public List<ExDocumento> consultarPorModeloEAssinatura(
 			CpOrgaoUsuario orgaoUsu, ExModelo mod, Date dtAssinaturaIni,
 			Date dtAssinaturaFim) {

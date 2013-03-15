@@ -88,8 +88,7 @@ public class PlayAction extends SigaActionSupport {
 			getRequest()
 					.setAttribute(
 							"result",
-							new String(ConexaoHTTP.get(URL, header).getBytes(),
-									"UTF-8"));
+							new String(ConexaoHTTP.get(URL, header).getBytes()));
 
 			return Action.SUCCESS;
 		} catch (Exception e) {

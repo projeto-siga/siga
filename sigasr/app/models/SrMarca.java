@@ -64,13 +64,5 @@ public class SrMarca extends CpMarca {
 		return this.getCpMarcador().getDescrMarcador() + " ("
 				+ getDpLotacaoIni().getSigla() + ")";
 	}
-	
-	@Override
-	public <T extends JPABase> T save() {
-		//Edson: Ver no Util o comentário sobre a chamada abaixo
-		if (getIdMarca() == null)
-			setIdMarca(Util.nextVal("CORPORATIVO.CP_MARCA_SEQ"));
-		return super.save();
-	}
 
 }

@@ -28,10 +28,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -60,9 +62,8 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	private static final long serialVersionUID = 4514355304185987860L;
 
 	@Id
-	//Ver comentário em sigasr.controllers.Util.nextVal() 
-	//@GeneratedValue(strategy = SEQUENCE, generator = "generator")
-	//@SequenceGenerator(name = "generator", sequenceName = "CP_CONFIGURACAO_SEQ")
+	@GeneratedValue(generator = "generator")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;

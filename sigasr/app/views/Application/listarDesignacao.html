@@ -32,17 +32,17 @@
 						<td>${design.hisIdIni}</td>
 						<td>${design.hisDtIniDDMMYY}</td>
 						<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
-						<td>${design.lotacao?.siglaLotacao}</td>
-						<td>${design.dpPessoa?.nomeAbreviado}</td>
-						<td>${design.cargo?.descricao}</td>
-						<td>${design.funcaoConfianca?.descricao}</td>
-						<td>${design.itemConfiguracao?.atual?.tituloItemConfiguracao}</td>
-						<td>${design.servico?.atual?.tituloServico}</td>
-						<td>#{selecionado sigla:design.atendente?.siglaLotacao,
+						<td style="color: ${design.lotacao?.hisDtFim ? 'red' : 'black'}">${design.lotacao?.siglaLotacao}</td>
+						<td style="color: ${design.dpPessoa?.hisDtFim ? 'red' : 'black'}">${design.dpPessoa?.nomeAbreviado}</td>
+						<td style="color: ${design.cargo?.hisDtFim ? 'red' : 'black'}">${design.cargo?.descricao}</td>
+						<td style="color: ${design.funcaoConfianca?.hisDtFim ? 'red' : 'black'}">${design.funcaoConfianca?.descricao}</td>
+						<td style="color: ${design.itemConfiguracao?.hisDtFim ? 'red' : 'black'}">${design.itemConfiguracao?.tituloItemConfiguracao}</td>
+						<td style="color: ${design.servico?.hisDtFim ? 'red' : 'black'}">${design.servico?.tituloServico}</td>
+						<td style="color: ${design.atendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.atendente?.siglaLotacao,
 							descricao:design.atendente?.nomeLotacao /}</td>
-						<td>#{selecionado sigla:design.preAtendente?.siglaLotacao,
+						<td style="color: ${design.preAtendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.preAtendente?.siglaLotacao,
 							descricao:design.preAtendente?.nomeLotacao /}</td>
-						<td>#{selecionado sigla:design.posAtendente?.siglaLotacao,
+						<td style="color: ${design.posAtendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.posAtendente?.siglaLotacao,
 							descricao:design.posAtendente?.nomeLotacao /}</td>
 						<td>${design.pesquisaSatisfacaoString}</td>
 					</tr>

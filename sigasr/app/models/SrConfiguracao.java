@@ -164,14 +164,6 @@ public class SrConfiguracao extends CpConfiguracao {
 								+ " and hisDtFim is null", SrConfiguracao.class)
 				.getResultList();
 	}
-
-	@Override
-	public <T extends JPABase> T save() {
-		// Edson: Ver no Util o comentário sobre a chamada abaixo
-		if (getIdConfiguracao() == null)
-			setIdConfiguracao(Util.nextVal("CORPORATIVO.CP_CONFIGURACAO_SEQ"));
-		return super.save();
-	}
 	
 	public static SrConfiguracao getConfiguracao(DpPessoa pess,
 			SrItemConfiguracao item, SrServico servico, long idTipo,

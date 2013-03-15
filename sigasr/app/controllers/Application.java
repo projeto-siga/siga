@@ -336,6 +336,7 @@ public class Application extends Controller {
 
 	public static void selecionar(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
+		sel.cadastrante = getCadastrante();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
 	}
@@ -365,6 +366,9 @@ public class Application extends Controller {
 
 	public static void criarFilha(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
+		if (sol.idSolicitacao == sol.solicitacaoPai.idSolicitacao){
+			
+		}
 		SrSolicitacao filha = sol.criarFilhaSemSalvar();
 		formEditar(filha);
 	}

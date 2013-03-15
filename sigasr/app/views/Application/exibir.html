@@ -1,0 +1,129 @@
+#{extends 'main.html' /}
+
+<script language="javascript">
+function carregarAtendente(){
+	frm = document.getElementById('formAndamento');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+	}
+	PassAjaxResponseToFunction('@{Application.exibirAtendente()}', 'carregouAtendente', null, false, params);
+}
+
+function carregouAtendente(response, param){
+	var div = document.getElementById('divAtendente');
+	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
+}
+
+</script>
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2>Solicitação ${solicitacao.codigo}</h2>
+		<p class="gt-table-action-list">
+			#{if editar} <a class="once"
+				href="@{Application.editar(solicitacao.idSolicitacao)}"> <img
+				src="${base}/css/famfamfam/icons/pencil.png"
+				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
+			#{if criarFilha} <a class="once"
+				href="@{Application.criarFilha(solicitacao.idSolicitacao)}"> <img
+				src="${base}/css/famfamfam/icons/arrow_divide.png"
+				style="margin-right: 5px;">Criar solicitação filha</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
+		</p>
+		#{quadroSolicitacao solicitacao:solicitacao, modoCompleto:true /} <br />
+		<div class="gt-content-box gt-form" style="margin-top: 15px;">
+			#{form @Application.andamento(), enctype:'multipart/form-data',
+			id:'formAndamento'} <input type="hidden"
+				name="andamento.solicitacao.idSolicitacao"
+				value="${solicitacao.idSolicitacao}"> #{if
+			movimentarPlenamente}
+			<div class="gt-form-row gt-width-66">
+				<label>Situação</label> #{select 'andamento.estado', items:estados,
+				labelProperty:'descrEstado', value:andamento.estado,
+				valueProperty:idEstado, onchange:'carregarAtendente();'} #{/select}
+			</div>
+
+			<div class="gt-form-row gt-width-66">
+				<label>Atendente</label>
+				<div id="divAtendente">#{include
+					'Application/exibirAtendente.html' /}</div>
+			</div>
+			#{/if}
+
+			<div class="gt-form-row gt-width-66">
+				<label>Descrição</label>
+				<textarea name="andamento.descrAndamento" id="descrSolicitacao"
+					cols="70" rows="4" value="${andamento.descrAndamento}"></textarea>
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Anexar arquivo</label> <input type="file"
+					name="andamento.arquivo">
+			</div>
+
+			<div class="gt-form-row">
+				<input type="submit" value="Gravar"
+					class="gt-btn-medium gt-btn-left" />
+			</div>
+			#{/form}
+		</div>
+		<!-- content box -->
+		<div class="gt-content-box" style="margin-top: 15px;">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th>Momento</th>
+						<th>Situação</th>
+						<th colspan="2">Cadastrante</th>
+						<th colspan="2">Atendente</th>
+						<th>Descrição</th>
+						<th></th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:solicitacao.andamentoSet, as:'andamento'}
+					<tr id="linha${andamento.idAndamento}"
+						#{if andamento_isFirst && desfazerAndamento}
+						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='${base}/css/famfamfam/icons/cancel.png';"
+						onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='${base}/css/famfamfam/icons/cancel_gray.png';"
+						#{/if}>
+						<td>${andamento.dtRegString}</td>
+						<td>${andamento.estado.descrEstado}</td>
+						<td>#{selecionado
+							sigla:andamento.lotaCadastrante?.siglaLotacao,
+							descricao:andamento.lotaCadastrante?.nomeLotacao /}</td>
+						<td>#{selecionado sigla:andamento.cadastrante?.nomeAbreviado,
+							descricao:andamento.cadastrante?.descricaoIniciaisMaiusculas /}</td>
+						<td>#{selecionado
+							sigla:andamento.lotaAtendente?.siglaLotacao,
+							descricao:andamento.lotaAtendente?.nomeLotacao /}</td>
+						<td>#{selecionado sigla:andamento.atendente?.nomeAbreviado,
+							descricao:andamento.atendente?.descricaoIniciaisMaiusculas /}</td>
+						<td id="descrAndamento${andamento.idAndamento}">${andamento.descrAndamento}#{if andamento.arquivo}&nbsp;&nbsp;|&nbsp;&nbsp;#{arquivo
+							arquivo:andamento.arquivo /}#{/if}</td>
+						<script language="javascript">
+							var descricao = document.getElementById('descrAndamento${andamento.idAndamento}');
+							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
+						</script>
+						<td>#{if andamento_isFirst && desfazerAndamento} <a
+							class="once"
+							href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
+							title="Desfazer este andamento"> <img id="imgCancelar"
+								src="${base}/css/famfamfam/icons/cancel_gray.png"
+								style="margin-right: 5px;"> </a>#{/if}</td>
+					</tr>
+					#{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

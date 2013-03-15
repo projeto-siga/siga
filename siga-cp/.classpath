@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="app"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/siga-sinc-lib"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-sinc-lib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-rel"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/activation.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/annotations-api-6.0.18.jar"/>

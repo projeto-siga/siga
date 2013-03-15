@@ -1,0 +1,210 @@
+#{extends 'main.html' /} #{set title:'Informações' /}
+
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2>Pesquisa de Conhecimento</h2>
+
+		<div class="gt-content-box gt-for-table">
+			<table class="gt-table">
+				<thead>
+					<tr>
+						<th rowspan="3" align="right">Número</th>
+						<th colspan="3" align="center">Tópico de Informação</th>
+						<th colspan="4" align="center">Situação</th>
+						<th rowspan="3">Tipo</th>
+						<th rowspan="3">Título</th>
+					</tr>
+					<tr>
+						<th rowspan="2" align="center">Data</th>
+						<th colspan="2" align="center">Autor</th>
+						<th rowspan="2" align="center">Data</th>
+						<th colspan="2" align="center">Responsável</th>
+						<th rowspan="2" align="center">Situação</th>
+					</tr>
+					<tr>
+						<th align="center">Lotação</th>
+						<th align="center">Pessoa</th>
+						<th align="center">Lotação</th>
+						<th align="center">Pessoa</th>
+					</tr>
+				</thead>
+
+				<tbody>
+
+					#{list items:lista, as:'i'} #{set cmarcas = i.marcas.size()/} #{set
+					m0 = cmarcas > 0 ? i.marcas.first() : null /}
+
+					<tr class="even">
+						<td width="11.5%" align="right" rowspan="${cmarcas}"><a
+							href="@{Application.exibir(i.id)}">${i.sigla}</a></td>
+						<td width="5%" align="center" rowspan="${cmarcas}">${i.dtIniString}</td>
+						<td width="4%" align="center" rowspan="${cmarcas}"><span
+							title="${i.lotacao.descricao}">${i.lotacao.sigla}</span>
+						</td>
+						<td width="4%" align="center" rowspan="${cmarcas}"><span
+							title="${i.autor.descricao} - ${i.autor.sigla}">${i.autor.nomeAbreviado}</span>
+						</td>
+
+						<td width="5%" align="center">${m0?.dtIniMarcaDDMMYYYY}</td>
+						<td width="4%" align="center"><span
+							title="${m0?.dpLotacaoIni?.descricao}">${m0?.dpLotacaoIni?.sigla}</span>
+						</td>
+						<td width="4%" align="center"><span
+							title="${m0?.dpPessoaIni?.descricao}">${m0?.dpPessoaIni?.sigla}</span>
+						</td>
+						<td width="10.5%" align="center">${m0?.cpMarcador?.descrMarcador}</td>
+
+						<td width="6%" rowspan="${cmarcas}">${i.tipo.nome}</td>
+
+						<td rowspan="${cmarcas}"><a
+							href="@{Application.exibir(i.id)}">${i.arq.titulo}</a>
+						</td>
+					</tr>
+					#{list items:i.marcas, as:'m'} #{if m != m0}
+					<tr>
+						<td width="5%" align="center">${m.dtIniMarcaDDMMYYYY}</td>
+						<td width="4%" align="center"><span
+							title="${m.dpLotacaoIni?.descricao}">${m.dpLotacaoIni?.sigla}</span>
+						</td>
+						<td width="4%" align="center"><span
+							title="${m.dpPessoaIni?.descricao}">${m.dpPessoaIni?.sigla}</span>
+						</td>
+						<td width="10.5%" align="center">${m.cpMarcador.descrMarcador}</td>
+					</tr>
+					#{/if} #{/list} #{/list}
+
+				</tbody>
+			</table>
+		</div>
+
+		<!-- </table></div> -->
+		<br>
+		<div class="gt-content-box gt-for-table">
+
+			<form id="listar" name="listar"
+				onsubmit="javascript: return limpaCampos()" method="GET"
+				class="form100">
+				<table class="gt-form-table">
+					<colgroup>
+						<col style="width: 10em;">
+						<col>
+					</colgroup>
+					<input type="hidden" name="popup" value="">
+					<input type="hidden" name="propriedade" value="">
+					<input type="hidden" name="postback" value="1" id="postback">
+					<input type="hidden" name="apenasRefresh" value="0"
+						id="apenasRefresh">
+					<input type="hidden" name="p.offset" value="0" id="p_offset">
+					<tbody>
+						<tr class="header">
+							<td align="center" valign="top" colspan="4">Dados da
+								Informação</td>
+						</tr>
+						<tr>
+							<td>Situação:</td>
+							<td>#{select name:'filtro.situacao', items:marcadores,
+								labelProperty:'descrMarcador', valueProperty:'idMarcador',
+								value:filtro?.situacao?.idMarcador} #{option 0}Todas#{/option}
+								#{/select} &nbsp;&nbsp;&nbsp;&nbsp;Pessoa/Lotação:
+								#{pessoaLotaSelecao nomeSelPessoa:'marcado',
+								nomeSelLotacao:'lotaMarcado', value:informacao?.autor /}</td>
+						</tr>
+						<tr>
+							<td>Órgão:</td>
+							<td>#{select name:'filtro.orgaoUsu', items:orgaosusuarios,
+								labelProperty:'descricao', valueProperty:'id',
+								value:filtro?.ou?.id} #{option 0}Todas#{/option} #{/select}</td>
+						</tr>
+						<tr>
+							<td>Criação:</td>
+							<td>Data Inicial: <input type="text" name="dtIniString"
+								value="" id="dtIniString"
+								onblur="javascript:verifica_data(this,0);">
+								&nbsp;&nbsp;Data Final: <input type="text" name="dtFimString"
+								value="" id="dtFimString"
+								onblur="javascript:verifica_data(this,0);"></td>
+						</tr>
+
+						<tr id="trTipo" style="display: ">
+							<td>Tipo:</td>
+							<td>#{select name:'filtro.tipo', items:tiposinformacao,
+								labelProperty:'nome', valueProperty:'id',
+								value:filtro?.tipo?.id} #{option 0}Todas#{/option} #{/select}</td>
+						</tr>
+						<tr>
+							<td>Ano de Emissão:</td>
+							<td>#{select name:'filtro.ano', items:anos,
+								labelProperty:'toString()', valueProperty:'toString()',
+								value:filtro?.tipo?.ano} #{option 0}Todos#{/option} #{/select}
+								&nbsp;&nbsp;&nbsp;&nbsp;Número: <input type="text"
+								name="numExpediente" size="7" maxlength="6" value=""
+								id="numExpediente">
+							</td>
+						</tr>
+
+						<tr>
+							<td>Autor:</td>
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'autor',
+								nomeSelLotacao:'lotaAutor', value:informacao?.autor /}</td>
+						</tr>
+						<tr>
+							<td>Cadastrante:</td>
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'cadastrante',
+								nomeSelLotacao:'lotaCadastrante', value:informacao?.autor /}</td>
+						</tr>
+						<tr>
+							<td>Responsável:</td>
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'responsavel',
+								nomeSelLotacao:'lotaResponsavel', value:informacao?.autor /}</td>
+						</tr>
+
+						<!-- A lista de par -->
+						<tr>
+							<td>Classificação:</td>
+							<td><input type="hidden" name="classificacaoSel.id" value=""
+								id="classificacaoSel_id"> <input type="hidden"
+								name="classificacaoSel.descricao" value=""
+								id="classificacaoSel_descricao"> <input type="hidden"
+								name="classificacaoSel.buscar" value=""
+								id="classificacaoSel_buscar"> <input type="hidden"
+								name="reqclassificacaoSel" value="" id="reqclassificacaoSel">
+								<input type="hidden" name="alterouSel" value="" id="alterouSel">
+								<input type="text" name="classificacaoSel.sigla" size="25"
+								value="" id="classificacaoSel_sigla"
+								onblur="javascript: ajax_classificacao();"
+								onkeypress="return handleEnter(this, event)"> <input
+								type="button" id="classificacaoSelButton" value="..."
+								onclick="javascript: popitup_classificacao('');" theme="simple">
+								<span id="classificacaoSelSpan"> </span></td>
+						</tr>
+						<tr>
+							<td class="tdLabel"><label for="descrDocumento"
+								class="label">Título:</label>
+							</td>
+							<td><input type="text" name="descrDocumento" size="80"
+								value="" id="descrDocumento"></td>
+						</tr>
+						<tr>
+							<td class="tdLabel"><label class="label" for="fullText">Conteudo:</label>
+							</td>
+							<td><input type="text" id="fullText" value="" size="80"
+								name="fullText"></td>
+						</tr>
+						<tr>
+							<td colspan="2"><input type="submit"
+								onclick="javascript:  if (isCarregando()) return false; carrega();"
+								class="gt-btn-medium gt-btn-left" value="Buscar"></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+	<br /> <input type="button" value="Novo"
+		onclick="javascript: window.location='@{Application.editar(0)}';"
+		class="gt-btn-medium gt-btn-right" />
+
+</div>
+
+

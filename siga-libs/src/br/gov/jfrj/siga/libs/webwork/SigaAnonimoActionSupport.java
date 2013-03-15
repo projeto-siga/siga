@@ -25,6 +25,8 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,6 +108,19 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 	// }
 
 	protected void carregaPerfil() throws Exception {
+	}
+
+	@SuppressWarnings("unchecked")
+	public HashMap<String, String> getHeaders() {
+
+		HashMap<String, String> atributos = new HashMap<String, String>();
+		Enumeration<String> headerNames = getRequest().getHeaderNames();
+
+		while (headerNames.hasMoreElements()) {
+			String s = (String) headerNames.nextElement();
+			atributos.put(s, getRequest().getHeader(s));
+		}
+		return atributos;
 	}
 
 	public Paginador getP() {

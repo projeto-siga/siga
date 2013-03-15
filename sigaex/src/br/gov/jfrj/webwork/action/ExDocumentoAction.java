@@ -97,8 +97,8 @@ import com.opensymphony.xwork.Action;
 public class ExDocumentoAction extends ExActionSupport {
 
 	/**
-	 * 
-	 */
+         * 
+         */
 	private static final long serialVersionUID = 2051335434134663817L;
 
 	// private static Log log = LogFactory.getLog(ExDocumentoAction.class);
@@ -1408,34 +1408,44 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 		}
 	}
-	
+
 	public String aDesfazerCancelamentoDocumento() throws Exception {
 		buscarDocumento(true);
-		if (!Ex.getInstance().getComp()
-				.podeDesfazerCancelamentoDocumento(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível desfazer o cancelamento deste documento");
+		if (!Ex.getInstance()
+				.getComp()
+				.podeDesfazerCancelamentoDocumento(getTitular(),
+						getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível desfazer o cancelamento deste documento");
 		try {
-			Ex.getInstance().getBL()
-					.DesfazerCancelamentoDocumento(getCadastrante(), getLotaTitular(), doc);
+			Ex.getInstance()
+					.getBL()
+					.DesfazerCancelamentoDocumento(getCadastrante(),
+							getLotaTitular(), doc);
 		} catch (final Exception e) {
 			throw e;
 		}
 		return Action.SUCCESS;
 	}
-	
+
 	public String aTornarDocumentoSemEfeito() throws Exception {
 		buscarDocumento(true);
-		if (!Ex.getInstance().getComp()
-				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível tornar documento sem efeito.");
+		if (!Ex.getInstance()
+				.getComp()
+				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(),
+						mob))
+			throw new AplicacaoException(
+					"Não é possível tornar documento sem efeito.");
 		try {
-			Ex.getInstance().getBL()
-					.TornarDocumentoSemEfeito(getCadastrante(), getLotaTitular(), doc);
+			Ex.getInstance()
+					.getBL()
+					.TornarDocumentoSemEfeito(getCadastrante(),
+							getLotaTitular(), doc);
 		} catch (final Exception e) {
 			throw e;
 		}
 		return Action.SUCCESS;
-	}	
+	}
 
 	private void carregarBeans() throws Exception {
 		ExMobil mobPai = null;

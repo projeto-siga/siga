@@ -1,0 +1,39 @@
+#{extends 'main.html' /} #{set title:'Edição de Ação' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Ação</h2>
+
+		<div class="gt-form gt-content-box">
+			#{form @Application.gravarServico()} #{if
+			servico?.idServico} <input type="hidden"
+				name="servico.idServico" value="${servico.idServico}">
+			#{/if}
+			<div class="gt-form-row gt-width-66">
+				<label>Código</label> <input type="text"
+					name="servico.siglaServico"
+					value="${servico?.siglaServico}" />
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Título</label> <input type="text"
+					name="servico.tituloServico"
+					value="${servico?.tituloServico}" size="100"/>
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Descrição</label> <input type="text"
+					name="servico.descrServico"
+					value="${servico?.descrServico}" size="100"/>
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" value="Salvar"
+					class="gt-btn-medium gt-btn-left" />#{if
+				servico?.idServico} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarServico()}?id=${servico.idServico}'" />
+				#{/if}
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>
+

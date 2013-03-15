@@ -26,6 +26,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -36,6 +40,7 @@ import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.FOP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
@@ -53,22 +58,23 @@ public class ExDaoTest extends TestCase {
 		// HibernateUtil
 		// .configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml",
 		// ExMarca.class, CpMarca.class);
-		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
+		/*CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 
-		dao = ExDao.getInstance();
+		dao = ExDao.getInstance();*/
 	}
-	
-	public void testaExtensaoConversorHTML(String html) throws Exception{
-		ConversorHtml ext = AbstractConversorHTMLFactory.getInstance().getExtensaoConversorHTML();
-		byte b[] = ext.converter(html, ConversorHtml.PDF);
+
+	public void testaPattern() {
+		Matcher m = Pattern.compile("(https?://)([a-zA-Z_0-9]+)(:[0-9]{1,5})?(/.*)?").matcher("http://localhost:9000/sigasr");
+		System.out.println(m.find() + "  --" + m.group(1) + "--" + m.group(2) + "--" + m.group(3) + "--" + m.group(4)+"--");
+
 	}
-	
-	public static void main (String[] a) throws Exception{
+
+	public static void main(String[] a) throws Exception {
 		ExDaoTest test = new ExDaoTest();
-		test.testaExtensaoConversorHTML("<html><body><table><caption>tabela 1</caption><thead><tr><th>vv</th><th>vv</th></tr></thead><tbody><tr><td>xx</td><td>xx</td></tr></tbody></table><p></p><table><caption>tabela 2</caption><thead><tr><th>xx</th><th>xx</th></tr></thead><tbody><tr><td>xx</td><td>xx</td></tr></tbody></table>");
+		test.testaPattern();
 	}
 
 	/**
@@ -81,12 +87,12 @@ public class ExDaoTest extends TestCase {
 			System.out.println("Data e hora da ultima atualização - "
 					+ dao.consultarDataUltimaAtualizacao());
 
-//			ExModelo mod = dao.consultar(512L, ExModelo.class, false);
-//			mod.setNmMod(mod.getNmMod() + " - teste.");
-//			dao.iniciarTransacao();
-//			dao.gravar(mod);
-//			dao.commitTransacao();
-			
+			// ExModelo mod = dao.consultar(512L, ExModelo.class, false);
+			// mod.setNmMod(mod.getNmMod() + " - teste.");
+			// dao.iniciarTransacao();
+			// dao.gravar(mod);
+			// dao.commitTransacao();
+
 			List<ExConfiguracao> l = dao.listarTodos(ExConfiguracao.class);
 			if (true)
 				return;
@@ -215,7 +221,9 @@ public class ExDaoTest extends TestCase {
 						continue;
 					try {
 						cDoc++;
-						String sNome = Ex.getInstance().getBL()
+						String sNome = Ex
+								.getInstance()
+								.getBL()
 								.verificarAssinatura(
 										mov.getExDocumento()
 												.getConteudoBlobPdf(),
@@ -277,7 +285,9 @@ public class ExDaoTest extends TestCase {
 						continue;
 					try {
 						cMov++;
-						String sNome = Ex.getInstance().getBL()
+						String sNome = Ex
+								.getInstance()
+								.getBL()
 								.verificarAssinatura(
 										mov.getExMovimentacaoRef()
 												.getConteudoBlobpdf(),

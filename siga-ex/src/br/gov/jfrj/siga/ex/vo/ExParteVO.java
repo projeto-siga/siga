@@ -58,8 +58,8 @@ public class ExParteVO {
 			if (nomeAbreviado.length() == 0)
 				nomeAbreviado = n.substring(0, 1).toUpperCase()
 						+ n.substring(1).toLowerCase();
-//			else if (!"|DA|DE|DO|DAS|DOS|E|".contains("|" + n + "|"))
-//				nomeAbreviado += " " + n.substring(0, 1) + ".";
+			// else if (!"|DA|DE|DO|DAS|DOS|E|".contains("|" + n + "|"))
+			// nomeAbreviado += " " + n.substring(0, 1) + ".";
 		}
 		return nomeAbreviado;
 	}

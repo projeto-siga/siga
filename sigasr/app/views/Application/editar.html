@@ -1,0 +1,170 @@
+#{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
+
+<script language="javascript">
+function carregarAtributos(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		if (frm[i].name && frm[i].value)
+			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+	}
+	PassAjaxResponseToFunction('@{Application.exibirAtributos()}', 'carregouAtributos', null, false, params);
+}
+
+function carregouAtributos(response, param){
+	var div = document.getElementById('divAtributos');
+	div.innerHTML = response;
+}
+
+function carregarLocalERamal(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		if (frm[i].name && frm[i].value)
+			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+	}
+	PassAjaxResponseToFunction('@{Application.exibirLocalERamal()}', 'carregouLocalERamal', null, false, params);
+}
+
+function carregouLocalERamal(response, param){
+	var div = document.getElementById('divLocalERamal');
+	div.innerHTML = response;
+}
+
+function carregarItem(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		if (frm[i].name && frm[i].value)
+			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+	}
+	PassAjaxResponseToFunction('@{Application.exibirItemConfiguracao()}', 'carregouItem', null, false, params);
+}
+
+function carregouItem(response, param){
+	var div = document.getElementById('divItem');
+	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
+}
+
+function carregarServico(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		if (frm[i].name && frm[i].value)
+			params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+	}
+	PassAjaxResponseToFunction('@{Application.exibirServico()}', 'carregouServico', null, false, params);
+}
+
+function carregouServico(response, param){
+	var div = document.getElementById('divServico');
+	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
+}
+
+</script>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2>#{if solicitacao.idSolicitacao}${solicitacao.codigo}#{/if}
+			#{else} #{if solicitacao.solicitacaoPai}Solicitação filha de
+			${solicitacao.solicitacaoPai.codigo}#{/if} #{else}Cadastro de
+			solicitação#{/else}#{/else}</h2>
+		<div class="gt-content-box gt-form">
+
+			#{form @Application.gravar(),
+			enctype:'multipart/form-data',id:'formSolicitacao' } 
+				#{if solicitacao.solicitacaoPai}
+				<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao"
+				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
+				#{/if}
+				#{if solicitacao.idSolicitacao}
+				<input
+				type="hidden" name="solicitacao.idSolicitacao"
+				value="${solicitacao.idSolicitacao}" /> 
+				#{/if}
+				<input type="hidden"
+				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
+
+			#{ifErrors}
+			<p class="gt-error">Alguns campos obrigatórios não foram
+				preenchidos ${error}</p>
+			#{/ifErrors}
+
+			<div class="gt-form-row gt-width-66">
+				<label>Solicitante</label> #{selecao tipo:'pessoa',
+				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
+				onchange:'carregarLocalERamal();carregarItem();' /}
+			</div>
+
+			<div class="gt-form-row gt-width-66">
+				<label>Quando deseja receber notificação de andamento?</label>
+				#{select name:'solicitacao.formaAcompanhamento',
+				items:formasAcompanhamento,
+				labelProperty:'descrFormaAcompanhamento',
+				value:solicitacao.formaAcompanhamento /}
+			</div>
+
+			<div id="divLocalERamal">#{include
+				'Application/exibirLocalERamal.html' /}</div>
+
+			<div id="divItem">#{include
+				'Application/exibirItemConfiguracao.html' /}</div>
+
+			#{if priorizar}
+			<div class="gt-form-row gt-width-66">
+				<label>Os prejuízos ou dificuldades relativos ao problema
+					são</label> #{select name:'solicitacao.gravidade', items:gravidades,
+				labelProperty:'respostaEnunciado', value:solicitacao.gravidade /}
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>O problema deve ser resolvido</label> #{select
+				name:'solicitacao.urgencia', items:urgencias,
+				labelProperty:'respostaEnunciado', value:solicitacao.urgencia /}
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Se nada for feito, a situação</label> #{select
+				name:'solicitacao.tendencia', items:tendencias,
+				labelProperty:'respostaEnunciado', value:solicitacao.tendencia /}
+			</div>
+			#{/if}
+			<div class="gt-form-row gt-width-66">
+				<label>Descrição</label>
+				<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
+					id="descrSolicitacao">${solicitacao.descrSolicitacao}</textarea>
+				<span style="color: red">#{error
+					'solicitacao.descrSolicitacao' /}</span>
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Anexar arquivo</label> <input type="file"
+					name="solicitacao.arquivo" />
+			</div>
+
+			#{if abrirFechando}
+			<div class="gt-form-row gt-width-66">
+				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
+					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',
+					disabled: alterando /} Fechar o chamado logo após a abertura</label>
+			</div>
+			#{/if}
+
+			<div class="gt-form-row gt-width-66" id="motivoFechamento"
+				style="display: none">
+				<label>Motivo do fechamento</label> <input type="text" size="100"
+					name="solicitacao.motivoFechamentoAbertura"
+					id="motivoFechamentoAbertura" />
+			</div>
+
+			<div class="gt-form-row">
+				<input type="submit" value="Gravar"
+					class="gt-btn-medium gt-btn-left" />
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>

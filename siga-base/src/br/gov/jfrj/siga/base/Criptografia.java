@@ -29,8 +29,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Classe responsável por criptografar dados .
@@ -71,18 +70,16 @@ public class Criptografia {
 					"Parâmetros inválidos!\n"
 							+ "Use: Criptografia [mensagem que sera criptografada] [chave da criptografia]");
 		}
-		BASE64Encoder enc = new BASE64Encoder();
-		BASE64Decoder dec = new BASE64Decoder();
 
 		String mensagem = args[0];
-		String chave = enc.encode(args[1].getBytes());
+		String chave = new String(Base64.encode(args[1].getBytes()));
 
 		byte[] msgCriptografada = Criptografia.criptografar(mensagem, chave);
 
 		System.out.println("mensagem criptografada com "
 				+ ALGORITMO_CRIPTOGRAFICO + " Em Hex: "
 				+ asHex(msgCriptografada) + " Em Base64 "
-				+ enc.encode(msgCriptografada));
+				+ new String(Base64.encode(msgCriptografada)));
 
 		byte[] msgDescriptografada = Criptografia.desCriptografar(
 				msgCriptografada, chave);
@@ -159,7 +156,7 @@ public class Criptografia {
 	 * @return - array com os bytes correspondente ao hash gerado
 	 */
 	private static byte[] getHashBytesChave(String chave) {
-		return UUID.nameUUIDFromBytes(chave.getBytes()).toString().replace("-",
-				"").getBytes();
+		return UUID.nameUUIDFromBytes(chave.getBytes()).toString()
+				.replace("-", "").getBytes();
 	}
 }

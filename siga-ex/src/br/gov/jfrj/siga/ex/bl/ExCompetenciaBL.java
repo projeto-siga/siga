@@ -520,6 +520,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& podePorConfiguracao(titular, lotaTitular,
 							ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
 							CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+		
+		if(mob.isGeral() && mob.doc().isProcesso())
+			return false;
+			
+		
 		return mob.isGeral();
 	}
 
@@ -725,7 +730,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.doc().isSemEfeito())
 			return false;
 		
-		if(!mob.doc().isEletronico() || !mob.doc().isAssinado() || ((mob.doc().getSubscritor()!=null) && !mob.doc().getSubscritor().equivale(titular)))
+		if(!mob.doc().isEletronico() || !mob.doc().isAssinado())
+			return false;
+		
+		if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
 			return false;
 		
 		//Verifica se o documento está com pedido de publicação no DJE ou BIE.

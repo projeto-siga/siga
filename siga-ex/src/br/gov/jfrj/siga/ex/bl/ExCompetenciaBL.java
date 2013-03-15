@@ -2306,6 +2306,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& mob.doc().isAssinado()
 				&& !mob.isJuntado()
+				&& !mob.isApensado()
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()

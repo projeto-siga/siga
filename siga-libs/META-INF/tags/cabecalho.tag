@@ -57,29 +57,31 @@
 ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
+<c:set var="serverAndPort" scope="request">http://${pageContext.request.serverName}:${pageContext.request.localPort}</c:set>
 
-<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css"
+<link rel="stylesheet" href="${serverAndPort}/siga/css/ecoblue/css/reset-fonts.css"
 	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css"
+<link rel="stylesheet" href="${serverAndPort}/siga/css/ecoblue/css/gt-styles.css"
 	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
+<link rel="stylesheet" href="${serverAndPort}/siga/css/ecoblue/css/custom.css"
 	type="text/css" media="screen, projection">
 
-<!-- <link rel="StyleSheet" href="${path}/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
+<!-- <link rel="StyleSheet" href="/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
 
-<script src="/siga/sigalibs/ajax.js" language="JavaScript1.1"
+<script src="${serverAndPort}/siga/sigalibs/ajax.js" language="JavaScript1.1"
 	type="text/javascript"></script>
-<script src="/siga/sigalibs/static_javascript.js"
+<script src="${serverAndPort}/siga/sigalibs/static_javascript.js"
 	language="JavaScript1.1" type="text/javascript" charset="utf-8"></script>
 
 <!-- <link href="${pageContext.request.contextPath}/sigalibs/menu.css"
 	rel="stylesheet" type="text/css" /> -->
 
-<link rel="shortcut icon" href="/sigalibs/siga.ico" />
+<link rel="shortcut icon" href="${serverAndPort}/siga/sigalibs/siga.ico" />
 
 <script language="JavaScript"
-	src="/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
-<!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
+	src="${serverAndPort}/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
+<!--[if gte IE 5.5]><script language="JavaScript" src="${serverAndPort}/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
+
 <script language="JavaScript" type="text/javascript">
 	$(document).ready(function() {
 		$('.links li code').hide();
@@ -121,7 +123,7 @@ ${meta}
 						 - ${cadastrante.lotacao.sigla}</c:when>
 												</c:choose>
 											</c:catch> </strong> <span class="gt-util-separator">|</span> <a
-											href="/siga/logoff.action">sair</a>
+											href="${serverAndPort}/siga/logoff.action">sair</a>
 									</p>
 									<p style="text-align: right; padding-top: 10px;">
 										<c:catch>
@@ -129,12 +131,12 @@ ${meta}
 												<c:when
 													test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
 													<span class="gt-util-separator">|</span>
-													<a href="/siga/substituicao/finalizar.action">finalizar</a>
+													<a href="${serverAndPort}/siga/substituicao/finalizar.action">finalizar</a>
 												</c:when>
 												<c:when
 													test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
 													<span class="gt-util-separator">|</span>
-													<a href="/siga/substituicao/finalizar.action">finalizar</a>
+													<a href="${serverAndPort}/siga/substituicao/finalizar.action">finalizar</a>
 												</c:when>
 												<c:otherwise></c:otherwise>
 											</c:choose>
@@ -147,7 +149,7 @@ ${meta}
 						<!-- logo -->
 						<div class="gt-logo" style="padding: 0;">
 							<img style="margin-top: 3px; margin-bottom: -13px;"
-								src="/siga/imagens/logo.png">
+								src="${serverAndPort}/siga/imagens/logo.png">
 						</div>
 						<div class="gt-company">
 							<strong>Justi&ccedil;a Federal <c:catch>
@@ -180,31 +182,31 @@ ${meta}
 							<c:if test="${desabilitarbusca != 'sim'}">
 								<div class="gt-search">
 									<div class="gt-search-inner" onclick="">
-										<siga:selecao propriedade="buscar" modulo="sigaex"
-											tipo="expediente" tema="simple" ocultardescricao="sim"
-											buscar="nao" siglaInicial="Buscar documento" />
+										<siga:selecao propriedade="buscar" modulo="siga"
+											tipo="generico" tema="simple" ocultardescricao="sim"
+											buscar="nao" siglaInicial="Buscar" />
 										<script type="text/javascript">
 											var fld = document
-													.getElementById("buscar_expedienteSel_sigla");
+													.getElementById("buscar_genericoSel_sigla");
 											fld.setAttribute("class",
 													"gt-search-text");
 											fld.className = "gt-search-text";
 											fld.onfocus = function() {
-												if (this.value == 'Buscar documento') {
+												if (this.value == 'Buscar') {
 													this.value = '';
 												}
 											};
 											fld.onblur = function() {
 												if (this.value == '') {
-													this.value = 'Buscar documento';
+													this.value = 'Buscar';
 													return;
 												}
-												if (this.value != 'Buscar documento')
-													ajax_buscar_expediente();
+												if (this.value != 'Buscar')
+													ajax_buscar_generico();
 											};
 											fld.onkeypress = function(event) {
 												var fid = document
-												.getElementById("buscar_expedienteSel_id");
+												.getElementById("buscar_genericoSel_id");
 												
 												event = (event) ? event
 														: window.event
@@ -226,23 +228,22 @@ ${meta}
 												}
 											};
 
-											self.resposta_ajax_buscar_expediente = function(
+											self.resposta_ajax_buscar_generico = function(
 													response, d1, d2, d3) {
 												var sigla = document
-														.getElementsByName('buscar_expedienteSel.sigla')[0].value;
+														.getElementsByName('buscar_genericoSel.sigla')[0].value;
 												var data = response.split(';');
 												if (data[0] == '1') {
-													retorna_buscar_expediente(
+													retorna_buscar_generico(
 															data[1], data[2],
 															data[3]);
 													if (data[1] != null
 															&& data[1] != "") {
-														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
-															+ data[2];
+														window.location.href = data[3];
 													}
 													return
 												} 
-												retorna_buscar_expediente('',
+												retorna_buscar_generico('',
 														'', '');
 
 												return;

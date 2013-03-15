@@ -1,0 +1,33 @@
+#{extends 'main.html' /} #{set title:'Edição de Tipo de Atributo' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Tipo de Atributo</h2>
+
+		<div class="gt-form gt-content-box">
+			#{form @Application.gravarTipoAtributo()} #{if att?.idTipoAtributo} <input
+				type="hidden" name="att.idTipoAtributo"
+				value="${att.idTipoAtributo}"> #{/if}
+			<div class="gt-form-row gt-width-66">
+				<label>Nome</label> <input type="text"
+					name="att.nomeTipoAtributo"
+					value="${att?.nomeTipoAtributo}" size="60" />
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Descrição</label> <input type="text"
+					name="att.descrTipoAtributo"
+					value="${att?.descrTipoAtributo}" size="60" />
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" value="Salvar"
+					class="gt-btn-medium gt-btn-left" /> #{if
+				att?.idTipoAtributo} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarTipoAtributo()}?id=${att.idTipoAtributo}'" />
+				#{/if}
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>
+

@@ -1,0 +1,63 @@
+#{extends 'main.html' /} #{set title:'Designação de solicitações' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Designações</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Data</th>
+						<th>Órgão</th>
+						<th>Lotação</th>
+						<th>Pessoa</th>
+						<th>Cargo</th>
+						<th>Função</th>
+						<th>Item</th>
+						<th>Ação</th>
+						<th>Atendente</th>
+						<th>Pré-atendente</th>
+						<th>Pós-atendente</th>
+						<th>Pesquisa de satisfação?</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:designacoes, as:'design'}
+					<tr
+						onclick="javascript:window.location='@{Application.editarDesignacao(design.idConfiguracao)}'"
+						style="cursor: pointer;">
+						<td>${design.hisIdIni}</td>
+						<td>${design.hisDtIniDDMMYY}</td>
+						<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
+						<td style="color: ${design.lotacao?.hisDtFim ? 'red' : 'black'}">${design.lotacao?.siglaLotacao}</td>
+						<td style="color: ${design.dpPessoa?.hisDtFim ? 'red' : 'black'}">${design.dpPessoa?.nomeAbreviado}</td>
+						<td style="color: ${design.cargo?.hisDtFim ? 'red' : 'black'}">${design.cargo?.descricao}</td>
+						<td style="color: ${design.funcaoConfianca?.hisDtFim ? 'red' : 'black'}">${design.funcaoConfianca?.descricao}</td>
+						<td style="color: ${design.itemConfiguracao?.hisDtFim ? 'red' : 'black'}">${design.itemConfiguracao?.tituloItemConfiguracao}</td>
+						<td style="color: ${design.servico?.hisDtFim ? 'red' : 'black'}">${design.servico?.tituloServico}</td>
+						<td style="color: ${design.atendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.atendente?.siglaLotacao,
+							descricao:design.atendente?.nomeLotacao /}</td>
+						<td style="color: ${design.preAtendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.preAtendente?.siglaLotacao,
+							descricao:design.preAtendente?.nomeLotacao /}</td>
+						<td style="color: ${design.posAtendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.posAtendente?.siglaLotacao,
+							descricao:design.posAtendente?.nomeLotacao /}</td>
+						<td>${design.pesquisaSatisfacaoString}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarDesignacao}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

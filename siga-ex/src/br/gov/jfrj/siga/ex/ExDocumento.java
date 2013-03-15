@@ -107,7 +107,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	// @Override
 	public ExNivelAcesso getExNivelAcesso() {
-		log.info("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
+		log.debug("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
 		ExNivelAcesso nivel = null;
 		if (getMobilGeral() != null
 				&& getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
@@ -354,7 +354,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Field(index = Index.TOKENIZED, name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		log.info("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
+		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
 		String nivel = null;
 		ExNivelAcesso nivelAcesso = getExNivelAcesso();
 

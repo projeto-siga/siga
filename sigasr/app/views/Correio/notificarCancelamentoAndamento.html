@@ -1,0 +1,24 @@
+<html>
+<body>
+	<p>
+		Informamos que foi <b>cancelado</b>, em
+		${andamento.dtCancelamentoDDMMYYYYHHMM}, o <b>andamento</b> abaixo,
+		dado na solicitação <b>${sol.codigo}</b>
+	</p>
+	<blockquote>
+		<p>${andamento.descrAndamento}</p>
+		<p>Andamento dado por
+			${andamento.cadastrante.descricaoIniciaisMaiusculas}
+			(${andamento.lotaCadastrante.siglaLotacao})</p>
+		<p>
+			<b>Cancelado</b> por
+			${andamento.cancelador.descricaoIniciaisMaiusculas}
+			(${andamento.lotaCancelador.siglaLotacao})
+		</p>
+	</blockquote>
+	<p>
+		Para acessar a solicitação, clique <a
+			href="@@{Application.exibir(sol.idSolicitacao)}">aqui</a>.
+	</p>
+</body>
+</html>

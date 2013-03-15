@@ -18,8 +18,30 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.model;
 
+import java.util.Date;
+
 public interface Historico extends Assemelhavel {
 	public Long getIdInicial();
 
 	public boolean equivale(Object other);
+
+	public Long getId();
+	
+	public void setId(Long id);
+
+	public Long getHisIdIni();
+
+	public void setHisIdIni(Long hisIdIni);
+
+	public Date getHisDtIni();
+
+	public void setHisDtIni(Date hisDtIni);
+
+	public Date getHisDtFim();
+
+	public void setHisDtFim(Date hisDtFim);
+
+	public int getHisAtivo();
+
+	public void setHisAtivo(int hisAtivo);
 }

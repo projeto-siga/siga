@@ -1,0 +1,90 @@
+#{extends 'main.html' /} #{set title:'Designação de solicitações' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		#{if designacao?.idConfiguracao}
+		<h2 class="gt-form-head">Designação Nº ${designacao.hisIdIni}</h2>
+		#{/if} #{else}
+		<h2 class="gt-form-head">Nova designação</h2>
+		#{/else}
+
+		<div class="gt-form gt-content-box">
+			#{form @Application.gravarDesignacao()} #{if
+			designacao?.idConfiguracao} <input type="hidden"
+				name="designacao.idConfiguracao"
+				value="${designacao.idConfiguracao}"> #{/if}
+				
+			<div class="gt-form-row gt-width-66">
+				<label>Órgão</label> 
+				#{select name:'designacao.orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
+				labelProperty:'nmOrgaoUsu', value:designacao.orgaoUsuario?.idOrgaoUsu}
+				#{option 0}Nenhum#{/option} 
+				#{/select}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Lotação</label>#{selecao
+					tipo:'lotacao', nome:'designacao.lotacao',
+					value:designacao.lotacao?.lotacaoAtual /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Pessoa</label>#{selecao
+					tipo:'pessoa', nome:'designacao.dpPessoa',
+					value:designacao.dpPessoa?.pessoalAtual /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Cargo</label>#{selecao
+					tipo:'cargo', nome:'designacao.cargo',
+					value:designacao.cargo /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Função</label>#{selecao
+					tipo:'funcao', nome:'designacao.funcaoConfianca',
+					value:designacao.funcaoConfianca /}
+			</div>
+
+			<div class="gt-form-row gt-width-66">
+				<label>Item</label> #{selecao tipo:'item',
+					nome:'designacao.itemConfiguracao',
+					value:designacao.itemConfiguracao?.atual /}
+			</div>
+
+			<div class="gt-form-row gt-width-66">
+				<label>Ação</label> #{selecao tipo:'servico',
+					nome:'designacao.servico', value:designacao.servico?.atual /}
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Atendente</label>#{selecao tipo:'lotacao',
+					nome:'designacao.atendente', value:designacao.atendente?.lotacaoAtual /}
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Pré-atendente</label>#{selecao
+					tipo:'lotacao', nome:'designacao.preAtendente',
+					value:designacao.preAtendente?.lotacaoAtual /}
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Pós-atendente</label> #{selecao
+					tipo:'lotacao', nome:'designacao.posAtendente',
+					value:designacao.posAtendente?.lotacaoAtual /}
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Exibir pesquisa de satisfação</label> #{radioSN
+				name:'designacao.pesquisaSatisfacao',
+				value:designacao.pesquisaSatisfacao /}
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" value="Salvar"
+					class="gt-btn-medium gt-btn-left" />#{if
+				designacao?.idConfiguracao} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarDesignacao()}?id=${designacao.idConfiguracao}'" />
+				#{/if}
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>
+

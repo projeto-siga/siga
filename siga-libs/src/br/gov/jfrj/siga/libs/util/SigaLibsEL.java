@@ -254,10 +254,15 @@ public class SigaLibsEL {
 
 	public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, Integer idServico) throws Exception {
-		return Cp.getInstance().getConf().podePorConfiguracao(titular,
-				lotaTitular,
-				dao().consultar(idServico.longValue(), CpServico.class, false),
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+		return Cp
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						dao().consultar(idServico.longValue(), CpServico.class,
+								false),
+						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
 	}
 
 	// public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa
@@ -273,34 +278,36 @@ public class SigaLibsEL {
 	public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, String servicoPath) throws Exception {
 
-		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
-				titular, lotaTitular, servicoPath);
+		return Cp
+				.getInstance()
+				.getConf()
+				.podeUtilizarServicoPorConfiguracao(titular, lotaTitular,
+						servicoPath);
 	}
-	
-	public static String getURLSistema(String nome){
+
+	public static String getURLSistema(String nome) {
 		String ambiente = SigaBaseProperties.getString("ambiente");
 		String url = System.getProperty(nome + "." + ambiente + ".url");
-		if (url == null || url.length() == 0){
+		if (url == null || url.length() == 0) {
 			url = "#";
 		}
 		return url.trim();
 	}
+
 	
-	public static String getComplementoHead(CpOrgaoUsuario oragaoUsu){
-			ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
-			Map attrs = new HashMap();
-			attrs.put("nmMod", "macro complementoHEAD");
-			attrs.put("template", "[@complementoHEAD/]");
-			try {
-				return p.processarModelo(oragaoUsu, attrs, null).trim() ;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+	public static String getComplementoHead(CpOrgaoUsuario oragaoUsu) {
+		ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
+		Map attrs = new HashMap();
+		attrs.put("nmMod", "macro complementoHEAD");
+		attrs.put("template", "[@complementoHEAD/]");
+		try {
+			return p.processarModelo(oragaoUsu, attrs, null).trim();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "";
 	}
 
-
 }
-
-

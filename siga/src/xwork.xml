@@ -15,6 +15,18 @@
 		<action name="principal" class="br.gov.jfrj.webwork.action.PrincipalAction">
 			<result>/paginas/principal.jsp</result>
 		</action>
+		
+		<action name="pagina_vazia" class="br.gov.jfrj.webwork.action.PlayAction">
+			<result>/paginas/play_pagina_vazia.jsp</result>
+		</action>
+		
+		<action name="ajax_proxy" class="br.gov.jfrj.webwork.action.PlayAction" method="aAjaxProxy">
+			<result>/paginas/play_proxy.jsp</result>
+		</action>
+		
+		<action name="usuario_autenticado" class="br.gov.jfrj.webwork.action.PlayAction" method="aUsuarioAutenticado">
+			<result>/paginas/play_usuario_autenticado.jsp</result>
+		</action>
 
 		<!-- Renato: Comentei pois acho que não está sendo utilizado mais. <action 
 			name="news" class="br.gov.jfrj.webwork.action.PrincipalAction"> <result>/paginas/entradas/news.jsp?completo=true</result> 
@@ -92,6 +104,16 @@
 			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
 
+	</package>
+	
+	<package name="generico" extends="default" namespace="/generico">
+		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
+		<default-action-ref name="selecionar" />
+		<action name="selecionar" class="br.gov.jfrj.webwork.action.PrincipalAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
+		</action>
 	</package>
 
 	<package name="substituicao" extends="default" namespace="/substituicao">

@@ -1,0 +1,40 @@
+#{extends 'main.html' /} #{set title:'Designação de solicitações' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Itens de Configuração</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th>Código</th>
+						<th>Título</th>
+						<th>Descrição</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:itens, as:'item'}
+					<tr
+						onclick="javascript:window.location='@{Application.editaritem(item.idItemConfiguracao)}'"
+						style="cursor: pointer;">
+						<td style="padding-left: ${item.nivel*13}px;">${item.siglaItemConfiguracao}</td>
+						<td>${item.tituloItemConfiguracao}</td>
+						<td>${item.descrItemConfiguracao}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarItem}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

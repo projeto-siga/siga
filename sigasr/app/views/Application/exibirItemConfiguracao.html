@@ -1,0 +1,10 @@
+<div class="gt-form-row gt-width-66">
+				<label>Item</label> #{selecao tipo:'item',
+				nome:'solicitacao.itemConfiguracao',
+				value:solicitacao.itemConfiguracao, grande:true, onchange:'carregarServico();',
+				params:'pessoa='+solicitacao.solicitante?.idPessoa /} <span style="color: red">#{error
+					'solicitacao.itemConfiguracao' /}</span>
+</div>
+
+<div id="divServico">#{include 'Application/exibirServico.html'
+				/}</div>

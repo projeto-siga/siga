@@ -1,0 +1,7 @@
+#{list items:solicitacao.tiposAtributoAssociados, as:'tipoAtributo'}
+<div class="gt-form-row gt-width-66">
+<label>${tipoAtributo.nomeTipoAtributo}</label>
+<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" />
+<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+</div>
+#{/list}

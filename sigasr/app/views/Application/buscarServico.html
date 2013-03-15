@@ -1,0 +1,50 @@
+#{extends 'main.html' /}
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<div class="gt-content-box gt-for-table">
+			<form action="@{Application.buscarServico}">
+				<input type="hidden" name="popup" value="true" />
+				<table class="gt-form-table">
+					<tr class="header">
+						<td align="center" valign="top" colspan="4">Dados da ação</td>
+					</tr>
+					<tr>
+						<td>Código:</td>
+						<td><input type="text" name="filtro.siglaServico"
+							value="${filtro?.siglaServico}" />
+						</td>
+					</tr>
+					<tr>
+						<td>Título</td>
+						<td><input type="text" name="filtro.tituloServico"
+							value="${filtro?.tituloServico}" />  <input type="hidden" name="nome"
+							value="${nome}" />
+						</td>
+					</tr>
+					<tr>
+						<input type="hidden" name="pessoa" value="${pessoa}" />
+						<input type="hidden" name="item" value="${item}" />
+						<td><input type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" /></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="gt-content-box">
+	<table class="gt-table">
+		<tr>
+			<th>Código
+			</td>
+			<th>Descrição
+			</td>
+		</tr>
+		#{list items:itens, as:'servico'}
+		<tr>
+			<td style="padding-left: ${servico.nivel*13}px;"><a href="javascript:opener.retorna_servico${nome}('${servico.id}','${servico.sigla}','${servico.descricao}');window.close()">${servico.sigla}</a>
+			</td>
+			<td>${servico.descricao}</td>
+		</tr>
+		#{/list}
+	</table>
+</div>

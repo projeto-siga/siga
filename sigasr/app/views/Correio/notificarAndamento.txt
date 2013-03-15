@@ -1,0 +1,8 @@
+Informamos que a solicitação ${sol.codigo} recebeu o seguinte andamento em ${andamento.dtRegDDMMYYYYHHMM}:
+
+	Situação: ${andamento.situacaoString}
+	${andamento.descrAndamento}
+	${andamento.cadastrante.descricaoIniciaisMaiusculas} (${andamento.lotaCadastrante.siglaLotacao})
+
+Para acessar a solicitação, acesse @@{Application.exibir(sol.idSolicitacao)}.
+	

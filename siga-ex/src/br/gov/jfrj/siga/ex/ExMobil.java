@@ -551,6 +551,42 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			return getExDocumento().getSigla();
 		}
 	}
+	
+	/**
+	 * Retorna o código do documento mais o número da via ou do volume.
+	 * 
+	 * @return O código do documento mais o número da via ou do volume.
+	 */
+	public static String getSigla(String codigoDocumento, Integer numSequencia, Long idTipoMobil) {
+		if (codigoDocumento == null)
+			return null;
+		if (idTipoMobil == null)
+			return null;
+		if ((idTipoMobil == ExTipoMobil.TIPO_MOBIL_VIA || idTipoMobil == ExTipoMobil.TIPO_MOBIL_VOLUME)
+				&& (numSequencia == null || numSequencia == 0))
+			throw new Error(
+					"Via e Volume devem possuir número válido de sequencia.");
+		if (idTipoMobil == ExTipoMobil.TIPO_MOBIL_VIA) {
+			final String alfabeto = "ABCDEFGHIJLMNOPQRSTUZ";
+
+			// as vias vão até a letra 'U', se passar disso, assume letra 'Z'
+			if (numSequencia <= 20) {
+				final String vsNumVia = alfabeto.substring(
+						numSequencia - 1, numSequencia);
+				return codigoDocumento + "-" + vsNumVia;
+			} else {
+				final String vsNumVia = "Z";
+				return codigoDocumento + "-" + vsNumVia;
+			}
+		} else if (idTipoMobil == ExTipoMobil.TIPO_MOBIL_VOLUME) {
+			final String vsNumVolume = "V"
+					+ (numSequencia < 10 ? "0" + numSequencia
+							: numSequencia);
+			return codigoDocumento + "-" + vsNumVolume;
+		} else {
+			return codigoDocumento;
+		}
+	}
 
 	/*
 	 * public Long getId() { if (getExDocumento() == null) return null;

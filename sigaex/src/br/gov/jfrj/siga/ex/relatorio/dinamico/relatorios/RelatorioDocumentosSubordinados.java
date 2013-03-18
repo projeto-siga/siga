@@ -73,8 +73,127 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		return this;
 
 	}
-
+	
 	public Collection processarDados() throws Exception {
+
+		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
+		// para a forma
+		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
+				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
+						+ parametros.get("tipoFormaDoc") + "'");
+		
+		ExTipoFormaDoc tipoFormaDoc = null;
+		if (qryTipoForma.list().size() > 0) {
+			tipoFormaDoc = (ExTipoFormaDoc) qryTipoForma.uniqueResult();
+		}
+		
+		String trechoQryTipoForma = tipoFormaDoc == null ? ""
+				: " and tipoForma.idTipoFormaDoc = "
+						+ tipoFormaDoc.getIdTipoFormaDoc();
+
+			
+		// Obtém a lotação com o id passado...
+		Query qrySetor = HibernateUtil.getSessao().createQuery(
+				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
+			
+		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
+		DpLotacao lotacao = (DpLotacao)qrySetor.list().get(0);
+		lotacaoSet.add(lotacao);
+		
+	
+
+		// ... e monta trecho da query para as lotações
+		String listaLotacoes = "";
+		Set<DpLotacao> todasLotas;
+		if (parametros.get("incluirSubordinados") != null)
+			todasLotas = getSetoresSubordinados(lotacaoSet);
+		else
+			todasLotas = lotacaoSet;
+		for (DpLotacao lot : todasLotas) {
+			if (listaLotacoes != "")
+				listaLotacoes += ",";
+			listaLotacoes += lot.getIdInicial().toString();
+		}
+
+		// Monta trecho da query para ocultar seletivamente a descrição do
+		// documento
+		String trechoQryDescrDocumento = "(case when ("
+				+ "	nivel.idNivelAcesso <> 1 "
+				+ "	and nivel.idNivelAcesso <> 6"
+				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
+
+		// Monta trecho da query para retornar o código do documento
+		String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
+				+ "|| '-' || " + "forma.siglaFormaDoc "
+				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "
+				+ "doc.numExpediente " + "|| "
+				+ "(case when (tipoMob.idTipoMobil = 4) "
+				+ "then ('-V' || marca.exMobil.numSequencia) " +
+						"else ('-' || chr(marca.exMobil.numSequencia+64)) end)";
+
+		// Monta query definitiva
+		String listaMarcadoresRelevantes = "2, 3, 5, 7, 14, 15"; // Ativos
+		if (parametros.get("tipoRel").equals("2")) {
+			listaMarcadoresRelevantes = "27"; // Como gestor
+		} else if (parametros.get("tipoRel").equals("3")) {
+			listaMarcadoresRelevantes = "28"; // Como interessado
+		}
+		
+		// bruno.lacerda@avantiprima.com.br
+		// int timeout = 1;
+		Query qryMarcas = HibernateUtil
+				.getSessao()
+				.createQuery(
+						"select " + "	marca.dpLotacaoIni.nomeLotacao, "
+								+ "	orgao.acronimoOrgaoUsu, orgao.siglaOrgaoUsu, forma.siglaFormaDoc, doc.anoEmissao, doc.numExpediente, marca.exMobil.numSequencia, tipoMob.idTipoMobil,  "
+								//+ "	mobPai.exDocumento.orgaoUsuario.acronimoOrgaoUsu, mobPai.exDocumento.orgaoUsuario.siglaOrgaoUsu, mobPai.exDocumento.exFormaDocumento.siglaFormaDoc, mobPai.exDocumento.anoEmissao, mobPai.exDocumento.numExpediente, mobPai.numSequencia, mobPai.exTipoMobil.idTipoMobil,  "
+								+ "	docPai.anoEmissao, docPai.numExpediente, "
+								+ trechoQryCodigoDoc
+								+ ","
+								+ " '"
+								+ parametros.get("link_siga")
+								+ "' ||"
+								+ trechoQryCodigoDoc
+								+ ","
+								+ trechoQryDescrDocumento
+								+ ","
+								+ "	pes.nomePessoa,"
+								+ "	marca.cpMarcador.descrMarcador "
+								+ "from ExMarca marca "
+								+ "inner join marca.exMobil as mob "
+								+ "inner join mob.exTipoMobil as tipoMob "
+								+ "inner join mob.exDocumento as doc "
+								+ "inner join doc.exNivelAcesso as nivel "
+								+ "inner join doc.orgaoUsuario as orgao "
+								+ "inner join doc.exFormaDocumento as forma "
+								+ "inner join forma.exTipoFormaDoc as tipoForma "
+								+ "inner join marca.dpLotacaoIni as lot "
+								+ "inner join marca.cpMarcador as marcador "
+								+ "left outer join marca.dpPessoaIni as pes "
+								+ "left outer join doc.exMobilPai as mobPai "
+								+ "inner join mobPai.exDocumento docPai "
+								+ "where lot.idLotacao in ("
+								+ listaLotacoes
+								+ ") "
+								+ "and marcador.idMarcador in ("
+								+ listaMarcadoresRelevantes
+								+ ")"
+								+ trechoQryTipoForma
+								+ " order by lot.siglaLotacao, doc.idDoc"/*, timeout*/);
+
+		// Retorna
+		List<Object[]> lista = qryMarcas.list();
+
+		List<String> listaFinal = new ArrayList<String>();
+		for (Object[] array : lista) {
+			for (Object value : array)
+				listaFinal.add((String) value);
+		}
+
+		return listaFinal;
+	}
+
+	public Collection processarDadosAntigo() throws Exception {
 
 		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma

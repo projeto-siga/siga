@@ -190,18 +190,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * 
 	 * @throws Exception
 	 */
-	public static String getCodigo(Long idDoc, String siglaOrgaoUsu, String acronimoOrgaoUsu, String siglaFormaDoc, Long anoEmissao, String numExpediente, Integer numSequencia,
-			Long pai_idDoc, String pai_siglaOrgaoUsu, String pai_acronimoOrgaoUsu, String pai_siglaFormaDoc, Long pai_anoEmissao, String pai_numExpediente, Integer pai_numSequencia, Long idTipoMobil) {
+	public static String getCodigo(Long idDoc, String siglaOrgaoUsu, String acronimoOrgaoUsu, String siglaFormaDoc, Long anoEmissao, Long numExpediente, Integer numSequencia, Long idTipoMobil,
+			Long pai_idDoc, String pai_siglaOrgaoUsu, String pai_acronimoOrgaoUsu, String pai_siglaFormaDoc, Long pai_anoEmissao, Long pai_numExpediente, Integer pai_numSequencia, Long pai_idTipoMobil) {
 		
 		if(pai_siglaOrgaoUsu != null && pai_acronimoOrgaoUsu != null && pai_siglaFormaDoc != null && pai_anoEmissao != null && pai_numExpediente != null && numSequencia != null ) {
 			String s = numSequencia.toString();
 			while (s.length() < 2)
 				s = "0" + s;
 
-			return  ExMobil.getSigla(getCodigo(pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, null,null, null, null, null, null, null, null, null), pai_numSequencia, idTipoMobil) + "." + s;
+			return  ExMobil.getSigla(getCodigo(pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil,null, null, null, null, null, null, null, null), pai_numSequencia, pai_idTipoMobil) + "." + s;
 		}
 		if (anoEmissao != null && numExpediente != null) {
-			String s = numExpediente;
+			String s = numExpediente.toString();
 			while (s.length() < 5)
 				s = "0" + s;
 			

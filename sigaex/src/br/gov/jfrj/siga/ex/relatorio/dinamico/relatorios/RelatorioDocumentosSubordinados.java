@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
+import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -123,13 +124,13 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
 
 		// Monta trecho da query para retornar o código do documento
-		String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
+		/*String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
 				+ "|| '-' || " + "forma.siglaFormaDoc "
 				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "
 				+ "doc.numExpediente " + "|| "
 				+ "(case when (tipoMob.idTipoMobil = 4) "
 				+ "then ('-V' || marca.exMobil.numSequencia) " +
-						"else ('-' || chr(marca.exMobil.numSequencia+64)) end)";
+						"else ('-' || chr(marca.exMobil.numSequencia+64)) end)";*/
 
 		// Monta query definitiva
 		String listaMarcadoresRelevantes = "2, 3, 5, 7, 14, 15"; // Ativos
@@ -139,21 +140,18 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 			listaMarcadoresRelevantes = "28"; // Como interessado
 		}
 		
+		
 		// bruno.lacerda@avantiprima.com.br
 		// int timeout = 1;
 		Query qryMarcas = HibernateUtil
 				.getSessao()
 				.createQuery(
 						"select " + "	marca.dpLotacaoIni.nomeLotacao, "
-								+ "	orgao.acronimoOrgaoUsu, orgao.siglaOrgaoUsu, forma.siglaFormaDoc, doc.anoEmissao, doc.numExpediente, marca.exMobil.numSequencia, tipoMob.idTipoMobil,  "
-								//+ "	mobPai.exDocumento.orgaoUsuario.acronimoOrgaoUsu, mobPai.exDocumento.orgaoUsuario.siglaOrgaoUsu, mobPai.exDocumento.exFormaDocumento.siglaFormaDoc, mobPai.exDocumento.anoEmissao, mobPai.exDocumento.numExpediente, mobPai.numSequencia, mobPai.exTipoMobil.idTipoMobil,  "
-								+ "	docPai.anoEmissao, docPai.numExpediente, "
-								+ trechoQryCodigoDoc
-								+ ","
+								+ "doc.idDoc, orgao.siglaOrgaoUsu, orgao.acronimoOrgaoUsu, forma.siglaFormaDoc, doc.anoEmissao, doc.numExpediente, doc.numSequencia, tipoMob.idTipoMobil,  "
+								+ "docPai.idDoc, orgaoDocPai.siglaOrgaoUsu, orgaoDocPai.acronimoOrgaoUsu, formaDocPai.siglaFormaDoc, docPai.anoEmissao, docPai.numExpediente, docPai.numSequencia, tipoMobPai.idTipoMobil, "
 								+ " '"
 								+ parametros.get("link_siga")
-								+ "' ||"
-								+ trechoQryCodigoDoc
+								+ " '"
 								+ ","
 								+ trechoQryDescrDocumento
 								+ ","
@@ -171,7 +169,10 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 								+ "inner join marca.cpMarcador as marcador "
 								+ "left outer join marca.dpPessoaIni as pes "
 								+ "left outer join doc.exMobilPai as mobPai "
-								+ "inner join mobPai.exDocumento docPai "
+								+ "left outer join mobPai.exDocumento docPai "
+								+ "left outer join docPai.orgaoUsuario orgaoDocPai "
+								+ "left outer join docPai.exFormaDocumento formaDocPai "
+								+ "left outer join mobPai.exTipoMobil tipoMobPai "
 								+ "where lot.idLotacao in ("
 								+ listaLotacoes
 								+ ") "
@@ -186,14 +187,53 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 		List<String> listaFinal = new ArrayList<String>();
 		for (Object[] array : lista) {
-			for (Object value : array)
-				listaFinal.add((String) value);
+			
+			String nomeLotacao = (String)array[0]; 
+			
+			
+			Long idDoc = (Long)array[1];
+			String siglaOrgaoUsu = (String)array[2];
+			String acronimoOrgaoUsu = (String)array[3];
+			String siglaFormaDoc = (String)array[4];
+			Long anoEmissao = (Long)array[5];
+			Long numExpediente = (Long)array[6];
+			Integer numSequencia = (Integer)array[7];
+			Long idTipoMobil = (Long)array[8];
+			Long pai_idDoc = (Long)array[9];
+			String pai_siglaOrgaoUsu = (String)array[10];
+			String pai_acronimoOrgaoUsu = (String)array[11];
+			String pai_siglaFormaDoc = (String)array[12];
+			Long pai_anoEmissao = (Long)array[13];
+			Long pai_numExpediente = (Long)array[14];
+			Integer pai_numSequencia = (Integer)array[15];
+			Long pai_idTipoMobil = (Long)array[16];
+			
+			
+			String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc, anoEmissao, numExpediente, numSequencia, idTipoMobil, 
+					pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil);
+			
+			String codigoMobil = ExMobil.getSigla(codigoDocumento, numSequencia, idTipoMobil);
+			
+			String url = ((String)array[17]).trim() + codigoMobil;
+			
+			String descricao = (String)array[18];
+			
+			String nomePessoa = (String)array[19];
+			
+			String descrMarcador =  (String)array[20];
+			
+			listaFinal.add(nomeLotacao);
+			listaFinal.add(codigoMobil);
+			listaFinal.add(url);
+			listaFinal.add(descricao);
+			listaFinal.add(nomePessoa);
+			listaFinal.add(descrMarcador);
 		}
 
 		return listaFinal;
 	}
 
-	public Collection processarDadosAntigo() throws Exception {
+	public Collection processarDadosAnterior() throws Exception {
 
 		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma

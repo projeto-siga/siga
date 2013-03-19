@@ -562,6 +562,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			return null;
 		if (idTipoMobil == null)
 			return null;
+		
 		if ((idTipoMobil == ExTipoMobil.TIPO_MOBIL_VIA || idTipoMobil == ExTipoMobil.TIPO_MOBIL_VOLUME)
 				&& (numSequencia == null || numSequencia == 0))
 			throw new Error(

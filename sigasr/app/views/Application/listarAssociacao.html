@@ -24,9 +24,9 @@
 						style="cursor: pointer;">
 						<td>${assoc.hisIdIni}</td>
 						<td>${assoc.hisDtIniDDMMYY}</td>
-						<td style="color: ${assoc.itemConfiguracao?.hisDtFim ? 'red' : 'black'}">${assoc.itemConfiguracao?.tituloItemConfiguracao}</td>
-						<td style="color: ${assoc.servico?.hisDtFim ? 'red' : 'black'}">${assoc.servico?.tituloServico}</td>
-						<td style="color: ${assoc.tipoAtributo?.hisDtFim ? 'red' : 'black'}">${assoc.tipoAtributo?.nomeTipoAtributo}</td>
+						<td>${assoc.itemConfiguracao?.atual?.tituloItemConfiguracao}</td>
+						<td>${assoc.servico?.atual?.tituloServico}</td>
+						<td>${assoc.tipoAtributo?.nomeTipoAtributo}</td>
 						<td>${assoc.atributoObrigatorioString}</td>
 					</tr>
 					</a> #{/list}

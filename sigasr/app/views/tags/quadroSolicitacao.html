@@ -13,7 +13,11 @@ _solicitacoes.add(_solicitacao); } }%
 							${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}
 							#{ifnot _modoCompleto} </a>#{/ifnot}
 					</h4>
-					<p style="font-size: 9pt; padding-top: 3pt">${sol.descrSolicitacao}<br/><b>${sol.atributosString}</b></p>
+					<p style="font-size: 9pt; padding-top: 3pt" id="descrSolicitacao">${sol.descrSolicitacao}<br/><b>${sol.atributosString}</b></p>
+					<script language="javascript">
+						var descricao = document.getElementById('descrSolicitacao');
+						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
+					</script>
 					<p style="font-size: 9pt">
 						<i>${sol.solicitante.descricaoIniciaisMaiusculas},
 							${sol.lotaSolicitante.siglaLotacao}#{if

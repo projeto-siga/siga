@@ -72,7 +72,7 @@ public class Application extends Controller {
 					|| (!popup.equals("true") && !popup.equals("false")))
 				popup = "false";
 			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
-					+ "/siga/pagina_vazia.action?popup=" + popup, atributos);
+					+ "/pagina_vazia.action?popup=" + popup, atributos);
 			String[] pageText = paginaVazia.split("<!-- insert body -->");
 			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
 			renderArgs.put("_cabecalho", cabecalho);
@@ -80,7 +80,7 @@ public class Application extends Controller {
 
 			// Obter usuário logado
 			String[] IDs = ConexaoHTTP.get(
-					getBaseSiga() + "/siga/usuario_autenticado.action",
+					getBaseSiga() + "/usuario_autenticado.action",
 					atributos).split(";");
 
 			renderArgs.put("cadastrante",
@@ -97,19 +97,17 @@ public class Application extends Controller {
 			if (IDs[3] != null && !IDs[3].equals(""))
 				renderArgs.put("lotaTitular",
 						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
+			
+			assertAcesso("");
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
 			// Edson: Quando as informações não puderam ser obtidas do Siga,
 			// manda para a página de login
-			redirect(getBaseSiga() + "/siga");
-		}
-
-		// Edson: Este bloco não deveria ser necessário, mas o Play,
-		// pelo visto, não joga automaticamente para o
-		// método @Catch as exceções geradas no @Before
-		try {
-			assertAcesso("");
-		} catch (Exception e) {
+			redirect(getBaseSiga());
+		} catch(Exception e){
+			// Edson: Este bloco não deveria ser necessário, mas o Play,
+			// pelo visto, não joga automaticamente para o
+			// método @Catch as exceções geradas no @Before
 			catchExceptions(e);
 		}
 
@@ -133,7 +131,10 @@ public class Application extends Controller {
 	}
 
 	public static String getBaseSiga() {
-		return Play.configuration.getProperty("siga.base.url");
+		String retorno = Play.configuration.getProperty("siga.base.url");
+		if (retorno.endsWith("/"))
+			retorno = retorno.substring(0, retorno.length()-1);
+		return retorno;
 	}
 
 	public static String getBaseSigaSr() {
@@ -335,6 +336,7 @@ public class Application extends Controller {
 
 	public static void selecionar(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
+		sel.cadastrante = getCadastrante();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
 	}
@@ -364,6 +366,9 @@ public class Application extends Controller {
 
 	public static void criarFilha(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
+		if (sol.idSolicitacao == sol.solicitacaoPai.idSolicitacao){
+			
+		}
 		SrSolicitacao filha = sol.criarFilhaSemSalvar();
 		formEditar(filha);
 	}
@@ -555,14 +560,14 @@ public class Application extends Controller {
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		renderHtml(proxy(getBaseSiga() + "/siga/" + tipo
+		renderHtml(proxy(getBaseSiga() + "/" + tipo
 				+ "/selecionar.action?" + "propriedade=" + tipo + nome
 				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8")));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		String html = proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action?"
+		String html = proxy(getBaseSiga() + "/" + tipo + "/buscar.action?"
 				+ "propriedade=" + tipo + nome + "&sigla="
 				+ URLEncoder.encode(sigla, "UTF-8"));
 		// Edson: impedir que os links internos à popup de busca vinda
@@ -579,7 +584,7 @@ public class Application extends Controller {
 				paramString += s + "="
 						+ URLEncoder.encode(request.params.get(s), "UTF-8")
 						+ "&";
-		String html = proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action"
+		String html = proxy(getBaseSiga() + "/" + tipo + "/buscar.action"
 				+ paramString);
 		html = html.replace("\"/siga", "\"/sigasr/siga").replace("'/siga//", "'/sigasr/siga/");
 		renderHtml(html);

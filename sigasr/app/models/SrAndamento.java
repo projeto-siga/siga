@@ -36,8 +36,8 @@ import util.SigaPlayCalendar;
 public class SrAndamento extends GenericModel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ANDAMENTO_SEQ", name = "SR_ANDAMENTO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ANDAMENTO_SEQ")
+	@SequenceGenerator(sequenceName = "SR_ANDAMENTO_SEQ", name = "srAndamentoSeq")
+	@GeneratedValue(generator = "srAndamentoSeq")
 	@Column(name = "ID_ANDAMENTO")
 	public long idAndamento;
 

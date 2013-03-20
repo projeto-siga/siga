@@ -11,8 +11,7 @@
 
 <mod:modelo salvarViaAjax="N" acaoGravar="gravarBI" acaoExcluir="excluirBI" acaoCancelar="refazerBI" acaoFinalizar="finalizarBI">
 	<mod:entrevista>
-                <!--
-
+                
 		<mod:grupo>
 			<mod:texto titulo="Presidente" var="nmPresidente" valor="Desembargadora Federal Maria Helena Cisne" largura="90"/>
 		</mod:grupo>
@@ -33,7 +32,7 @@
 			<mod:texto titulo="Diagramação e Impressão" var="diagramacaoEImpressao" valor="Coordenadoria de Produção Gráfica e Editorial (CPGRAF)" largura="90"/>
 		</mod:grupo>
 		
-                -->
+                
 		
 		<mod:grupo titulo="Documentos a Publicar">
 			<table>

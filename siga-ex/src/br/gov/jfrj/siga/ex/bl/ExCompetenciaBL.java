@@ -520,6 +520,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& podePorConfiguracao(titular, lotaTitular,
 							ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
 							CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+		
+		if(mob.isGeral() && mob.doc().isProcesso())
+			return false;
+			
+		
 		return mob.isGeral();
 	}
 
@@ -688,6 +693,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
+				&& !mob.isApensado()
 				&& !mob.isEmTransito()
 				&& !mob.doc().isSemEfeito()
 				&& getConf()
@@ -725,7 +731,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.doc().isSemEfeito())
 			return false;
 		
-		if(!mob.doc().isEletronico() || !mob.doc().isAssinado() || ((mob.doc().getSubscritor()!=null) && !mob.doc().getSubscritor().equivale(titular)))
+		if(!mob.doc().isEletronico() || !mob.doc().isAssinado())
+			return false;
+		
+		if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
 			return false;
 		
 		//Verifica se o documento está com pedido de publicação no DJE ou BIE.
@@ -743,11 +752,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				if (!podeMovimentar(titular, lotaTitular, m))
 					return false;
 				
-				if(mob.isJuntado())
+				if(mob.isJuntado() || mob.isApensado())
 					return false;
 				
-				if(mob.isApensado() && !mob.isApensadoAVolumeDoMesmoProcesso())
-					return false;
 			}
 		}
 		
@@ -2298,6 +2305,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& mob.doc().isAssinado()
 				&& !mob.isJuntado()
+				&& !mob.isApensado()
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()

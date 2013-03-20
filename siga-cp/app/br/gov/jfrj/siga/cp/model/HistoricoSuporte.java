@@ -115,7 +115,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	public boolean ativoNaData(Date dt) {
 		if (dt == null)
 			return this.getHisDtFim() == null;
-		if (dt.before(this.getHisDtIni()))
+		if (this.getHisDtIni() != null && dt.before(this.getHisDtIni()))
 			return false;
 		// dt >= DtIni
 		if (this.getHisDtFim() == null)

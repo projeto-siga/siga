@@ -8,11 +8,16 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -33,8 +38,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ITEM_CONFIGURACAO_SEQ", name = "SR_ITEM_CONFIGURACAO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ITEM_CONFIGURACAO_SEQ")
+	@SequenceGenerator(sequenceName = "SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
+	@GeneratedValue(generator = "srItemSeq")
 	@Column(name = "ID_ITEM_CONFIGURACAO")
 	public Long idItemConfiguracao;
 
@@ -46,6 +51,14 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 
 	@Column(name = "TITULO_ITEM_CONFIGURACAO")
 	public String tituloItemConfiguracao;
+
+	@ManyToOne()
+	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+	public SrItemConfiguracao itemInicial;
+
+	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.PERSIST)
+	@OrderBy("hisDtIni desc")
+	public List<SrItemConfiguracao> meuItemHistoricoSet;
 
 	public SrItemConfiguracao() {
 		this(null, null);
@@ -83,11 +96,9 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	}
 
 	public List<SrItemConfiguracao> getHistoricoItemConfiguracao() {
-		if (getHisIdIni() == null)
-			return null;
-		return find(
-				"from SrItemConfiguracao where hisIdIni = " + getHisIdIni()
-						+ " order by idItemConfiguracao desc").fetch();
+		if (itemInicial != null)
+			return itemInicial.meuItemHistoricoSet;
+		return null;
 	}
 
 	public SrItemConfiguracao getAtual() {
@@ -248,8 +259,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 								.compareTo(o2.siglaItemConfiguracao);
 					}
 				});
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess, null, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess,
+				null, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
 						SrConfiguracaoBL.ITEM_CONFIGURACAO,
 						SrConfiguracaoBL.SERVICO });
@@ -257,7 +268,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			if (conf.itemConfiguracao == null)
 				listaFinal.addAll(listar());
 			else
-				listaFinal.addAll(conf.itemConfiguracao
+				listaFinal.addAll(conf.itemConfiguracao.getAtual()
 						.listarItemETodosDescendentes());
 		}
 		return new ArrayList(listaFinal);

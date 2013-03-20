@@ -8,11 +8,16 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,8 +35,8 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_SERVICO_SEQ", name = "SR_SERVICO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_SERVICO_SEQ")
+	@SequenceGenerator(sequenceName = "SR_SERVICO_SEQ", name = "srServicoSeq")
+	@GeneratedValue(generator = "srServicoSeq")
 	@Column(name = "ID_SERVICO")
 	public Long idServico;
 
@@ -43,6 +48,14 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 
 	@Column(name = "TITULO_SERVICO")
 	public String tituloServico;
+	
+	@ManyToOne()
+	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+	public SrServico servicoInicial;
+
+	@OneToMany(targetEntity = SrServico.class, mappedBy = "servicoInicial", cascade = CascadeType.PERSIST)
+	@OrderBy("hisDtIni desc")
+	public List<SrServico> meuServicoHistoricoSet;
 
 	public SrServico() {
 		this(null, null);
@@ -80,13 +93,11 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	public void setDescricao(String descricao) {
 		this.tituloServico = descricao;
 	}
-
+	
 	public List<SrServico> getHistoricoServico() {
-		if (getHisIdIni() == null)
-			return null;
-		return find(
-				"from SrServico where hisIdIni = " + getHisIdIni()
-						+ " order by idServico desc").fetch();
+		if (servicoInicial != null)
+			return servicoInicial.meuServicoHistoricoSet;
+		return null;
 	}
 
 	public SrServico getAtual() {
@@ -266,7 +277,7 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 						listaFinal.add(serv);
 				break;
 			} else
-				for (SrServico serv : conf.servico
+				for (SrServico serv : conf.servico.getAtual()
 						.listarServicoETodosDescendentes())
 					if (serv.isEspecifico())
 						listaFinal.add(serv);

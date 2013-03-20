@@ -589,9 +589,8 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		List<ExConfiguracao> configVigentes = new ArrayList<ExConfiguracao>();
 		
 		for (ExConfiguracao cfg : todasConfig ) {
-			if (cfg.getHisDtIni() != null) // retirar????
-			  if (!cfg.ativaNaData(hoje)) 
-				  continue;			
+			if (!cfg.ativaNaData(hoje)) 
+			   continue;			
 			configVigentes.add(cfg);			
 		}
 		return(configVigentes);		

@@ -22,7 +22,7 @@
 </c:if>
 
 <c:if test="${empty test or test}">
-	<c:if test="${not empty linkSeparator}"><span class="gt-separator">|</span> </c:if>
+	<c:if test="${not empty linkSeparator}"><span class="gt-separator"> |</span> </c:if>
 	<c:if test="${empty linkSeparator}">
 		<c:if test="${empty linkInline}">
 			<p class="gt-table-action-list">

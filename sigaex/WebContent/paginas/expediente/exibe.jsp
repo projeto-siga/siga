@@ -158,8 +158,8 @@
 									sigla="${mov.parte.resp.nomeAbreviado}"
 									descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" />
 							</td>
-							<td>${mov.descricao}<c:if test='${mov.idTpMov != 2}'> ${mov.complemento}</c:if>
-								<c:set var="assinadopor" value="${true}" /> <siga:links
+							<td>${mov.descricao} <c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
+								<c:set var="assinadopor" value="${true}" /> <siga:links	
 									inline="${true}"
 									separator="${not empty mov.descricao and mov.descricao != null}">
 									<c:forEach var="acao" items="${mov.acoes}">

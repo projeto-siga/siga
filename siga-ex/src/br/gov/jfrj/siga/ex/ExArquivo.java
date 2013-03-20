@@ -53,9 +53,10 @@ public abstract class ExArquivo {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * Retorna o pdf do documento com stamp. Método criado para tentar stampar um documento que está sendo anexado.
+	 * Retorna o pdf do documento com stamp. Método criado para tentar stampar
+	 * um documento que está sendo anexado.
 	 * 
 	 * @return pdf com stamp.
 	 * 
@@ -66,13 +67,14 @@ public abstract class ExArquivo {
 			abPdf = getPdf();
 			if (abPdf == null)
 				return null;
-			
-			//Verifica se é possível estampar o documento
+
+			// Verifica se é possível estampar o documento
 			try {
-				byte[] documentoComStamp = Documento.stamp(abPdf, "", true, false, false,null, null, null, null, null, null, null);
-				
+				byte[] documentoComStamp = Documento.stamp(abPdf, "", true,
+						false, false, null, null, null, null, null, null, null);
+
 				return documentoComStamp;
-				
+
 			} catch (Exception e) {
 				return null;
 			}
@@ -84,6 +86,8 @@ public abstract class ExArquivo {
 	public abstract Date getData();
 
 	public abstract String getHtml();
+
+	public abstract String getHtmlComReferencias() throws Exception;
 
 	public Long getIdDoc() {
 		if (this instanceof ExDocumento) {
@@ -247,10 +251,11 @@ public abstract class ExArquivo {
 	public abstract boolean isCancelado();
 
 	public abstract boolean isRascunho();
-	
+
 	public abstract boolean isSemEfeito();
 
 	public void setNumPaginas(Integer numPaginas) {
 		this.numPaginas = numPaginas;
 	}
+
 }

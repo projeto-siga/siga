@@ -90,7 +90,8 @@ public class ExDocumentoVO extends ExVO {
 		if (doc.getExModelo() != null)
 			this.nmArqMod = doc.getExModelo().getNmArqMod();
 
-		this.conteudoBlobHtmlString = doc.getConteudoBlobHtmlString();
+		this.conteudoBlobHtmlString = doc
+				.getConteudoBlobHtmlStringComReferencias();
 
 		if (doc.isEletronico()) {
 			this.classe = "header_eletronico";
@@ -104,8 +105,8 @@ public class ExDocumentoVO extends ExVO {
 
 		this.forma = doc.getExFormaDocumento() != null ? doc
 				.getExFormaDocumento().getDescricao() : "";
-		this.modelo = doc.getExModelo() != null ? doc.getExModelo()
-				.getNmMod() : "";
+		this.modelo = doc.getExModelo() != null ? doc.getExModelo().getNmMod()
+				: "";
 
 		if (mob != null) {
 			SortedSet<ExMobil> mobsDoc;
@@ -378,11 +379,14 @@ public class ExDocumentoVO extends ExVO {
 								lotaTitular, mob),
 				"Esta operação anulará o cancelamento do documento e tornará o documento novamente editável. Prosseguir?",
 				null, null, null);
-		
-		vo.addAcao("delete","Cancelar Documento",
+
+		vo.addAcao(
+				"delete",
+				"Cancelar Documento",
 				"/expediente/doc",
 				"tornarDocumentoSemEfeito",
-				Ex.getInstance().getComp()
+				Ex.getInstance()
+						.getComp()
 						.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
 				"Esta operação tornará esse documento sem efeito. Prosseguir?",
 				null, null, null);

@@ -233,7 +233,7 @@ public class ProcessadorReferencias {
 			final String s = new String(os.toByteArray(), "utf-8");
 			return s;
 		} catch (final Exception ex) {
-			throw new Exception(ex);
+			return sHtml;
 		}
 	}
 }

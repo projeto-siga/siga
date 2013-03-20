@@ -68,12 +68,17 @@ function visualizarRelatorio(rel) {
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relMovimentacao.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelMovimentacao</c:set>
-		<c:set var="titulo_pagina" scope="request">Relatório de Movimentação</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de Movimentações</c:set>
 		<c:set var="nomeRelatorio" scope="request">relMovimentacao.jsp</c:set>
+	</c:when>
+	<c:when test='${param.nomeArquivoRel eq "relMovCad.jsp"}'>
+		<c:set var="actionName" scope="request">emiteRelMovCad</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de Movimentações por Cadastrante</c:set>
+		<c:set var="nomeRelatorio" scope="request">relMovCad.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relOrgao.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelOrgao</c:set>
-		<c:set var="titulo_pagina" scope="request">Relatórios de Despachos e Transferências</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de Despachos e Transferências</c:set>
 		<c:set var="nomeRelatorio" scope="request">relOrgao.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relTipoDoc.jsp"}'>

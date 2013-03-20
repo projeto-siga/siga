@@ -51,7 +51,7 @@ public class RelOrgao extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Totais de Expedientes/Processos");
+		this.setTitle("Relatório de Despachos e Transferências");
 		this.addColuna("Lotação", 20, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Expedientes recebidos", 20, RelatorioRapido.ESQUERDA,
 				false);

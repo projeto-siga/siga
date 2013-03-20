@@ -1108,6 +1108,14 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		
+		<action name="emiteRelMovCad" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelMovCad">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
 
 		<action name="emiteRelOrgao" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelOrgao">

@@ -76,7 +76,7 @@ public class RelMovimentacao extends RelatorioTemplate {
 		 "where mob.idMobil=mov.exMobil.idMobil " +
 		 "and (mov.lotaResp.idLotacao = :id or mov.lotaCadastrante.idLotacao = :id or mov.lotaSubscritor.idLotacao = :id) "
 		 + "and mov.dtIniMov >= :dtini " + "and mov.dtIniMov <= :dtfim " +
-		 "order by mov.exMobil.idMobil, mov.dtIniMov");
+		 "order by mov.dtIniMov, mov.exMobil.idMobil");
 		 
 		query.setParameter("id",
 				Long.valueOf((String) parametros.get("lotacao")));

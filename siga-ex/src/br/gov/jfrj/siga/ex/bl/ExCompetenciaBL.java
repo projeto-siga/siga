@@ -693,6 +693,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
+				&& !mob.isApensado()
 				&& !mob.isEmTransito()
 				&& !mob.doc().isSemEfeito()
 				&& getConf()
@@ -751,11 +752,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				if (!podeMovimentar(titular, lotaTitular, m))
 					return false;
 				
-				if(mob.isJuntado())
+				if(mob.isJuntado() || mob.isApensado())
 					return false;
 				
-				if(mob.isApensado() && !mob.isApensadoAVolumeDoMesmoProcesso())
-					return false;
 			}
 		}
 		

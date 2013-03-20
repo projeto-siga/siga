@@ -48,9 +48,12 @@ public class DocumentoHtml extends AbstractDocumento {
 
 		StringBuilder sb = new StringBuilder();
 		boolean fFirst = true;
-//TAH: infelizmente o IE não funciona bem com background-color: transparent.		
-//		sb.append("<html class=\"fisico\"><body style=\"margin:2px; padding:0pt; background-color: #E2EAEE;overflow:visible;\">");
-		sb.append("<html><body style=\"margin:2px; padding:0pt; background-color: " + (mob.getDoc().isEletronico() ? "#E2EAEE" : "#f1e9c6") + ";overflow:visible;\">");
+		// TAH: infelizmente o IE não funciona bem com background-color:
+		// transparent.
+		// sb.append("<html class=\"fisico\"><body style=\"margin:2px; padding:0pt; background-color: #E2EAEE;overflow:visible;\">");
+		sb.append("<html><head><base target=\"_parent\"/></head><body style=\"margin:2px; padding:0pt; background-color: "
+				+ (mob.getDoc().isEletronico() ? "#E2EAEE" : "#f1e9c6")
+				+ ";overflow:visible;\">");
 		for (ExArquivoNumerado an : ans) {
 			String numeracao = null;
 			// if (fFirst)
@@ -60,16 +63,13 @@ public class DocumentoHtml extends AbstractDocumento {
 			// .append("<div style=\"margin:10px; padding:10px; width:100%;
 			// border: medium double green;\" class=\"total\">");
 
-			sb
-				.append("<div style=\"margin-bottom:6pt; padding:0pt; width:100%; clear:both; background-color: #fff; border: 1px solid #ccc; border-radius: 5px;\" class=\"documento\">");
-			sb
-					.append("<table width=\"100%\" style=\"padding:3pt;\" border=0><tr><td>");
+			sb.append("<div style=\"margin-bottom:6pt; padding:0pt; width:100%; clear:both; background-color: #fff; border: 1px solid #ccc; border-radius: 5px;\" class=\"documento\">");
+			sb.append("<table width=\"100%\" style=\"padding:3pt;\" border=0><tr><td>");
 			if (an.getPaginaInicial() != null) {
 				numeracao = an.getPaginaInicial().toString();
 				if (!an.getPaginaFinal().equals(an.getPaginaInicial()))
 					numeracao += " - " + an.getPaginaFinal();
-				sb
-						.append("<div style=\"margin:3pt; padding:3pt; float:right; border: 1px solid #ccc; border-radius: 5px;\" class=\"numeracao\">");
+				sb.append("<div style=\"margin:3pt; padding:3pt; float:right; border: 1px solid #ccc; border-radius: 5px;\" class=\"numeracao\">");
 				sb.append(numeracao);
 				sb.append("</div>");
 			}
@@ -82,25 +82,25 @@ public class DocumentoHtml extends AbstractDocumento {
 				sb.append(sHtml);
 				// sb.append("</div>");
 			} else {
-				sb
-						.append("<div style=\"margin:3pt; padding:3pt;\" class=\"anexo\">");
+				sb.append("<div style=\"margin:3pt; padding:3pt;\" class=\"anexo\">");
 				sb.append("<a href=\"" + "http://" + request.getServerName()
 						+ ":" + request.getServerPort()
 						+ request.getContextPath() + "/expediente/doc/"
 						+ an.getArquivo().getReferenciaPDF() + "\">");
 				sb.append(an.getNome());
 				sb.append("</a>");
-				if (an.getArquivo() instanceof ExMovimentacao){
-					sb.append(": " + ((ExMovimentacao)an.getArquivo()).getDescrMov());
+				if (an.getArquivo() instanceof ExMovimentacao) {
+					sb.append(": "
+							+ ((ExMovimentacao) an.getArquivo()).getDescrMov());
 				}
 				sb.append("<br/>");
 				sb.append("</div>");
 			}
 
-			if (an.getArquivo().getMensagem() != null && an.getArquivo().getMensagem().trim().length() > 0) {
+			if (an.getArquivo().getMensagem() != null
+					&& an.getArquivo().getMensagem().trim().length() > 0) {
 				sb.append("</td></tr><tr><td>");
-				sb
-						.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
+				sb.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
 				sb.append(an.getArquivo().getMensagem());
 				sb.append("</div>");
 			}
@@ -112,8 +112,8 @@ public class DocumentoHtml extends AbstractDocumento {
 	}
 
 	public static String fixHtml(HttpServletRequest request,
-			ExArquivoNumerado an) {
-		String sHtml = an.getArquivo().getHtml();
+			ExArquivoNumerado an) throws Exception {
+		String sHtml = an.getArquivo().getHtmlComReferencias();
 		sHtml = sHtml.replace("<!-- INICIO PRIMEIRO CABECALHO",
 				"<!-- INICIO PRIMEIRO CABECALHO -->");
 		sHtml = sHtml.replace("FIM PRIMEIRO CABECALHO -->",

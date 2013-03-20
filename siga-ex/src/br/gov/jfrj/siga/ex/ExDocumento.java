@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
+import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
@@ -184,6 +185,48 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return "NOVO";
 		return "TMP-" + getIdDoc();
 	}
+	
+	/**
+	 * Retorna o código do documento.
+	 * 
+	 * @throws Exception
+	 */
+	public static String getCodigo(Long idDoc, String siglaOrgaoUsu, String acronimoOrgaoUsu, String siglaFormaDoc, Long anoEmissao, Long numExpediente, Integer docNumSequencia, Long idTipoMobil, Integer mobilNumSequencia,
+			Long pai_idDoc, String pai_siglaOrgaoUsu, String pai_acronimoOrgaoUsu, String pai_siglaFormaDoc, Long pai_anoEmissao, Long pai_numExpediente, Integer pai_docNumSequencia, Long pai_idTipoMobil, Integer pai_mobilNumSequencia) {
+		
+		if(pai_siglaOrgaoUsu != null && pai_acronimoOrgaoUsu != null && pai_siglaFormaDoc != null && pai_anoEmissao != null && pai_numExpediente != null && docNumSequencia != null ) {
+			String s = docNumSequencia.toString();
+			while (s.length() < 2)
+				s = "0" + s;
+
+			return  ExMobil.getSigla(getCodigo(pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_docNumSequencia, pai_idTipoMobil, pai_mobilNumSequencia,null, null, null, null, null, null, null, null, null), pai_mobilNumSequencia, pai_idTipoMobil) + "." + s;
+		}
+		if (anoEmissao != null && numExpediente != null) {
+			String s = numExpediente.toString();
+			while (s.length() < 5)
+				s = "0" + s;
+			
+			if (siglaOrgaoUsu != null) {
+				try {
+					Long l_anoEmissao = Long.valueOf(anoEmissao);
+					if (l_anoEmissao >= SigaExProperties
+							.getAnoInicioAcronimoNoCodigoDoDocumento()) {
+						return acronimoOrgaoUsu + "-" + siglaFormaDoc + "-" + anoEmissao + "/" + s;
+					} else {
+						return siglaOrgaoUsu + "-" 	+ siglaFormaDoc + "-" + anoEmissao + "/" + s;
+					}
+				} catch (Exception ex) {
+					throw new Error(ex);
+				}
+			}
+			
+		}
+	
+		if (idDoc == null)
+			return "NOVO";
+		
+		return "TMP-" + idDoc;
+	}
 
 	/**
 	 * Retorna o código do documento sem "-" ou "/".
@@ -299,6 +342,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		} catch (UnsupportedEncodingException e) {
 			return new String(ab);
 		}
+	}
+
+	/**
+	 * Retorna o conteúdo do arquivo <b>html</b> contido no zip gravado no blob
+	 * do documento, com todas as referencias para outros documentos
+	 * substituidas por links html para os devidos documentos.
+	 * 
+	 * @throws Exception
+	 */
+	public String getConteudoBlobHtmlStringComReferencias() throws Exception {
+		String sHtml = getConteudoBlobHtmlString();
+		ProcessadorReferencias pr = new ProcessadorReferencias();
+		pr.ignorar(getSigla());
+		sHtml = pr.marcarReferencias(sHtml);
+		return sHtml;
 	}
 
 	/**
@@ -972,7 +1030,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
-	
 	public boolean isBoletimPublicado() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
@@ -985,7 +1042,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
-	
 	/**
 	 * Verifica se um documento já foi publicado no DJE.
 	 */
@@ -1000,9 +1056,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return false;
 	}
-	
-	
-	
 
 	/**
 	 * Retorna se uma determinada via está cancelada.
@@ -1267,6 +1320,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * Vide getConteudoBlobHtmlString()
+	 * @throws Exception 
+	 */
+	@Override
+	public String getHtmlComReferencias() throws Exception {
+		return getConteudoBlobHtmlStringComReferencias();
+	}
+
+	/**
+	 * Vide getConteudoBlobHtmlString()
 	 */
 	@Override
 	public byte[] getPdf() {
@@ -1476,15 +1538,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public boolean isRascunho() {
 		return getDtFechamento() == null || (isEletronico() && !isAssinado());
 	}
-	
+
 	/**
 	 * verifica se um documento está sem efeito.
 	 */
 	@Override
 	public boolean isSemEfeito() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
-		
-		if(movs != null) {
+
+		if (movs != null) {
 			for (final ExMovimentacao mov : movs) {
 				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
 						&& mov.getExMovimentacaoCanceladora() == null) {
@@ -1817,10 +1879,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	public boolean isSubscritorOuCosignatario(DpPessoa subscritor) {
 		for (DpPessoa signatario : getSubscritorECosignatarios()) {
-			if(signatario.equivale(subscritor))
+			if (signatario.equivale(subscritor))
 				return true;
 		}
-		
+
 		return false;
 	}
 

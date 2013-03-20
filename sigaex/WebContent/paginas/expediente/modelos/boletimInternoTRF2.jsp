@@ -11,8 +11,7 @@
 
 <mod:modelo salvarViaAjax="N" acaoGravar="gravarBI" acaoExcluir="excluirBI" acaoCancelar="refazerBI" acaoFinalizar="finalizarBI">
 	<mod:entrevista>
-                <!--
-
+                
 		<mod:grupo>
 			<mod:texto titulo="Presidente" var="nmPresidente" valor="Desembargadora Federal Maria Helena Cisne" largura="90"/>
 		</mod:grupo>
@@ -33,7 +32,7 @@
 			<mod:texto titulo="Diagramação e Impressão" var="diagramacaoEImpressao" valor="Coordenadoria de Produção Gráfica e Editorial (CPGRAF)" largura="90"/>
 		</mod:grupo>
 		
-                -->
+                
 		
 		<mod:grupo titulo="Documentos a Publicar">
 			<table>
@@ -102,7 +101,7 @@
 			<table width="100%" align="left" border="0" bgcolor="#FFFFFF">
 				<tr bgcolor="#FFFFFF">
 					<td align="left" valign="bottom" width="100%"><img
-						src="contextpath/imagens/cabecalhoBoletimInternoTRF2.gif" width="448" height="287" /></td>
+						src="contextpath/imagens/cabecalhoBoletimInternoTRF2.gif" width="450" height="65" /></td>
 				</tr>
 			</table>
 		</td></tr>
@@ -206,11 +205,12 @@
 		<center><span style="font-size: 15px;">********************************* FIM *********************************</span></center>
 
 		<!-- INICIO PRIMEIRO RODAPE
-		
+		<%--<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental2.jsp" />--%>
+		<c:import url="/paginas/expediente/modelos/inc_rodapeBoxBoletimInternol.jsp" />
 		FIM PRIMEIRO RODAPE -->
 
 		<!-- INICIO RODAPE
-		
+		<c:import url="/paginas/expediente/modelos/inc_rodapeNumeracaoADireita2.jsp" />
 		FIM RODAPE -->
 	</mod:documento>
 

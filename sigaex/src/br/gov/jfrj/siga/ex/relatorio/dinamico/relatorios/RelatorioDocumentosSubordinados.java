@@ -147,8 +147,8 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 				.getSessao()
 				.createQuery(
 						"select " + "	marca.dpLotacaoIni.nomeLotacao, "
-								+ "doc.idDoc, orgao.siglaOrgaoUsu, orgao.acronimoOrgaoUsu, forma.siglaFormaDoc, doc.anoEmissao, doc.numExpediente, doc.numSequencia, tipoMob.idTipoMobil,  "
-								+ "docPai.idDoc, orgaoDocPai.siglaOrgaoUsu, orgaoDocPai.acronimoOrgaoUsu, formaDocPai.siglaFormaDoc, docPai.anoEmissao, docPai.numExpediente, docPai.numSequencia, tipoMobPai.idTipoMobil, "
+								+ "doc.idDoc, orgao.siglaOrgaoUsu, orgao.acronimoOrgaoUsu, forma.siglaFormaDoc, doc.anoEmissao, doc.numExpediente, doc.numSequencia, tipoMob.idTipoMobil, mob.numSequencia,  "
+								+ "docPai.idDoc, orgaoDocPai.siglaOrgaoUsu, orgaoDocPai.acronimoOrgaoUsu, formaDocPai.siglaFormaDoc, docPai.anoEmissao, docPai.numExpediente, docPai.numSequencia, tipoMobPai.idTipoMobil, mobPai.numSequencia, "
 								+ " '"
 								+ parametros.get("link_siga")
 								+ " '"
@@ -197,30 +197,31 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 			String siglaFormaDoc = (String)array[4];
 			Long anoEmissao = (Long)array[5];
 			Long numExpediente = (Long)array[6];
-			Integer numSequencia = (Integer)array[7];
+			Integer docNumSequencia = (Integer)array[7];
 			Long idTipoMobil = (Long)array[8];
-			Long pai_idDoc = (Long)array[9];
-			String pai_siglaOrgaoUsu = (String)array[10];
-			String pai_acronimoOrgaoUsu = (String)array[11];
-			String pai_siglaFormaDoc = (String)array[12];
-			Long pai_anoEmissao = (Long)array[13];
-			Long pai_numExpediente = (Long)array[14];
-			Integer pai_numSequencia = (Integer)array[15];
-			Long pai_idTipoMobil = (Long)array[16];
+			Integer mobilNumSequencia = (Integer)array[9];
+			Long pai_idDoc = (Long)array[10];
+			String pai_siglaOrgaoUsu = (String)array[11];
+			String pai_acronimoOrgaoUsu = (String)array[12];
+			String pai_siglaFormaDoc = (String)array[13];
+			Long pai_anoEmissao = (Long)array[14];
+			Long pai_numExpediente = (Long)array[15];
+			Integer pai_numSequencia = (Integer)array[16];
+			Long pai_idTipoMobil = (Long)array[17];
+			Integer pai_mobilNumSequencia = (Integer)array[18];
 			
+			String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc, anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, 
+					pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
 			
-			String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc, anoEmissao, numExpediente, numSequencia, idTipoMobil, 
-					pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil);
+			String codigoMobil = ExMobil.getSigla(codigoDocumento, mobilNumSequencia, idTipoMobil);
 			
-			String codigoMobil = ExMobil.getSigla(codigoDocumento, numSequencia, idTipoMobil);
+			String url = ((String)array[19]).trim() + codigoMobil;
 			
-			String url = ((String)array[17]).trim() + codigoMobil;
+			String descricao = (String)array[20];
 			
-			String descricao = (String)array[18];
+			String nomePessoa = (String)array[21];
 			
-			String nomePessoa = (String)array[19];
-			
-			String descrMarcador =  (String)array[20];
+			String descrMarcador =  (String)array[22];
 			
 			listaFinal.add(nomeLotacao);
 			listaFinal.add(codigoMobil);

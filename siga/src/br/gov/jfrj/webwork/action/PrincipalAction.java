@@ -119,9 +119,9 @@ public class PrincipalAction extends SigaActionSupport {
 
 		try {
 
-			String URLSigaSr = System.getProperty("siga.sr."
+			String URLSigaSr = SigaBaseProperties.getString("siga.sr."
 					+ SigaBaseProperties.getString("ambiente") + ".url");
-			String URLSigaDoc = System.getProperty("siga.ex."
+			String URLSigaDoc = SigaBaseProperties.getString("siga.ex."
 					+ SigaBaseProperties.getString("ambiente") + ".url");
 			String URLSelecionar = "";
 			String uRLExibir = "";

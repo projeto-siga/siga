@@ -68,7 +68,7 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 		// TODO Auto-generated method stub
-		this.setTitle("Documentos movimentados no período");
+		this.setTitle("Relação de Documentos entre Datas");
 		this.addColuna("Código do Documento", 20, RelatorioRapido.ESQUERDA,
 				false, true);
 		this.addColuna("Descrição do documento", 67, RelatorioRapido.ESQUERDA,

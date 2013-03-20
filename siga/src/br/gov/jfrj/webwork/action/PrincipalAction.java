@@ -119,10 +119,10 @@ public class PrincipalAction extends SigaActionSupport {
 
 		try {
 
-			String URLSigaSr = System.getProperty("siga.sr."
+			String URLSigaSr = SigaBaseProperties.getString("siga.sr."
 					+ SigaBaseProperties.getString("ambiente") + ".url");
-			String URLSigaDoc = "http://" + getRequest().getServerName() + ":"
-					+ getRequest().getLocalPort() + "/sigaex";
+			String URLSigaDoc = SigaBaseProperties.getString("siga.ex."
+					+ SigaBaseProperties.getString("ambiente") + ".url");
 			String URLSelecionar = "";
 			String uRLExibir = "";
 
@@ -157,7 +157,8 @@ public class PrincipalAction extends SigaActionSupport {
 			if (copiaSigla.startsWith("SR"))
 				uRLExibir = URLSigaSr + "/exibir/" + response[1];
 			else
-				uRLExibir = "http://" + getRequest().getServerName() + ":"
+				uRLExibir = getRequest().getScheme() + "://"
+						+ getRequest().getServerName() + ":"
 						+ getRequest().getLocalPort()
 						+ "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];

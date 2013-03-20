@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
+import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
@@ -341,6 +342,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		} catch (UnsupportedEncodingException e) {
 			return new String(ab);
 		}
+	}
+
+	/**
+	 * Retorna o conteúdo do arquivo <b>html</b> contido no zip gravado no blob
+	 * do documento, com todas as referencias para outros documentos
+	 * substituidas por links html para os devidos documentos.
+	 * 
+	 * @throws Exception
+	 */
+	public String getConteudoBlobHtmlStringComReferencias() throws Exception {
+		String sHtml = getConteudoBlobHtmlString();
+		ProcessadorReferencias pr = new ProcessadorReferencias();
+		pr.ignorar(getSigla());
+		sHtml = pr.marcarReferencias(sHtml);
+		return sHtml;
 	}
 
 	/**
@@ -1014,7 +1030,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
-	
 	public boolean isBoletimPublicado() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
@@ -1027,7 +1042,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
-	
 	/**
 	 * Verifica se um documento já foi publicado no DJE.
 	 */
@@ -1042,9 +1056,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return false;
 	}
-	
-	
-	
 
 	/**
 	 * Retorna se uma determinada via está cancelada.
@@ -1309,6 +1320,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * Vide getConteudoBlobHtmlString()
+	 * @throws Exception 
+	 */
+	@Override
+	public String getHtmlComReferencias() throws Exception {
+		return getConteudoBlobHtmlStringComReferencias();
+	}
+
+	/**
+	 * Vide getConteudoBlobHtmlString()
 	 */
 	@Override
 	public byte[] getPdf() {
@@ -1518,15 +1538,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public boolean isRascunho() {
 		return getDtFechamento() == null || (isEletronico() && !isAssinado());
 	}
-	
+
 	/**
 	 * verifica se um documento está sem efeito.
 	 */
 	@Override
 	public boolean isSemEfeito() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
-		
-		if(movs != null) {
+
+		if (movs != null) {
 			for (final ExMovimentacao mov : movs) {
 				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
 						&& mov.getExMovimentacaoCanceladora() == null) {
@@ -1859,10 +1879,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	public boolean isSubscritorOuCosignatario(DpPessoa subscritor) {
 		for (DpPessoa signatario : getSubscritorECosignatarios()) {
-			if(signatario.equivale(subscritor))
+			if (signatario.equivale(subscritor))
 				return true;
 		}
-		
+
 		return false;
 	}
 

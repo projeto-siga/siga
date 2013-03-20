@@ -157,7 +157,8 @@ public class PrincipalAction extends SigaActionSupport {
 			if (copiaSigla.startsWith("SR"))
 				uRLExibir = URLSigaSr + "/exibir/" + response[1];
 			else
-				uRLExibir = "http://" + getRequest().getServerName() + ":"
+				uRLExibir = getRequest().getScheme() + "://"
+						+ getRequest().getServerName() + ":"
 						+ getRequest().getLocalPort()
 						+ "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];

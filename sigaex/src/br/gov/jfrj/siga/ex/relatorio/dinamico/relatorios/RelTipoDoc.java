@@ -58,7 +58,7 @@ public class RelTipoDoc extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Documentos Criados");
+		this.setTitle("Relação de Documentos Criados");
 		this.addColuna("Tipo de Documento", 35, RelatorioRapido.ESQUERDA,
 				false, false);
 		this.addColuna("Forma do Documento", 40, RelatorioRapido.ESQUERDA,

@@ -26,10 +26,10 @@ FORMULARIO BANCO DE DADOS DA CEG-->
 		</mod:grupo>
 		
 		<mod:grupo>	
-			<mod:selecao titulo="Tipo de Usuário" opcoes="Magistrado;Diretor/Substituto" var="tipoUsuario" reler="sim"/>
+			<mod:selecao titulo="Tipo de Usuário" opcoes="Magistrado;Servidor" var="tipoUsuario" reler="sim"/>
 		</mod:grupo>
 		
-		<c:if test="${valorTipoDeForm == 1 && tipoUsuario == 'Diretor/Substituto'}">
+		<c:if test="${valorTipoDeForm == 1 && tipoUsuario == 'Servidor'}">
 			<mod:grupo>
 				<mod:pessoa titulo="Nome do Juiz autorizador" var="juiz"/> 
 			</mod:grupo>
@@ -40,7 +40,7 @@ FORMULARIO BANCO DE DADOS DA CEG-->
 				<b>Para indicação de novo usuário, no caso de remoção do magistrado para órgão externo à SJRJ, deverá ser 
 				preenchido e encaminhado à SEJUD, pelo diretor de secretaria, o respectivo formulário de exclusão. </b>
 			</c:if>
-			<c:if test="${tipoUsuario == 'Diretor/Substituto'}">
+			<c:if test="${tipoUsuario == 'Servidor'}">
 				<b>Para indicação de novo usuário, no caso de dispensa do cargo ou remoção do Diretor de Secretaria e/ou de 
 				seu substituto, deverá ser preenchido e encaminhado à SEJUD, pelo diretor de secretaria, 
 				o respectivo formulário de exclusão. </b>
@@ -125,7 +125,7 @@ FORMULARIO BANCO DE DADOS DA CEG-->
     <c:if test="${tipoUsuario == 'Magistrado'}">
     MAGISTRADO 
     </c:if>
-    <c:if test="${tipoUsuario == 'Diretor/Substituto'}">
+    <c:if test="${tipoUsuario == 'Servidor'}">
     DIRETOR DE SECRETARIA/SUBSTITUTO EVENTUAL
     </c:if>
     </b></td>
@@ -189,7 +189,7 @@ FORMULARIO BANCO DE DADOS DA CEG-->
 	
 		
 		
-		<c:if test="${tipoFormulario == 1 && tipoUsuario == 'Diretor/Substituto'}">
+		<c:if test="${tipoFormulario == 1 && tipoUsuario == 'Servidor'}">
 		<br/><br/>
 			<table border="1" cellpadding="2" width="900" align="center">
 			<tr>

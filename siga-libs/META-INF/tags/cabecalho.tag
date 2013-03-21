@@ -57,7 +57,7 @@
 ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
-<c:set var="serverAndPort" scope="request">http://${pageContext.request.serverName}:${pageContext.request.localPort}</c:set>
+<c:set var="serverAndPort" scope="request">${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.localPort}</c:set>
 
 <link rel="stylesheet" href="${serverAndPort}/siga/css/ecoblue/css/reset-fonts.css"
 	type="text/css" media="screen, projection">

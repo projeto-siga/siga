@@ -160,8 +160,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OneToMany(mappedBy = "solicitacaoPai", cascade = CascadeType.PERSIST)
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
-	
-	
+
 	public SrSolicitacao() {
 
 	}
@@ -193,7 +192,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public static void main(String[] args) {
-		final Pattern p = Pattern.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
+		final Pattern p = Pattern
+				.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
 		final Matcher m = p.matcher("SR1.1");
 		System.out.println(m.groupCount());
 		System.out.println(m.find());
@@ -223,7 +223,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Override
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
-		final Pattern p = Pattern.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
+		final Pattern p = Pattern
+				.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -278,7 +279,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		setSigla(sigla);
 		if (orgaoUsuario == null && cadastrante != null)
 			orgaoUsuario = cadastrante.getOrgaoUsuario();
-		
+
 		String query = "from SrSolicitacao where hisDtFim is null ";
 
 		if (orgaoUsuario != null) {
@@ -302,7 +303,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		SrSolicitacao sol = (SrSolicitacao) JPA.em().createQuery(query)
 				.getSingleResult();
-		
+
 		return sol;
 	}
 
@@ -476,14 +477,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return getAndamentoSetComCancelados() != null
 				&& getAndamentoSetComCancelados().size() > 0;
 	}
-	
+
 	public boolean temFilha() {
 		boolean var = false;
-		if (this.solicitacaoPai == null) 
+		if (this.solicitacaoPai == null)
 			var = false;
 		else if (this.idSolicitacao != this.solicitacaoPai.idSolicitacao)
 			var = true;
-	return var;
+		return var;
 	}
 
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
@@ -823,10 +824,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			numSolicitacao = getProximoNumero();
 
 		if (gravidade == null)
-			gravidade = SrGravidade.POUCO_GRAVE;
+			gravidade = SrGravidade.NORMAL;
 
 		if (urgencia == null)
-			urgencia = SrUrgencia.PODE_ESPERAR;
+			urgencia = SrUrgencia.NORMAL;
 
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;

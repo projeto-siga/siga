@@ -147,8 +147,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 					throw new AplicacaoException("Titular não informado");
 				subst.setTitular(dao().consultar(getTitularSel().getId(),
 						DpPessoa.class, false));
-				if (subst.getTitular().getIdPessoa() != getCadastrante()
-						.getIdPessoa()
+				if (!subst.getTitular().getIdPessoa().equals(getCadastrante().getIdPessoa())  
 						&& !Cp.getInstance()
 								.getConf()
 								.podePorConfiguracao(

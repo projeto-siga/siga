@@ -1,0 +1,2 @@
+UPDATE CORPORATIVO.CP_SERVICO SET sigla_servico='SIGA-GI-GDISTR',desc_servico='Gerenciar grupos de distribuição' where sigla_servico='SIGA-GI-GEMAIL';
+--Insert into CP_SERVICO (ID_SERVICO,SIGLA_SERVICO,DESC_SERVICO,ID_SERVICO_PAI,ID_TP_SERVICO) values (21,'SIGA-GI-GEMAIL','Gerenciar grupos de email',15,2);

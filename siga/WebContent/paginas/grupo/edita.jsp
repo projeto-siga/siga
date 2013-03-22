@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <ww:url id="urlGravar" action="gravar" />
 <ww:url id="urlExcluir" action="excluir" />
@@ -321,7 +322,14 @@
 						</tr>
 						<input type="hidden" name="idCpTipoGrupo" value="${idCpTipoGrupo}" />
 						<input type="hidden" name="idCpGrupo" value="${idCpGrupo}" />
-						<ww:textfield label="Sigla" name="siglaGrupo" size="20" />
+						<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir')}">
+							<ww:textfield label="Sigla" name="siglaGrupo" size="20" />
+						</ww:if>
+						<ww:else>
+							<ww:label label="Sigla" name="siglaGrupo" value="${siglaGrupo}"/>
+							<ww:hidden name="siglaGrupo" value="${siglaGrupo}"></ww:hidden>
+						</ww:else>
+						
 						<ww:textfield label="Descrição" name="dscGrupo" size="40" />
 						<c:if test="${cpTipoGrupo.idTpGrupo == 1}">
 							<siga:selecao titulo="Pai:" propriedade="grupoPai" />

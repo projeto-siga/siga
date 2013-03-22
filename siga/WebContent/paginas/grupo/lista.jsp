@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <ww:url id="url" action="editar" />
 <script type="text/javascript" language="Javascript1.1">
@@ -58,8 +59,11 @@
 					</siga:paginador>
 				</table>
 			</div>
-			<br /> <input type="button" value="Incluir"
+			<br /> 
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir')}">
+						<input type="button" value="Incluir"
 				onclick="javascript:editar()" class="gt-btn-medium">
+			</c:if>
 		</div>
 	</div>
 </siga:pagina>

@@ -18,9 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.webwork.action;
 
-import java.lang.reflect.InvocationTargetException;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 
 public class CpGrupoDeEmailAction extends CpGrupoAction {
@@ -30,25 +27,25 @@ public class CpGrupoDeEmailAction extends CpGrupoAction {
 
 	@Override
 	public String aEditar() throws Exception {
-		assertAcesso("GEMAIL:Gerenciar grupos de email");
+		assertAcesso("GDISTR:Gerenciar grupos de distribuição;ALT:Alterar");
 		return super.aEditar();
 	}
 
 	@Override
 	public String aExcluir() throws Exception {
-		assertAcesso("GEMAIL:Gerenciar grupos de email");
+		assertAcesso("GDISTR:Gerenciar grupos de distribuição;EXC:Excluir");
 		return super.aExcluir();
 	}
 
 	@Override
 	public String aGravar() throws Exception {
-		assertAcesso("GEMAIL:Gerenciar grupos de email");
+		assertAcesso("GDISTR:Gerenciar grupos de distribuição;ALT:Alterar");
 		return super.aGravar();
 	}
 
 	@Override
 	public String aListar() throws Exception {
-		assertAcesso("GEMAIL:Gerenciar grupos de email");
+		assertAcesso("GDISTR:Gerenciar grupos de distribuição;PSQ:Pesquisar");
 		return super.aListar();
 	}
 

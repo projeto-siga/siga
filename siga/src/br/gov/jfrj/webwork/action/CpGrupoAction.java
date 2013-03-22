@@ -28,9 +28,9 @@ package br.gov.jfrj.webwork.action;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -372,6 +372,18 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 		setTamanho(intQtd);
 		List<CpGrupo> itgGrupos = dao().consultarPorFiltro(flt, offset,
 				itemPagina);
+	
+		Iterator<CpGrupo> it = itgGrupos.iterator();
+		
+		while(it.hasNext()){
+			CpGrupo cpGrp = it.next();
+			CpConfiguracaoBL bl = Cp.getInstance().getConf();
+			if (!bl.podePorConfiguracao(getTitular(), getLotaTitular(), cpGrp, CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
+				it.remove();
+			}
+			
+		}
+		
 		setItens(itgGrupos);
 		return "lista";
 	}

@@ -101,7 +101,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		String s = getExTipoMovimentacao().getSigla();
 		if (getCadastrante() == null || getSubscritor() == null)
 			return s;
-		if (getSubscritor().getId() != getCadastrante().getId())
+		if (!getSubscritor().getId().equals(getCadastrante().getId()))
 			s = s + " de Ordem";
 		if (getExMovimentacaoCanceladora() != null)
 			s = s + " (Cancelada)";

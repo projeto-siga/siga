@@ -80,7 +80,7 @@
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
 						<h2 class="gt-table-head">Quadro de Solicitações</h2>
 						<!-- content box -->
-						<span id='rightbottom' style="margin:0;padding:0;"></span>
+						<div id='rightbottom'></div>
 						<c:set var="url" value="${f:getURLSistema('siga.sr')}" />
 						<script type="text/javascript">
 							SetInnerHTMLFromAjaxResponse(

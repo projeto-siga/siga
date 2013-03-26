@@ -11,7 +11,8 @@
 
 <mod:modelo salvarViaAjax="N" acaoGravar="gravarBI" acaoExcluir="excluirBI" acaoCancelar="refazerBI" acaoFinalizar="finalizarBI">
 	<mod:entrevista>
-                
+                <!--
+
 		<mod:grupo>
 			<mod:texto titulo="Presidente" var="nmPresidente" valor="Desembargadora Federal Maria Helena Cisne" largura="90"/>
 		</mod:grupo>
@@ -32,7 +33,7 @@
 			<mod:texto titulo="Diagramação e Impressão" var="diagramacaoEImpressao" valor="Coordenadoria de Produção Gráfica e Editorial (CPGRAF)" largura="90"/>
 		</mod:grupo>
 		
-                
+                -->
 		
 		<mod:grupo titulo="Documentos a Publicar">
 			<table>
@@ -73,6 +74,12 @@
 		</mod:grupo>		
 	</mod:entrevista>
 
+
+
+
+
+
+
 	<mod:documento>
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
@@ -101,7 +108,7 @@
 			<table width="100%" align="left" border="0" bgcolor="#FFFFFF">
 				<tr bgcolor="#FFFFFF">
 					<td align="left" valign="bottom" width="100%"><img
-						src="contextpath/imagens/cabecalhoBoletimInternoTRF2.gif" width="450" height="65" /></td>
+						src="contextpath/imagens/cabecalhoBoletimInternoTRF2.gif" width="775" height="225" /></td>
 				</tr>
 			</table>
 		</td></tr>
@@ -126,7 +133,7 @@
 		<br />
 		<br />
 		<!-- INICIO CABECALHO
-			<table width="100%" bgcolor="#FFFFFF">
+			<table width="100%" bgcolor="#FFFFFF">  <!-- segunda página em diante  -->
 				<tr>
 					<td valign="bottom" align="center" style="border-width: 0px 0px 1px 0px; border-style: solid; padding-top: 3px">
 						<span style="font-size:11px">${doc.codigo} de ${doc.dtDocDDMMYY}</span>
@@ -205,12 +212,11 @@
 		<center><span style="font-size: 15px;">********************************* FIM *********************************</span></center>
 
 		<!-- INICIO PRIMEIRO RODAPE
-		<%--<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental2.jsp" />--%>
-		<c:import url="/paginas/expediente/modelos/inc_rodapeBoxBoletimInternol.jsp" />
+		
 		FIM PRIMEIRO RODAPE -->
 
 		<!-- INICIO RODAPE
-		<c:import url="/paginas/expediente/modelos/inc_rodapeNumeracaoADireita2.jsp" />
+		
 		FIM RODAPE -->
 	</mod:documento>
 

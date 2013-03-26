@@ -11,8 +11,8 @@ import play.db.jpa.Model;
 
 public enum SrUrgencia {
 
-	SEM_PRESSA(1, "Sem urgência.", "Sem pressa"), PODE_ESPERAR(2,
-			"Pouco urgente.", "Quando for oportuno"), URGENCIA(
+	SEM_PRESSA(1, "Sem urgência.", "Sem pressa"), NORMAL(2,
+			"Urgência normal.", "Quando for oportuno"), URGENCIA(
 			3, "Urgente.", "Com urgência"), MUITA_URGENCIA(
 			4, "Muito urgente", "Com muita urgência"), AGIR_IMEDIATO(5,
 			"Extremamente urgente.", "Imediatamente");

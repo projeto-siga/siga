@@ -1649,8 +1649,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		if (doc.getTitular() != null
-				&& doc.getTitular().getIdPessoa() != doc.getSubscritor()
-						.getIdPessoa()) {
+				&& !doc.getTitular().getIdPessoa().equals(doc.getSubscritor()
+						.getIdPessoa()) ) {
 			getTitularSel().buscarPorObjeto(doc.getTitular());
 			setSubstituicao(true);
 		}

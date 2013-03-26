@@ -196,6 +196,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
 
 	private ExDocumento exDocAnterior;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_MOB_AUTUADO")
+	private ExMobil exMobilAutuado;
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -829,5 +833,13 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setTitular(DpPessoa titular) {
 		this.titular = titular;
+	}
+
+	public ExMobil getExMobilAutuado() {
+		return exMobilAutuado;
+	}
+
+	public void setExMobilAutuado(ExMobil exMobilAutuado) {
+		this.exMobilAutuado = exMobilAutuado;
 	}
 }

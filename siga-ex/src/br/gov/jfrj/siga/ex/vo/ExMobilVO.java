@@ -362,6 +362,15 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeCancelarVia(titular, lotaTitular, mob),
 				"Confirma o cancelamento da via?", null, null, null);
+		
+		addAcao("link_add","Autuar",
+				"/expediente/doc",
+				"editar",
+				Ex.getInstance()
+						.getComp()
+						.podeAutuar(titular, lotaTitular, mob),
+				null, "idMobilAutuado=" + mob.getId(),
+				null, null);
 	}
 
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {

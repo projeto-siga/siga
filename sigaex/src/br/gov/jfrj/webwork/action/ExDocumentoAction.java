@@ -279,6 +279,10 @@ public class ExDocumentoAction extends ExActionSupport {
 	private boolean criandoAnexo;
 
 	private List<ExFormaDocumento> formasDoc;
+	
+	private Long idMobilAutuado;
+	
+	private boolean autuando;
 
 	public boolean isCriandoAnexo() {
 		return criandoAnexo;
@@ -298,6 +302,14 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public void setDespachando(boolean despachando) {
 		this.despachando = despachando;
+	}
+
+	public boolean getAutuando() {
+		return autuando;
+	}
+
+	public void setAutuando(boolean autuando) {
+		this.autuando = autuando;
 	}
 
 	public String getAlerta() {
@@ -353,6 +365,14 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public void setNivelAcesso(Long nivelAcesso) {
 		this.nivelAcesso = nivelAcesso;
+	}
+
+	public Long getIdMobilAutuado() {
+		return idMobilAutuado;
+	}
+
+	public void setIdMobilAutuado(Long idMobilAutuado) {
+		this.idMobilAutuado = idMobilAutuado;
 	}
 
 	public ExDocumentoAction() {
@@ -1161,6 +1181,15 @@ public class ExDocumentoAction extends ExActionSupport {
 			 * "Não foi possível criar documento filho do documento selecionado."
 			 * ); } }
 			 */
+			
+			ExMobil mobilAutuado = null;
+			if(getIdMobilAutuado() != null) {
+				
+				mobilAutuado = dao().consultar(getIdMobilAutuado(),
+						ExMobil.class, false);
+				
+				doc.setExMobilAutuado(mobilAutuado);
+			}
 
 			Ex.getInstance().getBL()
 					.gravar(getCadastrante(), getLotaTitular(), doc);
@@ -2317,7 +2346,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					.getBL()
 					.obterFormasDocumento(getTitular(), getLotaTitular(),
 							doc.getExTipoDocumento(), null, true,
-							getDespachando());
+							getDespachando(), getAutuando());
 		return formasDoc;
 	}
 
@@ -2336,7 +2365,7 @@ public class ExDocumentoAction extends ExActionSupport {
 				.getInstance()
 				.getBL()
 				.obterListaModelos(forma, getDespachando(), headerValue, true,
-						getTitular(), getLotaTitular());
+						getTitular(), getLotaTitular(), getAutuando());
 
 	}
 

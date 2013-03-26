@@ -69,6 +69,64 @@
 					onclick="javascript:window.location.href='${url}'"
 					class="gt-btn-medium gt-btn-left">
 			</div>
+			<br/>
+			
+			<c:if test="${(not empty itensTitular)}">
+			<h2 class="gt-table-head">Substituições cadastradas para o Titular</h2>
+			<div class="gt-content-box gt-for-table">
+				<table border="0" class="gt-table">
+					<thead>
+						<tr>
+							<th align="left">Titular</th>
+							<th align="left">Substituto</th>
+							<th align="center">Data inicial</th>
+							<th align="center">Data final</th>
+							<th align="center">Opções</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<c:forEach var="substituicao" items="${itensTitular}">
+							<tr>
+								<td align="left"><c:choose>
+										<c:when test="${not empty substituicao.titular}">
+						${substituicao.titular.nomePessoa}
+					</c:when>
+										<c:otherwise>
+						${substituicao.lotaTitular.nomeLotacao}
+					</c:otherwise>
+									</c:choose>
+								</td>
+								<td align="left"><c:choose>
+										<c:when test="${not empty substituicao.substituto}">
+						${substituicao.substituto.nomePessoa}
+					</c:when>
+										<c:otherwise>
+						${substituicao.lotaSubstituto.nomeLotacao}
+					</c:otherwise>
+									</c:choose>
+								</td>
+								<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
+								<td align="center">${substituicao.dtFimSubstDDMMYY}</td>
+								<td align="center"><ww:url id="url" action="editar" namespace="/substituicao">
+											<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
+										</ww:url>
+										<ww:a href="%{url}">Alterar</ww:a>
+										<ww:url id="url" action="excluir" namespace="/substituicao">
+												<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
+										</ww:url>
+										<ww:a href="%{url}"> | Excluir</ww:a>
+																
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
+			</c:if>
+			
+			
+			
 		</div>
 	</div>
 </siga:pagina>

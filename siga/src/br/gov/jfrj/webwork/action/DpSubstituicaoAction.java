@@ -48,6 +48,8 @@ import com.opensymphony.xwork.Action;
 public class DpSubstituicaoAction extends SigaActionSupport {
 
 	private List itens;
+	
+	private List itensTitular;
 
 	private Long id;
 
@@ -279,10 +281,29 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	    	if (subst.isEmVoga()) {
 	    		substVigentes.add(subst);	    		
 	    	}
-	    }
-
-		
+	    }		
 		setItens(substVigentes);
+		
+		
+		if (!getCadastrante().getId().equals(getTitular().getId())
+				|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
+			// é uma substituição !
+			dpSubstituicao.setTitular(getTitular());
+			dpSubstituicao.setLotaTitular(getTitular().getLotacao());
+			todasSubst = dao().consultarOrdemData(dpSubstituicao);	
+			for (DpSubstituicao subst : todasSubst) {
+		    	if (subst.getLotaSubstituto() != null && subst.getLotaSubstituto().isFechada())
+		    		continue;
+		    	if (subst.getSubstituto() != null && (subst.getSubstituto().isFechada() 
+		    			|| subst.getSubstituto().isBloqueada()))
+		    		continue;
+		    	if (subst.isEmVoga()) {
+		    		substVigentes.add(subst);	    		
+		    	}
+		    }	
+			setItensTitular(substVigentes);			
+		}
+		
 		/*
 		 * TreeMap tree = new TreeMap(); for (Object dps : getItens()) {
 		 * DpSubstituicao trueDps = (DpSubstituicao) dps;
@@ -293,6 +314,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		return Action.SUCCESS;
 	}
 
+	
 	public String aSubstituirGravar() throws Exception {
 		aFinalizar();
 		if (getIdTitular() != null) {
@@ -490,6 +512,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	}
 
 	public void setItens(List itens) {
+		this.itens = itens;
+	}
+	
+	public void setItensTitular(List itens) {
 		this.itens = itens;
 	}
 

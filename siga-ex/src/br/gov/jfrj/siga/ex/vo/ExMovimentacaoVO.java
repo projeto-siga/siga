@@ -199,36 +199,38 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 
 			if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {
-				addAcao(null,
-						"Excluir",
-						"/expediente/mov",
-						"excluir",
-						Ex.getInstance()
-								.getComp()
-								.podeExcluirAnexo(titular, lotaTitular,
-										mov.mob(), mov));
-				addAcao(null,
-						"Cancelar",
-						"/expediente/mov",
-						"cancelar",
-						Ex.getInstance()
-								.getComp()
-								.podeCancelarAnexo(titular, lotaTitular,
-										mov.mob(), mov));
-				if (!mov.isCancelada())
+				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito()) {
+					addAcao(null,
+							"Excluir",
+							"/expediente/mov",
+							"excluir",
+							Ex.getInstance()
+									.getComp()
+									.podeExcluirAnexo(titular, lotaTitular,
+											mov.mob(), mov));
+					addAcao(null,
+							"Cancelar",
+							"/expediente/mov",
+							"cancelar",
+							Ex.getInstance()
+									.getComp()
+									.podeCancelarAnexo(titular, lotaTitular,
+											mov.mob(), mov));
 					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov",
 							"exibir", true, null, "&popup=true", null, null);
+				}
 			}
 
 			if (hasDespacho(idTpMov)) {
-				addAcao(null,
-						"Cancelar",
-						"/expediente/mov",
-						"cancelar",
-						Ex.getInstance()
-								.getComp()
-								.podeCancelarDespacho(titular, lotaTitular,
-										mov.mob(), mov));
+				if (!mov.mob().doc().isSemEfeito())
+					addAcao(null,
+							"Cancelar",
+							"/expediente/mov",
+							"cancelar",
+							Ex.getInstance()
+									.getComp()
+									.podeCancelarDespacho(titular, lotaTitular,
+											mov.mob(), mov));
 			}
 
 			if (idTpMov != TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
@@ -236,7 +238,7 @@ public class ExMovimentacaoVO extends ExVO {
 					&& idTpMov != TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 					&& idTpMov != TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO
 					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO) {
-				if (!mov.isCancelada())
+				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito())
 					addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir",
 							true, null, "&popup=true", null, null);
 			}

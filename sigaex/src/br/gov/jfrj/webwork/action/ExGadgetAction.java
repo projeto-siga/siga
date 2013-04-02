@@ -22,7 +22,10 @@
 
 package br.gov.jfrj.webwork.action;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -83,7 +86,24 @@ public class ExGadgetAction extends ExActionSupport {
 					"Código do tipo de marca (Processos ou Expedientes) não foi informado");
 		listEstados = dao().consultarPaginaInicial(getTitular(),
 				getLotaTitular(), getIdTpFormaDoc());
-		documentoViaSel = new ExMobilSelecao();
+		// documentoViaSel = new ExMobilSelecao();
+
+		if (param("idTpMarcadorExcluir") != null) {
+			String as[] = param("idTpMarcadorExcluir").split(",");
+			Set<Integer> excluir = new HashSet<Integer>();
+			for (String s : as) {
+				excluir.add(Integer.valueOf(s));
+			}
+			List listEstadosReduzida = new ArrayList<Object[]>();
+			for (Object o : listEstados) {
+				// if (!excluir.contains(Short.valueOf(((Object[]) o)[0]
+				// .toString()))) {
+				if (!excluir.contains((Integer) ((Object[]) o)[0])) {
+					listEstadosReduzida.add(o);
+				}
+			}
+			listEstados = listEstadosReduzida;
+		}
 
 		super.getRequest().setAttribute(
 				"_cadastrante",
@@ -97,7 +117,8 @@ public class ExGadgetAction extends ExActionSupport {
 
 	public String test() throws Exception {
 		DpPessoa pes = daoPes(param("matricula"));
-		setIdTpFormaDoc(1);
+		if (getIdTpFormaDoc() == null || getIdTpFormaDoc() == 0)
+			setIdTpFormaDoc(1);
 		setTitular(pes);
 		setLotaTitular(pes.getLotacao());
 		return execute();

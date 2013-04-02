@@ -369,7 +369,7 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance()
 						.getComp()
 						.podeAutuar(titular, lotaTitular, mob),
-				null, "idMobilAutuado=" + mob.getId(),
+				null, "idMobilAutuado=" + mob.getId() + "&autuando=true",
 				null, null);
 	}
 

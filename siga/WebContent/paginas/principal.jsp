@@ -30,7 +30,7 @@
 					<div style="width: 100%; padding:0; margin:0;">
 						<!-- Files Table -->
 						<!-- This table can be used for listing things like files, pictures, documents, etc -->
-						<h2 class="gt-table-head">Quadro de Expedientes</h2>
+						<h2 class="gt-table-head">Expedientes</h2>
 						<!-- content box -->
 						<div id='left'></div>
 						<script type="text/javascript">
@@ -41,7 +41,7 @@
 						<!-- Expedientes -->
 						<br/>
 						<!-- Processos -->
-						<h2 class="gt-table-head">Quadro de Processos Administrativos</h2>
+						<h2 class="gt-table-head">Administrativos</h2>
 						<!-- content box -->
 						<div id='leftbottom'></div>
 
@@ -58,7 +58,7 @@
 					<div style="width: 100%; padding:0; margin:0;">
 						<c:if
 							test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF')}">
-							<h2 class="gt-table-head">Quadro de Tarefas</h2>
+							<h2 class="gt-table-head">Tarefas</h2>
 							<!-- content box -->
 							<span id='right' style="margin:0;padding:0;"></span>
 							<c:if test="${f:resource('siga.sr.')}">
@@ -78,7 +78,7 @@
 						<br/>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-						<h2 class="gt-table-head">Quadro de Solicitações</h2>
+						<h2 class="gt-table-head">Solicitações</h2>
 						<!-- content box -->
 						<div id='rightbottom'></div>
 						<c:set var="url" value="${f:getURLSistema('siga.sr')}" />
@@ -86,6 +86,19 @@
 							SetInnerHTMLFromAjaxResponse(
 									"/siga/ajax_proxy.action?URL=${url}/gadget",
 									document.getElementById('rightbottom'));
+						</script>
+						</c:if>
+						<br/>
+						<c:if
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
+						<h2 class="gt-table-head">Gestão de Conhecimento</h2>
+						<!-- content box -->
+						<div id='rightbottom2'></div>
+						<c:set var="url" value="${f:getURLSistema('siga.gc')}" />
+						<script type="text/javascript">
+							SetInnerHTMLFromAjaxResponse(
+									"/siga/ajax_proxy.action?URL=${url}/gadget",
+									document.getElementById('rightbottom2'));
 						</script>
 						</c:if>
 						<br/>

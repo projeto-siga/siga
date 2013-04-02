@@ -3,16 +3,21 @@ package models;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
@@ -31,6 +36,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
 @Table(name = "GC_INFORMACAO")
+@NamedQuery(name = "buscarConhecimento", query = "select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join inf.tags tag where tag in (:tags)")
 public class GcInformacao extends GenericModel {
 	@Id
 	@GeneratedValue
@@ -56,6 +62,10 @@ public class GcInformacao extends GenericModel {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_LOTACAO")
 	public DpLotacao lotacao;
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "GC_TAG_X_INFORMACAO", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
+	public Set<GcTag> tags;
 
 	@Column(name = "DT_ELABORACAO_FIM")
 	public Date elaboracaoFim;

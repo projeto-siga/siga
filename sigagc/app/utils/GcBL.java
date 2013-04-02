@@ -1,5 +1,7 @@
 package utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -14,7 +16,9 @@ import models.GcArquivo;
 import models.GcInformacao;
 import models.GcMarca;
 import models.GcMovimentacao;
+import models.GcTag;
 import models.GcTipoMovimentacao;
+import models.GcTipoTag;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -59,7 +63,7 @@ public class GcBL {
 		if (titulo != null || conteudo != null || classificacao != null) {
 			GcArquivo arq = new GcArquivo();
 			arq.titulo = titulo;
-			arq.conteudo = conteudo;
+			arq.setConteudoHTML(conteudo);
 			arq.classificacao = classificacao;
 			mov.arq = arq;
 		} else {
@@ -93,12 +97,12 @@ public class GcBL {
 
 	public static Date dt() {
 		Date dt;
-//		try {
-//			dt = dao().dt();
-//			return dt;
-//		} catch (AplicacaoException e) {
-//			e.printStackTrace();
-//		}
+		// try {
+		// dt = dao().dt();
+		// return dt;
+		// } catch (AplicacaoException e) {
+		// e.printStackTrace();
+		// }
 		return new Date();
 	}
 
@@ -135,6 +139,7 @@ public class GcBL {
 			}
 		}
 		atualizarInformacaoPorMovimentacoes(inf);
+		atualizarTags(inf);
 		inf.save();
 		atualizarMarcas(inf);
 		// dao().commitTransacao();
@@ -142,6 +147,61 @@ public class GcBL {
 		// dao().rollbackTransacao();
 		// }
 		return inf;
+	}
+
+	private static void atualizarTags(GcInformacao inf) {
+		inf.tags = new TreeSet<GcTag>();
+		if (inf.arq.classificacao != null) {
+			String a[] = inf.arq.classificacao.split(",");
+			inf.tags = buscarTags(a, false);
+		}
+	}
+
+	public static Set<GcTag> buscarTags(String[] a, boolean fValidos) {
+		Set<GcTag> set = new TreeSet<GcTag>();
+		for (String s : a) {
+			String categoria = null;
+			String titulo = null;
+			Long tipo = null;
+			s = simplificarString(s);
+			if (s != null) {
+				if (s.startsWith("@")) {
+					s = s.substring(1);
+					String aa[] = s.split(":");
+					if (aa.length > 2) {
+						continue;
+					} else if (aa.length == 2) {
+						categoria = simplificarString(aa[0]);
+						titulo = simplificarString(aa[1]);
+					} else {
+						titulo = simplificarString(aa[0]);
+					}
+					tipo = GcTipoTag.TIPO_TAG_CLASSIFICACAO;
+				} else if (s.startsWith("#")) {
+					s = s.substring(1);
+					titulo = simplificarString(s);
+					tipo = GcTipoTag.TIPO_TAG_HASHTAG;
+				}
+			}
+			GcTag tag;
+			if (categoria == null)
+				tag = GcTag.find(
+						"tipo.id = ? and categoria is null and titulo = ?",
+						tipo, titulo).first();
+			else
+				tag = GcTag.find(
+						"tipo.id = ? and categoria = ? and titulo = ?", tipo,
+						categoria, titulo).first();
+			if (tag == null && !fValidos) {
+				tag = new GcTag((GcTipoTag) GcTipoTag.findById(tipo),
+						categoria, titulo);
+			}
+			if (tag != null)
+				set.add(tag);
+		}
+		if (set.size() == 0)
+			return null;
+		return set;
 	}
 
 	public static void atualizarInformacaoPorMovimentacoes(GcInformacao inf)
@@ -190,10 +250,15 @@ public class GcBL {
 
 	public static void atualizarMarcas(GcInformacao inf) {
 		SortedSet<GcMarca> setA = new TreeSet<GcMarca>();
-		if (inf.marcas != null)
-			setA.addAll(inf.marcas);
-		if (setA == null)
-			setA = new TreeSet<GcMarca>();
+		if (inf.marcas != null) {
+			// Excluir marcas duplicadas
+			for (GcMarca m : inf.marcas) {
+				if (setA.contains(m))
+					dao().excluir(m);
+				else
+					setA.add(m);
+			}
+		}
 		SortedSet<GcMarca> setB = calcularMarcadores(inf);
 		Set<GcMarca> incluir = new TreeSet<GcMarca>();
 		Set<GcMarca> excluir = new TreeSet<GcMarca>();
@@ -417,6 +482,50 @@ public class GcBL {
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, titular,
 				lotaTitular, null, null, null, null, null);
 		GcBL.gravar(informacao, idc);
+	}
+
+	public static int compareStrings(String s1, String s2) {
+		if (s1 == null) {
+			if (s2 != null)
+				return -1;
+			else
+				return 0;
+		}
+		return s1.compareTo(s2);
+	}
+
+	private final static String NON_THIN = "[^iIl1\\.,']";
+
+	private static int textWidth(String str) {
+		return (int) (str.length() - str.replaceAll(NON_THIN, "").length() / 2);
+	}
+
+	public static String ellipsize(String text, int max) {
+
+		if (textWidth(text) <= max)
+			return text;
+
+		// Start by chopping off at the word before max
+		// This is an over-approximation due to thin-characters...
+		int end = text.lastIndexOf(' ', max - 3);
+
+		// Just one long word. Chop it off.
+		if (end == -1)
+			return text.substring(0, max - 3) + "...";
+
+		// Step forward as long as textWidth allows.
+		int newEnd = end;
+		do {
+			end = newEnd;
+			newEnd = text.indexOf(' ', end + 1);
+
+			// No more spaces.
+			if (newEnd == -1)
+				newEnd = text.length();
+
+		} while (textWidth(text.substring(0, newEnd) + "...") < max);
+
+		return text.substring(0, end) + "...";
 	}
 
 }

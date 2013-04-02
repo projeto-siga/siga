@@ -2,6 +2,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import models.GcInformacao;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
+import models.GcTipoTag;
 import play.Play;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
@@ -59,9 +60,13 @@ public class Bootstrap extends Job {
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 					"Cancelamento de movimentação").save();
 
-			GcTipoInformacao tinf = new GcTipoInformacao();
-			tinf.nome = "Registro de Conhecimento";
-			tinf.save();
+			new GcTipoInformacao(
+					GcTipoInformacao.TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO,
+					"Registro de Conhecimento").save();
+
+			new GcTipoTag(GcTipoTag.TIPO_TAG_CLASSIFICACAO, "Classificação")
+					.save();
+			new GcTipoTag(GcTipoTag.TIPO_TAG_HASHTAG, "Marcador").save();
 		}
 
 		if (false && !Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa")) {

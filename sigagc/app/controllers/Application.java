@@ -1,30 +1,37 @@
 package controllers;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
 
 import models.GcArquivo;
 import models.GcInformacao;
-import models.GcMarca;
 import models.GcMovimentacao;
+import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 import play.Play;
 import play.Play.Mode;
 import play.db.jpa.JPA;
+import play.exceptions.PlayException;
+import play.exceptions.UnexpectedException;
 import play.mvc.Before;
+import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
+import play.mvc.Scope.Flash;
 import utils.GcBL;
 import utils.GcDao;
 import utils.GcInformacaoFiltro;
@@ -145,7 +152,7 @@ public class Application extends Controller {
 			DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 
 			GcArquivo arq = new GcArquivo();
-			arq.conteudo = "teste 123";
+			arq.setConteudoHTML("teste 123");
 			arq.titulo = "teste";
 
 			GcMovimentacao mov = new GcMovimentacao();
@@ -184,6 +191,37 @@ public class Application extends Controller {
 				((DpLotacao) renderArgs.get("lotaTitular")).getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
+	}
+
+	public static void knowledge(String[] tags, String estilo) {
+		Set<GcTag> set = GcBL.buscarTags(tags, true);
+		Query query = JPA.em().createNamedQuery("buscarConhecimento");
+		query.setParameter("tags", set);
+		List<Object[]> conhecimentos = query.getResultList();
+		for (Object[] o : conhecimentos) {
+			if (o[2] != null && o[2] instanceof byte[]) {
+				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
+				s = GcBL.ellipsize(s, 100);
+				o[2] = s;
+			}
+		}
+
+		if (conhecimentos.size() == 0)
+			conhecimentos = null;
+
+		String classificacao = "";
+		if (tags != null && tags.length > 0) {
+			for (String s : tags) {
+				if (classificacao.length() > 0)
+					classificacao += ", ";
+				classificacao += s;
+			}
+		}
+
+		if (estilo != null)
+			render("@knowledge_" + estilo, conhecimentos, classificacao);
+		else
+			render(conhecimentos, classificacao);
 	}
 
 	public static void index() {
@@ -238,7 +276,7 @@ public class Application extends Controller {
 		render(informacao);
 	}
 
-	public static void editar(long id) {
+	public static void editar(long id, String classificacao) throws IOException {
 		GcInformacao informacao = null;
 		if (id != 0)
 			informacao = GcInformacao.findById(id);
@@ -246,10 +284,11 @@ public class Application extends Controller {
 			informacao = new GcInformacao();
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
 		String titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
-		String conteudo = (informacao.arq != null) ? informacao.arq.conteudo
-				: null;
-		String classificacao = (informacao.arq != null) ? informacao.arq.classificacao
-				: null;
+		String conteudo = (informacao.arq != null) ? informacao.arq
+				.getConteudoHTML() : null;
+		if (classificacao == null)
+			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
+					: null;
 		render(informacao, tiposInformacao, titulo, conteudo, classificacao);
 	}
 
@@ -268,7 +307,14 @@ public class Application extends Controller {
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
 			informacao.lotacao = informacao.autor.getLotacao();
-			informacao.ou = informacao.autor.getOrgaoUsuario();
+		}
+		if (informacao.ou == null) {
+			if (informacao.autor != null)
+				informacao.ou = informacao.autor.getOrgaoUsuario();
+			else if (informacao.lotacao != null)
+				informacao.ou = informacao.lotacao.getOrgaoUsuario();
+			else if (pessoa != null)
+				informacao.ou = pessoa.getOrgaoUsuario();
 		}
 		if (informacao.tipo == null)
 			informacao.tipo = GcTipoInformacao.all().first();
@@ -421,6 +467,27 @@ public class Application extends Controller {
 						+ "&";
 		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action"
 				+ paramString);
+	}
+
+	@Catch(value = Throwable.class, priority = 1)
+	public static void catchError(Throwable throwable) {
+		if (Play.mode.isDev())
+			return;
+		// Flash.current().clear();
+		// Flash.current().put("_cabecalho_pre",
+		// renderArgs.get("_cabecalho_pre"));
+		// Flash.current().put("_cabecalho_pos",
+		// renderArgs.get("_cabecalho_pos"));
+		// Flash.current().put("_rodape", renderArgs.get("_rodape"));
+		java.io.StringWriter sw = new java.io.StringWriter();
+		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+		throwable.printStackTrace(pw);
+		String stackTrace = sw.toString();
+		erro(throwable.getMessage(), stackTrace);
+	}
+
+	public static void erro(String message, String stackTrace) {
+		render(message, stackTrace);
 	}
 
 }

@@ -6,6 +6,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="libs"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
@@ -159,7 +160,7 @@
 									descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" />
 							</td>
 							<td>${mov.descricao} <c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
-								<c:set var="assinadopor" value="${true}" /> <siga:links	
+								<c:set var="assinadopor" value="${true}" /> <siga:links
 									inline="${true}"
 									separator="${not empty mov.descricao and mov.descricao != null}">
 									<c:forEach var="acao" items="${mov.acoes}">
@@ -332,8 +333,12 @@
 		</c:if>
 
 		</div>
+
+		<div class="gt-sidebar-content" id="gc"></div>
+
 		<!-- / sidebar -->
 	</div>
+
 </div>
 
 <!-- Somente quando o workflow está ativado -->
@@ -341,5 +346,19 @@
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
 </c:if>
+<c:if
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+	<c:url var="url" value="${libs:getURLSistema('siga.gc')}/knowledge">
+		<c:forEach var="tag" items="${docVO.tags}">
+			<c:param name="tags">${tag}</c:param>
+		</c:forEach>
+		<c:param name="estilo">sidebar</c:param>
+		<c:param name="ts">${currentTimeMillis}</c:param>
+	</c:url>
+	<script type="text/javascript">
+		SetInnerHTMLFromAjaxResponse("/siga/ajax_proxy.action?URL=${url}",document.getElementById('gc'));
+	</script>
+</c:if>
+
 
 <siga:rodape />

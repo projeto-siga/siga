@@ -80,11 +80,10 @@
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
 						<h2 class="gt-table-head">Quadro de Solicitações</h2>
 						<!-- content box -->
-						<div id='rightbottom'></div>
-						<c:set var="url" value="${f:getURLSistema('siga.sr')}" />
+						<span id='rightbottom' style="margin:0;padding:0;"></span>
 						<script type="text/javascript">
 							SetInnerHTMLFromAjaxResponse(
-									"/siga/ajax_proxy.action?URL=${url}/gadget",
+									"/siga/ajax_proxy.action?modulo=sr&action=gadget",
 									document.getElementById('rightbottom'));
 						</script>
 						</c:if>

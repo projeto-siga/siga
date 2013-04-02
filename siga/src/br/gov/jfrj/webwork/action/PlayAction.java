@@ -43,6 +43,7 @@ import org.apache.commons.codec.EncoderException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
@@ -69,13 +70,11 @@ public class PlayAction extends SigaActionSupport {
 	 */
 	public String aAjaxProxy() throws AplicacaoException {
 		try {
-			String URL = param("URL");
-			/*
-			 * Matcher m = Pattern.compile(
-			 * "(https?://)([a-zA-Z_0-9]+)(:[0-9]{1,5})?(/.*)?").matcher( URL);
-			 * if (m.find()) URL = m.group(1) + "localhost" + m.group(3) +
-			 * m.group(4);
-			 */
+			String url = SigaBaseProperties.getString("siga." + param("modulo") +"."
+					+ SigaBaseProperties.getString("ambiente") + ".url.interna");
+			if (!url.endsWith("/")) 
+				url += "/";
+			url += param("action");
 
 			HashMap<String, String> header = new HashMap<String, String>();
 			Enumeration<String> headerNames = getRequest().getHeaderNames();
@@ -88,7 +87,7 @@ public class PlayAction extends SigaActionSupport {
 			getRequest()
 					.setAttribute(
 							"result",
-							new String(ConexaoHTTP.get(URL, header).getBytes()));
+							new String(ConexaoHTTP.get(url, header).getBytes()));
 
 			return Action.SUCCESS;
 		} catch (Exception e) {

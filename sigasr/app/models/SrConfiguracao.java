@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO")
+@Table(name = "SR_CONFIGURACAO", schema="SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
 

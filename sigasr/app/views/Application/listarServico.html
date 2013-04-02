@@ -19,8 +19,8 @@
 					<tr
 						onclick="javascript:window.location='@{Application.editarServico(servico.idServico)}'"
 						style="cursor: pointer;">
-						<td style="padding-left: ${servico.nivel*13}px;">${servico.siglaServico}</td>
-						<td>${servico.tituloServico}</td>
+						<td>${servico.siglaServico}</td>
+						<td style="padding-left: ${servico.nivel*13}px;">${servico.tituloServico}</td>
 						<td>${servico.descrServico}</td>
 					</tr>
 					</a> #{/list}

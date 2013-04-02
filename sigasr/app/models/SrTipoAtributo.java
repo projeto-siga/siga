@@ -26,11 +26,11 @@ import play.db.jpa.Model;
 import models.siga.PlayHistoricoSuporte;
 
 @Entity
-@Table(name="SR_TIPO_ATRIBUTO")
+@Table(name="SR_TIPO_ATRIBUTO", schema="SIGASR")
 public class SrTipoAtributo extends HistoricoSuporte {
 	
 	@Id
-	@SequenceGenerator(sequenceName = "SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
 	@GeneratedValue(generator = "srTipoAtributoSeq")
 	@Column(name = "ID_TIPO_ATRIBUTO")
 	public Long idTipoAtributo;

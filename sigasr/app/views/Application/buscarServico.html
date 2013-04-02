@@ -41,9 +41,9 @@
 		</tr>
 		#{list items:itens, as:'servico'}
 		<tr>
-			<td style="padding-left: ${servico.nivel*13}px;"><a href="javascript:opener.retorna_servico${nome}('${servico.id}','${servico.sigla}','${servico.descricao}');window.close()">${servico.sigla}</a>
+			<td><a href="javascript:opener.retorna_servico${nome}('${servico.id}','${servico.sigla}','${servico.descricao}');window.close()">${servico.sigla}</a>
 			</td>
-			<td>${servico.descricao}</td>
+			<td style="padding-left: ${servico.nivel*13}px;">${servico.descricao}</td>
 		</tr>
 		#{/list}
 	</table>

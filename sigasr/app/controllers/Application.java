@@ -33,9 +33,12 @@ import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
+import util.SigaPlayCalendar;
+import util.SigaSrProperties;
 import util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -58,8 +61,8 @@ public class Application extends Controller {
 	static void addDefaults() throws Exception {
 		try {
 
-			renderArgs.put("base", getBaseSiga());
-			renderArgs.put("baseSr", getBaseSigaSr());
+			renderArgs.put("base", SigaBaseProperties.getUrl());
+			renderArgs.put("baseSr", SigaSrProperties.getUrl());
 
 			// Obter cabeçalho e rodapé do Siga
 			HashMap<String, String> atributos = new HashMap<String, String>();
@@ -71,8 +74,10 @@ public class Application extends Controller {
 			if (popup == null
 					|| (!popup.equals("true") && !popup.equals("false")))
 				popup = "false";
-			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
-					+ "/pagina_vazia.action?popup=" + popup, atributos);
+			String paginaVazia = ConexaoHTTP.get(
+					SigaBaseProperties.getUrlInterna()
+							+ "/pagina_vazia.action?popup=" + popup, atributos);
+			paginaVazia = replaceBarraSigas(paginaVazia);
 			String[] pageText = paginaVazia.split("<!-- insert body -->");
 			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
 			renderArgs.put("_cabecalho", cabecalho);
@@ -80,8 +85,9 @@ public class Application extends Controller {
 
 			// Obter usuário logado
 			String[] IDs = ConexaoHTTP.get(
-					getBaseSiga() + "/usuario_autenticado.action",
-					atributos).split(";");
+					SigaBaseProperties.getUrlInterna()
+							+ "/usuario_autenticado.action", atributos).split(
+					";");
 
 			renderArgs.put("cadastrante",
 					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
@@ -97,14 +103,14 @@ public class Application extends Controller {
 			if (IDs[3] != null && !IDs[3].equals(""))
 				renderArgs.put("lotaTitular",
 						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
-			
+
 			assertAcesso("");
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
 			// Edson: Quando as informações não puderam ser obtidas do Siga,
 			// manda para a página de login
-			redirect(getBaseSiga());
-		} catch(Exception e){
+			redirect(SigaBaseProperties.getUrl());
+		} catch (Exception e) {
 			// Edson: Este bloco não deveria ser necessário, mas o Play,
 			// pelo visto, não joga automaticamente para o
 			// método @Catch as exceções geradas no @Before
@@ -130,15 +136,14 @@ public class Application extends Controller {
 		error(e.getMessage());
 	}
 
-	public static String getBaseSiga() {
-		String retorno = Play.configuration.getProperty("siga.base.url");
-		if (retorno.endsWith("/"))
-			retorno = retorno.substring(0, retorno.length()-1);
-		return retorno;
-	}
-
-	public static String getBaseSigaSr() {
-		return "http://" + request.domain + ":" + request.port;
+	// Edson: o objetivo deste método é apenas impedir que os links nas páginas
+	// montadas pelo Siga sejam repassados ao Play com caminhos
+	// relativos, o que causa problemas quando a aplicação está rodando
+	// em porta diferente (9000)
+	private static String replaceBarraSigas(String html) {
+		String urlSiga = SigaBaseProperties.getUrl() + "/";
+		return html.replace("\"/siga", "\"" + urlSiga).replace("'/siga//",
+				"'" + urlSiga);
 	}
 
 	static DpPessoa getCadastrante() {
@@ -366,8 +371,8 @@ public class Application extends Controller {
 
 	public static void criarFilha(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		if (sol.idSolicitacao == sol.solicitacaoPai.idSolicitacao){
-			
+		if (sol.idSolicitacao == sol.solicitacaoPai.idSolicitacao) {
+
 		}
 		SrSolicitacao filha = sol.criarFilhaSemSalvar();
 		formEditar(filha);
@@ -560,20 +565,17 @@ public class Application extends Controller {
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		renderHtml(proxy(getBaseSiga() + "/" + tipo
+		renderHtml(proxy(SigaBaseProperties.getUrl() + "/" + tipo
 				+ "/selecionar.action?" + "propriedade=" + tipo + nome
 				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8")));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		String html = proxy(getBaseSiga() + "/" + tipo + "/buscar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla="
+		String html = proxy(SigaBaseProperties.getUrl() + "/" + tipo
+				+ "/buscar.action?" + "propriedade=" + tipo + nome + "&sigla="
 				+ URLEncoder.encode(sigla, "UTF-8"));
-		// Edson: impedir que os links internos à popup de busca vinda
-		// do Siga chame http://localhost:9000/siga/... em vez de
-		// http://localhost:9000/sigasr/siga/...
-		html = html.replace("\"/siga", "\"/sigasr/siga").replace("'/siga//", "'/sigasr/siga/");
+		html = replaceBarraSigas(html);
 		renderHtml(html);
 	}
 
@@ -584,9 +586,9 @@ public class Application extends Controller {
 				paramString += s + "="
 						+ URLEncoder.encode(request.params.get(s), "UTF-8")
 						+ "&";
-		String html = proxy(getBaseSiga() + "/" + tipo + "/buscar.action"
-				+ paramString);
-		html = html.replace("\"/siga", "\"/sigasr/siga").replace("'/siga//", "'/sigasr/siga/");
+		String html = proxy(SigaBaseProperties.getUrl() + "/" + tipo
+				+ "/buscar.action" + paramString);
+		html = replaceBarraSigas(html);
 		renderHtml(html);
 	}
 

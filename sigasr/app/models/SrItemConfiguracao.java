@@ -31,14 +31,14 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name = "SR_ITEM_CONFIGURACAO")
+@Table(name = "SR_ITEM_CONFIGURACAO", schema="SIGASR")
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel {
 
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
 	@GeneratedValue(generator = "srItemSeq")
 	@Column(name = "ID_ITEM_CONFIGURACAO")
 	public Long idItemConfiguracao;

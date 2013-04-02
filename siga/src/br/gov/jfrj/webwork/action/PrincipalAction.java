@@ -121,8 +121,13 @@ public class PrincipalAction extends SigaActionSupport {
 
 			String URLSigaSr = SigaBaseProperties.getString("siga.sr."
 					+ SigaBaseProperties.getString("ambiente") + ".url");
+			String URLSigaSrInterna = SigaBaseProperties.getString("siga.sr."
+					+ SigaBaseProperties.getString("ambiente") + ".url.interna");
 			String URLSigaDoc = SigaBaseProperties.getString("siga.ex."
 					+ SigaBaseProperties.getString("ambiente") + ".url");
+			String URLSigaDocInterna = SigaBaseProperties.getString("siga.ex."
+					+ SigaBaseProperties.getString("ambiente") + ".url.interna");
+			
 			String URLSelecionar = "";
 			String uRLExibir = "";
 
@@ -145,10 +150,10 @@ public class PrincipalAction extends SigaActionSupport {
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(getTitular(),
 								getLotaTitular(), "SIGA;SR"))
-					URLSelecionar = URLSigaSr + "/selecionar?sigla="
+					URLSelecionar = URLSigaSrInterna + "/selecionar?sigla="
 							+ getSigla();
 			} else
-				URLSelecionar = URLSigaDoc
+				URLSelecionar = URLSigaDocInterna
 						+ "/expediente/selecionar.action?sigla=" + getSigla();
 
 			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
@@ -157,10 +162,7 @@ public class PrincipalAction extends SigaActionSupport {
 			if (copiaSigla.startsWith("SR"))
 				uRLExibir = URLSigaSr + "/exibir/" + response[1];
 			else
-				uRLExibir = getRequest().getScheme() + "://"
-						+ getRequest().getServerName() + ":"
-						+ getRequest().getLocalPort()
-						+ "/sigaex/expediente/doc/exibir.action?sigla="
+				uRLExibir = URLSigaDoc + "/expediente/doc/exibir.action?sigla="
 						+ response[2];
 
 			sel.setId(Long.valueOf(response[1]));

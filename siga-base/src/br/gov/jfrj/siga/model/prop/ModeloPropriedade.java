@@ -20,6 +20,8 @@ package br.gov.jfrj.siga.model.prop;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -38,7 +40,9 @@ public abstract class ModeloPropriedade {
 	/**
 	 * Retorna o prefixo do módulo (programa), fazendo uma separação de
 	 * namespaces para cada projeto. Esse prefixo é adicionado à propriedade que
-	 * o usuário deseja buscar. Por exemplo, se for buscada uma propriedade "teste" no módulo siga.cd (projeto siga-cd), equivale à solicitar uma propriedade "siga.cd.teste" <br/>
+	 * o usuário deseja buscar. Por exemplo, se for buscada uma propriedade
+	 * "teste" no módulo siga.cd (projeto siga-cd), equivale à solicitar uma
+	 * propriedade "siga.cd.teste" <br/>
 	 * Veja alguns exemplos:
 	 * <table border="1">
 	 * <tr>
@@ -101,15 +105,18 @@ public abstract class ModeloPropriedade {
 	}
 
 	public String getPrefixo() {
-		String pars = new String();
-		for (int i = 0; i < prefixo.length; i++) {
-			if (i == prefixo.length - 1) {
-				pars += prefixo[i];
-			} else {
-				pars += prefixo[i] + ".";
+		if (prefixo != null) {
+			String pars = new String();
+			for (int i = 0; i < prefixo.length; i++) {
+				if (i == prefixo.length - 1) {
+					pars += prefixo[i];
+				} else {
+					pars += prefixo[i] + ".";
+				}
 			}
+			return pars;
 		}
-		return pars;
+		return null;
 	}
 
 	/**
@@ -130,18 +137,11 @@ public abstract class ModeloPropriedade {
 	 */
 	public String obterPropriedade(String nome) throws Exception {
 		carregarPropriedades();
-		if (prefixo != null) {
-			for (int i = 0; i < prefixo.length; i++) {
-				String prop = new String();
-				for (int j = i; j < prefixo.length; j++) {
-					prop += prefixo[j] + ".";
-				}
-				String value = propriedades.getProperty(prop + nome);
-				if (value != null)
-					return value.trim();
-			}
-		}
-		if (propriedades.getProperty(nome) !=null){
+		String pre = getPrefixo();
+		String value = propriedades.getProperty(pre + "." + nome);
+		if (value != null)
+			return value.trim();
+		if (propriedades.getProperty(nome) != null) {
 			return propriedades.getProperty(nome).trim();
 		}
 		return null;
@@ -172,4 +172,31 @@ public abstract class ModeloPropriedade {
 		}
 		return lista;
 	}
+
+	/**
+	 * 
+	 * Obtém um HashMap com as chaves e respectivos valores das propriedades
+	 * cuja chave contém o nome passado como parâmetro, esteja ou não essa
+	 * propriedade acompanhada do prefixo do módulo no arquivo de propriedades.
+	 * Seguindo essa ideia, para se obter todas as propriedades do módulo, basta
+	 * passar uma String vazia (não nula) como parâmetro.
+	 * 
+	 * @param nome
+	 *            nome do parâmetro a obter. Se atribuído o prefixo, o mesmo não
+	 *            deve estar contido.
+	 * @return
+	 * @throws Exception
+	 */
+	public HashMap<String, String> obterTodas(String nome) throws Exception {
+		carregarPropriedades();
+		String pre = getPrefixo();
+		HashMap<String, String> hashFinal = new HashMap<String, String>();
+		for (Object o : propriedades.keySet()) {
+			String s = (String) o;
+			if (s.contains(pre + "." + "nome") || s.contains(nome))
+				hashFinal.put(s, propriedades.getProperty(s));
+		}
+		return hashFinal;
+	}
+
 }

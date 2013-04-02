@@ -24,38 +24,39 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package br.gov.jfrj.siga.base;
+
 /*
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-*/
+ import java.util.MissingResourceException;
+ import java.util.ResourceBundle;
+ */
 import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
 
 public class SigaBaseProperties extends ModeloPropriedade {
 	/*
 	 * 
-	 *  Antes a classe se chamava Mensagens (foi renomeada - refactor)
-	 *  
+	 * Antes a classe se chamava Mensagens (foi renomeada - refactor)
 	 */
-	//private static final String BUNDLE_NAME = "resource.application";
-	/*private static final String BUNDLE_NAME = "globalMessages";
+	// private static final String BUNDLE_NAME = "resource.application";
+	/*
+	 * private static final String BUNDLE_NAME = "globalMessages";
+	 * 
+	 * private static final ResourceBundle RESOURCE_BUNDLE =
+	 * ResourceBundle.getBundle(Mensagens.BUNDLE_NAME);
+	 * 
+	 * public static String getString(final String key) {
+	 * 
+	 * try { return Mensagens.RESOURCE_BUNDLE.getString(key); } catch (final
+	 * MissingResourceException e) { return '!' + key + '!'; } }
+	 */
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Mensagens.BUNDLE_NAME);
-
-	public static String getString(final String key) {
-
-		try {
-			return Mensagens.RESOURCE_BUNDLE.getString(key);
-		} catch (final MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
-	*/
+	private String ambiente;
 
 	protected SigaBaseProperties() {
-		// construtor privado
+
 	}
-	
+
 	private static SigaBaseProperties instance = new SigaBaseProperties();
+
 	public static String getString(final String key) {
 		try {
 			return instance.obterPropriedade(key);
@@ -64,13 +65,34 @@ public class SigaBaseProperties extends ModeloPropriedade {
 			return "";
 		}
 	}
+
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.base";
 	}
-	
+
+	public static String getAmbiente() {
+		if (instance.ambiente == null)
+			instance.ambiente = getString("ambiente");
+		return instance.ambiente;
+	}
+
 	public static boolean getBooleanValue(String key) {
-		String strAuditaThreadFilter = getString( key );
-		return Boolean.parseBoolean( strAuditaThreadFilter );
+		String strAuditaThreadFilter = getString(key);
+		return Boolean.parseBoolean(strAuditaThreadFilter);
+	}
+
+	public static String getUrl() {
+		return cortaBarraNoFim(getString(getAmbiente() + ".url"));
+	}
+
+	public static String getUrlInterna() {
+		return cortaBarraNoFim(getString(getAmbiente() + ".url.interna"));
+	}
+
+	private static String cortaBarraNoFim(String url) {
+		if (url.endsWith("/"))
+			url = url.substring(0, url.length() - 1);
+		return url;
 	}
 }

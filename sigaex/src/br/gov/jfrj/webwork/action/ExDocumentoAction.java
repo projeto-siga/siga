@@ -1527,6 +1527,15 @@ public class ExDocumentoAction extends ExActionSupport {
 				 * }
 				 */
 			}
+			
+			if(getAutuando() && getIdMobilAutuado() != null) {
+				ExMobil mobilAutuado = daoMob(getIdMobilAutuado());
+				
+				doc.setExMobilAutuado(mobilAutuado);
+				
+				getClassificacaoSel().setId(mobilAutuado.getDoc().getExClassificacao().getId());
+				setDescrDocumento(mobilAutuado.getDoc().getDescrDocumento());
+			}
 		}
 
 		// Fim das questões referentes a doc pai--------------------
@@ -1582,7 +1591,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 
 			setIdMod(mod.getIdMod());
-			if ((getIdMod() != 0) && (mobilPaiSel.getId() == null))
+			if ((getIdMod() != 0) && (mobilPaiSel.getId() == null) && (getIdMobilAutuado() == null))
 				getClassificacaoSel().apagar();
 		}
 

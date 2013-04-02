@@ -47,7 +47,7 @@ function sbmt(nivel){
 		</tr>
 		#{list items:itens, as:'item'}
 		<tr>
-			<td style="padding-left: ${item.nivel*13}px;">
+			<td>
 			#{if item.especifico || !params.pessoa}<a
 				href="javascript:opener.retorna_item${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">#{selecionado sigla:item.siglaItemConfiguracao, descricao:item.descrItemConfiguracao /}</a>
 			#{/if}
@@ -55,7 +55,7 @@ function sbmt(nivel){
 				#{selecionado sigla:item.siglaItemConfiguracao, descricao:item.descrItemConfiguracao /}
 			#{/else}
 			</td>
-			<td>#{selecionado sigla:item.tituloItemConfiguracao, descricao:item.descrItemConfiguracao /}</td>
+			<td style="padding-left: ${item.nivel*13}px;">#{selecionado sigla:item.tituloItemConfiguracao, descricao:item.descrItemConfiguracao /}</td>
 		</tr>
 		#{/list}
 	</table>

@@ -14,11 +14,11 @@ import play.db.jpa.GenericModel;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name="SR_ATRIBUTO")
+@Table(name="SR_ATRIBUTO", schema="SIGASR")
 public class SrAtributo extends GenericModel {
 	
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
 	@GeneratedValue(generator = "srAtributoSeq")
 	@Column(name = "ID_ATRIBUTO")
 	public long id;

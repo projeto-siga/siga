@@ -50,11 +50,11 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name = "SR_SOLICITACAO")
+@Table(name = "SR_SOLICITACAO", schema="SIGASR")
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", name = "srSolicitacaoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_SOLICITACAO_SEQ", name = "srSolicitacaoSeq")
 	@GeneratedValue(generator = "srSolicitacaoSeq")
 	@Column(name = "ID_SOLICITACAO")
 	public Long idSolicitacao;

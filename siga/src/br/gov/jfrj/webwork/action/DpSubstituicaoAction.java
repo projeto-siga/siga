@@ -23,6 +23,7 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,6 +75,8 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	private String dtFimSubst;
 	
 	private String strBuscarFechadas;
+	
+	private String isSubstituicao;
 
 	public Date getDtAtual() {
 		return new Date();
@@ -264,43 +267,30 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	}
 
 	public String aListarSubstitutos() throws Exception {
-
-		List<DpSubstituicao> todasSubst = new ArrayList<DpSubstituicao>();
-		List<DpSubstituicao> substVigentes = new ArrayList<DpSubstituicao>();
-		DpSubstituicao dpSubstituicao = new DpSubstituicao();
-		dpSubstituicao.setTitular(getCadastrante());
-		dpSubstituicao.setLotaTitular(getCadastrante().getLotacao());
-	    todasSubst = dao().consultarOrdemData(dpSubstituicao);	
-	    for (DpSubstituicao subst : todasSubst) {
-	    	if (subst.getLotaSubstituto() != null && subst.getLotaSubstituto().isFechada())
-	    		continue;
-	    	if (subst.getSubstituto() != null && (subst.getSubstituto().isFechada() 
-	    			|| subst.getSubstituto().isBloqueada()))
-	    		continue;
-	    	if (subst.isEmVoga()) {
-	    		substVigentes.add(subst);	    		
-	    	}
-	    }		
-		setItens(substVigentes);
+		
+		setIsSubstituicao("false");		
+		setItens(buscarSubstitutos(getCadastrante(), getCadastrante().getLotacao()));			
 		
 		
 		if (!getCadastrante().getId().equals(getTitular().getId())
 				|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
 			// é uma substituição !
-			dpSubstituicao.setTitular(getTitular());
-			dpSubstituicao.setLotaTitular(getTitular().getLotacao());
-			todasSubst = dao().consultarOrdemData(dpSubstituicao);	
-			for (DpSubstituicao subst : todasSubst) {
-		    	if (subst.getLotaSubstituto() != null && subst.getLotaSubstituto().isFechada())
-		    		continue;
-		    	if (subst.getSubstituto() != null && (subst.getSubstituto().isFechada() 
-		    			|| subst.getSubstituto().isBloqueada()))
-		    		continue;
-		    	if (subst.isEmVoga()) {
-		    		substVigentes.add(subst);	    		
-		    	}
-		    }	
-			setItensTitular(substVigentes);			
+			if(Cp
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(getCadastrante(),
+				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST) ||				
+				
+				Cp
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(getCadastrante().getLotacao(),
+				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)){
+				// obs: se o cadastrante não tem permissão de cadastrar qq substituição, o sistema não vai buscar as substituições do Titular
+				setIsSubstituicao("true");
+				setItensTitular(buscarSubstitutos(getTitular(), getLotaTitular()));	
+				
+			}		
 		}
 		
 		/*
@@ -311,6 +301,29 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		 */
 
 		return Action.SUCCESS;
+	}
+
+	private List<DpSubstituicao> buscarSubstitutos(DpPessoa pessoa, DpLotacao lotacao) throws SQLException,
+			AplicacaoException {
+			
+		List<DpSubstituicao> todasSubst = new ArrayList<DpSubstituicao>();
+		List<DpSubstituicao> substVigentes = new ArrayList<DpSubstituicao>();
+		DpSubstituicao dpSubstituicao = new DpSubstituicao();
+		dpSubstituicao.setTitular(pessoa);
+		dpSubstituicao.setLotaTitular(lotacao);
+	    todasSubst = dao().consultarOrdemData(dpSubstituicao);	
+	    for (DpSubstituicao subst : todasSubst) {
+	    	if (subst.getLotaSubstituto() != null && subst.getLotaSubstituto().isFechada()
+	    			&& this.isSubstituicao == "false")	    		
+	    		continue;
+	    	if (subst.getSubstituto() != null && (subst.getSubstituto().isFechada() 
+	    			|| subst.getSubstituto().isBloqueada()) && this.isSubstituicao == "false")
+	    		continue;
+	    	if (subst.isEmVoga()) {
+	    		substVigentes.add(subst);	    		
+	    	}
+	    }
+		return substVigentes;
 	}
 
 	
@@ -458,6 +471,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	public List getItens() {
 		return itens;
 	}
+	
+	public List getItensTitular() {
+		return itensTitular;
+	}
 
 	public Map<Integer, String> getListaTipoTitular() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
@@ -514,8 +531,8 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		this.itens = itens;
 	}
 	
-	public void setItensTitular(List itens) {
-		this.itens = itens;
+	public void setItensTitular(List itensTitular) {
+		this.itensTitular = itensTitular;
 	}
 
 	public void setLotaSubstitutoSel(DpLotacaoSelecao lotaSubstitutoSel) {
@@ -548,6 +565,14 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 
 	public void setTitularSel(DpPessoaSelecao titularSel) {
 		this.titularSel = titularSel;
+	}
+	
+	public String getIsSubstituicao() {
+		return isSubstituicao;
+	}
+
+	public void setIsSubstituicao(String isSubstituicao) {
+		this.isSubstituicao = isSubstituicao;
 	}
 
 }

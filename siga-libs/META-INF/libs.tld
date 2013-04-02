@@ -95,4 +95,10 @@
 		<function-signature>java.lang.Boolean podeDefinirPublicadoresPorConfiguracao( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
 	</function>	
 	
+	<function>
+ 		<name>podeCadastrarQqSubstituicaoPorConfiguracao</name>
+		<function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
+ 		<function-signature>java.lang.Boolean podeCadastrarQqSubstituicaoPorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ 	</function>
+	
 </taglib>

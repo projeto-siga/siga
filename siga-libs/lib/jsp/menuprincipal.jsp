@@ -25,8 +25,7 @@
 					</c:if>
 					
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-						<li><a
-							href="${f:getURLSistema('siga.sr')}" >Serviços</a>
+						<li><a href="${f:getURLSistema('siga.sr')}" >Serviços</a>
 						</li>
 					</c:if>
 
@@ -84,8 +83,18 @@
 						</li>
 					</c:if>
 					 --%>
-					<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
-					</li>
+					 
+					 <ww:if test="${(cadastrante.idPessoa != titular.idPessoa) || (cadastrante.lotacao.idLotacao != titular.lotacao.idLotacao)}">
+					 <%-- é uma substituição --%> 
+					 	<c:if test="${f:podeCadastrarQqSubstituicaoPorConfiguracao(cadastrante, cadastrante.lotacao)}">
+					 		<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+							</li>
+					 	</c:if>
+					 </ww:if>
+					 <ww:else>
+					 	<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+						</li>
+					 </ww:else>				
 				</ul>
 			</li>
 

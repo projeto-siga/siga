@@ -301,7 +301,7 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob));
 		
-		addAcao("package", "Sobrestar",
+		addAcao("hourglass_add", "Sobrestar",
 				"/expediente/mov",
 				"sobrestar_gravar",
 				Ex.getInstance().getComp()
@@ -317,7 +317,7 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeDesarquivar(titular, lotaTitular, mob));
 		
-		addAcao("package_go","Desobrestar",
+		addAcao("hourglass_delete","Desobrestar",
 				"/expediente/mov",
 				"desobrestar_gravar",
 				Ex.getInstance().getComp()
@@ -363,7 +363,7 @@ public class ExMobilVO extends ExVO {
 						.podeCancelarVia(titular, lotaTitular, mob),
 				"Confirma o cancelamento da via?", null, null, null);
 		
-		addAcao("link_add","Autuar",
+		addAcao("brick","Autuar",
 				"/expediente/doc",
 				"editar",
 				Ex.getInstance()

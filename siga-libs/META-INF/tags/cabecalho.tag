@@ -183,7 +183,7 @@ ${meta}
 									<div class="gt-search-inner" onclick="">
 										<siga:selecao propriedade="buscar"
 											tipo="generico" tema="simple" ocultardescricao="sim"
-											buscar="nao" siglaInicial="Buscar" modulo="${f:getURLSistema('siga.base')}" />
+											buscar="nao" siglaInicial="Buscar" modulo="siga" />
 										<script type="text/javascript">
 											var fld = document
 													.getElementById("buscar_genericoSel_sigla");

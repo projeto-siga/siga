@@ -83,7 +83,7 @@
 						<span id='rightbottom' style="margin:0;padding:0;"></span>
 						<script type="text/javascript">
 							SetInnerHTMLFromAjaxResponse(
-									"/siga/ajax_proxy.action?modulo=sr&action=gadget",
+									"/sigasr/gadget",
 									document.getElementById('rightbottom'));
 						</script>
 						</c:if>

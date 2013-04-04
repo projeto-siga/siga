@@ -26,7 +26,7 @@
 					
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
 						<li><a
-							href="${f:getURLSistema('siga.sr')}" >Serviços</a>
+							href="/sigasr/" >Serviços</a>
 						</li>
 					</c:if>
 

@@ -8,7 +8,7 @@
 --   nas DT_FIM_VIG_CONFIGURACAO e DT_INI_VIG_CONFIGURACAO serão
 --   carregados nas novas colunas correspondentes. 
 
-alter table cp_configuracao rename column dt_ini_reg to his_dt_ini
+alter table cp_configuracao rename column dt_ini_reg to his_dt_ini;
 alter table cp_configuracao add HIS_DT_FIM timestamp(6);
 alter table cp_configuracao add HIS_ID_INI NUMBER(19,0);
 update cp_configuracao set HIS_DT_INI = DT_INI_VIG_CONFIGURACAO;

@@ -8,24 +8,24 @@
 --   nas DT_FIM_VIG_CONFIGURACAO e DT_INI_VIG_CONFIGURACAO serão
 --   carregados nas novas colunas correspondentes. 
 
-alter table cp_configuracao rename column dt_ini_reg to his_dt_ini;
-alter table cp_configuracao add HIS_DT_FIM timestamp(6);
-alter table cp_configuracao add HIS_ID_INI NUMBER(19,0);
-update cp_configuracao set HIS_DT_INI = DT_INI_VIG_CONFIGURACAO;
-update cp_configuracao set HIS_DT_FIM = DT_FIM_VIG_CONFIGURACAO;
-update cp_configuracao set DT_INI_VIG_CONFIGURACAO = null;
-update cp_configuracao set DT_FIM_VIG_CONFIGURACAO = null;
+alter table CORPORATIVO.cp_configuracao rename column dt_ini_reg to his_dt_ini;
+alter table CORPORATIVO.cp_configuracao add HIS_DT_FIM timestamp(6);
+alter table CORPORATIVO.cp_configuracao add HIS_ID_INI NUMBER(19,0);
+update CORPORATIVO.cp_configuracao set HIS_DT_INI = DT_INI_VIG_CONFIGURACAO;
+update CORPORATIVO.cp_configuracao set HIS_DT_FIM = DT_FIM_VIG_CONFIGURACAO;
+update CORPORATIVO.cp_configuracao set DT_INI_VIG_CONFIGURACAO = null;
+update CORPORATIVO.cp_configuracao set DT_FIM_VIG_CONFIGURACAO = null;
 
 
 -- - - - - - - - - - - - - - - - - - - - - - 
 -- - - CP_COMPLEXO - - - - - - - - - - - - - 
 -- - - - - - - - - - - - - - - - - - - - - - 
 
-	CREATE TABLE CP_COMPLEXO (
+	CREATE TABLE CORPORATIVO.CP_COMPLEXO (
          ID_COMPLEXO INT,
          NOME_COMPLEXO VARCHAR(100),
          ID_LOCALIDADE,
-         FOREIGN KEY (ID_LOCALIDADE) REFERENCES CP_LOCALIDADE(ID_LOCALIDADE)
+         FOREIGN KEY (ID_LOCALIDADE) REFERENCES CORPORATIVO.CP_LOCALIDADE(ID_LOCALIDADE)
        );
 	insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade) values (1, 'Almirante Barroso' 	,15);
 	insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade) values (2, 'Angra' 				,1);

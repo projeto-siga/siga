@@ -751,11 +751,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			if(!m.isGeral()) {
 				if (!podeMovimentar(titular, lotaTitular, m))
 					return false;
-				
-				if(mob.isJuntado() || mob.isApensado())
-					return false;
-				
 			}
+			
+			if(mob.isJuntado() || mob.isApensado())
+				return false;			
 		}
 		
 		return  getConf()

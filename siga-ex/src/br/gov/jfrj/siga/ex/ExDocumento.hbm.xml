@@ -19,7 +19,8 @@
   <property formula="REMOVE_ACENTO(DESCR_DOCUMENTO)" generated="never"
    lazy="false" name="descrDocumentoAI" type="java.lang.String"/>
   <property column="DT_DOC" generated="never" lazy="false" name="dtDoc" type="java.util.Date"/>
-  <property column="DT_DOC_ORIGINAL" generated="never" lazy="false" name="dtDocOriginal" type="java.util.Date"/>
+  <property column="DT_DOC_ORIGINAL" generated="never" lazy="false"
+   name="dtDocOriginal" type="java.util.Date"/>
   <property column="DT_REG_DOC" generated="never" lazy="false"
    name="dtRegDoc" not-null="true" type="java.util.Date"/>
   <property column="DT_FECHAMENTO" generated="never" lazy="false"
@@ -85,6 +86,8 @@
    column="ID_DOC_ANTERIOR" name="exDocAnterior" not-null="false"/>
   <many-to-one class="br.gov.jfrj.siga.ex.ExMobil" column="ID_MOB_PAI"
    name="exMobilPai" not-null="false"/>
+  <many-to-one class="br.gov.jfrj.siga.ex.ExMobil" column="ID_MOB_AUTUADO" 
+  name="exMobilAutuado" not-null="false"/>
   <set batch-size="500" inverse="true" lazy="true"
    name="exBoletimDocSet" order-by="ID_DOC" sort="unsorted">
    <key column="ID_DOC"/>
@@ -237,12 +240,12 @@
  <query name="listarSolicitados">select doc 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			where label.cpMarcador.idMarcador = 21
-			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu</query>			
+			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu</query>
  <query name="listarDisponibilizados">select doc 
 			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc
 			where label.cpMarcador.idMarcador = 22
 			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu</query>
-<query name="listarDocPendenteAssinatura">select doc 
+ <query name="listarDocPendenteAssinatura">select doc 
 			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in 
-			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc</query>			  
+			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc</query>
 </hibernate-mapping>

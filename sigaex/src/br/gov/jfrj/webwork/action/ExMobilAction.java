@@ -948,7 +948,7 @@ public class ExMobilAction extends
 				.getInstance()
 				.getBL()
 				.obterFormasDocumento(getTitular(), getLotaTitular(), null,
-						tipoForma, false, false);
+						tipoForma, false, false, false);
 	}
 
 	public List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {
@@ -966,7 +966,7 @@ public class ExMobilAction extends
 				.getInstance()
 				.getBL()
 				.obterListaModelos(forma, false, "Todos", false, getTitular(),
-						getLotaTitular());
+						getLotaTitular(), false);
 	}
 
 	public String getAnexarString() {

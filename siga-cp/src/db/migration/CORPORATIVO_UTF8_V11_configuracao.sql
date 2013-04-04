@@ -25,7 +25,7 @@ update CORPORATIVO.cp_configuracao set DT_FIM_VIG_CONFIGURACAO = null;
          ID_COMPLEXO INT,
          NOME_COMPLEXO VARCHAR(100),
          ID_LOCALIDADE,
-         FOREIGN KEY (ID_LOCALIDADE) REFERENCES CP_LOCALIDADE(ID_LOCALIDADE)
+         FOREIGN KEY (ID_LOCALIDADE) REFERENCES CORPORATIVO.CP_LOCALIDADE(ID_LOCALIDADE)
        );
 	insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade) values (1, 'Almirante Barroso' 	,15);
 	insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade) values (2, 'Angra' 				,1);

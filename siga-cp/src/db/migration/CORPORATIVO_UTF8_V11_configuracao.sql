@@ -16,6 +16,31 @@ update CORPORATIVO.cp_configuracao set HIS_DT_FIM = DT_FIM_VIG_CONFIGURACAO;
 update CORPORATIVO.cp_configuracao set DT_INI_VIG_CONFIGURACAO = null;
 update CORPORATIVO.cp_configuracao set DT_FIM_VIG_CONFIGURACAO = null;
 
+/*CP_LOCALIDADE*/
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (1,'Angra dos Reis',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (2,'Barra do Piraí',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (3,'Cachoeiro do Itapemirim',8);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (4,'Campos',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (5,'Duque de Caxias',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (6,'Itaboraí',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (7,'Itaperuna',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (8,'Macaé',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (9,'Magé',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (10,'Niterói',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (11,'Nova Friburgo',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (12,'Nova Iguaçu',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (13,'Petrópolis',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (14,'Resende',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (15,'Rio de Janeiro',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (16,'São Gonçalo',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (17,'São João de Meriti',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (18,'São Mateus',8);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (19,'São Pedro da Aldeia',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (20,'Teresópolis',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (21,'Três Rios',19);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (22,'Vitória',8);
+Insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (23,'Volta Redonda',19);
+
 
 -- - - - - - - - - - - - - - - - - - - - - - 
 -- - - CP_COMPLEXO - - - - - - - - - - - - - 
@@ -52,4 +77,4 @@ update CORPORATIVO.cp_configuracao set DT_FIM_VIG_CONFIGURACAO = null;
 	insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade) values (23,'Venezuela' 			,15);
 	insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade) values (24,'Volta Redonda' 		,23);
 	
-	
+

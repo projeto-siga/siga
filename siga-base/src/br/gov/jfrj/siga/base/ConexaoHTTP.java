@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -35,28 +36,21 @@ public class ConexaoHTTP {
 
 		try {
 
-			URLConnection conn = new URL(URL).openConnection();
+			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
+					.openConnection();
 
-			for (String s : header.keySet())
-				conn.setRequestProperty(s, header.get(s));
+			conn.setInstanceFollowRedirects(true);
+
+			for (String s : header.keySet()) {
+					conn.setRequestProperty(s, header.get(s));
+			}
 
 			System.setProperty("http.keepAlive", "false");
 
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
 			return writer.toString();
-			// BufferedReader in = new BufferedReader(new InputStreamReader(
-			// conn.getInputStream(), "UTF-8"));
-			//
-			// String inputLine;
-			// StringBuilder sb = new StringBuilder();
-			//
-			// while ((inputLine = in.readLine()) != null) {
-			// sb.append(inputLine);
-			// }
-			// in.close();
-			//
-			// return sb.toString();
+			
 		} catch (IOException ioe) {
 			throw new AplicacaoException("Não foi possível abrir conexão", 1,
 					ioe);

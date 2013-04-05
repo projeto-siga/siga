@@ -83,7 +83,7 @@
 						<span id='rightbottom' style="margin:0;padding:0;"></span>
 						<script type="text/javascript">
 							SetInnerHTMLFromAjaxResponse(
-									"/sigasr/gadget",
+									"/sigasr/gadget?ts=${currentTimeMillis}",
 									document.getElementById('rightbottom'));
 						</script>
 						</c:if>

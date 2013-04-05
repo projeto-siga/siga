@@ -32,16 +32,22 @@
 				
 			</div>
 			<div class="gt-form-row">
-				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" />#{if
-				associacao?.idConfiguracao} <input type="button" value="Desativar"
-					class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarAssociacao()}?id=${associacao.idConfiguracao}'" />
-				#{/if}
-			</div>
-			<div class="gt-form-row">
 				<label>#{checkbox name:'associacao.atributoObrigatorio',
 					value:associacao.atributoObrigatorio /} Obrigatório</label>
+			</div>
+			<div class="gt-form-row">
+				#{if associacao.hisDtFim}
+					<input type="submit" value="Reativar"
+						class="gt-btn-medium gt-btn-left" />
+				#{/if}
+				#{else}
+					<input type="submit" value="Salvar"
+						class="gt-btn-medium gt-btn-left" />#{if
+					associacao?.idConfiguracao} <input type="button" value="Desativar"
+						class="gt-btn-medium gt-btn-left"
+						onclick="location.href='@{Application.desativarAssociacao()}?id=${associacao.idConfiguracao}'" />
+				#{/if}
+				#{/else}
 			</div>
 			#{/form}
 		</div>

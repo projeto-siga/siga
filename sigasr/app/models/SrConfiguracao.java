@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO", schema="SIGASR")
+@Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
 
@@ -88,41 +89,25 @@ public class SrConfiguracao extends CpConfiguracao {
 		this.subTipoConfig = subTipoConfig;
 	}
 
-	/*public SrItemConfiguracao getItemConfiguracao() {
-		if (itemConfiguracao != null)
-			return itemConfiguracao.getAtual();
-		return null;
-	}
-
-	public SrServico getServico() {
-		if (servico != null)
-			return servico.getAtual();
-		return null;
-	}
-
-	public SrTipoAtributo getTipoAtributo() {
-		if (tipoAtributo != null)
-			return tipoAtributo.getAtual();
-		return null;
-	}
-
-	public DpLotacao getAtendente() {
-		if (atendente != null)
-			return atendente.getLotacaoAtual();
-		return null;
-	}
-
-	public DpLotacao getPosAtendente() {
-		if (posAtendente != null)
-			return posAtendente.getLotacaoAtual();
-		return null;
-	}
-
-	public DpLotacao getPreAtendente() {
-		if (preAtendente != null)
-			return preAtendente.getLotacaoAtual();
-		return null;
-	}*/
+	/*
+	 * public SrItemConfiguracao getItemConfiguracao() { if (itemConfiguracao !=
+	 * null) return itemConfiguracao.getAtual(); return null; }
+	 * 
+	 * public SrServico getServico() { if (servico != null) return
+	 * servico.getAtual(); return null; }
+	 * 
+	 * public SrTipoAtributo getTipoAtributo() { if (tipoAtributo != null)
+	 * return tipoAtributo.getAtual(); return null; }
+	 * 
+	 * public DpLotacao getAtendente() { if (atendente != null) return
+	 * atendente.getLotacaoAtual(); return null; }
+	 * 
+	 * public DpLotacao getPosAtendente() { if (posAtendente != null) return
+	 * posAtendente.getLotacaoAtual(); return null; }
+	 * 
+	 * public DpLotacao getPreAtendente() { if (preAtendente != null) return
+	 * preAtendente.getLotacaoAtual(); return null; }
+	 */
 
 	public String getPesquisaSatisfacaoString() {
 		return pesquisaSatisfacao ? "Sim" : "Não";
@@ -144,8 +129,8 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(
 						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and hisDtFim is null", SrConfiguracao.class)
-				.getResultList();
+								+ " and hisDtFim is null order by itemConfiguracao.siglaItemConfiguracao, orgaoUsuario",
+						SrConfiguracao.class).getResultList();
 	}
 
 	public void salvarComoAssociacaoTipoAtributo() throws Exception {
@@ -154,17 +139,30 @@ public class SrConfiguracao extends CpConfiguracao {
 		salvar();
 	}
 
-	public static List<SrConfiguracao> listarAssociacoesTipoAtributo() {
-		long k = CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO;
-		return JPA
-				.em()
-				.createQuery(
-						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
-								+ " and hisDtFim is null", SrConfiguracao.class)
-				.getResultList();
+	public static List<List<SrConfiguracao>> listarAssociacoesTipoAtributo() {
+
+		String query = "from SrConfiguracao c where cpTipoConfiguracao.idTpConfiguracao = "
+				+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
+				+ " and hisDtFim is null order by itemConfiguracao.siglaItemConfiguracao, orgaoUsuario";
+
+		List<SrConfiguracao> abertas = JPA.em()
+				.createQuery(query, SrConfiguracao.class).getResultList();
+
+		query = query.replace("hisDtFim is null",
+				"hisDtFim is not null and hisDtIni = ("
+						+ "	select max(hisDtIni) from SrConfiguracao where "
+						+ "hisIdIni = c.hisIdIni)");
+
+		List<SrConfiguracao> fechadas = JPA.em()
+				.createQuery(query, SrConfiguracao.class).getResultList();
+
+		List<List<SrConfiguracao>> retorno = new ArrayList<List<SrConfiguracao>>();
+		retorno.add(abertas);
+		retorno.add(fechadas);
+		return retorno;
+
 	}
-	
+
 	public static SrConfiguracao getConfiguracao(DpPessoa pess,
 			SrItemConfiguracao item, SrServico servico, long idTipo,
 			SrSubTipoConfiguracao subTipo) throws Exception {

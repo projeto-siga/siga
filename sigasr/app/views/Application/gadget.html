@@ -12,20 +12,20 @@
 			#{list items:contagens, as:'contagem'}
 			<tr>
 				<td><a
-					href="${baseSr}/listar?${p}&filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[1]}</a>
+					href="@{Application.listar}?${p}&filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[1]}</a>
 				</td>
 				<td align="right"><a
-					href="${baseSr}/listar?${p}&filtro.situacao=${contagem[0]}&filtro.atendente=${cadastrante.idPessoa}">${contagem[2]}</a>
+					href="@{Application.listar}?${p}&filtro.situacao=${contagem[0]}&filtro.atendente=${cadastrante.idPessoa}">${contagem[2]}</a>
 				</td>
 				<td align="right"><a
-					href="${baseSr}/listar?${p}&filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[3]}</a>
+					href="@{Application.listar}?${p}&filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[3]}</a>
 				</td>
 			</tr>
 			#{/list}
 		</tbody>
 	</table>
 </div>
-<form action="${baseSr}/editar">
+<form action="@{Application.editar}">
 <div id='rightbottom'></div>
 <br>
 <h2><input type="submit" value="Nova" class="gt-btn-small gt-btn-right" /></h2>	

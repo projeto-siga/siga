@@ -681,8 +681,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		// que as classificações antigas, ainda não linkadas por equivalência,
 		// possam ser usadas
 		ExClassificacao classif = getClassificacaoSel().buscarObjeto();
-		if (classif != null && classif.getDtFimReg() != null
-				&& classif.getDtIniReg() != null
+		if (classif != null && classif.getHisDtFim() != null
+				&& classif.getHisDtIni() != null
 				&& classif.getCodAssunto() != null) {
 			classif = ExDao.getInstance().consultarAtual(classif);
 			if (classif != null)

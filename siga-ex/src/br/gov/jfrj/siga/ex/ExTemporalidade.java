@@ -39,13 +39,4 @@ public class ExTemporalidade extends AbstractExTemporalidade implements Serializ
 	public ExTemporalidade() {
 	}
 
-	/**
-	 * Constructor of ExTemporalidade instances given a simple primary key.
-	 * 
-	 * @param idTemporalidade
-	 */
-	public ExTemporalidade(final java.lang.Short idTemporalidade) {
-		super(idTemporalidade);
-	}
-
 }

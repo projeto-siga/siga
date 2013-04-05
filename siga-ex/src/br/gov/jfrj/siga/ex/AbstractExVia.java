@@ -24,11 +24,13 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+
 /**
  * A class that represents a row in the EX_VIA table. You can customize the
  * behavior of this class by editing the class, {@link ExVia()}.
  */
-public abstract class AbstractExVia implements Serializable {
+public abstract class AbstractExVia extends HistoricoAuditavelSuporte implements Serializable {
 	/** The value of the simple codVia property. */
 	private java.lang.String codVia;
 
@@ -46,9 +48,6 @@ public abstract class AbstractExVia implements Serializable {
 
 	/** The value of the exTipoDestinacao association. */
 	private ExTipoDestinacao exDestinacaoFinal;
-
-	private char fgMaior;
-	// private String fgMaior;
 
 	/**
 	 * The cached hash code value for this instance. Setting to 0 triggers
@@ -281,19 +280,4 @@ public abstract class AbstractExVia implements Serializable {
 		this.obs = obs;
 	}
 
-	// public String getFgMaior() {
-	// return fgMaior;
-	// }
-	//
-	// public void setFgMaior(String fgMaior) {
-	// this.fgMaior = fgMaior;
-	// }
-
-	public char getFgMaior() {
-		return fgMaior;
-	}
-
-	public void setFgMaior(final char fgMaior) {
-		this.fgMaior = fgMaior;
-	}
 }

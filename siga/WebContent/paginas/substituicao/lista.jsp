@@ -46,14 +46,18 @@
 								</td>
 								<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
 								<td align="center">${substituicao.dtFimSubstDDMMYY}</td>
-								<td align="center"><ww:url id="url" action="editar" namespace="/substituicao">
-											<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
-										</ww:url>
-										<ww:a href="%{url}">Alterar</ww:a>
+								<td align="center">
+									<ww:url id="url" action="editar" namespace="/substituicao">
+										<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
+									</ww:url>
+									<siga:link title="Alterar" url="${url}" />
+									<%--<ww:a href="%{url}">Alterar</ww:a>  --%>
 										<ww:url id="url" action="excluir" namespace="/substituicao">
 												<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
 										</ww:url>
-										<ww:a href="%{url}"> | Excluir</ww:a>
+										<siga:link title="Excluir" url="${url}" 
+												popup="excluir" confirm="Deseja excluir configuração?" />
+									<%--	<ww:a href="%{url}"> | Excluir</ww:a>  --%>
 																
 								</td>
 							</tr>
@@ -108,7 +112,9 @@
 										<ww:url id="url" action="excluir" namespace="/substituicao">
 												<ww:param name="id">${substTitular.idSubstituicao}</ww:param>
 										</ww:url>
-										<ww:a href="%{url}"> | Excluir</ww:a>																
+										<siga:link title="Excluir" url="${url}" 
+												popup="excluir" confirm="Deseja excluir configuração?" />
+									<%--	<ww:a href="%{url}"> | Excluir</ww:a>  --%>																
 									</td>
 								</tr>
 							</c:forEach>

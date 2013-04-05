@@ -177,12 +177,11 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 							"A lotação titular não foi informada");
 				subst.setLotaTitular(dao().consultar(
 						getLotaTitularSel().getId(), DpLotacao.class, false));
-				if (subst.getLotaTitular().getIdLotacao() != getCadastrante()
-						.getIdLotacao()
+				if (subst.getLotaTitular().getIdLotacao() != getCadastrante().getIdLotacao()
 						&& !Cp.getInstance()
 								.getConf()
 								.podePorConfiguracao(
-										getLotaTitular(),
+										getCadastrante().getLotacao(),
 										CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST))// &&
 					// !getCadastrante().getSigla().equals("RJ13635"))
 					/*
@@ -274,7 +273,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		
 		if (!getCadastrante().getId().equals(getTitular().getId())
 				|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
-			// é uma substituição !
+			// é uma substituição !			
 			if(Cp
 				.getInstance()
 				.getConf()
@@ -287,8 +286,8 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 				.podePorConfiguracao(getCadastrante().getLotacao(),
 				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)){
 				// obs: se o cadastrante não tem permissão de cadastrar qq substituição, o sistema não vai buscar as substituições do Titular
-				setIsSubstituicao("true");
-				setItensTitular(buscarSubstitutos(getTitular(), getLotaTitular()));	
+					setIsSubstituicao("true");					
+					setItensTitular(buscarSubstitutos(getTitular(), getLotaTitular()));	
 				
 			}		
 		}
@@ -305,14 +304,25 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 
 	private List<DpSubstituicao> buscarSubstitutos(DpPessoa pessoa, DpLotacao lotacao) throws SQLException,
 			AplicacaoException {
-			
+		
+		Boolean isSubstLotacao = false;
 		List<DpSubstituicao> todasSubst = new ArrayList<DpSubstituicao>();
 		List<DpSubstituicao> substVigentes = new ArrayList<DpSubstituicao>();
 		DpSubstituicao dpSubstituicao = new DpSubstituicao();
 		dpSubstituicao.setTitular(pessoa);
-		dpSubstituicao.setLotaTitular(lotacao);
-	    todasSubst = dao().consultarOrdemData(dpSubstituicao);	
-	    for (DpSubstituicao subst : todasSubst) {
+		dpSubstituicao.setLotaTitular(lotacao);			
+	    todasSubst = dao().consultarOrdemData(dpSubstituicao);
+	    
+	    if (getCadastrante().getId().equals(getTitular().getId())
+				&& !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId()))
+	    	    	isSubstLotacao = true;			
+	    
+	    for (DpSubstituicao subst : todasSubst) {	
+	    	if (isSubstituicao == "true") {
+	    		if (isSubstLotacao && subst.getTitular() != null)
+	    			continue;	    		
+	    	}
+	    		
 	    	if (subst.getLotaSubstituto() != null && subst.getLotaSubstituto().isFechada()
 	    			&& this.isSubstituicao == "false")	    		
 	    		continue;

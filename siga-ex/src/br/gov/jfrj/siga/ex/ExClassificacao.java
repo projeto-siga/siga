@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
@@ -67,14 +68,6 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	public ExClassificacao() {
 	}
 
-	/**
-	 * Constructor of ExClassificacao instances given a simple primary key.
-	 * 
-	 * @param idClassificacao
-	 */
-	public ExClassificacao(final java.lang.Long idClassificacao) {
-		super(idClassificacao);
-	}
 
 	public Long getId() {
 		return getIdClassificacao();
@@ -115,25 +108,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	public String getSigla() {
-		String s = "";
-
-		if (getCodAssunto() == null) { // classificação antiga
-			s += Zeros(getCodAssuntoPrincipal(), 1);
-			s += Zeros(getCodAssuntoSecundario(), 1);
-			s += ".";
-			s += Zeros(getCodClasse(), 1);
-		} else {
-			s += Zeros(getCodAssunto(), 2);
-			s += ".";
-			s += Zeros(getCodClasse(), 2);
-			s += ".";
-		}
-
-		s += Zeros(getCodSubclasse(), 2);
-		s += ".";
-		s += Zeros(getCodAtividade(), 2);
-
-		return s;
+		return getCodificacao();
 	}
 
 	/**
@@ -143,26 +118,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	public void setSigla(final String sigla) {
-		final Pattern p1 = Pattern
-				.compile("^([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])");
-		final Matcher m1 = p1.matcher(sigla);
-		if (m1.find()) {
-			setCodAssunto(Byte.parseByte(m1.group(1)));
-			setCodClasse(Byte.parseByte(m1.group(2)));
-			setCodSubclasse(Short.parseShort(m1.group(3)));
-			setCodAtividade(Short.parseShort(m1.group(4)));
-		} else {
-			final Pattern p2 = Pattern
-					.compile("^([0-9])([0-9]).?([0-9])([0-9][0-9]).?([0-9][0-9])");
-			final Matcher m2 = p2.matcher(sigla);
-			if (m2.find()) {
-				setCodAssuntoPrincipal(Byte.parseByte(m2.group(1)));
-				setCodAssuntoSecundario(Byte.parseByte(m2.group(2)));
-				setCodClasse(Byte.parseByte(m2.group(3)));
-				setCodSubclasse(Short.parseShort(m2.group(4)));
-				setCodAtividade(Short.parseShort(m2.group(5)));
-			}
-		}
+		setCodificacao(sigla);
 	}
 
 	/**
@@ -308,9 +264,18 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	*/
 	public boolean isFechada() {
-		if(this.getDtFimReg() != null)
+		if(this.getHisDtFim() != null)
 			return true;
 		
+		return false;
+	}
+
+	public void setId(Long id) {
+		setIdClassificacao(id);
+		
+	}
+
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
 }

@@ -14,29 +14,23 @@
 			</generator>
 		</id>
 
-		<property name="codAssunto" column="COD_ASSUNTO" type="byte"
-			not-null="false" />
-		<property name="codAssuntoPrincipal"
-			column="COD_ASSUNTO_PRINCIPAL" type="byte" not-null="false" />
-		<property name="codAssuntoSecundario"
-			column="COD_ASSUNTO_SECUNDARIO" type="byte" not-null="false" />
-		<property name="codClasse" column="COD_CLASSE" type="byte"
+		<!-- Campos padronizados para armazenar dados históricos -->
+		<property name="hisIdIni" column="HIS_ID_INI" type="java.lang.Long" />
+		<property name="hisDtIni" column="HIS_DT_INI" type="java.util.Date" />
+		<many-to-one name="hisIdcIni" column="HIS_IDC_INI" class="br.gov.jfrj.siga.cp.CpIdentidade" />
+		<property name="hisDtFim" column="HIS_DT_FIM" type="java.util.Date" />
+		<many-to-one name="hisIdcFim" column="HIS_IDC_FIM" class="br.gov.jfrj.siga.cp.CpIdentidade" />
+	 	<property name="hisAtivo" column="HIS_ATIVO" type="java.lang.Integer" /> 
+
+		<property name="codificacao" column="CODIFICACAO" type="java.lang.String"
 			not-null="true" />
-		<property name="codSubclasse" column="COD_SUBCLASSE"
-			type="short" not-null="true" />
-		<property name="codAtividade" column="COD_ATIVIDADE"
-			type="short" not-null="true" />
 		<property name="descrClassificacao" column="DESCR_CLASSIFICACAO"
 			type="string" not-null="true" />
-		<property name="facilitadorClass" column="FACILITADOR_CLASS"
+		<property name="obs" column="OBS"
 			type="string" />
 		<property name="descrClassificacaoAI"
 			formula="REMOVE_ACENTO(DESCR_CLASSIFICACAO)" type="string" />
-
-		<property name="dtFimReg" column="DT_FIM_REG" type="date" />
-		<property name="dtIniReg" column="DT_INI_REG" type="date" />
-		<property name="idRegIni" column="ID_REG_INI" type="long" />
-
+<!-- 
 		<property lazy="true" name="descrAssuntoPrincipalAI"
 			formula="REMOVE_ACENTO((SELECT CLA.DESCR_CLASSIFICACAO FROM SIGA.EX_CLASSIFICACAO CLA  
 														WHERE CLA.COD_ASSUNTO_PRINCIPAL=COD_ASSUNTO_PRINCIPAL 
@@ -44,7 +38,7 @@
 														AND CLA.COD_CLASSE=0 
 														AND CLA.COD_SUBCLASSE=0 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL))"
+														AND CLA.HIS_DT_FIM IS NULL))"
 			type="string" />
 		<property lazy="true" name="descrAssuntoSecundarioAI"
 			formula="REMOVE_ACENTO((SELECT CLA.DESCR_CLASSIFICACAO FROM SIGA.EX_CLASSIFICACAO CLA  
@@ -53,7 +47,7 @@
 														AND CLA.COD_CLASSE=0 
 														AND CLA.COD_SUBCLASSE=0 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL))"
+														AND CLA.HIS_DT_FIM IS NULL))"
 			type="string" />
 
 
@@ -63,7 +57,7 @@
 														AND CLA.COD_CLASSE=0 
 														AND CLA.COD_SUBCLASSE=0 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL))"
+														AND CLA.HIS_DT_FIM IS NULL))"
 			type="string" />
 		<property lazy="true" name="descrClasseAI"
 			formula="REMOVE_ACENTO((SELECT CLA.DESCR_CLASSIFICACAO FROM SIGA.EX_CLASSIFICACAO CLA  
@@ -71,7 +65,7 @@
 														AND CLA.COD_CLASSE=COD_CLASSE 
 														AND CLA.COD_SUBCLASSE=0 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL))"
+														AND CLA.HIS_DT_FIM IS NULL))"
 			type="string" />
 		<property lazy="true" name="descrSubclasseAI"
 			formula="REMOVE_ACENTO((SELECT CLA.DESCR_CLASSIFICACAO FROM SIGA.EX_CLASSIFICACAO CLA  
@@ -79,7 +73,7 @@
 														AND CLA.COD_CLASSE=COD_CLASSE 
 														AND CLA.COD_SUBCLASSE=COD_SUBCLASSE 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL))"
+														AND CLA.HIS_DT_FIM IS NULL))"
 			type="string" />
 
 		<property lazy="true" name="descrAssuntoPrincipal"
@@ -89,7 +83,7 @@
 														AND CLA.COD_CLASSE=0 
 														AND CLA.COD_SUBCLASSE=0 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL)"
+														AND CLA.HIS_DT_FIM IS NULL)"
 			type="string" />
 		<property lazy="true" name="descrAssuntoSecundario"
 			formula="(SELECT CLA.DESCR_CLASSIFICACAO FROM SIGA.EX_CLASSIFICACAO CLA  
@@ -98,7 +92,7 @@
 														AND CLA.COD_CLASSE=0 
 														AND CLA.COD_SUBCLASSE=0 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL)"
+														AND CLA.HIS_DT_FIM IS NULL)"
 			type="string" />
 		<property lazy="true" name="descrAssunto"
 			formula="(SELECT CLA.DESCR_CLASSIFICACAO FROM SIGA.EX_CLASSIFICACAO CLA  
@@ -106,7 +100,7 @@
 														AND CLA.COD_CLASSE=0 
 														AND CLA.COD_SUBCLASSE=0 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL)"
+														AND CLA.HIS_DT_FIM IS NULL)"
 			type="string" />
 		<property lazy="true" name="descrClasse"
 			formula="(SELECT CLA.DESCR_CLASSIFICACAO FROM SIGA.EX_CLASSIFICACAO CLA  
@@ -114,7 +108,7 @@
 														AND CLA.COD_CLASSE=COD_CLASSE 
 														AND CLA.COD_SUBCLASSE=0 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL)"
+														AND CLA.HIS_DT_FIM IS NULL)"
 			type="string" />
 		<property lazy="true" name="descrSubclasse"
 			formula="(SELECT CLA.DESCR_CLASSIFICACAO FROM SIGA.EX_CLASSIFICACAO CLA  
@@ -122,12 +116,12 @@
 														AND CLA.COD_CLASSE=COD_CLASSE 
 														AND CLA.COD_SUBCLASSE=COD_SUBCLASSE 
 														AND CLA.COD_ATIVIDADE=0
-														AND CLA.DT_FIM_REG IS NULL)"
+														AND CLA.HIS_DT_FIM IS NULL)"
 			type="string" />
 
-
+ -->
 		<set name="exViaSet" inverse="true"
-			where="(ID_CLASSIFICACAO &lt;&gt; 1328 or COD_VIA &lt;&gt; 1) and DT_FIM_REG is null"
+			where="(ID_CLASSIFICACAO &lt;&gt; 1328 or COD_VIA &lt;&gt; 1) and HIS_DT_FIM is null"
 			order-by="COD_VIA asc">
 
 			<key column="ID_CLASSIFICACAO" />
@@ -141,12 +135,13 @@
 
 	</class>
 	
+	<!-- 
 	<query name="consultarAssuntosExClassificacao">
 		<![CDATA[from ExClassificacao cl 
 	      where cl.codClasse = 0 
 	       	and cl.codSubclasse = 0 
 	       	and cl.codAtividade = 0
-	       	and cl.dtFimReg is null 
+	       	and cl.hisDtFim is null 
 	       	order by cl.descrClassificacao]]>
 	</query>
 	
@@ -156,7 +151,7 @@
 	       	and cl.codClasse = 0 
 	       	and cl.codSubclasse = 0 
 	       	and cl.codAtividade = 0
-	       	and cl.dtFimReg is null 
+	       	and cl.hisDtFim is null 
 	       	order by cl.descrClassificacao]]>
 	</query>
 
@@ -166,7 +161,7 @@
 	       	and cl.codClasse = 0 
 	       	and cl.codSubclasse = 0  
 	       	and cl.codAtividade = 0
-	       	and cl.dtFimReg is null 
+	       	and cl.hisDtFim is null 
 	       	order by cl.descrClassificacao]]>
 	</query>
 
@@ -176,7 +171,7 @@
 	       	and cl.codAssuntoSecundario =  :assuntoSecundario  
 	       	and cl.codSubclasse = 0  
 	       	and cl.codAtividade = 0
-	       	and cl.dtFimReg is null 
+	       	and cl.hisDtFim is null 
 	       	order by cl.descrClassificacao]]>
 	</query>
 	
@@ -185,7 +180,7 @@
 	      where cl.codAssunto =  :assunto
 	       	and cl.codSubclasse = 0  
 	       	and cl.codAtividade = 0
-	       	and cl.dtFimReg is null 
+	       	and cl.hisDtFim is null 
 	       	order by cl.descrClassificacao]]>
 	</query>
 
@@ -195,7 +190,7 @@
 	       	and cl.codAssuntoSecundario =  :assuntoSecundario  
 	       	and cl.codClasse =  :classe  
 	       	and cl.codAtividade = 0
-	       	and cl.dtFimReg is null
+	       	and cl.hisDtFim is null
 	       	order by cl.descrClassificacao]]>
 	</query>
 	
@@ -204,7 +199,7 @@
 	      where cl.codAssunto =  :assunto  
 	       	and cl.codClasse =  :classe  
 	       	and cl.codAtividade = 0
-	       	and cl.dtFimReg is null
+	       	and cl.hisDtFim is null
 	       	order by cl.descrClassificacao]]>
 	</query>
 
@@ -216,70 +211,40 @@
 	       	and cl.codSubclasse =  :subclasse  
 	       	and cl.idClassificacao = v.exClassificacao.idClassificacao 
 	       	and (v.codVia is not null or :ultimoNivel=true)
-	       	and v.dtFimReg is null
-	       	and cl.dtFimReg is null
+	       	and v.hisDtFim is null
+	       	and cl.hisDtFim is null
 	       	order by cl.descrClassificacao]]>
 	</query>
-
+-->
 	<query name="consultarPorFiltroExClassificacao">
 		<![CDATA[select distinct(cla) from ExClassificacao cla ,ExVia v 
-		where 	(
-		        (upper(cla.descrAssuntoPrincipalAI) like upper('%' || :descrClassificacao || '%')) or
-				(upper(cla.descrAssuntoSecundarioAI) like upper('%' || :descrClassificacao || '%')) or
-				(upper(cla.descrClassificacaoAI) like upper('%' || :descrClassificacao || '%')) or
-				(upper(cla.descrClasseAI) like upper('%' || :descrClassificacao || '%')) or
-				(upper(cla.descrSubclasseAI) like upper('%' || :descrClassificacao || '%'))  
-				)
-	    	and (cla.codAssuntoPrincipal = :codAssuntoPrincipal or :codAssuntoPrincipal=-1)
-	    	and (cla.codAssuntoSecundario = :codAssuntoSecundario or :codAssuntoSecundario=-1 )
-	    	and (cla.codAssunto = :codAssunto or :codAssunto=-1 )
-	    	and (cla.codClasse = :codClasse or :codClasse=-1)
-	    	and cla.dtFimReg is null
-	    	and (cla.codSubclasse = :codSubclasse or :codSubclasse=-1)
-	    	and (cla.codAtividade = :codAtividade or :codAtividade=-1)
+		where 	(upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%'))
+	    	and cla.hisDtFim is null
 	       	and cla.idClassificacao = v.exClassificacao.idClassificacao 
 	       	and (v.codVia is not null or :ultimoNivel=true)
-	       	and v.dtFimReg is null
-	    	order by cla.codAssunto,cla.codClasse,
-	    		cla.codSubclasse,cla.codAtividade]]>
+	       	and v.hisDtFim is null
+	    	order by codificacao]]>
 	</query>
 
 	<query name="consultarQuantidadeExClassificacao">
 		<![CDATA[select count(distinct cla) from ExClassificacao cla ,ExVia v  
-		where 	(
-		        (upper(cla.descrAssuntoPrincipalAI) like upper('%' || :descrClassificacao || '%')) or
-				(upper(cla.descrAssuntoSecundarioAI) like upper('%' || :descrClassificacao || '%')) or
-				(upper(cla.descrClassificacaoAI) like upper('%' || :descrClassificacao || '%')) or
-				(upper(cla.descrClasseAI) like upper('%' || :descrClassificacao || '%')) or
-				(upper(cla.descrSubclasseAI) like upper('%' || :descrClassificacao || '%'))  
-				)
-    	and (cla.codAssuntoPrincipal = :codAssuntoPrincipal or :codAssuntoPrincipal=-1)
-    	and (cla.codAssuntoSecundario = :codAssuntoSecundario or :codAssuntoSecundario=-1 )
-    	and (cla.codAssunto = :codAssunto or :codAssunto=-1 )
-    	and (cla.codClasse = :codClasse or :codClasse=-1)
-    	and (cla.codSubclasse = :codSubclasse or :codSubclasse=-1)
-    	and (cla.codAtividade = :codAtividade or :codAtividade=-1)
+		where (upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%'))
     	and cla.idClassificacao = v.exClassificacao.idClassificacao
-    	and v.dtFimReg is null 
-    	and cla.dtFimReg is null
+    	and v.hisDtFim is null 
+    	and cla.hisDtFim is null
 	    and (v.codVia is not null or :ultimoNivel=true))]]>
 	</query>
-
+ 
+ 
 	<query name="consultarPorSiglaExClassificacao">
 		<![CDATA[select cla from ExClassificacao cla 
- 		where  (cla.codAssuntoPrincipal = :codAssuntoPrincipal or :codAssuntoPrincipal = -1 or :codAssuntoPrincipal = null)
-    	and (cla.codAssuntoSecundario = :codAssuntoSecundario or :codAssuntoSecundario = -1 or :codAssuntoSecundario = null)
-    	and (cla.codAssunto = :codAssunto or :codAssunto = -1 or :codAssunto = null)
-    	and cla.codClasse = :codClasse
-    	and cla.codSubclasse = :codSubclasse
-    	and cla.codAtividade = :codAtividade
-    	and cla.dtFimReg is null]]>
+ 		where cla.codificacao = :codificacao and cla.hisDtFim is null]]>
 	</query>
 
 	<query name="consultarAtualPorId">
 		<![CDATA[select cla from ExClassificacao cla 
- 		where  cla.idRegIni = :idRegIni
-    	and cla.dtFimReg is null]]>
+ 		where  cla.hisIdIni = :hisIdIni
+    	and cla.hisDtFim is null]]>
 	</query>
 
 </hibernate-mapping>

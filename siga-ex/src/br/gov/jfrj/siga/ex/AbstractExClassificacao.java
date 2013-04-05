@@ -25,44 +25,23 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+
 /**
  * A class that represents a row in the EX_CLASSIFICACAO table. You can
  * customize the behavior of this class by editing the class,
  * {@link ExClassificacao()}.
  */
-public abstract class AbstractExClassificacao implements Serializable {
+public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte implements Serializable {
 	
 	private java.lang.Byte codAssunto;
 	
-	/** The value of the simple codAssuntoPrincipal property. */
-	private java.lang.Byte codAssuntoPrincipal;
+	private Long idClassificacao;
 
-	/** The value of the simple codAssuntoSecundario property. */
-	private java.lang.Byte codAssuntoSecundario;
-
-	/** The value of the simple codAtividade property. */
-	private java.lang.Short codAtividade;
-
-	/** The value of the simple codClasse property. */
-	private java.lang.Byte codClasse;
-
-	/** The value of the simple codSubclasse property. */
-	private java.lang.Short codSubclasse;
-
-	/** The value of the simple descrClassificacao property. */
-	private java.lang.String descrClassificacao;
-
-	/** The value of the exViaSet one-to-many association. */
-	private java.util.Set<ExVia> exViaSet;
-
-	/** The value of the simple facilitadorClass property. */
-	private java.lang.String facilitadorClass;
-	
-	private Date dtIniReg;
-	
-	private Date dtFimReg;
-	
-	private Long idRegIni;
+	private String codificacao;
+	private String descrClassificacao;
+	private Set<ExVia> exViaSet;
+	private String obs;
 
 	private Set exModeloSet;
 
@@ -72,23 +51,11 @@ public abstract class AbstractExClassificacao implements Serializable {
 	 */
 	private int hashValue = 0;
 
-	/** The composite primary key value. */
-	private java.lang.Long idClassificacao;
 
 	/**
 	 * Simple constructor of AbstractExClassificacao instances.
 	 */
 	public AbstractExClassificacao() {
-	}
-
-	/**
-	 * Constructor of AbstractExClassificacao instances given a simple primary
-	 * key.
-	 * 
-	 * @param idClassificacao
-	 */
-	public AbstractExClassificacao(final java.lang.Long idClassificacao) {
-		this.setIdClassificacao(idClassificacao);
 	}
 
 	/**
@@ -112,50 +79,7 @@ public abstract class AbstractExClassificacao implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Return the value of the COD_ASSUNTO_PRINCIPAL column.
-	 * 
-	 * @return java.lang.Byte
-	 */
-	public java.lang.Byte getCodAssuntoPrincipal() {
-		return this.codAssuntoPrincipal;
-	}
 
-	/**
-	 * Return the value of the COD_ASSUNTO_SECUNDARIO column.
-	 * 
-	 * @return java.lang.Byte
-	 */
-	public java.lang.Byte getCodAssuntoSecundario() {
-		return this.codAssuntoSecundario;
-	}
-
-	/**
-	 * Return the value of the COD_ATIVIDADE column.
-	 * 
-	 * @return java.lang.Short
-	 */
-	public java.lang.Short getCodAtividade() {
-		return this.codAtividade;
-	}
-
-	/**
-	 * Return the value of the COD_CLASSE column.
-	 * 
-	 * @return java.lang.Byte
-	 */
-	public java.lang.Byte getCodClasse() {
-		return this.codClasse;
-	}
-
-	/**
-	 * Return the value of the COD_SUBCLASSE column.
-	 * 
-	 * @return java.lang.Short
-	 */
-	public java.lang.Short getCodSubclasse() {
-		return this.codSubclasse;
-	}
 
 	/**
 	 * Return the value of the DESCR_CLASSIFICACAO column.
@@ -180,8 +104,8 @@ public abstract class AbstractExClassificacao implements Serializable {
 	 * 
 	 * @return java.lang.String
 	 */
-	public java.lang.String getFacilitadorClass() {
-		return this.facilitadorClass;
+	public java.lang.String getObs() {
+		return this.obs;
 	}
 
 	/**
@@ -212,50 +136,6 @@ public abstract class AbstractExClassificacao implements Serializable {
 		return this.hashValue;
 	}
 
-	/**
-	 * Set the value of the COD_ASSUNTO_PRINCIPAL column.
-	 * 
-	 * @param codAssuntoPrincipal
-	 */
-	public void setCodAssuntoPrincipal(final java.lang.Byte codAssuntoPrincipal) {
-		this.codAssuntoPrincipal = codAssuntoPrincipal;
-	}
-
-	/**
-	 * Set the value of the COD_ASSUNTO_SECUNDARIO column.
-	 * 
-	 * @param codAssuntoSecundario
-	 */
-	public void setCodAssuntoSecundario(final java.lang.Byte codAssuntoSecundario) {
-		this.codAssuntoSecundario = codAssuntoSecundario;
-	}
-
-	/**
-	 * Set the value of the COD_ATIVIDADE column.
-	 * 
-	 * @param codAtividade
-	 */
-	public void setCodAtividade(final java.lang.Short codAtividade) {
-		this.codAtividade = codAtividade;
-	}
-
-	/**
-	 * Set the value of the COD_CLASSE column.
-	 * 
-	 * @param codClasse
-	 */
-	public void setCodClasse(final java.lang.Byte codClasse) {
-		this.codClasse = codClasse;
-	}
-
-	/**
-	 * Set the value of the COD_SUBCLASSE column.
-	 * 
-	 * @param codSubclasse
-	 */
-	public void setCodSubclasse(final java.lang.Short codSubclasse) {
-		this.codSubclasse = codSubclasse;
-	}
 
 	/**
 	 * Set the value of the DESCR_CLASSIFICACAO column.
@@ -280,8 +160,8 @@ public abstract class AbstractExClassificacao implements Serializable {
 	 * 
 	 * @param facilitadorClass
 	 */
-	public void setFacilitadorClass(final java.lang.String facilitadorClass) {
-		this.facilitadorClass = facilitadorClass;
+	public void setObs(final java.lang.String obs) {
+		this.obs = obs;
 	}
 
 	/**
@@ -302,30 +182,6 @@ public abstract class AbstractExClassificacao implements Serializable {
 		this.exModeloSet = modeloSet;
 	}
 
-	public Date getDtIniReg() {
-		return dtIniReg;
-	}
-
-	public void setDtIniReg(Date dtIniReg) {
-		this.dtIniReg = dtIniReg;
-	}
-
-	public Date getDtFimReg() {
-		return dtFimReg;
-	}
-
-	public void setDtFimReg(Date dtFimReg) {
-		this.dtFimReg = dtFimReg;
-	}
-
-	public Long getIdRegIni() {
-		return idRegIni;
-	}
-
-	public void setIdRegIni(Long idRegIni) {
-		this.idRegIni = idRegIni;
-	}
-
 	public java.lang.Byte getCodAssunto() {
 		return codAssunto;
 	}
@@ -333,4 +189,13 @@ public abstract class AbstractExClassificacao implements Serializable {
 	public void setCodAssunto(java.lang.Byte codAssunto) {
 		this.codAssunto = codAssunto;
 	}
+
+	public void setCodificacao(String codificacao) {
+		this.codificacao = codificacao;
+	}
+
+	public String getCodificacao() {
+		return codificacao;
+	}
+
 }

@@ -82,9 +82,8 @@
 							</ww:a>
 						</li>
 					</c:if>
-					 --%>
-					 
-					 <ww:if test="${(cadastrante.idPessoa != titular.idPessoa) || (cadastrante.lotacao.idLotacao != titular.lotacao.idLotacao)}">
+					 --%>					
+					 <ww:if test="${(cadastrante.idPessoa != titular.idPessoa) || (cadastrante.lotacao.idLotacao != lotaTitular.idLotacao)}">
 					 <%-- é uma substituição --%> 
 					 	<c:if test="${f:podeCadastrarQqSubstituicaoPorConfiguracao(cadastrante, cadastrante.lotacao)}">
 					 		<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>

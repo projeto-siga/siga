@@ -39,7 +39,7 @@ public class ConexaoHTTP {
 			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
 					.openConnection();
 
-			conn.setInstanceFollowRedirects(true);
+			//conn.setInstanceFollowRedirects(true);
 
 			for (String s : header.keySet()) {
 					conn.setRequestProperty(s, header.get(s));

@@ -26,6 +26,7 @@ package br.gov.jfrj.siga.cp;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -167,6 +168,21 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 			return df.format(getHisDtIni());
 		}
 		return "";
+	}
+	
+	/**
+	 * Retorna a configuração atual no histórico desta configuração
+	 * 
+	 * @return CpConfiguracao
+	 */
+	public CpConfiguracao getConfiguracaoAtual() {
+		CpConfiguracao ini = getConfiguracaoInicial();
+		Set<CpConfiguracao> setConfs = ini.getConfiguracoesPosteriores();
+		if (setConfs != null)
+			for (CpConfiguracao l : setConfs)
+				return l;
+
+		return this;
 	}
 
 }

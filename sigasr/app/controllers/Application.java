@@ -26,17 +26,12 @@ import models.SrUrgencia;
 import org.hibernate.Session;
 
 import play.Logger;
-import play.Play;
-import play.data.binding.As;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
-import util.SigaPlayCalendar;
-import util.SigaSrProperties;
 import util.SrSolicitacaoFiltro;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -60,9 +55,8 @@ public class Application extends Controller {
 			"exibirLocalERamal", "exibirItemConfiguracao", "exibirServico" })
 	static void addDefaults() throws Exception {
 		try {
-
-			renderArgs.put("base", SigaBaseProperties.getUrl());
-			renderArgs.put("baseSr", SigaSrProperties.getUrl());
+			
+			Logger.info("Siga-SR info: " + getBaseSiga());
 
 			// Obter cabeçalho e rodapé do Siga
 			HashMap<String, String> atributos = new HashMap<String, String>();
@@ -74,10 +68,8 @@ public class Application extends Controller {
 			if (popup == null
 					|| (!popup.equals("true") && !popup.equals("false")))
 				popup = "false";
-			String paginaVazia = ConexaoHTTP.get(
-					SigaBaseProperties.getUrlInterna()
-							+ "/pagina_vazia.action?popup=" + popup, atributos);
-			paginaVazia = replaceBarraSigas(paginaVazia);
+			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
+					+ "/pagina_vazia.action?popup=" + popup, atributos);
 			String[] pageText = paginaVazia.split("<!-- insert body -->");
 			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
 			renderArgs.put("_cabecalho", cabecalho);
@@ -85,10 +77,11 @@ public class Application extends Controller {
 
 			// Obter usuário logado
 			String[] IDs = ConexaoHTTP.get(
-					SigaBaseProperties.getUrlInterna()
-							+ "/usuario_autenticado.action", atributos).split(
-					";");
+					getBaseSiga() + "/usuario_autenticado.action", atributos)
+					.split(";");
 
+			Logger.info("Siga-SR info: " + IDs.toString());
+			
 			renderArgs.put("cadastrante",
 					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
 
@@ -109,7 +102,7 @@ public class Application extends Controller {
 		} catch (ArrayIndexOutOfBoundsException aioob) {
 			// Edson: Quando as informações não puderam ser obtidas do Siga,
 			// manda para a página de login
-			redirect(SigaBaseProperties.getUrl());
+			redirect("/siga");
 		} catch (Exception e) {
 			// Edson: Este bloco não deveria ser necessário, mas o Play,
 			// pelo visto, não joga automaticamente para o
@@ -140,11 +133,6 @@ public class Application extends Controller {
 	// montadas pelo Siga sejam repassados ao Play com caminhos
 	// relativos, o que causa problemas quando a aplicação está rodando
 	// em porta diferente (9000)
-	private static String replaceBarraSigas(String html) {
-		String urlSiga = SigaBaseProperties.getUrl() + "/";
-		return html.replace("\"/siga", "\"" + urlSiga).replace("'/siga//",
-				"'" + urlSiga);
-	}
 
 	static DpPessoa getCadastrante() {
 		return (DpPessoa) renderArgs.get("cadastrante");
@@ -152,6 +140,12 @@ public class Application extends Controller {
 
 	static DpLotacao getLotaTitular() {
 		return (DpLotacao) renderArgs.get("lotaTitular");
+	}
+
+	static String getBaseSiga() {
+		return "http://"
+				+ SigaBaseProperties.getString(SigaBaseProperties
+						.getString("ambiente") + ".servidor") + ":8080/siga";
 	}
 
 	private static void assertAcesso(String pathServico) throws Exception {
@@ -371,9 +365,6 @@ public class Application extends Controller {
 
 	public static void criarFilha(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		if (sol.idSolicitacao == sol.solicitacaoPai.idSolicitacao) {
-
-		}
 		SrSolicitacao filha = sol.criarFilhaSemSalvar();
 		formEditar(filha);
 	}
@@ -405,15 +396,16 @@ public class Application extends Controller {
 	}
 
 	public static void listarAssociacao() {
-		List<SrConfiguracao> associacoes = SrConfiguracao
+		List<List<SrConfiguracao>> listasAssociacoes = SrConfiguracao
 				.listarAssociacoesTipoAtributo();
-		render(associacoes);
+		render(listasAssociacoes);
 	}
 
 	public static void editarAssociacao(Long id) {
 		SrConfiguracao associacao = new SrConfiguracao();
 		if (id != null)
-			associacao = JPA.em().find(SrConfiguracao.class, id);
+			associacao = (SrConfiguracao) JPA.em()
+					.find(SrConfiguracao.class, id).getConfiguracaoAtual();
 		List<SrTipoAtributo> tiposAtributo = SrTipoAtributo.listar();
 		render(associacao, tiposAtributo);
 	}
@@ -555,41 +547,16 @@ public class Application extends Controller {
 		render(itens, filtro, nome, pessoa, item);
 	}
 
-	private static String proxy(String url) throws Exception {
-		HashMap<String, String> atributos = new HashMap<String, String>();
-		for (Http.Header h : request.headers.values())
-			atributos.put(h.name, h.value());
-
-		return ConexaoHTTP.get(url, atributos);
-	}
-
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		renderHtml(proxy(SigaBaseProperties.getUrl() + "/" + tipo
-				+ "/selecionar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8")));
+		redirect("/siga/" + tipo + "/selecionar.action?" + "propriedade="
+				+ tipo + nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		String html = proxy(SigaBaseProperties.getUrl() + "/" + tipo
-				+ "/buscar.action?" + "propriedade=" + tipo + nome + "&sigla="
-				+ URLEncoder.encode(sigla, "UTF-8"));
-		html = replaceBarraSigas(html);
-		renderHtml(html);
-	}
-
-	public static void buscarSigaFromPopup(String tipo) throws Exception {
-		String paramString = "?";
-		for (String s : request.params.all().keySet())
-			if (!s.equals("body"))
-				paramString += s + "="
-						+ URLEncoder.encode(request.params.get(s), "UTF-8")
-						+ "&";
-		String html = proxy(SigaBaseProperties.getUrl() + "/" + tipo
-				+ "/buscar.action" + paramString);
-		html = replaceBarraSigas(html);
-		renderHtml(html);
+		redirect("/siga/" + tipo + "/buscar.action?" + "propriedade=" + tipo
+				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 }

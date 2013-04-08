@@ -301,7 +301,7 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob));
 		
-		addAcao("package", "Sobrestar",
+		addAcao("hourglass_add", "Sobrestar",
 				"/expediente/mov",
 				"sobrestar_gravar",
 				Ex.getInstance().getComp()
@@ -317,7 +317,7 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeDesarquivar(titular, lotaTitular, mob));
 		
-		addAcao("package_go","Desobrestar",
+		addAcao("hourglass_delete","Desobrestar",
 				"/expediente/mov",
 				"desobrestar_gravar",
 				Ex.getInstance().getComp()
@@ -362,6 +362,15 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeCancelarVia(titular, lotaTitular, mob),
 				"Confirma o cancelamento da via?", null, null, null);
+		
+		addAcao("brick","Autuar",
+				"/expediente/doc",
+				"editar",
+				Ex.getInstance()
+						.getComp()
+						.podeAutuar(titular, lotaTitular, mob),
+				null, "idMobilAutuado=" + mob.getId() + "&autuando=true",
+				null, null);
 	}
 
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {

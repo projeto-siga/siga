@@ -309,5 +309,22 @@ public class SigaLibsEL {
 		}
 		return "";
 	}
+	
+	public static Boolean podeCadastrarQqSubstituicaoPorConfiguracao(
+			DpPessoa pessoa, DpLotacao lotacao) throws Exception {		
+			
+		return Cp
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+				pessoa,
+				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST) ||
+			  Cp
+			  	.getInstance()
+			  	.getConf()
+			  	.podePorConfiguracao(
+			  	lotacao,
+			  	CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);	
+	}
 
 }

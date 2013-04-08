@@ -35,7 +35,7 @@ self.retorna_${_tipo}${_nomeClean} = function(id, sigla, descricao) {
 
 self.newwindow_${_nomeClean} = '';
 self.popitup_${_nomeClean} = function(sigla) {
-	var url = '@@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${_nomeClean}&'+'${_params.raw()}';
+	var url = '@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${_nomeClean}&'+'${_params.raw()}';
 	
 	if (!newwindow_${_nomeClean}.closed && newwindow_${_nomeClean}.location) {
 		newwindow_${_nomeClean}.location.href = url;
@@ -76,7 +76,7 @@ self.ajax_${_nomeClean} = function() {
 	if (sigla == '') {
 		return retorna_${_tipo}${_nomeClean}('', '', '');
 	}
-	var url = '@@{Application.index()}${_tipo}/selecionar?sigla=' + sigla + '&nome=${_nomeClean}&'+'${_params.raw()}';
+	var url = '@{Application.index()}${_tipo}/selecionar?sigla=' + sigla + '&nome=${_nomeClean}&'+'${_params.raw()}';
 
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${_nomeClean}', false);
 }

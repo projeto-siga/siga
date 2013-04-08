@@ -1561,7 +1561,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			setPreenchimento(0L);
 		}
 
-		if (isAlterouModelo())
+		if (isAlterouModelo() && mobilPaiSel.getId() == null)
 			getClassificacaoSel().apagar();
 
 		boolean naLista = false;

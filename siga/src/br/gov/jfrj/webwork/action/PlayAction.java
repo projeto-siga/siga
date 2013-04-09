@@ -60,39 +60,4 @@ public class PlayAction extends SigaActionSupport {
 		return Action.SUCCESS;
 	}
 
-	/**
-	 * Recebe chamadas Ajax do Siga e repassa a aplicações Play. É necessário um
-	 * proxy porque nem sempre a aplicação Play chamada está na mesma porta que
-	 * o Siga.
-	 * 
-	 * @return
-	 * @throws AplicacaoException
-	 */
-	public String aAjaxProxy() throws AplicacaoException {
-		try {
-			String url = SigaBaseProperties.getString("siga." + param("modulo") +"."
-					+ SigaBaseProperties.getString("ambiente") + ".url.interna");
-			if (!url.endsWith("/")) 
-				url += "/";
-			url += param("action");
-
-			HashMap<String, String> header = new HashMap<String, String>();
-			Enumeration<String> headerNames = getRequest().getHeaderNames();
-			while (headerNames.hasMoreElements()) {
-				String headerName = (String) headerNames.nextElement();
-				if (!headerName.equals("host"))
-					header.put(headerName, getRequest().getHeader(headerName));
-			}
-
-			getRequest()
-					.setAttribute(
-							"result",
-							new String(ConexaoHTTP.get(url, header).getBytes()));
-
-			return Action.SUCCESS;
-		} catch (Exception e) {
-
-		}
-		return "";
-	}
 }

@@ -20,10 +20,6 @@
 			<result>/paginas/play_pagina_vazia.jsp</result>
 		</action>
 		
-		<action name="ajax_proxy" class="br.gov.jfrj.webwork.action.PlayAction" method="aAjaxProxy">
-			<result>/paginas/play_proxy.jsp</result>
-		</action>
-		
 		<action name="usuario_autenticado" class="br.gov.jfrj.webwork.action.PlayAction" method="aUsuarioAutenticado">
 			<result>/paginas/play_usuario_autenticado.jsp</result>
 		</action>

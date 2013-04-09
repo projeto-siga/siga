@@ -12,7 +12,6 @@ import models.SrAndamento;
 import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
-import models.SrConfiguracaoBL;
 import models.SrEstado;
 import models.SrFormaAcompanhamento;
 import models.SrGravidade;
@@ -22,92 +21,30 @@ import models.SrSolicitacao;
 import models.SrTendencia;
 import models.SrTipoAtributo;
 import models.SrUrgencia;
-
-import org.hibernate.Session;
-
-import play.Logger;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
-import play.mvc.Controller;
-import play.mvc.Http;
 import util.SrSolicitacaoFiltro;
-import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 
-public class Application extends Controller {
+public class Application extends PlayApplication {
 
 	@Before
-	static void addDefaultsSempre() throws Exception {
-		Session playSession = (Session) JPA.em().getDelegate();
-		CpDao.freeInstance();
-		CpDao.getInstance(playSession);
-		SrConfiguracaoBL.get().limparCache(null);
+	public static void addDefaultsAlways() throws Exception {
+		prepararSessao();
 	}
 
 	@Before(unless = { "exibirAtendente", "exibirAtributos",
 			"exibirLocalERamal", "exibirItemConfiguracao", "exibirServico" })
-	static void addDefaults() throws Exception {
+	public static void addDefaults() throws Exception {
+
 		try {
-			
-			Logger.info("Siga-SR info: " + getBaseSiga());
-
-			// Obter cabeçalho e rodapé do Siga
-			HashMap<String, String> atributos = new HashMap<String, String>();
-			for (Http.Header h : request.headers.values())
-				if (!h.name.equals("content-type"))
-					atributos.put(h.name, h.value());
-
-			String popup = params.get("popup");
-			if (popup == null
-					|| (!popup.equals("true") && !popup.equals("false")))
-				popup = "false";
-			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
-					+ "/pagina_vazia.action?popup=" + popup, atributos);
-			String[] pageText = paginaVazia.split("<!-- insert body -->");
-			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
-			renderArgs.put("_cabecalho", cabecalho);
-			renderArgs.put("_rodape", pageText[1]);
-
-			// Obter usuário logado
-			String[] IDs = ConexaoHTTP.get(
-					getBaseSiga() + "/usuario_autenticado.action", atributos)
-					.split(";");
-
-			Logger.info("Siga-SR info: " + IDs.toString());
-			
-			renderArgs.put("cadastrante",
-					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
-
-			if (IDs[1] != null && !IDs[1].equals(""))
-				renderArgs.put("lotaCadastrante",
-						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
-
-			if (IDs[2] != null && !IDs[2].equals(""))
-				renderArgs.put("titular",
-						JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
-
-			if (IDs[3] != null && !IDs[3].equals(""))
-				renderArgs.put("lotaTitular",
-						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
-
+			obterCabecalhoEUsuario();
 			assertAcesso("");
-
-		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Edson: Quando as informações não puderam ser obtidas do Siga,
-			// manda para a página de login
-			redirect("/siga");
 		} catch (Exception e) {
-			// Edson: Este bloco não deveria ser necessário, mas o Play,
-			// pelo visto, não joga automaticamente para o
-			// método @Catch as exceções geradas no @Before
-			catchExceptions(e);
+			tratarExcecoes(e);
 		}
 
 		try {
@@ -116,48 +53,15 @@ public class Application extends Controller {
 		} catch (Exception e) {
 			renderArgs.put("exibirMenuAdministrar", false);
 		}
-
 	}
 
-	@Catch
-	public static void catchExceptions(Exception e) {
-		// MailUtils.sendErrorMail(e);
-		if (getCadastrante() != null)
-			Logger.error("Erro Siga-SR; Pessoa: " + getCadastrante().getSigla()
-					+ "; Lotação: " + getLotaTitular().getSigla(), e);
-		e.printStackTrace();
-		error(e.getMessage());
+	protected static void assertAcesso(String path) throws Exception {
+		PlayApplication.assertAcesso("SR:Módulo de Serviços;" + path);
 	}
 
-	// Edson: o objetivo deste método é apenas impedir que os links nas páginas
-	// montadas pelo Siga sejam repassados ao Play com caminhos
-	// relativos, o que causa problemas quando a aplicação está rodando
-	// em porta diferente (9000)
-
-	static DpPessoa getCadastrante() {
-		return (DpPessoa) renderArgs.get("cadastrante");
-	}
-
-	static DpLotacao getLotaTitular() {
-		return (DpLotacao) renderArgs.get("lotaTitular");
-	}
-
-	static String getBaseSiga() {
-		return "http://"
-				+ SigaBaseProperties.getString(SigaBaseProperties
-						.getString("ambiente") + ".servidor") + ":8080/siga";
-	}
-
-	private static void assertAcesso(String pathServico) throws Exception {
-		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;SR:Módulo de Serviços;"
-				+ pathServico;
-		if (!Cp.getInstance()
-				.getConf()
-				.podeUtilizarServicoPorConfiguracao(getCadastrante(),
-						getLotaTitular(), servico))
-			throw new Exception("Acesso negado. Serviço: '" + servico
-					+ "' usuário: " + getCadastrante().getSigla()
-					+ " lotação: " + getLotaTitular().getSiglaCompleta());
+	@Catch()
+	public static void tratarExcecoes(Exception e) {
+		PlayApplication.tratarExcecoes(e);
 	}
 
 	public static void index() throws Exception {
@@ -370,11 +274,13 @@ public class Application extends Controller {
 	}
 
 	public static void listarDesignacao() throws Exception {
+		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes();
 		render(designacoes);
 	}
 
-	public static void editarDesignacao(Long id) {
+	public static void editarDesignacao(Long id) throws Exception{
+		assertAcesso("ADM:Administrar");
 		List<CpComplexo> orgaos = JPA.em().createQuery("from CpOrgaoUsuario")
 				.getResultList();
 		SrConfiguracao designacao = new SrConfiguracao();
@@ -385,23 +291,27 @@ public class Application extends Controller {
 
 	public static void gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
+		assertAcesso("ADM:Administrar");
 		designacao.salvarComoDesignacao();
 		listarDesignacao();
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
 		listarDesignacao();
 	}
 
-	public static void listarAssociacao() {
+	public static void listarAssociacao() throws Exception{
+		assertAcesso("ADM:Administrar");
 		List<List<SrConfiguracao>> listasAssociacoes = SrConfiguracao
 				.listarAssociacoesTipoAtributo();
 		render(listasAssociacoes);
 	}
 
-	public static void editarAssociacao(Long id) {
+	public static void editarAssociacao(Long id) throws Exception{
+		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = new SrConfiguracao();
 		if (id != null)
 			associacao = (SrConfiguracao) JPA.em()
@@ -412,22 +322,26 @@ public class Application extends Controller {
 
 	public static void gravarAssociacao(SrConfiguracao associacao)
 			throws Exception {
+		assertAcesso("ADM:Administrar");
 		associacao.salvarComoAssociacaoTipoAtributo();
 		listarAssociacao();
 	}
 
 	public static void desativarAssociacao(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
 		associacao.finalizar();
 		listarAssociacao();
 	}
 
-	public static void listarItem() {
+	public static void listarItem() throws Exception {
+		assertAcesso("ADM:Administrar");
 		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar();
 		render(itens);
 	}
 
-	public static void editarItem(Long id) {
+	public static void editarItem(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = new SrItemConfiguracao();
 		if (id != null)
 			item = SrItemConfiguracao.findById(id);
@@ -435,11 +349,13 @@ public class Application extends Controller {
 	}
 
 	public static void gravarItem(SrItemConfiguracao item) throws Exception {
+		assertAcesso("ADM:Administrar");
 		item.salvar();
 		listarItem();
 	}
 
 	public static void desativarItem(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
 		item.finalizar();
 		listarItem();
@@ -471,12 +387,14 @@ public class Application extends Controller {
 		render(itens, filtro, nome, pessoa);
 	}
 
-	public static void listarTipoAtributo() {
+	public static void listarTipoAtributo() throws Exception{
+		assertAcesso("ADM:Administrar");
 		List<SrTipoAtributo> atts = SrTipoAtributo.listar();
 		render(atts);
 	}
 
-	public static void editarTipoAtributo(Long id) {
+	public static void editarTipoAtributo(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrTipoAtributo att = new SrTipoAtributo();
 		if (id != null)
 			att = SrTipoAtributo.findById(id);
@@ -484,22 +402,26 @@ public class Application extends Controller {
 	}
 
 	public static void gravarTipoAtributo(SrTipoAtributo att) throws Exception {
+		assertAcesso("ADM:Administrar");
 		att.salvar();
 		listarTipoAtributo();
 	}
 
 	public static void desativarTipoAtributo(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrTipoAtributo item = SrTipoAtributo.findById(id);
 		item.finalizar();
 		listarTipoAtributo();
 	}
 
-	public static void listarServico() {
+	public static void listarServico() throws Exception{
+		assertAcesso("ADM:Administrar");
 		List<SrServico> servicos = SrServico.listar();
 		render(servicos);
 	}
 
-	public static void editarServico(Long id) {
+	public static void editarServico(Long id) throws Exception{
+		assertAcesso("ADM:Administrar");
 		SrServico servico = new SrServico();
 		if (id != null)
 			servico = SrServico.findById(id);
@@ -507,11 +429,13 @@ public class Application extends Controller {
 	}
 
 	public static void gravarServico(SrServico servico) throws Exception {
+		assertAcesso("ADM:Administrar");
 		servico.salvar();
 		listarServico();
 	}
 
 	public static void desativarServico(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrServico servico = SrServico.findById(id);
 		servico.finalizar();
 		listarServico();

@@ -41,7 +41,7 @@ public abstract class AbstractExTemporalidade implements Serializable {
 	private int hashValue = 0;
 
 	/** The composite primary key value. */
-	private java.lang.Long idTemporalidade;
+	private Long idTemporalidade;
 
 	/** Valor em dias, meses ou anos*/
 	private Integer valorTemporalidade;

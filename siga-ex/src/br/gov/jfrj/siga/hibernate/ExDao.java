@@ -85,6 +85,7 @@ import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -1133,6 +1134,7 @@ public class ExDao extends CpDao {
 	public List<ExClassificacao> listarAssuntos() {
 		final Query query = getSessao().getNamedQuery(
 				"consultarAssuntosExClassificacao");
+		query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoNivel(0));
 		final List<ExClassificacao> l = query.list();
 		return l;
 	}
@@ -1164,10 +1166,15 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
-	public List<ExClassificacao> listarClasses(final int codAssunto) {
+	public List<ExClassificacao> listarClasses(final String codAssunto) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarClassesExClassificacao");
-		query.setInteger("assunto", codAssunto);
+		String mascara = null;
+		if (codAssunto!=null && !codAssunto.equals("-1")){
+			mascara = MascaraUtil.getInstance().getMscFilho(codAssunto, 1,false);
+		}
+		query.setString("mascara", mascara);
+		query.setString("exceto", MascaraUtil.getInstance().formatar(codAssunto));
 		final List<ExClassificacao> l = query.list();
 		return l;
 	}
@@ -1185,26 +1192,32 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
-	public List<ExClassificacao> listarSubClasses(final int codAssunto,
-			final int codClasse) {
+	public List<ExClassificacao> listarSubClasses(final String codAssunto,
+			final String codClasse) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarSubClassesExClassificacao");
-		query.setInteger("assunto", codAssunto);
-		query.setInteger("classe", codClasse);
+		String mascara = null;
+		if (!codAssunto.equals("-1") &&
+			!codClasse.equals("-1")){
+			mascara = MascaraUtil.getInstance().getMscFilho(codAssunto+codClasse, 2,false);
+		}
+
+		query.setString("mascara", mascara);
+		query.setString("exceto", MascaraUtil.getInstance().formatar(codAssunto+codClasse));
 		final List<ExClassificacao> l = query.list();
 		return l;
 	}
 
-	public List<ExClassificacao> listarAtividades(
-			final int codAssuntoPrincipal, final int codAssuntoSecundario,
-			final int codClasse, final int codSubClasse,
+	public List<ExClassificacao> listarAtividades(			
+			final String codClasse, final String codSubClasse,
 			final boolean ultimoNivel) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarAtividadesExClassificacao");
-		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
-		query.setInteger("assuntoSecundario", codAssuntoSecundario);
-		query.setInteger("classe", codClasse);
-		query.setInteger("subclasse", codSubClasse);
+//		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
+//		query.setInteger("assuntoSecundario", codAssuntoSecundario);
+//		query.setInteger("classe", codClasse);
+//		query.setInteger("subclasse", codSubClasse);
+		query.setString("mascara", "__." + codClasse + "." + codSubClasse + ".00");
 		query.setBoolean("ultimoNivel", ultimoNivel);
 
 		final List<ExClassificacao> l = query.list();
@@ -1222,45 +1235,47 @@ public class ExDao extends CpDao {
 	public List<ExClassificacao> consultarPorFiltro(
 			final ExClassificacaoDaoFiltro flt, final int offset,
 			final int itemPagina) {
-//		int codAssuntoPrincipal = -1;
-//		int codAssuntoSecundario = -1;
-//		int codClasse = -1;
-//		int codSubClasse = -1;
-//		int codAtividade = -1;
-//		int codAssunto = -1;
+		String codAssuntoPrincipal = "-1";
+		String codAssuntoSecundario = "-1";
+		String codClasse = "-1";
+		String codSubClasse = "-1";
+		String codAtividade = "-1";
+		String codAssunto = "-1";
 		boolean ultimoNivel = false;
 		String descrClassificacao = "";
+		
+		StringBuffer mascara = new StringBuffer();
 //		if (flt.getAssuntoPrincipal() != null) {
 //			if (!flt.getAssuntoPrincipal().equals("")) {
 //				codAssuntoPrincipal = new Integer(flt.getAssuntoPrincipal());
 //			}
 //		}
-//		if (flt.getAssunto() != null) {
-//			if (!flt.getAssunto().equals("")) {
-//				codAssunto = new Integer(flt.getAssunto());
-//			}
-//		}
+		if (flt.getAssunto() != null) {
+			if (!flt.getAssunto().equals("")) {
+				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(0,flt.getAssunto());
+			}
+		}
 //
 //		if (flt.getAssuntoSecundario() != null) {
 //			if (!flt.getAssuntoSecundario().equals("")) {
 //				codAssuntoSecundario = new Integer(flt.getAssuntoSecundario());
 //			}
 //		}
-//		if (flt.getClasse() != null) {
-//			if (!flt.getClasse().equals("")) {
-//				codClasse = new Integer(flt.getClasse());
-//			}
-//		}
-//		if (flt.getSubclasse() != null) {
-//			if (!flt.getSubclasse().equals("")) {
-//				codSubClasse = new Integer(flt.getSubclasse());
-//			}
-//		}
-//		if (flt.getAtividade() != null) {
-//			if (!flt.getAtividade().equals("")) {
-//				codAtividade = new Integer(flt.getAtividade());
-//			}
-//		}
+		if (flt.getClasse() != null) {
+			if (!flt.getClasse().equals("")) {
+				codClasse = MascaraUtil.getInstance().getCampoDaMascara(1,flt.getClasse());
+			}
+		}
+		if (flt.getSubclasse() != null) {
+			if (!flt.getSubclasse().equals("")) {
+				codSubClasse = MascaraUtil.getInstance().getCampoDaMascara(2,flt.getSubclasse());
+			}
+		}
+		if (flt.getAtividade() != null) {
+			if (!flt.getAtividade().equals("")) {
+				codAtividade = MascaraUtil.getInstance().getCampoDaMascara(3,flt.getAtividade());
+			}
+		}
 		if (flt.getDescricao() != null) {
 			descrClassificacao = flt.getDescricao();
 		}
@@ -1277,6 +1292,27 @@ public class ExDao extends CpDao {
 			query.setMaxResults(itemPagina);
 		}
 
+		if (codAssunto!=null && !codAssunto.equals("-1")){
+			mascara.append(codAssunto);	
+		}
+		if (codClasse!=null && !codClasse.equals("-1")){
+			mascara.append(codClasse);	
+		}
+
+		if (codSubClasse!=null && !codSubClasse.equals("-1")){
+			mascara.append(codSubClasse);	
+		}
+
+		if (codAtividade!=null && !codAtividade.equals("-1")){
+			mascara.append(codAtividade);	
+		}
+		
+		if (mascara.length()<=0){
+			query.setString("mascara", "%");
+		}else{
+			query.setString("mascara", MascaraUtil.getInstance().getMscFilho(mascara.toString(),true));
+		}
+		
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
 		query.setBoolean("ultimoNivel", ultimoNivel);

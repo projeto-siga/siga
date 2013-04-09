@@ -29,6 +29,7 @@ import java.util.List;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExClassificacao;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.SigaSelecionavelActionSupport;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -37,6 +38,7 @@ import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 public class ExClassificacaoAction
 		extends
 		SigaSelecionavelActionSupport<ExClassificacao, ExClassificacaoDaoFiltro> {
+
 	/**
 	 * 
 	 */
@@ -44,19 +46,19 @@ public class ExClassificacaoAction
 
 	private Byte assuntoPrincipal;
 
-	private Byte assunto;
+	private String assunto;
 
 	private Byte assuntoSecundario;
 
-	private Short atividade;
+	private String atividade;
 
-	private Byte classe;
+	private String classe;
 
 	private ExClassificacaoSelecao classificacaoSel;
 
 	private String nome;
 
-	private Short subclasse;
+	private String subclasse;
 
 	private Boolean ultimoNivel;
 
@@ -117,7 +119,7 @@ public class ExClassificacaoAction
 				.listarAssuntosSecundario(codAssuntoPrincipal);
 	}
 
-	public Short getAtividade() {
+	public String getAtividade() {
 		return atividade;
 	}
 
@@ -130,39 +132,39 @@ public class ExClassificacaoAction
 	 */
 
 	public List<ExClassificacao> getAtividades() throws AplicacaoException {
-		int codAssuntoSecundario = -1;
-		int codAssuntoPrincipal = -1;
-		int codClasse = -1;
-		int codSubClasse = -1;
+//		int codAssuntoSecundario = -1;
+//		int codAssuntoPrincipal = -1;
+		String codClasse = "-1";
+		String codSubClasse = "-1";
 		boolean ultimoNivel = false;
-		if (this.getAssuntoPrincipal() != null) {
-			if (!this.getAssuntoPrincipal().equals("")) {
-				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
-			}
-		}
-		if (this.getAssuntoSecundario() != null) {
-			if (!this.getAssuntoSecundario().equals("")) {
-				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
-			}
-		}
+//		if (this.getAssuntoPrincipal() != null) {
+//			if (!this.getAssuntoPrincipal().equals("")) {
+//				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
+//			}
+//		}
+//		if (this.getAssuntoSecundario() != null) {
+//			if (!this.getAssuntoSecundario().equals("")) {
+//				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
+//			}
+//		}
 		if (this.getClasse() != null) {
 			if (!this.getClasse().equals("")) {
-				codClasse = new Integer(this.getClasse());
+				codClasse = MascaraUtil.getInstance().getCampoDaMascara(1,getClasse());;
 			}
 		}
 		if (this.getSubclasse() != null) {
 			if (!this.getSubclasse().equals("")) {
-				codSubClasse = new Integer(this.getSubclasse());
+				codSubClasse = codClasse = MascaraUtil.getInstance().getCampoDaMascara(2,getClasse());;
 			}
 		}
 		if (this.getUltimoNivel() != null) {
 			ultimoNivel = this.getUltimoNivel();
 		}
-		return ExDao.getInstance().listarAtividades(codAssuntoPrincipal,
-				codAssuntoSecundario, codClasse, codSubClasse, ultimoNivel);
+		return ExDao.getInstance().listarAtividades(codClasse, codSubClasse, ultimoNivel);
+
 	}
 
-	public Byte getClasse() {
+	public String getClasse() {
 		return classe;
 	}
 
@@ -184,10 +186,10 @@ public class ExClassificacaoAction
 	}
 
 	public List<ExClassificacao> getClasses() throws AplicacaoException {
-		int codAssunto = -1;
-		if (this.getAssunto() != null) {
+		String codAssunto = "-1";
+		if (this.getAssunto() != null ) {
 			if (!this.getAssunto().equals("")) {
-				codAssunto = new Integer(this.getAssunto());
+				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(0,getAssunto());
 			}
 		}
 
@@ -202,7 +204,7 @@ public class ExClassificacaoAction
 		return nome;
 	}
 
-	public Short getSubclasse() {
+	public String getSubclasse() {
 		return subclasse;
 	}
 
@@ -230,16 +232,16 @@ public class ExClassificacaoAction
 	}
 
 	public List<ExClassificacao> getSubClasses() throws AplicacaoException {
-		int codAssunto = -1;
-		int codClasse = -1;
-		if (this.getAssunto() != null) {
+		String codAssunto = "-1";
+		String codClasse = "-1";
+		if (this.getAssunto() != null && !this.getAssunto().equals("-1")) {
 			if (!this.getAssunto().equals("")) {
-				codAssunto = new Integer(this.getAssunto());
+				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(0,getAssunto());
 			}
 		}
-		if (this.getClasse() != null) {
+		if (this.getClasse() != null && !this.getClasse().equals("-1")) {
 			if (!this.getClasse().equals("")) {
-				codClasse = new Integer(this.getClasse());
+				codClasse = MascaraUtil.getInstance().getCampoDaMascara(1,getClasse());
 			}
 		}
 		return ExDao.getInstance().listarSubClasses(codAssunto, codClasse);
@@ -267,11 +269,11 @@ public class ExClassificacaoAction
 		this.assuntoSecundario = assuntoSecundario;
 	}
 
-	public void setAtividade(final Short atividade) {
+	public void setAtividade(final String atividade) {
 		this.atividade = atividade;
 	}
 
-	public void setClasse(final Byte classe) {
+	public void setClasse(final String classe) {
 		this.classe = classe;
 	}
 
@@ -284,7 +286,7 @@ public class ExClassificacaoAction
 		this.nome = descricao;
 	}
 
-	public void setSubclasse(final Short subclasse) {
+	public void setSubclasse(final String subclasse) {
 		this.subclasse = subclasse;
 	}
 
@@ -303,11 +305,11 @@ public class ExClassificacaoAction
 				: sel;
 	}
 
-	public Byte getAssunto() {
+	public String getAssunto() {
 		return assunto;
 	}
 
-	public void setAssunto(Byte assunto) {
+	public void setAssunto(String assunto) {
 		this.assunto = assunto;
 	}
 }

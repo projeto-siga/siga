@@ -47,7 +47,7 @@ function sbmt(offset) {
 			<tr>
 				<td width="15%">Assunto:</td>
 				<td width="85%"><ww:select name="assunto"
-					list="assuntos" listKey="codAssunto"
+					list="assuntos" listKey="codificacao"
 					listValue="descrClassificacao" headerKey="-1" headerValue="[Todos]"
 					onchange="javascript:sbmt(0);" /></td>
 			</tr>
@@ -68,13 +68,13 @@ function sbmt(offset) {
 			<tr>
 				<td width="15%">Classe:</td>
 				<td width="85%"><ww:select name="classe" list="classes"
-					listKey="codClasse" listValue="descrClassificacao" headerKey="-1"
+					listKey="codificacao" listValue="descrClassificacao" headerKey="-1"
 					headerValue="[Todos]" onchange="javascript:sbmt(0);" /></td>
 			</tr>
 			<tr>
 				<td width="15%">Subclasse:</td>
 				<td width="85%"><ww:select name="subclasse" list="subClasses"
-					listKey="codSubclasse" listValue="descrClassificacao"
+					listKey="codificacao" listValue="descrClassificacao"
 					headerKey="-1" headerValue="[Todos]" onchange="javascript:sbmt(0);" /></td>
 			</tr>
 			<%--<tr>

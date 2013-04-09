@@ -21,13 +21,12 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.Serializable;
 
 /**
  * A class that represents a row in the 'EX_TEMPORALIDADE' table. This class may
  * be customized as it is never re-generated after being created.
  */
-public class ExTemporalidade extends AbstractExTemporalidade implements Serializable {
+public class ExTemporalidade extends AbstractExTemporalidade  {
 	/**
 	 * 
 	 */

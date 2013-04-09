@@ -39,15 +39,4 @@ public class ExTipoDestinacao extends AbstractExTipoDestinacao implements Serial
 	public ExTipoDestinacao() {
 	}
 
-	/**
-	 * Constructor of ExTipoDestinacao instances given a simple primary key.
-	 * 
-	 * @param idTpDestinacao
-	 */
-	public ExTipoDestinacao(final java.lang.Long idTpDestinacao) {
-		super(idTpDestinacao);
-	}
-
-	/* Add customized code below */
-
 }

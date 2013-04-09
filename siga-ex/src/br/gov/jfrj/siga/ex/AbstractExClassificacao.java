@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Set;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
 
 /**
  * A class that represents a row in the EX_CLASSIFICACAO table. You can
@@ -34,7 +35,8 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
  */
 public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte implements Serializable {
 	
-	private java.lang.Byte codAssunto;
+
+//	private java.lang.Byte codAssunto;
 	
 	private Long idClassificacao;
 
@@ -182,13 +184,13 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte 
 		this.exModeloSet = modeloSet;
 	}
 
-	public java.lang.Byte getCodAssunto() {
-		return codAssunto;
+	public String getCodAssunto() {
+		return MascaraUtil.getInstance().getCampoDaMascara(0, getCodificacao());
 	}
 
-	public void setCodAssunto(java.lang.Byte codAssunto) {
-		this.codAssunto = codAssunto;
-	}
+//	public void setCodAssunto(java.lang.Byte codAssunto) {
+//		this.codAssunto = codAssunto;
+//	}
 
 	public void setCodificacao(String codificacao) {
 		this.codificacao = codificacao;

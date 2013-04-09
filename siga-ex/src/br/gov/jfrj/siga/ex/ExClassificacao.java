@@ -130,25 +130,25 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 */
 	public String getDescricao() {
 		String descr = "";
-		if (getCodAssunto() != null) {
-			if (getDescrAssunto() != null)
-				descr += getDescrAssunto();
-			if (getDescrClasse() != null)
-				descr += ": " + getDescrClasse();
-			if (getDescrSubclasse() != null)
-				descr += ": " + getDescrSubclasse();
-			if (getDescrClassificacao() != null)
-				descr += ": " + getDescrClassificacao();
-		} else {
-			if (getDescrAssuntoPrincipal() != null)
-				descr += getDescrAssuntoPrincipal();
-			if (getDescrAssuntoSecundario() != null)
-				descr += ": " + getDescrAssuntoSecundario();
-			if (getDescrClassificacao() != null)
-				descr += ": " + getDescrClassificacao();
-		}
-
-		return descr;
+//		if (getCodAssunto() != null) {
+//			if (getDescrAssunto() != null)
+//				descr += getDescrAssunto();
+//			if (getDescrClasse() != null)
+//				descr += ": " + getDescrClasse();
+//			if (getDescrSubclasse() != null)
+//				descr += ": " + getDescrSubclasse();
+//			if (getDescrClassificacao() != null)
+//				descr += ": " + getDescrClassificacao();
+//		} else {
+//			if (getDescrAssuntoPrincipal() != null)
+//				descr += getDescrAssuntoPrincipal();
+//			if (getDescrAssuntoSecundario() != null)
+//				descr += ": " + getDescrAssuntoSecundario();
+//			if (getDescrClassificacao() != null)
+//				descr += ": " + getDescrClassificacao();
+//		}
+		
+		return getDescrClassificacao();
 	}
 
 	public String getDescricaoCompleta() {

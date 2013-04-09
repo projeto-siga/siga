@@ -35,9 +35,6 @@ public abstract class AbstractExTipoDestinacao implements Serializable {
 	/** The value of the exViaSet one-to-many association. */
 	private java.util.Set exViaSet;
 
-	/** The value of the simple facilitadorDest property. */
-	private java.lang.String facilitadorDest;
-
 	/**
 	 * The cached hash code value for this instance. Settting to 0 triggers
 	 * re-calculation.
@@ -51,16 +48,6 @@ public abstract class AbstractExTipoDestinacao implements Serializable {
 	 * Simple constructor of AbstractExTipoDestinacao instances.
 	 */
 	public AbstractExTipoDestinacao() {
-	}
-
-	/**
-	 * Constructor of AbstractExTipoDestinacao instances given a simple primary
-	 * key.
-	 * 
-	 * @param idTpDestinacao
-	 */
-	public AbstractExTipoDestinacao(final java.lang.Long idTpDestinacao) {
-		this.setIdTpDestinacao(idTpDestinacao);
 	}
 
 	/**
@@ -101,15 +88,6 @@ public abstract class AbstractExTipoDestinacao implements Serializable {
 	 */
 	public java.util.Set getExViaSet() {
 		return this.exViaSet;
-	}
-
-	/**
-	 * Return the value of the FACILITADOR_DEST column.
-	 * 
-	 * @return java.lang.String
-	 */
-	public java.lang.String getFacilitadorDest() {
-		return this.facilitadorDest;
 	}
 
 	/**
@@ -156,15 +134,6 @@ public abstract class AbstractExTipoDestinacao implements Serializable {
 	 */
 	public void setExViaSet(final java.util.Set exViaSet) {
 		this.exViaSet = exViaSet;
-	}
-
-	/**
-	 * Set the value of the FACILITADOR_DEST column.
-	 * 
-	 * @param facilitadorDest
-	 */
-	public void setFacilitadorDest(final java.lang.String facilitadorDest) {
-		this.facilitadorDest = facilitadorDest;
 	}
 
 	/**

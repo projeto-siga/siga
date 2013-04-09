@@ -15,8 +15,6 @@
 		</id>
 		<property name="descrTipoDestinacao"
 			column="DESCR_TIPO_DESTINACAO" type="string" not-null="true" />
-		<property name="facilitadorDest" column="FACILITADOR_DEST"
-			type="string" />
 
 		<set name="exViaSet" inverse="true">
 			<key column="ID_TP_DESTINACAO" />

@@ -44,11 +44,11 @@ public class ExClassificacaoAction
 	 */
 	private static final long serialVersionUID = -6157885790446917185L;
 
-	private Byte assuntoPrincipal;
+//	private Byte assuntoPrincipal;
 
 	private String assunto;
 
-	private Byte assuntoSecundario;
+//	private Byte assuntoSecundario;
 
 	private String atividade;
 
@@ -72,10 +72,10 @@ public class ExClassificacaoAction
 		final ExClassificacaoDaoFiltro flt = new ExClassificacaoDaoFiltro();
 		if (assunto != null)
 			flt.setAssunto(String.valueOf(assunto));
-		if (assuntoPrincipal != null)
-			flt.setAssuntoPrincipal(String.valueOf(assuntoPrincipal));
-		if (assuntoSecundario != null)
-			flt.setAssuntoSecundario(String.valueOf(assuntoSecundario));
+//		if (assuntoPrincipal != null)
+//			flt.setAssuntoPrincipal(String.valueOf(assuntoPrincipal));
+//		if (assuntoSecundario != null)
+//			flt.setAssuntoSecundario(String.valueOf(assuntoSecundario));
 		if (classe != null)
 			flt.setClasse(String.valueOf(classe));
 		if (subclasse != null)
@@ -90,13 +90,13 @@ public class ExClassificacaoAction
 		return flt;
 	}
 
-	public Byte getAssuntoPrincipal() {
-		return assuntoPrincipal;
-	}
+//	public Byte getAssuntoPrincipal() {
+//		return assuntoPrincipal;
+//	}
 
-	public Byte getAssuntoSecundario() {
-		return assuntoSecundario;
-	}
+//	public Byte getAssuntoSecundario() {
+//		return assuntoSecundario;
+//	}
 
 	public List<ExClassificacao> getAssuntosPrincipal()
 			throws AplicacaoException {
@@ -107,17 +107,17 @@ public class ExClassificacaoAction
 		return ExDao.getInstance().listarAssuntos();
 	}
 
-	public List<ExClassificacao> getAssuntosSecundario()
-			throws AplicacaoException {
-		int codAssuntoPrincipal = -1;
-		if (this.getAssuntoPrincipal() != null) {
-			if (!this.getAssuntoPrincipal().equals("")) {
-				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
-			}
-		}
-		return ExDao.getInstance()
-				.listarAssuntosSecundario(codAssuntoPrincipal);
-	}
+//	public List<ExClassificacao> getAssuntosSecundario()
+//			throws AplicacaoException {
+//		int codAssuntoPrincipal = -1;
+//		if (this.getAssuntoPrincipal() != null) {
+//			if (!this.getAssuntoPrincipal().equals("")) {
+//				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
+//			}
+//		}
+//		return ExDao.getInstance()
+//				.listarAssuntosSecundario(codAssuntoPrincipal);
+//	}
 
 	public String getAtividade() {
 		return atividade;
@@ -132,21 +132,9 @@ public class ExClassificacaoAction
 	 */
 
 	public List<ExClassificacao> getAtividades() throws AplicacaoException {
-//		int codAssuntoSecundario = -1;
-//		int codAssuntoPrincipal = -1;
 		String codClasse = "-1";
 		String codSubClasse = "-1";
 		boolean ultimoNivel = false;
-//		if (this.getAssuntoPrincipal() != null) {
-//			if (!this.getAssuntoPrincipal().equals("")) {
-//				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
-//			}
-//		}
-//		if (this.getAssuntoSecundario() != null) {
-//			if (!this.getAssuntoSecundario().equals("")) {
-//				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
-//			}
-//		}
 		if (this.getClasse() != null) {
 			if (!this.getClasse().equals("")) {
 				codClasse = MascaraUtil.getInstance().getCampoDaMascara(1,getClasse());;
@@ -168,22 +156,22 @@ public class ExClassificacaoAction
 		return classe;
 	}
 
-	public List<ExClassificacao> getClassesAntigo() throws AplicacaoException {
-		int codAssuntoSecundario = -1;
-		int codAssuntoPrincipal = -1;
-		if (this.getAssuntoPrincipal() != null) {
-			if (!this.getAssuntoPrincipal().equals("")) {
-				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
-			}
-		}
-		if (this.getAssuntoSecundario() != null) {
-			if (!this.getAssuntoSecundario().equals("")) {
-				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
-			}
-		}
-		return ExDao.getInstance().listarClassesAntigo(codAssuntoPrincipal,
-				codAssuntoSecundario);
-	}
+//	public List<ExClassificacao> getClassesAntigo() throws AplicacaoException {
+//		int codAssuntoSecundario = -1;
+//		int codAssuntoPrincipal = -1;
+//		if (this.getAssuntoPrincipal() != null) {
+//			if (!this.getAssuntoPrincipal().equals("")) {
+//				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
+//			}
+//		}
+//		if (this.getAssuntoSecundario() != null) {
+//			if (!this.getAssuntoSecundario().equals("")) {
+//				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
+//			}
+//		}
+//		return ExDao.getInstance().listarClassesAntigo(codAssuntoPrincipal,
+//				codAssuntoSecundario);
+//	}
 
 	public List<ExClassificacao> getClasses() throws AplicacaoException {
 		String codAssunto = "-1";
@@ -208,28 +196,28 @@ public class ExClassificacaoAction
 		return subclasse;
 	}
 
-	public List<ExClassificacao> getSubClassesAntigo() throws AplicacaoException {
-		int codAssuntoSecundario = -1;
-		int codAssuntoPrincipal = -1;
-		int codClasse = -1;
-		if (this.getAssuntoPrincipal() != null) {
-			if (!this.getAssuntoPrincipal().equals("")) {
-				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
-			}
-		}
-		if (this.getAssuntoSecundario() != null) {
-			if (!this.getAssuntoSecundario().equals("")) {
-				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
-			}
-		}
-		if (this.getClasse() != null) {
-			if (!this.getClasse().equals("")) {
-				codClasse = new Integer(this.getClasse());
-			}
-		}
-		return ExDao.getInstance().listarSubClassesAntigo(codAssuntoPrincipal,
-				codAssuntoSecundario, codClasse);
-	}
+//	public List<ExClassificacao> getSubClassesAntigo() throws AplicacaoException {
+//		int codAssuntoSecundario = -1;
+//		int codAssuntoPrincipal = -1;
+//		int codClasse = -1;
+//		if (this.getAssuntoPrincipal() != null) {
+//			if (!this.getAssuntoPrincipal().equals("")) {
+//				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
+//			}
+//		}
+//		if (this.getAssuntoSecundario() != null) {
+//			if (!this.getAssuntoSecundario().equals("")) {
+//				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
+//			}
+//		}
+//		if (this.getClasse() != null) {
+//			if (!this.getClasse().equals("")) {
+//				codClasse = new Integer(this.getClasse());
+//			}
+//		}
+//		return ExDao.getInstance().listarSubClassesAntigo(codAssuntoPrincipal,
+//				codAssuntoSecundario, codClasse);
+//	}
 
 	public List<ExClassificacao> getSubClasses() throws AplicacaoException {
 		String codAssunto = "-1";
@@ -261,13 +249,13 @@ public class ExClassificacaoAction
 		return null;
 	}
 
-	public void setAssuntoPrincipal(final Byte assuntoPrincipal) {
-		this.assuntoPrincipal = assuntoPrincipal;
-	}
+//	public void setAssuntoPrincipal(final Byte assuntoPrincipal) {
+//		this.assuntoPrincipal = assuntoPrincipal;
+//	}
 
-	public void setAssuntoSecundario(final Byte assuntoSecundario) {
-		this.assuntoSecundario = assuntoSecundario;
-	}
+//	public void setAssuntoSecundario(final Byte assuntoSecundario) {
+//		this.assuntoSecundario = assuntoSecundario;
+//	}
 
 	public void setAtividade(final String atividade) {
 		this.atividade = atividade;

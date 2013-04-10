@@ -44,9 +44,9 @@ public class ExClassificacao extends AbstractExClassificacao implements
 
 	private String descrClassificacaoAI;
 
-	private String descrAssuntoPrincipalAI;
+//	private String descrAssuntoPrincipalAI;
 
-	private String descrAssuntoSecundarioAI;
+//	private String descrAssuntoSecundarioAI;
 
 	private String descrAssuntoAI;
 
@@ -54,9 +54,9 @@ public class ExClassificacao extends AbstractExClassificacao implements
 
 	private String descrSubclasseAI;
 
-	private String descrAssuntoPrincipal;
+//	private String descrAssuntoPrincipal;
 
-	private String descrAssuntoSecundario;
+//	private String descrAssuntoSecundario;
 
 	private String descrAssunto;
 
@@ -150,21 +150,21 @@ public class ExClassificacao extends AbstractExClassificacao implements
 		return getDescrClassificacao();
 	}
 
-	public String getDescrAssuntoPrincipal() {
-		return descrAssuntoPrincipal;
-	}
+//	public String getDescrAssuntoPrincipal() {
+//		return descrAssuntoPrincipal;
+//	}
 
-	public String getDescrAssuntoSecundario() {
-		return descrAssuntoSecundario;
-	}
+//	public String getDescrAssuntoSecundario() {
+//		return descrAssuntoSecundario;
+//	}
 
-	public void setDescrAssuntoPrincipal(String descrAssuntoPrincipal) {
-		this.descrAssuntoPrincipal = descrAssuntoPrincipal;
-	}
+//	public void setDescrAssuntoPrincipal(String descrAssuntoPrincipal) {
+//		this.descrAssuntoPrincipal = descrAssuntoPrincipal;
+//	}
 
-	public void setDescrAssuntoSecundario(String descrAssuntoSecundario) {
-		this.descrAssuntoSecundario = descrAssuntoSecundario;
-	}
+//	public void setDescrAssuntoSecundario(String descrAssuntoSecundario) {
+//		this.descrAssuntoSecundario = descrAssuntoSecundario;
+//	}
 
 	public Integer getNumVias() {
 		return getExViaSet().size();
@@ -174,21 +174,21 @@ public class ExClassificacao extends AbstractExClassificacao implements
 		return "";
 	}
 
-	public String getDescrAssuntoPrincipalAI() {
-		return descrAssuntoPrincipalAI;
-	}
+//	public String getDescrAssuntoPrincipalAI() {
+//		return descrAssuntoPrincipalAI;
+//	}
 
-	public void setDescrAssuntoPrincipalAI(String descrAssuntoPrincipalAI) {
-		this.descrAssuntoPrincipalAI = descrAssuntoPrincipalAI;
-	}
+//	public void setDescrAssuntoPrincipalAI(String descrAssuntoPrincipalAI) {
+//		this.descrAssuntoPrincipalAI = descrAssuntoPrincipalAI;
+//	}
 
-	public String getDescrAssuntoSecundarioAI() {
-		return descrAssuntoSecundarioAI;
-	}
+//	public String getDescrAssuntoSecundarioAI() {
+//		return descrAssuntoSecundarioAI;
+//	}
 
-	public void setDescrAssuntoSecundarioAI(String descrAssuntoSecundarioAI) {
-		this.descrAssuntoSecundarioAI = descrAssuntoSecundarioAI;
-	}
+//	public void setDescrAssuntoSecundarioAI(String descrAssuntoSecundarioAI) {
+//		this.descrAssuntoSecundarioAI = descrAssuntoSecundarioAI;
+//	}
 
 	public String getDescrAssuntoAI() {
 		return descrAssuntoAI;

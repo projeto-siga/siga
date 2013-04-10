@@ -1140,32 +1140,32 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
-	public List<ExClassificacao> listarAssuntosSecundario(
-			final int codAssuntoPrincipal) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarAssuntosSecundarioExClassificacao");
-		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
+//	public List<ExClassificacao> listarAssuntosSecundario(
+//			final int codAssuntoPrincipal) {
+//		final Query query = getSessao().getNamedQuery(
+//				"consultarAssuntosSecundarioExClassificacao");
+//		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
+//
+//		final List<ExClassificacao> l = query.list();
+//		/*
+//		 * if (l.size() == 0) return null;
+//		 */
+//		return l;
+//	}
 
-		final List<ExClassificacao> l = query.list();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
-		return l;
-	}
-
-	public List<ExClassificacao> listarClassesAntigo(
-			final int codAssuntoPrincipal, final int codAssuntoSecundario) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarClassesExClassificacao");
-		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
-		query.setInteger("assuntoSecundario", codAssuntoSecundario);
-
-		final List<ExClassificacao> l = query.list();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
-		return l;
-	}
+//	public List<ExClassificacao> listarClassesAntigo(
+//			final int codAssuntoPrincipal, final int codAssuntoSecundario) {
+//		final Query query = getSessao().getNamedQuery(
+//				"consultarClassesExClassificacao");
+//		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
+//		query.setInteger("assuntoSecundario", codAssuntoSecundario);
+//
+//		final List<ExClassificacao> l = query.list();
+//		/*
+//		 * if (l.size() == 0) return null;
+//		 */
+//		return l;
+//	}
 
 	public List<ExClassificacao> listarClasses(final String codAssunto) {
 		final Query query = getSessao().getNamedQuery(
@@ -1180,18 +1180,18 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
-	public List<ExClassificacao> listarSubClassesAntigo(
-			final int codAssuntoPrincipal, final int codAssuntoSecundario,
-			final int codClasse) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarSubClassesExClassificacao");
-		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
-		query.setInteger("assuntoSecundario", codAssuntoSecundario);
-		query.setInteger("classe", codClasse);
-
-		final List<ExClassificacao> l = query.list();
-		return l;
-	}
+//	public List<ExClassificacao> listarSubClassesAntigo(
+//			final int codAssuntoPrincipal, final int codAssuntoSecundario,
+//			final int codClasse) {
+//		final Query query = getSessao().getNamedQuery(
+//				"consultarSubClassesExClassificacao");
+//		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
+//		query.setInteger("assuntoSecundario", codAssuntoSecundario);
+//		query.setInteger("classe", codClasse);
+//
+//		final List<ExClassificacao> l = query.list();
+//		return l;
+//	}
 
 	public List<ExClassificacao> listarSubClasses(final String codAssunto,
 			final String codClasse) {

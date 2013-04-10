@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -120,8 +121,10 @@ public class SrAndamento extends GenericModel {
 	}
 
 	public boolean isPrimeiroAndamento() {
-		List<SrAndamento> andamentos = solicitacao.getAndamentoSet();
-		return (andamentos.indexOf(this) == andamentos.size() - 1);
+		SrAndamento primeiro = null;
+		for (SrAndamento andamento : solicitacao.getAndamentoSet())
+			primeiro = andamento;
+		return (primeiro == null || primeiro.equals(this));
 	}
 
 	public String getDtRegString() {

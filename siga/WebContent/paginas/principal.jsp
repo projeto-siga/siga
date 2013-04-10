@@ -77,14 +77,14 @@
 						<br />
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-							<h2 class="gt-table-head">Solicitações</h2>
-							<!-- content box -->
-							<span id='rightbottom' style="margin: 0; padding: 0;"></span>
-							<script type="text/javascript">
-								SetInnerHTMLFromAjaxResponse(
-										"/siga/ajax_proxy.action?modulo=sr&action=gadget",
-										document.getElementById('rightbottom'));
-							</script>
+						<h2 class="gt-table-head">Solicitações</h2>
+						<!-- content box -->
+						<span id='rightbottom' style="margin:0;padding:0;"></span>
+						<script type="text/javascript">
+							SetInnerHTMLFromAjaxResponse(
+									"/sigasr/gadget?ts=${currentTimeMillis}",
+									document.getElementById('rightbottom'));
+						</script>
 						</c:if>
 						<br />
 						<c:if

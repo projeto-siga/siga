@@ -1358,6 +1358,11 @@ public class ExBL extends CpBL {
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						cadastrante, cadastrante, mov);
 			}
+			
+			if(doc.getExMobilAutuado() != null) {
+				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov,
+						cadastrante, cadastrante, mov);
+			}
 
 			if (!fPreviamenteAssinado && doc.isAssinado()) {
 				processarComandosEmTag(doc, "assinatura");
@@ -2555,7 +2560,7 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-
+			
 			concluirAlteracao(doc);
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -4044,6 +4049,29 @@ public class ExBL extends CpBL {
 			}
 		}
 	}
+	
+	private void juntarAoDocumentoAutuado(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc,
+			final Date dtMov, final DpPessoa subscritor,
+			final DpPessoa titular, final ExMovimentacao mov) throws Exception,
+			AplicacaoException {
+
+		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
+		// numVia++)
+		for (final ExMobil mob : doc.getExMobilSet()) {
+			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
+			if (getComp().podeJuntar(ultMov.getCadastrante(),
+					ultMov.getLotaCadastrante(),  doc.getExMobilAutuado())
+					& getComp().podeSerJuntado(ultMov.getCadastrante(),
+							ultMov.getLotaCadastrante(), mob)) {
+				juntarDocumento(ultMov.getCadastrante(), ultMov.getTitular(),
+						ultMov.getLotaCadastrante(), null, doc.getExMobilAutuado(),
+						mob, dtMov, ultMov.getSubscritor(),
+						ultMov.getTitular(), "1");
+				break;
+			}
+		}
+	}
 
 	private ExMovimentacao criarNovaMovimentacao(final long idtpmov,
 			final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
@@ -4223,7 +4251,7 @@ public class ExBL extends CpBL {
 
 	public List<ExFormaDocumento> obterFormasDocumento(DpPessoa titular,
 			DpLotacao lotaTitular, ExTipoDocumento tipoDoc,
-			ExTipoFormaDoc tipoForma, boolean protegido, boolean despachando)
+			ExTipoFormaDoc tipoForma, boolean protegido, boolean despachando, boolean autuando)
 
 	throws Exception {
 		List<ExFormaDocumento> formasSet = new ArrayList<ExFormaDocumento>();
@@ -4247,6 +4275,15 @@ public class ExBL extends CpBL {
 			formasSet = formasFinal;
 			formasFinal = new ArrayList<ExFormaDocumento>();
 		}
+		if(autuando) {
+			for (ExFormaDocumento forma : formasSet) {
+				if (getConf().podePorConfiguracao(titular, lotaTitular, forma,
+						CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL))
+					formasFinal.add(forma);
+			}
+			formasSet = formasFinal;
+			formasFinal = new ArrayList<ExFormaDocumento>();
+		}
 		if (protegido)
 			for (ExFormaDocumento forma : formasSet) {
 				if (getConf().podePorConfiguracao(titular, lotaTitular, forma,
@@ -4260,7 +4297,7 @@ public class ExBL extends CpBL {
 
 	public List<ExModelo> obterListaModelos(ExFormaDocumento forma,
 			boolean despachando, String headerValue, boolean protegido,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) throws Exception {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
 		if (forma != null)
@@ -4273,6 +4310,14 @@ public class ExBL extends CpBL {
 			for (ExModelo mod : modeloSetFinal)
 				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
 						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL))
+					provSet.add(mod);
+			modeloSetFinal = provSet;
+		}
+		if (autuando) {
+			provSet = new ArrayList<ExModelo>();
+			for (ExModelo mod : modeloSetFinal)
+				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
+						CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL))
 					provSet.add(mod);
 			modeloSetFinal = provSet;
 		}

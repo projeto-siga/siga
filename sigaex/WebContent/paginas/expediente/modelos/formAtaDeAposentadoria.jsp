@@ -225,9 +225,15 @@
 		FIM CABECALHO -->
 
 		<br />
+		<table width="100%" border="0" cellpadding="0">
+			<tr>
+				<td align="center"><b>ATA MÉDICO PERICIAL DE APOSENTADORIA</b></td>
+			</tr>			
+		</table>
+		<br/>
 
 		<table cellpadding="4" width="100%" border="1">
-			<tr>
+		   	<tr>
 				<td colspan="8"><b>1 - DADOS DO SERVIDOR</b></td>
 			</tr>
 			<tr>
@@ -423,6 +429,19 @@
 					</tr>				
 				</ww:else>
 		</table>
+	
+	 
+	<c:import
+			url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" />
+			
+	<table width="80%" border="0" cellpadding="0">
+		<tr>
+			<td> Ciente em _____/_____/_______ </td>
+			<td>_____________________________________________________ <br>
+	${requestScope['matServidor_pessoaSel.descricao']} - ${requestScope['matServidor_pessoaSel.sigla']} </td>
+		</tr>	
+	</table>
+	
 
 	<!-- INICIO PRIMEIRO RODAPE
 			<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />

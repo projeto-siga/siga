@@ -4,14 +4,19 @@
 	<div class="gt-content">
 		<h2>Associações de tipo de atributo</h2>
 		<!-- content bomex -->
+		#{list items:listasAssociacoes, as:'associacoes'}
+		#{if associacoes_isLast}
+			<br/><br/><br/>
+			<h4>Inativas:</h4>
+		#{/if}
 		<div class="gt-content-box">
 			<table border="0" class="gt-table">
 				<thead>
 					<tr>
 						<th></th>
 						<th>Data</th>
-						<th>Item</th>
-						<th>Serviço</th>
+						<th><i>Item &darr;</i></th>
+						<th>Ação</th>
 						<th>Tipo de atributo</th>
 						<th>Obrigatório</th>
 					</tr>
@@ -33,6 +38,8 @@
 				</tbody>
 			</table>
 		</div>
+		#{/list}
+		<br/>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
 		<a href="@{Application.editarAssociacao}" class="gt-btn-medium gt-btn-left">Incluir</a>

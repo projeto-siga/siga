@@ -57,30 +57,29 @@
 ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
-<c:set var="serverAndPort" scope="request">${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.localPort}</c:set>
 
-<link rel="stylesheet" href="${serverAndPort}/siga/css/ecoblue/css/reset-fonts.css"
+<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css"
 	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="${serverAndPort}/siga/css/ecoblue/css/gt-styles.css"
+<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css"
 	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="${serverAndPort}/siga/css/ecoblue/css/custom.css"
+<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
 	type="text/css" media="screen, projection">
 
 <!-- <link rel="StyleSheet" href="/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
 
-<script src="${serverAndPort}/siga/sigalibs/ajax.js" language="JavaScript1.1"
+<script src="/siga/sigalibs/ajax.js" language="JavaScript1.1"
 	type="text/javascript"></script>
-<script src="${serverAndPort}/siga/sigalibs/static_javascript.js"
+<script src="/siga/sigalibs/static_javascript.js"
 	language="JavaScript1.1" type="text/javascript" charset="utf-8"></script>
 
 <!-- <link href="${pageContext.request.contextPath}/sigalibs/menu.css"
 	rel="stylesheet" type="text/css" /> -->
 
-<link rel="shortcut icon" href="${serverAndPort}/siga/sigalibs/siga.ico" />
+<link rel="shortcut icon" href="/siga/sigalibs/siga.ico" />
 
 <script language="JavaScript"
-	src="${serverAndPort}/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
-<!--[if gte IE 5.5]><script language="JavaScript" src="${serverAndPort}/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
+	src="/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
+<!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
 <script language="JavaScript" type="text/javascript">
 	$(document).ready(function() {
@@ -123,7 +122,7 @@ ${meta}
 						 - ${cadastrante.lotacao.sigla}</c:when>
 												</c:choose>
 											</c:catch> </strong> <span class="gt-util-separator">|</span> <a
-											href="${serverAndPort}/siga/logoff.action">sair</a>
+											href="/siga/logoff.action">sair</a>
 									</p>
 									<p style="text-align: right; padding-top: 10px;">
 										<c:catch>
@@ -131,12 +130,12 @@ ${meta}
 												<c:when
 													test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
 													<span class="gt-util-separator">|</span>
-													<a href="${serverAndPort}/siga/substituicao/finalizar.action">finalizar</a>
+													<a href="/siga/substituicao/finalizar.action">finalizar</a>
 												</c:when>
 												<c:when
 													test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
 													<span class="gt-util-separator">|</span>
-													<a href="${serverAndPort}/siga/substituicao/finalizar.action">finalizar</a>
+													<a href="/siga/substituicao/finalizar.action">finalizar</a>
 												</c:when>
 												<c:otherwise></c:otherwise>
 											</c:choose>
@@ -149,7 +148,7 @@ ${meta}
 						<!-- logo -->
 						<div class="gt-logo" style="padding: 0;">
 							<img style="margin-top: 3px; margin-bottom: -13px;"
-								src="${serverAndPort}/siga/imagens/logo.png">
+								src="/siga/imagens/logo.png">
 						</div>
 						<div class="gt-company">
 							<strong>Justi&ccedil;a Federal <c:catch>
@@ -182,9 +181,9 @@ ${meta}
 							<c:if test="${desabilitarbusca != 'sim'}">
 								<div class="gt-search">
 									<div class="gt-search-inner" onclick="">
-										<siga:selecao propriedade="buscar" modulo="siga"
+										<siga:selecao propriedade="buscar"
 											tipo="generico" tema="simple" ocultardescricao="sim"
-											buscar="nao" siglaInicial="Buscar" />
+											buscar="nao" siglaInicial="Buscar" modulo="siga" />
 										<script type="text/javascript">
 											var fld = document
 													.getElementById("buscar_genericoSel_sigla");

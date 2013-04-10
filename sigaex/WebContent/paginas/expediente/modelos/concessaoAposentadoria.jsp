@@ -41,6 +41,7 @@ ABONO DE PERMANENCIA -->
 		</mod:grupo>
 		<mod:grupo>
 		<mod:texto titulo="Telefone" largura="13" var="telefone" />
+		<mod:texto titulo="Email" largura="40" var="email" />
 		</mod:grupo>
 		<mod:grupo titulo="OPÇÃO DE APOSENTADORIA CONFORME A BASE LEGAL">
 		<b>Aposentadoria voluntária com proventos proporcionais</b>
@@ -86,7 +87,7 @@ ABONO DE PERMANENCIA -->
 		<br />${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, 
 		do Quadro de Pessoal Permanente da Justiça Federal de Primeiro Grau no Rio de Janeiro, 
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, 
-		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone nº ${telefone},
+		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone nº ${telefone}, email ${email},
 		vem requerer a Vossa Senhoria que se digne remeter seu requerimento de concessão de aposentadoria ao Egrégio 
 		Tribunal Regional Federal da 2ª Região.
 		</p>
@@ -102,7 +103,7 @@ ABONO DE PERMANENCIA -->
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido},
 		do Quadro de Pessoal Permanente da Justiça Federal de Primeiro Grau no Rio de Janeiro,
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, 
-		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone nº ${telefone},
+		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone nº ${telefone}, email ${email},
 		vem requerer a Vossa Excelência a concessão de aposentadoria voluntária com proventos proporcionais, ${requestScope[f:concat('tipo',tipoProventos)]}.
 		    </c:if>
 		
@@ -110,7 +111,7 @@ ABONO DE PERMANENCIA -->
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido},
 		do Quadro de Pessoal Permanente da Justiça Federal de Primeiro Grau no Rio de Janeiro,
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, 
-		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone nº ${telefone},
+		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone nº ${telefone}, email ${email},
 		vem requerer a Vossa Excelência a concessão de aposentadoria voluntária com proventos correspondentes, ${requestScope[f:concat('tipo',tipoProventos)]}.
 		    </c:if>
 		
@@ -118,7 +119,7 @@ ABONO DE PERMANENCIA -->
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido},
 		do Quadro de Pessoal Permanente da Justiça Federal de Primeiro Grau no Rio de Janeiro,
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, 
-		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone nº ${telefone},
+		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone nº ${telefone}, email ${email},
 		vem requerer a Vossa Excelência a concessão de aposentadoria voluntária com proventos integrais, ${requestScope[f:concat('tipo',tipoProventos)]}.
 		    </c:if>
 		    	

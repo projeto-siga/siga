@@ -25,11 +25,11 @@ function carregouAtendente(response, param){
 		<p class="gt-table-action-list">
 			#{if editar} <a class="once"
 				href="@{Application.editar(solicitacao.idSolicitacao)}"> <img
-				src="${base}/css/famfamfam/icons/pencil.png"
+				src="/siga/css/famfamfam/icons/pencil.png"
 				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
 			#{if criarFilha} <a class="once"
 				href="@{Application.criarFilha(solicitacao.idSolicitacao)}"> <img
-				src="${base}/css/famfamfam/icons/arrow_divide.png"
+				src="/siga/css/famfamfam/icons/arrow_divide.png"
 				style="margin-right: 5px;">Criar solicitação filha</a>&nbsp;&nbsp;&nbsp;
 			#{/if}
 		</p>
@@ -87,8 +87,8 @@ function carregouAtendente(response, param){
 					#{list items:solicitacao.andamentoSet, as:'andamento'}
 					<tr id="linha${andamento.idAndamento}"
 						#{if andamento_isFirst && desfazerAndamento}
-						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='${base}/css/famfamfam/icons/cancel.png';"
-						onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='${base}/css/famfamfam/icons/cancel_gray.png';"
+						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
+						onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"
 						#{/if}>
 						<td>${andamento.dtRegString}</td>
 						<td>${andamento.estado.descrEstado}</td>
@@ -112,7 +112,7 @@ function carregouAtendente(response, param){
 							class="once"
 							href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
 							title="Desfazer este andamento"> <img id="imgCancelar"
-								src="${base}/css/famfamfam/icons/cancel_gray.png"
+								src="/siga/css/famfamfam/icons/cancel_gray.png"
 								style="margin-right: 5px;"> </a>#{/if}</td>
 					</tr>
 					#{/list}

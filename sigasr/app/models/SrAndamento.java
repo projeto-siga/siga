@@ -32,11 +32,11 @@ import play.db.jpa.Model;
 import util.SigaPlayCalendar;
 
 @Entity
-@Table(name = "SR_ANDAMENTO")
+@Table(name = "SR_ANDAMENTO", schema="SIGASR")
 public class SrAndamento extends GenericModel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ANDAMENTO_SEQ", name = "srAndamentoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_ANDAMENTO_SEQ", name = "srAndamentoSeq")
 	@GeneratedValue(generator = "srAndamentoSeq")
 	@Column(name = "ID_ANDAMENTO")
 	public long idAndamento;

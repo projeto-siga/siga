@@ -1,5 +1,3 @@
-
-
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
@@ -160,19 +158,19 @@
 </style>
 		</head>
 		<body>
-                <c:set var="orgaojudic" value="JUSTIÇA FEDERAL DE 1º GRAU DO ESTADO DO RIO DE JANEIRO, estabelecida na" />
+                <c:set var="orgaojudic" value="A JUSTIÇA FEDERAL DE 1º GRAU DO ESTADO DO RIO DE JANEIRO, estabelecida na" />
                 <c:set var="endereco" value="Av. Rio Branco, 243 - Anexo I - Centro - Rio de Janeiro, inscrita no CNPJ/MF sob o nº " />
-                <c:set var="cnpj" value="05.424.540/0001-16" />
+                <c:set var="cpj" value="05.424.540/0001-16" />
                 
                 <c:if test="${org == 'SJES'}">
-		    <c:set var="orgaojudic" value="JUSTIÇA FEDERAL DE 1º GRAU DO ESTADO DO ESPÍRITO SANTO, estabelecida na" />
+		    <c:set var="orgaojudic" value="A JUSTIÇA FEDERAL DE 1º GRAU DO ESTADO DO ESPÍRITO SANTO, estabelecida na" />
                     <c:set var="endereco" value="Av. Marechal Mascarenhas de Moraes, 1.877 - Vitória - ES, inscrita no CNPJ/MF sob o nº" />
-                    <c:set var="cnpj" value="05.424.467/00001-82" />
+                    <c:set var="cpj" value="05.424.467/00001-82" />
 	        </c:if>
                 <c:if test="${org == 'TRF2'}">
 		    <c:set var="orgaojudic" value="O TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO, estabelecido na" />
                     <c:set var="endereco" value="Rua Acre, 80 - Centro - Rio de Janeiro - RJ, inscrito no CNPJ/MF sob o nº" />
-                    <c:set var="cnpj" value="32.243.347/0001-51" />
+                    <c:set var="cpj" value="32.243.347/0001-51" />
 	        </c:if>
 
 		<!-- INICIO PRIMEIRO CABECALHO
@@ -203,7 +201,7 @@
 		
 		<p style="text-align: center; font: bold;"><b>ATESTADO DE CAPACIDADE TÉCNICA </b></p>
 		
-		<p style="text-align: justify;">${orgaojudic} ${endereco} ${cnpj}, ATESTA, para os devidos fins de direito, que a empresa 
+		<p style="text-align: justify;">${orgaojudic} ${endereco} ${cpj}, ATESTA, para os devidos fins de direito, que a empresa 
 		${nomeEmpresa}, estabelecida na ${enderecoEmpresa}, inscrita no CNPJ/MF sob o nº ${cnpj},
 		<ww:if test="${servicos == 'Sim'}">
 			executou os serviços

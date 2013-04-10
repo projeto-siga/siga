@@ -225,6 +225,7 @@
 		<![CDATA[select count(distinct cla) from ExClassificacao cla ,ExVia v  
 		where (upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%'))
     	and cla.idClassificacao = v.exClassificacao.idClassificacao
+    	and cla.codificacao like :mascara
     	and v.hisAtivo = 1 
     	and cla.hisAtivo = 1
 	    and (v.codVia is not null or :ultimoNivel=true))]]>
@@ -240,6 +241,15 @@
 		<![CDATA[select cla from ExClassificacao cla 
  		where  cla.hisIdIni = :hisIdIni
     	and cla.hisAtivo = 1]]>
+	</query>
+	
+	<query name="consultarDescricaoExClassificacao">
+	<![CDATA[
+		select descrClassificacao from ExClassificacao cla
+		where cla.codificacao in (:listaCodificacao)
+		and cla.hisAtivo = 1 
+		order by codificacao
+	]]>
 	</query>
 
 </hibernate-mapping>

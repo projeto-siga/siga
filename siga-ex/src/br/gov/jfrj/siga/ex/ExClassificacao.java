@@ -26,6 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -129,26 +131,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	public String getDescricao() {
-		String descr = "";
-//		if (getCodAssunto() != null) {
-//			if (getDescrAssunto() != null)
-//				descr += getDescrAssunto();
-//			if (getDescrClasse() != null)
-//				descr += ": " + getDescrClasse();
-//			if (getDescrSubclasse() != null)
-//				descr += ": " + getDescrSubclasse();
-//			if (getDescrClassificacao() != null)
-//				descr += ": " + getDescrClassificacao();
-//		} else {
-//			if (getDescrAssuntoPrincipal() != null)
-//				descr += getDescrAssuntoPrincipal();
-//			if (getDescrAssuntoSecundario() != null)
-//				descr += ": " + getDescrAssuntoSecundario();
-//			if (getDescrClassificacao() != null)
-//				descr += ": " + getDescrClassificacao();
-//		}
-		
-		return getDescrClassificacao();
+		return ExDao.getInstance().consultarDescricaoExClassificacao(this);
 	}
 
 	public String getDescricaoCompleta() {

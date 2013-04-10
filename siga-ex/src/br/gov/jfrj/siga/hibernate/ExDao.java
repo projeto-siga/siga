@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -1213,10 +1214,6 @@ public class ExDao extends CpDao {
 			final boolean ultimoNivel) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarAtividadesExClassificacao");
-//		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
-//		query.setInteger("assuntoSecundario", codAssuntoSecundario);
-//		query.setInteger("classe", codClasse);
-//		query.setInteger("subclasse", codSubClasse);
 		query.setString("mascara", "__." + codClasse + "." + codSubClasse + ".00");
 		query.setBoolean("ultimoNivel", ultimoNivel);
 
@@ -1235,8 +1232,6 @@ public class ExDao extends CpDao {
 	public List<ExClassificacao> consultarPorFiltro(
 			final ExClassificacaoDaoFiltro flt, final int offset,
 			final int itemPagina) {
-		String codAssuntoPrincipal = "-1";
-		String codAssuntoSecundario = "-1";
 		String codClasse = "-1";
 		String codSubClasse = "-1";
 		String codAtividade = "-1";
@@ -1245,22 +1240,11 @@ public class ExDao extends CpDao {
 		String descrClassificacao = "";
 		
 		StringBuffer mascara = new StringBuffer();
-//		if (flt.getAssuntoPrincipal() != null) {
-//			if (!flt.getAssuntoPrincipal().equals("")) {
-//				codAssuntoPrincipal = new Integer(flt.getAssuntoPrincipal());
-//			}
-//		}
 		if (flt.getAssunto() != null) {
 			if (!flt.getAssunto().equals("")) {
 				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(0,flt.getAssunto());
 			}
 		}
-//
-//		if (flt.getAssuntoSecundario() != null) {
-//			if (!flt.getAssuntoSecundario().equals("")) {
-//				codAssuntoSecundario = new Integer(flt.getAssuntoSecundario());
-//			}
-//		}
 		if (flt.getClasse() != null) {
 			if (!flt.getClasse().equals("")) {
 				codClasse = MascaraUtil.getInstance().getCampoDaMascara(1,flt.getClasse());
@@ -1308,7 +1292,7 @@ public class ExDao extends CpDao {
 		}
 		
 		if (mascara.length()<=0){
-			query.setString("mascara", "%");
+			query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
 		}else{
 			query.setString("mascara", MascaraUtil.getInstance().getMscFilho(mascara.toString(),true));
 		}
@@ -1318,51 +1302,12 @@ public class ExDao extends CpDao {
 		query.setBoolean("ultimoNivel", ultimoNivel);
 
 		final List<ExClassificacao> l = query.list();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
 		return l;
 	}
 
 	public int consultarQuantidade(final ExClassificacaoDaoFiltro flt) {
-//		int codAssuntoPrincipal = -1;
-//		int codAssuntoSecundario = -1;
-//		int codClasse = -1;
-//		int codSubClasse = -1;
-//		int codAtividade = -1;
-//		int codAssunto = -1;
 		boolean ultimoNivel = false;
 		String descrClassificacao = "";
-//		if (flt.getAssuntoPrincipal() != null) {
-//			if (!flt.getAssuntoPrincipal().equals("")) {
-//				codAssuntoPrincipal = new Integer(flt.getAssuntoPrincipal());
-//			}
-//		}
-//		if (flt.getAssunto() != null) {
-//			if (!flt.getAssunto().equals("")) {
-//				codAssunto = new Integer(flt.getAssunto());
-//			}
-//		}
-//		if (flt.getAssuntoSecundario() != null) {
-//			if (!flt.getAssuntoSecundario().equals("")) {
-//				codAssuntoSecundario = new Integer(flt.getAssuntoSecundario());
-//			}
-//		}
-//		if (flt.getClasse() != null) {
-//			if (!flt.getClasse().equals("")) {
-//				codClasse = new Integer(flt.getClasse());
-//			}
-//		}
-//		if (flt.getSubclasse() != null) {
-//			if (!flt.getSubclasse().equals("")) {
-//				codSubClasse = new Integer(flt.getSubclasse());
-//			}
-//		}
-//		if (flt.getAtividade() != null) {
-//			if (!flt.getAtividade().equals("")) {
-//				codAtividade = new Integer(flt.getAtividade());
-//			}
-//		}
 		if (flt.getUltimoNivel() != null) {
 			ultimoNivel = new Boolean(flt.getUltimoNivel());
 		}
@@ -1376,11 +1321,9 @@ public class ExDao extends CpDao {
 		query.setBoolean("ultimoNivel", ultimoNivel);
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
+		query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
 
 		final int l = ((Long) query.uniqueResult()).intValue();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
 		return l;
 	}
 
@@ -1388,7 +1331,7 @@ public class ExDao extends CpDao {
 		try {
 			final Query query = getSessao().getNamedQuery(
 					"consultarPorSiglaExClassificacao");
-			query.setString("codificacao", o.getSigla());
+			query.setString("codificacao", MascaraUtil.getInstance().formatar(o.getSigla()));
 
 			final List<ExClassificacao> l = query.list();
 			if (l.size() != 1)
@@ -1421,16 +1364,10 @@ public class ExDao extends CpDao {
 		try {
 			final Query query = getSessao().getNamedQuery(
 					"consultarMovimentacoesPorLotacaoEntreDatas");
-			// if (titular.getIdPessoaIni() != null)
-			// query.setLong("titular", titular.getIdPessoaIni());
-			// else
-			// query.setLong("titular", 0);
 			if (lotaTitular.getIdLotacaoIni() != null)
 				query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni());
 			else
 				query.setLong("lotaTitular", 0);
-			// query.setDate("dtIni", dtIni);
-			// query.setDate("dtFim", dtFim);
 
 			return query.list();
 		} catch (final NullPointerException e) {
@@ -1725,5 +1662,25 @@ public class ExDao extends CpDao {
 				"listarDocPendenteAssinatura");
 		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
 		return query.list();
+	}
+
+	public String consultarDescricaoExClassificacao(ExClassificacao exClass) {
+		String[] pais = MascaraUtil.getInstance().getPais(exClass.getCodificacao());
+		if (pais==null){
+			return exClass.getDescrClassificacao();
+		}
+		pais = Arrays.copyOf(pais, pais.length+1);
+		pais[pais.length-1]= exClass.getCodificacao();
+		
+		Query q = getSessao().getNamedQuery("consultarDescricaoExClassificacao");
+		q.setParameterList("listaCodificacao", pais);
+		List<String> result = q.list();
+		StringBuffer sb = new StringBuffer();
+		for (String descr : result) {
+			sb.append(descr);
+			sb.append(": ");
+		}
+		sb.deleteCharAt(sb.lastIndexOf(": "));
+		return sb.toString();
 	}
 }

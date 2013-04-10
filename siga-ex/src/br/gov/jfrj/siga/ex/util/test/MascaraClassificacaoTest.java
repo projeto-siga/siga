@@ -14,6 +14,9 @@ public class MascaraClassificacaoTest extends TestCase {
 	private static final String MASK_IN_3 = "([0-9]{0,1})\\-?([0-9]{2})?\\-?([0-9]{3})?";
 	private static final String MASK_OUT_3 = "%1$01d-%2$02d-%3$03d";
 
+	private static final String MASK_IN_4 = "([0-9]{0,1})\\-?([0-9]{5})?";
+	private static final String MASK_OUT_4 = "%1$01d-%2$03d";
+
 
 
 	public void testFormatar(){
@@ -22,6 +25,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		/*TESTE DE FORMATAÇÃO*/
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
+		assertNull(m.formatar(null));
 		assertEquals(m.formatar("11223344A"),"11.22.33.44");
 		assertEquals(m.formatar("11223344"),"11.22.33.44");
 		assertEquals(m.formatar("11.223344"),"11.22.33.44");
@@ -31,6 +35,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(m.formatar("112233"),"11.22.33.00");
 		assertEquals(m.formatar("0"),"00.00.00.00");
 		assertEquals(m.formatar(""),"00.00.00.00");
+
 		
 		m.setMascaraEntrada(MASK_IN_2);
 		m.setMascaraSaida(MASK_OUT_2);
@@ -51,6 +56,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		/*TESTE MÁSCARA DE BUSCA DE FILHOS*/ 
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
+		assertNull(m.getMscFilho(null,0,false));
 		assertEquals(m.getMscFilho("11",1,false),"11.__.00.00");
 		assertEquals(m.getMscFilho("11.00.00.00",1,false),"11.__.00.00");
 		assertEquals(m.getMscFilho("11.22",2,false),"11.22.__.00");
@@ -102,19 +108,122 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(m.getMscTodosDoNivel(1),"__.__.00.00");
 		assertEquals(m.getMscTodosDoNivel(2),"__.__.__.00");
 		assertEquals(m.getMscTodosDoNivel(3),"__.__.__.__");
+		assertEquals(m.getMscTodosDoNivel(-1),"__.__.__.__");
+		assertEquals(m.getMscTodosDoNivel(99999),"__.__.__.__");
+		assertEquals(m.getMscTodosDoMaiorNivel(),"__.__.__.__");
+
 
 		m.setMascaraEntrada(MASK_IN_2);
 		m.setMascaraSaida(MASK_OUT_2);
 		assertEquals(m.getMscTodosDoNivel(0),"__.000.00");
 		assertEquals(m.getMscTodosDoNivel(1),"__.___.00");
 		assertEquals(m.getMscTodosDoNivel(2),"__.___.__");
+		assertEquals(m.getMscTodosDoNivel(-1),"__.___.__");
+		assertEquals(m.getMscTodosDoNivel(99999),"__.___.__");
+		assertEquals(m.getMscTodosDoMaiorNivel(),"__.___.__");
+
 		
 		m.setMascaraEntrada(MASK_IN_3);
 		m.setMascaraSaida(MASK_OUT_3);
 		assertEquals(m.getMscTodosDoNivel(0),"_-00-000");
 		assertEquals(m.getMscTodosDoNivel(1),"_-__-000");
 		assertEquals(m.getMscTodosDoNivel(2),"_-__-___");
+		assertEquals(m.getMscTodosDoNivel(-1),"_-__-___");
+		assertEquals(m.getMscTodosDoNivel(99999),"_-__-___");
+		assertEquals(m.getMscTodosDoMaiorNivel(),"_-__-___");
 
+
+		/*TESTE BUSCA DE PAIS*/
+		m.setMascaraEntrada(MASK_IN_1);
+		m.setMascaraSaida(MASK_OUT_1);
+		assertNull(m.getPais(null));
+
+		String[] result = m.getPais("11.22.33.44");
+		assertEquals(result.length, 3);
+		assertEquals(result[0], "11.00.00.00");
+		assertEquals(result[1], "11.22.00.00");
+		assertEquals(result[2], "11.22.33.00");
+		
+		result = m.getPais("11.22.33.00");
+		assertEquals(result.length, 2);
+		assertEquals(result[0], "11.00.00.00");
+		assertEquals(result[1], "11.22.00.00");
+		
+		result = m.getPais("11.22.33");
+		assertEquals(result.length, 2);
+		assertEquals(result[0], "11.00.00.00");
+		assertEquals(result[1], "11.22.00.00");
+		
+		result = m.getPais("11.22.00.00");
+		assertEquals(result.length, 1);
+		assertEquals(result[0], "11.00.00.00");
+		
+		result = m.getPais("11.22");
+		assertEquals(result.length, 1);
+		assertEquals(result[0], "11.00.00.00");
+
+
+		result = m.getPais("11.00.00.00");
+		assertNull(result);
+		
+		result = m.getPais("11");
+		assertNull(result);
+		
+		m.setMascaraEntrada(MASK_IN_2);
+		m.setMascaraSaida(MASK_OUT_2);
+		result = m.getPais("11.222.33");
+		assertEquals(result.length, 2);
+		assertEquals(result[0], "11.000.00");
+		assertEquals(result[1], "11.222.00");
+		
+		result = m.getPais("11.222.00");
+		assertEquals(result.length, 1);
+		assertEquals(result[0], "11.000.00");
+		
+		result = m.getPais("11.000.00");
+		assertNull(result);
+		
+		result = m.getPais("11.222");
+		assertEquals(result.length, 1);
+		assertEquals(result[0], "11.000.00");
+
+		result = m.getPais("11");
+		assertNull(result);
+		
+		m.setMascaraEntrada(MASK_IN_3);
+		m.setMascaraSaida(MASK_OUT_3);
+		result = m.getPais("1-22-333");
+		assertEquals(result.length, 2);
+		assertEquals(result[0], "1-00-000");
+		assertEquals(result[1], "1-22-000");
+
+		
+		result = m.getPais("1-22-000");
+		assertEquals(result.length, 1);
+		assertEquals(result[0], "1-00-000");
+		
+		result = m.getPais("1-00-000");
+		assertNull(result);
+		
+		result = m.getPais("1-22");
+		assertEquals(result.length, 1);
+		assertEquals(result[0], "1-00-000");
+
+		result = m.getPais("1");
+		assertNull(result);
+
+		m.setMascaraEntrada(MASK_IN_4);
+		m.setMascaraSaida(MASK_OUT_4);
+		result = m.getPais("1-22222");
+		assertEquals(result.length, 1);
+		assertEquals(result[0], "1-00000");
+		
+		result = m.getPais("1");
+		assertNull(result);
+		
+
+
+		
 	
 	}
 }

@@ -6,12 +6,13 @@ import java.util.regex.Pattern;
 
 public class MascaraUtil {
 	
-	public static final String CLASSIFICACAO_COD_ASSUNTO = "COD_ASSUNTO";
-	public static final String CLASSIFICACAO_COD_CLASSE = "COD_CLASSE";
-	public static final String CLASSIFICACAO_COD_SUBCLASSE = "COD_SUBCLASSE";
-	
 	private static String MASK_IN = "([0-9]{0,2})\\.?([0-9]{2})?\\.?([0-9]{2})?\\.?([0-9]{2})?([A-Z])?";
 	private static String MASK_OUT = "%1$02d.%2$02d.%3$02d.%4$02d";
+
+//	MASCARA ANTIGA
+//	private static String MASK_IN = "([0-9]{0,2})\\.?([0-9]{3})?\\.?([0-9]{2})?";
+//	private static String MASK_OUT = "%1$02d.%2$03d.%3$02d";
+
 
 	
 	private static MascaraUtil instancia;
@@ -26,10 +27,18 @@ public class MascaraUtil {
 		return instancia;
 	}
 	
+	/**
+	 * Retorna Expressão regular com formato em que a classificação documental deve estar de acordo 
+	 * @return - regex da classificacao documental
+	 */
 	private String getMascaraEntrada(){
 		return MASK_IN;
 	}
 	
+	/**
+	 * Retorna o formato da máscara a ser produzida na saída (vide Formatter.java)
+	 * @return - máscara de saída
+	 */
 	private String getMascaraSaida() {
 		return MASK_OUT;
 	} 
@@ -45,10 +54,8 @@ public class MascaraUtil {
 	
 	/**
 	 * Formata um texto que esteja de acordo com a mascara de entrada 
-	 * @param mascaraEntrada - Expressão regular (regexp) com formato em que a classificacao documental deve estar de acordo
-	 * @param mascaraSaida - formato a ser utilizado na saída (vide Formatter.java)
-	 * @param texto - texto a ser formatado
-	 * @return - texto formatado de acordo com mascaraSaida. <br/> Retorna null em caso de problemas com entrada ou saída.
+	 * @param texto - texto a ser formatado como codificacao de classificação documental
+	 * @return - codificacao formatado de acordo com mascaraSaida. <br/> Retorna null em caso de problemas com entrada ou saída.
 	 */
 	public String formatar(String texto){
 		if (getMascaraEntrada()==null || getMascaraSaida()== null || texto == null){
@@ -80,20 +87,22 @@ public class MascaraUtil {
 	
 	/**
 	 * Produz a máscara para consultar m nível de classificacao documental
-	 * @param mascaraEntrada - Expressão regular (regexp) com formato em que a classificação documental deve estar de acordo
-	 * @param mascaraSaida - Formato da máscara a ser produzida na saída (vide Formatter.java)
 	 * @param nivel - Nível na hierarquia desejado. Baseado em zero (0)
 	 * @return - Máscara para consultar o nível (Ex: nível 1: "__.__.00.00")
 	 */
 	public String getMscTodosDoNivel(int nivel) {
-		if (getMascaraEntrada()==null || getMascaraSaida() == null){
+		String txt = formatar("");
+		if (getMascaraEntrada()==null || getMascaraSaida() == null || txt == null){
 			return null;
 		}
-		String txt = formatar("");
+
 		Pattern pe = Pattern.compile(getMascaraEntrada());
 		Matcher me = pe.matcher(txt);
 		
 		if(me.matches()){
+			if (nivel< 0 || nivel>me.groupCount()){
+				nivel = getUltimoNivel(txt);
+			}
 			StringBuffer sb = new StringBuffer(txt);
 			nivel++;
 			
@@ -113,21 +122,41 @@ public class MascaraUtil {
 		return null;
 
 	}
+	
+	private int getUltimoNivel(String codificacao) {
+		Pattern pe = Pattern.compile(getMascaraEntrada());
+		Matcher me = pe.matcher(codificacao);
+		
+		if(me.matches()){
+			for (int i = me.groupCount(); i > 0 ; i--) {
+				if (me.group(i)!=null){
+					return i-1;
+				}
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Retorna a máscara no maior nível possível.
+	 * @return - Máscara do maior nível possível Ex:__.__.__.__
+	 */
+	public String getMscTodosDoMaiorNivel(){
+		return getMscTodosDoNivel(-1);
+	}
 
 	/**
 	 * Produz a máscara correspondente para obter os filhos da classificacao.
-	 * @param mascaraEntrada - Expressão regular (regexp) com formato em que a classificação documental deve estar de acordo 
-	 * @param mascaraSaida - Formato da máscara a ser produzida na saída (vide Formatter.java)
 	 * @param texto - Valor da Classificacao Documental
-	 * @param nivel - Nível na hierarquia desejado. Baseado em zero (0)
-	 * @return - Máscara para consultar os filhos (Ex: nível 1: "11.__.00.00")
+	 * @param nivelInicial - Nível na hierarquia desejado. Baseado em zero (0)
+	 * @param niveisAbaixo - boolean que indica se deve ser calculados os níveis inferiores ao nível inicial
+	 * @return - Máscara para consultar os filhos (Ex1: <br/>nível 1: "11.__.00.00" <br/>Ex2: nível 1 com niveis abaixo: "11.__.__.__" )
 	 */
 	public String getMscFilho(String texto, int nivelInicial, boolean niveisAbaixo) {
-		if (getMascaraEntrada()==null || getMascaraSaida()== null || texto == null){
+		String txt = formatar(texto);
+		if (getMascaraEntrada()==null || getMascaraSaida()== null || txt == null){
 			return null;
 		}
-	
-		String txt = formatar(texto);
 		Pattern pe = Pattern.compile(getMascaraEntrada());
 		Matcher me = pe.matcher(txt);
 		
@@ -152,22 +181,25 @@ public class MascaraUtil {
 		return null;
 	}
 
-	public String getMscFilho(String texto, boolean niveisAbaixo) {
-		int nivelInicial = deduzirNivelInicial(formatar(texto));
-		return getMscFilho(texto, nivelInicial, niveisAbaixo);
+	public String getMscFilho(String codificacao, boolean niveisAbaixo) {
+		int nivelInicial = deduzirNivelInicial(formatar(codificacao));
+		return getMscFilho(codificacao, nivelInicial, niveisAbaixo);
 	}
 	
 	/**
 	 * Retorna o campo correspondente ao nível indicado
 	 * @param nivel - Nivel desejado. Baseado em 0.
-	 * @param texto - codificacao da classificacao documental
+	 * @param texto - texto com a classificacao documental
 	 * @return
 	 */
 	public String getCampoDaMascara(int nivel, String texto) {
 		String txt = formatar(texto);
+		if (txt == null || nivel < 0){
+			return null;
+		}
 	
 		Pattern pe = Pattern.compile(getMascaraEntrada());
-		Matcher me = pe.matcher(texto);
+		Matcher me = pe.matcher(txt);
 		
 		if(me.matches()){
 			StringBuffer sb = new StringBuffer(txt);
@@ -182,23 +214,57 @@ public class MascaraUtil {
 		return null;
 	}
 
-	private int deduzirNivelInicial(String texto) {
+	/**
+	 * Calcula qual é o nível inicial em que se deve procurar os filhos. A lógica é pegar o primeiro grupo com zero (0)
+	 * @param codificacao - codificacao da classificacao documental
+	 * @return
+	 */
+	private int deduzirNivelInicial(String codificacao) {
 		Pattern pe = Pattern.compile(getMascaraEntrada());
-		Matcher me = pe.matcher(texto);
+		Matcher me = pe.matcher(codificacao);
+		int nivelDeduzido = 1;
 		if (me.matches()){
-			for (int i = 1; i <= me.groupCount(); i++) {
-				try{
+			for (int i = me.groupCount(); i > 1 ; i--) {
+				if (me.group(i)!=null){
 					Integer grupo = Integer.valueOf(me.group(i));
-					if(grupo == 0){
-						return i-1;
+					if (grupo != 0){
+						nivelDeduzido = i;
+						break;
 					}
-				}catch (NumberFormatException e) {
-
 				}
 			}
 		}
-		return me.groupCount();
+		return nivelDeduzido;
 		
+	}
+	
+	public String[] getPais(String texto){
+		String codificacao = formatar(texto);
+		if (codificacao == null){
+			return null;
+		}
+
+		Pattern pe = Pattern.compile(getMascaraEntrada());
+		Matcher me = pe.matcher(codificacao);
+		String result[] = null;
+		if (me.matches()){
+			int nivelInicial = deduzirNivelInicial(codificacao);
+			if (nivelInicial==1){
+				return result;
+			}
+			result = new String[nivelInicial-1];
+			StringBuffer sb = new StringBuffer(codificacao);
+			for (int i = nivelInicial; i > 1; i--) {
+				int inicio = me.start(i);
+				int fim = me.end(i);
+				
+				for (int j = inicio; j < fim; j++) {
+					sb.setCharAt(j, '0');
+				}
+				result[i-2] = sb.toString();
+			}
+		}
+		return result;
 	}
 
 		

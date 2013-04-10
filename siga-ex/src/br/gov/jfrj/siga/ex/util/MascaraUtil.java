@@ -4,10 +4,16 @@ import java.util.Formatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.gov.jfrj.siga.ex.SigaExProperties;
+
 public class MascaraUtil {
-	
-	private static String MASK_IN = "([0-9]{0,2})\\.?([0-9]{2})?\\.?([0-9]{2})?\\.?([0-9]{2})?([A-Z])?";
-	private static String MASK_OUT = "%1$02d.%2$02d.%3$02d.%4$02d";
+
+	private static String MASK_IN;
+	private static String MASK_OUT;
+
+//	MASCARA ATUAL
+//	private static String MASK_IN = "([0-9]{0,2})\\.?([0-9]{2})?\\.?([0-9]{2})?\\.?([0-9]{2})?([A-Z])?";
+//	private static String MASK_OUT = "%1$02d.%2$02d.%3$02d.%4$02d";
 
 //	MASCARA ANTIGA
 //	private static String MASK_IN = "([0-9]{0,2})\\.?([0-9]{3})?\\.?([0-9]{2})?";
@@ -22,6 +28,8 @@ public class MascaraUtil {
 	
 	public static synchronized MascaraUtil getInstance(){
 		if (instancia == null){
+			MASK_IN = SigaExProperties.getExClassificacaoMascaraEntrada();
+			MASK_OUT = SigaExProperties.getExClassificacaoMascaraSaida();
 			instancia = new MascaraUtil();
 		}
 		return instancia;

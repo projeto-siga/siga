@@ -88,6 +88,14 @@ public class SigaExProperties extends ModeloPropriedade {
 		return getString("montador.query");
 	}
 	
+	public static String getExClassificacaoMascaraEntrada() {
+		return getString("classificacao.mascara.entrada");
+	}
+
+	public static String getExClassificacaoMascaraSaida() {
+		return getString("classificacao.mascara.saida");
+	}
+	
 	public static boolean isAmbienteProducao(){
 		if (getAmbiente() != null && getAmbiente().equals("prod"))
 			return true;

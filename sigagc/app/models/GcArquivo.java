@@ -37,12 +37,12 @@ public class GcArquivo extends GenericModel {
 	@Column(name = "CONTEUDO_TIPO")
 	public String mimeType;
 
-	public void setConteudoHTML(String html) {
+	public void setConteudoTXT(String html) {
 		conteudo = html.getBytes(Charset.forName("utf-8"));
-		mimeType = "text/html";
+		mimeType = "text/plain";
 	}
 
-	public String getConteudoHTML() throws IOException {
+	public String getConteudoTXT() throws IOException {
 		return new String(conteudo, Charset.forName("utf-8"));
 	}
 }

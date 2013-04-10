@@ -67,6 +67,7 @@ public class Bootstrap extends Job {
 			new GcTipoTag(GcTipoTag.TIPO_TAG_CLASSIFICACAO, "Classificação")
 					.save();
 			new GcTipoTag(GcTipoTag.TIPO_TAG_HASHTAG, "Marcador").save();
+			new GcTipoTag(GcTipoTag.TIPO_TAG_ANCORA, "Âncora").save();
 		}
 
 		if (false && !Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa")) {

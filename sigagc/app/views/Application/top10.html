@@ -10,9 +10,9 @@
 						#{list items:lista, as:'i'}
 						<tr>
 							<td style="width: 70%;"><h4>
-									<a href="@{Application.exibir(i.id)}">${i.titulo}</a>
+									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i.conteudo}</p>
+								<p>${i?.conteudoHTML.raw()}</p>
 							</td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
@@ -48,9 +48,9 @@
 						#{list items:lista, as:'i'}
 						<tr>
 							<td style="width: 70%;"><h4>
-									<a href="@{Application.exibir(i.id)}">${i.titulo}</a>
+									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i.conteudo}</p>
+								<p>${i.conteudoHTML.raw()}</p>
 							</td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
@@ -86,9 +86,9 @@
 						#{list items:lista, as:'i'}
 						<tr>
 							<td style="width: 70%;"><h4>
-									<a href="@{Application.exibir(i.id)}">${i.titulo}</a>
+									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i.conteudo}</p>
+								<p>${i?.conteudoHTML.raw()}</p>
 							</td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->

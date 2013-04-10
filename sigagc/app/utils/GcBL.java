@@ -63,7 +63,7 @@ public class GcBL {
 		if (titulo != null || conteudo != null || classificacao != null) {
 			GcArquivo arq = new GcArquivo();
 			arq.titulo = titulo;
-			arq.setConteudoHTML(conteudo);
+			arq.setConteudoTXT(conteudo);
 			arq.classificacao = classificacao;
 			mov.arq = arq;
 		} else {
@@ -165,7 +165,11 @@ public class GcBL {
 			Long tipo = null;
 			s = simplificarString(s);
 			if (s != null) {
-				if (s.startsWith("@")) {
+				if (s.startsWith("@") || s.startsWith("^")) {
+					if (s.startsWith("@"))
+						tipo = GcTipoTag.TIPO_TAG_CLASSIFICACAO;
+					else
+						tipo = GcTipoTag.TIPO_TAG_ANCORA;
 					s = s.substring(1);
 					String aa[] = s.split(":");
 					if (aa.length > 2) {
@@ -176,7 +180,6 @@ public class GcBL {
 					} else {
 						titulo = simplificarString(aa[0]);
 					}
-					tipo = GcTipoTag.TIPO_TAG_CLASSIFICACAO;
 				} else if (s.startsWith("#")) {
 					s = s.substring(1);
 					titulo = simplificarString(s);

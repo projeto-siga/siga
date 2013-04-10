@@ -25,9 +25,9 @@
 
 				<!-- Expedientes -->
 				<div
-					style="width: 49%; float: left; clear: both; padding:0; margin:0;">
+					style="width: 49%; float: left; clear: both; padding: 0; margin: 0;">
 					<!-- Expedientes -->
-					<div style="width: 100%; padding:0; margin:0;">
+					<div style="width: 100%; padding: 0; margin: 0;">
 						<!-- Files Table -->
 						<!-- This table can be used for listing things like files, pictures, documents, etc -->
 						<h2 class="gt-table-head">Expedientes</h2>
@@ -39,7 +39,7 @@
 									document.getElementById('left'));
 						</script>
 						<!-- Expedientes -->
-						<br/>
+						<br />
 						<!-- Processos -->
 						<h2 class="gt-table-head">Administrativos</h2>
 						<!-- content box -->
@@ -53,16 +53,15 @@
 						<!-- Processos -->
 					</div>
 				</div>
-				<div
-					style="width: 49%; float: right; padding:0; margin:0;">
-					<div style="width: 100%; padding:0; margin:0;">
+				<div style="width: 49%; float: right; padding: 0; margin: 0;">
+					<div style="width: 100%; padding: 0; margin: 0;">
 						<c:if
 							test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF')}">
 							<h2 class="gt-table-head">Tarefas</h2>
 							<!-- content box -->
-							<span id='right' style="margin:0;padding:0;"></span>
+							<span id='right' style="margin: 0; padding: 0;"></span>
 							<c:if test="${f:resource('siga.sr.')}">
-								</c:if>
+							</c:if>
 							<script type="text/javascript">
 								SetInnerHTMLFromAjaxResponse(
 										"/sigawf/inbox.action?ts=${currentTimeMillis}",
@@ -75,32 +74,32 @@
 							 -->
 							<!-- segunda metade da tela -->
 						</c:if>
-						<br/>
+						<br />
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-						<h2 class="gt-table-head">Solicitações</h2>
-						<!-- content box -->
-						<span id='rightbottom' style="margin:0;padding:0;"></span>
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/siga/ajax_proxy.action?modulo=sr&action=gadget",
-									document.getElementById('rightbottom'));
-						</script>
+							<h2 class="gt-table-head">Solicitações</h2>
+							<!-- content box -->
+							<span id='rightbottom' style="margin: 0; padding: 0;"></span>
+							<script type="text/javascript">
+								SetInnerHTMLFromAjaxResponse(
+										"/siga/ajax_proxy.action?modulo=sr&action=gadget",
+										document.getElementById('rightbottom'));
+							</script>
 						</c:if>
-						<br/>
+						<br />
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
-						<h2 class="gt-table-head">Gestão de Conhecimento</h2>
-						<!-- content box -->
-						<div id='rightbottom2'></div>
-						<c:set var="url" value="${f:getURLSistema('siga.gc')}" />
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/siga/ajax_proxy.action?URL=${url}/gadget",
-									document.getElementById('rightbottom2'));
-						</script>
+							<h2 class="gt-table-head">Gestão de Conhecimento</h2>
+							<!-- content box -->
+							<div id='rightbottom2'></div>
+							<c:set var="url" value="${f:getURLSistema('siga.gc')}" />
+							<script type="text/javascript">
+								SetInnerHTMLFromAjaxResponse(
+										"/siga/ajax_proxy.action?modulo=gc&action=gadget",
+										document.getElementById('rightbottom2'));
+							</script>
 						</c:if>
-						<br/>
+						<br />
 					</div>
 				</div>
 			</div>

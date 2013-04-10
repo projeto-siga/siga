@@ -27,4 +27,8 @@ public class GcTipoInformacao extends GenericModel {
 		this.id = id;
 		this.nome = nome;
 	}
+
+	public GcTipoInformacao() {
+		super();
+	}
 }

@@ -1,6 +1,6 @@
 #{extends 'main.html' /} #{set title:'Edição de Tópico de Informação' /}
 
-<div class="gt-bd clearfix">
+<div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
 		<h2>
 			<span id="codigoInf">${informacao?.sigla}</span>
@@ -9,6 +9,7 @@
 		<div class="gt-form gt-content-box">
 			<form action="@{Application.gravar}">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
+				<input type="hidden" name="origem" value="${origem}" />
 				*{
 				<div class="gt-form-row gt-width-100">
 					<label>Tópico pai:</label> #{selecao tipo:'pessoa',
@@ -83,6 +84,118 @@
 					</p>
 				</div>
 			</form>
+		</div>
+	</div>
+	<div class="gt-sidebar">
+		<!-- Sidebar Content -->
+		<div class="gt-sidebar-content">
+			<h3>Opções de Formatação</h3>
+			<p>
+				O conteúdo do campo "Texto" pode ser receber <a
+					href="http://www.wikicreole.org"> marcações especiais</a>, clique <a
+					href="javascript: $('#cheatsheet').show();">aqui</a> para
+				visualizar as opções disponíveis.
+			</p>
+			<div id="cheatsheet" style="display: none;">
+				<table class="side-bar-light-table">
+					<tbody>
+						<tr>
+							<td>//itálico//</td>
+							<td class="arrow">→</td>
+							<td><em>itálico</em>
+							</td>
+						</tr>
+						<tr>
+							<td>**negrito**</td>
+							<td class="arrow">→</td>
+							<td><strong>negrito</strong>
+							</td>
+						</tr>
+
+						<tr>
+							<td>* Lista não numerada<br>* Segundo item<br>**
+								Sub item</td>
+							<td class="arrow">→</td>
+							<td>• Lista não numerada<br>• Segundo item<br>..•
+								Sub item</td>
+						</tr>
+						<tr>
+							<td># Lista numerada<br># Segundo item<br>## Sub
+								item</td>
+							<td class="arrow">→</td>
+							<td>1. Lista numerada<br>2. Segundo item<br>2.1
+								Sub item</td>
+						</tr>
+
+						<!-- 
+					<tr>
+						<td>Link para [[outro conhecimento]]</td>
+						<td class="arrow">→</td>
+						<td>Link to <a
+							href="http://www.wikicreole.org/attach/CheatSheet/URL">wiki
+								page</a>
+						</td>
+					</tr>
+ -->
+						<tr>
+							<td>[[URL|nome do link]]</td>
+							<td class="arrow">→</td>
+							<td><a
+								href="http://www.wikicreole.org/attach/CheatSheet/URL">nome
+									do link</a>
+							</td>
+						</tr>
+
+						<tr>
+							<td>== Título grande<br>=== Título médio<br>====
+								Título pequeno</td>
+							<td class="arrow">→</td>
+							<td><span style="font-size: 120%; font-weight: bold;">
+									Título grande</span><br> <span
+								style="font-size: 110%; font-weight: bold;">Título médio</span><br>
+								<span style="font-size: 100%; font-weight: bold;">Título
+									pequeno</span>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Não<br> quebrar a linha!<br> <br>Use uma
+								linha vazia</td>
+							<td class="arrow">→</td>
+							<td>Não quebrar a linha!<br> <br>Use uma linha
+								vazia</td>
+						</tr>
+						<tr>
+							<td>Quebra de linha\\forçada<br>
+							</td>
+							<td class="arrow">→</td>
+							<td>Quebra de linha<br>forçada</td>
+						</tr>
+						<tr>
+							<td>Linha horizontal:<br>----</td>
+							<td class="arrow">→</td>
+							<td>Linha horizontal:
+								<hr>
+							</td>
+						</tr>
+						<tr>
+							<td>{{imagem.jpg|título}}</td>
+							<td class="arrow">→</td>
+							<td>Imagem com título</td>
+						</tr>
+						<tr>
+							<td>|=|=tabela|=cabeçalho|<br>|a|tabela|linha|<br>|b|tabela|linha|</td>
+							<td class="arrow">→</td>
+							<td>Tabela</td>
+						</tr>
+						<tr>
+							<td>{{{<br>== [[não|formatar]]<br />}}}</td>
+							<td class="arrow">→</td>
+							<td>== [[não|formatar]]:</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>

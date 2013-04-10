@@ -132,7 +132,7 @@ public class ExDocumentoVO extends ExVO {
 		if (doc.getExClassificacao() != null)
 			tags.add("@doc:" + doc.getExClassificacao().getSigla());
 		if (doc.getExFormaDocumento() != null)
-			tags.add("@doc:" + doc.getExFormaDocumento().getSigla());
+			tags.add("@doc:" + Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
 		if (doc.getExModelo() != null)
 			tags.add("@doc:" + Texto.slugify(doc.getExModelo().getNmMod(), true, true));
 	}

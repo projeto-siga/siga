@@ -153,8 +153,7 @@
 							</c:if>
 							<td align="left"><siga:selecionado
 									sigla="${mov.parte.lotaResp.sigla}"
-									descricao="${mov.parte.lotaResp.descricaoAmpliada}" />
-							</td>
+									descricao="${mov.parte.lotaResp.descricaoAmpliada}" /></td>
 							<td align="left"><siga:selecionado
 									sigla="${mov.parte.resp.nomeAbreviado}"
 									descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" />
@@ -189,8 +188,7 @@
 									<c:set var="assinadopor" value="${false}" />
 										</c:if>
 									</c:forEach>
-								</siga:links>
-							</td>
+								</siga:links></td>
 
 							<c:if test="${exibirCompleto != 'true' and mov.duracaoSpan > 0}">
 								<td align="center" class="duracaoborderbottom"
@@ -283,7 +281,8 @@
 							<tags:fixdocumenthtml>
 			${docVO.conteudoBlobHtmlString}
 		</tags:fixdocumenthtml>
-						</c:if></td>
+						</c:if>
+					</td>
 				</tr>
 			</table>
 		</div>
@@ -348,7 +347,7 @@
 </c:if>
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-	<c:url var="url" value="${libs:getURLSistema('siga.gc')}/knowledge">
+	<c:url var="url" value="knowledge">
 		<c:forEach var="tag" items="${docVO.tags}">
 			<c:param name="tags">${tag}</c:param>
 		</c:forEach>
@@ -356,7 +355,7 @@
 		<c:param name="ts">${currentTimeMillis}</c:param>
 	</c:url>
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("/siga/ajax_proxy.action?URL=${url}",document.getElementById('gc'));
+		SetInnerHTMLFromAjaxResponse("/siga/ajax_proxy.action?modulo=gc&action=${libs:urlEncode(url)}",document.getElementById('gc'));
 	</script>
 </c:if>
 

@@ -1,5 +1,6 @@
 package models;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.hibernate.annotations.SortType;
 import play.db.jpa.GenericModel;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
+import ys.wikiparser.WikiParser;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -36,7 +38,9 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
 @Table(name = "GC_INFORMACAO")
-@NamedQuery(name = "buscarConhecimento", query = "select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join inf.tags tag where tag in (:tags)")
+@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc")
+// select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
+// inf.tags tag where tag in (:tags)
 public class GcInformacao extends GenericModel {
 	@Id
 	@GeneratedValue
@@ -366,4 +370,15 @@ public class GcInformacao extends GenericModel {
 		return sb.toString();
 	}
 
+	public String getConteudoHTML() throws Exception {
+		if (this.arq == null || this.arq.conteudo == null)
+			return null;
+		String s = this.arq.getConteudoTXT().replace(" # ", "\n# ")
+				.replace(" ## ", "\n## ").replace(" ### ", "\n### ")
+				.replace(" #### ", "\n#### ").replace(" * ", "\n* ")
+				.replace(" ** ", "\n** ").replace(" *** ", "\n*** ")
+				.replace(" **** ", "\n**** ").replace(" ==", "\n==");
+		String fragment = WikiParser.renderXHTML(s);
+		return fragment;
+	}
 }

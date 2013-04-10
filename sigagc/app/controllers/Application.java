@@ -152,7 +152,7 @@ public class Application extends Controller {
 			DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 
 			GcArquivo arq = new GcArquivo();
-			arq.setConteudoHTML("teste 123");
+			arq.setConteudoTXT("teste 123");
 			arq.titulo = "teste";
 
 			GcMovimentacao mov = new GcMovimentacao();
@@ -193,7 +193,8 @@ public class Application extends Controller {
 		render(contagens);
 	}
 
-	public static void knowledge(String[] tags, String estilo) {
+	public static void knowledge(String[] tags, String estilo, String msgvazio,
+			String urlvazio, String titulo) throws Exception {
 		Set<GcTag> set = GcBL.buscarTags(tags, true);
 		Query query = JPA.em().createNamedQuery("buscarConhecimento");
 		query.setParameter("tags", set);
@@ -206,8 +207,21 @@ public class Application extends Controller {
 			}
 		}
 
+		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
+			GcInformacao inf = GcInformacao.findById(conhecimentos.get(0)[0]);
+			conhecimentos.get(0)[1] = inf.arq.titulo;
+			conhecimentos.get(0)[2] = inf.getConteudoHTML();
+		}
+
 		if (conhecimentos.size() == 0)
 			conhecimentos = null;
+
+		String referer = null;
+		try {
+			referer = request.headers.get("referer").value();
+		} catch (Exception e) {
+
+		}
 
 		String classificacao = "";
 		if (tags != null && tags.length > 0) {
@@ -218,10 +232,17 @@ public class Application extends Controller {
 			}
 		}
 
+		// if (msgvazio != null) {
+		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
+		// "\">aqui</a>");
+		// }
+
 		if (estilo != null)
-			render("@knowledge_" + estilo, conhecimentos, classificacao);
+			render("@knowledge_" + estilo, conhecimentos, classificacao,
+					msgvazio, urlvazio, titulo, referer);
 		else
-			render(conhecimentos, classificacao);
+			render(conhecimentos, classificacao, msgvazio, urlvazio, titulo,
+					referer);
 	}
 
 	public static void index() {
@@ -276,20 +297,23 @@ public class Application extends Controller {
 		render(informacao);
 	}
 
-	public static void editar(long id, String classificacao) throws IOException {
+	public static void editar(long id, String classificacao, String titulo,
+			String origem) throws IOException {
 		GcInformacao informacao = null;
 		if (id != 0)
 			informacao = GcInformacao.findById(id);
 		else
 			informacao = new GcInformacao();
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
-		String titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
+		if (titulo == null)
+			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
 		String conteudo = (informacao.arq != null) ? informacao.arq
-				.getConteudoHTML() : null;
+				.getConteudoTXT() : null;
 		if (classificacao == null)
 			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
 					: null;
-		render(informacao, tiposInformacao, titulo, conteudo, classificacao);
+		render(informacao, tiposInformacao, titulo, conteudo, classificacao,
+				origem);
 	}
 
 	public static void fechar(long id) throws Exception {
@@ -301,7 +325,8 @@ public class Application extends Controller {
 	}
 
 	public static void gravar(GcInformacao informacao, String titulo,
-			String conteudo, String classificacao) throws Exception {
+			String conteudo, String classificacao, String origem)
+			throws Exception {
 		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 
 		if (informacao.autor == null) {
@@ -326,7 +351,10 @@ public class Application extends Controller {
 				null);
 
 		GcBL.gravar(informacao, idc());
-		exibir(informacao.id);
+		if (origem != null && origem.trim().length() != 0)
+			redirect(origem);
+		else
+			exibir(informacao.id);
 	}
 
 	public static void remover(long id) throws AplicacaoException {

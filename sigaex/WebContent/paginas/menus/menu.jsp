@@ -89,6 +89,12 @@
 						namespace="/expediente/configuracao" /> <ww:a href="%{url}">Cadastro de configurações</ww:a>
 				</li>
 			</c:if>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental')}">
+				<li><ww:url id="url" action="listar"
+						namespace="/expediente/classificacao" /> <ww:a href="%{url}">Classificação Documental</ww:a>
+				</li>
+			</c:if>
 		</ul>
 	</li>
 </c:if>

@@ -1166,6 +1166,12 @@
 				/sigalibs/ajax_retorno.jsp
 			</result>
 		</action>
+		<action name="listar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aListar">
+			<result name="busca">
+				/paginas/classificacao_lista.jsp
+			</result>
+		</action>
 	</package>
 
 	<package name="lotacao" extends="default" namespace="/lotacao">

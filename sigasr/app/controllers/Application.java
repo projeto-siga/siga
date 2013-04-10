@@ -12,6 +12,7 @@ import models.SrAndamento;
 import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
+import models.SrConfiguracaoBL;
 import models.SrEstado;
 import models.SrFormaAcompanhamento;
 import models.SrGravidade;
@@ -26,14 +27,16 @@ import play.mvc.Before;
 import play.mvc.Catch;
 import util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
-public class Application extends PlayApplication {
+public class Application extends SigaApplication {
 
 	@Before
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
+		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
 	@Before(unless = { "exibirAtendente", "exibirAtributos",
@@ -56,12 +59,12 @@ public class Application extends PlayApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		PlayApplication.assertAcesso("SR:Módulo de Serviços;" + path);
+		SigaApplication.assertAcesso("SR:Módulo de Serviços;" + path);
 	}
 
 	@Catch()
 	public static void tratarExcecoes(Exception e) {
-		PlayApplication.tratarExcecoes(e);
+		SigaApplication.tratarExcecoes(e);
 	}
 
 	public static void index() throws Exception {

@@ -261,4 +261,8 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
+	
+	public int getNivel(){
+		return MascaraUtil.getInstance().calcularNivel(this.getCodificacao());
+	}
 }

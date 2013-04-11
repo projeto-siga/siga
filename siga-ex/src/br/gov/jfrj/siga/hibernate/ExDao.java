@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Blob;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,8 +38,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import oracle.jdbc.OracleTypes;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
@@ -68,7 +65,6 @@ import org.hibernate.util.ReflectHelper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -1682,5 +1678,11 @@ public class ExDao extends CpDao {
 		}
 		sb.deleteCharAt(sb.lastIndexOf(": "));
 		return sb.toString();
+	}
+	
+	public List<ExClassificacao> consultarExClassificacaoVigente(){
+		Query q = getSessao().getNamedQuery("consultarExClassificacaoVigente");
+		q.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
+		return q.list();
 	}
 }

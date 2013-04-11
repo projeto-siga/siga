@@ -217,7 +217,7 @@
 	    	and cla.hisAtivo = 1
 	       	and cla.idClassificacao = v.exClassificacao.idClassificacao 
 	       	and (v.codVia is not null or :ultimoNivel=true)
-	       	and v.hisDtFim is null
+	       	and v.hisAtivo = 1
 	    	order by codificacao]]>
 	</query>
 
@@ -251,5 +251,13 @@
 		order by codificacao
 	]]>
 	</query>
+	
+	<query name="consultarExClassificacaoVigente">
+		<![CDATA[select distinct(cla) from ExClassificacao cla
+		where cla.codificacao like :mascara
+	    	and cla.hisAtivo = 1
+	    	order by codificacao]]>
+	</query>
+	
 
 </hibernate-mapping>

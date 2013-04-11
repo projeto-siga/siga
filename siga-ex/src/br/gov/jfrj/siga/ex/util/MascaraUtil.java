@@ -190,7 +190,7 @@ public class MascaraUtil {
 	}
 
 	public String getMscFilho(String codificacao, boolean niveisAbaixo) {
-		int nivelInicial = deduzirNivelInicial(formatar(codificacao));
+		int nivelInicial = calcularNivel(formatar(codificacao));
 		return getMscFilho(codificacao, nivelInicial, niveisAbaixo);
 	}
 	
@@ -227,22 +227,22 @@ public class MascaraUtil {
 	 * @param codificacao - codificacao da classificacao documental
 	 * @return
 	 */
-	private int deduzirNivelInicial(String codificacao) {
+	public int calcularNivel(String codificacao) {
 		Pattern pe = Pattern.compile(getMascaraEntrada());
 		Matcher me = pe.matcher(codificacao);
-		int nivelDeduzido = 1;
+		int nivel = 0;
 		if (me.matches()){
-			for (int i = me.groupCount(); i > 1 ; i--) {
+			for (int i = me.groupCount(); i > 0 ; i--) {
 				if (me.group(i)!=null){
 					Integer grupo = Integer.valueOf(me.group(i));
 					if (grupo != 0){
-						nivelDeduzido = i;
+						nivel = i;
 						break;
 					}
 				}
 			}
 		}
-		return nivelDeduzido;
+		return nivel;
 		
 	}
 	
@@ -256,7 +256,7 @@ public class MascaraUtil {
 		Matcher me = pe.matcher(codificacao);
 		String result[] = null;
 		if (me.matches()){
-			int nivelInicial = deduzirNivelInicial(codificacao);
+			int nivelInicial = calcularNivel(codificacao);
 			if (nivelInicial==1){
 				return result;
 			}

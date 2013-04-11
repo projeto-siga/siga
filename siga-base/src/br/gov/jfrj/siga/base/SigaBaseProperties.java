@@ -29,6 +29,8 @@ package br.gov.jfrj.siga.base;
  import java.util.MissingResourceException;
  import java.util.ResourceBundle;
  */
+import java.util.HashMap;
+
 import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
 
 public class SigaBaseProperties extends ModeloPropriedade {
@@ -81,18 +83,9 @@ public class SigaBaseProperties extends ModeloPropriedade {
 		String strAuditaThreadFilter = getString(key);
 		return Boolean.parseBoolean(strAuditaThreadFilter);
 	}
-
-	public static String getUrl() {
-		return cortaBarraNoFim(getString(getAmbiente() + ".url"));
+	
+	public static HashMap<String, String> obterTodas() throws Exception{
+		return instance.obterTodas("");
 	}
 
-	public static String getUrlInterna() {
-		return cortaBarraNoFim(getString(getAmbiente() + ".url.interna"));
-	}
-
-	private static String cortaBarraNoFim(String url) {
-		if (url.endsWith("/"))
-			url = url.substring(0, url.length() - 1);
-		return url;
-	}
 }

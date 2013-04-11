@@ -4,10 +4,12 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +43,7 @@ import util.SigaPlayCalendar;
 import util.Util;
 import models.siga.PlayHistoricoSuporte;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -50,7 +53,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name = "SR_SOLICITACAO", schema="SIGASR")
+@Table(name = "SR_SOLICITACAO", schema = "SIGASR")
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
@@ -417,7 +420,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return sols.get(0);
 	}
 
-	public List<SrAndamento> getAndamentoSet() {
+	public Set<SrAndamento> getAndamentoSet() {
 		return getAndamentoSet(false);
 	}
 
@@ -429,14 +432,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return meuAtributoSet;
 	}
 
-	public List<SrAndamento> getAndamentoSetComCancelados() {
+	public Set<SrAndamento> getAndamentoSetComCancelados() {
 		return getAndamentoSet(true);
 	}
 
-	public List<SrAndamento> getAndamentoSet(boolean considerarCancelados) {
+	public Set<SrAndamento> getAndamentoSet(boolean considerarCancelados) {
 		if (solicitacaoInicial == null)
 			return null;
-		ArrayList<SrAndamento> listaCompleta = new ArrayList<SrAndamento>();
+		TreeSet<SrAndamento> listaCompleta = new TreeSet<SrAndamento>(
+				new Comparator<SrAndamento>() {
+					@Override
+					public int compare(SrAndamento a1, SrAndamento a2) {
+						return a2.dtReg.compareTo(a1.dtReg);
+					}
+				});
 		for (SrSolicitacao sol : getHistoricoSolicitacao())
 			if (sol.meuAndamentoSet != null)
 				if (considerarCancelados)

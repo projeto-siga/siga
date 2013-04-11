@@ -36,22 +36,4 @@ public class SigaSrProperties extends ModeloPropriedade {
 		return instance.ambiente;
 	}
 
-	public static String getUrl() {
-		return cortaBarraNoFim(getString(getAmbiente()+".url"));
-	}
-	
-	public static String getUrlInterna() {
-		return cortaBarraNoFim(getString(getAmbiente()+".url.interna"));
-	}
-	
-	public static HashMap<String, String> getPropriedadesPlay() throws Exception{
-		return instance.obterTodas("play.");
-	}
-	
-	private static String cortaBarraNoFim(String url){
-		if (url.endsWith("/"))
-			url = url.substring(0, url.length()-1);
-		return url;
-	}
-
 }

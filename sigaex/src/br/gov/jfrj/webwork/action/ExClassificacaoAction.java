@@ -61,6 +61,11 @@ public class ExClassificacaoAction
 	private String subclasse;
 
 	private Boolean ultimoNivel;
+	
+	private String codificacao;
+	private String descrClassificacao;
+	private String obs;
+	
 
 	public ExClassificacaoAction() {
 		super();
@@ -90,6 +95,19 @@ public class ExClassificacaoAction
 		return flt;
 	}
 
+	public String aListar(){
+		return SUCCESS;
+	}
+
+	public String aEditar(){
+		return SUCCESS;
+	}
+
+	public String aSalvar(){
+		setMensagem("Classificação salva!");
+		return SUCCESS;
+	}
+	
 //	public Byte getAssuntoPrincipal() {
 //		return assuntoPrincipal;
 //	}
@@ -299,5 +317,33 @@ public class ExClassificacaoAction
 
 	public void setAssunto(String assunto) {
 		this.assunto = assunto;
+	}
+	
+	public List<ExClassificacao> getClassificacaoVigente(){
+		return ExDao.getInstance().consultarExClassificacaoVigente();
+	}
+
+	public void setCodificacao(String codificacao) {
+		this.codificacao = codificacao;
+	}
+
+	public String getCodificacao() {
+		return codificacao;
+	}
+
+	public void setDescrClassificacao(String descrClassificacao) {
+		this.descrClassificacao = descrClassificacao;
+	}
+
+	public String getDescrClassificacao() {
+		return descrClassificacao;
+	}
+
+	public void setObs(String obs) {
+		this.obs = obs;
+	}
+
+	public String getObs() {
+		return obs;
 	}
 }

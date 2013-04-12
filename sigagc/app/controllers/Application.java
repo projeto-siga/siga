@@ -25,15 +25,10 @@ import models.GcTipoMovimentacao;
 import play.Play;
 import play.Play.Mode;
 import play.db.jpa.JPA;
-import play.exceptions.PlayException;
-import play.exceptions.UnexpectedException;
 import play.mvc.Before;
 import play.mvc.Catch;
-import play.mvc.Controller;
 import play.mvc.Http;
-import play.mvc.Scope.Flash;
 import utils.GcBL;
-import utils.GcDao;
 import utils.GcInformacaoFiltro;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
@@ -56,31 +51,36 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 //  javax.persistence.Query query = manager.createQuery(...);
 //  query.setHint("org.hibernate.cacheable", true);
 
-public class Application extends Controller {
+public class Application extends SigaApplication {
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 
-	// private static final String HTTP_LOCALHOST_8080 =
-	// "http://versailles:8080";
-
-	private static GcDao dao() {
-		return GcDao.getInstance();
-	}
-
-	private static CpIdentidade idc() {
-		return (CpIdentidade) renderArgs.get("identidadeCadastrante");
-	}
-
-	private static DpPessoa titular() {
-		return (DpPessoa) renderArgs.get("titular");
-	}
-
-	private static DpLotacao lotaTitular() {
-		return (DpLotacao) renderArgs.get("lotaTitular");
+	@Before
+	public static void addDefaultsAlways() throws Exception {
+		prepararSessao();
+		// TAH: Copiar essa classe e fazer as alterações necessárias
+		// SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
 	@Before
-	static void addDefaults() throws Exception {
+	public static void addDefaults() throws Exception {
+
+		try {
+			obterCabecalhoEUsuario();
+			assertAcesso("");
+		} catch (Exception e) {
+			tratarExcecoes(e);
+		}
+
+		try {
+			assertAcesso("ADM:Administrar");
+			renderArgs.put("exibirMenuAdministrar", true);
+		} catch (Exception e) {
+			renderArgs.put("exibirMenuAdministrar", false);
+		}
+	}
+
+	static void delme_addDefaults() throws Exception {
 		ModeloDao.freeInstance();
 
 		if (request.url.contains("proxy"))
@@ -142,8 +142,6 @@ public class Application extends Controller {
 		}
 
 		int a = 0;
-
-		dao();
 
 		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
 			Date dt = GcBL.dt();
@@ -351,9 +349,15 @@ public class Application extends Controller {
 				null);
 
 		GcBL.gravar(informacao, idc());
-		if (origem != null && origem.trim().length() != 0)
+		if (origem != null && origem.trim().length() != 0) {
+			if (informacao.podeFinalizar()) {
+				GcBL.movimentar(informacao,
+						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
+						null, null, null, null, null, null);
+				GcBL.gravar(informacao, idc());
+			}
 			redirect(origem);
-		else
+		} else
 			exibir(informacao.id);
 	}
 
@@ -516,6 +520,11 @@ public class Application extends Controller {
 
 	public static void erro(String message, String stackTrace) {
 		render(message, stackTrace);
+	}
+
+	protected static void assertAcesso(String path) throws Exception {
+		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
+				+ path);
 	}
 
 }

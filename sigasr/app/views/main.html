@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 
-${_cabecalho[0].raw()}
+${_cabecalho_pre.raw()}
 
 #{if params['popup'] != 'true'}
 	#{include "Application/menu.html" /}
-	${_cabecalho[1].raw()}
+	${_cabecalho_pos.raw()}
 #{/if}
 
 #{doLayout /}

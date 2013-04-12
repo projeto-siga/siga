@@ -81,6 +81,9 @@
 						class="gt-btn-medium gt-btn-left" />
 					<p class="gt-cancel">
 						ou <a href="">cancelar alterações</a>
+						#{if informacao != null && informacao.id != null && informacao.id != 0}
+						ou <a href="@{Application.exibir(informacao?.id)}">exibir movimentações</a>
+						#{/if}
 					</p>
 				</div>
 			</form>

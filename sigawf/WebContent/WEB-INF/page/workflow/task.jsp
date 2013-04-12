@@ -376,18 +376,18 @@
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 
-		<c:url var="url" value="knowledge">
+		<c:url var="url" value="/../sigagc/knowledge">
 			<c:param name="tags">${task.ancora}</c:param>
 			<c:param name="estilo">inplace</c:param>
-			<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique *aqui* para contribuir.</c:param>
+			<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a href="$1">aqui</a> para contribuir.</c:param>
 			<c:param name="titulo">${taskInstance.task.processDefinition.name} - ${taskInstance.task.name}</c:param>
 			<c:param name="ts">${currentTimeMillis}</c:param>
 		</c:url>
 		<script type="text/javascript">
-	SetInnerHTMLFromAjaxResponse("/siga/ajax_proxy.action?modulo=gc&action=${f:urlEncode(url)}",document.getElementById('gc-ancora'));
+	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc-ancora'));
 	</script>
 
-		<c:url var="url" value="knowledge">
+		<c:url var="url" value="/../sigagc/knowledge">
 			<c:forEach var="tag" items="${task.tags}">
 				<c:param name="tags">${tag}</c:param>
 			</c:forEach>
@@ -395,7 +395,7 @@
 			<c:param name="ts">${currentTimeMillis}</c:param>
 		</c:url>
 		<script type="text/javascript">
-	SetInnerHTMLFromAjaxResponse("/siga/ajax_proxy.action?modulo=gc&action=${f:urlEncode(url)}",document.getElementById('gc'));
+	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
 	</script>
 	</c:if>
 </siga:pagina>

@@ -38,7 +38,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
 @Table(name = "GC_INFORMACAO")
-@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc")
+@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc")
 // select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
 // inf.tags tag where tag in (:tags)
 public class GcInformacao extends GenericModel {

@@ -25,13 +25,10 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class GcBL {
 	private static final long TEMPO_NOVIDADE = 7 * 24 * 60 * 60 * 1000L;
-
-	private static GcDao dao() {
-		return GcDao.getInstance();
-	}
 
 	private static String simplificarString(String s) {
 		if (s == null)
@@ -257,7 +254,7 @@ public class GcBL {
 			// Excluir marcas duplicadas
 			for (GcMarca m : inf.marcas) {
 				if (setA.contains(m))
-					dao().excluir(m);
+					m.delete();
 				else
 					setA.add(m);
 			}
@@ -283,7 +280,7 @@ public class GcBL {
 				e.inf.marcas = new ArrayList<GcMarca>();
 			}
 			e.inf.marcas.remove(e);
-			dao().excluir(e);
+			e.delete();
 		}
 	}
 
@@ -345,7 +342,7 @@ public class GcBL {
 			DpPessoa pess, DpLotacao lota) {
 		GcMarca mar = new GcMarca();
 		mar.inf = inf;
-		mar.setCpMarcador(dao().consultar(idMarcador, CpMarcador.class, false));
+		mar.setCpMarcador((CpMarcador) CpMarcador.findById(idMarcador));
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
 		if (lota != null)

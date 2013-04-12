@@ -10,9 +10,9 @@
 		<tbody>
 		#{list items:contagens, as:'contagem'}
 			<tr>
-				<td ><a href="http://localhost:9000@{Application.listar}?filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[1]}</a></td>
-				<td align="right" ><a href="http://localhost:9000@{Application.listar}?filtro.situacao=${contagem[0]}&filtro.atendente=${cadastrante.idPessoa}">${contagem[2]}</a></td>
-				<td align="right" ><a href="http://localhost:9000@{Application.listar}?filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[3]}</a></td>
+				<td ><a href="@{Application.listar}?filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[1]}</a></td>
+				<td align="right" ><a href="@{Application.listar}?filtro.situacao=${contagem[0]}&filtro.atendente=${cadastrante.idPessoa}">${contagem[2]}</a></td>
+				<td align="right" ><a href="@{Application.listar}?filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[3]}</a></td>
 			</tr>
 		#{/list}
 		</tbody>

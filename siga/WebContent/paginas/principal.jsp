@@ -92,10 +92,9 @@
 							<h2 class="gt-table-head">Gestão de Conhecimento</h2>
 							<!-- content box -->
 							<div id='rightbottom2'></div>
-							<c:set var="url" value="${f:getURLSistema('siga.gc')}" />
 							<script type="text/javascript">
 								SetInnerHTMLFromAjaxResponse(
-										"/siga/ajax_proxy.action?modulo=gc&action=gadget",
+										"/sigagc/gadget?ts=${currentTimeMillis}",
 										document.getElementById('rightbottom2'));
 							</script>
 						</c:if>

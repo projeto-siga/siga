@@ -496,6 +496,9 @@ public class ExBL extends CpBL {
 				acrescentarMarca(set, mob, CpMarcador.MARCADOR_EM_ELABORACAO,
 						mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
 						mob.doc().getLotaCadastrante());
+				if (mob.getExDocumento().getSubscritor() != null)
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_COMO_SUBSCRITOR, mob.doc().getDtRegDoc(), 
+						mob.getExDocumento().getSubscritor(), null);
 
 			}
 
@@ -4036,6 +4039,7 @@ public class ExBL extends CpBL {
 		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
+			
 			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 			if (getComp().podeJuntar(ultMov.getCadastrante(),
 					ultMov.getLotaCadastrante(), mob)

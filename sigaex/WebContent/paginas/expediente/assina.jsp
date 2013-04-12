@@ -91,7 +91,7 @@ End Function
 						method="POST">
 						<ww:hidden name="sigla" value="${sigla}" />
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 							<ww:hidden name="conteudo_b64" value="${doc.conteudoBlobPdfB64}" />
 							<ww:hidden name="assinaturaB64" />
 							<ww:hidden name="assinante" />
@@ -100,7 +100,7 @@ End Function
 						</c:if>
 					</ww:form>
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 						<ww:hidden name="pdfchk_${doc.idDoc}" value="${sigla}" />
 						<ww:hidden name="urlchk_${doc.idDoc}"
 							value="doc/${doc.codigoCompacto}.pdf" />

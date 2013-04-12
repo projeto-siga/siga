@@ -1,32 +1,34 @@
 package controllers;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
 
 import models.GcArquivo;
 import models.GcInformacao;
-import models.GcMarca;
 import models.GcMovimentacao;
+import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 import play.Play;
 import play.Play.Mode;
 import play.db.jpa.JPA;
 import play.mvc.Before;
-import play.mvc.Controller;
+import play.mvc.Catch;
 import play.mvc.Http;
 import utils.GcBL;
-import utils.GcDao;
 import utils.GcInformacaoFiltro;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
@@ -49,31 +51,36 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 //  javax.persistence.Query query = manager.createQuery(...);
 //  query.setHint("org.hibernate.cacheable", true);
 
-public class Application extends Controller {
+public class Application extends SigaApplication {
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 
-	// private static final String HTTP_LOCALHOST_8080 =
-	// "http://versailles:8080";
-
-	private static GcDao dao() {
-		return GcDao.getInstance();
-	}
-
-	private static CpIdentidade idc() {
-		return (CpIdentidade) renderArgs.get("identidadeCadastrante");
-	}
-
-	private static DpPessoa titular() {
-		return (DpPessoa) renderArgs.get("titular");
-	}
-
-	private static DpLotacao lotaTitular() {
-		return (DpLotacao) renderArgs.get("lotaTitular");
+	@Before
+	public static void addDefaultsAlways() throws Exception {
+		prepararSessao();
+		// TAH: Copiar essa classe e fazer as alterações necessárias
+		// SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
 	@Before
-	static void addDefaults() throws Exception {
+	public static void addDefaults() throws Exception {
+
+		try {
+			obterCabecalhoEUsuario();
+			assertAcesso("");
+		} catch (Exception e) {
+			tratarExcecoes(e);
+		}
+
+		try {
+			assertAcesso("ADM:Administrar");
+			renderArgs.put("exibirMenuAdministrar", true);
+		} catch (Exception e) {
+			renderArgs.put("exibirMenuAdministrar", false);
+		}
+	}
+
+	static void delme_addDefaults() throws Exception {
 		ModeloDao.freeInstance();
 
 		if (request.url.contains("proxy"))
@@ -136,8 +143,6 @@ public class Application extends Controller {
 
 		int a = 0;
 
-		dao();
-
 		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
 			Date dt = GcBL.dt();
 			CpIdentidade idc = (CpIdentidade) renderArgs
@@ -145,7 +150,7 @@ public class Application extends Controller {
 			DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 
 			GcArquivo arq = new GcArquivo();
-			arq.conteudo = "teste 123";
+			arq.setConteudoTXT("teste 123");
 			arq.titulo = "teste";
 
 			GcMovimentacao mov = new GcMovimentacao();
@@ -184,6 +189,58 @@ public class Application extends Controller {
 				((DpLotacao) renderArgs.get("lotaTitular")).getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
+	}
+
+	public static void knowledge(String[] tags, String estilo, String msgvazio,
+			String urlvazio, String titulo) throws Exception {
+		Set<GcTag> set = GcBL.buscarTags(tags, true);
+		Query query = JPA.em().createNamedQuery("buscarConhecimento");
+		query.setParameter("tags", set);
+		List<Object[]> conhecimentos = query.getResultList();
+		for (Object[] o : conhecimentos) {
+			if (o[2] != null && o[2] instanceof byte[]) {
+				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
+				s = GcBL.ellipsize(s, 100);
+				o[2] = s;
+			}
+		}
+
+		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
+			GcInformacao inf = GcInformacao.findById(conhecimentos.get(0)[0]);
+			conhecimentos.get(0)[1] = inf.arq.titulo;
+			conhecimentos.get(0)[2] = inf.getConteudoHTML();
+		}
+
+		if (conhecimentos.size() == 0)
+			conhecimentos = null;
+
+		String referer = null;
+		try {
+			referer = request.headers.get("referer").value();
+		} catch (Exception e) {
+
+		}
+
+		String classificacao = "";
+		if (tags != null && tags.length > 0) {
+			for (String s : tags) {
+				if (classificacao.length() > 0)
+					classificacao += ", ";
+				classificacao += s;
+			}
+		}
+
+		// if (msgvazio != null) {
+		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
+		// "\">aqui</a>");
+		// }
+
+		if (estilo != null)
+			render("@knowledge_" + estilo, conhecimentos, classificacao,
+					msgvazio, urlvazio, titulo, referer);
+		else
+			render(conhecimentos, classificacao, msgvazio, urlvazio, titulo,
+					referer);
 	}
 
 	public static void index() {
@@ -238,19 +295,23 @@ public class Application extends Controller {
 		render(informacao);
 	}
 
-	public static void editar(long id) {
+	public static void editar(long id, String classificacao, String titulo,
+			String origem) throws IOException {
 		GcInformacao informacao = null;
 		if (id != 0)
 			informacao = GcInformacao.findById(id);
 		else
 			informacao = new GcInformacao();
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
-		String titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
-		String conteudo = (informacao.arq != null) ? informacao.arq.conteudo
-				: null;
-		String classificacao = (informacao.arq != null) ? informacao.arq.classificacao
-				: null;
-		render(informacao, tiposInformacao, titulo, conteudo, classificacao);
+		if (titulo == null)
+			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
+		String conteudo = (informacao.arq != null) ? informacao.arq
+				.getConteudoTXT() : null;
+		if (classificacao == null)
+			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
+					: null;
+		render(informacao, tiposInformacao, titulo, conteudo, classificacao,
+				origem);
 	}
 
 	public static void fechar(long id) throws Exception {
@@ -262,13 +323,21 @@ public class Application extends Controller {
 	}
 
 	public static void gravar(GcInformacao informacao, String titulo,
-			String conteudo, String classificacao) throws Exception {
+			String conteudo, String classificacao, String origem)
+			throws Exception {
 		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
 			informacao.lotacao = informacao.autor.getLotacao();
-			informacao.ou = informacao.autor.getOrgaoUsuario();
+		}
+		if (informacao.ou == null) {
+			if (informacao.autor != null)
+				informacao.ou = informacao.autor.getOrgaoUsuario();
+			else if (informacao.lotacao != null)
+				informacao.ou = informacao.lotacao.getOrgaoUsuario();
+			else if (pessoa != null)
+				informacao.ou = pessoa.getOrgaoUsuario();
 		}
 		if (informacao.tipo == null)
 			informacao.tipo = GcTipoInformacao.all().first();
@@ -280,7 +349,16 @@ public class Application extends Controller {
 				null);
 
 		GcBL.gravar(informacao, idc());
-		exibir(informacao.id);
+		if (origem != null && origem.trim().length() != 0) {
+			if (informacao.podeFinalizar()) {
+				GcBL.movimentar(informacao,
+						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
+						null, null, null, null, null, null);
+				GcBL.gravar(informacao, idc());
+			}
+			redirect(origem);
+		} else
+			exibir(informacao.id);
 	}
 
 	public static void remover(long id) throws AplicacaoException {
@@ -421,6 +499,32 @@ public class Application extends Controller {
 						+ "&";
 		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action"
 				+ paramString);
+	}
+
+	@Catch(value = Throwable.class, priority = 1)
+	public static void catchError(Throwable throwable) {
+		if (Play.mode.isDev())
+			return;
+		// Flash.current().clear();
+		// Flash.current().put("_cabecalho_pre",
+		// renderArgs.get("_cabecalho_pre"));
+		// Flash.current().put("_cabecalho_pos",
+		// renderArgs.get("_cabecalho_pos"));
+		// Flash.current().put("_rodape", renderArgs.get("_rodape"));
+		java.io.StringWriter sw = new java.io.StringWriter();
+		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+		throwable.printStackTrace(pw);
+		String stackTrace = sw.toString();
+		erro(throwable.getMessage(), stackTrace);
+	}
+
+	public static void erro(String message, String stackTrace) {
+		render(message, stackTrace);
+	}
+
+	protected static void assertAcesso(String path) throws Exception {
+		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
+				+ path);
 	}
 
 }

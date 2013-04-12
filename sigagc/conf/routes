@@ -3,6 +3,7 @@
 # ~~~~
 
 # Home page
+GET     /favicon.ico                            404
 GET     /                                       Application.index
 
 # Map static resources from the /app/public folder to the /public path

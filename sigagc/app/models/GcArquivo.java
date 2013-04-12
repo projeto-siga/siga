@@ -1,40 +1,48 @@
 package models;
 
-import java.util.Date;
-import java.util.Set;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
+import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.apache.commons.io.IOUtils;
 
 import play.db.jpa.GenericModel;
-import util.SigaPlayCalendar;
-import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
-@Table(name = "GC_CONTEUDO")
+@Table(name = "GC_ARQUIVO") 
 public class GcArquivo extends GenericModel {
 	@Id
 	@GeneratedValue
 	@Column(name = "ID_CONTEUDO")
 	public long id;
 
-	@Column(name = "TITULO_TEMP")
+	@Column(name = "TITULO")
 	public String titulo;
 
-	@Column(name = "CONTEUDO_TEMP")
-	public String conteudo;
-
-	@Column(name = "CLASSIFICACAO_TEMP")
+	@Column(name = "CLASSIFICACAO")
 	public String classificacao;
+
+	@Lob
+	@Column(name = "CONTEUDO")
+	public byte[] conteudo;
+
+	@Column(name = "CONTEUDO_TIPO")
+	public String mimeType;
+
+	public void setConteudoTXT(String html) {
+		conteudo = html.getBytes(Charset.forName("utf-8"));
+		mimeType = "text/plain";
+	}
+
+	public String getConteudoTXT() throws IOException {
+		return new String(conteudo, Charset.forName("utf-8"));
+	}
 }

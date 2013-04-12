@@ -64,13 +64,13 @@ public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 	// return this;
 	// }
 
-	@Override
-	public <T extends JPABase> T save() {
-		// Edson: Ver no Util o comentÃ¡rio sobre a chamada abaixo
-		if (getIdMarca() == null)
-			setIdMarca(Util.nextVal("CORPORATIVO.CP_MARCA_SEQ"));
-		return super.save();
-	}
+//	@Override
+//	public <T extends JPABase> T save() {
+//		// Edson: Ver no Util o comentário sobre a chamada abaixo
+//		if (getIdMarca() == null)
+//			setIdMarca(Util.nextVal("CORPORATIVO.CP_MARCA_SEQ"));
+//		return super.save();
+//	}
 
 	public int compareTo(GcMarca other) {
 		int i = getCpMarcador().getIdMarcador().compareTo(

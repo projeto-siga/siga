@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import org.hibernate.Session;
@@ -10,7 +11,6 @@ import play.db.jpa.JPA;
 import play.mvc.Controller;
 import play.mvc.Http;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -26,7 +26,7 @@ public class SigaApplication extends Controller {
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
-	protected static void obterCabecalhoEUsuario() throws Exception {
+	protected static void obterCabecalhoEUsuario(String backgroundColor) throws Exception {
 		try {
 
 			Logger.info("Siga-SR info: " + getBaseSiga());
@@ -45,6 +45,10 @@ public class SigaApplication extends Controller {
 					+ "/pagina_vazia.action?popup=" + popup, atributos);
 			String[] pageText = paginaVazia.split("<!-- insert body -->");
 			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
+			
+			if (backgroundColor != null)
+				cabecalho[0] = cabecalho[0].replace("<html>", "<html style=\"background-color: " + backgroundColor + " !important;\">");
+			
 			renderArgs.put("_cabecalho_pre", cabecalho[0]);
 			renderArgs.put("_cabecalho_pos", cabecalho[1]);
 			renderArgs.put("_rodape", pageText[1]);
@@ -77,6 +81,8 @@ public class SigaApplication extends Controller {
 				renderArgs.put("identidadeCadastrante", identidadeCadastrante);
 			}
 
+			renderArgs.put("currentTimeMillis", new Date().getTime());
+
 		} catch (ArrayIndexOutOfBoundsException aioob) {
 			// Edson: Quando as informações não puderam ser obtidas do Siga,
 			// manda para a página de login. Se não for esse o erro, joga
@@ -86,13 +92,19 @@ public class SigaApplication extends Controller {
 
 	}
 
-	protected static void assertAcesso(String pathServico) throws Exception {
-		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
-				+ pathServico;
-		if (!Cp.getInstance()
+	protected static boolean podeUtilizarServico(String servico)
+			throws Exception {
+		return Cp
+				.getInstance()
 				.getConf()
 				.podeUtilizarServicoPorConfiguracao(cadastrante(),
-						lotaTitular(), servico))
+						lotaTitular(), servico);
+	}
+
+	protected static void assertAcesso(String pathServico) throws Exception {
+		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
+			+ pathServico;
+		if (!podeUtilizarServico(servico))
 			throw new Exception("Acesso negado. Serviço: '" + servico
 					+ "' usuário: " + cadastrante().getSigla() + " lotação: "
 					+ lotaTitular().getSiglaCompleta());

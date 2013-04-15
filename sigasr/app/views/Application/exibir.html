@@ -19,7 +19,7 @@ function carregouAtendente(response, param){
 }
 
 </script>
-<div class="gt-bd clearfix">
+<div class="gt-bd gt-cols clearfix" style="padding-bottom:0px;">
 	<div class="gt-content clearfix">
 		<h2>Solicitação ${solicitacao.codigo}</h2>
 		<p class="gt-table-action-list">
@@ -33,8 +33,11 @@ function carregouAtendente(response, param){
 				style="margin-right: 5px;">Criar solicitação filha</a>&nbsp;&nbsp;&nbsp;
 			#{/if}
 		</p>
-		#{quadroSolicitacao solicitacao:solicitacao, modoCompleto:true /} <br />
-		<div class="gt-content-box gt-form" style="margin-top: 15px;">
+		
+		#{quadroSolicitacao solicitacao:solicitacao, modoCompleto:true /}
+		
+		<h3 style="padding-top: 25px;">Próximo Andamento</h3>
+		<div class="gt-content-box gt-form" style="margin-bottom: 0px !important;">
 			#{form @Application.andamento(), enctype:'multipart/form-data',
 			id:'formAndamento'} <input type="hidden"
 				name="andamento.solicitacao.idSolicitacao"
@@ -69,61 +72,112 @@ function carregouAtendente(response, param){
 			</div>
 			#{/form}
 		</div>
-		<!-- content box -->
-		<div class="gt-content-box" style="margin-top: 15px;">
-			<table border="0" class="gt-table">
-				<thead>
-					<tr>
-						<th>Momento</th>
-						<th>Situação</th>
-						<th colspan="2">Cadastrante</th>
-						<th colspan="2">Atendente</th>
-						<th>Descrição</th>
-						<th></th>
-					</tr>
-				</thead>
+	</div>
 
-				<tbody>
-					#{list items:solicitacao.andamentoSet, as:'andamento'}
-					<tr id="linha${andamento.idAndamento}"
-						#{if andamento_isFirst && desfazerAndamento}
-						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
-						onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"
-						#{/if}>
-						<td>${andamento.dtRegString}</td>
-						<td>${andamento.estado.descrEstado}</td>
-						<td>#{selecionado
-							sigla:andamento.lotaCadastrante?.siglaLotacao,
-							descricao:andamento.lotaCadastrante?.nomeLotacao /}</td>
-						<td>#{selecionado sigla:andamento.cadastrante?.nomeAbreviado,
-							descricao:andamento.cadastrante?.descricaoIniciaisMaiusculas /}</td>
-						<td>#{selecionado
-							sigla:andamento.lotaAtendente?.siglaLotacao,
-							descricao:andamento.lotaAtendente?.nomeLotacao /}</td>
-						<td>#{selecionado sigla:andamento.atendente?.nomeAbreviado,
-							descricao:andamento.atendente?.descricaoIniciaisMaiusculas /}</td>
-						<td id="descrAndamento${andamento.idAndamento}">${andamento.descrAndamento}#{if andamento.arquivo}&nbsp;&nbsp;|&nbsp;&nbsp;#{arquivo
-							arquivo:andamento.arquivo /}#{/if}</td>
-						<script language="javascript">
-							var descricao = document.getElementById('descrAndamento${andamento.idAndamento}');
-							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
-						</script>
-						<td>#{if andamento_isFirst && desfazerAndamento} <a
-							class="once"
-							href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
-							title="Desfazer este andamento"> <img id="imgCancelar"
-								src="/siga/css/famfamfam/icons/cancel_gray.png"
-								style="margin-right: 5px;"> </a>#{/if}</td>
-					</tr>
-					#{/list}
-				</tbody>
-			</table>
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Dados da Solicitação</h3>
+			<p>
+				<b>Órgão Usuário:</b> ${informacao?.ou?.acronimoOrgaoUsu}
+			</p>
+			<p>
+				<b>Autor:</b> ${informacao?.autor?.descricaoIniciaisMaiusculas} -
+				${informacao?.autor?.sigla}
+			</p>
+			<p>
+				<b>Lotação:</b> ${informacao?.lotacao?.descricaoIniciaisMaiusculas}
+				- ${informacao?.lotacao?.sigla}
+			</p>
+			<p>
+				<b>Data:</b> ${informacao?.dtIniString}
+			</p>
+			<p>
+				<b>Finalizado em:</b> ${informacao?.elaboracaoFim}
+			</p>
+			<!--  -->
+			#{set cls = informacao?.arq?.classificacao?.split(",") /}
+			<!--  -->
+			#{if cls != null && cls.size() > 1}
+			<p>
+				<b>Classificações:</b>
+			<ul>
+				#{list items:cls, as:'cl'}
+				<li>${cl}</li> #{/list}
+			</ul>
+			</p>
+			#{/if}#{else}
+			<p>
+				<b>Classificação:</b> ${informacao?.arq?.classificacao}
+			</p>
+			#{/else}
+
 		</div>
-		<!-- /content box -->
-
+		<!-- / sidebar -->
+		<div class="gt-sidebar-content" id="gc"></div>
+		
 	</div>
 </div>
 
-<br />
-<br />
-<br />
+<div class="gt-bd" style="padding-bottom: 0px;">
+	<div class="gt-content">
+		<h3>Andamentos</h3>
+	</div>
+
+	<div class="gt-content-box">
+	<table border="0" class="gt-table">
+		<thead>
+			<tr>
+				<th>Momento</th>
+				<th>Situação</th>
+				<th colspan="2">Cadastrante</th>
+				<th colspan="2">Atendente</th>
+				<th>Descrição</th>
+				<th></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			#{list items:solicitacao.andamentoSet, as:'andamento'}
+			<tr id="linha${andamento.idAndamento}" #{if
+				andamento_isFirst && desfazerAndamento}
+						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
+				onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"#{/if}>
+				<td>${andamento.dtRegString}</td>
+				<td>${andamento.estado.descrEstado}</td>
+				<td>#{selecionado
+					sigla:andamento.lotaCadastrante?.siglaLotacao,
+					descricao:andamento.lotaCadastrante?.nomeLotacao /}</td>
+				<td>#{selecionado sigla:andamento.cadastrante?.nomeAbreviado,
+					descricao:andamento.cadastrante?.descricaoIniciaisMaiusculas /}</td>
+				<td>#{selecionado sigla:andamento.lotaAtendente?.siglaLotacao,
+					descricao:andamento.lotaAtendente?.nomeLotacao /}</td>
+				<td>#{selecionado sigla:andamento.atendente?.nomeAbreviado,
+					descricao:andamento.atendente?.descricaoIniciaisMaiusculas /}</td>
+				<td id="descrAndamento${andamento.idAndamento}">${andamento.descrAndamento}#{if
+					andamento.arquivo}&nbsp;&nbsp;|&nbsp;&nbsp;#{arquivo
+					arquivo:andamento.arquivo /}#{/if}</td>
+				<script language="javascript">
+							var descricao = document.getElementById('descrAndamento${andamento.idAndamento}');
+							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
+						</script>
+				<td>#{if andamento_isFirst && desfazerAndamento} <a
+					class="once"
+					href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
+					title="Desfazer este andamento"> <img id="imgCancelar"
+						src="/siga/css/famfamfam/icons/cancel_gray.png"
+						style="margin-right: 5px;"> </a>#{/if}</td>
+			</tr>
+			#{/list}
+		</tbody>
+	</table>
+</div>
+<!-- /content box -->
+
+</div>
+
+	#{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')} 
+	<script type="text/javascript">
+		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?tags=@sr:${solicitacao.itemConfiguracao.siglaItemConfiguracao}&tags=@sr:${solicitacao.servico.siglaServico}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
+	</script>
+	#{/if} 
+

@@ -121,7 +121,7 @@ public class PrincipalAction extends SigaActionSupport {
 
 			String urlBase = "http://"
 					+ SigaBaseProperties.getString(SigaBaseProperties
-							.getString("ambiente") + ".servidor")
+							.getString("ambiente") + ".servidor.principal")
 					+ ":8080";
 
 			String URLSelecionar = "";

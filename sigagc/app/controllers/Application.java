@@ -66,7 +66,7 @@ public class Application extends SigaApplication {
 	public static void addDefaults() throws Exception {
 
 		try {
-			obterCabecalhoEUsuario();
+			obterCabecalhoEUsuario("rgb(241, 248, 212)");
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);

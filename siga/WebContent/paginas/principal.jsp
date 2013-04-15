@@ -41,7 +41,7 @@
 						<!-- Expedientes -->
 						<br />
 						<!-- Processos -->
-						<h2 class="gt-table-head">Administrativos</h2>
+						<h2 class="gt-table-head">Processos Administrativos</h2>
 						<!-- content box -->
 						<div id='leftbottom'></div>
 

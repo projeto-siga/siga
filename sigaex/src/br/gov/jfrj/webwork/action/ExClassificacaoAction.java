@@ -24,11 +24,22 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import org.apache.commons.beanutils.PropertyUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExClassificacao;
+import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExTemporalidade;
+import br.gov.jfrj.siga.ex.ExTipoDestinacao;
+import br.gov.jfrj.siga.ex.ExVia;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.SigaSelecionavelActionSupport;
@@ -62,9 +73,13 @@ public class ExClassificacaoAction
 
 	private Boolean ultimoNivel;
 	
+	private  String codificacaoAntiga;
+	private ExClassificacao exClass;
 	private String codificacao;
 	private String descrClassificacao;
 	private String obs;
+	
+	private String acao;
 	
 
 	public ExClassificacaoAction() {
@@ -100,14 +115,91 @@ public class ExClassificacaoAction
 	}
 
 	public String aEditar(){
+		if (getCodificacao()!=null){
+			exClass = buscarExClassificacao(getCodificacao());
+		}
 		return SUCCESS;
 	}
 
-	public String aSalvar(){
+	private ExClassificacao buscarExClassificacao(String codificacao) {
+		exClass = new ExClassificacao();
+		exClass.setSigla(codificacao);
+		return ExDao.getInstance().consultarPorSigla(exClass);
+	}
+
+	public String aGravar() throws AplicacaoException{
+		dao().iniciarTransacao();
+		exClass = buscarExClassificacao(getCodificacao());
+		if (exClass == null){
+			exClass = new ExClassificacao();
+		}
+		
+		if(exClass.getId()==null){
+			ExClassificacao exClassAntiga = buscarExClassificacao(getCodificacaoAntiga());
+			if(exClassAntiga!=null && !exClassAntiga.getCodificacao().equals(getCodificacao())){
+				//mover classificacao
+				lerForm(exClass);
+				exClass.setHisIdIni(exClassAntiga.getHisIdIni());
+				dao().gravarComHistorico(exClass,exClassAntiga, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+			}else{
+				//novaClassificacao
+				lerForm(exClass);
+				dao().gravarComHistorico(exClass,null, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+			}
+		}else{
+			//alterar classificacao existente
+			ExClassificacao exClassNovo = new ExClassificacao();
+			try {
+				PropertyUtils.copyProperties(exClassNovo, exClass);
+				//novo id
+				exClassNovo.setId(null);
+				//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
+				//HibernateException:Found shared references to a collection
+				Set<ExVia> setExVia = new HashSet<ExVia>();
+				setExVia.addAll(exClass.getExViaSet());
+				exClassNovo.setExViaSet(setExVia);
+				
+				Set<ExModelo> setExModelo = new HashSet<ExModelo>();
+				setExModelo.addAll(exClass.getExModeloSet());
+				exClassNovo.setExModeloSet(setExModelo);
+				
+				lerForm(exClassNovo);
+
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Erro ao copiar as propriedades do modelo anterior.");
+			}
+			
+			dao().gravarComHistorico(exClassNovo, exClass, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+
+			dao().commitTransacao();
+		}
+		
+
+		
 		setMensagem("Classificação salva!");
 		return SUCCESS;
 	}
+
+	private void buscarExClassificacaoAntiga() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void lerForm(ExClassificacao c) {
+		c.setCodificacao(getCodificacao());
+		c.setDescrClassificacao(getDescrClassificacao());
+		c.setObs(getObs());
+	}
 	
+	public ExClassificacao getExClass() {
+		return exClass;
+	}
+	
+	public void setExClass(ExClassificacao exClass) {
+		this.exClass = exClass;
+	}
+
 //	public Byte getAssuntoPrincipal() {
 //		return assuntoPrincipal;
 //	}
@@ -322,6 +414,15 @@ public class ExClassificacaoAction
 	public List<ExClassificacao> getClassificacaoVigente(){
 		return ExDao.getInstance().consultarExClassificacaoVigente();
 	}
+	
+	public List<ExTipoDestinacao> getListaExTipoDestinacao(){
+		return ExDao.getInstance().listarTodos(ExTipoDestinacao.class);
+	}
+	
+	public List<ExTemporalidade> getListaExTemporalidade(){
+		return ExDao.getInstance().listarTodos(ExTemporalidade.class);
+	}
+
 
 	public void setCodificacao(String codificacao) {
 		this.codificacao = codificacao;
@@ -345,5 +446,30 @@ public class ExClassificacaoAction
 
 	public String getObs() {
 		return obs;
+	}
+
+	public void setCodificacaoAntiga(String codificacaoAntiga) {
+		this.codificacaoAntiga = codificacaoAntiga;
+	}
+
+	public String getCodificacaoAntiga() {
+		return codificacaoAntiga;
+	}
+
+	public void setAcao(String acao) {
+		this.acao = acao;
+	}
+
+	public String getAcao() {
+		return acao;
+	}
+	
+	public int getNumeroDeVias(){
+		try{
+			return exClass.getExViaSet().size();
+		}catch (Exception e) {
+			return 0;
+		}
+		
 	}
 }

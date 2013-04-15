@@ -1178,10 +1178,10 @@
 				/paginas/classificacao_edita.jsp
 			</result>
 		</action>
-		<action name="salvar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
-			method="aSalvar">
-			<result name="success">
-				/paginas/classificacao_lista.jsp
+		<action name="gravar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aGravar">
+			<result type="redirect-action">
+				listar
 			</result>
 		</action>
 		

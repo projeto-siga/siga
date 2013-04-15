@@ -19,7 +19,6 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -37,13 +36,10 @@ import notifiers.Correio;
 
 import org.hibernate.annotations.Where;
 
-import play.cache.Cache;
 import play.db.jpa.JPA;
 import util.SigaPlayCalendar;
 import util.Util;
-import models.siga.PlayHistoricoSuporte;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -499,37 +495,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		DpLotacao pre = Cache.get("preAtendenteDesignado_" + idSolicitacao,
-				DpLotacao.class);
-		if (pre == null) {
-			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-					itemConfiguracao, servico,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-					SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
-			if (conf != null) {
-				pre = conf.preAtendente.getLotacaoAtual();
-				Cache.set("preAtendenteDesignado_" + idSolicitacao, pre, "8mn");
-			}
-		}
-		return pre;
+		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
+				itemConfiguracao, servico,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
+		if (conf != null)
+			return conf.preAtendente.getLotacaoAtual();
+		return null;
 	}
 
 	public DpLotacao getAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		DpLotacao aten = Cache.get("atendenteDesignado_" + idSolicitacao,
-				DpLotacao.class);
-		if (aten == null) {
-			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-					itemConfiguracao, servico,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
-			if (conf != null) {
-				aten = conf.atendente.getLotacaoAtual();
-				Cache.set("atendenteDesignado_" + idSolicitacao, aten, "8mn");
-			}
-		}
-		return aten;
+		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
+				itemConfiguracao, servico,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
+		if (conf != null)
+			return conf.atendente.getLotacaoAtual();
+		return null;
 	}
 
 	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados()
@@ -564,19 +548,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		DpLotacao pos = Cache.get("posAtendenteDesignado_" + idSolicitacao,
-				DpLotacao.class);
-		if (pos == null) {
-			SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-					itemConfiguracao, servico,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-					SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
-			if (conf != null) {
-				pos = conf.posAtendente.getLotacaoAtual();
-				Cache.set("posAtendenteDesignado_" + idSolicitacao, pos, "8mn");
-			}
-		}
-		return pos;
+
+		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
+				itemConfiguracao, servico,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
+		if (conf != null)
+			return conf.posAtendente.getLotacaoAtual();
+		return null;
 	}
 
 	// Edson: poderia também guardar num HashMap transiente e, ao salvar(),

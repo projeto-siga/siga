@@ -36,11 +36,11 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		if (conf.posAtendente != null)
 			conf.posAtendente.getSigla();
 		if (conf.itemConfiguracao != null)
-			conf.itemConfiguracao.getSigla();
+			conf.itemConfiguracao.getAtual();
 		if (conf.servico != null)
-			conf.servico.getSigla();
+			conf.servico.getAtual();
 		if (conf.tipoAtributo != null)
-			conf.tipoAtributo.getId();
+			conf.tipoAtributo.getAtual();
 	}
 
 	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)

@@ -1562,8 +1562,8 @@ public class ExDao extends CpDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExMarca.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpMarca.class);
 
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
-				"read-only", "ex");
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
+//				"read-only", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExConfiguracao",
 		// "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExEstadoDoc",
@@ -1595,9 +1595,9 @@ public class ExDao extends CpDao {
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"br.gov.jfrj.siga.ex.ExTipoDocumento.exFormaDocumentoSet",
 				"read-only", "ex");
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExClassificacao.exViaSet", "read-only",
-				"ex");
+//		cfg.setCollectionCacheConcurrencyStrategy(
+//				"br.gov.jfrj.siga.ex.ExClassificacao.exViaSet", "read-only",
+//				"ex");
 		// cfg.setCollectionCacheConcurrencyStrategy(
 		// "br.gov.jfrj.siga.ex.ExFormaDocumento.exModeloSet",
 		

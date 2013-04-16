@@ -1827,6 +1827,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAnexarArquivoAlternativo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		
+		if (!mob.doc().isAssinado())
+			return false;
+		
+		if (mob.doc().isExpediente() && mob.doc().getPai() != null)
+			return false;
+		
+		if (mob.doc().isProcesso() && mob.isEncerrado())
+			return false;
+		
 		if(mob.doc().isSemEfeito())
 			return false;
 		
@@ -1857,8 +1866,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 
 		return (mob.getExDocumento().getDtFechamento() != null)
-				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO)
-				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
+				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO)				
 				&& podeMovimentar;
 
 	}

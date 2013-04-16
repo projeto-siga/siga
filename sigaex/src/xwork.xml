@@ -1181,9 +1181,31 @@
 		<action name="gravar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
 			method="aGravar">
 			<result type="redirect-action">
+				editar?codificacao=${codificacao}&amp;acao=editar_classificacao
+			</result>
+		</action>
+		<action name="excluir" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aExcluir">
+			<result type="redirect-action">
 				listar
 			</result>
 		</action>
+		
+		
+		
+		<action name="gravarVia" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aGravarVia">
+			<result type="redirect-action">
+				editar?codificacao=${codificacao}&amp;acao=editar_classificacao
+			</result>
+		</action>
+		<action name="excluirVia" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aExcluirVia">
+			<result type="redirect-action">
+				editar?codificacao=${codificacao}&amp;acao=editar_classificacao
+			</result>
+		</action>
+		
 		
 	</package>
 

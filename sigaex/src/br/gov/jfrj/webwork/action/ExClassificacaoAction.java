@@ -24,10 +24,10 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -38,8 +38,6 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.SigaSelecionavelActionSupport;
@@ -54,32 +52,31 @@ public class ExClassificacaoAction
 	 * 
 	 */
 	private static final long serialVersionUID = -6157885790446917185L;
-
-//	private Byte assuntoPrincipal;
-
-	private String assunto;
-
-//	private Byte assuntoSecundario;
-
-	private String atividade;
-
-	private String classe;
-
-	private ExClassificacaoSelecao classificacaoSel;
-
-	private String nome;
-
-	private String subclasse;
-
-	private Boolean ultimoNivel;
 	
+	private String acao;
+
+	//classificacao
+	private String assunto;
+	private String atividade;
+	private String classe;
+	private ExClassificacaoSelecao classificacaoSel;
+	private String nome;
+	private String subclasse;
+	private Boolean ultimoNivel;
 	private  String codificacaoAntiga;
 	private ExClassificacao exClass;
 	private String codificacao;
 	private String descrClassificacao;
 	private String obs;
+
+	//via
+	private Long idVia;
 	
-	private String acao;
+
+	private Long idDestino;
+	private Long idDestinacaoFinal;
+	private Long idTemporalidadeArqCorr;
+	private Long idTemporalidadeArqInterm;
 	
 
 	public ExClassificacaoAction() {
@@ -135,17 +132,20 @@ public class ExClassificacaoAction
 		}
 		
 		if(exClass.getId()==null){
+			
 			ExClassificacao exClassAntiga = buscarExClassificacao(getCodificacaoAntiga());
+			lerForm(exClass);
+			
 			if(exClassAntiga!=null && !exClassAntiga.getCodificacao().equals(getCodificacao())){
 				//mover classificacao
-				lerForm(exClass);
 				exClass.setHisIdIni(exClassAntiga.getHisIdIni());
 				dao().gravarComHistorico(exClass,exClassAntiga, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+				copiarVias(exClass, exClassAntiga);
 			}else{
 				//novaClassificacao
-				lerForm(exClass);
 				dao().gravarComHistorico(exClass,null, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
 			}
+			
 		}else{
 			//alterar classificacao existente
 			ExClassificacao exClassNovo = new ExClassificacao();
@@ -156,7 +156,6 @@ public class ExClassificacaoAction
 				//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
 				//HibernateException:Found shared references to a collection
 				Set<ExVia> setExVia = new HashSet<ExVia>();
-				setExVia.addAll(exClass.getExViaSet());
 				exClassNovo.setExViaSet(setExVia);
 				
 				Set<ExModelo> setExModelo = new HashSet<ExModelo>();
@@ -164,13 +163,18 @@ public class ExClassificacaoAction
 				exClassNovo.setExModeloSet(setExModelo);
 				
 				lerForm(exClassNovo);
+				
+				dao().gravarComHistorico(exClassNovo, exClass, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+				
+				copiarVias(exClassNovo,exClass);
+
 
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Erro ao copiar as propriedades do modelo anterior.");
 			}
 			
-			dao().gravarComHistorico(exClassNovo, exClass, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+			
 
 			dao().commitTransacao();
 		}
@@ -181,10 +185,70 @@ public class ExClassificacaoAction
 		return SUCCESS;
 	}
 
-	private void buscarExClassificacaoAntiga() {
-		// TODO Auto-generated method stub
-		
+	private void copiarVias(ExClassificacao exClassNovo,ExClassificacao exClassAntigo)
+			throws AplicacaoException {
+		try{
+			for (ExVia viaAntiga: exClassAntigo.getExViaSet()) {
+				ExVia viaNova = new ExVia();
+				
+				PropertyUtils.copyProperties(viaNova, viaAntiga);
+				viaNova.setId(null);
+				viaNova.setExClassificacao(exClassNovo);
+				
+				dao().gravarComHistorico(viaNova, viaAntiga, null, getIdentidadeCadastrante());
+				if(exClassNovo.getExViaSet()==null){
+					exClassNovo.setExViaSet(new HashSet<ExVia>());
+				}
+				exClassNovo.getExViaSet().add(viaNova);
+				
+			}
+		}catch (Exception e) {
+			throw new AplicacaoException("Não foi possível fazer cópia das vias!");
+		}
 	}
+	
+	public String aExcluir() throws AplicacaoException{
+		dao().iniciarTransacao();
+		dao().commitTransacao();
+		return SUCCESS;
+	}
+	
+	public String aGravarVia() throws AplicacaoException{
+		dao().iniciarTransacao();
+
+		setExClass(buscarExClassificacao(getCodificacao()));
+		ExVia exVia = null;
+		if (idVia ==null){
+			ExTipoDestinacao destino = !getIdDestino().equals("-1")?dao().consultar(getIdDestino(), ExTipoDestinacao.class, false):null; 
+			ExTipoDestinacao destFinal = !getIdDestino().equals("-1")?dao().consultar(getIdDestinacaoFinal(), ExTipoDestinacao.class, false):null; 
+			ExTemporalidade tempCorrente = !getIdDestino().equals("-1")?dao().consultar(getIdTemporalidadeArqCorr(), ExTemporalidade.class, false):null; 
+			ExTemporalidade tempInterm = !getIdDestino().equals("-1")?dao().consultar(getIdTemporalidadeArqInterm(), ExTemporalidade.class, false):null; 
+			
+			exVia = new ExVia();
+			
+			exVia.setExClassificacao(getExClass());
+			exVia.setExTipoDestinacao(destino);
+			exVia.setExDestinacaoFinal(destFinal);
+			exVia.setTemporalidadeCorrente(tempCorrente);
+			exVia.setTemporalidadeIntermediario(tempInterm);
+			exVia.setCodVia(String.valueOf(getNumeroDeVias()+1));
+			exVia.setObs(getObs());
+			
+			dao().gravarComHistorico(exVia,null,null,getIdentidadeCadastrante());
+			
+		}
+		dao().commitTransacao();
+		return SUCCESS;
+	}
+	
+	public String aExcluirVia() throws AplicacaoException{
+		dao().iniciarTransacao();
+		ExVia exVia = dao().consultar(getIdVia(), ExVia.class, false);
+		dao().excluirComHistorico(exVia, getIdentidadeCadastrante());
+		dao().commitTransacao();
+		return SUCCESS;
+	}
+
 
 	private void lerForm(ExClassificacao c) {
 		c.setCodificacao(getCodificacao());
@@ -472,4 +536,46 @@ public class ExClassificacaoAction
 		}
 		
 	}
+
+	public void setIdVia(Long idVia) {
+		this.idVia = idVia;
+	}
+
+	public Long getIdVia() {
+		return idVia;
+	}
+	
+	public Long getIdDestino() {
+		return idDestino;
+	}
+
+	public void setIdDestino(Long idDestino) {
+		this.idDestino = idDestino;
+	}
+
+	public Long getIdDestinacaoFinal() {
+		return idDestinacaoFinal;
+	}
+
+	public void setIdDestinacaoFinal(Long idDestinacaoFinal) {
+		this.idDestinacaoFinal = idDestinacaoFinal;
+	}
+
+	public void setIdTemporalidadeArqCorr(Long idTemporalidadeArqCorr) {
+		this.idTemporalidadeArqCorr = idTemporalidadeArqCorr;
+	}
+
+	public Long getIdTemporalidadeArqCorr() {
+		return idTemporalidadeArqCorr;
+	}
+
+	public void setIdTemporalidadeArqInterm(Long idTemporalidadeArqInterm) {
+		this.idTemporalidadeArqInterm = idTemporalidadeArqInterm;
+	}
+
+	public Long getIdTemporalidadeArqInterm() {
+		return idTemporalidadeArqInterm;
+	}
+
+
 }

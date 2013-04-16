@@ -1277,6 +1277,13 @@
 			method="test">
 			<result>/paginas/gadget.jsp</result>
 		</action>
+		<action name="selecionar" class="br.gov.jfrj.webwork.action.ExMobilAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">
+				/sigalibs/ajax_retorno.jsp
+			</result>
+		</action>
 	</package>
 
 	<package name="modelo" extends="default" namespace="/modelo">

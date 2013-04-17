@@ -250,7 +250,19 @@ public class Application extends SigaApplication {
 	public static void top10() {
 		List<GcInformacao> lista = GcInformacao.all().fetch();
 
-		render(lista);
+		Query query1 = JPA.em().createNamedQuery("maisRecentes");
+		query1.setMaxResults(5);
+		List<Object[]> listaMaisRecentes = query1.getResultList();
+		if (listaMaisRecentes.size() == 0)
+			listaMaisRecentes = null;
+
+		Query query2 = JPA.em().createNamedQuery("maisVisitados");
+		query2.setMaxResults(5);
+		List<Object[]> listaMaisVisitados = query2.getResultList();
+		if (listaMaisVisitados.size() == 0)
+			listaMaisVisitados = null;
+
+		render(lista, listaMaisRecentes, listaMaisVisitados);
 	}
 
 	public static void listar(GcInformacaoFiltro filtro) {

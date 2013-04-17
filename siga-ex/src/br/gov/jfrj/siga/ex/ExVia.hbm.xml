@@ -29,11 +29,11 @@
 			class="ExClassificacao" not-null="true" />
 
 		<many-to-one name="temporalidadeCorrente"
-			column="ID_TEMPORAL_ARQ_COR" class="ExTemporalidade" not-null="true" />
+			column="ID_TEMPORAL_ARQ_COR" class="ExTemporalidade" not-null="false" />
 
 		<many-to-one name="temporalidadeIntermediario"
-			column="ID_TEMPORAL_ARQ_INT" class="ExTemporalidade"
-			not-null="true" />
+			column="ID_TEMPORAL_ARQ_INT" class="ExTemporalidade" not-null="false" />
+			
 
 		<many-to-one name="exTipoDestinacao" column="ID_DESTINACAO"
 			class="ExTipoDestinacao" not-null="true" />

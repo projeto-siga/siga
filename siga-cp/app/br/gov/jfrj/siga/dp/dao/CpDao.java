@@ -1544,10 +1544,13 @@ public class CpDao extends ModeloDao {
 		return l.get(0);
 	}
 
-	public void excluirComHistorico(HistoricoAuditavel entidade,
+	public void excluirComHistorico(HistoricoAuditavel entidade, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		
-		entidade.setHisDtFim(consultarDataEHoraDoServidor());
+		if(dt==null){
+			dt = consultarDataEHoraDoServidor();
+		}
+		entidade.setHisDtFim(dt);
 		entidade.setHisIdcFim(identidadeCadastrante);
 		entidade.setHisAtivo(0);
 		

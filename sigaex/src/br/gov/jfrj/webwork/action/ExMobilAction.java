@@ -41,6 +41,7 @@ import org.hibernate.search.SearchFactory;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -238,6 +239,8 @@ public class ExMobilAction extends
 	private Integer ordem;
 
 	private Integer visualizacao;
+	
+	private String matricula;
 
 	public Integer getVisualizacao() {
 		return visualizacao;
@@ -384,6 +387,13 @@ public class ExMobilAction extends
 	@Override
 	public ExMobilDaoFiltro createDaoFiltro() throws Exception {
 		final ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+		
+		if (flt.getIdOrgaoUsu() == null || flt.getIdOrgaoUsu() == 0) {
+			if (matricula != null) {
+				DpPessoa pes = daoPes(param("matricula"));
+				flt.setIdOrgaoUsu(pes.getOrgaoUsuario().getId());
+			}
+		}
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		try {
@@ -468,11 +478,13 @@ public class ExMobilAction extends
 					.getIdInicial());
 
 		flt.setNumSequencia(paramInteger("numVia"));
-		flt.setLotacaoCadastranteAtualId(getCadastrante().getLotacao()
-				.getIdInicial());
+		if (getCadastrante() != null)
+			flt.setLotacaoCadastranteAtualId(getCadastrante().getLotacao()
+					.getIdInicial());
 
-		flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
-		if (flt.getIdOrgaoUsu() == null)
+		if (paramLong("orgaoUsu") != null && paramLong("orgaoUsu") != 0)
+			flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
+		if (flt.getIdOrgaoUsu() == null && getLotaTitular() != null)
 			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario()
 					.getIdOrgaoUsu());
 		flt.setIdMod(paramLong("idMod"));
@@ -1432,6 +1444,14 @@ public class ExMobilAction extends
 
 	public void setOrdem(Integer ordem) {
 		this.ordem = ordem;
+	}
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
 	}
 
 }

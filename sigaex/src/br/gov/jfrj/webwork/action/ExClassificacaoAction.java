@@ -24,7 +24,7 @@
  */
 package br.gov.jfrj.webwork.action;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,8 +70,8 @@ public class ExClassificacaoAction
 	private String obs;
 
 	//via
+	private String codigoVia;
 	private Long idVia;
-	
 
 	private Long idDestino;
 	private Long idDestinacaoFinal;
@@ -194,7 +194,7 @@ public class ExClassificacaoAction
 				PropertyUtils.copyProperties(viaNova, viaAntiga);
 				viaNova.setId(null);
 				viaNova.setExClassificacao(exClassNovo);
-				
+
 				dao().gravarComHistorico(viaNova, viaAntiga, null, getIdentidadeCadastrante());
 				if(exClassNovo.getExViaSet()==null){
 					exClassNovo.setExViaSet(new HashSet<ExVia>());
@@ -209,53 +209,92 @@ public class ExClassificacaoAction
 	
 	public String aExcluir() throws AplicacaoException{
 		dao().iniciarTransacao();
+		exClass = buscarExClassificacao(codificacao);
+		Date dt = dao().consultarDataEHoraDoServidor();
+		for (ExVia exVia : exClass.getExViaSet()) {
+			dao().excluirComHistorico(exVia, dt, getIdentidadeCadastrante());
+		}
+		dao().excluirComHistorico(exClass, dt, getIdentidadeCadastrante());
 		dao().commitTransacao();
 		return SUCCESS;
 	}
 	
 	public String aGravarVia() throws AplicacaoException{
+		verificarParamsVia();
 		dao().iniciarTransacao();
 
 		setExClass(buscarExClassificacao(getCodificacao()));
 		ExVia exVia = null;
-		if (idVia ==null){
-			ExTipoDestinacao destino = !getIdDestino().equals("-1")?dao().consultar(getIdDestino(), ExTipoDestinacao.class, false):null; 
-			ExTipoDestinacao destFinal = !getIdDestino().equals("-1")?dao().consultar(getIdDestinacaoFinal(), ExTipoDestinacao.class, false):null; 
-			ExTemporalidade tempCorrente = !getIdDestino().equals("-1")?dao().consultar(getIdTemporalidadeArqCorr(), ExTemporalidade.class, false):null; 
-			ExTemporalidade tempInterm = !getIdDestino().equals("-1")?dao().consultar(getIdTemporalidadeArqInterm(), ExTemporalidade.class, false):null; 
-			
+		
+		if (getIdVia() ==null){
+			//nova via
+
 			exVia = new ExVia();
-			
-			exVia.setExClassificacao(getExClass());
-			exVia.setExTipoDestinacao(destino);
-			exVia.setExDestinacaoFinal(destFinal);
-			exVia.setTemporalidadeCorrente(tempCorrente);
-			exVia.setTemporalidadeIntermediario(tempInterm);
+			lerFormVia(exVia);
 			exVia.setCodVia(String.valueOf(getNumeroDeVias()+1));
-			exVia.setObs(getObs());
-			
 			dao().gravarComHistorico(exVia,null,null,getIdentidadeCadastrante());
-			
+		}else{
+			//alterar via existente
+			exVia = dao().consultar(getIdVia(),ExVia.class,false);
+			ExVia exViaNova = new ExVia();
+			try {
+				PropertyUtils.copyProperties(exViaNova, exVia);
+				//novo id
+				exViaNova.setId(null);
+				
+				lerFormVia(exViaNova);
+				
+				dao().gravarComHistorico(exViaNova, exVia, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+				
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Erro ao copiar as propriedades da via anterior.");
+			}
+
 		}
 		dao().commitTransacao();
 		return SUCCESS;
 	}
 	
+	private void verificarParamsVia() throws AplicacaoException {
+		if (getIdDestino()==null || getIdDestino()<=0){
+			throw new AplicacaoException("A destinação da via deve ser definida!");
+		}
+	}
+
 	public String aExcluirVia() throws AplicacaoException{
 		dao().iniciarTransacao();
+		
 		ExVia exVia = dao().consultar(getIdVia(), ExVia.class, false);
-		dao().excluirComHistorico(exVia, getIdentidadeCadastrante());
+		dao().excluirComHistorico(exVia, null,getIdentidadeCadastrante());
+		
 		dao().commitTransacao();
 		return SUCCESS;
 	}
-
 
 	private void lerForm(ExClassificacao c) {
 		c.setCodificacao(getCodificacao());
 		c.setDescrClassificacao(getDescrClassificacao());
 		c.setObs(getObs());
 	}
-	
+
+	private void lerFormVia(ExVia exVia) {
+		
+		ExTipoDestinacao destino = !getIdDestino().equals(-1L)?dao().consultar(getIdDestino(), ExTipoDestinacao.class, false):null; 
+		ExTipoDestinacao destFinal = !getIdDestinacaoFinal().equals(-1L)?dao().consultar(getIdDestinacaoFinal(), ExTipoDestinacao.class, false):null; 
+		ExTemporalidade tempCorrente = !getIdTemporalidadeArqCorr().equals(-1L)?dao().consultar(getIdTemporalidadeArqCorr(), ExTemporalidade.class, false):null; 
+		ExTemporalidade tempInterm = !getIdTemporalidadeArqInterm().equals(-1L)?dao().consultar(getIdTemporalidadeArqInterm(), ExTemporalidade.class, false):null; 
+
+		exVia.setExClassificacao(getExClass());
+		exVia.setExTipoDestinacao(destino);
+		exVia.setExDestinacaoFinal(destFinal);
+		exVia.setTemporalidadeCorrente(tempCorrente);
+		exVia.setTemporalidadeIntermediario(tempInterm);
+		exVia.setCodVia(getCodigoVia());
+		exVia.setObs(getObs());
+
+	}
+
 	public ExClassificacao getExClass() {
 		return exClass;
 	}
@@ -577,5 +616,12 @@ public class ExClassificacaoAction
 		return idTemporalidadeArqInterm;
 	}
 
+	public void setCodigoVia(String codigoVia) {
+		this.codigoVia = codigoVia;
+	}
 
+	public String getCodigoVia() {
+		return codigoVia;
+	}
+	
 }

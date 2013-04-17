@@ -10,12 +10,19 @@
 
 <siga:pagina titulo="Classificação Documental">
 <script type="text/javascript">
+
+
 	//funções de dados
 	function gravarClassificacao(){
 		$('#frmClassificacao').submit();
 	}
-	function gravarExVia(){
-		$('#frmNovaVia').submit();
+	
+	function gravarExVia(idVia){
+		if (idVia==null || idVia==0){
+			$('#frmNovaVia').submit();
+		}else{
+			$('#frmEdicaoVia_'+idVia).submit();
+		}
 	}
 
 	//funções de exibição
@@ -32,6 +39,20 @@
 		exibirBotoesViasExistentes();
 		return false;
 	}
+	function cancelarEdicaoVia(idVia){
+		$('#divViaEdicao_' + idVia).hide(delay);
+		$('#divViaExibicao_' + idVia).show(delay);
+		exibirBotoesClassificacao();
+		exibirBotoesViasExistentes();
+		
+		return false;
+	}
+	function editarExVia(idVia){
+		ocultarBotoesClassificacao();
+		ocultarBotoesViasExistentes();
+		$('#divViaExibicao_' + idVia).hide(delay);
+		$('#divViaEdicao_' + idVia).show(delay);
+	}
 	function ocultarBotoesClassificacao(){
 		$('.botoesClassificacao').hide(delay);
 		$('#divClassificacao :input').attr("disabled", true);
@@ -46,8 +67,6 @@
 	function exibirBotoesViasExistentes(){
 		$('#divVias .botoesVias').show(delay);
 	}
-	
-	
 </script>
 <c:choose>
 	<c:when test="${acao == 'editar_classificacao'}">
@@ -178,7 +197,7 @@
 							</div>
 							<!-- form row -->
 							<div class="gt-form-row">
-								<a id="btGravarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:gravarExVia()">Gravar Via</a>
+								<a id="btGravarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:gravarExVia(0)">Gravar Via</a>
 								<p class="gt-cancel">
 									ou <a href="javascript:void(0);" onclick="javascript:cancelarNovaVia();" style="cursor: pointer;">cancelar via</a>
 								</p>
@@ -196,7 +215,9 @@
 			
 			<!--  VIA EXISTENTE -->
 			<div id="divVia_${via.id}" class="viasExistentes">
-				<div class="gt-bd clearfix">
+			
+			<!-- EXIBICAO VIA -->
+				<div id="divViaExibicao_${via.id}" class="gt-bd clearfix">
 					<div class="gt-content">
 			
 						<div class="gt-form gt-content-box">
@@ -245,7 +266,7 @@
 							</div>
 							<!-- form row -->
 							<div class="gt-form-row botoesVias">
-								<a id="btEditarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:editarVia()">Editar Via</a>
+								<a id="btEditarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:editarExVia(${via.id})">Editar Via</a>
 								<p class="gt-cancel">
 									ou <ww:a href="excluirVia.action?idVia=${via.id}&codificacao=${codificacao}">excluir via</ww:a>
 								</p>
@@ -254,6 +275,128 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- EXIBICAO VIA -->
+				
+				<!-- EDICAO VIA -->
+				<div id="divViaEdicao_${via.id}" class="gt-bd clearfix" style="display: none">
+					<div class="gt-content">
+						<div class="gt-form gt-content-box">
+							<div class="clearfix">
+								<!-- left column -->
+									<div class="gt-left-col">
+									<ww:form id="frmEdicaoVia_${via.id}" action="gravarVia" method="aGravarVia">
+										<input type="hidden" name="codificacao" value="${exClass.codificacao}"/>
+										<input type="hidden" name="idVia" value="${via.id}"/>
+										<input type="hidden" name="codigoVia" value="${via.codVia}"/>
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+											<h3 class="gt-form-head">Edição da Via ${via.codVia}</h3>
+										</div>
+										<!-- /form row -->
+
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+
+											<label>Destino</label>
+											<select id="idDestino" name="idDestino"> 
+												<option value="-1">[Escolha uma opção]</option>
+												<c:forEach items="${listaExTipoDestinacao}" var="itemLista">
+													<c:choose>
+														<c:when test="${itemLista.idTpDestinacao == via.exTipoDestinacao.idTpDestinacao}">
+															<option value="${itemLista.idTpDestinacao}" selected="selected">${itemLista.descrTipoDestinacao}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${itemLista.idTpDestinacao}">${itemLista.descrTipoDestinacao}</option>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+											</select>
+											
+										</div>
+										<!-- /form row -->
+										
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+
+											<label>Arquivo Corrente</label>
+											<select id="idTemporalidadeArqCorr" name="idTemporalidadeArqCorr"> 
+												<option value="-1">[Escolha uma opção]</option>
+												<c:forEach items="${listaExTemporalidade}" var="itemLista">
+													<c:choose>
+														<c:when test="${itemLista.idTemporalidade == via.temporalidadeCorrente.idTemporalidade}">
+															<option value="${itemLista.idTemporalidade}" selected="selected">${itemLista.descTemporalidade}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${itemLista.idTemporalidade}">${itemLista.descTemporalidade}</option>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+											</select>
+											
+										</div>
+										<!-- /form row -->
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+
+											<label>Arquivo Intermediário</label>
+											<select id="idTemporalidadeArqInterm" name="idTemporalidadeArqInterm"> 
+												<option value="-1">[Escolha uma opção]</option>
+												<c:forEach items="${listaExTemporalidade}" var="itemLista">
+													<c:choose>
+														<c:when test="${itemLista.idTemporalidade == via.temporalidadeIntermediario.idTemporalidade}">
+															<option value="${itemLista.idTemporalidade}" selected="selected">${itemLista.descTemporalidade}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${itemLista.idTemporalidade}">${itemLista.descTemporalidade}</option>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+											</select>
+
+										</div>
+										<!-- /form row -->
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+										
+											<label>Destinação Final</label>
+											<select id="idDestinacaoFinal" name="idDestinacaoFinal"> 
+												<option value="-1">[Escolha uma opção]</option>
+												<c:forEach items="${listaExTipoDestinacao}" var="itemLista">
+													<c:choose>
+														<c:when test="${itemLista.idTpDestinacao == via.exDestinacaoFinal.idTpDestinacao}">
+															<option value="${itemLista.idTpDestinacao}" selected="selected">${itemLista.descrTipoDestinacao}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${itemLista.idTpDestinacao}">${itemLista.descrTipoDestinacao}</option>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+											</select>
+											
+										</div>
+										<!-- /form row -->
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+											<label>Observação</label> <input id="obs" name="obs" type="text" class="gt-form-text" value="${via.obs}"/>
+										</div>
+										<!-- /form row -->
+									</ww:form>
+								</div>
+							</div>
+							<!-- form row -->
+							<div class="gt-form-row">
+								<a id="btGravarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:gravarExVia(${via.idVia})">Gravar Via</a>
+								<p class="gt-cancel">
+									ou <a href="javascript:void(0);" onclick="javascript:cancelarEdicaoVia(${via.idVia});" style="cursor: pointer;">cancelar edição</a>
+								</p>
+							</div>
+							<!-- /form row -->
+						</div>
+					</div>
+				</div>
+				
+				<!-- EDICAO VIA -->
 			</div>	
 			<!-- VIA EXISTENTE -->
 

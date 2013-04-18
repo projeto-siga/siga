@@ -10,7 +10,7 @@ Informação'/}
 		<!-- Dados do documento -->
 		<div class="gt-content-box" style="padding: 10px;">
 			<h2>${informacao?.arq?.titulo}</h2>
-			${informacao?.arq?.conteudo}
+			${informacao.conteudoHTML.raw()}
 		</div>
 	</div>
 
@@ -35,7 +35,7 @@ Informação'/}
 				<b>Finalizado em:</b> ${informacao?.elaboracaoFim}
 			</p>
 			<!--  -->
-			#{set cls = informacao?.arq?.classificacao?.split(";") /}
+			#{set cls = informacao?.arq?.classificacao?.split(",") /}
 			<!--  -->
 			#{if cls != null && cls.size() > 1}
 			<p>

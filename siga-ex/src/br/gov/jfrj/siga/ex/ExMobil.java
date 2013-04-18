@@ -49,9 +49,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private static final Logger log = Logger.getLogger( ExMobil.class );
-	
+
+	private static final Logger log = Logger.getLogger(ExMobil.class);
+
 	private class CronologiaComparator implements Comparator<ExMovimentacao> {
 
 		public int compare(ExMovimentacao o1, ExMovimentacao o2) {
@@ -297,25 +297,25 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		String descricaoCurta = null;
 		ExDocumento exDocumento = getExDocumento();
-		
-		if ( exDocumento != null ) {
+
+		if (exDocumento != null) {
 			try {
 				descricaoCurta = exDocumento.getDescrCurta();
-			}catch (Exception e) {
-				log.warn( "[getDescricao] - Não foi possível recuperar a descrição curta do Documento. Retornando descrição em branco.", e );
+			} catch (Exception e) {
+				log.warn(
+						"[getDescricao] - Não foi possível recuperar a descrição curta do Documento. Retornando descrição em branco.",
+						e);
 				descricaoCurta = "";
 			}
 		} else {
-			log.warn( "[getDescricao] - O Documento informado é nulo." );
+			log.warn("[getDescricao] - O Documento informado é nulo.");
 		}
-		
-		if ( descricaoCurta == null ) {
+
+		if (descricaoCurta == null) {
 			descricaoCurta = "";
 		}
 
-		s = s + "', 'documento', " + winProp + ")\">"
-					+ descricaoCurta + "</a>";
-		
+		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
 
 		return s;
 	}
@@ -398,12 +398,14 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 
-		final ExDocumento doc = new ExDocumento();
-		setExDocumento(doc);
+		if (getExDocumento() == null) {
+			final ExDocumento doc = new ExDocumento();
+			setExDocumento(doc);
+		}
 
 		if (m2.find()) {
 			if (m2.group(1) != null)
-				doc.setIdDoc(new Long(m2.group(1)));
+				getExDocumento().setIdDoc(new Long(m2.group(1)));
 			return;
 		}
 
@@ -458,7 +460,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 							.substring(vsNumSubdocumento.indexOf(".") + 1);
 				Integer vshNumSubdocumento = new Integer(vsNumSubdocumento);
 				if (vshNumSubdocumento != 0) {
-					String siglaPai = (m1.group(1) == null ? "" : m1.group(1))
+					String siglaPai = (m1.group(1) == null ? (getExDocumento()
+							.getOrgaoUsuario() != null ? getExDocumento()
+							.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : m1
+							.group(1))
 							+ (m1.group(2) == null ? "" : m1.group(2))
 							+ (m1.group(3) == null ? "" : m1.group(3))
 							+ ((m1.group(3) != null && m1.group(4) != null) ? "/"
@@ -551,18 +556,19 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			return getExDocumento().getSigla();
 		}
 	}
-	
+
 	/**
 	 * Retorna o código do documento mais o número da via ou do volume.
 	 * 
 	 * @return O código do documento mais o número da via ou do volume.
 	 */
-	public static String getSigla(String codigoDocumento, Integer numSequencia, Long idTipoMobil) {
+	public static String getSigla(String codigoDocumento, Integer numSequencia,
+			Long idTipoMobil) {
 		if (codigoDocumento == null)
 			return null;
 		if (idTipoMobil == null)
 			return null;
-		
+
 		if ((idTipoMobil == ExTipoMobil.TIPO_MOBIL_VIA || idTipoMobil == ExTipoMobil.TIPO_MOBIL_VOLUME)
 				&& (numSequencia == null || numSequencia == 0))
 			throw new Error(
@@ -572,8 +578,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 			// as vias vão até a letra 'U', se passar disso, assume letra 'Z'
 			if (numSequencia <= 20) {
-				final String vsNumVia = alfabeto.substring(
-						numSequencia - 1, numSequencia);
+				final String vsNumVia = alfabeto.substring(numSequencia - 1,
+						numSequencia);
 				return codigoDocumento + "-" + vsNumVia;
 			} else {
 				final String vsNumVia = "Z";
@@ -581,8 +587,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			}
 		} else if (idTipoMobil == ExTipoMobil.TIPO_MOBIL_VOLUME) {
 			final String vsNumVolume = "V"
-					+ (numSequencia < 10 ? "0" + numSequencia
-							: numSequencia);
+					+ (numSequencia < 10 ? "0" + numSequencia : numSequencia);
 			return codigoDocumento + "-" + vsNumVolume;
 		} else {
 			return codigoDocumento;
@@ -660,7 +665,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return b;
 	}
-	
+
 	/**
 	 * Verifica se uma mobil está sobrestado
 	 */
@@ -717,7 +722,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		for (ExMovimentacao mov : getExMovimentacaoSet()) {
 			if (mov.isCancelada())
 				continue;
-			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA || mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)
+			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+					|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)
 				b = true;
 			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO)
 				b = false;
@@ -1325,24 +1331,24 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		return l;
 	}
-	
+
 	/**
-	 * Retorna as  movimentações de um Mobil que estão canceladas.
+	 * Retorna as movimentações de um Mobil que estão canceladas.
 	 * 
 	 * @return Lista de movimentações de um Mobil que estão canceladas.
 	 * 
 	 */
 	public List<ExMovimentacao> getMovimentacoesCanceladas() {
-		
+
 		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
-		List<ExMovimentacao> movsCanceladas = new ArrayList<ExMovimentacao>();	
-		
+		List<ExMovimentacao> movsCanceladas = new ArrayList<ExMovimentacao>();
+
 		if (movs != null)
-			for (final ExMovimentacao mov : movs) {				
+			for (final ExMovimentacao mov : movs) {
 				if (mov.isCancelada())
 					movsCanceladas.add(mov);
 			}
-		return movsCanceladas;	
+		return movsCanceladas;
 	}
 
 }

@@ -168,4 +168,19 @@ public class Texto {
 		
 		return String.valueOf(caracteres);
 	}
+	
+    public static String slugify(String string, boolean lowercase, boolean underscore) {
+        string = removeAcento(string);
+        // Apostrophes.
+        string = string.replaceAll("([a-z])'s([^a-z])", "$1s$2");
+        string = string.replaceAll("[^\\w]", "-").replaceAll("-{2,}", "-");
+        // Get rid of any - at the start and end.
+        string.replaceAll("-+$", "").replaceAll("^-+", "");
+        
+        if (underscore)
+            string.replaceAll("-", "_");
+
+        return (lowercase ? string.toLowerCase() : string);
+    }
+
 }

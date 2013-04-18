@@ -797,6 +797,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
+				&& mob.doc().isAssinado()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
 						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO);

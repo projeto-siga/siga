@@ -130,11 +130,11 @@ public class ExDocumentoVO extends ExVO {
 		
 		tags = new ArrayList<String>();
 		if (doc.getExClassificacao() != null)
-			tags.add("@doc:" + doc.getExClassificacao().getSigla());
+			tags.add("@doc-classe:" + doc.getExClassificacao().getSigla());
 		if (doc.getExFormaDocumento() != null)
-			tags.add("@doc:" + Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
+			tags.add("@doc-tipo:" + Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
 		if (doc.getExModelo() != null)
-			tags.add("@doc:" + Texto.slugify(doc.getExModelo().getNmMod(), true, true));
+			tags.add("@doc-modelo:" + Texto.slugify(doc.getExModelo().getNmMod(), true, true));
 	}
 
 	public ExDocumentoVO(ExDocumento doc) throws Exception {

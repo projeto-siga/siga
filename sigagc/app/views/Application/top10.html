@@ -4,16 +4,16 @@
 	<div class="gt-content clearfix">
 		<div class="gt-left-col">
 			<h2>Conhecimentos Mais Recentes</h2>
+			#{if listaMaisRecentes != null}
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-table gt-user-table">
 					<tbody>
-						#{list items:lista, as:'i'}
+						#{list items:listaMaisRecentes,as:'i'}
 						<tr>
 							<td style="width: 70%;"><h4>
 									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i?.conteudoHTML.raw()}</p>
-							</td>
+								<p>${i?.conteudoHTML.raw()}</p></td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
 								<table border="0" class="gt-table-categories">
@@ -31,27 +31,30 @@
 											<td>${i.dtIniString}</td>
 										</tr>
 									</tbody>
-								</table>
-							</td>
+								</table></td>
 						</tr>
 						#{/list}
 					</tbody>
 				</table>
 			</div>
-			
-			<br/>
+			#{/if} #{else}
+			<p>Nenhum conhecimento recente.</p>
+			#{/else}
 
+			<br />
+
+			<!--  -->
 			<h2>Conhecimentos Mais Acessados</h2>
+			#{if listaMaisVisitados != null}
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-table gt-user-table">
 					<tbody>
-						#{list items:lista, as:'i'}
+						#{list items:listaMaisVisitados,as:'i'}
 						<tr>
 							<td style="width: 70%;"><h4>
 									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i.conteudoHTML.raw()}</p>
-							</td>
+								<p>${i?.conteudoHTML.raw()}</p></td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
 								<table border="0" class="gt-table-categories">
@@ -69,13 +72,16 @@
 											<td>${i.dtIniString}</td>
 										</tr>
 									</tbody>
-								</table>
-							</td>
+								</table></td>
 						</tr>
 						#{/list}
 					</tbody>
 				</table>
 			</div>
+			#{/if} #{else}
+			<p>Nenhum conhecimento visitado.</p>
+			#{/else}
+
 
 		</div>
 		<div class="gt-right-col">
@@ -88,8 +94,7 @@
 							<td style="width: 70%;"><h4>
 									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i?.conteudoHTML.raw()}</p>
-							</td>
+								<p>${i?.conteudoHTML.raw()}</p></td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
 								<table border="0" class="gt-table-categories">
@@ -107,8 +112,7 @@
 											<td>${i.dtIniString}</td>
 										</tr>
 									</tbody>
-								</table>
-							</td>
+								</table></td>
 						</tr>
 						#{/list}
 					</tbody>

@@ -9,6 +9,45 @@
 
 
 <siga:pagina titulo="Classificação Documental">
+<script src="format4js.js"></script>
+<script type="text/javascript">
+		function executar(input){
+		
+			var mask_in = /([0-9]{0,2})\.?([0-9]{0,2})?\.?([0-9]{0,2})?\.?([0-9]{0,2})?([A-Z])?/;
+			var mask_out = "%1$02d.%2$02d.%3$02d.%4$02d";
+			
+			gruposRegEx = mask_in.exec(input.value);
+			gruposRegEx[0] = mask_out;
+			
+			for(i=0;i<gruposRegEx.length;i++){
+				if(gruposRegEx[i]==null){
+					gruposRegEx[i]=0;	
+				}
+			}
+			/*
+			var pos = input.selectionStart;
+			input.value = mdgw.format.apply(null,gruposRegEx);
+			
+			var charAtual = document.getElementById('texto').value.charAt(pos);
+			if (charAtual!="" && !isDigito(charAtual)){
+				while(!isDigito(charAtual)){
+					pos++;
+					charAtual = document.getElementById('texto').value.charAt(pos);
+				}
+			}
+			input.selectionStart = pos;
+			*/
+			input.value = mdgw.format.apply(null,gruposRegEx);
+			//document.getElementById('textoFormatado').value = mdgw.format.apply(null,gruposRegEx);
+		}
+		/*
+		function isDigito(digito){
+			regExDigito = /[0-9,a-z,A-Z]/;
+			return regExDigito.exec(digito)!=null
+		}
+		*/
+</script>
+
 <script type="text/javascript">
 
 

@@ -41,12 +41,12 @@ public class ExVia extends AbstractExVia implements Serializable {
 	public ExVia() {
 	}
 
-	public String getDestinacao() {
-		if (getExTipoDestinacao() != null)
-			return getExTipoDestinacao().getDescrTipoDestinacao();
-		else
-			return "";
-	}
+//	public String getDestinacao() {
+//		if (getExTipoDestinacao() != null)
+//			return getExTipoDestinacao().getDescrTipoDestinacao();
+//		else
+//			return "";
+//	}
 
 	public String getLetraVia() {
 		if (getCodVia() != null)

@@ -162,28 +162,28 @@
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
 											<label>Destino</label><ww:select name="idDestino" list="listaExTipoDestinacao"
-														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="Escolha uma opção"  
+														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="[Escolha uma opção]"  
 														theme="simple" />
 										</div>
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
 											<label>Arquivo Corrente</label><ww:select name="idTemporalidadeArqCorr" list="listaExTemporalidade"
-														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Escolha uma opção"
+														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Não definido"
 														theme="simple" />
 										</div>
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
 											<label>Arquivo Intermediário</label><ww:select name="idTemporalidadeArqInterm" list="listaExTemporalidade"
-														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Escolha uma opção"
+														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Não definido"
 														theme="simple" />
 										</div>
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
 											<label>Destinação Final</label><ww:select name="idDestinacaoFinal" list="listaExTipoDestinacao"
-														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="Escolha uma opção"
+														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="Não definido"
 														theme="simple" />
 										</div>
 										<!-- /form row -->
@@ -321,7 +321,7 @@
 
 											<label>Arquivo Corrente</label>
 											<select id="idTemporalidadeArqCorr" name="idTemporalidadeArqCorr"> 
-												<option value="-1">[Escolha uma opção]</option>
+												<option value="-1">Não definido</option>
 												<c:forEach items="${listaExTemporalidade}" var="itemLista">
 													<c:choose>
 														<c:when test="${itemLista.idTemporalidade == via.temporalidadeCorrente.idTemporalidade}">
@@ -341,7 +341,7 @@
 
 											<label>Arquivo Intermediário</label>
 											<select id="idTemporalidadeArqInterm" name="idTemporalidadeArqInterm"> 
-												<option value="-1">[Escolha uma opção]</option>
+												<option value="-1">Não definido</option>
 												<c:forEach items="${listaExTemporalidade}" var="itemLista">
 													<c:choose>
 														<c:when test="${itemLista.idTemporalidade == via.temporalidadeIntermediario.idTemporalidade}">
@@ -361,7 +361,7 @@
 										
 											<label>Destinação Final</label>
 											<select id="idDestinacaoFinal" name="idDestinacaoFinal"> 
-												<option value="-1">[Escolha uma opção]</option>
+												<option value="-1">Não definido</option>
 												<c:forEach items="${listaExTipoDestinacao}" var="itemLista">
 													<c:choose>
 														<c:when test="${itemLista.idTpDestinacao == via.exDestinacaoFinal.idTpDestinacao}">

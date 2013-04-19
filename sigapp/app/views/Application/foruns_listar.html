@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Lista Foruns</title>
+</head>
+<body>
+<ul>
+#{list items:listForuns, as:'forum'}
+	<li>${forum.cod_forum}</li>
+	<li>${forum.descricao_forum}</li>
+	------------------------
+#{/list}
+</ul>
+<form name="restringe_foruns" action="/foruns_listar" onsubmit="">
+Código do forum:<input type="text" name="cod_forum" size="50" maxlength="2"><br>
+Descrição:<input type="text" name="descricao_forum" size="50" maxlength="50"><br>
+<input type="submit" value="Busca" >
+<br><a href="/">Voltar</a>
+</body>
+</html>

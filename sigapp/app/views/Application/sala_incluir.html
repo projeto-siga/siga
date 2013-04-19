@@ -1,0 +1,17 @@
+#{extends 'main.html' /}
+#{set title:'Incluir Sala' /}
+<form name="" action="/sala_insert" onsubmit="" method="post" ><br>
+	Código da sala: <input type="text" name="objLocal.cod_local" maxlength="3" size="3" /> <!-- String --><br> 
+	Descrição: <input type="text" name="objLocal.local" maxlength="50" size="50" /> <!-- String --><br>
+	Código do forum: <input type="text" name="objLocal.cod_forum" maxlength="50" size="50" /> <!-- int --><br>
+	Dias de atendimento: <input type="text" name="objLocal.dias" maxlength="50" size="50" /> <!-- String --><br>
+	Horário inicial:<input type="text" name="objLocal.hora_ini" maxlength="50" size="50" /> <!-- String --><br>
+	Horário final:<input type="text" name="objLocal.hora_fim" maxlength="50" size="50" /> <!--  String  --><br>
+	<input type="hidden" name="objLocal.intervalo_atendimento" value="15" /> <!-- int -->
+	<input type="hidden" name="objLocal.exibir" value="1" /> <!-- int -->
+	Endereço:<input type="text" name="objLocal.endereco" maxlength="50" size="50" /> <!-- String -->
+	<input type="hidden" name="objLocal.ordem_apresentacao" value="0" />  <!-- int --> 
+<br>
+	<input type="submit" value="Grava" /> <br>
+	<a href="/">Voltar</a>
+</form>

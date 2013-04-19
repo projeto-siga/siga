@@ -1350,5 +1350,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			}
 		return movsCanceladas;
 	}
+	
+	public int getTotalDePaginas() {
+		int totalDePaginas = 0;
+		
+		for (ExArquivoNumerado arquivo : getArquivosNumerados()) {
+			
+			totalDePaginas += arquivo.getNumeroDePaginasParaInsercaoEmDossie();
+		}
+		
+		return totalDePaginas;
+	}
 
 }

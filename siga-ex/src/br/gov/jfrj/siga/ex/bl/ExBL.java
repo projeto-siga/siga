@@ -1079,6 +1079,8 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
+			
+			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -2851,6 +2853,9 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
+			
+			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
@@ -4681,6 +4686,20 @@ public class ExBL extends CpBL {
 		}
 
 	}
+	
+	public void encerrarAutomatico(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor,
+			final DpPessoa titular, String nmFuncaoSubscritor) 
+			throws AplicacaoException, Exception {
+		
+		//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
+		if(mob.doc().isProcesso()) {
+			if(mob.getTotalDePaginas() > 200) {
+				encerrar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, nmFuncaoSubscritor, true);
+			}
+		}
+	}
 
 	/**
 	 * Encerra um volume e insere uma certidão de encerramento de volume, que
@@ -4699,7 +4718,7 @@ public class ExBL extends CpBL {
 	public void encerrar(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, String nmFuncaoSubscritor)
+			final DpPessoa titular, String nmFuncaoSubscritor, boolean automatico)
 			throws AplicacaoException, Exception {
 
 		if (mob.isEncerrado())
@@ -4732,6 +4751,9 @@ public class ExBL extends CpBL {
 			final byte pdf[] = Documento.generatePdf(strHtml);
 			mov.setConteudoBlobPdf(pdf);
 			mov.setConteudoTpMov("application/zip");
+			
+			if(automatico)
+				mov.setDescrMov("Volume encerrado automaticamente.");
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mob.doc());

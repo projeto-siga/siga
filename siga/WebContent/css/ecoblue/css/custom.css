@@ -417,3 +417,31 @@ TABLE.entrevista TR TD{
 }
 
 
+TABLE.side-bar-light-table {
+	width: 100%;
+	font-size: 85%;
+}
+
+TABLE.side-bar-light-table  TBODY TH {
+	border: 1px solid gray;
+}
+
+TABLE.side-bar-light-table TBODY TR TD {
+	backgroud: black;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+DIV.gt-tag-cloud {
+	padding: 10px !important;
+}
+
+DIV.gt-tag-cloud a {
+	text-decoration: none !important;
+}
+
+DIV.gt-tag-cloud a:hover {
+	text-decoration: underline !important;
+}

@@ -44,7 +44,7 @@ public class Application extends SigaApplication {
 	public static void addDefaults() throws Exception {
 
 		try {
-			obterCabecalhoEUsuario();
+			obterCabecalhoEUsuario("rgb(235, 235, 232)");
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
@@ -73,8 +73,8 @@ public class Application extends SigaApplication {
 
 	public static void gadget() {
 		Query query = JPA.em().createNamedQuery("contarSrMarcas");
-		query.setParameter("idPessoaIni", getCadastrante().getIdInicial());
-		query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
+		query.setParameter("idPessoaIni", cadastrante().getIdInicial());
+		query.setParameter("idLotacaoIni", lotaTitular().getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
 	}
@@ -83,7 +83,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao;
 		if (id == null) {
 			solicitacao = new SrSolicitacao();
-			solicitacao.solicitante = getCadastrante();
+			solicitacao.solicitante = cadastrante();
 		} else
 			solicitacao = SrSolicitacao.findById(id);
 
@@ -138,9 +138,9 @@ public class Application extends SigaApplication {
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 		boolean abrirFechando = solicitacao.podeAbrirJaFechando(
-				getLotaTitular(), getCadastrante());
-		boolean priorizar = solicitacao.podePriorizar(getLotaTitular(),
-				getCadastrante());
+				lotaTitular(), cadastrante());
+		boolean priorizar = solicitacao.podePriorizar(lotaTitular(),
+				cadastrante());
 
 		List<SrServico> servicos = SrServico.listarPorPessoaEItem(
 				solicitacao.solicitante, solicitacao.itemConfiguracao);
@@ -192,7 +192,7 @@ public class Application extends SigaApplication {
 
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
 		validarFormEditar(solicitacao);
-		solicitacao.salvar(getCadastrante(), getLotaTitular());
+		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
 		exibir(id);
 	}
@@ -225,14 +225,14 @@ public class Application extends SigaApplication {
 		SrAndamento andamento = new SrAndamento(solicitacao); // 1query
 		andamento.deduzirProxAtendente(); // 318 queries
 
-		boolean criarFilha = solicitacao.podeCriarFilha(getLotaTitular(),
-				getCadastrante());
+		boolean criarFilha = solicitacao.podeCriarFilha(lotaTitular(),
+				cadastrante());
 		boolean desfazerAndamento = solicitacao.podeDesfazerAndamento(
-				getLotaTitular(), getCadastrante());
-		boolean editar = solicitacao.podeEditar(getLotaTitular(),
-				getCadastrante());
-		boolean movimentarPlenamente = solicitacao.estaCom(getLotaTitular(),
-				getCadastrante());
+				lotaTitular(), cadastrante());
+		boolean editar = solicitacao.podeEditar(lotaTitular(),
+				cadastrante());
+		boolean movimentarPlenamente = solicitacao.estaCom(lotaTitular(),
+				cadastrante());
 
 		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
 
@@ -242,7 +242,7 @@ public class Application extends SigaApplication {
 
 	public static void selecionar(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
-		sel.cadastrante = getCadastrante();
+		sel.cadastrante = cadastrante();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
 	}
@@ -258,15 +258,15 @@ public class Application extends SigaApplication {
 	}
 
 	public static void andamento(SrAndamento andamento) throws Exception {
-		andamento.solicitacao.darAndamento(andamento, getCadastrante(),
-				getLotaTitular());
+		andamento.solicitacao.darAndamento(andamento, cadastrante(),
+				lotaTitular());
 		Long id = andamento.solicitacao.idSolicitacao;
 		exibir(id);
 	}
 
 	public static void desfazerUltimoAndamento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.desfazerUltimoAndamento(getCadastrante(), getLotaTitular());
+		sol.desfazerUltimoAndamento(cadastrante(), lotaTitular());
 		exibir(id);
 	}
 

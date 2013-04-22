@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+        <property name="hibernate.connection.password">sigapmp</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@mclaren:1521:sigapmp</property>
+        <property name="hibernate.connection.username">sigapmp</property>
+        <property name="hibernate.default_schema">sigapmp</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
+    </session-factory>
+</hibernate-configuration>

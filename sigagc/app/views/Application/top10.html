@@ -4,15 +4,16 @@
 	<div class="gt-content clearfix">
 		<div class="gt-left-col">
 			<h2>Conhecimentos Mais Recentes</h2>
+			#{if listaMaisRecentes != null}
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-table gt-user-table">
 					<tbody>
-						#{list items:lista, as:'i'}
+						#{list items:listaMaisRecentes,as:'i'}
 						<tr>
 							<td style="width: 70%;"><h4>
-									<a href="@{Application.exibir(i.id)}">${i.titulo}</a>
+									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i.conteudo}</p>
+								<p>${i?.conteudoHTML.raw()}</p>
 							</td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
@@ -38,19 +39,22 @@
 					</tbody>
 				</table>
 			</div>
-			
-			<br/>
+			#{/if} #{else}
+			<p>Nenhum conhecimento recente.</p>
+			#{/else} <br />
 
+			<!--  -->
 			<h2>Conhecimentos Mais Acessados</h2>
+			#{if listaMaisVisitados != null}
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-table gt-user-table">
 					<tbody>
-						#{list items:lista, as:'i'}
+						#{list items:listaMaisVisitados,as:'i'}
 						<tr>
 							<td style="width: 70%;"><h4>
-									<a href="@{Application.exibir(i.id)}">${i.titulo}</a>
+									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i.conteudo}</p>
+								<p>${i?.conteudoHTML.raw()}</p>
 							</td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
@@ -76,44 +80,76 @@
 					</tbody>
 				</table>
 			</div>
+			#{/if} #{else}
+			<p>Nenhum conhecimento visitado.</p>
+			#{/else}
+
 
 		</div>
 		<div class="gt-right-col">
 			<h2>Principais Autores</h2>
+			#{if listaPrincipaisAutores != null}
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-table gt-user-table">
 					<tbody>
-						#{list items:lista, as:'i'}
+						#{list items:listaPrincipaisAutores,as:'p'}
 						<tr>
-							<td style="width: 70%;"><h4>
-									<a href="@{Application.exibir(i.id)}">${i.titulo}</a>
-								</h4>
-								<p>${i.conteudo}</p>
-							</td>
-							<td style="width: 30%;">
-								<!-- Categories Sub Table -->
-								<table border="0" class="gt-table-categories">
-									<tbody>
-										<tr>
-											<th>Autor:</th>
-											<td>${i.autor.primeiroNomeEIniciais}</td>
-										</tr>
-										<tr>
-											<th>Lotação:</th>
-											<td>${i.lotacao.sigla}</td>
-										</tr>
-										<tr>
-											<th>Data:</th>
-											<td>${i.dtIniString}</td>
-										</tr>
-									</tbody>
-								</table>
-							</td>
+							<td style="width: 70%;">${p.descricao}</td>
+							<td style="width: 30%;">${p.lotacao.sigla}</td>
 						</tr>
 						#{/list}
 					</tbody>
 				</table>
 			</div>
+			#{/if} #{else}
+			<p>Nenhum autor.</p>
+			#{/else} <br />
+			<h2>Principais Lotações</h2>
+			#{if listaPrincipaisLotacoes != null}
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-table gt-user-table">
+					<tbody>
+						#{list items:listaPrincipaisLotacoes,as:'l'}
+						<tr>
+							<td style="width: 70%;">${l.descricao}</td>
+							<td style="width: 30%;">${l.sigla}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum autor.</p>
+			#{/else}
+
+			*{			
+			<br />
+			<h2>Principais Classificações</h2>
+			#{if listaPrincipaisTags != null}
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-table gt-user-table">
+					<tbody>
+						#{list items:listaPrincipaisTags,as:'t'}
+						<tr>
+							<td style="width: 30%;">${t.categoria}</td>
+							<td style="width: 70%;">${t.titulo}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum autor.</p>
+			#{/else}
+			}*
+			
+			<br />
+			<h2>Principais Classificações</h2>
+			<div class="gt-content-box gt-tag-cloud">
+				#{list items:cloud.tags(),as:'tag'}
+					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a> 
+				#{/list}
+</div> 
 		</div>
 	</div>
 </div>

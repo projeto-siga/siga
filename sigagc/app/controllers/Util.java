@@ -4,36 +4,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
-import models.ManipuladorHistorico;
-import models.GcConfiguracao;
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Historico;
 
 public class Util {
 
-	public static void salvar(Historico o) throws Exception {
-		o.setHisDtIni(new Date());
-		o.setHisDtFim(null);
-		if (o.getId() == null) {
-			((GenericModel) o).save();
-			o.setHisIdIni(o.getId());
-		} else {
-			JPA.em().detach(o);
-			// Edson: Abaixo, nÃ£o funcionou findById, por algum motivo
-			// relacionado a esse esquema de sobrescrever o ObjetoBase
-			Historico oAntigo = (Historico) JPA.em().find(o.getClass(),
-					o.getId());
-			((ManipuladorHistorico) oAntigo).finalizar();
-			o.setHisIdIni(oAntigo.getHisIdIni());
-			o.setId(null);
-		}
-		((GenericModel) o).save();
-	}
+//	public static void salvar(Historico o) throws Exception {
+//		o.setHisDtIni(new Date());
+//		o.setHisDtFim(null);
+//		if (o.getId() == null) {
+//			((GenericModel) o).save();
+//			o.setHisIdIni(o.getId());
+//		} else {
+//			JPA.em().detach(o);
+//			// Edson: Abaixo, nÃ£o funcionou findById, por algum motivo
+//			// relacionado a esse esquema de sobrescrever o ObjetoBase
+//			Historico oAntigo = (Historico) JPA.em().find(o.getClass(),
+//					o.getId());
+//			((ManipuladorHistorico) oAntigo).finalizar();
+//			o.setHisIdIni(oAntigo.getHisIdIni());
+//			o.setId(null);
+//		}
+//		((GenericModel) o).save();
+//	}
 
 	public static void finalizar(Historico o) throws Exception {
 		o.setHisDtFim(new Date());

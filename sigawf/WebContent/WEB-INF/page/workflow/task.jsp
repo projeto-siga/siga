@@ -3,45 +3,57 @@
 	<div class="gt-bd gt-cols clearfix" id="page">
 		<div class="gt-content clearfix">
 
-			<div id="desc_editar" style="display: none;">
-				<h3>Descrição da Tarefa</h3>
-				<div class="gt-form gt-content-box">
-					<ww:url action="saveKnowledge" id="url"></ww:url>
-					<form method="POST" action="${url}">
-						<input name="tiId" type="hidden" value="${tiId}" />
-						<div class="gt-form-row gt-width-100">
-							<label>Descrição</label>
-							<textarea cols="80" rows="15" name="conhecimento"
-								class="gt-form-textarea">${task.conhecimento}</textarea>
-						</div>
-						<div class="gt-form-row gt-width-100">
-							<input name="salvar_conhecimento" type="submit" value="Salvar"
-								class="gt-btn-medium gt-btn-left" /> <a
-								href="javascript: window.location.reload()"
-								class="gt-btn-medium gt-btn-left">Cancelar</a>
-						</div>
-					</form>
+			<c:if
+				test="${not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+				<div id="desc_editar" style="display: none;">
+					<h3>Descrição da Tarefa</h3>
+					<div class="gt-form gt-content-box">
+						<ww:url action="saveKnowledge" id="url"></ww:url>
+						<form method="POST" action="${url}">
+							<input name="tiId" type="hidden" value="${tiId}" />
+							<div class="gt-form-row gt-width-100">
+								<label>Descrição</label>
+								<textarea cols="80" rows="15" name="conhecimento"
+									class="gt-form-textarea">${task.conhecimento}</textarea>
+							</div>
+							<div class="gt-form-row gt-width-100">
+								<input name="salvar_conhecimento" type="submit" value="Salvar"
+									class="gt-btn-medium gt-btn-left" /> <a
+									href="javascript: window.location.reload()"
+									class="gt-btn-medium gt-btn-left">Cancelar</a>
+							</div>
+						</form>
+					</div>
 				</div>
-			</div>
+			</c:if>
 
 			<!-- Adicionando a lista de Tarefas -->
 			<ww:url action="executeTask" id="url"></ww:url>
 			<form method="POST" action="${url}">
 				<h3>Execução da Tarefa</h3>
 				<div class="gt-form gt-content-box">
-					<div class="gt-form-row gt-width-100">
-						<span id="desc_ver"> <c:choose>
-								<c:when test="${not empty task.descricao}">
-									<c:if test="${task.conhecimentoEditavel}">
-										<a
-											style="float: right; margin-left: 15px; margin-bottom: 15px;"
-											title="Editar a descrição"
-											href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';"><img
-											src="/siga/css/famfamfam/icons/pencil.png"> </a>
-									</c:if>${task.descricao}</c:when>
-								<c:otherwise>Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
-										href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';">aqui</a> para contribuir.</c:otherwise>
-							</c:choose> </span>
+					<div style="margin:10px;" >
+						<c:if
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+							<span id="gc-ancora"></span>
+						</c:if>
+
+
+						<c:if
+							test="${not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+							<span id="desc_ver"> <c:choose>
+									<c:when test="${not empty task.descricao}">
+										<c:if test="${task.conhecimentoEditavel}">
+											<a
+												style="float: right; margin-left: 15px; margin-bottom: 15px;"
+												title="Editar a descrição"
+												href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';"><img
+												src="/siga/css/famfamfam/icons/pencil.png"> </a>
+										</c:if>${task.descricao}</c:when>
+									<c:otherwise>Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
+											href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';">aqui</a> para contribuir.</c:otherwise>
+								</c:choose> </span>
+						</c:if>
 					</div>
 					<div class="gt-form-row gt-width-100">
 						<table class="gt-form-table">
@@ -140,8 +152,7 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
 												</c:choose>
-											</ww:else>
-										</td>
+											</ww:else></td>
 									</tr>
 								</c:if>
 							</c:forEach>
@@ -221,18 +232,14 @@
 							<c:forEach var="c" items="${wf:ordenarComentarios(ti)}">
 								<tr>
 									<td>${f:espera(c.time)}</td>
-									<td><ww:property value="%{#attr.c.actorId}" />
-									</td>
-									<td><ww:property value="%{#attr.c.message}" />
-									</td>
+									<td><ww:property value="%{#attr.c.actorId}" /></td>
+									<td><ww:property value="%{#attr.c.message}" /></td>
 								</tr>
 							</c:forEach>
 							<tr>
 								<td>${f:espera(ti.create)}</td>
-								<td><ww:property value="%{#attr.ti.actorId}" />
-								</td>
-								<td><b><ww:property value="%{#attr.ti.name}" /> </b>
-								</td>
+								<td><ww:property value="%{#attr.ti.actorId}" /></td>
+								<td><b><ww:property value="%{#attr.ti.name}" /> </b></td>
 							</tr>
 						</c:forEach>
 					</table>
@@ -336,13 +343,17 @@
 			<div class="gt-sidebar-list">
 				<h3>Mapa do Procedimento</h3>
 				<ul class="gt-sidebar-list-content">
-					<li class="gt-sidebar-list-row"><a onclick="javascript: document.getElementById('page').style.display='none'; document.getElementById('map').style.display='block';" title="Zoom"
-						href="#"><img
-							style="width: 100%" src="loadPhoto?tId=${taskInstance.id}" /> </a> <%--<tags:wfImage task="${taskInstance.id}"
-								token="${taskInstance.token.id}" /> --%></li>
+					<li class="gt-sidebar-list-row"><a
+						onclick="javascript: document.getElementById('page').style.display='none'; document.getElementById('map').style.display='block';"
+						title="Zoom" href="#"><img style="width: 100%"
+							src="loadPhoto?tId=${taskInstance.id}" /> </a> <%--<tags:wfImage task="${taskInstance.id}"
+								token="${taskInstance.token.id}" /> --%>
+					</li>
 				</ul>
 			</div>
 			<!-- /Sidebar List -->
+
+			<div class="gt-sidebar-content" id="gc"></div>
 
 		</div>
 		<!-- / sidebar -->
@@ -357,9 +368,34 @@
 				</div>
 			</div>
 		</div>
-		<a
-			href="task.action?tiId=${taskInstance.id}"
+		<a href="task.action?tiId=${taskInstance.id}"
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
 	</div>
+
+	<c:if
+		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+
+		<c:url var="url" value="/../sigagc/knowledge">
+			<c:param name="tags">${task.ancora}</c:param>
+			<c:param name="estilo">inplace</c:param>
+			<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a href="$1">aqui</a> para contribuir.</c:param>
+			<c:param name="titulo">${taskInstance.task.processDefinition.name} - ${taskInstance.task.name}</c:param>
+			<c:param name="ts">${currentTimeMillis}</c:param>
+		</c:url>
+		<script type="text/javascript">
+	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc-ancora'));
+	</script>
+
+		<c:url var="url" value="/../sigagc/knowledge">
+			<c:forEach var="tag" items="${task.tags}">
+				<c:param name="tags">${tag}</c:param>
+			</c:forEach>
+			<c:param name="estilo">sidebar</c:param>
+			<c:param name="ts">${currentTimeMillis}</c:param>
+		</c:url>
+		<script type="text/javascript">
+	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
+	</script>
+	</c:if>
 </siga:pagina>

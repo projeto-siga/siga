@@ -11,6 +11,11 @@
   <function-signature>java.lang.String getURLSistema(java.lang.String)</function-signature>
  </function>
  <function>
+  <name>urlEncode</name>
+  <function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
+  <function-signature>java.lang.String urlEncode(java.lang.String)</function-signature>
+</function>
+ <function>
   <name>getComplementoHead</name>
   <function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
   <function-signature>java.lang.String getComplementoHead(br.gov.jfrj.siga.dp.CpOrgaoUsuario)</function-signature>

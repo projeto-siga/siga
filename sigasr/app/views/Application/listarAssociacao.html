@@ -14,7 +14,6 @@
 				<thead>
 					<tr>
 						<th></th>
-						<th>Data</th>
 						<th><i>Item &darr;</i></th>
 						<th>Ação</th>
 						<th>Tipo de atributo</th>
@@ -27,8 +26,7 @@
 					<tr
 						onclick="javascript:window.location='@{Application.editarAssociacao(assoc.idConfiguracao)}'"
 						style="cursor: pointer;">
-						<td>${assoc.hisIdIni}</td>
-						<td>${assoc.hisDtIniDDMMYY}</td>
+						<td></td>
 						<td>${assoc.itemConfiguracao?.atual?.tituloItemConfiguracao}</td>
 						<td>${assoc.servico?.atual?.tituloServico}</td>
 						<td>${assoc.tipoAtributo?.nomeTipoAtributo}</td>

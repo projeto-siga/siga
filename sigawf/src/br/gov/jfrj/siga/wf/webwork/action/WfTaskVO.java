@@ -39,6 +39,7 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
@@ -70,6 +71,10 @@ public class WfTaskVO {
 	private String conhecimento = null;
 
 	private String msgAviso = "";
+
+	private List<String> tags;
+
+	private String ancora;
 
 	/**
 	 * Construtor privado, impedindo a instanciação sem informar a tarefa.
@@ -309,6 +314,21 @@ public class WfTaskVO {
 				this.transitions.add(new WfTransitionVO(transition, set));
 			}
 		}
+
+		tags = new ArrayList<String>();
+		if (taskInstance.getName() != null)
+			tags.add("@wf-tarefa:" + Texto.slugify(taskInstance.getName(), true, true));
+		if (taskInstance.getProcessInstance().getProcessDefinition().getName() != null)
+			tags.add("@wf-processo:"
+					+ Texto.slugify(taskInstance.getProcessInstance()
+							.getProcessDefinition().getName(), true, true));
+
+		if (taskInstance.getProcessInstance().getProcessDefinition().getName() != null
+				&& taskInstance.getName() != null)
+			ancora = "^wf:"
+					+ Texto.slugify(taskInstance.getProcessInstance()
+							.getProcessDefinition().getName()
+							+ "-" + taskInstance.getName(), true, true);
 	}
 
 	/**
@@ -400,5 +420,21 @@ public class WfTaskVO {
 
 	public String getMsgAviso() {
 		return msgAviso;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+	public String getAncora() {
+		return ancora;
+	}
+
+	public void setAncora(String ancora) {
+		this.ancora = ancora;
 	}
 }

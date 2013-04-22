@@ -3,16 +3,22 @@ package models;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
@@ -24,6 +30,7 @@ import org.hibernate.annotations.SortType;
 import play.db.jpa.GenericModel;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
+import ys.wikiparser.WikiParser;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -31,6 +38,17 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
 @Table(name = "GC_INFORMACAO")
+@NamedQueries({
+		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc"),
+		@NamedQuery(name = "maisRecentes", query = "from GcInformacao i where i.hisDtFim is null order by i.hisDtIni desc"),
+		@NamedQuery(name = "maisVisitados", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null group by i order by count(*) desc"),
+		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
+		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
+		@NamedQuery(name = "principaisTags", query = "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
+		
+})
+// select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
+// inf.tags tag where tag in (:tags)
 public class GcInformacao extends GenericModel {
 	@Id
 	@GeneratedValue
@@ -56,6 +74,10 @@ public class GcInformacao extends GenericModel {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_LOTACAO")
 	public DpLotacao lotacao;
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "GC_TAG_X_INFORMACAO", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
+	public Set<GcTag> tags;
 
 	@Column(name = "DT_ELABORACAO_FIM")
 	public Date elaboracaoFim;
@@ -356,4 +378,15 @@ public class GcInformacao extends GenericModel {
 		return sb.toString();
 	}
 
+	public String getConteudoHTML() throws Exception {
+		if (this.arq == null || this.arq.conteudo == null)
+			return null;
+		String s = this.arq.getConteudoTXT().replace(" # ", "\n# ")
+				.replace(" ## ", "\n## ").replace(" ### ", "\n### ")
+				.replace(" #### ", "\n#### ").replace(" * ", "\n* ")
+				.replace(" ** ", "\n** ").replace(" *** ", "\n*** ")
+				.replace(" **** ", "\n**** ").replace(" ==", "\n==");
+		String fragment = WikiParser.renderXHTML(s);
+		return fragment;
+	}
 }

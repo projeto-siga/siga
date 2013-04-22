@@ -8,14 +8,21 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 
+
 <siga:pagina titulo="Classificação Documental">
-<script src="format4js.js"></script>
+<script src="/siga/javascript/format4js.js"></script>
 <script type="text/javascript">
-		function executar(input){
+		function aplicarMascara(input){
 		
-			var mask_in = /([0-9]{0,2})\.?([0-9]{0,2})?\.?([0-9]{0,2})?\.?([0-9]{0,2})?([A-Z])?/;
-			var mask_out = "%1$02d.%2$02d.%3$02d.%4$02d";
-			
+			var mask_in = getMascaraIn();
+			var mask_out = getMascaraOut();
+
+			encontrado = input.value.match(mask_in)[0];
+			if (encontrado==null || encontrado == ''){
+				window.alert("Entrada inválida");
+				input.value="";
+				return;
+			}
 			gruposRegEx = mask_in.exec(input.value);
 			gruposRegEx[0] = mask_out;
 			
@@ -40,6 +47,18 @@
 			input.value = mdgw.format.apply(null,gruposRegEx);
 			//document.getElementById('textoFormatado').value = mdgw.format.apply(null,gruposRegEx);
 		}
+
+		function getMascaraIn(){
+			/*mask = $("#mask_in").val();
+			mask.replaceAll('\\','\');
+			return mask;
+			*/
+			return new RegExp($("#mask_in").val());
+		}
+
+		function getMascaraOut(){
+			return $("#mask_out").val();
+		}
 		/*
 		function isDigito(digito){
 			regExDigito = /[0-9,a-z,A-Z]/;
@@ -53,7 +72,15 @@
 
 	//funções de dados
 	function gravarClassificacao(){
+		if($('#codificacao').val() != $('#codificacaoAntiga').val()){
+			confirma = window.confirm('Você está alterando o código da classificação fazendo com que esta subarvore seja movida para outro ponto. Você confirma? PROSSIGA APENAS SE SOUBER O QUE ESTÁ FAZENDO!');
+			if (!confirma){
+				return;
+			}
+		}
+		
 		$('#frmClassificacao').submit();
+		
 	}
 	
 	function gravarExVia(idVia){
@@ -68,8 +95,12 @@
 	var delay = 400;
 	function adicionarVia(){
 		ocultarBotoesClassificacao();
-		$('#divNovaVia').show(delay);
 		ocultarBotoesViasExistentes();
+		$('#divNovaVia').show(delay);
+
+		var targetOffset = $('#divNovaVia').offset().top;
+		$('html,body').animate({scrollTop: targetOffset}, 1000);
+				
 	}
 
 	function cancelarNovaVia(){
@@ -107,6 +138,10 @@
 		$('#divVias .botoesVias').show(delay);
 	}
 </script>
+
+<input id="mask_in" type="hidden" value="${mascaraEntrada}"/>
+<input id="mask_out" type="hidden" value="${mascaraSaida}">
+
 <c:choose>
 	<c:when test="${acao == 'editar_classificacao'}">
 		<c:set var="titulo_pagina" value="Editar Classificação - ${codificacao}"></c:set>
@@ -128,7 +163,7 @@
 						<div class="gt-left-col">
 							<!-- form row -->
 							<div class="gt-form-row gt-width-66">
-								<label>Codificação</label><input id="codificacao" name="codificacao" type="text" class="gt-form-text" value="${exClass.codificacao}"/>
+								<label>Codificação</label><input id="codificacao" name="codificacao" type="text" class="gt-form-text" value="${exClass.codificacao}" onblur="javascript:aplicarMascara(this)"/>
 								<input type="hidden" id="codificacaoAntiga" name="codificacaoAntiga" value="${exClass.codificacao}"/>
 							</div>
 							<!-- /form row -->
@@ -183,72 +218,6 @@
 		
 		<div id="divVias">
 		
-			<!--      NOVA VIA		-->
-			<div id="divNovaVia" style="display: none;">
-				<div class="gt-bd clearfix">
-					<div class="gt-content">
-						<div class="gt-form gt-content-box">
-							<div class="clearfix">
-								<!-- left column -->
-									<div class="gt-left-col">
-									<ww:form id="frmNovaVia" action="gravarVia" method="aGravarVia">
-										<input type="hidden" name="codificacao" value="${exClass.codificacao}"/>
-										<!-- form row -->
-										<div class="gt-form-row gt-width-66">
-											<h3 class="gt-form-head">Nova Via</h3>
-										</div>
-										<!-- /form row -->
-										<!-- form row -->
-										<div class="gt-form-row gt-width-66">
-											<label>Destino</label><ww:select name="idDestino" list="listaExTipoDestinacao"
-														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="[Escolha uma opção]"  
-														theme="simple" />
-										</div>
-										<!-- /form row -->
-										<!-- form row -->
-										<div class="gt-form-row gt-width-66">
-											<label>Arquivo Corrente</label><ww:select name="idTemporalidadeArqCorr" list="listaExTemporalidade"
-														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Não definido"
-														theme="simple" />
-										</div>
-										<!-- /form row -->
-										<!-- form row -->
-										<div class="gt-form-row gt-width-66">
-											<label>Arquivo Intermediário</label><ww:select name="idTemporalidadeArqInterm" list="listaExTemporalidade"
-														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Não definido"
-														theme="simple" />
-										</div>
-										<!-- /form row -->
-										<!-- form row -->
-										<div class="gt-form-row gt-width-66">
-											<label>Destinação Final</label><ww:select name="idDestinacaoFinal" list="listaExTipoDestinacao"
-														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="Não definido"
-														theme="simple" />
-										</div>
-										<!-- /form row -->
-										<!-- form row -->
-										<div class="gt-form-row gt-width-66">
-											<label>Observação</label> <input id="obs" name="obs" type="text" class="gt-form-text"/>
-										</div>
-										<!-- /form row -->
-									</ww:form>
-								</div>
-							</div>
-							<!-- form row -->
-							<div class="gt-form-row">
-								<a id="btGravarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:gravarExVia(0)">Gravar Via</a>
-								<p class="gt-cancel">
-									ou <a href="javascript:void(0);" onclick="javascript:cancelarNovaVia();" style="cursor: pointer;">cancelar via</a>
-								</p>
-							</div>
-							<!-- /form row -->
-						</div>
-					</div>
-				</div>
-			</div>	
-			<!--      NOVA VIA		-->
-			
-			
 			<c:forEach items="${exClass.exViaSet}" var="via">
 			
 			
@@ -306,9 +275,11 @@
 							<!-- form row -->
 							<div class="gt-form-row botoesVias">
 								<a id="btEditarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:editarExVia(${via.id})">Editar Via</a>
-								<p class="gt-cancel">
-									ou <ww:a href="excluirVia.action?idVia=${via.id}&codificacao=${codificacao}">excluir via</ww:a>
-								</p>
+								<c:if test="${via.codVia == numeroDeVias}">
+									<p class="gt-cancel">
+										ou <ww:a href="excluirVia.action?idVia=${via.id}&codificacao=${codificacao}">excluir via</ww:a>
+									</p>
+								</c:if>
 							</div>
 							<!-- /form row -->
 						</div>
@@ -441,6 +412,72 @@
 
 
 			</c:forEach>
+			
+			<!--      NOVA VIA		-->
+			<div id="divNovaVia" style="display: none;">
+				<div class="gt-bd clearfix">
+					<div class="gt-content">
+						<div class="gt-form gt-content-box">
+							<div class="clearfix">
+								<!-- left column -->
+									<div class="gt-left-col">
+									<ww:form id="frmNovaVia" action="gravarVia" method="aGravarVia">
+										<input type="hidden" name="codificacao" value="${exClass.codificacao}"/>
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+											<h3 class="gt-form-head">Nova Via</h3>
+										</div>
+										<!-- /form row -->
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+											<label>Destino</label><ww:select name="idDestino" list="listaExTipoDestinacao"
+														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="[Escolha uma opção]"  
+														theme="simple" />
+										</div>
+										<!-- /form row -->
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+											<label>Arquivo Corrente</label><ww:select name="idTemporalidadeArqCorr" list="listaExTemporalidade"
+														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Não definido"
+														theme="simple" />
+										</div>
+										<!-- /form row -->
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+											<label>Arquivo Intermediário</label><ww:select name="idTemporalidadeArqInterm" list="listaExTemporalidade"
+														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Não definido"
+														theme="simple" />
+										</div>
+										<!-- /form row -->
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+											<label>Destinação Final</label><ww:select name="idDestinacaoFinal" list="listaExTipoDestinacao"
+														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="Não definido"
+														theme="simple" />
+										</div>
+										<!-- /form row -->
+										<!-- form row -->
+										<div class="gt-form-row gt-width-66">
+											<label>Observação</label> <input id="obs" name="obs" type="text" class="gt-form-text"/>
+										</div>
+										<!-- /form row -->
+									</ww:form>
+								</div>
+							</div>
+							<!-- form row -->
+							<div class="gt-form-row">
+								<a id="btGravarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:gravarExVia(0)">Gravar Via</a>
+								<p class="gt-cancel">
+									ou <a href="javascript:void(0);" onclick="javascript:cancelarNovaVia();" style="cursor: pointer;">cancelar via</a>
+								</p>
+							</div>
+							<!-- /form row -->
+						</div>
+					</div>
+				</div>
+			</div>	
+			<!--      NOVA VIA		-->
+			
 		</div>
 	</c:if>
 	

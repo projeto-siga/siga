@@ -1,5 +1,4 @@
 #{extends 'main.html' /}
-
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 
@@ -10,7 +9,8 @@
 		<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum
 			item foi encontrado.</div>
 		#{/elseif }
-
+		
+		
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 			<form action="@{Application.listar}">
 				<input type="hidden" name="filtro.pesquisar" value="true" />
@@ -49,11 +49,11 @@
 					</tr>
 					<tr>
 						<td>Data de abertura</td>
-						<td><input type="text" name="filtro.dtIni"
-							value="${filtro.dtIni}" id="filtro.dtIni" /> a <input
-							type="text" name="filtro.dtFim" value="${filtro.dtFim}"
-							id="filtro.dtFim" />
+						<td>
+							<input type="text" name="filtro.dtIni" onblur="javascript:verifica_data(this,true)" value="${filtro.dtIni}" id="filtro.dtIni" /> a 
+							<input type="text" name="filtro.dtFim" onblur="javascript:verifica_data(this,true)" value="${filtro.dtFim}" id="filtro.dtFim" />
 						</td>
+					
 					</tr>
 					<tr>
 						<td>Item</td>

@@ -1,0 +1,19 @@
+#{extends 'main.html' /}
+#{set title:'Lista Salas' /}
+
+<div>
+<h3>Lista de salas </h3>
+<ul>
+#{list items:listLocais, as:'locais'}
+	<li>${locais.cod_local}</li>
+	<li>${locais.local}</li>
+	<li>${locais.cod_forum}</li>
+	<li>${locais.dias}</li>
+	<li>${locais.hora_ini}</li>
+	<li>${locais.hora_fim}</li>
+	<li>${locais.endereco}</li>
+	------------------------
+#{/list}
+</ul>
+</div>
+<a href="/">Voltar</a>

@@ -137,52 +137,85 @@ public class ExClassificacaoAction
 			lerForm(exClass);
 			
 			if(exClassAntiga!=null && !exClassAntiga.getCodificacao().equals(getCodificacao())){
-				//mover classificacao
-				exClass.setHisIdIni(exClassAntiga.getHisIdIni());
-				dao().gravarComHistorico(exClass,exClassAntiga, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
-				copiarVias(exClass, exClassAntiga);
+				moverClassificacao(exClass,exClassAntiga);
 			}else{
 				//novaClassificacao
 				dao().gravarComHistorico(exClass,null, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
 			}
 			
 		}else{
-			//alterar classificacao existente
-			ExClassificacao exClassNovo = new ExClassificacao();
-			try {
-				PropertyUtils.copyProperties(exClassNovo, exClass);
-				//novo id
-				exClassNovo.setId(null);
-				//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
-				//HibernateException:Found shared references to a collection
-				Set<ExVia> setExVia = new HashSet<ExVia>();
-				exClassNovo.setExViaSet(setExVia);
-				
-				Set<ExModelo> setExModelo = new HashSet<ExModelo>();
-				setExModelo.addAll(exClass.getExModeloSet());
-				exClassNovo.setExModeloSet(setExModelo);
-				
-				lerForm(exClassNovo);
-				
-				dao().gravarComHistorico(exClassNovo, exClass, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
-				
-				copiarVias(exClassNovo,exClass);
-
-
-			} catch (Exception e) {
-				throw new AplicacaoException(
-						"Erro ao copiar as propriedades do modelo anterior.");
-			}
-			
-			
-
-			dao().commitTransacao();
+			alterarClassificacaoExistente();
 		}
 		
 
 		
 		setMensagem("Classificação salva!");
 		return SUCCESS;
+	}
+
+	private void alterarClassificacaoExistente() throws AplicacaoException {
+		ExClassificacao exClassNovo = new ExClassificacao();
+		try {
+			PropertyUtils.copyProperties(exClassNovo, exClass);
+			//novo id
+			exClassNovo.setId(null);
+			//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
+			//HibernateException:Found shared references to a collection
+			Set<ExVia> setExVia = new HashSet<ExVia>();
+			exClassNovo.setExViaSet(setExVia);
+			
+			Set<ExModelo> setExModelo = new HashSet<ExModelo>();
+			exClassNovo.setExModeloSet(setExModelo);
+			
+			lerForm(exClassNovo);
+			
+			dao().gravarComHistorico(exClassNovo, exClass, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+			
+			copiarReferencias(exClassNovo,exClass);
+
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro ao copiar as propriedades do modelo anterior.");
+		}
+		dao().commitTransacao();
+
+		
+	}
+
+	private void moverClassificacao(ExClassificacao exClassNova, ExClassificacao exClassAntiga)
+			throws AplicacaoException {
+		exClassNova.setHisIdIni(exClassAntiga.getHisIdIni());
+		dao().gravarComHistorico(exClassNova,exClassAntiga, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+		copiarReferencias(exClassNova,exClassAntiga);
+	}
+
+	private void copiarReferencias(ExClassificacao exClassNova, ExClassificacao exClassAntiga)
+			throws AplicacaoException {
+		copiarVias(exClassNova, exClassAntiga);
+		copiarModelos(exClassNova, exClassAntiga);
+	}
+
+	private void copiarModelos(ExClassificacao exClassNovo,
+			ExClassificacao exClassAntigo) throws AplicacaoException {
+		try{
+			for (ExModelo modAntigo: exClassAntigo.getExModeloSet()) {
+				ExModelo modNovo = new ExModelo();
+				
+				PropertyUtils.copyProperties(modNovo, modAntigo);
+				modNovo.setIdMod(null);
+				modNovo.setExClassificacao(exClassNovo);
+
+				dao().gravarComHistorico(modNovo, modAntigo, null, getIdentidadeCadastrante());
+				if(exClassNovo.getExModeloSet()==null){
+					exClassNovo.setExModeloSet(new HashSet<ExModelo>());
+				}
+				exClassNovo.getExModeloSet().add(modNovo);
+				
+			}
+		}catch (Exception e) {
+			throw new AplicacaoException("Não foi possível fazer cópia dos modelos!");
+		}
+
 	}
 
 	private void copiarVias(ExClassificacao exClassNovo,ExClassificacao exClassAntigo)
@@ -622,6 +655,14 @@ public class ExClassificacaoAction
 
 	public String getCodigoVia() {
 		return codigoVia;
+	}
+	
+	public String getMascaraEntrada(){
+		return MascaraUtil.getInstance().getMascaraEntrada();
+	}
+	
+	public String getMascaraSaida(){
+		return MascaraUtil.getInstance().getMascaraSaida();
 	}
 	
 }

@@ -39,7 +39,7 @@ public class MascaraUtil {
 	 * Retorna Expressão regular com formato em que a classificação documental deve estar de acordo 
 	 * @return - regex da classificacao documental
 	 */
-	private String getMascaraEntrada(){
+	public String getMascaraEntrada(){
 		return MASK_IN;
 	}
 	
@@ -47,7 +47,7 @@ public class MascaraUtil {
 	 * Retorna o formato da máscara a ser produzida na saída (vide Formatter.java)
 	 * @return - máscara de saída
 	 */
-	private String getMascaraSaida() {
+	public String getMascaraSaida() {
 		return MASK_OUT;
 	} 
 	

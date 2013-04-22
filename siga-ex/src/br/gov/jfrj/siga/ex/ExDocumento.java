@@ -1763,7 +1763,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public List<DpPessoa> getSubscritorECosignatarios() {
 		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
 
-		subscritores.add(getSubscritor());
+		if(getSubscritor() != null)
+			subscritores.add(getSubscritor());
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
 			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO

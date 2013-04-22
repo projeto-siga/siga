@@ -2854,7 +2854,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
 			
-			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+			encerrarAutomatico(cadastrante, lotaCadastrante, mobPai, dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
 			
 		} catch (final Exception e) {
 			cancelarAlteracao();

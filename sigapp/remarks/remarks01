@@ -1,0 +1,11 @@
+<script type="text/javascript" language="javascript">
+function lista_foruns(){
+	alert('ok na funcao');
+	$.ajax({
+	type: "GET",
+	url: "/foruns_listar"
+	}).done(function( msg ) {
+	getElemetById(div_msg).innerHTML = 'conteudo da div';
+	}); 
+}
+</script>

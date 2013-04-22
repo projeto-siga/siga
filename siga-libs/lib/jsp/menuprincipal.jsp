@@ -32,7 +32,7 @@
 
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
 						<li><a
-							href="${f:getURLSistema('siga.gc')}" >Gestão de Conhecimento</a>
+							href="${/sigagc/}" >Gestão de Conhecimento</a>
 						</li>
 					</c:if>
 

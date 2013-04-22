@@ -190,20 +190,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		this.motivoFechamentoAbertura = motivoFechamentoAbertura;
 	}
 
-	public static void main(String[] args) {
-		final Pattern p = Pattern
-				.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
-		final Matcher m = p.matcher("SR1.1");
-		System.out.println(m.groupCount());
-		System.out.println(m.find());
-		System.out.println("Grupo 1: " + m.group(1));
-		System.out.println("Grupo 2: " + m.group(2));
-		System.out.println("Grupo 3: " + m.group(3));
-		System.out.println("Grupo 4: " + m.group(4));
-		System.out.println("Grupo 5: " + m.group(5));
-		System.out.println("Grupo 6: " + m.group(6));
-	}
-
 	@Override
 	public Long getId() {
 		return idSolicitacao;
@@ -223,7 +209,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
 		final Pattern p = Pattern
-				.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
+		.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -483,15 +469,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				&& getAndamentoSetComCancelados().size() > 0;
 	}
 
-	public boolean temFilha() {
-		boolean var = false;
-		if (this.solicitacaoPai == null)
-			var = false;
-		else if (this.idSolicitacao != this.solicitacaoPai.idSolicitacao)
-			var = true;
-		return var;
+	public boolean isFilha() {
+		return (this.solicitacaoPai !=null);
 	}
-
+	
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
@@ -699,7 +680,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
-		return estaCom(lota, pess) && isEmAtendimento() && !temFilha();
+		return estaCom(lota, pess) && isEmAtendimento() && !isFilha();
 	}
 
 	public boolean podeDesfazerAndamento(DpLotacao lota, DpPessoa pess) {

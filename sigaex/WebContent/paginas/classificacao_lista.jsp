@@ -61,7 +61,7 @@
 									</c:if>
 									<c:if test="${via.codVia>1}">
 										<tr>
-											<td>${via.exClassificacao.codificacao}-${via.letraDaVia}</td>
+											<td>${via.exClassificacao.codificacao}-${via.letraVia}</td>
 											<td>${via.codVia}</td>
 											<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
 											<td>${via.temporalidadeCorrente.descTemporalidade}</td>

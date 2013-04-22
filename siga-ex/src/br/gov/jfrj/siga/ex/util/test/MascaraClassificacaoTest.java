@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 
 public class MascaraClassificacaoTest extends TestCase {
 	
-	private static final String MASK_IN_1 = "([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?([A-Z])?";
+	private static final String MASK_IN_1 = "([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?-?([A-Z])?";
 	private static final String MASK_OUT_1 = "%1$02d.%2$02d.%3$02d.%4$02d";
 
 	private static final String MASK_IN_2 = "([0-9]{0,2})\\.?([0-9]{3})?\\.?([0-9]{2})?";
@@ -34,6 +34,11 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(m.formatar("1122"),"11.22.00.00");
 		assertEquals(m.formatar("112233"),"11.22.33.00");
 		assertEquals(m.formatar("11223"),"11.22.03.00");
+		assertEquals(m.formatar("1.2.3.4"),"01.02.03.04");
+		assertEquals(m.formatar("1.2.3"),"01.02.03.00");
+		assertEquals(m.formatar("1.20"),"01.20.00.00");
+		assertEquals(m.formatar("1.21.22.1"),"01.21.22.01");
+		assertEquals(m.formatar("1.21.22.1-A"),"01.21.22.01");
 		assertEquals(m.formatar("0"),"00.00.00.00");
 		assertEquals(m.formatar("1"),"01.00.00.00");
 		assertEquals(m.formatar(""),"00.00.00.00");
@@ -224,8 +229,6 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertNull(result);
 		
 
-
-		
 	
 	}
 }

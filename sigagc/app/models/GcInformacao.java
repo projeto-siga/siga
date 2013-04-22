@@ -42,7 +42,9 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentes", query = "from GcInformacao i where i.hisDtFim is null order by i.hisDtIni desc"),
 		@NamedQuery(name = "maisVisitados", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null group by i order by count(*) desc"),
-		@NamedQuery(name = "maisVisitados", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null group by i order by count(*) desc"),
+		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
+		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
+		@NamedQuery(name = "principaisTags", query = "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
 		
 })
 // select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join

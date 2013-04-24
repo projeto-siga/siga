@@ -265,4 +265,9 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	public int getNivel(){
 		return MascaraUtil.getInstance().calcularNivel(this.getCodificacao());
 	}
+	
+	@Override
+	public String toString() {
+		return getCodificacao() + " " + getDescricao();
+	}
 }

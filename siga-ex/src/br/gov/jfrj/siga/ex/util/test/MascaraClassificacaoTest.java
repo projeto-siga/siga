@@ -60,6 +60,12 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(m.formatar("0"),"0-00-000");
 		assertEquals(m.formatar(""),"0-00-000");
 		
+
+
+	}
+
+	public void testBuscaDeFilhos() {
+		MascaraUtil m = MascaraUtil.getInstance();
 		/*TESTE MÁSCARA DE BUSCA DE FILHOS*/ 
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
@@ -107,39 +113,10 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(m.getMscFilho("11.000.00",true),"11.___.__");
 		assertEquals(m.getMscFilho("11.222",true),"11.222.__");
 		assertEquals(m.getMscFilho("11.222.33",true),"11.222.33");
-
-		/*TESTE MÁSCARA DE BUSCA TODOS DE UM DETERMINADO NÍVEL*/
-		m.setMascaraEntrada(MASK_IN_1);
-		m.setMascaraSaida(MASK_OUT_1);
-		assertEquals(m.getMscTodosDoNivel(0),"__.00.00.00");
-		assertEquals(m.getMscTodosDoNivel(1),"__.__.00.00");
-		assertEquals(m.getMscTodosDoNivel(2),"__.__.__.00");
-		assertEquals(m.getMscTodosDoNivel(3),"__.__.__.__");
-		assertEquals(m.getMscTodosDoNivel(-1),"__.__.__.__");
-		assertEquals(m.getMscTodosDoNivel(99999),"__.__.__.__");
-		assertEquals(m.getMscTodosDoMaiorNivel(),"__.__.__.__");
-
-
-		m.setMascaraEntrada(MASK_IN_2);
-		m.setMascaraSaida(MASK_OUT_2);
-		assertEquals(m.getMscTodosDoNivel(0),"__.000.00");
-		assertEquals(m.getMscTodosDoNivel(1),"__.___.00");
-		assertEquals(m.getMscTodosDoNivel(2),"__.___.__");
-		assertEquals(m.getMscTodosDoNivel(-1),"__.___.__");
-		assertEquals(m.getMscTodosDoNivel(99999),"__.___.__");
-		assertEquals(m.getMscTodosDoMaiorNivel(),"__.___.__");
-
-		
-		m.setMascaraEntrada(MASK_IN_3);
-		m.setMascaraSaida(MASK_OUT_3);
-		assertEquals(m.getMscTodosDoNivel(0),"_-00-000");
-		assertEquals(m.getMscTodosDoNivel(1),"_-__-000");
-		assertEquals(m.getMscTodosDoNivel(2),"_-__-___");
-		assertEquals(m.getMscTodosDoNivel(-1),"_-__-___");
-		assertEquals(m.getMscTodosDoNivel(99999),"_-__-___");
-		assertEquals(m.getMscTodosDoMaiorNivel(),"_-__-___");
-
-
+	}
+	
+	public void testBuscaDePais(){
+		MascaraUtil m = MascaraUtil.getInstance();
 		/*TESTE BUSCA DE PAIS*/
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
@@ -227,8 +204,83 @@ public class MascaraClassificacaoTest extends TestCase {
 		
 		result = m.getPais("1");
 		assertNull(result);
-		
 
+	}
 	
+	public void testBuscaPorNivel(){
+		MascaraUtil m = MascaraUtil.getInstance();
+		/*TESTE MÁSCARA DE BUSCA TODOS DE UM DETERMINADO NÍVEL*/
+		m.setMascaraEntrada(MASK_IN_1);
+		m.setMascaraSaida(MASK_OUT_1);
+		assertEquals(m.getMscTodosDoNivel(0),"__.00.00.00");
+		assertEquals(m.getMscTodosDoNivel(1),"__.__.00.00");
+		assertEquals(m.getMscTodosDoNivel(2),"__.__.__.00");
+		assertEquals(m.getMscTodosDoNivel(3),"__.__.__.__");
+		assertEquals(m.getMscTodosDoNivel(-1),"__.__.__.__");
+		assertEquals(m.getMscTodosDoNivel(99999),"__.__.__.__");
+		assertEquals(m.getMscTodosDoMaiorNivel(),"__.__.__.__");
+
+
+		m.setMascaraEntrada(MASK_IN_2);
+		m.setMascaraSaida(MASK_OUT_2);
+		assertEquals(m.getMscTodosDoNivel(0),"__.000.00");
+		assertEquals(m.getMscTodosDoNivel(1),"__.___.00");
+		assertEquals(m.getMscTodosDoNivel(2),"__.___.__");
+		assertEquals(m.getMscTodosDoNivel(-1),"__.___.__");
+		assertEquals(m.getMscTodosDoNivel(99999),"__.___.__");
+		assertEquals(m.getMscTodosDoMaiorNivel(),"__.___.__");
+
+		
+		m.setMascaraEntrada(MASK_IN_3);
+		m.setMascaraSaida(MASK_OUT_3);
+		assertEquals(m.getMscTodosDoNivel(0),"_-00-000");
+		assertEquals(m.getMscTodosDoNivel(1),"_-__-000");
+		assertEquals(m.getMscTodosDoNivel(2),"_-__-___");
+		assertEquals(m.getMscTodosDoNivel(-1),"_-__-___");
+		assertEquals(m.getMscTodosDoNivel(99999),"_-__-___");
+		assertEquals(m.getMscTodosDoMaiorNivel(),"_-__-___");
+
+	}
+	public void testSunstituicao(){
+		MascaraUtil m = MascaraUtil.getInstance();
+		
+		m.setMascaraEntrada(MASK_IN_1);
+		m.setMascaraSaida(MASK_OUT_1);
+		
+		assertEquals("01.02.03.04",m.substituir("01.02.03.04","__.__.__.__"));
+		assertEquals("05.02.03.04",m.substituir("01.02.03.04","05.__.__.__"));
+		assertEquals("05.06.03.04",m.substituir("01.02.03.04","05.06.__.__"));
+		assertEquals("05.06.07.04",m.substituir("01.02.03.04","05.06.07.__"));
+		assertEquals("05.06.07.08",m.substituir("01.02.03.04","05.06.07.08"));
+		
+		m.setMascaraEntrada(MASK_IN_2);
+		m.setMascaraSaida(MASK_OUT_2);
+		assertEquals("01.002.03",m.substituir("01.002.03","__.___.__"));
+		assertEquals("05.002.03",m.substituir("01.002.03","05.___.__"));
+		assertEquals("05.006.03",m.substituir("01.002.03","05.006.__"));
+		assertEquals("05.006.07",m.substituir("01.002.03","05.006.07"));
+		
+		m.setMascaraEntrada(MASK_IN_3);
+		m.setMascaraSaida(MASK_OUT_3);
+		assertEquals("1-22-333",m.substituir("1-22-333","_-__-___"));
+		assertEquals("5-22-333",m.substituir("1-22-333","5-__-___"));
+		assertEquals("5-66-333",m.substituir("1-22-333","5-66-___"));
+		assertEquals("5-66-777",m.substituir("1-22-333","5-66-777"));
+		
+		m.setMascaraEntrada(MASK_IN_4);
+		m.setMascaraSaida(MASK_OUT_4);
+		assertEquals("1-22222",m.substituir("1-22222","_-_____"));
+		assertEquals("5-22222",m.substituir("1-22222","5-_____"));
+		assertEquals("5-66666",m.substituir("1-22222","5-66666"));
+
+		//máscaras e valores inválidos
+		assertNull(m.substituir("01.02.03.04","__,__,__,__"));
+		assertNull(m.substituir("01.02.03.04","__.__.__"));
+		assertNull(m.substituir("01.02.03.04","abcde012345"));
+		assertNull(m.substituir("01.02.03.04",""));
+		assertNull(m.substituir("01.02.03.04",null));
+		assertNull(m.substituir("","__.__.__.__"));
+		assertNull(m.substituir(null,"__.__.__.__"));
+		assertNull(m.substituir("1","__.__.__.__"));
 	}
 }

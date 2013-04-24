@@ -176,7 +176,7 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte 
 		this.idClassificacao = idClassificacao;
 	}
 
-	public Set getExModeloSet() {
+	public Set<ExModelo> getExModeloSet() {
 		return exModeloSet;
 	}
 

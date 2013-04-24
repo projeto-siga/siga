@@ -19,7 +19,7 @@
 
 			encontrado = input.value.match(mask_in)[0];
 			if (encontrado==null || encontrado == ''){
-				window.alert("Entrada inválida");
+				window.alert("Codificação inválida!");
 				input.value="";
 				return;
 			}
@@ -72,7 +72,7 @@
 
 	//funções de dados
 	function gravarClassificacao(){
-		if($('#codificacao').val() != $('#codificacaoAntiga').val()){
+		if($('#codificacaoAntiga').val() != "" && $('#codificacao').val() != $('#codificacaoAntiga').val()){
 			confirma = window.confirm('Você está alterando o código da classificação fazendo com que esta subarvore seja movida para outro ponto. Você confirma? PROSSIGA APENAS SE SOUBER O QUE ESTÁ FAZENDO!');
 			if (!confirma){
 				return;
@@ -160,6 +160,7 @@
 				<div id="divClassificacao" class="clearfix">
 					<!-- left column -->
 					<ww:form id="frmClassificacao" action="gravar" method="aGravar">
+						<input type="hidden" id="acao" name="acao" value="${acao}" />
 						<div class="gt-left-col">
 							<!-- form row -->
 							<div class="gt-form-row gt-width-66">

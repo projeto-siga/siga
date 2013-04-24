@@ -37,8 +37,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -64,6 +67,7 @@ import org.hibernate.search.Search;
 import org.hibernate.util.ReflectHelper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -81,6 +85,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
+import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
@@ -1574,8 +1579,8 @@ public class ExDao extends CpDao {
 				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy(
 				"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao", "read-only", "ex");
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
-				"read-only", "ex");
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
+//				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDespacho",
 				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDestinacao",
@@ -1685,4 +1690,75 @@ public class ExDao extends CpDao {
 		q.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
 		return q.list();
 	}
+	
+	public List<ExClassificacao> consultarFilhos(ExClassificacao exClass,boolean niveisAbaixo){
+		final Query query = getSessao().getNamedQuery("consultarFilhosExClassificacao");
+		query.setString("mascara", MascaraUtil.getInstance().getMscFilho(exClass.getCodificacao().toString(),niveisAbaixo));
+		
+		return query.list().subList(1, query.list().size());
+	}
+	
+	public void alterarExClassificacao(ExClassificacao exClassNovo,ExClassificacao exClassAntigo,
+			Date dt, CpIdentidade identidadeCadastrante) throws AplicacaoException{
+		try {
+
+			gravarComHistorico(exClassNovo, exClassAntigo, dt,identidadeCadastrante);
+			copiarReferencias(exClassNovo,exClassAntigo,dt,identidadeCadastrante);
+
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro ao copiar as propriedades do modelo anterior.");
+		}
+
+	} 
+	
+	private void copiarReferencias(ExClassificacao exClassNova, ExClassificacao exClassAntiga, Date dt, CpIdentidade identidadeCadastrante)	throws AplicacaoException {
+		copiarVias(exClassNova, exClassAntiga,dt,identidadeCadastrante);
+		copiarModelos(exClassNova, exClassAntiga,dt,identidadeCadastrante);
+	}
+
+	private void copiarModelos(ExClassificacao exClassNovo,
+			ExClassificacao exClassAntigo, Date dt, CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		try{
+			for (ExModelo modAntigo: exClassAntigo.getExModeloSet()) {
+				ExModelo modNovo = new ExModelo();
+				
+				PropertyUtils.copyProperties(modNovo, modAntigo);
+				modNovo.setIdMod(null);
+				modNovo.setExClassificacao(exClassNovo);
+		
+				gravarComHistorico(modNovo, modAntigo, dt, identidadeCadastrante);
+				if(exClassNovo.getExModeloSet()==null){
+					exClassNovo.setExModeloSet(new HashSet<ExModelo>());
+				}
+				exClassNovo.getExModeloSet().add(modNovo);
+				
+			}
+		}catch (Exception e) {
+			throw new AplicacaoException("Não foi possível fazer cópia dos modelos!");
+		}
+}
+
+	private void copiarVias(ExClassificacao exClassNovo,ExClassificacao exClassAntigo, Date dt, CpIdentidade identidadeCadastrante)
+		throws AplicacaoException {
+		try{
+			for (ExVia viaAntiga: exClassAntigo.getExViaSet()) {
+				ExVia viaNova = new ExVia();
+				
+				PropertyUtils.copyProperties(viaNova, viaAntiga);
+				viaNova.setId(null);
+				viaNova.setExClassificacao(exClassNovo);
+		
+				gravarComHistorico(viaNova, viaAntiga, dt, identidadeCadastrante);
+				if(exClassNovo.getExViaSet()==null){
+					exClassNovo.setExViaSet(new HashSet<ExVia>());
+				}
+				exClassNovo.getExViaSet().add(viaNova);
+				
+			}
+		}catch (Exception e) {
+			throw new AplicacaoException("Não foi possível fazer cópia das vias!");
+		}
+	}
+
 }

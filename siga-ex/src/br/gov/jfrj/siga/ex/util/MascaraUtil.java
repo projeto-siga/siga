@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -273,6 +274,41 @@ public class MascaraUtil {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Substitui um valor pela máscara correspondente
+	 * @param s - String a ter o valor substituído. A string deve estar no formato da máscara definida em getMascaraentrada().<br/>
+	 * 			  Ex:01.02.03.04
+	 * @param mask - Máscara que será aplicada ao valor. A string ser compatível com o formato da máscara definida em getMascaraentrada().<br/> 
+	 * 				ex: 05.06.__.__
+	 * @return O valor da entrada alterado de acordo com a máscara. Retorna null, em caso de erros de formatação ou máscaras incompatíveis.  
+	 */
+	public String substituir(String valor, String masklike) {
+		if (valor==null || masklike==null ||valor.length()!=masklike.length()){
+			return null;
+		}
+		Pattern p = Pattern.compile(getMascaraEntrada());
+		Matcher mValor = p.matcher(valor);
+		
+		String mascaraLike =  masklike.replaceAll("_", "0");
+		Matcher mMaskLike = p.matcher(mascaraLike);
+		
+		if(!mValor.matches() || !mMaskLike.matches()){
+			return null;
+		}
+		
+		StringBuffer result = new StringBuffer();
+		char[] caracteres = masklike.toCharArray();
+		for (int i = 0; i < caracteres.length; i++) {
+			if(caracteres[i]=='_'){
+				result.append(valor.charAt(i));
+			}else{
+				result.append(caracteres[i]);
+			}
+		}
+		
+		return result.toString();
 	}
 
 		

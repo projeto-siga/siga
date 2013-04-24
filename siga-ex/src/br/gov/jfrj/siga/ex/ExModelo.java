@@ -25,6 +25,8 @@ import java.io.Serializable;
 
 import org.hibernate.Hibernate;
 
+import br.gov.jfrj.siga.model.Assemelhavel;
+
 /**
  * A class that represents a row in the 'EX_MODELO' table. This class may be
  * customized as it is never re-generated after being created.
@@ -64,6 +66,18 @@ public class ExModelo extends AbstractExModelo implements Serializable {
 			cacheConteudoBlobMod = br.gov.jfrj.siga.cp.util.Blob
 					.toByteArray(getConteudoBlobMod());
 		return cacheConteudoBlobMod;
+	}
+
+	public Long getId() {
+		return getIdMod();
+	}
+
+	public void setId(Long id) {
+		setIdMod(id);
+	}
+
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		return false;
 	}
 
 }

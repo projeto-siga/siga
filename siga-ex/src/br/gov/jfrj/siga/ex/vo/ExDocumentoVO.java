@@ -368,17 +368,6 @@ public class ExDocumentoVO extends ExVO {
 
 		// <ww:param name="idFormaDoc">60</ww:param>
 		vo.addAcao(
-				"link_add",
-				"Criar Anexo",
-				"/expediente/doc",
-				"editar",
-				Ex.getInstance()
-						.getComp()
-						.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
-				null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
-				null, null);
-
-		vo.addAcao(
 				"arrow_undo",
 				"Desfazer Cancelamento",
 				"/expediente/doc",

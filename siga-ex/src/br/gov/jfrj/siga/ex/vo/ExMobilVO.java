@@ -263,6 +263,16 @@ public class ExMobilVO extends ExVO {
 					Ex.getInstance().getComp()
 							.podeVisualizarImpressao(titular, lotaTitular, mob),
 					null, "&popup=true", null, null);
+			addAcao(
+					"link_add",
+					"Criar Anexo",
+					"/expediente/doc",
+					"editar",
+					Ex.getInstance()
+							.getComp()
+							.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
+					null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
+					null, null);
 		}
 		addAcao("link_break", "Desentranhar",
 				"/expediente/mov",

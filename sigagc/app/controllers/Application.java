@@ -23,6 +23,7 @@ import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 
+import org.joda.time.LocalDate;
 import org.mcavallo.opencloud.Cloud;
 import org.mcavallo.opencloud.Tag;
 
@@ -296,10 +297,38 @@ public class Application extends SigaApplication {
 				d -= 1;
 			}
 		}
+		
+		LocalDate ld = new LocalDate();
+		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
+		
+		// Header
+		StringBuilder sb = new StringBuilder();
+		sb.append("['");
+		sb.append("Mês");
+		sb.append("',");
+		sb.append("'");
+		sb.append("Visitas");
+		sb.append("',");
+		sb.append("'Novos'],");
+
+		// Values
+		for (int i = -6; i <= 0; i++) {
+			String m = ld.plusMonths(i).toString("yyyy-MM");
+			sb.append("['");
+			sb.append(ld.plusMonths(i).toString("MMM/yy"));
+			sb.append("',");
+			float v = 0;
+			sb.append(v);
+			sb.append(",");
+			sb.append(v);
+			sb.append(",");
+			sb.append("],");
+		}
+		String evolucao = sb.toString();
 
 		render(lista, listaMaisRecentes, listaMaisVisitados,
 				listaPrincipaisAutores, listaPrincipaisLotacoes,
-				listaPrincipaisTags, cloud);
+				listaPrincipaisTags, cloud, evolucao);
 	}
 
 	public static void listar(GcInformacaoFiltro filtro) {

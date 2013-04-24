@@ -1,4 +1,37 @@
 #{extends 'main.html' /} #{set title:'Informações' /}
+#{set 'moreHead'}
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+	google.load('visualization', '1', {
+		packages : [ 'corechart', 'gauge' ]
+	});
+</script>
+<script type="text/javascript">
+function drawGraphs() {
+	drawEvolution();
+}
+
+function drawEvolution() {
+	// Some raw data (not necessarily accurate)
+	var data = google.visualization.arrayToDataTable([${evolucao.raw()}]);
+
+	// Create and draw the visualization.
+	var ac = new google.visualization.ComboChart(document
+			.getElementById('evolution'));
+	ac.draw(data, {
+		seriesType : "bars",
+		legend : {position: 'top', alignment : 'center'},
+		isStacked : true,
+		width : "100%",
+		height : "100%"
+	});
+}
+
+	google.setOnLoadCallback(drawGraphs);
+</script>
+
+#{/set}
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -149,7 +182,23 @@
 				#{list items:cloud.tags(),as:'tag'}
 					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a> 
 				#{/list}
-</div> 
+			</div>
+			
+			<br />
+			<h2>Evolução</h2>
+			<div id="evolution" class="gt-content-box gt-tag-cloud">
+			</div> 
+			 
+			<br />
+			<h2>Mês Passado</h2>
+			<div id="lastmonth" class="gt-content-box gt-tag-cloud">
+			</div> 
+			 
+			<br />
+			<h2>Mês Corrente</h2>
+			<div id="thismonth" class="gt-content-box gt-tag-cloud">
+			</div> 
+			 
 		</div>
 	</div>
 </div>

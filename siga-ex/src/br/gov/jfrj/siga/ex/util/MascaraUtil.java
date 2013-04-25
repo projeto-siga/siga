@@ -113,7 +113,7 @@ public class MascaraUtil {
 				nivel = getUltimoNivel(txt);
 			}
 			StringBuffer sb = new StringBuffer(txt);
-			nivel++;
+//			nivel++;
 			
 			for (int i = nivel; i > 0; i--) {
 				int inicio = me.start(i);
@@ -139,7 +139,7 @@ public class MascaraUtil {
 		if(me.matches()){
 			for (int i = me.groupCount(); i > 0 ; i--) {
 				if (me.group(i)!=null){
-					return i-1;
+					return i;
 				}
 			}
 		}
@@ -229,6 +229,9 @@ public class MascaraUtil {
 	 * @return
 	 */
 	public int calcularNivel(String codificacao) {
+		if (codificacao.equals(formatar("0"))){
+			return 1;
+		}
 		Pattern pe = Pattern.compile(getMascaraEntrada());
 		Matcher me = pe.matcher(codificacao);
 		int nivel = 0;

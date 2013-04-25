@@ -1670,8 +1670,8 @@ public class ExDao extends CpDao {
 		if (pais==null){
 			return exClass.getDescrClassificacao();
 		}
-		pais = Arrays.copyOf(pais, pais.length+1);
-		pais[pais.length-1]= exClass.getCodificacao();
+//		pais = Arrays.copyOf(pais, pais.length+1);
+//		pais[pais.length-1]= exClass.getCodificacao();
 		
 		Query q = getSessao().getNamedQuery("consultarDescricaoExClassificacao");
 		q.setParameterList("listaCodificacao", pais);
@@ -1681,14 +1681,13 @@ public class ExDao extends CpDao {
 			sb.append(descr);
 			sb.append(": ");
 		}
-		sb.deleteCharAt(sb.lastIndexOf(": "));
+		
+		sb.append(exClass.getDescrClassificacao());
 		return sb.toString();
 	}
 	
 	public List<ExClassificacao> consultarExClassificacaoVigente(){
-		Query q = getSessao().getNamedQuery("consultarExClassificacaoVigente");
-		q.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
-		return q.list();
+		return consultarExClassificacao(MascaraUtil.getInstance().getMscTodosDoMaiorNivel(),"");
 	}
 	
 	public List<ExClassificacao> consultarFilhos(ExClassificacao exClass,boolean niveisAbaixo){
@@ -1698,67 +1697,20 @@ public class ExDao extends CpDao {
 		return query.list().subList(1, query.list().size());
 	}
 	
-	public void alterarExClassificacao(ExClassificacao exClassNovo,ExClassificacao exClassAntigo,
-			Date dt, CpIdentidade identidadeCadastrante) throws AplicacaoException{
-		try {
-
-			gravarComHistorico(exClassNovo, exClassAntigo, dt,identidadeCadastrante);
-			copiarReferencias(exClassNovo,exClassAntigo,dt,identidadeCadastrante);
-
-		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro ao copiar as propriedades do modelo anterior.");
-		}
-
-	} 
-	
-	private void copiarReferencias(ExClassificacao exClassNova, ExClassificacao exClassAntiga, Date dt, CpIdentidade identidadeCadastrante)	throws AplicacaoException {
-		copiarVias(exClassNova, exClassAntiga,dt,identidadeCadastrante);
-		copiarModelos(exClassNova, exClassAntiga,dt,identidadeCadastrante);
+	public List<ExClassificacao> consultarExClassificacao(String mascaraLike,
+			String descrClassificacao) {
+		Query q = getSessao().getNamedQuery("consultarExClassificacaoPorMascara");
+		q.setString("mascara", mascaraLike);
+		q.setString("descrClassificacao", descrClassificacao.toUpperCase());
+		
+		return q.list();
 	}
 
-	private void copiarModelos(ExClassificacao exClassNovo,
-			ExClassificacao exClassAntigo, Date dt, CpIdentidade identidadeCadastrante) throws AplicacaoException {
-		try{
-			for (ExModelo modAntigo: exClassAntigo.getExModeloSet()) {
-				ExModelo modNovo = new ExModelo();
-				
-				PropertyUtils.copyProperties(modNovo, modAntigo);
-				modNovo.setIdMod(null);
-				modNovo.setExClassificacao(exClassNovo);
-		
-				gravarComHistorico(modNovo, modAntigo, dt, identidadeCadastrante);
-				if(exClassNovo.getExModeloSet()==null){
-					exClassNovo.setExModeloSet(new HashSet<ExModelo>());
-				}
-				exClassNovo.getExModeloSet().add(modNovo);
-				
-			}
-		}catch (Exception e) {
-			throw new AplicacaoException("Não foi possível fazer cópia dos modelos!");
-		}
-}
-
-	private void copiarVias(ExClassificacao exClassNovo,ExClassificacao exClassAntigo, Date dt, CpIdentidade identidadeCadastrante)
-		throws AplicacaoException {
-		try{
-			for (ExVia viaAntiga: exClassAntigo.getExViaSet()) {
-				ExVia viaNova = new ExVia();
-				
-				PropertyUtils.copyProperties(viaNova, viaAntiga);
-				viaNova.setId(null);
-				viaNova.setExClassificacao(exClassNovo);
-		
-				gravarComHistorico(viaNova, viaAntiga, dt, identidadeCadastrante);
-				if(exClassNovo.getExViaSet()==null){
-					exClassNovo.setExViaSet(new HashSet<ExVia>());
-				}
-				exClassNovo.getExViaSet().add(viaNova);
-				
-			}
-		}catch (Exception e) {
-			throw new AplicacaoException("Não foi possível fazer cópia das vias!");
-		}
+	public ExClassificacao consultarExClassificacao(String codificacao) {
+		ExClassificacao flt = new ExClassificacao();
+		flt.setSigla(codificacao);
+		return ExDao.getInstance().consultarPorSigla(flt);
 	}
+
 
 }

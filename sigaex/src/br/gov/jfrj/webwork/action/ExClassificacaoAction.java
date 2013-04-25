@@ -39,6 +39,8 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExVia;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.SigaSelecionavelActionSupport;
@@ -123,9 +125,7 @@ public class ExClassificacaoAction
 	}
 
 	private ExClassificacao buscarExClassificacao(String codificacao) {
-		ExClassificacao flt = new ExClassificacao();
-		flt.setSigla(codificacao);
-		return ExDao.getInstance().consultarPorSigla(flt);
+		return ExDao.getInstance().consultarExClassificacao(codificacao);
 	}
 
 	public String aGravar() throws AplicacaoException{
@@ -138,18 +138,18 @@ public class ExClassificacaoAction
 		if (getAcao().equals("nova_classificacao")){
 			ExClassificacao exClassExistente = buscarExClassificacao(getCodificacao());
 			if (exClassExistente!=null){
-				throw new AplicacaoException("A classificação documental já existe: " + exClass.getCodificacao());
+				throw new AplicacaoException("A classificação documental já existe: " + exClassExistente.getCodificacao());
 			}else{
 				exClass = new ExClassificacao();
 				lerForm(exClass);
-				dao().gravarComHistorico(exClass,null, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+				Ex.getInstance().getBL().incluirExClassificacao(exClass,getIdentidadeCadastrante());
 			}
 		}else{
 			ExClassificacao exClassAntiga = buscarExClassificacao(getCodificacaoAntiga());
 			if(exClassAntiga!=null && !exClassAntiga.getCodificacao().equals(getCodificacao())){
 				exClass = new ExClassificacao();
 				lerForm(exClass);
-				moverClassificacao(exClass,exClassAntiga);
+				Ex.getInstance().getBL().moverClassificacao(exClass,exClassAntiga,getIdentidadeCadastrante());
 			}else{
 				alterarClassificacaoExistente(exClassAntiga);
 			}
@@ -164,65 +164,12 @@ public class ExClassificacaoAction
 
 	private void alterarClassificacaoExistente(ExClassificacao exClassAntiga) throws AplicacaoException {
 		
-		ExClassificacao exClassNovo = getCopia(exClassAntiga);
+		ExClassificacao exClassNovo = Ex.getInstance().getBL().getCopia(exClassAntiga);
 		lerForm(exClassNovo);
 
-		ExDao.getInstance().alterarExClassificacao(exClassNovo, exClassAntiga, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+		Ex.getInstance().getBL().alterarExClassificacao(exClassNovo, exClassAntiga, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
 
-		
 	}
-
-	private ExClassificacao getCopia(ExClassificacao exClassOrigem) throws AplicacaoException{
-		ExClassificacao exClassCopia = new ExClassificacao();
-		try {
-			
-			PropertyUtils.copyProperties(exClassCopia, exClassOrigem);
-			
-			//novo id
-			exClassCopia.setId(null);
-			//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
-			//HibernateException:Found shared references to a collection
-			Set<ExVia> setExVia = new HashSet<ExVia>();
-			exClassCopia.setExViaSet(setExVia);
-			
-			Set<ExModelo> setExModelo = new HashSet<ExModelo>();
-			exClassCopia.setExModeloSet(setExModelo);
-
-		} catch (Exception e){
-			throw new AplicacaoException(
-			"Erro ao copiar as propriedades do modelo anterior.");
-		}
-		
-		return exClassCopia;
-	}
-
-	private void moverClassificacao(ExClassificacao exClassDest, ExClassificacao exClassOrigem)
-			throws AplicacaoException {
-		Date dt = dao().consultarDataEHoraDoServidor();
-		MascaraUtil m = MascaraUtil.getInstance();
-		ExDao dao = ExDao.getInstance();
-		if (m.calcularNivel(exClassDest.getCodificacao()) > m.calcularNivel(exClassOrigem.getCodificacao())){
-			throw new AplicacaoException("O nível do destino é maior do que o nível da origem! Os filhos não caberão na hierarquia da classificação documental!");
-		}
-		
-		ExClassificacao classExistente = buscarExClassificacao(exClassDest.getCodificacao());
-		if (classExistente!=null){
-			throw new AplicacaoException("A classificação destino já existe!");
-		}
-		
-		List<ExClassificacao> filhos = dao.consultarFilhos(exClassOrigem,true);
-		String mascaraDestino = m.getMscFilho(exClassDest.getCodificacao(), true);
-		for (ExClassificacao f : filhos) {
-			String novaCodificacao = m.substituir(f.getCodificacao(), mascaraDestino);
-			ExClassificacao fNovo = getCopia(f);
-			fNovo.setCodificacao(novaCodificacao);
-			ExDao.getInstance().alterarExClassificacao(fNovo, f, dt, getIdentidadeCadastrante());
-		}
-		
-		exClassDest.setHisIdIni(exClassOrigem.getHisIdIni());
-		ExDao.getInstance().alterarExClassificacao(exClassDest,exClassOrigem, dt , getIdentidadeCadastrante());
-	}
-
 	
 	public String aExcluir() throws AplicacaoException{
 		dao().iniciarTransacao();

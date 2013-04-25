@@ -43,7 +43,7 @@
 					<c:forEach items="${classificacaoVigente}" var="cla">
 						<c:set var="nivel" value="${cla.nivel}"/>
 						<tr>
-							<td style="width: 100px"><a href="editar.action?codificacao=${cla.codificacao}&acao=editar_classificacao">${cla.codificacao}</a></td>
+							<td style="width: 100px"><a title="${cla.descricao}" href="editar.action?codificacao=${cla.codificacao}&acao=editar_classificacao">${cla.codificacao}</a></td>
 							<td rowspan="${fn:length(cla.exViaSet)}">
 								<c:forEach begin="1" end="${nivel*nivel}">&nbsp;</c:forEach>
 								<span style="font-size: ${16-nivel}">${cla.descrClassificacao}</span>

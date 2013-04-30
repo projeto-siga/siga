@@ -1151,7 +1151,7 @@
 		</action>
 	</package>
 
-	<package name="expediente/classificacao" extends="default" namespace="/expediente/classificacao">
+	<package name="classificacao" extends="default" namespace="/classificacao">
 		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
 			method="aBuscar">
@@ -1166,6 +1166,11 @@
 				/sigalibs/ajax_retorno.jsp
 			</result>
 		</action>
+		
+	</package>
+	
+	<package name="expediente/classificacao" extends="default" namespace="/expediente/classificacao">
+		<default-interceptor-ref name="defaultStack" />
 		<action name="listar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
 			method="aListar">
 			<result name="success">

@@ -44,7 +44,7 @@ public class Application extends SigaApplication {
 	public static void addDefaults() throws Exception {
 
 		try {
-			obterCabecalhoEUsuario();
+			obterCabecalhoEUsuario("rgb(235, 235, 232)");
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
@@ -137,19 +137,22 @@ public class Application extends SigaApplication {
 		SrGravidade[] gravidades = SrGravidade.values();
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
-		boolean abrirFechando = solicitacao.podeAbrirJaFechando(
-				lotaTitular(), cadastrante());
+		boolean abrirFechando = solicitacao.podeAbrirJaFechando(lotaTitular(),
+				cadastrante());
 		boolean priorizar = solicitacao.podePriorizar(lotaTitular(),
 				cadastrante());
 
-		List<SrServico> servicos = SrServico.listarPorPessoaEItem(
-				solicitacao.solicitante, solicitacao.itemConfiguracao);
-		if (solicitacao.servico == null
-				|| !servicos.contains(solicitacao.servico)) {
-			if (servicos.size() > 0)
-				solicitacao.servico = servicos.get(0);
-			else
-				solicitacao.servico = null;
+		List<SrServico> servicos = new ArrayList<SrServico>();
+		if (solicitacao.itemConfiguracao != null) {
+			servicos = SrServico.listarPorPessoaEItem(
+					solicitacao.solicitante, solicitacao.itemConfiguracao);
+			if (solicitacao.servico == null
+					|| !servicos.contains(solicitacao.servico)) {
+				if (servicos.size() > 0)
+					solicitacao.servico = servicos.get(0);
+				else
+					solicitacao.servico = null;
+			}
 		}
 
 		render("@editar", solicitacao, formasAcompanhamento, gravidades,
@@ -229,8 +232,7 @@ public class Application extends SigaApplication {
 				cadastrante());
 		boolean desfazerAndamento = solicitacao.podeDesfazerAndamento(
 				lotaTitular(), cadastrante());
-		boolean editar = solicitacao.podeEditar(lotaTitular(),
-				cadastrante());
+		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		boolean movimentarPlenamente = solicitacao.estaCom(lotaTitular(),
 				cadastrante());
 
@@ -282,7 +284,7 @@ public class Application extends SigaApplication {
 		render(designacoes);
 	}
 
-	public static void editarDesignacao(Long id) throws Exception{
+	public static void editarDesignacao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<CpComplexo> orgaos = JPA.em().createQuery("from CpOrgaoUsuario")
 				.getResultList();
@@ -306,14 +308,14 @@ public class Application extends SigaApplication {
 		listarDesignacao();
 	}
 
-	public static void listarAssociacao() throws Exception{
+	public static void listarAssociacao() throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<List<SrConfiguracao>> listasAssociacoes = SrConfiguracao
 				.listarAssociacoesTipoAtributo();
 		render(listasAssociacoes);
 	}
 
-	public static void editarAssociacao(Long id) throws Exception{
+	public static void editarAssociacao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = new SrConfiguracao();
 		if (id != null)
@@ -390,7 +392,7 @@ public class Application extends SigaApplication {
 		render(itens, filtro, nome, pessoa);
 	}
 
-	public static void listarTipoAtributo() throws Exception{
+	public static void listarTipoAtributo() throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrTipoAtributo> atts = SrTipoAtributo.listar();
 		render(atts);
@@ -417,13 +419,13 @@ public class Application extends SigaApplication {
 		listarTipoAtributo();
 	}
 
-	public static void listarServico() throws Exception{
+	public static void listarServico() throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrServico> servicos = SrServico.listar();
 		render(servicos);
 	}
 
-	public static void editarServico(Long id) throws Exception{
+	public static void editarServico(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrServico servico = new SrServico();
 		if (id != null)

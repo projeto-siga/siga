@@ -458,6 +458,7 @@ function limpaCampos()
 									<th colspan="3" align="center">Documento</th>
 									<th colspan="4" align="center">Situação</th>
 									<th rowspan="3">Tipo</th>
+									<th rowspan="3">Modelo</th>
 									<th rowspan="3">Descrição</th>
 									<c:if test="${visualizacao == 1}"> 
 										<th rowspan="3">Última Anotação</th>
@@ -555,6 +556,7 @@ function limpaCampos()
 									</c:if>
 
 									<td width="6%">${documento[0].descrFormaDoc}</td>
+									<td width="6%">${documento[0].nmMod}</td>
 
 									<c:set var="acessivel" value="" />
 									<c:set var="acessivel"
@@ -567,10 +569,10 @@ function limpaCampos()
 												test="${f:mostraDescricaoConfidencial(documento[0], lotaTitular) eq true}">
 												<c:set var="estilo" value="confidencial" />
 											</c:if>
-											<td class="${estilo}" width="44%">${f:descricaoConfidencial(documento[0],
+											<td class="${estilo}" width="38%">${f:descricaoConfidencial(documento[0],
 												lotaTitular)}</td>
 											<c:if test="${visualizacao == 1}"> 
-												<td class="${estilo}" width="44%">${f:anotacaoConfidencial(documento[1],
+												<td class="${estilo}" width="38%">${f:anotacaoConfidencial(documento[1],
 													lotaTitular)}</td>
 											</c:if>
 										</c:when>

@@ -432,3 +432,16 @@ TABLE.side-bar-light-table TBODY TR TD {
 	padding-right: 0.2em;
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
+}
+
+DIV.gt-tag-cloud {
+	padding: 10px !important;
+}
+
+DIV.gt-tag-cloud a {
+	text-decoration: none !important;
+}
+
+DIV.gt-tag-cloud a:hover {
+	text-decoration: underline !important;
+}

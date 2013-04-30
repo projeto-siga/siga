@@ -34,7 +34,8 @@ import controllers.Util;
 		+ "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
 		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
 		+ "		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
-		+ "		AND id_tp_marca = 3" + "		GROUP BY id_marcador" + "	) c "
+		+ "		AND id_tp_marca = 3" + "		AND id_marcador <> "
+		+ CpMarcador.MARCADOR_CANCELADO + "		GROUP BY id_marcador" + "	) c "
 		+ "WHERE m.id_marcador = c.id_marcador", resultSetMapping = "colunas_contagem")
 public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 
@@ -64,13 +65,13 @@ public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 	// return this;
 	// }
 
-//	@Override
-//	public <T extends JPABase> T save() {
-//		// Edson: Ver no Util o comentário sobre a chamada abaixo
-//		if (getIdMarca() == null)
-//			setIdMarca(Util.nextVal("CORPORATIVO.CP_MARCA_SEQ"));
-//		return super.save();
-//	}
+	// @Override
+	// public <T extends JPABase> T save() {
+	// // Edson: Ver no Util o comentário sobre a chamada abaixo
+	// if (getIdMarca() == null)
+	// setIdMarca(Util.nextVal("CORPORATIVO.CP_MARCA_SEQ"));
+	// return super.save();
+	// }
 
 	public int compareTo(GcMarca other) {
 		int i = getCpMarcador().getIdMarcador().compareTo(

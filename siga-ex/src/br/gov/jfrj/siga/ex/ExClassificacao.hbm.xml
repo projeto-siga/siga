@@ -142,38 +142,6 @@
 	       	and cl.hisAtivo = 1 
 	       	order by cl.descrClassificacao]]>
 	</query>
-	<!-- 
-	<query name="consultarAssuntosPrincipalExClassificacao">
-		<![CDATA[from ExClassificacao cl 
-	      where cl.codAssuntoSecundario = 0 
-	       	and cl.codClasse = 0 
-	       	and cl.codSubclasse = 0 
-	       	and cl.codAtividade = 0
-	       	and cl.hisDtFim is null 
-	       	order by cl.descrClassificacao]]>
-	</query>
-
-	<query name="consultarAssuntosSecundarioExClassificacao">
-		<![CDATA[from ExClassificacao cl 
-	      where cl.codAssuntoPrincipal = :assuntoPrincipal 
-	       	and cl.codClasse = 0 
-	       	and cl.codSubclasse = 0  
-	       	and cl.codAtividade = 0
-	       	and cl.hisDtFim is null 
-	       	order by cl.descrClassificacao]]>
-	</query>
-
-	<query name="consultarClassesAntigoExClassificacao">
-		<![CDATA[from ExClassificacao cl 
-	      where cl.codAssuntoPrincipal =  :assuntoPrincipal   
-	       	and cl.codAssuntoSecundario =  :assuntoSecundario  
-	       	and cl.codSubclasse = 0  
-	       	and cl.codAtividade = 0
-	       	and cl.hisDtFim is null 
-	       	order by cl.descrClassificacao]]>
-	</query>
--->
-
 	<query name="consultarClassesExClassificacao">
 		<![CDATA[from ExClassificacao cl 
 	      where cl.codificacao like :mascara
@@ -181,17 +149,6 @@
 	       	and cl.hisAtivo = 1
 	       	order by cl.descrClassificacao]]>
 	</query>
-<!-- 
-	<query name="consultarSubClassesAntigoExClassificacao">
-		<![CDATA[from ExClassificacao cl 
-	      where cl.codAssuntoPrincipal =  :assuntoPrincipal   
-	       	and cl.codAssuntoSecundario =  :assuntoSecundario  
-	       	and cl.codClasse =  :classe  
-	       	and cl.codAtividade = 0
-	       	and cl.hisDtFim is null
-	       	order by cl.descrClassificacao]]>
-	</query>
- -->
 	<query name="consultarSubClassesExClassificacao">
 		<![CDATA[from ExClassificacao cl 
 	      where cl.codificacao like :mascara
@@ -199,6 +156,15 @@
 	       	and cl.hisAtivo = 1
 	       	order by cl.descrClassificacao]]>
 	</query>
+	
+		<query name="consultarExClassificacaoComExcecao">
+		<![CDATA[from ExClassificacao cl 
+	      where cl.codificacao like :mascara
+	      	and cl.codificacao != :exceto
+	       	and cl.hisAtivo = 1
+	       	order by cl.descrClassificacao]]>
+	</query>
+	
 
 	<query name="consultarAtividadesExClassificacao">
 		<![CDATA[select distinct(cl) from ExClassificacao cl,ExVia v 

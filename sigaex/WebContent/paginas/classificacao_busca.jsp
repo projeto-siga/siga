@@ -6,6 +6,8 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+
 
 
 <c:if
@@ -25,6 +27,10 @@ function sbmt(offset) {
 	frm.submit();
 }
 
+function alterarNivel(nivelAlterado){
+	document.getElementById("nivelAlterado").value = nivelAlterado;
+}
+
 
 
 </script>
@@ -34,6 +40,7 @@ function sbmt(offset) {
 		<input type="hidden" name="propriedade" value="${param.propriedade}" />
 		<input type="hidden" name="postback" value="1" />
 		<input type="hidden" name="p.offset" value="0" />
+		<input type="hidden" id="nivelAlterado" name="nivelAlterado" />
 
 		<table class="form" width="100%">
 			<tr class="header">
@@ -44,45 +51,24 @@ function sbmt(offset) {
 				<td width="15%">Palavra-chave:</td>
 				<td width="85%" colspan="3"><ww:textfield name="nome" size="50" /></td>
 			</tr>
+			
+			
+			
+			<c:forEach items="${listaNiveis}" var="itemLista" varStatus="i">
+			<ww:set value="%{getClassificacoesDoNivel(${i.index})}" name="classificacoesDoNivel"/>
+
 			<tr>
-				<td width="15%">Assunto:</td>
-				<td width="85%"><ww:select name="assunto"
-					list="assuntos" listKey="codificacao"
+				<td width="15%">${itemLista}</td>
+				<td width="85%"><ww:select name="nivelSelecionado[${i.index}]"
+					list="classificacoesDoNivel" listKey="codificacao"
 					listValue="descrClassificacao" headerKey="-1" headerValue="[Todos]"
-					onchange="javascript:sbmt(0);" /></td>
+					onchange="javascript:alterarNivel(${i.index});javascript:sbmt(0);" /></td>
 			</tr>
-			<%-- <tr>
-				<td width="15%">Assunto Principal:</td>
-				<td width="85%"><ww:select name="assuntoPrincipal"
-					list="assuntosPrincipal" listKey="codAssuntoPrincipal"
-					listValue="descrClassificacao" headerKey="-1" headerValue="[Todos]"
-					onchange="javascript:sbmt(0);" /></td>
-			</tr>
-			<tr>
-				<td width="15%">Assunto Secundário:</td>
-				<td width="85%"><ww:select name="assuntoSecundario"
-					list="assuntosSecundario" listKey="codAssuntoSecundario"
-					listValue="descrClassificacao" headerKey="-1" headerValue="[Todos]"
-					onchange="javascript:sbmt(0);" /></td>
-			</tr>--%>
-			<tr>
-				<td width="15%">Classe:</td>
-				<td width="85%"><ww:select name="classe" list="classes"
-					listKey="codificacao" listValue="descrClassificacao" headerKey="-1"
-					headerValue="[Todos]" onchange="javascript:sbmt(0);" /></td>
-			</tr>
-			<tr>
-				<td width="15%">Subclasse:</td>
-				<td width="85%"><ww:select name="subclasse" list="subClasses"
-					listKey="codificacao" listValue="descrClassificacao"
-					headerKey="-1" headerValue="[Todos]" onchange="javascript:sbmt(0);" /></td>
-			</tr>
-			<%--<tr>
-				<td></td>
-				<td colspan="3"><ww:submit value="Pesquisar" />&nbsp;<ww:checkbox
-					name="ultimoNivel" fieldValue="true" onclick="javascript:sbmt(0);" />Permitir
-				Classificação Intermediária</td>
-			</tr>--%>
+				
+				
+				
+			</c:forEach>
+
 			<tr>
 				<td></td>
 				<td colspan="3"><ww:submit value="Pesquisar" />&nbsp;<ww:checkbox

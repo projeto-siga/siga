@@ -24,6 +24,7 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,13 +56,13 @@ public class ExClassificacaoAction
 	private String acao;
 
 	//classificacao
-	private String assunto;
-	private String atividade;
-	private String classe;
+	private String[] listaNiveis;
+	private String[] nivelSelecionado;
+	private Integer nivelAlterado;
+	
 	private ExClassificacaoSelecao classificacaoSel;
 	private String nome;
-	private String subclasse;
-//	private Boolean ultimoNivel;
+	
 	private  String codificacaoAntiga;
 	private ExClassificacao exClass;
 	private String codificacao;
@@ -81,27 +82,37 @@ public class ExClassificacaoAction
 	public ExClassificacaoAction() {
 		super();
 		classificacaoSel = new ExClassificacaoSelecao();
+		int totalItens = MascaraUtil.getInstance().getTotalDeNiveisDaMascara();
+		listaNiveis = new String[totalItens];
+		nivelSelecionado = new String[totalItens];
+		for (int i = 0; i < listaNiveis.length; i++) {
+			listaNiveis[i]=String.valueOf(i);
+		}
 	}
 
 	@Override
 	public ExClassificacaoDaoFiltro createDaoFiltro() {
 		final ExClassificacaoDaoFiltro flt = new ExClassificacaoDaoFiltro();
-		if (assunto != null)
-			flt.setAssunto(String.valueOf(assunto));
-//		if (assuntoPrincipal != null)
-//			flt.setAssuntoPrincipal(String.valueOf(assuntoPrincipal));
-//		if (assuntoSecundario != null)
-//			flt.setAssuntoSecundario(String.valueOf(assuntoSecundario));
-		if (classe != null)
-			flt.setClasse(String.valueOf(classe));
-		if (subclasse != null)
-			flt.setSubclasse(String.valueOf(subclasse));
-		if (atividade != null)
-			flt.setAtividade(String.valueOf(atividade));
-//		if (ultimoNivel != null)
-//			flt.setUltimoNivel(String.valueOf(ultimoNivel));
-//		else
-//			flt.setUltimoNivel("false");
+		
+		if (nivelAlterado !=null){
+			for(int i=nivelAlterado;i<nivelSelecionado.length-1;i++){
+				nivelSelecionado[i+1]=null;
+			}
+			
+		}
+		
+		String codigoSelecionado = null;
+		for (int i = nivelSelecionado.length-1; i>=0; i--) {
+			if (nivelSelecionado[i] != null && !nivelSelecionado[i].equals("-1")){
+				codigoSelecionado = nivelSelecionado[i] ;
+				break;
+			}
+		}
+		
+		if (codigoSelecionado!=null){
+			flt.setSigla(codigoSelecionado);
+		}
+				
 		flt.setDescricao(Texto.removeAcentoMaiusculas(nome));
 		return flt;
 	}
@@ -277,155 +288,12 @@ public class ExClassificacaoAction
 		this.exClass = exClass;
 	}
 
-//	public Byte getAssuntoPrincipal() {
-//		return assuntoPrincipal;
-//	}
-
-//	public Byte getAssuntoSecundario() {
-//		return assuntoSecundario;
-//	}
-
-	public List<ExClassificacao> getAssuntosPrincipal()
-			throws AplicacaoException {
-		return ExDao.getInstance().listarAssuntosPrincipal();
-	}
-
-	public List<ExClassificacao> getAssuntos() throws AplicacaoException {
-		return ExDao.getInstance().listarAssuntos();
-	}
-
-//	public List<ExClassificacao> getAssuntosSecundario()
-//			throws AplicacaoException {
-//		int codAssuntoPrincipal = -1;
-//		if (this.getAssuntoPrincipal() != null) {
-//			if (!this.getAssuntoPrincipal().equals("")) {
-//				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
-//			}
-//		}
-//		return ExDao.getInstance()
-//				.listarAssuntosSecundario(codAssuntoPrincipal);
-//	}
-
-	public String getAtividade() {
-		return atividade;
-	}
-
-	/*
-	 * public List<ExClassificacao> getClassificacoes() throws CsisException {
-	 * ExClassificacaoDao classificacaoDao =
-	 * getFabrica().createExClassificacaoDao(); ExClassificacaoDaoFiltro flt =
-	 * new ExClassificacaoDaoFiltro(); return
-	 * classificacaoDao.consultarPorFiltro(flt); }
-	 */
-
-	public List<ExClassificacao> getAtividades() throws AplicacaoException {
-		String codAssunto = "-1";
-		String codClasse = "-1";
-		String codSubClasse = "-1";
-//		boolean ultimoNivel = false;
-		if (this.getAssunto() != null) {
-			if (!this.getAssunto().equals("")) {
-				codAssunto= MascaraUtil.getInstance().getCampoDaMascara(1,getClasse());;
-			}
-		}
-		if (this.getClasse() != null) {
-			if (!this.getClasse().equals("")) {
-				codClasse = MascaraUtil.getInstance().getCampoDaMascara(2,getClasse());;
-			}
-		}
-		if (this.getSubclasse() != null) {
-			if (!this.getSubclasse().equals("")) {
-				codSubClasse = codClasse = MascaraUtil.getInstance().getCampoDaMascara(3,getClasse());;
-			}
-		}
-//		if (this.getUltimoNivel() != null) {
-//			ultimoNivel = this.getUltimoNivel();
-//		}
-		return ExDao.getInstance().listarAtividades(codAssunto,codClasse, codSubClasse);
-
-	}
-
-	public String getClasse() {
-		return classe;
-	}
-
-//	public List<ExClassificacao> getClassesAntigo() throws AplicacaoException {
-//		int codAssuntoSecundario = -1;
-//		int codAssuntoPrincipal = -1;
-//		if (this.getAssuntoPrincipal() != null) {
-//			if (!this.getAssuntoPrincipal().equals("")) {
-//				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
-//			}
-//		}
-//		if (this.getAssuntoSecundario() != null) {
-//			if (!this.getAssuntoSecundario().equals("")) {
-//				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
-//			}
-//		}
-//		return ExDao.getInstance().listarClassesAntigo(codAssuntoPrincipal,
-//				codAssuntoSecundario);
-//	}
-
-	public List<ExClassificacao> getClasses() throws AplicacaoException {
-		String codAssunto = "-1";
-		if (this.getAssunto() != null ) {
-			if (!this.getAssunto().equals("")) {
-				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(1,getAssunto());
-			}
-		}
-
-		return ExDao.getInstance().listarClasses(codAssunto);
-	}
-
 	public ExClassificacaoSelecao getClassificacaoSel() {
 		return classificacaoSel;
 	}
 
 	public String getNome() {
 		return nome;
-	}
-
-	public String getSubclasse() {
-		return subclasse;
-	}
-
-//	public List<ExClassificacao> getSubClassesAntigo() throws AplicacaoException {
-//		int codAssuntoSecundario = -1;
-//		int codAssuntoPrincipal = -1;
-//		int codClasse = -1;
-//		if (this.getAssuntoPrincipal() != null) {
-//			if (!this.getAssuntoPrincipal().equals("")) {
-//				codAssuntoPrincipal = new Integer(this.getAssuntoPrincipal());
-//			}
-//		}
-//		if (this.getAssuntoSecundario() != null) {
-//			if (!this.getAssuntoSecundario().equals("")) {
-//				codAssuntoSecundario = new Integer(this.getAssuntoSecundario());
-//			}
-//		}
-//		if (this.getClasse() != null) {
-//			if (!this.getClasse().equals("")) {
-//				codClasse = new Integer(this.getClasse());
-//			}
-//		}
-//		return ExDao.getInstance().listarSubClassesAntigo(codAssuntoPrincipal,
-//				codAssuntoSecundario, codClasse);
-//	}
-
-	public List<ExClassificacao> getSubClasses() throws AplicacaoException {
-		String codAssunto = "-1";
-		String codClasse = "-1";
-		if (this.getAssunto() != null && !this.getAssunto().equals("-1")) {
-			if (!this.getAssunto().equals("")) {
-				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(1,getAssunto());
-			}
-		}
-		if (this.getClasse() != null && !this.getClasse().equals("-1")) {
-			if (!this.getClasse().equals("")) {
-				codClasse = MascaraUtil.getInstance().getCampoDaMascara(2,getClasse());
-			}
-		}
-		return ExDao.getInstance().listarSubClasses(codAssunto, codClasse);
 	}
 
 	@Override
@@ -442,22 +310,6 @@ public class ExClassificacaoAction
 		return null;
 	}
 
-//	public void setAssuntoPrincipal(final Byte assuntoPrincipal) {
-//		this.assuntoPrincipal = assuntoPrincipal;
-//	}
-
-//	public void setAssuntoSecundario(final Byte assuntoSecundario) {
-//		this.assuntoSecundario = assuntoSecundario;
-//	}
-
-	public void setAtividade(final String atividade) {
-		this.atividade = atividade;
-	}
-
-	public void setClasse(final String classe) {
-		this.classe = classe;
-	}
-
 	public void setClassificacaoSel(
 			final ExClassificacaoSelecao classificacaoSel) {
 		this.classificacaoSel = classificacaoSel;
@@ -467,18 +319,6 @@ public class ExClassificacaoAction
 		this.nome = descricao;
 	}
 
-	public void setSubclasse(final String subclasse) {
-		this.subclasse = subclasse;
-	}
-
-//	public Boolean getUltimoNivel() {
-//		return ultimoNivel;
-//	}
-
-//	public void setUltimoNivel(Boolean ultimoNivel) {
-//		this.ultimoNivel = ultimoNivel;
-//	}
-
 	@Override
 	public Selecionavel selecionarVerificar(Selecionavel sel)
 			throws AplicacaoException {
@@ -486,14 +326,6 @@ public class ExClassificacaoAction
 				: sel;
 	}
 
-	public String getAssunto() {
-		return assunto;
-	}
-
-	public void setAssunto(String assunto) {
-		this.assunto = assunto;
-	}
-	
 	public List<ExClassificacao> getClassificacaoVigente(){
 		return ExDao.getInstance().consultarExClassificacaoVigente();
 	}
@@ -610,6 +442,51 @@ public class ExClassificacaoAction
 	
 	public String getMascaraSaida(){
 		return MascaraUtil.getInstance().getMascaraSaida();
+	}
+
+	public Integer getTotalDeNiveis(){
+		return MascaraUtil.getInstance().getTotalDeNiveisDaMascara();
+	}
+
+	public void setListaNiveis(String[] listaNiveis) {
+		this.listaNiveis = listaNiveis;
+	}
+
+	public String[] getListaNiveis() {
+		return listaNiveis;
+	}
+
+	public void setNivelSelecionado(String[] nivelSelecionado) {
+		this.nivelSelecionado = nivelSelecionado;
+	}
+
+	public String[] getNivelSelecionado() {
+		return nivelSelecionado;
+	} 
+	
+	public List<ExClassificacao> getClassificacoesDoNivel(Integer nivel){
+		List<ExClassificacao> result = new ArrayList<ExClassificacao>();
+		
+		//se primeira lista, carrega incondicionalmente
+		if (nivel==0){
+			return ExDao.getInstance().listarExClassificacaoPorNivel(MascaraUtil.getInstance().getMscTodosDoNivel(1));
+		}
+		
+		//se lista do nível anterior está definido, carrega lista baseando-se na anterior
+		String nivelListaAnterior = nivelSelecionado[nivel-1];
+		if (nivelListaAnterior !=null && !nivelListaAnterior.equals("-1")){
+			return ExDao.getInstance().listarExClassificacaoPorNivel(MascaraUtil.getInstance().getMscFilho(nivelListaAnterior, false),nivelListaAnterior);
+		}
+		
+		return result;
+	}
+
+	public void setNivelAlterado(Integer nivelAlterado) {
+		this.nivelAlterado = nivelAlterado;
+	}
+
+	public Integer getNivelAlterado() {
+		return nivelAlterado;
 	}
 	
 }

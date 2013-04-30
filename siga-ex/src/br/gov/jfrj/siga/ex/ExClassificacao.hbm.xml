@@ -204,7 +204,7 @@
 		<![CDATA[select distinct(cl) from ExClassificacao cl,ExVia v 
 	      where cl.codificacao  like :mascara   
 	       	and cl.idClassificacao = v.exClassificacao.idClassificacao 
-	       	and (v.codVia is not null or :ultimoNivel=true)
+	       	and (v.codVia is not null)
 	       	and v.hisAtivo = 1
 	       	and cl.hisAtivo = 1
 	       	order by cl.descrClassificacao]]>
@@ -212,11 +212,13 @@
 
 	<query name="consultarPorFiltroExClassificacao">
 		<![CDATA[select distinct(cla) from ExClassificacao cla ,ExVia v 
-		where 	(upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%'))
+		where 	(
+			(upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%')) or
+			(cla.codificacao = :descrClassificacao)
+		)
 			and cla.codificacao like :mascara
 	    	and cla.hisAtivo = 1
 	       	and cla.idClassificacao = v.exClassificacao.idClassificacao 
-	       	and (v.codVia is not null or :ultimoNivel=true)
 	       	and v.hisAtivo = 1
 	    	order by codificacao]]>
 	</query>
@@ -236,7 +238,7 @@
     	and cla.codificacao like :mascara
     	and v.hisAtivo = 1 
     	and cla.hisAtivo = 1
-	    and (v.codVia is not null or :ultimoNivel=true))]]>
+	    and (v.codVia is not null))]]>
 	</query>
  
  

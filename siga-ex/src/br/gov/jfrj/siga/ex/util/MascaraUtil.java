@@ -325,6 +325,25 @@ public class MascaraUtil {
 	public boolean isCodificacao(String texto) {
 		return Pattern.matches(getMascaraEntrada(), texto);
 	}
+	
+	/**
+	 * Retorna a quantidade de níveis da mascara definida. Por exemplo: "00.00.00.00" retorna 4. "11-2222", retorna 2 níveis;  
+	 * @return - número de níveis da máscara;
+	 */
+	public int getTotalDeNiveisDaMascara(){
+		Pattern pe = Pattern.compile(getMascaraEntrada());
+		Matcher me = pe.matcher(formatar("0"));
+		int result = 0;
+		if(me.matches()){
+			for (int i = 1; i<=me.groupCount(); i++) {
+				if (me.group(i)!=null){
+					result++;
+				}
+			}
+		}
+		return result;
+
+	}
 
 		
 }

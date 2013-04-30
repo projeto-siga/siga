@@ -24,11 +24,8 @@
  */
 package br.gov.jfrj.webwork.action;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -40,7 +37,6 @@ import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.SigaSelecionavelActionSupport;
@@ -65,7 +61,7 @@ public class ExClassificacaoAction
 	private ExClassificacaoSelecao classificacaoSel;
 	private String nome;
 	private String subclasse;
-	private Boolean ultimoNivel;
+//	private Boolean ultimoNivel;
 	private  String codificacaoAntiga;
 	private ExClassificacao exClass;
 	private String codificacao;
@@ -102,10 +98,10 @@ public class ExClassificacaoAction
 			flt.setSubclasse(String.valueOf(subclasse));
 		if (atividade != null)
 			flt.setAtividade(String.valueOf(atividade));
-		if (ultimoNivel != null)
-			flt.setUltimoNivel(String.valueOf(ultimoNivel));
-		else
-			flt.setUltimoNivel("false");
+//		if (ultimoNivel != null)
+//			flt.setUltimoNivel(String.valueOf(ultimoNivel));
+//		else
+//			flt.setUltimoNivel("false");
 		flt.setDescricao(Texto.removeAcentoMaiusculas(nome));
 		return flt;
 	}
@@ -175,6 +171,11 @@ public class ExClassificacaoAction
 		dao().iniciarTransacao();
 		exClass = buscarExClassificacao(codificacao);
 		Date dt = dao().consultarDataEHoraDoServidor();
+		if (exClass.getExModeloSet().size() >0){
+			ExModelo m = exClass.getExModeloSet().iterator().next();
+			throw new AplicacaoException("Não é possível excluir a classificação documental, pois está associada ao modelo:<br/>" +
+					"(" + m.getDescMod() + ") " + m.getDescMod() );
+		}
 		for (ExVia exVia : exClass.getExViaSet()) {
 			dao().excluirComHistorico(exVia, dt, getIdentidadeCadastrante());
 		}
@@ -309,23 +310,29 @@ public class ExClassificacaoAction
 	 */
 
 	public List<ExClassificacao> getAtividades() throws AplicacaoException {
+		String codAssunto = "-1";
 		String codClasse = "-1";
 		String codSubClasse = "-1";
-		boolean ultimoNivel = false;
+//		boolean ultimoNivel = false;
+		if (this.getAssunto() != null) {
+			if (!this.getAssunto().equals("")) {
+				codAssunto= MascaraUtil.getInstance().getCampoDaMascara(1,getClasse());;
+			}
+		}
 		if (this.getClasse() != null) {
 			if (!this.getClasse().equals("")) {
-				codClasse = MascaraUtil.getInstance().getCampoDaMascara(1,getClasse());;
+				codClasse = MascaraUtil.getInstance().getCampoDaMascara(2,getClasse());;
 			}
 		}
 		if (this.getSubclasse() != null) {
 			if (!this.getSubclasse().equals("")) {
-				codSubClasse = codClasse = MascaraUtil.getInstance().getCampoDaMascara(2,getClasse());;
+				codSubClasse = codClasse = MascaraUtil.getInstance().getCampoDaMascara(3,getClasse());;
 			}
 		}
-		if (this.getUltimoNivel() != null) {
-			ultimoNivel = this.getUltimoNivel();
-		}
-		return ExDao.getInstance().listarAtividades(codClasse, codSubClasse, ultimoNivel);
+//		if (this.getUltimoNivel() != null) {
+//			ultimoNivel = this.getUltimoNivel();
+//		}
+		return ExDao.getInstance().listarAtividades(codAssunto,codClasse, codSubClasse);
 
 	}
 
@@ -354,7 +361,7 @@ public class ExClassificacaoAction
 		String codAssunto = "-1";
 		if (this.getAssunto() != null ) {
 			if (!this.getAssunto().equals("")) {
-				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(0,getAssunto());
+				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(1,getAssunto());
 			}
 		}
 
@@ -401,12 +408,12 @@ public class ExClassificacaoAction
 		String codClasse = "-1";
 		if (this.getAssunto() != null && !this.getAssunto().equals("-1")) {
 			if (!this.getAssunto().equals("")) {
-				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(0,getAssunto());
+				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(1,getAssunto());
 			}
 		}
 		if (this.getClasse() != null && !this.getClasse().equals("-1")) {
 			if (!this.getClasse().equals("")) {
-				codClasse = MascaraUtil.getInstance().getCampoDaMascara(1,getClasse());
+				codClasse = MascaraUtil.getInstance().getCampoDaMascara(2,getClasse());
 			}
 		}
 		return ExDao.getInstance().listarSubClasses(codAssunto, codClasse);
@@ -455,13 +462,13 @@ public class ExClassificacaoAction
 		this.subclasse = subclasse;
 	}
 
-	public Boolean getUltimoNivel() {
-		return ultimoNivel;
-	}
+//	public Boolean getUltimoNivel() {
+//		return ultimoNivel;
+//	}
 
-	public void setUltimoNivel(Boolean ultimoNivel) {
-		this.ultimoNivel = ultimoNivel;
-	}
+//	public void setUltimoNivel(Boolean ultimoNivel) {
+//		this.ultimoNivel = ultimoNivel;
+//	}
 
 	@Override
 	public Selecionavel selecionarVerificar(Selecionavel sel)

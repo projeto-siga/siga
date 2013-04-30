@@ -33,7 +33,7 @@ public class ExClassificacaoDaoFiltro extends DaoFiltroSelecionavel {
 
 	private String subclasse;
 	
-	private String ultimoNivel;
+//	private String ultimoNivel;
 	
 	private String assunto;
 
@@ -93,11 +93,11 @@ public class ExClassificacaoDaoFiltro extends DaoFiltroSelecionavel {
 		this.subclasse = subclasse;
 	}
 
-	public String getUltimoNivel() {
-		return ultimoNivel;
-	}
+//	public String getUltimoNivel() {
+//		return ultimoNivel;
+//	}
 
-	public void setUltimoNivel(String ultimoNivel) {
-		this.ultimoNivel = ultimoNivel;
-	}
+//	public void setUltimoNivel(String ultimoNivel) {
+//		this.ultimoNivel = ultimoNivel;
+//	}
 }

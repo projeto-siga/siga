@@ -15,7 +15,7 @@ public class MascaraClassificacaoTest extends TestCase {
 	private static final String MASK_OUT_3 = "%1$01d-%2$02d-%3$03d";
 
 	private static final String MASK_IN_4 = "([0-9]{0,1})\\-?([0-9]{5})?";
-	private static final String MASK_OUT_4 = "%1$01d-%2$03d";
+	private static final String MASK_OUT_4 = "%1$01d-%2$05d";
 
 
 
@@ -90,6 +90,32 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(2, m.calcularNivel("11.22.00.00"));
 		assertEquals(3, m.calcularNivel("11.22.33.00"));
 		assertEquals(4, m.calcularNivel("11.22.33.44"));
+
+	}
+	
+	public void testTotalNiveisMascara(){
+		MascaraUtil m = MascaraUtil.getInstance();
+		
+		m.setMascaraEntrada(MASK_IN_1);
+		m.setMascaraSaida(MASK_OUT_1);
+		
+		assertEquals(4, m.getTotalDeNiveisDaMascara());
+		
+		m.setMascaraEntrada(MASK_IN_2);
+		m.setMascaraSaida(MASK_OUT_2);
+		
+		assertEquals(3, m.getTotalDeNiveisDaMascara());
+
+		m.setMascaraEntrada(MASK_IN_3);
+		m.setMascaraSaida(MASK_OUT_3);
+		
+		assertEquals(3, m.getTotalDeNiveisDaMascara());
+		
+		m.setMascaraEntrada(MASK_IN_4);
+		m.setMascaraSaida(MASK_OUT_4);
+		
+		assertEquals(2, m.getTotalDeNiveisDaMascara());
+
 
 	}
 

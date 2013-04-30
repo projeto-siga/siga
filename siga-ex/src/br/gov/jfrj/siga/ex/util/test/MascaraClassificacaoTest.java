@@ -63,6 +63,35 @@ public class MascaraClassificacaoTest extends TestCase {
 
 
 	}
+	
+	public void testCampoDaMascara(){
+		MascaraUtil m = MascaraUtil.getInstance();
+		
+		m.setMascaraEntrada(MASK_IN_1);
+		m.setMascaraSaida(MASK_OUT_1);
+
+		assertNull(m.getCampoDaMascara(0, "11.22.33.44"));
+		assertEquals("11",m.getCampoDaMascara(1, "11.22.33.44"));
+		assertEquals("22",m.getCampoDaMascara(2, "11.22.33.44"));
+		assertEquals("33",m.getCampoDaMascara(3, "11.22.33.44"));
+		assertEquals("44",m.getCampoDaMascara(4, "11.22.33.44"));
+		assertNull(m.getCampoDaMascara(5, "11.22.33.44"));
+	}
+	
+	public void testCalcularNivel(){
+		MascaraUtil m = MascaraUtil.getInstance();
+		
+		m.setMascaraEntrada(MASK_IN_1);
+		m.setMascaraSaida(MASK_OUT_1);
+		assertEquals(-1, m.calcularNivel(null));
+		assertEquals(-1, m.calcularNivel(""));
+		assertEquals(1, m.calcularNivel("00.00.00.00"));
+		assertEquals(1, m.calcularNivel("11.00.00.00"));
+		assertEquals(2, m.calcularNivel("11.22.00.00"));
+		assertEquals(3, m.calcularNivel("11.22.33.00"));
+		assertEquals(4, m.calcularNivel("11.22.33.44"));
+
+	}
 
 	public void testBuscaDeFilhos() {
 		MascaraUtil m = MascaraUtil.getInstance();
@@ -70,32 +99,32 @@ public class MascaraClassificacaoTest extends TestCase {
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
 		assertNull(m.getMscFilho(null,0,false));
-		assertEquals(m.getMscFilho("11",1,false),"11.__.00.00");
-		assertEquals(m.getMscFilho("11.00.00.00",1,false),"11.__.00.00");
-		assertEquals(m.getMscFilho("11.22",2,false),"11.22.__.00");
-		assertEquals(m.getMscFilho("11.22.33",3,false),"11.22.33.__");
-		assertEquals(m.getMscFilho("11.22.33.44",4,false),"11.22.33.44");
+		assertNull(m.getMscFilho(null,1,false));
+		assertEquals(m.getMscFilho("11",2,false),"11.__.00.00");
+		assertEquals(m.getMscFilho("11.00.00.00",2,false),"11.__.00.00");
+		assertEquals(m.getMscFilho("11.22",3,false),"11.22.__.00");
+		assertEquals(m.getMscFilho("11.22.33",4,false),"11.22.33.__");
+		assertEquals(m.getMscFilho("11.22.33.44",5,false),"11.22.33.44");
 		
 		m.setMascaraEntrada(MASK_IN_2);
 		m.setMascaraSaida(MASK_OUT_2);
-		assertEquals(m.getMscFilho("11",1,false),"11.___.00");
-		assertEquals(m.getMscFilho("11.000.00",1,false),"11.___.00");
-		assertEquals(m.getMscFilho("11.222",2,false),"11.222.__");
-		assertEquals(m.getMscFilho("11.222.33",2,false),"11.222.__");
+		assertEquals(m.getMscFilho("11",2,false),"11.___.00");
+		assertEquals(m.getMscFilho("11.000.00",2,false),"11.___.00");
+		assertEquals(m.getMscFilho("11.222",3,false),"11.222.__");
 		
 		// TESTE MÁSCARA DE BUSCA DE FILHOS E DESCENDENTES
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
-		assertEquals(m.getMscFilho("11",1,true),"11.__.__.__");
-		assertEquals(m.getMscFilho("11.00.00.00",1,true),"11.__.__.__");
-		assertEquals(m.getMscFilho("11.22",2,true),"11.22.__.__");
-		assertEquals(m.getMscFilho("11.22.33",3,true),"11.22.33.__");
-		assertEquals(m.getMscFilho("11.22.33.44",4,true),"11.22.33.44");
+		assertEquals(m.getMscFilho("11",2,true),"11.__.__.__");
+		assertEquals(m.getMscFilho("11.00.00.00",2,true),"11.__.__.__");
+		assertEquals(m.getMscFilho("11.22",3,true),"11.22.__.__");
+		assertEquals(m.getMscFilho("11.22.33",4,true),"11.22.33.__");
+		assertEquals(m.getMscFilho("11.22.33.44",5,true),"11.22.33.44");
 		
-		assertEquals(m.getMscFilho("11",1,true),"11.__.__.__");
-		assertEquals(m.getMscFilho("11.22",2,true),"11.22.__.__");
-		assertEquals(m.getMscFilho("11.22.33",3,true),"11.22.33.__");
-		assertEquals(m.getMscFilho("11.22.33.44",4,true),"11.22.33.44");
+		assertEquals(m.getMscFilho("11",2,true),"11.__.__.__");
+		assertEquals(m.getMscFilho("11.22",3,true),"11.22.__.__");
+		assertEquals(m.getMscFilho("11.22.33",4,true),"11.22.33.__");
+		assertEquals(m.getMscFilho("11.22.33.44",5,true),"11.22.33.44");
 		
 		// TESTE MÁSCARA DE BUSCA DE FILHOS E DESCENDENTES COM DEDUÇÃO DE NÍVEL INCIAL
 		m.setMascaraEntrada(MASK_IN_1);
@@ -215,7 +244,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		/*TESTE MÁSCARA DE BUSCA TODOS DE UM DETERMINADO NÍVEL*/
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
-		assertEquals(m.getMscTodosDoNivel(0),"00.00.00.00");
+		assertEquals(m.getMscTodosDoNivel(0),"__.__.__.__");
 		assertEquals(m.getMscTodosDoNivel(1),"__.00.00.00");
 		assertEquals(m.getMscTodosDoNivel(2),"__.__.00.00");
 		assertEquals(m.getMscTodosDoNivel(3),"__.__.__.00");
@@ -227,7 +256,7 @@ public class MascaraClassificacaoTest extends TestCase {
 
 		m.setMascaraEntrada(MASK_IN_2);
 		m.setMascaraSaida(MASK_OUT_2);
-		assertEquals(m.getMscTodosDoNivel(0),"00.000.00");
+		assertEquals(m.getMscTodosDoNivel(0),"__.___.__");
 		assertEquals(m.getMscTodosDoNivel(1),"__.000.00");
 		assertEquals(m.getMscTodosDoNivel(2),"__.___.00");
 		assertEquals(m.getMscTodosDoNivel(3),"__.___.__");
@@ -238,7 +267,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		
 		m.setMascaraEntrada(MASK_IN_3);
 		m.setMascaraSaida(MASK_OUT_3);
-		assertEquals(m.getMscTodosDoNivel(0),"0-00-000");
+		assertEquals(m.getMscTodosDoNivel(0),"_-__-___");
 		assertEquals(m.getMscTodosDoNivel(1),"_-00-000");
 		assertEquals(m.getMscTodosDoNivel(2),"_-__-000");
 		assertEquals(m.getMscTodosDoNivel(3),"_-__-___");
@@ -247,7 +276,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(m.getMscTodosDoMaiorNivel(),"_-__-___");
 
 	}
-	public void testSunstituicao(){
+	public void testSubstituicao(){
 		MascaraUtil m = MascaraUtil.getInstance();
 		
 		m.setMascaraEntrada(MASK_IN_1);

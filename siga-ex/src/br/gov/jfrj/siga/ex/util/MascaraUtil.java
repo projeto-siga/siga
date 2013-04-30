@@ -96,8 +96,8 @@ public class MascaraUtil {
 	
 	/**
 	 * Produz a máscara para consultar m nível de classificacao documental
-	 * @param nivel - Nível na hierarquia desejado. Baseado em zero (0)
-	 * @return - Máscara para consultar o nível (Ex: nível 1: "__.__.00.00")
+	 * @param nivel - Nível na hierarquia desejado. Baseado em um (1)
+	 * @return - Máscara para consultar o nível (Ex: nível 2: "__.__.00.00")
 	 */
 	public String getMscTodosDoNivel(int nivel) {
 		String txt = formatar("");
@@ -109,7 +109,7 @@ public class MascaraUtil {
 		Matcher me = pe.matcher(txt);
 		
 		if(me.matches()){
-			if (nivel< 0 || nivel>me.groupCount()){
+			if (nivel<= 0 || nivel>me.groupCount()){
 				nivel = getUltimoNivel(txt);
 			}
 			StringBuffer sb = new StringBuffer(txt);
@@ -157,9 +157,9 @@ public class MascaraUtil {
 	/**
 	 * Produz a máscara correspondente para obter os filhos da classificacao.
 	 * @param texto - Valor da Classificacao Documental
-	 * @param nivelInicial - Nível na hierarquia desejado. Baseado em zero (0)
+	 * @param nivelInicial - Nível na hierarquia desejado. Baseado em um (1)
 	 * @param niveisAbaixo - boolean que indica se deve ser calculados os níveis inferiores ao nível inicial
-	 * @return - Máscara para consultar os filhos (Ex1: <br/>nível 1: "11.__.00.00" <br/>Ex2: nível 1 com niveis abaixo: "11.__.__.__" )
+	 * @return - Máscara para consultar os filhos (Ex1: <br/>nível 2: "11.__.00.00" <br/>Ex2: nível 2 com niveis abaixo: "11.__.__.__" )
 	 */
 	public String getMscFilho(String texto, int nivelInicial, boolean niveisAbaixo) {
 		String txt = formatar(texto);
@@ -171,7 +171,7 @@ public class MascaraUtil {
 		
 		if(me.matches()){
 			StringBuffer sb = new StringBuffer(txt);
-			nivelInicial++;
+//			nivelInicial++;
 			int nivelFinal = niveisAbaixo?me.groupCount():nivelInicial;
 			
 			for (int i = nivelInicial; i <= nivelFinal; i++) {
@@ -192,18 +192,19 @@ public class MascaraUtil {
 
 	public String getMscFilho(String codificacao, boolean niveisAbaixo) {
 		int nivelInicial = calcularNivel(formatar(codificacao));
+		nivelInicial++;
 		return getMscFilho(codificacao, nivelInicial, niveisAbaixo);
 	}
 	
 	/**
 	 * Retorna o campo correspondente ao nível indicado
-	 * @param nivel - Nivel desejado. Baseado em 0.
+	 * @param nivel - Nivel desejado. Baseado em 1.
 	 * @param texto - texto com a classificacao documental
 	 * @return
 	 */
 	public String getCampoDaMascara(int nivel, String texto) {
 		String txt = formatar(texto);
-		if (txt == null || nivel < 0){
+		if (txt == null || nivel <= 0){
 			return null;
 		}
 	
@@ -212,9 +213,13 @@ public class MascaraUtil {
 		
 		if(me.matches()){
 			StringBuffer sb = new StringBuffer(txt);
-			nivel++;
+//			nivel++;
 			int inicio = me.start(nivel);
 			int fim = me.end(nivel);
+			
+			if (inicio<0 || fim<0){
+				return null;
+			}
 			
 			return sb.substring(inicio, fim);
 			
@@ -229,6 +234,9 @@ public class MascaraUtil {
 	 * @return
 	 */
 	public int calcularNivel(String codificacao) {
+		if (codificacao==null || codificacao.equals("")){
+			return -1;
+		}
 		if (codificacao.equals(formatar("0"))){
 			return 1;
 		}
@@ -312,6 +320,10 @@ public class MascaraUtil {
 		}
 		
 		return result.toString();
+	}
+
+	public boolean isCodificacao(String texto) {
+		return Pattern.matches(getMascaraEntrada(), texto);
 	}
 
 		

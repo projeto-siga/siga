@@ -1136,7 +1136,7 @@ public class ExDao extends CpDao {
 	public List<ExClassificacao> listarAssuntos() {
 		final Query query = getSessao().getNamedQuery(
 				"consultarAssuntosExClassificacao");
-		query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoNivel(0));
+		query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoNivel(1));
 		final List<ExClassificacao> l = query.list();
 		return l;
 	}
@@ -1173,7 +1173,7 @@ public class ExDao extends CpDao {
 				"consultarClassesExClassificacao");
 		String mascara = null;
 		if (codAssunto!=null && !codAssunto.equals("-1")){
-			mascara = MascaraUtil.getInstance().getMscFilho(codAssunto, 1,false);
+			mascara = MascaraUtil.getInstance().getMscFilho(codAssunto, 2,false);
 		}
 		query.setString("mascara", mascara);
 		query.setString("exceto", MascaraUtil.getInstance().formatar(codAssunto));
@@ -1201,7 +1201,7 @@ public class ExDao extends CpDao {
 		String mascara = null;
 		if (!codAssunto.equals("-1") &&
 			!codClasse.equals("-1")){
-			mascara = MascaraUtil.getInstance().getMscFilho(codAssunto+codClasse, 2,false);
+			mascara = MascaraUtil.getInstance().getMscFilho(codAssunto+codClasse, 3,false);
 		}
 
 		query.setString("mascara", mascara);
@@ -1210,13 +1210,19 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
-	public List<ExClassificacao> listarAtividades(			
-			final String codClasse, final String codSubClasse,
-			final boolean ultimoNivel) {
+	public List<ExClassificacao> listarAtividades(final String codAssunto,	
+			final String codClasse, final String codSubClasse) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarAtividadesExClassificacao");
+		
+		String mascara = null;
+		if (!codAssunto.equals("-1") &&
+			!codClasse.equals("-1")){
+			mascara = MascaraUtil.getInstance().getMscFilho(codAssunto+codClasse, 4,false);
+		}
+
 		query.setString("mascara", "__." + codClasse + "." + codSubClasse + ".00");
-		query.setBoolean("ultimoNivel", ultimoNivel);
+//		query.setBoolean("ultimoNivel", ultimoNivel);
 
 		final List<ExClassificacao> l = query.list();
 		/*
@@ -1237,36 +1243,43 @@ public class ExDao extends CpDao {
 		String codSubClasse = "-1";
 		String codAtividade = "-1";
 		String codAssunto = "-1";
-		boolean ultimoNivel = false;
+//		boolean ultimoNivel = false;
 		String descrClassificacao = "";
+		
+		MascaraUtil m = MascaraUtil.getInstance();
 		
 		StringBuffer mascara = new StringBuffer();
 		if (flt.getAssunto() != null) {
 			if (!flt.getAssunto().equals("")) {
-				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(0,flt.getAssunto());
+				codAssunto = MascaraUtil.getInstance().getCampoDaMascara(1,flt.getAssunto());
 			}
 		}
 		if (flt.getClasse() != null) {
 			if (!flt.getClasse().equals("")) {
-				codClasse = MascaraUtil.getInstance().getCampoDaMascara(1,flt.getClasse());
+				codClasse = MascaraUtil.getInstance().getCampoDaMascara(2,flt.getClasse());
 			}
 		}
 		if (flt.getSubclasse() != null) {
 			if (!flt.getSubclasse().equals("")) {
-				codSubClasse = MascaraUtil.getInstance().getCampoDaMascara(2,flt.getSubclasse());
+				codSubClasse = MascaraUtil.getInstance().getCampoDaMascara(3,flt.getSubclasse());
 			}
 		}
 		if (flt.getAtividade() != null) {
 			if (!flt.getAtividade().equals("")) {
-				codAtividade = MascaraUtil.getInstance().getCampoDaMascara(3,flt.getAtividade());
+				codAtividade = MascaraUtil.getInstance().getCampoDaMascara(4,flt.getAtividade());
 			}
 		}
 		if (flt.getDescricao() != null) {
-			descrClassificacao = flt.getDescricao();
+			String d = flt.getDescricao();
+			if (d.length() > 0 && m.isCodificacao(d)){
+				descrClassificacao = m.formatar(d);
+			}else{
+				descrClassificacao = d;	
+			}
 		}
-		if (flt.getUltimoNivel() != null) {
-			ultimoNivel = new Boolean(flt.getUltimoNivel());
-		}
+//		if (flt.getUltimoNivel() != null) {
+//			ultimoNivel = new Boolean(flt.getUltimoNivel());
+//		}
 
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorFiltroExClassificacao");
@@ -1300,18 +1313,18 @@ public class ExDao extends CpDao {
 		
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
-		query.setBoolean("ultimoNivel", ultimoNivel);
+//		query.setBoolean("ultimoNivel", ultimoNivel);
 
 		final List<ExClassificacao> l = query.list();
 		return l;
 	}
 
 	public int consultarQuantidade(final ExClassificacaoDaoFiltro flt) {
-		boolean ultimoNivel = false;
+//		boolean ultimoNivel = false;
 		String descrClassificacao = "";
-		if (flt.getUltimoNivel() != null) {
-			ultimoNivel = new Boolean(flt.getUltimoNivel());
-		}
+//		if (flt.getUltimoNivel() != null) {
+//			ultimoNivel = new Boolean(flt.getUltimoNivel());
+//		}
 		if (flt.getDescricao() != null) {
 			descrClassificacao = flt.getDescricao();
 		}
@@ -1319,7 +1332,7 @@ public class ExDao extends CpDao {
 		final Query query = getSessao().getNamedQuery(
 				"consultarQuantidadeExClassificacao");
 
-		query.setBoolean("ultimoNivel", ultimoNivel);
+//		query.setBoolean("ultimoNivel", ultimoNivel);
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
 		query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());

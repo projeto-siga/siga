@@ -29,7 +29,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * A class that represents a row in the 'EX_VIA' table. This class may be
  * customized as it is never re-generated after being created.
  */
-public class ExVia extends AbstractExVia implements Serializable {
+public class ExVia extends AbstractExVia {
 	/**
 	 * 
 	 */

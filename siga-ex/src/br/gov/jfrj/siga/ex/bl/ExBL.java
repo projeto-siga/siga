@@ -5022,7 +5022,7 @@ public class ExBL extends CpBL {
 			
 				if(exClassNovo.getDescricao().equalsIgnoreCase(exClassConflito.getDescricao()) ){
 					//se conflito não causado por movimentacao onde a própria classificacao é o conflito
-					if (!exClassConflito.getCodificacao().equals(exClassAntigo.getCodificacao())){
+					if (exClassAntigo==null || !exClassConflito.getCodificacao().equals(exClassAntigo.getCodificacao())){
 						throw new AplicacaoException("Termo da classificação em conflito! <br/><br/>" + exClassConflito.getDescricaoCompleta());	
 					}
 					

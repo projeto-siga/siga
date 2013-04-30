@@ -129,7 +129,7 @@
 		</set>
 
 		<set name="exModeloSet" inverse="true">
-			<key column="ID_MOD" />
+			<key column="ID_CLASSIFICACAO" />
 			<one-to-many class="ExModelo" />
 		</set>
 

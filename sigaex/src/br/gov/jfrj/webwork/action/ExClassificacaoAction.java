@@ -37,6 +37,7 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExVia;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -58,6 +59,7 @@ public class ExClassificacaoAction
 	//classificacao
 	private String[] listaNiveis;
 	private String[] nivelSelecionado;
+	private String[] nomeNivel;
 	private Integer nivelAlterado;
 	
 	private ExClassificacaoSelecao classificacaoSel;
@@ -79,7 +81,7 @@ public class ExClassificacaoAction
 	private Long idTemporalidadeArqInterm;
 	
 
-	public ExClassificacaoAction() {
+	public ExClassificacaoAction() throws AplicacaoException {
 		super();
 		classificacaoSel = new ExClassificacaoSelecao();
 		int totalItens = MascaraUtil.getInstance().getTotalDeNiveisDaMascara();
@@ -88,6 +90,14 @@ public class ExClassificacaoAction
 		for (int i = 0; i < listaNiveis.length; i++) {
 			listaNiveis[i]=String.valueOf(i);
 		}
+		
+		
+		nomeNivel = new String[getTotalDeNiveis()];
+		List<String> listaNomes = SigaExProperties.getExClassificacaoNomesNiveis();
+		for (int i = 0; i<listaNomes.size()-1;i++){
+			nomeNivel[i]= listaNomes.get(i+1);
+		}
+
 	}
 
 	@Override
@@ -489,4 +499,7 @@ public class ExClassificacaoAction
 		return nivelAlterado;
 	}
 	
+	public String getNomeDoNivel(Integer nivel){
+		return nomeNivel[nivel];
+	}
 }

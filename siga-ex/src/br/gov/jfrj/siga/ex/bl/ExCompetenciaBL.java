@@ -929,7 +929,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor()
 				.equivale(titular))
-				|| isCadastranteExterno || (isConsignatario && mob.doc().isAssinado()) 
+				|| isCadastranteExterno || (isConsignatario && mob.doc().isAssinado() && mob.doc().isAssinadoSubscritor()) 
 						|| podeMovimentar(
 				titular, lotaTitular, mob))
 

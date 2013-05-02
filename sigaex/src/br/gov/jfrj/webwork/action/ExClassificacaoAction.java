@@ -94,7 +94,7 @@ public class ExClassificacaoAction
 		
 		nomeNivel = new String[getTotalDeNiveis()];
 		List<String> listaNomes = SigaExProperties.getExClassificacaoNomesNiveis();
-		for (int i = 0; i<listaNomes.size()-1;i++){
+		for (int i = 0; i<nomeNivel.length;i++){
 			nomeNivel[i]= listaNomes.get(i+1);
 		}
 

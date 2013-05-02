@@ -177,7 +177,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 							"A lotação titular não foi informada");
 				subst.setLotaTitular(dao().consultar(
 						getLotaTitularSel().getId(), DpLotacao.class, false));
-				if (subst.getLotaTitular().getIdLotacao() != getCadastrante().getIdLotacao()
+				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
 						&& !Cp.getInstance()
 								.getConf()
 								.podePorConfiguracao(

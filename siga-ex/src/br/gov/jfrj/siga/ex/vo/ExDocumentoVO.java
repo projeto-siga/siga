@@ -130,11 +130,11 @@ public class ExDocumentoVO extends ExVO {
 		
 		tags = new ArrayList<String>();
 		if (doc.getExClassificacao() != null)
-			tags.add("@doc:" + doc.getExClassificacao().getSigla());
+			tags.add("@doc-classe:" + doc.getExClassificacao().getSigla());
 		if (doc.getExFormaDocumento() != null)
-			tags.add("@doc:" + Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
+			tags.add("@doc-tipo:" + Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
 		if (doc.getExModelo() != null)
-			tags.add("@doc:" + Texto.slugify(doc.getExModelo().getNmMod(), true, true));
+			tags.add("@doc-modelo:" + Texto.slugify(doc.getExModelo().getNmMod(), true, true));
 	}
 
 	public ExDocumentoVO(ExDocumento doc) throws Exception {
@@ -294,6 +294,17 @@ public class ExDocumentoVO extends ExVO {
 			if (mob.temAnexos())
 				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov",
 						"assinar_anexos_geral", true);
+			
+			vo.addAcao(
+					"link_add",
+					"Criar Anexo",
+					"/expediente/doc",
+					"editar",
+					Ex.getInstance()
+							.getComp()
+							.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
+					null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
+					null, null);
 		}
 
 		vo.addAcao("shield", "Redefinir Nível de Acesso", "/expediente/mov",
@@ -367,17 +378,6 @@ public class ExDocumentoVO extends ExVO {
 						.podePedirPublicacao(titular, lotaTitular, mob));
 
 		// <ww:param name="idFormaDoc">60</ww:param>
-		vo.addAcao(
-				"link_add",
-				"Criar Anexo",
-				"/expediente/doc",
-				"editar",
-				Ex.getInstance()
-						.getComp()
-						.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
-				null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
-				null, null);
-
 		vo.addAcao(
 				"arrow_undo",
 				"Desfazer Cancelamento",

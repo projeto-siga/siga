@@ -1,0 +1,14 @@
+#{extends 'main.html' /}
+#{set title:'Incluir Forum' /}
+<script language="javascript" type="text/javascript">
+ function chamada(novaURL){
+	$(window.document.location).attr('href',novaURL);
+ }
+</script>
+<form name="" action="/forum_insert" onsubmit="" method="post" ><br>
+Código do Forum: <input name="objForum.cod_forum" type="text" maxlength="3" size="5" /> <!-- int --><br>
+Descrição: <input name="objForum.descricao_forum" type="text" maxlength="50" size="50" /> <!-- String --><br>
+<input type="submit" value="Grava" /><input type="button" value="Lista" onclick="chamada('/foruns_listar');" /><br>
+<a href="/">Voltar</a>
+</form>
+<div id="div_msg"></div>

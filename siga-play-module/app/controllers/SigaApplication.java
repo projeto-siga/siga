@@ -49,7 +49,10 @@ public class SigaApplication extends Controller {
 			if (backgroundColor != null)
 				cabecalho[0] = cabecalho[0].replace("<html>", "<html style=\"background-color: " + backgroundColor + " !important;\">");
 			
-			renderArgs.put("_cabecalho_pre", cabecalho[0]);
+			String[] cabecalho_pre = cabecalho[0].split("</head>");
+			
+			renderArgs.put("_cabecalho_pre_head", cabecalho_pre[0]);
+			renderArgs.put("_cabecalho_pre_menu", "</head>" + cabecalho_pre[1]);
 			renderArgs.put("_cabecalho_pos", cabecalho[1]);
 			renderArgs.put("_rodape", pageText[1]);
 

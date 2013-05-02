@@ -88,6 +88,21 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	public String getDescricao() {
 		return tituloServico;
 	}
+	
+	public String getDescricaoCompleta() {
+		String sigla = this.siglaServico;
+		int nivel = this.getNivel();
+		String desc_nivel = null;
+		if (nivel == 1){
+			desc_nivel =  this.tituloServico;
+		}
+		if (nivel == 2){
+			String sigla_raiz = this.getSigla().substring(0,2) + ".00";
+			SrServico configuracao = SrServico.find("bySiglaServico",sigla_raiz).first();
+			desc_nivel =  configuracao.tituloServico + " - " + this.tituloServico;
+		}
+		return desc_nivel;
+	}
 
 	@Override
 	public void setDescricao(String descricao) {

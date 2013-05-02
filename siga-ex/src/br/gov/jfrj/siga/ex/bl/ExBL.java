@@ -1364,9 +1364,14 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 
 			// Verifica se o documento possui documento pai e faz a juntada
-			// automática.
+			// automática. Caso o pai seja um volume de um processo, primeiro 
+			// verifica se o volume está encerrado, se estiver procura o último volume para juntar. 
 
 			if (doc.getExMobilPai() != null) {
+				if(doc.getExMobilPai().getDoc().isProcesso() && doc.getExMobilPai().isEncerrado()){
+					doc.setExMobilPai(doc.getExMobilPai().doc().getUltimoVolume());
+					gravar(cadastrante, lotaCadastrante, doc);
+				}
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						cadastrante, cadastrante, mov);
 			}
@@ -2826,7 +2831,7 @@ public class ExBL extends CpBL {
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele está em trânsito, cancelado ou encontra-se em outra lotação");
+						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado ou encontra-se em outra lotação");
 		}
 		
 		final ExMovimentacao mov;

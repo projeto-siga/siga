@@ -22,6 +22,11 @@ import models.GcMovimentacao;
 import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
+
+import org.joda.time.LocalDate;
+import org.mcavallo.opencloud.Cloud;
+import org.mcavallo.opencloud.Tag;
+
 import play.Play;
 import play.Play.Mode;
 import play.db.jpa.JPA;
@@ -250,7 +255,80 @@ public class Application extends SigaApplication {
 	public static void top10() {
 		List<GcInformacao> lista = GcInformacao.all().fetch();
 
-		render(lista);
+		Query query1 = JPA.em().createNamedQuery("maisRecentes");
+		query1.setMaxResults(5);
+		List<Object[]> listaMaisRecentes = query1.getResultList();
+		if (listaMaisRecentes.size() == 0)
+			listaMaisRecentes = null;
+
+		Query query2 = JPA.em().createNamedQuery("maisVisitados");
+		query2.setMaxResults(5);
+		List<Object[]> listaMaisVisitados = query2.getResultList();
+		if (listaMaisVisitados.size() == 0)
+			listaMaisVisitados = null;
+
+		Query query3 = JPA.em().createNamedQuery("principaisAutores");
+		query3.setMaxResults(5);
+		List<Object[]> listaPrincipaisAutores = query3.getResultList();
+		if (listaPrincipaisAutores.size() == 0)
+			listaPrincipaisAutores = null;
+
+		Query query4 = JPA.em().createNamedQuery("principaisLotacoes");
+		query4.setMaxResults(5);
+		List<Object[]> listaPrincipaisLotacoes = query4.getResultList();
+		if (listaPrincipaisLotacoes.size() == 0)
+			listaPrincipaisLotacoes = null;
+
+		Cloud cloud = null;
+
+		Query query5 = JPA.em().createNamedQuery("principaisTags");
+		query5.setMaxResults(50);
+		List<Object[]> listaPrincipaisTags = query5.getResultList();
+		if (listaPrincipaisTags.size() == 0)
+			listaPrincipaisTags = null;
+		else {
+			cloud = new Cloud(); // create cloud
+			cloud.setMaxWeight(150.0); // max font size
+			cloud.setMinWeight(50.0);
+			double d = listaPrincipaisTags.size();
+			for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) {
+				Tag tag = new Tag(t.titulo, d);
+				cloud.addTag(tag);
+				d -= 1;
+			}
+		}
+		
+		LocalDate ld = new LocalDate();
+		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
+		
+		// Header
+		StringBuilder sb = new StringBuilder();
+		sb.append("['");
+		sb.append("Mês");
+		sb.append("',");
+		sb.append("'");
+		sb.append("Visitas");
+		sb.append("',");
+		sb.append("'Novos'],");
+
+		// Values
+		for (int i = -6; i <= 0; i++) {
+			String m = ld.plusMonths(i).toString("yyyy-MM");
+			sb.append("['");
+			sb.append(ld.plusMonths(i).toString("MMM/yy"));
+			sb.append("',");
+			float v = 0;
+			sb.append(v);
+			sb.append(",");
+			sb.append(v);
+			sb.append(",");
+			sb.append("],");
+		}
+		String evolucao = sb.toString();
+
+		render(lista, listaMaisRecentes, listaMaisVisitados,
+				listaPrincipaisAutores, listaPrincipaisLotacoes,
+				listaPrincipaisTags, cloud, evolucao);
 	}
 
 	public static void listar(GcInformacaoFiltro filtro) {

@@ -177,7 +177,7 @@ function carregouAtendente(response, param){
 
 	#{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')} 
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?tags=@sr:${solicitacao.itemConfiguracao.siglaItemConfiguracao}&tags=@sr:${solicitacao.servico.siglaServico}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
+		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?tags=@sr-item:${solicitacao.itemConfiguracao.siglaItemConfiguracao}&tags=@sr-acao:${solicitacao.servico.siglaServico}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
 	</script>
 	#{/if} 
 

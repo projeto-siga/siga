@@ -940,6 +940,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Verifica se um documento já foi assinado pelo Subscritor.
+	 */
+	public boolean isAssinadoSubscritor() {		
+		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
+			if (assinatura.getSubscritor().equivale(getSubscritor()))
+				return true;
+		}
+		return false;
+	}
+	
+	
+	
 
 	/**
 	 * Verifica se um documento está cancelado, o que é verdadeiro quando todas

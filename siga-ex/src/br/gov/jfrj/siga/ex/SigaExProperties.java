@@ -27,6 +27,9 @@ package br.gov.jfrj.siga.ex;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 */
+import java.util.List;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.prop.ext.ModeloPropriedade;
 
 public class SigaExProperties extends ModeloPropriedade {
@@ -94,6 +97,14 @@ public class SigaExProperties extends ModeloPropriedade {
 
 	public static String getExClassificacaoMascaraSaida() {
 		return getString("classificacao.mascara.saida");
+	}
+	
+	public static List<String> getExClassificacaoNomesNiveis() throws AplicacaoException{
+		try {
+			return instance.obterPropriedadeLista("siga.ex.classificacao.mascara.nomeNivel");
+		} catch (Exception e) {
+			throw new AplicacaoException("Não foi possível encontrar os nomes dos níveis da classificação documental no arquivo siga.properties. Ex: siga.ex.classificacao.mascara.nomeNivel.0 = Assunto");
+		}
 	}
 	
 	public static boolean isAmbienteProducao(){

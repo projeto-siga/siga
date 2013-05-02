@@ -135,21 +135,7 @@
 
 	</class>
 	
-	
-	<query name="consultarAssuntosExClassificacao">
-		<![CDATA[from ExClassificacao cl 
-	      where cl.codificacao like (:mascara) 
-	       	and cl.hisAtivo = 1 
-	       	order by cl.descrClassificacao]]>
-	</query>
-	<query name="consultarClassesExClassificacao">
-		<![CDATA[from ExClassificacao cl 
-	      where cl.codificacao like :mascara
-	      	and cl.codificacao != :exceto
-	       	and cl.hisAtivo = 1
-	       	order by cl.descrClassificacao]]>
-	</query>
-	<query name="consultarSubClassesExClassificacao">
+	<query name="consultarExClassificacaoComExcecao">
 		<![CDATA[from ExClassificacao cl 
 	      where cl.codificacao like :mascara
 	      	and cl.codificacao != :exceto
@@ -157,24 +143,6 @@
 	       	order by cl.descrClassificacao]]>
 	</query>
 	
-		<query name="consultarExClassificacaoComExcecao">
-		<![CDATA[from ExClassificacao cl 
-	      where cl.codificacao like :mascara
-	      	and cl.codificacao != :exceto
-	       	and cl.hisAtivo = 1
-	       	order by cl.descrClassificacao]]>
-	</query>
-	
-
-	<query name="consultarAtividadesExClassificacao">
-		<![CDATA[select distinct(cl) from ExClassificacao cl,ExVia v 
-	      where cl.codificacao  like :mascara   
-	       	and cl.idClassificacao = v.exClassificacao.idClassificacao 
-	       	and (v.codVia is not null)
-	       	and v.hisAtivo = 1
-	       	and cl.hisAtivo = 1
-	       	order by cl.descrClassificacao]]>
-	</query>
 
 	<query name="consultarPorFiltroExClassificacao">
 		<![CDATA[select distinct(cla) from ExClassificacao cla ,ExVia v 

@@ -497,7 +497,7 @@ public class ExBL extends CpBL {
 						mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
 						mob.doc().getLotaCadastrante());
 				if (mob.getExDocumento().getSubscritor() != null)
-					acrescentarMarca(set, mob, CpMarcador.MARCADOR_COMO_SUBSCRITOR, mob.doc().getDtRegDoc(), 
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_REVISAR, mob.doc().getDtRegDoc(), 
 						mob.getExDocumento().getSubscritor(), null);
 
 			}
@@ -571,20 +571,26 @@ public class ExBL extends CpBL {
 										mov.getLotaCadastrante());
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
 							if (mob.getDoc().isEletronico()) {
-								m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-								for (ExMovimentacao assinatura : mob.getDoc()
-										.getTodasAsAssinaturas()) {
-									if (assinatura.getSubscritor().equivale(
-											mov.getSubscritor())) {
-										m = null;
-										break;
+								if (!mob.getDoc().isAssinado())
+									m = CpMarcador.MARCADOR_REVISAR;
+								else {
+									if (mob.getDoc().isAssinadoSubscritor())
+										m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
+									else	
+										m = CpMarcador.MARCADOR_REVISAR;
+									for (ExMovimentacao assinatura : mob.getDoc().getTodasAsAssinaturas()) {
+										if (assinatura.getSubscritor().equivale(mov.getSubscritor())) {
+											m = null;
+											break;
+										}
 									}
-								}
+								}									
 								if (m != null)
 									acrescentarMarca(set, mob, m,
 											mov.getDtIniMov(), mov.getSubscritor(),
-											null);
+											null);	
 							}
+							
 						} 
 					}
 					if (mDje != null) {
@@ -696,19 +702,8 @@ public class ExBL extends CpBL {
 			}
 	
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
-				Long mSubs = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-				for (ExMovimentacao assinatura : mob.getDoc()
-						.getTodasAsAssinaturas()) {
-					if (assinatura.getSubscritor().equivale(
-							mob.getExDocumento().getSubscritor())) {
-						mSubs = null;
-						break;
-					}
-				}
-				if (mSubs != null)
-					acrescentarMarca(set, mob, mSubs, dt, mob.getExDocumento()
-							.getSubscritor(), null);
-			}
+				if (!mob.getDoc().isAssinadoSubscritor())
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob.getExDocumento().getSubscritor(), null);			}
 	
 			if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
 				if (!mob.doc().isEletronico()) {

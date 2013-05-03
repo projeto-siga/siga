@@ -21,6 +21,8 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import br.gov.jfrj.siga.model.Assemelhavel;
+
 
 /**
  * A class that represents a row in the 'EX_TEMPORALIDADE' table. This class may
@@ -38,4 +40,16 @@ public class ExTemporalidade extends AbstractExTemporalidade  {
 	public ExTemporalidade() {
 	}
 
+	public Long getId() {
+		return getIdTemporalidade();
+	}
+
+	public void setId(Long id) {
+		setIdTemporalidade(id);
+	}
+
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		return false;
+	}
+	
 }

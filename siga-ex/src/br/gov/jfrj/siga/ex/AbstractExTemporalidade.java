@@ -22,15 +22,17 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 
 /**
  * A class that represents a row in the EX_TEMPORALIDADE table. You can
  * customize the behavior of this class by editing the class,
  * {@link ExTemporalidade()}.
  */
-public abstract class AbstractExTemporalidade implements Serializable {
+public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte {
 	/** The value of the simple descTemporalidade property. */
 	private java.lang.String descTemporalidade;
 
@@ -47,6 +49,9 @@ public abstract class AbstractExTemporalidade implements Serializable {
 	private Integer valorTemporalidade;
 	
 	private CpUnidadeMedida cpUnidadeMedida; 
+	
+	private Set<ExVia> exViaArqCorrenteSet;
+	private Set<ExVia> exViaArqIntermediarioSet;
 	
 
 	/**
@@ -142,4 +147,21 @@ public abstract class AbstractExTemporalidade implements Serializable {
 	public CpUnidadeMedida getCpUnidadeMedida() {
 		return cpUnidadeMedida;
 	}
+
+	public void setExViaArqCorrenteSet(Set<ExVia> exViaArqCorrenteSet) {
+		this.exViaArqCorrenteSet = exViaArqCorrenteSet;
+	}
+
+	public Set<ExVia> getExViaArqCorrenteSet() {
+		return exViaArqCorrenteSet;
+	}
+
+	public void setExViaArqIntermediarioSet(Set<ExVia> exViaArqIntermediarioSet) {
+		this.exViaArqIntermediarioSet = exViaArqIntermediarioSet;
+	}
+
+	public Set<ExVia> getExViaArqIntermediarioSet() {
+		return exViaArqIntermediarioSet;
+	}
+
 }

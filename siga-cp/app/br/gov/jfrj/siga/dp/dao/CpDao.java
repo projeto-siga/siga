@@ -48,6 +48,7 @@ import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -1175,7 +1176,21 @@ public class CpDao extends ModeloDao {
 		return findByCriteria(clazz, Property.forName(dtFim).isNull(), Property
 				.forName("orgaoUsuario.idOrgaoUsu").eq(orgaoUsuario));
 	}
+	
+	public <T> List<T> listarAtivos(Class<T> clazz,String orderBy) {
+		Criteria c = getSessao().createCriteria(clazz);
+		
+		if (orderBy != null){
+			c.addOrder(Order.asc(orderBy));	
+		}
+		
+		c.add(Restrictions.eq("hisAtivo", 1));
+	
+		return c.list();
 
+	}
+
+	
 	/**
 	 * Use this inside subclasses as a convenience method.
 	 */

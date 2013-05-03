@@ -121,7 +121,7 @@
 
  -->
 		<set name="exViaSet" inverse="true"
-			where="HIS_DT_FIM is null"
+			where="HIS_ATIVO = 1"
 			order-by="COD_VIA asc">
 
 			<key column="ID_CLASSIFICACAO" />

@@ -96,6 +96,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
+import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -5037,6 +5038,92 @@ public class ExBL extends CpBL {
 		}
 		
 		
+	}
+
+	public void incluirExTemporalidade(ExTemporalidade exTemporalidade,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		ExDao.getInstance().gravarComHistorico(exTemporalidade, null, null, identidadeCadastrante);
+	}
+
+	public ExTemporalidade getCopia(ExTemporalidade exTempOrigem) throws AplicacaoException {
+		ExTemporalidade exTempCopia = new ExTemporalidade();
+		try {
+			
+			PropertyUtils.copyProperties(exTempCopia, exTempOrigem);
+			
+			//novo id
+			exTempCopia.setId(null);
+			//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
+			//HibernateException:Found shared references to a collection
+			Set<ExVia> setExViaArqCorr= new HashSet<ExVia>();
+			Set<ExVia> setExViaArqInterm= new HashSet<ExVia>();
+			exTempCopia.setExViaArqCorrenteSet(setExViaArqCorr);
+			exTempCopia.setExViaArqIntermediarioSet(setExViaArqInterm);
+			
+		} catch (Exception e){
+			throw new AplicacaoException(
+			"Erro ao copiar as propriedades do objeto ExTemporalidade.");
+		}
+		
+		return exTempCopia;
+
+	}
+
+	public void alterarExTemporalidade(ExTemporalidade exTempNovo,
+			ExTemporalidade exTempAntiga, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		
+
+			dao().gravarComHistorico(exTempNovo, exTempAntiga, dt,
+					identidadeCadastrante);
+			
+			//copiar Referências arq corrente
+			try {
+				for (ExVia viaAntiga : exTempAntiga.getExViaArqCorrenteSet()) {
+					ExVia viaNova = new ExVia();
+
+					PropertyUtils.copyProperties(viaNova, viaAntiga);
+					viaNova.setIdVia(null);
+					viaNova.setTemporalidadeCorrente(exTempNovo);
+
+					dao().gravarComHistorico(viaNova, viaAntiga, dt,
+							identidadeCadastrante);
+					if (exTempNovo.getExViaArqCorrenteSet() == null) {
+						exTempNovo.setExViaArqCorrenteSet(new HashSet<ExVia>());
+					}
+					exTempNovo.getExViaArqCorrenteSet().add(viaNova);
+
+				}
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Não foi possível fazer cópia das vias em arquivo corrente!");
+			}
+			
+			//copiar Referências arq intermediário
+			try {
+				for (ExVia viaAntiga : exTempAntiga.getExViaArqIntermediarioSet()) {
+					ExVia viaNova = new ExVia();
+
+					PropertyUtils.copyProperties(viaNova, viaAntiga);
+					viaNova.setIdVia(null);
+					viaNova.setTemporalidadeIntermediario(exTempNovo);
+
+					dao().gravarComHistorico(viaNova, viaAntiga, dt,
+							identidadeCadastrante);
+					if (exTempNovo.getExViaArqIntermediarioSet() == null) {
+						exTempNovo.setExViaArqIntermediarioSet(new HashSet<ExVia>());
+					}
+					exTempNovo.getExViaArqIntermediarioSet().add(viaNova);
+
+				}
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Não foi possível fazer cópia das vias em arquivo intermediário!");
+			}
+
+
+
+
 	}
 
 }

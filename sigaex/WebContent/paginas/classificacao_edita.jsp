@@ -151,7 +151,6 @@
 	</c:otherwise>
 </c:choose>
 
-	<h2 class="gt-table-head">Classificação Documental</h2>
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
 			<h2 class="gt-form-head">${titulo_pagina}</h2>

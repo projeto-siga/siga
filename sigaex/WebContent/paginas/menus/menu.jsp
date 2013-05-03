@@ -95,6 +95,13 @@
 						namespace="/expediente/classificacao" /> <ww:a href="%{url}">Classificação Documental</ww:a>
 				</li>
 			</c:if>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental')}">
+				<li><ww:url id="url" action="listar"
+						namespace="/expediente/temporalidade" /> <ww:a href="%{url}">Temporalidade Documental</ww:a>
+				</li>
+			</c:if>
+			
 		</ul>
 	</li>
 </c:if>

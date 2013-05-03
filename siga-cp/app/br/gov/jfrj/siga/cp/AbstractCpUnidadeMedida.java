@@ -11,13 +11,13 @@ import br.gov.jfrj.siga.model.Objeto;
 
 public class AbstractCpUnidadeMedida extends Objeto implements Serializable{
 
-	private Integer idUnidadeMedida;
+	private Long idUnidadeMedida;
 	private String descricao;
 	
-	public void setIdUnidadeMedida(Integer idUnidadeMedida) {
+	public void setIdUnidadeMedida(Long idUnidadeMedida) {
 		this.idUnidadeMedida = idUnidadeMedida;
 	}
-	public Integer getIdUnidadeMedida() {
+	public Long getIdUnidadeMedida() {
 		return idUnidadeMedida;
 	}
 	public void setDescricao(String descricao) {

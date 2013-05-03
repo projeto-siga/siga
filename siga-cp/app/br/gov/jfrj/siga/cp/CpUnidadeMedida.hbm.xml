@@ -6,7 +6,7 @@
 	<class name="CpUnidadeMedida"
 		table="CP_UNIDADE_MEDIDA">
 		<id name="idUnidadeMedida" column="ID_UNIDADE_MEDIDA"
-			type="java.lang.Integer">
+			type="java.lang.Long">
 		</id>
 		<property name="descricao" column="DESCR_UNIDADE_MEDIDA"
 			type="java.lang.String" />

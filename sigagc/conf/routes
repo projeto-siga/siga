@@ -9,6 +9,9 @@ GET     /                                       Application.index
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
+*		/tag/selecionar							Application.selecionarTag
+*		/tag/buscar								Application.buscarTag
+
 *		/{tipo}/buscar							Application.buscarSiga
 *		/siga/{tipo}/buscar.action				Application.buscarSigaFromPopup
 *		/{tipo}/selecionar						Application.selecionarSiga

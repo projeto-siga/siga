@@ -835,6 +835,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (getExClassificacao() != null)
 				vias = getExClassificacao().getExViaSet();
 		}
+		
+		if (vias != null && ((ExVia)vias.toArray()[0]).getExTipoDestinacao().getFacilitadorDest() != null)
+			return vias;
 
 		// Expediente externo ou eletrônico e com Documento Pai tem apenas 1 via
 		if (getExTipoDocumento().getIdTpDoc() == 3 || isEletronico()

@@ -355,11 +355,21 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 *         descrição do tipo de destinação.
 	 */
 	public String getDescricaoCompleta() {
+		String descTipoMobil = getExTipoMobil().getDescTipoMobil();
+
 		if (isGeral())
-			return getExTipoMobil().getDescTipoMobil();
+			return descTipoMobil;
+
+		if (isVia()) {
+			ExVia via = getDoc().via(getNumSequencia().shortValue());
+			if (via != null && via.getExTipoDestinacao() != null
+					&& via.getExTipoDestinacao().getFacilitadorDest() != null) {
+				descTipoMobil = via.getExTipoDestinacao().getFacilitadorDest();
+			}
+		}
 
 		String s = getNumSequencia() + (isVia() ? "&ordf; " : "&ordm; ")
-				+ getExTipoMobil().getDescTipoMobil();
+				+ descTipoMobil;
 
 		if (isVia()) {
 			ExVia via = getDoc().via(getNumSequencia().shortValue());

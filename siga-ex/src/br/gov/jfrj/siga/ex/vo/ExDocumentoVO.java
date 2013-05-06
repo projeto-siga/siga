@@ -127,14 +127,33 @@ public class ExDocumentoVO extends ExVO {
 		}
 
 		addDadosComplementares();
-		
+
 		tags = new ArrayList<String>();
-		if (doc.getExClassificacao() != null)
-			tags.add("@doc-classe:" + doc.getExClassificacao().getSigla());
-		if (doc.getExFormaDocumento() != null)
-			tags.add("@doc-tipo:" + Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
-		if (doc.getExModelo() != null)
-			tags.add("@doc-modelo:" + Texto.slugify(doc.getExModelo().getNmMod(), true, true));
+		String classificacao = doc.getExClassificacao().getDescricao();
+		if (classificacao != null && classificacao.length() != 0) {
+			String a[] = classificacao.split(": ");
+			for (String s : a) {
+				String ss = "@" + Texto.slugify(s, true, true);
+				if (!tags.contains(ss)) {
+					tags.add(ss);
+				}
+			}
+		}
+		if (doc.getExModelo() != null) {
+			String ss = "@"
+					+ Texto.slugify(doc.getExModelo().getNmMod(), true, true);
+			if (!tags.contains(ss)) {
+				tags.add(ss);
+			}
+		}
+		// if (doc.getExClassificacao() != null)
+		// tags.add("@doc-classe:" + doc.getExClassificacao().getSigla());
+		// if (doc.getExFormaDocumento() != null)
+		// tags.add("@doc-tipo:" +
+		// Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
+		// if (doc.getExModelo() != null)
+		// tags.add("@doc-modelo:" + Texto.slugify(doc.getExModelo().getNmMod(),
+		// true, true));
 	}
 
 	public ExDocumentoVO(ExDocumento doc) throws Exception {

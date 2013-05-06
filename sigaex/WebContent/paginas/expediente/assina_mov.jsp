@@ -86,7 +86,7 @@ End Function
 
 				<br />
 				<ww:hidden name="copia" value="${copia}" />
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">				
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">				
 				<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
 				<ww:hidden name="assinaturaB64" /> <ww:hidden name="assinante" />
 				<c:choose>

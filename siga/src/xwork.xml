@@ -20,10 +20,6 @@
 			<result>/paginas/play_pagina_vazia.jsp</result>
 		</action>
 		
-		<action name="ajax_proxy" class="br.gov.jfrj.webwork.action.PlayAction" method="aAjaxProxy">
-			<result>/paginas/play_proxy.jsp</result>
-		</action>
-		
 		<action name="usuario_autenticado" class="br.gov.jfrj.webwork.action.PlayAction" method="aUsuarioAutenticado">
 			<result>/paginas/play_usuario_autenticado.jsp</result>
 		</action>
@@ -490,6 +486,11 @@
 		<action name="testes" class="br.gov.jfrj.webwork.action.PrincipalAction"
 			method="test">
 			<result>/paginas/testes.jsp</result>
+		</action>
+		<action name="selecionar" class="br.gov.jfrj.webwork.action.PrincipalAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
 	</package>
 </xwork>

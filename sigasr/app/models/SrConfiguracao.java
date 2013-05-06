@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO", schema="SIGASR")
+@Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
 
@@ -88,41 +89,25 @@ public class SrConfiguracao extends CpConfiguracao {
 		this.subTipoConfig = subTipoConfig;
 	}
 
-	/*public SrItemConfiguracao getItemConfiguracao() {
-		if (itemConfiguracao != null)
-			return itemConfiguracao.getAtual();
-		return null;
-	}
-
-	public SrServico getServico() {
-		if (servico != null)
-			return servico.getAtual();
-		return null;
-	}
-
-	public SrTipoAtributo getTipoAtributo() {
-		if (tipoAtributo != null)
-			return tipoAtributo.getAtual();
-		return null;
-	}
-
-	public DpLotacao getAtendente() {
-		if (atendente != null)
-			return atendente.getLotacaoAtual();
-		return null;
-	}
-
-	public DpLotacao getPosAtendente() {
-		if (posAtendente != null)
-			return posAtendente.getLotacaoAtual();
-		return null;
-	}
-
-	public DpLotacao getPreAtendente() {
-		if (preAtendente != null)
-			return preAtendente.getLotacaoAtual();
-		return null;
-	}*/
+	/*
+	 * public SrItemConfiguracao getItemConfiguracao() { if (itemConfiguracao !=
+	 * null) return itemConfiguracao.getAtual(); return null; }
+	 * 
+	 * public SrServico getServico() { if (servico != null) return
+	 * servico.getAtual(); return null; }
+	 * 
+	 * public SrTipoAtributo getTipoAtributo() { if (tipoAtributo != null)
+	 * return tipoAtributo.getAtual(); return null; }
+	 * 
+	 * public DpLotacao getAtendente() { if (atendente != null) return
+	 * atendente.getLotacaoAtual(); return null; }
+	 * 
+	 * public DpLotacao getPosAtendente() { if (posAtendente != null) return
+	 * posAtendente.getLotacaoAtual(); return null; }
+	 * 
+	 * public DpLotacao getPreAtendente() { if (preAtendente != null) return
+	 * preAtendente.getLotacaoAtual(); return null; }
+	 */
 
 	public String getPesquisaSatisfacaoString() {
 		return pesquisaSatisfacao ? "Sim" : "Não";
@@ -142,10 +127,10 @@ public class SrConfiguracao extends CpConfiguracao {
 		return JPA
 				.em()
 				.createQuery(
-						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
+						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and hisDtFim is null", SrConfiguracao.class)
-				.getResultList();
+								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario",
+						SrConfiguracao.class).getResultList();
 	}
 
 	public void salvarComoAssociacaoTipoAtributo() throws Exception {
@@ -154,17 +139,30 @@ public class SrConfiguracao extends CpConfiguracao {
 		salvar();
 	}
 
-	public static List<SrConfiguracao> listarAssociacoesTipoAtributo() {
-		long k = CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO;
-		return JPA
-				.em()
-				.createQuery(
-						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
-								+ " and hisDtFim is null", SrConfiguracao.class)
-				.getResultList();
+	public static List<List<SrConfiguracao>> listarAssociacoesTipoAtributo() {
+
+		String query = "select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
+				+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
+				+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario";
+
+		List<SrConfiguracao> abertas = JPA.em()
+				.createQuery(query, SrConfiguracao.class).getResultList();
+
+		query = query.replace("conf.hisDtFim is null",
+				"conf.hisDtFim is not null and conf.hisDtIni = ("
+						+ "	select max(hisDtIni) from SrConfiguracao where "
+						+ "hisIdIni = conf.hisIdIni)");
+
+		List<SrConfiguracao> fechadas = JPA.em()
+				.createQuery(query, SrConfiguracao.class).getResultList();
+
+		List<List<SrConfiguracao>> retorno = new ArrayList<List<SrConfiguracao>>();
+		retorno.add(abertas);
+		retorno.add(fechadas);
+		return retorno;
+
 	}
-	
+
 	public static SrConfiguracao getConfiguracao(DpPessoa pess,
 			SrItemConfiguracao item, SrServico servico, long idTipo,
 			SrSubTipoConfiguracao subTipo) throws Exception {

@@ -41,6 +41,7 @@ import org.hibernate.search.SearchFactory;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -239,6 +240,41 @@ public class ExMobilAction extends
 
 	private Integer visualizacao;
 
+	private String matricula;
+
+	public class GenericoSelecao implements Selecionavel {
+
+		private Long id;
+
+		private String sigla;
+
+		private String descricao;
+
+		public String getDescricao() {
+			return descricao;
+		}
+
+		public void setDescricao(String descricao) {
+			this.descricao = descricao;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getSigla() {
+			return sigla;
+		}
+
+		public void setSigla(String sigla) {
+			this.sigla = sigla;
+		}
+	}
+
 	public Integer getVisualizacao() {
 		return visualizacao;
 	}
@@ -248,7 +284,6 @@ public class ExMobilAction extends
 	}
 
 	public ExMobilAction() {
-
 		classificacaoSel = new ExClassificacaoSelecao();
 		destinatarioSel = new DpPessoaSelecao();
 		documentoSel = new ExDocumentoSelecao();
@@ -266,6 +301,20 @@ public class ExMobilAction extends
 		paramsEntrevista = new TreeMap<String, String>();
 		cpOrgaoSel = new CpOrgaoSelecao();
 		results = new LinkedList<ExDocumento>();
+	}
+
+	@Override
+	public String aSelecionar() throws Exception {
+		String s = super.aSelecionar();
+		if (getSel() != null && getMatricula() != null) {
+			GenericoSelecao sel = new GenericoSelecao();
+			sel.setId(getSel().getId());
+			sel.setSigla(getSel().getSigla());
+			sel.setDescricao("/sigaex/expediente/doc/exibir.action?sigla="
+					+ sel.getSigla());
+			setSel(sel);
+		}
+		return s;
 	}
 
 	@Override
@@ -366,10 +415,9 @@ public class ExMobilAction extends
 			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
 					getTitular(), getLotaTitular()));
 
-			/*if (getTamanho() > 100) {
-				setTamanho(100);
-				itemPagina = 100;
-			}*/
+			/*
+			 * if (getTamanho() > 100) { setTamanho(100); itemPagina = 100; }
+			 */
 
 			System.out.println("Consulta dos por filtro: "
 					+ (System.currentTimeMillis() - tempoIni));
@@ -384,6 +432,13 @@ public class ExMobilAction extends
 	@Override
 	public ExMobilDaoFiltro createDaoFiltro() throws Exception {
 		final ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+
+		if (flt.getIdOrgaoUsu() == null || flt.getIdOrgaoUsu() == 0) {
+			if (matricula != null) {
+				DpPessoa pes = daoPes(param("matricula"));
+				flt.setIdOrgaoUsu(pes.getOrgaoUsuario().getId());
+			}
+		}
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		try {
@@ -468,11 +523,13 @@ public class ExMobilAction extends
 					.getIdInicial());
 
 		flt.setNumSequencia(paramInteger("numVia"));
-		flt.setLotacaoCadastranteAtualId(getCadastrante().getLotacao()
-				.getIdInicial());
+		if (getCadastrante() != null)
+			flt.setLotacaoCadastranteAtualId(getCadastrante().getLotacao()
+					.getIdInicial());
 
-		flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
-		if (flt.getIdOrgaoUsu() == null)
+		if (paramLong("orgaoUsu") != null)
+			flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
+		if (flt.getIdOrgaoUsu() == null && getLotaTitular() != null)
 			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario()
 					.getIdOrgaoUsu());
 		flt.setIdMod(paramLong("idMod"));
@@ -948,7 +1005,7 @@ public class ExMobilAction extends
 				.getInstance()
 				.getBL()
 				.obterFormasDocumento(getTitular(), getLotaTitular(), null,
-						tipoForma, false, false);
+						tipoForma, false, false, false);
 	}
 
 	public List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {
@@ -966,7 +1023,7 @@ public class ExMobilAction extends
 				.getInstance()
 				.getBL()
 				.obterListaModelos(forma, false, "Todos", false, getTitular(),
-						getLotaTitular());
+						getLotaTitular(), false);
 	}
 
 	public String getAnexarString() {
@@ -1434,4 +1491,11 @@ public class ExMobilAction extends
 		this.ordem = ordem;
 	}
 
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
+	}
 }

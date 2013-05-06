@@ -296,7 +296,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 				.getInstance()
 				.getBL()
 				.obterListaModelos(forma, false, "Todos", false, getTitular(),
-						getLotaTitular());
+						getLotaTitular(), false);
 	}
 
 	public String aEditarGravar() throws Exception {
@@ -662,7 +662,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	@SuppressWarnings("all")
 	public List<ExFormaDocumento> getListaFormas() throws Exception {
 		return Ex.getInstance().getBL().obterFormasDocumento(null, null, null,
-				null, false, false);
+				null, false, false, false);
 	}
 
 	public List<ExTipoDocumento> getListaTiposDocumento() throws Exception {

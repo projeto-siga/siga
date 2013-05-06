@@ -496,6 +496,9 @@ public class ExBL extends CpBL {
 				acrescentarMarca(set, mob, CpMarcador.MARCADOR_EM_ELABORACAO,
 						mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
 						mob.doc().getLotaCadastrante());
+				if (mob.getExDocumento().getSubscritor() != null)
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_REVISAR, mob.doc().getDtRegDoc(), 
+						mob.getExDocumento().getSubscritor(), null);
 
 			}
 
@@ -568,20 +571,26 @@ public class ExBL extends CpBL {
 										mov.getLotaCadastrante());
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
 							if (mob.getDoc().isEletronico()) {
-								m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-								for (ExMovimentacao assinatura : mob.getDoc()
-										.getTodasAsAssinaturas()) {
-									if (assinatura.getSubscritor().equivale(
-											mov.getSubscritor())) {
-										m = null;
-										break;
+								if (!mob.getDoc().isAssinado())
+									m = CpMarcador.MARCADOR_REVISAR;
+								else {
+									if (mob.getDoc().isAssinadoSubscritor())
+										m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
+									else	
+										m = CpMarcador.MARCADOR_REVISAR;
+									for (ExMovimentacao assinatura : mob.getDoc().getTodasAsAssinaturas()) {
+										if (assinatura.getSubscritor().equivale(mov.getSubscritor())) {
+											m = null;
+											break;
+										}
 									}
-								}
+								}									
 								if (m != null)
 									acrescentarMarca(set, mob, m,
 											mov.getDtIniMov(), mov.getSubscritor(),
-											null);
+											null);	
 							}
+							
 						} 
 					}
 					if (mDje != null) {
@@ -693,19 +702,8 @@ public class ExBL extends CpBL {
 			}
 	
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
-				Long mSubs = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-				for (ExMovimentacao assinatura : mob.getDoc()
-						.getTodasAsAssinaturas()) {
-					if (assinatura.getSubscritor().equivale(
-							mob.getExDocumento().getSubscritor())) {
-						mSubs = null;
-						break;
-					}
-				}
-				if (mSubs != null)
-					acrescentarMarca(set, mob, mSubs, dt, mob.getExDocumento()
-							.getSubscritor(), null);
-			}
+				if (!mob.getDoc().isAssinadoSubscritor())
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob.getExDocumento().getSubscritor(), null);			}
 	
 			if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
 				if (!mob.doc().isEletronico()) {
@@ -1352,10 +1350,20 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 
 			// Verifica se o documento possui documento pai e faz a juntada
-			// automática.
+			// automática. Caso o pai seja um volume de um processo, primeiro 
+			// verifica se o volume está encerrado, se estiver procura o último volume para juntar. 
 
 			if (doc.getExMobilPai() != null) {
+				if(doc.getExMobilPai().getDoc().isProcesso() && doc.getExMobilPai().isEncerrado()){
+					doc.setExMobilPai(doc.getExMobilPai().doc().getUltimoVolume());
+					gravar(cadastrante, lotaCadastrante, doc);
+				}
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
+						cadastrante, cadastrante, mov);
+			}
+			
+			if(doc.getExMobilAutuado() != null) {
+				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov,
 						cadastrante, cadastrante, mov);
 			}
 
@@ -2555,7 +2563,7 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-
+			
 			concluirAlteracao(doc);
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -2809,7 +2817,7 @@ public class ExBL extends CpBL {
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele está em trânsito, cancelado ou encontra-se em outra lotação");
+						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado ou encontra-se em outra lotação");
 		}
 
 		try {
@@ -4031,6 +4039,7 @@ public class ExBL extends CpBL {
 		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
+			
 			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 			if (getComp().podeJuntar(ultMov.getCadastrante(),
 					ultMov.getLotaCadastrante(), mob)
@@ -4039,6 +4048,29 @@ public class ExBL extends CpBL {
 				juntarDocumento(ultMov.getCadastrante(), ultMov.getTitular(),
 						ultMov.getLotaCadastrante(), null, mob,
 						doc.getExMobilPai(), dtMov, ultMov.getSubscritor(),
+						ultMov.getTitular(), "1");
+				break;
+			}
+		}
+	}
+	
+	private void juntarAoDocumentoAutuado(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc,
+			final Date dtMov, final DpPessoa subscritor,
+			final DpPessoa titular, final ExMovimentacao mov) throws Exception,
+			AplicacaoException {
+
+		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
+		// numVia++)
+		for (final ExMobil mob : doc.getExMobilSet()) {
+			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
+			if (getComp().podeJuntar(ultMov.getCadastrante(),
+					ultMov.getLotaCadastrante(),  doc.getExMobilAutuado())
+					& getComp().podeSerJuntado(ultMov.getCadastrante(),
+							ultMov.getLotaCadastrante(), mob)) {
+				juntarDocumento(ultMov.getCadastrante(), ultMov.getTitular(),
+						ultMov.getLotaCadastrante(), null, doc.getExMobilAutuado(),
+						mob, dtMov, ultMov.getSubscritor(),
 						ultMov.getTitular(), "1");
 				break;
 			}
@@ -4223,7 +4255,7 @@ public class ExBL extends CpBL {
 
 	public List<ExFormaDocumento> obterFormasDocumento(DpPessoa titular,
 			DpLotacao lotaTitular, ExTipoDocumento tipoDoc,
-			ExTipoFormaDoc tipoForma, boolean protegido, boolean despachando)
+			ExTipoFormaDoc tipoForma, boolean protegido, boolean despachando, boolean autuando)
 
 	throws Exception {
 		List<ExFormaDocumento> formasSet = new ArrayList<ExFormaDocumento>();
@@ -4247,6 +4279,15 @@ public class ExBL extends CpBL {
 			formasSet = formasFinal;
 			formasFinal = new ArrayList<ExFormaDocumento>();
 		}
+		if(autuando) {
+			for (ExFormaDocumento forma : formasSet) {
+				if (getConf().podePorConfiguracao(titular, lotaTitular, forma,
+						CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL))
+					formasFinal.add(forma);
+			}
+			formasSet = formasFinal;
+			formasFinal = new ArrayList<ExFormaDocumento>();
+		}
 		if (protegido)
 			for (ExFormaDocumento forma : formasSet) {
 				if (getConf().podePorConfiguracao(titular, lotaTitular, forma,
@@ -4260,7 +4301,7 @@ public class ExBL extends CpBL {
 
 	public List<ExModelo> obterListaModelos(ExFormaDocumento forma,
 			boolean despachando, String headerValue, boolean protegido,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) throws Exception {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
 		if (forma != null)
@@ -4273,6 +4314,14 @@ public class ExBL extends CpBL {
 			for (ExModelo mod : modeloSetFinal)
 				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
 						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL))
+					provSet.add(mod);
+			modeloSetFinal = provSet;
+		}
+		if (autuando) {
+			provSet = new ArrayList<ExModelo>();
+			for (ExModelo mod : modeloSetFinal)
+				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
+						CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL))
 					provSet.add(mod);
 			modeloSetFinal = provSet;
 		}

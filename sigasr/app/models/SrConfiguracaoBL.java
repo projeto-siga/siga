@@ -30,17 +30,17 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
 	private void evitaSessionClosed(SrConfiguracao conf) {
 		if (conf.preAtendente != null)
-			conf.preAtendente.getSigla();
+			conf.preAtendente.getLotacaoAtual();
 		if (conf.atendente != null)
-			conf.atendente.getSigla();
+			conf.atendente.getLotacaoAtual();
 		if (conf.posAtendente != null)
-			conf.posAtendente.getSigla();
+			conf.posAtendente.getLotacaoAtual();
 		if (conf.itemConfiguracao != null)
-			conf.itemConfiguracao.getSigla();
+			conf.itemConfiguracao.getAtual();
 		if (conf.servico != null)
-			conf.servico.getSigla();
+			conf.servico.getAtual();
 		if (conf.tipoAtributo != null)
-			conf.tipoAtributo.getId();
+			conf.tipoAtributo.getAtual();
 	}
 
 	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)

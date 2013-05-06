@@ -1,0 +1,152 @@
+package controllers;
+
+import java.util.Date;
+import java.util.HashMap;
+
+import org.hibernate.Session;
+
+import play.Logger;
+import play.Play;
+import play.db.jpa.JPA;
+import play.mvc.Controller;
+import play.mvc.Http;
+import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+
+public class SigaApplication extends Controller {
+
+	protected static void prepararSessao() throws Exception {
+		Session playSession = (Session) JPA.em().getDelegate();
+		CpDao.freeInstance();
+		CpDao.getInstance(playSession);
+		Cp.getInstance().getConf().limparCacheSeNecessario();
+	}
+
+	protected static void obterCabecalhoEUsuario(String backgroundColor)
+			throws Exception {
+		try {
+
+			Logger.info("Siga-SR info: " + getBaseSiga());
+
+			// Obter cabeçalho e rodapé do Siga
+			HashMap<String, String> atributos = new HashMap<String, String>();
+			for (Http.Header h : request.headers.values())
+				if (!h.name.equals("content-type"))
+					atributos.put(h.name, h.value());
+
+			String popup = params.get("popup");
+			if (popup == null
+					|| (!popup.equals("true") && !popup.equals("false")))
+				popup = "false";
+			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
+					+ "/pagina_vazia.action?popup=" + popup, atributos);
+			String[] pageText = paginaVazia.split("<!-- insert body -->");
+			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
+
+			if (backgroundColor != null)
+				cabecalho[0] = cabecalho[0].replace("<html>",
+						"<html style=\"background-color: " + backgroundColor
+								+ " !important;\">");
+
+			String[] cabecalho_pre = cabecalho[0].split("</head>");
+
+			renderArgs.put("_cabecalho_pre_head", cabecalho_pre[0]);
+			renderArgs.put("_cabecalho_pre_menu", "</head>" + cabecalho_pre[1]);
+			
+			if (cabecalho.length > 1) 
+				renderArgs.put("_cabecalho_pos", cabecalho[1]);
+
+			renderArgs.put("_rodape", pageText[1]);
+			
+			// Obter usuário logado
+			String[] IDs = ConexaoHTTP.get(
+					getBaseSiga() + "/usuario_autenticado.action", atributos)
+					.split(";");
+
+			Logger.info("Siga-SR info: " + IDs.toString());
+
+			renderArgs.put("cadastrante",
+					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
+
+			if (IDs[1] != null && !IDs[1].equals(""))
+				renderArgs.put("lotaCadastrante",
+						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
+
+			if (IDs[2] != null && !IDs[2].equals(""))
+				renderArgs.put("titular",
+						JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
+
+			if (IDs[3] != null && !IDs[3].equals(""))
+				renderArgs.put("lotaTitular",
+						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
+
+			if (IDs[4] != null && !IDs[4].equals("")) {
+				CpIdentidade identidadeCadastrante = JPA.em().find(
+						CpIdentidade.class, Long.parseLong(IDs[4]));
+				renderArgs.put("identidadeCadastrante", identidadeCadastrante);
+			}
+
+			renderArgs.put("currentTimeMillis", new Date().getTime());
+
+		} catch (ArrayIndexOutOfBoundsException aioob) {
+			// Edson: Quando as informações não puderam ser obtidas do Siga,
+			// manda para a página de login. Se não for esse o erro, joga
+			// exceção pra cima.
+			redirect("/siga");
+		}
+
+	}
+
+	protected static boolean podeUtilizarServico(String servico)
+			throws Exception {
+		return Cp
+				.getInstance()
+				.getConf()
+				.podeUtilizarServicoPorConfiguracao(cadastrante(),
+						lotaTitular(), servico);
+	}
+
+	protected static void assertAcesso(String pathServico) throws Exception {
+		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
+				+ pathServico;
+		if (!podeUtilizarServico(servico))
+			throw new Exception("Acesso negado. Serviço: '" + servico
+					+ "' usuário: " + cadastrante().getSigla() + " lotação: "
+					+ lotaTitular().getSiglaCompleta());
+	}
+
+	protected static void tratarExcecoes(Exception e) {
+		// MailUtils.sendErrorMail(e);
+		if (cadastrante() != null)
+			Logger.error("Erro Siga-SR; Pessoa: " + cadastrante().getSigla()
+					+ "; Lotação: " + lotaTitular().getSigla(), e);
+		e.printStackTrace();
+		error(e.getMessage());
+	}
+
+	static DpPessoa cadastrante() {
+		return (DpPessoa) renderArgs.get("cadastrante");
+	}
+
+	static DpPessoa titular() {
+		return (DpPessoa) renderArgs.get("titular");
+	}
+
+	static DpLotacao lotaTitular() {
+		return (DpLotacao) renderArgs.get("lotaTitular");
+	}
+
+	static CpIdentidade idc() {
+		return (CpIdentidade) renderArgs.get("identidadeCadastrante");
+	}
+
+	static String getBaseSiga() {
+		return "http://" + Play.configuration.getProperty("servidor.principal")
+				+ ":8080/siga";
+	}
+
+}

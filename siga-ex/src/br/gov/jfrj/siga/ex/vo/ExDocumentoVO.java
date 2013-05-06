@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -39,6 +40,7 @@ public class ExDocumentoVO extends ExVO {
 	String dtDocDDMMYY;
 	String subscritorString;
 	String classificacaoDescricaoCompleta;
+	List<String> tags;
 	String destinatarioString;
 	String descrDocumento;
 	String nmNivelAcesso;
@@ -125,6 +127,14 @@ public class ExDocumentoVO extends ExVO {
 		}
 
 		addDadosComplementares();
+		
+		tags = new ArrayList<String>();
+		if (doc.getExClassificacao() != null)
+			tags.add("@doc-classe:" + doc.getExClassificacao().getSigla());
+		if (doc.getExFormaDocumento() != null)
+			tags.add("@doc-tipo:" + Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
+		if (doc.getExModelo() != null)
+			tags.add("@doc-modelo:" + Texto.slugify(doc.getExModelo().getNmMod(), true, true));
 	}
 
 	public ExDocumentoVO(ExDocumento doc) throws Exception {
@@ -284,6 +294,17 @@ public class ExDocumentoVO extends ExVO {
 			if (mob.temAnexos())
 				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov",
 						"assinar_anexos_geral", true);
+			
+			vo.addAcao(
+					"link_add",
+					"Criar Anexo",
+					"/expediente/doc",
+					"editar",
+					Ex.getInstance()
+							.getComp()
+							.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
+					null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
+					null, null);
 		}
 
 		vo.addAcao("shield", "Redefinir Nível de Acesso", "/expediente/mov",
@@ -357,17 +378,6 @@ public class ExDocumentoVO extends ExVO {
 						.podePedirPublicacao(titular, lotaTitular, mob));
 
 		// <ww:param name="idFormaDoc">60</ww:param>
-		vo.addAcao(
-				"link_add",
-				"Criar Anexo",
-				"/expediente/doc",
-				"editar",
-				Ex.getInstance()
-						.getComp()
-						.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
-				null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
-				null, null);
-
 		vo.addAcao(
 				"arrow_undo",
 				"Desfazer Cancelamento",
@@ -501,5 +511,13 @@ public class ExDocumentoVO extends ExVO {
 
 	public void setModelo(String modelo) {
 		this.modelo = modelo;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 }

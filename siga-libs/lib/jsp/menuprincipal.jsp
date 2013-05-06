@@ -30,6 +30,12 @@
 						</li>
 					</c:if>
 
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
+						<li><a
+							href="/sigagc/" >Gestão de Conhecimento</a>
+						</li>
+					</c:if>
+
 					<!-- <li><a href="/sigatr/">Treinamento</a>
 					</li> -->
 					<!-- <li><a href="/SigaServicos/">Serviços</a>
@@ -84,8 +90,17 @@
 						</li>
 					</c:if>
 					 --%>
-					<li><ww:a href="/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
-					</li>
+					<ww:if test="${(cadastrante.idPessoa != titular.idPessoa) || (cadastrante.lotacao.idLotacao != lotaTitular.idLotacao)}">
+					 <%-- é uma substituição --%> 
+					 	<c:if test="${f:podeCadastrarQqSubstituicaoPorConfiguracao(cadastrante, cadastrante.lotacao)}">
+					 		<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+							</li>
+					 	</c:if>
+					 </ww:if>
+					 <ww:else>
+					 	<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+						</li>
+					 </ww:else>				
 				</ul>
 			</li>
 

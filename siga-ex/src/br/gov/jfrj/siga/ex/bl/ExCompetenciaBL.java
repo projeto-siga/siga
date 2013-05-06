@@ -797,6 +797,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
+				&& mob.doc().isAssinado()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
 						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO);
@@ -906,7 +907,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
 
-		// cosignatario pode assinar
+		// cosignatario pode assinar depois que o subscritor já tiver assinado
 
 		boolean isConsignatario = false;
 
@@ -928,7 +929,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor()
 				.equivale(titular))
-				|| isCadastranteExterno || isConsignatario || podeMovimentar(
+				|| isCadastranteExterno || (isConsignatario && mob.doc().isAssinado() && mob.doc().isAssinadoSubscritor()) 
+						|| podeMovimentar(
 				titular, lotaTitular, mob))
 
 				// && mob.doc().isEletronico() //Nato: Permitido assinar
@@ -1827,6 +1829,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAnexarArquivoAlternativo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		
+		if (!mob.isGeral() && !mob.doc().isAssinado())
+			return false;
+		
+		if(mob.isGeral() && mob.doc().isAssinado())
+			return false;
+		
+		if (mob.doc().isExpediente() && mob.doc().getPai() != null)
+			return false;
+		
+		if (mob.doc().isProcesso() && mob.isEncerrado())
+			return false;
+		
 		if(mob.doc().isSemEfeito())
 			return false;
 		
@@ -1857,8 +1871,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 
 		return (mob.getExDocumento().getDtFechamento() != null)
-				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO)
-				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
+				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO)				
 				&& podeMovimentar;
 
 	}
@@ -3158,4 +3171,35 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(doc.getOrgaoUsuario(), doc.getExFormaDocumento(),CpTipoConfiguracao.TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO);
 	}
+	
+	/**
+	 * Retorna se é possível autuar um expediente, com base nas
+	 * seguintes regras:
+	 * <ul>
+	 * <li>Documento tem de estar Assinada</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAutuar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isSemEfeito())
+			return false;
+		
+		if(mob.isJuntado())
+			return false;
+		
+		if(mob.isApensado())
+			return false;
+		
+		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
+
+		return (!mob.isGeral() && mob.doc().isExpediente() && mob.doc().isAssinado() && podeMovimentar);
+	}	
 }

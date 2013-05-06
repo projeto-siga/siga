@@ -104,6 +104,7 @@
 			<url-pattern>/administracao/*</url-pattern>
 			<url-pattern>/expediente/*</url-pattern>
 			<url-pattern>/modelo/*</url-pattern>
+			<url-pattern>/generico/*</url-pattern>
 			<url-pattern>/gi/*</url-pattern>
 			<url-pattern>/administracao.action</url-pattern>
 			<url-pattern>/redirect.action</url-pattern>

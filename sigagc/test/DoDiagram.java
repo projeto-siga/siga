@@ -1,7 +1,9 @@
+import models.GcArquivo;
 import models.GcConfiguracao;
 import models.GcInformacao;
 import models.GcMarca;
 import models.GcMovimentacao;
+import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
@@ -28,7 +30,7 @@ public class DoDiagram {
 	public static void testGeraDiagramaGC() throws Exception {
 		Diagram d = new Diagram();
 		d.setfMergeWithAbstractClass(true);
-		boolean fI = true;
+		boolean fI = false;
 
 		d.addClass(DpPessoa.class, fI, false, false);
 		d.addClass(DpLotacao.class, fI, false, false);
@@ -36,12 +38,14 @@ public class DoDiagram {
 		d.addClass(CpMarca.class, fI, true, false);
 		d.addClass(CpConfiguracao.class, false, false, false);
 
-		d.addClass(GcInformacao.class, false);
-		d.addClass(GcTipoInformacao.class, false);
-		d.addClass(GcMovimentacao.class, false);
-		d.addClass(GcTipoMovimentacao.class, false);
-		d.addClass(GcMarca.class, false);
-		d.addClass(GcConfiguracao.class, false);
+		d.addClass(GcArquivo.class, fI, true, false);
+		d.addClass(GcConfiguracao.class, fI, true, false);
+		d.addClass(GcInformacao.class, fI, true, false);
+		d.addClass(GcMarca.class, fI, true, false);
+		d.addClass(GcMovimentacao.class, fI, true, false);
+		d.addClass(GcTipoInformacao.class, fI, true, false);
+		d.addClass(GcTipoMovimentacao.class, fI, true, false);
+		d.addClass(GcTag.class, fI, true, false);
 
 		d.createGraphML("sigagc.graphml", true, false);
 

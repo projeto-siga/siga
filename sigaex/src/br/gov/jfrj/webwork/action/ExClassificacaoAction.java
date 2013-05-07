@@ -345,7 +345,7 @@ public class ExClassificacaoAction
 	}
 	
 	public List<ExTemporalidade> getListaExTemporalidade(){
-		return ExDao.getInstance().listarTodos(ExTemporalidade.class);
+		return ExDao.getInstance().listarAtivos(ExTemporalidade.class,"descTemporalidade");
 	}
 
 

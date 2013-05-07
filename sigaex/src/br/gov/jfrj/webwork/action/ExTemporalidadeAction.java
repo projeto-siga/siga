@@ -18,27 +18,17 @@
  ******************************************************************************/
 package br.gov.jfrj.webwork.action;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
-import br.gov.jfrj.siga.ex.ExClassificacao;
-import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
-import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
-import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 
 public class ExTemporalidadeAction extends SigaActionSupport {
 
@@ -81,12 +71,7 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 	public String aGravar() throws AplicacaoException{
 		dao().iniciarTransacao();
 
-		if (getValorTemporalidade()!=null && getIdCpUnidade()<=0){
-			throw new AplicacaoException("Você deve especificar a unidade de medida do valor informado!");
-		}
-		if (getValorTemporalidade()==null && getIdCpUnidade()>0){
-			throw new AplicacaoException("Você deve especificar um valor para a unidade de medida informada!");
-		}
+		validarDados();
 
 		exTemporal = buscarExTemporalidade(getIdTemporalidade());
 		if (getAcao().equals("nova_temporalidade")){
@@ -105,6 +90,18 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 		
 		setMensagem("Classificação salva!");
 		return SUCCESS;
+	}
+
+	private void validarDados() throws AplicacaoException {
+		if (getDescTemporalidade()==null || getDescTemporalidade().trim().length()==0){
+			throw new AplicacaoException("Você deve especificar uma descrição!");
+		}
+		if (getValorTemporalidade()!=null && getIdCpUnidade()<=0){
+			throw new AplicacaoException("Você deve especificar a unidade de medida do valor informado!");
+		}
+		if (getValorTemporalidade()==null && getIdCpUnidade()>0){
+			throw new AplicacaoException("Você deve especificar um valor para a unidade de medida informada!");
+		}
 	}
 
 	private void alterarTemporalidadeExistente(ExTemporalidade exTempAntiga) throws AplicacaoException {
@@ -175,8 +172,7 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 		}
 		t.setCpUnidadeMedida(cpUnidade);	
 	}
-
-
+	
 	public List<ExTemporalidade> getTemporalidadeVigente(){
 		return ExDao.getInstance().listarAtivos(ExTemporalidade.class,"descTemporalidade");
 	}
@@ -242,8 +238,11 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 		return valorTemporalidade;
 	}
 
-	public void setValorTemporalidade(Integer valorTemporalidade) {
-		this.valorTemporalidade = valorTemporalidade;
+	public void setValorTemporalidade(Integer valor) {
+		if(valor<0){
+			valor = null;
+		}
+		this.valorTemporalidade = valor;
 	}
 
 }

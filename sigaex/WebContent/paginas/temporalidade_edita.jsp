@@ -58,7 +58,21 @@
 	
 							<!-- form row -->
 							<div class="gt-form-row gt-width-66">
-								<label>Valor</label> <input id="valorTemporalidade" name="valorTemporalidade" type="text" class="gt-form-text" value="${exTemporal.valorTemporalidade}"/>
+								<label>Valor</label>
+								<select  id="valorTemporalidade" name="valorTemporalidade">
+									<option value="-1">[Sem valor]</option>								
+									<c:forEach begin="1" end="365" var="item">
+										<c:choose>
+											<c:when test="${exTemporal.valorTemporalidade==item}">
+												<option value="${item}" selected="selected">${item}</option>
+											</c:when>
+											<c:otherwise>
+												<option value="${item}">${item}</option>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
+								</select>
+								<%--<input id="valorTemporalidade" name="valorTemporalidade" type="text" class="gt-form-text" value="${exTemporal.valorTemporalidade}"/>  --%>
 							</div>
 							<!-- /form row -->
 							
@@ -67,7 +81,7 @@
 
 								<label>Unidade de Medida</label>
 								<select id="idCpUnidade" name="idCpUnidade"> 
-									<option value="-1">Sem valor</option>
+									<option value="-1">[Sem valor]</option>
 									<c:forEach items="${listaCpUnidade}" var="itemLista">
 										<c:choose>
 											<c:when test="${itemLista.idUnidadeMedida == exTemporal.cpUnidadeMedida.idUnidadeMedida}">

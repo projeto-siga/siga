@@ -61,12 +61,6 @@ ALTER TABLE SIGA.EX_TEMPORALIDADE ADD (HIS_ATIVO NUMBER);
 UPDATE SIGA.EX_CLASSIFICACAO SET his_ativo = 0 WHERE his_dt_fim IS NOT NULL;
 UPDATE SIGA.EX_CLASSIFICACAO SET his_ativo = 1 WHERE his_dt_fim IS NULL;
 
-UPDATE SIGA.EX_VIA SET his_ativo = 0 WHERE his_dt_fim IS NOT NULL;
-UPDATE SIGA.EX_VIA SET his_ativo = 1 WHERE his_dt_fim IS NULL;
-
-UPDATE SIGA.EX_TEMPORALIDADE SET his_ativo = 1;
-
-
 --SCRIPT PARA CONVERTER OS DADOS PARA NOVO FORMATO
 
 DECLARE
@@ -86,6 +80,15 @@ BEGIN
   END LOOP ;
 END ;
 /
+
+--DESATIVA TODAS AS VIAS DAS CLASSIFICACOES DESATIVADAS
+UPDATE (select via.his_ativo via_his_ativo,cla.his_ativo cla_his_ativo,via.his_dt_fim via_his_dt_fim,cla.his_dt_fim cla_his_dt_fim from SIGA.ex_via via inner join SIGA.ex_classificacao cla on via.id_classificacao = cla.id_classificacao where via.his_dt_fim is null AND cla.his_dt_fim is not null) set via_his_ativo = cla_his_ativo,via_his_dt_fim=cla_his_dt_fim;
+
+UPDATE SIGA.EX_VIA SET his_ativo = 0 WHERE his_dt_fim IS NOT NULL;
+UPDATE SIGA.EX_VIA SET his_ativo = 1 WHERE his_dt_fim IS NULL;
+
+UPDATE SIGA.EX_TEMPORALIDADE SET his_ativo = 1;
+UPDATE SIGA.EX_TEMPORALIDADE SET his_id_ini = id_temporalidade where his_id_ini is null;
 
 
 --CONSTRAINTS

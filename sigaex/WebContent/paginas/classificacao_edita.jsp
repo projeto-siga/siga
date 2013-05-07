@@ -244,12 +244,24 @@
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
-											<label>Arquivo Corrente</label>${via.temporalidadeCorrente.descTemporalidade}
+											<label>Arquivo Corrente</label>
+											<c:choose>
+												<c:when test="${empty via.temporalidadeCorrente.descTemporalidade}">
+												[Sem valor]
+												</c:when>
+												<c:otherwise>${via.temporalidadeCorrente.descTemporalidade}</c:otherwise>
+											</c:choose>
 										</div>
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
-											<label>Arquivo Intermediário</label>${via.temporalidadeIntermediario.descTemporalidade}
+											<label>Arquivo Intermediário</label>
+											<c:choose>
+												<c:when test="${empty via.temporalidadeIntermediario.descTemporalidade}">
+												[Sem valor]
+												</c:when>
+												<c:otherwise>${via.temporalidadeIntermediario.descTemporalidade}</c:otherwise>
+											</c:choose>
 										</div>
 										<!-- /form row -->
 										<!-- form row -->
@@ -331,7 +343,7 @@
 
 											<label>Arquivo Corrente</label>
 											<select id="idTemporalidadeArqCorr" name="idTemporalidadeArqCorr"> 
-												<option value="-1">Não definido</option>
+												<option value="-1">[Sem valor]</option>
 												<c:forEach items="${listaExTemporalidade}" var="itemLista">
 													<c:choose>
 														<c:when test="${itemLista.idTemporalidade == via.temporalidadeCorrente.idTemporalidade}">
@@ -351,7 +363,7 @@
 
 											<label>Arquivo Intermediário</label>
 											<select id="idTemporalidadeArqInterm" name="idTemporalidadeArqInterm"> 
-												<option value="-1">Não definido</option>
+												<option value="-1">[Sem valor]</option>
 												<c:forEach items="${listaExTemporalidade}" var="itemLista">
 													<c:choose>
 														<c:when test="${itemLista.idTemporalidade == via.temporalidadeIntermediario.idTemporalidade}">
@@ -371,7 +383,7 @@
 										
 											<label>Destinação Final</label>
 											<select id="idDestinacaoFinal" name="idDestinacaoFinal"> 
-												<option value="-1">Não definido</option>
+												<option value="-1">[Sem valor]</option>
 												<c:forEach items="${listaExTipoDestinacao}" var="itemLista">
 													<c:choose>
 														<c:when test="${itemLista.idTpDestinacao == via.exDestinacaoFinal.idTpDestinacao}">
@@ -438,21 +450,21 @@
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
 											<label>Arquivo Corrente</label><ww:select name="idTemporalidadeArqCorr" list="listaExTemporalidade"
-														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Não definido"
+														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="[Sem valor]"
 														theme="simple" />
 										</div>
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
 											<label>Arquivo Intermediário</label><ww:select name="idTemporalidadeArqInterm" list="listaExTemporalidade"
-														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="Não definido"
+														listKey="idTemporalidade" listValue="descTemporalidade" headerKey="-1" headerValue="[Sem valor]"
 														theme="simple" />
 										</div>
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
 											<label>Destinação Final</label><ww:select name="idDestinacaoFinal" list="listaExTipoDestinacao"
-														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="Não definido"
+														listKey="idTpDestinacao" listValue="descrTipoDestinacao" headerKey="-1" headerValue="[Sem valor]"
 														theme="simple" />
 										</div>
 										<!-- /form row -->

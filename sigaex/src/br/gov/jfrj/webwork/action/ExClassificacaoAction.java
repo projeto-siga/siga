@@ -123,7 +123,7 @@ public class ExClassificacaoAction
 			flt.setSigla(codigoSelecionado);
 		}
 				
-		flt.setDescricao(Texto.removeAcentoMaiusculas(nome));
+		flt.setDescricao(nome);
 		return flt;
 	}
 

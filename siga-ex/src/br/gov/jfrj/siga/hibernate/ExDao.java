@@ -63,6 +63,7 @@ import org.hibernate.search.Search;
 import org.hibernate.util.ReflectHelper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -1145,7 +1146,6 @@ public class ExDao extends CpDao {
 		
 		MascaraUtil m = MascaraUtil.getInstance();
 		
-		StringBuffer mascara = new StringBuffer();
 		if (flt.getDescricao() != null) {
 			String d = flt.getDescricao();
 			if (d.length() > 0 && m.isCodificacao(d)){
@@ -1172,6 +1172,8 @@ public class ExDao extends CpDao {
 
 		
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
+				.replace(' ', '%'));
+		query.setString("descrClassificacaoSemAcento", Texto.removeAcentoMaiusculas(descrClassificacao)
 				.replace(' ', '%'));
 
 		final List<ExClassificacao> l = query.list();

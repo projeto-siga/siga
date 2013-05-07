@@ -148,6 +148,7 @@
 		<![CDATA[select distinct(cla) from ExClassificacao cla ,ExVia v 
 		where 	(
 			(upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%')) or
+			(upper(cla.descrClassificacao) like upper('%' || :descrClassificacaoSemAcento || '%')) or 
 			(cla.codificacao = :descrClassificacao)
 		)
 			and cla.codificacao like :mascara

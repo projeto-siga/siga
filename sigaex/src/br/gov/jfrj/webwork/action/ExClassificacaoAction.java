@@ -490,6 +490,17 @@ public class ExClassificacaoAction
 		
 		return result;
 	}
+	
+	public boolean exibirAdicaoDeVia(){
+		if (getCodificacao()!=null){
+			MascaraUtil m = MascaraUtil.getInstance();
+			if (m.calcularNivel(getCodificacao())==m.getTotalDeNiveisDaMascara()){
+				return true;
+			} 
+		}
+		
+		return false;
+	}
 
 	public void setNivelAlterado(Integer nivelAlterado) {
 		this.nivelAlterado = nivelAlterado;

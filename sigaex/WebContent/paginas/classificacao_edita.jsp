@@ -200,10 +200,13 @@
 					</div>
 					<!-- /form row -->
 					<c:if test="${acao == 'editar_classificacao'}">
-						<!-- form row -->
-						<div class="gt-form-row">
-							<a id="btAddVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:adicionarVia()">Adicionar Via</a>
-						</div>
+						<ww:set value="%{exibirAdicaoDeVia()}" name="exibirBotaoAddVia" />
+						<c:if test="${exibirBotaoAddVia}">
+							<!-- form row -->
+							<div class="gt-form-row">
+								<a id="btAddVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:adicionarVia()">Adicionar Via</a>
+							</div>
+						</c:if>
 						<!-- /form row -->
 					</c:if>
 				</div>

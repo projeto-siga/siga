@@ -2874,7 +2874,7 @@ public class ExBL extends CpBL {
 		}
 		
 		try {
-			encerrarAutomatico(cadastrante, lotaCadastrante, mobPai, dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+			encerrarAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -4720,9 +4720,10 @@ public class ExBL extends CpBL {
 			final DpPessoa titular, String nmFuncaoSubscritor) 
 			throws AplicacaoException, Exception {
 		
+		dao().getSessao().refresh(mob);
 		//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
 		if(mob.doc().isProcesso()) {
-			if(mob.getTotalDePaginas() > 200) {
+			if(mob.getTotalDePaginas() >= 200) {
 				encerrar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, nmFuncaoSubscritor, true);
 			}
 		}

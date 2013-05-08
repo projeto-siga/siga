@@ -8,13 +8,13 @@ public class MascaraClassificacaoTest extends TestCase {
 	private static final String MASK_IN_1 = "([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?-?([A-Z])?";
 	private static final String MASK_OUT_1 = "%1$02d.%2$02d.%3$02d.%4$02d";
 
-	private static final String MASK_IN_2 = "([0-9]{0,2})\\.?([0-9]{3})?\\.?([0-9]{2})?";
+	private static final String MASK_IN_2 = "([0-9]{0,2})\\.?([0-9]{0,3})?\\.?([0-9]{0,2})?";
 	private static final String MASK_OUT_2 = "%1$02d.%2$03d.%3$02d";
 	
-	private static final String MASK_IN_3 = "([0-9]{0,1})\\-?([0-9]{2})?\\-?([0-9]{3})?";
+	private static final String MASK_IN_3 = "([0-9]{0,1})\\-?([0-9]{0,2})?\\-?([0-9]{0,3})?";
 	private static final String MASK_OUT_3 = "%1$01d-%2$02d-%3$03d";
 
-	private static final String MASK_IN_4 = "([0-9]{0,1})\\-?([0-9]{5})?";
+	private static final String MASK_IN_4 = "([0-9]{0,1})\\-?([0-9]{0,5})?";
 	private static final String MASK_OUT_4 = "%1$01d-%2$05d";
 
 
@@ -343,5 +343,58 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertNull(m.substituir("","__.__.__.__"));
 		assertNull(m.substituir(null,"__.__.__.__"));
 		assertNull(m.substituir("1","__.__.__.__"));
+	}
+	
+	public void testIsUltimoNivel(){
+		MascaraUtil m = MascaraUtil.getInstance();
+		
+		m.setMascaraEntrada(MASK_IN_1);
+		m.setMascaraSaida(MASK_OUT_1);
+		
+		assertTrue(m.isUltimoNivel("00.00.00.01"));
+		assertTrue(m.isUltimoNivel("01.02.03.04"));
+		assertTrue(m.isUltimoNivel("1.2.3.4"));
+		
+		assertFalse(m.isUltimoNivel("00.00.00.00"));
+		assertFalse(m.isUltimoNivel("01.02.03.00"));
+		assertFalse(m.isUltimoNivel("01.00.03.00"));
+		assertFalse(m.isUltimoNivel("1.2"));
+		
+		m.setMascaraEntrada(MASK_IN_2);
+		m.setMascaraSaida(MASK_OUT_2);
+		
+		assertTrue(m.isUltimoNivel("00.000.01"));
+		assertTrue(m.isUltimoNivel("01.002.03"));
+		assertTrue(m.isUltimoNivel("01.000.03"));
+		assertTrue(m.isUltimoNivel("1.2.3"));
+		
+		assertFalse(m.isUltimoNivel("00.000.00"));
+		assertFalse(m.isUltimoNivel("01.002.00"));
+		assertFalse(m.isUltimoNivel("1.2"));
+		
+		m.setMascaraEntrada(MASK_IN_3);
+		m.setMascaraSaida(MASK_OUT_3);
+		
+		assertTrue(m.isUltimoNivel("0-00-001"));
+		assertTrue(m.isUltimoNivel("1-02-003"));
+		assertTrue(m.isUltimoNivel("1-00-003"));
+		assertTrue(m.isUltimoNivel("1-2-3"));
+		
+		assertFalse(m.isUltimoNivel("0-00-000"));
+		assertFalse(m.isUltimoNivel("1-02-000"));
+		assertFalse(m.isUltimoNivel("1-2"));
+
+		m.setMascaraEntrada(MASK_IN_4);
+		m.setMascaraSaida(MASK_OUT_4);
+		
+		assertTrue(m.isUltimoNivel("0-00001"));
+		assertTrue(m.isUltimoNivel("1-00002"));
+		assertTrue(m.isUltimoNivel("1-2"));
+		
+		assertFalse(m.isUltimoNivel("0-00000"));
+		assertFalse(m.isUltimoNivel("1-00000"));
+		assertFalse(m.isUltimoNivel("1"));
+
+
 	}
 }

@@ -493,10 +493,7 @@ public class ExClassificacaoAction
 	
 	public boolean exibirAdicaoDeVia(){
 		if (getCodificacao()!=null){
-			MascaraUtil m = MascaraUtil.getInstance();
-			if (m.calcularNivel(getCodificacao())==m.getTotalDeNiveisDaMascara()){
-				return true;
-			} 
+			return MascaraUtil.getInstance().isUltimoNivel(getCodificacao());
 		}
 		
 		return false;

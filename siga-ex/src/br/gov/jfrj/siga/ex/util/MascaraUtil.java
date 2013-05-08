@@ -345,6 +345,14 @@ public class MascaraUtil {
 
 	}
 
+	public boolean isUltimoNivel(String codificacao) {
+		String c = formatar(codificacao);
+		if (calcularNivel(c)==getTotalDeNiveisDaMascara()){
+			return true;
+		} 
+		return false;
+	}
+
 		
 }
 	

@@ -73,7 +73,7 @@
 	//funções de dados
 	function gravarClassificacao(){
 		if($('#codificacaoAntiga').val() != "" && $('#codificacao').val() != $('#codificacaoAntiga').val()){
-			confirma = window.confirm('Você está alterando o código da classificação fazendo com que esta subarvore seja movida para outro ponto. Você confirma? PROSSIGA APENAS SE SOUBER O QUE ESTÁ FAZENDO!');
+			confirma = window.confirm('Você está alterando o código da classificação fazendo com que esta subarvore seja movida para outro ponto. Você tem ABSOLUTA certeza?');
 			if (!confirma){
 				return;
 			}

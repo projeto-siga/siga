@@ -1491,9 +1491,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getUltimoVolume() != null
 				&& mob.doc().getUltimoVolume().isEmTransito())
 			return false;
-
+		
 		if (mob.doc().getDtFechamento() != null
 				&& mob.doc().getUltimoVolume().isEncerrado()) {
+			
+			if(mob.doc().isEletronico() && 
+					(mob.doc().getUltimoVolume().temAnexosNaoAssinados() || mob.doc().getUltimoVolume().temDespachosNaoAssinados()))
+				return false;
+			
 			return true;
 		}
 

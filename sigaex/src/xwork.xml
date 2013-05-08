@@ -1092,6 +1092,22 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		
+		<action name="emiteRelMovDocsSubordinados" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelMovDocumentosSubordinados">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="emiteRelDocsSubCriados" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelDocsSubCriados">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
 
 		<action name="emiteRelDocEntreDatas" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelDocEntreDatas">

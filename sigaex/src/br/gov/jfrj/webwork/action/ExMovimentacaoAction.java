@@ -2383,7 +2383,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getBL()
 					.encerrar(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor(),
-							mov.getTitular(), mov.getNmFuncaoSubscritor());
+							mov.getTitular(), mov.getNmFuncaoSubscritor(), false);
 		} catch (final Exception e) {
 			throw e;
 		}

@@ -21,8 +21,6 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.Serializable;
-
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**

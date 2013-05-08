@@ -129,13 +129,15 @@ public class ExDocumentoVO extends ExVO {
 		addDadosComplementares();
 
 		tags = new ArrayList<String>();
-		String classificacao = doc.getExClassificacao().getDescricao();
-		if (classificacao != null && classificacao.length() != 0) {
-			String a[] = classificacao.split(": ");
-			for (String s : a) {
-				String ss = "@" + Texto.slugify(s, true, true);
-				if (!tags.contains(ss)) {
-					tags.add(ss);
+		if (doc.getExClassificacao() != null) {
+			String classificacao = doc.getExClassificacao().getDescricao();
+			if (classificacao != null && classificacao.length() != 0) {
+				String a[] = classificacao.split(": ");
+				for (String s : a) {
+					String ss = "@" + Texto.slugify(s, true, true);
+					if (!tags.contains(ss)) {
+						tags.add(ss);
+					}
 				}
 			}
 		}
@@ -313,7 +315,7 @@ public class ExDocumentoVO extends ExVO {
 			if (mob.temAnexos())
 				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov",
 						"assinar_anexos_geral", true);
-			
+
 			vo.addAcao(
 					"link_add",
 					"Criar Anexo",
@@ -321,9 +323,10 @@ public class ExDocumentoVO extends ExVO {
 					"editar",
 					Ex.getInstance()
 							.getComp()
-							.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
-					null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
-					null, null);
+							.podeAnexarArquivoAlternativo(titular, lotaTitular,
+									mob), null,
+					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
+					null);
 		}
 
 		vo.addAcao("shield", "Redefinir Nível de Acesso", "/expediente/mov",

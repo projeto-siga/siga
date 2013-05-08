@@ -1344,7 +1344,7 @@ public class ExDao extends CpDao {
 	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script)
 			throws Exception {
 		final Query q = getSessao().createQuery(
-				"select m from ExModelo m left join m.exFormaDocumento as f "
+				"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
 						+ "order by f.descrFormaDoc, m.nmMod");
 		List<ExModelo> l = new ArrayList<ExModelo>();
 		for (ExModelo mod : (List<ExModelo>) q.list())

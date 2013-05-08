@@ -22,7 +22,7 @@
 		<many-to-one name="exTipoFormaDoc" column="ID_TIPO_FORMA_DOC"
 			class="ExTipoFormaDoc" not-null="true" />
 
-		<set name="exModeloSet" order-by="NM_MOD" inverse="true">
+		<set name="exModeloSet" order-by="NM_MOD" inverse="true" where="HIS_ATIVO = 1">
 			<key column="ID_FORMA_DOC" />
 			<one-to-many class="ExModelo" />
 		</set>

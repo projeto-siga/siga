@@ -4789,19 +4789,19 @@ public class ExBL extends CpBL {
 		// }
 	}
 
-	public void gravarModelo(ExModelo mod) throws AplicacaoException {
-		if (mod.getExFormaDocumento() == null)
+	public void gravarModelo(ExModelo modNovo,ExModelo modAntigo, Date dt,CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		if (modNovo.getExFormaDocumento() == null)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar a forma do documento.");
-		if (mod.getNmMod() == null || mod.getNmMod().trim().length() == 0)
+		if (modNovo.getNmMod() == null || modNovo.getNmMod().trim().length() == 0)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar o nome.");
-		if (mod.getDescMod() == null || mod.getDescMod().trim().length() == 0)
+		if (modNovo.getDescMod() == null || modNovo.getDescMod().trim().length() == 0)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar a descrição.");
 		try {
 			ExDao.iniciarTransacao();
-			dao().gravar(mod);
+			dao().gravarComHistorico(modNovo, modAntigo, dt, identidadeCadastrante);
 			ExDao.commitTransacao();
 		} catch (Exception e) {
 			ExDao.rollbackTransacao();
@@ -4900,6 +4900,7 @@ public class ExBL extends CpBL {
 			ExClassificacao exClassAntigo, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		try {
+			//classificacao geral 
 			for (ExModelo modAntigo : exClassAntigo.getExModeloSet()) {
 				ExModelo modNovo = new ExModelo();
 
@@ -4915,6 +4916,24 @@ public class ExBL extends CpBL {
 				exClassNovo.getExModeloSet().add(modNovo);
 
 			}
+
+			//classificacao criacao via
+			for (ExModelo modAntigo : exClassAntigo.getExModeloCriacaoViaSet()) {
+				ExModelo modNovo = new ExModelo();
+
+				PropertyUtils.copyProperties(modNovo, modAntigo);
+				modNovo.setIdMod(null);
+				modNovo.setExClassCriacaoVia(exClassNovo);
+
+				dao().gravarComHistorico(modNovo, modAntigo, dt,
+						identidadeCadastrante);
+				if (exClassNovo.getExModeloCriacaoViaSet() == null) {
+					exClassNovo.setExModeloCriacaoViaSet(new HashSet<ExModelo>());
+				}
+				exClassNovo.getExModeloCriacaoViaSet().add(modNovo);
+
+			}
+
 		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível fazer cópia dos modelos!");
@@ -5002,6 +5021,10 @@ public class ExBL extends CpBL {
 			
 			Set<ExModelo> setExModelo = new HashSet<ExModelo>();
 			exClassCopia.setExModeloSet(setExModelo);
+			
+			Set<ExModelo> setExModeloCriacaoVia = new HashSet<ExModelo>();
+			exClassCopia.setExModeloCriacaoViaSet(setExModeloCriacaoVia);
+
 
 		} catch (Exception e){
 			throw new AplicacaoException(
@@ -5124,6 +5147,23 @@ public class ExBL extends CpBL {
 
 
 
+	}
+
+	public ExModelo getCopia(ExModelo exModOrigem) throws AplicacaoException {
+		ExModelo exModCopia = new ExModelo();
+		try {
+			
+			PropertyUtils.copyProperties(exModCopia, exModOrigem);
+			
+			//novo id
+			exModCopia.setId(null);
+
+		} catch (Exception e){
+			throw new AplicacaoException(
+			"Erro ao copiar as propriedades do modelo anterior.");
+		}
+		
+		return exModCopia;
 	}
 
 }

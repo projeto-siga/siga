@@ -128,10 +128,16 @@
 			<one-to-many class="ExVia" />
 		</set>
 
-		<set name="exModeloSet" inverse="true">
+		<set name="exModeloSet" inverse="true" where="HIS_ATIVO = 1">
 			<key column="ID_CLASSIFICACAO" />
 			<one-to-many class="ExModelo" />
 		</set>
+		
+		<set name="exModeloCriacaoViaSet" inverse="true" where="HIS_ATIVO = 1">
+			<key column="ID_CLASS_CRIACAO_VIA" />
+			<one-to-many class="ExModelo" />
+		</set>
+		
 
 	</class>
 	

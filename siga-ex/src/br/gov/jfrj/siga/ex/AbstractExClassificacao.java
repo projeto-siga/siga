@@ -45,7 +45,8 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte 
 	private Set<ExVia> exViaSet;
 	private String obs;
 
-	private Set exModeloSet;
+	private Set<ExModelo> exModeloSet;
+	private Set<ExModelo> exModeloCriacaoViaSet;
 
 	/**
 	 * The cached hash code value for this instance. Settting to 0 triggers
@@ -198,6 +199,14 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte 
 
 	public String getCodificacao() {
 		return codificacao;
+	}
+
+	public void setExModeloCriacaoViaSet(Set<ExModelo> exModeloCriacaoViaSet) {
+		this.exModeloCriacaoViaSet = exModeloCriacaoViaSet;
+	}
+
+	public Set<ExModelo> getExModeloCriacaoViaSet() {
+		return exModeloCriacaoViaSet;
 	}
 
 }

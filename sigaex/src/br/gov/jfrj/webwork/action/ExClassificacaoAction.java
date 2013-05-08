@@ -192,7 +192,7 @@ public class ExClassificacaoAction
 		dao().iniciarTransacao();
 		exClass = buscarExClassificacao(codificacao);
 		Date dt = dao().consultarDataEHoraDoServidor();
-		if (exClass.getExModeloSet().size() >0){
+		if (exClass.getExModeloSet().size() >0 || exClass.getExModeloCriacaoViaSet().size() >0){
 			StringBuffer sb = new StringBuffer();
 			for(ExModelo m: exClass.getExModeloSet()){
 				sb.append("(");
@@ -201,7 +201,15 @@ public class ExClassificacaoAction
 				sb.append(m.getNmMod());
 				sb.append("<br/>");
 			}
-			ExModelo m = exClass.getExModeloSet().iterator().next();
+			for(ExModelo m: exClass.getExModeloCriacaoViaSet()){
+				sb.append("(");
+				sb.append(m.getId());
+				sb.append(") ");
+				sb.append(m.getNmMod());
+				sb.append(" (Criação de via)");
+				sb.append("<br/>");
+			}
+
 			
 			throw new AplicacaoException("Não é possível excluir a classificação documental, pois está associada ao(s) seguinte(s) modelo(s):<br/><br/>" +
 					sb.toString() );

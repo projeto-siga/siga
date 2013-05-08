@@ -156,7 +156,7 @@ public abstract class ThreadFilter implements Filter {
 	 * @param request
 	 * @param ex
 	 */
-	protected void clogaExcecaoAoExecutarFiltro(final ServletRequest request,
+	protected void logaExcecaoAoExecutarFiltro(final ServletRequest request,
 			final Exception ex) {
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;

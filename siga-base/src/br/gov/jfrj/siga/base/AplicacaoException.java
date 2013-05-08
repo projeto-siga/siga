@@ -23,11 +23,13 @@
  */
 package br.gov.jfrj.siga.base;
 
+import javax.servlet.ServletException;
+
 /**
  * @author SEANS Classe padrão para tratamenteo de erros nos Sistemas
  * 
  */
-public class AplicacaoException extends Exception {
+public class AplicacaoException extends ServletException {
 
 	/**
 	 * 

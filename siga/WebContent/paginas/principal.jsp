@@ -56,7 +56,7 @@
 				<div style="width: 49%; float: right; padding: 0; margin: 0;">
 					<div style="width: 100%; padding: 0; margin: 0;">
 						<c:if
-							test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF')}">
+							test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Gestão de Conhecimento')}">
 							<h2 class="gt-table-head">Tarefas</h2>
 							<!-- content box -->
 							<span id='right' style="margin: 0; padding: 0;"></span>
@@ -77,14 +77,14 @@
 						<br />
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-						<h2 class="gt-table-head">Solicitações</h2>
-						<!-- content box -->
-						<span id='rightbottom' style="margin:0;padding:0;"></span>
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/sigasr/gadget?ts=${currentTimeMillis}",
-									document.getElementById('rightbottom'));
-						</script>
+							<h2 class="gt-table-head">Solicitações</h2>
+							<!-- content box -->
+							<span id='rightbottom' style="margin: 0; padding: 0;"></span>
+							<script type="text/javascript">
+								SetInnerHTMLFromAjaxResponse(
+										"/sigasr/gadget?ts=${currentTimeMillis}",
+										document.getElementById('rightbottom'));
+							</script>
 						</c:if>
 						<br />
 						<c:if

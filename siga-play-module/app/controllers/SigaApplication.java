@@ -26,7 +26,8 @@ public class SigaApplication extends Controller {
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
-	protected static void obterCabecalhoEUsuario(String backgroundColor) throws Exception {
+	protected static void obterCabecalhoEUsuario(String backgroundColor)
+			throws Exception {
 		try {
 
 			Logger.info("Siga-SR info: " + getBaseSiga());
@@ -45,13 +46,28 @@ public class SigaApplication extends Controller {
 					+ "/pagina_vazia.action?popup=" + popup, atributos);
 			String[] pageText = paginaVazia.split("<!-- insert body -->");
 			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
-			
+
 			if (backgroundColor != null)
-				cabecalho[0] = cabecalho[0].replace("<html>", "<html style=\"background-color: " + backgroundColor + " !important;\">");
-			
-			renderArgs.put("_cabecalho_pre", cabecalho[0]);
-			renderArgs.put("_cabecalho_pos", cabecalho[1]);
-			renderArgs.put("_rodape", pageText[1]);
+				cabecalho[0] = cabecalho[0].replace("<html>",
+						"<html style=\"background-color: " + backgroundColor
+								+ " !important;\">");
+
+			String[] cabecalho_pre = cabecalho[0].split("</head>");
+
+			String cabecalhoPreHead = cabecalho_pre[0];
+			String cabecalhoPreMenu = "</head>" + cabecalho_pre[1];
+			String cabecalhoPos = cabecalho.length > 1 ? cabecalho[1] : null;
+			String rodape = pageText[1];
+
+			if (cabecalhoPos == null) {
+				cabecalhoPos = cabecalhoPreMenu;
+				cabecalhoPreMenu = null;
+			}
+
+			renderArgs.put("_cabecalho_pre_head", cabecalhoPreHead);
+			renderArgs.put("_cabecalho_pre_menu", cabecalhoPreMenu);
+			renderArgs.put("_cabecalho_pos", cabecalhoPos);
+			renderArgs.put("_rodape", rodape);
 
 			// Obter usuário logado
 			String[] IDs = ConexaoHTTP.get(
@@ -103,7 +119,7 @@ public class SigaApplication extends Controller {
 
 	protected static void assertAcesso(String pathServico) throws Exception {
 		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
-			+ pathServico;
+				+ pathServico;
 		if (!podeUtilizarServico(servico))
 			throw new Exception("Acesso negado. Serviço: '" + servico
 					+ "' usuário: " + cadastrante().getSigla() + " lotação: "

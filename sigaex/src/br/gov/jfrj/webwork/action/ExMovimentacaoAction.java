@@ -2064,7 +2064,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	
 	
 	public String aAssinarLote() throws Exception {		
-		setItensSolicitados(dao().listarDocPendenteAssinatura(getTitular()));
+		List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular());
+		List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
+		
+		for (ExDocumento doc : itensComoSubscritor) {
+			if (doc.getDtFechamento() != null) 
+				itensFinalizados.add(doc);			
+		}
+		setItensSolicitados(itensFinalizados);
 		return Action.SUCCESS;
 	}
 
@@ -2376,7 +2383,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getBL()
 					.encerrar(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor(),
-							mov.getTitular(), mov.getNmFuncaoSubscritor());
+							mov.getTitular(), mov.getNmFuncaoSubscritor(), false);
 		} catch (final Exception e) {
 			throw e;
 		}

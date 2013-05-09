@@ -157,6 +157,9 @@ public class Texto {
 	}
 	
 	public static String inciaisMaiuscula(String texto) {
+		if (texto==null){
+			return texto;
+		}
 		char caracteres[] = texto.toCharArray();
 		for (int i = 0; i < caracteres.length; i++) {
 			if (i==0 || String.valueOf(caracteres[i-1]).equals(" ")){

@@ -127,9 +127,9 @@ public class SrConfiguracao extends CpConfiguracao {
 		return JPA
 				.em()
 				.createQuery(
-						"from SrConfiguracao where cpTipoConfiguracao.idTpConfiguracao = "
+						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and hisDtFim is null order by itemConfiguracao.siglaItemConfiguracao, orgaoUsuario",
+								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario",
 						SrConfiguracao.class).getResultList();
 	}
 
@@ -141,17 +141,17 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	public static List<List<SrConfiguracao>> listarAssociacoesTipoAtributo() {
 
-		String query = "from SrConfiguracao c where cpTipoConfiguracao.idTpConfiguracao = "
+		String query = "select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
 				+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
-				+ " and hisDtFim is null order by itemConfiguracao.siglaItemConfiguracao, orgaoUsuario";
+				+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario";
 
 		List<SrConfiguracao> abertas = JPA.em()
 				.createQuery(query, SrConfiguracao.class).getResultList();
 
-		query = query.replace("hisDtFim is null",
-				"hisDtFim is not null and hisDtIni = ("
+		query = query.replace("conf.hisDtFim is null",
+				"conf.hisDtFim is not null and conf.hisDtIni = ("
 						+ "	select max(hisDtIni) from SrConfiguracao where "
-						+ "hisIdIni = c.hisIdIni)");
+						+ "hisIdIni = conf.hisIdIni)");
 
 		List<SrConfiguracao> fechadas = JPA.em()
 				.createQuery(query, SrConfiguracao.class).getResultList();

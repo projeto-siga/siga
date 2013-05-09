@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 
-${_cabecalho_pre.raw()}
+${_cabecalho_pre_head.raw()}
+${moreHead?.raw()}
+
+#{if _cabecalho_pre_menu != null}
+${_cabecalho_pre_menu.raw()}
 <li><a class="" href="@{Application.top10}">Conhecimentos</a>
 	<ul>
 		<li><a class="" href="@{Application.editar}">Novo</a>
@@ -11,4 +15,10 @@ ${_cabecalho_pre.raw()}
 		</li>
 	</ul>
 </li>
-${_cabecalho_pos.raw()} #{doLayout /} ${_rodape.raw()}
+#{/if}
+
+${_cabecalho_pos.raw()}
+ 
+#{doLayout /} 
+ 
+${_rodape.raw()}

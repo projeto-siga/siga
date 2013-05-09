@@ -368,6 +368,24 @@ public class SelfConfigAction 	extends SigaActionSupport
 		if (pes.getLotacao().equivale(obterLotacaoEfetiva())){
 			throw new AplicacaoException("A pessoa selecionada deve ser de outra lotação!");
 		}
+		
+		
+		/*
+		 * MELHORAR: Permite a inclusão apenas de pessoas ativas. 
+		 * Isso deve ser melhorado, pois ainda não existe uma referência nem mapeamento no hibernate
+		 *  para a descrição da situação funciona da pessoa. 
+		 * */
+		if(!pes.getSituacaoFuncionalPessoa().equals("1")){
+			if (pes.getSituacaoFuncionalPessoa().equals("2")){
+				throw new AplicacaoException("Não é possível inserir uma pessoa que está CEDIDA!<br/>Por favor, abra um chamado para o suporte técnico.");
+			}else{
+				throw new AplicacaoException("A pessoa não está com situação funcional ATIVA! Situação atual: " + pes.getSituacaoFuncionalPessoa() + "<br/>Por favor, abra um chamado para o suporte técnico.");	
+			}
+			
+		}
+		
+		
+		
 		CpTipoConfiguracao tpConf =  obterCpTipoConfiguracaoAConfigurar(getIdTipoConfiguracaoUtilizarServicoOutraLotacao());
 		Cp.getInstance().getBL().configurarAcesso(null, pes.getOrgaoUsuario(), obterLotacaoEfetiva(), pes, null, null, tpConf, getIdentidadeCadastrante());
 		

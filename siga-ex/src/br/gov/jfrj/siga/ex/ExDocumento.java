@@ -185,46 +185,64 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return "NOVO";
 		return "TMP-" + getIdDoc();
 	}
-	
+
 	/**
 	 * Retorna o código do documento.
 	 * 
 	 * @throws Exception
 	 */
-	public static String getCodigo(Long idDoc, String siglaOrgaoUsu, String acronimoOrgaoUsu, String siglaFormaDoc, Long anoEmissao, Long numExpediente, Integer docNumSequencia, Long idTipoMobil, Integer mobilNumSequencia,
-			Long pai_idDoc, String pai_siglaOrgaoUsu, String pai_acronimoOrgaoUsu, String pai_siglaFormaDoc, Long pai_anoEmissao, Long pai_numExpediente, Integer pai_docNumSequencia, Long pai_idTipoMobil, Integer pai_mobilNumSequencia) {
-		
-		if(pai_siglaOrgaoUsu != null && pai_acronimoOrgaoUsu != null && pai_siglaFormaDoc != null && pai_anoEmissao != null && pai_numExpediente != null && docNumSequencia != null ) {
+	public static String getCodigo(Long idDoc, String siglaOrgaoUsu,
+			String acronimoOrgaoUsu, String siglaFormaDoc, Long anoEmissao,
+			Long numExpediente, Integer docNumSequencia, Long idTipoMobil,
+			Integer mobilNumSequencia, Long pai_idDoc,
+			String pai_siglaOrgaoUsu, String pai_acronimoOrgaoUsu,
+			String pai_siglaFormaDoc, Long pai_anoEmissao,
+			Long pai_numExpediente, Integer pai_docNumSequencia,
+			Long pai_idTipoMobil, Integer pai_mobilNumSequencia) {
+
+		if (pai_siglaOrgaoUsu != null && pai_acronimoOrgaoUsu != null
+				&& pai_siglaFormaDoc != null && pai_anoEmissao != null
+				&& pai_numExpediente != null && docNumSequencia != null) {
 			String s = docNumSequencia.toString();
 			while (s.length() < 2)
 				s = "0" + s;
 
-			return  ExMobil.getSigla(getCodigo(pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_docNumSequencia, pai_idTipoMobil, pai_mobilNumSequencia,null, null, null, null, null, null, null, null, null), pai_mobilNumSequencia, pai_idTipoMobil) + "." + s;
+			return ExMobil.getSigla(
+					getCodigo(pai_idDoc, pai_siglaOrgaoUsu,
+							pai_acronimoOrgaoUsu, pai_siglaFormaDoc,
+							pai_anoEmissao, pai_numExpediente,
+							pai_docNumSequencia, pai_idTipoMobil,
+							pai_mobilNumSequencia, null, null, null, null,
+							null, null, null, null, null),
+					pai_mobilNumSequencia, pai_idTipoMobil)
+					+ "." + s;
 		}
 		if (anoEmissao != null && numExpediente != null) {
 			String s = numExpediente.toString();
 			while (s.length() < 5)
 				s = "0" + s;
-			
+
 			if (siglaOrgaoUsu != null) {
 				try {
 					Long l_anoEmissao = Long.valueOf(anoEmissao);
 					if (l_anoEmissao >= SigaExProperties
 							.getAnoInicioAcronimoNoCodigoDoDocumento()) {
-						return acronimoOrgaoUsu + "-" + siglaFormaDoc + "-" + anoEmissao + "/" + s;
+						return acronimoOrgaoUsu + "-" + siglaFormaDoc + "-"
+								+ anoEmissao + "/" + s;
 					} else {
-						return siglaOrgaoUsu + "-" 	+ siglaFormaDoc + "-" + anoEmissao + "/" + s;
+						return siglaOrgaoUsu + "-" + siglaFormaDoc + "-"
+								+ anoEmissao + "/" + s;
 					}
 				} catch (Exception ex) {
 					throw new Error(ex);
 				}
 			}
-			
+
 		}
-	
+
 		if (idDoc == null)
 			return "NOVO";
-		
+
 		return "TMP-" + idDoc;
 	}
 
@@ -817,6 +835,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (getExClassificacao() != null)
 				vias = getExClassificacao().getExViaSet();
 		}
+		
+		if (vias != null && ((ExVia)vias.toArray()[0]).getExTipoDestinacao().getFacilitadorDest() != null)
+			return vias;
 
 		// Expediente externo ou eletrônico e com Documento Pai tem apenas 1 via
 		if (getExTipoDocumento().getIdTpDoc() == 3 || isEletronico()
@@ -922,6 +943,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Verifica se um documento já foi assinado pelo Subscritor.
+	 */
+	public boolean isAssinadoSubscritor() {		
+		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
+			if (assinatura.getSubscritor().equivale(getSubscritor()))
+				return true;
+		}
+		return false;
+	}
+	
+	
+	
 
 	/**
 	 * Verifica se um documento está cancelado, o que é verdadeiro quando todas
@@ -1320,7 +1355,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * Vide getConteudoBlobHtmlString()
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Override
 	public String getHtmlComReferencias() throws Exception {
@@ -1654,6 +1690,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
+	 * Retorna o móbil-via de um expediente de acordo com o seu número.
+	 */
+	public ExMobil getVia(int i) {
+		for (final ExMobil mob : getExMobilSet()) {
+			if (mob.isVia() && mob.getNumSequencia() == i) {
+				return mob;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Verifica se um documento é do tipo Expediente.
 	 */
 	public boolean isExpediente() {
@@ -1695,6 +1743,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	public ExMobil getUltimoVolume() {
 		return getVolume(getNumUltimoVolume());
+	}
+
+	/**
+	 * Retorna o último móbil-volume (funciona apenas para processo
+	 * administrativo).
+	 */
+	public ExMobil getUltimaVia() {
+		return getVia(getNumUltimaVia());
 	}
 
 	/**
@@ -1763,7 +1819,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public List<DpPessoa> getSubscritorECosignatarios() {
 		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
 
-		subscritores.add(getSubscritor());
+		if(getSubscritor() != null)
+			subscritores.add(getSubscritor());
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
 			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO

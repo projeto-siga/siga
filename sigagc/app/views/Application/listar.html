@@ -61,8 +61,8 @@
 							href="@{Application.exibir(i.id)}">${i.arq.titulo}</a>
 						</td>
 					</tr>
-					#{set fprimeiro = true /}
-					#{list items:i.marcas, as:'m'} #{if !fprimeiro} 
+					#{set fprimeiro = true /} #{list items:i.marcas, as:'m'} #{if
+					!fprimeiro}
 					<tr>
 						<td width="5%" align="center">${m.dtIniMarcaDDMMYYYY}</td>
 						<td width="4%" align="center"><span
@@ -73,8 +73,7 @@
 						</td>
 						<td width="10.5%" align="center">${m.cpMarcador.descrMarcador}</td>
 					</tr>
-					#{/if} #{set fprimeiro = false /}
-					#{/list} #{/list}
+					#{/if} #{set fprimeiro = false /} #{/list} #{/list}
 
 				</tbody>
 			</table>
@@ -164,21 +163,7 @@
 						<!-- A lista de par -->
 						<tr>
 							<td>Classificação:</td>
-							<td><input type="hidden" name="classificacaoSel.id" value=""
-								id="classificacaoSel_id"> <input type="hidden"
-								name="classificacaoSel.descricao" value=""
-								id="classificacaoSel_descricao"> <input type="hidden"
-								name="classificacaoSel.buscar" value=""
-								id="classificacaoSel_buscar"> <input type="hidden"
-								name="reqclassificacaoSel" value="" id="reqclassificacaoSel">
-								<input type="hidden" name="alterouSel" value="" id="alterouSel">
-								<input type="text" name="classificacaoSel.sigla" size="25"
-								value="" id="classificacaoSel_sigla"
-								onblur="javascript: ajax_classificacao();"
-								onkeypress="return handleEnter(this, event)"> <input
-								type="button" id="classificacaoSelButton" value="..."
-								onclick="javascript: popitup_classificacao('');" theme="simple">
-								<span id="classificacaoSelSpan"> </span></td>
+							<td>#{selecao tipo:'tag', nome:'filtro.tag', value:filtro.tag /}</td>
 						</tr>
 						<tr>
 							<td class="tdLabel"><label for="descrDocumento"

@@ -230,8 +230,10 @@ public class GcBL {
 				inf.hisDtFim = mov.hisDtIni;
 
 			if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO) {
-				inf.autor = mov.pessoa;
-				inf.lotacao = mov.lotacao;
+				if (inf.autor == null)
+					inf.autor = mov.pessoa;
+				if (inf.lotacao == null)
+					inf.lotacao = mov.lotacao;
 				inf.arq = mov.arq;
 			}
 		}

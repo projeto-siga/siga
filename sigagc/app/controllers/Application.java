@@ -22,13 +22,21 @@ import models.GcMovimentacao;
 import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
+
+import org.joda.time.LocalDate;
+import org.mcavallo.opencloud.Cloud;
+import org.mcavallo.opencloud.Tag;
+
 import play.Play;
 import play.Play.Mode;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
+import play.mvc.Router;
 import utils.GcBL;
+import utils.GcGraficoEvolucao;
+import utils.GcGraficoEvolucaoItem;
 import utils.GcInformacaoFiltro;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
@@ -66,7 +74,7 @@ public class Application extends SigaApplication {
 	public static void addDefaults() throws Exception {
 
 		try {
-			obterCabecalhoEUsuario("rgb(241, 248, 212)");
+			obterCabecalhoEUsuario("#f1f4e2");
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
@@ -262,7 +270,95 @@ public class Application extends SigaApplication {
 		if (listaMaisVisitados.size() == 0)
 			listaMaisVisitados = null;
 
-		render(lista, listaMaisRecentes, listaMaisVisitados);
+		Query query3 = JPA.em().createNamedQuery("principaisAutores");
+		query3.setMaxResults(5);
+		List<Object[]> listaPrincipaisAutores = query3.getResultList();
+		if (listaPrincipaisAutores.size() == 0)
+			listaPrincipaisAutores = null;
+
+		Query query4 = JPA.em().createNamedQuery("principaisLotacoes");
+		query4.setMaxResults(5);
+		List<Object[]> listaPrincipaisLotacoes = query4.getResultList();
+		if (listaPrincipaisLotacoes.size() == 0)
+			listaPrincipaisLotacoes = null;
+
+		Cloud cloud = null;
+
+		Query query5 = JPA.em().createNamedQuery("principaisTags");
+		query5.setMaxResults(50);
+		List<Object[]> listaPrincipaisTags = query5.getResultList();
+		if (listaPrincipaisTags.size() == 0)
+			listaPrincipaisTags = null;
+		else {
+			cloud = new Cloud(); // create cloud
+			cloud.setMaxWeight(150.0); // max font size
+			cloud.setMinWeight(50.0);
+			double d = listaPrincipaisTags.size();
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) {
+				map.clear();
+				map.put("filtro.tag", t.id);
+				String link = Router.reverse("Application.listar", map).url;
+				Tag tag = new Tag(t.titulo, link, d);
+				cloud.addTag(tag);
+				d -= 1;
+			}
+		}
+
+		GcGraficoEvolucao set = new GcGraficoEvolucao();
+		Query query6 = JPA.em().createNamedQuery("evolucaoNovos");
+		List<Object[]> listaNovos = query6.getResultList();
+		for (Object[] novos : listaNovos) {
+			set.add(new GcGraficoEvolucaoItem((Integer) novos[0],
+					(Integer) novos[1], (Long) novos[2], 0, 0));
+		}
+
+		Query query7 = JPA.em().createNamedQuery("evolucaoVisitados");
+		List<Object[]> listaVisitados = query7.getResultList();
+		for (Object[] visitados : listaVisitados) {
+			set.add(new GcGraficoEvolucaoItem((Integer) visitados[0],
+					(Integer) visitados[1], 0, (Long) visitados[2], 0));
+		}
+
+		LocalDate ld = new LocalDate();
+		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
+
+		// Header
+		StringBuilder sb = new StringBuilder();
+		sb.append("['");
+		sb.append("Mês");
+		sb.append("',");
+		sb.append("'");
+		sb.append("Visitas");
+		sb.append("',");
+		sb.append("'Novos'],");
+
+		// Values
+		for (int i = -6; i <= 0; i++) {
+			LocalDate ldl = ld.plusMonths(i);
+			sb.append("['");
+			sb.append(ldl.toString("MMM/yy"));
+			sb.append("',");
+			long novos = 0;
+			long visitados = 0;
+			GcGraficoEvolucaoItem o = new GcGraficoEvolucaoItem(
+					ldl.getMonthOfYear(), ldl.getYear(), 0, 0, 0);
+			if (set.contains(o)) {
+				o = set.floor(o);
+				novos = o.novos;
+				visitados = o.visitados;
+			}
+			sb.append(visitados);
+			sb.append(",");
+			sb.append(novos);
+			sb.append(",");
+			sb.append("],");
+		}
+		String evolucao = sb.toString();
+
+		render(lista, listaMaisRecentes, listaMaisVisitados,
+				listaPrincipaisAutores, listaPrincipaisLotacoes,
+				listaPrincipaisTags, cloud, evolucao);
 	}
 
 	public static void listar(GcInformacaoFiltro filtro) {
@@ -460,6 +556,32 @@ public class Application extends SigaApplication {
 		GcInformacao informacao = GcInformacao.findById(id);
 		GcBL.cancelar(informacao, idc(), titular(), lotaTitular());
 		exibir(id);
+	}
+
+	public static void selecionarTag(String sigla) throws Exception {
+		GcTag sel = (GcTag) new GcTag().selecionar(sigla);
+		render("@siga-play-module.selecionar", sel);
+	}
+
+	public static void buscarTag(String sigla, GcTag filtro) {
+		List<GcTag> itens = null;
+
+		Query query = JPA.em().createNamedQuery("listarTagCategorias");
+		List<Object[]> listaTagCategorias = query.getResultList();
+		if (listaTagCategorias.size() == 0)
+			listaTagCategorias = null;
+
+		try {
+			if (filtro == null)
+				filtro = new GcTag();
+			if (sigla != null && !sigla.trim().equals(""))
+				filtro.setSigla(sigla);
+			itens = (List<GcTag>) filtro.buscar();
+		} catch (Exception e) {
+			itens = new ArrayList<GcTag>();
+		}
+
+		render(itens, filtro, listaTagCategorias);
 	}
 
 	public static void proxy(String url) throws Exception {

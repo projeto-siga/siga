@@ -266,4 +266,30 @@ public class ExServiceImpl implements ExService {
 		return null;
 	}
 
+	public String criarVia(String codigoDocumento, String siglaCadastrante)
+			throws Exception {
+		if (codigoDocumento == null)
+			return null;
+		try {
+			ExMobil mob = buscarMobil(codigoDocumento);
+			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
+					siglaCadastrante);
+			if (cadastranteParser.getLotacao() == null
+					&& cadastranteParser.getPessoa() == null)
+				return null;
+			Ex.getInstance()
+					.getBL()
+					.criarVia(
+							cadastranteParser.getPessoa(),
+							cadastranteParser
+									.getLotacaoOuLotacaoPrincipalDaPessoa(),
+							mob.doc());
+			return mob.doc().getUltimaVia().getSigla();
+		} catch (Exception e) {
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			return null;
+		}
+	}
+
 }

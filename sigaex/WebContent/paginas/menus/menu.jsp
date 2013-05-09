@@ -182,6 +182,32 @@
 						<ww:param name="nomeArquivoRel">relTipoDoc.jsp</ww:param>
 					</ww:url> <ww:a href="%{url}">Relação de Documentos Criados</ww:a></li>
 			</c:if>
+			
+			
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CLSD:Classificação Documental')}">
+				<li><a href="#">Classificação Documental</a>
+					<ul>
+						<c:if
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CLSD:Classificação Documental;CLASS:Relação de classificações')}">
+							<li><ww:url id="url" action="relRelatorios"
+									namespace="/expediente/rel">
+									<ww:param name="nomeArquivoRel">relClassificacao.jsp</ww:param>
+								</ww:url> <ww:a href="%{url}">Relação de Classificações</ww:a></li>
+						</c:if>
+						
+						<c:if
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CLSD:Classificação Documental;DOCS:Relação de documentos classificados')}">
+							<li><ww:url id="url" action="relRelatorios"
+									namespace="/expediente/rel">
+									<ww:param name="nomeArquivoRel">relDocsClassificados.jsp</ww:param>
+								</ww:url> <ww:a href="%{url}">Relação de Documentos Classificados</ww:a></li>
+						</c:if>
+						
+					</ul>		
+				</li>
+			</c:if>
+			
 
 		</ul></li>
 </c:if>

@@ -193,7 +193,7 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 
 		relatorio = configurarRelatorio();
 		dados = processarDados();
-		if (dados.size() > 0) {
+		if (dados!=null && dados.size() > 0) {
 			relatorio.setDados(dados);
 		} else {
 			throw new Exception("Não há dados para gerar o relatório!");

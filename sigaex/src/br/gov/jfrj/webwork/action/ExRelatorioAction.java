@@ -47,6 +47,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
@@ -592,6 +593,23 @@ public class ExRelatorioAction extends ExActionSupport {
 
 		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
 
+		return "relatorio";
+	}
+	
+	public String aRelClassificacao() throws AplicacaoException, Exception {
+		assertAcesso("CLSD:Classificação Documental;CLASS:Relação de classificações");
+		
+		Map<String, String> parametros = new HashMap<String, String>();
+		parametros.put("codificacao", getRequest().getParameter("codificacao"));
+
+		RelClassificacao rel = new RelClassificacao(parametros);
+		rel.gerar();
+
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+		return "relatorio";
+	}
+	public String aRelClassDocDocumentos() throws AplicacaoException, Exception {
+		assertAcesso("CLSD:Classificação Documental;DOCS:Relação de documentos classificados");
 		return "relatorio";
 	}
 

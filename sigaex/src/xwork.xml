@@ -1132,9 +1132,25 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		
+		<!-- relatórios de classificação documental -->
 
-
-
+		<action name="aRelClassificacao" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelClassificacao">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="emiteRelClassDocDocumentos" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelClassDocDocumentos">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
 	</package>
 	<package name="pessoa" extends="default" namespace="/pessoa">
 		<default-interceptor-ref name="defaultStack" />

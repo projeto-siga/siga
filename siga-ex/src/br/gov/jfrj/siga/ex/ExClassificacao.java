@@ -22,8 +22,6 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
@@ -41,28 +39,6 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	private static final long serialVersionUID = -5783951238385826556L;
-
-	private String descrClassificacaoAI;
-
-//	private String descrAssuntoPrincipalAI;
-
-//	private String descrAssuntoSecundarioAI;
-
-	private String descrAssuntoAI;
-
-	private String descrClasseAI;
-
-	private String descrSubclasseAI;
-
-//	private String descrAssuntoPrincipal;
-
-//	private String descrAssuntoSecundario;
-
-	private String descrAssunto;
-
-	private String descrClasse;
-
-	private String descrSubclasse;
 
 	/**
 	 * Simple constructor of ExClassificacao instances.
@@ -138,33 +114,9 @@ public class ExClassificacao extends AbstractExClassificacao implements
 		return getSigla() + " - " + getDescricao();
 	}
 
-	public String getDescrClassificacaoAI() {
-		return descrClassificacaoAI;
-	}
-
-	public void setDescrClassificacaoAI(String descrClassificacaoAI) {
-		this.descrClassificacaoAI = descrClassificacaoAI;
-	}
-
 	public String getNome() {
 		return getDescrClassificacao();
 	}
-
-//	public String getDescrAssuntoPrincipal() {
-//		return descrAssuntoPrincipal;
-//	}
-
-//	public String getDescrAssuntoSecundario() {
-//		return descrAssuntoSecundario;
-//	}
-
-//	public void setDescrAssuntoPrincipal(String descrAssuntoPrincipal) {
-//		this.descrAssuntoPrincipal = descrAssuntoPrincipal;
-//	}
-
-//	public void setDescrAssuntoSecundario(String descrAssuntoSecundario) {
-//		this.descrAssuntoSecundario = descrAssuntoSecundario;
-//	}
 
 	public Integer getNumVias() {
 		return getExViaSet().size();
@@ -174,72 +126,6 @@ public class ExClassificacao extends AbstractExClassificacao implements
 		return "";
 	}
 
-//	public String getDescrAssuntoPrincipalAI() {
-//		return descrAssuntoPrincipalAI;
-//	}
-
-//	public void setDescrAssuntoPrincipalAI(String descrAssuntoPrincipalAI) {
-//		this.descrAssuntoPrincipalAI = descrAssuntoPrincipalAI;
-//	}
-
-//	public String getDescrAssuntoSecundarioAI() {
-//		return descrAssuntoSecundarioAI;
-//	}
-
-//	public void setDescrAssuntoSecundarioAI(String descrAssuntoSecundarioAI) {
-//		this.descrAssuntoSecundarioAI = descrAssuntoSecundarioAI;
-//	}
-
-	public String getDescrAssuntoAI() {
-		return descrAssuntoAI;
-	}
-
-	public void setDescrAssuntoAI(String descrAssuntoAI) {
-		this.descrAssuntoAI = descrAssuntoAI;
-	}
-
-	public String getDescrClasseAI() {
-		return descrClasseAI;
-	}
-
-	public void setDescrClasseAI(String descrClasseAI) {
-		this.descrClasseAI = descrClasseAI;
-	}
-
-	public String getDescrSubclasseAI() {
-		return descrSubclasseAI;
-	}
-
-	public void setDescrSubclasseAI(String descrSubclasseAI) {
-		this.descrSubclasseAI = descrSubclasseAI;
-	}
-
-	public String getDescrAssunto() {
-		return descrAssunto;
-	}
-
-	public void setDescrAssunto(String descrAssunto) {
-		this.descrAssunto = descrAssunto;
-	}
-
-	public String getDescrClasse() {
-		return descrClasse;
-	}
-
-	public void setDescrClasse(String descrClasse) {
-		this.descrClasse = descrClasse;
-	}
-
-	public String getDescrSubclasse() {
-		return descrSubclasse;
-	}
-
-	public void setDescrSubclasse(String descrSubclasse) {
-		this.descrSubclasse = descrSubclasse;
-	}
-
-	/* Add customized code below */
-	
 	/**
 	 * Verifica se uma classificação está fechada.
 	 * 

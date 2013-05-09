@@ -46,12 +46,14 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public String aListar(){
+	public String aListar() throws AplicacaoException, Exception{
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental");
 		return SUCCESS;
 	}
 
 
-	public String aEditar() throws AplicacaoException{
+	public String aEditar() throws Exception{
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental");
 		if (exTemporal==null){
 			exTemporal = buscarExTemporalidade(getIdTemporalidade());
 		}
@@ -68,7 +70,8 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 		return null;
 	}
 
-	public String aGravar() throws AplicacaoException{
+	public String aGravar() throws Exception{
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental");
 		dao().iniciarTransacao();
 
 		validarDados();
@@ -113,7 +116,8 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 		exTemporal = exTempNovo;
 	}
 	
-	public String aExcluir() throws AplicacaoException{
+	public String aExcluir() throws Exception{
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental");
 		dao().iniciarTransacao();
 		exTemporal = buscarExTemporalidade(getIdTemporalidade());
 		Date dt = dao().consultarDataEHoraDoServidor();

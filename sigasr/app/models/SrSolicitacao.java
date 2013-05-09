@@ -190,6 +190,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		this.motivoFechamentoAbertura = motivoFechamentoAbertura;
 	}
 
+
 	@Override
 	public Long getId() {
 		return idSolicitacao;

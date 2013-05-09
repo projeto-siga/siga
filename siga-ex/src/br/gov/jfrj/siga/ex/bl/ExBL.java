@@ -1058,11 +1058,13 @@ public class ExBL extends CpBL {
 			final DpPessoa titular, final DpLotacao lotaTitular,
 			final byte[] conteudo, final String tipoConteudo, String motivo)
 			throws AplicacaoException {
+		
+		final ExMovimentacao mov;
 
 		try {
 			iniciarAlteracao();
 
-			final ExMovimentacao mov = criarNovaMovimentacao(
+			mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, cadastrante,
 					lotaCadastrante, mob, dtMov, subscritor, null, titular,
 					lotaTitular, null);
@@ -1074,11 +1076,18 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
-
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar documento.", 0, e);
 		}
+		
+		try {
+			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
@@ -2819,7 +2828,9 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado ou encontra-se em outra lotação");
 		}
-
+		
+		final ExMovimentacao mov;
+		
 		try {
 			iniciarAlteracao();
 
@@ -2831,7 +2842,7 @@ public class ExBL extends CpBL {
 			} else
 				throw new AplicacaoException("Opção inválida.");
 
-			final ExMovimentacao mov = criarNovaMovimentacao(idTpMov,
+			mov = criarNovaMovimentacao(idTpMov,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null,
 					titular, null, null);
 
@@ -2851,9 +2862,16 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
+		}
+		
+		try {
+			encerrarAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 	}
 
@@ -3390,6 +3408,7 @@ public class ExBL extends CpBL {
 					concluirAlteracaoParcial(m);
 				}
 			}
+			
 			concluirAlteracao(null);
 
 		} catch (final AplicacaoException e) {
@@ -3398,6 +3417,14 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao transferir documento.", 0, e);
+		}
+
+		if(fDespacho) {
+			try {
+				encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni, subscritor, titular, nmFuncaoSubscritor);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 
 		// Inicio envio e-mail
@@ -4681,6 +4708,21 @@ public class ExBL extends CpBL {
 		}
 
 	}
+	
+	public void encerrarAutomatico(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor,
+			final DpPessoa titular, String nmFuncaoSubscritor) 
+			throws AplicacaoException, Exception {
+		
+		dao().getSessao().refresh(mob);
+		//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
+		if(mob.doc().isProcesso()) {
+			if(mob.getTotalDePaginas() >= 200) {
+				encerrar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, nmFuncaoSubscritor, true);
+			}
+		}
+	}
 
 	/**
 	 * Encerra um volume e insere uma certidão de encerramento de volume, que
@@ -4699,7 +4741,7 @@ public class ExBL extends CpBL {
 	public void encerrar(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, String nmFuncaoSubscritor)
+			final DpPessoa titular, String nmFuncaoSubscritor, boolean automatico)
 			throws AplicacaoException, Exception {
 
 		if (mob.isEncerrado())
@@ -4732,6 +4774,9 @@ public class ExBL extends CpBL {
 			final byte pdf[] = Documento.generatePdf(strHtml);
 			mov.setConteudoBlobPdf(pdf);
 			mov.setConteudoTpMov("application/zip");
+			
+			if(automatico)
+				mov.setDescrMov("Volume encerrado automaticamente.");
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mob.doc());

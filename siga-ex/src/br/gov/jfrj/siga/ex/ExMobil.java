@@ -1183,13 +1183,43 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public boolean temAnexosNaoAssinados() {
 		boolean b = false;
 		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
-			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
-				if (movAss.isAssinada())
-					continue;
-				else {
-					b = true;
-					break;
-				}
+			if(!movAss.isCancelada()) { 
+				if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+					if (movAss.isAssinada())
+						continue;
+					else {
+						b = true;
+						break;
+					}
+			}
+		}
+		return b;
+
+	}
+	
+	/**
+	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura
+	 * 
+	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
+	 *         contrário.
+	 * 
+	 */
+	public boolean temDespachosNaoAssinados() {
+		boolean b = false;
+		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
+			if(!movAss.isCancelada()) {
+				if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
+						|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO
+						|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
+						|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+						|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+					if (movAss.isAssinada())
+						continue;
+					else {
+						b = true;
+						break;
+					}
+			}
 		}
 		return b;
 
@@ -1359,6 +1389,17 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 					movsCanceladas.add(mov);
 			}
 		return movsCanceladas;
+	}
+	
+	public int getTotalDePaginas() {
+		int totalDePaginas = 0;
+		
+		for (ExArquivoNumerado arquivo : getArquivosNumerados()) {
+			
+			totalDePaginas += arquivo.getNumeroDePaginasParaInsercaoEmDossie();
+		}
+		
+		return totalDePaginas;
 	}
 
 }

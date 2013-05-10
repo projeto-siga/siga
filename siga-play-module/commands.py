@@ -116,7 +116,6 @@ def delete_jta(war_path):
 
 def move_servlet(war_path):
    print "Movendo o arquivo LoginServlet.class para WEB-INF\classes\util..."
-   # Edson: O '\\' abaixo foi necessário porque o Python acaba substituindo '\a' por '\x07'
    arqOrigem = os.path.join(war_path, 'WEB-INF\\application\precompiled\java\util\LoginServlet.class')
    dirDestino = os.path.join(war_path, 'WEB-INF\classes\util')
    arqDestino = os.path.join(dirDestino, 'LoginServlet.class')

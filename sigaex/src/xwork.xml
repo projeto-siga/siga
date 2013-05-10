@@ -4,15 +4,35 @@
 	<include file="webwork-default.xml" />
 
 	<package name="default" extends="webwork-default">
-		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
+		<interceptors>
+			<interceptor name="siga-exception"
+				class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
+
+			<interceptor-stack name="defaultStackWithExceptionMapping">
+				<interceptor-ref name="siga-exception" />
+				<interceptor-ref name="servlet-config" />
+				<interceptor-ref name="prepare" />
+				<interceptor-ref name="static-params" />
+				<interceptor-ref name="params" />
+				<interceptor-ref name="conversionError" />
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="defaultStackWithExceptionMapping" />
 
 		<default-action-ref name="principal" />
+
 		<!-- <default-action-ref name="erroGeral" /> -->
 		<global-results>
 			<result name="erroGeral" type="dispatcher">
 				/sigalibs/erroGeral.jsp
 			</result>
 		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception"
+				result="erroGeral" />
+		</global-exception-mappings>
 
 		<!-- <action name="administracao" class="br.gov.jfrj.webwork.action.AdministracaoAction"> 
 			<result>/paginas/entradas/administracao.jsp</result> </action> -->
@@ -44,7 +64,7 @@
 			<result name="autenticado">/paginas/autenticado.jsp</result>
 			<result>/paginas/autenticar.jsp</result>
 		</action>
-		
+
 		<action name="arquivoAutenticado" method="arquivo"
 			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
 			<result name="autenticado">/paginas/imagemCaptcha.jsp</result>
@@ -53,16 +73,9 @@
 	</package>
 
 
-	<package name="expediente" extends="default" namespace="/expediente">
-		<default-interceptor-ref name="defaultStack" />
-		<action name="gadget" class="br.gov.jfrj.webwork.action.ExGadgetAction">
-			<result>/paginas/fast_gadget.jsp</result>
-		</action>
-	</package>
-
 	<package name="expediente/configuracao" extends="default"
 		namespace="/expediente/configuracao">
-		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
+
 		<action name="listar" method="aListar"
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
 			<result>/paginas/configuracao/lista.jsp</result>
@@ -124,6 +137,11 @@
 	</package>
 
 	<package name="expediente" extends="default" namespace="/expediente">
+
+		<action name="gadget" class="br.gov.jfrj.webwork.action.ExGadgetAction">
+			<result>/paginas/fast_gadget.jsp</result>
+		</action>
+
 		<action name="buscar" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aBuscar">
 			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
@@ -140,7 +158,6 @@
 	</package>
 
 	<package name="expediente/doc" extends="default" namespace="/expediente/doc">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="pdf" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aAcessar">
 			<result type="redirect">${mob.codigoCompacto}.pdf</result>
@@ -151,47 +168,38 @@
 		</action>
 		<action name="marcar_tudo" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aMarcarTudo">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 		<action name="numerar_tudo" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aNumerarTudo">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 		<action name="marcar" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aMarcar">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 		<action name="indexar_tudo" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aIndexarTudo">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 		<action name="listar_nao_indexados" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aListarNaoIndexados">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/lista_nao_indexados.jsp</result>
 		</action>
 		<action name="indexar_fila" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aIndexarFila">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 		<action name="indexar_ultimas" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aIndexarUltimas">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 		<action name="indexar" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aIndexar">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 		<action name="desindexar" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aDesindexar">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 		<action name="full_search" class="br.gov.jfrj.webwork.action.ExMobilAction"
@@ -422,7 +430,7 @@
 	</package>
 
 	<package name="expediente/mov" extends="default" namespace="/expediente/mov">
-		<default-interceptor-ref name="defaultStack" />
+
 		<action name="assinar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinar">
 			<result>/paginas/expediente/assina.jsp</result>
@@ -1092,6 +1100,22 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		
+		<action name="emiteRelMovDocsSubordinados" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelMovDocumentosSubordinados">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="emiteRelDocsSubCriados" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelDocsSubCriados">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
 
 		<action name="emiteRelDocEntreDatas" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelDocEntreDatas">
@@ -1108,7 +1132,7 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
-		
+
 		<action name="emiteRelMovCad" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelMovCad">
 			<result name="relatorio" type="stream">
@@ -1137,7 +1161,7 @@
 
 	</package>
 	<package name="pessoa" extends="default" namespace="/pessoa">
-		<default-interceptor-ref name="defaultStack" />
+
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/pessoa_busca.jsp</result>
@@ -1152,7 +1176,7 @@
 	</package>
 
 	<package name="classificacao" extends="default" namespace="/classificacao">
-		<default-interceptor-ref name="defaultStack" />
+
 		<action name="buscar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
 			method="aBuscar">
 			<result name="busca">
@@ -1169,7 +1193,7 @@
 	</package>
 
 	<package name="lotacao" extends="default" namespace="/lotacao">
-		<default-interceptor-ref name="defaultStack" />
+
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpLotacaoAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/lotacao_busca.jsp</result>
@@ -1184,7 +1208,7 @@
 	</package>
 
 	<package name="orgao" extends="default" namespace="/orgao">
-		<default-interceptor-ref name="defaultStack" />
+
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.CpOrgaoAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/orgao_busca.jsp</result>
@@ -1199,7 +1223,7 @@
 	</package>
 
 	<package name="funcao" extends="default" namespace="/funcao">
-		<default-interceptor-ref name="defaultStack" />
+
 		<action name="buscar"
 			class="br.gov.jfrj.siga.libs.webwork.DpFuncaoConfiancaAction" method="aBuscar">
 			<result name="busca">/sigalibs/funcao_busca.jsp</result>
@@ -1214,7 +1238,7 @@
 	</package>
 
 	<package name="cargo" extends="default" namespace="/cargo">
-		<default-interceptor-ref name="defaultStack" />
+
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpCargoAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/cargo_busca.jsp</result>
@@ -1229,13 +1253,13 @@
 	</package>
 
 	<!-- <package name="manutencao/desenvolvimento" extends="default" namespace="/manutencao/desenvolvimento"> 
-		<default-interceptor-ref name="defaultStack" /> <action name="cancelar" class="br.gov.jfrj.webwork.action.ExDocumentoAction" 
-		method="aCancelarDocumento"> <result type="redirect-action">principal</result> 
-		</action> </package> -->
+		<default-interceptor-ref name="defaultStackWithExceptionMapping"/> <action 
+		name="cancelar" class="br.gov.jfrj.webwork.action.ExDocumentoAction" method="aCancelarDocumento"> 
+		<result type="redirect-action">principal</result> </action> </package> -->
 
 	<package name="despacho/tipodespacho" extends="default"
 		namespace="/despacho/tipodespacho">
-		<default-interceptor-ref name="defaultStack" />
+
 
 		<action name="listar" class="br.gov.jfrj.webwork.action.ExTipoDespachoAction"
 			method="aListar">
@@ -1254,7 +1278,7 @@
 	</package>
 
 	<package name="externo" extends="default" namespace="/externo">
-		<default-interceptor-ref name="defaultStack" />
+
 
 		<action name="atualizar_publicacao" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAtualizarPublicacao">
@@ -1265,14 +1289,13 @@
 
 		<action name="indexar_fila" class="br.gov.jfrj.webwork.action.ExMobilAction"
 			method="aIndexarFila">
-			<interceptor-ref name="defaultStack" />
 			<result>/paginas/expediente/finalizou_rotina.jsp</result>
 		</action>
 
 	</package>
 
 	<package name="testes" extends="default" namespace="/testes">
-		<default-interceptor-ref name="defaultStack" />
+
 		<action name="gadgetTest" class="br.gov.jfrj.webwork.action.ExGadgetAction"
 			method="test">
 			<result>/paginas/gadget.jsp</result>
@@ -1287,7 +1310,7 @@
 	</package>
 
 	<package name="modelo" extends="default" namespace="/modelo">
-		<default-interceptor-ref name="defaultStack" />
+
 
 		<action name="listar" class="br.gov.jfrj.webwork.action.ExModeloAction"
 			method="aListar">

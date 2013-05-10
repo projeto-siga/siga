@@ -66,6 +66,16 @@ function visualizarRelatorio(rel) {
 		<c:set var="titulo_pagina" scope="request">Relação de Documentos em Setores Subordinados</c:set>
 		<c:set var="nomeRelatorio" scope="request">relDocumentosSubordinados.jsp</c:set>
 	</c:when>
+	<c:when test='${param.nomeArquivoRel eq "relMovimentacaoDocSubordinados.jsp"}'>
+		<c:set var="actionName" scope="request">emiteRelMovDocsSubordinados</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de Movimentação de Documentos em Setores Subordinados</c:set>
+		<c:set var="nomeRelatorio" scope="request">relMovimentacaoDocSubordinados.jsp</c:set>
+	</c:when>
+	<c:when test='${param.nomeArquivoRel eq "relCrDocSubordinados.jsp"}'>
+		<c:set var="actionName" scope="request">emiteRelDocsSubCriados</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de Criação de Documentos em Setores Subordinados</c:set>
+		<c:set var="nomeRelatorio" scope="request">relCrDocSubordinados.jsp</c:set>
+	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relMovimentacao.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelMovimentacao</c:set>
 		<c:set var="titulo_pagina" scope="request">Relação de Movimentações</c:set>

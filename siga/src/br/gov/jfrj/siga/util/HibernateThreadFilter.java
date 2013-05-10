@@ -70,8 +70,10 @@ public class HibernateThreadFilter extends ThreadFilter {
 			
 		} catch (final Exception ex) {
 			CpDao.rollbackTransacao();
-			super.logaExcecaoAoExecutarFiltro( request, ex );
-			throw new ServletException(ex);
+			if (ex instanceof ServletException)
+				throw (ServletException) ex;
+			else
+				throw new ServletException(ex);
 		} finally {
 			this.fechaSessaoHibernate();
 			this.liberaInstanciaDao();

@@ -1581,5 +1581,20 @@ public class ExDao extends CpDao {
 		return ExDao.getInstance().consultarPorSigla(flt);
 	}
 
+	public List<ExDocumento> consultarExDocumentoPorClassificacao(
+			DpLotacao lotacao, String mascara,CpOrgaoUsuario orgaoUsu) {
+		Query q;
+		if (lotacao == null){
+			q = getSessao().getNamedQuery("consultarExDocumentoClassificados");
+		}else{
+			q = getSessao().getNamedQuery("consultarExDocumentoClassificadosPorLotacao");
+			q.setLong("idLotacao", lotacao.getId());
+		}
+		 
+		q.setString("mascara", mascara);
+		q.setLong("idOrgaoUsuario", orgaoUsu.getIdOrgaoUsu());
+		return q.list();
+	}
+
 
 }

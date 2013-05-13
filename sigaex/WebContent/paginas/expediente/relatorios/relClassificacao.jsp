@@ -7,9 +7,15 @@
 
 <%@ taglib prefix="ww" uri="/webwork"%>
 
+<script src="/siga/javascript/format4js.js"></script>
+<script src="/siga/javascript/mascara.js"></script>
+
 <c:set var="titulo_pagina" scope="request">Relatório de Classificação Documental</c:set>
+<c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
+<input id="mask_in" type="hidden" value="${mascaraEntrada}"/>
+<input id="mask_out" type="hidden" value="${mascaraSaida}">
 
 <tr>
-	<td>Digite a classificação desejada (opcional):</td>
-	<td><input type="text" id="codificacao" name="codificacao"></td>
+	<td  width="30%">Classificação documental:</td>
+	<td><input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)" /></td>
 </tr>

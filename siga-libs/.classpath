@@ -5,8 +5,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-cp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/siga-sinc-lib"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/siga-cd-base"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/webwork-2.2.7.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/xwork.jar"/>
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/webwork-2.2.7.jar" sourcepath="C:/Desenvolvimento/webwork/webwork_2-2-7/src/java"/>
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/xwork.jar" sourcepath="C:/Desenvolvimento/webwork/xwork_1-2-2/src/java"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.jboss.ide.eclipse.as.classpath.core.javaee-5.0"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/activation.jar"/>

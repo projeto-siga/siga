@@ -325,13 +325,7 @@ public class Application extends SigaApplication {
 
 		// Header
 		StringBuilder sb = new StringBuilder();
-		sb.append("['");
-		sb.append("Mês");
-		sb.append("',");
-		sb.append("'");
-		sb.append("Visitas");
-		sb.append("',");
-		sb.append("'Novos'],");
+		sb.append("['Mês','Visitas','Novos'],");
 
 		// Values
 		for (int i = -6; i <= 0; i++) {

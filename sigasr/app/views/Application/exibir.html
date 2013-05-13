@@ -21,7 +21,7 @@ function carregouAtendente(response, param){
 <div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
 	<div class="gt-content clearfix">
 		<h2> ${solicitacao.codigo}</h2>
-		<h3 style="margin-bottom: 0px;">Descrição da Solicitação</h3>
+		<h3 style="margin-bottom: 0px;">${solicitacao.itemConfiguracao?.descricao} - ${solicitacao.servico?.descricao}</h3>
 		<p class="gt-table-action-list">
 			#{if editar} <a class="once"
 				href="@{Application.editar(solicitacao.idSolicitacao)}"> <img
@@ -98,8 +98,15 @@ function carregouAtendente(response, param){
 				Tel.: ${solicitacao.telPrincipal} 
 			</p>
 			<p>
+				<b>Cadastrante:</b> ${solicitacao?.cadastrante?.descricaoIniciaisMaiusculas}
+			</p>
+			<p>
 			<b>Item de Configuração:</b>
-			${solicitacao.itemConfiguracao?.descricao} - ${solicitacao.servico?.descricao}
+			${solicitacao.itemConfiguracao?.siglaItemConfiguracao} - ${solicitacao.itemConfiguracao?.descricaoCompleta}
+			</p>
+			<p>
+			<b>Ação:</b>
+			${solicitacao.servico?.siglaServico} - ${solicitacao.servico?.descricaoCompleta}
 			</p>
 			<p>
 				<b>Abertura:</b> ${solicitacao.solicitacaoInicial.dtRegString}
@@ -119,7 +126,7 @@ function carregouAtendente(response, param){
 <div class="gt-sidebar">
 	<div class="gt-sidebar-content">
 		<h3>Contexto</h3>
-			<p><b>Contexto:</b>
+			<p>
 				#{listaArvore solicitacao:solicitacao.paiDaArvore,visualizando:solicitacao /}
 			</p>
 	</div>

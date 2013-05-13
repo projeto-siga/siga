@@ -58,7 +58,7 @@ function sbmt(nivel){
 				#{else}
 					&nbsp;&nbsp;
 				#{/else}
-				#{if item.nivel > 2 || !params.pessoa}<a
+				#{if item.nivel > 1 || !params.pessoa}<a
 				href="javascript:opener.retorna_item${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
 				#{/if}
 				#{else}<span>${item.tituloItemConfiguracao}</span>#{/else}

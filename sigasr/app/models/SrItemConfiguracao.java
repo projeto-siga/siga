@@ -105,43 +105,22 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			desc_nivel = this.tituloItemConfiguracao;
 		}
 		if (nivel == 2) {
-			String sigla_nivelpai = this.getSigla().substring(0, 2) + ".00"
-					+ ".00" + ".00";
+			String sigla_nivelpai = this.getSigla().substring(0, 2) + ".00.00";
 			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
 					"bySiglaItemConfiguracao", sigla_nivelpai).first();
-			desc_nivel = configuracao.tituloItemConfiguracao + " - "
+			desc_nivel = configuracao.tituloItemConfiguracao + " : "
 					+ this.tituloItemConfiguracao;
 		}
 		if (nivel == 3) {
-			String sigla_nivelpai = this.getSigla().substring(0, 2) + "."
-					+ this.getSigla().substring(3, 5) + ".00" + ".00";
+			String sigla_nivelpai = this.getSigla().substring(0, 5) + ".00";
 			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
 					"bySiglaItemConfiguracao", sigla_nivelpai).first();
 			String sigla_nivel_anterior = this.getSigla().substring(0, 2)
-					+ ".00" + ".00" + ".00";
+					+ ".00.00";
 			SrItemConfiguracao configuracao_anterior = SrItemConfiguracao.find(
 					"bySiglaItemConfiguracao", sigla_nivel_anterior).first();
-			desc_nivel = configuracao_anterior.tituloItemConfiguracao + " - "
-					+ configuracao.tituloItemConfiguracao + " - "
-					+ this.tituloItemConfiguracao;
-		}
-		if (nivel == 4) {
-			String sigla_nivel_spai = this.getSigla().substring(0, 2) + "."
-					+ this.getSigla().substring(3, 5)
-					+ this.getSigla().substring(6, 8) + "." + ".00";
-			SrItemConfiguracao configuracao_spai = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivel_spai).first();
-			String sigla_nivelpai = this.getSigla().substring(0, 2) + "."
-					+ this.getSigla().substring(3, 5) + ".00" + ".00";
-			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivelpai).first();
-			String sigla_nivel_anterior = this.getSigla().substring(0, 2)
-					+ ".00" + ".00" + ".00";
-			SrItemConfiguracao configuracao_anterior = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivel_anterior).first();
-			desc_nivel = configuracao_spai.tituloItemConfiguracao + " - "
-					+ configuracao_anterior.tituloItemConfiguracao + " - "
-					+ configuracao.tituloItemConfiguracao + " - "
+			desc_nivel = configuracao_anterior.tituloItemConfiguracao + " : "
+					+ configuracao.tituloItemConfiguracao + " : "
 					+ this.tituloItemConfiguracao;
 		}
 		return desc_nivel;
@@ -272,11 +251,11 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			camposVazios++;
 			pos = getSigla().indexOf(".00", pos + 1);
 		}
-		return 4 - camposVazios;
+		return 3 - camposVazios;
 	}
 
 	public boolean isEspecifico() {
-		return getNivel() == 4;
+		return getNivel() == 3;
 	}
 
 	public String getSiglaSemZeros() {
@@ -292,7 +271,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		if (sigla.lastIndexOf(".") == -1)
 			return null;
 		sigla = sigla.substring(0, sigla.lastIndexOf("."));
-		for (int i = 0; i < 4 - (getNivel() - 1); i++) {
+		for (int i = 0; i < 3 - (getNivel() - 1); i++) {
 			sigla += ".00";
 		}
 		return SrItemConfiguracao.find(

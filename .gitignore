@@ -18,3 +18,5 @@ siga-ldap/build/
 siga-libs/build/
 siga-sinc-lib/bin/
 sigagc/eclipse/classes/
+sigasr/eclipse/classes/
+sigasr/precompiled/

@@ -42,35 +42,37 @@ public class ExThreadFilter extends ThreadFilter {
 	private static boolean fConfigured = false;
 
 	private static final Object classLock = ExThreadFilter.class;
-	
-	private static final Logger log = Logger.getLogger( ExThreadFilter.class );
-	
+
+	private static final Logger log = Logger.getLogger(ExThreadFilter.class);
+
 	/**
 	 * Pega a sessão.
 	 */
 	public void doFilter(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
-		
-		final StringBuilder csv = super.iniciaAuditoria( request );
-		
+
+		final StringBuilder csv = super.iniciaAuditoria(request);
+
 		this.configuraHibernate();
-		
+
 		try {
-			
-			this.executaFiltro( request, response, chain );
+
+			this.executaFiltro(request, response, chain);
 
 		} catch (final Exception ex) {
-			 ExDao.rollbackTransacao();
-             super.logaExcecaoAoExecutarFiltro( request, ex );
-             throw new ServletException(ex);
+			ExDao.rollbackTransacao();
+			if (ex instanceof ServletException)
+				throw (ServletException) ex;
+			else
+				throw new ServletException(ex);
 		} finally {
 			this.fechaSessaoHibernate();
 			this.liberaInstanciaDao();
 		}
-		
-		super.terminaAuditoria( csv );
-		
+
+		super.terminaAuditoria(csv);
+
 	}
 
 	private void configuraHibernate() throws ExceptionInInitializerError {
@@ -86,18 +88,23 @@ public class ExThreadFilter extends ThreadFilter {
 								.criarHibernateCfg("java:/SigaExDS");
 
 						// bruno.lacerda@avantiprima.com.br
-						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
-						SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
-						
+						// Configura listeners de auditoria de acordo com os
+						// parametros definidos no arquivo
+						// siga.auditoria.properties
+						SigaAuditor
+								.configuraAuditoria(new SigaHibernateChamadaAuditor(
+										cfg));
+
 						registerTransactionClasses(cfg);
-						
+
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
 						// ex);
-						log.error( "Não foi possível configurar o Hibernate. ", ex );
+						log.error("Não foi possível configurar o Hibernate. ",
+								ex);
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -108,56 +115,60 @@ public class ExThreadFilter extends ThreadFilter {
 	private void executaFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws Exception, AplicacaoException {
-		
+
 		// HibernateUtil.getSessao();
 		ModeloDao.freeInstance();
 		ExDao.getInstance();
 		Ex.getInstance().getConf().limparCacheSeNecessario();
 
 		// Novo
-		if ( !ExDao.getInstance().sessaoEstahAberta() )
+		if (!ExDao.getInstance().sessaoEstahAberta())
 			throw new AplicacaoException(
 					"Erro: sessão do Hibernate está fechada.");
 
 		ExDao.iniciarTransacao();
-		doFiltro( request, response, chain );
+		doFiltro(request, response, chain);
 		ExDao.commitTransacao();
 	}
 
 	private void doFiltro(final ServletRequest request,
-			final ServletResponse response, final FilterChain chain) throws Exception {
-		
+			final ServletResponse response, final FilterChain chain)
+			throws Exception {
+
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			log.info( "Ocorreu um erro durante a execução da operação: " + e.getMessage() );
+			log.info("Ocorreu um erro durante a execução da operação: "
+					+ e.getMessage());
 			throw e;
 		}
 	}
-	
+
 	private void fechaSessaoHibernate() {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
+			log.error("Ocorreu um erro ao fechar uma sessão do Hibernate", ex);
 		}
 	}
-	
+
 	private void liberaInstanciaDao() {
 		try {
 			ExDao.freeInstance();
 		} catch (Exception ex) {
-			log.error( ex.getMessage(), ex );
+			log.error(ex.getMessage(), ex);
 		}
 	}
 
 	/**
 	 * Executa ao destruir o filtro.
 	 */
-	public void destroy() {}
+	public void destroy() {
+	}
 
 	/**
 	 * Executa ao inciar o filtro.
 	 */
-	public void init(FilterConfig arg0) throws ServletException {}
+	public void init(FilterConfig arg0) throws ServletException {
+	}
 }

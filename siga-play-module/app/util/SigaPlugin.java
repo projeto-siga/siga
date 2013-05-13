@@ -14,10 +14,7 @@ public class SigaPlugin extends PlayPlugin {
 		super.onConfigurationRead();
 		String applicationName = Play.configuration
 				.getProperty("application.name");
-		String applicationMode = Play.configuration
-				.getProperty("application.mode");
-		if ("dev".equals(applicationMode))
-			applicationMode = "desenv";
+		String applicationMode = SigaBaseProperties.getAmbiente();
 
 		try {
 			HashMap<String, String> propsPlay = SigaBaseProperties.obterTodas();

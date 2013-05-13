@@ -99,7 +99,7 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		if (nivel == 2){
 			String sigla_raiz = this.getSigla().substring(0,2) + ".00";
 			SrServico configuracao = SrServico.find("bySiglaServico",sigla_raiz).first();
-			desc_nivel =  configuracao.tituloServico + " - " + this.tituloServico;
+			desc_nivel =  configuracao.tituloServico + " : " + this.tituloServico;
 		}
 		return desc_nivel;
 	}

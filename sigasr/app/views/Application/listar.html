@@ -16,22 +16,26 @@
 							#{ifnot _modoCompleto}</a>#{/ifnot}
 					</h4>
 					<font style="font-size: 9pt; padding-top: 3pt">
-							<b>Abertura:</b>${sol.solicitante.descricaoIniciaisMaiusculas},
+							<b>Abertura:&nbsp;</b>${sol.solicitante.descricaoIniciaisMaiusculas},
 							${sol.lotaSolicitante.siglaLotacao}#{if
 							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}
 							- ${sol.solicitacaoInicial.dtRegString}
 							#{if _modoCompleto && sol.solicitante != sol.cadastrante}
 							Cadastrado por ${sol.cadastrante.descricaoIniciaisMaiusculas},
-							${sol.lotaCadastrante.siglaLotacao}</font>
+							${sol.lotaCadastrante.siglaLotacao}
 							#{/if}
+					</font>
 					<p style="font-size: 9pt; padding-top: 3pt; margin-bottom: 5pt;" id="descrSolicitacao">
 					${sol.descrSolicitacao}</p>
-					<p style="font-size: 9pt; padding-top: 0pt; margin-bottom: 5pt;">
-							<b>Último andamento:</b>${sol.ultimoAndamento.solicitacao.solicitante.descricaoIniciaisMaiusculas},
+					<font style="font-size: 9pt; padding-top: 0pt;">
+							<b>Último andamento:&nbsp;</b>${sol.ultimoAndamento.solicitacao.solicitante.descricaoIniciaisMaiusculas},
 							${sol.lotaSolicitante.siglaLotacao}#{if
 							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}
 							- ${sol.ultimoAndamento.dtRegString}
-							<br>${sol.ultimoAndamento.descrAndamento}</p>
+					</font>
+					<p style="font-size: 9pt; padding-top: 3pt;">
+							${sol.ultimoAndamento.descrAndamento}
+					</p>
 				</td>
 				<td style="padding-left: 60px">
 					<table border="0" class="gt-table-categories">

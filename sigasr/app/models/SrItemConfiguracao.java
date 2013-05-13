@@ -127,8 +127,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		}
 		if (nivel == 4) {
 			String sigla_nivel_spai = this.getSigla().substring(0, 2) + "."
-					+ this.getSigla().substring(3, 5)
-					+ this.getSigla().substring(6, 8) + "." + ".00";
+					+ this.getSigla().substring(3, 5) + "."
+					+ this.getSigla().substring(6, 8) + ".00";
 			SrItemConfiguracao configuracao_spai = SrItemConfiguracao.find(
 					"bySiglaItemConfiguracao", sigla_nivel_spai).first();
 			String sigla_nivelpai = this.getSigla().substring(0, 2) + "."

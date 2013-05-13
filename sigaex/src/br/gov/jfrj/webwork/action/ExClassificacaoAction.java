@@ -128,12 +128,12 @@ public class ExClassificacaoAction
 	}
 
 	public String aListar() throws AplicacaoException, Exception{
-		assertAcesso("FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
 		return SUCCESS;
 	}
 
 	public String aEditar() throws Exception{
-		assertAcesso("FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
 		if (getCodificacao()!=null){
 			exClass = buscarExClassificacao(getCodificacao());
 		}
@@ -148,7 +148,7 @@ public class ExClassificacaoAction
 	}
 
 	public String aGravar() throws Exception{
-		assertAcesso("FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
 		dao().iniciarTransacao();
 		
 		if (getCodificacao().length() == 0  || getDescrClassificacao().length() == 0 ){
@@ -192,7 +192,7 @@ public class ExClassificacaoAction
 	}
 	
 	public String aExcluir() throws Exception{
-		assertAcesso("FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
 		dao().iniciarTransacao();
 		exClass = buscarExClassificacao(codificacao);
 		Date dt = dao().consultarDataEHoraDoServidor();
@@ -227,7 +227,7 @@ public class ExClassificacaoAction
 	}
 	
 	public String aGravarVia() throws Exception{
-		assertAcesso("FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
 		verificarParamsVia();
 		dao().iniciarTransacao();
 
@@ -271,7 +271,7 @@ public class ExClassificacaoAction
 	}
 
 	public String aExcluirVia() throws Exception{
-		assertAcesso("FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
 		dao().iniciarTransacao();
 		
 		ExVia exVia = dao().consultar(getIdVia(), ExVia.class, false);

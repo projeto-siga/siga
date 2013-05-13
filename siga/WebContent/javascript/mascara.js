@@ -5,7 +5,7 @@
 
 			encontrado = input.value.match(mask_in)[0];
 			if (encontrado==null || encontrado == ''){
-				window.alert("CodificaÁ„o inv·lida!");
+				window.alert("Codifica√ß√£o inv√°lida!");
 				input.value="";
 				return;
 			}

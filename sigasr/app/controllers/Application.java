@@ -115,7 +115,7 @@ public class Application extends SigaApplication {
 
 	public static void exibirServico(SrSolicitacao solicitacao)
 			throws Exception {
-		List<SrServico> servicos = SrServico.listarPorPessoaEItem(
+		List<SrServico> servicos = SrServico.listarPorPessoaEItemEmOrdemAlfabetica(
 				solicitacao.solicitante, solicitacao.itemConfiguracao);
 		if (solicitacao.servico == null
 				|| !servicos.contains(solicitacao.servico)) {
@@ -144,7 +144,7 @@ public class Application extends SigaApplication {
 
 		List<SrServico> servicos = new ArrayList<SrServico>();
 		if (solicitacao.itemConfiguracao != null) {
-			servicos = SrServico.listarPorPessoaEItem(
+			servicos = SrServico.listarPorPessoaEItemEmOrdemAlfabetica(
 					solicitacao.solicitante, solicitacao.itemConfiguracao);
 			if (solicitacao.servico == null
 					|| !servicos.contains(solicitacao.servico)) {

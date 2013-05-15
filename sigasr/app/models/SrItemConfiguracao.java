@@ -156,9 +156,9 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	public SrItemConfiguracao selecionar(String sigla, DpPessoa pess)
 			throws Exception {
 		setSigla(sigla);
-		List<SrItemConfiguracao> itens = buscar(pess);
+		List<SrItemConfiguracao> itens = buscar(pess, false);
 		if (itens.size() == 0 || itens.size() > 1
-				|| !itens.get(0).isEspecifico())
+				|| itens.get(0).isGenerico())
 			return null;
 		return itens.get(0);
 	}
@@ -184,6 +184,11 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	}
 
 	public List<SrItemConfiguracao> buscar(DpPessoa pess) throws Exception {
+		return buscar(pess, true);
+	}
+
+	public List<SrItemConfiguracao> buscar(DpPessoa pess, boolean comHierarquia)
+			throws Exception {
 
 		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
@@ -214,12 +219,17 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				if (naoAtende)
 					continue;
 			}
-			do {
-				if (!listaFinal.contains(item))
-					listaFinal.add(item);
-				item = item.getPai();
-			} while (item != null);
+			
+			if (comHierarquia)
+				do {
+					if (!listaFinal.contains(item))
+						listaFinal.add(item);
+					item = item.getPai();
+				} while (item != null);
+			else
+				listaFinal.add(item);
 		}
+		
 		Collections.sort(listaFinal, comparator);
 		return listaFinal;
 	}
@@ -256,6 +266,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 
 	public boolean isEspecifico() {
 		return getNivel() == 3;
+	}
+	
+	public boolean isGenerico() {
+		return getNivel() == 1;
 	}
 
 	public String getSiglaSemZeros() {

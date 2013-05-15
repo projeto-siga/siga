@@ -73,7 +73,7 @@ public class Application extends SigaApplication {
 
 	public static void gadget() {
 		Query query = JPA.em().createNamedQuery("contarSrMarcas");
-		query.setParameter("idPessoaIni", cadastrante().getIdInicial());
+		query.setParameter("idPessoaIni", titular().getIdInicial());
 		query.setParameter("idLotacaoIni", lotaTitular().getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
@@ -83,7 +83,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao;
 		if (id == null) {
 			solicitacao = new SrSolicitacao();
-			solicitacao.solicitante = cadastrante();
+			solicitacao.solicitante = titular();
 		} else
 			solicitacao = SrSolicitacao.findById(id);
 

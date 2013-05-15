@@ -34,15 +34,11 @@ function carregouAtendente(response, param){
 			#{/if}
 		</p>
 		<div class="gt-content-box">
-			<table border="0" class="gt-table gt-user-table">
-				<tbody><tr><td style="width: 70%">
-						<h4>
-							
-						</h4>
-						<p style="font-size: 9pt; padding-top: 3pt" id="descrSolicitacao">
+			<p style="font-size: 9pt; padding: 7px 10px; margin-bottom: 0px;" id="descrSolicitacao">
 							${solicitacao.descrSolicitacao}</p>
-				</td></tr></tbody>
-			</table>
+			#{list items:solicitacao.atributoSet, as:'att'}
+				<p style="font-size: 9pt; padding: 0px 10px"><b>${att.tipoAtributo.nomeTipoAtributo}:</b> ${att.valorAtributo}</p>
+			#{/list}
 		</div>
 
 		<h3 style="padding-top: 25px;">Próximo Andamento</h3>
@@ -92,10 +88,10 @@ function carregouAtendente(response, param){
 				<b>Solicitante:</b> ${solicitacao?.solicitante?.descricaoIniciaisMaiusculas}
 			</p>
 			<p>
-				<b>Lotação:</b> ${solicitacao.lotaSolicitante?.siglaLotacao} - 
-				#{if solicitacao.local}
-				#{/if}
-				Tel.: ${solicitacao.telPrincipal} 
+				<b>Lotação:</b> ${solicitacao.lotaSolicitante?.siglaLotacao} (${solicitacao.local})
+			</p>
+			<p>
+				<b>Telefone:</b> ${solicitacao.telPrincipal} 
 			</p>
 			<p>
 				<b>Cadastrante:</b> ${solicitacao?.cadastrante?.descricaoIniciaisMaiusculas}
@@ -112,7 +108,10 @@ function carregouAtendente(response, param){
 				<b>Abertura:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>
 			<p>
-				<b>Situação:</b> ${solicitacao.situacaoString}
+				<b>Situação:</b> ${solicitacao.situacaoStringSemLota}
+			</p>
+			<p>
+				<b>Atendente:</b> ${solicitacao.lotaAtendente?.sigla}
 			</p>
 			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
 						#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /} #{/elseif}

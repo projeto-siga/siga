@@ -1,11 +1,68 @@
-		function aplicarMascara(input){
+/*
+ * mascara.js - utilit·rio para aplicar m·scara a uma caixa de texto
+ * 
+  Para utilizar este componente faÁa o seguinte:
+  
+  1) Inclua o javascript na p·gina
+  2) Defina os campos que ter„o m·scara
+  3) Defina os hidden com valores da m·scara
+  4) Implemente a interface IUsaMascara na action
+  5) (Opcional)Se quiser que a m·scara seja preenchida com zeros, coloque o seguinte "onblur" no input
+   
+  			<input type="text" onblur="javascript:aplicarMascara(this)" />
+  			
+  
+  Exemplo:
+  
+	<!-- mascara.js -->
+	
+  		<script src="/siga/javascript/mascara.js"></script>
+  
+  		<script type="text/javascript">
+ 				var elementosComMascara = ['#codificacao','inputText2'];		
+  		</script>
+
+  		<input id="mask_in" type="hidden" value="${mascaraEntrada}"/>
+  		<input id="mask_out" type="hidden" value="${mascaraSaida}">
+  		<input id="mask_js" type="hidden" value="${mascaraJavascript}">
+
+	<!-- mascara.js -->
+	
+	ImplementaÁ„o de IUsaMascara
+	
+	public class XXX implements IUsaMascara {
+	
+	...
+	
+		public String getMascaraEntrada(){
+			return MascaraUtil.getInstance().getMascaraEntrada();
+		}
+		
+		public String getMascaraSaida(){
+			return MascaraUtil.getInstance().getMascaraSaida();
+		}
+		
+		public String getMascaraJavascript(){
+			return SigaExProperties.getExClassificacaoMascaraJavascript();
+		}
+		
+	...
+		
+	}
+ *
+ * 
+ * */
+
+
+
+function aplicarMascara(input){
 		
 			var mask_in = getMascaraIn();
 			var mask_out = getMascaraOut();
 
 			encontrado = input.value.match(mask_in)[0];
 			if (encontrado==null || encontrado == ''){
-				window.alert("Codifica√ß√£o inv√°lida!");
+				// window.alert("Valor inv√°lido!");
 				input.value="";
 				return;
 			}
@@ -17,37 +74,40 @@
 					gruposRegEx[i]=0;	
 				}
 			}
-			/*
-			var pos = input.selectionStart;
+
 			input.value = mdgw.format.apply(null,gruposRegEx);
 			
-			var charAtual = document.getElementById('texto').value.charAt(pos);
-			if (charAtual!="" && !isDigito(charAtual)){
-				while(!isDigito(charAtual)){
-					pos++;
-					charAtual = document.getElementById('texto').value.charAt(pos);
-				}
-			}
-			input.selectionStart = pos;
-			*/
-			input.value = mdgw.format.apply(null,gruposRegEx);
-			//document.getElementById('textoFormatado').value = mdgw.format.apply(null,gruposRegEx);
 		}
 
 		function getMascaraIn(){
-			/*mask = $("#mask_in").val();
-			mask.replaceAll('\\','\');
-			return mask;
-			*/
 			return new RegExp($("#mask_in").val());
 		}
 
 		function getMascaraOut(){
 			return $("#mask_out").val();
 		}
-		/*
-		function isDigito(digito){
-			regExDigito = /[0-9,a-z,A-Z]/;
-			return regExDigito.exec(digito)!=null
+		
+		function getMascaraJs(){
+			return $("#mask_js").val();
 		}
-		*/
+		
+		$.getScript("/siga/javascript/format4js.js", function(){
+			
+		});
+
+
+		//carrega a m·scara
+		$.getScript("/siga/javascript/jquery.maskedinput.min.js", function(){
+				jQuery(function($){
+					for(e in elementosComMascara){
+					   $(elementosComMascara[e]).mask(getMascaraJs());
+					   
+					   $(elementosComMascara[e]).blur(function(){
+						   aplicarMascara(this);
+					   });
+					}
+				});
+		});
+		
+		
+

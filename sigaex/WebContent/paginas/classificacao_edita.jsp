@@ -10,10 +10,15 @@
 
 
 <siga:pagina titulo="Classificação Documental">
-<script src="/siga/javascript/format4js.js"></script>
+
 <script src="/siga/javascript/mascara.js"></script>
 <script type="text/javascript">
+	var elementosComMascara = ['#codificacao'];		
+</script>
 
+
+
+<script type="text/javascript">
 
 	//funções de dados
 	function gravarClassificacao(){
@@ -86,6 +91,7 @@
 
 <input id="mask_in" type="hidden" value="${mascaraEntrada}"/>
 <input id="mask_out" type="hidden" value="${mascaraSaida}">
+<input id="mask_js" type="hidden" value="${mascaraJavascript}">
 
 <c:choose>
 	<c:when test="${acao == 'editar_classificacao'}">

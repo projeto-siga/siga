@@ -25,6 +25,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExVia;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -193,15 +194,6 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 		return acao;
 	}
 	
-
-	public String getMascaraEntrada(){
-		return MascaraUtil.getInstance().getMascaraEntrada();
-	}
-	
-	public String getMascaraSaida(){
-		return MascaraUtil.getInstance().getMascaraSaida();
-	}
-
 	public Integer getTotalDeNiveis(){
 		return MascaraUtil.getInstance().getTotalDeNiveisDaMascara();
 	}

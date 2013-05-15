@@ -47,6 +47,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsClassificados;
@@ -64,7 +65,7 @@ import br.gov.jfrj.siga.persistencia.oracle.JDBCUtilOracle;
 import com.opensymphony.webwork.ServletActionContext;
 import com.opensymphony.xwork.ActionInvocation;
 
-public class ExRelatorioAction extends ExActionSupport {
+public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 
 	private List dataSource;
 
@@ -649,6 +650,10 @@ public class ExRelatorioAction extends ExActionSupport {
 	
 	public String getMascaraSaida(){
 		return MascaraUtil.getInstance().getMascaraSaida();
+	}
+	
+	public String getMascaraJavascript(){
+		return SigaExProperties.getExClassificacaoMascaraJavascript();
 	}
 
 }

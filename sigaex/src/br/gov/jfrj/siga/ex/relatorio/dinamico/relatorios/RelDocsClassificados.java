@@ -62,7 +62,12 @@ public class RelDocsClassificados extends RelatorioTemplate {
 		List<String> dados = new ArrayList<String>();
 		List<ExDocumento> listaDocs;
 		
-		listaDocs = ExDao.getInstance().consultarExDocumentoPorClassificacao(this.lotacao,m.getMscFilho(this.codificacao, true),this.cpOrgaoUsu);
+		if (this.codificacao!=null && this.codificacao.length()>0){
+			listaDocs = ExDao.getInstance().consultarExDocumentoPorClassificacao(this.lotacao,m.getMscFilho(this.codificacao, true),this.cpOrgaoUsu);	
+		}else{
+			listaDocs = ExDao.getInstance().consultarExDocumentoPorClassificacao(this.lotacao,m.getMscTodosDoMaiorNivel(),this.cpOrgaoUsu);
+		}
+		
 		
 		for (ExDocumento d : listaDocs) {
 			dados.add(d.getCodigo()); //num doc

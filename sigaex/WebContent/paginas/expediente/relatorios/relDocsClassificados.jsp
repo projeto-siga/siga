@@ -7,13 +7,22 @@
 
 <%@ taglib prefix="ww" uri="/webwork"%>
 
-<script src="/siga/javascript/format4js.js"></script>
-<script src="/siga/javascript/mascara.js"></script>
+	<!-- mascara.js -->
+	
+  		<script src="/siga/javascript/mascara.js"></script>
+  
+  		<script type="text/javascript">
+ 				var elementosComMascara = ['#codificacao'];		
+  		</script>
+
+  		<input id="mask_in" type="hidden" value="${mascaraEntrada}"/>
+  		<input id="mask_out" type="hidden" value="${mascaraSaida}">
+  		<input id="mask_js" type="hidden" value="${mascaraJavascript}">
+
+	<!-- mascara.js -->
 
 <c:set var="titulo_pagina" scope="request">Relatório de Classificação Documental</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
-<input id="mask_in" type="hidden" value="${mascaraEntrada}"/>
-<input id="mask_out" type="hidden" value="${mascaraSaida}">
 
 
 <tr>

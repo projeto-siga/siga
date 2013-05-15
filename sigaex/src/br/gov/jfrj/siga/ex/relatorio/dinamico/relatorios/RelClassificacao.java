@@ -52,7 +52,7 @@ public class RelClassificacao extends RelatorioTemplate {
 		List<String> dados = new ArrayList<String>();
 		List<ExClassificacao> listaClass;
 		
-		if (this.codificacao!=null || this.codificacao.length()>0){
+		if (this.codificacao!=null && this.codificacao.length()>0){
 			listaClass = ExDao.getInstance().consultarExClassificacao(m.getMscFilho(this.codificacao, true), "");
 		}else{
 			listaClass= ExDao.getInstance().consultarExClassificacaoVigente();

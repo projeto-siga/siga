@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExPropriedadeBL;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.SigaSelecionavelActionSupport;
@@ -47,7 +48,7 @@ import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 
 public class ExClassificacaoAction
 		extends
-		SigaSelecionavelActionSupport<ExClassificacao, ExClassificacaoDaoFiltro> {
+		SigaSelecionavelActionSupport<ExClassificacao, ExClassificacaoDaoFiltro> implements IUsaMascara{
 
 	/**
 	 * 
@@ -466,6 +467,10 @@ public class ExClassificacaoAction
 	
 	public String getMascaraSaida(){
 		return MascaraUtil.getInstance().getMascaraSaida();
+	}
+	
+	public String getMascaraJavascript(){
+		return SigaExProperties.getExClassificacaoMascaraJavascript();
 	}
 
 	public Integer getTotalDeNiveis(){

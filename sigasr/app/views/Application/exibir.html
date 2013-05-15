@@ -37,7 +37,9 @@ function carregouAtendente(response, param){
 			<p style="font-size: 9pt; padding: 7px 10px; margin-bottom: 0px;" id="descrSolicitacao">
 							${solicitacao.descrSolicitacao}</p>
 			#{list items:solicitacao.atributoSet, as:'att'}
+				#{if att.valorAtributo}
 				<p style="font-size: 9pt; padding: 0px 10px"><b>${att.tipoAtributo.nomeTipoAtributo}:</b> ${att.valorAtributo}</p>
+				#{/if}
 			#{/list}
 		</div>
 

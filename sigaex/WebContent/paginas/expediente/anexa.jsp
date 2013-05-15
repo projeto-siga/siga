@@ -146,7 +146,8 @@
 					    type="checkbox"  theme="simple" name="check" 
 	                    onclick="javascript:montaTableAssinados(check.checked);" /><b>Exibir anexos assinados</b>
 	                <br/>  
-	             </c:if>  		     
+	             </c:if>  		  
+	             <br/>   
 				 <h2>Anexos Pendentes de Assinatura
 				
 				 <ww:if test="${assinandoAnexosGeral}">

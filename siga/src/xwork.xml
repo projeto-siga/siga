@@ -9,6 +9,7 @@
 				class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
 
 			<interceptor-stack name="defaultStackWithExceptionMapping">
+				<interceptor-ref name="fileUpload"/>
 				<interceptor-ref name="siga-exception" />
 				<interceptor-ref name="servlet-config" />
 				<interceptor-ref name="prepare" />

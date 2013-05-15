@@ -4715,11 +4715,13 @@ public class ExBL extends CpBL {
 			final DpPessoa titular, String nmFuncaoSubscritor) 
 			throws AplicacaoException, Exception {
 		
-		dao().getSessao().refresh(mob);
-		//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
-		if(mob.doc().isProcesso()) {
-			if(mob.getTotalDePaginas() >= 200) {
-				encerrar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, nmFuncaoSubscritor, true);
+		if(mob.doc().isEletronico()) {
+			dao().getSessao().refresh(mob);
+			//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
+			if(mob.doc().isProcesso()) {
+				if(mob.getTotalDePaginas() >= 200) {
+					encerrar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, nmFuncaoSubscritor, true);
+				}
 			}
 		}
 	}

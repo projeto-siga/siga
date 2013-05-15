@@ -93,9 +93,11 @@ function carregouAtendente(response, param){
 				(${solicitacao.local.nomeComplexo})
 				#{/if}
 			</p>
+			#{if solicitacao.telPrincipal}
 			<p>
 				<b>Telefone:</b> ${solicitacao.telPrincipal} 
 			</p>
+			#{/if}
 			<p>
 				<b>Cadastrante:</b> ${solicitacao?.cadastrante?.descricaoIniciaisMaiusculas}
 			</p>

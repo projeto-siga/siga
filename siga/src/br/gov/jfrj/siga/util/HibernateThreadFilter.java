@@ -43,9 +43,10 @@ public class HibernateThreadFilter extends ThreadFilter {
 	private static boolean fConfigured = false;
 
 	private static final Object classLock = HibernateThreadFilter.class;
-	
-	private static final Logger log = Logger.getLogger( HibernateThreadFilter.class );
-	
+
+	private static final Logger log = Logger
+			.getLogger(HibernateThreadFilter.class);
+
 	// static {
 	// try {
 	// HibernateUtil.configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml");
@@ -60,26 +61,26 @@ public class HibernateThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		final StringBuilder csv = super.iniciaAuditoria( request );
-		
+		final StringBuilder csv = super.iniciaAuditoria(request);
+
 		this.configuraHibernate();
-		
+
 		try {
-			
-			this.executaFiltro( request, response, chain );
-			
+
+			this.executaFiltro(request, response, chain);
+
 		} catch (final Exception ex) {
 			CpDao.rollbackTransacao();
-			if (ex instanceof ServletException)
-				throw (ServletException) ex;
+			if (ex instanceof RuntimeException)
+				throw (RuntimeException) ex;
 			else
 				throw new ServletException(ex);
 		} finally {
 			this.fechaSessaoHibernate();
 			this.liberaInstanciaDao();
 		}
-		
-		super.terminaAuditoria( csv );
+
+		super.terminaAuditoria(csv);
 	}
 
 	private void configuraHibernate() throws ExceptionInInitializerError {
@@ -90,22 +91,28 @@ public class HibernateThreadFilter extends ThreadFilter {
 			synchronized (classLock) {
 				if (!fConfigured) {
 					try {
-						// TODO: _LAGS - Trocar para obter os parametros do "web.xml"
+						// TODO: _LAGS - Trocar para obter os parametros do
+						// "web.xml"
 						AnnotationConfiguration cfg = CpDao
 								.criarHibernateCfg("java:/SigaCpDS");
-						
+
 						// bruno.lacerda@avantiprima.com.br
-						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
-						SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
-						
+						// Configura listeners de auditoria de acordo com os
+						// parametros definidos no arquivo
+						// siga.auditoria.properties
+						SigaAuditor
+								.configuraAuditoria(new SigaHibernateChamadaAuditor(
+										cfg));
+
 						registerTransactionClasses(cfg);
-						
+
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						log.error( "Não foi possível configurar o hibernate. ", ex );
+						log.error("Não foi possível configurar o hibernate. ",
+								ex);
 						// ex.printStackTrace();
 						throw new ExceptionInInitializerError(ex);
 					}
@@ -113,54 +120,56 @@ public class HibernateThreadFilter extends ThreadFilter {
 			}
 		}
 	}
-	
+
 	private void executaFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws Exception, AplicacaoException {
-		
+
 		HibernateUtil.getSessao();
 		ModeloDao.freeInstance();
 		CpDao.getInstance();
 		Cp.getInstance().getConf().limparCacheSeNecessario();
-		
-		if ( !CpDao.getInstance().sessaoEstahAberta() )
+
+		if (!CpDao.getInstance().sessaoEstahAberta())
 			throw new AplicacaoException(
 					"Erro: sessão do Hibernate está fechada.");
-		
+
 		CpDao.iniciarTransacao();
-		doFiltro( request, response, chain );
+		doFiltro(request, response, chain);
 		CpDao.commitTransacao();
 	}
 
 	private void doFiltro(final ServletRequest request,
-			final ServletResponse response, final FilterChain chain ) throws Exception {
-		
-		 try {
+			final ServletResponse response, final FilterChain chain)
+			throws Exception {
+
+		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			log.info( "Ocorreu um erro durante a execução da operação: " + e.getMessage() );
+			log.info("Ocorreu um erro durante a execução da operação: "
+					+ e.getMessage());
 			throw e;
 		}
 	}
-	
+
 	private void fechaSessaoHibernate() {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error( "Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
+			log.error("Ocorreu um erro ao fechar uma sessão do Hibernate", ex);
 			// ex.printStackTrace();
 		}
 	}
-		
+
 	private void liberaInstanciaDao() {
 		try {
 			CpDao.freeInstance();
 		} catch (Exception ex) {
-			log.error( ex.getMessage(), ex );
+			log.error(ex.getMessage(), ex);
 			// ex.printStackTrace();
 		}
 	}
-		
+
 	public void init(final FilterConfig filterConfig) throws ServletException {
 		HibernateThreadFilter.log
 				.debug("Initializing filter, obtaining Hibernate SessionFactory from HibernateUtil");

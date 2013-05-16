@@ -460,6 +460,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getSituacaoString() {
 		return getUltimoAndamento().getSituacaoString();
 	}
+	
+	public String getSituacaoStringSemLota() {
+		return getUltimoAndamento().getSituacaoStringSemLota();
+	}
 
 	public SrEstado getEstado() {
 		return getUltimoAndamento().estado;
@@ -891,7 +895,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		removerMarcas();
 
-		Long marcador;
+		Long marcador = 0L;
 		SrAndamento andamento = getUltimoAndamento();
 
 		if (andamento.estado == SrEstado.FECHADO)
@@ -906,7 +910,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO;
 		else
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
-		System.out.println(andamento.lotaAtendente.getNomeLotacao());
+		
 		marcar(marcador, andamento.lotaAtendente, andamento.atendente);
 
 		if (!isFechado() && !isCancelado()) {

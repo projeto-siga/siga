@@ -74,7 +74,7 @@ public class Application extends SigaApplication {
 
 	public static void gadget() {
 		Query query = JPA.em().createNamedQuery("contarSrMarcas");
-		query.setParameter("idPessoaIni", cadastrante().getIdInicial());
+		query.setParameter("idPessoaIni", titular().getIdInicial());
 		query.setParameter("idLotacaoIni", lotaTitular().getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
@@ -84,7 +84,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao;
 		if (id == null) {
 			solicitacao = new SrSolicitacao();
-			solicitacao.solicitante = cadastrante();
+			solicitacao.solicitante = titular();
 		} else
 			solicitacao = SrSolicitacao.findById(id);
 
@@ -116,7 +116,7 @@ public class Application extends SigaApplication {
 
 	public static void exibirServico(SrSolicitacao solicitacao)
 			throws Exception {
-		List<SrServico> servicos = SrServico.listarPorPessoaEItem(
+		List<SrServico> servicos = SrServico.listarPorPessoaEItemEmOrdemAlfabetica(
 				solicitacao.solicitante, solicitacao.itemConfiguracao);
 		if (solicitacao.servico == null
 				|| !servicos.contains(solicitacao.servico)) {
@@ -145,7 +145,7 @@ public class Application extends SigaApplication {
 
 		List<SrServico> servicos = new ArrayList<SrServico>();
 		if (solicitacao.itemConfiguracao != null) {
-			servicos = SrServico.listarPorPessoaEItem(
+			servicos = SrServico.listarPorPessoaEItemEmOrdemAlfabetica(
 					solicitacao.solicitante, solicitacao.itemConfiguracao);
 			if (solicitacao.servico == null
 					|| !servicos.contains(solicitacao.servico)) {

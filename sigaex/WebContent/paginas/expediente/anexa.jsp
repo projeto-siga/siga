@@ -146,7 +146,8 @@
 					    type="checkbox"  theme="simple" name="check" 
 	                    onclick="javascript:montaTableAssinados(check.checked);" /><b>Exibir anexos assinados</b>
 	                <br/>  
-	             </c:if>  		     
+	             </c:if>  		  
+	             <br/>   
 				 <h2>Anexos Pendentes de Assinatura
 				
 				 <ww:if test="${assinandoAnexosGeral}">
@@ -261,7 +262,8 @@
 					    </c:forEach>
 					</table>	
 				</ww:form>
-		    </div>				
+		    </div>			
+		    <br/>
 			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 				<c:set var="jspServer"
 				       value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />

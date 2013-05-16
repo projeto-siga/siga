@@ -173,6 +173,10 @@ public class SrAndamento extends GenericModel {
 	public String getSituacaoString() {
 		return estado.descrEstado + " (" + lotaAtendente.getSigla() + ")";
 	}
+	
+	public String getSituacaoStringSemLota() {
+		return estado.descrEstado;
+	}
 
 	// Necessário porque não há binder para arquivo
 	public void setArquivo(File file) {

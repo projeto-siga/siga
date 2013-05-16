@@ -187,7 +187,7 @@
 			href="/wiki/Wiki.jsp?page=${f:removeAcento(titulo)}">Ajuda</a></li>
  --%>
 		<li><a href="#">Substituir</a>
-			<ul class="navmenu-large">
+			<ul class="navmenu-large">			
 				<c:forEach var="substituicao" items="${meusTitulares}">
 					<li><a
 						href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
@@ -198,11 +198,16 @@
 								<c:otherwise>
 						${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
 					</c:otherwise>
-							</c:choose> </a>
+							</c:choose>
+					 </a> 
+					 <a href="/siga/substituicao/excluir.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">Excluir</a> 
+				     					
 					</li>
 				</c:forEach>
+			
 			</ul>
-		</li>
+		</li>		
+		
 
 		<li><ww:a href="/siga/logoff.action">Logoff</ww:a>
 		</li>

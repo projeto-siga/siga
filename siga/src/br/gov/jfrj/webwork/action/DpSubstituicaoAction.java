@@ -76,8 +76,8 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	
 	private String strBuscarFechadas;
 	
-	private String isSubstituicao;
-
+	private String isSubstituicao;	
+	
 	public Date getDtAtual() {
 		return new Date();
 	}
@@ -253,16 +253,30 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	}
 
 	public String aExcluirSubstituto() throws Exception {
+		
+		DpSubstituicao dpSubstituicao = new DpSubstituicao();
+		DpSubstituicao substExcluir = new DpSubstituicao();
+		
+		DpPessoa titular = dao().consultar(getIdTitular(), DpPessoa.class, false);
+		DpLotacao lotaTitular = daoLot(getIdLotaTitular());
+		
+		dpSubstituicao.setTitular(titular);
+		dpSubstituicao.setLotaTitular(lotaTitular);
+		dpSubstituicao.setSubstituto(getCadastrante());
+		dpSubstituicao.setLotaSubstituto(getCadastrante().getLotacao());
 
-		if (getId() != null) {
-			dao().iniciarTransacao();
-			DpSubstituicao dpSub = daoSub(getId());
-			dpSub.setDtFimRegistro(new Date());
-			dpSub = dao().gravar(dpSub);
+		substExcluir = dao().consultarPorTitular(dpSubstituicao);
+		
+		if (substExcluir.getIdSubstituicao() != null){
+			dao().iniciarTransacao();			
+			substExcluir.setDtFimRegistro(new Date());
+			substExcluir = dao().gravar(substExcluir);
 			dao().commitTransacao();
 		} else
-			throw new AplicacaoException("Não foi informada id");
-		return Action.SUCCESS;
+			throw new AplicacaoException("Erro na exclusao de substituicao");
+		
+		return Action.SUCCESS;	
+			
 	}
 
 	public String aListarSubstitutos() throws Exception {

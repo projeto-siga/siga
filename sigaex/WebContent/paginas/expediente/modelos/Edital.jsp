@@ -72,15 +72,16 @@
 			</mod:letra>
 		FIM TITULO -->
 		
-		<mod:letra tamanho="${tl}"><!-- INICIO CORPO --><!-- INICIO MIOLO -->
+		<mod:letra tamanho="${tl}"><!-- INICIO MIOLO --><!-- INICIO CORPO -->
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			${texto_edital}
 			</p>
 		
 		<p align="center">${doc.dtExtenso}</p>
 		<br/>
-		<!-- FIM MIOLO --><!-- FIM CORPO -->
+		<!-- FIM CORPO -->
 		<!-- INICIO ASSINATURA --><c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" /><!-- FIM ASSINATURA -->
+		<!-- FIM MIOLO -->
 		</mod:letra>
 		
 			<!-- INICIO PRIMEIRO RODAPE

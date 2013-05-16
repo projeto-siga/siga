@@ -43,12 +43,12 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
  * 
  */
 public class WfThreadFilter extends ThreadFilter {
-	
+
 	private static boolean fConfigured = false;
 
 	private static final Object classLock = WfThreadFilter.class;
-	
-	private static final Logger log = Logger.getLogger( WfThreadFilter.class );
+
+	private static final Logger log = Logger.getLogger(WfThreadFilter.class);
 
 	/**
 	 * Pega a sessão do JBPM e coloca-a no Hibernate.
@@ -57,31 +57,33 @@ public class WfThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		final StringBuilder csv = super.iniciaAuditoria( request );
-		
+		final StringBuilder csv = super.iniciaAuditoria(request);
+
 		this.configuraHibernate();
 
 		try {
-			
-			this.executaFiltro( request, response, chain );
+
+			this.executaFiltro(request, response, chain);
 
 		} catch (final Exception ex) {
 			WfDao.rollbackTransacao();
-			super.logaExcecaoAoExecutarFiltro( request, ex );
-			throw new ServletException(ex);
+			if (ex instanceof RuntimeException)
+				throw (RuntimeException) ex;
+			else
+				throw new ServletException(ex);
 		} finally {
 			this.fechaContextoWorkflow();
 			this.fechaSessaoHibernate();
 			this.liberaInstanciaDao();
 		}
-		
-		super.terminaAuditoria( csv );
+
+		super.terminaAuditoria(csv);
 	}
 
 	private void executaFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws Exception, AplicacaoException {
-		
+
 		HibernateUtil.getSessao();
 		ModeloDao.freeInstance();
 		WfDao.getInstance();
@@ -92,11 +94,12 @@ public class WfThreadFilter extends ThreadFilter {
 		WfContextBuilder.createJbpmContext();
 
 		// Novo
-		if ( !WfDao.getInstance().sessaoEstahAberta() ) 
+		if (!WfDao.getInstance().sessaoEstahAberta())
 			throw new AplicacaoException(
 					"Erro: sessão do Hibernate está fechada.");
-		
-		WfContextBuilder.getJbpmContext().getJbpmContext().setSession( WfDao.getInstance().getSessao() );
+
+		WfContextBuilder.getJbpmContext().getJbpmContext()
+				.setSession(WfDao.getInstance().getSessao());
 
 		// Velho
 		// GraphSession s = WfContextBuilder.getJbpmContext()
@@ -111,18 +114,20 @@ public class WfThreadFilter extends ThreadFilter {
 		// WfDao.getInstance();
 
 		WfDao.iniciarTransacao();
-		doFiltro( request, response, chain );
+		doFiltro(request, response, chain);
 		WfDao.commitTransacao();
 	}
 
 	private void doFiltro(final ServletRequest request,
-			final ServletResponse response, final FilterChain chain ) throws Exception {
-		
+			final ServletResponse response, final FilterChain chain)
+			throws Exception {
+
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			log.warn( "[doFiltro] - Ocorreu um erro durante a execução da operação: " + e.getMessage() );
-			throw new AplicacaoException( "Ocorreu um erro inesperado", 0, e );
+			log.warn("[doFiltro] - Ocorreu um erro durante a execução da operação: "
+					+ e.getMessage());
+			throw new AplicacaoException("Ocorreu um erro inesperado", 0, e);
 		}
 	}
 
@@ -137,19 +142,24 @@ public class WfThreadFilter extends ThreadFilter {
 						Wf.getInstance();
 						AnnotationConfiguration cfg = WfDao
 								.criarHibernateCfg("java:/SigaWfDS");
-						
+
 						// bruno.lacerda@avantiprima.com.br
-						// Configura listeners de auditoria de acordo com os parametros definidos no arquivo siga.auditoria.properties
-						// SigaAuditor.configuraAuditoria( new SigaHibernateChamadaAuditor( cfg ) );
-						
+						// Configura listeners de auditoria de acordo com os
+						// parametros definidos no arquivo
+						// siga.auditoria.properties
+						// SigaAuditor.configuraAuditoria( new
+						// SigaHibernateChamadaAuditor( cfg ) );
+
 						registerTransactionClasses(cfg);
-						
+
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be
 						// swallowed
-						log.error("[configuraHibernate] - Não foi possível configurar o hibernate.", ex);
+						log.error(
+								"[configuraHibernate] - Não foi possível configurar o hibernate.",
+								ex);
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -157,21 +167,25 @@ public class WfThreadFilter extends ThreadFilter {
 			}
 		}
 	}
-	
+
 	private void fechaContextoWorkflow() {
 		try {
 			WfContextBuilder.closeContext();
 		} catch (Exception ex) {
-			log.error( "[fechaContextoWorkflow] - Ocorreu um erro ao fechar o contexto do Workflow", ex );
+			log.error(
+					"[fechaContextoWorkflow] - Ocorreu um erro ao fechar o contexto do Workflow",
+					ex);
 			// ex.printStackTrace();
 		}
 	}
-	
+
 	private void fechaSessaoHibernate() {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error( "[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessão do Hibernate", ex );
+			log.error(
+					"[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessão do Hibernate",
+					ex);
 			// ex.printStackTrace();
 		}
 	}
@@ -180,7 +194,7 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			ModeloDao.freeInstance();
 		} catch (Exception ex) {
-			log.error( ex.getMessage(), ex );
+			log.error(ex.getMessage(), ex);
 			// ex.printStackTrace();
 		}
 	}

@@ -907,7 +907,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
 
-		// cosignatario pode assinar
+		// cosignatario pode assinar depois que o subscritor já tiver assinado
 
 		boolean isConsignatario = false;
 
@@ -929,7 +929,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor()
 				.equivale(titular))
-				|| isCadastranteExterno || isConsignatario || podeMovimentar(
+				|| isCadastranteExterno || (isConsignatario && mob.doc().isAssinado() && mob.doc().isAssinadoSubscritor()) 
+						|| podeMovimentar(
 				titular, lotaTitular, mob))
 
 				// && mob.doc().isEletronico() //Nato: Permitido assinar
@@ -1491,9 +1492,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getUltimoVolume() != null
 				&& mob.doc().getUltimoVolume().isEmTransito())
 			return false;
-
+		
 		if (mob.doc().getDtFechamento() != null
 				&& mob.doc().getUltimoVolume().isEncerrado()) {
+			
+			if(mob.doc().isEletronico() && 
+					(mob.doc().getUltimoVolume().temAnexosNaoAssinados() || mob.doc().getUltimoVolume().temDespachosNaoAssinados()))
+				return false;
+			
 			return true;
 		}
 

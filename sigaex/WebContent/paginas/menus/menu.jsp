@@ -151,6 +151,25 @@
 			</c:if>
 
 			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;MVSUB:Relatório de movimentação de documentos em setores subordinados')}">
+				<li><ww:url id="url" action="relRelatorios"
+						namespace="/expediente/rel">
+						<ww:param name="nomeArquivoRel">relMovimentacaoDocSubordinados.jsp</ww:param>
+					</ww:url> <ww:a href="%{url}">Relatório de Movimentação de Documentos em Setores Subordinados</ww:a>
+				</li>
+			</c:if>
+			
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CRSUB:Relatório de documentos criados em setores subordinados')}">
+				<li><ww:url id="url" action="relRelatorios"
+						namespace="/expediente/rel">
+						<ww:param name="nomeArquivoRel">relCrDocSubordinados.jsp</ww:param>
+					</ww:url> <ww:a href="%{url}">Relatório de Criação de Documentos em Setores Subordinados</ww:a>
+				</li>
+			</c:if>
+			
+
+			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;MOVLOT:Relação de movimentações')}">
 				<li><ww:url id="url" action="relRelatorios"
 						namespace="/expediente/rel">

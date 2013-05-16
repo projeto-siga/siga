@@ -50,9 +50,11 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsClassificados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
@@ -393,6 +395,79 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		return "relatorio";
 	}
 
+	
+	public String aRelMovDocumentosSubordinados() throws Exception {
+
+		assertAcesso("MVSUB:Relatório de movimentação de documentos em setores subordinados");
+
+		Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("tipoFormaDoc", getRequest()
+				.getParameter("tipoFormaDoc"));
+		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
+		parametros.put("incluirSubordinados",
+				getRequest().getParameter("incluirSubordinados"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("idTit", getRequest().getParameter("idTit"));
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
+				+ "/expediente/doc/exibir.action?sigla=");
+
+		RelMovimentacaoDocSubordinados rel = new RelMovimentacaoDocSubordinados(
+				parametros);
+
+		rel.gerar();
+
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+		// this.setInputStream(new
+		// ByteArrayInputStream(rel.getRelatorioHTML().toString().getBytes("utf-8")));
+		return "relatorio";
+	}
+	
+	public String aRelDocsSubCriados() throws Exception {
+
+		assertAcesso("CRSUB:Relatório de criação de documentos em setores subordinados");
+
+		Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("tipoFormaDoc", getRequest()
+				.getParameter("tipoFormaDoc"));
+		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
+		parametros.put("incluirSubordinados",
+				getRequest().getParameter("incluirSubordinados"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("idTit", getRequest().getParameter("idTit"));
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
+				+ "/expediente/doc/exibir.action?sigla=");
+
+		RelDocSubordinadosCriados rel = new RelDocSubordinadosCriados(parametros);
+
+		rel.gerar();
+
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+		// this.setInputStream(new
+		// ByteArrayInputStream(rel.getRelatorioHTML().toString().getBytes("utf-8")));
+		return "relatorio";
+	}
+
+	
 	public List<ExTipoFormaDoc> getListaExTipoFormaDoc() {
 		List<ExTipoFormaDoc> listaQry = (List<ExTipoFormaDoc>) HibernateUtil
 				.getSessao().createQuery("from ExTipoFormaDoc").list();

@@ -23,11 +23,12 @@
  */
 package br.gov.jfrj.siga.base;
 
+
 /**
  * @author SEANS Classe padrão para tratamenteo de erros nos Sistemas
  * 
  */
-public class AplicacaoException extends Exception {
+public class AplicacaoException extends RuntimeException {
 
 	/**
 	 * 

@@ -168,7 +168,7 @@ public class PrincipalAction extends SigaActionSupport {
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
 					URLSelecionar = urlBase + "/sigasr" + testes
-							+ "/selecionar?sigla=" + getSigla()
+							+ "/solicitacao/selecionar?sigla=" + getSigla()
 							+ incluirMatricula;
 			} else
 				URLSelecionar = urlBase + "/sigaex"

@@ -45,7 +45,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
 		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
 		@NamedQuery(name = "principaisTags", query = "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
-		
+		@NamedQuery(name = "evolucaoNovos", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
+		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
 })
 // select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
 // inf.tags tag where tag in (:tags)

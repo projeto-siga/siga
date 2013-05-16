@@ -52,10 +52,10 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
 	@Column(name = "ID_PESSOA", nullable = false)
 	@Desconsiderar
-	private long idPessoa;
+	private Long idPessoa;
 	@Column(name = "ID_PESSOA_INICIAL")
 	@Desconsiderar
-	private long idPessoaIni;
+	private Long idPessoaIni;
 	@Column(name = "DATA_FIM_PESSOA")
 	@Temporal(TemporalType.DATE)
 	@Desconsiderar

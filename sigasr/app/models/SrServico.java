@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +32,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name = "SR_SERVICO", schema="SIGASR")
+@Table(name = "SR_SERVICO", schema = "SIGASR")
 public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
@@ -48,7 +49,7 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 
 	@Column(name = "TITULO_SERVICO")
 	public String tituloServico;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrServico servicoInicial;
@@ -88,18 +89,20 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	public String getDescricao() {
 		return tituloServico;
 	}
-	
+
 	public String getDescricaoCompleta() {
 		String sigla = this.siglaServico;
 		int nivel = this.getNivel();
 		String desc_nivel = null;
-		if (nivel == 1){
-			desc_nivel =  this.tituloServico;
+		if (nivel == 1) {
+			desc_nivel = this.tituloServico;
 		}
-		if (nivel == 2){
-			String sigla_raiz = this.getSigla().substring(0,2) + ".00";
-			SrServico configuracao = SrServico.find("bySiglaServico",sigla_raiz).first();
-			desc_nivel =  configuracao.tituloServico + " - " + this.tituloServico;
+		if (nivel == 2) {
+			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
+			SrServico configuracao = SrServico.find("bySiglaServico",
+					sigla_raiz).first();
+			desc_nivel = configuracao.tituloServico + " : "
+					+ this.tituloServico;
 		}
 		return desc_nivel;
 	}
@@ -108,7 +111,7 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	public void setDescricao(String descricao) {
 		this.tituloServico = descricao;
 	}
-	
+
 	public List<SrServico> getHistoricoServico() {
 		if (servicoInicial != null)
 			return servicoInicial.meuServicoHistoricoSet;
@@ -281,8 +284,8 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 						return o1.siglaServico.compareTo(o2.siglaServico);
 					}
 				});
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess, item, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess,
+				item, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
 				new int[] { SrConfiguracaoBL.SERVICO });
 		for (SrConfiguracao conf : confs) {
@@ -297,6 +300,22 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 					if (serv.isEspecifico())
 						listaFinal.add(serv);
 		}
+
 		return new ArrayList(listaFinal);
+	}
+
+	public static List<SrServico> listarPorPessoaEItemEmOrdemAlfabetica(
+			DpPessoa pess, SrItemConfiguracao item) throws Exception {
+		List<SrServico> l = listarPorPessoaEItem(pess, item);
+		Collections.sort(l, new Comparator<SrServico>() {
+			@Override
+			public int compare(SrServico o1, SrServico o2) {
+				int i = o1.tituloServico.compareTo(o2.tituloServico);
+				if (i != 0)
+					return i;
+				return o1.idServico.compareTo(o2.idServico);
+			}
+		});
+		return l;
 	}
 }

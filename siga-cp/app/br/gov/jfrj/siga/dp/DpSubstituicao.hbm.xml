@@ -59,6 +59,18 @@
 			order by dps.dtIniSubst, dps.dtFimSubst
 		]]>
 	</query>
+	<query name="consultarPorTitular">
+		<![CDATA[
+			from DpSubstituicao as dps
+			where (dps.dtIniSubst < sysdate or dps.dtIniSubst = null)
+			and (dps.dtFimSubst > sysdate or dps.dtFimSubst = null)
+			and ((dps.substituto = null and dps.lotaSubstituto.idLotacao = :idLotaSubstitutoIni) or
+			(dps.substituto.idPessoa  = :idSubstitutoIni))
+			and ((dps.titular = null and dps.lotaTitular.idLotacao = :idLotaTitularIni) or
+			(dps.titular.idPessoa  = :idTitularIni))
+			and dps.dtFimRegistro = null
+		]]>
+	</query>
 </hibernate-mapping>
 
 

@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Query;
 
@@ -197,7 +198,7 @@ public class Application extends SigaApplication {
 		validarFormEditar(solicitacao);
 		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
-		exibir(id);
+		exibir(id, false);
 	}
 
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
@@ -222,12 +223,13 @@ public class Application extends SigaApplication {
 				marcadores, filtro);
 	}
 
-	public static void exibir(Long id) throws Exception {
+	public static void exibir(Long id, boolean considerarCancelados) throws Exception {
 		// antes: 8 queries
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id); // 3 queries
 		SrAndamento andamento = new SrAndamento(solicitacao); // 1query
 		andamento.deduzirProxAtendente(); // 318 queries
-
+		// = true;
+		
 		boolean criarFilha = solicitacao.podeCriarFilha(lotaTitular(),
 				cadastrante());
 		boolean desfazerAndamento = solicitacao.podeDesfazerAndamento(
@@ -235,11 +237,11 @@ public class Application extends SigaApplication {
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		boolean movimentarPlenamente = solicitacao.estaCom(lotaTitular(),
 				cadastrante());
-
+		
 		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
 
 		render(solicitacao, editar, desfazerAndamento, movimentarPlenamente,
-				andamento, criarFilha, estados);
+				andamento, criarFilha, estados, considerarCancelados);
 	}
 
 	public static void selecionar(String sigla) throws Exception {
@@ -263,13 +265,13 @@ public class Application extends SigaApplication {
 		andamento.solicitacao.darAndamento(andamento, cadastrante(),
 				lotaTitular());
 		Long id = andamento.solicitacao.idSolicitacao;
-		exibir(id);
+		exibir(id, false);
 	}
 
 	public static void desfazerUltimoAndamento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.desfazerUltimoAndamento(cadastrante(), lotaTitular());
-		exibir(id);
+		exibir(id, false);
 	}
 
 	public static void criarFilha(Long id) throws Exception {

@@ -935,4 +935,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
+	public boolean considerarcancelados() {
+		return false;
+	}
+
 }

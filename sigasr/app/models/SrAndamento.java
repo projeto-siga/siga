@@ -87,6 +87,9 @@ public class SrAndamento extends GenericModel {
 	@Column(name = "DT_CANCELAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtCancelamento;
+	
+	@Column(name = "NUM_SEQUENCIA")
+	public Long numSequencia;
 
 	public SrAndamento() throws Exception {
 		this(null);
@@ -125,6 +128,13 @@ public class SrAndamento extends GenericModel {
 		for (SrAndamento andamento : solicitacao.getAndamentoSet())
 			primeiro = andamento;
 		return (primeiro == null || primeiro.equals(this));
+	}
+	
+	public Long getProximoAndamento() {
+		Long num = find(
+				"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
+						+ solicitacao.getId()).first();
+		return (num != null) ? num : 1;
 	}
 
 	public String getDtRegString() {
@@ -216,6 +226,7 @@ public class SrAndamento extends GenericModel {
 
 	public SrAndamento salvar() throws Exception {
 		checarCampos();
+		this.numSequencia = getProximoAndamento();
 		super.save();
 		return this;
 	}

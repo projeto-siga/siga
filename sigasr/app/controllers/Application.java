@@ -92,8 +92,14 @@ public class Application extends SigaApplication {
 
 	public static void exibirLocalERamal(SrSolicitacao solicitacao)
 			throws Exception {
-		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
-				.getResultList();
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		if (solicitacao.solicitante != null)
+			locais = JPA
+					.em()
+					.createQuery(
+							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+									+ solicitacao.solicitante.getOrgaoUsuario()
+											.getIdOrgaoUsu()).getResultList();
 		render(solicitacao.deduzirLocalERamal(), locais);
 	}
 
@@ -115,8 +121,9 @@ public class Application extends SigaApplication {
 
 	public static void exibirServico(SrSolicitacao solicitacao)
 			throws Exception {
-		List<SrServico> servicos = SrServico.listarPorPessoaEItemEmOrdemAlfabetica(
-				solicitacao.solicitante, solicitacao.itemConfiguracao);
+		List<SrServico> servicos = SrServico
+				.listarPorPessoaEItemEmOrdemAlfabetica(solicitacao.solicitante,
+						solicitacao.itemConfiguracao);
 		if (solicitacao.servico == null
 				|| !servicos.contains(solicitacao.servico)) {
 			if (servicos.size() > 0)

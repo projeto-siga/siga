@@ -816,9 +816,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void iniciar() throws Exception {
 		if (temPreAtendenteDesignado())
 			darAndamento(SrEstado.PRE_ATENDIMENTO,
-					"Iniciando pré-atendimento...", getPreAtendenteDesignado());
+					"Abertura", getPreAtendenteDesignado());
 		else
-			darAndamento(SrEstado.ANDAMENTO, "Iniciando atendimento...",
+			darAndamento(SrEstado.ANDAMENTO, "Abertura",
 					getAtendenteDesignado());
 	}
 

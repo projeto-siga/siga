@@ -114,6 +114,12 @@ function carregouAtendente(response, param){
 			<p>
 				<b>Abertura:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>
+			#{if solicitacao.arquivo}
+			<p>
+				<b>Arquivo anexo: </b>	#{arquivo
+						arquivo:solicitacao.arquivo /} 
+			</p>
+			#{/if}
 			<p>
 				<b>Situação:</b> ${solicitacao.situacaoStringSemLota}
 			</p>

@@ -72,9 +72,9 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	@Column(name = "NOME_PESSOA")
 	private String nomePessoa;
 	@Column(name = "CPF_PESSOA")
-	private long cpfPessoa;
+	private Long cpfPessoa;
 	@Column(name = "MATRICULA")
-	private long matricula;
+	private Long matricula;
 	@Column(name = "SESB_PESSOA")
 	private String sesbPessoa;
 	@Column(name = "EMAIL_PESSOA")

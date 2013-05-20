@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Query;
 
@@ -230,6 +231,7 @@ public class Application extends SigaApplication {
 		andamento.deduzirProxAtendente(); // 318 queries
 		// = true;
 		
+		
 		boolean criarFilha = solicitacao.podeCriarFilha(lotaTitular(),
 				cadastrante());
 		boolean desfazerAndamento = solicitacao.podeDesfazerAndamento(
@@ -237,11 +239,12 @@ public class Application extends SigaApplication {
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		boolean movimentarPlenamente = solicitacao.estaCom(lotaTitular(),
 				cadastrante());
+		Set<SrAndamento> andamentos = (Set<SrAndamento>) solicitacao.getAndamentoSet(considerarCancelados);
 		
 		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
 
 		render(solicitacao, editar, desfazerAndamento, movimentarPlenamente,
-				andamento, criarFilha, estados, considerarCancelados);
+				andamento, criarFilha, estados, considerarCancelados, andamentos);
 	}
 
 	public static void selecionar(String sigla) throws Exception {

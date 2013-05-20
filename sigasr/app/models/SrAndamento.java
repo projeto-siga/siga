@@ -108,7 +108,6 @@ public class SrAndamento extends GenericModel {
 	public SrAndamento(SrEstado estado, String descricao, DpPessoa atendente,
 			DpLotacao lotaAtendente, DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, SrSolicitacao sol) {
-
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
 		this.atendente = atendente;
@@ -135,12 +134,28 @@ public class SrAndamento extends GenericModel {
 				"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
 						+ solicitacao.getId()).first();
 		return (num != null) ? num : 1;
-	}
+}
+	
+	public Long getAndamentoAtual() {
+		Long num = find(
+				"select max(numSequencia) from SrAndamento where solicitacao.idSolicitacao = "
+						+ solicitacao.getId()).first();
+		return (num != null) ? num : 1;
+}
 
 	public String getDtRegString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtReg);
 		return cal.getTempoTranscorridoString(false);
+	}
+	
+	public String getDtRegAndDDMMYYHHMM() {
+		if (dtReg != null) {
+			final SimpleDateFormat df = new SimpleDateFormat(
+					"dd/MM/yy HH:mm");
+			return df.format(dtReg);
+		}
+		return "";
 	}
 
 	public String getAtendenteString() {
@@ -230,7 +245,6 @@ public class SrAndamento extends GenericModel {
 
 	public SrAndamento salvar() throws Exception {
 		checarCampos();
-		this.numSequencia = getProximoAndamento();
 		super.save();
 		return this;
 	}
@@ -290,6 +304,12 @@ public class SrAndamento extends GenericModel {
 		}
 		if (estado == null)
 			estado = anterior.estado;
+		
+		if (isCancelado()){
+			numSequencia = getAndamentoAtual();
+		}
+		else
+			numSequencia = getProximoAndamento();
 
 	}
 

@@ -318,7 +318,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		cal.setTime(dtReg);
 		return cal.getTempoTranscorridoString(false);
 	}
-
+	
 	public String getAtributosString() {
 		String s = "";
 		for (SrAtributo att : getAtributoSet()) {
@@ -437,7 +437,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					for (SrAndamento andamento : sol.meuAndamentoSet)
 						if (!andamento.isCancelado())
 							listaCompleta.add(andamento);
-
 		return listaCompleta;
 	}
 

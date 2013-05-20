@@ -154,7 +154,9 @@ function carregouAtendente(response, param){
 		<table border="0" class="gt-table">
 			<thead>
 				<tr>
-					<th>Sequencia</th>
+				#{if considerarCancelados}
+					<th></th>
+				#{/if}	
 					<th>Momento</th>
 					<th>Situação</th>
 					<th colspan="2">Cadastrante</th>
@@ -165,13 +167,16 @@ function carregouAtendente(response, param){
 			</thead>
 
 			<tbody>
-				#{list items:solicitacao.andamentoSet, as:'andamento'}
+				#{list items:andamentos, as:'andamento'}
 				<tr id="linha${andamento.idAndamento}" #{if
 					andamento_isFirst && desfazerAndamento}
 						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
 					onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"#{/if}>
+					#{if considerarCancelados} 
 					<td>${andamento.numSequencia}</td>
-					<td>${andamento.dtRegString}</td>
+					#{/if}
+					#{if !considerarCancelados}<td>${andamento.dtRegString}</td>#{/if}
+					#{else}<td>${andamento.dtRegAndDDMMYYHHMM}</td>#{/else}
 					<td>${andamento.estado.descrEstado}</td>
 					<td>#{selecionado
 						sigla:andamento.lotaCadastrante?.siglaLotacao,
@@ -189,13 +194,13 @@ function carregouAtendente(response, param){
 							var descricao = document.getElementById('descrAndamento${andamento.idAndamento}');
 							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 					</script>
-					<td>#{if andamento_isFirst && desfazerAndamento} <a
+					<td>#{if andamento_isFirst && desfazerAndamento && !andamento_isCancelado} <a
 						class="once"
 						href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
 						title="Desfazer este andamento"> <img id="imgCancelar"
 							src="/siga/css/famfamfam/icons/cancel_gray.png"
 							style="margin-right: 5px;"> </a>#{/if}</td>
-				</tr>
+  				</tr>
 				#{/list}
 			</tbody>
 		</table>

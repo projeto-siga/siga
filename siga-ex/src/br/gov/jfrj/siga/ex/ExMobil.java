@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1182,12 +1183,24 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean temAnexosNaoAssinados() {
 		boolean b = false;
+		Date dataDeInicioDeObrigacaoDeAssinatura = null;
+		
+		try {
+			dataDeInicioDeObrigacaoDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeAssinarAnexoEDespacho();
+		} catch (Exception e) {
+			
+		}
+		
 		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
 			if(!movAss.isCancelada()) { 
 				if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
 					if (movAss.isAssinada())
 						continue;
 					else {
+						if(dataDeInicioDeObrigacaoDeAssinatura != null &&
+								movAss.getDtMov().before(dataDeInicioDeObrigacaoDeAssinatura))
+							continue;
+						
 						b = true;
 						break;
 					}
@@ -1206,6 +1219,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean temDespachosNaoAssinados() {
 		boolean b = false;
+		Date dataDeInicioDeObrigacaoDeAssinatura = null;
+		
+		try {
+			dataDeInicioDeObrigacaoDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeAssinarAnexoEDespacho();
+		} catch (Exception e) {
+			
+		}
 		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
 			if(!movAss.isCancelada()) {
 				if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
@@ -1216,6 +1236,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 					if (movAss.isAssinada())
 						continue;
 					else {
+						if(dataDeInicioDeObrigacaoDeAssinatura != null &&
+								movAss.getDtMov().before(dataDeInicioDeObrigacaoDeAssinatura))
+							continue;
+						
 						b = true;
 						break;
 					}

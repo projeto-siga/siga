@@ -33,6 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.siga.dp.CpLocalidade;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
@@ -57,6 +58,10 @@ public abstract class AbstractCpComplexo extends Objeto implements Serializable 
 	@JoinColumn(name = "ID_LOCALIDADE")
 	@NaoRecursivo
 	private CpLocalidade localidade;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
+	private CpOrgaoUsuario orgaoUsuario;
 
 	public Long getIdComplexo() {
 		return idComplexo;

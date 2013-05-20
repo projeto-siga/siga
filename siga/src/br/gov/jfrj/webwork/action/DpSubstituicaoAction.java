@@ -278,6 +278,24 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		return Action.SUCCESS;	
 			
 	}
+	
+	
+/*	public String aExcluirSubstituto() throws Exception {
+
+		if (getId() != null) {
+			dao().iniciarTransacao();
+			DpSubstituicao dpSub = daoSub(getId());
+			dpSub.setDtFimRegistro(new Date());
+			dpSub = dao().gravar(dpSub);
+			dao().commitTransacao();
+		} else
+			throw new AplicacaoException("Não foi informada id");
+		return Action.SUCCESS;
+	}
+*/	
+	
+	
+	
 
 	public String aListarSubstitutos() throws Exception {
 		

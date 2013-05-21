@@ -157,7 +157,7 @@ function carregouAtendente(response, param){
 	</div>
 
 	<div class="gt-content-box">
-		<table border="0" class="gt-table">
+		<table border="0" class="gt-table mov">
 			<thead>
 				<tr>
 				#{if considerarCancelados}
@@ -174,8 +174,8 @@ function carregouAtendente(response, param){
 
 			<tbody>
 				#{list items:andamentos, as:'andamento'}
-				<tr id="linha${andamento.idAndamento}" #{if
-					andamento_isFirst && desfazerAndamento}
+				<tr id="linha${andamento.idAndamento}" ${andamento.cancelado} #{if andamento.cancelado} 
+				class="disabled" #{/if} #{if andamento_isFirst && desfazerAndamento && !andamento.cancelado}
 						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
 					onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"#{/if}>
 					#{if considerarCancelados} 
@@ -200,7 +200,7 @@ function carregouAtendente(response, param){
 							var descricao = document.getElementById('descrAndamento${andamento.idAndamento}');
 							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 					</script>
-					<td>#{if andamento_isFirst && desfazerAndamento && !andamento_isCancelado} <a
+					<td>#{if andamento_isFirst && desfazerAndamento && !andamento.cancelado} <a
 						class="once"
 						href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
 						title="Desfazer este andamento"> <img id="imgCancelar"
@@ -220,3 +220,5 @@ function carregouAtendente(response, param){
 		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?tags=@sr-item:${solicitacao.itemConfiguracao.siglaItemConfiguracao}&tags=@sr-acao:${solicitacao.servico.siglaServico}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
 </script>
 #{/if}
+
+

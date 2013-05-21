@@ -248,6 +248,10 @@ tr.fisicoeven:hover td {
 	padding: 7px 10px;
 }
 
+TABLE.mov TR.disabled TD {
+	color: #bbb;
+}
+
 /*
 Author: Craig Erskine
 Description: Dynamic Menu System - Horizontal/Vertical

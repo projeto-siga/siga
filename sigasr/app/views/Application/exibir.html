@@ -32,6 +32,11 @@ function carregouAtendente(response, param){
 				src="/siga/css/famfamfam/icons/arrow_divide.png"
 				style="margin-right: 5px;">Criar solicitação filha</a>&nbsp;&nbsp;&nbsp;
 			#{/if}
+			#{if !considerarCancelados} <a class="once"
+				href="@{Application.exibir(solicitacao.idSolicitacao)}?considerarCancelados=true"> <img
+				src="/siga/css/famfamfam/icons/eye.png"
+				style="margin-right: 5px;">Exibir Informações Completas</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
 		</p>
 		<div class="gt-content-box">
 			<p style="font-size: 9pt; padding: 7px 10px; margin-bottom: 0px;" id="descrSolicitacao">
@@ -155,6 +160,9 @@ function carregouAtendente(response, param){
 		<table border="0" class="gt-table">
 			<thead>
 				<tr>
+				#{if considerarCancelados}
+					<th></th>
+				#{/if}	
 					<th>Momento</th>
 					<th>Situação</th>
 					<th colspan="2">Cadastrante</th>
@@ -165,12 +173,16 @@ function carregouAtendente(response, param){
 			</thead>
 
 			<tbody>
-				#{list items:solicitacao.andamentoSet, as:'andamento'}
+				#{list items:andamentos, as:'andamento'}
 				<tr id="linha${andamento.idAndamento}" #{if
 					andamento_isFirst && desfazerAndamento}
 						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
 					onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"#{/if}>
-					<td>${andamento.dtRegString}</td>
+					#{if considerarCancelados} 
+					<td>${andamento.numSequencia}</td>
+					#{/if}
+					#{if !considerarCancelados}<td>${andamento.dtRegString}</td>#{/if}
+					#{else}<td>${andamento.dtRegAndDDMMYYHHMM}</td>#{/else}
 					<td>${andamento.estado.descrEstado}</td>
 					<td>#{selecionado
 						sigla:andamento.lotaCadastrante?.siglaLotacao,
@@ -188,18 +200,19 @@ function carregouAtendente(response, param){
 							var descricao = document.getElementById('descrAndamento${andamento.idAndamento}');
 							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 					</script>
-					<td>#{if andamento_isFirst && desfazerAndamento} <a
+					<td>#{if andamento_isFirst && desfazerAndamento && !andamento_isCancelado} <a
 						class="once"
 						href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
 						title="Desfazer este andamento"> <img id="imgCancelar"
 							src="/siga/css/famfamfam/icons/cancel_gray.png"
 							style="margin-right: 5px;"> </a>#{/if}</td>
-				</tr>
+  				</tr>
 				#{/list}
 			</tbody>
 		</table>
 	</div>
 	<!-- /content box -->
+	<br/>
 </div>
 
 #{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}

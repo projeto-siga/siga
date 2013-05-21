@@ -1,3 +1,7 @@
+-------------------------------------------
+--	SCRIPT:TAM15 NUM EXP
+-------------------------------------------
+
 alter table SIGA.ex_forma_documento modify (id_forma_doc NUMBER(15,0));
 
 alter table SIGA.ex_modelo modify (id_forma_doc NUMBER(15,0));

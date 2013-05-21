@@ -1,3 +1,6 @@
+-------------------------------------------
+--	SCRIPT:CONSTRAINTS
+-------------------------------------------
 
  ALTER TABLE "CORPORATIVO"."CAD_SIT_FUNCIONAL" ADD CONSTRAINT "CAD_SIT_FUNCIONAL_PK" PRIMARY KEY ("ID_CAD_SIT_FUNCIONAL") ENABLE;
  

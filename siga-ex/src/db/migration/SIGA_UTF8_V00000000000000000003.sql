@@ -1,3 +1,7 @@
+-------------------------------------------
+--	SCRIPT:TAMANHO NUM EXP
+-------------------------------------------
+
 alter table SIGA.ex_forma_documento modify (id_forma_doc NUMBER(3,0));
 
 alter table SIGA.ex_modelo modify (id_forma_doc NUMBER(3,0));

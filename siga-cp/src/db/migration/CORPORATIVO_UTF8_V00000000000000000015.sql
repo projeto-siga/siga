@@ -1,3 +1,7 @@
+-------------------------------------------
+--	SCRIPT:COMPLEMENTO HEAD
+-------------------------------------------
+
 DECLARE
   dest_blob BLOB;
   src_blob BLOB;

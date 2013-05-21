@@ -1,3 +1,7 @@
+-------------------------------------------
+--	SCRIPT:CLASS DOC
+-------------------------------------------
+
 --EX_CLASSIFICACAO
 ALTER TABLE SIGA.EX_CLASSIFICACAO ADD (HIS_IDC_INI NUMBER);
 ALTER TABLE SIGA.EX_CLASSIFICACAO ADD (HIS_IDC_FIM NUMBER);

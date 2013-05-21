@@ -1,3 +1,6 @@
+-------------------------------------------
+--	SCRIPT:CRIACAO DO BANCO
+-------------------------------------------
 --SET DEFINE OFF
 ALTER SESSION SET CURRENT_SCHEMA=corporativo;
 

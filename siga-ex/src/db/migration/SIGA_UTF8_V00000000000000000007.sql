@@ -1,3 +1,7 @@
+-------------------------------------------
+--	SCRIPT:IDX DEADLOCK
+-------------------------------------------
+
 alter session set current_schema=SIGA;
 create index IXCF_DOC_CP_ORGAO_DEST_FK on EX_DOCUMENTO(ID_ORGAO_DESTINATARIO);
 create index IXCF_DOC_CP_ORGAO_FK on EX_DOCUMENTO(ID_ORGAO);

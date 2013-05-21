@@ -1,3 +1,7 @@
+-------------------------------------------
+--	SCRIPT:CORR SVC
+-------------------------------------------
+
 UPDATE CORPORATIVO.CP_SERVICO SET SIGLA_SERVICO = 'FS-SEC' WHERE sigla_servico = 'FS_SEC';
 UPDATE CORPORATIVO.CP_SERVICO SET SIGLA_SERVICO = 'FS-GAB' WHERE sigla_servico = 'FS_GAB';
 UPDATE CORPORATIVO.CP_SERVICO SET SIGLA_SERVICO = 'FS-JUIZ' WHERE sigla_servico = 'FS_JUIZ';

@@ -1,3 +1,7 @@
+-------------------------------------------
+--	SCRIPT:AUTUAR
+-------------------------------------------
+
 alter table SIGA.EX_DOCUMENTO add (ID_MOB_AUTUADO NUMBER);
 
 alter table SIGA.EX_DOCUMENTO add constraint SIGA_EXDOC_MOB_AUTUADO_ID_IX

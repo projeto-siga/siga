@@ -1,3 +1,7 @@
+-------------------------------------------
+--	SCRIPT:CONFIGURACAO
+-------------------------------------------
+
 --Alterações referentes a Configuração:
 --   Corporativo (conforme hbm.xml) usava DT_INI_VIG_CONFIGURACAO 
 --   e DT_FIM_VIG_CONFIGURACAO para guardar as informações do 

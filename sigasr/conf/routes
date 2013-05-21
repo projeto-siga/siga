@@ -15,7 +15,7 @@ GET     /public/                                staticDir:public
 *		/solicitacao/desfazer_ultimo/{id}	Application.desfazerUltimoAndamento
 *		/solicitacao/baixar					Application.baixar
 *		/solicitacao/filha/{id}				Application.criarFilha
-		/solicitacao/selecionar				Application.selecionar
+*		/solicitacao/selecionar				Application.selecionar
 *		/solicitacao/editar/{id}			Application.editar
 *		/solicitacao/editar					Application.editar
 *		/solicitacao/listar					Application.listar

@@ -247,7 +247,7 @@ public class Application extends SigaApplication {
 		boolean movimentarPlenamente = solicitacao.estaCom(lotaTitular(),
 				cadastrante());
 		Set<SrAndamento> andamentos = (Set<SrAndamento>) solicitacao.getAndamentoSet(considerarCancelados);
-				
+		
 		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
 
 		render(solicitacao, editar, desfazerAndamento, movimentarPlenamente,

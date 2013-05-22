@@ -302,7 +302,7 @@ public class PublicacaoDJEBL {
 		attIdentificacao.addAttribute("", "", "DATADISPONIBILIZACAO", "Date",
 				df.format(mov.getDtDispPublicacao()));
 
-		long idMod = mov.getExDocumento().getExModelo().getIdMod();
+		long idMod = mov.getExDocumento().getExModelo().getHisIdIni();
 		if (idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR
 				|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS
 				|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R)
@@ -374,9 +374,9 @@ public class PublicacaoDJEBL {
 		ExDocumento movDoc = mov.getExDocumento();
 		Map<String, String> docForm = movDoc.getForm();
 
-		if ((movDoc.getExModelo().getIdMod() == MODELO_FORMULARIO_PUBLICACAO_DJF2R
-				|| movDoc.getExModelo().getIdMod() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS || movDoc
-				.getExModelo().getIdMod() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR)
+		if ((movDoc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R
+				|| movDoc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS || movDoc
+				.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR)
 				&& docForm.get("lotOrigem_lotacaoSel.sigla") != null)
 			nomeLota = docForm.get("lotOrigem_lotacaoSel.sigla");
 		else {
@@ -396,8 +396,8 @@ public class PublicacaoDJEBL {
 
 		nomeLotaFinal = nomeLota;
 
-		if (movDoc.getExModelo().getIdMod() == MODELO_FORMULARIO_PUBLICACAO_DJF2R
-				|| movDoc.getExModelo().getIdMod() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR) {
+		if (movDoc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R
+				|| movDoc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR) {
 			if (docForm.get("juizDistribuidor").equals("Sim")) {
 				nomeLota = "JD";
 				Matcher m = Pattern.compile("^.+(-[A-Z]{2,4})").matcher(
@@ -413,9 +413,9 @@ public class PublicacaoDJEBL {
 	}
 
 	public static String obterSugestaoTipoMateria(ExDocumento doc) {
-		if (doc.getExModelo().getIdMod() == PublicacaoDJEBL.MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS)
+		if (doc.getExModelo().getHisIdIni() == PublicacaoDJEBL.MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS)
 			return "A";
-		else if (doc.getExModelo().getIdMod() == PublicacaoDJEBL.MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR)
+		else if (doc.getExModelo().getHisIdIni() == PublicacaoDJEBL.MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR)
 			return "J";
 		else if (doc.getLotaSubscritor() != null
 				&& doc.getLotaSubscritor().getLotacaoPai() != null
@@ -459,8 +459,8 @@ public class PublicacaoDJEBL {
 	}
 
 	public static boolean obterObrigatoriedadeTipoCaderno(ExDocumento doc) {
-		return doc.getExModelo().getIdMod() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS
-				|| doc.getExModelo().getIdMod() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR;
+		return doc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS
+				|| doc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR;
 	}
 
 	public static void cancelarRemessaPublicacao(ExMovimentacao movCancelamento)

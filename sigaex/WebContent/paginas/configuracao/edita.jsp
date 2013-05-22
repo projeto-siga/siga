@@ -24,7 +24,7 @@ function alteraTipoDaForma(){
 <ww:url id="urlModelo" action="carregar_lista_modelos" namespace="/expediente/doc">
 </ww:url>
 function alteraForma(){
-	ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{urlModelo}"/>'+'?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
+	ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{urlModelo}"/>'+'?forma='+document.getElementById('forma').value+'&idMod='+'${hisIdIni}', null, document.getElementById('comboModeloDiv'))
 }
 
 function sbmt() {

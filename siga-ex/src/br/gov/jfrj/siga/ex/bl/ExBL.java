@@ -4376,6 +4376,7 @@ public class ExBL extends CpBL {
 		if (headerValue != null && modeloSetFinal.size() > 1) {
 			ExModelo mod = new ExModelo();
 			mod.setIdMod(0L);
+			mod.setHisIdIni(0L);
 			mod.setNmMod("[" + headerValue + "]");
 			modeloSetFinal.add(0, mod);
 		}

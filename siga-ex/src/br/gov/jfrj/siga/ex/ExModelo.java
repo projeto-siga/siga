@@ -77,5 +77,5 @@ public class ExModelo extends AbstractExModelo {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-
+	
 }

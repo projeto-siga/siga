@@ -1189,6 +1189,23 @@ public class CpDao extends ModeloDao {
 		return c.list();
 
 	}
+	
+	public <T> T consultarAtivoPorIdInicial(Class<T> clazz,Long hisIdIni) {
+		Criteria c = getSessao().createCriteria(clazz);
+		
+		c.add(Restrictions.eq("hisIdIni", hisIdIni));
+		c.add(Restrictions.eq("hisAtivo", 1));
+	
+		T obj = null;
+		try{
+			obj = (T) c.list().get(0);
+		}catch (Exception e) {
+			
+		}
+		
+		return obj;
+	}
+
 
 	
 	/**

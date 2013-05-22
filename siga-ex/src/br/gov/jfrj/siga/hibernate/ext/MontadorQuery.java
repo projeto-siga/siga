@@ -196,7 +196,7 @@ public class MontadorQuery implements IMontadorQuery {
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
-			sbf.append(" and doc.exModelo.idMod = ");
+			sbf.append(" and doc.exModelo.hisIdIni = ");
 			sbf.append(flt.getIdMod());
 		}
 

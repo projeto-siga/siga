@@ -148,25 +148,22 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 			if (exCfg.getExVia() != null
 					&& ((exCfgFiltro.getExVia() != null && !exCfg.getExVia()
-							.getIdVia().equals(
-									exCfgFiltro.getExVia().getIdVia())) || ((exCfgFiltro
+							.equivale(exCfgFiltro.getExVia())) || ((exCfgFiltro
 							.getExVia() == null) && !atributosDesconsiderados
 							.contains(VIA))))
 				return false;
 
 			if (exCfg.getExClassificacao() != null
 					&& ((exCfgFiltro.getExClassificacao() != null && !exCfg
-							.getExClassificacao().getIdClassificacao().equals(
-									exCfgFiltro.getExClassificacao()
-											.getIdClassificacao())) || ((exCfgFiltro
+							.getExClassificacao().equivale(exCfgFiltro.getExClassificacao())) || ((exCfgFiltro
 							.getExClassificacao() == null) && !atributosDesconsiderados
 							.contains(CLASSIFICACAO))))
 				return false;
 
 			if (exCfg.getExModelo() != null
 					&& ((exCfgFiltro.getExModelo() != null && !exCfg
-							.getExModelo().getIdMod().equals(
-									exCfgFiltro.getExModelo().getIdMod())) || ((exCfgFiltro
+							.getExModelo().equivale(
+									exCfgFiltro.getExModelo())) || ((exCfgFiltro
 							.getExModelo() == null) && !atributosDesconsiderados
 							.contains(MODELO))))
 				return false;

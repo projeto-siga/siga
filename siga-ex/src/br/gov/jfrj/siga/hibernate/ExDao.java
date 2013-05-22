@@ -1014,7 +1014,7 @@ public class ExDao extends CpDao {
 				query.setLong("lotacao", 0);
 			if (exPreenchimento.getExModelo() != null)
 				query.setLong("modelo", exPreenchimento.getExModelo()
-						.getIdMod());
+						.getHisIdIni());
 			else
 				query.setLong("modelo", 0);
 			final List<ExPreenchimento> l = query.list();
@@ -1248,7 +1248,7 @@ public class ExDao extends CpDao {
 	public ExTpDocPublicacao consultarPorModelo(ExModelo mod) {
 		try {
 			final Query query = getSessao().getNamedQuery("consultarPorModelo");
-			query.setLong("idMod", mod.getIdMod());
+			query.setLong("idMod", mod.getHisIdIni());
 
 			return (ExTpDocPublicacao) query.list().get(0);
 		} catch (final Throwable t) {

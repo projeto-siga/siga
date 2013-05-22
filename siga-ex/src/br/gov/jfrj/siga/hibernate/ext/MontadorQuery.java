@@ -20,11 +20,10 @@ package br.gov.jfrj.siga.hibernate.ext;
 
 import java.text.SimpleDateFormat;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpOrgaoUsuarioDaoFiltro;
+import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class MontadorQuery implements IMontadorQuery {
 
@@ -196,8 +195,9 @@ public class MontadorQuery implements IMontadorQuery {
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
+			ExModelo mod = ExDao.getInstance().consultar(flt.getIdMod(), ExModelo.class, false);
 			sbf.append(" and doc.exModelo.hisIdIni = ");
-			sbf.append(flt.getIdMod());
+			sbf.append(mod.getHisIdIni());
 		}
 
 		if (!apenasCount) {

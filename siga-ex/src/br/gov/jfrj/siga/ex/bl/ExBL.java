@@ -3888,11 +3888,10 @@ public class ExBL extends CpBL {
 				if (doc.getExTipoDocumento().getIdTpDoc() == 2) {
 					if (doc.getExModelo() != null)
 						backupID = doc.getExModelo().getIdMod();
-					doc.setExModelo(dao().consultar(
+					doc.setExModelo(dao().consultarAtivoPorIdInicial(ExModelo.class,
 							doc.isProcesso() ? SigaExProperties.getIdModPA()
 									: SigaExProperties
-											.getIdModInternoImportado(),
-							ExModelo.class, false));
+											.getIdModInternoImportado()));
 				}
 
 				final String strHtml;

@@ -4,8 +4,10 @@
 					value="${solicitacao.telPrincipal}" />
 			</div>
 
+			#{if locais.size() > 1}
 			<div class="gt-form-row gt-width-66">
 				<label>Local</label> 
 				#{select name:'solicitacao.local', items:locais, valueProperty:'idComplexo',
 				labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo /}
 			</div>
+			#{/if}

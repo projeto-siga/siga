@@ -27,6 +27,9 @@ package br.gov.jfrj.siga.ex;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 */
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -197,6 +200,20 @@ public class SigaExProperties extends ModeloPropriedade {
 	 */
 	public static String getExClassificacaoMascaraJavascript() {
 		return getString("classificacao.mascara.javascript");
+	}
+	
+	public static Date getDataInicioObrigacaoDeAssinarAnexoEDespacho() throws Exception{
+		String s = getString("siga.ex.dataInicioObrigacaoDeAssinarAnexoEDespacho");
+		
+		DateFormat formatter = new SimpleDateFormat("MM/dd/yy");  
+				
+		if (s == null)
+			return (Date)formatter.parse("31/12/2099");
+		try{
+			return (Date)formatter.parse(s);
+		} catch (NumberFormatException nfe){
+			throw new Exception("Erro ao obter propriedade para o data inicial de obrigação de assinatura de anexos e despachos em documentos eletrônicos");
+		}
 	}
 	
 

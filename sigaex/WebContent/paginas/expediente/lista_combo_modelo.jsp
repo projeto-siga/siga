@@ -5,5 +5,5 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <ww:select
 	label="Tipo" name="idMod" 
-	list="modelos" listKey="idMod"
+	list="modelos" listKey="hisIdIni"
 	listValue="nmMod" theme="simple" />

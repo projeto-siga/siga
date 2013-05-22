@@ -231,15 +231,15 @@ public class HierarquizadorBoletimInternoES {
 	private void alocaDocumento(ExDocumento doc) {
 
 		// Se é matéria do Rio...
-		if ((doc.getExModelo().getIdMod() != 234 &&  doc.getLocalidadeString().trim().toLowerCase().equals(
+		if ((doc.getExModelo().getHisIdIni() != 234 &&  doc.getLocalidadeString().trim().toLowerCase().equals(
 				"vitória")) ||
-				(doc.getExModelo().getIdMod() == 234 &&  !doc.getForm().containsKey("orgOrigem_lotacaoSel.descricao"))) {
+				(doc.getExModelo().getHisIdIni() == 234 &&  !doc.getForm().containsKey("orgOrigem_lotacaoSel.descricao"))) {
 
 			// Se não existe subtópico no boletim pro modelo desse doc...
-			if (!ordemPorModelo.containsKey(doc.getExModelo().getIdMod())) {
+			if (!ordemPorModelo.containsKey(doc.getExModelo().getHisIdIni())) {
 
 				// Se é matéria livre...
-				if (doc.getExModelo().getIdMod() == 234) {
+				if (doc.getExModelo().getHisIdIni() == 234) {
 					for (String chave : doc.getForm().keySet()) {
 						if (chave.contains("tipoMateria")) {
 							String tipoMat = doc.getForm().get(chave);
@@ -273,7 +273,7 @@ public class HierarquizadorBoletimInternoES {
 			// Se existe tópico pra esse modelo...
 			else
 				nodosPrincipais.get(0).getNodos().get(
-						ordemPorModelo.get(doc.getExModelo().getIdMod()))
+						ordemPorModelo.get(doc.getExModelo().getHisIdIni()))
 						.getExDocumentoSet().add(doc);
 
 			// Se é do interior...

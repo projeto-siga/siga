@@ -48,13 +48,13 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 	}
 	
 	public String aListar() throws AplicacaoException, Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade");
 		return SUCCESS;
 	}
 
 
 	public String aEditar() throws Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade");
 		if (exTemporal==null){
 			exTemporal = buscarExTemporalidade(getIdTemporalidade());
 		}
@@ -72,7 +72,7 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 	}
 
 	public String aGravar() throws Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade");
 		dao().iniciarTransacao();
 
 		validarDados();
@@ -118,7 +118,7 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 	}
 	
 	public String aExcluir() throws Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade");
 		dao().iniciarTransacao();
 		exTemporal = buscarExTemporalidade(getIdTemporalidade());
 		Date dt = dao().consultarDataEHoraDoServidor();

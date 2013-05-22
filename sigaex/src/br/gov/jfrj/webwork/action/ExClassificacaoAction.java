@@ -129,12 +129,12 @@ public class ExClassificacaoAction
 	}
 
 	public String aListar() throws AplicacaoException, Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		return SUCCESS;
 	}
 
 	public String aEditar() throws Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		if (getCodificacao()!=null){
 			exClass = buscarExClassificacao(getCodificacao());
 		}
@@ -149,7 +149,7 @@ public class ExClassificacaoAction
 	}
 
 	public String aGravar() throws Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		dao().iniciarTransacao();
 		
 		if (getCodificacao().length() == 0  || getDescrClassificacao().length() == 0 ){
@@ -193,7 +193,7 @@ public class ExClassificacaoAction
 	}
 	
 	public String aExcluir() throws Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		dao().iniciarTransacao();
 		exClass = buscarExClassificacao(codificacao);
 		Date dt = dao().consultarDataEHoraDoServidor();
@@ -228,7 +228,7 @@ public class ExClassificacaoAction
 	}
 	
 	public String aGravarVia() throws Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		verificarParamsVia();
 		dao().iniciarTransacao();
 
@@ -272,7 +272,7 @@ public class ExClassificacaoAction
 	}
 
 	public String aExcluirVia() throws Exception{
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental");
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		dao().iniciarTransacao();
 		
 		ExVia exVia = dao().consultar(getIdVia(), ExVia.class, false);

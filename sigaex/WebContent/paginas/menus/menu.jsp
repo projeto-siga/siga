@@ -90,13 +90,13 @@
 				</li>
 			</c:if>
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CLASS_DOC:Classificação Documental')}">
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação')}">
 				<li><ww:url id="url" action="listar"
 						namespace="/expediente/classificacao" /> <ww:a href="%{url}">Classificação Documental</ww:a>
 				</li>
 			</c:if>
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;TEMPORAL_DOC:Temporalidade Documental')}">
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade')}">
 				<li><ww:url id="url" action="listar"
 						namespace="/expediente/temporalidade" /> <ww:a href="%{url}">Temporalidade Documental</ww:a>
 				</li>

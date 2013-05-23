@@ -70,6 +70,10 @@
 							</c:when>
 							<c:otherwise>
 								<td/>
+								<td/>
+								<td/>
+								<td/>
+								<td/>
 							</c:otherwise>
 						</c:choose>
 							

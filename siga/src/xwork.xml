@@ -169,9 +169,12 @@
 			</result>
 		</action>
 		<action name="excluir" method="aExcluirSubstituto"
-			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
+			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">			
 			<result type="redirect-action">
-				<param name="actionName">listar</param>
+				<param name="actionName">listar</param>				
+			</result>
+			<result name="MENU" type="redirect-action">			
+				<param name="actionName">principal</param>
 			</result>
 		</action>
 		<!-- Renato: Comentei pois acho que não está sendo utilizado mais. <action 

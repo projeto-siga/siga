@@ -23,7 +23,7 @@
 	//funções de dados
 	function gravarClassificacao(){
 		if($('#codificacaoAntiga').val() != "" && $('#codificacao').val() != $('#codificacaoAntiga').val()){
-			confirma = window.confirm('Você está alterando o código da classificação fazendo com que esta subarvore seja movida para outro ponto. Você tem ABSOLUTA certeza?');
+			confirma = window.confirm('Você está alterando o código da classificação fazendo com que esta subárvore seja movida para outro ponto. Você tem ABSOLUTA certeza?');
 			if (!confirma){
 				return;
 			}
@@ -167,7 +167,11 @@
 	
 	<c:if test="${acao == 'editar_classificacao'}">
 		<c:if test="${numeroDeVias > 0}">
-			<h2 class="gt-form-head">Vias</h2>
+			<div class="gt-bd clearfix">
+				<div class="gt-content">
+					<h2 class="gt-form-head">Vias</h2>
+				</div>
+			</div>
 		</c:if>
 		
 		<div id="divVias">

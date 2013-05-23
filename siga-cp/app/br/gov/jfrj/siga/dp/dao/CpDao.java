@@ -938,29 +938,6 @@ public class CpDao extends ModeloDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public DpSubstituicao consultarPorTitular(
-			final DpSubstituicao exemplo) throws SQLException {
-		try {
-			Query query = null;
-			query = getSessao().getNamedQuery(
-					"consultarPorTitular");
-			query.setLong("idSubstitutoIni", exemplo.getSubstituto()
-					.getIdPessoaIni());
-			query.setLong("idLotaSubstitutoIni", exemplo.getLotaSubstituto()
-					.getIdLotacaoIni());
-			query.setLong("idTitularIni", exemplo.getTitular()
-					.getIdPessoaIni());
-			query.setLong("idLotaTitularIni", exemplo.getLotaTitular()
-					.getIdLotacaoIni());
-			final DpSubstituicao subst = (DpSubstituicao)query.uniqueResult();
-			return subst;
-		} catch (final IllegalArgumentException e) {
-			throw e;
-		} catch (final Exception e) {
-			return null;
-		}
-	}
 
 	public CpIdentidade consultaIdentidadeCadastrante(final String nmUsuario,
 			boolean fAtiva) throws AplicacaoException {

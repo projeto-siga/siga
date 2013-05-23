@@ -62,8 +62,8 @@ public class ExThreadFilter extends ThreadFilter {
 
 		} catch (final Exception ex) {
 			ExDao.rollbackTransacao();
-			if (ex instanceof ServletException)
-				throw (ServletException) ex;
+			if (ex instanceof RuntimeException)
+				throw (RuntimeException) ex;
 			else
 				throw new ServletException(ex);
 		} finally {

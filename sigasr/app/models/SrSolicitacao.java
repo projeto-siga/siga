@@ -318,7 +318,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		cal.setTime(dtReg);
 		return cal.getTempoTranscorridoString(false);
 	}
-
+	
 	public String getAtributosString() {
 		String s = "";
 		for (SrAtributo att : getAtributoSet()) {
@@ -437,7 +437,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					for (SrAndamento andamento : sol.meuAndamentoSet)
 						if (!andamento.isCancelado())
 							listaCompleta.add(andamento);
-
 		return listaCompleta;
 	}
 
@@ -459,6 +458,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public String getSituacaoString() {
 		return getUltimoAndamento().getSituacaoString();
+	}
+	
+	public String getSituacaoStringSemLota() {
+		return getUltimoAndamento().getSituacaoStringSemLota();
 	}
 
 	public SrEstado getEstado() {
@@ -812,9 +815,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void iniciar() throws Exception {
 		if (temPreAtendenteDesignado())
 			darAndamento(SrEstado.PRE_ATENDIMENTO,
-					"Iniciando pré-atendimento...", getPreAtendenteDesignado());
+					"Abertura", getPreAtendenteDesignado());
 		else
-			darAndamento(SrEstado.ANDAMENTO, "Iniciando atendimento...",
+			darAndamento(SrEstado.ANDAMENTO, "Abertura",
 					getAtendenteDesignado());
 	}
 
@@ -891,7 +894,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		removerMarcas();
 
-		Long marcador;
+		Long marcador = 0L;
 		SrAndamento andamento = getUltimoAndamento();
 
 		if (andamento.estado == SrEstado.FECHADO)
@@ -906,7 +909,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO;
 		else
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
-		System.out.println(andamento.lotaAtendente.getNomeLotacao());
+		
 		marcar(marcador, andamento.lotaAtendente, andamento.atendente);
 
 		if (!isFechado() && !isCancelado()) {
@@ -932,6 +935,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean considerarcancelados() {
 		return false;
 	}
 

@@ -7,6 +7,7 @@
 				class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
 
 			<interceptor-stack name="defaultStackWithExceptionMapping">
+				<interceptor-ref name="fileUpload"/>
 				<interceptor-ref name="siga-exception" />
 				<interceptor-ref name="servlet-config" />
 				<interceptor-ref name="prepare" />
@@ -81,7 +82,7 @@
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>
@@ -89,7 +90,7 @@
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>
@@ -97,7 +98,7 @@
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>

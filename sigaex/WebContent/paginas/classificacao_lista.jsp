@@ -19,12 +19,6 @@
 	<div class="gt-content">
 	<h2 class="gt-table-head">Classificação Documental</h2>
 	
-		<ww:form id="frmNovaClassif" action="editar" method="aEditar">
-			<div class="gt-table-buttons">
-				<a id="btNovaClassif" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaClassificacao()">Nova Classificação</a>
-			</div>
-			<input type="hidden" id="acao" name="acao" value="nova_classificacao"/>
-		</ww:form>
 		<div class="gt-content-box">
 			<table border="0" class="gt-table">
 				<thead>
@@ -85,5 +79,11 @@
 				</tbody>
 			</table>
 		</div>
+		<ww:form id="frmNovaClassif" action="editar" method="aEditar">
+			<div class="gt-table-buttons">
+				<a id="btNovaClassif" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaClassificacao()">Nova Classificação</a>
+			</div>
+			<input type="hidden" id="acao" name="acao" value="nova_classificacao"/>
+		</ww:form>
 
 </siga:pagina>

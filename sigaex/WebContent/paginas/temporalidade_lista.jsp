@@ -19,12 +19,6 @@
 	<div class="gt-content">
 	<h2 class="gt-table-head">Temporalidade Documental</h2>
 	
-		<ww:form id="frmNovaTemporalidade" action="editar" method="aEditar">
-			<div class="gt-table-buttons">
-				<a id="btNovaTemporalidade" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaTemporalidade()">Nova Temporalidade</a>
-			</div>
-			<input type="hidden" id="acao" name="acao" value="nova_temporalidade"/>
-		</ww:form>
 		<div class="gt-content-box">
 			<table border="0" class="gt-table">
 				<thead>
@@ -50,5 +44,11 @@
 				</tbody>
 			</table>
 		</div>
+		<ww:form id="frmNovaTemporalidade" action="editar" method="aEditar">
+			<div class="gt-table-buttons">
+				<a id="btNovaTemporalidade" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaTemporalidade()">Nova Temporalidade</a>
+			</div>
+			<input type="hidden" id="acao" name="acao" value="nova_temporalidade"/>
+		</ww:form>
 
 </siga:pagina>

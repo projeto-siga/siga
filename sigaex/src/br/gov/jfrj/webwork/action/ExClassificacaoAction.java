@@ -196,37 +196,11 @@ public class ExClassificacaoAction
 		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		dao().iniciarTransacao();
 		exClass = buscarExClassificacao(codificacao);
-		Date dt = dao().consultarDataEHoraDoServidor();
-		if (exClass.getExModeloSet().size() >0 || exClass.getExModeloCriacaoViaSet().size() >0){
-			StringBuffer sb = new StringBuffer();
-			for(ExModelo m: exClass.getExModeloSet()){
-				sb.append("(");
-				sb.append(m.getId());
-				sb.append(") ");
-				sb.append(m.getNmMod());
-				sb.append("<br/>");
-			}
-			for(ExModelo m: exClass.getExModeloCriacaoViaSet()){
-				sb.append("(");
-				sb.append(m.getId());
-				sb.append(") ");
-				sb.append(m.getNmMod());
-				sb.append(" (Criação de via)");
-				sb.append("<br/>");
-			}
-
-			
-			throw new AplicacaoException("Não é possível excluir a classificação documental, pois está associada ao(s) seguinte(s) modelo(s):<br/><br/>" +
-					sb.toString() );
-		}
-		for (ExVia exVia : exClass.getExViaSet()) {
-			dao().excluirComHistorico(exVia, dt, getIdentidadeCadastrante());
-		}
-		dao().excluirComHistorico(exClass, dt, getIdentidadeCadastrante());
+		Ex.getInstance().getBL().excluirExClassificacao(exClass,getIdentidadeCadastrante());
 		dao().commitTransacao();
 		return SUCCESS;
 	}
-	
+
 	public String aGravarVia() throws Exception{
 		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		verificarParamsVia();

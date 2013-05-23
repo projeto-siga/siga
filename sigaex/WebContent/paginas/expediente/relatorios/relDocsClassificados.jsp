@@ -30,7 +30,7 @@
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" /></td>
 </tr>
 <tr>
-	<td>Classificação documental:</td>
+	<td>Subárvore da Classificação documental (opcional):</td>
 	<td><input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)"/></td>
 </tr>
 

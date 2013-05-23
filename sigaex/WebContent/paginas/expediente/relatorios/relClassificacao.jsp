@@ -26,6 +26,6 @@
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
 
 <tr>
-	<td  width="30%">Classificação documental:</td>
+	<td  width="30%">Subárvore da Classificação documental (opcional):</td>
 	<td><input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)"/></td>
 </tr>

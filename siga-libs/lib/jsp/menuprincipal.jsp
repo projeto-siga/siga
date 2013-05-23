@@ -3,11 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
+<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <li><a class="" href="#">SIGA</a>
 	<ul>
-		<li><a href="/siga/principal.action">Página Inicial</a>
-		</li>
+		<li><a href="/siga/principal.action">Página Inicial</a></li>
 		<c:if test="${empty pagina_de_erro}">
 			<li><a href="#">Módulos</a>
 				<ul>
@@ -20,20 +20,17 @@
 
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:Módulo de Workflow')}">
-						<li><a href="/sigawf/resumo.action">Workflow</a>
-						</li>
-					</c:if>
-					
-					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-						<li><a
-							href="/sigasr/" >Serviços</a>
-						</li>
+						<li><a href="/sigawf/resumo.action">Workflow</a></li>
 					</c:if>
 
-					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
-						<li><a
-							href="/sigagc/" >Gestão de Conhecimento</a>
-						</li>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
+						<li><a href="/sigasr/">Serviços</a></li>
+					</c:if>
+
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
+						<li><a href="/sigagc/">Gestão de Conhecimento</a></li>
 					</c:if>
 
 					<!-- <li><a href="/sigatr/">Treinamento</a>
@@ -59,17 +56,16 @@
 							</c:if>
 							<c:if
 								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
-								<li><a href="${f:getURLSistema('siga.sgp.aq')}">AQ</a></li>
+								<li><a href="${f:getURLSistema('siga.sgp.aq')}">AQ</a>
+								</li>
 							</c:if>
 							<c:if
 								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento')}">
 								<li><a href="${f:getURLSistema('siga.sgp.trn')}">Treinamento</a>
 								</li>
 							</c:if>
-						</ul>
-					</li>
-				</ul>
-			</li>
+						</ul></li>
+				</ul></li>
 			<li><a href="#">Administração</a>
 				<ul>
 					<li><ww:a href="/siga/trocar_senha.action">Trocar senha</ww:a>
@@ -90,19 +86,22 @@
 						</li>
 					</c:if>
 					 --%>
-					<ww:if test="${(cadastrante.idPessoa != titular.idPessoa) || (cadastrante.lotacao.idLotacao != lotaTitular.idLotacao)}">
-					 <%-- é uma substituição --%> 
-					 	<c:if test="${f:podeCadastrarQqSubstituicaoPorConfiguracao(cadastrante, cadastrante.lotacao)}">
-					 		<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+					<ww:if
+						test="${(cadastrante.idPessoa != titular.idPessoa) || (cadastrante.lotacao.idLotacao != lotaTitular.idLotacao)}">
+						<%-- é uma substituição --%>
+						<c:if
+							test="${f:podeCadastrarQqSubstituicaoPorConfiguracao(cadastrante, cadastrante.lotacao)}">
+							<li><ww:a
+									href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
 							</li>
-					 	</c:if>
-					 </ww:if>
-					 <ww:else>
-					 	<li><ww:a href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+						</c:if>
+					</ww:if>
+					<ww:else>
+						<li><ww:a
+								href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
 						</li>
-					 </ww:else>				
-				</ul>
-			</li>
+					</ww:else>
+				</ul></li>
 
 
 			<c:if
@@ -155,9 +154,11 @@
 									<li><ww:a
 											href="/siga/gi/relatorio/selecionar_historico_usuario.action">Histórico de Usuário</ww:a>
 									</li>
-								</ul></li>
+								</ul>
+							</li>
 						</c:if>
-					</ul></li>
+					</ul>
+				</li>
 			</c:if>
 		</c:if>
 
@@ -180,16 +181,28 @@
 						<li><ww:a href="/sigawf/administrar.action">Administrar SIGA WF</ww:a>
 						</li>
 					</c:if>
-				</ul></li>
+				</ul>
+			</li>
 		</c:if>
 
 		<%--	<li><a target="_blank"
 			href="/wiki/Wiki.jsp?page=${f:removeAcento(titulo)}">Ajuda</a></li>
  --%>
 		<li><a href="#">Substituir</a>
-			<ul class="navmenu-large">			
+			<ul class="navmenu-large">
 				<c:forEach var="substituicao" items="${meusTitulares}">
 					<li><a
+						style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
+						href="javascript:if (confirm('Deseja excluir configuração?')) location.href='/siga/substituicao/excluir.action?id=${substituicao.idSubstituicao}&porMenu=true';">
+						<img
+							style="display: inline;"
+							src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
+							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
+					</a>
+					 <%--	 <siga:link icon="cancel" titleImg="Excluir" url="/siga/substituicao/excluir.action?id=${substituicao.idSubstituicao}&porMenu=true" 
+												popup="excluir" confirm="Deseja excluir configuração?" />					  
+				 --%> <a
 						href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
 							<c:choose>
 								<c:when test="${not empty substituicao.titular}">
@@ -198,22 +211,15 @@
 								<c:otherwise>
 						${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
 					</c:otherwise>
-							</c:choose>
-					 </a> 
-					 <a href="/siga/substituicao/excluir.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">Excluir</a> 
-				     					
-					</li>
+							</c:choose> </a></li>
 				</c:forEach>
-			
-			</ul>
-		</li>		
-		
 
-		<li><ww:a href="/siga/logoff.action">Logoff</ww:a>
-		</li>
+			</ul></li>
 
-	</ul>
-</li>
+
+		<li><ww:a href="/siga/logoff.action">Logoff</ww:a></li>
+
+	</ul></li>
 <!-- insert menu -->
 <c:import url="/paginas/menus/menu.jsp"></c:import>
 

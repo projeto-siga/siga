@@ -30,8 +30,6 @@ public class SigaApplication extends Controller {
 			throws Exception {
 		try {
 
-			Logger.info("Siga-SR info: " + getBaseSiga());
-
 			// Obter cabeçalho e rodapé do Siga
 			HashMap<String, String> atributos = new HashMap<String, String>();
 			for (Http.Header h : request.headers.values())
@@ -73,8 +71,6 @@ public class SigaApplication extends Controller {
 			String[] IDs = ConexaoHTTP.get(
 					getBaseSiga() + "/usuario_autenticado.action", atributos)
 					.split(";");
-
-			Logger.info("Siga-SR info: " + IDs.toString());
 
 			renderArgs.put("cadastrante",
 					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));

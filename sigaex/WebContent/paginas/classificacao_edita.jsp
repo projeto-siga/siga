@@ -114,20 +114,20 @@
 						<div class="gt-left-col">
 							<!-- form row -->
 							<div class="gt-form-row gt-width-66">
-								<label>Codificação</label><input id="codificacao" name="codificacao" type="text" class="gt-form-text" value="${exClass.codificacao}" onblur="javascript:aplicarMascara(this)"/>
+								<label>Codificação</label><input id="codificacao" name="codificacao" type="text" value="${exClass.codificacao}" onblur="javascript:aplicarMascara(this)" size="11"/>
 								<input type="hidden" id="codificacaoAntiga" name="codificacaoAntiga" value="${exClass.codificacao}"/>
 							</div>
 							<!-- /form row -->
 	
 							<!-- form row -->
 							<div class="gt-form-row gt-width-66">
-								<label>Descrição</label> <input id="descrClassificacao" name="descrClassificacao" type="text" class="gt-form-text" value="${exClass.descrClassificacao}"/>
+								<label>Descrição</label> <input id="descrClassificacao" name="descrClassificacao" type="text" value="${exClass.descrClassificacao}" size="100"/>
 							</div>
 							<!-- /form row -->
 	
 							<!-- form row -->
 							<div class="gt-form-row gt-width-66">
-								<label>Observação</label> <input id="obs" name="obs" type="text" class="gt-form-text" value="${exClass.obs}"/>
+								<label>Observação</label> <input id="obs" name="obs" type="text" value="${exClass.obs}" size="100"/>
 							</div>
 							<!-- /form row -->
 						</div>
@@ -358,7 +358,7 @@
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
-											<label>Observação</label> <input id="obs" name="obs" type="text" class="gt-form-text" value="${via.obs}"/>
+											<label>Observação</label> <input id="obs" name="obs" type="text" value="${via.obs}" size="100"/>
 										</div>
 										<!-- /form row -->
 									</ww:form>
@@ -428,7 +428,7 @@
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
-											<label>Observação</label> <input id="obs" name="obs" type="text" class="gt-form-text"/>
+											<label>Observação</label> <input id="obs" name="obs" type="text" />
 										</div>
 										<!-- /form row -->
 									</ww:form>

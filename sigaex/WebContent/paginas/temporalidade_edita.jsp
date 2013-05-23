@@ -52,7 +52,7 @@
 
 							<!-- form row -->
 							<div class="gt-form-row gt-width-66">
-								<label>Descrição</label> <input id="descTemporalidade" name="descTemporalidade" type="text" class="gt-form-text" value="${exTemporal.descTemporalidade}"/>
+								<label>Descrição</label> <input id="descTemporalidade" name="descTemporalidade" type="text" value="${exTemporal.descTemporalidade}" size="50"/>
 							</div>
 							<!-- /form row -->
 	

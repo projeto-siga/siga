@@ -2193,6 +2193,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeFazerVinculacaoPapel(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		
+		if(mob.doc().isCancelado())
+			return false;
+		
 		if(mob.doc().isSemEfeito())
 			return false;
 

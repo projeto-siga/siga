@@ -273,7 +273,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		// ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() ==
 		// null);
 		return getExTipoMobil() != null
-				&& getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA
+				&& (getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA || 
+						getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME)
 				&& getUltimaMovimentacaoNaoCancelada() == null;
 	}
 

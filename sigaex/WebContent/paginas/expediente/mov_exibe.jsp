@@ -306,7 +306,7 @@ function visualizarImpressao(via) {
 						<input type="button" value="Visualizar Impressão" class="gt-btn-large gt-btn-left" 
 							       onclick="javascript:visualizarImpressao();" />						      
 					</c:if>
-					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;VBS')}">
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 						<ww:hidden name="conteudo_b64" value="${mov.conteudoBlobPdfB64}" />
 						<ww:hidden name="assinaturaB64" />
 						<ww:hidden name="assinante" />
@@ -340,7 +340,7 @@ function visualizarImpressao(via) {
 			</ww:form>			
 			
 			<div style="padding-left: 10;">		
-    			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">	
+    			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">	
 	  				<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
 	    			<ww:hidden name="urlchk_${mov.idMov}" value="${mov.nmPdf}" />
 	   				<c:set var="jspServer" 

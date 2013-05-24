@@ -20,12 +20,12 @@ import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name = "SR_ARQUIVO")
+@Table(name = "SR_ARQUIVO", schema="SIGASR")
 public class SrArquivo extends GenericModel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ARQUIVO_SEQ", name = "SR_ARQUIVO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ARQUIVO_SEQ")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_ARQUIVO_SEQ", name = "srArquivoSeq")
+	@GeneratedValue(generator = "srArquivoSeq")
 	@Column(name = "ID_ARQUIVO")
 	public Long idArquivo;
 

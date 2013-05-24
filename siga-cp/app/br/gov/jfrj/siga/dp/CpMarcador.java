@@ -105,21 +105,23 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_TOMAR_CIENCIA = 40;
 	
-	final static public long MARCADOR_SOLICITACAO_EM_ANDAMENTO = 301;
+	final static public long MARCADOR_SOLICITACAO_A_RECEBER = 41;
+	
+	final static public long MARCADOR_SOLICITACAO_EM_ANDAMENTO = 42;
 
-	final static public long MARCADOR_SOLICITACAO_FECHADO = 302;
+	final static public long MARCADOR_SOLICITACAO_FECHADO = 43;
 
-	final static public long MARCADOR_SOLICITACAO_PENDENTE = 303;
+	final static public long MARCADOR_SOLICITACAO_PENDENTE = 44;
 
-	final static public long MARCADOR_SOLICITACAO_CANCELADO = 304;
+	final static public long MARCADOR_SOLICITACAO_CANCELADO = 45;
 	
-	final static public long MARCADOR_SOLICITACAO_PRE_ATENDIMENTO = 305;
+	final static public long MARCADOR_SOLICITACAO_PRE_ATENDIMENTO = 46;
 	
-	final static public long MARCADOR_SOLICITACAO_POS_ATENDIMENTO = 306;
+	final static public long MARCADOR_SOLICITACAO_POS_ATENDIMENTO = 47;
 	
-	final static public long MARCADOR_SOLICITACAO_COMO_CADASTRANTE = 307;
+	final static public long MARCADOR_SOLICITACAO_COMO_CADASTRANTE = 48;
 	
-	final static public long MARCADOR_SOLICITACAO_COMO_SOLICITANTE = 308;
+	final static public long MARCADOR_SOLICITACAO_COMO_SOLICITANTE = 49;
 
 	public CpMarcador() {
 		super();

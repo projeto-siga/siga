@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,9 +50,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private static final Logger log = Logger.getLogger( ExMobil.class );
-	
+
+	private static final Logger log = Logger.getLogger(ExMobil.class);
+
 	private class CronologiaComparator implements Comparator<ExMovimentacao> {
 
 		public int compare(ExMovimentacao o1, ExMovimentacao o2) {
@@ -272,7 +273,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		// ExTipoMobil.TIPO_MOBIL_VIA && getUltimaMovimentacaoNaoCancelada() ==
 		// null);
 		return getExTipoMobil() != null
-				&& getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA
+				&& (getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA || 
+						getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME)
 				&& getUltimaMovimentacaoNaoCancelada() == null;
 	}
 
@@ -297,25 +299,25 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		String descricaoCurta = null;
 		ExDocumento exDocumento = getExDocumento();
-		
-		if ( exDocumento != null ) {
+
+		if (exDocumento != null) {
 			try {
 				descricaoCurta = exDocumento.getDescrCurta();
-			}catch (Exception e) {
-				log.warn( "[getDescricao] - Não foi possível recuperar a descrição curta do Documento. Retornando descrição em branco.", e );
+			} catch (Exception e) {
+				log.warn(
+						"[getDescricao] - Não foi possível recuperar a descrição curta do Documento. Retornando descrição em branco.",
+						e);
 				descricaoCurta = "";
 			}
 		} else {
-			log.warn( "[getDescricao] - O Documento informado é nulo." );
+			log.warn("[getDescricao] - O Documento informado é nulo.");
 		}
-		
-		if ( descricaoCurta == null ) {
+
+		if (descricaoCurta == null) {
 			descricaoCurta = "";
 		}
 
-		s = s + "', 'documento', " + winProp + ")\">"
-					+ descricaoCurta + "</a>";
-		
+		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
 
 		return s;
 	}
@@ -355,11 +357,21 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 *         descrição do tipo de destinação.
 	 */
 	public String getDescricaoCompleta() {
+		String descTipoMobil = getExTipoMobil().getDescTipoMobil();
+
 		if (isGeral())
-			return getExTipoMobil().getDescTipoMobil();
+			return descTipoMobil;
+
+		if (isVia()) {
+			ExVia via = getDoc().via(getNumSequencia().shortValue());
+			if (via != null && via.getExTipoDestinacao() != null
+					&& via.getExTipoDestinacao().getFacilitadorDest() != null) {
+				descTipoMobil = via.getExTipoDestinacao().getFacilitadorDest();
+			}
+		}
 
 		String s = getNumSequencia() + (isVia() ? "&ordf; " : "&ordm; ")
-				+ getExTipoMobil().getDescTipoMobil();
+				+ descTipoMobil;
 
 		if (isVia()) {
 			ExVia via = getDoc().via(getNumSequencia().shortValue());
@@ -398,12 +410,14 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 
-		final ExDocumento doc = new ExDocumento();
-		setExDocumento(doc);
+		if (getExDocumento() == null) {
+			final ExDocumento doc = new ExDocumento();
+			setExDocumento(doc);
+		}
 
 		if (m2.find()) {
 			if (m2.group(1) != null)
-				doc.setIdDoc(new Long(m2.group(1)));
+				getExDocumento().setIdDoc(new Long(m2.group(1)));
 			return;
 		}
 
@@ -458,7 +472,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 							.substring(vsNumSubdocumento.indexOf(".") + 1);
 				Integer vshNumSubdocumento = new Integer(vsNumSubdocumento);
 				if (vshNumSubdocumento != 0) {
-					String siglaPai = (m1.group(1) == null ? "" : m1.group(1))
+					String siglaPai = (m1.group(1) == null ? (getExDocumento()
+							.getOrgaoUsuario() != null ? getExDocumento()
+							.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : m1
+							.group(1))
 							+ (m1.group(2) == null ? "" : m1.group(2))
 							+ (m1.group(3) == null ? "" : m1.group(3))
 							+ ((m1.group(3) != null && m1.group(4) != null) ? "/"
@@ -552,6 +569,43 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 	}
 
+	/**
+	 * Retorna o código do documento mais o número da via ou do volume.
+	 * 
+	 * @return O código do documento mais o número da via ou do volume.
+	 */
+	public static String getSigla(String codigoDocumento, Integer numSequencia,
+			Long idTipoMobil) {
+		if (codigoDocumento == null)
+			return null;
+		if (idTipoMobil == null)
+			return null;
+
+		if ((idTipoMobil == ExTipoMobil.TIPO_MOBIL_VIA || idTipoMobil == ExTipoMobil.TIPO_MOBIL_VOLUME)
+				&& (numSequencia == null || numSequencia == 0))
+			throw new Error(
+					"Via e Volume devem possuir número válido de sequencia.");
+		if (idTipoMobil == ExTipoMobil.TIPO_MOBIL_VIA) {
+			final String alfabeto = "ABCDEFGHIJLMNOPQRSTUZ";
+
+			// as vias vão até a letra 'U', se passar disso, assume letra 'Z'
+			if (numSequencia <= 20) {
+				final String vsNumVia = alfabeto.substring(numSequencia - 1,
+						numSequencia);
+				return codigoDocumento + "-" + vsNumVia;
+			} else {
+				final String vsNumVia = "Z";
+				return codigoDocumento + "-" + vsNumVia;
+			}
+		} else if (idTipoMobil == ExTipoMobil.TIPO_MOBIL_VOLUME) {
+			final String vsNumVolume = "V"
+					+ (numSequencia < 10 ? "0" + numSequencia : numSequencia);
+			return codigoDocumento + "-" + vsNumVolume;
+		} else {
+			return codigoDocumento;
+		}
+	}
+
 	/*
 	 * public Long getId() { if (getExDocumento() == null) return null;
 	 * ExMovimentacao mov = getExDocumento()
@@ -623,7 +677,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return b;
 	}
-	
+
 	/**
 	 * Verifica se uma mobil está sobrestado
 	 */
@@ -680,7 +734,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		for (ExMovimentacao mov : getExMovimentacaoSet()) {
 			if (mov.isCancelada())
 				continue;
-			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA || mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)
+			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+					|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)
 				b = true;
 			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO)
 				b = false;
@@ -1129,14 +1184,67 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean temAnexosNaoAssinados() {
 		boolean b = false;
+		Date dataDeInicioDeObrigacaoDeAssinatura = null;
+		
+		try {
+			dataDeInicioDeObrigacaoDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeAssinarAnexoEDespacho();
+		} catch (Exception e) {
+			
+		}
+		
 		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
-			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
-				if (movAss.isAssinada())
-					continue;
-				else {
-					b = true;
-					break;
-				}
+			if(!movAss.isCancelada()) { 
+				if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+					if (movAss.isAssinada())
+						continue;
+					else {
+						if(dataDeInicioDeObrigacaoDeAssinatura != null &&
+								movAss.getDtMov().before(dataDeInicioDeObrigacaoDeAssinatura))
+							continue;
+						
+						b = true;
+						break;
+					}
+			}
+		}
+		return b;
+
+	}
+	
+	/**
+	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura
+	 * 
+	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
+	 *         contrário.
+	 * 
+	 */
+	public boolean temDespachosNaoAssinados() {
+		boolean b = false;
+		Date dataDeInicioDeObrigacaoDeAssinatura = null;
+		
+		try {
+			dataDeInicioDeObrigacaoDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeAssinarAnexoEDespacho();
+		} catch (Exception e) {
+			
+		}
+		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
+			if(!movAss.isCancelada()) {
+				if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
+						|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO
+						|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
+						|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+						|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+					if (movAss.isAssinada())
+						continue;
+					else {
+						if(dataDeInicioDeObrigacaoDeAssinatura != null &&
+								movAss.getDtMov().before(dataDeInicioDeObrigacaoDeAssinatura))
+							continue;
+						
+						b = true;
+						break;
+					}
+			}
 		}
 		return b;
 
@@ -1288,24 +1396,35 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		return l;
 	}
-	
+
 	/**
-	 * Retorna as  movimentações de um Mobil que estão canceladas.
+	 * Retorna as movimentações de um Mobil que estão canceladas.
 	 * 
 	 * @return Lista de movimentações de um Mobil que estão canceladas.
 	 * 
 	 */
 	public List<ExMovimentacao> getMovimentacoesCanceladas() {
-		
+
 		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
-		List<ExMovimentacao> movsCanceladas = new ArrayList<ExMovimentacao>();	
-		
+		List<ExMovimentacao> movsCanceladas = new ArrayList<ExMovimentacao>();
+
 		if (movs != null)
-			for (final ExMovimentacao mov : movs) {				
+			for (final ExMovimentacao mov : movs) {
 				if (mov.isCancelada())
 					movsCanceladas.add(mov);
 			}
-		return movsCanceladas;	
+		return movsCanceladas;
+	}
+	
+	public int getTotalDePaginas() {
+		int totalDePaginas = 0;
+		
+		for (ExArquivoNumerado arquivo : getArquivosNumerados()) {
+			
+			totalDePaginas += arquivo.getNumeroDePaginasParaInsercaoEmDossie();
+		}
+		
+		return totalDePaginas;
 	}
 
 }

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler;
 
 /**
  * Hello World example as a Servlet.
@@ -71,10 +72,13 @@ public class Anexo extends HttpServlet {
 			// write ByteArrayOutputStream to the ServletOutputStream
 			final ServletOutputStream out = response.getOutputStream();
 			out.write(mov.getConteudoBlobMov2());
-			out.flush();
+			//out.flush();
+			out.close();
 		} catch (final Exception e) {
-			e.printStackTrace();
-			System.err.println("document: " + e.getMessage());
+			SigaExceptionHandler seh = new SigaExceptionHandler();
+			seh.logaExcecao(e);
+//			e.printStackTrace();
+//			System.err.println("document: " + e.getMessage());
 		}
 		// document.close();
 	}

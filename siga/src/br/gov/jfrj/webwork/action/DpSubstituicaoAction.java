@@ -23,14 +23,17 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
@@ -46,6 +49,8 @@ import com.opensymphony.xwork.Action;
 public class DpSubstituicaoAction extends SigaActionSupport {
 
 	private List itens;
+	
+	private List itensTitular;
 
 	private Long id;
 
@@ -68,6 +73,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	private String dtIniSubst;
 
 	private String dtFimSubst;
+	
+	private String strBuscarFechadas;
+	
+	private String isSubstituicao;
 
 	public Date getDtAtual() {
 		return new Date();
@@ -87,6 +96,17 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	}
 
 	public String aEditarSubstituto() throws Exception {
+		if(Cp.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+						getCadastrante(),
+						CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST))
+			{
+				setStrBuscarFechadas("buscarFechadas=true");
+				
+			}else
+				setStrBuscarFechadas("buscarFechadas=false");
+		
 		if (getId() != null) {
 			DpSubstituicao subst = dao().consultar(getId(),
 					DpSubstituicao.class, false);
@@ -132,8 +152,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 					throw new AplicacaoException("Titular não informado");
 				subst.setTitular(dao().consultar(getTitularSel().getId(),
 						DpPessoa.class, false));
-				if (subst.getTitular().getIdPessoa() != getCadastrante()
-						.getIdPessoa()
+				if (!subst.getTitular().getIdPessoa().equals(getCadastrante().getIdPessoa())  
 						&& !Cp.getInstance()
 								.getConf()
 								.podePorConfiguracao(
@@ -158,12 +177,11 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 							"A lotação titular não foi informada");
 				subst.setLotaTitular(dao().consultar(
 						getLotaTitularSel().getId(), DpLotacao.class, false));
-				if (subst.getLotaTitular().getIdLotacao() != getCadastrante()
-						.getIdLotacao()
+				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
 						&& !Cp.getInstance()
 								.getConf()
 								.podePorConfiguracao(
-										getLotaTitular(),
+										getCadastrante().getLotacao(),
 										CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST))// &&
 					// !getCadastrante().getSigla().equals("RJ13635"))
 					/*
@@ -248,11 +266,32 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	}
 
 	public String aListarSubstitutos() throws Exception {
-
-		DpSubstituicao dpSubstituicao = new DpSubstituicao();
-		dpSubstituicao.setTitular(getCadastrante());
-		dpSubstituicao.setLotaTitular(getCadastrante().getLotacao());
-		setItens(dao().consultarOrdemData(dpSubstituicao));
+		
+		setIsSubstituicao("false");		
+		setItens(buscarSubstitutos(getCadastrante(), getCadastrante().getLotacao()));			
+		
+		
+		if (!getCadastrante().getId().equals(getTitular().getId())
+				|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
+			// é uma substituição !			
+			if(Cp
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(getCadastrante(),
+				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST) ||				
+				
+				Cp
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(getCadastrante().getLotacao(),
+				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)){
+				// obs: se o cadastrante não tem permissão de cadastrar qq substituição, o sistema não vai buscar as substituições do Titular
+					setIsSubstituicao("true");					
+					setItensTitular(buscarSubstitutos(getTitular(), getLotaTitular()));	
+				
+			}		
+		}
+		
 		/*
 		 * TreeMap tree = new TreeMap(); for (Object dps : getItens()) {
 		 * DpSubstituicao trueDps = (DpSubstituicao) dps;
@@ -263,6 +302,41 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		return Action.SUCCESS;
 	}
 
+	private List<DpSubstituicao> buscarSubstitutos(DpPessoa pessoa, DpLotacao lotacao) throws SQLException,
+			AplicacaoException {
+		
+		Boolean isSubstLotacao = false;
+		List<DpSubstituicao> todasSubst = new ArrayList<DpSubstituicao>();
+		List<DpSubstituicao> substVigentes = new ArrayList<DpSubstituicao>();
+		DpSubstituicao dpSubstituicao = new DpSubstituicao();
+		dpSubstituicao.setTitular(pessoa);
+		dpSubstituicao.setLotaTitular(lotacao);			
+	    todasSubst = dao().consultarOrdemData(dpSubstituicao);
+	    
+	    if (getCadastrante().getId().equals(getTitular().getId())
+				&& !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId()))
+	    	    	isSubstLotacao = true;			
+	    
+	    for (DpSubstituicao subst : todasSubst) {	
+	    	if (isSubstituicao == "true") {
+	    		if (isSubstLotacao && subst.getTitular() != null)
+	    			continue;	    		
+	    	}
+	    		
+	    	if (subst.getLotaSubstituto() != null && subst.getLotaSubstituto().isFechada()
+	    			&& this.isSubstituicao == "false")	    		
+	    		continue;
+	    	if (subst.getSubstituto() != null && (subst.getSubstituto().isFechada() 
+	    			|| subst.getSubstituto().isBloqueada()) && this.isSubstituicao == "false")
+	    		continue;
+	    	if (subst.isEmVoga()) {
+	    		substVigentes.add(subst);	    		
+	    	}
+	    }
+		return substVigentes;
+	}
+
+	
 	public String aSubstituirGravar() throws Exception {
 		aFinalizar();
 		if (getIdTitular() != null) {
@@ -407,6 +481,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	public List getItens() {
 		return itens;
 	}
+	
+	public List getItensTitular() {
+		return itensTitular;
+	}
 
 	public Map<Integer, String> getListaTipoTitular() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
@@ -462,6 +540,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	public void setItens(List itens) {
 		this.itens = itens;
 	}
+	
+	public void setItensTitular(List itensTitular) {
+		this.itensTitular = itensTitular;
+	}
 
 	public void setLotaSubstitutoSel(DpLotacaoSelecao lotaSubstitutoSel) {
 		this.lotaSubstitutoSel = lotaSubstitutoSel;
@@ -483,8 +565,24 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		this.tipoTitular = tipoTitular;
 	}
 
+	public String getStrBuscarFechadas() {
+		return strBuscarFechadas;
+	}
+
+	public void setStrBuscarFechadas(String strBuscarFechadas) {
+		this.strBuscarFechadas = strBuscarFechadas;
+	}
+
 	public void setTitularSel(DpPessoaSelecao titularSel) {
 		this.titularSel = titularSel;
+	}
+	
+	public String getIsSubstituicao() {
+		return isSubstituicao;
+	}
+
+	public void setIsSubstituicao(String isSubstituicao) {
+		this.isSubstituicao = isSubstituicao;
 	}
 
 }

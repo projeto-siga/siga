@@ -6,6 +6,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="libs"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
@@ -152,13 +153,12 @@
 							</c:if>
 							<td align="left"><siga:selecionado
 									sigla="${mov.parte.lotaResp.sigla}"
-									descricao="${mov.parte.lotaResp.descricaoAmpliada}" />
-							</td>
+									descricao="${mov.parte.lotaResp.descricaoAmpliada}" /></td>
 							<td align="left"><siga:selecionado
 									sigla="${mov.parte.resp.nomeAbreviado}"
 									descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" />
 							</td>
-							<td>${mov.descricao}<c:if test='${mov.idTpMov != 2}'> ${mov.complemento}</c:if>
+							<td>${mov.descricao} <c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 								<c:set var="assinadopor" value="${true}" /> <siga:links
 									inline="${true}"
 									separator="${not empty mov.descricao and mov.descricao != null}">
@@ -188,8 +188,7 @@
 									<c:set var="assinadopor" value="${false}" />
 										</c:if>
 									</c:forEach>
-								</siga:links>
-							</td>
+								</siga:links></td>
 
 							<c:if test="${exibirCompleto != 'true' and mov.duracaoSpan > 0}">
 								<td align="center" class="duracaoborderbottom"
@@ -282,7 +281,8 @@
 							<tags:fixdocumenthtml>
 			${docVO.conteudoBlobHtmlString}
 		</tags:fixdocumenthtml>
-						</c:if></td>
+						</c:if>
+					</td>
 				</tr>
 			</table>
 		</div>
@@ -332,8 +332,12 @@
 		</c:if>
 
 		</div>
+
+		<div class="gt-sidebar-content" id="gc"></div>
+
 		<!-- / sidebar -->
 	</div>
+
 </div>
 
 <!-- Somente quando o workflow está ativado -->
@@ -341,5 +345,19 @@
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
 </c:if>
+<c:if
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+	<c:url var="url" value="/../sigagc/knowledge">
+		<c:forEach var="tag" items="${docVO.tags}">
+			<c:param name="tags">${tag}</c:param>
+		</c:forEach>
+		<c:param name="estilo">sidebar</c:param>
+		<c:param name="ts">${currentTimeMillis}</c:param>
+	</c:url>
+	<script type="text/javascript">
+		SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
+	</script>
+</c:if>
+
 
 <siga:rodape />

@@ -30,17 +30,17 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
 	private void evitaSessionClosed(SrConfiguracao conf) {
 		if (conf.preAtendente != null)
-			conf.preAtendente.getSigla();
+			conf.preAtendente.getLotacaoAtual();
 		if (conf.atendente != null)
-			conf.atendente.getSigla();
+			conf.atendente.getLotacaoAtual();
 		if (conf.posAtendente != null)
-			conf.posAtendente.getSigla();
+			conf.posAtendente.getLotacaoAtual();
 		if (conf.itemConfiguracao != null)
-			conf.itemConfiguracao.getSigla();
+			conf.itemConfiguracao.getAtual();
 		if (conf.servico != null)
-			conf.servico.getSigla();
+			conf.servico.getAtual();
 		if (conf.tipoAtributo != null)
-			conf.tipoAtributo.getId();
+			conf.tipoAtributo.getAtual();
 	}
 
 	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)
@@ -51,6 +51,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	@Override
 	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
 		super.deduzFiltro(cpConfiguracao);
+		if (cpConfiguracao instanceof SrConfiguracao) {
+			SrConfiguracao srConf = (SrConfiguracao) cpConfiguracao;
+			if (srConf.itemConfiguracao != null)
+				srConf.itemConfiguracao = srConf.itemConfiguracao.getAtual();
+			if (srConf.servico != null)
+				srConf.servico = srConf.servico.getAtual();
+		}
+
 	}
 
 	@Override
@@ -82,12 +90,13 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (!atributosDesconsiderados.contains(SERVICO)
 					&& conf.servico != null
 					&& (filtro.servico == null || (filtro.servico != null && !conf.servico
-							.isPaiDeOuIgualA(filtro.servico))))
+							.getAtual().isPaiDeOuIgualA(filtro.servico))))
 				return false;
 
 			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO)
 					&& conf.itemConfiguracao != null
 					&& (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null && !conf.itemConfiguracao
+							.getAtual()
 							.isPaiDeOuIgualA(filtro.itemConfiguracao))))
 				return false;
 

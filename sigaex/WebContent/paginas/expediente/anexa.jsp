@@ -146,7 +146,8 @@
 					    type="checkbox"  theme="simple" name="check" 
 	                    onclick="javascript:montaTableAssinados(check.checked);" /><b>Exibir anexos assinados</b>
 	                <br/>  
-	             </c:if>  		     
+	             </c:if>  		  
+	             <br/>   
 				 <h2>Anexos Pendentes de Assinatura
 				
 				 <ww:if test="${assinandoAnexosGeral}">
@@ -169,7 +170,7 @@
 								<th rowspan="2">Descrição</th>
 							</tr>
 							<tr>
-							    <ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+							    <ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 									<td align="center"><input type="checkbox" name="checkall"
 										onclick="checkUncheckAll(this)" /></td>
 								</ww:if>
@@ -191,7 +192,7 @@
 									<ww:else>
 									    <c:set var="dtUlt" value="${dt}" />
 									</ww:else>
-									<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+									<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 									    <c:set var="x" scope="request">chk_${mov.mov.idMov}</c:set>
 										<c:remove var="x_checked" scope="request" />
 										<c:if test="${param[x] == 'true'}">
@@ -251,7 +252,7 @@
 											</c:forEach>
 										    </siga:links>    
 										
-										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 										      <ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
 											   <ww:hidden name="url${x}" value="${mov.mov.nmPdf}" />
 										</c:if>	
@@ -261,8 +262,9 @@
 					    </c:forEach>
 					</table>	
 				</ww:form>
-		    </div>				
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;EXT:Extensão')}">
+		    </div>			
+		    <br/>
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 				<c:set var="jspServer"
 				       value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 				<c:set var="nextURL"

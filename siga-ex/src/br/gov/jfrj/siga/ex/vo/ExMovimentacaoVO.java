@@ -57,6 +57,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 
 public class ExMovimentacaoVO extends ExVO {
 	ExMovimentacao mov;
@@ -74,7 +75,7 @@ public class ExMovimentacaoVO extends ExVO {
 	ExMobilVO mobVO;
 	int duracaoSpan;
 	int duracaoSpanExibirCompleto;
-	String duracao;	
+	String duracao;
 
 	public ExMobilVO getMobVO() {
 		return mobVO;
@@ -116,7 +117,7 @@ public class ExMovimentacaoVO extends ExVO {
 		desabilitada = mov.getExMovimentacaoCanceladora() != null
 				|| mov.getIdTpMov().equals(
 						TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
-		
+
 	}
 
 	/**
@@ -132,9 +133,9 @@ public class ExMovimentacaoVO extends ExVO {
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) {
 			descricao = "";
-			addAcao(null, "Verificar", "/expediente/mov", "assinar_verificar", true,
-					null, "&ajax=true&id=" + mov.getIdMov().toString(), null,
-					null);
+			addAcao(null, "Verificar", "/expediente/mov", "assinar_verificar",
+					true, null, "&ajax=true&id=" + mov.getIdMov().toString(),
+					null, null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
@@ -143,25 +144,38 @@ public class ExMovimentacaoVO extends ExVO {
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ANOTACAO) {
 			descricao = mov.getObs();
-			addAcao(null, "Excluir", "/expediente/mov", "excluir", Ex.getInstance()
-					.getComp().podeExcluirAnotacao(titular, lotaTitular,
-							mov.mob(), mov));
+			addAcao(null,
+					"Excluir",
+					"/expediente/mov",
+					"excluir",
+					Ex.getInstance()
+							.getComp()
+							.podeExcluirAnotacao(titular, lotaTitular,
+									mov.mob(), mov));
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
-			addAcao(null, "Cancelar", "/expediente/mov", "cancelar", Ex.getInstance()
-					.getComp().podeCancelarVinculacaoPapel(titular,
-							lotaTitular, mov.mob(), mov));
+			addAcao(null,
+					"Cancelar",
+					"/expediente/mov",
+					"cancelar",
+					Ex.getInstance()
+							.getComp()
+							.podeCancelarVinculacaoPapel(titular, lotaTitular,
+									mov.mob(), mov));
 		}
-		
-		
+
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
-			addAcao(null, "Cancelar", "/expediente/mov", "cancelar", Ex.getInstance()
-					.getComp().podeCancelarVinculacaoDocumento(titular,
-							lotaTitular, mov.mob(), mov));
+			addAcao(null,
+					"Cancelar",
+					"/expediente/mov",
+					"cancelar",
+					Ex.getInstance()
+							.getComp()
+							.podeCancelarVinculacaoDocumento(titular,
+									lotaTitular, mov.mob(), mov));
 		}
-		
-		
+
 		if (mov.getNumPaginas() != null
 				|| idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {
@@ -174,27 +188,49 @@ public class ExMovimentacaoVO extends ExVO {
 					"&popup=true", null, null);
 
 			if (idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
-				addAcao(null, "Excluir", "/expediente/mov", "excluir", Ex
-						.getInstance().getComp().podeExcluirAnexo(titular,
-								lotaTitular, mov.mob(), mov));
+				addAcao(null,
+						"Excluir",
+						"/expediente/mov",
+						"excluir",
+						Ex.getInstance()
+								.getComp()
+								.podeExcluirAnexo(titular, lotaTitular,
+										mov.mob(), mov));
 			}
 
 			if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {
-				addAcao(null, "Excluir", "/expediente/mov", "excluir", Ex
-						.getInstance().getComp().podeExcluirAnexo(titular,
-								lotaTitular, mov.mob(), mov));
-				addAcao(null, "Cancelar", "/expediente/mov", "cancelar", Ex
-						.getInstance().getComp().podeCancelarAnexo(titular,
-								lotaTitular, mov.mob(), mov));
-				if (!mov.isCancelada())
-					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov", "exibir",
-							true, null, "&popup=true", null, null);
+				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito()) {
+					addAcao(null,
+							"Excluir",
+							"/expediente/mov",
+							"excluir",
+							Ex.getInstance()
+									.getComp()
+									.podeExcluirAnexo(titular, lotaTitular,
+											mov.mob(), mov));
+					addAcao(null,
+							"Cancelar",
+							"/expediente/mov",
+							"cancelar",
+							Ex.getInstance()
+									.getComp()
+									.podeCancelarAnexo(titular, lotaTitular,
+											mov.mob(), mov));
+					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov",
+							"exibir", true, null, "&popup=true", null, null);
+				}
 			}
 
 			if (hasDespacho(idTpMov)) {
-				addAcao(null, "Cancelar", "/expediente/mov", "cancelar", Ex
-						.getInstance().getComp().podeCancelarDespacho(titular,
-								lotaTitular, mov.mob(), mov));
+				if (!mov.mob().doc().isSemEfeito())
+					addAcao(null,
+							"Cancelar",
+							"/expediente/mov",
+							"cancelar",
+							Ex.getInstance()
+									.getComp()
+									.podeCancelarDespacho(titular, lotaTitular,
+											mov.mob(), mov));
 			}
 
 			if (idTpMov != TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
@@ -202,9 +238,9 @@ public class ExMovimentacaoVO extends ExVO {
 					&& idTpMov != TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 					&& idTpMov != TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO
 					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO) {
-				if (!mov.isCancelada())
-					addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir", true,
-							null, "&popup=true", null, null);
+				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito())
+					addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir",
+							true, null, "&popup=true", null, null);
 			}
 
 			if (mov.getExMovimentacaoReferenciadoraSet() != null) {
@@ -219,8 +255,8 @@ public class ExMovimentacaoVO extends ExVO {
 								+ Texto.maiusculasEMinusculas(movRef.getObs());
 						fAssinaturas = true;
 					} else if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
-						complementoConferencias += (complementoConferencias.length() > 0 ? ", "
-								: "")
+						complementoConferencias += (complementoConferencias
+								.length() > 0 ? ", " : "")
 								+ Texto.maiusculasEMinusculas(movRef.getObs());
 						fConferencias = true;
 					}
@@ -240,8 +276,8 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = null;
 			if (originadaAqui) {
 				if (mov.getExMobilRef() != null) {
-					addAcao(null, mov.getExMobilRef().getSigla(), "/expediente/doc",
-							"exibir", true, null, "sigla="
+					addAcao(null, mov.getExMobilRef().getSigla(),
+							"/expediente/doc", "exibir", true, null, "sigla="
 									+ mov.getExMobilRef().getSigla(),
 							"Juntado ao documento: ", null);
 				} else {
@@ -258,8 +294,8 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_APENSACAO) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/expediente/doc",
-						"exibir", true, null, "sigla="
+				addAcao(null, mov.getExMobilRef().getSigla(),
+						"/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
 						"Apensado ao documento: ", null);
 			} else {
@@ -273,8 +309,8 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_DESAPENSACAO) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/expediente/doc",
-						"exibir", true, null, "sigla="
+				addAcao(null, mov.getExMobilRef().getSigla(),
+						"/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
 						"Desapensado do documento: ", null);
 			} else {
@@ -289,15 +325,15 @@ public class ExMovimentacaoVO extends ExVO {
 			addAcao(null, mov.getExMobilRef().getSigla(), "/expediente/doc",
 					"exibir", true, null, "sigla="
 							+ mov.getExMobilRef().getSigla(),
-					"Publicado no Boletim Interno: ", " em "
-							+ mov.getDtMovDDMMYY());
+					"Publicado no Boletim Interno: ",
+					" em " + mov.getDtMovDDMMYY());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/expediente/doc",
-						"exibir", true, null, "sigla="
+				addAcao(null, mov.getExMobilRef().getSigla(),
+						"/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
 						"Ver também: ", null);
 			} else {
@@ -312,8 +348,8 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/expediente/mov", "protocolo_arq", true,
-						null, "pessoa="
+				addAcao(null, "Protocolo", "/expediente/mov", "protocolo_arq",
+						true, null, "pessoa="
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
 								+ mov.getDtRegMovDDMMYYYYHHMMSS()
@@ -327,8 +363,9 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 				|| idTpMov == TIPO_MOVIMENTACAO_RECEBIMENTO_TRANSITORIO) {
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/expediente/mov", "protocolo_transf",
-						true, null, "pessoa="
+				addAcao(null, "Protocolo", "/expediente/mov",
+						"protocolo_transf", true, null,
+						"pessoa="
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
 								+ mov.getDtRegMovDDMMYYYYHHMMSS()
@@ -339,6 +376,11 @@ public class ExMovimentacaoVO extends ExVO {
 			addAcao(null, mov.getNmArqMov(), "/anexo", mov.getIdMov() + "/"
 					+ mov.getNmArqMov(), mov.getNmArqMov() != null, null,
 					"&popup=true", null, null);
+		}
+
+		if (descricao != null && descricao.equals(mov.getObs())) {
+			descricao = ProcessadorReferencias.marcarReferenciasParaDocumentos(
+					descricao, null);
 		}
 	}
 

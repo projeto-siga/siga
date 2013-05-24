@@ -63,7 +63,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		root.put("root", root);
 		root.put("func", new FuncoesEL());
 		root.put("exbl", Ex.getInstance().getBL());
-
+		
 		root.putAll(attrs);
 		root.put("param", params);
 

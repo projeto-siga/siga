@@ -1,32 +1,42 @@
 package controllers;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
 
 import models.GcArquivo;
 import models.GcInformacao;
-import models.GcMarca;
 import models.GcMovimentacao;
+import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
+
+import org.joda.time.LocalDate;
+import org.mcavallo.opencloud.Cloud;
+import org.mcavallo.opencloud.Tag;
+
 import play.Play;
 import play.Play.Mode;
 import play.db.jpa.JPA;
 import play.mvc.Before;
-import play.mvc.Controller;
+import play.mvc.Catch;
 import play.mvc.Http;
+import play.mvc.Router;
 import utils.GcBL;
-import utils.GcDao;
+import utils.GcGraficoEvolucao;
+import utils.GcGraficoEvolucaoItem;
 import utils.GcInformacaoFiltro;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
@@ -49,31 +59,36 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 //  javax.persistence.Query query = manager.createQuery(...);
 //  query.setHint("org.hibernate.cacheable", true);
 
-public class Application extends Controller {
+public class Application extends SigaApplication {
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 
-	// private static final String HTTP_LOCALHOST_8080 =
-	// "http://versailles:8080";
-
-	private static GcDao dao() {
-		return GcDao.getInstance();
-	}
-
-	private static CpIdentidade idc() {
-		return (CpIdentidade) renderArgs.get("identidadeCadastrante");
-	}
-
-	private static DpPessoa titular() {
-		return (DpPessoa) renderArgs.get("titular");
-	}
-
-	private static DpLotacao lotaTitular() {
-		return (DpLotacao) renderArgs.get("lotaTitular");
+	@Before
+	public static void addDefaultsAlways() throws Exception {
+		prepararSessao();
+		// TAH: Copiar essa classe e fazer as alterações necessárias
+		// SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
 	@Before
-	static void addDefaults() throws Exception {
+	public static void addDefaults() throws Exception {
+
+		try {
+			obterCabecalhoEUsuario("#f1f4e2");
+			assertAcesso("");
+		} catch (Exception e) {
+			tratarExcecoes(e);
+		}
+
+		try {
+			assertAcesso("ADM:Administrar");
+			renderArgs.put("exibirMenuAdministrar", true);
+		} catch (Exception e) {
+			renderArgs.put("exibirMenuAdministrar", false);
+		}
+	}
+
+	static void delme_addDefaults() throws Exception {
 		ModeloDao.freeInstance();
 
 		if (request.url.contains("proxy"))
@@ -136,8 +151,6 @@ public class Application extends Controller {
 
 		int a = 0;
 
-		dao();
-
 		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
 			Date dt = GcBL.dt();
 			CpIdentidade idc = (CpIdentidade) renderArgs
@@ -145,7 +158,7 @@ public class Application extends Controller {
 			DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 
 			GcArquivo arq = new GcArquivo();
-			arq.conteudo = "teste 123";
+			arq.setConteudoTXT("teste 123");
 			arq.titulo = "teste";
 
 			GcMovimentacao mov = new GcMovimentacao();
@@ -186,6 +199,58 @@ public class Application extends Controller {
 		render(contagens);
 	}
 
+	public static void knowledge(String[] tags, String estilo, String msgvazio,
+			String urlvazio, String titulo) throws Exception {
+		Set<GcTag> set = GcBL.buscarTags(tags, true);
+		Query query = JPA.em().createNamedQuery("buscarConhecimento");
+		query.setParameter("tags", set);
+		List<Object[]> conhecimentos = query.getResultList();
+		for (Object[] o : conhecimentos) {
+			if (o[2] != null && o[2] instanceof byte[]) {
+				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
+				s = GcBL.ellipsize(s, 100);
+				o[2] = s;
+			}
+		}
+
+		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
+			GcInformacao inf = GcInformacao.findById(conhecimentos.get(0)[0]);
+			conhecimentos.get(0)[1] = inf.arq.titulo;
+			conhecimentos.get(0)[2] = inf.getConteudoHTML();
+		}
+
+		if (conhecimentos.size() == 0)
+			conhecimentos = null;
+
+		String referer = null;
+		try {
+			referer = request.headers.get("referer").value();
+		} catch (Exception e) {
+
+		}
+
+		String classificacao = "";
+		if (tags != null && tags.length > 0) {
+			for (String s : tags) {
+				if (classificacao.length() > 0)
+					classificacao += ", ";
+				classificacao += s;
+			}
+		}
+
+		// if (msgvazio != null) {
+		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
+		// "\">aqui</a>");
+		// }
+
+		if (estilo != null)
+			render("@knowledge_" + estilo, conhecimentos, classificacao,
+					msgvazio, urlvazio, titulo, referer);
+		else
+			render(conhecimentos, classificacao, msgvazio, urlvazio, titulo,
+					referer);
+	}
+
 	public static void index() {
 		listar(null);
 	}
@@ -193,7 +258,101 @@ public class Application extends Controller {
 	public static void top10() {
 		List<GcInformacao> lista = GcInformacao.all().fetch();
 
-		render(lista);
+		Query query1 = JPA.em().createNamedQuery("maisRecentes");
+		query1.setMaxResults(5);
+		List<Object[]> listaMaisRecentes = query1.getResultList();
+		if (listaMaisRecentes.size() == 0)
+			listaMaisRecentes = null;
+
+		Query query2 = JPA.em().createNamedQuery("maisVisitados");
+		query2.setMaxResults(5);
+		List<Object[]> listaMaisVisitados = query2.getResultList();
+		if (listaMaisVisitados.size() == 0)
+			listaMaisVisitados = null;
+
+		Query query3 = JPA.em().createNamedQuery("principaisAutores");
+		query3.setMaxResults(5);
+		List<Object[]> listaPrincipaisAutores = query3.getResultList();
+		if (listaPrincipaisAutores.size() == 0)
+			listaPrincipaisAutores = null;
+
+		Query query4 = JPA.em().createNamedQuery("principaisLotacoes");
+		query4.setMaxResults(5);
+		List<Object[]> listaPrincipaisLotacoes = query4.getResultList();
+		if (listaPrincipaisLotacoes.size() == 0)
+			listaPrincipaisLotacoes = null;
+
+		Cloud cloud = null;
+
+		Query query5 = JPA.em().createNamedQuery("principaisTags");
+		query5.setMaxResults(50);
+		List<Object[]> listaPrincipaisTags = query5.getResultList();
+		if (listaPrincipaisTags.size() == 0)
+			listaPrincipaisTags = null;
+		else {
+			cloud = new Cloud(); // create cloud
+			cloud.setMaxWeight(150.0); // max font size
+			cloud.setMinWeight(50.0);
+			double d = listaPrincipaisTags.size();
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) {
+				map.clear();
+				map.put("filtro.tag", t.id);
+				String link = Router.reverse("Application.listar", map).url;
+				Tag tag = new Tag(t.titulo, link, d);
+				cloud.addTag(tag);
+				d -= 1;
+			}
+		}
+
+		GcGraficoEvolucao set = new GcGraficoEvolucao();
+		Query query6 = JPA.em().createNamedQuery("evolucaoNovos");
+		List<Object[]> listaNovos = query6.getResultList();
+		for (Object[] novos : listaNovos) {
+			set.add(new GcGraficoEvolucaoItem((Integer) novos[0],
+					(Integer) novos[1], (Long) novos[2], 0, 0));
+		}
+
+		Query query7 = JPA.em().createNamedQuery("evolucaoVisitados");
+		List<Object[]> listaVisitados = query7.getResultList();
+		for (Object[] visitados : listaVisitados) {
+			set.add(new GcGraficoEvolucaoItem((Integer) visitados[0],
+					(Integer) visitados[1], 0, (Long) visitados[2], 0));
+		}
+
+		LocalDate ld = new LocalDate();
+		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
+
+		// Header
+		StringBuilder sb = new StringBuilder();
+		sb.append("['Mês','Visitas','Novos'],");
+
+		// Values
+		for (int i = -6; i <= 0; i++) {
+			LocalDate ldl = ld.plusMonths(i);
+			sb.append("['");
+			sb.append(ldl.toString("MMM/yy"));
+			sb.append("',");
+			long novos = 0;
+			long visitados = 0;
+			GcGraficoEvolucaoItem o = new GcGraficoEvolucaoItem(
+					ldl.getMonthOfYear(), ldl.getYear(), 0, 0, 0);
+			if (set.contains(o)) {
+				o = set.floor(o);
+				novos = o.novos;
+				visitados = o.visitados;
+			}
+			sb.append(visitados);
+			sb.append(",");
+			sb.append(novos);
+			sb.append(",");
+			sb.append("],");
+		}
+		String evolucao = sb.toString();
+
+		render(lista, listaMaisRecentes, listaMaisVisitados,
+				listaPrincipaisAutores, listaPrincipaisLotacoes,
+				listaPrincipaisTags, cloud, evolucao);
 	}
 
 	public static void listar(GcInformacaoFiltro filtro) {
@@ -238,19 +397,23 @@ public class Application extends Controller {
 		render(informacao);
 	}
 
-	public static void editar(long id) {
+	public static void editar(long id, String classificacao, String titulo,
+			String origem) throws IOException {
 		GcInformacao informacao = null;
 		if (id != 0)
 			informacao = GcInformacao.findById(id);
 		else
 			informacao = new GcInformacao();
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
-		String titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
-		String conteudo = (informacao.arq != null) ? informacao.arq.conteudo
-				: null;
-		String classificacao = (informacao.arq != null) ? informacao.arq.classificacao
-				: null;
-		render(informacao, tiposInformacao, titulo, conteudo, classificacao);
+		if (titulo == null)
+			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
+		String conteudo = (informacao.arq != null) ? informacao.arq
+				.getConteudoTXT() : null;
+		if (classificacao == null)
+			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
+					: null;
+		render(informacao, tiposInformacao, titulo, conteudo, classificacao,
+				origem);
 	}
 
 	public static void fechar(long id) throws Exception {
@@ -262,13 +425,21 @@ public class Application extends Controller {
 	}
 
 	public static void gravar(GcInformacao informacao, String titulo,
-			String conteudo, String classificacao) throws Exception {
+			String conteudo, String classificacao, String origem)
+			throws Exception {
 		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
 			informacao.lotacao = informacao.autor.getLotacao();
-			informacao.ou = informacao.autor.getOrgaoUsuario();
+		}
+		if (informacao.ou == null) {
+			if (informacao.autor != null)
+				informacao.ou = informacao.autor.getOrgaoUsuario();
+			else if (informacao.lotacao != null)
+				informacao.ou = informacao.lotacao.getOrgaoUsuario();
+			else if (pessoa != null)
+				informacao.ou = pessoa.getOrgaoUsuario();
 		}
 		if (informacao.tipo == null)
 			informacao.tipo = GcTipoInformacao.all().first();
@@ -280,7 +451,16 @@ public class Application extends Controller {
 				null);
 
 		GcBL.gravar(informacao, idc());
-		exibir(informacao.id);
+		if (origem != null && origem.trim().length() != 0) {
+			if (informacao.podeFinalizar()) {
+				GcBL.movimentar(informacao,
+						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
+						null, null, null, null, null, null);
+				GcBL.gravar(informacao, idc());
+			}
+			redirect(origem);
+		} else
+			exibir(informacao.id);
 	}
 
 	public static void remover(long id) throws AplicacaoException {
@@ -372,6 +552,32 @@ public class Application extends Controller {
 		exibir(id);
 	}
 
+	public static void selecionarTag(String sigla) throws Exception {
+		GcTag sel = (GcTag) new GcTag().selecionar(sigla);
+		render("@siga-play-module.selecionar", sel);
+	}
+
+	public static void buscarTag(String sigla, GcTag filtro) {
+		List<GcTag> itens = null;
+
+		Query query = JPA.em().createNamedQuery("listarTagCategorias");
+		List<Object[]> listaTagCategorias = query.getResultList();
+		if (listaTagCategorias.size() == 0)
+			listaTagCategorias = null;
+
+		try {
+			if (filtro == null)
+				filtro = new GcTag();
+			if (sigla != null && !sigla.trim().equals(""))
+				filtro.setSigla(sigla);
+			itens = (List<GcTag>) filtro.buscar();
+		} catch (Exception e) {
+			itens = new ArrayList<GcTag>();
+		}
+
+		render(itens, filtro, listaTagCategorias);
+	}
+
 	public static void proxy(String url) throws Exception {
 		URL u = new URL(url);
 		URLConnection conn = u.openConnection();
@@ -421,6 +627,32 @@ public class Application extends Controller {
 						+ "&";
 		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action"
 				+ paramString);
+	}
+
+	@Catch(value = Throwable.class, priority = 1)
+	public static void catchError(Throwable throwable) {
+		if (Play.mode.isDev())
+			return;
+		// Flash.current().clear();
+		// Flash.current().put("_cabecalho_pre",
+		// renderArgs.get("_cabecalho_pre"));
+		// Flash.current().put("_cabecalho_pos",
+		// renderArgs.get("_cabecalho_pos"));
+		// Flash.current().put("_rodape", renderArgs.get("_rodape"));
+		java.io.StringWriter sw = new java.io.StringWriter();
+		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+		throwable.printStackTrace(pw);
+		String stackTrace = sw.toString();
+		erro(throwable.getMessage(), stackTrace);
+	}
+
+	public static void erro(String message, String stackTrace) {
+		render(message, stackTrace);
+	}
+
+	protected static void assertAcesso(String path) throws Exception {
+		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
+				+ path);
 	}
 
 }

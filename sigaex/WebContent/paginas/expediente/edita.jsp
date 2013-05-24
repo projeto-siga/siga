@@ -333,7 +333,11 @@ function checkBoxMsg() {
 				<input type="hidden" name="campos" value="despachando" />
 				<ww:hidden name="despachando" value="${despachando}" />
 				<input type="hidden" name="campos" value="criandoAnexo" />
+				<input type="hidden" name="campos" value="autuando" />
+				<ww:hidden name="autuando" value="${autuando}" />
 				<ww:hidden name="criandoAnexo" value="${criandoAnexo}" />
+				<input type="hidden" name="campos" value="idMobilAutuado" />
+				<ww:hidden name="idMobilAutuado" value="${idMobilAutuado}" />
 
 				<table class="gt-form-table">
 					<tr class="header">

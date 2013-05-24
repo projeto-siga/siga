@@ -30,21 +30,24 @@
 			</form>
 		</div>
 	</div>
-</div>
-<div class="gt-content-box">
-	<table class="gt-table">
-		<tr>
-			<th>Código
-			</td>
-			<th>Descrição
-			</td>
-		</tr>
-		#{list items:itens, as:'servico'}
-		<tr>
-			<td style="padding-left: ${servico.nivel*13}px;"><a href="javascript:opener.retorna_servico${nome}('${servico.id}','${servico.sigla}','${servico.descricao}');window.close()">${servico.sigla}</a>
-			</td>
-			<td>${servico.descricao}</td>
-		</tr>
-		#{/list}
-	</table>
+
+	<br />
+	
+	<div class="gt-content-box gt-for-table">
+		<table class="gt-table">
+			<tr>
+				<th>Código
+				</td>
+				<th>Descrição
+				</td>
+			</tr>
+			#{list items:itens, as:'servico'}
+			<tr>
+				<td><a href="javascript:opener.retorna_servico${nome}('${servico.id}','${servico.sigla}','${servico.descricao}');window.close()">${servico.sigla}</a>
+				</td>
+				<td style="padding-left: ${servico.nivel*13}px;">${servico.descricao}</td>
+			</tr>
+			#{/list}
+		</table>
+	</div>
 </div>

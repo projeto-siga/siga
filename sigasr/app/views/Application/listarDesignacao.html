@@ -9,13 +9,11 @@
 				<thead>
 					<tr>
 						<th></th>
-						<th>Data</th>
-						<th>Órgão</th>
 						<th>Lotação</th>
 						<th>Pessoa</th>
 						<th>Cargo</th>
 						<th>Função</th>
-						<th>Item</th>
+						<th><i>Item &darr;</i></th>
 						<th>Ação</th>
 						<th>Atendente</th>
 						<th>Pré-atendente</th>
@@ -29,21 +27,21 @@
 					<tr
 						onclick="javascript:window.location='@{Application.editarDesignacao(design.idConfiguracao)}'"
 						style="cursor: pointer;">
-						<td>${design.hisIdIni}</td>
-						<td>${design.hisDtIniDDMMYY}</td>
 						<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
-						<td style="color: ${design.lotacao?.hisDtFim ? 'red' : 'black'}">${design.lotacao?.siglaLotacao}</td>
-						<td style="color: ${design.dpPessoa?.hisDtFim ? 'red' : 'black'}">${design.dpPessoa?.nomeAbreviado}</td>
-						<td style="color: ${design.cargo?.hisDtFim ? 'red' : 'black'}">${design.cargo?.descricao}</td>
-						<td style="color: ${design.funcaoConfianca?.hisDtFim ? 'red' : 'black'}">${design.funcaoConfianca?.descricao}</td>
-						<td style="color: ${design.itemConfiguracao?.hisDtFim ? 'red' : 'black'}">${design.itemConfiguracao?.tituloItemConfiguracao}</td>
-						<td style="color: ${design.servico?.hisDtFim ? 'red' : 'black'}">${design.servico?.tituloServico}</td>
-						<td style="color: ${design.atendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.atendente?.siglaLotacao,
-							descricao:design.atendente?.nomeLotacao /}</td>
-						<td style="color: ${design.preAtendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.preAtendente?.siglaLotacao,
-							descricao:design.preAtendente?.nomeLotacao /}</td>
-						<td style="color: ${design.posAtendente?.hisDtFim ? 'red' : 'black'}">#{selecionado sigla:design.posAtendente?.siglaLotacao,
-							descricao:design.posAtendente?.nomeLotacao /}</td>
+						<td>${design.lotacao?.lotacaoAtual?.siglaLotacao}</td>
+						<td>${design.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>
+						<td>${design.cargo?.descricao}</td>
+						<td>${design.funcaoConfianca?.descricao}</td>
+						<td>#{selecionado sigla:design.itemConfiguracao?.atual?.tituloItemConfiguracao, 
+						descricao:design.itemConfiguracao?.atual?.descricaoCompleta /}</td>
+						<td>#{selecionado sigla:design.servico?.atual?.tituloServico, 
+						descricao:design.servico?.atual?.descricaoCompleta /}</td>
+						<td>#{selecionado sigla:design.atendente?.lotacaoAtual?.siglaLotacao,
+							descricao:design.atendente?.lotacaoAtual?.nomeLotacao /}</td>
+						<td>#{selecionado sigla:design.preAtendente?.lotacaoAtual?.siglaLotacao,
+							descricao:design.preAtendente?.lotacaoAtual?.nomeLotacao /}</td>
+						<td>#{selecionado sigla:design.posAtendente?.lotacaoAtual?.siglaLotacao,
+							descricao:design.posAtendente?.lotacaoAtual?.nomeLotacao /}</td>
 						<td>${design.pesquisaSatisfacaoString}</td>
 					</tr>
 					</a> #{/list}

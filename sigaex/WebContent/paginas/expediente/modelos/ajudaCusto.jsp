@@ -13,7 +13,9 @@ REQUERIMENTO DE CONCESSÃO DE AJUDA DE CUSTO -->
 		<mod:grupo titulo="DETALHES DO REQUERIMENTO:">
 			<%--<mod:texto titulo="Lotação Originaria" largura="60" var="sedeOriginaria"/>
 			<mod:grupo></mod:grupo>--%>
-			<mod:texto titulo="Lotação Destinada" largura="60" var="sedeDestino"/>
+			<mod:texto titulo="Lotação de Origem" largura="60" var="sedeOrigem"/>
+            <mod:grupo></mod:grupo>
+			<mod:texto titulo="Lotação de Destino" largura="60" var="sedeDestino"/>
 			<mod:grupo></mod:grupo>
 			<mod:texto titulo="Município Destinado de Residência" var="localidadeDestinada"/>
 			<mod:texto titulo="Estado" var="estadoLocal" largura="2" maxcaracteres="2"/>			
@@ -38,7 +40,7 @@ REQUERIMENTO DE CONCESSÃO DE AJUDA DE CUSTO -->
 	<mod:documento>
 	<mod:valor var="texto_requerimento">						
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, removido de Ofício e no interesse da Administração, do(a) ${doc.subscritor.lotacao.nomeLotacao} para o(a) ${sedeDestino}, com efeitos a contar de ${dataVigencia}, vem requerer a Vossa Excelência a concessão 
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, removido no interesse da Administração, do(a) ${sedeOrigem} para o(a) ${sedeDestino}, com efeitos a contar de ${dataVigencia}, vem requerer a Vossa Excelência a concessão 
 		da <b> AJUDA DE CUSTO </b> prevista no artigo 53 da 
 		Lei n.º 8.112/90, com a redação dada pela Lei n.º 9.527/97
 		, tendo em vista que efetivou, juntamente com os dependentes abaixo relacionados, 

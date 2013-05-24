@@ -78,8 +78,8 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Tarefas por SEC");
-		this.addColuna("Número da SEC", 20, RelatorioRapido.ESQUERDA, true);
+		this.setTitle("Tarefas por DOC");
+		this.addColuna("Número do DOC", 20, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Tarefa", 55, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Início", 25, RelatorioRapido.CENTRO, false);
 		this.addColuna("Fim", 25, RelatorioRapido.CENTRO, false);
@@ -143,7 +143,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 
 		String sql = "select pd.name_ pd_name,stringvalue_,p.start_ p_start,p.end_ p_end,t.name_ t_name,t.create_ t_create,t.end_ t_end "
 				+ "from (select id_, stringvalue_, processinstance_ from sigawf.jbpm_variableinstance "
-				+ "where stringvalue_ like 'RJ-SEC%' and name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
+				+ "where stringvalue_ like '%RJ-SEC%' or stringvalue_ like '%RJ-EOF%' and name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
 				+ "from sigawf.jbpm_processinstance where end_ is not null )p, "
 				+ "(select name_,procinst_,create_, end_ from sigawf.jbpm_taskinstance)t, "
 				+ "(select name_ , id_ from sigawf.jbpm_processdefinition)pd "

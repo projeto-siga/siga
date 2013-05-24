@@ -25,6 +25,8 @@ package br.gov.jfrj.siga.cp;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -33,6 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -138,6 +141,30 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Column(name = "DT_FIM_VIG_CONFIGURACAO")
 	@Temporal(TemporalType.DATE)
 	private Date dtFimVigConfiguracao;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+	private CpConfiguracao configuracaoInicial;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "configuracaoInicial")
+	@Desconsiderar
+	private Set<CpConfiguracao> configuracoesPosteriores = new HashSet<CpConfiguracao>(0);
+
+	public Set<CpConfiguracao> getConfiguracoesPosteriores() {
+		return configuracoesPosteriores;
+	}
+
+	public void setConfiguracoesPosteriores(Set<CpConfiguracao> configuracoesPosteriores) {
+		this.configuracoesPosteriores = configuracoesPosteriores;
+	}
+
+	public CpConfiguracao getConfiguracaoInicial() {
+		return configuracaoInicial;
+	}
+
+	public void setConfiguracaoInicial(CpConfiguracao configuracaoInicial) {
+		this.configuracaoInicial = configuracaoInicial;
+	}
 
 	public CpIdentidade getCpIdentidade() {
 		return cpIdentidade;

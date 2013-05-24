@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <siga:pagina titulo="Login" desabilitarbusca="sim"
@@ -21,9 +22,28 @@
 	<c:set var="pagina" scope="session">${pageContext.request.requestURL}</c:set>
 
 	<div class="gt-bd gt-cols clearfix">
+
 		<!-- main content -->
 		<div class="gt-content">
-			<c:import url="comentario.jsp" />
+			<ww:if
+				test="${f:podeUtilizarServicoPorConfiguracao(null,null,'SIGA;GC')}">
+
+				<c:url var="url" value="/../sigagc/knowledge">
+					<c:param name="tags">^pagina-de-login</c:param>
+					<c:param name="estilo">inplace</c:param>
+					<c:param name="msgvazio">Ainda não existem informações para serem exibidas aqui. Por favor, clique <a
+							href="$1">aqui</a> para contribuir.</c:param>
+					<c:param name="titulo">Página de Login</c:param>
+					<c:param name="ts">${currentTimeMillis}</c:param>
+				</c:url>
+				<script type="text/javascript">
+					SetInnerHTMLFromAjaxResponse("${url}", document
+							.getElementById('gc-ancora'));
+				</script>
+			</ww:if>
+			<ww:else>
+				<c:import url="comentario.jsp" />
+			</ww:else>
 		</div>
 		<!-- / main content -->
 

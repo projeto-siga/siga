@@ -4,27 +4,47 @@
 	<include file="webwork-default.xml" />
 
 	<package name="default" extends="webwork-default" namespace="/">
-		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
+		<interceptors>
+			<interceptor name="siga-exception"
+				class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
+
+			<interceptor-stack name="defaultStackWithExceptionMapping">
+				<interceptor-ref name="fileUpload"/>
+				<interceptor-ref name="siga-exception" />
+				<interceptor-ref name="servlet-config" />
+				<interceptor-ref name="prepare" />
+				<interceptor-ref name="static-params" />
+				<interceptor-ref name="params" />
+				<interceptor-ref name="conversionError" />
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="defaultStackWithExceptionMapping" />
 
 		<default-action-ref name="principal" />
 
+		<!-- <default-action-ref name="erroGeral" /> -->
 		<global-results>
-			<result name="erroGeral" type="dispatcher">/sigalibs/erroGeral.jsp</result>
+			<result name="erroGeral" type="dispatcher">
+				/sigalibs/erroGeral.jsp
+			</result>
 		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception"
+				result="erroGeral" />
+		</global-exception-mappings>
 
 		<action name="principal" class="br.gov.jfrj.webwork.action.PrincipalAction">
 			<result>/paginas/principal.jsp</result>
 		</action>
-		
+
 		<action name="pagina_vazia" class="br.gov.jfrj.webwork.action.PlayAction">
 			<result>/paginas/play_pagina_vazia.jsp</result>
 		</action>
-		
-		<action name="ajax_proxy" class="br.gov.jfrj.webwork.action.PlayAction" method="aAjaxProxy">
-			<result>/paginas/play_proxy.jsp</result>
-		</action>
-		
-		<action name="usuario_autenticado" class="br.gov.jfrj.webwork.action.PlayAction" method="aUsuarioAutenticado">
+
+		<action name="usuario_autenticado" class="br.gov.jfrj.webwork.action.PlayAction"
+			method="aUsuarioAutenticado">
 			<result>/paginas/play_usuario_autenticado.jsp</result>
 		</action>
 
@@ -37,7 +57,7 @@
 		<action name="logoff" class="br.gov.jfrj.siga.libs.webwork.LogoffAction">
 			<result name="success" type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 			</result>
 			<result name="CLIENT_CERT_AUTH_LOGOFF">/sigalibs/client_cert_auth_logoff.jsp</result>
 
@@ -45,7 +65,8 @@
 
 		<action name="redirect" class="br.gov.jfrj.siga.libs.webwork.LogoffAction"
 			method="redirect">
-			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.localPort}${uri}</result>
+			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.localPort}${uri}
+			</result>
 		</action>
 
 		<action name="trocar_senha" class="br.gov.jfrj.webwork.action.UsuarioAction"
@@ -57,7 +78,7 @@
 			method="aTrocarSenhaGravar">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 			<!--<result type="redirect-action">/principal?mensagem=${mensagem}</result> -->
@@ -75,7 +96,7 @@
 			method="aEsqueciSenhaGravar">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Esqueci Minha Senha 
@@ -92,7 +113,7 @@
 			method="aIncluirUsuarioGravar">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Novo Usuário </result> -->
@@ -105,9 +126,8 @@
 		</action>
 
 	</package>
-	
+
 	<package name="generico" extends="default" namespace="/generico">
-		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 		<default-action-ref name="selecionar" />
 		<action name="selecionar" class="br.gov.jfrj.webwork.action.PrincipalAction"
 			method="aSelecionar">
@@ -117,17 +137,13 @@
 	</package>
 
 	<package name="substituicao" extends="default" namespace="/substituicao">
-		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 		<default-action-ref name="substituir" />
-
-
-
 
 		<action name="substituir_gravar" method="aSubstituirGravar"
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>
@@ -139,7 +155,7 @@
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>
@@ -167,7 +183,6 @@
 	</package>
 
 	<package name="gi/identidade" extends="default" namespace="/gi/identidade">
-		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 		<default-action-ref name="listar" />
 		<action name="listar" method="aListar"
 			class="br.gov.jfrj.webwork.action.IdentidadeAction">
@@ -206,7 +221,6 @@
 	</package>
 
 	<package name="gi/acesso" extends="default" namespace="/gi/acesso">
-		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 		<default-action-ref name="listar" />
 		<action name="listar" method="aListar"
 			class="br.gov.jfrj.webwork.action.AcessoAction">
@@ -219,7 +233,6 @@
 	</package>
 
 	<package name="modelo" extends="default" namespace="/modelo">
-		<default-interceptor-ref name="defaultStack"></default-interceptor-ref>
 		<default-action-ref name="listar" />
 		<action name="listar" method="aListar"
 			class="br.gov.jfrj.webwork.action.CpModeloAction">
@@ -234,7 +247,6 @@
 	</package>
 
 	<package name="pessoa" extends="default" namespace="/pessoa">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/pessoa_busca.jsp</result>
@@ -247,7 +259,6 @@
 	</package>
 
 	<package name="lotacao" extends="default" namespace="/lotacao">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpLotacaoAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/lotacao_busca.jsp</result>
@@ -260,7 +271,6 @@
 	</package>
 
 	<package name="orgao" extends="default" namespace="/orgao">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.CpOrgaoAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/orgao_busca.jsp</result>
@@ -273,7 +283,6 @@
 	</package>
 
 	<package name="funcao" extends="default" namespace="/funcao">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar"
 			class="br.gov.jfrj.siga.libs.webwork.DpFuncaoConfiancaAction" method="aBuscar">
 			<result name="busca">/sigalibs/funcao_busca.jsp</result>
@@ -286,7 +295,6 @@
 	</package>
 
 	<package name="cargo" extends="default" namespace="/cargo">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpCargoAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/cargo_busca.jsp</result>
@@ -299,7 +307,6 @@
 	</package>
 
 	<package name="gi/perfil" extends="default" namespace="/gi/perfil">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar" class="br.gov.jfrj.webwork.action.CpPerfilAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/grupo_busca.jsp?idCpTipoGrupo=2
@@ -334,7 +341,6 @@
 	</package>
 
 	<package name="gi/email" extends="default" namespace="/gi/email">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aBuscar">
 			<result name="busca">/sigalibs/grupo_busca.jsp?idCpTipoGrupo=2
@@ -370,7 +376,6 @@
 	</package>
 
 	<package name="gi/perfiljee" extends="default" namespace="/gi/perfiljee">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="buscar" class="br.gov.jfrj.webwork.action.CpPerfilJEEAction"
 			method="aBuscar">
 			<result name="busca">/paginas/grupo/grupo_busca.jsp
@@ -404,7 +409,6 @@
 		</action>
 	</package>
 	<package name="gi/servico" extends="default" namespace="/gi/servico">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="editar" class="br.gov.jfrj.webwork.action.SelfConfigAction"
 			method="aEditar">
 			<result name="edita">/paginas/servico/edita.jsp</result>
@@ -429,7 +433,6 @@
 
 	</package>
 	<package name="gi/relatorio" extends="default" namespace="/gi/relatorio">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="selecionar_acesso_servico" class="br.gov.jfrj.webwork.action.GiRelatorioAction"
 			method="aSelecionarRelAcessoServico">
 			<result name="success">/paginas/relatorio/acesso_servico_selecionar.jsp
@@ -486,10 +489,14 @@
 	</package>
 
 	<package name="testes" extends="default" namespace="/testes">
-		<default-interceptor-ref name="defaultStack" />
 		<action name="testes" class="br.gov.jfrj.webwork.action.PrincipalAction"
 			method="test">
 			<result>/paginas/testes.jsp</result>
+		</action>
+		<action name="selecionar" class="br.gov.jfrj.webwork.action.PrincipalAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
 	</package>
 </xwork>

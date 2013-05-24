@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,12 +33,12 @@ import play.db.jpa.Model;
 import util.SigaPlayCalendar;
 
 @Entity
-@Table(name = "SR_ANDAMENTO")
+@Table(name = "SR_ANDAMENTO", schema="SIGASR")
 public class SrAndamento extends GenericModel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ANDAMENTO_SEQ", name = "SR_ANDAMENTO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SR_ANDAMENTO_SEQ")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_ANDAMENTO_SEQ", name = "srAndamentoSeq")
+	@GeneratedValue(generator = "srAndamentoSeq")
 	@Column(name = "ID_ANDAMENTO")
 	public long idAndamento;
 
@@ -86,6 +87,9 @@ public class SrAndamento extends GenericModel {
 	@Column(name = "DT_CANCELAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtCancelamento;
+	
+	@Column(name = "NUM_SEQUENCIA")
+	public Long numSequencia;
 
 	public SrAndamento() throws Exception {
 		this(null);
@@ -104,7 +108,6 @@ public class SrAndamento extends GenericModel {
 	public SrAndamento(SrEstado estado, String descricao, DpPessoa atendente,
 			DpLotacao lotaAtendente, DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, SrSolicitacao sol) {
-
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
 		this.atendente = atendente;
@@ -120,14 +123,39 @@ public class SrAndamento extends GenericModel {
 	}
 
 	public boolean isPrimeiroAndamento() {
-		List<SrAndamento> andamentos = solicitacao.getAndamentoSet();
-		return (andamentos.indexOf(this) == andamentos.size() - 1);
+		SrAndamento primeiro = null;
+		for (SrAndamento andamento : solicitacao.getAndamentoSet())
+			primeiro = andamento;
+		return (primeiro == null || primeiro.equals(this));
 	}
+	
+	public Long getProximoAndamento() {
+		Long num = find(
+				"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
+						+ solicitacao.getId()).first();
+		return (num != null) ? num : 1;
+}
+	
+	public Long getAndamentoAtual() {
+		Long num = find(
+				"select max(numSequencia) from SrAndamento where solicitacao.idSolicitacao = "
+						+ solicitacao.getId()).first();
+		return (num != null) ? num : 1;
+}
 
 	public String getDtRegString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtReg);
 		return cal.getTempoTranscorridoString(false);
+	}
+	
+	public String getDtRegAndDDMMYYHHMM() {
+		if (dtReg != null) {
+			final SimpleDateFormat df = new SimpleDateFormat(
+					"dd/MM/yy HH:mm");
+			return df.format(dtReg);
+		}
+		return "";
 	}
 
 	public String getAtendenteString() {
@@ -159,6 +187,10 @@ public class SrAndamento extends GenericModel {
 
 	public String getSituacaoString() {
 		return estado.descrEstado + " (" + lotaAtendente.getSigla() + ")";
+	}
+	
+	public String getSituacaoStringSemLota() {
+		return estado.descrEstado;
 	}
 
 	// Necessário porque não há binder para arquivo
@@ -272,6 +304,12 @@ public class SrAndamento extends GenericModel {
 		}
 		if (estado == null)
 			estado = anterior.estado;
+		
+		if (isCancelado()){
+			numSequencia = getAndamentoAtual();
+		}
+		else
+			numSequencia = getProximoAndamento();
 
 	}
 

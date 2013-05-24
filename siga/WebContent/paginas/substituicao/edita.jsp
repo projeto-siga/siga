@@ -65,8 +65,7 @@
 					document.getElementById("atencao").value = atencao;
 					document.getElementById("dtFimSubst").focus;
 				}
-			</script>
-
+			</script>   
 			<h2 class="gt-table-head">Cadastrar substituição</h2>
 			<div class="gt-content-box gt-for-table">
 				<form action="editar_gravar.action" onsubmit="verificaData()">
@@ -95,7 +94,7 @@
 								</c:choose> <span id="spanTitular" style="${titularStyle}"> <siga:selecao
 										propriedade="titular" tema="simple" /> </span> <span
 								id="spanLotaTitular" style="${lotaTitularStyle}"> <siga:selecao
-										propriedade="lotaTitular" tema="simple" /> </span>
+										propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> </span>
 							</td>
 						</tr>
 

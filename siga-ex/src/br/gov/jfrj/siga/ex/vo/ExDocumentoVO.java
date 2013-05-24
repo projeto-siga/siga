@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -39,6 +40,7 @@ public class ExDocumentoVO extends ExVO {
 	String dtDocDDMMYY;
 	String subscritorString;
 	String classificacaoDescricaoCompleta;
+	List<String> tags;
 	String destinatarioString;
 	String descrDocumento;
 	String nmNivelAcesso;
@@ -90,7 +92,8 @@ public class ExDocumentoVO extends ExVO {
 		if (doc.getExModelo() != null)
 			this.nmArqMod = doc.getExModelo().getNmArqMod();
 
-		this.conteudoBlobHtmlString = doc.getConteudoBlobHtmlString();
+		this.conteudoBlobHtmlString = doc
+				.getConteudoBlobHtmlStringComReferencias();
 
 		if (doc.isEletronico()) {
 			this.classe = "header_eletronico";
@@ -104,8 +107,8 @@ public class ExDocumentoVO extends ExVO {
 
 		this.forma = doc.getExFormaDocumento() != null ? doc
 				.getExFormaDocumento().getDescricao() : "";
-		this.modelo = doc.getExModelo() != null ? doc.getExModelo()
-				.getNmMod() : "";
+		this.modelo = doc.getExModelo() != null ? doc.getExModelo().getNmMod()
+				: "";
 
 		if (mob != null) {
 			SortedSet<ExMobil> mobsDoc;
@@ -124,6 +127,35 @@ public class ExDocumentoVO extends ExVO {
 		}
 
 		addDadosComplementares();
+
+		tags = new ArrayList<String>();
+		if (doc.getExClassificacao() != null) {
+			String classificacao = doc.getExClassificacao().getDescricao();
+			if (classificacao != null && classificacao.length() != 0) {
+				String a[] = classificacao.split(": ");
+				for (String s : a) {
+					String ss = "@" + Texto.slugify(s, true, true);
+					if (!tags.contains(ss)) {
+						tags.add(ss);
+					}
+				}
+			}
+		}
+		if (doc.getExModelo() != null) {
+			String ss = "@"
+					+ Texto.slugify(doc.getExModelo().getNmMod(), true, true);
+			if (!tags.contains(ss)) {
+				tags.add(ss);
+			}
+		}
+		// if (doc.getExClassificacao() != null)
+		// tags.add("@doc-classe:" + doc.getExClassificacao().getSigla());
+		// if (doc.getExFormaDocumento() != null)
+		// tags.add("@doc-tipo:" +
+		// Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
+		// if (doc.getExModelo() != null)
+		// tags.add("@doc-modelo:" + Texto.slugify(doc.getExModelo().getNmMod(),
+		// true, true));
 	}
 
 	public ExDocumentoVO(ExDocumento doc) throws Exception {
@@ -283,6 +315,18 @@ public class ExDocumentoVO extends ExVO {
 			if (mob.temAnexos())
 				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov",
 						"assinar_anexos_geral", true);
+
+			vo.addAcao(
+					"link_add",
+					"Criar Anexo",
+					"/expediente/doc",
+					"editar",
+					Ex.getInstance()
+							.getComp()
+							.podeAnexarArquivoAlternativo(titular, lotaTitular,
+									mob), null,
+					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
+					null);
 		}
 
 		vo.addAcao("shield", "Redefinir Nível de Acesso", "/expediente/mov",
@@ -357,17 +401,6 @@ public class ExDocumentoVO extends ExVO {
 
 		// <ww:param name="idFormaDoc">60</ww:param>
 		vo.addAcao(
-				"link_add",
-				"Criar Anexo",
-				"/expediente/doc",
-				"editar",
-				Ex.getInstance()
-						.getComp()
-						.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
-				null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
-				null, null);
-
-		vo.addAcao(
 				"arrow_undo",
 				"Desfazer Cancelamento",
 				"/expediente/doc",
@@ -378,11 +411,14 @@ public class ExDocumentoVO extends ExVO {
 								lotaTitular, mob),
 				"Esta operação anulará o cancelamento do documento e tornará o documento novamente editável. Prosseguir?",
 				null, null, null);
-		
-		vo.addAcao("delete","Cancelar Documento",
+
+		vo.addAcao(
+				"delete",
+				"Cancelar Documento",
 				"/expediente/doc",
 				"tornarDocumentoSemEfeito",
-				Ex.getInstance().getComp()
+				Ex.getInstance()
+						.getComp()
 						.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
 				"Esta operação tornará esse documento sem efeito. Prosseguir?",
 				null, null, null);
@@ -497,5 +533,13 @@ public class ExDocumentoVO extends ExVO {
 
 	public void setModelo(String modelo) {
 		this.modelo = modelo;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 }

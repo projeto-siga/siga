@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Query;
 
@@ -22,95 +24,32 @@ import models.SrSolicitacao;
 import models.SrTendencia;
 import models.SrTipoAtributo;
 import models.SrUrgencia;
-
-import org.hibernate.Session;
-
-import play.Logger;
-import play.Play;
-import play.data.binding.As;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
-import play.mvc.Controller;
-import play.mvc.Http;
 import util.SrSolicitacaoFiltro;
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 
-public class Application extends Controller {
+public class Application extends SigaApplication {
 
 	@Before
-	static void addDefaultsSempre() throws Exception {
-		Session playSession = (Session) JPA.em().getDelegate();
-		CpDao.freeInstance();
-		CpDao.getInstance(playSession);
-		SrConfiguracaoBL.get().limparCache(null);
+	public static void addDefaultsAlways() throws Exception {
+		prepararSessao();
+		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
 	@Before(unless = { "exibirAtendente", "exibirAtributos",
 			"exibirLocalERamal", "exibirItemConfiguracao", "exibirServico" })
-	static void addDefaults() throws Exception {
+	public static void addDefaults() throws Exception {
+
 		try {
-
-			renderArgs.put("base", getBaseSiga());
-			renderArgs.put("baseSr", getBaseSigaSr());
-
-			// Obter cabeçalho e rodapé do Siga
-			HashMap<String, String> atributos = new HashMap<String, String>();
-			for (Http.Header h : request.headers.values())
-				if (!h.name.equals("content-type"))
-					atributos.put(h.name, h.value());
-
-			String popup = params.get("popup");
-			if (popup == null
-					|| (!popup.equals("true") && !popup.equals("false")))
-				popup = "false";
-			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
-					+ "/siga/pagina_vazia.action?popup=" + popup, atributos);
-			String[] pageText = paginaVazia.split("<!-- insert body -->");
-			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
-			renderArgs.put("_cabecalho", cabecalho);
-			renderArgs.put("_rodape", pageText[1]);
-
-			// Obter usuário logado
-			String[] IDs = ConexaoHTTP.get(
-					getBaseSiga() + "/siga/usuario_autenticado.action",
-					atributos).split(";");
-
-			renderArgs.put("cadastrante",
-					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
-
-			if (IDs[1] != null && !IDs[1].equals(""))
-				renderArgs.put("lotaCadastrante",
-						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
-
-			if (IDs[2] != null && !IDs[2].equals(""))
-				renderArgs.put("titular",
-						JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
-
-			if (IDs[3] != null && !IDs[3].equals(""))
-				renderArgs.put("lotaTitular",
-						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
-
-		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Edson: Quando as informações não puderam ser obtidas do Siga,
-			// manda para a página de login
-			redirect(getBaseSiga() + "/siga");
-		}
-
-		// Edson: Este bloco não deveria ser necessário, mas o Play,
-		// pelo visto, não joga automaticamente para o
-		// método @Catch as exceções geradas no @Before
-		try {
+			obterCabecalhoEUsuario("rgb(235, 235, 232)");
 			assertAcesso("");
 		} catch (Exception e) {
-			catchExceptions(e);
+			tratarExcecoes(e);
 		}
 
 		try {
@@ -119,45 +58,15 @@ public class Application extends Controller {
 		} catch (Exception e) {
 			renderArgs.put("exibirMenuAdministrar", false);
 		}
-
 	}
 
-	@Catch
-	public static void catchExceptions(Exception e) {
-		// MailUtils.sendErrorMail(e);
-		if (getCadastrante() != null)
-			Logger.error("Erro Siga-SR; Pessoa: " + getCadastrante().getSigla()
-					+ "; Lotação: " + getLotaTitular().getSigla(), e);
-		e.printStackTrace();
-		error(e.getMessage());
+	protected static void assertAcesso(String path) throws Exception {
+		SigaApplication.assertAcesso("SR:Módulo de Serviços;" + path);
 	}
 
-	public static String getBaseSiga() {
-		return Play.configuration.getProperty("siga.base.url");
-	}
-
-	public static String getBaseSigaSr() {
-		return "http://" + request.domain + ":" + request.port;
-	}
-
-	static DpPessoa getCadastrante() {
-		return (DpPessoa) renderArgs.get("cadastrante");
-	}
-
-	static DpLotacao getLotaTitular() {
-		return (DpLotacao) renderArgs.get("lotaTitular");
-	}
-
-	private static void assertAcesso(String pathServico) throws Exception {
-		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;SR:Módulo de Serviços;"
-				+ pathServico;
-		if (!Cp.getInstance()
-				.getConf()
-				.podeUtilizarServicoPorConfiguracao(getCadastrante(),
-						getLotaTitular(), servico))
-			throw new Exception("Acesso negado. Serviço: '" + servico
-					+ "' usuário: " + getCadastrante().getSigla()
-					+ " lotação: " + getLotaTitular().getSiglaCompleta());
+	@Catch()
+	public static void tratarExcecoes(Exception e) {
+		SigaApplication.tratarExcecoes(e);
 	}
 
 	public static void index() throws Exception {
@@ -166,8 +75,8 @@ public class Application extends Controller {
 
 	public static void gadget() {
 		Query query = JPA.em().createNamedQuery("contarSrMarcas");
-		query.setParameter("idPessoaIni", getCadastrante().getIdInicial());
-		query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
+		query.setParameter("idPessoaIni", titular().getIdInicial());
+		query.setParameter("idLotacaoIni", lotaTitular().getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
 	}
@@ -176,7 +85,7 @@ public class Application extends Controller {
 		SrSolicitacao solicitacao;
 		if (id == null) {
 			solicitacao = new SrSolicitacao();
-			solicitacao.solicitante = getCadastrante();
+			solicitacao.solicitante = titular();
 		} else
 			solicitacao = SrSolicitacao.findById(id);
 
@@ -185,8 +94,14 @@ public class Application extends Controller {
 
 	public static void exibirLocalERamal(SrSolicitacao solicitacao)
 			throws Exception {
-		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
-				.getResultList();
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		if (solicitacao.solicitante != null)
+			locais = JPA
+					.em()
+					.createQuery(
+							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+									+ solicitacao.solicitante.getOrgaoUsuario()
+											.getIdOrgaoUsu()).getResultList();
 		render(solicitacao.deduzirLocalERamal(), locais);
 	}
 
@@ -208,8 +123,9 @@ public class Application extends Controller {
 
 	public static void exibirServico(SrSolicitacao solicitacao)
 			throws Exception {
-		List<SrServico> servicos = SrServico.listarPorPessoaEItem(
-				solicitacao.solicitante, solicitacao.itemConfiguracao);
+		List<SrServico> servicos = SrServico
+				.listarPorPessoaEItemEmOrdemAlfabetica(solicitacao.solicitante,
+						solicitacao.itemConfiguracao);
 		if (solicitacao.servico == null
 				|| !servicos.contains(solicitacao.servico)) {
 			if (servicos.size() > 0)
@@ -230,19 +146,22 @@ public class Application extends Controller {
 		SrGravidade[] gravidades = SrGravidade.values();
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
-		boolean abrirFechando = solicitacao.podeAbrirJaFechando(
-				getLotaTitular(), getCadastrante());
-		boolean priorizar = solicitacao.podePriorizar(getLotaTitular(),
-				getCadastrante());
+		boolean abrirFechando = solicitacao.podeAbrirJaFechando(lotaTitular(),
+				cadastrante());
+		boolean priorizar = solicitacao.podePriorizar(lotaTitular(),
+				cadastrante());
 
-		List<SrServico> servicos = SrServico.listarPorPessoaEItem(
-				solicitacao.solicitante, solicitacao.itemConfiguracao);
-		if (solicitacao.servico == null
-				|| !servicos.contains(solicitacao.servico)) {
-			if (servicos.size() > 0)
-				solicitacao.servico = servicos.get(0);
-			else
-				solicitacao.servico = null;
+		List<SrServico> servicos = new ArrayList<SrServico>();
+		if (solicitacao.itemConfiguracao != null) {
+			servicos = SrServico.listarPorPessoaEItemEmOrdemAlfabetica(
+					solicitacao.solicitante, solicitacao.itemConfiguracao);
+			if (solicitacao.servico == null
+					|| !servicos.contains(solicitacao.servico)) {
+				if (servicos.size() > 0)
+					solicitacao.servico = servicos.get(0);
+				else
+					solicitacao.servico = null;
+			}
 		}
 
 		render("@editar", solicitacao, formasAcompanhamento, gravidades,
@@ -285,9 +204,9 @@ public class Application extends Controller {
 
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
 		validarFormEditar(solicitacao);
-		solicitacao.salvar(getCadastrante(), getLotaTitular());
+		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
-		exibir(id);
+		exibir(id, false);
 	}
 
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
@@ -312,29 +231,32 @@ public class Application extends Controller {
 				marcadores, filtro);
 	}
 
-	public static void exibir(Long id) throws Exception {
+	public static void exibir(Long id, boolean considerarCancelados) throws Exception {
 		// antes: 8 queries
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id); // 3 queries
 		SrAndamento andamento = new SrAndamento(solicitacao); // 1query
 		andamento.deduzirProxAtendente(); // 318 queries
-
-		boolean criarFilha = solicitacao.podeCriarFilha(getLotaTitular(),
-				getCadastrante());
+		// = true;
+		
+		
+		boolean criarFilha = solicitacao.podeCriarFilha(lotaTitular(),
+				cadastrante());
 		boolean desfazerAndamento = solicitacao.podeDesfazerAndamento(
-				getLotaTitular(), getCadastrante());
-		boolean editar = solicitacao.podeEditar(getLotaTitular(),
-				getCadastrante());
-		boolean movimentarPlenamente = solicitacao.estaCom(getLotaTitular(),
-				getCadastrante());
-
+				lotaTitular(), cadastrante());
+		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
+		boolean movimentarPlenamente = solicitacao.estaCom(lotaTitular(),
+				cadastrante());
+		Set<SrAndamento> andamentos = (Set<SrAndamento>) solicitacao.getAndamentoSet(considerarCancelados);
+		
 		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
 
 		render(solicitacao, editar, desfazerAndamento, movimentarPlenamente,
-				andamento, criarFilha, estados);
+				andamento, criarFilha, estados, considerarCancelados, andamentos);
 	}
 
 	public static void selecionar(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
+		sel.cadastrante = cadastrante();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
 	}
@@ -350,16 +272,16 @@ public class Application extends Controller {
 	}
 
 	public static void andamento(SrAndamento andamento) throws Exception {
-		andamento.solicitacao.darAndamento(andamento, getCadastrante(),
-				getLotaTitular());
+		andamento.solicitacao.darAndamento(andamento, cadastrante(),
+				lotaTitular());
 		Long id = andamento.solicitacao.idSolicitacao;
-		exibir(id);
+		exibir(id, false);
 	}
 
 	public static void desfazerUltimoAndamento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.desfazerUltimoAndamento(getCadastrante(), getLotaTitular());
-		exibir(id);
+		sol.desfazerUltimoAndamento(cadastrante(), lotaTitular());
+		exibir(id, false);
 	}
 
 	public static void criarFilha(Long id) throws Exception {
@@ -369,11 +291,13 @@ public class Application extends Controller {
 	}
 
 	public static void listarDesignacao() throws Exception {
+		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes();
 		render(designacoes);
 	}
 
-	public static void editarDesignacao(Long id) {
+	public static void editarDesignacao(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		List<CpComplexo> orgaos = JPA.em().createQuery("from CpOrgaoUsuario")
 				.getResultList();
 		SrConfiguracao designacao = new SrConfiguracao();
@@ -384,48 +308,57 @@ public class Application extends Controller {
 
 	public static void gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
+		assertAcesso("ADM:Administrar");
 		designacao.salvarComoDesignacao();
 		listarDesignacao();
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
 		listarDesignacao();
 	}
 
-	public static void listarAssociacao() {
-		List<SrConfiguracao> associacoes = SrConfiguracao
+	public static void listarAssociacao() throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<List<SrConfiguracao>> listasAssociacoes = SrConfiguracao
 				.listarAssociacoesTipoAtributo();
-		render(associacoes);
+		render(listasAssociacoes);
 	}
 
-	public static void editarAssociacao(Long id) {
+	public static void editarAssociacao(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = new SrConfiguracao();
 		if (id != null)
-			associacao = JPA.em().find(SrConfiguracao.class, id);
+			associacao = (SrConfiguracao) JPA.em()
+					.find(SrConfiguracao.class, id).getConfiguracaoAtual();
 		List<SrTipoAtributo> tiposAtributo = SrTipoAtributo.listar();
 		render(associacao, tiposAtributo);
 	}
 
 	public static void gravarAssociacao(SrConfiguracao associacao)
 			throws Exception {
+		assertAcesso("ADM:Administrar");
 		associacao.salvarComoAssociacaoTipoAtributo();
 		listarAssociacao();
 	}
 
 	public static void desativarAssociacao(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
 		associacao.finalizar();
 		listarAssociacao();
 	}
 
-	public static void listarItem() {
+	public static void listarItem() throws Exception {
+		assertAcesso("ADM:Administrar");
 		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar();
 		render(itens);
 	}
 
-	public static void editarItem(Long id) {
+	public static void editarItem(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = new SrItemConfiguracao();
 		if (id != null)
 			item = SrItemConfiguracao.findById(id);
@@ -433,11 +366,13 @@ public class Application extends Controller {
 	}
 
 	public static void gravarItem(SrItemConfiguracao item) throws Exception {
+		assertAcesso("ADM:Administrar");
 		item.salvar();
 		listarItem();
 	}
 
 	public static void desativarItem(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
 		item.finalizar();
 		listarItem();
@@ -469,12 +404,14 @@ public class Application extends Controller {
 		render(itens, filtro, nome, pessoa);
 	}
 
-	public static void listarTipoAtributo() {
+	public static void listarTipoAtributo() throws Exception {
+		assertAcesso("ADM:Administrar");
 		List<SrTipoAtributo> atts = SrTipoAtributo.listar();
 		render(atts);
 	}
 
-	public static void editarTipoAtributo(Long id) {
+	public static void editarTipoAtributo(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrTipoAtributo att = new SrTipoAtributo();
 		if (id != null)
 			att = SrTipoAtributo.findById(id);
@@ -482,22 +419,26 @@ public class Application extends Controller {
 	}
 
 	public static void gravarTipoAtributo(SrTipoAtributo att) throws Exception {
+		assertAcesso("ADM:Administrar");
 		att.salvar();
 		listarTipoAtributo();
 	}
 
 	public static void desativarTipoAtributo(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrTipoAtributo item = SrTipoAtributo.findById(id);
 		item.finalizar();
 		listarTipoAtributo();
 	}
 
-	public static void listarServico() {
+	public static void listarServico() throws Exception {
+		assertAcesso("ADM:Administrar");
 		List<SrServico> servicos = SrServico.listar();
 		render(servicos);
 	}
 
-	public static void editarServico(Long id) {
+	public static void editarServico(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrServico servico = new SrServico();
 		if (id != null)
 			servico = SrServico.findById(id);
@@ -505,11 +446,13 @@ public class Application extends Controller {
 	}
 
 	public static void gravarServico(SrServico servico) throws Exception {
+		assertAcesso("ADM:Administrar");
 		servico.salvar();
 		listarServico();
 	}
 
 	public static void desativarServico(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
 		SrServico servico = SrServico.findById(id);
 		servico.finalizar();
 		listarServico();
@@ -545,44 +488,16 @@ public class Application extends Controller {
 		render(itens, filtro, nome, pessoa, item);
 	}
 
-	private static String proxy(String url) throws Exception {
-		HashMap<String, String> atributos = new HashMap<String, String>();
-		for (Http.Header h : request.headers.values())
-			atributos.put(h.name, h.value());
-
-		return ConexaoHTTP.get(url, atributos);
-	}
-
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		renderHtml(proxy(getBaseSiga() + "/siga/" + tipo
-				+ "/selecionar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8")));
+		redirect("/siga/" + tipo + "/selecionar.action?" + "propriedade="
+				+ tipo + nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		String html = proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla="
-				+ URLEncoder.encode(sigla, "UTF-8"));
-		// Edson: impedir que os links internos à popup de busca vinda
-		// do Siga chame http://localhost:9000/siga/... em vez de
-		// http://localhost:9000/sigasr/siga/...
-		html = html.replace("\"/siga", "\"/sigasr/siga").replace("'/siga//", "'/sigasr/siga/");
-		renderHtml(html);
-	}
-
-	public static void buscarSigaFromPopup(String tipo) throws Exception {
-		String paramString = "?";
-		for (String s : request.params.all().keySet())
-			if (!s.equals("body"))
-				paramString += s + "="
-						+ URLEncoder.encode(request.params.get(s), "UTF-8")
-						+ "&";
-		String html = proxy(getBaseSiga() + "/siga/" + tipo + "/buscar.action"
-				+ paramString);
-		html = html.replace("\"/siga", "\"/sigasr/siga").replace("'/siga//", "'/sigasr/siga/");
-		renderHtml(html);
+		redirect("/siga/" + tipo + "/buscar.action?" + "propriedade=" + tipo
+				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 }

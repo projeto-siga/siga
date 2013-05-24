@@ -51,7 +51,7 @@ public class RelOrgao extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Totais de Expedientes/Processos");
+		this.setTitle("Relatório de Despachos e Transferências");
 		this.addColuna("Lotação", 20, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Expedientes recebidos", 20, RelatorioRapido.ESQUERDA,
 				false);
@@ -73,19 +73,19 @@ public class RelOrgao extends RelatorioTemplate {
 		List<String> d = new ArrayList<String>();
 
 		Query query = HibernateUtil
-				.getSessao()
-				.createQuery(
-						"select mov.lotaCadastrante.siglaLotacao, doc.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
-								+ "mov.exTipoMovimentacao.descrTipoMovimentacao, count(distinct doc.idDoc) "
-								+ "from ExMovimentacao mov inner join mov.exMobil mob "
-								+ "inner join mob.exDocumento doc "
-								+ "where doc.orgaoUsuario = :orgaoUsu "
-								+ "and mov.exTipoMovimentacao in (3,4,6) "
-								+ "and mov.exMovimentacaoCanceladora is null "
-								+ "and doc.exFormaDocumento in (1,2) "
-								+ "and mov.dtIniMov between :dtini and :dtfim "
-								+ "group by mov.lotaCadastrante.siglaLotacao, "
-								+ "doc.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, mov.exTipoMovimentacao.descrTipoMovimentacao");
+		.getSessao()
+		.createQuery( "select mov.lotaCadastrante.siglaLotacao, mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
+						+ "mov.exTipoMovimentacao.descrTipoMovimentacao, count(distinct mob.idMobil.exDocumento.idDoc) "
+						+ "from ExMovimentacao mov inner join mov.exMobil mob "
+						+ "where mov.lotaCadastrante.orgaoUsuario.idOrgaoUsu = :orgaoUsu "
+						+ "and mov.exTipoMovimentacao in (3,6,4) "
+						+ "and mov.exMovimentacaoCanceladora is null "
+						+ "and mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc in (1,2) "
+						+ "and mov.dtIniMov between :dtini and :dtfim " 
+						+ "group by mov.lotaCadastrante.siglaLotacao, " 
+						+ "mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, " 
+						+ "mov.exTipoMovimentacao.descrTipoMovimentacao");
+
 
 		Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
 		query.setLong("orgaoUsu", orgaoUsu);

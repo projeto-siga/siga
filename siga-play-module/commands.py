@@ -40,7 +40,13 @@ def after(**kargs):
     print "siga-play-module after"
     if command == "war":
         diminish_siga_play_module(app=app)
-
+        war_path = None
+        optlist, args = getopt.getopt(args, 'o:', ['output=', 'zip','exclude='])
+        for o, a in optlist:
+            if o in ('-o', '--output'):
+                war_path = os.path.normpath(os.path.abspath(a))
+        delete_jta(war_path);
+        move_servlet(war_path);
     if command == "new":
         pass
 
@@ -102,8 +108,20 @@ def diminish_siga_play_module(app):
 #            print "~ Deleting corporative java files from app folder ..."
 #            app_directory(src, dest, 0)
 
-    jta_jar_path = os.path.join(war_path, 'WEB-INF\lib\jta-1.1.jar');
-    print "Deleting %s" % jta_jar_path
-    if os.path.exists(jta_jar_path):
-        os.remove(jta_jar_path)
+def delete_jta(war_path):
+   jta_jar_path = os.path.join(war_path, 'WEB-INF\lib\jta-1.1.jar')
+   print "Apagando %s" % jta_jar_path
+   if os.path.exists(jta_jar_path):
+       os.remove(jta_jar_path)
 
+def move_servlet(war_path):
+   print "Movendo o arquivo LoginServlet.class para WEB-INF\classes\util..."
+   arqOrigem = os.path.join(war_path, 'WEB-INF\\application\precompiled\java\util\LoginServlet.class')
+   dirDestino = os.path.join(war_path, 'WEB-INF\classes\util')
+   arqDestino = os.path.join(dirDestino, 'LoginServlet.class')
+   if not os.path.exists(dirDestino):
+       os.mkdir(dirDestino)
+   elif os.path.exists(arqDestino):
+       os.remove(arqDestino)
+   shutil.move(arqOrigem, dirDestino)
+   print "Arquivo LoginServlet.class movido"

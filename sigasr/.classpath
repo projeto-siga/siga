@@ -80,5 +80,7 @@
 	<classpathentry kind="lib" path="C:/Desenvolvimento/play-1.2.4/framework/lib/xstream-1.3.jar"/>
 	<classpathentry kind="lib" path="C:/Desenvolvimento/play-1.2.4/framework/play-1.2.4.jar" sourcepath="C:/desenvolvimento/play-1.2.4/framework/src"/>
 	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="output" path="eclipse/classes"/>
 </classpath>

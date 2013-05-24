@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
@@ -45,6 +46,8 @@ public class PrincipalAction extends SigaActionSupport {
 		private Long id;
 
 		private String sigla;
+
+		private String matricula;
 
 		private String descricao;
 
@@ -71,6 +74,14 @@ public class PrincipalAction extends SigaActionSupport {
 		public void setSigla(String sigla) {
 			this.sigla = sigla;
 		}
+
+		public String getMatricula() {
+			return matricula;
+		}
+
+		public void setMatricula(String matricula) {
+			this.matricula = matricula;
+		}
 	}
 
 	private static final String OK = "<span style=\"color: green;\">OK</span>";
@@ -84,6 +95,8 @@ public class PrincipalAction extends SigaActionSupport {
 	private List listEstados;
 
 	private String sigla;
+
+	private String matricula;
 
 	private GenericoSelecao sel;
 
@@ -116,13 +129,23 @@ public class PrincipalAction extends SigaActionSupport {
 	}
 
 	public String aSelecionar() throws Exception {
-
 		try {
+			DpPessoa pes = getTitular();
+			DpLotacao lot = getLotaTitular();
+			String testes = "";
+			String incluirMatricula = "";
+			if (matricula != null) {
+				pes = daoPes(param("matricula"));
+				lot = pes.getLotacao();
+				testes = "/testes";
+				incluirMatricula = "&matricula=" + matricula;
+			}
 
-			String URLSigaSr = System.getProperty("siga.sr."
-					+ SigaBaseProperties.getString("ambiente") + ".url");
-			String URLSigaDoc = "http://" + getRequest().getServerName() + ":"
-					+ getRequest().getLocalPort() + "/sigaex";
+			String urlBase = "http://"
+					+ SigaBaseProperties.getString(SigaBaseProperties
+							.getString("ambiente") + ".servidor.principal")
+					+ ":8080";
+
 			String URLSelecionar = "";
 			String uRLExibir = "";
 
@@ -143,23 +166,23 @@ public class PrincipalAction extends SigaActionSupport {
 			if (copiaSigla.startsWith("SR")) {
 				if (Cp.getInstance()
 						.getConf()
-						.podeUtilizarServicoPorConfiguracao(getTitular(),
-								getLotaTitular(), "SIGA;SR"))
-					URLSelecionar = URLSigaSr + "/selecionar?sigla="
-							+ getSigla();
+						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
+					URLSelecionar = urlBase + "/sigasr" + testes
+							+ "/solicitacao/selecionar?sigla=" + getSigla()
+							+ incluirMatricula;
 			} else
-				URLSelecionar = URLSigaDoc
-						+ "/expediente/selecionar.action?sigla=" + getSigla();
+				URLSelecionar = urlBase + "/sigaex"
+						+ (testes.length() > 0 ? testes : "/expediente")
+						+ "/selecionar.action?sigla=" + getSigla()
+						+ incluirMatricula;
 
 			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
 					.split(";");
 
 			if (copiaSigla.startsWith("SR"))
-				uRLExibir = URLSigaSr + "/exibir/" + response[1];
+				uRLExibir = "/sigasr/exibir/" + response[1];
 			else
-				uRLExibir = "http://" + getRequest().getServerName() + ":"
-						+ getRequest().getLocalPort()
-						+ "/sigaex/expediente/doc/exibir.action?sigla="
+				uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];
 
 			sel.setId(Long.valueOf(response[1]));
@@ -225,6 +248,14 @@ public class PrincipalAction extends SigaActionSupport {
 			return false;
 		}
 
+	}
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
 	}
 
 }

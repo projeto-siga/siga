@@ -18,7 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.libs.util;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -293,8 +295,10 @@ public class SigaLibsEL {
 		}
 		return url.trim();
 	}
-
 	
+	public static String urlEncode(String value) throws UnsupportedEncodingException {
+	    return URLEncoder.encode(value, "UTF-8");
+	}
 
 	public static String getComplementoHead(CpOrgaoUsuario oragaoUsu) {
 		ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
@@ -308,6 +312,23 @@ public class SigaLibsEL {
 			e.printStackTrace();
 		}
 		return "";
+	}
+	
+	public static Boolean podeCadastrarQqSubstituicaoPorConfiguracao(
+			DpPessoa pessoa, DpLotacao lotacao) throws Exception {		
+			
+		return Cp
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+				pessoa,
+				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST) ||
+			  Cp
+			  	.getInstance()
+			  	.getConf()
+			  	.podePorConfiguracao(
+			  	lotacao,
+			  	CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);	
 	}
 
 }

@@ -58,7 +58,7 @@
 			and dps.dtFimRegistro = null
 			order by dps.dtIniSubst, dps.dtFimSubst
 		]]>
-	</query>
+	</query>	
 </hibernate-mapping>
 
 

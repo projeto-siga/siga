@@ -938,6 +938,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
 
 	public CpIdentidade consultaIdentidadeCadastrante(final String nmUsuario,
 			boolean fAtiva) throws AplicacaoException {

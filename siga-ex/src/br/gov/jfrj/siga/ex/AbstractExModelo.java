@@ -23,11 +23,13 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.sql.Blob;
 
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+
 /**
  * A class that represents a row in the EX_MODELO table. You can customize the
  * behavior of this class by editing the class, {@link ExModelo()}.
  */
-public abstract class AbstractExModelo implements Serializable {
+public abstract class AbstractExModelo extends HistoricoAuditavelSuporte implements Serializable {
 	/** The value of the simple conteudoBlobMod property. */
 	private Blob conteudoBlobMod;
 

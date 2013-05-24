@@ -916,19 +916,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna se o documento possui vias adicionais em relação à quantidade
-	 * estabelecida pela classificação.
-	 */
-	public boolean getViasAdicionais() {
-		for (final ExVia via : getExClassificacao().getExViaSet()) {
-			final char ch = via.getFgMaior();
-			if (ch == 'S')
-				return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Verifica se um documento já está assinado ou, sendo externo ou interno
 	 * importado, se está finalizado.
 	 */

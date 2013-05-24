@@ -248,4 +248,23 @@
  <query name="listarDocPendenteAssinatura">select doc 
 			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in 
 			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc</query>
+		
+	<query name="consultarExDocumentoClassificados">
+		<![CDATA[select doc from ExDocumento doc left join fetch doc.exClassificacao
+		where doc.exClassificacao.codificacao like :mascara
+		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario
+		and doc.dtFechamento is not null
+		]]>
+	</query>
+	
+	
+	<query name="consultarExDocumentoClassificadosPorLotacao">
+		<![CDATA[select doc from ExDocumento doc left join fetch doc.exClassificacao
+		where doc.exClassificacao.codificacao like :mascara
+			and (doc.lotaTitular.id = :idLotacao)
+			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario
+			and doc.dtFechamento is not null
+		]]>
+	</query>
+		
 </hibernate-mapping>

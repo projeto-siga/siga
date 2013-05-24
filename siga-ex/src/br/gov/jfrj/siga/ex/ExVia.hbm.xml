@@ -15,27 +15,27 @@
 
 		<property name="codVia" column="COD_VIA" type="string"
 			not-null="true" />
-		<property name="obs" column="OBS" type="string" not-null="true" />
-		<property name="fgMaior" column="FG_MAIOR" type="char" />
-		<!-- <property name="fgMaior" column="FG_MAIOR" type="string" /> -->
-
-		<property name="dtFimReg" column="DT_FIM_REG"
-			type="date" />
-		<property name="dtIniReg" column="DT_INI_REG"
-			type="date" />
-		<property name="idRegIni" column="ID_REG_INI" type="long" />
-
+		<property name="obs" column="OBS" type="string" />
+		
+		<!-- Campos padronizados para armazenar dados históricos -->
+		<property name="hisIdIni" column="HIS_ID_INI" type="java.lang.Long" />
+		<property name="hisDtIni" column="HIS_DT_INI" type="java.util.Date" />
+		<many-to-one name="hisIdcIni" column="HIS_IDC_INI" class="br.gov.jfrj.siga.cp.CpIdentidade" />
+		<property name="hisDtFim" column="HIS_DT_FIM" type="java.util.Date" />
+		<many-to-one name="hisIdcFim" column="HIS_IDC_FIM" class="br.gov.jfrj.siga.cp.CpIdentidade" />
+	 	<property name="hisAtivo" column="HIS_ATIVO" type="java.lang.Integer" /> 
+		
 		<many-to-one name="exClassificacao" column="ID_CLASSIFICACAO"
 			class="ExClassificacao" not-null="true" />
 
 		<many-to-one name="temporalidadeCorrente"
-			column="ID_TMP_CORRENTE" class="ExTemporalidade" not-null="true" />
+			column="ID_TEMPORAL_ARQ_COR" class="ExTemporalidade" not-null="false" />
 
 		<many-to-one name="temporalidadeIntermediario"
-			column="ID_TMP_INTERMEDIARIO" class="ExTemporalidade"
-			not-null="true" />
+			column="ID_TEMPORAL_ARQ_INT" class="ExTemporalidade" not-null="false" />
+			
 
-		<many-to-one name="exTipoDestinacao" column="ID_TP_DESTINACAO"
+		<many-to-one name="exTipoDestinacao" column="ID_DESTINACAO"
 			class="ExTipoDestinacao" not-null="true" />
 			
 		<many-to-one name="exDestinacaoFinal" column="ID_DESTINACAO_FINAL"

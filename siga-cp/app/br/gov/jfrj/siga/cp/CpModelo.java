@@ -42,7 +42,7 @@ public class CpModelo extends AbstractCpModelo {
 	public boolean equivale(Object other) {
 		if (other == null)
 			return false;
-		return this.getIdInicial().longValue() == ((CpIdentidade) other)
+		return this.getIdInicial().longValue() == ((CpModelo) other)
 				.getIdInicial().longValue();
 	}
 

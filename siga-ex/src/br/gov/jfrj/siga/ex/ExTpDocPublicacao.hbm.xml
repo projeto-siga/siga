@@ -17,6 +17,6 @@
 	</class>
 
 	<query name="consultarPorModelo">
-		<![CDATA[select docPubl from ExTpDocPublicacao docPubl left join docPubl.exModeloSet mod where mod.idMod = :idMod]]>
+		<![CDATA[select docPubl from ExTpDocPublicacao docPubl left join docPubl.exModeloSet mod where mod.hisIdIni = :idMod]]>
 	</query>
 </hibernate-mapping>

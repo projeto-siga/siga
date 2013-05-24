@@ -1157,9 +1157,25 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		
+		<!-- relatórios de classificação documental -->
 
-
-
+		<action name="aRelClassificacao" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelClassificacao">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="emiteRelClassDocDocumentos" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelClassDocDocumentos">
+			<result name="relatorio" type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
 	</package>
 	<package name="pessoa" extends="default" namespace="/pessoa">
 
@@ -1191,7 +1207,83 @@
 				/sigalibs/ajax_retorno.jsp
 			</result>
 		</action>
+		
 	</package>
+	
+	<package name="expediente/classificacao" extends="default" namespace="/expediente/classificacao">
+		<default-interceptor-ref name="defaultStack" />
+		<action name="listar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aListar">
+			<result name="success">
+				/paginas/classificacao_lista.jsp
+			</result>
+		</action>
+		<action name="editar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aEditar">
+			<result name="success">
+				/paginas/classificacao_edita.jsp
+			</result>
+		</action>
+		<action name="gravar" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aGravar">
+			<result type="redirect-action">
+				editar?codificacao=${codificacao}&amp;acao=editar_classificacao
+			</result>
+		</action>
+		<action name="excluir" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aExcluir">
+			<result type="redirect-action">
+				listar
+			</result>
+		</action>
+		
+		
+		
+		<action name="gravarVia" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aGravarVia">
+			<result type="redirect-action">
+				editar?codificacao=${codificacao}&amp;acao=editar_classificacao
+			</result>
+		</action>
+		<action name="excluirVia" class="br.gov.jfrj.webwork.action.ExClassificacaoAction"
+			method="aExcluirVia">
+			<result type="redirect-action">
+				editar?codificacao=${codificacao}&amp;acao=editar_classificacao
+			</result>
+		</action>
+		
+		
+	</package>
+	
+		<package name="expediente/temporalidade" extends="default" namespace="/expediente/temporalidade">
+		<default-interceptor-ref name="defaultStack" />
+		<action name="listar" class="br.gov.jfrj.webwork.action.ExTemporalidadeAction"
+			method="aListar">
+			<result name="success">
+				/paginas/temporalidade_lista.jsp
+			</result>
+		</action>
+		<action name="editar" class="br.gov.jfrj.webwork.action.ExTemporalidadeAction"
+			method="aEditar">
+			<result name="success">
+				/paginas/temporalidade_edita.jsp
+			</result>
+		</action>
+		<action name="gravar" class="br.gov.jfrj.webwork.action.ExTemporalidadeAction"
+			method="aGravar">
+			<result type="redirect-action">
+				editar?idTemporalidade=${exTemporal.idTemporalidade}&amp;acao=editar_temporalidade
+			</result>
+		</action>
+		<action name="excluir" class="br.gov.jfrj.webwork.action.ExTemporalidadeAction"
+			method="aExcluir">
+			<result type="redirect-action">
+				listar
+			</result>
+		</action>
+		
+	</package>
+	
 
 	<package name="lotacao" extends="default" namespace="/lotacao">
 

@@ -21,9 +21,9 @@ package br.gov.jfrj.siga.persistencia;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public class ExClassificacaoDaoFiltro extends DaoFiltroSelecionavel {
-	private String assuntoPrincipal;
+//	private String assuntoPrincipal;
 
-	private String assuntoSecundario;
+//	private String assuntoSecundario;
 
 	private String atividade;
 
@@ -33,7 +33,7 @@ public class ExClassificacaoDaoFiltro extends DaoFiltroSelecionavel {
 
 	private String subclasse;
 	
-	private String ultimoNivel;
+//	private String ultimoNivel;
 	
 	private String assunto;
 
@@ -45,21 +45,21 @@ public class ExClassificacaoDaoFiltro extends DaoFiltroSelecionavel {
 		this.assunto = assunto;
 	}
 
-	public String getAssuntoPrincipal() {
-		return assuntoPrincipal;
-	}
+//	public String getAssuntoPrincipal() {
+//		return assuntoPrincipal;
+//	}
 
-	public void setAssuntoPrincipal(final String assuntoPrincipal) {
-		this.assuntoPrincipal = assuntoPrincipal;
-	}
+//	public void setAssuntoPrincipal(final String assuntoPrincipal) {
+//		this.assuntoPrincipal = assuntoPrincipal;
+//	}
 
-	public String getAssuntoSecundario() {
-		return assuntoSecundario;
-	}
+//	public String getAssuntoSecundario() {
+//		return assuntoSecundario;
+//	}
 
-	public void setAssuntoSecundario(final String assuntoSecundario) {
-		this.assuntoSecundario = assuntoSecundario;
-	}
+//	public void setAssuntoSecundario(final String assuntoSecundario) {
+//		this.assuntoSecundario = assuntoSecundario;
+//	}
 
 	public String getAtividade() {
 		return atividade;
@@ -93,11 +93,11 @@ public class ExClassificacaoDaoFiltro extends DaoFiltroSelecionavel {
 		this.subclasse = subclasse;
 	}
 
-	public String getUltimoNivel() {
-		return ultimoNivel;
-	}
+//	public String getUltimoNivel() {
+//		return ultimoNivel;
+//	}
 
-	public void setUltimoNivel(String ultimoNivel) {
-		this.ultimoNivel = ultimoNivel;
-	}
+//	public void setUltimoNivel(String ultimoNivel) {
+//		this.ultimoNivel = ultimoNivel;
+//	}
 }

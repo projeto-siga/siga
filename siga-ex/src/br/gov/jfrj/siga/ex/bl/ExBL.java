@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.batik.apps.rasterizer.Main.NoValueOptionHandler;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.cfg.AnnotationConfiguration;
@@ -68,11 +69,11 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
-import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -84,6 +85,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExBoletimDoc;
+import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -94,6 +96,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
+import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -104,6 +107,7 @@ import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.ex.util.Notificador;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
@@ -488,7 +492,7 @@ public class ExBL extends CpBL {
 		SortedSet<ExMarca> set = new TreeSet<ExMarca>();
 
 		ExMovimentacao ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
-		
+
 		Boolean isDocumentoSemEfeito = mob.doc().isSemEfeito();
 
 		if (mob.isGeral()) {
@@ -503,19 +507,20 @@ public class ExBL extends CpBL {
 			}
 
 			if (mob.getExMovimentacaoSet() != null) {
-				if(isDocumentoSemEfeito) {
+				if (isDocumentoSemEfeito) {
 					for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 						if (mov.isCancelada())
 							continue;
 
 						Long t = mov.getIdTpMov();
 						if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
-							acrescentarMarca(set, mob, CpMarcador.MARCADOR_SEM_EFEITO, mov.getDtIniMov(),
-									mov.getCadastrante(),
+							acrescentarMarca(set, mob,
+									CpMarcador.MARCADOR_SEM_EFEITO,
+									mov.getDtIniMov(), mov.getCadastrante(),
 									mov.getLotaCadastrante());
 						}
 					}
-						
+
 				} else {
 					// Verificar a situação no DJE
 					Long mDje = null;
@@ -535,8 +540,8 @@ public class ExBL extends CpBL {
 								break;
 							}
 							if (m != null)
-								acrescentarMarca(set, mob, m, mov.getDtIniMov(),
-										mov.getSubscritor(),
+								acrescentarMarca(set, mob, m,
+										mov.getDtIniMov(), mov.getSubscritor(),
 										mov.getLotaSubscritor());
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
 							mDje = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
@@ -552,21 +557,25 @@ public class ExBL extends CpBL {
 								&& !mob.doc().jaTransferido()) {
 							m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 							/*
-							 * não é possível usar ExMovimentacao.isAssinada() pois
-							 * não há tempo habil no BD de efetivar a inclusao de
-							 * movimentacao de assinatura de movimentção
+							 * não é possível usar ExMovimentacao.isAssinada()
+							 * pois não há tempo habil no BD de efetivar a
+							 * inclusao de movimentacao de assinatura de
+							 * movimentção
 							 */
-							for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-								if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
+							for (ExMovimentacao movAss : mob
+									.getExMovimentacaoSet()) {
+								if ((movAss.getExTipoMovimentacao()
+										.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
 										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
-										&& movAss.getExMovimentacaoRef().getIdMov() == mov
-												.getIdMov()) {
+										&& movAss.getExMovimentacaoRef()
+												.getIdMov() == mov.getIdMov()) {
 									m = null;
 									break;
 								}
 							}
 							if (m != null)
-								acrescentarMarca(set, mob, m, mov.getDtIniMov(),
+								acrescentarMarca(set, mob, m,
+										mov.getDtIniMov(),
 										mov.getCadastrante(),
 										mov.getLotaCadastrante());
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
@@ -610,9 +619,9 @@ public class ExBL extends CpBL {
 					.doc().getCadastrante(), mob.doc().getLotaCadastrante());
 			return set;
 		}
-		
-		if(!isDocumentoSemEfeito) {
-	
+
+		if (!isDocumentoSemEfeito) {
+
 			long m = CpMarcador.MARCADOR_CANCELADO;
 			long mAnterior = m;
 			Date dt = null;
@@ -655,7 +664,7 @@ public class ExBL extends CpBL {
 						}
 					}
 				}
-	
+
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO
@@ -665,7 +674,8 @@ public class ExBL extends CpBL {
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
 					if (!mob.doc().isEletronico()
 							&& (mob.doc().isAssinado())
-							|| (mob.doc().isEletronico() && mob.doc()
+							|| (mob.doc().isEletronico() && mob
+									.doc()
 									.isAssinadoEletronicoPorTodosOsSignatarios())
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
@@ -675,14 +685,14 @@ public class ExBL extends CpBL {
 					} else {
 						m = CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA;
 					}
-	
+
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
 						&& mob.doc().isEletronico()) {
 					m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 					/*
-					 * não é possível usar ExMovimentacao.isAssinada() pois não há
-					 * tempo habil no BD de efetivar a inclusao de movimentacao de
-					 * assinatura de movimentção
+					 * não é possível usar ExMovimentacao.isAssinada() pois não
+					 * há tempo habil no BD de efetivar a inclusao de
+					 * movimentacao de assinatura de movimentção
 					 */
 					for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
 						if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
@@ -694,13 +704,13 @@ public class ExBL extends CpBL {
 						}
 					}
 				}
-	
+
 				if (m != mAnterior) {
 					dt = mov.getDtIniMov();
 					mAnterior = m;
 				}
 			}
-	
+
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
 				if (!mob.getDoc().isAssinadoSubscritor())
 					acrescentarMarca(set, mob, CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob.getExDocumento().getSubscritor(), null);			}
@@ -708,8 +718,8 @@ public class ExBL extends CpBL {
 			if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
 				if (!mob.doc().isEletronico()) {
 					m = CpMarcador.MARCADOR_A_RECEBER;
-					acrescentarMarca(set, mob, CpMarcador.MARCADOR_EM_TRANSITO, dt,
-							ultMovNaoCanc.getCadastrante(),
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_EM_TRANSITO,
+							dt, ultMovNaoCanc.getCadastrante(),
 							ultMovNaoCanc.getLotaCadastrante());
 				} else {
 					if (ultMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
@@ -723,7 +733,8 @@ public class ExBL extends CpBL {
 				}
 			}
 			if (m == CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO) {
-				acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getCadastrante(),
+				acrescentarMarca(set, mob, m, dt,
+						ultMovNaoCanc.getCadastrante(),
 						ultMovNaoCanc.getLotaCadastrante());
 			} else if (m == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA) {
 				if (ultMovNaoCanc.getCadastrante().getId() != ultMovNaoCanc
@@ -738,7 +749,8 @@ public class ExBL extends CpBL {
 								ultMovNaoCanc.getSubscritor(), null);
 					}
 				}
-				acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getCadastrante(),
+				acrescentarMarca(set, mob, m, dt,
+						ultMovNaoCanc.getCadastrante(),
 						ultMovNaoCanc.getLotaCadastrante());
 			} else if (m == CpMarcador.MARCADOR_JUNTADO
 					|| m == CpMarcador.MARCADOR_APENSADO) {
@@ -1150,7 +1162,7 @@ public class ExBL extends CpBL {
 					"Erro ao arquivar permanentemente um documento.", 0, e);
 		}
 	}
-	
+
 	public void sobrestar(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
 			Date dtMovIni, DpPessoa subscritor) throws AplicacaoException {
@@ -1370,10 +1382,10 @@ public class ExBL extends CpBL {
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						cadastrante, cadastrante, mov);
 			}
-			
-			if(doc.getExMobilAutuado() != null) {
-				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov,
-						cadastrante, cadastrante, mov);
+
+			if (doc.getExMobilAutuado() != null) {
+				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc,
+						dtMov, cadastrante, cadastrante, mov);
 			}
 
 			if (!fPreviamenteAssinado && doc.isAssinado()) {
@@ -2140,7 +2152,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao desarquivar.", 0, e);
 		}
 	}
-	
+
 	public void desobrestar(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor)
@@ -2572,7 +2584,7 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-			
+
 			concluirAlteracao(doc);
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -2940,10 +2952,10 @@ public class ExBL extends CpBL {
 
 		if (doc.getLotaDestinatario() != null
 				&& !doc.getLotaDestinatario().isFechada())
-			novoDoc.setLotaDestinatario(doc.getLotaDestinatario().getLotacaoAtual());
+			novoDoc.setLotaDestinatario(doc.getLotaDestinatario()
+					.getLotacaoAtual());
 
-		if (doc.getSubscritor() != null
-				&& !doc.getSubscritor().isFechada()) {
+		if (doc.getSubscritor() != null && !doc.getSubscritor().isFechada()) {
 			novoDoc.setSubscritor(doc.getSubscritor().getPessoaAtual());
 			novoDoc.setLotaSubscritor(doc.getSubscritor().getPessoaAtual()
 					.getLotacao());
@@ -2961,14 +2973,12 @@ public class ExBL extends CpBL {
 		novoDoc.setExMobilPai(doc.getExMobilPai());
 		novoDoc.setOrgaoUsuario(doc.getOrgaoUsuario());
 
-		if(doc.getTitular() != null
-				&& !doc.getTitular().isFechada())
+		if (doc.getTitular() != null && !doc.getTitular().isFechada())
 			novoDoc.setTitular(doc.getTitular().getPessoaAtual());
-		
-		if(doc.getLotaTitular() != null
-				&& !doc.getLotaTitular().isFechada())
+
+		if (doc.getLotaTitular() != null && !doc.getLotaTitular().isFechada())
 			novoDoc.setLotaTitular(doc.getLotaTitular().getLotacaoAtual());
-		
+
 		novoDoc.setNumAntigoDoc(doc.getNumAntigoDoc());
 		novoDoc.setExDocAnterior(doc);
 		// novoDoc.setNumPaginas(novoDoc.getContarNumeroDePaginas());
@@ -3878,11 +3888,10 @@ public class ExBL extends CpBL {
 				if (doc.getExTipoDocumento().getIdTpDoc() == 2) {
 					if (doc.getExModelo() != null)
 						backupID = doc.getExModelo().getIdMod();
-					doc.setExModelo(dao().consultar(
+					doc.setExModelo(dao().consultarAtivoPorIdInicial(ExModelo.class,
 							doc.isProcesso() ? SigaExProperties.getIdModPA()
 									: SigaExProperties
-											.getIdModInternoImportado(),
-							ExModelo.class, false));
+											.getIdModInternoImportado()));
 				}
 
 				final String strHtml;
@@ -4066,7 +4075,7 @@ public class ExBL extends CpBL {
 		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
-			
+
 			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 			if (getComp().podeJuntar(ultMov.getCadastrante(),
 					ultMov.getLotaCadastrante(), mob)
@@ -4080,7 +4089,7 @@ public class ExBL extends CpBL {
 			}
 		}
 	}
-	
+
 	private void juntarAoDocumentoAutuado(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor,
@@ -4092,13 +4101,13 @@ public class ExBL extends CpBL {
 		for (final ExMobil mob : doc.getExMobilSet()) {
 			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 			if (getComp().podeJuntar(ultMov.getCadastrante(),
-					ultMov.getLotaCadastrante(),  doc.getExMobilAutuado())
+					ultMov.getLotaCadastrante(), doc.getExMobilAutuado())
 					& getComp().podeSerJuntado(ultMov.getCadastrante(),
 							ultMov.getLotaCadastrante(), mob)) {
 				juntarDocumento(ultMov.getCadastrante(), ultMov.getTitular(),
-						ultMov.getLotaCadastrante(), null, doc.getExMobilAutuado(),
-						mob, dtMov, ultMov.getSubscritor(),
-						ultMov.getTitular(), "1");
+						ultMov.getLotaCadastrante(), null,
+						doc.getExMobilAutuado(), mob, dtMov,
+						ultMov.getSubscritor(), ultMov.getTitular(), "1");
 				break;
 			}
 		}
@@ -4282,7 +4291,8 @@ public class ExBL extends CpBL {
 
 	public List<ExFormaDocumento> obterFormasDocumento(DpPessoa titular,
 			DpLotacao lotaTitular, ExTipoDocumento tipoDoc,
-			ExTipoFormaDoc tipoForma, boolean protegido, boolean despachando, boolean autuando)
+			ExTipoFormaDoc tipoForma, boolean protegido, boolean despachando,
+			boolean autuando)
 
 	throws Exception {
 		List<ExFormaDocumento> formasSet = new ArrayList<ExFormaDocumento>();
@@ -4306,7 +4316,7 @@ public class ExBL extends CpBL {
 			formasSet = formasFinal;
 			formasFinal = new ArrayList<ExFormaDocumento>();
 		}
-		if(autuando) {
+		if (autuando) {
 			for (ExFormaDocumento forma : formasSet) {
 				if (getConf().podePorConfiguracao(titular, lotaTitular, forma,
 						CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL))
@@ -4328,7 +4338,8 @@ public class ExBL extends CpBL {
 
 	public List<ExModelo> obterListaModelos(ExFormaDocumento forma,
 			boolean despachando, String headerValue, boolean protegido,
-			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, boolean autuando)
+			throws Exception {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
 		if (forma != null)
@@ -4364,6 +4375,7 @@ public class ExBL extends CpBL {
 		if (headerValue != null && modeloSetFinal.size() > 1) {
 			ExModelo mod = new ExModelo();
 			mod.setIdMod(0L);
+			mod.setHisIdIni(0L);
 			mod.setNmMod("[" + headerValue + "]");
 			modeloSetFinal.add(0, mod);
 		}
@@ -4817,19 +4829,19 @@ public class ExBL extends CpBL {
 		// }
 	}
 
-	public void gravarModelo(ExModelo mod) throws AplicacaoException {
-		if (mod.getExFormaDocumento() == null)
+	public void gravarModelo(ExModelo modNovo,ExModelo modAntigo, Date dt,CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		if (modNovo.getExFormaDocumento() == null)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar a forma do documento.");
-		if (mod.getNmMod() == null || mod.getNmMod().trim().length() == 0)
+		if (modNovo.getNmMod() == null || modNovo.getNmMod().trim().length() == 0)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar o nome.");
-		if (mod.getDescMod() == null || mod.getDescMod().trim().length() == 0)
+		if (modNovo.getDescMod() == null || modNovo.getDescMod().trim().length() == 0)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar a descrição.");
 		try {
 			ExDao.iniciarTransacao();
-			dao().gravar(mod);
+			dao().gravarComHistorico(modNovo, modAntigo, dt, identidadeCadastrante);
 			ExDao.commitTransacao();
 		} catch (Exception e) {
 			ExDao.rollbackTransacao();
@@ -4878,19 +4890,19 @@ public class ExBL extends CpBL {
 					"Erro ao anular cancelamento do documento.", 0, e);
 		}
 	}
-	
+
 	public void TornarDocumentoSemEfeito(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 		try {
 			iniciarAlteracao();
-			
+
 			final ExMovimentacao mov = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
-						cadastrante, lotaCadastrante, doc.getMobilGeral(), null,
-						null, null, null, null, null);
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), null,
+					null, null, null, null, null);
 
 			gravarMovimentacao(mov);
-			
+
 			concluirAlteracao(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -4898,5 +4910,339 @@ public class ExBL extends CpBL {
 					"Erro ao tornar o documento sem efeito.", 0, e);
 		}
 	}
-	
+
+	public void alterarExClassificacao(ExClassificacao exClassNovo,
+			ExClassificacao exClassAntigo, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		verificarDuplicacaoTermoCompleto(exClassNovo,exClassAntigo);
+		try {
+
+			dao().gravarComHistorico(exClassNovo, exClassAntigo, dt,
+					identidadeCadastrante);
+			copiarReferencias(exClassNovo, exClassAntigo, dt,
+					identidadeCadastrante);
+
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro ao copiar as propriedades do modelo anterior.");
+		}
+
+	}
+
+	private void copiarReferencias(ExClassificacao exClassNova,
+			ExClassificacao exClassAntiga, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		copiarVias(exClassNova, exClassAntiga, dt, identidadeCadastrante);
+		copiarModelos(exClassNova, exClassAntiga, dt, identidadeCadastrante);
+	}
+
+	private void copiarModelos(ExClassificacao exClassNovo,
+			ExClassificacao exClassAntigo, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		try {
+			//classificacao geral 
+			for (ExModelo modAntigo : exClassAntigo.getExModeloSet()) {
+				ExModelo modNovo = new ExModelo();
+
+				PropertyUtils.copyProperties(modNovo, modAntigo);
+				modNovo.setIdMod(null);
+				modNovo.setExClassificacao(exClassNovo);
+
+				dao().gravarComHistorico(modNovo, modAntigo, dt,
+						identidadeCadastrante);
+				if (exClassNovo.getExModeloSet() == null) {
+					exClassNovo.setExModeloSet(new HashSet<ExModelo>());
+				}
+				exClassNovo.getExModeloSet().add(modNovo);
+
+			}
+
+			//classificacao criacao via
+			for (ExModelo modAntigo : exClassAntigo.getExModeloCriacaoViaSet()) {
+				ExModelo modNovo = new ExModelo();
+
+				PropertyUtils.copyProperties(modNovo, modAntigo);
+				modNovo.setIdMod(null);
+				modNovo.setExClassCriacaoVia(exClassNovo);
+
+				dao().gravarComHistorico(modNovo, modAntigo, dt,
+						identidadeCadastrante);
+				if (exClassNovo.getExModeloCriacaoViaSet() == null) {
+					exClassNovo.setExModeloCriacaoViaSet(new HashSet<ExModelo>());
+				}
+				exClassNovo.getExModeloCriacaoViaSet().add(modNovo);
+
+			}
+
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Não foi possível fazer cópia dos modelos!");
+		}
+	}
+
+	private void copiarVias(ExClassificacao exClassNovo,
+			ExClassificacao exClassAntigo, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		try {
+			for (ExVia viaAntiga : exClassAntigo.getExViaSet()) {
+				ExVia viaNova = new ExVia();
+
+				PropertyUtils.copyProperties(viaNova, viaAntiga);
+				viaNova.setId(null);
+				viaNova.setExClassificacao(exClassNovo);
+
+				dao().gravarComHistorico(viaNova, viaAntiga, dt,
+						identidadeCadastrante);
+				if (exClassNovo.getExViaSet() == null) {
+					exClassNovo.setExViaSet(new HashSet<ExVia>());
+				}
+				exClassNovo.getExViaSet().add(viaNova);
+
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Não foi possível fazer cópia das vias!");
+		}
+	}
+
+	public void moverClassificacao(ExClassificacao exClassDest,
+			ExClassificacao exClassOrigem,CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		
+		Date dt = dao().consultarDataEHoraDoServidor();
+		MascaraUtil m = MascaraUtil.getInstance();
+		ExDao dao = ExDao.getInstance();
+		
+		List<ExClassificacao> filhos = dao.consultarFilhos(exClassOrigem, true);
+		
+		if (filhos.size()>0 && m.calcularNivel(exClassDest.getCodificacao()) > m
+				.calcularNivel(exClassOrigem.getCodificacao())) {
+			throw new AplicacaoException(
+					"O nível do destino é maior do que o nível da origem! Os filhos não caberão na hierarquia da classificação documental!");
+		}
+
+		ExClassificacao classExistente = dao().consultarPorSigla(exClassDest);
+		if (classExistente != null) {
+			throw new AplicacaoException("A classificação destino já existe! <br/><br/>" + classExistente.getCodificacao());
+		}
+
+		
+		String mascaraDestino = m.getMscFilho(exClassDest.getCodificacao(),
+				true);
+		for (ExClassificacao f : filhos) {
+			String novaCodificacao = m.substituir(f.getCodificacao(),
+					mascaraDestino);
+			ExClassificacao fNovo = getCopia(f);
+			fNovo.setCodificacao(novaCodificacao);
+			Ex.getInstance()
+					.getBL()
+					.alterarExClassificacao(fNovo, f, dt,
+							identidadeCadastrante);
+		}
+
+		exClassDest.setHisIdIni(exClassOrigem.getHisIdIni());
+		Ex.getInstance()
+				.getBL()
+				.alterarExClassificacao(exClassDest, exClassOrigem, dt,
+						identidadeCadastrante);
+	}
+
+	public ExClassificacao getCopia(ExClassificacao exClassOrigem) throws AplicacaoException{
+		ExClassificacao exClassCopia = new ExClassificacao();
+		try {
+			
+			PropertyUtils.copyProperties(exClassCopia, exClassOrigem);
+			
+			//novo id
+			exClassCopia.setId(null);
+			//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
+			//HibernateException:Found shared references to a collection
+			Set<ExVia> setExVia = new HashSet<ExVia>();
+			exClassCopia.setExViaSet(setExVia);
+			
+			Set<ExModelo> setExModelo = new HashSet<ExModelo>();
+			exClassCopia.setExModeloSet(setExModelo);
+			
+			Set<ExModelo> setExModeloCriacaoVia = new HashSet<ExModelo>();
+			exClassCopia.setExModeloCriacaoViaSet(setExModeloCriacaoVia);
+
+
+		} catch (Exception e){
+			throw new AplicacaoException(
+			"Erro ao copiar as propriedades do modelo anterior.");
+		}
+		
+		return exClassCopia;
+	}
+
+	public void incluirExClassificacao(ExClassificacao exClass,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		verificarDuplicacaoTermoCompleto(exClass,null);
+		dao().gravarComHistorico(exClass,null, dao().consultarDataEHoraDoServidor(), identidadeCadastrante);
+		
+	}
+
+	private void verificarDuplicacaoTermoCompleto(ExClassificacao exClassNovo,ExClassificacao exClassAntigo) throws AplicacaoException {
+		
+		MascaraUtil m = MascaraUtil.getInstance();
+		String mascara = m.getMscTodosDoNivel(m.calcularNivel(exClassNovo.getCodificacao()));
+		List<ExClassificacao> exClassMesmoNivel = dao().consultarExClassificacao(mascara, exClassNovo.getDescrClassificacao());
+		if (exClassMesmoNivel.size()>0){
+			for (ExClassificacao exClassConflito : exClassMesmoNivel) {
+			
+				if(exClassNovo.getDescricao().equalsIgnoreCase(exClassConflito.getDescricao()) ){
+					//se conflito não causado por movimentacao onde a própria classificacao é o conflito
+					if (exClassAntigo==null || !exClassConflito.getCodificacao().equals(exClassAntigo.getCodificacao())){
+						throw new AplicacaoException("Termo da classificação em conflito! <br/><br/>" + exClassConflito.getDescricaoCompleta());	
+					}
+					
+				}
+
+			}
+		}
+		
+		
+	}
+
+	public void incluirExTemporalidade(ExTemporalidade exTemporalidade,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		ExDao.getInstance().gravarComHistorico(exTemporalidade, null, null, identidadeCadastrante);
+	}
+
+	public ExTemporalidade getCopia(ExTemporalidade exTempOrigem) throws AplicacaoException {
+		ExTemporalidade exTempCopia = new ExTemporalidade();
+		try {
+			
+			PropertyUtils.copyProperties(exTempCopia, exTempOrigem);
+			
+			//novo id
+			exTempCopia.setId(null);
+			//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
+			//HibernateException:Found shared references to a collection
+			Set<ExVia> setExViaArqCorr= new HashSet<ExVia>();
+			Set<ExVia> setExViaArqInterm= new HashSet<ExVia>();
+			exTempCopia.setExViaArqCorrenteSet(setExViaArqCorr);
+			exTempCopia.setExViaArqIntermediarioSet(setExViaArqInterm);
+			
+		} catch (Exception e){
+			throw new AplicacaoException(
+			"Erro ao copiar as propriedades do objeto ExTemporalidade.");
+		}
+		
+		return exTempCopia;
+
+	}
+
+	public void alterarExTemporalidade(ExTemporalidade exTempNovo,
+			ExTemporalidade exTempAntiga, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		
+
+			dao().gravarComHistorico(exTempNovo, exTempAntiga, dt,
+					identidadeCadastrante);
+			
+			//copiar Referências arq corrente
+			try {
+				for (ExVia viaAntiga : exTempAntiga.getExViaArqCorrenteSet()) {
+					ExVia viaNova = new ExVia();
+
+					PropertyUtils.copyProperties(viaNova, viaAntiga);
+					viaNova.setIdVia(null);
+					viaNova.setTemporalidadeCorrente(exTempNovo);
+
+					dao().gravarComHistorico(viaNova, viaAntiga, dt,
+							identidadeCadastrante);
+					if (exTempNovo.getExViaArqCorrenteSet() == null) {
+						exTempNovo.setExViaArqCorrenteSet(new HashSet<ExVia>());
+					}
+					exTempNovo.getExViaArqCorrenteSet().add(viaNova);
+
+				}
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Não foi possível fazer cópia das vias em arquivo corrente!");
+			}
+			
+			//copiar Referências arq intermediário
+			try {
+				for (ExVia viaAntiga : exTempAntiga.getExViaArqIntermediarioSet()) {
+					ExVia viaNova = new ExVia();
+
+					PropertyUtils.copyProperties(viaNova, viaAntiga);
+					viaNova.setIdVia(null);
+					viaNova.setTemporalidadeIntermediario(exTempNovo);
+
+					dao().gravarComHistorico(viaNova, viaAntiga, dt,
+							identidadeCadastrante);
+					if (exTempNovo.getExViaArqIntermediarioSet() == null) {
+						exTempNovo.setExViaArqIntermediarioSet(new HashSet<ExVia>());
+					}
+					exTempNovo.getExViaArqIntermediarioSet().add(viaNova);
+
+				}
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Não foi possível fazer cópia das vias em arquivo intermediário!");
+			}
+
+
+
+
+	}
+
+	public ExModelo getCopia(ExModelo exModOrigem) throws AplicacaoException {
+		ExModelo exModCopia = new ExModelo();
+		try {
+			
+			PropertyUtils.copyProperties(exModCopia, exModOrigem);
+			
+			//novo id
+			exModCopia.setId(null);
+
+		} catch (Exception e){
+			throw new AplicacaoException(
+			"Erro ao copiar as propriedades do modelo anterior.");
+		}
+		
+		return exModCopia;
+	}
+
+	public void excluirExClassificacao(ExClassificacao exClass, CpIdentidade idCadastrante) {
+		Date dt = dao().consultarDataEHoraDoServidor();
+		if (exClass.getExModeloSet().size() >0 || exClass.getExModeloCriacaoViaSet().size() >0){
+			StringBuffer sb = new StringBuffer();
+			for(ExModelo m: exClass.getExModeloSet()){
+				sb.append("(");
+				sb.append(m.getId());
+				sb.append(") ");
+				sb.append(m.getNmMod());
+				sb.append("<br/>");
+			}
+			for(ExModelo m: exClass.getExModeloCriacaoViaSet()){
+				sb.append("(");
+				sb.append(m.getId());
+				sb.append(") ");
+				sb.append(m.getNmMod());
+				sb.append(" (Criação de via)");
+				sb.append("<br/>");
+			}
+
+			
+			throw new AplicacaoException("Não é possível excluir a classificação documental, pois está associada ao(s) seguinte(s) modelo(s):<br/><br/>" +
+					sb.toString() );
+		}
+		
+		List<ExDocumento> docs = ExDao.getInstance().consultarExDocumentoPorClassificacao(null, MascaraUtil.getInstance().getMscTodosDoMaiorNivel(), idCadastrante.getPessoaAtual().getOrgaoUsuario());
+		if (docs.size() > 0){
+			StringBuffer sb = new StringBuffer();
+			
+			throw new AplicacaoException("Não é possível excluir a classificação documental, pois já foi associada a documento(s)." +
+					sb.toString() );
+		}
+		
+		for (ExVia exVia : exClass.getExViaSet()) {
+			dao().excluirComHistorico(exVia, dt, idCadastrante);
+		}
+		dao().excluirComHistorico(exClass, dt, idCadastrante);
+	}
+
 }

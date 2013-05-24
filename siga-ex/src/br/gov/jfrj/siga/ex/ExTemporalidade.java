@@ -21,13 +21,14 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.Serializable;
+import br.gov.jfrj.siga.model.Assemelhavel;
+
 
 /**
  * A class that represents a row in the 'EX_TEMPORALIDADE' table. This class may
  * be customized as it is never re-generated after being created.
  */
-public class ExTemporalidade extends AbstractExTemporalidade implements Serializable {
+public class ExTemporalidade extends AbstractExTemporalidade  {
 	/**
 	 * 
 	 */
@@ -39,13 +40,16 @@ public class ExTemporalidade extends AbstractExTemporalidade implements Serializ
 	public ExTemporalidade() {
 	}
 
-	/**
-	 * Constructor of ExTemporalidade instances given a simple primary key.
-	 * 
-	 * @param idTemporalidade
-	 */
-	public ExTemporalidade(final java.lang.Short idTemporalidade) {
-		super(idTemporalidade);
+	public Long getId() {
+		return getIdTemporalidade();
 	}
 
+	public void setId(Long id) {
+		setIdTemporalidade(id);
+	}
+
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		return false;
+	}
+	
 }

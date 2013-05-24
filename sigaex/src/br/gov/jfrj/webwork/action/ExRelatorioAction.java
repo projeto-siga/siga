@@ -47,8 +47,11 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
+import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsClassificados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubordinados;
@@ -56,6 +59,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.persistencia.oracle.JDBCUtilOracle;
@@ -63,7 +67,7 @@ import br.gov.jfrj.siga.persistencia.oracle.JDBCUtilOracle;
 import com.opensymphony.webwork.ServletActionContext;
 import com.opensymphony.xwork.ActionInvocation;
 
-public class ExRelatorioAction extends ExActionSupport {
+public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 
 	private List dataSource;
 
@@ -669,10 +673,62 @@ public class ExRelatorioAction extends ExActionSupport {
 
 		return "relatorio";
 	}
+	
+	public String aRelClassificacao() throws AplicacaoException, Exception {
+		assertAcesso("CLSD:Classificação Documental;CLASS:Relação de classificações");
+		
+		Map<String, String> parametros = new HashMap<String, String>();
+		parametros.put("codificacao", getRequest().getParameter("codificacao"));
+		parametros.put("secaoUsuario",getRequest().getParameter("secaoUsuario"));
+
+		RelClassificacao rel = new RelClassificacao(parametros);
+		rel.gerar();
+
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+		return "relatorio";
+	}
+	public String aRelClassDocDocumentos() throws AplicacaoException, Exception {
+		assertAcesso("CLSD:Classificação Documental;DOCS:Relação de documentos classificados");
+		
+		Map<String, String> parametros = new HashMap<String, String>();
+		String codificacao = getRequest().getParameter("codificacao");
+		String idLotacao = getRequest().getParameter("lotacaoDestinatarioSel.id");
+		String idOrgaoUsu = getRequest().getParameter("orgaoUsuario");
+		String secaoUsuario = getRequest().getParameter("secaoUsuario");
+		
+		if ((codificacao==null || codificacao.length()==0)&& (idLotacao == null || idLotacao.length()==0)){
+			throw new AplicacaoException("Especifique pelo menos um dos parâmetros!");
+		}
+		
+		parametros.put("codificacao", codificacao);
+		parametros.put("idLotacao", idLotacao);
+		parametros.put("idOrgaoUsu", idOrgaoUsu);	
+		parametros.put("secaoUsuario", secaoUsuario);
+		
+		RelDocsClassificados rel = new RelDocsClassificados(parametros);
+		rel.gerar();
+
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+
+		
+		return "relatorio";
+	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException,
 			Exception {
 		super.assertAcesso("REL:Gerar relatórios;" + pathServico);
+	}
+	
+	public String getMascaraEntrada(){
+		return MascaraUtil.getInstance().getMascaraEntrada();
+	}
+	
+	public String getMascaraSaida(){
+		return MascaraUtil.getInstance().getMascaraSaida();
+	}
+	
+	public String getMascaraJavascript(){
+		return SigaExProperties.getExClassificacaoMascaraJavascript();
 	}
 
 }

@@ -193,17 +193,15 @@
 				<c:forEach var="substituicao" items="${meusTitulares}">
 					<li><a
 						style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
-						href="javascript:if (confirm('Deseja excluir configuração?')) location.href='/siga/substituicao/excluir.action?id=${substituicao.idSubstituicao}&porMenu=true';">
+						href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/substituicao/excluir.action?id=${substituicao.idSubstituicao}&porMenu=true';">
 						<img
 							style="display: inline;"
 							src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
 							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
 							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
 					</a>
-					 <%--	 <siga:link icon="cancel" titleImg="Excluir" url="/siga/substituicao/excluir.action?id=${substituicao.idSubstituicao}&porMenu=true" 
-												popup="excluir" confirm="Deseja excluir configuração?" />					  
-				 --%> <a
-						href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
+					
+				     <a href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
 							<c:choose>
 								<c:when test="${not empty substituicao.titular}">
 						${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}

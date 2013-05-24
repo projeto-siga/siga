@@ -80,7 +80,7 @@ public class SigaExceptionHandler extends ExceptionMappingInterceptor {
 	 * @param request
 	 * @param ex
 	 */
-	protected void logaExcecao(final Exception ex) {
+	public void logaExcecao(final Exception ex) {
 		HttpServletRequest httpRequest = ServletActionContext.getRequest();
 
 		String url = httpRequest.getRequestURL().toString();

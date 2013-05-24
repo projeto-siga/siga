@@ -57,7 +57,7 @@
 		<action name="logoff" class="br.gov.jfrj.siga.libs.webwork.LogoffAction">
 			<result name="success" type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 			</result>
 			<result name="CLIENT_CERT_AUTH_LOGOFF">/sigalibs/client_cert_auth_logoff.jsp</result>
 
@@ -78,7 +78,7 @@
 			method="aTrocarSenhaGravar">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 			<!--<result type="redirect-action">/principal?mensagem=${mensagem}</result> -->
@@ -96,7 +96,7 @@
 			method="aEsqueciSenhaGravar">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Esqueci Minha Senha 
@@ -113,7 +113,7 @@
 			method="aIncluirUsuarioGravar">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Novo Usuário </result> -->
@@ -143,7 +143,7 @@
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>
@@ -155,7 +155,7 @@
 			class="br.gov.jfrj.webwork.action.DpSubstituicaoAction">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>

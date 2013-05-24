@@ -82,7 +82,7 @@
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>
@@ -90,7 +90,7 @@
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>
@@ -98,7 +98,7 @@
 			class='br.gov.jfrj.siga.wf.webwork.action.WfAdminAction'>
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
-				<param name="namespace=">/</param>
+				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>
 		</action>

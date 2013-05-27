@@ -327,7 +327,8 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public List<ExTpDocPublicacao> getListaPublicacao() {
-		return PublicacaoDJEBL.obterListaTiposMaterias(getIdMod());
+		ExModelo mod = dao().consultar(getIdMod(),ExModelo.class,false);
+		return PublicacaoDJEBL.obterListaTiposMaterias(mod.getHisIdIni());
 	}
 
 	public List<ExDocumento> getListaDocsAPublicarBoletim() {
@@ -611,12 +612,12 @@ public class ExDocumentoAction extends ExActionSupport {
 			} else
 				nivelAcesso = 1L;
 
-			idMod = 26L;
+			idMod = ((ExModelo)dao().consultarAtivoPorIdInicial(ExModelo.class,26L)).getIdMod();
 		}
 
 		if (isCriandoAnexo() && getId() == null && getPostback() == null) {
 			idFormaDoc = 60;
-			idMod = 507L;
+			idMod = ((ExModelo)dao().consultarAtivoPorIdInicial(ExModelo.class,507L)).getIdMod();
 		}
 
 		if (getId() == null && doc != null)
@@ -649,7 +650,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		if (getTipoDocumento() != null && getTipoDocumento().equals("externo")) {
-			setIdMod(28L);
+			setIdMod(((ExModelo)dao().consultarAtivoPorIdInicial(ExModelo.class,28L)).getIdMod());
 		}
 		carregarBeans();
 
@@ -681,8 +682,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		// que as classificações antigas, ainda não linkadas por equivalência,
 		// possam ser usadas
 		ExClassificacao classif = getClassificacaoSel().buscarObjeto();
-		if (classif != null && classif.getDtFimReg() != null
-				&& classif.getDtIniReg() != null
+		if (classif != null && classif.getHisDtFim() != null
+				&& classif.getHisDtIni() != null
 				&& classif.getCodAssunto() != null) {
 			classif = ExDao.getInstance().consultarAtual(classif);
 			if (classif != null)
@@ -1372,7 +1373,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		ExDao exDao = ExDao.getInstance();
 		StringBuffer appender = new StringBuffer(
-				"from ExDocumento doc where doc.exModelo.idMod in (73, 76) and doc.dtFechamento between :start and :end");
+				"from ExDocumento doc where (doc.exModelo.hisIdIni in (73, 76) and doc.exModelo.hisAtivo = 1) and doc.dtFechamento between :start and :end");
 		Query query = exDao.getSessao().createQuery(appender.toString());
 		Calendar cal = new GregorianCalendar();
 		cal.set(2008, 07, 14);

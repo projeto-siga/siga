@@ -20,20 +20,20 @@
 					var="gestorSuplente" obrigatorio="Sim" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:pessoa titulo="3) Nome do Fiscal Administrativo (Titular)"
-					var="fiscalAdmTitular" />
-			</mod:grupo>
-			<mod:grupo>
-				<mod:pessoa titulo="4) Nome do Fiscal Administrativo (Suplente)"
-					var="fiscalAdmSuplente" />
-			</mod:grupo>
-			<mod:grupo>
-				<mod:pessoa titulo="5) Nome do Fiscal Técnico (Titular)"
+				<mod:pessoa titulo="3) Nome do Fiscal Técnico (Titular)"
 					var="fiscalTecTitular" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:pessoa titulo="6) Nome do Fiscal Técnico (Suplente)"
+				<mod:pessoa titulo="4) Nome do Fiscal Técnico (Suplente)"
 					var="fiscalTecSuplente" />
+			</mod:grupo>
+			<mod:grupo>
+				<mod:pessoa titulo="5) Nome do Fiscal Administrativo (Titular)"
+					var="fiscalAdmTitular" />
+			</mod:grupo>
+			<mod:grupo>
+				<mod:pessoa titulo="6) Nome do Fiscal Administrativo (Suplente)"
+					var="fiscalAdmSuplente" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:memo titulo="Outros Fiscais da capital" var="outrosFiscais"
@@ -163,32 +163,6 @@
 					<td></td>
 				</c:if>
 			</tr>
-			<c:if test="${not empty requestScope['fiscalAdmTitular_pessoaSel.id']}">
-				<tr bgcolor="#999999">
-					<td colspan="2"><b>FISCAL ADMINISTRATIVO</b></td>
-					<c:if test="${!doc.eletronico}">
-						<td width="10%">ciência</td>
-					</c:if>
-				</tr>
-				<tr>
-					<td width="69%">Titular:
-					${requestScope['fiscalAdmTitular_pessoaSel.descricao']}</td>
-					<td width="21%">Matrícula:
-					${f:pessoa(requestScope['fiscalAdmTitular_pessoaSel.id']).matricula}</td>
-					<c:if test="${!doc.eletronico}">
-						<td></td>
-					</c:if>
-				</tr>
-				<tr>
-					<td>Suplente:
-					${requestScope['fiscalAdmSuplente_pessoaSel.descricao']}</td>
-					<td>Matrícula:
-					${f:pessoa(requestScope['fiscalAdmSuplente_pessoaSel.id']).matricula}</td>
-					<c:if test="${!doc.eletronico}">
-						<td></td>
-					</c:if>
-				</tr>
-			</c:if>
 			<c:if test="${not empty requestScope['fiscalTecTitular_pessoaSel.id']}">
 				<tr bgcolor="#999999">
 					<td colspan="2"><b>FISCAL TÉCNICO</b></td>
@@ -210,6 +184,32 @@
 					${requestScope['fiscalTecSuplente_pessoaSel.descricao']}</td>
 					<td>Matrícula:
 					${f:pessoa(requestScope['fiscalTecSuplente_pessoaSel.id']).matricula}</td>
+					<c:if test="${!doc.eletronico}">
+						<td></td>
+					</c:if>
+				</tr>
+			</c:if>
+			<c:if test="${not empty requestScope['fiscalAdmTitular_pessoaSel.id']}">
+				<tr bgcolor="#999999">
+					<td colspan="2"><b>FISCAL ADMINISTRATIVO</b></td>
+					<c:if test="${!doc.eletronico}">
+						<td width="10%">ciência</td>
+					</c:if>
+				</tr>
+				<tr>
+					<td width="69%">Titular:
+					${requestScope['fiscalAdmTitular_pessoaSel.descricao']}</td>
+					<td width="21%">Matrícula:
+					${f:pessoa(requestScope['fiscalAdmTitular_pessoaSel.id']).matricula}</td>
+					<c:if test="${!doc.eletronico}">
+						<td></td>
+					</c:if>
+				</tr>
+				<tr>
+					<td>Suplente:
+					${requestScope['fiscalAdmSuplente_pessoaSel.descricao']}</td>
+					<td>Matrícula:
+					${f:pessoa(requestScope['fiscalAdmSuplente_pessoaSel.id']).matricula}</td>
 					<c:if test="${!doc.eletronico}">
 						<td></td>
 					</c:if>

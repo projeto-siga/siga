@@ -22,10 +22,11 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
@@ -39,42 +40,12 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 */
 	private static final long serialVersionUID = -5783951238385826556L;
 
-	private String descrClassificacaoAI;
-
-	private String descrAssuntoPrincipalAI;
-
-	private String descrAssuntoSecundarioAI;
-
-	private String descrAssuntoAI;
-
-	private String descrClasseAI;
-
-	private String descrSubclasseAI;
-
-	private String descrAssuntoPrincipal;
-
-	private String descrAssuntoSecundario;
-
-	private String descrAssunto;
-
-	private String descrClasse;
-
-	private String descrSubclasse;
-
 	/**
 	 * Simple constructor of ExClassificacao instances.
 	 */
 	public ExClassificacao() {
 	}
 
-	/**
-	 * Constructor of ExClassificacao instances given a simple primary key.
-	 * 
-	 * @param idClassificacao
-	 */
-	public ExClassificacao(final java.lang.Long idClassificacao) {
-		super(idClassificacao);
-	}
 
 	public Long getId() {
 		return getIdClassificacao();
@@ -115,25 +86,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	public String getSigla() {
-		String s = "";
-
-		if (getCodAssunto() == null) { // classificação antiga
-			s += Zeros(getCodAssuntoPrincipal(), 1);
-			s += Zeros(getCodAssuntoSecundario(), 1);
-			s += ".";
-			s += Zeros(getCodClasse(), 1);
-		} else {
-			s += Zeros(getCodAssunto(), 2);
-			s += ".";
-			s += Zeros(getCodClasse(), 2);
-			s += ".";
-		}
-
-		s += Zeros(getCodSubclasse(), 2);
-		s += ".";
-		s += Zeros(getCodAtividade(), 2);
-
-		return s;
+		return getCodificacao();
 	}
 
 	/**
@@ -143,26 +96,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	public void setSigla(final String sigla) {
-		final Pattern p1 = Pattern
-				.compile("^([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])");
-		final Matcher m1 = p1.matcher(sigla);
-		if (m1.find()) {
-			setCodAssunto(Byte.parseByte(m1.group(1)));
-			setCodClasse(Byte.parseByte(m1.group(2)));
-			setCodSubclasse(Short.parseShort(m1.group(3)));
-			setCodAtividade(Short.parseShort(m1.group(4)));
-		} else {
-			final Pattern p2 = Pattern
-					.compile("^([0-9])([0-9]).?([0-9])([0-9][0-9]).?([0-9][0-9])");
-			final Matcher m2 = p2.matcher(sigla);
-			if (m2.find()) {
-				setCodAssuntoPrincipal(Byte.parseByte(m2.group(1)));
-				setCodAssuntoSecundario(Byte.parseByte(m2.group(2)));
-				setCodClasse(Byte.parseByte(m2.group(3)));
-				setCodSubclasse(Short.parseShort(m2.group(4)));
-				setCodAtividade(Short.parseShort(m2.group(5)));
-			}
-		}
+		setCodificacao(sigla);
 	}
 
 	/**
@@ -173,58 +107,15 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	public String getDescricao() {
-		String descr = "";
-		if (getCodAssunto() != null) {
-			if (getDescrAssunto() != null)
-				descr += getDescrAssunto();
-			if (getDescrClasse() != null)
-				descr += ": " + getDescrClasse();
-			if (getDescrSubclasse() != null)
-				descr += ": " + getDescrSubclasse();
-			if (getDescrClassificacao() != null)
-				descr += ": " + getDescrClassificacao();
-		} else {
-			if (getDescrAssuntoPrincipal() != null)
-				descr += getDescrAssuntoPrincipal();
-			if (getDescrAssuntoSecundario() != null)
-				descr += ": " + getDescrAssuntoSecundario();
-			if (getDescrClassificacao() != null)
-				descr += ": " + getDescrClassificacao();
-		}
-
-		return descr;
+		return ExDao.getInstance().consultarDescricaoExClassificacao(this);
 	}
 
 	public String getDescricaoCompleta() {
 		return getSigla() + " - " + getDescricao();
 	}
 
-	public String getDescrClassificacaoAI() {
-		return descrClassificacaoAI;
-	}
-
-	public void setDescrClassificacaoAI(String descrClassificacaoAI) {
-		this.descrClassificacaoAI = descrClassificacaoAI;
-	}
-
 	public String getNome() {
 		return getDescrClassificacao();
-	}
-
-	public String getDescrAssuntoPrincipal() {
-		return descrAssuntoPrincipal;
-	}
-
-	public String getDescrAssuntoSecundario() {
-		return descrAssuntoSecundario;
-	}
-
-	public void setDescrAssuntoPrincipal(String descrAssuntoPrincipal) {
-		this.descrAssuntoPrincipal = descrAssuntoPrincipal;
-	}
-
-	public void setDescrAssuntoSecundario(String descrAssuntoSecundario) {
-		this.descrAssuntoSecundario = descrAssuntoSecundario;
 	}
 
 	public Integer getNumVias() {
@@ -235,72 +126,6 @@ public class ExClassificacao extends AbstractExClassificacao implements
 		return "";
 	}
 
-	public String getDescrAssuntoPrincipalAI() {
-		return descrAssuntoPrincipalAI;
-	}
-
-	public void setDescrAssuntoPrincipalAI(String descrAssuntoPrincipalAI) {
-		this.descrAssuntoPrincipalAI = descrAssuntoPrincipalAI;
-	}
-
-	public String getDescrAssuntoSecundarioAI() {
-		return descrAssuntoSecundarioAI;
-	}
-
-	public void setDescrAssuntoSecundarioAI(String descrAssuntoSecundarioAI) {
-		this.descrAssuntoSecundarioAI = descrAssuntoSecundarioAI;
-	}
-
-	public String getDescrAssuntoAI() {
-		return descrAssuntoAI;
-	}
-
-	public void setDescrAssuntoAI(String descrAssuntoAI) {
-		this.descrAssuntoAI = descrAssuntoAI;
-	}
-
-	public String getDescrClasseAI() {
-		return descrClasseAI;
-	}
-
-	public void setDescrClasseAI(String descrClasseAI) {
-		this.descrClasseAI = descrClasseAI;
-	}
-
-	public String getDescrSubclasseAI() {
-		return descrSubclasseAI;
-	}
-
-	public void setDescrSubclasseAI(String descrSubclasseAI) {
-		this.descrSubclasseAI = descrSubclasseAI;
-	}
-
-	public String getDescrAssunto() {
-		return descrAssunto;
-	}
-
-	public void setDescrAssunto(String descrAssunto) {
-		this.descrAssunto = descrAssunto;
-	}
-
-	public String getDescrClasse() {
-		return descrClasse;
-	}
-
-	public void setDescrClasse(String descrClasse) {
-		this.descrClasse = descrClasse;
-	}
-
-	public String getDescrSubclasse() {
-		return descrSubclasse;
-	}
-
-	public void setDescrSubclasse(String descrSubclasse) {
-		this.descrSubclasse = descrSubclasse;
-	}
-
-	/* Add customized code below */
-	
 	/**
 	 * Verifica se uma classificação está fechada.
 	 * 
@@ -308,9 +133,27 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	*/
 	public boolean isFechada() {
-		if(this.getDtFimReg() != null)
+		if(this.getHisDtFim() != null)
 			return true;
 		
 		return false;
+	}
+
+	public void setId(Long id) {
+		setIdClassificacao(id);
+		
+	}
+
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		return false;
+	}
+	
+	public int getNivel(){
+		return MascaraUtil.getInstance().calcularNivel(this.getCodificacao());
+	}
+	
+	@Override
+	public String toString() {
+		return getCodificacao() + " " + getDescricao();
 	}
 }

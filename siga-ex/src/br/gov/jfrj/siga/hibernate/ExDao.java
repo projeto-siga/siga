@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Blob;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import oracle.jdbc.OracleTypes;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
@@ -66,8 +63,8 @@ import org.hibernate.search.Search;
 import org.hibernate.util.ReflectHelper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -85,6 +82,7 @@ import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -1016,7 +1014,7 @@ public class ExDao extends CpDao {
 				query.setLong("lotacao", 0);
 			if (exPreenchimento.getExModelo() != null)
 				query.setLong("modelo", exPreenchimento.getExModelo()
-						.getIdMod());
+						.getHisIdIni());
 			else
 				query.setLong("modelo", 0);
 			final List<ExPreenchimento> l = query.list();
@@ -1118,101 +1116,23 @@ public class ExDao extends CpDao {
 
 	}
 
-	public List<ExClassificacao> listarAssuntosPrincipal() {
-		final Query query = getSessao().getNamedQuery(
-				"consultarAssuntosPrincipalExClassificacao");
-		// query.setString("descricao", o.getDescricao());
+	public List<ExClassificacao> listarExClassificacaoPorNivel(String mascara,String exceto){
+		Query q = getSessao().getNamedQuery("consultarExClassificacaoComExcecao");
+		q.setString("mascara", mascara);
+		q.setString("exceto", exceto);
+		return q.list();
 
-		final List<ExClassificacao> l = query.list();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
-		return l;
+	}
+	
+	public List<ExClassificacao> listarExClassificacaoPorNivel(String mascara){
+		Query q = getSessao().getNamedQuery("consultarExClassificacaoPorMascara");
+		q.setString("mascara", mascara);
+		q.setString("descrClassificacao", "");
+		return q.list();
+
 	}
 
-	public List<ExClassificacao> listarAssuntos() {
-		final Query query = getSessao().getNamedQuery(
-				"consultarAssuntosExClassificacao");
-		final List<ExClassificacao> l = query.list();
-		return l;
-	}
 
-	public List<ExClassificacao> listarAssuntosSecundario(
-			final int codAssuntoPrincipal) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarAssuntosSecundarioExClassificacao");
-		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
-
-		final List<ExClassificacao> l = query.list();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
-		return l;
-	}
-
-	public List<ExClassificacao> listarClassesAntigo(
-			final int codAssuntoPrincipal, final int codAssuntoSecundario) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarClassesExClassificacao");
-		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
-		query.setInteger("assuntoSecundario", codAssuntoSecundario);
-
-		final List<ExClassificacao> l = query.list();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
-		return l;
-	}
-
-	public List<ExClassificacao> listarClasses(final int codAssunto) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarClassesExClassificacao");
-		query.setInteger("assunto", codAssunto);
-		final List<ExClassificacao> l = query.list();
-		return l;
-	}
-
-	public List<ExClassificacao> listarSubClassesAntigo(
-			final int codAssuntoPrincipal, final int codAssuntoSecundario,
-			final int codClasse) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarSubClassesExClassificacao");
-		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
-		query.setInteger("assuntoSecundario", codAssuntoSecundario);
-		query.setInteger("classe", codClasse);
-
-		final List<ExClassificacao> l = query.list();
-		return l;
-	}
-
-	public List<ExClassificacao> listarSubClasses(final int codAssunto,
-			final int codClasse) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarSubClassesExClassificacao");
-		query.setInteger("assunto", codAssunto);
-		query.setInteger("classe", codClasse);
-		final List<ExClassificacao> l = query.list();
-		return l;
-	}
-
-	public List<ExClassificacao> listarAtividades(
-			final int codAssuntoPrincipal, final int codAssuntoSecundario,
-			final int codClasse, final int codSubClasse,
-			final boolean ultimoNivel) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarAtividadesExClassificacao");
-		query.setInteger("assuntoPrincipal", codAssuntoPrincipal);
-		query.setInteger("assuntoSecundario", codAssuntoSecundario);
-		query.setInteger("classe", codClasse);
-		query.setInteger("subclasse", codSubClasse);
-		query.setBoolean("ultimoNivel", ultimoNivel);
-
-		final List<ExClassificacao> l = query.list();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
-		return l;
-	}
 
 	public List<ExClassificacao> consultarPorFiltro(
 			final ExClassificacaoDaoFiltro flt) {
@@ -1222,50 +1142,17 @@ public class ExDao extends CpDao {
 	public List<ExClassificacao> consultarPorFiltro(
 			final ExClassificacaoDaoFiltro flt, final int offset,
 			final int itemPagina) {
-		int codAssuntoPrincipal = -1;
-		int codAssuntoSecundario = -1;
-		int codClasse = -1;
-		int codSubClasse = -1;
-		int codAtividade = -1;
-		int codAssunto = -1;
-		boolean ultimoNivel = false;
 		String descrClassificacao = "";
-		if (flt.getAssuntoPrincipal() != null) {
-			if (!flt.getAssuntoPrincipal().equals("")) {
-				codAssuntoPrincipal = new Integer(flt.getAssuntoPrincipal());
-			}
-		}
-		if (flt.getAssunto() != null) {
-			if (!flt.getAssunto().equals("")) {
-				codAssunto = new Integer(flt.getAssunto());
-			}
-		}
-
-		if (flt.getAssuntoSecundario() != null) {
-			if (!flt.getAssuntoSecundario().equals("")) {
-				codAssuntoSecundario = new Integer(flt.getAssuntoSecundario());
-			}
-		}
-		if (flt.getClasse() != null) {
-			if (!flt.getClasse().equals("")) {
-				codClasse = new Integer(flt.getClasse());
-			}
-		}
-		if (flt.getSubclasse() != null) {
-			if (!flt.getSubclasse().equals("")) {
-				codSubClasse = new Integer(flt.getSubclasse());
-			}
-		}
-		if (flt.getAtividade() != null) {
-			if (!flt.getAtividade().equals("")) {
-				codAtividade = new Integer(flt.getAtividade());
-			}
-		}
+		
+		MascaraUtil m = MascaraUtil.getInstance();
+		
 		if (flt.getDescricao() != null) {
-			descrClassificacao = flt.getDescricao();
-		}
-		if (flt.getUltimoNivel() != null) {
-			ultimoNivel = new Boolean(flt.getUltimoNivel());
+			String d = flt.getDescricao();
+			if (d.length() > 0 && m.isCodificacao(d)){
+				descrClassificacao = m.formatar(d);
+			}else{
+				descrClassificacao = d;	
+			}
 		}
 
 		final Query query = getSessao().getNamedQuery(
@@ -1277,65 +1164,24 @@ public class ExDao extends CpDao {
 			query.setMaxResults(itemPagina);
 		}
 
-		query.setInteger("codAssuntoPrincipal", codAssuntoPrincipal);
-		query.setInteger("codAssunto", codAssunto);
-		query.setInteger("codAssuntoSecundario", codAssuntoSecundario);
-		query.setInteger("codClasse", codClasse);
-		query.setInteger("codSubclasse", codSubClasse);
-		query.setInteger("codAtividade", codAtividade);
+		if (flt.getSigla()==null || flt.getSigla().equals("")){
+			query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
+		}else{
+			query.setString("mascara", MascaraUtil.getInstance().getMscFilho(flt.getSigla().toString(),true));
+		}
+
+		
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
-		query.setBoolean("ultimoNivel", ultimoNivel);
+		query.setString("descrClassificacaoSemAcento", Texto.removeAcentoMaiusculas(descrClassificacao)
+				.replace(' ', '%'));
 
 		final List<ExClassificacao> l = query.list();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
 		return l;
 	}
 
 	public int consultarQuantidade(final ExClassificacaoDaoFiltro flt) {
-		int codAssuntoPrincipal = -1;
-		int codAssuntoSecundario = -1;
-		int codClasse = -1;
-		int codSubClasse = -1;
-		int codAtividade = -1;
-		int codAssunto = -1;
-		boolean ultimoNivel = false;
 		String descrClassificacao = "";
-		if (flt.getAssuntoPrincipal() != null) {
-			if (!flt.getAssuntoPrincipal().equals("")) {
-				codAssuntoPrincipal = new Integer(flt.getAssuntoPrincipal());
-			}
-		}
-		if (flt.getAssunto() != null) {
-			if (!flt.getAssunto().equals("")) {
-				codAssunto = new Integer(flt.getAssunto());
-			}
-		}
-		if (flt.getAssuntoSecundario() != null) {
-			if (!flt.getAssuntoSecundario().equals("")) {
-				codAssuntoSecundario = new Integer(flt.getAssuntoSecundario());
-			}
-		}
-		if (flt.getClasse() != null) {
-			if (!flt.getClasse().equals("")) {
-				codClasse = new Integer(flt.getClasse());
-			}
-		}
-		if (flt.getSubclasse() != null) {
-			if (!flt.getSubclasse().equals("")) {
-				codSubClasse = new Integer(flt.getSubclasse());
-			}
-		}
-		if (flt.getAtividade() != null) {
-			if (!flt.getAtividade().equals("")) {
-				codAtividade = new Integer(flt.getAtividade());
-			}
-		}
-		if (flt.getUltimoNivel() != null) {
-			ultimoNivel = new Boolean(flt.getUltimoNivel());
-		}
 		if (flt.getDescricao() != null) {
 			descrClassificacao = flt.getDescricao();
 		}
@@ -1343,20 +1189,11 @@ public class ExDao extends CpDao {
 		final Query query = getSessao().getNamedQuery(
 				"consultarQuantidadeExClassificacao");
 
-		query.setInteger("codAssuntoPrincipal", codAssuntoPrincipal);
-		query.setInteger("codAssuntoSecundario", codAssuntoSecundario);
-		query.setInteger("codAssunto", codAssunto);
-		query.setInteger("codClasse", codClasse);
-		query.setInteger("codSubclasse", codSubClasse);
-		query.setInteger("codAtividade", codAtividade);
-		query.setBoolean("ultimoNivel", ultimoNivel);
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
+		query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
 
 		final int l = ((Long) query.uniqueResult()).intValue();
-		/*
-		 * if (l.size() == 0) return null;
-		 */
 		return l;
 	}
 
@@ -1364,22 +1201,7 @@ public class ExDao extends CpDao {
 		try {
 			final Query query = getSessao().getNamedQuery(
 					"consultarPorSiglaExClassificacao");
-			if (o.getCodAssuntoPrincipal() != null)
-				query.setByte("codAssuntoPrincipal", o.getCodAssuntoPrincipal());
-			else
-				query.setInteger("codAssuntoPrincipal", -1);
-			if (o.getCodAssuntoSecundario() != null)
-				query.setByte("codAssuntoSecundario",
-						o.getCodAssuntoSecundario());
-			else
-				query.setInteger("codAssuntoSecundario", -1);
-			if (o.getCodAssunto() != null)
-				query.setByte("codAssunto", o.getCodAssunto());
-			else
-				query.setInteger("codAssunto", -1);
-			query.setByte("codClasse", o.getCodClasse());
-			query.setShort("codSubclasse", o.getCodSubclasse());
-			query.setShort("codAtividade", o.getCodAtividade());
+			query.setString("codificacao", MascaraUtil.getInstance().formatar(o.getSigla()));
 
 			final List<ExClassificacao> l = query.list();
 			if (l.size() != 1)
@@ -1394,7 +1216,7 @@ public class ExDao extends CpDao {
 		try {
 			final Query query = getSessao()
 					.getNamedQuery("consultarAtualPorId");
-			query.setLong("idRegIni", o.getIdRegIni());
+			query.setLong("idRegIni", o.getHisIdIni());
 			return (ExClassificacao) query.uniqueResult();
 		} catch (final NullPointerException e) {
 			return null;
@@ -1412,16 +1234,10 @@ public class ExDao extends CpDao {
 		try {
 			final Query query = getSessao().getNamedQuery(
 					"consultarMovimentacoesPorLotacaoEntreDatas");
-			// if (titular.getIdPessoaIni() != null)
-			// query.setLong("titular", titular.getIdPessoaIni());
-			// else
-			// query.setLong("titular", 0);
 			if (lotaTitular.getIdLotacaoIni() != null)
 				query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni());
 			else
 				query.setLong("lotaTitular", 0);
-			// query.setDate("dtIni", dtIni);
-			// query.setDate("dtFim", dtFim);
 
 			return query.list();
 		} catch (final NullPointerException e) {
@@ -1432,7 +1248,7 @@ public class ExDao extends CpDao {
 	public ExTpDocPublicacao consultarPorModelo(ExModelo mod) {
 		try {
 			final Query query = getSessao().getNamedQuery("consultarPorModelo");
-			query.setLong("idMod", mod.getIdMod());
+			query.setLong("idMod", mod.getHisIdIni());
 
 			return (ExTpDocPublicacao) query.list().get(0);
 		} catch (final Throwable t) {
@@ -1528,7 +1344,7 @@ public class ExDao extends CpDao {
 	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script)
 			throws Exception {
 		final Query q = getSessao().createQuery(
-				"select m from ExModelo m left join m.exFormaDocumento as f "
+				"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
 						+ "order by f.descrFormaDoc, m.nmMod");
 		List<ExModelo> l = new ArrayList<ExModelo>();
 		for (ExModelo mod : (List<ExModelo>) q.list())
@@ -1620,8 +1436,8 @@ public class ExDao extends CpDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExMarca.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpMarca.class);
 
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
-				"read-only", "ex");
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
+//				"read-only", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExConfiguracao",
 		// "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExEstadoDoc",
@@ -1632,8 +1448,8 @@ public class ExDao extends CpDao {
 				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy(
 				"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao", "read-only", "ex");
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
-				"read-only", "ex");
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
+//				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDespacho",
 				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDestinacao",
@@ -1646,16 +1462,16 @@ public class ExDao extends CpDao {
 				"br.gov.jfrj.siga.ex.ExTipoMovimentacao", "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoFormaDoc",
 				"read-only", "ex");
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExVia",
-				"read-only", "ex");
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExVia",
+//				"read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoMobil",
 				"read-only", "ex");
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"br.gov.jfrj.siga.ex.ExTipoDocumento.exFormaDocumentoSet",
 				"read-only", "ex");
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExClassificacao.exViaSet", "read-only",
-				"ex");
+//		cfg.setCollectionCacheConcurrencyStrategy(
+//				"br.gov.jfrj.siga.ex.ExClassificacao.exViaSet", "read-only",
+//				"ex");
 		// cfg.setCollectionCacheConcurrencyStrategy(
 		// "br.gov.jfrj.siga.ex.ExFormaDocumento.exModeloSet",
 		
@@ -1717,4 +1533,68 @@ public class ExDao extends CpDao {
 		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
 		return query.list();
 	}
+
+	public String consultarDescricaoExClassificacao(ExClassificacao exClass) {
+		String[] pais = MascaraUtil.getInstance().getPais(exClass.getCodificacao());
+		if (pais==null){
+			return exClass.getDescrClassificacao();
+		}
+//		pais = Arrays.copyOf(pais, pais.length+1);
+//		pais[pais.length-1]= exClass.getCodificacao();
+		
+		Query q = getSessao().getNamedQuery("consultarDescricaoExClassificacao");
+		q.setParameterList("listaCodificacao", pais);
+		List<String> result = q.list();
+		StringBuffer sb = new StringBuffer();
+		for (String descr : result) {
+			sb.append(descr);
+			sb.append(": ");
+		}
+		
+		sb.append(exClass.getDescrClassificacao());
+		return sb.toString();
+	}
+	
+	public List<ExClassificacao> consultarExClassificacaoVigente(){
+		return consultarExClassificacao(MascaraUtil.getInstance().getMscTodosDoMaiorNivel(),"");
+	}
+	
+	public List<ExClassificacao> consultarFilhos(ExClassificacao exClass,boolean niveisAbaixo){
+		final Query query = getSessao().getNamedQuery("consultarFilhosExClassificacao");
+		query.setString("mascara", MascaraUtil.getInstance().getMscFilho(exClass.getCodificacao().toString(),niveisAbaixo));
+		
+		return query.list().subList(1, query.list().size());
+	}
+	
+	public List<ExClassificacao> consultarExClassificacao(String mascaraLike,
+			String descrClassificacao) {
+		Query q = getSessao().getNamedQuery("consultarExClassificacaoPorMascara");
+		q.setString("mascara", mascaraLike);
+		q.setString("descrClassificacao", descrClassificacao.toUpperCase());
+		
+		return q.list();
+	}
+
+	public ExClassificacao consultarExClassificacao(String codificacao) {
+		ExClassificacao flt = new ExClassificacao();
+		flt.setSigla(codificacao);
+		return ExDao.getInstance().consultarPorSigla(flt);
+	}
+
+	public List<ExDocumento> consultarExDocumentoPorClassificacao(
+			DpLotacao lotacao, String mascara,CpOrgaoUsuario orgaoUsu) {
+		Query q;
+		if (lotacao == null){
+			q = getSessao().getNamedQuery("consultarExDocumentoClassificados");
+		}else{
+			q = getSessao().getNamedQuery("consultarExDocumentoClassificadosPorLotacao");
+			q.setLong("idLotacao", lotacao.getId());
+		}
+		 
+		q.setString("mascara", mascara);
+		q.setLong("idOrgaoUsuario", orgaoUsu.getIdOrgaoUsu());
+		return q.list();
+	}
+
+
 }

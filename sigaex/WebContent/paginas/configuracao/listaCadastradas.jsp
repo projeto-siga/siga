@@ -55,7 +55,7 @@
 					<td><c:if test="${not empty configuracao.orgaoUsuario}">${configuracao.orgaoUsuario.acronimoOrgaoUsu}</c:if></td>
 					<td><c:if test="${not empty configuracao.cargo}">${configuracao.cargo.nomeCargo}</c:if></td>
 					<td><c:if test="${not empty configuracao.exTipoMovimentacao}">${configuracao.exTipoMovimentacao.descrTipoMovimentacao}</c:if></td>
-					<td><c:if test="${not empty configuracao.exVia}">${configuracao.exVia.destinacao}(${configuracao.exVia.codVia})</c:if></td>
+					<td><c:if test="${not empty configuracao.exVia}">${configuracao.exVia.exTipoDestinacao}(${configuracao.exVia.codVia})</c:if></td>
 					<td><c:if test="${not empty configuracao.exModelo}">${configuracao.exModelo.nmMod}</c:if></td>
 					<td><c:if test="${not empty configuracao.exClassificacao}">${configuracao.exClassificacao.descrClassificacao}</c:if></td>
 					<td><c:if test="${not empty configuracao.exFormaDocumento.exTipoFormaDoc}">${configuracao.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc}</c:if></td>

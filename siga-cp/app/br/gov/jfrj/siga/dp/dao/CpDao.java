@@ -48,6 +48,7 @@ import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -937,6 +938,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
 
 	public CpIdentidade consultaIdentidadeCadastrante(final String nmUsuario,
 			boolean fAtiva) throws AplicacaoException {
@@ -1175,7 +1177,38 @@ public class CpDao extends ModeloDao {
 		return findByCriteria(clazz, Property.forName(dtFim).isNull(), Property
 				.forName("orgaoUsuario.idOrgaoUsu").eq(orgaoUsuario));
 	}
+	
+	public <T> List<T> listarAtivos(Class<T> clazz,String orderBy) {
+		Criteria c = getSessao().createCriteria(clazz);
+		
+		if (orderBy != null){
+			c.addOrder(Order.asc(orderBy));	
+		}
+		
+		c.add(Restrictions.eq("hisAtivo", 1));
+	
+		return c.list();
 
+	}
+	
+	public <T> T consultarAtivoPorIdInicial(Class<T> clazz,Long hisIdIni) {
+		Criteria c = getSessao().createCriteria(clazz);
+		
+		c.add(Restrictions.eq("hisIdIni", hisIdIni));
+		c.add(Restrictions.eq("hisAtivo", 1));
+	
+		T obj = null;
+		try{
+			obj = (T) c.list().get(0);
+		}catch (Exception e) {
+			
+		}
+		
+		return obj;
+	}
+
+
+	
 	/**
 	 * Use this inside subclasses as a convenience method.
 	 */
@@ -1435,6 +1468,7 @@ public class CpDao extends ModeloDao {
 		cfg.addClass(br.gov.jfrj.siga.cp.CpTipoIdentidade.class);
 		cfg.addClass(br.gov.jfrj.siga.cp.CpIdentidade.class);
 		cfg.addClass(br.gov.jfrj.siga.cp.CpModelo.class);
+		cfg.addClass(br.gov.jfrj.siga.cp.CpUnidadeMedida.class);
 
 		// <!--
 		// <mapping resource="br/gov/jfrj/siga/dp/CpTipoMarcador.hbm.xml" />
@@ -1541,6 +1575,21 @@ public class CpDao extends ModeloDao {
 		}
 			
 		return l.get(0);
+	}
+
+	public void excluirComHistorico(HistoricoAuditavel entidade, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		
+		if(dt==null){
+			dt = consultarDataEHoraDoServidor();
+		}
+		entidade.setHisDtFim(dt);
+		entidade.setHisIdcFim(identidadeCadastrante);
+		entidade.setHisAtivo(0);
+		
+		gravarComHistorico(entidade,identidadeCadastrante);
+
+		
 	}
 
 }

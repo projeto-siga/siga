@@ -22,13 +22,17 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.Set;
+
+import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 
 /**
  * A class that represents a row in the EX_TEMPORALIDADE table. You can
  * customize the behavior of this class by editing the class,
  * {@link ExTemporalidade()}.
  */
-public abstract class AbstractExTemporalidade implements Serializable {
+public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte {
 	/** The value of the simple descTemporalidade property. */
 	private java.lang.String descTemporalidade;
 
@@ -39,25 +43,21 @@ public abstract class AbstractExTemporalidade implements Serializable {
 	private int hashValue = 0;
 
 	/** The composite primary key value. */
-	private java.lang.Short idTemporalidade;
+	private Long idTemporalidade;
 
-	/** The value of the simple permanenciaArquivo property. */
-	private java.lang.Integer permanenciaArquivo;
+	/** Valor em dias, meses ou anos*/
+	private Integer valorTemporalidade;
+	
+	private CpUnidadeMedida cpUnidadeMedida; 
+	
+	private Set<ExVia> exViaArqCorrenteSet;
+	private Set<ExVia> exViaArqIntermediarioSet;
+	
 
 	/**
 	 * Simple constructor of AbstractExTemporalidade instances.
 	 */
 	public AbstractExTemporalidade() {
-	}
-
-	/**
-	 * Constructor of AbstractExTemporalidade instances given a simple primary
-	 * key.
-	 * 
-	 * @param idTemporalidade
-	 */
-	public AbstractExTemporalidade(final java.lang.Short idTemporalidade) {
-		this.setIdTemporalidade(idTemporalidade);
 	}
 
 	/**
@@ -90,22 +90,8 @@ public abstract class AbstractExTemporalidade implements Serializable {
 		return this.descTemporalidade;
 	}
 
-	/**
-	 * Return the simple primary key value that identifies this object.
-	 * 
-	 * @return java.lang.Short
-	 */
-	public java.lang.Short getIdTemporalidade() {
+	public Long getIdTemporalidade() {
 		return idTemporalidade;
-	}
-
-	/**
-	 * Return the value of the PERMANENCIA_ARQUIVO column.
-	 * 
-	 * @return java.lang.Integer
-	 */
-	public java.lang.Integer getPermanenciaArquivo() {
-		return this.permanenciaArquivo;
 	}
 
 	/**
@@ -141,17 +127,41 @@ public abstract class AbstractExTemporalidade implements Serializable {
 	 * 
 	 * @param idTemporalidade
 	 */
-	public void setIdTemporalidade(final java.lang.Short idTemporalidade) {
+	public void setIdTemporalidade(final Long idTemporalidade) {
 		this.hashValue = 0;
 		this.idTemporalidade = idTemporalidade;
 	}
 
-	/**
-	 * Set the value of the PERMANENCIA_ARQUIVO column.
-	 * 
-	 * @param permanenciaArquivo
-	 */
-	public void setPermanenciaArquivo(final java.lang.Integer permanenciaArquivo) {
-		this.permanenciaArquivo = permanenciaArquivo;
+	public void setValorTemporalidade(Integer valorTemporalidade) {
+		this.valorTemporalidade = valorTemporalidade;
 	}
+
+	public Integer getValorTemporalidade() {
+		return valorTemporalidade;
+	}
+
+	public void setCpUnidadeMedida(CpUnidadeMedida cpUnidadeMedida) {
+		this.cpUnidadeMedida = cpUnidadeMedida;
+	}
+
+	public CpUnidadeMedida getCpUnidadeMedida() {
+		return cpUnidadeMedida;
+	}
+
+	public void setExViaArqCorrenteSet(Set<ExVia> exViaArqCorrenteSet) {
+		this.exViaArqCorrenteSet = exViaArqCorrenteSet;
+	}
+
+	public Set<ExVia> getExViaArqCorrenteSet() {
+		return exViaArqCorrenteSet;
+	}
+
+	public void setExViaArqIntermediarioSet(Set<ExVia> exViaArqIntermediarioSet) {
+		this.exViaArqIntermediarioSet = exViaArqIntermediarioSet;
+	}
+
+	public Set<ExVia> getExViaArqIntermediarioSet() {
+		return exViaArqIntermediarioSet;
+	}
+
 }

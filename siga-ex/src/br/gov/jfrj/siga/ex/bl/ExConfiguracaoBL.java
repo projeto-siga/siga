@@ -148,25 +148,22 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 			if (exCfg.getExVia() != null
 					&& ((exCfgFiltro.getExVia() != null && !exCfg.getExVia()
-							.getIdVia().equals(
-									exCfgFiltro.getExVia().getIdVia())) || ((exCfgFiltro
+							.equivale(exCfgFiltro.getExVia())) || ((exCfgFiltro
 							.getExVia() == null) && !atributosDesconsiderados
 							.contains(VIA))))
 				return false;
 
 			if (exCfg.getExClassificacao() != null
 					&& ((exCfgFiltro.getExClassificacao() != null && !exCfg
-							.getExClassificacao().getIdClassificacao().equals(
-									exCfgFiltro.getExClassificacao()
-											.getIdClassificacao())) || ((exCfgFiltro
+							.getExClassificacao().equivale(exCfgFiltro.getExClassificacao())) || ((exCfgFiltro
 							.getExClassificacao() == null) && !atributosDesconsiderados
 							.contains(CLASSIFICACAO))))
 				return false;
 
 			if (exCfg.getExModelo() != null
 					&& ((exCfgFiltro.getExModelo() != null && !exCfg
-							.getExModelo().getIdMod().equals(
-									exCfgFiltro.getExModelo().getIdMod())) || ((exCfgFiltro
+							.getExModelo().equivale(
+									exCfgFiltro.getExModelo())) || ((exCfgFiltro
 							.getExModelo() == null) && !atributosDesconsiderados
 							.contains(MODELO))))
 				return false;
@@ -594,5 +591,42 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			configVigentes.add(cfg);			
 		}
 		return(configVigentes);		
+	}
+	
+	/**
+	 * Varre as entidades definidas na configuração para evitar que o hibernate
+	 * guarde versões lazy delas.
+	 * 
+	 * @param listaCfg - lista de configurações que podem ter objetos lazy
+	 */
+	@Override
+	protected void evitarLazy(List<CpConfiguracao> listaCfg) {
+		super.evitarLazy(listaCfg);
+		
+		for (CpConfiguracao cpCfg : listaCfg) {
+			if (cpCfg instanceof ExConfiguracao){
+				ExConfiguracao cfg = (ExConfiguracao) cpCfg;
+				if (cfg.getExClassificacao() != null)
+					cfg.getExClassificacao().getDescrClassificacao();
+				if (cfg.getExFormaDocumento() != null)
+					cfg.getExFormaDocumento().getDescrFormaDoc();
+				if (cfg.getExModelo() != null)
+					cfg.getExModelo().getDescMod();
+				if (cfg.getExNivelAcesso() != null)
+					cfg.getExNivelAcesso().getDscNivelAcesso();
+				if (cfg.getExPapel() != null)
+					cfg.getExPapel().getDescPapel();
+				if (cfg.getExTipoDocumento() != null)
+					cfg.getExTipoDocumento().getDescrTipoDocumento();
+				if (cfg.getExTipoFormaDoc() != null)
+					cfg.getExTipoFormaDoc().getDescTipoFormaDoc();
+				if (cfg.getExTipoMovimentacao() != null)
+					cfg.getExTipoMovimentacao().getDescrTipoMovimentacao();
+				if (cfg.getExVia() != null)
+					cfg.getExVia().getObs();
+
+			}
+		}
+
 	}
 }

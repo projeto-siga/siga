@@ -22,7 +22,7 @@
 							<th align="center">Opções</th>
 						</tr>
 					</thead>
-
+					
 					<tbody>
 						<c:forEach var="substituicao" items="${itens}">
 							<tr>
@@ -50,14 +50,12 @@
 									<ww:url id="url" action="editar" namespace="/substituicao">
 										<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
 									</ww:url>
-									<siga:link title="Alterar" url="${url}" />
-									<%--<ww:a href="%{url}">Alterar</ww:a>  --%>
+									<siga:link title="Alterar" url="${url}" />									
 										<ww:url id="url" action="excluir" namespace="/substituicao">
 												<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
 										</ww:url>
 										<siga:link title="Excluir" url="${url}" 
-												popup="excluir" confirm="Deseja excluir configuração?" />
-									<%--	<ww:a href="%{url}"> | Excluir</ww:a>  --%>
+												popup="excluir" confirm="Deseja excluir substituição?" />									
 																
 								</td>
 							</tr>

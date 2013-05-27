@@ -54,16 +54,6 @@ public abstract class AbstractExTipoDestinacao implements Serializable {
 	}
 
 	/**
-	 * Constructor of AbstractExTipoDestinacao instances given a simple primary
-	 * key.
-	 * 
-	 * @param idTpDestinacao
-	 */
-	public AbstractExTipoDestinacao(final java.lang.Long idTpDestinacao) {
-		this.setIdTpDestinacao(idTpDestinacao);
-	}
-
-	/**
 	 * Implementation of the equals comparison on the basis of equality of the
 	 * primary key values.
 	 * 

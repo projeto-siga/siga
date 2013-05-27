@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
@@ -201,5 +202,7 @@ public class ExActionSupport extends SigaActionSupport {
 			Exception {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
+	
+
 
 }

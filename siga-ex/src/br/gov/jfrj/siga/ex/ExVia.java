@@ -21,13 +21,13 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.Serializable;
+import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
  * A class that represents a row in the 'EX_VIA' table. This class may be
  * customized as it is never re-generated after being created.
  */
-public class ExVia extends AbstractExVia implements Serializable {
+public class ExVia extends AbstractExVia {
 	/**
 	 * 
 	 */
@@ -39,12 +39,12 @@ public class ExVia extends AbstractExVia implements Serializable {
 	public ExVia() {
 	}
 
-	public String getDestinacao() {
-		if (getExTipoDestinacao() != null)
-			return getExTipoDestinacao().getDescrTipoDestinacao();
-		else
-			return "";
-	}
+//	public String getDestinacao() {
+//		if (getExTipoDestinacao() != null)
+//			return getExTipoDestinacao().getDescrTipoDestinacao();
+//		else
+//			return "";
+//	}
 
 	public String getLetraVia() {
 		if (getCodVia() != null)
@@ -52,6 +52,18 @@ public class ExVia extends AbstractExVia implements Serializable {
 					.toString();
 		else
 			return "";
+	}
+
+	public Long getId() {
+		return getIdVia();
+	}
+
+	public void setId(Long id) {
+		setIdVia(id);
+	}
+
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		return false;
 	}
 
 	/* Add customized code below */

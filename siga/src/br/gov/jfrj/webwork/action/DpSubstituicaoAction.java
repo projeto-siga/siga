@@ -76,8 +76,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	
 	private String strBuscarFechadas;
 	
-	private String isSubstituicao;
-
+	private String isSubstituicao;	
+	
+	private String porMenu;
+	
 	public Date getDtAtual() {
 		return new Date();
 	}
@@ -253,6 +255,35 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	}
 
 	public String aExcluirSubstituto() throws Exception {
+		
+		if (getId() != null) {
+			DpSubstituicao dpSub = daoSub(getId());
+			
+			if ((dpSub.getSubstituto() != null && dpSub.getSubstituto().equals(getCadastrante()))					
+				|| (dpSub.getSubstituto() == null && dpSub.getLotaSubstituto().equals(getCadastrante().getLotacao()))
+				|| Cp.getInstance()
+					.getConf()
+					.podePorConfiguracao(
+							getCadastrante(),
+							CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)) {
+				dao().iniciarTransacao();		
+				dpSub.setDtFimRegistro(new Date());
+				dpSub = dao().gravar(dpSub);
+				dao().commitTransacao();				
+			} else
+				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
+		} else
+			throw new AplicacaoException("Não foi informada id");
+		
+		if (getPorMenu() != null && getPorMenu().equals("true")) 
+			return "MENU";
+		
+		
+		return Action.SUCCESS;		
+	}
+	
+	
+/*	public String aExcluirSubstituto() throws Exception {
 
 		if (getId() != null) {
 			dao().iniciarTransacao();
@@ -263,6 +294,18 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		} else
 			throw new AplicacaoException("Não foi informada id");
 		return Action.SUCCESS;
+	}
+*/	
+	
+	
+	
+
+	public String getPorMenu() {
+		return porMenu;
+	}
+
+	public void setPorMenu(String porMenu) {
+		this.porMenu = porMenu;
 	}
 
 	public String aListarSubstitutos() throws Exception {

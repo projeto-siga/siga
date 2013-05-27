@@ -212,7 +212,7 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 		if (id == null) {
 			mod = new ExModelo();
 		} else {
-			mod = dao().consultar(id, ExModelo.class, false);
+			mod = Ex.getInstance().getBL().getCopia(dao().consultar(getId(), ExModelo.class, false));
 
 			// if (!ExCompetenciaBL
 			// .podeEditar(getTitular(), getLotaTitular(), mob))
@@ -260,7 +260,12 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 	public String aEditarGravar() throws Exception {
 		assertAcesso("MOD:Gerenciar modelos");
 		lerForm();
-		Ex.getInstance().getBL().gravarModelo(mod);
+		ExModelo modAntigo = null;
+		if (getId()!=null){
+			modAntigo = dao().consultar(getId(), ExModelo.class, false);
+		}
+		Ex.getInstance().getBL().gravarModelo(mod,modAntigo,null,getIdentidadeCadastrante());
+		setId(mod.getId());
 		Map<String, String[]> l = getPar();
 		if ("Aplicar".equals(param("submit")))
 			return "aplicar";

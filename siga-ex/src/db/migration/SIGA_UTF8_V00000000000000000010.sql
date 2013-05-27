@@ -1,0 +1,6 @@
+-------------------------------------------
+--	SCRIPT:CONF DESP LONG
+-------------------------------------------
+
+Insert into CORPORATIVO.CP_CONFIGURACAO (ID_CONFIGURACAO,DT_INI_VIG_CONFIGURACAO,ID_SIT_CONFIGURACAO,ID_TP_CONFIGURACAO) values (CORPORATIVO.CP_CONFIGURACAO_SEQ.nextval,to_date('31/10/12','DD/MM/RR'),1,30);
+Insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO_EX,ID_MOD) values (CORPORATIVO.CP_CONFIGURACAO_SEQ.currval,78);

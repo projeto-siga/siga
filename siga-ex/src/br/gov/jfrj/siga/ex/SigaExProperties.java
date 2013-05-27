@@ -30,7 +30,9 @@ import java.util.ResourceBundle;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.prop.ext.ModeloPropriedade;
 
 public class SigaExProperties extends ModeloPropriedade {
@@ -90,6 +92,22 @@ public class SigaExProperties extends ModeloPropriedade {
 
 	public static String getMontadorQuery() {
 		return getString("montador.query");
+	}
+	
+	public static String getExClassificacaoMascaraEntrada() {
+		return getString("classificacao.mascara.entrada");
+	}
+
+	public static String getExClassificacaoMascaraSaida() {
+		return getString("classificacao.mascara.saida");
+	}
+	
+	public static List<String> getExClassificacaoNomesNiveis() throws AplicacaoException{
+		try {
+			return instance.obterPropriedadeLista("siga.ex.classificacao.mascara.nomeNivel");
+		} catch (Exception e) {
+			throw new AplicacaoException("Não foi possível encontrar os nomes dos níveis da classificação documental no arquivo siga.properties. Ex: siga.ex.classificacao.mascara.nomeNivel.0 = Assunto");
+		}
 	}
 	
 	public static boolean isAmbienteProducao(){
@@ -159,6 +177,29 @@ public class SigaExProperties extends ModeloPropriedade {
 		} catch (NumberFormatException nfe){
 			throw new Exception("Erro ao obter propriedade para o ano inicial para a utilização do acrônimo no código do documento");
 		}
+	}
+
+	/**
+	 * Retorna a máscara da classificação a ser utilizadas em caixas de texto DURANTE a digitação do valor
+	 *
+	 * a - Represents an alpha character (A-Z,a-z)
+	 * 9 - Represents a numeric character (0-9)
+	 * * - Represents an alphanumeric character (A-Z,a-z,0-9)
+	 * 
+	 * Exemplos:
+	 * 
+	 * 	Data		99/99/9999
+	 *  Telefone		(999) 999-9999
+	 *	Telefone + Ramal		(999) 999-9999? x99999
+	 *	CPF		999.999.999-99
+	 *	Chave de produto		a*-999-a999
+	 * 
+	 *  Para mais detalhes, veja http://digitalbush.com/projects/masked-input-plugin/
+
+	 * @return
+	 */
+	public static String getExClassificacaoMascaraJavascript() {
+		return getString("classificacao.mascara.javascript");
 	}
 	
 	public static Date getDataInicioObrigacaoDeAssinarAnexoEDespacho() throws Exception{

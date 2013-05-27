@@ -96,6 +96,17 @@ function visualizarRelatorio(rel) {
 		<c:set var="titulo_pagina" scope="request">Relação de Documentos Criados</c:set>
 		<c:set var="nomeRelatorio" scope="request">relTipoDoc.jsp</c:set>
 	</c:when>
+	<c:when test='${param.nomeArquivoRel eq "relClassificacao.jsp"}'>
+		<c:set var="actionName" scope="request">aRelClassificacao</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de Classificação Documental</c:set>
+		<c:set var="nomeRelatorio" scope="request">relClassificacao.jsp</c:set>
+	</c:when>
+	<c:when test='${param.nomeArquivoRel eq "relDocsClassificados.jsp"}'>
+		<c:set var="actionName" scope="request">emiteRelClassDocDocumentos</c:set>
+		<c:set var="titulo_pagina" scope="request">Relação de Documentos Classificados</c:set>
+		<c:set var="nomeRelatorio" scope="request">relDocsClassificados.jsp</c:set>
+	</c:when>
+	
 	<c:otherwise>
 		<c:set var="actionName" scope="request">emiteRelExpedientes</c:set>
 		<c:set var="titulo_pagina" scope="request">Relatório de Expedientes</c:set>

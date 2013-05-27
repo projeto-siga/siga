@@ -4,6 +4,7 @@
 <%@ attribute name="pre"%>
 <%@ attribute name="icon"%>
 <%@ attribute name="title"%>
+<%@ attribute name="titleImg"%>
 <%@ attribute name="pos"%>
 <%@ attribute name="url"%>
 <%@ attribute name="test"%>
@@ -18,7 +19,7 @@
 
 <c:set var="img" value=""/>
 <c:if test="${not empty icon}">
-<c:set var="img"><img src="/siga/css/famfamfam/icons/${icon}.png" style="margin-right:5px;"></c:set>
+<c:set var="img"><img src="/siga/css/famfamfam/icons/${icon}.png" style="margin-right:5px;" title="${titleImg}"></c:set>
 </c:if>
 
 <c:if test="${empty test or test}">

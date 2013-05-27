@@ -6,6 +6,7 @@
 
 <p style="font-family: Arial; font-size: 11pt; font-weight: bold;"
 	align="center">
+	<!-- Inicio Subscritor ${doc.subscritor.id} -->
 	<c:choose>
 		<c:when test="${not empty doc.nmSubscritor}">
 			${doc.nmSubscritor}
@@ -38,7 +39,7 @@
 	</c:otherwise>
 </c:choose> 
 <c:if test="${not empty param.formatarOrgao}">
-	<br>
+	<br/>
 	<c:choose>
 		<c:when test="${not empty doc.nmLotacao}">
 	${doc.nmLotacao}
@@ -46,18 +47,21 @@
 		<c:otherwise>${doc.titular.lotacao.nomeLotacao}</c:otherwise>
 	</c:choose>
 
-</c:if><c:forEach var="mov" items="${doc.mobilGeral.exMovimentacaoSet}">
+</c:if>
+<!-- Fim Subscritor ${doc.subscritor.id} -->
+<c:forEach var="mov" items="${doc.mobilGeral.exMovimentacaoSet}">
 	<c:if test="${mov.exTipoMovimentacao.idTpMov == 24}">
-		<br>
-		<br>
-		<br>
+		
+		<br/>
+		<br/>
+		<br/>
 		<c:choose>
 			<c:when test="${not empty mov.nmSubscritor}">
 				${mov.nmSubscritor}
 			</c:when>
 			<c:otherwise>${mov.subscritor.nomePessoa}</c:otherwise>
 		</c:choose>		
-		<br>
+		<br/>
 		<c:choose>
 			<c:when test="${not empty mov.nmFuncao}">
 			${mov.nmFuncao}
@@ -75,7 +79,7 @@
 			<c:otherwise>${mov.subscritor.cargo.nomeCargo}</c:otherwise>
 		</c:choose>
 		<c:if test="${not empty param.formatarOrgao}">
-			<br>
+			<br/>
 			<c:choose>
 				<c:when test="${not empty mov.nmLotacao}">
 				${mov.nmLotacao}
@@ -83,6 +87,7 @@
 				<c:otherwise>${mov.titular.lotacao.nomeLotacao}</c:otherwise>
 			</c:choose>
 		</c:if>
+		
 	</c:if>
 </c:forEach></c:if>
 <c:if test="${not empty param.textoFinal}">

@@ -59,7 +59,7 @@ public class CpConfiguracaoBL {
 
 	private Date dtUltimaAtualizacao = null;
 
-	private Comparator<CpConfiguracao> comparator = null;
+	protected Comparator<CpConfiguracao> comparator = null;
 
 	public HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
 
@@ -122,42 +122,50 @@ public class CpConfiguracaoBL {
 				List<CpConfiguracao> provResults = (List<CpConfiguracao>) CpDao
 						.getInstance().consultar(cpConfiguracao);
 
-				// Varre algumas entidades para evitar que o hibernate guarde
-				// versoes lazy delas
-				for (CpConfiguracao cfg : provResults) {
-					if (cfg.getCpSituacaoConfiguracao() != null)
-						cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
-					if (cfg.getOrgaoUsuario() != null)
-						cfg.getOrgaoUsuario().getDescricao();
-					if (cfg.getLotacao() != null)
-						cfg.getLotacao().getSigla();
-					if (cfg.getCargo() != null)
-						cfg.getCargo().getDescricao();
-					if (cfg.getFuncaoConfianca() != null)
-						cfg.getFuncaoConfianca().getDescricao();
-					if (cfg.getDpPessoa() != null)
-						cfg.getDpPessoa().getDescricao();
-					if (cfg.getCpTipoConfiguracao() != null)
-						cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
-					if (cfg.getCpServico() != null)
-						cfg.getCpServico().getDescricao();
-					if (cfg.getCpIdentidade() != null)
-						cfg.getCpIdentidade().getNmLoginIdentidade();
-					if (cfg.getCpGrupo() != null)
-						cfg.getCpGrupo().getDescricao();
-					if (cfg.getCpTipoLotacao() != null)
-						cfg.getCpTipoLotacao().getDscTpLotacao();
-					if (cfg.getHisIdcIni() != null)
-						cfg.getHisIdcIni().getDpPessoa().getDescricao();
-					if (cfg.getHisIdcFim() != null)
-						cfg.getHisIdcFim().getDpPessoa().getDescricao();
-				}
+				evitarLazy(provResults);
 
 				if (provResults != null)
 					tree.addAll(provResults);
 				getHashListas().put(idTipoConfig, tree);
 			}
 			return getHashListas().get(idTipoConfig);
+		}
+	}
+
+	/**
+	 * Varre as entidades definidas na configuração para evitar que o hibernate
+	 * guarde versões lazy delas.
+	 * 
+	 * @param listaCfg - lista de configurações que podem ter objetos lazy
+	 */
+	protected void evitarLazy(List<CpConfiguracao> provResults) {
+		for (CpConfiguracao cfg : provResults) {
+			if (cfg.getCpSituacaoConfiguracao() != null)
+				cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
+			if (cfg.getOrgaoUsuario() != null)
+				cfg.getOrgaoUsuario().getDescricao();
+			if (cfg.getLotacao() != null)
+				cfg.getLotacao().getSigla();
+			if (cfg.getCargo() != null)
+				cfg.getCargo().getDescricao();
+			if (cfg.getFuncaoConfianca() != null)
+				cfg.getFuncaoConfianca().getDescricao();
+			if (cfg.getDpPessoa() != null)
+				cfg.getDpPessoa().getDescricao();
+			if (cfg.getCpTipoConfiguracao() != null)
+				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
+			if (cfg.getCpServico() != null)
+				cfg.getCpServico().getDescricao();
+			if (cfg.getCpIdentidade() != null)
+				cfg.getCpIdentidade().getNmLoginIdentidade();
+			if (cfg.getCpGrupo() != null)
+				cfg.getCpGrupo().getDescricao();
+			if (cfg.getCpTipoLotacao() != null)
+				cfg.getCpTipoLotacao().getDscTpLotacao();
+			if (cfg.getHisIdcIni() != null)
+				cfg.getHisIdcIni().getDpPessoa().getDescricao();
+			if (cfg.getHisIdcFim() != null)
+				cfg.getHisIdcFim().getDpPessoa().getDescricao();
 		}
 	}
 

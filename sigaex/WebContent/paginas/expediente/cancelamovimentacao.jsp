@@ -39,24 +39,20 @@ function sbmt() {
 					<tr class="header">
 						<td colspan="2">Dados do cancelamento de movimentacao</td>
 					</tr>
-					<ww:textfield name="dtMovString" label="Data" />
+					<ww:textfield name="dtMovString" label="Data (Opcional)" />
 					<tr>
-						<td>Responsável:</td>
+						<td>Responsável (Opcional):</td>
 						<td><siga:selecao tema="simple" propriedade="subscritor" />
 						&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 							onclick="javascript:displayTitular(this);" />Substituto</td>
 					</tr>
-					<c:set var="style" value="" />
-					<c:if test="${!substituicao}">
-						<c:set var="style" value="display:none" />
-					</c:if>
-					<tr id="tr_titular" style="">
+					<tr id="tr_titular" style="display:none">
 						<td>Titular:</td>
 						<input type="hidden" name="campos" value="titularSel.id" />
 						<td><siga:selecao propriedade="titular" tema="simple" /></td>
 					</tr>
 
-					<ww:textfield name="descrMov" label="Motivo" maxlength="80"
+					<ww:textfield name="descrMov" label="Motivo (Opcional)" maxlength="80"
 						size="80" />
 
 				<tr class="button">

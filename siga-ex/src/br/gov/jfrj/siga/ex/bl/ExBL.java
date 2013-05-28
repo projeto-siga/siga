@@ -1083,7 +1083,7 @@ public class ExBL extends CpBL {
 		}
 		
 		try {
-			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -2869,7 +2869,7 @@ public class ExBL extends CpBL {
 		}
 		
 		try {
-			encerrarAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+			encerrarAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -3419,7 +3419,7 @@ public class ExBL extends CpBL {
 
 		if(fDespacho) {
 			try {
-				encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni, subscritor, titular, nmFuncaoSubscritor);
+				encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -4709,8 +4709,7 @@ public class ExBL extends CpBL {
 	
 	public void encerrarAutomatico(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
-			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, String nmFuncaoSubscritor) 
+			final Date dtMov) 
 			throws AplicacaoException, Exception {
 		
 		if(mob.doc().isEletronico()) {
@@ -4718,7 +4717,7 @@ public class ExBL extends CpBL {
 			//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
 			if(mob.doc().isProcesso()) {
 				if(mob.getTotalDePaginas() >= 200) {
-					encerrar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, nmFuncaoSubscritor, true);
+					encerrar(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
 				}
 			}
 		}

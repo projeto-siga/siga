@@ -1252,6 +1252,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM)
 			return false;
+		
+		//Não deixa cancelar juntada quando o documento está juntado a um expediente/processo que possui numeração automatica
+		if(exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA
+				&& exUltMovNaoCanc.getExMobilRef() != null && exUltMovNaoCanc.getExMobilRef().getDoc().isNumeracaoUnicaAutomatica())
+			return false;
+		
 
 		// Verifica se a última movimentação não cancelada é agendamento de
 		// publicação no DJE

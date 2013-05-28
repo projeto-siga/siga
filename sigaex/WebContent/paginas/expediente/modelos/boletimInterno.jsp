@@ -12,7 +12,7 @@
 <mod:modelo salvarViaAjax="N" acaoGravar="gravarBI" acaoExcluir="excluirBI" acaoCancelar="refazerBI" acaoFinalizar="finalizarBI">
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:texto titulo="Nome do Diretor do Foro" var="nmDiretorForo" valor="Dr. Marcelo Leonardo Tavares" largura="40"/>
+			<mod:texto titulo="Nome do Diretor do Foro" var="nmDiretorForo" valor="Dr. Carlos Guilherme Francovich Lugones" largura="40"/>
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto titulo="Nome do Diretor da SG" var="nmDiretorRH" valor="Patrícia Reis Longhi" largura="40" />

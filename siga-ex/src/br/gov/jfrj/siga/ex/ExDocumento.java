@@ -386,7 +386,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		 					sHtml.indexOf(comentarioFim));
 		 			
 		 			StringBuilder sb = new StringBuilder();
-		 			sb.append("<span style=\"color:red;\">");
+		 			sb.append("<span style=\"color:#CD3700;\">");
 		 			sb.append(blocoSubscritor);
 		 			sb.append("</span>");
 		 			

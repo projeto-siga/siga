@@ -51,7 +51,7 @@
 <!-- Fim Subscritor ${doc.subscritor.id} -->
 <c:forEach var="mov" items="${doc.mobilGeral.exMovimentacaoSet}">
 	<c:if test="${mov.exTipoMovimentacao.idTpMov == 24}">
-		
+		<!-- Inicio Subscritor ${mov.subscritor.id} -->
 		<br/>
 		<br/>
 		<br/>
@@ -87,7 +87,7 @@
 				<c:otherwise>${mov.titular.lotacao.nomeLotacao}</c:otherwise>
 			</c:choose>
 		</c:if>
-		
+		<!-- Fim Subscritor ${mov.subscritor.id} -->
 	</c:if>
 </c:forEach></c:if>
 <c:if test="${not empty param.textoFinal}">

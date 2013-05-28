@@ -129,7 +129,7 @@
 							</li>
 						</c:if>
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR:Gerenciar grupos de distribuição')}">
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;ALT:Alterar')}">
 							<li><ww:a href="${serverAndPort}/siga/gi/email/listar.action">Grupo de Distribuição</ww:a>
 							</li>
 						</c:if>

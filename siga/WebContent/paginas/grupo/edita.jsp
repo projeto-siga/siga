@@ -322,15 +322,19 @@
 						</tr>
 						<input type="hidden" name="idCpTipoGrupo" value="${idCpTipoGrupo}" />
 						<input type="hidden" name="idCpGrupo" value="${idCpGrupo}" />
-						<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir')}">
+						<ww:if
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir')}">
 							<ww:textfield label="Sigla" name="siglaGrupo" size="20" />
 						</ww:if>
 						<ww:else>
-							<ww:label label="Sigla" name="siglaGrupo" value="${siglaGrupo}"/>
+							<ww:label label="Sigla" name="siglaGrupo" value="${siglaGrupo}" />
 							<ww:hidden name="siglaGrupo" value="${siglaGrupo}"></ww:hidden>
 						</ww:else>
-						
+
 						<ww:textfield label="Descrição" name="dscGrupo" size="40" />
+						<siga:selecao titulo="Lotação Gestora:" propriedade="lotacaoGestora" />
+						
+						
 						<c:if test="${cpTipoGrupo.idTpGrupo == 1}">
 							<siga:selecao titulo="Pai:" propriedade="grupoPai" />
 						</c:if>
@@ -411,7 +415,8 @@
 										<textarea rows="3" cols="64"
 											id="formulario_area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 											name="formulario_area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">${configuracaoGrupo.conteudoConfiguracao}</textarea>
-									</div></td>
+									</div>
+								</td>
 							</tr>
 						</c:forEach>
 						<tr>
@@ -453,18 +458,18 @@
 										name="formulario_area_${idConfiguracaoNova}"
 										id="formulario_area_${idConfiguracaoNova}"></textarea>
 								</div> <input type="hidden" name="conteudoConfiguracaoNova"
-								id="conteudo_${idConfiguracaoNova}" value="" />
-							</td>
+								id="conteudo_${idConfiguracaoNova}" value="" /></td>
 						</tr>
 						<tr>
-							<td><input type="button" id="btnGravar" value="Gravar"
-								onclick="javascript:gravarGrupo()"
-								class="gt-btn-medium gt-btn-left"> <input type="button"
-								id="btnSair" value="Sair" onclick="javascript:sair()"
-								class="gt-btn-medium gt-btn-left"> <input type="button"
-								id="btnExcluir" value="Excluir"
-								onclick="javascript:excluirGrupo()"
-								class="gt-btn-medium gt-btn-left"></td>
+							<td>
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;ALT:Alterar')}">
+									<input type="button" id="btnGravar" value="Gravar" onclick="javascript:gravarGrupo()" class="gt-btn-medium gt-btn-left"/>
+								</c:if>
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;EXC:Excluir')}">
+									<input type="button" id="btnExcluir" value="Excluir" onclick="javascript:excluirGrupo()" class="gt-btn-medium gt-btn-left"/>
+								</c:if>
+								<input type="button" id="btnSair" value="Sair" onclick="javascript:sair()" class="gt-btn-medium gt-btn-left"/>
+							</td>
 						</tr>
 					</table>
 				</ww:form>

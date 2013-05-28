@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.cp.CpTipoGrupo;
 
 public class CpGrupoDeEmailAction extends CpGrupoAction {
 	public int getIdTipoGrupo() {
-		return CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL;
+		return CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO;
 	}
 
 	@Override

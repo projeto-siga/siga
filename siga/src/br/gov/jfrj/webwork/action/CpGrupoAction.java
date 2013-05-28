@@ -40,6 +40,8 @@ import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpPerfilJEE;
+import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -49,6 +51,7 @@ import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
 import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
+import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -79,6 +82,9 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 
 	private String dscCpTipoGrupo;
 	private String dscGrupo;
+	
+	private DpLotacaoSelecao lotacaoGestoraSel;
+	
 	// erro
 	private Exception exception;
 	private CpGrupoDeEmailSelecao grupoPaiSel;
@@ -232,7 +238,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 
 			// Substituir isso por uma fábrica
 			//
-			if (tpGrp.getIdTpGrupo() == CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL)
+			if (tpGrp.getIdTpGrupo() == CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO)
 				grpNovo = new CpGrupoDeEmail();
 			if (tpGrp.getIdTpGrupo() == CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO)
 				grpNovo = new CpPerfil();
@@ -251,7 +257,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 			grpNovo.setCpGrupoPai(getGrupoPaiSel().getObjeto());
 			grpNovo.setDscGrupo(dscGrupo);
 			grpNovo.setSiglaGrupo(siglaGrupo);
-
+			
 			dao().iniciarTransacao();
 			grp = (CpGrupo) dao().gravarComHistorico(grpNovo, grp, dt,
 					getIdentidadeCadastrante());
@@ -281,6 +287,9 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 				cfgGrp.atualizarCpConfiguracao();
 				dao().gravarComHistorico(cfg, getIdentidadeCadastrante());
 			}
+			
+			definirGestorDoGrupo();
+			
 			// processa as configurações existentes
 			configuracoesGrupo = Cp.getInstance().getConf().obterCfgGrupo(grp);
 			for (int i = 0; i < idConfiguracao.size(); i++) {
@@ -349,6 +358,19 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 					+ " erro ao gravar grupo e configurações.", 0, e);
 		}
 		return "edita";
+	}
+
+	private void definirGestorDoGrupo() {
+		DpLotacao lot = getLotacaoGestoraSel().getObjeto();
+		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR,CpTipoConfiguracao.class,false);
+		CpSituacaoConfiguracao situacao = dao().consultar(CpSituacaoConfiguracao.SITUACAO_PODE,CpSituacaoConfiguracao.class,false);
+		
+		//permissão do menu
+		CpServico svc = dao().consultarPorSiglaCpServico("GDISTR:Gerenciar grupos de distribuição;ALT:Alterar");
+		Cp.getInstance().getBL().configurarAcesso(null, null, lot, null, svc, situacao, null, getIdentidadeCadastrante());
+	
+		//permissão de gerenciar grupo
+		Cp.getInstance().getBL().configurarAcesso(null, null, lot, null, null, situacao, null, getIdentidadeCadastrante());
 	}
 
 	/*
@@ -574,6 +596,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 	 * 
 	 */
 	public void prepare() {
+		lotacaoGestoraSel = new DpLotacaoSelecao();
 		grupoPaiSel = new CpGrupoDeEmailSelecao();
 		tiposDeGrupo = obterTiposGrupo();
 		tipoConfiguracao = dao().consultar(
@@ -739,4 +762,18 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 		this.tiposDeGrupo = tiposDeGrupo;
 	}
 
+	public void setLotacaoGestoraSel(DpLotacaoSelecao lotacaoGestoraSel) {
+		this.lotacaoGestoraSel = lotacaoGestoraSel;
+	}
+
+	public DpLotacaoSelecao getLotacaoGestoraSel() {
+		return lotacaoGestoraSel;
+	}
+
+
+
+
+
+	
+	
 }

@@ -25,6 +25,6 @@ import javax.persistence.Table;
 @Table(name = "CP_TIPO_GRUPO", schema="CORPORATIVO")
 public class CpTipoGrupo extends AbstractCpTipoGrupo {
 	public static final int TIPO_GRUPO_PERFIL_DE_ACESSO = 1;
-	public static final int TIPO_GRUPO_GRUPO_DE_EMAIL = 2;
+	public static final int TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO = 2;
 	public static final int TIPO_GRUPO_PERFIL_JEE = 3;
 }

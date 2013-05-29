@@ -834,4 +834,14 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		// TODO Auto-generated method stub
 		return getExMobil();
 	}
+
+	@Override
+	public boolean isInternoProduzido() {
+		switch (getExTipoMovimentacao().getIdTpMov().intValue()) {
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO:
+			return false;
+		}
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

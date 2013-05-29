@@ -102,6 +102,8 @@ public class Documento extends AbstractDocumento {
 
 	private static final int TEXT_HEIGHT = 5;
 
+	private static final float SAFETY_MARGIN = 0.1f;
+
 	/**
 	 * 
 	 */
@@ -193,10 +195,10 @@ public class Documento extends AbstractDocumento {
 	}
 
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
-			boolean cancelado, boolean semEfeito, String qrCode,
-			String mensagem, Integer paginaInicial, Integer paginaFinal,
-			Integer cOmitirNumeracao, String instancia, String orgaoUsu)
-			throws DocumentException, IOException {
+			boolean cancelado, boolean semEfeito, boolean internoProduzido,
+			String qrCode, String mensagem, Integer paginaInicial,
+			Integer paginaFinal, Integer cOmitirNumeracao, String instancia,
+			String orgaoUsu) throws DocumentException, IOException {
 
 		PdfReader pdfIn = new PdfReader(abPdf);
 		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
@@ -229,19 +231,6 @@ public class Documento extends AbstractDocumento {
 			cb.saveState();
 
 			if (rot != 0) {
-				double theta = -rot * (Math.PI / 180);
-				cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
-						h / 2));
-				if (rot == 90) {
-					cb.transform(AffineTransform.getTranslateInstance(
-							(h - w) / 2, (h - w) / 2));
-				} else if (rot == 270) {
-					cb.transform(AffineTransform.getTranslateInstance(
-							(w - h) / 2, (w - h) / 2));
-				}
-			}
-
-			if (rot != 0) {
 				float swap = w;
 				w = h;
 				h = swap;
@@ -254,13 +243,35 @@ public class Documento extends AbstractDocumento {
 			// do my transformations :
 			cb.transform(AffineTransform.getScaleInstance(scale, scale));
 
+			if (!internoProduzido) {
+				cb.transform(AffineTransform.getTranslateInstance(pw
+						* SAFETY_MARGIN, ph * SAFETY_MARGIN));
+				cb.transform(AffineTransform.getScaleInstance(
+						1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
+			}
+
+			if (rot != 0) {
+				double theta = -rot * (Math.PI / 180);
+				cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
+						w / 2));
+				if (rot == 90) {
+					cb.transform(AffineTransform.getTranslateInstance(
+							(w - h) / 2, (w - h) / 2));
+				} else if (rot == 270) {
+					cb.transform(AffineTransform.getTranslateInstance(
+							(h - w) / 2, (h - w) / 2));
+				}
+			}
+
+//			Logger.getRootLogger().error(
+//					"----- dimensoes: " + rot + ", " + w + ", " + h);
+//			Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
+
 			// cb.transform(AffineTransform.getTranslateInstance(
 			// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
 
 			// put the page
 			cb.addTemplate(page, 0, 0);
-
-			cb.restoreState();
 
 			// draw a red rectangle at the page borders
 			//
@@ -270,6 +281,9 @@ public class Documento extends AbstractDocumento {
 			// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
 			// .getPageSize(i).getTop());
 			// cb.stroke();
+			// cb.restoreState();
+
+			cb.restoreState();
 		}
 		doc.close();
 
@@ -743,11 +757,11 @@ public class Documento extends AbstractDocumento {
 						.getArquivo().getPdf(), sigla, an.getArquivo()
 						.isRascunho(), an.getArquivo().isCancelado(), an
 						.getArquivo().isSemEfeito(), an.getArquivo()
-						.getQRCode(), an.getArquivo().getMensagem(),
-						an.getPaginaInicial(), an.getPaginaFinal(),
-						an.getOmitirNumeracao(), "Justiça Federal", mob
-								.getExDocumento().getOrgaoUsuario()
-								.getDescricao());
+						.isInternoProduzido(), an.getArquivo().getQRCode(), an
+						.getArquivo().getMensagem(), an.getPaginaInicial(),
+						an.getPaginaFinal(), an.getOmitirNumeracao(),
+						"Justiça Federal", mob.getExDocumento()
+								.getOrgaoUsuario().getDescricao());
 
 				// we create a reader for a certain document
 

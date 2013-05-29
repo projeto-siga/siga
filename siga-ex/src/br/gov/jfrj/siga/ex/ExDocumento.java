@@ -835,8 +835,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (getExClassificacao() != null)
 				vias = getExClassificacao().getExViaSet();
 		}
-		
-		if (vias != null && ((ExVia)vias.toArray()[0]).getExTipoDestinacao().getFacilitadorDest() != null)
+
+		if (vias != null
+				&& ((ExVia) vias.toArray()[0]).getExTipoDestinacao()
+						.getFacilitadorDest() != null)
 			return vias;
 
 		// Expediente externo ou eletrônico e com Documento Pai tem apenas 1 via
@@ -930,20 +932,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 	/**
 	 * Verifica se um documento já foi assinado pelo Subscritor.
 	 */
-	public boolean isAssinadoSubscritor() {		
+	public boolean isAssinadoSubscritor() {
 		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
 			if (assinatura.getSubscritor().equivale(getSubscritor()))
 				return true;
 		}
 		return false;
 	}
-	
-	
-	
 
 	/**
 	 * Verifica se um documento está cancelado, o que é verdadeiro quando todas
@@ -1806,7 +1805,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public List<DpPessoa> getSubscritorECosignatarios() {
 		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
 
-		if(getSubscritor() != null)
+		if (getSubscritor() != null)
 			subscritores.add(getSubscritor());
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
@@ -2031,5 +2030,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				lista.add(mov.getLotaSubscritor());
 		}
 		return lista.size() == 0 ? null : lista;
+	}
+
+	@Override
+	public boolean isInternoProduzido() {
+		return true;
 	}
 }

@@ -400,8 +400,13 @@ public class CpConfiguracaoBL {
 			return false;
 
 		if (cfg.getCpGrupo() != null
-				&& (perfis == null || !perfis.contains(cfg.getCpGrupo())))
+				&& ((cfgFiltro.getCpGrupo() != null
+						&& !cfg.getCpGrupo().equivale(
+								cfgFiltro.getCpGrupo()) || ((cfgFiltro
+						.getCpGrupo() == null) && !atributosDesconsiderados
+						.contains(GRUPO))) || (perfis != null && !perfis.contains(cfg.getCpGrupo()))))
 			return false;
+
 
 		if (cfg.getCpIdentidade() != null
 				&& ((cfgFiltro.getCpIdentidade() != null
@@ -759,6 +764,11 @@ public class CpConfiguracaoBL {
 		}
 
 	}
+	
+	public boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular, Long idCpTipoGrupo) throws Exception{
+		return dao().getGruposGeridos(titular, lotaTitular, idCpTipoGrupo).size()>0;
+	}
+
 
 
 }

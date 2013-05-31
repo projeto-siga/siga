@@ -33,6 +33,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
@@ -58,9 +59,12 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -1591,5 +1595,24 @@ public class CpDao extends ModeloDao {
 
 		
 	}
+
+	public List<CpGrupo> getGruposGeridos(DpPessoa titular,DpLotacao lotaTitular,Long idCpTipoGrupo) throws Exception {
+		CpGrupoDaoFiltro flt = new CpGrupoDaoFiltro();
+		flt.setIdTpGrupo(idCpTipoGrupo.intValue());
+		List<CpGrupo> itgGrupos = consultarPorFiltro(flt,0,0);
+	
+		Iterator<CpGrupo> it = itgGrupos.iterator();
+		
+		while(it.hasNext()){
+			CpGrupo cpGrp = it.next();
+			CpConfiguracaoBL bl = Cp.getInstance().getConf();
+			if (!bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
+				it.remove();
+			}
+			
+		}
+		return itgGrupos;
+	}
+	
 
 }

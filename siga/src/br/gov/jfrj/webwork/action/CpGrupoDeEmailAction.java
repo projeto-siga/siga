@@ -18,7 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.webwork.action;
 
+import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 
 public class CpGrupoDeEmailAction extends CpGrupoAction {
 	public int getIdTipoGrupo() {
@@ -27,7 +31,11 @@ public class CpGrupoDeEmailAction extends CpGrupoAction {
 
 	@Override
 	public String aEditar() throws Exception {
-		assertAcesso("GDISTR:Gerenciar grupos de distribuição;ALT:Alterar");
+		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "GDISTR:Gerenciar grupos de distribuição") ||
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
+			
+		}
 		return super.aEditar();
 	}
 
@@ -39,13 +47,23 @@ public class CpGrupoDeEmailAction extends CpGrupoAction {
 
 	@Override
 	public String aGravar() throws Exception {
-		assertAcesso("GDISTR:Gerenciar grupos de distribuição;ALT:Alterar");
+		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "GDISTR:Gerenciar grupos de distribuição") ||
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
+			
+		}
+
 		return super.aGravar();
 	}
 
 	@Override
 	public String aListar() throws Exception {
-		assertAcesso("GDISTR:Gerenciar grupos de distribuição;PSQ:Pesquisar");
+		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "GDISTR:Gerenciar grupos de distribuição") ||
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
+			
+		}
+
 		return super.aListar();
 	}
 

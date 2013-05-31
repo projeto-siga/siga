@@ -40,7 +40,6 @@ import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpPerfilJEE;
-import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
@@ -103,6 +102,8 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 	private ArrayList<TipoConfiguracaoGrupoEnum> tiposConfiguracaoGrupoParaTipoDeGrupo;
 	// Carga inicial
 	private ArrayList<CpTipoGrupo> tiposDeGrupo;
+	
+	private Long idConfGestor;
 
 	@Override
 	public String aBuscar() throws Exception {
@@ -153,6 +154,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 			dscGrupo = grp.getDscGrupo();
 			siglaGrupo = grp.getSiglaGrupo();
 			getGrupoPaiSel().buscarPorObjeto(grp.getCpGrupoPai());
+			
 			CpTipoGrupo tpGrp = grp.getCpTipoGrupo();
 
 			tiposConfiguracaoGrupoParaTipoDeGrupo = obterTiposConfiguracaoGrupoParaTipoDeGrupo(tpGrp);
@@ -226,6 +228,9 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 	 * @throws InvocationTargetException
 	 */
 	public String aGravar() throws Exception {
+		if (siglaGrupo == null){
+			throw new AplicacaoException("A sigla do grupo deve ser definida!");
+		}
 		try {
 			CpGrupo grp = null;
 			CpGrupo grpNovo = null;
@@ -287,8 +292,6 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 				cfgGrp.atualizarCpConfiguracao();
 				dao().gravarComHistorico(cfg, getIdentidadeCadastrante());
 			}
-			
-			definirGestorDoGrupo();
 			
 			// processa as configurações existentes
 			configuracoesGrupo = Cp.getInstance().getConf().obterCfgGrupo(grp);
@@ -359,18 +362,58 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 		}
 		return "edita";
 	}
-
-	private void definirGestorDoGrupo() {
+	
+	public String aGravarGestorGrupo(){
 		DpLotacao lot = getLotacaoGestoraSel().getObjeto();
 		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR,CpTipoConfiguracao.class,false);
 		CpSituacaoConfiguracao situacao = dao().consultar(CpSituacaoConfiguracao.SITUACAO_PODE,CpSituacaoConfiguracao.class,false);
 		
-		//permissão do menu
-		CpServico svc = dao().consultarPorSiglaCpServico("GDISTR:Gerenciar grupos de distribuição;ALT:Alterar");
-		Cp.getInstance().getBL().configurarAcesso(null, null, lot, null, svc, situacao, null, getIdentidadeCadastrante());
+		CpConfiguracao conf = new CpConfiguracao();
+		conf.setLotacao(lot);
+		conf.setCpTipoConfiguracao(tpConf);
+		conf.setCpSituacaoConfiguracao(situacao);
+		conf.setCpGrupo(daoGrupo(idCpGrupo));
+		conf.setHisDtIni(dao().consultarDataEHoraDoServidor());
+		dao().gravarComHistorico(conf, getIdentidadeCadastrante());
+		
+		setIdCpGrupo(getIdCpGrupo());
+
+		return SUCCESS;
+	}
 	
-		//permissão de gerenciar grupo
-		Cp.getInstance().getBL().configurarAcesso(null, null, lot, null, null, situacao, null, getIdentidadeCadastrante());
+	public String aExcluirGestorGrupo(){
+		dao().iniciarTransacao();
+		CpConfiguracao conf = dao().consultar(idConfGestor,CpConfiguracao.class,false);
+		conf.setHisDtFim(dao().consultarDataEHoraDoServidor());
+		dao().gravarComHistorico(conf,getIdentidadeCadastrante());
+		
+		setIdCpGrupo(getIdCpGrupo());
+		dao().commitTransacao();
+		return SUCCESS;
+	}
+
+
+
+	public List<CpConfiguracao> getConfGestores(){
+		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR,CpTipoConfiguracao.class,false);
+		CpSituacaoConfiguracao situacao = dao().consultar(CpSituacaoConfiguracao.SITUACAO_PODE,CpSituacaoConfiguracao.class,false);
+		CpGrupo grp = daoGrupo(getIdCpGrupo());
+		CpConfiguracao fltConf = new CpConfiguracao();
+		fltConf.setCpGrupo(grp);
+		fltConf.setCpTipoConfiguracao(tpConf);
+		fltConf.setCpSituacaoConfiguracao(situacao);
+		
+		List<CpConfiguracao> confs = dao().consultar(fltConf);
+		
+		Iterator it = confs.iterator();
+		while(it.hasNext()){
+			CpConfiguracao c = (CpConfiguracao) it.next();
+			if (c.getHisDtFim()!=null || c.getCpGrupo() == null || !c.getCpGrupo().getIdInicial().equals(grp.getIdInicial())){
+				it.remove();
+			}
+		}
+		
+		return confs;
 	}
 
 	/*
@@ -768,6 +811,14 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 
 	public DpLotacaoSelecao getLotacaoGestoraSel() {
 		return lotacaoGestoraSel;
+	}
+
+	public void setIdConfGestor(Long idConfGestor) {
+		this.idConfGestor = idConfGestor;
+	}
+
+	public Long getIdConfGestor() {
+		return idConfGestor;
 	}
 
 

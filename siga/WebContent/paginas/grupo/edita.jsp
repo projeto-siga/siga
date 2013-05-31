@@ -6,10 +6,16 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
+<ww:url id="urlGravarGestorGrupo" action="gravarGestorGrupo" />
 <ww:url id="urlGravar" action="gravar" />
 <ww:url id="urlExcluir" action="excluir" />
 <ww:url id="urlBuscar" action="listar" />
 <script type="text/javascript" language="Javascript1.1">
+	function gravarGestorGrupo() {
+		var t_strUrl = '${urlGravarGestorGrupo}';
+		document.formulario.action =  t_strUrl;
+		document.formulario.submit();
+	}
 	function gravarGrupo() {
 		var t_strIdConfiguracaoNova = '${idConfiguracaoNova}';
 		var t_strUrl = '${urlGravar}';
@@ -144,7 +150,7 @@
 		return t_arr1StrIdResult;
 	}
 	function excluirGrupo() {
-		var resp = confirm("Deseja realmente exluir o grupo?")
+		var resp = confirm("Deseja realmente excluir o grupo?")
 		if (resp){
 			var t_strUrl = '${urlExcluir}';
 			if (t_strUrl) {
@@ -330,11 +336,25 @@
 							<ww:label label="Sigla" name="siglaGrupo" value="${siglaGrupo}" />
 							<ww:hidden name="siglaGrupo" value="${siglaGrupo}"></ww:hidden>
 						</ww:else>
-
 						<ww:textfield label="Descrição" name="dscGrupo" size="40" />
-						<siga:selecao titulo="Lotação Gestora:" propriedade="lotacaoGestora" />
-						
-						
+						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir') and not empty idCpGrupo}">
+							<table class="gt-form-table">
+								<tr class="header" >
+									<td colspan="2">Gestores do Grupo</td>
+								</tr>
+								<tr>
+									<td colspan="2"><siga:selecao titulo="Nova Lotação Gestora:" propriedade="lotacaoGestora" /></td>
+								</tr>
+								<c:forEach var="conf" items="${confGestores}">
+									<tr>
+										<td>${conf.lotacao.sigla} <span class="gt-cancel"><a href="excluirGestorGrupo.action?idConfGestor=${conf.id}&idCpGrupo=${idCpGrupo}">(excluir)</a></span></td>
+									</tr>
+								</c:forEach>
+								<tr>
+									<td><input type="button" id="btnGravarGestor" value="Incluir" onclick="javascript:gravarGestorGrupo()" class="gt-btn-medium gt-btn-left"/></td>
+								</tr>
+							</table>
+						</c:if>
 						<c:if test="${cpTipoGrupo.idTpGrupo == 1}">
 							<siga:selecao titulo="Pai:" propriedade="grupoPai" />
 						</c:if>
@@ -462,9 +482,7 @@
 						</tr>
 						<tr>
 							<td>
-								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;ALT:Alterar')}">
-									<input type="button" id="btnGravar" value="Gravar" onclick="javascript:gravarGrupo()" class="gt-btn-medium gt-btn-left"/>
-								</c:if>
+								<input type="button" id="btnGravar" value="Gravar" onclick="javascript:gravarGrupo()" class="gt-btn-medium gt-btn-left"/>
 								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;EXC:Excluir')}">
 									<input type="button" id="btnExcluir" value="Excluir" onclick="javascript:excluirGrupo()" class="gt-btn-medium gt-btn-left"/>
 								</c:if>

@@ -370,6 +370,22 @@
 			</result>
 
 		</action>
+		<action name="gravarGestorGrupo" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
+			method="aGravarGestorGrupo">
+			<result type="redirect-action">
+				<param name="actionName">editar</param>
+				<param name="idCpGrupo">${idCpGrupo}</param>
+			</result>
+		</action>
+		<action name="excluirGestorGrupo" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
+			method="aExcluirGestorGrupo">
+			<result type="redirect-action">
+				<param name="actionName">editar</param>
+				<param name="idCpGrupo">${idCpGrupo}</param>
+			</result>
+		</action>
+		
+		
 		<action name="excluir" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aExcluir">
 			<result name="lista" type="redirect-action">

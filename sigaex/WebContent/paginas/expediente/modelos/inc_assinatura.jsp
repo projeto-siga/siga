@@ -6,7 +6,7 @@
 
 <p style="font-family: Arial; font-size: 11pt; font-weight: bold;"
 	align="center">
-	<!-- Inicio Subscritor ${doc.subscritor.id} -->
+	<!-- INICIO SUBSCRITOR ${doc.subscritor.id} -->
 	<c:choose>
 		<c:when test="${not empty doc.nmSubscritor}">
 			${doc.nmSubscritor}
@@ -48,10 +48,10 @@
 	</c:choose>
 
 </c:if>
-<!-- Fim Subscritor ${doc.subscritor.id} -->
+<!-- FIM SUBSCRITOR ${doc.subscritor.id} -->
 <c:forEach var="mov" items="${doc.mobilGeral.exMovimentacaoSet}">
 	<c:if test="${mov.exTipoMovimentacao.idTpMov == 24}">
-		<!-- Inicio Subscritor ${mov.subscritor.id} -->
+		<!-- INICIO SUBSCRITOR ${mov.subscritor.id} -->
 		<br/>
 		<br/>
 		<br/>
@@ -87,7 +87,7 @@
 				<c:otherwise>${mov.titular.lotacao.nomeLotacao}</c:otherwise>
 			</c:choose>
 		</c:if>
-		<!-- Fim Subscritor ${mov.subscritor.id} -->
+		<!-- FIM SUBSCRITOR ${mov.subscritor.id} -->
 	</c:if>
 </c:forEach></c:if>
 <c:if test="${not empty param.textoFinal}">

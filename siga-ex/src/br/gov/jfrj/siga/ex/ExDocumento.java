@@ -377,9 +377,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		
 		//Verifica se todos os subscritores assinaram o documento
 	 	for (DpPessoa subscritor : getSubscritorECosignatarios()) {
-	 		if(isEletronico() && !jaAssinadoPor(subscritor)) {
-	 			String comentarioInicio = "<!-- Inicio Subscritor " + subscritor.getId() + " -->";
-	 			String comentarioFim = "<!-- Fim Subscritor " + subscritor.getId() + " -->";
+	 		if(isEletronico() && getDtFechamento() != null && !jaAssinadoPor(subscritor)) {
+	 			String comentarioInicio = "<!-- INICIO SUBSCRITOR " + subscritor.getId() + " -->";
+	 			String comentarioFim = "<!-- FIM SUBSCRITOR " + subscritor.getId() + " -->";
 	 			
 	 			if(sHtml.contains(comentarioInicio) && sHtml.contains(comentarioFim)) {
 		 			String blocoSubscritor = sHtml.substring(sHtml.indexOf(comentarioInicio) + comentarioInicio.length(),

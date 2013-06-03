@@ -2822,11 +2822,9 @@ public class ExBL extends CpBL {
 						"É necessário informar a via à qual será feita a juntada");
 
 			if (mob.doc().isEletronico()) {
-				for (CpMarca marca : mob.getExMarcaSet()) {
-					if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
+				if (mob.temAnexosNaoAssinados() || mob.temDespachosNaoAssinados())			
 						throw new AplicacaoException(
-								"Não é possível juntar documento com anexo pendente de assinatura ou conferência");
-				}
+								"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");				
 			}
 
 			// Verifica se o documeto pai já está apensado a este documento
@@ -2838,7 +2836,7 @@ public class ExBL extends CpBL {
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado ou encontra-se em outra lotação");
+						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado, arquivado ou encontra-se em outra lotação");
 		}
 		
 		final ExMovimentacao mov;

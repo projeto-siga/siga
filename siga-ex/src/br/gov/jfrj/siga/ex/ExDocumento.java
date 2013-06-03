@@ -836,7 +836,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				vias = getExClassificacao().getExViaSet();
 		}
 
-		if (vias != null
+		if (vias != null && vias.size() > 0
 				&& ((ExVia) vias.toArray()[0]).getExTipoDestinacao()
 						.getFacilitadorDest() != null)
 			return vias;

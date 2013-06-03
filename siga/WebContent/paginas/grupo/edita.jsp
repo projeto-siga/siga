@@ -337,7 +337,7 @@
 							<ww:hidden name="siglaGrupo" value="${siglaGrupo}"></ww:hidden>
 						</ww:else>
 						<ww:textfield label="Descrição" name="dscGrupo" size="40" />
-						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir') and not empty idCpGrupo}">
+						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir') and not empty idCpGrupo and cpTipoGrupo.idTpGrupo == 2}">
 							<table class="gt-form-table">
 								<tr class="header" >
 									<td colspan="2">Gestores do Grupo</td>

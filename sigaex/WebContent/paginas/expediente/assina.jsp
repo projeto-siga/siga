@@ -76,7 +76,7 @@ End Function
 						<tr>
 							<td colspan="2">
 								<div id="conteudo" style="padding-top: 10px;">
-									<tags:fixdocumenthtml>${doc.conteudoBlobHtmlString}</tags:fixdocumenthtml>
+									<tags:fixdocumenthtml>${doc.conteudoBlobHtmlStringComReferencias}</tags:fixdocumenthtml>
 								</div></td>
 						</tr>
 					</c:if>

@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.webwork.action;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -31,11 +31,13 @@ public class CpGrupoDeEmailAction extends CpGrupoAction {
 	@Override
 	public String aEditar() throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
-		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "GDISTR:Gerenciar grupos de distribuição") ||
-				conf.podeGerirGrupo(getTitular(), getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
-			
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+			return super.aEditar();	
 		}
-		return super.aEditar();
+		
+		
+		throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 	}
 
 	@Override
@@ -47,23 +49,25 @@ public class CpGrupoDeEmailAction extends CpGrupoAction {
 	@Override
 	public String aGravar() throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
-		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "GDISTR:Gerenciar grupos de distribuição") ||
-				conf.podeGerirGrupo(getTitular(), getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
-			
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+			return super.aGravar();	
 		}
 
-		return super.aGravar();
+		throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+		
 	}
 
 	@Override
 	public String aListar() throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
-		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "GDISTR:Gerenciar grupos de distribuição") ||
-				conf.podeGerirGrupo(getTitular(), getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
-			
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+			return super.aListar();	
 		}
 
-		return super.aListar();
+		throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+		
 	}
 
 }

@@ -25,15 +25,18 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @SqlResultSetMapping(name = "colunas_contagem", columns = {
 		@ColumnResult(name = "id_marcador"),
 		@ColumnResult(name = "descr_marcador"),
-		@ColumnResult(name = "cont_pessoa"), @ColumnResult(name = "cont_lota") })
+		@ColumnResult(name = "cont_pessoa"), 
+		@ColumnResult(name = "cont_lota"),
+		@ColumnResult(name = "cont_unassigned") })
 @NamedNativeQuery(name = "contarSrMarcas", query = ""
-		+ "SELECT m.id_marcador, m.descr_marcador, c.cont_pessoa, c.cont_lota "
+		+ "SELECT m.id_marcador, m.descr_marcador, c.cont_pessoa, c.cont_lota, c.cont_unassigned "
 		+ "FROM "
 		+ "	corporativo.cp_marcador m, "
 		+ "	("
 		+ "		SELECT id_marcador,"
 		+ "		SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
-		+ "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota "
+		+ "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota, "
+		+ "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni and id_pessoa_ini is null THEN 1 ELSE 0 END) cont_unassigned "
 		+ "		FROM corporativo.cp_marca marca"
 		+ "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
 		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"

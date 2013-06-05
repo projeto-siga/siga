@@ -27,15 +27,16 @@
 					</font>
 					<p style="font-size: 9pt; padding-top: 3pt; margin-bottom: 5pt;" id="descrSolicitacao">
 					${sol.descrSolicitacao}</p>
+					#{if !sol.ultimoAndamento.primeiroAndamento}
 					<font style="font-size: 9pt; padding-top: 0pt;">
-							<b>Último andamento:&nbsp;</b>${sol.ultimoAndamento.solicitacao.solicitante.descricaoIniciaisMaiusculas},
-							${sol.lotaSolicitante.siglaLotacao}#{if
-							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}
+							<b>Último andamento:&nbsp;</b>${sol.ultimoAndamento.cadastrante.descricaoIniciaisMaiusculas},
+							${sol.ultimoAndamento.lotaCadastrante.siglaLotacao}
 							- ${sol.ultimoAndamento.dtRegString}
 					</font>
 					<p style="font-size: 9pt; padding-top: 3pt;">
 							${sol.ultimoAndamento.descrAndamento}
 					</p>
+					#{/if}
 				</td>
 				<td style="padding-left: 60px">
 					<table border="0" class="gt-table-categories">
@@ -149,7 +150,15 @@
 							nomeSelPessoa:'filtro.atendente',
 							nomeSelLotacao:'filtro.lotaAtendente',
 							valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente
-							/}</td>
+							/}
+							<div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
+								<label>#{checkbox name:'filtro.naoDesignados',
+								value:filtro.naoDesignados /} Apenas não designadas</label>
+							</div>
+							<script language="javascript">
+								$("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
+							</script>
+							</td>
 					</tr>
 					<tr>
 						<td>Cadastrante</td>

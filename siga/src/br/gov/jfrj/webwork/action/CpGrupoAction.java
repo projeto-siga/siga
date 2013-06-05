@@ -360,6 +360,8 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 			throw new AplicacaoException("Id do grupo: " + idCpGrupo
 					+ " erro ao gravar grupo e configurações.", 0, e);
 		}
+		
+		
 		return "edita";
 	}
 	
@@ -440,13 +442,17 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 	
 		Iterator<CpGrupo> it = itgGrupos.iterator();
 		
-		while(it.hasNext()){
-			CpGrupo cpGrp = it.next();
-			CpConfiguracaoBL bl = Cp.getInstance().getConf();
-			if (!bl.podePorConfiguracao(getTitular(), getLotaTitular(), cpGrp, CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
-				it.remove();
+		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
+		//se não for administrador, exibe apenas os grupos que pode gerir
+		if (!conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")){
+			while(it.hasNext()){
+				CpGrupo cpGrp = it.next();
+				CpConfiguracaoBL bl = Cp.getInstance().getConf();
+				if (!bl.podePorConfiguracao(getTitular(), getLotaTitular(), cpGrp, CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
+					it.remove();
+				}
+				
 			}
-			
 		}
 		
 		setItens(itgGrupos);

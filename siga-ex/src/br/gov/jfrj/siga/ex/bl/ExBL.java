@@ -1505,34 +1505,6 @@ public class ExBL extends CpBL {
 			boolean fValido = false;
 			Long lMatricula = null;
 
-			// } else {
-			// sNome = s;
-			// String sCPF = client.recuperarCPF(pkcs7);
-			// Service.throwExceptionIfError(sCPF);
-			// lCPF = Long.valueOf(sCPF);
-			// }
-			try {
-				// Orlando: Inseri o IF abaixo para que seja enviado um e-mail
-				// quando o despacho é assinado.
-				if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-						&& movAlvo.getResp() != null) {
-					emailDeTransferência(movAlvo.getResp(),
-							movAlvo.getLotaResp(),
-							movAlvo.getSiglaAssinatura(), movAlvo
-									.getExDocumento().getCodigoString(),
-							movAlvo.getExDocumento().getDescrDocumento());
-				}
-				// sNome = AssinaturaDigital.verificarAssinatura(movAlvo
-				// .getConteudoBlobpdf(), assinatura, null);
-			} catch (final Exception e) {
-				log.error(
-						"Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao",
-						e);
-				throw new AplicacaoException(
-						"Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao",
-						0, e);
-			}
-
 			try {
 				if (sNome == null)
 					throw new AplicacaoException(

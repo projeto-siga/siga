@@ -364,24 +364,18 @@
 		</action>
 		<action name="gravar" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aGravar">
-			<result name="edita" type="redirect-action">
-				<param name="actionName">editar</param>
-				<param name="idCpGrupo">${idCpGrupo}</param>
+			<result name="edita" type="redirect-action">editar?idCpGrupo=${idCpGrupo}
 			</result>
 
 		</action>
 		<action name="gravarGestorGrupo" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aGravarGestorGrupo">
-			<result type="redirect-action">
-				<param name="actionName">editar</param>
-				<param name="idCpGrupo">${idCpGrupo}</param>
+			<result type="redirect-action">editar?idCpGrupo=${idCpGrupo}
 			</result>
 		</action>
 		<action name="excluirGestorGrupo" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aExcluirGestorGrupo">
-			<result type="redirect-action">
-				<param name="actionName">editar</param>
-				<param name="idCpGrupo">${idCpGrupo}</param>
+			<result type="redirect-action">editar?idCpGrupo=${idCpGrupo}
 			</result>
 		</action>
 		

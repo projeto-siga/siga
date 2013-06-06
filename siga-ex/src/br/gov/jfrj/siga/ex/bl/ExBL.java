@@ -4714,7 +4714,7 @@ public class ExBL extends CpBL {
 			dao().getSessao().refresh(mob);
 			//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
 			if(mob.doc().isProcesso()) {
-				if(mob.getTotalDePaginas() >= 200) {
+				if(mob.getTotalDePaginasSemAnexosDoMobilGeral() >= 200) {
 					encerrar(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
 				}
 			}

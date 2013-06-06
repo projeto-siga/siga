@@ -594,38 +594,42 @@ public class CpConfiguracaoBL {
 	@SuppressWarnings("static-access")
 	public Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, String servicoPath) throws Exception {
-		if (titular == null || lotaTitular == null)
-			return false;
+		try {
+			if (titular == null || lotaTitular == null)
+				return false;
 
-		CpServico srv = null;
-		CpServico srvPai = null;
-		CpServico srvRecuperado = null;
+			CpServico srv = null;
+			CpServico srvPai = null;
+			CpServico srvRecuperado = null;
 
-		// Constroi uma linha completa, tipo full path
-		for (String s : servicoPath.split(";")) {
-			String[] asParts = s.split(":"); // Separa a sigla da descrição
-			String sSigla = asParts[0];
-			srv = new CpServico();
-			srv.setSiglaServico(srvPai != null ? srvPai.getSigla() + "-"
-					+ sSigla : sSigla);
-			srv.setCpServicoPai(srvPai);
-			srvRecuperado = dao().consultarPorSigla(srv);
-			if (srvRecuperado == null) {
-				CpTipoServico tpsrv = dao().consultar(
-						CpTipoServico.TIPO_CONFIG_SISTEMA, CpTipoServico.class,
-						false);
-				String sDesc = (asParts.length > 1 ? asParts[1] : "");
-				srv.setDscServico(sDesc);
-				srv.setCpTipoServico(tpsrv);
-				dao().iniciarTransacao();
-				srvRecuperado = dao().gravar(srv);
-				dao().commitTransacao();
+			// Constroi uma linha completa, tipo full path
+			for (String s : servicoPath.split(";")) {
+				String[] asParts = s.split(":"); // Separa a sigla da descrição
+				String sSigla = asParts[0];
+				srv = new CpServico();
+				srv.setSiglaServico(srvPai != null ? srvPai.getSigla() + "-"
+						+ sSigla : sSigla);
+				srv.setCpServicoPai(srvPai);
+				srvRecuperado = dao().consultarPorSigla(srv);
+				if (srvRecuperado == null) {
+					CpTipoServico tpsrv = dao().consultar(
+							CpTipoServico.TIPO_CONFIG_SISTEMA, CpTipoServico.class,
+							false);
+					String sDesc = (asParts.length > 1 ? asParts[1] : "");
+					srv.setDscServico(sDesc);
+					srv.setCpTipoServico(tpsrv);
+					dao().iniciarTransacao();
+					srvRecuperado = dao().gravar(srv);
+					dao().commitTransacao();
+				}
+				srvPai = srvRecuperado;
 			}
-			srvPai = srvRecuperado;
+			return Cp.getInstance().getConf().podePorConfiguracao(titular,
+					lotaTitular, srvRecuperado,
+					CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+		} catch (Exception e) {
+			return false;
 		}
-		return Cp.getInstance().getConf().podePorConfiguracao(titular,
-				lotaTitular, srvRecuperado,
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
 	}
 
 	/**

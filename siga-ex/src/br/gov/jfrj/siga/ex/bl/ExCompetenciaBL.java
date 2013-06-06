@@ -1714,13 +1714,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& (mob.doc().getSubscritor() != null && !mob.doc()
 						.getSubscritor().equivale(titular))
 				&& (mob.doc().getTitular() != null && !mob.doc().getTitular()
-						.equivale(titular))
-				&& (mob.doc().getTitular() != null && !mob.doc().getTitular()
 						.equivale(titular)))
+			return false;
+		
+		if (!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExFormaDocumento(),
+						CpTipoConfiguracao.TIPO_CONFIG_CRIAR) ||
+						!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExModelo(),
+								CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_EDITAR);
+				
 	}
 
 	/**

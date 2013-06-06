@@ -61,14 +61,30 @@
 
 		<action name="autenticar" method="exec"
 			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
-			<result name="imagem">/paginas/imagemCaptcha.jsp</result>
+			
+			<result name="imagem" type="stream">
+  				<param name="contentType">${contentType}</param>
+				<param name="contentDisposition">filename="${fileName}"</param>
+  				<param name="contentLength">${bytes.length}</param>
+				<param name="inputName">inputStream</param>
+				<param name="bufferSize">8192</param>
+			</result>
+			
 			<result name="autenticado">/paginas/autenticado.jsp</result>
 			<result>/paginas/autenticar.jsp</result>
 		</action>
 
 		<action name="arquivoAutenticado" method="arquivo"
 			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
-			<result name="autenticado">/paginas/imagemCaptcha.jsp</result>
+			
+			<result name="stream" type="stream">
+  				<param name="contentType">${contentType}</param>
+				<param name="contentDisposition">filename="${fileName}"</param>
+  				<param name="contentLength">${bytes.length}</param>
+				<param name="inputName">inputStream</param>
+				<param name="bufferSize">8192</param>
+			</result>
+			
 			<result>/paginas/autenticar.jsp</result>
 		</action>
 	</package>

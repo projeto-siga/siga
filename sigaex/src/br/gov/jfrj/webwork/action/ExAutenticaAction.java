@@ -18,7 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.webwork.action;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -44,12 +46,16 @@ public class ExAutenticaAction extends ExActionSupport {
 	private String fileName;
 
 	private String contentType;
-	
+
+	private int contentLength;
+
 	private boolean assinado;
-	
+
 	private Set<ExMovimentacao> assinaturas;
-	
+
 	private Long idMov;
+
+	private InputStream inputStream;
 
 	public String getCode() {
 		return code;
@@ -145,16 +151,21 @@ public class ExAutenticaAction extends ExActionSupport {
 			ByteArrayOutputStream imgOutputStream = new ByteArrayOutputStream();
 			ImageIO.write(captcha.getImage(), "png", imgOutputStream);
 			bytes = imgOutputStream.toByteArray();
-			fileName = contentType = "image/png";
+			fileName = "captch.png";
+			contentType = "image/png";
+			contentLength = bytes.length;
+
+			setInputStream(new ByteArrayInputStream(bytes));
+
 			return "imagem";
 		}
 
 		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(
 				Captcha.NAME);
-		//getRequest().getSession().removeAttribute(Captcha.NAME);
+		// getRequest().getSession().removeAttribute(Captcha.NAME);
 
 		if (captcha == null || n == null || n.trim().length() == 0) {
-			return SUCCESS; 
+			return SUCCESS;
 		}
 
 		// getRequest().setCharacterEncoding("UTF-8"); // Do this so we can
@@ -162,54 +173,77 @@ public class ExAutenticaAction extends ExActionSupport {
 		if (captcha.isCorrect(getAnswer())) {
 			ExArquivo arq = Ex.getInstance().getBL()
 					.buscarPorNumeroAssinatura(n);
-			
+
 			setAssinaturas(arq.getAssinaturasDigitais());
-			
+
 			return "autenticado";
 		} else {
 			setMensagem("Caracteres digitados não conferem com os apresentados na imagem. Por favor, tente novamente.");
 		}
 		return SUCCESS;
 	}
-	
+
 	public String arquivo() throws Exception {
 		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(
 				Captcha.NAME);
-		//getRequest().getSession().removeAttribute(Captcha.NAME);
+		// getRequest().getSession().removeAttribute(Captcha.NAME);
 
 		if (captcha == null || n == null || n.trim().length() == 0) {
-			return SUCCESS; 
+			return SUCCESS;
 		}
-		
+
 		if (captcha.isCorrect(getAnswer())) {
 			ExArquivo arq = Ex.getInstance().getBL()
 					.buscarPorNumeroAssinatura(n);
-			
-			if(idMov != null && idMov != 0) {
-				ExMovimentacao mov = dao().consultar( idMov, ExMovimentacao.class, false );
-				
+
+			if (idMov != null && idMov != 0) {
+				ExMovimentacao mov = dao().consultar(idMov,
+						ExMovimentacao.class, false);
+
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
 				contentType = mov.getConteudoTpMov();
-				
+
 				bytes = mov.getConteudoBlobMov2();
-				
-				return "autenticado";
+				contentLength = bytes.length;
+
+				setInputStream(new ByteArrayInputStream(bytes));
+
+				return "stream";
 			} else {
 				fileName = arq.getReferenciaPDF();
 				contentType = "application/pdf";
-				
-				if(isAssinado())
-					bytes = Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(n);
+
+				if (isAssinado())
+					bytes = Ex.getInstance().getBL()
+							.obterPdfPorNumeroAssinatura(n);
 				else
 					bytes = arq.getPdf();
+
+				contentLength = bytes.length;
+				setInputStream(new ByteArrayInputStream(bytes));
 				
-				return "autenticado";
+				return "stream";
 			}
-			
-			
+
 		} else {
 			setMensagem("Não foi possível fazer o Download do arquivo. Por favor, tente novamente.");
 		}
 		return SUCCESS;
+	}
+
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
+	public int getContentLength() {
+		return contentLength;
+	}
+
+	public void setContentLength(int contentLength) {
+		this.contentLength = contentLength;
 	}
 }

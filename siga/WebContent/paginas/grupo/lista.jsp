@@ -60,7 +60,7 @@
 				</table>
 			</div>
 			<br /> 
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir')}">
+			<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
 						<input type="button" value="Incluir"
 				onclick="javascript:editar()" class="gt-btn-medium">
 			</c:if>

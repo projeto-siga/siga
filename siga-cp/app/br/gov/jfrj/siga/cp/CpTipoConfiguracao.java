@@ -120,6 +120,7 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_FAZER_LOGIN = 204;
 
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO = 205;
+	public static final long TIPO_CONFIG_GERENCIAR_GRUPO = 206;
 
 	public CpTipoConfiguracao() {
 	}

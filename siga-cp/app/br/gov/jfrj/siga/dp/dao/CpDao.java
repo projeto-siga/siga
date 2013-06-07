@@ -1606,7 +1606,7 @@ public class CpDao extends ModeloDao {
 		while(it.hasNext()){
 			CpGrupo cpGrp = it.next();
 			CpConfiguracaoBL bl = Cp.getInstance().getConf();
-			if (!bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
+			if (!bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO)){
 				it.remove();
 			}
 			

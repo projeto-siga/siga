@@ -400,11 +400,11 @@ public class CpConfiguracaoBL {
 			return false;
 
 		if (cfg.getCpGrupo() != null
-				&& ((cfgFiltro.getCpGrupo() != null
+				&& (cfgFiltro.getCpGrupo() != null
 						&& !cfg.getCpGrupo().equivale(
 								cfgFiltro.getCpGrupo()) || ((cfgFiltro
 						.getCpGrupo() == null) && !atributosDesconsiderados
-						.contains(GRUPO))) || (perfis != null && !perfis.contains(cfg.getCpGrupo()))))
+						.contains(GRUPO)) && (perfis != null && !perfisContemGrupo(cfg, perfis))))
 			return false;
 
 
@@ -460,14 +460,25 @@ public class CpConfiguracaoBL {
 						.contains(TIPO_LOTACAO))))
 			return false;
 		
-		if (cfg.getCpGrupo() != null
-				&& ((cfgFiltro.getCpGrupo() != null && !cfg.getCpGrupo()
-						.getId().equals(cfgFiltro.getCpGrupo().getId())) || ((cfgFiltro
-						.getCpGrupo() == null) && !atributosDesconsiderados
-						.contains(GRUPO))))
-			return false;
-		
+
 		return true;
+	}
+
+	/**
+	 * Verifica se a configuracao refere-se a um perfil ao qual a pessoa/lotacao pertence
+	 * @param cfg - A configuração a ser verificada
+	 * @param perfis - os perfis da pessoa/lotacao
+	 * @return
+	 */
+	private boolean perfisContemGrupo(CpConfiguracao cfg,
+			SortedSet<CpPerfil> perfis) {
+		for (CpPerfil cpPerfil : perfis) {
+			if (cpPerfil.equivale(cfg.getCpGrupo())){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**

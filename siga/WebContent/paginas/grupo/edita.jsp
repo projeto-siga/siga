@@ -329,7 +329,7 @@
 						<input type="hidden" name="idCpTipoGrupo" value="${idCpTipoGrupo}" />
 						<input type="hidden" name="idCpGrupo" value="${idCpGrupo}" />
 						<ww:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir')}">
+							test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
 							<ww:textfield label="Sigla" name="siglaGrupo" size="20" />
 						</ww:if>
 						<ww:else>
@@ -483,7 +483,7 @@
 						<tr>
 							<td>
 								<input type="button" id="btnGravar" value="Gravar" onclick="javascript:gravarGrupo()" class="gt-btn-medium gt-btn-left"/>
-								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;EXC:Excluir')}">
+								<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;EXC:Excluir'))}">
 									<input type="button" id="btnExcluir" value="Excluir" onclick="javascript:excluirGrupo()" class="gt-btn-medium gt-btn-left"/>
 								</c:if>
 								<input type="button" id="btnSair" value="Sair" onclick="javascript:sair()" class="gt-btn-medium gt-btn-left"/>

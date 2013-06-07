@@ -367,7 +367,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 	
 	public String aGravarGestorGrupo(){
 		DpLotacao lot = getLotacaoGestoraSel().getObjeto();
-		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR,CpTipoConfiguracao.class,false);
+		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,CpTipoConfiguracao.class,false);
 		CpSituacaoConfiguracao situacao = dao().consultar(CpSituacaoConfiguracao.SITUACAO_PODE,CpSituacaoConfiguracao.class,false);
 		
 		CpConfiguracao conf = new CpConfiguracao();
@@ -397,7 +397,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 
 
 	public List<CpConfiguracao> getConfGestores(){
-		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR,CpTipoConfiguracao.class,false);
+		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,CpTipoConfiguracao.class,false);
 		CpSituacaoConfiguracao situacao = dao().consultar(CpSituacaoConfiguracao.SITUACAO_PODE,CpSituacaoConfiguracao.class,false);
 		CpGrupo grp = daoGrupo(getIdCpGrupo());
 		CpConfiguracao fltConf = new CpConfiguracao();
@@ -444,11 +444,11 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 		
 		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
 		//se não for administrador, exibe apenas os grupos que pode gerir
-		if (!conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")){
+		if (getIdTipoGrupo() == CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO && !conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")){
 			while(it.hasNext()){
 				CpGrupo cpGrp = it.next();
 				CpConfiguracaoBL bl = Cp.getInstance().getConf();
-				if (!bl.podePorConfiguracao(getTitular(), getLotaTitular(), cpGrp, CpTipoConfiguracao.TIPO_CONFIG_CONFIGURAR)){
+				if (!bl.podePorConfiguracao(getTitular(), getLotaTitular(), cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO)){
 					it.remove();
 				}
 				

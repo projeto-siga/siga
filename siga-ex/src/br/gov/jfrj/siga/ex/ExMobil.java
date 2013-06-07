@@ -1426,5 +1426,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		
 		return totalDePaginas;
 	}
+	
+	public int getTotalDePaginasSemAnexosDoMobilGeral() {
+		int totalDePaginasDoGeral = 0;
+		
+		if(getDoc().getMobilGeral().temAnexos()) {
+			totalDePaginasDoGeral = getDoc().getMobilGeral().getTotalDePaginas();
+		}
+		
+		return getTotalDePaginas() - totalDePaginasDoGeral;
+	}	
 
 }

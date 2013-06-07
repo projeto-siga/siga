@@ -27,6 +27,7 @@ GET     /public/                                staticDir:public
 *		/solicitacao/gravar 				Application.gravar
 *		/solicitacao/exibirAtendente		Application.exibirAtendente
 *		/solicitacao/andamento				Application.andamento
+		/solicitacao/rel					Application.relatorio
 
 *		/designacao/editar/{id}				Application.editarDesignacao
 *		/designacao/editar					Application.editarDesignacao

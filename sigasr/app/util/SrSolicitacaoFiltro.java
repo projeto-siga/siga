@@ -19,7 +19,7 @@ import models.SrSolicitacao;
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public boolean pesquisar = false;
-	
+
 	public String dtIni;
 
 	public String dtFim;
@@ -30,8 +30,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public DpLotacao lotaAtendente;
 
-	public List<SrSolicitacao> buscar() throws Exception{
-		
+	public boolean naoDesignados;
+
+	public List<SrSolicitacao> buscar() throws Exception {
+
 		String query = "from SrSolicitacao sol where sol.hisDtFim is null ";
 
 		if (cadastrante != null)
@@ -95,15 +97,23 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (atendente != null)
 			subquery += "and situacao.dpPessoaIni.idPessoa = "
 					+ atendente.getIdInicial();
-		else if (lotaAtendente != null)
-			subquery += "and situacao.dpLotacaoIni.idLotacao = "
-					+ lotaAtendente.getIdInicial();
+		else if (lotaAtendente != null) {
+			if (naoDesignados)
+				subquery += "and situacao.dpLotacaoIni.idLotacao = "
+						+ lotaAtendente.getIdInicial() + " and situacao.dpPessoaIni is null";
+			else
+				subquery += "and situacao.dpLotacaoIni.idLotacao = "
+						+ lotaAtendente.getIdInicial();
+		}
 
 		if (subquery.length() > 0)
 			subquery = " and exists (from SrMarca situacao where situacao.solicitacao = sol.solicitacaoInicial "
 					+ subquery + " )";
 
-		List listaRetorno = JPA.em().createQuery(query + subquery + " order by sol.idSolicitacao desc")
+		List listaRetorno = JPA
+				.em()
+				.createQuery(
+						query + subquery + " order by sol.idSolicitacao desc")
 				.getResultList();
 
 		return listaRetorno;

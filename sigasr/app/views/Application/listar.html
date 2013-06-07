@@ -4,134 +4,53 @@
 	<h2>Pesquisa de solicitações</h2>
  	#{if listaSolicitacao}
 	<div class="gt-content-box gt-for-table">
-	<table border="0" class="gt-table">
-		<tbody>
-			#{list items:listaSolicitacao, as:'sol'}
+	<table border="0" class="gt-table-nowrap">
+			<col width="20%" />
+    		<col width="50%" />
+    		<col width="20%" />
+    		<col width="15%" />
+    		<col width="20%" />
+    		<col width="20%" />
+    		<thead>
+				<tr style ="border-bottom: 1px solid #ccc !important;">
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Solicitante</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Aberto</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Situação</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Último Andamento</th>
+				</tr>
+			</thead>
+			<tbody>
+			#{list items:listaSolicitacao, as:'sol'}	
 			<tr>
-				<td style="width: 70%; padding-bottom: 1px;">
-					<h4>
-						#{ifnot _modoCompleto}
+			<td style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 						<a href="@{Application.exibir(sol.idSolicitacao)}">
-							${sol.codigo} -	#{/ifnot}${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}
-							#{ifnot _modoCompleto}</a>#{/ifnot}
-					</h4>
-					<font style="font-size: 9pt; padding-top: 3pt">
-							<b>Abertura:&nbsp;</b>${sol.solicitante.descricaoIniciaisMaiusculas},
-							${sol.lotaSolicitante.siglaLotacao}#{if
-							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}
-							- ${sol.solicitacaoInicial.dtRegString}
-							#{if _modoCompleto && sol.solicitante != sol.cadastrante}
-							Cadastrado por ${sol.cadastrante.descricaoIniciaisMaiusculas},
-							${sol.lotaCadastrante.siglaLotacao}
-							#{/if}
-					</font>
-					<p style="font-size: 9pt; padding-top: 3pt; margin-bottom: 5pt;" id="descrSolicitacao">
-					${sol.descrSolicitacao}</p>
-					<font style="font-size: 9pt; padding-top: 0pt;">
-							<b>Último andamento:&nbsp;</b>${sol.ultimoAndamento.solicitacao.solicitante.descricaoIniciaisMaiusculas},
-							${sol.lotaSolicitante.siglaLotacao}#{if
-							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}
-							- ${sol.ultimoAndamento.dtRegString}
-					</font>
-					<p style="font-size: 9pt; padding-top: 3pt;">
-							${sol.ultimoAndamento.descrAndamento}
-					</p>
-				</td>
-				<td style="padding-left: 60px">
-					<table border="0" class="gt-table-categories">
-						<tr><th>Situação:</th><td width="60%" >${sol.situacaoString}</td></tr>
-						#{if (sol.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
-						#{elseif (sol.GUT > 60)} #{set priorColor:'color: orange' /} #{/elseif}
-						#{else} #{set priorColor:'' /} #{/else}
-						<tr>
-							<th style="color: ${priorColor}">Prioridade:</th> 
-							<td width="60%" style="${priorColor}" >${sol.GUTPercent}
-							#{if _modoCompleto} &nbsp;&nbsp;${sol.GUTString}#{/if}
-							</td>
-						</tr>
-						*{#{if sol.arquivo}
-						<tr><th>Anexo:</th><td width="60%" >#{arquivo arquivo:sol.arquivo /}</td></tr>
-						#{/if}}*
-						#{if _modoCompleto && sol.parteDeArvore}
-						<tr><th>Contexto:</th>
-							<td width="60%" >#{listaArvore solicitacao:sol.paiDaArvore, visualizando:sol /}</td>
-						</tr>
-						#{/if}
-					</table>
-				</td></tr>#{/list}
-			</tbody>
-		</table>
+							${sol.codigo}
+						</a>	
+			</td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px;" "id="descrSolicitacao">
+			<b style="color: #333">${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}</b>&nbsp;
+			${sol.descrSolicitacao}
+			</td>
+			<td style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;" >
+			${sol.solicitante.descricaoIniciaisMaiusculas},${sol.lotaSolicitante.siglaLotacao}
+			</td>
+			<td style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">${sol.solicitacaoInicial.dtRegString}</td>						
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+				<b>${sol.situacaoStringSemLota},${sol.lotaAtendente.siglaLotacao}</b></td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+				${sol.ultimoAndamento.descrAndamento}</td>
+			</tr>		
+			</tbody>			
+			#{/list}
+			</table>
 		</div>
 	#{/if}
 	#{elseif filtro?.pesquisar} 
 	<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>	
 	#{/elseif }
 		
-	<div class="gt-content-box">
-	<table border="0" class="gt-table gt-user-table">
-	<tbody>
-		#{list items:_solicitacoes, as:'sol'}
-			<tr><td style="width: 70%">
-					<h4>
-						#{ifnot _modoCompleto}
-						<a href="@{Application.exibir(sol.idSolicitacao)}">
-							${sol.codigo} -	#{/ifnot}${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}
-							#{ifnot _modoCompleto}</a>#{/ifnot}
-					</h4>
-					<p style="font-size: 9pt">
-							<i>Abertura:${sol.solicitante.descricaoIniciaisMaiusculas},
-							${sol.lotaSolicitante.siglaLotacao}#{if
-							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}
-							- ${sol.solicitacaoInicial.dtRegString}</i>
-						#{if _modoCompleto && sol.solicitante != sol.cadastrante}
-						<i>Cadastrado por ${sol.cadastrante.descricaoIniciaisMaiusculas},
-							${sol.lotaCadastrante.siglaLotacao}</i>
-						#{/if}
-					<p style="font-size: 9pt; padding-top: 3pt" id="descrSolicitacao">
-					${sol.descrSolicitacao}<br/></p>
-					<script language="javascript">
-						var descricao = document.getElementById('descrSolicitacao');
-						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
-					</script>
-					<p style="font-size: 9pt">
-							<i>Último andamento:${sol.ultimoAndamento.solicitacao.solicitante.descricaoIniciaisMaiusculas},
-							${sol.lotaSolicitante.siglaLotacao}#{if
-							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}
-							- ${sol.ultimoAndamento.dtRegString}</i>
-							<br>
-							${sol.ultimoAndamento.descrAndamento}
-				</td>
-				<td style="padding-left: 60px">
-					<table border="0" class="gt-table-categories">
-						<tr>
-							<th>Situação:</th>
-							<td width="60%">${sol.situacaoString}</td>
-						</tr>
-						#{if (sol.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
-						#{elseif (sol.GUT > 60)} #{set priorColor:'color: orange' /} #{/elseif}
-						#{else} #{set priorColor:'' /} #{/else}
-						<tr>
-							<th style="color: ${priorColor}">Prioridade:</th> 
-							<td width="60%" style="${priorColor}" >${sol.GUTPercent}
-							#{if _modoCompleto} &nbsp;&nbsp;${sol.GUTString}#{/if}
-							</td>
-						</tr>
-						#{if sol.arquivo}
-						<tr>
-							<th>Anexo:</th>
-							<td width="60%">#{arquivo arquivo:sol.arquivo /}</td>
-						</tr>
-						#{/if}
-						#{if _modoCompleto && sol.parteDeArvore}
-						<tr>
-							<th>Contexto:</th>
-							<td width="60%">#{listaArvore solicitacao:sol.paiDaArvore, visualizando:sol /}</td>
-						</tr>
-						#{/if}
-					</table></td></tr>
-			#{/list}
-		</tbody>
-	</table></div>
 		
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 		<form action="@{Application.listar}">
@@ -149,7 +68,15 @@
 							nomeSelPessoa:'filtro.atendente',
 							nomeSelLotacao:'filtro.lotaAtendente',
 							valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente
-							/}</td>
+							/}
+							<div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
+								<label>#{checkbox name:'filtro.naoDesignados',
+								value:filtro.naoDesignados /} Apenas não designadas</label>
+							</div>
+							<script language="javascript">
+								$("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
+							</script>
+							</td>
 					</tr>
 					<tr>
 						<td>Cadastrante</td>

@@ -312,7 +312,7 @@
 	<package name="gi/perfil" extends="default" namespace="/gi/perfil">
 		<action name="buscar" class="br.gov.jfrj.webwork.action.CpPerfilAction"
 			method="aBuscar">
-			<result name="busca">/sigalibs/grupo_busca.jsp?idCpTipoGrupo=2
+			<result name="busca">/paginas/grupo/grupo_busca.jsp?idCpTipoGrupo=2
 			</result>
 		</action>
 		<action name="selecionar" class="br.gov.jfrj.webwork.action.CpPerfilAction"
@@ -346,7 +346,7 @@
 	<package name="gi/email" extends="default" namespace="/gi/email">
 		<action name="buscar" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aBuscar">
-			<result name="busca">/sigalibs/grupo_busca.jsp?idCpTipoGrupo=2
+			<result name="busca">/paginas/grupo/grupo_busca.jsp?idCpTipoGrupo=2
 			</result>
 		</action>
 		<action name="selecionar" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"

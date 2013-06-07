@@ -374,6 +374,27 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		ProcessadorReferencias pr = new ProcessadorReferencias();
 		pr.ignorar(getSigla());
 		sHtml = pr.marcarReferencias(sHtml);
+		
+		//Verifica se todos os subscritores assinaram o documento
+	 	for (DpPessoa subscritor : getSubscritorECosignatarios()) {
+	 		if(isEletronico() && getDtFechamento() != null && !jaAssinadoPor(subscritor)) {
+	 			String comentarioInicio = "<!-- INICIO SUBSCRITOR " + subscritor.getId() + " -->";
+	 			String comentarioFim = "<!-- FIM SUBSCRITOR " + subscritor.getId() + " -->";
+	 			
+	 			if(sHtml.contains(comentarioInicio) && sHtml.contains(comentarioFim)) {
+		 			String blocoSubscritor = sHtml.substring(sHtml.indexOf(comentarioInicio) + comentarioInicio.length(),
+		 					sHtml.indexOf(comentarioFim));
+		 			
+		 			StringBuilder sb = new StringBuilder();
+		 			sb.append("<span style=\"color:#CD3700;\">");
+		 			sb.append(blocoSubscritor);
+		 			sb.append("</span>");
+		 			
+		 			sHtml = sHtml.replace(blocoSubscritor, sb).toString();
+	 			}
+	 		}
+		} 
+		
 		return sHtml;
 	}
 
@@ -835,8 +856,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (getExClassificacao() != null)
 				vias = getExClassificacao().getExViaSet();
 		}
-		
-		if (vias != null && ((ExVia)vias.toArray()[0]).getExTipoDestinacao().getFacilitadorDest() != null)
+
+		if (vias != null && vias.size() > 0
+				&& ((ExVia) vias.toArray()[0]).getExTipoDestinacao()
+						.getFacilitadorDest() != null)
 			return vias;
 
 		// Expediente externo ou eletrônico e com Documento Pai tem apenas 1 via
@@ -930,11 +953,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 	/**
 	 * Verifica se um documento já foi assinado pelo Subscritor.
 	 */
-	public boolean isAssinadoSubscritor() {		
+	public boolean isAssinadoSubscritor() {
 		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
 			if (assinatura.getSubscritor().equivale(getSubscritor()))
 				return true;
@@ -942,8 +965,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 	
-	
-	
+	/**
+	 * Verifica se uma pessoa assinou este documento.
+	 */
+	public boolean jaAssinadoPor(DpPessoa subscritor) {		
+		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
+			if (assinatura.getSubscritor().equivale(subscritor))
+				return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Verifica se um documento está cancelado, o que é verdadeiro quando todas
@@ -1806,7 +1837,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public List<DpPessoa> getSubscritorECosignatarios() {
 		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
 
-		if(getSubscritor() != null)
+		if (getSubscritor() != null)
 			subscritores.add(getSubscritor());
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
@@ -2031,5 +2062,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				lista.add(mov.getLotaSubscritor());
 		}
 		return lista.size() == 0 ? null : lista;
+	}
+
+	@Override
+	public boolean isInternoProduzido() {
+		return true;
 	}
 }

@@ -68,7 +68,15 @@
 							nomeSelPessoa:'filtro.atendente',
 							nomeSelLotacao:'filtro.lotaAtendente',
 							valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente
-							/}</td>
+							/}
+							<div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
+								<label>#{checkbox name:'filtro.naoDesignados',
+								value:filtro.naoDesignados /} Apenas não designadas</label>
+							</div>
+							<script language="javascript">
+								$("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
+							</script>
+							</td>
 					</tr>
 					<tr>
 						<td>Cadastrante</td>

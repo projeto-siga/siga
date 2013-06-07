@@ -1095,7 +1095,7 @@ public class ExBL extends CpBL {
 		}
 		
 		try {
-			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -1504,34 +1504,6 @@ public class ExBL extends CpBL {
 
 			boolean fValido = false;
 			Long lMatricula = null;
-
-			// } else {
-			// sNome = s;
-			// String sCPF = client.recuperarCPF(pkcs7);
-			// Service.throwExceptionIfError(sCPF);
-			// lCPF = Long.valueOf(sCPF);
-			// }
-			try {
-				// Orlando: Inseri o IF abaixo para que seja enviado um e-mail
-				// quando o despacho é assinado.
-				if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-						&& movAlvo.getResp() != null) {
-					emailDeTransferência(movAlvo.getResp(),
-							movAlvo.getLotaResp(),
-							movAlvo.getSiglaAssinatura(), movAlvo
-									.getExDocumento().getCodigoString(),
-							movAlvo.getExDocumento().getDescrDocumento());
-				}
-				// sNome = AssinaturaDigital.verificarAssinatura(movAlvo
-				// .getConteudoBlobpdf(), assinatura, null);
-			} catch (final Exception e) {
-				log.error(
-						"Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao",
-						e);
-				throw new AplicacaoException(
-						"Ocorreu um erro ao enviar email de transferencia durante a ssinatura da movimentacao",
-						0, e);
-			}
 
 			try {
 				if (sNome == null)
@@ -2822,11 +2794,9 @@ public class ExBL extends CpBL {
 						"É necessário informar a via à qual será feita a juntada");
 
 			if (mob.doc().isEletronico()) {
-				for (CpMarca marca : mob.getExMarcaSet()) {
-					if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
+				if (mob.temAnexosNaoAssinados() || mob.temDespachosNaoAssinados())			
 						throw new AplicacaoException(
-								"Não é possível juntar documento com anexo pendente de assinatura ou conferência");
-				}
+								"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");				
 			}
 
 			// Verifica se o documeto pai já está apensado a este documento
@@ -2838,7 +2808,7 @@ public class ExBL extends CpBL {
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado ou encontra-se em outra lotação");
+						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado, arquivado ou encontra-se em outra lotação");
 		}
 		
 		final ExMovimentacao mov;
@@ -2881,7 +2851,7 @@ public class ExBL extends CpBL {
 		}
 		
 		try {
-			encerrarAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov, subscritor, titular, mov.getNmFuncaoSubscritor());
+			encerrarAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -3243,6 +3213,14 @@ public class ExBL extends CpBL {
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
 					"Não é possível fazer despacho em um documento que faça parte de um apenso");
+		
+		
+		if (fTranferencia && mob.doc().isEletronico()) {
+			if (mob.doc().getMobilGeral().temAnexosNaoAssinados() || mob.doc().getMobilGeral().temDespachosNaoAssinados())						
+					throw new AplicacaoException(
+							"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+			
+		}
 
 		for (ExMobil m : set) {
 			if (fDespacho && m.isEncerrado())
@@ -3274,20 +3252,10 @@ public class ExBL extends CpBL {
 							"Não é permitido fazer transferência em documento que ainda não foi assinado");
 
 				if (m.doc().isEletronico()) {
-					if (!m.doc().jaTransferido()) {
-						for (CpMarca marca : m.doc().getMobilGeral()
-								.getExMarcaSet())
-							if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
-								throw new AplicacaoException(
-										"Não é permitido fazer transferência em documento com anexo pendente de assinatura ou conferência");
-
-					}
-
-					for (CpMarca marca : m.getExMarcaSet()) {
-						if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA)
+					if (m.temAnexosNaoAssinados() || m.temDespachosNaoAssinados())						
 							throw new AplicacaoException(
-									"Não é permitido fazer transferência em documento com anexo pendente de assinatura ou conferência");
-					}
+									"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+					
 				}
 
 				if (m.getExDocumento().isEletronico()
@@ -3431,7 +3399,7 @@ public class ExBL extends CpBL {
 
 		if(fDespacho) {
 			try {
-				encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni, subscritor, titular, nmFuncaoSubscritor);
+				encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -4723,16 +4691,15 @@ public class ExBL extends CpBL {
 	
 	public void encerrarAutomatico(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
-			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, String nmFuncaoSubscritor) 
+			final Date dtMov) 
 			throws AplicacaoException, Exception {
 		
 		if(mob.doc().isEletronico()) {
 			dao().getSessao().refresh(mob);
 			//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
 			if(mob.doc().isProcesso()) {
-				if(mob.getTotalDePaginas() >= 200) {
-					encerrar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, titular, nmFuncaoSubscritor, true);
+				if(mob.getTotalDePaginasSemAnexosDoMobilGeral() >= 200) {
+					encerrar(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
 				}
 			}
 		}

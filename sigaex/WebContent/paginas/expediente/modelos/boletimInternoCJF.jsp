@@ -126,7 +126,7 @@
 		FIM CABECALHO -->
 
 		<c:set var="hBIE"
-			value="${f:obterHierarquizadorBIE(lotaTitular.orgaoUsuario, doc)}"></c:set>
+			value="${f:obterHierarquizadorBIECJF(lotaTitular.orgaoUsuario, doc)}"></c:set>
 
 		<c:forEach var="topico" items="${hBIE.nodosPrincipais}"
 			varStatus="loop">
@@ -214,4 +214,3 @@
 
 	</mod:finalizacao>--%>
 </mod:modelo>
-

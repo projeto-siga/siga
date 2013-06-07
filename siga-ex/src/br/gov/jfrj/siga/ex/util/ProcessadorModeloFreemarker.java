@@ -54,6 +54,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		cfg.setObjectWrapper(new DefaultObjectWrapper());
 		cfg.setWhitespaceStripping(true);
 		cfg.setTagSyntax(Configuration.SQUARE_BRACKET_TAG_SYNTAX);
+		cfg.setNumberFormat("0.######");
 	}
 
 	public String processarModelo(CpOrgaoUsuario ou, Map<String, Object> attrs,

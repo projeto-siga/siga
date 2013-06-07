@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
+import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoCJF;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoES;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
 import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
@@ -101,7 +102,14 @@ public class FuncoesEL {
 			CpOrgaoUsuario orgao, ExDocumento d) {
 		return new HierarquizadorBoletimInternoES(orgao, Ex.getInstance().getBL()
 				.obterDocumentosBoletim(d));
-	}	
+	}
+	
+	public static HierarquizadorBoletimInternoCJF obterHierarquizadorBIECJF(
+			CpOrgaoUsuario orgao, ExDocumento d) {
+		return new HierarquizadorBoletimInternoCJF(orgao, Ex.getInstance().getBL()
+				.obterDocumentosBoletim(d));
+	}
+	
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
 		if (lotaTitular == null)

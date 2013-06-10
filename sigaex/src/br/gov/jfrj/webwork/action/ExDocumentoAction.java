@@ -977,6 +977,49 @@ public class ExDocumentoAction extends ExActionSupport {
 				.println("\n\n\n\n\n\n*****************************************\n\n\n\n\n\n\n");
 
 	}
+	
+	private void verificaDocumento() throws AplicacaoException, Exception {
+		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc
+				.getNmSubscritorExt() == null)
+				&& ((doc.getExFormaDocumento().getExTipoFormaDoc()
+						.getIdTipoFormaDoc() == 2 && doc.isEletronico())
+						|| doc.getExFormaDocumento().getExTipoFormaDoc()
+						.getIdTipoFormaDoc() != 2 ))
+			throw new AplicacaoException(
+					"É necessário definir um subscritor para o documento.");
+
+		if (doc.getDestinatario() == null
+				&& doc.getLotaDestinatario() == null
+				&& (doc.getNmDestinatario() == null || doc.getNmDestinatario()
+						.trim().equals(""))
+				&& doc.getOrgaoExternoDestinatario() == null
+				&& (doc.getNmOrgaoExterno() == null || doc.getNmOrgaoExterno()
+						.trim().equals(""))) {
+			Long idSit = Ex
+					.getInstance()
+					.getConf()
+					.buscaSituacao(doc.getExModelo(), getTitular(),
+							getLotaTitular(),
+							CpTipoConfiguracao.TIPO_CONFIG_DESTINATARIO)
+					.getIdSitConfiguracao();
+			if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO)
+				throw new AplicacaoException("Para documentos do modelo "
+						+ doc.getExModelo().getNmMod()
+						+ ", é necessário definir um destinatário");
+		}
+
+		if ((doc.getExFormaDocumento().getExTipoFormaDoc().getIdTipoFormaDoc() == 2)
+				&& (doc.getExTipoDocumento().getIdTpDoc() == 2)
+				&& (doc.getNumAntigoDoc() == null || doc.getNumAntigoDoc()
+						.trim().equals("")))
+			throw new AplicacaoException(
+					"Ao cadastrar processo administrativo já existente, é necessário informar o **número antigo** do processo.");
+		
+		if (doc.getExClassificacao() == null)
+			throw new AplicacaoException(
+					"É necessário informar a classificação documental.");
+
+	}
 
 	private void buscarDocumentoOuNovo(boolean fVerificarAcesso)
 			throws Exception {
@@ -1038,39 +1081,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aFechar() throws Exception {
 		buscarDocumento(true);
 
-		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc
-				.getNmSubscritorExt() == null)
-				&& doc.getExFormaDocumento().getExTipoFormaDoc()
-						.getIdTipoFormaDoc() != 2)
-			throw new AplicacaoException(
-					"É necessário definir um subscritor antes de finalizar o documento.");
-
-		if (doc.getDestinatario() == null
-				&& doc.getLotaDestinatario() == null
-				&& (doc.getNmDestinatario() == null || doc.getNmDestinatario()
-						.trim().equals(""))
-				&& doc.getOrgaoExternoDestinatario() == null
-				&& (doc.getNmOrgaoExterno() == null || doc.getNmOrgaoExterno()
-						.trim().equals(""))) {
-			Long idSit = Ex
-					.getInstance()
-					.getConf()
-					.buscaSituacao(doc.getExModelo(), getTitular(),
-							getLotaTitular(),
-							CpTipoConfiguracao.TIPO_CONFIG_DESTINATARIO)
-					.getIdSitConfiguracao();
-			if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO)
-				throw new AplicacaoException("Para documentos do modelo "
-						+ doc.getExModelo().getNmMod()
-						+ ", é necessário definir um destinatário");
-		}
-
-		if ((doc.getExFormaDocumento().getExTipoFormaDoc().getIdTipoFormaDoc() == 2)
-				&& (doc.getExTipoDocumento().getIdTpDoc() == 2)
-				&& (doc.getNumAntigoDoc() == null || doc.getNumAntigoDoc()
-						.trim().equals("")))
-			throw new AplicacaoException(
-					"Ao cadastrar processo administrativo já existente, é necessário informar o **número antigo** do processo.");
+		verificaDocumento();
 
 		if (!Ex.getInstance().getComp()
 				.podeFinalizar(getTitular(), getLotaTitular(), mob))
@@ -1091,8 +1102,9 @@ public class ExDocumentoAction extends ExActionSupport {
 			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
 		}
 
-		return Action.SUCCESS;
-	}
+		return Action.SUCCESS;	}
+
+	
 
 	public String aFecharAssinar() throws Exception {
 		aFechar();
@@ -1166,6 +1178,8 @@ public class ExDocumentoAction extends ExActionSupport {
 				if (c.before(dtDocCalendar))
 					throw new Exception(
 							"Não é permitido criar documento com data futura");
+				
+				verificaDocumento();
 			}
 
 			/*
@@ -2207,8 +2221,9 @@ public class ExDocumentoAction extends ExActionSupport {
 		doc.setExTipoDocumento(dao().consultar(getIdTpDoc(),
 				ExTipoDocumento.class, false));
 
-		doc.setExFormaDocumento(dao().consultar(getIdFormaDoc(),
-				ExFormaDocumento.class, false));
+		if (doc.getDtFechamento() == null)
+			doc.setExFormaDocumento(dao().consultar(getIdFormaDoc(),
+					ExFormaDocumento.class, false));
 		doc.setNmDestinatario(getNmDestinatario());
 
 		if (getIdMod() != 0) {

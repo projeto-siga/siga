@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,10 +41,12 @@ import play.mvc.Catch;
 import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpPessoa;
+
 
 public class Application extends SigaApplication {
 
@@ -63,18 +66,26 @@ public class Application extends SigaApplication {
 		} catch (Exception e) {
 			tratarExcecoes(e);
 		}
-
+		
 		try {
 			assertAcesso("ADM:Administrar");
 			renderArgs.put("exibirMenuAdministrar", true);
 		} catch (Exception e) {
 			renderArgs.put("exibirMenuAdministrar", false);
 		}
-	}
+		
+		try {
+			assertAcesso("REL:Relatorios");
+			renderArgs.put("exibirMenuRelatorios", true);
+		} catch (Exception e) {
+			renderArgs.put("exibirMenuRelatorios", false);
+		}
 
+}
 	protected static void assertAcesso(String path) throws Exception {
 		SigaApplication.assertAcesso("SR:Módulo de Serviços;" + path);
 	}
+	
 
 	@Catch()
 	public static void tratarExcecoes(Exception e) {
@@ -244,6 +255,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void relatorio() throws Exception {
+		assertAcesso("REL:Relatorios");
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
 		
 		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
@@ -266,7 +278,7 @@ public class Application extends SigaApplication {
 			set.add(new SrSolicitacaoItem((Integer) fechados[0],
 					(Integer) fechados[1], 0, (Long) fechados[2], 0));
 		}
-
+		
 		LocalDate ld = new LocalDate();
 		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
 
@@ -298,6 +310,94 @@ public class Application extends SigaApplication {
 		String evolucao = sb.toString();
 
 		render(lista, evolucao);
+	}
+	
+	public static void estatistica() throws Exception {
+		assertAcesso("REL:Relatorios");
+		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
+		
+		List<String[]> listaSols = SrSolicitacao.find(
+				"select sol.gravidade, count(*) " +
+				"from SrSolicitacao sol, SrAndamento andamento " +
+				"where sol.idSolicitacao = andamento.solicitacao and andamento.estado <> 2 " +
+				"group by sol.gravidade").fetch(); 
+		
+		LocalDate ld = new LocalDate();
+		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
+
+		// Header
+		StringBuilder sb = new StringBuilder();
+		sb.append("['Prioridade','Total'],");
+
+		// Values
+		for (Iterator<String[]> it = listaSols.iterator(); it.hasNext();) {
+			Object[] obj = (Object[]) it.next();
+			SrGravidade gravidade = (SrGravidade) obj[0];
+			Long total = (Long) obj[1];
+			sb.append("['");
+			sb.append(gravidade.descrGravidade.toString());
+			sb.append("',");
+			sb.append(total.toString());
+			sb.append(",");
+			sb.append("],");
+		}
+		
+		String estat = sb.toString();
+		
+		List<SrSolicitacao> listaEvol = SrSolicitacao.all().fetch();
+		
+		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
+		List<Object[]> listaEvolSols = SrSolicitacao.find(
+				"select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(*) " +
+				"from SrSolicitacao sol group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch(); 
+			
+		for (Object[] sols : listaEvolSols) {
+			set.add(new SrSolicitacaoItem((Integer) sols[0],
+					(Integer) sols[1], (Long) sols[2], 0, 0));
+		}
+
+
+		List<Object[]> listaFechados = SrSolicitacao.find(
+				"select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(distinct sol.idSolicitacao) " +
+				"from SrSolicitacao sol, SrAndamento andamento " +
+				"where sol.idSolicitacao = andamento.solicitacao and andamento.estado = 2 " +
+				"group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch();
+		for (Object[] fechados : listaFechados) {
+			set.add(new SrSolicitacaoItem((Integer) fechados[0],
+					(Integer) fechados[1], 0, (Long) fechados[2], 0));
+		}
+		
+		LocalDate ldt = new LocalDate();
+		ldt = new LocalDate(ldt.getYear(), ldt.getMonthOfYear(), 1);
+
+		// Header
+		StringBuilder sbevol = new StringBuilder();
+		sbevol.append("['Mês','Fechados','Abertos'],");
+
+		// Values
+		for (int i = -6; i <= 0; i++) {
+			LocalDate ldl = ldt.plusMonths(i);
+			sbevol.append("['");
+			sbevol.append(ldl.toString("MMM/yy"));
+			sbevol.append("',");
+			long abertos = 0;
+			long fechados = 0;
+			SrSolicitacaoItem o = new SrSolicitacaoItem(
+					ldl.getMonthOfYear(), ldl.getYear(), 0, 0, 0);
+			if (set.contains(o)) {
+				o = set.floor(o);
+				abertos = o.abertos;
+				fechados = o.fechados;
+			}
+			sbevol.append(fechados);
+			sbevol.append(",");
+			sbevol.append(abertos);
+			sbevol.append(",");
+			sbevol.append("],");
+		}
+		String evolucao = sbevol.toString();
+
+		render(lista, estat, evolucao);
 	}
 	
 	

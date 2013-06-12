@@ -10,8 +10,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
@@ -23,6 +25,7 @@ import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.joda.time.LocalDate;
 import org.mcavallo.opencloud.Cloud;
 import org.mcavallo.opencloud.Tag;
@@ -38,6 +41,9 @@ import utils.GcBL;
 import utils.GcGraficoEvolucao;
 import utils.GcGraficoEvolucaoItem;
 import utils.GcInformacaoFiltro;
+import utils.diff_match_patch;
+import utils.diff_match_patch.Diff;
+import utils.diff_match_patch.Operation;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -414,6 +420,66 @@ public class Application extends SigaApplication {
 					: null;
 		render(informacao, tiposInformacao, titulo, conteudo, classificacao,
 				origem);
+	}
+
+	public static void historico(long id) throws Exception {
+		GcInformacao informacao = GcInformacao.findById(id);
+
+		if (informacao == null)
+			index();
+
+		diff_match_patch diff = new diff_match_patch();
+
+		String txtAnterior = "";
+		String tituloAnterior = "";
+
+		SortedSet<GcMovimentacao> list = new TreeSet<GcMovimentacao>();
+		HashMap<GcMovimentacao, String> mapTitulo = new HashMap<GcMovimentacao, String>();
+		HashMap<GcMovimentacao, String> mapTxt = new HashMap<GcMovimentacao, String>();
+		if (informacao.movs != null) {
+			GcMovimentacao[] array = informacao.movs
+					.toArray(new GcMovimentacao[informacao.movs.size()]);
+			ArrayUtils.reverse(array);
+			for (GcMovimentacao mov : array) {
+				Long t = mov.tipo.id;
+
+				if (mov.isCancelada())
+					continue;
+
+				if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO) {
+					// Titulo
+					String titulo = mov.arq.titulo;
+					LinkedList<Diff> tituloDiffs = diff.diff_main(
+							tituloAnterior, titulo, true);
+					String tituloDiffHtml = diff.diff_prettyHtml(tituloDiffs);
+					boolean tituloAlterado = tituloDiffs == null
+							|| tituloDiffs.size() != 1
+							|| tituloDiffs.size() == 1
+							&& tituloDiffs.get(0).operation != Operation.EQUAL;
+
+					// Texto
+					String txt = mov.arq.getConteudoTXT();
+					LinkedList<Diff> txtDiffs = diff.diff_main(txtAnterior,
+							txt, true);
+					String txtDiffHtml = diff.diff_prettyHtml(txtDiffs);
+					boolean txtAlterado = txtDiffs == null
+							|| txtDiffs.size() != 1 || txtDiffs.size() == 1
+							&& txtDiffs.get(0).operation != Operation.EQUAL;
+
+					if (tituloAlterado || txtAlterado) {
+						list.add(mov);
+						if (tituloAlterado)
+							mapTitulo.put(mov, tituloDiffHtml);
+						if (txtAlterado)
+							mapTxt.put(mov, txtDiffHtml);
+					}
+					txtAnterior = txt;
+					tituloAnterior = titulo;
+				}
+			}
+		}
+
+		render(informacao, list, mapTitulo, mapTxt);
 	}
 
 	public static void fechar(long id) throws Exception {

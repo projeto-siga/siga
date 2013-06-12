@@ -1,0 +1,59 @@
+#{extends 'main.html' /} #{set title:'Exibição de Tópico de
+Informação'/}
+
+<div class="gt-bd gt-cols clearfix">
+	<div class="gt-content">
+		<h2>${informacao.getSigla()}</h2>
+		<h3 style="margin-bottom: 0px;">${informacao.getMarcadoresEmHtml(titular,lotaTitular)}</h3>
+		<!-- Links para as ações de cada mobil -->
+		#{links acoes:informacao.acoes(idc,titular,lotaTitular), base:_base /}
+		<!-- Dados do documento -->
+		<div class="gt-content-box" style="padding: 10px;">
+			<h2>${informacao?.arq?.titulo}</h2>
+			${informacao.conteudoHTML.raw()}
+		</div>
+	</div>
+
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>${informacao?.tipo?.nome}</h3>
+			<p>
+				<b>Órgão Usuário:</b> ${informacao?.ou?.acronimoOrgaoUsu}
+			</p>
+			<p>
+				<b>Autor:</b> ${informacao?.autor?.descricaoIniciaisMaiusculas} -
+				${informacao?.autor?.sigla}
+			</p>
+			<p>
+				<b>Lotação:</b> ${informacao?.lotacao?.descricaoIniciaisMaiusculas}
+				- ${informacao?.lotacao?.sigla}
+			</p>
+			<p>
+				<b>Data:</b> ${informacao?.dtIniString}
+			</p>
+			<p>
+				<b>Finalizado em:</b> ${informacao?.elaboracaoFim}
+			</p>
+			<!--  -->
+			#{set cls = informacao?.arq?.classificacao?.split(",") /}
+			<!--  -->
+			#{if cls != null && cls.size() > 1}
+			<p>
+				<b>Classificações:</b>
+			<ul>
+				#{list items:cls, as:'cl'}
+				<li>${cl}</li> #{/list}
+			</ul>
+			</p>
+			#{/if}#{else}
+			<p>
+				<b>Classificação:</b> ${informacao?.arq?.classificacao}
+			</p>
+			#{/else}
+
+		</div>
+		<!-- / sidebar -->
+	</div>
+</div>
+
+#{doLayout /}

@@ -2006,6 +2006,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	public void setConteudoBlobPdf(final byte[] conteudo) throws Exception {
+		
+		// Atenção, não retirar esse teste nunca, pois ele é quem garante que o pdf não será refeito.
 		if (isAssinado() || isAssinadoDigitalmente())
 			throw new AplicacaoException(
 					"O conteúdo não pode ser alterado pois o documento já está assinado");

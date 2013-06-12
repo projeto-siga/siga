@@ -2,8 +2,6 @@
 </li>
 <li><a href="@{Application.listar}">Listar</a>
 </li>
-<li><a href="@{Application.relatorio}">Relatórios</a>
-</li>
 #{if exibirMenuAdministrar}
 <li><a href="#">Administrar</a>
 <ul>
@@ -12,6 +10,14 @@
 <li><a href="@{Application.listarServico}">Ação</a></li>
 <li><a href="@{Application.listarTipoAtributo}">Tipo de atributo</a></li>
 <li><a href="@{Application.listarAssociacao}">Associaçao de tipo de atributo</a></li>
+</ul>
+</li>
+#{/if}
+#{if exibirMenuRelatorios}
+<li><a href="#">Relatórios</a>
+<ul>
+<li><a href="@{Application.relatorio}">Estatísticas</a></li>
+<li><a href="@{Application.estatistica}">Atendentes</a></li>
 </ul>
 </li>
 #{/if}

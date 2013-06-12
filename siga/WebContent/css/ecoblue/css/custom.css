@@ -56,24 +56,6 @@ tr.fisicoeven:hover td {
 	height: auto !important;
 }
 
-.gt-table-nowrap {
-	width: 100% !important;
-	height: auto !important;
-	table-layout: fixed;
-	border-bottom: 1px solid #ccc !important;
-	background-color: #f4f7f8;
-	border-radius: 10px;
-}
-
-TD.gt-celula-nowrap {
-	white-space:nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; 
-    border-bottom: 1px solid #ccc !important;
-	background-color: #f4f7f8;
-	border-radius: 10px;
- }
-
 .gt-success {
 	margin-bottom: 1em;
 }
@@ -468,3 +450,6 @@ DIV.gt-tag-cloud a:hover {
 	text-decoration: underline !important;
 }
 
+del {
+	text-decoration: line-through !important;
+}

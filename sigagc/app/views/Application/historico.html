@@ -1,9 +1,9 @@
-#{extends 'Application/exibir_base.html' /} #{set title:'Exibição de
-Tópico de Informação'/}
+#{extends 'Application/exibir_base.html' /} #{set title:'Histórico de
+Alterações'/}
 
 <div class="gt-bd" style="padding-bottom: 0px;">
 	<div class="gt-content">
-		<h3>Movimentações</h3>
+		<h3>Histórico de alterações</h3>
 	</div>
 
 	<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
@@ -11,35 +11,28 @@ Tópico de Informação'/}
 			<thead>
 				<tr>
 					<th align="center" rowspan="2">Data</th>
-					<th rowspan="2">Evento</th>
 					<th colspan="2" align="left">Cadastrante</th>
-					<th colspan="2" align="left">Referente</th>
 					<th rowspan="2">Descrição</th>
 				</tr>
 				<tr>
 					<th align="left">Lotação</th>
 					<th align="left">Pessoa</th>
-					<th align="left">Lotação</th>
-					<th align="left">Pessoa</th>
 				</tr>
 			</thead>
 			<tbody>
-				#{list items:informacao.movs, as:'m'}
+				#{list items:list, as:'m'}
 				<tr class="juntada ">
-					<td align="center">${m.hisDtIni.format()}</td>
-					<td>${m.tipo.nome}</td>
+					<td align="center">${m.hisDtIni.format('dd/MM/yyyy hh:mm:ss')}</td>
 					<td align="left"><span
 						title="${m.hisIdcIni.dpPessoa.lotacao.descricao}">${m.hisIdcIni.dpPessoa.lotacao.sigla}</span>
 					</td>
 					<td align="left"><span
 						title="${m.hisIdcIni.dpPessoa.descricao}">${m.hisIdcIni.dpPessoa.nomeAbreviado}</span>
 					</td>
-
-					<td align="left"><span title="${m.lotacao?.descricao}">${m.lotacao?.sigla}</span>
-					</td>
-					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span>
-					</td>
-					<td></td>
+					<td>
+						<!-- Título -->#{if mapTitulo.containsKey(m)}
+						<h4>${mapTitulo.get(m).raw()}</h4>#{/if} <!-- Conteúdo -->#{if
+						mapTxt.containsKey(m)}${mapTxt.get(m).raw()}#{/if}</td>
 				</tr>
 				#{/list}
 			</tbody>

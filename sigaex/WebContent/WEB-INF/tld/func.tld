@@ -126,6 +126,11 @@
   <function-signature>br.gov.jfrj.siga.dp.DpLotacao lotacao(java.lang.Long)</function-signature>
  </function>
  <function>
+  <name>orgao</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>br.gov.jfrj.siga.dp.CpOrgao orgao(java.lang.Long)</function-signature>
+ </function>
+ <function>
   <name>pessoasPorLotacao</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>List&lt;DpPessoa&gt; pessoasPorLotacao(java.lang.Long, java.lang.Boolean)</function-signature>

@@ -72,7 +72,6 @@ public class Application extends SigaApplication {
 		} catch (Exception e) {
 			renderArgs.put("exibirMenuRelatorios", false);
 		}
-
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
@@ -246,7 +245,6 @@ public class Application extends SigaApplication {
 				marcadores, filtro);
 	}
 	public static void relatorio() throws Exception {
-		assertAcesso("REL:Relatorios");
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
 		
 		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
@@ -301,7 +299,7 @@ public class Application extends SigaApplication {
 		String evolucao = sb.toString();
 
 		render(lista, evolucao);
-	}
+}
 	
 	public static void estatistica() throws Exception {
 		assertAcesso("REL:Relatorios");
@@ -390,7 +388,6 @@ public class Application extends SigaApplication {
 
 		render(lista, estat, evolucao);
 	}
-	
 	
 	public static void exibir(Long id, boolean considerarCancelados) throws Exception {
 		// antes: 8 queries

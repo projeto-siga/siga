@@ -90,5 +90,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jasperreports-3.5.1-src.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jasperreports-3.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/iText-2.1.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

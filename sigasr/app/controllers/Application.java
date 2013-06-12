@@ -234,8 +234,8 @@ public class Application extends SigaApplication {
 		render(listaSolicitacao, urgencias, tendencias, gravidades, tipos,
 				marcadores, filtro);
 	}
-
 	public static void relatorio() throws Exception {
+		/*
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
 		
 		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
@@ -290,8 +290,8 @@ public class Application extends SigaApplication {
 		String evolucao = sb.toString();
 
 		render(lista, evolucao);
+	*/
 	}
-	
 	
 	public static void exibir(Long id, boolean considerarCancelados) throws Exception {
 		// antes: 8 queries
@@ -564,7 +564,7 @@ public class Application extends SigaApplication {
 	
 	public static void relFormularios(String lotacaoDestinatarioSelSigla, String dataInicial, String dataFinal) throws Exception {
 
-		assertAcesso("FORMS:Relação de formulários");
+		//assertAcesso("ADM:Administrar");
 
 		Map<String, String> parametros = new HashMap<String, String>(); 
 		

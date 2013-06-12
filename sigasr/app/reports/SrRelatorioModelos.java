@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import models.SrSolicitacao;
+
 import org.hibernate.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
@@ -33,34 +35,23 @@ public class SrRelatorioModelos extends RelatorioTemplate {
 	public Collection processarDados() {
 
 		List<String> d = new LinkedList<String>();
-		Query q = HibernateUtil.getSessao().createQuery(
-				"from ExModelo order by exFormaDocumento.descrFormaDoc");
+		List<SrSolicitacao> list = SrSolicitacao.findAll();
 
-		/*
-		for (ExModelo modelo : (List<ExModelo>) q.list()) {
-			if (modelo.getExFormaDocumento() != null) {
-				d.add(modelo.getExFormaDocumento().getDescrFormaDoc());
-			} else {
-				d.add("");
-			}
-			if (modelo.getNmMod() != null) {
-				d.add(modelo.getNmMod());
-			} else {
-				d.add("");
-			}
+		// Query q = HibernateUtil.getSessao().createQuery(
+		// "from SrSolicitacao");
 
-			if (modelo.getExClassificacao() != null) {
-				d.add(modelo.getExClassificacao().getSigla());
-			} else {
-				d.add("");
-			}
-			if (modelo.getExClassCriacaoVia() != null) {
-				d.add(modelo.getExClassCriacaoVia().getSigla());
-			} else {
-				d.add("");
-			}
+		for (SrSolicitacao sol : list) {
+			d.add("Renato");
+			d.add("Renato");
+			d.add("Renato");
+			d.add("Renato");
+			
+//			d.add(sol.getSigla());
+//			d.add(sol.descrSolicitacao);
+//
+//			d.add(sol.itemConfiguracao.descrItemConfiguracao);
+//			d.add(sol.servico.descrServico);
 		}
-		*/
 		return d;
 	}
 

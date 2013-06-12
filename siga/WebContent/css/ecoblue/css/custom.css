@@ -449,3 +449,7 @@ DIV.gt-tag-cloud a {
 DIV.gt-tag-cloud a:hover {
 	text-decoration: underline !important;
 }
+
+del {
+	text-decoration: line-through !important;
+}

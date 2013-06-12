@@ -75,7 +75,7 @@ public class SrAndamento extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITACAO")
 	public SrSolicitacao solicitacao;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "ID_CANCELADOR")
 	public DpPessoa cancelador;

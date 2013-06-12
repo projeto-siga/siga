@@ -22,7 +22,7 @@ function carregouAtendente(response, param){
 	<div class="gt-content clearfix">
 		<h2> ${solicitacao.codigo}</h2>
 		<h3 style="margin-bottom: 0px;">${solicitacao.itemConfiguracao?.descricao} - ${solicitacao.servico?.descricao}</h3>
-		<p class="gt-table-action-list">
+	   	<p class="gt-table-action-list">
 			#{if editar} <a class="once"
 				href="@{Application.editar(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/pencil.png"
@@ -39,8 +39,8 @@ function carregouAtendente(response, param){
 			#{/if}
 		</p>
 		<div class="gt-content-box">
-			<p style="font-size: 9pt; padding: 7px 10px; margin-bottom: 0px;" id="descrSolicitacao">
-							${solicitacao.descrSolicitacao}</p>
+					<p style="font-size: 9pt; padding: 7px 10px; margin-bottom: 0px;" id="descrSolicitacao">
+			    						${solicitacao.descrSolicitacao}</p>
 			#{list items:solicitacao.atributoSet, as:'att'}
 				#{if att.valorAtributo}
 				<p style="font-size: 9pt; padding: 0px 10px"><b>${att.tipoAtributo.nomeTipoAtributo}:</b> ${att.valorAtributo}</p>
@@ -174,10 +174,12 @@ function carregouAtendente(response, param){
 
 			<tbody>
 				#{list items:andamentos, as:'andamento'}
-				<tr id="linha${andamento.idAndamento}" ${andamento.cancelado} #{if andamento.cancelado} 
-				class="disabled" #{/if} #{if andamento_isFirst && desfazerAndamento && !andamento.cancelado}
-						onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
-					onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"#{/if}>
+				<tr id="linha${andamento.idAndamento}" 
+				#{if andamento.cancelado} class="disabled" #{/if} 
+				#{if desfazerAndamento && (!andamento.cancelado && (andamento.idAndamento == solicitacao.ultimoAndamento.idAndamento))} 
+					onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
+					onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"
+					#{/if}>
 					#{if considerarCancelados} 
 					<td>${andamento.numSequencia}</td>
 					#{/if}
@@ -200,7 +202,7 @@ function carregouAtendente(response, param){
 							var descricao = document.getElementById('descrAndamento${andamento.idAndamento}');
 							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 					</script>
-					<td>#{if andamento_isFirst && desfazerAndamento && !andamento.cancelado} <a
+					<td>#{if desfazerAndamento && (!andamento.cancelado && (andamento.idAndamento == solicitacao.ultimoAndamento.idAndamento))} <a
 						class="once"
 						href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
 						title="Desfazer este andamento"> <img id="imgCancelar"

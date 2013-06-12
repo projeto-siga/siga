@@ -1253,10 +1253,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM)
 			return false;
 		
-		//Não deixa cancelar juntada quando o documento está juntado a um expediente/processo que possui numeração automatica
-		if(exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA
-				&& exUltMovNaoCanc.getExMobilRef() != null && exUltMovNaoCanc.getExMobilRef().getDoc().isNumeracaoUnicaAutomatica())
-			return false;
+		//Não deixa cancelar juntada quando o documento está juntado a um expediente/processo que já sofreu outra movimentação
+		if(exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
+			
+			ExMovimentacao ultimaMovimentacaoDaReferencia = exUltMovNaoCanc.getExMobilRef().getUltimaMovimentacao();
+			
+			if(ultimaMovimentacaoDaReferencia.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO
+					&& ultimaMovimentacaoDaReferencia.getDtMov().after(exUltMovNaoCanc.getDtMov()))
+				return false;
+		}
 		
 
 		// Verifica se a última movimentação não cancelada é agendamento de
@@ -1714,13 +1719,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& (mob.doc().getSubscritor() != null && !mob.doc()
 						.getSubscritor().equivale(titular))
 				&& (mob.doc().getTitular() != null && !mob.doc().getTitular()
-						.equivale(titular))
-				&& (mob.doc().getTitular() != null && !mob.doc().getTitular()
 						.equivale(titular)))
+			return false;
+		
+		if (!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExFormaDocumento(),
+						CpTipoConfiguracao.TIPO_CONFIG_CRIAR) ||
+						!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExModelo(),
+								CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_EDITAR);
+				
 	}
 
 	/**

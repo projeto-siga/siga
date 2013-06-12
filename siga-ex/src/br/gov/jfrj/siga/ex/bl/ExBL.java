@@ -50,6 +50,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -501,8 +502,9 @@ public class ExBL extends CpBL {
 						mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
 						mob.doc().getLotaCadastrante());
 				if (mob.getExDocumento().getSubscritor() != null)
-					acrescentarMarca(set, mob, CpMarcador.MARCADOR_REVISAR, mob.doc().getDtRegDoc(), 
-						mob.getExDocumento().getSubscritor(), null);
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_REVISAR, mob
+							.doc().getDtRegDoc(), mob.getExDocumento()
+							.getSubscritor(), null);
 
 			}
 
@@ -585,22 +587,24 @@ public class ExBL extends CpBL {
 								else {
 									if (mob.getDoc().isAssinadoSubscritor())
 										m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-									else	
+									else
 										m = CpMarcador.MARCADOR_REVISAR;
-									for (ExMovimentacao assinatura : mob.getDoc().getTodasAsAssinaturas()) {
-										if (assinatura.getSubscritor().equivale(mov.getSubscritor())) {
+									for (ExMovimentacao assinatura : mob
+											.getDoc().getTodasAsAssinaturas()) {
+										if (assinatura.getSubscritor()
+												.equivale(mov.getSubscritor())) {
 											m = null;
 											break;
 										}
 									}
-								}									
+								}
 								if (m != null)
 									acrescentarMarca(set, mob, m,
-											mov.getDtIniMov(), mov.getSubscritor(),
-											null);	
+											mov.getDtIniMov(),
+											mov.getSubscritor(), null);
 							}
-							
-						} 
+
+						}
 					}
 					if (mDje != null) {
 						acrescentarMarca(set, mob, mDje, movDje.getDtIniMov(),
@@ -713,8 +717,11 @@ public class ExBL extends CpBL {
 
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
 				if (!mob.getDoc().isAssinadoSubscritor())
-					acrescentarMarca(set, mob, CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob.getExDocumento().getSubscritor(), null);			}
-	
+					acrescentarMarca(set, mob,
+							CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
+									.getExDocumento().getSubscritor(), null);
+			}
+
 			if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
 				if (!mob.doc().isEletronico()) {
 					m = CpMarcador.MARCADOR_A_RECEBER;
@@ -1070,7 +1077,7 @@ public class ExBL extends CpBL {
 			final DpPessoa titular, final DpLotacao lotaTitular,
 			final byte[] conteudo, final String tipoConteudo, String motivo)
 			throws AplicacaoException {
-		
+
 		final ExMovimentacao mov;
 
 		try {
@@ -1088,18 +1095,18 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
-			
+
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar documento.", 0, e);
 		}
-		
+
 		try {
 			encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMov);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+
 		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
@@ -1371,12 +1378,15 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 
 			// Verifica se o documento possui documento pai e faz a juntada
-			// automática. Caso o pai seja um volume de um processo, primeiro 
-			// verifica se o volume está encerrado, se estiver procura o último volume para juntar. 
+			// automática. Caso o pai seja um volume de um processo, primeiro
+			// verifica se o volume está encerrado, se estiver procura o último
+			// volume para juntar.
 
 			if (doc.getExMobilPai() != null) {
-				if(doc.getExMobilPai().getDoc().isProcesso() && doc.getExMobilPai().isEncerrado()){
-					doc.setExMobilPai(doc.getExMobilPai().doc().getUltimoVolume());
+				if (doc.getExMobilPai().getDoc().isProcesso()
+						&& doc.getExMobilPai().isEncerrado()) {
+					doc.setExMobilPai(doc.getExMobilPai().doc()
+							.getUltimoVolume());
 					gravar(cadastrante, lotaCadastrante, doc);
 				}
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
@@ -2184,13 +2194,7 @@ public class ExBL extends CpBL {
 
 		if (doc.getDtFechamento() != null)
 			throw new AplicacaoException("Documento já está fechado.");
-
-		if (doc.getExClassificacao() == null)
-			throw new AplicacaoException(
-					"Documento não pode ser finalizado sem que seja informada a"
-							+ " classificação documental. Por favor, volte para a página"
-							+ " de edição e classifique o documento antes de finalizar.");
-
+		
 		Set<ExVia> setVias = doc.getSetVias();
 
 		try {
@@ -2794,9 +2798,10 @@ public class ExBL extends CpBL {
 						"É necessário informar a via à qual será feita a juntada");
 
 			if (mob.doc().isEletronico()) {
-				if (mob.temAnexosNaoAssinados() || mob.temDespachosNaoAssinados())			
-						throw new AplicacaoException(
-								"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");				
+				if (mob.temAnexosNaoAssinados()
+						|| mob.temDespachosNaoAssinados())
+					throw new AplicacaoException(
+							"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");
 			}
 
 			// Verifica se o documeto pai já está apensado a este documento
@@ -2810,9 +2815,9 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado, arquivado ou encontra-se em outra lotação");
 		}
-		
+
 		final ExMovimentacao mov;
-		
+
 		try {
 			iniciarAlteracao();
 
@@ -2824,9 +2829,8 @@ public class ExBL extends CpBL {
 			} else
 				throw new AplicacaoException("Opção inválida.");
 
-			mov = criarNovaMovimentacao(idTpMov,
-					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null,
-					titular, null, null);
+			mov = criarNovaMovimentacao(idTpMov, cadastrante, lotaCadastrante,
+					mob, dtMov, subscritor, null, titular, null, null);
 
 			mov.setExMobilRef(mobPai);
 
@@ -2844,14 +2848,15 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
-			
+
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
 		}
-		
+
 		try {
-			encerrarAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
+			encerrarAutomatico(cadastrante, lotaCadastrante,
+					mov.getExMobilRef(), dtMov);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -3213,13 +3218,13 @@ public class ExBL extends CpBL {
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
 					"Não é possível fazer despacho em um documento que faça parte de um apenso");
-		
-		
+
 		if (fTranferencia && mob.doc().isEletronico()) {
-			if (mob.doc().getMobilGeral().temAnexosNaoAssinados() || mob.doc().getMobilGeral().temDespachosNaoAssinados())						
-					throw new AplicacaoException(
-							"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
-			
+			if (mob.doc().getMobilGeral().temAnexosNaoAssinados()
+					|| mob.doc().getMobilGeral().temDespachosNaoAssinados())
+				throw new AplicacaoException(
+						"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+
 		}
 
 		for (ExMobil m : set) {
@@ -3252,10 +3257,11 @@ public class ExBL extends CpBL {
 							"Não é permitido fazer transferência em documento que ainda não foi assinado");
 
 				if (m.doc().isEletronico()) {
-					if (m.temAnexosNaoAssinados() || m.temDespachosNaoAssinados())						
-							throw new AplicacaoException(
-									"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
-					
+					if (m.temAnexosNaoAssinados()
+							|| m.temDespachosNaoAssinados())
+						throw new AplicacaoException(
+								"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+
 				}
 
 				if (m.getExDocumento().isEletronico()
@@ -3386,7 +3392,7 @@ public class ExBL extends CpBL {
 					concluirAlteracaoParcial(m);
 				}
 			}
-			
+
 			concluirAlteracao(null);
 
 		} catch (final AplicacaoException e) {
@@ -3397,7 +3403,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao transferir documento.", 0, e);
 		}
 
-		if(fDespacho) {
+		if (fDespacho) {
 			try {
 				encerrarAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni);
 			} catch (Exception e) {
@@ -3856,7 +3862,8 @@ public class ExBL extends CpBL {
 				if (doc.getExTipoDocumento().getIdTpDoc() == 2) {
 					if (doc.getExModelo() != null)
 						backupID = doc.getExModelo().getIdMod();
-					doc.setExModelo(dao().consultarAtivoPorIdInicial(ExModelo.class,
+					doc.setExModelo(dao().consultarAtivoPorIdInicial(
+							ExModelo.class,
 							doc.isProcesso() ? SigaExProperties.getIdModPA()
 									: SigaExProperties
 											.getIdModInternoImportado()));
@@ -4494,6 +4501,13 @@ public class ExBL extends CpBL {
 		if (doc == null)
 			throw new AplicacaoException("Documento não encontrado");
 
+		// Testa se o documento existe na base
+		try {
+			doc.getDescrCurta();
+		} catch (ObjectNotFoundException e) {
+			throw new AplicacaoException("Documento não encontrado", 0, e);
+		}
+
 		/*
 		 * if (doc.getExNivelAcesso().getGrauNivelAcesso() > 20) throw new
 		 * Exception("Documento sigiloso");
@@ -4688,18 +4702,19 @@ public class ExBL extends CpBL {
 		}
 
 	}
-	
+
 	public void encerrarAutomatico(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExMobil mob,
-			final Date dtMov) 
+			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov)
 			throws AplicacaoException, Exception {
-		
-		if(mob.doc().isEletronico()) {
+
+		if (mob.doc().isEletronico()) {
 			dao().getSessao().refresh(mob);
-			//Verifica se é Processo e conta o número de páginas para verificar se tem que fechar o volume
-			if(mob.doc().isProcesso()) {
-				if(mob.getTotalDePaginasSemAnexosDoMobilGeral() >= 200) {
-					encerrar(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
+			// Verifica se é Processo e conta o número de páginas para verificar
+			// se tem que fechar o volume
+			if (mob.doc().isProcesso()) {
+				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= 200) {
+					encerrar(cadastrante, lotaCadastrante, mob, dtMov, null,
+							null, null, true);
 				}
 			}
 		}
@@ -4722,8 +4737,8 @@ public class ExBL extends CpBL {
 	public void encerrar(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, String nmFuncaoSubscritor, boolean automatico)
-			throws AplicacaoException, Exception {
+			final DpPessoa titular, String nmFuncaoSubscritor,
+			boolean automatico) throws AplicacaoException, Exception {
 
 		if (mob.isEncerrado())
 			throw new AplicacaoException(
@@ -4755,8 +4770,8 @@ public class ExBL extends CpBL {
 			final byte pdf[] = Documento.generatePdf(strHtml);
 			mov.setConteudoBlobPdf(pdf);
 			mov.setConteudoTpMov("application/zip");
-			
-			if(automatico)
+
+			if (automatico)
 				mov.setDescrMov("Volume encerrado automaticamente.");
 
 			gravarMovimentacao(mov);
@@ -4796,19 +4811,23 @@ public class ExBL extends CpBL {
 		// }
 	}
 
-	public void gravarModelo(ExModelo modNovo,ExModelo modAntigo, Date dt,CpIdentidade identidadeCadastrante) throws AplicacaoException {
+	public void gravarModelo(ExModelo modNovo, ExModelo modAntigo, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		if (modNovo.getExFormaDocumento() == null)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar a forma do documento.");
-		if (modNovo.getNmMod() == null || modNovo.getNmMod().trim().length() == 0)
+		if (modNovo.getNmMod() == null
+				|| modNovo.getNmMod().trim().length() == 0)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar o nome.");
-		if (modNovo.getDescMod() == null || modNovo.getDescMod().trim().length() == 0)
+		if (modNovo.getDescMod() == null
+				|| modNovo.getDescMod().trim().length() == 0)
 			throw new AplicacaoException(
 					"Não é possível salvar um modelo sem informar a descrição.");
 		try {
 			ExDao.iniciarTransacao();
-			dao().gravarComHistorico(modNovo, modAntigo, dt, identidadeCadastrante);
+			dao().gravarComHistorico(modNovo, modAntigo, dt,
+					identidadeCadastrante);
 			ExDao.commitTransacao();
 		} catch (Exception e) {
 			ExDao.rollbackTransacao();
@@ -4881,7 +4900,7 @@ public class ExBL extends CpBL {
 	public void alterarExClassificacao(ExClassificacao exClassNovo,
 			ExClassificacao exClassAntigo, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
-		verificarDuplicacaoTermoCompleto(exClassNovo,exClassAntigo);
+		verificarDuplicacaoTermoCompleto(exClassNovo, exClassAntigo);
 		try {
 
 			dao().gravarComHistorico(exClassNovo, exClassAntigo, dt,
@@ -4907,7 +4926,7 @@ public class ExBL extends CpBL {
 			ExClassificacao exClassAntigo, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		try {
-			//classificacao geral 
+			// classificacao geral
 			for (ExModelo modAntigo : exClassAntigo.getExModeloSet()) {
 				ExModelo modNovo = new ExModelo();
 
@@ -4924,7 +4943,7 @@ public class ExBL extends CpBL {
 
 			}
 
-			//classificacao criacao via
+			// classificacao criacao via
 			for (ExModelo modAntigo : exClassAntigo.getExModeloCriacaoViaSet()) {
 				ExModelo modNovo = new ExModelo();
 
@@ -4935,7 +4954,8 @@ public class ExBL extends CpBL {
 				dao().gravarComHistorico(modNovo, modAntigo, dt,
 						identidadeCadastrante);
 				if (exClassNovo.getExModeloCriacaoViaSet() == null) {
-					exClassNovo.setExModeloCriacaoViaSet(new HashSet<ExModelo>());
+					exClassNovo
+							.setExModeloCriacaoViaSet(new HashSet<ExModelo>());
 				}
 				exClassNovo.getExModeloCriacaoViaSet().add(modNovo);
 
@@ -4973,26 +4993,29 @@ public class ExBL extends CpBL {
 	}
 
 	public void moverClassificacao(ExClassificacao exClassDest,
-			ExClassificacao exClassOrigem,CpIdentidade identidadeCadastrante) throws AplicacaoException {
-		
+			ExClassificacao exClassOrigem, CpIdentidade identidadeCadastrante)
+			throws AplicacaoException {
+
 		Date dt = dao().consultarDataEHoraDoServidor();
 		MascaraUtil m = MascaraUtil.getInstance();
 		ExDao dao = ExDao.getInstance();
-		
+
 		List<ExClassificacao> filhos = dao.consultarFilhos(exClassOrigem, true);
-		
-		if (filhos.size()>0 && m.calcularNivel(exClassDest.getCodificacao()) > m
-				.calcularNivel(exClassOrigem.getCodificacao())) {
+
+		if (filhos.size() > 0
+				&& m.calcularNivel(exClassDest.getCodificacao()) > m
+						.calcularNivel(exClassOrigem.getCodificacao())) {
 			throw new AplicacaoException(
 					"O nível do destino é maior do que o nível da origem! Os filhos não caberão na hierarquia da classificação documental!");
 		}
 
 		ExClassificacao classExistente = dao().consultarPorSigla(exClassDest);
 		if (classExistente != null) {
-			throw new AplicacaoException("A classificação destino já existe! <br/><br/>" + classExistente.getCodificacao());
+			throw new AplicacaoException(
+					"A classificação destino já existe! <br/><br/>"
+							+ classExistente.getCodificacao());
 		}
 
-		
 		String mascaraDestino = m.getMscFilho(exClassDest.getCodificacao(),
 				true);
 		for (ExClassificacao f : filhos) {
@@ -5002,8 +5025,7 @@ public class ExBL extends CpBL {
 			fNovo.setCodificacao(novaCodificacao);
 			Ex.getInstance()
 					.getBL()
-					.alterarExClassificacao(fNovo, f, dt,
-							identidadeCadastrante);
+					.alterarExClassificacao(fNovo, f, dt, identidadeCadastrante);
 		}
 
 		exClassDest.setHisIdIni(exClassOrigem.getHisIdIni());
@@ -5013,88 +5035,103 @@ public class ExBL extends CpBL {
 						identidadeCadastrante);
 	}
 
-	public ExClassificacao getCopia(ExClassificacao exClassOrigem) throws AplicacaoException{
+	public ExClassificacao getCopia(ExClassificacao exClassOrigem)
+			throws AplicacaoException {
 		ExClassificacao exClassCopia = new ExClassificacao();
 		try {
-			
+
 			PropertyUtils.copyProperties(exClassCopia, exClassOrigem);
-			
-			//novo id
+
+			// novo id
 			exClassCopia.setId(null);
-			//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
-			//HibernateException:Found shared references to a collection
+			// objeto collection deve ser diferente (mas com mesmos elementos),
+			// senão ocorre exception
+			// HibernateException:Found shared references to a collection
 			Set<ExVia> setExVia = new HashSet<ExVia>();
 			exClassCopia.setExViaSet(setExVia);
-			
+
 			Set<ExModelo> setExModelo = new HashSet<ExModelo>();
 			exClassCopia.setExModeloSet(setExModelo);
-			
+
 			Set<ExModelo> setExModeloCriacaoVia = new HashSet<ExModelo>();
 			exClassCopia.setExModeloCriacaoViaSet(setExModeloCriacaoVia);
 
-
-		} catch (Exception e){
+		} catch (Exception e) {
 			throw new AplicacaoException(
-			"Erro ao copiar as propriedades do modelo anterior.");
+					"Erro ao copiar as propriedades do modelo anterior.");
 		}
-		
+
 		return exClassCopia;
 	}
 
 	public void incluirExClassificacao(ExClassificacao exClass,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
-		verificarDuplicacaoTermoCompleto(exClass,null);
-		dao().gravarComHistorico(exClass,null, dao().consultarDataEHoraDoServidor(), identidadeCadastrante);
-		
+		verificarDuplicacaoTermoCompleto(exClass, null);
+		dao().gravarComHistorico(exClass, null,
+				dao().consultarDataEHoraDoServidor(), identidadeCadastrante);
+
 	}
 
-	private void verificarDuplicacaoTermoCompleto(ExClassificacao exClassNovo,ExClassificacao exClassAntigo) throws AplicacaoException {
-		
+	private void verificarDuplicacaoTermoCompleto(ExClassificacao exClassNovo,
+			ExClassificacao exClassAntigo) throws AplicacaoException {
+
 		MascaraUtil m = MascaraUtil.getInstance();
-		String mascara = m.getMscTodosDoNivel(m.calcularNivel(exClassNovo.getCodificacao()));
-		List<ExClassificacao> exClassMesmoNivel = dao().consultarExClassificacao(mascara, exClassNovo.getDescrClassificacao());
-		if (exClassMesmoNivel.size()>0){
+		String mascara = m.getMscTodosDoNivel(m.calcularNivel(exClassNovo
+				.getCodificacao()));
+		List<ExClassificacao> exClassMesmoNivel = dao()
+				.consultarExClassificacao(mascara,
+						exClassNovo.getDescrClassificacao());
+		if (exClassMesmoNivel.size() > 0) {
 			for (ExClassificacao exClassConflito : exClassMesmoNivel) {
-			
-				if(exClassNovo.getDescricao().equalsIgnoreCase(exClassConflito.getDescricao()) ){
-					//se conflito não causado por movimentacao onde a própria classificacao é o conflito
-					if (exClassAntigo==null || !exClassConflito.getCodificacao().equals(exClassAntigo.getCodificacao())){
-						throw new AplicacaoException("Termo da classificação em conflito! <br/><br/>" + exClassConflito.getDescricaoCompleta());	
+
+				if (exClassNovo.getDescricao().equalsIgnoreCase(
+						exClassConflito.getDescricao())) {
+					// se conflito não causado por movimentacao onde a própria
+					// classificacao é o conflito
+					if (exClassAntigo == null
+							|| !exClassConflito.getCodificacao().equals(
+									exClassAntigo.getCodificacao())) {
+						throw new AplicacaoException(
+								"Termo da classificação em conflito! <br/><br/>"
+										+ exClassConflito
+												.getDescricaoCompleta());
 					}
-					
+
 				}
 
 			}
 		}
-		
-		
+
 	}
 
 	public void incluirExTemporalidade(ExTemporalidade exTemporalidade,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
-		ExDao.getInstance().gravarComHistorico(exTemporalidade, null, null, identidadeCadastrante);
+		ExDao.getInstance().gravarComHistorico(exTemporalidade, null, null,
+				identidadeCadastrante);
 	}
 
-	public ExTemporalidade getCopia(ExTemporalidade exTempOrigem) throws AplicacaoException {
+	public ExTemporalidade getCopia(ExTemporalidade exTempOrigem)
+			throws AplicacaoException {
 		ExTemporalidade exTempCopia = new ExTemporalidade();
 		try {
-			
+
 			PropertyUtils.copyProperties(exTempCopia, exTempOrigem);
-			
-			//novo id
+
+			// novo id
 			exTempCopia.setId(null);
-			//objeto collection deve ser diferente (mas com mesmos elementos), senão ocorre exception
-			//HibernateException:Found shared references to a collection
-			Set<ExVia> setExViaArqCorr= new HashSet<ExVia>();
-			Set<ExVia> setExViaArqInterm= new HashSet<ExVia>();
+			// objeto collection deve ser diferente (mas com mesmos elementos),
+			// senão ocorre exception
+			// HibernateException:Found shared references to a collection
+			Set<ExVia> setExViaArqCorr = new HashSet<ExVia>();
+			Set<ExVia> setExViaArqInterm = new HashSet<ExVia>();
 			exTempCopia.setExViaArqCorrenteSet(setExViaArqCorr);
 			exTempCopia.setExViaArqIntermediarioSet(setExViaArqInterm);
-			
-		} catch (Exception e){
+
+		} catch (Exception e) {
 			throw new AplicacaoException(
-			"Erro ao copiar as propriedades do objeto ExTemporalidade.");
+					"Erro ao copiar as propriedades do objeto ExTemporalidade.");
 		}
-		
+
 		return exTempCopia;
 
 	}
@@ -5102,89 +5139,88 @@ public class ExBL extends CpBL {
 	public void alterarExTemporalidade(ExTemporalidade exTempNovo,
 			ExTemporalidade exTempAntiga, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
-		
 
-			dao().gravarComHistorico(exTempNovo, exTempAntiga, dt,
-					identidadeCadastrante);
-			
-			//copiar Referências arq corrente
-			try {
-				for (ExVia viaAntiga : exTempAntiga.getExViaArqCorrenteSet()) {
-					ExVia viaNova = new ExVia();
+		dao().gravarComHistorico(exTempNovo, exTempAntiga, dt,
+				identidadeCadastrante);
 
-					PropertyUtils.copyProperties(viaNova, viaAntiga);
-					viaNova.setIdVia(null);
-					viaNova.setTemporalidadeCorrente(exTempNovo);
+		// copiar Referências arq corrente
+		try {
+			for (ExVia viaAntiga : exTempAntiga.getExViaArqCorrenteSet()) {
+				ExVia viaNova = new ExVia();
 
-					dao().gravarComHistorico(viaNova, viaAntiga, dt,
-							identidadeCadastrante);
-					if (exTempNovo.getExViaArqCorrenteSet() == null) {
-						exTempNovo.setExViaArqCorrenteSet(new HashSet<ExVia>());
-					}
-					exTempNovo.getExViaArqCorrenteSet().add(viaNova);
+				PropertyUtils.copyProperties(viaNova, viaAntiga);
+				viaNova.setIdVia(null);
+				viaNova.setTemporalidadeCorrente(exTempNovo);
 
+				dao().gravarComHistorico(viaNova, viaAntiga, dt,
+						identidadeCadastrante);
+				if (exTempNovo.getExViaArqCorrenteSet() == null) {
+					exTempNovo.setExViaArqCorrenteSet(new HashSet<ExVia>());
 				}
-			} catch (Exception e) {
-				throw new AplicacaoException(
-						"Não foi possível fazer cópia das vias em arquivo corrente!");
+				exTempNovo.getExViaArqCorrenteSet().add(viaNova);
+
 			}
-			
-			//copiar Referências arq intermediário
-			try {
-				for (ExVia viaAntiga : exTempAntiga.getExViaArqIntermediarioSet()) {
-					ExVia viaNova = new ExVia();
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Não foi possível fazer cópia das vias em arquivo corrente!");
+		}
 
-					PropertyUtils.copyProperties(viaNova, viaAntiga);
-					viaNova.setIdVia(null);
-					viaNova.setTemporalidadeIntermediario(exTempNovo);
+		// copiar Referências arq intermediário
+		try {
+			for (ExVia viaAntiga : exTempAntiga.getExViaArqIntermediarioSet()) {
+				ExVia viaNova = new ExVia();
 
-					dao().gravarComHistorico(viaNova, viaAntiga, dt,
-							identidadeCadastrante);
-					if (exTempNovo.getExViaArqIntermediarioSet() == null) {
-						exTempNovo.setExViaArqIntermediarioSet(new HashSet<ExVia>());
-					}
-					exTempNovo.getExViaArqIntermediarioSet().add(viaNova);
+				PropertyUtils.copyProperties(viaNova, viaAntiga);
+				viaNova.setIdVia(null);
+				viaNova.setTemporalidadeIntermediario(exTempNovo);
 
+				dao().gravarComHistorico(viaNova, viaAntiga, dt,
+						identidadeCadastrante);
+				if (exTempNovo.getExViaArqIntermediarioSet() == null) {
+					exTempNovo
+							.setExViaArqIntermediarioSet(new HashSet<ExVia>());
 				}
-			} catch (Exception e) {
-				throw new AplicacaoException(
-						"Não foi possível fazer cópia das vias em arquivo intermediário!");
+				exTempNovo.getExViaArqIntermediarioSet().add(viaNova);
+
 			}
-
-
-
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Não foi possível fazer cópia das vias em arquivo intermediário!");
+		}
 
 	}
 
 	public ExModelo getCopia(ExModelo exModOrigem) throws AplicacaoException {
 		ExModelo exModCopia = new ExModelo();
 		try {
-			
+
 			PropertyUtils.copyProperties(exModCopia, exModOrigem);
-			
-			//novo id
+
+			// novo id
 			exModCopia.setId(null);
 
-		} catch (Exception e){
+		} catch (Exception e) {
 			throw new AplicacaoException(
-			"Erro ao copiar as propriedades do modelo anterior.");
+					"Erro ao copiar as propriedades do modelo anterior.");
 		}
-		
+
 		return exModCopia;
 	}
 
-	public void excluirExClassificacao(ExClassificacao exClass, CpIdentidade idCadastrante) {
+	public void excluirExClassificacao(ExClassificacao exClass,
+			CpIdentidade idCadastrante) {
 		Date dt = dao().consultarDataEHoraDoServidor();
-		if (exClass.getExModeloSet().size() >0 || exClass.getExModeloCriacaoViaSet().size() >0){
+		if (exClass.getExModeloSet().size() > 0
+				|| exClass.getExModeloCriacaoViaSet().size() > 0) {
 			StringBuffer sb = new StringBuffer();
-			for(ExModelo m: exClass.getExModeloSet()){
+			for (ExModelo m : exClass.getExModeloSet()) {
 				sb.append("(");
 				sb.append(m.getId());
 				sb.append(") ");
 				sb.append(m.getNmMod());
 				sb.append("<br/>");
 			}
-			for(ExModelo m: exClass.getExModeloCriacaoViaSet()){
+			for (ExModelo m : exClass.getExModeloCriacaoViaSet()) {
 				sb.append("(");
 				sb.append(m.getId());
 				sb.append(") ");
@@ -5193,19 +5229,23 @@ public class ExBL extends CpBL {
 				sb.append("<br/>");
 			}
 
-			
-			throw new AplicacaoException("Não é possível excluir a classificação documental, pois está associada ao(s) seguinte(s) modelo(s):<br/><br/>" +
-					sb.toString() );
+			throw new AplicacaoException(
+					"Não é possível excluir a classificação documental, pois está associada ao(s) seguinte(s) modelo(s):<br/><br/>"
+							+ sb.toString());
 		}
-		
-		List<ExDocumento> docs = ExDao.getInstance().consultarExDocumentoPorClassificacao(null, MascaraUtil.getInstance().getMscTodosDoMaiorNivel(), idCadastrante.getPessoaAtual().getOrgaoUsuario());
-		if (docs.size() > 0){
+
+		List<ExDocumento> docs = ExDao.getInstance()
+				.consultarExDocumentoPorClassificacao(null,
+						MascaraUtil.getInstance().getMscTodosDoMaiorNivel(),
+						idCadastrante.getPessoaAtual().getOrgaoUsuario());
+		if (docs.size() > 0) {
 			StringBuffer sb = new StringBuffer();
-			
-			throw new AplicacaoException("Não é possível excluir a classificação documental, pois já foi associada a documento(s)." +
-					sb.toString() );
+
+			throw new AplicacaoException(
+					"Não é possível excluir a classificação documental, pois já foi associada a documento(s)."
+							+ sb.toString());
 		}
-		
+
 		for (ExVia exVia : exClass.getExViaSet()) {
 			dao().excluirComHistorico(exVia, dt, idCadastrante);
 		}

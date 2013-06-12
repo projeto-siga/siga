@@ -8,10 +8,13 @@ import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-
+@MappedSuperclass
 public class AbstractCpUnidadeMedida extends Objeto implements Serializable{
-
+	@Id
+	@Column(name = "ID_UNIDADE_MEDIDA", nullable = false)
 	private Long idUnidadeMedida;
+	
+	@Column(name = "DESCR_UNIDADE_MEDIDA")
 	private String descricao;
 	
 	public void setIdUnidadeMedida(Long idUnidadeMedida) {

@@ -1,25 +1,16 @@
 package controllers;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Query;
-import javax.persistence.Table;
 
-import org.joda.time.LocalDate;
-
-import models.SrSolicitacao;
 import models.SrAndamento;
 import models.SrArquivo;
 import models.SrAtributo;
@@ -34,14 +25,15 @@ import models.SrSolicitacao;
 import models.SrTendencia;
 import models.SrTipoAtributo;
 import models.SrUrgencia;
+
+import org.joda.time.LocalDate;
+
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
-import util.SrSolicitacaoAtendidos;
+import reports.SrRelatorioModelos;
 import util.SrSolicitacaoFiltro;
-import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -568,6 +560,26 @@ public class Application extends SigaApplication {
 			throws Exception {
 		redirect("/siga/" + tipo + "/buscar.action?" + "propriedade=" + tipo
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
+	}
+	
+	public static void relFormularios(String lotacaoDestinatarioSelSigla, String dataInicial, String dataFinal) throws Exception {
+
+		assertAcesso("FORMS:Relação de formulários");
+
+		Map<String, String> parametros = new HashMap<String, String>(); 
+		
+		parametros.put("lotacao", lotacaoDestinatarioSelSigla);
+		parametros.put("dataInicial", dataInicial);
+		parametros.put("dataFinal", dataFinal);
+
+		SrRelatorioModelos rel = new SrRelatorioModelos(parametros);
+
+		rel.gerar();
+		
+		byte[] pdf = rel.getRelatorioPDF();
+		InputStream is = new ByteArrayInputStream(pdf);
+		
+		renderBinary(is, "Relatório de Modelos", pdf.length, "application/pdf", false);
 	}
 	
 	private static Map<String, Object> map = new HashMap<String, Object>();

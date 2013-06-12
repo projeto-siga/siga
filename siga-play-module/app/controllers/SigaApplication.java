@@ -16,6 +16,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 public class SigaApplication extends Controller {
 
@@ -23,6 +24,7 @@ public class SigaApplication extends Controller {
 		Session playSession = (Session) JPA.em().getDelegate();
 		CpDao.freeInstance();
 		CpDao.getInstance(playSession);
+		HibernateUtil.setSessao(playSession);
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
@@ -121,7 +123,7 @@ public class SigaApplication extends Controller {
 					+ "' usuário: " + cadastrante().getSigla() + " lotação: "
 					+ lotaTitular().getSiglaCompleta());
 	}
-
+	
 	protected static void tratarExcecoes(Exception e) {
 		// MailUtils.sendErrorMail(e);
 		if (cadastrante() != null)

@@ -1473,6 +1473,10 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aTornarDocumentoSemEfeito() throws Exception {
+		return Action.SUCCESS;
+	}
+	
+	public String aTornarDocumentoSemEfeitoGravar() throws Exception {
 		buscarDocumento(true);
 		if (!Ex.getInstance()
 				.getComp()
@@ -1490,6 +1494,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
+
 
 	private void carregarBeans() throws Exception {
 		ExMobil mobPai = null;

@@ -32,8 +32,11 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
+import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.service.WfService;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
@@ -104,6 +107,9 @@ public class WfServiceImpl implements WfService {
 								ec.setTaskInstance(ti);
 								ec.setTask(ti.getTask());
 								ti.getTask().fireEvent("context-change", ec);
+								
+								executarAcoes(codigoDocumento, ti);
+								
 								b = true;
 							}
 						}
@@ -115,6 +121,24 @@ public class WfServiceImpl implements WfService {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);
 			throw e;
+		}
+	}
+
+	/**
+	 * Executa ações na tarefa baseando-se nos serviços externos associados à tarefa.
+	 * 
+	 * @param codigoDocumento
+	 * @param ti
+	 * @throws Exception
+	 */
+	private void executarAcoes(String codigoDocumento, TaskInstance ti)
+			throws Exception {
+		ExService exSvc = Service.getExService();
+		WfBL bl = Wf.getInstance().getBL();
+		WfDao dao = WfDao.getInstance();
+		
+		if (exSvc.isSemEfeito(codigoDocumento)){
+			bl.encerrarProcessInstance(ti.getProcessInstance().getId(), dao.consultarDataEHoraDoServidor());
 		}
 	}
 

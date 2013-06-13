@@ -4187,12 +4187,18 @@ public class ExBL extends CpBL {
 		// atualizarWorkflow(doc, null);
 
 		SortedSet<ExMobil> set = threadAlteracaoParcial.get();
-		if (set == null)
-			return;
-		for (ExMobil mob : set) {
-			atualizarWorkflow(mob.doc(), null);
+		if (set != null && set.size() > 0){
+			for (ExMobil mob : set) {
+				atualizarWorkflow(mob.doc(), null);
+			}
+			set.clear();
+		}else{
+			 if (doc != null){
+				 atualizarWorkflow(doc, null);	 
+			 }
+			 
+
 		}
-		set.clear();
 	}
 
 	private void cancelarAlteracao() throws AplicacaoException {
@@ -4208,7 +4214,7 @@ public class ExBL extends CpBL {
 
 		try {
 			if (Contexto.resource("isWorkflowEnabled") != null
-					&& (Boolean) Contexto.resource("isWorkflowEnabled")) {
+					&& Boolean.valueOf(String.valueOf(Contexto.resource("isWorkflowEnabled")))) {
 				if (mov != null) {
 					atualizarWorkFlow(mov);
 				} else {

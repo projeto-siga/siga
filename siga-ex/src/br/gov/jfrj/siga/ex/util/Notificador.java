@@ -48,8 +48,7 @@ public class Notificador {
 	// + SigaBaseProperties.getString(SigaBaseProperties
 	// .getString("ambiente") + ".servidor.principal");
 
-	private static String servidor = "http://"
-			+ SigaBaseProperties.getString("siga.ex."
+	private static String servidor = SigaBaseProperties.getString("siga.ex."
 					+ SigaBaseProperties.getString("ambiente") + ".url");
 
 	/**

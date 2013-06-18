@@ -693,7 +693,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
-				&& !mob.isApensado()
 				&& !mob.isEmTransito()
 				&& !mob.doc().isSemEfeito()
 				&& getConf()

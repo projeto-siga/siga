@@ -650,6 +650,7 @@ public class CpConfiguracaoBL {
 							false);
 					String sDesc = (asParts.length > 1 ? asParts[1] : "");
 					srv.setDscServico(sDesc);
+					srv.setCpServicoPai(srvPai);
 					srv.setCpTipoServico(tpsrv);
 					dao().iniciarTransacao();
 					srvRecuperado = dao().gravar(srv);

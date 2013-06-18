@@ -58,7 +58,7 @@ public class GcMovimentacao extends GenericModel implements
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "HIS_IDC_INI")
 	public CpIdentidade hisIdcIni;
-
+	
 	/**
 	 * verifica se uma movimentação está cancelada. Uma movimentação está
 	 * cancelada quando o seu atributo movimentacaoCanceladora está preenchido

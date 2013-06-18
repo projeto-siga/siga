@@ -158,18 +158,18 @@ public class HierarquizadorBoletimInternoES {
 		NodoMaior nodoSede = new NodoMaior("SEÇÃO JUDICIÁRIA - SEDE");
 
 		nodoSede.getNodos().add(
-				new NodoMenor("PORTARIAS PGD", new DataComparator()));
+				new NodoMenor("NORMAS INTERNAS", new DataComparator()));
 
 		ordemPorModelo.put(145L, 0);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("ORDEM DE SERVIÇO", new DataComparator()));
+				new NodoMenor("ORDENS DE SERVIÇO", new DataComparator()));
 
 		ordemPorModelo.put(76L, 1);
 		ordemPorModelo.put(148L, 1);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("PORTARIAS", new DataComparator()));
+				new NodoMenor("PORTARIAS DF (DIREÇÃO DO FORO)", new DataComparator()));
 
 		ordemPorModelo.put(73L, 2);
 		ordemPorModelo.put(215L, 2);
@@ -178,27 +178,27 @@ public class HierarquizadorBoletimInternoES {
 		ordemPorModelo.put(218L, 2);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("PORTARIAS SG", new DataComparator()));
+				new NodoMenor("PORTARIAS SG (SECRETARIA GERAL)", new DataComparator()));
 
 		ordemPorModelo.put(144L, 3);
 
 
 		nodoSede.getNodos().add(
-				new NodoMenor("PORTARIAS DA SGP", new DataComparator()));
+				new NodoMenor("PORTARIAS NGP (NÚCLEO DE GESTÃO DE PESSOAS)", new DataComparator()));
 
 		ordemPorModelo.put(85L, 4);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("OFÍCIOS CIRCULARES", new DataComparator()));
+				new NodoMenor("DIÁRIAS", new DataComparator()));
 
 
 		ordemPorModelo.put(84L, 5);
 		ordemPorModelo.put(147L, 5);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("PROCESSOS", new DataComparator()));
+				new NodoMenor("SUPRIMENTOS DE FUNDOS", new DataComparator()));
 
-		ordemPorModelo.put(233L, 6);
+		/*ordemPorModelo.put(233L, 6);
 
 		nodoSede.getNodos().add(
 				new NodoMenor("CONCESSÃO DE DIÁRIAS", new DataComparator()));
@@ -215,7 +215,7 @@ public class HierarquizadorBoletimInternoES {
 				new NodoMenor("ERRATAS", new TipoDataComparator()));
 
 		nodoSede.getNodos().add(
-				new NodoMenor("ANEXOS", new TipoDataComparator()));
+				new NodoMenor("ANEXOS", new TipoDataComparator()));*/
 
 		nodoSede.getNodos().add(
 				new NodoMenor("OUTROS", new TipoDataComparator()));

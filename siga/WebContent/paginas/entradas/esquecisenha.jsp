@@ -165,8 +165,7 @@ function refreshWindow(){
 	
 			<h2 class="gt-form-head">Método 1 - Envio de senha nova para o
 				e-mail</h2>
-			<p id="msgExplicacao">O sistema gera uma nova senha aleatoriamente e a envia para o
-				email da pessoa informada.</p>
+			<p id="msgExplicacao"></p>
 			<div class="gt-form gt-content-box">
 			
 				<ww:form action="${param.proxima_acao}" onsubmit="return validateUsuarioForm(this,'Met1');" theme="simple" method="post">

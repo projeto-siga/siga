@@ -1873,9 +1873,11 @@ public class ExBL extends CpBL {
 			switch ((int) (long) movACancelar.getExTipoMovimentacao()
 					.getIdTpMov()) {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR:
 				set = mob.getMobilETodosOsApensos();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA:

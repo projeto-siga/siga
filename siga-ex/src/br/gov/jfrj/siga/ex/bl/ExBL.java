@@ -1881,6 +1881,7 @@ public class ExBL extends CpBL {
 				set = mob.getMobilETodosOsApensos();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO:
 				set = mob.getMobilETodosOsApensos();
 				break;

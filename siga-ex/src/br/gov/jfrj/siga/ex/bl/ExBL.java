@@ -3042,7 +3042,10 @@ public class ExBL extends CpBL {
 	public void receber(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov)
 			throws AplicacaoException {
-
+		
+		if(mob.isEmTransitoExterno())
+			return;
+		
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
 
 		try {

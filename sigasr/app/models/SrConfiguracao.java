@@ -49,7 +49,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrUrgencia urgencia;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_ATENENTE")
+	@JoinColumn(name = "ID_ATENDENTE")
 	public DpLotacao atendente;
 
 	@ManyToOne

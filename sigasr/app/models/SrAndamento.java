@@ -107,7 +107,7 @@ public class SrAndamento extends GenericModel {
 
 	public SrAndamento(SrEstado estado, String descricao, DpPessoa atendente,
 			DpLotacao lotaAtendente, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, SrSolicitacao sol) {
+			DpLotacao lotaCadastrante, SrSolicitacao sol, Long numSequencia) {
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
 		this.atendente = atendente;
@@ -115,7 +115,7 @@ public class SrAndamento extends GenericModel {
 		this.descrAndamento = descricao;
 		this.estado = estado;
 		this.solicitacao = sol;
-
+		this.numSequencia = this.getnumSequencia();
 	}
 
 	public boolean isCancelado() {
@@ -127,6 +127,14 @@ public class SrAndamento extends GenericModel {
 		for (SrAndamento andamento : solicitacao.getAndamentoSet())
 			primeiro = andamento;
 		return (primeiro == null || primeiro.equals(this));
+	}
+	
+	
+	public Long getnumSequencia(){
+		numSequencia = find(
+				"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
+						+ solicitacao.getId()).first();
+		return (numSequencia != null) ? numSequencia : 1;
 	}
 	
 	public Long getProximoAndamento() {

@@ -32,7 +32,8 @@ import org.joda.time.LocalDate;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
-import reports.SrRelatorioModelos;
+import reports.SrRelSolicitacoes;
+import reports.SrRelTransferencias;
 import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
@@ -244,7 +245,8 @@ public class Application extends SigaApplication {
 		render(listaSolicitacao, urgencias, tendencias, gravidades, tipos,
 				marcadores, filtro);
 	}
-	public static void relatorio() throws Exception {
+	/*public static void relatorio() throws Exception {
+		assertAcesso("REL:Relatorios");
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
 		
 		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
@@ -300,7 +302,7 @@ public class Application extends SigaApplication {
 
 		render(lista, evolucao);
 }
-	
+	*/
 	public static void estatistica() throws Exception {
 		assertAcesso("REL:Relatorios");
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
@@ -431,7 +433,7 @@ public class Application extends SigaApplication {
 
 	public static void andamento(SrAndamento andamento) throws Exception {
 		andamento.solicitacao.darAndamento(andamento, cadastrante(),
-				lotaTitular());
+				lotaTitular(), andamento.getnumSequencia());
 		Long id = andamento.solicitacao.idSolicitacao;
 		exibir(id, false);
 	}
@@ -658,24 +660,59 @@ public class Application extends SigaApplication {
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 	
-	public static void relFormularios(String lotacaoDestinatarioSelSigla, String dataInicial, String dataFinal) throws Exception {
+	public static void relSolicitacoes () throws Exception {
+		assertAcesso("REL:Relatorio");
+		
+		render();
+	}
+	
+	public static void relTransferencias (SrSolicitacao solicitacao) throws Exception {
+		assertAcesso("REL:Relatorio");
+		
+		render();
+	}
+	
+	public static void grelSolicitacoes(String secaoUsuario, String lotacao, String situacao, String dtIni, String dtFim) throws Exception {
 
-		//assertAcesso("ADM:Administrar");
+		assertAcesso("REL:Relatorio");
 
 		Map<String, String> parametros = new HashMap<String, String>(); 
-		
-		parametros.put("lotacao", lotacaoDestinatarioSelSigla);
-		parametros.put("dataInicial", dataInicial);
-		parametros.put("dataFinal", dataFinal);
+	
+		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("lotacao", lotacao);
+		parametros.put("situacao", situacao);
+		parametros.put("dtIni", dtIni);
+		parametros.put("dtFim", dtFim);
 
-		SrRelatorioModelos rel = new SrRelatorioModelos(parametros);
+		SrRelSolicitacoes rel = new SrRelSolicitacoes(parametros);
 
 		rel.gerar();
 		
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 		
-		renderBinary(is, "Relatório de Modelos", pdf.length, "application/pdf", false);
+		renderBinary(is, "Relatório de Solicitações", pdf.length, "application/pdf", false);
+	}
+	
+	public static void grelTransferencias(String secaoUsuario, String lotacao, String dtIni, String dtFim) throws Exception {
+
+		assertAcesso("REL:Relatorio");
+
+		Map<String, String> parametros = new HashMap<String, String>(); 
+	
+		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("lotacao", lotacao);
+		parametros.put("dtIni", dtIni);
+		parametros.put("dtFim", dtFim);
+
+		SrRelTransferencias rel = new SrRelTransferencias(parametros);
+
+		rel.gerar();
+		
+		byte[] pdf = rel.getRelatorioPDF();
+		InputStream is = new ByteArrayInputStream(pdf);
+		
+		renderBinary(is, "Relatório de Transferências", pdf.length, "application/pdf", false);
 	}
 	
 	private static Map<String, Object> map = new HashMap<String, Object>();

@@ -37,6 +37,7 @@ import notifiers.Correio;
 import org.hibernate.annotations.Where;
 
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 import util.SigaPlayCalendar;
 import util.Util;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -299,6 +300,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 
+	public String getCodigo(Long idSolicitacao) {
+		SrSolicitacao solicitacao = new SrSolicitacao();
+		solicitacao = SrSolicitacao.findById(idSolicitacao);
+		
+		if (solicitacao.solicitacaoPai != null)
+			return solicitacao.solicitacaoPai.getCodigo() + "." + solicitacao.getNumSequenciaString();
+
+		String numString = solicitacao.numSolicitacao.toString();
+
+		for (int i = 0; i < 4 - ((int) Math.floor(solicitacao.numSolicitacao / 10)); i++)
+			numString = "0" + numString;
+
+		return solicitacao.orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + solicitacao.getAnoEmissao() + "/"
+				+ numString;
+	}
+	
 	public String getCodigo() {
 
 		if (solicitacaoPai != null)
@@ -815,38 +832,46 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void iniciar() throws Exception {
 		if (temPreAtendenteDesignado())
 			darAndamento(SrEstado.PRE_ATENDIMENTO,
-					"Abertura", getPreAtendenteDesignado());
+					"Abertura", getPreAtendenteDesignado(), getNumSeqAnd() );
 		else
 			darAndamento(SrEstado.ANDAMENTO, "Abertura",
-					getAtendenteDesignado());
+					getAtendenteDesignado(), getNumSeqAnd());
+	}
+
+	private Long getNumSeqAnd() {
+		Long numSeqAnd = find(
+					"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
+							+ idSolicitacao).first();
+			return (numSeqAnd != null) ? numSeqAnd : 1;
 	}
 
 	public void iniciarFechando() throws Exception {
 		darAndamento(SrEstado.FECHADO, motivoFechamentoAbertura,
-				getPosAtendenteDesignado());
+				getPosAtendenteDesignado(), getNumSeqAnd());
 	}
 
 	// Usado aqui pela própria solicitação
 	public void darAndamento(SrEstado estado, String descricao,
-			DpLotacao lotaAtendente) throws Exception {
+			DpLotacao lotaAtendente, Long numSeqAnd) throws Exception {
 
 		darAndamento(estado, descricao, null, lotaAtendente, this.cadastrante,
-				this.lotaCadastrante);
+				this.lotaCadastrante, numSeqAnd);
 	}
 
 	public void darAndamento(SrEstado estado, String descricao,
 			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante) throws Exception {
-
+			DpLotacao lotaCadastrante, Long numSeqAnd) throws Exception {
+//modificado com numsequencia
 		darAndamento(new SrAndamento(estado, descricao, atendente,
-				lotaAtendente, cadastrante, lotaCadastrante, this));
+				lotaAtendente, cadastrante, lotaCadastrante, this, numSeqAnd));
 	}
 
 	// Usado por Application
 	public void darAndamento(SrAndamento andamento, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante) throws Exception {
+			DpLotacao lotaCadastrante, Long numSeqAnd) throws Exception {
 		andamento.cadastrante = cadastrante;
 		andamento.lotaCadastrante = lotaCadastrante;
+		numSeqAnd = andamento.getnumSequencia();
 		darAndamento(andamento);
 	}
 

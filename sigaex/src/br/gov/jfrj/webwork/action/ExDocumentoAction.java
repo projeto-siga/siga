@@ -53,7 +53,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.stat.EntityStatistics;
@@ -283,6 +282,8 @@ public class ExDocumentoAction extends ExActionSupport {
 	private Long idMobilAutuado;
 	
 	private boolean autuando;
+	
+	private String descrMov;
 
 	public boolean isCriandoAnexo() {
 		return criandoAnexo;
@@ -1473,10 +1474,14 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aTornarDocumentoSemEfeito() throws Exception {
+		buscarDocumento(true);
 		return Action.SUCCESS;
 	}
 	
 	public String aTornarDocumentoSemEfeitoGravar() throws Exception {
+		if (getDescrMov()==null || getDescrMov().trim().length()==0){
+			throw new AplicacaoException("O preenchimento do campo MOTIVO é obrigatório!");
+		}
 		buscarDocumento(true);
 		if (!Ex.getInstance()
 				.getComp()
@@ -1488,7 +1493,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			Ex.getInstance()
 					.getBL()
 					.TornarDocumentoSemEfeito(getCadastrante(),
-							getLotaTitular(), doc);
+							getLotaTitular(), doc,getDescrMov());
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -2809,6 +2814,14 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public void setPdfStreamResult(InputStream pdfStreamResult) {
 		PdfStreamResult = pdfStreamResult;
+	}
+
+	public String getDescrMov() {
+		return descrMov;
+	}
+	
+	public void setDescrMov(String descrMov) {
+		this.descrMov = descrMov;
 	}
 
 }

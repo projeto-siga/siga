@@ -4890,7 +4890,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void TornarDocumentoSemEfeito(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc, String motivo) throws Exception {
 		try {
 			iniciarAlteracao();
 
@@ -4899,6 +4899,7 @@ public class ExBL extends CpBL {
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), null,
 					null, null, null, null, null);
 
+			mov.setDescrMov(motivo);
 			gravarMovimentacao(mov);
 
 			concluirAlteracao(doc);

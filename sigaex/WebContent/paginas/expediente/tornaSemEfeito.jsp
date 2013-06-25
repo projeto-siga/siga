@@ -17,7 +17,7 @@ function sbmt() {
 
 <siga:pagina titulo="Movimentação">
 
-<c:if test="${not mob.doc.eletronico}">
+<c:if test="${not doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
 </c:if>
 
@@ -28,7 +28,7 @@ function sbmt() {
 
 			<div class="gt-content-box gt-for-table">
 			
-		<ww:form action="tornarDocumentoSemEfeito"
+		<ww:form action="tornarDocumentoSemEfeitoGravar"
 				enctype="multipart/form-data" namespace="/expediente/doc"
 				method="post">
 			<input type="hidden" name="postback" value="1" />
@@ -38,13 +38,6 @@ function sbmt() {
 			<table class="gt-form-table">
 					<tr class="header">
 						<td colspan="2">Dados da movimentação</td>
-					</tr>
-					<ww:textfield name="dtMovString" label="Data (Opcional)" />
-					<tr>
-						<td>Responsável (Opcional):</td>
-						<td><siga:selecao tema="simple" propriedade="subscritor" />
-						&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
-							onclick="javascript:displayTitular(this);" />Substituto</td>
 					</tr>
 					<tr id="tr_titular" style="display:none">
 						<td>Titular:</td>

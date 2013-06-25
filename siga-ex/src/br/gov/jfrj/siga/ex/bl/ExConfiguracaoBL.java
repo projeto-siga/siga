@@ -629,4 +629,5 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		}
 
 	}
+	
 }

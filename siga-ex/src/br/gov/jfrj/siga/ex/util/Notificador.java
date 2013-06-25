@@ -44,9 +44,12 @@ public class Notificador {
 
 	// private static String servidor = "siga"; // produção
 
-	private static String servidor = "http://"
-			+ SigaBaseProperties.getString(SigaBaseProperties
-					.getString("ambiente") + ".servidor.principal");
+	// private static String servidor = "http://"
+	// + SigaBaseProperties.getString(SigaBaseProperties
+	// .getString("ambiente") + ".servidor.principal");
+
+	private static String servidor = SigaBaseProperties.getString("siga.ex."
+					+ SigaBaseProperties.getString("ambiente") + ".url");
 
 	/**
 	 * Método que notifica as pessoas com perfis vinculados ao documento.
@@ -335,7 +338,7 @@ public class Notificador {
 		conteudo.append("Para visualizar o documento, ");
 		conteudo.append("clique no link abaixo:\n\n");
 		conteudo.append(servidor
-				+ "/sigaex/expediente/doc/exibir.action?sigla=");
+				+ "/expediente/doc/exibir.action?sigla=");
 		conteudo.append(mov.getExDocumento().getSigla());
 
 		conteudo.append("\n\nEste email foi enviado porque ");
@@ -345,7 +348,7 @@ public class Notificador {
 		conteudo.append("' no documento ");
 		conteudo.append(mov.getExDocumento().getSigla());
 		conteudo.append(". Caso não deseje mais receber notificações desse documento, clique no link abaixo para se descadastrar:\n\n");
-		conteudo.append(servidor + "/sigaex/expediente/mov/cancelar.action?id=");
+		conteudo.append(servidor + "/expediente/mov/cancelar.action?id=");
 		conteudo.append(dest.idMovPapel);
 
 		// conteúdo html
@@ -403,7 +406,7 @@ public class Notificador {
 		conteudoHTML.append("<p>Para visualizar o documento, ");
 		conteudoHTML.append("clique <a href=\"");
 		conteudoHTML.append(servidor
-				+ "/sigaex/expediente/doc/exibir.action?sigla=");
+				+ "/expediente/doc/exibir.action?sigla=");
 		conteudoHTML.append(mov.getExDocumento().getSigla());
 		conteudoHTML.append("\">aqui</a>.</p>");
 
@@ -416,7 +419,7 @@ public class Notificador {
 		conteudoHTML
 				.append(". Caso não deseje mais receber notificações desse documento, clique <a href=\"");
 		conteudoHTML.append(servidor
-				+ "/sigaex/expediente/mov/cancelar.action?id=");
+				+ "/expediente/mov/cancelar.action?id=");
 		conteudoHTML.append(dest.idMovPapel);
 		conteudoHTML.append("\">aqui</a> para descadastrar.</p>");
 

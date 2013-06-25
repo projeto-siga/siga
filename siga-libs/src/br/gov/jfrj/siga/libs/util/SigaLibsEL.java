@@ -266,6 +266,15 @@ public class SigaLibsEL {
 								false),
 						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
 	}
+	
+	public static Boolean podePorConfiguracao(DpPessoa titular,
+			DpLotacao lotaTitular, Long idTpConf) throws Exception {
+		return Cp
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(titular,lotaTitular,idTpConf);
+	}
+
 
 	// public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa
 	// titular,
@@ -285,6 +294,10 @@ public class SigaLibsEL {
 				.getConf()
 				.podeUtilizarServicoPorConfiguracao(titular, lotaTitular,
 						servicoPath);
+	}
+	
+	public static Boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular, Long idCpTipoGrupo) throws Exception{
+		return Cp.getInstance().getConf().podeGerirGrupo(titular, lotaTitular, idCpTipoGrupo);
 	}
 
 	public static String getURLSistema(String nome) {

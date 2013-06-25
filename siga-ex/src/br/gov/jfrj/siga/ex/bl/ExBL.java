@@ -1873,12 +1873,15 @@ public class ExBL extends CpBL {
 			switch ((int) (long) movACancelar.getExTipoMovimentacao()
 					.getIdTpMov()) {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR:
 				set = mob.getMobilETodosOsApensos();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO:
 				set = mob.getMobilETodosOsApensos();
 				break;
@@ -3039,7 +3042,10 @@ public class ExBL extends CpBL {
 	public void receber(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov)
 			throws AplicacaoException {
-
+		
+		if(mob.isEmTransitoExterno())
+			return;
+		
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
 
 		try {

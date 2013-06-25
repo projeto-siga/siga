@@ -40,13 +40,8 @@
 					<li><a href="#">Pessoas</a>
 						<ul>
 							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro')}">
-								<li><a href="${f:getURLSistema('siga.sgp.cad')}">Cadastro</a>
-								</li>
-							</c:if>
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação')}">
-								<li><a href="${f:getURLSistema('siga.sgp.lot')}">Lotação</a>
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
+								<li><a href="${f:getURLSistema('siga.sgp.aq')}">AQ</a>
 								</li>
 							</c:if>
 							<c:if
@@ -55,8 +50,18 @@
 								</li>
 							</c:if>
 							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
-								<li><a href="${f:getURLSistema('siga.sgp.aq')}">AQ</a>
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro')}">
+								<li><a href="${f:getURLSistema('siga.sgp.cad')}">Cadastro</a>
+								</li>
+							</c:if>
+							<c:if
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas')}">
+								<li><a href="${f:getURLSistema('siga.sgp.cst')}">Consultas</a>
+								</li>
+							</c:if>
+							<c:if
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação')}">
+								<li><a href="${f:getURLSistema('siga.sgp.lot')}">Lotação</a>
 								</li>
 							</c:if>
 							<c:if
@@ -64,6 +69,7 @@
 								<li><a href="${f:getURLSistema('siga.sgp.trn')}">Treinamento</a>
 								</li>
 							</c:if>
+
 						</ul></li>
 				</ul></li>
 			<li><a href="#">Administração</a>
@@ -129,8 +135,8 @@
 							</li>
 						</c:if>
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GEMAIL:Gerenciar grupos de distribuição')}">
-							<li><ww:a href="/siga/gi/email/listar.action">Grupo de Distribuição</ww:a>
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR:Gerenciar grupos de distribuição') || f:podeGerirGrupo(titular,lotaTitular,2)}">
+							<li><ww:a href="${serverAndPort}/siga/gi/email/listar.action">Grupo de Distribuição</ww:a>
 							</li>
 						</c:if>
 						<c:if

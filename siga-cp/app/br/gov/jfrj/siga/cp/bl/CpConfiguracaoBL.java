@@ -78,6 +78,8 @@ public class CpConfiguracaoBL {
 	public static int IDENTIDADE = 7;
 	
 	public static int TIPO_LOTACAO = 8;
+	
+	public static int GRUPO = 9;
 
 	public Comparator<CpConfiguracao> getComparator() {
 		return comparator;
@@ -398,8 +400,13 @@ public class CpConfiguracaoBL {
 			return false;
 
 		if (cfg.getCpGrupo() != null
-				&& (perfis == null || !perfis.contains(cfg.getCpGrupo())))
+				&& (cfgFiltro.getCpGrupo() != null
+						&& !cfg.getCpGrupo().equivale(
+								cfgFiltro.getCpGrupo()) || ((cfgFiltro
+						.getCpGrupo() == null) && !atributosDesconsiderados
+						.contains(GRUPO)) && (perfis != null && !perfisContemGrupo(cfg, perfis))))
 			return false;
+
 
 		if (cfg.getCpIdentidade() != null
 				&& ((cfgFiltro.getCpIdentidade() != null
@@ -453,7 +460,25 @@ public class CpConfiguracaoBL {
 						.contains(TIPO_LOTACAO))))
 			return false;
 		
+
 		return true;
+	}
+
+	/**
+	 * Verifica se a configuracao refere-se a um perfil ao qual a pessoa/lotacao pertence
+	 * @param cfg - A configuração a ser verificada
+	 * @param perfis - os perfis da pessoa/lotacao
+	 * @return
+	 */
+	private boolean perfisContemGrupo(CpConfiguracao cfg,
+			SortedSet<CpPerfil> perfis) {
+		for (CpPerfil cpPerfil : perfis) {
+			if (cpPerfil.equivale(cfg.getCpGrupo())){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**
@@ -478,7 +503,7 @@ public class CpConfiguracaoBL {
 	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu,
 			DpLotacao dpLotacao, DpCargo cargo,
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa,
-			CpServico cpServico, CpIdentidade cpIdentidade, long idTpConf)
+			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo, long idTpConf)
 			throws Exception {
 
 		CpConfiguracao cfgFiltro = createNewConfiguracao();
@@ -491,6 +516,7 @@ public class CpConfiguracaoBL {
 		cfgFiltro.setCpServico(cpServico);
 		cfgFiltro.setCpIdentidade(cpIdentidade);
 		cfgFiltro.setCpTipoLotacao(dpLotacao!=null?dpLotacao.getCpTipoLotacao():null);
+		cfgFiltro.setCpGrupo(cpGrupo);
 
 		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
 				CpTipoConfiguracao.class, false));
@@ -524,34 +550,41 @@ public class CpConfiguracaoBL {
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			long idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null,
-				null, idTpConf);
+				null, null,idTpConf);
 
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			CpServico cpServico, long idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa,
-				cpServico, null, idTpConf);
+				cpServico, null, null,idTpConf);
 
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, dpPessoa, null,
-				null, idTpConf);
+				null, null,idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpLotacao dpLotacao, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, null, null,
-				null, idTpConf);
+				null, null,idTpConf);
 	}
 
 	public boolean podePorConfiguracao(CpIdentidade cpIdentidade, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, null,
-				cpIdentidade, idTpConf);
+				cpIdentidade, null,idTpConf);
 	}
+	
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
+			CpGrupo cpGrupo, long idTpConf) throws Exception {
+		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null,
+				null, cpGrupo,idTpConf);
+	}
+
 
 	/**
 	 * Infere configurações óbvias. Por exemplo, se for informada a pessoa, a lotação, órgão etc. já serão preenchidos automaticamente.
@@ -747,5 +780,11 @@ public class CpConfiguracaoBL {
 		}
 
 	}
+	
+	public boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular, Long idCpTipoGrupo) throws Exception{
+		return dao().getGruposGeridos(titular, lotaTitular, idCpTipoGrupo).size()>0;
+	}
+
+
 
 }

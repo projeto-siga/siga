@@ -312,7 +312,7 @@
 	<package name="gi/perfil" extends="default" namespace="/gi/perfil">
 		<action name="buscar" class="br.gov.jfrj.webwork.action.CpPerfilAction"
 			method="aBuscar">
-			<result name="busca">/sigalibs/grupo_busca.jsp?idCpTipoGrupo=2
+			<result name="busca">/paginas/grupo/grupo_busca.jsp?idCpTipoGrupo=2
 			</result>
 		</action>
 		<action name="selecionar" class="br.gov.jfrj.webwork.action.CpPerfilAction"
@@ -346,7 +346,7 @@
 	<package name="gi/email" extends="default" namespace="/gi/email">
 		<action name="buscar" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aBuscar">
-			<result name="busca">/sigalibs/grupo_busca.jsp?idCpTipoGrupo=2
+			<result name="busca">/paginas/grupo/grupo_busca.jsp?idCpTipoGrupo=2
 			</result>
 		</action>
 		<action name="selecionar" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
@@ -364,12 +364,22 @@
 		</action>
 		<action name="gravar" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aGravar">
-			<result name="edita" type="redirect-action">
-				<param name="actionName">editar</param>
-				<param name="idCpGrupo">${idCpGrupo}</param>
+			<result name="edita" type="redirect-action">editar?idCpGrupo=${idCpGrupo}
 			</result>
 
 		</action>
+		<action name="gravarGestorGrupo" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
+			method="aGravarGestorGrupo">
+			<result type="redirect-action">editar?idCpGrupo=${idCpGrupo}
+			</result>
+		</action>
+		<action name="excluirGestorGrupo" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
+			method="aExcluirGestorGrupo">
+			<result type="redirect-action">editar?idCpGrupo=${idCpGrupo}
+			</result>
+		</action>
+		
+		
 		<action name="excluir" class="br.gov.jfrj.webwork.action.CpGrupoDeEmailAction"
 			method="aExcluir">
 			<result name="lista" type="redirect-action">

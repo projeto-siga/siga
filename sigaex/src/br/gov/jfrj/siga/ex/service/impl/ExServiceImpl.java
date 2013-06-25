@@ -173,6 +173,18 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
+	public Boolean isSemEfeito(String codigoDocumento)
+			throws Exception {
+		try {
+			ExMobil mob = buscarMobil(codigoDocumento);
+			return mob.getExDocumento().isSemEfeito();
+		} catch (Exception e) {
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+
 	public Boolean podeMovimentar(String codigoDocumento,
 			String siglaCadastrante) throws Exception {
 		try {

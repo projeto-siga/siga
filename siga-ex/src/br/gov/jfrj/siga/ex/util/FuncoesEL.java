@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpLocalidade;
+import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -189,6 +190,13 @@ public class FuncoesEL {
 			return null;
 
 		return dao().consultar(id, DpLotacao.class, false);
+	}
+	
+	public static CpOrgao orgao(Long id) throws AplicacaoException {
+		if (id == null || id == 0)
+			return null;
+
+		return dao().consultar(id, CpOrgao.class, false);
 	}
 
 	public static String destinacaoPorNumeroVia(ExDocumento doc, Short i) {

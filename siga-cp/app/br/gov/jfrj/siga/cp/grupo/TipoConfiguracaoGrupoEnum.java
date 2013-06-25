@@ -26,18 +26,18 @@ import br.gov.jfrj.siga.cp.CpTipoGrupo;
  * Enumerador para os tipos de configuração permitidas para os grupos
  */
 public enum TipoConfiguracaoGrupoEnum {
-	PESSOA(0, "Pessoa", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL,
+	PESSOA(0, "Pessoa", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 			CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO,
 			CpTipoGrupo.TIPO_GRUPO_PERFIL_JEE }), LOTACAO(1, "Lotação",
-			new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL,
+			new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 					CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO }), CARGO(2,
-			"Cargo", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL,
+			"Cargo", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 					CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO }), FUNCAOCONFIANCA(
 			3, "Função de Confiança", new int[] {
-					CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL,
+					CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 					CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO }), EMAIL(4,
-			"Email", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL }), FORMULA(
-			5, "Fórmula", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL });
+			"Email", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO }), FORMULA(
+			5, "Fórmula", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO });
 	private int codigo;
 	private String descricao;
 	private int[] idsDeTiposDeGrupo; // 1 - Perfil de acesso, 2 - Pasta

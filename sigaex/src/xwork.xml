@@ -378,6 +378,10 @@
 		</action>
 		<action name="tornarDocumentoSemEfeito" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aTornarDocumentoSemEfeito">
+			<result>/paginas/expediente/tornaSemEfeito.jsp</result>
+		</action>
+		<action name="tornarDocumentoSemEfeitoGravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aTornarDocumentoSemEfeitoGravar">
 			<result type="redirect-action">
 				exibir?sigla=${doc.sigla}
 			</result>

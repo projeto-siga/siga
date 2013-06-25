@@ -86,7 +86,7 @@ public class CpDaoTest extends TestCase {
 		Date dt2 = dao.consultarDataUltimaAtualizacao();
 
 		CpTipoGrupo tpGrp = dao
-				.consultar(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL,
+				.consultar(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 						CpTipoGrupo.class, false);
 		dao.iniciarTransacao();
 
@@ -110,7 +110,7 @@ public class CpDaoTest extends TestCase {
 			Exception, IllegalAccessException {
 
 		CpTipoGrupo tpGrp = dao
-				.consultar(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL,
+				.consultar(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 						CpTipoGrupo.class, false);
 		dao.iniciarTransacao();
 

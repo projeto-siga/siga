@@ -30,6 +30,10 @@ public interface ExService extends Remote {
 
 	public Boolean isAssinado(String codigoDocumento, String siglaCadastrante)
 			throws Exception;
+	
+	public Boolean isSemEfeito(String codigoDocumento)
+			throws Exception;
+
 
 	public Boolean arquivarCorrente(String codigoDocumentoVia,
 			String siglaDestino, String siglaCadastrante) throws Exception;

@@ -18,38 +18,56 @@
  ******************************************************************************/
 package br.gov.jfrj.webwork.action;
 
-import java.lang.reflect.InvocationTargetException;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 
 public class CpGrupoDeEmailAction extends CpGrupoAction {
 	public int getIdTipoGrupo() {
-		return CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL;
+		return CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO;
 	}
 
 	@Override
 	public String aEditar() throws Exception {
-		assertAcesso("GEMAIL:Gerenciar grupos de email");
-		return super.aEditar();
+		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+			return super.aEditar();	
+		}
+		
+		
+		throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 	}
 
 	@Override
 	public String aExcluir() throws Exception {
-		assertAcesso("GEMAIL:Gerenciar grupos de email");
+		assertAcesso("GDISTR:Gerenciar grupos de distribuição;EXC:Excluir");
 		return super.aExcluir();
 	}
 
 	@Override
 	public String aGravar() throws Exception {
-		assertAcesso("GEMAIL:Gerenciar grupos de email");
-		return super.aGravar();
+		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+			return super.aGravar();	
+		}
+
+		throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+		
 	}
 
 	@Override
 	public String aListar() throws Exception {
-		assertAcesso("GEMAIL:Gerenciar grupos de email");
-		return super.aListar();
+		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+			return super.aListar();	
+		}
+
+		throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+		
 	}
 
 }

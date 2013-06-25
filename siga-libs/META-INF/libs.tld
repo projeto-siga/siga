@@ -25,6 +25,12 @@
   <function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
   <function-signature>java.lang.Boolean podeUtilizarServicoPorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, java.lang.String)</function-signature>
  </function>
+  <function>
+  <name>podeGerirGrupo</name>
+  <function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
+  <function-signature>java.lang.Boolean podeGerirGrupo(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao,java.lang.Long)</function-signature>
+ </function>
+ 
  <function>
   <name>concat</name>
   <function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>

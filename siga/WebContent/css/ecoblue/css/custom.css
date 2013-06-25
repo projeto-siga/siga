@@ -56,6 +56,20 @@ tr.fisicoeven:hover td {
 	height: auto !important;
 }
 
+.gt-table-nowrap {
+	width: 100% !important;
+	height: auto !important;
+	table-layout:fixed !important;
+	border-bottom: 1px solid #ccc !important;
+}	
+
+.gt-celula-nowrap {
+		white-space:nowrap;
+		overflow: hidden;        /* Ellipsis won't work without this. */
+        text-overflow: ellipsis; /* The most important part */
+        border-bottom: 1px solid #ccc !important;
+    }
+
 .gt-success {
 	margin-bottom: 1em;
 }
@@ -81,7 +95,7 @@ tr.fisicoeven:hover td {
 	display: block;
 }
 
-.gt-table-action-list {
+.le-action-list {
 	color: #999;
 	margin: 0;
 	padding-bottom: 3px;

@@ -309,7 +309,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		String numString = solicitacao.numSolicitacao.toString();
 
-		for (int i = 0; i < 4 - ((int) Math.floor(solicitacao.numSolicitacao / 10)); i++)
+		//for (int i = 0; i < 4 - ((int) Math.floor(solicitacao.numSolicitacao / 10)); i++)
+			//numString = "0" + numString;
+		while (numString.length() < 5)
 			numString = "0" + numString;
 
 		return solicitacao.orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + solicitacao.getAnoEmissao() + "/"
@@ -323,7 +325,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		String numString = numSolicitacao.toString();
 
-		for (int i = 0; i < 4 - ((int) Math.floor(numSolicitacao / 10)); i++)
+		//for (int i = 0; i < 4 - ((int) Math.floor(numSolicitacao / 10)); i++)
+		//	numString = "0" + numString;
+		while (numString.length() < 5)
 			numString = "0" + numString;
 
 		return orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao() + "/"

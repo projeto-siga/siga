@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Relat�rios' /}
+#{extends 'main.html' /} #{set title:'Relat�rios' /}
 #{set 'moreHead'}
 
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
@@ -30,25 +30,28 @@ function drawEvolution() {
 
 	google.setOnLoadCallback(drawGraphs);
 
-function drawGrafico() {
-	drawGrafico();
+function drawTop() {
+	drawTop10();
 }
-function drawGrafico() {
+
+function drawTop10() {
 	// Some raw data (not necessarily accurate)
-	var data = google.visualization.arrayToDataTable([${estat.raw()}]);
+	var data = google.visualization.arrayToDataTable([${top10.raw()}]);
 
 	// Create and draw the visualization.
 	var ac = new google.visualization.PieChart(document
-			.getElementById('estat'));
+			.getElementById('top10'));
 	ac.draw(data, {
-		legend : {position: 'top', alignment : 'center'},
-		isStacked : true,
+		legend : {position: 'top', alignment : 'right'},
 		width : "100%",
-		height : "100%"		
+		height : "100%",	
+		colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
+		isStacked : true,
+		is3D: true
 	});
 }
+	google.setOnLoadCallback(drawTop);
 
-	google.setOnLoadCallback(drawGrafico);
 </script>
 
 #{/set}
@@ -60,12 +63,15 @@ function drawGrafico() {
 				</div>
 		</div>
 		<div class="gt-right-col">
-			<h2>Solicitações por Urgência</h2>
-				<div id="estat" class="gt-content-box">
-			</div> 
+			<h2>Top 10</h2>
+				<div id="top10" class="gt-content-box">
+				</div>
 		</div>
 	</div>
 </div>
+
+
+
 
 
 

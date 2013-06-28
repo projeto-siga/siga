@@ -9,7 +9,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 
-<siga:pagina titulo="Transferência em Lote">
+<siga:pagina titulo="Lista de pedidos de publicação DJE">
 
 <script type="text/javascript" language="Javascript1.1"
 	src="<c:url value="/staticJavascript.action"/>"></script>

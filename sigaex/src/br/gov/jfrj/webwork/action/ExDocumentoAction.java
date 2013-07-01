@@ -2118,7 +2118,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			return preenchSet;
 
 		ExPreenchimento preench = new ExPreenchimento();
-		if(getIdMob() != null && getIdMob() != 0)
+		if(getIdMod() != null && getIdMod() != 0L)
 			preench.setExModelo(dao().consultar(getIdMod(), ExModelo.class, false));
 
 		DpLotacao lota = new DpLotacao();
@@ -2127,7 +2127,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		preenchSet.add(new ExPreenchimento(0, null, " [Em branco] ", null));
 
-		if(getIdMob() != null && getIdMob() != 0) {
+		if(getIdMod() != null && getIdMod() != 0) {
 			for (DpLotacao lotacao : lotacaoSet) {
 				preench.setDpLotacao(lotacao);
 				preenchSet.addAll(dao().consultar(preench));

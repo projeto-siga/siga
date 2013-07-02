@@ -91,25 +91,25 @@
 			<td rowspan="2" align="right">Número</td>
 			<c:choose>
 				<c:when test="${i == 1}">
-					<td rowspan="2" style="color:red">Data para Disponibilização</td>
+					<td  style="color:red">Data </td>
 				</c:when>
 				<c:when test="${i == 2}">
-					<td rowspan="2">Data de remessa</td>
+					<td>Data de remessa</td>
 				</c:when>
 			</c:choose>
 			<td colspan="3" align="center">Documento</td>
 			<td rowspan="2">Descrição</td>
-			<td rowspan="2">Tipo de Matéria</td>
-
-			</td>
-			<td rowspan="2"></td>
-
-			</td>
+			<td>Tipo de</td>			
+			<td> Lotação</td>
+			<td rowspan="2"></td>	
 		</tr>
-		<tr class="header">
+		<tr>
+			<td>Disponibilização</td>
 			<td align="center">Data</td>
 			<td align="center">Lotação</td>
 			<td align="center">Pessoa</td>
+			<td>Matéria</td>
+			<td>Publicação</td>
 		</tr>
 
 		<c:forEach var="documento" items="${elementos}">
@@ -151,23 +151,37 @@
 
 				<td width="44%">${f:descricaoConfidencial(documento,
 				lotaTitular)}</td>
-				<td width="4%" align="center">
-					<c:forEach var="movimentacao" items="${documento.exMovimentacaoSet}">
+				<td width="2%" align="center">
+				<c:forEach var="movimentacao" items="${documento.exMovimentacaoSet}">				
 						<c:choose>
 							<c:when test='${movimentacao.exTipoMovimentacao.idTpMov == 38 && 
 							!movimentacao.cancelada}'>
 								<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tpm_${documento.idDoc}" id="tm" label="Tipo de Matéria"  
 								value="'${movimentacao.cadernoPublicacaoDje}'"  />
+								${movimentacao.lotacaoPublicacao} 								
 							</c:when>
 						</c:choose>
 					</c:forEach>
 				</td>
-				<td width="4%" align="center">
+				
+<%--			<td width="6%" align="center">
 					<ww:url id="url" action="atender_pedido_publicacao_cancelar" namespace="/expediente/mov">
 						<ww:param name="sigla">${documento.sigla}</ww:param>
 					</ww:url>
-					<ww:a href="%{url}">Cancelar Pedido</ww:a>
+					<ww:a href="%{url}">Cancelar Pedido</ww:a>					
 				</td>
+ --%>	
+	 			<td>
+	 			 	<a
+						style="border-left: 0px; float: right; padding-left: 0.0em; padding-right: 0.0em;"
+						href="javascript:if (confirm('Deseja excluir o pedido?')) location.href='/siga/expediente/mov/atender_pedido_publicacao_cancelar.action?id=${documento.sigla}';">
+						<img
+							style="display: inline;"
+							src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir pedido"							
+							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
+					</a>
+	 			</td>				
 			</tr>
 		</c:forEach>
 	</table>

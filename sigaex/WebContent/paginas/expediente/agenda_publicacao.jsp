@@ -26,7 +26,36 @@
 		ExMovimentacaoForm.page.value='';
 		ExMovimentacaoForm.acao.value='aAgendarPublicacao';
 		ExMovimentacaoForm.submit();
-}
+    }
+	function contaLetras() {
+		var i = 256 - tamanho();
+		document.getElementById("Qtd").innerText = 'Restam ' + i + ' caracteres';
+	}
+
+	function verificaTamanho() {		
+		var i = tamanho();	
+		if (i>256) {
+			alert('Descrição com mais de 256 caracteres');
+			document.getElementById('descrPublicacao').focus();
+		}		
+	}
+
+	function tamanho() {
+		nota= new String();
+		nota = this.frm.descrPublicacao.value;
+		return nota.length;		
+	}
+
+	function validar() {
+		var data = document.getElementsByName('dtDispon')[0].value;
+		if (data==null || data=="") {			
+			alert("Preencha a data para disponibilização.");
+			document.getElementById('dt_dispon').focus();		
+		}else
+			frm.submit();	
+	}
+	
+	
 </script>
 
 <!-- A linha abaixo é temporária, pois está presente num dos cabeçalhos  -->
@@ -39,12 +68,11 @@
 
 			<div class="gt-content-box gt-for-table">
 
-		<form action="agendar_publicacao_gravar.action"
+		<form name="frm" action="agendar_publicacao_gravar.action"
 			namespace="/expediente/mov" cssClass="form" method="GET">
 			<ww:token/>
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>
-
 			<table class="gt-form-table">
 				<colgroup>
 				<col  style="width:30%"/>
@@ -81,9 +109,14 @@
 				<tr>
 					<td>Data de publicação:</td>
 					<td><div id="dt_publ" /></td>
-				</tr>
+				</tr>				
+				<ww:select name="lotPublicacao" list="listaLotPubl" label="Lotação de publicação"/>	
+				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
+							rows="2" cssClass="gt-form-textarea" label="Descrição do documento"
+							onkeyup="contaLetras();" onblur="verificaTamanho();"/>	
+				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>						
 				<tr>
-					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left" /> <input type="button"
+					<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-medium gt-btn-left" /> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
 				</tr>
 			</table>
@@ -91,7 +124,7 @@
 			</div>
 			
 			<br/>
-			<h3>Atenção:</h3>
+			<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>
 			<ul>
 				<li><span style="font-weight:bold">Data para
 				Disponibilização</span> - data em que a matéria efetivamente aparece no

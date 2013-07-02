@@ -1361,7 +1361,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			String nomeArq = doque.getIdDoc().toString();
 			fakeMov.setConteudoBlobRTF(nomeArq, gerador.geraRTF(doque));
 			fakeMov.setConteudoBlobXML(nomeArq,
-					PublicacaoDJEBL.gerarXMLPublicacao(fakeMov, "A"));
+					PublicacaoDJEBL.gerarXMLPublicacao(fakeMov, "A", "SESIA", "Teste descrição"));
 			fakeMov.setNmArqMov(nomeArq + ".zip");
 
 			PublicacaoDJEBL.primeiroEnvio(fakeMov);

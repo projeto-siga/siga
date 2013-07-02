@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -211,6 +212,32 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String mensagem;
 
 	private Long idPapel;
+	
+	private String lotPublicacao;
+	
+	private String descrPublicacao;
+	
+	private Integer tamMaxDescr;
+
+	public String getDescrPublicacao() {
+		return descrPublicacao;
+	}
+
+	public void setDescrPublicacao(String descrPublicacao) {
+		this.descrPublicacao = descrPublicacao;
+	}
+
+	public String getLotPublicacao() {
+		return lotPublicacao;
+	}
+
+	public void setLotPublicacao(String lotPublicacao) {
+		this.lotPublicacao = lotPublicacao;
+	}
+	
+	public Integer getTamMaxDescr() {
+		return 255 - doc.getDescrDocumento().length();
+	}
 
 	private boolean assinandoAnexosGeral = false;
 
@@ -434,6 +461,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
+		setDescrPublicacao(doc.getDescrDocumento());	
 
 		return Action.SUCCESS;
 	}
@@ -455,7 +483,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.pedirPublicacao(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor(),
 							mov.getTitular(), mov.getLotaTitular(),
-							mov.getDtDispPublicacao(), getTipoMateria());
+							mov.getDtDispPublicacao(), getTipoMateria(), getLotPublicacao(), getDescrPublicacao());
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -481,6 +509,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
+		if(getDescrPublicacao() == null)
+			setDescrPublicacao(doc.getDescrDocumento());	
 
 		return Action.SUCCESS;
 	}
@@ -493,6 +523,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
 					"Não foi possível o agendamento de publicação no DJE.");
+		
+		if (getDescrPublicacao().length() > 256)
+			throw new AplicacaoException(
+					"O campo descrição possui mais do que 256 caracteres.");
 
 		validarDataGravacao(mov, false);
 
@@ -501,7 +535,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.remeterParaPublicacao(getCadastrante(), getLotaTitular(), mob,
 						dao().dt(), mov.getSubscritor(), mov.getTitular(),
 						getLotaTitular(), mov.getDtDispPublicacao(),
-						getTipoMateria().replaceAll("'", ""));
+						getTipoMateria().replaceAll("'", ""), getLotPublicacao(), getDescrPublicacao());
 
 		return Action.SUCCESS;
 	}
@@ -595,6 +629,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aAtenderPedidoPublicacao() throws Exception {
+		
+		
 		if (!Ex.getInstance()
 				.getConf()
 				.podePorConfiguracao(
@@ -603,7 +639,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO))
 			throw new AplicacaoException("Operação restrita");
 		setItensSolicitados(dao().listarSolicitados(
-				getTitular().getOrgaoUsuario()));
+				getTitular().getOrgaoUsuario()));		
+		
 		return Action.SUCCESS;
 	}
 
@@ -653,7 +690,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 									getLotaTitular(), doque.getMobilGeral(),
 									dao().dt(), getCadastrante(),
 									getCadastrante(), getLotaTitular(),
-									move.getDtDispPublicacao(), stipoMateria);
+									move.getDtDispPublicacao(), stipoMateria, "",""); /* verificar depois */
 				} catch (final Throwable e) {
 					cont++;
 					msgDocumentosErro.append(cont + ")" + doque.getCodigo()
@@ -3568,5 +3605,24 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public ExModelo getModelo() {
 		return dao().consultarExModelo(null, "Despacho Automático");
+	}
+	
+	public Map<String, String> getListaLotPubl() throws Exception {
+		
+		Map<String, String> lotacoes = new HashMap<String, String>();
+		String lotSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(this.doc);
+		String lotCadastrante = getCadastrante().getLotacao().getSigla();
+		String lotTitular = getLotaTitular().getSigla();
+		this.setLotPublicacao(lotSubscritor);		
+		
+		lotacoes.put(lotSubscritor,lotSubscritor);	
+		if (!lotSubscritor.equals(lotCadastrante)){
+			lotacoes.put(lotCadastrante,lotCadastrante);
+		}
+		if (!lotSubscritor.equals(lotTitular) && !lotCadastrante.equals(lotTitular)) {
+			lotacoes.put(lotTitular,lotTitular);
+		}	
+		
+		return lotacoes;
 	}
 }

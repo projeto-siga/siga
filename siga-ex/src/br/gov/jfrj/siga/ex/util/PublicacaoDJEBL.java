@@ -24,6 +24,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class PublicacaoDJEBL {
 
 		Document dc = sb.build(st);
 
-		Element retornoPublicacao = dc.getRootElement();
+		Element retornoPublicacao = dc.getRootElement();		
 
 		List elementos = retornoPublicacao.getChildren();
 		Iterator i = elementos.iterator();
@@ -257,9 +258,44 @@ public class PublicacaoDJEBL {
 		}
 
 	}
+	
+	public static Map<String, String> lerXMLPublicacao(String xml) throws Exception {
+		
+		Map<String, String> atributosXML = new HashMap<String, String>();
+		StringReader st = new StringReader(xml);
+		SAXBuilder sb = new SAXBuilder();
+		Document dc = null;
+		
+		try {
+			dc = sb.build(st);
+		} catch (Exception e) {
+			String xmlAlterado = "<?" + xml;
+			st = new StringReader(xmlAlterado);
+			dc = sb.build(st);
+		}
+		
+		Element texPublicacao = dc.getRootElement();
+		
+		Element elemento = texPublicacao.getChild("IDENTIFICACAO");		
+		atributosXML.put("TIPOARQ", elemento.getAttributeValue("TIPOARQ"));
+		atributosXML.put("CADERNO", elemento.getAttributeValue("CADERNO"));
+		atributosXML.put("SECAO", elemento.getAttributeValue("SECAO"));
+		atributosXML.put("UNIDADE", elemento.getAttributeValue("UNIDADE"));
+		atributosXML.put("DATADISPONIBILIZACAO", elemento.getAttributeValue("DATADISPONIBILIZACAO"));
+		atributosXML.put("TIPODOC", elemento.getAttributeValue("TIPODOC"));
+		atributosXML.put("MATRICULAUSUARIO", elemento.getAttributeValue("MATRICULAUSUARIO"));		
+		
+		elemento = texPublicacao.getChild("EXPEDIENTE");
+		atributosXML.put("NUMEXPEDIENTE", elemento.getAttributeValue("NUMEXPEDIENTE"));
+		atributosXML.put("DESCREXPEDIENTE", elemento.getAttributeValue("DESCREXPEDIENTE"));
+		
+		return atributosXML;	
+		
+	}
+	
 
 	public static byte[] gerarXMLPublicacao(ExMovimentacao mov,
-			String tipoMateria) throws Exception {
+			String tipoMateria, String lotPublicacao, String descrPublicacao) throws Exception {
 
 		ExDocumento movDoc = mov.getExDocumento();
 
@@ -293,9 +329,9 @@ public class PublicacaoDJEBL {
 			attIdentificacao.addAttribute("", "", "SECAO", "String", String
 				.valueOf(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu()));
 
-		String auxStr = obterUnidadeDocumento(mov);
+//		String auxStr = obterUnidadeDocumento(mov.getExDocumento());
 
-		attIdentificacao.addAttribute("", "", "UNIDADE", "String", auxStr);
+		attIdentificacao.addAttribute("", "", "UNIDADE", "String", lotPublicacao);
 
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -345,7 +381,7 @@ public class PublicacaoDJEBL {
 					docForm.get("tituloMateria"));
 		else
 			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",
-					movDoc.getDescrDocumento());
+					descrPublicacao);
 		handler.startElement("", "", "EXPEDIENTE", attsExpediente);
 		handler.endElement("", "", "EXPEDIENTE");
 		handler.endElement("", "", "PUBLICACAODJE");
@@ -368,24 +404,24 @@ public class PublicacaoDJEBL {
 				+ pess.getMatricula().toString();
 	}
 
-	private static String obterUnidadeDocumento(ExMovimentacao mov)
+	public static String obterUnidadeDocumento(ExDocumento doc)
 			throws Exception {
 		String nomeLota, nomeLotaFinal = "";
-		ExDocumento movDoc = mov.getExDocumento();
-		Map<String, String> docForm = movDoc.getForm();
+//		ExDocumento movDoc = mov.getExDocumento();
+		Map<String, String> docForm = doc.getForm();
 
-		if ((movDoc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R
-				|| movDoc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS || movDoc
+		if ((doc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R
+				|| doc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS || doc
 				.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR)
 				&& docForm.get("lotOrigem_lotacaoSel.sigla") != null)
 			nomeLota = docForm.get("lotOrigem_lotacaoSel.sigla");
 		else {
-			if (movDoc.getTitular() != null)
-				nomeLota = movDoc.getLotaTitular().getSigla();
+			if (doc.getTitular() != null)
+				nomeLota = doc.getLotaTitular().getSigla();
 			else
-				nomeLota = movDoc.getLotaSubscritor().getSigla();
+				nomeLota = doc.getLotaSubscritor().getSigla();
 
-			String funcaoLower = mov.getExDocumento().getNmFuncaoSubscritor();
+			String funcaoLower = doc.getNmFuncaoSubscritor();
 			if (funcaoLower != null) {
 				funcaoLower = funcaoLower.toLowerCase();
 				if (funcaoLower.contains("diretor")
@@ -396,8 +432,8 @@ public class PublicacaoDJEBL {
 
 		nomeLotaFinal = nomeLota;
 
-		if (movDoc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R
-				|| movDoc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR) {
+		if (doc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R
+				|| doc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR) {
 			if (docForm.get("juizDistribuidor").equals("Sim")) {
 				nomeLota = "JD";
 				Matcher m = Pattern.compile("^.+(-[A-Z]{2,4})").matcher(
@@ -522,7 +558,7 @@ public class PublicacaoDJEBL {
 		call.setProperty(Call.SOAPACTION_URI_PROPERTY,
 				"http://tempuri.org/ExcluirDocumento");
 
-		String siglaUnidade = obterUnidadeDocumento(mov);
+		String siglaUnidade = obterUnidadeDocumento(mov.getExDocumento());
 
 		System.out.println("\n\n DJE exclusao "
 				+ mov.getExDocumento().getCodigo()

@@ -25,6 +25,8 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -48,6 +50,7 @@ import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
+import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 
 /**
  * A class that represents a row in the 'EX_MOVIMENTACAO' table. This class may
@@ -62,6 +65,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * 
 	 */
 	private static final long serialVersionUID = 2559924666592487436L;
+	
+	String lotaPublicacao;
 
 	private byte[] cacheConteudoBlobMov;
 
@@ -115,6 +120,29 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 					.toByteArray(getConteudoBlobMov());
 		return cacheConteudoBlobMov;
 
+	}
+	
+	public String getLotaPublicacao() {
+		Map<String, String> atributosXML = new HashMap<String, String>();
+	    
+		try{		
+		atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoBlobString());
+		}catch (Exception e){
+			throw new AplicacaoException(
+			"Erro na leitura do arquivo XML (lotação de publicação)",0,e);
+		}
+		return atributosXML.get("UNIDADE");
+	}
+	
+	public String getDescricaoPublicacao() {
+		Map<String, String> atributosXML = new HashMap<String, String>();
+		try{
+		atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoBlobString());
+		}catch (Exception e){
+			throw new AplicacaoException(
+			"Erro na leitura do arquivo XML (descrição de publicação)",0,e);
+		}
+		return atributosXML.get("DESCREXPEDIENTE");
 	}
 
 	@Field(name = "idTpMov", store = Store.COMPRESS)
@@ -473,6 +501,10 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return getConteudoBlob(nome);
 	}
 
+	public String getConteudoXmlString(String nome) throws UnsupportedEncodingException {
+		return new String(this.getConteudoBlobXML(nome),"ISO-8859-1");		
+	}
+	
 	public byte[] getConteudoBlobRTF() {
 		return getConteudoBlob("doc.rtf");
 	}

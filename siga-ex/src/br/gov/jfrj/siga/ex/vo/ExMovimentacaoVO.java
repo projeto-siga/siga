@@ -199,7 +199,8 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 
 			if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {
-				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito()) {
+				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito()
+						&& !mov.mob().isEmTransito()) {
 					addAcao(null,
 							"Excluir",
 							"/expediente/mov",

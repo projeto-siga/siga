@@ -66,8 +66,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	private static final long serialVersionUID = 2559924666592487436L;
 	
-	String lotaPublicacao;
-
 	private byte[] cacheConteudoBlobMov;
 
 	/**
@@ -126,7 +124,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Map<String, String> atributosXML = new HashMap<String, String>();
 	    
 		try{		
-		atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoBlobString());
+		atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoXmlString("boletimadm"));
 		}catch (Exception e){
 			throw new AplicacaoException(
 			"Erro na leitura do arquivo XML (lotação de publicação)",0,e);
@@ -134,10 +132,10 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return atributosXML.get("UNIDADE");
 	}
 	
-	public String getDescricaoPublicacao() {
+	public String getDescrPublicacao() {
 		Map<String, String> atributosXML = new HashMap<String, String>();
 		try{
-		atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoBlobString());
+		atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoXmlString("boletimadm"));
 		}catch (Exception e){
 			throw new AplicacaoException(
 			"Erro na leitura do arquivo XML (descrição de publicação)",0,e);

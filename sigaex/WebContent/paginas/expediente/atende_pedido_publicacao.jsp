@@ -88,28 +88,33 @@
 				<td rowspan="2" align="center"><input type="checkbox"
 					name="checkall" onclick="checkUncheckAll(this)" /></td>
 			</c:if>
-			<td rowspan="2" align="right">Número</td>
+			<td rowspan="2" align="center">Número</td>
 			<c:choose>
 				<c:when test="${i == 1}">
-					<td  style="color:red">Data </td>
+					<td rowspan="2"><table><tr>
+					<td align="center" style="color:red">Data de Diponibilização </td>
+					</tr>
+					</table>
+					</td>
 				</c:when>
 				<c:when test="${i == 2}">
-					<td>Data de remessa</td>
+					<td align="center">Data de remessa</td>
 				</c:when>
 			</c:choose>
 			<td colspan="3" align="center">Documento</td>
 			<td rowspan="2">Descrição</td>
-			<td>Tipo de</td>			
-			<td> Lotação</td>
-			<td rowspan="2"></td>	
+			<td rowspan="2"><table><tr>
+				<td align="center">Tipo de Matéria</td>
+				</tr></table></td>
+			<td rowspan="2"><table><tr>				
+				<td align="center"> Lotação de Publicação</td>
+				</tr></table></td>			
 		</tr>
-		<tr>
-			<td>Disponibilização</td>
+		<tr>			
 			<td align="center">Data</td>
 			<td align="center">Lotação</td>
-			<td align="center">Pessoa</td>
-			<td>Matéria</td>
-			<td>Publicação</td>
+			<td align="center">Pessoa</td>	
+					
 		</tr>
 
 		<c:forEach var="documento" items="${elementos}">
@@ -135,7 +140,7 @@
 							onclick="javascript: window.open('/sigaex/expediente/doc/exibir.action?popup=true&id=${documento.idDoc}', '_new', 'width=700,height=500,scrollbars=yes,resizable')">${documento.codigo}</a>
 				<c:choose>
 					<c:when test="${i == 1}">
-						<td width="11.5%">${documento.dtDispUltimoAgendamento}</td>
+						<td width="11.5%" align="center">${documento.dtDispUltimoAgendamento}</td>
 					</c:when>
 					<c:when test="${i == 2}">
 						<td rowspan="2" width="11.5%">${documento.dtUltimaRemessaParaPublicacao}</td>
@@ -149,20 +154,21 @@
 					sigla="${documento.lotaSubscritor.sigla}"
 					descricao="${documento.lotaSubscritor.descricao}" /></td>
 
-				<td width="44%">${f:descricaoConfidencial(documento,
-				lotaTitular)}</td>
-				<td width="2%" align="center">
+				
 				<c:forEach var="movimentacao" items="${documento.exMovimentacaoSet}">				
 						<c:choose>
 							<c:when test='${movimentacao.exTipoMovimentacao.idTpMov == 38 && 
 							!movimentacao.cancelada}'>
+							<td width="44%">${movimentacao.descrPublicacao}</td>
+							<td width="2%" align="left">
 								<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tpm_${documento.idDoc}" id="tm" label="Tipo de Matéria"  
-								value="'${movimentacao.cadernoPublicacaoDje}'"  />
-								${movimentacao.lotacaoPublicacao} 								
+								value="'${movimentacao.cadernoPublicacaoDje}'"  />								
+							</td>								
+							<td align="center">${movimentacao.lotaPublicacao}</td>
 							</c:when>
 						</c:choose>
-					</c:forEach>
-				</td>
+				</c:forEach>
+				
 				
 <%--			<td width="6%" align="center">
 					<ww:url id="url" action="atender_pedido_publicacao_cancelar" namespace="/expediente/mov">
@@ -174,7 +180,7 @@
 	 			<td>
 	 			 	<a
 						style="border-left: 0px; float: right; padding-left: 0.0em; padding-right: 0.0em;"
-						href="javascript:if (confirm('Deseja excluir o pedido?')) location.href='/siga/expediente/mov/atender_pedido_publicacao_cancelar.action?id=${documento.sigla}';">
+						href="javascript:if (confirm('Deseja excluir o pedido?')) location.href='/sigaex/expediente/mov/atender_pedido_publicacao_cancelar.action?sigla=${documento.sigla}';">
 						<img
 							style="display: inline;"
 							src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir pedido"							

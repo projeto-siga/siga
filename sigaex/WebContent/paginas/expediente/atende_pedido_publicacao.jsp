@@ -90,12 +90,8 @@
 			</c:if>
 			<td rowspan="2" align="center">Número</td>
 			<c:choose>
-				<c:when test="${i == 1}">
-					<td rowspan="2"><table><tr>
-					<td align="center" style="color:red">Data de Diponibilização </td>
-					</tr>
-					</table>
-					</td>
+				<c:when test="${i == 1}">			
+				<td rowspan="2" style="color:red" align="center">Data de Disponibilização</td>	
 				</c:when>
 				<c:when test="${i == 2}">
 					<td align="center">Data de remessa</td>
@@ -103,12 +99,8 @@
 			</c:choose>
 			<td colspan="3" align="center">Documento</td>
 			<td rowspan="2">Descrição</td>
-			<td rowspan="2"><table><tr>
-				<td align="center">Tipo de Matéria</td>
-				</tr></table></td>
-			<td rowspan="2"><table><tr>				
-				<td align="center"> Lotação de Publicação</td>
-				</tr></table></td>			
+			<td rowspan="2" align="center">Tipo de Matéria</td>
+			<td rowspan="2" align="center">Lotação de Publicação</td>		
 		</tr>
 		<tr>			
 			<td align="center">Data</td>

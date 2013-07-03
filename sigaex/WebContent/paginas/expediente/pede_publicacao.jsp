@@ -71,22 +71,19 @@
 					<td colspan="2">Dados da Solicitação</td>
 				</tr>
 				<tr>					
-					<c:set var="disabledTpMat">true</c:set> 
 					<c:choose>
 						<c:when test="${cadernoDJEObrigatorio}">
-							<td>Tipo de Matéria:</td>							
-							<input type="hidden" name="tipoMateria" value="${tipoMateria}" />						
+						    <c:set var="disabledTpMat">true</c:set> 
+						    <input type="hidden" name="tipoMateria" value="${tipoMateria}" />	
+							<td>Tipo de Matéria:</td>												
 							<td>
 							<c:choose>
 								<c:when test="${tipoMateria eq 'A'}">
 										Administrativa 
 								</c:when>
-								<c:when test="${tipoMateria eq 'J'}">
-									Judicial
-								</c:when>	
-								<c:otherwise>				
-						 			<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de Matéria"  value="${tipoMateria}"  disabled="${disabledTpMat}" />
-								</c:otherwise>
+								<c:otherwise>	
+									    Judicial
+								</c:otherwise>								
 							</c:choose>								
 							</td>
 						</c:when>

@@ -690,7 +690,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 									getLotaTitular(), doque.getMobilGeral(),
 									dao().dt(), getCadastrante(),
 									getCadastrante(), getLotaTitular(),
-									move.getDtDispPublicacao(), stipoMateria, "",""); /* verificar depois */
+									move.getDtDispPublicacao(), stipoMateria, move.getLotaPublicacao(), move.getDescrPublicacao()); 
 				} catch (final Throwable e) {
 					cont++;
 					msgDocumentosErro.append(cont + ")" + doque.getCodigo()

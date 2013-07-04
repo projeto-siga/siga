@@ -1,5 +1,5 @@
 ]<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
@@ -8,7 +8,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -30,7 +30,7 @@
 	function verificaTamanho() {		
 		var i = tamanho();	
 		if (i>256) {
-			alert('Descrição com mais de 256 caracteres');
+			alert('DescriÃ§Ã£o com mais de 256 caracteres');
 			document.getElementById('descrPublicacao').focus();	
 		}		
 	}
@@ -44,23 +44,23 @@
 	function validar() {
 		var data = document.getElementsByName('dtDispon')[0].value;
 		if (data==null || data=="") {			
-			alert("Preencha a data para disponibilização.");
+			alert("Preencha a data para disponibilizaÃ§Ã£o.");
 			document.getElementById('dt_dispon').focus();		
 		}else
 			frm.submit();	
 	}
 </script>
 
-<%--<c:set var="titulo_pagina" scope="request">Movimentação</c:set>
+<%--<c:set var="titulo_pagina" scope="request">MovimentaÃ§Ã£o</c:set>
 <c:import context="/siga" url="/paginas/cabecalho.jsp" />--%>
 
-<!-- A linha abaixo é temporária, pois está presente num dos cabeçalhos  -->
+<!-- A linha abaixo Ã© temporÃ¡ria, pois estÃ¡ presente num dos cabeÃ§alhos  -->
 <div id="carregando" style="position:absolute;top:0px;right:0px;background-color:red;font-weight:bold;padding:4px;color:white;display:none">Carregando...</div>
 
 
 <div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Solicitação de Publicação - ${doc.codigo}</h2>
+			<h2>SolicitaÃ§Ã£o de PublicaÃ§Ã£o - ${doc.codigo}</h2>
 			<div class="gt-content-box gt-for-table">
 			<ww:form name="frm" action="pedir_publicacao_gravar"
 			namespace="/expediente/mov" cssClass="form" method="GET">
@@ -68,14 +68,14 @@
 			<ww:hidden name="sigla" value="%{sigla}"/>			
 			<table class="gt-form-table">
 				<tr class="header">
-					<td colspan="2">Dados da Solicitação</td>
+					<td colspan="2">Dados da SolicitaÃ§Ã£o</td>
 				</tr>
 				<tr>					
 					<c:choose>
 						<c:when test="${cadernoDJEObrigatorio}">
 						    <c:set var="disabledTpMat">true</c:set> 
 						    <input type="hidden" name="tipoMateria" value="${tipoMateria}" />	
-							<td>Tipo de Matéria:</td>												
+							<td>Tipo de MatÃ©ria:</td>												
 							<td>
 							<c:choose>
 								<c:when test="${tipoMateria eq 'A'}">
@@ -89,7 +89,7 @@
 						</c:when>
 						<c:otherwise>
 							<td colspan="2">
-								<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de Matéria"  value="${tipoMateria}"  disabled="${disabledTpMat}" />
+								<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de MatÃ©ria"  value="${tipoMateria}"  disabled="${disabledTpMat}" />
 							</td>
 						</c:otherwise>	
 					</c:choose>
@@ -97,16 +97,16 @@
 				<tr>					
 					<td colspan="2"><ww:textfield name="dtDispon" id="dt_dispon"
 					onblur="javascript:verifica_data(this,true);prever_data();"
-					label="Data para disponibilização" /> 
+					label="Data para disponibilizaÃ§Ã£o" /> 
 					</td>
 				</tr>						
 				<tr>
-					<td>Data de publicação:</td>
+					<td>Data de publicaÃ§Ã£o:</td>
 					<td><div id="dt_publ"></div></td>
 				</tr>									
-				<ww:select name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" />			
+				<ww:select name="lotPublicacao" list="listaLotPubl" label="LotaÃ§Ã£o de PublicaÃ§Ã£o" />			
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
-							rows="2" cssClass="gt-form-textarea" label="Descrição do documento"
+							rows="2" cssClass="gt-form-textarea" label="DescriÃ§Ã£o do documento"
 							onkeyup="contaLetras();" onblur="verificaTamanho();"/>
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>
 								
@@ -117,13 +117,13 @@
 			</table>
 		</ww:form>
 	</div>
-	<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>
+	<span style="margin-left: 0.5cm;color: red;"><b>AtenÃ§Ã£o:</b></span>
 	<ul>
 	<li><span style="font-weight:bold">Data para
-	Disponibilização</span> - data em que a matéria efetivamente aparece no
+	DisponibilizaÃ§Ã£o</span> - data em que a matÃ©ria efetivamente aparece no
 	site</li>
-	<li><span style="font-weight:bold">Data de Publicação</span> -
-	a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
+	<li><span style="font-weight:bold">Data de PublicaÃ§Ã£o</span> -
+	a Data de DisponibilizaÃ§Ã£o + 1, conforme prevÃª art. 4Âº, parÃ¡grafo 3Âº
 	da Lei 11419 / 2006</li>
 	</ul>		
 	</div>
@@ -131,6 +131,6 @@
 
 
 
-<!--  tabela do rodapé -->
+<!--  tabela do rodapÃ© -->
 <%--<c:import context="/siga" url="/paginas/rodape.jsp" />--%>
 </siga:pagina>

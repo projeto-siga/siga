@@ -105,6 +105,9 @@ submitOk = function() {
 							<c:set var="titulo3" value=""></c:set>
 							<c:set var="ordem" value="1"/>
 						</c:when>
+						<c:when test="${listEstado[0]==31}">
+							<c:set var="visualizacao" value="1"/>
+						</c:when>
 					</c:choose>
 					<tr>
 						<td><ww:url id="url" action="listar"

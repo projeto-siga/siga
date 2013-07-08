@@ -953,14 +953,14 @@ public class ExBL extends CpBL {
 				}
 			}
 
-//RETIRAR COMENTÁRIO ANTES DE ENVIAR PARA PRODUÇÃO			
-/*			Correio.enviar(
+			
+			Correio.enviar(
 					SigaBaseProperties
 							.getString("servidor.smtp.usuario.remetente"),
 					emailsAtendentes.toArray(new String[emailsAtendentes.size()]),
 					"Nova solicitação de publicação DJE ("
 							+ mov.getLotaCadastrante().getSiglaLotacao() + ") ",
-					sb.toString(), sbHtml.toString()); */
+					sb.toString(), sbHtml.toString()); 
 
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -1053,13 +1053,13 @@ public class ExBL extends CpBL {
 			else
 				mov.setNmArqMov("JUD.zip");
 
-//RETIRAR COMENTÁRIO ANTES DE ENVIAR PARA PRODUÇÃO	
-/*			try {
+
+			try {
 				PublicacaoDJEBL.primeiroEnvio(mov);
 			} catch (Throwable t) {
 				throw new Exception(t.getMessage() + " -- "
 						+ t.getCause().getMessage());
-			} */
+			} 
 
 			// mov.setNumTRFPublicacao(numTRF);
 			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(dtDispPublicacao);
@@ -1932,10 +1932,10 @@ public class ExBL extends CpBL {
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
 				mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
 
-//RETIRAR COMENTÁRIO ANTES DE ENVIAR PARA PRODUÇÃO		
-/*				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
+		
+				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
 					PublicacaoDJEBL.cancelarRemessaPublicacao(mov);
-*/
+
 				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						&& ultMovNaoCancelada.getExMovimentacaoRef() != null) {
 					mov.setExMobilRef(ultMovNaoCancelada.getExMovimentacaoRef()

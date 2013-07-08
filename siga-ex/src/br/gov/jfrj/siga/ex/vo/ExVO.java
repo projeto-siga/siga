@@ -50,12 +50,12 @@ public class ExVO {
 
 	protected void addAcao(String icone, String nome, String nameSpace,
 			String action, boolean pode) {
-		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null);
+		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null, null);
 	}
 
 	protected void addAcao(String icone, String nome, String nameSpace,
 			String action, boolean pode, String msgConfirmacao,
-			String parametros, String pre, String pos) {
+			String parametros, String pre, String pos, String classe) {
 		TreeMap<String, String> params = new TreeMap<String, String>();
 
 		if (this instanceof ExMovimentacaoVO) {
@@ -85,7 +85,7 @@ public class ExVO {
 
 		if (pode) {
 			ExAcaoVO acao = new ExAcaoVO(icone, nome, nameSpace, action, pode,
-					msgConfirmacao, params, pre, pos);
+					msgConfirmacao, params, pre, pos, classe);
 			acoes.add(acao);
 		}
 	}

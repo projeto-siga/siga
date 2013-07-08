@@ -35,6 +35,7 @@ public class ExAcaoVO {
 	String msgConfirmacao;
 	String pre;
 	String pos;
+	String classe;
 	Map<String, String> params;
 
 	public Map<String, String> getParams() {
@@ -85,9 +86,17 @@ public class ExAcaoVO {
 		return msgConfirmacao;
 	}
 
+	public String getClasse() {
+		return classe;
+	}
+
+	public void setClasse(String classe) {
+		this.classe = classe;
+	}
+
 	public ExAcaoVO(String icone, String nome, String nameSpace, String acao, boolean pode,
 			String msgConfirmacao, TreeMap<String, String> params, String pre,
-			String pos) {
+			String pos, String classe) {
 		super();
 		this.icone = icone;
 		this.nome = nome;
@@ -101,6 +110,7 @@ public class ExAcaoVO {
 		this.params = params;
 		this.pre = pre;
 		this.pos = pos;
+		this.classe = classe;
 	}
 
 	@Override

@@ -262,7 +262,7 @@ public class ExMobilVO extends ExVO {
 					"pdf",
 					Ex.getInstance().getComp()
 							.podeVisualizarImpressao(titular, lotaTitular, mob),
-					null, "&popup=true", null, null);
+					null, "&popup=true", null, null, null);
 			addAcao(
 					"link_add",
 					"Criar Anexo",
@@ -272,19 +272,19 @@ public class ExMobilVO extends ExVO {
 							.getComp()
 							.podeAnexarArquivoAlternativo(titular, lotaTitular, mob),
 					null, "criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(),
-					null, null);
+					null, null, null);
 		}
 		addAcao("link_break", "Desentranhar",
 				"/expediente/mov",
 				"cancelar_juntada",
 				Ex.getInstance().getComp()
-						.podeCancelarJuntada(titular, lotaTitular, mob));
+						.podeCancelarJuntada(titular, lotaTitular, mob), null, null, null, null, "once");
 
 		addAcao("link_delete", "Desapensar", "/expediente/mov", "desapensar", Ex.getInstance()
-				.getComp().podeDesapensar(titular, lotaTitular, mob));
+				.getComp().podeDesapensar(titular, lotaTitular, mob), null, null, null, null, "once");
 
 		addAcao("email_open", "Receber", "/expediente/mov", "receber", Ex.getInstance()
-				.getComp().podeReceber(titular, lotaTitular, mob));
+				.getComp().podeReceber(titular, lotaTitular, mob), null, null, null, null, "once");
 
 		addAcao("email_edit", "Despachar/Transferir",
 				"/expediente/mov",
@@ -309,29 +309,29 @@ public class ExMobilVO extends ExVO {
 				"/expediente/mov",
 				"arquivar_corrente_gravar",
 				Ex.getInstance().getComp()
-						.podeArquivarCorrente(titular, lotaTitular, mob));
+						.podeArquivarCorrente(titular, lotaTitular, mob), null, null, null, null, "once");
 		
 		addAcao("hourglass_add", "Sobrestar",
 				"/expediente/mov",
 				"sobrestar_gravar",
 				Ex.getInstance().getComp()
-						.podeSobrestar(titular, lotaTitular, mob));
+						.podeSobrestar(titular, lotaTitular, mob), null, null, null, null, "once");
 
 		addAcao("box","Arq. Permanente", "/expediente/mov",
 				"arquivar_permanente_gravar", Ex.getInstance().getComp()
-						.podeArquivarPermanente(titular, lotaTitular, mob));
+						.podeArquivarPermanente(titular, lotaTitular, mob), null, null, null, null, "once");
 
 		addAcao("package_go","Desarquivar",
 				"/expediente/mov",
 				"desarquivar_gravar",
 				Ex.getInstance().getComp()
-						.podeDesarquivar(titular, lotaTitular, mob));
+						.podeDesarquivar(titular, lotaTitular, mob), null, null, null, null, "once");
 		
 		addAcao("hourglass_delete","Desobrestar",
 				"/expediente/mov",
 				"desobrestar_gravar",
 				Ex.getInstance().getComp()
-						.podeDesobrestar(titular, lotaTitular, mob));
+						.podeDesobrestar(titular, lotaTitular, mob), null, null, null, null, "once");
 
 		addAcao("link","Juntar", "/expediente/mov", "juntar", Ex.getInstance()
 				.getComp().podeJuntar(titular, lotaTitular, mob));
@@ -357,21 +357,21 @@ public class ExMobilVO extends ExVO {
 							.podeCancelarMovimentacao(titular, lotaTitular, mob),
 					"Confirma o cancelamento da última movimentação("
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()
-							+ ")?", null, null, null); // popup,
+							+ ")?", null, null, null, "once"); // popup,
 		// exibir+completo,
 		// confirmacao
 
 		addAcao("folder_page_white", "Encerrar Volume", "/expediente/mov", "encerrar_gravar", Ex
 				.getInstance().getComp()
 				.podeEncerrar(titular, lotaTitular, mob),
-				"Confirma o encerramento do volume?", null, null, null);
+				"Confirma o encerramento do volume?", null, null, null, "once");
 
 		addAcao("cancel", "Cancelar Via",
 				"/expediente/mov",
 				"cancelarMovimentacao",
 				Ex.getInstance().getComp()
 						.podeCancelarVia(titular, lotaTitular, mob),
-				"Confirma o cancelamento da via?", null, null, null);
+				"Confirma o cancelamento da via?", null, null, null, "once");
 		
 		addAcao("brick","Autuar",
 				"/expediente/doc",
@@ -380,7 +380,7 @@ public class ExMobilVO extends ExVO {
 						.getComp()
 						.podeAutuar(titular, lotaTitular, mob),
 				null, "idMobilAutuado=" + mob.getId() + "&autuando=true",
-				null, null);
+				null, null, null);
 	}
 
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {

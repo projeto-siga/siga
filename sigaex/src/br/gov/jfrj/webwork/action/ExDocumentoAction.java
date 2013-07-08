@@ -1988,7 +1988,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					false);
 		}
 
-		if (getIdMod() != null) {
+		if (getIdMod() != null && getIdMod() != 0) {
 			exMod = dao().consultar(getIdMod(), ExModelo.class, false);
 		}
 
@@ -2118,7 +2118,8 @@ public class ExDocumentoAction extends ExActionSupport {
 			return preenchSet;
 
 		ExPreenchimento preench = new ExPreenchimento();
-		preench.setExModelo(dao().consultar(getIdMod(), ExModelo.class, false));
+		if(getIdMod() != null && getIdMod() != 0L)
+			preench.setExModelo(dao().consultar(getIdMod(), ExModelo.class, false));
 
 		DpLotacao lota = new DpLotacao();
 		lota.setIdLotacaoIni(getLotaTitular().getIdLotacaoIni());
@@ -2126,9 +2127,11 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		preenchSet.add(new ExPreenchimento(0, null, " [Em branco] ", null));
 
-		for (DpLotacao lotacao : lotacaoSet) {
-			preench.setDpLotacao(lotacao);
-			preenchSet.addAll(dao().consultar(preench));
+		if(getIdMod() != null && getIdMod() != 0) {
+			for (DpLotacao lotacao : lotacaoSet) {
+				preench.setDpLotacao(lotacao);
+				preenchSet.addAll(dao().consultar(preench));
+			}
 		}
 
 		return preenchSet;

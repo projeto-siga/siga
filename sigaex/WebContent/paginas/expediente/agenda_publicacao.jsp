@@ -32,14 +32,6 @@
 		document.getElementById("Qtd").innerText = 'Restam ' + i + ' caracteres';
 	}
 
-	function verificaTamanho() {		
-		var i = tamanho();	
-		if (i>256) {
-			alert('Descrição com mais de 256 caracteres');
-			document.getElementById('descrPublicacao').focus();
-		}		
-	}
-
 	function tamanho() {
 		nota= new String();
 		nota = this.frm.descrPublicacao.value;
@@ -48,12 +40,34 @@
 
 	function validar() {
 		var data = document.getElementsByName('dtDispon')[0].value;
+		var i = tamanho();
 		if (data==null || data=="") {			
 			alert("Preencha a data para disponibilização.");
 			document.getElementById('dt_dispon').focus();		
-		}else
-			frm.submit();	
+		}else {
+			if (i>256) {
+				alert('Descrição com mais de 256 caracteres');
+				document.getElementById('descrPublicacao').focus();	
+			}else {
+				if (i<=0) {
+					alert('Descrição deve ser preenchida');
+					document.getElementById('descrPublicacao').focus();	
+				}else	
+					frm.submit();
+			}	
+		}
 	}
+
+	function buscaNomeLota(){
+		var siglaLota = $('#lotPublicacao').val();			
+			$.ajax({				     				  
+				  url:'/siga/lotacao/selecionar.action?sigla=' + siglaLota ,					    					   					 
+				  success: function(data) {
+					 var parts = data.split(';');					   
+			    	$('#nomeLota').html(parts[3]);				    
+			 	 }
+			});			
+	}		
 	
 	
 </script>
@@ -110,10 +124,14 @@
 					<td>Data de publicação:</td>
 					<td><div id="dt_publ" /></td>
 				</tr>				
-				<ww:select name="lotPublicacao" list="listaLotPubl" label="Lotação de publicação"/>	
+				<tr>
+					<td>Lotação de publicação:</td>
+					<td><ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" onchange="buscaNomeLota()" />
+					&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span>	</div></td>
+				</tr>	
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
-							rows="2" cssClass="gt-form-textarea" label="Descrição do documento"
-							onkeyup="contaLetras();" onblur="verificaTamanho();"/>	
+							rows="5" cssClass="gt-form-textarea" label="Descrição do documento"
+							onkeyup="contaLetras();" />	
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>						
 				<tr>
 					<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-medium gt-btn-left" /> <input type="button"
@@ -134,4 +152,7 @@
 				da Lei 11419 / 2006</li>
 			</ul>
 </div></div>
+<script type="text/javascript">
+	buscaNomeLota();
+</script>
 </siga:pagina>

@@ -81,7 +81,8 @@
 		</c:when>
 	</c:choose>
 	
-			<div class="gt-content-box gt-for-table">
+	<c:if test="${(not empty elementos)}">
+	<div class="gt-content-box gt-for-table">
 	<table class="gt-table">
 		<tr class="header">
 			<c:if test="${i == 1}">
@@ -186,6 +187,7 @@
 	</div>
 	<br />
 	<%--</c:forEach>--%>
+	</c:if>
 </ww:form>
 
 </div></div>

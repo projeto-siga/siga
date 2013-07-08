@@ -293,7 +293,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public Integer getTamanhoMaximoDescricao() {
-		return doc.isProcesso() ? 4000 : 256;
+		return  4000;
 	}
 
 	public boolean getDespachando() {
@@ -1158,9 +1158,9 @@ public class ExDocumentoAction extends ExActionSupport {
 				throw new AplicacaoException(
 						"Quando a classificação selecionada não traz informação para criação de vias, o sistema exige que, antes de gravar o documento, seja informada uma sugestão de classificação para ser incluída na próxima revisão da tabela de classificações.");
 
-			if (!doc.isProcesso() && doc.getDescrDocumento().length() > 256)
+			if (doc.getDescrDocumento().length() > getTamanhoMaximoDescricao())
 				throw new AplicacaoException(
-						"O campo descrição possui mais do que 256 caracteres.");
+						"O campo descrição possui mais do que " + getTamanhoMaximoDescricao() + " caracteres.");
 
 			if (doc.getDtFechamento() != null) {
 				Date dt = dao().dt();

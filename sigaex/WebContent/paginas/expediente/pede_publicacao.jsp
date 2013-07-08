@@ -27,14 +27,6 @@
 		document.getElementById("Qtd").innerText = 'Restam ' + i + ' caracteres';
 	}
 
-	function verificaTamanho() {		
-		var i = tamanho();	
-		if (i>256) {
-			alert('Descrição com mais de 256 caracteres');
-			document.getElementById('descrPublicacao').focus();	
-		}		
-	}
-
 	function tamanho() {
 		nota= new String();
 		nota = this.frm.descrPublicacao.value;
@@ -43,12 +35,35 @@
 
 	function validar() {
 		var data = document.getElementsByName('dtDispon')[0].value;
+		var i = tamanho();	
 		if (data==null || data=="") {			
 			alert("Preencha a data para disponibilização.");
 			document.getElementById('dt_dispon').focus();		
-		}else
-			frm.submit();	
+		}else {
+			if (i>256) {
+				alert('Descrição com mais de 256 caracteres');
+				document.getElementById('descrPublicacao').focus();	
+			}else {
+				if (i<=0) {
+					alert('Descrição deve ser preenchida');
+					document.getElementById('descrPublicacao').focus();	
+				}else	
+					frm.submit();
+			}	
+		}
+			
 	}
+
+	function buscaNomeLota(){
+		var siglaLota = $('#lotPublicacao').val();			
+			$.ajax({				     				  
+				  url:'/siga/lotacao/selecionar.action?sigla=' + siglaLota ,					    					   					 
+				  success: function(data) {
+					 var parts = data.split(';');					   
+			    	$('#nomeLota').html(parts[3]);				    
+			 	 }
+			});			
+	}		
 </script>
 
 <%--<c:set var="titulo_pagina" scope="request">Movimentação</c:set>
@@ -58,12 +73,12 @@
 <div id="carregando" style="position:absolute;top:0px;right:0px;background-color:red;font-weight:bold;padding:4px;color:white;display:none">Carregando...</div>
 
 
-<div class="gt-bd clearfix">
+	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Solicitação de Publicação - ${doc.codigo}</h2>
 			<div class="gt-content-box gt-for-table">
 			<ww:form name="frm" action="pedir_publicacao_gravar"
-			namespace="/expediente/mov" cssClass="form" method="GET">
+			namespace="/expediente/mov" cssClass="form" method="GET" >
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>			
 			<table class="gt-form-table">
@@ -103,11 +118,16 @@
 				<tr>
 					<td>Data de publicação:</td>
 					<td><div id="dt_publ"></div></td>
-				</tr>									
-				<ww:select name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" />			
+				</tr>				
+				<tr>
+					<td>Lotação de publicação:</td>
+					<td><ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" onchange="buscaNomeLota()" />
+					&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span>	</div></td>
+				</tr>				
+					
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
 							rows="2" cssClass="gt-form-textarea" label="Descrição do documento"
-							onkeyup="contaLetras();" onblur="verificaTamanho();"/>
+							onkeyup="contaLetras();" />
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>
 								
 				<tr class="button">
@@ -129,7 +149,9 @@
 	</div>
 </div>	
 
-
+<script type="text/javascript">
+	buscaNomeLota();
+</script>
 
 <!--  tabela do rodapé -->
 <%--<c:import context="/siga" url="/paginas/rodape.jsp" />--%>

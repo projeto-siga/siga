@@ -755,15 +755,15 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			emailsSolicitantes.add(movPedidoDJE.getCadastrante()
 					.getEmailPessoa());
 
-//RETIRAR COMENTÁRIO ANTES DE ENVIAR PARA PRODUÇÃO			
-/*			Correio.enviar(SigaBaseProperties
+		
+			Correio.enviar(SigaBaseProperties
 					.getString("servidor.smtp.usuario.remetente"),
 					emailsSolicitantes.toArray(new String[emailsSolicitantes
 							.size()]),
 					"Cancelamento de pedido de publicação no DJE ("
 							+ movPedidoDJE.getLotaCadastrante()
 									.getSiglaLotacao() + ") ", sb.toString(),
-					sbHtml.toString()); */
+					sbHtml.toString()); 
 		}
 
 		return Action.SUCCESS;

@@ -135,7 +135,7 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = "";
 			addAcao(null, "Verificar", "/expediente/mov", "assinar_verificar",
 					true, null, "&ajax=true&id=" + mov.getIdMov().toString(),
-					null, null);
+					null, null, null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
@@ -185,7 +185,7 @@ public class ExMovimentacaoVO extends ExVO {
 			// tipo="${mov.conteudoTpMov}" />
 			addAcao(null, mov.getNmArqMov(), "/anexo", mov.getIdMov() + "/"
 					+ mov.getNmArqMov(), mov.getNmArqMov() != null, null,
-					"&popup=true", null, null);
+					"&popup=true", null, null, null);
 
 			if (idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
 				addAcao(null,
@@ -218,7 +218,7 @@ public class ExMovimentacaoVO extends ExVO {
 									.podeCancelarAnexo(titular, lotaTitular,
 											mov.mob(), mov));
 					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov",
-							"exibir", true, null, "&popup=true", null, null);
+							"exibir", true, null, "&popup=true", null, null, null);
 				}
 			}
 
@@ -241,7 +241,7 @@ public class ExMovimentacaoVO extends ExVO {
 					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO) {
 				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito())
 					addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir",
-							true, null, "&popup=true", null, null);
+							true, null, "&popup=true", null, null, null);
 			}
 
 			if (mov.getExMovimentacaoReferenciadoraSet() != null) {
@@ -280,7 +280,7 @@ public class ExMovimentacaoVO extends ExVO {
 					addAcao(null, mov.getExMobilRef().getSigla(),
 							"/expediente/doc", "exibir", true, null, "sigla="
 									+ mov.getExMobilRef().getSigla(),
-							"Juntado ao documento: ", null);
+							"Juntado ao documento: ", null, null);
 				} else {
 					descricao = "Juntado ao documento: " + mov.getDescrMov();
 				}
@@ -288,7 +288,7 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
-						"Documento juntado: ", null);
+						"Documento juntado: ", null, null);
 			}
 		}
 
@@ -298,12 +298,12 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobilRef().getSigla(),
 						"/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
-						"Apensado ao documento: ", null);
+						"Apensado ao documento: ", null, null);
 			} else {
 				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
-						"Documento apensado: ", null);
+						"Documento apensado: ", null, null);
 			}
 		}
 
@@ -313,12 +313,12 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobilRef().getSigla(),
 						"/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
-						"Desapensado do documento: ", null);
+						"Desapensado do documento: ", null, null);
 			} else {
 				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
-						"Documento desapensado: ", null);
+						"Documento desapensado: ", null, null);
 			}
 		}
 
@@ -327,7 +327,7 @@ public class ExMovimentacaoVO extends ExVO {
 					"exibir", true, null, "sigla="
 							+ mov.getExMobilRef().getSigla(),
 					"Publicado no Boletim Interno: ",
-					" em " + mov.getDtMovDDMMYY());
+					" em " + mov.getDtMovDDMMYY(), null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
@@ -336,12 +336,12 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobilRef().getSigla(),
 						"/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
-						"Ver também: ", null);
+						"Ver também: ", null, null);
 			} else {
 				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(), "Ver também: ",
-						null);
+						null, null);
 			}
 		}
 
@@ -354,7 +354,7 @@ public class ExMovimentacaoVO extends ExVO {
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
 								+ mov.getDtRegMovDDMMYYYYHHMMSS()
-								+ "&popup=true", null, null);
+								+ "&popup=true", null, null, null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
@@ -370,13 +370,13 @@ public class ExMovimentacaoVO extends ExVO {
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
 								+ mov.getDtRegMovDDMMYYYYHHMMSS()
-								+ "&popup=true", null, null);
+								+ "&popup=true", null, null, null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
 			addAcao(null, mov.getNmArqMov(), "/anexo", mov.getIdMov() + "/"
 					+ mov.getNmArqMov(), mov.getNmArqMov() != null, null,
-					"&popup=true", null, null);
+					"&popup=true", null, null, null);
 		}
 
 		if (descricao != null && descricao.equals(mov.getObs())) {

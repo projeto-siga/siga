@@ -203,7 +203,7 @@ public class ExDocumentoVO extends ExVO {
 				"pdf",
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob),
-				null, "&popup=true", null, null);
+				null, "&popup=true", null, null, null);
 
 		vo.addAcao(
 				"lock",
@@ -212,7 +212,7 @@ public class ExDocumentoVO extends ExVO {
 				"fechar",
 				Ex.getInstance().getComp()
 						.podeFinalizar(titular, lotaTitular, mob),
-				"Confirma a finalização do documento?", null, null, null);
+				"Confirma a finalização do documento?", null, null, null, "once");
 
 		// addAcao("Finalizar e Assinar", "/expediente/mov", "fechar_assinar",
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
@@ -228,7 +228,7 @@ public class ExDocumentoVO extends ExVO {
 				"excluir",
 				Ex.getInstance().getComp()
 						.podeExcluir(titular, lotaTitular, mob),
-				"Confirma a exclusão do documento?", null, null, null);
+				"Confirma a exclusão do documento?", null, null, null, "once");
 
 		vo.addAcao("user_add", "Incluir Cossignatário", "/expediente/mov",
 				"incluir_cosignatario", Ex.getInstance().getComp()
@@ -263,16 +263,16 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao("sitemap_color", "Exibir Todas as Vias", "/expediente/doc",
 				"exibir", doc.isExpediente() && doc.getDtFechamento() != null,
-				null, "&exibirCompleto=false", null, null);
+				null, "&exibirCompleto=false", null, null, null);
 
 		vo.addAcao("sitemap_color", "Exibir Todos os Volumes",
 				"/expediente/doc", "exibir",
 				doc.isProcesso() && doc.getDtFechamento() != null, null,
-				"&exibirCompleto=false", null, null);
+				"&exibirCompleto=false", null, null, "once");
 
 		vo.addAcao("add", "Criar Via", "/expediente/doc", "criarVia", Ex
 				.getInstance().getComp()
-				.podeCriarVia(titular, lotaTitular, mob));
+				.podeCriarVia(titular, lotaTitular, mob), null, null, null, null, "once");
 
 		vo.addAcao(
 				"add",
@@ -281,7 +281,7 @@ public class ExDocumentoVO extends ExVO {
 				"criarVolume",
 				Ex.getInstance().getComp()
 						.podeCriarVolume(titular, lotaTitular, mob),
-				"Confirma a abertura de um novo volume?", null, null, null);
+				"Confirma a abertura de um novo volume?", null, null, null, "once");
 
 		vo.addAcao(
 				"link_add",
@@ -292,7 +292,7 @@ public class ExDocumentoVO extends ExVO {
 						.podeCriarSubprocesso(titular, lotaTitular, mob), null,
 				"mobilPaiSel.sigla=" + getSigla() + "&idForma="
 						+ mob.doc().getExFormaDocumento().getIdFormaDoc(),
-				null, null);
+				null, null, null);
 
 		vo.addAcao(
 				"script_edit",
@@ -326,7 +326,7 @@ public class ExDocumentoVO extends ExVO {
 							.podeAnexarArquivoAlternativo(titular, lotaTitular,
 									mob), null,
 					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
-					null);
+					null, null);
 		}
 
 		vo.addAcao("shield", "Redefinir Nível de Acesso", "/expediente/mov",
@@ -351,7 +351,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance()
 						.getComp()
 						.podeBotaoAgendarPublicacaoBoletim(titular,
-								lotaTitular, mob));
+								lotaTitular, mob), null, null, null, null, "once");
 
 		vo.addAcao(
 				"error_go",
@@ -361,7 +361,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeReabrir(titular, lotaTitular, mob),
 				"Esse documento será cancelado e seus dados serão copiados para um novo expediente em elaboração. Prosseguir?",
-				null, null, null);
+				null, null, null, "once");
 
 		vo.addAcao(
 				"arrow_divide",
@@ -371,7 +371,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeDuplicar(titular, lotaTitular, mob),
 				"Esta operação criará um expediente com os mesmos dados do atual. Prosseguir?",
-				null, null, null);
+				null, null, null, "once");
 
 		// test="${exibirCompleto != true}" />
 		vo.addAcao(
@@ -381,7 +381,7 @@ public class ExDocumentoVO extends ExVO {
 				"exibir",
 				Ex.getInstance().getComp()
 						.podeDuplicar(titular, lotaTitular, mob), null,
-				"&exibirCompleto=true", null, null);
+				"&exibirCompleto=true", null, null, null);
 
 		vo.addAcao(
 				"report_link",
@@ -410,7 +410,7 @@ public class ExDocumentoVO extends ExVO {
 						.podeDesfazerCancelamentoDocumento(titular,
 								lotaTitular, mob),
 				"Esta operação anulará o cancelamento do documento e tornará o documento novamente editável. Prosseguir?",
-				null, null, null);
+				null, null, null, "once");
 
 		vo.addAcao(
 				"delete",
@@ -421,7 +421,7 @@ public class ExDocumentoVO extends ExVO {
 						.getComp()
 						.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
 				"Esta operação tornará esse documento sem efeito. Prosseguir?",
-				null, null, null);
+				null, null, null, "once");
 	}
 
 	public void addDadosComplementares() throws Exception {

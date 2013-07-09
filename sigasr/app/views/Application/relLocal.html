@@ -3,7 +3,7 @@
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form id="grelSolicitacoes" action="@{Application.grelSolicitacoes}" method="GET">
+		<form id="grelLocal" action="@{Application.grelLocal}" method="GET">
 		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 		
 			<table class="gt-form-table">
@@ -14,21 +14,12 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Atendente(Solucionador)</td>
-						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /}</td>	
+						<td>Local (Solicitante)</td>
+						<td> #{select name:'local', items:locais, valueProperty:'idComplexo', labelProperty:'nomeComplexo', value:local?.idComplexo /} </td>	
 					</tr>
 					<tr>
-						<td>Situação</td>
-							<td><select name="situacao">
-							<option value="Todas">Todas</option>
-							<option value="4">Pré-Atendimento</option>
-							<option value="0">Andamento</option>
-							<option value="1">Pendente</option>
-							<option value="3">Cancelado</option>
-							<option value="2">Fechado</option>
-							<option value="5">Pós-Atendimento</option>
-							</select> 
-						</td>
+						<td>Atendente (Solucionador)</td>
+						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /}</td>	
 					</tr>
 					<tr>
 						<td>Data Inicial</td>

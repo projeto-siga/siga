@@ -37,7 +37,7 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 			throws AplicacaoException {
 		CpGrupo t_grpGrupo;
 		switch (IdTipoGrupo) {
-		case CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_EMAIL:
+		case CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO:
 			t_grpGrupo = new CpGrupoDeEmail();
 			break;
 		case CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO:

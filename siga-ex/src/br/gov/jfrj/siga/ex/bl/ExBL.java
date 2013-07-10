@@ -1878,12 +1878,15 @@ public class ExBL extends CpBL {
 			switch ((int) (long) movACancelar.getExTipoMovimentacao()
 					.getIdTpMov()) {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR:
 				set = mob.getMobilETodosOsApensos();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO:
 				set = mob.getMobilETodosOsApensos();
 				break;
@@ -3045,7 +3048,10 @@ public class ExBL extends CpBL {
 	public void receber(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov)
 			throws AplicacaoException {
-
+		
+		if(mob.isEmTransitoExterno())
+			return;
+		
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
 
 		try {
@@ -4193,12 +4199,18 @@ public class ExBL extends CpBL {
 		// atualizarWorkflow(doc, null);
 
 		SortedSet<ExMobil> set = threadAlteracaoParcial.get();
-		if (set == null)
-			return;
-		for (ExMobil mob : set) {
-			atualizarWorkflow(mob.doc(), null);
+		if (set != null && set.size() > 0){
+			for (ExMobil mob : set) {
+				atualizarWorkflow(mob.doc(), null);
+			}
+			set.clear();
+		}else{
+			 if (doc != null){
+				 atualizarWorkflow(doc, null);	 
+			 }
+			 
+
 		}
-		set.clear();
 	}
 
 	private void cancelarAlteracao() throws AplicacaoException {
@@ -4214,7 +4226,7 @@ public class ExBL extends CpBL {
 
 		try {
 			if (Contexto.resource("isWorkflowEnabled") != null
-					&& (Boolean) Contexto.resource("isWorkflowEnabled")) {
+					&& Boolean.valueOf(String.valueOf(Contexto.resource("isWorkflowEnabled")))) {
 				if (mov != null) {
 					atualizarWorkFlow(mov);
 				} else {
@@ -4884,7 +4896,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void TornarDocumentoSemEfeito(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc, String motivo) throws Exception {
 		try {
 			iniciarAlteracao();
 
@@ -4893,6 +4905,7 @@ public class ExBL extends CpBL {
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), null,
 					null, null, null, null, null);
 
+			mov.setDescrMov(motivo);
 			gravarMovimentacao(mov);
 
 			concluirAlteracao(doc);

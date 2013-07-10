@@ -32,7 +32,8 @@ import org.joda.time.LocalDate;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
-import reports.SrRelatorioModelos;
+import reports.SrRelSolicitacoes;
+import reports.SrRelTransferencias;
 import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
@@ -244,63 +245,6 @@ public class Application extends SigaApplication {
 		render(listaSolicitacao, urgencias, tendencias, gravidades, tipos,
 				marcadores, filtro);
 	}
-	public static void relatorio() throws Exception {
-		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
-		
-		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
-		List<Object[]> listaSols = SrSolicitacao.find(
-				"select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(*) " +
-				"from SrSolicitacao sol group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch(); 
-			
-		for (Object[] sols : listaSols) {
-			set.add(new SrSolicitacaoItem((Integer) sols[0],
-					(Integer) sols[1], (Long) sols[2], 0, 0));
-		}
-
-
-		List<Object[]> listaFechados = SrSolicitacao.find(
-				"select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(distinct sol.idSolicitacao) " +
-				"from SrSolicitacao sol, SrAndamento andamento " +
-				"where sol.idSolicitacao = andamento.solicitacao and andamento.estado = 2 " +
-				"group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch();
-		for (Object[] fechados : listaFechados) {
-			set.add(new SrSolicitacaoItem((Integer) fechados[0],
-					(Integer) fechados[1], 0, (Long) fechados[2], 0));
-		}
-
-		LocalDate ld = new LocalDate();
-		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
-
-		// Header
-		StringBuilder sb = new StringBuilder();
-		sb.append("['Mês','Fechados','Abertos'],");
-
-		// Values
-		for (int i = -6; i <= 0; i++) {
-			LocalDate ldl = ld.plusMonths(i);
-			sb.append("['");
-			sb.append(ldl.toString("MMM/yy"));
-			sb.append("',");
-			long abertos = 0;
-			long fechados = 0;
-			SrSolicitacaoItem o = new SrSolicitacaoItem(
-					ldl.getMonthOfYear(), ldl.getYear(), 0, 0, 0);
-			if (set.contains(o)) {
-				o = set.floor(o);
-				abertos = o.abertos;
-				fechados = o.fechados;
-			}
-			sb.append(fechados);
-			sb.append(",");
-			sb.append(abertos);
-			sb.append(",");
-			sb.append("],");
-		}
-		String evolucao = sb.toString();
-
-		render(lista, evolucao);
-}
-	
 	public static void estatistica() throws Exception {
 		assertAcesso("REL:Relatorios");
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
@@ -309,6 +253,7 @@ public class Application extends SigaApplication {
 				"select sol.gravidade, count(*) " +
 				"from SrSolicitacao sol, SrAndamento andamento " +
 				"where sol.idSolicitacao = andamento.solicitacao and andamento.estado <> 2 " +
+				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
 				"group by sol.gravidade").fetch(); 
 		
 		LocalDate ld = new LocalDate();
@@ -338,7 +283,10 @@ public class Application extends SigaApplication {
 		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
 		List<Object[]> listaEvolSols = SrSolicitacao.find(
 				"select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(*) " +
-				"from SrSolicitacao sol group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch(); 
+				"from SrSolicitacao sol, SrAndamento andamento " +
+				"where sol.idSolicitacao = andamento.solicitacao " +
+				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
+				"group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch(); 
 			
 		for (Object[] sols : listaEvolSols) {
 			set.add(new SrSolicitacaoItem((Integer) sols[0],
@@ -349,7 +297,9 @@ public class Application extends SigaApplication {
 		List<Object[]> listaFechados = SrSolicitacao.find(
 				"select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(distinct sol.idSolicitacao) " +
 				"from SrSolicitacao sol, SrAndamento andamento " +
-				"where sol.idSolicitacao = andamento.solicitacao and andamento.estado = 2 " +
+				"where sol.idSolicitacao = andamento.solicitacao " +
+				"and andamento.estado = 2 " +
+				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
 				"group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch();
 		for (Object[] fechados : listaFechados) {
 			set.add(new SrSolicitacaoItem((Integer) fechados[0],
@@ -385,8 +335,68 @@ public class Application extends SigaApplication {
 			sbevol.append("],");
 		}
 		String evolucao = sbevol.toString();
+		
+		List<SrSolicitacao> top = SrSolicitacao.all().fetch();
+		
+		List<String[]> listaTop = SrSolicitacao.find(
+				"select sol.itemConfiguracao.tituloItemConfiguracao, count(*) " +
+				"from SrSolicitacao sol, SrAndamento andamento " +
+				"where sol.idSolicitacao = andamento.solicitacao " +
+				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
+				"group by sol.itemConfiguracao.tituloItemConfiguracao").fetch(); 
+		
+		// Header
+		StringBuilder sbtop = new StringBuilder();
+		sbtop.append("['Item de Configuração','Total'],");
 
-		render(lista, estat, evolucao);
+		// Values
+		for (Iterator<String[]> itop = listaTop.iterator(); itop.hasNext();) {
+			Object[] obj = (Object[]) itop.next();
+			String itensconf = (String) obj[0];
+			Long total = (Long) obj[1];
+			sbtop.append("['");
+			sbtop.append(itensconf);
+			sbtop.append("',");
+			sbtop.append(total.toString());
+			sbtop.append(",");
+			sbtop.append("],");
+		}
+		
+		String top10 = sbtop.toString();
+		
+		List<SrSolicitacao> lstgut = SrSolicitacao.all().fetch();
+		
+		List<String[]> listaGUT = SrSolicitacao.find(
+				"select sol.gravidade, sol.urgencia, count(*) " +
+				"from SrSolicitacao sol, SrAndamento andamento " +
+				"where sol.idSolicitacao = andamento.solicitacao " +
+				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
+				"group by sol.gravidade, sol.urgencia").fetch(); 
+		
+		// Header
+		StringBuilder sbGUT = new StringBuilder();
+		sbGUT.append("['Gravidade','Urgência','Total'],");
+
+		// Values
+		for (Iterator<String[]> itgut = listaGUT.iterator(); itgut.hasNext();) {
+			Object[] obj = (Object[]) itgut.next();
+			SrGravidade gravidade = (SrGravidade) obj[0];
+			SrUrgencia urgencia = (SrUrgencia) obj[1];
+			Long total = (Long) obj[2];
+			sbGUT.append("['");
+			sbGUT.append(gravidade.descrGravidade.toString());
+			sbGUT.append("','");
+			sbGUT.append(urgencia.descrUrgencia.toString());
+			sbGUT.append("',");
+			sbGUT.append(total.toString());
+			sbGUT.append(",");
+			sbGUT.append("],");
+		}
+		
+		String gut = sbGUT.toString();
+
+		//render(lista, estat, evolucao, top10, gut);
+		render(lista, evolucao, top10);
 	}
 	
 	public static void exibir(Long id, boolean considerarCancelados) throws Exception {
@@ -431,7 +441,7 @@ public class Application extends SigaApplication {
 
 	public static void andamento(SrAndamento andamento) throws Exception {
 		andamento.solicitacao.darAndamento(andamento, cadastrante(),
-				lotaTitular());
+				lotaTitular(), andamento.getnumSequencia());
 		Long id = andamento.solicitacao.idSolicitacao;
 		exibir(id, false);
 	}
@@ -658,24 +668,59 @@ public class Application extends SigaApplication {
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 	
-	public static void relFormularios(String lotacaoDestinatarioSelSigla, String dataInicial, String dataFinal) throws Exception {
+	public static void relSolicitacoes () throws Exception {
+		assertAcesso("REL:Relatorio");
+		
+		render();
+	}
+	
+	public static void relTransferencias (SrSolicitacao solicitacao) throws Exception {
+		assertAcesso("REL:Relatorio");
+		
+		render();
+	}
+	
+	public static void grelSolicitacoes(String secaoUsuario, String lotacao, String situacao, String dtIni, String dtFim) throws Exception {
 
-		//assertAcesso("ADM:Administrar");
+		assertAcesso("REL:Relatorio");
 
 		Map<String, String> parametros = new HashMap<String, String>(); 
-		
-		parametros.put("lotacao", lotacaoDestinatarioSelSigla);
-		parametros.put("dataInicial", dataInicial);
-		parametros.put("dataFinal", dataFinal);
+	
+		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("lotacao", lotacao);
+		parametros.put("situacao", situacao);
+		parametros.put("dtIni", dtIni);
+		parametros.put("dtFim", dtFim);
 
-		SrRelatorioModelos rel = new SrRelatorioModelos(parametros);
+		SrRelSolicitacoes rel = new SrRelSolicitacoes(parametros);
 
 		rel.gerar();
 		
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 		
-		renderBinary(is, "Relatório de Modelos", pdf.length, "application/pdf", false);
+		renderBinary(is, "Relatório de Solicitações", pdf.length, "application/pdf", false);
+	}
+	
+	public static void grelTransferencias(String secaoUsuario, String lotacao, String dtIni, String dtFim) throws Exception {
+
+		assertAcesso("REL:Relatorio");
+
+		Map<String, String> parametros = new HashMap<String, String>(); 
+	
+		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("lotacao", lotacao);
+		parametros.put("dtIni", dtIni);
+		parametros.put("dtFim", dtFim);
+
+		SrRelTransferencias rel = new SrRelTransferencias(parametros);
+
+		rel.gerar();
+		
+		byte[] pdf = rel.getRelatorioPDF();
+		InputStream is = new ByteArrayInputStream(pdf);
+		
+		renderBinary(is, "Relatório de Transferências", pdf.length, "application/pdf", false);
 	}
 	
 	private static Map<String, Object> map = new HashMap<String, Object>();

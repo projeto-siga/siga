@@ -693,7 +693,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
-				&& !mob.isApensado()
 				&& !mob.isEmTransito()
 				&& !mob.doc().isSemEfeito()
 				&& getConf()
@@ -1893,6 +1892,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return (mob.getExDocumento().getDtFechamento() != null)
 				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO)				
+				&& !mob.isEmTransito()
 				&& podeMovimentar;
 
 	}
@@ -2340,7 +2340,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEncerrado()
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
-				&& mob.doc().isAssinado()
+				&& ((!mob.doc().isEletronico() && mob.doc().isAssinado()) 
+						|| (mob.doc().isEletronico() && mob.doc().isAssinadoEletronicoPorTodosOsSignatarios()))
 				&& !mob.isJuntado()
 				&& !mob.isApensado()
 				&& !mob.isArquivado()
@@ -3224,6 +3225,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 
-		return (!mob.isGeral() && mob.doc().isExpediente() && mob.doc().isAssinado() && podeMovimentar);
+		return (!mob.isGeral() && mob.doc().isExpediente() && mob.doc().isAssinado() && !mob.isEmTransito() && podeMovimentar);
 	}	
 }

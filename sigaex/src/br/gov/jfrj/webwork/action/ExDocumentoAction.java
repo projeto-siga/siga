@@ -53,7 +53,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.stat.EntityStatistics;
@@ -283,6 +282,8 @@ public class ExDocumentoAction extends ExActionSupport {
 	private Long idMobilAutuado;
 	
 	private boolean autuando;
+	
+	private String descrMov;
 
 	public boolean isCriandoAnexo() {
 		return criandoAnexo;
@@ -1474,6 +1475,14 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public String aTornarDocumentoSemEfeito() throws Exception {
 		buscarDocumento(true);
+		return Action.SUCCESS;
+	}
+	
+	public String aTornarDocumentoSemEfeitoGravar() throws Exception {
+		if (getDescrMov()==null || getDescrMov().trim().length()==0){
+			throw new AplicacaoException("O preenchimento do campo MOTIVO é obrigatório!");
+		}
+		buscarDocumento(true);
 		if (!Ex.getInstance()
 				.getComp()
 				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(),
@@ -1484,12 +1493,13 @@ public class ExDocumentoAction extends ExActionSupport {
 			Ex.getInstance()
 					.getBL()
 					.TornarDocumentoSemEfeito(getCadastrante(),
-							getLotaTitular(), doc);
+							getLotaTitular(), doc,getDescrMov());
 		} catch (final Exception e) {
 			throw e;
 		}
 		return Action.SUCCESS;
 	}
+
 
 	private void carregarBeans() throws Exception {
 		ExMobil mobPai = null;
@@ -1978,7 +1988,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					false);
 		}
 
-		if (getIdMod() != null) {
+		if (getIdMod() != null && getIdMod() != 0) {
 			exMod = dao().consultar(getIdMod(), ExModelo.class, false);
 		}
 
@@ -2108,7 +2118,8 @@ public class ExDocumentoAction extends ExActionSupport {
 			return preenchSet;
 
 		ExPreenchimento preench = new ExPreenchimento();
-		preench.setExModelo(dao().consultar(getIdMod(), ExModelo.class, false));
+		if(getIdMod() != null && getIdMod() != 0L)
+			preench.setExModelo(dao().consultar(getIdMod(), ExModelo.class, false));
 
 		DpLotacao lota = new DpLotacao();
 		lota.setIdLotacaoIni(getLotaTitular().getIdLotacaoIni());
@@ -2116,9 +2127,11 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		preenchSet.add(new ExPreenchimento(0, null, " [Em branco] ", null));
 
-		for (DpLotacao lotacao : lotacaoSet) {
-			preench.setDpLotacao(lotacao);
-			preenchSet.addAll(dao().consultar(preench));
+		if(getIdMod() != null && getIdMod() != 0) {
+			for (DpLotacao lotacao : lotacaoSet) {
+				preench.setDpLotacao(lotacao);
+				preenchSet.addAll(dao().consultar(preench));
+			}
 		}
 
 		return preenchSet;
@@ -2804,6 +2817,14 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public void setPdfStreamResult(InputStream pdfStreamResult) {
 		PdfStreamResult = pdfStreamResult;
+	}
+
+	public String getDescrMov() {
+		return descrMov;
+	}
+	
+	public void setDescrMov(String descrMov) {
+		this.descrMov = descrMov;
 	}
 
 }

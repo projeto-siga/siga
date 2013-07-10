@@ -7,47 +7,10 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
-<siga:pagina titulo="Documento">
+<siga:pagina titulo="Documento" onLoad="vbscript: TestCAPICOM">
 
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
-	</c:if>
-
-	<c:if
-		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-		<script language="VBScript">
-Function assinar()
-	Dim Assinatura
-	Dim Configuracao
-	On Error Resume Next
-	Set Configuracao = CreateObject("CAPICOM.Settings")
-	Configuracao.EnablePromptForCertificateUI = True
-	Set Assinatura = CreateObject("CAPICOM.SignedData")
-	Set Util = CreateObject("CAPICOM.Utilities")
-	If Erro Then Exit Function
-	Assinatura.Content = Util.Base64Decode(frm.conteudo_b64.value)
-	frm.assinaturaB64.value = Assinatura.Sign(Nothing, True, 0)
-	If Erro Then Exit Function
-	Dim Assinante
-	Assinante = Assinatura.Signers(1).Certificate.SubjectName
-	Assinante = Split(Assinante, "CN=")(1)
-	Assinante = Split(Assinante, ",")(0)
-	frm.assinante.value = Assinante
-	frm.conteudo_b64.value = ""
-	If Erro Then Exit Function
-	frm.Submit()
-End Function
-
-Function Erro() 
-	If Err.Number <> 0 then
-		MsgBox "Ocorreu um erro durante o processo de assinatura: " & Err.Description
-		Err.Clear
-		Erro = True
-	Else
-		Erro = False
-	End If
-End Function
-</script>
 	</c:if>
 
 	<div class="gt-bd" style="padding-bottom: 0px;">
@@ -85,34 +48,44 @@ End Function
 			</div>
 
 			<c:set var="acao" value="assinar_gravar" />
-			<div class="gt-form-row gt-width-100" style="padding-top:10px;">
-					<ww:form name="frm" id="frm" action="${acao}"
-						namespace="/expediente/mov" theme="simple" validate="false"
-						method="POST">
-						<ww:hidden name="sigla" value="${sigla}" />
-						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-							<ww:hidden name="conteudo_b64" value="${doc.conteudoBlobPdfB64}" />
-							<ww:hidden name="assinaturaB64" />
-							<ww:hidden name="assinante" />
-							<input type="button" value="Assinar" onclick="vbscript: assinar"
-								class="gt-btn-alternate-large gt-btn-left" />
-						</c:if>
-					</ww:form>
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-						<ww:hidden name="pdfchk_${doc.idDoc}" value="${sigla}" />
-						<ww:hidden name="urlchk_${doc.idDoc}"
-							value="doc/${doc.codigoCompacto}.pdf" />
-						<c:set var="jspServer"
-							value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action" />
-						<c:set var="nextURL"
-							value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}" />
-						<c:set var="urlPath" value="/${request.contextPath}/expediente" />
+			<div class="gt-form-row gt-width-100" style="padding-top: 10px;">
+				<div id="dados-assinatura" style="visible: hidden">
+					<ww:hidden id="pdfchk_0" name="pdfchk_${doc.idDoc}"
+						value="${sigla}" />
+					<ww:hidden id="urlchk_0" name="urlchk_${doc.idDoc}"
+						value="doc/${doc.codigoCompacto}.pdf" />
+					<c:set var="jspServer"
+						value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/assinar_gravar.action" />
+					<c:set var="nextURL"
+						value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}" />
+					<c:set var="urlPath" value="/${request.contextPath}/expediente" />
 
-						<c:set var="botao" value="" />
-						<c:set var="lote" value="false" />
+					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
+					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
+					<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
+					<c:set var="urlBase"
+						value="${request.scheme}://${request.serverName}:${request.localPort}" />
+					<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
+
+					<c:set var="botao" value="" />
+					<c:set var="lote" value="false" />
+				</div>
 				
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+					<c:import url="/paginas/expediente/inc_assina_vbs.jsp" />
+					<!--[if IE]>
+					<div id="capicom-div">
+					<a id="bot-assinar" href="#" onclick="vbscript: AssinarDocumentos 'false', Me"
+						class="gt-btn-alternate-large gt-btn-left">Assinar Documento</a>
+					</div>
+					<![endif]-->
+					<![if !IE]><p>A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p><![endif]>
+					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+				</c:if>
+
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
 				</c:if>
 			</div>

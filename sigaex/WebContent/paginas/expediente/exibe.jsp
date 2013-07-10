@@ -60,7 +60,7 @@
 							</ww:url>
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 								pre="${acao.pre}" pos="${acao.pos}" url="${url}" test="${true}"
-								popup="${acao.popup}" confirm="${acao.msgConfirmacao}" />
+								popup="${acao.popup}" confirm="${acao.msgConfirmacao}" classe="${acao.classe}" />
 						</c:forEach>
 					</siga:links>
 				</c:if>
@@ -183,7 +183,7 @@
 										<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 											pos="${acao.pos}" url="${url}" test="${true}"
 											popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
-											ajax="${acao.ajax}" idAjax="${mov.idMov}" />
+											ajax="${acao.ajax}" idAjax="${mov.idMov}" classe="${acao.classe}" />
 										<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
 									<c:set var="assinadopor" value="${false}" />
 										</c:if>

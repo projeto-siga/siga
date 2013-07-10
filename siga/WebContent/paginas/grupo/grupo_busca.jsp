@@ -47,7 +47,7 @@ function sbmt(offset) {
 			<td width="10%" align="center"><a
 				href="javascript: opener.retorna_${param.propriedade}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
 			<td width="70%" align="left">${item.descricao}</td>
-			<td align="left" width="20%">${item.dataFimGrupo}</td>
+			<td align="left" width="20%">${item.hisDtFim}</td>
 		</tr>
 	</siga:paginador>
 </table>

@@ -12,6 +12,7 @@
 <%@ attribute name="confirm"%>
 <%@ attribute name="ajax"%>
 <%@ attribute name="idAjax"%>
+<%@ attribute name="classe"%>
 
 <c:if test="${not empty confirm}">
 	<c:set var="linkConfirm" value="if (confirm('${confirm}')) " />
@@ -35,21 +36,21 @@
 	<c:if test="${not empty url}">
 		<c:choose>
 			<c:when test="${not empty popup and popup != false}">
-				<a class="once" href="javascript:${linkConfirm}popitup('${url}');">${img}${title}</a>
+				<a class="${classe}" href="javascript:${linkConfirm}popitup('${url}');">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
 				<span id="spanAjax_${idAjax}"> 
-					<a class="once" href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${img}${title}</a>
+					<a class="${classe}" href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${img}${title}</a>
 				</span>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
-						<a class="once"
+						<a class="${classe}"
 							href="javascript:${linkConfirm}location.href='${url}';">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a class="once" href="${url}">${img}${title}</a>
+						<a class="${classe}" href="${url}">${img}${title}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

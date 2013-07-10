@@ -695,30 +695,12 @@ public class Application extends SigaApplication {
 				+ paramString);
 	}
 
-	@Catch(value = Throwable.class, priority = 1)
-	public static void catchError(Throwable throwable) {
-		if (Play.mode.isDev())
-			return;
-		// Flash.current().clear();
-		// Flash.current().put("_cabecalho_pre",
-		// renderArgs.get("_cabecalho_pre"));
-		// Flash.current().put("_cabecalho_pos",
-		// renderArgs.get("_cabecalho_pos"));
-		// Flash.current().put("_rodape", renderArgs.get("_rodape"));
-		java.io.StringWriter sw = new java.io.StringWriter();
-		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-		throwable.printStackTrace(pw);
-		String stackTrace = sw.toString();
-		erro(throwable.getMessage(), stackTrace);
-	}
-
-	public static void erro(String message, String stackTrace) {
-		render(message, stackTrace);
-	}
-
 	protected static void assertAcesso(String path) throws Exception {
 		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
 				+ path);
+	}
+	public static void erro(String message, String stackTrace) {
+		render(message, stackTrace);
 	}
 
 }

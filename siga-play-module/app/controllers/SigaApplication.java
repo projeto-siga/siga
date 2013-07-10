@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import play.Logger;
 import play.Play;
 import play.db.jpa.JPA;
+import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
@@ -153,5 +154,31 @@ public class SigaApplication extends Controller {
 		return "http://" + Play.configuration.getProperty("servidor.principal")
 				+ ":8080/siga";
 	}
-
+	
+	@Catch(value = Throwable.class, priority = 1)
+	public static void catchError(Throwable throwable) {
+		if (Play.mode.isDev())
+			return;
+		
+		// Flash.current().clear();
+		// Flash.current().put("_cabecalho_pre",
+		// renderArgs.get("_cabecalho_pre"));
+		// Flash.current().put("_cabecalho_pos",
+		// renderArgs.get("_cabecalho_pos"));
+		// Flash.current().put("_rodape", renderArgs.get("_rodape"));
+		while(throwable.getMessage() == null && throwable.getCause() != null)
+			throwable = throwable.getCause();
+		java.io.StringWriter sw = new java.io.StringWriter();
+		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+		throwable.printStackTrace(pw);
+		String stackTrace = sw.toString();
+		String message = throwable.getMessage();
+		if (message == null)
+			message = "Nenhuma informação disponível.";
+		erro(message, stackTrace);
+	}
+	
+	public static void erro(String message, String stackTrace) {
+		render(message, stackTrace);
+	}
 }

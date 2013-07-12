@@ -121,26 +121,34 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 	
 	public String getLotaPublicacao() {
-		Map<String, String> atributosXML = new HashMap<String, String>();
-	    
+		Map<String, String> atributosXML = new HashMap<String, String>();	    
 		try{		
-		atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoXmlString("boletimadm"));
+			String xmlString = this.getConteudoXmlString("boletimadm");
+			if (xmlString != null){
+				atributosXML = PublicacaoDJEBL.lerXMLPublicacao(xmlString);
+				return atributosXML.get("UNIDADE");
+			}			
+			return PublicacaoDJEBL.obterUnidadeDocumento(this.getExDocumento());
 		}catch (Exception e){
-			throw new AplicacaoException(
-			"Erro na leitura do arquivo XML (lotação de publicação)",0,e);
+			return "Erro na leitura do arquivo XML (lotação de publicação)";
+			
 		}
-		return atributosXML.get("UNIDADE");
+		
 	}
 	
 	public String getDescrPublicacao() {
 		Map<String, String> atributosXML = new HashMap<String, String>();
 		try{
-		atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoXmlString("boletimadm"));
+			String xmlString = this.getConteudoXmlString("boletimadm");
+			if (xmlString != null){
+				atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoXmlString("boletimadm"));
+				return atributosXML.get("DESCREXPEDIENTE");
+			}
+			return this.getExDocumento().getDescrDocumento();	
 		}catch (Exception e){
-			throw new AplicacaoException(
-			"Erro na leitura do arquivo XML (descrição de publicação)",0,e);
+			return "Erro na leitura do arquivo XML (descrição de publicação)";
 		}
-		return atributosXML.get("DESCREXPEDIENTE");
+		
 	}
 
 	@Field(name = "idTpMov", store = Store.COMPRESS)
@@ -500,7 +508,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public String getConteudoXmlString(String nome) throws UnsupportedEncodingException {
-		return new String(this.getConteudoBlobXML(nome),"ISO-8859-1");		
+		
+		byte[] xmlByte = this.getConteudoBlobXML(nome);
+		if(xmlByte != null)
+			return new String(xmlByte,"ISO-8859-1");
+		
+		return null;		
 	}
 	
 	public byte[] getConteudoBlobRTF() {

@@ -34,6 +34,7 @@ import play.mvc.Before;
 import play.mvc.Catch;
 import reports.SrRelLocal;
 import reports.SrRelPrazo;
+import reports.SrRelPrazoDetail;
 import reports.SrRelSolicitacoes;
 import reports.SrRelTransferencias;
 import util.SrSolicitacaoAtendidos;
@@ -717,6 +718,18 @@ public class Application extends SigaApplication {
 	}
 	
 	
+	public static void relPrazoDetail () throws Exception {
+		assertAcesso("REL:Relatorio");
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		locais = JPA
+					.em()
+					.createQuery(
+						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+						+ lotaTitular().getOrgaoUsuario().getIdOrgaoUsu()).getResultList();
+		render(locais);
+	}
+	
+	
 	public static void grelSolicitacoes(String secaoUsuario, String lotacao, String situacao, String dtIni, String dtFim) throws Exception {
 
 		assertAcesso("REL:Relatorio");
@@ -802,6 +815,28 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 		
 		renderBinary(is, "Relatório de Prazos", pdf.length, "application/pdf", false);
+	}
+	
+	public static void grelPrazoDetail(String secaoUsuario, String lotacao, String local, String dtIni, String dtFim) throws Exception {
+
+		assertAcesso("REL:Relatorio");
+
+		Map<String, String> parametros = new HashMap<String, String>(); 
+	
+		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("lotacao", lotacao);
+		parametros.put("local", local);
+		parametros.put("dtIni", dtIni);
+		parametros.put("dtFim", dtFim);
+
+		SrRelPrazoDetail rel = new SrRelPrazoDetail(parametros);
+
+		rel.gerar();
+		
+		byte[] pdf = rel.getRelatorioPDF();
+		InputStream is = new ByteArrayInputStream(pdf);
+		
+		renderBinary(is, "Relatório Detalhado de Prazos", pdf.length, "application/pdf", false);
 	}
 		
 	private static Map<String, Object> map = new HashMap<String, Object>();

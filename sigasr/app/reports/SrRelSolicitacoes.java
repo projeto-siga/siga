@@ -105,8 +105,8 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 					"and andam.idAndamento = (select max(idAndamento) from SrAndamento where solicitacao=andam.solicitacao and " +
 					"lotaAtendente = andam.lotaAtendente) " +
 					"and andam.estado = " + parametros.get("situacao") + " " +
-					"and sol.dtReg >= to_date('" + parametros.get("dataInicial") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-					"and sol.dtReg <= to_date('" + parametros.get("dataFinal") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
+					"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
+					"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
 					"order by andam.estado").fetch();
 
 					Iterator it = lista.listIterator(); 

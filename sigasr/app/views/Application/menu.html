@@ -21,7 +21,10 @@
 <li><a href="@{Application.relSolicitacoes}">Relatório de Solicitações</a></li>
 <li><a href="@{Application.relTransferencias}">Relatório de Transferências</a></li>
 <li><a href="@{Application.relLocal}">Relatório Solicitações por Localidade</a></li>
-<li><a href="@{Application.relPrazo}">Relatório de Prazos</a></li>
+<li><a href="#">Relatório de Prazos</a>
+	<ul><a href="@{Application.relPrazoDetail}">Prazos por solicitações</a>
+	<a href="@{Application.relPrazo}">Totalizações</a></ul>
+</li>
 </ul>
 </li>
 #{/if}

@@ -3,7 +3,7 @@
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form id="grelprazo" action="@{Application.grelPrazo}" method="GET">
+		<form id="grelprazo" action="@{Application.grelPrazo}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100">
 		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 		
 			<table class="gt-form-table">
@@ -19,7 +19,12 @@
 					</tr>
 					<tr>
 						<td>Local (Solicitante)</td>
-						<td> #{select name:'local', items:locais, valueProperty:'idComplexo', labelProperty:'nomeComplexo', value:local?.idComplexo /} </td>	
+						<td>#{select name:'local', items:locais, labelProperty:'nomeComplexo', 
+						valueProperty:'idComplexo', 
+						value:filtro?.local?.idComplexo} 
+    					#{option 0}Todos#{/option}
+						#{/select}
+						</td> 
 					</tr>
 		   			<tr>
 						<td>Data Inicial</td>
@@ -34,9 +39,7 @@
 					</tr>
 					<tr>
 							<td colspan="2"><input type="submit"
-								onclick="javascript:  if (isCarregando()) return false; carrega();"
-								class="gt-btn-medium gt-btn-left" value="Gerar"></td>
-    					
+							class="gt-btn-medium gt-btn-left" value="Gerar"></td>
 					</tr>
 					</tbody>
 					

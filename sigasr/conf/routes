@@ -35,6 +35,8 @@ GET     /public/                                staticDir:public
 *		/solicitacao/relLocal/gerar  		Application.grelLocal
 *		/solicitacao/relPrazo		 		Application.relPrazo
 *		/solicitacao/relPrazo/gerar  		Application.grelPrazo
+*		/solicitacao/relPrazoDetail		 	Application.relPrazo
+*		/solicitacao/relPrazoDetail/gerar  	Application.grelPrazoDetail
 *		/solicitacao/estatistica			Application.estatistica
 
 

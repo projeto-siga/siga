@@ -18,13 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -35,13 +31,12 @@ import java.util.Set;
 import net.sf.jasperreports.engine.JRException;
 
 import org.hibernate.Query;
-import org.hibernate.Transaction;
+
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
-import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -49,12 +44,7 @@ import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.vo.DuracaoVO;
-import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
-import br.gov.jfrj.siga.ex.vo.ExMobilVO;
-import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
@@ -246,13 +236,6 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 			
 			long identificador = movimentacao.getExMobil().getId();
 			datatual = System.currentTimeMillis();
-			/*Query query = HibernateUtil
-			.getSessao()
-			.createQuery("select mov from ExMovimentacao mov " +
-					"where mov.dtMov = (select max(dtMov) from ExMovimentacao where " +
-					"exMobil = " 
-					+ identificador
-					+ " and exTipoMovimentacao in (3,8))");*/
 			movimentacao.getExMobil().getId();
 			if ((mob.getUltimaMovimentacao(3) == null) || (mob.getUltimaMovimentacao(8) == null)) {
 				dataant = mob.getUltimaMovimentacao(1).getData().getTime();
@@ -270,24 +253,6 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 				}
 					
 			}
-			/*query.list().size();
-			if ( query.list().size() < 1) {
-				Query qini = HibernateUtil
-				.getSessao()
-				.createQuery("select mov from ExMovimentacao mov " +
-						"where mov.dtMov = (select max(dtMov) from ExMovimentacao where " +
-						"exMobil = " 
-						+ identificador
-						+ " and exTipoMovimentacao = 1)");
-				ExMovimentacao movimento = (ExMovimentacao) qini.list().get(0);
-				dataant = movimento.getData().getTime(); 
-				durentrelots = (((datatual - dataant)/86400000L)+1);
-			}
-			else {
-				ExMovimentacao movim = (ExMovimentacao) query.list().get(0);
-				dataant = movim.getData().getTime(); 
-				durentrelots = (((datatual - dataant)/86400000L)+1);
-			}*/
 			mob.getUltimaMovimentacao(28);
 			listaFinal.add(nomeLotacao);
 			listaFinal.add(codigoMobil);

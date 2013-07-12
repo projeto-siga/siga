@@ -36,6 +36,9 @@ public class RelOrgao extends RelatorioTemplate {
 		if (parametros.get("orgao") == null) {
 			throw new DJBuilderException("Parâmetro órgão não informado!");
 		}
+		//if (parametros.get("lotacao") == null) {
+		//	throw new DJBuilderException("Parâmetro órgão não informado!");
+		//}
 		if (parametros.get("dataInicial") == null) {
 			throw new DJBuilderException("Parâmetro dataInicial não informado!");
 		}
@@ -72,12 +75,57 @@ public class RelOrgao extends RelatorioTemplate {
 
 		List<String> d = new ArrayList<String>();
 
+		if (parametros.get("lotacao").equals("")) {
+			Query query = HibernateUtil
+			.getSessao()
+			.createQuery( "select mov.lotaCadastrante.siglaLotacao, mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
+							+ "mov.exTipoMovimentacao.descrTipoMovimentacao, count(distinct mob.idMobil.exDocumento.idDoc) "
+							+ "from ExMovimentacao mov inner join mov.exMobil mob "
+							+ "where mov.lotaCadastrante.orgaoUsuario.idOrgaoUsu = :orgaoUsu " 
+							+ "and mov.exTipoMovimentacao in (3,6,4) "
+							+ "and mov.exMovimentacaoCanceladora is null "
+							+ "and mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc in (1,2) "
+							+ "and mov.dtIniMov between :dtini and :dtfim " 
+							+ "group by mov.lotaCadastrante.siglaLotacao, " 
+							+ "mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, " 
+							+ "mov.exTipoMovimentacao.descrTipoMovimentacao");
+			Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
+			query.setLong("orgaoUsu", orgaoUsu);
+			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
+			query.setDate("dtini", dtini);
+			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
+			query.setDate("dtfim", dtfim);
+
+			SortedSet<String> set = new TreeSet<String>();
+			TreeMap<String, Long> map = new TreeMap<String, Long>();
+
+			Iterator it = query.list().iterator();
+			while (it.hasNext()) {
+				Object[] obj = (Object[]) it.next();
+				String lotacao = (String) obj[0];
+				String tipodoc = (String) obj[1];
+				String tipomov = (String) obj[2];
+				Long totaldesp = Long.valueOf(obj[3].toString());
+				set.add(lotacao);
+				map.put(chave(lotacao, tipodoc, tipomov), totaldesp);
+			}
+			for (String s : set) {
+				d.add(s);
+				acrescentarColuna(d, map, s, "Expediente", "Recebimento");
+				acrescentarColuna(d, map, s, "Expediente", "Transferência"); 
+				acrescentarColuna(d, map, s, "Processo Administrativo",
+				"Recebimento");
+				acrescentarColuna(d, map, s, "Processo Administrativo",
+						"Transferência");
+			}
+		} else {
 		Query query = HibernateUtil
 		.getSessao()
 		.createQuery( "select mov.lotaCadastrante.siglaLotacao, mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
 						+ "mov.exTipoMovimentacao.descrTipoMovimentacao, count(distinct mob.idMobil.exDocumento.idDoc) "
 						+ "from ExMovimentacao mov inner join mov.exMobil mob "
-						+ "where mov.lotaCadastrante.orgaoUsuario.idOrgaoUsu = :orgaoUsu "
+						+ "where mov.lotaCadastrante.orgaoUsuario.idOrgaoUsu = :orgaoUsu " 
+						+ "and mov.lotaCadastrante.idLotacao = :lotacaodest "
 						+ "and mov.exTipoMovimentacao in (3,6,4) "
 						+ "and mov.exMovimentacaoCanceladora is null "
 						+ "and mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc in (1,2) "
@@ -85,17 +133,17 @@ public class RelOrgao extends RelatorioTemplate {
 						+ "group by mov.lotaCadastrante.siglaLotacao, " 
 						+ "mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, " 
 						+ "mov.exTipoMovimentacao.descrTipoMovimentacao");
-
-
 		Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
 		query.setLong("orgaoUsu", orgaoUsu);
+		Long lotacaodest = Long.valueOf((String) parametros.get("lotacao"));
+		query.setLong("lotacaodest", lotacaodest);
 		Date dtini = formatter.parse((String) parametros.get("dataInicial"));
 		query.setDate("dtini", dtini);
 		Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
 		query.setDate("dtfim", dtfim);
 
 		SortedSet<String> set = new TreeSet<String>();
-		Map<String, Long> map = new TreeMap<String, Long>();
+		TreeMap<String, Long> map = new TreeMap<String, Long>();
 
 		Iterator it = query.list().iterator();
 		while (it.hasNext()) {
@@ -116,6 +164,11 @@ public class RelOrgao extends RelatorioTemplate {
 			acrescentarColuna(d, map, s, "Processo Administrativo",
 					"Transferência");
 		}
+
+		}
+		
+	
+
 		return d;
 	}
 

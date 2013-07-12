@@ -24,6 +24,12 @@ function sbmt() {
 		headerKey="0" headerValue="" />
 	</td>
 
+<tr>
+	<td width="15%">Lotação:</td>
+	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" /></td>
+</tr>
+
+
 <input type="hidden" name="lotacao" value="${lotacaoDestinatarioSel.id}" />
 <input type="hidden" name="siglalotacao"
 	value="${lotacaoDestinatarioSel.sigla}" />

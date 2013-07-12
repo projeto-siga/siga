@@ -9,11 +9,15 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="Movimentação" onLoad="vbscript: TestCAPICOM">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
 </c:if>
+	<c:if
+		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+		<c:import url="/paginas/expediente/inc_assina_vbs.jsp" />
+	</c:if>
 
 	<script type="text/javascript" language="Javascript1.1">
 		var frm = document.getElementById('frm');
@@ -264,15 +268,37 @@
 				</ww:form>
 		    </div>			
 		    <br/>
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+			<div id="dados-assinatura" style="visible: hidden">
 				<c:set var="jspServer"
 				       value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 				<c:set var="nextURL"
 					   value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
-			    <c:set var="urlPath" value="/${request.contextPath}" />						
+			    <c:set var="urlPath" value="/${request.contextPath}" />
+			    
+	    		<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
+				<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
+				<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
+				<c:set var="urlBase"
+					value="${request.scheme}://${request.serverName}:${request.localPort}" />
+				<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
+			    						
 			    <c:set var="botao" value="ambos" />
-			    <c:set var="lote" value="true" />			
-					    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						
+			    <c:set var="lote" value="true" />
+			</div>			
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+				<!--[if IE]>
+					<div id="capicom-div">
+						<a id="bot-conferir" href="#" onclick="vbscript: AssinarDocumentos 'true', Me" class="gt-btn-alternate-large gt-btn-left">Conferir Cópia em Lote</a> 
+						<a id="bot-assinar" href="#" onclick="vbscript: AssinarDocumentos 'false', Me" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
+					</div> 
+				<![endif]-->
+				<![if !IE]><p>A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p><![endif]>
+				<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+			</c:if>
+		    
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+			    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						
 			</c:if>
 		</div>				   	
 	    </ww:if>

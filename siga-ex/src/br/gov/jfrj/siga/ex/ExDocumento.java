@@ -376,24 +376,28 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		sHtml = pr.marcarReferencias(sHtml);
 		
 		//Verifica se todos os subscritores assinaram o documento
-	 	for (DpPessoa subscritor : getSubscritorECosignatarios()) {
-	 		if(isEletronico() && getDtFechamento() != null && !jaAssinadoPor(subscritor)) {
-	 			String comentarioInicio = "<!-- INICIO SUBSCRITOR " + subscritor.getId() + " -->";
-	 			String comentarioFim = "<!-- FIM SUBSCRITOR " + subscritor.getId() + " -->";
-	 			
-	 			if(sHtml.contains(comentarioInicio) && sHtml.contains(comentarioFim)) {
-		 			String blocoSubscritor = sHtml.substring(sHtml.indexOf(comentarioInicio) + comentarioInicio.length(),
-		 					sHtml.indexOf(comentarioFim));
+		try {
+		 	for (DpPessoa subscritor : getSubscritorECosignatarios()) {
+		 		if(isEletronico() && getDtFechamento() != null && !jaAssinadoPor(subscritor)) {
+		 			String comentarioInicio = "<!-- INICIO SUBSCRITOR " + subscritor.getId() + " -->";
+		 			String comentarioFim = "<!-- FIM SUBSCRITOR " + subscritor.getId() + " -->";
 		 			
-		 			StringBuilder sb = new StringBuilder();
-		 			sb.append("<span style=\"color:#CD3700;\">");
-		 			sb.append(blocoSubscritor);
-		 			sb.append("</span>");
-		 			
-		 			sHtml = sHtml.replace(blocoSubscritor, sb).toString();
-	 			}
-	 		}
-		} 
+		 			if(sHtml.contains(comentarioInicio) && sHtml.contains(comentarioFim)) {
+			 			String blocoSubscritor = sHtml.substring(sHtml.indexOf(comentarioInicio) + comentarioInicio.length(),
+			 					sHtml.indexOf(comentarioFim));
+			 			
+			 			StringBuilder sb = new StringBuilder();
+			 			sb.append("<span style=\"color:#CD3700;\">");
+			 			sb.append(blocoSubscritor);
+			 			sb.append("</span>");
+			 			
+			 			sHtml = sHtml.replace(blocoSubscritor, sb).toString();
+		 			}
+		 		}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		
 		return sHtml;
 	}

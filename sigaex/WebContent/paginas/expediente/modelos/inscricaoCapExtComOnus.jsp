@@ -5,13 +5,6 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
-<!-- Este formulário já estava quase pronto, comecei a alterá-lo no dia 14/02/2011, para que seja aproveitado no work flow. Comentei vários trechos do código anterior (Rj13939) -->
-
-
-<!-- este modelo trata de
-SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
-
-
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo
@@ -30,7 +23,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 				<mod:grupo>
 					<mod:texto titulo="Ação de capacitação (Título)" largura="40"
 						var="capacit_tit" />
-					<!-- <mod:texto titulo="CT Nº" largura="20" var="ct_nr" /> -->
 				</mod:grupo>
 				<mod:grupo>
 				</mod:grupo>
@@ -41,27 +33,7 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 					<mod:selecao titulo="UF" var="uf"
 						opcoes="&nbsp;;AC;AL;AP;AM;BA;CE;DF;ES;GO;MA;MT;MS;MG;PA;PB;PR;PE;PI;RJ;RR;RO;RN;RS;SC;SP;SE;TO" />
 				</mod:grupo>
-				<!-- Mudei este trecho de lugar, para seguir a ordem do formulário.
 				<mod:grupo>
-					<mod:selecao titulo="Solicitação dentro do prazo" opcoes="sim;não"
-						var="solicitacao" reler="sim" />
-					<c:if test="${solicitacao=='não'}">
-						<mod:grupo>
-							<mod:memo colunas="55" linhas="2" titulo="Justifique" var="obs" />
-						</mod:grupo>
-					</c:if>
-				</mod:grupo>
-				RJ939
-				 -->
-				<mod:grupo>
-					<!-- 
-					<mod:texto titulo="Cidade/UF" largura="40" var="cidade_uf"/> 
-					-->
-					<!-- 	<mod:grupo>
-						<mod:selecao titulo="Prospecto anexo" var="prospecto_anexo"
-							opcoes="sim;não" />
-					</mod:grupo> -->
-				
 					<mod:grupo
 						titulo="Valor&nbsp;&nbsp; (Caso a ação não tenha ônus, deixe estes campos em branco)">
 						<mod:monetario titulo="Valor unitário" largura="12"
@@ -89,21 +61,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 
 				<mod:texto titulo="CPF:" largura="16" maxcaracteres="14" var="cpf" />
 			</mod:grupo>
-
-			<!--  
-				<mod:selecao
-					titulo="Numero de indicações a serem preenchidas para esta ação de 
-				capacitação"
-					var="indicacoes" reler="ajax" idAjax="indicacaoAjax" opcoes="1;2;3" /> -->
-
-
-
-			<!-- Não entendi o porquê do teste abaixo, pois há um número limitado de opções RJ939
-					<c:if test="${indicacoes>999}">
-						<mod:mensagem texto="Digite um numero menor que 1000"
-							vermelho="sim" />
-					</c:if>-->
-
 			<mod:grupo depende="precounitajax;precototalajax">
 				<c:if
 					test="${conv:monetarioParaFloat(valor_prospectoUnit) > 0 or conv:monetarioParaFloat(valor_prospectoTotal) > 0}">
@@ -127,12 +84,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 								<mod:texto titulo="Instituição/Consultor"
 									var="institucao_consultor_indic${i}" />
 							</mod:grupo>
-							<!--  
-								<mod:grupo>
-									<mod:texto titulo="Carga horária" largura="10"
-										var="carga_horaria${i}" />
-								</mod:grupo> 
-								-->
 							<mod:grupo>
 
 								<mod:monetario titulo="Valor total" largura="12"
@@ -149,12 +100,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 			</mod:grupo>
 
 			<mod:grupo>
-				<!--   Não achei variável prazo_ok no código.  
-				<c:if test="${prazo_ok == 'não'}">
-					<mod:memo colunas="55" linhas="2" titulo="Justifique"
-						var="justificativa_prazo" />
-				</c:if> RJ939 -->
-
 				<mod:grupo>
 					<mod:memo colunas="55" linhas="2"
 						titulo="Justifique por que a proposta escolhida é a que melhor atende às necessidades e a importância dela para as atividades de sua unidade"
@@ -173,7 +118,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 					var="ativ_hoje" reler="ajax" idAjax="atividadeAjax"
 					opcoes="1;2;3;4;5;6;7;8;9;10" />
 				<mod:grupo depende="atividadeAjax">
-					<!-- Não entendi o teste abaixo. -->
 					<c:if test="${ativ_hoje>999}">
 						<br>
 						<mod:mensagem texto="Digite um numero menor que 1000"
@@ -267,10 +211,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 					<mod:caixaverif obrigatorio="Sim"
 						titulo="Ciente"
 						var="cienteEncaminhamento" />
-				<!-- <mod:grupo>
-					<mod:data titulo="Data" var="data_form" />
-				</mod:grupo> RJ939 -->
-
 			</mod:grupo>
 		</mod:grupo>
 		<br>
@@ -314,16 +254,7 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 				</table>
 				</td>
 				<td width="2%"></td>
-				<td width="50%"><!-- <table width="100%" height="100%" cellpadding="10" cellspacing="1">
-					<tr>
-						<td align="center" colspan="2">SOLICITAÇÃO DE INSCRIÇÃO EM
-						AÇÃO DE &nbsp;&nbsp;&nbsp;CAPACITAÇÃO EXTERNA - COM ONUS</td>
-					</tr>
-					<tr>
-						<td>${doc.codigo}</td>
-						<td>2001-024-SRH</td>
-					</tr>
-				</table> -->
+				<td width="50%">
 				<table width="100%" height="100%" cellpadding="10" cellspacing="1">
 					<tr bordercolor="#FFFFFF">
 						<td align="center" colspan="2" bordercolor="#FFFFFF">SOLICITAÇÃO
@@ -378,15 +309,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 				<td width="50%"><font size="2">Cidade: <b>&nbsp;${cidade}</b>&nbsp;&nbsp;&nbsp;UF:<b>${uf}</b></font></td>
 			</tr>
 			<tr>
-				<!--<td><font size="2">PROSPECTO ANEXO:<b>&nbsp;
-				${prospecto_anexo}</b></font></td>  -->
-				
-				<!-- 
-				Retirei valor por extenso. Na entrevista, também marquei "extensoNum=não" no mod:monetário
-				<td><font size="2">VALOR:<b>&nbsp;${valor_prospecto}&nbsp;(${valor_prospectovrextenso})</b></font></td> 
-				RJ939
-				-->
-
 				<td colspan="2"><font size="2">VALOR UNITÁRIO:<b>&nbsp;${valor_prospectoUnit}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VALOR
 				TOTAL:&nbsp;<b>${valor_prospectoTotal}</b></font></td>
 			</tr>
@@ -427,7 +349,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 				<td width="20%"><font size="2">CIDADE/UF</font></td>
 				<td width="23%"><font size="2">INSTITUIÇÃO/CONSULTOR</font></td>
 				<td width="10%"><font size="2">VALOR TOTAL</font></td>
-				<!-- <td><font size="2">CARGA HORÁRIA</font></td> -->
 			</tr>
 			<c:forEach var="i" begin="1" end="2">
 				<tr>
@@ -449,17 +370,7 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 
 					<td><font size="2"><b>
 					${requestScope[f:concat('institucao_consultor_indic',i)]}</b></font></td>
-					<td><font size="2"><b> <!-- Retirei valor por extenso. Na entrevista, também marquei "extensoNum=não" no mod:monetário
-					${requestScope[f:concat('valor_indic',i)]}&nbsp;(${requestScope[f:concat(f:concat('valor_indic',i),'vrextenso')]})</b></font></td> 
-					RJ939
-					--> ${requestScope[f:concat('valor_indic',i)]}</b></font></td>
-
-					<!-- Não há mais carga horária no formulário.
-					<td><font size="2"><b>
-					${requestScope[f:concat('carga_horaria',i)]}</b></font></td> 
-					RJ939
-					 -->
-
+					<td><font size="2"><b> ${requestScope[f:concat('valor_indic',i)]}</b></font></td>
 				</tr>
 			</c:forEach>
 		</table>
@@ -470,14 +381,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 				<b>${obs}</b></font></p>
 				</td>
 			</tr>
-
-			<!--<tr>
-				<td><c:if test="${solicitacao_prazo=='não'}">
-					<p><font size="2">Solicitação dentro do prazo?<br>
-					<b>${obs_prazo}</b></font></p>
-				</c:if></td>
-			</tr>  -->
-
 			<tr>
 				<td>
 				<p><font size="2">Justifique por que a proposta escolhida é a que melhor atende às necessidades e a importância dela para as atividades de sua unidade:</font><br>
@@ -516,26 +419,8 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 		</table>
 		<br>
 		<table width="100%" align="center">
-			<!--  <tr>
-				<td bgcolor="#E8E8E8" align="center">SERVIDORE(S) INDICADO(S)
-				</td>
-			</tr>
 			<tr>
-				<td bgcolor="#E8E8E8" align="left"><font size="2"> Cada
-				servidor indicado está devidamente ciente do inteiro teor da
-				portaria n.042-GDF, 10.9.2002, assumindo os compromissos
-				determinados nesse ato normativo, sobre tudo no que se refere á
-				multiplicação do conhecimento adquirido.
-				</font></td>
-			</tr> -->
-
-			<tr>
-				<!-- <td bgcolor="#E8E8E8">
-				<p align="center">SERVIDORE(S) INDICADO(S)<font size="2"><br>
-				</font></p>
-				</td> -->
 				<td align="center" bgcolor="#E8E8E8">SERVIDORE(S) INDICADO(S)</td>
-
 			</tr>
 		</table>
 
@@ -554,9 +439,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 					<td><font size="2"><b>${f:pessoa(requestScope[f:concat(f:concat('nome',i),'_pessoaSel.id')]).cargo.descricao}</b></font></td>
 					<td><font size="2"><b>${f:pessoa(requestScope[f:concat(f:concat('nome',i),'_pessoaSel.id')]).funcaoConfianca.descricao}</b></font></td>
 					<td><font size="2"><b>${f:pessoa(requestScope[f:concat(f:concat('nome',i),'_pessoaSel.id')]).lotacao.sigla}</b></font></td>
-					<!-- 
-					<td><font size="2"><b> <c:set var="cargo"
-						value="${f:pessoa(requestScope[f:concat(f:concat('nome',i),'_pessoaSel.id')]).funcaoConfianca.descricao}" />${cargo}</b></font></td> -->
 				</tr>
 			</c:forEach>
 		</table>
@@ -591,30 +473,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 				<b>${forma_multiplicacao}</b> </font></p>
 				</td>
 			</tr>
-
-			<!-- 
-			<tr>
-				<!--<td width="30%"><font size="2">DATA: <b>${data_form}</b></font>-->
-			<!--  
-				<td width="20%"><font size="2">DATA: <b>${doc.dtExtenso}</b></font>
-				</td> 
-				<td width="80%" align="center">
-				<p align="center"><font size="2">Responsabilizo-me pelas
-				informações prestadas e pela multiplicação do conhecimento adquirido
-				pelos indicados, assim como pelo atesto ao final da ação de
-				capacitação.</font><br>
-				<br>
-				<font size="2"> <c:import
-					url="/paginas/expediente/modelos/inc_assinatura.jsp" /></font></p>
-					
-					<b>${doc.dtExtenso}</b>
-				<br>
-				<br>	
-					
-				</td>
-			</tr>  
-			RJ939
-			-->
 		</table>
 		<br>
 		<table width="90%" cellpadding="1" cellspacing="0" align="left">
@@ -637,15 +495,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 			</tr>
 		</table>
 		<br>
-		<!-- <p align="left"><font size="2">Responsabilizo-me pelas
-		informações prestadas e pela multiplicação do conhecimento adquirido
-		pelos indicados, assim como pelo atesto ao final da ação de
-		capacitação.</font></p>
-		<p align="center" > <c:import
-			url="/paginas/expediente/modelos/inc_assinatura.jsp" /></p>
-		<p align="center"><b>${doc.dtExtenso}</b></p>
-		RJ13939
-		 -->
 		<table width="90%" align="left" border="0" cellspacing="0">
 			
 			<tr>
@@ -665,13 +514,6 @@ SOLICITAÇÃO DE INSCRIÇÃO EM AÇÃO DE CAPACITAÇÃO EXTERNA - COM ÔNUS -->
 				ALI CONTIDAS.</font></td>
 			</tr>
 		</table>
-		<!-- <p  style="TEXT-INDENT: 2cm" align="left"><font size="1">NO
-		CASO DE ÔNUS APENAS COM DIÁRIAS E/OU PASSAGENS, ESTE FORMULÁRIO DEVERÁ
-		SER ENCAMINHADO DIRETAMENTE À SECRETARIA GERAL COM A PROPOSTA DE
-		CONCESSÃO DE DIÁRIAS. CASO ENVOLVA CONTRATAÇÃO, DEVERÁ SER
-		ENCAMINHADO, PRIMEIRAMENTE, SEÇÃO DE CAPACITAÇÃO.</font></p>
-		RJ13939
-		 -->
 		<c:import
 			url="/paginas/expediente/modelos/inc_classificacaoDocumental.jsp" />
 	</mod:documento>

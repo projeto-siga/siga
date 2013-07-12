@@ -3,7 +3,7 @@
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form id="grelTransferencias" action="@{Application.grelTransferencias}" method="GET">
+		<form id="grelLocal" action="@{Application.grelLocal}" method="GET">
 		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 		
 			<table class="gt-form-table">
@@ -14,7 +14,11 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Lotação</td>
+						<td>Local (Solicitante)</td>
+						<td> #{select name:'local', items:locais, valueProperty:'idComplexo', labelProperty:'nomeComplexo', value:local?.idComplexo /} </td>	
+					</tr>
+					<tr>
+						<td>Atendente (Solucionador)</td>
 						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /}</td>	
 					</tr>
 					<tr>
@@ -31,11 +35,14 @@
 					<tr>
 							<td colspan="2"><input type="submit"
 								class="gt-btn-medium gt-btn-left" value="Gerar"></td>
+    					
 					</tr>
 					</tbody>
+					
 				</table>
 		</form>
 		</div>
 	</div>
 	</div>
+
 	

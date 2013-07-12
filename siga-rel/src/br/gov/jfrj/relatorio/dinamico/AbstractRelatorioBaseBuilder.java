@@ -130,6 +130,8 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
         pagina.setWidth(new Integer(100));
         pagina.setWidth2(new Integer(100));
 //        this.addAutoText(pagina);
+        
+        
 	}
 	
 	/**
@@ -173,6 +175,7 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 	 */
 	public JasperPrint getRelatorioJasperPrint() throws JRException {
 		dr = this.build();
+	    
 //		return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, parametros);
 		return DynamicJasperHelper.generateJasperPrint(dr, new LayoutRelatorioDinamico(), ds, parametros);
 		

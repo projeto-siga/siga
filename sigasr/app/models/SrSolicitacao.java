@@ -35,6 +35,7 @@ import javax.persistence.TypedQuery;
 import notifiers.Correio;
 
 import org.hibernate.annotations.Where;
+import org.joda.time.DateTime;
 
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
@@ -376,7 +377,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return "";
 	}
-
+	
 	public Long getProximoNumero() {
 		if (orgaoUsuario == null)
 			return 0L;

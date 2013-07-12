@@ -82,5 +82,15 @@
 	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="/siga-play-module/.classpath"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/DynamicJasper-3.0.6-javadoc.jar"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/DynamicJasper-3.0.6-sources.jar"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/DynamicJasper-3.0.6-test-sources.jar"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/DynamicJasper-3.0.6.jar"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/jasperreports-3.5.1-src.jar"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/jasperreports-3.5.1.jar"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/commons-digester.jar"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/iText-2.1.5.jar"/>
+	<classpathentry kind="lib" path="/siga-play-module/lib/jfreechart.jar"/>
 	<classpathentry kind="output" path="eclipse/classes"/>
 </classpath>

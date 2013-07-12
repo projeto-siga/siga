@@ -60,7 +60,6 @@ public class SrRelTransferencias extends RelatorioTemplate {
 	@Override
 	public Collection processarDados() {
 
-		List<String> d = new ArrayList<String>();
 		List<String> e = new ArrayList<String>();
 					
 		String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni " +

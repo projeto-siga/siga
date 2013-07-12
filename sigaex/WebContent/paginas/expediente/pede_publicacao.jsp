@@ -126,7 +126,7 @@
 				</tr>				
 					
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
-							rows="2" cssClass="gt-form-textarea" label="Descrição do documento"
+							rows="5" cssClass="gt-form-textarea" label="Descrição do documento"
 							onkeyup="contaLetras();" />
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>
 								

@@ -215,7 +215,7 @@
 	</c:if>
 
 	<!-- Lista sucinta de documentos filhos - Falta incluir -->
-	<c:if test="${not empty m.filhosNaoCancelados}">
+	<c:if test="${not empty m.expedientesFilhosNaoCancelados}">
 		<c:set var="first" value="true" />
 		<p class="apensados" style="margin-top: 0pt;">
 			Documento
@@ -223,8 +223,8 @@
 			Filho
 			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
 			:
-			<c:forEach var="docFilho" items="${m.filhosNaoCancelados}">
-				<ww:url id="url" action="exibir" namespace="/expediente/doc">
+			<c:forEach var="docFilho" items="${m.expedientesFilhosNaoCancelados}">
+				<ww:url id="url" action="exibir" namespace="/expediente/doc" >
 					<ww:param name="sigla">${docFilho.sigla}</ww:param>
 				</ww:url>
 				<c:if test="${not first}">, </c:if>
@@ -235,6 +235,26 @@
 			</c:forEach>
 		</p>
 	</c:if>
+	
+	<!-- Lista sucinta de documentos filhos - Falta incluir -->
+	<c:if test="${not empty m.processosFilhosNaoCancelados}">
+		<c:set var="first" value="true" />
+		<p class="apensados" style="margin-top: 0pt;">
+			Subprocesso
+			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
+			:
+			<c:forEach var="docFilho" items="${m.processosFilhosNaoCancelados}">
+				<ww:url id="url" action="exibir" namespace="/expediente/doc">
+					<ww:param name="sigla">${docFilho.siglaCurtaSubProcesso}</ww:param>
+				</ww:url>
+				<c:if test="${not first}">, </c:if>
+				<ww:a href="%{url}">
+					<b>${docFilho.siglaCurtaSubProcesso}</b>
+				</ww:a>
+				<c:set var="first" value="false" />
+			</c:forEach>
+		</p>
+	</c:if>	
 
 	<!-- Lista sucinta de documentos apensados -->
 	<c:if test="${not empty m.apensos}">

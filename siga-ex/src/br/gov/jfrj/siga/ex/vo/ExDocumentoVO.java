@@ -489,6 +489,18 @@ public class ExDocumentoVO extends ExVO {
 	public String getSigla() {
 		return sigla;
 	}
+	
+	public String getSiglaCurtaSubProcesso() {
+		if(doc.isProcesso() && doc.getExMobilPai() != null) {
+			try {
+				return sigla.substring(sigla.length() - 3, sigla.length());
+			} catch (Exception e) {
+				return sigla;
+			}
+		}
+		
+		return "";
+	}	
 
 	public String getSubscritorString() {
 		return subscritorString;

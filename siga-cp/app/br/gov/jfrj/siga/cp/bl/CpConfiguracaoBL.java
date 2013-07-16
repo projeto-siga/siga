@@ -505,35 +505,39 @@ public class CpConfiguracaoBL {
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa,
 			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo, long idTpConf)
 			throws Exception {
+		
+		
+		try {
+			CpConfiguracao cfgFiltro = createNewConfiguracao();
+			cfgFiltro.setCargo(cargo);
+			cfgFiltro.setOrgaoUsuario(cpOrgaoUsu);
+			cfgFiltro.setFuncaoConfianca(dpFuncaoConfianca);
+			cfgFiltro.setLotacao(dpLotacao);
+			cfgFiltro.setDpPessoa(dpPessoa);
+			cfgFiltro.setCpServico(cpServico);
+			cfgFiltro.setCpIdentidade(cpIdentidade);
+			cfgFiltro.setCpTipoLotacao(dpLotacao!=null?dpLotacao.getCpTipoLotacao():null);
+			cfgFiltro.setCpGrupo(cpGrupo);
 
-		CpConfiguracao cfgFiltro = createNewConfiguracao();
+			cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
+					CpTipoConfiguracao.class, false));
 
-		cfgFiltro.setCargo(cargo);
-		cfgFiltro.setOrgaoUsuario(cpOrgaoUsu);
-		cfgFiltro.setFuncaoConfianca(dpFuncaoConfianca);
-		cfgFiltro.setLotacao(dpLotacao);
-		cfgFiltro.setDpPessoa(dpPessoa);
-		cfgFiltro.setCpServico(cpServico);
-		cfgFiltro.setCpIdentidade(cpIdentidade);
-		cfgFiltro.setCpTipoLotacao(dpLotacao!=null?dpLotacao.getCpTipoLotacao():null);
-		cfgFiltro.setCpGrupo(cpGrupo);
+			CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro,
+					new int[] { 0 }, null);
 
-		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
-				CpTipoConfiguracao.class, false));
+			CpSituacaoConfiguracao situacao;
+			if (cfg != null) {
+				situacao = cfg.getCpSituacaoConfiguracao();
+			} else {
+				situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
+			}
 
-		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro,
-				new int[] { 0 }, null);
-
-		CpSituacaoConfiguracao situacao;
-		if (cfg != null) {
-			situacao = cfg.getCpSituacaoConfiguracao();
-		} else {
-			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
+			if (situacao != null
+					&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+				return true;
+		} catch (Exception e) {
+			return false;
 		}
-
-		if (situacao != null
-				&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
-			return true;
 		return false;
 	}
 

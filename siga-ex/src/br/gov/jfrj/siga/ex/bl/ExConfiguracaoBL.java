@@ -263,39 +263,43 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso,
 			long idTpConf) throws Exception {
 
-		ExConfiguracao config = new ExConfiguracao();
+		
+		try {
+			ExConfiguracao config = new ExConfiguracao();
+			config.setCargo(cargo);
+			config.setOrgaoUsuario(cpOrgaoUsu);
+			config.setFuncaoConfianca(dpFuncaoConfianca);
+			config.setLotacao(dpLotacao);
+			config.setDpPessoa(dpPessoa);
+			config.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
+					CpTipoConfiguracao.class, false));
 
-		config.setCargo(cargo);
-		config.setOrgaoUsuario(cpOrgaoUsu);
-		config.setFuncaoConfianca(dpFuncaoConfianca);
-		config.setLotacao(dpLotacao);
-		config.setDpPessoa(dpPessoa);
-		config.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
-				CpTipoConfiguracao.class, false));
+			config.setCpServico(cpServico);
+			config.setExTipoFormaDoc(exTipoFormaDoc);
+			config.setExPapel(exPapel);
+			config.setExTipoDocumento(exTpDoc);
+			config.setExFormaDocumento(exFormaDoc);
+			config.setExModelo(exMod);
+			config.setExClassificacao(exClassificacao);
+			config.setExVia(exVia);
+			config.setExTipoMovimentacao(exTpMov);
+			config.setExNivelAcesso(nivelAcesso);
 
-		config.setCpServico(cpServico);
-		config.setExTipoFormaDoc(exTipoFormaDoc);
-		config.setExPapel(exPapel);
-		config.setExTipoDocumento(exTpDoc);
-		config.setExFormaDocumento(exFormaDoc);
-		config.setExModelo(exMod);
-		config.setExClassificacao(exClassificacao);
-		config.setExVia(exVia);
-		config.setExTipoMovimentacao(exTpMov);
-		config.setExNivelAcesso(nivelAcesso);
+			CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(config,
+					new int[] { 0 }, null);
 
-		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(config,
-				new int[] { 0 }, null);
+			CpSituacaoConfiguracao situacao;
+			if (cfg != null)
+				situacao = cfg.getCpSituacaoConfiguracao();
+			else
+				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
 
-		CpSituacaoConfiguracao situacao;
-		if (cfg != null)
-			situacao = cfg.getCpSituacaoConfiguracao();
-		else
-			situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
-
-		if (situacao != null
-				&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
-			return true;
+			if (situacao != null
+					&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+				return true;
+		} catch (Exception e) {
+			return false;
+		}		
 		return false;
 	}
 

@@ -228,7 +228,7 @@
 					<ww:param name="sigla">${docFilho.sigla}</ww:param>
 				</ww:url>
 				<c:if test="${not first}">, </c:if>
-				<ww:a href="%{url}">
+				<ww:a href="%{url}" title="${docFilho.descrDocumento}">
 					<b>${docFilho.sigla}</b>
 				</ww:a>
 				<c:set var="first" value="false" />
@@ -245,10 +245,10 @@
 			:
 			<c:forEach var="docFilho" items="${m.processosFilhosNaoCancelados}">
 				<ww:url id="url" action="exibir" namespace="/expediente/doc">
-					<ww:param name="sigla">${docFilho.siglaCurtaSubProcesso}</ww:param>
+					<ww:param name="sigla">${docFilho.sigla}</ww:param>
 				</ww:url>
 				<c:if test="${not first}">, </c:if>
-				<ww:a href="%{url}">
+				<ww:a href="%{url}" title="${docFilho.descrDocumento}">
 					<b>${docFilho.siglaCurtaSubProcesso}</b>
 				</ww:a>
 				<c:set var="first" value="false" />
@@ -270,7 +270,7 @@
 					<ww:param name="sigla">${mobItem.sigla}</ww:param>
 				</ww:url>
 				<c:if test="${not first}">, </c:if>
-				<ww:a href="%{url}">${mobItem.sigla}</ww:a>
+				<ww:a href="%{url}" title="${mobItem.mob.doc.descrDocumento}">${mobItem.sigla}</ww:a>
 				<c:set var="first" value="false" />
 			</c:forEach>
 		</p>

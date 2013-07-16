@@ -60,6 +60,7 @@ public class ExDocumentoVO extends ExVO {
 			DpLotacao lotaTitular, boolean completo) throws Exception {
 		this.doc = doc;
 		this.sigla = doc.getSigla();
+		this.descrDocumento = doc.getDescrDocumento();
 
 		if (!completo)
 			return;
@@ -71,7 +72,6 @@ public class ExDocumentoVO extends ExVO {
 			this.classificacaoDescricaoCompleta = doc.getExClassificacao()
 					.getDescricaoCompleta();
 		this.destinatarioString = doc.getDestinatarioString();
-		this.descrDocumento = doc.getDescrDocumento();
 		if (doc.getExNivelAcesso() != null)
 			this.nmNivelAcesso = doc.getExNivelAcesso().getNmNivelAcesso();
 		if (doc.getExMobilPai() != null)

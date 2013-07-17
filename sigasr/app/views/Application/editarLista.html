@@ -1,0 +1,29 @@
+#{extends 'main.html' /} #{set title:'Edição de Lista' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Lista</h2>
+		<div class="gt-form gt-content-box">
+			#{form @Application.gravarLista()} #{if
+			lista?.idLista} <input type="hidden" name="lista.idLista" value="${lista.idLista}">
+			#{/if}
+			<div class="gt-form-row gt-width-66">
+				<label>Nome</label> <input type="text"
+					name="lista.nomeLista"
+					value="${lista?.nomeLista}" size="100"/>
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" value="OK"
+					class="gt-btn-medium gt-btn-left" />#{if
+				lista?.idLista} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarLista()}?id=${lista.idLista}'" />
+				#{/if}
+			</div>
+			<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
+			<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
+			#{/form}
+		</div>
+	</div>
+</div>
+

@@ -21,6 +21,7 @@ import models.SrEstado;
 import models.SrFormaAcompanhamento;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
+import models.SrLista;
 import models.SrServico;
 import models.SrSolicitacao;
 import models.SrTendencia;
@@ -681,6 +682,29 @@ public class Application extends SigaApplication {
 			throws Exception {
 		redirect("/siga/" + tipo + "/buscar.action?" + "propriedade=" + tipo
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
+	}
+	
+	
+	public static void listarLista() throws Exception {
+		List<SrLista> lista = SrLista.listar();
+		render(lista);
+	}
+
+	public static void editarLista(Long id) throws Exception {
+		SrLista lista = new SrLista();
+		if (id != null)
+			lista = SrLista.findById(id);
+		render(lista);
+	}
+	
+	public static void gravarLista(SrLista lista) throws Exception {
+		lista.save();
+		listarLista();
+	}
+
+	public static void desativarLista(Long id) throws Exception {
+		SrLista lista = SrLista.findById(id);
+		listarLista();
 	}
 	
 	public static void relSolicitacoes () throws Exception {

@@ -261,6 +261,8 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 			
 			if ((dpSub.getSubstituto() != null && dpSub.getSubstituto().equals(getCadastrante()))					
 				|| (dpSub.getSubstituto() == null && dpSub.getLotaSubstituto().equals(getCadastrante().getLotacao()))
+				||(dpSub.getTitular() != null && dpSub.getTitular().equals(getCadastrante()))					
+				|| (dpSub.getTitular() == null && dpSub.getLotaTitular().equals(getCadastrante().getLotacao()))
 				|| Cp.getInstance()
 					.getConf()
 					.podePorConfiguracao(

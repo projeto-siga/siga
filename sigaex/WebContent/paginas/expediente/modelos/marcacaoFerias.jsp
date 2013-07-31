@@ -244,8 +244,7 @@
 				solicitação? <b>${motivo}</b></p>
 			</ww:else>
 		</c:if> <c:if test="${(opcao eq 'Alteração') or (opcao eq 'Marcação')}">
-			<p style="TEXT-INDENT: 2cm" align="justify">Conforme o art.8º, parágrafo 7º, da Res. 14/CJF de 19/05/2008, estou CIENTE de que
-			 perderei o direito às férias quando não gozá-las até o último dia do segundo período aquisitivo subsequente, segundo quadro disponível na INTRANET.</p>
+			<p style="TEXT-INDENT: 2cm" align="justify">Conforme o art.8º, parágrafo 8º, da Resolução CF-RES-2012/00221 de 19/12/2012, declaro estar CIENTE de que cabe à Administração, comunicar, com antecedência de 90 dias do fim do prazo de fruição das férias, ao servidor e à chefia imediata, a obrigatoriedade de gozo dessas férias e que, não havendo manifestação de minha parte ou de meu superior hierárquico acerca da marcação, a Administração o fará de ofício.</p>
 		</c:if> <c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" /> <c:import
 			url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" /> <c:import
 			url="/paginas/expediente/modelos/inc_deAcordoAssSupHierarquico.jsp" />

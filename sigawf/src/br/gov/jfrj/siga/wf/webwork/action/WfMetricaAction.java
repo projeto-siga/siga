@@ -103,6 +103,9 @@ public class WfMetricaAction extends WfSigaActionSupport {
 		parametrosRelatorio.put("dataFinalAte", getRequest().getParameter("dataFinalAte"));
 		parametrosRelatorio.put("nomeProcedimento", getRequest().getParameter(
 				"procedimento"));
+		parametrosRelatorio.put("incluirAbertos", getRequest().getParameter(
+		"incluirAbertos"));
+
 		
 		String relatorioEscolhido = (String)getRequest().getParameter(
 		"selecaoRelatorio");

@@ -8,4 +8,52 @@
 	<subclass name="br.gov.jfrj.siga.wf.util.WfTaskInstance"
 		extends="org.jbpm.taskmgmt.exe.TaskInstance" discriminator-value="S">
 	</subclass>
+	
+	
+<!-- RELATORIOS -->
+<sql-query name="consultarDocumentosFinalizadosNoPeriodo" >
+	<return-scalar column="START_" type="java.util.Calendar" />
+	<return-scalar column="END_" type="java.util.Calendar" />
+	<return-scalar column="STRINGVALUE_" type="java.lang.String" />
+	<return-scalar column="ID_" type="java.lang.Long" />
+	
+	<![CDATA[
+	SELECT 
+		PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ 
+	FROM 
+		JBPM_PROCESSINSTANCE PI,
+		(SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI,
+		(SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD 
+	WHERE
+		PI.PROCESSDEFINITION_=PD.ID_ AND 
+		PI.END_ IS NOT NULL AND 
+		PI.ID_ = VI.PROCESSINSTANCE_ AND  
+		(PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND 
+		(PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte)
+	]]>
+</sql-query>
+
+<sql-query name="consultarDocumentosFinalizadosEAbertosNoPeriodo" >
+	<return-scalar column="START_" type="java.util.Calendar" />
+	<return-scalar column="END_" type="java.util.Calendar" />
+	<return-scalar column="STRINGVALUE_" type="java.lang.String" />
+	<return-scalar column="ID_" type="java.lang.Long" />
+	
+	<![CDATA[
+	SELECT 
+		PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ 
+	FROM 
+		JBPM_PROCESSINSTANCE PI,
+		(SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI,
+		(SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD 
+	WHERE
+		PI.PROCESSDEFINITION_=PD.ID_ AND 
+		PI.ID_ = VI.PROCESSINSTANCE_ AND  
+		(PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND 
+		(PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte OR PI.END_ IS NOT NULL)
+	]]>
+</sql-query>
+	
 </hibernate-mapping>
+
+

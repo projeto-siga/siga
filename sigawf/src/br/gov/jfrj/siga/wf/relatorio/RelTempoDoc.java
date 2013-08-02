@@ -53,7 +53,7 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Classe que representa o relatório de secs que demoraram
+ * Classe que representa o relatório de docs que demoraram
  * 
  * @author kpf
  * 
@@ -134,9 +134,10 @@ public class RelTempoDoc extends RelatorioTemplate {
 		Date dataInicialAte = getDataAte("dataInicialAte");
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
+		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:(Boolean)parametros.get("incluirAbertos");
 
-		Set<Doc> docs = consultarSecs(procedimento, dataInicialDe,
-				dataInicialAte, dataFinalDe, dataFinalAte);
+		Set<Doc> docs = consultarDocs(procedimento, dataInicialDe,
+				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
 		List<String> dados = new ArrayList<String>();
 		for (Doc s : docs) {
 			dados.add(s.getNumeroDoc());
@@ -149,8 +150,8 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna as secs finalizadas no período indicado, ordenadas pelo tempo de
-	 * demora.
+	 * Retorna os docs no período indicado, ordenadas pelo tempo de
+	 * demora, podendo estar ou não finalizados.
 	 * 
 	 * Exemplo da query:
 	 * 
@@ -169,13 +170,17 @@ public class RelTempoDoc extends RelatorioTemplate {
 	 * @param dataFinal
 	 * @param dataFinalAte
 	 * @param dataFinalDe
+	 * @param incluirAbertos 
 	 * @return
 	 */
-	private Set<Doc> consultarSecs(String nomeProcedimento, Date dataInicialDe,
-			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte) {
-		String sql = "SELECT PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ FROM JBPM_PROCESSINSTANCE PI, (SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, (SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD WHERE PI.PROCESSDEFINITION_=PD.ID_ AND PI.END_ IS NOT NULL AND PI.ID_ = VI.PROCESSINSTANCE_ AND  (PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND (PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte)";
-
-		SQLQuery query = WfDao.getInstance().getSessao().createSQLQuery(sql);
+	private Set<Doc> consultarDocs(String nomeProcedimento, Date dataInicialDe,
+			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte, Boolean incluirAbertos) {
+		SQLQuery query = null;
+		if (incluirAbertos){
+			query = (SQLQuery) WfDao.getInstance().getSessao().getNamedQuery("consultarDocumentosFinalizadosNoPeriodo");
+		}else{
+			query = (SQLQuery) WfDao.getInstance().getSessao().getNamedQuery("consultarDocumentosFinalizadosEAbertosNoPeriodo");
+		}
 
 		query.addScalar("START_", new CalendarType());
 		query.addScalar("END_", new CalendarType());
@@ -191,7 +196,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 		query.setDate("dataFinalDe", dataFinalDe);
 		query.setDate("dataFinalAte", dataFinalAte);
 		List<Object[]> resultado = query.list();
-		Set<Doc> secs = new TreeSet<Doc>(new DocComparator());
+		Set<Doc> docs = new TreeSet<Doc>(new DocComparator());
 		for (Object[] o : resultado) {
 			Doc s = new Doc();
 			Calendar inicio = (Calendar) o[0];
@@ -200,10 +205,10 @@ public class RelTempoDoc extends RelatorioTemplate {
 			s.setInicio(inicio);
 			s.setFim(fim);
 			s.setProcessInstanceID((Long) (o[3]));
-			secs.add(s);
+			docs.add(s);
 		}
 
-		return secs;
+		return docs;
 	}
 
 	/**

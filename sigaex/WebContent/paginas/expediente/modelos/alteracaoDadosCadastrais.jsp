@@ -32,7 +32,7 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
                     reler="sim" />
                     <c:if test="${escolaridade == ' Pós-Graduação, Mestrado ou Doutorado'}">
                     <mod:grupo>
-                    <mod:selecao titulo="Requer Adicional de Qualificação por curso de Pós-Graduação?" var="adicionalopg"
+                    <mod:selecao titulo="Requer Adicional de Qualificação por curso de Pós-Graduação" var="adicionalopg"
                     opcoes=" ;Sim;Não"
                     reler="não" />
                     </mod:grupo>
@@ -91,8 +91,8 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
         <c:if test="${alterarEscolaridade == 'Sim'}">
         <li>
         Escolaridade: (Com documento autenticado em anexo)<br/>${escolaridade}<br />
-        <c:if test="${escolaridade == ' Pós-Graduação, Mestrado ou Doutorado'}">
-        -   Requer Adicional de Qualificação por curso de Pós-Graduação: ${adicionalopg}</li>
+        <c:if test="${escolaridade == ' Pós-Graduação, Mestrado ou Doutorado'}"><br />
+        -   Requer Adicional de Qualificação por curso de Pós-Graduação? ${adicionalopg}</li>
         </c:if>
         </c:if>
         
@@ -128,7 +128,7 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
                     ${tel2}<br/>
                     </c:if> 
                     
-                    <c:if test="${tel3 != ''}">                 
+                    <c:if test="${tel3 != ''}"> 
                     ${tel3}<br/>
                     </c:if> 
         </c:if>

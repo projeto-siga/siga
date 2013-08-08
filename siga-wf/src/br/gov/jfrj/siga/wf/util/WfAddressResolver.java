@@ -48,7 +48,7 @@ public class WfAddressResolver implements AddressResolver {
 
 		DpPessoa ator = WfDao.getInstance().getPessoaFromSigla(actorId);
 		if (ator != null) {
-			return ator.getEmailPessoa();
+			return ator.getEmailPessoaAtual();
 		}
 
 		DpLotacao lota = WfDao.getInstance().getLotacaoFromSigla(actorId);
@@ -62,7 +62,7 @@ public class WfAddressResolver implements AddressResolver {
 			}
 			List<String> emails = new ArrayList<String>();
 			for (DpPessoa pessoa : l) {
-				emails.add(pessoa.getEmailPessoa());
+				emails.add(pessoa.getEmailPessoaAtual());
 			}
 			return emails;
 		}

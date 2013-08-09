@@ -48,7 +48,6 @@ import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
@@ -134,7 +133,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 		Date dataInicialAte = getDataAte("dataInicialAte");
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
-		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:(Boolean)parametros.get("incluirAbertos");
+		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:Boolean.valueOf(parametros.get("incluirAbertos").toString());
 
 		Set<Doc> docs = consultarDocs(procedimento, dataInicialDe,
 				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
@@ -142,7 +141,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 		for (Doc s : docs) {
 			dados.add(s.getNumeroDoc());
 			dados.add(DateFormat.getInstance().format(s.getInicio().getTime()));
-			dados.add(DateFormat.getInstance().format(s.getFim().getTime()));
+			dados.add(s.getFim()==null?"Em Andamento":DateFormat.getInstance().format(s.getFim().getTime()));
 			dados.add(s.getDuracao());
 		}
 		return dados;
@@ -177,9 +176,9 @@ public class RelTempoDoc extends RelatorioTemplate {
 			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte, Boolean incluirAbertos) {
 		SQLQuery query = null;
 		if (incluirAbertos){
-			query = (SQLQuery) WfDao.getInstance().getSessao().getNamedQuery("consultarDocumentosFinalizadosNoPeriodo");
+			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosNoPeriodo());
 		}else{
-			query = (SQLQuery) WfDao.getInstance().getSessao().getNamedQuery("consultarDocumentosFinalizadosEAbertosNoPeriodo");
+			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
 		}
 
 		query.addScalar("START_", new CalendarType());
@@ -209,6 +208,36 @@ public class RelTempoDoc extends RelatorioTemplate {
 		}
 
 		return docs;
+	}
+
+	private String getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo() {
+		return
+		"SELECT " + 
+		"PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ " + 
+	"FROM  " +
+		"JBPM_PROCESSINSTANCE PI, " +
+		"(SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, " +
+		"(SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD  " +
+	"WHERE " +
+		"PI.PROCESSDEFINITION_=PD.ID_ AND " + 
+		"PI.ID_ = VI.PROCESSINSTANCE_ AND   " +
+		"(PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND " + 
+		"(PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte OR PI.END_ IS NULL)";
+	}
+
+	private String getSQLConsultarDocumentosFinalizadosNoPeriodo() {
+		return 
+	"SELECT PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ " +  
+	"FROM " +
+		"JBPM_PROCESSINSTANCE PI, " +
+		"(SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, " +
+		"(SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD " + 
+	"WHERE " +
+		"PI.PROCESSDEFINITION_=PD.ID_ AND " + 
+		"PI.END_ IS NOT NULL AND  " +
+		"PI.ID_ = VI.PROCESSINSTANCE_ AND " +  
+		"(PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND " + 
+		"(PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte) " ;
 	}
 
 	/**
@@ -315,6 +344,9 @@ public class RelTempoDoc extends RelatorioTemplate {
 		}
 
 		public long getDuracaoEmMili() {
+			if (getFim()==null || getInicio()==null){
+				return Calendar.getInstance().getTimeInMillis() - getInicio().getTimeInMillis();
+			}
 			return getFim().getTimeInMillis() - getInicio().getTimeInMillis();
 		}
 

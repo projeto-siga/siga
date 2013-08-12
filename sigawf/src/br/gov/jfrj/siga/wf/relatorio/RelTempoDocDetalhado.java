@@ -96,9 +96,10 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		Date dataInicialAte = getDataAte("dataInicialAte");
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
-
+		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:Boolean.valueOf(parametros.get("incluirAbertos").toString().equals("on"));
+		
 		Set<Tarefa> tarefas = consultarTarefas(procedimento, dataInicialDe,
-				dataInicialAte, dataFinalDe, dataFinalAte);
+				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
 		List<String> dados = new ArrayList<String>();
 		for (Tarefa t : tarefas) {
 			dados.add(t.getNumeroDocumento() + " ("
@@ -106,9 +107,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 			dados.add(t.getNome());
 			dados.add(DateFormat.getInstance().format(
 					t.getDataInicio().getTime()));
-			dados
-					.add(DateFormat.getInstance().format(
-							t.getDataFim().getTime()));
+			dados.add(t.getDataFim()==null?"Em Andamento":DateFormat.getInstance().format(t.getDataFim().getTime()));
 			dados.add(t.getDuracao().toString());
 
 		}
@@ -119,7 +118,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 
 	private Set<Tarefa> consultarTarefas(String nomeProcedimento,
 			Date dataInicialDe, Date dataInicialAte, Date dataFinalDe,
-			Date dataFinalAte) {
+			Date dataFinalAte,Boolean incluirAbertos) {
 		// ArrayList<Tarefa> tarefas = new ArrayList<Tarefa>();
 		// Tarefa t1 = new Tarefa();
 		// Tarefa t2 = new Tarefa();
@@ -141,18 +140,12 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		// String sql =
 		// "SELECT PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ FROM JBPM_PROCESSINSTANCE PI, (SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, (SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD WHERE PI.PROCESSDEFINITION_=PD.ID_ AND PI.END_ IS NOT NULL AND PI.ID_ = VI.PROCESSINSTANCE_ AND  (PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND (PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte)";
 
-		String sql = "select pd.name_ pd_name,stringvalue_,p.start_ p_start,p.end_ p_end,t.name_ t_name,t.create_ t_create,t.end_ t_end "
-				+ "from (select id_, stringvalue_, processinstance_ from sigawf.jbpm_variableinstance "
-				+ "where stringvalue_ like '%RJ-SEC%' or stringvalue_ like '%RJ-EOF%' and name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
-				+ "from sigawf.jbpm_processinstance where end_ is not null )p, "
-				+ "(select name_,procinst_,create_, end_ from sigawf.jbpm_taskinstance)t, "
-				+ "(select name_ , id_ from sigawf.jbpm_processdefinition)pd "
-				+ "where p.id_=v.processinstance_ and p.id_=t.procinst_ and p.processdefinition_ = pd.id_ "
-				+ "and (p.start_ >= :dataInicialDe and p.start_ <= :dataInicialAte) and (p.end_ >= :dataFinalDe and p.end_ <= :dataFinalAte) "
-				+ "and pd.name_ = :nomeProcedimento "
-				+ "order by stringvalue_ ,create_";
-
-		SQLQuery query = WfDao.getInstance().getSessao().createSQLQuery(sql);
+		SQLQuery query = null;
+		if (incluirAbertos){
+			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
+		}else{
+			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosNoPeriodo());
+		}
 
 		query.addScalar("stringvalue_", new StringType());
 		query.addScalar("pd_name", new StringType());
@@ -195,6 +188,33 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		// }
 		//
 		return tarefas;
+
+	}
+
+	private String getSQLConsultarDocumentosFinalizadosNoPeriodo() {
+		return "select pd.name_ pd_name,stringvalue_,p.start_ p_start,p.end_ p_end,t.name_ t_name,t.create_ t_create,t.end_ t_end "
+			+ "from (select id_, stringvalue_, processinstance_ from sigawf.jbpm_variableinstance "
+			+ "where (stringvalue_ like '%RJ-SEC%' or stringvalue_ like '%RJ-EOF%') and name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
+			+ "from sigawf.jbpm_processinstance where end_ is not null )p, "
+			+ "(select name_,procinst_,create_, end_ from sigawf.jbpm_taskinstance)t, "
+			+ "(select name_ , id_ from sigawf.jbpm_processdefinition)pd "
+			+ "where p.id_=v.processinstance_ and p.id_=t.procinst_ and p.processdefinition_ = pd.id_ "
+			+ "and (p.start_ >= :dataInicialDe and p.start_ <= :dataInicialAte) and (p.end_ >= :dataFinalDe and p.end_ <= :dataFinalAte) "
+			+ "and pd.name_ = :nomeProcedimento "
+			+ "order by stringvalue_ ,create_";
+	}
+
+	private String getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo() {
+		return "select pd.name_ pd_name,stringvalue_,p.start_ p_start,p.end_ p_end,t.name_ t_name,t.create_ t_create,t.end_ t_end "
+		+ "from (select id_, stringvalue_, processinstance_ from sigawf.jbpm_variableinstance "
+		+ "where (stringvalue_ like '%RJ-SEC%' or stringvalue_ like '%RJ-EOF%') and name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
+		+ "from sigawf.jbpm_processinstance) p, "
+		+ "(select name_,procinst_,create_, end_ from sigawf.jbpm_taskinstance)t, "
+		+ "(select name_ , id_ from sigawf.jbpm_processdefinition)pd "
+		+ "where p.id_=v.processinstance_ and p.id_=t.procinst_ and p.processdefinition_ = pd.id_ "
+		+ "and (p.start_ >= :dataInicialDe and p.start_ <= :dataInicialAte) and (p.end_ >= :dataFinalDe and p.end_ <= :dataFinalAte  OR p.END_ IS NULL) "
+		+ "and pd.name_ = :nomeProcedimento "
+		+ "order by stringvalue_ ,create_";
 
 	}
 
@@ -287,11 +307,18 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		}
 
 		public long getDuracaoEmMili() {
+			if (getDataFim()==null || getDataInicio()==null){
+				return Calendar.getInstance().getTimeInMillis() - getDataInicio().getTimeInMillis();
+			}
 			return getDataFim().getTimeInMillis()
 					- getDataInicio().getTimeInMillis();
 		}
 
 		public long getDuracaoProcedimentoEmMili() {
+			if (getDataFimProcedimento()==null || getDataInicioProcedimento()==null){
+				return Calendar.getInstance().getTimeInMillis() - getDataInicioProcedimento().getTimeInMillis();
+			}
+
 			return getDataFimProcedimento().getTimeInMillis()
 					- getDataInicioProcedimento().getTimeInMillis();
 		}

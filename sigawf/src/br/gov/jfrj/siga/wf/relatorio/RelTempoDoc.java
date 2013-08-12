@@ -133,7 +133,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 		Date dataInicialAte = getDataAte("dataInicialAte");
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
-		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:Boolean.valueOf(parametros.get("incluirAbertos").toString());
+		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:Boolean.valueOf(parametros.get("incluirAbertos").toString().equals("on"));
 
 		Set<Doc> docs = consultarDocs(procedimento, dataInicialDe,
 				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
@@ -176,9 +176,9 @@ public class RelTempoDoc extends RelatorioTemplate {
 			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte, Boolean incluirAbertos) {
 		SQLQuery query = null;
 		if (incluirAbertos){
-			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosNoPeriodo());
-		}else{
 			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
+		}else{
+			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosNoPeriodo());
 		}
 
 		query.addScalar("START_", new CalendarType());

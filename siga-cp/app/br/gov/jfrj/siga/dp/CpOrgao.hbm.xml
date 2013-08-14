@@ -58,16 +58,16 @@
 	
 	<query name="consultarPorFiltroCpOrgao">
 	 <![CDATA[from CpOrgao org 
-	      where upper(org.nmOrgaoAI) like upper('%' || :nome || '%')
-	       	and org.ativo='S'
-	       	order by org.nmOrgao]]>
+	 	where ((upper(org.nmOrgaoAI) like upper('%' || :nome || '%')) or (upper(org.siglaOrgao) like upper('%' || :nome || '%')))
+	    and org.ativo='S'
+    	order by org.nmOrgao]]>
 	</query>
 	
 	<query name="consultarQuantidadeCpOrgao">
 	 <![CDATA[select count(org) from CpOrgao org 
-	      where upper(org.nmOrgaoAI) like upper('%' || :nome || '%')
-	       	and org.ativo='S'
-	       	order by org.nmOrgao]]>
+	 	where ((upper(org.nmOrgaoAI) like upper('%' || :nome || '%')) or (upper(org.siglaOrgao) like upper('%' || :nome || '%')))
+       	and org.ativo='S'
+       	order by org.nmOrgao]]>
 	</query>
 </hibernate-mapping>
 

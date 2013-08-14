@@ -755,7 +755,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				if(m.isJuntado() || m.isApensado())
 					return false;
 				
-				if(m.getApensos() != null && m.getApensos().size() > 1)
+				if(m.getApensos() != null && m.getApensos().size() > 0)
 					return false;
 				
 				if(m.temDocumentosJuntados())

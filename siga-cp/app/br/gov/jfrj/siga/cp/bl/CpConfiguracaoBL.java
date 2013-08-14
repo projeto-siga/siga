@@ -405,7 +405,7 @@ public class CpConfiguracaoBL {
 								cfgFiltro.getCpGrupo()) || ((cfgFiltro
 						.getCpGrupo() == null) && !atributosDesconsiderados
 						.contains(GRUPO)) && (perfis != null && !perfisContemGrupo(cfg, perfis))) || 
-						(cfg.getCpGrupo() != null && cfgFiltro.getCpGrupo() == null))
+						(perfis == null && cfg.getCpGrupo() != null && cfgFiltro.getCpGrupo() == null))
 			return false;
 
 

@@ -318,8 +318,13 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		DpLotacao lotIni = getLotacaoInicial();
 		Set<DpLotacao> setLotas = lotIni.getLotacoesPosteriores();
 		if (setLotas != null)
-			for (DpLotacao l : setLotas)
-				return l;
+			for (DpLotacao l : setLotas){
+				if(l.getDataFim()==null){
+					return l;
+				}
+				
+			}
+				
 
 		return this;
 	}

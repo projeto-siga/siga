@@ -39,7 +39,8 @@ public class ExMobilVO extends ExVO {
 	String sigla;
 	List apensos = new ArrayList<ExMobilVO>();
 	List filhos = new ArrayList<ExDocumentoVO>();
-	List filhosNaoCancelados = new ArrayList<ExDocumentoVO>();
+	List expedientesFilhosNaoCancelados = new ArrayList<ExDocumentoVO>();
+	List processosFilhosNaoCancelados = new ArrayList<ExDocumentoVO>();
 	List<ExMovimentacaoVO> movs = new ArrayList<ExMovimentacaoVO>();
 	List<DuracaoVO> duracoes = new ArrayList<DuracaoVO>();
 	Long byteCount;
@@ -106,9 +107,14 @@ public class ExMobilVO extends ExVO {
 		tempoIni = System.currentTimeMillis();
 		for (ExDocumento d : mob.getExDocumentoFilhoSet()) {
 			filhos.add(new ExDocumentoVO(d, null, titular, lotaTitular, false));
-			if (d.getDtFechamento() == null || !d.isCancelado())
-				filhosNaoCancelados.add(new ExDocumentoVO(d, null, titular,
+			if (d.getDtFechamento() == null || !d.isCancelado()) {
+				if(d.isExpediente())
+					expedientesFilhosNaoCancelados.add(new ExDocumentoVO(d, null, titular,
 						lotaTitular, false));
+				else
+					processosFilhosNaoCancelados.add(new ExDocumentoVO(d, null, titular,
+						lotaTitular, false));
+			}
 		}
 		System.out.println(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()
@@ -477,8 +483,12 @@ public class ExMobilVO extends ExVO {
 		return filhos;
 	}
 
-	public List getFilhosNaoCancelados() {
-		return filhosNaoCancelados;
+	public List getExpedientesFilhosNaoCancelados() {
+		return expedientesFilhosNaoCancelados;
+	}
+
+	public List getProcessosFilhosNaoCancelados() {
+		return processosFilhosNaoCancelados;
 	}
 
 	@Override

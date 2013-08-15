@@ -1753,20 +1753,41 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAgendarPublicacao(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-		return (mob.doc().getDtFechamento() != null)
+		
+		if (mob.doc().getDtFechamento() == null 
+				|| !mob.doc().isAssinado() 
+				|| mob.doc().isPublicacaoAgendada()
+				|| mob.doc().isSemEfeito())
+			return false;
+		if (podeAtenderPedidoPublicacao(titular, lotaTitular,null))
+			return true;
+		
+		return (!mob.doc().isPublicacaoSolicitada()
+				&& podeMovimentar(titular, lotaTitular, mob) 
+				&&  getConf().podePorConfiguracao(titular,
+						lotaTitular,
+						mob.doc().getExModelo(),
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));		
+		
+		
+		
+		
+/*		return (mob.doc().getDtFechamento() != null)
 				&& (podeMovimentar(titular, lotaTitular, mob) || podeAtenderPedidoPublicacao(
 						titular, lotaTitular, null))
 				&& mob.doc().isAssinado()
 				&& !mob.doc().isPublicacaoAgendada()
 				&& !mob.doc().isPublicacaoSolicitada()
 				&& !mob.doc().isSemEfeito()
-				&& getConf()
+				&& (getConf()
 						.podePorConfiguracao(
 								titular,
 								lotaTitular,
 								mob.doc().getExModelo(),
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+*/								
 	}
 
 	/**
@@ -1811,8 +1832,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podePedirPublicacao(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-		if (podeAgendarPublicacao(titular, lotaTitular, mob))
+		if (podeAgendarPublicacao(titular, lotaTitular, mob)){		
 			return false;
+		}	
 		else
 			return (mob.doc().getDtFechamento() != null)
 					&& (podeMovimentar(titular, lotaTitular, mob) || podeAtenderPedidoPublicacao(

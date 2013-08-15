@@ -4,7 +4,7 @@
  *     This file is part of SIGA.
  * 
  *     SIGA is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
+ *     it under the terms of the GNU General public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
@@ -60,6 +60,7 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
@@ -102,6 +103,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String assinaturaB64;
 
 	private Boolean copia;
+	
+	private Boolean podeAtenderPedidoPubl;
 
 	private String contentType;
 
@@ -166,6 +169,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private boolean substituicao;
 
 	private DpLotacaoSelecao lotaResponsavelSel;
+	
+	private DpLotacaoSelecao lotaSubscritorSel;	
 
 	private ExMovimentacao mov = new ExMovimentacao();
 
@@ -247,6 +252,22 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public Long getNivelAcesso() {
 		return nivelAcesso;
+	}
+	
+	public Boolean getPodeAtenderPedidoPubl() {
+		return podeAtenderPedidoPubl;
+	}
+
+	public void setPodeAtenderPedidoPubl(Boolean podeAtenderPedidoPubl) {
+		this.podeAtenderPedidoPubl = podeAtenderPedidoPubl;
+	}
+	
+	public DpLotacaoSelecao getLotaSubscritorSel() {
+		return lotaSubscritorSel;
+	}
+
+	public void setLotaSubscritorSel(DpLotacaoSelecao lotaSubscritorSel) {
+		this.lotaSubscritorSel = lotaSubscritorSel;
 	}
 
 	public void setNivelAcesso(Long nivelAcesso) {
@@ -492,7 +513,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aAgendarPublicacao() throws Exception {
+	public String aAgendarPublicacao() throws Exception {		
+		
 		buscarDocumento(true);
 
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO
@@ -511,6 +533,25 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.obterObrigatoriedadeTipoCaderno(doc));
 		if(getDescrPublicacao() == null)
 			setDescrPublicacao(doc.getDescrDocumento());	
+		
+		if(!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(),
+				CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)){
+			this.setPodeAtenderPedidoPubl(false);
+		}else {
+			DpLotacaoSelecao lot = new DpLotacaoSelecao();
+			this.setPodeAtenderPedidoPubl(true);			
+			lot.setId(doc.getSubscritor().getLotacao().getId());
+			lot.buscar();
+			setLotaSubscritorSel(lot);			
+/*				DpLotacaoDaoFiltro flt = new DpLotacaoDaoFiltro();
+			flt.setIdOrgaoUsu(getTitular().getOrgaoUsuario().getId());			
+			List<DpLotacao> todasLotacoes = dao().consultarDpLotacaoOrdenadaPorSigla(flt);
+		
+			for (DpLotacao lotacao : todasLotacoes) {
+				lotacoes.put(lotacao.getSigla(),lotacao.getSigla());
+			}	
+*/					
+		}	
 
 		return Action.SUCCESS;
 	}
@@ -529,6 +570,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"O campo descrição possui mais do que 256 caracteres.");
 
 		validarDataGravacao(mov, false);
+		
+		if (getLotPublicacao() == null) {
+			if (getLotaSubscritorSel().getId() != null) 
+				this.setLotPublicacao(dao().consultar(getLotaSubscritorSel().getId(), 
+						DpLotacao.class, false).getSigla());
+		}
 
 		Ex.getInstance()
 				.getBL()
@@ -3614,8 +3661,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		String lotSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(this.doc);
 		String lotCadastrante = getCadastrante().getLotacao().getSigla();
 		String lotTitular = getLotaTitular().getSigla();
-		this.setLotPublicacao(lotSubscritor);		
-		
+		this.setLotPublicacao(lotSubscritor);	
 		lotacoes.put(lotSubscritor,lotSubscritor);	
 		if (!lotSubscritor.equals(lotCadastrante)){
 			lotacoes.put(lotCadastrante,lotCadastrante);
@@ -3623,7 +3669,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!lotSubscritor.equals(lotTitular) && !lotCadastrante.equals(lotTitular)) {
 			lotacoes.put(lotTitular,lotTitular);
 		}	
-		
 		return lotacoes;
 	}
 }

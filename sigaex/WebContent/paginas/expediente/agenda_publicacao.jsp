@@ -124,10 +124,17 @@
 					<td>Data de publicação:</td>
 					<td><div id="dt_publ" /></td>
 				</tr>				
-				<tr>
+				<tr>					
 					<td>Lotação de publicação:</td>
-					<td><ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" onchange="buscaNomeLota()" />
-					&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span>	</div></td>
+					<td>
+						<ww:if test="${podeAtenderPedidoPubl}">
+							<siga:selecao tema="simple" propriedade="lotaSubscritor" />
+						</ww:if>
+						<ww:else>
+							<ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" onchange="buscaNomeLota()" />
+									&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>
+						</ww:else>
+					</td>					
 				</tr>	
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
 							rows="5" cssClass="gt-form-textarea" label="Descrição do documento"

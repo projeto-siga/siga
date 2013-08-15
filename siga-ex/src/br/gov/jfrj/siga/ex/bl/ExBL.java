@@ -3343,6 +3343,9 @@ public class ExBL extends CpBL {
 							(subscritor == null && fDespacho) ? cadastrante
 									: subscritor, null, titular, null, dt);
 
+					if(dt != null)
+						mov.setDtIniMov(dt);
+
 					if (orgaoExterno != null || obsOrgao != null) {
 						mov.setOrgaoExterno(orgaoExterno);
 						mov.setObsOrgao(obsOrgao);

@@ -74,6 +74,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
+import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
@@ -481,6 +482,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
+		
+		try{
+			new GeradorRTF().geraRTFFOP(getDoc());
+		}catch (Exception e) {
+			setMensagem("Escrever a mensagem!!!!");
+			
+		}
 
 		return Action.SUCCESS;
 	}
@@ -502,6 +510,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						dao().dt(), mov.getSubscritor(), mov.getTitular(),
 						getLotaTitular(), mov.getDtDispPublicacao(),
 						getTipoMateria().replaceAll("'", ""));
+		
 
 		return Action.SUCCESS;
 	}

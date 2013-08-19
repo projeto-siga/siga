@@ -8,6 +8,16 @@
 	}
 </script>
 
+<script type="text/javascript">
+	function exibirOpcoesExtras(){
+		if ($("#selecaoRelatorio").val() == 'Tempo de documentos' || $("#selecaoRelatorio").val() == 'Tempo de documentos detalhado'){
+			$("#opcoesExtras").show();
+		}else{
+			$("#opcoesExtras").hide();
+		}
+	}
+</script>
+
 <siga:pagina titulo="Estatística de procedimento">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
@@ -22,7 +32,7 @@
 							value="${procedimento}" />
 						<tr>
 							<ww:select list="relatoriosMetricas" label="Relatório"
-								name="selecaoRelatorio">
+								name="selecaoRelatorio" onchange="javascript:exibirOpcoesExtras()">
 							</ww:select>
 						</tr>
 						<tr>
@@ -46,6 +56,12 @@
 									onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe);"
 									theme="simple" size="12" maxlength="10" /></td>
+						</tr>
+						<tr id="opcoesExtras" style="display: none" >
+							<td>
+								<input type="checkbox" id="incluirAbertos" name="incluirAbertos" style="float: left" class="gt-form-checkbox"></input>
+								<label>&nbsp;Incluir Procedimentos Abertos</label>
+							</td>
 						</tr>
 						<tr>
 							<td colspan="2"><input type="button"

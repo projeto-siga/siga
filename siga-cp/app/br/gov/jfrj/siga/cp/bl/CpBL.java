@@ -274,7 +274,7 @@ public class CpBL {
 				Long.parseLong(cpf), longmatricula);
 
 		if (pessoa != null && pessoa.getSigla().equals(matricula)
-				&& pessoa.getEmailPessoa() != null) {
+				&& pessoa.getEmailPessoaAtual() != null) {
 
 			// final Usuario usuario =
 			// dao().consultaUsuarioCadastrante(matricula);
@@ -310,7 +310,7 @@ public class CpBL {
 					dao().gravarComHistorico(idNova, id, dt, idCadastrante);
 					dao().commitTransacao();
 					Correio.enviar(
-							pessoa.getEmailPessoa(),
+							pessoa.getEmailPessoaAtual(),
 							"Alteração de senha ",
 							"\n"
 									+ idNova.getDpPessoa().getNomePessoa()
@@ -334,7 +334,7 @@ public class CpBL {
 			}
 
 		} else {
-			if (pessoa.getEmailPessoa() == null) {
+			if (pessoa.getEmailPessoaAtual() == null) {
 				throw new AplicacaoException(
 						"Este usuário não possui e-mail cadastrado");
 			} else {
@@ -362,7 +362,7 @@ public class CpBL {
 				id = null;
 			}
 			if (id == null) {
-				if (pessoa.getEmailPessoa() != null) {
+				if (pessoa.getEmailPessoaAtual() != null) {
 					String novaSenha = null;
 					if (senhaDefinida != null && senhaDefinida.length() > 0) {
 						novaSenha = senhaDefinida;
@@ -405,7 +405,7 @@ public class CpBL {
 						dao().iniciarTransacao();
 						dao().gravarComHistorico(idNova, idCadastrante);
 						Correio.enviar(
-								pessoa.getEmailPessoa(),
+								pessoa.getEmailPessoaAtual(),
 								"Novo Usuário",
 								"Seu login é: "
 										+ matricula
@@ -474,7 +474,7 @@ public class CpBL {
 
 					try {
 						Correio.enviar(
-								id.getDpPessoa().getEmailPessoa(),
+								id.getDpPessoa().getEmailPessoaAtual(),
 								"Troca de Senha",
 								"O Administrador do sistema alterou a senha do seguinte usuário, para efetuar "
 										+ "uma manutenção no sistema: "
@@ -698,7 +698,7 @@ public class CpBL {
 				dao().gravarComHistorico(idNova, id, dt, idCadastrante);
 				dao().commitTransacao();
 				Correio.enviar(
-						id.getDpPessoa().getEmailPessoa(),
+						id.getDpPessoa().getEmailPessoaAtual(),
 						"Alteração de senha ",
 						"\n"
 								+ idNova.getDpPessoa().getNomePessoa()

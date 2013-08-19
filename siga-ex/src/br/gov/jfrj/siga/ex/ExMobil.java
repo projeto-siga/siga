@@ -1266,6 +1266,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return b;
 
 	}
+	
+	public boolean temDocumentosJuntados() {
+		for (ExMovimentacao movRef : getExMovimentacaoReferenciaSet()) {
+			if(!movRef.isCancelada() &&
+					movRef.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+				return true;
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Verifica se um Mobil do tipo Volume está Apensado a outro Mobil do mesmo

@@ -746,6 +746,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		
 		//Verifica se o subscritor pode movimentar todos os mobils
+		//E Também se algum documento diferente está apensado ou juntado a este documento
 		for (ExMobil m : mob.doc().getExMobilSet()) {
 			if(!m.isGeral()) {
 				if (!podeMovimentar(titular, lotaTitular, m))
@@ -754,8 +755,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				if(m.isJuntado() || m.isApensado())
 					return false;
 				
+				if(m.getApensos() != null && m.getApensos().size() > 0)
+					return false;
+				
+				if(m.temDocumentosJuntados())
+					return false;
 			}
 		}
+		
 		
 		return  getConf()
 						.podePorConfiguracao(

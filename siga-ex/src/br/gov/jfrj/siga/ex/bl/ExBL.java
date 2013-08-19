@@ -932,9 +932,9 @@ public class ExBL extends CpBL {
 				if (conf.getCpSituacaoConfiguracao().getIdSitConfiguracao() == ExSituacaoConfiguracao.SITUACAO_PODE) {
 					if (conf.getDpPessoa() != null) {
 						if (!emailsAtendentes.contains(conf.getDpPessoa()
-								.getEmailPessoa())) {
+								.getEmailPessoaAtual())) {
 							emailsAtendentes.add(conf.getDpPessoa()
-									.getEmailPessoa());
+									.getEmailPessoaAtual());
 						}
 					} else if (conf.getLotacao() != null) {
 						List<DpPessoa> pessoasLotacao = CpDao.getInstance()
@@ -943,8 +943,8 @@ public class ExBL extends CpBL {
 										false, true);
 						for (DpPessoa pessoa : pessoasLotacao) {
 							if (!emailsAtendentes.contains(pessoa
-									.getEmailPessoa()))
-								emailsAtendentes.add(pessoa.getEmailPessoa());
+									.getEmailPessoaAtual()))
+								emailsAtendentes.add(pessoa.getEmailPessoaAtual());
 						}
 					}
 				}
@@ -3343,6 +3343,9 @@ public class ExBL extends CpBL {
 							(subscritor == null && fDespacho) ? cadastrante
 									: subscritor, null, titular, null, dt);
 
+					if(dt != null)
+						mov.setDtIniMov(dt);
+
 					if (orgaoExterno != null || obsOrgao != null) {
 						mov.setOrgaoExterno(orgaoExterno);
 						mov.setObsOrgao(obsOrgao);
@@ -3473,7 +3476,7 @@ public class ExBL extends CpBL {
 
 			sDestinatario = responsavel.getNomePessoa();
 
-			dest.add(responsavel.getEmailPessoa());
+			dest.add(responsavel.getEmailPessoaAtual());
 
 		} else if (lotaResponsavel != null) {
 
@@ -3501,7 +3504,7 @@ public class ExBL extends CpBL {
 
 						lotaResponsavel.getIdLotacao(), false, true)) {
 
-							dest.add(pes.getEmailPessoa());
+							dest.add(pes.getEmailPessoaAtual());
 
 						}
 
@@ -3519,7 +3522,7 @@ public class ExBL extends CpBL {
 
 				lotaResponsavel.getIdLotacao(), false, true)) {
 
-					dest.add(pes.getEmailPessoa());
+					dest.add(pes.getEmailPessoaAtual());
 
 				}
 

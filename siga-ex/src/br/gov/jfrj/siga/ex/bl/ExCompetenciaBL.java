@@ -1984,10 +1984,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		}
 
-		if (mob.doc().isAssinado() && mob.doc().isEletronico()) {
-			return false;
-		}
-
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
 

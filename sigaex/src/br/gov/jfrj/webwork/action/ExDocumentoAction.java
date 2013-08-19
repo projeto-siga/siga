@@ -2349,7 +2349,12 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		try {
 			ByteArrayOutputStream baos;
-			// if (doc.getExTipoDocumento().getId() == 1) {
+			
+			final String marcacoes[] = {"<!-- INICIO NUMERO -->", "<!-- FIM NUMERO -->","<!-- INICIO NUMERO","FIM NUMERO -->","<!-- INICIO TITULO",
+					"FIM TITULO -->","<!-- INICIO MIOLO -->","<!-- FIM MIOLO -->","<!-- INICIO CORPO -->","<!-- FIM CORPO -->","<!-- INICIO CORPO",
+					"FIM CORPO -->","<!-- INICIO ASSINATURA -->","<!-- FIM ASSINATURA -->","<!-- INICIO ABERTURA -->","<!-- FIM ABERTURA -->",
+					"<!-- INICIO ABERTURA","FIM ABERTURA -->","<!-- INICIO FECHO -->","<!-- FIM FECHO -->"};
+			
 			final String as[] = getPar().get("vars");
 			if (as != null) {
 				baos = new ByteArrayOutputStream();
@@ -2358,9 +2363,15 @@ public class ExDocumentoAction extends ExActionSupport {
 						baos.write('&');
 					baos.write(s.getBytes());
 					baos.write('=');
-					if (param(s) != null)
-						baos.write(URLEncoder.encode(param(s), "iso-8859-1")
+					if (param(s) != null) {
+						String parametro = param(s); 
+						for (final String m : marcacoes){
+							if (parametro.contains(m))
+								parametro = parametro.replaceAll(m, "");
+						}					
+						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
 								.getBytes());
+					}
 				}
 				doc.setConteudoTpDoc("application/zip");
 				doc.setConteudoBlobForm(baos.toByteArray());

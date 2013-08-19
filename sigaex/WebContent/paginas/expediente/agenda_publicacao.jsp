@@ -76,17 +76,20 @@
 <div id="carregando" style="position:absolute;top:0px;right:0px;background-color:red;font-weight:bold;padding:4px;color:white;display:none">Carregando...</div>
 
 	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
+		<div class="gt-content clearfix">		
 			<h2>Agendamento de Publicação - ${mob.siglaEDescricaoCompleta}</h2>
-
-			<div class="gt-content-box gt-for-table">
-
+			<div class="gt-content-box gt-for-table">			
 		<form name="frm" action="agendar_publicacao_gravar.action"
 			namespace="/expediente/mov" cssClass="form" method="GET">
 			<ww:token/>
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>
+			<ww:if test="${not empty mensagem}">
+				<c:set var="disabled" value="disabled" />				
+			</ww:if>
+			<ww:else>
+				<c:set var="disabled" value="" />
+			</ww:else>
 			<table class="gt-form-table">
 				<colgroup>
 				<col  style="width:30%"/>
@@ -141,12 +144,14 @@
 							onkeyup="contaLetras();" />	
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>						
 				<tr>
-					<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-medium gt-btn-left" /> <input type="button"
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left" ${disabled}/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
 				</tr>
 			</table>
-			</form>
+			</form>	
+			<span style="font-weight:bold; color: red">${mensagem}</span>			
 			</div>
+			
 			
 			<br/>
 			<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>

@@ -76,6 +76,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
+import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
@@ -531,6 +532,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
+
 		if(getDescrPublicacao() == null)
 			setDescrPublicacao(doc.getDescrDocumento());	
 		
@@ -542,16 +544,15 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			this.setPodeAtenderPedidoPubl(true);			
 			lot.setId(doc.getSubscritor().getLotacao().getId());
 			lot.buscar();
-			setLotaSubscritorSel(lot);			
-/*				DpLotacaoDaoFiltro flt = new DpLotacaoDaoFiltro();
-			flt.setIdOrgaoUsu(getTitular().getOrgaoUsuario().getId());			
-			List<DpLotacao> todasLotacoes = dao().consultarDpLotacaoOrdenadaPorSigla(flt);
-		
-			for (DpLotacao lotacao : todasLotacoes) {
-				lotacoes.put(lotacao.getSigla(),lotacao.getSigla());
-			}	
-*/					
+			setLotaSubscritorSel(lot);	
 		}	
+		
+		try{
+			new GeradorRTF().geraRTFFOP(getDoc());
+		}catch (Exception e) {
+			setMensagem("Houve erro na geração do arquivo a ser publicado. Favor entrar em contato com a equipe gestora do DJE.");
+			
+		}
 
 		return Action.SUCCESS;
 	}
@@ -582,8 +583,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.remeterParaPublicacao(getCadastrante(), getLotaTitular(), mob,
 						dao().dt(), mov.getSubscritor(), mov.getTitular(),
 						getLotaTitular(), mov.getDtDispPublicacao(),
-						getTipoMateria().replaceAll("'", ""), getLotPublicacao(), getDescrPublicacao());
-
+						getTipoMateria().replaceAll("'", ""), getLotPublicacao(), getDescrPublicacao());	
 		return Action.SUCCESS;
 	}
 

@@ -448,9 +448,9 @@ public class SigaCpSinc {
 	}
 
 	private void importarListasDeTipos() {
-		tiposLotacao = CpDao.getInstance().listarTodos(CpTipoLotacao.class);
-		tiposPessoa = CpDao.getInstance().listarTodos(CpTipoPessoa.class);
-		tiposPapel = CpDao.getInstance().listarTodos(CpTipoPapel.class);
+		tiposLotacao = CpDao.getInstance().listarTiposLotacao();
+		tiposPessoa = CpDao.getInstance().listarTiposPessoa();
+		tiposPapel = CpDao.getInstance().listarTiposPapel();
 	}
 
 	private CpTipoPessoa obterTipoPessoaPorDescricao(String dscTpPessoa)

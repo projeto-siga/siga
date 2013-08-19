@@ -33,11 +33,9 @@ public class MontadorQuery implements IMontadorQuery {
 		StringBuffer sbf = new StringBuffer();
 
 		if (apenasCount)
-			sbf
-					.append("select count(doc) from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc");
+			sbf.append("select count(doc) from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc");
 		else
-			sbf
-					.append("select doc, mob, label from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc");
+			sbf.append("select doc, mob, label from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 
 		sbf.append(" where 1 = 1");
 
@@ -96,8 +94,7 @@ public class MontadorQuery implements IMontadorQuery {
 		}
 
 		if (flt.getIdTipoFormaDoc() != null && flt.getIdTipoFormaDoc() != 0) {
-			sbf
-					.append(" and doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = ");
+			sbf.append(" and doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = ");
 			sbf.append(flt.getIdTipoFormaDoc());
 		}
 
@@ -113,20 +110,20 @@ public class MontadorQuery implements IMontadorQuery {
 			sbf.append("'%" + flt.getDescrDocumento().toUpperCase() + "%'");
 		}
 
-//		if (flt.getFullText() != null && !flt.getFullText().trim().equals("")) {
-//			String s = flt.getFullText();
-//			while (s.contains("  "))
-//				s = s.replace("  ", " ");
-//			s = s.replaceAll(" ", " AND ");
-//			sbf.append(" and CONTAINS(conteudo_blob_doc, '");
-//			sbf.append(s);
-//			sbf.append("', 1) > 0");
-//		}
+		// if (flt.getFullText() != null &&
+		// !flt.getFullText().trim().equals("")) {
+		// String s = flt.getFullText();
+		// while (s.contains("  "))
+		// s = s.replace("  ", " ");
+		// s = s.replaceAll(" ", " AND ");
+		// sbf.append(" and CONTAINS(conteudo_blob_doc, '");
+		// sbf.append(s);
+		// sbf.append("', 1) > 0");
+		// }
 
 		if (flt.getDtDoc() != null) {
 			sbf.append(" and doc.dtDoc >= to_date('");
-			sbf.append(new SimpleDateFormat("dd/MM/yyyy")
-					.format(flt.getDtDoc()));
+			sbf.append(new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDoc()));
 			sbf.append("', 'dd/mm/yyyy')");
 		}
 
@@ -195,7 +192,8 @@ public class MontadorQuery implements IMontadorQuery {
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
-			ExModelo mod = ExDao.getInstance().consultar(flt.getIdMod(), ExModelo.class, false);
+			ExModelo mod = ExDao.getInstance().consultar(flt.getIdMod(),
+					ExModelo.class, false);
 			sbf.append(" and doc.exModelo.hisIdIni = ");
 			sbf.append(mod.getHisIdIni());
 		}
@@ -218,6 +216,7 @@ public class MontadorQuery implements IMontadorQuery {
 	}
 
 	public void setMontadorPrincipal(IMontadorQuery montadorQueryPrincipal) {
-		//Este médodo não faz nada. É utilizado apenas para a extensão da busca textual do SIGA.
+		// Este médodo não faz nada. É utilizado apenas para a extensão da busca
+		// textual do SIGA.
 	}
 }

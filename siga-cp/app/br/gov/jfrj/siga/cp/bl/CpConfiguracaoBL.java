@@ -76,9 +76,9 @@ public class CpConfiguracaoBL {
 	public static int SERVICO = 6;
 
 	public static int IDENTIDADE = 7;
-	
+
 	public static int TIPO_LOTACAO = 8;
-	
+
 	public static int GRUPO = 9;
 
 	public Comparator<CpConfiguracao> getComparator() {
@@ -138,7 +138,8 @@ public class CpConfiguracaoBL {
 	 * Varre as entidades definidas na configuração para evitar que o hibernate
 	 * guarde versões lazy delas.
 	 * 
-	 * @param listaCfg - lista de configurações que podem ter objetos lazy
+	 * @param listaCfg
+	 *            - lista de configurações que podem ter objetos lazy
 	 */
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		for (CpConfiguracao cfg : provResults) {
@@ -211,8 +212,8 @@ public class CpConfiguracaoBL {
 		sfCpDao.evict(CpConfiguracao.class);
 		sfCpDao.evict(DpLotacao.class);
 
-		sfCpDao.evictQueries("query.CpConfiguracao");
-		sfCpDao.evictQueries("query.DpLotacao");
+		// sfCpDao.evictQueries("query.CpConfiguracao");
+		// sfCpDao.evictQueries("query.DpLotacao");
 
 		return;
 
@@ -251,8 +252,9 @@ public class CpConfiguracaoBL {
 						.getCpTipoConfiguracao()
 						.getIdTpConfiguracao()
 						.equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO)) {
-			perfis = consultarPerfisPorPessoaELotacao(cpConfiguracaoFiltro
-					.getDpPessoa(), cpConfiguracaoFiltro.getLotacao(), dtEvn);
+			perfis = consultarPerfisPorPessoaELotacao(
+					cpConfiguracaoFiltro.getDpPessoa(),
+					cpConfiguracaoFiltro.getLotacao(), dtEvn);
 
 			// Quando o filtro especifica um perfil, ou seja, estamos tentando
 			// avaliar as permissões de um determinado perfil, ele e todos os
@@ -279,20 +281,19 @@ public class CpConfiguracaoBL {
 		}
 
 		TreeSet<CpConfiguracao> lista = null;
-//		try {
-			lista = getListaPorTipo(cpConfiguracaoFiltro
-					.getCpTipoConfiguracao().getIdTpConfiguracao());
-//		} catch (Exception e) {
-//			System.out.println(e.getStackTrace());
-//		}
+		// try {
+		lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao()
+				.getIdTpConfiguracao());
+		// } catch (Exception e) {
+		// System.out.println(e.getStackTrace());
+		// }
 
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn))
 					|| (cpConfiguracao.getCpSituacaoConfiguracao() != null && cpConfiguracao
 							.getCpSituacaoConfiguracao()
 							.getIdSitConfiguracao()
-							.equals(
-									CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR))
+							.equals(CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR))
 					|| !atendeExigencias(cpConfiguracaoFiltro,
 							atributosDesconsiderados, cpConfiguracao, perfis))
 				continue;
@@ -337,8 +338,8 @@ public class CpConfiguracaoBL {
 					continue;
 
 				if (cfg.getOrgaoUsuario() != null
-						&& !cfg.getLotacao().getOrgaoUsuario().equivale(
-								lotacao.getOrgaoUsuario()))
+						&& !cfg.getLotacao().getOrgaoUsuario()
+								.equivale(lotacao.getOrgaoUsuario()))
 					continue;
 
 				do {
@@ -401,12 +402,11 @@ public class CpConfiguracaoBL {
 
 		if (cfg.getCpGrupo() != null
 				&& (cfgFiltro.getCpGrupo() != null
-						&& !cfg.getCpGrupo().equivale(
-								cfgFiltro.getCpGrupo()) || ((cfgFiltro
+						&& !cfg.getCpGrupo().equivale(cfgFiltro.getCpGrupo()) || ((cfgFiltro
 						.getCpGrupo() == null) && !atributosDesconsiderados
-						.contains(GRUPO)) && (perfis != null && !perfisContemGrupo(cfg, perfis))))
+						.contains(GRUPO))
+						&& (perfis != null && !perfisContemGrupo(cfg, perfis))))
 			return false;
-
 
 		if (cfg.getCpIdentidade() != null
 				&& ((cfgFiltro.getCpIdentidade() != null
@@ -432,16 +432,16 @@ public class CpConfiguracaoBL {
 
 		if (cfg.getFuncaoConfianca() != null
 				&& ((cfgFiltro.getFuncaoConfianca() != null && !cfg
-						.getFuncaoConfianca().getIdFuncao().equals(
-								cfgFiltro.getFuncaoConfianca().getIdFuncao())) || ((cfgFiltro
+						.getFuncaoConfianca().getIdFuncao()
+						.equals(cfgFiltro.getFuncaoConfianca().getIdFuncao())) || ((cfgFiltro
 						.getFuncaoConfianca() == null) && !atributosDesconsiderados
 						.contains(FUNCAO))))
 			return false;
 
 		if (cfg.getOrgaoUsuario() != null
 				&& ((cfgFiltro.getOrgaoUsuario() != null && !cfg
-						.getOrgaoUsuario().getIdOrgaoUsu().equals(
-								cfgFiltro.getOrgaoUsuario().getIdOrgaoUsu())) || ((cfgFiltro
+						.getOrgaoUsuario().getIdOrgaoUsu()
+						.equals(cfgFiltro.getOrgaoUsuario().getIdOrgaoUsu())) || ((cfgFiltro
 						.getOrgaoUsuario() == null) && !atributosDesconsiderados
 						.contains(ORGAO))))
 			return false;
@@ -452,32 +452,36 @@ public class CpConfiguracaoBL {
 						.getCargo() == null) && !atributosDesconsiderados
 						.contains(CARGO))))
 			return false;
-		
+
 		if (cfg.getCpTipoLotacao() != null
-				&& ((cfgFiltro.getCpTipoLotacao() != null && !cfg.getCpTipoLotacao()
-						.getIdTpLotacao().equals(cfgFiltro.getCpTipoLotacao().getIdTpLotacao())) || ((cfgFiltro
+				&& ((cfgFiltro.getCpTipoLotacao() != null && !cfg
+						.getCpTipoLotacao().getIdTpLotacao()
+						.equals(cfgFiltro.getCpTipoLotacao().getIdTpLotacao())) || ((cfgFiltro
 						.getCpTipoLotacao() == null) && !atributosDesconsiderados
 						.contains(TIPO_LOTACAO))))
 			return false;
-		
 
 		return true;
 	}
 
 	/**
-	 * Verifica se a configuracao refere-se a um perfil ao qual a pessoa/lotacao pertence
-	 * @param cfg - A configuração a ser verificada
-	 * @param perfis - os perfis da pessoa/lotacao
+	 * Verifica se a configuracao refere-se a um perfil ao qual a pessoa/lotacao
+	 * pertence
+	 * 
+	 * @param cfg
+	 *            - A configuração a ser verificada
+	 * @param perfis
+	 *            - os perfis da pessoa/lotacao
 	 * @return
 	 */
 	private boolean perfisContemGrupo(CpConfiguracao cfg,
 			SortedSet<CpPerfil> perfis) {
 		for (CpPerfil cpPerfil : perfis) {
-			if (cpPerfil.equivale(cfg.getCpGrupo())){
+			if (cpPerfil.equivale(cfg.getCpGrupo())) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -503,41 +507,38 @@ public class CpConfiguracaoBL {
 	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu,
 			DpLotacao dpLotacao, DpCargo cargo,
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa,
-			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo, long idTpConf)
-			throws Exception {
-		
-		
-		try {
-			CpConfiguracao cfgFiltro = createNewConfiguracao();
-			cfgFiltro.setCargo(cargo);
-			cfgFiltro.setOrgaoUsuario(cpOrgaoUsu);
-			cfgFiltro.setFuncaoConfianca(dpFuncaoConfianca);
-			cfgFiltro.setLotacao(dpLotacao);
-			cfgFiltro.setDpPessoa(dpPessoa);
-			cfgFiltro.setCpServico(cpServico);
-			cfgFiltro.setCpIdentidade(cpIdentidade);
-			cfgFiltro.setCpTipoLotacao(dpLotacao!=null?dpLotacao.getCpTipoLotacao():null);
-			cfgFiltro.setCpGrupo(cpGrupo);
+			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo,
+			long idTpConf) throws Exception {
 
-			cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
-					CpTipoConfiguracao.class, false));
+		CpConfiguracao cfgFiltro = createNewConfiguracao();
 
-			CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro,
-					new int[] { 0 }, null);
+		cfgFiltro.setCargo(cargo);
+		cfgFiltro.setOrgaoUsuario(cpOrgaoUsu);
+		cfgFiltro.setFuncaoConfianca(dpFuncaoConfianca);
+		cfgFiltro.setLotacao(dpLotacao);
+		cfgFiltro.setDpPessoa(dpPessoa);
+		cfgFiltro.setCpServico(cpServico);
+		cfgFiltro.setCpIdentidade(cpIdentidade);
+		cfgFiltro.setCpTipoLotacao(dpLotacao != null ? dpLotacao
+				.getCpTipoLotacao() : null);
+		cfgFiltro.setCpGrupo(cpGrupo);
 
-			CpSituacaoConfiguracao situacao;
-			if (cfg != null) {
-				situacao = cfg.getCpSituacaoConfiguracao();
-			} else {
-				situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
-			}
+		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
+				CpTipoConfiguracao.class, false));
 
-			if (situacao != null
-					&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
-				return true;
-		} catch (Exception e) {
-			return false;
+		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro,
+				new int[] { 0 }, null);
+
+		CpSituacaoConfiguracao situacao;
+		if (cfg != null) {
+			situacao = cfg.getCpSituacaoConfiguracao();
+		} else {
+			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
 		}
+
+		if (situacao != null
+				&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+			return true;
 		return false;
 	}
 
@@ -554,44 +555,45 @@ public class CpConfiguracaoBL {
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			long idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null,
-				null, null,idTpConf);
+				null, null, idTpConf);
 
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			CpServico cpServico, long idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa,
-				cpServico, null, null,idTpConf);
+				cpServico, null, null, idTpConf);
 
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, dpPessoa, null,
-				null, null,idTpConf);
+				null, null, idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpLotacao dpLotacao, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, null, null,
-				null, null,idTpConf);
+				null, null, idTpConf);
 	}
 
 	public boolean podePorConfiguracao(CpIdentidade cpIdentidade, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, null,
-				cpIdentidade, null,idTpConf);
+				cpIdentidade, null, idTpConf);
 	}
-	
+
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			CpGrupo cpGrupo, long idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null,
-				null, cpGrupo,idTpConf);
+				null, cpGrupo, idTpConf);
 	}
 
-
 	/**
-	 * Infere configurações óbvias. Por exemplo, se for informada a pessoa, a lotação, órgão etc. já serão preenchidos automaticamente.
+	 * Infere configurações óbvias. Por exemplo, se for informada a pessoa, a
+	 * lotação, órgão etc. já serão preenchidos automaticamente.
+	 * 
 	 * @param cpConfiguracao
 	 */
 	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
@@ -650,8 +652,8 @@ public class CpConfiguracaoBL {
 				srvRecuperado = dao().consultarPorSigla(srv);
 				if (srvRecuperado == null) {
 					CpTipoServico tpsrv = dao().consultar(
-							CpTipoServico.TIPO_CONFIG_SISTEMA, CpTipoServico.class,
-							false);
+							CpTipoServico.TIPO_CONFIG_SISTEMA,
+							CpTipoServico.class, false);
 					String sDesc = (asParts.length > 1 ? asParts[1] : "");
 					srv.setDscServico(sDesc);
 					srv.setCpServicoPai(srvPai);
@@ -662,9 +664,11 @@ public class CpConfiguracaoBL {
 				}
 				srvPai = srvRecuperado;
 			}
-			return Cp.getInstance().getConf().podePorConfiguracao(titular,
-					lotaTitular, srvRecuperado,
-					CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+			return Cp
+					.getInstance()
+					.getConf()
+					.podePorConfiguracao(titular, lotaTitular, srvRecuperado,
+							CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
 		} catch (Exception e) {
 			return false;
 		}
@@ -723,8 +727,8 @@ public class CpConfiguracaoBL {
 				if (c.getDpPessoa().equivale(pesAtual)) {
 					if (c.getHisAtivo() == 1
 							&& pesAtual.getDataFim() == null
-							&& c.getLotacao().getIdInicial().equals(
-									lot.getIdInicial())) {
+							&& c.getLotacao().getIdInicial()
+									.equals(lot.getIdInicial())) {
 						resultado.add(pesAtual);
 					}
 				}
@@ -750,8 +754,8 @@ public class CpConfiguracaoBL {
 			for (CpConfiguracao c : configs) {
 				if (c.getHisAtivo() == 1
 						&& c.getLotacao().getDataFim() == null
-						&& c.getDpPessoa().getIdInicial().equals(
-								pes.getIdInicial())) {
+						&& c.getDpPessoa().getIdInicial()
+								.equals(pes.getIdInicial())) {
 					resultado.add(c.getLotacao());
 				}
 			}
@@ -784,11 +788,11 @@ public class CpConfiguracaoBL {
 		}
 
 	}
-	
-	public boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular, Long idCpTipoGrupo) throws Exception{
-		return dao().getGruposGeridos(titular, lotaTitular, idCpTipoGrupo).size()>0;
+
+	public boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular,
+			Long idCpTipoGrupo) throws Exception {
+		return dao().getGruposGeridos(titular, lotaTitular, idCpTipoGrupo)
+				.size() > 0;
 	}
-
-
 
 }

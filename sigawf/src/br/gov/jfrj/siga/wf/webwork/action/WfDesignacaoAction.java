@@ -536,7 +536,7 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 	 * @return Lista de órgãos
 	 */
 	public List<CpOrgaoUsuario> getListaOrgao() {
-		return dao().listarTodos(CpOrgaoUsuario.class);
+		return dao().listarOrgaosUsuarios();
 	}
 
 	/**
@@ -647,9 +647,7 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 		sfWfDao.evict(WfConfiguracao.class);
 		sfCpDao.evict(DpLotacao.class);
 
-		sfWfDao.evictQueries("query.CpConfiguracao");
-		sfWfDao.evictQueries("query.WfConfiguracao");
-		sfCpDao.evictQueries("query.DpLotacao");
+		sfWfDao.evictQueries(CpDao.CACHE_QUERY_CONFIGURACAO);
 
 		return;
 

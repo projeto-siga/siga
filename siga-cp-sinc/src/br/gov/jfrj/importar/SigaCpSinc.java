@@ -448,9 +448,9 @@ public class SigaCpSinc {
 	}
 
 	private void importarListasDeTipos() {
-		tiposLotacao = CpDao.getInstance().listarTodos(CpTipoLotacao.class);
-		tiposPessoa = CpDao.getInstance().listarTodos(CpTipoPessoa.class);
-		tiposPapel = CpDao.getInstance().listarTodos(CpTipoPapel.class);
+		tiposLotacao = CpDao.getInstance().listarTiposLotacao();
+		tiposPessoa = CpDao.getInstance().listarTiposPessoa();
+		tiposPapel = CpDao.getInstance().listarTiposPapel();
 	}
 
 	private CpTipoPessoa obterTipoPessoaPorDescricao(String dscTpPessoa)
@@ -829,8 +829,8 @@ public class SigaCpSinc {
 				pessoa.setDataNascimento(dtNascimento);
 
 			pessoa.setEmailPessoa(parseStr(parser, "email"));
-			if (pessoa.getEmailPessoa() != null)
-				pessoa.setEmailPessoa(pessoa.getEmailPessoa().toLowerCase());
+			if (pessoa.getEmailPessoaAtual() != null)
+				pessoa.setEmailPessoa(pessoa.getEmailPessoaAtual().toLowerCase());
 			pessoa.setSesbPessoa(cpOrgaoUsuario.getSiglaOrgaoUsu());
 			pessoa.setDataInicioPessoa(new Date());
 			pessoa.setSiglaPessoa(parseStr(parser, "sigla"));

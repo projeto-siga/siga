@@ -193,12 +193,18 @@ public class SelfConfigAction 	extends SigaActionSupport
 		t_cfgConfigExemplo.setDpPessoa(p_dpsPessoa);
 		t_cfgConfigExemplo.setCpTipoConfiguracao(p_ctcTipoConfig);
 		t_cfgConfigExemplo.setCpServico(p_cpsServico);
-		ArrayList <CpConfiguracao> t_arlConfig = (ArrayList<CpConfiguracao>) dao().porLotacaoPessoaServicoTipo(t_cfgConfigExemplo);
-		if (t_arlConfig.size() > 0) {
-			return t_arlConfig.get(0);
-		} else {
-			return null;
+		
+		CpConfiguracao cpConf = null;
+		try {
+			cpConf = Cp.getInstance().getConf().buscaConfiguracao(t_cfgConfigExemplo,
+					new int[] { 0 }, null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		return cpConf;
+		
 	}
 	/**
 	 *  Retorna os serviços cuja configuração possui 

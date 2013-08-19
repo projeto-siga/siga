@@ -95,7 +95,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 		try {
 			if (parametros.get("idOrgaoUsuario").equals("-1")) {
 				setCpOrgaosUsuario((ArrayList<CpOrgaoUsuario>) dao()
-						.listarTodos(CpOrgaoUsuario.class));
+						.listarOrgaosUsuarios());
 			} else {
 				Long idOrg = Long.parseLong((String) parametros
 						.get("idOrgaoUsuario"));

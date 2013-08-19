@@ -330,7 +330,7 @@ public class ExClassificacaoAction
 	}
 	
 	public List<ExTipoDestinacao> getListaExTipoDestinacao(){
-		return ExDao.getInstance().listarTodos(ExTipoDestinacao.class);
+		return ExDao.getInstance().listarExTiposDestinacao();
 	}
 	
 	public List<ExTemporalidade> getListaExTemporalidade(){

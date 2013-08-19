@@ -660,7 +660,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			// Envia email para o servidor que fez o pedido
 			ArrayList<String> emailsSolicitantes = new ArrayList<String>();
 			emailsSolicitantes.add(movPedidoBI.getCadastrante()
-					.getEmailPessoa());
+					.getEmailPessoaAtual());
 
 			Correio.enviar(SigaBaseProperties
 					.getString("servidor.smtp.usuario.remetente"),
@@ -800,7 +800,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			// Envia email para o servidor que fez o pedido
 			ArrayList<String> emailsSolicitantes = new ArrayList<String>();
 			emailsSolicitantes.add(movPedidoDJE.getCadastrante()
-					.getEmailPessoa());
+					.getEmailPessoaAtual());
 
 		
 			Correio.enviar(SigaBaseProperties

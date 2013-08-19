@@ -42,6 +42,7 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	private String procedimento;
 	private String secaoUsuario;
 	private Map parametrosRelatorio;
+	private String incluirAbertos;
 
 	/**
 	 * Retorna o órgão.
@@ -103,6 +104,8 @@ public class WfMetricaAction extends WfSigaActionSupport {
 		parametrosRelatorio.put("dataFinalAte", getRequest().getParameter("dataFinalAte"));
 		parametrosRelatorio.put("nomeProcedimento", getRequest().getParameter(
 				"procedimento"));
+		parametrosRelatorio.put("incluirAbertos",incluirAbertos==null?false:incluirAbertos );
+
 		
 		String relatorioEscolhido = (String)getRequest().getParameter(
 		"selecaoRelatorio");
@@ -233,5 +236,13 @@ public class WfMetricaAction extends WfSigaActionSupport {
 		lista.add("Tempo de documentos");
 		lista.add("Tempo de documentos detalhado");
 		return lista; 
+	}
+
+	public void setIncluirAbertos(String incluirAbertos) {
+		this.incluirAbertos = incluirAbertos;
+	}
+
+	public String getIncluirAbertos() {
+		return incluirAbertos;
 	}
 }

@@ -48,6 +48,8 @@ import br.gov.jfrj.siga.wf.util.WfContextBuilder;
  */
 public class RelEstatisticaProcedimento extends RelatorioTemplate {
 
+	private static final double PERCENTUAL_MED_TRUNCADA = 5.0;
+
 	/**
 	 * Construtor que define os parâmetros que são obrigatórios para a
 	 * construção do relatório.
@@ -101,7 +103,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		this.addColuna("Mín", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Max", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Méd", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("Desvio Padrão", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Média Truncada", 15, RelatorioRapido.CENTRO, false);
 
 		return this;
 	}
@@ -128,9 +130,9 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Map<String, Long> mapaMax = new HashMap<String, Long>();
 		Map<String, Long> mapaMedia = new HashMap<String, Long>();
 		Map<String, ArrayList<Long>> mapaAmostra = new HashMap<String, ArrayList<Long>>();
-		Map<String, Long> mapaDesvio = new HashMap<String, Long>();
+		Map<String, Long> mapaMedTrunc = new HashMap<String, Long>();
 		Long mediaPI = 0L;
-		Long desvioPI = 0L;
+		Long medTruncPI = 0L;
 		Long minPI = 0L;
 		Long maxPI = 0L;
 
@@ -216,8 +218,8 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Double media = e.getMediaAritmetica();
 		mediaPI = media.longValue();
 		
-		Double desvio = e.getDesvioPadrao();
-		desvioPI = desvio.longValue();
+		Double medTrunc = e.getMediaAritmeticaTruncada(PERCENTUAL_MED_TRUNCADA);
+		medTruncPI = medTrunc.longValue();
 
 		// Estatísticas tarefas
 		for (String tarefa : mapaAmostra.keySet()) {
@@ -226,8 +228,8 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 			Double mediaTarefa = e.getMediaAritmetica();
 			mapaMedia.put(tarefa, mediaTarefa.longValue());
 			
-			Double desvioTarefa = e.getDesvioPadrao();
-			mapaDesvio.put(tarefa, desvioTarefa.longValue());
+			Double medTruncTarefa = e.getMediaAritmeticaTruncada(PERCENTUAL_MED_TRUNCADA);
+			mapaMedTrunc.put(tarefa, medTruncTarefa.longValue());
 
 		}
 
@@ -241,7 +243,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		dados.add(SigaCalendar.formatDHM(maxPI));
 		dados.add(SigaCalendar.formatDHM(mediaPI));
 
-		dados.add(SigaCalendar.formatDHM(desvioPI));
+		dados.add(SigaCalendar.formatDHM(medTruncPI));
 
 		// insere dados das tarefas
 		for (int i = 0; i < tarefasOrdenadas.length; i++) {
@@ -253,7 +255,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 			dados.add(SigaCalendar
 					.formatDHM(mapaMedia.get(tarefasOrdenadas[i])));
 
-			dados.add(SigaCalendar.formatDHM(mapaDesvio
+			dados.add(SigaCalendar.formatDHM(mapaMedTrunc
 					.get(tarefasOrdenadas[i]).longValue()));
 
 		}

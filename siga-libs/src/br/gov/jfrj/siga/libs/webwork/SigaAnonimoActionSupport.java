@@ -150,7 +150,7 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 	}
 
 	public List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
-		return dao().listarTodos(CpOrgaoUsuario.class);
+		return dao().listarOrgaosUsuarios();
 	}
 
 	public String param(final String parameterName) {

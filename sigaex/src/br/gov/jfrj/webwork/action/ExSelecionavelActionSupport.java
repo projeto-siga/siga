@@ -40,7 +40,7 @@ public abstract class ExSelecionavelActionSupport<T extends Selecionavel, DaoFil
 	}
 
 	public List<CpMarcador> getEstados() throws AplicacaoException {
-		return dao().listarTodos(CpMarcador.class);
+		return dao().listarMarcadores();
 	}
 
 	public Map<Integer, String> getListaTipoResp() {
@@ -60,7 +60,7 @@ public abstract class ExSelecionavelActionSupport<T extends Selecionavel, DaoFil
 	}
 
 	public List<ExTipoDocumento> getTiposDocumento() throws AplicacaoException {
-		return dao().listarTodos(ExTipoDocumento.class);
+		return dao().listarExTiposDocumento();
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException,

@@ -47,9 +47,10 @@ public class ConexaoHTTP {
 
 			System.setProperty("http.keepAlive", "false");
 
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
-			return writer.toString();
+			//StringWriter writer = new StringWriter();
+			//IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
+			//return writer.toString();
+			return IOUtils.toString(conn.getInputStream(), "UTF-8");
 			
 		} catch (IOException ioe) {
 			throw new AplicacaoException("Não foi possível abrir conexão", 1,

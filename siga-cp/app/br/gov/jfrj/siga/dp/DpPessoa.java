@@ -473,5 +473,15 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	public void setHisAtivo(int hisAtivo) {
 		//
 	}
+	
+	public String getEmailPessoaAtual() {
+		try{
+			return getPessoaAtual().getEmailPessoa();
+		}catch (Exception e) {
+			return getEmailPessoa();
+		}
+		
+	}
+
 
 }

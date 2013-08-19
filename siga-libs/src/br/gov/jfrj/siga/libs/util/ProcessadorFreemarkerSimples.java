@@ -52,6 +52,7 @@ public class ProcessadorFreemarkerSimples implements
 		cfg.setObjectWrapper(new DefaultObjectWrapper());
 		cfg.setWhitespaceStripping(true);
 		cfg.setTagSyntax(Configuration.SQUARE_BRACKET_TAG_SYNTAX);
+		cfg.setLocalizedLookup(false);
 	}
 
 	public String processarModelo(CpOrgaoUsuario ou, Map<String, Object> attrs,

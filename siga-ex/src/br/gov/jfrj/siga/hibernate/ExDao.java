@@ -35,8 +35,13 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.CacheConfiguration;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
@@ -64,7 +69,10 @@ import org.hibernate.util.ReflectHelper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -73,14 +81,22 @@ import br.gov.jfrj.siga.ex.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
+import br.gov.jfrj.siga.ex.ExTipoDespacho;
+import br.gov.jfrj.siga.ex.ExTipoDestinacao;
+import br.gov.jfrj.siga.ex.ExTipoDocumento;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
+import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
@@ -93,6 +109,8 @@ import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 public class ExDao extends CpDao {
+
+	public static final String CACHE_EX = "ex";
 
 	private static final Logger log = Logger.getLogger(ExDao.class);
 
@@ -208,6 +226,7 @@ public class ExDao extends CpDao {
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
+		long tempoIni = System.nanoTime();
 		Query query = getSessao().createQuery(
 				montadorQuery.montaQueryConsultaporFiltro(flt, titular,
 						lotaTitular, false));
@@ -218,6 +237,9 @@ public class ExDao extends CpDao {
 			query.setMaxResults(itemPagina);
 		}
 		List l = query.list();
+		long tempoTotal = System.nanoTime() - tempoIni;
+		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
+				/ 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
 	}
 
@@ -1074,18 +1096,19 @@ public class ExDao extends CpDao {
 	public List<ExConfiguracao> consultar(final ExConfiguracao exemplo) {
 		CpTipoConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
 		CpOrgaoUsuario orgao = exemplo.getOrgaoUsuario();
-		
+
 		StringBuffer sbf = new StringBuffer();
 
 		sbf.append("select * from siga.ex_configuracao ex inner join corporativo.cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
 
 		sbf.append("" + "where 1 = 1");
 
-		if (tpConf != null && tpConf.getIdTpConfiguracao() != null && tpConf.getIdTpConfiguracao() != 0) {
+		if (tpConf != null && tpConf.getIdTpConfiguracao() != null
+				&& tpConf.getIdTpConfiguracao() != 0) {
 			sbf.append(" and cp.id_tp_configuracao = ");
 			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
-		} 
-		
+		}
+
 		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
 			sbf.append(" and (cp.id_orgao_usu = ");
 			sbf.append(orgao.getId());
@@ -1100,39 +1123,41 @@ public class ExDao extends CpDao {
 			sbf.append(")");
 			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from corporativo.dp_funcao_confianca fc where fc.id_orgao_usu = ");
 			sbf.append(orgao.getId());
-			sbf.append(")");			
-			sbf.append(" or (cp.id_orgao_usu is null and cp.id_lotacao is null and cp.id_pessoa is null and cp.id_cargo is null and cp.id_funcao_confianca is null");			
-			sbf.append(")");		
 			sbf.append(")");
-			sbf.append("order by ex.id_configuracao_ex");			
-			
-		}		
-		
-		Query query = getSessao().createSQLQuery(sbf.toString()).addEntity(ExConfiguracao.class);
-		
+			sbf.append(" or (cp.id_orgao_usu is null and cp.id_lotacao is null and cp.id_pessoa is null and cp.id_cargo is null and cp.id_funcao_confianca is null");
+			sbf.append(")");
+			sbf.append(")");
+			sbf.append("order by ex.id_configuracao_ex");
+
+		}
+
+		Query query = getSessao().createSQLQuery(sbf.toString()).addEntity(
+				ExConfiguracao.class);
+
 		query.setCacheable(true);
 		query.setCacheRegion("query.ExConfiguracao");
 		return query.list();
 
 	}
 
-	public List<ExClassificacao> listarExClassificacaoPorNivel(String mascara,String exceto){
-		Query q = getSessao().getNamedQuery("consultarExClassificacaoComExcecao");
+	public List<ExClassificacao> listarExClassificacaoPorNivel(String mascara,
+			String exceto) {
+		Query q = getSessao().getNamedQuery(
+				"consultarExClassificacaoComExcecao");
 		q.setString("mascara", mascara);
 		q.setString("exceto", exceto);
 		return q.list();
 
 	}
-	
-	public List<ExClassificacao> listarExClassificacaoPorNivel(String mascara){
-		Query q = getSessao().getNamedQuery("consultarExClassificacaoPorMascara");
+
+	public List<ExClassificacao> listarExClassificacaoPorNivel(String mascara) {
+		Query q = getSessao().getNamedQuery(
+				"consultarExClassificacaoPorMascara");
 		q.setString("mascara", mascara);
 		q.setString("descrClassificacao", "");
 		return q.list();
 
 	}
-
-
 
 	public List<ExClassificacao> consultarPorFiltro(
 			final ExClassificacaoDaoFiltro flt) {
@@ -1143,15 +1168,15 @@ public class ExDao extends CpDao {
 			final ExClassificacaoDaoFiltro flt, final int offset,
 			final int itemPagina) {
 		String descrClassificacao = "";
-		
+
 		MascaraUtil m = MascaraUtil.getInstance();
-		
+
 		if (flt.getDescricao() != null) {
 			String d = flt.getDescricao();
-			if (d.length() > 0 && m.isCodificacao(d)){
+			if (d.length() > 0 && m.isCodificacao(d)) {
 				descrClassificacao = m.formatar(d);
-			}else{
-				descrClassificacao = d;	
+			} else {
+				descrClassificacao = d;
 			}
 		}
 
@@ -1164,17 +1189,20 @@ public class ExDao extends CpDao {
 			query.setMaxResults(itemPagina);
 		}
 
-		if (flt.getSigla()==null || flt.getSigla().equals("")){
-			query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
-		}else{
-			query.setString("mascara", MascaraUtil.getInstance().getMscFilho(flt.getSigla().toString(),true));
+		if (flt.getSigla() == null || flt.getSigla().equals("")) {
+			query.setString("mascara", MascaraUtil.getInstance()
+					.getMscTodosDoMaiorNivel());
+		} else {
+			query.setString(
+					"mascara",
+					MascaraUtil.getInstance().getMscFilho(
+							flt.getSigla().toString(), true));
 		}
 
-		
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
-		query.setString("descrClassificacaoSemAcento", Texto.removeAcentoMaiusculas(descrClassificacao)
-				.replace(' ', '%'));
+		query.setString("descrClassificacaoSemAcento", Texto
+				.removeAcentoMaiusculas(descrClassificacao).replace(' ', '%'));
 
 		final List<ExClassificacao> l = query.list();
 		return l;
@@ -1191,7 +1219,8 @@ public class ExDao extends CpDao {
 
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
-		query.setString("mascara", MascaraUtil.getInstance().getMscTodosDoMaiorNivel());
+		query.setString("mascara", MascaraUtil.getInstance()
+				.getMscTodosDoMaiorNivel());
 
 		final int l = ((Long) query.uniqueResult()).intValue();
 		return l;
@@ -1201,7 +1230,8 @@ public class ExDao extends CpDao {
 		try {
 			final Query query = getSessao().getNamedQuery(
 					"consultarPorSiglaExClassificacao");
-			query.setString("codificacao", MascaraUtil.getInstance().formatar(o.getSigla()));
+			query.setString("codificacao",
+					MascaraUtil.getInstance().formatar(o.getSigla()));
 
 			final List<ExClassificacao> l = query.list();
 			if (l.size() != 1)
@@ -1343,9 +1373,10 @@ public class ExDao extends CpDao {
 
 	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script)
 			throws Exception {
-		final Query q = getSessao().createQuery(
-				"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
-						+ "order by f.descrFormaDoc, m.nmMod");
+		final Query q = getSessao()
+				.createQuery(
+						"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
+								+ "order by f.descrFormaDoc, m.nmMod");
 		List<ExModelo> l = new ArrayList<ExModelo>();
 		for (ExModelo mod : (List<ExModelo>) q.list())
 			if (script != null && script.trim().length() != 0) {
@@ -1436,45 +1467,67 @@ public class ExDao extends CpDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExMarca.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpMarca.class);
 
-//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
-//				"read-only", "ex");
+		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
+		// "read-only", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExConfiguracao",
 		// "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExEstadoDoc",
-				"read-only", "ex");
+				"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExFormaDocumento",
-				"read-only", "ex");
+				"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExNivelAcesso",
-				"read-only", "ex");
+				"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao", "read-only", "ex");
-//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
-//				"read-only", "ex");
+				"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao", "read-only", CACHE_EX);
+		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
+		// "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDespacho",
-				"read-only", "ex");
+				"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDestinacao",
-				"read-only", "ex");
+				"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDocumento",
-				"read-only", "ex");
+				"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExTpDocPublicacao", "read-only", "ex");
+				"br.gov.jfrj.siga.ex.ExTpDocPublicacao", "read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExTipoMovimentacao", "read-only", "ex");
+				"br.gov.jfrj.siga.ex.ExTipoMovimentacao", "read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoFormaDoc",
-				"read-only", "ex");
-//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExVia",
-//				"read-only", "ex");
+				"read-only", CACHE_EX);
+		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExVia",
+		// "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoMobil",
-				"read-only", "ex");
+				"read-only", CACHE_EX);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"br.gov.jfrj.siga.ex.ExTipoDocumento.exFormaDocumentoSet",
-				"read-only", "ex");
-//		cfg.setCollectionCacheConcurrencyStrategy(
-//				"br.gov.jfrj.siga.ex.ExClassificacao.exViaSet", "read-only",
-//				"ex");
+				"read-only", CACHE_EX);
+
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoMarca",
+				"nonstrict-read-write", "corporativo");
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoMarcador",
+				"nonstrict-read-write", "corporativo");
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpMarcador",
+				"nonstrict-read-write", "corporativo");
+
+		CacheManager manager = CacheManager.getInstance();
+		Cache cache;
+		CacheConfiguration config;
+
+		if (!manager.cacheExists(CACHE_EX)) {
+			manager.addCache(CACHE_EX);
+			cache = manager.getCache(CACHE_EX);
+			config = cache.getCacheConfiguration();
+			config.setTimeToIdleSeconds(3600);
+			config.setTimeToLiveSeconds(36000);
+			config.setMaxElementsInMemory(10000);
+			config.setMaxElementsOnDisk(1000000);
+		}
+
+		// cfg.setCollectionCacheConcurrencyStrategy(
+		// "br.gov.jfrj.siga.ex.ExClassificacao.exViaSet", "read-only",
+		// "ex");
 		// cfg.setCollectionCacheConcurrencyStrategy(
 		// "br.gov.jfrj.siga.ex.ExFormaDocumento.exModeloSet",
-		
+
 		// "nonstrict-read-write", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExModelo",
 		// "nonstrict-read-write", "ex");
@@ -1535,14 +1588,16 @@ public class ExDao extends CpDao {
 	}
 
 	public String consultarDescricaoExClassificacao(ExClassificacao exClass) {
-		String[] pais = MascaraUtil.getInstance().getPais(exClass.getCodificacao());
-		if (pais==null){
+		String[] pais = MascaraUtil.getInstance().getPais(
+				exClass.getCodificacao());
+		if (pais == null) {
 			return exClass.getDescrClassificacao();
 		}
-//		pais = Arrays.copyOf(pais, pais.length+1);
-//		pais[pais.length-1]= exClass.getCodificacao();
-		
-		Query q = getSessao().getNamedQuery("consultarDescricaoExClassificacao");
+		// pais = Arrays.copyOf(pais, pais.length+1);
+		// pais[pais.length-1]= exClass.getCodificacao();
+
+		Query q = getSessao()
+				.getNamedQuery("consultarDescricaoExClassificacao");
 		q.setParameterList("listaCodificacao", pais);
 		List<String> result = q.list();
 		StringBuffer sb = new StringBuffer();
@@ -1550,28 +1605,35 @@ public class ExDao extends CpDao {
 			sb.append(descr);
 			sb.append(": ");
 		}
-		
+
 		sb.append(exClass.getDescrClassificacao());
 		return sb.toString();
 	}
-	
-	public List<ExClassificacao> consultarExClassificacaoVigente(){
-		return consultarExClassificacao(MascaraUtil.getInstance().getMscTodosDoMaiorNivel(),"");
+
+	public List<ExClassificacao> consultarExClassificacaoVigente() {
+		return consultarExClassificacao(MascaraUtil.getInstance()
+				.getMscTodosDoMaiorNivel(), "");
 	}
-	
-	public List<ExClassificacao> consultarFilhos(ExClassificacao exClass,boolean niveisAbaixo){
-		final Query query = getSessao().getNamedQuery("consultarFilhosExClassificacao");
-		query.setString("mascara", MascaraUtil.getInstance().getMscFilho(exClass.getCodificacao().toString(),niveisAbaixo));
-		
+
+	public List<ExClassificacao> consultarFilhos(ExClassificacao exClass,
+			boolean niveisAbaixo) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarFilhosExClassificacao");
+		query.setString(
+				"mascara",
+				MascaraUtil.getInstance().getMscFilho(
+						exClass.getCodificacao().toString(), niveisAbaixo));
+
 		return query.list().subList(1, query.list().size());
 	}
-	
+
 	public List<ExClassificacao> consultarExClassificacao(String mascaraLike,
 			String descrClassificacao) {
-		Query q = getSessao().getNamedQuery("consultarExClassificacaoPorMascara");
+		Query q = getSessao().getNamedQuery(
+				"consultarExClassificacaoPorMascara");
 		q.setString("mascara", mascaraLike);
 		q.setString("descrClassificacao", descrClassificacao.toUpperCase());
-		
+
 		return q.list();
 	}
 
@@ -1582,19 +1644,67 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExDocumento> consultarExDocumentoPorClassificacao(
-			DpLotacao lotacao, String mascara,CpOrgaoUsuario orgaoUsu) {
+			DpLotacao lotacao, String mascara, CpOrgaoUsuario orgaoUsu) {
 		Query q;
-		if (lotacao == null){
+		if (lotacao == null) {
 			q = getSessao().getNamedQuery("consultarExDocumentoClassificados");
-		}else{
-			q = getSessao().getNamedQuery("consultarExDocumentoClassificadosPorLotacao");
+		} else {
+			q = getSessao().getNamedQuery(
+					"consultarExDocumentoClassificadosPorLotacao");
 			q.setLong("idLotacao", lotacao.getId());
 		}
-		 
+
 		q.setString("mascara", mascara);
 		q.setLong("idOrgaoUsuario", orgaoUsu.getIdOrgaoUsu());
 		return q.list();
 	}
 
+	public List<ExPapel> listarExPapeis() {
+		return findByCriteria(ExPapel.class);
+	}
+
+	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTpDocPublicacao.class);
+	}
+
+	public List<ExConfiguracao> listarExConfiguracoes() {
+		return findByCriteria(ExConfiguracao.class);
+	}
+
+	public List<ExTipoDocumento> listarExTiposDocumento() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTipoDocumento.class);
+	}
+
+	public List<ExEstadoDoc> listarExEstadosDoc() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExEstadoDoc.class);
+	}
+
+	public List<ExTipoDestinacao> listarExTiposDestinacao() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTipoDestinacao.class);
+	}
+
+	public List<ExTipoFormaDoc> listarExTiposFormaDoc() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTipoFormaDoc.class);
+	}
+
+	public List<ExTipoMovimentacao> listarExTiposMovimentacao() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTipoMovimentacao.class);
+	}
+
+	public List<ExModelo> listarExModelos() {
+		return findByCriteria(ExModelo.class);
+	}
+
+	public List<ExVia> listarExVias() {
+		return findByCriteria(ExVia.class);
+	}
+
+	public List<ExFormaDocumento> listarExFormasDocumento() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExFormaDocumento.class);
+	}
+
+	public List<ExTipoDespacho> listarExTiposDespacho() {
+		return findByCriteria(ExTipoDespacho.class);
+	}
 
 }

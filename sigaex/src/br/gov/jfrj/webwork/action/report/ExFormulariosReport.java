@@ -35,9 +35,9 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
+import br.gov.jfrj.webwork.action.ExActionSupport;
 
-public class ExFormulariosReport extends SigaActionSupport {
+public class ExFormulariosReport extends ExActionSupport {
 
 	private Collection dataSource;
 
@@ -96,7 +96,7 @@ public class ExFormulariosReport extends SigaActionSupport {
 		secaoUsuario = getCadastrante().getOrgaoUsuario()
 				.getDescricaoMaiusculas();
 
-		List<ExModelo> l = dao().listarTodos(ExModelo.class);
+		List<ExModelo> l = dao().listarExModelos();
 
 		SortedSet<ListItem> ll = new TreeSet<ListItem>();
 		for (ExModelo o : l) {

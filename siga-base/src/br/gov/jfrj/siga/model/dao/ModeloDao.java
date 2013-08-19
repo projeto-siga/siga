@@ -161,11 +161,12 @@ public abstract class ModeloDao {
 		return entidade;
 	}
 
-	public <T> List<T> listarTodos(Class<T> clazz) {
-		// Criteria crit = getSessao().createCriteria(getPersistentClass());
-		// return crit.list();
-		return findByCriteria(clazz);
-	}
+	// Renato: desativei esse método pois ele não informar questões de cache ou de ordenação. É melhor termos métodos específicos, então.
+//	public <T> List<T> listarTodos(Class<T> clazz) {
+//		// Criteria crit = getSessao().createCriteria(getPersistentClass());
+//		// return crit.list();
+//		return findByCriteria(clazz);
+//	}
 
 	/**
 	 * Use this inside subclasses as a convenience method.
@@ -177,10 +178,20 @@ public abstract class ModeloDao {
 		for (final Criterion c : criterion) {
 			crit.add(c);
 		}
-		// if (getCacheRegion() != null) {
-		// crit.setCacheable(true);
-		// crit.setCacheRegion(getCacheRegion());
-		// }
+		return crit.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz,
+			final Criterion... criterion) {
+		final Criteria crit = getSessao().createCriteria(clazz);
+		for (final Criterion c : criterion) {
+			crit.add(c);
+		}
+		if (cacheRegion != null) {
+			crit.setCacheable(true);
+			crit.setCacheRegion(cacheRegion);
+		}
 		return crit.list();
 	}
 

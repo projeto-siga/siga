@@ -215,7 +215,7 @@ public class FuncoesEL {
 
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 
-		List<DpLotacao> lotacoes = dao().listarTodos(DpLotacao.class);
+		List<DpLotacao> lotacoes = dao().listarLotacoes();
 		List<DpLotacao> sublotacoes = new ArrayList<DpLotacao>();
 		sublotacoes.add(lotacao);
 

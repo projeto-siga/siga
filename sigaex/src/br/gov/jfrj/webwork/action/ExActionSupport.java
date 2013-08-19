@@ -159,7 +159,7 @@ public class ExActionSupport extends SigaActionSupport {
 	}
 
 	public List<ExTipoDocumento> getTiposDocumento() throws AplicacaoException {
-		return dao().listarTodos(ExTipoDocumento.class);
+		return dao().listarExTiposDocumento();
 	}
 
 	public ExDao dao() {
@@ -179,7 +179,7 @@ public class ExActionSupport extends SigaActionSupport {
 	}
 
 	public List<ExEstadoDoc> getEstados() throws AplicacaoException {
-		return ExDao.getInstance().listarTodos(ExEstadoDoc.class);
+		return ExDao.getInstance().listarExEstadosDoc();
 	}
 
 	public Map<Integer, String> getListaTipoResp() {

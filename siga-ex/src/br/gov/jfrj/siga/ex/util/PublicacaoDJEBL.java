@@ -437,8 +437,7 @@ public class PublicacaoDJEBL {
 	}
 
 	public static List<ExTpDocPublicacao> obterListaTiposMaterias(Long idMod) {
-		List<ExTpDocPublicacao> lista = ExDao.getInstance().listarTodos(
-				ExTpDocPublicacao.class);
+		List<ExTpDocPublicacao> lista = ExDao.getInstance().listarExTiposDocPublicacao();
 		List<ExTpDocPublicacao> listaFinal = new ArrayList<ExTpDocPublicacao>();
 
 		for (ExTpDocPublicacao docPubl : lista) {

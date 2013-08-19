@@ -175,8 +175,8 @@ public class ProcessadorReferencias {
 		if (acronimos == null) {
 			acronimos = "";
 			siglas = "";
-			List<CpOrgaoUsuario> lou = ExDao.getInstance().listarTodos(
-					CpOrgaoUsuario.class);
+			List<CpOrgaoUsuario> lou = ExDao.getInstance()
+					.listarOrgaosUsuarios();
 			for (CpOrgaoUsuario ou : lou) {
 				acronimos += (acronimos.length() > 0 ? "|" : "")
 						+ ou.getAcronimoOrgaoUsu();

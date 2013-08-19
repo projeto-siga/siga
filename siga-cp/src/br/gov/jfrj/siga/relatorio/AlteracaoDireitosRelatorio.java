@@ -365,8 +365,7 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		List<DpPessoa> pessoas = (List<DpPessoa>) CpDao.getInstance()
 				.consultarPorOrgaoUsuDpPessoaInclusiveFechadas(ou.getId());
 		// ArrayList<DpPessoa> pesas = testeObterPessoas2();
-		List<CpServico> servicos = CpDao.getInstance().listarTodos(
-				CpServico.class);
+		List<CpServico> servicos = CpDao.getInstance().listarServicos();
 		CpTipoConfiguracao tipo = CpDao.getInstance().consultar(
 				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
 				CpTipoConfiguracao.class, false);

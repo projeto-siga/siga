@@ -2378,7 +2378,7 @@ public class ExBL extends CpBL {
 				keys.add("doc_" + (char) ('a' + n));
 				values.add(doc.getCodigo() + "-" + (char) ('A' + n));
 			}
-			List<ExPapel> papeis = dao().listarTodos(ExPapel.class);
+			List<ExPapel> papeis = dao().listarExPapeis();
 			for (ExPapel papel : papeis) {
 				List<DpResponsavel> responsaveis = doc
 						.getResponsaveisPorPapel(papel);

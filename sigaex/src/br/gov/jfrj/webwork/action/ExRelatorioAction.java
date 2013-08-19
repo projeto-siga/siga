@@ -176,7 +176,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 
 		assertAcesso("FORMS:Relação de formulários");
 
-		List<ExModelo> l = dao().listarTodos(ExModelo.class);
+		List<ExModelo> l = dao().listarExModelos();
 
 		LinkedList<FormulariosListItem> ll = new LinkedList<FormulariosListItem>();
 		for (ExModelo o : l) {

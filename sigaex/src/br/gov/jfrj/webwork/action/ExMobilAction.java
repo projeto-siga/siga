@@ -1010,7 +1010,7 @@ public class ExMobilAction extends
 
 	public List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {
 		List<ExTipoFormaDoc> lista = new ArrayList<ExTipoFormaDoc>();
-		return dao().listarTodos(ExTipoFormaDoc.class);
+		return dao().listarExTiposFormaDoc();
 	}
 
 	public List<ExModelo> getModelos() throws Exception {

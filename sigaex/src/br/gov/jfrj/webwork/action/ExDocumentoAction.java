@@ -1916,8 +1916,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	 */
 
 	public List<ExFormaDocumento> getFormasDocumento() throws Exception {
-		List<ExFormaDocumento> formasSet = dao().listarTodos(
-				ExFormaDocumento.class);
+		List<ExFormaDocumento> formasSet = dao().listarExFormasDocumento();
 		ArrayList<ExFormaDocumento> formasFinal = new ArrayList<ExFormaDocumento>();
 		for (ExFormaDocumento forma : formasSet) {
 			if (Ex.getInstance()

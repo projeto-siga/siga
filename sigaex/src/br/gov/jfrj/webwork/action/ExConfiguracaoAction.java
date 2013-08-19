@@ -283,7 +283,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 	public List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {
 		List<ExTipoFormaDoc> lista = new ArrayList<ExTipoFormaDoc>();
-		return dao().listarTodos(ExTipoFormaDoc.class);
+		return dao().listarExTiposFormaDoc();
 	}
 
 	public List<ExModelo> getModelos() throws Exception {
@@ -628,7 +628,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 				});
 
-		s.addAll(dao().listarTodos(ExTipoMovimentacao.class));
+		s.addAll(dao().listarExTiposMovimentacao());
 
 		return s;
 	}
@@ -644,7 +644,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 		});
 
-		s.addAll(dao().listarTodos(ExModelo.class));
+		s.addAll(dao().listarExModelos());
 
 		return s;
 	}
@@ -666,7 +666,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	public List<ExTipoDocumento> getListaTiposDocumento() throws Exception {
-		return dao().listarTodos(ExTipoDocumento.class);
+		return dao().listarExTiposDocumento();
 	}
 	
 	
@@ -684,7 +684,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 				});
 
-		s.addAll(dao().listarTodos(CpSituacaoConfiguracao.class));
+		s.addAll(dao().listarSituacoesConfiguracao());
 
 		return s;
 	}
@@ -716,7 +716,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 				});
 
-		s.addAll(dao().listarTodos(CpTipoConfiguracao.class));
+		s.addAll(dao().listarTiposConfiguracao());
 
 		return s;
 	}
@@ -729,7 +729,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	public List<ExVia> getListaVias() throws Exception {
-		return dao().listarTodos(ExVia.class);
+		return dao().listarExVias();
 	}
 
 	public List<Object[]> getItens() {

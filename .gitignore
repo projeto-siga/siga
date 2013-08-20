@@ -20,3 +20,6 @@ siga-sinc-lib/bin/
 sigagc/eclipse/classes/
 sigasr/eclipse/classes/
 sigasr/precompiled/
+ImportarXml/bin/br/gov/jfrj/importar/
+*.class
+ImportarXml/bin/

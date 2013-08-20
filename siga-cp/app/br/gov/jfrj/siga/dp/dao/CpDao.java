@@ -1475,11 +1475,10 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.query.substitutions", "true 1, false 0");
 
 		// Alterado para compatibilizar com hibernate 3.61
-		// cfg.setProperty("hibernate.cache.provider_class",
-		// "org.hibernate.cache.EhCacheProvider");
-		cfg.setProperty("hibernate.cache.region.factory_class",
+		cfg.setProperty("hibernate.cache.provider_class", "org.hibernate.cache.EhCacheProvider");
+		//cfg.setProperty("hibernate.cache.region.factory_class",
 		// "net.sf.ehcache.hibernate.EhCacheRegionFactory");
-				"net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
+		//		"net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
 
 		cfg.setProperty("hibernate.cache.use_second_level_cache", "true");
 		cfg.setProperty("hibernate.cache.use_query_cache", "true");

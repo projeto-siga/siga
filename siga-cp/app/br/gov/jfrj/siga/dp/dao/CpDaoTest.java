@@ -56,7 +56,6 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
-
 public class CpDaoTest extends TestCase {
 
 	private static final String NOVA_SENHA = "123456";
@@ -70,12 +69,12 @@ public class CpDaoTest extends TestCase {
 		// ExMarca.class, CpMarca.class);
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
-		/*AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
-				"jdbc:oracle:thin:@mclaren:1521:mcl", "corporativo",
-				"corporativo");
-				*/
+		/*
+		 * AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
+		 * "jdbc:oracle:thin:@mclaren:1521:mcl", "corporativo", "corporativo");
+		 */
 		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
-//		CpDao.configurarHibernateParaDebug(cfg);
+		// CpDao.configurarHibernateParaDebug(cfg);
 		HibernateUtil.configurarHibernate(cfg, "");
 
 		dao = CpDao.getInstance();
@@ -85,9 +84,9 @@ public class CpDaoTest extends TestCase {
 			throws AplicacaoException {
 		Date dt2 = dao.consultarDataUltimaAtualizacao();
 
-		CpTipoGrupo tpGrp = dao
-				.consultar(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
-						CpTipoGrupo.class, false);
+		CpTipoGrupo tpGrp = dao.consultar(
+				CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
+				CpTipoGrupo.class, false);
 		dao.iniciarTransacao();
 
 		CpGrupo grpNovo = new CpGrupoDeEmail();
@@ -109,9 +108,9 @@ public class CpDaoTest extends TestCase {
 	public void testGravarGrupoEAtualizar() throws AplicacaoException,
 			Exception, IllegalAccessException {
 
-		CpTipoGrupo tpGrp = dao
-				.consultar(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
-						CpTipoGrupo.class, false);
+		CpTipoGrupo tpGrp = dao.consultar(
+				CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
+				CpTipoGrupo.class, false);
 		dao.iniciarTransacao();
 
 		CpGrupo grpNovo = new CpGrupoDeEmail();
@@ -143,10 +142,10 @@ public class CpDaoTest extends TestCase {
 
 		dao.iniciarTransacao();
 
-		CpGrupo grpIni = dao.listarTodos(CpGrupoDeEmail.class).get(0);
+		CpGrupo grpIni = dao.listarGruposDeEmail().get(0);
 
-		CpGrupo grp = (CpGrupo) Objeto.getImplementation(dao.consultar(grpIni
-				.getId(), CpGrupo.class, false));
+		CpGrupo grp = (CpGrupo) Objeto.getImplementation(dao.consultar(
+				grpIni.getId(), CpGrupo.class, false));
 		CpGrupo grpNovo = ((CpGrupo) Objeto.getImplementation(grp)).getClass()
 				.newInstance();
 		PropertyUtils.copyProperties(grpNovo, grp);
@@ -162,10 +161,10 @@ public class CpDaoTest extends TestCase {
 
 		dao.iniciarTransacao();
 
-		CpGrupo grpIni = dao.listarTodos(CpGrupoDeEmail.class).get(0);
+		CpGrupo grpIni = dao.listarGruposDeEmail().get(0);
 
-		CpGrupo grp = (CpGrupo) Objeto.getImplementation(dao.consultar(grpIni
-				.getId(), CpGrupo.class, false));
+		CpGrupo grp = (CpGrupo) Objeto.getImplementation(dao.consultar(
+				grpIni.getId(), CpGrupo.class, false));
 		CpGrupo grpNovo = ((CpGrupo) Objeto.getImplementation(grp)).getClass()
 				.newInstance();
 		PropertyUtils.copyProperties(grpNovo, grp);
@@ -200,10 +199,11 @@ public class CpDaoTest extends TestCase {
 	}
 
 	/*
-	 * O MÉTODO testBL foi DESATIVADO pois está usando a conta de um usuário real e, 
-	 * além disso, disparando e-mais por causa das trocas de senha e criação de identidades.
-	 * Esse teste deve ser REFATORADO para fazer parte da integração contínua.
-	 * */
+	 * O MÉTODO testBL foi DESATIVADO pois está usando a conta de um usuário
+	 * real e, além disso, disparando e-mais por causa das trocas de senha e
+	 * criação de identidades. Esse teste deve ser REFATORADO para fazer parte
+	 * da integração contínua.
+	 */
 	public void __DESATIVADO__testBL() throws AplicacaoException, Exception,
 			IllegalAccessException {
 
@@ -226,8 +226,8 @@ public class CpDaoTest extends TestCase {
 		}
 
 		// Cria uma nova identidade
-		CpIdentidade idNova = Cp.getInstance().getBL().criarIdentidade(LOGIN,
-				CPF, null,null,null,false);
+		CpIdentidade idNova = Cp.getInstance().getBL()
+				.criarIdentidade(LOGIN, CPF, null, null, null, false);
 		assertTrue(idNova.getDscSenhaIdentidade().length() > 0);
 
 		// Altera a identidade
@@ -235,23 +235,23 @@ public class CpDaoTest extends TestCase {
 		Calendar c = Calendar.getInstance();
 		c.setTime(dt);
 		c.add(Calendar.YEAR, 1);
-		CpIdentidade idAlterada = Cp.getInstance().getBL().alterarIdentidade(
-				idNova, c.getTime(), null);
+		CpIdentidade idAlterada = Cp.getInstance().getBL()
+				.alterarIdentidade(idNova, c.getTime(), null);
 		assertEquals(idAlterada.getDtExpiracaoIdentidade(), c.getTime());
 
 		// Se não há alteração, a ID deve ser mantida
-		CpIdentidade idAlterada2 = Cp.getInstance().getBL().alterarIdentidade(
-				idAlterada, c.getTime(), null);
+		CpIdentidade idAlterada2 = Cp.getInstance().getBL()
+				.alterarIdentidade(idAlterada, c.getTime(), null);
 		assertEquals(idAlterada.getId(), idAlterada2.getId());
 
 		// Altera novamente e verifica se foi criada uma nova ID
-		CpIdentidade idAlterada3 = Cp.getInstance().getBL().alterarIdentidade(
-				idAlterada, null, null);
+		CpIdentidade idAlterada3 = Cp.getInstance().getBL()
+				.alterarIdentidade(idAlterada, null, null);
 		assertFalse(idAlterada3.getId().equals(idAlterada2.getId()));
 
 		// Verificar se a busca por identidades retorna somente um item
-		List<CpIdentidade> l = dao.consultaIdentidades(idAlterada
-				.getDpPessoa());
+		List<CpIdentidade> l = dao
+				.consultaIdentidades(idAlterada.getDpPessoa());
 		assertEquals(l.size(), 1);
 
 		// A identidade está bloqueada?
@@ -271,14 +271,14 @@ public class CpDaoTest extends TestCase {
 		assertFalse(idAlterada.getDpPessoa().isBloqueada());
 
 		// Bloquear a pessoa
-		Cp.getInstance().getBL().bloquearPessoa(idAlterada.getDpPessoa(),
-				null, true);
+		Cp.getInstance().getBL()
+				.bloquearPessoa(idAlterada.getDpPessoa(), null, true);
 		assertTrue(idAlterada.isBloqueada());
 		assertTrue(idAlterada.getDpPessoa().isBloqueada());
 
 		// Desnloquear a pessoa
-		Cp.getInstance().getBL().bloquearPessoa(idAlterada.getDpPessoa(),
-				null, false);
+		Cp.getInstance().getBL()
+				.bloquearPessoa(idAlterada.getDpPessoa(), null, false);
 		assertFalse(idAlterada.getDpPessoa().isBloqueada());
 
 		// Depois de desbloquear a pessoa, a identidade continua bloqueada. Por
@@ -286,19 +286,19 @@ public class CpDaoTest extends TestCase {
 		assertTrue(idAlterada.isBloqueada());
 		Cp.getInstance().getBL().bloquearIdentidade(idAlterada, null, false);
 		assertFalse(idAlterada.isBloqueada());
-		
+
 		/*
-		 *O TESTE DE TROCA DE SENHA ABAIXO FOI DESATIVADO, PORQUE SEMPRE ENVIA E-MAIL PARA O USUÁRIO
-		 *COM O BUILD AUTOMATICO DA FERRAMENTA HUDSON(CI).
-		 *
+		 * O TESTE DE TROCA DE SENHA ABAIXO FOI DESATIVADO, PORQUE SEMPRE ENVIA
+		 * E-MAIL PARA O USUÁRIOCOM O BUILD AUTOMATICO DA FERRAMENTA HUDSON(CI).
 		 */
 		// Troca a senha
 		String senha = decodificarSenha(idAlterada);
-		CpIdentidade idNovaSenha = Cp.getInstance().getBL()
+		CpIdentidade idNovaSenha = Cp
+				.getInstance()
+				.getBL()
 				.trocarSenhaDeIdentidade(senha, NOVA_SENHA, NOVA_SENHA, LOGIN,
 						null);
 		assertEquals(decodificarSenha(idNovaSenha), NOVA_SENHA);
-
 
 	}
 
@@ -307,8 +307,8 @@ public class CpDaoTest extends TestCase {
 		BASE64Encoder b64enc = new BASE64Encoder();
 		String chave = b64enc.encode(id.getDpPessoa().getIdInicial().toString()
 				.getBytes());
-		String senha = new String(Criptografia.desCriptografar(b64dec
-				.decodeBuffer(id.getDscSenhaIdentidadeCripto()), chave));
+		String senha = new String(Criptografia.desCriptografar(
+				b64dec.decodeBuffer(id.getDscSenhaIdentidadeCripto()), chave));
 
 		return senha;
 	}
@@ -323,26 +323,26 @@ public class CpDaoTest extends TestCase {
 	// dao.commitTransacao();
 	// }
 
-//	public void testRelAlteracaoDeAcesso() throws AplicacaoException,
-//			Exception, IllegalAccessException {
-//		Map<String, String> listaParametros = new HashMap<String, String>();
-//		listaParametros.put("dataInicio", "06/01/2011");
-//		listaParametros.put("dataFim", "06/01/2011");
-//		listaParametros.put("idOrgaoUsuario", "1");
-//		AlteracaoDireitosRelatorio rel = new AlteracaoDireitosRelatorio(
-//				listaParametros);
-//		rel.gerar();
-//	}
+	// public void testRelAlteracaoDeAcesso() throws AplicacaoException,
+	// Exception, IllegalAccessException {
+	// Map<String, String> listaParametros = new HashMap<String, String>();
+	// listaParametros.put("dataInicio", "06/01/2011");
+	// listaParametros.put("dataFim", "06/01/2011");
+	// listaParametros.put("idOrgaoUsuario", "1");
+	// AlteracaoDireitosRelatorio rel = new AlteracaoDireitosRelatorio(
+	// listaParametros);
+	// rel.gerar();
+	// }
 
-//	public void testRelHistoricoUsuario() throws AplicacaoException,
-//			Exception, IllegalAccessException {
-//		Map<String, String> listaParametros = new HashMap<String, String>();
-//		listaParametros.put("idPessoa", "160632");
-//		HistoricoUsuarioRelatorio rel = new HistoricoUsuarioRelatorio(
-//				listaParametros);
-//		rel.gerar();
-//	}
-	
+	// public void testRelHistoricoUsuario() throws AplicacaoException,
+	// Exception, IllegalAccessException {
+	// Map<String, String> listaParametros = new HashMap<String, String>();
+	// listaParametros.put("idPessoa", "160632");
+	// HistoricoUsuarioRelatorio rel = new HistoricoUsuarioRelatorio(
+	// listaParametros);
+	// rel.gerar();
+	// }
+
 	/**
 	 * @param args
 	 * @throws Exception
@@ -357,7 +357,7 @@ public class CpDaoTest extends TestCase {
 
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
-		
+
 		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 
@@ -367,7 +367,7 @@ public class CpDaoTest extends TestCase {
 				+ dao.consultarDataUltimaAtualizacao());
 
 		dao.iniciarTransacao();
-//		dao.importarAcessoTomcat();
+		// dao.importarAcessoTomcat();
 		dao.commitTransacao();
 
 		if (true)

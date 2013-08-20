@@ -51,7 +51,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.DefaultNamingStrategy;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -60,6 +59,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
@@ -1489,9 +1489,9 @@ public class CpDao extends ModeloDao {
 		// cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
 
 		// descomentar para inpecionar o SQL
-//		cfg.setProperty("hibernate.show_sql", "true");
-//		cfg.setProperty("hibernate.format_sql", "true");
-//		cfg.setProperty("hibernate.use_sql_comments", "true");
+		// cfg.setProperty("hibernate.show_sql", "true");
+		// cfg.setProperty("hibernate.format_sql", "true");
+		// cfg.setProperty("hibernate.use_sql_comments", "true");
 		// Disable second-level cache.
 		// <property
 		// name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
@@ -1776,6 +1776,10 @@ public class CpDao extends ModeloDao {
 
 	public List<CpMarcador> listarMarcadores() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpMarcador.class);
+	}
+
+	public List<CpGrupoDeEmail> listarGruposDeEmail() {
+		return findByCriteria(CpGrupoDeEmail.class);
 	}
 
 	public void excluirComHistorico(HistoricoAuditavel entidade, Date dt,

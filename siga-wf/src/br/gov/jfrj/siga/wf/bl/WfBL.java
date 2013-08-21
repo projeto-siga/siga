@@ -305,7 +305,7 @@ public class WfBL extends CpBL {
 
 	}
 
-	 List consultarInstanciasDoProcessInstance(Long id) {
+	 private List consultarInstanciasDoProcessInstance(Long id) {
 		return WfContextBuilder
 				.getJbpmContext().getGraphSession().findProcessInstances(
 						id);

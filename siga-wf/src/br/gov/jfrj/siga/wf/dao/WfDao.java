@@ -31,12 +31,15 @@ import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.jbpm.graph.def.ProcessDefinition;
+import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.WfConfiguracao;
 import br.gov.jfrj.siga.wf.WfConhecimento;
+import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
  * Classe que representa o DAO do sistema de workflow.
@@ -93,6 +96,13 @@ public class WfDao extends CpDao {
 		return l.get(0);
 
 	}
+	
+	 public List<ProcessInstance> consultarInstanciasDoProcessInstance(Long id) {
+			return WfContextBuilder
+					.getJbpmContext().getGraphSession().findProcessInstances(
+							id);
+	}
+
 
 	static public AnnotationConfiguration criarHibernateCfg(String datasource)
 			throws Exception {
@@ -353,5 +363,10 @@ public class WfDao extends CpDao {
 		}
 
 		// ModeloDao.configurarHibernateParaDebug(cfg);
+	}
+
+	public ProcessDefinition getProcessDefinition(Long id) {
+		return WfContextBuilder
+		.getJbpmContext().getGraphSession().getProcessDefinition(id);
 	}
 }

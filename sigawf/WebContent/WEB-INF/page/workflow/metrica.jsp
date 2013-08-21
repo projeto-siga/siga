@@ -25,14 +25,14 @@
 			<div class="gt-content-box gt-for-table">
 				<form name="frmRelatorio" method="get" class="form">
 					<table class="gt-form-table">
-						<ww:hidden name="secaoUsuario" value="${secaoUsuario}" />
 						<ww:hidden name="procedimento" value="${procedimento}" />
+						<ww:hidden name="pdId" value="${pdId}" />
 						<ww:label name="orgao" label="Órgão" value="${orgao}" />
 						<ww:label name="Procedimento" label="Procedimento"
 							value="${procedimento}" />
 						<tr>
-							<ww:select list="relatoriosMetricas" label="Relatório"
-								name="selecaoRelatorio" onchange="javascript:exibirOpcoesExtras()">
+							<ww:select list="#{'1':'Estatísticas gerais', '2':'Tempo de documentos','3':'Tempo de documentos detalhado'}" label="Relatório"
+								name="selecaoRelatorio" onchange="javascript:exibirOpcoesExtras()" >
 							</ww:select>
 						</tr>
 						<tr>

@@ -83,10 +83,9 @@
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
 						<ww:url id="url" action="medir" namespace="/">
-							<ww:param name="orgao">${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}</ww:param>
+							<ww:param name="orgao">${lotaTitular.orgaoUsuario.idOrgaoUsu}</ww:param>
 							<ww:param name="procedimento">${pd.name}</ww:param>
 							<ww:param name="pdId">${pd.id}</ww:param>
-							<ww:param name="secaoUsuario">${lotaTitular.orgaoUsuario.descricaoMaiusculas}</ww:param>
 						</ww:url>
 						<li><ww:a href="%{url}">${pd.name}</ww:a>
 						</li>

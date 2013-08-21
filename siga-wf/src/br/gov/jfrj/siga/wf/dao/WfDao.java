@@ -31,6 +31,7 @@ import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
@@ -362,5 +363,10 @@ public class WfDao extends CpDao {
 		}
 
 		// ModeloDao.configurarHibernateParaDebug(cfg);
+	}
+
+	public ProcessDefinition getProcessDefinition(Long id) {
+		return WfContextBuilder
+		.getJbpmContext().getGraphSession().getProcessDefinition(id);
 	}
 }

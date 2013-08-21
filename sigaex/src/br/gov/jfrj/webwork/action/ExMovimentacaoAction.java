@@ -484,6 +484,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
 		setDescrPublicacao(doc.getDescrDocumento());	
+	
+		try{
+			new GeradorRTF().geraRTFFOP(getDoc());
+		}catch (Exception e) {
+			setMensagem("Houve erro na geração do arquivo a ser publicado. Favor entrar em contato com a equipe gestora do DJE.");			
+		}
 
 		return Action.SUCCESS;
 	}

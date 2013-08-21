@@ -80,7 +80,10 @@
 			<ww:form name="frm" action="pedir_publicacao_gravar"
 			namespace="/expediente/mov" cssClass="form" method="GET" >
 			<input type="hidden" name="postback" value="1" />
-			<ww:hidden name="sigla" value="%{sigla}"/>			
+			<ww:hidden name="sigla" value="%{sigla}"/>	
+			<ww:if test="${not empty mensagem}">
+				<c:set var="disabled" value="disabled" />				
+			</ww:if>		
 			<table class="gt-form-table">
 				<tr class="header">
 					<td colspan="2">Dados da Solicitação</td>
@@ -131,11 +134,12 @@
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>
 								
 				<tr class="button">
-					<td colspan="2"><input type="button" onclick="javascript: validar();" value="Ok" class="gt-btn-medium gt-btn-left"/> <input type="button"
+					<td colspan="2"><input type="button" onclick="javascript: validar();" value="Ok" class="gt-btn-medium gt-btn-left"  ${disabled}/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>					
 				</tr>
 			</table>
 		</ww:form>
+		<span style="font-weight:bold; color: red">${mensagem}</span>	
 	</div>
 	<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>
 	<ul>

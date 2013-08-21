@@ -294,9 +294,7 @@ public class WfBL extends CpBL {
 				.findAllProcessDefinitionVersions(nomeProcesso);
 
 		for (ProcessDefinition p : pd) {
-			List<ProcessInstance> instanciasProcesso = WfContextBuilder
-					.getJbpmContext().getGraphSession().findProcessInstances(
-							p.getId());
+			List<ProcessInstance> instanciasProcesso = consultarProcessDefinition(p.getId());
 
 			for (ProcessInstance pi : instanciasProcesso) {
 				encerrarProcessInstance(pi.getId(), new Date());
@@ -305,6 +303,12 @@ public class WfBL extends CpBL {
 		}
 		WfContextBuilder.closeContext();
 
+	}
+
+	private List consultarProcessDefinition(Long id) {
+		return WfContextBuilder
+				.getJbpmContext().getGraphSession().findProcessInstances(
+						id);
 	}
 
 	/**
@@ -364,15 +368,13 @@ public class WfBL extends CpBL {
 	 * @param nomeProcesso -
 	 *            Nome do processo que terá suas instâncias excluídas.
 	 */
-	public static void excluirTodasProcessInstances(String nomeProcesso) {
+	public void excluirTodasProcessInstances(String nomeProcesso) {
 		List<ProcessDefinition> pd = WfContextBuilder.getJbpmContext()
 				.getJbpmContext().getGraphSession()
 				.findAllProcessDefinitionVersions(nomeProcesso);
 
 		for (ProcessDefinition p : pd) {
-			List<ProcessInstance> instanciasProcesso = WfContextBuilder
-					.getJbpmContext().getGraphSession().findProcessInstances(
-							p.getId());
+			List<ProcessInstance> instanciasProcesso = consultarProcessDefinition(p.getId());
 
 			for (ProcessInstance pi : instanciasProcesso) {
 				WfContextBuilder.getJbpmContext().getGraphSession()

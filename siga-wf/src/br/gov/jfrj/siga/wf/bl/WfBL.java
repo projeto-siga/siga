@@ -294,7 +294,7 @@ public class WfBL extends CpBL {
 				.findAllProcessDefinitionVersions(nomeProcesso);
 
 		for (ProcessDefinition p : pd) {
-			List<ProcessInstance> instanciasProcesso = consultarProcessDefinition(p.getId());
+			List<ProcessInstance> instanciasProcesso = consultarInstanciasDoProcessInstance(p.getId());
 
 			for (ProcessInstance pi : instanciasProcesso) {
 				encerrarProcessInstance(pi.getId(), new Date());
@@ -305,7 +305,7 @@ public class WfBL extends CpBL {
 
 	}
 
-	private List consultarProcessDefinition(Long id) {
+	 List consultarInstanciasDoProcessInstance(Long id) {
 		return WfContextBuilder
 				.getJbpmContext().getGraphSession().findProcessInstances(
 						id);
@@ -374,7 +374,7 @@ public class WfBL extends CpBL {
 				.findAllProcessDefinitionVersions(nomeProcesso);
 
 		for (ProcessDefinition p : pd) {
-			List<ProcessInstance> instanciasProcesso = consultarProcessDefinition(p.getId());
+			List<ProcessInstance> instanciasProcesso = consultarInstanciasDoProcessInstance(p.getId());
 
 			for (ProcessInstance pi : instanciasProcesso) {
 				WfContextBuilder.getJbpmContext().getGraphSession()

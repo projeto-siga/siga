@@ -10,7 +10,7 @@
 
 <script type="text/javascript">
 	function exibirOpcoesExtras(){
-		if ($("#selecaoRelatorio").val() == 'Tempo de documentos' || $("#selecaoRelatorio").val() == 'Tempo de documentos detalhado'){
+		if ($("#selecaoRelatorio").val() == '2' || $("#selecaoRelatorio").val() == '3'){
 			$("#opcoesExtras").show();
 		}else{
 			$("#opcoesExtras").hide();

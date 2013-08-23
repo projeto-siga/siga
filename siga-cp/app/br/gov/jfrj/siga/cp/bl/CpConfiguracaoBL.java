@@ -49,6 +49,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 /**
@@ -789,10 +790,28 @@ public class CpConfiguracaoBL {
 
 	}
 
-	public boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular,
+	public boolean podeGerirAlgumGrupo(DpPessoa titular, DpLotacao lotaTitular,
 			Long idCpTipoGrupo) throws Exception {
 		return dao().getGruposGeridos(titular, lotaTitular, idCpTipoGrupo)
 				.size() > 0;
+	}
+
+	public boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular,Long idCpGrupo,
+			Long idCpTipoGrupo) {
+		
+		try {
+			CpGrupoDaoFiltro flt = new CpGrupoDaoFiltro();
+			CpGrupo cpGrp = CpDao.getInstance().consultar(idCpGrupo, CpGrupo.class, false);
+			flt.setIdTpGrupo(idCpTipoGrupo.intValue());
+			CpConfiguracaoBL bl = Cp.getInstance().getConf();
+
+			return bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
 	}
 
 }

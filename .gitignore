@@ -23,3 +23,5 @@ sigasr/precompiled/
 ImportarXml/bin/br/gov/jfrj/importar/
 *.class
 ImportarXml/bin/
+*.bak
+*.log

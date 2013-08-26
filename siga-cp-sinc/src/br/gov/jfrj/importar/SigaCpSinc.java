@@ -561,6 +561,11 @@ public class SigaCpSinc {
 	}
 
 	public void importarXml(InputStream in) throws Exception {
+		boolean contemCargo = false;
+		boolean contemPessoa = false;
+		boolean contemFuncao = false;
+		boolean contemLotacao = false;
+		
 		importarListasDeTipos();
 
 		obterLotacaoSJRJ();
@@ -605,8 +610,10 @@ public class SigaCpSinc {
 								"NotificarPorEmail");
 					} else if (parser.getName().equals("cargo")) {
 						setNovo.add(importarXmlCargo(parser));
+						contemCargo=true;
 					} else if (parser.getName().equals("funcao")) {
 						setNovo.add(importarXmlFuncao(parser));
+						contemFuncao=true;
 					} else if (parser.getName().equals("orgao")) {
 						if (getVersaoInteira().intValue() < 2)
 							throw new Exception(
@@ -614,8 +621,10 @@ public class SigaCpSinc {
 						setNovo.add(importarXmlOrgao(parser));
 					} else if (parser.getName().equals("lotacao")) {
 						setNovo.add(importarXmlLotacao(parser));
+						contemLotacao=true;
 					} else if (parser.getName().equals("pessoa")) {
 						setNovo.add(importarXmlPessoa(parser));
+						contemPessoa=true;
 					} else if (parser.getName().equals("papel")) {
 						if (getVersaoInteira().intValue() < 2)
 							throw new Exception(
@@ -636,10 +645,26 @@ public class SigaCpSinc {
 		} catch (IOException e) {
 			throw e;
 		}
+		
+		
+		if (!contemCargo){
+			throw new AplicacaoException("XML não contém cargo!");
+		}
+		if (!contemLotacao){
+			throw new AplicacaoException("XML não contém lotação!");
+		}
+		if (!contemPessoa){
+			throw new AplicacaoException("XML não contém pessoa!");
+		}
+		if (!contemFuncao){
+			throw new AplicacaoException("XML não contém função de confiança!");
+		}
+
 		if (!fDocumentoCompleto) {
 			throw new Exception(
 					"XML arquivo não estava completo! Nenhuma alteração foi realizada na base.");
 		}
+
 	}
 
 	/**

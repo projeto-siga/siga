@@ -297,10 +297,10 @@ public class SigaLibsEL {
 						servicoPath);
 	}
 
-	public static Boolean podeGerirGrupo(DpPessoa titular,
+	public static Boolean podeGerirAlgumGrupo(DpPessoa titular,
 			DpLotacao lotaTitular, Long idCpTipoGrupo) throws Exception {
 		return Cp.getInstance().getConf()
-				.podeGerirGrupo(titular, lotaTitular, idCpTipoGrupo);
+				.podeGerirAlgumGrupo(titular, lotaTitular, idCpTipoGrupo);
 	}
 
 	public static String getURLSistema(String nome) {

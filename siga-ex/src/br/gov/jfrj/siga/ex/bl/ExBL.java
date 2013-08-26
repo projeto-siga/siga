@@ -5256,6 +5256,19 @@ public class ExBL extends CpBL {
 							+ sb.toString());
 		}
 
+		/*AVISO: 
+		 * 
+		 *  
+		 * O código abaixo foi comentado para permitir a atualização da tabela de classificação documental
+		 * enquanto a funcionalidade de reclassificação de documentos nõa está disponível.
+		 * 
+		 * 
+		 *  
+		 */
+		
+		
+		
+		/*
 		List<ExDocumento> docs = ExDao.getInstance()
 				.consultarExDocumentoPorClassificacao(null,
 						MascaraUtil.getInstance().getMscTodosDoMaiorNivel(),
@@ -5267,7 +5280,11 @@ public class ExBL extends CpBL {
 					"Não é possível excluir a classificação documental, pois já foi associada a documento(s)."
 							+ sb.toString());
 		}
-
+		 */
+		
+		
+		
+		
 		for (ExVia exVia : exClass.getExViaSet()) {
 			dao().excluirComHistorico(exVia, dt, idCadastrante);
 		}

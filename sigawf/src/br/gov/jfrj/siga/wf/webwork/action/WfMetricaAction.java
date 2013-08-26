@@ -20,6 +20,8 @@ package br.gov.jfrj.siga.wf.webwork.action;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +64,11 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	 * @return
 	 */
 	public String getProcedimento() {
+		try{
+			return new String(procedimento.getBytes("iso8859-1"));
+		}catch (Exception e) {
+
+		}
 		return procedimento;
 	}
 

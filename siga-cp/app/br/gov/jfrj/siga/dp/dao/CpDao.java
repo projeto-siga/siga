@@ -45,6 +45,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -91,6 +92,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class CpDao extends ModeloDao {
@@ -1841,6 +1843,28 @@ public class CpDao extends ModeloDao {
 					"Ocorreu um erro tentando carregar os dados básicos para o usuário '"
 							+ nmUsuario + "'.", 0, e);
 		}
+	}
+
+	public List<DpPessoa> consultarPorMatriculaEOrgao(Long matricula, Long idOrgaoUsu,
+			boolean pessoasFinalizadas, boolean ordemDesc) {
+		Criteria c = HibernateUtil.getSessao().createCriteria(DpPessoa.class);
+		c.add(Restrictions.eq("matricula", matricula));
+		c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
+		
+		if (pessoasFinalizadas){
+			c.add(Restrictions.isNotNull("dataFimPessoa"));
+		}else{
+			c.add(Restrictions.isNull("dataFimPessoa"));
+		}
+		if (ordemDesc){
+			c.addOrder(Order.desc("dataInicioPessoa"));	
+		}else{
+			c.addOrder(Order.asc("dataInicioPessoa"));
+		}
+		
+
+		return c.list();
+
 	}
 
 }

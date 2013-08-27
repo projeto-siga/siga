@@ -56,8 +56,10 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
+import br.gov.jfrj.siga.sinc.lib.Item.Operacao;
 import br.gov.jfrj.siga.sinc.lib.OperadorComHistorico;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
@@ -179,6 +181,7 @@ public class SigaCpSinc {
 
 			for (Item opr : list) {
 				log(opr.getDescricao());
+				
 				if (opr.getNovo() != null && opr.getNovo() instanceof DpLotacao)
 					if (opr.getAntigo() != null)
 						opr.getAntigo().semelhante(opr.getNovo(), 0);
@@ -186,6 +189,9 @@ public class SigaCpSinc {
 				if (opr.getAntigo() != null) {
 					manterNomeExibicao(opr.getAntigo(), opr.getNovo());
 				}
+				
+				manterHistoricoPessoaSeNecessario(opr);
+
 
 			}
 			/*
@@ -225,6 +231,32 @@ public class SigaCpSinc {
 		HibernateUtil.getSessao().flush();
 		log("Total de alterações: " + list.size());
 		// ((GenericoHibernateDao) dao).getSessao().flush();
+	}
+
+	/**
+	 * Verifica se a pessoa que está sendo incluída é uma pessoa que já existe e foi 
+	 * removida indevidamente ocasionando a perda do histórico
+	 * @param opr 
+	 * @return
+	 */
+	private void manterHistoricoPessoaSeNecessario(Item opr) {
+		if (opr.getNovo()!=null && opr.getNovo() instanceof DpPessoa){
+			DpPessoa pesNova = (DpPessoa) opr.getNovo();
+			if (opr.getOperacao().equals(Operacao.incluir)){
+					List<DpPessoa> historicoPessoa = CpDao.getInstance()
+					.consultarPorMatriculaEOrgao(pesNova.getMatricula(),pesNova.getOrgaoUsuario().getId(),true,true);
+					
+					if (historicoPessoa.size() > 0){
+						DpPessoa pesAnterior = historicoPessoa.get(0);	
+						if (pesAnterior!=null && !pesAnterior.getIdInicial().equals(pesNova.getIdInicial())){
+							pesNova.setIdInicial(pesAnterior.getIdInicial());
+							log("AVISO: ID_INICIAL reconectada (" + pesNova.getSigla() + ")" );
+						}
+
+					}
+			}
+		}
+		
 	}
 
 	private void manterNomeExibicao(Sincronizavel antigo, Sincronizavel novo) {

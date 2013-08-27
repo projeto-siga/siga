@@ -133,6 +133,35 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return true;
 
 	}
+	
+	/**
+	 * * Retorna se é possível acessar um documento ao qual pertence o móbil
+	 * passado por parâmetro. Considera se o documento está sem efeito (não
+	 * estando sem efeito, retorna verdadeiro) e se <i>uma das</i> seguintes
+	 * condições é satisfeita:
+	 * <ul>
+	 * <li>Usuário é da lotação cadastrante do documento</li>
+	 * <li>Usuário é subscritor do documento</li>
+	 * <li>Usuário é titular do documento</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 */
+	public boolean podeAcessarSemEfeito(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		if (mob == null)
+			return false;
+		if (mob.doc().isSemEfeito()
+				&& !mob.doc().getLotaCadastrante().equivale(lotaTitular)
+				&& !titular.equivale(mob.doc().getSubscritor())
+				&& !titular.equivale(mob.doc().getTitular()))
+			return false;
+		return true;
+
+	}
 
 	/**
 	 * Retorna se é possível acessar o documento ao qual pertence o móbil
@@ -151,7 +180,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				 * podeAcessarPublico(titular, lotaTitular, mob) &&
 				 */podeAcessarAberto(titular, lotaTitular, mob)
 				&& podeAcessarPorNivel(titular, lotaTitular, mob)
-				&& podeAcessarCancelado(titular, lotaTitular, mob);
+				&& podeAcessarCancelado(titular, lotaTitular, mob)
+				&& podeAcessarSemEfeito(titular, lotaTitular, mob);
 	}
 
 	/**
@@ -1507,7 +1537,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.doc().getUltimoVolume() != null
-				&& mob.doc().getUltimoVolume().isEmTransito())
+				&& (mob.doc().getUltimoVolume().isEmTransito() || mob.doc().getUltimoVolume().isArquivado()))
 			return false;
 		
 		if (mob.doc().getDtFechamento() != null
@@ -1981,10 +2011,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.doc().getDtFechamento() != null && !mob.doc().isEletronico()) {
-			return false;
-		}
-
-		if (mob.doc().isAssinado() && mob.doc().isEletronico()) {
 			return false;
 		}
 

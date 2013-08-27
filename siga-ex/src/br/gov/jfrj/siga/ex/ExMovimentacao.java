@@ -768,6 +768,10 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	@Override
 	public boolean isRascunho() {
 		// TODO Auto-generated method stub
+		if(getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+				&& !isAssinada())
+			return true;
+		
 		return false;
 	}
 

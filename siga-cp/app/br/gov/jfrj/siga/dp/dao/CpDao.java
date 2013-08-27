@@ -947,8 +947,8 @@ public class CpDao extends ModeloDao {
 					.getIdPessoaIni());
 			query.setLong("idLotaSubstitutoIni", exemplo.getLotaSubstituto()
 					.getIdLotacaoIni());
-			query.setCacheable(true);
-			query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
+			//query.setCacheable(true);
+			//query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
 			return query.list();
 		} catch (final IllegalArgumentException e) {
 			throw e;
@@ -966,8 +966,8 @@ public class CpDao extends ModeloDao {
 			query.setLong("idTitularIni", exemplo.getTitular().getIdPessoaIni());
 			query.setLong("idLotaTitularIni", exemplo.getLotaTitular()
 					.getIdLotacaoIni());
-			query.setCacheable(true);
-			query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
+			//query.setCacheable(true);
+			//query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
 			return query.list();
 		} catch (final IllegalArgumentException e) {
 			throw e;

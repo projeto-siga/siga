@@ -86,8 +86,7 @@ public class ExGadgetAction extends ExActionSupport {
 					"Código do tipo de marca (Processos ou Expedientes) não foi informado");
 		listEstados = dao().consultarPaginaInicial(getTitular(),
 				getLotaTitular(), getIdTpFormaDoc());
-		// documentoViaSel = new ExMobilSelecao();
-
+		
 		if (param("idTpMarcadorExcluir") != null) {
 			String as[] = param("idTpMarcadorExcluir").split(",");
 			Set<Integer> excluir = new HashSet<Integer>();
@@ -96,8 +95,6 @@ public class ExGadgetAction extends ExActionSupport {
 			}
 			List listEstadosReduzida = new ArrayList<Object[]>();
 			for (Object o : listEstados) {
-				// if (!excluir.contains(Short.valueOf(((Object[]) o)[0]
-				// .toString()))) {
 				if (!excluir.contains((Integer) ((Object[]) o)[0])) {
 					listEstadosReduzida.add(o);
 				}

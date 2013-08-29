@@ -76,7 +76,6 @@
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/mail.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/neethi-2.0.4.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ognl.jar"/>
-	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/oscore.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/pager-taglib.jar"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/PDFBox-0.7.3.jar"/>
@@ -135,5 +134,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="/siga-ws"/>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ckeditor-java-core-3.5.3.jar"/>
+	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/ojdbc6.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

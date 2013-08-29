@@ -812,7 +812,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public boolean isRascunho() {
 		// TODO Auto-generated method stub
 		if(getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
-				&& !isAssinada())
+				&& mob().doc().isEletronico() && !isAssinada())
 			return true;
 		
 		return false;

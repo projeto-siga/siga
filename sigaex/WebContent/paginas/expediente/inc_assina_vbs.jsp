@@ -148,7 +148,7 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
                If Status = "OK" Then
                    Log "Documento: " & oNome.value & ", OK, Gravado!"
                Else
-					MsgBox "Erro na gravação: " & Status
+		            MsgBox Status, 0, "Não foi possível completar a operação"
                End If
            End If
        End If
@@ -181,9 +181,16 @@ Function GravarAssinatura(url, datatosend)
 
 	GravarAssinatura = "Erro inespecífico."
 	If objHTTP.Status = 200 Then
+        Dim Conteudo, Inicio, Fim, Texto
 		'MsgBox "OK, enviado"
 		GravarAssinatura = "OK"
-		'Conteudo = objHTTP.responseBody
+		Conteudo = objHTTP.responseText
+        If InStr(Conteudo, "gt-error-page-hd") <> -1 Then
+			Inicio = InStr(Conteudo, "<h3>") + 4
+			Fim = InStr(Conteudo, "</h3>")
+            Texto = mid(Conteudo, Inicio, Fim - Inicio)
+			GravarAssinatura = Texto
+        End If
 	End If
 End Function
 

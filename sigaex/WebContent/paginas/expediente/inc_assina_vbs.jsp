@@ -185,10 +185,12 @@ Function GravarAssinatura(url, datatosend)
 		'MsgBox "OK, enviado"
 		GravarAssinatura = "OK"
 		Conteudo = objHTTP.responseText
-        If InStr(Conteudo, "gt-error-page-hd") <> -1 Then
+
+        If InStr(Conteudo, "gt-error-page-hd") > 0 Then
 			Inicio = InStr(Conteudo, "<h3>") + 4
-			Fim = InStr(Conteudo, "</h3>")
-            Texto = mid(Conteudo, Inicio, Fim - Inicio)
+			Fim = InStr(Inicio,Conteudo, "</h3>")
+            Texto = Mid(Conteudo, Inicio, Fim - Inicio)
+			MsgBox Texto
 			GravarAssinatura = Texto
         End If
 	End If

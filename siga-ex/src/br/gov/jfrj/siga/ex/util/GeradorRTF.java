@@ -220,10 +220,15 @@ public class GeradorRTF {
 					true, true, false);
 			html = "<?xml version='1.0' encoding='utf-8' ?> <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><body>"
 					+ html + "</body></html>";
+			
+			byte[] baHtml = html.getBytes();			
+			if (baHtml.length > 1.0 * 1024 * 1024)
+				throw new AplicacaoException(
+						"O tamanho do arquivo a ser publicado é maior do que a capacidade suportada.");			
 			ConversorHtml conversor = new FOP("xhtml2foNovoSemStatic.xsl");
 			return conversor.converter(html, ConversorHtml.RTF);
 		} catch (Exception e) {
-			throw new AplicacaoException("Não foi possível ler o conteúdo do documento");
+			throw new AplicacaoException("Não foi possível ler o conteúdo do documento: " + e.getMessage());
 		}
 	}
 

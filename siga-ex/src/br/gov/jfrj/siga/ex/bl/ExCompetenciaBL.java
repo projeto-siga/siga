@@ -2182,8 +2182,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (mov.isCancelada())
 			return false;
-
-		if (!mov.getLotaCadastrante().getIdInicial().equals(
+		
+		//Verifica se foi a pessoa ou lotação que fez a anotação
+		if (!mov.getCadastrante().getIdInicial().equals(titular.getIdInicial())
+				&& !mov.getSubscritor().getIdInicial().equals(titular.getIdInicial())
+				&& !mov.getLotaCadastrante().getIdInicial().equals(
 				lotaTitular.getIdInicial())
 				&& !mov.getLotaSubscritor().getIdInicial().equals(
 						lotaTitular.getIdInicial()))

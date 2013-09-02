@@ -33,7 +33,7 @@
 		</style>
 		</head>
 		<body>
-		<c:import url="/paginas/expediente/modelos/inc_tit_SraDiretoraSubsecretariaRH.jsp" />
+		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForo.jsp" />
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria, nos termos do art.87, da Lei n&ordm; 8.112/90, com a
 		redação da Lei n&ordm; 9.527/97, c/c Resolução n&ordm; 5/2008, do Conselho da Justiça Federal, e Resolução n&ordm; 22/2008, do TRF da 2ª Região, <b>LICENÇA PARA CAPACITAÇÃO</b> a que faz jus, para fruição 
@@ -56,10 +56,7 @@
 				</c:otherwise>
 			</c:choose>
 		</p>
-		<p style="TEXT-INDENT: 2cm" align="justify">
-			Declara, ainda, estar ciente de que, de acordo com o art. 23, &sect;1&ordm; e &sect; 2&ordm;, da Resolução n&ordm; 5/2008, do CJF, e art. 5&ordm;, da Resolução n&ordm; 22/2008, do TRF da 2ª Região, deverá, ao final da atividade, apresentar, no prazo máximo de trinta dias, comprovante de freqüência no curso ou 
-			certificado de conclusão, cópia da monografia/dissertação e, a critério da Administração, relatório circunstanciado, sendo que o descumprimento poderá acarretar a instauração de sindicância nos termos da legislação vigente.
-		</p>
+		
 		<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
 		<br/>
 		<br/>
@@ -80,6 +77,28 @@
 		<p align="center">${doc.dtExtenso}</p>
 		<c:import
 			url="/paginas/expediente/modelos/inc_assinatura.jsp?apenasCargo=sim" />
+		
+		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
+		<br/>
+        <br/>
+        <c:import url="/paginas/expediente/modelos/inc_tit_declaracao.jsp" />
+		<p style="TEXT-INDENT: 2cm" align="justify">
+        
+        ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao},declara, nos termos do § 7º do art. 23 da Resolução nº 5/2008, do CJF, estar ciente de que:</br>
+        <br/>
+        1 -  Ao final da atividade deverá apresentar à Subsecretaria de Gestão de Pessoas, no prazo máximo de 30 dias, os seguintes documentos comprobatórios, conforme natureza da ação de capacitação: comprovante de frequência, participação e aproveitamento no evento objeto da licença, nas hipóteses de participação em evento com carga horária mínima de 12 horas; comprovante de entrega de monografia, dissertação, tese ou trabalho de conclusão de curso de graduação ou pós-graduação, bem como a entrega de cópia do trabalho final de curso, preferencialmente por meio eletrônico, à unidade de recursos humanos do órgão; comprovante de participação em atividade de orientação para elaboração de monografia, dissertação, tese ou trabalho de conclusão de curso de graduação ou pós-graduação; declaração de aprovação ou certificado de conclusão do curso; declaração de participação em processo seletivo para ingresso em curso de pós-graduação stricto sensu ou de obtenção de certificação de competências profissionais.<br>
+        <br/>
+        <br/>
+        2 -  Na hipótese de não participação integral no evento objeto da licença, deverá requerer, mediante justificativa pertinente, a interrupção da licença, com o retorno imediato ao trabalho. <br>
+        <br/>
+        <br/>
+       3 -  A ausência de comprovação de que trata o item 1 ou o não acatamento da justificativa de que trata o item 2 ensejará a cassação da licença com efeito retroativo, sendo computados como faltas ao serviço e descontados em folha de pagamento os dias referentes à licença cassada, garantidos o contraditório e a ampla defesa. Nos termos da legislação vigente, será instraurada sindicância para apuração de infração disciplinar.<br>
+      </p>
+        <br/>
+        <br/>
+        <c:import
+            url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" />
+		
 		</body>
 		</html>
 	</mod:documento>

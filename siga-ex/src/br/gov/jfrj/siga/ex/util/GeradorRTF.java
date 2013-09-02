@@ -222,9 +222,9 @@ public class GeradorRTF {
 					+ html + "</body></html>";
 			
 			byte[] baHtml = html.getBytes();			
-			if (baHtml.length > 1.5 * 1024 * 1024)
+			if (baHtml.length > 1.0 * 1024 * 1024)
 				throw new AplicacaoException(
-						"Não é suportada a publicação de arquivos com mais de 1,5MB.");			
+						"O tamanho do arquivo a ser publicado é maior do que a capacidade suportada.");			
 			ConversorHtml conversor = new FOP("xhtml2foNovoSemStatic.xsl");
 			return conversor.converter(html, ConversorHtml.RTF);
 		} catch (Exception e) {

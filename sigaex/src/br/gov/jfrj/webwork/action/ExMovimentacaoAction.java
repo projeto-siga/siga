@@ -556,7 +556,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		try{
 			new GeradorRTF().geraRTFFOP(getDoc());
 		}catch (Exception e) {
-			setMensagem("Houve erro na geração do arquivo a ser publicado. Favor entrar em contato com a equipe gestora do DJE.");
+			setMensagem("Houve erro na geração do arquivo a ser publicado. "+ e.getMessage()+" Favor entrar em contato com a equipe gestora do DJE.");
 			
 		}
 

@@ -2177,10 +2177,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						.getResp().equivale(mov.getResp())))
 			throw new AplicacaoException(
 					"Novo responsável não pode ser igual ao atual");
+		
+		if (!Ex.getInstance().getComp()
+					.podeReceberPorConfiguracao(mov.getResp(), mov.getLotaResp())) 
+				throw new AplicacaoException("Destinatário não pode receber documentos");			
+		
+		
 		if (!(Ex.getInstance().getComp()
-				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex
-
-		.getInstance().getComp()
+				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex.getInstance().getComp()
 				.podeDespachar(getTitular(), getLotaTitular(), mob)))
 			throw new AplicacaoException(
 					"Não é possível fazer despacho nem transferência");

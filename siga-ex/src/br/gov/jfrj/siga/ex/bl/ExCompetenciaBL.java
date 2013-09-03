@@ -2634,6 +2634,22 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
+	 * Retorna se a lotação ou pessoa tem permissão para receber documento
+	 * 
+	 * @param pessoa
+	 * @param lotacao	
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeReceberPorConfiguracao(final DpPessoa pessoa,
+			final DpLotacao lotacao) throws Exception {
+		
+		return getConf().podePorConfiguracao(pessoa, lotacao,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/**
 	 * Retorna se é possível receber o móbil. conforme as regras a seguir:
 	 * <ul>
 	 * <li>Móbil tem de ser via ou volume</li>

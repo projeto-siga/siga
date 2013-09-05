@@ -20,6 +20,8 @@ package br.gov.jfrj.siga.hibernate.ext;
 
 import java.text.SimpleDateFormat;
 
+import org.hibernate.Query;
+
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExModelo;
@@ -41,73 +43,61 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getUltMovIdEstadoDoc() != null
 				&& flt.getUltMovIdEstadoDoc() != 0) {
-			sbf.append(" and label.cpMarcador.idMarcador = ");
-			sbf.append(flt.getUltMovIdEstadoDoc());
+			sbf.append(" and label.cpMarcador.idMarcador = :ultMovIdEstadoDoc");
 		} else {
 			sbf.append(" and not (label.cpMarcador.idMarcador in (3, 14, 25))");
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
-			sbf.append(" and label.dpPessoaIni.idPessoa = ");
-			sbf.append(flt.getUltMovRespSelId());
+			sbf.append(" and label.dpPessoaIni.idPessoa = :ultMovRespSelId");
 		}
 
 		if (flt.getUltMovLotaRespSelId() != null
 				&& flt.getUltMovLotaRespSelId() != 0) {
-			sbf.append(" and label.dpLotacaoIni.idLotacao = ");
-			sbf.append(flt.getUltMovLotaRespSelId());
+			sbf.append(" and label.dpLotacaoIni.idLotacao = :ultMovLotaRespSelId");
 		}
 
 		if (flt.getIdTipoMobil() != null && flt.getIdTipoMobil() != 0) {
-			sbf.append(" and mob.exTipoMobil.idTipoMobil = ");
-			sbf.append(flt.getIdTipoMobil());
+			sbf.append(" and mob.exTipoMobil.idTipoMobil = :idTipoMobil");
 		}
 
 		if (flt.getNumSequencia() != null && flt.getNumSequencia() != 0) {
-			sbf.append(" and mob.numSequencia = ");
-			sbf.append(flt.getNumSequencia());
+			sbf.append(" and mob.numSequencia = :numSequencia ");
 		}
 
 		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0) {
-			sbf.append(" and doc.orgaoUsuario.idOrgaoUsu = ");
-			sbf.append(flt.getIdOrgaoUsu());
+			sbf.append(" and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu");
 		}
 
 		if (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0) {
-			sbf.append(" and doc.anoEmissao = ");
-			sbf.append(flt.getAnoEmissao());
+			sbf.append(" and doc.anoEmissao = :anoEmissao");
 		}
 
 		if (flt.getNumExpediente() != null && flt.getNumExpediente() != 0) {
-			sbf.append(" and doc.numExpediente = ");
-			sbf.append(flt.getNumExpediente());
+			sbf.append(" and doc.numExpediente = :numExpediente");
 		}
 
 		if (flt.getIdTpDoc() != null && flt.getIdTpDoc() != 0) {
-			sbf.append(" and doc.exTipoDocumento.idTpDoc = ");
-			sbf.append(flt.getIdTpDoc());
+			sbf.append(" and doc.exTipoDocumento.idTpDoc = :idTpDoc");
 		}
 
 		if (flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0) {
-			sbf.append(" and doc.exFormaDocumento.idFormaDoc = ");
-			sbf.append(flt.getIdFormaDoc());
+			sbf.append(" and doc.exFormaDocumento.idFormaDoc = :idFormaDoc");
 		}
 
 		if (flt.getIdTipoFormaDoc() != null && flt.getIdTipoFormaDoc() != 0) {
-			sbf.append(" and doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = ");
-			sbf.append(flt.getIdTipoFormaDoc());
+			sbf.append(" and doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc");
 		}
 
 		if (flt.getClassificacaoSelId() != null
 				&& flt.getClassificacaoSelId() != 0) {
-			sbf.append(" and doc.exClassificacao.idClassificacao = ");
-			sbf.append(flt.getClassificacaoSelId());
+			sbf.append(" and doc.exClassificacao.idClassificacao = :classificacaoSelId");
 		}
 
 		if (flt.getDescrDocumento() != null
 				&& !flt.getDescrDocumento().trim().equals("")) {
 			sbf.append(" and upper(doc.descrDocumentoAI) like ");
-			sbf.append("'%" + flt.getDescrDocumento().toUpperCase() + "%'");
+			sbf.append("'%" + ":descrDocumento" + "%'");
 		}
 
 		// if (flt.getFullText() != null &&
@@ -122,80 +112,72 @@ public class MontadorQuery implements IMontadorQuery {
 		// }
 
 		if (flt.getDtDoc() != null) {
-			sbf.append(" and doc.dtDoc >= to_date('");
-			sbf.append(new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDoc()));
-			sbf.append("', 'dd/mm/yyyy')");
+			sbf.append(" and doc.dtDoc >= to_date(");
+			sbf.append(":dtDoc");
+			sbf.append(", 'dd/mm/yyyy')");
 		}
 
 		if (flt.getDtDocFinal() != null) {
-			sbf.append(" and doc.dtDoc <= to_date('");
-			sbf.append(new SimpleDateFormat("dd/MM/yyyy").format(flt
-					.getDtDocFinal()));
-			sbf.append("', 'dd/mm/yyyy')");
+			sbf.append(" and doc.dtDoc <= to_date(");
+			sbf.append(":dtDocFinal");
+			sbf.append(", 'dd/mm/yyyy')");
 		}
 
 		if (flt.getNumAntigoDoc() != null
 				&& !flt.getNumAntigoDoc().trim().equals("")) {
 			sbf.append(" and upper(doc.numAntigoDoc) like ");
-			sbf.append("'%" + flt.getNumAntigoDoc().toUpperCase() + "%'");
+			sbf.append("'%" + ":numAntigoDoc" + "%'");
 		}
 
 		if (flt.getDestinatarioSelId() != null
 				&& flt.getDestinatarioSelId() != 0) {
-			sbf.append(" and doc.destinatario.idPessoaIni = ");
-			sbf.append(flt.getDestinatarioSelId());
+			sbf.append(" and doc.destinatario.idPessoaIni = :destinatarioSelId");
 		}
 
 		if (flt.getLotacaoDestinatarioSelId() != null
 				&& flt.getLotacaoDestinatarioSelId() != 0) {
-			sbf.append(" and doc.lotaDestinatario.idLotacaoIni = ");
-			sbf.append(flt.getLotacaoDestinatarioSelId());
+			sbf.append(" and doc.lotaDestinatario.idLotacaoIni = :lotacaoDestinatarioSelId");
 		}
 
 		if (flt.getNmDestinatario() != null
 				&& !flt.getNmDestinatario().trim().equals("")) {
 			sbf.append(" and upper(doc.nmDestinatario) like ");
-			sbf.append("'%" + flt.getNmDestinatario().toUpperCase() + "%'");
+			sbf.append("'%" + ":nmDestinatario" + "%'");
 		}
 
 		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
-			sbf.append(" and doc.cadastrante.idPessoaIni =  ");
-			sbf.append(flt.getCadastranteSelId());
+			sbf.append(" and doc.cadastrante.idPessoaIni = :cadastranteSelId");
 		}
 
 		if (flt.getLotaCadastranteSelId() != null
 				&& flt.getLotaCadastranteSelId() != 0) {
-			sbf.append(" and doc.lotaCadastrante.idLotacaoIni = ");
-			sbf.append(flt.getLotaCadastranteSelId());
-		}
+			sbf.append(" and doc.lotaCadastrante.idLotacaoIni = :lotaCadastranteSelId");
+ 		}
 
 		if (flt.getSubscritorSelId() != null && flt.getSubscritorSelId() != 0) {
-			sbf.append(" and doc.subscritor.idPessoaIni = ");
-			sbf.append(flt.getSubscritorSelId());
+			sbf.append(" and doc.subscritor.idPessoaIni = :subscritorSelId");
 		}
 
 		if (flt.getNmSubscritorExt() != null
 				&& !flt.getNmSubscritorExt().trim().equals("")) {
 			sbf.append(" and upper(doc.nmSubscritorExt) like ");
-			sbf.append("'%" + flt.getNmSubscritorExt().toUpperCase() + "%'");
+			sbf.append("'%" + ":nmSubscritorExt" + "%'");
 		}
 
 		if (flt.getOrgaoExternoSelId() != null
 				&& flt.getOrgaoExternoSelId() != 0) {
-			sbf.append(" and doc.orgaoExterno.idOrgao = ");
-			sbf.append(flt.getOrgaoExternoSelId());
+			sbf.append(" and doc.orgaoExterno.idOrgao = :orgaoExternoSelId");
 		}
 
 		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {
 			sbf.append(" and upper(doc.numExtDoc) like ");
-			sbf.append("'%" + flt.getNumExtDoc() + "%'");
+			sbf.append("'%" + ":numExtDoc" + "%'");
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
 			ExModelo mod = ExDao.getInstance().consultar(flt.getIdMod(),
 					ExModelo.class, false);
-			sbf.append(" and doc.exModelo.hisIdIni = ");
-			sbf.append(mod.getHisIdIni());
+			sbf.append(" and doc.exModelo.hisIdIni = :hisIdIni");
 		}
 
 		if (!apenasCount) {

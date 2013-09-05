@@ -99,6 +99,7 @@ import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
+import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -222,6 +223,151 @@ public class ExDao extends CpDao {
 		List l = query.list();
 		return l;
 	}
+	
+	
+	public void preencherParametros(final IExMobilDaoFiltro flt, final Query query)  {
+		if (flt.getUltMovIdEstadoDoc() != null
+				&& flt.getUltMovIdEstadoDoc() != 0) {
+			
+			query.setLong("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
+		} 
+
+		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
+			
+			query.setLong("ultMovRespSelId", flt.getUltMovRespSelId());
+		}
+
+		if (flt.getUltMovLotaRespSelId() != null
+				&& flt.getUltMovLotaRespSelId() != 0) {
+			
+			query.setLong("ultMovLotaRespSelId", flt.getUltMovLotaRespSelId());
+		}
+
+		if (flt.getIdTipoMobil() != null && flt.getIdTipoMobil() != 0) {
+
+			query.setLong("idTipoMobil", flt.getIdTipoMobil());
+		}
+
+		if (flt.getNumSequencia() != null && flt.getNumSequencia() != 0) {
+
+			query.setLong("numSequencia", flt.getNumSequencia());
+		}
+
+		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0) {
+
+			query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
+		}
+
+		if (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0) {
+			query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
+		}
+
+		if (flt.getNumExpediente() != null && flt.getNumExpediente() != 0) {
+
+			query.setLong("anoEmissao", flt.getAnoEmissao());
+		}
+
+		if (flt.getIdTpDoc() != null && flt.getIdTpDoc() != 0) {
+
+			query.setLong("idTpDoc", flt.getIdTpDoc());
+		}
+
+		if (flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0) {
+
+			query.setLong("idFormaDoc", flt.getIdFormaDoc());
+		}
+
+		if (flt.getIdTipoFormaDoc() != null && flt.getIdTipoFormaDoc() != 0) {
+
+			query.setLong("idTipoFormaDoc", flt.getIdTipoFormaDoc());
+		}
+
+		if (flt.getClassificacaoSelId() != null
+				&& flt.getClassificacaoSelId() != 0) {
+
+			query.setLong("classificacaoSelId", flt.getClassificacaoSelId());
+		}
+
+		if (flt.getDescrDocumento() != null
+				&& !flt.getDescrDocumento().trim().equals("")) {
+			
+			query.setString("descrDocumento", flt.getDescrDocumento().toUpperCase());
+		}
+
+		if (flt.getDtDoc() != null) {
+			
+			query.setString("dtDoc", new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDoc()));
+		}
+
+		if (flt.getDtDocFinal() != null) {
+			
+			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDocFinal()));
+		}
+
+		if (flt.getNumAntigoDoc() != null
+				&& !flt.getNumAntigoDoc().trim().equals("")) {
+			
+			query.setString("numAntigoDoc", flt.getNumAntigoDoc().toUpperCase());
+		}
+
+		if (flt.getDestinatarioSelId() != null
+				&& flt.getDestinatarioSelId() != 0) {
+			
+			query.setLong("destinatarioSelId", flt.getDestinatarioSelId());
+		}
+
+		if (flt.getLotacaoDestinatarioSelId() != null
+				&& flt.getLotacaoDestinatarioSelId() != 0) {
+
+			query.setLong("lotacaoDestinatarioSelId", flt.getLotacaoDestinatarioSelId());
+		}
+
+		if (flt.getNmDestinatario() != null
+				&& !flt.getNmDestinatario().trim().equals("")) {
+
+			query.setString("nmDestinatario", flt.getNmDestinatario());
+		}
+
+		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
+
+			query.setLong("cadastranteSelId", flt.getCadastranteSelId());
+		}
+
+		if (flt.getLotaCadastranteSelId() != null
+				&& flt.getLotaCadastranteSelId() != 0) {
+
+			query.setLong("lotaCadastranteSelId", flt.getLotaCadastranteSelId());
+		}
+
+		if (flt.getSubscritorSelId() != null && flt.getSubscritorSelId() != 0) {
+
+			query.setLong("subscritorSelId", flt.getSubscritorSelId());
+		}
+
+		if (flt.getNmSubscritorExt() != null
+				&& !flt.getNmSubscritorExt().trim().equals("")) {
+			
+			query.setString("nmSubscritorExt", flt.getNmSubscritorExt().toUpperCase());
+		}
+
+		if (flt.getOrgaoExternoSelId() != null
+				&& flt.getOrgaoExternoSelId() != 0) {
+
+			query.setLong("orgaoExternoSelId", flt.getOrgaoExternoSelId());
+		}
+
+		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {
+			
+			query.setString("numExtDoc", flt.getNumExtDoc());
+		}
+
+		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
+			ExModelo mod = ExDao.getInstance().consultar(flt.getIdMod(),
+					ExModelo.class, false);
+
+			query.setLong("hisIdIni", mod.getHisIdIni());
+		}
+	}
 
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
@@ -230,6 +376,9 @@ public class ExDao extends CpDao {
 		Query query = getSessao().createQuery(
 				montadorQuery.montaQueryConsultaporFiltro(flt, titular,
 						lotaTitular, false));
+		
+		preencherParametros(flt, query);
+		
 		if (offset > 0) {
 			query.setFirstResult(offset);
 		}
@@ -249,6 +398,9 @@ public class ExDao extends CpDao {
 		String s = montadorQuery.montaQueryConsultaporFiltro(flt, titular,
 				lotaTitular, true);
 		Query query = getSessao().createQuery(s);
+		
+		preencherParametros(flt, query);
+		
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
 		System.out.println("consultarQuantidadePorFiltroOtimizado: "

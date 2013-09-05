@@ -2204,8 +2204,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (mov.isCancelada())
 			return false;
-
-		if (!mov.getLotaCadastrante().getIdInicial().equals(
+		
+		//Verifica se foi a pessoa ou lotação que fez a anotação
+		if (!mov.getCadastrante().getIdInicial().equals(titular.getIdInicial())
+				&& !mov.getSubscritor().getIdInicial().equals(titular.getIdInicial())
+				&& !mov.getLotaCadastrante().getIdInicial().equals(
 				lotaTitular.getIdInicial())
 				&& !mov.getLotaSubscritor().getIdInicial().equals(
 						lotaTitular.getIdInicial()))
@@ -2652,6 +2655,22 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						CpTipoConfiguracao.TIPO_CONFIG_REABRIR);
 	}
 
+	/**
+	 * Retorna se a lotação ou pessoa tem permissão para receber documento
+	 * 
+	 * @param pessoa
+	 * @param lotacao	
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeReceberPorConfiguracao(final DpPessoa pessoa,
+			final DpLotacao lotacao) throws Exception {
+		
+		return getConf().podePorConfiguracao(pessoa, lotacao,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
 	/**
 	 * Retorna se é possível receber o móbil. conforme as regras a seguir:
 	 * <ul>

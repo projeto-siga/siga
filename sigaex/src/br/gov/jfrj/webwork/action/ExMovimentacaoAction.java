@@ -2192,168 +2192,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			return "processa_modelo";
 		return Action.SUCCESS;
 	}
-
-	//
-	// return mapping.findForward("transfere");
-	// }
-	//
-	// public ActionForward aTransferirGravar(ActionMapping mapping, ActionForm
-	// actionForm, HttpServletRequest request,
-	// HttpServletResponse response) throws Exception {
-	//
-	// if (isCancelled(request))
-	// return mapping.findForward("cancelado");
-	//
-	// ExMovimentacaoForm form = (ExMovimentacaoForm) actionForm;
-	//
-	// fabrica = DaoFactory.getDAOFactory();
-	//
-	// ExMovimentacao mov = new ExMovimentacao();
-	// lerForm(mov, form);
-	//
-	// try {
-	// // Ex.getInstance().getBL().transferir((DpPessoa)
-	// // request.getSession().getAttribute("cadastrante"),
-	// // mov.getExDocumento(),
-	// Ex.getInstance().getBL().transferir((DpPessoa)
-	// request.getAttribute("cadastrante"),
-	// mov.getExDocumento(), mov
-	// .getNumVia(), mov.getDtMov(), mov.getLotaResp(), mov.getResp(),
-	// mov.getLotaDestinoFinal(), mov
-	// .getDestinoFinal(), mov.getSubscritor(), mov.getExTipoDespacho(), false,
-	// mov.getDescrMov(), mov
-	// .getConteudoBlobMov(), mov.getConteudoTpMov());
-	// } catch (Exception e) {
-	// throw e;
-	// }
-	//
-	// request.setAttribute("doc", mov.getExDocumento());
-	// return mapping.findForward("transferido");
-	// }
-	//
-	// public ActionForward aAnexar(ActionMapping mapping, ActionForm
-	// actionForm, HttpServletRequest request,
-	// HttpServletResponse response) throws Exception {
-	// fabrica = DaoFactory.getDAOFactory();
-	// ExMovimentacaoForm form = (ExMovimentacaoForm) actionForm;
-	//
-	// ExDocumentoDao docDao = fabrica.createExDocumentoDao();
-	//
-	// if (form.getIdDoc() == null) {
-	// String sId = request.getParameter("id");
-	// if (sId == null) {
-	// throw new CsisException("id não foi informada.");
-	// }
-	// form.setIdDoc(Long.valueOf(sId));
-	// }
-	//
-	// if (form.getNumVia() == null) {
-	// String sVia = request.getParameter("via");
-	// if (sVia != null && sVia.length() > 0)
-	// form.setNumVia(Short.parseShort(sVia));
-	// }
-	//
-	// form.getSubscritorSel().buscar();
-	//
-	// ExDocumento doc = docDao.consultar(form.getIdDoc(), false);
-	// request.setAttribute("doc", doc);
-	// request.setAttribute("via", mov.getNumVia());
-	// return mapping.findForward("anexa");
-	// }
-	//
-	// public ActionForward aAnexo(ActionMapping mapping, ActionForm actionForm,
-	// HttpServletRequest request,
-	// HttpServletResponse response) throws Exception {
-	// fabrica = DaoFactory.getDAOFactory();
-	//
-	// ExMovimentacaoDao movDao = fabrica.createExMovimentacaoDao();
-	//
-	// String sId = request.getParameter("idmov");
-	// if (sId == null) {
-	// throw new CsisException("id não foi informada.");
-	// }
-	// Long lId = Long.valueOf(sId);
-	//
-	// ExMovimentacao mov = movDao.consultar(lId, false);
-	// String ct = mov.getConteudoTpMov();
-	//
-	// movDao.consultarConteudoBlob(mov);
-	//
-	// byte ba[] = mov.getConteudoBlobMov();
-	//
-	// request.setAttribute("mov", mov);
-	//
-	// request.setAttribute("ct", ct);
-	// request.setAttribute("arq", mov.getNmArqMov());
-	// request.setAttribute("ba", ba);
-	// request.setAttribute("cb", ba.length);
-	//
-	// return mapping.findForward("anexo");
-	// }
-	//
-	// public String aAnexarGravar() throws Exception {
-	//
-	// if (isCancelled(request))
-	// return mapping.findForward("cancelado");
-	//
-	// ExMovimentacaoForm form = (ExMovimentacaoForm) actionForm;
-	//
-	// fabrica = DaoFactory.getDAOFactory();
-	//
-	// ExMovimentacao mov = new ExMovimentacao();
-	// lerForm(mov, form);
-	//
-	// mov.setNmArqMov(form.getArquivo().getFileName());
-	// mov.setConteudoTpMov(form.getArquivo().getContentType());
-	// mov.setConteudoBlobMov(form.getArquivo().getFileData());
-	//
-	// try {
-	// // Ex.getInstance().getBL().anexarArquivo((DpPessoa)
-	// // request.getSession().getAttribute("cadastrante"), mov
-	// Ex.getInstance().getBL().anexarArquivo((DpPessoa)
-	// request.getAttribute("cadastrante"), mov.getExDocumento(), mov
-	// .getNumVia(), mov.getDtMov(), mov.getSubscritor(), mov.getNmArqMov(),
-	// mov.getConteudoBlobMov(), mov
-	// .getConteudoTpMov());
-	// } catch (Exception e) {
-	// throw e;
-	// }
-	//
-	// request.setAttribute("doc", mov.getExDocumento());
-	// return mapping.findForward("transferido");
-	// }
-	//
-	// public Selecionavel selecionarPorCodDoc(ExDocumentoDaoFiltro flt) throws
-	// CsisException {
-	//
-	// Selecionavel sel=null;
-	//
-	//
-	//
-	// ExDocumentoDao docDao = getFabrica().createExDocumentoDao();
-	//
-	// DpPessoa pessoa = new DpPessoa();
-	// pessoa.setSigla(request.getParameter("sigla").toUpperCase());
-	//
-	// /*
-	// * pessoa = pessoaDao.consultarPorSigla(pessoa);
-	// *
-	// * if (pessoa == null) {
-	// * form.setNome(request.getParameter("sigla").toUpperCase()); List
-	// * pessoas = pessoaDao.consultarPorFiltro(form); if (pessoas != null) if
-	// * (pessoas.size() == 1) pessoa = (DpPessoa)pessoas.get(0); }
-	// */
-	// if (pessoa == null)
-	// return mapping.findForward("ajax_vazio");
-	//
-	// request.setAttribute("id", pessoa.getId());
-	// request.setAttribute("sigla", pessoa.getSigla());
-	// request.setAttribute("descricao", pessoa.getDescricao());
-	//
-	// return mapping.findForward("ajax_retorno");
-	// }
-	// //
-	// //
+	
 	public String aReferenciarGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
@@ -2429,10 +2268,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						.getResp().equivale(mov.getResp())))
 			throw new AplicacaoException(
 					"Novo responsável não pode ser igual ao atual");
+		
+		if (!Ex.getInstance().getComp()
+					.podeReceberPorConfiguracao(mov.getResp(), mov.getLotaResp())) 
+				throw new AplicacaoException("Destinatário não pode receber documentos");			
+		
+		
 		if (!(Ex.getInstance().getComp()
-				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex
-
-		.getInstance().getComp()
+				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex.getInstance().getComp()
 				.podeDespachar(getTitular(), getLotaTitular(), mob)))
 			throw new AplicacaoException(
 					"Não é possível fazer despacho nem transferência");

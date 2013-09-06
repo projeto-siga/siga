@@ -291,7 +291,7 @@ public class ExDao extends CpDao {
 		if (flt.getDescrDocumento() != null
 				&& !flt.getDescrDocumento().trim().equals("")) {
 			
-			query.setString("descrDocumento", flt.getDescrDocumento().toUpperCase());
+			query.setString("descrDocumento", "%" + flt.getDescrDocumento().toUpperCase() + "%");
 		}
 
 		if (flt.getDtDoc() != null) {
@@ -307,7 +307,7 @@ public class ExDao extends CpDao {
 		if (flt.getNumAntigoDoc() != null
 				&& !flt.getNumAntigoDoc().trim().equals("")) {
 			
-			query.setString("numAntigoDoc", flt.getNumAntigoDoc().toUpperCase());
+			query.setString("numAntigoDoc", "%" + flt.getNumAntigoDoc().toUpperCase() + "%");
 		}
 
 		if (flt.getDestinatarioSelId() != null
@@ -325,7 +325,7 @@ public class ExDao extends CpDao {
 		if (flt.getNmDestinatario() != null
 				&& !flt.getNmDestinatario().trim().equals("")) {
 
-			query.setString("nmDestinatario", flt.getNmDestinatario());
+			query.setString("nmDestinatario", "%" + flt.getNmDestinatario() + "%");
 		}
 
 		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
@@ -347,7 +347,7 @@ public class ExDao extends CpDao {
 		if (flt.getNmSubscritorExt() != null
 				&& !flt.getNmSubscritorExt().trim().equals("")) {
 			
-			query.setString("nmSubscritorExt", flt.getNmSubscritorExt().toUpperCase());
+			query.setString("nmSubscritorExt", "%" + flt.getNmSubscritorExt().toUpperCase() + "%");
 		}
 
 		if (flt.getOrgaoExternoSelId() != null
@@ -358,7 +358,7 @@ public class ExDao extends CpDao {
 
 		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {
 			
-			query.setString("numExtDoc", flt.getNumExtDoc());
+			query.setString("numExtDoc", "%" + flt.getNumExtDoc() + "%");
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {

@@ -96,8 +96,7 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getDescrDocumento() != null
 				&& !flt.getDescrDocumento().trim().equals("")) {
-			sbf.append(" and upper(doc.descrDocumentoAI) like ");
-			sbf.append("'%" + ":descrDocumento" + "%'");
+			sbf.append(" and upper(doc.descrDocumentoAI) like :descrDocumento");
 		}
 
 		// if (flt.getFullText() != null &&
@@ -125,8 +124,7 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getNumAntigoDoc() != null
 				&& !flt.getNumAntigoDoc().trim().equals("")) {
-			sbf.append(" and upper(doc.numAntigoDoc) like ");
-			sbf.append("'%" + ":numAntigoDoc" + "%'");
+			sbf.append(" and upper(doc.numAntigoDoc) like :numAntigoDoc");
 		}
 
 		if (flt.getDestinatarioSelId() != null
@@ -141,8 +139,7 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getNmDestinatario() != null
 				&& !flt.getNmDestinatario().trim().equals("")) {
-			sbf.append(" and upper(doc.nmDestinatario) like ");
-			sbf.append("'%" + ":nmDestinatario" + "%'");
+			sbf.append(" and upper(doc.nmDestinatario) like :nmDestinatario");
 		}
 
 		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
@@ -160,8 +157,7 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getNmSubscritorExt() != null
 				&& !flt.getNmSubscritorExt().trim().equals("")) {
-			sbf.append(" and upper(doc.nmSubscritorExt) like ");
-			sbf.append("'%" + ":nmSubscritorExt" + "%'");
+			sbf.append(" and upper(doc.nmSubscritorExt) like :nmSubscritorExt");
 		}
 
 		if (flt.getOrgaoExternoSelId() != null
@@ -170,8 +166,7 @@ public class MontadorQuery implements IMontadorQuery {
 		}
 
 		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {
-			sbf.append(" and upper(doc.numExtDoc) like ");
-			sbf.append("'%" + ":numExtDoc" + "%'");
+			sbf.append(" and upper(doc.numExtDoc) like :numExtDoc");
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {

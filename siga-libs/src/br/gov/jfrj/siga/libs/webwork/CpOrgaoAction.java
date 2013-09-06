@@ -26,6 +26,8 @@ package br.gov.jfrj.siga.libs.webwork;
 
 import java.util.List;
 
+import com.opensymphony.xwork.Action;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -37,7 +39,7 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1098577621835510117L;
+	private static final long serialVersionUID = 1098577621835510117L;	
 
 	@Override
 	public CpOrgaoDaoFiltro createDaoFiltro() {
@@ -57,5 +59,12 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 			if (l.size() == 1)
 				return (CpOrgao) l.get(0);
 		return null;
+	}
+	
+	public String aListar() throws Exception {
+		
+		setItens(CpDao.getInstance().listarOrgaos());
+		
+		return Action.SUCCESS;
 	}
 }

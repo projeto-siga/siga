@@ -283,6 +283,10 @@
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
 			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
+		<action name="listar" class="br.gov.jfrj.siga.libs.webwork.CpOrgaoAction"
+			method="aListar">
+			<result>/paginas/orgao/lista_orgao.jsp</result>
+		</action>
 	</package>
 
 	<package name="funcao" extends="default" namespace="/funcao">

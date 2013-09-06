@@ -22,4 +22,17 @@ public class CdAssinaturaDigital implements ICdAssinaturaDigital {
 		return AssinaturaDigital.recuperarCPF(cms);
 	}
 
+	public byte[] produzPacoteAssinavel(byte[] certificado,
+			byte[] certificadoHash, byte[] documento, boolean politica,
+			Date dtAssinatura) throws Exception {
+		return documento;
+	}
+
+	public byte[] validarECompletarPacoteAssinavel(byte[] certificado,
+			byte[] documento, byte[] assinatura, boolean politica,
+			Date dtAssinatura) throws Exception {
+		return validarECompletarAssinatura(assinatura, documento, politica,
+				dtAssinatura);
+	}
+
 }

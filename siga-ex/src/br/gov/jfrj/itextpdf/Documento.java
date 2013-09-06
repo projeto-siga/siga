@@ -43,8 +43,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -85,6 +87,7 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.codec.Base64;
 import com.opensymphony.webwork.ServletActionContext;
 import com.swetake.util.Qrcode;
 
@@ -732,11 +735,12 @@ public class Documento {
 
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov)
 			throws Exception {
-		return getDocumento(mob, mov, false, true, null);
+		return getDocumento(mob, mov, false, true, null, null);
 	}
 
-	public static byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
-			boolean completo, boolean estampar, String hash) throws Exception {
+	protected byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
+			boolean completo, boolean estampar, String hash, byte[] certificado)
+			throws Exception {
 		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
 		PdfReader reader;
 		int n;
@@ -757,7 +761,12 @@ public class Documento {
 				completo);
 
 		if (!completo && !estampar && ans.size() == 1) {
-			if (hash != null) {
+			if (certificado != null) {
+				CdService cdService = Service.getCdService();
+				return cdService.produzPacoteAssinavel(certificado, null, ans
+						.get(0).getArquivo().getPdf(), true, ExDao
+						.getInstance().getServerDateTime());
+			} else if (hash != null) {
 				// Calcula o hash do documento
 				String alg = hash;
 				MessageDigest md = MessageDigest.getInstance(alg);

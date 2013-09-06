@@ -139,4 +139,26 @@ public class CdServiceImpl implements CdService {
 				.validarECompletarAssinatura(assinatura, documento, politica,
 						dtAssinatura);
 	}
+
+	public byte[] produzPacoteAssinavel(byte[] certificado,
+			byte[] certificadoHash, byte[] documento, boolean politica,
+			Date dtAssinatura) throws Exception {
+		return Cd
+				.getInstance()
+				.getAssinaturaDigital()
+				.produzPacoteAssinavel(certificado, certificadoHash, documento,
+						politica, dtAssinatura);
+
+	};
+
+	public byte[] validarECompletarPacoteAssinavel(byte[] certificado,
+			byte[] documento, byte[] assinatura, boolean politica,
+			Date dtAssinatura) throws Exception {
+		return Cd
+				.getInstance()
+				.getAssinaturaDigital()
+				.validarECompletarPacoteAssinavel(certificado, documento,
+						assinatura, politica, dtAssinatura);
+	};
+
 }

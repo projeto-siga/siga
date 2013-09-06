@@ -2931,7 +2931,12 @@ public class ExBL extends CpBL {
 
 		novoDoc.setDescrClassifNovo(doc.getDescrClassifNovo());
 		novoDoc.setExFormaDocumento(doc.getExFormaDocumento());
-		novoDoc.setExModelo(doc.getExModelo());
+		
+		if(!doc.getExModelo().isFechado())
+			novoDoc.setExModelo(doc.getExModelo().getModeloAtual());
+		else
+			throw new AplicacaoException("Não foi possível duplicar o documento pois este modelo não está mais em uso.");		
+		
 		novoDoc.setExTipoDocumento(doc.getExTipoDocumento());
 
 		if (doc.getLotaDestinatario() != null

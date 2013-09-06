@@ -36,5 +36,11 @@
 		<many-to-one name="exClassCriacaoVia" column="ID_CLASS_CRIACAO_VIA"
 			class="ExClassificacao" not-null="false" />
 	</class>
+	
+	<query name="consultarModeloAtual">
+		<![CDATA[select mod from ExModelo mod where
+			mod.hisIdIni = :hisIdIni
+	    	and mod.hisDtFim = null]]>
+	</query>
 
 </hibernate-mapping>

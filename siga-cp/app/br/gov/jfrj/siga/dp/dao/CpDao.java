@@ -1783,6 +1783,11 @@ public class CpDao extends ModeloDao {
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpOrgao> listarOrgaos() {
+		return findByCriteria(CpOrgao.class);
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<CpServico> listarServicos() {

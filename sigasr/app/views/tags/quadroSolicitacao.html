@@ -29,12 +29,12 @@ _solicitacoes.add(_solicitacao); } }%-->
 						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 					</script>
 					<p style="font-size: 9pt">
-							<i>Último andamento:${sol.ultimoAndamento.solicitacao.solicitante.descricaoIniciaisMaiusculas},
+							<i>Última Movimentação:${sol.ultimaMovimentacao.solicitacao.solicitante.descricaoIniciaisMaiusculas},
 							${sol.lotaSolicitante.siglaLotacao}#{if
 							sol.local}&nbsp;(${sol.local.nomeComplexo})#{/if}, Tel.: ${sol.telPrincipal}
-							- ${sol.ultimoAndamento.dtRegString}</i>
+							- ${sol.ultimaMovimentacao.dtIniString}</i>
 							<br>
-							${sol.ultimoAndamento.descrAndamento}
+							${sol.ultimoMovimentacao.descrMovimentacao}
 				</td>
 				<td style="padding-left: 60px">
 					<!-- Categories Sub Table -->

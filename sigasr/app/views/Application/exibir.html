@@ -1,8 +1,8 @@
-#{extends 'main.html' /}
+#{extends 'main.html' /} #{set title:'Movimentação de solicitação' /}
 
 <script language="javascript">
 function carregarAtendente(){
-	frm = document.getElementById('formAndamento');
+	frm = document.getElementById('formMovimentacao');
 	params = '';
 	for (i = 0; i < frm.length; i++){
 		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
@@ -37,6 +37,10 @@ function carregouAtendente(response, param){
 				src="/siga/css/famfamfam/icons/eye.png"
 				style="margin-right: 5px;">Exibir Informações Completas</a>&nbsp;&nbsp;&nbsp;
 			#{/if}
+			<a class="once"
+				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				src="/siga/css/famfamfam/icons/text_list_numbers.png"
+				style="margin-right: 5px;">Definir Lista</a>&nbsp;&nbsp;&nbsp;
 		</p>
 		<div class="gt-content-box">
 					<p style="font-size: 9pt; padding: 7px 10px; margin-bottom: 0px;" id="descrSolicitacao">
@@ -48,18 +52,16 @@ function carregouAtendente(response, param){
 			#{/list}
 		</div>
 
-		<h3 style="padding-top: 25px;">Próximo Andamento</h3>
-		<div class="gt-content-box gt-form"
-			style="margin-bottom: 0px !important;">
-			#{form @Application.andamento(), enctype:'multipart/form-data',
-			id:'formAndamento'} <input type="hidden"
-				name="andamento.solicitacao.idSolicitacao"
-				value="${solicitacao.idSolicitacao}"> #{if
+		<h3 style="padding-top: 25px;">Próxima Movimentação</h3>
+		<div class="gt-content-box gt-form">
+		<form action="@{Application.movimentacao()}" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
+				value="${movimentacao.solicitacao.idSolicitacao}"> #{if
 			movimentarPlenamente}
 			<div class="gt-form-row gt-width-66">
-				<label>Situação</label> #{select 'andamento.estado', items:estados,
-				labelProperty:'descrEstado', value:andamento.estado,
-				valueProperty:idEstado, onchange:'carregarAtendente();'} #{/select}
+				<label>Situação</label> #{select 'movimentacao.estado', items:estados,
+				labelProperty:'descrEstado', value:movimentacao.estado,
+				valueProperty:Estado, onchange:'carregarAtendente();'} #{/select}
 			</div>
 
 			<div class="gt-form-row gt-width-66">
@@ -71,19 +73,19 @@ function carregouAtendente(response, param){
 
 			<div style="display: inline" class="gt-form-row gt-width-66">
 				<label>Descrição</label>
-				<textarea style="width: 100%" name="andamento.descrAndamento" id="descrSolicitacao"
-					cols="70" rows="4" value="${andamento.descrAndamento}"></textarea>
+				<textarea style="width: 100%" name="movimentacao.descrMovimentacao" id="descrSolicitacao"
+					cols="70" rows="4" value="${movimentacao.descrMovimentacao}"></textarea>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Anexar arquivo</label> <input type="file"
-					name="andamento.arquivo">
+					name="movimentacao.arquivo">
 			</div>
 
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" />
 			</div>
-			#{/form}
+			</form> 
 		</div>
 	</div>
 
@@ -148,12 +150,33 @@ function carregouAtendente(response, param){
 			</p>
 	</div>
 	</div>
+
+
+<div class="gt-sidebar">
+	<div class="gt-sidebar-content">
+		<h3>Listas de Prioridades</h3>
+			<p>
+				#{list items:solicitacao.getListaAssociada(solicitacao), as:'listassoc'}
+				<tr>
+					<td class="gt-form-row gt-width-66" style="font-size: 13px; font-weight: bold; !important; padding: 7px 10px;">
+					&nbsp;
+					<input type="hidden" name="idlista" value="${listassoc.idLista}">
+						<a href="@{Application.exibirSolicitacaoLista(listassoc.idLista)}">
+						 ${listassoc.nomeLista}		
+						</a>	
+					</td>
+				</tr>	
+				#{/list}
+			</p>
+	</div>
+	</div>
 </div>
+
 
 
 <div class="gt-bd" style="padding-bottom: 0px;">
 	<div class="gt-content">
-		<h3>Andamentos</h3>
+		<h3>Movimentações</h3>
 	</div>
 
 	<div class="gt-content-box">
@@ -173,39 +196,40 @@ function carregouAtendente(response, param){
 			</thead>
 
 			<tbody>
-				#{list items:andamentos, as:'andamento'}
-				<tr id="linha${andamento.idAndamento}" 
-				#{if andamento.cancelado} class="disabled" #{/if} 
-				#{if desfazerAndamento && (!andamento.cancelado && (andamento.idAndamento == solicitacao.ultimoAndamento.idAndamento))} 
+				#{list items:movimentacoes, as:'movimentacao'}
+				<tr id="linha${movimentacao.idMovimentacao}" 
+				#{if movimentacao.cancelado} class="disabled" #{/if} 
+				#{if desfazerMovimentacao && (!movimentacao.cancelado && (movimentacao.idMovimentacao == solicitacao.ultimaMovimentacao.idMovimentacao))} 
 					onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
 					onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"
 					#{/if}>
 					#{if considerarCancelados} 
-					<td>${andamento.numSequencia}</td>
+					<td>${movimentacao.numSequencia}</td>
 					#{/if}
-					#{if !considerarCancelados}<td>${andamento.dtRegString}</td>#{/if}
-					#{else}<td>${andamento.dtRegAndDDMMYYHHMM}</td>#{/else}
-					<td>${andamento.estado.descrEstado}</td>
+					#{if !considerarCancelados}<td>${movimentacao.dtIniString}</td>#{/if}
+					#{else}<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>#{/else}
+					<td>${movimentacao.estado.descrEstado}</td>
 					<td>#{selecionado
-						sigla:andamento.lotaCadastrante?.siglaLotacao,
-						descricao:andamento.lotaCadastrante?.nomeLotacao /}</td>
-					<td>#{selecionado sigla:andamento.cadastrante?.nomeAbreviado,
-						descricao:andamento.cadastrante?.descricaoIniciaisMaiusculas /}</td>
-					<td>#{selecionado sigla:andamento.lotaAtendente?.siglaLotacao,
-						descricao:andamento.lotaAtendente?.nomeLotacao /}</td>
-					<td>#{selecionado sigla:andamento.atendente?.nomeAbreviado,
-						descricao:andamento.atendente?.descricaoIniciaisMaiusculas /}</td>
-					<td id="descrAndamento${andamento.idAndamento}">${andamento.descrAndamento}#{if
-						andamento.arquivo}&nbsp;&nbsp;|&nbsp;&nbsp;#{arquivo
-						arquivo:andamento.arquivo /}#{/if}</td>
+						sigla:movimentacao.lotaCadastrante?.siglaLotacao,
+						descricao:movimentacao.lotaCadastrante?.nomeLotacao /}</td>
+					<td>#{selecionado sigla:movimentacao.cadastrante?.nomeAbreviado,
+						descricao:movimentacao.cadastrante?.descricaoIniciaisMaiusculas /}</td>
+					<td>#{selecionado sigla:movimentacao.lotaAtendente?.siglaLotacao,
+						descricao:movimentacao.lotaAtendente?.nomeLotacao /}</td>
+					<td>#{selecionado sigla:movimentacao.atendente?.nomeAbreviado,
+						descricao:movimentacao.atendente?.descricaoIniciaisMaiusculas /}</td>
+					<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}#{if
+						movimentacao.arquivo}&nbsp;&nbsp;|&nbsp;&nbsp;#{arquivo
+						arquivo:movimentacao.arquivo /}#{/if}</td>
 					<script language="javascript">
-							var descricao = document.getElementById('descrAndamento${andamento.idAndamento}');
+							var descricao = document.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
 							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 					</script>
-					<td>#{if desfazerAndamento && (!andamento.cancelado && (andamento.idAndamento == solicitacao.ultimoAndamento.idAndamento))} <a
+					<td>#{if desfazerMovimentacao && (!movimentacao.cancelado && (movimentacao.idMovimentacao == solicitacao.ultimaMovimentacao.idMovimentacao))} 
+					<a
 						class="once"
-						href="@{Application.desfazerUltimoAndamento(solicitacao.idSolicitacao)}"
-						title="Desfazer este andamento"> <img id="imgCancelar"
+						href="@{Application.desfazerUltimaMovimentacao(solicitacao.idSolicitacao)}"
+						title="Desfazer esta movimentação"> <img id="imgCancelar"
 							src="/siga/css/famfamfam/icons/cancel_gray.png"
 							style="margin-right: 5px;"> </a>#{/if}</td>
   				</tr>
@@ -213,7 +237,6 @@ function carregouAtendente(response, param){
 			</tbody>
 		</table>
 	</div>
-	<!-- /content box -->
 	<br/>
 </div>
 
@@ -222,5 +245,7 @@ function carregouAtendente(response, param){
 		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?tags=@sr-item:${solicitacao.itemConfiguracao.siglaItemConfiguracao}&tags=@sr-acao:${solicitacao.servico.siglaServico}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
 </script>
 #{/if}
+
+
 
 

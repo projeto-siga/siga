@@ -14,8 +14,9 @@
 			</div>
 			<div class="gt-form-row">
 				<input type="submit" value="OK"
-					class="gt-btn-medium gt-btn-left" />#{if
-				lista?.idLista} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left" />
+					<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
+					#{if lista?.idLista} <input type="button" value="Desativar"
 					class="gt-btn-medium gt-btn-left"
 					onclick="location.href='@{Application.desativarLista()}?id=${lista.idLista}'" />
 				#{/if}

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,6 @@ import java.util.Set;
 
 import javax.persistence.Query;
 
-import models.SrAndamento;
 import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
@@ -22,10 +22,12 @@ import models.SrFormaAcompanhamento;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
+import models.SrMovimentacao;
 import models.SrServico;
 import models.SrSolicitacao;
 import models.SrTendencia;
 import models.SrTipoAtributo;
+import models.SrTipoMovimentacao;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
@@ -43,6 +45,7 @@ import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class Application extends SigaApplication {
@@ -267,9 +270,9 @@ public class Application extends SigaApplication {
 		
 		List<String[]> listaSols = SrSolicitacao.find(
 				"select sol.gravidade, count(*) " +
-				"from SrSolicitacao sol, SrAndamento andamento " +
-				"where sol.idSolicitacao = andamento.solicitacao and andamento.estado <> 2 " +
-				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
+				"from SrSolicitacao sol, SrMovimentacao movimentacao " +
+				"where sol.idSolicitacao = movimentacao.solicitacao and movimentacao.estado <> 2 " +
+				"and movimentacao.lotaAtendente = " +  lotaTitular().getId() + " " +
 				"group by sol.gravidade").fetch(); 
 		
 		LocalDate ld = new LocalDate();
@@ -299,9 +302,9 @@ public class Application extends SigaApplication {
 		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
 		List<Object[]> listaEvolSols = SrSolicitacao.find(
 				"select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(*) " +
-				"from SrSolicitacao sol, SrAndamento andamento " +
-				"where sol.idSolicitacao = andamento.solicitacao " +
-				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
+				"from SrSolicitacao sol, SrMovimentacao movimentacao " +
+				"where sol.idSolicitacao = movimentacao.solicitacao " +
+				"and movimentacao.lotaAtendente = " +  lotaTitular().getId() + " " +
 				"group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch(); 
 			
 		for (Object[] sols : listaEvolSols) {
@@ -312,10 +315,10 @@ public class Application extends SigaApplication {
 
 		List<Object[]> listaFechados = SrSolicitacao.find(
 				"select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(distinct sol.idSolicitacao) " +
-				"from SrSolicitacao sol, SrAndamento andamento " +
-				"where sol.idSolicitacao = andamento.solicitacao " +
-				"and andamento.estado = 2 " +
-				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
+				"from SrSolicitacao sol, SrMovimentacao movimentacao " +
+				"where sol.idSolicitacao = movimentacao.solicitacao " +
+				"and movimentacao.estado = 2 " +
+				"and movimentacao.lotaAtendente = " +  lotaTitular().getId() + " " +
 				"group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)").fetch();
 		for (Object[] fechados : listaFechados) {
 			set.add(new SrSolicitacaoItem((Integer) fechados[0],
@@ -356,9 +359,9 @@ public class Application extends SigaApplication {
 		
 		List<String[]> listaTop = SrSolicitacao.find(
 				"select sol.itemConfiguracao.tituloItemConfiguracao, count(*) " +
-				"from SrSolicitacao sol, SrAndamento andamento " +
-				"where sol.idSolicitacao = andamento.solicitacao " +
-				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
+				"from SrSolicitacao sol, SrMovimentacao movimentacao " +
+				"where sol.idSolicitacao = movimentacao.solicitacao " +
+				"and movimentacao.lotaAtendente = " +  lotaTitular().getId() + " " +
 				"group by sol.itemConfiguracao.tituloItemConfiguracao").fetch(); 
 		
 		// Header
@@ -384,9 +387,9 @@ public class Application extends SigaApplication {
 		
 		List<String[]> listaGUT = SrSolicitacao.find(
 				"select sol.gravidade, sol.urgencia, count(*) " +
-				"from SrSolicitacao sol, SrAndamento andamento " +
-				"where sol.idSolicitacao = andamento.solicitacao " +
-				"and andamento.lotaAtendente = " +  lotaTitular().getId() + " " +
+				"from SrSolicitacao sol, SrMovimentacao movimentacao " +
+				"where sol.idSolicitacao = movimentacao.solicitacao " +
+				"and movimentacao.lotaAtendente = " +  lotaTitular().getId() + " " +
 				"group by sol.gravidade, sol.urgencia").fetch(); 
 		
 		// Header
@@ -411,33 +414,91 @@ public class Application extends SigaApplication {
 		
 		String gut = sbGUT.toString();
 
-		//render(lista, estat, evolucao, top10, gut);
 		render(lista, evolucao, top10);
-	}
+}
 	
 	public static void exibir(Long id, boolean considerarCancelados) throws Exception {
-		// antes: 8 queries
-		SrSolicitacao solicitacao = SrSolicitacao.findById(id); // 3 queries
-		SrAndamento andamento = new SrAndamento(solicitacao); // 1query
-		andamento.deduzirProxAtendente(); // 318 queries
-		// = true;
 		
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
+		SrMovimentacao movimentacao = new SrMovimentacao (solicitacao);
+		movimentacao.deduzirProxAtendente();
 		
 		boolean criarFilha = solicitacao.podeCriarFilha(lotaTitular(),
 				cadastrante());
-		boolean desfazerAndamento = solicitacao.podeDesfazerAndamento(
+		boolean desfazerMovimentacao = solicitacao.podeDesfazerMovimentacao(
 				lotaTitular(), cadastrante());
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		boolean movimentarPlenamente = solicitacao.estaCom(lotaTitular(),
 				cadastrante());
-		Set<SrAndamento> andamentos = (Set<SrAndamento>) solicitacao.getAndamentoSet(considerarCancelados);
+		Set<SrMovimentacao> movimentacoes = (Set<SrMovimentacao>) solicitacao.getMovimentacaoSet(considerarCancelados);
 		
 		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
-
-		render(solicitacao, editar, desfazerAndamento, movimentarPlenamente,
-				andamento, criarFilha, estados, considerarCancelados, andamentos);
+		
+		List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
+		
+		render(solicitacao, editar, desfazerMovimentacao, movimentarPlenamente,
+				movimentacao, criarFilha, estados, considerarCancelados, movimentacoes, listas);
+	}
+	
+	public static void exibirLista(Long id) {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
+		//SrLista lista = new SrLista();
+		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
+		List<SrLista> listas =  solicitacao.getListaDisponivel(solicitacao);
+		render(solicitacao, editar, listas);
+	}
+	
+	public static void exibirSolicitacaoLista(Long id) {
+		
+		SrLista lista = SrLista.findById(id);
+		Set<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
+		render(solicitacao, lista);
 	}
 
+	public static void exibirListaAssoc(Long id) {
+		
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
+		SrLista lista = new SrLista();
+		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
+		//List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
+		List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
+		render(solicitacao, editar, listas);
+	}	
+	
+	public static void exibirListaAssoc(Long id, Long idLista) throws Exception {
+		
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
+		SrLista lista = SrLista.findById(idLista);
+		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
+		//List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
+		List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
+		render(solicitacao, editar, listas);
+	}
+	
+	public static void associarLista(Long idSolicitacao, Long idLista) throws Exception{
+		
+		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
+		SrLista lista = new SrLista();
+		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
+		Long prioridade = movimentacao.getPrioridade();
+		solicitacao.Movimentar(SrEstado.ANDAMENTO, "Inclusão em lista", null, null, cadastrante(), lotaTitular(), (SrLista) SrLista.findById(idLista), 
+				(SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA), movimentacao.getnumSequencia(),
+				prioridade);
+		List<SrLista> listas =  solicitacao.getListaDisponivel(solicitacao);
+		render(solicitacao, listas);
+	}
+	
+	public static void desassociarLista(Long idSolicitacao, Long idLista) throws Exception {
+		
+		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao); 
+		SrLista lista = SrLista.findById(idLista);
+		solicitacao.desassociarLista(solicitacao, lista);
+		Set<SrSolicitacao> sols = lista.getSolicitacaoAssociada();
+		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
+		boolean vazio = lista.isEmpty();
+		render(sols, editar, lista, vazio);
+	}
+	
 	public static void selecionar(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
 		sel.cadastrante = cadastrante();
@@ -445,8 +506,8 @@ public class Application extends SigaApplication {
 		render("@selecionar", sel);
 	}
 
-	public static void exibirAtendente(SrAndamento andamento) throws Exception {
-		render(andamento.deduzirProxAtendente());
+	public static void exibirAtendente(SrMovimentacao movimentacao) throws Exception {
+		render(movimentacao.deduzirProxAtendente());
 	}
 
 	public static void baixar(Long idArquivo) {
@@ -455,19 +516,20 @@ public class Application extends SigaApplication {
 			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
 	}
 
-	public static void andamento(SrAndamento andamento) throws Exception {
-		andamento.solicitacao.darAndamento(andamento, cadastrante(),
-				lotaTitular(), andamento.getnumSequencia());
-		Long id = andamento.solicitacao.idSolicitacao;
-		exibir(id, false);
+	public static void movimentacao(SrMovimentacao movimentacao) throws Exception {
+		
+		movimentacao.solicitacao.Movimentar(movimentacao, cadastrante(), 
+					lotaTitular(), movimentacao.tipoMov, movimentacao.getnumSequencia());
+		Long id = movimentacao.solicitacao.idSolicitacao;
+			exibir(id, false);
 	}
 
-	public static void desfazerUltimoAndamento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.desfazerUltimoAndamento(cadastrante(), lotaTitular());
-		exibir(id, false);
-	}
-
+	public static void desfazerUltimaMovimentacao(Long id) throws Exception {
+        SrSolicitacao sol = SrSolicitacao.findById(id);
+        sol.desfazerUltimaMovimentacao(cadastrante(), lotaTitular());
+        exibir(id, false);
+	}	
+	
 	public static void criarFilha(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrSolicitacao filha = sol.criarFilhaSemSalvar();
@@ -704,6 +766,7 @@ public class Application extends SigaApplication {
 
 	public static void desativarLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
+		lista.finalizar();
 		listarLista();
 	}
 	

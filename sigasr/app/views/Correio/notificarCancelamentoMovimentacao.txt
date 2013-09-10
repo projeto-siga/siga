@@ -1,0 +1,8 @@
+Informamos que foi **cancelado**, em ${movimentacao.dtCancelamentoDDMMYYYYHHMM}, a **movimentação** abaixo, dado na solicitação ${sol.codigo}:
+
+${movimentacao.descrMovimentacao}
+Movimentação dada por ${movimentacao.cadastrante.descricaoIniciaisMaiusculas} (${movimentacao.lotaCadastrante.siglaLotacao})
+**Cancelado** por ${movimentacao.cancelador.descricaoIniciaisMaiusculas} (${movimentacao.lotaCancelador.siglaLotacao})
+
+Para acessar a solicitação, acesse @@{Application.exibir(sol.idSolicitacao)}.
+	

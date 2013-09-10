@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -11,10 +12,13 @@ import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -24,7 +28,6 @@ import javax.persistence.TemporalType;
 
 import notifiers.Correio;
 
-
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -33,21 +36,25 @@ import play.db.jpa.Model;
 import util.SigaPlayCalendar;
 
 @Entity
-@Table(name = "SR_ANDAMENTO", schema="SIGASR")
-public class SrAndamento extends GenericModel {
+@Table(name = "SR_MOVIMENTACAO", schema="SIGASR")
+public class SrMovimentacao extends GenericModel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ANDAMENTO_SEQ", name = "srAndamentoSeq")
-	@GeneratedValue(generator = "srAndamentoSeq")
-	@Column(name = "ID_ANDAMENTO")
-	public long idAndamento;
+	@SequenceGenerator(sequenceName = "SIGASR.SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
+	@GeneratedValue(generator = "srMovimentacaoSeq")
+	@Column(name = "ID_MOVIMENTACAO")
+	public long idMovimentacao;
 
-	@Column(name = "DESCR_ANDAMENTO")
-	public String descrAndamento;
+	@Column(name = "DESCR_MOVIMENTACAO")
+	public String descrMovimentacao;
 
-	@Column(name = "DT_REG")
+	@Column(name = "DT_INI_MOV")
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date dtReg;
+	public Date dtIniMov;
+	
+	@Column(name = "DT_FIM_MOV")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date dtFimMov;
 
 	@JoinColumn(name = "ID_ESTADO", nullable = false)
 	public SrEstado estado;
@@ -59,7 +66,7 @@ public class SrAndamento extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_ATENDENTE")
 	public DpPessoa atendente;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_ATENDENTE", nullable = false)
 	public DpLotacao lotaAtendente;
@@ -67,7 +74,7 @@ public class SrAndamento extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_CADASTRANTE", nullable = false)
 	public DpPessoa cadastrante;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
@@ -77,6 +84,10 @@ public class SrAndamento extends GenericModel {
 	public SrSolicitacao solicitacao;
 	
 	@ManyToOne
+	@JoinColumn(name = "ID_LISTA")
+	public SrLista lista;
+	
+	@ManyToOne
 	@JoinColumn(name = "ID_CANCELADOR")
 	public DpPessoa cancelador;
 
@@ -84,84 +95,106 @@ public class SrAndamento extends GenericModel {
 	@JoinColumn(name = "ID_LOTA_CANCELADOR")
 	public DpLotacao lotaCancelador;
 
-	@Column(name = "DT_CANCELAMENTO")
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_MOV_CANCELADORA")
+	public SrMovimentacao idmovCanceladora;
+
+	@Column(name = "DT_MOV_CANCELADORA")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtCancelamento;
 	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
+	public SrTipoMovimentacao tipoMov;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_MOVIMENTACAO_REF")
+	public SrMovimentacao idMovRef;
+	
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
+	
+	@Column(name = "ID_PRIORIDADE")
+	public Long prioridade;
+	
 
-	public SrAndamento() throws Exception {
+	public SrMovimentacao() throws Exception {
 		this(null);
 	}
 
-	// Edson: O objetivo de ter um construtor com parâmetro é evitar que os
-	// valores default setados dentro dele acabem sendo chamados pelo
-	// framework a cada request, pois a ideia é esses valores serem
-	// definidos só no início da operação
-	public SrAndamento(SrSolicitacao sol) throws Exception {
+	public SrMovimentacao(SrSolicitacao sol) throws Exception {
 		this.solicitacao = sol;
-		if (solicitacao != null && solicitacao.temAndamento())
-			estado = solicitacao.getUltimoAndamento().estado;
+		if (solicitacao != null && solicitacao.temMovimentacao())
+			estado = solicitacao.getUltimaMovimentacao().estado;
 	}
 
-	public SrAndamento(SrEstado estado, String descricao, DpPessoa atendente,
+	public SrMovimentacao(SrEstado estado, String descricao, DpPessoa atendente,
 			DpLotacao lotaAtendente, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, SrSolicitacao sol, Long numSequencia) {
+			DpLotacao lotaCadastrante, SrSolicitacao sol, SrLista lista, SrTipoMovimentacao tipoMov, Long numSequencia, Long prioridade) {
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
 		this.atendente = atendente;
 		this.lotaAtendente = lotaAtendente;
-		this.descrAndamento = descricao;
+		this.descrMovimentacao = descricao;
 		this.estado = estado;
 		this.solicitacao = sol;
+		this.lista = lista;
+		this.tipoMov = tipoMov;
 		this.numSequencia = this.getnumSequencia();
+		this.prioridade = this.getPrioridade();
 	}
 
 	public boolean isCancelado() {
 		return dtCancelamento != null;
 	}
-
-	public boolean isPrimeiroAndamento() {
-		SrAndamento primeiro = null;
-		for (SrAndamento andamento : solicitacao.getAndamentoSet())
-			primeiro = andamento;
+	
+	public boolean isPrimeiraMovimentacao() {
+		SrMovimentacao primeiro = null;
+		for (SrMovimentacao movimentacao : solicitacao.getMovimentacaoSet())
+			primeiro = movimentacao;
 		return (primeiro == null || primeiro.equals(this));
 	}
 	
 	
 	public Long getnumSequencia(){
 		numSequencia = find(
-				"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
-						+ solicitacao.getId()).first();
+				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao " +
+				"and mov.solicitacao = " + solicitacao.getId()).first();
 		return (numSequencia != null) ? numSequencia : 1;
 	}
 	
-	public Long getProximoAndamento() {
+	public Long getPrioridade(){
+		prioridade = find(
+				"select max(mov.prioridade)+1 from SrMovimentacao mov where mov.lista = " + lista.getId()).first();
+		return (prioridade != null) ? prioridade : 1;
+	}
+	
+	public Long getProximaMovimentacao() {
 		Long num = find(
-				"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
-						+ solicitacao.getId()).first();
+				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao " +
+				"and mov.solicitacao = " + solicitacao.getId()).first();
 		return (num != null) ? num : 1;
 }
 	
-	public Long getAndamentoAtual() {
+	public Long getMovimentacaoAtual() {
 		Long num = find(
-				"select max(numSequencia) from SrAndamento where solicitacao.idSolicitacao = "
-						+ solicitacao.getId()).first();
+				"select max(mov.numSequencia) from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao " +
+				"and mov.solicitacao = " + solicitacao.getId()).first();
 		return (num != null) ? num : 1;
-}
+	}
 
-	public String getDtRegString() {
+	
+	public String getDtIniString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
-		cal.setTime(dtReg);
+		cal.setTime(dtIniMov);
 		return cal.getTempoTranscorridoString(false);
 	}
 	
-	public String getDtRegAndDDMMYYHHMM() {
-		if (dtReg != null) {
+	public String getDtIniMovDDMMYYHHMM() {
+		if (dtIniMov != null) {
 			final SimpleDateFormat df = new SimpleDateFormat(
 					"dd/MM/yy HH:mm");
-			return df.format(dtReg);
+			return df.format(dtIniMov);
 		}
 		return "";
 	}
@@ -173,12 +206,13 @@ public class SrAndamento extends GenericModel {
 			return lotaAtendente.getSigla();
 	}
 
-	public String getDtRegDDMMYYYYHHMM() {
-		if (dtReg != null) {
+	public String getDtIniMovDDMMYYYYHHMM() {
+		if (dtIniMov != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-			return df.format(dtReg);
+			return df.format(dtIniMov);
 		}
 		return "";
+		
 	}
 
 	public String getDtCancelamentoDDMMYYYYHHMM() {
@@ -200,8 +234,7 @@ public class SrAndamento extends GenericModel {
 	public String getSituacaoStringSemLota() {
 		return estado.descrEstado;
 	}
-
-	// Necessário porque não há binder para arquivo
+	
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
@@ -216,7 +249,7 @@ public class SrAndamento extends GenericModel {
 						.temAtendenteDesignado());
 	}
 
-	public SrAndamento deduzirProxAtendente() throws Exception {
+	public SrMovimentacao deduzirProxAtendente() throws Exception {
 
 		this.lotaAtendente = null;
 		this.atendente = null;
@@ -235,7 +268,7 @@ public class SrAndamento extends GenericModel {
 	}
 
 	@Override
-	public SrAndamento save() {
+	public SrMovimentacao save() {
 		try {
 			salvar();
 		} catch (Exception e) {
@@ -244,14 +277,14 @@ public class SrAndamento extends GenericModel {
 		return this;
 	}
 
-	public SrAndamento salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
+	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
 			throws Exception {
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
 		return salvar();
 	}
 
-	public SrAndamento salvar() throws Exception {
+	public SrMovimentacao salvar() throws Exception {
 		checarCampos();
 		super.save();
 		return this;
@@ -261,6 +294,7 @@ public class SrAndamento extends GenericModel {
 		dtCancelamento = new Date();
 		lotaCancelador = lota;
 		cancelador = pessoa;
+		tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		salvar();
 	}
 
@@ -268,12 +302,12 @@ public class SrAndamento extends GenericModel {
 
 		if (solicitacao == null)
 			throw new Exception(
-					"Andamento precisa fazer parte de uma solicitação");
+					"Movimentação precisa fazer parte de uma solicitação");
 
 		if (cadastrante == null)
 			throw new Exception("Cadastrante não pode ser nulo");
 
-		dtReg = new Date();
+		dtIniMov = new Date();
 
 		checarCamposConsiderandoSolicitacao();
 
@@ -286,14 +320,15 @@ public class SrAndamento extends GenericModel {
 
 	private void checarCamposConsiderandoSolicitacao() throws Exception {
 
-		if (!solicitacao.temAndamento())
+		if (!solicitacao.temMovimentacao())
 			return;
 
-		SrAndamento anterior = solicitacao.getUltimoAndamento();
-
+		SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
+		
 		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento()) {
 			atendente = null;
 			lotaAtendente = solicitacao.getAtendenteDesignado();
+			tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
 		} else if (estado == SrEstado.FECHADO
 				&& solicitacao.temPosAtendenteDesignado()
 				&& !solicitacao.getLotaAtendente().equivale(
@@ -301,9 +336,12 @@ public class SrAndamento extends GenericModel {
 			atendente = null;
 			lotaAtendente = solicitacao.getPosAtendenteDesignado();
 			estado = SrEstado.POS_ATENDIMENTO;
+			tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_POS_ATENDIMENTO);
+			
 		} else if (estado == SrEstado.PRE_ATENDIMENTO) {
 			atendente = null;
 			lotaAtendente = solicitacao.getPreAtendenteDesignado();
+			tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
 		}
 
 		if (!temAtendenteOuLota()) {
@@ -314,18 +352,26 @@ public class SrAndamento extends GenericModel {
 			estado = anterior.estado;
 		
 		if (isCancelado()){
-			numSequencia = getAndamentoAtual();
+			numSequencia = getMovimentacaoAtual();
 		}
 		else
-			numSequencia = getProximoAndamento();
+			numSequencia = getProximaMovimentacao();
+		
+		if(solicitacao.getMovimentacaoSolLista(solicitacao, lista) == null){
+			prioridade = 1L;
+		}
+		else {
+			prioridade = lista.getPriorAssociada(lista);
+		}
+			
 
 	}
 
 	public void notificar() {
 		if (!isCancelado())
-			Correio.notificarAndamento(this);
+			Correio.notificarMovimentacao(this);
 		else
-			Correio.notificarCancelamentoAndamento(this);
+			Correio.notificarCancelamentoMovimentacao(this);
 	}
 
 }

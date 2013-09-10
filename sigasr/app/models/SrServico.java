@@ -53,11 +53,11 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrServico servicoInicial;
-
+	
 	@OneToMany(targetEntity = SrServico.class, mappedBy = "servicoInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
 	public List<SrServico> meuServicoHistoricoSet;
-
+	
 	public SrServico() {
 		this(null, null);
 	}
@@ -99,9 +99,9 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		}
 		if (nivel == 2) {
 			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrServico configuracao = SrServico.find("bySiglaServico",
+			SrServico configuracao = SrServico.find("bySiglaServicoAndHisDtFimIsNull",
 					sigla_raiz).first();
-			desc_nivel = configuracao.tituloServico + " : "
+				desc_nivel = configuracao.tituloServico + " : "
 					+ this.tituloServico;
 		}
 		return desc_nivel;

@@ -10,16 +10,18 @@
 					<tr>
 						<th>Nome</th>
 						<th>Lotação</th>
+						<th>Lista</th>
 					</tr>
 				</thead>
 
 				<tbody>
 					#{list items:lista, as:'lista'}
-					<tr
-						onclick="javascript:window.location='@{Application.editarLista(lista.idLista)}'"
-						style="cursor: pointer;">
-						<td>${lista.nomeLista}</td>
+					<tr>
+						<td onclick="javascript:window.location='@{Application.editarLista(lista.idLista)}'"
+						style="cursor: pointer;">${lista.nomeLista}</td>
 						<td>${lista.lotaCadastrante}</td>
+						<td onclick="javascript:window.location='@{Application.exibirSolicitacaoLista(lista.idLista)}'"
+						style="cursor: pointer;"> ${lista.nomeLista}</td>
 					</tr>
 					</a> #{/list}
 				</tbody>
@@ -27,10 +29,9 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarLista}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a href="@{Application.editarLista}" class="gt-btn-medium gt-btn-left">Nova Lista</a>
+		<div class="gt-table-buttons">
 		</div>
-
-	</div>
 </div>
 
 <br />

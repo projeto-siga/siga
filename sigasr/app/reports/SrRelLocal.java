@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import models.SrAndamento;
+import models.SrMovimentacao;
 import models.SrSolicitacao;
 
 import org.hibernate.Query;
@@ -58,8 +58,8 @@ public class SrRelLocal extends RelatorioTemplate {
 		if (parametros.get("lotacao").equals("")) {
 			List<SrSolicitacao> lista = SrSolicitacao.find(
 					"select sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico, count(*) " +
-					"from SrSolicitacao sol, SrAndamento andam " +
-					"where sol.idSolicitacao = andam.solicitacao " +
+					"from SrSolicitacao sol, SrMovimentacao mov " +
+					"where sol.idSolicitacao = mov.solicitacao " +
 					"and sol.local = " + parametros.get("local") + " " +
 					"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 					"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
@@ -89,9 +89,9 @@ public class SrRelLocal extends RelatorioTemplate {
 						}
 						List<SrSolicitacao> lista = SrSolicitacao.find(
 							"select sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico, count(*) " +
-							"from SrSolicitacao sol, SrAndamento andam " +
-							"where sol.idSolicitacao = andam.solicitacao " +
-							"and andam.lotaAtendente in (" + listalotacoes + ") " +
+							"from SrSolicitacao sol, SrMovimentacao mov " +
+							"where sol.idSolicitacao = mov.solicitacao " +
+							"and mov.lotaAtendente in (" + listalotacoes + ") " +
 							"and sol.local = " + parametros.get("local") + " " +
 							"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 							"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +

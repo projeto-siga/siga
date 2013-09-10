@@ -21,8 +21,12 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import java.util.Set;
+
 import org.hibernate.Hibernate;
 
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
@@ -77,5 +81,17 @@ public class ExModelo extends AbstractExModelo {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
+	
+	public boolean isFechado() {
+		if(getModeloAtual() == null)
+			return true;
+		
+		return false;
+	}
+	
+	
+	public ExModelo getModeloAtual() {
+		return ExDao.getInstance().consultarModeloAtual(this);
+	}	
 	
 }

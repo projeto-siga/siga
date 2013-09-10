@@ -25,7 +25,7 @@ function sbmt(offset) {
 		<tr class="header">
 			<td align="center" valign="top" colspan="4">Dados do Órgão Externo</td>
 		</tr>
-		<ww:textfield label="Nome" name="nome" />
+		<ww:textfield label="Nome ou Sigla" name="nome" />
 		<ww:submit value="Pesquisar" />
 		</ww:form>
 

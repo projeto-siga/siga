@@ -31,7 +31,7 @@ public class Feriados {
 	public static List<CpFeriado> getListaFeriados() {
 		if (listaFeriados == null || listaFeriados.size() == 0) {
 			CpDao dao = CpDao.getInstance();
-			listaFeriados = dao.listarTodos(CpFeriado.class);
+			listaFeriados = dao.listarFeriados();
 		}
 		return listaFeriados;
 	}

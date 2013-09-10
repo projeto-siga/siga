@@ -932,9 +932,9 @@ public class ExBL extends CpBL {
 				if (conf.getCpSituacaoConfiguracao().getIdSitConfiguracao() == ExSituacaoConfiguracao.SITUACAO_PODE) {
 					if (conf.getDpPessoa() != null) {
 						if (!emailsAtendentes.contains(conf.getDpPessoa()
-								.getEmailPessoa())) {
+								.getEmailPessoaAtual())) {
 							emailsAtendentes.add(conf.getDpPessoa()
-									.getEmailPessoa());
+									.getEmailPessoaAtual());
 						}
 					} else if (conf.getLotacao() != null) {
 						List<DpPessoa> pessoasLotacao = CpDao.getInstance()
@@ -943,8 +943,8 @@ public class ExBL extends CpBL {
 										false, true);
 						for (DpPessoa pessoa : pessoasLotacao) {
 							if (!emailsAtendentes.contains(pessoa
-									.getEmailPessoa()))
-								emailsAtendentes.add(pessoa.getEmailPessoa());
+									.getEmailPessoaAtual()))
+								emailsAtendentes.add(pessoa.getEmailPessoaAtual());
 						}
 					}
 				}
@@ -2378,7 +2378,7 @@ public class ExBL extends CpBL {
 				keys.add("doc_" + (char) ('a' + n));
 				values.add(doc.getCodigo() + "-" + (char) ('A' + n));
 			}
-			List<ExPapel> papeis = dao().listarTodos(ExPapel.class);
+			List<ExPapel> papeis = dao().listarExPapeis();
 			for (ExPapel papel : papeis) {
 				List<DpResponsavel> responsaveis = doc
 						.getResponsaveisPorPapel(papel);
@@ -2925,7 +2925,12 @@ public class ExBL extends CpBL {
 
 		novoDoc.setDescrClassifNovo(doc.getDescrClassifNovo());
 		novoDoc.setExFormaDocumento(doc.getExFormaDocumento());
-		novoDoc.setExModelo(doc.getExModelo());
+		
+		if(!doc.getExModelo().isFechado())
+			novoDoc.setExModelo(doc.getExModelo().getModeloAtual());
+		else
+			throw new AplicacaoException("Não foi possível duplicar o documento pois este modelo não está mais em uso.");		
+		
 		novoDoc.setExTipoDocumento(doc.getExTipoDocumento());
 
 		if (doc.getLotaDestinatario() != null
@@ -3343,6 +3348,9 @@ public class ExBL extends CpBL {
 							(subscritor == null && fDespacho) ? cadastrante
 									: subscritor, null, titular, null, dt);
 
+					if(dt != null)
+						mov.setDtIniMov(dt);
+
 					if (orgaoExterno != null || obsOrgao != null) {
 						mov.setOrgaoExterno(orgaoExterno);
 						mov.setObsOrgao(obsOrgao);
@@ -3473,7 +3481,7 @@ public class ExBL extends CpBL {
 
 			sDestinatario = responsavel.getNomePessoa();
 
-			dest.add(responsavel.getEmailPessoa());
+			dest.add(responsavel.getEmailPessoaAtual());
 
 		} else if (lotaResponsavel != null) {
 
@@ -3501,7 +3509,7 @@ public class ExBL extends CpBL {
 
 						lotaResponsavel.getIdLotacao(), false, true)) {
 
-							dest.add(pes.getEmailPessoa());
+							dest.add(pes.getEmailPessoaAtual());
 
 						}
 
@@ -3519,7 +3527,7 @@ public class ExBL extends CpBL {
 
 				lotaResponsavel.getIdLotacao(), false, true)) {
 
-					dest.add(pes.getEmailPessoa());
+					dest.add(pes.getEmailPessoaAtual());
 
 				}
 
@@ -5247,6 +5255,19 @@ public class ExBL extends CpBL {
 							+ sb.toString());
 		}
 
+		/*AVISO: 
+		 * 
+		 *  
+		 * O código abaixo foi comentado para permitir a atualização da tabela de classificação documental
+		 * enquanto a funcionalidade de reclassificação de documentos nõa está disponível.
+		 * 
+		 * 
+		 *  
+		 */
+		
+		
+		
+		/*
 		List<ExDocumento> docs = ExDao.getInstance()
 				.consultarExDocumentoPorClassificacao(null,
 						MascaraUtil.getInstance().getMscTodosDoMaiorNivel(),
@@ -5258,7 +5279,11 @@ public class ExBL extends CpBL {
 					"Não é possível excluir a classificação documental, pois já foi associada a documento(s)."
 							+ sb.toString());
 		}
-
+		 */
+		
+		
+		
+		
 		for (ExVia exVia : exClass.getExViaSet()) {
 			dao().excluirComHistorico(exVia, dt, idCadastrante);
 		}

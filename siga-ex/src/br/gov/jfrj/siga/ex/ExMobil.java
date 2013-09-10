@@ -393,8 +393,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		sigla = sigla.trim().toUpperCase();
 
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
-		for (CpOrgaoUsuario ou : ExDao.getInstance().listarTodos(
-				CpOrgaoUsuario.class)) {
+		for (CpOrgaoUsuario ou : ExDao.getInstance().listarOrgaosUsuarios()) {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
 		}
 		String acronimos = "";
@@ -1266,6 +1265,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return b;
 
+	}
+	
+	public boolean temDocumentosJuntados() {
+		for (ExMovimentacao movRef : getExMovimentacaoReferenciaSet()) {
+			if(!movRef.isCancelada() &&
+					movRef.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+				return true;
+		}
+		
+		return false;
 	}
 
 	/**

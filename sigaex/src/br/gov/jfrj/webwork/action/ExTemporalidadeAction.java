@@ -183,7 +183,7 @@ public class ExTemporalidadeAction extends SigaActionSupport {
 	}
 	
 	public List<CpUnidadeMedida> getListaCpUnidade(){
-		return ExDao.getInstance().listarTodos(CpUnidadeMedida.class);
+		return ExDao.getInstance().listarUnidadesMedida();
 	}
 	
 	public void setAcao(String acao) {

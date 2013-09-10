@@ -39,7 +39,7 @@ public class ExTipoDespachoAction extends ExActionSupport {
 	public String aEditar() throws Exception {
 		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
 
-		tiposDespacho = dao().listarTodos(ExTipoDespacho.class);
+		tiposDespacho = dao().listarExTiposDespacho();
 		if (getId() != null) {
 			ExTipoDespacho tipo = dao().consultar(getId(),
 					ExTipoDespacho.class, false);
@@ -89,7 +89,7 @@ public class ExTipoDespachoAction extends ExActionSupport {
 	public String aListar() throws Exception {
 		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
 
-		tiposDespacho = dao().listarTodos(ExTipoDespacho.class);
+		tiposDespacho = dao().listarExTiposDespacho();
 		return SUCCESS;
 	}
 

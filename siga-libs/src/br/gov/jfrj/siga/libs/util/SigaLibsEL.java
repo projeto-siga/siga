@@ -28,6 +28,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -266,15 +270,12 @@ public class SigaLibsEL {
 								false),
 						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
 	}
-	
+
 	public static Boolean podePorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, Long idTpConf) throws Exception {
-		return Cp
-				.getInstance()
-				.getConf()
-				.podePorConfiguracao(titular,lotaTitular,idTpConf);
+		return Cp.getInstance().getConf()
+				.podePorConfiguracao(titular, lotaTitular, idTpConf);
 	}
-
 
 	// public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa
 	// titular,
@@ -295,9 +296,11 @@ public class SigaLibsEL {
 				.podeUtilizarServicoPorConfiguracao(titular, lotaTitular,
 						servicoPath);
 	}
-	
-	public static Boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular, Long idCpTipoGrupo) throws Exception{
-		return Cp.getInstance().getConf().podeGerirGrupo(titular, lotaTitular, idCpTipoGrupo);
+
+	public static Boolean podeGerirAlgumGrupo(DpPessoa titular,
+			DpLotacao lotaTitular, Long idCpTipoGrupo) throws Exception {
+		return Cp.getInstance().getConf()
+				.podeGerirAlgumGrupo(titular, lotaTitular, idCpTipoGrupo);
 	}
 
 	public static String getURLSistema(String nome) {
@@ -308,40 +311,63 @@ public class SigaLibsEL {
 		}
 		return url.trim();
 	}
-	
-	public static String urlEncode(String value) throws UnsupportedEncodingException {
-	    return URLEncoder.encode(value, "UTF-8");
+
+	public static String urlEncode(String value)
+			throws UnsupportedEncodingException {
+		return URLEncoder.encode(value, "UTF-8");
 	}
 
 	public static String getComplementoHead(CpOrgaoUsuario oragaoUsu) {
+		final String CACHE_GENERIC_HOURS = "cache.hours";
+		CacheManager manager = CacheManager.getInstance();
+		Cache cache;
+
+		if (!manager.cacheExists(CACHE_GENERIC_HOURS)) {
+			manager.addCache(CACHE_GENERIC_HOURS);
+			cache = manager.getCache(CACHE_GENERIC_HOURS);
+			CacheConfiguration config;
+			config = cache.getCacheConfiguration();
+			config.setTimeToIdleSeconds(3600);
+			config.setTimeToLiveSeconds(36000);
+			config.setMaxElementsInMemory(10000);
+			config.setMaxElementsOnDisk(1000000);
+		} else
+			cache = manager.getCache(CACHE_GENERIC_HOURS);
+
+		Element element;
+		String key = "complementoHEAD-" + oragaoUsu.getId();
+		if ((element = cache.get(key)) != null) {
+			return (String) element.getValue();
+		}
+
 		ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
 		Map attrs = new HashMap();
 		attrs.put("nmMod", "macro complementoHEAD");
 		attrs.put("template", "[@complementoHEAD/]");
 		try {
-			return p.processarModelo(oragaoUsu, attrs, null).trim();
+			String s = p.processarModelo(oragaoUsu, attrs, null).trim();
+			cache.put(new Element(key, s));
+			return s;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "";
 	}
-	
+
 	public static Boolean podeCadastrarQqSubstituicaoPorConfiguracao(
-			DpPessoa pessoa, DpLotacao lotacao) throws Exception {		
-			
+			DpPessoa pessoa, DpLotacao lotacao) throws Exception {
+
 		return Cp
 				.getInstance()
 				.getConf()
-				.podePorConfiguracao(
-				pessoa,
-				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST) ||
-			  Cp
-			  	.getInstance()
-			  	.getConf()
-			  	.podePorConfiguracao(
-			  	lotacao,
-			  	CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);	
+				.podePorConfiguracao(pessoa,
+						CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)
+				|| Cp.getInstance()
+						.getConf()
+						.podePorConfiguracao(
+								lotacao,
+								CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);
 	}
 
 }

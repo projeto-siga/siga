@@ -211,6 +211,46 @@
 		<![CDATA[from DpPessoa p where p.cargo.id = :idCargo and p.dataFimPessoa is null]]>
 	</query>
 	
+	
+	
+	
+	<!-- Tentativa de minimizar o número de queries necessário para executar cada request 
+	
+       u, 
+	       pes, 
+	       (select max(cpcfg.hisDtIni), max(cpcfg.hisDtFim)	from CpConfiguracao cpcfg),
+	       sysdate, 
+	       (select per from CpPersonalizacao per, DpPessoa pes2 where per.pessoa.idPessoa = pes2.idPessoa and pes2.idPessoaIni = pes.idPessoaIni)
+	 	  from CpIdentidade u , DpPessoa pes   
+	      where u.nmLoginIdentidade = :nmUsuario
+	       and pes.sesbPessoa = :sesbPessoa
+	       and u.dpPessoa.cpfPessoa = pes.cpfPessoa
+	       and (u.hisDtFim is null)
+	       and (u.dtCancelamentoIdentidade is null)
+	       and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date())
+	       and (pes.dataFimPessoa is null)
+	       and (pes.situacaoFuncionalPessoa in ('1', '2', '31'))
+	
+	 	  	  DpPessoa as pes, CpPersonalizacao as per
+	 	  	      
+	       and per.pessoa.idPessoaIni = pes.idPessoaIni
+	
+	-->	
+	<query name="consultarDadosBasicos">
+	 <![CDATA[select 
+	       u,  pes
+	 	  from CpIdentidade as u 
+	 	  	join u.dpPessoa.pessoaInicial pes
+	      where u.nmLoginIdentidade = :nmUsuario
+	       and pes.sesbPessoa = :sesbPessoa
+	       and u.dpPessoa.cpfPessoa = pes.cpfPessoa
+	       and (u.hisDtFim is null)
+	       and (u.dtCancelamentoIdentidade is null)
+	       and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date())
+	       and (pes.dataFimPessoa is null)
+	       and (pes.situacaoFuncionalPessoa in ('1', '2', '31'))
+	       ]]>
+	</query>
 </hibernate-mapping>
 
 

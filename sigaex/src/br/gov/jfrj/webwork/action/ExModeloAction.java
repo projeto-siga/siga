@@ -74,7 +74,7 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 	}
 
 	public List<ExFormaDocumento> getListaForma() throws Exception {
-		return dao().listarTodos(ExFormaDocumento.class);
+		return dao().listarExFormasDocumento();
 	}
 
 	// TODO: Criar EX_TIPO_MODELO

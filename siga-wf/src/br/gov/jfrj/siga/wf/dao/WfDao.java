@@ -25,14 +25,21 @@ package br.gov.jfrj.siga.wf.dao;
 
 import java.util.List;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.CacheConfiguration;
+
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.jbpm.graph.def.ProcessDefinition;
+import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.WfConfiguracao;
 import br.gov.jfrj.siga.wf.WfConhecimento;
+import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
  * Classe que representa o DAO do sistema de workflow.
@@ -41,6 +48,8 @@ import br.gov.jfrj.siga.wf.WfConhecimento;
  * 
  */
 public class WfDao extends CpDao {
+
+	public static final String CACHE_WF = "wf";
 
 	/**
 	 * Retorna uma instância do DAO.
@@ -65,7 +74,7 @@ public class WfDao extends CpDao {
 				.getIdTpConfiguracao());
 
 		query.setCacheable(true);
-		query.setCacheRegion("query.CpConfiguracao");
+		query.setCacheRegion(CACHE_QUERY_CONFIGURACAO);
 		return query.list();
 	}
 
@@ -87,6 +96,13 @@ public class WfDao extends CpDao {
 		return l.get(0);
 
 	}
+	
+	 public List<ProcessInstance> consultarInstanciasDoProcessInstance(Long id) {
+			return WfContextBuilder
+					.getJbpmContext().getGraphSession().findProcessInstances(
+							id);
+	}
+
 
 	static public AnnotationConfiguration criarHibernateCfg(String datasource)
 			throws Exception {
@@ -161,26 +177,21 @@ public class WfDao extends CpDao {
 
 		cfg.addClass(org.jbpm.context.exe.VariableInstance.class);
 
-		cfg
-				.addClass(org.jbpm.context.exe.variableinstance.ByteArrayInstance.class);
+		cfg.addClass(org.jbpm.context.exe.variableinstance.ByteArrayInstance.class);
 
 		cfg.addClass(org.jbpm.context.exe.variableinstance.DateInstance.class);
 
-		cfg
-				.addClass(org.jbpm.context.exe.variableinstance.DoubleInstance.class);
+		cfg.addClass(org.jbpm.context.exe.variableinstance.DoubleInstance.class);
 
-		cfg
-				.addClass(org.jbpm.context.exe.variableinstance.HibernateLongInstance.class);
+		cfg.addClass(org.jbpm.context.exe.variableinstance.HibernateLongInstance.class);
 
-		cfg
-				.addClass(org.jbpm.context.exe.variableinstance.HibernateStringInstance.class);
+		cfg.addClass(org.jbpm.context.exe.variableinstance.HibernateStringInstance.class);
 
 		cfg.addClass(org.jbpm.context.exe.variableinstance.LongInstance.class);
 
 		cfg.addClass(org.jbpm.context.exe.variableinstance.NullInstance.class);
 
-		cfg
-				.addClass(org.jbpm.context.exe.variableinstance.StringInstance.class);
+		cfg.addClass(org.jbpm.context.exe.variableinstance.StringInstance.class);
 		cfg.addClass(org.jbpm.job.Job.class);
 		cfg.addClass(org.jbpm.job.Timer.class);
 		cfg.addClass(org.jbpm.job.ExecuteNodeJob.class);
@@ -214,24 +225,19 @@ public class WfDao extends CpDao {
 
 		cfg.addClass(org.jbpm.context.log.VariableUpdateLog.class);
 
-		cfg
-				.addClass(org.jbpm.context.log.variableinstance.ByteArrayUpdateLog.class);
+		cfg.addClass(org.jbpm.context.log.variableinstance.ByteArrayUpdateLog.class);
 
 		cfg.addClass(org.jbpm.context.log.variableinstance.DateUpdateLog.class);
 
-		cfg
-				.addClass(org.jbpm.context.log.variableinstance.DoubleUpdateLog.class);
+		cfg.addClass(org.jbpm.context.log.variableinstance.DoubleUpdateLog.class);
 
-		cfg
-				.addClass(org.jbpm.context.log.variableinstance.HibernateLongUpdateLog.class);
+		cfg.addClass(org.jbpm.context.log.variableinstance.HibernateLongUpdateLog.class);
 
-		cfg
-				.addClass(org.jbpm.context.log.variableinstance.HibernateStringUpdateLog.class);
+		cfg.addClass(org.jbpm.context.log.variableinstance.HibernateStringUpdateLog.class);
 
 		cfg.addClass(org.jbpm.context.log.variableinstance.LongUpdateLog.class);
 
-		cfg
-				.addClass(org.jbpm.context.log.variableinstance.StringUpdateLog.class);
+		cfg.addClass(org.jbpm.context.log.variableinstance.StringUpdateLog.class);
 		cfg.addClass(org.jbpm.taskmgmt.log.TaskLog.class);
 		cfg.addClass(org.jbpm.taskmgmt.log.TaskCreateLog.class);
 		cfg.addClass(org.jbpm.taskmgmt.log.TaskAssignLog.class);
@@ -245,102 +251,122 @@ public class WfDao extends CpDao {
 		cfg.addClass(br.gov.jfrj.siga.wf.util.WfTaskInstance.class);
 
 		cfg.setCacheConcurrencyStrategy("org.jbpm.context.def.VariableAccess",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.file.def.FileDefinition.processFiles",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.action.Script.variableAccesses",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Action",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Event",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.Event.actions", "nonstrict-read-write",
-				"wf");
+				CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ExceptionHandler",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.ExceptionHandler.actions",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Node",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.events", "nonstrict-read-write", "wf");
+				"org.jbpm.graph.def.Node.events", "nonstrict-read-write",
+				CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.Node.exceptionHandlers",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.Node.leavingTransitions",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.Node.arrivingTransitions",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.ProcessDefinition.events",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.ProcessDefinition.exceptionHandlers",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.ProcessDefinition.nodes",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.ProcessDefinition.actions",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.ProcessDefinition.definitions",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.SuperState.nodes", "nonstrict-read-write",
-				"wf");
+				CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Transition",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.Transition.events", "nonstrict-read-write",
-				"wf");
+				CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.def.Transition.exceptionHandlers",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.node.Decision.decisionConditions",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.node.ProcessState.variableAccesses",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.graph.node.TaskNode.tasks", "nonstrict-read-write",
-				"wf");
+				CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.instantiation.Delegation",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.module.def.ModuleDefinition",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.taskmgmt.def.Swimlane.tasks", "nonstrict-read-write",
-				"wf");
+				CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskController",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.taskmgmt.def.TaskController.variableAccesses",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.taskmgmt.def.Task.events", "nonstrict-read-write",
-				"wf");
+				CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.taskmgmt.def.Task.exceptionHandlers",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.swimlanes",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
 		cfg.setCollectionCacheConcurrencyStrategy(
 				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.tasks",
-				"nonstrict-read-write", "wf");
+				"nonstrict-read-write", CACHE_WF);
+
+		CacheManager manager = CacheManager.getInstance();
+		Cache cache;
+		CacheConfiguration config;
+
+		if (!manager.cacheExists(CACHE_WF)) {
+			manager.addCache(CACHE_WF);
+			cache = manager.getCache(CACHE_WF);
+			config = cache.getCacheConfiguration();
+			config.setTimeToIdleSeconds(3600);
+			config.setTimeToLiveSeconds(36000);
+			config.setMaxElementsInMemory(10000);
+			config.setMaxElementsOnDisk(1000000);
+		}
 
 		// ModeloDao.configurarHibernateParaDebug(cfg);
+	}
+
+	public ProcessDefinition getProcessDefinition(Long id) {
+		return WfContextBuilder
+		.getJbpmContext().getGraphSession().getProcessDefinition(id);
 	}
 }

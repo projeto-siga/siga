@@ -133,6 +133,35 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return true;
 
 	}
+	
+	/**
+	 * * Retorna se é possível acessar um documento ao qual pertence o móbil
+	 * passado por parâmetro. Considera se o documento está sem efeito (não
+	 * estando sem efeito, retorna verdadeiro) e se <i>uma das</i> seguintes
+	 * condições é satisfeita:
+	 * <ul>
+	 * <li>Usuário é da lotação cadastrante do documento</li>
+	 * <li>Usuário é subscritor do documento</li>
+	 * <li>Usuário é titular do documento</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 */
+	public boolean podeAcessarSemEfeito(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		if (mob == null)
+			return false;
+		if (mob.doc().isSemEfeito()
+				&& !mob.doc().getLotaCadastrante().equivale(lotaTitular)
+				&& !titular.equivale(mob.doc().getSubscritor())
+				&& !titular.equivale(mob.doc().getTitular()))
+			return false;
+		return true;
+
+	}
 
 	/**
 	 * Retorna se é possível acessar o documento ao qual pertence o móbil
@@ -151,7 +180,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				 * podeAcessarPublico(titular, lotaTitular, mob) &&
 				 */podeAcessarAberto(titular, lotaTitular, mob)
 				&& podeAcessarPorNivel(titular, lotaTitular, mob)
-				&& podeAcessarCancelado(titular, lotaTitular, mob);
+				&& podeAcessarCancelado(titular, lotaTitular, mob)
+				&& podeAcessarSemEfeito(titular, lotaTitular, mob);
 	}
 
 	/**
@@ -746,6 +776,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		
 		//Verifica se o subscritor pode movimentar todos os mobils
+		//E Também se algum documento diferente está apensado ou juntado a este documento
 		for (ExMobil m : mob.doc().getExMobilSet()) {
 			if(!m.isGeral()) {
 				if (!podeMovimentar(titular, lotaTitular, m))
@@ -754,8 +785,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				if(m.isJuntado() || m.isApensado())
 					return false;
 				
+				if(m.getApensos() != null && m.getApensos().size() > 0)
+					return false;
+				
+				if(m.temDocumentosJuntados())
+					return false;
 			}
 		}
+		
 		
 		return  getConf()
 						.podePorConfiguracao(
@@ -1500,7 +1537,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.doc().getUltimoVolume() != null
-				&& mob.doc().getUltimoVolume().isEmTransito())
+				&& (mob.doc().getUltimoVolume().isEmTransito() || mob.doc().getUltimoVolume().isArquivado()))
 			return false;
 		
 		if (mob.doc().getDtFechamento() != null
@@ -1977,10 +2014,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		}
 
-		if (mob.doc().isAssinado() && mob.doc().isEletronico()) {
-			return false;
-		}
-
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
 
@@ -2149,8 +2182,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (mov.isCancelada())
 			return false;
-
-		if (!mov.getLotaCadastrante().getIdInicial().equals(
+		
+		//Verifica se foi a pessoa ou lotação que fez a anotação
+		if (!mov.getCadastrante().getIdInicial().equals(titular.getIdInicial())
+				&& !mov.getSubscritor().getIdInicial().equals(titular.getIdInicial())
+				&& !mov.getLotaCadastrante().getIdInicial().equals(
 				lotaTitular.getIdInicial())
 				&& !mov.getLotaSubscritor().getIdInicial().equals(
 						lotaTitular.getIdInicial()))
@@ -2597,6 +2633,22 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						CpTipoConfiguracao.TIPO_CONFIG_REABRIR);
 	}
 
+	/**
+	 * Retorna se a lotação ou pessoa tem permissão para receber documento
+	 * 
+	 * @param pessoa
+	 * @param lotacao	
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeReceberPorConfiguracao(final DpPessoa pessoa,
+			final DpLotacao lotacao) throws Exception {
+		
+		return getConf().podePorConfiguracao(pessoa, lotacao,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
 	/**
 	 * Retorna se é possível receber o móbil. conforme as regras a seguir:
 	 * <ul>

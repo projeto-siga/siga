@@ -93,7 +93,7 @@ public class ExDaoTest extends TestCase {
 			// dao.gravar(mod);
 			// dao.commitTransacao();
 
-			List<ExConfiguracao> l = dao.listarTodos(ExConfiguracao.class);
+			List<ExConfiguracao> l = dao.listarExConfiguracoes();
 			if (true)
 				return;
 

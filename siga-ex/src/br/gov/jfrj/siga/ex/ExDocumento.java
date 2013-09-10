@@ -2045,7 +2045,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	public List<DpResponsavel> getResponsaveisPorPapel(
 			String papelComoNomeDeVariavel) {
-		List<ExPapel> papeis = ExDao.getInstance().listarTodos(ExPapel.class);
+		List<ExPapel> papeis = ExDao.getInstance().listarExPapeis();
 		for (ExPapel papel : papeis) {
 			if (papel.getComoNomeDeVariavel().equals(papelComoNomeDeVariavel))
 				return getResponsaveisPorPapel(papel);

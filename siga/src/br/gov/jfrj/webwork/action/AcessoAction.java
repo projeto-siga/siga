@@ -141,7 +141,7 @@ public class AcessoAction extends GiActionSupport {
 
 		if (perfil != null || pessoa != null || lotacao != null
 				|| orgao != null) {
-			List<CpServico> l = dao().listarTodos(CpServico.class);
+			List<CpServico> l = dao().listarServicos();
 
 			HashMap<CpServico, ConfiguracaoAcesso> achm = new HashMap<CpServico, ConfiguracaoAcesso>();
 			for (CpServico srv : l) {

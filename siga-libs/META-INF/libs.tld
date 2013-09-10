@@ -26,9 +26,9 @@
   <function-signature>java.lang.Boolean podeUtilizarServicoPorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, java.lang.String)</function-signature>
  </function>
   <function>
-  <name>podeGerirGrupo</name>
+  <name>podeGerirAlgumGrupo</name>
   <function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
-  <function-signature>java.lang.Boolean podeGerirGrupo(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao,java.lang.Long)</function-signature>
+  <function-signature>java.lang.Boolean podeGerirAlgumGrupo(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao,java.lang.Long)</function-signature>
  </function>
  
  <function>

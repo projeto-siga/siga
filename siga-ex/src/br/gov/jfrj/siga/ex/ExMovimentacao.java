@@ -768,12 +768,24 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	@Override
 	public boolean isRascunho() {
 		// TODO Auto-generated method stub
+		if(getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+				&& mob().doc().isEletronico() && !isAssinada())
+			return true;
+		
 		return false;
 	}
 
 	@Override
 	public boolean isSemEfeito() {
-		return getExDocumento().isSemEfeito();
+		if(getExDocumento().isSemEfeito()) {
+			//Não gera marca de "Sem Efeito em Folha de Desentranhamento"
+			if(getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)
+				return false;
+			else
+				return true;
+		}
+		
+		return false;
 	}
 
 	/**

@@ -59,6 +59,28 @@ public class Estatistica {
 		return total / array.length;
 
 	}
+	
+	/**
+	 * Calcula a média aritmética desconsiderando um percentual dos maiores e menores elementos
+	 * 
+	 * @return
+	 */
+	public double getMediaAritmeticaTruncada(double percentual) {
+
+		if (array==null || array.length<=0){
+			return 0.0;
+		}
+		ordenar();
+		int descartar = (int) ((percentual/100)*array.length);
+		int de= descartar;
+		int ate= array.length - descartar;
+		
+		double[] elementosConsiderados = Arrays.copyOfRange(array, de, ate);
+		
+		return getMediaAritmetica(elementosConsiderados);
+
+	}
+
 
 	/**
 	 * Calcula a soma dos elementos.

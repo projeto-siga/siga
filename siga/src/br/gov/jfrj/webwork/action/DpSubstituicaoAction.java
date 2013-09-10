@@ -98,11 +98,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	}
 
 	public String aEditarSubstituto() throws Exception {
-		if(Cp.getInstance()
-				.getConf()
-				.podePorConfiguracao(
-						getCadastrante(),
-						CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST))
+		if(podeCadastrarQualquerSubstituicao())
 			{
 				setStrBuscarFechadas("buscarFechadas=true");
 				
@@ -155,20 +151,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 				subst.setTitular(dao().consultar(getTitularSel().getId(),
 						DpPessoa.class, false));
 				if (!subst.getTitular().getIdPessoa().equals(getCadastrante().getIdPessoa())  
-						&& !Cp.getInstance()
-								.getConf()
-								.podePorConfiguracao(
-										getCadastrante(),
-										CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST))
-					/*
-					 * && !getCadastrante().getSigla().equals("RJ13635")) &&
-					 * getLotaTitular().getIdLotacaoIni() !=
-					 * DpLotacao.ID_LOTACAO_INICIAL_SESAD_BASE_PRODUCAO &&
-					 * getLotaTitular().getIdLotacaoIni() !=
-					 * DpLotacao.ID_LOTACAO_INICIAL_SEADA_BASE_TESTE &&
-					 * getLotaTitular().getIdLotacaoIni() !=
-					 * DpLotacao.ID_LOTACAO_INICIAL_SEADA_BASE_PRODUCAO)
-					 */
+						&& !podeCadastrarQualquerSubstituicao())
 					throw new AplicacaoException(
 							"Titular não permitido. Apenas o próprio usuário pode se definir como titular.");
 				subst.setLotaTitular(subst.getTitular().getLotacao());
@@ -180,21 +163,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 				subst.setLotaTitular(dao().consultar(
 						getLotaTitularSel().getId(), DpLotacao.class, false));
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
-						&& !Cp.getInstance()
-								.getConf()
-								.podePorConfiguracao(
-										getCadastrante().getLotacao(),
-										CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST))// &&
-					// !getCadastrante().getSigla().equals("RJ13635"))
-					/*
-					 * && getLotaTitular().getIdLotacaoIni() !=
-					 * DpLotacao.ID_LOTACAO_INICIAL_SESAD_BASE_PRODUCAO &&
-					 * getLotaTitular().getIdLotacaoIni() !=
-					 * DpLotacao.ID_LOTACAO_INICIAL_SEADA_BASE_TESTE &&
-					 * getLotaTitular().getIdLotacaoIni() !=
-					 * DpLotacao.ID_LOTACAO_INICIAL_SEADA_BASE_PRODUCAO
-					 */
-
+						&& !podeCadastrarQualquerSubstituicao())
 					throw new AplicacaoException(
 							"Lotação titular não permitida. Apenas um usuário da própria lotação pode defini-la como titular.");
 			}
@@ -254,6 +223,12 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		return Action.SUCCESS;
 	}
 
+	private boolean podeCadastrarQualquerSubstituicao() throws Exception {
+		return Cp.getInstance()
+				.getConf()
+				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);
+	}
+
 	public String aExcluirSubstituto() throws Exception {
 		
 		if (getId() != null) {
@@ -261,11 +236,9 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 			
 			if ((dpSub.getSubstituto() != null && dpSub.getSubstituto().equals(getCadastrante()))					
 				|| (dpSub.getSubstituto() == null && dpSub.getLotaSubstituto().equals(getCadastrante().getLotacao()))
-				|| Cp.getInstance()
-					.getConf()
-					.podePorConfiguracao(
-							getCadastrante(),
-							CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)) {
+				||(dpSub.getTitular() != null && dpSub.getTitular().equals(getCadastrante()))					
+				|| (dpSub.getTitular() == null && dpSub.getLotaTitular().equals(getCadastrante().getLotacao()))
+				|| podeCadastrarQualquerSubstituicao()) {
 				dao().iniciarTransacao();		
 				dpSub.setDtFimRegistro(new Date());
 				dpSub = dao().gravar(dpSub);
@@ -282,24 +255,6 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		return Action.SUCCESS;		
 	}
 	
-	
-/*	public String aExcluirSubstituto() throws Exception {
-
-		if (getId() != null) {
-			dao().iniciarTransacao();
-			DpSubstituicao dpSub = daoSub(getId());
-			dpSub.setDtFimRegistro(new Date());
-			dpSub = dao().gravar(dpSub);
-			dao().commitTransacao();
-		} else
-			throw new AplicacaoException("Não foi informada id");
-		return Action.SUCCESS;
-	}
-*/	
-	
-	
-	
-
 	public String getPorMenu() {
 		return porMenu;
 	}
@@ -316,32 +271,12 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		
 		if (!getCadastrante().getId().equals(getTitular().getId())
 				|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
-			// é uma substituição !			
-			if(Cp
-				.getInstance()
-				.getConf()
-				.podePorConfiguracao(getCadastrante(),
-				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST) ||				
-				
-				Cp
-				.getInstance()
-				.getConf()
-				.podePorConfiguracao(getCadastrante().getLotacao(),
-				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)){
-				// obs: se o cadastrante não tem permissão de cadastrar qq substituição, o sistema não vai buscar as substituições do Titular
-					setIsSubstituicao("true");					
-					setItensTitular(buscarSubstitutos(getTitular(), getLotaTitular()));	
-				
+			if(podeCadastrarQualquerSubstituicao()){
+				setIsSubstituicao("true");					
+				setItensTitular(buscarSubstitutos(getTitular(), getLotaTitular()));	
 			}		
 		}
 		
-		/*
-		 * TreeMap tree = new TreeMap(); for (Object dps : getItens()) {
-		 * DpSubstituicao trueDps = (DpSubstituicao) dps;
-		 * tree.put(trueDps.getDtIniSubst(), trueDps); } setItens(new
-		 * ArrayList(tree.values()));
-		 */
-
 		return Action.SUCCESS;
 	}
 
@@ -440,66 +375,8 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 			dao().rollbackTransacao();
 		}
 
-		// setSharedContextAttribute("idTitular", null);
-		// setSharedContextAttribute("idLotaTitular", null);
-		// getRequest().getSession().setAttribute("idTitular", null);
-		// getRequest().getSession().setAttribute("idLotaTitular", null);
 		return Action.SUCCESS;
 	}
-
-//	public String aSimular() throws Exception {
-//		Usuario usuarioLogado = daoUsu(getPrincipalProxy().getUserPrincipal()
-//				.getName());
-//
-//		if (!Cp.getInstance().getComp().podeSimularUsuario(
-//				usuarioLogado.getPessoa(),
-//				usuarioLogado.getPessoa().getLotacao())) {
-//			throw new AplicacaoException(
-//					"Usuário não possui permissão de simular outro usuáio.");
-//		}
-//
-//		return Action.SUCCESS;
-//	}
-
-	// public String aSimularGravar() throws Exception {
-	// if (titularSel.getSigla() != null) {
-	// Usuario usuarioSimular = daoUsu(titularSel.getSigla());
-	// Usuario usuarioLogado = daoUsu(getPrincipalProxy()
-	// .getUserPrincipal().getName());
-	//
-	// CpPersonalizacao per = dao().consultarPersonalizacao(
-	// usuarioLogado.getPessoa());
-	//
-	// if (per == null) {
-	// per = new CpPersonalizacao();
-	// per.setPessoa(usuarioLogado.getPessoa());
-	// }
-	//
-	// if (usuarioSimular == usuarioLogado)
-	// per.setUsuarioSimulando(null);
-	// else {
-	// Usuario usu = dao().consultaUsuarioCadastrante(
-	// usuarioSimular.getNmUsuario());
-	// if (usu == null)
-	// per.setUsuarioSimulando(null);
-	// else
-	// per.setUsuarioSimulando(usuarioSimular);
-	// }
-	//
-	// try {
-	// dao().iniciarTransacao();
-	// dao().gravar(per);
-	// dao().commitTransacao();
-	// } catch (Exception e) {
-	// if (SigaActionSupport.getLog().isErrorEnabled())
-	// SigaActionSupport.getLog().error(
-	// "Não foi possível simular o usuário: "
-	// + usuarioSimular.getNmUsuario());
-	// }
-	// }
-	//
-	// return Action.SUCCESS;
-	// }
 
 	public String getDtFimSubst() {
 		return dtFimSubst;
@@ -627,5 +504,4 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	public void setIsSubstituicao(String isSubstituicao) {
 		this.isSubstituicao = isSubstituicao;
 	}
-
 }

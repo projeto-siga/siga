@@ -32,7 +32,7 @@ public class CpGrupoDeEmailAction extends CpGrupoAction {
 	public String aEditar() throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
 		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
-				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(),getIdCpGrupo(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
 			return super.aEditar();	
 		}
 		
@@ -50,7 +50,7 @@ public class CpGrupoDeEmailAction extends CpGrupoAction {
 	public String aGravar() throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
 		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
-				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+				conf.podeGerirGrupo(getTitular(), getLotaTitular(),getIdCpGrupo(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
 			return super.aGravar();	
 		}
 
@@ -62,7 +62,7 @@ public class CpGrupoDeEmailAction extends CpGrupoAction {
 	public String aListar() throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf(); 
 		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição") || 
-				conf.podeGerirGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
+				conf.podeGerirAlgumGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))){
 			return super.aListar();	
 		}
 

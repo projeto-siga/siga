@@ -160,7 +160,7 @@ public class Notificador {
 												.getExTipoMovimentacao(),
 										CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))) {
 					destinatariosEmail.add(new Destinatario(m.getSubscritor()
-							.getPessoaAtual().getEmailPessoa(), m
+							.getEmailPessoaAtual(), m
 							.getSubscritor().getPessoaAtual().getSigla(), m
 							.getExPapel().getDescPapel(), m.getIdMov()));
 				}
@@ -240,8 +240,8 @@ public class Notificador {
 										mov.getExTipoMovimentacao(),
 										CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))
 							destinatariosEmail
-									.add(new Destinatario(pes.getPessoaAtual()
-											.getEmailPessoa(), sigla, m
+									.add(new Destinatario(pes
+											.getEmailPessoaAtual(), sigla, m
 											.getExPapel().getDescPapel(), m
 											.getIdMov()));
 					}
@@ -264,7 +264,7 @@ public class Notificador {
 								mov.getExTipoMovimentacao(),
 								CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))
 					destinatariosEmail.add(new Destinatario(pes
-							.getPessoaAtual().getEmailPessoa(), sigla, m
+							.getEmailPessoaAtual(), sigla, m
 							.getExPapel().getDescPapel(), m.getIdMov()));
 			}
 

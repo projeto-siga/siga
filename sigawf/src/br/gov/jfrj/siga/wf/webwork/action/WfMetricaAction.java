@@ -20,14 +20,15 @@ package br.gov.jfrj.siga.wf.webwork.action;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.relatorio.RelEstatisticaProcedimento;
-import br.gov.jfrj.siga.wf.relatorio.RelTempoDocDetalhado;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDoc;
+import br.gov.jfrj.siga.wf.relatorio.RelTempoDocDetalhado;
 
 /**
  * Classe responsável pelas exibições das estatísticas dos procedimentos.
@@ -37,11 +38,16 @@ import br.gov.jfrj.siga.wf.relatorio.RelTempoDoc;
  */
 public class WfMetricaAction extends WfSigaActionSupport {
 
+	
+	private static final Long REL_ESTATISTICAS_GERAIS = 1L;
+	private static final Long REL_TEMPO_DE_DOCUMENTOS = 2L;
+	private static final Long REL_TEMPO_DE_DOCUMENTOS_DETALHADO = 3L;
+
+	private Long pdId;
 	private InputStream inputStream;
-	private String orgao;
 	private String procedimento;
-	private String secaoUsuario;
 	private Map parametrosRelatorio;
+	private String incluirAbertos;
 
 	/**
 	 * Retorna o órgão.
@@ -49,16 +55,7 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	 * @return
 	 */
 	public String getOrgao() {
-		return orgao;
-	}
-
-	/**
-	 *Define o órgão.
-	 * 
-	 * @param orgao
-	 */
-	public void setOrgao(String orgao) {
-		this.orgao = orgao;
+		return getLotaTitular().getOrgaoUsuario().getNmOrgaoUsu();
 	}
 
 	/**
@@ -67,6 +64,11 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	 * @return
 	 */
 	public String getProcedimento() {
+		try{
+			return new String(procedimento.getBytes("iso8859-1"));
+		}catch (Exception e) {
+
+		}
 		return procedimento;
 	}
 
@@ -93,27 +95,30 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	public String aEmitirRelatorio() throws Exception{
 		parametrosRelatorio = new HashMap<String, String>();
 
-		parametrosRelatorio.put("secaoUsuario", getRequest().getParameter(
-				"secaoUsuario"));
+		parametrosRelatorio.put("secaoUsuario", getLotaTitular().getOrgaoUsuario().getNmOrgaoUsu());
 		parametrosRelatorio.put("dataInicialDe", getRequest().getParameter(
 				"dataInicialDe"));
 		parametrosRelatorio.put("dataInicialAte", getRequest().getParameter(
 		"dataInicialAte"));
 		parametrosRelatorio.put("dataFinalDe", getRequest().getParameter("dataFinalDe"));
 		parametrosRelatorio.put("dataFinalAte", getRequest().getParameter("dataFinalAte"));
-		parametrosRelatorio.put("nomeProcedimento", getRequest().getParameter(
-				"procedimento"));
 		
-		String relatorioEscolhido = (String)getRequest().getParameter(
-		"selecaoRelatorio");
 		
-		if (relatorioEscolhido.equals("Estatísticas gerais")){
+		String nomeProcedimento = WfDao.getInstance().getProcessDefinition(getPdId()).getName();
+		
+		parametrosRelatorio.put("nomeProcedimento", nomeProcedimento);
+		parametrosRelatorio.put("incluirAbertos",incluirAbertos==null?false:incluirAbertos );
+
+		
+		Long relatorioEscolhido = Long.valueOf(getRequest().getParameter("selecaoRelatorio"));
+		
+		if (relatorioEscolhido.equals(REL_ESTATISTICAS_GERAIS)){
 			gerarRelEstGeral();
 		}
-		if (relatorioEscolhido.equals("Tempo de documentos")){
+		if (relatorioEscolhido.equals(REL_TEMPO_DE_DOCUMENTOS)){
 			gerarRelTempoDoc();
 		}
-		if (relatorioEscolhido.equals("Tempo de documentos detalhado")){
+		if (relatorioEscolhido.equals(REL_TEMPO_DE_DOCUMENTOS_DETALHADO)){
 			gerarRelTempoDocDetalhado();
 		}
 		
@@ -209,29 +214,20 @@ public class WfMetricaAction extends WfSigaActionSupport {
 		this.inputStream = inputStream;
 	}
 
-	/**
-	 * Retorna a seção do usuário.
-	 * 
-	 * @return
-	 */
-	public String getSecaoUsuario() {
-		return secaoUsuario;
+	
+	public void setIncluirAbertos(String incluirAbertos) {
+		this.incluirAbertos = incluirAbertos;
 	}
 
-	/**
-	 *Define a seção do usuário.
-	 * 
-	 * @param secaoUsuario
-	 */
-	public void setSecaoUsuario(String secaoUsuario) {
-		this.secaoUsuario = secaoUsuario;
+	public String getIncluirAbertos() {
+		return incluirAbertos;
 	}
-	
-	public List<String> getRelatoriosMetricas(){
-		List<String> lista = new ArrayList<String>();
-		lista.add("Estatísticas gerais");
-		lista.add("Tempo de documentos");
-		lista.add("Tempo de documentos detalhado");
-		return lista; 
+
+	public void setPdId(Long pdId) {
+		this.pdId = pdId;
+	}
+
+	public Long getPdId() {
+		return pdId;
 	}
 }

@@ -56,8 +56,10 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
+import br.gov.jfrj.siga.sinc.lib.Item.Operacao;
 import br.gov.jfrj.siga.sinc.lib.OperadorComHistorico;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
@@ -179,6 +181,7 @@ public class SigaCpSinc {
 
 			for (Item opr : list) {
 				log(opr.getDescricao());
+				
 				if (opr.getNovo() != null && opr.getNovo() instanceof DpLotacao)
 					if (opr.getAntigo() != null)
 						opr.getAntigo().semelhante(opr.getNovo(), 0);
@@ -186,6 +189,9 @@ public class SigaCpSinc {
 				if (opr.getAntigo() != null) {
 					manterNomeExibicao(opr.getAntigo(), opr.getNovo());
 				}
+				
+				manterHistoricoPessoaSeNecessario(opr);
+
 
 			}
 			/*
@@ -225,6 +231,32 @@ public class SigaCpSinc {
 		HibernateUtil.getSessao().flush();
 		log("Total de alterações: " + list.size());
 		// ((GenericoHibernateDao) dao).getSessao().flush();
+	}
+
+	/**
+	 * Verifica se a pessoa que está sendo incluída é uma pessoa que já existe e foi 
+	 * removida indevidamente ocasionando a perda do histórico
+	 * @param opr 
+	 * @return
+	 */
+	private void manterHistoricoPessoaSeNecessario(Item opr) {
+		if (opr.getNovo()!=null && opr.getNovo() instanceof DpPessoa){
+			DpPessoa pesNova = (DpPessoa) opr.getNovo();
+			if (opr.getOperacao().equals(Operacao.incluir)){
+					List<DpPessoa> historicoPessoa = CpDao.getInstance()
+					.consultarPorMatriculaEOrgao(pesNova.getMatricula(),pesNova.getOrgaoUsuario().getId(),true,true);
+					
+					if (historicoPessoa.size() > 0){
+						DpPessoa pesAnterior = historicoPessoa.get(0);	
+						if (pesAnterior!=null && !pesAnterior.getIdInicial().equals(pesNova.getIdInicial())){
+							pesNova.setIdInicial(pesAnterior.getIdInicial());
+							log("AVISO: ID_INICIAL reconectada (" + pesNova.getSigla() + ")" );
+						}
+
+					}
+			}
+		}
+		
 	}
 
 	private void manterNomeExibicao(Sincronizavel antigo, Sincronizavel novo) {
@@ -448,9 +480,9 @@ public class SigaCpSinc {
 	}
 
 	private void importarListasDeTipos() {
-		tiposLotacao = CpDao.getInstance().listarTodos(CpTipoLotacao.class);
-		tiposPessoa = CpDao.getInstance().listarTodos(CpTipoPessoa.class);
-		tiposPapel = CpDao.getInstance().listarTodos(CpTipoPapel.class);
+		tiposLotacao = CpDao.getInstance().listarTiposLotacao();
+		tiposPessoa = CpDao.getInstance().listarTiposPessoa();
+		tiposPapel = CpDao.getInstance().listarTiposPapel();
 	}
 
 	private CpTipoPessoa obterTipoPessoaPorDescricao(String dscTpPessoa)
@@ -561,6 +593,11 @@ public class SigaCpSinc {
 	}
 
 	public void importarXml(InputStream in) throws Exception {
+		boolean contemCargo = false;
+		boolean contemPessoa = false;
+		boolean contemFuncao = false;
+		boolean contemLotacao = false;
+		
 		importarListasDeTipos();
 
 		obterLotacaoSJRJ();
@@ -605,8 +642,10 @@ public class SigaCpSinc {
 								"NotificarPorEmail");
 					} else if (parser.getName().equals("cargo")) {
 						setNovo.add(importarXmlCargo(parser));
+						contemCargo=true;
 					} else if (parser.getName().equals("funcao")) {
 						setNovo.add(importarXmlFuncao(parser));
+						contemFuncao=true;
 					} else if (parser.getName().equals("orgao")) {
 						if (getVersaoInteira().intValue() < 2)
 							throw new Exception(
@@ -614,8 +653,10 @@ public class SigaCpSinc {
 						setNovo.add(importarXmlOrgao(parser));
 					} else if (parser.getName().equals("lotacao")) {
 						setNovo.add(importarXmlLotacao(parser));
+						contemLotacao=true;
 					} else if (parser.getName().equals("pessoa")) {
 						setNovo.add(importarXmlPessoa(parser));
+						contemPessoa=true;
 					} else if (parser.getName().equals("papel")) {
 						if (getVersaoInteira().intValue() < 2)
 							throw new Exception(
@@ -636,10 +677,26 @@ public class SigaCpSinc {
 		} catch (IOException e) {
 			throw e;
 		}
+		
+		
+		if (!contemCargo){
+			throw new AplicacaoException("XML não contém cargo!");
+		}
+		if (!contemLotacao){
+			throw new AplicacaoException("XML não contém lotação!");
+		}
+		if (!contemPessoa){
+			throw new AplicacaoException("XML não contém pessoa!");
+		}
+		if (!contemFuncao){
+			throw new AplicacaoException("XML não contém função de confiança!");
+		}
+
 		if (!fDocumentoCompleto) {
 			throw new Exception(
 					"XML arquivo não estava completo! Nenhuma alteração foi realizada na base.");
 		}
+
 	}
 
 	/**
@@ -829,8 +886,8 @@ public class SigaCpSinc {
 				pessoa.setDataNascimento(dtNascimento);
 
 			pessoa.setEmailPessoa(parseStr(parser, "email"));
-			if (pessoa.getEmailPessoa() != null)
-				pessoa.setEmailPessoa(pessoa.getEmailPessoa().toLowerCase());
+			if (pessoa.getEmailPessoaAtual() != null)
+				pessoa.setEmailPessoa(pessoa.getEmailPessoaAtual().toLowerCase());
 			pessoa.setSesbPessoa(cpOrgaoUsuario.getSiglaOrgaoUsu());
 			pessoa.setDataInicioPessoa(new Date());
 			pessoa.setSiglaPessoa(parseStr(parser, "sigla"));

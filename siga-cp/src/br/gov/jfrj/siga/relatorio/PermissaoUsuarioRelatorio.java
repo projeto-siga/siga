@@ -87,7 +87,7 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	public Collection processarDados() {
 		ArrayList<String> dados=new ArrayList<String>();
 		HashMap<CpServico, ConfiguracaoAcesso> achm = new HashMap<CpServico, ConfiguracaoAcesso>();
-		List<CpServico> l = dao().listarTodos(CpServico.class);
+		List<CpServico> l = dao().listarServicos();
 		try {
 			for (CpServico srv : l) {
 							ConfiguracaoAcesso ac = ConfiguracaoAcesso.gerar(null, dpPessoa,

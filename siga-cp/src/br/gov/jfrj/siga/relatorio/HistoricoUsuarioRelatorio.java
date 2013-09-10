@@ -231,7 +231,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	}
 
 	private ArrayList<Date> obterDatasAlteracaoConfiguracao() {
-		List<CpConfiguracao> confs = dao().listarTodos(CpConfiguracao.class);
+		List<CpConfiguracao> confs = dao().listarConfiguracoes();
 		ArrayList<Date> arlDatas = new ArrayList<Date>();
 		for (CpConfiguracao conf : confs) {
 
@@ -266,8 +266,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	@Override
 	public Collection processarDados() {
 		ArrayList<String> dados = new ArrayList<String>();
-		List<CpServico> servicos = CpDao.getInstance().listarTodos(
-				CpServico.class);
+		List<CpServico> servicos = CpDao.getInstance().listarServicos();
 		CpTipoConfiguracao tipo = CpDao.getInstance().consultar(
 				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
 				CpTipoConfiguracao.class, false);

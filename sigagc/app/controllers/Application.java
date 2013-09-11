@@ -1,6 +1,8 @@
 package controllers;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -18,6 +20,7 @@ import java.util.TreeSet;
 
 import javax.persistence.Query;
 
+import models.GcAcesso;
 import models.GcArquivo;
 import models.GcInformacao;
 import models.GcMovimentacao;
@@ -32,11 +35,13 @@ import org.mcavallo.opencloud.Tag;
 
 import play.Play;
 import play.Play.Mode;
+import play.data.Upload;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
 import play.mvc.Router;
+import utils.GcArvore;
 import utils.GcBL;
 import utils.GcGraficoEvolucao;
 import utils.GcGraficoEvolucaoItem;
@@ -387,6 +392,22 @@ public class Application extends SigaApplication {
 				tiposinformacao, anos);
 	}
 
+	public static void navegar() {
+		GcArvore arvore = new GcArvore();
+		
+		List<GcInformacao> infs = GcInformacao.all().fetch();
+		
+		for (GcInformacao inf : infs) {
+			for (GcTag tag : inf.tags) {
+				arvore.add(tag, inf);
+			}
+		}
+		
+		arvore.build();
+
+		render(arvore);
+	}
+
 	// public static void listar() {
 	// List<GcInformacao> informacoes = GcInformacao.all().fetch();
 	// render(informacoes);
@@ -397,6 +418,11 @@ public class Application extends SigaApplication {
 
 		if (informacao == null)
 			index();
+
+		if (!informacao.acessoPermitido(titular(), lotaTitular())) {
+			throw new AplicacaoException(
+					"O usuário corrente não tem acesso à informação solicitada.");
+		}
 
 		GcBL.notificado(informacao, idc());
 		GcBL.logarVisita(informacao, idc());
@@ -411,6 +437,7 @@ public class Application extends SigaApplication {
 		else
 			informacao = new GcInformacao();
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
+		List<GcAcesso> acessos = GcAcesso.all().fetch();
 		if (titulo == null)
 			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
 		String conteudo = (informacao.arq != null) ? informacao.arq
@@ -418,8 +445,16 @@ public class Application extends SigaApplication {
 		if (classificacao == null)
 			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
 					: null;
-		render(informacao, tiposInformacao, titulo, conteudo, classificacao,
-				origem);
+
+		if (informacao.autor == null) {
+			informacao.autor = titular();
+		}
+		if (informacao.lotacao == null) {
+			informacao.lotacao = lotaTitular();
+		}
+
+		render(informacao, tiposInformacao, acessos, titulo, conteudo,
+				classificacao, origem);
 	}
 
 	public static void historico(long id) throws Exception {
@@ -482,10 +517,19 @@ public class Application extends SigaApplication {
 		render(informacao, list, mapTitulo, mapTxt);
 	}
 
+	public static void movimentacoes(long id) throws Exception {
+		GcInformacao informacao = GcInformacao.findById(id);
+
+		if (informacao == null)
+			index();
+
+		render(informacao);
+	}
+
 	public static void fechar(long id) throws Exception {
 		GcInformacao inf = GcInformacao.findById(id);
 		GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
-				null, null, null, null, null, null, null);
+				null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(inf, idc());
 		exibir(id);
 	}
@@ -514,14 +558,14 @@ public class Application extends SigaApplication {
 		GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, pessoa,
 				pessoa.getLotacao(), titulo, conteudo, classificacao, null,
-				null);
+				null, null, null);
 
 		GcBL.gravar(informacao, idc());
 		if (origem != null && origem.trim().length() != 0) {
 			if (informacao.podeFinalizar()) {
 				GcBL.movimentar(informacao,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
-						null, null, null, null, null, null);
+						null, null, null, null, null, null, null, null);
 				GcBL.gravar(informacao, idc());
 			}
 			redirect(origem);
@@ -556,7 +600,7 @@ public class Application extends SigaApplication {
 				.findById(lotacao) : null);
 		GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pes, lot, null,
-				null, null, null, null);
+				null, null, null, null, null, null);
 		GcBL.gravar(informacao, idc());
 		exibir(informacao.id);
 	}
@@ -574,9 +618,49 @@ public class Application extends SigaApplication {
 				.findById(lotacao) : null);
 		GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pes,
-				lot, null, null, null, null, null);
+				lot, null, null, null, null, null, null, null);
 		GcBL.gravar(informacao, idc());
 		exibir(informacao.id);
+	}
+
+	public static void anexar(long id) {
+		GcInformacao informacao = GcInformacao.findById(id);
+		render(informacao);
+	}
+
+	public static void anexarGravar(GcInformacao informacao, Long pessoa,
+			Long lotacao, String titulo, File fake) throws Exception {
+
+		List<Upload> files = (List<Upload>) request.args.get("__UPLOADS");
+		if (files != null) {
+			for (Upload file : files) {
+				if (file.getSize() > 0) {
+					if (file.getContentType() != null) {
+						String mimeType = file.getContentType().toLowerCase();
+						byte anexo[] = file.asBytes();
+						titulo = file.getFileName();
+						DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa
+								.findById(pessoa) : null);
+						DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
+								.findById(lotacao) : null);
+						GcBL.movimentar(
+								informacao,
+								GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
+								pes, lot, titulo, null, null, null, null,
+								anexo, mimeType);
+						GcBL.gravar(informacao, idc());
+						exibir(informacao.id);
+					}
+				}
+			}
+		}
+	}
+
+	public static void baixar(Long id) {
+		GcArquivo arq = GcArquivo.findById(id);
+		if (arq != null)
+			renderBinary(new ByteArrayInputStream(arq.conteudo), arq.titulo,
+					(long) arq.conteudo.length, arq.mimeType, true);
 	}
 
 	public static void revisado(long id) throws Exception {
@@ -590,7 +674,7 @@ public class Application extends SigaApplication {
 					GcBL.movimentar(informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
 							mov.pessoa, mov.lotacao, null, null, null, mov,
-							null);
+							null, null, null);
 					GcBL.gravar(informacao, idc());
 					exibir(informacao.id);
 				}
@@ -699,8 +783,32 @@ public class Application extends SigaApplication {
 		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
 				+ path);
 	}
+
 	public static void erro(String message, String stackTrace) {
 		render(message, stackTrace);
+	}
+
+	@Catch(value = AplicacaoException.class, priority = 1)
+	public static void catchError(Throwable throwable) {
+		// if (Play.mode.isDev())
+		// return;
+
+		// Flash.current().clear();
+		// Flash.current().put("_cabecalho_pre",
+		// renderArgs.get("_cabecalho_pre"));
+		// Flash.current().put("_cabecalho_pos",
+		// renderArgs.get("_cabecalho_pos"));
+		// Flash.current().put("_rodape", renderArgs.get("_rodape"));
+		while (throwable.getMessage() == null && throwable.getCause() != null)
+			throwable = throwable.getCause();
+		java.io.StringWriter sw = new java.io.StringWriter();
+		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+		throwable.printStackTrace(pw);
+		String stackTrace = sw.toString();
+		String message = throwable.getMessage();
+		if (message == null)
+			message = "Nenhuma informação disponível.";
+		erro(message, stackTrace);
 	}
 
 }

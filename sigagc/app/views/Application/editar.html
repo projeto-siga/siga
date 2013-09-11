@@ -7,10 +7,9 @@
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form action="@{Application.gravar}">
+			<form id="frm" action="@{Application.gravar}">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
-				<input type="hidden" name="origem" value="${origem}" />
-				*{
+				<input type="hidden" name="origem" value="${origem}" /> *{
 				<div class="gt-form-row gt-width-100">
 					<label>Tópico pai:</label> #{selecao tipo:'pessoa',
 					nome:'informacao.informacaoPai', value:informacao?.informacaoPai /}
@@ -19,21 +18,18 @@
 				</div>
 				}*
 				<div class="gt-form-row gt-width-100">
-					<div class="gt-left-col gt-width-25">
+					<div class="gt-left-col gt-width-25" style="margin-right: 2em">
 						<label>Tipo</label>#{select name:'informacao.tipo',
 						items:tiposInformacao, labelProperty:'nome', valueProperty:'id',
 						value:informacao.tipo?.id} #{/select}
 					</div>
-					*{
-					<div class="gt-left-col gt-width-25">
-						<label>Acesso</label><select name="nivelAcesso"
-							id="frm_nivelAcesso">
-							<option value="1" selected="selected">Público</option>
-							<option value="2">Limitado ao órgão</option>
-							<option value="3">Limitado a lotação</option>
-							<option value="4">Limitado a pessoa</option>
-						</select>
+					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
+						<label>Acesso</label>#{select name:'informacao.acesso',
+						items:acessos, labelProperty:'nome', valueProperty:'id',
+						value:informacao.acesso?.id} #{/select}
+
 					</div>
+					*{
 					<div class="gt-left-col gt-width-25">
 						<label>Data Início</label><input type="text" name="dtDocString"
 							size="10" value="" id="frm_dtDocString"
@@ -45,6 +41,7 @@
 							onblur="javascript:verifica_data(this, true);">
 					</div>
 					}*
+
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Responsável</label> #{selecao tipo:'pessoa',
@@ -57,8 +54,9 @@
 						style="color: red">#{error 'informacao.lotacao' /}</span>
 				</div>
 
+
 				<div class="gt-form-row gt-width-100">
-					<label>Titulo</label> <input type="text" name="titulo"
+					<label>Título</label> <input type="text" name="titulo"
 						value="${titulo}" class="gt-form-text" /><span style="color: red">#{error
 						'titulo' /}</span>
 				</div>
@@ -80,10 +78,10 @@
 					<input type="submit" value="Gravar"
 						class="gt-btn-medium gt-btn-left" />
 					<p class="gt-cancel">
-						ou <a href="">cancelar alterações</a>
-						#{if informacao != null && informacao.id != null && informacao.id != 0}
-						ou <a href="@{Application.exibir(informacao?.id)}">exibir movimentações</a>
-						#{/if}
+						ou <a href="">cancelar alterações</a> #{if informacao != null &&
+						informacao.id != null && informacao.id != 0} ou <a
+							href="@{Application.exibir(informacao?.id)}">exibir
+							movimentações</a> #{/if}
 					</p>
 				</div>
 			</form>
@@ -92,7 +90,41 @@
 	<div class="gt-sidebar">
 		<!-- Sidebar Content -->
 		<div class="gt-sidebar-content">
-			<h3>Opções de Formatação</h3>
+			<script>				
+				function insertTextAtCursor(el, text) {
+    var val = el.value, endIndex, range;
+    if (typeof el.selectionStart != "undefined" && typeof el.selectionEnd != "undefined") {
+        endIndex = el.selectionEnd;
+        el.value = val.slice(0, endIndex) + text + val.slice(endIndex);
+        el.selectionStart = el.selectionEnd = endIndex + text.length;
+    } else if (typeof document.selection != "undefined" && typeof document.selection.createRange != "undefined") {
+        el.focus();
+        range = document.selection.createRange();
+        range.collapse(false);
+        range.text = text;
+        range.select();
+    }
+}
+</script>
+
+			<h3>Informações sobre o Preenchimento</h3>
+			<p>O campo "Título" sempre será acessível, independente do contro
+				de acesso selecionado.</p>
+
+			#{if contemArquivos}
+			<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos</h3>
+			<p>Clique em uma imagem/arquivo abaixo para incluir uma
+				referência no texto.</p>
+			#{list items:informacao.movs, as:'m'} #{if m.tipo.id ==
+			models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO}
+			<p>
+				<image src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
+				<a
+					href="javascript: var frm = document.getElementById('frm'); insertTextAtCursor(frm.conteudo, '#{if m.arq.image}{{${m.arq.id}|${m.arq.titulo}}}#{/if}#{else}[[${m.arq.id}|${m.arq.titulo}]]#{/else}');">${m.arq.titulo}</a>
+			</p>
+			#{/if} #{/list} #{/if}
+
+			<h3 style="padding-top: 1em">Opções de Formatação</h3>
 			<p>
 				O conteúdo do campo "Texto" pode ser receber <a
 					href="http://www.wikicreole.org"> marcações especiais</a>, clique <a
@@ -105,14 +137,12 @@
 						<tr>
 							<td>//itálico//</td>
 							<td class="arrow">→</td>
-							<td><em>itálico</em>
-							</td>
+							<td><em>itálico</em></td>
 						</tr>
 						<tr>
 							<td>**negrito**</td>
 							<td class="arrow">→</td>
-							<td><strong>negrito</strong>
-							</td>
+							<td><strong>negrito</strong></td>
 						</tr>
 
 						<tr>
@@ -145,8 +175,7 @@
 							<td class="arrow">→</td>
 							<td><a
 								href="http://www.wikicreole.org/attach/CheatSheet/URL">nome
-									do link</a>
-							</td>
+									do link</a></td>
 						</tr>
 
 						<tr>
@@ -157,8 +186,7 @@
 									Título grande</span><br> <span
 								style="font-size: 110%; font-weight: bold;">Título médio</span><br>
 								<span style="font-size: 100%; font-weight: bold;">Título
-									pequeno</span>
-							</td>
+									pequeno</span></td>
 						</tr>
 
 						<tr>
@@ -169,8 +197,7 @@
 								vazia</td>
 						</tr>
 						<tr>
-							<td>Quebra de linha\\forçada<br>
-							</td>
+							<td>Quebra de linha\\forçada<br></td>
 							<td class="arrow">→</td>
 							<td>Quebra de linha<br>forçada</td>
 						</tr>
@@ -178,8 +205,7 @@
 							<td>Linha horizontal:<br>----</td>
 							<td class="arrow">→</td>
 							<td>Linha horizontal:
-								<hr>
-							</td>
+								<hr></td>
 						</tr>
 						<tr>
 							<td>{{imagem.jpg|título}}</td>
@@ -198,6 +224,7 @@
 						</tr>
 					</tbody>
 				</table>
+
 			</div>
 		</div>
 	</div>

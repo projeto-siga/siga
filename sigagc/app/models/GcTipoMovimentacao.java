@@ -15,7 +15,7 @@ import play.db.jpa.GenericModel;
 public class GcTipoMovimentacao extends GenericModel {
 	final static public long TIPO_MOVIMENTACAO_CRIACAO = 1;
 
-	final static public long TIPO_MOVIMENTACAO_FECHAMENTO = 2;
+	final static public long TIPO_MOVIMENTACAO_FECHAMENTO = 2; 
 
 	final static public long TIPO_MOVIMENTACAO_CANCELAMENTO = 3;
 
@@ -37,6 +37,8 @@ public class GcTipoMovimentacao extends GenericModel {
 
 	public static final long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO = 12;
 
+	public static final long TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO = 13;
+	
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")
 	public long id;

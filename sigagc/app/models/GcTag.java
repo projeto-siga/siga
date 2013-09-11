@@ -158,4 +158,12 @@ public class GcTag extends GenericModel implements Comparable<GcTag>,
 		}
 		return GcTag.find(query).fetch();
 	}
+
+	@Override
+	public String toString() {
+		return (tipo.id == 1 ? "@" : (tipo.id == 2 ? "#" : "^")) + (categoria != null ? categoria + ":" : "") + titulo;
+	}
+
+	
+	
 }

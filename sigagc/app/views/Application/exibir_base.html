@@ -21,6 +21,9 @@ Informação'/}
 				<b>Órgão Usuário:</b> ${informacao?.ou?.acronimoOrgaoUsu}
 			</p>
 			<p>
+				<b>Acesso:</b> ${informacao?.acesso?.nome}
+			</p>
+			<p>
 				<b>Autor:</b> ${informacao?.autor?.descricaoIniciaisMaiusculas} -
 				${informacao?.autor?.sigla}
 			</p>
@@ -49,8 +52,15 @@ Informação'/}
 			<p>
 				<b>Classificação:</b> ${informacao?.arq?.classificacao}
 			</p>
-			#{/else}
-
+			#{/else} #{if informacao.contemArquivos}
+			<h3>Arquivos Anexos</h3>
+			#{list items:informacao.movs, as:'m'} #{if m.tipo.id ==
+			models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO}
+			<p>
+				<image src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
+				<a target="_blank" href="@{Application.baixar(m.arq.id)}">${m.arq.titulo}</a>
+			</p>
+			#{/if} #{/list} #{/if}
 		</div>
 		<!-- / sidebar -->
 	</div>

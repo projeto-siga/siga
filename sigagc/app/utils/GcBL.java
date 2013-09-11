@@ -40,8 +40,8 @@ public class GcBL {
 
 	public static GcMovimentacao movimentar(GcInformacao inf, long idTipo,
 			DpPessoa pessoa, DpLotacao lotacao, String titulo, String conteudo,
-			String classificacao, GcMovimentacao movRef, Date hisDtIni)
-			throws Exception {
+			String classificacao, GcMovimentacao movRef, Date hisDtIni,
+			byte[] anexo, String mimeType) throws Exception {
 
 		GcMovimentacao mov = new GcMovimentacao();
 		mov.tipo = GcTipoMovimentacao.findById(idTipo);
@@ -57,16 +57,24 @@ public class GcBL {
 		titulo = simplificarString(titulo);
 		conteudo = simplificarString(conteudo);
 		classificacao = simplificarString(classificacao);
-		if (titulo != null || conteudo != null || classificacao != null) {
+		if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO) {
 			GcArquivo arq = new GcArquivo();
 			arq.titulo = titulo;
-			arq.setConteudoTXT(conteudo);
-			arq.classificacao = classificacao;
+			arq.classificacao = null;
+			arq.setConteudoBinario(anexo, mimeType);
 			mov.arq = arq;
 		} else {
-			if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO)
-				throw new Exception(
-						"Não é permitido salvar uma informação com título, conteúdo e classificação vazios.");
+			if (titulo != null || conteudo != null || classificacao != null) {
+				GcArquivo arq = new GcArquivo();
+				arq.titulo = titulo;
+				arq.setConteudoTXT(conteudo);
+				arq.classificacao = classificacao;
+				mov.arq = arq;
+			} else {
+				if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO)
+					throw new Exception(
+							"Não é permitido salvar uma informação com título, conteúdo e classificação vazios.");
+			}
 		}
 
 		return movimentar(inf, mov);
@@ -421,7 +429,8 @@ public class GcBL {
 		}
 		GcMovimentacao m = GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA, idc.getDpPessoa()
-						.getPessoaAtual(), null, null, null, null, null, null);
+						.getPessoaAtual(), null, null, null, null, null, null,
+				null, null);
 		GcBL.gravar(informacao, idc);
 	}
 
@@ -434,7 +443,8 @@ public class GcBL {
 					&& idc.getDpPessoa().equivale(mov.pessoa)) {
 				GcMovimentacao m = GcBL.movimentar(informacao,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-						mov.pessoa, null, null, null, null, mov, null);
+						mov.pessoa, null, null, null, null, mov, null, null,
+						null);
 				mov.movCanceladora = m;
 				GcBL.gravar(informacao, idc);
 				return;
@@ -457,7 +467,7 @@ public class GcBL {
 		if (movLocalizada == null && fInteresse) {
 			GcMovimentacao m = GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO, titular,
-					null, null, null, null, null, null);
+					null, null, null, null, null, null, null, null);
 			GcBL.gravar(informacao, idc);
 		} else if (movLocalizada != null && !fInteresse) {
 			GcMovimentacao m = GcBL
@@ -465,7 +475,7 @@ public class GcBL {
 							informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 							movLocalizada.pessoa, null, null, null, null,
-							movLocalizada, null);
+							movLocalizada, null, null, null);
 			movLocalizada.movCanceladora = m;
 			GcBL.gravar(informacao, idc);
 		}
@@ -482,7 +492,7 @@ public class GcBL {
 		}
 		GcMovimentacao m = GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, titular,
-				lotaTitular, null, null, null, null, null);
+				lotaTitular, null, null, null, null, null, null, null);
 		GcBL.gravar(informacao, idc);
 	}
 

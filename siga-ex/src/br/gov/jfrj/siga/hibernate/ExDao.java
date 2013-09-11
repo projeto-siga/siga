@@ -259,112 +259,93 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0) {
-			query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
-		}
-
-		if (flt.getNumExpediente() != null && flt.getNumExpediente() != 0) {
-
 			query.setLong("anoEmissao", flt.getAnoEmissao());
 		}
 
-		if (flt.getIdTpDoc() != null && flt.getIdTpDoc() != 0) {
+		if (flt.getNumExpediente() != null && flt.getNumExpediente() != 0) {
+			query.setLong("numExpediente", flt.getNumExpediente());
+		}
 
+		if (flt.getIdTpDoc() != null && flt.getIdTpDoc() != 0) {
 			query.setLong("idTpDoc", flt.getIdTpDoc());
 		}
 
 		if (flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0) {
-
 			query.setLong("idFormaDoc", flt.getIdFormaDoc());
 		}
 
 		if (flt.getIdTipoFormaDoc() != null && flt.getIdTipoFormaDoc() != 0) {
-
 			query.setLong("idTipoFormaDoc", flt.getIdTipoFormaDoc());
 		}
 
 		if (flt.getClassificacaoSelId() != null
 				&& flt.getClassificacaoSelId() != 0) {
-
 			query.setLong("classificacaoSelId", flt.getClassificacaoSelId());
 		}
 
 		if (flt.getDescrDocumento() != null
-				&& !flt.getDescrDocumento().trim().equals("")) {
-			
+				&& !flt.getDescrDocumento().trim().equals("")) {			
 			query.setString("descrDocumento", "%" + flt.getDescrDocumento().toUpperCase() + "%");
 		}
 
-		if (flt.getDtDoc() != null) {
-			
+		if (flt.getDtDoc() != null) {			
 			query.setString("dtDoc", new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDoc()));
 		}
 
-		if (flt.getDtDocFinal() != null) {
-			
+		if (flt.getDtDocFinal() != null) {			
 			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDocFinal()));
 		}
 
 		if (flt.getNumAntigoDoc() != null
-				&& !flt.getNumAntigoDoc().trim().equals("")) {
-			
+				&& !flt.getNumAntigoDoc().trim().equals("")) {			
 			query.setString("numAntigoDoc", "%" + flt.getNumAntigoDoc().toUpperCase() + "%");
 		}
 
 		if (flt.getDestinatarioSelId() != null
-				&& flt.getDestinatarioSelId() != 0) {
-			
+				&& flt.getDestinatarioSelId() != 0) {			
 			query.setLong("destinatarioSelId", flt.getDestinatarioSelId());
 		}
 
 		if (flt.getLotacaoDestinatarioSelId() != null
 				&& flt.getLotacaoDestinatarioSelId() != 0) {
-
 			query.setLong("lotacaoDestinatarioSelId", flt.getLotacaoDestinatarioSelId());
 		}
 
 		if (flt.getNmDestinatario() != null
 				&& !flt.getNmDestinatario().trim().equals("")) {
-
 			query.setString("nmDestinatario", "%" + flt.getNmDestinatario() + "%");
 		}
 
 		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
-
 			query.setLong("cadastranteSelId", flt.getCadastranteSelId());
 		}
 
 		if (flt.getLotaCadastranteSelId() != null
 				&& flt.getLotaCadastranteSelId() != 0) {
-
 			query.setLong("lotaCadastranteSelId", flt.getLotaCadastranteSelId());
 		}
 
 		if (flt.getSubscritorSelId() != null && flt.getSubscritorSelId() != 0) {
-
 			query.setLong("subscritorSelId", flt.getSubscritorSelId());
 		}
 
 		if (flt.getNmSubscritorExt() != null
-				&& !flt.getNmSubscritorExt().trim().equals("")) {
-			
+				&& !flt.getNmSubscritorExt().trim().equals("")) {			
 			query.setString("nmSubscritorExt", "%" + flt.getNmSubscritorExt().toUpperCase() + "%");
 		}
 
 		if (flt.getOrgaoExternoSelId() != null
 				&& flt.getOrgaoExternoSelId() != 0) {
-
 			query.setLong("orgaoExternoSelId", flt.getOrgaoExternoSelId());
 		}
 
-		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {
-			
+		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {			
 			query.setString("numExtDoc", "%" + flt.getNumExtDoc() + "%");
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
 			ExModelo mod = ExDao.getInstance().consultar(flt.getIdMod(),
 					ExModelo.class, false);
-
 			query.setLong("hisIdIni", mod.getHisIdIni());
 		}
 	}

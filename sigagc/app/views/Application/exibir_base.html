@@ -62,8 +62,17 @@ Informação'/}
 			</p>
 			#{/if} #{/list} #{/if}
 		</div>
+
+		<div class="gt-sidebar-content" id="gc">teste</div>
+
 		<!-- / sidebar -->
 	</div>
 </div>
 
 #{doLayout /}
+
+<script type="text/javascript">
+		SetInnerHTMLFromAjaxResponse("knowledge?estilo=sidebar&ts=${currentTimeMillis}${informacao.gcTags.raw()}",document.getElementById('gc'));
+</script>
+
+

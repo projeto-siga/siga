@@ -1,5 +1,6 @@
 package models;
 
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ import play.db.jpa.GenericModel;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
 import utils.WikiParser;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -248,8 +250,8 @@ public class GcInformacao extends GenericModel {
 				"Application.historico", "historico=true", true);
 		addAcao(acoes, "eye", "Exibir Movimentações", null,
 				"Application.movimentacoes", "movimentacoes=true", true);
-//		addAcao(acoes, "eye", "Exibir Informações Completas", null,
-//				"Application.movimentacoes", "completo=true", true);
+		// addAcao(acoes, "eye", "Exibir Informações Completas", null,
+		// "Application.movimentacoes", "completo=true", true);
 		addAcao(acoes, "heart_delete", "Desmarcar Interesse", null,
 				"Application.desmarcarComoInteressado", null,
 				podeDesmarcarComoInteressado(titular));
@@ -440,4 +442,28 @@ public class GcInformacao extends GenericModel {
 				return true;
 		return false;
 	}
+
+	public boolean fts(String[] palavras) {
+		String s = arq.titulo + " "
+				+ new String(arq.conteudo, Charset.forName("utf-8"));
+		s = s.toLowerCase();
+
+		for (String palavra : palavras) {
+			if (s.trim().length() == 0)
+				continue;
+			if (!s.contains(palavra))
+				return false;
+		}
+		return true;
+	}
+	
+	public String getGcTags() {
+		String s = "";
+		for (GcTag tag : tags) {
+			s = "&tags=" + tag.toString();
+		}
+		return s;
+	}
+
+
 }

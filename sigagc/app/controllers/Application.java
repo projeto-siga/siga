@@ -394,18 +394,48 @@ public class Application extends SigaApplication {
 
 	public static void navegar() {
 		GcArvore arvore = new GcArvore();
-		
+
 		List<GcInformacao> infs = GcInformacao.all().fetch();
-		
+
 		for (GcInformacao inf : infs) {
 			for (GcTag tag : inf.tags) {
 				arvore.add(tag, inf);
 			}
 		}
-		
+
 		arvore.build();
 
 		render(arvore);
+	}
+
+	public static void buscar(String texto) {
+		GcArvore arvore = new GcArvore();
+		List<GcInformacao> infs = GcInformacao.all().fetch();
+
+		if (texto != null && texto.trim().length() > 0) {
+			texto = texto.trim().toLowerCase();
+			texto = texto.replace("  ", " ");
+			String[] palavras = texto.split(" ");
+
+			List<GcInformacao> infsFiltrada = new ArrayList<GcInformacao>();
+
+			for (GcInformacao inf : infs) {
+				if (inf.fts(palavras))
+					infsFiltrada.add(inf);
+			}
+
+			infs = infsFiltrada;
+		}
+
+		for (GcInformacao inf : infs) {
+			for (GcTag tag : inf.tags) {
+				arvore.add(tag, inf);
+			}
+		}
+
+		arvore.build();
+
+		render(arvore, texto);
 	}
 
 	// public static void listar() {

@@ -61,7 +61,9 @@ public class GcArvoreNo implements Comparable<GcArvoreNo> {
 		});
 		nosOrdenados.addAll(nos.values());
 
-		while (nosOrdenados.size() == 1) {
+		// Agrupa com o filho se tiverem o mesmo número de itens
+		while (nosOrdenados.size() == 1
+				&& nosOrdenados.first().infs.size() == infs.size()) {
 			GcArvoreNo noFilho = nosOrdenados.first();
 			tagsIrmaos.add(noFilho.tag);
 			nosOrdenados.remove(noFilho);

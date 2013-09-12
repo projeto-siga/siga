@@ -479,11 +479,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public String getSituacaoString() {
-		return getUltimoAndamento().getSituacaoString();
+		SrAndamento andam = getUltimoAndamento();
+		return andam != null ? andam.getSituacaoString() : "";
 	}
 	
 	public String getSituacaoStringSemLota() {
-		return getUltimoAndamento().getSituacaoStringSemLota();
+		SrAndamento andam = getUltimoAndamento();
+		return andam != null ? andam.getSituacaoStringSemLota() : "";
 	}
 
 	public SrEstado getEstado() {

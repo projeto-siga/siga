@@ -17,8 +17,8 @@
 							<th align="left">Nome</th>
 							<th align="center">Sigla</th>
 							<th align="left">Orgão Solicitante</th>
-							<th align="center">Ativo</th>		
-							<th align="center">Opções</th>					
+							<th align="right">Ativo</th>		
+							<th colspan="2" align="center">Opções</th>					
 						</tr>
 					</thead>
 					
@@ -38,13 +38,15 @@
 									<ww:url id="url" action="editar" namespace="/orgao">
 										<ww:param name="id">${orgao.idOrgao}</ww:param>
 									</ww:url>
-									<siga:link title="Alterar" url="${url}" />									
-										<ww:url id="url" action="excluir" namespace="/orgao">
-												<ww:param name="id">${orgao.idOrgao}</ww:param>
-										</ww:url>
-										<siga:link title="Excluir" url="${url}" 
-												popup="excluir" confirm="Deseja excluir substituição?" />									
-																
+									<siga:link title="Alterar" url="${url}" />					
+								</td>
+								<td align="left">									
+	 			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/orgao/excluir.action?id=${orgao.idOrgao}';">
+										<img style="display: inline;"
+										src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
+										onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+										onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
+									</a>															
 								</td>						
 							</tr>
 						</c:forEach>

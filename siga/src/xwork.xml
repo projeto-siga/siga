@@ -287,6 +287,12 @@
 			method="aListar">
 			<result>/paginas/orgao/lista_orgao.jsp</result>
 		</action>
+		<action name="excluir" class="br.gov.jfrj.siga.libs.webwork.CpOrgaoAction"
+			method="aExcluir">
+			<result type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>
+		</action>
 	</package>
 
 	<package name="funcao" extends="default" namespace="/funcao">

@@ -147,7 +147,10 @@ function carregouAtendente(response, param){
 				#{listaArvore solicitacao:solicitacao.paiDaArvore,visualizando:solicitacao /}
 			</p>
 	</div>
+			<div class="gt-sidebar-content" id="gc"></div>
 	</div>
+	
+	
 </div>
 
 
@@ -219,7 +222,7 @@ function carregouAtendente(response, param){
 
 #{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
 <script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?tags=@sr-item:${solicitacao.itemConfiguracao.siglaItemConfiguracao}&tags=@sr-acao:${solicitacao.servico.siglaServico}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
+		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?${solicitacao.gcTags.raw()}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
 </script>
 #{/if}
 

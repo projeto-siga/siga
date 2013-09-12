@@ -40,6 +40,20 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 	 * 
 	 */
 	private static final long serialVersionUID = 1098577621835510117L;	
+	
+	private Long id;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public CpOrgao daoOrgao(long id) {
+		return dao().consultar(id, CpOrgao.class, false);
+	}
 
 	@Override
 	public CpOrgaoDaoFiltro createDaoFiltro() {
@@ -65,6 +79,24 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 		
 		setItens(CpDao.getInstance().listarOrgaos());
 		
+		return Action.SUCCESS;
+	}
+	
+	public String aExcluir() throws Exception {
+		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+		if (getId() != null) {
+			try {
+				dao().iniciarTransacao();
+				CpOrgao orgao = daoOrgao(getId());				
+				dao().excluir(orgao);				
+				dao().commitTransacao();				
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Erro na exclusão de Orgão", 0, e);
+			}
+		} else
+			throw new AplicacaoException("ID não informada");
+
 		return Action.SUCCESS;
 	}
 }

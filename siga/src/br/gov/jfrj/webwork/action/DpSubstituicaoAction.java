@@ -234,10 +234,10 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 		if (getId() != null) {
 			DpSubstituicao dpSub = daoSub(getId());
 			
-			if ((dpSub.getSubstituto() != null && dpSub.getSubstituto().equals(getCadastrante()))					
-				|| (dpSub.getSubstituto() == null && dpSub.getLotaSubstituto().equals(getCadastrante().getLotacao()))
-				||(dpSub.getTitular() != null && dpSub.getTitular().equals(getCadastrante()))					
-				|| (dpSub.getTitular() == null && dpSub.getLotaTitular().equals(getCadastrante().getLotacao()))
+			if ((dpSub.getSubstituto() != null && dpSub.getSubstituto().equivale(getCadastrante()))					
+				|| (dpSub.getSubstituto() == null && dpSub.getLotaSubstituto().equivale(getCadastrante().getLotacao()))
+				||(dpSub.getTitular() != null && dpSub.getTitular().equivale(getCadastrante()))					
+				|| (dpSub.getTitular() == null && dpSub.getLotaTitular().equivale(getCadastrante().getLotacao()))
 				|| podeCadastrarQualquerSubstituicao()) {
 				dao().iniciarTransacao();		
 				dpSub.setDtFimRegistro(new Date());

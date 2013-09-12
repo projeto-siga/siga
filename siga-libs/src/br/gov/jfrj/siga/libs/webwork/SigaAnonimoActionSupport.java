@@ -168,10 +168,12 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 	}
 
 	public Long paramLong(final String parameterName) {
-		final String s = param(parameterName);
-		if (s == null || s.equals("") || !StringUtils.isNumeric( s ))
-			return null;
-		return Long.parseLong(s);
+		final String s = param(parameterName);		
+		try{ 
+			return Long.parseLong(s); 
+		} catch(Throwable t){ 
+			return null; 
+		} 
 	}
 
 	public Short paramShort(final String parameterName) {

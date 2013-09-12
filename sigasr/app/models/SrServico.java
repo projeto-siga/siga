@@ -13,7 +13,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,10 +21,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import util.Util;
-
-import models.siga.PlayHistoricoSuporte;
-
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -317,5 +313,25 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 			}
 		});
 		return l;
+	}
+
+	public String getGcTags() {
+		String sigla = this.siglaServico;
+
+		int nivel = this.getNivel();
+		String tags = "";
+		if (nivel == 1) {
+			tags = "&tags=@" + Texto.slugify(this.tituloServico, true, false);
+		}
+		if (nivel == 2) {
+			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
+			SrServico configuracao = SrServico.find("bySiglaServico",
+					sigla_raiz).first();
+			tags = "&tags=@"
+					+ Texto.slugify(configuracao.tituloServico, true, false)
+					+ "&tags=@"
+					+ Texto.slugify(this.tituloServico, true, false);
+		}
+		return tags;
 	}
 }

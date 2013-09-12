@@ -1,5 +1,4 @@
-import br.gov.jfrj.siga.dp.DpPessoa;
-import models.GcInformacao;
+import models.GcAcesso;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 import models.GcTipoTag;
@@ -60,6 +59,10 @@ public class Bootstrap extends Job {
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 					"Cancelamento de movimentação").save();
 
+			new GcTipoMovimentacao(
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
+					"Anexação de arquivo").save();
+
 			new GcTipoInformacao(
 					GcTipoInformacao.TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO,
 					"Registro de Conhecimento").save();
@@ -68,6 +71,16 @@ public class Bootstrap extends Job {
 					.save();
 			new GcTipoTag(GcTipoTag.TIPO_TAG_HASHTAG, "Marcador").save();
 			new GcTipoTag(GcTipoTag.TIPO_TAG_ANCORA, "Âncora").save();
+
+			new GcAcesso(GcAcesso.ACESSO_PUBLICO, "Público").save();
+			new GcAcesso(GcAcesso.ACESSO_ORGAO_USU, "Restrito ao órgão").save();
+			new GcAcesso(GcAcesso.ACESSO_LOTACAO_E_SUPERIORES,
+					"Lotação e superiores").save();
+			new GcAcesso(GcAcesso.ACESSO_LOTACAO_E_INFERIORES,
+					"Lotação e inferiores").save();
+			new GcAcesso(GcAcesso.ACESSO_LOTACAO, "Lotação").save();
+			new GcAcesso(GcAcesso.ACESSO_PESSOAL, "Pessoal").save();
+
 		}
 
 		if (false && !Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa")) {

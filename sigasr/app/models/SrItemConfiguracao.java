@@ -26,6 +26,7 @@ import util.Util;
 
 import models.siga.PlayHistoricoSuporte;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -157,8 +158,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			throws Exception {
 		setSigla(sigla);
 		List<SrItemConfiguracao> itens = buscar(pess, false);
-		if (itens.size() == 0 || itens.size() > 1
-				|| itens.get(0).isGenerico())
+		if (itens.size() == 0 || itens.size() > 1 || itens.get(0).isGenerico())
 			return null;
 		return itens.get(0);
 	}
@@ -219,7 +219,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				if (naoAtende)
 					continue;
 			}
-			
+
 			if (comHierarquia)
 				do {
 					if (!listaFinal.contains(item))
@@ -229,7 +229,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			else
 				listaFinal.add(item);
 		}
-		
+
 		Collections.sort(listaFinal, comparator);
 		return listaFinal;
 	}
@@ -267,7 +267,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	public boolean isEspecifico() {
 		return getNivel() == 3;
 	}
-	
+
 	public boolean isGenerico() {
 		return getNivel() == 1;
 	}
@@ -349,4 +349,42 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	public String getGcTags() {
+		String sigla = this.siglaItemConfiguracao;
+		int nivel = this.getNivel();
+		String tags = "";
+		if (nivel == 1) {
+			tags = "&tags=@"
+					+ Texto.slugify(this.tituloItemConfiguracao, true, false);
+		}
+		if (nivel == 2) {
+			String sigla_nivelpai = this.getSigla().substring(0, 2) + ".00.00";
+			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
+					"bySiglaItemConfiguracao", sigla_nivelpai).first();
+			tags = "&tags=@"
+					+ Texto.slugify(configuracao.tituloItemConfiguracao, true,
+							false) + "&tags=@"
+					+ Texto.slugify(this.tituloItemConfiguracao, true, false);
+		}
+		if (nivel == 3) {
+			String sigla_nivelpai = this.getSigla().substring(0, 5) + ".00";
+			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
+					"bySiglaItemConfiguracao", sigla_nivelpai).first();
+			String sigla_nivel_anterior = this.getSigla().substring(0, 2)
+					+ ".00.00";
+			SrItemConfiguracao configuracao_anterior = SrItemConfiguracao.find(
+					"bySiglaItemConfiguracao", sigla_nivel_anterior).first();
+			tags = "&tags=@"
+					+ Texto.slugify(
+							configuracao_anterior.tituloItemConfiguracao, true,
+							false)
+					+ "&tags=@"
+					+ Texto.slugify(configuracao.tituloItemConfiguracao, true,
+							false) + "&tags=@"
+					+ Texto.slugify(this.tituloItemConfiguracao, true, false);
+		}
+		return tags;
+	}
+
 }

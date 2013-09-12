@@ -192,7 +192,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		this.motivoFechamentoAbertura = motivoFechamentoAbertura;
 	}
 
-
 	@Override
 	public Long getId() {
 		return idSolicitacao;
@@ -212,7 +211,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
 		final Pattern p = Pattern
-		.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
+				.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -304,21 +303,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getCodigo(Long idSolicitacao) {
 		SrSolicitacao solicitacao = new SrSolicitacao();
 		solicitacao = SrSolicitacao.findById(idSolicitacao);
-		
+
 		if (solicitacao.solicitacaoPai != null)
-			return solicitacao.solicitacaoPai.getCodigo() + "." + solicitacao.getNumSequenciaString();
+			return solicitacao.solicitacaoPai.getCodigo() + "."
+					+ solicitacao.getNumSequenciaString();
 
 		String numString = solicitacao.numSolicitacao.toString();
 
-		//for (int i = 0; i < 4 - ((int) Math.floor(solicitacao.numSolicitacao / 10)); i++)
-			//numString = "0" + numString;
+		// for (int i = 0; i < 4 - ((int) Math.floor(solicitacao.numSolicitacao
+		// / 10)); i++)
+		// numString = "0" + numString;
 		while (numString.length() < 5)
 			numString = "0" + numString;
 
-		return solicitacao.orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + solicitacao.getAnoEmissao() + "/"
-				+ numString;
+		return solicitacao.orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-"
+				+ solicitacao.getAnoEmissao() + "/" + numString;
 	}
-	
+
 	public String getCodigo() {
 
 		if (solicitacaoPai != null)
@@ -326,13 +327,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		String numString = numSolicitacao.toString();
 
-		//for (int i = 0; i < 4 - ((int) Math.floor(numSolicitacao / 10)); i++)
-		//	numString = "0" + numString;
+		// for (int i = 0; i < 4 - ((int) Math.floor(numSolicitacao / 10)); i++)
+		// numString = "0" + numString;
 		while (numString.length() < 5)
 			numString = "0" + numString;
 
-		return orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao() + "/"
-				+ numString;
+		return orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao()
+				+ "/" + numString;
 	}
 
 	public String getDtRegString() {
@@ -340,7 +341,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		cal.setTime(dtReg);
 		return cal.getTempoTranscorridoString(false);
 	}
-	
+
 	public String getAtributosString() {
 		String s = "";
 		for (SrAtributo att : getAtributoSet()) {
@@ -377,7 +378,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return "";
 	}
-	
+
 	public Long getProximoNumero() {
 		if (orgaoUsuario == null)
 			return 0L;
@@ -479,11 +480,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public String getSituacaoString() {
-		return getUltimoAndamento().getSituacaoString();
+		SrAndamento andam = getUltimoAndamento();
+		return andam != null ? andam.getSituacaoString() : "";
 	}
-	
+
 	public String getSituacaoStringSemLota() {
-		return getUltimoAndamento().getSituacaoStringSemLota();
+		SrAndamento andam = getUltimoAndamento();
+		return andam != null ? andam.getSituacaoStringSemLota() : "";
 	}
 
 	public SrEstado getEstado() {
@@ -496,9 +499,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean isFilha() {
-		return (this.solicitacaoPai !=null);
+		return (this.solicitacaoPai != null);
 	}
-	
+
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
@@ -836,8 +839,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public void iniciar() throws Exception {
 		if (temPreAtendenteDesignado())
-			darAndamento(SrEstado.PRE_ATENDIMENTO,
-					"Abertura", getPreAtendenteDesignado(), getNumSeqAnd() );
+			darAndamento(SrEstado.PRE_ATENDIMENTO, "Abertura",
+					getPreAtendenteDesignado(), getNumSeqAnd());
 		else
 			darAndamento(SrEstado.ANDAMENTO, "Abertura",
 					getAtendenteDesignado(), getNumSeqAnd());
@@ -845,9 +848,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	private Long getNumSeqAnd() {
 		Long numSeqAnd = find(
-					"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
-							+ idSolicitacao).first();
-			return (numSeqAnd != null) ? numSeqAnd : 1;
+				"select max(numSequencia)+1 from SrAndamento where solicitacao.idSolicitacao = "
+						+ idSolicitacao).first();
+		return (numSeqAnd != null) ? numSeqAnd : 1;
 	}
 
 	public void iniciarFechando() throws Exception {
@@ -866,7 +869,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void darAndamento(SrEstado estado, String descricao,
 			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, Long numSeqAnd) throws Exception {
-//modificado com numsequencia
+		// modificado com numsequencia
 		darAndamento(new SrAndamento(estado, descricao, atendente,
 				lotaAtendente, cadastrante, lotaCadastrante, this, numSeqAnd));
 	}
@@ -939,7 +942,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO;
 		else
 			marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
-		
+
 		marcar(marcador, andamento.lotaAtendente, andamento.atendente);
 
 		if (!isFechado() && !isCancelado()) {
@@ -970,6 +973,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean considerarcancelados() {
 		return false;
+	}
+
+	public String getGcTags() {
+		String s = "tags=@servico";
+		if (servico != null)
+			s += servico.getGcTags();
+		if (itemConfiguracao != null)
+			s += itemConfiguracao.getGcTags();
+		return s;
 	}
 
 }

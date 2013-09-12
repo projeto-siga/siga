@@ -1,0 +1,44 @@
+#{extends 'main.html' /} #{set title:'Busca Textual' /}
+
+
+<script type="text/javascript">
+// Using jQuery.
+
+$(function() {
+    $('form').each(function() {
+        $('input').keypress(function(e) {
+            // Enter pressed?
+            if(e.which == 10 || e.which == 13) {
+                this.form.submit();
+            }
+        });
+    });
+});
+</script>
+
+
+<div class="gt-bd clearfix">
+
+	<div class="gt-content clearfix">
+		<h2>Busca Textual</h2>
+
+		<div class="gt-sidebar-box gt-sidebar-box-blue">
+			<!-- search -->
+			<div class="gt-search">
+				<div class="gt-search-inner">
+					<form id="frm" action="@{Application.buscar}" method="get">
+						<input type="text" id="texto" name="texto" class="gt-search-text"
+							value="#{if texto != null}${texto}#{/if}#{else}Digite as palavras da busca e tecle enter#{/else}"
+							onfocus="javascript:if(this.value=='Digite as palavras da busca e tecle enter')this.value='';">
+					</form>
+				</div>
+			</div>
+			<!-- /search -->
+		</div>
+
+		<div>${arvore.toHTML().raw()}</div>
+	</div>
+
+</div>
+
+<script>try{document.getElementById('texto').focus();document.getElementById('texto').select()}catch(e){};</script>

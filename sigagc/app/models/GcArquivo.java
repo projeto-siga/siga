@@ -17,7 +17,7 @@ import org.apache.commons.io.IOUtils;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name = "GC_ARQUIVO") 
+@Table(name = "GC_ARQUIVO")
 public class GcArquivo extends GenericModel {
 	@Id
 	@GeneratedValue
@@ -45,4 +45,24 @@ public class GcArquivo extends GenericModel {
 	public String getConteudoTXT() throws IOException {
 		return new String(conteudo, Charset.forName("utf-8"));
 	}
+
+	public void setConteudoBinario(byte[] conteudo, String mimeType) {
+		this.conteudo = conteudo;
+		this.mimeType = mimeType;
+	}
+
+	public boolean isImage() {
+		return mimeType != null && mimeType.startsWith("image/");
+	}
+
+	public String getIcon() {
+		if (mimeType != null) {
+			if (mimeType.startsWith("image/"))
+				return "image";
+			if (mimeType.startsWith("application/pdf"))
+				return "page_white_acrobat";
+		}
+		return "disk";
+	}
+
 }

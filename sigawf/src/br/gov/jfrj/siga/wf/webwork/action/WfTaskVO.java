@@ -316,12 +316,12 @@ public class WfTaskVO {
 		}
 
 		tags = new ArrayList<String>();
-		if (taskInstance.getName() != null)
-			tags.add("@wf-tarefa:" + Texto.slugify(taskInstance.getName(), true, true));
 		if (taskInstance.getProcessInstance().getProcessDefinition().getName() != null)
-			tags.add("@wf-processo:"
+			tags.add("@"
 					+ Texto.slugify(taskInstance.getProcessInstance()
 							.getProcessDefinition().getName(), true, true));
+		if (taskInstance.getName() != null)
+			tags.add("@" + Texto.slugify(taskInstance.getName(), true, true));
 
 		if (taskInstance.getProcessInstance().getProcessDefinition().getName() != null
 				&& taskInstance.getName() != null)

@@ -45,7 +45,6 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -76,6 +75,7 @@ import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.dp.AbstractDpLotacao;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -94,6 +94,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 
 public class CpDao extends ModeloDao {
 
@@ -1865,6 +1866,12 @@ public class CpDao extends ModeloDao {
 
 		return c.list();
 
+	}
+
+	public List<DpLotacao> consultarPorIdExterna(String idExterna) {
+		Criteria c = HibernateUtil.getSessao().createCriteria(DpLotacao.class);
+		c.add(Restrictions.eq("ideLotacao", idExterna));
+		return c.list();
 	}
 
 }

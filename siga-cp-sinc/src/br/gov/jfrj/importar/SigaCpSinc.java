@@ -190,7 +190,7 @@ public class SigaCpSinc {
 					manterNomeExibicao(opr.getAntigo(), opr.getNovo());
 				}
 				
-				manterHistoricoPessoaSeNecessario(opr);
+				manterHistoricoSeNecessario(opr);
 
 
 			}
@@ -234,12 +234,13 @@ public class SigaCpSinc {
 	}
 
 	/**
-	 * Verifica se a pessoa que está sendo incluída é uma pessoa que já existe e foi 
+	 * Verifica se a entidade que está sendo incluída é uma entidade que já existe e foi 
 	 * removida indevidamente ocasionando a perda do histórico
 	 * @param opr 
 	 * @return
 	 */
-	private void manterHistoricoPessoaSeNecessario(Item opr) {
+	private void manterHistoricoSeNecessario(Item opr) {
+		//Pessoa
 		if (opr.getNovo()!=null && opr.getNovo() instanceof DpPessoa){
 			DpPessoa pesNova = (DpPessoa) opr.getNovo();
 			if (opr.getOperacao().equals(Operacao.incluir)){
@@ -250,13 +251,33 @@ public class SigaCpSinc {
 						DpPessoa pesAnterior = historicoPessoa.get(0);	
 						if (pesAnterior!=null && !pesAnterior.getIdInicial().equals(pesNova.getIdInicial())){
 							pesNova.setIdInicial(pesAnterior.getIdInicial());
-							log("AVISO: ID_INICIAL reconectada (" + pesNova.getSigla() + ")" );
+							log("AVISO (PESSOA): ID_INICIAL reconectada (" + pesNova.getSigla() + ")" );
 						}
 
 					}
 			}
+			
 		}
 		
+		//Lotacao
+		if (opr.getNovo()!=null && opr.getNovo() instanceof DpLotacao){
+
+			DpLotacao novo = (DpLotacao) opr.getNovo();
+			if (opr.getOperacao().equals(Operacao.incluir)){
+					List<DpLotacao> historico = CpDao.getInstance().consultarPorIdExterna(novo.getIdeLotacao());
+					
+					if (historico.size() > 0){
+						DpLotacao anterior = historico.get(0);	
+						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
+							novo.setIdInicial(anterior.getIdInicial());
+							log("AVISO (LOTACAO): ID_INICIAL reconectada (" + novo.getSigla() + ")" );
+						}
+
+					}
+			}
+			
+		}
+
 	}
 
 	private void manterNomeExibicao(Sincronizavel antigo, Sincronizavel novo) {

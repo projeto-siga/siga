@@ -270,13 +270,53 @@ public class SigaCpSinc {
 						DpLotacao anterior = historico.get(0);	
 						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
 							novo.setIdInicial(anterior.getIdInicial());
-							log("AVISO (LOTACAO): ID_INICIAL reconectada (" + novo.getSigla() + ")" );
+							log("AVISO (LOTACAO): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
 						}
 
 					}
 			}
 			
 		}
+		
+		//Cargo
+		if (opr.getNovo()!=null && opr.getNovo() instanceof DpCargo){
+
+			DpCargo novo = (DpCargo) opr.getNovo();
+			if (opr.getOperacao().equals(Operacao.incluir)){
+					List<DpCargo> historico = (List<DpCargo>) CpDao.getInstance().consultarFechadosPorIdExterna(DpCargo.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
+					
+					if (historico.size() > 0){
+						DpCargo anterior = historico.get(0);	
+						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
+							novo.setIdInicial(anterior.getIdInicial());
+							log("AVISO (CARGO): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
+						}
+
+					}
+			}
+			
+		}
+		
+		//Funcao confianca
+		if (opr.getNovo()!=null && opr.getNovo() instanceof DpFuncaoConfianca){
+
+			DpFuncaoConfianca novo = (DpFuncaoConfianca) opr.getNovo();
+			if (opr.getOperacao().equals(Operacao.incluir)){
+					List<DpFuncaoConfianca> historico = (List<DpFuncaoConfianca>) CpDao.getInstance().consultarFechadosPorIdExterna(DpFuncaoConfianca.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
+					
+					if (historico.size() > 0){
+						DpFuncaoConfianca anterior = historico.get(0);	
+						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
+							novo.setIdInicial(anterior.getIdInicial());
+							log("AVISO (FUNCAO CONFIANCA): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
+						}
+
+					}
+			}
+			
+		}
+
+
 	}
 
 	private void manterNomeExibicao(Sincronizavel antigo, Sincronizavel novo) {

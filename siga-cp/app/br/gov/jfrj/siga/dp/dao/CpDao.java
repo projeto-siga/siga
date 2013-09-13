@@ -1878,6 +1878,26 @@ public class CpDao extends ModeloDao {
 			return c.list();
 		}
 		
+		if(clazz==DpCargo.class){
+			Criteria c = HibernateUtil.getSessao().createCriteria(DpCargo.class);
+			c.add(Restrictions.eq("ideCargo", idExterna));
+			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
+			c.add(Restrictions.isNotNull("dataFimCargo"));
+			c.addOrder(Order.desc("dataInicioCargo"));
+			return c.list();
+		}
+		
+		if(clazz==DpFuncaoConfianca.class){
+			Criteria c = HibernateUtil.getSessao().createCriteria(DpFuncaoConfianca.class);
+			c.add(Restrictions.eq("ideFuncao", idExterna));
+			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
+			c.add(Restrictions.isNotNull("dataFimFuncao"));
+			c.addOrder(Order.desc("dataInicioFuncao"));
+			return c.list();
+		}
+
+
+		
 		
 		return null;
 	}

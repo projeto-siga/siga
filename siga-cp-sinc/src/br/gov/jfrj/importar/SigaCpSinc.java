@@ -364,6 +364,7 @@ public class SigaCpSinc {
 			
 			if(param.startsWith("-maxSinc=")){
 				maxSinc = Integer.valueOf(param.split("=")[1]);
+				System.out.println("MAX SINC = " + maxSinc);
 			}
 		}
 
@@ -1364,5 +1365,12 @@ public class SigaCpSinc {
 	 */
 	protected void setDestinatariosExtras(String destinatarios) {
 		this.destinatariosExtras = destinatarios;
+	}
+
+	protected void exibirMensagemMaxSinc(List<Item> list) {
+		log("***ATENÇÃO***: Limite de operações por sincronismo excedido!");
+		log("Operações a serem executadas: " + list.size() + "\nOperações permitidas: " +maxSinc);
+		log("Ajuste o paâmetro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
+		log("As alterações não serão efetivadas! Executando rollback...");
 	}
 }

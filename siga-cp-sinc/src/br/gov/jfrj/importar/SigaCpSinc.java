@@ -73,7 +73,7 @@ public class SigaCpSinc {
 	// renato (8)
 
 	private static boolean modoLog = false;
-	private static int maxSinc = -1;
+	protected static int maxSinc = -1;
 
 	private String servidor = "";
 

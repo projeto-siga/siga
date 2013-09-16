@@ -3,6 +3,12 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content">
 		<h2>Lista</h2>
+		<p class="gt-table-action-list">
+		#{if lista?.idLista} 
+		<a class="once" href="@{Application.desativarLista(lista.idLista)}">
+		<img src="/siga/css/famfamfam/icons/disconnect.png" style="margin-right: 5px;">Desativar</a>
+		#{/if}
+		</p>
 		<div class="gt-form gt-content-box">
 			#{form @Application.gravarLista()} #{if
 			lista?.idLista} <input type="hidden" name="lista.idLista" value="${lista.idLista}">
@@ -13,16 +19,11 @@
 					value="${lista?.nomeLista}" size="100"/>
 			</div>
 			<div class="gt-form-row">
-				<input type="submit" value="OK"
-					class="gt-btn-medium gt-btn-left" />
-					<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
-					#{if lista?.idLista} <input type="button" value="Desativar"
-					class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarLista()}?id=${lista.idLista}'" />
-				#{/if}
-			</div>
 			<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
 			<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
+			<input type="submit" value="OK" class="gt-btn-medium gt-btn-left" /> 
+			<a href="@{Application.exibirSolicitacaoLista(lista.idLista)}" class="gt-btn-medium gt-btn-left">Voltar</a>
+			</div>
 			#{/form}
 		</div>
 	</div>

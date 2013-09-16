@@ -4,12 +4,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Query;
 
@@ -434,7 +436,7 @@ public class Application extends SigaApplication {
 		
 		List<SrEstado> estados = solicitacao.getEstadosSelecionaveis();
 		
-		List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
+		List<SrLista> listas =  solicitacao.getListaAssociada();
 		
 		render(solicitacao, editar, desfazerMovimentacao, movimentarPlenamente,
 				movimentacao, criarFilha, estados, considerarCancelados, movimentacoes, listas);
@@ -442,17 +444,17 @@ public class Application extends SigaApplication {
 	
 	public static void exibirLista(Long id) {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
-		//SrLista lista = new SrLista();
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		List<SrLista> listas =  solicitacao.getListaDisponivel(solicitacao);
+		List<SrLista> listas =  solicitacao.getListaDisponivel();
 		render(solicitacao, editar, listas);
 	}
 	
 	public static void exibirSolicitacaoLista(Long id) {
 		
 		SrLista lista = SrLista.findById(id);
-		Set<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
-		render(solicitacao, lista);
+		TreeSet<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
+		boolean editar = true;
+		render(solicitacao, lista, editar);
 	}
 
 	public static void exibirListaAssoc(Long id) {
@@ -461,7 +463,7 @@ public class Application extends SigaApplication {
 		SrLista lista = new SrLista();
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		//List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
-		List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
+		List<SrLista> listas =  solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
 	}	
 	
@@ -470,8 +472,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
 		SrLista lista = SrLista.findById(idLista);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		//List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
-		List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
+		List<SrLista> listas =  solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
 	}
 	
@@ -480,11 +481,10 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = new SrLista();
 		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
-		Long prioridade = movimentacao.getPrioridade();
+		Long prioridade = lista.getSolicOrd();
 		solicitacao.Movimentar(SrEstado.ANDAMENTO, "Inclusão em lista", null, null, cadastrante(), lotaTitular(), (SrLista) SrLista.findById(idLista), 
-				(SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA), movimentacao.getnumSequencia(),
-				prioridade);
-		List<SrLista> listas =  solicitacao.getListaDisponivel(solicitacao);
+				(SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA), movimentacao.getnumSequencia());
+		List<SrLista> listas =  solicitacao.getListaDisponivel();
 		render(solicitacao, listas);
 	}
 	
@@ -494,6 +494,7 @@ public class Application extends SigaApplication {
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.desassociarLista(solicitacao, lista);
 		Set<SrSolicitacao> sols = lista.getSolicitacaoAssociada();
+		lista.recalcularPrioridade(idLista);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		boolean vazio = lista.isEmpty();
 		render(sols, editar, lista, vazio);

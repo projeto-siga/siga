@@ -895,11 +895,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (temPreAtendenteDesignado())
 			Movimentar(SrEstado.PRE_ATENDIMENTO,"Abertura", 
 					getPreAtendenteDesignado(), (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO),
-					getNumSeqMov(), null );
+					getNumSeqMov());
 		else
 			Movimentar(SrEstado.ANDAMENTO, "Abertura",
 					getAtendenteDesignado(), (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO), 
-					getNumSeqMov(), null);
+					getNumSeqMov());
 	}
 
 
@@ -914,7 +914,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Movimentar(SrEstado.FECHADO, motivoFechamentoAbertura,
 				getPosAtendenteDesignado(), 
 				(SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO), 
-				getNumSeqMov(), null);
+				getNumSeqMov());
 	}
 
 	public void desfazerUltimaMovimentacao(DpPessoa cadastrante,
@@ -1181,9 +1181,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	// Usado aqui pela própria solicitação
 	public void Movimentar(SrEstado estado, String descricao,
-			DpLotacao lotaAtendente, SrTipoMovimentacao idTipoMov, Long numSeqMov, Long prioridade) throws Exception {
+			DpLotacao lotaAtendente, SrTipoMovimentacao idTipoMov, Long numSeqMov) throws Exception {
 		Movimentar(estado, descricao, null, lotaAtendente, this.cadastrante,
-				this.lotaCadastrante, null, idTipoMov, numSeqMov, prioridade);
+				this.lotaCadastrante, null, idTipoMov, numSeqMov);
 	}
 	
 	//Usado por Application
@@ -1199,10 +1199,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	public void Movimentar(SrEstado estado, String descricao,
 			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, SrLista lista, SrTipoMovimentacao idTipoMov, Long numSeqMov, Long prioridade) throws Exception {
+			DpLotacao lotaCadastrante, SrLista lista, SrTipoMovimentacao idTipoMov, Long numSeqMov) throws Exception {
 		//modificado com numsequencia
 		Movimentar(new SrMovimentacao(estado, descricao, atendente,
-                 lotaAtendente, cadastrante, lotaCadastrante, this, lista, idTipoMov, numSeqMov, prioridade));
+                 lotaAtendente, cadastrante, lotaCadastrante, this, lista, idTipoMov, numSeqMov, getSolPrioridade(lista)));
 }
 	
 	// Todos os métodos Movimentar caem aqui
@@ -1221,9 +1221,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			movimentacao.notificar();
 	}
 
-	public List<SrLista> getListaDisponivel(SrSolicitacao solicitacao) {
+	public List<SrLista> getListaDisponivel() {
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
-		for (SrMovimentacao mov : solicitacao.getMovimentacaoSet()) {
+		for (SrMovimentacao mov : getMovimentacaoSet()) {
 			if (mov.lista != null)
 				listaCompleta.add(mov.lista);
 		}
@@ -1238,18 +1238,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaDisponiveis;
 	}
 
-	public List<SrLista> getListaAssociada(SrSolicitacao solicitacao) {
+	public List<SrLista> getListaAssociada() {
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
-		for (SrMovimentacao mov : solicitacao.getMovimentacaoSet(false)) {
+		for (SrMovimentacao mov : getMovimentacaoSet(false)) {
 			if (mov.lista != null)
 				listaCompleta.add(mov.lista);
 		}
 		return listaCompleta;
 	}
 	
-
+	
+	public Long getSolPrioridade(SrLista lista){
+		Long solPrioridade = find(
+				"select mov.prioridade from SrMovimentacao mov where mov.lista = " + lista.idLista 
+				+ " and mov.solicitacao = " + idSolicitacao + " and mov.dtCancelamento is null").first();
+		return (solPrioridade != null) ? solPrioridade : 1;
+	}
+	
 	public void desassociarLista(SrSolicitacao solicitacao, SrLista lista) throws Exception {
-		
 		SrSolicitacao sol = new SrSolicitacao();
 		sol.meuMovimentacaoSet = solicitacao.getMovimentacaoSet();
 		SrMovimentacao movIncl = (SrMovimentacao) getMovimentacaoSolLista(solicitacao, lista);
@@ -1259,11 +1265,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		mov.lista = null;
+		mov.prioridade = getMovimentacaoSolLista(solicitacao, lista).prioridade;
 		mov.solicitacao = solicitacao;
 		mov.numSequencia = solicitacao.getNumSeqMov();
 		mov.idMovRef = movIncl;
 		solicitacao.Movimentar(mov);
 		movIncl.dtCancelamento = new Date();
+		movIncl.prioridade = null;
 		movIncl.idmovCanceladora = mov;
 		movIncl.save();
 		//JPA.em().flush();

@@ -12,9 +12,17 @@ $(function() {
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 	<h2> ${lista.nomeLista}</h2>
+	
+		<p class="gt-table-action-list">
+			#{if editar} <a class="once"
+				href="@{Application.editarLista(lista.idLista)}"> <img
+				src="/siga/css/famfamfam/icons/pencil.png"
+				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
+		</p>
  	
  	<div class="gt-content-box gt-for-table">
 	<table id="sortable"  border="0" class="gt-table-nowrap">
+			<col width="10%" />
 			<col width="10%" />
 			<col width="20%" />
     		<col width="20%" />
@@ -25,6 +33,7 @@ $(function() {
     		<thead>
 				<tr class="gt-celula-nowrap">
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Exc</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Prior</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Solicitante</th>
@@ -35,10 +44,14 @@ $(function() {
 			</thead>
 			<tbody>
 			#{list items:solicitacao, as:'sol'}
+			#{if sol}
 			<form action="@{Application.desassociarLista()}">	
 			<tr>
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 				<input type="radio" name="idSolicitacao" value="${sol.idSolicitacao}">	
+			</td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
+				${sol.getSolPrioridade(lista)}
 			</td>
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 						<a href="@{Application.exibir(sol.idSolicitacao)}">
@@ -63,7 +76,8 @@ $(function() {
 			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 				${sol.ultimaMovimentacao.descrMovimentacao}
 			</tr>		
-			</tbody>			
+			</tbody>	
+			#{/if}		
 			#{/list}
 			</table>
 		</div>
@@ -74,5 +88,6 @@ $(function() {
 		<div class="gt-table-buttons">
 			<input type="hidden" name="idLista" value="${lista.idLista}">
 			<input type="submit" value="Remover" class="gt-btn-medium gt-btn-left" />
+			<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
 		</form>
 		</div>

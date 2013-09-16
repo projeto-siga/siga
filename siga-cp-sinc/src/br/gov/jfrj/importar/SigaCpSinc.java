@@ -264,7 +264,7 @@ public class SigaCpSinc {
 
 			DpLotacao novo = (DpLotacao) opr.getNovo();
 			if (opr.getOperacao().equals(Operacao.incluir)){
-					List<DpLotacao> historico = CpDao.getInstance().consultarPorIdExterna(novo.getIdeLotacao());
+					List<DpLotacao> historico = (List<DpLotacao>) CpDao.getInstance().consultarFechadosPorIdExterna(DpLotacao.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
 					
 					if (historico.size() > 0){
 						DpLotacao anterior = historico.get(0);	
@@ -277,7 +277,6 @@ public class SigaCpSinc {
 			}
 			
 		}
-
 	}
 
 	private void manterNomeExibicao(Sincronizavel antigo, Sincronizavel novo) {

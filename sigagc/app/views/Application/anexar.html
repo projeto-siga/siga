@@ -1,0 +1,40 @@
+#{extends 'main.html' /} #{set title:'Anexação de Arquivo' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2>
+			<span id="codigoInf">Anexar - ${informacao?.sigla}</span>
+		</h2>
+
+		<div class="gt-form gt-content-box">
+			<form action="@{Application.anexarGravar}" enctype="multipart/form-data" method="post">
+				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
+				#{if false}
+				<div class="gt-form-row gt-width-100">
+					<label>Pessoa</label> #{selecao tipo:'pessoa', nome:'pessoa' /} <span
+						style="color: red">#{error 'pessoa' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Lotação</label> #{selecao tipo:'lotacao', nome:'lotacao' /}
+					<span style="color: red">#{error 'lotacao' /}</span>
+				</div>
+				#{/if}
+				<div class="gt-form-row gt-width-100">
+					<label>Título</label> <input type="text" name="titulo" value=""
+						class="gt-form-text">#{error 'titulo' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Arquivo</label> <input type="file" name="arquivo" value=""
+						class="gt-form-text">#{error 'titulo' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<input type="submit" value="Anexar"
+						class="gt-btn-medium gt-btn-left" />
+					<p class="gt-cancel">
+						ou <a href="javascript: history.back();">voltar</a>
+					</p>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

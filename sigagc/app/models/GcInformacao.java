@@ -1,5 +1,6 @@
 package models;
 
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,8 @@ import org.hibernate.annotations.SortType;
 import play.db.jpa.GenericModel;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
-import ys.wikiparser.WikiParser;
+import utils.WikiParser;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -66,6 +68,10 @@ public class GcInformacao extends GenericModel {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_ORGAO_USUARIO")
 	public CpOrgaoUsuario ou;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ID_ACESSO")
+	public GcAcesso acesso;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_PESSOA")
@@ -227,6 +233,10 @@ public class GcInformacao extends GenericModel {
 		return !isCancelado();
 	}
 
+	public boolean podeAnexar() {
+		return !isCancelado();
+	}
+
 	public SortedSet<GcAcaoVO> acoes(CpIdentidade idc, DpPessoa titular,
 			DpLotacao lotaTitular) {
 		SortedSet<GcAcaoVO> acoes = new TreeSet<GcAcaoVO>();
@@ -236,10 +246,12 @@ public class GcInformacao extends GenericModel {
 		addAcao(acoes, "delete", "Excluir", null, "Application.remover", null,
 				podeExcluir(), "Confirma a exclusão de tópico de informação?",
 				null, null);
-		addAcao(acoes, "eye", "Exibir Informações Completas", null,
-				"Application.exibir", "completo=true", true);
 		addAcao(acoes, "eye", "Exibir Histórico de Alterações", null,
 				"Application.historico", "historico=true", true);
+		addAcao(acoes, "eye", "Exibir Movimentações", null,
+				"Application.movimentacoes", "movimentacoes=true", true);
+		// addAcao(acoes, "eye", "Exibir Informações Completas", null,
+		// "Application.movimentacoes", "completo=true", true);
 		addAcao(acoes, "heart_delete", "Desmarcar Interesse", null,
 				"Application.desmarcarComoInteressado", null,
 				podeDesmarcarComoInteressado(titular));
@@ -265,6 +277,8 @@ public class GcInformacao extends GenericModel {
 				null, podeCancelar(titular, lotaTitular),
 				"Confirma o cancelamento deste tópico de informação?", null,
 				null);
+		addAcao(acoes, "attach", "Anexar Arquivo", null, "Application.anexar",
+				null, podeAnexar());
 
 		// addAcao("printer.png","Visualizar Impressão",null,"", null, true,
 		// null);
@@ -389,6 +403,67 @@ public class GcInformacao extends GenericModel {
 				.replace(" ** ", "\n** ").replace(" *** ", "\n*** ")
 				.replace(" **** ", "\n**** ").replace(" ==", "\n==");
 		String fragment = WikiParser.renderXHTML(s);
+		fragment = fragment.replace("&lt;&lt;&lt;Internal image(?): ",
+				"<img src=\"/sigagc/baixar?id=")
+				.replace("&gt;&gt;&gt;", "\"/>");
 		return fragment;
 	}
+
+	public boolean acessoPermitido(DpPessoa titular, DpLotacao lotaTitular) {
+		switch ((int) acesso.id) {
+		case (int) GcAcesso.ACESSO_PUBLICO:
+			return true;
+		case (int) GcAcesso.ACESSO_ORGAO_USU:
+			return ou.equals(titular.getOrgaoUsuario())
+					|| ou.equals(lotaTitular.getOrgaoUsuario());
+		case (int) GcAcesso.ACESSO_LOTACAO_E_SUPERIORES:
+			for (DpLotacao lot = lotacao; lot != null; lot = lot
+					.getLotacaoPai())
+				if (lotaTitular.equivale(lot))
+					return true;
+			return false;
+		case (int) GcAcesso.ACESSO_LOTACAO_E_INFERIORES:
+			for (DpLotacao lot = lotaTitular; lot != null; lot = lot
+					.getLotacaoPai())
+				if (lotacao.equivale(lot))
+					return true;
+			return false;
+		case (int) GcAcesso.ACESSO_LOTACAO:
+			return lotacao.equivale(lotaTitular);
+		case (int) GcAcesso.ACESSO_PESSOAL:
+			return autor.equivale(titular);
+		}
+		return false;
+	}
+
+	public boolean isContemArquivos() {
+		for (GcMovimentacao m : movs)
+			if (m.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO)
+				return true;
+		return false;
+	}
+
+	public boolean fts(String[] palavras) {
+		String s = arq.titulo + " "
+				+ new String(arq.conteudo, Charset.forName("utf-8"));
+		s = s.toLowerCase();
+
+		for (String palavra : palavras) {
+			if (s.trim().length() == 0)
+				continue;
+			if (!s.contains(palavra))
+				return false;
+		}
+		return true;
+	}
+	
+	public String getGcTags() {
+		String s = "";
+		for (GcTag tag : tags) {
+			s = "&tags=" + tag.toString();
+		}
+		return s;
+	}
+
+
 }

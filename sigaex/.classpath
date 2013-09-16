@@ -56,5 +56,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/siga-dep-tomcat/lib/simplecaptcha-1.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Desenvolvimento/Jboss-4.2.2.GA/server/default/lib/xmlgraphics-commons-1.3.1.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

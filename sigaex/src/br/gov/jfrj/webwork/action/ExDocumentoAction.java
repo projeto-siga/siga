@@ -294,7 +294,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public Integer getTamanhoMaximoDescricao() {
-		return doc.isProcesso() ? 4000 : 256;
+		return  4000;
 	}
 
 	public boolean getDespachando() {
@@ -1167,9 +1167,9 @@ public class ExDocumentoAction extends ExActionSupport {
 				throw new AplicacaoException(
 						"Quando a classificação selecionada não traz informação para criação de vias, o sistema exige que, antes de gravar o documento, seja informada uma sugestão de classificação para ser incluída na próxima revisão da tabela de classificações.");
 
-			if (!doc.isProcesso() && doc.getDescrDocumento().length() > 256)
+			if (doc.getDescrDocumento().length() > getTamanhoMaximoDescricao())
 				throw new AplicacaoException(
-						"O campo descrição possui mais do que 256 caracteres.");
+						"O campo descrição possui mais do que " + getTamanhoMaximoDescricao() + " caracteres.");
 
 			if (doc.getDtFechamento() != null) {
 				Date dt = dao().dt();
@@ -1370,7 +1370,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			String nomeArq = doque.getIdDoc().toString();
 			fakeMov.setConteudoBlobRTF(nomeArq, gerador.geraRTF(doque));
 			fakeMov.setConteudoBlobXML(nomeArq,
-					PublicacaoDJEBL.gerarXMLPublicacao(fakeMov, "A"));
+					PublicacaoDJEBL.gerarXMLPublicacao(fakeMov, "A", "SESIA", "Teste descrição"));
 			fakeMov.setNmArqMov(nomeArq + ".zip");
 
 			PublicacaoDJEBL.primeiroEnvio(fakeMov);
@@ -2356,7 +2356,12 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		try {
 			ByteArrayOutputStream baos;
-			// if (doc.getExTipoDocumento().getId() == 1) {
+			
+			final String marcacoes[] = {"<!-- INICIO NUMERO -->", "<!-- FIM NUMERO -->","<!-- INICIO NUMERO","FIM NUMERO -->","<!-- INICIO TITULO",
+					"FIM TITULO -->","<!-- INICIO MIOLO -->","<!-- FIM MIOLO -->","<!-- INICIO CORPO -->","<!-- FIM CORPO -->","<!-- INICIO CORPO",
+					"FIM CORPO -->","<!-- INICIO ASSINATURA -->","<!-- FIM ASSINATURA -->","<!-- INICIO ABERTURA -->","<!-- FIM ABERTURA -->",
+					"<!-- INICIO ABERTURA","FIM ABERTURA -->","<!-- INICIO FECHO -->","<!-- FIM FECHO -->"};
+			
 			final String as[] = getPar().get("vars");
 			if (as != null) {
 				baos = new ByteArrayOutputStream();
@@ -2365,9 +2370,15 @@ public class ExDocumentoAction extends ExActionSupport {
 						baos.write('&');
 					baos.write(s.getBytes());
 					baos.write('=');
-					if (param(s) != null)
-						baos.write(URLEncoder.encode(param(s), "iso-8859-1")
+					if (param(s) != null) {
+						String parametro = param(s); 
+						for (final String m : marcacoes){
+							if (parametro.contains(m))
+								parametro = parametro.replaceAll(m, "");
+						}					
+						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
 								.getBytes());
+					}
 				}
 				doc.setConteudoTpDoc("application/zip");
 				doc.setConteudoBlobForm(baos.toByteArray());

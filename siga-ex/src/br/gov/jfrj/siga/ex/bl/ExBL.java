@@ -857,7 +857,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, final DpLotacao lotaTitular,
-			final Date dtDispPublicacao, final String tipoMateria)
+			final Date dtDispPublicacao, final String tipoMateria, final String lotPublicacao, final String descrPublicacao)
 			throws AplicacaoException {
 
 		try {
@@ -894,6 +894,9 @@ public class ExBL extends CpBL {
 					+ new SimpleDateFormat("dd/MM/yy").format(DJE
 							.getDataPublicacao()));
 			mov.setCadernoPublicacaoDje(tipoMateria);
+			
+			mov.setConteudoBlobXML("boletimadm",
+					PublicacaoDJEBL.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao, descrPublicacao));
 
 			gravarMovimentacao(mov);
 
@@ -950,13 +953,14 @@ public class ExBL extends CpBL {
 				}
 			}
 
+			
 			Correio.enviar(
 					SigaBaseProperties
 							.getString("servidor.smtp.usuario.remetente"),
 					emailsAtendentes.toArray(new String[emailsAtendentes.size()]),
 					"Nova solicitação de publicação DJE ("
 							+ mov.getLotaCadastrante().getSiglaLotacao() + ") ",
-					sb.toString(), sbHtml.toString());
+					sb.toString(), sbHtml.toString()); 
 
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -1003,7 +1007,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, final DpLotacao lotaTitular,
-			final Date dtDispPublicacao, final String tipoMateria)
+			final Date dtDispPublicacao, final String tipoMateria, final String lotPublicacao, final String descrPublicacao)
 			throws Exception {
 
 		try {
@@ -1037,7 +1041,7 @@ public class ExBL extends CpBL {
 			mov.setConteudoBlobRTF("boletim",
 					gerador.geraRTFFOP(mob.getExDocumento()));
 			mov.setConteudoBlobXML("boletimadm",
-					PublicacaoDJEBL.gerarXMLPublicacao(mov, tipoMateria));
+					PublicacaoDJEBL.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao, descrPublicacao));
 
 			// Verifica se o documento possui documentos filhos do tipo Anexo
 			if (mob.getExDocumentoFilhoSet() != null) {
@@ -1049,12 +1053,13 @@ public class ExBL extends CpBL {
 			else
 				mov.setNmArqMov("JUD.zip");
 
+
 			try {
 				PublicacaoDJEBL.primeiroEnvio(mov);
 			} catch (Throwable t) {
 				throw new Exception(t.getMessage() + " -- "
 						+ t.getCause().getMessage());
-			}
+			} 
 
 			// mov.setNumTRFPublicacao(numTRF);
 			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(dtDispPublicacao);
@@ -1930,6 +1935,7 @@ public class ExBL extends CpBL {
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
 				mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
 
+		
 				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
 					PublicacaoDJEBL.cancelarRemessaPublicacao(mov);
 

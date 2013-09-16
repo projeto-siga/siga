@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
@@ -8,7 +8,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -26,25 +26,70 @@
 		ExMovimentacaoForm.page.value='';
 		ExMovimentacaoForm.acao.value='aAgendarPublicacao';
 		ExMovimentacaoForm.submit();
-}
+    }
+	function contaLetras() {
+		var i = 256 - tamanho();
+		document.getElementById("Qtd").innerText = 'Restam ' + i + ' caracteres';
+	}
+
+	function tamanho() {
+		nota= new String();
+		nota = this.frm.descrPublicacao.value;
+		return nota.length;		
+	}
+
+	function validar() {
+		var data = document.getElementsByName('dtDispon')[0].value;
+		var i = tamanho();
+		if (data==null || data=="") {			
+			alert("Preencha a data para disponibilizaÃ§Ã£o.");
+			document.getElementById('dt_dispon').focus();		
+		}else {
+			if (i>256) {
+				alert('DescriÃ§Ã£o com mais de 256 caracteres');
+				document.getElementById('descrPublicacao').focus();	
+			}else {
+				if (i<=0) {
+					alert('DescriÃ§Ã£o deve ser preenchida');
+					document.getElementById('descrPublicacao').focus();	
+				}else	
+					frm.submit();
+			}	
+		}
+	}
+
+	function buscaNomeLota(){
+		var siglaLota = $('#lotPublicacao').val();			
+			$.ajax({				     				  
+				  url:'/siga/lotacao/selecionar.action?sigla=' + siglaLota ,					    					   					 
+				  success: function(data) {
+					 var parts = data.split(';');					   
+			    	$('#nomeLota').html(parts[3]);				    
+			 	 }
+			});			
+	}		
+	
+	
 </script>
 
-<!-- A linha abaixo é temporária, pois está presente num dos cabeçalhos  -->
+<!-- A linha abaixo Ã© temporÃ¡ria, pois estÃ¡ presente num dos cabeÃ§alhos  -->
 <div id="carregando" style="position:absolute;top:0px;right:0px;background-color:red;font-weight:bold;padding:4px;color:white;display:none">Carregando...</div>
 
 	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
-			<h2>Agendamento de Publicação - ${mob.siglaEDescricaoCompleta}</h2>
-
-			<div class="gt-content-box gt-for-table">
-
-		<form action="agendar_publicacao_gravar.action"
+		<div class="gt-content clearfix">		
+			<h2>Agendamento de PublicaÃ§Ã£o - ${mob.siglaEDescricaoCompleta}</h2>
+			<div class="gt-content-box gt-for-table">			
+		<form name="frm" action="agendar_publicacao_gravar.action"
 			namespace="/expediente/mov" cssClass="form" method="GET">
 			<ww:token/>
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>
-
+			<ww:if test="${not empty mensagem}">
+				<c:set var="disabled" value="disabled" />				
+			</ww:if>
+			<ww:else>
+				<c:set var="disabled" value="" />
+			</ww:else>
 			<table class="gt-form-table">
 				<colgroup>
 				<col  style="width:30%"/>
@@ -58,7 +103,7 @@
 						<c:set var="disabledTpMat">true</c:set> 
 						<input type="hidden" name="tipoMateria" value="${tipoMateria}" />
 						<tr>
-							<td>Tipo de Matéria:</td>
+							<td>Tipo de MatÃ©ria:</td>
 							<td>
 								<c:choose>
 									<c:when test="${tipoMateria eq 'A'}">
@@ -72,33 +117,54 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de Matéria"  value="${tipoMateria}" disabled="${disabledTpMat}" />
+						<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de MatÃ©ria"  value="${tipoMateria}" disabled="${disabledTpMat}" />
 					</c:otherwise>
 				</c:choose>
 				<ww:textfield name="dtDispon" id="dt_dispon"
 					onblur="javascript:verifica_data(this,true);prever_data();"
-					label="Data para disponibilização" />
+					label="Data para disponibilizaÃ§Ã£o" />
 				<tr>
-					<td>Data de publicação:</td>
+					<td>Data de publicaÃ§Ã£o:</td>
 					<td><div id="dt_publ" /></td>
-				</tr>
+				</tr>				
+				<tr>					
+					<td>LotaÃ§Ã£o de publicaÃ§Ã£o:</td>
+					<td>
+						<ww:if test="${podeAtenderPedidoPubl}">
+							<siga:selecao tema="simple" propriedade="lotaSubscritor" />
+						</ww:if>
+						<ww:else>
+							<ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="LotaÃ§Ã£o de PublicaÃ§Ã£o" onchange="buscaNomeLota()" />
+									&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>
+						</ww:else>
+					</td>					
+				</tr>	
+				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
+							rows="5" cssClass="gt-form-textarea" label="DescriÃ§Ã£o do documento"
+							onkeyup="contaLetras();" />	
+				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>						
 				<tr>
-					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left" /> <input type="button"
+					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left" ${disabled}/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
 				</tr>
 			</table>
-			</form>
+			</form>	
+			<span style="font-weight:bold; color: red">${mensagem}</span>			
 			</div>
 			
+			
 			<br/>
-			<h3>Atenção:</h3>
+			<span style="margin-left: 0.5cm;color: red;"><b>AtenÃ§Ã£o:</b></span>
 			<ul>
 				<li><span style="font-weight:bold">Data para
-				Disponibilização</span> - data em que a matéria efetivamente aparece no
+				DisponibilizaÃ§Ã£o</span> - data em que a matÃ©ria efetivamente aparece no
 				site</li>
-				<li><span style="font-weight:bold">Data de Publicação</span> -
-				a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
+				<li><span style="font-weight:bold">Data de PublicaÃ§Ã£o</span> -
+				a Data de DisponibilizaÃ§Ã£o + 1, conforme prevÃª art. 4Âº, parÃ¡grafo 3Âº
 				da Lei 11419 / 2006</li>
 			</ul>
 </div></div>
+<script type="text/javascript">
+	buscaNomeLota();
+</script>
 </siga:pagina>

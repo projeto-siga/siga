@@ -4,7 +4,7 @@
  *     This file is part of SIGA.
  * 
  *     SIGA is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
+ *     it under the terms of the GNU General public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +60,7 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
@@ -74,6 +76,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
+import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
@@ -101,6 +104,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String assinaturaB64;
 
 	private Boolean copia;
+	
+	private Boolean podeAtenderPedidoPubl;
 
 	private String contentType;
 
@@ -165,6 +170,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private boolean substituicao;
 
 	private DpLotacaoSelecao lotaResponsavelSel;
+	
+	private DpLotacaoSelecao lotaSubscritorSel;	
 
 	private ExMovimentacao mov = new ExMovimentacao();
 
@@ -211,6 +218,32 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String mensagem;
 
 	private Long idPapel;
+	
+	private String lotPublicacao;
+	
+	private String descrPublicacao;
+	
+	private Integer tamMaxDescr;
+
+	public String getDescrPublicacao() {
+		return descrPublicacao;
+	}
+
+	public void setDescrPublicacao(String descrPublicacao) {
+		this.descrPublicacao = descrPublicacao;
+	}
+
+	public String getLotPublicacao() {
+		return lotPublicacao;
+	}
+
+	public void setLotPublicacao(String lotPublicacao) {
+		this.lotPublicacao = lotPublicacao;
+	}
+	
+	public Integer getTamMaxDescr() {
+		return 255 - doc.getDescrDocumento().length();
+	}
 
 	private boolean assinandoAnexosGeral = false;
 
@@ -220,6 +253,22 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public Long getNivelAcesso() {
 		return nivelAcesso;
+	}
+	
+	public Boolean getPodeAtenderPedidoPubl() {
+		return podeAtenderPedidoPubl;
+	}
+
+	public void setPodeAtenderPedidoPubl(Boolean podeAtenderPedidoPubl) {
+		this.podeAtenderPedidoPubl = podeAtenderPedidoPubl;
+	}
+	
+	public DpLotacaoSelecao getLotaSubscritorSel() {
+		return lotaSubscritorSel;
+	}
+
+	public void setLotaSubscritorSel(DpLotacaoSelecao lotaSubscritorSel) {
+		this.lotaSubscritorSel = lotaSubscritorSel;
 	}
 
 	public void setNivelAcesso(Long nivelAcesso) {
@@ -434,6 +483,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
+		setDescrPublicacao(doc.getDescrDocumento());	
+	
+		try{
+			new GeradorRTF().geraRTFFOP(getDoc());
+		}catch (Exception e) {
+			setMensagem("Houve erro na geração do arquivo a ser publicado. "+ e.getMessage()+" Favor entrar em contato com a equipe gestora do DJE.");			
+		}
 
 		return Action.SUCCESS;
 	}
@@ -455,7 +511,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.pedirPublicacao(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor(),
 							mov.getTitular(), mov.getLotaTitular(),
-							mov.getDtDispPublicacao(), getTipoMateria());
+							mov.getDtDispPublicacao(), getTipoMateria(), getLotPublicacao(), getDescrPublicacao());
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -464,7 +520,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aAgendarPublicacao() throws Exception {
+	public String aAgendarPublicacao() throws Exception {		
+		
 		buscarDocumento(true);
 
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO
@@ -482,6 +539,27 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
 
+		if(getDescrPublicacao() == null)
+			setDescrPublicacao(doc.getDescrDocumento());	
+		
+		if(!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(),
+				CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)){
+			this.setPodeAtenderPedidoPubl(false);
+		}else {
+			DpLotacaoSelecao lot = new DpLotacaoSelecao();
+			this.setPodeAtenderPedidoPubl(true);			
+			lot.setId(doc.getSubscritor().getLotacao().getId());
+			lot.buscar();
+			setLotaSubscritorSel(lot);	
+		}	
+		
+		try{
+			new GeradorRTF().geraRTFFOP(getDoc());
+		}catch (Exception e) {
+			setMensagem("Houve erro na geração do arquivo a ser publicado. "+ e.getMessage()+" Favor entrar em contato com a equipe gestora do DJE.");
+			
+		}
+
 		return Action.SUCCESS;
 	}
 
@@ -493,16 +571,25 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
 					"Não foi possível o agendamento de publicação no DJE.");
+		
+		if (getDescrPublicacao().length() > 256)
+			throw new AplicacaoException(
+					"O campo descrição possui mais do que 256 caracteres.");
 
 		validarDataGravacao(mov, false);
+		
+		if (getLotPublicacao() == null) {
+			if (getLotaSubscritorSel().getId() != null) 
+				this.setLotPublicacao(dao().consultar(getLotaSubscritorSel().getId(), 
+						DpLotacao.class, false).getSigla());
+		}
 
 		Ex.getInstance()
 				.getBL()
 				.remeterParaPublicacao(getCadastrante(), getLotaTitular(), mob,
 						dao().dt(), mov.getSubscritor(), mov.getTitular(),
 						getLotaTitular(), mov.getDtDispPublicacao(),
-						getTipoMateria().replaceAll("'", ""));
-
+						getTipoMateria().replaceAll("'", ""), getLotPublicacao(), getDescrPublicacao());	
 		return Action.SUCCESS;
 	}
 
@@ -595,6 +682,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aAtenderPedidoPublicacao() throws Exception {
+		
+		
 		if (!Ex.getInstance()
 				.getConf()
 				.podePorConfiguracao(
@@ -603,7 +692,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO))
 			throw new AplicacaoException("Operação restrita");
 		setItensSolicitados(dao().listarSolicitados(
-				getTitular().getOrgaoUsuario()));
+				getTitular().getOrgaoUsuario()));		
+		
 		return Action.SUCCESS;
 	}
 
@@ -653,7 +743,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 									getLotaTitular(), doque.getMobilGeral(),
 									dao().dt(), getCadastrante(),
 									getCadastrante(), getLotaTitular(),
-									move.getDtDispPublicacao(), stipoMateria);
+									move.getDtDispPublicacao(), stipoMateria, move.getLotaPublicacao(), move.getDescrPublicacao()); 
 				} catch (final Throwable e) {
 					cont++;
 					msgDocumentosErro.append(cont + ")" + doque.getCodigo()
@@ -718,6 +808,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			emailsSolicitantes.add(movPedidoDJE.getCadastrante()
 					.getEmailPessoaAtual());
 
+		
 			Correio.enviar(SigaBaseProperties
 					.getString("servidor.smtp.usuario.remetente"),
 					emailsSolicitantes.toArray(new String[emailsSolicitantes
@@ -725,7 +816,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"Cancelamento de pedido de publicação no DJE ("
 							+ movPedidoDJE.getLotaCadastrante()
 									.getSiglaLotacao() + ") ", sb.toString(),
-					sbHtml.toString());
+					sbHtml.toString()); 
 		}
 
 		return Action.SUCCESS;
@@ -3411,5 +3502,22 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public ExModelo getModelo() {
 		return dao().consultarExModelo(null, "Despacho Automático");
+	}
+	
+	public Map<String, String> getListaLotPubl() throws Exception {
+		
+		Map<String, String> lotacoes = new HashMap<String, String>();
+		String lotSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(this.doc);
+		String lotCadastrante = getCadastrante().getLotacao().getSigla();
+		String lotTitular = getLotaTitular().getSigla();
+		this.setLotPublicacao(lotSubscritor);	
+		lotacoes.put(lotSubscritor,lotSubscritor);	
+		if (!lotSubscritor.equals(lotCadastrante)){
+			lotacoes.put(lotCadastrante,lotCadastrante);
+		}
+		if (!lotSubscritor.equals(lotTitular) && !lotCadastrante.equals(lotTitular)) {
+			lotacoes.put(lotTitular,lotTitular);
+		}	
+		return lotacoes;
 	}
 }

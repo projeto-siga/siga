@@ -209,7 +209,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		this.motivoFechamentoAbertura = motivoFechamentoAbertura;
 	}
 
-
 	@Override
 	public Long getId() {
 		return idSolicitacao;
@@ -229,7 +228,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
 		final Pattern p = Pattern
-		.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
+				.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -321,19 +320,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getCodigo(Long idSolicitacao) {
 		SrSolicitacao solicitacao = new SrSolicitacao();
 		solicitacao = SrSolicitacao.findById(idSolicitacao);
-		
+
 		if (solicitacao.solicitacaoPai != null)
-			return solicitacao.solicitacaoPai.getCodigo() + "." + solicitacao.getNumSequenciaString();
+			return solicitacao.solicitacaoPai.getCodigo() + "."
+					+ solicitacao.getNumSequenciaString();
 
 		String numString = solicitacao.numSolicitacao.toString();
 
 		while (numString.length() < 5)
 			numString = "0" + numString;
 
-		return solicitacao.orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + solicitacao.getAnoEmissao() + "/"
-				+ numString;
+		return solicitacao.orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-"
+				+ solicitacao.getAnoEmissao() + "/" + numString;
 	}
-	
+
 	public String getCodigo() {
 
 		if (solicitacaoPai != null)
@@ -344,8 +344,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		while (numString.length() < 5)
 			numString = "0" + numString;
 
-		return orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao() + "/"
-				+ numString;
+		return orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao()
+				+ "/" + numString;
 	}
 
 	public String getDtRegString() {
@@ -353,7 +353,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		cal.setTime(dtReg);
 		return cal.getTempoTranscorridoString(false);
 	}
-	
+
 	public String getAtributosString() {
 		String s = "";
 		for (SrAtributo att : getAtributoSet()) {
@@ -390,7 +390,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return "";
 	}
-	
+
 	public Long getProximoNumero() {
 		if (orgaoUsuario == null)
 			return 0L;
@@ -526,7 +526,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getSituacaoString() {
 		return getUltimaMovimentacao().getSituacaoString();
 	}
-	
+
 	public String getSituacaoStringSemLota() {
 		try {
 			return getUltimaMovimentacao().getSituacaoStringSemLota();
@@ -547,9 +547,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean isFilha() {
-		return (this.solicitacaoPai !=null);
+		return (this.solicitacaoPai != null);
 	}
-	
+
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
@@ -901,7 +901,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					getAtendenteDesignado(), (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO), 
 					getNumSeqMov());
 	}
-
 
 	private Long getNumSeqMov() {
 		Long numSeqMov = find(
@@ -1279,4 +1278,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		sol.meuMovimentacaoSet.add(mov);
 		sol.meuMovimentacaoSet.add(movIncl);
 	}
+
+	public String getGcTags() {
+		String s = "tags=@servico";
+		if (servico != null)
+			s += servico.getGcTags();
+		if (itemConfiguracao != null)
+			s += itemConfiguracao.getGcTags();
+		return s;
+	}
+
 }

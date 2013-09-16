@@ -25,6 +25,8 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -48,6 +50,7 @@ import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
+import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 
 /**
  * A class that represents a row in the 'EX_MOVIMENTACAO' table. This class may
@@ -62,7 +65,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * 
 	 */
 	private static final long serialVersionUID = 2559924666592487436L;
-
+	
 	private byte[] cacheConteudoBlobMov;
 
 	/**
@@ -115,6 +118,37 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 					.toByteArray(getConteudoBlobMov());
 		return cacheConteudoBlobMov;
 
+	}
+	
+	public String getLotaPublicacao() {
+		Map<String, String> atributosXML = new HashMap<String, String>();	    
+		try{		
+			String xmlString = this.getConteudoXmlString("boletimadm");
+			if (xmlString != null){
+				atributosXML = PublicacaoDJEBL.lerXMLPublicacao(xmlString);
+				return atributosXML.get("UNIDADE");
+			}			
+			return PublicacaoDJEBL.obterUnidadeDocumento(this.getExDocumento());
+		}catch (Exception e){
+			return "Erro na leitura do arquivo XML (lotação de publicação)";
+			
+		}
+		
+	}
+	
+	public String getDescrPublicacao() {
+		Map<String, String> atributosXML = new HashMap<String, String>();
+		try{
+			String xmlString = this.getConteudoXmlString("boletimadm");
+			if (xmlString != null){
+				atributosXML = PublicacaoDJEBL.lerXMLPublicacao(this.getConteudoXmlString("boletimadm"));
+				return atributosXML.get("DESCREXPEDIENTE");
+			}
+			return this.getExDocumento().getDescrDocumento();	
+		}catch (Exception e){
+			return "Erro na leitura do arquivo XML (descrição de publicação)";
+		}
+		
 	}
 
 	@Field(name = "idTpMov", store = Store.COMPRESS)
@@ -473,6 +507,15 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return getConteudoBlob(nome);
 	}
 
+	public String getConteudoXmlString(String nome) throws UnsupportedEncodingException {
+		
+		byte[] xmlByte = this.getConteudoBlobXML(nome);
+		if(xmlByte != null)
+			return new String(xmlByte,"ISO-8859-1");
+		
+		return null;		
+	}
+	
 	public byte[] getConteudoBlobRTF() {
 		return getConteudoBlob("doc.rtf");
 	}

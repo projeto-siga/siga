@@ -1721,7 +1721,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			getMobilPaiSel().buscarPorObjeto(doc.getExMobilPai());
 		}
 
-		if (doc.getTitular() != null
+		if (doc.getTitular() != null && doc.getSubscritor() != null
 				&& !doc.getTitular().getIdPessoa().equals(doc.getSubscritor()
 						.getIdPessoa()) ) {
 			getTitularSel().buscarPorObjeto(doc.getTitular());

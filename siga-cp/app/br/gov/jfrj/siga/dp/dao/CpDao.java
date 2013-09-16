@@ -1868,12 +1868,18 @@ public class CpDao extends ModeloDao {
 
 	}
 
-	public List<DpLotacao> consultarPorIdExterna(String idExterna,Long idOrgaoUsu) {
-		Criteria c = HibernateUtil.getSessao().createCriteria(DpLotacao.class);
-		c.add(Restrictions.eq("ideLotacao", idExterna));
-		c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
-		c.addOrder(Order.desc("dataInicioLotacao"));
-		return c.list();
+	public List<?> consultarFechadosPorIdExterna(Class<?> clazz,String idExterna,Long idOrgaoUsu) {
+		if(clazz==DpLotacao.class){
+			Criteria c = HibernateUtil.getSessao().createCriteria(DpLotacao.class);
+			c.add(Restrictions.eq("ideLotacao", idExterna));
+			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
+			c.add(Restrictions.isNotNull("dataFimLotacao"));
+			c.addOrder(Order.desc("dataInicioLotacao"));
+			return c.list();
+		}
+		
+		
+		return null;
 	}
 
 }

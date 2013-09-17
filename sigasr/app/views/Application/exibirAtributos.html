@@ -5,3 +5,13 @@
 <span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
 </div>
 #{/list}
+
+#{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
+	<div style="margin:0px;" >
+		<span id="gc-ancora"></span>
+	</div>
+	<script type="text/javascript">
+		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?tags=${solicitacao.gcTagAbertura}&estilo=inplace&msgvazio=Ainda não existe uma explicação do que deve ser verificado antes de abrir uma solicitação deste tipo. Por favor, clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.gcTituloAbertura}&ts=${currentTimeMillis}",document.getElementById('gc-ancora'));
+	</script>
+#{/if}
+

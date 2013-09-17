@@ -444,7 +444,7 @@ public class GcInformacao extends GenericModel {
 	}
 
 	public boolean fts(String[] palavras) {
-		String s = arq.titulo + " "
+		String s = arq.titulo + " " + arq.classificacao + " "
 				+ new String(arq.conteudo, Charset.forName("utf-8"));
 		s = s.toLowerCase();
 

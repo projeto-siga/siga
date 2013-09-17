@@ -73,6 +73,7 @@ public class SigaCpSinc {
 	// renato (8)
 
 	private static boolean modoLog = false;
+	private static int maxSinc = -1;
 
 	private String servidor = "";
 
@@ -218,7 +219,19 @@ public class SigaCpSinc {
 				log("");
 				log("");
 				CpDao.getInstance().rollbackTransacao();
-			} else {
+			} else if (maxSinc>0 && list.size()>maxSinc){
+				log("");
+				log("");
+				log("***ATENÇÃO***: Limite de operações por sincronismo excedido!");
+				log("Operações a serem executadas: " + list.size() + "\nOperações permitidas: " +maxSinc);
+				log("Ajuste o paâmetro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
+				log("As alterações não serão efetivadas! Executando rollback...");
+				log("");
+				log("");
+
+				CpDao.getInstance().rollbackTransacao();
+			}else{
+				
 				CpDao.getInstance().commitTransacao();
 				log("Transação confirmada");
 			}
@@ -347,6 +360,10 @@ public class SigaCpSinc {
 		for (String param : Arrays.asList(pars)) {
 			if (param.equals("-modoLog=true")) {
 				modoLog = true;
+			}
+			
+			if(param.startsWith("-maxSinc=")){
+				maxSinc = Integer.valueOf(param.split("=")[1]);
 			}
 		}
 

@@ -389,13 +389,13 @@ public class ExMobilAction extends
 		}
 
 		int offset = 0;
-		int itemPagina = 0;
+		// int itemPagina = 10;
 		if (getP().getOffset() != null) {
 			offset = getP().getOffset();
 		}
-		if (param("itemPagina") != null) {
-			itemPagina = paramInteger("itemPagina");
-		}
+		// if (param("itemPagina") != null) {
+		// itemPagina = paramInteger("itemPagina");
+		// }
 
 		classificacaoSel.buscar();
 		destinatarioSel.buscar();
@@ -422,8 +422,8 @@ public class ExMobilAction extends
 			System.out.println("Consulta dos por filtro: "
 					+ (System.currentTimeMillis() - tempoIni));
 
-			setItens(dao().consultarPorFiltroOtimizado(flt, offset, itemPagina,
-					getTitular(), getLotaTitular()));
+			setItens(dao().consultarPorFiltroOtimizado(flt, offset,
+					getItemPagina(), getTitular(), getLotaTitular()));
 		}
 
 		return Action.SUCCESS;

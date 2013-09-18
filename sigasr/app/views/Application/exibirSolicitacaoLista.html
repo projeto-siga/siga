@@ -1,11 +1,15 @@
 #{extends 'main.html' /} #{set title:'Exibição de solicitação' /}
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<style>
+#sortable table { height: 1.5em; line-height: 1.2em; }
+.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+</style>
 <script>
 $(function() {
-	$( "#sortable" ).sortable();
+	$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
 	$( "#sortable" ).disableSelection();
-	});
+});
 </script>
 
 
@@ -21,7 +25,7 @@ $(function() {
 		</p>
  	
  	<div class="gt-content-box gt-for-table">
-	<table id="sortable"  border="0" class="gt-table-nowrap">
+	<table  id="sortable" border="0" class="gt-table-nowrap">
 			<col width="10%" />
 			<col width="10%" />
 			<col width="20%" />
@@ -46,12 +50,12 @@ $(function() {
 			#{list items:solicitacao, as:'sol'}
 			#{if sol}
 			<form action="@{Application.desassociarLista()}">	
-			<tr>
+			<tr id="${sol.idSolicitacao}">
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 				<input type="radio" name="idSolicitacao" value="${sol.idSolicitacao}">	
 			</td>
 			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
-				${sol.getSolPrioridade(lista)}
+				${lista.getSolicOrd(sol)}
 			</td>
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 						<a href="@{Application.exibir(sol.idSolicitacao)}">

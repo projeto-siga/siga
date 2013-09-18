@@ -456,6 +456,11 @@ public class Application extends SigaApplication {
 		boolean editar = true;
 		render(solicitacao, lista, editar);
 	}
+	
+	public static void teste() {
+	
+		render();
+	}
 
 	public static void exibirListaAssoc(Long id) {
 		
@@ -479,9 +484,8 @@ public class Application extends SigaApplication {
 	public static void associarLista(Long idSolicitacao, Long idLista) throws Exception{
 		
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
-		SrLista lista = new SrLista();
+		SrLista lista = SrLista.findById(idLista);
 		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
-		Long prioridade = lista.getSolicOrd();
 		solicitacao.Movimentar(SrEstado.ANDAMENTO, "Inclusão em lista", null, null, cadastrante(), lotaTitular(), (SrLista) SrLista.findById(idLista), 
 				(SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA), movimentacao.getnumSequencia());
 		List<SrLista> listas =  solicitacao.getListaDisponivel();

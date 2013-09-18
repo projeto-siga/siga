@@ -95,16 +95,16 @@ public class SrLista extends GenericModel {
 		return listas;
 	}
 	
-	public Long getPrioridade(){
-	Long prioridade = find(
-			"select max(mov.prioridade)+1 from SrMovimentacao mov where mov.lista = " + idLista).first();
-	return (prioridade != null) ? prioridade : 1;
-	}
-	
-	public Long getSolicOrd(){
+	public Long setSolicOrd(){
 		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null").fetch();
 		Long prioridade = (long) (mov.size()+1);
 		return prioridade;
+	}
+	
+	public Long getSolicOrd(SrSolicitacao solicitacao){
+		SrMovimentacao mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null and solicitacao = " 
+				+ solicitacao.idSolicitacao).first();
+		return mov.prioridade;
 	}
 	
 	public TreeSet<SrSolicitacao> getSolicitacaoAssociada() {
@@ -116,20 +116,16 @@ public class SrLista extends GenericModel {
 					}
 				});
 		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null").fetch();
-		
 		try {
 			if (mov != null) {
-				for (SrMovimentacao movim : mov)
-				{
+				for (SrMovimentacao movim : mov) {
 					listaCompleta.add(movim.solicitacao);
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-		
-		
-			return listaCompleta;
+				e.printStackTrace();
+			}	
+		return listaCompleta;
 	}
 	
 	public boolean isEmpty() {
@@ -191,7 +187,8 @@ public class SrLista extends GenericModel {
 	public void recalcularPrioridade(Long idLista) throws Exception {
 		
 		SrLista lista = new SrLista();
-		Long prioridade = lista.getPrioridade();
+		//Long prioridade = lista.getSolicOrd();
+		Long prioridade = lista.setSolicOrd();
 		
 	}
 	

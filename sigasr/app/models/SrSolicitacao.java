@@ -1200,8 +1200,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, SrLista lista, SrTipoMovimentacao idTipoMov, Long numSeqMov) throws Exception {
 		//modificado com numsequencia
+		Long prioridade = null;
+		if (lista != null){
+			prioridade = lista.setSolicOrd();
+		}
 		Movimentar(new SrMovimentacao(estado, descricao, atendente,
-                 lotaAtendente, cadastrante, lotaCadastrante, this, lista, idTipoMov, numSeqMov, getSolPrioridade(lista)));
+                 lotaAtendente, cadastrante, lotaCadastrante, this, lista, idTipoMov, numSeqMov, prioridade ));
 }
 	
 	// Todos os métodos Movimentar caem aqui
@@ -1246,13 +1250,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaCompleta;
 	}
 	
-	
-	public Long getSolPrioridade(SrLista lista){
-		Long solPrioridade = find(
-				"select mov.prioridade from SrMovimentacao mov where mov.lista = " + lista.idLista 
-				+ " and mov.solicitacao = " + idSolicitacao + " and mov.dtCancelamento is null").first();
-		return (solPrioridade != null) ? solPrioridade : 1;
-	}
 	
 	public void desassociarLista(SrSolicitacao solicitacao, SrLista lista) throws Exception {
 		SrSolicitacao sol = new SrSolicitacao();

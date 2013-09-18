@@ -442,7 +442,6 @@ public class Application extends SigaApplication {
 	
 	public static void exibirLista(Long id) {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
-		//SrLista lista = new SrLista();
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		List<SrLista> listas =  solicitacao.getListaDisponivel(solicitacao);
 		render(solicitacao, editar, listas);
@@ -481,9 +480,14 @@ public class Application extends SigaApplication {
 		SrLista lista = new SrLista();
 		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
 		Long prioridade = movimentacao.getPrioridade();
-		solicitacao.Movimentar(SrEstado.ANDAMENTO, "Inclusão em lista", null, null, cadastrante(), lotaTitular(), (SrLista) SrLista.findById(idLista), 
-				(SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA), movimentacao.getnumSequencia(),
-				prioridade);
+		SrMovimentacao mov = new SrMovimentacao();
+		mov.estado = SrEstado.ANDAMENTO;
+		mov.descrMovimentacao = "Inclusão em lista";
+		mov.cadastrante = cadastrante();
+		mov.lotaCadastrante = lotaTitular();
+		mov.lista = (SrLista) SrLista.findById(idLista);
+		mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+		mov.prioridade = prioridade;
 		List<SrLista> listas =  solicitacao.getListaDisponivel(solicitacao);
 		render(solicitacao, listas);
 	}
@@ -517,11 +521,10 @@ public class Application extends SigaApplication {
 	}
 
 	public static void movimentacao(SrMovimentacao movimentacao) throws Exception {
-		
-		movimentacao.solicitacao.Movimentar(movimentacao, cadastrante(), 
-					lotaTitular(), movimentacao.tipoMov, movimentacao.getnumSequencia());
-		Long id = movimentacao.solicitacao.idSolicitacao;
-			exibir(id, false);
+		movimentacao.cadastrante = cadastrante();
+		movimentacao.lotaCadastrante = lotaTitular(); 
+		movimentacao.salvar();
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}
 
 	public static void desfazerUltimaMovimentacao(Long id) throws Exception {

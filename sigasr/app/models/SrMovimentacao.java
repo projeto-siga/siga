@@ -36,7 +36,7 @@ import play.db.jpa.Model;
 import util.SigaPlayCalendar;
 
 @Entity
-@Table(name = "SR_MOVIMENTACAO", schema="SIGASR")
+@Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
 public class SrMovimentacao extends GenericModel {
 
 	@Id
@@ -51,7 +51,7 @@ public class SrMovimentacao extends GenericModel {
 	@Column(name = "DT_INI_MOV")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtIniMov;
-	
+
 	@Column(name = "DT_FIM_MOV")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtFimMov;
@@ -66,7 +66,7 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_ATENDENTE")
 	public DpPessoa atendente;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_ATENDENTE", nullable = false)
 	public DpLotacao lotaAtendente;
@@ -74,7 +74,7 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_CADASTRANTE", nullable = false)
 	public DpPessoa cadastrante;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
@@ -82,11 +82,11 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITACAO")
 	public SrSolicitacao solicitacao;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista lista;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_CANCELADOR")
 	public DpPessoa cancelador;
@@ -102,21 +102,20 @@ public class SrMovimentacao extends GenericModel {
 	@Column(name = "DT_MOV_CANCELADORA")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtCancelamento;
-	
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
 	public SrTipoMovimentacao tipoMov;
-	
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOVIMENTACAO_REF")
 	public SrMovimentacao idMovRef;
-	
+
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
-	
+
 	@Column(name = "ID_PRIORIDADE")
 	public Long prioridade;
-	
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -128,72 +127,57 @@ public class SrMovimentacao extends GenericModel {
 			estado = solicitacao.getUltimaMovimentacao().estado;
 	}
 
-	public SrMovimentacao(SrEstado estado, String descricao, DpPessoa atendente,
-			DpLotacao lotaAtendente, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, SrSolicitacao sol, SrLista lista, SrTipoMovimentacao tipoMov, Long numSequencia, Long prioridade) {
-		this.cadastrante = cadastrante;
-		this.lotaCadastrante = lotaCadastrante;
-		this.atendente = atendente;
-		this.lotaAtendente = lotaAtendente;
-		this.descrMovimentacao = descricao;
-		this.estado = estado;
-		this.solicitacao = sol;
-		this.lista = lista;
-		this.tipoMov = tipoMov;
-		this.numSequencia = this.getnumSequencia();
-		this.prioridade = this.getPrioridade();
-	}
-
 	public boolean isCancelado() {
 		return dtCancelamento != null;
 	}
-	
+
 	public boolean isPrimeiraMovimentacao() {
 		SrMovimentacao primeiro = null;
 		for (SrMovimentacao movimentacao : solicitacao.getMovimentacaoSet())
 			primeiro = movimentacao;
 		return (primeiro == null || primeiro.equals(this));
 	}
-	
-	
-	public Long getnumSequencia(){
+
+	public Long getnumSequencia() {
 		numSequencia = find(
-				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao " +
-				"and mov.solicitacao = " + solicitacao.getId()).first();
+				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao "
+						+ "and mov.solicitacao = " + solicitacao.getId())
+				.first();
 		return (numSequencia != null) ? numSequencia : 1;
 	}
-	
-	public Long getPrioridade(){
+
+	public Long getPrioridade() {
 		prioridade = find(
-				"select max(mov.prioridade)+1 from SrMovimentacao mov where mov.lista = " + lista.getId()).first();
+				"select max(mov.prioridade)+1 from SrMovimentacao mov where mov.lista = "
+						+ lista.getId()).first();
 		return (prioridade != null) ? prioridade : 1;
 	}
-	
+
 	public Long getProximaMovimentacao() {
 		Long num = find(
-				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao " +
-				"and mov.solicitacao = " + solicitacao.getId()).first();
-		return (num != null) ? num : 1;
-}
-	
-	public Long getMovimentacaoAtual() {
-		Long num = find(
-				"select max(mov.numSequencia) from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao " +
-				"and mov.solicitacao = " + solicitacao.getId()).first();
+				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao "
+						+ "and mov.solicitacao = " + solicitacao.getId())
+				.first();
 		return (num != null) ? num : 1;
 	}
 
-	
+	public Long getMovimentacaoAtual() {
+		Long num = find(
+				"select max(mov.numSequencia) from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao "
+						+ "and mov.solicitacao = " + solicitacao.getId())
+				.first();
+		return (num != null) ? num : 1;
+	}
+
 	public String getDtIniString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtIniMov);
 		return cal.getTempoTranscorridoString(false);
 	}
-	
+
 	public String getDtIniMovDDMMYYHHMM() {
 		if (dtIniMov != null) {
-			final SimpleDateFormat df = new SimpleDateFormat(
-					"dd/MM/yy HH:mm");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
 			return df.format(dtIniMov);
 		}
 		return "";
@@ -212,7 +196,7 @@ public class SrMovimentacao extends GenericModel {
 			return df.format(dtIniMov);
 		}
 		return "";
-		
+
 	}
 
 	public String getDtCancelamentoDDMMYYYYHHMM() {
@@ -230,11 +214,11 @@ public class SrMovimentacao extends GenericModel {
 	public String getSituacaoString() {
 		return estado.descrEstado + " (" + lotaAtendente.getSigla() + ")";
 	}
-	
+
 	public String getSituacaoStringSemLota() {
 		return estado.descrEstado;
 	}
-	
+
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
@@ -287,6 +271,14 @@ public class SrMovimentacao extends GenericModel {
 	public SrMovimentacao salvar() throws Exception {
 		checarCampos();
 		super.save();
+		// Edson: atualizando o srMovimentacaoSet...
+		solicitacao.refresh();
+		solicitacao.atualizarMarcas(solicitacao);
+		if (isPrimeiraMovimentacao()
+				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.NUNCA
+				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
+						&& estado != SrEstado.FECHADO && estado != SrEstado.POS_ATENDIMENTO))
+			notificar();
 		return this;
 	}
 
@@ -294,7 +286,8 @@ public class SrMovimentacao extends GenericModel {
 		dtCancelamento = new Date();
 		lotaCancelador = lota;
 		cancelador = pessoa;
-		tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
+		tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		salvar();
 	}
 
@@ -324,11 +317,12 @@ public class SrMovimentacao extends GenericModel {
 			return;
 
 		SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
-		
+
 		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento()) {
 			atendente = null;
 			lotaAtendente = solicitacao.getAtendenteDesignado();
-			tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
+			tipoMov = SrTipoMovimentacao
+					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
 		} else if (estado == SrEstado.FECHADO
 				&& solicitacao.temPosAtendenteDesignado()
 				&& !solicitacao.getLotaAtendente().equivale(
@@ -336,12 +330,14 @@ public class SrMovimentacao extends GenericModel {
 			atendente = null;
 			lotaAtendente = solicitacao.getPosAtendenteDesignado();
 			estado = SrEstado.POS_ATENDIMENTO;
-			tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_POS_ATENDIMENTO);
-			
+			tipoMov = SrTipoMovimentacao
+					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_POS_ATENDIMENTO);
+
 		} else if (estado == SrEstado.PRE_ATENDIMENTO) {
 			atendente = null;
 			lotaAtendente = solicitacao.getPreAtendenteDesignado();
-			tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
+			tipoMov = SrTipoMovimentacao
+					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
 		}
 
 		if (!temAtendenteOuLota()) {
@@ -350,20 +346,17 @@ public class SrMovimentacao extends GenericModel {
 		}
 		if (estado == null)
 			estado = anterior.estado;
-		
-		if (isCancelado()){
+
+		if (isCancelado()) {
 			numSequencia = getMovimentacaoAtual();
-		}
-		else
+		} else
 			numSequencia = getProximaMovimentacao();
-		
-		if(solicitacao.getMovimentacaoSolLista(solicitacao, lista) == null){
+
+		if (solicitacao.getMovimentacaoSolLista(solicitacao, lista) == null) {
 			prioridade = 1L;
-		}
-		else {
+		} else {
 			prioridade = lista.getPriorAssociada(lista);
 		}
-			
 
 	}
 

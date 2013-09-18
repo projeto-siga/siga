@@ -486,8 +486,17 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
-		solicitacao.Movimentar(SrEstado.ANDAMENTO, "Inclusão em lista", null, null, cadastrante(), lotaTitular(), (SrLista) SrLista.findById(idLista), 
-				(SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA), movimentacao.getnumSequencia());
+		SrMovimentacao mov = new SrMovimentacao();
+		Long prioridade = null;
+		if (lista != null){
+			prioridade = lista.setSolicOrd();
+		}
+		mov.estado = SrEstado.ANDAMENTO;
+		mov.descrMovimentacao = "Inclusão em lista";
+		mov.cadastrante = cadastrante();
+		mov.lotaCadastrante = lotaTitular();
+		mov.lista = (SrLista) SrLista.findById(idLista);
+		mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 		List<SrLista> listas =  solicitacao.getListaDisponivel();
 		render(solicitacao, listas);
 	}
@@ -522,11 +531,10 @@ public class Application extends SigaApplication {
 	}
 
 	public static void movimentacao(SrMovimentacao movimentacao) throws Exception {
-		
-		movimentacao.solicitacao.Movimentar(movimentacao, cadastrante(), 
-					lotaTitular(), movimentacao.tipoMov, movimentacao.getnumSequencia());
-		Long id = movimentacao.solicitacao.idSolicitacao;
-			exibir(id, false);
+		movimentacao.cadastrante = cadastrante();
+		movimentacao.lotaCadastrante = lotaTitular(); 
+		movimentacao.salvar();
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}
 
 	public static void desfazerUltimaMovimentacao(Long id) throws Exception {

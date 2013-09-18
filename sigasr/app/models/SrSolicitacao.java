@@ -141,7 +141,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
-	
+
 	@Sort(type = SortType.NATURAL)
 	@OneToMany(mappedBy = "solicitacao")
 	public SortedSet<SrMovimentacao> movs;
@@ -159,7 +159,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Transient
 	public java.util.List<SrMarca> marcas;
-	
+
 	@Transient
 	public java.util.List<SrLista> listas;
 
@@ -170,15 +170,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OneToMany(mappedBy = "solicitacaoPai", cascade = CascadeType.PERSIST)
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
-	
+
 	@PostLoad
 	private void onLoad() {
 		marcas = SrMarca.find("solicitacao.id = ?", this.idSolicitacao).fetch();
-		listas = SrLista.find("select lista from SrMovimentacao mov where mov.tipoMov = 3 " +
-				"and mov.dtFimMov is not null and mov.solicitacao = "
-			+ idSolicitacao).fetch(); 
+		listas = SrLista.find(
+				"select lista from SrMovimentacao mov where mov.tipoMov = 3 "
+						+ "and mov.dtFimMov is not null and mov.solicitacao = "
+						+ idSolicitacao).fetch();
 	}
-	
+
 	public SrSolicitacao() {
 
 	}
@@ -472,7 +473,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
-	
+
 	public Set<SrMovimentacao> getMovimentacaoSet(Long tipomov) {
 		if (solicitacaoInicial == null)
 			return null;
@@ -486,12 +487,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrSolicitacao sol : getHistoricoSolicitacao())
 			if (sol.meuMovimentacaoSet != null)
 				for (SrMovimentacao movimentacao : sol.meuMovimentacaoSet)
-						if (movimentacao.tipoMov.idTipoMov == tipomov)
-							listaCompleta.add(movimentacao);
+					if (movimentacao.tipoMov.idTipoMov == tipomov)
+						listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
-	
-	public SrMovimentacao getMovimentacaoSolLista(SrSolicitacao solicitacao, SrLista lista) {
+
+	public SrMovimentacao getMovimentacaoSolLista(SrSolicitacao solicitacao,
+			SrLista lista) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new Comparator<SrMovimentacao>() {
 					@Override
@@ -499,11 +501,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						return a2.dtIniMov.compareTo(a1.dtIniMov);
 					}
 				});
-		String query = "select mov from SrMovimentacao mov where mov.solicitacao = " + solicitacao.idSolicitacao 
-				+ " and mov.lista = " + lista.idLista + " and mov.descrMovimentacao = 'Inclusão em lista' and mov.dtIniMov = (select max(dtIniMov) " 
-				+ "from SrMovimentacao where solicitacao = " + solicitacao.idSolicitacao 	+ " and lista = " + lista.idLista 
+		String query = "select mov from SrMovimentacao mov where mov.solicitacao = "
+				+ solicitacao.idSolicitacao
+				+ " and mov.lista = "
+				+ lista.idLista
+				+ " and mov.descrMovimentacao = 'Inclusão em lista' and mov.dtIniMov = (select max(dtIniMov) "
+				+ "from SrMovimentacao where solicitacao = "
+				+ solicitacao.idSolicitacao
+				+ " and lista = "
+				+ lista.idLista
 				+ " and mov.descrMovimentacao = 'Inclusão em lista')";
-		SrMovimentacao movIncl = (SrMovimentacao) JPA.em().createQuery(query).getSingleResult();
+		SrMovimentacao movIncl = (SrMovimentacao) JPA.em().createQuery(query)
+				.getSingleResult();
 		return (SrMovimentacao) movIncl;
 	}
 
@@ -514,7 +523,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return movimentacao;
 		return null;
 	}
-	
+
 	public DpLotacao getLotaAtendente() {
 		return getUltimaMovimentacao().lotaAtendente;
 	}
@@ -530,8 +539,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getSituacaoStringSemLota() {
 		try {
 			return getUltimaMovimentacao().getSituacaoStringSemLota();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return getUltimaMovimentacao().getSituacaoStringSemLota();
@@ -673,9 +681,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (sol.marcas != null)
 				listaCompleta.addAll(sol.marcas);
 		}
-		/*if (sol.meuMarcaSet != null)
-			listaCompleta.addAll(sol.meuMarcaSet);
-		}*/
+		/*
+		 * if (sol.meuMarcaSet != null) listaCompleta.addAll(sol.meuMarcaSet); }
+		 */
 		return listaCompleta;
 	}
 
@@ -703,25 +711,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean isCancelado() {
 		return temMovimentacao()
-		&& getUltimaMovimentacao().estado == SrEstado.CANCELADO;
-		
+				&& getUltimaMovimentacao().estado == SrEstado.CANCELADO;
+
 	}
 
 	public boolean isFechado() {
 		return temMovimentacao()
-			&& getUltimaMovimentacao().estado == SrEstado.FECHADO;
+				&& getUltimaMovimentacao().estado == SrEstado.FECHADO;
 	}
 
 	public boolean isEmPosAtendimento() {
 		return temMovimentacao()
-		&& getUltimaMovimentacao().estado == SrEstado.POS_ATENDIMENTO;
+				&& getUltimaMovimentacao().estado == SrEstado.POS_ATENDIMENTO;
 	}
 
 	public boolean isEmPreAtendimento() {
 		return temMovimentacao()
 				&& getUltimaMovimentacao().estado == SrEstado.PRE_ATENDIMENTO;
 	}
-	
+
 	public boolean isEmAtendimento() {
 		return !isEmPreAtendimento() && !isEmPosAtendimento() && !isFechado();
 	}
@@ -737,16 +745,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean temMovPosAtendenteDesignado() throws Exception {
 		return (getPosAtendenteDesignado() != null);
 	}
-	
+
 	public boolean temAtendenteDesignado() throws Exception {
 		return (getAtendenteDesignado() != null);
 	}
 
 	public boolean estaCom(DpLotacao lota, DpPessoa pess) {
 		return temMovimentacao()
-		&& ((getUltimaMovimentacao().atendente != null && getUltimaMovimentacao().atendente
-				.equivale(pess)) || getUltimaMovimentacao().lotaAtendente
-				.equivale(lota));
+				&& ((getUltimaMovimentacao().atendente != null && getUltimaMovimentacao().atendente
+						.equivale(pess)) || getUltimaMovimentacao().lotaAtendente
+						.equivale(lota));
 	}
 
 	public boolean isParteDeArvore() {
@@ -840,16 +848,35 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		checarCampos();
 
 		super.salvar();
-		
+
 		if (!temMovimentacao()) {
-			if (fecharAoAbrir)
-				iniciarFechando();
-			else
-				iniciar();
-		if (!isEditado()
-				&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
-				&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
-			notificar();
+			SrMovimentacao mov = new SrMovimentacao();
+			if (fecharAoAbrir) {
+				mov.estado = SrEstado.FECHADO;
+				mov.descrMovimentacao = motivoFechamentoAbertura;
+				mov.lotaAtendente = getPosAtendenteDesignado();
+				mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao
+						.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
+			} else {
+				mov.descrMovimentacao = "Abertura";
+				if (temPreAtendenteDesignado()) {
+					mov.estado = SrEstado.PRE_ATENDIMENTO;
+					mov.lotaAtendente = getPreAtendenteDesignado();
+					mov.tipoMov = SrTipoMovimentacao
+							.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
+
+				} else {
+					mov.estado = SrEstado.ANDAMENTO;
+					mov.lotaAtendente = getAtendenteDesignado();
+					mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao
+							.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
+				}
+			}
+			mov.salvar();
+			if (!isEditado()
+					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
+					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
+				notificar();
 		}
 	}
 
@@ -859,7 +886,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throw new Exception("Cadastrante não pode ser nulo");
 
 		dtReg = new Date();
-		
+
 		if (lotaCadastrante == null)
 			lotaCadastrante = cadastrante.getLotacao();
 
@@ -891,29 +918,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							+ "configuração e/ou serviço");
 	}
 
-	public void iniciar() throws Exception {
-		if (temPreAtendenteDesignado())
-			Movimentar(SrEstado.PRE_ATENDIMENTO,"Abertura", 
-					getPreAtendenteDesignado(), (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO),
-					getNumSeqMov());
-		else
-			Movimentar(SrEstado.ANDAMENTO, "Abertura",
-					getAtendenteDesignado(), (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO), 
-					getNumSeqMov());
-	}
-
 	private Long getNumSeqMov() {
 		Long numSeqMov = find(
 					"select max(numSequencia)+1 from SrMovimentacao where solicitacao.idSolicitacao = "
 							+ idSolicitacao).first();
 			return (numSeqMov != null) ? numSeqMov : 1;
-	}
-	
-	public void iniciarFechando() throws Exception {
-		Movimentar(SrEstado.FECHADO, motivoFechamentoAbertura,
-				getPosAtendenteDesignado(), 
-				(SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO), 
-				getNumSeqMov());
 	}
 
 	public void desfazerUltimaMovimentacao(DpPessoa cadastrante,
@@ -966,7 +975,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		for (SrMarca e : excluir) {
 			if (e.solicitacao.marcas == null) {
-					e.solicitacao.marcas = new ArrayList<SrMarca>();
+				e.solicitacao.marcas = new ArrayList<SrMarca>();
 			}
 			e.solicitacao.marcas.remove(e);
 			e.delete();
@@ -1025,7 +1034,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		ib = null;
 		ia = null;
 	}
-	
+
 	private static void acrescentarMarca(SortedSet<SrMarca> set,
 			SrSolicitacao sol, Long idMarcador, Date dtIni, Date dtFim,
 			DpPessoa pess, DpLotacao lota) {
@@ -1040,7 +1049,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mar.setDtFimMarca(dtFim);
 		set.add(mar);
 	}
-	
+
 	private static SortedSet<SrMarca> calcularMarcadores(SrSolicitacao sol) {
 		SortedSet<SrMarca> set = new TreeSet<SrMarca>();
 
@@ -1051,60 +1060,87 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (mov.isCancelado())
 					continue;
 				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO)
-					acrescentarMarca(set, sol, CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
-							mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
+					acrescentarMarca(set, sol,
+							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
 				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO, mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
+							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
 				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_PRE_ATENDIMENTO, mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
+							CpMarcador.MARCADOR_SOLICITACAO_PRE_ATENDIMENTO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
 				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_POS_ATENDIMENTO)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO, mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
+							CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
 				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO, mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
+							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
 				if (e == SrEstado.ANDAMENTO)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO, mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
+							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
 				if (e == SrEstado.PENDENTE)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
+							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
 				if (e == SrEstado.FECHADO)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_FECHADO, mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
+							CpMarcador.MARCADOR_SOLICITACAO_FECHADO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
 				if (e == SrEstado.CANCELADO)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_CANCELADO, mov.dtIniMov, null, mov.cadastrante, mov.lotaCadastrante);
-				}
+							CpMarcador.MARCADOR_SOLICITACAO_CANCELADO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
+			}
 		}
-		if (sol.getHisDtFim() != null) { //quando preencho dthisfim da solicitação??? Quando a situação selecionada é Fechado. 
+		if (sol.getHisDtFim() != null) { // quando preencho dthisfim da
+											// solicitação??? Quando a situação
+											// selecionada é Fechado.
 			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_CANCELADO, sol.dtReg, null, sol.cadastrante, sol.lotaCadastrante);
+					CpMarcador.MARCADOR_SOLICITACAO_CANCELADO, sol.dtReg, null,
+					sol.cadastrante, sol.lotaCadastrante);
 		} else {
 			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO, sol.dtReg, null, sol.cadastrante, sol.lotaCadastrante);
+					CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO, sol.dtReg,
+					null, sol.cadastrante, sol.lotaCadastrante);
 		}
 		if (!sol.isFechado() && !sol.isCancelado()) {
-		 	acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null, null, sol.cadastrante, sol.lotaCadastrante);
 			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null, null, sol.solicitante, sol.lotaSolicitante);
+					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
+					null, sol.cadastrante, sol.lotaCadastrante);
+			acrescentarMarca(set, sol,
+					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
+					null, sol.solicitante, sol.lotaSolicitante);
 		}
-	
+
 		if (!sol.isFechado() && !sol.isCancelado()) {
 			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null, null, sol.cadastrante, sol.lotaCadastrante);
+					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
+					null, sol.cadastrante, sol.lotaCadastrante);
 			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null, null, sol.solicitante, sol.lotaSolicitante);
+					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
+					null, sol.solicitante, sol.lotaSolicitante);
 		}
 		return set;
 	}
-	
+
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {
 		StringBuilder sb = new StringBuilder();
-		// Marcacoes para a propria lotacao e para a propria pessoa ou sem informacao de pessoa
+		// Marcacoes para a propria lotacao e para a propria pessoa ou sem
+		// informacao de pessoa
 		for (SrMarca mar : marcas) {
 			if (((mar.getDpLotacaoIni() != null && lota.getIdInicial().equals(
 					mar.getDpLotacaoIni().getIdInicial())) || mar
@@ -1178,52 +1214,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
-	// Usado aqui pela própria solicitação
-	public void Movimentar(SrEstado estado, String descricao,
-			DpLotacao lotaAtendente, SrTipoMovimentacao idTipoMov, Long numSeqMov) throws Exception {
-		Movimentar(estado, descricao, null, lotaAtendente, this.cadastrante,
-				this.lotaCadastrante, null, idTipoMov, numSeqMov);
-	}
-	
-	//Usado por Application
-	public void Movimentar(SrMovimentacao movimentacao, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, SrTipoMovimentacao idTipoMov, Long numSeqMov ) throws Exception {
-		movimentacao.cadastrante = cadastrante;
-		movimentacao.lotaCadastrante = lotaCadastrante;
-		movimentacao.tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
-		numSeqMov = movimentacao.getnumSequencia();
-		//prioridade = movimentacao.solicitacao.listas.set(index, element);
-		Movimentar(movimentacao);
-	}	
-	
-	public void Movimentar(SrEstado estado, String descricao,
-			DpPessoa atendente, DpLotacao lotaAtendente, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, SrLista lista, SrTipoMovimentacao idTipoMov, Long numSeqMov) throws Exception {
-		//modificado com numsequencia
-		Long prioridade = null;
-		if (lista != null){
-			prioridade = lista.setSolicOrd();
-		}
-		Movimentar(new SrMovimentacao(estado, descricao, atendente,
-                 lotaAtendente, cadastrante, lotaCadastrante, this, lista, idTipoMov, numSeqMov, prioridade ));
-}
-	
-	// Todos os métodos Movimentar caem aqui
-	public void Movimentar(SrMovimentacao movimentacao) { // throws Exception {
-		try {
-			movimentacao.salvar();
-			refresh();
-			atualizarMarcas(movimentacao.solicitacao);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (!movimentacao.isPrimeiraMovimentacao()
-				&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
-				&& !(formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
-						&& movimentacao.estado != SrEstado.FECHADO && movimentacao.estado != SrEstado.POS_ATENDIMENTO))
-			movimentacao.notificar();
-	}
-
 	public List<SrLista> getListaDisponivel() {
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
@@ -1249,29 +1239,30 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return listaCompleta;
 	}
-	
-	
+
 	public void desassociarLista(SrSolicitacao solicitacao, SrLista lista) throws Exception {
 		SrSolicitacao sol = new SrSolicitacao();
 		sol.meuMovimentacaoSet = solicitacao.getMovimentacaoSet();
-		SrMovimentacao movIncl = (SrMovimentacao) getMovimentacaoSolLista(solicitacao, lista);
+		SrMovimentacao movIncl = (SrMovimentacao) getMovimentacaoSolLista(
+				solicitacao, lista);
 		SrMovimentacao mov = new SrMovimentacao();
 		mov.cadastrante = solicitacao.cadastrante;
 		mov.lotaCadastrante = solicitacao.lotaCadastrante;
-		mov.tipoMov = SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		mov.lista = null;
 		mov.prioridade = getMovimentacaoSolLista(solicitacao, lista).prioridade;
 		mov.solicitacao = solicitacao;
 		mov.numSequencia = solicitacao.getNumSeqMov();
 		mov.idMovRef = movIncl;
-		solicitacao.Movimentar(mov);
+		mov.salvar();
 		movIncl.dtCancelamento = new Date();
 		movIncl.prioridade = null;
 		movIncl.idmovCanceladora = mov;
 		movIncl.save();
-		//JPA.em().flush();
-		//JPA.em().getTransaction().commit();
+		// JPA.em().flush();
+		// JPA.em().getTransaction().commit();
 		sol.meuMovimentacaoSet.add(mov);
 		sol.meuMovimentacaoSet.add(movIncl);
 	}

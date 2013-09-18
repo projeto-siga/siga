@@ -5,12 +5,12 @@
  	#{if listaSolicitacao}
 	<div class="gt-content-box gt-for-table">
 	<table border="0" class="gt-table-nowrap">
-			<col width="20%" />
+			<col width="15%" />
+    		<col width="30%" />
+    		<col width="10%" />
+    		<col width="10%" />
+    		<col width="15%" />
     		<col width="20%" />
-    		<col width="15%" />
-    		<col width="15%" />
-    		<col width="15%" />
-    		<col width="15%" />
     		<thead>
 				<tr class="gt-celula-nowrap">
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
@@ -36,14 +36,14 @@
 			</td>
 				
 			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;" >
-			#{selecionado sigla:sol.solicitante.descricaoIniciaisMaiusculas + ',' + sol.lotaSolicitante.siglaLotacao, descricao:sol.solicitante.descricaoIniciaisMaiusculas + ',' + sol.lotaSolicitante.siglaLotacao/},
-			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.siglaLotacao /}
+			#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
+			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
 			</td>
 			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 			#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
 			</td>						
 			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				<b>${sol?.situacaoStringSemLota},${sol?.lotaAtendente.siglaLotacao}</b></td>
+				<b>${sol?.situacaoStringSemLota}, ${sol?.lotaAtendente.siglaLotacao}</b></td>
 			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 				${sol.ultimaMovimentacao.descrMovimentacao}
 			</tr>		

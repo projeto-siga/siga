@@ -1531,7 +1531,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 */
 	public boolean podeCriarVolume(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) {
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 
 		if (!mob.doc().isProcesso())
 			return false;
@@ -1539,6 +1539,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getUltimoVolume() != null
 				&& (mob.doc().getUltimoVolume().isEmTransito() || mob.doc().getUltimoVolume().isArquivado()))
 			return false;
+		
+		if (!podeMovimentar(titular, lotaTitular, mob))
+			return false;		
 		
 		if (mob.doc().getDtFechamento() != null
 				&& mob.doc().getUltimoVolume().isEncerrado()) {

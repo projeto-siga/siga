@@ -294,8 +294,12 @@ public class SrMovimentacao extends GenericModel {
 			throw new Exception("Cadastrante não pode ser nulo");
 
 		dtIniMov = new Date();
-
+		
 		checarCamposConsiderandoSolicitacao();
+
+		if (tipoMov == null)
+			tipoMov = SrTipoMovimentacao
+			.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO); 
 
 		if (atendente == null && lotaAtendente == null)
 			throw new Exception("Atendente não pode ser nulo");

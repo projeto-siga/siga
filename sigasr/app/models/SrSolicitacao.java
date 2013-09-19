@@ -872,6 +872,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
 				}
 			}
+			mov.solicitacao = this;
+			mov.cadastrante = cadastrante;
+			mov.lotaCadastrante = lotaCadastrante;
+			mov.numSequencia = mov.getnumSequencia();
 			mov.salvar();
 			if (!isEditado()
 					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA

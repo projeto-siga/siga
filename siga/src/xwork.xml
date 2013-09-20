@@ -285,7 +285,7 @@
 		</action>
 		<action name="listar" class="br.gov.jfrj.siga.libs.webwork.CpOrgaoAction"
 			method="aListar">
-			<result>/paginas/orgao/lista_orgao.jsp</result>
+			<result>/paginas/orgao/lista.jsp</result>
 		</action>
 		<action name="excluir" class="br.gov.jfrj.siga.libs.webwork.CpOrgaoAction"
 			method="aExcluir">
@@ -295,7 +295,7 @@
 		</action>
 		<action name="editar" method="aEditar"
 			class="br.gov.jfrj.siga.libs.webwork.CpOrgaoAction">
-			<result>/paginas/orgao/lista_orgao.jsp</result>
+			<result>/paginas/orgao/edita.jsp</result>
 		</action>
 		<action name="editar_gravar" method="aEditarGravar"
 			class="br.gov.jfrj.siga.libs.webwork.CpOrgaoAction">			

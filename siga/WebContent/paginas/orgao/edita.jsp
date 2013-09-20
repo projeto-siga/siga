@@ -21,19 +21,14 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">		
-
-
 		<form action="editar_gravar.action">
 		<input type="hidden" name="postback" value="1" /> <ww:hidden
 			name="id" /> <c:set var="dataFim" value="" />
-		<h1>Cadastro de configuração <c:if
-			test="${not empty configuracao}">
-			para ${configuracao.cpTipoConfiguracao.dscTpConfiguracao}
-		</c:if></h1>
+		<h1>Cadastro de orgão</h1>
 		<div class="gt-content-box gt-for-table">
 		<table class="gt-form-table" width="100%">
 			<tr class="header">
-				<td colspan="2">Dados da configuração</td>
+				<td colspan="2">Dados do Orgão </td>
 			</tr>
 			<tr>
 				<td><b>Tipo de Configuração</b></td>

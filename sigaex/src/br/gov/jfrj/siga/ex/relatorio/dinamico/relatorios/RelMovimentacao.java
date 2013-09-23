@@ -15,6 +15,7 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.hibernate.Query;
 
+import ar.com.fdvs.dj.domain.AutoText;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
@@ -51,7 +52,7 @@ public class RelMovimentacao extends RelatorioTemplate {
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
-
+		this.addAutoText("Período: " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString(), AutoText.POSITION_HEADER,(byte) RelatorioRapido.ESQUERDA,200);
 		this.setTitle("Relatório de Movimentações");
 		this.addColuna("Documento", 25, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Data de Movimento", 15, RelatorioRapido.ESQUERDA, false);

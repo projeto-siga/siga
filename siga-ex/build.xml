@@ -672,4 +672,17 @@
             <report format="frames" todir="${junit.output.dir}"/>
         </junitreport>
     </target>
+	
+	<target name="instrument" depends=""  description="Instumentation for Hibernate Model Classes" >
+	    <taskdef name="instrument" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
+	        <classpath path="build/classes"/>
+	        <classpath refid="siga-ex.classpath"/>
+	    </taskdef>
+
+	    <instrument verbose="true">
+	        <fileset dir="build/classes/br/gov/jfrj/siga/ex">
+	            <include name="*.class"/>
+	        </fileset>
+	    </instrument>
+	</target>
 </project>

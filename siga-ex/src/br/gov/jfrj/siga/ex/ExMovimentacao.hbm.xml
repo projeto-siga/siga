@@ -28,7 +28,7 @@
 			type="long" />
 		<property name="pagPublicacao" column="PAG_PUBLICACAO" type="java.lang.String" />
 		<property name="conteudoBlobMov" column="CONTEUDO_BLOB_MOV"
-			type="java.sql.Blob" />
+			type="java.sql.Blob" lazy="true" />
 
 		<property name="nmArqMov" column="NM_ARQ_MOV" type="string" />
 		<property name="conteudoTpMov" column="CONTEUDO_TP_MOV" type="string" />

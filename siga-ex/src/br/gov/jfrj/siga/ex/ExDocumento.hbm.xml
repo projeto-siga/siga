@@ -46,7 +46,7 @@
   <!--<property name="fgPessoal" column="FG_PESSOAL" type="string" />!-->
   <property column="OBS_ORGAO_DOC" generated="never" lazy="false"
    name="obsOrgao" type="string"/>
-  <property column="CONTEUDO_BLOB_DOC" generated="never" lazy="false"
+  <property column="CONTEUDO_BLOB_DOC" generated="never" lazy="true"
    name="conteudoBlobDoc" type="java.sql.Blob"/>
   <property column="DSC_CLASS_DOC" generated="never" lazy="false"
    name="descrClassifNovo" type="java.lang.String"/>

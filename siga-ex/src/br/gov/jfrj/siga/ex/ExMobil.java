@@ -20,7 +20,6 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,7 @@ import javax.persistence.Table;
 import org.apache.log4j.Logger;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -52,21 +52,6 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(ExMobil.class);
-
-	private class CronologiaComparator implements Comparator<ExMovimentacao> {
-
-		public int compare(ExMovimentacao o1, ExMovimentacao o2) {
-			try {
-				int i = o2.getDtIniMov().compareTo(o1.getDtIniMov());
-				if (i != 0)
-					return i;
-				i = o2.getIdMov().compareTo(o1.getIdMov());
-				return i;
-			} catch (final Exception ex) {
-				return 0;
-			}
-		}
-	}
 
 	/**
 	 * Retorna A última movimentação de um Mobil.

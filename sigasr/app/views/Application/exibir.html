@@ -5,9 +5,9 @@ function carregarAtendente(){
 	frm = document.getElementById('formAndamento');
 	params = '';
 	for (i = 0; i < frm.length; i++){
-		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+		params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 	}
-	PassAjaxResponseToFunction('@{Application.exibirAtendente()}', 'carregouAtendente', null, false, params);
+	PassAjaxResponseToFunction('@{Application.exibirAtendente()}?' + params, 'carregouAtendente', null, false, null);
 }
 function carregouAtendente(response, param){
 	var div = document.getElementById('divAtendente');

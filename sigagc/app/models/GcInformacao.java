@@ -437,6 +437,8 @@ public class GcInformacao extends GenericModel {
 	}
 
 	public boolean isContemArquivos() {
+		if (movs == null)
+			return false;
 		for (GcMovimentacao m : movs)
 			if (m.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO)
 				return true;

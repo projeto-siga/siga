@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -62,6 +61,7 @@ import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
+import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
@@ -1783,24 +1783,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		mobilInvertido.addAll(getExMobilSet());
 
 		return mobilInvertido;
-	}
-
-	private class TipoMobilComparatorInverso implements Comparator<ExMobil> {
-
-		public int compare(ExMobil o1, ExMobil o2) {
-			if (o1.getExTipoMobil().getIdTipoMobil() > o2.getExTipoMobil()
-					.getIdTipoMobil())
-				return -1;
-			else if (o1.getExTipoMobil().getIdTipoMobil() < o2.getExTipoMobil()
-					.getIdTipoMobil())
-				return 1;
-			else if (o1.getNumSequencia() > o2.getNumSequencia())
-				return -1;
-			else if (o1.getNumSequencia() < o2.getNumSequencia())
-				return 1;
-			else
-				return 0;
-		}
 	}
 
 	/**

@@ -482,21 +482,23 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void associarLista(Long idSolicitacao, Long idLista) throws Exception{
-		
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
 		SrMovimentacao mov = new SrMovimentacao();
 		Long prioridade = null;
 		if (lista != null){
-			prioridade = lista.setSolicOrd();
+			mov.prioridade = lista.setSolicOrd();
 		}
+		//sugestão do Renato: colocar em um método movimentar.
+		mov.solicitacao = solicitacao;
 		mov.estado = SrEstado.ANDAMENTO;
 		mov.descrMovimentacao = "Inclusão em lista";
 		mov.cadastrante = cadastrante();
 		mov.lotaCadastrante = lotaTitular();
 		mov.lista = (SrLista) SrLista.findById(idLista);
 		mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+		mov.salvar();
 		List<SrLista> listas =  solicitacao.getListaDisponivel();
 		render(solicitacao, listas);
 	}

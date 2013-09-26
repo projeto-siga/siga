@@ -26,9 +26,11 @@ import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.PKIXCertPathChecker;
 import java.security.cert.PKIXCertPathValidatorResult;
 import java.security.cert.PKIXParameters;
 import java.security.cert.X509Certificate;
@@ -37,6 +39,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.bouncycastle.jce.provider.X509CRLObject;
@@ -50,6 +53,7 @@ import org.bouncycastle.jce.provider.X509CRLObject;
  * @author mparaiso
  */
 public class X509ChainValidator {
+	private static final String XCN_OID_ENHANCED_KEY_USAGE = "2.5.29.37";
 	/** */
 	private Vector<X509Certificate> certChain;
 
@@ -178,6 +182,31 @@ public class X509ChainValidator {
 			final CertPath cp = cf.generateCertPath(this.certChain);
 
 			final PKIXParameters params = new PKIXParameters(trustedAnchors);
+			params.addCertPathChecker(new PKIXCertPathChecker() {
+
+				@Override
+				public void init(boolean forward)
+						throws CertPathValidatorException {
+				}
+
+				@Override
+				public boolean isForwardCheckingSupported() {
+					return false;
+				}
+
+				@Override
+				public Set<String> getSupportedExtensions() {
+					Set<String> s = new TreeSet<String>();
+					s.add(XCN_OID_ENHANCED_KEY_USAGE);
+					return s;
+				}
+
+				@Override
+				public void check(Certificate cert,
+						Collection<String> unresolvedCritExts)
+						throws CertPathValidatorException {
+				}
+			});
 
 			params.setExplicitPolicyRequired(false);// Nao obrigatorio, pois
 			// false e o default

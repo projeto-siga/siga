@@ -119,8 +119,9 @@ public class X509ChainValidator {
 	 * certificado deve ser o certificado a ser autenticado, seguido do
 	 * certificado do seu emissor (AC Intermediária) e assim por diante.
 	 * 
-	 * @param certificados -
-	 *            Cadeia de certificados completa, incluindo o certificado raiz.
+	 * @param certificados
+	 *            - Cadeia de certificados completa, incluindo o certificado
+	 *            raiz.
 	 * @return A cadeia de certificados sem o certificado raiz.
 	 */
 	@SuppressWarnings("unchecked")
@@ -191,7 +192,7 @@ public class X509ChainValidator {
 
 				@Override
 				public boolean isForwardCheckingSupported() {
-					return false;
+					return true;
 				}
 
 				@Override
@@ -205,6 +206,8 @@ public class X509ChainValidator {
 				public void check(Certificate cert,
 						Collection<String> unresolvedCritExts)
 						throws CertPathValidatorException {
+					if (unresolvedCritExts.contains(XCN_OID_ENHANCED_KEY_USAGE))
+						unresolvedCritExts.remove(XCN_OID_ENHANCED_KEY_USAGE);
 				}
 			});
 
@@ -232,7 +235,7 @@ public class X509ChainValidator {
 
 			params.setTrustAnchors(this.trustedAnchors);
 			params.setDate(dtSigned);
-			
+
 			final CertPathValidator cpv = CertPathValidator.getInstance("PKIX",
 					"BC");
 			// CertPathValidator cpv = CertPathValidator.getInstance("PKIX");
@@ -281,8 +284,8 @@ public class X509ChainValidator {
 	 * Por padrão a verificação de CRLs fica desabilitada. Para habilitá-la é
 	 * necessário setar checkCRL(true)
 	 * 
-	 * @param checkCRL -
-	 *            True para verificar as CRLs da cadeia de certificados
+	 * @param checkCRL
+	 *            - True para verificar as CRLs da cadeia de certificados
 	 */
 	public void checkCRL(final boolean checkCRL) {
 		this.checkCRL = checkCRL;

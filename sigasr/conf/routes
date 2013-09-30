@@ -26,7 +26,10 @@ GET     /public/                                staticDir:public
 *		/solicitacao/exibirServico 						Application.exibirServico
 *		/solicitacao/gravar 							Application.gravar
 *		/solicitacao/exibirAtendente					Application.exibirAtendente
-*		/solicitacao/movimentacao	    				Application.movimentacao
+*		/solicitacao/darAndamento		    			Application.darAndamento
+*		/solicitacao/fechar				    			Application.fechar
+*		/solicitacao/finalizarPreAtendimento			Application.finalizarPreAtendimento
+*		/solicitacao/finalizarPosAtendimento			Application.finalizarPosAtendimento
 *		/solicitacao/relSolicitacoes  					Application.relSolicitacoes
 *		/solicitacao/relSolicitacoes/gerar  			Application.grelSolicitacoes
 *		/solicitacao/relTransferencias 					Application.relTransferencias

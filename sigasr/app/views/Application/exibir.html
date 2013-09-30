@@ -23,11 +23,12 @@ function carregouAtendente(response, param){
 		<h2> ${solicitacao.codigo}</h2>
 		<h3 style="margin-bottom: 0px;">${solicitacao.itemConfiguracao?.descricao} - ${solicitacao.servico?.descricao}</h3>
 	   	<p class="gt-table-action-list">
-			#{if editar} <a class="once"
+			#{if solicitacao.podeEditar(lotaTitular, cadastrante)} <a class="once"
 				href="@{Application.editar(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/pencil.png"
 				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
-			#{if criarFilha} <a class="once"
+			#{if solicitacao.podeCriarFilha(lotaTitular,
+				cadastrante)} <a class="once"
 				href="@{Application.criarFilha(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/arrow_divide.png"
 				style="margin-right: 5px;">Criar solicitação filha</a>&nbsp;&nbsp;&nbsp;
@@ -41,6 +42,26 @@ function carregouAtendente(response, param){
 				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Definir Lista</a>&nbsp;&nbsp;&nbsp;
+			<a class="once"
+				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				src="/siga/css/famfamfam/icons/text_list_numbers.png"
+				style="margin-right: 5px;">Fechar</a>&nbsp;&nbsp;&nbsp;
+			<a class="once"
+				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				src="/siga/css/famfamfam/icons/text_list_numbers.png"
+				style="margin-right: 5px;">Finalizar Pré-atendimento</a>&nbsp;&nbsp;&nbsp;
+			<a class="once"
+				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				src="/siga/css/famfamfam/icons/text_list_numbers.png"
+				style="margin-right: 5px;">Finalizar Pós-atendimento</a>&nbsp;&nbsp;&nbsp;
+			<a class="once"
+				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				src="/siga/css/famfamfam/icons/text_list_numbers.png"
+				style="margin-right: 5px;">Cancelar</a>&nbsp;&nbsp;&nbsp;
+			<a class="once"
+				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				src="/siga/css/famfamfam/icons/text_list_numbers.png"
+				style="margin-right: 5px;">Deixar Pendente</a>&nbsp;&nbsp;&nbsp;
 		</p>
 		<div class="gt-content-box">
 					<p style="font-size: 9pt; padding: 7px 10px; margin-bottom: 0px;" id="descrSolicitacao">
@@ -54,12 +75,12 @@ function carregouAtendente(response, param){
 
 		<h3 style="padding-top: 25px;">Próxima Movimentação</h3>
 		<div class="gt-content-box gt-form">
-		<form action="@{Application.movimentacao()}" method="post" enctype="multipart/form-data">
+		<form action="@{Application.darAndamento()}" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 				value="${movimentacao.solicitacao.idSolicitacao}"> #{if
-			movimentarPlenamente}
+			solicitacao.estaCom(lotaTitular, cadastrante)}
 			<div class="gt-form-row gt-width-66">
-				<label>Situação</label> #{select 'movimentacao.estado', items:estados,
+				<label>Situação</label> #{select 'movimentacao.estado', items:solicitacao.estadosSelecionaveis,
 				labelProperty:'descrEstado', value:movimentacao.estado,
 				valueProperty:Estado, onchange:'carregarAtendente();'} #{/select}
 			</div>
@@ -196,9 +217,10 @@ function carregouAtendente(response, param){
 			</thead>
 
 			<tbody>
-				#{list items:movimentacoes, as:'movimentacao'}
+				#{list items:solicitacao.getMovimentacaoSet(considerarCancelados), as:'movimentacao'}
 				<tr id="linha${movimentacao.idMovimentacao}" 
 				#{if movimentacao.cancelado} class="disabled" #{/if} 
+				#{set desfazerMovimentacao: solicitacao.podeDesfazerMovimentacao(lotaTitular, cadastrante) /}
 				#{if desfazerMovimentacao && (!movimentacao.cancelado && (movimentacao.idMovimentacao == solicitacao.ultimaMovimentacao.idMovimentacao))} 
 					onmouseover="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel.png';"
 					onmouseout="var img = document.getElementById('imgCancelar'); if (img) img.src='/siga/css/famfamfam/icons/cancel_gray.png';"

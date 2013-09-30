@@ -852,24 +852,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (!temMovimentacao()) {
 			SrMovimentacao mov = new SrMovimentacao();
 			if (fecharAoAbrir) {
-				mov.estado = SrEstado.FECHADO;
 				mov.descrMovimentacao = motivoFechamentoAbertura;
 				mov.lotaAtendente = getPosAtendenteDesignado();
-				mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao
-						.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
+				mov.tipoMov = SrTipoMovimentacao
+						.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
+				mov.estado = SrEstado.FECHADO;
 			} else {
 				mov.descrMovimentacao = "Abertura";
+				mov.tipoMov = SrTipoMovimentacao
+						.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
 				if (temPreAtendenteDesignado()) {
-					mov.estado = SrEstado.PRE_ATENDIMENTO;
 					mov.lotaAtendente = getPreAtendenteDesignado();
-					mov.tipoMov = SrTipoMovimentacao
-							.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
-
+					mov.estado = SrEstado.PRE_ATENDIMENTO;
 				} else {
 					mov.estado = SrEstado.ANDAMENTO;
 					mov.lotaAtendente = getAtendenteDesignado();
-					mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao
-							.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
 				}
 			}
 			mov.salvar();

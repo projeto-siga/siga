@@ -927,8 +927,10 @@ public class ExBL extends CpBL {
 					CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO);
 
 			ArrayList<String> emailsAtendentes = new ArrayList<String>();
-
+			Date hoje = new Date(); 
 			for (CpConfiguracao cpConf : atendentes) {
+				if (!cpConf.ativaNaData(hoje)) 
+					   continue;			
 				if (!(cpConf instanceof ExConfiguracao))
 					continue;
 				ExConfiguracao conf = (ExConfiguracao) cpConf;

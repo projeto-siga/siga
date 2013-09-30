@@ -33,8 +33,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -42,6 +44,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Criteria;
@@ -49,6 +52,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.DefaultNamingStrategy;
 import org.hibernate.criterion.Order;
@@ -171,6 +175,57 @@ public class CpDao extends ModeloDao {
 		final List<CpServico> l = query.list();
 		if (l.size() != 1)
 			return null;
+		return l.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public CpServico consultarCpServicoPorChave(String chave) {
+		Cache cache= CacheManager.getInstance().getCache(CACHE_CORPORATIVO);
+		if (cache == null) {
+			CacheManager manager = CacheManager.getInstance();
+			manager.addCache(CACHE_CORPORATIVO);
+			cache = manager.getCache(CACHE_CORPORATIVO);
+			CacheConfiguration config;
+			config = cache.getCacheConfiguration();
+			config.setEternal(true);
+			config.setMaxElementsInMemory(10000);
+			config.setMaxElementsOnDisk(1000000);
+		}
+		Element element;
+		if ((element = cache.get(chave)) != null) {
+			return (CpServico) element.getValue();
+		}
+		
+		StringBuilder sb = new StringBuilder(50);
+		boolean supress = false; 
+		for (int i = 0; i<chave.length(); i++) {
+			final char ch = chave.charAt(i);
+			if (ch == ';') {
+				sb.append('-');
+				supress = false;
+				continue;
+			}
+			if (ch == ':') {
+				supress = true;
+				continue;
+			}
+			if (!supress)
+				sb.append(ch);
+		}
+		String sigla = sb.toString();
+		
+		final Query query = getSessao().getNamedQuery(
+				"consultarPorSiglaStringCpServico");
+		query.setString("siglaServico", sigla);
+
+		query.setCacheable(true);
+		query.setCacheRegion(CACHE_QUERY_HOURS);
+
+		final List<CpServico> l = query.list();
+		if (l.size() != 1)
+			return null;
+		
+		cache.put(new Element(chave, l.get(0)));
 		return l.get(0);
 	}
 
@@ -1473,15 +1528,15 @@ public class CpDao extends ModeloDao {
 
 		// Alterado para compatibilizar com hibernate 3.61
 		cfg.setProperty("hibernate.cache.provider_class", "org.hibernate.cache.EhCacheProvider");
-		//cfg.setProperty("hibernate.cache.region.factory_class",
-		// "net.sf.ehcache.hibernate.EhCacheRegionFactory");
-		//		"net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
+//		cfg.setProperty("hibernate.cache.region.factory_class",
+//				"net.sf.ehcache.hibernate.EhCacheRegionFactory");
+//				"net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
 
 		cfg.setProperty("hibernate.cache.use_second_level_cache", "true");
 		cfg.setProperty("hibernate.cache.use_query_cache", "true");
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
-		cfg.setProperty("hibernate.default_batch_fetch_size", "200");
+		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
 		// cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
 
 		// descomentar para inpecionar o SQL

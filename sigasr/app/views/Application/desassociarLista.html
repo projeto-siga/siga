@@ -11,6 +11,12 @@ $(function() {
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 	<h2> ${lista.nomeLista}</h2>
+		<p class="gt-table-action-list">
+			#{if editar} <a class="once"
+				href="@{Application.editarLista(lista.idLista)}"> <img
+				src="/siga/css/famfamfam/icons/pencil.png"
+				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
+		</p>
  	<div class="gt-content-box gt-for-table">
 	<table id="sortable" border="0" class="gt-table-nowrap">
 			<col width="5%" />
@@ -36,10 +42,10 @@ $(function() {
 			</thead>
 			<tbody>
 			#{list items:sols, as:'sols'}
-			<form action="@{Application.desassociarLista}">	
-			<tr>
+			<form action="@{Application.desassociarLista()}">	
+			<tr id="${sols.idSolicitacao}">
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-			<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
+			<img id="imgCancelar" src="/siga/css/famfamfam/icons/arrow_switch.png" style="margin-right: 5px;"> 
 			</td>
 			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
 				${sols.getUltimaMovimentacao()?.prioridade}
@@ -83,7 +89,6 @@ $(function() {
 		<!-- /content box -->
 		<div class="gt-table-buttons">
 			<input type="hidden" name="idLista" value="${lista.idLista}">
-			<input type="submit" value="Remover" class="gt-btn-medium gt-btn-left" />
 			<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
 		</form>
 		</div>

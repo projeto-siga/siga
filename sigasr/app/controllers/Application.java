@@ -442,46 +442,38 @@ public class Application extends SigaApplication {
 				movimentacao, criarFilha, estados, considerarCancelados, movimentacoes, listas);
 	}
 	
-	public static void exibirLista(Long id) {
+//	public static void exibirLista(Long id) {
+	public static void associarLista(Long id) {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		List<SrLista> listas =  solicitacao.getListaDisponivel();
 		render(solicitacao, editar, listas);
 	}
 	
-	public static void exibirSolicitacaoLista(Long id) {
-		
+	//public static void exibirSolicitacaoLista(Long id) {
+	public static void exibirLista(Long id) {	
 		SrLista lista = SrLista.findById(id);
 		TreeSet<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
 		boolean editar = true;
 		render(solicitacao, lista, editar);
 	}
-	
-	public static void teste() {
-	
-		render();
-	}
-
+/* Onde estou usando esses métodos?? ------------------------------------------ */	
 	public static void exibirListaAssoc(Long id) {
-		
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
 		SrLista lista = new SrLista();
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		//List<SrLista> listas =  solicitacao.getListaAssociada(solicitacao);
 		List<SrLista> listas =  solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
 	}	
-	
 	public static void exibirListaAssoc(Long id, Long idLista) throws Exception {
-		
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
 		SrLista lista = SrLista.findById(idLista);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		List<SrLista> listas =  solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
 	}
-	
-	public static void associarLista(Long idSolicitacao, Long idLista) throws Exception{
+/* ---------------------------------------------------------------------------- */	
+	public static void associarListaGravar(Long idSolicitacao, Long idLista) throws Exception{
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
@@ -490,7 +482,7 @@ public class Application extends SigaApplication {
 		if (lista != null){
 			mov.prioridade = lista.setSolicOrd();
 		}
-		//sugestão do Renato: colocar em um método movimentar.
+		//sugestão do Renato: colocar em um método movimentar. Fazer solicitacao.associarLista()
 		mov.solicitacao = solicitacao;
 		mov.estado = SrEstado.ANDAMENTO;
 		mov.descrMovimentacao = "Inclusão em lista";

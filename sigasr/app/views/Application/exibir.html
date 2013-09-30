@@ -38,7 +38,7 @@ function carregouAtendente(response, param){
 				style="margin-right: 5px;">Exibir Informações Completas</a>&nbsp;&nbsp;&nbsp;
 			#{/if}
 			<a class="once"
-				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				href="@{Application.associarLista(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Definir Lista</a>&nbsp;&nbsp;&nbsp;
 		</p>
@@ -162,7 +162,7 @@ function carregouAtendente(response, param){
 					<td class="gt-form-row gt-width-66" style="font-size: 13px; font-weight: bold; !important; padding: 7px 10px;">
 					&nbsp;
 					<input type="hidden" name="idlista" value="${listassoc.idLista}">
-						<a style="color: #365b6d;text-decoration: none" href="@{Application.exibirSolicitacaoLista(listassoc.idLista)}">
+						<a style="color: #365b6d;text-decoration: none" href="@{Application.exibirLista(listassoc.idLista)}">
 						 ${listassoc.nomeLista}		
 						</a>	
 					</td>

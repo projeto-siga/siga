@@ -16,7 +16,7 @@
 				<tbody>
 					#{list items:lista, as:'lista'}
 					<tr>
-						<td onclick="javascript:window.location='@{Application.exibirSolicitacaoLista(lista.idLista)}'"
+						<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'"
 						style="cursor: pointer;"> ${lista.nomeLista}</td>
 						<td>${lista.lotaCadastrante}</td>
 					</tr>

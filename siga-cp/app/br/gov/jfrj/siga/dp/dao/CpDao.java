@@ -74,8 +74,8 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
+import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
-import br.gov.jfrj.siga.dp.AbstractDpLotacao;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -94,7 +94,6 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 
 public class CpDao extends ModeloDao {
 
@@ -104,7 +103,7 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_QUERY_SECONDS = "query.seconds";
 	public static final String CACHE_QUERY_HOURS = "query.hours";
 	public static final String CACHE_SECONDS = "seconds";
-
+	
 	public static CpDao getInstance(Session sessao) {
 		return ModeloDao.getInstance(CpDao.class, sessao);
 	}
@@ -1078,7 +1077,7 @@ public class CpDao extends ModeloDao {
 	 * e.printStackTrace(); // return null; // } }
 	 */
 	public List<DpPessoa> pessoasPorLotacao(Long id,
-			Boolean incluirSublotacoes, Boolean somenteServidor)
+			Boolean incluirSublotacoes, Boolean somenteServidor,SituacaoFuncionalEnum situacoesFuncionais)
 			throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
@@ -1106,38 +1105,33 @@ public class CpDao extends ModeloDao {
 		}
 
 		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>();
-		DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-		flt.setSituacaoFuncionalPessoa("1");
-		String estagiario = "ESTAGIARIO";
-		String juizFederal = "JUIZ FEDERAL";
-		String juizFederalSubstituto = "JUIZ SUBSTITUTO";
-		flt.setNome("");
 		for (DpLotacao lot : sublotacoes) {
-			flt.setLotacao(lot);
-			List<DpPessoa> lst = consultarPorFiltro(flt);
-
-			for (DpPessoa pes : lst) {
-				if (pes.getCargo() == null
-						|| pes.getCargo().getNomeCargo() == null) {
-					lstCompleta.add(pes);
-					continue;
-				}
-				String cargo = pes.getCargo().getNomeCargo().toUpperCase();
-				if (somenteServidor) {
-					if (!cargo.contains(juizFederal)
-							&& !cargo.contains(juizFederalSubstituto)
-							&& !(cargo.contains(estagiario))) {
-						lstCompleta.add(pes);
-					}
-				} else {
-					lstCompleta.add(pes);
-				}
-
+			
+			Criteria c = HibernateUtil.getSessao().createCriteria(DpPessoa.class);
+			c.createAlias("cargo", "c");
+			
+			c.add(Restrictions.eq("lotacao.id", lot.getId()));
+			if (somenteServidor){
+				c.add(Restrictions.not(Restrictions.in("c.nomeCargo", new String[]{"ESTAGIARIO","JUIZ SUBSTITUTO","JUIZ FEDERAL"})));
 			}
+			
+			c.add(Restrictions.in("situacaoFuncionalPessoa", situacoesFuncionais.getValor()));	
+			
+			c.add(Restrictions.isNull("dataFimPessoa"));
+			
+			c.addOrder(Order.asc("nomePessoa"));
+			
+			lstCompleta.addAll((List<DpPessoa>) c.list());
+			
 		}
 		return lstCompleta;
 	}
 
+	public List<DpPessoa> pessoasPorLotacao(Long id,
+			Boolean incluirSublotacoes, Boolean somenteServidor){
+		return pessoasPorLotacao(id, incluirSublotacoes, somenteServidor, SituacaoFuncionalEnum.APENAS_ATIVOS);
+	}
+	
 	public DpPessoa consultarPorCpfMatricula(final long cpf, long matricula) {
 
 		final Query qry = getSessao().getNamedQuery("consultarPorCpfMatricula");

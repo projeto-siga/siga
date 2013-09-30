@@ -60,7 +60,7 @@
 				<td width="65%" align="right" style="margin-right:4px; font-size: 10pt; border-width: 1px 0px 0px 0px; border-style: solid">
 					<c:choose>
 						<c:when test="${idOrgaoUsu == 1 || idOrgaoUsu == 2}">
-							${doc.codigo} - Geração e impressão: <br/>
+							${doc.codigo} - Geração: <br/>
 							${requestScope['geraImpress']}<br/>
 							Setores responsáveis pelas informações:<br/>
 							${requestScope['setoresResponsaveis']}<br/>

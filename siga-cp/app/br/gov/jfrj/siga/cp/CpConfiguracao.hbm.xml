@@ -2,18 +2,18 @@
 <!DOCTYPE hibernate-mapping PUBLIC
                             "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                             "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
-	<!--
-		Nato: não desejamos que seja realizada uma carga lazy dos objetos
-		relacionados (many-to-one) com a configuração, no entanto o
-		lazy="false" não estava funcionando porque estava sendo carregado um
-		proxy e a função de instanceof não estava funcionando corretamente com
-		o proxy. Por isso precisamos trocar o lazy="false" por lazy="no-proxy"
-		e, no código, forçar o acesso a todos os membros para obrigar o
-		hibernate a realizar a carga.
-	-->
-<hibernate-mapping package="br.gov.jfrj.siga.cp" schema="CORPORATIVO">
-	<class name="CpConfiguracao" table="CP_CONFIGURACAO"
-		lazy="false">
+<!-- Nato: não desejamos que seja realizada uma carga lazy dos objetos relacionados 
+	(many-to-one) com a configuração, no entanto o lazy="false" não estava funcionando 
+	porque estava sendo carregado um proxy e a função de instanceof não estava 
+	funcionando corretamente com o proxy. Por isso precisamos trocar o lazy="false" 
+	por lazy="no-proxy" e, no código, forçar o acesso a todos os membros para 
+	obrigar o hibernate a realizar a carga. Depois, quando começamos a utilizar 
+	bytecode instrumentation para evitar a carga dos blobs de todos os documentos 
+	e movimentações, tive que voltar para lazy="false" pois estava ignorando 
+	os campos que não eram carregados forçosamente. -->
+<hibernate-mapping package="br.gov.jfrj.siga.cp"
+	schema="CORPORATIVO">
+	<class name="CpConfiguracao" table="CP_CONFIGURACAO" lazy="false">
 		<id name="idConfiguracao" column="ID_CONFIGURACAO" type="java.lang.Long">
 			<!-- <generator class="sequence"></generator> -->
 			<generator class="sequence">
@@ -22,46 +22,41 @@
 		</id>
 
 		<many-to-one name="orgaoUsuario" column="ID_ORGAO_USU"
-			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" lazy="no-proxy" />
+			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" lazy="false" />
 		<many-to-one name="lotacao" column="ID_LOTACAO"
-			class="br.gov.jfrj.siga.dp.DpLotacao" lazy="no-proxy" />
+			class="br.gov.jfrj.siga.dp.DpLotacao" lazy="false" />
 		<many-to-one name="cargo" column="ID_CARGO"
-			class="br.gov.jfrj.siga.dp.DpCargo" lazy="no-proxy" />
+			class="br.gov.jfrj.siga.dp.DpCargo" lazy="false" />
 		<many-to-one name="funcaoConfianca" column="ID_FUNCAO_CONFIANCA"
-			class="br.gov.jfrj.siga.dp.DpFuncaoConfianca" lazy="no-proxy" />
+			class="br.gov.jfrj.siga.dp.DpFuncaoConfianca" lazy="false" />
 		<many-to-one name="dpPessoa" column="ID_PESSOA"
-			class="br.gov.jfrj.siga.dp.DpPessoa" lazy="no-proxy" />
+			class="br.gov.jfrj.siga.dp.DpPessoa" lazy="false" />
 		<many-to-one name="cpSituacaoConfiguracao" column="ID_SIT_CONFIGURACAO"
-			class="CpSituacaoConfiguracao" lazy="no-proxy" />
+			class="CpSituacaoConfiguracao" lazy="false" />
 		<many-to-one name="cpTipoConfiguracao" column="ID_TP_CONFIGURACAO"
-			class="CpTipoConfiguracao" lazy="no-proxy" />
+			class="CpTipoConfiguracao" lazy="false" />
 		<many-to-one name="cpServico" column="ID_SERVICO" class="CpServico"
-			lazy="no-proxy" />
+			lazy="false" />
 		<many-to-one name="cpIdentidade" column="ID_IDENTIDADE"
-			class="CpIdentidade" lazy="no-proxy" />
+			class="CpIdentidade" lazy="false" />
 
 		<!-- Identidade (drive k e grupo de email) -->
 		<many-to-one name="cpGrupo" column="ID_GRUPO"
-			class="br.gov.jfrj.siga.cp.CpGrupo" lazy="no-proxy" />
+			class="br.gov.jfrj.siga.cp.CpGrupo" lazy="false" />
 		<property name="nmEmail" column="NM_EMAIL" type="java.lang.String" />
 		<property name="dscFormula" column="DESC_FORMULA" type="java.lang.String" />
 		<many-to-one name="cpTipoLotacao" column="ID_TP_LOTACAO"
-			class="br.gov.jfrj.siga.dp.CpTipoLotacao" lazy="no-proxy" />
-			
-		<!--
-			Campos padronizados para armazenar dados histórios, levemente
-			alterado por motivos de compatibilidade. Para copiar o padrão, é
-			melhor usar o CpGrupo.hbm.xml
-		<many-to-one name="hisIdIni" column="HIS_ID_INI" class="CpGrupo" />
-		<property name="hisAtivo" column="HIS_ATIVO" type="java.lang.Integer" />
-		-->
-		<property name="hisDtIni" column="HIS_DT_INI"
-			type="java.util.Date" />
+			class="br.gov.jfrj.siga.dp.CpTipoLotacao" lazy="false" />
+
+		<!-- Campos padronizados para armazenar dados histórios, levemente alterado 
+			por motivos de compatibilidade. Para copiar o padrão, é melhor usar o CpGrupo.hbm.xml 
+			<many-to-one name="hisIdIni" column="HIS_ID_INI" class="CpGrupo" /> <property 
+			name="hisAtivo" column="HIS_ATIVO" type="java.lang.Integer" /> -->
+		<property name="hisDtIni" column="HIS_DT_INI" type="java.util.Date" />
 		<many-to-one name="hisIdcIni" column="HIS_IDC_INI" class="CpIdentidade" />
-		<property name="hisDtFim" column="HIS_DT_FIM"
-			type="java.util.Date" />
+		<property name="hisDtFim" column="HIS_DT_FIM" type="java.util.Date" />
 		<many-to-one name="hisIdcFim" column="HIS_IDC_FIM" class="CpIdentidade" />
-			
+
 	</class>
 
 	<query name="consultarCpConfiguracoes">

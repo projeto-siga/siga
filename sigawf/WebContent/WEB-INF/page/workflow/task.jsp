@@ -388,6 +388,7 @@
 	</script>
 
 		<c:url var="url" value="/../sigagc/knowledge">
+			<c:param name="tags">@workflow</c:param>
 			<c:forEach var="tag" items="${task.tags}">
 				<c:param name="tags">${tag}</c:param>
 			</c:forEach>

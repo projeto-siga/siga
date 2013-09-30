@@ -146,13 +146,6 @@ public class SrMovimentacao extends GenericModel {
 		return (numSequencia != null) ? numSequencia : 1;
 	}
 
-	public Long getPrioridade() {
-		prioridade = find(
-				"select max(mov.prioridade)+1 from SrMovimentacao mov where mov.lista = "
-						+ lista.getId()).first();
-		return (prioridade != null) ? prioridade : 1;
-	}
-
 	public Long getProximaMovimentacao() {
 		Long num = find(
 				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao "
@@ -301,8 +294,12 @@ public class SrMovimentacao extends GenericModel {
 			throw new Exception("Cadastrante não pode ser nulo");
 
 		dtIniMov = new Date();
-
+		
 		checarCamposConsiderandoSolicitacao();
+
+		if (tipoMov == null)
+			tipoMov = SrTipoMovimentacao
+			.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO); 
 
 		if (atendente == null && lotaAtendente == null)
 			throw new Exception("Atendente não pode ser nulo");
@@ -351,12 +348,6 @@ public class SrMovimentacao extends GenericModel {
 			numSequencia = getMovimentacaoAtual();
 		} else
 			numSequencia = getProximaMovimentacao();
-
-		if (solicitacao.getMovimentacaoSolLista(solicitacao, lista) == null) {
-			prioridade = 1L;
-		} else {
-			prioridade = lista.getPriorAssociada(lista);
-		}
 
 	}
 

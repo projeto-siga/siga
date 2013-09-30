@@ -91,17 +91,40 @@ public class SrLista extends GenericModel {
 	}
 
 	public List<SrLista> getListaSet() {
-		List<SrLista> listas =  SrLista.findAll();
+		List<SrLista> listas = SrLista.find("dtReg is null").fetch();
 		return listas;
 	}
 	
-	public HashSet<SrSolicitacao> getSolicitacaoAssociada() {
-		HashSet<SrSolicitacao> listaCompleta = new HashSet<SrSolicitacao>();
+	public Long setSolicOrd(){
 		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null").fetch();
-		for (SrMovimentacao movim : mov)
-		{
-			listaCompleta.add(movim.solicitacao);
-		}
+		Long prioridade = (long) (mov.size()+1);
+		return prioridade;
+	}
+	
+	public Long getSolicOrd(SrSolicitacao solicitacao){
+		SrMovimentacao mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null and solicitacao = " 
+				+ solicitacao.idSolicitacao).first();
+		return mov.prioridade;
+	}
+	
+	public TreeSet<SrSolicitacao> getSolicitacaoAssociada() {
+		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
+				new Comparator<SrSolicitacao>() {
+					@Override
+					public int compare(SrSolicitacao a1, SrSolicitacao a2) {
+						return a2.getMovimentacaoSet(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).iterator().next().prioridade.compareTo(a1.getMovimentacaoSet(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).iterator().next().prioridade);
+					}
+				});
+		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null").fetch();
+		try {
+			if (mov != null) {
+				for (SrMovimentacao movim : mov) {
+					listaCompleta.add(movim.solicitacao);
+				}
+			}
+		} catch (Exception e) {
+				e.printStackTrace();
+			}	
 		return listaCompleta;
 	}
 	
@@ -111,10 +134,14 @@ public class SrLista extends GenericModel {
 		return true;
 	}
 	
-	public Long getPriorAssociada(SrLista lista) throws Exception {
+	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
+		return true;
+	}
+	
+	public Long getPriorAssociada() throws Exception {
 		
 		SrMovimentacao movimentacao  = new SrMovimentacao();
-		for (SrMovimentacao movs : getMovimentacaoListaSet(lista, (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)))
+		for (SrMovimentacao movs : getMovimentacaoListaSet(this, (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)))
 			if (movs.dtCancelamento == null){
 				if (movs.prioridade != null){
 					
@@ -122,10 +149,7 @@ public class SrLista extends GenericModel {
 				else
 					movimentacao.prioridade = 1L;
 			}
-			
 		return movimentacao.prioridade;
-			
-		
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoListaSet(SrLista lista) {
@@ -158,6 +182,14 @@ public class SrLista extends GenericModel {
 			listaCompleta.add((SrMovimentacao) movim);
 		}
 		return listaCompleta;
+	}
+
+	public void recalcularPrioridade(Long idLista) throws Exception {
+		
+		SrLista lista = new SrLista();
+		//Long prioridade = lista.getSolicOrd();
+		Long prioridade = lista.setSolicOrd();
+		
 	}
 	
 	

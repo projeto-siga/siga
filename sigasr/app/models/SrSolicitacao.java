@@ -869,6 +869,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					mov.lotaAtendente = getAtendenteDesignado();
 				}
 			}
+			mov.solicitacao = this;
+			mov.cadastrante = cadastrante;
+			mov.lotaCadastrante = lotaCadastrante;
+			mov.numSequencia = mov.getnumSequencia();
 			mov.salvar();
 			if (!isEditado()
 					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
@@ -917,9 +921,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	private Long getNumSeqMov() {
 		Long numSeqMov = find(
-				"select max(numSequencia)+1 from SrMovimentacao where solicitacao.idSolicitacao = "
-						+ idSolicitacao).first();
-		return (numSeqMov != null) ? numSeqMov : 1;
+					"select max(numSequencia)+1 from SrMovimentacao where solicitacao.idSolicitacao = "
+							+ idSolicitacao).first();
+			return (numSeqMov != null) ? numSeqMov : 1;
 	}
 
 	public void desfazerUltimaMovimentacao(DpPessoa cadastrante,
@@ -1211,9 +1215,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
-	public List<SrLista> getListaDisponivel(SrSolicitacao solicitacao) {
+	public List<SrLista> getListaDisponivel() {
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
-		for (SrMovimentacao mov : solicitacao.getMovimentacaoSet()) {
+		for (SrMovimentacao mov : getMovimentacaoSet()) {
 			if (mov.lista != null)
 				listaCompleta.add(mov.lista);
 		}
@@ -1228,18 +1232,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaDisponiveis;
 	}
 
-	public List<SrLista> getListaAssociada(SrSolicitacao solicitacao) {
+	public List<SrLista> getListaAssociada() {
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
-		for (SrMovimentacao mov : solicitacao.getMovimentacaoSet(false)) {
+		for (SrMovimentacao mov : getMovimentacaoSet(false)) {
 			if (mov.lista != null)
 				listaCompleta.add(mov.lista);
 		}
 		return listaCompleta;
 	}
 
-	public void desassociarLista(SrSolicitacao solicitacao, SrLista lista)
-			throws Exception {
-
+	public void desassociarLista(SrSolicitacao solicitacao, SrLista lista) throws Exception {
 		SrSolicitacao sol = new SrSolicitacao();
 		sol.meuMovimentacaoSet = solicitacao.getMovimentacaoSet();
 		SrMovimentacao movIncl = (SrMovimentacao) getMovimentacaoSolLista(
@@ -1251,11 +1253,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		mov.lista = null;
+		mov.prioridade = getMovimentacaoSolLista(solicitacao, lista).prioridade;
 		mov.solicitacao = solicitacao;
 		mov.numSequencia = solicitacao.getNumSeqMov();
 		mov.idMovRef = movIncl;
 		mov.salvar();
 		movIncl.dtCancelamento = new Date();
+		movIncl.prioridade = null;
 		movIncl.idmovCanceladora = mov;
 		movIncl.save();
 		// JPA.em().flush();
@@ -1263,4 +1267,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		sol.meuMovimentacaoSet.add(mov);
 		sol.meuMovimentacaoSet.add(movIncl);
 	}
+
+	public String getGcTags() {
+		String s = "tags=@servico";
+		if (servico != null)
+			s += servico.getGcTags();
+		if (itemConfiguracao != null)
+			s += itemConfiguracao.getGcTags();
+		return s;
+	}
+
 }

@@ -6,7 +6,7 @@
 		
 		<p>
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form action="@{Application.associarListaGravar}">
+		<form action="@{Application.associarListaGravar()}">
 		<table border="0" class="gt-table">
 			<col width="20%" />
     		<col width="20%" />
@@ -25,14 +25,19 @@
 			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrLista">
 				${lista.nomeLista}
 			</td>
-			</tr>		
+			</tr>
 			#{/list}
 			</tbody>
-			</table>		
-			<div class="gt-table-button gt-width-66">
+			</table>	
+			<div>
+			<tr>
 				<input type="hidden" name="idSolicitacao" value="${solicitacao.idSolicitacao}">
-				<input type="submit" value="Selecionar Lista" class="gt-btn-medium gt-btn-left" />
+				<input type="hidden" name="idLista" value="${lista.idLista}">
+				<td colspan="2"><input type="submit" value="Selecionar Lista" class="gt-btn-medium gt-btn-left" /></td>
+				<td colspan="2">
 				<a href="@{Application.exibir(solicitacao.idSolicitacao)}" class="gt-btn-medium gt-btn-left">Voltar</a>
+				</td>
+			</tr>
 			</div>
 		</form>
 </div>

@@ -5,7 +5,8 @@
 		<h2>Item de Configuração</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarItem()} #{if item?.idItemConfiguracao} <input
+		<form action="@{Application.gravarItem}" enctype="multipart/form-data" method="post">
+			#{if item?.idItemConfiguracao} <input
 				type="hidden" name="item.idItemConfiguracao"
 				value="${item.idItemConfiguracao}"> #{/if}
 			<div class="gt-form-row gt-width-66">
@@ -31,7 +32,7 @@
 					onclick="location.href='@{Application.desativarItem()}?id=${item.idItemConfiguracao}'" />
 				#{/if}
 			</div>
-			#{/form}
+		
 		</div>
 	</div>
 </div>

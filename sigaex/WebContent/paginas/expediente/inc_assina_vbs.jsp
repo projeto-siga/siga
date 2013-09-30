@@ -1,4 +1,9 @@
 <script language="VBScript">
+Dim gConfiguracao
+Dim gCertificadoB64
+Dim gUtil
+Dim gAssinatura
+
 Function assinar()
 	Dim Assinatura
 	Dim Configuracao
@@ -31,19 +36,29 @@ Function Erro()
 	End If
 End Function
 
-Function AssinarDocumento(conteudo, ByRef assinante, ByRef assinaturaB64)
-	Dim Assinatura
-	Dim Configuracao
+Function InicializarCapicom()
+	Dim Desprezar
 	On Error Resume Next
-	Set Configuracao = CreateObject("CAPICOM.Settings")
-	Configuracao.EnablePromptForCertificateUI = True
-	Set Assinatura = CreateObject("CAPICOM.SignedData")
-	Set Util = CreateObject("CAPICOM.Utilities")
+	Set gConfiguracao = CreateObject("CAPICOM.Settings")
+	gConfiguracao.EnablePromptForCertificateUI = True
+	Set gAssinatura = CreateObject("CAPICOM.SignedData")
+	Set gUtil = CreateObject("CAPICOM.Utilities")
 	If Erro Then Exit Function
-	Assinatura.Content = Conteudo
-	assinaturaB64 = Assinatura.Sign(Nothing, True, 0)
+
+	'Infelizmente não é possível armazenar o objeto Signer e utilizá-lo na próxima chamada para Sign.
+	gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado."
+	Desprezar = gAssinatura.Sign(Nothing, True, 0)
+	gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
+
+	InicializarCapicom = "OK"
+End Function
+
+Function AssinarDocumento(conteudo, ByRef assinante, ByRef assinaturaB64)
+	On Error Resume Next
+	gAssinatura.Content = Conteudo
+	assinaturaB64 = gAssinatura.Sign(Nothing, True, 0)
 	If Erro Then Exit Function
-	assinante = Assinatura.Signers(1).Certificate.SubjectName
+	assinante = gAssinatura.Signers(1).Certificate.SubjectName
 	assinante = Split(assinante, "CN=")(1)
 	assinante = Split(assinante, ",")(0)
 	If Erro Then Exit Function
@@ -53,6 +68,10 @@ End Function
 Dim intID ' set a global variable
 Function AssinarDocumentos(Copia, oElm)
 	TestCAPICOM
+	If InicializarCapicom() <> "OK" Then
+        MsgBox "Erro na inicializacao da CAPICOM.", 0, "Não foi possível completar a operação"
+		Exit Function
+    End If
 
 	Dim Id, Caption
 	If Not IsEmpty(oElm) Then
@@ -125,7 +144,15 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
 
            If b Then
                Dim urlDocumento, Documento
+ 			   Dim certParam
+			   certParam = "certificadoB64=" & UrlEncode(gCertificadoB64)
+
                urlDocumento = oUrlBase.value + oUrlPath.value + "/semmarcas/" + oUrl.value
+			   If InStr(urlDocumento, "?") > 0 Then
+               		urlDocumento = urlDocumento & "&" & certParam
+			   Else
+               		urlDocumento = urlDocumento & "?" & certParam
+			   End If
                Documento = Conteudo(urlDocumento)
                'MsgBox Documento
                Log "Documento: " & oNome.value
@@ -149,6 +176,7 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
                    Log "Documento: " & oNome.value & ", OK, Gravado!"
                Else
 		            MsgBox Status, 0, "Não foi possível completar a operação"
+					Exit Function
                End If
            End If
        End If
@@ -190,7 +218,6 @@ Function GravarAssinatura(url, datatosend)
 			Inicio = InStr(Conteudo, "<h3>") + 4
 			Fim = InStr(Inicio,Conteudo, "</h3>")
             Texto = Mid(Conteudo, Inicio, Fim - Inicio)
-			MsgBox Texto
 			GravarAssinatura = Texto
         End If
 	End If

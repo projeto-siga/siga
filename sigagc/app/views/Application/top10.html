@@ -1,5 +1,4 @@
-#{extends 'main.html' /} #{set title:'Informações' /}
-#{set 'moreHead'}
+#{extends 'main.html' /} #{set title:'Informações' /} #{set 'moreHead'}
 
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
@@ -43,11 +42,11 @@ function drawEvolution() {
 					<tbody>
 						#{list items:listaMaisRecentes,as:'i'}
 						<tr>
-							<td style="width: 70%;"><h4>
-									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
+							<td style="width: 70%;"><a
+								href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a> *{ <a
+								href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i?.conteudoHTML.raw()}</p>
-							</td>
+								<p>${i?.conteudoHTML.raw()}</p> }*</td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
 								<table border="0" class="gt-table-categories">
@@ -65,8 +64,7 @@ function drawEvolution() {
 											<td>${i.dtIniString}</td>
 										</tr>
 									</tbody>
-								</table>
-							</td>
+								</table></td>
 						</tr>
 						#{/list}
 					</tbody>
@@ -87,8 +85,7 @@ function drawEvolution() {
 							<td style="width: 70%;"><h4>
 									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i?.conteudoHTML.raw()}</p>
-							</td>
+								<p>${i?.conteudoHTML.raw()}</p></td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
 								<table border="0" class="gt-table-categories">
@@ -106,8 +103,7 @@ function drawEvolution() {
 											<td>${i.dtIniString}</td>
 										</tr>
 									</tbody>
-								</table>
-							</td>
+								</table></td>
 						</tr>
 						#{/list}
 					</tbody>
@@ -153,10 +149,7 @@ function drawEvolution() {
 			</div>
 			#{/if} #{else}
 			<p>Nenhum autor.</p>
-			#{/else}
-
-			*{			
-			<br />
+			#{/else} *{ <br />
 			<h2>Principais Classificações</h2>
 			#{if listaPrincipaisTags != null}
 			<div class="gt-content-box gt-for-table">
@@ -173,32 +166,25 @@ function drawEvolution() {
 			</div>
 			#{/if} #{else}
 			<p>Nenhum autor.</p>
-			#{/else}
-			}*
-			
-			<br />
+			#{/else} }* <br />
 			<h2>Principais Classificações</h2>
 			<div class="gt-content-box gt-tag-cloud">
 				#{list items:cloud.tags(),as:'tag'}
 					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a> 
 				#{/list}
 			</div>
-			
+
 			<br />
 			<h2>Evolução</h2>
-			<div id="evolution" class="gt-content-box gt-tag-cloud">
-			</div> 
-*{			 
-			<br />
+			<div id="evolution" class="gt-content-box gt-tag-cloud"></div>
+			*{ <br />
 			<h2>Mês Passado</h2>
-			<div id="lastmonth" class="gt-content-box gt-tag-cloud">
-			</div> 
-			 
+			<div id="lastmonth" class="gt-content-box gt-tag-cloud"></div>
+
 			<br />
 			<h2>Mês Corrente</h2>
-			<div id="thismonth" class="gt-content-box gt-tag-cloud">
-			</div> 
-}*			 
+			<div id="thismonth" class="gt-content-box gt-tag-cloud"></div>
+			}*
 		</div>
 	</div>
 </div>

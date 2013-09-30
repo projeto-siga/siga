@@ -4,12 +4,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Query;
 
@@ -437,48 +439,55 @@ public class Application extends SigaApplication {
 		render(solicitacao, movimentacao, considerarCancelados);
 	}
 
-	public static void exibirLista(Long id) {
+	// public static void exibirLista(Long id) {
+	public static void associarLista(Long id) {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		List<SrLista> listas = solicitacao.getListaDisponivel(solicitacao);
+		List<SrLista> listas = solicitacao.getListaDisponivel();
 		render(solicitacao, editar, listas);
 	}
 
-	public static void exibirSolicitacaoLista(Long id) {
-
+	// public static void exibirSolicitacaoLista(Long id) {
+	public static void exibirLista(Long id) {
 		SrLista lista = SrLista.findById(id);
-		Set<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
-		render(solicitacao, lista);
+		TreeSet<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
+		boolean editar = true;
+		render(solicitacao, lista, editar);
 	}
 
+	/*
+	 * Onde estou usando esses métodos??
+	 * ------------------------------------------
+	 */
 	public static void exibirListaAssoc(Long id) {
-
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		SrLista lista = new SrLista();
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		// List<SrLista> listas = solicitacao.getListaAssociada(solicitacao);
-		List<SrLista> listas = solicitacao.getListaAssociada(solicitacao);
+		List<SrLista> listas = solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
 	}
 
 	public static void exibirListaAssoc(Long id, Long idLista) throws Exception {
-
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		SrLista lista = SrLista.findById(idLista);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		// List<SrLista> listas = solicitacao.getListaAssociada(solicitacao);
-		List<SrLista> listas = solicitacao.getListaAssociada(solicitacao);
+		List<SrLista> listas = solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
 	}
 
-	public static void associarLista(Long idSolicitacao, Long idLista)
+	public static void associarListaGravar(Long idSolicitacao, Long idLista)
 			throws Exception {
-
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
-		SrLista lista = new SrLista();
+		SrLista lista = SrLista.findById(idLista);
 		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
-		Long prioridade = movimentacao.getPrioridade();
 		SrMovimentacao mov = new SrMovimentacao();
+		Long prioridade = null;
+		if (lista != null) {
+			mov.prioridade = lista.setSolicOrd();
+		}
+		// sugestão do Renato: colocar em um método movimentar. Fazer
+		// solicitacao.associarLista()
+		mov.solicitacao = solicitacao;
 		mov.estado = SrEstado.ANDAMENTO;
 		mov.descrMovimentacao = "Inclusão em lista";
 		mov.cadastrante = cadastrante();
@@ -486,8 +495,8 @@ public class Application extends SigaApplication {
 		mov.lista = (SrLista) SrLista.findById(idLista);
 		mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.prioridade = prioridade;
-		List<SrLista> listas = solicitacao.getListaDisponivel(solicitacao);
+		mov.salvar();
+		List<SrLista> listas = solicitacao.getListaDisponivel();
 		render(solicitacao, listas);
 	}
 
@@ -498,6 +507,7 @@ public class Application extends SigaApplication {
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.desassociarLista(solicitacao, lista);
 		Set<SrSolicitacao> sols = lista.getSolicitacaoAssociada();
+		lista.recalcularPrioridade(idLista);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		boolean vazio = lista.isEmpty();
 		render(sols, editar, lista, vazio);

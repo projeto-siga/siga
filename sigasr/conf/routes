@@ -42,15 +42,12 @@ GET     /public/                                staticDir:public
 *		/solicitacao/relPrazoDetail/gerar  				Application.grelPrazoDetail
 *		/solicitacao/estatistica						Application.estatistica
 *		/solicitacao/listarLista						Application.listarLista
-*		/solicitacao/listarLista/editar/{id}			Application.editarLista
-*		/solicitacao/listarLista/editar					Application.editarLista
 *		/solicitacao/listarLista/gravar 				Application.gravarLista
-*		/solicitacao/exibirLista/{id}	 				Application.exibirLista
-*		/solicitacao/exibirListaAssoc/{id} 			    Application.exibirListaAssoc
-*		/solicitacao/associarLista					    Application.associarLista
+*		/solicitacao/exibirLista/{id}		 			Application.exibirLista
+*		/solicitacao/associarLista/{id}				    Application.associarLista
+*		/solicitacao/associarListaGravar/{id}				    Application.associarListaGravar
 *		/solicitacao/desassociarLista					Application.desassociarLista
-*		/solicitacao/exibirSolicitacaoLista				Application.exibirSolicitacaoLista
-
+*		/solicitacao/editarLista/{id}							Application.editarLista
 
 
 *		/designacao/editar/{id}				Application.editarDesignacao

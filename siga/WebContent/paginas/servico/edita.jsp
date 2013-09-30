@@ -27,7 +27,18 @@
 					<th>Nome</th>
 					<c:forEach var="servico" items="${cpServicosDisponiveis}">
 						<th><a href="#" alt="${servico.descricao}"
-							title="${servico.descricao}">${servico.siglaServico}</a>
+							title="${servico.descricao}">
+							
+							<c:choose>
+								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">RAIZ</c:when>
+								<c:when test="${servico.siglaServico == 'FS-GAB'}">GABINETE</c:when>
+								<c:when test="${servico.siglaServico == 'FS-SEC'}">SECRETARIA</c:when>
+								<c:when test="${servico.siglaServico == 'FS-JUIZ'}">JUIZ</c:when>
+								<c:when test="${servico.siglaServico == 'FS-PUB'}">PÚBLICA</c:when>
+								<c:otherwise>${servico.siglaServico}</c:otherwise>
+							</c:choose>
+
+							</a>
 						</th>
 					</c:forEach> </theader>
 					<c:forEach var="pessoa" items="${dpPessoasDaLotacao}">

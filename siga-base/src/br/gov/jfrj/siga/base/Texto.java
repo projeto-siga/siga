@@ -25,8 +25,8 @@ public class Texto {
 	/**
 	 * Remove os acentos da string e coloca os caracteres em letras maiúsculas
 	 * 
-	 * @param acentuado -
-	 *            String acentuada
+	 * @param acentuado
+	 *            - String acentuada
 	 * @return String sem acentos
 	 */
 	public static String removeAcentoMaiusculas(String acentuado) {
@@ -38,8 +38,8 @@ public class Texto {
 	/**
 	 * Remove os acentos da string
 	 * 
-	 * @param acentuado -
-	 *            String acentuada
+	 * @param acentuado
+	 *            - String acentuada
 	 * @return String sem acentos
 	 */
 	public static String removeAcento(String acentuado) {
@@ -144,7 +144,7 @@ public class Texto {
 		while (iBegin != -1 && iEnd != -1) {
 			sResult = sResult
 					+ sSource.substring(iBegin + sBegin.length(), iEnd);
-			startPos = iEnd+sEnd.length();
+			startPos = iEnd + sEnd.length();
 			iBegin = sSource.indexOf(sBegin, startPos);
 			iEnd = sSource.indexOf(sEnd, startPos);
 		}
@@ -152,38 +152,44 @@ public class Texto {
 		return sResult;
 	}
 
-	public static String removerEspacosExtra(String texto){
+	public static String removerEspacosExtra(String texto) {
 		return texto.replaceAll("\\s{2,}", " ");
 	}
-	
+
 	public static String inciaisMaiuscula(String texto) {
-		if (texto==null){
+		if (texto == null) {
 			return texto;
 		}
 		char caracteres[] = texto.toCharArray();
 		for (int i = 0; i < caracteres.length; i++) {
-			if (i==0 || String.valueOf(caracteres[i-1]).equals(" ")){
+			if (i == 0 || String.valueOf(caracteres[i - 1]).equals(" ")) {
 				caracteres[i] = Character.toUpperCase(caracteres[i]);
-			}else{
+			} else {
 				caracteres[i] = Character.toLowerCase(caracteres[i]);
 			}
 		}
-		
+
 		return String.valueOf(caracteres);
 	}
-	
-    public static String slugify(String string, boolean lowercase, boolean underscore) {
-        string = removeAcento(string);
-        // Apostrophes.
-        string = string.replaceAll("([a-z])'s([^a-z])", "$1s$2");
-        string = string.replaceAll("[^\\w]", "-").replaceAll("-{2,}", "-");
-        // Get rid of any - at the start and end.
-        string.replaceAll("-+$", "").replaceAll("^-+", "");
-        
-        if (underscore)
-            string.replaceAll("-", "_");
 
-        return (lowercase ? string.toLowerCase() : string);
-    }
+	public static String slugify(String string, boolean lowercase,
+			boolean underscore) {
+		if (string == null)
+			return null;
+		string = string.trim();
+		if (string.length() == 0)
+			return null;
+		string = removeAcento(string);
+		// Apostrophes.
+		string = string.replaceAll("([a-z])'s([^a-z])", "$1s$2");
+		string = string.replaceAll("[^\\w]", "-").replaceAll("-{2,}", "-");
+		// Get rid of any - at the start and end.
+		string.replaceAll("-+$", "").replaceAll("^-+", "");
+
+		if (underscore)
+			string.replaceAll("-", "_");
+
+		return (lowercase ? string.toLowerCase() : string);
+	}
 
 }

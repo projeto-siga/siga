@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,14 +19,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 
 import play.db.jpa.GenericModel;
@@ -34,7 +39,7 @@ import play.db.jpa.Model;
 
 @Entity
 @Table(name="SR_LISTA", schema="SIGASR")
-public class SrLista extends GenericModel {
+public class SrLista extends HistoricoSuporte {
 	
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_LISTA_SEQ", name = "srListaSeq")
@@ -54,8 +59,11 @@ public class SrLista extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
-	
-	
+
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@OrderBy("dtIniMov DESC")
+	protected Set<SrMovimentacao> meuMovimentacaoSet;
+
 	public SrLista(){
 		
 	}
@@ -89,6 +97,11 @@ public class SrLista extends GenericModel {
 		this.dtReg = new Date();
 		this.save();
 	}
+	
+	@Override
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		return false;
+	}
 
 	public List<SrLista> getListaSet() {
 		List<SrLista> listas = SrLista.find("dtReg is null").fetch();
@@ -96,8 +109,10 @@ public class SrLista extends GenericModel {
 	}
 	
 	public Long setSolicOrd(){
-		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null").fetch();
-		Long prioridade = (long) (mov.size()+1);
+		SrLista lista = SrLista.findById(idLista);
+		//List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null").fetch();
+		Long prioridade = (long) (lista.getMovimentacaoSet(false).size()+1);
+		//Long prioridade = (long) (mov.size()+1);
 		return prioridade;
 	}
 	
@@ -107,7 +122,7 @@ public class SrLista extends GenericModel {
 		return mov.prioridade;
 	}
 	
-	public TreeSet<SrSolicitacao> getSolicitacaoAssociada() {
+	/*public TreeSet<SrSolicitacao> getSolicitacaoAssociada() {
 		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
 				new Comparator<SrSolicitacao>() {
 					@Override
@@ -126,10 +141,10 @@ public class SrLista extends GenericModel {
 				e.printStackTrace();
 			}	
 		return listaCompleta;
-	}
+	}*/
 	
-	public boolean isEmpty() {
-		if (getSolicitacaoAssociada() != null) 
+	public boolean isEmpty() throws Exception {
+		if (getSolicSet() != null)
 			return false;
 		return true;
 	}
@@ -151,8 +166,29 @@ public class SrLista extends GenericModel {
 			}
 		return movimentacao.prioridade;
 	}
+	
+	public TreeSet<SrSolicitacao> getSolicSet() throws Exception {
+		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
+				new Comparator<SrSolicitacao>() {
+					@Override
+					public int compare(SrSolicitacao a1, SrSolicitacao a2) {
+						return a2.getMovimentacaoSet(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).iterator().next().prioridade.compareTo(a1.getMovimentacaoSet(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).iterator().next().prioridade);
+					}
+				});
+		for (SrMovimentacao movs : getMovimentacaoSet())
+			if (movs.dtCancelamento == null){
+				listaCompleta.add(movs.solicitacao);
+			}
+		return listaCompleta;
+	}
 
-	public Set<SrMovimentacao> getMovimentacaoListaSet(SrLista lista) {
+
+	public Set<SrMovimentacao> getMovimentacaoSet() {
+		return getMovimentacaoSet(false);
+	}
+	
+	public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCancelados) {
+		SrLista lista = SrLista.findById(idLista);
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new Comparator<SrMovimentacao>() {
 					@Override
@@ -160,14 +196,17 @@ public class SrLista extends GenericModel {
 						return a2.dtIniMov.compareTo(a1.dtIniMov);
 					}
 				});
-		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + lista.idLista + " and dtCancelamento is null").fetch();
-		for (SrMovimentacao movim : mov)
-		{
-			listaCompleta.add((SrMovimentacao) movim);
-		}
+		for (SrMovimentacao movimentacao : lista.meuMovimentacaoSet)
+			if (movimentacao.lista.meuMovimentacaoSet != null)
+				if (considerarCancelados)
+					listaCompleta.addAll(movimentacao.lista.meuMovimentacaoSet);
+				else
+					for (SrMovimentacao movim : movimentacao.lista.meuMovimentacaoSet)
+						if (!movim.isCancelado())
+							listaCompleta.add(movim);
 		return listaCompleta;
 	}
-	
+
 	public Set<SrMovimentacao> getMovimentacaoListaSet(SrLista lista, SrTipoMovimentacao tipomov) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new Comparator<SrMovimentacao>() {

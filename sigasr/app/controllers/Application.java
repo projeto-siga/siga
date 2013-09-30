@@ -451,9 +451,11 @@ public class Application extends SigaApplication {
 	}
 	
 	//public static void exibirSolicitacaoLista(Long id) {
-	public static void exibirLista(Long id) {	
+	public static void exibirLista(Long id, boolean considerarCancelados) throws Exception {	
 		SrLista lista = SrLista.findById(id);
-		TreeSet<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
+		lista.getMovimentacaoSet(false);
+		//TreeSet<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
+		TreeSet<SrSolicitacao> solicitacao = lista.getSolicSet();
 		boolean editar = true;
 		render(solicitacao, lista, editar);
 	}
@@ -476,21 +478,7 @@ public class Application extends SigaApplication {
 	public static void associarListaGravar(Long idSolicitacao, Long idLista) throws Exception{
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		SrMovimentacao movimentacao = solicitacao.getUltimaMovimentacao();
-		SrMovimentacao mov = new SrMovimentacao();
-		Long prioridade = null;
-		if (lista != null){
-			mov.prioridade = lista.setSolicOrd();
-		}
-		//sugestão do Renato: colocar em um método movimentar. Fazer solicitacao.associarLista()
-		mov.solicitacao = solicitacao;
-		mov.estado = SrEstado.ANDAMENTO;
-		mov.descrMovimentacao = "Inclusão em lista";
-		mov.cadastrante = cadastrante();
-		mov.lotaCadastrante = lotaTitular();
-		mov.lista = (SrLista) SrLista.findById(idLista);
-		mov.tipoMov = (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.salvar();
+		solicitacao.associarLista(solicitacao, lista);
 		List<SrLista> listas =  solicitacao.getListaDisponivel();
 		render(solicitacao, listas);
 	}
@@ -500,8 +488,9 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao); 
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.desassociarLista(solicitacao, lista);
-		Set<SrSolicitacao> sols = lista.getSolicitacaoAssociada();
-		lista.recalcularPrioridade(idLista);
+		//Set<SrSolicitacao> sols = lista.getSolicitacaoAssociada();
+		Set<SrSolicitacao> sols = lista.getSolicSet();
+		//lista.recalcularPrioridade(idLista);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		boolean vazio = lista.isEmpty();
 		render(sols, editar, lista, vazio);

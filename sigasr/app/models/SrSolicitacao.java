@@ -1212,6 +1212,29 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return listaCompleta;
 	}
+	
+	public void associarLista(SrSolicitacao solicitacao, SrLista lista) throws Exception {
+		//SrSolicitacao sol = new SrSolicitacao();
+		//sol.meuMovimentacaoSet = solicitacao.getMovimentacaoSet();
+		SrMovimentacao mov = new SrMovimentacao();
+		if (lista != null){
+			mov.prioridade = lista.setSolicOrd();
+		}
+		mov.cadastrante = solicitacao.cadastrante;
+		mov.lotaCadastrante = solicitacao.lotaCadastrante;
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+		mov.descrMovimentacao = "Inclusão em lista";
+		//mov.cadastrante =  solicitacao.cadastrante;
+		//mov.lotaCadastrante = solicitacao.lotaCadastrante; 
+		mov.lista = lista;
+		//mov.prioridade = getMovimentacaoSolLista(solicitacao, lista).prioridade;
+		mov.solicitacao = solicitacao;
+		//mov.estado = SrEstado.ANDAMENTO;
+		mov.numSequencia = solicitacao.getNumSeqMov();
+		mov.salvar();
+		solicitacao.meuMovimentacaoSet.add(mov);
+	}
 
 	public void desassociarLista(SrSolicitacao solicitacao, SrLista lista)
 			throws Exception {
@@ -1235,8 +1258,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movIncl.prioridade = null;
 		movIncl.idmovCanceladora = mov;
 		movIncl.save();
-		// JPA.em().flush();
-		// JPA.em().getTransaction().commit();
 		sol.meuMovimentacaoSet.add(mov);
 		sol.meuMovimentacaoSet.add(movIncl);
 	}

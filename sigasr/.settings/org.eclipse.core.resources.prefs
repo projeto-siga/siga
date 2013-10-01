@@ -1,10 +1,10 @@
-#Mon Sep 30 14:03:50 BRT 2013
 eclipse.preferences.version=1
 encoding//app/controllers/Application.java=UTF-8
 encoding//app/controllers/Bootstrap.java=UTF-8
 encoding//app/models/SrSolicitacao.java=UTF-8
 encoding//app/reports/SrRelTransferencias.java=UTF-8
 encoding//app/views/Application/associarLista.html=UTF-8
+encoding//app/views/Application/associarListaGravar.html=UTF-8
 encoding//app/views/Application/buscarItem.html=UTF-8
 encoding//app/views/Application/buscarServico.html=UTF-8
 encoding//app/views/Application/desassociarLista.html=UTF-8

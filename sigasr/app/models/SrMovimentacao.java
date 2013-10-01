@@ -56,9 +56,6 @@ public class SrMovimentacao extends GenericModel {
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtFimMov;
 
-	@JoinColumn(name = "ID_ESTADO", nullable = false)
-	public SrEstado estado;
-
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQUIVO")
 	public SrArquivo arquivo;
@@ -123,8 +120,6 @@ public class SrMovimentacao extends GenericModel {
 
 	public SrMovimentacao(SrSolicitacao sol) throws Exception {
 		this.solicitacao = sol;
-		if (solicitacao != null && solicitacao.temMovimentacao())
-			estado = solicitacao.getUltimaMovimentacao().estado;
 	}
 
 	public boolean isCancelado() {
@@ -204,44 +199,12 @@ public class SrMovimentacao extends GenericModel {
 		return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
 	}
 
-	public String getSituacaoString() {
-		return estado.descrEstado + " (" + lotaAtendente.getSigla() + ")";
-	}
-
-	public String getSituacaoStringSemLota() {
-		return estado.descrEstado;
-	}
-
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
 
 	public boolean temAtendenteOuLota() {
 		return (atendente != null || lotaAtendente != null);
-	}
-
-	public boolean isProxAtendenteAlteravel() throws Exception {
-		return estado == SrEstado.ANDAMENTO
-				&& (!solicitacao.isEmPreAtendimento() || !solicitacao
-						.temAtendenteDesignado());
-	}
-
-	public SrMovimentacao deduzirProxAtendente() throws Exception {
-
-		this.lotaAtendente = null;
-		this.atendente = null;
-		if (estado == SrEstado.FECHADO || estado == SrEstado.POS_ATENDIMENTO)
-			this.lotaAtendente = solicitacao.getPosAtendenteDesignado();
-		if (estado == SrEstado.PRE_ATENDIMENTO)
-			this.lotaAtendente = solicitacao.getPreAtendenteDesignado();
-		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento())
-			this.lotaAtendente = solicitacao.getAtendenteDesignado();
-
-		if (this.lotaAtendente == null && solicitacao != null) {
-			this.lotaAtendente = solicitacao.getLotaAtendente();
-			this.atendente = solicitacao.getAtendente();
-		}
-		return this;
 	}
 
 	@Override
@@ -270,7 +233,7 @@ public class SrMovimentacao extends GenericModel {
 		if (isPrimeiraMovimentacao()
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
-						&& estado != SrEstado.FECHADO && estado != SrEstado.POS_ATENDIMENTO))
+						&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
 		return this;
 	}
@@ -294,12 +257,12 @@ public class SrMovimentacao extends GenericModel {
 			throw new Exception("Cadastrante não pode ser nulo");
 
 		dtIniMov = new Date();
-		
+
 		checarCamposConsiderandoSolicitacao();
 
 		if (tipoMov == null)
 			tipoMov = SrTipoMovimentacao
-			.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO); 
+					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
 
 		if (atendente == null && lotaAtendente == null)
 			throw new Exception("Atendente não pode ser nulo");
@@ -315,34 +278,10 @@ public class SrMovimentacao extends GenericModel {
 
 		SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
 
-		if (estado == SrEstado.ANDAMENTO && solicitacao.isEmPreAtendimento()) {
-			atendente = null;
-			lotaAtendente = solicitacao.getAtendenteDesignado();
-			tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
-		} else if (estado == SrEstado.FECHADO
-				&& solicitacao.temPosAtendenteDesignado()
-				&& !solicitacao.getLotaAtendente().equivale(
-						solicitacao.getPosAtendenteDesignado())) {
-			atendente = null;
-			lotaAtendente = solicitacao.getPosAtendenteDesignado();
-			estado = SrEstado.POS_ATENDIMENTO;
-			tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_POS_ATENDIMENTO);
-
-		} else if (estado == SrEstado.PRE_ATENDIMENTO) {
-			atendente = null;
-			lotaAtendente = solicitacao.getPreAtendenteDesignado();
-			tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
-		}
-
 		if (!temAtendenteOuLota()) {
 			lotaAtendente = anterior.lotaAtendente;
 			atendente = anterior.atendente;
 		}
-		if (estado == null)
-			estado = anterior.estado;
 
 		if (isCancelado()) {
 			numSequencia = getMovimentacaoAtual();

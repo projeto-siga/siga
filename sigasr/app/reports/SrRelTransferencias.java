@@ -128,11 +128,8 @@ public class SrRelTransferencias extends RelatorioTemplate {
 				lotaAtendente = "";
 			}
 			//Estado da solicitação - 6º elemento
-			if (mov.estado.descrEstado != null) {
-				descrEstado = mov.estado.descrEstado;
-			} else {
 				descrEstado = "";
-			}
+
 			//Item de configuração - 7º elemento
 			if (solic.itemConfiguracao != null) {
 				itemConfig = solic.itemConfiguracao.tituloItemConfiguracao.toString();
@@ -179,11 +176,8 @@ public class SrRelTransferencias extends RelatorioTemplate {
 				lotaAtendente = "";
 			}
 			//Estado da solicitação - 6º elemento
-			if (mov.estado.descrEstado != null) {
-				descrEstado = mov.estado.descrEstado;
-			} else {
-				descrEstado = "";
-			}
+			descrEstado = "";
+			
 			//Item de configuração - 7º elemento
 			if (solic.itemConfiguracao != null) {
 				itemConfig = solic.itemConfiguracao.tituloItemConfiguracao.toString();

@@ -1,23 +1,5 @@
 #{extends 'main.html' /} #{set title:'Movimentação de solicitação' /}
 
-<script language="javascript">
-function carregarAtendente(){
-	frm = document.getElementById('formMovimentacao');
-	params = '';
-	for (i = 0; i < frm.length; i++){
-		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
-	}
-	PassAjaxResponseToFunction('@{Application.exibirAtendente()}', 'carregouAtendente', null, false, params);
-}
-function carregouAtendente(response, param){
-	var div = document.getElementById('divAtendente');
-	div.innerHTML = response;
-	var scripts = div.getElementsByTagName("script");
-	for(var i=0;i<scripts.length;i++)  
-	   eval(scripts[i].text);  
-}
-</script>
-
 <div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
 	<div class="gt-content clearfix">
 		<h2> ${solicitacao.codigo}</h2>
@@ -42,26 +24,42 @@ function carregouAtendente(response, param){
 				href="@{Application.associarLista(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Definir Lista</a>&nbsp;&nbsp;&nbsp;
+			#{if solicitacao.podeFechar(lotaTitular)}
 			<a class="once"
-				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				href="@{Application.fechar(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Fechar</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
+			#{if solicitacao.podeFinalizarPreAtendimento(lotaTitular)}
 			<a class="once"
-				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				href="@{Application.finalizarPreAtendimento(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Finalizar Pré-atendimento</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
+			#{if solicitacao.podeFinalizarPosAtendimento(lotaTitular)}
 			<a class="once"
-				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				href="@{Application.finalizarPosAtendimento(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Finalizar Pós-atendimento</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
+			#{if solicitacao.podeCancelar(lotaTitular)}
 			<a class="once"
-				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				href="@{Application.cancelar(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Cancelar</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
+			#{if solicitacao.podeReabrir(lotaTitular)}
 			<a class="once"
-				href="@{Application.exibirLista(solicitacao.idSolicitacao)}"> <img
+				href="@{Application.cancelar(solicitacao.idSolicitacao)}"> <img
+				src="/siga/css/famfamfam/icons/text_list_numbers.png"
+				style="margin-right: 5px;">Cancelar</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
+			#{if solicitacao.podeDeixarPendente(lotaTitular)}
+			<a class="once"
+				href="@{Application.deixarPendente(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Deixar Pendente</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
 		</p>
 		<div class="gt-content-box">
 					<p style="font-size: 9pt; padding: 7px 10px; margin-bottom: 0px;" id="descrSolicitacao">
@@ -80,15 +78,14 @@ function carregouAtendente(response, param){
 				value="${movimentacao.solicitacao.idSolicitacao}"> #{if
 			solicitacao.estaCom(lotaTitular, cadastrante)}
 			<div class="gt-form-row gt-width-66">
-				<label>Situação</label> #{select 'movimentacao.estado', items:solicitacao.estadosSelecionaveis,
-				labelProperty:'descrEstado', value:movimentacao.estado,
-				valueProperty:Estado, onchange:'carregarAtendente();'} #{/select}
-			</div>
-
-			<div class="gt-form-row gt-width-66">
 				<label>Atendente</label>
-				<div id="divAtendente">#{include
-					'Application/exibirAtendente.html' /}</div>
+				<div id="divAtendente">
+				#{pessoaLotaSelecao nomeSelLotacao:'movimentacao.lotaAtendente',
+					nomeSelPessoa:'movimentacao.atendente',
+					valuePessoa:movimentacao.atendente,
+					valueLotacao:movimentacao.lotaAtendente,
+					disabled:disabled /}
+				</div>
 			</div>
 			#{/if}
 
@@ -149,7 +146,7 @@ function carregouAtendente(response, param){
 			</p>
 			#{/if}
 			<p>
-				<b>Situação:</b> ${solicitacao.situacaoStringSemLota}
+				<b>Situação:</b> Colocar aqui marcas
 			</p>
 			<p>
 				<b>Atendente:</b> ${solicitacao.lotaAtendente?.sigla}
@@ -209,7 +206,7 @@ function carregouAtendente(response, param){
 					<th></th>
 				#{/if}	
 					<th>Momento</th>
-					<th>Situação</th>
+					<th>Tipo de Movimentação</th>
 					<th colspan="2">Cadastrante</th>
 					<th colspan="2">Atendente</th>
 					<th>Descrição</th>
@@ -218,7 +215,7 @@ function carregouAtendente(response, param){
 			</thead>
 
 			<tbody>
-				#{list items:solicitacao.getMovimentacaoSet(considerarCancelados), as:'movimentacao'}
+				#{list items:solicitacao.getMovimentacaoSet(considerarCancelados, null), as:'movimentacao'}
 				<tr id="linha${movimentacao.idMovimentacao}" 
 				#{if movimentacao.cancelado} class="disabled" #{/if} 
 				#{set desfazerMovimentacao: solicitacao.podeDesfazerMovimentacao(lotaTitular, cadastrante) /}
@@ -231,7 +228,7 @@ function carregouAtendente(response, param){
 					#{/if}
 					#{if !considerarCancelados}<td>${movimentacao.dtIniString}</td>#{/if}
 					#{else}<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>#{/else}
-					<td>${movimentacao.estado.descrEstado}</td>
+					<td>${movimentacao.tipoMov.nome}</td>
 					<td>#{selecionado
 						sigla:movimentacao.lotaCadastrante?.siglaLotacao,
 						descricao:movimentacao.lotaCadastrante?.nomeLotacao /}</td>

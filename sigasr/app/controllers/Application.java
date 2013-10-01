@@ -19,7 +19,6 @@ import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
-import models.SrEstado;
 import models.SrFormaAcompanhamento;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
@@ -434,7 +433,6 @@ public class Application extends SigaApplication {
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
-		movimentacao.deduzirProxAtendente();
 
 		render(solicitacao, movimentacao, considerarCancelados);
 	}
@@ -488,7 +486,6 @@ public class Application extends SigaApplication {
 		// sugestão do Renato: colocar em um método movimentar. Fazer
 		// solicitacao.associarLista()
 		mov.solicitacao = solicitacao;
-		mov.estado = SrEstado.ANDAMENTO;
 		mov.descrMovimentacao = "Inclusão em lista";
 		mov.cadastrante = cadastrante();
 		mov.lotaCadastrante = lotaTitular();
@@ -520,11 +517,6 @@ public class Application extends SigaApplication {
 		render("@selecionar", sel);
 	}
 
-	public static void exibirAtendente(SrMovimentacao movimentacao)
-			throws Exception {
-		render(movimentacao.deduzirProxAtendente());
-	}
-
 	public static void baixar(Long idArquivo) {
 		SrArquivo arq = SrArquivo.findById(idArquivo);
 		if (arq != null)
@@ -539,25 +531,55 @@ public class Application extends SigaApplication {
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}
 
-	public static void fechar(SrMovimentacao movimentacao) throws Exception {
+	public static void fechar(Long idSolicitacao) throws Exception {
+
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
+		
+		if (movimentacao.solicitacao.temPosAtendenteDesignado()) {
+			movimentacao.tipoMov = SrTipoMovimentacao
+					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
+			movimentacao.lotaAtendente = movimentacao.solicitacao
+					.getPosAtendenteDesignado();
+		} else {
+			movimentacao.tipoMov = SrTipoMovimentacao
+					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
+		}
+
+		movimentacao.salvar(cadastrante(), lotaTitular());
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
+	}
+
+	public static void cancelar(Long idSolicitacao) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
+		
+		movimentacao.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO);
+		movimentacao.salvar(cadastrante(), lotaTitular());
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
+	}
+
+	public static void finalizarPreAtendimento(Long idSolicitacao)
+			throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
+		
+		movimentacao.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
+		movimentacao.lotaAtendente = movimentacao.solicitacao
+				.getAtendenteDesignado();
+		movimentacao.salvar(cadastrante(), lotaTitular());
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
+	}
+
+	public static void finalizarPosAtendimento(Long idSolicitacao)
+			throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
+		
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
-	}
-
-	public static void finalizarPreAtendimento(SrMovimentacao movimentacao)
-			throws Exception {
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_PRE_ATENDIMENTO);
-		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
-	}
-
-	public static void finalizarPosAtendimento(SrMovimentacao movimentacao)
-			throws Exception {
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_POS_ATENDIMENTO);
 		movimentacao.salvar(cadastrante(), lotaTitular());
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}

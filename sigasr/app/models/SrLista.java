@@ -33,34 +33,33 @@ import play.db.jpa.JPA;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name="SR_LISTA", schema="SIGASR")
+@Table(name = "SR_LISTA", schema = "SIGASR")
 public class SrLista extends GenericModel {
-	
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_LISTA_SEQ", name = "srListaSeq")
 	@GeneratedValue(generator = "srListaSeq")
 	@Column(name = "ID_LISTA")
 	public long idLista;
-	
+
 	@Column(name = "NOME_LISTA")
 	public String nomeLista;
-	
+
 	@Column(name = "DT_REG")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtReg;
-	
-	//public void setHisDtFim(Date hisDtFim);
-	
+
+	// public void setHisDtFim(Date hisDtFim);
+
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
-	
-	
-	public SrLista(){
-		
+
+	public SrLista() {
+
 	}
-	
-	public SrLista(SrLista lista){
+
+	public SrLista(SrLista lista) {
 		this.nomeLista = lista.nomeLista;
 		this.lotaCadastrante = lista.lotaCadastrante;
 	}
@@ -76,7 +75,7 @@ public class SrLista extends GenericModel {
 	public void setId(Long id) {
 		idLista = id;
 	}
-	
+
 	public DpLotacao getlotaCadastrante() {
 		return this.lotaCadastrante;
 	}
@@ -94,28 +93,41 @@ public class SrLista extends GenericModel {
 		List<SrLista> listas = SrLista.find("dtReg is null").fetch();
 		return listas;
 	}
-	
-	public Long setSolicOrd(){
-		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null").fetch();
-		Long prioridade = (long) (mov.size()+1);
+
+	public Long setSolicOrd() {
+		List<SrMovimentacao> mov = SrMovimentacao.find(
+				"lista= " + idLista + " and dtCancelamento is null").fetch();
+		Long prioridade = (long) (mov.size() + 1);
 		return prioridade;
 	}
-	
-	public Long getSolicOrd(SrSolicitacao solicitacao){
-		SrMovimentacao mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null and solicitacao = " 
-				+ solicitacao.idSolicitacao).first();
+
+	public Long getSolicOrd(SrSolicitacao solicitacao) {
+		SrMovimentacao mov = SrMovimentacao.find(
+				"lista= " + idLista
+						+ " and dtCancelamento is null and solicitacao = "
+						+ solicitacao.idSolicitacao).first();
 		return mov.prioridade;
 	}
-	
+
 	public TreeSet<SrSolicitacao> getSolicitacaoAssociada() {
 		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
 				new Comparator<SrSolicitacao>() {
 					@Override
 					public int compare(SrSolicitacao a1, SrSolicitacao a2) {
-						return a2.getMovimentacaoSet(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).iterator().next().prioridade.compareTo(a1.getMovimentacaoSet(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).iterator().next().prioridade);
+						return a2
+								.getMovimentacaoSet(
+										false,
+										SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)
+								.iterator().next().prioridade
+								.compareTo(a1
+										.getMovimentacaoSet(
+												false,
+												SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)
+										.iterator().next().prioridade);
 					}
 				});
-		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista + " and dtCancelamento is null").fetch();
+		List<SrMovimentacao> mov = SrMovimentacao.find(
+				"lista= " + idLista + " and dtCancelamento is null").fetch();
 		try {
 			if (mov != null) {
 				for (SrMovimentacao movim : mov) {
@@ -123,30 +135,32 @@ public class SrLista extends GenericModel {
 				}
 			}
 		} catch (Exception e) {
-				e.printStackTrace();
-			}	
+			e.printStackTrace();
+		}
 		return listaCompleta;
 	}
-	
+
 	public boolean isEmpty() {
-		if (getSolicitacaoAssociada() != null) 
+		if (getSolicitacaoAssociada() != null)
 			return false;
 		return true;
 	}
-	
+
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
 		return true;
 	}
-	
+
 	public Long getPriorAssociada() throws Exception {
-		
-		SrMovimentacao movimentacao  = new SrMovimentacao();
-		for (SrMovimentacao movs : getMovimentacaoListaSet(this, (SrTipoMovimentacao) SrTipoMovimentacao.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)))
-			if (movs.dtCancelamento == null){
-				if (movs.prioridade != null){
-					
-				}
-				else
+
+		SrMovimentacao movimentacao = new SrMovimentacao();
+		for (SrMovimentacao movs : getMovimentacaoListaSet(
+				this,
+				(SrTipoMovimentacao) SrTipoMovimentacao
+						.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)))
+			if (movs.dtCancelamento == null) {
+				if (movs.prioridade != null) {
+
+				} else
 					movimentacao.prioridade = 1L;
 			}
 		return movimentacao.prioridade;
@@ -160,15 +174,17 @@ public class SrLista extends GenericModel {
 						return a2.dtIniMov.compareTo(a1.dtIniMov);
 					}
 				});
-		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + lista.idLista + " and dtCancelamento is null").fetch();
-		for (SrMovimentacao movim : mov)
-		{
+		List<SrMovimentacao> mov = SrMovimentacao.find(
+				"lista= " + lista.idLista + " and dtCancelamento is null")
+				.fetch();
+		for (SrMovimentacao movim : mov) {
 			listaCompleta.add((SrMovimentacao) movim);
 		}
 		return listaCompleta;
 	}
-	
-	public Set<SrMovimentacao> getMovimentacaoListaSet(SrLista lista, SrTipoMovimentacao tipomov) {
+
+	public Set<SrMovimentacao> getMovimentacaoListaSet(SrLista lista,
+			SrTipoMovimentacao tipomov) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new Comparator<SrMovimentacao>() {
 					@Override
@@ -176,21 +192,22 @@ public class SrLista extends GenericModel {
 						return a2.dtIniMov.compareTo(a1.dtIniMov);
 					}
 				});
-		List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + lista.idLista + " and dtCancelamento is null and tipomov = " + tipomov.idTipoMov).fetch();
-		for (SrMovimentacao movim : mov)
-		{
+		List<SrMovimentacao> mov = SrMovimentacao.find(
+				"lista= " + lista.idLista
+						+ " and dtCancelamento is null and tipomov = "
+						+ tipomov.idTipoMov).fetch();
+		for (SrMovimentacao movim : mov) {
 			listaCompleta.add((SrMovimentacao) movim);
 		}
 		return listaCompleta;
 	}
 
 	public void recalcularPrioridade(Long idLista) throws Exception {
-		
+
 		SrLista lista = new SrLista();
-		//Long prioridade = lista.getSolicOrd();
+		// Long prioridade = lista.getSolicOrd();
 		Long prioridade = lista.setSolicOrd();
-		
+
 	}
-	
-	
+
 }

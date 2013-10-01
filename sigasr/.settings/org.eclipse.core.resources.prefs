@@ -1,4 +1,4 @@
-#Mon Aug 19 16:07:15 BRT 2013
+#Mon Sep 30 14:03:50 BRT 2013
 eclipse.preferences.version=1
 encoding//app/controllers/Application.java=UTF-8
 encoding//app/controllers/Bootstrap.java=UTF-8
@@ -20,7 +20,6 @@ encoding//app/views/Application/exibir.html=UTF-8
 encoding//app/views/Application/exibirLista.html=UTF-8
 encoding//app/views/Application/exibirListaAssoc.html=UTF-8
 encoding//app/views/Application/exibirServico.html=UTF-8
-encoding//app/views/Application/exibirSolicitacaoLista.html=UTF-8
 encoding//app/views/Application/gadget.html=UTF-8
 encoding//app/views/Application/listar.html=UTF-8
 encoding//app/views/Application/listarAssociacao.html=UTF-8

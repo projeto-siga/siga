@@ -13,24 +13,7 @@ GET     /public/                                staticDir:public
 
 *		/solicitacao/exibir/{id}						Application.exibir
 *		/solicitacao/desfazer_ultimo/{id}				Application.desfazerUltimaMovimentacao
-*		/solicitacao/baixar								Application.baixar
 *		/solicitacao/filha/{id}							Application.criarFilha
-*		/solicitacao/selecionar							Application.selecionar
-*		/solicitacao/editar/{id}						Application.editar
-*		/solicitacao/editar/							Application.editar
-*		/solicitacao/listar								Application.listar
-*		/solicitacao/gadget								Application.gadget
-*		/solicitacao/exibirLocalERamal					Application.exibirLocalERamal
-*		/solicitacao/exibirAtributos					Application.exibirAtributos
-*		/solicitacao/exibirItemConfiguracao 			Application.exibirItemConfiguracao
-*		/solicitacao/exibirServico 						Application.exibirServico
-*		/solicitacao/gravar 							Application.gravar
-*		/solicitacao/darAndamento		    			Application.darAndamento
-*		/solicitacao/fechar				    			Application.fechar
-*		/solicitacao/cancelar			    			Application.cancelar
-*		/solicitacao/deixarPendente		    			Application.deixarPendente
-*		/solicitacao/finalizarPreAtendimento			Application.finalizarPreAtendimento
-*		/solicitacao/finalizarPosAtendimento			Application.finalizarPosAtendimento
 *		/solicitacao/relSolicitacoes  					Application.relSolicitacoes
 *		/solicitacao/relSolicitacoes/gerar  			Application.grelSolicitacoes
 *		/solicitacao/relTransferencias 					Application.relTransferencias
@@ -41,14 +24,13 @@ GET     /public/                                staticDir:public
 *		/solicitacao/relPrazo/gerar  					Application.grelPrazo
 *		/solicitacao/relPrazoDetail		 				Application.relPrazo
 *		/solicitacao/relPrazoDetail/gerar  				Application.grelPrazoDetail
-*		/solicitacao/estatistica						Application.estatistica
-*		/solicitacao/listarLista						Application.listarLista
 *		/solicitacao/listarLista/gravar 				Application.gravarLista
 *		/solicitacao/exibirLista/{id}		 			Application.exibirLista
 *		/solicitacao/associarLista/{id}				    Application.associarLista
 *		/solicitacao/associarListaGravar/{id}			Application.associarListaGravar
 *		/solicitacao/desassociarLista					Application.desassociarLista
 *		/solicitacao/editarLista/{id}					Application.editarLista
+*		/solicitacao/${action}							Application.${action}
 
 
 *		/designacao/editar/{id}				Application.editarDesignacao

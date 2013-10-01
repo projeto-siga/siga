@@ -42,9 +42,9 @@ GET     /public/                                staticDir:public
 *		/solicitacao/listarLista/gravar 				Application.gravarLista
 *		/solicitacao/exibirLista/{id}		 			Application.exibirLista
 *		/solicitacao/associarLista/{id}				    Application.associarLista
-*		/solicitacao/associarListaGravar/{id}				    Application.associarListaGravar
+*		/solicitacao/associarListaGravar/{id}			Application.associarListaGravar
 *		/solicitacao/desassociarLista					Application.desassociarLista
-*		/solicitacao/editarLista/{id}							Application.editarLista
+*		/solicitacao/editarLista/{id}					Application.editarLista
 
 
 *		/designacao/editar/{id}				Application.editarDesignacao

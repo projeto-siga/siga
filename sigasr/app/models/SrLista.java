@@ -175,6 +175,7 @@ public class SrLista extends HistoricoSuporte {
 						return a2.getMovimentacaoSet(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).iterator().next().prioridade.compareTo(a1.getMovimentacaoSet(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).iterator().next().prioridade);
 					}
 				});
+		
 		for (SrMovimentacao movs : getMovimentacaoSet())
 			if (movs.dtCancelamento == null){
 				listaCompleta.add(movs.solicitacao);

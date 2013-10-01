@@ -442,14 +442,6 @@ public class Application extends SigaApplication {
 				movimentacao, criarFilha, estados, considerarCancelados, movimentacoes, listas);
 	}
 	
-//	public static void exibirLista(Long id) {
-	public static void associarLista(Long id) {
-		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
-		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		List<SrLista> listas =  solicitacao.getListaDisponivel();
-		render(solicitacao, editar, listas);
-	}
-	
 	//public static void exibirSolicitacaoLista(Long id) {
 	public static void exibirLista(Long id, boolean considerarCancelados) throws Exception {	
 		SrLista lista = SrLista.findById(id);
@@ -475,6 +467,14 @@ public class Application extends SigaApplication {
 		render(solicitacao, editar, listas);
 	}
 /* ---------------------------------------------------------------------------- */	
+//	public static void exibirLista(Long id) {
+	public static void associarLista(Long id) {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id); 
+		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
+		List<SrLista> listas =  solicitacao.getListaDisponivel();
+		render(solicitacao, editar, listas);
+	}
+	
 	public static void associarListaGravar(Long idSolicitacao, Long idLista) throws Exception{
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);

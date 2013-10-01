@@ -82,7 +82,7 @@ first-page-body {
 		Concurso Nacional de Remoção a Pedido Mediante Permuta ${anoRemocao}, com base
 		no art. 20 da Lei nº 11.416/2006 c/c a Lei nº 8.112/1990, e nos termos
 		da Portaria Conjunta nº 3/2007, da Resolução 3/2008 alterada pela
-		Resolução nº 66/2009 do Conselho da Justiça Federal e declaro que
+		Resolução nº 66/2009 e pela Resolução n° 229/2013 do Conselho da Justiça Federal e declaro que
 		concordo com os termos do Edital do CJF de ${dataEdital}.</p>
 		<br />
 		<br />

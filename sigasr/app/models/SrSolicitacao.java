@@ -785,6 +785,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean podeDeixarPendente(DpLotacao lota) {
 		return isEmAtendimento() && getLotaAtendente().equivale(lota);
 	}
+	
+	public boolean podeReabrir(DpLotacao lota) {
+		return isFechado() && getLotaAtendente().equivale(lota);
+	}
 
 	public SrSolicitacao deduzirLocalERamal() {
 

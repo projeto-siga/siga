@@ -671,28 +671,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (isCancelado())
 			return false;
 		SrMovimentacao mov = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		return mov != null && mov.idMovRef == null;
+		return mov != null && mov.movReversora == null;
 	}
 
 	public boolean isPendente() {
 		if (isCancelado())
 			return false;
 		SrMovimentacao mov = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
-		return mov != null && mov.idMovRef == null;
+		return mov != null && mov.movReversora == null;
 	}
 
 	public boolean isEmPosAtendimento() {
 		if (isCancelado())
 			return false;
 		SrMovimentacao mov = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
-		return mov != null && mov.idMovRef == null;
+		return mov != null && mov.movReversora == null;
 	}
 
 	public boolean isEmPreAtendimento() {
 		if (isCancelado())
 			return false;
 		SrMovimentacao mov = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO);
-		return mov != null && mov.idMovRef == null;
+		return mov != null && mov.movReversora == null;
 	}
 
 	public boolean isEmAtendimento() {
@@ -1258,11 +1258,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.prioridade = getMovimentacaoSolLista(solicitacao, lista).prioridade;
 		mov.solicitacao = solicitacao;
 		mov.numSequencia = solicitacao.getNumSeqMov();
-		mov.idMovRef = movIncl;
+		//Edson: comentando, pelo motivo do comentário abaixo
+		//mov.idMovRef = movIncl;
 		mov.salvar();
-		movIncl.dtCancelamento = new Date();
+		//Edson: comentando, pois a ideia seria reverter, não cancelar...
+		//movIncl.dtCancelamento = new Date();
 		movIncl.prioridade = null;
-		movIncl.idmovCanceladora = mov;
+		movIncl.movCanceladora = mov;
 		movIncl.save();
 		sol.meuMovimentacaoSet.add(mov);
 		sol.meuMovimentacaoSet.add(movIncl);

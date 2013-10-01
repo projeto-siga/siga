@@ -142,7 +142,7 @@ public class SrLista extends HistoricoSuporte {
 				this,
 				(SrTipoMovimentacao) SrTipoMovimentacao
 						.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)))
-			if (movs.dtCancelamento == null) {
+			if (movs.movCanceladora == null) {
 				if (movs.prioridade != null) {
 
 				} else
@@ -170,7 +170,7 @@ public class SrLista extends HistoricoSuporte {
 				});
 
 		for (SrMovimentacao movs : getMovimentacaoSet())
-			if (movs.dtCancelamento == null) {
+			if (movs.movCanceladora == null) {
 				listaCompleta.add(movs.solicitacao);
 			}
 		return listaCompleta;

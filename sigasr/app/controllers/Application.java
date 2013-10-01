@@ -560,7 +560,7 @@ public class Application extends SigaApplication {
 
 		SrMovimentacao movRevertida = sol
 				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO);
-		movRevertida.idMovRef = movRevertida;
+		movRevertida.movReversora = movimentacao;
 		movRevertida.salvar();
 
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
@@ -577,7 +577,7 @@ public class Application extends SigaApplication {
 
 		SrMovimentacao movRevertida = sol
 				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
-		movRevertida.idMovRef = movRevertida;
+		movRevertida.movReversora = movimentacao;
 		movRevertida.salvar();
 
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
@@ -603,7 +603,7 @@ public class Application extends SigaApplication {
 
 		SrMovimentacao movRevertida = sol
 				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
-		movRevertida.idMovRef = movRevertida;
+		movRevertida.movReversora = movimentacao;
 		movRevertida.salvar();
 
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
@@ -619,7 +619,7 @@ public class Application extends SigaApplication {
 
 		SrMovimentacao movRevertida = sol
 				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		movRevertida.idMovRef = movRevertida;
+		movRevertida.movReversora = movimentacao;
 		movRevertida.salvar();
 
 		exibir(movimentacao.solicitacao.idSolicitacao, false);

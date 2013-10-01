@@ -2,7 +2,7 @@
 <body>
 	<p>
 		Informamos que foi <b>cancelado</b>, em
-		${movimentacao.dtCancelamentoDDMMYYYYHHMM}, o <b>movimentação</b> abaixo,
+		${movimentacao.movCanceladora.dtIniMovDDMMYYYYHHMM}, o <b>movimentação</b> abaixo,
 		dado na solicitação <b>${sol.codigo}</b>
 	</p>
 	<blockquote>
@@ -12,8 +12,8 @@
 			(${movimentacao.lotaCadastrante.siglaLotacao})</p>
 		<p>
 			<b>Cancelado</b> por
-			${movimentacao.cancelador.descricaoIniciaisMaiusculas}
-			(${movimentacao.lotaCancelador.siglaLotacao})
+			${movimentacao.movCanceladora.cadastrante.descricaoIniciaisMaiusculas}
+			(${movimentacao.movCanceladora.lotaCadastrante.siglaLotacao})
 		</p>
 	</blockquote>
 	<p>

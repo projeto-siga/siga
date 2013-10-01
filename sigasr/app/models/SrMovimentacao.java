@@ -84,29 +84,17 @@ public class SrMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista lista;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_CANCELADOR")
-	public DpPessoa cancelador;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_LOTA_CANCELADOR")
-	public DpLotacao lotaCancelador;
-
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_CANCELADORA")
-	public SrMovimentacao idmovCanceladora;
-
-	@Column(name = "DT_MOV_CANCELADORA")
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date dtCancelamento;
+	public SrMovimentacao movCanceladora;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
 	public SrTipoMovimentacao tipoMov;
 
 	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_MOVIMENTACAO_REF")
-	public SrMovimentacao idMovRef;
+	@JoinColumn(name = "ID_MOV_REVERSORA")
+	public SrMovimentacao movReversora;
 
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
@@ -130,7 +118,7 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public boolean isCancelado() {
-		return dtCancelamento != null;
+		return movCanceladora != null;
 	}
 
 	public boolean isPrimeiraMovimentacao() {
@@ -194,14 +182,6 @@ public class SrMovimentacao extends GenericModel {
 
 	}
 
-	public String getDtCancelamentoDDMMYYYYHHMM() {
-		if (dtCancelamento != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-			return df.format(dtCancelamento);
-		}
-		return "";
-	}
-
 	public String getCadastranteString() {
 		return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
 	}
@@ -246,12 +226,12 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public void desfazer(DpPessoa pessoa, DpLotacao lota) throws Exception {
-		dtCancelamento = new Date();
-		lotaCancelador = lota;
-		cancelador = pessoa;
-		tipoMov = SrTipoMovimentacao
+		SrMovimentacao mov = new SrMovimentacao(this.solicitacao);
+		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
-		salvar();
+		mov.salvar(pessoa, lota);
+		this.movCanceladora = mov;
+		this.salvar();
 	}
 
 	private void checarCampos() throws Exception {
@@ -263,7 +243,8 @@ public class SrMovimentacao extends GenericModel {
 		if (cadastrante == null)
 			throw new Exception("Cadastrante não pode ser nulo");
 
-		dtIniMov = new Date();
+		if (dtIniMov == null)
+			dtIniMov = new Date();
 
 		checarCamposConsiderandoSolicitacao();
 

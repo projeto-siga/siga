@@ -1297,6 +1297,23 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			if(ultimaMovimentacaoDaReferencia.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO
 					&& ultimaMovimentacaoDaReferencia.getDtMov().after(exUltMovNaoCanc.getDtMov()))
 				return false;
+			
+			//Verifica se o mobil de referência já recebeu outras movimentações depois da movimentação que vai ser cancelada.
+			if(mob.doc().isEletronico()
+					&& exUltMovNaoCanc.getExMobilRef() != null
+					&& exUltMovNaoCanc.getExMobilRef().doc().isNumeracaoUnicaAutomatica()) {
+				
+				for (ExMovimentacao movDoMobilRef : exUltMovNaoCanc.getExMobilRef().getCronologiaSet()) {
+					if(movDoMobilRef.getIdMov().equals(exUltMovNaoCanc.getIdMov()))
+						break;
+
+					if(!movDoMobilRef.isCancelada() &&
+							movDoMobilRef.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA &&
+							movDoMobilRef.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO &&
+							movDoMobilRef.getDtIniMov().after(exUltMovNaoCanc.getDtIniMov()))
+						return false;
+				}
+			}
 		}
 		
 

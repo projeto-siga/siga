@@ -119,6 +119,8 @@ public class SigaApplication extends Controller {
 	protected static void assertAcesso(String pathServico) throws Exception {
 		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
 				+ pathServico;
+		if (servico.endsWith(";"))
+			servico = servico.substring(0, servico.length()-1);
 		if (!podeUtilizarServico(servico))
 			throw new Exception("Acesso negado. Serviço: '" + servico
 					+ "' usuário: " + cadastrante().getSigla() + " lotação: "

@@ -17,7 +17,7 @@
 		<property name="descMod" column="DESC_MOD" type="string" />
 		<property name="nmArqMod" column="NM_ARQ_MOD" type="string" />
 		<property name="conteudoBlobMod" column="CONTEUDO_BLOB_MOD"
-			type="java.sql.Blob" />
+			type="java.sql.Blob" lazy="true" />
 		<property name="conteudoTpBlob" column="CONTEUDO_TP_BLOB"
 			type="string" />
 			

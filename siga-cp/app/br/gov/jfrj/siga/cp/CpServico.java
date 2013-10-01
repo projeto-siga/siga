@@ -19,16 +19,20 @@
 package br.gov.jfrj.siga.cp;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Selecionavel;
 
-@NamedQuery(name = "consultarPorSiglaCpServico", query = "select org from CpServico org "
-	+ "where upper(org.siglaServico) like upper(:siglaServico) "
-	+ "and ((:idServicoPai = 0 and org.cpServicoPai is null) or org.cpServicoPai.idServico = :idServicoPai)")
+@NamedQueries({
+		@NamedQuery(name = "consultarPorSiglaCpServico", query = "select org from CpServico org "
+				+ "where upper(org.siglaServico) like upper(:siglaServico) "
+				+ "and ((:idServicoPai = 0 and org.cpServicoPai is null) or org.cpServicoPai.idServico = :idServicoPai)"),
+		@NamedQuery(name = "consultarPorSiglaStringCpServico", query = "select org from CpServico org "
+				+ "where upper(org.siglaServico) like upper(:siglaServico)") })
 @Entity
-@Table(name = "CP_SERVICO", schema="CORPORATIVO")
+@Table(name = "CP_SERVICO", schema = "CORPORATIVO")
 public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	/**

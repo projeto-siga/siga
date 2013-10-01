@@ -519,10 +519,9 @@ public class Application extends SigaApplication {
 	}
 
 	public static void fechar(Long idSolicitacao) throws Exception {
-
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		if (movimentacao.solicitacao.temPosAtendenteDesignado()) {
 			movimentacao.tipoMov = SrTipoMovimentacao
 					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
@@ -532,42 +531,97 @@ public class Application extends SigaApplication {
 			movimentacao.tipoMov = SrTipoMovimentacao
 					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
 		}
-
 		movimentacao.salvar(cadastrante(), lotaTitular());
+
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}
 
 	public static void cancelar(Long idSolicitacao) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO);
 		movimentacao.salvar(cadastrante(), lotaTitular());
+
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}
 
 	public static void finalizarPreAtendimento(Long idSolicitacao)
 			throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
 		movimentacao.lotaAtendente = movimentacao.solicitacao
 				.getAtendenteDesignado();
 		movimentacao.salvar(cadastrante(), lotaTitular());
+
+		SrMovimentacao movRevertida = sol
+				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO);
+		movRevertida.idMovRef = movRevertida;
+		movRevertida.salvar();
+
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}
 
 	public static void finalizarPosAtendimento(Long idSolicitacao)
 			throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
 		movimentacao.salvar(cadastrante(), lotaTitular());
+
+		SrMovimentacao movRevertida = sol
+				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
+		movRevertida.idMovRef = movRevertida;
+		movRevertida.salvar();
+
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
+	}
+
+	public static void deixarPendente(Long idSolicitacao) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
+
+		movimentacao.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
+		movimentacao.salvar(cadastrante(), lotaTitular());
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
+	}
+
+	public static void terminarPendencia(Long idSolicitacao) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
+		movimentacao.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
+		movimentacao.salvar(cadastrante(), lotaTitular());
+
+		SrMovimentacao movRevertida = sol
+				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
+		movRevertida.idMovRef = movRevertida;
+		movRevertida.salvar();
+
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
+	}
+
+	public static void reabrir(Long idSolicitacao) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+
+		SrMovimentacao movimentacao = new SrMovimentacao(sol);
+		movimentacao.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
+		movimentacao.salvar(cadastrante(), lotaTitular());
+
+		SrMovimentacao movRevertida = sol
+				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
+		movRevertida.idMovRef = movRevertida;
+		movRevertida.salvar();
+
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}
 

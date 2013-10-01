@@ -50,15 +50,21 @@
 			#{/if}
 			#{if solicitacao.podeReabrir(lotaTitular)}
 			<a class="once"
-				href="@{Application.cancelar(solicitacao.idSolicitacao)}"> <img
+				href="@{Application.reabrir(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
-				style="margin-right: 5px;">Cancelar</a>&nbsp;&nbsp;&nbsp;
+				style="margin-right: 5px;">Reabrir</a>&nbsp;&nbsp;&nbsp;
 			#{/if}
 			#{if solicitacao.podeDeixarPendente(lotaTitular)}
 			<a class="once"
 				href="@{Application.deixarPendente(solicitacao.idSolicitacao)}"> <img
 				src="/siga/css/famfamfam/icons/text_list_numbers.png"
 				style="margin-right: 5px;">Deixar Pendente</a>&nbsp;&nbsp;&nbsp;
+			#{/if}
+			#{if solicitacao.podeTerminarPendencia(lotaTitular)}
+			<a class="once"
+				href="@{Application.terminarPendencia(solicitacao.idSolicitacao)}"> <img
+				src="/siga/css/famfamfam/icons/text_list_numbers.png"
+				style="margin-right: 5px;">Terminar Pendência</a>&nbsp;&nbsp;&nbsp;
 			#{/if}
 		</p>
 		<div class="gt-content-box">

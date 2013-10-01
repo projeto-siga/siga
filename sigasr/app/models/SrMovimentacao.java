@@ -120,6 +120,13 @@ public class SrMovimentacao extends GenericModel {
 
 	public SrMovimentacao(SrSolicitacao sol) throws Exception {
 		this.solicitacao = sol;
+		if (this.solicitacao != null) {
+			SrMovimentacao ultMov = solicitacao.getUltimaMovimentacao();
+			if (ultMov != null) {
+				this.lotaAtendente = ultMov.lotaAtendente;
+				this.atendente = ultMov.atendente;
+			}
+		}
 	}
 
 	public boolean isCancelado() {

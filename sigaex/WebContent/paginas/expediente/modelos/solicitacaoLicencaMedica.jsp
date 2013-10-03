@@ -88,7 +88,7 @@
 	
 		FIM PRIMEIRO CABECALHO -->
 
-		<p style="font-size: 15pt;"><b>SOLICITAÇÃO DE LICENÇA MÉDICA</b></p>
+		<p style="font-size: 12pt;"><b>SOLICITAÇÃO DE LICENÇA MÉDICA</b></p>
 		Atestado em anexo:&nbsp;&nbsp;&nbsp;&nbsp;
 		<c:choose>
 			<c:when test="${tipoAtestado eq 'médico da SJRJ'}">
@@ -103,13 +103,13 @@
 		</c:choose>
 		<table width="100%" border="1" cellpadding="3" cellspacing="1">
 			<tr>
-				<td bgcolor="#C0C0C0" colspan="2"><b>SERVIDOR</b></td>
+				<td bgcolor="#C0C0C0" colspan="2"><p align="center" style="font-size: 10pt;"><b>SERVIDOR</b> </p></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3" cellspacing="1">
 			<tr>
-				<td width="70%" bgcolor="#FFFFFF">Nome: <b>${doc.subscritor.descricao}</b></td>
-				<td width="30%" bgcolor="#FFFFFF">Matrícula: <b>${doc.subscritor.sigla}</b></td>
+				<td width="70%" bgcolor="#FFFFFF">Nome: <b><p align="center" style="font-size: 9pt;">${doc.subscritor.descricao}</b></p></td>
+				<td width="30%" bgcolor="#FFFFFF">Matrícula: <b><p align="center" style="font-size: 9pt;">${doc.subscritor.sigla}</b></p></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
@@ -176,19 +176,15 @@
 				<td width="50%" valign="top">Local e Data:<br />
 				${doc.dtExtenso}<br />
 				<br />
-				<br />
-				<br />
 				</td>
 				<td width="50%" valign="top">Assinatura do(a) Servidor(a)<br />
-				<br />
-				<br />
 				<br />
 				</td>
 			</tr>
 		</table>
 		<table width="100%" border="1" width="100%">
 			<tr>
-				<td bgcolor="#C0C0C0"><b> OBSERVAÇÕES </b></td>
+				<td bgcolor="#C0C0C0"><b><p align="center" style="font-size: 10pt;"> OBSERVAÇÕES </p> </b></td>
 			</tr>
 			<tr>
 				<td>
@@ -218,7 +214,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td bgcolor="#C0C0C0"><b> CHEFIA </b></td>
+				<td bgcolor="#C0C0C0"><p align="center" style="font-size: 10pt;"><b> CHEFIA </b></p></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" width="100%">
@@ -228,7 +224,6 @@
 				chefia para a perícia médica</b><br />
 				(preenchimento obrigatório, mesmo que seja com "nada a declarar").<br />
 				OBS:<br />
-				<br />
 				<br />
 				</p>
 				<p align="center" style="font-size: 8pt;">- Em caso de
@@ -241,11 +236,8 @@
 				<p align="center" style="font-size: 8pt;">Último dia de trabalho
 				do servidor:<br />
 				<br />
-				<br />
 				_______/_______/_______<br />
 				Carimbo e assinatura da chefia<br />
-				<br />
-				<br />
 				<br />
 				</p>
 				</td>

@@ -95,20 +95,16 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	public String aEmitirRelatorio() throws Exception{
 		parametrosRelatorio = new HashMap<String, String>();
 
+		for (Object o: getRequest().getParameterMap().keySet()) {
+			String k = (String)o;
+			String v = (String) getRequest().getParameter(k);
+			parametrosRelatorio.put(k,v);
+		}
+		
 		parametrosRelatorio.put("secaoUsuario", getLotaTitular().getOrgaoUsuario().getNmOrgaoUsu());
-		parametrosRelatorio.put("dataInicialDe", getRequest().getParameter(
-				"dataInicialDe"));
-		parametrosRelatorio.put("dataInicialAte", getRequest().getParameter(
-		"dataInicialAte"));
-		parametrosRelatorio.put("dataFinalDe", getRequest().getParameter("dataFinalDe"));
-		parametrosRelatorio.put("dataFinalAte", getRequest().getParameter("dataFinalAte"));
-		
-		
 		String nomeProcedimento = WfDao.getInstance().getProcessDefinition(getPdId()).getName();
-		
 		parametrosRelatorio.put("nomeProcedimento", nomeProcedimento);
-		parametrosRelatorio.put("incluirAbertos",incluirAbertos==null?false:incluirAbertos );
-
+		parametrosRelatorio.put("incluirAbertos",incluirAbertos==null?false:incluirAbertos);
 		
 		Long relatorioEscolhido = Long.valueOf(getRequest().getParameter("selecaoRelatorio"));
 		

@@ -71,16 +71,15 @@ function displayTitular(thisElement) {
 function avisoColorido(msg, cor, tempo) {
 	var quadroAviso = document.getElementById('quadroAviso');
 	quadroAviso.style.backgroundColor = cor;
-	quadroAviso.style.left = (document.body.clientWidth / 2)
-			- ((msg.length) / 2);
+	quadroAviso.innerHTML = msg;
+	quadroAviso.style.left = 0;
 	var posicionaQuadro = function() {
 		quadroAviso.style.top = document.body.scrollTop;
 	};
 	posicionaQuadro();
 	window.onscroll = posicionaQuadro;
-	quadroAviso.innerHTML = msg;
 	quadroAviso.style.visibility = 'visible';
-	var ttt = setTimeout('escondeAvisoColorido()', tempo);
+	setTimeout('escondeAvisoColorido()', (tempo ? tempo : 5000));
 }
 
 function escondeAvisoColorido() {

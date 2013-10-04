@@ -329,24 +329,16 @@
 
 		<action name="gravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aGravar">
-			<!-- <interceptor-ref name="completeStack"/> <interceptor-ref name="execAndWait"> 
-				<param name="delay">3000</param> </interceptor-ref> <result name="wait" type="redirect-action"> 
-				exibir?id=${idDoc} </result> -->
-			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
-				/> -->
 			<result name="success" type="redirect-action">
 				exibir?sigla=${doc.sigla}${desativ}
 			</result>
 			<result name="form_incompleto">
 				/paginas/expediente/edita.jsp
 			</result>
-			<!-- <result name="form_incompleto" type="redirect-action"> editar?${urlEncodedParameters}&amp;alerta=Sim 
-				</result> -->
+			<result name="ajax">
+				/paginas/expediente/retorno_salvamento_ajax.jsp
+			</result>
 		</action>
-		<!-- <result name="wait">longRunningAction-wait.jsp</result> <result name="success">longRunningAction-success.jsp</result> 
-			<action name="gravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction" 
-			method="aGravar"> <result type="redirect-action"> exibir?id=${doc.idDoc} 
-			</result> </action> -->
 
 		<action name="excluir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aExcluirDocMovimentacoes">

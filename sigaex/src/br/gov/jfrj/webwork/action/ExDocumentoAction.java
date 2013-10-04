@@ -278,11 +278,11 @@ public class ExDocumentoAction extends ExActionSupport {
 	private boolean criandoAnexo;
 
 	private List<ExFormaDocumento> formasDoc;
-	
+
 	private Long idMobilAutuado;
-	
+
 	private boolean autuando;
-	
+
 	private String descrMov;
 
 	public boolean isCriandoAnexo() {
@@ -294,7 +294,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public Integer getTamanhoMaximoDescricao() {
-		return  4000;
+		return 4000;
 	}
 
 	public boolean getDespachando() {
@@ -328,7 +328,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public List<ExTpDocPublicacao> getListaPublicacao() {
-		ExModelo mod = dao().consultar(getIdMod(),ExModelo.class,false);
+		ExModelo mod = dao().consultar(getIdMod(), ExModelo.class, false);
 		return PublicacaoDJEBL.obterListaTiposMaterias(mod.getHisIdIni());
 	}
 
@@ -613,12 +613,14 @@ public class ExDocumentoAction extends ExActionSupport {
 			} else
 				nivelAcesso = 1L;
 
-			idMod = ((ExModelo)dao().consultarAtivoPorIdInicial(ExModelo.class,26L)).getIdMod();
+			idMod = ((ExModelo) dao().consultarAtivoPorIdInicial(
+					ExModelo.class, 26L)).getIdMod();
 		}
 
 		if (isCriandoAnexo() && getId() == null && getPostback() == null) {
 			idFormaDoc = 60;
-			idMod = ((ExModelo)dao().consultarAtivoPorIdInicial(ExModelo.class,507L)).getIdMod();
+			idMod = ((ExModelo) dao().consultarAtivoPorIdInicial(
+					ExModelo.class, 507L)).getIdMod();
 		}
 
 		if (getId() == null && doc != null)
@@ -651,7 +653,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		if (getTipoDocumento() != null && getTipoDocumento().equals("externo")) {
-			setIdMod(((ExModelo)dao().consultarAtivoPorIdInicial(ExModelo.class,28L)).getIdMod());
+			setIdMod(((ExModelo) dao().consultarAtivoPorIdInicial(
+					ExModelo.class, 28L)).getIdMod());
 		}
 		carregarBeans();
 
@@ -986,14 +989,14 @@ public class ExDocumentoAction extends ExActionSupport {
 				.println("\n\n\n\n\n\n*****************************************\n\n\n\n\n\n\n");
 
 	}
-	
+
 	private void verificaDocumento() throws AplicacaoException, Exception {
 		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc
 				.getNmSubscritorExt() == null)
 				&& ((doc.getExFormaDocumento().getExTipoFormaDoc()
-						.getIdTipoFormaDoc() == 2 && doc.isEletronico())
-						|| doc.getExFormaDocumento().getExTipoFormaDoc()
-						.getIdTipoFormaDoc() != 2 ))
+						.getIdTipoFormaDoc() == 2 && doc.isEletronico()) || doc
+						.getExFormaDocumento().getExTipoFormaDoc()
+						.getIdTipoFormaDoc() != 2))
 			throw new AplicacaoException(
 					"É necessário definir um subscritor para o documento.");
 
@@ -1023,7 +1026,7 @@ public class ExDocumentoAction extends ExActionSupport {
 						.trim().equals("")))
 			throw new AplicacaoException(
 					"Ao cadastrar processo administrativo já existente, é necessário informar o **número antigo** do processo.");
-		
+
 		if (doc.getExClassificacao() == null)
 			throw new AplicacaoException(
 					"É necessário informar a classificação documental.");
@@ -1111,9 +1114,8 @@ public class ExDocumentoAction extends ExActionSupport {
 			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
 		}
 
-		return Action.SUCCESS;	}
-
-	
+		return Action.SUCCESS;
+	}
 
 	public String aFecharAssinar() throws Exception {
 		aFechar();
@@ -1169,7 +1171,8 @@ public class ExDocumentoAction extends ExActionSupport {
 
 			if (doc.getDescrDocumento().length() > getTamanhoMaximoDescricao())
 				throw new AplicacaoException(
-						"O campo descrição possui mais do que " + getTamanhoMaximoDescricao() + " caracteres.");
+						"O campo descrição possui mais do que "
+								+ getTamanhoMaximoDescricao() + " caracteres.");
 
 			if (doc.getDtFechamento() != null) {
 				Date dt = dao().dt();
@@ -1187,31 +1190,16 @@ public class ExDocumentoAction extends ExActionSupport {
 				if (c.before(dtDocCalendar))
 					throw new Exception(
 							"Não é permitido criar documento com data futura");
-				
+
 				verificaDocumento();
 			}
 
-			/*
-			 * if (getDoc().getExMobilPai() != null) { if
-			 * (doc.getExMobilPai().getExDocumento().isProcesso() &&
-			 * doc.isProcesso()) { if
-			 * (!ExCompetenciaBL.podeCriarSubprocesso(getTitular(),
-			 * getLotaTitular(), getDoc().getExMobilPai())) throw new
-			 * AplicacaoException(
-			 * "Não foi possível criar Subprocesso do documento selecionado.");
-			 * } else { if (!ExCompetenciaBL.podeCriarDocFilho(getTitular(),
-			 * getLotaTitular(), getDoc().getExMobilPai())) throw new
-			 * AplicacaoException(
-			 * "Não foi possível criar documento filho do documento selecionado."
-			 * ); } }
-			 */
-			
 			ExMobil mobilAutuado = null;
-			if(getIdMobilAutuado() != null) {
-				
+			if (getIdMobilAutuado() != null) {
+
 				mobilAutuado = dao().consultar(getIdMobilAutuado(),
 						ExMobil.class, false);
-				
+
 				doc.setExMobilAutuado(mobilAutuado);
 			}
 
@@ -1228,7 +1216,10 @@ public class ExDocumentoAction extends ExActionSupport {
 		} finally {
 		}
 
-		return Action.SUCCESS;
+		if (param("ajax") != null && param("ajax").equals("true"))
+			return "ajax";
+		else
+			return Action.SUCCESS;
 	}
 
 	public String aGravarPreenchimento() throws Exception {
@@ -1369,8 +1360,9 @@ public class ExDocumentoAction extends ExActionSupport {
 			GeradorRTF gerador = new GeradorRTF();
 			String nomeArq = doque.getIdDoc().toString();
 			fakeMov.setConteudoBlobRTF(nomeArq, gerador.geraRTF(doque));
-			fakeMov.setConteudoBlobXML(nomeArq,
-					PublicacaoDJEBL.gerarXMLPublicacao(fakeMov, "A", "SESIA", "Teste descrição"));
+			fakeMov.setConteudoBlobXML(nomeArq, PublicacaoDJEBL
+					.gerarXMLPublicacao(fakeMov, "A", "SESIA",
+							"Teste descrição"));
 			fakeMov.setNmArqMov(nomeArq + ".zip");
 
 			PublicacaoDJEBL.primeiroEnvio(fakeMov);
@@ -1485,10 +1477,11 @@ public class ExDocumentoAction extends ExActionSupport {
 		buscarDocumento(true);
 		return Action.SUCCESS;
 	}
-	
+
 	public String aTornarDocumentoSemEfeitoGravar() throws Exception {
-		if (getDescrMov()==null || getDescrMov().trim().length()==0){
-			throw new AplicacaoException("O preenchimento do campo MOTIVO é obrigatório!");
+		if (getDescrMov() == null || getDescrMov().trim().length() == 0) {
+			throw new AplicacaoException(
+					"O preenchimento do campo MOTIVO é obrigatório!");
 		}
 		buscarDocumento(true);
 		if (!Ex.getInstance()
@@ -1501,13 +1494,12 @@ public class ExDocumentoAction extends ExActionSupport {
 			Ex.getInstance()
 					.getBL()
 					.TornarDocumentoSemEfeito(getCadastrante(),
-							getLotaTitular(), doc,getDescrMov());
+							getLotaTitular(), doc, getDescrMov());
 		} catch (final Exception e) {
 			throw e;
 		}
 		return Action.SUCCESS;
 	}
-
 
 	private void carregarBeans() throws Exception {
 		ExMobil mobPai = null;
@@ -1560,13 +1552,14 @@ public class ExDocumentoAction extends ExActionSupport {
 				 * }
 				 */
 			}
-			
-			if(getAutuando() && getIdMobilAutuado() != null) {
+
+			if (getAutuando() && getIdMobilAutuado() != null) {
 				ExMobil mobilAutuado = daoMob(getIdMobilAutuado());
-				
+
 				doc.setExMobilAutuado(mobilAutuado);
-				
-				getClassificacaoSel().setId(mobilAutuado.getDoc().getExClassificacao().getId());
+
+				getClassificacaoSel().setId(
+						mobilAutuado.getDoc().getExClassificacao().getId());
 				setDescrDocumento(mobilAutuado.getDoc().getDescrDocumento());
 			}
 		}
@@ -1624,7 +1617,8 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 
 			setIdMod(mod.getIdMod());
-			if ((getIdMod() != 0) && (mobilPaiSel.getId() == null) && (getIdMobilAutuado() == null))
+			if ((getIdMod() != 0) && (mobilPaiSel.getId() == null)
+					&& (getIdMobilAutuado() == null))
 				getClassificacaoSel().apagar();
 		}
 
@@ -1632,8 +1626,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			setPreenchimento(0L);
 		}
 
-		if (isAlterouModelo()  
-				&& mobilPaiSel.getId() == null
+		if (isAlterouModelo() && mobilPaiSel.getId() == null
 				&& idMobilAutuado == null)
 			getClassificacaoSel().apagar();
 
@@ -1721,9 +1714,10 @@ public class ExDocumentoAction extends ExActionSupport {
 			getMobilPaiSel().buscarPorObjeto(doc.getExMobilPai());
 		}
 
-		if (doc.getTitular() != null && doc.getSubscritor() != null
-				&& !doc.getTitular().getIdPessoa().equals(doc.getSubscritor()
-						.getIdPessoa()) ) {
+		if (doc.getTitular() != null
+				&& doc.getSubscritor() != null
+				&& !doc.getTitular().getIdPessoa()
+						.equals(doc.getSubscritor().getIdPessoa())) {
 			getTitularSel().buscarPorObjeto(doc.getTitular());
 			setSubstituicao(true);
 		}
@@ -2125,8 +2119,9 @@ public class ExDocumentoAction extends ExActionSupport {
 			return preenchSet;
 
 		ExPreenchimento preench = new ExPreenchimento();
-		if(getIdMod() != null && getIdMod() != 0L)
-			preench.setExModelo(dao().consultar(getIdMod(), ExModelo.class, false));
+		if (getIdMod() != null && getIdMod() != 0L)
+			preench.setExModelo(dao().consultar(getIdMod(), ExModelo.class,
+					false));
 
 		DpLotacao lota = new DpLotacao();
 		lota.setIdLotacaoIni(getLotaTitular().getIdLotacaoIni());
@@ -2134,7 +2129,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		preenchSet.add(new ExPreenchimento(0, null, " [Em branco] ", null));
 
-		if(getIdMod() != null && getIdMod() != 0) {
+		if (getIdMod() != null && getIdMod() != 0) {
 			for (DpLotacao lotacao : lotacaoSet) {
 				preench.setDpLotacao(lotacao);
 				preenchSet.addAll(dao().consultar(preench));
@@ -2356,12 +2351,18 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		try {
 			ByteArrayOutputStream baos;
-			
-			final String marcacoes[] = {"<!-- INICIO NUMERO -->", "<!-- FIM NUMERO -->","<!-- INICIO NUMERO","FIM NUMERO -->","<!-- INICIO TITULO",
-					"FIM TITULO -->","<!-- INICIO MIOLO -->","<!-- FIM MIOLO -->","<!-- INICIO CORPO -->","<!-- FIM CORPO -->","<!-- INICIO CORPO",
-					"FIM CORPO -->","<!-- INICIO ASSINATURA -->","<!-- FIM ASSINATURA -->","<!-- INICIO ABERTURA -->","<!-- FIM ABERTURA -->",
-					"<!-- INICIO ABERTURA","FIM ABERTURA -->","<!-- INICIO FECHO -->","<!-- FIM FECHO -->"};
-			
+
+			final String marcacoes[] = { "<!-- INICIO NUMERO -->",
+					"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO",
+					"FIM NUMERO -->", "<!-- INICIO TITULO", "FIM TITULO -->",
+					"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
+					"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
+					"<!-- INICIO CORPO", "FIM CORPO -->",
+					"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->",
+					"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
+					"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
+					"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
+
 			final String as[] = getPar().get("vars");
 			if (as != null) {
 				baos = new ByteArrayOutputStream();
@@ -2371,11 +2372,11 @@ public class ExDocumentoAction extends ExActionSupport {
 					baos.write(s.getBytes());
 					baos.write('=');
 					if (param(s) != null) {
-						String parametro = param(s); 
-						for (final String m : marcacoes){
+						String parametro = param(s);
+						for (final String m : marcacoes) {
 							if (parametro.contains(m))
 								parametro = parametro.replaceAll(m, "");
-						}					
+						}
 						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
 								.getBytes());
 					}
@@ -2840,7 +2841,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String getDescrMov() {
 		return descrMov;
 	}
-	
+
 	public void setDescrMov(String descrMov) {
 		this.descrMov = descrMov;
 	}

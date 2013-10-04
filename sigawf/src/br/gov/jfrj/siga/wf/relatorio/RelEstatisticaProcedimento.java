@@ -48,7 +48,7 @@ import br.gov.jfrj.siga.wf.util.WfContextBuilder;
  */
 public class RelEstatisticaProcedimento extends RelatorioTemplate {
 
-	private static final double PERCENTUAL_MED_TRUNCADA = 5.0;
+	private double percentualMediaTruncada = 5.0;
 
 	/**
 	 * Construtor que define os parâmetros que são obrigatórios para a
@@ -85,6 +85,12 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		if (parametros.get("dataFinalAte") == null) {
 			throw new DJBuilderException("Parâmetro dataFinalAte não informado!");
 		}
+		if (parametros.get("percentualMediaTruncada") != null) {
+			try{
+				percentualMediaTruncada = Double.valueOf((String) parametros.get("percentualMediaTruncada"));
+			}catch (Exception e) {
+			}
+		}
 
 	}
 
@@ -103,7 +109,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		this.addColuna("Mín", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Max", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Méd", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("Média Truncada", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Méd Truncada " + percentualMediaTruncada + "%", 15, RelatorioRapido.CENTRO, false);
 
 		return this;
 	}
@@ -122,7 +128,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Date dataInicialAte = getDataAte("dataInicialAte");
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
-
+		
 		GregorianCalendar calendario = new GregorianCalendar();
 		List<String> dados = new ArrayList<String>();
 
@@ -218,7 +224,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Double media = e.getMediaAritmetica();
 		mediaPI = media.longValue();
 		
-		Double medTrunc = e.getMediaAritmeticaTruncada(PERCENTUAL_MED_TRUNCADA);
+		Double medTrunc = e.getMediaAritmeticaTruncada(percentualMediaTruncada);
 		medTruncPI = medTrunc.longValue();
 
 		// Estatísticas tarefas
@@ -228,7 +234,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 			Double mediaTarefa = e.getMediaAritmetica();
 			mapaMedia.put(tarefa, mediaTarefa.longValue());
 			
-			Double medTruncTarefa = e.getMediaAritmeticaTruncada(PERCENTUAL_MED_TRUNCADA);
+			Double medTruncTarefa = e.getMediaAritmeticaTruncada(percentualMediaTruncada);
 			mapaMedTrunc.put(tarefa, medTruncTarefa.longValue());
 
 		}

@@ -48,7 +48,7 @@ import br.gov.jfrj.siga.wf.util.WfContextBuilder;
  */
 public class RelEstatisticaProcedimento extends RelatorioTemplate {
 
-	private double percentualMediaTruncada = 5.0;
+	private Double percentualMediaTruncada = 5.0;
 
 	/**
 	 * Construtor que define os parâmetros que são obrigatórios para a
@@ -87,7 +87,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		}
 		if (parametros.get("percentualMediaTruncada") != null) {
 			try{
-				percentualMediaTruncada = Double.valueOf((String) parametros.get("percentualMediaTruncada"));
+				percentualMediaTruncada = Double.valueOf(((String) parametros.get("percentualMediaTruncada")).replace(",", "."));
 			}catch (Exception e) {
 			}
 		}
@@ -109,7 +109,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		this.addColuna("Mín", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Max", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Méd", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("Méd Truncada " + percentualMediaTruncada + "%", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Méd Truncada " + percentualMediaTruncada.toString().replace(".", ",") + "%", 15, RelatorioRapido.CENTRO, false);
 
 		return this;
 	}

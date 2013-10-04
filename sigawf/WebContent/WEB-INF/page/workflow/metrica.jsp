@@ -15,6 +15,12 @@
 		}else{
 			$("#opcoesExtras").hide();
 		}
+		if ($("#selecaoRelatorio").val() == '1'){
+			$("#opcaoPercentualMediaTruncada").show();
+		}else{
+			$("#opcaoPercentualMediaTruncada").hide();
+		}
+		
 	}
 </script>
 
@@ -61,6 +67,14 @@
 							<td>
 								<input type="checkbox" id="incluirAbertos" name="incluirAbertos" style="float: left" class="gt-form-checkbox"></input>
 								<label>&nbsp;Incluir Procedimentos Abertos</label>
+							</td>
+						</tr>
+						<tr id="opcaoPercentualMediaTruncada"  >
+							<td>
+								<label>Percentual&nbsp;da&nbsp;Média&nbsp;Truncada (%):</label>
+							</td>
+							<td>
+								<input type="text" id="percentualMediaTruncada" name="percentualMediaTruncada" style="float: left" class="gt-form-text"></input>
 							</td>
 						</tr>
 						<tr>

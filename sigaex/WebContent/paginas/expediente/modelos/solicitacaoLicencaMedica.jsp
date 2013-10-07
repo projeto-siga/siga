@@ -108,31 +108,31 @@
 		</table>
 		<table width="100%" border="1" cellpadding="3" cellspacing="1">
 			<tr>
-				<td width="70%" bgcolor="#FFFFFF">Nome: <b><p align="center" style="font-size: 9pt;">${doc.subscritor.descricao}</b></p></td>
-				<td width="30%" bgcolor="#FFFFFF">Matrícula: <b><p align="center" style="font-size: 9pt;">${doc.subscritor.sigla}</b></p></td>
+				<td width="70%" bgcolor="#FFFFFF">Nome: <b><p align="center" style="font-size: 12pt;">${doc.subscritor.descricao}</b></p></td>
+				<td width="30%" bgcolor="#FFFFFF">Matrícula: <b><p align="center" style="font-size: 12pt;">${doc.subscritor.sigla}</b></p></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td width="30%">Lotação: <b>${doc.subscritor.lotacao.descricao}</b></td>
-				<td width="70%">Cargo: <b>${doc.subscritor.cargo.nomeCargo}</b></td>
+				<td width="30%"<p align="center" style="font-size: 10pt;">>Lotação: <b>${doc.subscritor.lotacao.descricao}</p></b></td>
+				<td width="70%"><p align="center" style="font-size: 10pt;">Cargo: <b>${doc.subscritor.cargo.nomeCargo}</b></p></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td>Endereço: <b>${endereco}</b></td>
+				<td><p align="center" style="font-size: 10pt;">Endereço: <b>${endereco}</p></b></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td>Tel Residencial: <b>${telResidencial}</b></td>
+				<td><p align="center" style="font-size: 10pt;">Tel Residencial: <b>${telResidencial}</b></td>
 				<td>Tel Celular: <b>${telCelular}</b></td>
-				<td>Ramal da Lotação: <b>${ramalLotacao}</b></td>
+				<td>Ramal da Lotação: <b>${ramalLotacao}</b></p></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td width="60%">Tipo de Licença:<br /><br />
+				<td width="60%"><p align="center" style="font-size: 10pt;">Tipo de Licença:<br />
 				<c:choose>
 					<c:when
 						test="${tipolicenca eq 'Licença para Tratamento da Própria Saúde'}">
@@ -156,7 +156,7 @@
 					<c:otherwise>
 					</c:otherwise>
 				</c:choose></td>
-				<td width="40%" align="center">Período Solicitado:<br /><br />
+				<td width="40%" align="center">Período Solicitado:<br />
 				De: <b>${dataInicio}</b> até <c:if test="${not empty quantDias}">
 					<b>${f:calculaData(requestScope['quantDias'],requestScope['dataInicio'])}</b>
 				</c:if></td>
@@ -179,7 +179,7 @@
 				</td>
 				<td width="50%" valign="top">Assinatura do(a) Servidor(a)<br />
 				<br />
-				</td>
+				</p></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" width="100%">
@@ -230,7 +230,7 @@
 				solicitação de Licença por Motivo de Doença em Pessoa da Família -
 				LTPF, há possibilidade do servidor compensar os dias não
 				trabalhados?(conforme §2º do art. 2º da Resolução nº447/2005 - CJF)</p>
-				<font size="3"> [&nbsp;&nbsp;]sim [&nbsp;&nbsp;]não</font><br />
+				<p align="center" style="font-size: 8pt;"> [&nbsp;&nbsp;]sim [&nbsp;&nbsp;]não</p><br />
 				</td>
 				<td valign="top">
 				<p align="center" style="font-size: 8pt;">Último dia de trabalho

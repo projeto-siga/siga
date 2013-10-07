@@ -1692,12 +1692,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeDespachar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 
-		// Verifica se o despacho já está assinado
-		for (CpMarca marca : mob.getExMarcaSet()) {
-			if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA)
-				return false;
-		}
-
 		return (mob.isVia() || mob.isVolume())
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)

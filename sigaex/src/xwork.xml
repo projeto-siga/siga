@@ -1083,7 +1083,6 @@
 				<param name="inputName">inputStream</param>
 				<param name="contentType">text/html</param>
 				<param name="contentLength">${contentLength}</param>
-				<param name="contentDisposition">${contentDisposition}</param>
 			</result>
 			<result name="pdf" type="stream">
 				<param name="inputName">inputStream</param>

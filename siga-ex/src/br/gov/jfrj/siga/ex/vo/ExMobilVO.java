@@ -262,13 +262,16 @@ public class ExMobilVO extends ExVO {
 					"exibirProcesso",
 					Ex.getInstance().getComp()
 							.podeVisualizarImpressao(titular, lotaTitular, mob));
-
-			addAcao("printer", "Visualizar Impressão",
-					"/expediente/doc",
-					"pdf",
+			
+			addAcao(
+					"printer",
+					"Visualizar Impressão",
+					"/arquivo",
+					"exibir",
 					Ex.getInstance().getComp()
-							.podeVisualizarImpressao(titular, lotaTitular, mob),
-					null, "&popup=true", null, null, null);
+					.podeVisualizarImpressao(titular, lotaTitular, mob),
+					null, "&popup=true&arquivo=" + mob.getReferenciaPDF(), null, null, null);
+
 			addAcao(
 					"link_add",
 					"Criar Anexo",

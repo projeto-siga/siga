@@ -1429,6 +1429,26 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		
 		return getTotalDePaginas() - totalDePaginasDoGeral;
-	}	
+	}
+	
+	public String getReferencia() {
+		return getCodigoCompacto();
+	}
+
+	/**
+	 * Retorna a referência do objeto mais o extensão ".html".
+	 * 
+	 */
+	public String getReferenciaHtml() {
+		return getReferencia() + ".html";
+	}
+
+	/**
+	 * Retorna a referência do objeto mais o extensão ".pdf".
+	 * 
+	 */
+	public String getReferenciaPDF() {
+		return getReferencia() + ".pdf";
+	};
 
 }

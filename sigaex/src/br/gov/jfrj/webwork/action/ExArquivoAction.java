@@ -175,10 +175,11 @@ public class ExArquivoAction extends ExActionSupport {
 		final Matcher m = pattern.matcher(requestURI);
 		if (m.find()) {
 			sMovId = m.group(2);
-			if (sMovId.length() == 0)
+			if (sMovId.length() <= 1)
 				return null;
+			final long l = Long.parseLong(sMovId.substring(1));
 			for (ExMovimentacao movAux : mob.getExMovimentacaoSet()) {
-				if (movAux.getIdMov() == Long.parseLong(sMovId))
+				if (movAux.getIdMov() == l)
 					mov = movAux;
 			}
 		}
@@ -1404,15 +1405,15 @@ public class ExArquivoAction extends ExActionSupport {
 			ExMovimentacao mov = getMov(mob, arquivo);
 
 			String cacheControl = "private";
-			final Integer grauNivelAcesso = mob.doc().getExNivelAcessoDoDocumento()
-					.getGrauNivelAcesso();
+			final Integer grauNivelAcesso = mob.doc()
+					.getExNivelAcessoDoDocumento().getGrauNivelAcesso();
 			if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso
 					|| ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso)
 				cacheControl = "public";
 
+			byte ab[] = null;
 			if (isPdf) {
-				final byte ab[] = getDocumento(mob, mov, completo, estampar,
-						hash);
+				ab = getDocumento(mob, mov, completo, estampar, hash);
 
 				String filename = null;
 				if (mov != null) {
@@ -1428,57 +1429,42 @@ public class ExArquivoAction extends ExActionSupport {
 					setContentDisposition("attachment; filename=" + filename
 							+ "." + hash.toLowerCase());
 					return "hash";
-				} else {
-					// Calcula o hash do documento, mas não leva em consideração
-					// para fins de hash os últimos bytes do arquivos, pois lá
-					// fica armazanada a ID e as datas de criação e modificação
-					// e estas são sempre diferente de um pdf para o outro.
-					MessageDigest md = MessageDigest.getInstance("MD5");
-
-					int m = match(ab);
-					md.update(ab, 0, m);
-					String etag = Base64.encodeBytes(md.digest());
-
-					String ifNoneMatch = getRequest()
-							.getHeader("If-None-Match");
-					getResponse().setHeader("Cache-Control",
-							"must-revalidate, " + cacheControl);
-					getResponse().setDateHeader("Expires", 0);
-					getResponse().setHeader("ETag", etag);
-					getResponse().setHeader("Pragma", null);
-					if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
-						getResponse().sendError(
-								HttpServletResponse.SC_NOT_MODIFIED);
-						return null;
-					}
-
-					this.setInputStream(new ByteArrayInputStream(ab));
-					this.setContentLength(ab.length);
-					setContentDisposition("filename=" + filename + ".pdf");
-					return "pdf";
 				}
-			} else {
-				final byte ab[] = getDocumentoHTML(mob, mov, completo,
-						contextpath, servernameport);
-				this.setInputStream(new ByteArrayInputStream(ab));
-				this.setContentLength(ab.length);
-				return "html";
+
+				setContentDisposition("filename=" + filename + ".pdf");
+			}
+			if (isHtml) {
+				ab = getDocumentoHTML(mob, mov, completo, contextpath,
+						servernameport);
 			}
 
-			// if (somenteHash) {
-			// response.setHeader("Content-Disposition",
-			// "attachment; filename=" + filename + ".hash");
-			// response.setContentType("application/octet-stream");
-			// } else {
-			// response.setHeader("Content-Disposition", "filename="
-			// + filename + ".pdf");
-			// response.setContentType(getContentType());
-			// }
-			// response.setContentLength(ab.length);
-			// if (getCharacterEncoding() != null)
-			// response.setCharacterEncoding(getCharacterEncoding());
-			// response.getOutputStream().write(ab);
-			// response.getOutputStream().flush();
+			// Calcula o hash do documento, mas não leva em consideração
+			// para fins de hash os últimos bytes do arquivos, pois lá
+			// fica armazanada a ID e as datas de criação e modificação
+			// e estas são sempre diferente de um pdf para o outro.
+			MessageDigest md = MessageDigest.getInstance("MD5");
+
+			int m = match(ab);
+			if (m != -1)
+				md.update(ab, 0, m);
+			else
+				md.update(ab);
+			String etag = Base64.encodeBytes(md.digest());
+
+			String ifNoneMatch = getRequest().getHeader("If-None-Match");
+			getResponse().setHeader("Cache-Control",
+					"must-revalidate, " + cacheControl);
+			getResponse().setDateHeader("Expires", 0);
+			getResponse().setHeader("ETag", etag);
+			getResponse().setHeader("Pragma", null);
+			if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+				getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
+				return null;
+			}
+
+			this.setInputStream(new ByteArrayInputStream(ab));
+			this.setContentLength(ab.length);
+			return isPdf ? "pdf" : "html";
 		} catch (Exception e) {
 			throw new ServletException("erro na geração do documento.", e);
 		}

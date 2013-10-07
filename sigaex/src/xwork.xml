@@ -1069,7 +1069,31 @@
 		</action>
 
 	</package>
-	<!-- Pedro:02052007 -->
+	
+	<package name="arquivo" extends="default" namespace="/arquivo">
+			<action name="exibir" class="br.gov.jfrj.webwork.action.ExArquivoAction"
+			method="aExibir">
+			<result name="hash" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="html" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">text/html</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="pdf" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/pdf</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+		</action>
+	</package>
+	
 	<package name="expediente/rel" extends="default" namespace="/expediente/rel">
 		<!-- action principal : chama todos os jsp´s -->
 		<action name="relRelatorios" class="br.gov.jfrj.webwork.action.ExRelatorioAction">

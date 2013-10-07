@@ -142,7 +142,7 @@
 		<filter-class>br.gov.jfrj.siga.libs.util.ResponseHeaderFilter</filter-class>
 		<init-param>
 			<param-name>Cache-Control</param-name>
-			<param-value>max-age=3600</param-value>
+			<param-value>max-age=3600, public</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>
@@ -271,6 +271,7 @@
 			<url-pattern>/administracao/*</url-pattern>
 			<url-pattern>/expediente/*</url-pattern>
 			<url-pattern>/modelo/*</url-pattern>
+			<url-pattern>/arquivo/*</url-pattern>
 			<url-pattern>/despacho/*</url-pattern>
 			<url-pattern>/administracao.action</url-pattern>
 			<url-pattern>/anexo/*</url-pattern>

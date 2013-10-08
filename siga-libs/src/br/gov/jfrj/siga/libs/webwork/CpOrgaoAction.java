@@ -45,23 +45,15 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 	private Long id;
 	private String nmOrgao;
 	private String siglaOrgao;
-	private String ativo;
+	private char ativo;
 	private Long idOrgaoUsu;
-	private String nmOrgaoUsu;
 	
-	public String getNmOrgaoUsu() {
-		return nmOrgaoUsu;
-	}
-
-	public void setNmOrgaoUsu(String nmOrgaoUsu) {
-		this.nmOrgaoUsu = nmOrgaoUsu;
-	}
-
-	public String getAtivo() {
+	
+	public char getAtivo() {
 		return ativo;
 	}
 
-	public void setAtivo(String ativo) {
+	public void setAtivo(char ativo) {
 		this.ativo = ativo;
 	}
 
@@ -151,16 +143,23 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 		if (getId() != null) {
 			CpOrgao orgao = daoOrgao(getId());	
 			this.setNmOrgao(orgao.getNmOrgao());
-			this.setSigla(orgao.getSigla());
-			this.setAtivo(orgao.getAtivo());
-			this.setNmOrgaoUsu(orgao.getOrgaoUsuario().getNmOrgaoUsu());
+			this.setSiglaOrgao(orgao.getSigla());
+			this.setAtivo(orgao.getAtivo().charAt(0));
+			this.setIdOrgaoUsu(orgao.getOrgaoUsuario().getId());
 		}
 		
 		return Action.SUCCESS;
 	}
 	
 	public String aEditarGravar() throws Exception {
-
+		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+		
+		if(this.getNmOrgao() == null)
+			throw new AplicacaoException("Nome do Órgão Externo não informado");
+		
+		if(this.getSiglaOrgao() == null)
+			throw new AplicacaoException("Sigla do Órgão Externo não informada");
+		
 		CpOrgao orgao;		
 		if (getId() == null)
 			orgao = new CpOrgao();
@@ -176,7 +175,7 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 		}else
 			orgao.setOrgaoUsuario(null);
 		
-		orgao.setAtivo(this.getAtivo());
+		orgao.setAtivo(String.valueOf(this.getAtivo()));
 		
 		try {
 			dao().iniciarTransacao();

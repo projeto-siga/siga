@@ -120,6 +120,10 @@ public class SrMovimentacao extends GenericModel {
 	public boolean isCancelado() {
 		return movCanceladora != null;
 	}
+	
+	public boolean isRevertida() {
+		return movReversora != null;
+	}
 
 	public boolean isPrimeiraMovimentacao() {
 		SrMovimentacao primeiro = null;

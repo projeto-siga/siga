@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -736,6 +737,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return pai;
 	}
+	
+	public boolean temArquivosAnexos(){
+		return getAnexacoes().size() > 0;
+	}
+
+	public Set<SrMovimentacao> getAnexacoes() {
+		return getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO);
+	}
 
 	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess) && isEmAtendimento() && !isFilha();
@@ -788,6 +797,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeReabrir(DpLotacao lota) {
 		return isFechado() && getLotaAtendente().equivale(lota);
+	}
+
+	public boolean podeAnexarArquivo(DpLotacao lota) {
+		return getLotaAtendente().equivale(lota)
+				&& (isEmPreAtendimento() || isEmAtendimento());
 	}
 
 	public SrSolicitacao deduzirLocalERamal() {
@@ -1050,16 +1064,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	private static SortedSet<SrMarca> calcularMarcadores(SrSolicitacao sol) {
 		SortedSet<SrMarca> set = new TreeSet<SrMarca>();
 
-		if (sol.movs != null) {
-			for (SrMovimentacao mov : sol.meuMovimentacaoSet) {
+			for (SrMovimentacao mov : sol.getMovimentacaoSet()) {
 				Long t = mov.tipoMov.idTipoMov;
-				if (mov.isCancelado())
+				if (mov.isCancelado() || mov.isRevertida())
 					continue;
-				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO)
-					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
-							mov.dtIniMov, null, mov.cadastrante,
-							mov.lotaCadastrante);
 				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO)
 					acrescentarMarca(set, sol,
 							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
@@ -1075,32 +1083,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO,
 							mov.dtIniMov, null, mov.cadastrante,
 							mov.lotaCadastrante);
-				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)
+				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
 					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
+							CpMarcador.MARCADOR_SOLICITACAO_FECHADO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
+				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO)
+					acrescentarMarca(set, sol,
+							CpMarcador.MARCADOR_SOLICITACAO_CANCELADO,
+							mov.dtIniMov, null, mov.cadastrante,
+							mov.lotaCadastrante);
+				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA)
+					acrescentarMarca(set, sol,
+							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
 							mov.dtIniMov, null, mov.cadastrante,
 							mov.lotaCadastrante);
 			}
-		}
-		if (sol.getHisDtFim() != null) { // quando preencho dthisfim da
-											// solicitação??? Quando a situação
-											// selecionada é Fechado.
-			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_CANCELADO, sol.dtReg, null,
-					sol.cadastrante, sol.lotaCadastrante);
-		} else {
-			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO, sol.dtReg,
-					null, sol.cadastrante, sol.lotaCadastrante);
-		}
-		if (!sol.isFechado() && !sol.isCancelado()) {
-			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
-					null, sol.cadastrante, sol.lotaCadastrante);
-			acrescentarMarca(set, sol,
-					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
-					null, sol.solicitante, sol.lotaSolicitante);
-		}
 
 		if (!sol.isFechado() && !sol.isCancelado()) {
 			acrescentarMarca(set, sol,
@@ -1110,6 +1108,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
 					null, sol.solicitante, sol.lotaSolicitante);
 		}
+		
 		return set;
 	}
 
@@ -1258,11 +1257,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.prioridade = getMovimentacaoSolLista(solicitacao, lista).prioridade;
 		mov.solicitacao = solicitacao;
 		mov.numSequencia = solicitacao.getNumSeqMov();
-		//Edson: comentando, pelo motivo do comentário abaixo
-		//mov.idMovRef = movIncl;
+		// Edson: comentando, pelo motivo do comentário abaixo
+		// mov.idMovRef = movIncl;
 		mov.salvar();
-		//Edson: comentando, pois a ideia seria reverter, não cancelar...
-		//movIncl.dtCancelamento = new Date();
+		// Edson: comentando, pois a ideia seria reverter, não cancelar...
+		// movIncl.dtCancelamento = new Date();
 		movIncl.prioridade = null;
 		movIncl.movCanceladora = mov;
 		movIncl.save();

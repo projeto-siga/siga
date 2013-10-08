@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -514,6 +515,11 @@ public class Application extends SigaApplication {
 			throws Exception {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
+		movimentacao.salvar(cadastrante(), lotaTitular());
+		exibir(movimentacao.solicitacao.idSolicitacao, false);
+	}
+
+	public static void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
 		movimentacao.salvar(cadastrante(), lotaTitular());
 		exibir(movimentacao.solicitacao.idSolicitacao, false);
 	}

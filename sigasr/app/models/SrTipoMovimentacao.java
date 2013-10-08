@@ -35,6 +35,8 @@ public class SrTipoMovimentacao extends GenericModel {
 	final static public long TIPO_MOVIMENTACAO_REABERTURA = 10;
 	
 	final static public long TIPO_MOVIMENTACAO_FIM_PENDENCIA = 11;
+	
+	final static public long TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO = 12;
 
 	final static public long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO = 14;
 

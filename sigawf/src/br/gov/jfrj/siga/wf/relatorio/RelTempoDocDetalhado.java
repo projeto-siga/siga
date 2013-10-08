@@ -101,7 +101,26 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		Set<Tarefa> tarefas = consultarTarefas(procedimento, dataInicialDe,
 				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
 		List<String> dados = new ArrayList<String>();
+		
+		String ultimoDoc = null;
+		EspecificacaoGrupoRel especGrupo = null;
+		List<Tarefa> grupoAtual = new ArrayList<RelTempoDocDetalhado.Tarefa>();
 		for (Tarefa t : tarefas) {
+			
+			if (ultimoDoc == null || !t.getNumeroDocumento().equals(ultimoDoc)){
+				especGrupo = new EspecificacaoGrupoRel("Etapa Dirfo", "Retificar SEC");
+				grupoAtual = new ArrayList<RelTempoDocDetalhado.Tarefa>();
+			}
+			
+			if (especGrupo.atendeEspecificacao(t.getNome()) && especGrupo.isInicio()){
+				addLinhaEmBranco(t,dados);
+				especGrupo.continuar();
+			}
+			
+			if(especGrupo.atendeEspecificacao(t.getNome()) && t.getNumeroDocumento().equals(ultimoDoc)){
+				grupoAtual.add(t);
+			}
+			
 			dados.add(t.getNumeroDocumento() + " ("
 					+ t.getDuracaoProcedimento() + ")");
 			dados.add(t.getNome());
@@ -109,11 +128,45 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 					t.getDataInicio().getTime()));
 			dados.add(t.getDataFim()==null?"Em Andamento":DateFormat.getInstance().format(t.getDataFim().getTime()));
 			dados.add(t.getDuracao().toString());
+			
+			
+			if (especGrupo.atendeEspecificacao(t.getNome()) && especGrupo.isFim()){
+				addLinhaTotalGrupo(grupoAtual,dados);
+				addLinhaEmBranco(t,dados);
+				especGrupo.reiniciarAvaliacao();
+				grupoAtual.clear();
+			}
+			
+			
+			ultimoDoc = t.getNumeroDocumento();
 
 		}
 
 		return dados;
 
+	}
+
+	private void addLinhaTotalGrupo(List<Tarefa> grupoAtual, List<String> dados) {
+		long duracao = 0;
+		for (Tarefa t : grupoAtual) {
+			duracao += t.getDuracaoEmMili();
+		}
+		
+		dados.add(grupoAtual.get(0).getNumeroDocumento() + " ("
+				+ grupoAtual.get(0).getDuracaoProcedimento() + ")");
+		dados.add("TOTAL [Grupo]");
+		dados.add("");
+		dados.add("");
+		dados.add(SigaCalendar.formatDHM(duracao));
+	}
+
+	private void addLinhaEmBranco(Tarefa t, List<String> dados) {
+		dados.add(t.getNumeroDocumento() + " ("
+				+ t.getDuracaoProcedimento() + ")");
+		dados.add("");
+		dados.add("");
+		dados.add("");
+		dados.add("");
 	}
 
 	private Set<Tarefa> consultarTarefas(String nomeProcedimento,
@@ -325,6 +378,11 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 
 		public String getDuracaoProcedimento() {
 			return SigaCalendar.formatDHM(this.getDuracaoProcedimentoEmMili());
+		}
+		
+		@Override
+		public String toString() {
+			return getNumeroDocumento() + "," + getNome();
 		}
 	}
 

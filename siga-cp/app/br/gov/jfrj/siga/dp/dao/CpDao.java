@@ -191,7 +191,8 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setEternal(true);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 		Element element;
 		if ((element = cache.get(chave)) != null) {
@@ -1541,7 +1542,7 @@ public class CpDao extends ModeloDao {
 
 		// Alterado para compatibilizar com hibernate 3.61
 		cfg.setProperty("hibernate.cache.provider_class",
-				"org.hibernate.cache.EhCacheProvider");
+				"org.hibernate.cache.SingletonEhCacheProvider");
 		// cfg.setProperty("hibernate.cache.region.factory_class",
 		// "net.sf.ehcache.hibernate.EhCacheRegionFactory");
 		// "net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
@@ -1608,8 +1609,10 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setTimeToIdleSeconds(3600);
 			config.setTimeToLiveSeconds(36000);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		if (!manager.cacheExists(CACHE_QUERY_SECONDS)) {
@@ -1618,8 +1621,10 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setTimeToIdleSeconds(5);
 			config.setTimeToLiveSeconds(5);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		if (!manager.cacheExists(CACHE_QUERY_SUBSTITUICAO)) {
@@ -1628,8 +1633,10 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setTimeToIdleSeconds(300);
 			config.setTimeToLiveSeconds(3600);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		if (!manager.cacheExists(CACHE_SECONDS)) {
@@ -1638,8 +1645,10 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setTimeToIdleSeconds(5);
 			config.setTimeToLiveSeconds(5);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		if (!manager.cacheExists(CACHE_CORPORATIVO)) {
@@ -1648,7 +1657,8 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setEternal(true);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao",
@@ -1691,6 +1701,10 @@ public class CpDao extends ModeloDao {
 				"nonstrict-read-write", CACHE_SECONDS);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao",
 				"nonstrict-read-write", CACHE_QUERY_SUBSTITUICAO);
+
+		// Desabilitado pois o hibernate não permite cache de blobs.
+		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpModelo",
+		// "nonstrict-read-write", CACHE_SECONDS);
 	}
 
 	public DpPessoa getPessoaFromSigla(String sigla) {

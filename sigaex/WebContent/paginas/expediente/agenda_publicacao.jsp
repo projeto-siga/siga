@@ -144,7 +144,7 @@
 							onkeyup="contaLetras();" />	
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>						
 				<tr>
-					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left" ${disabled}/> <input type="button"
+					<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-medium gt-btn-left" ${disabled}/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
 				</tr>
 			</table>

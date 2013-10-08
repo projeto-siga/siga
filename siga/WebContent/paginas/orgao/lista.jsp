@@ -9,7 +9,7 @@
 	<!-- main content -->
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">		
-			<h2 class="gt-table-head">Orgãos externos cadastrados</h2>
+			<h2 class="gt-table-head">Orgãos Externos cadastrados</h2>
 			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table">
 					<thead>
@@ -29,7 +29,7 @@
 								<td align="left">${orgao.sigla}</td>
 								<td align="left">${orgao.orgaoUsuario.descricao}</td>
 								<ww:if test="${(orgao.ativo == 'S')}">			
-									<td align="center">Sim</td>
+									<td align="left">Sim</td>
 								</ww:if>
 								<ww:else>			
 									<td align="left">Não</td>
@@ -40,14 +40,15 @@
 									</ww:url>
 									<siga:link title="Alterar" url="${url}" />					
 								</td>
-								<td align="left">									
+							<%--	<td align="left">									
 	 			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/orgao/excluir.action?id=${orgao.idOrgao}';">
 										<img style="display: inline;"
 										src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
 										onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
 										onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
 									</a>															
-								</td>						
+								</td>
+							 --%>							
 							</tr>
 						</c:forEach>
 					</tbody>

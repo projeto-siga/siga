@@ -31,6 +31,7 @@ import com.opensymphony.xwork.Action;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -42,9 +43,54 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 	private static final long serialVersionUID = 1098577621835510117L;	
 	
 	private Long id;
+	private String nmOrgao;
+	private String siglaOrgao;
+	private String ativo;
+	private Long idOrgaoUsu;
+	private String nmOrgaoUsu;
 	
+	public String getNmOrgaoUsu() {
+		return nmOrgaoUsu;
+	}
+
+	public void setNmOrgaoUsu(String nmOrgaoUsu) {
+		this.nmOrgaoUsu = nmOrgaoUsu;
+	}
+
+	public String getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
+	}
+
+	public String getNmOrgao() {
+		return nmOrgao;
+	}
+
+	public void setNmOrgao(String nmOrgao) {
+		this.nmOrgao = nmOrgao;
+	}
+
+	public String getSiglaOrgao() {
+		return siglaOrgao;
+	}
+
+	public void setSiglaOrgao(String siglaOrgao) {
+		this.siglaOrgao = siglaOrgao;
+	}
+
+	public Long getIdOrgaoUsu() {
+		return idOrgaoUsu;
+	}
+
 	public Long getId() {
 		return id;
+	}
+
+	public void setIdOrgaoUsu(Long idOrgaoUsu) {
+		this.idOrgaoUsu = idOrgaoUsu;
 	}
 
 	public void setId(Long id) {
@@ -97,6 +143,50 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 		} else
 			throw new AplicacaoException("ID não informada");
 
+		return Action.SUCCESS;
+	}
+	
+	public String aEditar() throws Exception {
+
+		if (getId() != null) {
+			CpOrgao orgao = daoOrgao(getId());	
+			this.setNmOrgao(orgao.getNmOrgao());
+			this.setSigla(orgao.getSigla());
+			this.setAtivo(orgao.getAtivo());
+			this.setNmOrgaoUsu(orgao.getOrgaoUsuario().getNmOrgaoUsu());
+		}
+		
+		return Action.SUCCESS;
+	}
+	
+	public String aEditarGravar() throws Exception {
+
+		CpOrgao orgao;		
+		if (getId() == null)
+			orgao = new CpOrgao();
+		else
+			orgao = daoOrgao(getId());	
+		
+		orgao.setNmOrgao(this.getNmOrgao());
+		orgao.setSigla(this.getSiglaOrgao());
+		if (this.getIdOrgaoUsu() != null && this.getIdOrgaoUsu() != 0) {
+			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+			orgaoUsuario = dao().consultar(this.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);	
+			orgao.setOrgaoUsuario(orgaoUsuario);
+		}else
+			orgao.setOrgaoUsuario(null);
+		
+		orgao.setAtivo(this.getAtivo());
+		
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(orgao);
+			dao().commitTransacao();			
+		} catch (final Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
+		
 		return Action.SUCCESS;
 	}
 }

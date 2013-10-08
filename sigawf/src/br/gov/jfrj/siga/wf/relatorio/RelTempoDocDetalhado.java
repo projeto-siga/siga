@@ -107,9 +107,9 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		List<Tarefa> grupoAtual = new ArrayList<RelTempoDocDetalhado.Tarefa>();
 		for (Tarefa t : tarefas) {
 			
+			//processamento inicial de grupo
 			if (ultimoDoc == null || !t.getNumeroDocumento().equals(ultimoDoc)){
 				especGrupo = new EspecificacaoGrupoRel("Etapa Dirfo", "Retificar SEC");
-				grupoAtual = new ArrayList<RelTempoDocDetalhado.Tarefa>();
 			}
 			
 			if (especGrupo.atendeEspecificacao(t.getNome()) && especGrupo.isInicio()){
@@ -121,15 +121,9 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 				grupoAtual.add(t);
 			}
 			
-			dados.add(t.getNumeroDocumento() + " ("
-					+ t.getDuracaoProcedimento() + ")");
-			dados.add(t.getNome());
-			dados.add(DateFormat.getInstance().format(
-					t.getDataInicio().getTime()));
-			dados.add(t.getDataFim()==null?"Em Andamento":DateFormat.getInstance().format(t.getDataFim().getTime()));
-			dados.add(t.getDuracao().toString());
+			addLinha(dados, t);
 			
-			
+			//processamento final de grupo
 			if (especGrupo.atendeEspecificacao(t.getNome()) && especGrupo.isFim()){
 				addLinhaTotalGrupo(grupoAtual,dados);
 				addLinhaEmBranco(t,dados);
@@ -144,6 +138,16 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 
 		return dados;
 
+	}
+
+	private void addLinha(List<String> dados, Tarefa t) {
+		dados.add(t.getNumeroDocumento() + " ("
+				+ t.getDuracaoProcedimento() + ")");
+		dados.add(t.getNome());
+		dados.add(DateFormat.getInstance().format(
+				t.getDataInicio().getTime()));
+		dados.add(t.getDataFim()==null?"Em Andamento":DateFormat.getInstance().format(t.getDataFim().getTime()));
+		dados.add(t.getDuracao().toString());
 	}
 
 	private void addLinhaTotalGrupo(List<Tarefa> grupoAtual, List<String> dados) {

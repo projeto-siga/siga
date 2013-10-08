@@ -41,7 +41,7 @@
 		<many-to-one name="orgaoUsuario" column="ID_ORGAO_USU"
 			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" not-null="false" />
 		<property name="nmOrgaoAI" formula="REMOVE_ACENTO(NM_ORGAO)" type="string" />
-		<property name="ativo" formula="FG_ATIVO" type="string" />
+		<property name="ativo" column="FG_ATIVO" type="string" />
 		<!--
 
 		<set name="cpOrgaoSet" inverse="true">

@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.gov.jfrj.siga.wf.SigaWfProperties;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.relatorio.RelEstatisticaProcedimento;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDoc;
@@ -225,5 +226,12 @@ public class WfMetricaAction extends WfSigaActionSupport {
 
 	public Long getPdId() {
 		return pdId;
+	}
+	
+	public String getMinMediaTruncada(){
+		return SigaWfProperties.getRelEstatGeraisMinMediaTrunc().toString().replace(".", ",");
+	}
+	public String getMaxMediaTruncada(){
+		return SigaWfProperties.getRelEstatGeraisMaxMediaTrunc().toString().replace(".", ",");
 	}
 }

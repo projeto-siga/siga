@@ -37,7 +37,9 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.wf.SigaWfProperties;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
@@ -86,10 +88,24 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 			throw new DJBuilderException("Parâmetro dataFinalAte não informado!");
 		}
 		if (parametros.get("percentualMediaTruncada") != null) {
+			Double minMediaTruncada = null;
+			Double maxMediaTruncada = null;
 			try{
 				percentualMediaTruncada = Double.valueOf(((String) parametros.get("percentualMediaTruncada")).replace(",", "."));
+				
+				minMediaTruncada = SigaWfProperties.getRelEstatGeraisMinMediaTrunc();
+				maxMediaTruncada = SigaWfProperties.getRelEstatGeraisMaxMediaTrunc();
+				
 			}catch (Exception e) {
+				throw new AplicacaoException("Não foi possível determinar a média truncada!");
 			}
+
+			if (percentualMediaTruncada < minMediaTruncada || percentualMediaTruncada > maxMediaTruncada){
+				throw new AplicacaoException("A média truncada deve ser entre " + minMediaTruncada + " e " + maxMediaTruncada);
+			}
+			
+		}else{
+			throw new AplicacaoException("Informe o percentual da média truncada!");
 		}
 
 	}

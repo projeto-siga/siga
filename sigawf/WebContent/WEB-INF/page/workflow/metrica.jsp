@@ -71,10 +71,10 @@
 						</tr>
 						<tr id="opcaoPercentualMediaTruncada"  >
 							<td>
-								<label>Percentual&nbsp;da&nbsp;Média&nbsp;Truncada (%):</label>
+								<label>Percentual&nbsp;da&nbsp;Média&nbsp;Truncada (entre ${minMediaTruncada}% e ${maxMediaTruncada}%):</label>
 							</td>
 							<td>
-								<input type="text" id="percentualMediaTruncada" name="percentualMediaTruncada" style="float: left" class="gt-form-text"></input>
+								<input type="text" id="percentualMediaTruncada" name="percentualMediaTruncada" style="float: left" class="gt-form-text" value="${minMediaTruncada}"></input>
 							</td>
 						</tr>
 						<tr>

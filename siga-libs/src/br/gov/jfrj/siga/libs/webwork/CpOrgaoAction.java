@@ -144,7 +144,10 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 			CpOrgao orgao = daoOrgao(getId());	
 			this.setNmOrgao(orgao.getNmOrgao());
 			this.setSiglaOrgao(orgao.getSigla());
-			this.setAtivo(orgao.getAtivo().charAt(0));
+			if (orgao.getAtivo() != null && !orgao.getAtivo().isEmpty())
+				this.setAtivo(orgao.getAtivo().charAt(0));
+			else
+				this.setAtivo('N');
 			this.setIdOrgaoUsu(orgao.getOrgaoUsuario().getId());
 		}
 		

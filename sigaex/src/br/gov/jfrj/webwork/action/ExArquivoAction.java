@@ -1372,7 +1372,7 @@ public class ExArquivoAction extends ExActionSupport {
 			boolean isHtml = arquivo.endsWith(".html");
 			boolean estampar = !getPar().containsKey("semmarcas");
 			boolean completo = getPar().containsKey("completo");
-			boolean somenteHash = getPar().containsKey("hash");
+			boolean somenteHash = getPar().containsKey("hash") || getPar().containsKey("HASH_ALGORITHM");
 			String hash = null;
 			if (somenteHash) {
 				hash = getPar().get("hash")[0];

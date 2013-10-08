@@ -148,12 +148,13 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
  			   Dim certParam
 			   certParam = "certificadoB64=" & UrlEncode(gCertificadoB64)
 
-               urlDocumento = oUrlBase.value + oUrlPath.value + "/semmarcas/" + oUrl.value
+               urlDocumento = oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1"
 			   If InStr(urlDocumento, "?") > 0 Then
                		urlDocumento = urlDocumento & "&" & certParam
 			   Else
                		urlDocumento = urlDocumento & "?" & certParam
 			   End If
+msgbox urlDocumento
                Documento = Conteudo(urlDocumento)
                'MsgBox Documento
                Log "Documento: " & oNome.value

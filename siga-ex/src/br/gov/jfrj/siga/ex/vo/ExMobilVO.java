@@ -447,7 +447,7 @@ public class ExMobilVO extends ExVO {
 							|| mar.getDpPessoaIni() != null) {
 						sb.append(" [");
 						if (mar.getDpLotacaoIni() != null) {
-							sb.append(mar.getDpLotacaoIni().getSigla());
+							sb.append(mar.getDpLotacaoIni().getLotacaoAtual().getSigla());
 						}
 						if (mar.getDpPessoaIni() != null) {
 							if (mar.getDpLotacaoIni() != null) {

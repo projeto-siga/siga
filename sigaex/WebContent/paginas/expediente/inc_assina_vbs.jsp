@@ -154,7 +154,7 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
 			   Else
                		urlDocumento = urlDocumento & "?" & certParam
 			   End If
-msgbox urlDocumento
+
                Documento = Conteudo(urlDocumento)
                'MsgBox Documento
                Log "Documento: " & oNome.value

@@ -625,6 +625,9 @@ public class ExBL extends CpBL {
 		}
 
 		if (!isDocumentoSemEfeito) {
+			
+			if(mob.isApensadoAVolumeDoMesmoProcesso())
+				return set;
 
 			long m = CpMarcador.MARCADOR_CANCELADO;
 			long mAnterior = m;

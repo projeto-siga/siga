@@ -199,11 +199,11 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"printer",
 				"Visualizar Impressão",
-				"/expediente/doc",
-				"pdf",
+				"/arquivo",
+				"exibir",
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob),
-				null, "&popup=true", null, null, null);
+				null, "&popup=true&arquivo=" + doc.getReferenciaPDF(), null, null, null);
 
 		vo.addAcao(
 				"lock",

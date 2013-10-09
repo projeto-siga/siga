@@ -16,7 +16,9 @@
 <siga:cabecalho titulo="Documento" popup="${param.popup}" />
 
 <c:if test="${not docVO.digital}">
-	<script type="text/javascript">$("html").addClass("fisico");</script>
+	<script type="text/javascript">
+		$("html").addClass("fisico");
+	</script>
 </c:if>
 
 <script type="text/javascript">
@@ -30,14 +32,14 @@
 	var getFFVersion = navigator.userAgent.substring(
 			navigator.userAgent.indexOf("Firefox")).split("/")[1]
 	var FFextraHeight = parseFloat(getFFVersion) >= 0.1 ? 3 : 0
-			
+
 	var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 
 	if (is_chrome) {
 		FFextraHeight = 30;
-		
+
 	}
-			
+
 	//extra height in px to add to iframe in FireFox 1.0+ browsers
 </script>
 <script type="text/javascript" language="Javascript1.1">
@@ -54,7 +56,7 @@
 		var ifrp = document.getElementById('paipainel');
 
 		ifr.height = pageHeight() - 300;
-				
+
 		if (ifr && !window.opera) {
 			ifr.style.display = "block";
 			if (ifr.contentDocument && ifr.contentDocument.body.offsetHeight) //ns6 syntax
@@ -80,13 +82,13 @@
 
 		if (b) {
 			divMain.setAttribute("class", "gt-bd clearfix");
-			divMain.className = "gt-bd clearfix";		
-			divSidebar.style.display="none";
+			divMain.className = "gt-bd clearfix";
+			divSidebar.style.display = "none";
 		} else {
 			divMain.setAttribute("class", "gt-bd gt-cols-2 clearfix");
-			divMain.className = "gt-bd gt-cols-2 clearfix";		
-			divSidebar.style.display="block";
-		}		
+			divMain.className = "gt-bd gt-cols-2 clearfix";
+			divSidebar.style.display = "block";
+		}
 		resize();
 	}
 </script>
@@ -191,7 +193,8 @@
 							</c:if> <a
 							title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}"
 							href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nome}</a>
-							<c:set var="tooltipResumo" value="" /></td>
+							<c:set var="tooltipResumo" value="" />
+						</td>
 						<td align="center">${arqNumerado.arquivo.lotacao.sigla}</td>
 						<td align="center">${arqNumerado.paginaInicial}</td>
 					</tr>
@@ -217,20 +220,8 @@
 
 				</c:forEach>
 				<tr>
-					<td style="padding-left: 5pt;">
-						<!-- 
-					<ww:url
-						id="urlProcessoHTML" action="exibirProcessoHTML"
-						namespace="/expediente/doc">
-						<ww:param name="id">${doc.idDoc}</ww:param>
-					</ww:url>
-					<input id="enderecoHTMLCompleto${doc.idDoc}" type="hidden" 
-						value="completo/${doc.codigo}.html" />
-					<input id="enderecoPDFCompleto${doc.idDoc}" type="hidden"
-						value="completo/${doc.codigo}.pdf" />
-					<a 	href="javascript:exibirNoFrame(${doc.idDoc},'S')">COMPLETO</a>  
-				 --> <a
-						href="javascript:exibir('completo/${arqsNum[0].referenciaHtml}','completo/${arqsNum[0].referenciaPDF}','')">COMPLETO</a>
+					<td style="padding-left: 5pt;"><a
+						href="javascript:exibir('${arqsNum[0].referenciaHtml}&completo=1','${arqsNum[0].referenciaPDF}&completo=1','')">COMPLETO</a>
 					</td>
 					<td align="center" style="padding-left: 5pt;"></td>
 					<td align="center" style="padding-left: 5pt;">
@@ -244,7 +235,8 @@
 							<ww:param name="sigla">${mob.sigla}</ww:param>
 						</ww:url>
 						<td colspan="3" style="padding-left: 5pt;"><a
-							href="javascript:exibirNoIFrame('${url}')">RESUMO</a></td>
+							href="javascript:exibirNoIFrame('${url}')">RESUMO</a>
+						</td>
 					</tr>
 				</c:if>
 
@@ -320,13 +312,15 @@
 
 <!-- Página Inicial -->
 <script>
-	var htmlAtual = 'completo/${arqsNum[0].referenciaHtml}';
-	var pdfAtual = 'completo/${arqsNum[0].referenciaPDF}';
+	var path = '/sigaex/arquivo/exibir.action?arquivo=';
+	var htmlAtual = '${arqsNum[0].referenciaHtml}&completo=1';
+	var pdfAtual = 'arquivo=${arqsNum[0].referenciaPDF}&completo=1';
 
 	function fixlinks(refHTML, refPDF) {
-//		document.getElementById('htmllink').href = "./" + refHTML;
-		document.getElementById('pdflink').href = "./" + refPDF;
-		document.getElementById('pdfsemmarcaslink').href = "./semmarcas/" + refPDF;
+		//		document.getElementById('htmllink').href = "./" + refHTML;
+		document.getElementById('pdflink').href = path + refPDF;
+		document.getElementById('pdfsemmarcaslink').href = path + refPDF
+				+ "&semmarcas=1";
 	}
 
 	function exibir(refHTML, refPDF, semMarcas) {
@@ -338,7 +332,7 @@
 		else if (ifr.attachEvent)
 			ifr.detachEvent("onload", resize); // Bug fix line
 		if (document.getElementById('radioHTML').checked && refHTML != '') {
-			ifr.src = "./" + refHTML;
+			ifr.src = path + refHTML;
 			ifrp.style.border = "0px solid black";
 			ifrp.style.borderBottom = "0px solid black";
 			if (ifr.addEventListener)
@@ -346,7 +340,10 @@
 			else if (ifr.attachEvent)
 				ifr.attachEvent("onload", resize);
 		} else {
-			ifr.src = "./" + semMarcas + refPDF;
+			if (document.getElementById('radioPDFSemMarcas').checked)
+				ifr.src = path + refPDF + "&semmarcas=1"
+			else
+				ifr.src = path + refPDF;
 			ifrp.style.border = "1px solid black";
 			ifr.height = pageHeight() - 300;
 		}

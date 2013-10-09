@@ -69,5 +69,10 @@
        	and org.ativo='S'
        	order by org.nmOrgao]]>
 	</query>
+	
+	<query name="consultarCpOrgaoOrdenadoPorNome">
+	  <![CDATA[from CpOrgao org	 	
+    	order by org.nmOrgao]]>
+	</query>
 </hibernate-mapping>
 

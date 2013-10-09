@@ -74,7 +74,7 @@
 </style>
         </head>
         <body>
-	<!-- INICIO PRIMEIRO CABECALHO
+    <!-- INICIO PRIMEIRO CABECALHO
         <table width="100%" border="0" bgcolor="#FFFFFF">
             <tr>
                 <td>
@@ -88,7 +88,7 @@
     
         FIM PRIMEIRO CABECALHO -->
 
-	<p style="font-size: 15pt;"><b>SOLICITAÇÃO DE LICENÇA MÉDICA</b></p>
+    <p style="font-size: 15pt;"><b>SOLICITAÇÃO DE LICENÇA MÉDICA</b></p>
         Atestado em anexo:&nbsp;&nbsp;&nbsp;&nbsp;
         <c:choose>
             <c:when test="${tipoAtestado eq 'médico da SJRJ'}">
@@ -132,26 +132,26 @@
         </table>
         <table width="100%" border="1" cellpadding="3">
             <tr>
-                <td width="60%">Tipo de Licença:<br /><br />
+                <td width="60%">Tipo de Licença:<br />
                 <c:choose>
                     <c:when
                         test="${tipolicenca eq 'Licença para Tratamento da Própria Saúde'}">
-                    LTS - Licença para Tratamento da Própria Saúde<br />
+                    <p style="font-size: 9pt;">LTS - Licença para Tratamento da Própria Saúde<br /> </p>
                     </c:when>
                     <c:when
                         test="${tipolicenca eq 'Licença à Gestante' && plg eq 'Nao'}">
-                    LG - Licença à Gestante<br />
+                   <p style="font-size: 9pt;"> LG - Licença à Gestante<br /></p>
                     </c:when>
                     <c:when
                         test="${tipolicenca eq 'Licença à Gestante' && plg eq 'Sim'}">
-                    LG - Licença à Gestante<br />
+                   <p style="font-size: 9pt;"> LG - Licença à Gestante<br />
                     PLG - Prorrogação da Licença à Gestante (Declaro estar ciente de que, 
                     caso haja falecimento da criança, cessará, imediatamente, o meu direito à prorrogação 
-                    da Licença à Gestante, conforme disposto no art.7º da Res-CJF n.30/2008)
+                    da Licença à Gestante, conforme disposto no art.7º da Res-CJF n.30/2008)</p>
                     </c:when>
                     <c:when
                         test="${tipolicenca eq 'Licença por Motivo de Doença de Pessoa da Família'}">
-                    LTPF - Licença por Motivo de Doença de Pessoa da Família<br />
+                   <p style="font-size: 9pt;"> LTPF - Licença por Motivo de Doença de Pessoa da Família<br /></p>
                     </c:when>
                     <c:otherwise>
                     </c:otherwise>
@@ -233,7 +233,7 @@
                 </td>
                 <td valign="top">
                 <p align="center" style="font-size: 8pt;">Último dia de trabalho
-                do servidor:<br />
+                do servidor: <br />
                 <br />
                 _______/_______/_______<br />
                 Carimbo e assinatura da chefia<br />

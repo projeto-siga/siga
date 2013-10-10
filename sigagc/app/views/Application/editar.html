@@ -7,9 +7,10 @@
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form id="frm" action="@{Application.gravar}">
+			<form id="frm" action="@{SigaGcApplication.gravar}">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
-				<input type="hidden" name="origem" value="${origem}" /> *{
+				<input type="hidden" name="origem" value="${origem}" /> 
+				*{
 				<div class="gt-form-row gt-width-100">
 					<label>Tópico pai:</label> #{selecao tipo:'pessoa',
 					nome:'informacao.informacaoPai', value:informacao?.informacaoPai /}
@@ -69,9 +70,10 @@
 				</div>
 
 				<div class="gt-form-row gt-width-100">
-					<label>Classificação</label> <input type="text"
-						name="classificacao" value="${classificacao}" class="gt-form-text" /><span
-						style="color: red">#{error 'classificacao' /}</span>
+					<label>Classificação</label>
+					*{ <input type="text" name="classificacao" value="${classificacao}" class="gt-form-text" /> }*
+					<p>${classificacao ?: 'Esse conhecimento ainda não possui uma classificação'}	</p>
+					<span style="color: red">#{error 'classificacao' /}</span>
 				</div>
 
 				<div class="gt-form-row gt-width-100">
@@ -80,7 +82,7 @@
 					<p class="gt-cancel">
 						ou <a href="">cancelar alterações</a> #{if informacao != null &&
 						informacao.id != null && informacao.id != 0} ou <a
-							href="@{Application.exibir(informacao?.id)}">exibir
+							href="@{SigaGcApplication.exibir(informacao?.id)}">exibir
 							movimentações</a> #{/if}
 					</p>
 				</div>

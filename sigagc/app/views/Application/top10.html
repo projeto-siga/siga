@@ -43,8 +43,8 @@ function drawEvolution() {
 						#{list items:listaMaisRecentes,as:'i'}
 						<tr>
 							<td style="width: 70%;"><a
-								href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a> *{ <a
-								href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
+								href="@{SigaGcApplication.exibir(i.id)}">${i?.arq?.titulo}</a> *{ <a
+								href="@{SigaGcApplication.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
 								<p>${i?.conteudoHTML.raw()}</p> }*</td>
 							<td style="width: 30%;">
@@ -81,30 +81,28 @@ function drawEvolution() {
 				<table class="gt-table gt-user-table">
 					<tbody>
 						#{list items:listaMaisVisitados,as:'i'}
-						<tr>
-							<td style="width: 70%;"><h4>
-									<a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
-								</h4>
-								<p>${i?.conteudoHTML.raw()}</p></td>
-							<td style="width: 30%;">
-								<!-- Categories Sub Table -->
-								<table border="0" class="gt-table-categories">
-									<tbody>
-										<tr>
-											<th>Autor:</th>
-											<td>${i.autor.primeiroNomeEIniciais}</td>
-										</tr>
-										<tr>
-											<th>Lotação:</th>
-											<td>${i.lotacao.sigla}</td>
-										</tr>
-										<tr>
-											<th>Data:</th>
-											<td>${i.dtIniString}</td>
-										</tr>
-									</tbody>
-								</table></td>
-						</tr>
+						<tr><td class="gt-userGC-column">
+							<table>
+								<tbody>
+									<tr>
+										<td colspan=4 style="width: 77%;">
+											<h4>
+												<a href="@{SigaGcApplication.exibir(i.id)}">${i?.arq?.titulo}</a>
+											</h4>
+											<!--<p>${i?.conteudoHTML.raw()}</p> -->
+										</td>						
+										<td class="gt-categories-th">Data:</td>
+										<td class="gt-categories-td">${i.dtIniString}</td>
+									</tr>
+									<tr class="gt-table-categories">
+										<th style="width: 12%;">Autor:</th>
+										<td colspan=3>${i.autor.primeiroNomeEIniciais}</td>
+										<th style="width: 12%;">Lotação:</th>
+										<td>${i.lotacao.sigla}</td>
+									</tr>
+								</tbody>
+							</table>
+						</td></tr>
 						#{/list}
 					</tbody>
 				</table>

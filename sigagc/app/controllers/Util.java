@@ -2,14 +2,25 @@ package controllers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+//import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.regex.*;
+
+//import javax.swing.event.ListSelectionEvent;
+//import javax.persistence.Query;
 
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.model.Historico;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import models.GcInformacao;
+import models.SrSolicitacao;
 
 public class Util {
+	
+	static String acronimoOrgao = "";
 
 //	public static void salvar(Historico o) throws Exception {
 //		o.setHisDtIni(new Date());
@@ -109,5 +120,48 @@ public class Util {
 				.createNativeQuery("select " + sequence + ".nextval from dual")
 				.getSingleResult().toString());
 	}
+	
+	
+	/**
+	 * Cria um link referenciando automaticamente um documento/serviço/conhecimento  
+	 * quando é acrescentado o seu código no campo de conteúdo da informação.
+	 * Ex: Estou editando um conhecimento, no seu campo texto quero referenciar o seguinte documento
+	 * JFRJ-OFI-2013/00003. Quando acrescento esse código do ofício e mando salvar as alterações do
+	 * conhecimento é criado um link que leva direto ao documento referenciado.
+	 **/
+	public static String marcarReferencia(String conteudo){
+
+		StringBuffer sb = new StringBuffer();
+			
+		if(acronimoOrgao.isEmpty()) {
+			List<String> acronimo = CpOrgaoUsuario.find("select acronimoOrgaoUsu from CpOrgaoUsuario").fetch();
+			for(String ao : acronimo) 
+				acronimoOrgao += (acronimoOrgao == "" ? "" : "|") + ao;
+		}
+ 		
+		Pattern padrao = Pattern.compile("(\\[\\[http.*\\]\\])|(?i)((" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/([0-9]{5}))");
+		Matcher combinador = padrao.matcher(conteudo);
+		
+		while(combinador.find()){
+			if(combinador.group(1) == null) {
+				if(combinador.group(4).toUpperCase().equals("GC")){
+					GcInformacao conhecimento = GcInformacao.find("byNumero",Integer.parseInt(combinador.group(5))).first();
+					combinador.appendReplacement(sb, "[[http://localhost/sigagc/exibir?id=" + conhecimento.id + "|" + combinador.group(2).toUpperCase().trim() + " (" + conhecimento.arq.titulo + ")]]");	
+				}
+				else if(combinador.group(4).toUpperCase().equals("SR")) {
+					SrSolicitacao solicitacao = SrSolicitacao.find("byNumSolicitacao",Long.parseLong(combinador.group(5))).first();
+					combinador.appendReplacement(sb, "[[/sigasr/solicitacao/exibir/" + solicitacao.idSolicitacao + "|" + combinador.group(2).toUpperCase().trim() + " (" + solicitacao.itemConfiguracao.descrItemConfiguracao + "-" + solicitacao.servico.descrServico + ")]]");
+				}
+				/*else {
+					combinador.appendReplacement(sb,"[[http://localhost/sigaex/expediente/doc/exibir.action?sigla=" + combinador.group(0).toUpperCase() + "|" + combinador.group(0).toUpperCase() + "]]");
+				}*/
+			}
+		}
+		combinador.appendTail(sb);
+		
+		return sb.toString();
+	}
+
+	
 
 }

@@ -338,7 +338,7 @@ body {
 	font-size: 85%;
 	border: none;
 }
-.gt-table-categories td {
+.gt-table-categories td{
 	text-align: left;
 	font-size: 85%;
 	font-weight: bold;
@@ -346,6 +346,22 @@ body {
 	vertical-align: top;
 	padding: 0 0 5px 0;
 	border: none;
+}
+.gt-categories-th {
+	font-weight: normal;
+	color: #666666 !important;
+	text-align: left;
+	padding: 0 !important;
+	vertical-align: middle !important;
+	font-size: 85%;
+}
+.gt-categories-td {
+	text-align: left;
+	font-size: 85%;
+	font-weight: bold;
+	color: #666666 !important;
+	vertical-align: middle !important;
+	padding: 0 !important;
 }
 .gt-table-categories a:link, .gt-table-categories a:visited {
 	color: #666666;
@@ -377,6 +393,11 @@ body {
 /* User Table */
 .gt-user-table .gt-avatar {
 	width: 1%;
+}
+
+/*User GC Table*/
+.gt-userGC-column {
+	padding: 2px !important;
 }
 .gt-user-table p {
 	font-size: 85%;

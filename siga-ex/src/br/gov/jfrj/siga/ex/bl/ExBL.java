@@ -626,8 +626,7 @@ public class ExBL extends CpBL {
 
 		if (!isDocumentoSemEfeito) {
 			
-			if(mob.isApensadoAVolumeDoMesmoProcesso())
-				return set;
+			boolean apensadoAVolumeDoMesmoProcesso = mob.isApensadoAVolumeDoMesmoProcesso();
 
 			long m = CpMarcador.MARCADOR_CANCELADO;
 			long mAnterior = m;
@@ -652,13 +651,13 @@ public class ExBL extends CpBL {
 					m = CpMarcador.MARCADOR_JUNTADO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO)
 					m = CpMarcador.MARCADOR_JUNTADO_EXTERNO;
-				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO)
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO && apensadoAVolumeDoMesmoProcesso)
 					m = CpMarcador.MARCADOR_APENSADO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
 					m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
-				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
+				if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso)
 					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 						&& mob.doc().isEletronico()) {
@@ -679,14 +678,17 @@ public class ExBL extends CpBL {
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
-					if (!mob.doc().isEletronico()
+					if (!mob.doc().isEletronico() 
 							&& (mob.doc().isAssinado())
 							|| (mob.doc().isEletronico() && mob
 									.doc()
 									.isAssinadoEletronicoPorTodosOsSignatarios())
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
-						m = CpMarcador.MARCADOR_EM_ANDAMENTO;
+						
+						if(!apensadoAVolumeDoMesmoProcesso)
+							m = CpMarcador.MARCADOR_EM_ANDAMENTO;
+						
 					} else if (mob.isApensado()) {
 						m = CpMarcador.MARCADOR_APENSADO;
 					} else {

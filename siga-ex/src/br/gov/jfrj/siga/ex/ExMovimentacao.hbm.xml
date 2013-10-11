@@ -109,7 +109,7 @@
 	<query name="consultarParaTransferirEmLote">
 		<![CDATA[select mob from ExMobil mob join mob.exMarcaSet mar 
 		where (mar.dpLotacaoIni.idLotacao=:lotaIni
-		and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=15)		
+		and (mar.cpMarcador.idMarcador=2)		
 		) order by mar.dtIniMarca desc]]>
 	</query>
 	

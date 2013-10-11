@@ -2479,7 +2479,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		for (ExMobil m : provItens) {
 			if (Ex.getInstance().getComp()
-					.podeAcessarDocumento(getTitular(), getLotaTitular(), m))
+					.podeAcessarDocumento(getTitular(), getLotaTitular(), m) && !m.isApensado())
 				getItens().add(m);
 		}
 

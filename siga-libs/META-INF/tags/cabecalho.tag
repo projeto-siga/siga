@@ -79,6 +79,10 @@ ${meta}
 
 <script language="JavaScript"
 	src="/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
+<%-- Desabilitado porque requer o jquery 1.7 ou maior. 	
+<script language="JavaScript"
+	src="/siga/javascript/autogrow.min.js" type="text/javascript"></script>
+--%>	
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
 <script language="JavaScript" type="text/javascript">
@@ -93,6 +97,7 @@ ${meta}
 			else
 				this.beenSubmitted = true;
 		});
+		//$('.autogrow').css('overflow', 'hidden').autogrow();
 	});
 </script>
 <c:if test="${not empty titular}">

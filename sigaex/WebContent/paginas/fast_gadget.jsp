@@ -151,7 +151,11 @@ submitOk = function() {
 	<ww:url id="url" action="editar" namespace="/expediente/doc" />
 	<a class="gt-btn-small gt-btn-right"
 		href="javascript: window.location.href='${url}'"
-		title="Criar Novo Expediente">Novo</a>
+		title="Criar novo expediente ou processo administrativo">Novo</a>
+	<ww:url id="url" action="listar" namespace="/expediente/doc" />
+	<a class="gt-btn-medium gt-btn-right"
+		href="javascript: window.location.href='${url}'"
+		title="Pesquisar expedientes e processos administrativos">Pesquisar</a>
 	<%-- 
 	<ww:form name="frmSigaEx" action="editar" namespace="/expediente/doc"
 		method="post" theme="simple">

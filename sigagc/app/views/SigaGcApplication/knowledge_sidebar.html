@@ -1,20 +1,20 @@
 <h3>
 	Conhecimentos<a style="float: right;" title="Registrar um novo conhecimento"
-		href="@{Application.editar}?classificacao=${classificacao}"><img
+		href="@{SigaGcApplication.editar}?classificacao=${classificacao}"><img
 		src="/siga/css/famfamfam/icons/add.png">
 	</a>
 </h3>
 #{if conhecimentos != null} #{list items:conhecimentos,as:'conhecimento'}
 <p>
 	<b><a
-		href="@{Application.exibir}?id=${conhecimento[0]}">${conhecimento[1]}</a>:</b>
+		href="@{SigaGcApplication.exibir}?id=${conhecimento[0]}">${conhecimento[1]}</a>:</b>
 	${conhecimento[2]}
 </p>
 <!--  -->
 #{/list} #{/if} #{else}
 <p>
 	Nenhum conhecimento registrado. Clique <a
-		href="@{Application.editar}?classificacao=${classificacao}">aqui</a>
+		href="@{SigaGcApplication.editar}?classificacao=${classificacao}">aqui</a>
 	para registrar um novo conhecimento.
 </p>
 #{/else}

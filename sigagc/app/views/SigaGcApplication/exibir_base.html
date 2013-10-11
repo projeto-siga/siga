@@ -58,7 +58,7 @@ Informação'/}
 			models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO}
 			<p>
 				<image src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
-				<a target="_blank" href="@{Application.baixar(m.arq.id)}">${m.arq.titulo}</a>
+				<a target="_blank" href="@{SigaGcApplication.baixar(m.arq.id)}">${m.arq.titulo}</a>
 			</p>
 			#{/if} #{/list} #{/if}
 		</div>

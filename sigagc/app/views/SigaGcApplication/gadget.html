@@ -1,0 +1,20 @@
+<div class="gt-content-box gt-for-table">
+	<table border="0" class="gt-table">
+		<thead>
+			<tr>
+				<th width="50%">Situação</th>
+				<th width="25%" style="text-align: right">Atendente</th>
+				<th width="25%" style="text-align: right">Lotação</th>
+			</tr>
+		</thead>
+		<tbody>
+		#{list items:contagens, as:'contagem'}
+			<tr>
+				<td ><a href="@{SigaGcApplication.listar}?filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[1]}</a></td>
+				<td align="right" ><a href="@{SigaGcApplication.listar}?filtro.situacao=${contagem[0]}&filtro.atendente=${cadastrante.idPessoa}">${contagem[2]}</a></td>
+				<td align="right" ><a href="@{SigaGcApplication.listar}?filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[3]}</a></td>
+			</tr>
+		#{/list}
+		</tbody>
+	</table>
+</div>

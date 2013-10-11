@@ -139,7 +139,8 @@ public class Util {
 				acronimoOrgao += (acronimoOrgao == "" ? "" : "|") + ao;
 		}
  		
-		Pattern padrao = Pattern.compile("(\\[\\[http.*\\]\\])|(?i)((" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/([0-9]{5}))");
+		//Pattern padrao = Pattern.compile("(\\[\\[http.*\\]\\])|(?i)((" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/([0-9]{5}))");
+		Pattern padrao = Pattern.compile("(\\[\\[http.*\\]\\])|(?i)((RJ)-([A-Za-z]{2,3})-[0-9]{4}/([0-9]{5})");
 		Matcher combinador = padrao.matcher(conteudo);
 		
 		while(combinador.find()){
@@ -150,11 +151,11 @@ public class Util {
 				}
 				else if(combinador.group(4).toUpperCase().equals("SR")) {
 					SrSolicitacao solicitacao = SrSolicitacao.find("byNumSolicitacao",Long.parseLong(combinador.group(5))).first();
-					combinador.appendReplacement(sb, "[[/sigasr/solicitacao/exibir/" + solicitacao.idSolicitacao + "|" + combinador.group(2).toUpperCase().trim() + " (" + solicitacao.itemConfiguracao.descrItemConfiguracao + "-" + solicitacao.servico.descrServico + ")]]");
+					combinador.appendReplacement(sb, "[[http://localhost/sigasr/solicitacao/exibir/" + solicitacao.idSolicitacao + "|" + combinador.group(2).toUpperCase().trim() + " (" + solicitacao.itemConfiguracao.getDescricao() + "-" + solicitacao.servico.getDescricao() + ")]]");
 				}
-				/*else {
-					combinador.appendReplacement(sb,"[[http://localhost/sigaex/expediente/doc/exibir.action?sigla=" + combinador.group(0).toUpperCase() + "|" + combinador.group(0).toUpperCase() + "]]");
-				}*/
+				else {
+					combinador.appendReplacement(sb,"[[http://localhost/sigaex/expediente/doc/exibir.action?sigla=" + combinador.group(2).toUpperCase().trim() + "|" + combinador.group(2).toUpperCase().trim() + "]]");
+				}
 			}
 		}
 		combinador.appendTail(sb);

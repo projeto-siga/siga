@@ -241,43 +241,43 @@ public class GcInformacao extends GenericModel {
 			DpLotacao lotaTitular) {
 		SortedSet<GcAcaoVO> acoes = new TreeSet<GcAcaoVO>();
 
-		addAcao(acoes, "pencil", "Editar", null, "Application.editar", null,
+		addAcao(acoes, "pencil", "Editar", null, "SigaGcApplication.editar", null,
 				podeEditar());
-		addAcao(acoes, "delete", "Excluir", null, "Application.remover", null,
+		addAcao(acoes, "delete", "Excluir", null, "SigaGcApplication.remover", null,
 				podeExcluir(), "Confirma a exclusão de tópico de informação?",
 				null, null);
 		addAcao(acoes, "eye", "Exibir Histórico de Alterações", null,
-				"Application.historico", "historico=true", true);
+				"SigaGcApplication.historico", "historico=true", true);
 		addAcao(acoes, "eye", "Exibir Movimentações", null,
-				"Application.movimentacoes", "movimentacoes=true", true);
+				"SigaGcApplication.movimentacoes", "movimentacoes=true", true);
 		// addAcao(acoes, "eye", "Exibir Informações Completas", null,
 		// "Application.movimentacoes", "completo=true", true);
 		addAcao(acoes, "heart_delete", "Desmarcar Interesse", null,
-				"Application.desmarcarComoInteressado", null,
+				"SigaGcApplication.desmarcarComoInteressado", null,
 				podeDesmarcarComoInteressado(titular));
 		addAcao(acoes, "heart_add", "Marcar Interesse", null,
-				"Application.marcarComoInteressado", null,
+				"SigaGcApplication.marcarComoInteressado", null,
 				podeMarcarComoInteressado(titular));
-		addAcao(acoes, "bell", "Notificar", null, "Application.notificar",
+		addAcao(acoes, "bell", "Notificar", null, "SigaGcApplication.notificar",
 				null, podeNotificar());
 		addAcao(acoes,
 				"lock",
 				"Finalizar Elaboração",
 				null,
-				"Application.fechar",
+				"SigaGcApplication.fechar",
 				null,
 				podeFinalizar(),
 				"Confirma a finalização da elaboração deste tópico de informação?",
 				null, null);
-		addAcao(acoes, "folder_user", "Revisado", null, "Application.revisado",
+		addAcao(acoes, "folder_user", "Revisado", null, "SigaGcApplication.revisado",
 				null, podeRevisar(titular));
 		addAcao(acoes, "folder_user", "Solicitar Revisão", null,
-				"Application.solicitarRevisao", null, podeSolicitarRevisao());
-		addAcao(acoes, "cancel", "Cancelar", null, "Application.cancelar",
+				"SigaGcApplication.solicitarRevisao", null, podeSolicitarRevisao());
+		addAcao(acoes, "cancel", "Cancelar", null, "SigaGcApplication.cancelar",
 				null, podeCancelar(titular, lotaTitular),
 				"Confirma o cancelamento deste tópico de informação?", null,
 				null);
-		addAcao(acoes, "attach", "Anexar Arquivo", null, "Application.anexar",
+		addAcao(acoes, "attach", "Anexar Arquivo", null, "SigaGcApplication.anexar",
 				null, podeAnexar());
 
 		// addAcao("printer.png","Visualizar Impressão",null,"", null, true,

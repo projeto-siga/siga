@@ -2,21 +2,19 @@ package controllers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-//import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-//import javax.swing.event.ListSelectionEvent;
-//import javax.persistence.Query;
-
-import play.db.jpa.GenericModel;
-import play.db.jpa.JPA;
-import br.gov.jfrj.siga.model.Historico;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import models.GcInformacao;
 import models.SrSolicitacao;
+import play.db.jpa.GenericModel;
+import play.db.jpa.JPA;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.model.Historico;
 
 public class Util {
 	
@@ -132,37 +130,50 @@ public class Util {
 	public static String marcarReferencia(String conteudo){
 
 		StringBuffer sb = new StringBuffer();
+		try{
+			if(acronimoOrgao.isEmpty()) {
+				List<String> acronimo = CpOrgaoUsuario.find("select acronimoOrgaoUsu from CpOrgaoUsuario").fetch();
+				for(String ao : acronimo) 
+					acronimoOrgao += (acronimoOrgao == "" ? "" : "|") + ao;
+			}
+	 		//lembrar de retirar o RJ quando for para a produção. 
+			Pattern padrao = Pattern.compile("(\\[\\[http.*\\]\\])|(?i)(?:(?: RJ|" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/([0-9]{5})(?:.([0-9]{2}))?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)");
 			
-		if(acronimoOrgao.isEmpty()) {
-			List<String> acronimo = CpOrgaoUsuario.find("select acronimoOrgaoUsu from CpOrgaoUsuario").fetch();
-			for(String ao : acronimo) 
-				acronimoOrgao += (acronimoOrgao == "" ? "" : "|") + ao;
-		}
- 		
-		//Pattern padrao = Pattern.compile("(\\[\\[http.*\\]\\])|(?i)((" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/([0-9]{5}))");
-		Pattern padrao = Pattern.compile("(\\[\\[http.*\\]\\])|(?i)((RJ)-([A-Za-z]{2,3})-[0-9]{4}/([0-9]{5})");
-		Matcher combinador = padrao.matcher(conteudo);
-		
-		while(combinador.find()){
-			if(combinador.group(1) == null) {
-				if(combinador.group(4).toUpperCase().equals("GC")){
-					GcInformacao conhecimento = GcInformacao.find("byNumero",Integer.parseInt(combinador.group(5))).first();
-					combinador.appendReplacement(sb, "[[http://localhost/sigagc/exibir?id=" + conhecimento.id + "|" + combinador.group(2).toUpperCase().trim() + " (" + conhecimento.arq.titulo + ")]]");	
-				}
-				else if(combinador.group(4).toUpperCase().equals("SR")) {
-					SrSolicitacao solicitacao = SrSolicitacao.find("byNumSolicitacao",Long.parseLong(combinador.group(5))).first();
-					combinador.appendReplacement(sb, "[[http://localhost/sigasr/solicitacao/exibir/" + solicitacao.idSolicitacao + "|" + combinador.group(2).toUpperCase().trim() + " (" + solicitacao.itemConfiguracao.getDescricao() + "-" + solicitacao.servico.getDescricao() + ")]]");
-				}
-				else {
-					combinador.appendReplacement(sb,"[[http://localhost/sigaex/expediente/doc/exibir.action?sigla=" + combinador.group(2).toUpperCase().trim() + "|" + combinador.group(2).toUpperCase().trim() + "]]");
+			Matcher combinador = padrao.matcher(conteudo);
+			
+			while(combinador.find()){	
+				if(combinador.group(1) == null) {
+					
+					if(combinador.group(2).toUpperCase().equals("GC")){
+						GcInformacao conhecimento = GcInformacao.find("byNumero",Integer.parseInt(combinador.group(3))).first();
+						combinador.appendReplacement(sb, "[[http://localhost/sigagc/exibir?id=" + conhecimento.id + "|" + combinador.group(0).toUpperCase().trim() + " (" + conhecimento.arq.titulo + ")]]");	
+					}
+					else if(combinador.group(2).toUpperCase().equals("SR")) {
+						
+						if(combinador.group(4) == null){
+							SrSolicitacao solicitacao = SrSolicitacao.find("byNumSolicitacao",Long.parseLong(combinador.group(3))).first();
+							combinador.appendReplacement(sb, "[[http://localhost/sigasr/solicitacao/exibir/" + solicitacao.idSolicitacao + "|" + combinador.group(0).toUpperCase().trim() + " (" + solicitacao.itemConfiguracao.getDescricao() + "-" + solicitacao.servico.getDescricao() + ")]]");
+						}
+						else {
+							SrSolicitacao solicitacao = SrSolicitacao.find("from SrSolicitacao where numSequencia =" + Long.parseLong(combinador.group(4)) 
+																		+ "and solicitacaoPai = (select idSolicitacao from SrSolicitacao where numSolicitacao =" + Long.parseLong(combinador.group(3)) 
+																		+ ")").first();
+							
+							combinador.appendReplacement(sb, "[[http://localhost/sigasr/solicitacao/exibir/" + solicitacao.idSolicitacao + "|" + combinador.group(0).toUpperCase().trim() + " (" + solicitacao.itemConfiguracao.getDescricao() + "-" + solicitacao.servico.getDescricao() + ")]]");						
+						}
+					}
+					else {
+						combinador.appendReplacement(sb,"[[http://localhost/sigaex/expediente/doc/exibir.action?sigla=" + combinador.group(0).toUpperCase().trim() + "|" + combinador.group(0).toUpperCase().trim() + "]]");
+					}
 				}
 			}
+			combinador.appendTail(sb);
+			
+			return sb.toString();
 		}
-		combinador.appendTail(sb);
-		
-		return sb.toString();
+		catch(Exception e) {
+			throw new AplicacaoException("Um documento/solicitação/conhecimento não existe. Favor verificar novamente os links referenciados!");
+		}
 	}
-
-	
 
 }

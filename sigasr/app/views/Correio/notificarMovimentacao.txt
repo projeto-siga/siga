@@ -1,6 +1,6 @@
 Informamos que a solicitação ${sol.codigo} recebeu a seguinte movimentacao em ${movimentacao.dtIniMovDDMMYYYYHHMM}:
 
-	Situação: Marcas aqui
+	Tipo: ${movimentacao.tipoMov.nome}
 	${movimentacao.descrMovimentacao}
 	${movimentacao.cadastrante.descricaoIniciaisMaiusculas} (${movimentacao.lotaCadastrante.siglaLotacao})
 

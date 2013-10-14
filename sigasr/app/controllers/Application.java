@@ -84,6 +84,10 @@ public class Application extends SigaApplication {
 		}
 	}
 
+	public static boolean completo() {
+		return Boolean.parseBoolean(params.get("completo"));
+	}
+
 	protected static void assertAcesso(String path) throws Exception {
 		SigaApplication.assertAcesso("SR:Módulo de Serviços;" + path);
 	}
@@ -175,17 +179,8 @@ public class Application extends SigaApplication {
 
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
 
-		SrFormaAcompanhamento[] formasAcompanhamento = SrFormaAcompanhamento
-				.values();
-		SrUrgencia[] urgencias = SrUrgencia.values();
-		SrTendencia[] tendencias = SrTendencia.values();
-		SrGravidade[] gravidades = SrGravidade.values();
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
-		boolean abrirFechando = solicitacao.podeAbrirJaFechando(lotaTitular(),
-				cadastrante());
-		boolean priorizar = solicitacao.podePriorizar(lotaTitular(),
-				cadastrante());
 
 		List<SrServico> servicos = new ArrayList<SrServico>();
 		if (solicitacao.itemConfiguracao != null) {
@@ -200,9 +195,7 @@ public class Application extends SigaApplication {
 			}
 		}
 
-		render("@editar", solicitacao, formasAcompanhamento, gravidades,
-				urgencias, tendencias, priorizar, abrirFechando, locais,
-				servicos);
+		render("@editar", solicitacao, locais, servicos);
 	}
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
@@ -242,7 +235,7 @@ public class Application extends SigaApplication {
 		validarFormEditar(solicitacao);
 		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
-		exibir(id, false);
+		exibir(id, completo());
 	}
 
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
@@ -255,16 +248,12 @@ public class Application extends SigaApplication {
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
 
 		// Montando o filtro...
-		SrUrgencia[] urgencias = SrUrgencia.values();
-		SrTendencia[] tendencias = SrTendencia.values();
-		SrGravidade[] gravidades = SrGravidade.values();
 		String[] tipos = new String[] { "Pessoa", "Lotação" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
 
-		render(listaSolicitacao, urgencias, tendencias, gravidades, tipos,
-				marcadores, filtro);
+		render(listaSolicitacao, tipos, marcadores, filtro);
 	}
 
 	public static void estatistica() throws Exception {
@@ -430,12 +419,11 @@ public class Application extends SigaApplication {
 		render(lista, evolucao, top10);
 	}
 
-	public static void exibir(Long id, boolean considerarCancelados)
-			throws Exception {
+	public static void exibir(Long id, boolean completo) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
-		render(solicitacao, movimentacao, considerarCancelados);
+		render(solicitacao, movimentacao, completo);
 	}
 
 	// public static void exibirSolicitacaoLista(Long id) {
@@ -516,16 +504,17 @@ public class Application extends SigaApplication {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
 		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
+	public static void anexarArquivo(SrMovimentacao movimentacao)
+			throws Exception {
 		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void fechar(Long idSolicitacao) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+	public static void fechar(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
 
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		if (movimentacao.solicitacao.temPosAtendenteDesignado()) {
@@ -539,23 +528,22 @@ public class Application extends SigaApplication {
 		}
 		movimentacao.salvar(cadastrante(), lotaTitular());
 
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void cancelar(Long idSolicitacao) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+	public static void cancelar(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
 
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO);
 		movimentacao.salvar(cadastrante(), lotaTitular());
 
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void finalizarPreAtendimento(Long idSolicitacao)
-			throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+	public static void finalizarPreAtendimento(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
 
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
@@ -564,77 +552,56 @@ public class Application extends SigaApplication {
 				.getAtendenteDesignado();
 		movimentacao.salvar(cadastrante(), lotaTitular());
 
-		SrMovimentacao movRevertida = sol
-				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO);
-		movRevertida.movReversora = movimentacao;
-		movRevertida.salvar();
-
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void finalizarPosAtendimento(Long idSolicitacao)
-			throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+	public static void finalizarPosAtendimento(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
 
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
 		movimentacao.salvar(cadastrante(), lotaTitular());
 
-		SrMovimentacao movRevertida = sol
-				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
-		movRevertida.movReversora = movimentacao;
-		movRevertida.salvar();
-
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void deixarPendente(Long idSolicitacao) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+	public static void deixarPendente(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
 		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void terminarPendencia(Long idSolicitacao) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+	public static void terminarPendencia(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
 
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
 		movimentacao.salvar(cadastrante(), lotaTitular());
 
-		SrMovimentacao movRevertida = sol
-				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
-		movRevertida.movReversora = movimentacao;
-		movRevertida.salvar();
-
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void reabrir(Long idSolicitacao) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacao);
+	public static void reabrir(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
 
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
 		movimentacao.salvar(cadastrante(), lotaTitular());
 
-		SrMovimentacao movRevertida = sol
-				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		movRevertida.movReversora = movimentacao;
-		movRevertida.salvar();
-
-		exibir(movimentacao.solicitacao.idSolicitacao, false);
+		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
 	public static void desfazerUltimaMovimentacao(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.desfazerUltimaMovimentacao(cadastrante(), lotaTitular());
-		exibir(id, false);
+		exibir(id, completo());
 	}
 
 	public static void criarFilha(Long id) throws Exception {

@@ -1,8 +1,8 @@
-Informamos que foi **cancelado**, em ${movimentacao.movCanceladora.dtIniMovDDMMYYYYHHMM}, a **movimentação** abaixo, dado na solicitação ${sol.codigo}:
+Informamos que foi **cancelada**, em ${movimentacao.movCanceladora.dtIniMovDDMMYYYYHHMM}, a **movimentação** abaixo, dada na solicitação ${sol.codigo}:
 
 ${movimentacao.descrMovimentacao}
-Movimentação dada por ${movimentacao.cadastrante.descricaoIniciaisMaiusculas} (${movimentacao.lotaCadastrante.siglaLotacao})
-**Cancelado** por ${movimentacao.movCanceladora.cadastrante.descricaoIniciaisMaiusculas} (${movimentacao.movCanceladora.lotaCadastrante.siglaLotacao})
+Movimentação havia sido dada por ${movimentacao.cadastrante.descricaoIniciaisMaiusculas} (${movimentacao.lotaCadastrante.siglaLotacao})
+**Cancelada** por ${movimentacao.movCanceladora.cadastrante.descricaoIniciaisMaiusculas} (${movimentacao.movCanceladora.lotaCadastrante.siglaLotacao})
 
 Para acessar a solicitação, acesse @@{Application.exibir(sol.idSolicitacao)}.
 	

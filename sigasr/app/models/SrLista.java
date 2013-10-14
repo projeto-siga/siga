@@ -196,7 +196,7 @@ public class SrLista extends HistoricoSuporte {
 					listaCompleta.addAll(movimentacao.lista.meuMovimentacaoSet);
 				else
 					for (SrMovimentacao movim : movimentacao.lista.meuMovimentacaoSet)
-						if (!movim.isCancelado())
+						if (!movim.isCancelada())
 							listaCompleta.add(movim);
 		return listaCompleta;
 	}

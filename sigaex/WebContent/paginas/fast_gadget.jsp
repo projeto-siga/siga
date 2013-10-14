@@ -154,7 +154,7 @@ submitOk = function() {
 		title="Criar novo expediente ou processo administrativo">Novo</a>
 	<ww:url id="url" action="listar" namespace="/expediente/doc" />
 	<a class="gt-btn-medium gt-btn-right"
-		href="javascript: window.location.href='${url}'"
+		href="javascript: window.location.href='${url}?primeiraVez=sim'"
 		title="Pesquisar expedientes e processos administrativos">Pesquisar</a>
 	<%-- 
 	<ww:form name="frmSigaEx" action="editar" namespace="/expediente/doc"

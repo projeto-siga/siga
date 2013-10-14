@@ -117,9 +117,9 @@ public class Documento {
 	private static final float PAGE_BORDER_IN_CM = 0.8f;
 
 	private static final float STAMP_BORDER_IN_CM = 0.2f;
-	
+
 	private static final Pattern pattern = Pattern
-	.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.(pdf|html|zip)");
+		.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.(pdf|html|zip)");
 
 	private static Log log = LogFactory.getLog(Documento.class);
 
@@ -1285,16 +1285,29 @@ public class Documento {
 				// sb.append("</div>");
 			} else {
 				sb.append("<div style=\"margin:3pt; padding:3pt;\" class=\"anexo\">");
-				sb.append("<a href=\"" + "http://" + servernameport
-						+ contextpath + "/expediente/doc/"
-						+ an.getArquivo().getReferenciaPDF() + "\">");
+				sb.append("<img src=\"/siga/css/famfamfam/icons/page_white_acrobat.png\"/> <a href=\""
+						+ "http://"
+						+ servernameport
+						+ contextpath
+						+ "/arquivo/exibir.action?arquivo="
+						+ an.getArquivo().getReferenciaPDF()
+						+ "\" target=\"_blank\">");
 				sb.append(an.getNome());
 				sb.append("</a>");
-				if (an.getArquivo() instanceof ExMovimentacao) {
-					sb.append(": "
-							+ ((ExMovimentacao) an.getArquivo()).getDescrMov());
-				}
-				sb.append("<br/>");
+				if (((ExMovimentacao) an.getArquivo()).getDescrMov() != null)
+					if (an.getArquivo() instanceof ExMovimentacao) {
+						sb.append(": "
+								+ ((ExMovimentacao) an.getArquivo())
+										.getDescrMov());
+					}
+				sb.append("<iframe style=\"visibility: visible; margin: 0px; padding: 0px; display: block;height: 30em;\" src=\"http://"
+						+ servernameport
+						+ contextpath
+						+ "/arquivo/exibir.action?arquivo="
+						+ an.getArquivo().getReferenciaPDF()
+						+ "&semmarcas=1\" width=\"100%\" frameborder=\"0\" scrolling=\"auto\"></iframe>");
+
+				// sb.append("<br/>");
 				sb.append("</div>");
 			}
 

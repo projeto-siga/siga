@@ -810,6 +810,7 @@ public class Documento {
 					// step 2: we create a writer that listens to the
 					// document
 					writer = new PdfCopy(document, bo2);
+					writer.setFullCompression();
 
 					// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
 

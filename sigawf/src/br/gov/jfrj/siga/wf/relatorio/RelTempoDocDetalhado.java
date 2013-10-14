@@ -105,15 +105,18 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		String ultimoDoc = null;
 		DetectorGrupoRel detectGrupo = null;
 		List<Tarefa> grupoAtual = new ArrayList<RelTempoDocDetalhado.Tarefa>();
+		int linhaInicioGrupo = -1;
 		for (Tarefa t : tarefas) {
 			
 			//processamento inicial de grupo
 			if (ultimoDoc == null || !t.getNumeroDocumento().equals(ultimoDoc)){
-				detectGrupo = new DetectorGrupoRel("Etapa Dirfo", "Retificar SEC");
+				detectGrupo = new DetectorGrupoRel("x", "x");
+				grupoAtual.clear();
 			}
 			
 			if (detectGrupo.fazParteDoGrupo(t.getNome()) && detectGrupo.isInicio()){
-				addLinhaEmBranco(t,dados);
+				linhaInicioGrupo = dados.size();
+//				addLinhaEmBranco(t,dados);
 				detectGrupo.continuar();
 			}
 			
@@ -125,6 +128,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 			
 			//processamento final de grupo
 			if (detectGrupo.fazParteDoGrupo(t.getNome()) && detectGrupo.isFim()){
+				addLinhaEmBranco(t,dados,linhaInicioGrupo);
 				addLinhaTotalGrupo(grupoAtual,dados);
 				addLinhaEmBranco(t,dados);
 				detectGrupo.reiniciarAvaliacao();
@@ -164,13 +168,21 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		dados.add(SigaCalendar.formatDHM(duracao));
 	}
 
-	private void addLinhaEmBranco(Tarefa t, List<String> dados) {
-		dados.add(t.getNumeroDocumento() + " ("
+	private void addLinhaEmBranco(Tarefa t, List<String> dados,int posicao) {
+		if (posicao<=-1){
+			posicao = dados.size();
+		}
+		dados.add(posicao,"");
+		dados.add(posicao,"");
+		dados.add(posicao,"");
+		dados.add(posicao,"");
+		dados.add(posicao,t.getNumeroDocumento() + " ("
 				+ t.getDuracaoProcedimento() + ")");
-		dados.add("");
-		dados.add("");
-		dados.add("");
-		dados.add("");
+
+	}
+	
+	private void addLinhaEmBranco(Tarefa t, List<String> dados){
+		addLinhaEmBranco(t, dados, -1);
 	}
 
 	private Set<Tarefa> consultarTarefas(String nomeProcedimento,

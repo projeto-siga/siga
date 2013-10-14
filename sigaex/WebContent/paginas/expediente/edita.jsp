@@ -204,7 +204,7 @@ function checkBoxMsg() {
 var saveTimer;
 function triggerAutoSave(){
 	clearTimeout(saveTimer);
-	saveTimer=setTimeout('autoSave()',60000 * 30);
+	saveTimer=setTimeout('autoSave()',60000);
 }
 
 triggerAutoSave();

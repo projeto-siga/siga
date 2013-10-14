@@ -2061,7 +2061,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setItens(new ArrayList<ExMobil>());
 
 		for (ExMobil m : provItens) {
-			if (Ex.getInstance().getComp()
+			if (!m.isApensado() && Ex.getInstance().getComp()
 					.podeAcessarDocumento(getTitular(), getLotaTitular(), m))
 				getItens().add(m);
 		}
@@ -2114,7 +2114,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setItens(new ArrayList<ExMobil>());
 
 		for (ExMobil m : provItens) {
-			if (Ex.getInstance().getComp()
+			if (!m.isApensado() && Ex.getInstance().getComp()
 					.podeAcessarDocumento(getTitular(), getLotaTitular(), m))
 				getItens().add(m);
 		}
@@ -2377,7 +2377,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setItens(new ArrayList<ExMobil>());
 
 		for (ExMobil m : provItens) {
-			if (Ex.getInstance().getComp()
+			if (!m.isApensado() && Ex.getInstance().getComp()
 					.podeAcessarDocumento(getTitular(), getLotaTitular(), m))
 				getItens().add(m);
 		}
@@ -2478,8 +2478,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setItens(new ArrayList<ExMobil>());
 
 		for (ExMobil m : provItens) {
-			if (Ex.getInstance().getComp()
-					.podeAcessarDocumento(getTitular(), getLotaTitular(), m) && !m.isApensado())
+			if (!m.isApensado() && Ex.getInstance().getComp()
+					.podeAcessarDocumento(getTitular(), getLotaTitular(), m) )
 				getItens().add(m);
 		}
 

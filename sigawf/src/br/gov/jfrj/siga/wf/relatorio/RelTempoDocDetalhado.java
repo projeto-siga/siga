@@ -103,31 +103,31 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		List<String> dados = new ArrayList<String>();
 		
 		String ultimoDoc = null;
-		EspecificacaoGrupoRel especGrupo = null;
+		DetectorGrupoRel detectGrupo = null;
 		List<Tarefa> grupoAtual = new ArrayList<RelTempoDocDetalhado.Tarefa>();
 		for (Tarefa t : tarefas) {
 			
 			//processamento inicial de grupo
 			if (ultimoDoc == null || !t.getNumeroDocumento().equals(ultimoDoc)){
-				especGrupo = new EspecificacaoGrupoRel("Etapa Dirfo", "Retificar SEC");
+				detectGrupo = new DetectorGrupoRel("Etapa Dirfo", "Retificar SEC");
 			}
 			
-			if (especGrupo.atendeEspecificacao(t.getNome()) && especGrupo.isInicio()){
+			if (detectGrupo.fazParteDoGrupo(t.getNome()) && detectGrupo.isInicio()){
 				addLinhaEmBranco(t,dados);
-				especGrupo.continuar();
+				detectGrupo.continuar();
 			}
 			
-			if(especGrupo.atendeEspecificacao(t.getNome()) && t.getNumeroDocumento().equals(ultimoDoc)){
+			if(detectGrupo.fazParteDoGrupo(t.getNome()) && t.getNumeroDocumento().equals(ultimoDoc)){
 				grupoAtual.add(t);
 			}
 			
 			addLinha(dados, t);
 			
 			//processamento final de grupo
-			if (especGrupo.atendeEspecificacao(t.getNome()) && especGrupo.isFim()){
+			if (detectGrupo.fazParteDoGrupo(t.getNome()) && detectGrupo.isFim()){
 				addLinhaTotalGrupo(grupoAtual,dados);
 				addLinhaEmBranco(t,dados);
-				especGrupo.reiniciarAvaliacao();
+				detectGrupo.reiniciarAvaliacao();
 				grupoAtual.clear();
 			}
 			

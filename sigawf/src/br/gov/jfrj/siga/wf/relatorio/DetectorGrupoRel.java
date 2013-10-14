@@ -1,7 +1,7 @@
 package br.gov.jfrj.siga.wf.relatorio;
 
 
-public class EspecificacaoGrupoRel {
+public class DetectorGrupoRel {
 
 	public static enum GrupoEmProcessamento{
 		INICIO, FIM, EM_PROGRESSO,NENHUM
@@ -11,7 +11,7 @@ public class EspecificacaoGrupoRel {
 	private String grpFim;
 	private GrupoEmProcessamento grupoEmProcessamento = GrupoEmProcessamento.NENHUM;
 	
-	public EspecificacaoGrupoRel(String grpInicio, String grpFim) {
+	public DetectorGrupoRel(String grpInicio, String grpFim) {
 		this.grpInicio = grpInicio;
 		this.grpFim = grpFim;
 	}
@@ -22,7 +22,7 @@ public class EspecificacaoGrupoRel {
 	 * @param nomeGrupo
 	 * @return
 	 */
-	public boolean atendeEspecificacao(String nomeGrupo){
+	public boolean fazParteDoGrupo(String nomeGrupo){
 		
 		if (nomeGrupo.equalsIgnoreCase(grpInicio) && grupoEmProcessamento.equals(GrupoEmProcessamento.NENHUM)){
 			setGrupoAtual(GrupoEmProcessamento.INICIO);
@@ -67,11 +67,11 @@ public class EspecificacaoGrupoRel {
 	}
 
 	public boolean isInicio() {
-		return getGrupoEmProcessamento().equals(EspecificacaoGrupoRel.GrupoEmProcessamento.INICIO);
+		return getGrupoEmProcessamento().equals(DetectorGrupoRel.GrupoEmProcessamento.INICIO);
 	}
 
 	public boolean isFim() {
-		return getGrupoEmProcessamento().equals(EspecificacaoGrupoRel.GrupoEmProcessamento.FIM);
+		return getGrupoEmProcessamento().equals(DetectorGrupoRel.GrupoEmProcessamento.FIM);
 	}
 	
 }

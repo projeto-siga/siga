@@ -55,7 +55,7 @@
 	}
 
 	function buscaNomeLota(){
-		var siglaLota = $('#lotPublicacao').val();			
+		var siglaLota = $('#idLotPublicacao :selected').text();	
 			$.ajax({				     				  
 				  url:'/siga/lotacao/selecionar.action?sigla=' + siglaLota ,					    					   					 
 				  success: function(data) {
@@ -124,8 +124,9 @@
 				</tr>				
 				<tr>
 					<td>Lotação de publicação:</td>
-					<td><ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" onchange="buscaNomeLota()" />
-					&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span>	</div></td>
+					<td><ww:select name="idLotPublicacao" list="listaLotPubl" listKey="idLotacao"
+						        listValue="siglaLotacao" value="${idLotDefault}" label="Lotação de Publicação" onchange="buscaNomeLota()" theme="simple"  />
+								&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>		
 				</tr>				
 					
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"

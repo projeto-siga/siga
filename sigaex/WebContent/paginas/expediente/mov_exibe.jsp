@@ -56,7 +56,7 @@ function visualizarImpressao(via) {
 	else
 		v = ''; 
 	frm.target='_blank'; 
-	frm.action='<c:url value="/"/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
+	frm.action='<c:url value="/arquivo/exibir.action?arquivo="/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
 	frm.submit();
 	frm.target=t;
 	frm.action=a;

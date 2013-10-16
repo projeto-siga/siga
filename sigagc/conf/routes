@@ -4,18 +4,18 @@
 
 # Home page
 GET     /favicon.ico                            404
-GET     /                                       SigaGcApplication.index
+GET     /                                       Application.index
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-*		/tag/selecionar							SigaGcApplication.selecionarTag
-*		/tag/buscar								SigaGcApplication.buscarTag
+*		/tag/selecionar							Application.selecionarTag
+*		/tag/buscar								Application.buscarTag
 
-*		/{tipo}/buscar							SigaGcApplication.buscarSiga
-*		/siga/{tipo}/buscar.action				SigaGcApplication.buscarSigaFromPopup
-*		/{tipo}/selecionar						SigaGcApplication.selecionarSiga
+*		/{tipo}/buscar							Application.buscarSiga
+*		/siga/{tipo}/buscar.action				Application.buscarSigaFromPopup
+*		/{tipo}/selecionar						Application.selecionarSiga
 
 # Catch all
-*       /{action}                  				SigaGcApplication.{action}
+*       /{action}                  				Application.{action}
 *       /{controller}/{action}                  {controller}.{action}

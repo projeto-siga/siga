@@ -76,9 +76,9 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Solicitação de Publicação - ${doc.codigo}</h2>
-			<div class="gt-content-box gt-for-table">
-			<ww:form name="frm" action="pedir_publicacao_gravar"
-			namespace="/expediente/mov" cssClass="form" method="GET" >
+			<div class="gt-content-box gt-for-table">			
+			<form name="frm" action="pedir_publicacao_gravar.action"
+					namespace="/expediente/mov" cssClass="form" method="GET">
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>	
 			<ww:if test="${not empty mensagem}">
@@ -125,7 +125,7 @@
 				<tr>
 					<td>Lotação de publicação:</td>
 					<td><ww:select name="idLotPublicacao" list="listaLotPubl" listKey="idLotacao"
-						        listValue="siglaLotacao" value="${idLotDefault}" label="Lotação de Publicação" onchange="buscaNomeLota()" theme="simple"  />
+						        listValue="siglaLotacao" value="${idLotDefault}" onchange="javascript: buscaNomeLota();" theme="simple"  />
 								&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>		
 				</tr>				
 					
@@ -139,9 +139,9 @@
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>					
 				</tr>
 			</table>
-		</ww:form>
+		</form>
 		<span style="font-weight:bold; color: red">${mensagem}</span>	
-	</div>
+	</div>	
 	<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>
 	<ul>
 	<li><span style="font-weight:bold">Data para
@@ -151,12 +151,12 @@
 	a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
 	da Lei 11419 / 2006</li>
 	</ul>		
-	</div>
-</div>	
-
+	</div>	
+</div>
 <script type="text/javascript">
 	buscaNomeLota();
 </script>
+
 
 <!--  tabela do rodapé -->
 <%--<c:import context="/siga" url="/paginas/rodape.jsp" />--%>

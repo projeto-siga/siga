@@ -1,5 +1,5 @@
 #{if conhecimentos != null} #{list items:conhecimentos,as:'conhecimento'}
-	#{set "url"}@{SigaGcApplication.editar(conhecimento[0], null, null, referer)}#{/set} 
+	#{set "url"}@{Application.editar(conhecimento[0], null, null, referer)}#{/set} 
 <p>
 	<a style="float: right;" title="Editar conhecimento"
 		href="${url}"><img
@@ -8,7 +8,7 @@
 	${conhecimento[2].raw()}
 <!--  -->
 #{/list} #{/if} #{else}
-	#{set "url"}@{SigaGcApplication.editar(0, classificacao, titulo, referer)}#{/set} 
+	#{set "url"}@{Application.editar(0, classificacao, titulo, referer)}#{/set} 
 <h3>
 	<a style="float: right;" title="Registrar um novo conhecimento"
 		href="${url}"><img src="/siga/css/famfamfam/icons/add.png"> </a>

@@ -37,7 +37,7 @@
 
 					<tr class="even">
 						<td width="11.5%" align="right" rowspan="${cmarcas}"><a
-							href="@{SigaGcApplication.exibir(i.id)}">${i.sigla}</a></td>
+							href="@{Application.exibir(i.id)}">${i.sigla}</a></td>
 						<td width="5%" align="center" rowspan="${cmarcas}">${i.dtIniString}</td>
 						<td width="4%" align="center" rowspan="${cmarcas}"><span
 							title="${i.lotacao.descricao}">${i.lotacao.sigla}</span>
@@ -58,7 +58,7 @@
 						<td width="6%" rowspan="${cmarcas}">${i.tipo.nome}</td>
 
 						<td rowspan="${cmarcas}"><a
-							href="@{SigaGcApplication.exibir(i.id)}">${i.arq.titulo}</a>
+							href="@{Application.exibir(i.id)}">${i.arq.titulo}</a>
 						</td>
 					</tr>
 					#{set fprimeiro = true /} #{list items:i.marcas, as:'m'} #{if
@@ -189,7 +189,7 @@
 		</div>
 	</div>
 	<br /> <input type="button" value="Novo"
-		onclick="javascript: window.location='@{SigaGcApplication.editar(0)}';"
+		onclick="javascript: window.location='@{Application.editar(0)}';"
 		class="gt-btn-medium gt-btn-right" />
 
 </div>

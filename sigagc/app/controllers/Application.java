@@ -70,7 +70,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 //  javax.persistence.Query query = manager.createQuery(...);
 //  query.setHint("org.hibernate.cacheable", true);
 
-public class SigaGcApplication extends SigaApplication {
+public class Application extends SigaApplication {
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 
@@ -569,8 +569,6 @@ public class SigaGcApplication extends SigaApplication {
 			throws Exception {
 		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 
-		conteudo = Util.marcarReferencia(conteudo);
-		
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
 			informacao.lotacao = informacao.autor.getLotacao();

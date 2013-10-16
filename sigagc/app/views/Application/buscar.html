@@ -26,7 +26,7 @@ $(function() {
 			<!-- search -->
 			<div class="gt-search">
 				<div class="gt-search-inner">
-					<form id="frm" action="@{SigaGcApplication.buscar}" method="get">
+					<form id="frm" action="@{Application.buscar}" method="get">
 						<input type="text" id="texto" name="texto" class="gt-search-text"
 							value="#{if texto != null}${texto}#{/if}#{else}Digite as palavras da busca e tecle enter#{/else}"
 							onfocus="javascript:if(this.value=='Digite as palavras da busca e tecle enter')this.value='';">

@@ -1,15 +1,15 @@
-#{extends 'main.html' /} #{set title:'Anexação de Arquivo' /}
+#{extends 'main.html' /} #{set title:'Solicitar Revisão de Tópico de
+Informação' /}
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2>
-			<span id="codigoInf">Anexar - ${informacao?.sigla}</span>
+			<span id="codigoInf">Solicitar Revisão - ${informacao?.sigla}</span>
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form action="@{SigaGcApplication.anexarGravar}" enctype="multipart/form-data" method="post">
+			<form action="@{Application.solicitarRevisaoGravar}">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
-				#{if false}
 				<div class="gt-form-row gt-width-100">
 					<label>Pessoa</label> #{selecao tipo:'pessoa', nome:'pessoa' /} <span
 						style="color: red">#{error 'pessoa' /}</span>
@@ -18,17 +18,8 @@
 					<label>Lotação</label> #{selecao tipo:'lotacao', nome:'lotacao' /}
 					<span style="color: red">#{error 'lotacao' /}</span>
 				</div>
-				#{/if}
 				<div class="gt-form-row gt-width-100">
-					<label>Título</label> <input type="text" name="titulo" value=""
-						class="gt-form-text">#{error 'titulo' /}</span>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Arquivo</label> <input type="file" name="arquivo" value=""
-						class="gt-form-text">#{error 'titulo' /}</span>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<input type="submit" value="Anexar"
+					<input type="submit" value="Solicitar"
 						class="gt-btn-medium gt-btn-left" />
 					<p class="gt-cancel">
 						ou <a href="javascript: history.back();">voltar</a>

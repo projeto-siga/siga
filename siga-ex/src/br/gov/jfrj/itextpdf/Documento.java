@@ -273,13 +273,13 @@ public class Documento {
 			// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
 			// + ", " + h);
 
-			doc.setPageSize((rot != 0) ^ (w > h) ? PageSize.A4.rotate()
+			doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate()
 					: PageSize.A4);
 			doc.newPage();
 
 			cb.saveState();
 
-			if (rot != 0) {
+			if (rot != 0 && rot != 180) {
 				float swap = w;
 				w = h;
 				h = swap;
@@ -301,8 +301,13 @@ public class Documento {
 
 			if (rot != 0) {
 				double theta = -rot * (Math.PI / 180);
-				cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
-						w / 2));
+				if (rot == 180){
+					cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
+							h / 2));
+				}else{
+					cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
+							w / 2));
+				}
 				if (rot == 90) {
 					cb.transform(AffineTransform.getTranslateInstance(
 							(w - h) / 2, (w - h) / 2));

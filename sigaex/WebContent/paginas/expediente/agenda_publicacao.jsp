@@ -134,7 +134,7 @@
 						</ww:if>
 						<ww:else>						
 							<td><ww:select name="idLotPublicacao" list="listaLotPubl" listKey="idLotacao"
-						                  listValue="siglaLotacao" value="${idLotDefault}" label="Lotação de Publicação" onchange="buscaNomeLota()" theme="simple"  />
+						                  listValue="siglaLotacao" value="${idLotDefault}" onchange="javascript:buscaNomeLota();" theme="simple"  />
 								&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>							
 						</ww:else>									
 				</tr>	

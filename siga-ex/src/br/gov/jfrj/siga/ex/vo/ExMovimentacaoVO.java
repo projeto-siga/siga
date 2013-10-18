@@ -374,9 +374,8 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
-			addAcao(null, mov.getNmArqMov(), "/anexo", mov.getIdMov() + "/"
-					+ mov.getNmArqMov(), mov.getNmArqMov() != null, null,
-					"&popup=true", null, null, null);
+			addAcao(null, mov.getNmArqMov(), null, "arquivo/download.action", mov.getNmArqMov() != null, null,
+					"arquivo=" + mov.getReferenciaZIP(), null, null, null);
 		}
 
 		if (descricao != null && descricao.equals(mov.getObs())) {

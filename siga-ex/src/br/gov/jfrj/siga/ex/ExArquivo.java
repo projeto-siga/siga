@@ -230,6 +230,16 @@ public abstract class ExArquivo {
 			return null;
 		return getReferencia() + ".pdf";
 	};
+	
+	/**
+	 * Retorna a referência do objeto mais o extensão ".pdf".
+	 * 
+	 */
+	public String getReferenciaZIP() {
+		if (getPdf() == null)
+			return null;
+		return getReferencia() + ".zip";
+	};
 
 	public Map<String, String> getResumo() {
 		return null;

@@ -25,6 +25,7 @@ package br.gov.jfrj.webwork.action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -121,6 +122,11 @@ public class ExArquivoAction extends ExActionSupport {
 
 			ExMovimentacao mov = Documento.getMov(mob, arquivo);
 
+			// Falta tratar o caso do doc já assinado, por enquanto estamos
+			// contemplando apenas as movimentações
+			boolean imutavel = (mov != null) && !completo && !estampar
+					&& !somenteHash;
+
 			String cacheControl = "private";
 			final Integer grauNivelAcesso = mob.doc()
 					.getExNivelAcessoDoDocumento().getGrauNivelAcesso();
@@ -130,7 +136,11 @@ public class ExArquivoAction extends ExActionSupport {
 
 			byte ab[] = null;
 			if (isPdf) {
-				ab = Documento.getDocumento(mob, mov, completo, estampar, hash);
+				if (mov != null && !completo && !estampar && hash == null)
+					ab = mov.getConteudoBlobpdf();
+				else
+					ab = Documento.getDocumento(mob, mov, completo, estampar,
+							hash);
 
 				String filename = null;
 				if (mov != null) {
@@ -155,30 +165,38 @@ public class ExArquivoAction extends ExActionSupport {
 						contextpath, servernameport);
 			}
 
-			// Calcula o hash do documento, mas não leva em consideração
-			// para fins de hash os últimos bytes do arquivos, pois lá
-			// fica armazanada a ID e as datas de criação e modificação
-			// e estas são sempre diferente de um pdf para o outro.
-			MessageDigest md = MessageDigest.getInstance("MD5");
+			if (imutavel) {
+				getResponse().setHeader("Cache-Control", cacheControl);
+				// Um ano no cache.
+				getResponse().setDateHeader("Expires",
+						new Date().getTime() + (365 * 24 * 3600 * 1000L));
+			} else {
+				// Calcula o hash do documento, mas não leva em consideração
+				// para fins de hash os últimos bytes do arquivos, pois lá
+				// fica armazanada a ID e as datas de criação e modificação
+				// e estas são sempre diferente de um pdf para o outro.
+				MessageDigest md = MessageDigest.getInstance("MD5");
 
-			int m = match(ab);
-			if (m != -1)
-				md.update(ab, 0, m);
-			else
-				md.update(ab);
-			String etag = Base64.encodeBytes(md.digest());
+				int m = match(ab);
+				if (m != -1)
+					md.update(ab, 0, m);
+				else
+					md.update(ab);
+				String etag = Base64.encodeBytes(md.digest());
 
-			String ifNoneMatch = getRequest().getHeader("If-None-Match");
-			getResponse().setHeader("Cache-Control",
-					"must-revalidate, " + cacheControl);
-			getResponse().setDateHeader("Expires", 0);
-			getResponse().setHeader("ETag", etag);
-			getResponse().setHeader("Pragma", null);
-			if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
-				getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
-				return null;
+				String ifNoneMatch = getRequest().getHeader("If-None-Match");
+				getResponse().setHeader("Cache-Control",
+						"must-revalidate, " + cacheControl);
+				getResponse().setDateHeader("Expires", 0);
+				getResponse().setHeader("ETag", etag);
+
+				if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+					getResponse()
+							.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+					return null;
+				}
 			}
-
+			getResponse().setHeader("Pragma", null);
 			this.setInputStream(new ByteArrayInputStream(ab));
 			this.setContentLength(ab.length);
 			return isPdf ? "pdf" : "html";

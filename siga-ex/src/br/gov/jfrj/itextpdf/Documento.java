@@ -1300,7 +1300,7 @@ public class Documento {
 								+ ((ExMovimentacao) an.getArquivo())
 										.getDescrMov());
 					}
-				sb.append("<iframe style=\"visibility: visible; margin: 0px; padding: 0px; display: block;height: 30em;\" src=\"http://"
+				sb.append("<iframe style=\"visibility: visible; margin: 0px; padding: 0px; display: block;height: 30em; border: 1px solid black;\" src=\"http://"
 						+ servernameport
 						+ contextpath
 						+ "/arquivo/exibir.action?arquivo="

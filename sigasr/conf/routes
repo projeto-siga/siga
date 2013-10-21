@@ -11,7 +11,6 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-*		/solicitacao/exibir/{id}						Application.exibir
 *		/solicitacao/desfazer_ultimo/{id}				Application.desfazerUltimaMovimentacao
 *		/solicitacao/filha/{id}							Application.criarFilha
 *		/solicitacao/relSolicitacoes  					Application.relSolicitacoes
@@ -31,7 +30,8 @@ GET     /public/                                staticDir:public
 *		/solicitacao/associarListaGravar/{id}			Application.associarListaGravar
 *		/solicitacao/desassociarLista					Application.desassociarLista
 *		/solicitacao/editarLista/{id}					Application.editarLista
-*		/solicitacao/${action}							Application.${action}
+*		/solicitacao/{action}							Application.{action}
+*		/solicitacao/{action}/{id}						Application.{action}
 
 
 *		/designacao/editar/{id}				Application.editarDesignacao
@@ -68,5 +68,3 @@ GET     /public/                                staticDir:public
 
 *		/{tipo}/buscar						Application.buscarSiga
 *		/{tipo}/selecionar					Application.selecionarSiga
-
-*       /{action}                  			Application.{action}

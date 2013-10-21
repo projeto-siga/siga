@@ -200,7 +200,7 @@ public class SrLista extends HistoricoSuporte {
 		for (SrLista listas : getHistoricoLista())
 			if (listas.meuMovimentacaoSet != null)
 				for (SrMovimentacao movimentacao : listas.meuMovimentacaoSet)
-					if (!movimentacao.isCancelado() || considerarCancelados)
+					if (!movimentacao.isCancelada() || considerarCancelados)
 						listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
@@ -231,9 +231,10 @@ public class SrLista extends HistoricoSuporte {
 		for (SrLista listas : getHistoricoLista())
 			if (listas.meuMovimentacaoSet != null)
 				for (SrMovimentacao movimentacao : listas.meuMovimentacaoSet)
-					if ((!movimentacao.isCancelado() || considerarCancelados)
+					if ((!movimentacao.isCancelada() || considerarCancelados)
 						&& (tipoMov == null || movimentacao.tipoMov.idTipoMov == tipoMov)
-						&& (movimentacao.movReversora == null))
+						//&& (movimentacao.movReversora == null)
+						)
 						listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
@@ -251,10 +252,11 @@ public class SrLista extends HistoricoSuporte {
 		for (SrLista listas : getHistoricoLista())
 			if (listas.meuMovimentacaoSet != null)
 				for (SrMovimentacao movimentacao : listas.meuMovimentacaoSet)
-					if ((!movimentacao.isCancelado() || considerarCancelados)
+					if ((!movimentacao.isCancelada() || considerarCancelados)
 						&& (movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA
 								|| movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
-						&& (movimentacao.movReversora == null))
+						//&& (movimentacao.movReversora == null)
+						)
 						listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}

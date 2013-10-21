@@ -105,7 +105,7 @@ function carregouServico(response, param){
 			<div class="gt-form-row gt-width-66">
 				<label>Quando deseja receber notificação de movimentacao?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
-				items:formasAcompanhamento,
+				items:models.SrFormaAcompanhamento.values(),
 				labelProperty:'descrFormaAcompanhamento',
 				value:solicitacao.formaAcompanhamento /}
 			</div>
@@ -115,20 +115,20 @@ function carregouServico(response, param){
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
 
-			#{if priorizar}
+			#{if solicitacao.podePriorizar(lotaTitular,cadastrante)}
 			<div class="gt-form-row gt-width-66">
 				<label>Os prejuízos ou dificuldades relativos ao problema
-					são</label> #{select name:'solicitacao.gravidade', items:gravidades,
+					são</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
 				labelProperty:'respostaEnunciado', value:solicitacao.gravidade /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>O problema deve ser resolvido</label> #{select
-				name:'solicitacao.urgencia', items:urgencias,
+				name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
 				labelProperty:'respostaEnunciado', value:solicitacao.urgencia /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Se nada for feito, a situação</label> #{select
-				name:'solicitacao.tendencia', items:tendencias,
+				name:'solicitacao.tendencia', items:models.SrTendencia.values(),
 				labelProperty:'respostaEnunciado', value:solicitacao.tendencia /}
 			</div>
 			#{/if}
@@ -144,7 +144,7 @@ function carregouServico(response, param){
 					name="solicitacao.arquivo" />
 			</div>
 
-			#{if abrirFechando}
+			#{if solicitacao.podeAbrirJaFechando(lotaTitular,cadastrante)}
 			<div class="gt-form-row gt-width-66">
 				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
 					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',

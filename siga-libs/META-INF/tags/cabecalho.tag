@@ -78,7 +78,7 @@ ${meta}
 <link rel="shortcut icon" href="/siga/sigalibs/siga.ico" />
 
 <script language="JavaScript"
-	src="/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
+	src="/siga/javascript/jquery/1.10/jquery-1.10.2.min.js" type="text/javascript"></script>
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
 <script language="JavaScript" type="text/javascript">

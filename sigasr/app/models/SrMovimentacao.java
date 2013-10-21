@@ -92,10 +92,6 @@ public class SrMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
 	public SrTipoMovimentacao tipoMov;
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_MOV_REVERSORA")
-	public SrMovimentacao movReversora;
-
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
 
@@ -117,39 +113,24 @@ public class SrMovimentacao extends GenericModel {
 		}
 	}
 
-	public boolean isCancelado() {
+	public boolean isCancelada() {
 		return movCanceladora != null;
 	}
 
-	public boolean isPrimeiraMovimentacao() {
-		SrMovimentacao primeiro = null;
-		for (SrMovimentacao movimentacao : solicitacao.getMovimentacaoSet())
-			primeiro = movimentacao;
-		return (primeiro == null || primeiro.equals(this));
+	public boolean isCanceladoOuCancelador() {
+		return isCancelada()
+				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
 	}
 
-	public Long getnumSequencia() {
-		numSequencia = find(
-				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao "
-						+ "and mov.solicitacao = " + solicitacao.getId())
-				.first();
-		return (numSequencia != null) ? numSequencia : 1;
-	}
-
-	public Long getProximaMovimentacao() {
-		Long num = find(
-				"select max(mov.numSequencia)+1 from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao "
-						+ "and mov.solicitacao = " + solicitacao.getId())
-				.first();
-		return (num != null) ? num : 1;
-	}
-
-	public Long getMovimentacaoAtual() {
-		Long num = find(
-				"select max(mov.numSequencia) from SrMovimentacao mov, SrSolicitacao sol where sol.idSolicitacao = mov.solicitacao "
-						+ "and mov.solicitacao = " + solicitacao.getId())
-				.first();
-		return (num != null) ? num : 1;
+	public SrMovimentacao getAnterior() {
+		boolean pronto = false;
+		for (SrMovimentacao mov : solicitacao.getMovimentacaoSet()) {
+			if (pronto)
+				return mov;
+			if (mov.idMovimentacao == this.idMovimentacao)
+				pronto = true;
+		}
+		return null;
 	}
 
 	public String getDtIniString() {
@@ -190,20 +171,6 @@ public class SrMovimentacao extends GenericModel {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
 
-	public boolean temAtendenteOuLota() {
-		return (atendente != null || lotaAtendente != null);
-	}
-
-	@Override
-	public SrMovimentacao save() {
-		try {
-			salvar();
-		} catch (Exception e) {
-			//
-		}
-		return this;
-	}
-
 	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
 			throws Exception {
 		this.cadastrante = cadastrante;
@@ -217,7 +184,8 @@ public class SrMovimentacao extends GenericModel {
 		// Edson: atualizando o srMovimentacaoSet...
 		solicitacao.refresh();
 		solicitacao.atualizarMarcas(solicitacao);
-		if (isPrimeiraMovimentacao()
+		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
+				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
 						&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
@@ -226,11 +194,16 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public void desfazer(DpPessoa pessoa, DpLotacao lota) throws Exception {
-		SrMovimentacao mov = new SrMovimentacao(this.solicitacao);
-		mov.tipoMov = SrTipoMovimentacao
+		SrMovimentacao ultimaValida = getAnterior();
+		SrMovimentacao movCanceladora = new SrMovimentacao(this.solicitacao);
+		movCanceladora.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
-		mov.salvar(pessoa, lota);
-		this.movCanceladora = mov;
+		movCanceladora.descrMovimentacao = "Cancelando "
+				+ tipoMov.nome.toLowerCase() + " nº " + numSequencia;
+		movCanceladora.atendente = ultimaValida.atendente;
+		movCanceladora.lotaAtendente = ultimaValida.lotaAtendente;
+		movCanceladora.salvar(pessoa, lota);
+		this.movCanceladora = movCanceladora;
 		this.salvar();
 	}
 
@@ -246,7 +219,19 @@ public class SrMovimentacao extends GenericModel {
 		if (dtIniMov == null)
 			dtIniMov = new Date();
 
-		checarCamposConsiderandoSolicitacao();
+		if (solicitacao.getMovimentacaoSetComCancelados().size() == 0) {
+			numSequencia = 1L;
+		} else {
+			SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
+
+			if (atendente == null && lotaAtendente == null) {
+				lotaAtendente = anterior.lotaAtendente;
+				atendente = anterior.atendente;
+			}
+
+			if (numSequencia == null)
+				numSequencia = solicitacao.getUltimaMovimentacaoComCanceladas().numSequencia + 1;
+		}
 
 		if (tipoMov == null)
 			tipoMov = SrTipoMovimentacao
@@ -259,27 +244,8 @@ public class SrMovimentacao extends GenericModel {
 			lotaAtendente = atendente.getLotacao();
 	}
 
-	private void checarCamposConsiderandoSolicitacao() throws Exception {
-
-		if (!solicitacao.temMovimentacao())
-			return;
-
-		SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
-
-		if (!temAtendenteOuLota()) {
-			lotaAtendente = anterior.lotaAtendente;
-			atendente = anterior.atendente;
-		}
-
-		if (isCancelado()) {
-			numSequencia = getMovimentacaoAtual();
-		} else
-			numSequencia = getProximaMovimentacao();
-
-	}
-
 	public void notificar() {
-		if (!isCancelado())
+		if (!isCancelada())
 			Correio.notificarMovimentacao(this);
 		else
 			Correio.notificarCancelamentoMovimentacao(this);

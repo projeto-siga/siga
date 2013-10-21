@@ -11,7 +11,25 @@ $(function() {
 	$( "#sortable" ).disableSelection();
 });
 </script>
-
+<script>
+$(function(){
+    $('#btn').click(function() {
+        var ids=[];
+    	$("#sortable > tr").each(function() {
+          ids.push($(this).attr('id'));
+ 	    });
+ 	    $.ajax({
+ 	  	   type: "POST",
+ 	  	   async: false,
+ 	  	   data: {ids:ids, id:"${lista.idLista}"},
+ 	  	   url: "/sigasr/solicitacao/priorizarLista",
+ 	  	   success: function(){
+ 	  		 window.location.reload();
+ 	  	   }
+ 	  	});
+    });
+});
+</script>
 
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -25,18 +43,17 @@ $(function() {
 		</p>
  	
  	<div class="gt-content-box gt-for-table">
-	<table  id="sortable" border="0" class="gt-table-nowrap">
-			<col width="5%" />
+	<table border="0" class="gt-table-nowrap">
 			<col width="5%" />
 			<col width="15%" />
+    		<col width="25%" />
+    		<col width="10%" />
+    		<col width="10%" />
+    		<col width="10%" />
     		<col width="20%" />
-    		<col width="10%" />
-    		<col width="10%" />
-    		<col width="15%" />
-    		<col width="15%" />
+    		<col width="5%" />
     		<thead>
 				<tr class="gt-celula-nowrap">
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;"></th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Prior</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
@@ -47,16 +64,13 @@ $(function() {
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Exc</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="sortable" >
 			#{list items:solicitacao, as:'sol'}
 			#{if sol}
-			<form action="@{Application.desassociarLista}">
+
 			<tr id="${sol.idSolicitacao}">
-			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-			<img id="imgCancelar" src="/siga/css/famfamfam/icons/arrow_switch.png" style="margin-right: 5px;"> 
-			</td>	
-			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
-				${lista.getSolicOrd(sol)}
+			<td class="gt-celula-nowrap" style="cursor:move; font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
+				${sol.getPrioridade(lista)}
 			</td>
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 						<a href="@{Application.exibir(sol.idSolicitacao)}">
@@ -77,7 +91,7 @@ $(function() {
 			#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
 			</td>						
 			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				<b>${sol?.situacaoStringSemLota},${sol?.lotaAtendente.siglaLotacao}</b></td>
+				<b>${sol?.lotaAtendente.siglaLotacao}</b></td>
 			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 				${sol.ultimaMovimentacao.descrMovimentacao}
 			</td>
@@ -88,9 +102,9 @@ $(function() {
 				<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> </a>
 			</td>
 			</tr>		
-			</tbody>	
 			#{/if}		
 			#{/list}
+			</tbody>
 			</table>
 		</div>
 	
@@ -98,6 +112,8 @@ $(function() {
 
 		<!-- /content box -->
 		<div class="gt-table-buttons">
+		<input type="hidden" name="idLista" value="${lista.idLista}">
+		<input type="button" id="btn" value="Priorizar" class="gt-btn-medium gt-btn-left" />
 		<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
-		</form>
+
 		</div>

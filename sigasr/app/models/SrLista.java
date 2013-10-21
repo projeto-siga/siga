@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
@@ -45,7 +47,7 @@ public class SrLista extends HistoricoSuporte {
 	@SequenceGenerator(sequenceName = "SIGASR.SR_LISTA_SEQ", name = "srListaSeq")
 	@GeneratedValue(generator = "srListaSeq")
 	@Column(name = "ID_LISTA")
-	public long idLista;
+	public Long idLista;
 
 	@Column(name = "NOME_LISTA")
 	public String nomeLista;
@@ -63,6 +65,14 @@ public class SrLista extends HistoricoSuporte {
 	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
+	
+	@ManyToOne()
+	@JoinColumn(name = "HIS_ID_INI" , insertable = false, updatable = false)
+	public SrLista listaInicial;
+
+	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", cascade = CascadeType.PERSIST)
+	@OrderBy("hisDtIni desc")
+	public List<SrLista> meuListaHistoricoSet;
 
 	public SrLista() {
 
@@ -84,7 +94,7 @@ public class SrLista extends HistoricoSuporte {
 	public void setId(Long id) {
 		idLista = id;
 	}
-
+	
 	public DpLotacao getlotaCadastrante() {
 		return this.lotaCadastrante;
 	}
@@ -108,21 +118,9 @@ public class SrLista extends HistoricoSuporte {
 		return listas;
 	}
 
-	public Long setSolicOrd() {
-		SrLista lista = SrLista.findById(idLista);
-		// List<SrMovimentacao> mov = SrMovimentacao.find("lista= " + idLista +
-		// " and dtCancelamento is null").fetch();
-		Long prioridade = (long) (lista.getMovimentacaoSet(false).size() + 1);
-		// Long prioridade = (long) (mov.size()+1);
+	public Long getProximaPosicao() {
+		Long prioridade = (long) (getMovimentacaoSet(false, SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).size() + 1);
 		return prioridade;
-	}
-
-	public Long getSolicOrd(SrSolicitacao solicitacao) {
-		SrMovimentacao mov = SrMovimentacao.find(
-				"lista= " + idLista
-						+ " and dtCancelamento is null and solicitacao = "
-						+ solicitacao.idSolicitacao).first();
-		return mov.prioridade;
 	}
 
 	public boolean isEmpty() throws Exception {
@@ -135,44 +133,54 @@ public class SrLista extends HistoricoSuporte {
 		return true;
 	}
 
-	public Long getPriorAssociada() throws Exception {
-
-		SrMovimentacao movimentacao = new SrMovimentacao();
-		for (SrMovimentacao movs : getMovimentacaoListaSet(
-				this,
-				(SrTipoMovimentacao) SrTipoMovimentacao
-						.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)))
-			if (movs.movCanceladora == null) {
-				if (movs.prioridade != null) {
-
-				} else
-					movimentacao.prioridade = 1L;
-			}
-		return movimentacao.prioridade;
-	}
-
 	public TreeSet<SrSolicitacao> getSolicSet() throws Exception {
-		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
+		/* A comparação não mais se aplica porque a prioridade válida no momento pode estar tanto
+		 * na movimentação de inclusão quanto na de alteração de prioridade.
+		 * 
+		 * TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
 				new Comparator<SrSolicitacao>() {
 					@Override
 					public int compare(SrSolicitacao a1, SrSolicitacao a2) {
-						return a2
+						return a1
 								.getMovimentacaoSet(
 										false,
 										SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)
 								.iterator().next().prioridade
-								.compareTo(a1
+								.compareTo(a2
 										.getMovimentacaoSet(
 												false,
 												SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)
 										.iterator().next().prioridade);
 					}
-				});
+				});*/
+			/* A exibição das solicitações da lista deve ser por ordem de prioridade.*/
+			TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
+					new Comparator<SrSolicitacao>() {
+						@Override
+						public int compare(SrSolicitacao a1, SrSolicitacao a2) {
+							return a1.meuMovimentacaoSet.iterator().next().prioridade.
+							compareTo(a2.meuMovimentacaoSet.iterator().next().prioridade);
+						}
+					});	
 
-		for (SrMovimentacao movs : getMovimentacaoSet())
-			if (movs.movCanceladora == null) {
+			for (SrMovimentacao mov : getPrioridadeListaSet(false)) {
+				SrMovimentacao movIncl = mov.solicitacao.getMovimentacaoInclusao(this);
+				SrMovimentacao movAltAnt = mov.solicitacao.
+								getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
+				/* Montar lista com as solicitações com prioridade maior que a prioridade da solicitação removida da lista.*/
+				if (movAltAnt != null) {
+						listaCompleta.add(mov.solicitacao);
+				} else {
+					if (movIncl != null) {
+						listaCompleta.add(mov.solicitacao);
+					}
+				}
+			}	
+			
+		/*for (SrMovimentacao movs : getMovimentacaoSet())
+			if (movs.movReversora == null) {
 				listaCompleta.add(movs.solicitacao);
-			}
+			}*/
 		return listaCompleta;
 	}
 
@@ -181,7 +189,7 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCancelados) {
-		SrLista lista = SrLista.findById(idLista);
+		
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new Comparator<SrMovimentacao>() {
 					@Override
@@ -189,20 +197,30 @@ public class SrLista extends HistoricoSuporte {
 						return a2.dtIniMov.compareTo(a1.dtIniMov);
 					}
 				});
-
-		for (SrMovimentacao movimentacao : lista.meuMovimentacaoSet)
-			if (movimentacao.lista.meuMovimentacaoSet != null)
-				if (considerarCancelados)
-					listaCompleta.addAll(movimentacao.lista.meuMovimentacaoSet);
-				else
-					for (SrMovimentacao movim : movimentacao.lista.meuMovimentacaoSet)
-						if (!movim.isCancelado())
-							listaCompleta.add(movim);
+		for (SrLista listas : getHistoricoLista())
+			if (listas.meuMovimentacaoSet != null)
+				for (SrMovimentacao movimentacao : listas.meuMovimentacaoSet)
+					if (!movimentacao.isCancelado() || considerarCancelados)
+						listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
 
-	public Set<SrMovimentacao> getMovimentacaoListaSet(SrLista lista,
-			SrTipoMovimentacao tipomov) {
+	public List<SrLista> getHistoricoLista() {
+		if (listaInicial != null)
+			return listaInicial.meuListaHistoricoSet;
+		return null;
+	}
+
+	public SrLista getListaAtual() {
+		List<SrLista> listas = getHistoricoLista();
+		if (listas == null)
+			return null;
+		return listas.get(0);
+	}
+	
+	public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCancelados,Long tipoMov) {
+		if (listaInicial == null)
+			return null;
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new Comparator<SrMovimentacao>() {
 					@Override
@@ -210,22 +228,169 @@ public class SrLista extends HistoricoSuporte {
 						return a2.dtIniMov.compareTo(a1.dtIniMov);
 					}
 				});
-		List<SrMovimentacao> mov = SrMovimentacao.find(
-				"lista= " + lista.idLista
-						+ " and dtCancelamento is null and tipomov = "
-						+ tipomov.idTipoMov).fetch();
-		for (SrMovimentacao movim : mov) {
-			listaCompleta.add((SrMovimentacao) movim);
+		for (SrLista listas : getHistoricoLista())
+			if (listas.meuMovimentacaoSet != null)
+				for (SrMovimentacao movimentacao : listas.meuMovimentacaoSet)
+					if ((!movimentacao.isCancelado() || considerarCancelados)
+						&& (tipoMov == null || movimentacao.tipoMov.idTipoMov == tipoMov)
+						&& (movimentacao.movReversora == null))
+						listaCompleta.add(movimentacao);
+		return listaCompleta;
+	}
+	
+	public Set<SrMovimentacao> getPrioridadeListaSet(boolean considerarCancelados) {
+		if (listaInicial == null)
+			return null;
+		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
+				new Comparator<SrMovimentacao>() {
+					@Override
+					public int compare(SrMovimentacao a1, SrMovimentacao a2) {
+						return a2.dtIniMov.compareTo(a1.dtIniMov);
+					}
+				});
+		for (SrLista listas : getHistoricoLista())
+			if (listas.meuMovimentacaoSet != null)
+				for (SrMovimentacao movimentacao : listas.meuMovimentacaoSet)
+					if ((!movimentacao.isCancelado() || considerarCancelados)
+						&& (movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA
+								|| movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
+						&& (movimentacao.movReversora == null))
+						listaCompleta.add(movimentacao);
+		return listaCompleta;
+	}
+	
+	public SrMovimentacao getUltimaMovimentacao() {
+		for (SrMovimentacao movimentacao : getMovimentacaoSet())
+			return movimentacao;
+		return null;
+	}
+
+	public SrMovimentacao getUltimaMovimentacaoPorTipo(Long idTpMov) {
+		for (SrMovimentacao movimentacao : getMovimentacaoSet(false, idTpMov))
+			return movimentacao;
+		return null;
+	}
+	
+	public void recalcularPrioridade(Long prioremov) throws Exception {
+		//Long id = this.idLista;
+		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
+				new Comparator<SrSolicitacao>() {
+					@Override
+					public int compare(SrSolicitacao a1, SrSolicitacao a2) {
+						return a1.meuMovimentacaoSet.iterator().next().prioridade.
+						compareTo(a2.meuMovimentacaoSet.iterator().next().prioridade);
+					}
+				});
+		
+		for (SrMovimentacao mov : getPrioridadeListaSet(false)) {
+			SrMovimentacao movIncl = mov.solicitacao.getMovimentacaoInclusao(this);
+			SrMovimentacao movAltAnt = mov.solicitacao.
+							getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
+			/* Montar lista com as solicitações com prioridade maior que a prioridade da solicitação removida da lista.*/
+			if (movAltAnt != null) {
+				if (movAltAnt.prioridade > prioremov) {
+					listaCompleta.add(mov.solicitacao);
+				}
+			} else {
+				if (movIncl != null) {
+					if (movIncl.prioridade > prioremov) {
+						listaCompleta.add(mov.solicitacao);
+					}
+				}
+			}
 		}
-		return listaCompleta;
-	}
-
-	public void recalcularPrioridade(Long idLista) throws Exception {
-
-		SrLista lista = new SrLista();
-		// Long prioridade = lista.getSolicOrd();
-		Long prioridade = lista.setSolicOrd();
-
-	}
-
+		Iterator itr = listaCompleta.iterator();
+		Long i = prioremov;
+		while (itr.hasNext()){
+			SrSolicitacao solic  = (SrSolicitacao) itr.next();
+			solic.getPrioridade(this);
+			SrMovimentacao movIncl = solic.getMovimentacaoInclusao(this);
+			SrMovimentacao movAltAnt = solic.
+							getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
+			if (movAltAnt != null) {
+				movAltAnt.prioridade = i ;
+				movAltAnt.salvar();
+				solic.meuMovimentacaoSet.add(movAltAnt);
+			} else if (movIncl != null) {
+				movIncl.prioridade = i ;
+				movIncl.salvar();
+				solic.meuMovimentacaoSet.add(movIncl);
+			}
+			//solic.refresh();
+			i++;
+		}	
+	
 }
+
+	public void priorizar(ArrayList ids, final Long id, DpPessoa cadastrante, DpLotacao lotaCadastrante) throws Exception {
+		
+		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
+				new Comparator<SrSolicitacao>() {
+					@Override
+					public int compare(SrSolicitacao a1, SrSolicitacao a2) {
+						return a1.meuMovimentacaoSet.iterator().next().prioridade.
+						compareTo(a2.meuMovimentacaoSet.iterator().next().prioridade);
+					}
+				});
+		
+		/*TreeSet<SrLista> listaCompleta = new TreeSet<SrLista>(
+				new Comparator<SrLista>() {
+					@Override
+					public int compare(SrLista a1, SrLista a2) {
+						return a1.getPrioridadeListaSet(false)
+								.iterator().next().prioridade
+								.compareTo(a2
+										.getPrioridadeListaSet(false)
+										.iterator().next().prioridade);
+					}
+				});
+
+		for (SrMovimentacao mov : getMovimentacaoSet()) {
+				listaCompleta.add(mov.solicitacao);
+		}*/
+		// Teste pegar somente movimentações de inclusão e alteração
+		
+		for (SrMovimentacao mov : getPrioridadeListaSet(false)) {
+			listaCompleta.add(mov.solicitacao);
+		}	
+		//listaCompleta contém os movimentos ordenados por prioridade da solicitação
+		Iterator itr = listaCompleta.iterator();
+		int i = 0;
+		while (itr.hasNext()){
+			SrSolicitacao solic  = (SrSolicitacao) itr.next();
+			Long idsol =  Long.valueOf((String) ids.get(i));
+			if (!solic.idSolicitacao.equals(idsol)) {
+				SrMovimentacao movAlt = new SrMovimentacao();
+				movAlt.solicitacao = SrSolicitacao.findById(idsol);
+				//SrMovimentacao movIncl = solic.getMovimentacaoInclusao((SrLista) SrLista.findById(id));
+				//SrMovimentacao movAltAnt = solic.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
+				/*if (movAltAnt != null && movAltAnt.dtFimMov == null) {
+				if (movAltAnt != null) {
+					movAltAnt.dtFimMov = new Date();
+					movAltAnt.salvar();
+					solic.meuMovimentacaoSet.add(movAltAnt);
+				//} else if (movIncl != null && movIncl.dtFimMov == null){
+				} else if (movIncl != null){
+					movIncl.dtFimMov = new Date();
+					movIncl.salvar();
+					solic.meuMovimentacaoSet.add(movIncl);
+				}*/
+				//solic.getUltimaMovimentacaoPorTipo(idTpMov);
+				movAlt.prioridade = (long) i+1;
+				movAlt.lista = SrLista.findById(id);
+				movAlt.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
+				movAlt.descrMovimentacao = "Alteração de prioridade em lista";
+				movAlt.cadastrante = cadastrante;
+				movAlt.lotaCadastrante = lotaCadastrante;
+				movAlt.salvar();
+				//solic.meuMovimentacaoSet.add(movAlt);
+			}
+			i++;
+			//Como pegar o índice dos objetos que estão dentro do iterator???
+			//Object[] obj = (Object[]) it.next();
+			//SrSolicitacao solic = (SrSolicitacao) obj[0];
+		}
+	}
+}	
+

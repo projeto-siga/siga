@@ -241,7 +241,7 @@ public class Application extends SigaApplication {
 		validarFormEditar(solicitacao);
 		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
-		exibir(id, false);
+		exibir(id, false); 
 	}
 
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
@@ -433,15 +433,11 @@ public class Application extends SigaApplication {
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
-
 		render(solicitacao, movimentacao, considerarCancelados);
 	}
 
-	// public static void exibirSolicitacaoLista(Long id) {
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
-		lista.getMovimentacaoSet(false);
-		// TreeSet<SrSolicitacao> solicitacao = lista.getSolicitacaoAssociada();
 		TreeSet<SrSolicitacao> solicitacao = lista.getSolicSet();
 		boolean editar = true;
 		render(solicitacao, lista, editar);
@@ -453,7 +449,6 @@ public class Application extends SigaApplication {
 	 */
 	public static void exibirListaAssoc(Long id) {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		SrLista lista = new SrLista();
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		List<SrLista> listas = solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
@@ -461,7 +456,6 @@ public class Application extends SigaApplication {
 
 	public static void exibirListaAssoc(Long id, Long idLista) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		SrLista lista = SrLista.findById(idLista);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
 		List<SrLista> listas = solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
@@ -479,22 +473,23 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.associarLista(solicitacao, lista);
-		List<SrLista> listas = solicitacao.getListaDisponivel();
-		render(solicitacao, listas);
+		associarLista(idSolicitacao);
 	}
 
 	public static void desassociarLista(Long idSolicitacao, Long idLista)
 			throws Exception {
-
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.desassociarLista(solicitacao, lista);
-		// Set<SrSolicitacao> sols = lista.getSolicitacaoAssociada();
-		Set<SrSolicitacao> sols = lista.getSolicSet();
-		// lista.recalcularPrioridade(idLista);
-		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		boolean vazio = lista.isEmpty();
-		render(sols, editar, lista, vazio);
+		//lista.refresh();
+		exibirLista(idLista);
+	}
+	
+	public static void priorizarLista(ArrayList ids, Long id, DpPessoa cadastrante, DpLotacao lotaCadastrante)
+	throws Exception {
+		SrLista lista = SrLista.findById(id);
+		lista.priorizar(ids, id, cadastrante(), lotaTitular());
+		exibirLista(id);
 	}
 
 	public static void selecionar(String sigla) throws Exception {
@@ -860,7 +855,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void gravarLista(SrLista lista) throws Exception {
-		lista.save();
+		lista.salvar();
 		listarLista();
 	}
 

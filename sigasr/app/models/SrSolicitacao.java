@@ -477,28 +477,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaCompleta;
 	}
 
-	public SrMovimentacao getMovimentacaoSolLista(SrSolicitacao solicitacao,
-			SrLista lista) {
-		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
-				new Comparator<SrMovimentacao>() {
-					@Override
-					public int compare(SrMovimentacao a1, SrMovimentacao a2) {
-						return a2.dtIniMov.compareTo(a1.dtIniMov);
-					}
-				});
-		String query = "select mov from SrMovimentacao mov where mov.solicitacao = "
-				+ solicitacao.idSolicitacao
-				+ " and mov.lista = "
-				+ lista.idLista
-				+ " and mov.descrMovimentacao = 'Inclusão em lista' and mov.dtIniMov = (select max(dtIniMov) "
-				+ "from SrMovimentacao where solicitacao = "
-				+ solicitacao.idSolicitacao
-				+ " and lista = "
-				+ lista.idLista
-				+ " and mov.descrMovimentacao = 'Inclusão em lista')";
-		SrMovimentacao movIncl = (SrMovimentacao) JPA.em().createQuery(query)
-				.getSingleResult();
-		return (SrMovimentacao) movIncl;
+	public SrMovimentacao getMovimentacaoInclusao(SrLista lista) throws Exception {
+		SrMovimentacao movIncl = new SrMovimentacao();
+		for (SrMovimentacao movimentacao : getMovimentacaoSet())
+			if (movimentacao.lista == lista &&
+				movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA && 
+				movimentacao.movReversora == null)
+					movIncl = movimentacao;
+		return movIncl;
 	}
 
 	public SrMovimentacao getUltimaMovimentacao() {
@@ -790,10 +776,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return isFechado() && getLotaAtendente().equivale(lota);
 	}
 	
-	public boolean podeReabrir(DpLotacao lota) {
-		return isFechado() && getLotaAtendente().equivale(lota);
-	}
-
 	public SrSolicitacao deduzirLocalERamal() {
 
 		if (solicitante == null)
@@ -1079,11 +1061,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO,
 							mov.dtIniMov, null, mov.cadastrante,
 							mov.lotaCadastrante);
-				if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)
-					acrescentarMarca(set, sol,
-							CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO,
-							mov.dtIniMov, null, mov.cadastrante,
-							mov.lotaCadastrante);
 			}
 		}
 		if (sol.getHisDtFim() != null) { // quando preencho dthisfim da
@@ -1197,7 +1174,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public List<SrLista> getListaDisponivel() {
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.lista != null)
+			if (mov.lista != null && mov.movReversora == null)
 				listaCompleta.add(mov.lista);
 		}
 		SrLista lista = new SrLista();
@@ -1213,66 +1190,67 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public List<SrLista> getListaAssociada() {
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
-		for (SrMovimentacao mov : getMovimentacaoSet(
-				false,
-				SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)) {
-			listaCompleta.add(mov.lista);
+		for (SrMovimentacao mov : getMovimentacaoSet()) {
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA 
+					&& mov.movReversora == null)
+				listaCompleta.add(mov.lista);
 		}
-		return listaCompleta;
+		return listaCompleta;	
+	}
+	
+	public Long getPrioridade(SrLista lista) throws Exception{
+		Long prioridade = 0L;
+		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
+		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
+		if (movAltAnt != null) {
+			prioridade = movAltAnt.prioridade;
+		} else if (movIncl != null) {
+			prioridade = movIncl.prioridade;
+		}	
+		return prioridade;
 	}
 
 	public void associarLista(SrSolicitacao solicitacao, SrLista lista)
 			throws Exception {
-		// SrSolicitacao sol = new SrSolicitacao();
-		// sol.meuMovimentacaoSet = solicitacao.getMovimentacaoSet();
 		SrMovimentacao mov = new SrMovimentacao();
 		if (lista != null) {
-			mov.prioridade = lista.setSolicOrd();
+			mov.prioridade = lista.getProximaPosicao();
 		}
 		mov.cadastrante = solicitacao.cadastrante;
 		mov.lotaCadastrante = solicitacao.lotaCadastrante;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Inclusão em lista";
-		// mov.cadastrante = solicitacao.cadastrante;
-		// mov.lotaCadastrante = solicitacao.lotaCadastrante;
 		mov.lista = lista;
-		// mov.prioridade = getMovimentacaoSolLista(solicitacao,
-		// lista).prioridade;
 		mov.solicitacao = solicitacao;
-		// mov.estado = SrEstado.ANDAMENTO;
-		mov.numSequencia = solicitacao.getNumSeqMov();
+		mov.numSequencia = mov.getnumSequencia();//solicitacao.getNumSeqMov();
 		mov.salvar();
 		solicitacao.meuMovimentacaoSet.add(mov);
 	}
 
 	public void desassociarLista(SrSolicitacao solicitacao, SrLista lista)
 			throws Exception {
+		Long prioremov = getPrioridade(lista);
 		SrSolicitacao sol = new SrSolicitacao();
 		sol.meuMovimentacaoSet = solicitacao.getMovimentacaoSet();
-		SrMovimentacao movIncl = (SrMovimentacao) getMovimentacaoSolLista(
-				solicitacao, lista);
-		SrMovimentacao mov = new SrMovimentacao();
-		mov.cadastrante = solicitacao.cadastrante;
-		mov.lotaCadastrante = solicitacao.lotaCadastrante;
-		mov.tipoMov = SrTipoMovimentacao
+		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
+		SrMovimentacao movRev = new SrMovimentacao();
+		movRev.cadastrante = solicitacao.cadastrante;
+		movRev.lotaCadastrante = solicitacao.lotaCadastrante;
+		movRev.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "Cancelamento de Inclusão em Lista";
-		mov.lista = null;
-		mov.prioridade = getMovimentacaoSolLista(solicitacao, lista).prioridade;
-		mov.solicitacao = solicitacao;
-		mov.numSequencia = solicitacao.getNumSeqMov();
-		//Edson: comentando, pelo motivo do comentário abaixo
-		//mov.idMovRef = movIncl;
-		mov.salvar();
-		//Edson: comentando, pois a ideia seria reverter, não cancelar...
-		//movIncl.dtCancelamento = new Date();
-		movIncl.prioridade = null;
-		movIncl.movCanceladora = mov;
-		movIncl.save();
-		sol.meuMovimentacaoSet.add(mov);
+		movRev.descrMovimentacao = "Cancelamento de Inclusão em Lista";
+		movRev.solicitacao = solicitacao;
+		movRev.numSequencia = solicitacao.getNumSeqMov();
+		movRev.salvar();
+		movIncl.movReversora = movRev;
+		movIncl.salvar();
+		sol.meuMovimentacaoSet.add(movRev);
 		sol.meuMovimentacaoSet.add(movIncl);
+		refresh();
+		lista.recalcularPrioridade(prioremov);
 	}
+	
 
 	public String getGcTags() {
 		String s = "tags=@servico";

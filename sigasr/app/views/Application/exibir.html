@@ -181,13 +181,13 @@
 	<div class="gt-sidebar-content">
 		<h3>Listas de Prioridades</h3>
 			<p>
-				#{list items:solicitacao.getListaAssociada(), as:'listassoc'}
+				#{list items:solicitacao.getListaAssociada(), as:'listas'}
 				<tr>
 					<td class="gt-form-row gt-width-66" style="font-size: 13px; font-weight: bold; !important; padding: 7px 10px;">
 					&nbsp;
-					<input type="hidden" name="idlista" value="${listassoc.idLista}">
-						<a style="color: #365b6d;text-decoration: none" href="@{Application.exibirLista(listassoc.idLista)}">
-						 ${listassoc.nomeLista}		
+					<input type="hidden" name="idlista" value="${listas?.idLista}">
+						<a style="color: #365b6d;text-decoration: none" href="@{Application.exibirLista(listas?.idLista)}">
+						 ${listas?.nomeLista}		
 						</a>	
 					</td>
 				</tr>	

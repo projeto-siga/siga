@@ -284,5 +284,4 @@ public class SrMovimentacao extends GenericModel {
 		else
 			Correio.notificarCancelamentoMovimentacao(this);
 	}
-
 }

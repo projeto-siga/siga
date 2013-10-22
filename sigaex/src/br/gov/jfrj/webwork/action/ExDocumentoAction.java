@@ -622,6 +622,10 @@ public class ExDocumentoAction extends ExActionSupport {
 			idMod = ((ExModelo) dao().consultarAtivoPorIdInicial(
 					ExModelo.class, 507L)).getIdMod();
 		}
+		
+		if (getDespachando() && getId() == null && (getPostback() == null || getPostback() == 0)) {
+			idFormaDoc = 8;
+		}
 
 		if (getId() == null && doc != null)
 			setId(doc.getIdDoc());

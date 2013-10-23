@@ -236,8 +236,6 @@ public abstract class ExArquivo {
 	 * 
 	 */
 	public String getReferenciaZIP() {
-		if (getPdf() == null)
-			return null;
 		return getReferencia() + ".zip";
 	};
 

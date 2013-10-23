@@ -202,7 +202,21 @@ public class ExArquivoAction extends ExActionSupport {
 			String arquivo = getPar().get("arquivo")[0];
 
 			boolean isZip = arquivo.endsWith(".zip");
+			boolean somenteHash = getPar().containsKey("hash")
+					|| getPar().containsKey("HASH_ALGORITHM");
 			String hash = null;
+			if (somenteHash) {
+				hash = getPar().get("hash")[0];
+				if (hash == null) {
+					hash = getPar().get("HASH_ALGORITHM")[0];
+				}
+				if (hash != null) {
+					if (!(hash.equals("SHA1") || hash.equals("SHA-256")
+							|| hash.equals("SHA-512") || hash.equals("MD5")))
+						throw new AplicacaoException(
+								"Algoritmo de hash inválido. Os permitidos são: SHA1, SHA-256, SHA-512 e MD5.");
+				}
+			}
 			
 			ExMobil mob = Documento.getMobil(arquivo);
 			if (mob == null) {
@@ -228,15 +242,10 @@ public class ExArquivoAction extends ExActionSupport {
 
 			byte ab[] = null;
 			if (isZip) {
-				ab = Documento.getDocumento(mob, mov, false, false, hash);
+				ab = mov.getConteudoBlobMov2();
 
-				String filename = null;
-				if (mov != null) {
-					filename = mov.getReferencia();
-				} else {
-					filename = mob.getCodigoCompacto();
-				}
-
+				String filename = mov.getNmArqMov();
+				
 				if (hash != null) {
 					this.setInputStream(new ByteArrayInputStream(ab));
 					this.setContentLength(ab.length);
@@ -246,7 +255,7 @@ public class ExArquivoAction extends ExActionSupport {
 					return "hash";
 				}
 
-				setContentDisposition("filename=" + filename + ".pdf");
+				setContentDisposition("filename=" + filename);
 			}
 
 			// Calcula o hash do documento, mas não leva em consideração

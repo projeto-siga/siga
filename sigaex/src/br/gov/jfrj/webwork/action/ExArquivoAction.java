@@ -186,6 +186,109 @@ public class ExArquivoAction extends ExActionSupport {
 			throw new ServletException("erro na geração do documento.", e);
 		}
 	}
+	
+	public String aDownload() throws Exception {
+		try {
+
+			String servernameport = getRequest().getServerName() + ":"
+					+ getRequest().getServerPort();
+			String contextpath = getRequest().getContextPath();
+
+			// log.info("Iniciando servlet de documentos...");
+
+			@SuppressWarnings("unused")
+			ExDao dao = ExDao.getInstance();
+
+			String arquivo = getPar().get("arquivo")[0];
+
+			boolean isZip = arquivo.endsWith(".zip");
+			boolean somenteHash = getPar().containsKey("hash")
+					|| getPar().containsKey("HASH_ALGORITHM");
+			String hash = null;
+			if (somenteHash) {
+				hash = getPar().get("hash")[0];
+				if (hash == null) {
+					hash = getPar().get("HASH_ALGORITHM")[0];
+				}
+				if (hash != null) {
+					if (!(hash.equals("SHA1") || hash.equals("SHA-256")
+							|| hash.equals("SHA-512") || hash.equals("MD5")))
+						throw new AplicacaoException(
+								"Algoritmo de hash inválido. Os permitidos são: SHA1, SHA-256, SHA-512 e MD5.");
+				}
+			}
+			
+			ExMobil mob = Documento.getMobil(arquivo);
+			if (mob == null) {
+				throw new AplicacaoException(
+						"A sigla informada não corresponde a um documento da base de dados.");
+			}
+
+			if (!Ex.getInstance().getComp()
+					.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+				throw new AplicacaoException("Documento " + mob.getSigla()
+						+ " inacessível ao usuário " + getTitular().getSigla()
+						+ "/" + getLotaTitular().getSiglaCompleta() + ".");
+			}
+
+			ExMovimentacao mov = Documento.getMov(mob, arquivo);
+
+			String cacheControl = "private";
+			final Integer grauNivelAcesso = mob.doc()
+					.getExNivelAcessoDoDocumento().getGrauNivelAcesso();
+			if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso
+					|| ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso)
+				cacheControl = "public";
+
+			byte ab[] = null;
+			if (isZip) {
+				ab = mov.getConteudoBlobMov2();
+
+				String filename = mov.getNmArqMov();
+				
+				if (hash != null) {
+					this.setInputStream(new ByteArrayInputStream(ab));
+					this.setContentLength(ab.length);
+
+					setContentDisposition("attachment; filename=" + filename
+							+ "." + hash.toLowerCase());
+					return "hash";
+				}
+
+				setContentDisposition("filename=" + filename);
+			}
+
+			// Calcula o hash do documento, mas não leva em consideração
+			// para fins de hash os últimos bytes do arquivos, pois lá
+			// fica armazanada a ID e as datas de criação e modificação
+			// e estas são sempre diferente de um pdf para o outro.
+			MessageDigest md = MessageDigest.getInstance("MD5");
+
+			int m = match(ab);
+			if (m != -1)
+				md.update(ab, 0, m);
+			else
+				md.update(ab);
+			String etag = Base64.encodeBytes(md.digest());
+
+			String ifNoneMatch = getRequest().getHeader("If-None-Match");
+			getResponse().setHeader("Cache-Control",
+					"must-revalidate, " + cacheControl);
+			getResponse().setDateHeader("Expires", 0);
+			getResponse().setHeader("ETag", etag);
+			getResponse().setHeader("Pragma", null);
+			if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+				getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
+				return null;
+			}
+
+			this.setInputStream(new ByteArrayInputStream(ab));
+			this.setContentLength(ab.length);
+			return "zip";
+		} catch (Exception e) {
+			throw new ServletException("erro na geração do documento.", e);
+		}
+	}	
 
 	static private byte[] idPattern = "/ModDate(D:20".getBytes();
 	static private int[] failure = computeFailure();

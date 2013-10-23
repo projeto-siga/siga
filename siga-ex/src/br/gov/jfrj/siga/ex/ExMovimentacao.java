@@ -568,6 +568,31 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 		return s;
 	}
+	
+	/**
+	 * Retorna o nome do arquivo anexado a movimentação sem extensão.
+	 * 
+	 * @return Nome do arquivo anexado a movimentação sem extensão.
+	 */
+	@Field(name = "nmArqmov", store = Store.COMPRESS)
+	public String getNmArqMovSemExtensao() {
+		String s = super.getNmArqMov();
+
+		if (s != null) {
+			s = s.trim();
+			if (s.length() == 0)
+				return null;
+			
+			try {
+				return s.split("\\.")[0];	
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
+		}
+		
+		return s;
+	}
 
 	/**
 	 * Retorna o nome da lotação do subscritor da movimentação.

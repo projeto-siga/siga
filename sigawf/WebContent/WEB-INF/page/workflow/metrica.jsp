@@ -20,6 +20,12 @@
 		}else{
 			$("#opcaoPercentualMediaTruncada").hide();
 		}
+		if ($("#selecaoRelatorio").val() == '3'){
+			$("#opcaoGrupos").show();
+		}else{
+			$("#opcaoGrupos").hide();
+		}
+		
 		
 	}
 </script>
@@ -77,6 +83,13 @@
 								<input type="text" id="percentualMediaTruncada" name="percentualMediaTruncada" style="float: left" class="gt-form-text" value="${minMediaTruncada}"></input>
 							</td>
 						</tr>
+						<tr id="opcaoGrupos"  style="display: none"  >
+							<td>
+								<ww:select id="grpIni" name="grpIni" list="lstGruposIni" listValue="name" listKey="id" headerKey="-1" headerValue="[Escolha uma tarefa]" theme="simple"></ww:select>
+								<ww:select id="grpFim" name="grpFim" list="lstGruposFim" listValue="name" listKey="id" headerKey="-1" headerValue="[Escolha uma tarefa]" theme="simple"></ww:select>
+							</td>
+						</tr>
+						
 						<tr>
 							<td colspan="2"><input type="button"
 								onclick="javascript:sbmt()" value="Gerar relatório"

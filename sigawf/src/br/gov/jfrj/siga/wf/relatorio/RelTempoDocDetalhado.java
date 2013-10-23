@@ -97,6 +97,8 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
 		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:Boolean.valueOf(parametros.get("incluirAbertos").toString().equals("on"));
+		String grupoIni = parametros.get("inicioGrupo")==null?"-1":(String) parametros.get("inicioGrupo");
+		String grupoFim = parametros.get("fimGrupo")==null?"-1":(String) parametros.get("fimGrupo");
 		
 		Set<Tarefa> tarefas = consultarTarefas(procedimento, dataInicialDe,
 				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
@@ -110,7 +112,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 			
 			//processamento inicial de grupo
 			if (ultimoDoc == null || !t.getNumeroDocumento().equals(ultimoDoc)){
-				detectGrupo = new DetectorGrupoRel("x", "x");
+				detectGrupo = new DetectorGrupoRel(grupoIni, grupoFim);
 				grupoAtual.clear();
 			}
 			

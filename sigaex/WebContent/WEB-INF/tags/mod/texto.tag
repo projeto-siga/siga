@@ -11,6 +11,7 @@
 <%@ attribute name="maxcaracteres"%>
 <%@ attribute name="idAjax"%>
 <%@ attribute name="obrigatorio"%>
+<%@ attribute name="onkeypress"%>
 <%@ attribute name="valor"%>
 
 <c:if test="${reler == 'ajax'}">
@@ -19,6 +20,10 @@
 
 <c:if test="${reler == 'sim'}">
 	<c:set var="jreler"> onchange="javascript: sbmt();"</c:set>
+</c:if>
+
+<c:if test="${not empty onkeypress}">
+    <c:set var="jonkeypress"> onkeypress="${onkeypress}"</c:set>
 </c:if>
 
 <c:if test="${relertab == 'sim'}">
@@ -71,7 +76,7 @@
 </c:if>
 <c:choose>
 	<c:when test="${param.entrevista == 1}">
-		<input type="text" name="${var}" value="${v}" ${jreler}${jrelertab}${jlargura}${jmaxcaracteres}/>
+		<input type="text" name="${var}" value="${v}" ${jreler}${jrelertab}${jlargura}${jmaxcaracteres}${jonkeypress}/>
 	</c:when>
 	<c:otherwise>
 		<span class="valor">${v}</span>

@@ -141,6 +141,18 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome() {
+		try {
+			final Query query = getSessao().getNamedQuery(
+					"consultarCpOrgaoOrdenadoPorNome");
+			final List<CpOrgao> l = query.list();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpOrgao consultarPorSigla(final CpOrgao o) {

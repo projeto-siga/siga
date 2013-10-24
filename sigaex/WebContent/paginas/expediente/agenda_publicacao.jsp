@@ -59,7 +59,7 @@
 	}
 
 	function buscaNomeLota(){
-		var siglaLota = $('#lotPublicacao').val();			
+		var siglaLota = $('#idLotPublicacao :selected').text();	
 			$.ajax({				     				  
 				  url:'/siga/lotacao/selecionar.action?sigla=' + siglaLota ,					    					   					 
 				  success: function(data) {
@@ -127,17 +127,16 @@
 					<td>Data de publicação:</td>
 					<td><div id="dt_publ" /></td>
 				</tr>				
-				<tr>					
-					<td>Lotação de publicação:</td>
-					<td>
+				<tr>									
+					<td>Lotação de Publicação:</td>
 						<ww:if test="${podeAtenderPedidoPubl}">
-							<siga:selecao tema="simple" propriedade="lotaSubscritor" />
+							<td><siga:selecao tema="simple" propriedade="lotaSubscritor"  /></td>
 						</ww:if>
-						<ww:else>
-							<ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" onchange="buscaNomeLota()" />
-									&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>
-						</ww:else>
-					</td>					
+						<ww:else>						
+							<td><ww:select name="idLotPublicacao" list="listaLotPubl" listKey="idLotacao"
+						                  listValue="siglaLotacao" value="${idLotDefault}" onchange="javascript:buscaNomeLota();" theme="simple"  />
+								&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>							
+						</ww:else>									
 				</tr>	
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
 							rows="5" cssClass="gt-form-textarea" label="Descrição do documento"

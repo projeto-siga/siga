@@ -300,7 +300,7 @@
 				<mod:grupo depende="boaCondUnifAjax">
 					<ww:if test="${boaCondUnifVal == '2'}">
 						<mod:oculto var="boaCondUnifNao" valor="não"/>
-						<b>A substituição foi solicitada?</b>
+						</br><b>A substituição foi solicitada?</b>
 						<mod:radio titulo="Sim." var="substitUnif" valor="1" reler="ajax" idAjax="substitUnifAjax" marcado="Sim"/>
 						<mod:grupo>
 							<mod:grupo largura="3">

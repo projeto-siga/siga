@@ -23,6 +23,7 @@
 package br.gov.jfrj.webwork.action;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Date;
@@ -150,12 +151,15 @@ public class ExArquivoAction extends ExActionSupport {
 				}
 
 				if (hash != null) {
-					this.setInputStream(new ByteArrayInputStream(ab));
-					this.setContentLength(ab.length);
-
 					setContentDisposition("attachment; filename=" + filename
 							+ "." + hash.toLowerCase());
-					return "hash";
+					this.setContentLength(ab.length);
+					if (false) {
+						this.setInputStream(new ByteArrayInputStream(ab));
+						return "hash";
+					} else {
+						return writeByteArray(ab, "application/octet-stream");
+					}
 				}
 
 				setContentDisposition("filename=" + filename + ".pdf");
@@ -193,18 +197,41 @@ public class ExArquivoAction extends ExActionSupport {
 				if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
 					getResponse()
 							.sendError(HttpServletResponse.SC_NOT_MODIFIED);
-					return null;
+					return "donothing";
 				}
 			}
 			getResponse().setHeader("Pragma", null);
-			this.setInputStream(new ByteArrayInputStream(ab));
+
 			this.setContentLength(ab.length);
-			return isPdf ? "pdf" : "html";
+			if (false) {
+				this.setInputStream(new ByteArrayInputStream(ab));
+				return isPdf ? "pdf" : "html";
+			} else {
+				return writeByteArray(ab, isPdf ? "application/pdf"
+						: "text/html");
+			}
 		} catch (Exception e) {
 			throw new ServletException("erro na geração do documento.", e);
 		}
 	}
-	
+
+	// Esta rotina foi criada para verificar se utilizar o StreamResult do
+	// WebWork estava causando uma instabilidade no sistema. Ou seja, se havia
+	// algum memory leak na rotina de enviar uma stream como resultado. Assim
+	// que fique comprovado que não há interferência, essa rotina deve ser
+	// desativada.
+	private String writeByteArray(byte[] ab, String contentType)
+			throws IOException {
+		getResponse().setStatus(200);
+		getResponse().setContentLength(getContentLength());
+		getResponse().setContentType(contentType);
+		getResponse().setHeader("content-disposition", getContentDisposition());
+		getResponse().getOutputStream().write(ab);
+		getResponse().getOutputStream().flush();
+		getResponse().getOutputStream().close();
+		return "donothing";
+	}
+
 	public String aDownload() throws Exception {
 		try {
 
@@ -235,7 +262,7 @@ public class ExArquivoAction extends ExActionSupport {
 								"Algoritmo de hash inválido. Os permitidos são: SHA1, SHA-256, SHA-512 e MD5.");
 				}
 			}
-			
+
 			ExMobil mob = Documento.getMobil(arquivo);
 			if (mob == null) {
 				throw new AplicacaoException(
@@ -263,7 +290,7 @@ public class ExArquivoAction extends ExActionSupport {
 				ab = mov.getConteudoBlobMov2();
 
 				String filename = mov.getNmArqMov();
-				
+
 				if (hash != null) {
 					this.setInputStream(new ByteArrayInputStream(ab));
 					this.setContentLength(ab.length);
@@ -306,7 +333,7 @@ public class ExArquivoAction extends ExActionSupport {
 		} catch (Exception e) {
 			throw new ServletException("erro na geração do documento.", e);
 		}
-	}	
+	}
 
 	static private byte[] idPattern = "/ModDate(D:20".getBytes();
 	static private int[] failure = computeFailure();

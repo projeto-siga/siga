@@ -2577,6 +2577,8 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
+			
+			incluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
 
 			concluirAlteracao(doc);
 
@@ -5302,6 +5304,44 @@ public class ExBL extends CpBL {
 			dao().excluirComHistorico(exVia, dt, idCadastrante);
 		}
 		dao().excluirComHistorico(exClass, dt, idCadastrante);
+	}
+	
+	public void incluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
+		
+		final List<DpPessoa> cosignatarios = obterCosignatariosDaEntrevista(doc.getForm());
+		
+		if(cosignatarios != null) {
+			
+			for (DpPessoa cosignatario : cosignatarios) {
+				
+				incluirCosignatario(cadastrante, lotaCadastrante, doc, null, cosignatario, null);
+				
+			}
+		}
+	}
+	
+	public List<DpPessoa> obterCosignatariosDaEntrevista(Map<String, String> docForm) {
+		List<DpPessoa> list = new ArrayList<DpPessoa>();
+		ExDao exDao = ExDao.getInstance();
+		
+		for (String chave : docForm.keySet()) {
+			
+			DpPessoa pessoa;
+			
+			if(chave.contains("cosignatarioSel.sigla")) {
+				String[] dados = chave.split("=");
+				
+				if(dados != null && dados[1] != null) {
+					
+					pessoa = exDao.getPessoaFromSigla(dados[1]);
+					
+					if(pessoa != null)
+						list.add(pessoa);
+				}
+			}
+		}
+		return list;
 	}
 
 }

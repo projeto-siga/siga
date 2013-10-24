@@ -348,12 +348,14 @@
 					<ww:else>
 						<c:if test="${irregContCheqVal == '1'}">
 							<mod:oculto var="irregContCheqNao" valor="não"/>	
-						</c:if>
+						</c:if>						
 					</ww:else>
+					
 				</mod:grupo>
 			</mod:grupo>
 			<mod:radio titulo="Não se aplica (cópias encaminhada diretamente para a sede)." var="irregContCheq" valor="3" 
-						reler="ajax" idAjax="irregContCheqAjax" />		
+						reler="ajax" idAjax="irregContCheqAjax" />
+		
 		</mod:grupo>
 		<c:if test="${secao == 'DSEG'}">
 			<mod:grupo>
@@ -891,15 +893,25 @@
 					</c:if>			
 				</c:if>
 			</td></tr>	
-			<ww:if test="${irregContCheq == '3'}">
-				<tr><td>A informação referente às divergências ou irregularidades nos 
-						contracheques não se aplica.</td></tr>
-			</ww:if>
+            <c:if test="${irregContCheq == '2'}">
 			<tr><td>Os contracheques ${irregContCheqNao} apresentaram divergências ou irregularidades.
 				<c:if test="${irregContCheq == '2'}">	
 				<br>${ressalvaIrregContCheq} 					
 				</c:if>
-			</td></tr>	
+			</c:if>
+			</td></tr>
+			
+			     <c:if test="${irregContCheq == '1'}">   
+               <tr> <td>Os contracheques não apresentaram divergências ou irregularidades.               
+                </c:if>
+                </td></tr>
+              
+               
+                <c:if test="${irregContCheq == '3'}">   
+                <tr><td>A informação referente às divergências ou irregularidades nos 
+                        contracheques não se aplica. (cópias encaminhadas diretamente para a sede).                 
+                </c:if>
+            </td></tr>  	
 			<c:if test="${secao == 'SEGRA' or secao == 'SGS' or secao == 'SIE'}">
 				<tr><td>Os funcionários ${confEspecifNao} prestaram os serviços em conformidade com a especificação.
 					<c:if test="${confEspecif == '2'}">	

@@ -46,9 +46,10 @@ Function InicializarCapicom()
 	If Erro Then Exit Function
 
 	'Infelizmente não é possível armazenar o objeto Signer e utilizá-lo na próxima chamada para Sign.
-	gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado."
-	Desprezar = gAssinatura.Sign(Nothing, True, 0)
-	gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
+	'Renato: desabilitado temporariamente para não interferir com os testes de desempenho.
+	'gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado."
+	'Desprezar = gAssinatura.Sign(Nothing, True, 0)
+	'gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
 
 	InicializarCapicom = "OK"
 End Function
@@ -147,12 +148,13 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
  			   Dim certParam
 			   certParam = "certificadoB64=" & UrlEncode(gCertificadoB64)
 
-               urlDocumento = oUrlBase.value + oUrlPath.value + "/semmarcas/" + oUrl.value
+               urlDocumento = oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1"
 			   If InStr(urlDocumento, "?") > 0 Then
                		urlDocumento = urlDocumento & "&" & certParam
 			   Else
                		urlDocumento = urlDocumento & "?" & certParam
 			   End If
+
                Documento = Conteudo(urlDocumento)
                'MsgBox Documento
                Log "Documento: " & oNome.value

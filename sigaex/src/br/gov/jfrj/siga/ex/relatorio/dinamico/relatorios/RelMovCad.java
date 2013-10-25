@@ -55,9 +55,9 @@ public class RelMovCad extends RelatorioTemplate {
 		this.addAutoText("Período: " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString(), AutoText.POSITION_HEADER,(byte) RelatorioRapido.ESQUERDA,200);
 		this.setTitle("Relatório de Movimentações por Cadastrante");
 		this.addColuna("Cadastrante", 100, RelatorioRapido.ESQUERDA, true);
-		this.addColuna("Documento", 30, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Data de Movimento", 30, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Descrição", 40, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Documento", 40, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Data da Movimentação", 50, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Descrição", 50, RelatorioRapido.ESQUERDA, false);
 		return this;
 
 	}

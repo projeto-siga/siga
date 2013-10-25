@@ -23,6 +23,8 @@ public class GcInformacaoFiltro extends GcInformacao {
 
 	public GcTipoInformacao tipo;
 
+	public String titulo;
+
 	public String conteudo;
 
 	public GcTag tag;

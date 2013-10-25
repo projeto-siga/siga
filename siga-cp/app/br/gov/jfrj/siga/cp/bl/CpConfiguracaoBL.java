@@ -642,28 +642,32 @@ public class CpConfiguracaoBL {
 			CpServico srvPai = null;
 			CpServico srvRecuperado = null;
 
-			// Constroi uma linha completa, tipo full path
-			for (String s : servicoPath.split(";")) {
-				String[] asParts = s.split(":"); // Separa a sigla da descrição
-				String sSigla = asParts[0];
-				srv = new CpServico();
-				srv.setSiglaServico(srvPai != null ? srvPai.getSigla() + "-"
-						+ sSigla : sSigla);
-				srv.setCpServicoPai(srvPai);
-				srvRecuperado = dao().consultarPorSigla(srv);
-				if (srvRecuperado == null) {
-					CpTipoServico tpsrv = dao().consultar(
-							CpTipoServico.TIPO_CONFIG_SISTEMA,
-							CpTipoServico.class, false);
-					String sDesc = (asParts.length > 1 ? asParts[1] : "");
-					srv.setDscServico(sDesc);
+			srvRecuperado = dao().consultarCpServicoPorChave(servicoPath);
+			if (srvRecuperado == null) {
+				// Constroi uma linha completa, tipo full path
+				for (String s : servicoPath.split(";")) {
+					String[] asParts = s.split(":"); // Separa a sigla da
+														// descrição
+					String sSigla = asParts[0];
+					srv = new CpServico();
+					srv.setSiglaServico(srvPai != null ? srvPai.getSigla()
+							+ "-" + sSigla : sSigla);
 					srv.setCpServicoPai(srvPai);
-					srv.setCpTipoServico(tpsrv);
-					dao().iniciarTransacao();
-					srvRecuperado = dao().gravar(srv);
-					dao().commitTransacao();
+					srvRecuperado = dao().consultarPorSigla(srv);
+					if (srvRecuperado == null) {
+						CpTipoServico tpsrv = dao().consultar(
+								CpTipoServico.TIPO_CONFIG_SISTEMA,
+								CpTipoServico.class, false);
+						String sDesc = (asParts.length > 1 ? asParts[1] : "");
+						srv.setDscServico(sDesc);
+						srv.setCpServicoPai(srvPai);
+						srv.setCpTipoServico(tpsrv);
+						dao().iniciarTransacao();
+						srvRecuperado = dao().gravar(srv);
+						dao().commitTransacao();
+					}
+					srvPai = srvRecuperado;
 				}
-				srvPai = srvRecuperado;
 			}
 			return Cp
 					.getInstance()
@@ -796,21 +800,23 @@ public class CpConfiguracaoBL {
 				.size() > 0;
 	}
 
-	public boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular,Long idCpGrupo,
-			Long idCpTipoGrupo) {
-		
+	public boolean podeGerirGrupo(DpPessoa titular, DpLotacao lotaTitular,
+			Long idCpGrupo, Long idCpTipoGrupo) {
+
 		try {
 			CpGrupoDaoFiltro flt = new CpGrupoDaoFiltro();
-			CpGrupo cpGrp = CpDao.getInstance().consultar(idCpGrupo, CpGrupo.class, false);
+			CpGrupo cpGrp = CpDao.getInstance().consultar(idCpGrupo,
+					CpGrupo.class, false);
 			flt.setIdTpGrupo(idCpTipoGrupo.intValue());
 			CpConfiguracaoBL bl = Cp.getInstance().getConf();
 
-			return bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO);
+			return bl.podePorConfiguracao(titular, lotaTitular, cpGrp,
+					CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
 

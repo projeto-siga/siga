@@ -56,8 +56,8 @@ function sbmt() {
 			document.getElementById('transferir_gravar_sigla').value= '';
 			document.getElementById('transferir_gravar_pai').value= '${mob.sigla}';
 			document.getElementById('transferir_gravar_despachando').value= 'true';
-			frm.action='<ww:property value="%{urlEditar}"/>';
 			frm.postback.value=0;
+			frm.action='<ww:property value="%{urlEditar}"/>';
   		}	
   		else {
 			document.getElementById('transferir_gravar_sigla').value= '${mob.sigla}';

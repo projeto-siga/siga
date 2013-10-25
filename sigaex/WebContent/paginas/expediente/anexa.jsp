@@ -258,7 +258,7 @@
 										
 										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 										      <ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
-											   <ww:hidden name="url${x}" value="${mov.mov.nmPdf}" />
+						  					  <ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.mov.nmPdf}"/>
 										</c:if>	
 									</td>
 							    </tr>

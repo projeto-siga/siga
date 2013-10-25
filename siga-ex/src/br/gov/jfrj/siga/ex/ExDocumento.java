@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -57,9 +56,12 @@ import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
 import br.gov.jfrj.siga.ex.util.Compactador;
+import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
+import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
@@ -374,31 +376,37 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		ProcessadorReferencias pr = new ProcessadorReferencias();
 		pr.ignorar(getSigla());
 		sHtml = pr.marcarReferencias(sHtml);
-		
-		//Verifica se todos os subscritores assinaram o documento
+
+		// Verifica se todos os subscritores assinaram o documento
 		try {
-		 	for (DpPessoa subscritor : getSubscritorECosignatarios()) {
-		 		if(isEletronico() && getDtFechamento() != null && !jaAssinadoPor(subscritor)) {
-		 			String comentarioInicio = "<!-- INICIO SUBSCRITOR " + subscritor.getId() + " -->";
-		 			String comentarioFim = "<!-- FIM SUBSCRITOR " + subscritor.getId() + " -->";
-		 			
-		 			if(sHtml.contains(comentarioInicio) && sHtml.contains(comentarioFim)) {
-			 			String blocoSubscritor = sHtml.substring(sHtml.indexOf(comentarioInicio) + comentarioInicio.length(),
-			 					sHtml.indexOf(comentarioFim));
-			 			
-			 			StringBuilder sb = new StringBuilder();
-			 			sb.append("<span style=\"color:#CD3700;\">");
-			 			sb.append(blocoSubscritor);
-			 			sb.append("</span>");
-			 			
-			 			sHtml = sHtml.replace(blocoSubscritor, sb).toString();
-		 			}
-		 		}
+			for (DpPessoa subscritor : getSubscritorECosignatarios()) {
+				if (isEletronico() && getDtFechamento() != null
+						&& !jaAssinadoPor(subscritor)) {
+					String comentarioInicio = "<!-- INICIO SUBSCRITOR "
+							+ subscritor.getId() + " -->";
+					String comentarioFim = "<!-- FIM SUBSCRITOR "
+							+ subscritor.getId() + " -->";
+
+					if (sHtml.contains(comentarioInicio)
+							&& sHtml.contains(comentarioFim)) {
+						String blocoSubscritor = sHtml.substring(
+								sHtml.indexOf(comentarioInicio)
+										+ comentarioInicio.length(),
+								sHtml.indexOf(comentarioFim));
+
+						StringBuilder sb = new StringBuilder();
+						sb.append("<span style=\"color:#CD3700;\">");
+						sb.append(blocoSubscritor);
+						sb.append("</span>");
+
+						sHtml = sHtml.replace(blocoSubscritor, sb).toString();
+					}
+				}
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+
 		return sHtml;
 	}
 
@@ -861,7 +869,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				vias = getExClassificacao().getExViaSet();
 		}
 
-		if (vias != null && vias.size() > 0
+		if (vias != null
+				&& vias.size() > 0
 				&& ((ExVia) vias.toArray()[0]).getExTipoDestinacao()
 						.getFacilitadorDest() != null)
 			return vias;
@@ -968,11 +977,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Verifica se uma pessoa assinou este documento.
 	 */
-	public boolean jaAssinadoPor(DpPessoa subscritor) {		
+	public boolean jaAssinadoPor(DpPessoa subscritor) {
 		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
 			if (assinatura.getSubscritor().equivale(subscritor))
 				return true;
@@ -1474,22 +1483,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			int nivel) {
 
 		SortedSet<ExMovimentacao> set = new TreeSet<ExMovimentacao>(
-				new Comparator<ExMovimentacao>() {
-					public int compare(ExMovimentacao o1, ExMovimentacao o2) {
-						try {
-							int i = o1
-									.getDtIniMovParaInsercaoEmDossie()
-									.compareTo(
-											o2.getDtIniMovParaInsercaoEmDossie());
-							if (i != 0)
-								return i;
-							i = o1.getIdMov().compareTo(o2.getIdMov());
-							return i;
-						} catch (final Exception ex) {
-							return 0;
-						}
-					}
-				});
+				new AnexoNumeradoComparator());
 
 		incluirArquivos(getMobilGeral(), set);
 		incluirArquivos(mob, set);
@@ -1652,24 +1646,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	public java.util.Set<ExDocumento> getExDocumentoFilhoSet() {
 		Set<ExDocumento> set = new TreeSet<ExDocumento>(
-				new Comparator<ExDocumento>() {
-					public int compare(ExDocumento o1, ExDocumento o2) {
-						if (o1.getNumSequencia() != null
-								&& o2.getNumSequencia() != null)
-							return o1.getNumSequencia().compareTo(
-									o2.getNumSequencia());
-						if (o1.getDtFechamento() != null
-								&& o2.getDtFechamento() != null)
-							return o1.getDtFechamento().compareTo(
-									o2.getDtFechamento());
-						if (o1.getDtRegDoc() != null
-								&& o2.getDtRegDoc() != null)
-							return o1.getDtRegDoc().compareTo(o2.getDtRegDoc());
-						if (o1.getIdDoc() != null && o2.getIdDoc() != null)
-							return o1.getIdDoc().compareTo(o2.getIdDoc());
-						throw new Error("Não é possivel comparar documentos.");
-					}
-				});
+				new DocumentoFilhoComparator());
 		for (ExMobil m : getExMobilSet())
 			if (m.getExDocumentoFilhoSet() != null)
 				set.addAll(m.getExDocumentoFilhoSet());
@@ -1806,24 +1783,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		mobilInvertido.addAll(getExMobilSet());
 
 		return mobilInvertido;
-	}
-
-	private class TipoMobilComparatorInverso implements Comparator<ExMobil> {
-
-		public int compare(ExMobil o1, ExMobil o2) {
-			if (o1.getExTipoMobil().getIdTipoMobil() > o2.getExTipoMobil()
-					.getIdTipoMobil())
-				return -1;
-			else if (o1.getExTipoMobil().getIdTipoMobil() < o2.getExTipoMobil()
-					.getIdTipoMobil())
-				return 1;
-			else if (o1.getNumSequencia() > o2.getNumSequencia())
-				return -1;
-			else if (o1.getNumSequencia() < o2.getNumSequencia())
-				return 1;
-			else
-				return 0;
-		}
 	}
 
 	/**
@@ -2010,8 +1969,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	public void setConteudoBlobPdf(final byte[] conteudo) throws Exception {
-		
-		// Atenção, não retirar esse teste nunca, pois ele é quem garante que o pdf não será refeito.
+
+		// Atenção, não retirar esse teste nunca, pois ele é quem garante que o
+		// pdf não será refeito.
 		if (isAssinado() || isAssinadoDigitalmente())
 			throw new AplicacaoException(
 					"O conteúdo não pode ser alterado pois o documento já está assinado");

@@ -41,7 +41,7 @@
 		<many-to-one name="orgaoUsuario" column="ID_ORGAO_USU"
 			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" not-null="false" />
 		<property name="nmOrgaoAI" formula="REMOVE_ACENTO(NM_ORGAO)" type="string" />
-		<property name="ativo" formula="FG_ATIVO" type="string" />
+		<property name="ativo" column="FG_ATIVO" type="string" />
 		<!--
 
 		<set name="cpOrgaoSet" inverse="true">
@@ -68,6 +68,11 @@
 	 	where ((upper(org.nmOrgaoAI) like upper('%' || :nome || '%')) or (upper(org.siglaOrgao) like upper('%' || :nome || '%')))
        	and org.ativo='S'
        	order by org.nmOrgao]]>
+	</query>
+	
+	<query name="consultarCpOrgaoOrdenadoPorNome">
+	  <![CDATA[from CpOrgao org	 	
+    	order by org.nmOrgao]]>
 	</query>
 </hibernate-mapping>
 

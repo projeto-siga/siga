@@ -25,21 +25,23 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -52,6 +54,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -90,7 +93,7 @@ import com.swetake.util.Qrcode;
  * 
  * @author blowagie
  */
-public class Documento extends AbstractDocumento {
+public class Documento {
 
 	private static final float QRCODE_LEFT_MARGIN_IN_CM = 3.0f;
 
@@ -115,7 +118,50 @@ public class Documento extends AbstractDocumento {
 
 	private static final float STAMP_BORDER_IN_CM = 0.2f;
 
+	private static final Pattern pattern = Pattern
+		.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.(pdf|html|zip)");
+
 	private static Log log = LogFactory.getLog(Documento.class);
+
+	public static ExMobil getMobil(String requestURI) throws SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, Exception {
+		ExMobil mob = null;
+		String sigla = "";
+
+		final Matcher m = pattern.matcher(requestURI);
+		if (m.find()) {
+			sigla = m.group(1);
+			final ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+			flt.setSigla(sigla);
+			mob = (ExMobil) ExDao.getInstance().consultarPorSigla(flt);
+		}
+		// expDAO.consultarConteudoBlob(docvia.getExDocumento());
+		return mob;
+	}
+
+	public static ExMovimentacao getMov(ExMobil mob, String requestURI)
+			throws AplicacaoException, SQLException {
+		String sMovId = null;
+		ExMovimentacao mov = null;
+
+		final Matcher m = pattern.matcher(requestURI);
+		if (m.find()) {
+			sMovId = m.group(2);
+			if (sMovId.length() <= 1)
+				return null;
+			final long l = Long.parseLong(sMovId.substring(1));
+			for (ExMovimentacao movAux : mob.getExMovimentacaoSet()) {
+				if (movAux.getIdMov() == l)
+					mov = movAux;
+			}
+		}
+		if (mov == null)
+			return null;
+		mov = ExDao.getInstance().consultar(mov.getIdMov(),
+				ExMovimentacao.class, false);
+		return mov;
+	}
 
 	private String getDocHTML(ExMobil mob, HttpServletRequest request)
 			throws Exception {
@@ -202,6 +248,9 @@ public class Documento extends AbstractDocumento {
 
 		PdfReader pdfIn = new PdfReader(abPdf);
 		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
+		// final SimpleDateFormat sdf = new SimpleDateFormat(
+		// "EEE MMM dd HH:mm:ss zzz yyyy");
+		// doc.add(new Meta("creationdate", sdf.format(new Date(0L))));
 		final ByteArrayOutputStream boA4 = new ByteArrayOutputStream();
 		PdfWriter writer = PdfWriter.getInstance(doc, boA4);
 		doc.open();
@@ -224,13 +273,13 @@ public class Documento extends AbstractDocumento {
 			// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
 			// + ", " + h);
 
-			doc.setPageSize((rot != 0) ^ (w > h) ? PageSize.A4.rotate()
+			doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate()
 					: PageSize.A4);
 			doc.newPage();
 
 			cb.saveState();
 
-			if (rot != 0) {
+			if (rot != 0 && rot != 180) {
 				float swap = w;
 				w = h;
 				h = swap;
@@ -252,8 +301,13 @@ public class Documento extends AbstractDocumento {
 
 			if (rot != 0) {
 				double theta = -rot * (Math.PI / 180);
-				cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
-						w / 2));
+				if (rot == 180){
+					cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
+							h / 2));
+				}else{
+					cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
+							w / 2));
+				}
 				if (rot == 90) {
 					cb.transform(AffineTransform.getTranslateInstance(
 							(w - h) / 2, (w - h) / 2));
@@ -263,9 +317,9 @@ public class Documento extends AbstractDocumento {
 				}
 			}
 
-//			Logger.getRootLogger().error(
-//					"----- dimensoes: " + rot + ", " + w + ", " + h);
-//			Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
+			// Logger.getRootLogger().error(
+			// "----- dimensoes: " + rot + ", " + w + ", " + h);
+			// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
 
 			// cb.transform(AffineTransform.getTranslateInstance(
 			// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
@@ -292,6 +346,7 @@ public class Documento extends AbstractDocumento {
 		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
 
 		final PdfReader reader = new PdfReader(abPdf);
+
 		final int n = reader.getNumberOfPages();
 		final PdfStamper stamp = new PdfStamper(reader, bo2);
 
@@ -680,31 +735,7 @@ public class Documento extends AbstractDocumento {
 		return getDocumento(mob, mov, false, true, null);
 	}
 
-	protected byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
-			HttpServletRequest request) throws Exception {
-
-		String uri = request.getRequestURI();
-		boolean estampar = uri.indexOf("/semmarcas/") == -1;
-		boolean completo = uri.indexOf("/completo/") != -1;
-		boolean somenteHash = uri.indexOf("/hash/") != -1
-				|| uri.indexOf("/hashSHA1/") != -1
-				|| uri.indexOf("/hashSHA-256/") != -1
-				|| uri.indexOf("/hashSHA-512/") != -1
-				|| uri.indexOf("/hashMD5/") != -1;
-		String hash = null;
-		if (somenteHash) {
-			if (uri.indexOf("/hash/") != -1)
-				hash = request.getParameter("HASH_ALGORITHM");
-			else
-				hash = uri.substring(uri.indexOf("/hash") + 5,
-						uri.indexOf("/", uri.indexOf("/hash") + 5));
-		}
-
-		return getDocumento(mob, mov, completo, estampar, hash);
-
-	}
-
-	protected byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
+	public static byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
 			boolean completo, boolean estampar, String hash) throws Exception {
 		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
 		PdfReader reader;
@@ -784,6 +815,7 @@ public class Documento extends AbstractDocumento {
 					// step 2: we create a writer that listens to the
 					// document
 					writer = new PdfCopy(document, bo2);
+					writer.setFullCompression();
 
 					// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
 
@@ -833,24 +865,11 @@ public class Documento extends AbstractDocumento {
 			}
 			if (!master.isEmpty())
 				writer.setOutlines(master);
-			// step 5: we close the document
 
-			// PdfContentByte cb = writer.getDirectContent();
-			// PdfOutline root = cb.getRootOutline();
-			//
-			// PdfOutline oline1 = new PdfOutline(root,
-			// PdfAction.gotoLocalPage("1", false),"Chapter 1");
-			//
-			// PdfOutline oline2 = new PdfOutline(root,
-			// PdfAction.gotoLocalPage("2", false),"Chapter 2");
-			// oline2.setOpen(false);
-			// PdfOutline oline2_1 = new PdfOutline(oline2,
-			// PdfAction.gotoLocalPage("2.1", false),"Sub 2.1");
-			// PdfOutline oline2_2 = new PdfOutline(oline2,
-			// PdfAction.gotoLocalPage("2.2", false),"Sub 2.2");
-			//
-			// PdfOutline oline3 = new PdfOutline(root,
-			// PdfAction.gotoLocalPage("3", false),"Chapter 3");
+			// PdfDictionary info = writer.getInfo();
+			// info.put(PdfName.MODDATE, null);
+			// info.put(PdfName.CREATIONDATE, null);
+			// info.put(PdfName.ID, null);
 
 			document.close();
 		} catch (Exception e) {
@@ -872,7 +891,7 @@ public class Documento extends AbstractDocumento {
 		sHtml = (new ProcessadorHtml()).canonicalizarHtml(sHtml, true, false,
 				true, false, true);
 
-		log.info("Processamento: terminou canonicalizar");
+		// log.info("Processamento: terminou canonicalizar");
 
 		/*
 		 * bruno.lacerda@avantiprima.com.br - 01/08/2012 correcao para carregar
@@ -884,7 +903,7 @@ public class Documento extends AbstractDocumento {
 		sHtml = sHtml.replace("contextpath", ServletActionContext
 				.getServletContext().getRealPath(""));
 
-		log.info("Processamento: prestes a entrar no nheengatu");
+		// log.info("Processamento: prestes a entrar no nheengatu");
 
 		return parser.converter(sHtml, ConversorHtml.PDF);
 
@@ -1228,44 +1247,103 @@ public class Documento extends AbstractDocumento {
 		}
 	}
 
-	@Override
-	public String getContentType() {
-		return "application/pdf";
-	}
-}
+	public static byte[] getDocumentoHTML(ExMobil mob, ExMovimentacao mov,
+			boolean completo, String contextpath, String servernameport)
+			throws Exception {
+		List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
+				completo);
 
-/*
- * import java.io.FileOutputStream ; import com.lowagie.text.Document ; import
- * com.lowagie.text.PageSize ; import com.lowagie.text.pdf.PdfWriter ; import
- * com.lowagie.text.html.HtmlParser ;
- * 
- * import com.lowagie.text.*; import com.lowagie.text.pdf.*; import
- * com.lowagie.text.html.simpleparser.*;
- * 
- * import java.util.*; import java.io.*;
- * 
- * public class Test {
- * 
- * public static void main(String[] args) {
- * 
- * Test test = new Test(); try { test.createUsingString();
- * 
- * }catch (Exception e){ } }
- * 
- * public void createUsingString() { try { StringBuffer sBuff = new
- * StringBuffer("<HTML>"); sBuff.append("<head></head>");
- * sBuff.append("<body>"); sBuff.append("<table>"); sBuff.append("<tr><td><font
- * color=blue face='Times New Roaman' >Coming Soon
- * <sup>hi<sup></font></td></tr>"); sBuff.append("</table>");
- * sBuff.append("</body>"); sBuff.append("</html>"); StringReader stringReader =
- * new StringReader(sBuff.toString()); Document document = new
- * Document(PageSize.LEGAL,36,36,36,36); OutputStream output = new
- * FileOutputStream("d:/itext/TestString1.pdf");
- * 
- * PdfWriter writer = PdfWriter.getInstance(document, output); document.open();
- * HTMLWorker worker = new HTMLWorker(document); worker.parse(stringReader);
- * document.close();
- * 
- * }catch (Exception ex){ System.out.println( "Exception " + ex.toString()); } }
- * }
- */
+		StringBuilder sb = new StringBuilder();
+		boolean fFirst = true;
+		// TAH: infelizmente o IE não funciona bem com background-color:
+		// transparent.
+		// sb.append("<html class=\"fisico\"><body style=\"margin:2px; padding:0pt; background-color: #E2EAEE;overflow:visible;\">");
+		sb.append("<html><head><base target=\"_parent\"/></head><body style=\"margin:2px; padding:0pt; background-color: "
+				+ (mob.getDoc().isEletronico() ? "#E2EAEE" : "#f1e9c6")
+				+ ";overflow:visible;\">");
+		for (ExArquivoNumerado an : ans) {
+			String numeracao = null;
+			// if (fFirst)
+			// fFirst = false;
+			// else
+			// sb
+			// .append("<div style=\"margin:10px; padding:10px; width:100%;
+			// border: medium double green;\" class=\"total\">");
+
+			sb.append("<div style=\"margin-bottom:6pt; padding:0pt; width:100%; clear:both; background-color: #fff; border: 1px solid #ccc; border-radius: 5px;\" class=\"documento\">");
+			sb.append("<table width=\"100%\" style=\"padding:3pt;\" border=0><tr><td>");
+			if (an.getPaginaInicial() != null) {
+				numeracao = an.getPaginaInicial().toString();
+				if (!an.getPaginaFinal().equals(an.getPaginaInicial()))
+					numeracao += " - " + an.getPaginaFinal();
+				sb.append("<div style=\"margin:3pt; padding:3pt; float:right; border: 1px solid #ccc; border-radius: 5px;\" class=\"numeracao\">");
+				sb.append(numeracao);
+				sb.append("</div>");
+			}
+			if (an.getArquivo().getHtml() != null) {
+				String sHtml = fixHtml(contextpath, an);
+				sHtml = ProcessadorHtml.bodyOnly(sHtml);
+				// sb
+				// .append("<div style=\"margin:3pt; padding:3pt; border: thin
+				// solid brown;\" class=\"dochtml\">");
+				sb.append(sHtml);
+				// sb.append("</div>");
+			} else {
+				sb.append("<div style=\"margin:3pt; padding:3pt;\" class=\"anexo\">");
+				sb.append("<img src=\"/siga/css/famfamfam/icons/page_white_acrobat.png\"/> <a href=\""
+						+ "http://"
+						+ servernameport
+						+ contextpath
+						+ "/arquivo/exibir.action?arquivo="
+						+ an.getArquivo().getReferenciaPDF()
+						+ "\" target=\"_blank\">");
+				sb.append(an.getNome());
+				sb.append("</a>");
+				if (((ExMovimentacao) an.getArquivo()).getDescrMov() != null)
+					if (an.getArquivo() instanceof ExMovimentacao) {
+						sb.append(": "
+								+ ((ExMovimentacao) an.getArquivo())
+										.getDescrMov());
+					}
+//				sb.append("<iframe style=\"visibility: visible; margin: 0px; padding: 0px; display: block;height: 30em; border: 1px solid black;\" src=\"http://"
+//						+ servernameport
+//						+ contextpath
+//						+ "/arquivo/exibir.action?arquivo="
+//						+ an.getArquivo().getReferenciaPDF()
+//						+ "&semmarcas=1\" width=\"100%\" frameborder=\"0\" scrolling=\"auto\"></iframe>");
+
+				// sb.append("<br/>");
+				sb.append("</div>");
+			}
+
+			if (an.getArquivo().getMensagem() != null
+					&& an.getArquivo().getMensagem().trim().length() > 0) {
+				sb.append("</td></tr><tr><td>");
+				sb.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
+				sb.append(an.getArquivo().getMensagem());
+				sb.append("</div>");
+			}
+			sb.append("</td></tr></table></div>");
+		}
+		sb.append("</body></html>");
+
+		return sb.toString().getBytes("utf-8");
+	}
+
+	public static String fixHtml(String contextpath, ExArquivoNumerado an)
+			throws Exception {
+		String sHtml = an.getArquivo().getHtmlComReferencias();
+		sHtml = sHtml.replace("<!-- INICIO PRIMEIRO CABECALHO",
+				"<!-- INICIO PRIMEIRO CABECALHO -->");
+		sHtml = sHtml.replace("FIM PRIMEIRO CABECALHO -->",
+				"<!-- FIM PRIMEIRO CABECALHO -->");
+		sHtml = sHtml.replace("<!-- INICIO PRIMEIRO RODAPE",
+				"<!-- INICIO PRIMEIRO RODAPE -->");
+		sHtml = sHtml.replace("FIM PRIMEIRO RODAPE -->",
+				"<!-- FIM PRIMEIRO RODAPE-->");
+		// s = s.replace("http://localhost:8080/siga/", "/siga/");
+		sHtml = sHtml.replace("contextpath", contextpath);
+		return sHtml;
+	}
+
+}

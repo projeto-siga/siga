@@ -2,6 +2,9 @@
 <xwork>
 	<include file="webwork-default.xml" />
 	<package name="default" extends="webwork-default">
+		<result-types>
+ 			<result-type name="stream-fixed" class="br.gov.jfrj.siga.libs.webwork.StreamResult"/> 
+ 		</result-types>
 		<interceptors>
 			<interceptor name="siga-exception"
 				class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
@@ -177,7 +180,7 @@
 
 		<action name="emitirRelatorio"
 			class="br.gov.jfrj.siga.wf.webwork.action.WfMetricaAction" method="aEmitirRelatorio">
-			<result name="relatorioPDF" type="stream">
+			<result name="relatorioPDF" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>

@@ -4,6 +4,11 @@
 	<include file="webwork-default.xml" />
 
 	<package name="default" extends="webwork-default">
+		<result-types>
+ 			<result-type name="stream-fixed" class="br.gov.jfrj.siga.libs.webwork.StreamResult"/> 
+ 			<result-type name="do-nothing" class="br.gov.jfrj.siga.libs.webwork.DoNothingResult"/> 
+ 		</result-types>
+
 		<interceptors>
 			<interceptor name="siga-exception"
 				class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
@@ -18,7 +23,7 @@
 				<interceptor-ref name="conversionError" />
 			</interceptor-stack>
 		</interceptors>
-
+		
 		<default-interceptor-ref name="defaultStackWithExceptionMapping" />
 
 		<default-action-ref name="principal" />
@@ -62,7 +67,7 @@
 		<action name="autenticar" method="exec"
 			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
 			
-			<result name="imagem" type="stream">
+			<result name="imagem" type="stream-fixed">
   				<param name="contentType">${contentType}</param>
 				<param name="contentDisposition">filename="${fileName}"</param>
   				<param name="contentLength">${bytes.length}</param>
@@ -77,7 +82,7 @@
 		<action name="arquivoAutenticado" method="arquivo"
 			class="br.gov.jfrj.webwork.action.ExAutenticaAction">
 			
-			<result name="stream" type="stream">
+			<result name="stream" type="stream-fixed">
   				<param name="contentType">${contentType}</param>
 				<param name="contentDisposition">filename="${fileName}"</param>
   				<param name="contentLength">${bytes.length}</param>
@@ -329,24 +334,16 @@
 
 		<action name="gravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aGravar">
-			<!-- <interceptor-ref name="completeStack"/> <interceptor-ref name="execAndWait"> 
-				<param name="delay">3000</param> </interceptor-ref> <result name="wait" type="redirect-action"> 
-				exibir?id=${idDoc} </result> -->
-			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
-				/> -->
 			<result name="success" type="redirect-action">
 				exibir?sigla=${doc.sigla}${desativ}
 			</result>
 			<result name="form_incompleto">
 				/paginas/expediente/edita.jsp
 			</result>
-			<!-- <result name="form_incompleto" type="redirect-action"> editar?${urlEncodedParameters}&amp;alerta=Sim 
-				</result> -->
+			<result name="ajax">
+				/paginas/expediente/retorno_salvamento_ajax.jsp
+			</result>
 		</action>
-		<!-- <result name="wait">longRunningAction-wait.jsp</result> <result name="success">longRunningAction-success.jsp</result> 
-			<action name="gravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction" 
-			method="aGravar"> <result type="redirect-action"> exibir?id=${doc.idDoc} 
-			</result> </action> -->
 
 		<action name="excluir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aExcluirDocMovimentacoes">
@@ -401,7 +398,7 @@
 		</action>
 		<action name="preverPdf" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aPreverPdf">
-			<result name="success" type="stream">
+			<result name="success" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">pdfStreamResult</param>
 				<param name="contentDisposition">
@@ -429,7 +426,7 @@
 		<action name="testar_pdf_gravar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aTestarPdfGravar">
 
-			<result name="success" type="stream">
+			<result name="success" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">htmlTesteConvertido</param>
 				<param name="contentDisposition">
@@ -1077,7 +1074,46 @@
 		</action>
 
 	</package>
-	<!-- Pedro:02052007 -->
+	
+	<package name="arquivo" extends="default" namespace="/arquivo">
+		<action name="exibir" class="br.gov.jfrj.webwork.action.ExArquivoAction"
+			method="aExibir">
+			<result name="hash" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="html" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">text/html</param>
+				<param name="contentLength">${contentLength}</param>
+			</result>
+			<result name="pdf" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/pdf</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="donothing" type="do-nothing"></result>
+		</action>
+		<action name="download" class="br.gov.jfrj.webwork.action.ExArquivoAction"
+			method="aDownload">
+			<result name="hash" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="zip" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">multipart/x-zip</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+		</action>
+	</package>
+	
 	<package name="expediente/rel" extends="default" namespace="/expediente/rel">
 		<!-- action principal : chama todos os jsp´s -->
 		<action name="relRelatorios" class="br.gov.jfrj.webwork.action.ExRelatorioAction">
@@ -1086,7 +1122,7 @@
 		<!-- relacao de formularios -->
 		<action name="emiteRelFormularios" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelFormularios">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1095,7 +1131,7 @@
 		<action name="emiteRelExpedientes" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelExpedientes">
 			<result>/paginas/expediente/relatorio.jsp</result>
-			<result name="relExpPag" type="stream">
+			<result name="relExpPag" type="stream-fixed">
 				<param name="contentType">${contentType}</param>
 				<param name="inputName">${inputStream}</param>
 				<param name="contentDisposition">inline</param>
@@ -1116,7 +1152,7 @@
 
 		<action name="emiteRelDocumentosSubordinados" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelDocumentosSubordinados">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1124,7 +1160,7 @@
 		
 		<action name="emiteRelMovDocsSubordinados" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelMovDocumentosSubordinados">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1132,7 +1168,7 @@
 		
 		<action name="emiteRelDocsSubCriados" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelDocsSubCriados">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1140,7 +1176,7 @@
 
 		<action name="emiteRelDocEntreDatas" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelDocEntreDatas">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1148,7 +1184,7 @@
 
 		<action name="emiteRelMovimentacao" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelMovimentacao">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1156,7 +1192,7 @@
 
 		<action name="emiteRelMovCad" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelMovCad">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1164,7 +1200,7 @@
 
 		<action name="emiteRelOrgao" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelOrgao">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1172,7 +1208,7 @@
 
 		<action name="emiteRelTipoDoc" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelTipoDoc">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1182,7 +1218,7 @@
 
 		<action name="aRelClassificacao" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelClassificacao">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>
@@ -1190,7 +1226,7 @@
 		
 		<action name="emiteRelClassDocDocumentos" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelClassDocDocumentos">
-			<result name="relatorio" type="stream">
+			<result name="relatorio" type="stream-fixed">
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 			</result>

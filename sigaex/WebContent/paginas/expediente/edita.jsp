@@ -9,112 +9,15 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Novo Documento">
-	<%--onLoad="javascript:autoSave();" --%>
-		<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
 	
-	<script type="text/javascript">
-	
-<ww:url id="url" action="testar_conexao" namespace="/expediente/doc">
-</ww:url>
-var conexaoTimer;
-function testaConexao(){
-	PassAjaxResponseToFunction('<ww:property value="%{url}"/>','naoCaiu', false, true, null);
-	conexaoTimer = setTimeout('avisaCaiu()',360000);
-}
-
-function limitaDescricao(silencioso){
-	var limite = ${tamanhoMaximoDescricao};
-	if (document.getElementsByName('descrDocumento')[0].value.length >= limite) {
-		if (!silencioso)
-			alert('O tamanho máximo da descrição é de ' + limite + ' caracteres');
-		return false;
-	}
-	return true;
-}
-
-
-function naoCaiu(response, param){
-	clearTimeout(conexaoTimer);
-	setTimeout('testaConexao()',360000);
-}
-
-function avisaCaiu(){
-	alert('Atenção: O sistema parece não estar respondendo. \nAs alterações feitas a partir de agora nesta tela não serão salvas. \nFavor, abrir o Siga em uma outra janela.');
-}
-
-var saveTimer;
-function autoSave(){
-	var salvarViaAjax = document.getElementById('salvarViaAjax');
-	if(salvarViaAjax == null || salvarViaAjax.value != 'N') {
-		clearTimeout(saveTimer);
-		saveTimer=setTimeout('salvaAjaxFCK(true)',70000);
-	}
-}
-
-function tryAgain(){
-	clearTimeout(saveTimer);
-	saveTimer=setTimeout('salvaAjaxFCK(true)',15000);
-}
-
-function FCKeditor_OnComplete( editorInstance ){
-    	editorInstance.Commands.GetCommand('Save').Execute = function(){
-    		window.parent.salvaAjaxFCK();
-    	}
- 		//autoSave();
-}
-
-var isSaving = false;
-<ww:url id="url" action="gravar_ajax" namespace="/expediente/doc">
-</ww:url>
-function salvaAjaxFCK(automatico){
-	if (!isSaving){
-		if (!validar(automatico))
-			return autoSave();
-		for ( i = 0; i < parent.frames.length; ++i ) {
-			if ( parent.frames[i].FCK )
-				parent.frames[i].FCK.UpdateLinkedField();
-        	if (parent.frames[i].updateFCKeditor) { 
-            	  // Calls all functions in the functions array 
-             	for (var i = 0 ; i < parent.frames[i].updateFCKeditor.length ; i++) 
-				parent.frames[i].updateFCKeditor[i]() ; 
-            } 
-    	}
-		var i;
-		var s = "";
-		for (i = 0; i < frm.length; i++){
-			s = s + '&' + frm[i].name + '=' + escape(frm[i].value);
-		}
-		if (automatico)
-			s = s + '&auto_save=1';
-		isSaving = true;
-		//PassAjaxResponseToFunction('<ww:property value="%{url}"/>'+'?'+s, 'salvo', false, automatico, 'POST');
-		PassAjaxResponseToFunction('<ww:property value="%{url}"/>','salvo', false, automatico, s);
-	}
-}
-
-function salvo(response){
-	var data = response.split('_');
-    if (data[0] == 'OK'){
-    	avisoVerde('Salvo ' + data[2], 3000);
-    	document.getElementById('codigoDoc').innerHTML = data[1];
-    	document.getElementById('sigla').value = data[1];
-    	document.getElementById('dataDoc').innerHTML = data[2];
-    	autoSave();
-    }
-    else {
-    	tryAgain(); 
-    	//avisoVermelho('Ocorreu um erro ao salvar o documento.', 4000);
-    }
-    isSaving = false;
-}
+<script type="text/javascript">
 
 <ww:url id="url" action="editar" namespace="/expediente/doc">
 </ww:url>
 function sbmt(id) {
 	
 	var frm = document.getElementById('frm');
-	//frm.submit();
-	//return;
 	
 	//Dispara a função onSave() do editor, caso exista
     if (typeof(onSave) == "function"){
@@ -132,23 +35,12 @@ function sbmt(id) {
 	if (typeof(frm.submitsave) == "undefined")
 		frm.submitsave = frm.submit;
 	frm.action='<ww:property value="%{url}"/>';
-    for ( i = 0; i < parent.frames.length; ++i ) {
-        if ( parent.frames[i].FCK )
-                 parent.frames[i].FCK.UpdateLinkedField();
-        if (parent.frames[i].updateFCKeditor) { 
-              // Calls all functions in the functions array 
-              for (var i = 0 ; i < parent.frames[i].updateFCKeditor.length ; i++) 
-                      parent.frames[i].updateFCKeditor[i]() ; 
-        } 
-    }
                     
 	if (id == null || typeof(id) == 'undefined' || IsRunningAjaxRequest()) {
-		//window.alert("submitting");
 		window.customOnsubmit = function() {return true;};
 		frm.onsubmit = null;
 		frm.submit = frm.submitsave;
 		frm.submit();
-		//window.alert("submitting done!");
 	} else {
 		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
 	}
@@ -156,52 +48,57 @@ function sbmt(id) {
 
 <ww:url id="url" action="gravar" namespace="/expediente/doc">
 </ww:url>
-counter = 0;
 function gravarDoc() {
 	clearTimeout(saveTimer);
-	if (counter > 0){
-		return;
-	} else {
-		if (!validar(false))
-			return false;
-		frm.action='<ww:property value="%{url}"/>';
-		window.customOnsubmit = function() {return true;};
-		if (typeof(frm.submitsave) != "undefined")
-			frm.submit = frm.submitsave;
-		counter++;
-		
-		//Dispara a função onSave() do editor, caso exista
-    	if (typeof(onSave) == "function")
-    		onSave();
-		
-		frm.submit();
+	if (!validar(false)){
+		triggerAutoSave();
+		return false;
 	}
+	frm.action='<ww:property value="%{url}"/>';
+	window.customOnsubmit = function() {return true;};
+	if (typeof(frm.submitsave) != "undefined")
+		frm.submit = frm.submitsave;
+	
+	//Dispara a função onSave() do editor, caso exista
+   	if (typeof(onSave) == "function")
+   		onSave();
+	
+	frm.submit();
 }
 
 function validar(silencioso){
-var descr = document.getElementsByName('descrDocumento')[0].value;
-var eletroHidden = document.getElementById('eletronicoHidden');
-var eletro1 = document.getElementById('eletronicoCheck1');
-var eletro2 = document.getElementById('eletronicoCheck2');
+	
+	var descr = document.getElementsByName('descrDocumento')[0].value;
+	var eletroHidden = document.getElementById('eletronicoHidden');
+	var eletro1 = document.getElementById('eletronicoCheck1');
+	var eletro2 = document.getElementById('eletronicoCheck2');
 
-if (descr==null || descr=="") {
-	if (!silencioso){
-		alert("Preencha o campo Descrição antes de gravar o documento.");
-		document.getElementById('descrDocumento').focus();
+	if (descr==null || descr=="") {
+		aviso("Preencha o campo Descrição antes de gravar o documento.", silencioso);
+		return false;
 	}
-	return false;
+	
+	if (eletroHidden == null && !eletro1.checked && !eletro2.checked) {
+		aviso("É necessário informar se o documento será digital ou físico, na parte superior da tela.", silencioso);
+		return false;
+	}
+
+	var limite = ${tamanhoMaximoDescricao};
+	if (document.getElementsByName('descrDocumento')[0].value.length >= limite) {
+		aviso('O tamanho máximo da descrição é de ' + limite + ' caracteres', silencioso);
+		return false;
+	}
+	
+	return true;
+	
 }
 
-if (eletroHidden == null && !eletro1.checked && !eletro2.checked) {
-	if (!silencioso)
-		alert("É necessário informar se o documento será digital ou físico, na parte superior da tela.");
-	return false;
+function aviso(msg, silencioso){
+	if (silencioso)
+		avisoVermelho('O documento não pôde ser salvo: ' + msg);
+	else alert(msg);
 }
-
-return limitaDescricao(silencioso);
-
-}
-
+	
 <ww:url id="url" action="excluirpreench" namespace="/expediente/doc"></ww:url>
 function removePreench(){
 			//Dispara a função onSave() do editor, caso exista
@@ -302,6 +199,59 @@ function popitup_documento(pdf) {
 
 function checkBoxMsg() {
    window.alert('Atenção: essa opção só deve ser selecionada quando o subscritor possui certificado digital, pois será exigida a assinatura digital do documento.');   
+}
+
+var saveTimer;
+function triggerAutoSave(){
+	clearTimeout(saveTimer);
+	saveTimer=setTimeout('autoSave()',60000 * 30);
+}
+
+triggerAutoSave();
+
+var stillSaving = false;
+<ww:url id="url" action="gravar" namespace="/expediente/doc">
+</ww:url>
+function autoSave(){
+	if (stillSaving)
+		return;
+	if (!validar(true))
+		return tryAgainAutoSave();
+	for (instance in CKEDITOR.instances)
+		CKEDITOR.instances[instance].updateElement();
+	if (typeof(onSave) == "function")
+		onSave();
+	stillSaving = true;
+	$.ajax({
+		type: "POST",
+		url: "<ww:property value="%{url}"/>?ajax=true",
+	   	data: $(frm).serialize(),
+	   	timeout: 30000,
+	   	success: doneAutoSave,
+	   	error: failAutoSave
+	});
+}
+
+function doneAutoSave(response){
+	var data = response.split('_');
+    if (data[0] == 'OK'){
+    	avisoVerde('Documento ' + data[1] + ' salvo');
+    	document.getElementById('codigoDoc').innerHTML = data[1];
+    	document.getElementById('sigla').value = data[1];
+    	stillSaving = false;
+    	triggerAutoSave();
+    } else failAutoSave();
+}
+
+function failAutoSave(response){
+	tryAgainAutoSave(); 
+	avisoVermelho('Atenção: Ocorreu um erro ao salvar o documento.');
+	stillSaving = false;
+}
+
+function tryAgainAutoSave(){
+	clearTimeout(saveTimer);
+	saveTimer=setTimeout('autoSave()',60000 * 30);
 }
 
 </script>

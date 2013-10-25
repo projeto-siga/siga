@@ -61,6 +61,9 @@ public class Notificador {
 	 */
 	public static void notificarPerfisVinculados(ExMovimentacao mov,
 			int tipoNotificacao) throws AplicacaoException {
+		
+		if(mov.getExMobil().isApensadoAVolumeDoMesmoProcesso())
+			return;
 
 		StringBuilder conteudo = new StringBuilder(); // armazena o corpo do
 		// e-mail

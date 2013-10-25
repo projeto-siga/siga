@@ -557,7 +557,7 @@ public class PublicacaoDJEBL {
 		call.setProperty(Call.SOAPACTION_URI_PROPERTY,
 				"http://tempuri.org/ExcluirDocumento");
 
-		String siglaUnidade = obterUnidadeDocumento(mov.getExDocumento());
+		String siglaUnidade = mov.getLotaPublicacao();
 
 		System.out.println("\n\n DJE exclusao "
 				+ mov.getExDocumento().getCodigo()

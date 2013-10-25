@@ -3,6 +3,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>  
 
 <mod:modelo>
 	<mod:entrevista>
@@ -75,13 +76,13 @@ first-page-body {
 		<br />
 		<br />
 		<p align="justify" style="line-height: 200%">Eu,
-		${doc.subscritor.descricao}, ocupante do cargo efetivo de ${doc.subscritor.cargo.nomeCargo},
+		${doc.subscritor.descricao}, nascido no dia  <fmt:formatDate pattern="dd/MM/yyyy" value="${doc.subscritor.dataNascimento}" />, ocupante do cargo efetivo de ${doc.subscritor.cargo.nomeCargo},
 		área ${area}, do quadro pessoal da Seção Judiciária do Rio de Janeiro, matrícula nº
 		RJ${doc.subscritor.matricula}, venho requerer a V. Exa. a inscrição no
 		Concurso Nacional de Remoção a Pedido Mediante Permuta ${anoRemocao}, com base
 		no art. 20 da Lei nº 11.416/2006 c/c a Lei nº 8.112/1990, e nos termos
 		da Portaria Conjunta nº 3/2007, da Resolução 3/2008 alterada pela
-		Resolução nº 66/2009 do Conselho da Justiça Federal e declaro que
+		Resolução nº 66/2009 e pela Resolução n° 229/2013 do Conselho da Justiça Federal e declaro que
 		concordo com os termos do Edital do CJF de ${dataEdital}.</p>
 		<br />
 		<br />

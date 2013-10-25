@@ -55,7 +55,7 @@
 				<div id="dados-assinatura" style="visible: hidden">
 				    <c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action" />
 		   	 	    <c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/siga/principal.action"  />
-		    	    <c:set var="urlPath" value="/${request.contextPath}/expediente" />
+		    	    <c:set var="urlPath" value="${request.contextPath}" />
 		
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
@@ -130,7 +130,7 @@
 			            <td width="49%"align="left">${doc.descrDocumento}</td>			            				    
 			        </tr>			         		         
 			        <ww:hidden name="pdf${x}" value="${doc.sigla}" />
-				    <ww:hidden name="url${x}" value="doc/${doc.codigoCompacto}.pdf"/>
+				    <ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${doc.codigoCompacto}.pdf"/>
 			    </c:forEach>   
 			 </table>
 	         </div>

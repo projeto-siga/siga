@@ -73,6 +73,7 @@ public class SigaCpSinc {
 	// renato (8)
 
 	private static boolean modoLog = false;
+	protected static int maxSinc = -1;
 
 	private String servidor = "";
 
@@ -190,7 +191,7 @@ public class SigaCpSinc {
 					manterNomeExibicao(opr.getAntigo(), opr.getNovo());
 				}
 				
-				manterHistoricoPessoaSeNecessario(opr);
+				manterHistoricoSeNecessario(opr);
 
 
 			}
@@ -218,7 +219,19 @@ public class SigaCpSinc {
 				log("");
 				log("");
 				CpDao.getInstance().rollbackTransacao();
-			} else {
+			} else if (maxSinc>0 && list.size()>maxSinc){
+				log("");
+				log("");
+				log("***ATENÇÃO***: Limite de operações por sincronismo excedido!");
+				log("Operações a serem executadas: " + list.size() + "\nOperações permitidas: " +maxSinc);
+				log("Ajuste o paâmetro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
+				log("As alterações não serão efetivadas! Executando rollback...");
+				log("");
+				log("");
+
+				CpDao.getInstance().rollbackTransacao();
+			}else{
+				
 				CpDao.getInstance().commitTransacao();
 				log("Transação confirmada");
 			}
@@ -234,12 +247,13 @@ public class SigaCpSinc {
 	}
 
 	/**
-	 * Verifica se a pessoa que está sendo incluída é uma pessoa que já existe e foi 
+	 * Verifica se a entidade que está sendo incluída é uma entidade que já existe e foi 
 	 * removida indevidamente ocasionando a perda do histórico
 	 * @param opr 
 	 * @return
 	 */
-	private void manterHistoricoPessoaSeNecessario(Item opr) {
+	private void manterHistoricoSeNecessario(Item opr) {
+		//Pessoa
 		if (opr.getNovo()!=null && opr.getNovo() instanceof DpPessoa){
 			DpPessoa pesNova = (DpPessoa) opr.getNovo();
 			if (opr.getOperacao().equals(Operacao.incluir)){
@@ -250,13 +264,72 @@ public class SigaCpSinc {
 						DpPessoa pesAnterior = historicoPessoa.get(0);	
 						if (pesAnterior!=null && !pesAnterior.getIdInicial().equals(pesNova.getIdInicial())){
 							pesNova.setIdInicial(pesAnterior.getIdInicial());
-							log("AVISO: ID_INICIAL reconectada (" + pesNova.getSigla() + ")" );
+							log("AVISO (PESSOA): ID_INICIAL reconectada (" + pesNova.getSigla() + ")" );
 						}
 
 					}
 			}
+			
 		}
 		
+		//Lotacao
+		if (opr.getNovo()!=null && opr.getNovo() instanceof DpLotacao){
+
+			DpLotacao novo = (DpLotacao) opr.getNovo();
+			if (opr.getOperacao().equals(Operacao.incluir)){
+					List<DpLotacao> historico = (List<DpLotacao>) CpDao.getInstance().consultarFechadosPorIdExterna(DpLotacao.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
+					
+					if (historico.size() > 0){
+						DpLotacao anterior = historico.get(0);	
+						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
+							novo.setIdInicial(anterior.getIdInicial());
+							log("AVISO (LOTACAO): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
+						}
+
+					}
+			}
+			
+		}
+		
+		//Cargo
+		if (opr.getNovo()!=null && opr.getNovo() instanceof DpCargo){
+
+			DpCargo novo = (DpCargo) opr.getNovo();
+			if (opr.getOperacao().equals(Operacao.incluir)){
+					List<DpCargo> historico = (List<DpCargo>) CpDao.getInstance().consultarFechadosPorIdExterna(DpCargo.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
+					
+					if (historico.size() > 0){
+						DpCargo anterior = historico.get(0);	
+						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
+							novo.setIdInicial(anterior.getIdInicial());
+							log("AVISO (CARGO): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
+						}
+
+					}
+			}
+			
+		}
+		
+		//Funcao confianca
+		if (opr.getNovo()!=null && opr.getNovo() instanceof DpFuncaoConfianca){
+
+			DpFuncaoConfianca novo = (DpFuncaoConfianca) opr.getNovo();
+			if (opr.getOperacao().equals(Operacao.incluir)){
+					List<DpFuncaoConfianca> historico = (List<DpFuncaoConfianca>) CpDao.getInstance().consultarFechadosPorIdExterna(DpFuncaoConfianca.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
+					
+					if (historico.size() > 0){
+						DpFuncaoConfianca anterior = historico.get(0);	
+						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
+							novo.setIdInicial(anterior.getIdInicial());
+							log("AVISO (FUNCAO CONFIANCA): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
+						}
+
+					}
+			}
+			
+		}
+
+
 	}
 
 	private void manterNomeExibicao(Sincronizavel antigo, Sincronizavel novo) {
@@ -287,6 +360,11 @@ public class SigaCpSinc {
 		for (String param : Arrays.asList(pars)) {
 			if (param.equals("-modoLog=true")) {
 				modoLog = true;
+			}
+			
+			if(param.startsWith("-maxSinc=")){
+				maxSinc = Integer.valueOf(param.split("=")[1]);
+				System.out.println("MAX SINC = " + maxSinc);
 			}
 		}
 
@@ -1287,5 +1365,12 @@ public class SigaCpSinc {
 	 */
 	protected void setDestinatariosExtras(String destinatarios) {
 		this.destinatariosExtras = destinatarios;
+	}
+
+	protected void exibirMensagemMaxSinc(List<Item> list) {
+		log("***ATENÇÃO***: Limite de operações por sincronismo excedido!");
+		log("Operações a serem executadas: " + list.size() + "\nOperações permitidas: " +maxSinc);
+		log("Ajuste o paâmetro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
+		log("As alterações não serão efetivadas! Executando rollback...");
 	}
 }

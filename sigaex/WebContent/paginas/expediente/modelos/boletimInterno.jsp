@@ -21,7 +21,7 @@
 			<mod:texto titulo="Setores Responsáveis" var="setoresResponsaveis" valor="DIRFO: NSDF / SGP: SEPRF, SEBEN, SECAD, SELEG, SELOT, SESAU / SOF / SG" largura="90"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Geração e impressão" var="geraImpress" valor="SID/CIPE" largura="90"/>
+			<mod:texto titulo="Geração" var="geraImpress" valor="SID/CIPE" largura="90"/>
 		</mod:grupo>
 		
 		<mod:grupo titulo="Documentos a Publicar">

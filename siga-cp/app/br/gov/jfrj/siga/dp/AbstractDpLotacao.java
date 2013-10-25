@@ -57,10 +57,8 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@Desconsiderar
 	private Long idLotacaoIni;
 	@Column(name = "NOME_LOTACAO", nullable = false)
-	@Desconsiderar
 	private String nomeLotacao;
 	@Column(name = "SIGLA_LOTACAO")
-	@Desconsiderar
 	private String siglaLotacao;
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_FIM_LOT")

@@ -1297,6 +1297,23 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			if(ultimaMovimentacaoDaReferencia.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO
 					&& ultimaMovimentacaoDaReferencia.getDtMov().after(exUltMovNaoCanc.getDtMov()))
 				return false;
+			
+			//Verifica se o mobil de referência já recebeu outras movimentações depois da movimentação que vai ser cancelada.
+			if(mob.doc().isEletronico()
+					&& exUltMovNaoCanc.getExMobilRef() != null
+					&& exUltMovNaoCanc.getExMobilRef().doc().isNumeracaoUnicaAutomatica()) {
+				
+				for (ExMovimentacao movDoMobilRef : exUltMovNaoCanc.getExMobilRef().getCronologiaSet()) {
+					if(movDoMobilRef.getIdMov().equals(exUltMovNaoCanc.getIdMov()))
+						break;
+
+					if(!movDoMobilRef.isCancelada() &&
+							movDoMobilRef.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA &&
+							movDoMobilRef.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO &&
+							movDoMobilRef.getDtIniMov().after(exUltMovNaoCanc.getDtIniMov()))
+						return false;
+				}
+			}
 		}
 		
 
@@ -1531,7 +1548,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 */
 	public boolean podeCriarVolume(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) {
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 
 		if (!mob.doc().isProcesso())
 			return false;
@@ -1539,6 +1556,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getUltimoVolume() != null
 				&& (mob.doc().getUltimoVolume().isEmTransito() || mob.doc().getUltimoVolume().isArquivado()))
 			return false;
+		
+		if (!podeMovimentar(titular, lotaTitular, mob))
+			return false;		
 		
 		if (mob.doc().getDtFechamento() != null
 				&& mob.doc().getUltimoVolume().isEncerrado()) {
@@ -1671,12 +1691,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeDespachar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-
-		// Verifica se o despacho já está assinado
-		for (CpMarca marca : mob.getExMarcaSet()) {
-			if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA)
-				return false;
-		}
 
 		return (mob.isVia() || mob.isVolume())
 				&& !mob.isEmTransito()

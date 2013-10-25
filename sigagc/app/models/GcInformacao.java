@@ -437,6 +437,8 @@ public class GcInformacao extends GenericModel {
 	}
 
 	public boolean isContemArquivos() {
+		if (movs == null)
+			return false;
 		for (GcMovimentacao m : movs)
 			if (m.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO)
 				return true;
@@ -444,7 +446,7 @@ public class GcInformacao extends GenericModel {
 	}
 
 	public boolean fts(String[] palavras) {
-		String s = arq.titulo + " "
+		String s = arq.titulo + " " + arq.classificacao + " "
 				+ new String(arq.conteudo, Charset.forName("utf-8"));
 		s = s.toLowerCase();
 

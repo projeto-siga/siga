@@ -180,7 +180,7 @@ public class PrincipalAction extends SigaActionSupport {
 					.split(";");
 
 			if (copiaSigla.startsWith("SR"))
-				uRLExibir = "/sigasr/exibir/" + response[1];
+				uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
 			else
 				uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];

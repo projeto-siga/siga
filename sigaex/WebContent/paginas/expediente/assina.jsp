@@ -53,12 +53,13 @@
 					<ww:hidden id="pdfchk_0" name="pdfchk_${doc.idDoc}"
 						value="${sigla}" />
 					<ww:hidden id="urlchk_0" name="urlchk_${doc.idDoc}"
-						value="doc/${doc.codigoCompacto}.pdf" />
+						value="/arquivo/exibir.action?arquivo=${doc.codigoCompacto}.pdf" />
+				
 					<c:set var="jspServer"
 						value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/assinar_gravar.action" />
 					<c:set var="nextURL"
 						value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}" />
-					<c:set var="urlPath" value="/${request.contextPath}/expediente" />
+					<c:set var="urlPath" value="${request.contextPath}" />
 
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />

@@ -96,7 +96,7 @@ public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 	@Column(name = "UF_ORGAO")
 	private String ufOrgao;
 
-	@Formula(value = "FG_ATIVO")
+	@Column(name = "FG_ATIVO")
 	private String ativo;
 
 	@ManyToOne(fetch = FetchType.LAZY)

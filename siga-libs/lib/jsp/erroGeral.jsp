@@ -6,40 +6,35 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<c:catch>
-	<c:if test="${empty exceptionStack}">
+<c:catch var="selectException">
+	<c:if test="${empty exceptionGeral or empty exceptionStackGeral}">
 		<%
-			java.lang.Throwable t = null;
-					if (pageContext != null
-							&& pageContext.getErrorData() != null
-							&& pageContext.getErrorData().getThrowable() != null) {
-						t = pageContext.getErrorData().getThrowable();
-						if (!t.getClass().getSimpleName()
-								.equals("AplicacaoException")
-								&& t.getCause() != null) {
-							if (t.getCause().getClass().getSimpleName()
+			java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
+			if (t != null) {
+				if (!t.getClass().getSimpleName()
+						.equals("AplicacaoException")
+						&& t.getCause() != null) {
+					if (t.getCause().getClass().getSimpleName()
+							.equals("AplicacaoException")) {
+						t = t.getCause();
+					} else if (t.getCause().getCause() != null
+							&& t.getCause().getCause().getClass()
+									.getSimpleName()
 									.equals("AplicacaoException")) {
-								t = t.getCause();
-							} else if (t.getCause().getCause() != null
-									&& t.getCause().getCause().getClass()
-											.getSimpleName()
-											.equals("AplicacaoException")) {
-								t = t.getCause().getCause();
-							}
-						}
-						// Get the ErrorData
-						pageContext.getRequest().setAttribute("exception", t);
-						java.io.StringWriter sw = new java.io.StringWriter();
-						java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-						t.printStackTrace(pw);
-						pageContext.getRequest().setAttribute("exceptionStack",
-								sw.toString());
-
+						t = t.getCause().getCause();
 					}
+				}
+				// Get the ErrorData
+				pageContext.getRequest().setAttribute("exceptionGeral", t);
+				java.io.StringWriter sw = new java.io.StringWriter();
+				java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+				t.printStackTrace(pw);
+				pageContext.getRequest().setAttribute("exceptionStackGeral",
+						sw.toString());
+			}
 		%>
 	</c:if>
 </c:catch>
-
 <c:catch var="catchException">
 	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim">
 		<!--
@@ -63,18 +58,18 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 							<td align="center" valign="middle">
 								<table class="form" width="50%">
 									<c:catch>
-										<c:if test="${not empty exception}">
-											<c:if test="${not empty exception.message}">
+										<c:if test="${not empty exceptionGeral}">
+											<c:if test="${not empty exceptionGeral.message}">
 												<tr>
-													<td style="text-align: center; padding-top: 10px;"><h3>${exception.message}</h3>
+													<td style="text-align: center; padding-top: 10px;"><h3>${exceptionGeral.message}</h3>
 													</td>
 												</tr>
 											</c:if>
-											<c:if test="${not empty exception.cause}">
+											<c:if test="${not empty exceptionGeral.cause}">
 
 												<tr>
 													<td
-														style="text-align: center;"><h4>${exception.cause.message}</h4></td>
+														style="text-align: center;"><h4>${exceptionGeral.cause.message}</h4></td>
 												</tr>
 											</c:if>
 										</c:if>
@@ -85,7 +80,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 						<tr>
 							<td style="text-align: center; padding:0;">
 								<div style="display: none; padding: 8pt;" align="left" id="stack">
-									<pre style="font-size: 8pt;">${exceptionStack}</pre>
+									<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
 								</div>
 							</td>
 						</tr>

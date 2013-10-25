@@ -77,11 +77,11 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 			final String tarefa) throws Exception {
 		WfConfiguracao cfgFiltro = new WfConfiguracao();
 
-		cfgFiltro.setCargo(titularIniciador.getCargo());
+		cfgFiltro.setCargo(titularIniciador!=null?titularIniciador.getCargo():null);
 		cfgFiltro.setOrgaoUsuario(lotaTitularIniciador.getOrgaoUsuario());
-		cfgFiltro.setFuncaoConfianca(titularIniciador.getFuncaoConfianca());
+		cfgFiltro.setFuncaoConfianca(titularIniciador!=null?titularIniciador.getFuncaoConfianca():null);
 		cfgFiltro.setLotacao(lotaTitularIniciador);
-		cfgFiltro.setDpPessoa(titularIniciador);
+		cfgFiltro.setDpPessoa(titularIniciador!=null?titularIniciador:null);
 		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(
 				tipoConfig, CpTipoConfiguracao.class, false));
 

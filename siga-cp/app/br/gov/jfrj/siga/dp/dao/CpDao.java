@@ -42,10 +42,10 @@ import javax.crypto.NoSuchPaddingException;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -75,6 +75,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
+import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -140,6 +141,18 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome() {
+		try {
+			final Query query = getSessao().getNamedQuery(
+					"consultarCpOrgaoOrdenadoPorNome");
+			final List<CpOrgao> l = query.list();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpOrgao consultarPorSigla(final CpOrgao o) {
@@ -171,6 +184,68 @@ public class CpDao extends ModeloDao {
 		final List<CpServico> l = query.list();
 		if (l.size() != 1)
 			return null;
+		return l.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public CpServico consultarCpServicoPorChave(String chave) {
+		// Cria uma cache region específica da classe para garantir que os
+		// objetos armazenados por uma aplicação não seja recuperados por outra.
+		// Isso causa ClassCastException.
+		final String cRegion = CACHE_CORPORATIVO + "_"
+				+ this.getClass().getSimpleName();
+		Cache cache = CacheManager.getInstance().getCache(cRegion);
+		if (cache == null) {
+			CacheManager manager = CacheManager.getInstance();
+			manager.addCache(cRegion);
+			cache = manager.getCache(cRegion);
+			CacheConfiguration config;
+			config = cache.getCacheConfiguration();
+			config.setEternal(true);
+			config.setMaxElementsInMemory(10000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
+		}
+		Element element;
+		if ((element = cache.get(chave)) != null) {
+			return (CpServico) element.getValue();
+		}
+
+		StringBuilder sb = new StringBuilder(50);
+		boolean supress = false;
+		for (int i = 0; i < chave.length(); i++) {
+			final char ch = chave.charAt(i);
+			if (ch == ';') {
+				sb.append('-');
+				supress = false;
+				continue;
+			}
+			if (ch == ':') {
+				supress = true;
+				continue;
+			}
+			if (!supress)
+				sb.append(ch);
+		}
+		String sigla = sb.toString();
+
+		final Query query = getSessao().getNamedQuery(
+				"consultarPorSiglaStringCpServico");
+		query.setString("siglaServico", sigla);
+
+		query.setCacheable(true);
+		query.setCacheRegion(CACHE_QUERY_HOURS);
+
+		final List<CpServico> l = query.list();
+		if (l.size() != 1)
+			return null;
+
+		// Força a carga de algums campos para garantir o lazy load.
+		CpServico srv = (CpServico) l.get(0).getImplementation();
+		Object o1 = srv.getCpServicoPai().getDescricao();
+		Object o2 = srv.getCpTipoServico().getDscTpServico();
+
+		cache.put(new Element(chave, srv));
 		return l.get(0);
 	}
 
@@ -949,8 +1024,8 @@ public class CpDao extends ModeloDao {
 					.getIdPessoaIni());
 			query.setLong("idLotaSubstitutoIni", exemplo.getLotaSubstituto()
 					.getIdLotacaoIni());
-			//query.setCacheable(true);
-			//query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
+			// query.setCacheable(true);
+			// query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
 			return query.list();
 		} catch (final IllegalArgumentException e) {
 			throw e;
@@ -968,8 +1043,8 @@ public class CpDao extends ModeloDao {
 			query.setLong("idTitularIni", exemplo.getTitular().getIdPessoaIni());
 			query.setLong("idLotaTitularIni", exemplo.getLotaTitular()
 					.getIdLotacaoIni());
-			//query.setCacheable(true);
-			//query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
+			// query.setCacheable(true);
+			// query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
 			return query.list();
 		} catch (final IllegalArgumentException e) {
 			throw e;
@@ -1077,7 +1152,8 @@ public class CpDao extends ModeloDao {
 	 * e.printStackTrace(); // return null; // } }
 	 */
 	public List<DpPessoa> pessoasPorLotacao(Long id,
-			Boolean incluirSublotacoes, Boolean somenteServidor)
+			Boolean incluirSublotacoes, Boolean somenteServidor,
+			SituacaoFuncionalEnum situacoesFuncionais)
 			throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
@@ -1105,36 +1181,36 @@ public class CpDao extends ModeloDao {
 		}
 
 		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>();
-		DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-		flt.setSituacaoFuncionalPessoa("1");
-		String estagiario = "ESTAGIARIO";
-		String juizFederal = "JUIZ FEDERAL";
-		String juizFederalSubstituto = "JUIZ SUBSTITUTO";
-		flt.setNome("");
 		for (DpLotacao lot : sublotacoes) {
-			flt.setLotacao(lot);
-			List<DpPessoa> lst = consultarPorFiltro(flt);
 
-			for (DpPessoa pes : lst) {
-				if (pes.getCargo() == null
-						|| pes.getCargo().getNomeCargo() == null) {
-					lstCompleta.add(pes);
-					continue;
-				}
-				String cargo = pes.getCargo().getNomeCargo().toUpperCase();
-				if (somenteServidor) {
-					if (!cargo.contains(juizFederal)
-							&& !cargo.contains(juizFederalSubstituto)
-							&& !(cargo.contains(estagiario))) {
-						lstCompleta.add(pes);
-					}
-				} else {
-					lstCompleta.add(pes);
-				}
+			Criteria c = HibernateUtil.getSessao().createCriteria(
+					DpPessoa.class);
+			c.createAlias("cargo", "c");
 
+			c.add(Restrictions.eq("lotacao.id", lot.getId()));
+			if (somenteServidor) {
+				c.add(Restrictions.not(Restrictions.in("c.nomeCargo",
+						new String[] { "ESTAGIARIO", "JUIZ SUBSTITUTO",
+								"JUIZ FEDERAL" })));
 			}
+
+			c.add(Restrictions.in("situacaoFuncionalPessoa",
+					situacoesFuncionais.getValor()));
+
+			c.add(Restrictions.isNull("dataFimPessoa"));
+
+			c.addOrder(Order.asc("nomePessoa"));
+
+			lstCompleta.addAll((List<DpPessoa>) c.list());
+
 		}
 		return lstCompleta;
+	}
+
+	public List<DpPessoa> pessoasPorLotacao(Long id,
+			Boolean incluirSublotacoes, Boolean somenteServidor) {
+		return pessoasPorLotacao(id, incluirSublotacoes, somenteServidor,
+				SituacaoFuncionalEnum.APENAS_ATIVOS);
 	}
 
 	public DpPessoa consultarPorCpfMatricula(final long cpf, long matricula) {
@@ -1477,16 +1553,17 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.query.substitutions", "true 1, false 0");
 
 		// Alterado para compatibilizar com hibernate 3.61
-		cfg.setProperty("hibernate.cache.provider_class", "org.hibernate.cache.EhCacheProvider");
-		//cfg.setProperty("hibernate.cache.region.factory_class",
+		cfg.setProperty("hibernate.cache.provider_class",
+				"org.hibernate.cache.SingletonEhCacheProvider");
+		// cfg.setProperty("hibernate.cache.region.factory_class",
 		// "net.sf.ehcache.hibernate.EhCacheRegionFactory");
-		//		"net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
+		// "net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
 
 		cfg.setProperty("hibernate.cache.use_second_level_cache", "true");
 		cfg.setProperty("hibernate.cache.use_query_cache", "true");
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
-		cfg.setProperty("hibernate.default_batch_fetch_size", "200");
+		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
 		// cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
 
 		// descomentar para inpecionar o SQL
@@ -1544,8 +1621,10 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setTimeToIdleSeconds(3600);
 			config.setTimeToLiveSeconds(36000);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		if (!manager.cacheExists(CACHE_QUERY_SECONDS)) {
@@ -1554,8 +1633,10 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setTimeToIdleSeconds(5);
 			config.setTimeToLiveSeconds(5);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		if (!manager.cacheExists(CACHE_QUERY_SUBSTITUICAO)) {
@@ -1564,8 +1645,10 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setTimeToIdleSeconds(300);
 			config.setTimeToLiveSeconds(3600);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		if (!manager.cacheExists(CACHE_SECONDS)) {
@@ -1574,8 +1657,10 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setTimeToIdleSeconds(5);
 			config.setTimeToLiveSeconds(5);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		if (!manager.cacheExists(CACHE_CORPORATIVO)) {
@@ -1584,7 +1669,8 @@ public class CpDao extends ModeloDao {
 			config = cache.getCacheConfiguration();
 			config.setEternal(true);
 			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+			config.setOverflowToDisk(false);
+			config.setMaxElementsOnDisk(0);
 		}
 
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao",
@@ -1627,6 +1713,10 @@ public class CpDao extends ModeloDao {
 				"nonstrict-read-write", CACHE_SECONDS);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao",
 				"nonstrict-read-write", CACHE_QUERY_SUBSTITUICAO);
+
+		// Desabilitado pois o hibernate não permite cache de blobs.
+		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpModelo",
+		// "nonstrict-read-write", CACHE_SECONDS);
 	}
 
 	public DpPessoa getPessoaFromSigla(String sigla) {
@@ -1718,6 +1808,11 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpOrgao> listarOrgaos() {
+		return findByCriteria(CpOrgao.class);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1845,26 +1940,60 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	public List<DpPessoa> consultarPorMatriculaEOrgao(Long matricula, Long idOrgaoUsu,
-			boolean pessoasFinalizadas, boolean ordemDesc) {
+	public List<DpPessoa> consultarPorMatriculaEOrgao(Long matricula,
+			Long idOrgaoUsu, boolean pessoasFinalizadas, boolean ordemDesc) {
 		Criteria c = HibernateUtil.getSessao().createCriteria(DpPessoa.class);
 		c.add(Restrictions.eq("matricula", matricula));
 		c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
-		
-		if (pessoasFinalizadas){
+
+		if (pessoasFinalizadas) {
 			c.add(Restrictions.isNotNull("dataFimPessoa"));
-		}else{
+		} else {
 			c.add(Restrictions.isNull("dataFimPessoa"));
 		}
-		if (ordemDesc){
-			c.addOrder(Order.desc("dataInicioPessoa"));	
-		}else{
+		if (ordemDesc) {
+			c.addOrder(Order.desc("dataInicioPessoa"));
+		} else {
 			c.addOrder(Order.asc("dataInicioPessoa"));
 		}
-		
 
 		return c.list();
 
+	}
+
+	public List<?> consultarFechadosPorIdExterna(Class<?> clazz,
+			String idExterna, Long idOrgaoUsu) {
+		if (clazz == DpLotacao.class) {
+			Criteria c = HibernateUtil.getSessao().createCriteria(
+					DpLotacao.class);
+			c.add(Restrictions.eq("ideLotacao", idExterna));
+			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
+			c.add(Restrictions.isNotNull("dataFimLotacao"));
+			c.addOrder(Order.desc("dataInicioLotacao"));
+			return c.list();
+		}
+
+		if (clazz == DpCargo.class) {
+			Criteria c = HibernateUtil.getSessao()
+					.createCriteria(DpCargo.class);
+			c.add(Restrictions.eq("ideCargo", idExterna));
+			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
+			c.add(Restrictions.isNotNull("dataFimCargo"));
+			c.addOrder(Order.desc("dataInicioCargo"));
+			return c.list();
+		}
+
+		if (clazz == DpFuncaoConfianca.class) {
+			Criteria c = HibernateUtil.getSessao().createCriteria(
+					DpFuncaoConfianca.class);
+			c.add(Restrictions.eq("ideFuncao", idExterna));
+			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
+			c.add(Restrictions.isNotNull("dataFimFuncao"));
+			c.addOrder(Order.desc("dataInicioFuncao"));
+			return c.list();
+		}
+
+		return null;
 	}
 
 }

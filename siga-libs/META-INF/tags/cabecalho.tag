@@ -77,8 +77,11 @@ ${meta}
 
 <link rel="shortcut icon" href="/siga/sigalibs/siga.ico" />
 
+<script language="JavaScript" src="/siga/javascript/jquery/1.10/jquery-1.10.2.min.js" type="text/javascript" />
+<%-- Desabilitado porque requer o jquery 1.7 ou maior. 	
 <script language="JavaScript"
-	src="/siga/javascript/jquery/1.10/jquery-1.10.2.min.js" type="text/javascript"></script>
+	src="/siga/javascript/autogrow.min.js" type="text/javascript"></script>
+--%>	
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
 <script language="JavaScript" type="text/javascript">
@@ -93,6 +96,7 @@ ${meta}
 			else
 				this.beenSubmitted = true;
 		});
+		//$('.autogrow').css('overflow', 'hidden').autogrow();
 	});
 </script>
 <c:if test="${not empty titular}">

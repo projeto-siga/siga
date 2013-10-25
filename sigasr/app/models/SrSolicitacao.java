@@ -52,6 +52,7 @@ import play.db.jpa.JPABase;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
 import util.Util;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
@@ -1460,6 +1461,26 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			s += servico.getGcTags();
 		if (itemConfiguracao != null)
 			s += itemConfiguracao.getGcTags();
+		return s;
+	}
+
+	public String getGcTagAbertura() {
+		String s = "^sr:";
+		if (servico != null)
+			s += Texto.slugify(servico.tituloServico, true, false);
+		if (itemConfiguracao != null)
+			s += "-"
+					+ Texto.slugify(itemConfiguracao.tituloItemConfiguracao,
+							true, false);
+		return s;
+	}
+
+	public String getGcTituloAbertura() {
+		String s = "";
+		if (servico != null)
+			s += servico.tituloServico;
+		if (itemConfiguracao != null)
+			s += " - " + itemConfiguracao.tituloItemConfiguracao;
 		return s;
 	}
 

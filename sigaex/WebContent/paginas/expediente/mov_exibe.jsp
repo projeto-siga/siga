@@ -56,7 +56,7 @@ function visualizarImpressao(via) {
 	else
 		v = ''; 
 	frm.target='_blank'; 
-	frm.action='<c:url value="/"/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
+	frm.action='<c:url value="/arquivo/exibir.action?arquivo="/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
 	frm.submit();
 	frm.target=t;
 	frm.action=a;
@@ -177,9 +177,8 @@ function visualizarImpressao(via) {
 														<%-- TIPO_MOVIMENTACAO_ANEXACAO --%>
 														<c:if test="${exibemov == 'anexacao'}">
 															<tr>
-																<td colspan=2><c:url var='anexo'
-																		value='/anexo/${mov.idMov}/${mov.nmArqMov}' /> <c:url
-																		var='anexo' value='/${mov.nmPdf}' /> <iframe
+																<td colspan=2><c:url var="anexo"
+																		value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" /> <iframe
 																		src="${anexo}" width="100%" height="600"
 																		align="center" style="margin-top: 10px;"> </iframe></td>
 															</tr>
@@ -276,12 +275,13 @@ function visualizarImpressao(via) {
 			<div style="padding-left: 10;">
 				<div id="dados-assinatura" style="visible: hidden">
 					<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
-					<ww:hidden name="urlchk_${mov.idMov}" value="${mov.nmPdf}" />
+					<ww:hidden name="urlchk_${mov.idMov}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
+
 					<c:set var="jspServer"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 					<c:set var="nextURL"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
-					<c:set var="urlPath" value="/${request.contextPath}" />
+					<c:set var="urlPath" value="${request.contextPath}" />
 					
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />

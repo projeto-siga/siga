@@ -60,6 +60,7 @@ public class SrMarca extends CpMarca implements Comparable<SrMarca> {
 			setDpPessoaIni(pessoa.getPessoaInicial());
 		setDpLotacaoIni(lota.getLotacaoInicial());
 		setCpMarcador(JPA.em().find(CpMarcador.class, idMarcador));
+		solicitacao = sol;
 	}
 
 	public String getDescricao() {

@@ -421,6 +421,10 @@ public class Application extends SigaApplication {
 
 	public static void exibir(Long id, boolean completo) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		if (solicitacao == null)
+			throw new Exception("Solicitação não encontrada");
+		else
+			solicitacao = solicitacao.getSolicitacaoAtual();
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
 		render(solicitacao, movimentacao, completo);
@@ -536,7 +540,7 @@ public class Application extends SigaApplication {
 
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO);
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
 		movimentacao.salvar(cadastrante(), lotaTitular());
 
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
@@ -642,9 +646,9 @@ public class Application extends SigaApplication {
 
 	public static void listarAssociacao() throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<List<SrConfiguracao>> listasAssociacoes = SrConfiguracao
+		List<SrConfiguracao> listaAssociacao = SrConfiguracao
 				.listarAssociacoesTipoAtributo();
-		render(listasAssociacoes);
+		render(listaAssociacao);
 	}
 
 	public static void editarAssociacao(Long id) throws Exception {
@@ -653,8 +657,7 @@ public class Application extends SigaApplication {
 		if (id != null)
 			associacao = (SrConfiguracao) JPA.em()
 					.find(SrConfiguracao.class, id).getConfiguracaoAtual();
-		List<SrTipoAtributo> tiposAtributo = SrTipoAtributo.listar();
-		render(associacao, tiposAtributo);
+		render(associacao);
 	}
 
 	public static void gravarAssociacao(SrConfiguracao associacao)

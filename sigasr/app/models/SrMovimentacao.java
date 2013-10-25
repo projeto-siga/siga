@@ -52,10 +52,6 @@ public class SrMovimentacao extends GenericModel {
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtIniMov;
 
-	@Column(name = "DT_FIM_MOV")
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date dtFimMov;
-
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQUIVO")
 	public SrArquivo arquivo;
@@ -183,7 +179,7 @@ public class SrMovimentacao extends GenericModel {
 		super.save();
 		// Edson: atualizando o srMovimentacaoSet...
 		solicitacao.refresh();
-		solicitacao.atualizarMarcas(solicitacao);
+		solicitacao.atualizarMarcas();
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.NUNCA
@@ -194,14 +190,16 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public void desfazer(DpPessoa pessoa, DpLotacao lota) throws Exception {
-		SrMovimentacao ultimaValida = getAnterior();
 		SrMovimentacao movCanceladora = new SrMovimentacao(this.solicitacao);
 		movCanceladora.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		movCanceladora.descrMovimentacao = "Cancelando "
 				+ tipoMov.nome.toLowerCase() + " nº " + numSequencia;
+
+		SrMovimentacao ultimaValida = getAnterior();
 		movCanceladora.atendente = ultimaValida.atendente;
 		movCanceladora.lotaAtendente = ultimaValida.lotaAtendente;
+
 		movCanceladora.salvar(pessoa, lota);
 		this.movCanceladora = movCanceladora;
 		this.salvar();

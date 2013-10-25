@@ -9,9 +9,11 @@
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
 			${solicitacao.itemConfiguracao?.descricao} - ${solicitacao.servico?.descricao}
 			</p>
-			<p style="font-size: 9pt;">
-			${solicitacao.descrSolicitacao}
-			</p>
+			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descrSolicitacao}</p>
+			<script language="javascript">
+				var descricao = document.getElementById('descrSolicitacao');
+				descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
+			</script>
 			#{list items:solicitacao.atributoSet, as:'att'}
 				#{if att.valorAtributo}
 				<p style="font-size: 9pt; padding: 0px 10px"><b>${att.tipoAtributo.nomeTipoAtributo}:</b> ${att.valorAtributo}</p>
@@ -207,13 +209,12 @@
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Arquivos Anexos</h3>
-				#{if solicitacao.arquivo}
 				<p>
-					#{arquivo arquivo:solicitacao.arquivo /} 
-				</p>
-				#{/if}
-				<p>
-					#{list items:solicitacao.anexacoes, as:'anexacao'}
+					#{list items:solicitacao.arquivosAnexosNaCriacao, as:'anexo'}
+						#{arquivo arquivo:anexo /} <br/>
+					#{/list}
+					
+					#{list items:solicitacao.movimentacoesAnexacao, as:'anexacao'}
 						#{arquivo arquivo:anexacao.arquivo /} ${anexacao.descrMovimentacao}<br/>
 					#{/list}
 				</p>

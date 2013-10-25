@@ -71,10 +71,8 @@ function carregouServico(response, param){
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-		<h2>#{if solicitacao.idSolicitacao}${solicitacao.codigo}#{/if}
-			#{else} #{if solicitacao.solicitacaoPai}Solicitação filha de
-			${solicitacao.solicitacaoPai.codigo}#{/if} #{else}Cadastro de
-			solicitação#{/else}#{/else}</h2>
+		<h2>#{if solicitacao.idSolicitacao || solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
+			#{else}Cadastro de solicitação#{/else}</h2>
 		<div class="gt-content-box gt-form">
 
 			#{form @Application.gravar(),

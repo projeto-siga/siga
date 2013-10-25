@@ -8,44 +8,44 @@
 			<col width="15%" />
     		<col width="30%" />
     		<col width="10%" />
-    		<col width="10%" />
     		<col width="15%" />
-    		<col width="20%" />
+    		<col width="15%" />
+    		<col width="15%" />
     		<thead>
 				<tr class="gt-celula-nowrap">
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Solicitante</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Aberto</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Situação</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Última Movimentação</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 4px;">Código</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 4px;">Teor</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 4px;">Solicitante</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 4px;">Aberto</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 4px;">Situação</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 4px;">Último Andamento</th>
 				</tr>
 			</thead>
 			<tbody>
 			#{list items:listaSolicitacao, as:'sol'}	
 			<tr>
-			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 4px;">
 						<a href="@{Application.exibir(sol.idSolicitacao)}">
 							${sol.codigo}
 						</a>	
 			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrSolicitacao">
+			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 4px; border-bottom: 1px solid #ccc !important;" "id="descrSolicitacao">
 			<b style="color: #333">
-			${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}:</b>&nbsp;
-			#{selecionado sigla:sol?.descrSolicitacao,descricao:sol?.descrSolicitacao /}
+			${sol.itemConfiguracao?.descricao}:</b>&nbsp;
+			#{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}
 			</td>
 				
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;" >
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 4px;" >
 			#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
 			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
 			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 4px;">
 			#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
 			</td>						
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				<b>${sol?.situacaoStringSemLota}, ${sol?.lotaAtendente.siglaLotacao}</b></td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				${sol?.ultimaMovimentacao.descrMovimentacao}
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 4px;">
+				<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 4px;">
+				#{selecionado sigla:sol.ultimoAndamento?.descrMovimentacao,descricao:sol.ultimoAndamento?.descrMovimentacao /}
 			</tr>		
 			</tbody>			
 			#{/list}

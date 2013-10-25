@@ -122,7 +122,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 				detectGrupo.continuar();
 			}
 			
-			if(detectGrupo.fazParteDoGrupo(t.getNome()) && t.getNumeroDocumento().equals(ultimoDoc)){
+			if(detectGrupo.fazParteDoGrupo(t.getNome())){
 				grupoAtual.add(t);
 			}
 			

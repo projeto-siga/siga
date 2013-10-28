@@ -429,8 +429,9 @@ public class Application extends SigaApplication {
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		TreeSet<SrSolicitacao> solicitacao = lista.getSolicSet();
-		boolean editar = true;
-		render(solicitacao, lista, editar);
+		boolean editar = lista.podeEditar(lotaTitular());
+		boolean priorizar = lista.podePriorizar(lotaTitular());
+		render(solicitacao, lista, editar, priorizar);
 	}
 
 	/*

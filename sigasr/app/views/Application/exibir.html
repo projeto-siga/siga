@@ -201,13 +201,6 @@
 	</div>
 	</div>
 </div>
-
-
-
-<div class="gt-bd" style="padding-bottom: 0px;">
-	<div class="gt-content">
-		<h3>Movimentações</h3>
-	</div>
 	
 	#{if solicitacao.temArquivosAnexos()}
 	<div class="gt-sidebar">
@@ -234,8 +227,6 @@
 		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?${solicitacao.gcTags.raw()}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
 </script>
 #{/if}
-
-
 
 #{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
 <div class="gt-content-box gt-form">

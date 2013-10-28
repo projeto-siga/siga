@@ -486,7 +486,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					movIncl = movimentacao;
 		return movIncl;
 	}
-
+	
 	public SrMovimentacao getUltimaMovimentacao() {
 		for (SrMovimentacao movimentacao : getMovimentacaoSet())
 			return movimentacao;
@@ -1285,10 +1285,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrLista> getListaDisponivel() {
+		SrLista rol = new SrLista();
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.lista != null //&& mov.movReversora == null
-					)
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)
+				rol = mov.lista;
+			if (mov.lista != null && mov.lista != rol) 
 				listaCompleta.add(mov.lista);
 		}
 		SrLista lista = new SrLista();
@@ -1304,10 +1306,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public List<SrLista> getListaAssociada() {
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
+		ArrayList<SrLista> listas = new ArrayList<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA 
-					//&& mov.movReversora == null
-					)
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
+				listas.add(mov.lista);
+			} else if ((!mov.isCancelada())
+					&& (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA 
+							|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
+					&& (!listas.contains(mov.lista)))
 				listaCompleta.add(mov.lista);
 		}
 		return listaCompleta;	
@@ -1323,6 +1329,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			prioridade = movIncl.prioridade;
 		}	
 		return prioridade;
+	}
+	
+	public SrMovimentacao getMovPrioridade(SrLista lista) throws Exception{
+		SrMovimentacao mov =  new SrMovimentacao();
+		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
+		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
+		if (movAltAnt != null) {
+			mov =  movAltAnt;
+		} else if (movIncl != null) {
+			mov = movIncl;
+		}	
+		return mov;
 	}
 
 	public void associarLista(SrSolicitacao solicitacao, SrLista lista)
@@ -1347,7 +1365,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Long prioremov = getPrioridade(lista);
 		SrSolicitacao sol = new SrSolicitacao();
 		sol.meuMovimentacaoSet = solicitacao.getMovimentacaoSet();
-		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
 		SrMovimentacao movRev = new SrMovimentacao();
 		movRev.cadastrante = solicitacao.cadastrante;
 		movRev.lotaCadastrante = solicitacao.lotaCadastrante;
@@ -1355,12 +1372,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
 		movRev.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		movRev.solicitacao = solicitacao;
+		movRev.lista = lista;
 		movRev.numSequencia = solicitacao.getNumSeqMov();
 		movRev.salvar();
-		//movIncl.movReversora = movRev;
-		//movIncl.salvar();
 		sol.meuMovimentacaoSet.add(movRev);
-		//sol.meuMovimentacaoSet.add(movIncl);
 		refresh();
 		lista.recalcularPrioridade(prioremov);
 	}

@@ -38,6 +38,8 @@ public class SrTipoMovimentacao extends GenericModel {
 	
 	final static public long TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO = 12;
 
+	final static public long TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA = 13;
+	
 	final static public long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO = 14;
 
 	@Id

@@ -184,26 +184,25 @@
 	</div>
 	#{/if}
 
-	#{if solicitacao.emLista}
-	<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
-			<h3>Listas de Prioridade</h3>
-				<p>
-					#{list items:solicitacao.getListaAssociada(), as:'listassoc'}
-					<tr>
-						<td class="gt-form-row gt-width-66" style="font-size: 13px; font-weight: bold; !important; padding: 7px 10px;">
-						&nbsp;
-						<input type="hidden" name="idlista" value="${listassoc?.idLista}">
-							<a style="color: #365b6d;text-decoration: none" href="@{Application.exibirLista(listassoc?.idLista)}">
-						 	${listassoc?.nomeLista}		
-							</a>	
-						</td>
-					</tr>	
-					#{/list}
-				</p>
-		</div>
+<div class="gt-sidebar">
+	<div class="gt-sidebar-content">
+		<h3>Listas de Prioridades</h3>
+			<p>
+				#{list items:solicitacao.getListaAssociada(), as:'listas'}
+				<tr>
+					<td class="gt-form-row gt-width-66" style="font-size: 13px; font-weight: bold; !important; padding: 7px 10px;">
+					&nbsp;
+					<input type="hidden" name="idlista" value="${listas?.idLista}">
+						<a style="color: #365b6d;text-decoration: none" href="@{Application.exibirLista(listas?.idLista)}">
+						 ${listas?.nomeLista}		
+						</a>	
+					</td>
+				</tr>	
+				#{/list}
+			</p>
 	</div>
-	#{/if}
+	</div>
+</div>
 	
 	#{if solicitacao.temArquivosAnexos()}
 	<div class="gt-sidebar">
@@ -229,8 +228,6 @@
 		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?${solicitacao.gcTags.raw()}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
 </script>
 #{/if}
-
-
 
 #{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
 <div class="gt-content-box gt-form">

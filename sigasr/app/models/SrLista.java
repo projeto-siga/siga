@@ -84,6 +84,7 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public static List<SrLista> listar() {
+		//return SrLista.find("dtReg is null and lotaCadastrante = " + lotaCadastrante.getIdLotacao() + " order by idLista").fetch();
 		return SrLista.find("dtReg is null order by idLista").fetch();
 	}
 
@@ -107,7 +108,7 @@ public class SrLista extends HistoricoSuporte {
 		this.dtReg = new Date();
 		this.save();
 	}
-
+	
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
@@ -130,10 +131,14 @@ public class SrLista extends HistoricoSuporte {
 		return true;
 	}
 
-	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
-		return true;
+	public boolean podeEditar(DpLotacao lota) {
+		return (lota.equals(lotaCadastrante));
 	}
-
+	
+	public boolean podePriorizar(DpLotacao lotaTitular) {
+		return (lotaTitular.equals(lotaCadastrante));
+	}
+	
 	public TreeSet<SrSolicitacao> getSolicSet() throws Exception {
 		/*
 		 * A comparação não mais se aplica porque a prioridade válida no momento
@@ -375,4 +380,5 @@ public class SrLista extends HistoricoSuporte {
 			i++;
 		}
 	}
+
 }

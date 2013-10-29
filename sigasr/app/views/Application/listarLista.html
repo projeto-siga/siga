@@ -18,7 +18,7 @@
 					<tr>
 						<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'"
 						style="cursor: pointer;"> ${lista.nomeLista}</td>
-						<td>${lista.lotaCadastrante}</td>
+						<td>${lista.getlotaCadastrante().getNomeLotacao()}</td>
 					</tr>
 					</a> #{/list}
 				</tbody>

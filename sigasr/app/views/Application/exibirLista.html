@@ -113,7 +113,8 @@ $(function(){
 		<!-- /content box -->
 		<div class="gt-table-buttons">
 		<input type="hidden" name="idLista" value="${lista.idLista}">
-		<input type="button" id="btn" value="Priorizar" class="gt-btn-medium gt-btn-left" />
+		#{if editar} 
+		<input type="button" id="btn" value="Priorizar" class="gt-btn-medium gt-btn-left" />#{/if}
 		<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
 
 		</div>

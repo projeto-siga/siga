@@ -3,23 +3,30 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ page language="java" contentType="text/html; charset=utf-8" buffer="64kb"%>
+<script language="javascript">
+var newwin = null;
+</script>
 
 <mod:modelo>
 	<mod:entrevista>
+        <c:set var="intervaloMsg">
+&nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).        </c:set>
 	<mod:grupo >    
-            <mod:radio titulo="A presente solicitação observa a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF ." var="Antecedencia" valor="1" marcado="não" reler="não" /> </br>
-            <mod:radio titulo="Não foi possível observar a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF, haja vista." var="Antecedencia" valor="2" reler="não" gerarHidden="Não"/>	
+            <mod:radio titulo="A presente solicitação observa a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF ." var="Antecedencia" valor="1" reler="não" marcado="Sim"/> </br>
+            <mod:radio titulo="Não foi possível observar a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF, " var="Antecedencia" valor="2" reler="não" gerarHidden="Não"/>	
+            haja vista&nbsp;&nbsp;<mod:memo colunas="80" linhas="5" var="antecedenciaNao" titulo="" />
+            
     </mod:grupo>	
 		<mod:grupo>		
-			</br><mod:selecao titulo="Número de servidores a serem incluídos"
-				var="numIncluidos"
-				opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20"
-				reler="ajax" idAjax="numIncluidosAjax" />
+			</br><mod:texto titulo="Número de servidores a serem incluídos"
+				var="numIncluidos"	reler="ajax" idAjax="numIncluidosAjax" largura="2"/>
 			<mod:grupo depende="numIncluidosAjax">
 				<c:forEach var="i" begin="1" end="${numIncluidos}">
 					<mod:grupo>
+					</br>
+					_____________________________________________________________________________________________________________________________________________________________________</br></br>
 						<b>Dados do ${i}º servidor que prestará hora extra:</b>
 						<mod:grupo>
 							<mod:pessoa titulo="Matrícula" var="servidor${i}" />							
@@ -43,7 +50,9 @@
 						    		largura="2" maxcaracteres="2" titulo="Horário inicial" var="horaIni${i}${j}" reler="ajax" idAjax="Func$${i}${j}" />h 
 						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" titulo="" largura="2" maxcaracteres="2" var="minutoIni${i}${j}" reler="ajax" idAjax="${i}${j}" />m &nbsp;&nbsp;&nbsp;&nbsp;
-						    		<mod:selecao titulo="Intervalo?" var="intervalo${i}${j}" opcoes="Não;Sim" reler="ajax" idAjax="Func${i}${j}" />&nbsp;&nbsp;&nbsp;&nbsp;
+						    		<span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=125,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${intervaloMsg}');"><u>
+                                    Intervalo?</u></span>
+						    		<mod:selecao titulo="" var="intervalo${i}${j}" opcoes="Não;Sim" reler="ajax" idAjax="Func${i}${j}" />&nbsp;&nbsp;&nbsp;&nbsp;
 						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"largura="2" maxcaracteres="2" titulo="Horário final" var="horaFim${i}${j}" reler="ajax" idAjax="Func${i}${j}" />h
 						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
@@ -51,11 +60,11 @@
 
                             
                                  <c:set var="xintervalo" value="${requestScope[f:concat(f:concat('intervalo',i),j)]}" />
-                                 <c:set var="xhoraIni" value="${requestScope[f:concat(f:concat('horaIni',i),j)]}" />
-                                 <c:set var="xhoraFim" value="${requestScope[f:concat(f:concat('horaFim',i),j)]}" />
-                                 <c:set var="xminutoIni" value="${requestScope[f:concat(f:concat('minutoIni',i),j)]}" />
-                                 <c:set var="xminutoFim" value="${requestScope[f:concat(f:concat('minutoFim',i),j)]}" />
-
+                                 <fmt:formatNumber var="xhoraIni" value="${requestScope[f:concat(f:concat('horaIni',i),j)]}" maxFractionDigits="0" minIntegerDigits="2" />
+                                 <fmt:formatNumber var="xhoraFim" value="${requestScope[f:concat(f:concat('horaFim',i),j)]}" maxFractionDigits="0" minIntegerDigits="2" />
+                                 <fmt:formatNumber var="xminutoIni" value="${requestScope[f:concat(f:concat('minutoIni',i),j)]}" maxFractionDigits="0" minIntegerDigits="2" />
+                                 <fmt:formatNumber var="xminutoFim" value="${requestScope[f:concat(f:concat('minutoFim',i),j)]}" maxFractionDigits="0" minIntegerDigits="2" />
+                                 
 
                                 <c:if test="${(xhoraIni > 24)}"> 
 								<p style="color:red">Hora de início deve ser menor ou igual a 24</p>
@@ -88,9 +97,11 @@
                                 
                                 
                                  <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao')&& (xintervalo =='Não')}">
-                                     <fmt:formatNumber var="xhoraTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" maxFractionDigits="0" />
-                                     <c:set var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" />
-                                     Total de horas solicitadas:<input type="text" name="totalHoras${i}${j}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}${j}" value="${xminutoTotal}" size="2" readonly/>min  
+                                     <fmt:formatNumber var="xhoraTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" maxFractionDigits="0" minIntegerDigits="2" />
+                                     <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
+                                     
+                                          
+                                Total de horas solicitadas:<input type="text" name="totalHoras${i}${j}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}${j}" value="${xminutoTotal}" size="2" readonly/>min  
                                  </c:if>
                                  
                                  <c:if test="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))<= 60) && (xintervalo =='Sim') }">
@@ -99,8 +110,8 @@
                                  </c:if>  
                                  
                                  <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao') && (xintervalo =='Sim')}">
-                                     <fmt:formatNumber var="xhoraTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)-1)}" maxFractionDigits="0" />
-                                     <c:set var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" />
+                                     <fmt:formatNumber var="xhoraTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)-1)}" maxFractionDigits="0" minIntegerDigits="2" />
+                                     <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2"  />
                                      Total de horas solicitadas:<input type="text" name="totalHoras${i}${j}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}${j}" value="${xminutoTotal}" size="2" readonly/>min
                                                                            
                                  </c:if>
@@ -108,20 +119,7 @@
                                 
                                  
                                 </mod:grupo>
-                                </br>
-                                <mod:radio var="normaRegul${i}${j}" titulo="Esta solicitação observa os limites de horas-extras estabelecidos na norma regulamentar: 2 (duas) horas nos dias úteis, 10 (dez) horas semanais (de domingo a sábado), 44 (quarenta e quatro) horas mensais e 134 (cento e trinta e quatro) horas anuais." reler="nao" marcado="sim" />                                
-								</br>
-								No caso de a solicitação se referir ao adicional de serviço extraordinário realizado em fins de semana e feriados: 
-								  </br> <input type="radio" name="adicionalServico${i}${j}" id="aplica" value="aplica"><label for="male">foram observados os requisitos previstos no <abbr title="&nbsp;&nbsp;&nbsp;&nbsp;A prestação remunerada de serviço extraordinário aos sábados, domingos e feriados somente será admitida nos seguintes casos:
-								- Para realização de atividades essenciais que não possam ser exercidas em dias úteis;
-								- Para eventos que ocorram nesses dias, desde que seja impossível adotar escala de revezamento ou realizar a devida compensação;
-								- Quando ocorrerem situações que requeiram reparos inadiáveis e imediato atendimento e sejam decorrentes de fatos supervenientes;
-								- Para colocação em dia de tarefas específicas mediante plano de esforço concentrado aprovado pelo (...) Diretor da Secretaria Geral, nas Seções Judiciárias.
-								"><u>artigo 47</u></abbr> , caput, da Resolução nº 4/2008-CJF, com a redação dada pela Resolução nº 173/2011-CJF.</label>
-								<br>
-								  <input type="radio" name="adicionalServico${i}${j}" id="naoAplica" value="naoAplica">  <label for="naoAplica">não se aplica.</label><br>
-								  
-								</br></br>
+
 								
 								</mod:grupo>
 							</c:forEach>
@@ -131,13 +129,27 @@
 			</mod:grupo>
 		</mod:grupo>
 		<mod:grupo>
+		<c:set var="artigo47">
+A prestação remunerada de serviço extraordinário aos sábados, domingos e feriados somente será admitida nos seguintes casos:</br>&nbsp;&nbsp;- Para realização de atividades essenciais que não possam ser exercidas em dias úteis;</br>&nbsp;&nbsp; - Para eventos que ocorram nesses dias, desde que seja impossível adotar escala de revezamento ou realizar a devida compensação;</br>&nbsp;&nbsp;- Quando ocorrerem situações que requeiram reparos inadiáveis e imediato atendimento e sejam decorrentes de fatos supervenientes;</br>&nbsp;&nbsp;- Para colocação em dia de tarefas específicas mediante plano de esforço concentrado aprovado pelo (...) Diretor da Secretaria Geral, nas Seções Judiciárias.
+        </c:set>
+<c:set var="artigo">
+            <b>foram observados os requisitos previstos no  
+            <span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=325,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${artigo47}');"><u>
+            artigo 47</u></span>,caput, da Resolução nº 4/2008-CJF, com a redação dada pela Resolução nº 173/2011-CJF. </b>
+</c:set>
+           
+                                </br>
+                                <mod:caixaverif var="normaRegul" titulo="Esta solicitação observa os limites de horas-extras estabelecidos na norma regulamentar: 2 (duas) horas nos dias úteis, 10 (dez) horas semanais (de domingo a sábado), 44 (quarenta e quatro) horas mensais e 134 (cento e trinta e quatro) horas anuais." reler="nao" marcado="Não" obrigatorio="Sim" />                                
+                                </br></br>
+                                No caso de a solicitação se referir ao adicional de serviço extraordinário realizado em fins de semana e feriados:   
+                                  </br> <input type="radio" name="adicionalServico" id="aplica" value="aplica" checked><label for="artigo47">${artigo} </label>
+                                <br>
+                                  <input type="radio" name="adicionalServico" id="naoAplica" value="naoAplica">  <label for="naoAplica">não se aplica.</label><br>
+
+                                </br></br>		      
 			<mod:memo colunas="70" linhas="3"
 				titulo="As horas-extras acima se mostram necessárias, pois (MANIFESTAÇÃO FUNDAMENTADA)"
-				var="motivo" />
-		</mod:grupo>
-		<mod:grupo>
-			<mod:selecao titulo="Horas extras trabalhadas" var="tipoHoraExtra"
-				opcoes="em dias úteis;em fins de semana/feriados" />
+				var="motivoHora" /> 
 		</mod:grupo>
 		<mod:grupo>
 			<mod:memo colunas="70" linhas="2" titulo="As mencionadas tarefas não podem ser realizadas 
@@ -198,9 +210,8 @@
 		<br />
 		<p style="text-align: justify; text-indent: 3cm;">Solicito
 		autorização para prestação de serviço extraordinário segundo a escala
-		abaixo discriminada, com vista ao pagamento do respectivo adicional,
-		de acordo com os artigos 42 e seguintes da Resolução nº 4/2008, do
-		Conselho da Justiça Federal.</p>
+		abaixo discriminada, de acordo com os artigos 42 e seguintes da 
+		Resolução nº 4/2008, do Conselho da Justiça Federal.</p>
 		<br />
 
 		<table width="100%" align="center" border="1" cellpadding="2"
@@ -235,13 +246,13 @@
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('adicionalBanco',i),j)]}</p></td>
-							<td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]} h  
-							${requestScope[f:concat(f:concat('minutoIni',i),j)]}min</p></td>
+							<td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]}:
+							${requestScope[f:concat(f:concat('minutoIni',i),j)]}</p></td>
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
-						    <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]} h  
-                            ${requestScope[f:concat(f:concat('minutoFim',i),j)]} min</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}h  
-                            ${requestScope[f:concat(f:concat('totalMinutos',i),j)]} min</p></td>
+						    <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:  
+                            ${requestScope[f:concat(f:concat('minutoFim',i),j)]}</p></td>
+                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:  
+                            ${requestScope[f:concat(f:concat('totalMinutos',i),j)]}</p></td>
 						</ww:if>
 						<ww:else>
 							<tr>
@@ -252,13 +263,13 @@
                             <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
                             <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
                             <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('adicionalBanco',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]} h  
-                            ${requestScope[f:concat(f:concat('minutoIni',i),j)]}min</p></td>
+                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]} :  
+                            ${requestScope[f:concat(f:concat('minutoIni',i),j)]}</p></td>
                             <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]} h  
-                            ${requestScope[f:concat(f:concat('minutoFim',i),j)]} min</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]} h  
-                            ${requestScope[f:concat(f:concat('totalMinutos',i),j)]} min </p></td>
+                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]} : 
+                            ${requestScope[f:concat(f:concat('minutoFim',i),j)]} </p></td>
+                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]} :  
+                            ${requestScope[f:concat(f:concat('totalMinutos',i),j)]}  </p></td>
 							</tr>
 						</ww:else>
 					</c:forEach>
@@ -268,7 +279,7 @@
 		</c:forEach>
 	</table>
 		<p style="text-align: justify; text-indent: 3cm;">As horas-extras
-		acima se mostram necessárias, pois &nbsp;${motivo}</p>
+		acima se mostram necessárias, pois &nbsp;${motivoHora}</p>
 		<c:if test="${tipoHoraExtra eq 'em fins de semana/feriados'}">
 			<c:set var="tampouco" value="tampouco em dias úteis," scope="request" />
 		</c:if>
@@ -280,7 +291,7 @@
         <p style="text-align: justify; text-indent: 3cm;">
          Não foi possível observar a antecedência mínima de 5 (cinco) 
         dias prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF, 
-        haja vista.</p>
+        haja vista &nbsp; ${antecedenciaNao}</p>
         </c:if>
         
 		<p style="text-align: justify; text-indent: 3cm;">Na hipótese de

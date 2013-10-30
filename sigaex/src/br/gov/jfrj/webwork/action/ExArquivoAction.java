@@ -225,7 +225,7 @@ public class ExArquivoAction extends ExActionSupport {
 		getResponse().setStatus(200);
 		getResponse().setContentLength(getContentLength());
 		getResponse().setContentType(contentType);
-		getResponse().setHeader("content-disposition", getContentDisposition());
+		getResponse().setHeader("Content-Disposition", getContentDisposition());
 		getResponse().getOutputStream().write(ab);
 		getResponse().getOutputStream().flush();
 		getResponse().getOutputStream().close();

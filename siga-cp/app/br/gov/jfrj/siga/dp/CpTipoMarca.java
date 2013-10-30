@@ -28,6 +28,7 @@ import javax.persistence.Table;
 @Entity
 @Table(schema="CORPORATIVO", name="CP_TIPO_MARCA")
 public class CpTipoMarca extends AbstractCpTipoMarca {
-
-	
+	public static final long TIPO_MARCA_SIGA_EX = 1;
+	public static final long TIPO_MARCA_SIGA_SR = 2;
+	public static final long TIPO_MARCA_SIGA_GC = 3;
 }

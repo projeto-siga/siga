@@ -2578,8 +2578,6 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 			
-			incluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
-
 			concluirAlteracao(doc);
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -5309,6 +5307,9 @@ public class ExBL extends CpBL {
 	public void incluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
 		
+		if(doc.getCosignatarios() != null && !doc.getCosignatarios().isEmpty())
+			excluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
+		
 		final List<DpPessoa> cosignatarios = obterCosignatariosDaEntrevista(doc.getForm());
 		
 		if(cosignatarios != null) {
@@ -5316,7 +5317,19 @@ public class ExBL extends CpBL {
 			for (DpPessoa cosignatario : cosignatarios) {
 				
 				incluirCosignatario(cadastrante, lotaCadastrante, doc, null, cosignatario, null);
+			}
+		}
+	}
+	
+	public void excluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
+		
+		for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) {
+			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+					&& m.getExMovimentacaoCanceladora() == null) {
 				
+				
+				excluirMovimentacao(cadastrante, lotaCadastrante, doc.getMobilGeral(), m.getIdMov());
 			}
 		}
 	}
@@ -5330,11 +5343,11 @@ public class ExBL extends CpBL {
 			DpPessoa pessoa;
 			
 			if(chave.contains("cosignatarioSel.sigla")) {
-				String[] dados = chave.split("=");
+				String valor = docForm.get(chave);
 				
-				if(dados != null && dados[1] != null) {
+				if(valor != null) {
 					
-					pessoa = exDao.getPessoaFromSigla(dados[1]);
+					pessoa = exDao.getPessoaFromSigla(valor);
 					
 					if(pessoa != null)
 						list.add(pessoa);

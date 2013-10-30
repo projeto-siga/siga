@@ -52,9 +52,9 @@ public class SrLista extends HistoricoSuporte {
 	@Column(name = "NOME_LISTA")
 	public String nomeLista;
 
-	@Column(name = "DT_REG")
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date dtReg;
+	//@Column(name = "DT_REG")
+	//@Temporal(TemporalType.TIMESTAMP)
+	//public Date dtReg;
 
 	// public void setHisDtFim(Date hisDtFim);
 
@@ -84,8 +84,7 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public static List<SrLista> listar() {
-		//return SrLista.find("dtReg is null and lotaCadastrante = " + lotaCadastrante.getIdLotacao() + " order by idLista").fetch();
-		return SrLista.find("dtReg is null order by idLista").fetch();
+		return SrLista.find("hisDtFim is null order by idLista").fetch();
 	}
 
 	public Long getId() {
@@ -105,8 +104,12 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public void finalizar() {
-		this.dtReg = new Date();
-		this.save();
+		try {
+			((Historico) this).setHisDtFim(new Date());
+			this.save();
+		} catch (ClassCastException cce) {
+			this.save();
+		}
 	}
 	
 	@Override
@@ -114,8 +117,8 @@ public class SrLista extends HistoricoSuporte {
 		return false;
 	}
 
-	public List<SrLista> getListaSet() {
-		List<SrLista> listas = SrLista.find("dtReg is null").fetch();
+	public List<SrLista> getListaSet(DpLotacao lotaCadastrante) {
+		List<SrLista> listas = SrLista.find("hisDtFim is null and lotaCadastrante = " + lotaCadastrante.getId()).fetch();
 		return listas;
 	}
 
@@ -136,6 +139,10 @@ public class SrLista extends HistoricoSuporte {
 	}
 	
 	public boolean podePriorizar(DpLotacao lotaTitular) {
+		return (lotaTitular.equals(lotaCadastrante));
+	}
+	
+	public boolean podeRemover(DpLotacao lotaTitular) {
 		return (lotaTitular.equals(lotaCadastrante));
 	}
 	
@@ -380,5 +387,7 @@ public class SrLista extends HistoricoSuporte {
 			i++;
 		}
 	}
+
+
 
 }

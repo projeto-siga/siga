@@ -9,15 +9,23 @@
 			#{if item?.idItemConfiguracao} <input
 				type="hidden" name="item.idItemConfiguracao"
 				value="${item.idItemConfiguracao}"> #{/if}
+			#{ifErrors}
+			<p class="gt-error">Alguns campos obrigatórios não foram
+				preenchidos ${error}</p>
+			#{/ifErrors}
 			<div class="gt-form-row gt-width-66">
 				<label>Código</label> <input type="text"
 					name="item.siglaItemConfiguracao"
 					value="${item?.siglaItemConfiguracao}" />
+					<span style="color: red">#{error
+					'itemConfiguracao.siglaItemConfiguracao' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Título</label> <input type="text"
 					name="item.tituloItemConfiguracao"
 					value="${item?.tituloItemConfiguracao}" size="100" />
+					<span style="color: red">#{error
+					'itemConfiguracao.tituloItemConfiguracao' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label> <input type="text"

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -804,7 +805,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeAssociarLista(DpLotacao lota, DpPessoa pess) {
-		return true;
+		return !isFechado() && estaCom(lota, pess);
 	}
 
 	public boolean podeTrocarAtendente(DpLotacao lota, DpPessoa pess) {
@@ -1284,7 +1285,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return getListaAssociada().size() > 0;
 	}
 
-	public List<SrLista> getListaDisponivel() {
+	public List<SrLista> getListaDisponivel(DpLotacao lotaTitular) {
 		SrLista rol = new SrLista();
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
@@ -1295,7 +1296,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		SrLista lista = new SrLista();
 		ArrayList<SrLista> listaTodos = new ArrayList<SrLista>();
-		for (SrLista listas : lista.getListaSet()) {
+		for (SrLista listas : lista.getListaSet(lotaTitular)) {
 			if (listas != null)
 				listaTodos.add(listas);
 		}
@@ -1304,16 +1305,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaDisponiveis;
 	}
 
-	public List<SrLista> getListaAssociada() {
-		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
-		ArrayList<SrLista> listas = new ArrayList<SrLista>();
+	public Set<SrLista> getListaAssociada()  {
+		Set<SrLista> listaCompleta = new HashSet<SrLista>();
+		Set<SrLista> listas = new HashSet<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
 				listas.add(mov.lista);
 			} else if ((!mov.isCancelada())
 					&& (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA 
 							|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
-					&& (!listas.contains(mov.lista)))
+					&& (!listas.contains(mov.lista))
+					&& (mov.lista.isHisAtivo()))
 				listaCompleta.add(mov.lista);
 		}
 		return listaCompleta;	

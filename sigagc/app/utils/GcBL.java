@@ -1,7 +1,5 @@
 package utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -23,9 +21,9 @@ import play.db.jpa.JPA;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class GcBL {
 	private static final long TEMPO_NOVIDADE = 7 * 24 * 60 * 60 * 1000L;
@@ -350,7 +348,9 @@ public class GcBL {
 	private static void acrescentarMarca(SortedSet<GcMarca> set,
 			GcInformacao inf, Long idMarcador, Date dtIni, Date dtFim,
 			DpPessoa pess, DpLotacao lota) {
+		CpTipoMarca tipoMarca = CpTipoMarca.findById(CpTipoMarca.TIPO_MARCA_SIGA_GC);
 		GcMarca mar = new GcMarca();
+		mar.setCpTipoMarca(tipoMarca);
 		mar.inf = inf;
 		mar.setCpMarcador((CpMarcador) CpMarcador.findById(idMarcador));
 		if (pess != null)

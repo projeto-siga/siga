@@ -84,7 +84,7 @@ self.ajax_${nomeclean} = function() {
 	id="${nomeclean}_buscar" /> <input type="hidden"
 	name="req${nomeclean}" value="" id="req${nomeclean}" /> <input
 	type="hidden" name="alterouSel" value="" id="alterouSel" /> <input
-	type="text" size="25"
+	type="text" size="25" name="${nomeclean}_sigla"
 	value="${_value?.sigla}" id="${nomeclean}_sigla"
 	onblur="javascript: ajax_${nomeclean}();"
 	onkeypress="return handleEnter(this, event)" ${selecaoDisabled} /> <input type="button"

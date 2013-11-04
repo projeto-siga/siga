@@ -41,14 +41,14 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
 		this.setTitle("Relatório de Solicitações");
-		this.addColuna("Solicitação", 18, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Movimentação", 13, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Descrição", 40, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Solicitação", 20, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Movimentação", 15, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Descrição", 35, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Solicitante", 10, RelatorioRapido.ESQUERDA, true);
-		this.addColuna("Atendente", 13, RelatorioRapido.CENTRO, false);
+		this.addColuna("Atendente", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Situação", 15, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Item de Configuração", 16, RelatorioRapido.CENTRO, false);
-		this.addColuna("Serviço", 16, RelatorioRapido.CENTRO, false);
+		this.addColuna("Serviço", 20, RelatorioRapido.CENTRO, false);
 		return this;
 	}
 

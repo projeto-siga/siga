@@ -1355,7 +1355,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.lotaCadastrante = solicitacao.lotaCadastrante;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "Inclusão em lista";
+		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista + " com a prioridade " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = solicitacao;
 		mov.salvar();

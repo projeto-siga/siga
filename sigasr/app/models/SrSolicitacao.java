@@ -729,6 +729,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						.equivale(pess)) || ultMov.lotaAtendente.equivale(lota));
 	}
 
+	public boolean foiSolicitadaPor(DpLotacao lota, DpPessoa pess) {
+		return (solicitante.equivale(pess) || lotaSolicitante.equivale(lota));
+	}
+
+	public boolean foiCadastradaPor(DpLotacao lota, DpPessoa pess) {
+		return (cadastrante.equivale(pess) || lotaCadastrante.equivale(lota));
+	}
+
 	public boolean isParteDeArvore() {
 		return solicitacaoPai != null
 				|| (getSolicitacaoFilhaSet() != null && !getSolicitacaoFilhaSet()
@@ -762,7 +770,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
-		return estaCom(lota, pess) && isEmAtendimento() && !isFilha();
+		return estaCom(lota, pess) && (isEmAtendimento() || isPendente())
+				&& !isFilha();
 	}
 
 	public boolean podeDesfazerMovimentacao(DpLotacao lota, DpPessoa pess) {
@@ -811,7 +820,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeReabrir(DpLotacao lota, DpPessoa pess) {
-		return isFechado() && estaCom(lota, pess);
+		return isFechado()
+				&& (estaCom(lota, pess) || foiCadastradaPor(lota, pess) || foiSolicitadaPor(
+						lota, pess));
 	}
 
 	public boolean podeAnexarArquivo(DpLotacao lota, DpPessoa pess) {
@@ -909,7 +920,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeFinalizarPreAtendimento(lotaTitular, titular),
 				"Application.finalizarPreAtendimento"));
 
-		operacoes.add(new SrOperacao("lock", "Finalizar Pós_Atendimento",
+		operacoes.add(new SrOperacao("lock", "Finalizar Pós-Atendimento",
 				podeFinalizarPosAtendimento(lotaTitular, titular),
 				"Application.finalizarPosAtendimento"));
 

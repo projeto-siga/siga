@@ -1618,10 +1618,11 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
-
+		} catch (final AplicacaoException e) {
+			cancelarAlteracao();
+			throw e;
 		} catch (final Exception e) {
-			log.error("Ocorreu um erro durante a finalização do processo de gravação da movimentação");
-			log.info("Cancelando alterações da movimentação");
+			log.error("Erro ao assinar movimentação.", e);
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao assinar movimentação.", 0, e);
 		}

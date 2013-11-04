@@ -37,7 +37,9 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.wf.SigaWfProperties;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
@@ -48,7 +50,7 @@ import br.gov.jfrj.siga.wf.util.WfContextBuilder;
  */
 public class RelEstatisticaProcedimento extends RelatorioTemplate {
 
-	private static final double PERCENTUAL_MED_TRUNCADA = 5.0;
+	private Double percentualMediaTruncada = 5.0;
 
 	/**
 	 * Construtor que define os parâmetros que são obrigatórios para a
@@ -85,6 +87,26 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		if (parametros.get("dataFinalAte") == null) {
 			throw new DJBuilderException("Parâmetro dataFinalAte não informado!");
 		}
+		if (parametros.get("percentualMediaTruncada") != null) {
+			Double minMediaTruncada = null;
+			Double maxMediaTruncada = null;
+			try{
+				percentualMediaTruncada = Double.valueOf(((String) parametros.get("percentualMediaTruncada")).replace(",", "."));
+				
+				minMediaTruncada = SigaWfProperties.getRelEstatGeraisMinMediaTrunc();
+				maxMediaTruncada = SigaWfProperties.getRelEstatGeraisMaxMediaTrunc();
+				
+			}catch (Exception e) {
+				throw new AplicacaoException("Não foi possível determinar a média truncada!");
+			}
+
+			if (percentualMediaTruncada < minMediaTruncada || percentualMediaTruncada > maxMediaTruncada){
+				throw new AplicacaoException("A média truncada deve ser entre " + minMediaTruncada + " e " + maxMediaTruncada);
+			}
+			
+		}else{
+			throw new AplicacaoException("Informe o percentual da média truncada!");
+		}
 
 	}
 
@@ -103,7 +125,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		this.addColuna("Mín", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Max", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Méd", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("Média Truncada", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Méd Truncada " + percentualMediaTruncada.toString().replace(".", ",") + "%", 15, RelatorioRapido.CENTRO, false);
 
 		return this;
 	}
@@ -122,7 +144,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Date dataInicialAte = getDataAte("dataInicialAte");
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
-
+		
 		GregorianCalendar calendario = new GregorianCalendar();
 		List<String> dados = new ArrayList<String>();
 
@@ -218,7 +240,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Double media = e.getMediaAritmetica();
 		mediaPI = media.longValue();
 		
-		Double medTrunc = e.getMediaAritmeticaTruncada(PERCENTUAL_MED_TRUNCADA);
+		Double medTrunc = e.getMediaAritmeticaTruncada(percentualMediaTruncada);
 		medTruncPI = medTrunc.longValue();
 
 		// Estatísticas tarefas
@@ -228,7 +250,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 			Double mediaTarefa = e.getMediaAritmetica();
 			mapaMedia.put(tarefa, mediaTarefa.longValue());
 			
-			Double medTruncTarefa = e.getMediaAritmeticaTruncada(PERCENTUAL_MED_TRUNCADA);
+			Double medTruncTarefa = e.getMediaAritmeticaTruncada(percentualMediaTruncada);
 			mapaMedTrunc.put(tarefa, medTruncTarefa.longValue());
 
 		}

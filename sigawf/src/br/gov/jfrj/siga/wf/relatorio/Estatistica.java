@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+
 /**
  * Classe com utilitários estatísticos. Os cálculos são realizados sobre os dados do array
  * fornecido no método setArray().
@@ -75,7 +77,13 @@ public class Estatistica {
 		int de= descartar;
 		int ate= array.length - descartar;
 		
-		double[] elementosConsiderados = Arrays.copyOfRange(array, de, ate);
+		double[] elementosConsiderados=null;
+		if (de<=ate){
+			elementosConsiderados = Arrays.copyOfRange(array, de, ate);	
+		}else{
+			throw new AplicacaoException("Não é possível calcular a média truncada! Verifique se o percentual a ser descartado remove todos os elementos.");
+		}
+		
 		
 		return getMediaAritmetica(elementosConsiderados);
 

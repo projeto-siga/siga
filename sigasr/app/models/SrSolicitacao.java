@@ -292,13 +292,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					+ " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/"
 					+ year + " 23:59','dd/mm/yyyy HH24:mi')";
 		}
-		if (numSequencia != null) {
-			query += " and solicitacaoPai.idSolicitacao = (select idSolicitacao from SrSolicitacao where numSolicitacao = "
-					+ numSolicitacao + " )";
-			query += " and numSequencia = " + numSequencia;
-		} else {
+		if (numSolicitacao != null)
 			query += " and numSolicitacao = " + numSolicitacao;
-		}
+		if (numSequencia == null)
+			query += " and numSequencia is null";
+		else
+			query += " and numSequencia = " + numSequencia;
+
 		SrSolicitacao sol = (SrSolicitacao) JPA.em().createQuery(query)
 				.getSingleResult();
 
@@ -1013,7 +1013,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (orgaoUsuario == null)
 			orgaoUsuario = lotaSolicitante.getOrgaoUsuario();
 
-		if (numSolicitacao == null && solicitacaoPai == null)
+		if (numSolicitacao == null)
 			numSolicitacao = getProximoNumero();
 
 		if (gravidade == null)
@@ -1032,13 +1032,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							+ "configuração e/ou serviço");
 	}
 
-	private Long getNumSeqMov() {
-		Long numSeqMov = find(
-				"select max(numSequencia)+1 from SrMovimentacao where solicitacao.idSolicitacao = "
-						+ idSolicitacao).first();
-		return (numSeqMov != null) ? numSeqMov : 1;
-	}
-
 	public void desfazerUltimaMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante) throws Exception {
 		SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
@@ -1050,6 +1043,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Util.copiar(filha, this);
 		filha.idSolicitacao = null;
 		filha.solicitacaoPai = this;
+		filha.numSolicitacao = this.numSolicitacao;
 		for (SrSolicitacao s : getSolicitacaoFilhaSet())
 			filha.numSequencia = s.numSequencia;
 		if (filha.numSequencia == null)
@@ -1318,15 +1312,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaDisponiveis;
 	}
 
-	public Set<SrLista> getListaAssociada()  {
+	public Set<SrLista> getListaAssociada() {
 		Set<SrLista> listaCompleta = new HashSet<SrLista>();
 		Set<SrLista> listas = new HashSet<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
 				listas.add(mov.lista);
 			} else if ((!mov.isCancelada())
-					&& (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA 
-							|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
+					&& (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA || mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
 					&& (!listas.contains(mov.lista))
 					&& (mov.lista.isHisAtivo()))
 				listaCompleta.add(mov.lista);
@@ -1388,7 +1381,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movRev.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		movRev.solicitacao = solicitacao;
 		movRev.lista = lista;
-		movRev.numSequencia = solicitacao.getNumSeqMov();
 		movRev.salvar();
 		sol.meuMovimentacaoSet.add(movRev);
 		refresh();

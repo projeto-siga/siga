@@ -9,15 +9,23 @@
 			servico?.idServico} <input type="hidden"
 				name="servico.idServico" value="${servico.idServico}">
 			#{/if}
+			#{ifErrors}
+			<p class="gt-error">Alguns campos obrigatórios não foram
+				preenchidos ${error}</p>
+			#{/ifErrors}
 			<div class="gt-form-row gt-width-66">
 				<label>Código</label> <input type="text"
 					name="servico.siglaServico"
 					value="${servico?.siglaServico}" />
+					<span style="color: red">#{error
+					'servico.siglaServico' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Título</label> <input type="text"
 					name="servico.tituloServico"
 					value="${servico?.tituloServico}" size="100"/>
+					<span style="color: red">#{error
+					'servico.tituloServico' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label> <input type="text"

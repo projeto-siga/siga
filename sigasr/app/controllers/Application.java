@@ -230,6 +230,39 @@ public class Application extends SigaApplication {
 			formEditar(solicitacao);
 		}
 	}
+	
+	private static void validarFormEditarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
+
+			if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
+				validation.addError("itemConfiguracao.siglaItemConfiguracao",
+						"Código não informado");
+			}
+			
+			if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
+				validation.addError("itemConfiguracao.tituloItemConfiguracao", "Título não informado");
+			}
+			
+			if (validation.hasErrors()) {
+				render("@editarItem");
+			}
+	}
+	
+	private static void validarFormEditarServico(SrServico servico) {
+		
+		if (servico.siglaServico.equals("")) {
+			validation.addError("servico.siglaServico",
+					"Código não informado");
+		}
+		
+		if (servico.tituloServico.equals("")) {
+			validation.addError("servico.tituloServico", "Título não informado");
+		}
+		
+		if (validation.hasErrors()) {
+			render("@editarServico");
+		}
+		
+	}
 
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
 		validarFormEditar(solicitacao);
@@ -263,7 +296,7 @@ public class Application extends SigaApplication {
 		List<String[]> listaSols = SrSolicitacao
 				.find("select sol.gravidade, count(*) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
-						+ "where sol.idSolicitacao = movimentacao.solicitacao and movimentacao.estado <> 2 "
+						+ "where sol.idSolicitacao = movimentacao.solicitacao and movimentacao.tipoMov <> 7 "
 						+ "and movimentacao.lotaAtendente = "
 						+ lotaTitular().getId() + " "
 						+ "group by sol.gravidade").fetch();
@@ -312,7 +345,7 @@ public class Application extends SigaApplication {
 				.find("select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
-						+ "and movimentacao.estado = 2 "
+						+ "and movimentacao.tipoMov = 7 "
 						+ "and movimentacao.lotaAtendente = "
 						+ lotaTitular().getId()
 						+ " "
@@ -426,7 +459,6 @@ public class Application extends SigaApplication {
 		else
 			solicitacao = solicitacao.getSolicitacaoAtual();
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
-
 		render(solicitacao, movimentacao, completo);
 	}
 
@@ -435,7 +467,8 @@ public class Application extends SigaApplication {
 		TreeSet<SrSolicitacao> solicitacao = lista.getSolicSet();
 		boolean editar = lista.podeEditar(lotaTitular());
 		boolean priorizar = lista.podePriorizar(lotaTitular());
-		render(solicitacao, lista, editar, priorizar);
+		boolean remover = lista.podeRemover(lotaTitular());
+		render(solicitacao, lista, editar, priorizar, remover);
 	}
 
 	/*
@@ -445,21 +478,21 @@ public class Application extends SigaApplication {
 	public static void exibirListaAssoc(Long id) {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		List<SrLista> listas = solicitacao.getListaAssociada();
+		Set<SrLista> listas = solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
 	}
 
 	public static void exibirListaAssoc(Long id, Long idLista) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		List<SrLista> listas = solicitacao.getListaAssociada();
+		Set<SrLista> listas = solicitacao.getListaAssociada();
 		render(solicitacao, editar, listas);
 	}
 
 	public static void associarLista(Long id) {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		List<SrLista> listas = solicitacao.getListaDisponivel();
+		List<SrLista> listas = solicitacao.getListaDisponivel(lotaTitular());
 		render(solicitacao, editar, listas);
 	}
 
@@ -687,6 +720,7 @@ public class Application extends SigaApplication {
 
 	public static void gravarItem(SrItemConfiguracao item) throws Exception {
 		assertAcesso("ADM:Administrar");
+		validarFormEditarItem(item);
 		item.salvar();
 		listarItem();
 	}
@@ -767,6 +801,7 @@ public class Application extends SigaApplication {
 
 	public static void gravarServico(SrServico servico) throws Exception {
 		assertAcesso("ADM:Administrar");
+		validarFormEditarServico(servico);
 		servico.salvar();
 		listarServico();
 	}

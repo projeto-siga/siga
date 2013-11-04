@@ -68,17 +68,17 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 
 		if (parametros.get("situacao").equals("Todas")) {
 			List<SrSolicitacao> lista = SrSolicitacao.find(
-				"select sol.idSolicitacao, to_char(mov.dtReg,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
+				"select sol.idSolicitacao, to_char(mov.dtIniMov,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
 				"sol.lotaSolicitante.siglaLotacao, mov.lotaAtendente.siglaLotacao, " +
-				"mov.estado, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
+				"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
 				"from SrSolicitacao sol, SrMovimentacao mov " +
 				"where sol.idSolicitacao = mov.solicitacao " +
 				"and mov.lotaAtendente in (" + listalotacoes + ") " +
-				"and mov.idMovimentacao = (select max(idMovimentacao) from SrMovimentacao where solicitacao=olicitacao and " +
+				"and mov.idMovimentacao = (select max(idMovimentacao) from SrMovimentacao where solicitacao=solicitacao and " +
 				"lotaAtendente = mov.lotaAtendente) " +
 				"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 				"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-				"order by mov.estado").fetch();
+				"order by mov.tipoMov.nome").fetch();
 
 				Iterator it = lista.listIterator(); 
 				while (it.hasNext()) {
@@ -98,16 +98,16 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 				List<SrSolicitacao> lista = SrSolicitacao.find(
 					"select sol.idSolicitacao, to_char(mov.dtReg,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
 					"sol.lotaSolicitante.siglaLotacao, mov.lotaAtendente.siglaLotacao, " +
-					"mov.estado, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
+					"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
 					"from SrSolicitacao sol, SrMovimentacao mov " +
 					"where sol.idSolicitacao = mov.solicitacao " +
 					"and mov.lotaAtendente in (" + listalotacoes + ") " +
 					"and mov.idMovimentacao = (select max(idMovimentacao) from SrMovimentacao where solicitacao=mov.solicitacao and " +
 					"lotaAtendente = mov.lotaAtendente) " +
-					"and mov.estado = " + parametros.get("situacao") + " " +
+					"and mov.tipoMov.nome = " + parametros.get("situacao") + " " +
 					"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 					"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-					"order by mov.estado").fetch();
+					"order by mov.tipoMov.nome").fetch();
 
 					Iterator it = lista.listIterator(); 
 					while (it.hasNext()) {

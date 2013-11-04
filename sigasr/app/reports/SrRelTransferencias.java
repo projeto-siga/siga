@@ -80,7 +80,7 @@ public class SrRelTransferencias extends RelatorioTemplate {
 				"and sol.hisIdIni <> sol.idSolicitacao " +
 				"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 				"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-				"order by mov.estado").fetch();
+				"order by mov.tipoMov").fetch();
 		
 		List<SrSolicitacao> lst = SrSolicitacao.find(
 				"select sol, mov " +
@@ -89,11 +89,11 @@ public class SrRelTransferencias extends RelatorioTemplate {
 				"and mov.lotaAtendente in (" + listalotacoes + ") " +
 				"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 				"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-				"and exists (select 1 from SrMovimentacao where solicitacao = mov.solicitacao and dtReg > mov.dtReg " +
+				"and exists (select 1 from SrMovimentacao where solicitacao = mov.solicitacao and dtIniMov > mov.dtIniMov " +
 				"and lotaAtendente <> mov.lotaAtendente " +
-				"and dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-                "and dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss')) " +
-               	"order by mov.estado").fetch();
+				"and dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
+                "and dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss')) " +
+               	"order by mov.tipoMov").fetch();
 		
 		SortedSet<String> set = new TreeSet<String>();
 		TreeMap<String, String> map = new TreeMap<String, String>();

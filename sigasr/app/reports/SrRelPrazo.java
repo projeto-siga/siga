@@ -130,7 +130,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.lotaAtendente in (" + listalotacoes
-							+ ") " + "and mov.estado = 2 "
+							+ ") " + "and mov.tipoMov = 7 "
 							+ "and sol.dtReg >= to_date('"
 							+ parametros.get("dtIni")
 							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "

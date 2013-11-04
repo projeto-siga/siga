@@ -13,8 +13,8 @@ function ${_nome}(){
 <script>
 $("#${_nome}_dialog").dialog({
     autoOpen: false,
-    height: ${_altura?_altura:300},
-    width: ${_largura?_largura:400},
+    height: ${_altura?_altura:"'auto'"},
+    width: ${_largura?_largura:"'auto'"},
     modal: true,
     resizable: false
   });

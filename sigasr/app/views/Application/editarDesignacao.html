@@ -13,7 +13,10 @@
 			designacao?.idConfiguracao} <input type="hidden"
 				name="designacao.idConfiguracao"
 				value="${designacao.idConfiguracao}"> #{/if}
-				
+			#{ifErrors}
+			<p class="gt-error">Alguns campos obrigatórios não foram
+				preenchidos ${error}</p>
+			#{/ifErrors}	
 			<div class="gt-form-row gt-width-66">
 				<label>Órgão</label> 
 				#{select name:'designacao.orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
@@ -21,7 +24,8 @@
 				#{option 0}Nenhum#{/option} 
 				#{/select}
 			</div>
-			
+			<span style="color: red">#{error
+					'designacao.orgaoUsuario' /}</span>
 			<div class="gt-form-row gt-width-66">
 				<label>Lotação</label>#{selecao
 					tipo:'lotacao', nome:'designacao.lotacao',
@@ -59,16 +63,19 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Atendente</label>#{selecao tipo:'lotacao',
 					nome:'designacao.atendente', value:designacao.atendente?.lotacaoAtual /}
+					<span style="display:inline;color: red">#{error 'designacao.atendente' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Pré-atendente</label>#{selecao
 					tipo:'lotacao', nome:'designacao.preAtendente',
 					value:designacao.preAtendente?.lotacaoAtual /}
+					<span style="display:inline;color: red">#{error 'designacao.preAtendente' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Pós-atendente</label> #{selecao
 					tipo:'lotacao', nome:'designacao.posAtendente',
 					value:designacao.posAtendente?.lotacaoAtual /}
+					<span style="display:inline;color: red">#{error 'designacao.posAtendente' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Exibir pesquisa de satisfação</label> #{radioSN

@@ -45,7 +45,7 @@ public class SrRelLocal extends RelatorioTemplate {
 		this.addColuna("Item de Configuração", 30, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Serviço", 30, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Total", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("Tot", 20, RelatorioRapido.CENTRO, false);
+		//this.addColuna("Tot", 20, RelatorioRapido.CENTRO, false);
 		//this.setp
 		return this;
 	}
@@ -76,7 +76,7 @@ public class SrRelLocal extends RelatorioTemplate {
 						d.add(itensconf.toString());
 						d.add(itensserv.toString());
 						d.add(total.toString());
-						d.add(tot.toString());
+						//d.add(tot.toString());
 			}
 		} else {
 						String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni " +
@@ -107,7 +107,7 @@ public class SrRelLocal extends RelatorioTemplate {
 								d.add(itensconf.toString());
 								d.add(itensserv.toString());
 								d.add(total.toString());
-								d.add(tot.toString());
+								//d.add(tot.toString());
 					}
 		
 		}

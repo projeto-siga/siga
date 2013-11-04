@@ -459,15 +459,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaCompleta;
 	}
 
-	public SrMovimentacao getMovimentacaoInclusao(SrLista lista) throws Exception {
+	public SrMovimentacao getMovimentacaoInclusao(SrLista lista)
+			throws Exception {
 		SrMovimentacao movIncl = new SrMovimentacao();
 		for (SrMovimentacao movimentacao : getMovimentacaoSet())
-			if (movimentacao.lista == lista &&
-				movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA ) //&& movimentacao.movReversora == null)
-					movIncl = movimentacao;
+			if (movimentacao.lista == lista
+					&& movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA) // &&
+																												// movimentacao.movReversora
+																												// ==
+																												// null)
+				movIncl = movimentacao;
 		return movIncl;
 	}
-	
+
 	public SrMovimentacao getUltimaMovimentacao() {
 		for (SrMovimentacao movimentacao : getMovimentacaoSet())
 			return movimentacao;
@@ -492,10 +496,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public SrMovimentacao getUltimaMovimentacaoCancelavel() {
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA
-					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA)
-				continue;
-			return mov;
+			if (mov.numSequencia > 1
+					&& mov.tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA
+					&& mov.tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA
+					&& mov.tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
+				return mov;
 		}
 		return null;
 	}
@@ -556,7 +561,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
 				null)) {
 			SrTipoAtributo tipo = conf.tipoAtributo.getAtual();
-			if (!listaFinal.contains(tipo)) {
+			if (tipo != null && !listaFinal.contains(tipo)) {
 				listaFinal.add(tipo);
 				if (map != null)
 					map.put(tipo.idTipoAtributo, conf.atributoObrigatorio);
@@ -760,8 +765,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeDesfazerMovimentacao(DpLotacao lota, DpPessoa pess) {
-		return getMovimentacaoSet().size() > 1
-				&& getUltimaMovimentacao().lotaCadastrante.equivale(lota);
+		SrMovimentacao ultCancelavel = getUltimaMovimentacaoCancelavel();
+		if (ultCancelavel == null)
+			return false;
+		return ultCancelavel.lotaCadastrante.equivale(lota);
 	}
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
@@ -817,7 +824,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean podeTrocarAtendente(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess) && isEmAtendimento();
 	}
-	
+
 	public SrSolicitacao deduzirLocalERamal() {
 
 		if (solicitante == null)
@@ -923,8 +930,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeAnexarArquivo(lotaTitular, titular), "anexarArquivo",
 				"modal=true"));
 
+		SrMovimentacao ultCancelavel = getUltimaMovimentacaoCancelavel();
 		operacoes.add(new SrOperacao("cancel", "Desfazer "
-				+ getUltimaMovimentacaoCancelavel().tipoMov.nome,
+				+ (ultCancelavel != null ? ultCancelavel.tipoMov.nome : ""),
 				podeDesfazerMovimentacao(lotaTitular, titular),
 				"Application.desfazerUltimaMovimentacao"));
 
@@ -1045,7 +1053,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			filha.numSequencia = s.numSequencia;
 		if (filha.numSequencia == null)
 			filha.numSequencia = 1L;
-		else filha.numSequencia++;
+		else
+			filha.numSequencia++;
 		return filha;
 	}
 
@@ -1294,7 +1303,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)
 				rol = mov.lista;
-			if (mov.lista != null && mov.lista != rol) 
+			if (mov.lista != null && mov.lista != rol)
 				listaCompleta.add(mov.lista);
 		}
 		SrLista lista = new SrLista();
@@ -1315,15 +1324,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
 				listas.add(mov.lista);
 			} else if ((!mov.isCancelada())
-					&& (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA 
-							|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
+					&& (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA || mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
 					&& (!listas.contains(mov.lista)))
 				listaCompleta.add(mov.lista);
 		}
-		return listaCompleta;	
+		return listaCompleta;
 	}
-	
-	public Long getPrioridade(SrLista lista) throws Exception{
+
+	public Long getPrioridade(SrLista lista) throws Exception {
 		Long prioridade = 0L;
 		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
 		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
@@ -1331,19 +1339,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			prioridade = movAltAnt.prioridade;
 		} else if (movIncl != null) {
 			prioridade = movIncl.prioridade;
-		}	
+		}
 		return prioridade;
 	}
-	
-	public SrMovimentacao getMovPrioridade(SrLista lista) throws Exception{
-		SrMovimentacao mov =  new SrMovimentacao();
+
+	public SrMovimentacao getMovPrioridade(SrLista lista) throws Exception {
+		SrMovimentacao mov = new SrMovimentacao();
 		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
 		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
 		if (movAltAnt != null) {
-			mov =  movAltAnt;
+			mov = movAltAnt;
 		} else if (movIncl != null) {
 			mov = movIncl;
-		}	
+		}
 		return mov;
 	}
 
@@ -1383,7 +1391,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		refresh();
 		lista.recalcularPrioridade(prioremov);
 	}
-	
 
 	public String getGcTags() {
 		String s = "tags=@servico";

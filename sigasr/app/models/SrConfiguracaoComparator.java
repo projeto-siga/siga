@@ -24,10 +24,10 @@ public class SrConfiguracaoComparator extends CpConfiguracaoComparator {
 				if (srC2.itemConfiguracao == null)
 					return -1;
 				else {
-					if (srC1.itemConfiguracao.getNivel() > srC2.itemConfiguracao
+					if (srC1.itemConfiguracao.getNivel() < srC2.itemConfiguracao
 							.getNivel())
 						return 1;
-					if (srC1.itemConfiguracao.getNivel() < srC2.itemConfiguracao
+					if (srC1.itemConfiguracao.getNivel() > srC2.itemConfiguracao
 							.getNivel())
 						return -1;
 				}
@@ -40,10 +40,10 @@ public class SrConfiguracaoComparator extends CpConfiguracaoComparator {
 				if (srC2.servico == null)
 					return -1;
 				else {
-					if (srC1.servico.getNivel() > srC2.servico
+					if (srC1.servico.getNivel() < srC2.servico
 							.getNivel())
 						return 1;
-					if (srC1.servico.getNivel() < srC2.servico
+					if (srC1.servico.getNivel() > srC2.servico
 							.getNivel())
 						return -1;
 				}

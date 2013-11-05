@@ -222,7 +222,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
 		final Pattern p = Pattern
-				.compile("^?([A-Z]{2})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?(\\.{1})?([0-9]{1,2})?$");
+			.compile("^?([A-Z0-9]{3,4})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?([.]{1})?([0-9]{1,2})?");
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -234,7 +234,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					orgaoUsuario = (CpOrgaoUsuario) JPA
 							.em()
 							.createQuery(
-									"from CpOrgaoUsuario where siglaOrgaoUsu = '"
+									"from CpOrgaoUsuario where acronimoOrgaoUsu = '"
 											+ m.group(1) + "'")
 							.getSingleResult();
 					this.orgaoUsuario = orgaoUsuario;
@@ -277,7 +277,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		setSigla(sigla);
 		if (orgaoUsuario == null && cadastrante != null)
 			orgaoUsuario = cadastrante.getOrgaoUsuario();
-
+	
 		String query = "from SrSolicitacao where hisDtFim is null ";
 
 		if (orgaoUsuario != null) {

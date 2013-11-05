@@ -157,7 +157,7 @@ public class Application extends SigaApplication {
 				.contains(solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
-		solicitacao.servico = null;
+		solicitacao.servico = null; //essa linha deve sair??? Adicionei 
 
 		render(solicitacao);
 	}
@@ -270,8 +270,6 @@ public class Application extends SigaApplication {
 			validation.addError("designacao.atendente","Atendente não informado.", "designacao.preAtendente","Atendente não informado.",
 					"designacao.posAtendente","Atendente não informado.");
 		}
-
-		
 		
 		if (validation.hasErrors()) {
 			List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
@@ -896,7 +894,6 @@ public class Application extends SigaApplication {
 
 	public static void relSolicitacoes() throws Exception {
 		assertAcesso("REL:Relatorio");
-
 		render();
 	}
 

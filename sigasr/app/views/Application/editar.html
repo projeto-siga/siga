@@ -97,9 +97,9 @@ function carregouServico(response, param){
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
-				onchange:'carregarLocalERamal();carregarItem();' /}
+				onchange:'carregarLocalERamal();carregarItem();carregarServico()' /}
 			</div>
-
+			
 			<div class="gt-form-row gt-width-66">
 				<label>Quando deseja receber notificação de movimentacao?</label>
 				#{select name:'solicitacao.formaAcompanhamento',

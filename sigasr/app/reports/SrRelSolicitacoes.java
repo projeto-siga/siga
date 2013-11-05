@@ -74,7 +74,7 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 				"from SrSolicitacao sol, SrMovimentacao mov " +
 				"where sol.idSolicitacao = mov.solicitacao " +
 				"and mov.lotaAtendente in (" + listalotacoes + ") " +
-				"and mov.idMovimentacao = (select max(idMovimentacao) from SrMovimentacao where solicitacao=solicitacao and " +
+				"and mov.idMovimentacao = (select max(idMovimentacao) from SrMovimentacao where solicitacao = mov.solicitacao and " +
 				"lotaAtendente = mov.lotaAtendente) " +
 				"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 				"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
@@ -96,7 +96,7 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 				}
 			} else {
 				List<SrSolicitacao> lista = SrSolicitacao.find(
-					"select sol.idSolicitacao, to_char(mov.dtReg,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
+					"select sol.idSolicitacao, to_char(mov.dtIniMov,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
 					"sol.lotaSolicitante.siglaLotacao, mov.lotaAtendente.siglaLotacao, " +
 					"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
 					"from SrSolicitacao sol, SrMovimentacao mov " +
@@ -104,7 +104,7 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 					"and mov.lotaAtendente in (" + listalotacoes + ") " +
 					"and mov.idMovimentacao = (select max(idMovimentacao) from SrMovimentacao where solicitacao=mov.solicitacao and " +
 					"lotaAtendente = mov.lotaAtendente) " +
-					"and mov.tipoMov.nome = " + parametros.get("situacao") + " " +
+					"and mov.tipoMov= " + parametros.get("situacao") + " " +
 					"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 					"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
 					"order by mov.tipoMov.nome").fetch();

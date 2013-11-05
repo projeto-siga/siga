@@ -47,6 +47,7 @@ import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -250,8 +251,7 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarServico(SrServico servico) {
 		
 		if (servico.siglaServico.equals("")) {
-			validation.addError("servico.siglaServico",
-					"Código não informado");
+			validation.addError("servico.siglaServico","Código não informado");
 		}
 		
 		if (servico.tituloServico.equals("")) {
@@ -262,6 +262,21 @@ public class Application extends SigaApplication {
 			render("@editarServico");
 		}
 		
+	}
+	
+	private static void validarFormEditarDesignacao(SrConfiguracao designacao) {
+			
+		if ((designacao.atendente == null) && (designacao.preAtendente == null)  && (designacao.posAtendente == null) ) {
+			validation.addError("designacao.atendente","Atendente não informado.", "designacao.preAtendente","Atendente não informado.",
+					"designacao.posAtendente","Atendente não informado.");
+		}
+
+		
+		
+		if (validation.hasErrors()) {
+			List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
+			render("@editarDesignacao", designacao, orgaos);
+		}
 	}
 
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
@@ -663,6 +678,7 @@ public class Application extends SigaApplication {
 	public static void gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
+		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
 		listarDesignacao();
 	}

@@ -89,6 +89,7 @@ public class GiServiceImpl implements GiService {
 			
 			DpLotacao l = p.getLotacao();
 			lotacao.put("idLotacao", l.getId());
+			lotacao.put("idExternaLotacao", l.getIdExterna());
 			lotacao.put("nomeLotacao", l.getNomeLotacao());
 			lotacao.put("siglaLotacao", l.getSigla());
 			lotacao.put("idLotacaoPai", l.getIdLotacaoPai());

@@ -2,13 +2,17 @@
 #{set title:'Incluir Forum' /}
 <script language="javascript" type="text/javascript">
  function chamada(novaURL){
-	$(window.document.location).attr('href',novaURL);
+	 $(window.document.location).attr('href',novaURL);
  }
 </script>
-<form name="" action="/forum_insert" onsubmit="" method="post" ><br>
-Código do Forum: <input name="objForum.cod_forum" type="text" maxlength="3" size="5" /> <!-- int --><br>
-Descrição: <input name="objForum.descricao_forum" type="text" maxlength="50" size="50" /> <!-- String --><br>
-<input type="submit" value="Grava" /><input type="button" value="Lista" onclick="chamada('/foruns_listar');" /><br>
-<a href="/">Voltar</a>
+<form class= name="" action="@{forum_insert()}" onsubmit="" method="POST" ><br>
+  <font style="position: absolute;left:5%;right:77%;" class="ui-state-default" size="3px">Código do Forum:</font><input  name="cod_forum" type="text" style="position:absolute;left:25%;" class="ui-widget" size="5" maxlength="2" /> <!-- int --><br>
+  <br>
+  <font style="position: absolute;left:5%;right:77%;" class="ui-state-default" size="3px" >Descrição:</font> <input  name="descricao" type="text" style="position:absolute;left:25%;" class="ui-widget" size="50" maxlength="50" /> <!-- String --><br>
+  <br>
+  <div style="position:absolute;left:5%;right:77%;">
+   <input class="ui-button" type="submit" value="Grava" /><input  type="button" class="ui-button" value="Lista" onclick="chamada('@{foruns_listar()}');" /><br>
+  </div>
 </form>
-<div id="div_msg"></div>
+<a style="position:absolute;left:5%;top:200%;" class="ui-state-hover" href="/sigapp/">Voltar</a>
+<div id="div_msg" class="ui-widget"></div>

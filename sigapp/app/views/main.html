@@ -1,15 +1,48 @@
-<!DOCTYPE html>
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <html>
-    <head>
-        <title>#{get 'title' /}</title>
-        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
-        #{get 'moreStyles' /}
-        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
-        <script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
-        #{get 'moreScripts' /}
-    </head>
-    <body>
-        #{doLayout /}
-    </body>
+${_cabecalho_pre_head.raw()}
+${moreHead.raw()}
+${_cabecalho_pre_menu.raw()}
+<link rel="stylesheet" href="public/stylesheets/jquery-ui.css"
+	type="text/css" media="screen, projection" />
+<!-- <li><a class="ui-widget" href="">Forum</a>
+	<ul>
+		<li><a class="ui-widget" href="@{forum_incluir()}">Incluir forum</a>
+		</li>
+		<li><a class="ui-widget" href="@{foruns_listar()}">Listar foruns</a>
+		</li>
+	</ul>
+</li>
+
+<li><a class="ui-widget" href="">Sala</a>
+	<ul>
+		<li><a class="ui-widget" href="@{sala_incluir()}">Incluir sala</a>
+		</li>
+		<li><a class="ui-widget" href="@{salas_listar()}">Listar salas</a>
+		</li>
+	</ul>
+</li>
+-->
+<li><a class="ui-widget" href="@{agendamento_incluir_ajax()}">Agendar</a>
+	<ul>
+	</ul>
+</li>
+<li><a class="ui-widget" href="@{agendamento_excluir()}">Cancelar</a>
+	<ul>
+		
+	</ul>
+</li>
+<li><a class="ui-widget" href="" >Relatórios</a>
+	<ul>
+		<li><a class="ui-widget" href="@{agendadas_hoje()}">Marcadas Hoje</a>
+		</li>
+		<li><a class="ui-widget" href="@{agendamento_excluir()}">Agendadas</a>
+		</li>
+	</ul>
+</li>
+<li><a class="ui-widget" href="@{usuario_atualiza()}">Configuração</a>
+</li>
+<li><a class="ui-widget" href="@{creditos()}">Créditos</a>
+	<ul></ul>
+</li>
+${_cabecalho_pos.raw()} #{doLayout /}  ${_rodape.raw()}
 </html>

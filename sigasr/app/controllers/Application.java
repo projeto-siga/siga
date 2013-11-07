@@ -157,9 +157,16 @@ public class Application extends SigaApplication {
 				.contains(solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
-		solicitacao.servico = null; //essa linha deve sair??? Adicionei 
+		List<SrServico> servicos = SrServico
+		.listarPorPessoaEItemEmOrdemAlfabetica(solicitacao.solicitante,solicitacao.itemConfiguracao);
+		if (solicitacao.servico == null || !servicos.contains(solicitacao.servico)) {
+			 if (servicos.size() > 0) 
+				solicitacao.servico = servicos.get(0);
+			 else 
+				solicitacao.servico = null;
+		}
 
-		render(solicitacao);
+		render(solicitacao, servicos);
 	}
 
 	public static void exibirServico(SrSolicitacao solicitacao)

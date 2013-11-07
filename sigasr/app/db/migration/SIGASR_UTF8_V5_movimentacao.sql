@@ -32,6 +32,7 @@ CREATE TABLE "SIGASR"."SR_LISTA"
     "HIS_DT_FIM" TIMESTAMP (6),
     PRIMARY KEY ("ID_LISTA")
   );
+ create sequence sigasr.sr_lista_seq;
 
 alter TABLE SIGASR.SR_ANDAMENTO rename TO SR_MOVIMENTACAO;
 alter table sigasr.sr_movimentacao rename column DT_REG to DT_INI_MOV;

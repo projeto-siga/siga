@@ -27,6 +27,11 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
 						<li><a href="/sigasr/">Serviços</a></li>
 					</c:if>
+					
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
+						<li><a href="/sigapp/">Perícias INSS</a></li>
+					</c:if>
 
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">

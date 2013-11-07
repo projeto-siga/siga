@@ -82,6 +82,7 @@ public class GiServiceImpl implements GiService {
 		try {
 			DpPessoa p = id.getPessoaAtual();
 			pessoa.put("idPessoa", p.getId());
+			pessoa.put("idExternaPessoa", p.getIdExterna());
 			pessoa.put("matriculaPessoa", p.getMatricula());
 			pessoa.put("siglaPessoa", p.getSiglaCompleta());
 			pessoa.put("nomePessoa", p.getNomePessoa());
@@ -98,12 +99,14 @@ public class GiServiceImpl implements GiService {
 			
 			DpCargo c = p.getCargo();
 			cargo.put("idCargo", c.getId());
+			cargo.put("idExternaCargo", c.getIdExterna());
 			cargo.put("nomeCargo", c.getNomeCargo());
 			cargo.put("siglaCargo", c.getSigla());
 			
 			DpFuncaoConfianca f = p.getFuncaoConfianca();
 			if (f !=null){
 					funcao.put("idFuncaoConfianca", f.getId());
+					funcao.put("idExternaFuncaoConfianca", f.getIdeFuncao());
 					funcao.put("nomeFuncaoConfianca", f.getNomeFuncao());
 					funcao.put("siglaFuncaoConfianca", f.getSigla());
 					funcao.put("idPaiFuncaoConfianca", f.getIdFuncaoPai());

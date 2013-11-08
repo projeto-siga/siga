@@ -189,7 +189,8 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
 						<li><ww:a href="/sigawf/administrar.action">Administrar SIGA WF</ww:a>
 						</li>
-					</c:if>					
+					</c:if>		
+						<li><ww:a href="/siga/feriado/listar.action">Cadastro de Feriados</ww:a></li>			
 				</ul>
 			</li>
 		</c:if>

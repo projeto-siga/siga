@@ -61,9 +61,13 @@ ALTER SESSION SET CURRENT_SCHEMA = corporativo;
 	grant select on dp_substituicao to sigasr;
 	grant select on cp_modelo_seq to sigasr;
 	grant select on CP_IDENTIDADE_SEQ to sigasr;
+	grant select on cp_orgao_usuario to sigasr;
+	grant select on cp_tipo_servico to sigasr;
 	
 	grant select, update, delete, insert on cp_marca to sigasr;
 	grant select, update, insert on CP_CONFIGURACAO to sigasr;
+	
+	grant select on CP_CONFIGURACAO_SEQ to sigasr;
 
 -- - - - - - - - - - - - - - - - - - - - - - 
 -- - - Serviços- - - - - - - - - - - - - - -

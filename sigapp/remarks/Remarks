@@ -1,0 +1,123 @@
+ void method()
+{
+    User u = User();
+    u.name = "bob";
+    u.save();
+    JPA.em().flush();
+    JPA.em().getTransaction().commit();
+    while(true){/* endless loop */}
+}
+===================================================================================
+public Hospede cadastraHospede() {    
+        Hospede novoHospede = new Hospede();    
+    
+        Scanner teclado = new Scanner(System.in);    
+    
+        //Recebe as Informacoes para o cadastro    
+        System.out.println("Informe o Nome do Hospede: ");    
+        novoHospede.setNome(teclado.nextLine());    
+  
+        System.out.println("Informe o Endereco do Hospede: ");    
+        novoHospede.setRua(teclado.nextLine());    
+  
+        System.out.println("Informe a Cidade do Hospede: ");    
+        novoHospede.setCidade(teclado.nextLine());    
+  
+        System.out.println("Informe o Estado do Hospede: ");    
+        novoHospede.setEstado(teclado.nextLine());    
+  
+        System.out.println("Informe o Telefone do Hospede: ");    
+        novoHospede.setTel(teclado.nextLine());    
+  
+        System.out.println("Informe o Email do Hospede: ");    
+        novoHospede.setEmail(teclado.nextLine());    
+    
+        novoHospede.setId(1);    
+  
+        System.out.println("Executei");    
+        return novoHospede;    
+    }    
+=========================================================================================================
+<script type="text/javascript">
+</script>
+===============================
+//Object auxForum = JPA.em().createQuery("from Foruns where descricao_forum ='" + "For'").getSingleResult();
+//listForuns.add((Foruns) auxForum);
+========================================================================    		
+@OneToMany(mappedBy="post", cascade=CascadeType.ALL)
+    ---------------------------------------------
+    "jdbc:oracle:thin:@mclaren:1521/mcl","sigapmp","sigapmp"
+    -----------------------------------------------
+=========================================================================
+Connection cone = DriverManager.getConnection("jdbc:oracle:thin:@mclaren:1521/mcl","sigapmp","sigapmp");
+Statement coma = cone.createStatement(tableField.TYPE_FORWARD_ONLY, tableField.CONCUR_READ_ONLY);
+tableField = coma.executeQuery("select l.cod_local, l.local, f.descricao_forum, l.dias, l.hora_ini, l.hora_fim, l.endereco from locais l, foruns f where l.cod_forum = f.cod_forum ");
+===============================================================================================
+#{list items:listForuns, as:'forum'}
+	#{if !b} <tr class="ui-button-icon-only" bgcolor="#dddddd"> #{/if}
+	#{if b} <tr class="ui-button-icon-only" > #{/if}
+	#{set b: !b /}
+	<td>${forum.cod_forum}</td>
+	<td>${forum.descricao_forum}</td>
+	<td> &nbsp<form name="forum_deleta01" action="@{forum_delete()}" method="post"><img  src="/siga/css/famfamfam/icons/delete.png"><input type="hidden" name="cod_forum" value="${forum.cod_forum}"/><input type="submit" value="Exclui"/></form></td>
+#{/list}
+==================================================================================================
+for(Iterator iterator = resultado.iterator();iterator.hasNext();){
+    			listLocais.add((Locais) iterator.next());
+    		}
+====================================================================================================
+Locais objLocal = new Locais("","","","","",0,0,"",0);
+// listLocais.add((Locais)objLocal);
+=======================================================================================
+SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+System.out.println( df.format(listAgendamentos.get(0).data_ag));
+else{
+	java.sql.Date dd = new java.sql.Date(2013-01-01);
+	Agendamentos objAgendamento = new Agendamentos((java.util.Date) dd,"0000", null ,"hla","","","","");
+	listAgendamentos.add(objAgendamento);
+	}
+//listAgendamentos = JPA.em().createQuery("from agendamentos where data_ag between '"+df.format(hoje)+ "' and '" +df.format(hoje)+"'").getResultList();
+//listAgendamentos = JPA.em().createQuery("from agendamentos where data_ag ="+ hoje +"").getResultList();
+============================================================================
+#{list items:listAgendamentos, as:'age'}
+	${age.sigla} <br>
+#{/list}    		
+============================================================================
+$("#nome input type text").datepicker("getDate"))
+=============================================================================
+new Agendamentos((java.util.Date) dd,"",(Locais)null,"","","","","");	
+//Agendamentos objAgendamento = new Agendamentos( Date.valueOf("2013-09-25") , "10:00" , listSalas.get(0) , "hla" , "Catatau" , "Guarda Belo" , "Ze Colmeia", "555555" );
+		<td> &nbsp<form name="agendamento_deleta01" action="@{agendamento_delete()}" method="post"><img  src="/siga/css/famfamfam/icons/delete.png"><input type="hidden" name="cod_forum" value="${Agendamento.data_ag}"/>&nbsp<input type="submit" value="Exclui"/> </form></td>
+		==================================
+		//SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+			//java.util.Date dt = new java.util.Date();
+			//String dtt = df.format(formAgendamento.data_ag);
+			//dtt = dtt;
+			System.out.println( formAgendamento.hora_ag + " " + cod_local );
+			Locais objLocal = new Locais();
+			objLocal.cod_local = cod_local; 
+			formAgendamento.localFk = objLocal;
+			formAgendamento.delete();
+======================================================================
+ from CORPORATIVO.DP_PESSOA
+ System.out.println(dppessoa.MATRICULA);
+ System.out.println(MATRICULA403_0_);  
+ ==========================================================================================
+ ...para enviar requisição Ajax (supondo que o id da tag form seja “formulario”).
+Abraços, Edson
+
+function foi(response){
+    alert(“Foi” + response);
+}
+
+function naoFoi(response){
+    alert(“Não foi”);
+}
+
+$.ajax({
+       type: "POST",
+       url: "@{Application.salvar()}",
+       data: $(“#formulario”).serialize(),
+       success: foi,
+       error: naoFoi
+}); 

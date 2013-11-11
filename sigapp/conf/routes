@@ -3,15 +3,25 @@
 # ~~~~
 
 # Home page
-	#GET	/                                       Application.index
 	GET		/										Application.home
 	GET		/sala_incluir							Application.sala_incluir
 	POST	/sala_insert							Application.sala_insert
 	GET		/salas_listar							Application.salas_listar
+	POST	/sala_delete							Application.sala_delete
 	GET		/forum_incluir							Application.forum_incluir
 	POST	/forum_insert							Application.forum_insert
 	GET		/foruns_listar							Application.foruns_listar
-	
+	POST	/forum_delete							Application.forum_delete
+	GET 	/agendamento_incluir_ajax				Application.agendamento_incluir_ajax
+	GET		/calendario_vetor						Application.calendario_vetor
+	GET		/horario_vetor							Application.horario_vetor
+	POST	/agendamento_insert						Application.agendamento_insert
+	GET     /agendamento_excluir					Application.agendamento_excluir
+	POST 	/agendamento_delete						Application.agendamento_delete
+	GET 	/agendadas_hoje							Application.agendadas_hoje
+	GET		/usuario_atualiza						Application.usuario_atualiza					
+	GET 	/creditos								Application.creditos
+		
 # Ignore favicon requests
 	GET     /favicon.ico                            404
 
@@ -19,5 +29,5 @@
 	GET     /public/                                staticDir:public
 
 # Catch all
-*       /{controller}/{action}                  {controller}.{action}
-		 
+#*       /{controller}/{action}                  {controller}.{action}
+*   	/{controller}/{action}					 Application.home		 

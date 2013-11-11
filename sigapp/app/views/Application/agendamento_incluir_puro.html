@@ -1,0 +1,105 @@
+#{extends 'main.html' /}
+#{set title:'Agendar' /}
+<title>Agendar</title>
+
+<script src="public/javascripts/jquery-1.9.1.js"></script>
+<script src="public/javascripts/jquery-ui.js"></script>
+
+<script type="text/javascript" language="Javascript1.1">
+var verificouSala=false;
+var diasLotados = new Array(31);
+var i=0; 
+#{list items:listDatasLotadas, as:'age'}
+	diasLotados[i++]="${age}";
+	diasLotados[i-1]=diasLotados[i-1].substring(0,10);
+#{/list}
+$(function () {
+	$.datepicker.setDefaults({monthNames: [ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto",  "Setembro", "Outubro", "Novembro", "Dezembro" ] ,
+        					  dayNamesMin: [ "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab" ],
+        					  dateFormat: "dd-mm-yy",
+        					  duration: "slow",
+        					  prevText: "Mês anterior",
+        					  nextText: "Próximo mês",
+        					  //buttonImage: "public/images/favicon.png",
+        					  showOn: "button",
+        					  buttonText: "...",
+        					  minDate: new Date(),
+        					  beforeShowDay: function(date){ if($.inArray($.datepicker.formatDate("yy-mm-dd" , date ) , diasLotados )>=0 || date.getDay()==0 || date.getDay()==6){ return [ false , '' , 'Sem horário livre' ];} else {return [ true , '' , '' ];}
+        					  }  	  
+  	});
+	$( "#datepicker" ).datepicker();
+} );
+
+function funcData(){
+	var dt = document.getElementById('datepicker').value;
+	if(dt=="--"){
+		document.getElementById('datepicker').value="";
+	}else{
+		if(dt!=""){
+			document.getElementById('datepicker').value = dt.substr(6,4)+"-"+dt.substr(3,2)+"-"+dt.substr(0,2);
+		}
+	}
+}
+
+function submete_a_si(){
+	frm_inclui_agendamento.action="agendamento_incluir";
+	frm_inclui_agendamento.method="get";
+	if(verificouSala){
+		frm_inclui_agendamento.verde.value=true;
+		
+	}
+	frm_inclui_agendamento.submit();
+}
+function mudouSala(){
+	verificouSala=false;
+	frm_inclui_agendamento.frm_data_ag.value = "";
+	frm_inclui_agendamento.frm_data_ag.disabled="disabled";
+}
+</script> 
+
+<form name="frm_inclui_agendamento" method="post" action="agendamento_insert" onsubmit="" >
+<input type="hidden" name="verde" value=false />
+<br>
+ <div style="position: absolute;left:05%;">
+	<h1 class="ui-accordion-header">Passo um</h1>
+	<select class="ui-widget" name="frm_cod_local" onchange="mudouSala();">
+		#{list items:listSalas, as:'sala'}
+		<option value=${sala.cod_local}>${sala.local}</option>
+		#{/list}
+	</select>
+	
+	<input name="cmd_verifica" type="button" onclick="verificouSala=true;submete_a_si();" value="Verifica dias" >
+ </div>
+ <div style="position:absolute;left:30%;">
+ 	<!-- onclick="document.getElementById('datepicker').value='';"  -->
+	<h1 class="ui-accordion-header">Passo dois</h1>
+	<input type="text" id="datepicker"  name="frm_data_ag" onchange="frm_inclui_agendamento.cmd_verifica.value='Verifica horário'"  readonly="readonly"  value="${frm_data_ag}" />
+	
+ </div>
+ <div style="position: absolute;left:65%;">
+	<h1 class="ui-accordion-header">Passo três</h1>
+	<select class="ui-widget" name="hora_ag" >
+		#{list items:listHorasLivres, as:'hora'}
+		<option value=${hora}>${hora}</option>
+		#{/list} 
+	</select>
+	<!-- <input type="button" onclick="submete_a_si();" value="Escolha o horário"> -->
+ </div>
+ <input type="hidden" name="sigla" value="">
+ <br><br><br><br><br><br><br><br><br>
+ <div style="position:absolute;left:10%;right:10%;">
+  <font class="ui-state-default" size="3px" style="position:absolute;left:1%;right:60%;">Número processo: </font><input class="ui-widget" name="processo"  type="text" style="position:absolute;left:45%;right:20%;" size="25" maxlength="15" /><br>
+  <br>
+  <font class="ui-state-default" size="3px" style="position:absolute;left:1%;right:60%;">Nome periciado: </font><input class="ui-widget" name="periciado" type="text" style="position:absolute;left:45%;right:20%;" size="50" maxlength="50" /><br>
+  <br>
+  <font class="ui-state-default" size="3px" style="position:absolute;left:1%;right:60%;">Perito juízo: </font><input class="ui-widget" name="perito_juizo" type="text" style="position:absolute;left:45%;right:20%;" size="50" maxlength="50" /><br>
+  <br>
+  <font class="ui-state-default" size="3px" style="position:absolute;left:1%;right:60%;">Perito parte: </font><input class="ui-widget" name="perito_parte" type="text" style="position:absolute;left:45%;right:20%;" size="50" maxlength="50" /><br>
+  <br>
+  <font class="ui-state-default" size="3px" style="position:absolute;left:1%;right:60%;">Órgão julgador: </font><input class="ui-widget" name="orgao" type="text" style="position:absolute;left:45%;right:20%;" size="50" maxlength="15" /><br>
+  <br>
+  <input class="ui-button" style="position: absolute; left:1%" type="submit" value="Agendar" onclick="funcData()" />
+	<br><br><br>
+	<a style="position:absolute;left:1%;" class="ui-state-hover" href="/sigapp/">Voltar</a>  
+ </div>
+</form>

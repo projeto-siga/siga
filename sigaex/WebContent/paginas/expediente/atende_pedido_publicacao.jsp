@@ -180,6 +180,8 @@
 							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
 							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
 					</a>
+	 			</td>
+	 			<td><a href="/sigaex/arquivo/download.action?arquivo=${documento.mobilGeral.referenciaRTF}">RTF</a>
 	 			</td>				
 			</tr>
 		</c:forEach>

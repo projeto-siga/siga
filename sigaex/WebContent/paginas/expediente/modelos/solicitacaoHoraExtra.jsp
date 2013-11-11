@@ -49,7 +49,7 @@ var newwin = null;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
 						    		largura="2" maxcaracteres="2" titulo="Horário inicial" var="horaIni${i}${j}" reler="ajax" idAjax="Func$${i}${j}" />h 
 						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
-                                    if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" titulo="" largura="2" maxcaracteres="2" var="minutoIni${i}${j}" reler="ajax" idAjax="${i}${j}" />m &nbsp;&nbsp;&nbsp;&nbsp;
+                                    if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" titulo="" largura="2" maxcaracteres="2" var="minutoIni${i}${j}" reler="ajax" idAjax="Func${i}${j}" />m &nbsp;&nbsp;&nbsp;&nbsp;
 						    		<span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=125,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${intervaloMsg}');"><u>
                                     Intervalo?</u></span>
 						    		<mod:selecao titulo="" var="intervalo${i}${j}" opcoes="Não;Sim" reler="ajax" idAjax="Func${i}${j}" />&nbsp;&nbsp;&nbsp;&nbsp;
@@ -71,13 +71,13 @@ var newwin = null;
 								<c:set var="condicional" value="nao"/>
 								</c:if>
 								
+								<c:if test="${(xminutoIni > 59)}"> 
+                                <p style="color:red">Minuto de início deve ser menor ou igual a 59</p>
+                                <c:set var="condicional" value="nao"/>
+                                </c:if>
+                                
 								<c:if test="${(xhoraFim > 24)}"> 
 								<p style="color:red">Hora de fim deve ser menor ou igual a 24.</p>
-								<c:set var="condicional" value="nao"/>
-								</c:if>
-								
-								<c:if test="${(xminutoIni > 59)}"> 
-								<p style="color:red">Minuto de fim deve ser menor ou igual a 59</p>
 								<c:set var="condicional" value="nao"/>
 								</c:if>
 								
@@ -114,8 +114,10 @@ var newwin = null;
                                      <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2"  />
                                      Total de horas solicitadas:<input type="text" name="totalHoras${i}${j}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}${j}" value="${xminutoTotal}" size="2" readonly/>min
                                                                            
+                                </c:if>
+                                <c:if test="${(xhoraTotal > 10) or ((xhoraTotal== 10)and(xminutoTotal > 0))}">
+                                 <p style="color:red">Total de Hora Extra não pode ser maior que 10h00m.</p>
                                  </c:if>
-                                
                                 
                                  
                                 </mod:grupo>

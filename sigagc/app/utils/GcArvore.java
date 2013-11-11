@@ -1,5 +1,7 @@
 package utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -111,14 +113,14 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 		}
 	}
 
-	public String toHTML() {
+	public String toHTML() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		printNosHTML(sb, raiz.nosOrdenados, 0);
 		return sb.toString();
 	}
 
 	public void printNosHTML(StringBuilder sb, SortedSet<GcArvoreNo> nos,
-			int ident) {
+			int ident) throws Exception {
 		sb.append("<ul>");
 		for (GcArvoreNo no : nos) {
 			for (int i = 0; i < ident; i++)
@@ -145,7 +147,8 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 			if (no.infs.size() > 0) {
 				sb.append("<ul>");
 				for (GcInformacao inf : no.infs) {
-					sb.append("<li><a href=\"exibir?id=" + inf.id + "\">");
+					//sb.append("<li><a href=\"exibir?id=" + inf.id + "\">");
+					sb.append("<li><a href=\"exibir?sigla=" + URLEncoder.encode(inf.getSigla(), "UTF-8") + "\">");
 					sb.append(inf.arq.titulo);
 					sb.append("</a></li>");
 				}

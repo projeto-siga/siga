@@ -38,15 +38,38 @@ function drawEvolution() {
 			<h2>Conhecimentos Mais Recentes</h2>
 			#{if listaMaisRecentes != null}
 			<div class="gt-content-box gt-for-table">
-				<table class="gt-table gt-user-table">
+				<table border="0" class="gt-table gt-user-table">
+					<thead>
+						<tr>
+							<th width="40%">Título</th>
+							<th width="20%">Data</th>
+							<th width="25%">Autor</th>
+							<th width="15%">Lotação</th>	
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaMaisRecentes,as:'i'}
+						<tr class="gt-table-categories gt-td">
+							<td width="40%"><h4 class="gt-categories-link"><a href="@{Application.exibir(i.sigla)}">${i?.arq?.titulo}</h4></a></td>
+							<td width="20%">${i.dtIniString}</td>
+							<td width="25%">${i.autor.primeiroNomeEIniciais}</td>
+							<td width="15%">${i.lotacao.sigla}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			
+				*{<table class="gt-table gt-user-table">
 					<tbody>
 						#{list items:listaMaisRecentes,as:'i'}
 						<tr>
-							<td style="width: 70%;"><a
-								href="@{SigaGcApplication.exibir(i.id)}">${i?.arq?.titulo}</a> *{ <a
-								href="@{SigaGcApplication.exibir(i.id)}">${i?.arq?.titulo}</a>
+							<td style="width: 70%;">
+								<a href="@{Application.exibir(i.sigla)}">${i?.arq?.titulo}</a> 
+								 <a href="@{Application.exibir(i.id)}">${i?.arq?.titulo}</a>
 								</h4>
-								<p>${i?.conteudoHTML.raw()}</p> }*</td>
+								<p>${i?.conteudoHTML.raw()}</p> 
+								
+							</td>
 							<td style="width: 30%;">
 								<!-- Categories Sub Table -->
 								<table border="0" class="gt-table-categories">
@@ -68,7 +91,8 @@ function drawEvolution() {
 						</tr>
 						#{/list}
 					</tbody>
-				</table>
+				</table>}*
+				
 			</div>
 			#{/if} #{else}
 			<p>Nenhum conhecimento recente.</p>
@@ -85,19 +109,19 @@ function drawEvolution() {
 							<table>
 								<tbody>
 									<tr>
-										<td colspan=4 style="width: 77%;">
+										<td colspan=2 style="width: 77%;">
 											<h4>
-												<a href="@{SigaGcApplication.exibir(i.id)}">${i?.arq?.titulo}</a>
+												<a href="@{Application.exibir(i.sigla)}">${i?.arq?.titulo}</a>
 											</h4>
 											<!--<p>${i?.conteudoHTML.raw()}</p> -->
 										</td>						
-										<td class="gt-categories-th">Data:</td>
+										<td class="gt-th gt-categories-th">Data:</td>
 										<td class="gt-categories-td">${i.dtIniString}</td>
 									</tr>
 									<tr class="gt-table-categories">
-										<th style="width: 12%;">Autor:</th>
-										<td colspan=3>${i.autor.primeiroNomeEIniciais}</td>
-										<th style="width: 12%;">Lotação:</th>
+										<th class="gt-categories-th" style="width: 8%;">Autor:</th>
+										<td>${i.autor.primeiroNomeEIniciais}</td>
+										<th>Lotação:</th>
 										<td>${i.lotacao.sigla}</td>
 									</tr>
 								</tbody>

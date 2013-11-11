@@ -62,7 +62,8 @@ public class GcBL {
 			arq.setConteudoBinario(anexo, mimeType);
 			mov.arq = arq;
 		} else {
-			if (titulo != null || conteudo != null || classificacao != null) {
+			//if (titulo != null || conteudo != null || classificacao != null) {
+			if (titulo != null && conteudo != null) {
 				GcArquivo arq = new GcArquivo();
 				arq.titulo = titulo;
 				arq.setConteudoTXT(conteudo);
@@ -70,8 +71,8 @@ public class GcBL {
 				mov.arq = arq;
 			} else {
 				if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO)
-					throw new Exception(
-							"Não é permitido salvar uma informação com título, conteúdo e classificação vazios.");
+					//throw new Exception("Não é permitido salvar uma informação com título, conteúdo e classificação vazios.");
+					throw new AplicacaoException("Não é permitido salvar uma informação com título, conteúdo vazios.");
 			}
 		}
 
@@ -114,7 +115,7 @@ public class GcBL {
 		Date dt = dt();
 		// dao().iniciarTransacao();
 		// try {
-
+		
 		// Atualiza o campo arq, pois este não pode ser nulo
 		if (inf.movs != null) {
 			for (GcMovimentacao mov : inf.movs) {
@@ -159,7 +160,6 @@ public class GcBL {
 			inf.tags = buscarTags(a, false);
 		}
 	}
-
 	public static Set<GcTag> buscarTags(String[] a, boolean fValidos) {
 		Set<GcTag> set = new TreeSet<GcTag>();
 		for (String s : a) {
@@ -202,9 +202,11 @@ public class GcBL {
 				tag = new GcTag((GcTipoTag) GcTipoTag.findById(tipo),
 						categoria, titulo);
 			}
-			if (tag != null)
+			if (tag != null) {
 				set.add(tag);
+			}
 		}
+		
 		if (set.size() == 0)
 			return null;
 		return set;
@@ -539,5 +541,15 @@ public class GcBL {
 
 		return text.substring(0, end) + "...";
 	}
-
+	
+	public static String atualizarClassificacao(String classificacao, String hashTag) {		
+		if(classificacao.isEmpty() && hashTag.isEmpty())
+			return null;
+		else if (classificacao.isEmpty() && !hashTag.isEmpty())
+			return hashTag.trim();
+		else if(!classificacao.isEmpty() && hashTag.isEmpty())
+			return classificacao;
+		else
+			return classificacao.concat(", ").concat(hashTag).trim();
+	}
 }

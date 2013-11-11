@@ -7,7 +7,7 @@
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form id="frm" action="@{SigaGcApplication.gravar}">
+			<form id="frm" action="@{Application.gravar}">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
 				<input type="hidden" name="origem" value="${origem}" /> 
 				*{
@@ -71,8 +71,12 @@
 
 				<div class="gt-form-row gt-width-100">
 					<label>Classificação</label>
-					*{ <input type="text" name="classificacao" value="${classificacao}" class="gt-form-text" /> }*
-					<p>${classificacao ?: 'Esse conhecimento ainda não possui uma classificação'}	</p>
+					#{if classificacao != null}
+						<textarea name="classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
+					#{/if}
+					#{else}
+						<p>Esse conhecimento ainda não possui uma classificação</p>
+					#{/else}
 					<span style="color: red">#{error 'classificacao' /}</span>
 				</div>
 
@@ -82,7 +86,7 @@
 					<p class="gt-cancel">
 						ou <a href="">cancelar alterações</a> #{if informacao != null &&
 						informacao.id != null && informacao.id != 0} ou <a
-							href="@{SigaGcApplication.exibir(informacao?.id)}">exibir
+							href="@{Application.exibir(informacao?.sigla)}">exibir
 							movimentações</a> #{/if}
 					</p>
 				</div>
@@ -92,22 +96,25 @@
 	<div class="gt-sidebar">
 		<!-- Sidebar Content -->
 		<div class="gt-sidebar-content">
-			<script>				
-				function insertTextAtCursor(el, text) {
-    var val = el.value, endIndex, range;
-    if (typeof el.selectionStart != "undefined" && typeof el.selectionEnd != "undefined") {
-        endIndex = el.selectionEnd;
-        el.value = val.slice(0, endIndex) + text + val.slice(endIndex);
-        el.selectionStart = el.selectionEnd = endIndex + text.length;
-    } else if (typeof document.selection != "undefined" && typeof document.selection.createRange != "undefined") {
-        el.focus();
-        range = document.selection.createRange();
-        range.collapse(false);
-        range.text = text;
-        range.select();
-    }
-}
-</script>
+	<script>				
+	function insertTextAtCursor(el, text) {
+	    var val = el.value, endIndex, range;
+	    if (typeof el.selectionStart != "undefined" && typeof el.selectionEnd != "undefined") {
+	        endIndex = el.selectionEnd;
+	        el.value = val.slice(0, endIndex) + text + val.slice(endIndex);
+	        el.selectionStart = el.selectionEnd = endIndex + text.length;
+	    } else if (typeof document.selection != "undefined" && typeof document.selection.createRange != "undefined") {
+	        el.focus();
+	        range = document.selection.createRange();
+	        range.collapse(false);
+	        range.text = text;
+	        range.select();
+	    }
+	}
+	$(document).ready(function(){
+		  $("textarea[readonly]").css({"background-color":"transparent","border":"none","overflow":"auto","height":"50px","resize":"none"});
+	});
+	</script>
 
 			<h3>Informações sobre o Preenchimento</h3>
 			<p>O campo "Título" sempre será acessível, independente do contro
@@ -120,7 +127,7 @@
 			#{list items:informacao.movs, as:'m'} #{if m.tipo.id ==
 			models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO}
 			<p>
-				<image src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
+				<img src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
 				<a
 					href="javascript: var frm = document.getElementById('frm'); insertTextAtCursor(frm.conteudo, '#{if m.arq.image}{{${m.arq.id}|${m.arq.titulo}}}#{/if}#{else}[[${m.arq.id}|${m.arq.titulo}]]#{/else}');">${m.arq.titulo}</a>
 			</p>

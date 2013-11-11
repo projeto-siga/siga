@@ -25,6 +25,7 @@ import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.eclipse.jdt.core.dom.ThisExpression;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -149,7 +150,7 @@ public class GcInformacao extends GenericModel {
 		return s;
 	}
 
-	private String getSigla() {
+	public String getSigla() {
 		if (this.elaboracaoFim != null) {
 			return ou.getAcronimoOrgaoUsu() + "-GC-" + ano + "/"
 					+ completarComZeros(numero, 5);
@@ -296,11 +297,11 @@ public class GcInformacao extends GenericModel {
 	protected void addAcao(SortedSet<GcAcaoVO> acoes, String icone,
 			String nome, String nameSpace, String action, String parametros,
 			boolean pode, String msgConfirmacao, String pre, String pos) {
-		TreeMap<String, String> params = new TreeMap<String, String>();
+		//TreeMap<String, String> params = new TreeMap<String, String>();
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("id", String.valueOf(this.id));
+		map.put("sigla",this.getSigla());
 		if (parametros != null)
 			mapFromUrlEncodedForm(map, parametros);
 
@@ -466,6 +467,19 @@ public class GcInformacao extends GenericModel {
 		}
 		return s;
 	}
-
+	
+	/**
+	 * Identifica uma informação através do seu código (JFRJ-GC-2013/00002 ou TMPGC-23)
+	 **/
+	public GcInformacao findBySigla(String sigla){
+		String[] siglaParticionada = sigla.split("-");
+		
+		//verificação necessária por conta dos arquivos temporários que são buscados pelo id, já os finalizados
+		//são buscados pela sua numeração
+		if(siglaParticionada[1].equals("GC"))
+			return GcInformacao.find("byNumero",Integer.parseInt(siglaParticionada[2].split("/")[1])).first();
+		else
+			return GcInformacao.findById(Long.parseLong(siglaParticionada[1]));	
+	}
 
 }

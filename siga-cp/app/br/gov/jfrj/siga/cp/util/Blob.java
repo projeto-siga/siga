@@ -18,49 +18,62 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
 
 public class Blob {
 
 	public static byte[] toByteArray(java.sql.Blob fromBlob) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		InputStream is = null;
-
 		if (fromBlob == null)
 			return null;
-		else {
-			try {
-				byte[] buf = new byte[4000];
-				is = fromBlob.getBinaryStream();
-				for (;;) {
-					int dataSize = is.read(buf);
-					if (dataSize == -1)
-						break;
-					baos.write(buf, 0, dataSize);
-				}
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			} finally {
-				if (baos != null) {
-					try {
-						baos.close();
-					} catch (IOException ex) {
-					}
-				}
-				if (is != null) {
-					try {
-						is.close();
-					} catch (IOException ex) {
-						int a = 0;
-					}
-				}
-			}
-			return baos.toByteArray();
+		try {
+			int blobLength = (int) fromBlob.length();
+			byte[] blobAsBytes = fromBlob.getBytes(1, blobLength);
+
+			// Foi necessario comentar o .free() pois estava gerando uma
+			// mensagem de erro quando os documentos eram finalizados.
+			//
+			// release the blob and free up memory. (since JDBC 4.0)
+			// fromBlob.free();
+			return blobAsBytes;
+		} catch (SQLException e) {
+			throw new RuntimeException("Não foi possível ler um BLOB.", e);
 		}
+
+		// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// InputStream is = null;
+		//
+		// if (fromBlob == null)
+		// return null;
+		// else {
+		// try {
+		// byte[] buf = new byte[4000];
+		// is = fromBlob.getBinaryStream();
+		// for (;;) {
+		// int dataSize = is.read(buf);
+		// if (dataSize == -1)
+		// break;
+		// baos.write(buf, 0, dataSize);
+		// }
+		// } catch (SQLException e) {
+		// throw new RuntimeException(e);
+		// } catch (IOException e) {
+		// throw new RuntimeException(e);
+		// } finally {
+		// if (baos != null) {
+		// try {
+		// baos.close();
+		// } catch (IOException ex) {
+		// }
+		// }
+		// if (is != null) {
+		// try {
+		// is.close();
+		// } catch (IOException ex) {
+		// int a = 0;
+		// }
+		// }
+		// }
+		// return baos.toByteArray();
+		// }
 	}
 }

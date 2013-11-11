@@ -138,8 +138,18 @@ public class SrConfiguracao extends CpConfiguracao {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		salvar();
 	}
+	
+	public static List<SrConfiguracao> listarAssociacoesTipoAtributo() {
+		return JPA
+				.em()
+				.createQuery(
+						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
+								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
+								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario",
+						SrConfiguracao.class).getResultList();
+	}
 
-	public static List<List<SrConfiguracao>> listarAssociacoesTipoAtributo() {
+	public static List<List<SrConfiguracao>> listarAssociacoesTipoAtributoDividindoAbertasEFechadas() {
 
 		String query = "select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
 				+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO

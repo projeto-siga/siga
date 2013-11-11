@@ -6,6 +6,7 @@
 	<package name="default" extends="webwork-default">
 		<result-types>
  			<result-type name="stream-fixed" class="br.gov.jfrj.siga.libs.webwork.StreamResult"/> 
+ 			<result-type name="do-nothing" class="br.gov.jfrj.siga.libs.webwork.DoNothingResult"/> 
  		</result-types>
 
 		<interceptors>
@@ -1075,7 +1076,7 @@
 	</package>
 	
 	<package name="arquivo" extends="default" namespace="/arquivo">
-			<action name="exibir" class="br.gov.jfrj.webwork.action.ExArquivoAction"
+		<action name="exibir" class="br.gov.jfrj.webwork.action.ExArquivoAction"
 			method="aExibir">
 			<result name="hash" type="stream-fixed">
 				<param name="inputName">inputStream</param>
@@ -1091,6 +1092,28 @@
 			<result name="pdf" type="stream-fixed">
 				<param name="inputName">inputStream</param>
 				<param name="contentType">application/pdf</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="donothing" type="do-nothing"></result>
+		</action>
+		<action name="download" class="br.gov.jfrj.webwork.action.ExArquivoAction"
+			method="aDownload">
+			<result name="hash" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="zip" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">multipart/x-zip</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="rtf" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/rtf</param>
 				<param name="contentLength">${contentLength}</param>
 				<param name="contentDisposition">${contentDisposition}</param>
 			</result>

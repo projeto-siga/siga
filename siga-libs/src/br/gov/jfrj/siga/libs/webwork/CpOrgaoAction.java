@@ -115,7 +115,7 @@ public class CpOrgaoAction extends SigaSelecionavelActionSupport<CpOrgao, CpOrga
 	
 	public String aListar() throws Exception {
 		
-		setItens(CpDao.getInstance().listarOrgaos());
+		setItens(CpDao.getInstance().consultarCpOrgaoOrdenadoPorNome());
 		
 		return Action.SUCCESS;
 	}

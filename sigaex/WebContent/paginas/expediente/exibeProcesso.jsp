@@ -314,7 +314,7 @@
 <script>
 	var path = '/sigaex/arquivo/exibir.action?arquivo=';
 	var htmlAtual = '${arqsNum[0].referenciaHtml}&completo=1';
-	var pdfAtual = 'arquivo=${arqsNum[0].referenciaPDF}&completo=1';
+	var pdfAtual = '${arqsNum[0].referenciaPDF}&completo=1';
 
 	function fixlinks(refHTML, refPDF) {
 		//		document.getElementById('htmllink').href = "./" + refHTML;

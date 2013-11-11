@@ -10,5 +10,9 @@
         <property name="hibernate.connection.username">sigapmp</property>
         <property name="hibernate.default_schema">sigapmp</property>
         <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
+        <mapping class="models.Foruns" />
+        <mapping class="models.Locais" />
+        <mapping class="models.Agendamentos" />
+        <mapping class="models.UsuarioForum" />
     </session-factory>
 </hibernate-configuration>

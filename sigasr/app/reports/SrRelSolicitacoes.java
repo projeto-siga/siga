@@ -41,14 +41,14 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
 		this.setTitle("Relatório de Solicitações");
-		this.addColuna("Solicitação", 18, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Andamento", 13, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Descrição", 40, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Solicitação", 20, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Movimentação", 15, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Descrição", 35, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Solicitante", 10, RelatorioRapido.ESQUERDA, true);
-		this.addColuna("Atendente", 13, RelatorioRapido.CENTRO, false);
+		this.addColuna("Atendente", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Situação", 15, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Item de Configuração", 16, RelatorioRapido.CENTRO, false);
-		this.addColuna("Serviço", 16, RelatorioRapido.CENTRO, false);
+		this.addColuna("Serviço", 20, RelatorioRapido.CENTRO, false);
 		return this;
 	}
 
@@ -68,17 +68,17 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 
 		if (parametros.get("situacao").equals("Todas")) {
 			List<SrSolicitacao> lista = SrSolicitacao.find(
-				"select sol.idSolicitacao, to_char(andam.dtReg,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
-				"sol.lotaSolicitante.siglaLotacao, andam.lotaAtendente.siglaLotacao, " +
-				"andam.estado, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
-				"from SrSolicitacao sol, SrAndamento andam " +
-				"where sol.idSolicitacao = andam.solicitacao " +
-				"and andam.lotaAtendente in (" + listalotacoes + ") " +
-				"and andam.idAndamento = (select max(idAndamento) from SrAndamento where solicitacao=andam.solicitacao and " +
-				"lotaAtendente = andam.lotaAtendente) " +
+				"select sol.idSolicitacao, to_char(mov.dtIniMov,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
+				"sol.lotaSolicitante.siglaLotacao, mov.lotaAtendente.siglaLotacao, " +
+				"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
+				"from SrSolicitacao sol, SrMovimentacao mov " +
+				"where sol.idSolicitacao = mov.solicitacao " +
+				"and mov.lotaAtendente in (" + listalotacoes + ") " +
+				"and mov.idMovimentacao = (select max(idMovimentacao) from SrMovimentacao where solicitacao = mov.solicitacao and " +
+				"lotaAtendente = mov.lotaAtendente) " +
 				"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 				"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-				"order by andam.estado").fetch();
+				"order by mov.tipoMov.nome").fetch();
 
 				Iterator it = lista.listIterator(); 
 				while (it.hasNext()) {
@@ -96,18 +96,18 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 				}
 			} else {
 				List<SrSolicitacao> lista = SrSolicitacao.find(
-					"select sol.idSolicitacao, to_char(andam.dtReg,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
-					"sol.lotaSolicitante.siglaLotacao, andam.lotaAtendente.siglaLotacao, " +
-					"andam.estado, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
-					"from SrSolicitacao sol, SrAndamento andam " +
-					"where sol.idSolicitacao = andam.solicitacao " +
-					"and andam.lotaAtendente in (" + listalotacoes + ") " +
-					"and andam.idAndamento = (select max(idAndamento) from SrAndamento where solicitacao=andam.solicitacao and " +
-					"lotaAtendente = andam.lotaAtendente) " +
-					"and andam.estado = " + parametros.get("situacao") + " " +
+					"select sol.idSolicitacao, to_char(mov.dtIniMov,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
+					"sol.lotaSolicitante.siglaLotacao, mov.lotaAtendente.siglaLotacao, " +
+					"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
+					"from SrSolicitacao sol, SrMovimentacao mov " +
+					"where sol.idSolicitacao = mov.solicitacao " +
+					"and mov.lotaAtendente in (" + listalotacoes + ") " +
+					"and mov.idMovimentacao = (select max(idMovimentacao) from SrMovimentacao where solicitacao=mov.solicitacao and " +
+					"lotaAtendente = mov.lotaAtendente) " +
+					"and mov.tipoMov= " + parametros.get("situacao") + " " +
 					"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 					"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-					"order by andam.estado").fetch();
+					"order by mov.tipoMov.nome").fetch();
 
 					Iterator it = lista.listIterator(); 
 					while (it.hasNext()) {

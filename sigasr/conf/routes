@@ -11,35 +11,6 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-*		/solicitacao/exibir/{id}   			Application.exibir
-*		/solicitacao/desfazer_ultimo/{id}	Application.desfazerUltimoAndamento
-*		/solicitacao/baixar					Application.baixar
-*		/solicitacao/filha/{id}				Application.criarFilha
-*		/solicitacao/selecionar				Application.selecionar
-*		/solicitacao/editar/{id}			Application.editar
-*		/solicitacao/editar					Application.editar
-*		/solicitacao/listar					Application.listar
-*		/solicitacao/gadget					Application.gadget
-*		/solicitacao/exibirLocalERamal		Application.exibirLocalERamal
-*		/solicitacao/exibirAtributos		Application.exibirAtributos
-*		/solicitacao/exibirItemConfiguracao Application.exibirItemConfiguracao
-*		/solicitacao/exibirServico 			Application.exibirServico
-*		/solicitacao/gravar 				Application.gravar
-*		/solicitacao/exibirAtendente		Application.exibirAtendente
-*		/solicitacao/andamento				Application.andamento
-*		/solicitacao/relSolicitacoes  		Application.relSolicitacoes
-*		/solicitacao/relSolicitacoes/gerar  Application.grelSolicitacoes
-*		/solicitacao/relTransferencias 		Application.relTransferencias
-*		/solicitacao/relTransferencias/gerar  Application.grelTransferencias
-*		/solicitacao/relLocal		 		Application.relLocal
-*		/solicitacao/relLocal/gerar  		Application.grelLocal
-*		/solicitacao/relPrazo		 		Application.relPrazo
-*		/solicitacao/relPrazo/gerar  		Application.grelPrazo
-*		/solicitacao/relPrazoDetail		 	Application.relPrazo
-*		/solicitacao/relPrazoDetail/gerar  	Application.grelPrazoDetail
-*		/solicitacao/estatistica			Application.estatistica
-
-
 *		/designacao/editar/{id}				Application.editarDesignacao
 *		/designacao/editar					Application.editarDesignacao
 *		/designacao/gravar					Application.gravarDesignacao
@@ -72,7 +43,30 @@ GET     /public/                                staticDir:public
 *		/servico/buscar						Application.buscarServico
 *		/servico/desativar/{id}				Application.desativarServico	
 
-*		/{tipo}/buscar						Application.buscarSiga
-*		/{tipo}/selecionar					Application.selecionarSiga
+*		/solicitacao/desfazer_ultimo/{id}				Application.desfazerUltimaMovimentacao
+*		/solicitacao/filha/{id}							Application.criarFilha
+*		/solicitacao/relSolicitacoes  					Application.relSolicitacoes
+*		/solicitacao/relSolicitacoes/gerar  			Application.grelSolicitacoes
+*		/solicitacao/relTransferencias 					Application.relTransferencias
+*		/solicitacao/relTransferencias/gerar  			Application.grelTransferencias
+*		/solicitacao/relLocal		 					Application.relLocal
+*		/solicitacao/relLocal/gerar  					Application.grelLocal
+*		/solicitacao/relPrazo		 					Application.relPrazo
+*		/solicitacao/relPrazo/gerar  					Application.grelPrazo
+*		/solicitacao/relPrazoDetail		 				Application.relPrazo
+*		/solicitacao/relPrazoDetail/gerar  				Application.grelPrazoDetail
+*		/solicitacao/listarLista/gravar 				Application.gravarLista
+*		/solicitacao/exibirLista/{id}		 			Application.exibirLista
+*		/solicitacao/priorizarLista		 				Application.priorizarLista
+*		/solicitacao/associarLista/{id}				    Application.associarLista
+*		/solicitacao/associarListaGravar/{id}			Application.associarListaGravar
+*		/solicitacao/desassociarLista					Application.desassociarLista
+*		/solicitacao/editarLista/{id}					Application.editarLista
+*		/solicitacao/{action}							Application.{action}
+*		/solicitacao/{action}/{id}						Application.{action}
 
-*       /{action}                  			Application.{action}
+*		/{tipo}/buscar									Application.buscarSiga
+*		/{tipo}/selecionar								Application.selecionarSiga
+
+
+

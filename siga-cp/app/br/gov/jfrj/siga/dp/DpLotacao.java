@@ -115,7 +115,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public Long getId() {
-		return Long.valueOf(getIdLotacao());
+		return super.getIdLotacao();
 	}
 	
 	public void setId(Long id){

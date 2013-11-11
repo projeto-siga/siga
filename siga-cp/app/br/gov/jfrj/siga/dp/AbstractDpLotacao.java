@@ -52,10 +52,10 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
 	@Column(name = "ID_LOTACAO", nullable = false)
 	@Desconsiderar
-	private long idLotacao;
+	private Long idLotacao;
 	@Column(name = "ID_LOTACAO_INI")
 	@Desconsiderar
-	private long idLotacaoIni;
+	private Long idLotacaoIni;
 	@Column(name = "NOME_LOTACAO", nullable = false)
 	private String nomeLotacao;
 	@Column(name = "SIGLA_LOTACAO")
@@ -77,7 +77,6 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private DpLotacao lotacaoInicial;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTACAO_PAI")
-	@Desconsiderar
 	private DpLotacao lotacaoPai;
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoInicial")
 	@Desconsiderar

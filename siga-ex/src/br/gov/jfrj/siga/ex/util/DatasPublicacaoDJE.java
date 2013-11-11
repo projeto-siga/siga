@@ -161,10 +161,16 @@ public class DatasPublicacaoDJE {
 	}
 
 	private long getDifHojeDisponib() {
-		Long diasUteis, diasInuteis;
+		Long diasUteis, diasInuteis, diferencaEmMilisegundos;
 		if (difHojeDisponib == null) {
-			diasUteis = (getDataDisponibilizacao().getTime() - getHojeMeiaNoite()
-					.getTime()) / 86400000;
+			
+			diferencaEmMilisegundos = getDataDisponibilizacao().getTime() - getHojeMeiaNoite().getTime();
+			
+			//Início de Horário de Verão.
+			if(diferencaEmMilisegundos == 342000000L)
+				diferencaEmMilisegundos += 3600000L; 
+			
+			diasUteis = (diferencaEmMilisegundos) / 86400000;
 			diasInuteis = getNumeroDiasInuteis(getHojeMeiaNoite(),
 					getDataDisponibilizacao());
 

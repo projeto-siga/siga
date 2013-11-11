@@ -55,7 +55,7 @@
 	}
 
 	function buscaNomeLota(){
-		var siglaLota = $('#lotPublicacao').val();			
+		var siglaLota = $('#idLotPublicacao :selected').text();	
 			$.ajax({				     				  
 				  url:'/siga/lotacao/selecionar.action?sigla=' + siglaLota ,					    					   					 
 				  success: function(data) {
@@ -76,9 +76,9 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Solicitação de Publicação - ${doc.codigo}</h2>
-			<div class="gt-content-box gt-for-table">
-			<ww:form name="frm" action="pedir_publicacao_gravar"
-			namespace="/expediente/mov" cssClass="form" method="GET" >
+			<div class="gt-content-box gt-for-table">			
+			<form name="frm" action="pedir_publicacao_gravar.action"
+					namespace="/expediente/mov" cssClass="form" method="GET">
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>	
 			<ww:if test="${not empty mensagem}">
@@ -124,8 +124,9 @@
 				</tr>				
 				<tr>
 					<td>Lotação de publicação:</td>
-					<td><ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" onchange="buscaNomeLota()" />
-					&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span>	</div></td>
+					<td><ww:select name="idLotPublicacao" list="listaLotPubl" listKey="idLotacao"
+						        listValue="siglaLotacao" value="${idLotDefault}" onchange="javascript: buscaNomeLota();" theme="simple"  />
+								&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>		
 				</tr>				
 					
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
@@ -135,12 +136,13 @@
 								
 				<tr class="button">
 					<td colspan="2"><input type="button" onclick="javascript: validar();" value="Ok" class="gt-btn-medium gt-btn-left"  ${disabled}/> <input type="button"
-						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>					
+						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
+						<a href="/sigaex/arquivo/download.action?arquivo=${mob.referenciaRTF}" class="gt-btn-medium gt-btn-left">Visualizar RTF</a></td>					
 				</tr>
 			</table>
-		</ww:form>
+		</form>
 		<span style="font-weight:bold; color: red">${mensagem}</span>	
-	</div>
+	</div>	
 	<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>
 	<ul>
 	<li><span style="font-weight:bold">Data para
@@ -149,13 +151,15 @@
 	<li><span style="font-weight:bold">Data de Publicação</span> -
 	a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
 	da Lei 11419 / 2006</li>
+	<li><span style="font-weight:bold">Visualizar RTF</span> -
+	Permite visualizar o documento antes de ser enviado para o DJE.</li>
 	</ul>		
-	</div>
-</div>	
-
+	</div>	
+</div>
 <script type="text/javascript">
 	buscaNomeLota();
 </script>
+
 
 <!--  tabela do rodapé -->
 <%--<c:import context="/siga" url="/paginas/rodape.jsp" />--%>

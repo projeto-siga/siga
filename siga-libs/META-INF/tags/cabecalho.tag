@@ -78,7 +78,7 @@ ${meta}
 <link rel="shortcut icon" href="/siga/sigalibs/siga.ico" />
 
 <script language="JavaScript"
-	src="/siga/javascript/jquery/1.3/jquery.min.js" type="text/javascript"></script>
+	src="/siga/javascript/jquery/1.6/jquery-1.6.4.min.js" type="text/javascript"></script>
 <%-- Desabilitado porque requer o jquery 1.7 ou maior. 	
 <script language="JavaScript"
 	src="/siga/javascript/autogrow.min.js" type="text/javascript"></script>

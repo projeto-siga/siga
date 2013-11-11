@@ -219,11 +219,33 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	private Long idPapel;
 	
-	private String lotPublicacao;
+	private String lotPublicacao;	
+	
+	private Long idLotPublicacao;
 	
 	private String descrPublicacao;
 	
 	private Integer tamMaxDescr;
+	
+	private Long idLotDefault;
+	
+	
+	
+	public Long getIdLotPublicacao() {
+		return idLotPublicacao;
+	}
+
+	public void setIdLotPublicacao(Long idLotPublicacao) {
+		this.idLotPublicacao = idLotPublicacao;
+	}
+
+	public Long getIdLotDefault() {
+		return idLotDefault;
+	}
+
+	public void setIdLotDefault(Long idLotDefault) {
+		this.idLotDefault = idLotDefault;
+	}
 
 	public String getDescrPublicacao() {
 		return descrPublicacao;
@@ -233,12 +255,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.descrPublicacao = descrPublicacao;
 	}
 
-	public String getLotPublicacao() {
+	private String getLotPublicacao() {
 		return lotPublicacao;
 	}
 
-	public void setLotPublicacao(String lotPublicacao) {
-		this.lotPublicacao = lotPublicacao;
+	private void setLotPublicacao(String lotPublicacao) {
+		this.lotPublicacao = lotPublicacao;		
 	}
 	
 	public Integer getTamMaxDescr() {
@@ -484,20 +506,17 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
 		setDescrPublicacao(doc.getDescrDocumento());	
-	
-		try{
-			new GeradorRTF().geraRTFFOP(getDoc());
-		}catch (Exception e) {
-			setMensagem("Houve erro na geração do arquivo a ser publicado. "+ e.getMessage()+" Favor entrar em contato com a equipe gestora do DJE.");			
-		}
 
 		return Action.SUCCESS;
 	}
 
-	public String aPedirPublicacaoGravar() throws Exception {
+	public String aPedirPublicacaoGravar() throws Exception {		
 		buscarDocumento(true);
-
 		lerForm(mov);
+		
+		if (this.getIdLotPublicacao() != null)
+			this.setLotPublicacao(dao().consultar(this.getIdLotPublicacao(), DpLotacao.class, false).getSigla());
+
 
 		if (!Ex.getInstance().getComp()
 				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
@@ -552,20 +571,23 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			lot.buscar();
 			setLotaSubscritorSel(lot);	
 		}	
-		
-		try{
-			new GeradorRTF().geraRTFFOP(getDoc());
-		}catch (Exception e) {
-			setMensagem("Houve erro na geração do arquivo a ser publicado. "+ e.getMessage()+" Favor entrar em contato com a equipe gestora do DJE.");
-			
-		}
 
 		return Action.SUCCESS;
 	}
 
 	public String aAgendarPublicacaoGravar() throws Exception {
+		Long idPubl = null;
 		buscarDocumento(true);
-		lerForm(mov);
+		lerForm(mov);		
+		
+		if (this.getIdLotPublicacao() != null)
+			idPubl = this.getIdLotPublicacao();
+		else {
+			if (getLotaSubscritorSel().getId() != null)
+				idPubl = getLotaSubscritorSel().getId();
+		}	
+		
+		this.setLotPublicacao(dao().consultar(idPubl, DpLotacao.class, false).getSigla());
 
 		if (!Ex.getInstance().getComp()
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))
@@ -578,11 +600,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		validarDataGravacao(mov, false);
 		
-		if (getLotPublicacao() == null) {
-			if (getLotaSubscritorSel().getId() != null) 
-				this.setLotPublicacao(dao().consultar(getLotaSubscritorSel().getId(), 
-						DpLotacao.class, false).getSigla());
-		}
+//		if (getLotPublicacao() == null) {
+//			if (getLotaSubscritorSel().getId() != null) 
+//				this.setLotPublicacao(dao().consultar(getLotaSubscritorSel().getId(), 
+//						DpLotacao.class, false).getSigla());
+//		}
 
 		Ex.getInstance()
 				.getBL()
@@ -3504,20 +3526,41 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return dao().consultarExModelo(null, "Despacho Automático");
 	}
 	
-	public Map<String, String> getListaLotPubl() throws Exception {
+	
+	public List<DpLotacao> getListaLotPubl() throws Exception {
 		
-		Map<String, String> lotacoes = new HashMap<String, String>();
-		String lotSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(this.doc);
-		String lotCadastrante = getCadastrante().getLotacao().getSigla();
-		String lotTitular = getLotaTitular().getSigla();
-		this.setLotPublicacao(lotSubscritor);	
-		lotacoes.put(lotSubscritor,lotSubscritor);	
-		if (!lotSubscritor.equals(lotCadastrante)){
-			lotacoes.put(lotCadastrante,lotCadastrante);
+		List<DpLotacao> lotacoes = new ArrayList<DpLotacao>();
+		DpLotacao lotSubscritor, lotCadastrante, lotTitular, lotFiltro;
+		String siglaSubscritor, siglaCadastrante, siglaTitular;
+		
+		siglaSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(this.doc);
+		siglaCadastrante = getCadastrante().getLotacao().getSigla();		
+		siglaTitular = getLotaTitular().getSigla();
+		lotFiltro = new DpLotacao();
+		
+		lotFiltro.setOrgaoUsuario(this.doc.getOrgaoUsuario());		
+		lotFiltro.setSigla(siglaSubscritor);
+		lotSubscritor = dao().consultarPorSigla(lotFiltro);		
+		lotacoes.add(lotSubscritor);		
+				
+		if(!siglaSubscritor.equals(siglaCadastrante) &&
+				getCadastrante().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId())) {
+			lotFiltro.setSigla(siglaCadastrante);
+			lotCadastrante = dao().consultarPorSigla(lotFiltro);
+			lotacoes.add(lotCadastrante);
 		}
-		if (!lotSubscritor.equals(lotTitular) && !lotCadastrante.equals(lotTitular)) {
-			lotacoes.put(lotTitular,lotTitular);
-		}	
+		
+		if(!siglaSubscritor.equals(siglaTitular) && !siglaCadastrante.equals(siglaTitular) 
+				&&(
+				(getTitular().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId()))
+						|| getLotaTitular().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId()))){
+			lotFiltro.setSigla(siglaTitular);
+			lotTitular = dao().consultarPorSigla(lotFiltro);
+			lotacoes.add(lotTitular);
+		}
+		
+		this.setIdLotDefault(lotSubscritor.getId());
+		
 		return lotacoes;
 	}
 }

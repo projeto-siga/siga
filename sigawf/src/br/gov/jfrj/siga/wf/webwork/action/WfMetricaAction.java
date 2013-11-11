@@ -20,15 +20,21 @@ package br.gov.jfrj.siga.wf.webwork.action;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.jbpm.graph.def.ProcessDefinition;
+import org.jbpm.graph.node.TaskNode;
+import org.jbpm.taskmgmt.def.Task;
+
+import br.gov.jfrj.siga.wf.SigaWfProperties;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.relatorio.RelEstatisticaProcedimento;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDoc;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDocDetalhado;
+import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
  * Classe responsável pelas exibições das estatísticas dos procedimentos.
@@ -48,6 +54,9 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	private String procedimento;
 	private Map parametrosRelatorio;
 	private String incluirAbertos;
+	
+	private Long grpIni;
+	private Long grpFim;
 
 	/**
 	 * Retorna o órgão.
@@ -95,34 +104,49 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	public String aEmitirRelatorio() throws Exception{
 		parametrosRelatorio = new HashMap<String, String>();
 
+		for (Object o: getRequest().getParameterMap().keySet()) {
+			String k = (String)o;
+			String v = (String) getRequest().getParameter(k);
+			parametrosRelatorio.put(k,v);
+		}
+		
 		parametrosRelatorio.put("secaoUsuario", getLotaTitular().getOrgaoUsuario().getNmOrgaoUsu());
-		parametrosRelatorio.put("dataInicialDe", getRequest().getParameter(
-				"dataInicialDe"));
-		parametrosRelatorio.put("dataInicialAte", getRequest().getParameter(
-		"dataInicialAte"));
-		parametrosRelatorio.put("dataFinalDe", getRequest().getParameter("dataFinalDe"));
-		parametrosRelatorio.put("dataFinalAte", getRequest().getParameter("dataFinalAte"));
+		parametrosRelatorio.put("nomeProcedimento", getProcedimentoEscolhido().getName());
+		parametrosRelatorio.put("incluirAbertos",incluirAbertos==null?false:incluirAbertos);
+		parametrosRelatorio.put("inicioGrupo",(grpIni==null || grpIni < 0)?null:getNomeGrupo(grpIni));
+		parametrosRelatorio.put("fimGrupo",(grpFim==null || grpFim < 0)?null:getNomeGrupo(grpFim));
 		
-		
-		String nomeProcedimento = WfDao.getInstance().getProcessDefinition(getPdId()).getName();
-		
-		parametrosRelatorio.put("nomeProcedimento", nomeProcedimento);
-		parametrosRelatorio.put("incluirAbertos",incluirAbertos==null?false:incluirAbertos );
-
-		
-		Long relatorioEscolhido = Long.valueOf(getRequest().getParameter("selecaoRelatorio"));
-		
-		if (relatorioEscolhido.equals(REL_ESTATISTICAS_GERAIS)){
+		if (getRelatorioEscolhido().equals(REL_ESTATISTICAS_GERAIS)){
 			gerarRelEstGeral();
 		}
-		if (relatorioEscolhido.equals(REL_TEMPO_DE_DOCUMENTOS)){
+		if (getRelatorioEscolhido().equals(REL_TEMPO_DE_DOCUMENTOS)){
 			gerarRelTempoDoc();
 		}
-		if (relatorioEscolhido.equals(REL_TEMPO_DE_DOCUMENTOS_DETALHADO)){
+		if (getRelatorioEscolhido().equals(REL_TEMPO_DE_DOCUMENTOS_DETALHADO)){
 			gerarRelTempoDocDetalhado();
 		}
 		
 		return "relatorioPDF";
+	}
+
+	private String getNomeGrupo(Long idGrupo) {
+		for (Object o: getProcedimentoEscolhido().getTaskMgmtDefinition().getTasks().values()) {
+			Task t = (Task)o;
+			if (t.getId()==idGrupo.longValue()){
+				return t.getName();
+			}
+		} 
+		
+		return null;
+		
+	}
+
+	private ProcessDefinition getProcedimentoEscolhido() {
+		return WfDao.getInstance().getProcessDefinition(getPdId());
+	}
+
+	private Long getRelatorioEscolhido() {
+		return Long.valueOf(getRequest().getParameter("selecaoRelatorio"));
 	}
 	
 	/**
@@ -230,4 +254,46 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	public Long getPdId() {
 		return pdId;
 	}
+	
+	public String getMinMediaTruncada(){
+		return SigaWfProperties.getRelEstatGeraisMinMediaTrunc().toString().replace(".", ",");
+	}
+	public String getMaxMediaTruncada(){
+		return SigaWfProperties.getRelEstatGeraisMaxMediaTrunc().toString().replace(".", ",");
+	}
+	
+	public List<Task> getLstGruposIni(){
+		List<Task> result = new ArrayList<Task>();
+		Map map = getProcedimentoEscolhido().getTaskMgmtDefinition().getTasks();
+		for (Object o : map.values()) {
+			Task t = (Task)o;
+			if (t.getTaskNode()!=null){
+				result.add(t);	
+			}
+			
+		}
+		
+		return result;
+	}
+	
+	public List<Task>  getLstGruposFim(){
+		return getLstGruposIni();
+	}
+
+	public void setGrpFim(Long grpFim) {
+		this.grpFim = grpFim;
+	}
+
+	public Long getGrpFim() {
+		return grpFim;
+	}
+
+	public void setGrpIni(Long grpIni) {
+		this.grpIni = grpIni;
+	}
+
+	public Long getGrpIni() {
+		return grpIni;
+	}
+
 }

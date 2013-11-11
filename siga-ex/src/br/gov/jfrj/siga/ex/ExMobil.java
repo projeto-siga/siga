@@ -1450,5 +1450,14 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public String getReferenciaPDF() {
 		return getReferencia() + ".pdf";
 	};
+	
+	/**
+	 * Retorna a referência do objeto mais o extensão ".rtf".
+	 * 
+	 */
+	public String getReferenciaRTF() {
+		return getReferencia() + ".rtf";
+	};
+
 
 }

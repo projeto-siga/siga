@@ -1,0 +1,121 @@
+#{extends 'main.html' /} #{set title:'Exibição de solicitação' /}
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<style>
+#sortable table { height: 1.5em; line-height: 1.2em; }
+.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+</style>
+<script>
+$(function() {
+	$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
+	$( "#sortable" ).disableSelection();
+});
+</script>
+<script>
+$(function(){
+    $('#btn').click(function() {
+        var ids=[];
+    	$("#sortable > tr").each(function() {
+          ids.push($(this).attr('id'));
+ 	    });
+ 	    $.ajax({
+ 	  	   type: "POST",
+ 	  	   async: false,
+ 	  	   data: {ids:ids, id:"${lista.idLista}"},
+ 	  	   url: "/sigasr/solicitacao/priorizarLista",
+ 	  	   success: function(){
+ 	  		 window.location.reload();
+ 	  	   }
+ 	  	});
+    });
+});
+</script>
+
+	<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+	<h2> ${lista.nomeLista}</h2>
+	
+		<p class="gt-table-action-list">
+			#{if editar} <a class="once"
+				href="@{Application.editarLista(lista?.idLista)}"> <img
+				src="/siga/css/famfamfam/icons/pencil.png"
+				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
+		</p>
+ 	
+ 	<div class="gt-content-box gt-for-table">
+	<table border="0" class="gt-table-nowrap">
+			<col width="5%" />
+			<col width="15%" />
+    		<col width="25%" />
+    		<col width="10%" />
+    		<col width="10%" />
+    		<col width="10%" />
+    		<col width="20%" />
+    		<col width="5%" />
+    		<thead>
+				<tr class="gt-celula-nowrap">
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Prior</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Solicitante</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Aberto</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Situação</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Última Movimentação</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Exc</th>
+				</tr>
+			</thead>
+			<tbody id="sortable" >
+			#{list items:solicitacao, as:'sol'}
+			#{if sol}
+
+			<tr id="${sol.idSolicitacao}">
+			<td class="gt-celula-nowrap" style="cursor:move; font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
+				${sol.getPrioridade(lista)}
+			</td>
+			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+						<a href="@{Application.exibir(sol.idSolicitacao)}">
+							${sol.codigo}
+						</a>	
+			</td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrSolicitacao">
+			<b style="color: #333">
+			${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}:</b>&nbsp;
+			#{selecionado sigla:sol?.descrSolicitacao,descricao:sol?.descrSolicitacao /}
+			</td>
+				
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;" >
+			#{selecionado sigla:sol.solicitante.descricaoIniciaisMaiusculas + ',' + sol.lotaSolicitante.siglaLotacao, descricao:sol.solicitante.descricaoIniciaisMaiusculas + ',' + sol.lotaSolicitante.siglaLotacao/},
+			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.siglaLotacao /}
+			</td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+			#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
+			</td>						
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+				<b>${sol?.lotaAtendente.siglaLotacao}</b></td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+				${sol.ultimaMovimentacao.descrMovimentacao}
+			</td>
+			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+				<input type="hidden" name="idLista" value="${lista.idLista}">
+				<input type="hidden" name="idSolicitacao" value="${sol.idSolicitacao}">
+				#{if remover} 
+				<a class="once" href="@{Application.desassociarLista(sol.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.idSolicitacao}">
+				<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> </a>#{/if}
+			</td>
+			</tr>		
+			#{/if}		
+			#{/list}
+			</tbody>
+			</table>
+		</div>
+	
+</div>
+
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<input type="hidden" name="idLista" value="${lista.idLista}">
+		#{if editar} 
+		<input type="button" id="btn" value="Priorizar" class="gt-btn-medium gt-btn-left" />#{/if}
+		<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
+
+		</div>

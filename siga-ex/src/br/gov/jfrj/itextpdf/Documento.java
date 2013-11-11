@@ -117,9 +117,9 @@ public class Documento {
 	private static final float PAGE_BORDER_IN_CM = 0.8f;
 
 	private static final float STAMP_BORDER_IN_CM = 0.2f;
-	
+
 	private static final Pattern pattern = Pattern
-	.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.(pdf|html)");
+		.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.(pdf|html|zip|rtf)");
 
 	private static Log log = LogFactory.getLog(Documento.class);
 
@@ -273,13 +273,13 @@ public class Documento {
 			// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
 			// + ", " + h);
 
-			doc.setPageSize((rot != 0) ^ (w > h) ? PageSize.A4.rotate()
+			doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate()
 					: PageSize.A4);
 			doc.newPage();
 
 			cb.saveState();
 
-			if (rot != 0) {
+			if (rot != 0 && rot != 180) {
 				float swap = w;
 				w = h;
 				h = swap;
@@ -301,8 +301,13 @@ public class Documento {
 
 			if (rot != 0) {
 				double theta = -rot * (Math.PI / 180);
-				cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
-						w / 2));
+				if (rot == 180){
+					cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
+							h / 2));
+				}else{
+					cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
+							w / 2));
+				}
 				if (rot == 90) {
 					cb.transform(AffineTransform.getTranslateInstance(
 							(w - h) / 2, (w - h) / 2));
@@ -810,6 +815,7 @@ public class Documento {
 					// step 2: we create a writer that listens to the
 					// document
 					writer = new PdfCopy(document, bo2);
+					writer.setFullCompression();
 
 					// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
 
@@ -1284,16 +1290,29 @@ public class Documento {
 				// sb.append("</div>");
 			} else {
 				sb.append("<div style=\"margin:3pt; padding:3pt;\" class=\"anexo\">");
-				sb.append("<a href=\"" + "http://" + servernameport
-						+ contextpath + "/expediente/doc/"
-						+ an.getArquivo().getReferenciaPDF() + "\">");
+				sb.append("<img src=\"/siga/css/famfamfam/icons/page_white_acrobat.png\"/> <a href=\""
+						+ "http://"
+						+ servernameport
+						+ contextpath
+						+ "/arquivo/exibir.action?arquivo="
+						+ an.getArquivo().getReferenciaPDF()
+						+ "\" target=\"_blank\">");
 				sb.append(an.getNome());
 				sb.append("</a>");
-				if (an.getArquivo() instanceof ExMovimentacao) {
-					sb.append(": "
-							+ ((ExMovimentacao) an.getArquivo()).getDescrMov());
-				}
-				sb.append("<br/>");
+				if (((ExMovimentacao) an.getArquivo()).getDescrMov() != null)
+					if (an.getArquivo() instanceof ExMovimentacao) {
+						sb.append(": "
+								+ ((ExMovimentacao) an.getArquivo())
+										.getDescrMov());
+					}
+//				sb.append("<iframe style=\"visibility: visible; margin: 0px; padding: 0px; display: block;height: 30em; border: 1px solid black;\" src=\"http://"
+//						+ servernameport
+//						+ contextpath
+//						+ "/arquivo/exibir.action?arquivo="
+//						+ an.getArquivo().getReferenciaPDF()
+//						+ "&semmarcas=1\" width=\"100%\" frameborder=\"0\" scrolling=\"auto\"></iframe>");
+
+				// sb.append("<br/>");
 				sb.append("</div>");
 			}
 

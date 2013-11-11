@@ -59,7 +59,7 @@
 	}
 
 	function buscaNomeLota(){
-		var siglaLota = $('#lotPublicacao').val();			
+		var siglaLota = $('#idLotPublicacao :selected').text();	
 			$.ajax({				     				  
 				  url:'/siga/lotacao/selecionar.action?sigla=' + siglaLota ,					    					   					 
 				  success: function(data) {
@@ -127,17 +127,16 @@
 					<td>Data de publicação:</td>
 					<td><div id="dt_publ" /></td>
 				</tr>				
-				<tr>					
-					<td>Lotação de publicação:</td>
-					<td>
+				<tr>									
+					<td>Lotação de Publicação:</td>
 						<ww:if test="${podeAtenderPedidoPubl}">
-							<siga:selecao tema="simple" propriedade="lotaSubscritor" />
+							<td><siga:selecao tema="simple" propriedade="lotaSubscritor"  /></td>
 						</ww:if>
-						<ww:else>
-							<ww:select theme="simple" id="lotPublicacao" name="lotPublicacao" list="listaLotPubl" label="Lotação de Publicação" onchange="buscaNomeLota()" />
-									&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>
-						</ww:else>
-					</td>					
+						<ww:else>						
+							<td><ww:select name="idLotPublicacao" list="listaLotPubl" listKey="idLotacao"
+						                  listValue="siglaLotacao" value="${idLotDefault}" onchange="javascript:buscaNomeLota();" theme="simple"  />
+								&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>							
+						</ww:else>									
 				</tr>	
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
 							rows="5" cssClass="gt-form-textarea" label="Descrição do documento"
@@ -146,6 +145,7 @@
 				<tr>
 					<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-medium gt-btn-left" ${disabled}/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
+						<a href="/sigaex/arquivo/download.action?arquivo=${mob.referenciaRTF}" class="gt-btn-medium gt-btn-left">Visualizar RTF</a>
 				</tr>
 			</table>
 			</form>	
@@ -162,6 +162,8 @@
 				<li><span style="font-weight:bold">Data de Publicação</span> -
 				a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
 				da Lei 11419 / 2006</li>
+				<li><span style="font-weight:bold">Visualizar RTF</span> -
+				Permite visualizar o documento antes de ser enviado para o DJE.</li>
 			</ul>
 </div></div>
 <script type="text/javascript">

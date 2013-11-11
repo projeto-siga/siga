@@ -40,7 +40,7 @@ import org.joda.time.chrono.ISOChronology;
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
 
-import models.SrAndamento;
+import models.SrMovimentacao;
 import models.SrSolicitacao;
 import play.db.jpa.JPA;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
@@ -126,11 +126,11 @@ public class SrRelPrazo extends RelatorioTemplate {
 
 		if (parametros.get("local").equals("0")) {
 			List<SrSolicitacao> lista = SrSolicitacao.find(
-					"select sol, andam "
-							+ "from SrSolicitacao sol, SrAndamento andam "
-							+ "where sol.idSolicitacao = andam.solicitacao "
-							+ "and andam.lotaAtendente in (" + listalotacoes
-							+ ") " + "and andam.estado = 2 "
+					"select sol, mov "
+							+ "from SrSolicitacao sol, SrMovimentacao mov "
+							+ "where sol.idSolicitacao = mov.solicitacao "
+							+ "and mov.lotaAtendente in (" + listalotacoes
+							+ ") " + "and mov.tipoMov = 7 "
 							+ "and sol.dtReg >= to_date('"
 							+ parametros.get("dtIni")
 							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
@@ -141,9 +141,9 @@ public class SrRelPrazo extends RelatorioTemplate {
 			while (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
 				SrSolicitacao sol = (SrSolicitacao) obj[0];
-				SrAndamento andam = (SrAndamento) obj[1];
+				SrMovimentacao mov = (SrMovimentacao) obj[1];
 				DateTime startemp = new DateTime(sol.dtReg);
-				DateTime endtemp = new DateTime(andam.dtReg);
+				DateTime endtemp = new DateTime(mov.dtIniMov);
 				DateTime start1 = new DateTime();
 				DateTime end1 = new DateTime();
 				if (startemp.getHourOfDay() < 10) {
@@ -255,13 +255,13 @@ public class SrRelPrazo extends RelatorioTemplate {
 			d.add(String.valueOf(cls_ac24));
 		} else {
 			List<SrSolicitacao> lista = SrSolicitacao.find(
-					"select sol, andam "
-							+ "from SrSolicitacao sol, SrAndamento andam "
-							+ "where sol.idSolicitacao = andam.solicitacao "
-							+ "and andam.lotaAtendente in (" + listalotacoes
+					"select sol, mov "
+							+ "from SrSolicitacao sol, SrMovimentacao mov "
+							+ "where sol.idSolicitacao = mov.solicitacao "
+							+ "and mov.lotaAtendente in (" + listalotacoes
 							+ ") " + "and sol.local = "
 							+ parametros.get("local") + " "
-							+ "and andam.estado = 2 "
+							+ "and mov.estado = 2 "
 							+ "and sol.dtReg >= to_date('"
 							+ parametros.get("dtIni")
 							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
@@ -272,9 +272,9 @@ public class SrRelPrazo extends RelatorioTemplate {
 			while (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
 				SrSolicitacao sol = (SrSolicitacao) obj[0];
-				SrAndamento andam = (SrAndamento) obj[1];
+				SrMovimentacao mov = (SrMovimentacao) obj[1];
 				DateTime startemp = new DateTime(sol.dtReg);
-				DateTime endtemp = new DateTime(andam.dtReg);
+				DateTime endtemp = new DateTime(mov.dtIniMov);
 				DateTime start1 = new DateTime();
 				DateTime end1 = new DateTime();
 				if (startemp.getHourOfDay() < 10) {

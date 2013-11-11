@@ -97,23 +97,94 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
 		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:Boolean.valueOf(parametros.get("incluirAbertos").toString().equals("on"));
+		String grupoIni = parametros.get("inicioGrupo")==null?"-1":(String) parametros.get("inicioGrupo");
+		String grupoFim = parametros.get("fimGrupo")==null?"-1":(String) parametros.get("fimGrupo");
 		
 		Set<Tarefa> tarefas = consultarTarefas(procedimento, dataInicialDe,
 				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
 		List<String> dados = new ArrayList<String>();
+		
+		String ultimoDoc = null;
+		DetectorGrupoRel detectGrupo = null;
+		List<Tarefa> grupoAtual = new ArrayList<RelTempoDocDetalhado.Tarefa>();
+		int linhaInicioGrupo = -1;
 		for (Tarefa t : tarefas) {
-			dados.add(t.getNumeroDocumento() + " ("
-					+ t.getDuracaoProcedimento() + ")");
-			dados.add(t.getNome());
-			dados.add(DateFormat.getInstance().format(
-					t.getDataInicio().getTime()));
-			dados.add(t.getDataFim()==null?"Em Andamento":DateFormat.getInstance().format(t.getDataFim().getTime()));
-			dados.add(t.getDuracao().toString());
+			
+			//processamento inicial de grupo
+			if (ultimoDoc == null || !t.getNumeroDocumento().equals(ultimoDoc)){
+				detectGrupo = new DetectorGrupoRel(grupoIni, grupoFim);
+				grupoAtual.clear();
+			}
+			
+			if (detectGrupo.fazParteDoGrupo(t.getNome()) && detectGrupo.isInicio()){
+				linhaInicioGrupo = dados.size();
+//				addLinhaEmBranco(t,dados);
+				detectGrupo.continuar();
+			}
+			
+			if(detectGrupo.fazParteDoGrupo(t.getNome())){
+				grupoAtual.add(t);
+			}
+			
+			addLinha(dados, t);
+			
+			//processamento final de grupo
+			if (detectGrupo.fazParteDoGrupo(t.getNome()) && detectGrupo.isFim()){
+				addLinhaEmBranco(t,dados,linhaInicioGrupo);
+				addLinhaTotalGrupo(grupoAtual,dados);
+				addLinhaEmBranco(t,dados);
+				detectGrupo.reiniciarAvaliacao();
+				grupoAtual.clear();
+			}
+			
+			
+			ultimoDoc = t.getNumeroDocumento();
 
 		}
 
 		return dados;
 
+	}
+
+	private void addLinha(List<String> dados, Tarefa t) {
+		dados.add(t.getNumeroDocumento() + " ("
+				+ t.getDuracaoProcedimento() + ")");
+		dados.add(t.getNome());
+		dados.add(DateFormat.getInstance().format(
+				t.getDataInicio().getTime()));
+		dados.add(t.getDataFim()==null?"Em Andamento":DateFormat.getInstance().format(t.getDataFim().getTime()));
+		dados.add(t.getDuracao().toString());
+	}
+
+	private void addLinhaTotalGrupo(List<Tarefa> grupoAtual, List<String> dados) {
+		long duracao = 0;
+		for (Tarefa t : grupoAtual) {
+			duracao += t.getDuracaoEmMili();
+		}
+		
+		dados.add(grupoAtual.get(0).getNumeroDocumento() + " ("
+				+ grupoAtual.get(0).getDuracaoProcedimento() + ")");
+		dados.add("TOTAL [Grupo]");
+		dados.add("");
+		dados.add("");
+		dados.add(SigaCalendar.formatDHM(duracao));
+	}
+
+	private void addLinhaEmBranco(Tarefa t, List<String> dados,int posicao) {
+		if (posicao<=-1){
+			posicao = dados.size();
+		}
+		dados.add(posicao,"");
+		dados.add(posicao,"");
+		dados.add(posicao,"");
+		dados.add(posicao,"");
+		dados.add(posicao,t.getNumeroDocumento() + " ("
+				+ t.getDuracaoProcedimento() + ")");
+
+	}
+	
+	private void addLinhaEmBranco(Tarefa t, List<String> dados){
+		addLinhaEmBranco(t, dados, -1);
 	}
 
 	private Set<Tarefa> consultarTarefas(String nomeProcedimento,
@@ -325,6 +396,11 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 
 		public String getDuracaoProcedimento() {
 			return SigaCalendar.formatDHM(this.getDuracaoProcedimentoEmMili());
+		}
+		
+		@Override
+		public String toString() {
+			return getNumeroDocumento() + "," + getNome();
 		}
 	}
 

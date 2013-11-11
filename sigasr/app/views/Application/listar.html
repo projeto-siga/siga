@@ -5,20 +5,20 @@
  	#{if listaSolicitacao}
 	<div class="gt-content-box gt-for-table">
 	<table border="0" class="gt-table-nowrap">
-			<col width="20%" />
-    		<col width="20%" />
-    		<col width="15%" />
+			<col width="15%" />
+    		<col width="30%" />
+    		<col width="10%" />
     		<col width="15%" />
     		<col width="15%" />
     		<col width="15%" />
     		<thead>
 				<tr class="gt-celula-nowrap">
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Solicitante</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Aberto</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Situação</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Último Andamento</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Aberto</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -29,23 +29,23 @@
 							${sol.codigo}
 						</a>	
 			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrSolicitacao">
+			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important;" "id="descrSolicitacao">
 			<b style="color: #333">
-			${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}:</b>&nbsp;
-			#{selecionado sigla:sol?.descrSolicitacao,descricao:sol?.descrSolicitacao /}
+			${sol.itemConfiguracao?.descricao}:</b>&nbsp;
+			#{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}
 			</td>
 				
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;" >
-			#{selecionado sigla:sol.solicitante.descricaoIniciaisMaiusculas + ',' + sol.lotaSolicitante.siglaLotacao, descricao:sol.solicitante.descricaoIniciaisMaiusculas + ',' + sol.lotaSolicitante.siglaLotacao/},
-			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.siglaLotacao /}
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
+			#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
+			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
 			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
 			#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
 			</td>						
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				<b>${sol.situacaoStringSemLota},${sol.lotaAtendente.siglaLotacao}</b></td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				${sol.ultimoAndamento.descrAndamento}</td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+				<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+				#{selecionado sigla:sol.ultimoAndamento?.descrMovimentacao,descricao:sol.ultimoAndamento?.descrMovimentacao /}
 			</tr>		
 			</tbody>			
 			#{/list}
@@ -118,13 +118,13 @@
 					</tr>
 					<tr>
 						<td>Prioridade</td>
-						<td colspan="3">#{select 'filtro.urgencia', items:urgencias,
+						<td colspan="3">#{select 'filtro.urgencia', items:models.SrUrgencia.values(),
 							labelProperty:'descrUrgencia', value:filtro.urgencia } #{option
 							0}Todas#{/option}#{/select} #{select 'filtro.gravidade',
-							items:gravidades, labelProperty:'descrGravidade',
+							items:models.SrGravidade.values(), labelProperty:'descrGravidade',
 							value:filtro.gravidade }#{option
 							0}Todas#{/option}#{/select} #{select 'filtro.tendencia',
-							items:tendencias, labelProperty:'descrTendencia',
+							items:models.SrTendencia.values(), labelProperty:'descrTendencia',
 							value:filtro.tendencia}#{option
 							0}Todas#{/option}#{/select}</td>
 					</tr>

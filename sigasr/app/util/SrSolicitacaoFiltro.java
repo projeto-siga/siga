@@ -107,7 +107,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		}
 
 		if (subquery.length() > 0)
-			subquery = " and exists (from SrMarca situacao where situacao.solicitacao = sol.solicitacaoInicial "
+			subquery = " and exists (from SrMarca situacao where situacao.solicitacao.solicitacaoInicial = sol.solicitacaoInicial "
 					+ subquery + " )";
 
 		List listaRetorno = JPA

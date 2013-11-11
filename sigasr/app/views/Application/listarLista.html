@@ -1,0 +1,36 @@
+#{extends 'main.html' /} #{set title:'Listas' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Listas</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Lotação</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:lista, as:'lista'}
+					<tr>
+						<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'"
+						style="cursor: pointer;"> ${lista.nomeLista}</td>
+						<td>${lista.getlotaCadastrante().getNomeLotacao()}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarLista}" class="gt-btn-medium gt-btn-left">Nova Lista</a>
+		<div class="gt-table-buttons">
+		</div>
+</div>
+
+<br />
+<br />
+<br />

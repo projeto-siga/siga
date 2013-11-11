@@ -137,7 +137,7 @@
 				<tr class="button">
 					<td colspan="2"><input type="button" onclick="javascript: validar();" value="Ok" class="gt-btn-medium gt-btn-left"  ${disabled}/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
-						<a href="/sigaex/arquivo/download.action?arquivo=${mob.referenciaRTF}" class="gt-btn-medium gt-btn-left">Visualizar RTF</a></td>					
+						<a href="/sigaex/arquivo/download.action?arquivo=${mob.referenciaRTF}" class="gt-btn-medium gt-btn-left">Visualizar Publicação</a></td>					
 				</tr>
 			</table>
 		</form>
@@ -151,7 +151,7 @@
 	<li><span style="font-weight:bold">Data de Publicação</span> -
 	a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
 	da Lei 11419 / 2006</li>
-	<li><span style="font-weight:bold">Visualizar RTF</span> -
+	<li><span style="font-weight:bold">Visualizar Publicação</span> -
 	Permite visualizar o documento antes de ser enviado para o DJE.</li>
 	</ul>		
 	</div>	

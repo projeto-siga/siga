@@ -648,7 +648,6 @@ public class Application extends SigaApplication {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
 		movimentacao.salvar(cadastrante(), lotaTitular());
-
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
@@ -968,7 +967,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Solicitações", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	public static void grelTransferencias(String secaoUsuario, String lotacao,
@@ -991,7 +990,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Transferências", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	public static void grelLocal(String secaoUsuario, String lotacao,
@@ -1015,7 +1014,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Solicitações por Localidade",
-				pdf.length, "application/pdf", false);
+				pdf.length, "application/pdf", true);
 	}
 
 	public static void grelPrazo(String secaoUsuario, String lotacao,
@@ -1039,7 +1038,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Prazos", pdf.length, "application/pdf",
-				false);
+				true);
 	}
 
 	public static void grelPrazoDetail(String secaoUsuario, String lotacao,
@@ -1063,7 +1062,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório Detalhado de Prazos", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	private static Map<String, Object> map = new HashMap<String, Object>();

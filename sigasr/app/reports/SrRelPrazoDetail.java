@@ -114,10 +114,13 @@ public class SrRelPrazoDetail extends RelatorioTemplate {
 					"select sol, mov " +
 					"from SrSolicitacao sol, SrMovimentacao mov " +
 					"where sol.idSolicitacao = mov.solicitacao " +
-					"and mov.lotaAtendente in (" + listalotacoes + ") " +
-					"and mov.tipoMov = 7 " +
-					"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-					"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
+					"and mov.lotaAtendente in (" + listalotacoes + ") " 
+					+ "and mov.dtIniMov = (select max(mov2.dtIniMov) " 
+					+ "	from SrMovimentacao mov2 where mov2.solicitacao = mov.solicitacao "
+					+ " and mov2.tipoMov = 7 " 
+					+ " and mov2.movCanceladora is null) "
+					+ "and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " 
+					+ "and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
 				Iterator it = lista.listIterator(); 
 				while (it.hasNext()) {
 						Object[] obj = (Object[]) it.next();
@@ -200,10 +203,13 @@ public class SrRelPrazoDetail extends RelatorioTemplate {
 					"from SrSolicitacao sol, SrMovimentacao mov " +
 					"where sol.idSolicitacao = mov.solicitacao " +
 					"and mov.lotaAtendente in (" + listalotacoes + ") " +
-					"and sol.local = " + parametros.get("local") + " " +
-					"and mov.estado = 2 " +
-					"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-					"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
+					"and sol.local = " + parametros.get("local") + " " 
+					+ "and mov.dtIniMov = (select max(mov2.dtIniMov) " 
+					+ "	from SrMovimentacao mov2 where mov2.solicitacao = mov.solicitacao "
+					+ " and mov2.tipoMov = 7 " 
+					+ " and mov2.movCanceladora is null) "
+					+ "and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " 
+					+ "and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
 				Iterator it = lista.listIterator(); 
 				while (it.hasNext()) {
 						Object[] obj = (Object[]) it.next();

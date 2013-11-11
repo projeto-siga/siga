@@ -47,11 +47,11 @@ public class SrRelTransferencias extends RelatorioTemplate {
 			throws DJBuilderException {
 		this.setTitle("Relatório de Transferências");
 		this.addColuna("Solicitação", 18, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Movimentacao", 13, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Movimentação", 15, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Descrição", 40, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Solicitante", 10, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Atendente", 13, RelatorioRapido.CENTRO, false);
-		this.addColuna("Situação", 15, RelatorioRapido.ESQUERDA, true);
+		this.addColuna("Tipo de Movimentação", 15, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Item de Configuração", 16, RelatorioRapido.CENTRO, false);
 		this.addColuna("Serviço", 16, RelatorioRapido.CENTRO, false);
 		return this;
@@ -78,8 +78,10 @@ public class SrRelTransferencias extends RelatorioTemplate {
 				"and mov.lotaAtendente in (" + listalotacoes + ") " +
 				"and sol.hisDtFim is not null " +
 				"and sol.hisIdIni <> sol.idSolicitacao " +
-				"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-				"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
+				//"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
+				//"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
+				"and mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
+                "and mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss')) " +
 				"order by mov.tipoMov").fetch();
 		
 		List<SrSolicitacao> lst = SrSolicitacao.find(
@@ -87,8 +89,6 @@ public class SrRelTransferencias extends RelatorioTemplate {
 				"from SrSolicitacao sol, SrMovimentacao mov " +
 				"where mov.solicitacao=sol.idSolicitacao " +
 				"and mov.lotaAtendente in (" + listalotacoes + ") " +
-				"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-				"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
 				"and exists (select 1 from SrMovimentacao where solicitacao = mov.solicitacao and dtIniMov > mov.dtIniMov " +
 				"and lotaAtendente <> mov.lotaAtendente " +
 				"and dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
@@ -128,7 +128,8 @@ public class SrRelTransferencias extends RelatorioTemplate {
 				lotaAtendente = "";
 			}
 			//Estado da solicitação - 6º elemento
-				descrEstado = "";
+				descrEstado = mov.tipoMov.nome;
+				//descrEstado = "";
 
 			//Item de configuração - 7º elemento
 			if (solic.itemConfiguracao != null) {
@@ -176,7 +177,8 @@ public class SrRelTransferencias extends RelatorioTemplate {
 				lotaAtendente = "";
 			}
 			//Estado da solicitação - 6º elemento
-			descrEstado = "";
+			//descrEstado = "";
+				descrEstado = mov.tipoMov.nome;
 			
 			//Item de configuração - 7º elemento
 			if (solic.itemConfiguracao != null) {

@@ -680,6 +680,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
+	public boolean isReabertura() {
+		if (isCancelado())
+			return false;
+		for (SrMovimentacao mov : getMovimentacaoSet()) {
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
+				return true;
+		}
+		return false;
+	}
+	
 	public boolean isEmPosAtendimento() {
 		if (isCancelado())
 			return false;
@@ -699,7 +709,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
 					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
 				return false;
-			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO)
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO 
+					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA)
 				return true;
 		}
 		return false;
@@ -803,7 +814,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeFinalizarPosAtendimento(DpLotacao lota, DpPessoa pess) {
-		return isEmPosAtendimento() && estaCom(lota, pess);
+		return (isEmPosAtendimento() ) && estaCom(lota, pess);
 	}
 
 	public boolean podeCancelar(DpLotacao lota, DpPessoa pess) {
@@ -1115,8 +1126,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				movMarca = mov;
 			}
 			if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA) {
-				marcador = marcadorAnterior;
-				movMarca = movMarcaAnterior;
+				//marcador = marcadorAnterior;
+				//movMarca = movMarcaAnterior;
+				marcador = CpMarcador.MARCADOR_SOLICITACAO_PRE_ATENDIMENTO;
+				movMarca = mov;
 			}
 			if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO) {
 				marcador = CpMarcador.MARCADOR_SOLICITACAO_CANCELADO;
@@ -1340,9 +1353,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public Long getPrioridade(SrLista lista) throws Exception {
 		Long prioridade = 0L;
-		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
+		SrMovimentacao movIncl = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA); //getMovimentacaoInclusao(lista);
 		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		if (movAltAnt != null) {
+		if (movAltAnt != null && movAltAnt.dtIniMov.after(movIncl.dtIniMov)) {
 			prioridade = movAltAnt.prioridade;
 		} else if (movIncl != null) {
 			prioridade = movIncl.prioridade;
@@ -1352,9 +1365,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public SrMovimentacao getMovPrioridade(SrLista lista) throws Exception {
 		SrMovimentacao mov = new SrMovimentacao();
-		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
+		SrMovimentacao movIncl = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		if (movAltAnt != null) {
+		//SrMovimentacao movCan = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
+		if (movAltAnt != null && movAltAnt.dtIniMov.after(movIncl.dtIniMov)) {
 			mov = movAltAnt;
 		} else if (movIncl != null) {
 			mov = movIncl;

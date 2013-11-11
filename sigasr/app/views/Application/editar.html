@@ -87,6 +87,8 @@ function carregouServico(response, param){
 				value="${solicitacao.idSolicitacao}" /> 
 				#{/if}
 				<input type="hidden"
+				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
+				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 
 			#{ifErrors}

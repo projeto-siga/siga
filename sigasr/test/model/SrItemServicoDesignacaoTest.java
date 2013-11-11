@@ -217,7 +217,7 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 	public void listarItemEServicoSemHaverDesignTrazVazio() throws Exception {
 		prepararSessao();
 		assertEquals(0, SrItemConfiguracao.listarPorPessoa(eeh()).size());
-		assertEquals(0, SrServico.listarPorPessoaEItem(eeh(), null).size());
+		assertEquals(0, SrServico.listarComAtendentePorPessoaEItem(eeh(), null).size());
 	}
 
 	@Test
@@ -273,14 +273,14 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 			throws Exception {
 		// Edson: Traz 99.01, 99.02. Apesar de não haver designação diretamente
 		// pro SigaDoc, há para sysDoc
-		assertEquals(2, SrServico.listarPorPessoaEItem(eeh(), sigaDoc()).size());
+		assertEquals(2, SrServico.listarComAtendentePorPessoaEItem(eeh(), sigaDoc()).size());
 	}
 
 	@Test
 	public void listarServicoPorItemNaoHavendoDesignProItemTrazVazio()
 			throws Exception {
 		//Edson: vazio porque não há designação pro sysTrab
-		assertEquals(0, SrServico.listarPorPessoaEItem(eeh(), sysTrab()).size());
+		assertEquals(0, SrServico.listarComAtendentePorPessoaEItem(eeh(), sysTrab()).size());
 	}
 	
 	@Test

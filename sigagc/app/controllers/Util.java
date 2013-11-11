@@ -134,9 +134,7 @@ public class Util {
 	 * de classificação do conhecimento.
 	 * 
 	 **/
-	public static void marcarLinkNoConteudo(GcInformacao info, String conteudo, String classificacao) throws Exception {
-
-		GcInformacao infoAlterada = new GcInformacao();
+	public static GcArquivo marcarLinkNoConteudo(String conteudo, String classificacao) throws Exception {
 		
 		if(classificacao != null)
 			//remove todas as hashTag da classificacao, caso exista. Necessário para manter a classificacao
@@ -153,10 +151,8 @@ public class Util {
 		}
 		
 		conteudo = criarLinkSigla(conteudo);
-		infoAlterada.arq = criarLinkHashTag(conteudo, classificacao);
 		
-		info.arq.setConteudoTXT(infoAlterada.arq.getConteudoTXT());
-		info.arq.classificacao = infoAlterada.arq.classificacao;	
+		return criarLinkHashTag(conteudo, classificacao);
 	}
 	
 	private static String criarLinkSigla(String conteudo) throws Exception{

@@ -570,12 +570,13 @@ public class Application extends SigaApplication {
 			String conteudo, String classificacao, String origem)
 			throws Exception {
 		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
+		GcArquivo arq = new GcArquivo();
 
-		Util.marcarLinkNoConteudo(informacao, conteudo, classificacao);
+		arq = Util.marcarLinkNoConteudo(conteudo, classificacao);
 		
 		//Atualiza o conteudo e a classificação após a verificação se existe links criados
-		conteudo = informacao.arq.getConteudoTXT();
-		classificacao = informacao.arq.classificacao;
+		conteudo = arq.getConteudoTXT();
+		classificacao = arq.classificacao;
 		
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;

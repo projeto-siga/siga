@@ -25,12 +25,11 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 		<mod:grupo>	
 			<mod:selecao titulo="Tipo de Usuário" opcoes="Magistrado;Servidor" var="tipoUsuario" reler="sim"/>
 		</mod:grupo>
-		<mod:grupo>
-		  <mod:cosignatario titulo="Cossignatário" var="cossignatario" obrigatorio="Sim"/> <br/>
-		</mod:grupo>
+
 		<c:if test="${valorTipoDeForm == 1 && tipoUsuario == 'Servidor'}">
-			<mod:grupo>
-				<mod:pessoa titulo="Nome do Juiz autorizador" var="juiz"/> 
+			</br>
+			<mod:grupo titulo="Cossignatário">
+				<mod:cosignatario titulo="Nome do Juiz autorizador" var="juiz" obrigatorio="Sim"/> 
 			</mod:grupo>
 		</c:if>
 		<br/>
@@ -168,7 +167,8 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 				</td>
 			</tr>
 			<tr><td width="400">
-			<b>Nome do Juiz Autorizador: </b><br/>${f:pessoa(requestScope['juiz_pessoaSel.id']).nomePessoa}
+			<b>Nome do Juiz Autorizador: </b><br/>
+			${f:pessoa(requestScope['juiz_cosignatarioSel.id']).nomePessoa}
 			</td> 
 			<td width="500" align="center"><br/><br/>______________________
 			<br>Assinatura do Juiz Autorizador</td>

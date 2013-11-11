@@ -19,14 +19,15 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 		
 		<mod:grupo titulo="Identificação do Usuário">
 			<mod:pessoa titulo="Matrícula do Usuário" var="usuario"/> <br/>
-			<mod:cosignatario titulo="Cossignatário" var="usuario3"/> <br/>
 			<mod:texto titulo="E-mail Institucional" var="email" largura="50"/>
 		</mod:grupo>
 		
 		<mod:grupo>	
 			<mod:selecao titulo="Tipo de Usuário" opcoes="Magistrado;Servidor" var="tipoUsuario" reler="sim"/>
 		</mod:grupo>
-		
+		<mod:grupo>
+		  <mod:cosignatario titulo="Cossignatário" var="cossignatario" obrigatorio="Sim"/> <br/>
+		</mod:grupo>
 		<c:if test="${valorTipoDeForm == 1 && tipoUsuario == 'Servidor'}">
 			<mod:grupo>
 				<mod:pessoa titulo="Nome do Juiz autorizador" var="juiz"/> 

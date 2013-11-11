@@ -101,7 +101,7 @@ var newwin = null;
                                 </c:if>
                                 
                                 <c:if test="${(xminutoIniIntervalo > 59)}"> 
-                                <p style="color:red">Minuto de fim do intervalo deve ser menor ou igual a 59</p>
+                                <p style="color:red">Minuto de início do intervalo deve ser menor ou igual a 59</p>
                                 <c:set var="condicional" value="nao"/>
                                 </c:if>
                                 
@@ -131,7 +131,7 @@ var newwin = null;
                                 </c:if>
                                 
                                 <c:if test="${(xminutoIni > 59)}"> 
-                                <p style="color:red">Minuto de fim deve ser menor ou igual a 59</p>
+                                <p style="color:red">Minuto de início deve ser menor ou igual a 59</p>
                                 <c:set var="condicional" value="nao"/>
                                 </c:if>
                                 

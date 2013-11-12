@@ -1111,6 +1111,12 @@
 				<param name="contentLength">${contentLength}</param>
 				<param name="contentDisposition">${contentDisposition}</param>
 			</result>
+			<result name="rtf" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/rtf</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
 		</action>
 	</package>
 	

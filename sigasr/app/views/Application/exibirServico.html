@@ -1,10 +1,11 @@
-#{if solicitacao.itemConfiguracao && servicos} 
+#{if solicitacao.itemConfiguracao && servicosEAtendentes} 
 <div class="gt-form-row gt-width-66">
 	<label>Ação</label> 
 	#{select name:'solicitacao.servico', value:solicitacao.servico?.idServico, onchange:'carregarAtributos();'}
-		#{list items:servicos, as:'servico' }
+		#{list items:servicosEAtendentes.keySet(), as:'servico' }
 			#{option servico.idServico}
-			${servico.tituloServico}#{/option}
+				${servico.tituloServico} (${servicosEAtendentes[servico].sigla})
+			#{/option}
 		#{/list}
 	#{/select}
 	

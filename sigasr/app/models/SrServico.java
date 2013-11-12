@@ -3,9 +3,10 @@ package models;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +25,7 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
@@ -49,11 +51,11 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrServico servicoInicial;
-	
+
 	@OneToMany(targetEntity = SrServico.class, mappedBy = "servicoInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
 	public List<SrServico> meuServicoHistoricoSet;
-	
+
 	public SrServico() {
 		this(null, null);
 	}
@@ -95,9 +97,9 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		}
 		if (nivel == 2) {
 			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrServico configuracao = SrServico.find("bySiglaServicoAndHisDtFimIsNull",
-					sigla_raiz).first();
-				desc_nivel = configuracao.tituloServico + " : "
+			SrServico configuracao = SrServico.find(
+					"bySiglaServicoAndHisDtFimIsNull", sigla_raiz).first();
+			desc_nivel = configuracao.tituloServico + " : "
 					+ this.tituloServico;
 		}
 		return desc_nivel;
@@ -178,7 +180,7 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		if (pess == null)
 			lista = listar();
 		else
-			lista = listarPorPessoaEItem(pess, item);
+			lista.addAll(listarComAtendentePorPessoaEItem(pess, item).keySet());
 
 		if ((siglaServico == null || siglaServico.equals(""))
 				&& (tituloServico == null || tituloServico.equals("")))
@@ -268,9 +270,35 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		return SrServico.find("hisDtFim is null order by siglaServico").fetch();
 	}
 
-	public static List<SrServico> listarPorPessoaEItem(DpPessoa pess,
-			SrItemConfiguracao item) throws Exception {
-		Set<SrServico> listaFinal = new TreeSet<SrServico>(
+	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaEItem(
+			DpPessoa pess, SrItemConfiguracao item) throws Exception {
+		Map<SrServico, DpLotacao> listaFinal = new HashMap<SrServico, DpLotacao>();
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess,
+				item, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
+				new int[] { SrConfiguracaoBL.SERVICO });
+		for (SrConfiguracao conf : confs) {
+			// Edson: o && !containsKey, abaixo, é necessário pra que atendentes
+			// de configurações mais genéricas não substituam os das mais
+			// específicas, que vêm antes
+			if (conf.servico == null) {
+				for (SrServico serv : listar())
+					if (serv.isEspecifico() && !listaFinal.containsKey(serv))
+						listaFinal.put(serv, conf.atendente);
+				break;
+			} else
+				for (SrServico serv : conf.servico.getAtual()
+						.listarServicoETodosDescendentes())
+					if (serv.isEspecifico() && !listaFinal.containsKey(serv))
+						listaFinal.put(serv, conf.atendente);
+		}
+
+		return listaFinal;
+	}
+
+	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaEItemOrdemSigla(
+			DpPessoa pess, SrItemConfiguracao item) throws Exception {
+		Map<SrServico, DpLotacao> m = new TreeMap<SrServico, DpLotacao>(
 				new Comparator<SrServico>() {
 					@Override
 					public int compare(SrServico o1, SrServico o2) {
@@ -280,39 +308,26 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 						return o1.siglaServico.compareTo(o2.siglaServico);
 					}
 				});
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess,
-				item, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.SERVICO });
-		for (SrConfiguracao conf : confs) {
-			if (conf.servico == null) {
-				for (SrServico serv : listar())
-					if (serv.isEspecifico())
-						listaFinal.add(serv);
-				break;
-			} else
-				for (SrServico serv : conf.servico.getAtual()
-						.listarServicoETodosDescendentes())
-					if (serv.isEspecifico())
-						listaFinal.add(serv);
-		}
 
-		return new ArrayList(listaFinal);
+		m.putAll(listarComAtendentePorPessoaEItem(pess, item));
+		return m;
 	}
 
-	public static List<SrServico> listarPorPessoaEItemEmOrdemAlfabetica(
+	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaEItemOrdemTitulo(
 			DpPessoa pess, SrItemConfiguracao item) throws Exception {
-		List<SrServico> l = listarPorPessoaEItem(pess, item);
-		Collections.sort(l, new Comparator<SrServico>() {
-			@Override
-			public int compare(SrServico o1, SrServico o2) {
-				int i = o1.tituloServico.compareTo(o2.tituloServico);
-				if (i != 0)
-					return i;
-				return o1.idServico.compareTo(o2.idServico);
-			}
-		});
-		return l;
+		Map<SrServico, DpLotacao> m = new TreeMap<SrServico, DpLotacao>(
+				new Comparator<SrServico>() {
+					@Override
+					public int compare(SrServico o1, SrServico o2) {
+						int i = o1.tituloServico.compareTo(o2.tituloServico);
+						if (i != 0)
+							return i;
+						return o1.idServico.compareTo(o2.idServico);
+					}
+				});
+
+		m.putAll(listarComAtendentePorPessoaEItem(pess, item));
+		return m;
 	}
 
 	public String getGcTags() {

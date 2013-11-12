@@ -50,6 +50,13 @@ public class SigaMultipleRequestDenyHandler implements Interceptor {
 
 		byte ba[] = null;
 
+		
+		if (request.getQueryString() == null
+				|| request.getUserPrincipal() == null
+				|| request.getUserPrincipal().getName() == null) {
+			return invocation.invoke();
+		}
+		
 		// Monta o md5 do request
 		MessageDigest md5 = MessageDigest.getInstance("MD5");
 		final HttpServletRequest httpServletRequest = request;

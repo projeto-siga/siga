@@ -25,7 +25,7 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 		<mod:grupo>	
 			<mod:selecao titulo="Tipo de Usuário" opcoes="Magistrado;Servidor" var="tipoUsuario" reler="sim"/>
 		</mod:grupo>
-
+ 
 		<c:if test="${valorTipoDeForm == 1 && tipoUsuario == 'Servidor'}">
 			</br>
 			<mod:grupo titulo="Cossignatário">

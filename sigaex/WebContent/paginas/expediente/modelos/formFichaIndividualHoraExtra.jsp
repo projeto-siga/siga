@@ -11,7 +11,7 @@ var newwin = null;
 <mod:modelo>
     <mod:entrevista>
 <c:set var="intervaloMsg">
-&nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).        </c:set>
+&nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br> Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça.        </c:set>
     
     <mod:grupo titulo="Referente">
         <input type="radio" name="referente" id="solicitacao" value="1" checked> à Solicitação de Serviço Extraordinário Nº:<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
@@ -51,7 +51,7 @@ var newwin = null;
                    <mod:texto titulo="" largura="2" maxcaracteres="2" var="minutoFim${i}" reler="ajax" idAjax="Func${i}" />m&nbsp;&nbsp;&nbsp;&nbsp;
                     </br>
                     
-                    <span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=125,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${intervaloMsg}');"><u>
+                    <span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=255,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${intervaloMsg}');"><u>
                                     Intervalo?</u></span>
                     <mod:selecao titulo="" var="intervalo${i}" opcoes="Não;Sim" reler="ajax" idAjax="Func${i}" />&nbsp;&nbsp;&nbsp;&nbsp;
                     <c:set var="xintervalo" value="${requestScope[f:concat('intervalo',i)]}" />

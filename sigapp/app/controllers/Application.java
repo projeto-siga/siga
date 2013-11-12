@@ -95,7 +95,7 @@ public class Application extends SigaApplication {
 		UsuarioForum objUsuario = UsuarioForum.find("matricula_usu =" + matriculaSessao).first();
 		if(objUsuario!=null){
 			try{
-				List<Locais> lstLocais =  Locais.find("forumFk="+objUsuario.forumFk.cod_forum).fetch();
+				List<Locais> lstLocais =  Locais.find("forumFk="+objUsuario.forumFk.cod_forum+"order by ordem_apresentacao ").fetch();
 				render(lstLocais);
 			}catch(Exception e){
 				e.printStackTrace();
@@ -343,7 +343,7 @@ public class Application extends SigaApplication {
 		if (objUsuario != null) {
 			// Pega o usuário do sistema, e, busca os locais(salas) daquele
 			// forum onde ele está.
-			listSalas = (List) Locais.find("cod_forum='"+objUsuario.forumFk.cod_forum+"'").fetch(); // isso não dá erro no caso de retorno vazio.
+			listSalas = (List) Locais.find("cod_forum='"+objUsuario.forumFk.cod_forum+"' order by ordem_apresentacao ").fetch(); // isso não dá erro no caso de retorno vazio.
 			render(listSalas);
 		}else{
 			Excecoes("Usuário sem permissão");
@@ -392,7 +392,7 @@ public class Application extends SigaApplication {
 						dia_ag_ant = dia_ag_prox;
 					}
 					// se a data estiver lotada, marca
-					if (i >= 15) {
+					if (i >= 49) {
 						listDatasLotadas.add(dia_ag_ant);
 					} // guardou a data lotada
 				}
@@ -416,24 +416,55 @@ public class Application extends SigaApplication {
 				null, null, null, null, null, null, null, null);
 		List<Agendamentos> results = new ArrayList<Agendamentos>();
 		if (frm_data_ag != null && !frm_data_ag.isEmpty()) {
+			listHorasLivres.add("09:00");
+			listHorasLivres.add("09:10");
+			listHorasLivres.add("09:20");
+			listHorasLivres.add("09:30");
+			listHorasLivres.add("09:40");
+			listHorasLivres.add("09:50");
 			listHorasLivres.add("10:00");
+			listHorasLivres.add("10:10");
+			listHorasLivres.add("10:20");
 			listHorasLivres.add("10:30");
+			listHorasLivres.add("10:40");
+			listHorasLivres.add("10:50");
 			listHorasLivres.add("11:00");
+			listHorasLivres.add("11:10");
+			listHorasLivres.add("11:20");
 			listHorasLivres.add("11:30");
+			listHorasLivres.add("11:40");
+			listHorasLivres.add("11:50");
 			listHorasLivres.add("12:00");
+			listHorasLivres.add("12:10");
+			listHorasLivres.add("12:20");
 			listHorasLivres.add("12:30");
+			listHorasLivres.add("12:40");
+			listHorasLivres.add("12:50");
 			listHorasLivres.add("13:00");
+			listHorasLivres.add("13:10");
+			listHorasLivres.add("13:20");
 			listHorasLivres.add("13:30");
+			listHorasLivres.add("13:40");
+			listHorasLivres.add("13:50");
 			listHorasLivres.add("14:00");
+			listHorasLivres.add("14:10");
+			listHorasLivres.add("14:20");
 			listHorasLivres.add("14:30");
+			listHorasLivres.add("14:40");
+			listHorasLivres.add("14:50");
 			listHorasLivres.add("15:00");
+			listHorasLivres.add("15:10");
+			listHorasLivres.add("15:20");
 			listHorasLivres.add("15:30");
+			listHorasLivres.add("15:40");
+			listHorasLivres.add("15:50");
 			listHorasLivres.add("16:00");
+			listHorasLivres.add("16:10");
+			listHorasLivres.add("16:20");
 			listHorasLivres.add("16:30");
+			listHorasLivres.add("16:40");
+			listHorasLivres.add("16:50");
 			listHorasLivres.add("17:00");
-			listHorasLivres.add("");
-			listHorasLivres.add("");
-			listHorasLivres.add("");
 			df.applyPattern("dd-MM-yyyy");
 			try {
 				dtt = frm_data_ag;
@@ -523,7 +554,7 @@ public class Application extends SigaApplication {
 									dia_ag_ant = dia_ag_prox;
 								}
 								// se a data estiver lotada, marca
-								if (i >= 18) {
+								if (i >= 33) {
 									listDatasLotadas.add(dia_ag_ant);
 								} // guardou a data lotada
 							}
@@ -677,7 +708,7 @@ public class Application extends SigaApplication {
 				// Busca os agendamentos da data do formulário
 				listAgendamentos = Agendamentos.find(
 						"data_ag = to_date('" + frm_data_ag
-								+ "','dd-mm-yy') order by data_ag").fetch();
+								+ "','dd-mm-yy') order by data_ag , hora_ag").fetch();
 				// busca os locais do forum do usuario
 				List<Locais> listLocais = Locais.find("cod_forum='"+objUsuario.forumFk.cod_forum+"'").fetch();
 				// Verifica se existe local naquele forum do usuário

@@ -55,7 +55,7 @@ commit;
 ALTER TABLE sigasr.SR_MOVIMENTACAO MODIFY (ID_TIPO_MOVIMENTACAO NUMBER(19,0) NOT NULL); 
 
 --Início atendimento
-update sr_movimentacao set id_tipo_movimentacao = 1 where id_movimentacao in (
+update sigasr.sr_movimentacao set id_tipo_movimentacao = 1 where id_movimentacao in (
   select id_movimentacao from sigasr.sr_movimentacao m where dt_ini_mov = (
     select min(dt_ini_mov) from sigasr.sr_movimentacao 
     where id_solicitacao = m.id_solicitacao 
@@ -64,7 +64,7 @@ update sr_movimentacao set id_tipo_movimentacao = 1 where id_movimentacao in (
 );
 
 --Início Pré-atendimento
-update sr_movimentacao set id_tipo_movimentacao = 4 where id_movimentacao in (
+update sigasr.sr_movimentacao set id_tipo_movimentacao = 4 where id_movimentacao in (
   select id_movimentacao from sigasr.sr_movimentacao m where dt_ini_mov = (
     select min(dt_ini_mov) from sigasr.sr_movimentacao 
     where id_solicitacao = m.id_solicitacao 
@@ -73,7 +73,7 @@ update sr_movimentacao set id_tipo_movimentacao = 4 where id_movimentacao in (
 );
 
 --Início pós-atendimento
-update sr_movimentacao set id_tipo_movimentacao = 5 where id_movimentacao in (
+update sigasr.sr_movimentacao set id_tipo_movimentacao = 5 where id_movimentacao in (
   select id_movimentacao from sigasr.sr_movimentacao m where dt_ini_mov = (
     select min(dt_ini_mov) from sigasr.sr_movimentacao 
     where id_solicitacao = m.id_solicitacao 
@@ -82,7 +82,7 @@ update sr_movimentacao set id_tipo_movimentacao = 5 where id_movimentacao in (
 );
 
 --Fechamento
-update sr_movimentacao set id_tipo_movimentacao = 7 where id_movimentacao in (
+update sigasr.sr_movimentacao set id_tipo_movimentacao = 7 where id_movimentacao in (
   select id_movimentacao from sigasr.sr_movimentacao m where dt_ini_mov = (
     select min(dt_ini_mov) from sigasr.sr_movimentacao 
     where id_solicitacao = m.id_solicitacao 
@@ -91,7 +91,7 @@ update sr_movimentacao set id_tipo_movimentacao = 7 where id_movimentacao in (
 );
 
 --Cancelamento
-update sr_movimentacao set id_tipo_movimentacao = 8 where id_movimentacao in (
+update sigasr.sr_movimentacao set id_tipo_movimentacao = 8 where id_movimentacao in (
   select id_movimentacao from sigasr.sr_movimentacao m where dt_ini_mov = (
     select min(dt_ini_mov) from sigasr.sr_movimentacao
     where id_solicitacao = m.id_solicitacao 
@@ -100,7 +100,7 @@ update sr_movimentacao set id_tipo_movimentacao = 8 where id_movimentacao in (
 );
 
 --Início de pendência
-update sr_movimentacao set id_tipo_movimentacao = 9 where id_movimentacao in (
+update sigasr.sr_movimentacao set id_tipo_movimentacao = 9 where id_movimentacao in (
   select id_movimentacao from sigasr.sr_movimentacao m where dt_ini_mov = (
     select min(dt_ini_mov) from sigasr.sr_movimentacao 
     where id_solicitacao = m.id_solicitacao 
@@ -114,7 +114,7 @@ where id_arquivo is not null
 and id_tipo_movimentacao = 2;
 
 --Apagando movimentações canceladas
-delete from sr_movimentacao where id_mov_canceladora is not null;
+delete from sigasr.sr_movimentacao where id_lota_cancelador is not null;
 
 --Resolver manualmente: fim de pendência e reabertura
 

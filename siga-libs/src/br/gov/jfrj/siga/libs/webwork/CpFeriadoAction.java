@@ -45,7 +45,8 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	 */
 	private static final long serialVersionUID = 1098577621835510117L;	
 	
-	private Long id;
+	private Integer id;
+	private Long idOcorrencia;
 	private String dscFeriado;
 	private Date dtIniFeriado;
 	private Date dtFimFeriado;
@@ -54,12 +55,21 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	
 	
 		
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
+	}	
+	
+
+	public Long getIdOcorrencia() {
+		return idOcorrencia;
+	}
+
+	public void setIdOcorrencia(Long idOcorrencia) {
+		this.idOcorrencia = idOcorrencia;
 	}
 
 	public String getDscFeriado() {
@@ -102,7 +112,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		return Action.SUCCESS;
 	}
 	
-	public CpFeriado daoFeriado(long id) {
+	public CpFeriado daoFeriado(Integer id) {
 		return dao().consultar(id, CpFeriado.class, false);
 	}
 	
@@ -132,7 +142,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	
 	public String aExcluirOcorrencia() throws Exception {
 //		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
-		if (getId() != null) {
+		if (getIdOcorrencia() != null) {
 			try {
 				dao().iniciarTransacao();
 				CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getId());				
@@ -143,7 +153,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado", 0, e);
 			}
 		} else
-			throw new AplicacaoException("ID não informada");
+			throw new AplicacaoException("ID da ocorrencia não informada");
 
 		return Action.SUCCESS;
 	}
@@ -163,11 +173,18 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	
 	public String aEditarOcorrencia() throws Exception {
 
-		if (getId() != null) {
-			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getId());	
+		if (getIdOcorrencia() != null) {
+			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getIdOcorrencia());	
 			this.setDscFeriado(ocorrencia.getCpFeriado().getDescricao());		
 			this.setDtIniFeriado(stringToDate(ocorrencia.getDtRegIniDDMMYY()));
 			this.setDtFimFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYY()));			
+		
+		} else {
+			if (getId() != null) {
+				CpFeriado feriado = daoFeriado(getId());		
+				this.dscFeriado = feriado.getDescricao();				
+			} else		
+				throw new AplicacaoException("ID não informado");
 		}
 		
 		return Action.SUCCESS;
@@ -176,39 +193,32 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	public String aEditarOcorrenciaGravar() throws Exception {
 //		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		
+		CpOcorrenciaFeriado ocorrencia;
+		
 		if(this.getDtIniFeriado() == null)
 			throw new AplicacaoException("Data de início do feriado não informada");
 		
-		if (getId() == null)
-			CpOcorrenciaFeriado ocorrencia = new CpOcorrenciaFeriado();
+		if (getIdOcorrencia() == null)
+			 ocorrencia = new CpOcorrenciaFeriado();
 		else
-			ocorrencia = daoOcorrenciaFeriado(getId());	
+			ocorrencia = daoOcorrenciaFeriado(getIdOcorrencia());	
 		
-		ocorrencia.setNmOrgao(this.getNmOrgao());
-		orgao.setSigla(this.getSiglaOrgao());
-		if (this.getIdOrgaoUsu() != null && this.getIdOrgaoUsu() != 0) {
-			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-			orgaoUsuario = dao().consultar(this.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);	
-			orgao.setOrgaoUsuario(orgaoUsuario);
-		}else
-			orgao.setOrgaoUsuario(null);
-		
-		orgao.setAtivo(String.valueOf(this.getAtivo()));
+		CpFeriado feriado = daoFeriado(getId());	
+		ocorrencia.setCpFeriado(feriado);		
+		ocorrencia.setDtIniFeriado(this.dtIniFeriado);
+		ocorrencia.setDtFimFeriado(this.dtFimFeriado);	
 		
 		try {
 			dao().iniciarTransacao();
-			dao().gravar(orgao);
+			dao().gravar(ocorrencia);
 			dao().commitTransacao();			
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
 		
-		return Action.SUCCESS;
-		return Action.SUCCESS;
-	}
-	
-	
+		return Action.SUCCESS;		
+	}	
 	
 /*	
 	

@@ -10,13 +10,12 @@
 	<!-- main content -->
 	<script type="text/javascript">
 	function validar() {
-		var dataIni = document.getElementsByName('dtIniFeriado')[0].value;
+		var dataIni = $('#dtIniFeriado').val();		
 		if (dataIni==null || dataIni=="") {			
 			alert("Preencha a data de início");
 			document.getElementById('dtIniFeriado').focus();		
-		}
-			frm.submit();				
-		}			
+		}else
+			frm.submit();					
 	}
 	</script>
 
@@ -26,7 +25,8 @@
 	<div class="gt-content clearfix" style="width: 70% !important;">		
 		<form name="frm" action="editar_ocorrencia_gravar.action">
 		<input type="hidden" name="postback" value="1" /> 
-		<ww:hidden name="id" /> 
+		<ww:hidden name="id" />
+		<ww:hidden name="idOcorrencia" />  
 		<h2 class="gt-table-head">Cadastrar ocorrência de feriado</h2>
 		<div class="gt-content-box gt-for-table">
 		<table class="gt-form-table">
@@ -35,7 +35,7 @@
 			</tr>
 			<tr>
 				<td width="20%">Data de Início</td>
-				<td width="80%" id="dtIniFeriado" align="left"><ww:textfield name="dtIniFeriado" label="Data de Início"
+				<td width="80%" align="left"><ww:textfield name="dtIniFeriado" id="dtIniFeriado" label="Data de Início"
 					onblur="javascript:verifica_data(this, true);" theme="simple" /></td>
 			</tr>
 			<tr>

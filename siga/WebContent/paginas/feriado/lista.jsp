@@ -17,7 +17,7 @@
 							<th align="left" width="50%">Descrição</th>	
 							<th align="right" width="15%">Data Inicio</th>
 							<th align="right" width="15%">Data Fim</th>														
-							<th colspan="2" align="right" width="20%">Opções</th>					
+							<th colspan="2" align="right" width="20%">Opções de ocorrência</th>					
 						</tr>
 					</thead>
 					
@@ -30,12 +30,13 @@
 										<td align="left">${ocorrencia.dtRegIniDDMMYY}</td>
 										<td align="left">${ocorrencia.dtRegFimDDMMYY}</td>
 										<td align="left"><ww:url id="url" action="editar_ocorrencia" namespace="/feriado">
-															<ww:param name="id">${ocorrencia.idOcorrencia}</ww:param>
+															<ww:param name="idOcorrencia">${ocorrencia.idOcorrencia}</ww:param>
+															<ww:param name="id">${feriado.idFeriado}</ww:param>
 														</ww:url>
 													<siga:link title="Alterar" url="${url}" />					
 										</td>
 										<td align="center" width="10%">									
-	 			 							<a href="javascript:if (confirm('Deseja excluir o feriado?')) location.href='/siga/feriado/excluir_ocorrencia.action?id=${ocorrencia.idOcorrencia}';">
+	 			 							<a href="javascript:if (confirm('Deseja excluir o feriado?')) location.href='/siga/feriado/excluir_ocorrencia.action?idOcorrencia=${ocorrencia.idOcorrencia}';">
 												<img style="display: inline;"
 												src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir feriado"							
 												onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
@@ -45,7 +46,12 @@
 									</c:forEach>										
 								</ww:if>
 								<ww:else>			
-									<td></td><td></td><td></td><td></td><td></td>
+									<td></td><td></td>
+									<td align="left"><ww:url id="url" action="editar_ocorrencia" namespace="/feriado">
+													<ww:param name="id">${feriado.idFeriado}</ww:param>
+												</ww:url>
+											<siga:link title="Incluir" url="${url}" />					
+										</td><td></td><td></td>
 								</ww:else>							 							
 							</tr>
 						</c:forEach>

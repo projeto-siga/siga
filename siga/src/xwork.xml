@@ -332,7 +332,7 @@
 			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">
 			<result>/paginas/feriado/editaOcorrencia.jsp</result>
 		</action>
-		<action name="editar_ocorrencia_gravar" method="aEditarGravarOcorrencia"
+		<action name="editar_ocorrencia_gravar" method="aEditarOcorrenciaGravar"
 			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">			
 			<result type="redirect-action">listar</result>
 		</action>	

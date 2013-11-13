@@ -1,17 +1,16 @@
 package models;
 
 import javax.persistence.Column;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
-import sun.net.www.content.text.Generic;
 
-@Entity(name = "UsuarioForum")
+@Entity
+@Table(name = "UsuarioForum", schema = "SIGAPMP")
 public class UsuarioForum extends GenericModel {
 	
 	@Id()

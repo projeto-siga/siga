@@ -18,7 +18,7 @@ import play.db.jpa.GenericModel;
 import play.db.jpa.Model;
 
 @Entity(name = "Agendamentos")
-@Table(name = "Agendamentos")
+@Table(name = "Agendamentos", schema = "SIGAPMP")
 public class Agendamentos extends GenericModel {
  @Id()
  @Column(name = "data_ag", nullable=false)

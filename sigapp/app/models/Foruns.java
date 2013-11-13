@@ -27,7 +27,7 @@ import play.db.jpa.Model;
  * @author Herval, Edson da Rocha, e Ruben
  */
 @Entity(name = "Foruns")
-@Table(name = "Foruns")
+@Table(name = "Foruns", schema = "SIGAPMP")
 public class Foruns extends GenericModel {
 	@Id()
 	@Column(name="cod_forum",length=10, nullable=false)

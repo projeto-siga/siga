@@ -23,7 +23,7 @@ import play.db.jpa.Model;
  * @author Herval, Ruben e Edson da Rocha
  */
 @Entity(name = "Locais")
-@Table(name = "Locais")
+@Table(name = "Locais", schema = "SIGAPMP")
 public class Locais extends GenericModel {
 	@Id
 	@Column(name="cod_local", length=3, nullable=false)

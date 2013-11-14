@@ -142,7 +142,7 @@ public class ExArquivoAction extends ExActionSupport {
 					ab = mov.getConteudoBlobpdf();
 				else
 					ab = Documento.getDocumento(mob, mov, completo, estampar,
-							hash);
+							hash, null);
 
 				String filename = null;
 				if (mov != null) {

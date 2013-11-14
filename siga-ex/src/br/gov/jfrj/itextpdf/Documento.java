@@ -738,7 +738,7 @@ public class Documento {
 		return getDocumento(mob, mov, false, true, null, null);
 	}
 
-	protected byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
+	public static byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
 			boolean completo, boolean estampar, String hash, byte[] certificado)
 			throws Exception {
 		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();

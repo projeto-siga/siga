@@ -47,9 +47,9 @@ Function InicializarCapicom()
 
 	'Infelizmente não é possível armazenar o objeto Signer e utilizá-lo na próxima chamada para Sign.
 	'Renato: desabilitado temporariamente para não interferir com os testes de desempenho.
-	'gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado."
-	'Desprezar = gAssinatura.Sign(Nothing, True, 0)
-	'gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
+	gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado."
+	Desprezar = gAssinatura.Sign(Nothing, True, 0)
+	gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
 
 	InicializarCapicom = "OK"
 End Function

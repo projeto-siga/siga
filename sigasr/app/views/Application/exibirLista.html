@@ -57,7 +57,7 @@ $(function(){
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Prior</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px; text-align:center;">Solicitante</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Solicitante</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Aberto</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Situação</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Última Movimentação</th>
@@ -77,7 +77,7 @@ $(function(){
 							${sol.codigo}
 						</a>	
 			</td>
-			<td style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
+			<td class="gt-celula-nowrap"  style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
 			<b style="color: #333">
 			${sol.itemConfiguracao?.descricao}:</b>&nbsp;
 			#{selecionado sigla:sol.descrSolicitacao,descricao:sol?.descrSolicitacao /}

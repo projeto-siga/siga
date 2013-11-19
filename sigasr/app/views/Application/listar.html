@@ -15,7 +15,7 @@
 				<tr >
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 0px; text-align:center;">Solicitante</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Aberto</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
@@ -29,13 +29,13 @@
 							${sol.codigo}
 						</a>	
 			</td>
-			<td style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
+			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
 			<b style="color: #333">
 			${sol.itemConfiguracao?.descricao}:</b>&nbsp;
 			#{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}
 			</td>
 				
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px; text-align:center;" >
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
 			#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
 			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
 			</td>

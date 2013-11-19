@@ -661,6 +661,7 @@ public class Application extends SigaApplication {
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
+		//checar lotação do pré-atendimento 
 		movimentacao.salvar(cadastrante(), lotaTitular());
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}

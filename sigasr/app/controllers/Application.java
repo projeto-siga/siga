@@ -543,7 +543,6 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.desassociarLista(solicitacao, lista);
-		// lista.refresh();
 		exibirLista(idLista);
 	}
 
@@ -581,22 +580,18 @@ public class Application extends SigaApplication {
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void fechar(Long id) throws Exception {
+	public static void fechar(Long id, String motivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		if (movimentacao.solicitacao.temPosAtendenteDesignado()) {
-			movimentacao.tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
-			movimentacao.lotaAtendente = movimentacao.solicitacao
-					.getPosAtendenteDesignado();
-		} else {
-			movimentacao.tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		}
-		movimentacao.salvar(cadastrante(), lotaTitular());
+		if (sol.isEmAtendimento()) {
+			if (sol.temPosAtendenteDesignado())
+				sol.iniciarPosAtendimento(lotaTitular(), cadastrante(), motivo);
+			else
+				sol.fechar(lotaTitular(), cadastrante(), motivo);
+		} else
+			sol.fechar(lotaTitular(), cadastrante(), motivo);
 
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		exibir(sol.idSolicitacao, completo());
 	}
 
 	public static void cancelar(Long id) throws Exception {
@@ -612,26 +607,8 @@ public class Application extends SigaApplication {
 
 	public static void finalizarPreAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
-		movimentacao.lotaAtendente = movimentacao.solicitacao
-				.getAtendenteDesignado();
-		movimentacao.salvar(cadastrante(), lotaTitular());
-
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
-	}
-
-	public static void finalizarPosAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		movimentacao.salvar(cadastrante(), lotaTitular());
-
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		sol.iniciarAtendimento(lotaTitular(), cadastrante());
+		exibir(sol.idSolicitacao, completo());
 	}
 
 	public static void deixarPendente(Long id) throws Exception {

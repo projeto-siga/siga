@@ -8,6 +8,7 @@ public class GcAcaoVO implements Comparable<GcAcaoVO> {
 	String nome;
 	String url;
 	boolean pode;
+	boolean modal;
 	String msgConfirmacao;
 	String pre;
 	String pos;

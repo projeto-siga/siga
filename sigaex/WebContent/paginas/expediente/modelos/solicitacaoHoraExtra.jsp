@@ -12,7 +12,7 @@ var newwin = null;
 <mod:modelo>
 	<mod:entrevista>
         <c:set var="intervaloMsg">
-&nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).        </c:set>
+&nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br>&nbsp;&nbsp;&nbsp;Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça. </c:set>
 	<mod:grupo >    
             <mod:radio titulo="A presente solicitação observa a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF ." var="Antecedencia" valor="1" reler="não" marcado="Sim"/> </br>
             <mod:radio titulo="Não foi possível observar a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF, " var="Antecedencia" valor="2" reler="não" gerarHidden="Não"/>	
@@ -50,7 +50,7 @@ var newwin = null;
 						    		largura="2" maxcaracteres="2" titulo="Horário inicial" var="horaIni${i}${j}" reler="ajax" idAjax="Func$${i}${j}" />h 
 						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" titulo="" largura="2" maxcaracteres="2" var="minutoIni${i}${j}" reler="ajax" idAjax="Func${i}${j}" />m &nbsp;&nbsp;&nbsp;&nbsp;
-						    		<span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=125,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${intervaloMsg}');"><u>
+						    		<span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=225,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${intervaloMsg}');"><u>
                                     Intervalo?</u></span>
 						    		<mod:selecao titulo="" var="intervalo${i}${j}" opcoes="Não;Sim" reler="ajax" idAjax="Func${i}${j}" />&nbsp;&nbsp;&nbsp;&nbsp;
 						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
@@ -106,7 +106,7 @@ var newwin = null;
                                  
                                  <c:if test="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))<= 60) && (xintervalo =='Sim') }">
                                     <c:set var="condicional" value="nao"/>                                
-                                    <p style="color:red"> Com intervalo, o total de Horas Extras deve ser superior a 60 minutos. </p>
+                                    <p style="color:red"> Para preencher esta opção, clicar em “<u>Intervalo ?</u>” e ler o conteúdo. </p>
                                  </c:if>  
                                  
                                  <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao') && (xintervalo =='Sim')}">
@@ -148,14 +148,13 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
                                 <br>
                                   <input type="radio" name="adicionalServico" id="naoAplica" value="naoAplica">  <label for="naoAplica">não se aplica.</label><br>
 
-                                </br></br>		      
+                                 </br></br>		      
 			<mod:memo colunas="70" linhas="3"
 				titulo="As horas-extras acima se mostram necessárias, pois (MANIFESTAÇÃO FUNDAMENTADA)"
 				var="motivoHora" /> 
 		</mod:grupo>
 		<mod:grupo>
-			<mod:memo colunas="70" linhas="2" titulo="As mencionadas tarefas não podem ser realizadas 
-			durante o expediente regulamentar, eis que <br> (MANIFESTAÇÃO FUNDAMENTADA)"
+			<mod:memo colunas="70" linhas="2" titulo="A(s) mencionada(s) tarefa(s) só pode (em) ser realizada(s) durante esse período, eis que (MANIFESTAÇÃO FUNDAMENTADA </br>quanto à impossibilidade de realização do serviço durante o expediente regulamentar ou em dias úteis, na hipótese de </br>prestação de serviço extraordinário em fins de semana e feriados)"
 				var="justificativa" /></br></br>
 		</mod:grupo>
 		<mod:grupo><p style="color:red">
@@ -285,8 +284,7 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 		<c:if test="${tipoHoraExtra eq 'em fins de semana/feriados'}">
 			<c:set var="tampouco" value="tampouco em dias úteis," scope="request" />
 		</c:if>
-		<p style="text-align: justify; text-indent: 3cm;">As mencionadas
-		tarefas não podem ser realizadas durante o expediente regulamentar,
+		<p style="text-align: justify; text-indent: 3cm;">A(s) mencionada(s) tarefa(s) só pode (em) ser realizada(s) durante esse período,
 		${tampouco} eis que &nbsp;${justificativa}</p>
         
         <c:if test="${Antecedencia == '2'}">

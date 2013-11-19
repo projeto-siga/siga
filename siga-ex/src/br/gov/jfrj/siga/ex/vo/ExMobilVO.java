@@ -261,7 +261,7 @@ public class ExMobilVO extends ExVO {
 					"/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()
-							.podeVisualizarImpressao(titular, lotaTitular, mob));
+							.podeVisualizarImpressao(titular, lotaTitular, mob), null, null, null, null, "once");
 			
 			addAcao(
 					"printer",

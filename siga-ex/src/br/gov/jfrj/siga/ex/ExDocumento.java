@@ -1443,6 +1443,34 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				i = listVolumeAnterior.get(listVolumeAnterior.size() - 1)
 						.getPaginaFinal();
 			}
+			
+			//Verifica se tem movimentação de desentranhamento que não pertence ao documento principal
+			if(list != null && list.get(0) != null) {
+				ExArquivoNumerado arquivoPrincipal = list.get(0);
+				
+				if(arquivoPrincipal.getArquivo() instanceof ExDocumento) {
+					
+					List<Integer> indicesParaRemover = new ArrayList<Integer>();
+					
+					for (ExArquivoNumerado an : list) {
+						if(an.getArquivo() instanceof ExMovimentacao) {
+							ExMovimentacao mov = (ExMovimentacao)an.getArquivo();
+							
+							if(mov.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+								
+								if(mov.getExMobilRef() != null && !mov.getExMobilRef().getId().equals(arquivoPrincipal.getMobil().getId())) {
+									
+									indicesParaRemover.add(list.indexOf(an));
+								}
+							}
+						}
+					}
+					
+					for (int indice : indicesParaRemover) {
+						list.remove(indice);
+					}
+				}
+			}
 
 			for (ExArquivoNumerado an : list) {
 				i++;

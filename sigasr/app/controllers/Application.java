@@ -158,9 +158,18 @@ public class Application extends SigaApplication {
 				.contains(solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
-		solicitacao.servico = null; // essa linha deve sair??? Adicionei
-
-		render(solicitacao);
+		Map<SrServico, DpLotacao> servicosEAtendentes = SrServico
+		.listarComAtendentePorPessoaEItemOrdemTitulo(
+				solicitacao.solicitante, solicitacao.itemConfiguracao);		
+		if (solicitacao.servico == null
+				|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
+			if (servicosEAtendentes.size() > 0)
+				solicitacao.servico = servicosEAtendentes.keySet().iterator()
+						.next();
+			else
+				solicitacao.servico = null;
+		}
+		render(solicitacao, servicosEAtendentes);
 	}
 
 	public static void exibirServico(SrSolicitacao solicitacao)
@@ -534,7 +543,6 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.desassociarLista(solicitacao, lista);
-		// lista.refresh();
 		exibirLista(idLista);
 	}
 
@@ -572,22 +580,18 @@ public class Application extends SigaApplication {
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void fechar(Long id) throws Exception {
+	public static void fechar(Long id, String motivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		if (movimentacao.solicitacao.temPosAtendenteDesignado()) {
-			movimentacao.tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
-			movimentacao.lotaAtendente = movimentacao.solicitacao
-					.getPosAtendenteDesignado();
-		} else {
-			movimentacao.tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		}
-		movimentacao.salvar(cadastrante(), lotaTitular());
+		if (sol.isEmAtendimento()) {
+			if (sol.temPosAtendenteDesignado())
+				sol.iniciarPosAtendimento(lotaTitular(), cadastrante(), motivo);
+			else
+				sol.fechar(lotaTitular(), cadastrante(), motivo);
+		} else
+			sol.fechar(lotaTitular(), cadastrante(), motivo);
 
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		exibir(sol.idSolicitacao, completo());
 	}
 
 	public static void cancelar(Long id) throws Exception {
@@ -603,26 +607,8 @@ public class Application extends SigaApplication {
 
 	public static void finalizarPreAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
-		movimentacao.lotaAtendente = movimentacao.solicitacao
-				.getAtendenteDesignado();
-		movimentacao.salvar(cadastrante(), lotaTitular());
-
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
-	}
-
-	public static void finalizarPosAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		movimentacao.salvar(cadastrante(), lotaTitular());
-
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		sol.iniciarAtendimento(lotaTitular(), cadastrante());
+		exibir(sol.idSolicitacao, completo());
 	}
 
 	public static void deixarPendente(Long id) throws Exception {
@@ -652,8 +638,8 @@ public class Application extends SigaApplication {
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
+		//checar lotação do pré-atendimento 
 		movimentacao.salvar(cadastrante(), lotaTitular());
-
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
@@ -973,7 +959,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Solicitações", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	public static void grelTransferencias(String secaoUsuario, String lotacao,
@@ -996,7 +982,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Transferências", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	public static void grelLocal(String secaoUsuario, String lotacao,
@@ -1020,7 +1006,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Solicitações por Localidade",
-				pdf.length, "application/pdf", false);
+				pdf.length, "application/pdf", true);
 	}
 
 	public static void grelPrazo(String secaoUsuario, String lotacao,
@@ -1044,7 +1030,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Prazos", pdf.length, "application/pdf",
-				false);
+				true);
 	}
 
 	public static void grelPrazoDetail(String secaoUsuario, String lotacao,
@@ -1068,7 +1054,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório Detalhado de Prazos", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	private static Map<String, Object> map = new HashMap<String, Object>();

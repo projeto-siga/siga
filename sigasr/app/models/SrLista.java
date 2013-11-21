@@ -122,10 +122,23 @@ public class SrLista extends HistoricoSuporte {
 		return listas;
 	}
 
-	public Long getProximaPosicao() {
-		Long prioridade = (long) (getMovimentacaoSet(false,
-				SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA).size() + 1);
-		return prioridade;
+	public Long getProximaPosicao() throws Exception {
+		Long tamanho = 0L; 
+		SrMovimentacao movIni = new SrMovimentacao();
+		SrMovimentacao movCan = new SrMovimentacao();
+		Set<SrSolicitacao> listasols = new HashSet<SrSolicitacao>();
+		for (SrMovimentacao movimentacao : getMovimentacaoSet(false)){
+			listasols.add(movimentacao.solicitacao);
+		}
+		for (SrSolicitacao solicitacao : listasols){
+			movIni = solicitacao.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+			movCan = solicitacao.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
+			if (movCan == null) {
+				listasols.add(solicitacao);
+				tamanho++;
+			}
+		}
+		return tamanho + 1L;
 	}
 
 	public boolean isEmpty() throws Exception {
@@ -182,17 +195,16 @@ public class SrLista extends HistoricoSuporte {
 					}
 				});
 		for (SrMovimentacao mov : getPrioridadeListaSet(false)) {
-			SrMovimentacao movIncl = mov.solicitacao
-					.getMovimentacaoInclusao(this);
+			SrMovimentacao movIncl = mov.solicitacao.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 			SrMovimentacao movAltAnt = mov.solicitacao
 					.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
 			/*
 			 * Montar lista com as solicitações com prioridade maior que a
 			 * prioridade da solicitação removida da lista.
 			 */
-			if (movAltAnt != null) {
+			if (movAltAnt != null && movAltAnt.dtIniMov.after(movIncl.dtIniMov)) {
 				listaCompleta.add(mov.solicitacao);
-			} else {
+			}else {
 				if (movIncl != null) {
 					listaCompleta.add(mov.solicitacao);
 				}

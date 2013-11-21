@@ -130,7 +130,11 @@ public class SrRelPrazo extends RelatorioTemplate {
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.lotaAtendente in (" + listalotacoes
-							+ ") " + "and mov.tipoMov = 7 "
+							+ ") " 
+							+ "and mov.dtIniMov = (select max(mov2.dtIniMov) " 
+							+ "	from SrMovimentacao mov2 where mov2.solicitacao = mov.solicitacao "
+							+ " and mov2.tipoMov = 7 " 
+							+ " and mov2.movCanceladora is null) "
 							+ "and sol.dtReg >= to_date('"
 							+ parametros.get("dtIni")
 							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
@@ -259,9 +263,12 @@ public class SrRelPrazo extends RelatorioTemplate {
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.lotaAtendente in (" + listalotacoes
-							+ ") " + "and sol.local = "
-							+ parametros.get("local") + " "
-							+ "and mov.estado = 2 "
+							+ ") "				 
+							+ "and mov.dtIniMov = (select max(mov2.dtIniMov) " 
+							+ "	from SrMovimentacao mov2 where mov2.solicitacao = mov.solicitacao "
+							+ " and mov2.tipoMov = 7 " 
+							+ " and mov2.movCanceladora is null) "
+							+ "and sol.local = " + parametros.get("local") + " " 
 							+ "and sol.dtReg >= to_date('"
 							+ parametros.get("dtIni")
 							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "

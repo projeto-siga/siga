@@ -87,6 +87,8 @@ function carregouServico(response, param){
 				value="${solicitacao.idSolicitacao}" /> 
 				#{/if}
 				<input type="hidden"
+				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
+				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 
 			#{ifErrors}
@@ -97,7 +99,7 @@ function carregouServico(response, param){
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
-				onchange:'carregarLocalERamal();carregarItem();carregarServico()' /}
+				onchange:'carregarLocalERamal();carregarItem()' /}
 			</div>
 			
 			<div class="gt-form-row gt-width-66">

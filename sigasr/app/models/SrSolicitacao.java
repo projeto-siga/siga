@@ -222,7 +222,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
 		final Pattern p = Pattern
-			.compile("^?([A-Z0-9]{3,4})?-?(SR{1})?-?([0-9]{4})?/?([0-9]{1,5})?([.]{1})?([0-9]{1,2})?");
+			.compile("^([A-Z]{3})?([A-Z0-9]{1})?-?(SR{1})-?(2{1}[0-9]{3})?/?([0-9]{1,5})?([.]{1})?([0-9]{1,2})?$"); 
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -235,7 +235,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							.em()
 							.createQuery(
 									"from CpOrgaoUsuario where acronimoOrgaoUsu = '"
-											+ m.group(1) + "'")
+											+ m.group(1) + m.group(2) + "'")
 							.getSingleResult();
 					this.orgaoUsuario = orgaoUsuario;
 				} catch (final Exception ce) {
@@ -243,19 +243,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				}
 			}
 
-			if (m.group(3) != null) {
+			if (m.group(4) != null) {
 				Calendar c1 = Calendar.getInstance();
-				c1.set(Calendar.YEAR, Integer.valueOf(m.group(3)));
+				c1.set(Calendar.YEAR, Integer.valueOf(m.group(4)));
 				c1.set(Calendar.DAY_OF_YEAR, 1);
 				this.dtReg = c1.getTime();
 			} else
 				this.dtReg = new Date();
 
-			if (m.group(4) != null)
-				numSolicitacao = Long.valueOf(m.group(4));
+			if (m.group(5) != null)
+				numSolicitacao = Long.valueOf(m.group(5));
 
-			if (m.group(6) != null)
-				numSequencia = Long.valueOf(m.group(6));
+			if (m.group(7) != null)
+				numSequencia = Long.valueOf(m.group(7));
 		}
 
 	}
@@ -277,7 +277,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		setSigla(sigla);
 		if (orgaoUsuario == null && cadastrante != null)
 			orgaoUsuario = cadastrante.getOrgaoUsuario();
-	
+
 		String query = "from SrSolicitacao where hisDtFim is null ";
 
 		if (orgaoUsuario != null) {
@@ -466,8 +466,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrMovimentacao movimentacao : getMovimentacaoSet())
 			if (movimentacao.lista == lista
 					&& movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA) // &&
-																												// movimentacao.movReversora
-																												// ==
+																												// //
 																												// null)
 				movIncl = movimentacao;
 		return movIncl;
@@ -504,6 +503,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				return mov;
 		}
 		return null;
+	}
+
+	public Set<SrMovimentacao> getMovimentacoesPrincipais() {
+		Set<SrMovimentacao> set = new LinkedHashSet<SrMovimentacao>();
+		for (SrMovimentacao m : getMovimentacaoSet()) {
+			if (m.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO
+					|| m.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO
+					|| m.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+				set.add(m);
+		}
+		return set;
 	}
 
 	public DpLotacao getLotaAtendente() {
@@ -680,6 +690,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
+	public boolean isReabertura() {
+		if (isCancelado())
+			return false;
+		for (SrMovimentacao mov : getMovimentacaoSet()) {
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA)
+				;
+			return true;
+		}
+		return false;
+	}
+
 	public boolean isEmPosAtendimento() {
 		if (isCancelado())
 			return false;
@@ -699,7 +720,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
 					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
 				return false;
-			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO)
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
+					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA)
 				return true;
 		}
 		return false;
@@ -799,11 +821,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeFechar(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess)
-				&& (isEmPreAtendimento() || isEmAtendimento());
-	}
-
-	public boolean podeFinalizarPosAtendimento(DpLotacao lota, DpPessoa pess) {
-		return isEmPosAtendimento() && estaCom(lota, pess);
+				&& (isEmPreAtendimento() || isEmAtendimento() || isEmPosAtendimento());
 	}
 
 	public boolean podeCancelar(DpLotacao lota, DpPessoa pess) {
@@ -914,15 +932,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				"Application.associarLista"));
 
 		operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(lotaTitular,
-				titular), "Application.fechar"));
+				titular), "fechar", "modal=true"));
 
 		operacoes.add(new SrOperacao("accept", "Finalizar Pré-Atendimento",
 				podeFinalizarPreAtendimento(lotaTitular, titular),
 				"Application.finalizarPreAtendimento"));
-
-		operacoes.add(new SrOperacao("lock", "Finalizar Pós-Atendimento",
-				podeFinalizarPosAtendimento(lotaTitular, titular),
-				"Application.finalizarPosAtendimento"));
 
 		operacoes.add(new SrOperacao("cross", "Cancelar Solicitação",
 				podeCancelar(lotaTitular, titular), "Application.cancelar"));
@@ -975,28 +989,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		super.salvar();
 
 		if (getMovimentacaoSetComCancelados().size() == 0) {
-			SrMovimentacao mov = new SrMovimentacao();
-			if (fecharAoAbrir) {
-				mov.descrMovimentacao = motivoFechamentoAbertura;
-				mov.lotaAtendente = getPosAtendenteDesignado();
-				mov.tipoMov = SrTipoMovimentacao
-						.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-			} else {
-				mov.descrMovimentacao = "Abertura";
-				if (temPreAtendenteDesignado()) {
-					mov.lotaAtendente = getPreAtendenteDesignado();
-					mov.tipoMov = SrTipoMovimentacao
-							.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO);
-				} else {
-					mov.lotaAtendente = getAtendenteDesignado();
-					mov.tipoMov = SrTipoMovimentacao
-							.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
-				}
-			}
-			mov.solicitacao = this;
-			mov.cadastrante = cadastrante;
-			mov.lotaCadastrante = lotaCadastrante;
-			mov.salvar();
+			if (fecharAoAbrir)
+				fechar(lotaCadastrante, cadastrante, motivoFechamentoAbertura);
+			else if (temPreAtendenteDesignado())
+				iniciarPreAtendimento(lotaCadastrante, cadastrante);
+			else
+				iniciarAtendimento(lotaCadastrante, cadastrante);
 			if (!isEditado()
 					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
@@ -1115,8 +1113,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				movMarca = mov;
 			}
 			if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA) {
-				marcador = marcadorAnterior;
-				movMarca = movMarcaAnterior;
+				// marcador = marcadorAnterior;
+				// movMarca = movMarcaAnterior;
+				marcador = CpMarcador.MARCADOR_SOLICITACAO_PRE_ATENDIMENTO;
+				movMarca = mov;
 			}
 			if (t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO) {
 				marcador = CpMarcador.MARCADOR_SOLICITACAO_CANCELADO;
@@ -1340,9 +1340,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public Long getPrioridade(SrLista lista) throws Exception {
 		Long prioridade = 0L;
-		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
+		SrMovimentacao movIncl = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA); // getMovimentacaoInclusao(lista);
 		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		if (movAltAnt != null) {
+		if (movAltAnt != null && movAltAnt.dtIniMov.after(movIncl.dtIniMov)) {
 			prioridade = movAltAnt.prioridade;
 		} else if (movIncl != null) {
 			prioridade = movIncl.prioridade;
@@ -1352,9 +1352,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public SrMovimentacao getMovPrioridade(SrLista lista) throws Exception {
 		SrMovimentacao mov = new SrMovimentacao();
-		SrMovimentacao movIncl = getMovimentacaoInclusao(lista);
+		SrMovimentacao movIncl = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		if (movAltAnt != null) {
+		// SrMovimentacao movCan =
+		// getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
+		if (movAltAnt != null && movAltAnt.dtIniMov.after(movIncl.dtIniMov)) {
 			mov = movAltAnt;
 		} else if (movIncl != null) {
 			mov = movIncl;
@@ -1372,7 +1374,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.lotaCadastrante = solicitacao.lotaCadastrante;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista + " com a prioridade " + mov.prioridade;
+		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista
+				+ " com a prioridade " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = solicitacao;
 		mov.salvar();
@@ -1396,6 +1399,43 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		sol.meuMovimentacaoSet.add(movRev);
 		refresh();
 		lista.recalcularPrioridade(prioremov);
+	}
+
+	public void iniciarPreAtendimento(DpLotacao lota, DpPessoa pess)
+			throws Exception {
+		SrMovimentacao mov = new SrMovimentacao(this);
+		mov.lotaAtendente = getPreAtendenteDesignado();
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO);
+		mov.salvar(pess, lota);
+	}
+
+	public void iniciarAtendimento(DpLotacao lota, DpPessoa pess)
+			throws Exception {
+		SrMovimentacao mov = new SrMovimentacao(this);
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
+		mov.lotaAtendente = mov.solicitacao.getAtendenteDesignado();
+		mov.salvar(pess, lota);
+	}
+
+	public void iniciarPosAtendimento(DpLotacao lota, DpPessoa pess,
+			String motivo) throws Exception {
+		SrMovimentacao mov = new SrMovimentacao(this);
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
+		mov.lotaAtendente = mov.solicitacao.getPosAtendenteDesignado();
+		mov.descrMovimentacao = motivo;
+		mov.salvar(pess, lota);
+	}
+
+	public void fechar(DpLotacao lota, DpPessoa pess, String motivo)
+			throws Exception {
+		SrMovimentacao mov = new SrMovimentacao(this);
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
+		mov.descrMovimentacao = motivo;
+		mov.salvar(pess, lota);
 	}
 
 	public String getGcTags() {

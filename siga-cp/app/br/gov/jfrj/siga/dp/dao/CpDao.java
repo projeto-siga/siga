@@ -1603,6 +1603,7 @@ public class CpDao extends ModeloDao {
 		cfg.addClass(br.gov.jfrj.siga.cp.CpIdentidade.class);
 		cfg.addClass(br.gov.jfrj.siga.cp.CpModelo.class);
 		cfg.addClass(br.gov.jfrj.siga.cp.CpUnidadeMedida.class);
+		cfg.addClass(br.gov.jfrj.siga.cp.CpComplexo.class);
 
 		// <!--
 		// <mapping resource="br/gov/jfrj/siga/dp/CpTipoMarcador.hbm.xml" />

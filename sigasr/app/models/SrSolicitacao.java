@@ -222,7 +222,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
 		final Pattern p = Pattern
-			.compile("^([A-Z]{3})?([A-Z0-9]{1})?-?(SR{1})-?(2{1}[0-9]{3})?/?([0-9]{1,5})?([.]{1})?([0-9]{1,2})?$"); 
+				.compile("^([A-Z]{3})?([A-Z0-9]{1})?-?(SR{1})-?(2{1}[0-9]{3})?/?([0-9]{1,5})?([.]{1})?([0-9]{1,2})?$");
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -532,7 +532,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return null;
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				itemConfiguracao, servico,
+				local, itemConfiguracao, servico,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
 		if (conf != null)
@@ -544,7 +544,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return null;
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				itemConfiguracao, servico,
+				local, itemConfiguracao, servico,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
 		if (conf != null)
@@ -568,7 +568,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
 		for (SrConfiguracao conf : SrConfiguracao.getConfiguracoes(solicitante,
-				itemConfiguracao, servico,
+				local, itemConfiguracao, servico,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
 				null)) {
 			SrTipoAtributo tipo = conf.tipoAtributo.getAtual();
@@ -586,7 +586,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return null;
 
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				itemConfiguracao, servico,
+				local, itemConfiguracao, servico,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
 		if (conf != null)

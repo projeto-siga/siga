@@ -82,6 +82,8 @@ public class CpConfiguracaoBL {
 
 	public static int GRUPO = 9;
 
+	public static int COMPLEXO = 10;
+
 	public Comparator<CpConfiguracao> getComparator() {
 		return comparator;
 	}
@@ -429,6 +431,13 @@ public class CpConfiguracaoBL {
 						&& !cfg.getLotacao().equivale(cfgFiltro.getLotacao()) || ((cfgFiltro
 						.getLotacao() == null) && !atributosDesconsiderados
 						.contains(LOTACAO)))))
+			return false;
+
+		if (cfg.getComplexo() != null
+				&& ((cfgFiltro.getComplexo() != null
+						&& !cfg.getComplexo().equals(cfgFiltro.getComplexo()) || ((cfgFiltro
+						.getComplexo() == null) && !atributosDesconsiderados
+						.contains(COMPLEXO)))))
 			return false;
 
 		if (cfg.getFuncaoConfianca() != null

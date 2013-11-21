@@ -82,6 +82,11 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	private DpLotacao lotacao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_COMPLEXO")
+	@NaoRecursivo
+	private CpComplexo complexo;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_CARGO")
 	@NaoRecursivo
 	private DpCargo cargo;
@@ -141,20 +146,22 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Column(name = "DT_FIM_VIG_CONFIGURACAO")
 	@Temporal(TemporalType.DATE)
 	private Date dtFimVigConfiguracao;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	private CpConfiguracao configuracaoInicial;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "configuracaoInicial")
 	@Desconsiderar
-	private Set<CpConfiguracao> configuracoesPosteriores = new HashSet<CpConfiguracao>(0);
+	private Set<CpConfiguracao> configuracoesPosteriores = new HashSet<CpConfiguracao>(
+			0);
 
 	public Set<CpConfiguracao> getConfiguracoesPosteriores() {
 		return configuracoesPosteriores;
 	}
 
-	public void setConfiguracoesPosteriores(Set<CpConfiguracao> configuracoesPosteriores) {
+	public void setConfiguracoesPosteriores(
+			Set<CpConfiguracao> configuracoesPosteriores) {
 		this.configuracoesPosteriores = configuracoesPosteriores;
 	}
 
@@ -233,6 +240,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	public void setCargo(DpCargo cargo) {
 		this.cargo = cargo;
+	}
+	
+	public CpComplexo getComplexo() {
+		return complexo;
+	}
+
+	public void setComplexo(CpComplexo complexo) {
+		this.complexo = complexo;
 	}
 
 	public DpFuncaoConfianca getFuncaoConfianca() {

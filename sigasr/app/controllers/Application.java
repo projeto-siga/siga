@@ -154,13 +154,14 @@ public class Application extends SigaApplication {
 
 	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
 			throws Exception {
-		if (!SrItemConfiguracao.listarPorPessoa(solicitacao.solicitante)
-				.contains(solicitacao.itemConfiguracao))
+		if (!SrItemConfiguracao.listarPorPessoaELocal(solicitacao.solicitante,
+				solicitacao.local).contains(solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
 		Map<SrServico, DpLotacao> servicosEAtendentes = SrServico
-		.listarComAtendentePorPessoaEItemOrdemTitulo(
-				solicitacao.solicitante, solicitacao.itemConfiguracao);		
+				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
+						solicitacao.solicitante, solicitacao.local,
+						solicitacao.itemConfiguracao);
 		if (solicitacao.servico == null
 				|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
 			if (servicosEAtendentes.size() > 0)
@@ -175,8 +176,9 @@ public class Application extends SigaApplication {
 	public static void exibirServico(SrSolicitacao solicitacao)
 			throws Exception {
 		Map<SrServico, DpLotacao> servicosEAtendentes = SrServico
-				.listarComAtendentePorPessoaEItemOrdemTitulo(
-						solicitacao.solicitante, solicitacao.itemConfiguracao);
+				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
+						solicitacao.solicitante, solicitacao.local,
+						solicitacao.itemConfiguracao);
 		if (solicitacao.servico == null
 				|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
 			if (servicosEAtendentes.size() > 0)
@@ -197,8 +199,8 @@ public class Application extends SigaApplication {
 		Map<SrServico, DpLotacao> servicosEAtendentes = new TreeMap<SrServico, DpLotacao>();
 		if (solicitacao.itemConfiguracao != null) {
 			servicosEAtendentes = SrServico
-					.listarComAtendentePorPessoaEItemOrdemTitulo(
-							solicitacao.solicitante,
+					.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
+							solicitacao.solicitante, solicitacao.local,
 							solicitacao.itemConfiguracao);
 			if (solicitacao.servico == null
 					|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
@@ -638,7 +640,7 @@ public class Application extends SigaApplication {
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
-		//checar lotação do pré-atendimento 
+		// checar lotação do pré-atendimento
 		movimentacao.salvar(cadastrante(), lotaTitular());
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
@@ -663,12 +665,13 @@ public class Application extends SigaApplication {
 
 	public static void editarDesignacao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<CpComplexo> orgaos = JPA.em().createQuery("from CpOrgaoUsuario")
-				.getResultList();
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
 		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
-		render(designacao, orgaos);
+		render(designacao, orgaos, locais);
 	}
 
 	public static void gravarDesignacao(SrConfiguracao designacao)
@@ -744,30 +747,37 @@ public class Application extends SigaApplication {
 		listarItem();
 	}
 
-	public static void selecionarItem(String sigla, Long pessoa)
+	public static void selecionarItem(String sigla, Long pessoa, Long local)
 			throws Exception {
+		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
+				pessoa) : null;
+		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
+				local) : null;
 		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
-				pessoa != null ? JPA.em().find(DpPessoa.class, pessoa) : null);
+				dpPessoa, cpComplexo);
 		render("@selecionar", sel);
 	}
 
 	public static void buscarItem(String sigla, String nome,
-			SrItemConfiguracao filtro, Long pessoa) {
+			SrItemConfiguracao filtro, Long pessoa, Long local) {
 
 		List<SrItemConfiguracao> itens = null;
+		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
+				pessoa) : null;
+		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
+				local) : null;
 
 		try {
 			if (filtro == null)
 				filtro = new SrItemConfiguracao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(pessoa != null ? JPA.em().find(
-					DpPessoa.class, pessoa) : null);
+			itens = filtro.buscar(dpPessoa, cpComplexo);
 		} catch (Exception e) {
 			itens = new ArrayList<SrItemConfiguracao>();
 		}
 
-		render(itens, filtro, nome, pessoa);
+		render(itens, filtro, nome, pessoa, local);
 	}
 
 	public static void listarTipoAtributo() throws Exception {
@@ -825,34 +835,41 @@ public class Application extends SigaApplication {
 		listarServico();
 	}
 
-	public static void selecionarServico(String sigla, Long pessoa, Long item)
-			throws Exception {
-		SrServico sel = new SrServico().selecionar(
-				sigla,
-				pessoa != null ? JPA.em().find(DpPessoa.class, pessoa) : null,
-				item != null ? (SrItemConfiguracao) SrItemConfiguracao
-						.findById(item) : null);
+	public static void selecionarServico(String sigla, Long pessoa, Long local,
+			Long item) throws Exception {
+		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
+				pessoa) : null;
+		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
+				local) : null;
+		SrItemConfiguracao srItem = item != null ? (SrItemConfiguracao) SrItemConfiguracao
+				.findById(item) : null;
+
+		SrServico sel = new SrServico().selecionar(sigla, dpPessoa, cpComplexo,
+				srItem);
 		render("@selecionar", sel);
 	}
 
 	public static void buscarServico(String sigla, String nome,
-			SrServico filtro, Long pessoa, Long item) {
+			SrServico filtro, Long pessoa, Long local, Long item) {
 		List<SrServico> itens = null;
+		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
+				pessoa) : null;
+		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
+				local) : null;
+		SrItemConfiguracao srItem = item != null ? (SrItemConfiguracao) SrItemConfiguracao
+				.findById(item) : null;
+
 		try {
 			if (filtro == null)
 				filtro = new SrServico();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(
-					pessoa != null ? JPA.em().find(DpPessoa.class, pessoa)
-							: null,
-					item != null ? (SrItemConfiguracao) SrItemConfiguracao
-							.findById(item) : null);
+			itens = filtro.buscar(dpPessoa, cpComplexo, srItem);
 		} catch (Exception e) {
 			itens = new ArrayList<SrServico>();
 		}
 
-		render(itens, filtro, nome, pessoa, item);
+		render(itens, filtro, nome, pessoa, local, item);
 	}
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)

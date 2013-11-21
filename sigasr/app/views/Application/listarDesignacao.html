@@ -9,6 +9,7 @@
 				<thead>
 					<tr>
 						<th></th>
+						<th>Local</th>
 						<th>Lotação</th>
 						<th>Pessoa</th>
 						<th>Cargo</th>
@@ -28,6 +29,7 @@
 						onclick="javascript:window.location='@{Application.editarDesignacao(design.idConfiguracao)}'"
 						style="cursor: pointer;">
 						<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
+						<td>${design.complexo?.nomeComplexo}</td>
 						<td>${design.lotacao?.lotacaoAtual?.siglaLotacao}</td>
 						<td>${design.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>
 						<td>${design.cargo?.descricao}</td>

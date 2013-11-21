@@ -26,6 +26,11 @@
 			</div>
 			<span style="color: red">#{error
 					'designacao.orgaoUsuario' /}</span>
+			<div class="gt-form-row gt-width-66">		
+				<label>Local</label> 
+				#{select name:'designacao.complexo', items:locais, valueProperty:'idComplexo',
+				labelProperty:'nomeComplexo', value:designacao.complexo?.idComplexo /}
+			</div>		
 			<div class="gt-form-row gt-width-66">
 				<label>Lotação</label>#{selecao
 					tipo:'lotacao', nome:'designacao.lotacao',

@@ -1,8 +1,28 @@
+<script>
+function carregarServico(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		if (frm[i].name && frm[i].value)
+			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+	}
+	PassAjaxResponseToFunction('@{Application.exibirServico()}?' + params, 'carregouServico', null, false, null);
+}
+
+function carregouServico(response, param){
+	var div = document.getElementById('divServico');
+	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
+}
+</script>
+
 <div class="gt-form-row gt-width-66">
 				<label>Item</label> #{selecao tipo:'item',
 				nome:'solicitacao.itemConfiguracao',
 				value:solicitacao.itemConfiguracao, grande:true, onchange:'carregarServico();',
-				params:'pessoa='+solicitacao.solicitante?.idPessoa /} <span style="color: red">#{error
+				params:'pessoa='+solicitacao.solicitante?.idPessoa+'&local='+solicitacao.local?.idComplexo /} <span style="color: red">#{error
 					'solicitacao.itemConfiguracao' /}</span>
 </div>
 

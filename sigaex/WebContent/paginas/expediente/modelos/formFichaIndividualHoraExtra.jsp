@@ -11,11 +11,10 @@ var newwin = null;
 <mod:modelo>
     <mod:entrevista>
 <c:set var="intervaloMsg">
-&nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br> Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça.        </c:set>
+&nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br>&nbsp;&nbsp;&nbsp; Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça.        </c:set>
     
     <mod:grupo titulo="Referente">
-        <input type="radio" name="referente" id="solicitacao" value="1" checked> à Solicitação de Serviço Extraordinário Nº:<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
-                                    if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" size="4"  name="numerosolicitacao"  type="text"><br>
+        <input type="radio" name="referente" id="solicitacao" value="1" checked> à Solicitação de Serviço Extraordinário Nº:<input size="4"  name="numerosolicitacao"  type="text"><br>
         <input type="radio" name="referente" id="plantao" value="2">ao Plantão Judiciário.<br>
    </mod:grupo>
    </br>
@@ -62,9 +61,6 @@ var newwin = null;
                     <c:set var="xdiaSemana" value="${requestScope[f:concat('diaSemana',i)]}" />
                     <c:set var="xferiado" value="${requestScope[f:concat('feriado',i)]}" /> 
                     
-                          
-                             
-                             
                                 <c:if test="${(xhoraIni > 24)}"> 
                                 <p style="color:red">Hora de início deve ser menor ou igual a 24</p>
                                 <c:set var="condicional" value="nao"/>
@@ -94,7 +90,7 @@ var newwin = null;
                                         <fmt:formatNumber var="xminutoTotalIntevalo" value="${(((xhoraFimIntervalo * 60 + xminutoFimIntervalo)
                                         -(xhoraIniIntervalo * 60 + xminutoIniIntervalo))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
                               
-
+                                <p style="color:red">Para preencher esta opção, clicar em <u>“Intervalo?”</u> e ler o conteúdo.</p>
                                 <c:if test="${(xhoraFimIntervalo > 24)}"> 
                                 <p style="color:red">Hora de fim do intervalo deve ser menor ou igual a 24.</p>
                                 <c:set var="condicional" value="nao"/>
@@ -149,18 +145,11 @@ var newwin = null;
                                 <c:set var="condicional" value="nao"/>
                                 </c:if>
                                 
-                                
-                                
-                                 <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao')&& (xintervalo =='Não')}">
+                                <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao')&& (xintervalo =='Não')}">
                                      <fmt:formatNumber var="xhoraTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      Total de horas:<input type="text" name="totalHoras${i}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}" value="${xminutoTotal}" size="2" readonly/>min  
-                                  <c:set var="xtotalHoras" value="${requestScope[f:concat('totalHoras',i)]}" />
-                                   
-                   
-                    
-                                 </c:if>
-                                 
+                                  </c:if>
                                  
                                  <c:if test="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))<= 60) && (xintervalo =='Sim') }">
                                     <c:set var="condicional" value="nao"/>                                
@@ -170,12 +159,9 @@ var newwin = null;
                                 <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao') && (xintervalo =='Sim')}">
                                     <fmt:formatNumber var="xhoraTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))-((xhoraFimIntervalo * 60 + xminutoFimIntervalo)-(xhoraIniIntervalo * 60 + xminutoIniIntervalo)))/60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      <fmt:formatNumber var="xminutoTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))-((xhoraFimIntervalo * 60 + xminutoFimIntervalo)-(xhoraIniIntervalo * 60 + xminutoIniIntervalo)))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
-                                        
                                      Total de horas:<input type="text" name="totalHoras${i}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}" value="${xminutoTotal}" size="2" readonly/>min
                                 </c:if>
                           
-                         
-
                  </mod:grupo>
                     
             </c:forEach>
@@ -183,9 +169,10 @@ var newwin = null;
         </mod:grupo>
         <br/>
         <mod:grupo>
-                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumprida" value="1" > Afirmo que todas as tarefas/atividades descritas na Solicitação de Serviço Extraordinário foram cumpridas.</br>
-                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="2">Afirmo que as tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram cumpridas pois:<input size="40"  name="solicitacaoCumpridaNaoPois"  type="text"><br>
-                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="3" checked>Não se aplica.</br>
+                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumprida" value="1" checked > Afirmo que todas as tarefas/atividades descritas na Solicitação de Serviço Extraordinário foram cumpridas.</br>
+                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="2">Afirmo que as tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram cumpridas pois:
+                    <mod:memo titulo="" var="solicitacaoCumpridaNaoPois" colunas="60" linhas="7" /><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Além da justificativa, incluir a tarefa alterada.)</b></br>
+                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="3" >Não se aplica.</br>
                 </br>
         </mod:grupo>
         <mod:grupo >
@@ -262,14 +249,12 @@ var newwin = null;
                 <td bgcolor="#BAB9AF" width="45%" align="center">Nome</td>
                 <td bgcolor="#BAB9AF" width="15%" align="center">Matrícula</td>
                 <td bgcolor="#BAB9AF" width="40%" align="center">Lotação</td>
-         </tr>
-         <tr>
-                
-                
+            </tr>
+            <tr>
                 <td bgcolor="#FFFFFF" width="45%" align="center">${requestScope['servidor_pessoaSel.descricao']}</td>
                 <td bgcolor="#FFFFFF" width="15%" align="center">${requestScope['servidor_pessoaSel.sigla']}</td>
                 <td bgcolor="#FFFFFF" width="40%" align="center">${f:pessoa(requestScope['servidor_pessoaSel.id']).lotacao.descricao}</td>
-         </tr>         
+            </tr>         
        </table>
        
         </br>
@@ -284,12 +269,13 @@ var newwin = null;
                 <td bgcolor="#BAB9AF" width="10%" align="center">Início</td>
                 <td bgcolor="#BAB9AF" width="10%" align="center">Término</td>
                 <td bgcolor="#BAB9AF" width="10%" align="center">Total de horas</td>                
+             </tr>
             
-            </tr>
             <c:set var="horaDiaUtil" value="0"/> 
             <c:set var="minutoDiaUtil" value="0"/> 
             <c:set var="horaDomingo" value="0"/> 
             <c:set var="minutoDomingo" value="0"/> 
+        
         <c:forEach var="i" begin="1" end="${numDiasHoraExtra}">         
             
             <tr>
@@ -305,53 +291,64 @@ var newwin = null;
                     
             </tr>
 
-                        <c:set var="xhoraTotal" value="${requestScope[f:concat('totalHoras',i)]}" />
-                         <c:set var="xminutoTotal" value="${requestScope[f:concat('totalMinutos',i)]}" />
-                          <c:set var="xdiaSemana" value="${requestScope[f:concat('diaSemana',i)]}" />
-                         <c:set var="xferiado" value="${requestScope[f:concat('feriado',i)]}" /> 
+                        <c:set var="xhoraTotal2" value="${requestScope[f:concat('totalHoras',i)]}" />
+                        <c:set var="xminutoTotal2" value="${requestScope[f:concat('totalMinutos',i)]}" />
+                        <c:set var="xdiaSemana" value="${requestScope[f:concat('diaSemana',i)]}" />
+                        <c:set var="xferiado" value="${requestScope[f:concat('feriado',i)]}" /> 
                                        
+             <c:if test="${(xdiaSemana == 'Domingo') or (xferiado != 'Não')}">  
 
-            <c:if test="${(xdiaSemana == 'Domingo') or (xferiado != 'Não')}">  
+                   <c:set var="horaDomingo" value="${horaDomingo + xhoraTotal2}" /> 
+                   <c:set var="minutoDomingo" value="${minutoDomingo + xminutoTotal2}"/> 
+             </c:if>
 
-                              
-                   <c:set var="horaDomingo" value="${horaDomingo + xhoraTotal}" /> 
-                   <c:set var="minutoDomingo" value="${minutoDomingo + xminutoTotal}"/> 
-                   <fmt:formatNumber var="horaDomingoF" value="${((horaDomingo*60)+minutoDomingo)/60}"maxFractionDigits="0" minIntegerDigits="2" /> 
-                   <fmt:formatNumber var="minutoDomingoF" value="${((horaDomingo*60)+minutoDomingo)%60}"maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
-
-                                       
-              </c:if>
-
-    
              <c:if test="${(xdiaSemana != 'Domingo') and (xferiado == 'Não')}">  
                                        
-                   <c:set var="horaDiaUtil" value="${horaDiaUtil + xhoraTotal}" /> 
-                   <c:set var="minutoDiaUtil" value="${minutoDiaUtil + xminutoTotal}"/> 
-                   <fmt:formatNumber var="horaDiaUtilF" value="${((horaDiaUtil*60)+minutoDiaUtil)/60}"maxFractionDigits="0" minIntegerDigits="2" /> 
-                   <fmt:formatNumber var="minutoDiaUtilF" value="${((horaDiaUtil*60)+minutoDiaUtil)%60}"maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
-           
+                   <c:set var="horaDiaUtil" value="${horaDiaUtil + xhoraTotal2}" /> 
+                   <c:set var="minutoDiaUtil" value="${minutoDiaUtil + xminutoTotal2}"/> 
+
               </c:if>
 
-             
-                                       
-                   <fmt:formatNumber var="horaExtra" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))/60)}"maxFractionDigits="0" minIntegerDigits="2" /> 
+             </c:forEach>
+                   <c:set var="horaDomingo2" value="${((horaDomingo*60)+minutoDomingo)/60}"/>
+                   <c:set var="minutoDomingo2" value="${((horaDomingo*60)+minutoDomingo)%60}"/>
+                   
+                   <fmt:formatNumber var="horaDomingoF" value="${(horaDomingo2)-0.5}" maxFractionDigits="0" minIntegerDigits="2" /> 
+                   <fmt:formatNumber var="minutoDomingoF" value="${minutoDomingo2}" maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
+                   
+                   
+                   <c:set var="horaDiaUtilF2" value="${((horaDiaUtil*60)+minutoDiaUtil)/60}"/>
+                   <c:set var="minutoDiaUtilF2" value="${((horaDiaUtil*60)+minutoDiaUtil)%60}"/>
+                   
+                   <fmt:formatNumber var="horaDiaUtilF" value="${(horaDiaUtilF2)-0.5}" maxFractionDigits="0" minIntegerDigits="2" /> 
+                   <fmt:formatNumber var="minutoDiaUtilF" value="${minutoDiaUtilF2}"maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
+                                  
+                   <fmt:formatNumber var="horaExtra" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))/60)-0.5}"maxFractionDigits="0" minIntegerDigits="2" /> 
                    <fmt:formatNumber var="minutoExtra" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))%60)}"maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
-                                       
-                       
-              
-              
-        
-        </c:forEach>
         </table>
         
         <br/><br/>
         <table width="100%" align="center" border="1" cellpadding="2"
             cellspacing="1" bgcolor="#000000">
             <tr>
-                <td bgcolor="#FFFFFF" width="40%" align="left"><b>Total de Horas Extraordinárias em Dias Úteis e Sábados:</b> &nbsp;${horaDiaUtilF}: ${minutoDiaUtilF}</td>            
+                <td bgcolor="#FFFFFF" width="40%" align="left"><b>Total de Horas Extraordinárias em Dias Úteis e Sábados:</b> &nbsp; 
+               <c:if test="${(empty minutoDiaUtilF) and (empty horaDiaUtilF)}">
+                00:00 
+                </c:if>
+                <c:if test="${(not empty minutoDiaUtilF) and (not empty horaDiaUtilF) }">
+                ${horaDiaUtilF2}:${minutoDiaUtilF2}
+              </c:if>
+                </td>            
             </tr>
             <tr>
-                <td bgcolor="#FFFFFF" width="30%" align="left"><b>Total de Horas Extraordinárias em Domingos e Feriados:</b> &nbsp; ${horaDomingoF}:${minutoDomingoF}</td>      
+                <td bgcolor="#FFFFFF" width="30%" align="left"><b>Total de Horas Extraordinárias em Domingos e Feriados:</b> &nbsp;
+                <c:if test="${(empty horaDomingoF) and (empty minutoDomingoF)}">
+                00:00
+                </c:if>
+                <c:if test="${(not empty horaDomingoF) and (not empty minutoDomingoF) }">
+                 ${horaDomingoF2}:${minutoDomingoF2}
+              </c:if>
+                </td>      
             </tr>
             <tr>
                 <td bgcolor="#FFFFFF" width="30%" align="left"><b>Total de Horas Extraordinárias:</b> &nbsp; ${horaExtra}:${minutoExtra}</td>        

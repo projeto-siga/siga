@@ -37,7 +37,7 @@
 										class="gt-btn-medium gt-btn-left" />	
 									<input  type="button" value="Excluir" onclick="javascript:if (confirm('Deseja excluir o feriado?')) location.href='/siga/feriado/excluir.action?id=${id}';"
 									       class="gt-btn-medium gt-btn-left" />											
-									<input  type="button" value="Voltar" onclick="javascript:history.back();"
+									<input  type="button" value="Voltar" onclick="javascript:location.href='/siga';"
 									       class="gt-btn-medium gt-btn-left" />	
 								</td>
 							</tr>							

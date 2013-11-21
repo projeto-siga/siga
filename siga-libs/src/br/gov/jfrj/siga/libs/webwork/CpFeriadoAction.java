@@ -105,13 +105,6 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		this.dtFimFeriado = dtFimFeriado;
 	}
 
-	public String aListar() throws Exception {
-		
-		setItens(CpDao.getInstance().listarFeriados());
-		
-		return Action.SUCCESS;
-	}
-	
 	public CpFeriado daoFeriado(Integer id) {
 		return dao().consultar(id, CpFeriado.class, false);
 	}
@@ -120,10 +113,47 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		return dao().consultar(id, CpOcorrenciaFeriado.class, false);
 	}
 
-
+	public String aListar() throws Exception {
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+		
+		CpFeriado feriado;
+		if (this.getId() != null){
+			feriado = daoFeriado(getId());		
+			this.setDscFeriado(feriado.getDescricao());
+		}			
+		
+		setItens(CpDao.getInstance().listarCpFeriadoPorDescricao());		
+		return Action.SUCCESS;
+	}
+	
+	public String aEditarGravar() throws Exception {
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+		
+		if(this.getDscFeriado() == null)
+			throw new AplicacaoException("Descrição do feriado não informada");
+		
+		CpFeriado feriado;		
+			
+		if (getId() == null)
+			feriado = new CpFeriado();
+		else
+			feriado = daoFeriado(getId());	
+		
+		feriado.setDscFeriado(this.getDscFeriado());		
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(feriado);
+			dao().commitTransacao();			
+		} catch (final Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}		
+		return Action.SUCCESS;
+	}
+	
 	
 	public String aExcluir() throws Exception {
-//		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 		if (getId() != null) {
 			try {
 				dao().iniciarTransacao();
@@ -141,11 +171,11 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	}
 	
 	public String aExcluirOcorrencia() throws Exception {
-//		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 		if (getIdOcorrencia() != null) {
 			try {
 				dao().iniciarTransacao();
-				CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getId());				
+				CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getIdOcorrencia());				
 				dao().excluir(ocorrencia);				
 				dao().commitTransacao();				
 			} catch (final Exception e) {
@@ -172,6 +202,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
     }  
 	
 	public String aEditarOcorrencia() throws Exception {
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 
 		if (getIdOcorrencia() != null) {
 			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getIdOcorrencia());	
@@ -191,7 +222,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	}
 	
 	public String aEditarOcorrenciaGravar() throws Exception {
-//		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 		
 		CpOcorrenciaFeriado ocorrencia;
 		
@@ -218,62 +249,5 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		}
 		
 		return Action.SUCCESS;		
-	}	
-	
-/*	
-	
-	public String aEditar() throws Exception {
-
-		if (getId() != null) {
-			CpOrgao orgao = daoOrgao(getId());	
-			this.setNmOrgao(orgao.getNmOrgao());
-			this.setSiglaOrgao(orgao.getSigla());
-			if (orgao.getAtivo() != null && !orgao.getAtivo().isEmpty())
-				this.setAtivo(orgao.getAtivo().charAt(0));
-			else
-				this.setAtivo('N');
-			this.setIdOrgaoUsu(orgao.getOrgaoUsuario().getId());
-		}
-		
-		return Action.SUCCESS;
 	}
-	
-	public String aEditarGravar() throws Exception {
-		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
-		
-		if(this.getNmOrgao() == null)
-			throw new AplicacaoException("Nome do Órgão Externo não informado");
-		
-		if(this.getSiglaOrgao() == null)
-			throw new AplicacaoException("Sigla do Órgão Externo não informada");
-		
-		CpOrgao orgao;		
-		if (getId() == null)
-			orgao = new CpOrgao();
-		else
-			orgao = daoOrgao(getId());	
-		
-		orgao.setNmOrgao(this.getNmOrgao());
-		orgao.setSigla(this.getSiglaOrgao());
-		if (this.getIdOrgaoUsu() != null && this.getIdOrgaoUsu() != 0) {
-			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-			orgaoUsuario = dao().consultar(this.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);	
-			orgao.setOrgaoUsuario(orgaoUsuario);
-		}else
-			orgao.setOrgaoUsuario(null);
-		
-		orgao.setAtivo(String.valueOf(this.getAtivo()));
-		
-		try {
-			dao().iniciarTransacao();
-			dao().gravar(orgao);
-			dao().commitTransacao();			
-		} catch (final Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
-		}
-		
-		return Action.SUCCESS;
-	}
-	*/
 }

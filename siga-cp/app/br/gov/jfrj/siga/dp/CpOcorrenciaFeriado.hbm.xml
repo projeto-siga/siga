@@ -6,8 +6,7 @@
 <hibernate-mapping package="br.gov.jfrj.siga.dp" schema="CORPORATIVO">
 	<class name="CpOcorrenciaFeriado"
 		table="CP_OCORRENCIA_FERIADO">
-		<id name="idOcorrencia" column="ID_OCORRENCIA" type="long">
-		  <!--	<generator class="assigned"></generator>	-->		
+		<id name="idOcorrencia" column="ID_OCORRENCIA" type="long">		 
 			<generator class="sequence">
 				<param name="sequence">CP_OCORRENCIA_FERIADO_SEQ</param>
 			</generator>

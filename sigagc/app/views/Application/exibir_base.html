@@ -63,7 +63,7 @@ Informação'/}
 			#{/if} #{/list} #{/if}
 		</div>
 
-		<div class="gt-sidebar-content" id="gc">teste</div>
+		<div class="gt-sidebar-content" id="gc"></div>
 
 		<!-- / sidebar -->
 	</div>
@@ -72,7 +72,7 @@ Informação'/}
 #{doLayout /}
 
 <script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("knowledge?estilo=sidebar&ts=${currentTimeMillis}${informacao.gcTags.raw()}",document.getElementById('gc'));
+		SetInnerHTMLFromAjaxResponse("knowledge?estilo=sidebar&ts=${currentTimeMillis}${informacao.gcTags.raw()}&id=${informacao.id}",document.getElementById('gc'));
 </script>
 
 

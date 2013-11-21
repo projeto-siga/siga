@@ -210,20 +210,33 @@ public class Application extends SigaApplication {
 		render(contagens);
 	}
 
-	public static void knowledge(String[] tags, String estilo, String msgvazio,
+	public static void knowledge(Long id, String[] tags, String estilo, String msgvazio,
 			String urlvazio, String titulo) throws Exception {
+		int index = Integer.MAX_VALUE;
+		Long idOutroConhecimento = 0l;
+		GcInformacao info = null;
+		
 		Set<GcTag> set = GcBL.buscarTags(tags, true);
 		Query query = JPA.em().createNamedQuery("buscarConhecimento");
 		query.setParameter("tags", set);
 		List<Object[]> conhecimentos = query.getResultList();
 		for (Object[] o : conhecimentos) {
-			if (o[2] != null && o[2] instanceof byte[]) {
-				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
-				s = GcBL.ellipsize(s, 100);
-				o[2] = s;
+			idOutroConhecimento = Long.parseLong(o[0].toString());
+			if(id.equals(idOutroConhecimento))
+				index = conhecimentos.indexOf(o);
+			else {
+				info = GcInformacao.findById(idOutroConhecimento);
+				o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
+				if (o[2] != null && o[2] instanceof byte[]) {
+					String s = new String((byte[]) o[2], Charset.forName("utf-8"));
+					s = GcBL.ellipsize(s, 100);
+					o[2] = s;
+				}
 			}
 		}
-
+		if(index < conhecimentos.size())
+			conhecimentos.remove(index);
+		
 		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
 			GcInformacao inf = GcInformacao.findById(conhecimentos.get(0)[0]);
 			conhecimentos.get(0)[1] = inf.arq.titulo;
@@ -563,7 +576,7 @@ public class Application extends SigaApplication {
 		GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 				null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(inf, idc());
-		exibir(sigla);
+		exibir(inf.getSigla());
 	}
 
 	public static void gravar(GcInformacao informacao, String titulo,

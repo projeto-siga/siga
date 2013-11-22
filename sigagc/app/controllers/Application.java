@@ -73,6 +73,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 public class Application extends SigaApplication {
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
+	private static final int CONTROLE_HASH_TAG = 1;
 
 	@Before
 	public static void addDefaultsAlways() throws Exception {
@@ -459,10 +460,14 @@ public class Application extends SigaApplication {
 	public static void exibir(String sigla) throws Exception {
 		
 		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
-
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
-
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 		if (!informacao.acessoPermitido(titular(), lotaTitular())) {
 			throw new AplicacaoException(
 					"O usuário corrente não tem acesso à informação solicitada.");
@@ -472,7 +477,7 @@ public class Application extends SigaApplication {
 		GcBL.logarVisita(informacao, idc());
 		render(informacao);
 	}
-
+	
 	public static void editar(String sigla, String classificacao, String titulo,
 			String origem) throws IOException {
 		GcInformacao informacao = new GcInformacao();
@@ -583,14 +588,6 @@ public class Application extends SigaApplication {
 			String conteudo, String classificacao, String origem)
 			throws Exception {
 		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
-		GcArquivo arq = new GcArquivo();
-
-		arq = Util.marcarLinkNoConteudo(conteudo, classificacao);
-		
-		//Atualiza o conteudo e a classificação após a verificação se existe links criados
-		conteudo = arq.getConteudoTXT();
-		classificacao = arq.classificacao;
-		
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
 			informacao.lotacao = informacao.autor.getLotacao();
@@ -606,6 +603,8 @@ public class Application extends SigaApplication {
 		if (informacao.tipo == null)
 			informacao.tipo = GcTipoInformacao.all().first();
 
+		//Atualiza a classificação com as hashTags encontradas
+		classificacao = Util.findHashTag(conteudo, classificacao, CONTROLE_HASH_TAG);
 		// if (informacao.id != 0)
 		GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, pessoa,
@@ -621,7 +620,7 @@ public class Application extends SigaApplication {
 				GcBL.gravar(informacao, idc());
 			}
 			redirect(origem);
-		} else
+		} else 
 			exibir(informacao.getSigla());
 	}
 

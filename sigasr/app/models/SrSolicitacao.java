@@ -594,6 +594,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 
+	public DpLotacao getEquipeQualidadeDesignada() throws Exception {
+		if (solicitante == null)
+			return null;
+
+		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
+				local, itemConfiguracao, servico,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE);
+		if (conf != null)
+			return conf.equipeQualidade.getLotacaoAtual();
+		return null;
+	}
+
 	// Edson: poderia também guardar num HashMap transiente e, ao salvar(),
 	// mandar criar os atributos, caso se quisesse permitir um
 	// solicitacao.getAtributoSet().put...
@@ -734,6 +747,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean temPreAtendenteDesignado() throws Exception {
 		return (getPreAtendenteDesignado() != null);
+	}
+
+	public boolean temEquipeQualidadeDesignada() throws Exception {
+		return (getEquipeQualidadeDesignada() != null);
 	}
 
 	public boolean temPosAtendenteDesignado() throws Exception {

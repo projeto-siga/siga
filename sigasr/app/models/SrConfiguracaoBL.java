@@ -86,6 +86,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE
 					&& conf.posAtendente == null)
 				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE
+					&& conf.equipeQualidade == null)
+				return false;
 
 			if (!atributosDesconsiderados.contains(SERVICO)
 					&& conf.servico != null

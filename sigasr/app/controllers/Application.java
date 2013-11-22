@@ -215,12 +215,11 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
-
+		
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
 					"Item não informado");
 		}
-
 		if (solicitacao.servico == null) {
 			validation.addError("solicitacao.servico", "Serviço não informado");
 		}

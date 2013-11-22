@@ -418,6 +418,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return null;
 		return sols.get(0);
 	}
+	
+	public SrSolicitacao getUltimaSolicitacaoHistorico() {
+		List<SrSolicitacao> sols = getHistoricoSolicitacao();
+		if (sols == null)
+			return null;
+		return sols.get(1);
+	}
 
 	public List<SrAtributo> getAtributoSet() {
 		if (meuAtributoSet == null)
@@ -793,7 +800,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
-		return isEmPreAtendimento() && estaCom(lota, pess);
+		//return isEmPreAtendimento() && estaCom(lota, pess);
+		return estaCom(lota, pess)
+			&& (isEmPreAtendimento() || isEmAtendimento());
 	}
 
 	public boolean podePriorizar(DpLotacao lota, DpPessoa pess) {
@@ -984,7 +993,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		checarCampos();
 
 		super.salvar();
-
+		
 		if (getMovimentacaoSetComCancelados().size() == 0) {
 			SrMovimentacao mov = new SrMovimentacao();
 			if (fecharAoAbrir) {
@@ -1012,8 +1021,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
 				Correio.notificarAbertura(this);
-		} else
-			atualizarMarcas();
+		} else {
+			if (getSolicitacaoAtual().itemConfiguracao != this.itemConfiguracao) {
+				//Ao gravar a movimentação , o id da solicitação é o id inicial ou o que eu passo na página ao salvar?
+					SrMovimentacao mov = new SrMovimentacao();
+					if (temPreAtendenteDesignado()) {
+						mov.lotaAtendente = getPreAtendenteDesignado();
+						mov.tipoMov = SrTipoMovimentacao
+							.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO);
+					} else {
+						mov.lotaAtendente = getAtendenteDesignado();
+						mov.tipoMov = SrTipoMovimentacao
+								.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
+					}
+					mov.solicitacao = this;
+					mov.cadastrante = cadastrante;
+					mov.lotaCadastrante = lotaCadastrante;
+					mov.salvar();
+					meuMovimentacaoSet.add(mov);
+					refresh();
+			}
+		}
+		atualizarMarcas();
 	}
 
 	public void checarCampos() throws Exception {
@@ -1046,6 +1075,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
+
+		if (itemConfiguracao == null)
+			;
 
 		if (!temAtendenteDesignado() && !temPreAtendenteDesignado())
 			throw new Exception(
@@ -1367,7 +1399,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrMovimentacao mov = new SrMovimentacao();
 		SrMovimentacao movIncl = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		//SrMovimentacao movCan = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
 		if (movAltAnt != null && movAltAnt.dtIniMov.after(movIncl.dtIniMov)) {
 			mov = movAltAnt;
 		} else if (movIncl != null) {

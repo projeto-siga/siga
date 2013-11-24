@@ -1,0 +1,31 @@
++ Imprimir "Rascunho" no pdf do documento não fechado
++ Numerar apenas no fechamento
++ Indicar a destinação de cada via
++ Corrigir o padrão de numeração da classificacao
+
+- Transferir para orgao externo
+- Impressao de protocolos
+- Vincular e desvincular
+
+- BL
+  - Numerar os expedientes por sesb/forma/ano/número;
+  - Somente o subscritor pode fechar o documento;
+  - Competência
+    - A competência se refere ao subscritor e não ao cadastrante;
+
+- Visualização    
+  - lista de expedientes
+    - buscar pelo número
+    
+- Implementar assinatura digital;
+- Restringir algumas operações na camada de negócios;
+  
+- Modelos
+  - Quisitos
+    - Visualizar o documento como se ele já estivesse preenchido
+    - Resolver a questão da formatação externa (ofício/memo)
+    - Possibilitar a expansão para um sistema complexo de modelos
+    
+/*
+
+*/

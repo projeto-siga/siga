@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+ <!-- Mensagens vindas do servidor - Exemplo  -->
+ <mensagens>
+	<!-- Primeira mensagem  -->
+	<mensagem>
+		<serial>123</serial> 				<!-- Numero de série da mensagem  -->
+		<inicio>2010,10,22,15,0,0</inicio>	<!-- data e hora de início da mensagem Atenção : mês - janeiro começa em zero  -->
+		<fim>2010,10,22,16,45,0</fim>			<!-- data e hora de fim da mensagem Atenção : mês - janeiro começa em zero  -->
+		<texto>O sistema SIGA DOC sirá do ar às 19:00. clique para sair.</texto> <!-- Texto da mensagem  -->
+	</mensagem>
+	<!-- Segunda mensagem  -->
+	<mensagem>
+		<serial>234</serial>				<!-- Numero de série da mensagem  -->
+		<inicio>2010,10,22,15,0,0</inicio>	<!-- data e hora de início da mensagem Atenção : mês - janeiro começa em zero  -->
+		<fim>2010,10,22,16,45,0</fim>			<!-- data e hora de fim da mensagem Atenção : mês - janeiro começa em zero  -->
+		<texto>Manutenção programada em duas horas !</texto> <!-- Texto da mensagem  -->
+	</mensagem>
+</mensagens>

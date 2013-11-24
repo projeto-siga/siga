@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+                            "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                            "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="br.gov.jfrj.siga.ex">
+	<class name="ExEmailNotificacao" schema="SIGA" table="EX_EMAIL_NOTIFICACAO">
+		<id name="idEmailNotificacao" column="ID_EMAIL_NOTIFICACAO" type="java.lang.Long">
+			<generator class="sequence"></generator>
+		</id>
+		
+		<many-to-one name="dpLotacao" column="ID_LOTACAO" class="br.gov.jfrj.siga.dp.DpLotacao" not-null="true" />
+		<property name="email" column="EMAIL" type="string" />
+	</class>
+
+	<query name="consultarEmailPorLotacao">
+		<![CDATA[select email from ExEmailNotificacao 
+		where dpLotacao.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacaoIni) 
+		]]>
+	</query>
+</hibernate-mapping>
+

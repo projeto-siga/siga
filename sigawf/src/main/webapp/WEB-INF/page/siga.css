@@ -1,0 +1,637 @@
+a {
+	color: Black;
+	text-decoration: none;
+}
+
+a:hover {
+	color: Black;
+	text-decoration: underline;
+}
+
+a:visited {
+	color: Black;
+}
+
+a img {
+	color: Black;
+	text-decoration: none;
+}
+
+a:hover img {
+	color: Black;
+	text-decoration: underline;
+}
+
+a:visited img {
+	color: Black;
+}
+
+a.attached {
+	color: Black;
+	text-decoration: underline;
+}
+
+a.attached:visited {
+	color: Black;
+	text-decoration: underline;
+}
+
+a.sidetable {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: Black;
+	text-decoration: none;
+}
+
+a.sidetable:hover {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: Black;
+	text-decoration: underline;
+}
+
+body {
+	background-color: #ffffff;
+}
+
+body,p,td,h1,h2,h3,input,button,select,newsarticle {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+body,p,td,input,button,select {
+	font-size: 11px;
+}
+
+p.indent {
+	text-indent: 2cm;
+}
+
+div.buttons {
+	margin-left: 0;
+	margin-right: 0;
+	margin-top: 3;
+	margin-bottom: 3;
+	padding-left: 0;
+}
+
+div.buttons a {
+	color: #888888;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+div.buttons a.button:visited {
+	color: #888888;
+}
+
+div.buttons a.button:hover {
+	color: Black;
+	text-decoration: underline;
+}
+
+
+
+div.buttons input {margin-right: 5; margin-top: 0; margin-bottom: 5;
+	
+}
+
+h1.webpage {
+	font-size: 14px;
+	color: #989898;
+	font-weight: bold;
+	padding-left: 2pt;
+}
+
+h1 {
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 4pt;
+}
+
+h2 {
+	font-size: 11px;
+	font-weight: bold;
+}
+
+h3 {
+	font-size: 11px;
+}
+
+h4 {
+	font-size: 10px;
+	font-weight: bold;
+}
+
+.newsarticle {
+	font-size: 11px;
+	color: #142363;
+}
+
+.base {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #FFFFFF;
+}
+
+.baselink {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: Silver;
+}
+
+td.mainmenu {
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #ffd400;
+	font-weight: bold;
+	padding-bottom: 4px;
+}
+
+td.confidencial{
+	color: #ff0000;
+	font-color: #ff0000;
+}
+
+td.mainmenu a,td.mainmenu a:visited {
+	color: #ffd400;
+	text-decoration: none;
+}
+
+td.mainmenu a:hover {
+	text-decoration: underline;
+}
+
+a.whitenav {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a.whitenav:hover {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: white;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.title,.subtitle {
+	font-size: 12px;
+	color: #142363;
+	margin: 10px;
+}
+
+.title {
+	text-decoration: underline;
+}
+
+TABLE {
+	font-size: 10pt;
+}
+
+TABLE.indexer TR TD.left {
+	padding-right: 10px;
+	border-right: 1px solid #C0C0C0;
+}
+
+TABLE.indexer TR TD.center {
+	padding-right: 10px;
+	border-right: 1px solid #C0C0C0;
+}
+
+TABLE.indexer TR TD.right {
+	padding-left: 9px;
+}
+
+TABLE.indexer TR TD FORM {
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
+
+TABLE.index {
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+TABLE.index TR TD {
+	background-color: #FFFFFF;
+	padding: 2px;
+	border-bottom: 1px solid #C0C0C0;
+}
+
+TABLE.index TR TD A:link {
+	color: #000000;
+	text-decoration: none;
+}
+
+TABLE.index TR TD A:visited {
+	color: #000000;
+	text-decoration: none;
+}
+
+TABLE.index TR TD A:hover {
+	color: #000000;
+	text-decoration: underline;
+}
+
+TABLE.index TR.header TD {
+	font-weight: bold;
+	background-color: #C0C0C0;
+	border-bottom: 15px solid #FFFFFF;
+}
+
+TABLE.index TR TD.item {
+	
+}
+
+TABLE.index TR TD.count {
+	padding-left: 30px;
+	text-align: right;
+}
+
+TABLE.listexib {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+TABLE.listexib TR TD {
+	vertical-align: top;
+	background-color: #FFFFFF;
+	border-bottom: 1px solid #C0C0C0;
+	padding-right: 32px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	padding-left: 4px;
+}
+
+TABLE.listexib TR TD A:link {
+	color: #000000;
+	text-decoration: none;
+}
+
+TABLE.listexib TR TD A:visited {
+	color: #000000;
+	text-decoration: none;
+}
+
+TABLE.listexib TR TD A:hover {
+	color: #000000;
+	text-decoration: underline;
+}
+
+TABLE.listexib TR.header TD {
+	font-weight: bold;
+	background-color: #C0C0C0;
+	padding: 4px;
+}
+
+TABLE.form {
+	
+}
+
+TABLE.form TR TD {
+	background-color: #ECF1FF;
+	padding: 1px;
+	wborder: 0px solid white;
+}
+
+TABLE.form TR.header TD {
+	background-color: #C0C0C0;
+	font-weight: bold;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+TABLE.form TR.button TD {
+	background-color: #DCE1EF;
+	font-weight: bold;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+TABLE.form100 {
+	width: 100%;
+}
+
+TABLE.form100 TR TD {
+	background-color: #ECF1FF;
+	padding: 1px;
+	wborder: 0px solid white;
+}
+
+TABLE.form100 TR.header TD {
+	background-color: #C0C0C0;
+	font-weight: bold;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+TABLE.form100 TR.button TD {
+	background-color: #DCE1EF;
+	font-weight: bold;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+TABLE.login {
+	
+}
+
+TABLE.login TR TD {
+	padding: 2pt;
+	font-size: 14pt;
+	background-color: #ECF1FF;
+	wborder: 0px solid white;
+}
+
+TABLE.login TR TD INPUT {
+	font-size: 14pt;
+}
+
+TABLE.login TR.header TD {
+	padding: 2pt;
+	font-size: 14pt;
+	background-color: #C0C0C0;
+	font-weight: bold;
+}
+
+TABLE.login TR.button TD {
+	background-color: #DCE1EF;
+	font-weight: bold;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+TABLE.entrevista TR TD {
+	padding: 0px;
+}
+
+TABLE.entrevista TR.header TD {
+	background-color: #ECF1FF;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+TABLE.message {
+	padding: 0;
+	margin: 1px;
+	margin-top: 0px;
+	border-spacing: 0px;
+	border-collapse: collapse;
+	border: 1px solid black;
+}
+
+TABLE.message TR TD {
+	background-color: #FFFFFF;
+	padding: 5px;
+	wborder: 0px solid white;
+}
+
+TABLE.message TR TD H1 {
+	font-size: 12pt;
+	color: #000000;
+	font-family: Verdana, Tahoma, Arial, 'Times New Roman';
+	background-color: #FFFFFF;
+	text-decoration: none
+}
+
+TABLE.message TR TD H4 {
+	font-size: 10pt;
+	color: #000000;
+	font-family: Verdana, Tahoma, Arial, 'Times New Roman';
+	background-color: #FFFFFF;
+	text-decoration: none
+}
+
+TABLE.message TR.header TD {
+	background-color: #C0C0C0;
+	padding: 3px;
+	margin: 0px;
+	wborder: 0px solid white;
+}
+
+TABLE.message TR.header_eletronico TD {
+	background-color: #BCCFC1;
+	padding: 3px;
+	margin: 0px;
+	wborder: 0px solid white;
+}
+TABLE.message TR.header_anexacao TD {
+	background-color: #FEFFD7;
+	padding: 3px;
+	margin: 0px;
+	wborder: 0px solid white;
+}
+
+TABLE.message TR.header_despacho TD {
+	background-color: #C0C0C0;
+	padding: 3px;
+	margin: 0px;
+	wborder: 0px solid white;
+}
+
+TABLE.message TR.header_juntada TD {
+	background-color: #FDD2A8;
+	padding: 3px;
+	margin: 0px;
+	wborder: 0px solid white;
+}
+
+TABLE.message TR.header_vinculo TD {
+	background-color: #DCEFE1;
+	padding: 3px;
+	margin: 0px;
+	wborder: 0px solid white;
+}
+
+TABLE.message TR TD TABLE {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	background-color: #FFFFFF;
+	padding: 2px;
+}
+
+TABLE.message TR TD TABLE TR TD {
+	border: 0px solid black;
+	padding: 2px;
+}
+
+TABLE.message TR TD TABLE.entrevista TR TD {
+	border: 0px;
+	text-align: left;
+	padding: 2px;
+}
+
+TABLE.message TR TD TABLE.entrevista TR TD SPAN.valor {
+	text-decoration: none;
+	font-weight: bold;
+}
+
+TABLE.message TR TD TABLE.entrevista TR.header TD {
+	border: 0px;
+	text-align: left;
+	font-weight: bold;
+	text-decoration: none;
+	background-color: #FFFFFF;
+}
+
+TABLE.list {
+	padding: 0;
+	margin: 0px;
+	margin-left: -1px;
+	border-spacing: 1px;
+}
+
+TABLE.list TR TD {
+	background-color: #ECF1FF;
+}
+
+TABLE.list TR.header TD {
+	background-color: #C0C0C0;
+}
+
+TABLE.list TR.header_eletronico TD {
+	background-color: #BCCFC1;
+}
+
+TABLE.list TR.even TD {
+	background-color: #DCE1EF;
+}
+
+TABLE.list TR.eletronicoodd TD {	
+	background-color: #DCEFE1;
+}
+
+TABLE.list TR.eletronicoeven TD {	
+	background-color: #DCEFE1;
+}
+
+TABLE.list TR.evendisabled TD {
+	background-color: #DCE1EF;
+	color: #808080;
+}
+
+TABLE.list TR.odddisabled TD {
+	color: #808080;
+}
+
+TABLE.list TR.disabled TD {
+	color: #808080;
+}
+
+TABLE.list TR.total TD {
+	background-color: #BCC1CF;
+}
+
+TABLE.list TR.footer TD {
+	background-color: #FFFFFF;
+}
+
+TABLE.list TR.despachoeven TD {
+	background-color: #DCEFE1;
+}
+
+TABLE.list TR.despachoodd TD {
+	background-color: #ECFFF1;
+}
+
+TABLE.list TR.despachoevendisabled TD {
+	color: #808080;
+	background-color: #DCEFE1;
+}
+
+TABLE.list TR.despachoodddisabled TD {
+	color: #808080;
+	background-color: #ECFFF1;
+}
+TABLE.list TR.juntadaeven TD {
+	background-color: #FDF2C8;
+	background-color1: #FDD2A8;
+}
+
+TABLE.list TR.juntadaodd TD {
+	background-color: #FDF2D8;
+	background-color1: #FDD2A8;
+}
+
+TABLE.list TR.juntadaevendisabled TD {
+	color: #808080;
+	background-color: #EFE1EC;
+	background-color1: #FDD2A8;
+}
+
+TABLE.list TR.juntadaodddisabled TD {
+	color: #808080;
+	background-color: #EFE1EC;
+	background-color1: #FDD2A8;
+}
+
+TABLE.list TR.anexacaoeven TD {
+	background-color: #FEFFD7;
+}
+
+TABLE.list TR.anexacaoodd TD {
+	background-color: #FEFFD7;
+}
+
+TABLE.list TR.anexacaoevendisabled TD {
+	color: #808080;
+	background-color: #FEFFD7;
+}
+
+TABLE.list TR.anexacaoodddisabled TD {
+	color: #808080;
+	background-color: #FEFFD7;
+}
+
+TABLE.list TR.vinculoeven TD {
+	background-color: #DCE1EF;
+}
+
+TABLE.list TR.vinculoodd TD {
+	background-color: #ECF1FF;
+}
+
+TABLE.list TR.vinculoevendisabled TD {
+	color: #808080;
+	background-color: #ECF1FF;
+}
+
+TABLE.list TR.vinculoodddisabled TD {
+	color: #808080;
+	background-color: #DCEFE1;
+}
+
+table.zero {
+	padding: 0px;
+	border: 0px;
+	margin: 0px;
+	border-width: 0px;
+}
+
+table.zero tr {
+	padding: 0px;
+	border: 0px;
+	margin: 0px;
+	border-width: 0px;
+}
+
+table.zero tr td {
+	padding: 0px;
+	border: 0px;
+	margin: 0px;
+	border-width: 0px;
+}
+
+ol {
+	list-style-type: upper-roman;
+	padding-left: 2cm;
+}
+
+ol ol {
+	list-style-type: lower-alpha;
+	padding-left: 1cm;
+}

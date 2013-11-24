@@ -1,3 +1,16 @@
+target/
+.idea/
+*.iml
+.settings/
+.classpath/
+.DS_Store/
+.project/
+.DS_Store
+/tmp
+/test-output
+/.settings
+.project
+.classpath
 siga-play-module\bin/
 siga-play-module/bin/
 siga-rel/build/

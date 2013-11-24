@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<info primitiveTypes='attribute'>
+	<element name='funcao'>
+		<attribute name='id' property='idFuncao' />
+		<attribute name='idPai' property='idFuncaoPai' />
+		<attribute name='nome' property='nomeFuncao' />
+		<attribute name='nivel' property='nivelFuncao' />
+		<attribute name='codFolha' property='codFolhaFuncao' />
+		<attribute name='categoriaFolha' property='categoriaFuncao' />
+	</element>
+</info>

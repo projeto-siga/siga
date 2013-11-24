@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE form-validation PUBLIC
+          "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1.3//EN"
+          "http://jakarta.apache.org/commons/dtds/validator_1_1_3.dtd">
+
+<form-validation>
+
+
+
+	<global>
+		<constant>
+			<constant-name>nomeMask</constant-name>
+			<constant-value>^[a-zA-Z]{1}[\w]*$</constant-value>
+		</constant>
+		<constant>
+			<constant-name>telefoneMask</constant-name>
+			<constant-value>^[0-9]*$</constant-value>
+		</constant>
+		<constant>
+			<constant-name>dataMask</constant-name>
+			<constant-value>
+				^[0-3][0-9]/[0-1][0-9]/[0-9][0-9][0-9][0-9]$
+			</constant-value>
+		</constant>
+	</global>
+
+	<formset>
+		
+		<form name="ExDocumentoForm">
+			<field property="descrDocumento"
+				depends="required,maxlength" page="1">
+				<arg0 key="formExpediente.descrDocumento"></arg0>
+				<arg1 key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="dtDocString" depends="required,mask"
+				page="1">
+				<msg name="mask" key="formExpediente.dataMask" />
+				<var>
+					<var-name>mask</var-name>
+					<var-value>${dataMask}</var-value>
+				</var>
+				<arg0 key="formExpediente.dtDocString"></arg0>
+			</field>
+			<field property="classificacaoSel.sigla"
+				depends="required" page="1">
+				<arg0 key="formExpediente.classificacaoSel.sigla"></arg0>
+			</field>
+		</form>
+		<form name="UsuarioForm">
+			<field property="senhaAtual" depends="required" page="1">
+				<arg0 key="usuario.senhaAtual" />
+			</field>
+			<field property="senhaConfirma" depends="required,minlength"
+				page="1">
+				<arg0 key="usuario.senhaConfirma" />
+				<arg1 key="${var:minlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>5</var-value>
+				</var>
+			</field>
+			<field property="senhaNova" depends="required,minlength"
+				page="1">
+				<arg0 key="usuario.senhaNova" />
+				<arg1 key="${var:minlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>5</var-value>
+				</var>
+			</field>
+		</form>
+	</formset>
+</form-validation>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+
+	<description>SigaWf</description>
+
+	<tlib-version>1.0</tlib-version>
+
+	<short-name>sigawf</short-name>
+	<uri>http://localhost/functiontag</uri>
+
+	<function>
+		<name>ordenarTransicoes</name>
+		<function-class>br.gov.jfrj.siga.wf.util.FuncoesEL</function-class>
+		<function-signature>java.util.List ordenarTransicoes(org.jbpm.taskmgmt.exe.TaskInstance)</function-signature>
+	</function>
+	<function>
+		<name>ordenarTarefas</name>
+		<function-class>br.gov.jfrj.siga.wf.util.FuncoesEL</function-class>
+		<function-signature>java.util.List ordenarTarefas(org.jbpm.taskmgmt.exe.TaskInstance)</function-signature>
+	</function>
+	<function>
+		<name>ordenarComentarios</name>
+		<function-class>br.gov.jfrj.siga.wf.util.FuncoesEL</function-class>
+		<function-signature>java.util.List ordenarComentarios(org.jbpm.taskmgmt.exe.TaskInstance)</function-signature>
+	</function>
+	<function>
+		<name>listarOpcoes</name>
+		<function-class>br.gov.jfrj.siga.wf.util.FuncoesEL</function-class>
+		<function-signature>java.util.List listarOpcoes(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>podePegarTarefa</name>
+		<function-class>br.gov.jfrj.siga.wf.util.FuncoesEL</function-class>
+		<function-signature>java.util.Boolean podePegarTarefa(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.dp.DpLotacao, org.jbpm.taskmgmt.exe.TaskInstance)</function-signature>
+	</function>
+</taglib>

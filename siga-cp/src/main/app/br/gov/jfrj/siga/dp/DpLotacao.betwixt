@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<info primitiveTypes='attribute'>
+	<element name='lotacao'>
+		<attribute name='id' property='idLotacao' />
+		<attribute name='idPai' property='idLotacaoPai' />
+		<attribute name='sigla' property='siglaLotacao' />
+		<attribute name='nome' property='nomeLotacao' />
+	</element>
+</info>

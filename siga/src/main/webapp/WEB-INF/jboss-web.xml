@@ -1,0 +1,26 @@
+<jboss-web>
+   <!-- Uncomment the security-domain to enable security. You will
+      need to edit the htmladaptor login configuration to setup the
+      login modules used to authentication users.
+   -->
+  <!-- ***************************************  -->
+	<!--  Configuracao para login com formulario  -->
+	<!-- ***************************************  -->
+	<!--  Nao alterar comentario _$(iniLogForm)$_ -->   
+    <security-domain>java:/jaas/SigaPolicy</security-domain>
+	<!-- _$(fimLogForm)$_Nao alterar comentario  -->
+	<!-- *************************************** -->
+	<!--   Fim da configuracao com formulario    -->
+	<!-- *************************************** -->
+
+	<!-- ***************************************  -->
+	<!--  Configuracao para login com certificado -->
+	<!-- ***************************************  -->
+	<!--  Nao alterar comentario _$(iniLogCert)$_ 
+    <security-domain flushOnSessionInvalidation="true">java:/jaas/SigaClientCertPolicy</security-domain> 
+         _$(fimLogCert)$_ Nao alterar comentario  -->
+	<!-- ***************************************  -->
+	<!--  Fim da configuracao com certificado     -->
+	<!-- ***************************************  -->
+    <context-root>siga</context-root>
+</jboss-web>

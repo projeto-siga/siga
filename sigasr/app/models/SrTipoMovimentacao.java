@@ -41,6 +41,12 @@ public class SrTipoMovimentacao extends GenericModel {
 	final static public long TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA = 13;
 	
 	final static public long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO = 14;
+	
+	final static public long TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL = 15;
+	
+	final static public long TIPO_MOVIMENTACAO_AVALIACAO = 16;
+	
+	final static public long TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE = 17;
 
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")

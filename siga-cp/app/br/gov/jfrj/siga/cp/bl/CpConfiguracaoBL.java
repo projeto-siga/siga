@@ -150,6 +150,8 @@ public class CpConfiguracaoBL {
 				cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
 			if (cfg.getOrgaoUsuario() != null)
 				cfg.getOrgaoUsuario().getDescricao();
+			if (cfg.getComplexo() != null)
+				cfg.getComplexo().getNomeComplexo();
 			if (cfg.getLotacao() != null)
 				cfg.getLotacao().getSigla();
 			if (cfg.getCargo() != null)

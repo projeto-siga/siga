@@ -84,9 +84,9 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 				Iterator it = lista.listIterator(); 
 				while (it.hasNext()) {
 						Object[] sol = (Object[]) it.next();
-						SrSolicitacao solic = new SrSolicitacao();
+						SrSolicitacao solic = SrSolicitacao.findById((Long)sol[0]);
 						/* Pegar numero da solicitacao */
-						d.add(solic.getCodigo((Long)sol[0]));
+						d.add(solic.getCodigo());
 						d.add(sol[1].toString());
 						d.add(sol[2].toString());
 						d.add(sol[3].toString());
@@ -114,9 +114,9 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 					Iterator it = lista.listIterator(); 
 					while (it.hasNext()) {
 						Object[] sol = (Object[]) it.next();
-						SrSolicitacao solic = new SrSolicitacao();
+						SrSolicitacao solic = SrSolicitacao.findById((Long)sol[0]);
 						/* Pegar numero da solicitacao */
-						d.add(solic.getCodigo((Long)sol[0]));
+						d.add(solic.getCodigo());
 						d.add(sol[1].toString());
 						d.add(sol[2].toString());
 						d.add(sol[3].toString());

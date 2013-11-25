@@ -286,11 +286,13 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarDesignacao(SrConfiguracao designacao) {
 
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
-				&& (designacao.posAtendente == null) && (designacao.equipeQualidade == null)) {
+				&& (designacao.posAtendente == null)
+				&& (designacao.equipeQualidade == null)) {
 			validation.addError("designacao.atendente",
 					"Atendente não informado.", "designacao.preAtendente",
 					"Pré-atendente não informado.", "designacao.posAtendente",
-					"Pós-atendente não informado.", "designacao.equipeQualidade",
+					"Pós-atendente não informado.",
+					"designacao.equipeQualidade",
 					"Equipe de qualidade não informada.");
 		}
 
@@ -585,16 +587,24 @@ public class Application extends SigaApplication {
 
 	public static void fechar(Long id, String motivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		if (sol.isEmAtendimento()) {
-			if (sol.temPosAtendenteDesignado())
-				sol.iniciarPosAtendimento(lotaTitular(), cadastrante(), motivo);
-			else
-				sol.fechar(lotaTitular(), cadastrante(), motivo);
-		} else
-			sol.fechar(lotaTitular(), cadastrante(), motivo);
-
+		sol.fechar(lotaTitular(), cadastrante(), motivo);
 		exibir(sol.idSolicitacao, completo());
+	}
+
+	public static void responderPesquisa(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		render(sol);
+	}
+
+	public static void responderPesquisaGravar(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.avaliar(lotaTitular(), cadastrante());
+	}
+
+	public static void retornarAoAtendimento(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.retornarAoAtendimento(lotaTitular(), cadastrante());
+		exibir(id, completo());
 	}
 
 	public static void cancelar(Long id) throws Exception {
@@ -610,7 +620,7 @@ public class Application extends SigaApplication {
 
 	public static void finalizarPreAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.iniciarAtendimento(lotaTitular(), cadastrante());
+		sol.finalizarPreAtendimento(lotaTitular(), cadastrante());
 		exibir(sol.idSolicitacao, completo());
 	}
 

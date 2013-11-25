@@ -31,4 +31,11 @@ public class Correio extends Mailer {
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(movimentacao, sol);
 	}
+	
+	public static void pesquisaSatisfacao(SrSolicitacao sol){
+		setSubject("Pesquisa de Satisfação" + sol.getCodigo());
+		addRecipient(sol.solicitante.getEmailPessoa());
+		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
+		send(sol);
+	}
 }

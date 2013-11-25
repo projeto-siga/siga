@@ -42,11 +42,7 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 			</mod:grupo>
 		</c:if>
 		<br/>
-		<c:if test="${empty valorTipoDeForm or valorTipoDeForm == 1}">
-	<b>Para indicação de novo usuário, deverá ser preenchido e encaminhado à SEJUD, pelo diretor de secretaria, 
-	o respectivo formulário de exclusão. </b>
-	</c:if>
-	
+		
 	</mod:entrevista>
 	
 	<mod:documento>

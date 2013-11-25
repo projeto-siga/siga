@@ -56,6 +56,10 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToOne
 	@JoinColumn(name = "ID_POS_ATENDENTE")
 	public DpLotacao posAtendente;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_EQUIPE_QUALIDADE")
+	public DpLotacao equipeQualidade;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_PRE_ATENDENTE")

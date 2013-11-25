@@ -14,11 +14,12 @@
 						<th>Pessoa</th>
 						<th>Cargo</th>
 						<th>Função</th>
-						<th><i>Item &darr;</i></th>
+						<th style="border-left: 1px solid #ccc;"><i>Item &darr;</i></th>
 						<th>Ação</th>
-						<th>Atendente</th>
+						<th style="border-left: 1px solid #ccc;">Atendente</th>
 						<th>Pré-atendente</th>
 						<th>Pós-atendente</th>
+						<th>Qualidade</th>
 						<th>Pesquisa de satisfação?</th>
 					</tr>
 				</thead>
@@ -34,16 +35,18 @@
 						<td>${design.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>
 						<td>${design.cargo?.descricao}</td>
 						<td>${design.funcaoConfianca?.descricao}</td>
-						<td>#{selecionado sigla:design.itemConfiguracao?.atual?.tituloItemConfiguracao, 
+						<td style="border-left: 1px solid #ccc;">#{selecionado sigla:design.itemConfiguracao?.atual?.tituloItemConfiguracao, 
 						descricao:design.itemConfiguracao?.atual?.descricaoCompleta /}</td>
 						<td>#{selecionado sigla:design.servico?.atual?.tituloServico, 
 						descricao:design.servico?.atual?.descricaoCompleta /}</td>
-						<td>#{selecionado sigla:design.atendente?.lotacaoAtual?.siglaLotacao,
+						<td style="border-left: 1px solid #ccc;">#{selecionado sigla:design.atendente?.lotacaoAtual?.siglaLotacao,
 							descricao:design.atendente?.lotacaoAtual?.nomeLotacao /}</td>
 						<td>#{selecionado sigla:design.preAtendente?.lotacaoAtual?.siglaLotacao,
 							descricao:design.preAtendente?.lotacaoAtual?.nomeLotacao /}</td>
 						<td>#{selecionado sigla:design.posAtendente?.lotacaoAtual?.siglaLotacao,
 							descricao:design.posAtendente?.lotacaoAtual?.nomeLotacao /}</td>
+						<td>#{selecionado sigla:design.equipeQualidade?.lotacaoAtual?.siglaLotacao,
+							descricao:design.equipeQualidade?.lotacaoAtual?.nomeLotacao /}</td>
 						<td>${design.pesquisaSatisfacaoString}</td>
 					</tr>
 					</a> #{/list}

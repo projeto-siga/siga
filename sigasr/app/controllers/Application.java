@@ -286,11 +286,12 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarDesignacao(SrConfiguracao designacao) {
 
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
-				&& (designacao.posAtendente == null)) {
+				&& (designacao.posAtendente == null) && (designacao.equipeQualidade == null)) {
 			validation.addError("designacao.atendente",
 					"Atendente não informado.", "designacao.preAtendente",
-					"Atendente não informado.", "designacao.posAtendente",
-					"Atendente não informado.");
+					"Pré-atendente não informado.", "designacao.posAtendente",
+					"Pós-atendente não informado.", "designacao.equipeQualidade",
+					"Equipe de qualidade não informada.");
 		}
 
 		if (validation.hasErrors()) {

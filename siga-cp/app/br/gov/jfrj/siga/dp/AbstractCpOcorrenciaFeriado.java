@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -98,6 +99,30 @@ public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Seri
 
 	public void setCpFeriado(CpFeriado cpFeriado) {
 		this.cpFeriado = cpFeriado;
+	}
+	
+	/**
+	 * Retorna a data de início formato dd/mm/aa ,
+	 * por exemplo, 01/02/10.
+	 * 
+	 * @return Data no formato dd/mm/aa, por
+	 *         exemplo, 01/02/10.
+	 * 
+	 */
+	public String getDtRegIniDDMMYY() {
+		if (getDtIniFeriado() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			return df.format(getDtIniFeriado());
+		}
+		return "";
+	}
+	
+	public String getDtRegFimDDMMYY() {
+		if (getDtFimFeriado() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			return df.format(getDtFimFeriado());
+		}
+		return "";
 	}
 
 }

@@ -83,6 +83,12 @@
 					<span style="display:inline;color: red">#{error 'designacao.posAtendente' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
+				<label>Equipe de Qualidade</label> #{selecao
+					tipo:'lotacao', nome:'designacao.equipeQualidade',
+					value:designacao.equipeQualidade?.lotacaoAtual /}
+					<span style="display:inline;color: red">#{error 'designacao.equipeQualidade' /}</span>
+			</div>
+			<div class="gt-form-row gt-width-66">
 				<label>Exibir pesquisa de satisfação</label> #{radioSN
 				name:'designacao.pesquisaSatisfacao',
 				value:designacao.pesquisaSatisfacao /}

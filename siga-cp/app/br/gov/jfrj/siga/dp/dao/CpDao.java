@@ -153,6 +153,18 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpFeriado> listarCpFeriadoPorDescricao() {
+		try {
+			final Query query = getSessao().getNamedQuery(
+					"listarCpFeriadoOrdenadoPorDescricao");
+			final List<CpFeriado> l = query.list();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpOrgao consultarPorSigla(final CpOrgao o) {

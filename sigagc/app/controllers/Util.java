@@ -20,6 +20,9 @@ public class Util {
 	
 	private static String acronimoOrgao = null;
 	private	static final int CONTROLE_LINK_HASH_TAG = 2;
+	private static final String URL_SIGA_DOC = "/sigaex/expediente/doc/exibir.action?sigla=";
+	private static final String URL_SIGA_SR = "/sigasr/solicitacao/exibir?sigla=";
+	private static final String URL_SIGA_GC = "/sigagc/exibir?sigla=";
 	
 //	public static void salvar(Historico o) throws Exception {
 //		o.setHisDtIni(new Date());
@@ -164,18 +167,18 @@ public class Util {
 						//conhecimento
 						if(matcherSigla.group(1).toUpperCase().equals("GC")) {
 							infoReferenciada = new GcInformacao().findBySigla(sigla);
-							matcherSigla.appendReplacement(sb,"[[http://localhost/sigagc/exibir?sigla=" + 
+							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_GC + 
 									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + " - " +
 									infoReferenciada.arq.titulo + "]]");						
 						}
 						//serviço
 						else if(matcherSigla.group(1).toUpperCase().equals("SR")) {
-							matcherSigla.appendReplacement(sb,"[[http://localhost/sigasr/solicitacao/exibir?sigla=" + 
+							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_SR + 
 									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
 						}
 						//documento
 						else {
-							matcherSigla.appendReplacement(sb,"[[http://localhost/sigaex/expediente/doc/exibir.action?sigla=" + 
+							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_DOC +
 									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
 						}
 					}

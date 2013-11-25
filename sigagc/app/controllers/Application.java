@@ -216,8 +216,9 @@ public class Application extends SigaApplication {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
 		GcInformacao info = null;
-		
-		Set<GcTag> set = GcBL.buscarTags(tags, true);
+		Set<GcTag> set = null;
+		if(tags != null)  
+			set = GcBL.buscarTags(tags, true);
 		Query query = JPA.em().createNamedQuery("buscarConhecimento");
 		query.setParameter("tags", set);
 		List<Object[]> conhecimentos = query.getResultList();
@@ -262,7 +263,9 @@ public class Application extends SigaApplication {
 				classificacao += s;
 			}
 		}
-
+		//Necessário pq para criar um novo conhecimento a partir de um já existente, a classificação
+		//é passada como queryString. Sem fazer isso, as hashTags não são passadas.
+		classificacao = URLEncoder.encode(classificacao, "UTF-8");
 		// if (msgvazio != null) {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");
@@ -277,7 +280,8 @@ public class Application extends SigaApplication {
 	}
 
 	public static void index() {
-		listar(null);
+		//listar(null);
+		buscar(null);
 	}
 
 	public static void top10() {
@@ -472,7 +476,6 @@ public class Application extends SigaApplication {
 			throw new AplicacaoException(
 					"O usuário corrente não tem acesso à informação solicitada.");
 		}
-
 		GcBL.notificado(informacao, idc());
 		GcBL.logarVisita(informacao, idc());
 		render(informacao);
@@ -492,7 +495,7 @@ public class Application extends SigaApplication {
 			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
 		String conteudo = (informacao.arq != null) ? informacao.arq
 				.getConteudoTXT() : null;
-		if (classificacao == null)
+		if (classificacao == null || classificacao.isEmpty())
 			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
 					: null;
 
@@ -510,8 +513,14 @@ public class Application extends SigaApplication {
 	public static void historico(String sigla) throws Exception {
 		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 
 		diff_match_patch diff = new diff_match_patch();
 
@@ -570,8 +579,14 @@ public class Application extends SigaApplication {
 	public static void movimentacoes(String sigla) throws Exception {
 		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 
 		render(informacao);
 	}

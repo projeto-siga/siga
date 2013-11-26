@@ -828,9 +828,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
-		//return isEmPreAtendimento() && estaCom(lota, pess);
-		return estaCom(lota, pess)
-			&& (isEmPreAtendimento() || isEmAtendimento());
+		return isEmPreAtendimento() && estaCom(lota, pess);
+		//return estaCom(lota, pess)
+		//	&& (isEmPreAtendimento() || isEmAtendimento());
 	}
 
 	public boolean podePriorizar(DpLotacao lota, DpPessoa pess) {
@@ -870,7 +870,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeAnexarArquivo(DpLotacao lota, DpPessoa pess) {
-		return (isEmPreAtendimento() || isEmAtendimento());
+		return (isEmPreAtendimento() || isEmAtendimento() || isPendente());
 	}
 
 	public boolean podeAssociarLista(DpLotacao lota, DpPessoa pess) {

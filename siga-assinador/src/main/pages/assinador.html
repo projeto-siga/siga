@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript">
+        function alerta(mensagem) {
+            alert(mensagem);
+        }
+    </script>
+</head>
+<body>
+<object
+        classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+        codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0"
+        width="130"
+        class="assinador" standby="AGUARDE..."
+        height="20"
+        align="top"
+        mayscript="true">
+    <param name="type" value="application/x-java-applet;version=1.4">
+    <param name="code" value="br.jus.tjrr.siga.assinador.AppletAssinador">
+    <param name="archive" value="siga-assinador.jar,lib/opensc.pkcs11-0.2.2.jar,lib/bcprov-jdk16-145.jar" >
+    <param name="mayscript" value="true">
+    <param name="scriptable" value="true">
+    <comment>
+        <embed
+                id="assinador"
+                width="130"
+                height="21"
+                align="top"
+                type="application/x-java-applet;version=1.4"
+                pluginspage="http://java.sun.com/products/plugin/index.html#download"
+                code="br.jus.tjrr.siga.assinador.AppletAssinador"
+                archive="siga-assinador.jar,lib/opensc.pkcs11-0.2.2.jar,lib/bcprov-jdk16-145.jar"
+                mayscript="true"
+                scriptable="true">
+        <noembed>
+            O applet n&atilde;o p&ocirc;de ser iniciado porque &eacute; requerido o Java Plug-In vers&atilde;o 1.4 ou superior. Voc&ecirc; pode continuar usando o Projudi, mas os arquivos a serem inseridos devem estar assinados.
+        </noembed>
+        </embed>
+    </comment>
+</object>
+
+</body>
+</html>

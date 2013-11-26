@@ -302,7 +302,44 @@
 			<result type="redirect-action">listar</result>
 		</action>	
 	</package>
-
+	
+	<package name="feriado" extends="default" namespace="/feriado">		
+		<action name="excluir" class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction"
+			method="aExcluir">
+			<result type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>			
+		</action>
+				
+		<action name="editar_gravar" method="aEditarGravar"
+			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">			
+			<result type="redirect-action">listar</result>
+		</action>
+			
+		<action name="listar" class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction"
+			method="aListar">
+			<result>/paginas/feriado/lista.jsp</result>
+		</action>		
+		
+		<action name="excluir_ocorrencia" class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction"
+			method="aExcluirOcorrencia">
+			<result type="redirect-action">
+				<param name="actionName">listar</param>
+			</result>			
+		</action>
+		
+		<action name="editar_ocorrencia" method="aEditarOcorrencia"
+			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">
+			<result>/paginas/feriado/editaOcorrencia.jsp</result>
+		</action>
+		
+		<action name="editar_ocorrencia_gravar" method="aEditarOcorrenciaGravar"
+			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">			
+			<result type="redirect-action">listar</result>
+		</action>	
+	</package>
+	
+	
 	<package name="funcao" extends="default" namespace="/funcao">
 		<action name="buscar"
 			class="br.gov.jfrj.siga.libs.webwork.DpFuncaoConfiancaAction" method="aBuscar">

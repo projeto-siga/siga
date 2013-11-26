@@ -8,6 +8,11 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Local</label> 
 				#{select name:'solicitacao.local', items:locais, valueProperty:'idComplexo',
-				labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo /}
+				labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
 			</div>
+			<script>
+				$("#local").change(function() {
+					  carregarItem();
+				});
+			</script>
 			#{/if}

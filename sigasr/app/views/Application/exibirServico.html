@@ -1,3 +1,20 @@
+<script>
+function carregarAtributos(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		if (frm[i].name && frm[i].value)
+			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+	}
+	PassAjaxResponseToFunction('@{Application.exibirAtributos()}?' + params, 'carregouAtributos', null, false, null);
+}
+
+function carregouAtributos(response, param){
+	var div = document.getElementById('divAtributos');
+	div.innerHTML = response;
+}
+</script>
+
 #{if solicitacao.itemConfiguracao && servicosEAtendentes} 
 <div class="gt-form-row gt-width-66">
 	<label>Ação</label> 

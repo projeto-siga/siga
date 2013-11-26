@@ -26,6 +26,11 @@
 			</div>
 			<span style="color: red">#{error
 					'designacao.orgaoUsuario' /}</span>
+			<div class="gt-form-row gt-width-66">		
+				<label>Local</label> 
+				#{select name:'designacao.complexo', items:locais, valueProperty:'idComplexo',
+				labelProperty:'nomeComplexo', value:designacao.complexo?.idComplexo /}
+			</div>		
 			<div class="gt-form-row gt-width-66">
 				<label>Lotação</label>#{selecao
 					tipo:'lotacao', nome:'designacao.lotacao',
@@ -76,6 +81,12 @@
 					tipo:'lotacao', nome:'designacao.posAtendente',
 					value:designacao.posAtendente?.lotacaoAtual /}
 					<span style="display:inline;color: red">#{error 'designacao.posAtendente' /}</span>
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Equipe de Qualidade</label> #{selecao
+					tipo:'lotacao', nome:'designacao.equipeQualidade',
+					value:designacao.equipeQualidade?.lotacaoAtual /}
+					<span style="display:inline;color: red">#{error 'designacao.equipeQualidade' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Exibir pesquisa de satisfação</label> #{radioSN

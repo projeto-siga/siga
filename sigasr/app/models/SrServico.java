@@ -23,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -141,13 +142,13 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 
 	@Override
 	public SrServico selecionar(String sigla) throws Exception {
-		return selecionar(sigla, null, null);
+		return selecionar(sigla, null, null, null);
 	}
 
-	public SrServico selecionar(String sigla, DpPessoa pess,
+	public SrServico selecionar(String sigla, DpPessoa pess, CpComplexo local,
 			SrItemConfiguracao item) throws Exception {
 		setSigla(sigla);
-		List<SrServico> itens = buscar(pess, item);
+		List<SrServico> itens = buscar(pess, local, item);
 		if (itens.size() == 0 || itens.size() > 1)
 			return null;
 		return itens.get(0);
@@ -168,11 +169,11 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 
 	@Override
 	public List<SrServico> buscar() throws Exception {
-		return buscar(null, null);
+		return buscar(null, null, null);
 	}
 
-	public List<SrServico> buscar(DpPessoa pess, SrItemConfiguracao item)
-			throws Exception {
+	public List<SrServico> buscar(DpPessoa pess, CpComplexo local,
+			SrItemConfiguracao item) throws Exception {
 
 		List<SrServico> lista = new ArrayList<SrServico>();
 		List<SrServico> listaFinal = new ArrayList<SrServico>();
@@ -180,7 +181,8 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		if (pess == null)
 			lista = listar();
 		else
-			lista.addAll(listarComAtendentePorPessoaEItem(pess, item).keySet());
+			lista.addAll(listarComAtendentePorPessoaLocalEItem(pess, local,
+					item).keySet());
 
 		if ((siglaServico == null || siglaServico.equals(""))
 				&& (tituloServico == null || tituloServico.equals("")))
@@ -270,11 +272,13 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		return SrServico.find("hisDtFim is null order by siglaServico").fetch();
 	}
 
-	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaEItem(
-			DpPessoa pess, SrItemConfiguracao item) throws Exception {
+	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaLocalEItem(
+			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
+			throws Exception {
 		Map<SrServico, DpLotacao> listaFinal = new HashMap<SrServico, DpLotacao>();
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess,
-				item, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				local, item, null,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
 				new int[] { SrConfiguracaoBL.SERVICO });
 		for (SrConfiguracao conf : confs) {
@@ -296,8 +300,9 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		return listaFinal;
 	}
 
-	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaEItemOrdemSigla(
-			DpPessoa pess, SrItemConfiguracao item) throws Exception {
+	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaLocalEItemOrdemSigla(
+			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
+			throws Exception {
 		Map<SrServico, DpLotacao> m = new TreeMap<SrServico, DpLotacao>(
 				new Comparator<SrServico>() {
 					@Override
@@ -309,12 +314,13 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 					}
 				});
 
-		m.putAll(listarComAtendentePorPessoaEItem(pess, item));
+		m.putAll(listarComAtendentePorPessoaLocalEItem(pess, local, item));
 		return m;
 	}
 
-	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaEItemOrdemTitulo(
-			DpPessoa pess, SrItemConfiguracao item) throws Exception {
+	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaLocalEItemOrdemTitulo(
+			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
+			throws Exception {
 		Map<SrServico, DpLotacao> m = new TreeMap<SrServico, DpLotacao>(
 				new Comparator<SrServico>() {
 					@Override
@@ -326,7 +332,7 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 					}
 				});
 
-		m.putAll(listarComAtendentePorPessoaEItem(pess, item));
+		m.putAll(listarComAtendentePorPessoaLocalEItem(pess, local, item));
 		return m;
 	}
 

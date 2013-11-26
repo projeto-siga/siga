@@ -1803,14 +1803,28 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (getSubscritor() != null)
 			subscritores.add(getSubscritor());
 
-		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
-			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
-					&& m.getExMovimentacaoCanceladora() == null) {
-				subscritores.add(m.getSubscritor());
-			}
-		}
+		subscritores.addAll(getCosignatarios());
 
 		return subscritores;
+	}
+	
+	/**
+	 * Retorna uma lista com o todos os cossignatários.
+	 */
+	public List<DpPessoa> getCosignatarios() {
+		
+		List<DpPessoa> cosignatarios = new ArrayList<DpPessoa>();
+		
+		if(getMobilGeral() != null && getMobilGeral().getExMovimentacaoSet() != null) {
+			for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+				if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+						&& m.getExMovimentacaoCanceladora() == null) {
+					cosignatarios.add(m.getSubscritor());
+				}
+			}
+		}
+		
+		return cosignatarios;
 	}
 
 	/**

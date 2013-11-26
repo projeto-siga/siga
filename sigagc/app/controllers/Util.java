@@ -1,6 +1,5 @@
 package controllers;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
@@ -9,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import models.GcArquivo;
 import models.GcInformacao;
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
@@ -21,8 +18,12 @@ import br.gov.jfrj.siga.model.Historico;
 
 public class Util {
 	
-	static String acronimoOrgao = null;
-
+	private static String acronimoOrgao = null;
+	private	static final int CONTROLE_LINK_HASH_TAG = 2;
+	private static final String URL_SIGA_DOC = "/sigaex/expediente/doc/exibir.action?sigla=";
+	private static final String URL_SIGA_SR = "/sigasr/solicitacao/exibir?sigla=";
+	private static final String URL_SIGA_GC = "/sigagc/exibir?sigla=";
+	
 //	public static void salvar(Historico o) throws Exception {
 //		o.setHisDtIni(new Date());
 //		o.setHisDtFim(null);
@@ -134,28 +135,19 @@ public class Util {
 	 * de classificação do conhecimento.
 	 * 
 	 **/
-	public static GcArquivo marcarLinkNoConteudo(String conteudo, String classificacao) throws Exception {
-		
-		if(classificacao != null)
-			//remove todas as hashTag da classificacao, caso exista. Necessário para manter a classificacao
-			//atualizada. Ao final serão inseridas as hashTags que foram acrescentadas/mantidas no conteudo
-			classificacao = classificacao.replaceAll("[,\\s]*#[,\\w-]+", "").trim();
-		else
-			classificacao = "";
-		
+	public static String marcarLinkNoConteudo(String conteudo) throws Exception {
+			
 		if(acronimoOrgao == null) {
 			acronimoOrgao = "";
 			List<String> acronimo = CpOrgaoUsuario.find("select acronimoOrgaoUsu from CpOrgaoUsuario").fetch();
 			for(String ao : acronimo) 
 				acronimoOrgao += (acronimoOrgao.isEmpty() ? "" : "|") + ao;
 		}
-		
-		conteudo = criarLinkSigla(conteudo);
-		
-		return criarLinkHashTag(conteudo, classificacao);
+		conteudo = findSigla(conteudo);
+		return findHashTag(conteudo, null, CONTROLE_LINK_HASH_TAG);
 	}
 	
-	private static String criarLinkSigla(String conteudo) throws Exception{
+	private static String findSigla(String conteudo) throws Exception{
 		String sigla = null;
 		GcInformacao infoReferenciada = null;
 		StringBuffer sb = new StringBuffer();
@@ -163,8 +155,6 @@ public class Util {
 		try{
 				//lembrar de retirar o RJ quando for para a produção. 
 				Pattern padraoSigla = Pattern.compile(
-										//reconhece um link, para não tomar a ação de recriá-lo
-										"(\\[\\[http(?:.[^\\]\\]]*)\\]\\])|" + 
 										//reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01, JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01, TRF2-PRO-2013/00001-V01
 										"(?i)(?:(?:RJ|" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)"
 										); 
@@ -172,23 +162,23 @@ public class Util {
 				Matcher matcherSigla = padraoSigla.matcher(conteudo);
 				while(matcherSigla.find()){
 					//identifica que é um código de um conhecimento, ou serviço ou documento
-					if(matcherSigla.group(2) != null) {
+					if(matcherSigla.group(1) != null) {
 						sigla = matcherSigla.group(0).toUpperCase().trim();
 						//conhecimento
-						if(matcherSigla.group(2).toUpperCase().equals("GC")) {
+						if(matcherSigla.group(1).toUpperCase().equals("GC")) {
 							infoReferenciada = new GcInformacao().findBySigla(sigla);
-							matcherSigla.appendReplacement(sb,"[[http://localhost/sigagc/exibir?sigla=" + 
+							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_GC + 
 									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + " - " +
 									infoReferenciada.arq.titulo + "]]");						
 						}
 						//serviço
-						else if(matcherSigla.group(2).toUpperCase().equals("SR")) {
-							matcherSigla.appendReplacement(sb,"[[http://localhost/sigasr/solicitacao/exibir?sigla=" + 
+						else if(matcherSigla.group(1).toUpperCase().equals("SR")) {
+							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_SR + 
 									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
 						}
 						//documento
 						else {
-							matcherSigla.appendReplacement(sb,"[[http://localhost/sigaex/expediente/doc/exibir.action?sigla=" + 
+							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_DOC +
 									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
 						}
 					}
@@ -202,38 +192,43 @@ public class Util {
 		}
 	}
 
-	private static GcArquivo criarLinkHashTag(String conteudo, String classificacao) {
+	/**
+	 *	Método que encontra uma hashTag. Quando o parâmetro controle é igual a 1, a classificação é atualizada
+	 *  para poder ser gravada. Quando o controle é igual a 2, o conteudo é marcado com os links das hashTags
+	 *	encontradas. O conteudo não é gravado com os links.
+	 */
+	public static String findHashTag(String conteudo, String classificacao, int controle) {
 		StringBuffer sb = new StringBuffer();
 		String hashTag = new String();
-		GcArquivo arquivoAlterado = new GcArquivo();
-		
+			
 		Pattern padraoHashTag = Pattern.compile(
-								//reconhece um link, para não tomar a ação de recriá-lo e também 
-								//reconhece uma hashTag. Isso é necessário para sempre encontrar uma hashTag 
-								//para ser acrescentada na classificacao mesmo que já tenha virado um link
-								"(\\[\\[http(?:.[^\\]\\]]*)(#[\\w-]+)\\]\\])|" + 
-								//reconhece uma hashTag (#) que não virou link ainda
+								//reconhece uma hashTag (#)
 								"(#[\\w-]+)"
 								);
 				
 		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
 		while(matcherHashTag.find()) {
-			//acrescenta a hashTag na classificação do conhecimento	
-			if(matcherHashTag.group(2) != null) {
-				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(2);
-			}
-			//acrescenta a hashTag na classificação do conhecimento e cria o link direto para a pesquisa 
-			else if(matcherHashTag.group(3) != null) {
-				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(3);
+			if(controle == 1) 
+				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(0);
+			else if(controle == 2){
 				matcherHashTag.appendReplacement(sb,"[[http://localhost/sigagc/listar?filtro.tag.sigla=" + 
-												matcherHashTag.group(3).substring(1)  + "|$3]]");
+													matcherHashTag.group(0).substring(1)  + "|$0]]");
 			}
 		}
-		matcherHashTag.appendTail(sb);
-		
-		arquivoAlterado.classificacao = GcBL.atualizarClassificacao(classificacao, hashTag);
-		arquivoAlterado.setConteudoTXT(sb.toString());
-		
-		return arquivoAlterado;
+		if(controle == 1) {
+			if(classificacao != null)
+				//remove todas as hashTag da classificacao, caso exista. Necessário para manter a classificacao
+				//atualizada. Ao final serão inseridas as hashTags que foram acrescentadas/mantidas no conteudo
+				classificacao = classificacao.replaceAll("[,\\s]*#[,\\w-]+", "").trim();
+			else
+				classificacao = "";
+			return GcBL.atualizarClassificacao(classificacao, hashTag);
+		}
+		else if(controle == 2){
+			matcherHashTag.appendTail(sb);
+			return sb.toString();
+		}
+		else	
+			return null;
 	}
 }

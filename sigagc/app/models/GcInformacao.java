@@ -1,5 +1,6 @@
 package models;
 
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
@@ -460,10 +461,11 @@ public class GcInformacao extends GenericModel {
 		return true;
 	}
 	
-	public String getGcTags() {
+	public String getGcTags() throws Exception {
 		String s = "";
 		for (GcTag tag : tags) {
-			s = "&tags=" + tag.toString();
+			//s = "&tags=" + tag.toString();
+			s += "&tags=" + URLEncoder.encode(tag.toString(),"UTF-8");
 		}
 		return s;
 	}

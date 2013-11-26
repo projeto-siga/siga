@@ -411,7 +411,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return solicitacaoInicial.meuSolicitacaoHistoricoSet;
 		return null;
 	}
-	
+
 	public SrSolicitacao getSolicitacaoAtual() {
 		List<SrSolicitacao> sols = getHistoricoSolicitacao();
 		if (sols == null)

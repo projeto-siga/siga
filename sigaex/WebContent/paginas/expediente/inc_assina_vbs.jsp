@@ -3,6 +3,7 @@ Dim gConfiguracao
 Dim gCertificadoB64
 Dim gUtil
 Dim gAssinatura
+Dim gAtributoAssinavelDataHora
 
 Function assinar()
 	Dim Assinatura
@@ -146,14 +147,12 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
            If b Then
                Dim urlDocumento, Documento
  			   Dim certParam
-			   certParam = "certificadoB64=" & UrlEncode(gCertificadoB64)
 
                urlDocumento = oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1"
-			   If InStr(urlDocumento, "?") > 0 Then
-               		urlDocumento = urlDocumento & "&" & certParam
-			   Else
-               		urlDocumento = urlDocumento & "?" & certParam
-			   End If
+			   If Not isEmpty(gCertificadoB64) Then
+			       certParam = "certificadoB64=" & UrlEncode(gCertificadoB64)
+                   urlDocumento = urlDocumento & "&" & certParam
+               End If
 
                Documento = Conteudo(urlDocumento)
                'MsgBox Documento
@@ -164,6 +163,11 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
                Log "Documento: " & oNome.value & ", Assinante: " & Assinante
        
                DadosDoPost = "sigla=" & UrlEncode(oNome.value) & "&copia=" & Copia & "&assinaturaB64=" & UrlEncode(AssinaturaB64) & "&assinante=" + UrlEncode(Assinante)
+			   If Not isEmpty(gCertificadoB64) Then
+                   DadosDoPost = DadosDoPost & "&" & certParam
+                   DadosDoPost = DadosDoPost & "&atributoAssinavelDataHora=" & gAtributoAssinavelDataHora
+               End If
+
 			   'MsgBox "oNome: " & oNome.value
                Dim aNome
                aNome = Split(oNome.value, ":")
@@ -198,6 +202,7 @@ Function Conteudo(url)
 	objHTTP.send
 
 	If objHTTP.Status = 200 Then
+		gAtributoAssinavelDataHora = objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora")
 		Conteudo = objHTTP.responseBody
 	End If
 End Function

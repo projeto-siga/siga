@@ -103,6 +103,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	private String assinaturaB64;
 
+	private String certificadoB64;
+
+	private String atributoAssinavelDataHora;
+
 	private Boolean copia;
 	
 	private Boolean podeAtenderPedidoPubl;
@@ -230,7 +234,22 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private Long idLotDefault;
 	
 	
+	public String getAtributoAssinavelDataHora() {
+		return atributoAssinavelDataHora;
+	}
+
+	public void setAtributoAssinavelDataHora(String atributoAssinavelDataHora) {
+		this.atributoAssinavelDataHora = atributoAssinavelDataHora;
+	}
 	
+	public String getCertificadoB64() {
+		return certificadoB64;
+	}
+
+	public void setCertificadoB64(String certificadoB64) {
+		this.certificadoB64 = certificadoB64;
+	}
+
 	public Long getIdLotPublicacao() {
 		return idLotPublicacao;
 	}
@@ -1095,6 +1114,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			setAssinaturaB64(b64Applet);
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
+		Date dt = mov.getDtMov();
+		
+		byte[] certificado = Base64.decode(getCertificadoB64());
+		if (certificado != null && certificado.length != 0)
+			dt = new Date(Long.valueOf(getAtributoAssinavelDataHora()));
+		else
+			certificado = null;
 
 		// if ("true".equals(getRequest().getParameter("politica"))) {
 //		CdService client = Service.getCdService();
@@ -1108,7 +1134,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getInstance()
 					.getBL()
 					.assinarDocumento(getCadastrante(), getLotaTitular(), doc,
-							mov.getDtMov(), assinatura));
+							dt, assinatura, certificado));
 		} catch (final Exception e) {
 			if (fApplet) {
 				getRequest().setAttribute("err", e.getMessage());

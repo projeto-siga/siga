@@ -32,13 +32,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.jus.trf2.component.PoliticaEnum;
 
 import com.lowagie.text.pdf.codec.Base64;
 
@@ -87,6 +90,9 @@ public class ExArquivoAction extends ExActionSupport {
 
 			String arquivo = getPar().get("arquivo")[0];
 
+			byte[] certificado = null;
+			boolean pacoteAssinavel = getPar().containsKey("certificadoB64");
+
 			boolean isPdf = arquivo.endsWith(".pdf");
 			boolean isHtml = arquivo.endsWith(".html");
 			boolean estampar = !getPar().containsKey("semmarcas");
@@ -109,6 +115,12 @@ public class ExArquivoAction extends ExActionSupport {
 				estampar = false;
 			}
 
+			if (pacoteAssinavel) {
+				certificado = Base64.decode(getPar().get("certificadoB64")[0]);
+				completo = false;
+				estampar = false;
+			}
+
 			ExMobil mob = Documento.getMobil(arquivo);
 			if (mob == null) {
 				throw new AplicacaoException(
@@ -127,7 +139,7 @@ public class ExArquivoAction extends ExActionSupport {
 			// Falta tratar o caso do doc já assinado, por enquanto estamos
 			// contemplando apenas as movimentações
 			boolean imutavel = (mov != null) && !completo && !estampar
-					&& !somenteHash;
+					&& !somenteHash && !pacoteAssinavel;
 
 			String cacheControl = "private";
 			final Integer grauNivelAcesso = mob.doc()
@@ -149,6 +161,18 @@ public class ExArquivoAction extends ExActionSupport {
 					filename = mov.getReferencia();
 				} else {
 					filename = mob.getCodigoCompacto();
+				}
+
+				if (pacoteAssinavel) {
+					setContentDisposition("attachment; filename=" + filename
+							+ ".sa");
+					CdService client = Service.getCdService();
+					final Date dt = dao().consultarDataEHoraDoServidor();
+					byte[] sa = client.produzPacoteAssinavel(certificado, certificado, ab, true,
+							dt);
+					this.setContentLength(sa.length);
+					getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
+					return writeByteArray(sa, "application/octet-stream");
 				}
 
 				if (hash != null) {
@@ -304,11 +328,11 @@ public class ExArquivoAction extends ExActionSupport {
 
 				setContentDisposition("filename=" + filename);
 			}
-			
+
 			if (isRtf) {
 				GeradorRTF gerador = new GeradorRTF();
 				ab = gerador.geraRTFFOP(mob.getDoc());
-				
+
 				String filename = mob.doc().getCodigo() + ".rtf";
 
 				if (hash != null) {
@@ -349,12 +373,12 @@ public class ExArquivoAction extends ExActionSupport {
 
 			this.setInputStream(new ByteArrayInputStream(ab));
 			this.setContentLength(ab.length);
-			
-			if(isZip)
+
+			if (isZip)
 				return "zip";
-			else 
+			else
 				return "rtf";
-			
+
 		} catch (Exception e) {
 			throw new ServletException("erro na geração do documento.", e);
 		}

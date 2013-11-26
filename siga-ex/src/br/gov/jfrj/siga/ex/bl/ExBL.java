@@ -1214,7 +1214,7 @@ public class ExBL extends CpBL {
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
-			final Date dtMov, final byte[] pkcs7) throws AplicacaoException {
+			final Date dtMov, final byte[] pkcs7, final byte[] certificado) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
 
@@ -1241,15 +1241,19 @@ public class ExBL extends CpBL {
 			CdService client = Service.getCdService();
 
 			String s;
-
-			// s = client.validarAssinatura(pkcs7, data, dao().dt(),
-			// VALIDAR_LCR);
-			// Service.throwExceptionIfError(s);
-			//
-			// if (BUSCAR_CARIMBO_DE_TEMPO) {
-			cms = client.validarECompletarAssinatura(pkcs7, data, true, dtMov);
+			
+			if (certificado != null) {
+				cms = client.validarECompletarPacoteAssinavel(certificado, data, pkcs7, true, (dtMov != null) ? dtMov : dao().consultarDataEHoraDoServidor());
+			} else {
+				// s = client.validarAssinatura(pkcs7, data, dao().dt(),
+				// VALIDAR_LCR);
+				// Service.throwExceptionIfError(s);
+				//
+				// if (BUSCAR_CARIMBO_DE_TEMPO) {
+				cms = client.validarECompletarAssinatura(pkcs7, data, true, dtMov);
+			}
 			sNome = client
-					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
+			.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
 
 			// cms = client
 			// .converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(pkcs7);

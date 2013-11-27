@@ -74,16 +74,17 @@
 				
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/paginas/expediente/inc_assina_vbs.jsp" />
+					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 					<!--[if IE]>
 					<div id="capicom-div">
-					<a id="bot-assinar" href="#" onclick="vbscript: AssinarDocumentos 'false', Me"
+					<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);"
 						class="gt-btn-alternate-large gt-btn-left">Assinar Documento</a>
 					</div>
 					<![endif]-->
 					<![if !IE]><p>A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p><![endif]>
 					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
 				</c:if>
+				<p id="vbslog" style="display: block;">........</p>
 
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">

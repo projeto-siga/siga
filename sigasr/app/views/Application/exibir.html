@@ -271,3 +271,12 @@
 	</form>
 #{/modal}
 
+#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa de Satisfação'}
+Falta o conteúdo
+<form action="@{Application.responderPesquisaGravar()}" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="completo" value="${completo}" />
+		<input type="hidden" name="id" value="${solicitacao.id}" />
+		<input type="submit" value="Não gostei!"
+							class="gt-btn-medium gt-btn-left" />
+	</form>
+#{/modal}

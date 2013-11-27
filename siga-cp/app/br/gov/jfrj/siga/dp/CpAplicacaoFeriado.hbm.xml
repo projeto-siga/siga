@@ -15,4 +15,9 @@
 		<many-to-one name="orgaoUsu" column="ID_ORGAO_USU" class="CpOrgaoUsuario" />
 		<many-to-one name="cpOcorrenciaFeriado" column="ID_OCORRENCIA_FERIADO" class="CpOcorrenciaFeriado" />
 	</class>
+	<query name="listarAplicacoesFeriado">
+		<![CDATA[from CpAplicacaoFeriado apl 
+		where apl.cpOcorrenciaFeriado = :id]]>
+	</query>
+	
 </hibernate-mapping>

@@ -26,17 +26,25 @@ package br.gov.jfrj.siga.libs.webwork;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.opensymphony.webwork.components.Set;
 import com.opensymphony.xwork.Action;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
+import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOcorrenciaFeriado;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpUF;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoDaoFiltro;
+
 
 
 public class CpFeriadoAction extends SigaAnonimoActionSupport {
@@ -49,12 +57,19 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	private Long idOcorrencia;
 	private String dscFeriado;
 	private Date dtIniFeriado;
-	private Date dtFimFeriado;
-	
+	private Date dtFimFeriado;	
 	private List itens;
+	private CpOrgaoUsuario orgao;
+	private List localidades;	
+	private String nmUF;
+	private DpLotacaoSelecao lotacaoSel;
 	
 	
 		
+	public CpFeriadoAction() {
+		lotacaoSel = new DpLotacaoSelecao();
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -80,7 +95,6 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		this.dscFeriado = dscFeriado;	
 	}
 	
-	
 	public List getItens() {
 		return itens;
 	}
@@ -103,6 +117,38 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 
 	public void setDtFimFeriado(Date dtFimFeriado) {
 		this.dtFimFeriado = dtFimFeriado;
+	}
+	
+	public DpLotacaoSelecao getLotacaoSel() {
+		return lotacaoSel;
+	}
+
+	public void setLotacaoSel(DpLotacaoSelecao lotacaoSel) {
+		this.lotacaoSel = lotacaoSel;
+	}
+
+	public List getLocalidades() {
+		return localidades;
+	}
+
+	public void setLocalidades(List localidades) {
+		this.localidades = localidades;
+	}	
+
+	public CpOrgaoUsuario getOrgao() {
+		return orgao;
+	}
+
+	public void setOrgao(CpOrgaoUsuario orgao) {
+		this.orgao = orgao;
+	}	
+
+	public String getNmUF() {
+		return nmUF;
+	}
+
+	public void setNmUF(String nmUF) {
+		this.nmUF = nmUF;
 	}
 
 	public CpFeriado daoFeriado(Integer id) {
@@ -208,8 +254,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getIdOcorrencia());	
 			this.setDscFeriado(ocorrencia.getCpFeriado().getDescricao());		
 			this.setDtIniFeriado(stringToDate(ocorrencia.getDtRegIniDDMMYY()));
-			this.setDtFimFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYY()));			
-		
+			this.setDtFimFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYY()));		
 		} else {
 			if (getId() != null) {
 				CpFeriado feriado = daoFeriado(getId());		
@@ -218,6 +263,8 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 				throw new AplicacaoException("ID não informado");
 		}
 		
+		setItens(CpDao.getInstance().consultaCpOrgaoUsuario());		
+		
 		return Action.SUCCESS;
 	}
 	
@@ -225,7 +272,6 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 		
 		CpOcorrenciaFeriado ocorrencia;
-		
 		if(this.getDtIniFeriado() == null)
 			throw new AplicacaoException("Data de início do feriado não informada");
 		
@@ -250,4 +296,47 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		
 		return Action.SUCCESS;		
 	}
+	
+	public String aListarLocalidades() {
+
+			
+		return Action.SUCCESS;
+	}
+	
+	public List<CpLocalidade> getListaLocalidades(){
+		
+		List<CpLocalidade> localidades = new ArrayList<CpLocalidade>();
+		
+		if (this.nmUF == null || this.nmUF == ""){
+			localidades = dao().consultarLocalidades();
+		}else
+			localidades = dao().consultarLocalidadesPorUF(this.nmUF);
+		
+		return localidades;
+		
+	}	
+	
+	public List<CpUF> getListaUF(){
+		
+		List<CpUF> uf = new ArrayList<CpUF>();
+		uf = dao().consultarUF();
+		
+		return uf;
+		
+	}	
+	
+public List<CpAplicacaoFeriado> getListaAplicacoes(){
+		
+		List<CpAplicacaoFeriado> aplicacoes = new ArrayList<CpAplicacaoFeriado>();
+		CpAplicacaoFeriado apl = new CpAplicacaoFeriado();
+		CpOcorrenciaFeriado ocorrencia = new CpOcorrenciaFeriado();
+		ocorrencia = dao().consultar(this.idOcorrencia, CpOcorrenciaFeriado.class, false);	
+		apl.setCpOcorrenciaFeriado(ocorrencia);
+		
+		aplicacoes = dao().listarAplicacoesFeriado(apl);
+		
+		return aplicacoes;
+		
+	}	
+	
 }

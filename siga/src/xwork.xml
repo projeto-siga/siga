@@ -349,6 +349,10 @@
 			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">			
 			<result type="redirect-action">listar</result>
 		</action>	
+		<action name="listar_localidades" method="aListarLocalidades"
+			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">			
+			<result>/paginas/feriado/listaLocalidades.jsp</result>
+		</action>	
 	</package>
 	
 	

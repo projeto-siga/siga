@@ -19,7 +19,7 @@
 							<td><label>Matrícula: </label>
 							</td>
 							<td><siga:selecao tipo="pessoa" tema="simple"
-									propriedade="pessoa" />
+									propriedade="pessoa" modulo="siga"/>
 							</td>
 						</tr>
 						<tr class="">

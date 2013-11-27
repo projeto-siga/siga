@@ -92,8 +92,8 @@
 										<c:set var="lotaTitularStyle" value="" />
 									</c:when>
 								</c:choose> <span id="spanTitular" style="${titularStyle}"> <siga:selecao
-										propriedade="titular" tema="simple" /> </span> <span
-								id="spanLotaTitular" style="${lotaTitularStyle}"> <siga:selecao
+										propriedade="titular" tema="simple" modulo="siga" /> </span> <span
+								id="spanLotaTitular" style="${lotaTitularStyle}"> <siga:selecao modulo="siga"
 										propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> </span>
 							</td>
 						</tr>
@@ -113,8 +113,8 @@
 										<c:set var="lotaSubstitutoStyle" value="" />
 									</c:when>
 								</c:choose> <span id="spanSubstituto" style="${substitutoStyle}"> <siga:selecao
-										propriedade="substituto" tema="simple" /> </span> <span
-								id="spanLotaSubstituto" style="${lotaSubstitutoStyle}"> <siga:selecao
+										propriedade="substituto" tema="simple" modulo="siga"/> </span> <span
+								id="spanLotaSubstituto" style="${lotaSubstitutoStyle}"> <siga:selecao  modulo="siga"
 										propriedade="lotaSubstituto" tema="simple" /> </span>
 							</td>
 						</tr>

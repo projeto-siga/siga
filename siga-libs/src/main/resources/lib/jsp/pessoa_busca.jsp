@@ -26,7 +26,7 @@ function sbmt(offset) {
 			<td align="center" valign="top" colspan="4">Dados do Usuário</td>
 		</tr>
 		<ww:textfield label="Nome ou Matrícula" name="nome" />
-		<siga:selecao titulo="Lotação" propriedade="lotacao" />
+		<siga:selecao titulo="Lotação" propriedade="lotacao" modulo="siga"/>
 		<ww:select name="orgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
 			listValue="nmOrgaoUsu" label="Órgão" headerKey="0"
 			headerValue="[Todos]" />

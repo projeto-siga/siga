@@ -67,9 +67,9 @@
 						<c:set var="lotaPublicadorStyle" value="" />
 					</c:when>
 				</c:choose> <span id="spanPublicador" style="${publicadorStyle}"> <siga:selecao
-					propriedade="pessoa" tema="simple" /> </span> <span
+					propriedade="pessoa" tema="simple" modulo="siga"/> </span> <span
 					id="spanLotaPublicador" style="${lotaPublicadorStyle}"> <siga:selecao
-					propriedade="lotacao" tema="simple" /> </span></td>
+					propriedade="lotacao" tema="simple" modulo="siga"/> </span></td>
 
 			</tr>
 			<tr>

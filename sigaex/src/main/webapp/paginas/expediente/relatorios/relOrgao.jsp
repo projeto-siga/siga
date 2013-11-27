@@ -26,7 +26,7 @@ function sbmt() {
 
 <tr>
 	<td width="15%">Lotação:</td>
-	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" /></td>
+	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/></td>
 </tr>
 
 

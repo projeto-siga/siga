@@ -63,12 +63,12 @@
 					</tr>
 					<tr>
 						<td>Classificação:</td>
-						<td><siga:selecao tema="simple" propriedade="classificacao" /></td>
+						<td><siga:selecao tema="simple" propriedade="classificacao" modulo="siga"/></td>
 					</tr>
 
 					<tr>
 						<td>Classificação para criação de vias:</td>
-						<td><siga:selecao tema="simple"
+						<td><siga:selecao tema="simple" modulo="siga"
 							propriedade="classificacaoCriacaoVias" /></td>
 					</tr>
 					<tr>

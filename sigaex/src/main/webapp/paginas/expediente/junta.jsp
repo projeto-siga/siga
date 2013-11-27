@@ -47,7 +47,7 @@ function sbmt() {
 							onblur="javascript:verifica_data(this, true);" />
 						<tr>
 						<td>Responsável:</td>
-						<td><siga:selecao tema="simple" propriedade="subscritor" />
+						<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 						&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 							onclick="javascript:displayTitular(this);" />Substituto</td>
 					</c:when>
@@ -67,14 +67,14 @@ function sbmt() {
 			<td>Titular:</td>
 				<input type="hidden" name="campos" value="titularSel.id" />
 			<td colspan="3"><siga:selecao propriedade="titular"
-						tema="simple" /></td>
+						tema="simple" modulo="siga" /></td>
 			</tr>
 			<tr>
 					<td>Documento:</td>
 					<td>
 						<siga:escolha var='idDocumentoEscolha'>
 							<siga:opcao id='1' texto="Documento Interno" >
-								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" />
+								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" modulo="siga"/>
 							</siga:opcao>
 							<siga:opcao id='2' texto="Documento Externo ao SIGAEX" >
 								<ww:textfield theme='simple' name="idDocumentoPaiExterno" />

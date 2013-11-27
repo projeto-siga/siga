@@ -69,7 +69,7 @@
 </c:if>
 <c:choose>
 	<c:when test="${param.entrevista == 1}">
-		<siga:selecao propriedade="${var}" tipo="${tipo}" tema="simple"
+		<siga:selecao propriedade="${var}" tipo="${tipo}" tema="simple" modulo="siga"
 			reler="${reler}" relertab="${relertab}" paramList="${paramList}"/>
 		<%-- <input type="text" name="${var}" value="${v}"
 			${jreler}${jrelertab}${jlargura}${jmaxcaracteres}/> --%>

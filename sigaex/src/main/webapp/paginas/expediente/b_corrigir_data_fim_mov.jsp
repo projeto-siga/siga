@@ -36,7 +36,7 @@ function sbmt() {
 					<td colspan="2">Dados</td>
 				</tr>
 
-				<siga:selecao titulo="Documento:" propriedade="documentoRef" />
+				<siga:selecao titulo="Documento:" propriedade="documentoRef" modulo="siga" />
 				<tr class="button">
 					<td></td>
 					<td><input type="submit" value="Ok" /> <input type="button"

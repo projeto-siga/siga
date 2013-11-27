@@ -652,17 +652,17 @@ function limpaCampos()
 													test="ultMovTipoResp == 1">
 													<span id="divUltMovResp" style="display: "><siga:selecao
 															propriedade="ultMovResp" tema="simple"
-															paramList="buscarFechadas=true" /> </span>
+															paramList="buscarFechadas=true" modulo="siga"/> </span>
 													<span id="divUltMovLotaResp" style="display: none"><siga:selecao
 															propriedade="ultMovLotaResp" tema="simple"
-															paramList="buscarFechadas=true" /> </span>
+															paramList="buscarFechadas=true" modulo="siga"/> </span>
 												</ww:if> <ww:elseif test="ultMovTipoResp == 2">
 													<span id="divUltMovResp" style="display: none"><siga:selecao
 															propriedade="ultMovResp" tema="simple"
-															paramList="buscarFechadas=true" /> </span>
+															paramList="buscarFechadas=true" modulo="siga"/> </span>
 													<span id="divUltMovLotaResp" style="display: "><siga:selecao
 															propriedade="ultMovLotaResp" tema="simple"
-															paramList="buscarFechadas=true" /> </span>
+															paramList="buscarFechadas=true" modulo="siga"/> </span>
 												</ww:elseif>
 											</td>
 										</tr>
@@ -758,7 +758,7 @@ function limpaCampos()
 										</c:choose>
 
 										<td>Órgão Externo:</td>
-										<td><siga:selecao propriedade="cpOrgao"
+										<td><siga:selecao propriedade="cpOrgao" modulo="siga"
 												titulo="Órgão Externo" tema="simple" />
 										</td>
 										</tr>
@@ -788,7 +788,7 @@ function limpaCampos()
 											</c:when>
 											<c:otherwise>
 												<siga:selecao titulo="Subscritor:" propriedade="subscritor"
-													paramList="buscarFechadas=true" />
+													paramList="buscarFechadas=true" modulo="siga"/>
 											</c:otherwise>
 										</c:choose>
 
@@ -802,20 +802,20 @@ function limpaCampos()
 												</div> <ww:if test="tipoCadastrante == 1">
 													<div id="divCadastrante" style="display: ">
 														<siga:selecao propriedade="cadastrante" tema="simple"
-															paramList="buscarFechadas=true" />
+															paramList="buscarFechadas=true" modulo="siga"/>
 													</div>
 													<div id="divLotaCadastrante" style="display: none">
 														<siga:selecao propriedade="lotaCadastrante" tema="simple"
-															paramList="buscarFechadas=true" />
+															paramList="buscarFechadas=true" modulo="siga" />
 													</div>
 												</ww:if> <ww:elseif test="tipoCadastrante == 2">
 													<div id="divCadastrante" style="display: none">
 														<siga:selecao propriedade="cadastrante" tema="simple"
-															paramList="buscarFechadas=true" />
+															paramList="buscarFechadas=true" modulo="siga"/>
 													</div>
 													<div id="divLotaCadastrante" style="display: ">
 														<siga:selecao propriedade="lotaCadastrante" tema="simple"
-															paramList="buscarFechadas=true" />
+															paramList="buscarFechadas=true" modulo="siga"/>
 													</div>
 												</ww:elseif>
 											</td>
@@ -832,16 +832,16 @@ function limpaCampos()
 													<c:when test='${tipoDestinatario == 1}'>
 														<div id="divDestinatario" style="display: ">
 															<siga:selecao propriedade="destinatario" tema="simple"
-																paramList="buscarFechadas=true" />
+																paramList="buscarFechadas=true" modulo="siga"/>
 														</div>
 														<div id="divLotaDestinatario" style="display: none">
 															<siga:selecao propriedade="lotacaoDestinatario"
-																tema="simple" paramList="buscarFechadas=true" />
+																tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 														</div>
 														<div id="divOrgaoExternoDestinatario"
 															style="display: none">
 															<siga:selecao propriedade="orgaoExternoDestinatario"
-																tema="simple" />
+																tema="simple" modulo="siga"/>
 														</div>
 														<div id="divNmDestinatario" style="display: none">
 															<ww:textfield name="nmDestinatario" size="80"
@@ -853,16 +853,16 @@ function limpaCampos()
 													<c:when test='${tipoDestinatario == 2}'>
 														<div id="divDestinatario" style="display: none">
 															<siga:selecao propriedade="destinatario" tema="simple"
-																paramList="buscarFechadas=true" />
+																paramList="buscarFechadas=true" modulo="siga"/>
 														</div>
 														<div id="divLotaDestinatario" style="display: ">
 															<siga:selecao propriedade="lotacaoDestinatario"
-																tema="simple" paramList="buscarFechadas=true" />
+																tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 														</div>
 														<div id="divOrgaoExternoDestinatario"
 															style="display: none">
 															<siga:selecao propriedade="orgaoExternoDestinatario"
-																tema="simple" />
+																tema="simple" modulo="siga"/>
 														</div>
 														<div id="divNmDestinatario" style="display: none">
 															<ww:textfield name="nmDestinatario" size="80"
@@ -875,15 +875,15 @@ function limpaCampos()
 													<c:when test='${tipoDestinatario == 3}'>
 														<div id="divDestinatario" style="display: none">
 															<siga:selecao propriedade="destinatario" tema="simple"
-																paramList="buscarFechadas=true" />
+																paramList="buscarFechadas=true" modulo="siga"/>
 														</div>
 														<div id="divLotaDestinatario" style="display: none">
 															<siga:selecao propriedade="lotacaoDestinatario"
-																tema="simple" paramList="buscarFechadas=true" />
+																tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 														</div>
 														<div id="divOrgaoExternoDestinatario" style="display: ">
 															<siga:selecao propriedade="orgaoExternoDestinatario"
-																tema="simple" />
+																tema="simple" modulo="siga"/>
 														</div>
 														<div id="divNmDestinatario" style="display: none">
 															<ww:textfield name="nmDestinatario" size="80"
@@ -896,16 +896,16 @@ function limpaCampos()
 													<c:otherwise>
 														<div id="divDestinatario" style="display: none">
 															<siga:selecao propriedade="destinatario" tema="simple"
-																paramList="buscarFechadas=true" />
+																paramList="buscarFechadas=true" modulo="siga"/>
 														</div>
 														<div id="divLotaDestinatario" style="display: none">
 															<siga:selecao propriedade="lotacaoDestinatario"
-																tema="simple" paramList="buscarFechadas=true" />
+																tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 														</div>
 														<div id="divOrgaoExternoDestinatario"
 															style="display: none">
 															<siga:selecao propriedade="orgaoExternoDestinatario"
-																tema="simple" />
+																tema="simple" modulo="siga"/>
 														</div>
 														<div id="divNmDestinatario" style="display: ">
 															<ww:textfield name="nmDestinatario" size="80"
@@ -920,7 +920,7 @@ function limpaCampos()
 										</tr>
 
 										<siga:selecao titulo="Classificação:"
-											propriedade="classificacao" />
+											propriedade="classificacao" modulo="siga"/>
 
 										<ww:textfield label="Descrição" name="descrDocumento"
 											size="80" />

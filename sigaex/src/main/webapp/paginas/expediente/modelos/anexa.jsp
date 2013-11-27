@@ -39,7 +39,7 @@ function sbmt() {
 				</tr>
 				<tr>
 					<td>Subscritor:</td>
-					<td><siga:selecao propriedade="subscritor" /></td>
+					<td><siga:selecao propriedade="subscritor" modulo="siga"/></td>
 				</tr>
 				<tr>
 					<td>Data:</td>

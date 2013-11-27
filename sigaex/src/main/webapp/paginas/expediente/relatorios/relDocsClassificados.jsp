@@ -27,7 +27,7 @@
 
 <tr>
 	<td width="30%">Lotação:</td>
-	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" /></td>
+	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/></td>
 </tr>
 <tr>
 	<td>Subárvore da Classificação documental (opcional):</td>

@@ -42,14 +42,14 @@ function sbmt() {
 					<ww:textfield name="dtMovString" label="Data (Opcional)" />
 					<tr>
 						<td>Responsável (Opcional):</td>
-						<td><siga:selecao tema="simple" propriedade="subscritor" />
+						<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 						&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 							onclick="javascript:displayTitular(this);" />Substituto</td>
 					</tr>
 					<tr id="tr_titular" style="display:none">
 						<td>Titular:</td>
 						<input type="hidden" name="campos" value="titularSel.id" />
-						<td><siga:selecao propriedade="titular" tema="simple" /></td>
+						<td><siga:selecao propriedade="titular" tema="simple" modulo="siga"/></td>
 					</tr>
 
 					<ww:textfield name="descrMov" label="Motivo (Opcional)" maxlength="80"

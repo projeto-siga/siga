@@ -403,6 +403,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return null;
 		return sols.get(0);
 	}
+	
+	public SrSolicitacao getSolicitacaoAnterior() {
+		List<SrSolicitacao> sols = getHistoricoSolicitacao();
+		if (sols == null)
+			return null;
+		return sols.get(1);
+	}
 
 	public List<SrAtributo> getAtributoSet() {
 		if (meuAtributoSet == null)
@@ -758,10 +765,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean estaCom(DpLotacao lota, DpPessoa pess) {
 		SrMovimentacao ultMov = getUltimaMovimentacao();
 		return ultMov != null
-				&& ((ultMov.atendente != null && ultMov.atendente
+				&& ((ultMov.atendente != null && pess != null && ultMov.atendente
 						.equivale(pess)) || ultMov.lotaAtendente.equivale(lota));
 	}
-
+	
+	public boolean estaComAtendenteDesignado() throws Exception {
+		return !estaCom(getAtendenteDesignado(), null) 
+				&& !isEmPreAtendimento();
+	}
+	
+	public boolean estaComPreAtendenteDesignado() throws Exception {
+		return (estaCom (getPreAtendenteDesignado(), null));
+	}
+	
 	public boolean foiSolicitadaPor(DpLotacao lota, DpPessoa pess) {
 		return (solicitante.equivale(pess) || lotaSolicitante.equivale(lota));
 	}
@@ -815,7 +831,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
-		return isEmPreAtendimento() && estaCom(lota, pess);
+		return estaCom(lota, pess)
+			&& (isEmPreAtendimento() || isEmAtendimento());
 	}
 
 	public boolean podePriorizar(DpLotacao lota, DpPessoa pess) {
@@ -824,6 +841,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeAbrirJaFechando(DpLotacao lota, DpPessoa pess) {
 		return false;
+	}
+
+	public boolean podeRetornarAoPreAtendimento(DpLotacao lota, DpPessoa pess) throws Exception {
+		return !isEmPreAtendimento () &&
+						estaCom(lota, pess);
 	}
 
 	public boolean podeFinalizarPreAtendimento(DpLotacao lota, DpPessoa pess) {
@@ -921,7 +943,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public SortedSet<SrOperacao> operacoes(final DpLotacao lotaTitular,
-			final DpPessoa titular, final boolean vendoHistoricoCompleto) {
+			final DpPessoa titular, final boolean vendoHistoricoCompleto) throws Exception {
 
 		SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
 			@Override
@@ -959,7 +981,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("lock", "Responder Pesquisa",
 				podeResponderPesquisa(lotaTitular, titular),
 				"Application.responderPesquisa"));
-
+		
+		operacoes.add(new SrOperacao("arrow_rotate_anticlockwise", "Retornar ao Pré-Atendimento",
+				podeRetornarAoPreAtendimento(lotaTitular, titular),
+				"Application.retornarAoPreAtendimento"));
+		
 		operacoes.add(new SrOperacao("accept", "Finalizar Pré-Atendimento",
 				podeFinalizarPreAtendimento(lotaTitular, titular),
 				"Application.finalizarPreAtendimento"));
@@ -1029,7 +1055,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
 				Correio.notificarAbertura(this);
-		} else
+		} else 
 			atualizarMarcas();
 	}
 
@@ -1449,6 +1475,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (!podeFinalizarPreAtendimento(lota, pess))
 			throw new Exception("Operação não permitida");
 		iniciarAtendimento(lota, pess);
+	}
+	
+	public void retornarAoPreAtendimento(DpLotacao lota, DpPessoa pess)
+	throws Exception {
+		if (!podeRetornarAoPreAtendimento(lota, pess))
+				throw new Exception("Operação não permitida");
+		iniciarPreAtendimento(lota, pess);
 	}
 
 	private void iniciarAtendimento(DpLotacao lota, DpPessoa pess)

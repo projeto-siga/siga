@@ -33,6 +33,7 @@
   <mapping resource="br/gov/jfrj/siga/ex/ExTipoMovimentacao.hbm.xml"/>
   <mapping resource="br/gov/jfrj/siga/ex/ExTpDocPublicacao.hbm.xml"/>
   <mapping resource="br/gov/jfrj/siga/cp/CpConfiguracao.hbm.xml"/>
+  <mapping resource="br/gov/jfrj/siga/cp/CpComplexo.hbm.xml"/>
   <mapping resource="br/gov/jfrj/siga/cp/CpGrupo.hbm.xml"/>
   <mapping resource="br/gov/jfrj/siga/cp/CpIdentidade.hbm.xml"/>
   <mapping resource="br/gov/jfrj/siga/cp/CpModelo.hbm.xml"/>

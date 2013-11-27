@@ -623,6 +623,12 @@ public class Application extends SigaApplication {
 		sol.finalizarPreAtendimento(lotaTitular(), cadastrante());
 		exibir(sol.idSolicitacao, completo());
 	}
+	
+	public static void retornarAoPreAtendimento(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.retornarAoPreAtendimento(lotaTitular(), cadastrante());
+		exibir(sol.idSolicitacao, completo());
+	}
 
 	public static void deixarPendente(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);

@@ -17,6 +17,7 @@ import net.sf.jasperreports.engine.JRException;
 import org.hibernate.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
+import ar.com.fdvs.dj.domain.constants.Font;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
@@ -53,17 +54,26 @@ public class RelOrgao extends RelatorioTemplate {
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
-
+		
 		this.setTitle("Relatório de Despachos e Transferências");
-		this.addColuna("Lotação", 20, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Expedientes recebidos", 20, RelatorioRapido.ESQUERDA,
+		estiloTituloColuna.setFont(new Font(8,"Arial",true));
+		this.addColuna("Lotação", 10, RelatorioRapido.CENTRO, false);
+		this.addColuna("Expedientes recebidos", 10, RelatorioRapido.CENTRO,
 				false);
-		this.addColuna("Expedientes transferidos", 20,
-				RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Processos recebidos", 20, RelatorioRapido.ESQUERDA,
+		this.addColuna("Expedientes transferidos", 13,
+				RelatorioRapido.CENTRO, false);
+		this.addColuna("Expedientes arquivados", 15,
+				RelatorioRapido.CENTRO, false);
+		this.addColuna("Expedientes desarquivados", 13,
+				RelatorioRapido.CENTRO, false);
+		this.addColuna("Processos recebidos", 10, RelatorioRapido.CENTRO,
 				false);
-		this.addColuna("Processos transferidos", 20, RelatorioRapido.ESQUERDA,
+		this.addColuna("Processos transferidos", 13, RelatorioRapido.CENTRO,
 				false);
+		this.addColuna("Processos arquivados", 10,
+				RelatorioRapido.CENTRO, false);
+		this.addColuna("Processos desarquivados", 13,
+				RelatorioRapido.CENTRO, false);
 		return this;
 
 	}
@@ -82,7 +92,7 @@ public class RelOrgao extends RelatorioTemplate {
 							+ "mov.exTipoMovimentacao.descrTipoMovimentacao, count(distinct mob.idMobil.exDocumento.idDoc) "
 							+ "from ExMovimentacao mov inner join mov.exMobil mob "
 							+ "where mov.lotaCadastrante.orgaoUsuario.idOrgaoUsu = :orgaoUsu " 
-							+ "and mov.exTipoMovimentacao in (3,6,4) "
+							+ "and mov.exTipoMovimentacao in (3,6,4,9,21) "
 							+ "and mov.exMovimentacaoCanceladora is null "
 							+ "and mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc in (1,2) "
 							+ "and mov.dtIniMov between :dtini and :dtfim " 
@@ -112,11 +122,15 @@ public class RelOrgao extends RelatorioTemplate {
 			for (String s : set) {
 				d.add(s);
 				acrescentarColuna(d, map, s, "Expediente", "Recebimento");
-				acrescentarColuna(d, map, s, "Expediente", "Transferência"); 
+				acrescentarColuna(d, map, s, "Expediente", "Transferência");
+				acrescentarColuna(d, map, s, "Expediente", "Arquivamento Corrente"); 
+				acrescentarColuna(d, map, s, "Expediente", "Desarquivamento");
 				acrescentarColuna(d, map, s, "Processo Administrativo",
 				"Recebimento");
 				acrescentarColuna(d, map, s, "Processo Administrativo",
 						"Transferência");
+				acrescentarColuna(d, map, s, "Processo Administrativo", "Arquivamento Corrente");
+				acrescentarColuna(d, map, s, "Processo Administrativo", "Desarquivamento");
 			}
 		} else {
 		Query query = HibernateUtil
@@ -126,7 +140,7 @@ public class RelOrgao extends RelatorioTemplate {
 						+ "from ExMovimentacao mov inner join mov.exMobil mob "
 						+ "where mov.lotaCadastrante.orgaoUsuario.idOrgaoUsu = :orgaoUsu " 
 						+ "and mov.lotaCadastrante.idLotacao = :lotacaodest "
-						+ "and mov.exTipoMovimentacao in (3,6,4) "
+						+ "and mov.exTipoMovimentacao in (3,6,4,9,21) "
 						+ "and mov.exMovimentacaoCanceladora is null "
 						+ "and mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc in (1,2) "
 						+ "and mov.dtIniMov between :dtini and :dtfim " 
@@ -158,11 +172,13 @@ public class RelOrgao extends RelatorioTemplate {
 		for (String s : set) {
 			d.add(s);
 			acrescentarColuna(d, map, s, "Expediente", "Recebimento");
-			acrescentarColuna(d, map, s, "Expediente", "Transferência"); 
-			acrescentarColuna(d, map, s, "Processo Administrativo",
-			"Recebimento");
-			acrescentarColuna(d, map, s, "Processo Administrativo",
-					"Transferência");
+			acrescentarColuna(d, map, s, "Expediente", "Transferência");
+			acrescentarColuna(d, map, s, "Expediente", "Arquivamento Corrente");
+			acrescentarColuna(d, map, s, "Expediente", "Desarquivamento"); 
+			acrescentarColuna(d, map, s, "Processo Administrativo","Recebimento");
+			acrescentarColuna(d, map, s, "Processo Administrativo",	"Transferência");
+			acrescentarColuna(d, map, s, "Processo Administrativo", "Arquivamento Corrente");
+			acrescentarColuna(d, map, s, "Processo Administrativo", "Desarquivamento");
 		}
 
 		}

@@ -23,6 +23,8 @@
 
 		<many-to-one name="orgaoUsuario" column="ID_ORGAO_USU"
 			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" lazy="false" />
+		<many-to-one name="complexo" column="ID_COMPLEXO"
+			class="br.gov.jfrj.siga.cp.CpComplexo" lazy="false" />
 		<many-to-one name="lotacao" column="ID_LOTACAO"
 			class="br.gov.jfrj.siga.dp.DpLotacao" lazy="false" />
 		<many-to-one name="cargo" column="ID_CARGO"

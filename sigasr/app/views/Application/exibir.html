@@ -16,7 +16,7 @@
 			</script>
 			#{list items:solicitacao.atributoSet, as:'att'}
 				#{if att.valorAtributo}
-				<p style="font-size: 9pt; padding: 0px 10px"><b>${att.tipoAtributo.nomeTipoAtributo}:</b> ${att.valorAtributo}</p>
+				<p style="font-size: 9pt; padding: 0px"><b>${att.tipoAtributo.nomeTipoAtributo}:</b> ${att.valorAtributo}</p>
 				#{/if}
 			#{/list}
 		</div>
@@ -53,7 +53,12 @@
 			</form> 
 		</div>
 		
-		#{set movs:solicitacao.getMovimentacaoSet(completo, (completo?null:2)) /}
+		#{if completo}
+			#{set movs:solicitacao.movimentacaoSetComCancelados /}
+		#{/if}
+		#{else}
+			#{set movs:solicitacao.movimentacoesPrincipais /}
+		#{/else}
 		
 		#{if movs}
 		<h3 style="padding-top: 25px;">#{if completo}Movimentações#{/if}#{else}Andamentos#{/else}</h3>
@@ -252,3 +257,17 @@
 			</form> 
 		</div>
 #{/modal}
+
+#{modal nome:'fechar', titulo:'Fechar'}
+	<form action="@{Application.fechar()}" method="post" enctype="multipart/form-data">
+		<div style="display: inline" class="gt-form-row gt-width-66">
+			<label>Motivo</label>
+			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
+		</div>
+		<input type="hidden" name="completo" value="${completo}" />
+		<input type="hidden" name="id" value="${solicitacao.id}" />
+		<input type="submit" value="Gravar"
+							class="gt-btn-medium gt-btn-left" />
+	</form>
+#{/modal}
+

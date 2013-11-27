@@ -73,6 +73,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 public class Application extends SigaApplication {
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
+	private static final int CONTROLE_HASH_TAG = 1;
 
 	@Before
 	public static void addDefaultsAlways() throws Exception {
@@ -210,20 +211,34 @@ public class Application extends SigaApplication {
 		render(contagens);
 	}
 
-	public static void knowledge(String[] tags, String estilo, String msgvazio,
+	public static void knowledge(Long id, String[] tags, String estilo, String msgvazio,
 			String urlvazio, String titulo) throws Exception {
-		Set<GcTag> set = GcBL.buscarTags(tags, true);
+		int index = Integer.MAX_VALUE;
+		Long idOutroConhecimento = 0l;
+		GcInformacao info = null;
+		Set<GcTag> set = null;
+		if(tags != null)  
+			set = GcBL.buscarTags(tags, true);
 		Query query = JPA.em().createNamedQuery("buscarConhecimento");
 		query.setParameter("tags", set);
 		List<Object[]> conhecimentos = query.getResultList();
 		for (Object[] o : conhecimentos) {
-			if (o[2] != null && o[2] instanceof byte[]) {
-				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
-				s = GcBL.ellipsize(s, 100);
-				o[2] = s;
+			idOutroConhecimento = Long.parseLong(o[0].toString());
+			if(id.equals(idOutroConhecimento))
+				index = conhecimentos.indexOf(o);
+			else {
+				info = GcInformacao.findById(idOutroConhecimento);
+				o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
+				if (o[2] != null && o[2] instanceof byte[]) {
+					String s = new String((byte[]) o[2], Charset.forName("utf-8"));
+					s = GcBL.ellipsize(s, 100);
+					o[2] = s;
+				}
 			}
 		}
-
+		if(index < conhecimentos.size())
+			conhecimentos.remove(index);
+		
 		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
 			GcInformacao inf = GcInformacao.findById(conhecimentos.get(0)[0]);
 			conhecimentos.get(0)[1] = inf.arq.titulo;
@@ -248,7 +263,9 @@ public class Application extends SigaApplication {
 				classificacao += s;
 			}
 		}
-
+		//Necessário pq para criar um novo conhecimento a partir de um já existente, a classificação
+		//é passada como queryString. Sem fazer isso, as hashTags não são passadas.
+		classificacao = URLEncoder.encode(classificacao, "UTF-8");
 		// if (msgvazio != null) {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");
@@ -263,7 +280,8 @@ public class Application extends SigaApplication {
 	}
 
 	public static void index() {
-		listar(null);
+		//listar(null);
+		buscar(null);
 	}
 
 	public static void top10() {
@@ -443,27 +461,32 @@ public class Application extends SigaApplication {
 	// render(informacoes);
 	// }
 
-	public static void exibir(long id) throws Exception {
-		GcInformacao informacao = GcInformacao.findById(id);
-
+	public static void exibir(String sigla) throws Exception {
+		
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
-
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 		if (!informacao.acessoPermitido(titular(), lotaTitular())) {
 			throw new AplicacaoException(
 					"O usuário corrente não tem acesso à informação solicitada.");
 		}
-
 		GcBL.notificado(informacao, idc());
 		GcBL.logarVisita(informacao, idc());
 		render(informacao);
 	}
-
-	public static void editar(long id, String classificacao, String titulo,
+	
+	public static void editar(String sigla, String classificacao, String titulo,
 			String origem) throws IOException {
-		GcInformacao informacao = null;
-		if (id != 0)
-			informacao = GcInformacao.findById(id);
+		GcInformacao informacao = new GcInformacao();
+
+		if(sigla != null)
+			informacao = informacao.findBySigla(sigla);
 		else
 			informacao = new GcInformacao();
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
@@ -472,7 +495,7 @@ public class Application extends SigaApplication {
 			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
 		String conteudo = (informacao.arq != null) ? informacao.arq
 				.getConteudoTXT() : null;
-		if (classificacao == null)
+		if (classificacao == null || classificacao.isEmpty())
 			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
 					: null;
 
@@ -487,11 +510,17 @@ public class Application extends SigaApplication {
 				classificacao, origem);
 	}
 
-	public static void historico(long id) throws Exception {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void historico(String sigla) throws Exception {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 
 		diff_match_patch diff = new diff_match_patch();
 
@@ -547,28 +576,33 @@ public class Application extends SigaApplication {
 		render(informacao, list, mapTitulo, mapTxt);
 	}
 
-	public static void movimentacoes(long id) throws Exception {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void movimentacoes(String sigla) throws Exception {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 
 		render(informacao);
 	}
 
-	public static void fechar(long id) throws Exception {
-		GcInformacao inf = GcInformacao.findById(id);
+	public static void fechar(String sigla) throws Exception {
+		GcInformacao inf = new GcInformacao().findBySigla(sigla);
 		GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 				null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(inf, idc());
-		exibir(id);
+		exibir(inf.getSigla());
 	}
 
 	public static void gravar(GcInformacao informacao, String titulo,
 			String conteudo, String classificacao, String origem)
 			throws Exception {
 		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
-
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
 			informacao.lotacao = informacao.autor.getLotacao();
@@ -584,6 +618,8 @@ public class Application extends SigaApplication {
 		if (informacao.tipo == null)
 			informacao.tipo = GcTipoInformacao.all().first();
 
+		//Atualiza a classificação com as hashTags encontradas
+		classificacao = Util.findHashTag(conteudo, classificacao, CONTROLE_HASH_TAG);
 		// if (informacao.id != 0)
 		GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, pessoa,
@@ -599,26 +635,26 @@ public class Application extends SigaApplication {
 				GcBL.gravar(informacao, idc());
 			}
 			redirect(origem);
-		} else
-			exibir(informacao.id);
+		} else 
+			exibir(informacao.getSigla());
 	}
 
-	public static void remover(long id) throws AplicacaoException {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void remover(String sigla) throws AplicacaoException {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 
 		if (informacao.elaboracaoFim != null)
 			throw new AplicacaoException(
 					"Não é permitido remover informações que já foram finalizadas.");
 		JPA.em().createQuery("delete from GcMarca where inf.id = :id")
-				.setParameter("id", id).executeUpdate();
+				.setParameter("id", informacao.id).executeUpdate();
 		JPA.em().createQuery("delete from GcMovimentacao where inf.id = :id")
-				.setParameter("id", id).executeUpdate();
+				.setParameter("id", informacao.id).executeUpdate();
 		informacao.delete();
 		index();
 	}
 
-	public static void notificar(long id) {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void notificar(String sigla) {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -632,11 +668,11 @@ public class Application extends SigaApplication {
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pes, lot, null,
 				null, null, null, null, null, null);
 		GcBL.gravar(informacao, idc());
-		exibir(informacao.id);
+		exibir(informacao.getSigla());
 	}
 
-	public static void solicitarRevisao(long id) {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void solicitarRevisao(String sigla) {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -650,11 +686,11 @@ public class Application extends SigaApplication {
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pes,
 				lot, null, null, null, null, null, null, null);
 		GcBL.gravar(informacao, idc());
-		exibir(informacao.id);
+		exibir(informacao.getSigla());
 	}
 
-	public static void anexar(long id) {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void anexar(String sigla) {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -679,7 +715,7 @@ public class Application extends SigaApplication {
 								pes, lot, titulo, null, null, null, null,
 								anexo, mimeType);
 						GcBL.gravar(informacao, idc());
-						exibir(informacao.id);
+						exibir(informacao.getSigla());
 					}
 				}
 			}
@@ -693,8 +729,8 @@ public class Application extends SigaApplication {
 					(long) arq.conteudo.length, arq.mimeType, true);
 	}
 
-	public static void revisado(long id) throws Exception {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void revisado(String sigla) throws Exception {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 		if (informacao.movs != null) {
 			for (GcMovimentacao mov : informacao.movs) {
 				if (mov.isCancelada())
@@ -706,7 +742,7 @@ public class Application extends SigaApplication {
 							mov.pessoa, mov.lotacao, null, null, null, mov,
 							null, null, null);
 					GcBL.gravar(informacao, idc());
-					exibir(informacao.id);
+					exibir(sigla);
 				}
 			}
 		}
@@ -714,22 +750,22 @@ public class Application extends SigaApplication {
 				+ idc().getDpPessoa().getSigla());
 	}
 
-	public static void marcarComoInteressado(long id) throws Exception {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void marcarComoInteressado(String sigla) throws Exception {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 		GcBL.interessado(informacao, idc(), titular(), true);
-		exibir(id);
+		exibir(sigla);
 	}
 
-	public static void desmarcarComoInteressado(long id) throws Exception {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void desmarcarComoInteressado(String sigla) throws Exception {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 		GcBL.interessado(informacao, idc(), titular(), false);
-		exibir(id);
+		exibir(sigla);
 	}
 
-	public static void cancelar(long id) throws Exception {
-		GcInformacao informacao = GcInformacao.findById(id);
+	public static void cancelar(String sigla) throws Exception {
+		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 		GcBL.cancelar(informacao, idc(), titular(), lotaTitular());
-		exibir(id);
+		exibir(sigla);
 	}
 
 	public static void selecionarTag(String sigla) throws Exception {
@@ -810,7 +846,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
+		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento"
 				+ path);
 	}
 

@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 import play.db.jpa.GenericModel;
+import play.db.jpa.JPA;
 import play.db.jpa.Model;
 import util.SigaPlayCalendar;
 

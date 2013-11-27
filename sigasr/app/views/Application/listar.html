@@ -6,13 +6,13 @@
 	<div class="gt-content-box gt-for-table">
 	<table border="0" class="gt-table-nowrap">
 			<col width="15%" />
-    		<col width="30%" />
+    		<col width="35%" />
     		<col width="10%" />
     		<col width="15%" />
     		<col width="15%" />
     		<col width="15%" />
     		<thead>
-				<tr class="gt-celula-nowrap">
+				<tr >
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
@@ -29,7 +29,7 @@
 							${sol.codigo}
 						</a>	
 			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important;" "id="descrSolicitacao">
+			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
 			<b style="color: #333">
 			${sol.itemConfiguracao?.descricao}:</b>&nbsp;
 			#{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}

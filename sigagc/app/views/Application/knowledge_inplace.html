@@ -1,5 +1,7 @@
 #{if conhecimentos != null} #{list items:conhecimentos,as:'conhecimento'}
-	#{set "url"}@{Application.editar(conhecimento[0], null, null, referer)}#{/set} 
+	#{set "url"}*{@{Application.editar(conhecimento[0], null, null, referer)}}*
+		@{Application.editar(conhecimento[3], null, null, referer)}
+	#{/set} 
 <p>
 	<a style="float: right;" title="Editar conhecimento"
 		href="${url}"><img
@@ -8,7 +10,9 @@
 	${conhecimento[2].raw()}
 <!--  -->
 #{/list} #{/if} #{else}
-	#{set "url"}@{Application.editar(0, classificacao, titulo, referer)}#{/set} 
+	#{set "url"}*{@{Application.editar(0, classificacao, titulo, referer)}}*
+		@{Application.editar(null, classificacao, titulo, referer)}
+	#{/set} 
 <h3>
 	<a style="float: right;" title="Registrar um novo conhecimento"
 		href="${url}"><img src="/siga/css/famfamfam/icons/add.png"> </a>
@@ -18,7 +22,7 @@
 		${msgvazio.replace("\$1", url).raw()}
 	#{/if}
 	#{else}
-	Nenhum conhecimento registrado. Clique <a href="${url}">aqui</a>
+	Nenhum conhecimento relacionado registrado. Clique <a href="${url}">aqui</a>
 	para registrar um novo conhecimento.
 	#{/else}
 </p>

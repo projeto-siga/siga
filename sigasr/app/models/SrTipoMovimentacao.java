@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name = "SR_TIPO_MOVIMENTACAO")
+@Table(name = "SR_TIPO_MOVIMENTACAO", schema = "SIGASR")
 public class SrTipoMovimentacao extends GenericModel {
 
 	final static public long TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO = 1;

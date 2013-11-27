@@ -51,6 +51,11 @@ public class CpConfiguracaoComparator implements Comparator<CpConfiguracao> {
 		else if (c1.getLotacao() != null && c2.getLotacao() == null)
 			return -1;
 
+		if (c1.getComplexo() == null && c2.getComplexo() != null)
+			return 1;
+		else if (c1.getComplexo() != null && c2.getComplexo() == null)
+			return -1;
+
 		if (c1.getFuncaoConfianca() == null && c2.getFuncaoConfianca() != null)
 			return 1;
 		else if (c1.getFuncaoConfianca() != null

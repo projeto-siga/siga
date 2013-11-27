@@ -154,20 +154,31 @@ public class Application extends SigaApplication {
 
 	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
 			throws Exception {
-		if (!SrItemConfiguracao.listarPorPessoa(solicitacao.solicitante)
-				.contains(solicitacao.itemConfiguracao))
+		if (!SrItemConfiguracao.listarPorPessoaELocal(solicitacao.solicitante,
+				solicitacao.local).contains(solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
-		solicitacao.servico = null; // essa linha deve sair??? Adicionei
-
-		render(solicitacao);
+		Map<SrServico, DpLotacao> servicosEAtendentes = SrServico
+				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
+						solicitacao.solicitante, solicitacao.local,
+						solicitacao.itemConfiguracao);
+		if (solicitacao.servico == null
+				|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
+			if (servicosEAtendentes.size() > 0)
+				solicitacao.servico = servicosEAtendentes.keySet().iterator()
+						.next();
+			else
+				solicitacao.servico = null;
+		}
+		render(solicitacao, servicosEAtendentes);
 	}
 
 	public static void exibirServico(SrSolicitacao solicitacao)
 			throws Exception {
 		Map<SrServico, DpLotacao> servicosEAtendentes = SrServico
-				.listarComAtendentePorPessoaEItemOrdemTitulo(
-						solicitacao.solicitante, solicitacao.itemConfiguracao);
+				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
+						solicitacao.solicitante, solicitacao.local,
+						solicitacao.itemConfiguracao);
 		if (solicitacao.servico == null
 				|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
 			if (servicosEAtendentes.size() > 0)
@@ -188,8 +199,8 @@ public class Application extends SigaApplication {
 		Map<SrServico, DpLotacao> servicosEAtendentes = new TreeMap<SrServico, DpLotacao>();
 		if (solicitacao.itemConfiguracao != null) {
 			servicosEAtendentes = SrServico
-					.listarComAtendentePorPessoaEItemOrdemTitulo(
-							solicitacao.solicitante,
+					.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
+							solicitacao.solicitante, solicitacao.local,
 							solicitacao.itemConfiguracao);
 			if (solicitacao.servico == null
 					|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
@@ -206,12 +217,11 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
-
+		
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
 					"Item não informado");
 		}
-
 		if (solicitacao.servico == null) {
 			validation.addError("solicitacao.servico", "Serviço não informado");
 		}
@@ -275,11 +285,12 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarDesignacao(SrConfiguracao designacao) {
 
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
-				&& (designacao.posAtendente == null)) {
+				&& (designacao.posAtendente == null) && (designacao.equipeQualidade == null)) {
 			validation.addError("designacao.atendente",
 					"Atendente não informado.", "designacao.preAtendente",
-					"Atendente não informado.", "designacao.posAtendente",
-					"Atendente não informado.");
+					"Pré-atendente não informado.", "designacao.posAtendente",
+					"Pós-atendente não informado.", "designacao.equipeQualidade",
+					"Equipe de qualidade não informada.");
 		}
 
 		if (validation.hasErrors()) {
@@ -534,7 +545,6 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.desassociarLista(solicitacao, lista);
-		// lista.refresh();
 		exibirLista(idLista);
 	}
 
@@ -572,22 +582,18 @@ public class Application extends SigaApplication {
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
-	public static void fechar(Long id) throws Exception {
+	public static void fechar(Long id, String motivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		if (movimentacao.solicitacao.temPosAtendenteDesignado()) {
-			movimentacao.tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO);
-			movimentacao.lotaAtendente = movimentacao.solicitacao
-					.getPosAtendenteDesignado();
-		} else {
-			movimentacao.tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		}
-		movimentacao.salvar(cadastrante(), lotaTitular());
+		if (sol.isEmAtendimento()) {
+			if (sol.temPosAtendenteDesignado())
+				sol.iniciarPosAtendimento(lotaTitular(), cadastrante(), motivo);
+			else
+				sol.fechar(lotaTitular(), cadastrante(), motivo);
+		} else
+			sol.fechar(lotaTitular(), cadastrante(), motivo);
 
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		exibir(sol.idSolicitacao, completo());
 	}
 
 	public static void cancelar(Long id) throws Exception {
@@ -603,26 +609,8 @@ public class Application extends SigaApplication {
 
 	public static void finalizarPreAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
-		movimentacao.lotaAtendente = movimentacao.solicitacao
-				.getAtendenteDesignado();
-		movimentacao.salvar(cadastrante(), lotaTitular());
-
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
-	}
-
-	public static void finalizarPosAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		movimentacao.salvar(cadastrante(), lotaTitular());
-
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		sol.iniciarAtendimento(lotaTitular(), cadastrante());
+		exibir(sol.idSolicitacao, completo());
 	}
 
 	public static void deixarPendente(Long id) throws Exception {
@@ -652,8 +640,8 @@ public class Application extends SigaApplication {
 		SrMovimentacao movimentacao = new SrMovimentacao(sol);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
+		// checar lotação do pré-atendimento
 		movimentacao.salvar(cadastrante(), lotaTitular());
-
 		exibir(movimentacao.solicitacao.idSolicitacao, completo());
 	}
 
@@ -677,12 +665,13 @@ public class Application extends SigaApplication {
 
 	public static void editarDesignacao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<CpComplexo> orgaos = JPA.em().createQuery("from CpOrgaoUsuario")
-				.getResultList();
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
 		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
-		render(designacao, orgaos);
+		render(designacao, orgaos, locais);
 	}
 
 	public static void gravarDesignacao(SrConfiguracao designacao)
@@ -758,30 +747,37 @@ public class Application extends SigaApplication {
 		listarItem();
 	}
 
-	public static void selecionarItem(String sigla, Long pessoa)
+	public static void selecionarItem(String sigla, Long pessoa, Long local)
 			throws Exception {
+		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
+				pessoa) : null;
+		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
+				local) : null;
 		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
-				pessoa != null ? JPA.em().find(DpPessoa.class, pessoa) : null);
+				dpPessoa, cpComplexo);
 		render("@selecionar", sel);
 	}
 
 	public static void buscarItem(String sigla, String nome,
-			SrItemConfiguracao filtro, Long pessoa) {
+			SrItemConfiguracao filtro, Long pessoa, Long local) {
 
 		List<SrItemConfiguracao> itens = null;
+		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
+				pessoa) : null;
+		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
+				local) : null;
 
 		try {
 			if (filtro == null)
 				filtro = new SrItemConfiguracao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(pessoa != null ? JPA.em().find(
-					DpPessoa.class, pessoa) : null);
+			itens = filtro.buscar(dpPessoa, cpComplexo);
 		} catch (Exception e) {
 			itens = new ArrayList<SrItemConfiguracao>();
 		}
 
-		render(itens, filtro, nome, pessoa);
+		render(itens, filtro, nome, pessoa, local);
 	}
 
 	public static void listarTipoAtributo() throws Exception {
@@ -839,34 +835,41 @@ public class Application extends SigaApplication {
 		listarServico();
 	}
 
-	public static void selecionarServico(String sigla, Long pessoa, Long item)
-			throws Exception {
-		SrServico sel = new SrServico().selecionar(
-				sigla,
-				pessoa != null ? JPA.em().find(DpPessoa.class, pessoa) : null,
-				item != null ? (SrItemConfiguracao) SrItemConfiguracao
-						.findById(item) : null);
+	public static void selecionarServico(String sigla, Long pessoa, Long local,
+			Long item) throws Exception {
+		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
+				pessoa) : null;
+		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
+				local) : null;
+		SrItemConfiguracao srItem = item != null ? (SrItemConfiguracao) SrItemConfiguracao
+				.findById(item) : null;
+
+		SrServico sel = new SrServico().selecionar(sigla, dpPessoa, cpComplexo,
+				srItem);
 		render("@selecionar", sel);
 	}
 
 	public static void buscarServico(String sigla, String nome,
-			SrServico filtro, Long pessoa, Long item) {
+			SrServico filtro, Long pessoa, Long local, Long item) {
 		List<SrServico> itens = null;
+		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
+				pessoa) : null;
+		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
+				local) : null;
+		SrItemConfiguracao srItem = item != null ? (SrItemConfiguracao) SrItemConfiguracao
+				.findById(item) : null;
+
 		try {
 			if (filtro == null)
 				filtro = new SrServico();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(
-					pessoa != null ? JPA.em().find(DpPessoa.class, pessoa)
-							: null,
-					item != null ? (SrItemConfiguracao) SrItemConfiguracao
-							.findById(item) : null);
+			itens = filtro.buscar(dpPessoa, cpComplexo, srItem);
 		} catch (Exception e) {
 			itens = new ArrayList<SrServico>();
 		}
 
-		render(itens, filtro, nome, pessoa, item);
+		render(itens, filtro, nome, pessoa, local, item);
 	}
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
@@ -973,7 +976,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Solicitações", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	public static void grelTransferencias(String secaoUsuario, String lotacao,
@@ -996,7 +999,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Transferências", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	public static void grelLocal(String secaoUsuario, String lotacao,
@@ -1020,7 +1023,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Solicitações por Localidade",
-				pdf.length, "application/pdf", false);
+				pdf.length, "application/pdf", true);
 	}
 
 	public static void grelPrazo(String secaoUsuario, String lotacao,
@@ -1044,7 +1047,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Prazos", pdf.length, "application/pdf",
-				false);
+				true);
 	}
 
 	public static void grelPrazoDetail(String secaoUsuario, String lotacao,
@@ -1068,7 +1071,7 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório Detalhado de Prazos", pdf.length,
-				"application/pdf", false);
+				"application/pdf", true);
 	}
 
 	private static Map<String, Object> map = new HashMap<String, Object>();

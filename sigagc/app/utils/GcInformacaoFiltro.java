@@ -33,7 +33,8 @@ public class GcInformacaoFiltro extends GcInformacao {
 		String query = "from GcInformacao inf where inf.hisDtFim is null ";
 
 		if (tag != null)
-			query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = " + tag.id;
+			//query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = " + tag.id;
+			query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.titulo = '" + tag.titulo + "'";
 			//query += " and inf.tags.id = " + tag.id;
 		if (autor != null)
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();

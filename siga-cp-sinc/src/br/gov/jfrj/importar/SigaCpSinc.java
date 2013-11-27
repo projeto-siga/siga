@@ -767,7 +767,7 @@ public class SigaCpSinc {
 			throw new AplicacaoException("XML não contém pessoa!");
 		}
 		if (!contemFuncao){
-			throw new AplicacaoException("XML não contém função de confiança!");
+//			throw new AplicacaoException("XML não contém função de confiança!");
 		}
 
 		if (!fDocumentoCompleto) {

@@ -77,14 +77,14 @@ $(function(){
 							${sol.codigo}
 						</a>	
 			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrSolicitacao">
+			<td class="gt-celula-nowrap"  style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
 			<b style="color: #333">
-			${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}:</b>&nbsp;
-			#{selecionado sigla:sol?.descrSolicitacao,descricao:sol?.descrSolicitacao /}
+			${sol.itemConfiguracao?.descricao}:</b>&nbsp;
+			#{selecionado sigla:sol.descrSolicitacao,descricao:sol?.descrSolicitacao /}
 			</td>
 				
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;" >
-			#{selecionado sigla:sol.solicitante.descricaoIniciaisMaiusculas + ',' + sol.lotaSolicitante.siglaLotacao, descricao:sol.solicitante.descricaoIniciaisMaiusculas + ',' + sol.lotaSolicitante.siglaLotacao/},
+			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px; text-align:center;" >
+			#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
 			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.siglaLotacao /}
 			</td>
 			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">

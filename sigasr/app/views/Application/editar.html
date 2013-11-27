@@ -1,20 +1,6 @@
 #{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
 
 <script language="javascript">
-function carregarAtributos(){
-	frm = document.getElementById('formSolicitacao');
-	params = '';
-	for (i = 0; i < frm.length; i++){
-		if (frm[i].name && frm[i].value)
-			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
-	}
-	PassAjaxResponseToFunction('@{Application.exibirAtributos()}?' + params, 'carregouAtributos', null, false, null);
-}
-
-function carregouAtributos(response, param){
-	var div = document.getElementById('divAtributos');
-	div.innerHTML = response;
-}
 
 function carregarLocalERamal(){
 	frm = document.getElementById('formSolicitacao');
@@ -49,24 +35,6 @@ function carregouItem(response, param){
 	   eval(scripts[i].text);  
 }
 
-function carregarServico(){
-	frm = document.getElementById('formSolicitacao');
-	params = '';
-	for (i = 0; i < frm.length; i++){
-		if (frm[i].name && frm[i].value)
-			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
-	}
-	PassAjaxResponseToFunction('@{Application.exibirServico()}?' + params, 'carregouServico', null, false, null);
-}
-
-function carregouServico(response, param){
-	var div = document.getElementById('divServico');
-	div.innerHTML = response;
-	var scripts = div.getElementsByTagName("script");
-	for(var i=0;i<scripts.length;i++)  
-	   eval(scripts[i].text);  
-}
-
 </script>
 
 <div class="gt-bd clearfix">
@@ -87,6 +55,8 @@ function carregouServico(response, param){
 				value="${solicitacao.idSolicitacao}" /> 
 				#{/if}
 				<input type="hidden"
+				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
+				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 
 			#{ifErrors}
@@ -97,7 +67,7 @@ function carregouServico(response, param){
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
-				onchange:'carregarLocalERamal();carregarItem();carregarServico()' /}
+				onchange:'carregarLocalERamal();carregarItem()' /}
 			</div>
 			
 			<div class="gt-form-row gt-width-66">

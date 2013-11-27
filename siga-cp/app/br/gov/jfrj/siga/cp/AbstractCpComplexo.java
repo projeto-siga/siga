@@ -63,6 +63,14 @@ public abstract class AbstractCpComplexo extends Objeto implements Serializable 
 	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario orgaoUsuario;
 
+	public CpOrgaoUsuario getOrgaoUsuario() {
+		return orgaoUsuario;
+	}
+
+	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
+		this.orgaoUsuario = orgaoUsuario;
+	}
+
 	public Long getIdComplexo() {
 		return idComplexo;
 	}

@@ -58,13 +58,13 @@
 					onchange="javascript:sbmt();" /> <c:choose>
 					<c:when test="${tipoResponsavel == 1}">
 						<siga:selecao propriedade="lotaResponsavel" tema="simple"
-							reler="sim" />
+							reler="sim" modulo="siga"/>
 					</c:when>
 					<c:when test="${tipoResponsavel == 2}">
-						<siga:selecao propriedade="responsavel" tema="simple" reler="sim" />
+						<siga:selecao propriedade="responsavel" tema="simple" reler="sim" modulo="siga"/>
 					</c:when>
 					<c:when test="${tipoResponsavel == 3}">
-						<siga:selecao propriedade="cpOrgao" tema="simple" reler="sim" />
+						<siga:selecao propriedade="cpOrgao" tema="simple" reler="sim" modulo="siga"/>
 					</c:when>
 				</c:choose></td>
 				<c:if test="${tipoResponsavel == 3}">

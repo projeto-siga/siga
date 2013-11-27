@@ -42,7 +42,8 @@
 								Pessoa</td>
 						</tr>
 
-						<siga:selecao titulo="Matrícula" propriedade="pessoa" />
+						<siga:selecao titulo="Matrícula" propriedade="pessoa"
+                                modulo="siga"/>
 
 						<tr>
 							<td colspan="4"><siga:monobotao inputType="submit"

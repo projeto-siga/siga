@@ -75,15 +75,15 @@ function sbmt() {
 			</tr>
 			<tr>
 				<td>Pessoa</td>
-				<td><siga:selecao propriedade="pessoa" tema="simple" /></td>
+				<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
 				<td>Lotação</td>
-				<td><siga:selecao propriedade="lotacao" tema="simple" /></td>
+				<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
 				<td>Função de Confiança</td>
-				<td><siga:selecao propriedade="funcao" tema="simple" /></td>
+				<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
 				<td>Órgão</td>
@@ -131,7 +131,7 @@ function sbmt() {
 			</tr>		
 			<tr>
 				<td>Classificação</td>
-				<td><siga:selecao propriedade="classificacao" tema="simple" /></td>
+				<td><siga:selecao propriedade="classificacao" tema="simple" modulo="siga"/></td>
 			</tr>			
 			<tr>
 				<td>Origem</td>

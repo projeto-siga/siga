@@ -42,7 +42,7 @@ function sbmt() {
 					<tr id="tr_titular" style="display:none">
 						<td>Titular:</td>
 						<input type="hidden" name="campos" value="titularSel.id" />
-						<td><siga:selecao propriedade="titular" tema="simple" /></td>
+						<td><siga:selecao propriedade="titular" tema="simple" modulo="siga"/></td>
 					</tr>
 
 					<ww:textfield name="descrMov" label="Motivo" maxlength="80"

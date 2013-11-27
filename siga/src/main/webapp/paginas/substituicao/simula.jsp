@@ -39,7 +39,7 @@ function sbmt() {
 
 				<td>
 					<span id="spanTitular" style=""> <siga:selecao
-					propriedade="titular" tema="simple" /> </span> 
+					propriedade="titular" tema="simple" modulo="siga" /> </span>
 				</td>
 			</tr>
 			<tr class="button">

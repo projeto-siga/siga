@@ -55,7 +55,7 @@
 							<td><siga:escolha var='idAbrangencia'>
 									<siga:opcao id='4' texto="Perfil">
 										<siga:selecao tema='simple' titulo="Perfil:"
-											propriedade="perfil" />
+											propriedade="perfil" modulo="siga"/>
 									</siga:opcao>
 									<siga:opcao id='1' texto="Órgão usuário">
 										<ww:select name="idOrgaoUsu" list="orgaosUsu"
@@ -64,11 +64,11 @@
 									</siga:opcao>
 									<siga:opcao id='2' texto="Lotação">
 										<siga:selecao tema='simple' titulo="Lotação:"
-											propriedade="lotacao" />
+											propriedade="lotacao" modulo="siga"/>
 									</siga:opcao>
 									<siga:opcao id='3' texto="Matrícula">
 										<siga:selecao tema='simple' titulo="Matrícula:"
-											propriedade="pessoa" />
+											propriedade="pessoa" modulo="siga" />
 									</siga:opcao>
 								</siga:escolha></td>
 						</tr>

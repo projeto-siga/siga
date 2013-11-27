@@ -20,7 +20,7 @@ function sbmt() {
 
 	<td>Lotação</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-		reler="sim" /></td>
+		reler="sim" modulo="siga"/></td>
 </tr>
 <input type="hidden" name="lotacao" value="${lotacaoDestinatarioSel.id}" />
 <input type="hidden" name="siglalotacao"

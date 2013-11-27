@@ -343,7 +343,7 @@
 									<td colspan="2">Gestores do Grupo</td>
 								</tr>
 								<tr>
-									<td colspan="2"><siga:selecao titulo="Nova Lotação Gestora:" propriedade="lotacaoGestora" /></td>
+									<td colspan="2"><siga:selecao titulo="Nova Lotação Gestora:" propriedade="lotacaoGestora" modulo="siga"/></td>
 								</tr>
 								<c:forEach var="conf" items="${confGestores}">
 									<tr>
@@ -356,7 +356,7 @@
 							</table>
 						</c:if>
 						<c:if test="${cpTipoGrupo.idTpGrupo == 1}">
-							<siga:selecao titulo="Pai:" propriedade="grupoPai" />
+							<siga:selecao titulo="Pai:" propriedade="grupoPai" modulo="siga"/>
 						</c:if>
 					</table>
 
@@ -391,7 +391,8 @@
 											propriedade="matricula_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 											siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
 											idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
-											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}" />
+											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
+                                            modulo="siga"/>
 									</div> <!-- LOTACAO -->
 									<div
 										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 1}">inline</ww:if><ww:else>none</ww:else>;"
@@ -401,7 +402,8 @@
 											propriedade="lotacao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 											siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
 											idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
-											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}" />
+											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
+                                            modulo="siga"/>
 									</div> <!-- CARGO -->
 									<div
 										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 2}">inline</ww:if><ww:else>none</ww:else>;"
@@ -410,7 +412,8 @@
 											propriedade="cargo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 											siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
 											idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
-											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}" />
+											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
+                                            modulo="siga"/>
 									</div> <!-- funcao -->
 									<div
 										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 3}">inline</ww:if><ww:else>none</ww:else>;"
@@ -419,7 +422,8 @@
 											propriedade="funcao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 											siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
 											idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
-											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}" />
+											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
+                                            modulo="siga"/>
 									</div> <!-- EMAIL -->
 									<div
 										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 4}">inline</ww:if><ww:else>none</ww:else>;"
@@ -454,19 +458,19 @@
 									onchange="javascript:solicitarInformacao('${idConfiguracaoNova}');" />
 								<div style="display: none;" id="matricula_${idConfiguracaoNova}">
 									<siga:selecao tipo="pessoa" tema="simple"
-										propriedade="matricula_${idConfiguracaoNova}" />
+										propriedade="matricula_${idConfiguracaoNova}" modulo="siga"/>
 								</div>
 								<div style="display: none;" id="lotacao_${idConfiguracaoNova}">
 									<siga:selecao tipo="lotacao" tema="simple"
-										propriedade="lotacao_${idConfiguracaoNova}" />
+										propriedade="lotacao_${idConfiguracaoNova}" modulo="siga"/>
 								</div>
 								<div style="display: none;" id="cargo_${idConfiguracaoNova}">
 									<siga:selecao tipo="cargo" tema="simple"
-										propriedade="cargo_${idConfiguracaoNova}" />
+										propriedade="cargo_${idConfiguracaoNova}" modulo="siga"/>
 								</div>
 								<div style="display: none;" id="funcao_${idConfiguracaoNova}">
 									<siga:selecao tipo="funcao" tema="simple"
-										propriedade="funcao_${idConfiguracaoNova}" />
+										propriedade="funcao_${idConfiguracaoNova}" modulo="siga"/>
 								</div>
 								<div style="display: none;" id="texto_${idConfiguracaoNova}">
 									<input type="text" size="64" maxlength="64"

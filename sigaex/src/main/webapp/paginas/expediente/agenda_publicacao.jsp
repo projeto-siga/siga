@@ -130,7 +130,7 @@
 				<tr>									
 					<td>Lotação de Publicação:</td>
 						<ww:if test="${podeAtenderPedidoPubl}">
-							<td><siga:selecao tema="simple" propriedade="lotaSubscritor"  /></td>
+							<td><siga:selecao tema="simple" propriedade="lotaSubscritor" modulo="siga" /></td>
 						</ww:if>
 						<ww:else>						
 							<td><ww:select name="idLotPublicacao" list="listaLotPubl" listKey="idLotacao"

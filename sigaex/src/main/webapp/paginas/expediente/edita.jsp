@@ -376,7 +376,7 @@ function tryAgainAutoSave(){
 							<td><ww:textfield name="numExtDoc" size="32" maxLength="32" /></td>
 							<td align="right">Órgão:</td>
 							<input type="hidden" name="campos" value="cpOrgaoSel.id" />
-							<td><siga:selecao propriedade="cpOrgao" tema="simple" /></td>
+							<td><siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"/></td>
 						</tr>
 						<tr>
 							<td>Obs. sobre o Órgão Externo:</td>
@@ -397,7 +397,7 @@ function tryAgainAutoSave(){
 					<tr style="display: none;">
 						<td>Documento Pai:</td>
 						<td colspan="3"><siga:selecao titulo="Documento Pai:"
-							propriedade="mobilPai" tema="simple"
+							propriedade="mobilPai" tema="simple" modulo="siga"
 							desativar="${desativarDocPai}" reler="sim" /></td>
 					</tr>
 					<tr>
@@ -412,7 +412,7 @@ function tryAgainAutoSave(){
 								<td>Subscritor:</td>
 								<input type="hidden" name="campos" value="subscritorSel.id" />
 								<input type="hidden" name="campos" value="substituicao" />
-								<td colspan="3"><siga:selecao propriedade="subscritor"
+								<td colspan="3"><siga:selecao propriedade="subscritor" modulo="siga"
 									tema="simple" />&nbsp;&nbsp;<ww:checkbox name="substituicao"
 									onclick="javascript:displayTitular(this);" />Substituto</td>
 							</c:otherwise>
@@ -430,7 +430,7 @@ function tryAgainAutoSave(){
 					<td>Titular:</td>
 					<input type="hidden" name="campos" value="titularSel.id" />
 					<td colspan="3"><siga:selecao propriedade="titular"
-						tema="simple" /></td>
+						tema="simple" modulo="siga"/></td>
 					</tr>
 					<tr>
 						<td>Função;<wbr/>Lotação;<wbr/>Localidade:</td>
@@ -472,21 +472,21 @@ function tryAgainAutoSave(){
 								<c:when test='${tipoDestinatario == 1}'>
 									<input type="hidden" name="campos" value="destinatarioSel.id" />
 									<siga:selecao propriedade="destinatario" tema="simple"
-										reler="sim" />
+										reler="sim" modulo="siga" />
 									<!--  idAjax="destinatario"  -->
 								</c:when>
 								<c:when test='${tipoDestinatario == 2}'>
 									<input type="hidden" name="campos"
 										value="lotacaoDestinatarioSel.id" />
 									<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-										reler="sim" /></td>
+										reler="sim" modulo="siga" /></td>
 						<!--  idAjax="destinatario" -->
 						</c:when>
 						<c:when test='${tipoDestinatario == 3}'>
 							<input type="hidden" name="campos"
 								value="orgaoExternoDestinatarioSel.id" />
 							<siga:selecao propriedade="orgaoExternoDestinatario"
-								tema="simple" reler="sim" />
+								tema="simple" reler="sim" modulo="siga" />
 							<!-- idAjax="destinatario" -->
 							<br>
 							<ww:textfield name="nmOrgaoExterno" size="120" maxLength="256" />
@@ -594,7 +594,7 @@ function tryAgainAutoSave(){
 						<input type="hidden" name="campos" value="classificacaoSel.id" />
 						<td colspan="3"><siga:span id="classificacao"
 							depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}"
+							<siga:selecao desativar="${desativarClassif}" modulo="siga"
 								propriedade="classificacao" tema="simple" reler="sim" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>

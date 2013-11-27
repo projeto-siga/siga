@@ -40,7 +40,7 @@
 						<%--<ww:textfield name="dtMovString" label="Data"
 					onblur="javascript:verifica_data(this);" />--%>
 
-						<siga:selecao titulo="Cossignatário:" propriedade="cosignatario" />
+						<siga:selecao titulo="Cossignatário:" propriedade="cosignatario" modulo="siga"/>
 						<ww:textfield name="funcaoCosignatario"
 							label="Função;Lotação;Localidade" size="50" maxLength="128" />
 

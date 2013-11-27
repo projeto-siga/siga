@@ -115,10 +115,10 @@ function popitup_movimentacao() {
 						onchange="javascript:sbmt();" /> 
      					<c:choose>							  
 							  <c:when test="${tipoResponsavel == 1}">
-								<siga:selecao propriedade="responsavel" tema="simple" />
+								<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
 							  </c:when>
 							  <c:when test="${tipoResponsavel == 2}">
-								<siga:selecao propriedade="lotaResponsavel" tema="simple" />
+								<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
 							  </c:when>							  
 						</c:choose>
 					</td>

@@ -43,7 +43,7 @@ function sbmt() {
 						onblur="javascript:verifica_data(this, true);" />
 					<tr>
 						<td>Subscritor:</td>
-						<td><siga:selecao tema="simple" propriedade="subscritor" />
+						<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 						&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 							onclick="javascript:displayTitular(this);" />Substituto</td>
 					</tr>
@@ -54,7 +54,7 @@ function sbmt() {
 					<tr id="tr_titular" style="${style}">
 						<td>Titular:</td>
 						<input type="hidden" name="campos" value="titularSel.id" />
-						<td><siga:selecao propriedade="titular" tema="simple" /></td>
+						<td><siga:selecao propriedade="titular" tema="simple" modulo="siga"/></td>
 					</tr>
 					<tr>
 						<td><span style="font-weight: bold">Atenção:</span></td>

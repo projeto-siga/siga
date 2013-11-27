@@ -126,7 +126,7 @@
 						</tr>
 						<tr>
 							<td colspan="2">Pessoa:<siga:selecao tipo="pessoa"
-									tema="simple" propriedade="pessoaExtra" /></td>
+									tema="simple" propriedade="pessoaExtra" modulo="siga"/></td>
 						</tr>
 
 						<tr>

@@ -110,7 +110,7 @@
 			</tr>
 			<tr>
 				<td>Responsável:</td>
-				<td><siga:selecao tema="simple" propriedade="subscritor" />
+				<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 				&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 					onclick="javascript:displayTitular(this);" />Substituto</td>
 			</tr>
@@ -126,7 +126,7 @@
 			<td>Titular:</td>
 			<input type="hidden" name="campos" value="titularSel.id" />
 			<td colspan="1"><siga:selecao propriedade="titular"
-				tema="simple" /></td>
+				tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
 				<td>Função do Responsável:</td>
@@ -139,13 +139,13 @@
 				<td><ww:select name="tipoResponsavel" list="listaTipoResp"
 					onchange="javascript:sbmt();" /> <c:choose>
 					<c:when test="${tipoResponsavel == 1}">
-						<siga:selecao propriedade="lotaResponsavel" tema="simple" />
+						<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
 					</c:when>
 					<c:when test="${tipoResponsavel == 2}">
-						<siga:selecao propriedade="responsavel" tema="simple" />
+						<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
 					</c:when>
 					<c:when test="${tipoResponsavel == 3}">
-						<siga:selecao propriedade="cpOrgao" tema="simple" />
+						<siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"/>
 					</c:when>
 				</c:choose></td>
 

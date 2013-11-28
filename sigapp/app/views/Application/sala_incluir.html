@@ -12,19 +12,19 @@ function formata(){
 <form name="" action="/sigapp/sala_insert" onsubmit="formata()" method="POST" ><br>
 	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Código da sala: </font> <input id="cod_local01" type="text"  class="ui-widget" style="position:absolute;left:25%;" name="formLocal.cod_local" maxlength="3" size="3" /> <!-- String --><br>
 	<br> 
-	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Descrição: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.local" maxlength="50" size="50" /> <!-- String --><br>
+	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Descrição: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.local" maxlength="30" size="50" /> <!-- String --><br>
 	<br>
 	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Código do forum: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="cod_forum" id="cod_forum01" maxlength="3" size="50" onchange="if(isNaN(document.getElementById('cod_forum01').value) ){alert('Esse campo tem que ser numérico');}" /> <!-- int --><br>
 	<br>
-	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Dias de atendimento: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.dias" maxlength="50" size="50" /> <!-- String --><br>
+	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Dias de atendimento: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.dias" maxlength="40" size="50" /> <!-- String --><br>
 	<br>
-	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Horário inicial: </font><input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.hora_ini" maxlength="50" size="50" /> <!-- String --><br>
+	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Horário inicial: </font><input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.hora_ini" maxlength="8" size="50" /> <!-- String --><br>
 	<br>
-	<font style="position:absolute;left:5%;right:76%" class="ui-state-default" size="3px">Horário final: </font><input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.hora_fim" maxlength="50" size="50" /> <!--  String  --><br>
+	<font style="position:absolute;left:5%;right:76%" class="ui-state-default" size="3px">Horário final: </font><input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.hora_fim" maxlength="8" size="50" /> <!--  String  --><br>
 	<br>
-	<input type="hidden" name="formLocal.intervalo_atendimento" value="15" /> <!-- int -->
+	<input type="hidden" name="formLocal.intervalo_atendimento" value="10" /> <!-- int -->
 	<input type="hidden" name="formLocal.exibir" value="1" /> <!-- int -->
-	<font style="position:absolute;left:5%;right:76%" class="ui-state-default" size="3px">Endereço: </font><input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.endereco" maxlength="50" size="50" /> <!-- String --><br>
+	<font style="position:absolute;left:5%;right:76%" class="ui-state-default" size="3px">Endereço: </font><input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.endereco" maxlength="100" size="50" /> <!-- String --><br>
 	<input type="hidden" name="formLocal.ordem_apresentacao" value="0" />  <!-- int --> 
 <br>
 	<div style="position:absolute;left:5%;">

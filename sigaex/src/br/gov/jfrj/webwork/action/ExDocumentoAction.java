@@ -1209,11 +1209,20 @@ public class ExDocumentoAction extends ExActionSupport {
 
 			Ex.getInstance().getBL()
 					.gravar(getCadastrante(), getLotaTitular(), doc);
-
+			
 			lerEntrevista(doc);
 
 			if (getDesativarDocPai().equals("sim"))
 				setDesativ("&desativarDocPai=sim");
+			
+			try {
+				
+				Ex.getInstance().getBL().incluirCosignatariosAutomaticamente(getCadastrante(), getLotaTitular(), doc);
+				
+			} catch (Exception e) {
+				
+				throw new AplicacaoException("Erro ao tentar incluir os cosignatários deste documento", 0, e);
+			}
 
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro na gravação", 0, e);

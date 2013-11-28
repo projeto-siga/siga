@@ -1,10 +1,11 @@
 #{extends 'main.html' /}
 #{set title: 'Listar Foruns' /}
 
- <table class="ui-tabs"  align="center" style="font-size:125%;">
+ <table class="ui-tabs"  align="center" width="900px" style="font-size:125%;">
  <tr bgcolor="Silver">
   <th>&nbsp Código &nbsp </th>
-  <th> Forum </th>
+  <th>&nbsp Forum &nbsp</th>
+  <th>&nbsp Mural</th>
   <th></th>
  </tr>
 #{list items:listForuns, as:'forum'}
@@ -13,6 +14,7 @@
 	#{set b: !b /}
 	<td>&nbsp ${forum.cod_forum}</td>
 	<td>${forum.descricao_forum}&nbsp</td>
+	<td>${forum.mural}&nbsp</td>
 	<td> &nbsp<form name="forum_deleta01" action="@{forum_delete()}" method="post"><img  src="/siga/css/famfamfam/icons/delete.png"><input type="hidden" name="cod_forum" value="${forum.cod_forum}"/>&nbsp<input type="submit" value="Exclui"/> </form></td>
 	</tr>
 #{/list}

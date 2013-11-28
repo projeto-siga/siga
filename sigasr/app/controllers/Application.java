@@ -217,12 +217,11 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
-
+		
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
 					"Item não informado");
 		}
-
 		if (solicitacao.servico == null) {
 			validation.addError("solicitacao.servico", "Serviço não informado");
 		}
@@ -333,11 +332,11 @@ public class Application extends SigaApplication {
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
 
 		List<String[]> listaSols = SrSolicitacao
-				.find("select sol.gravidade, count(*) "
+				.find("select sol.gravidade, count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao and movimentacao.tipoMov <> 7 "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getId() + " "
+						+ lotaTitular().getIdLotacao() + " "
 						+ "group by sol.gravidade").fetch();
 
 		LocalDate ld = new LocalDate();
@@ -366,13 +365,13 @@ public class Application extends SigaApplication {
 
 		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
 		List<Object[]> listaEvolSols = SrSolicitacao
-				.find("select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(*) "
+				.find("select extract (month from sol.dtReg), extract (year from sol.dtReg), count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getId()
+						+ lotaTitular().getIdLotacao()
 						+ " "
-						+ "group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)")
+						+ "group by extract (month from sol.dtReg), extract (year from sol.dtReg)")
 				.fetch();
 
 		for (Object[] sols : listaEvolSols) {
@@ -381,14 +380,14 @@ public class Application extends SigaApplication {
 		}
 
 		List<Object[]> listaFechados = SrSolicitacao
-				.find("select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(distinct sol.idSolicitacao) "
+				.find("select extract (month from sol.dtReg), extract (year from sol.dtReg), count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.tipoMov = 7 "
 						+ "and movimentacao.lotaAtendente = "
 						+ lotaTitular().getId()
 						+ " "
-						+ "group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)")
+						+ "group by extract (month from sol.dtReg), extract (year from sol.dtReg)")
 				.fetch();
 		for (Object[] fechados : listaFechados) {
 			set.add(new SrSolicitacaoItem((Integer) fechados[0],
@@ -428,11 +427,11 @@ public class Application extends SigaApplication {
 		List<SrSolicitacao> top = SrSolicitacao.all().fetch();
 
 		List<String[]> listaTop = SrSolicitacao
-				.find("select sol.itemConfiguracao.tituloItemConfiguracao, count(*) "
+				.find("select sol.itemConfiguracao.tituloItemConfiguracao, count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getId()
+						+ lotaTitular().getIdLotacao()
 						+ " "
 						+ "group by sol.itemConfiguracao.tituloItemConfiguracao")
 				.fetch();
@@ -459,11 +458,11 @@ public class Application extends SigaApplication {
 		List<SrSolicitacao> lstgut = SrSolicitacao.all().fetch();
 
 		List<String[]> listaGUT = SrSolicitacao
-				.find("select sol.gravidade, sol.urgencia, count(*) "
+				.find("select sol.gravidade, sol.urgencia, count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getId() + " "
+						+ lotaTitular().getIdLotacao() + " "
 						+ "group by sol.gravidade, sol.urgencia").fetch();
 
 		// Header
@@ -487,7 +486,6 @@ public class Application extends SigaApplication {
 		}
 
 		String gut = sbGUT.toString();
-
 		render(lista, evolucao, top10);
 	}
 

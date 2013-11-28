@@ -31,12 +31,14 @@
 						</li>
 					</c:if>
 
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
-						<li><a href="/sigapp/">Perícias INSS</a>
-						</li>
-					</c:if>
-
+					<li><a href="#">Agendas</a>
+						<ul>
+							<c:if
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
+								<li><a href="/sigapp/">Perícias INSS</a>
+								</li>
+							</c:if>
+						</ul></li>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
 						<li><a href="/sigagc/">Gestão de Conhecimento</a>
@@ -198,10 +200,13 @@
 						<li><ww:a href="/sigawf/administrar.action">Administrar SIGA WF</ww:a>
 						</li>
 					</c:if>
+<<<<<<< HEAD
+=======
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FERIADO:Cadastrar Feriados')}">
 						<li><ww:a href="/siga/feriado/listar.action">Cadastro de Feriados</ww:a></li>
 					</c:if>	
+>>>>>>> 9b23013cd6d37d6b13b731837c4a4d6633eb69d4
 				</ul></li>
 		</c:if>
 

@@ -221,6 +221,8 @@ public class GeradorRTF {
 			html = "<?xml version='1.0' encoding='utf-8' ?> <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><body>"
 					+ html + "</body></html>";
 			
+			html = removerTabela(html);
+			
 			byte[] baHtml = html.getBytes();			
 			if (baHtml.length > 1.0 * 1024 * 1024)
 				throw new AplicacaoException(
@@ -230,6 +232,37 @@ public class GeradorRTF {
 		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível ler o conteúdo do documento: " + e.getMessage());
 		}
+	}
+
+	private String removerTabela(String html) {
+		final String tags[] = { "<table", "</table", "<tr", "</tr", "<td", "</td", "<th", "</th", 
+								"<tbody", "</tbody", "<tfoot", "</tfoot", "<thead", "</thead"};
+		
+		for (String tag : tags) {
+			if(html.contains(tag)) {
+				
+				while (html.contains(tag)) {
+					int indiceInicial = html.indexOf(tag);
+					int indiceEncerramento = html.indexOf(">", indiceInicial);
+				}
+				
+			}
+		}
+		
+		
+		html = html.replaceAll("<table>", "");
+		html = html.replaceAll("</table>", "");
+		html = html.replaceAll("<tr>", "");
+		html = html.replaceAll("</tr>", "");
+		html = html.replaceAll("<td>", "");
+		html = html.replaceAll("</td>", "");
+		html = html.replaceAll("<th>", "");
+		html = html.replaceAll("</th>", "");
+		html = html.replaceAll("<tbody>", "");
+		html = html.replaceAll("</tbody>", "");
+		html = html.replaceAll("<td style=\"font-size:9pt;\">", "");
+		
+		return html;
 	}
 
 	public byte[] geraRTF(ExDocumento doc) throws Exception {

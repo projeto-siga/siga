@@ -10,7 +10,7 @@ import java.util.List;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
 import models.SrItemConfiguracao;
-import models.SrServico;
+import models.SrAcao;
 import models.SrSubTipoConfiguracao;
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;

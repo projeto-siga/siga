@@ -26,7 +26,7 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
-import models.SrServico;
+import models.SrAcao;
 import models.SrSolicitacao;
 import models.SrTendencia;
 import models.SrTipoAtributo;
@@ -61,7 +61,7 @@ public class Application extends SigaApplication {
 	}
 
 	@Before(unless = { "exibirAtendente", "exibirAtributos",
-			"exibirLocalERamal", "exibirItemConfiguracao", "exibirServico" })
+			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao" })
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -158,37 +158,37 @@ public class Application extends SigaApplication {
 				solicitacao.local).contains(solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
-		Map<SrServico, DpLotacao> servicosEAtendentes = SrServico
+		Map<SrAcao, DpLotacao> acoesEAtendentes = SrAcao
 				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
 						solicitacao.solicitante, solicitacao.local,
 						solicitacao.itemConfiguracao);
-		if (solicitacao.servico == null
-				|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
-			if (servicosEAtendentes.size() > 0)
-				solicitacao.servico = servicosEAtendentes.keySet().iterator()
+		if (solicitacao.acao == null
+				|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
+			if (acoesEAtendentes.size() > 0)
+				solicitacao.acao = acoesEAtendentes.keySet().iterator()
 						.next();
 			else
-				solicitacao.servico = null;
+				solicitacao.acao = null;
 		}
-		render(solicitacao, servicosEAtendentes);
+		render(solicitacao, acoesEAtendentes);
 	}
 
-	public static void exibirServico(SrSolicitacao solicitacao)
+	public static void exibirAcao(SrSolicitacao solicitacao)
 			throws Exception {
-		Map<SrServico, DpLotacao> servicosEAtendentes = SrServico
+		Map<SrAcao, DpLotacao> acoessEAtendentes = SrAcao
 				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
 						solicitacao.solicitante, solicitacao.local,
 						solicitacao.itemConfiguracao);
-		if (solicitacao.servico == null
-				|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
-			if (servicosEAtendentes.size() > 0)
-				solicitacao.servico = servicosEAtendentes.keySet().iterator()
+		if (solicitacao.acao == null
+				|| !acoessEAtendentes.containsKey(solicitacao.acao)) {
+			if (acoessEAtendentes.size() > 0)
+				solicitacao.acao = acoessEAtendentes.keySet().iterator()
 						.next();
 			else
-				solicitacao.servico = null;
+				solicitacao.acao = null;
 		}
 
-		render(solicitacao, servicosEAtendentes);
+		render(solicitacao, acoessEAtendentes);
 	}
 
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
@@ -196,23 +196,23 @@ public class Application extends SigaApplication {
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 
-		Map<SrServico, DpLotacao> servicosEAtendentes = new TreeMap<SrServico, DpLotacao>();
+		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
 		if (solicitacao.itemConfiguracao != null) {
-			servicosEAtendentes = SrServico
+			acoesEAtendentes = SrAcao
 					.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
 							solicitacao.solicitante, solicitacao.local,
 							solicitacao.itemConfiguracao);
-			if (solicitacao.servico == null
-					|| !servicosEAtendentes.containsKey(solicitacao.servico)) {
-				if (servicosEAtendentes.size() > 0)
-					solicitacao.servico = servicosEAtendentes.keySet()
+			if (solicitacao.acao == null
+					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
+				if (acoesEAtendentes.size() > 0)
+					solicitacao.acao = acoesEAtendentes.keySet()
 							.iterator().next();
 				else
-					solicitacao.servico = null;
+					solicitacao.acao = null;
 			}
 		}
 
-		render("@editar", solicitacao, locais, servicosEAtendentes);
+		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
@@ -222,8 +222,8 @@ public class Application extends SigaApplication {
 			validation.addError("solicitacao.itemConfiguracao",
 					"Item não informado");
 		}
-		if (solicitacao.servico == null) {
-			validation.addError("solicitacao.servico", "Serviço não informado");
+		if (solicitacao.acao == null) {
+			validation.addError("solicitacao.acao", "Ação não informada");
 		}
 
 		if (solicitacao.descrSolicitacao == null
@@ -265,19 +265,19 @@ public class Application extends SigaApplication {
 		}
 	}
 
-	private static void validarFormEditarServico(SrServico servico) {
+	private static void validarFormEditarAcao(SrAcao acao) {
 
-		if (servico.siglaServico.equals("")) {
-			validation.addError("servico.siglaServico", "Código não informado");
+		if (acao.siglaAcao.equals("")) {
+			validation.addError("acao.siglaAcao", "Código não informado");
 		}
 
-		if (servico.tituloServico.equals("")) {
+		if (acao.tituloAcao.equals("")) {
 			validation
-					.addError("servico.tituloServico", "Título não informado");
+					.addError("acao.tituloAcao", "Título não informado");
 		}
 
 		if (validation.hasErrors()) {
-			render("@editarServico");
+			render("@editarAcao");
 		}
 
 	}
@@ -800,35 +800,35 @@ public class Application extends SigaApplication {
 		listarTipoAtributo();
 	}
 
-	public static void listarServico() throws Exception {
+	public static void listarAcao() throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrServico> servicos = SrServico.listar();
-		render(servicos);
+		List<SrAcao> acoes = SrAcao.listar();
+		render(acoes);
 	}
 
-	public static void editarServico(Long id) throws Exception {
+	public static void editarAcao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
-		SrServico servico = new SrServico();
+		SrAcao acao = new SrAcao();
 		if (id != null)
-			servico = SrServico.findById(id);
-		render(servico);
+			acao = SrAcao.findById(id);
+		render(acao);
 	}
 
-	public static void gravarServico(SrServico servico) throws Exception {
+	public static void gravarAcao(SrAcao acao) throws Exception {
 		assertAcesso("ADM:Administrar");
-		validarFormEditarServico(servico);
-		servico.salvar();
-		listarServico();
+		validarFormEditarAcao(acao);
+		acao.salvar();
+		listarAcao();
 	}
 
-	public static void desativarServico(Long id) throws Exception {
+	public static void desativarAcao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
-		SrServico servico = SrServico.findById(id);
-		servico.finalizar();
-		listarServico();
+		SrAcao acao = SrAcao.findById(id);
+		acao.finalizar();
+		listarAcao();
 	}
 
-	public static void selecionarServico(String sigla, Long pessoa, Long local,
+	public static void selecionarAcao(String sigla, Long pessoa, Long local,
 			Long item) throws Exception {
 		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
 				pessoa) : null;
@@ -837,14 +837,14 @@ public class Application extends SigaApplication {
 		SrItemConfiguracao srItem = item != null ? (SrItemConfiguracao) SrItemConfiguracao
 				.findById(item) : null;
 
-		SrServico sel = new SrServico().selecionar(sigla, dpPessoa, cpComplexo,
+		SrAcao sel = new SrAcao().selecionar(sigla, dpPessoa, cpComplexo,
 				srItem);
 		render("@selecionar", sel);
 	}
 
-	public static void buscarServico(String sigla, String nome,
-			SrServico filtro, Long pessoa, Long local, Long item) {
-		List<SrServico> itens = null;
+	public static void buscarAcao(String sigla, String nome,
+			SrAcao filtro, Long pessoa, Long local, Long item) {
+		List<SrAcao> itens = null;
 		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
 				pessoa) : null;
 		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
@@ -854,12 +854,12 @@ public class Application extends SigaApplication {
 
 		try {
 			if (filtro == null)
-				filtro = new SrServico();
+				filtro = new SrAcao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
 			itens = filtro.buscar(dpPessoa, cpComplexo, srItem);
 		} catch (Exception e) {
-			itens = new ArrayList<SrServico>();
+			itens = new ArrayList<SrAcao>();
 		}
 
 		render(itens, filtro, nome, pessoa, local, item);

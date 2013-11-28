@@ -15,19 +15,19 @@ function carregouAtributos(response, param){
 }
 </script>
 
-#{if solicitacao.itemConfiguracao && servicosEAtendentes} 
+#{if solicitacao.itemConfiguracao && acoesEAtendentes} 
 <div class="gt-form-row gt-width-66">
 	<label>Ação</label> 
-	#{select name:'solicitacao.servico', value:solicitacao.servico?.idServico, onchange:'carregarAtributos();'}
-		#{list items:servicosEAtendentes.keySet(), as:'servico' }
-			#{option servico.idServico}
-				${servico.tituloServico} (${servicosEAtendentes[servico].sigla})
+	#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:'carregarAtributos();'}
+		#{list items:acoesEAtendentes.keySet(), as:'acao' }
+			#{option acao.idAcao}
+				${acao.tituloAcao} (${acoesEAtendentes[acao].sigla})
 			#{/option}
 		#{/list}
 	#{/select}
 	
 	 <span
-		style="color: red">#{error 'solicitacao.servico' /}</span>
+		style="color: red">#{error 'solicitacao.acao' /}</span>
 </div>
 #{/if}
 

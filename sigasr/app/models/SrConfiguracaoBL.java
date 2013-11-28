@@ -17,7 +17,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
 	public static int ITEM_CONFIGURACAO = 31;
 
-	public static int SERVICO = 32;
+	public static int ACAO = 32;
 
 	public static SrConfiguracaoBL get() {
 		return instancia;
@@ -37,8 +37,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			conf.posAtendente.getLotacaoAtual();
 		if (conf.itemConfiguracao != null)
 			conf.itemConfiguracao.getAtual();
-		if (conf.servico != null)
-			conf.servico.getAtual();
+		if (conf.acao != null)
+			conf.acao.getAtual();
 		if (conf.tipoAtributo != null)
 			conf.tipoAtributo.getAtual();
 	}
@@ -55,8 +55,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			SrConfiguracao srConf = (SrConfiguracao) cpConfiguracao;
 			if (srConf.itemConfiguracao != null)
 				srConf.itemConfiguracao = srConf.itemConfiguracao.getAtual();
-			if (srConf.servico != null)
-				srConf.servico = srConf.servico.getAtual();
+			if (srConf.acao != null)
+				srConf.acao = srConf.acao.getAtual();
 		}
 
 	}
@@ -91,10 +91,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.equipeQualidade == null)
 				return false;
 
-			if (!atributosDesconsiderados.contains(SERVICO)
-					&& conf.servico != null
-					&& (filtro.servico == null || (filtro.servico != null && !conf.servico
-							.getAtual().isPaiDeOuIgualA(filtro.servico))))
+			if (!atributosDesconsiderados.contains(ACAO)
+					&& conf.acao != null
+					&& (filtro.acao == null || (filtro.acao != null && !conf.acao
+							.getAtual().isPaiDeOuIgualA(filtro.acao))))
 				return false;
 
 			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO)

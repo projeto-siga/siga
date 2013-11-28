@@ -1,16 +1,16 @@
 <script>
-function carregarServico(){
+function carregarAcao(){
 	frm = document.getElementById('formSolicitacao');
 	params = '';
 	for (i = 0; i < frm.length; i++){
 		if (frm[i].name && frm[i].value)
 			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 	}
-	PassAjaxResponseToFunction('@{Application.exibirServico()}?' + params, 'carregouServico', null, false, null);
+	PassAjaxResponseToFunction('@{Application.exibirAcao()}?' + params, 'carregouAcao', null, false, null);
 }
 
-function carregouServico(response, param){
-	var div = document.getElementById('divServico');
+function carregouAcao(response, param){
+	var div = document.getElementById('divAcao');
 	div.innerHTML = response;
 	var scripts = div.getElementsByTagName("script");
 	for(var i=0;i<scripts.length;i++)  
@@ -21,10 +21,10 @@ function carregouServico(response, param){
 <div class="gt-form-row gt-width-66">
 				<label>Item</label> #{selecao tipo:'item',
 				nome:'solicitacao.itemConfiguracao',
-				value:solicitacao.itemConfiguracao, grande:true, onchange:'carregarServico();',
+				value:solicitacao.itemConfiguracao, grande:true, onchange:'carregarAcao();',
 				params:'pessoa='+solicitacao.solicitante?.idPessoa+'&local='+solicitacao.local?.idComplexo /} <span style="color: red">#{error
 					'solicitacao.itemConfiguracao' /}</span>
 </div>
 
-<div id="divServico">#{include 'Application/exibirServico.html'
+<div id="divAcao">#{include 'Application/exibirAcao.html'
 				/}</div>

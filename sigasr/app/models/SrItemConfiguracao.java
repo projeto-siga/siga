@@ -327,7 +327,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
 						SrConfiguracaoBL.ITEM_CONFIGURACAO,
-						SrConfiguracaoBL.SERVICO });
+						SrConfiguracaoBL.ACAO });
 		for (SrConfiguracao conf : confs) {
 			if (conf.itemConfiguracao == null)
 				listaFinal.addAll(listar());

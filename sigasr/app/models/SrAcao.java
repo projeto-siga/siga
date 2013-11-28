@@ -31,94 +31,94 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name = "SR_SERVICO", schema = "SIGASR")
-public class SrServico extends HistoricoSuporte implements SrSelecionavel {
+@Table(name = "SR_ACAO", schema = "SIGASR")
+public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_SERVICO_SEQ", name = "srServicoSeq")
-	@GeneratedValue(generator = "srServicoSeq")
-	@Column(name = "ID_SERVICO")
-	public Long idServico;
+	@SequenceGenerator(sequenceName = "SIGASR.SR_ACAO_SEQ", name = "srAcaoSeq")
+	@GeneratedValue(generator = "srAcaoSeq")
+	@Column(name = "ID_ACAO")
+	public Long idAcao;
 
-	@Column(name = "SIGLA_SERVICO")
-	public String siglaServico;
+	@Column(name = "SIGLA_ACAO")
+	public String siglaAcao;
 
-	@Column(name = "DESCR_SERVICO")
-	public String descrServico;
+	@Column(name = "DESCR_ACAO")
+	public String descrAcao;
 
-	@Column(name = "TITULO_SERVICO")
-	public String tituloServico;
+	@Column(name = "TITULO_ACAO")
+	public String tituloAcao;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrServico servicoInicial;
+	public SrAcao acaoInicial;
 
-	@OneToMany(targetEntity = SrServico.class, mappedBy = "servicoInicial", cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
-	public List<SrServico> meuServicoHistoricoSet;
+	public List<SrAcao> meuAcaoHistoricoSet;
 
-	public SrServico() {
+	public SrAcao() {
 		this(null, null);
 	}
 
-	public SrServico(String descricao) {
+	public SrAcao(String descricao) {
 		this(descricao, null);
 	}
 
-	public SrServico(String sigla, String descricao) {
-		this.tituloServico = descricao;
-		this.siglaServico = sigla;
+	public SrAcao(String sigla, String descricao) {
+		this.tituloAcao = descricao;
+		this.siglaAcao = sigla;
 	}
 
 	@Override
 	public Long getId() {
-		return this.idServico;
+		return this.idAcao;
 	}
 
 	public void setId(Long id) {
-		idServico = id;
+		idAcao = id;
 	}
 
 	@Override
 	public String getSigla() {
-		return this.siglaServico;
+		return this.siglaAcao;
 	}
 
 	@Override
 	public String getDescricao() {
-		return tituloServico;
+		return tituloAcao;
 	}
 
 	public String getDescricaoCompleta() {
-		String sigla = this.siglaServico;
+		String sigla = this.siglaAcao;
 		int nivel = this.getNivel();
 		String desc_nivel = null;
 		if (nivel == 1) {
-			desc_nivel = this.tituloServico;
+			desc_nivel = this.tituloAcao;
 		}
 		if (nivel == 2) {
 			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrServico configuracao = SrServico.find(
-					"bySiglaServicoAndHisDtFimIsNull", sigla_raiz).first();
-			desc_nivel = configuracao.tituloServico + " : "
-					+ this.tituloServico;
+			SrAcao configuracao = SrAcao.find(
+					"bySiglaAcaoAndHisDtFimIsNull", sigla_raiz).first();
+			desc_nivel = configuracao.tituloAcao + " : "
+					+ this.tituloAcao;
 		}
 		return desc_nivel;
 	}
 
 	@Override
 	public void setDescricao(String descricao) {
-		this.tituloServico = descricao;
+		this.tituloAcao = descricao;
 	}
 
-	public List<SrServico> getHistoricoServico() {
-		if (servicoInicial != null)
-			return servicoInicial.meuServicoHistoricoSet;
+	public List<SrAcao> getHistoricoAcao() {
+		if (acaoInicial != null)
+			return acaoInicial.meuAcaoHistoricoSet;
 		return null;
 	}
 
-	public SrServico getAtual() {
-		List<SrServico> sols = getHistoricoServico();
+	public SrAcao getAtual() {
+		List<SrAcao> sols = getHistoricoAcao();
 		if (sols == null)
 			return null;
 		return sols.get(0);
@@ -141,42 +141,30 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	@Override
-	public SrServico selecionar(String sigla) throws Exception {
+	public SrAcao selecionar(String sigla) throws Exception {
 		return selecionar(sigla, null, null, null);
 	}
 
-	public SrServico selecionar(String sigla, DpPessoa pess, CpComplexo local,
+	public SrAcao selecionar(String sigla, DpPessoa pess, CpComplexo local,
 			SrItemConfiguracao item) throws Exception {
 		setSigla(sigla);
-		List<SrServico> itens = buscar(pess, local, item);
+		List<SrAcao> itens = buscar(pess, local, item);
 		if (itens.size() == 0 || itens.size() > 1)
 			return null;
 		return itens.get(0);
 
 	}
 
-	public List<SrServico> buscarOld() {
-		String query = "from SrServico where 1=1";
-		if (tituloServico != null && !tituloServico.equals("")) {
-			for (String s : tituloServico.toLowerCase().split("\\s"))
-				query += " and lower(tituloServico) like '%" + s + "%'";
-		}
-		if (siglaServico != null && !siglaServico.equals(""))
-			query += " and siglaServico like '%" + siglaServico + "%' ";
-		query += " and hisDtFim is null";
-		return SrServico.find(query).fetch();
-	}
-
 	@Override
-	public List<SrServico> buscar() throws Exception {
+	public List<SrAcao> buscar() throws Exception {
 		return buscar(null, null, null);
 	}
 
-	public List<SrServico> buscar(DpPessoa pess, CpComplexo local,
+	public List<SrAcao> buscar(DpPessoa pess, CpComplexo local,
 			SrItemConfiguracao item) throws Exception {
 
-		List<SrServico> lista = new ArrayList<SrServico>();
-		List<SrServico> listaFinal = new ArrayList<SrServico>();
+		List<SrAcao> lista = new ArrayList<SrAcao>();
+		List<SrAcao> listaFinal = new ArrayList<SrAcao>();
 
 		if (pess == null)
 			lista = listar();
@@ -184,23 +172,23 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 			lista.addAll(listarComAtendentePorPessoaLocalEItem(pess, local,
 					item).keySet());
 
-		if ((siglaServico == null || siglaServico.equals(""))
-				&& (tituloServico == null || tituloServico.equals("")))
+		if ((siglaAcao == null || siglaAcao.equals(""))
+				&& (tituloAcao == null || tituloAcao.equals("")))
 			return lista;
 
-		for (SrServico servico : lista) {
-			if (siglaServico != null && !siglaServico.equals("")
-					&& !(servico.siglaServico.contains(getSigla())))
+		for (SrAcao acao : lista) {
+			if (siglaAcao != null && !siglaAcao.equals("")
+					&& !(acao.siglaAcao.contains(getSigla())))
 				continue;
-			if (tituloServico != null && !tituloServico.equals("")) {
+			if (tituloAcao != null && !tituloAcao.equals("")) {
 				boolean naoAtende = false;
-				for (String s : tituloServico.toLowerCase().split("\\s"))
-					if (!servico.tituloServico.toLowerCase().contains(s))
+				for (String s : tituloAcao.toLowerCase().split("\\s"))
+					if (!acao.tituloAcao.toLowerCase().contains(s))
 						naoAtende = true;
 				if (naoAtende)
 					continue;
 			}
-			listaFinal.add(servico);
+			listaFinal.add(acao);
 		}
 		return listaFinal;
 	}
@@ -208,8 +196,8 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	@Override
 	public void setSigla(String sigla) {
 		if (sigla == null) {
-			tituloServico = "";
-			siglaServico = "";
+			tituloAcao = "";
+			siglaAcao = "";
 		} else {
 			String padrao = "([0-9][0-9]).?([0-9][0-9])";
 			final Pattern p1 = Pattern.compile("^" + padrao);
@@ -220,9 +208,9 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 					s += m1.group(i);
 					s += (i < m1.groupCount()) ? "." : "";
 				}
-				siglaServico = s;
+				siglaAcao = s;
 			} else
-				tituloServico = sigla;
+				tituloAcao = sigla;
 		}
 	}
 
@@ -247,70 +235,70 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		return getSigla().substring(0, posFimComparacao + 1);
 	}
 
-	public boolean isPaiDeOuIgualA(SrServico outroServico) {
-		if (outroServico == null || outroServico.getSigla() == null)
+	public boolean isPaiDeOuIgualA(SrAcao outraAcao) {
+		if (outraAcao == null || outraAcao.getSigla() == null)
 			return false;
-		if (this.equals(outroServico))
+		if (this.equals(outraAcao))
 			return true;
 		int posFimComparacao = getSigla().indexOf(".00");
 		if (posFimComparacao < 0)
 			posFimComparacao = getSigla().length() - 1;
-		return outroServico.getSigla().startsWith(
+		return outraAcao.getSigla().startsWith(
 				getSigla().substring(0, posFimComparacao + 1));
 	}
 
-	public boolean isFilhoDeOuIgualA(SrServico outroItem) {
+	public boolean isFilhoDeOuIgualA(SrAcao outroItem) {
 		return outroItem.isPaiDeOuIgualA(this);
 	}
 
-	public List<SrServico> listarServicoETodosDescendentes() {
-		return SrServico.find("byHisDtFimIsNullAndSiglaServicoLike",
+	public List<SrAcao> listarAcaoETodasDescendentes() {
+		return SrAcao.find("byHisDtFimIsNullAndSiglaAcaoLike",
 				getSiglaSemZeros() + "%").fetch();
 	}
 
-	public static List<SrServico> listar() {
-		return SrServico.find("hisDtFim is null order by siglaServico").fetch();
+	public static List<SrAcao> listar() {
+		return SrAcao.find("hisDtFim is null order by siglaAcao").fetch();
 	}
 
-	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaLocalEItem(
+	public static Map<SrAcao, DpLotacao> listarComAtendentePorPessoaLocalEItem(
 			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
 			throws Exception {
-		Map<SrServico, DpLotacao> listaFinal = new HashMap<SrServico, DpLotacao>();
+		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess,
 				local, item, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.SERVICO });
+				new int[] { SrConfiguracaoBL.ACAO });
 		for (SrConfiguracao conf : confs) {
 			// Edson: o && !containsKey, abaixo, é necessário pra que atendentes
 			// de configurações mais genéricas não substituam os das mais
 			// específicas, que vêm antes
-			if (conf.servico == null) {
-				for (SrServico serv : listar())
-					if (serv.isEspecifico() && !listaFinal.containsKey(serv))
-						listaFinal.put(serv, conf.atendente);
+			if (conf.acao == null) {
+				for (SrAcao acao : listar())
+					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
+						listaFinal.put(acao, conf.atendente);
 				break;
 			} else
-				for (SrServico serv : conf.servico.getAtual()
-						.listarServicoETodosDescendentes())
-					if (serv.isEspecifico() && !listaFinal.containsKey(serv))
-						listaFinal.put(serv, conf.atendente);
+				for (SrAcao acao : conf.acao.getAtual()
+						.listarAcaoETodasDescendentes())
+					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
+						listaFinal.put(acao, conf.atendente);
 		}
 
 		return listaFinal;
 	}
 
-	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaLocalEItemOrdemSigla(
+	public static Map<SrAcao, DpLotacao> listarComAtendentePorPessoaLocalEItemOrdemSigla(
 			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
 			throws Exception {
-		Map<SrServico, DpLotacao> m = new TreeMap<SrServico, DpLotacao>(
-				new Comparator<SrServico>() {
+		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
+				new Comparator<SrAcao>() {
 					@Override
-					public int compare(SrServico o1, SrServico o2) {
+					public int compare(SrAcao o1, SrAcao o2) {
 						if (o1 != null && o2 != null
-								&& o1.idServico == o2.idServico)
+								&& o1.idAcao == o2.idAcao)
 							return 0;
-						return o1.siglaServico.compareTo(o2.siglaServico);
+						return o1.siglaAcao.compareTo(o2.siglaAcao);
 					}
 				});
 
@@ -318,17 +306,17 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 		return m;
 	}
 
-	public static Map<SrServico, DpLotacao> listarComAtendentePorPessoaLocalEItemOrdemTitulo(
+	public static Map<SrAcao, DpLotacao> listarComAtendentePorPessoaLocalEItemOrdemTitulo(
 			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
 			throws Exception {
-		Map<SrServico, DpLotacao> m = new TreeMap<SrServico, DpLotacao>(
-				new Comparator<SrServico>() {
+		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
+				new Comparator<SrAcao>() {
 					@Override
-					public int compare(SrServico o1, SrServico o2) {
-						int i = o1.tituloServico.compareTo(o2.tituloServico);
+					public int compare(SrAcao o1, SrAcao o2) {
+						int i = o1.tituloAcao.compareTo(o2.tituloAcao);
 						if (i != 0)
 							return i;
-						return o1.idServico.compareTo(o2.idServico);
+						return o1.idAcao.compareTo(o2.idAcao);
 					}
 				});
 
@@ -337,21 +325,21 @@ public class SrServico extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public String getGcTags() {
-		String sigla = this.siglaServico;
+		String sigla = this.siglaAcao;
 
 		int nivel = this.getNivel();
 		String tags = "";
 		if (nivel == 1) {
-			tags = "&tags=@" + Texto.slugify(this.tituloServico, true, false);
+			tags = "&tags=@" + Texto.slugify(this.tituloAcao, true, false);
 		}
 		if (nivel == 2) {
 			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrServico configuracao = SrServico.find("bySiglaServico",
+			SrAcao configuracao = SrAcao.find("bySiglaAcao",
 					sigla_raiz).first();
 			tags = "&tags=@"
-					+ Texto.slugify(configuracao.tituloServico, true, false)
+					+ Texto.slugify(configuracao.tituloAcao, true, false)
 					+ "&tags=@"
-					+ Texto.slugify(this.tituloServico, true, false);
+					+ Texto.slugify(this.tituloAcao, true, false);
 		}
 		return tags;
 	}

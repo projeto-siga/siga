@@ -7,7 +7,7 @@
 		#{links acoes:solicitacao.operacoes(lotaTitular, titular, completo), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-			${solicitacao.itemConfiguracao?.descricao} - ${solicitacao.servico?.descricao}
+			${solicitacao.itemConfiguracao?.descricao} - ${solicitacao.acao?.descricao}
 			</p>
 			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descrSolicitacao}</p>
 			<script language="javascript">
@@ -166,7 +166,7 @@
 			</p>
 			<p>
 			<b>Ação:</b>
-			${solicitacao.servico?.siglaServico} - ${solicitacao.servico?.descricaoCompleta}
+			${solicitacao.acao?.siglaAcao} - ${solicitacao.acao?.descricaoCompleta}
 			</p>
 			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
 						#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /} #{/elseif}

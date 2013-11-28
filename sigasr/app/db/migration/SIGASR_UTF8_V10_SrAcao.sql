@@ -1,0 +1,10 @@
+
+alter table rename SIGASR.SR_SERVICO to SIGASR.SR_ACAO;
+alter sequence rename SIGASR.SR_SERVICO_SEQ to SIGASR.SR_ACAO_SEQ;
+alter table SIGASR.SR_ACAO rename ID_SERVICO to ID_ACAO;
+alter table SIGASR.SR_ACAO rename SIGLA_SERVICO to SIGLA_ACAO;
+alter table SIGASR.SR_ACAO rename DESCR_SERVICO to DESCR_ACAO;
+alter table SIGASR.SR_ACAO rename TITULO_SERVICO to TITULO_ACAO;
+
+alter table SIGASR.SR_SOLICITACAO rename ID_SERVICO to ID_ACAO;
+alter table SIGASR.SR_CONFIGURACAO rename ID_SERVICO to ID_ACAO;

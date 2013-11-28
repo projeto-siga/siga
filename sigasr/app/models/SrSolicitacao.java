@@ -111,8 +111,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrArquivo arquivo;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_SERVICO")
-	public SrServico servico;
+	@JoinColumn(name = "ID_ACAO")
+	public SrAcao acao;
 
 	@Lob
 	@Column(name = "DESCR_SOLICITACAO", length = 8192)
@@ -177,32 +177,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public SrSolicitacao() {
 
-	}
-
-	public SrSolicitacao(DpPessoa solicitante, DpLotacao lotaSolicitante,
-			DpPessoa cadastrante, DpLotacao lotaCadastrante,
-			SrSolicitacao solcitacaoPai,
-			SrFormaAcompanhamento formaAcompanhamento,
-			SrItemConfiguracao itemConfiguracao, SrServico servico,
-			SrGravidade gravidade, SrUrgencia urgencia, SrTendencia tendencia,
-			String dscrSolcitacao, CpComplexo local, String telPrincipal,
-			String motivoFechamentoAbertura) {
-		super();
-		this.solicitante = solicitante;
-		this.lotaSolicitante = lotaSolicitante;
-		this.cadastrante = cadastrante;
-		this.lotaCadastrante = lotaCadastrante;
-		this.solicitacaoPai = solcitacaoPai;
-		this.formaAcompanhamento = formaAcompanhamento;
-		this.itemConfiguracao = itemConfiguracao;
-		this.servico = servico;
-		this.urgencia = urgencia;
-		this.tendencia = tendencia;
-		this.gravidade = gravidade;
-		this.descrSolicitacao = dscrSolcitacao;
-		this.local = local;
-		this.telPrincipal = telPrincipal;
-		this.motivoFechamentoAbertura = motivoFechamentoAbertura;
 	}
 
 	@Override
@@ -519,7 +493,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return null;
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, servico,
+				local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
 		if (conf != null)
@@ -531,7 +505,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return null;
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, servico,
+				local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
 		if (conf != null)
@@ -555,7 +529,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
 		for (SrConfiguracao conf : SrConfiguracao.getConfiguracoes(solicitante,
-				local, itemConfiguracao, servico,
+				local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
 				null)) {
 			SrTipoAtributo tipo = conf.tipoAtributo.getAtual();
@@ -573,7 +547,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return null;
 
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, servico,
+				local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
 		if (conf != null)
@@ -585,7 +559,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return false;
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, servico,
+				local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO);
 		if (conf != null)
@@ -598,7 +572,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return null;
 
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, servico,
+				local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE);
 		if (conf != null)
@@ -1089,7 +1063,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throw new Exception(
 					"Não foi encontrado nenhum atendente designado "
 							+ "para esta solicitação. Sugestão: alterar item de "
-							+ "configuração e/ou serviço");
+							+ "configuração e/ou ação");
 	}
 
 	public void desfazerUltimaMovimentacao(DpPessoa cadastrante,
@@ -1623,8 +1597,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public String getGcTags() {
 		String s = "tags=@servico";
-		if (servico != null)
-			s += servico.getGcTags();
+		if (acao != null)
+			s += acao.getGcTags();
 		if (itemConfiguracao != null)
 			s += itemConfiguracao.getGcTags();
 		return s;
@@ -1632,8 +1606,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public String getGcTagAbertura() {
 		String s = "^sr:";
-		if (servico != null)
-			s += Texto.slugify(servico.tituloServico, true, false);
+		if (acao != null)
+			s += Texto.slugify(acao.tituloAcao, true, false);
 		if (itemConfiguracao != null)
 			s += "-"
 					+ Texto.slugify(itemConfiguracao.tituloItemConfiguracao,
@@ -1643,8 +1617,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public String getGcTituloAbertura() {
 		String s = "";
-		if (servico != null)
-			s += servico.tituloServico;
+		if (acao != null)
+			s += acao.tituloAcao;
 		if (itemConfiguracao != null)
 			s += " - " + itemConfiguracao.tituloItemConfiguracao;
 		return s;

@@ -33,17 +33,17 @@ public class SrConfiguracaoComparator extends CpConfiguracaoComparator {
 				}
 			}
 
-			if (srC1.servico == null) {
-				if (srC2.servico != null)
+			if (srC1.acao == null) {
+				if (srC2.acao != null)
 					return 1;
 			} else {
-				if (srC2.servico == null)
+				if (srC2.acao == null)
 					return -1;
 				else {
-					if (srC1.servico.getNivel() < srC2.servico
+					if (srC1.acao.getNivel() < srC2.acao
 							.getNivel())
 						return 1;
-					if (srC1.servico.getNivel() > srC2.servico
+					if (srC1.acao.getNivel() > srC2.acao
 							.getNivel())
 						return -1;
 				}

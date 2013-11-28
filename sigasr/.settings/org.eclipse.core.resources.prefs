@@ -1,32 +1,32 @@
-#Tue Nov 12 10:27:13 BRST 2013
+#Thu Nov 28 10:13:12 BRST 2013
 eclipse.preferences.version=1
 encoding//app/controllers/Application.java=UTF-8
 encoding//app/controllers/Bootstrap.java=UTF-8
 encoding//app/models/SrSolicitacao.java=UTF-8
 encoding//app/reports/SrRelTransferencias.java=UTF-8
 encoding//app/views/Application/associarLista.html=UTF-8
+encoding//app/views/Application/buscarAcao.html=UTF-8
 encoding//app/views/Application/buscarItem.html=UTF-8
-encoding//app/views/Application/buscarServico.html=UTF-8
 encoding//app/views/Application/desassociarLista.html=UTF-8
 encoding//app/views/Application/editar.html=UTF-8
+encoding//app/views/Application/editarAcao.html=UTF-8
 encoding//app/views/Application/editarAssociacao.html=UTF-8
 encoding//app/views/Application/editarDesignacao.html=UTF-8
 encoding//app/views/Application/editarItem.html=UTF-8
 encoding//app/views/Application/editarLista.html=UTF-8
-encoding//app/views/Application/editarServico.html=UTF-8
 encoding//app/views/Application/editarTipoAtributo.html=UTF-8
 encoding//app/views/Application/estatistica.html=UTF-8
 encoding//app/views/Application/exibir.html=UTF-8
+encoding//app/views/Application/exibirAcao.html=UTF-8
 encoding//app/views/Application/exibirLista.html=UTF-8
 encoding//app/views/Application/exibirListaAssoc.html=UTF-8
-encoding//app/views/Application/exibirServico.html=UTF-8
 encoding//app/views/Application/gadget.html=UTF-8
 encoding//app/views/Application/listar.html=UTF-8
+encoding//app/views/Application/listarAcao.html=UTF-8
 encoding//app/views/Application/listarAssociacao.html=UTF-8
 encoding//app/views/Application/listarDesignacao.html=UTF-8
 encoding//app/views/Application/listarItem.html=UTF-8
 encoding//app/views/Application/listarLista.html=UTF-8
-encoding//app/views/Application/listarServico.html=UTF-8
 encoding//app/views/Application/listarTipoAtributo.html=UTF-8
 encoding//app/views/Application/menu.html=UTF-8
 encoding//app/views/Application/relLocal.html=UTF-8

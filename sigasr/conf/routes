@@ -35,13 +35,13 @@ GET     /public/                                staticDir:public
 *		/associacao/gravar					Application.gravarAssociacao
 *		/associacao/listar					Application.listarAssociacao
 
-*		/servico/editar/{id}				Application.editarServico
-*		/servico/editar						Application.editarServico
-*		/servico/gravar						Application.gravarServico
-*		/servico/listar						Application.listarServico
-*		/servico/selecionar					Application.selecionarServico
-*		/servico/buscar						Application.buscarServico
-*		/servico/desativar/{id}				Application.desativarServico	
+*		/acao/editar/{id}				Application.editarAcao
+*		/acao/editar						Application.editarAcao
+*		/acao/gravar						Application.gravarAcao
+*		/acao/listar						Application.listarAcao
+*		/acao/selecionar					Application.selecionarAcao
+*		/acao/buscar						Application.buscarAcao
+*		/acao/desativar/{id}				Application.desativarAcao	
 
 *		/solicitacao/desfazer_ultimo/{id}				Application.desfazerUltimaMovimentacao
 *		/solicitacao/filha/{id}							Application.criarFilha

@@ -11,6 +11,8 @@
         <groupId>projeto-siga</groupId>
         <artifactId>siga-play-module</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+
+
         <dependencies>
                 <dependency>
                         <groupId>javax.activation</groupId>
@@ -234,6 +236,7 @@
     </plugins>
   </build>
          <properties>
+                 <play.version>1.2.4</play.version>
                 <playHome>C:\Desenvolvimento\play-1.2.4</playHome>
         </properties>
 </project>

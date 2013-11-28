@@ -484,7 +484,6 @@ public class Application extends SigaApplication {
 		}
 
 		String gut = sbGUT.toString();
-
 		render(lista, evolucao, top10);
 	}
 

@@ -240,27 +240,16 @@ public class GeradorRTF {
 		
 		for (String tag : tags) {
 			if(html.contains(tag)) {
-				
 				while (html.contains(tag)) {
 					int indiceInicial = html.indexOf(tag);
 					int indiceEncerramento = html.indexOf(">", indiceInicial);
+					
+					String textoParaRemover = html.substring(indiceInicial, indiceEncerramento + 1);
+					
+					html = html.replaceAll(textoParaRemover, "");
 				}
-				
 			}
 		}
-		
-		
-		html = html.replaceAll("<table>", "");
-		html = html.replaceAll("</table>", "");
-		html = html.replaceAll("<tr>", "");
-		html = html.replaceAll("</tr>", "");
-		html = html.replaceAll("<td>", "");
-		html = html.replaceAll("</td>", "");
-		html = html.replaceAll("<th>", "");
-		html = html.replaceAll("</th>", "");
-		html = html.replaceAll("<tbody>", "");
-		html = html.replaceAll("</tbody>", "");
-		html = html.replaceAll("<td style=\"font-size:9pt;\">", "");
 		
 		return html;
 	}

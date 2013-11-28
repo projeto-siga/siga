@@ -6,6 +6,60 @@ var gAssinatura;
 var gAtributoAssinavelDataHora
 var gSigner;
 
+var gCopia;
+var gNome;
+var gUrlDocumento;
+var process = {
+	    steps: [],
+	    index: 0,
+	    reset: function() {
+	    	this.steps=[]; this.index = 0; 
+		    },
+	    push: function(x) {
+		    this.steps.push(x);
+		    },
+		run: function() {
+			this.dialogo = $('<div id="dialog-ad" title="Assinatura Digital"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>').dialog({
+				       title: "Assinatura Digital",
+				       width: '50%',
+				       height: 'auto',
+				       resizable: false,
+				       autoOpen: true,
+				       position: { my: "center top+25%", at: "center top", of: window },
+				       modal: true,
+				       closeText: "hide" 
+			       });
+		    this.progressbar = $('#progressbar-ad').progressbar();
+		    this.nextStep();
+			},
+		finalize: function() {
+			this.dialogo.dialog('destroy');
+			},
+	    nextStep: function(){
+		    if (typeof this.steps[this.index] == 'string')
+			    eval(this.steps[this.index++]);
+		    else {
+		        var ret = this.steps[this.index++]();
+		        if ((typeof ret == 'string') && ret != "OK") {
+			        this.finalize();
+		           	alert(ret, 0, "Não foi possível completar a operação");
+		     		return;
+		        }
+		    }
+
+		    this.progressbar.progressbar("value", 100 * (this.index / this.steps.length));
+	        
+	        if (this.index != this.steps.length) {
+	            var me = this;
+	            window.setTimeout(function(){
+	                me.nextStep();
+	            }, 100);
+	        } else {
+		        this.finalize();
+		    }
+	    }
+	};
+
 function assinar(){
  var Assinatura;
  var Configuracao;
@@ -81,38 +135,24 @@ function AssinarDocumento(conteudo){
 	return ret;
 }
 
-var intID //a global variable;
 function AssinarDocumentos(Copia, oElm){
 	TestCAPICOM();
-	if(InicializarCapicom() != "OK"){
-		alert("Erro na inicializacao da CAPICOM.", 0, "Não foi possível completar a operação");
-		return;
-	}
+	process.reset();
 
-	var Id, Caption;
-	if (typeof oElm != 'undefined') {
-		Id = oElm.id;
-		Caption = oElm.innerHTML;
-		oElm.innerHTML = "Aguarde..." ;
-		//alert(oElm.id);
-    }
-	intID = window.setInterval(function(){AssinarDocumentosAgora(Copia, Id, Caption);}, 1000) ;
-}
-
-function AssinarDocumentosAgora(Copia, Id, Caption){
-    window.clearInterval(intID);
-   	oElm = document.getElementById(Id);
-    oElm.innerHTML = Caption;
+//   	oElm = document.getElementById(Id);
+//    oElm.innerHTML = Caption;
     if(Copia == "true"){
   		Copia = "true";
 		// alert("Iniciando conferência")
-     	Log("Iniciando conferência");
+     	process.push(function(){Log("Iniciando conferência")});
  	}else{
   		Copia = "false";
 		// alert("Iniciando assinatura")
-     	Log("Iniciando assinatura");
+     	process.push(function(){Log("Iniciando assinatura")});
     }
 
+	process.push(InicializarCapicom);
+    
     var oUrlPost, oNextUrl, oUrlBase, oUrlPath, oNome, oUrl, oChk;
 
 	oUrlPost = document.getElementById("jspserver");
@@ -159,54 +199,40 @@ function AssinarDocumentosAgora(Copia, Id, Caption){
 		        b = oChk.Checked;
 		    } 
 		
+      		process.push("Copia=" + Copia + ";");
 		    if(b){
-		        var urlDocumento, Documento;
-				var certParam
+				process.push("gNome='" + oNome.value + "'; gUrlDocumento = '" + oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1'; if (typeof gCertificadoB64 != 'undefined'){gUrlDocumento = gUrlDocumento + '&certificadoB64=' + encodeURIComponent(gCertificadoB64);};");
+	      		process.push(function(){Log(gNome + ": Buscando no servidor...")});
+	      		process.push(function(){gDocumento = Conteudo(gUrlDocumento)});
 	
-				urlDocumento = oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1";
-	      		if (typeof gCertificadoB64 != 'undefined'){
-	          		certParam = "certificadoB64=" + encodeURIComponent(gCertificadoB64);
-	                urlDocumento = urlDocumento + "&" + certParam;
-	            }
-	
-	            Documento = Conteudo(urlDocumento);
-	            //alert(Documento);
-	            Log("Documento: " + oNome.value);
-	
-	            var ret, DadosDoPost;
-	            ret = AssinarDocumento(Documento);
-	            Log("Documento: " + oNome.value + ", Assinante: " + ret.assinante);
-	
-	            DadosDoPost = "sigla=" + encodeURIComponent(oNome.value) + "&copia=" + Copia + "&assinaturaB64=" + encodeURIComponent(ret.assinaturaB64) + "&assinante=" + encodeURIComponent(ret.assinante);
-	            if (typeof gCertificadoB64 != 'undefined'){
-	                 DadosDoPost = DadosDoPost + "&" + certParam;
-	                 DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora=" + gAtributoAssinavelDataHora;
-	            }
-	
-				//alert("oNome: " + oNome.value);
-				var aNome = oNome.value.split(":");
-				if(aNome.length == 1){
-					//alert("id: " + aNome(1));
-					DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
-				}
+	            var ret;
+	      		process.push(function(){Log(gNome + ": Assinando...")});
+	            process.push(function(){gRet = AssinarDocumento(gDocumento)});
+	      		process.push(function(){Log(gNome + ": Gravando assinatura de " + gRet.assinante)});
+	      		
+	            process.push(function(){
+		            var DadosDoPost = "sigla=" + encodeURIComponent(oNome.value) + "&copia=" + Copia + "&assinaturaB64=" + encodeURIComponent(gRet.assinaturaB64) + "&assinante=" + encodeURIComponent(gRet.assinante);
+		            if (typeof gCertificadoB64 != 'undefined'){
+		                 DadosDoPost = DadosDoPost + "&certificadoB64=" + encodeURIComponent(gCertificadoB64);
+		                 DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora=" + gAtributoAssinavelDataHora;
+		            }
 		
-				Log("Documento: " + oNome.value + ", Gravando...");
-		        Status = GravarAssinatura(oUrlPost.value, DadosDoPost);
-		        if (Status == "OK") {
-		             Log("Documento: " + oNome.value + ", OK, Gravado!");
-		        } else {
-		        	alert(Status, 0, "Não foi possível completar a operação");
-	     			return;
-	            }
+					//alert("oNome: " + oNome.value);
+					var aNome = oNome.value.split(":");
+					if(aNome.length == 1){
+						//alert("id: " + aNome(1));
+						DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
+					}
+			
+			        Status = GravarAssinatura(oUrlPost.value, DadosDoPost);
+			        return Status;
+	    		});
 		    }
        	}
 	}
-
-	if(Status == "OK"){
-  		//alert("Redirecionando para " + oUrlNext.value);
-        Log("Concluído, redirecionando...");
-  		location.href = oUrlNext.value;
-    }
+    process.push(function(){Log("Concluído, redirecionando...");});
+    process.push(function(){location.href = oUrlNext.value;});
+	process.run();
 }
 
 function Conteudo(url){
@@ -223,7 +249,6 @@ function Conteudo(url){
 }
 
 function GravarAssinatura(url, datatosend) {
-	//alert("Enviando: " + url);
 	objHTTP = new ActiveXObject("MSXML2.XMLHTTP");
 	objHTTP.Open("POST", url, false);
 	objHTTP.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -276,34 +301,5 @@ function TestCAPICOM() {
 	}
 }
 
-var process = {
-	    steps: [
-	        function(){
-	            // step 1
-	            // display gif
-	        },
-	        function(){
-	            // step 2
-	        },
-	        function(){
-	            // step 3
-	        },
-	        function(){
-	            // step 4
-	            // hide gif
-	        }
-	    ],
-	    index: 0,
-	    nextStep: function(){
-	        this.steps[this.index++]();
-	        if (this.index != this.steps.length) {
-	            var me = this;
-	            window.setTimeout(function(){
-	                me.nextStep();
-	            }, 0);
-	        }
-	    }
-	};
 
-	process.nextStep();
 </script>

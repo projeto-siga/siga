@@ -77,6 +77,7 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 					eeh(),
 					null,
 					null,
+					null,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
 					new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO,
@@ -216,8 +217,8 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 	@Test
 	public void listarItemEServicoSemHaverDesignTrazVazio() throws Exception {
 		prepararSessao();
-		assertEquals(0, SrItemConfiguracao.listarPorPessoa(eeh()).size());
-		assertEquals(0, SrServico.listarComAtendentePorPessoaEItem(eeh(), null).size());
+		assertEquals(0, SrItemConfiguracao.listarPorPessoaELocal(eeh(), null).size());
+		assertEquals(0, SrServico.listarComAtendentePorPessoaLocalEItem(eeh(), null, null).size());
 	}
 
 	@Test
@@ -231,7 +232,7 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 		designTRF.salvarComoDesignacao();
 		apagaCacheDesignacao();
 
-		assertEquals(0, SrItemConfiguracao.listarPorPessoa(eeh()).size());
+		assertEquals(0, SrItemConfiguracao.listarPorPessoaELocal(eeh(), null).size());
 
 	}
 
@@ -244,7 +245,7 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 		apagaCacheDesignacao();
 
 		List<SrItemConfiguracao> itens = SrItemConfiguracao
-				.listarPorPessoa(eeh());
+				.listarPorPessoaELocal(eeh(), null);
 		assertEquals(5, itens.size());
 	}
 
@@ -261,7 +262,7 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 		apagaCacheDesignacao();
 
 		List<SrItemConfiguracao> itens = SrItemConfiguracao
-				.listarPorPessoa(eeh());
+				.listarPorPessoaELocal(eeh(), null);
 
 		// Edson: 99.00.00, 99.01.00, 99.01.01, 99.01.02
 		assertEquals(4, itens.size());
@@ -273,14 +274,14 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 			throws Exception {
 		// Edson: Traz 99.01, 99.02. Apesar de não haver designação diretamente
 		// pro SigaDoc, há para sysDoc
-		assertEquals(2, SrServico.listarComAtendentePorPessoaEItem(eeh(), sigaDoc()).size());
+		assertEquals(2, SrServico.listarComAtendentePorPessoaLocalEItem(eeh(), null, sigaDoc()).size());
 	}
 
 	@Test
 	public void listarServicoPorItemNaoHavendoDesignProItemTrazVazio()
 			throws Exception {
 		//Edson: vazio porque não há designação pro sysTrab
-		assertEquals(0, SrServico.listarComAtendentePorPessoaEItem(eeh(), sysTrab()).size());
+		assertEquals(0, SrServico.listarComAtendentePorPessoaLocalEItem(eeh(), null, sysTrab()).size());
 	}
 	
 	@Test

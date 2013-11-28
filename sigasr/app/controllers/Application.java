@@ -591,12 +591,14 @@ public class Application extends SigaApplication {
 
 	public static void responderPesquisa(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
+		//Implementar
 		render(sol);
 	}
 
 	public static void responderPesquisaGravar(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.avaliar(lotaTitular(), cadastrante());
+		sol.responderPesquisa(lotaTitular(), cadastrante());
+		exibir(id, completo());
 	}
 
 	public static void retornarAoAtendimento(Long id) throws Exception {
@@ -607,13 +609,8 @@ public class Application extends SigaApplication {
 
 	public static void cancelar(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
-		movimentacao.salvar(cadastrante(), lotaTitular());
-
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		sol.cancelar(lotaTitular(), cadastrante());
+		exibir(id, completo());
 	}
 
 	public static void finalizarPreAtendimento(Long id) throws Exception {
@@ -630,34 +627,20 @@ public class Application extends SigaApplication {
 
 	public static void deixarPendente(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
-		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		sol.deixarPendente(lotaTitular(), cadastrante());
+		exibir(id, completo());
 	}
 
 	public static void terminarPendencia(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
-		movimentacao.salvar(cadastrante(), lotaTitular());
-
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		sol.terminarPendencia(lotaTitular(), cadastrante());
+		exibir(id, completo());
 	}
 
 	public static void reabrir(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-
-		SrMovimentacao movimentacao = new SrMovimentacao(sol);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
-		// checar lotação do pré-atendimento
-		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		sol.reabrir(lotaTitular(), cadastrante());
+		exibir(id, completo());
 	}
 
 	public static void desfazerUltimaMovimentacao(Long id) throws Exception {

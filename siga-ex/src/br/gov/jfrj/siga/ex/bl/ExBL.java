@@ -5307,14 +5307,14 @@ public class ExBL extends CpBL {
 	public void incluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
 		
-		if(doc.getCosignatarios() != null && !doc.getCosignatarios().isEmpty())
-			excluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
+		final List<DpPessoa> cosignatariosDaEntrevista = obterCosignatariosDaEntrevista(doc.getForm());
 		
-		final List<DpPessoa> cosignatarios = obterCosignatariosDaEntrevista(doc.getForm());
-		
-		if(cosignatarios != null) {
+		if(cosignatariosDaEntrevista != null && !cosignatariosDaEntrevista.isEmpty()) {
 			
-			for (DpPessoa cosignatario : cosignatarios) {
+			if(doc.getCosignatarios() != null && !doc.getCosignatarios().isEmpty())
+				excluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
+			
+			for (DpPessoa cosignatario : cosignatariosDaEntrevista) {
 				
 				incluirCosignatario(cadastrante, lotaCadastrante, doc, null, cosignatario, null);
 			}

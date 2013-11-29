@@ -606,7 +606,12 @@ public class Application extends SigaApplication {
 		sol.retornarAoAtendimento(lotaTitular(), cadastrante());
 		exibir(id, completo());
 	}
-
+	
+	public static void termoAtendimento(Long id) throws Exception {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		render(solicitacao);
+	}
+	
 	public static void cancelar(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.cancelar(lotaTitular(), cadastrante());
@@ -913,7 +918,6 @@ public class Application extends SigaApplication {
 	public static void relTransferencias(SrSolicitacao solicitacao)
 			throws Exception {
 		assertAcesso("REL:Relatorio");
-
 		render();
 	}
 

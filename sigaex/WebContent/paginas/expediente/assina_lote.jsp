@@ -8,7 +8,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Assinatura em Lote" onLoad="vbscript: TestCAPICOM">
+<siga:pagina titulo="Assinatura em Lote" onLoad="javascript: TestCAPICOM()">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
@@ -69,7 +69,7 @@
 				</div>			
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/paginas/expediente/inc_assina_vbs.jsp" />
+					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 					<!--[if IE]>
 						<div id="capicom-div">
 							<a id="bot-assinar" href="#" onclick="vbscript: AssinarDocumentos 'false', Me" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>

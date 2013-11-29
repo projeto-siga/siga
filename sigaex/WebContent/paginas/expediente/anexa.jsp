@@ -9,14 +9,14 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 
-<siga:pagina titulo="Movimentação" onLoad="vbscript: TestCAPICOM">
+<siga:pagina titulo="Movimentação" onLoad="javascript: TestCAPICOM();">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
 </c:if>
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-		<c:import url="/paginas/expediente/inc_assina_vbs.jsp" />
+		<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 	</c:if>
 
 	<script type="text/javascript" language="Javascript1.1">

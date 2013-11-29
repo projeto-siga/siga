@@ -1311,6 +1311,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
+		Date dt = mov.getDtMov();
+		
+		byte[] certificado = Base64.decode(getCertificadoB64());
+		if (certificado != null && certificado.length != 0)
+			dt = new Date(Long.valueOf(getAtributoAssinavelDataHora()));
+		else
+			certificado = null;
 
 		// String sArquivoPolitica = getRequest().getRealPath("") +
 		// File.separator
@@ -1324,7 +1331,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			Ex.getInstance()
 					.getBL()
 					.assinarMovimentacao(getCadastrante(), getLotaTitular(),
-							mov, assinatura, tpMovAssinatura);
+							mov, dt, assinatura, certificado, tpMovAssinatura);
 		} catch (final Exception e) {
 			if (fApplet) {
 				getRequest().setAttribute("err", e.getMessage());

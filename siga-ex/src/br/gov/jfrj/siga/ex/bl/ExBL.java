@@ -1481,7 +1481,7 @@ public class ExBL extends CpBL {
 
 	public void assinarMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
-			final byte[] pkcs7, long tpMovAssinatura) throws AplicacaoException {
+			final Date dtMov, final byte[] pkcs7, final byte[] certificado, long tpMovAssinatura) throws AplicacaoException {
 
 		if (movAlvo != null) {
 			log.info("Assinando movimentacao: " + movAlvo.toString()
@@ -1509,14 +1509,16 @@ public class ExBL extends CpBL {
 
 			String s;
 
-			// s = client.validarAssinatura(pkcs7, data, dao().dt(),
-			// VALIDAR_LCR);
-			// Service.throwExceptionIfError(s);
-			//
-			// if (BUSCAR_CARIMBO_DE_TEMPO) {
-			cms = client.validarECompletarAssinatura(pkcs7, data, true,
-
-			dao().dt());
+			if (certificado != null) {
+				cms = client.validarECompletarPacoteAssinavel(certificado, data, pkcs7, true, (dtMov != null) ? dtMov : dao().consultarDataEHoraDoServidor());
+			} else {
+				// s = client.validarAssinatura(pkcs7, data, dao().dt(),
+				// VALIDAR_LCR);
+				// Service.throwExceptionIfError(s);
+				//
+				// if (BUSCAR_CARIMBO_DE_TEMPO) {
+				cms = client.validarECompletarAssinatura(pkcs7, data, true, dtMov);
+			}
 
 			sNome = client
 					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);

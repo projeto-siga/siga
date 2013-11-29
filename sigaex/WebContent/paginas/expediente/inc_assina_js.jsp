@@ -19,6 +19,7 @@ var process = {
 		    this.steps.push(x);
 		    },
 		run: function() {
+			window.scrollTo(0, 0);
 			this.dialogo = $('<div id="dialog-ad" title="Assinatura Digital"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>').dialog({
 				       title: "Assinatura Digital",
 				       width: '50%',
@@ -196,7 +197,7 @@ function AssinarDocumentos(Copia, oElm){
 		    if(oChk == null){
 		        b = true;
 		    }else{
-		        b = oChk.Checked;
+		        b = oChk.checked;
 		    } 
 		
       		process.push("Copia=" + Copia + ";");
@@ -211,15 +212,15 @@ function AssinarDocumentos(Copia, oElm){
 	      		process.push(function(){Log(gNome + ": Gravando assinatura de " + gRet.assinante)});
 	      		
 	            process.push(function(){
-		            var DadosDoPost = "sigla=" + encodeURIComponent(oNome.value) + "&copia=" + Copia + "&assinaturaB64=" + encodeURIComponent(gRet.assinaturaB64) + "&assinante=" + encodeURIComponent(gRet.assinante);
+		            var DadosDoPost = "sigla=" + encodeURIComponent(gNome) + "&copia=" + Copia + "&assinaturaB64=" + encodeURIComponent(gRet.assinaturaB64) + "&assinante=" + encodeURIComponent(gRet.assinante);
 		            if (typeof gCertificadoB64 != 'undefined'){
 		                 DadosDoPost = DadosDoPost + "&certificadoB64=" + encodeURIComponent(gCertificadoB64);
 		                 DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora=" + gAtributoAssinavelDataHora;
 		            }
 		
 					//alert("oNome: " + oNome.value);
-					var aNome = oNome.value.split(":");
-					if(aNome.length == 1){
+					var aNome = gNome.split(":");
+					if(aNome.length == 2){
 						//alert("id: " + aNome(1));
 						DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
 					}
@@ -254,7 +255,6 @@ function GravarAssinatura(url, datatosend) {
 	objHTTP.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	objHTTP.send(datatosend); 
 	
-	GravarAssinatura = "Erro inespecífico.";
 	if(objHTTP.Status == 200){
 		var Conteudo, Inicio, Fim, Texto;
 		//alert("OK, enviado");

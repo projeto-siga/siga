@@ -146,8 +146,12 @@
 
 						<tr>
 							<td>Autor:</td>
-							<td>#{pessoaLotaSelecao nomeSelPessoa:'autor',
-								nomeSelLotacao:'lotaAutor', value:informacao?.autor /}</td>
+							*{<td>#{pessoaLotaSelecao nomeSelPessoa:'autor',
+								nomeSelLotacao:'lotaAutor', value:informacao?.autor /}</td>}*
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.autor',
+								nomeSelLotacao:'filtro.lotacao',
+								valuePessoa:filtro.autor,
+								valueLotacao:filtro.lotacao /}</td>
 						</tr>
 						<tr>
 							<td>Cadastrante:</td>

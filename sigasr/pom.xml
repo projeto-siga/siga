@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <parent>
-        <artifactId>projeto-siga</artifactId>
-        <groupId>projeto-siga</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>com.google.code.maven-play-plugin</groupId>
+        <artifactId>play-app-default-parent</artifactId>
+        <version>1.0.0-beta6</version>
     </parent>
 
         <modelVersion>4.0.0</modelVersion>
@@ -12,21 +13,24 @@
         <artifactId>sigasr</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <packaging>play</packaging>
-        <dependencies>
+
+<dependencies>        
 
                  <!-- Especifico do sigasr (extrair depois)-->
                 <dependency>
-                    <groupId>projeto-siga</groupId>
+                    <groupId>${project.groupId}</groupId>
                     <artifactId>siga-play-module</artifactId>
-                    <version>0.0.1-SNAPSHOT</version>
+                    <version>${project.version}</version>
                  </dependency>
                  <dependency>
-                    <groupId>projeto-siga</groupId>
+                    <groupId>${project.groupId}</groupId>
                     <artifactId>siga-rel</artifactId>
+                    <version>${project.version}</version>
                  </dependency>
                  <dependency>
-                    <groupId>projeto-siga</groupId>
+                    <groupId>${project.groupId}</groupId>
                     <artifactId>siga-cp</artifactId>
+                    <version>${project.version}</version>
                  </dependency>
 
 
@@ -42,41 +46,65 @@
                  </dependency>
 
 
-                 <dependency>
+                  <dependency>
                     <groupId>de.jollyday</groupId>
                     <artifactId>jollyday</artifactId>
                     <version>0.4.7</version>
-                </dependency>
+                  </dependency>
 
-                    <dependency>
-                        <groupId>ar.com.fdvs</groupId>
-                        <artifactId>DynamicJasper</artifactId>
-                    </dependency>
+                  <dependency>
+                      <groupId>ar.com.fdvs</groupId>
+                      <artifactId>DynamicJasper</artifactId>
+                      <version>3.0.6</version>
+                  </dependency>
             
+                  <dependency>
+                    <groupId>org.jboss.javaee</groupId>
+                    <artifactId>jboss-servlet-api</artifactId>
+                    <version>2.5.0.GA</version>
+                    <scope>provided</scope>
+                  </dependency>
+            
+                  <dependency>
+                      <groupId>com.oracle</groupId>
+                      <artifactId>ojdbc6</artifactId>
+                      <version>11.2.0.3.0</version>
+                      <scope>runtime</scope>
+                  </dependency>
+
+                  <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-commons-annotations</artifactId>
+                    <version>3.2.0.Final</version>
+                  </dependency>
+
+                  <dependency>
+                    <groupId>org.hibernate.javax.persistence</groupId>
+                    <artifactId>hibernate-jpa-2.0-api</artifactId>
+                    <version>1.0.0.Final</version>
+                  </dependency>
+                  
+                  <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                    <version>3.6.0.Final</version>
+                  </dependency>
+                   
+
                  <!-- Especifico do sigasr (extrair depois)-->
 
 
-
-
         </dependencies>
-         <build>
-            <plugins>
 
-                <plugin>
-                    <groupId>com.google.code.maven-play-plugin</groupId>
-                    <artifactId>play-maven-plugin</artifactId>
-                    <version>1.0.0-beta6</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <warArchiveName>${project.artifactId}</warArchiveName>
-                    </configuration>                
-                </plugin>
-            </plugins>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.google.code.maven-play-plugin</groupId>
+                <artifactId>play-maven-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
+    </build>
 
-  </build>
-
-           <properties>
-                 <play.version>1.2.4</play.version>
-        </properties>
 
 </project>

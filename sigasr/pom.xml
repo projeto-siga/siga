@@ -88,7 +88,21 @@
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-entitymanager</artifactId>
                     <version>3.6.0.Final</version>
+                    <exclusions>
+                      <exclusion>
+                        <groupId>javassist</groupId>
+                        <artifactId>javassist</artifactId>
+                      </exclusion>
+            
+                    </exclusions>
                   </dependency>
+
+                  <dependency>
+                  <groupId>joda-time</groupId>
+                  <artifactId>joda-time</artifactId>
+                  <version>2.3</version>
+                </dependency>
+            
                    
 
                  <!-- Especifico do sigasr (extrair depois)-->
@@ -106,5 +120,9 @@
         </plugins>
     </build>
 
+
+<properties>
+  <play.version>1.2.4</play.version>
+</properties>
 
 </project>

@@ -1,0 +1,38 @@
+#{extends 'main.html' /} #{set title:'Pesquisas de Satisfação' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Pesquisas de Satisfaçãoo</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Descrição</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:pesquisas, as:'pesq'}
+					<tr
+						onclick="javascript:window.location='@{Application.editarPesquisa(pesq.idPesquisa)}'"
+						style="cursor: pointer;">
+						<td >${pesq.nomePesquisa}</td>
+						<td>${pesq.descrPesquisa}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarPesquisa}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

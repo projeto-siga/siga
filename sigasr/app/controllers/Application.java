@@ -26,11 +26,13 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
+import models.SrPesquisa;
 import models.SrServico;
 import models.SrSolicitacao;
 import models.SrTendencia;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
+import models.SrTipoPergunta;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
@@ -217,7 +219,7 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
-		
+
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
 					"Item não informado");
@@ -336,7 +338,8 @@ public class Application extends SigaApplication {
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao and movimentacao.tipoMov <> 7 "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getIdLotacao() + " "
+						+ lotaTitular().getIdLotacao()
+						+ " "
 						+ "group by sol.gravidade").fetch();
 
 		LocalDate ld = new LocalDate();
@@ -462,7 +465,8 @@ public class Application extends SigaApplication {
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getIdLotacao() + " "
+						+ lotaTitular().getIdLotacao()
+						+ " "
 						+ "group by sol.gravidade, sol.urgencia").fetch();
 
 		// Header
@@ -591,7 +595,7 @@ public class Application extends SigaApplication {
 
 	public static void responderPesquisa(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		//Implementar
+		// Implementar
 		render(sol);
 	}
 
@@ -618,7 +622,7 @@ public class Application extends SigaApplication {
 		sol.finalizarPreAtendimento(lotaTitular(), cadastrante());
 		exibir(sol.idSolicitacao, completo());
 	}
-	
+
 	public static void retornarAoPreAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.retornarAoPreAtendimento(lotaTitular(), cadastrante());
@@ -803,6 +807,34 @@ public class Application extends SigaApplication {
 		SrTipoAtributo item = SrTipoAtributo.findById(id);
 		item.finalizar();
 		listarTipoAtributo();
+	}
+
+	public static void listarPesquisa() throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrPesquisa> pesquisas = SrPesquisa.listar();
+		render(pesquisas);
+	}
+
+	public static void editarPesquisa(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrPesquisa pesq = new SrPesquisa();
+		if (id != null)
+			pesq = SrPesquisa.findById(id);
+		List<SrTipoPergunta> tipos = SrTipoPergunta.all().fetch();
+		render(pesq, tipos);
+	}
+
+	public static void gravarPesquisa(SrPesquisa pesq) throws Exception {
+		assertAcesso("ADM:Administrar");
+		pesq.salvar();
+		listarPesquisa();
+	}
+
+	public static void desativarPesquisa(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrPesquisa pesq = SrPesquisa.findById(id);
+		pesq.finalizar();
+		listarPesquisa();
 	}
 
 	public static void listarServico() throws Exception {

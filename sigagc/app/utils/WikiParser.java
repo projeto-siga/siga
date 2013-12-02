@@ -826,19 +826,23 @@ public class WikiParser {
 		} catch (URISyntaxException e) {
 		}
 		//if (uri != null && uri.isAbsolute() && !uri.isOpaque()) {
-		if (uri != null) {
-			sb.append("<a href=\"" + escapeHTML(uri.toString())
-					+ "\" target=\"_blank\" rel=\"nofollow\">");
-			sb.append(escapeHTML(unescapeHTML(link.length >= 2
-					&& !isEmpty(link[1].trim()) ? link[1] : link[0])));
-			sb.append("</a>");
-		} /*else {
-			sb.append("<a href=\"/sigagc/baixar?id=" + escapeHTML(uri.toString())
-					+ "\" target=\"_blank\" title=\"Internal link\">");
-			sb.append(escapeHTML(unescapeHTML(link.length >= 2
-					&& !isEmpty(link[1].trim()) ? link[1] : link[0])));
-			sb.append("</a>");
-		}*/
+		if (uri != null){
+			String[] path = split(uri.getPath().toString(),'/');
+			if(uri.isAbsolute()|| path.length > 1) {
+				sb.append("<a href=\"" + escapeHTML(uri.toString())
+						+ "\" target=\"_blank\" rel=\"nofollow\">");
+				sb.append(escapeHTML(unescapeHTML(link.length >= 2
+						&& !isEmpty(link[1].trim()) ? link[1] : link[0])));
+				sb.append("</a>");
+			} 
+			else {
+				sb.append("<a href=\"/sigagc/baixar?id=" + escapeHTML(uri.toString())
+						+ "\" target=\"_blank\" title=\"Internal link\">");
+				sb.append(escapeHTML(unescapeHTML(link.length >= 2
+						&& !isEmpty(link[1].trim()) ? link[1] : link[0])));
+				sb.append("</a>");
+			}
+		}
 	}
 
 	protected void appendImage(String text) {

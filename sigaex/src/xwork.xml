@@ -1212,6 +1212,14 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		
+		<action name="emiteRelMovProcesso" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelMovProcesso">
+			<result name="relatorio" type="stream-fixed">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
 
 		<action name="emiteRelTipoDoc" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelTipoDoc">

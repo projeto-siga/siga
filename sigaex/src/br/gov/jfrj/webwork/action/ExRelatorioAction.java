@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreData
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsClassificados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovProcesso;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
@@ -674,6 +675,39 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		return "relatorio";
 	}
 	
+	public String aRelMovProcesso() throws Exception {
+
+		assertAcesso("RELMVP:Relação de movimentações de processos");
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
+		Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		if (dtFim.getTime() - dtIni.getTime() > 31536000000L)
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+
+		Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		parametros.put("processo", getRequest().getParameter("processo"));
+		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
+				+ "/expediente/doc/exibir.action?sigla=");
+
+		RelMovProcesso rel = new RelMovProcesso(parametros);
+
+		rel.gerar();
+
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+
+		return "relatorio";
+	}
 	public String aRelClassificacao() throws AplicacaoException, Exception {
 		assertAcesso("CLSD:Classificação Documental;CLASS:Relação de classificações");
 		

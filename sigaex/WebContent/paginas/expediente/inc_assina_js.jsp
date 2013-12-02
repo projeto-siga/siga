@@ -1,3 +1,7 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	buffer="64kb"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <script language="javascript">;
 var gConfiguracao;
 var gCertificadoB64;
@@ -43,7 +47,7 @@ var process = {
 		        var ret = this.steps[this.index++]();
 		        if ((typeof ret == 'string') && ret != "OK") {
 			        this.finalize();
-		           	alert(ret, 0, "Não foi possível completar a operação");
+		           	alert(ret, 0, "NÃ£o foi possÃ­vel completar a operaÃ§Ã£o");
 		     		return;
 		        }
 		    }
@@ -108,13 +112,15 @@ function InicializarCapicom(){
 		return Erro(err);
 	}
 	
-	//Infelizmente não é possível armazenar o objeto Signer e utilizá-lo na próxima chamada para Sign.;
-	//Renato: desabilitado temporariamente para não interferir com os testes de desempenho.;
+	//Infelizmente nÃ£o Ã© possÃ­vel armazenar o objeto Signer e utilizÃ¡-lo na prÃ³xima chamada para Sign.;
+	//Renato: desabilitado temporariamente para nÃ£o interferir com os testes de desempenho.;
 	gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado.";
 	var nothing;
 	gSigner = new ActiveXObject("CAPICOM.Signer");
 	Desprezar = gAssinatura.Sign(gSigner, 1, 0);
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;ADRB:PolÃ­tica - ReferÃªncia BÃ¡sica')}">
 	gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
+</c:if>
 	return "OK";
 }
 
@@ -144,8 +150,8 @@ function AssinarDocumentos(Copia, oElm){
 //    oElm.innerHTML = Caption;
     if(Copia == "true"){
   		Copia = "true";
-		// alert("Iniciando conferência")
-     	process.push(function(){Log("Iniciando conferência")});
+		// alert("Iniciando conferÃªncia")
+     	process.push(function(){Log("Iniciando conferÃªncia")});
  	}else{
   		Copia = "false";
 		// alert("Iniciando assinatura")
@@ -231,7 +237,7 @@ function AssinarDocumentos(Copia, oElm){
 		    }
        	}
 	}
-    process.push(function(){Log("Concluído, redirecionando...");});
+    process.push(function(){Log("ConcluÃ­do, redirecionando...");});
     process.push(function(){location.href = oUrlNext.value;});
 	process.run();
 }
@@ -246,7 +252,7 @@ function Conteudo(url){
 		gAtributoAssinavelDataHora = objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora");
 	  	return objHTTP.responseBody;
 	}
-	return Erro("Não foi possível obter o conteúdo do documento a ser assinado.")
+	return Erro("NÃ£o foi possÃ­vel obter o conteÃºdo do documento a ser assinado.")
 }
 
 function GravarAssinatura(url, datatosend) {

@@ -901,6 +901,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean podeAnexarArquivo(DpLotacao lota, DpPessoa pess) {
 		return (isEmPreAtendimento() || isEmAtendimento() || isPendente());
 	}
+	
+
+	private boolean podeImprimirTermoAtendimento(DpLotacao lota, DpPessoa pess) {
+		return (!isFechado() && estaCom(lota, pess));
+	}
 
 	public boolean podeAssociarLista(DpLotacao lota, DpPessoa pess) {
 		return !isFechado() && estaCom(lota, pess);
@@ -1028,6 +1033,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("attach", "Anexar Arquivo",
 				podeAnexarArquivo(lotaTitular, titular), "anexarArquivo",
 				"modal=true"));
+		
+		operacoes.add(new SrOperacao("printer", "Termo de Atendimento",
+				podeImprimirTermoAtendimento(lotaTitular, titular), "Application.termoAtendimento",
+				"popup=true"));
 
 		SrMovimentacao ultCancelavel = getUltimaMovimentacaoCancelavel();
 		operacoes.add(new SrOperacao("cancel", "Desfazer "
@@ -1039,7 +1048,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.add(new SrOperacao("eye", "Ver Todas as Movimentações",
 						!vendoHistoricoCompleto, "Application.exibir",
 						"completo=true"));
-
+		
 		operacoes
 				.add(new SrOperacao("eye", "Ver Apenas Andamentos",
 						vendoHistoricoCompleto, "Application.exibir",
@@ -1519,7 +1528,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.descrMovimentacao = motivo;
 		mov.salvar(pess, lota);
 	}
-
+	
 	public void fechar(DpLotacao lota, DpPessoa pess, String motivo)
 			throws Exception {
 

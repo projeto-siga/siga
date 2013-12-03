@@ -170,19 +170,19 @@ public class Application extends SigaApplication {
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-		Map<SrAcao, DpLotacao> acoessEAtendentes = SrAcao
+		Map<SrAcao, DpLotacao> acoesEAtendentes = SrAcao
 				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
 						solicitacao.solicitante, solicitacao.local,
 						solicitacao.itemConfiguracao);
 		if (solicitacao.acao == null
-				|| !acoessEAtendentes.containsKey(solicitacao.acao)) {
-			if (acoessEAtendentes.size() > 0)
-				solicitacao.acao = acoessEAtendentes.keySet().iterator().next();
+				|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
+			if (acoesEAtendentes.size() > 0)
+				solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
 			else
 				solicitacao.acao = null;
 		}
 
-		render(solicitacao, acoessEAtendentes);
+		render(solicitacao, acoesEAtendentes);
 	}
 
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {

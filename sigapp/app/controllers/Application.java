@@ -96,7 +96,17 @@ public class Application extends SigaApplication {
 		if(objUsuario!=null){
 			try{
 				List<Locais> lstLocais =  Locais.find("forumFk="+objUsuario.forumFk.cod_forum+"order by ordem_apresentacao ").fetch();
-				render(lstLocais);
+				Foruns objForum = Foruns.find("cod_forum="+objUsuario.forumFk.cod_forum).first();
+				ArrayList vetorForuns = new ArrayList();
+				String texto = objForum.mural;
+				int i=0;
+				while(texto.length()>4){
+						vetorForuns.add( texto.substring( 0,texto.indexOf("<br>") ) );
+						texto = texto.substring(texto.indexOf("<br>"),texto.length());
+						texto = texto.substring(4,texto.length());
+						i++;
+					}
+					render(lstLocais,vetorForuns);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -118,7 +128,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void sala_insert(Locais formLocal, int cod_forum) {
-		Foruns objForum = new Foruns(cod_forum, " ");
+		Foruns objForum = new Foruns(cod_forum, " ", " ");
 		formLocal.forumFk = objForum;
 		String varCodLocal = formLocal.cod_local;
 		String resposta = "";
@@ -189,7 +199,7 @@ public class Application extends SigaApplication {
 			} else if (!desc_forum.isEmpty()) {
 				try {
 					List<Foruns> listForuns = new ArrayList<Foruns>();
-					Foruns objForum = new Foruns(0, "");
+					Foruns objForum = new Foruns(0, "", "");
 					List<Locais> listLocaisAux = new ArrayList<Locais>();
 					listForuns = JPA
 							.em()
@@ -251,10 +261,10 @@ public class Application extends SigaApplication {
 		}
 	}
 
-	public static void forum_insert(int cod_forum, String descricao) {
+	public static void forum_insert(int cod_forum, String descricao, String mural) {
 		String resposta = "";
 		try {
-			Foruns objForum = new Foruns(cod_forum, descricao);
+			Foruns objForum = new Foruns(cod_forum, descricao, mural);
 			objForum.save();
 			JPA.em().flush();
 			resposta = "Ok.";
@@ -490,6 +500,10 @@ public class Application extends SigaApplication {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				if(e.getMessage().equals("-1")){
+					listHorasLivres.clear();
+					listHorasLivres.add("Erro de horário inválido na base.");
+				}
 			}finally{
 				render(listHorasLivres);
 			}
@@ -497,180 +511,19 @@ public class Application extends SigaApplication {
 
 	}
 		
-	// o código abaixo NÃO será usado, mas, deverá ser preservado porque está funcionando bem.
-	public static void agendamento_incluir_puro(String frm_cod_local,
-			String frm_data_ag, Boolean verde) {
-		// pega usuario do sistema
-		String matriculaSessao = cadastrante().getMatricula().toString();
-		UsuarioForum objUsuario = UsuarioForum.find(
-				"matricula_usu =" + matriculaSessao).first();
-		if (objUsuario != null) {
-			List<String> listHorasLivres = new ArrayList<String>();
-			List<Locais> listSalas = new ArrayList();
-			List listDatasLotadas = new ArrayList();
-			List listDatasDoMes = new ArrayList();
-			if (frm_data_ag == null && frm_cod_local == null) { // Se nulo
-				// Pega o usuário do sistema, e, busca os locais(salas) daquele
-				// forum onde ele está.
-				listSalas = (List) Locais.find("cod_forum='"+objUsuario.forumFk.cod_forum+"'").fetch(); // isso não dá erro no caso de retorno vazio.
-			} else {
-				if (frm_cod_local != null) {
-					SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-					Date parametro = new Date();
-					Date dt = new Date();
-					String dtt = df.format(dt);
-					Agendamentos objAgendamento = new Agendamentos(parametro,
-							null, null, null, null, null, null, null, null);
-					try {
-						List<Agendamentos> results = Agendamentos
-								.find("data_ag >= to_date('" + dtt
-										+ "','dd/MM/yyyy') and cod_local='"
-										+ frm_cod_local + "'  order by data_ag")
-								.fetch();
-						// verifica se veio algum agendamento
-						if (results.size() != 0) {
-							// preenche as datas do local no 'MÊS' na agenda
-							// CORRENTE
-							for (Iterator it = results.iterator(); it.hasNext();) {
-								objAgendamento = (Agendamentos) it.next();
-								listDatasDoMes.add(objAgendamento.data_ag
-										.toString());
-							}
-							String dia_ag_ant = "";
-							String dia_ag_prox;
-							int i = 0;
-							// conta os agendamentos de cada dia, do local que
-							// veio do form
-							for (Iterator it = listDatasDoMes.iterator(); it
-									.hasNext();) {
-								dia_ag_prox = (String) it.next(); // pegou o próximo
-								if (i == 0) {
-									dia_ag_ant = dia_ag_prox;
-								}
-								if (dia_ag_prox.equals(dia_ag_ant)) {
-									i++; // contou a repetição
-								} else {
-									i = 1;
-									dia_ag_ant = dia_ag_prox;
-								}
-								// se a data estiver lotada, marca
-								if (i >= 33) {
-									listDatasLotadas.add(dia_ag_ant);
-								} // guardou a data lotada
-							}
-							// veio algum agendamento
-							System.out.println(results.size()
-									+ " agendamentos...");
-						} else {
-							// não veio nenhum agendamento
-							System.out.println("não veio agendamento nenhum");
-							System.out.println("Data ag:" + frm_data_ag);
-						}
-						// frm_cod_local não veio nulo
-						listSalas.clear();
-						listSalas.add((Locais) Locais.find(
-								"cod_local = '" + frm_cod_local + "'").first());
-						// escolheu uma sala, e, submeteu o form a si
-						if (verde) {
-							// local com dias filtrados, passa aos horários do
-							// dia selecionado
-							if (frm_data_ag != null && !frm_data_ag.isEmpty()) {
-								listHorasLivres.add("10:00");
-								listHorasLivres.add("10:30");
-								listHorasLivres.add("11:00");
-								listHorasLivres.add("11:30");
-								listHorasLivres.add("12:00");
-								listHorasLivres.add("12:30");
-								listHorasLivres.add("13:00");
-								listHorasLivres.add("13:30");
-								listHorasLivres.add("14:00");
-								listHorasLivres.add("14:30");
-								listHorasLivres.add("15:00");
-								listHorasLivres.add("15:30");
-								listHorasLivres.add("16:00");
-								listHorasLivres.add("16:30");
-								listHorasLivres.add("17:00");
-								listHorasLivres.add("17:30");
-								listHorasLivres.add("18:00");
-								listHorasLivres.add("18:30");
-								df.applyPattern("dd-MM-yyyy");
-								try {
-									parametro = df.parse(frm_data_ag);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-								objAgendamento = null;
-								/*
-								Locais objLocal = Locais.find(
-										"cod_local = '" + frm_cod_local + "'")
-										.first();
-								listSalas.add(objLocal);
-								*/
-								try {
-									dtt = frm_data_ag;
-									results.clear();
-									results = Agendamentos
-											.find("data_ag = to_date('"
-													+ dtt
-													+ "','dd-MM-yyyy') and cod_local='"
-													+ frm_cod_local + "'")
-											.fetch();
-									// zera os horários usados na data
-									// selecionada no determinado local
-									String hrr = "";
-									for (Iterator it = results.iterator(); it
-											.hasNext();) {
-										objAgendamento = (Agendamentos) it
-												.next();
-										hrr = objAgendamento.hora_ag;
-										hrr = hrr.substring(0, 2) + ":"
-												+ hrr.substring(2, 4);
-										listHorasLivres.set(
-												listHorasLivres.indexOf(hrr),
-												"");
-									}
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			try {
-				render(listSalas, listHorasLivres, listDatasLotadas,
-						frm_data_ag);
-			} catch (Exception e) {
-				e.printStackTrace();
 
-			}
-		} else {
-			Excecoes("Usuário sem permissão");
-		}
-	}
 
 	public static void agendamento_insert(String frm_data_ag, String frm_hora_ag,
 			String frm_cod_local, String matricula, String periciado,
 			String perito_juizo, String perito_parte, String orgao,
-			String processo) {
+			String processo, Integer lote) {
 		System.out.println(" === ");
-		System.out.println(frm_hora_ag);
+		System.out.println("Lote: "+lote);
 		System.out.println(" === ");
 		matricula = cadastrante().getMatricula().toString();
 		String resposta = "";
-		Locais auxLocal = new Locais();
+		Locais auxLocal = Locais.findById(frm_cod_local);
 		String hr;
-		auxLocal.cod_local = frm_cod_local;
-		auxLocal.local = "";
-		auxLocal.dias = "";
-		auxLocal.endereco = "";
-		auxLocal.exibir = 1;
-		auxLocal.forumFk = null;
-		auxLocal.hora_fim = "";
-		auxLocal.hora_ini = "";
-		auxLocal.intervalo_atendimento = 0;
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			Date parametro = df.parse(frm_data_ag);
@@ -678,17 +531,38 @@ public class Application extends SigaApplication {
 					auxLocal, matricula , periciado, perito_juizo, perito_parte,
 					processo, orgao);
 			hr = frm_hora_ag;
-			if (hr != null && (!hr.isEmpty())) {
-				objAgendamento.hora_ag = hr.substring(0, 2)
-						+ hr.substring(3, 5);
-			
-			objAgendamento.save();
-			JPA.em().flush();
-			resposta = "Ok.";
-			}else{resposta="Não Ok.";}
+		   //begin transaction, que, segundo o Da Rocha é automático; no inicio da action
+		   String hrAux=hr.substring(0, 2);
+		   String minAux=hr.substring(3, 5);
+		   if (hr != null && (!hr.isEmpty())) {
+		   // sloop
+			for(int i=0;i<lote;i++){
+				objAgendamento.hora_ag = hrAux + minAux;
+				System.out.println(objAgendamento.hora_ag);
+				objAgendamento.save();
+				JPA.em().flush();
+				JPA.em().clear();
+				minAux=String.valueOf( Integer.parseInt(minAux)+auxLocal.intervalo_atendimento);
+				if(Integer.parseInt(minAux)>=60){
+					hrAux=String.valueOf(Integer.parseInt(hrAux)+1);
+					minAux="00";
+				}
+				resposta = "Ok.";
+		   	}
+			//floop
+			//end transaction, que, segundo o Da Rocha é automático; no fim da action
+		   }else{
+				resposta="Não Ok.";
+		   }
 		} catch (Exception e) {
+			//rollback transaction, que segundo o Da Rocha é automático; ocorre em qualquer erro
 			e.printStackTrace();
-			resposta = "Não Ok. Verifique se preencheu todos os campos do agendamento.";
+			String erro = e.getMessage();
+			if(erro.substring(24,52).equals("ConstraintViolationException")){
+				resposta = "Não Ok. O lote não foi agendado.";
+			}else{
+				resposta = "Não Ok. Verifique se preencheu todos os campos do agendamento.";
+			}
 		} finally {
 			render(resposta);
 		}
@@ -808,7 +682,7 @@ public class Application extends SigaApplication {
     	UsuarioForum objUsuario = UsuarioForum.find("matricula_usu ="+ matriculaSessao).first();
     	if(objUsuario!=null){
     		if(paramCodForum!=null && !paramCodForum.isEmpty()){
-    			Foruns objForum = new Foruns(Integer.parseInt(paramCodForum), "");
+    			Foruns objForum = new Foruns(Integer.parseInt(paramCodForum), "", "");
     			objUsuario.delete();
     			objUsuario.forumFk = objForum;
     			objUsuario.matricula_usu = matriculaSessao;

@@ -73,6 +73,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 public class Application extends SigaApplication {
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
+	private static final int CONTROLE_HASH_TAG = 1;
 
 	@Before
 	public static void addDefaultsAlways() throws Exception {
@@ -210,20 +211,34 @@ public class Application extends SigaApplication {
 		render(contagens);
 	}
 
-	public static void knowledge(String[] tags, String estilo, String msgvazio,
+	public static void knowledge(Long id, String[] tags, String estilo, String msgvazio,
 			String urlvazio, String titulo) throws Exception {
-		Set<GcTag> set = GcBL.buscarTags(tags, true);
+		int index = Integer.MAX_VALUE;
+		Long idOutroConhecimento = 0l;
+		GcInformacao info = null;
+		Set<GcTag> set = null;
+		if(tags != null)  
+			set = GcBL.buscarTags(tags, true);
 		Query query = JPA.em().createNamedQuery("buscarConhecimento");
 		query.setParameter("tags", set);
 		List<Object[]> conhecimentos = query.getResultList();
 		for (Object[] o : conhecimentos) {
-			if (o[2] != null && o[2] instanceof byte[]) {
-				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
-				s = GcBL.ellipsize(s, 100);
-				o[2] = s;
+			idOutroConhecimento = Long.parseLong(o[0].toString());
+			if(id.equals(idOutroConhecimento))
+				index = conhecimentos.indexOf(o);
+			else {
+				info = GcInformacao.findById(idOutroConhecimento);
+				o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
+				if (o[2] != null && o[2] instanceof byte[]) {
+					String s = new String((byte[]) o[2], Charset.forName("utf-8"));
+					s = GcBL.ellipsize(s, 100);
+					o[2] = s;
+				}
 			}
 		}
-
+		if(index < conhecimentos.size())
+			conhecimentos.remove(index);
+		
 		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
 			GcInformacao inf = GcInformacao.findById(conhecimentos.get(0)[0]);
 			conhecimentos.get(0)[1] = inf.arq.titulo;
@@ -248,7 +263,9 @@ public class Application extends SigaApplication {
 				classificacao += s;
 			}
 		}
-
+		//Necessário pq para criar um novo conhecimento a partir de um já existente, a classificação
+		//é passada como queryString. Sem fazer isso, as hashTags não são passadas.
+		classificacao = URLEncoder.encode(classificacao, "UTF-8");
 		// if (msgvazio != null) {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");
@@ -263,7 +280,8 @@ public class Application extends SigaApplication {
 	}
 
 	public static void index() {
-		listar(null);
+		//listar(null);
+		buscar(null);
 	}
 
 	public static void top10() {
@@ -446,20 +464,23 @@ public class Application extends SigaApplication {
 	public static void exibir(String sigla) throws Exception {
 		
 		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
-
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
-
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 		if (!informacao.acessoPermitido(titular(), lotaTitular())) {
 			throw new AplicacaoException(
 					"O usuário corrente não tem acesso à informação solicitada.");
 		}
-
 		GcBL.notificado(informacao, idc());
 		GcBL.logarVisita(informacao, idc());
 		render(informacao);
 	}
-
+	
 	public static void editar(String sigla, String classificacao, String titulo,
 			String origem) throws IOException {
 		GcInformacao informacao = new GcInformacao();
@@ -474,7 +495,7 @@ public class Application extends SigaApplication {
 			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
 		String conteudo = (informacao.arq != null) ? informacao.arq
 				.getConteudoTXT() : null;
-		if (classificacao == null)
+		if (classificacao == null || classificacao.isEmpty())
 			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
 					: null;
 
@@ -492,8 +513,14 @@ public class Application extends SigaApplication {
 	public static void historico(String sigla) throws Exception {
 		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 
 		diff_match_patch diff = new diff_match_patch();
 
@@ -552,8 +579,14 @@ public class Application extends SigaApplication {
 	public static void movimentacoes(String sigla) throws Exception {
 		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
 
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		
 		if (informacao == null)
 			index();
+		else {
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+		}
 
 		render(informacao);
 	}
@@ -563,21 +596,13 @@ public class Application extends SigaApplication {
 		GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 				null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(inf, idc());
-		exibir(sigla);
+		exibir(inf.getSigla());
 	}
 
 	public static void gravar(GcInformacao informacao, String titulo,
 			String conteudo, String classificacao, String origem)
 			throws Exception {
 		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
-		GcArquivo arq = new GcArquivo();
-
-		arq = Util.marcarLinkNoConteudo(conteudo, classificacao);
-		
-		//Atualiza o conteudo e a classificação após a verificação se existe links criados
-		conteudo = arq.getConteudoTXT();
-		classificacao = arq.classificacao;
-		
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
 			informacao.lotacao = informacao.autor.getLotacao();
@@ -593,6 +618,8 @@ public class Application extends SigaApplication {
 		if (informacao.tipo == null)
 			informacao.tipo = GcTipoInformacao.all().first();
 
+		//Atualiza a classificação com as hashTags encontradas
+		classificacao = Util.findHashTag(conteudo, classificacao, CONTROLE_HASH_TAG);
 		// if (informacao.id != 0)
 		GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, pessoa,
@@ -608,7 +635,7 @@ public class Application extends SigaApplication {
 				GcBL.gravar(informacao, idc());
 			}
 			redirect(origem);
-		} else
+		} else 
 			exibir(informacao.getSigla());
 	}
 

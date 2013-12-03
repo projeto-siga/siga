@@ -1,9 +1,10 @@
-#Thu Nov 28 10:13:12 BRST 2013
+#Tue Dec 03 12:17:25 BRST 2013
 eclipse.preferences.version=1
 encoding//app/controllers/Application.java=UTF-8
 encoding//app/controllers/Bootstrap.java=UTF-8
 encoding//app/models/SrSolicitacao.java=UTF-8
 encoding//app/reports/SrRelTransferencias.java=UTF-8
+<<<<<<< HEAD
 encoding//app/views/Application/associarLista.html=UTF-8
 encoding//app/views/Application/buscarAcao.html=UTF-8
 encoding//app/views/Application/buscarItem.html=UTF-8
@@ -40,4 +41,7 @@ encoding//app/views/Correio/notificarCancelamentoMovimentacao.html=UTF-8
 encoding//app/views/Correio/notificarMovimentacao.html=UTF-8
 encoding//app/views/errors/500.html=UTF-8
 encoding//app/views/tags/quadroSolicitacao.html=UTF-8
+encoding//app/views/Application/editarPesquisa.html=UTF-8
+encoding//app/views/Application/listarPesquisa.html=UTF-8
+encoding//app/views/Application/termoAtendimento.html=UTF-8
 encoding/<project>=UTF-8

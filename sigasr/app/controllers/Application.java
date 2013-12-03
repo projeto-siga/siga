@@ -1,13 +1,10 @@
 package controllers;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,20 +14,20 @@ import java.util.TreeSet;
 
 import javax.persistence.Query;
 
+import models.SrAcao;
 import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
-import models.SrFormaAcompanhamento;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
-import models.SrAcao;
+import models.SrPesquisa;
 import models.SrSolicitacao;
-import models.SrTendencia;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
+import models.SrTipoPergunta;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
@@ -165,16 +162,14 @@ public class Application extends SigaApplication {
 		if (solicitacao.acao == null
 				|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
 			if (acoesEAtendentes.size() > 0)
-				solicitacao.acao = acoesEAtendentes.keySet().iterator()
-						.next();
+				solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
 			else
 				solicitacao.acao = null;
 		}
 		render(solicitacao, acoesEAtendentes);
 	}
 
-	public static void exibirAcao(SrSolicitacao solicitacao)
-			throws Exception {
+	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
 		Map<SrAcao, DpLotacao> acoessEAtendentes = SrAcao
 				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
 						solicitacao.solicitante, solicitacao.local,
@@ -182,8 +177,7 @@ public class Application extends SigaApplication {
 		if (solicitacao.acao == null
 				|| !acoessEAtendentes.containsKey(solicitacao.acao)) {
 			if (acoessEAtendentes.size() > 0)
-				solicitacao.acao = acoessEAtendentes.keySet().iterator()
-						.next();
+				solicitacao.acao = acoessEAtendentes.keySet().iterator().next();
 			else
 				solicitacao.acao = null;
 		}
@@ -205,8 +199,8 @@ public class Application extends SigaApplication {
 			if (solicitacao.acao == null
 					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
 				if (acoesEAtendentes.size() > 0)
-					solicitacao.acao = acoesEAtendentes.keySet()
-							.iterator().next();
+					solicitacao.acao = acoesEAtendentes.keySet().iterator()
+							.next();
 				else
 					solicitacao.acao = null;
 			}
@@ -217,7 +211,7 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
-		
+
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
 					"Item não informado");
@@ -272,8 +266,7 @@ public class Application extends SigaApplication {
 		}
 
 		if (acao.tituloAcao.equals("")) {
-			validation
-					.addError("acao.tituloAcao", "Título não informado");
+			validation.addError("acao.tituloAcao", "Título não informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -332,11 +325,12 @@ public class Application extends SigaApplication {
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
 
 		List<String[]> listaSols = SrSolicitacao
-				.find("select sol.gravidade, count(*) "
+				.find("select sol.gravidade, count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao and movimentacao.tipoMov <> 7 "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getId() + " "
+						+ lotaTitular().getIdLotacao()
+						+ " "
 						+ "group by sol.gravidade").fetch();
 
 		LocalDate ld = new LocalDate();
@@ -365,13 +359,13 @@ public class Application extends SigaApplication {
 
 		SrSolicitacaoAtendidos set = new SrSolicitacaoAtendidos();
 		List<Object[]> listaEvolSols = SrSolicitacao
-				.find("select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(*) "
+				.find("select extract (month from sol.dtReg), extract (year from sol.dtReg), count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getId()
+						+ lotaTitular().getIdLotacao()
 						+ " "
-						+ "group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)")
+						+ "group by extract (month from sol.dtReg), extract (year from sol.dtReg)")
 				.fetch();
 
 		for (Object[] sols : listaEvolSols) {
@@ -380,14 +374,14 @@ public class Application extends SigaApplication {
 		}
 
 		List<Object[]> listaFechados = SrSolicitacao
-				.find("select extract (month from sol.hisDtIni), extract (year from sol.hisDtIni), count(distinct sol.idSolicitacao) "
+				.find("select extract (month from sol.dtReg), extract (year from sol.dtReg), count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.tipoMov = 7 "
 						+ "and movimentacao.lotaAtendente = "
 						+ lotaTitular().getId()
 						+ " "
-						+ "group by extract (month from sol.hisDtIni), extract (year from sol.hisDtIni)")
+						+ "group by extract (month from sol.dtReg), extract (year from sol.dtReg)")
 				.fetch();
 		for (Object[] fechados : listaFechados) {
 			set.add(new SrSolicitacaoItem((Integer) fechados[0],
@@ -427,11 +421,11 @@ public class Application extends SigaApplication {
 		List<SrSolicitacao> top = SrSolicitacao.all().fetch();
 
 		List<String[]> listaTop = SrSolicitacao
-				.find("select sol.itemConfiguracao.tituloItemConfiguracao, count(*) "
+				.find("select sol.itemConfiguracao.tituloItemConfiguracao, count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getId()
+						+ lotaTitular().getIdLotacao()
 						+ " "
 						+ "group by sol.itemConfiguracao.tituloItemConfiguracao")
 				.fetch();
@@ -458,11 +452,12 @@ public class Application extends SigaApplication {
 		List<SrSolicitacao> lstgut = SrSolicitacao.all().fetch();
 
 		List<String[]> listaGUT = SrSolicitacao
-				.find("select sol.gravidade, sol.urgencia, count(*) "
+				.find("select sol.gravidade, sol.urgencia, count(distinct sol.idSolicitacao) "
 						+ "from SrSolicitacao sol, SrMovimentacao movimentacao "
 						+ "where sol.idSolicitacao = movimentacao.solicitacao "
 						+ "and movimentacao.lotaAtendente = "
-						+ lotaTitular().getId() + " "
+						+ lotaTitular().getIdLotacao()
+						+ " "
 						+ "group by sol.gravidade, sol.urgencia").fetch();
 
 		// Header
@@ -486,7 +481,6 @@ public class Application extends SigaApplication {
 		}
 
 		String gut = sbGUT.toString();
-
 		render(lista, evolucao, top10);
 	}
 
@@ -592,7 +586,7 @@ public class Application extends SigaApplication {
 
 	public static void responderPesquisa(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		//Implementar
+		// Implementar
 		render(sol);
 	}
 
@@ -608,6 +602,11 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
+	public static void termoAtendimento(Long id) throws Exception {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		render(solicitacao);
+	}
+
 	public static void cancelar(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.cancelar(lotaTitular(), cadastrante());
@@ -617,6 +616,12 @@ public class Application extends SigaApplication {
 	public static void finalizarPreAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.finalizarPreAtendimento(lotaTitular(), cadastrante());
+		exibir(sol.idSolicitacao, completo());
+	}
+
+	public static void retornarAoPreAtendimento(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.retornarAoPreAtendimento(lotaTitular(), cadastrante());
 		exibir(sol.idSolicitacao, completo());
 	}
 
@@ -800,6 +805,34 @@ public class Application extends SigaApplication {
 		listarTipoAtributo();
 	}
 
+	public static void listarPesquisa() throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrPesquisa> pesquisas = SrPesquisa.listar();
+		render(pesquisas);
+	}
+
+	public static void editarPesquisa(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrPesquisa pesq = new SrPesquisa();
+		if (id != null)
+			pesq = SrPesquisa.findById(id);
+		List<SrTipoPergunta> tipos = SrTipoPergunta.all().fetch();
+		render(pesq, tipos);
+	}
+
+	public static void gravarPesquisa(SrPesquisa pesq) throws Exception {
+		assertAcesso("ADM:Administrar");
+		pesq.salvar();
+		listarPesquisa();
+	}
+
+	public static void desativarPesquisa(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrPesquisa pesq = SrPesquisa.findById(id);
+		pesq.finalizar();
+		listarPesquisa();
+	}
+
 	public static void listarAcao() throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrAcao> acoes = SrAcao.listar();
@@ -842,8 +875,8 @@ public class Application extends SigaApplication {
 		render("@selecionar", sel);
 	}
 
-	public static void buscarAcao(String sigla, String nome,
-			SrAcao filtro, Long pessoa, Long local, Long item) {
+	public static void buscarAcao(String sigla, String nome, SrAcao filtro,
+			Long pessoa, Long local, Long item) {
 		List<SrAcao> itens = null;
 		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
 				pessoa) : null;
@@ -908,7 +941,6 @@ public class Application extends SigaApplication {
 	public static void relTransferencias(SrSolicitacao solicitacao)
 			throws Exception {
 		assertAcesso("REL:Relatorio");
-
 		render();
 	}
 

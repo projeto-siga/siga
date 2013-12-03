@@ -6,7 +6,6 @@
 	<package name="default" extends="webwork-default">
 		<result-types>
  			<result-type name="stream-fixed" class="br.gov.jfrj.siga.libs.webwork.StreamResult"/> 
- 			<result-type name="do-nothing" class="br.gov.jfrj.siga.libs.webwork.DoNothingResult"/> 
  		</result-types>
 
 		<interceptors>
@@ -1098,7 +1097,6 @@
 				<param name="contentLength">${contentLength}</param>
 				<param name="contentDisposition">${contentDisposition}</param>
 			</result>
-			<result name="donothing" type="do-nothing"></result>
 		</action>
 		<action name="download" class="br.gov.jfrj.webwork.action.ExArquivoAction"
 			method="aDownload">
@@ -1214,6 +1212,14 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		
+		<action name="emiteRelMovProcesso" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelMovProcesso">
+			<result name="relatorio" type="stream-fixed">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
 
 		<action name="emiteRelTipoDoc" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelTipoDoc">
@@ -1254,6 +1260,18 @@
 			<result name="ajax_retorno">
 				/sigalibs/ajax_retorno.jsp
 			</result>
+		</action>
+	</package>
+	
+	<package name="cosignatario" extends="default" namespace="/cosignatario">
+		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
+			method="aBuscar">
+			<result name="busca">/sigalibs/pessoa_busca.jsp</result>
+		</action>
+		<action name="selecionar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
 	</package>
 

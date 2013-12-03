@@ -3,6 +3,11 @@
 <div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
 	<div class="gt-content clearfix">
 		<h2> ${solicitacao.codigo}</h2>
+		#{if solicitacao.estaComAtendenteDesignado()}
+		<img src="/siga/css/famfamfam/icons/error.png" style="margin-right: 5px;">
+		<font style="font-size: 11pt; color: #365b6d;">O atendente atual não é o atendente designado.</font> 
+		#{/if}
+		<p></p>
 		<h3>${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)}</h3>
 		#{links acoes:solicitacao.operacoes(lotaTitular, titular, completo), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
@@ -280,3 +285,5 @@ Falta o conteúdo
 							class="gt-btn-medium gt-btn-left" />
 	</form>
 #{/modal}
+
+

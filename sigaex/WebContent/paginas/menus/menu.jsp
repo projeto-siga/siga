@@ -160,6 +160,15 @@
 			</c:if>
 			
 			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELMVP:Relatório de movimentações de processos')}">
+				<li><ww:url id="url" action="relRelatorios"
+						namespace="/expediente/rel">
+						<ww:param name="nomeArquivoRel">relMovProcesso.jsp</ww:param>
+					</ww:url> <ww:a href="%{url}">Relatório de Movimentações de Processos</ww:a>
+				</li>
+			</c:if>
+			
+			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CRSUB:Relatório de documentos criados em setores subordinados')}">
 				<li><ww:url id="url" action="relRelatorios"
 						namespace="/expediente/rel">

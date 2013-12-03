@@ -16,6 +16,11 @@ GET     /public/                                staticDir:public
 *		/designacao/gravar					Application.gravarDesignacao
 *		/designacao/listar					Application.listarDesignacao
 
+*		/pesquisa/editar/{id}				Application.editarPesquisa
+*		/pesquisa/editar					Application.editarPesquisa
+*		/pesquisa/gravar					Application.gravarPesquisa
+*		/pesquisa/listar					Application.listarPesquisa
+
 *		/item/editar/{id}					Application.editarItem
 *		/item/editar						Application.editarItem
 *		/item/gravar						Application.gravarItem

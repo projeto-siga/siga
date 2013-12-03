@@ -8,7 +8,7 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo titulo="Tipo de Formulário">	
-			<mod:radio titulo="Inclusão" var="tipoFormulario" valor="1" marcado="Sim" reler="sim" />
+			<mod:radio titulo="Inclusão" var="tipoFormulario" valor="1"  reler="sim" />
 			<mod:radio titulo="Exclusão" var="tipoFormulario" valor="2" reler="sim" gerarHidden="Não"/>
 		</mod:grupo>
 		
@@ -17,26 +17,32 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 			<c:set var="valorTipoDeForm" value="${param['tipoFormulario']}" />
 		</c:if>
 		
+		<c:if test="${valorTipoDeForm == 1}">
 		<mod:grupo titulo="Identificação do Usuário">
-			<mod:pessoa titulo="Matrícula do Usuário" var="usuario"/> <br/>
 			<mod:texto titulo="E-mail Institucional" var="email" largura="50"/>
 		</mod:grupo>
+		</c:if>
 		
+        <c:if test="${valorTipoDeForm == 2}">
+        <mod:grupo titulo="Identificação do Usuário">
+            <mod:pessoa titulo="Matrícula do Usuário" var="usuario"/> <br/>
+            <mod:texto titulo="E-mail Institucional" var="email" largura="50"/>
+        </mod:grupo>
+        </c:if>
+        
+        		
 		<mod:grupo>	
 			<mod:selecao titulo="Tipo de Usuário" opcoes="Magistrado;Servidor" var="tipoUsuario" reler="sim"/>
 		</mod:grupo>
-		
+ 
 		<c:if test="${valorTipoDeForm == 1 && tipoUsuario == 'Servidor'}">
-			<mod:grupo>
-				<mod:pessoa titulo="Nome do Juiz autorizador" var="juiz"/> 
+			</br>
+			<mod:grupo titulo="Cossignatário">
+				<mod:cosignatario titulo="Nome do Juiz autorizador" var="juiz" obrigatorio="Sim"/>  
 			</mod:grupo>
 		</c:if>
 		<br/>
-		<c:if test="${empty valorTipoDeForm or valorTipoDeForm == 1}">
-	<b>Para indicação de novo usuário, deverá ser preenchido e encaminhado à SEJUD, pelo diretor de secretaria, 
-	o respectivo formulário de exclusão. </b>
-	</c:if>
-	
+		
 	</mod:entrevista>
 	
 	<mod:documento>
@@ -124,15 +130,28 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
     <td colspan="2" align="left"><b>1.1 - IDENTIFICAÇÃO DO USUÁRIO </b></td>
   </tr>
   <tr>
-    <td width="500"><b>NOME COMPLETO:</b><br/> ${f:pessoa(requestScope['usuario_pessoaSel.id']).nomePessoa} </td>
-    <td width="300"><b>CPF:</b> ${f:formatarCPF(f:pessoa(requestScope['usuario_pessoaSel.id']).cpfPessoa)}</td>
+    <td width="500"><b>NOME COMPLETO:</b><br/>
+    <c:if test="${tipoFormulario == 2}"> ${f:pessoa(requestScope['usuario_pessoaSel.id']).nomePessoa}  </c:if>
+    <c:if test="${tipoFormulario == 1}"> ${doc.subscritor.descricao} </c:if></td>
+    <td width="300"><b>CPF:</b>
+    <c:if test="${tipoFormulario == 2}"> ${f:formatarCPF(f:pessoa(requestScope['usuario_pessoaSel.id']).cpfPessoa)}</c:if>
+    <c:if test="${tipoFormulario == 1}"> ${f:formatarCPF(doc.subscritor.cpfPessoa)} </c:if></td>
   </tr>
   <tr>
-    <td width="300"><b>MATR&Iacute;CULA:</b> RJ${f:pessoa(requestScope['usuario_pessoaSel.id']).matricula}</td>
-    <td width="500"><b>CARGO/FUN&Ccedil;&Atilde;O:</b><br/> ${f:pessoa(requestScope['usuario_pessoaSel.id']).cargo.nomeCargo}-${f:pessoa(requestScope['usuario_pessoaSel.id']).funcaoConfianca.nomeFuncao}</td>
+    <td width="300"><b>MATR&Iacute;CULA:</b> 
+    <c:if test="${tipoFormulario == 2}">RJ${f:pessoa(requestScope['usuario_pessoaSel.id']).matricula}</c:if>
+    <c:if test="${tipoFormulario == 1}">${doc.subscritor.sigla} </c:if>
+    </td>
+    <td width="500"><b>CARGO/FUN&Ccedil;&Atilde;O:</b><br/> 
+    <c:if test="${tipoFormulario == 2}">${f:pessoa(requestScope['usuario_pessoaSel.id']).cargo.nomeCargo}-${f:pessoa(requestScope['usuario_pessoaSel.id']).funcaoConfianca.nomeFuncao}</c:if>
+    <c:if test="${tipoFormulario == 1}"> ${doc.subscritor.cargo.nomeCargo} ${doc.subscritor.padraoReferenciaInvertido}</c:if>
+    </td>
   </tr>
   <tr>
-    <td><b>LOTA&Ccedil;&Atilde;O:</b><br/> ${f:pessoa(requestScope['usuario_pessoaSel.id']).lotacao.descricao}</td>
+    <td><b>LOTA&Ccedil;&Atilde;O:</b><br/> 
+    <c:if test="${tipoFormulario == 2}">${f:pessoa(requestScope['usuario_pessoaSel.id']).lotacao.descricao}</c:if>
+    <c:if test="${tipoFormulario == 1}">${doc.subscritor.lotacao.descricao }</c:if>
+    </td>
     <td><b>E-MAIL INSTITUCIONAL:</b><br/> ${email}</td>
   </tr>
   
@@ -166,7 +185,8 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 				</td>
 			</tr>
 			<tr><td width="400">
-			<b>Nome do Juiz Autorizador: </b><br/>${f:pessoa(requestScope['juiz_pessoaSel.id']).nomePessoa}
+			<b>Nome do Juiz Autorizador: </b><br/>
+			${f:pessoa(requestScope['juiz_cosignatarioSel.id']).nomePessoa}
 			</td> 
 			<td width="500" align="center"><br/><br/>______________________
 			<br>Assinatura do Juiz Autorizador</td>

@@ -36,12 +36,13 @@
 	</script>
 <body>
 
-<div class="gt-bd clearfix" style="width: 70% !important;">
-	<div class="gt-content clearfix" style="width: 70% !important;">		
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">		
 		<form name="frm" action="editar_ocorrencia_gravar.action">
-		<input type="hidden" name="postback" value="1" /> 
-		<ww:hidden name="id" />
-		<ww:hidden name="idOcorrencia" />  
+		<input type="hidden" name="postback" value="1" />		
+		<ww:hidden name="idOcorrencia" value="${idOcorrencia}"/>
+		<ww:hidden name="id" value="${id}"/>   
+		<c:set var="aplicFer" value="${listaAplicacoes}" />
 		<h2 class="gt-table-head">Cadastrar ocorrência de feriado</h2>
 			<div class="gt-content-box gt-for-table">
 			<table class="gt-form-table">
@@ -60,7 +61,7 @@
 				</tr>
 				<tr>		
 					<td>Órgão:</td>
-					<td><ww:select name="idOrgaoUsu" list="orgaosUsu" headerValue="[Todos]" headerKey="-1"
+					<td><ww:select name="idOrgaoUsu" list="orgaosUsu" headerValue="[Todos]" headerKey="0"
 						listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple" /></td>
 				</tr>	
 				<tr>
@@ -70,7 +71,7 @@
 				<tr>
 					<td>UF:</td>
 					<td>
-						<ww:select name="idUF" list="listaUF" listKey="idUF" headerValue="[Todas]" headerKey="-1"
+						<ww:select name="idUF" list="listaUF" listKey="idUF" headerValue="[Todas]" headerKey="0"
 						                  listValue="nmUF" theme="simple" onchange="javascript:listaLocalidades()" />
 					</td>
 				</tr>	
@@ -81,37 +82,50 @@
 					</td>
 				</tr>								
 				<tr class="button">
-					<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> <input type="button"
-					value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>				
+					<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" />
+					 <input type="button"  value="Cancela" onclick="javascript:location.href='/siga/feriado/listar.action';" class="gt-btn-medium gt-btn-left" /></td>				
 				</tr>
 			</table>
 			</div>
 		</form>
-	<br />
+	<br />	
 	
-	<h2 class="gt-table-head">Aplicações Cadastradas</h2>
-			<div class="gt-content-box gt-for-table" style="width: 80% !important;">
+	<ww:if test="${(not empty aplicFer)}">	
+	
+		<h2 class="gt-table-head">Local onde a ocorrência se aplica</h2>
+			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table">
 					<thead>
 						<tr>							
 							<th>Órgao</th>	
 							<th>Lotação</th>
-							<th>Localidade</th>										
+							<th>Localidade</th>		
+							<th>UF</th>								
 						</tr>
 					</thead>
 					
 					<tbody>
-						<c:forEach var="apl" items="${listaAplicacoes}">
+						<c:forEach var="apl" items="${aplicFer}">
+							<ww:hidden name="idAplicacao" />  
 							<tr>
-								<td>apl.orgaoUsu.nmOrgaoUsu</td>	
-								<td>apl.dpLotacao.siglaLotacao</td>	
-								<td>apl.localidade.nmLocalidade</td>	
+								<td>${apl.orgaoUsu.nmOrgaoUsu}</td>	
+								<td>${apl.dpLotacao.siglaLotacao}</td>	
+								<td>${apl.localidade.nmLocalidade}</td>	
+								<td>${apl.localidade.UF.descricao}</td>	
+								<td align="center" width="10%">									
+	 			 						<a href="javascript:if (confirm('Deseja excluir?')) location.href='/siga/feriado/excluir_aplicacao.action?idAplicacao=${apl.id}&idOcorrencia=${idOcorrencia}';">
+											<img style="display: inline;"
+											src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir feriado"							
+											onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+											onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
+										</a>															
+								</td>
 							</tr>	
 						</c:forEach>
 					</tbody>
 				</table>
 			</div>			
-				
+	</ww:if>			
 						
 	</div></div>
 </body>

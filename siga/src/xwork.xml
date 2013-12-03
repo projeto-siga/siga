@@ -353,6 +353,12 @@
 			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">			
 			<result>/paginas/feriado/listaLocalidades.jsp</result>
 		</action>	
+		<action name="excluir_aplicacao" class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction"
+			method="aExcluirAplicacao">
+			<result type="redirect-action">				
+				editar_ocorrencia?id=${id}&amp;idOcorrencia=${idOcorrencia}
+			</result>				
+		</action>
 	</package>
 	
 	

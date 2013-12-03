@@ -37,6 +37,7 @@ import br.gov.jfrj.siga.model.Historico;
 
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 
 @Entity
@@ -53,16 +54,20 @@ public class SrPergunta extends HistoricoSuporte {
 	public String descrPergunta;
 
 	@ManyToOne()
-	@JoinColumn(name = "ID_PESQUISA", insertable = false, updatable = false)
-	public SrPergunta pesquisa;
-	
+	@JoinColumn(name = "ID_PESQUISA")
+	public SrPesquisa pesquisa;
+
+	@ManyToOne()
+	@JoinColumn(name = "ID_TIPO_PERGUNTA")
+	public SrTipoPergunta tipoPergunta;
+
 	@Column(name = "ORDEM_PERGUNTA")
 	public Long ordemPergunta;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrPergunta perguntaInicial;
-	
+
 	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "perguntaInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
 	public List<SrPergunta> meuPerguntaHistoricoSet;
@@ -78,12 +83,12 @@ public class SrPergunta extends HistoricoSuporte {
 	public void setId(Long id) {
 		idPergunta = id;
 	}
-	
+
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-	
+
 	public List<SrPergunta> getHistoricoPergunta() {
 		if (perguntaInicial != null)
 			return perguntaInicial.meuPerguntaHistoricoSet;

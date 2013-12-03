@@ -58,14 +58,14 @@ public class SrPesquisa extends HistoricoSuporte {
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrPesquisa pesquisaInicial;
-	
+
 	@OneToMany(targetEntity = SrPesquisa.class, mappedBy = "pesquisaInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
 	public List<SrPesquisa> meuPesquisaHistoricoSet;
-	
-	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "pesquisa", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+
+	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "pesquisa")
 	@OrderBy("ordemPergunta")
-	public Set<SrPesquisa> perguntaSet;
+	public Set<SrPergunta> perguntaSet;
 
 	public SrPesquisa() {
 
@@ -78,12 +78,12 @@ public class SrPesquisa extends HistoricoSuporte {
 	public void setId(Long id) {
 		idPesquisa = id;
 	}
-	
+
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-	
+
 	public List<SrPesquisa> getHistoricoPesquisa() {
 		if (pesquisaInicial != null)
 			return pesquisaInicial.meuPesquisaHistoricoSet;
@@ -96,9 +96,27 @@ public class SrPesquisa extends HistoricoSuporte {
 			return null;
 		return pesquisas.get(0);
 	}
-	
+
 	public static List<SrPesquisa> listar() {
 		return find("byHisDtFimIsNull").fetch();
 	}
 
+	// Edson: Não consegui fazer com que esse cascade fosse automático.
+	@Override
+	public void salvar() throws Exception {
+		super.salvar();
+		for (SrPergunta pergunta : perguntaSet) {
+			pergunta.pesquisa = this;
+			pergunta.salvar();
+		}
+	}
+	
+	// Edson: Não consegui fazer com que esse cascade fosse automático.
+	@Override
+	public void finalizar() throws Exception {
+		super.finalizar();
+		for (SrPergunta pergunta : perguntaSet) {
+			pergunta.finalizar();
+		}
+	}
 }

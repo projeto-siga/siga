@@ -321,16 +321,24 @@ public class Application extends SigaApplication {
 		else {
 			cloud = new Cloud(); // create cloud
 			cloud.setMaxWeight(150.0); // max font size
-			cloud.setMinWeight(50.0);
-			double d = listaPrincipaisTags.size();
+			cloud.setMinWeight(60.0);
+			//double d = listaPrincipaisTags.size();
 			HashMap<String, Object> map = new HashMap<String, Object>();
-			for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) {
+/*			for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) {
 				map.clear();
 				map.put("filtro.tag", t.id);
 				String link = Router.reverse("Application.listar", map).url;
 				Tag tag = new Tag(t.titulo, link, d);
 				cloud.addTag(tag);
 				d -= 1;
+			}*/
+			for (Object[] t : listaPrincipaisTags) {
+				map.clear();
+				map.put("filtro.tag.sigla", t[0]);
+				String link = Router.reverse("Application.listar", map).url;
+				Tag tag = new Tag(t[0].toString(), link, Double.parseDouble(t[1].toString()));
+				cloud.addTag(tag);
+				//d -= 1;
 			}
 		}
 

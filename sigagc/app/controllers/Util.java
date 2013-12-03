@@ -211,7 +211,7 @@ public class Util {
 			if(controle == 1) 
 				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(0);
 			else if(controle == 2){
-				matcherHashTag.appendReplacement(sb,"[[http://localhost/sigagc/listar?filtro.tag.sigla=" + 
+				matcherHashTag.appendReplacement(sb,"[[/sigagc/listar?filtro.tag.sigla=" + 
 													matcherHashTag.group(0).substring(1)  + "|$0]]");
 			}
 		}

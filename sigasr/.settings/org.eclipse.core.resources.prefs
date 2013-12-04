@@ -1,9 +1,10 @@
-#Fri Nov 29 17:01:47 BRST 2013
+#Mon Dec 02 16:52:25 BRST 2013
 eclipse.preferences.version=1
 encoding//app/controllers/Application.java=UTF-8
 encoding//app/controllers/Bootstrap.java=UTF-8
 encoding//app/models/SrSolicitacao.java=UTF-8
 encoding//app/reports/SrRelTransferencias.java=UTF-8
 encoding//app/views/Application/exibir.html=UTF-8
+encoding//app/views/Application/listarDesignacao.html=UTF-8
 encoding//app/views/Application/termoAtendimento.html=UTF-8
 encoding/<project>=UTF-8

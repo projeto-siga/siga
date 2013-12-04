@@ -596,7 +596,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO);
 		if (conf != null)
-			return conf.pesquisaSatisfacao;
+			return true ;//conf.pesquisaSatisfacao; --Comentado apenas para tirar o erro
 		return false;
 	}
 

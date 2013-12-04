@@ -69,9 +69,13 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_TIPO_ATRIBUTO")
 	public SrTipoAtributo tipoAtributo;
 
-	@Column(name = "PESQUISA_SATISFACAO")
+	@ManyToOne
+	@JoinColumn(name = "PESQUISA_SATISFACAO")
+	public SrPesquisa pesquisaSatisfacao;
+	
+	/*@Column(name = "PESQUISA_SATISFACAO")
 	@Type(type = "yes_no")
-	public boolean pesquisaSatisfacao;
+	public boolean pesquisaSatisfacao;*/
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
@@ -95,9 +99,9 @@ public class SrConfiguracao extends CpConfiguracao {
 		this.subTipoConfig = subTipoConfig;
 	}
 
-	public String getPesquisaSatisfacaoString() {
+	/*public String getPesquisaSatisfacaoString() {
 		return pesquisaSatisfacao ? "Sim" : "Não";
-	}
+	}*/
 
 	public String getAtributoObrigatorioString() {
 		return atributoObrigatorio ? "Sim" : "Não";

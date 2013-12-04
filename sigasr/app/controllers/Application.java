@@ -675,6 +675,7 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
+		//List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find("hisDtFim is null").fetch();
 		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);

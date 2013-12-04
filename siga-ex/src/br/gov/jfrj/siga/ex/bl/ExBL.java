@@ -4626,10 +4626,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento juntado");
 
-		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre))
+		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre) ||
+				!mob.estaNaMesmaLotacao(mobMestre))
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento que esteja em outra lotação");
-
+		
 		if (mobMestre.isEmTransito())
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento em trânsito");

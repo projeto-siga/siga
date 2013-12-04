@@ -94,6 +94,10 @@ public class SrMovimentacao extends GenericModel {
 
 	@Column(name = "ID_PRIORIDADE")
 	public Long prioridade;
+	
+	@ManyToOne()
+	@JoinColumn(name = "ID_PESQUISA")
+	public SrPesquisa pesquisa;
 
 	public SrMovimentacao() throws Exception {
 		this(null);

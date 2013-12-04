@@ -976,7 +976,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		operacoes.add(new SrOperacao("lock", "Responder Pesquisa",
 				podeResponderPesquisa(lotaTitular, titular),
-					"responderPesquisa", "modal=true"));
+					"Application.responderPesquisa", "popup=true"));
 		
 		operacoes.add(new SrOperacao("arrow_rotate_anticlockwise", "Retornar ao Pré-Atendimento",
 				podeRetornarAoPreAtendimento(lotaTitular, titular),

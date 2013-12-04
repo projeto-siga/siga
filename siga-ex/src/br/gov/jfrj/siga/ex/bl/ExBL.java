@@ -29,8 +29,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +52,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Order;
@@ -75,7 +78,6 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
-import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -115,11 +117,22 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.wf.service.WfService;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 public class ExBL extends CpBL {
@@ -5362,6 +5375,72 @@ public class ExBL extends CpBL {
 			}
 		}
 		return list;
+	}
+	
+	private static class BlobSerializer
+    implements JsonSerializer<java.sql.Blob>, JsonDeserializer<java.sql.Blob> {
+	    public JsonElement serialize(java.sql.Blob src, Type srcType, JsonSerializationContext context) {
+	    	String s = null;
+	    	byte ab[] = br.gov.jfrj.siga.cp.util.Blob.toByteArray(src);
+	    	if (ab != null)
+	    		s = Base64.encode(ab);
+	    	return new JsonPrimitive(s);
+	    }
+
+	    public Blob deserialize(JsonElement json, Type type, JsonDeserializationContext context)
+	    throws JsonParseException {
+	    	String s = json.getAsString();
+			if (s != null) {
+		    	byte ab[] = Base64.decode(s);
+				return Hibernate.createBlob(ab);
+			}
+			return null;
+	    }
+	  }
+
+	public String toJSON(ExMobil mobil) {
+		//Prune
+		ExMobil mob = (ExMobil) Objeto.getImplementation(mobil);
+		mob.setExDocumento((ExDocumento) Objeto.getImplementation(mob.doc()));
+		mob.setExDocumentoFilhoSet(null);
+		mob.setExMarcaSet(null);
+		mob.setExMovimentacaoReferenciaSet(null);
+		mob.setExMovimentacaoSet(null);
+		mob.setExTipoMobil(null);
+		
+		ExDocumento doc = mob.doc();
+		//doc.setCadastrante(null);
+		//doc.setDestinatario(null);
+		doc.setExBoletimDocSet(null); 
+		doc.setExClassificacao(null);
+		doc.setExDocAnterior(null);
+		doc.setExFormaDocumento(null);
+		doc.setExMobilAutuado(null);
+		doc.setExMobilPai(null);
+		doc.setExMobilSet(null);
+		doc.setExModelo(null);
+		doc.setExNivelAcesso(null);
+		doc.setExTipoDocumento(null);
+		doc.setLotaCadastrante(null);
+		doc.setLotaDestinatario(null);
+		//doc.setLotaSubscritor((DpLotacao) Objeto.getImplementation(doc.getLotaSubscritor()));
+		doc.setLotaSubscritor(null);
+		doc.setLotaTitular(null);
+		doc.setCadastrante(null);
+		doc.setDestinatario(null);
+		doc.setSubscritor(null);
+		doc.setTitular(null);
+		doc.setOrgaoExterno(null);
+		doc.setOrgaoExternoDestinatario(null);
+		doc.setOrgaoUsuario(null);
+		
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(java.sql.Blob.class, new BlobSerializer())
+				.setPrettyPrinting()
+				.setFieldNamingPolicy(
+						FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+		String jsonOutput = gson.toJson(mob);
+		return jsonOutput;
 	}
 
 }

@@ -173,8 +173,7 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
-	public Boolean isSemEfeito(String codigoDocumento)
-			throws Exception {
+	public Boolean isSemEfeito(String codigoDocumento) throws Exception {
 		try {
 			ExMobil mob = buscarMobil(codigoDocumento);
 			return mob.getExDocumento().isSemEfeito();
@@ -301,6 +300,22 @@ public class ExServiceImpl implements ExService {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);
 			return null;
+		}
+	}
+
+	public String toJSON(String codigo) throws Exception {
+		try {
+			ExMobil mob = null;
+			{
+				final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+				filter.setSigla(codigo);
+				mob = (ExMobil) dao().consultarPorSigla(filter);
+				return Ex.getInstance().getBL().toJSON(mob);
+			}
+		} catch (Exception e) {
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
 		}
 	}
 

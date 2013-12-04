@@ -7,7 +7,7 @@ import java.util.List;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
 import models.SrItemConfiguracao;
-import models.SrServico;
+import models.SrAcao;
 import models.SrSolicitacao;
 import models.SrSubTipoConfiguracao;
 
@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import play.db.jpa.JPA;
 import play.test.UnitTest;
 
-public class SrItemServicoDesignacaoTest extends UnitTest {
+public class SrItemAcaoDesignacaoTest extends UnitTest {
 
 	private DpPessoa eeh() {
 		return DpPessoa.find("bySiglaPessoa", "EEH").first();
@@ -81,7 +81,7 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 					SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
 					new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO,
-							SrConfiguracaoBL.SERVICO }).get(0);
+							SrConfiguracaoBL.ACAO }).get(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -182,43 +182,46 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 	}
 
 	@Test
-	public void testarCriacaoServico() throws Exception {
+	public void testarCriacaoAcao() throws Exception {
 
-		SrServico servSoft = new SrServico();
-		servSoft.descrServico = "Ação para Software";
-		servSoft.siglaServico = "99.00";
-		servSoft.tituloServico = "Ação para Software";
-		servSoft.salvar();
+		SrAcao acaoSoft = new SrAcao();
+		acaoSoft.descrAcao = "Ação para Software";
+		acaoSoft.siglaAcao = "99.00";
+		acaoSoft.tituloAcao = "Ação para Software";
+		acaoSoft.salvar();
 
-		SrServico criar = new SrServico();
-		criar.descrServico = "Criar";
-		criar.siglaServico = "99.01";
-		criar.tituloServico = "Criar";
+		SrAcao criar = new SrAcao();
+		criar.descrAcao = "Criar";
+		criar.siglaAcao = "99.01";
+		criar.tituloAcao = "Criar";
 		criar.salvar();
 
-		SrServico manter = new SrServico();
-		manter.descrServico = "Manter";
-		manter.siglaServico = "99.02";
-		manter.tituloServico = "Manter";
+		SrAcao manter = new SrAcao();
+		manter.descrAcao = "Manter";
+		manter.siglaAcao = "99.02";
+		manter.tituloAcao = "Manter";
 		manter.salvar();
 
-		SrServico filtro = new SrServico();
-		filtro.siglaServico = "99.";
+		SrAcao filtro = new SrAcao();
+		filtro.siglaAcao = "99.";
 		assertEquals(3, filtro.buscar().size());
-		assertEquals(3, SrServico.listar().size());
+		assertEquals(3, SrAcao.listar().size());
 
-		for (SrServico servico : SrServico.listar()) {
-			assertNull(servico.servicoInicial);
-			servico.refresh();
-			assertNotNull(servico.servicoInicial);
+		for (SrAcao acao : SrAcao.listar()) {
+			assertNull(acao.acaoInicial);
+			acao.refresh();
+			assertNotNull(acao.acaoInicial);
 		}
 	}
 
 	@Test
-	public void listarItemEServicoSemHaverDesignTrazVazio() throws Exception {
+	public void listarItemEAcaoSemHaverDesignTrazVazio() throws Exception {
 		prepararSessao();
-		assertEquals(0, SrItemConfiguracao.listarPorPessoaELocal(eeh(), null).size());
-		assertEquals(0, SrServico.listarComAtendentePorPessoaLocalEItem(eeh(), null, null).size());
+		assertEquals(0, SrItemConfiguracao.listarPorPessoaELocal(eeh(), null)
+				.size());
+		assertEquals(0,
+				SrAcao.listarComAtendentePorPessoaLocalEItem(eeh(), null, null)
+						.size());
 	}
 
 	@Test
@@ -232,7 +235,8 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 		designTRF.salvarComoDesignacao();
 		apagaCacheDesignacao();
 
-		assertEquals(0, SrItemConfiguracao.listarPorPessoaELocal(eeh(), null).size());
+		assertEquals(0, SrItemConfiguracao.listarPorPessoaELocal(eeh(), null)
+				.size());
 
 	}
 
@@ -270,33 +274,39 @@ public class SrItemServicoDesignacaoTest extends UnitTest {
 	}
 
 	@Test
-	public void listarServicoPorItemHavendoDesignProItemSemServicoTrazTodosDeNivel2()
+	public void listarAcaoPorItemHavendoDesignProItemSemAcaoTrazTodosDeNivel2()
 			throws Exception {
 		// Edson: Traz 99.01, 99.02. Apesar de não haver designação diretamente
 		// pro SigaDoc, há para sysDoc
-		assertEquals(2, SrServico.listarComAtendentePorPessoaLocalEItem(eeh(), null, sigaDoc()).size());
+		assertEquals(
+				2,
+				SrAcao.listarComAtendentePorPessoaLocalEItem(eeh(), null,
+						sigaDoc()).size());
 	}
 
 	@Test
-	public void listarServicoPorItemNaoHavendoDesignProItemTrazVazio()
+	public void listarAcaoPorItemNaoHavendoDesignProItemTrazVazio()
 			throws Exception {
-		//Edson: vazio porque não há designação pro sysTrab
-		assertEquals(0, SrServico.listarComAtendentePorPessoaLocalEItem(eeh(), null, sysTrab()).size());
+		// Edson: vazio porque não há designação pro sysTrab
+		assertEquals(
+				0,
+				SrAcao.listarComAtendentePorPessoaLocalEItem(eeh(), null,
+						sysTrab()).size());
 	}
-	
+
 	@Test
-	public void fazerAlgunsOutrosTestesComDesignItemServico(){
-		assertFalse(1==1);
+	public void fazerAlgunsOutrosTestesComDesignItemAcao() {
+		assertFalse(1 == 1);
 	}
 
 	@Test
 	public void testarDesignacaoReferenciandoItemFechado() {
-		assertFalse(1==1);
+		assertFalse(1 == 1);
 	}
-	
+
 	@Test
 	public void verSeTesteiBemOQueEhProvavelQOUsuarioInsira() {
-		assertFalse(1==1);
+		assertFalse(1 == 1);
 	}
 
 }

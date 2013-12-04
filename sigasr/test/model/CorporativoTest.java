@@ -6,7 +6,7 @@ import java.util.List;
 
 import models.SrConfiguracao;
 import models.SrItemConfiguracao;
-import models.SrServico;
+import models.SrAcao;
 
 import org.junit.After;
 import org.junit.Before;

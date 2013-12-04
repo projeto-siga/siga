@@ -33,15 +33,19 @@ $(function() {
 		height: 'auto',
 		width: 'auto',
 		modal: true,
-		title: 'Nova Pergunta',
+		resizable: false,
 		close: function() {
-			jDescrPergunta.val("");
-			$(this).data('descrPergunta','');
-			$(this).data('tipoPergunta','');
+			jDescrPergunta.val('');
+			jDialog.data('descrPergunta','');
+			jDialog.data('tipoPergunta','');
 		},
 		open: function(){
-			jDescrPergunta.val($(this).data("descrPergunta"));
-			jTipoPergunta.find("option[value=" + $(this).data("tipoPergunta") + "]").prop('selected', true);
+			if (jDialog.data("descrPergunta"))
+				jDialog.dialog('option', 'title', 'Alterar Pergunta');
+			else 
+				jDialog.dialog('option', 'title', 'Incluir Pergunta');			
+			jDescrPergunta.val(jDialog.data("descrPergunta"));
+			jTipoPergunta.find("option[value=" + jDialog.data("tipoPergunta") + "]").prop('selected', true);
 		}
 	});
 	$("#modalOk").click(function(){
@@ -55,8 +59,10 @@ $(function() {
 	});
 
 	perguntas["index"] = 0;
-	perguntas.incluirItem = function(descr, idTipo, descrTipo){
-		jPerguntas.append("<li style=\"cursor: move\" id =\"" + ++perguntas["index"] + "\"></li>");
+	perguntas.incluirItem = function(descr, idTipo, descrTipo, id){
+		if (!id)
+			id = 'novo_' + ++perguntas["index"];
+		jPerguntas.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
 		var jNewTr = jPerguntas.find("li:last-child");
 		jNewTr.append("<span>" + descr + "</span> - <span style=\"display: inline-block\" id=\"" + idTipo + "\">" 
 				+ descrTipo + "</span>");
@@ -66,7 +72,7 @@ $(function() {
 			var jDivs=jNewTr.find("span");
 			jDialog.data("descrPergunta",jDivs[0].innerText)
 				.data("tipoPergunta",jDivs[1].id)
-				.data("id",perguntas["index"])
+				.data("id",id)
 				.data("acao", perguntas.alterarItem)
 				.dialog("open");
 		});
@@ -80,8 +86,8 @@ $(function() {
 			jNewTr.find("img").css("visibility", "hidden");
 		});
 	}
-	perguntas.alterarItem = function(descr, idTipo, descrTipo, idItem){
-		var jDivs=$("#"+idItem).find("span");
+	perguntas.alterarItem = function(descr, idTipo, descrTipo, id){
+		var jDivs=$("#"+id).find("span");
 		jDivs[0].innerText = descr;
 		jDivs[1].id = idTipo;
 		jDivs[1].innerText = descrTipo;
@@ -92,8 +98,22 @@ $(function() {
 	}
 
 	#{list items:pesq.perguntaSet, as:'pergunta'}
-		perguntas.incluirPerguntas('${pergunta.descrPergunta}', '${pergunta.tipoPergunta.idTipoPergunta}', '${pergunta.tipoPergunta.nomeTipoPergunta}');
+		perguntas.incluirItem('${pergunta.descrPergunta}', '${pergunta.tipoPergunta.idTipoPergunta}', '${pergunta.tipoPergunta.nomeTipoPergunta}', ${pergunta.idPergunta});
 	#{/list}
+
+	$("[value='Salvar']").click(function(){
+		var jForm = $("form"), 
+			params = jForm.serialize();
+		jPerguntas.find("li").each(function(i){
+			var jDivs=$(this).find("span");
+			params += '&pesq.perguntaSet[' + i + '].descrPergunta=' + jDivs[0].innerText;
+			params += '&pesq.perguntaSet[' + i + '].tipoPergunta.idTipoPergunta=' + jDivs[1].id;
+			params += '&pesq.perguntaSet[' + i + '].ordemPergunta=' + i;
+			if (this.id.indexOf("novo_") < 1)
+				params += '&pesq.perguntaSet[' + i + '].idPergunta=' + this.id;
+		});
+		location.href = '@{Application.gravarPesquisa()}?' + params;
+	});
 });
 </script>
 <div class="gt-bd clearfix">
@@ -101,32 +121,32 @@ $(function() {
 		<h2>Pesquisa de Satisfação</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarPesquisa()} #{if pesq?.idPesquisa} <input
-				type="hidden" name="pesq.idPesquisa" value="${pesq.idPesquisa}">
-			#{/if}
-			<div class="gt-form-row gt-width-66">
-				<label>Nome</label> <input type="text" name="pesq.nomePesquisa"
-					value="${pesq?.nomePesquisa}" size="60" />
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Descrição</label> <input type="text"
-					name="pesq.descrPesquisa" value="${pesq?.descrPesquisa}" size="60" />
-			</div>
-			<div class="gt-form-row">
-				<label>Perguntas</label>
-				<ul id="perguntas" style="color: #365b6d">
-				</ul>
-				<input type="button" value="Incluir" id="botaoIncluir"
-					class="gt-btn-small gt-btn-left" style="font-size: 10px;"/>
-			</div>
-			<div class="gt-form-row">
-				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" /> #{if pesq?.idPesquisa} <input
-					type="button" value="Desativar" class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarPesquisa()}?id=${pesq.idPesquisa}'" />
-				#{/if}
-			</div>
-			#{/form}
+			<form>
+				#{if pesq?.idPesquisa} <input type="hidden" name="pesq.idPesquisa"
+					value="${pesq.idPesquisa}"> #{/if}
+				<div class="gt-form-row gt-width-66">
+					<label>Nome</label> <input type="text" name="pesq.nomePesquisa"
+						value="${pesq?.nomePesquisa}" size="60" />
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Descrição</label> <input type="text"
+						name="pesq.descrPesquisa" value="${pesq?.descrPesquisa}" size="60" />
+				</div>
+				<div class="gt-form-row">
+					<label>Perguntas</label>
+					<ul id="perguntas" style="color: #365b6d">
+					</ul>
+					<input type="button" value="Incluir" id="botaoIncluir"
+						class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+				</div>
+				<div class="gt-form-row">
+					<input type="button" value="Salvar"
+						class="gt-btn-medium gt-btn-left" /> #{if pesq?.idPesquisa} <input
+						type="button" value="Desativar" class="gt-btn-medium gt-btn-left"
+						onclick="location.href='@{Application.desativarPesquisa()}?id=${pesq.idPesquisa}'" />
+					#{/if}
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

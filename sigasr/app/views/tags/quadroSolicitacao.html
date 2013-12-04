@@ -8,7 +8,7 @@ _solicitacoes.add(_solicitacao); } }%-->
 					<h4>
 						#{ifnot _modoCompleto}
 						<a href="@{Application.exibir(sol.idSolicitacao)}">
-							${sol.codigo} -	#{/ifnot}${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.servico?.descricao}
+							${sol.codigo} -	#{/ifnot}${sol.itemConfiguracao?.descricao}&nbsp;-&nbsp;${sol.acao?.descricao}
 							#{ifnot _modoCompleto}</a>#{/ifnot}
 					</h4>
 					<!--  <p></p> -->

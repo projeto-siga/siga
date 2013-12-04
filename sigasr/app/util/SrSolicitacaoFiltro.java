@@ -52,8 +52,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				&& itemConfiguracao.idItemConfiguracao > 0L)
 			query += " and sol.itemConfiguracao.idItemConfiguracao = "
 					+ itemConfiguracao.idItemConfiguracao;
-		if (servico != null && servico.idServico > 0L)
-			query += " and sol.servico.idServico = " + servico.idServico;
+		if (acao != null && acao.idAcao > 0L)
+			query += " and sol.acao.idAcao = " + acao.idAcao;
 		if (urgencia != null && urgencia.nivelUrgencia > 0)
 			query += " and sol.urgencia = " + urgencia.ordinal();
 		if (tendencia != null && tendencia.nivelTendencia > 0)

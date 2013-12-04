@@ -5,7 +5,7 @@ import models.SrFormaAcompanhamento;
 import models.SrItemConfiguracao;
 import models.SrMarca;
 import models.SrMovimentacao;
-import models.SrServico;
+import models.SrAcao;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -29,7 +29,7 @@ public class DoDiagram {
 		d.addClass(SrAtributo.class, false);
 		d.addClass(SrFormaAcompanhamento.class, false);
 		d.addClass(SrItemConfiguracao.class, false);
-		d.addClass(SrServico.class, false);
+		d.addClass(SrAcao.class, false);
 		d.addClass(SrMarca.class, false);
 		d.addClass(SrSolicitacao.class, false);
 		d.addClass(SrTipoAtributo.class, false);

@@ -156,7 +156,7 @@ tipo: SrTipoAtributo</y:AttributeLabel>
             <y:AttributeLabel>entidadePai: EntidadeSiga
 formaAcompanhamento: SrFormaAcompanhamento
 itemConfiguracao: SrItemConfiguracao
-servico: SrServico
+acao: SrAcao
 gravidade: SrGravidade
 tendencia: SrTendencia
 urgencia: SrUrgencia
@@ -239,7 +239,7 @@ hisIdcFim: CpIdentidade</y:AttributeLabel>
           <y:Geometry height="180.87343750000002" width="140.724609375" x="489.7880921378968" y="879.8734374999997"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="64.70263671875" x="38.010986328125" y="3.0">SrServico</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="64.70263671875" x="38.010986328125" y="3.0">SrAcao</y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="false">
             <y:AttributeLabel>hisIdIni: Long
 hisDtIni: Date
@@ -247,10 +247,10 @@ hisDtFim: Date
 hisAtivo: int
 hisIdcIni: CpIdentidade
 hisIdcFim: CpIdentidade
-idServico: Long
-siglaServico: String
-descrServico: String
-tituloServico: String</y:AttributeLabel>
+idAcao: Long
+siglaAcao: String
+descrAcao: String
+tituloAcao: String</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -282,7 +282,7 @@ solicitacaoPai: SrSolicitacao
 formaAcompanhamento: SrFormaAcompanhamento
 itemConfiguracao: SrItemConfiguracao
 arquivo: SrArquivo
-servico: SrServico
+acao: SrAcao
 descrSolicitacao: String
 gravidade: SrGravidade
 tendencia: SrTendencia

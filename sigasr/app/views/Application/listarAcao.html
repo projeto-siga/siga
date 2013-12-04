@@ -15,14 +15,14 @@
 				</thead>
 
 				<tbody>
-					#{list items:servicos, as:'servico'}
+					#{list items:acoes, as:'acao'}
 					<tr
-						onclick="javascript:window.location='@{Application.editarServico(servico.idServico)}'"
+						onclick="javascript:window.location='@{Application.editarAcao(acao.idAcao)}'"
 						style="cursor: pointer;">
-						<td>${servico.siglaServico}</td>
-						<td><span style="margin-left: ${(servico.nivel-1)*2}em; #{if servico.nivel == 1}font-weight: bold;#{/if}">#{selecionado sigla:servico.atual?.tituloServico, 
-						descricao:servico.atual?.descricaoCompleta /}</span></td>
-						<td>${servico.descrServico}</td>
+						<td>${acao.siglaAcao}</td>
+						<td><span style="margin-left: ${(acao.nivel-1)*2}em; #{if acao.nivel == 1}font-weight: bold;#{/if}">#{selecionado sigla:acao.atual?.tituloAcao, 
+						descricao:acao.atual?.descricaoCompleta /}</span></td>
+						<td>${acao.descrAcao}</td>
 					</tr>
 					</a> #{/list}
 				</tbody>
@@ -30,7 +30,7 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarServico}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a href="@{Application.editarAcao}" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 
 	</div>

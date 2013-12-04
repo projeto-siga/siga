@@ -53,7 +53,7 @@ public class SrRelTransferencias extends RelatorioTemplate {
 		this.addColuna("Atendente", 13, RelatorioRapido.CENTRO, false);
 		this.addColuna("Tipo de Movimentação", 15, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Item de Configuração", 16, RelatorioRapido.CENTRO, false);
-		this.addColuna("Serviço", 16, RelatorioRapido.CENTRO, false);
+		this.addColuna("Ação", 16, RelatorioRapido.CENTRO, false);
 		return this;
 	}
 
@@ -103,7 +103,7 @@ public class SrRelTransferencias extends RelatorioTemplate {
 			Object[] obj = (Object[]) it.next();
 			SrSolicitacao solic = (SrSolicitacao) obj[0];
 			SrMovimentacao mov = (SrMovimentacao) obj[1];
-			String dtreg, descricao, lotaSolicitante, lotaAtendente, descrEstado, itemConfig, descServico;
+			String dtreg, descricao, lotaSolicitante, lotaAtendente, descrEstado, itemConfig, descAcao;
 			if (mov.getDtIniString() != null) {
 				dtreg = mov.getDtIniString().toString();
 			} else {
@@ -137,13 +137,13 @@ public class SrRelTransferencias extends RelatorioTemplate {
 			} else {
 				itemConfig = "";
 			}
-			//Serviço - 8º elemento
-			if (solic.servico != null) {
-				descServico = solic.servico.tituloServico.toString();
+			//Açao - 8º elemento
+			if (solic.acao != null) {
+				descAcao = solic.acao.tituloAcao.toString();
 			} else {
-				descServico = "";
+				descAcao = "";
 			}
-			String solicitacao = dtreg + ";" + descricao + ";" + lotaSolicitante + ";" + lotaAtendente + ";" + descrEstado + ";" + itemConfig + ";" + descServico;
+			String solicitacao = dtreg + ";" + descricao + ";" + lotaSolicitante + ";" + lotaAtendente + ";" + descrEstado + ";" + itemConfig + ";" + descAcao;
 			set.add(solic.getCodigo().toString());
 			map.put(solic.getCodigo().toString(), solicitacao);
 		}
@@ -152,7 +152,7 @@ public class SrRelTransferencias extends RelatorioTemplate {
 			Object[] obj = (Object[]) itl.next();
 			SrSolicitacao solic = (SrSolicitacao) obj[0];
 			SrMovimentacao mov = (SrMovimentacao) obj[1];
-			String dtreg, descricao, lotaSolicitante, lotaAtendente, descrEstado, itemConfig, descServico;
+			String dtreg, descricao, lotaSolicitante, lotaAtendente, descrEstado, itemConfig, descAcao;
 			if (mov.getDtIniString() != null) {
 				dtreg = mov.getDtIniString().toString();
 			} else {
@@ -186,13 +186,13 @@ public class SrRelTransferencias extends RelatorioTemplate {
 			} else {
 				itemConfig = "";
 			}
-			//Serviço - 8º elemento
-			if (solic.servico != null) {
-				descServico = solic.servico.tituloServico.toString();
+			//Ação - 8º elemento
+			if (solic.acao != null) {
+				descAcao = solic.acao.tituloAcao.toString();
 			} else {
-				descServico = "";
+				descAcao = "";
 			}
-			String solicitacao = dtreg + ";" + descricao + ";" + lotaSolicitante + ";" + lotaAtendente + ";" + descrEstado + ";" + itemConfig + ";" + descServico;
+			String solicitacao = dtreg + ";" + descricao + ";" + lotaSolicitante + ";" + lotaAtendente + ";" + descrEstado + ";" + itemConfig + ";" + descAcao;
 			set.add(solic.getCodigo().toString());
 			map.put(solic.getCodigo().toString(), solicitacao);
 		}

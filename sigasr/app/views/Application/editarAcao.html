@@ -5,9 +5,9 @@
 		<h2>Ação</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarServico()} #{if
-			servico?.idServico} <input type="hidden"
-				name="servico.idServico" value="${servico.idServico}">
+			#{form @Application.gravarAcao()} #{if
+			acao?.idAcao} <input type="hidden"
+				name="acao.idAcao" value="${acao.idAcao}">
 			#{/if}
 			#{ifErrors}
 			<p class="gt-error">Alguns campos obrigatórios não foram
@@ -15,29 +15,29 @@
 			#{/ifErrors}
 			<div class="gt-form-row gt-width-66">
 				<label>Código</label> <input type="text"
-					name="servico.siglaServico"
-					value="${servico?.siglaServico}" />
+					name="acao.siglaAcao"
+					value="${acao?.siglaAcao}" />
 					<span style="color: red">#{error
-					'servico.siglaServico' /}</span>
+					'acao.siglaAcao' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Título</label> <input type="text"
-					name="servico.tituloServico"
-					value="${servico?.tituloServico}" size="100"/>
+					name="acao.tituloAcao"
+					value="${acao?.tituloAcao}" size="100"/>
 					<span style="color: red">#{error
-					'servico.tituloServico' /}</span>
+					'acao.tituloAcao' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label> <input type="text"
-					name="servico.descrServico"
-					value="${servico?.descrServico}" size="100"/>
+					name="acao.descrAcao"
+					value="${acao?.descrAcao}" size="100"/>
 			</div>
 			<div class="gt-form-row">
 				<input type="submit" value="Salvar"
 					class="gt-btn-medium gt-btn-left" />#{if
-				servico?.idServico} <input type="button" value="Desativar"
+				acao?.idAcao} <input type="button" value="Desativar"
 					class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarServico()}?id=${servico.idServico}'" />
+					onclick="location.href='@{Application.desativarAcao()}?id=${acao.idAcao}'" />
 				#{/if}
 			</div>
 			#{/form}

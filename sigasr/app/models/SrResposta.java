@@ -14,6 +14,7 @@ import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,65 +42,40 @@ import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name = "SR_PERGUNTA", schema = "SIGASR")
-public class SrPergunta extends HistoricoSuporte {
+@Table(name = "SR_RESPOSTA", schema = "SIGASR")
+public class SrResposta extends GenericModel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_PERGUNTA_SEQ", name = "srPerguntaSeq")
-	@GeneratedValue(generator = "srPerguntaSeq")
-	@Column(name = "ID_PERGUNTA")
-	public Long idPergunta;
+	@SequenceGenerator(sequenceName = "SIGASR.SR_RESPOSTA_SEQ", name = "srRespostaSeq")
+	@GeneratedValue(generator = "srRespostaSeq")
+	@Column(name = "ID_RESPOSTA")
+	public Long idResposta;
 
-	@Column(name = "DESCR_PERGUNTA")
+	@Column(name = "DESCR_RESPOSTA")
 	public String descrPergunta;
 
-	@ManyToOne()
-	@JoinColumn(name = "ID_PESQUISA")
-	public SrPesquisa pesquisa;
+	@Enumerated()
+	@Column(name = "VALOR_RESPOSTA")
+	public SrFormaAcompanhamento valorResposta;
 
 	@ManyToOne()
-	@JoinColumn(name = "ID_TIPO_PERGUNTA")
-	public SrTipoPergunta tipoPergunta;
-
-	@Column(name = "ORDEM_PERGUNTA")
-	public Long ordemPergunta;
+	@JoinColumn(name = "ID_PERGUNTA")
+	public SrPergunta pergunta;
 
 	@ManyToOne()
-	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrPergunta perguntaInicial;
+	@JoinColumn(name = "ID_AVALIACAO")
+	public SrMovimentacao avaliacao;
 
-	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "perguntaInicial", cascade = CascadeType.PERSIST)
-	@OrderBy("hisDtIni desc")
-	public List<SrPergunta> meuPerguntaHistoricoSet;
-
-	public SrPergunta() {
+	public SrResposta() {
 
 	}
 
 	public Long getId() {
-		return this.idPergunta;
+		return this.idResposta;
 	}
 
 	public void setId(Long id) {
-		idPergunta = id;
-	}
-
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		return false;
-	}
-
-	public List<SrPergunta> getHistoricoPergunta() {
-		if (perguntaInicial != null)
-			return perguntaInicial.meuPerguntaHistoricoSet;
-		return null;
-	}
-
-	public SrPergunta getPerguntaAtual() {
-		List<SrPergunta> perguntas = getHistoricoPergunta();
-		if (perguntas == null)
-			return null;
-		return perguntas.get(0);
+		idResposta = id;
 	}
 
 }

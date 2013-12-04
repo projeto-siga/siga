@@ -48,7 +48,7 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 		this.addColuna("Atendente", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Situação", 15, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Item de Configuração", 16, RelatorioRapido.CENTRO, false);
-		this.addColuna("Serviço", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("Ação", 20, RelatorioRapido.CENTRO, false);
 		return this;
 	}
 
@@ -70,7 +70,7 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 			List<SrSolicitacao> lista = SrSolicitacao.find(
 				"select sol.idSolicitacao, to_char(mov.dtIniMov,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
 				"sol.lotaSolicitante.siglaLotacao, mov.lotaAtendente.siglaLotacao, " +
-				"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
+				"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao " +
 				"from SrSolicitacao sol, SrMovimentacao mov " +
 				"where sol.idSolicitacao = mov.solicitacao " +
 				"and sol.idSolicitacao = sol.hisIdIni " +
@@ -99,7 +99,7 @@ public class SrRelSolicitacoes extends RelatorioTemplate {
 				List<SrSolicitacao> lista = SrSolicitacao.find(
 					"select sol.idSolicitacao, to_char(mov.dtIniMov,'dd/mm/yy hh24:mi'), sol.descrSolicitacao, " +
 					"sol.lotaSolicitante.siglaLotacao, mov.lotaAtendente.siglaLotacao, " +
-					"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico " +
+					"mov.tipoMov.nome, sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao " +
 					"from SrSolicitacao sol, SrMovimentacao mov " +
 					"where sol.idSolicitacao = mov.solicitacao " +
 					"and sol.idSolicitacao = sol.hisIdIni " +

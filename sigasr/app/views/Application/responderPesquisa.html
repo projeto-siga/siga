@@ -1,0 +1,30 @@
+#{extends 'main.html' /} #{set title:'Pesquisa de Satisfação' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Pesquisa de Satisfação</h2>
+
+		<div class="gt-form gt-content-box">
+			#{form @Application.responderPesquisaGravar()}
+			<div class="gt-form-row">
+				<label>Diga aí o que você achou</label>
+				<textarea cols="50" rows="6" name="semNome"
+					id="semDescr"></textarea>
+			</div> 
+			<div class="gt-form-row">
+				<label>E qual o seu conceito?</label>
+				<input type="radio" name="semNome" value="Um">Muito Ruim&nbsp;
+				<input type="radio" name="semNome" value="Um">Ruim&nbsp;
+				<input type="radio" name="semNome" value="Um">Regular&nbsp;
+				<input type="radio" name="semNome" value="Um">Bom&nbsp;
+				<input type="radio" name="semNome" value="Um">Muito Bom&nbsp;
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" value="Enviar"
+					class="gt-btn-medium gt-btn-left" />
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>
+

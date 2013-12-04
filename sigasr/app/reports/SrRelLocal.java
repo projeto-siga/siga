@@ -43,7 +43,7 @@ public class SrRelLocal extends RelatorioTemplate {
 			throws DJBuilderException {
 		this.setTitle("Relatório de Solicitações por Localidade");
 		this.addColuna("Item de Configuração", 30, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Serviço", 30, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Ação", 30, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Total", 20, RelatorioRapido.CENTRO, false);
 		//this.addColuna("Tot", 20, RelatorioRapido.CENTRO, false);
 		//this.setp
@@ -57,12 +57,12 @@ public class SrRelLocal extends RelatorioTemplate {
 		
 		if (parametros.get("lotacao").equals("")) {
 			List<SrSolicitacao> lista = SrSolicitacao.find(
-					"select sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico, count(*) " +
+					"select sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao, count(*) " +
 					"from SrSolicitacao sol " +
 					"where sol.local = " + parametros.get("local") + " " +
 					"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 					"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-					"group by sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico").fetch();
+					"group by sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao").fetch();
 					Iterator it = lista.listIterator(); 
 					Long tot = (long) 0;
 					while (it.hasNext()) {
@@ -86,14 +86,14 @@ public class SrRelLocal extends RelatorioTemplate {
 							if (i < ( lotacoes.size() - 1)) listalotacoes.append(",");
 						}
 						List<SrSolicitacao> lista = SrSolicitacao.find(
-							"select sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico, count(*) " +
+							"select sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao, count(*) " +
 							"from SrSolicitacao sol " +
 							"where exists (select 1 from SrMovimentacao mov where mov.solicitacao = sol.idSolicitacao " +
 							"				and mov.lotaAtendente in (" + listalotacoes + "))" +
 							"and sol.local = " + parametros.get("local") + " " +
 							"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 							"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-									"group by sol.itemConfiguracao.tituloItemConfiguracao, sol.servico.tituloServico").fetch();
+									"group by sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao").fetch();
 							Long tot = (long) 0;
 							Iterator it = lista.listIterator(); 
 							while (it.hasNext()) {

@@ -37,8 +37,8 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrItemConfiguracao itemConfiguracao;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_SERVICO")
-	public SrServico servico;
+	@JoinColumn(name = "ID_ACAO")
+	public SrAcao acao;
 
 	@Column(name = "GRAVIDADE")
 	public SrGravidade gravidade;
@@ -89,12 +89,12 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public SrConfiguracao(DpPessoa pess, CpComplexo local,
-			SrItemConfiguracao item, SrServico servico,
+			SrItemConfiguracao item, SrAcao acao,
 			CpTipoConfiguracao tipo, SrSubTipoConfiguracao subTipoConfig) {
 		this.setDpPessoa(pess);
 		this.setComplexo(local);
 		this.itemConfiguracao = item;
-		this.servico = servico;
+		this.acao = acao;
 		this.setCpTipoConfiguracao(tipo);
 		this.subTipoConfig = subTipoConfig;
 	}
@@ -164,27 +164,27 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public static SrConfiguracao getConfiguracao(DpPessoa pess,
-			CpComplexo local, SrItemConfiguracao item, SrServico servico,
+			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
 			long idTipo, SrSubTipoConfiguracao subTipo) throws Exception {
 
-		SrConfiguracao conf = new SrConfiguracao(pess, local, item, servico,
+		SrConfiguracao conf = new SrConfiguracao(pess, local, item, acao,
 				JPA.em().find(CpTipoConfiguracao.class, idTipo), subTipo);
 
 		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
 	}
 
 	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
-			CpComplexo complexo, SrItemConfiguracao item, SrServico servico,
+			CpComplexo complexo, SrItemConfiguracao item, SrAcao acao,
 			long idTipo, SrSubTipoConfiguracao subTipo) throws Exception {
-		return getConfiguracoes(pess, complexo, item, servico, idTipo, subTipo,
+		return getConfiguracoes(pess, complexo, item, acao, idTipo, subTipo,
 				new int[] {});
 	}
 
 	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
-			CpComplexo local, SrItemConfiguracao item, SrServico servico,
+			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
 			long idTipo, SrSubTipoConfiguracao subTipo,
 			int atributoDesconsideradoFiltro[]) throws Exception {
-		SrConfiguracao conf = new SrConfiguracao(pess, local, item, servico,
+		SrConfiguracao conf = new SrConfiguracao(pess, local, item, acao,
 				JPA.em().find(CpTipoConfiguracao.class, idTipo), subTipo);
 		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf,
 				atributoDesconsideradoFiltro);

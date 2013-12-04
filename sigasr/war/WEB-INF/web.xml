@@ -46,7 +46,7 @@
 	  <url-pattern>/</url-pattern>
 	  
 	  <url-pattern>/solicitacao/*</url-pattern>
-      <url-pattern>/servico/*</url-pattern>
+      <url-pattern>/acao/*</url-pattern>
       <url-pattern>/associacao/*</url-pattern>
       <url-pattern>/designacao/*</url-pattern>
       <url-pattern>/item/*</url-pattern>

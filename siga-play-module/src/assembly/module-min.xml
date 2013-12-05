@@ -28,6 +28,7 @@
     <format>jar</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
+  <!--
   <dependencySets>
     <dependencySet>
       <outputDirectory>/</outputDirectory>
@@ -36,5 +37,13 @@
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
+-->
+  <fileSets>
+   <fileSet>
+    <directory>/app</directory>
+    <outputDirectory>/</outputDirectory>
+   </fileSet>
+  </fileSets>
+
 </assembly>
 <!-- END SNIPPET: jar-with-dependencies -->

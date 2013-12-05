@@ -106,7 +106,7 @@
         <executions>
           <execution>
             <id>copy-resources</id>
-            <!-- here the phase you need -->
+
             <phase>generate-sources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -117,7 +117,6 @@
               <resources>          
                 <resource>
                   <directory>../siga-base/src/main/java</directory>
-                  <filtering>true</filtering>
                   <excludes>
                     <exclude>br/gov/jfrj/siga/model/ObjetoBase.java</exclude>
                   </excludes>
@@ -126,22 +125,29 @@
               <!-- siga-cd-base -->
                 <resource>
                   <directory>../siga-cd-base/src/main/java</directory>
-                  <filtering>true</filtering>
                   <excludes>
                     <exclude>br/gov/jfrj/siga/cd/ac/**</exclude>
                   </excludes>
                 </resource>
 
-              <!-- siga-cp-app -->
+              <!-- siga-cp (app) -->
                 <resource>
                   <directory>../siga-cp/src/main/app</directory>
-                  <filtering>true</filtering>
                   <excludes>
                     <exclude>br/gov/jfrj/siga/gi/**</exclude>
                     <exclude>br/gov/jfrj/siga/relatorio/**</exclude>
                   </excludes>
                 </resource>
 
+              <!-- siga-rel -->
+                <resource>
+                  <directory>../siga-rel/src/main/java</directory>
+                </resource>
+
+              <!-- siga-sinc-lib -->
+                <resource>
+                  <directory>../siga-sinc-lib/src/main/java</directory>
+                </resource>
 
               </resources>              
             </configuration>            
@@ -151,7 +157,7 @@
 
 
 
-<!--    
+    
     <plugin>
       <artifactId>maven-assembly-plugin</artifactId>
       <version>2.3</version>
@@ -178,7 +184,7 @@
 
 
     </plugin>
--->
+
 
   </plugins>
 

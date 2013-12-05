@@ -21,17 +21,34 @@
                     <groupId>${project.groupId}</groupId>
                     <artifactId>siga-play-module</artifactId>
                     <version>${project.version}</version>
+                    <classifier>module-min</classifier>
+                    <type>zip</type>
+                    <exclusions>
+                      <exclusion>
+                          <groupId>projeto-siga</groupId>
+                          <artifactId>siga-cp</artifactId>
+                      </exclusion>
+                  </exclusions>
+
                  </dependency>
-                 <dependency>
+
+                    <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>siga-rel</artifactId>
+                    <artifactId>siga-play-module</artifactId>
                     <version>${project.version}</version>
+                    <type>jar</type>
+                    <exclusions>
+                      <exclusion>
+                          <groupId>projeto-siga</groupId>
+                          <artifactId>siga-cp</artifactId>
+                      </exclusion>
+                  </exclusions>
+
                  </dependency>
-                 <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>siga-cp</artifactId>
-                    <version>${project.version}</version>
-                 </dependency>
+
+
+
+
 
 
                  <dependency>
@@ -83,7 +100,8 @@
                     <artifactId>hibernate-jpa-2.0-api</artifactId>
                     <version>1.0.0.Final</version>
                   </dependency>
-                  
+
+<!--                  
                   <dependency>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-entitymanager</artifactId>
@@ -93,10 +111,9 @@
                         <groupId>javassist</groupId>
                         <artifactId>javassist</artifactId>
                       </exclusion>
-            
                     </exclusions>
                   </dependency>
-
+-->
                   <dependency>
                   <groupId>joda-time</groupId>
                   <artifactId>joda-time</artifactId>

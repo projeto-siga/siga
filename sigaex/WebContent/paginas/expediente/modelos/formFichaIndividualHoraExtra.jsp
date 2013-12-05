@@ -170,7 +170,7 @@ var newwin = null;
         <br/>
         <mod:grupo>
                  <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumprida" value="1" checked > Afirmo que todas as tarefas/atividades descritas na Solicitação de Serviço Extraordinário foram cumpridas.</br>
-                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="2">Afirmo que as tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram cumpridas pois:
+                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="2">Afirmo que as tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram todas cumpridas pois:
                     <mod:memo titulo="" var="solicitacaoCumpridaNaoPois" colunas="60" linhas="7" /><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Além da justificativa, incluir a tarefa alterada.)</b></br>
                  <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="3" >Não se aplica.</br>
                 </br>
@@ -357,12 +357,12 @@ var newwin = null;
         <br/>
         <c:if test="${solicitacaoCumprida == '1'}">
         <p style="text-align: justify; text-indent: 2cm;">
-         Todas as tarefas/atividades descritas na Solicitação de Serviço Extraordinário foram cumpridas.</p>
+         Informo que todas as tarefas/atividades descritas na Solicitação de Serviço Extraordinário foram cumpridas.</p>
         </c:if>
         </br>
         <c:if test="${solicitacaoCumprida == '2'}">
         <p style="text-align: justify; text-indent: 2cm;">
-         As tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram cumpridas pois:&nbsp; ${solicitacaoCumpridaNaoPois}</p>
+         Informo que as tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram todas cumpridas pois:&nbsp; ${solicitacaoCumpridaNaoPois}</p>
         </c:if></br>
         <p style="text-align: center;">${doc.dtExtenso}</p> 
               

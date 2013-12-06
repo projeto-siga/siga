@@ -46,6 +46,3 @@ function sbmt() {
 	value="${lotaTitular.orgaoUsuario.idOrgaoUsu}" />
 <input type="hidden" name="idTit"
 	value="${titular.id}" />
-
-
-

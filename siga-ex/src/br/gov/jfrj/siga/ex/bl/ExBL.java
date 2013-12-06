@@ -1618,10 +1618,11 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
-
+		} catch (final AplicacaoException e) {
+			cancelarAlteracao();
+			throw e;
 		} catch (final Exception e) {
-			log.error("Ocorreu um erro durante a finalização do processo de gravação da movimentação");
-			log.info("Cancelando alterações da movimentação");
+			log.error("Erro ao assinar movimentação.", e);
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao assinar movimentação.", 0, e);
 		}
@@ -2576,7 +2577,7 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-
+			
 			concluirAlteracao(doc);
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -5301,6 +5302,59 @@ public class ExBL extends CpBL {
 			dao().excluirComHistorico(exVia, dt, idCadastrante);
 		}
 		dao().excluirComHistorico(exClass, dt, idCadastrante);
+	}
+	
+	public void incluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
+		
+		if(doc.getCosignatarios() != null && !doc.getCosignatarios().isEmpty())
+			excluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
+		
+		final List<DpPessoa> cosignatarios = obterCosignatariosDaEntrevista(doc.getForm());
+		
+		if(cosignatarios != null) {
+			
+			for (DpPessoa cosignatario : cosignatarios) {
+				
+				incluirCosignatario(cadastrante, lotaCadastrante, doc, null, cosignatario, null);
+			}
+		}
+	}
+	
+	public void excluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
+		
+		for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) {
+			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+					&& m.getExMovimentacaoCanceladora() == null) {
+				
+				
+				excluirMovimentacao(cadastrante, lotaCadastrante, doc.getMobilGeral(), m.getIdMov());
+			}
+		}
+	}
+	
+	public List<DpPessoa> obterCosignatariosDaEntrevista(Map<String, String> docForm) {
+		List<DpPessoa> list = new ArrayList<DpPessoa>();
+		ExDao exDao = ExDao.getInstance();
+		
+		for (String chave : docForm.keySet()) {
+			
+			DpPessoa pessoa;
+			
+			if(chave.contains("cosignatarioSel.sigla")) {
+				String valor = docForm.get(chave);
+				
+				if(valor != null) {
+					
+					pessoa = exDao.getPessoaFromSigla(valor);
+					
+					if(pessoa != null)
+						list.add(pessoa);
+				}
+			}
+		}
+		return list;
 	}
 
 }

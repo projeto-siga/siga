@@ -2,10 +2,16 @@ package models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.OptimisticLock;
@@ -14,43 +20,32 @@ import play.db.jpa.GenericModel;
 import play.db.jpa.Model;
 
 /**
- * @author Herval e Ruben
+ * @author Herval, Ruben e Edson da Rocha
  */
 @Entity(name = "Locais")
-@Table(name = "Locais")
+@Table(name = "Locais", schema = "SIGAPMP")
 public class Locais extends GenericModel {
 	@Id
+	@Column(name="cod_local", length=3, nullable=false)
 	public String cod_local;
-	@Column(name="local")
+	@Column(name="local", length=30, nullable=true)
 	public String local;
-	//foreign key para tabela Foruns; só no Oracle.
-	@Column(name="cod_forum")
-	public int cod_forum;
-	@Column(name="dias")
+	@ManyToOne
+	@JoinColumn(name = "cod_forum", nullable=true) //fk, e, tem que atribuir programaticamente como objeto.
+	public Foruns forumFk; // Isso é coluna, mas,  tem que atribuir como objeto.
+	@Column(name="dias", length=40, nullable=true)
 	public String dias;
-	@Column(name="hora_ini")
+	@Column(name="hora_ini", length=8, nullable=true)
 	public String hora_ini;
-	@Column(name="hora_fim")
+	@Column(name="hora_fim", length=8, nullable=true)
 	public String hora_fim;
-	@Column(name="intervalo_atendimento")
+	@Column(name="intervalo_atendimento", length=10, nullable=true)
 	public int intervalo_atendimento;
-	@Column(name="exibir")
+	@Column(name="exibir", length=2, nullable=false)
 	public int exibir;
-	@Column(name="endereco")
+	@Column(name="endereco", length=100, nullable = true)
 	public String endereco;
-	@Column(name="ordem_apresentacao")
+	@Column(name="ordem_apresentacao", length=2, nullable=false )
 	public int ordem_apresentacao;
 	
-	public Locais(String cod_local, String local, int cod_forum, String dias, String hora_ini, String hora_fim , int intervalo_atendimento, int exibir, String endereco, int ordem_apresentacao  ) {
-		this.cod_local = cod_local;
-		this.local = local;
-		this.cod_forum = cod_forum;
-		this.dias = dias;
-		this.hora_ini = hora_ini;
-		this.hora_fim = hora_fim;
-		this.intervalo_atendimento = 15;
-		this.exibir = 1;
-		this.endereco = endereco;
-		this.ordem_apresentacao = 0;
-	}
 }

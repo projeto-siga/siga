@@ -3,18 +3,18 @@
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form id="grelprazodetail" action="@{Application.grelPrazoDetail}" method="GET">
+		<form id="grelprazodetail" action="@{Application.grelPrazoDetail}" method="GET" target="relPrazoDetail">
 		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 		
 			<table class="gt-form-table">
 				<tbody>
 					<tr class="header">
 						<td colspan="2">
-							Dados do Relatório
+							Dados do RelatÃ³rio
 						</td>
 					</tr>
 					<tr>
-						<td>Atendente(Solucionador)</td>
+						<td>Atendente</td>
 						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /}</td>	
 					</tr>
 					<tr>

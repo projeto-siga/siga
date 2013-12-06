@@ -1,8 +1,29 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
-<title>Home Page</title>
-<div style="position:absolute;top:5%;left1%;bottom:1%;">
-<a href="sala_incluir">Incluir sala</a><br>
-<a href="salas_listar">Listar salas</a><br>
-<a href="forum_incluir">Incluir forum</a>
-</div>
+#{set title:'Home Page SigaPP' /}
+<div class="ui-widget" style="position: absolute;left:1%;right:3%">
+Horários:<br>
+#{list items:lstLocais, as:'av'}
+	${av.local} ${av.dias} ${av.hora_ini} ${av.hora_fim} ${av.endereco} <br> <br>
+#{/list}
+<br><br><br>
+LOCAL PARA ATENDIMENTO/HORÁRIO 
+
+Estão disponíveis para agendamento 4 (quatro) Salas de Perícias, conforme abaixo:<br> 
+<br>
+Salas 1, 2 e 4 - dispõem de mesas de exames(macas) - indicadas para todo tipo de perícia, a critério do juízo.<br> 
+<br>
+Sala 3 dispõem de mesa simples - mais indicadas para atendimentos simples, por exemplo, psiquiatricos.<br> 
+<br>
+
+<br> 
+Cadastramento de usuários: Para solicitar o cadastramento de usuários a fim de viabilizar o agendamento de perícias, o Diretor de Secretaria da Vara/JEF deverá encaminhar e-mail para tscsis@jfrj.jus.br
+ <br>
+ <br>
+<table border="2px" cellspacing="1px" cellpadding="2px" >
+	<tr><th>
+	ATENÇÃO: 
+	A fim de evitar que os periciandos aguardem excessivamente por atendimento no espaço de espera das salas de perícia do Foro da ..., é importante que o horário para seu comparecimento à perícia, constante do mandado de intimação, seja igual ao horário efetivamente agendado no sistema SigaPP. 
+	Veja mais informações no Ofício Circular  <a href="http://portalintranet/documentos/grupo_172/oficios_circulares/2012/rjocd201200063a.pdf">RJ-OCD-2012/00063</a>. 
+	</th></tr>
+</table>
+</div> 

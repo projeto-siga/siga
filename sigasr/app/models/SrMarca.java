@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		+ "WHERE m.id_marcador = c.id_marcador " +
 				"AND m.id_marcador not in (43, 45)" +
 				"order by m.descr_marcador", resultSetMapping = "colunas_contagem")
-public class SrMarca extends CpMarca {
+public class SrMarca extends CpMarca implements Comparable<SrMarca> {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
@@ -60,12 +60,48 @@ public class SrMarca extends CpMarca {
 			setDpPessoaIni(pessoa.getPessoaInicial());
 		setDpLotacaoIni(lota.getLotacaoInicial());
 		setCpMarcador(JPA.em().find(CpMarcador.class, idMarcador));
-		this.solicitacao = sol.solicitacaoInicial;
+		solicitacao = sol;
 	}
 
 	public String getDescricao() {
 		return this.getCpMarcador().getDescrMarcador() + " ("
 				+ getDpLotacaoIni().getSigla() + ")";
+	}
+	
+	public int compareTo(SrMarca other) {
+		int i = getCpMarcador().getIdMarcador().compareTo(
+				other.getCpMarcador().getIdMarcador());
+		if (i != 0)
+			return i;
+		if (getDpLotacaoIni() == null) {
+			if (other.getDpLotacaoIni() == null)
+				i = 0;
+			else
+				i = -1;
+		} else {
+			if (other.getDpLotacaoIni() == null)
+				i = 1;
+			else
+				i = getDpLotacaoIni().getIdLotacao().compareTo(
+						other.getDpLotacaoIni().getIdLotacao());
+		}
+		if (i != 0)
+			return i;
+		if (getDpPessoaIni() == null) {
+			if (other.getDpPessoaIni() == null)
+				i = 0;
+			else
+				i = -1;
+		} else {
+			if (other.getDpPessoaIni() == null)
+				i = 1;
+			else
+				i = getDpPessoaIni().getIdPessoa().compareTo(
+						other.getDpPessoaIni().getIdPessoa());
+		}
+		if (i != 0)
+			return i;
+		return 0;
 	}
 
 }

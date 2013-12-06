@@ -3,8 +3,9 @@
 <li><a href="@{Application.editar}">Cadastrar</a></li>
 <li><a href="@{Application.listar}">Listar</a>
 </ul>
+<li><a href="@{Application.listarLista}">Listas</a>
 #{if exibirMenuAdministrar}
-<li><a href="#">Administrar</a>
+<li><a href="#">Administração</a>
 <ul>
 <li><a href="@{Application.listarDesignacao}">Designação</a></li>
 <li><a href="@{Application.listarItem}">Item de configuração</a></li>
@@ -14,6 +15,7 @@
 </ul>
 </li>
 #{/if}
+
 #{if exibirMenuRelatorios}
 <li><a href="#">Relatórios</a>
 <ul>

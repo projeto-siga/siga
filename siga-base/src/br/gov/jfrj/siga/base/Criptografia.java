@@ -49,7 +49,7 @@ public class Criptografia {
 	 * @param buf
 	 * @return
 	 */
-	private static String asHex(byte buf[]) {
+	public static String asHex(byte buf[]) {
 		StringBuffer strbuf = new StringBuffer(buf.length * 2);
 		int i;
 

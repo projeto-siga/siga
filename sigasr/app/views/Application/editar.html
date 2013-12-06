@@ -1,20 +1,6 @@
 #{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
 
 <script language="javascript">
-function carregarAtributos(){
-	frm = document.getElementById('formSolicitacao');
-	params = '';
-	for (i = 0; i < frm.length; i++){
-		if (frm[i].name && frm[i].value)
-			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
-	}
-	PassAjaxResponseToFunction('@{Application.exibirAtributos()}?' + params, 'carregouAtributos', null, false, null);
-}
-
-function carregouAtributos(response, param){
-	var div = document.getElementById('divAtributos');
-	div.innerHTML = response;
-}
 
 function carregarLocalERamal(){
 	frm = document.getElementById('formSolicitacao');
@@ -49,32 +35,12 @@ function carregouItem(response, param){
 	   eval(scripts[i].text);  
 }
 
-function carregarServico(){
-	frm = document.getElementById('formSolicitacao');
-	params = '';
-	for (i = 0; i < frm.length; i++){
-		if (frm[i].name && frm[i].value)
-			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
-	}
-	PassAjaxResponseToFunction('@{Application.exibirServico()}?' + params, 'carregouServico', null, false, null);
-}
-
-function carregouServico(response, param){
-	var div = document.getElementById('divServico');
-	div.innerHTML = response;
-	var scripts = div.getElementsByTagName("script");
-	for(var i=0;i<scripts.length;i++)  
-	   eval(scripts[i].text);  
-}
-
 </script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-		<h2>#{if solicitacao.idSolicitacao}${solicitacao.codigo}#{/if}
-			#{else} #{if solicitacao.solicitacaoPai}Solicitação filha de
-			${solicitacao.solicitacaoPai.codigo}#{/if} #{else}Cadastro de
-			solicitação#{/else}#{/else}</h2>
+		<h2>#{if solicitacao.idSolicitacao || solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
+			#{else}Cadastro de solicitação#{/else}</h2>
 		<div class="gt-content-box gt-form">
 
 			#{form @Application.gravar(),
@@ -89,6 +55,8 @@ function carregouServico(response, param){
 				value="${solicitacao.idSolicitacao}" /> 
 				#{/if}
 				<input type="hidden"
+				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
+				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 
 			#{ifErrors}
@@ -99,13 +67,13 @@ function carregouServico(response, param){
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
-				onchange:'carregarLocalERamal();carregarItem();' /}
+				onchange:'carregarLocalERamal();carregarItem()' /}
 			</div>
-
+			
 			<div class="gt-form-row gt-width-66">
-				<label>Quando deseja receber notificação de andamento?</label>
+				<label>Quando deseja receber notificação de movimentacao?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
-				items:formasAcompanhamento,
+				items:models.SrFormaAcompanhamento.values(),
 				labelProperty:'descrFormaAcompanhamento',
 				value:solicitacao.formaAcompanhamento /}
 			</div>
@@ -115,20 +83,20 @@ function carregouServico(response, param){
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
 
-			#{if priorizar}
+			#{if solicitacao.podePriorizar(lotaTitular,cadastrante)}
 			<div class="gt-form-row gt-width-66">
 				<label>Os prejuízos ou dificuldades relativos ao problema
-					são</label> #{select name:'solicitacao.gravidade', items:gravidades,
+					são</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
 				labelProperty:'respostaEnunciado', value:solicitacao.gravidade /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>O problema deve ser resolvido</label> #{select
-				name:'solicitacao.urgencia', items:urgencias,
+				name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
 				labelProperty:'respostaEnunciado', value:solicitacao.urgencia /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Se nada for feito, a situação</label> #{select
-				name:'solicitacao.tendencia', items:tendencias,
+				name:'solicitacao.tendencia', items:models.SrTendencia.values(),
 				labelProperty:'respostaEnunciado', value:solicitacao.tendencia /}
 			</div>
 			#{/if}
@@ -145,7 +113,7 @@ function carregouServico(response, param){
 					name="solicitacao.arquivo" />
 			</div>
 
-			#{if abrirFechando}
+			#{if solicitacao.podeAbrirJaFechando(lotaTitular,cadastrante)}
 			<div class="gt-form-row gt-width-66">
 				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
 					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',

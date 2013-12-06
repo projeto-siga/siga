@@ -65,6 +65,11 @@ public class SrTipoAtributo extends HistoricoSuporte {
 		return SrTipoAtributo.find("byHisDtFimIsNull").fetch();
 	}
 	
+	public static List<SrSolicitacao> listarSolicitacao() {
+		return SrTipoAtributo.find("byHisDtFimIsNull").fetch();
+	}
+	
+	
 	public List<SrTipoAtributo> getHistoricoTipoAtributo() {
 		if (tipoAtributoInicial != null)
 			return tipoAtributoInicial.meuTipoAtributoHistoricoSet;

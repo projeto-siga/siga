@@ -27,4 +27,8 @@ public interface GiService extends Remote {
 
 	public String login(String matricula, String senha);
 
+	public String acessos(String matricula, String lotacao);
+
+	public String acesso(String matricula, String lotacao, String servico);
+
 }

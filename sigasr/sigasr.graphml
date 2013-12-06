@@ -87,10 +87,10 @@
           <y:Geometry height="210.30625000000003" width="212.7890625" x="308.99197668650794" y="0.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="89.22998046875" x="61.779541015625" y="3.0">SrAndamento</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="89.22998046875" x="61.779541015625" y="3.0">SrMovimentacao</y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="false">
-            <y:AttributeLabel>idAndamento: long
-descrAndamento: String
+            <y:AttributeLabel>idMovimentacao: long
+descrMovimentacao: String
 dtReg: Date
 estado: SrEstado
 arquivo: SrArquivo
@@ -99,8 +99,8 @@ lotaAtendente: DpLotacao
 cadastrante: DpPessoa
 lotaCadastrante: DpLotacao
 solicitacao: SrSolicitacao
-andamentoCancelador: SrAndamento
-andamentoCancelado: SrAndamento</y:AttributeLabel>
+movimentacaoCancelador: SrMovimentacao
+movimentacaoCancelado: SrMovimentacao</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -298,7 +298,7 @@ dtInicioAtendimento: Date
 dtFimAtendimento: Date
 atributoSet: List
 marcaSet: Set
-andamentoSet: Set
+movimentacaoSet: Set
 solicitacaoFilhaSet: List</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>

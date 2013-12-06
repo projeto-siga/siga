@@ -6,16 +6,18 @@
 	<package name="default" extends="webwork-default">
 		<result-types>
  			<result-type name="stream-fixed" class="br.gov.jfrj.siga.libs.webwork.StreamResult"/> 
- 			<result-type name="do-nothing" class="br.gov.jfrj.siga.libs.webwork.DoNothingResult"/> 
  		</result-types>
 
 		<interceptors>
 			<interceptor name="siga-exception"
 				class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
+			<interceptor name="siga-multiple-request-deny"
+				class="br.gov.jfrj.siga.libs.webwork.SigaMultipleRequestDenyHandler" />
 
 			<interceptor-stack name="defaultStackWithExceptionMapping">
 				<interceptor-ref name="fileUpload"/>
 				<interceptor-ref name="siga-exception" />
+				<interceptor-ref name="siga-multiple-request-deny" />
 				<interceptor-ref name="servlet-config" />
 				<interceptor-ref name="prepare" />
 				<interceptor-ref name="static-params" />
@@ -1095,7 +1097,6 @@
 				<param name="contentLength">${contentLength}</param>
 				<param name="contentDisposition">${contentDisposition}</param>
 			</result>
-			<result name="donothing" type="do-nothing"></result>
 		</action>
 		<action name="download" class="br.gov.jfrj.webwork.action.ExArquivoAction"
 			method="aDownload">
@@ -1108,6 +1109,12 @@
 			<result name="zip" type="stream-fixed">
 				<param name="inputName">inputStream</param>
 				<param name="contentType">multipart/x-zip</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+			</result>
+			<result name="rtf" type="stream-fixed">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/rtf</param>
 				<param name="contentLength">${contentLength}</param>
 				<param name="contentDisposition">${contentDisposition}</param>
 			</result>
@@ -1245,6 +1252,18 @@
 			<result name="ajax_retorno">
 				/sigalibs/ajax_retorno.jsp
 			</result>
+		</action>
+	</package>
+	
+	<package name="cosignatario" extends="default" namespace="/cosignatario">
+		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
+			method="aBuscar">
+			<result name="busca">/sigalibs/pessoa_busca.jsp</result>
+		</action>
+		<action name="selecionar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
 	</package>
 

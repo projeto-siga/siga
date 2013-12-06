@@ -1,0 +1,21 @@
+<script language="javascript">
+
+function ${_nome}(){
+	$( "#${_nome}_dialog" ).dialog( "open" );
+}
+
+</script>
+
+<div id="${_nome}_dialog" title="${_titulo}">
+#{doBody /}
+</div>
+
+<script>
+$("#${_nome}_dialog").dialog({
+    autoOpen: false,
+    height: ${_altura?_altura:"'auto'"},
+    width: ${_largura?_largura:"'auto'"},
+    modal: true,
+    resizable: false
+  });
+</script>

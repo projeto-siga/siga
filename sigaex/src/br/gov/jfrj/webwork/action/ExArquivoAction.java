@@ -37,6 +37,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 import com.lowagie.text.pdf.codec.Base64;
@@ -225,7 +226,7 @@ public class ExArquivoAction extends ExActionSupport {
 		getResponse().setStatus(200);
 		getResponse().setContentLength(getContentLength());
 		getResponse().setContentType(contentType);
-		getResponse().setHeader("content-disposition", getContentDisposition());
+		getResponse().setHeader("Content-Disposition", getContentDisposition());
 		getResponse().getOutputStream().write(ab);
 		getResponse().getOutputStream().flush();
 		getResponse().getOutputStream().close();
@@ -247,6 +248,7 @@ public class ExArquivoAction extends ExActionSupport {
 			String arquivo = getPar().get("arquivo")[0];
 
 			boolean isZip = arquivo.endsWith(".zip");
+			boolean isRtf = arquivo.endsWith(".rtf");
 			boolean somenteHash = getPar().containsKey("hash")
 					|| getPar().containsKey("HASH_ALGORITHM");
 			String hash = null;
@@ -302,6 +304,24 @@ public class ExArquivoAction extends ExActionSupport {
 
 				setContentDisposition("filename=" + filename);
 			}
+			
+			if (isRtf) {
+				GeradorRTF gerador = new GeradorRTF();
+				ab = gerador.geraRTFFOP(mob.getDoc());
+				
+				String filename = mob.doc().getCodigo() + ".rtf";
+
+				if (hash != null) {
+					this.setInputStream(new ByteArrayInputStream(ab));
+					this.setContentLength(ab.length);
+
+					setContentDisposition("attachment; filename=" + filename
+							+ "." + hash.toLowerCase());
+					return "hash";
+				}
+
+				setContentDisposition("filename=" + filename);
+			}
 
 			// Calcula o hash do documento, mas não leva em consideração
 			// para fins de hash os últimos bytes do arquivos, pois lá
@@ -329,7 +349,12 @@ public class ExArquivoAction extends ExActionSupport {
 
 			this.setInputStream(new ByteArrayInputStream(ab));
 			this.setContentLength(ab.length);
-			return "zip";
+			
+			if(isZip)
+				return "zip";
+			else 
+				return "rtf";
+			
 		} catch (Exception e) {
 			throw new ServletException("erro na geração do documento.", e);
 		}

@@ -75,6 +75,12 @@ public class CpFeriado extends AbstractCpFeriado implements Serializable,
 		}
 		return false;
 	}
+	
+	public int getQuantidadeOcorrencias(){
+		if (getCpOcorrenciaFeriadoSet() != null)
+			return getCpOcorrenciaFeriadoSet().size();
+		return 1;
+	}
 
 	/*
 	 * public boolean abrange(Date data) {

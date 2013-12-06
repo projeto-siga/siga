@@ -1,8 +1,0 @@
-Informamos que foi **cancelado**, em ${andamento.dtCancelamentoDDMMYYYYHHMM}, o **andamento** abaixo, dado na solicitação ${sol.codigo}:
-
-${andamento.descrAndamento}
-Andamento dado por ${andamento.cadastrante.descricaoIniciaisMaiusculas} (${andamento.lotaCadastrante.siglaLotacao})
-**Cancelado** por ${andamento.cancelador.descricaoIniciaisMaiusculas} (${andamento.lotaCancelador.siglaLotacao})
-
-Para acessar a solicitação, acesse @@{Application.exibir(sol.idSolicitacao)}.
-	

@@ -119,7 +119,7 @@ public class Documento {
 	private static final float STAMP_BORDER_IN_CM = 0.2f;
 
 	private static final Pattern pattern = Pattern
-		.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.(pdf|html|zip)");
+		.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.(pdf|html|zip|rtf)");
 
 	private static Log log = LogFactory.getLog(Documento.class);
 
@@ -273,13 +273,13 @@ public class Documento {
 			// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
 			// + ", " + h);
 
-			doc.setPageSize((rot != 0) ^ (w > h) ? PageSize.A4.rotate()
+			doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate()
 					: PageSize.A4);
 			doc.newPage();
 
 			cb.saveState();
 
-			if (rot != 0) {
+			if (rot != 0 && rot != 180) {
 				float swap = w;
 				w = h;
 				h = swap;
@@ -301,8 +301,13 @@ public class Documento {
 
 			if (rot != 0) {
 				double theta = -rot * (Math.PI / 180);
-				cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
-						w / 2));
+				if (rot == 180){
+					cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
+							h / 2));
+				}else{
+					cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
+							w / 2));
+				}
 				if (rot == 90) {
 					cb.transform(AffineTransform.getTranslateInstance(
 							(w - h) / 2, (w - h) / 2));

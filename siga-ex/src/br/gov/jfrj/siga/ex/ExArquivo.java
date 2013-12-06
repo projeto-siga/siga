@@ -19,15 +19,12 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.ex.bl.Ex;
 
 public abstract class ExArquivo {
 	private Integer numPaginas;
@@ -226,7 +223,7 @@ public abstract class ExArquivo {
 	 * 
 	 */
 	public String getReferenciaPDF() {
-		if (getPdf() == null)
+		if (getNumPaginas() == null || getNumPaginas() == 0)
 			return null;
 		return getReferencia() + ".pdf";
 	};

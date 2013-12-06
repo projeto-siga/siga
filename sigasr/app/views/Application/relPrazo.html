@@ -3,7 +3,7 @@
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form id="grelprazo" action="@{Application.grelPrazo}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100">
+		<form id="grelprazo" action="@{Application.grelPrazo}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100" target="relPrazo">
 		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 		
 			<table class="gt-form-table">
@@ -14,7 +14,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Atendente(Solucionador)</td>
+						<td>Atendente</td>
 						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /}</td>	
 					</tr>
 					<tr>

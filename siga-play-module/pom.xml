@@ -9,97 +9,41 @@
         <version>0.0.1-SNAPSHOT</version>
         <packaging>jar</packaging>
 
-<dependencies>
-            <dependency>
-                <groupId>hibernate</groupId>
-                <artifactId>hibernate3</artifactId>
-                <version>3.2.3.GA</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
-            </dependency>
 
-</dependencies>
-
-
-<!--
-<dependencies>
-    <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>siga-cp</artifactId>
-        <version>${project.version}</version>
-
-        <exclusions>
-            <exclusion>
-                <groupId>org.codehaus.jettison</groupId>
-                <artifactId>jettison</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>org.apache.axis</groupId>
-                <artifactId>axis</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>javax.xml</groupId>
-                <artifactId>jaxrpc-api</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>ar.com.fdvs</groupId>
-                <artifactId>DynamicJasper</artifactId>
-            </exclusion>
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.5.5-Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.maven-play-plugin.org.playframework</groupId>
+            <artifactId>play</artifactId>
+            <version>1.2.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_2.5_spec</artifactId>
+            <version>1.0.1.Final</version>
+            <scope>provided</scope>
+        </dependency>
+                
+      <dependency>
+          <groupId>ar.com.fdvs</groupId>
+          <artifactId>DynamicJasper</artifactId>
+          <version>3.0.6</version>
+      </dependency>
+                
+    </dependencies>
 
 
-        </exclusions> 
-
-
-    </dependency>
-</dependencies>
--->
 <build>
+    <sourceDirectory>app</sourceDirectory>
+
   <plugins>
-    <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>../siga-base/src/main/java</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
--->
+
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.6</version>
@@ -107,12 +51,15 @@
           <execution>
             <id>copy-resources</id>
 
-            <phase>generate-sources</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
+
             <configuration>
+
               <outputDirectory>${basedir}/app</outputDirectory>
+
               <!-- siga-base -->
               <resources>          
                 <resource>
@@ -156,8 +103,6 @@
       </plugin>
 
 
-
-    
     <plugin>
       <artifactId>maven-assembly-plugin</artifactId>
       <version>2.3</version>

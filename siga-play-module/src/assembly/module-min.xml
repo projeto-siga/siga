@@ -40,9 +40,10 @@
 -->
   <fileSets>
    <fileSet>
-    <directory>/app</directory>
+    <directory>/target/classes</directory>
     <outputDirectory>/</outputDirectory>
    </fileSet>
+
   </fileSets>
 
 </assembly>

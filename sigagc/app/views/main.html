@@ -2,7 +2,7 @@
 
 ${_cabecalho_pre_head.raw()} ${moreHead?.raw()} #{if _cabecalho_pre_menu
 != null} ${_cabecalho_pre_menu.raw()}
-<li><a class="" href="@{Application.top10}">Conhecimentos</a>
+<li><a class="" href="@{Application.estatisticaGeral}">Conhecimentos</a>
 	<ul>
 		<li><a class="" href="@{Application.editar}">Novo</a>
 		</li>
@@ -12,7 +12,11 @@ ${_cabecalho_pre_head.raw()} ${moreHead?.raw()} #{if _cabecalho_pre_menu
 		</li>
 		<li><a class="" href="@{Application.listar}">Pesquisar</a>
 		</li>
-		<li><a class="" href="@{Application.top10}">Estatísticas</a>
+		<li><a class="" href="#">Estatísticas</a>
+			<ul>
+				<li><a class="" href="@{Application.estatisticaGeral}">Gerais</a></li>
+				<li><a class="" href="@{Application.estatisticaLotacao}">Por Lotação</a></li>
+			</ul>
 		</li>
 	</ul></li>
 #{/if} ${_cabecalho_pos.raw()} #{doLayout /} ${_rodape.raw()}

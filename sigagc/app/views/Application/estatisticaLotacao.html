@@ -34,6 +34,7 @@ function drawEvolution() {
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
+		<h2>Estatísticas - ${siglaLotacao}</h2><br />
 		<div class="gt-left-col">
 			<h2>Conhecimentos Mais Recentes</h2>
 			#{if listaMaisRecentes != null}
@@ -120,66 +121,16 @@ function drawEvolution() {
 			#{/if} #{else}
 			<p>Nenhum autor.</p>
 			#{/else} <br />
-			<h2>Principais Lotações</h2>
-			#{if listaPrincipaisLotacoes != null}
-			<div class="gt-content-box gt-for-table">
-				<table class="gt-table gt-user-table">
-					<thead>
-						<tr>
-							<th width="60%">Descrição da Lotação</th>
-							<th width="15%">Lotação</th>
-							<th style="width: 25%;text-align: right;">Conhecimentos</th>	
-						</tr>
-					</thead>
-					<tbody>
-						#{list items:listaPrincipaisLotacoes,as:'l'}
-						<tr>
-							<td style="width: 60%;">${l[0].descricao}</td>
-							<td style="width: 15%;">${l[0].sigla}</td>
-							<td style="width: 25%;text-align: right;"><a href="@{Application.listar}?filtro.lotacao=${l[0].idInicial}">${l[1]}</a></td>
-						</tr>
-						#{/list}
-					</tbody>
-				</table>
-			</div>
-			#{/if} #{else}
-			<p>Nenhum autor.</p>
-			#{/else} *{ <br />
-			<h2>Principais Classificações</h2>
-			#{if listaPrincipaisTags != null}
-			<div class="gt-content-box gt-for-table">
-				<table class="gt-table gt-user-table">
-					<tbody>
-						#{list items:listaPrincipaisTags,as:'t'}
-						<tr>
-							<td style="width: 30%;">${t.categoria}</td>
-							<td style="width: 70%;">${t.titulo}</td>
-						</tr>
-						#{/list}
-					</tbody>
-				</table>
-			</div>
-			#{/if} #{else}
-			<p>Nenhum autor.</p>
-			#{/else} }* <br />
+			
 			<h2>Principais Classificações</h2>
 			<div class="gt-content-box gt-tag-cloud">
 				#{list items:cloud.tags(),as:'tag'}
 					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a>
 				#{/list}
 			</div>
-
 			<br />
 			<h2>Evolução</h2>
 			<div id="evolution" class="gt-content-box gt-tag-cloud"></div>
-			*{ <br />
-			<h2>Mês Passado</h2>
-			<div id="lastmonth" class="gt-content-box gt-tag-cloud"></div>
-
-			<br />
-			<h2>Mês Corrente</h2>
-			<div id="thismonth" class="gt-content-box gt-tag-cloud"></div>
-			}*
 		</div>
 	</div>
 </div>

@@ -284,8 +284,8 @@ public class Application extends SigaApplication {
 		buscar(null);
 	}
 
-	public static void top10() {
-		List<GcInformacao> lista = GcInformacao.all().fetch();
+	public static void estatisticaGeral() {
+		//List<GcInformacao> lista = GcInformacao.all().fetch();
 
 		Query query1 = JPA.em().createNamedQuery("maisRecentes");
 		query1.setMaxResults(5);
@@ -318,30 +318,9 @@ public class Application extends SigaApplication {
 		List<Object[]> listaPrincipaisTags = query5.getResultList();
 		if (listaPrincipaisTags.size() == 0)
 			listaPrincipaisTags = null;
-		else {
-			cloud = new Cloud(); // create cloud
-			cloud.setMaxWeight(150.0); // max font size
-			cloud.setMinWeight(60.0);
-			//double d = listaPrincipaisTags.size();
-			HashMap<String, Object> map = new HashMap<String, Object>();
-/*			for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) {
-				map.clear();
-				map.put("filtro.tag", t.id);
-				String link = Router.reverse("Application.listar", map).url;
-				Tag tag = new Tag(t.titulo, link, d);
-				cloud.addTag(tag);
-				d -= 1;
-			}*/
-			for (Object[] t : listaPrincipaisTags) {
-				map.clear();
-				map.put("filtro.tag.sigla", t[0]);
-				String link = Router.reverse("Application.listar", map).url;
-				Tag tag = new Tag(t[0].toString(), link, Double.parseDouble(t[1].toString()));
-				cloud.addTag(tag);
-				//d -= 1;
-			}
-		}
-
+		else 
+			cloud = GcTag.criarCloud(listaPrincipaisTags, 150.0, 60.0);
+		
 		GcGraficoEvolucao set = new GcGraficoEvolucao();
 		Query query6 = JPA.em().createNamedQuery("evolucaoNovos");
 		List<Object[]> listaNovos = query6.getResultList();
@@ -356,40 +335,70 @@ public class Application extends SigaApplication {
 			set.add(new GcGraficoEvolucaoItem((Integer) visitados[0],
 					(Integer) visitados[1], 0, (Long) visitados[2], 0));
 		}
+		String evolucao = set.criarGrafico();
 
-		LocalDate ld = new LocalDate();
-		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
-
-		// Header
-		StringBuilder sb = new StringBuilder();
-		sb.append("['Mês','Visitas','Novos'],");
-
-		// Values
-		for (int i = -6; i <= 0; i++) {
-			LocalDate ldl = ld.plusMonths(i);
-			sb.append("['");
-			sb.append(ldl.toString("MMM/yy"));
-			sb.append("',");
-			long novos = 0;
-			long visitados = 0;
-			GcGraficoEvolucaoItem o = new GcGraficoEvolucaoItem(
-					ldl.getMonthOfYear(), ldl.getYear(), 0, 0, 0);
-			if (set.contains(o)) {
-				o = set.floor(o);
-				novos = o.novos;
-				visitados = o.visitados;
-			}
-			sb.append(visitados);
-			sb.append(",");
-			sb.append(novos);
-			sb.append(",");
-			sb.append("],");
-		}
-		String evolucao = sb.toString();
-
-		render(lista, listaMaisRecentes, listaMaisVisitados,
+		render(listaMaisRecentes, listaMaisVisitados,
 				listaPrincipaisAutores, listaPrincipaisLotacoes,
 				listaPrincipaisTags, cloud, evolucao);
+	}
+
+	public static void estatisticaLotacao() {
+		//List<GcInformacao> lista = GcInformacao.all().fetch();
+	
+		Long idLotacao = lotaTitular().getId();
+		String siglaLotacao = lotaTitular().getDescricaoIniciaisMaiusculas();
+		
+		Query query1 = JPA.em().createNamedQuery("maisRecentesLotacao");
+		query1.setParameter("idLotacao", idLotacao);	
+		query1.setMaxResults(5);
+		List<Object[]> listaMaisRecentes = query1.getResultList();
+		if (listaMaisRecentes.size() == 0)
+			listaMaisRecentes = null;
+
+		Query query2 = JPA.em().createNamedQuery("maisVisitadosLotacao");
+		query2.setParameter("idLotacao", idLotacao);	
+		query2.setMaxResults(5);
+		List<Object[]> listaMaisVisitados = query2.getResultList();
+		if (listaMaisVisitados.size() == 0)
+			listaMaisVisitados = null;
+
+		Query query3 = JPA.em().createNamedQuery("principaisAutoresLotacao");
+		query3.setParameter("idLotacao", idLotacao);
+		query3.setMaxResults(5);
+		List<Object[]> listaPrincipaisAutores = query3.getResultList();
+		if (listaPrincipaisAutores.size() == 0)
+			listaPrincipaisAutores = null;
+
+		Cloud cloud = null;
+		Query query4  = JPA.em().createNamedQuery("principaisTagsLotacao");
+		query4.setParameter("idLotacao", idLotacao);
+		query4.setMaxResults(50);
+		List<Object[]> listaPrincipaisTags = query4.getResultList();
+		if (listaPrincipaisTags.size() == 0)
+			listaPrincipaisTags = null;
+		else 
+			cloud = GcTag.criarCloud(listaPrincipaisTags, 150.0, 60.0);
+		
+		GcGraficoEvolucao set = new GcGraficoEvolucao();
+		Query query5 = JPA.em().createNamedQuery("evolucaoNovosLotacao");
+		query5.setParameter("idLotacao", idLotacao);
+		List<Object[]> listaNovos = query5.getResultList();
+		for (Object[] novos : listaNovos) {
+			set.add(new GcGraficoEvolucaoItem((Integer) novos[0],
+					(Integer) novos[1], (Long) novos[2], 0, 0));
+		}
+
+		Query query6 = JPA.em().createNamedQuery("evolucaoVisitadosLotacao");
+		query6.setParameter("idLotacao", idLotacao);
+		List<Object[]> listaVisitados = query6.getResultList();
+		for (Object[] visitados : listaVisitados) {
+			set.add(new GcGraficoEvolucaoItem((Integer) visitados[0],
+					(Integer) visitados[1], 0, (Long) visitados[2], 0));
+		}
+		String evolucao = set.criarGrafico();
+
+		render(siglaLotacao, listaMaisRecentes, listaMaisVisitados,
+				listaPrincipaisAutores, listaPrincipaisTags, cloud, evolucao);
 	}
 
 	public static void listar(GcInformacaoFiltro filtro) {

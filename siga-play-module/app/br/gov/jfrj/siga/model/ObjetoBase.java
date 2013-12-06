@@ -34,6 +34,7 @@ public abstract class ObjetoBase extends GenericModel {
 				thisHistorico.setId(null);
 			}
 			this.save();
+			//this.refresh();
 		} catch (ClassCastException cce) {
 			this.save();
 		}

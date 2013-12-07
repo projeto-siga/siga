@@ -174,11 +174,12 @@
                 <groupId>com.google.code.maven-play-plugin</groupId>
                 <artifactId>play-maven-plugin</artifactId>
                 <extensions>true</extensions>
+                <configuration>
+                  <warDependencyExcludes>jta</warDependencyExcludes>                  
+                </configuration>
             </plugin>
-
-
-
         </plugins>
+
     </build>
 
 

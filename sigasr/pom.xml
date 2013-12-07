@@ -36,15 +36,24 @@
 
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>siga-play-module</artifactId>
+                    <artifactId>siga-cp</artifactId>
                     <version>${project.version}</version>
+                    <classifier>module-min</classifier>
+                    <type>zip</type>
+                    <exclusions>
+                      <exclusion>
+                          <groupId>*</groupId>
+                          <artifactId>*</artifactId>
+                      </exclusion>
+                    </exclusions>
                  </dependency>
 
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>siga-cp</artifactId>
+                    <artifactId>siga-play-module</artifactId>
                     <version>${project.version}</version>
                  </dependency>
+
                   <dependency>
                     <groupId>c3p0</groupId>
                     <artifactId>c3p0</artifactId>
@@ -106,26 +115,32 @@
                       <version>11.2.0.3.0</version>
                       <scope>runtime</scope>
                   </dependency>
-<!--
+
                   <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-commons-annotations</artifactId>
-                    <version>3.2.0.Final</version>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-commons-annotations</artifactId>
+                        <version>3.2.0.Final</version>
                   </dependency>
--->                  
-<!--
+
+    
                   <dependency>
                     <groupId>org.hibernate.javax.persistence</groupId>
                     <artifactId>hibernate-jpa-2.0-api</artifactId>
                     <version>1.0.0.Final</version>
                   </dependency>
--->
+
                   <dependency>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                     <version>1.6.1</version>
                   </dependency>
-
+<!--
+                  <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-validator-legacy</artifactId>
+                        <version>3.1.0.GA</version>
+                  </dependency>
+-->                                                        
 <!--
                   <dependency>
                     <groupId>org.hibernate</groupId>
@@ -154,13 +169,13 @@
 
     <build>
           <sourceDirectory>/app</sourceDirectory>
-
         <plugins>
             <plugin>
                 <groupId>com.google.code.maven-play-plugin</groupId>
                 <artifactId>play-maven-plugin</artifactId>
                 <extensions>true</extensions>
             </plugin>
+
 
 
         </plugins>

@@ -40,8 +40,18 @@
 -->
   <fileSets>
    <fileSet>
+    <directory>/app</directory>
+    <outputDirectory>/main/app</outputDirectory>
+   </fileSet>
+
+   <fileSet>
     <directory>/target/classes</directory>
-    <outputDirectory>/</outputDirectory>
+    <outputDirectory>/build/classes</outputDirectory>
+   </fileSet>
+
+   <fileSet>
+    <directory>/test</directory>
+    <outputDirectory>/test</outputDirectory>
    </fileSet>
 
   </fileSets>

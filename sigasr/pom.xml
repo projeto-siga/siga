@@ -24,14 +24,6 @@
                     <version>${project.version}</version>
                     <classifier>module-min</classifier>
                     <type>zip</type>
-<!--
-                    <exclusions>
-                      <exclusion>
-                          <groupId>projeto-siga</groupId>
-                          <artifactId>siga-cp</artifactId>
-                      </exclusion>
-                  </exclusions>
--->
                  </dependency>
 
                 <dependency>
@@ -40,12 +32,6 @@
                     <version>${project.version}</version>
                     <classifier>module-min</classifier>
                     <type>zip</type>
-                    <exclusions>
-                      <exclusion>
-                          <groupId>*</groupId>
-                          <artifactId>*</artifactId>
-                      </exclusion>
-                    </exclusions>
                  </dependency>
 
                 <dependency>
@@ -134,26 +120,13 @@
                     <artifactId>slf4j-api</artifactId>
                     <version>1.6.1</version>
                   </dependency>
-<!--
+
                   <dependency>
                         <groupId>org.hibernate</groupId>
                         <artifactId>hibernate-validator-legacy</artifactId>
                         <version>3.1.0.GA</version>
                   </dependency>
--->                                                        
-<!--
-                  <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-entitymanager</artifactId>
-                    <version>3.6.0.Final</version>
-                    <exclusions>
-                      <exclusion>
-                        <groupId>javassist</groupId>
-                        <artifactId>javassist</artifactId>
-                      </exclusion>
-                    </exclusions>
-                  </dependency>
--->
+
                   <dependency>
                   <groupId>joda-time</groupId>
                   <artifactId>joda-time</artifactId>
@@ -177,6 +150,31 @@
                 <configuration>
                   <warDependencyExcludes>jta</warDependencyExcludes>                  
                 </configuration>
+                <executions>
+                  <execution>
+                    <id>precompile</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                      <goal>precompile</goal>
+                    </goals>
+                  </execution>
+                <execution>
+                  <id>make-war</id>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>war</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>play-dependencies</id>
+                  <phase>validate</phase>
+                  <goals>
+                    <goal>dependencies</goal>
+                  </goals>
+                </execution>
+
+              </executions>
+
             </plugin>
         </plugins>
 
@@ -184,7 +182,7 @@
 
 
 <properties>
-  <play.version>1.2.4</play.version>
+  <play.version>1.2.6</play.version>
 </properties>
 
 </project>

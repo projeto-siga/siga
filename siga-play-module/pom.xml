@@ -68,7 +68,6 @@
                     <exclude>br/gov/jfrj/siga/model/ObjetoBase.java</exclude>
                   </excludes>
                 </resource>
-
               <!-- siga-cd-base -->
                 <resource>
                   <directory>../siga-cd-base/src/main/java</directory>
@@ -76,27 +75,27 @@
                     <exclude>br/gov/jfrj/siga/cd/ac/**</exclude>
                   </excludes>
                 </resource>
-
               <!-- siga-cp (app) -->
+              <!--
                 <resource>
                   <directory>../siga-cp/src/main/app</directory>
                   <excludes>
                     <exclude>br/gov/jfrj/siga/gi/**</exclude>
                     <exclude>br/gov/jfrj/siga/relatorio/**</exclude>
+                    <exclude>br/gov/jfrj/siga/acesso/**</exclude>
                   </excludes>
                 </resource>
-
+              -->
               <!-- siga-rel -->
                 <resource>
                   <directory>../siga-rel/src/main/java</directory>
                 </resource>
-
               <!-- siga-sinc-lib -->
                 <resource>
                   <directory>../siga-sinc-lib/src/main/java</directory>
                 </resource>
-
               </resources>              
+
             </configuration>            
           </execution>
         </executions>
@@ -136,12 +135,10 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.5</source>
+            <target>1.5</target>
         </configuration>
     </plugin>
-
-
 
   </plugins>
 

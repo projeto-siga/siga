@@ -43,12 +43,12 @@
     <directory>/app</directory>
     <outputDirectory>/app</outputDirectory>
    </fileSet>
-
+<!--
    <fileSet>
     <directory>/target/classes</directory>
     <outputDirectory>/bin</outputDirectory>
    </fileSet>
-
+-->
    <fileSet>
     <directory>/conf</directory>
     <outputDirectory>/conf</outputDirectory>

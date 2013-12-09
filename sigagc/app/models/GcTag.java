@@ -167,30 +167,5 @@ public class GcTag extends GenericModel implements Comparable<GcTag>,
 	@Override
 	public String toString() {
 		return (tipo.id == 1 ? "@" : (tipo.id == 2 ? "#" : "^")) + (categoria != null ? categoria + ":" : "") + titulo;
-	}
-
-	public static Cloud criarCloud(List<Object[]> listaTags, double max, double min) {
-		Cloud cloud = new Cloud(); // create cloud
-		cloud.setMaxWeight(max); // max font size
-		cloud.setMinWeight(min);
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		/*double d = listaPrincipaisTags.size();
-		for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) {
-			map.clear();
-			map.put("filtro.tag", t.id);
-			String link = Router.reverse("Application.listar", map).url;
-			Tag tag = new Tag(t.titulo, link, d);
-			cloud.addTag(tag);
-			d -= 1;
-		}*/
-		for (Object[] t : listaTags) {
-			map.clear();
-			map.put("filtro.tag.sigla", t[0]);// t[0] - nome da tag
-			String link = Router.reverse("Application.listar", map).url;
-			Tag tag = new Tag(t[0].toString(), link, Double.parseDouble(t[1].toString())); //t[1] - contator da tag
-			cloud.addTag(tag);
-		}
-		return cloud;
-	}
-	
+	}	
 }

@@ -30,8 +30,6 @@ import models.GcTipoMovimentacao;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.joda.time.LocalDate;
-import org.mcavallo.opencloud.Cloud;
-import org.mcavallo.opencloud.Tag;
 
 import play.Play;
 import play.Play.Mode;
@@ -43,6 +41,7 @@ import play.mvc.Http;
 import play.mvc.Router;
 import utils.GcArvore;
 import utils.GcBL;
+import utils.GcCloud;
 import utils.GcGraficoEvolucao;
 import utils.GcGraficoEvolucaoItem;
 import utils.GcInformacaoFiltro;
@@ -311,16 +310,17 @@ public class Application extends SigaApplication {
 		if (listaPrincipaisLotacoes.size() == 0)
 			listaPrincipaisLotacoes = null;
 
-		Cloud cloud = null;
-
+		GcCloud cloud = new GcCloud(150.0, 60.0);
 		Query query5 = JPA.em().createNamedQuery("principaisTags");
 		query5.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query5.getResultList();
 		if (listaPrincipaisTags.size() == 0)
 			listaPrincipaisTags = null;
-		else 
-			cloud = GcTag.criarCloud(listaPrincipaisTags, 150.0, 60.0);
-		
+		else {
+			for (Object[] t : listaPrincipaisTags) {
+				cloud.criarCloud(t);
+			}
+		}
 		GcGraficoEvolucao set = new GcGraficoEvolucao();
 		Query query6 = JPA.em().createNamedQuery("evolucaoNovos");
 		List<Object[]> listaNovos = query6.getResultList();
@@ -369,16 +369,18 @@ public class Application extends SigaApplication {
 		if (listaPrincipaisAutores.size() == 0)
 			listaPrincipaisAutores = null;
 
-		Cloud cloud = null;
+		GcCloud cloud = new GcCloud(150.0, 60.0);
 		Query query4  = JPA.em().createNamedQuery("principaisTagsLotacao");
 		query4.setParameter("idLotacao", idLotacao);
 		query4.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query4.getResultList();
 		if (listaPrincipaisTags.size() == 0)
 			listaPrincipaisTags = null;
-		else 
-			cloud = GcTag.criarCloud(listaPrincipaisTags, 150.0, 60.0);
-		
+		else {
+			for (Object[] t : listaPrincipaisTags) {
+				cloud.criarCloud(t);
+			}
+		}
 		GcGraficoEvolucao set = new GcGraficoEvolucao();
 		Query query5 = JPA.em().createNamedQuery("evolucaoNovosLotacao");
 		query5.setParameter("idLotacao", idLotacao);

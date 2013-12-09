@@ -40,15 +40,19 @@
 -->
   <fileSets>
    <fileSet>
-    <directory>/app</directory>
-    <outputDirectory>/main/app</outputDirectory>
+    <directory>/src/main/app</directory>
+    <excludes>
+      <exclude>/app/br/gov/jfrj/siga/model/ObjetoBase.java</exclude>
+    </excludes>
+    <outputDirectory>/app</outputDirectory>
    </fileSet>
-
+   
+<!--
    <fileSet>
     <directory>/target/classes</directory>
     <outputDirectory>/build/classes</outputDirectory>
    </fileSet>
-
+-->
    <fileSet>
     <directory>/test</directory>
     <outputDirectory>/test</outputDirectory>

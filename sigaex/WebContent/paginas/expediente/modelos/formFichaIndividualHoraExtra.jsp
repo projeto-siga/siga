@@ -14,7 +14,7 @@ var newwin = null;
 &nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br>&nbsp;&nbsp;&nbsp; Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça.        </c:set>
     
     <mod:grupo titulo="Referente">
-        <input type="radio" name="referente" id="solicitacao" value="1" checked> à Solicitação de Serviço Extraordinário Nº:<input size="4"  name="numerosolicitacao"  type="text"><br>
+        <input type="radio" name="referente" id="solicitacao" value="1" checked> à Solicitação de Serviço Extraordinário <mod:texto titulo="Nº" var="numerosolicitacao"  largura="7"/><br>
         <input type="radio" name="referente" id="plantao" value="2">ao Plantão Judiciário.<br>
    </mod:grupo>
    </br>

@@ -63,7 +63,7 @@ public class SrPesquisa extends HistoricoSuporte {
 	@OrderBy("hisDtIni desc")
 	public List<SrPesquisa> meuPesquisaHistoricoSet;
 
-	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "pesquisa")
+	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrPergunta.class, mappedBy = "pesquisa")
 	@OrderBy("ordemPergunta")
 	public Set<SrPergunta> perguntaSet;
 
@@ -83,7 +83,7 @@ public class SrPesquisa extends HistoricoSuporte {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-
+	
 	public List<SrPesquisa> getHistoricoPesquisa() {
 		if (pesquisaInicial != null)
 			return pesquisaInicial.meuPesquisaHistoricoSet;

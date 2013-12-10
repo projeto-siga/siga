@@ -23,7 +23,9 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
+import models.SrPergunta;
 import models.SrPesquisa;
+import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
@@ -287,7 +289,11 @@ public class Application extends SigaApplication {
 					"designacao.equipeQualidade",
 					"Equipe de qualidade não informada.");
 		}
-
+		
+		for(play.data.validation.Error error : validation.errors()) {
+            System.out.println(error.message());
+        }
+		
 		if (validation.hasErrors()) {
 			List<CpOrgaoUsuario> orgaos = JPA.em()
 					.createQuery("from CpOrgaoUsuario").getResultList();
@@ -586,14 +592,17 @@ public class Application extends SigaApplication {
 
 	public static void responderPesquisa(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		// Implementar
+		if (sol.getPesquisaDesignada() == null)
+			throw new Exception(
+					"Não foi encontrada nenhuma pesquisa designada para esta solicitação.");
 		render(sol);
 	}
 
-	public static void responderPesquisaGravar(Long id) throws Exception {
+	public static void responderPesquisaGravar(Long id, HashMap<Long, String> respostaMap) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.responderPesquisa(lotaTitular(), cadastrante());
-		exibir(id, completo());
+		SrMovimentacao movimentacao = new SrMovimentacao();
+		List<SrResposta> respostas = movimentacao.setRespostaMap(respostaMap);
+		sol.responderPesquisa(lotaTitular(), cadastrante(), respostas);
 	}
 
 	public static void retornarAoAtendimento(Long id) throws Exception {
@@ -666,11 +675,11 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		//List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find("hisDtFim is null").fetch();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find("hisDtFim is null").fetch();
 		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
-		render(designacao, orgaos, locais);
+		render(designacao, orgaos, locais, pesquisaSatisfacao);
 	}
 
 	public static void gravarDesignacao(SrConfiguracao designacao)

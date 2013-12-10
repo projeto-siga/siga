@@ -1,30 +1,55 @@
 #{extends 'main.html' /} #{set title:'Pesquisa de Satisfação' /}
+<script>
+$(function(){
+    $('#formSubmit').submit(function() {
+  	    $.ajax({
+ 	  	   type: "POST",
+ 	  	   async: false,
+ 	  	   data:  $("#formSubmit").serializeArray(),
+ 	  	   url: "/sigasr/solicitacao/responderPesquisa",
+ 	  	   success: function(){
+ 	  			window.alert('Obrigado por responder a pesquisa!');
+ 	  			window.parent.opener.location.reload(true); 
+ 	 	  	 	window.close();
+ 	 	  	}
+ 	  	});
+    });
+});
+</script>
+
+
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
 		<h2>Pesquisa de Satisfação</h2>
-
-		<div class="gt-form gt-content-box">
-			#{form @Application.responderPesquisaGravar()}
+		#{form @Application.responderPesquisaGravar(), id:'formSubmit', enctype:'multipart/form-data'}
+		 <input type="hidden" name="id" value="${sol.idSolicitacao}">
+		#{list items:sol.getPesquisaDesignada().perguntaSet, as:'pergunta'}
+		#{if pergunta.tipoPergunta.idTipoPergunta == 1}
 			<div class="gt-form-row">
-				<label>Diga aí o que você achou</label>
-				<textarea cols="50" rows="6" name="semNome"
-					id="semDescr"></textarea>
+				<label>${pergunta.descrPergunta}</label><p>
+				<textarea cols="50" rows="6" 
+					name="respostaMap[${pergunta.idPergunta}]" value="${resposta?.descrPergunta}">
+				</textarea>
 			</div> 
-			<div class="gt-form-row">
-				<label>E qual o seu conceito?</label>
-				<input type="radio" name="semNome" value="Um">Muito Ruim&nbsp;
-				<input type="radio" name="semNome" value="Um">Ruim&nbsp;
-				<input type="radio" name="semNome" value="Um">Regular&nbsp;
-				<input type="radio" name="semNome" value="Um">Bom&nbsp;
-				<input type="radio" name="semNome" value="Um">Muito Bom&nbsp;
-			</div>
-			<div class="gt-form-row">
-				<input type="submit" value="Enviar"
-					class="gt-btn-medium gt-btn-left" />
-			</div>
-			#{/form}
+		#{/if}
+		#{elseif pergunta.tipoPergunta.idTipoPergunta == 2}
+		<div class="gt-form gt-content-box">
+		<div class="gt-form-row">
+				<label>${pergunta.descrPergunta}</label>
+				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="1">Muito Ruim&nbsp;
+				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="2">Ruim&nbsp;
+				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="3">Regular&nbsp;
+				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="4">Bom&nbsp;
+				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="5">Muito Bom&nbsp;
 		</div>
+		#{/elseif}
+		</div>
+		#{/list}
+		<div class="gt-form-row">
+				<input type="submit" value="Enviar" class="gt-btn-medium gt-btn-left" />
+		</div>
+		</div>
+		#{/form}
 	</div>
-</div>
 

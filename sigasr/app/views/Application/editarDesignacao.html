@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Designação de solicita��es' /}
+ #{extends 'main.html' /} #{set title:'Designação de solicita��es' /}
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -66,8 +66,8 @@
 					nome:'designacao.acao', value:designacao.acao?.atual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Atendente</label>#{selecao tipo:'lotacao',
-					nome:'designacao.atendente', value:designacao.atendente?.lotacaoAtual /}
+				<label>Atendente</label>#{selecao
+					tipo:'lotacao', nome:'designacao.atendente', value:designacao.atendente?.lotacaoAtual /}
 					<span style="display:inline;color: red">#{error 'designacao.atendente' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
@@ -91,7 +91,9 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Pesquisa de satisfa��o</label> 
 				#{select name:'designacao.pesquisaSatisfacao', items:pesquisaSatisfacao, valueProperty:'idPesquisa',
-				labelProperty:'nomePesquisa', value:designacao.pesquisaSatisfacao?.idPesquisa /}
+				labelProperty:'nomePesquisa', value:designacao.pesquisaSatisfacao?.idPesquisa}
+				#{option 0}Nenhuma#{/option} 
+				#{/select}
 			</div>
 			<div class="gt-form-row">
 				<input type="submit" value="Salvar"

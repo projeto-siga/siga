@@ -4,8 +4,11 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -20,7 +23,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -98,6 +103,10 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne()
 	@JoinColumn(name = "ID_PESQUISA")
 	public SrPesquisa pesquisa;
+	
+	@OneToMany(targetEntity = SrResposta.class, mappedBy = "pergunta", cascade = CascadeType.ALL)
+	//@OrderBy("pergunta asc")
+	protected List<SrResposta> meuRespostaSet;
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -112,6 +121,35 @@ public class SrMovimentacao extends GenericModel {
 				this.atendente = ultMov.atendente;
 			}
 		}
+	}
+	
+	public List<SrResposta> getRespostaSet() {
+		if (meuRespostaSet == null)
+			return new ArrayList<SrResposta>();
+		return meuRespostaSet;
+	}
+	
+	public List<SrResposta> setRespostaMap(HashMap<Long, String> respostas) throws Exception {
+		meuRespostaSet = new ArrayList<SrResposta>();
+		Iterator<Map.Entry<Long, String>> entries = respostas.entrySet().iterator();
+		while (entries.hasNext()) {
+			Map.Entry<Long, String> entry = entries.next();
+			SrResposta resp = new SrResposta();
+		    Long entrada = entry.getKey();
+		    resp.pergunta = SrPergunta.findById(entrada);
+		    resp.descrPergunta = entry.getValue();
+		    meuRespostaSet.add(resp);
+		}
+		return meuRespostaSet;	
+	}
+	
+	public HashMap<Long, String> getRespostaMap() {
+		HashMap<Long, String> map = new HashMap<Long, String>();
+		if (meuRespostaSet != null)
+			for (SrResposta resp : meuRespostaSet) {
+				map.put(resp.pergunta.idPergunta, resp.descrPergunta);
+			}
+		return map;
 	}
 
 	public boolean isCancelada() {

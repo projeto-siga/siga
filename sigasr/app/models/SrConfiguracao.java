@@ -70,13 +70,9 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrTipoAtributo tipoAtributo;
 
 	@ManyToOne
-	@JoinColumn(name = "PESQUISA_SATISFACAO")
+	@JoinColumn(name = "ID_PESQUISA")
 	public SrPesquisa pesquisaSatisfacao;
 	
-	/*@Column(name = "PESQUISA_SATISFACAO")
-	@Type(type = "yes_no")
-	public boolean pesquisaSatisfacao;*/
-
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
 	public boolean atributoObrigatorio;
@@ -98,11 +94,11 @@ public class SrConfiguracao extends CpConfiguracao {
 		this.setCpTipoConfiguracao(tipo);
 		this.subTipoConfig = subTipoConfig;
 	}
-
-	/*public String getPesquisaSatisfacaoString() {
-		return pesquisaSatisfacao ? "Sim" : "Não";
-	}*/
-
+	
+	public String getPesquisaSatisfacaoString() {
+		return pesquisaSatisfacao.nomePesquisa; 
+	}
+	
 	public String getAtributoObrigatorioString() {
 		return atributoObrigatorio ? "Sim" : "Não";
 	}
@@ -176,7 +172,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
 			CpComplexo complexo, SrItemConfiguracao item, SrAcao acao,
 			long idTipo, SrSubTipoConfiguracao subTipo) throws Exception {
-		return getConfiguracoes(pess, complexo, item, acao, idTipo, subTipo,
+		return getConfiguracoes(pess, complexo, item, acao, idTipo, subTipo, 
 				new int[] {});
 	}
 
@@ -184,7 +180,7 @@ public class SrConfiguracao extends CpConfiguracao {
 			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
 			long idTipo, SrSubTipoConfiguracao subTipo,
 			int atributoDesconsideradoFiltro[]) throws Exception {
-		SrConfiguracao conf = new SrConfiguracao(pess, local, item, acao,
+		SrConfiguracao conf = new SrConfiguracao(pess, local, item, acao, 
 				JPA.em().find(CpTipoConfiguracao.class, idTipo), subTipo);
 		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf,
 				atributoDesconsideradoFiltro);

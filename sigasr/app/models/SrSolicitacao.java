@@ -519,6 +519,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return conf.atendente.getLotacaoAtual();
 		return null;
 	}
+	
+	public SrPesquisa getPesquisaDesignada() throws Exception {
+		if (solicitante == null)
+			return null;
+		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
+				local, itemConfiguracao, acao,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO);
+		if (conf != null)
+			return conf.pesquisaSatisfacao;
+		return null;
+	}
 
 	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados()
 			throws Exception {
@@ -761,8 +773,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	public boolean estaComAtendenteDesignado() throws Exception {
-		return !estaCom(getAtendenteDesignado(), null) 
-				&& !isEmPreAtendimento();
+		return !estaCom(getAtendenteDesignado(), null) && isEmAtendimento();
 	}
 	
 	public boolean estaComPreAtendenteDesignado() throws Exception {
@@ -835,8 +846,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeRetornarAoPreAtendimento(DpLotacao lota, DpPessoa pess) throws Exception {
-		return !isEmPreAtendimento () &&
-						estaCom(lota, pess);
+		return isEmAtendimento() && estaCom(lota, pess);
 	}
 
 	public boolean podeFinalizarPreAtendimento(DpLotacao lota, DpPessoa pess) {
@@ -878,7 +888,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 
 	private boolean podeImprimirTermoAtendimento(DpLotacao lota, DpPessoa pess) {
-		return (!isFechado() && estaCom(lota, pess));
+		return isEmAtendimento() && estaCom(lota,pess);
 	}
 
 	public boolean podeAssociarLista(DpLotacao lota, DpPessoa pess) {
@@ -1560,13 +1570,26 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.salvar(pess, lota);
 	}
 
-	public void responderPesquisa(DpLotacao lota, DpPessoa pess)
+	public void responderPesquisa(DpLotacao lota, DpPessoa pess, List<SrResposta> respostas)
 			throws Exception {
 		if (!podeResponderPesquisa(lota, pess))
 			throw new Exception("Operação não permitida");
-		SrMovimentacao mov = new SrMovimentacao(this);
-		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_AVALIACAO);
-		mov.salvar(pess, lota);
+		SrMovimentacao movimentacao = new SrMovimentacao(this);
+		movimentacao.pesquisa =this.getPesquisaDesignada(); 
+		movimentacao.descrMovimentacao = "Avaliação realizada.";
+		movimentacao.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_AVALIACAO);
+		movimentacao.salvar(pess, lota);
+		for (SrPergunta pergunta : this.getPesquisaDesignada().perguntaSet){
+			for (SrResposta resp : respostas){
+				if (pergunta.idPergunta == resp.pergunta.idPergunta) {
+					SrResposta resposta = new SrResposta();
+					resposta.pergunta = pergunta;
+					resposta.descrPergunta = resp.descrPergunta;
+					resposta.idMovimentacao = movimentacao;
+					resposta.save();
+				}	
+			}
+		}	
 		// if (avaliacao.isSuficiente)...
 		// fecharTotalmente()
 		// else

@@ -63,3 +63,9 @@ alter table sigasr.sr_movimentacao add
 	ID_PESQUISA				NUMBER(19,0),
 	CONSTRAINT SR_MOV_PESQUISA_FK FOREIGN KEY (ID_PESQUISA) REFERENCES SR_PESQUISA(ID_PESQUISA)
 );
+
+alter table sigasr.sr_configuracao
+rename column pesquisa_satisfacao to id_pesquisa;
+
+alter table sigasr.sr_configuracao
+modify (id_pesquisa number (19,0));

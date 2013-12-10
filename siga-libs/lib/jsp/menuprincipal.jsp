@@ -31,12 +31,14 @@
 						</li>
 					</c:if>
 
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
-						<li><a href="/sigapp/">Perícias INSS</a>
-						</li>
-					</c:if>
-
+					<li><a href="#">Agendas</a>
+						<ul>
+							<c:if
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
+								<li><a href="/sigapp/">Perícias INSS</a>
+								</li>
+							</c:if>
+						</ul></li>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
 						<li><a href="/sigagc/">Gestão de Conhecimento</a>

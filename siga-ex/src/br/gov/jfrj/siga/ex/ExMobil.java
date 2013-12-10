@@ -1458,6 +1458,17 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public String getReferenciaRTF() {
 		return getReferencia() + ".rtf";
 	};
+	
+	/**
+	 * Verifica se o mobil está na mesma lotação de outro
+	 * 
+	 */
+	public boolean estaNaMesmaLotacao(ExMobil outroMobil) {
+		if(getUltimaMovimentacao() != null && outroMobil.getUltimaMovimentacao() != null)
+			return getUltimaMovimentacao().getLotaResp().equivale(outroMobil.getUltimaMovimentacao().getLotaResp());
+		
+		return false;
+	}
 
 
 }

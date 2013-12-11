@@ -98,7 +98,7 @@ public class SrPesquisa extends HistoricoSuporte {
 	}
 
 	public static List<SrPesquisa> listar() {
-		return find("byHisDtFimIsNull").fetch();
+		return SrPesquisa.find("byHisDtFimIsNull").fetch();
 	}
 
 	// Edson: Não consegui fazer com que esse cascade fosse automático.
@@ -109,6 +109,24 @@ public class SrPesquisa extends HistoricoSuporte {
 			pergunta.pesquisa = this;
 			pergunta.salvar();
 		}
+	}
+	
+	public Set<SrPergunta> getPerguntaSet() {
+		if (pesquisaInicial == null)
+			return null;
+		TreeSet<SrPergunta> listaCompleta = new TreeSet<SrPergunta>(
+				new Comparator<SrPergunta>() {
+					@Override
+					public int compare(SrPergunta a1, SrPergunta a2) {
+						return a1.ordemPergunta.compareTo(a2.ordemPergunta);
+					}
+				});
+		for (SrPesquisa pesquisas : getHistoricoPesquisa())
+			if (pesquisas.meuPesquisaHistoricoSet != null)
+				for (SrPergunta perg : pesquisas.perguntaSet)
+					if (perg.getHisDtFim() == null)
+						listaCompleta.add(perg);
+		return listaCompleta;
 	}
 	
 	// Edson: Não consegui fazer com que esse cascade fosse automático.

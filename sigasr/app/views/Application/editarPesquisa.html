@@ -1,5 +1,4 @@
 #{extends 'main.html' /} #{set title:'Edição de Pesquisa' /}
-
 <style>
 #sortable ul {
         height: 1.5em;
@@ -70,7 +69,7 @@ $(function() {
                 jNewTr.append("&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
                 jNewTr.find("img:eq(0)").click(function(){
                         var jDivs=jNewTr.find("span");
-                        jDialog.data("descrPergunta",jDivs[0].innerText)
+                        jDialog.data("descrPergunta",jDivs[0].innerHTML)
                                 .data("tipoPergunta",jDivs[1].id)
                                 .data("id",id)
                                 .data("acao", perguntas.alterarItem)
@@ -88,16 +87,16 @@ $(function() {
         }
         perguntas.alterarItem = function(descr, idTipo, descrTipo, id){
                 var jDivs=$("#"+id).find("span");
-                jDivs[0].innerText = descr;
+                jDivs[0].innerHTML = descr;
                 jDivs[1].id = idTipo;
-                jDivs[1].innerText = descrTipo;
+                jDivs[1].innerHTML = descrTipo;
         }
         perguntas.removerItem = function(idItem){
                 $("#"+idItem).remove();
                 perguntas["index"]--;
         }
 
-        #{list items:pesq.perguntaSet, as:'pergunta'}
+        #{list items:pesq.getPerguntaSet(), as:'pergunta'}
                 perguntas.incluirItem('${pergunta.descrPergunta}', '${pergunta.tipoPergunta.idTipoPergunta}', '${pergunta.tipoPergunta.nomeTipoPergunta}', ${pergunta.idPergunta});
         #{/list}
 
@@ -106,7 +105,7 @@ $(function() {
                         params = jForm.serialize();
                 jPerguntas.find("li").each(function(i){
                         var jDivs=$(this).find("span");
-                        params += '&pesq.perguntaSet[' + i + '].descrPergunta=' + jDivs[0].innerText;
+                        params += '&pesq.perguntaSet[' + i + '].descrPergunta=' + jDivs[0].innerHTML;
                         params += '&pesq.perguntaSet[' + i + '].tipoPergunta.idTipoPergunta=' + jDivs[1].id;
                         params += '&pesq.perguntaSet[' + i + '].ordemPergunta=' + i;
                         if (this.id.indexOf("novo_") < 1)

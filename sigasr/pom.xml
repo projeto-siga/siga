@@ -32,6 +32,13 @@
                     <version>${project.version}</version>
                     <classifier>module-min</classifier>
                     <type>zip</type>
+                    <exclusions>
+                      <exclusion>
+                        <groupId>projeto-siga</groupId>
+                        <artifactId>siga-base</artifactId>
+                      </exclusion>
+                    </exclusions>
+
                  </dependency>
 
                 <dependency>
@@ -40,14 +47,15 @@
                     <version>${project.version}</version>
                  </dependency>
 
+
+
+
+
                   <dependency>
                     <groupId>c3p0</groupId>
                     <artifactId>c3p0</artifactId>
                     <version>0.9.1.2</version>
                   </dependency>
-            
-
-
 
                  <dependency>
                       <groupId>net.objectlab.kit</groupId>
@@ -148,7 +156,7 @@
                 <artifactId>play-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                  <warDependencyExcludes>jta</warDependencyExcludes>                  
+                  <warDependencyExcludes>jta,siga-base,siga-cd-base,siga-sinc-lib,siga-ws</warDependencyExcludes>
                 </configuration>
                 <executions>
                   <execution>
@@ -178,11 +186,50 @@
             </plugin>
         </plugins>
 
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									com.google.code.maven-play-plugin
+        								</groupId>
+        								<artifactId>
+        									play-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.0.0-beta6,)
+        								</versionRange>
+        								<goals>
+        									<goal>initialize</goal>
+        									<goal>dependencies</goal>
+        									<goal>
+        										generate-selenium-junit4-sources
+        									</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
     </build>
 
 
 <properties>
-  <play.version>1.2.6</play.version>
+  <play.version>1.2.4</play.version>
 </properties>
 
 </project>

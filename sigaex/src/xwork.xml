@@ -1120,6 +1120,32 @@
 			</result>
 		</action>
 	</package>
+	<package name="emailNotificacao" extends="default" namespace="/emailNotificacao">
+		<action name="exibir" class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction"
+			method="aExibir">
+						
+		<action name="listar" method="aListar"
+			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
+			<result>/paginas/emailNotificacao/lista.jsp</result>
+		</action>		
+		<action name="editar" method="aEditar"
+			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
+			<result>/paginas/emailNotificacao/edita.jsp</result>
+		</action>
+		<action name="editar_gravar" method="aEditarGravar"
+			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
+			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
+				/> -->
+			<result type="redirect-action">listar</result>
+		</action>
+		<action name="excluir" method="aExcluir"
+			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
+			<result type="redirect-action">listar</result>
+		</action>
+			
+		</action>
+	</package>
+	
 	
 	<package name="expediente/rel" extends="default" namespace="/expediente/rel">
 		<!-- action principal : chama todos os jsp´s -->

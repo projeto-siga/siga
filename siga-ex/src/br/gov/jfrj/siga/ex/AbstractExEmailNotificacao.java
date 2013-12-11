@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class AbstractExEmailNotificacao {
 	
@@ -28,7 +29,13 @@ public class AbstractExEmailNotificacao {
 	
 	private DpLotacao dpLotacao;
 	
+	private DpPessoa dpPessoa;
+	
 	private String email;
+	
+	private DpLotacao lotacaoAlvo;
+	
+	private DpPessoa pessoaAlvo;
 	
 	public java.lang.Long getIdEmailNotificacao() {
 		return idEmailNotificacao;
@@ -52,6 +59,30 @@ public class AbstractExEmailNotificacao {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public DpPessoa getDpPessoa() {
+		return dpPessoa;
+	}
+
+	public void setDpPessoa(DpPessoa dpPessoa) {
+		this.dpPessoa = dpPessoa;
+	}
+
+	public DpLotacao getLotacaoAlvo() {
+		return lotacaoAlvo;
+	}
+
+	public void setLotacaoAlvo(DpLotacao lotacaoAlvo) {
+		this.lotacaoAlvo = lotacaoAlvo;
+	}
+
+	public DpPessoa getPessoaAlvo() {
+		return pessoaAlvo;
+	}
+
+	public void setPessoaAlvo(DpPessoa pessoaAlvo) {
+		this.pessoaAlvo = pessoaAlvo;
 	}
 
 	public AbstractExEmailNotificacao() {

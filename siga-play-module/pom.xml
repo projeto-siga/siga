@@ -17,6 +17,12 @@
             <artifactId>siga-cp</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+              <exclusion>
+                <groupId>projeto-siga</groupId>
+                <artifactId>siga-base</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

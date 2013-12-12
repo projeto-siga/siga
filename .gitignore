@@ -33,6 +33,8 @@ siga-sinc-lib/bin/
 sigagc/eclipse/classes/
 sigasr/eclipse/classes/
 sigasr/precompiled/
+sigasr/lib
+sigasr/modules
 ImportarXml/bin/br/gov/jfrj/importar/
 *.class
 ImportarXml/bin/

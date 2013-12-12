@@ -89,6 +89,14 @@
 						namespace="/expediente/configuracao" /> <ww:a href="%{url}">Cadastro de configurações</ww:a>
 				</li>
 			</c:if>
+			
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;FER:Feriados')}">
+				<li><ww:url id="url" action="listar"
+						namespace="/expediente/emailNotificacao" /> <ww:a href="%{url}">Cadastro de email de notificação</ww:a>
+				</li>
+			</c:if>
+			
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação')}">
 				<li><ww:url id="url" action="listar"

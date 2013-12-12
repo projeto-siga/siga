@@ -1,1 +1,1 @@
-alter table siga.ex_email_notificacao add (ID_PESSOA NUMBER(10,0), ID_LOTA_ALVO NUMBER(10,0), ID_PESSOA_ALVO NUMBER(10,0));
+alter table siga.ex_email_notificacao add (ID_PESSOA NUMBER(10,0), ID_LOTA_EMAIL NUMBER(10,0), ID_PESSOA_EMAIL NUMBER(10,0));

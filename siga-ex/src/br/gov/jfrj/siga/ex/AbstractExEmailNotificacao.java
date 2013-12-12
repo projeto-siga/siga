@@ -33,9 +33,9 @@ public class AbstractExEmailNotificacao {
 	
 	private String email;
 	
-	private DpLotacao lotacaoAlvo;
+	private DpLotacao lotacaoEmail;
 	
-	private DpPessoa pessoaAlvo;
+	private DpPessoa pessoaEmail;
 	
 	public java.lang.Long getIdEmailNotificacao() {
 		return idEmailNotificacao;
@@ -69,20 +69,20 @@ public class AbstractExEmailNotificacao {
 		this.dpPessoa = dpPessoa;
 	}
 
-	public DpLotacao getLotacaoAlvo() {
-		return lotacaoAlvo;
+	public DpLotacao getLotacaoEmail() {
+		return lotacaoEmail;
 	}
 
-	public void setLotacaoAlvo(DpLotacao lotacaoAlvo) {
-		this.lotacaoAlvo = lotacaoAlvo;
+	public void setLotacaoEmail(DpLotacao lotacaoEmail) {
+		this.lotacaoEmail = lotacaoEmail;
 	}
 
-	public DpPessoa getPessoaAlvo() {
-		return pessoaAlvo;
+	public DpPessoa getPessoaEmail() {
+		return pessoaEmail;
 	}
 
-	public void setPessoaAlvo(DpPessoa pessoaAlvo) {
-		this.pessoaAlvo = pessoaAlvo;
+	public void setPessoaEmail(DpPessoa pessoaEmail) {
+		this.pessoaEmail = pessoaEmail;
 	}
 
 	public AbstractExEmailNotificacao() {

@@ -54,12 +54,12 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	private DpLotacao dpLotacao;	
 	private DpPessoa dpPessoa;	
 	private String email;	
-	private DpLotacao lotacaoAlvo;	
-	private DpPessoa pessoaAlvo;
+	private DpLotacao lotacaoEmail;	
+	private DpPessoa pessoaEmail;
 	private DpLotacaoSelecao lotaSel;
-	private DpLotacaoSelecao lotaAlvoSel;
+	private DpLotacaoSelecao lotaEmailSel;
 	private DpPessoaSelecao pessSel;
-	private DpPessoaSelecao pessAlvoSel;
+	private DpPessoaSelecao pessEmailSel;
 	private Long id;
 	private List itens;
 	
@@ -96,20 +96,20 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		this.email = email;
 	}
 
-	public DpLotacao getLotacaoAlvo() {
-		return lotacaoAlvo;
+	public DpLotacao getLotacaoEmail() {
+		return lotacaoEmail;
 	}
 
-	public void setLotacaoAlvo(DpLotacao lotacaoAlvo) {
-		this.lotacaoAlvo = lotacaoAlvo;
+	public void setLotacaoEmail(DpLotacao lotacaoEmail) {
+		this.lotacaoEmail = lotacaoEmail;
 	}
 
-	public DpPessoa getPessoaAlvo() {
-		return pessoaAlvo;
+	public DpPessoa getPessoaEmail() {
+		return pessoaEmail;
 	}
 
-	public void setPessoaAlvo(DpPessoa pessoaAlvo) {
-		this.pessoaAlvo = pessoaAlvo;
+	public void setPessoaEmail(DpPessoa pessoaEmail) {
+		this.pessoaEmail = pessoaEmail;
 	}
 
 	public DpLotacaoSelecao getLotaSel() {
@@ -120,12 +120,12 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		this.lotaSel = lotaSel;
 	}
 
-	public DpLotacaoSelecao getLotaAlvoSel() {
-		return lotaAlvoSel;
+	public DpLotacaoSelecao getLotaEmailSel() {
+		return lotaEmailSel;
 	}
 
-	public void setLotaAlvoSel(DpLotacaoSelecao lotaAlvoSel) {
-		this.lotaAlvoSel = lotaAlvoSel;
+	public void setLotaEmailSel(DpLotacaoSelecao lotaEmailSel) {
+		this.lotaEmailSel = lotaEmailSel;
 	}
 
 	public DpPessoaSelecao getPessSel() {
@@ -136,12 +136,12 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		this.pessSel = pessSel;
 	}
 
-	public DpPessoaSelecao getPessAlvoSel() {
-		return pessAlvoSel;
+	public DpPessoaSelecao getPessEmailSel() {
+		return pessEmailSel;
 	}
 
-	public void setPessAlvoSel(DpPessoaSelecao pessAlvoSel) {
-		this.pessAlvoSel = pessAlvoSel;
+	public void setPessEmailSel(DpPessoaSelecao pessEmailSel) {
+		this.pessEmailSel = pessEmailSel;
 	}
 	
 	public List getItens() {

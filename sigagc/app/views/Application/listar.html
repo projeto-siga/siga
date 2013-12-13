@@ -1,22 +1,35 @@
 #{extends 'main.html' /} #{set title:'Informações' /}
-
-
+#{ set 'moreHead'}
+<script type="text/javascript">
+		$(document).ready(function(){
+			$("#dicaNumero").hide();
+			$("#filtronumero").focus(function (){
+				$("#dicaNumero").show("slow");
+			})
+			.focusout(function(){
+				$("#dicaNumero").hide("fast");
+			});			
+		});
+</script>
+#{/set}
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2>Pesquisa de Conhecimento</h2>
-
+		#{if lista.size() == 0}
+			<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>
+		#{/if}
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-table">
 				<thead>
 					<tr>
-						<th rowspan="3" align="right">Número</th>
+						<th rowspan="3" align="left">Número</th>
 						<th colspan="3" align="center">Tópico de Informação</th>
 						<th colspan="4" align="center">Situação</th>
 						<th rowspan="3">Tipo</th>
 						<th rowspan="3">Título</th>
 					</tr>
 					<tr>
-						<th rowspan="2" align="center">Data</th>
+						<th rowspan="2" align="left">Data</th>
 						<th colspan="2" align="center">Autor</th>
 						<th rowspan="2" align="center">Data</th>
 						<th colspan="2" align="center">Responsável</th>
@@ -36,9 +49,9 @@
 					m0 = cmarcas > 0 ? i.marcas.first() : null /}
 
 					<tr class="even">
-						<td width="11.5%" align="right" rowspan="${cmarcas}"><a
+						<td width="11.5%" align="left" rowspan="${cmarcas}"><a
 							href="@{Application.exibir(i.sigla)}">${i.sigla}</a></td>
-						<td width="5%" align="center" rowspan="${cmarcas}">${i.dtIniString}</td>
+						<td width="5%" align="left" rowspan="${cmarcas}">${i.dtIniString}</td>
 						<td width="4%" align="center" rowspan="${cmarcas}"><span
 							title="${i.lotacao.descricao}">${i.lotacao.sigla}</span>
 						</td>
@@ -78,7 +91,7 @@
 				</tbody>
 			</table>
 		</div>
-
+		
 		<!-- </table></div> -->
 		<br>
 		<div class="gt-content-box gt-for-table">
@@ -106,23 +119,23 @@
 							<td>Situação:</td>
 							<td>#{select name:'filtro.situacao', items:marcadores,
 								labelProperty:'descrMarcador', valueProperty:'idMarcador',
-								value:filtro?.situacao?.idMarcador} #{option 0}Todas#{/option}
-								#{/select} &nbsp;&nbsp;&nbsp;&nbsp;Pessoa/Lotação:
+								value:filtro?.situacao?.idMarcador} #{option null}Todas#{/option}
+								#{/select} *{&nbsp;&nbsp;&nbsp;&nbsp;Pessoa/Lotação:
 								#{pessoaLotaSelecao nomeSelPessoa:'marcado',
-								nomeSelLotacao:'lotaMarcado', value:informacao?.autor /}</td>
+								nomeSelLotacao:'lotaMarcado', value:informacao?.autor /}</td>}*
 						</tr>
 						<tr>
 							<td>Órgão:</td>
 							<td>#{select name:'filtro.orgaoUsu', items:orgaosusuarios,
 								labelProperty:'descricao', valueProperty:'id',
-								value:filtro?.ou?.id} #{option 0}Todas#{/option} #{/select}</td>
+								value:filtro?.orgaoUsu?.id} #{option null}Todas#{/option} #{/select}</td>
 						</tr>
 						<tr>
 							<td>Criação:</td>
-							<td>Data Inicial: <input type="text" name="dtIniString"
+							<td>Data Inicial: <input type="text" name="filtro.dtIni"
 								value="" id="dtIniString"
 								onblur="javascript:verifica_data(this,0);">
-								&nbsp;&nbsp;Data Final: <input type="text" name="dtFimString"
+								&nbsp;&nbsp;Data Final: <input type="text" name="filtro.dtFim"
 								value="" id="dtFimString"
 								onblur="javascript:verifica_data(this,0);"></td>
 						</tr>
@@ -131,16 +144,17 @@
 							<td>Tipo:</td>
 							<td>#{select name:'filtro.tipo', items:tiposinformacao,
 								labelProperty:'nome', valueProperty:'id',
-								value:filtro?.tipo?.id} #{option 0}Todas#{/option} #{/select}</td>
+								value:filtro?.tipo?.id} #{option null}Todas#{/option} #{/select}</td>
 						</tr>
 						<tr>
 							<td>Ano de Emissão:</td>
 							<td>#{select name:'filtro.ano', items:anos,
 								labelProperty:'toString()', valueProperty:'toString()',
-								value:filtro?.tipo?.ano} #{option 0}Todos#{/option} #{/select}
-								&nbsp;&nbsp;&nbsp;&nbsp;Número: <input type="text"
-								name="numExpediente" size="7" maxlength="6" value=""
-								id="numExpediente">
+								value:filtro?.ano} #{option null}Todos#{/option} #{/select}
+								&nbsp;&nbsp;&nbsp;&nbsp;Número do Conhecimento: <input type="text"
+								name="filtro.numero" size="7" maxlength="6" value=""
+								id="filtronumero">
+								<span id="dicaNumero" style="font-size:x-small;">Ex: JFRJ-GC-2013/<b style="background:#cccccc;">00152</b> (número em destaque)</span>
 							</td>
 						</tr>
 
@@ -174,13 +188,13 @@
 								class="label">Título:</label>
 							</td>
 							<td><input type="text" name="filtro.titulo" size="80"
-								value="" id="descrDocumento"></td>
+								value="" id="titulo"></td>
 						</tr>
 						<tr>
 							<td class="tdLabel"><label class="label" for="fullText">Conteudo:</label>
 							</td>
-							<td><input type="text" id="fullText" value="" size="80"
-								name="fullText"></td>
+							<td><input type="text" id="conteudo" value="" size="80"
+								name="filtro.conteudo"></td>
 						</tr>
 						<tr>
 							<td colspan="2"><input type="submit"
@@ -192,10 +206,10 @@
 			</form>
 		</div>
 	</div>
-	<br /> <input type="button" value="Novo"
+	*{<br /> <input type="button" value="Novo"
 		onclick="javascript: window.location='@{Application.editar(0)}';"
 		class="gt-btn-medium gt-btn-right" />
-
+	}*
 </div>
 
 

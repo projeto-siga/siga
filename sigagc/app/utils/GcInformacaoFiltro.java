@@ -14,38 +14,50 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 public class GcInformacaoFiltro extends GcInformacao {
 
 	public String dtIni;
-
 	public String dtFim;
-
 	public CpMarcador situacao;
-
 	public CpOrgaoUsuario orgaoUsu;
-
-	public GcTipoInformacao tipo;
-
 	public String titulo;
-
 	public String conteudo;
-
 	public GcTag tag;
 
 	public List<GcInformacao> buscar() {
 		String query = "from GcInformacao inf where inf.hisDtFim is null ";
 
-		if (tag != null)
+		if(orgaoUsu != null)
+			query += " and inf.ou = " + orgaoUsu.getId();
+		
+		if(tag != null)
 			//query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = " + tag.id;
 			query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.titulo = '" + tag.titulo + "'";
 			//query += " and inf.tags.id = " + tag.id;
-		if (autor != null)
+		if(autor != null)
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();
-		if (lotacao != null)
+		
+		if(lotacao != null)
 			query += " and inf.lotacao.idLotacaoIni = "
 					+ lotacao.getIdInicial();
-
-		if (conteudo != null && !conteudo.trim().equals("")) {
-			for (String s : conteudo.split(" "))
-				query += " and lower(inf.arq.conteudo) like '%"
+		if(tipo != null)
+				query += " and inf.tipo = " + tipo.id;
+		
+		if(ano != null)
+			query += " and inf.ano = " + Integer.parseInt(ano.toString());
+		
+		if(numero != null)
+			query += " and inf.numero = " + Integer.parseInt(numero.toString());
+		
+		if(conteudo != null && !conteudo.trim().equals("")) {
+			for (String s : conteudo.split(" ")){
+				/*query += " and lower(inf.arq.conteudo) like '%"
 						+ s.toLowerCase() + "%' ";
+				 */		
+				//forma de consultar num coluna BLOB através do SQL
+				query += " and dbms_lob.instr(inf.arq.conteudo,utl_raw.cast_to_raw('" + s + "'),1,1) > 0";
+			}	
+		}
+		if(titulo != null && !titulo.trim().equals("")){
+			for (String t : titulo.split(" "))
+				query += " and lower(inf.arq.titulo) like '%" + t.toLowerCase() + "%' ";
 		}
 
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");

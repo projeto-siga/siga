@@ -36,4 +36,16 @@ public class GcCloud extends Cloud{
 		Tag tagCloud =  new Tag(tag[0].toString(), link, Double.parseDouble(tag[1].toString())); //tag[1] - contador 
 		this.addTag(tagCloud);
 	}
+	
+	public void criarCloud(Object[] tag, Long idLotacao){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		//for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) 
+
+		map.clear();
+		map.put("filtro.tag.sigla", tag[0].toString());//tag[0] - titulo
+		map.put("filtro.lotacao", idLotacao);
+		String link = Router.reverse("Application.listar", map).url;
+		Tag tagCloud =  new Tag(tag[0].toString(), link, Double.parseDouble(tag[1].toString())); //tag[1] - contador 
+		this.addTag(tagCloud);
+	}
 }

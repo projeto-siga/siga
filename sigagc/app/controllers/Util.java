@@ -151,45 +151,39 @@ public class Util {
 		String sigla = null;
 		GcInformacao infoReferenciada = null;
 		StringBuffer sb = new StringBuffer();
-		
-		try{
-				//lembrar de retirar o RJ quando for para a produção. 
-				Pattern padraoSigla = Pattern.compile(
-										//reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01, JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01, TRF2-PRO-2013/00001-V01
-										"(?i)(?:(?:RJ|" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)"
-										); 
-	
-				Matcher matcherSigla = padraoSigla.matcher(conteudo);
-				while(matcherSigla.find()){
-					//identifica que é um código de um conhecimento, ou serviço ou documento
-					if(matcherSigla.group(1) != null) {
-						sigla = matcherSigla.group(0).toUpperCase().trim();
-						//conhecimento
-						if(matcherSigla.group(1).toUpperCase().equals("GC")) {
-							infoReferenciada = new GcInformacao().findBySigla(sigla);
-							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_GC + 
-									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + " - " +
-									infoReferenciada.arq.titulo + "]]");						
-						}
-						//serviço
-						else if(matcherSigla.group(1).toUpperCase().equals("SR")) {
-							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_SR + 
-									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
-						}
-						//documento
-						else {
-							matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_DOC +
-									URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
-						}
-					}
+
+		//lembrar de retirar o RJ quando for para a produção. 
+		Pattern padraoSigla = Pattern.compile(
+								//reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01, JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01, TRF2-PRO-2013/00001-V01
+								"(?i)(?:(?:RJ|" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)"
+								); 
+
+		Matcher matcherSigla = padraoSigla.matcher(conteudo);
+		while(matcherSigla.find()){
+			//identifica que é um código de um conhecimento, ou serviço ou documento
+			if(matcherSigla.group(1) != null) {
+				sigla = matcherSigla.group(0).toUpperCase().trim();
+				//conhecimento
+				if(matcherSigla.group(1).toUpperCase().equals("GC")) {
+					infoReferenciada = GcInformacao.findBySigla(sigla);
+					matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_GC + 
+							URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + " - " +
+							infoReferenciada.arq.titulo + "]]");						
 				}
-				matcherSigla.appendTail(sb);
-				return sb.toString();
+				//serviço
+				else if(matcherSigla.group(1).toUpperCase().equals("SR")) {
+					matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_SR + 
+							URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
+				}
+				//documento
+				else {
+					matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_DOC +
+							URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
+				}
+			}
 		}
-		catch(Exception e){
-			throw new AplicacaoException("Não foi possível encontrar um conhecimento com o código " + sigla + 
-											". Favor verificá-lo.");
-		}
+		matcherSigla.appendTail(sb);
+		return sb.toString();
 	}
 
 	/**

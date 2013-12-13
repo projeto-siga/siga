@@ -34,6 +34,7 @@ import play.db.jpa.GenericModel;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
 import utils.WikiParser;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -49,10 +50,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = "maisVisitados", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null group by i order by count(*) desc"),
 		@NamedQuery(name = "maisVisitadosLotacao", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null and i.lotacao.idLotacao = :idLotacao group by i order by count(*) desc"),
 //		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
-		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor), count(i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(i.autor) desc"),
+		@NamedQuery(name = "principaisAutores", query = "select p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null group by p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao order by count(*) desc"),
+		@NamedQuery(name = "principaisAutoresLotacao", query = "select p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.lotacao.idLotacao = :idLotacao group by p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao order by count(*) desc"),
 //		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
-		@NamedQuery(name = "principaisAutoresLotacao", query = "select (select p from DpPessoa p where p = i.autor), count(i.autor) from GcInformacao i where i.hisDtFim is null and i.lotacao.idLotacao = :idLotacao group by i.autor order by count(i.autor) desc"),
-		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao), count(i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(i.lotacao) desc"),
+		@NamedQuery(name = "principaisLotacoes", query = "select l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao, count(*) from GcInformacao i inner join i.lotacao l where i.hisDtFim is null group by l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao order by count(*) desc"),
 //		@NamedQuery(name = "principaisTags", query = "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
 		@NamedQuery(name = "principaisTags", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),
 		@NamedQuery(name = "principaisTagsLotacao", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and i.lotacao.idLotacao = :idLotacao and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),	
@@ -482,15 +483,20 @@ public class GcInformacao extends GenericModel {
 	/**
 	 * Identifica uma informação através do seu código (JFRJ-GC-2013/00002 ou TMPGC-23)
 	 **/
-	public GcInformacao findBySigla(String sigla){
+	public static GcInformacao findBySigla(String sigla){
 		String[] siglaParticionada = sigla.split("-");
-		
+		GcInformacao info = null;
 		//verificação necessária por conta dos arquivos temporários que são buscados pelo id, já os finalizados
 		//são buscados pela sua numeração
 		if(siglaParticionada[1].equals("GC"))
-			return GcInformacao.find("byNumero",Integer.parseInt(siglaParticionada[2].split("/")[1])).first();
+			info = GcInformacao.find("byNumero",Integer.parseInt(siglaParticionada[2].split("/")[1])).first();
 		else
-			return GcInformacao.findById(Long.parseLong(siglaParticionada[1]));	
-	}
+			info = GcInformacao.findById(Long.parseLong(siglaParticionada[1]));
 
+		if(info == null){
+			throw new AplicacaoException("Não foi possível encontrar um conhecimento com o código " + sigla + 
+			". Favor verificá-lo.");
+		} else
+			return info;
+	}
 }

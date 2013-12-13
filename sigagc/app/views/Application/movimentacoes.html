@@ -10,7 +10,7 @@ title:'Movimentações'/}
 		<table class="gt-table mov">
 			<thead>
 				<tr>
-					<th align="center" rowspan="2">Data</th>
+					<th align="left" rowspan="2">Data</th>
 					<th rowspan="2">Evento</th>
 					<th colspan="2" align="left">Cadastrante</th>
 					<th colspan="2" align="left">Referente</th>
@@ -26,7 +26,7 @@ title:'Movimentações'/}
 			<tbody>
 				#{list items:informacao.movs, as:'m'}
 				<tr class="juntada ">
-					<td align="center">${m.hisDtIni.format()}</td>
+					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
 					<td>${m.tipo.nome}</td>
 					<td align="left"><span
 						title="${m.hisIdcIni.dpPessoa.lotacao.descricao}">${m.hisIdcIni.dpPessoa.lotacao.sigla}</span>

@@ -1,6 +1,15 @@
 #{extends 'main.html' /} #{set title:'Busca Textual' /}
-
-
+#{ set 'moreHead'}
+<script type="text/javascript">
+		$(document).ready(function(){
+			var placeHolder = "Digite as palavras da busca e tecle enter";
+			$("#texto").attr("value",placeHolder).keydown(function() {
+				if($(this).val() == placeHolder)
+					$("#texto").attr("value", "");
+			});
+		});
+</script>
+#{/set}
 <script type="text/javascript">
 // Using jQuery.
 
@@ -21,22 +30,25 @@ $(function() {
 
 	<div class="gt-content clearfix">
 		<h2>Busca Textual</h2>
-
 		<div class="gt-sidebar-box gt-sidebar-box-blue">
 			<!-- search -->
 			<div class="gt-search">
 				<div class="gt-search-inner">
 					<form id="frm" action="@{Application.buscar}" method="get">
 						<input type="text" id="texto" name="texto" class="gt-search-text"
-							value="#{if texto != null}${texto}#{/if}#{else}Digite as palavras da busca e tecle enter#{/else}"
-							onfocus="javascript:if(this.value=='Digite as palavras da busca e tecle enter')this.value='';">
+							*{value="#{if texto != null}${texto}#{/if}#{else}Digite as palavras da busca e tecle enter#{/else}"
+							onfocus="javascript:if(this.value=='Digite as palavras da busca e tecle enter')this.value='';"}*>
 					</form>
 				</div>
 			</div>
 			<!-- /search -->
 		</div>
-
-		<div>${arvore.toHTML().raw()}</div>
+		#{if (arvore.toString() == "")}
+			<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>
+		#{/if}
+		#{else}
+			<div>${arvore.toHTML().raw()}</div>
+		#{/else}
 	</div>
 
 </div>

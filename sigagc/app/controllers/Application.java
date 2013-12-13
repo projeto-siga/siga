@@ -3,7 +3,6 @@ package controllers;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,7 +28,6 @@ import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.joda.time.LocalDate;
 
 import play.Play;
 import play.Play.Mode;
@@ -38,7 +36,6 @@ import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
-import play.mvc.Router;
 import utils.GcArvore;
 import utils.GcBL;
 import utils.GcCloud;
@@ -160,7 +157,7 @@ public class Application extends SigaApplication {
 			renderArgs.put("identidadeCadastrante", identidadeCadastrante);
 		}
 
-		int a = 0;
+		//int a = 0;
 
 		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
 			Date dt = GcBL.dt();
@@ -378,7 +375,7 @@ public class Application extends SigaApplication {
 			listaPrincipaisTags = null;
 		else {
 			for (Object[] t : listaPrincipaisTags) {
-				cloud.criarCloud(t);
+				cloud.criarCloud(t, idLotacao);
 			}
 		}
 		GcGraficoEvolucao set = new GcGraficoEvolucao();
@@ -471,7 +468,7 @@ public class Application extends SigaApplication {
 		}
 
 		arvore.build();
-
+		
 		render(arvore, texto);
 	}
 
@@ -480,17 +477,12 @@ public class Application extends SigaApplication {
 	// render(informacoes);
 	// }
 
-	public static void exibir(String sigla) throws Exception {
-		
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void exibir(String sigla) throws Exception{
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		if (conteudo != null)
+			informacao.arq.setConteudoTXT(conteudo);
 		
-		if (informacao == null)
-			index();
-		else {
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-		}
 		if (!informacao.acessoPermitido(titular(), lotaTitular())) {
 			throw new AplicacaoException(
 					"O usuário corrente não tem acesso à informação solicitada.");
@@ -501,11 +493,11 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void editar(String sigla, String classificacao, String titulo,
-			String origem) throws IOException {
-		GcInformacao informacao = new GcInformacao();
+			String origem) throws Exception {
+		GcInformacao informacao = null;
 
 		if(sigla != null)
-			informacao = informacao.findBySigla(sigla);
+			informacao = GcInformacao.findBySigla(sigla);
 		else
 			informacao = new GcInformacao();
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
@@ -530,16 +522,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void historico(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
-
-		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
-		
-		if (informacao == null)
-			index();
-		else {
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-		}
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
 		diff_match_patch diff = new diff_match_patch();
 
@@ -591,27 +574,25 @@ public class Application extends SigaApplication {
 				}
 			}
 		}
+		
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		if (conteudo != null)
+			informacao.arq.setConteudoTXT(conteudo);
 
 		render(informacao, list, mapTitulo, mapTxt);
 	}
 
 	public static void movimentacoes(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
-
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
-		
-		if (informacao == null)
-			index();
-		else {
-			if (conteudo != null)
+		if (conteudo != null)
 				informacao.arq.setConteudoTXT(conteudo);
-		}
 
 		render(informacao);
 	}
 
 	public static void fechar(String sigla) throws Exception {
-		GcInformacao inf = new GcInformacao().findBySigla(sigla);
+		GcInformacao inf = GcInformacao.findBySigla(sigla);
 		GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 				null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(inf, idc());
@@ -658,8 +639,8 @@ public class Application extends SigaApplication {
 			exibir(informacao.getSigla());
 	}
 
-	public static void remover(String sigla) throws AplicacaoException {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void remover(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
 		if (informacao.elaboracaoFim != null)
 			throw new AplicacaoException(
@@ -672,8 +653,8 @@ public class Application extends SigaApplication {
 		index();
 	}
 
-	public static void notificar(String sigla) {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void notificar(String sigla) throws Exception{
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -690,8 +671,8 @@ public class Application extends SigaApplication {
 		exibir(informacao.getSigla());
 	}
 
-	public static void solicitarRevisao(String sigla) {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void solicitarRevisao(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -708,8 +689,8 @@ public class Application extends SigaApplication {
 		exibir(informacao.getSigla());
 	}
 
-	public static void anexar(String sigla) {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void anexar(String sigla) throws Exception{
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -749,7 +730,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void revisado(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		if (informacao.movs != null) {
 			for (GcMovimentacao mov : informacao.movs) {
 				if (mov.isCancelada())
@@ -770,19 +751,19 @@ public class Application extends SigaApplication {
 	}
 
 	public static void marcarComoInteressado(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		GcBL.interessado(informacao, idc(), titular(), true);
 		exibir(sigla);
 	}
 
 	public static void desmarcarComoInteressado(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		GcBL.interessado(informacao, idc(), titular(), false);
 		exibir(sigla);
 	}
 
 	public static void cancelar(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		GcBL.cancelar(informacao, idc(), titular(), lotaTitular());
 		exibir(sigla);
 	}

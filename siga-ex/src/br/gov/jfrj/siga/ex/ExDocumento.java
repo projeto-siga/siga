@@ -1464,7 +1464,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			
 			if(arquivoPrincipal.getArquivo() instanceof ExDocumento) {
 				
-				List<Integer> indicesParaRemover = new ArrayList<Integer>();
+				List<ExArquivoNumerado> arquivosParaRemover = new ArrayList<ExArquivoNumerado>();
 				
 				for (ExArquivoNumerado an : list) {
 					if(an.getArquivo() instanceof ExMovimentacao) {
@@ -1474,14 +1474,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 							
 							if(mov.getExMobilRef() != null && !mov.getExMobilRef().getId().equals(arquivoPrincipal.getMobil().getId())) {
 								
-								indicesParaRemover.add(list.indexOf(an));
+								arquivosParaRemover.add(an);
 							}
 						}
 					}
 				}
 				
-				for (int indice : indicesParaRemover) {
-					list.remove(indice);
+				for (ExArquivoNumerado arquivoParaRemover : arquivosParaRemover) {
+					list.remove(arquivoParaRemover);
 				}
 			}
 		}

@@ -14,8 +14,16 @@ var newwin = null;
 &nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br>&nbsp;&nbsp;&nbsp; Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça.        </c:set>
     
     <mod:grupo titulo="Referente">
-        <input type="radio" name="referente" id="solicitacao" value="1" checked> à Solicitação de Serviço Extraordinário <mod:texto titulo="Nº" var="numerosolicitacao"  largura="7"/><br>
-        <input type="radio" name="referente" id="plantao" value="2">ao Plantão Judiciário.<br>
+        <mod:radio titulo="ao Plantão Judiciário." var="referente" valor="1" reler="sim" marcado="Sim"/>
+        <mod:radio titulo="à Solicitação de Serviço Extraordinário" var="referente" valor="2" reler="sim" />
+        <c:set var="valorreferente" value="${referente}" />
+        <c:if test="${empty valorreferente}">
+            <c:set var="valorreferente" value="${param['referente']}" />
+        </c:if>
+         <c:if test="${(valorreferente == '2')}">        
+         <mod:texto titulo="Nº" var="numerosolicitacao"  largura="7" obrigatorio="Sim"/>         
+         </c:if>
+       
    </mod:grupo>
    </br>
         <mod:grupo>
@@ -169,10 +177,10 @@ var newwin = null;
         </mod:grupo>
         <br/>
         <mod:grupo>
-                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumprida" value="1" checked > Afirmo que todas as tarefas/atividades descritas na Solicitação de Serviço Extraordinário foram cumpridas.</br>
-                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="2">Afirmo que as tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram todas cumpridas pois:
-                    <mod:memo titulo="" var="solicitacaoCumpridaNaoPois" colunas="60" linhas="7" /><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Além da justificativa, incluir a tarefa alterada.)</b></br>
-                 <input type="radio" name="solicitacaoCumprida" id="solicitacaoCumpridaNao" value="3" >Não se aplica.</br>
+             <mod:radio titulo="Afirmo que todas as tarefas/atividades descritas na Solicitação de Serviço Extraordinário foram cumpridas." var="solicitacaoCumprida" valor="1" marcado="Sim"/>
+              <mod:radio titulo="Afirmo que as tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram todas cumpridas pois:" var="solicitacaoCumprida" valor="2" />
+                            <mod:memo titulo="" var="solicitacaoCumpridaNaoPois" colunas="60" linhas="7" /><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Além da justificativa, incluir a tarefa alterada.)</b></br>
+                 <mod:radio titulo="Não se aplica." var="solicitacaoCumprida" valor="3" /></br>
                 </br>
         </mod:grupo>
         <mod:grupo >
@@ -181,13 +189,13 @@ var newwin = null;
                 
         </mod:grupo>
         <br>
-        <b><mod:grupo><p style="color:red">
+        <b><mod:grupo>
             Obs.1: O próprio servidor deverá preencher o formulário.</br> </br> 
 
             Obs.2: Antes da finalização do documento, deverão ser cadastrados como cossignatários:</br> 
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) o superior hierárquico e o titular da unidade de prestação do serviço extraordinário, exatamente nessa ordem;</br> 
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b) o diretor de secretaria, no caso de Plantão Judiciário.
-            </p>
+            
         </mod:grupo></b>    
     </mod:entrevista>
 
@@ -233,12 +241,12 @@ var newwin = null;
         
         &nbsp;<br/> <%-- Solução by Edson --%>
         <b>Referente:</b>
-        <c:if test="${referente == '1'}">
-        à Solicitação de Serviço Extraordinário Nº:${numerosolicitacao}</br>
-        </c:if>
 
-        <c:if test="${referente == '2'}">
+        <c:if test="${referente == '1'}">
         ao Plantão Judiciário.</br></c:if>
+        <c:if test="${referente == '2'}">
+        à Solicitação de Serviço Extraordinário Nº:${numerosolicitacao}</br></c:if>
+        
         <b>Unidade Organizacional:</b> ${requestScope['unidade_lotacaoSel.sigla']}-${requestScope['unidade_lotacaoSel.descricao']}<br/>
         <b>Mês/Ano:</b>  ${mes}/${ano} <br/>
        

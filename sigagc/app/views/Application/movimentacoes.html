@@ -1,9 +1,19 @@
 #{extends 'Application/exibir_base.html' /} #{set
 title:'Movimentações'/}
+#{set 'moreHead'}
+<script type="text/javascript">
+	$(document).ready(function(){
+        $("html, body").stop().animate({
+        	"scrollTop":$("#ancora_mov").offset().top
+        }, 900);
+        event.preventDefault();
+	});
+</script>
+#{/set}
 
 <div class="gt-bd" style="padding-bottom: 0px;">
 	<div class="gt-content">
-		<h3>Movimentações</h3>
+		<h3 id="ancora_mov">Movimentações</h3>
 	</div>
 
 	<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
@@ -39,7 +49,11 @@ title:'Movimentações'/}
 					</td>
 					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span>
 					</td>
-					<td></td>
+					<td>
+						#{if m.tipo.id == 13}
+							${m.arq?.titulo} (${m.arq?.mimeType})
+						#{/if}
+					</td>
 				</tr>
 				#{/list}
 			</tbody>

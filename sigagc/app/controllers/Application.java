@@ -704,7 +704,8 @@ public class Application extends SigaApplication {
 					if (file.getContentType() != null) {
 						String mimeType = file.getContentType().toLowerCase();
 						byte anexo[] = file.asBytes();
-						titulo = file.getFileName();
+						if (titulo == null)
+							titulo = file.getFileName();
 						DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa
 								.findById(pessoa) : null);
 						DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
@@ -718,6 +719,8 @@ public class Application extends SigaApplication {
 						exibir(informacao.getSigla());
 					}
 				}
+				else
+					throw new AplicacaoException("Não é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
 			}
 		}
 	}

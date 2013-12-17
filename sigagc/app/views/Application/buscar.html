@@ -5,7 +5,10 @@
 			var placeHolder = "Digite as palavras da busca e tecle enter";
 			$("#texto").attr("value",placeHolder).keydown(function() {
 				if($(this).val() == placeHolder)
-					$("#texto").attr("value", "");
+					$("#texto").removeAttr("value");
+			}).focusout(function() {
+				if($(this).val() == "")
+					$("#texto").attr("value", placeHolder);
 			});
 		});
 </script>
@@ -44,7 +47,8 @@ $(function() {
 			<!-- /search -->
 		</div>
 		#{if (arvore.toString() == "")}
-			<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>
+			*{<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>}*
+			<p class="gt-notice-box">A busca não retornou resultados.</p>
 		#{/if}
 		#{else}
 			<div>${arvore.toHTML().raw()}</div>

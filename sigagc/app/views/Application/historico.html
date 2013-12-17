@@ -1,9 +1,18 @@
 #{extends 'Application/exibir_base.html' /} #{set title:'Histórico de
 Alterações'/}
-
+#{set 'moreHead'}
+<script type="text/javascript">
+	$(document).ready(function(){
+        $("html, body").stop().animate({
+        	"scrollTop":$("#ancora_his").offset().top
+        }, 900);
+        event.preventDefault();
+	});
+</script>
+#{/set}
 <div class="gt-bd" style="padding-bottom: 0px;">
 	<div class="gt-content">
-		<h3>Histórico de alterações</h3>
+		<h3 id="ancora_his">Histórico de alterações</h3>
 	</div>
 
 	<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">

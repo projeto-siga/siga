@@ -2,9 +2,10 @@
 #{ set 'moreHead'}
 <script type="text/javascript">
 		$(document).ready(function(){
+			//adiciona uma dica para o preenchimento - número do conhecimento
 			$("#dicaNumero").hide();
 			$("#filtronumero").focus(function (){
-				$("#dicaNumero").show("slow");
+				$("#dicaNumero").show("fast");
 			})
 			.focusout(function(){
 				$("#dicaNumero").hide("fast");
@@ -16,8 +17,10 @@
 	<div class="gt-content clearfix">
 		<h2>Pesquisa de Conhecimento</h2>
 		#{if lista.size() == 0}
-			<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>
+			*{<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>}*
+			<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
 		#{/if}
+		#{else}
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-table">
 				<thead>
@@ -91,7 +94,7 @@
 				</tbody>
 			</table>
 		</div>
-		
+		#{/else}
 		<!-- </table></div> -->
 		<br>
 		<div class="gt-content-box gt-for-table">
@@ -151,10 +154,10 @@
 							<td>#{select name:'filtro.ano', items:anos,
 								labelProperty:'toString()', valueProperty:'toString()',
 								value:filtro?.ano} #{option null}Todos#{/option} #{/select}
-								&nbsp;&nbsp;&nbsp;&nbsp;Número do Conhecimento: <input type="text"
+								&nbsp;&nbsp;&nbsp;&nbsp;Número: <input type="text"
 								name="filtro.numero" size="7" maxlength="6" value=""
 								id="filtronumero">
-								<span id="dicaNumero" style="font-size:x-small;">Ex: JFRJ-GC-2013/<b style="background:#cccccc;">00152</b> (número em destaque)</span>
+								<span id="dicaNumero" style="font-size:x-small;">Ex: JFRJ-GC-2013/<b style="background:#cccccc;">00152</b></span>
 							</td>
 						</tr>
 
@@ -191,7 +194,7 @@
 								value="" id="titulo"></td>
 						</tr>
 						<tr>
-							<td class="tdLabel"><label class="label" for="fullText">Conteudo:</label>
+							<td class="tdLabel"><label class="label" for="fullText">Conteúdo:</label>
 							</td>
 							<td><input type="text" id="conteudo" value="" size="80"
 								name="filtro.conteudo"></td>
@@ -199,7 +202,8 @@
 						<tr>
 							<td colspan="2"><input type="submit"
 								onclick="javascript:  if (isCarregando()) return false; carrega();"
-								class="gt-btn-medium gt-btn-left" value="Buscar"></td>
+								class="gt-btn-medium gt-btn-left" value="Buscar">
+							</td>
 						</tr>
 					</tbody>
 				</table>

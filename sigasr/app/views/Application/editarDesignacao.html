@@ -59,11 +59,13 @@
 				<label>Item</label> #{selecao tipo:'item',
 					nome:'designacao.itemConfiguracao',
 					value:designacao.itemConfiguracao?.atual /}
+					<span style="display:inline;color: red">#{error 'designacao.itemConfiguracao' /}</span>
 			</div>
 
 			<div class="gt-form-row gt-width-66">
 				<label>Ação</label> #{selecao tipo:'acao',
 					nome:'designacao.acao', value:designacao.acao?.atual /}
+					<span style="display:inline;color: red">#{error 'designacao.acao' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Atendente</label>#{selecao

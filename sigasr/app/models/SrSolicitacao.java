@@ -726,7 +726,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean isEmAtendimento() {
-		return sofreuMov(TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,
+		long idsTpsMovs[] = {TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO, TIPO_MOVIMENTACAO_REABERTURA};
+		return sofreuMov(idsTpsMovs,
 				TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL,
@@ -735,9 +736,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean sofreuMov(long idTpMov, long... idsTpsReversores) {
-		for (SrMovimentacao mov : getMovimentacaoSet()) {
+		for (SrMovimentacao mov : getMovimentacaoSet()){
 			if (mov.tipoMov.idTipoMov == idTpMov)
-				return true;
+					return true;
+			else
+				for (long idTpReversor : idsTpsReversores)
+					if (mov.tipoMov.idTipoMov == idTpReversor)
+						return false;
+		}
+		return false;
+	}
+	
+	public boolean sofreuMov(long[] idsTpsMovs, long... idsTpsReversores) {
+		for (SrMovimentacao mov : getMovimentacaoSet()){
+			for (long idTpMov : idsTpsMovs)
+				if (mov.tipoMov.idTipoMov == idTpMov)
+					return true;
 			else
 				for (long idTpReversor : idsTpsReversores)
 					if (mov.tipoMov.idTipoMov == idTpReversor)

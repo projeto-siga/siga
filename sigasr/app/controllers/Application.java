@@ -282,12 +282,16 @@ public class Application extends SigaApplication {
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
 				&& (designacao.posAtendente == null)
 				&& (designacao.equipeQualidade == null)) {
-			validation.addError("designacao.atendente",
-					"Atendente não informado.", "designacao.preAtendente",
-					"Pré-atendente não informado.", "designacao.posAtendente",
-					"Pós-atendente não informado.",
-					"designacao.equipeQualidade",
-					"Equipe de qualidade não informada.");
+			validation.addError("designacao.atendente",	"Atendente não informado.");
+			validation.addError("designacao.preAtendente","Pré-atendente não informado.");
+			validation.addError("designacao.posAtendente","Pós-atendente não informado.");
+			validation.addError("designacao.equipeQualidade","Equipe de qualidade não informada.");
+		}
+		
+		if ((designacao.itemConfiguracao == null) 
+				&& (designacao.acao == null)) {
+			validation.addError("designacao.itemConfiguracao","Código não informado.");
+			validation.addError("designacao.acao","Código não informado.");
 		}
 		
 		for(play.data.validation.Error error : validation.errors()) {
@@ -997,8 +1001,8 @@ public class Application extends SigaApplication {
 
 		Map<String, String> parametros = new HashMap<String, String>();
 
+		if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
 		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("lotacao", lotacao);
 		parametros.put("situacao", situacao);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
@@ -1022,7 +1026,7 @@ public class Application extends SigaApplication {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("lotacao", lotacao);
+		if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
 
@@ -1069,7 +1073,7 @@ public class Application extends SigaApplication {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("lotacao", lotacao);
+		if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
 		parametros.put("local", local);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
@@ -1093,7 +1097,8 @@ public class Application extends SigaApplication {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("lotacao", lotacao);
+		//parametros.put("lotacao", lotacao);
+		if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
 		parametros.put("local", local);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);

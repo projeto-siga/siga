@@ -33,6 +33,7 @@
 		<h2>
 			<c:if test="${empty ocultarCodigo}">${docVO.sigla}</c:if>
 		</h2>
+		<c:set var="primeiroMobil" value="${true}" />
 		<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
 			<ww:if
 				test="%{#attr.m.mob.geral or true or (((mob.geral or (mob.id == #attr.m.mob.id)) and (exibirCompleto or (#attr.m.mob.getUltimaMovimentacaoNaoCancelada() != null))))}">
@@ -67,12 +68,24 @@
 
 				<!-- Somente quando o workflow está ativado -->
 				<c:if test="${f:resource('isWorkflowEnabled')}">
-					<div id="${m.sigla}" depende=";wf;" />
-					<!--ajax:${doc.codigo}-${i}-->
-					<!--/ajax:${doc.codigo}-${i}-->
-	</div>
-	</c:if>
-
+				<!-- Se for um processo administrativo, colocar a caixa do wf geral no último volume -->
+				<ww:if test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
+						<div id="${docVO.sigla}" depende=";wf;" />
+						<!--ajax:${doc.codigo}-${i}-->
+						<!--/ajax:${doc.codigo}-${i}-->
+						</div>
+					<c:set var="primeiroMobil" value="${false}" />
+				</ww:if>
+				
+				<ww:if test="%{(not #attr.m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
+						<div id="${m.sigla}" depende=";wf;" />
+						<!--ajax:${doc.codigo}-${i}-->
+						<!--/ajax:${doc.codigo}-${i}-->
+						</div>
+				</ww:if>
+				
+				</c:if>
+	
 	<c:set var="dtUlt" value="" />
 
 	<!-- Verifica se haverá alguma movimentação para ser exibida -->

@@ -200,13 +200,10 @@
 						<li><ww:a href="/sigawf/administrar.action">Administrar SIGA WF</ww:a>
 						</li>
 					</c:if>
-<<<<<<< HEAD
-=======
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FERIADO:Cadastrar Feriados')}">
 						<li><ww:a href="/siga/feriado/listar.action">Cadastro de Feriados</ww:a></li>
 					</c:if>	
->>>>>>> 9b23013cd6d37d6b13b731837c4a4d6633eb69d4
 				</ul></li>
 		</c:if>
 

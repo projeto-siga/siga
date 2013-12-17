@@ -221,7 +221,7 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 				<td bgcolor="#FFFFFF" width="20%" align="center"><p style="font-size:11px">Servidor</p></td>
 				<td bgcolor="#FFFFFF" width="07%" align="center"><p style="font-size:11px">Matrícula</p></td>
 				<td bgcolor="#FFFFFF" width="5%" align="center"><p style="font-size:11px">Lotação</p></td>
-				<td bgcolor="#FFFFFF" width="10%" align="center"><p style="font-size:10px">Data do Serviço Extraordinário</p></td>
+				<td bgcolor="#FFFFFF" width="10%" align="center"><p style="font-size:9px">Data do Serviço Extraordinário</p></td>
 				<td bgcolor="#FFFFFF" width="7%"><p style="font-size:11px">Dia da semana</p></td>
 				<td bgcolor="#FFFFFF" width="7%"><p style="font-size:11px">Feriado?</p></td>
 				<td bgcolor="#FFFFFF" width="7%"><p style="font-size:10px">Adicional ou Banco de Horas</p></td>
@@ -237,9 +237,9 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 				value="${requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')]}" />
 
 				<tr>
-					<td bgcolor="#FFFFFF" width="20%" align="center"><p style="font-size:11px">${f:maiusculasEMinusculas(f:pessoa(servidorX).nomePessoa)}</p></td>
+					<td bgcolor="#FFFFFF" width="20%" align="center"><p style="font-size:10px">${f:maiusculasEMinusculas(f:pessoa(servidorX).nomePessoa)}</p></td>
 					<td bgcolor="#FFFFFF" width="07%" align="center"><p style="font-size:11px">${f:pessoa(servidorX).matricula}</p></td>
-					<td bgcolor="#FFFFFF" width="5%" align="center"><p style="font-size:11px">${f:pessoa(servidorX).lotacao.descricao}</p></td>
+					<td bgcolor="#FFFFFF" width="5%" align="center"><p style="font-size:8px">${f:pessoa(servidorX).lotacao.descricao}</p></td>
 					<c:forEach var="j" begin="1"
 						end="${requestScope[f:concat('numDatas',i)]}">
 						<ww:if test="${j == 1}">

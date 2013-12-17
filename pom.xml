@@ -29,6 +29,9 @@
         <module>siga-autenticidade</module>
         <module>siga-cd-aut</module>
         <module>siga-cp-sinc</module>
+        <module>siga-play-module</module>
+        <module>sigasr</module>
+        <module>sigagc</module>
         <module>siga-assinador</module>
     </modules>
 

@@ -574,16 +574,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 
-	public boolean getPesquisaSatisfacao() throws Exception {
+	public SrPesquisa getPesquisaSatisfacao() throws Exception {
 		if (solicitante == null)
-			return false;
+			return null;
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
 				local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO);
 		if (conf != null)
-			return true ;//conf.pesquisaSatisfacao; --Comentado apenas para tirar o erro
-		return false;
+			return conf.pesquisaSatisfacao; 
+		return null;
 	}
 
 	public DpLotacao getEquipeQualidadeDesignada() throws Exception {
@@ -727,6 +727,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean isEmAtendimento() {
 		return sofreuMov(TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,
+				TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL,
 				TIPO_MOVIMENTACAO_FECHAMENTO)
@@ -750,7 +751,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean temPesquisaSatisfacao() throws Exception {
-		return getPesquisaSatisfacao();
+		if (getPesquisaSatisfacao() != null)
+			return true;
+		return false; 
+	}
+
+	public boolean temPesquisaRespondida() {
+		return false;
 	}
 
 	public boolean temEquipeQualidadeDesignada() throws Exception {
@@ -772,7 +779,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						.equivale(pess)) || ultMov.lotaAtendente.equivale(lota));
 	}
 	
-	public boolean estaComAtendenteDesignado() throws Exception {
+	public boolean estaForaAtendenteDesignado() throws Exception {
 		return !estaCom(getAtendenteDesignado(), null) && isEmAtendimento();
 	}
 	
@@ -846,7 +853,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeRetornarAoPreAtendimento(DpLotacao lota, DpPessoa pess) throws Exception {
-		return isEmAtendimento() && estaCom(lota, pess);
+		return isEmAtendimento() && estaCom(lota, pess) && //(!estaForaAtendenteDesignado() && getPreAtendenteDesignado() != null);
+						(getPreAtendenteDesignado() != null);
 	}
 
 	public boolean podeFinalizarPreAtendimento(DpLotacao lota, DpPessoa pess) {
@@ -1540,25 +1548,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				return;
 			} else
 				estadoAtual = TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO;
-
-		if (estadoAtual == TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO)
-			if (temPesquisaSatisfacao()) {
+		
+		if (estadoAtual == TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO){
+			if (temPesquisaSatisfacao()) { 
+				fecharParcialmente(lota, pess, motivo); 
 				enviarPesquisa();
-				if (temEquipeQualidadeDesignada()) {
-					fecharParcialmente(lota, pess, motivo);
-				} else
-					fecharTotalmente(lota, pess, motivo);
-			} else {
+				estadoAtual = TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL;
+			} else	
 				fecharTotalmente(lota, pess, motivo);
-			}
-
+		}	
+		
 		if (estadoAtual == TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE)
 			fecharTotalmente(lota, pess, motivo);
-
 	}
 
-	private void enviarPesquisa() {
+
+	public void enviarPesquisa() throws Exception {
 		// Implementar
+		Correio.pesquisaSatisfacao(this);
 	}
 
 	private void fecharParcialmente(DpLotacao lota, DpPessoa pess, String motivo)
@@ -1585,7 +1592,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					SrResposta resposta = new SrResposta();
 					resposta.pergunta = pergunta;
 					resposta.descrPergunta = resp.descrPergunta;
-					resposta.idMovimentacao = movimentacao;
+					resposta.movimentacao = movimentacao;
 					resposta.save();
 				}	
 			}
@@ -1593,7 +1600,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		// if (avaliacao.isSuficiente)...
 		// fecharTotalmente()
 		// else
-		iniciarControleQualidade(lota, pess);
+		if (getEquipeQualidadeDesignada() != null)
+			iniciarControleQualidade(lota, pess);
+		else 
+			fecharTotalmente(lota, pess, "Pesquisa não satisfatória");
 	}
 
 	private void iniciarControleQualidade(DpLotacao lota, DpPessoa pess)

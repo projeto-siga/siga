@@ -3,8 +3,8 @@
 <div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
 	<div class="gt-content clearfix">
 		<h2>${solicitacao.codigo}</h2>
-		#{if solicitacao.estaComAtendenteDesignado()} <img
-			src="/siga/css/famfamfam/icons/error.png" style="margin-right: 5px;">
+		#{if solicitacao.estaForaAtendenteDesignado()} 
+		<img src="/siga/css/famfamfam/icons/error.png" style="margin-right: 5px;">
 		<font style="font-size: 11pt; color: #365b6d;">O atendente
 			atual não é o atendente designado.</font> #{/if}
 		<p></p>
@@ -256,31 +256,5 @@
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>
-	#{/modal} #{modal nome:'responderPesquisa', titulo:'Responder Pesquisa
-	de Satisfação'}
-	<div class="gt-bd clearfix">
-		<div class="gt-content">
-			<h2>Pesquisa de Satisfação</h2>
-
-			<div class="gt-form gt-content-box">
-				#{form @Application.responderPesquisaGravar()}
-				<div class="gt-form-row gt-width-66">
-					<label>Diga aí o que você achou</label>
-					<textarea cols="85" rows="10" name="semNome" id="semDescr"></textarea>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<input type="radio" name="semNome" value="Um">Muito
-					Ruim&nbsp; <input type="radio" name="semNome" value="Um">Ruim&nbsp;
-					<input type="radio" name="semNome" value="Um">Regular&nbsp;
-					<input type="radio" name="semNome" value="Um">Bom&nbsp; <input
-						type="radio" name="semNome" value="Um">Muito Bom&nbsp;
-				</div>
-				<div class="gt-form-row">
-					<input type="submit" value="Enviar"
-						class="gt-btn-medium gt-btn-left" />
-				</div>
-				#{/form}
-			</div>
-		</div>
-	</div>
-	#{/modal}
+	#{/modal} 
+	

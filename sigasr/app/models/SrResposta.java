@@ -64,7 +64,7 @@ public class SrResposta extends GenericModel {
 	
 	@ManyToOne()
 	@JoinColumn(name = "ID_MOVIMENTACAO")
-	public SrMovimentacao idMovimentacao;
+	public SrMovimentacao movimentacao;
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_AVALIACAO")

@@ -1,8 +1,11 @@
 package notifiers;
 
+import javax.mail.internet.MimeMultipart;
+
 import models.SrMovimentacao;
 import models.SrSolicitacao;
 
+import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.HtmlEmail;
 
 import play.mvc.Mailer;
@@ -32,8 +35,8 @@ public class Correio extends Mailer {
 		send(movimentacao, sol);
 	}
 	
-	public static void pesquisaSatisfacao(SrSolicitacao sol){
-		setSubject("Pesquisa de Satisfação" + sol.getCodigo());
+	public static void pesquisaSatisfacao(SrSolicitacao sol) throws Exception{
+		setSubject("Pesquisa de Satisfação da solicitação " + sol.getCodigo());
 		addRecipient(sol.solicitante.getEmailPessoa());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(sol);

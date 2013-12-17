@@ -1,14 +1,8 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
@@ -16,28 +10,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.Historico;
-
-import play.db.jpa.GenericModel;
-import play.db.jpa.JPA;
-import play.db.jpa.Model;
 
 @Entity
 @Table(name = "SR_PESQUISA", schema = "SIGASR")
@@ -58,11 +40,11 @@ public class SrPesquisa extends HistoricoSuporte {
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrPesquisa pesquisaInicial;
-
-	@OneToMany(targetEntity = SrPesquisa.class, mappedBy = "pesquisaInicial", cascade = CascadeType.PERSIST)
+	
+	@OneToMany(targetEntity = SrPesquisa.class,  mappedBy = "pesquisaInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
 	public List<SrPesquisa> meuPesquisaHistoricoSet;
-
+	
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrPergunta.class, mappedBy = "pesquisa")
 	@OrderBy("ordemPergunta")
 	public Set<SrPergunta> perguntaSet;
@@ -111,7 +93,7 @@ public class SrPesquisa extends HistoricoSuporte {
 		}
 	}
 	
-	public Set<SrPergunta> getPerguntaSet() {
+	public Set<SrPergunta> getPerguntaSetAtivas() {
 		if (pesquisaInicial == null)
 			return null;
 		TreeSet<SrPergunta> listaCompleta = new TreeSet<SrPergunta>(

@@ -96,7 +96,7 @@ $(function() {
                 perguntas["index"]--;
         }
 
-        #{list items:pesq.getPerguntaSet(), as:'pergunta'}
+        #{list items:pesq.getPerguntaSetAtivas(), as:'pergunta'}
                 perguntas.incluirItem('${pergunta.descrPergunta}', '${pergunta.tipoPergunta.idTipoPergunta}', '${pergunta.tipoPergunta.nomeTipoPergunta}', ${pergunta.idPergunta});
         #{/list}
 

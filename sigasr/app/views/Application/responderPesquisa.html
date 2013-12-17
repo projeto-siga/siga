@@ -1,23 +1,23 @@
 #{extends 'main.html' /} #{set title:'Pesquisa de Satisfação' /}
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script>
 $(function(){
     $('#formSubmit').submit(function() {
-  	    $.ajax({
+    	var url=window.opener.location.href;
+    	$.ajax({
  	  	   type: "POST",
  	  	   async: false,
  	  	   data:  $("#formSubmit").serializeArray(),
  	  	   url: "/sigasr/solicitacao/responderPesquisa",
  	  	   success: function(){
- 	  			window.alert('Obrigado por responder a pesquisa!');
- 	  			window.parent.opener.location.reload(true); 
- 	 	  	 	window.close();
- 	 	  	}
+ 	  		   	window.alert('Obrigado por responder a pesquisa!');
+ 	  		   	window.setTimeout(function(){opener.location.reload(true),5000});
+ 	  		   	window.close();}
  	  	});
     });
 });
 </script>
-
-
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
@@ -47,7 +47,8 @@ $(function(){
 		</div>
 		#{/list}
 		<div class="gt-form-row">
-				<input type="submit" value="Enviar" class="gt-btn-medium gt-btn-left" />
+				<input type="submit" value="Enviar" class="gt-btn-medium gt-btn-left" 
+					  />
 		</div>
 		</div>
 		#{/form}

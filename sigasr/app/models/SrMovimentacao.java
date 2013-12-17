@@ -104,7 +104,7 @@ public class SrMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_PESQUISA")
 	public SrPesquisa pesquisa;
 	
-	@OneToMany(targetEntity = SrResposta.class, mappedBy = "pergunta", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao")
 	//@OrderBy("pergunta asc")
 	protected List<SrResposta> meuRespostaSet;
 

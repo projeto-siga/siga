@@ -681,26 +681,33 @@ public class Application extends SigaApplication {
     	String nomeSessao = cadastrante().getNomeAbreviado();
     	UsuarioForum objUsuario = UsuarioForum.find("matricula_usu ="+ matriculaSessao).first();
     	if(objUsuario!=null){
+    		String descricaoForum = "";
     		if(paramCodForum!=null && !paramCodForum.isEmpty()){
-    			Foruns objForum = new Foruns(Integer.parseInt(paramCodForum), "", "");
+    			Foruns objForum = Foruns.findById(Integer.parseInt(paramCodForum));
+    			descricaoForum = objForum.descricao_forum;
     			objUsuario.delete();
+    			JPA.em().flush();
+    			JPA.em().clear();
     			objUsuario.forumFk = objForum;
     			objUsuario.matricula_usu = matriculaSessao;
     			objUsuario.nome_usu =  nomeSessao;
     			try{
     				objUsuario.save();
     				JPA.em().flush();
+    				JPA.em().clear();
     				mensagem = "Ok.";
     			}catch (Exception e){
     				e.printStackTrace();
     				mensagem = "Não Ok.";
     			}
-    			System.out.println("saved"+objUsuario.forumFk.cod_forum);
     		}else{
     			paramCodForum = Integer.toString(objUsuario.forumFk.cod_forum);
+    			Foruns objForum = Foruns.find("cod_forum = "+Integer.parseInt(paramCodForum)).first();
+    			descricaoForum = objForum.descricao_forum;
+    			JPA.em().flush();
     		}
-    		System.out.println(objUsuario.matricula_usu);
-    		render(objUsuario, paramCodForum, mensagem);
+    		List<Foruns> outrosForuns = Foruns.find("cod_forum <> "+paramCodForum).fetch();
+    		render(objUsuario, paramCodForum, descricaoForum, mensagem, outrosForuns);
     	}else{
     		Excecoes("Usuário sem permissão");
     	}

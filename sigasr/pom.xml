@@ -192,14 +192,56 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.1</version>
             <configuration>
                 <source>1.6</source>
                 <target>1.6</target>
                 <fork>true</fork>
             </configuration>
         </plugin>
+        
+        <plugin>
+        	<groupId>org.apache.maven.plugins</groupId>
+        	<artifactId>maven-resources-plugin</artifactId>
+        	<version>2.6</version>
+        	<executions>
+				<execution>
+					<phase>process-resources</phase>
+					<goals>
+						<goal>copy-resources</goal>
+					</goals>
+				   	<configuration>
+		        		<resources>
+		        			<resource>
+								<directory>/resources</directory>
+								<filtering>true</filtering>
+		        			</resource>
+		        		</resources>
+		        		<outputDirectory>${project.basedir}</outputDirectory>
+		        	</configuration>
+				
+				</execution>        	
+        	</executions>
+        </plugin>
 
+        <plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>properties-maven-plugin</artifactId>
+			<version>1.0-alpha-2</version>
+			<executions>
+				<execution>
+					<phase>initialize</phase>
+					<goals>
+						<goal>read-project-properties</goal>
+					</goals>
+					<configuration>
+						<files>
+							<file>../build.properties</file>
+						</files>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+        
         </plugins>
 
         <pluginManagement>
@@ -233,6 +275,29 @@
         							</pluginExecutionFilter>
         							<action>
         								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+
+
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.codehaus.mojo
+        								</groupId>
+        								<artifactId>
+        									properties-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.0-alpha-2,)
+        								</versionRange>
+        								<goals>
+        									<goal>
+        										read-project-properties
+        									</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<execute></execute>
         							</action>
         						</pluginExecution>
         					</pluginExecutions>

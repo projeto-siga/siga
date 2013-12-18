@@ -48,6 +48,7 @@ import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Where;
 import org.joda.time.DateTime;
 
+import play.Logger;
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
 import play.mvc.Router;
@@ -235,7 +236,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 
 	}
-
+	
 	@Override
 	public String getDescricao() {
 		if (descrSolicitacao.length() > 40)

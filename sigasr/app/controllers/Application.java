@@ -256,11 +256,15 @@ public class Application extends SigaApplication {
 					"Título não informado");
 		}
 
+		for(play.data.validation.Error error : validation.errors()) {
+	        System.out.println(error.message());
+	    }
+		
 		if (validation.hasErrors()) {
-			render("@editarItem");
+			render("@editarItem", itemConfiguracao);
 		}
 	}
-
+	
 	private static void validarFormEditarAcao(SrAcao acao) {
 
 		if (acao.siglaAcao.equals("")) {
@@ -272,7 +276,7 @@ public class Application extends SigaApplication {
 		}
 
 		if (validation.hasErrors()) {
-			render("@editarAcao");
+			render("@editarAcao", acao);
 		}
 
 	}
@@ -739,19 +743,19 @@ public class Application extends SigaApplication {
 
 	public static void editarItem(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
-		SrItemConfiguracao item = new SrItemConfiguracao();
+		SrItemConfiguracao itemConfiguracao = new SrItemConfiguracao();
 		if (id != null)
-			item = SrItemConfiguracao.findById(id);
-		render(item);
+			itemConfiguracao = SrItemConfiguracao.findById(id);
+		render(itemConfiguracao);
 	}
 
-	public static void gravarItem(SrItemConfiguracao item) throws Exception {
+	public static void gravarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
 		assertAcesso("ADM:Administrar");
-		validarFormEditarItem(item);
-		item.salvar();
+		validarFormEditarItem(itemConfiguracao);
+		itemConfiguracao.salvar();
 		listarItem();
 	}
-
+	
 	public static void desativarItem(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
@@ -808,8 +812,24 @@ public class Application extends SigaApplication {
 
 	public static void gravarTipoAtributo(SrTipoAtributo att) throws Exception {
 		assertAcesso("ADM:Administrar");
+		validarFormEditarTipoAtributo(att);
 		att.salvar();
 		listarTipoAtributo();
+	}
+
+	private static void validarFormEditarTipoAtributo(SrTipoAtributo att) {
+		if (att.nomeTipoAtributo.equals("")) {
+			validation.addError("att.nomeTipoAtributo",
+					"Nome de atributo não informado");
+		}
+
+		for(play.data.validation.Error error : validation.errors()) {
+	        System.out.println(error.message());
+	    }
+		
+		if (validation.hasErrors()) {
+			render("@editarTipoAtributo", att);
+		}
 	}
 
 	public static void desativarTipoAtributo(Long id) throws Exception {

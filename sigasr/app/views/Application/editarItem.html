@@ -1,46 +1,43 @@
 #{extends 'main.html' /} #{set title:'Edição de Item de Configuração' /}
 
 <div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Item de Configuração</h2>
-
+	<div class="gt-content clearfix">
+		<h2 class="gt-form-head">Item de Configuração</h2>
 		<div class="gt-form gt-content-box">
-		<form action="@{Application.gravarItem}" enctype="multipart/form-data" method="post">
-			#{if item?.idItemConfiguracao} <input
-				type="hidden" name="item.idItemConfiguracao"
-				value="${item.idItemConfiguracao}"> #{/if}
+		#{form @Application.gravarItem()}
+			#{if itemConfiguracao.idItemConfiguracao} <input
+				type="hidden" name="itemConfiguracao.idItemConfiguracao"
+				value="${itemConfiguracao.idItemConfiguracao}"> #{/if}
 			#{ifErrors}
 			<p class="gt-error">Alguns campos obrigatórios não foram
 				preenchidos ${error}</p>
 			#{/ifErrors}
 			<div class="gt-form-row gt-width-66">
 				<label>Código</label> <input type="text"
-					name="item.siglaItemConfiguracao"
-					value="${item?.siglaItemConfiguracao}" />
+					name="itemConfiguracao.siglaItemConfiguracao"
+					value="${itemConfiguracao?.siglaItemConfiguracao}" />
 					<span style="color: red">#{error
 					'itemConfiguracao.siglaItemConfiguracao' /}</span>
 			</div>
 			<div class="gt-form-row">
-				<label>Título</label> <input type="text"
-					name="item.tituloItemConfiguracao"
-					value="${item?.tituloItemConfiguracao}" size="100" />
-					<span style="display:inline;color: red">#{error
+				<label>Título</label> <input type="text" id="itemConfiguracao.tituloItemConfiguracao"
+					name="itemConfiguracao.tituloItemConfiguracao" value="${itemConfiguracao?.tituloItemConfiguracao}" size="100" />
+				<span style="display:inline;color: red">#{error
 					'itemConfiguracao.tituloItemConfiguracao' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label> <input type="text"
-					name="item.descrItemConfiguracao"
-					value="${item?.descrItemConfiguracao}" size="100" />
+					name="itemConfiguracao.descrItemConfiguracao"
+					value="${itemConfiguracao?.descrItemConfiguracao}" size="100" />
 			</div>
 			<div class="gt-form-row">
-				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" /> #{if
-				item?.idItemConfiguracao} <input type="button" value="Desativar"
+				<input type="submit" value="Salvar" class="gt-btn-medium gt-btn-left" /> #{if
+				itemConfiguracao?.idItemConfiguracao} <input type="button" value="Desativar"
 					class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarItem()}?id=${item.idItemConfiguracao}'" />
+					onclick="location.href='@{Application.desativarItem()}?id=${itemConfiguracao.idItemConfiguracao}'" />
 				#{/if}
 			</div>
-		
+		#{/form}
 		</div>
 	</div>
 </div>

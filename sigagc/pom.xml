@@ -184,6 +184,31 @@
               </executions>
 
             </plugin>
+            
+		<plugin>
+        	<groupId>org.apache.maven.plugins</groupId>
+        	<artifactId>maven-resources-plugin</artifactId>
+        	<version>2.6</version>
+        	<executions>
+				<execution>
+					<phase>process-resources</phase>
+					<goals>
+						<goal>copy-resources</goal>
+					</goals>
+				   	<configuration>
+		        		<resources>
+		        			<resource>
+								<directory>/resources</directory>
+								<filtering>true</filtering>
+		        			</resource>
+		        		</resources>
+		        		<outputDirectory>${project.basedir}</outputDirectory>
+		        	</configuration>
+				
+				</execution>        	
+        	</executions>
+        </plugin>
+            
 
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>

@@ -45,5 +45,11 @@ sigaex/WebContent/WEB-INF/lib/fop/xmlgraphics-commons-1.3.1.jar.old
 sigari/bin/
 sigari/precompiled/templates/app/views/Application/anexar.html
 sigari/precompiled/
+
 sigasr/sigasr-start.launch
+sigasr/lib
+sigasr/modules
+
 sigagc/sigagc-start.launch
+sigagc/lib
+sigagc/modules

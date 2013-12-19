@@ -83,16 +83,13 @@
                   </excludes>
                 </resource>
               <!-- siga-cd-base -->
-              <!--
                 <resource>
                   <directory>../siga-cd-base/src/main/java</directory>
                   <excludes>
                     <exclude>br/gov/jfrj/siga/cd/ac/**</exclude>
                   </excludes>
                 </resource>
-              -->
               <!-- siga-cp (app) -->
-              <!--
                 <resource>
                   <directory>../siga-cp/src/main/app</directory>
                   <excludes>
@@ -101,13 +98,12 @@
                     <exclude>br/gov/jfrj/siga/acesso/**</exclude>
                   </excludes>
                 </resource>
-              -->
               <!-- siga-rel -->
-              <!--
+<!--               
                 <resource>
                   <directory>../siga-rel/src/main/java</directory>
                 </resource>
-              -->
+ -->                
               <!-- siga-sinc-lib -->
                 <resource>
                   <directory>../siga-sinc-lib/src/main/java</directory>

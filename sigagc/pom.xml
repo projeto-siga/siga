@@ -209,6 +209,24 @@
         	</executions>
         </plugin>
             
+        <plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>properties-maven-plugin</artifactId>
+			<version>1.0-alpha-2</version>
+			<executions>
+				<execution>
+					<phase>initialize</phase>
+					<goals>
+						<goal>read-project-properties</goal>
+					</goals>
+					<configuration>
+						<files>
+							<file>../build.properties</file>
+						</files>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
 
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -256,6 +274,29 @@
         								<ignore></ignore>
         							</action>
         						</pluginExecution>
+
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.codehaus.mojo
+        								</groupId>
+        								<artifactId>
+        									properties-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.0-alpha-2,)
+        								</versionRange>
+        								<goals>
+        									<goal>
+        										read-project-properties
+        									</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<execute></execute>
+        							</action>
+        						</pluginExecution>
+        						
         					</pluginExecutions>
         				</lifecycleMappingMetadata>
         			</configuration>

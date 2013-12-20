@@ -83,12 +83,14 @@
                   </excludes>
                 </resource>
               <!-- siga-cd-base -->
+<!--               
                 <resource>
                   <directory>../siga-cd-base/src/main/java</directory>
                   <excludes>
                     <exclude>br/gov/jfrj/siga/cd/ac/**</exclude>
                   </excludes>
                 </resource>
+ -->                
               <!-- siga-cp (app) -->
                 <resource>
                   <directory>../siga-cp/src/main/app</directory>

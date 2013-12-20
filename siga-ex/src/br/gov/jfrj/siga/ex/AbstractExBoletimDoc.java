@@ -20,7 +20,9 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
-public abstract class AbstractExBoletimDoc implements Serializable {
+import br.gov.jfrj.siga.model.Objeto;
+
+public abstract class AbstractExBoletimDoc extends Objeto implements Serializable {
 	
 	/** The composite primary key value. */
 	private java.lang.Long idBoletimDoc;

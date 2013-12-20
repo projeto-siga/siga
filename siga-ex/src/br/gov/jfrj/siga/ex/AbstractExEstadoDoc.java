@@ -23,11 +23,13 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 /**
  * A class that represents a row in the EX_ESTADO_DOC table. You can customize
  * the behavior of this class by editing the class, {@link ExEstadoDoc()}.
  */
-public abstract class AbstractExEstadoDoc implements Serializable {
+public abstract class AbstractExEstadoDoc extends Objeto implements Serializable {
 	/** The value of the simple descEstadoDoc property. */
 	private java.lang.String descEstadoDoc;
 

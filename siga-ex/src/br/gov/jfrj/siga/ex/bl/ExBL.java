@@ -28,6 +28,8 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
@@ -58,6 +60,7 @@ import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.proxy.HibernateProxy;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -118,6 +121,7 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
@@ -638,8 +642,9 @@ public class ExBL extends CpBL {
 		}
 
 		if (!isDocumentoSemEfeito) {
-			
-			boolean apensadoAVolumeDoMesmoProcesso = mob.isApensadoAVolumeDoMesmoProcesso();
+
+			boolean apensadoAVolumeDoMesmoProcesso = mob
+					.isApensadoAVolumeDoMesmoProcesso();
 
 			long m = CpMarcador.MARCADOR_CANCELADO;
 			long mAnterior = m;
@@ -664,13 +669,14 @@ public class ExBL extends CpBL {
 					m = CpMarcador.MARCADOR_JUNTADO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO)
 					m = CpMarcador.MARCADOR_JUNTADO_EXTERNO;
-				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO && apensadoAVolumeDoMesmoProcesso)
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO
+						&& apensadoAVolumeDoMesmoProcesso)
 					m = CpMarcador.MARCADOR_APENSADO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
 					m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
-				if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso)
+				if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA || t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
+						&& !apensadoAVolumeDoMesmoProcesso)
 					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 						&& mob.doc().isEletronico()) {
@@ -691,17 +697,17 @@ public class ExBL extends CpBL {
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
-					if (!mob.doc().isEletronico() 
+					if (!mob.doc().isEletronico()
 							&& (mob.doc().isAssinado())
 							|| (mob.doc().isEletronico() && mob
 									.doc()
 									.isAssinadoEletronicoPorTodosOsSignatarios())
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
-						
-						if(!apensadoAVolumeDoMesmoProcesso)
+
+						if (!apensadoAVolumeDoMesmoProcesso)
 							m = CpMarcador.MARCADOR_EM_ANDAMENTO;
-						
+
 					} else if (mob.isApensado()) {
 						m = CpMarcador.MARCADOR_APENSADO;
 					} else {
@@ -875,7 +881,8 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, final DpLotacao lotaTitular,
-			final Date dtDispPublicacao, final String tipoMateria, final String lotPublicacao, final String descrPublicacao)
+			final Date dtDispPublicacao, final String tipoMateria,
+			final String lotPublicacao, final String descrPublicacao)
 			throws AplicacaoException {
 
 		try {
@@ -912,9 +919,10 @@ public class ExBL extends CpBL {
 					+ new SimpleDateFormat("dd/MM/yy").format(DJE
 							.getDataPublicacao()));
 			mov.setCadernoPublicacaoDje(tipoMateria);
-			
-			mov.setConteudoBlobXML("boletimadm",
-					PublicacaoDJEBL.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao, descrPublicacao));
+
+			mov.setConteudoBlobXML("boletimadm", PublicacaoDJEBL
+					.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao,
+							descrPublicacao));
 
 			gravarMovimentacao(mov);
 
@@ -945,10 +953,10 @@ public class ExBL extends CpBL {
 					CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO);
 
 			ArrayList<String> emailsAtendentes = new ArrayList<String>();
-			Date hoje = new Date(); 
+			Date hoje = new Date();
 			for (CpConfiguracao cpConf : atendentes) {
-				if (!cpConf.ativaNaData(hoje)) 
-					   continue;			
+				if (!cpConf.ativaNaData(hoje))
+					continue;
 				if (!(cpConf instanceof ExConfiguracao))
 					continue;
 				ExConfiguracao conf = (ExConfiguracao) cpConf;
@@ -967,20 +975,20 @@ public class ExBL extends CpBL {
 						for (DpPessoa pessoa : pessoasLotacao) {
 							if (!emailsAtendentes.contains(pessoa
 									.getEmailPessoaAtual()))
-								emailsAtendentes.add(pessoa.getEmailPessoaAtual());
+								emailsAtendentes.add(pessoa
+										.getEmailPessoaAtual());
 						}
 					}
 				}
 			}
 
-			
 			Correio.enviar(
 					SigaBaseProperties
 							.getString("servidor.smtp.usuario.remetente"),
 					emailsAtendentes.toArray(new String[emailsAtendentes.size()]),
 					"Nova solicitação de publicação DJE ("
 							+ mov.getLotaCadastrante().getSiglaLotacao() + ") ",
-					sb.toString(), sbHtml.toString()); 
+					sb.toString(), sbHtml.toString());
 
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -1027,7 +1035,8 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, final DpLotacao lotaTitular,
-			final Date dtDispPublicacao, final String tipoMateria, final String lotPublicacao, final String descrPublicacao)
+			final Date dtDispPublicacao, final String tipoMateria,
+			final String lotPublicacao, final String descrPublicacao)
 			throws Exception {
 
 		try {
@@ -1060,8 +1069,9 @@ public class ExBL extends CpBL {
 			GeradorRTF gerador = new GeradorRTF();
 			mov.setConteudoBlobRTF("boletim",
 					gerador.geraRTFFOP(mob.getExDocumento()));
-			mov.setConteudoBlobXML("boletimadm",
-					PublicacaoDJEBL.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao, descrPublicacao));
+			mov.setConteudoBlobXML("boletimadm", PublicacaoDJEBL
+					.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao,
+							descrPublicacao));
 
 			// Verifica se o documento possui documentos filhos do tipo Anexo
 			if (mob.getExDocumentoFilhoSet() != null) {
@@ -1073,13 +1083,12 @@ public class ExBL extends CpBL {
 			else
 				mov.setNmArqMov("JUD.zip");
 
-
 			try {
 				PublicacaoDJEBL.primeiroEnvio(mov);
 			} catch (Throwable t) {
 				throw new Exception(t.getMessage() + " -- "
 						+ t.getCause().getMessage());
-			} 
+			}
 
 			// mov.setNumTRFPublicacao(numTRF);
 			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(dtDispPublicacao);
@@ -1962,7 +1971,6 @@ public class ExBL extends CpBL {
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
 				mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
 
-		
 				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
 					PublicacaoDJEBL.cancelarRemessaPublicacao(mov);
 
@@ -2230,7 +2238,7 @@ public class ExBL extends CpBL {
 
 		if (doc.getDtFechamento() != null)
 			throw new AplicacaoException("Documento já está fechado.");
-		
+
 		Set<ExVia> setVias = doc.getSetVias();
 
 		try {
@@ -2596,7 +2604,7 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-			
+
 			concluirAlteracao(doc);
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -2958,12 +2966,13 @@ public class ExBL extends CpBL {
 
 		novoDoc.setDescrClassifNovo(doc.getDescrClassifNovo());
 		novoDoc.setExFormaDocumento(doc.getExFormaDocumento());
-		
-		if(!doc.getExModelo().isFechado())
+
+		if (!doc.getExModelo().isFechado())
 			novoDoc.setExModelo(doc.getExModelo().getModeloAtual());
 		else
-			throw new AplicacaoException("Não foi possível duplicar o documento pois este modelo não está mais em uso.");		
-		
+			throw new AplicacaoException(
+					"Não foi possível duplicar o documento pois este modelo não está mais em uso.");
+
 		novoDoc.setExTipoDocumento(doc.getExTipoDocumento());
 
 		if (doc.getLotaDestinatario() != null
@@ -3080,10 +3089,10 @@ public class ExBL extends CpBL {
 	public void receber(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov)
 			throws AplicacaoException {
-		
-		if(mob.isEmTransitoExterno())
+
+		if (mob.isEmTransitoExterno())
 			return;
-		
+
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
 
 		try {
@@ -3381,7 +3390,7 @@ public class ExBL extends CpBL {
 							(subscritor == null && fDespacho) ? cadastrante
 									: subscritor, null, titular, null, dt);
 
-					if(dt != null)
+					if (dt != null)
 						mov.setDtIniMov(dt);
 
 					if (orgaoExterno != null || obsOrgao != null) {
@@ -3475,7 +3484,8 @@ public class ExBL extends CpBL {
 					// Orlando: Inseri a condição abaixo para que o e-mail não
 					// seja enviado quando tratar-se de despacho com
 					// transferência que não estiver assinado.
-					if (tpDespacho == null && descrMov == null && !m.isApensadoAVolumeDoMesmoProcesso())
+					if (tpDespacho == null && descrMov == null
+							&& !m.isApensadoAVolumeDoMesmoProcesso())
 						emailDeTransferência(responsavel, lotaResponsavel,
 								m.getSigla(), m.getExDocumento()
 										.getCodigoString(), m.getExDocumento()
@@ -4234,16 +4244,15 @@ public class ExBL extends CpBL {
 		// atualizarWorkflow(doc, null);
 
 		SortedSet<ExMobil> set = threadAlteracaoParcial.get();
-		if (set != null && set.size() > 0){
+		if (set != null && set.size() > 0) {
 			for (ExMobil mob : set) {
 				atualizarWorkflow(mob.doc(), null);
 			}
 			set.clear();
-		}else{
-			 if (doc != null){
-				 atualizarWorkflow(doc, null);	 
-			 }
-			 
+		} else {
+			if (doc != null) {
+				atualizarWorkflow(doc, null);
+			}
 
 		}
 	}
@@ -4261,7 +4270,8 @@ public class ExBL extends CpBL {
 
 		try {
 			if (Contexto.resource("isWorkflowEnabled") != null
-					&& Boolean.valueOf(String.valueOf(Contexto.resource("isWorkflowEnabled")))) {
+					&& Boolean.valueOf(String.valueOf(Contexto
+							.resource("isWorkflowEnabled")))) {
 				if (mov != null) {
 					atualizarWorkFlow(mov);
 				} else {
@@ -4932,7 +4942,8 @@ public class ExBL extends CpBL {
 	}
 
 	public void TornarDocumentoSemEfeito(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc, String motivo) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc, String motivo)
+			throws Exception {
 		try {
 			iniciarAlteracao();
 
@@ -5289,129 +5300,239 @@ public class ExBL extends CpBL {
 							+ sb.toString());
 		}
 
-		/*AVISO: 
-		 * 
-		 *  
-		 * O código abaixo foi comentado para permitir a atualização da tabela de classificação documental
-		 * enquanto a funcionalidade de reclassificação de documentos nõa está disponível.
-		 * 
-		 * 
-		 *  
-		 */
-		
-		
-		
 		/*
-		List<ExDocumento> docs = ExDao.getInstance()
-				.consultarExDocumentoPorClassificacao(null,
-						MascaraUtil.getInstance().getMscTodosDoMaiorNivel(),
-						idCadastrante.getPessoaAtual().getOrgaoUsuario());
-		if (docs.size() > 0) {
-			StringBuffer sb = new StringBuffer();
-
-			throw new AplicacaoException(
-					"Não é possível excluir a classificação documental, pois já foi associada a documento(s)."
-							+ sb.toString());
-		}
+		 * AVISO:
+		 * 
+		 * 
+		 * O código abaixo foi comentado para permitir a atualização da tabela
+		 * de classificação documental enquanto a funcionalidade de
+		 * reclassificação de documentos nõa está disponível.
 		 */
-		
-		
-		
-		
+
+		/*
+		 * List<ExDocumento> docs = ExDao.getInstance()
+		 * .consultarExDocumentoPorClassificacao(null,
+		 * MascaraUtil.getInstance().getMscTodosDoMaiorNivel(),
+		 * idCadastrante.getPessoaAtual().getOrgaoUsuario()); if (docs.size() >
+		 * 0) { StringBuffer sb = new StringBuffer();
+		 * 
+		 * throw new AplicacaoException(
+		 * "Não é possível excluir a classificação documental, pois já foi associada a documento(s)."
+		 * + sb.toString()); }
+		 */
+
 		for (ExVia exVia : exClass.getExViaSet()) {
 			dao().excluirComHistorico(exVia, dt, idCadastrante);
 		}
 		dao().excluirComHistorico(exClass, dt, idCadastrante);
 	}
-	
+
 	public void incluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
-		
-		final List<DpPessoa> cosignatariosDaEntrevista = obterCosignatariosDaEntrevista(doc.getForm());
-		
-		if(cosignatariosDaEntrevista != null && !cosignatariosDaEntrevista.isEmpty()) {
-			
-			if(doc.getCosignatarios() != null && !doc.getCosignatarios().isEmpty())
-				excluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
-			
+			final DpLotacao lotaCadastrante, final ExDocumento doc)
+			throws Exception {
+
+		final List<DpPessoa> cosignatariosDaEntrevista = obterCosignatariosDaEntrevista(doc
+				.getForm());
+
+		if (cosignatariosDaEntrevista != null
+				&& !cosignatariosDaEntrevista.isEmpty()) {
+
+			if (doc.getCosignatarios() != null
+					&& !doc.getCosignatarios().isEmpty())
+				excluirCosignatariosAutomaticamente(cadastrante,
+						lotaCadastrante, doc);
+
 			for (DpPessoa cosignatario : cosignatariosDaEntrevista) {
-				
-				incluirCosignatario(cadastrante, lotaCadastrante, doc, null, cosignatario, null);
+
+				incluirCosignatario(cadastrante, lotaCadastrante, doc, null,
+						cosignatario, null);
 			}
 		}
 	}
-	
+
 	public void excluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
-		
+			final DpLotacao lotaCadastrante, final ExDocumento doc)
+			throws Exception {
+
 		for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) {
 			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 					&& m.getExMovimentacaoCanceladora() == null) {
-				
-				
-				excluirMovimentacao(cadastrante, lotaCadastrante, doc.getMobilGeral(), m.getIdMov());
+
+				excluirMovimentacao(cadastrante, lotaCadastrante,
+						doc.getMobilGeral(), m.getIdMov());
 			}
 		}
 	}
-	
-	public List<DpPessoa> obterCosignatariosDaEntrevista(Map<String, String> docForm) {
+
+	public List<DpPessoa> obterCosignatariosDaEntrevista(
+			Map<String, String> docForm) {
 		List<DpPessoa> list = new ArrayList<DpPessoa>();
 		ExDao exDao = ExDao.getInstance();
-		
+
 		for (String chave : docForm.keySet()) {
-			
+
 			DpPessoa pessoa;
-			
-			if(chave.contains("cosignatarioSel.sigla")) {
+
+			if (chave.contains("cosignatarioSel.sigla")) {
 				String valor = docForm.get(chave);
-				
-				if(valor != null) {
-					
+
+				if (valor != null) {
+
 					pessoa = exDao.getPessoaFromSigla(valor);
-					
-					if(pessoa != null)
+
+					if (pessoa != null)
 						list.add(pessoa);
 				}
 			}
 		}
 		return list;
 	}
-	
-	private static class BlobSerializer
-    implements JsonSerializer<java.sql.Blob>, JsonDeserializer<java.sql.Blob> {
-	    public JsonElement serialize(java.sql.Blob src, Type srcType, JsonSerializationContext context) {
-	    	String s = null;
-	    	byte ab[] = br.gov.jfrj.siga.cp.util.Blob.toByteArray(src);
-	    	if (ab != null)
-	    		s = Base64.encode(ab);
-	    	return new JsonPrimitive(s);
-	    }
 
-	    public Blob deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-	    throws JsonParseException {
-	    	String s = json.getAsString();
+	private static class BlobSerializer implements
+			JsonSerializer<java.sql.Blob>, JsonDeserializer<java.sql.Blob> {
+		public JsonElement serialize(java.sql.Blob src, Type srcType,
+				JsonSerializationContext context) {
+			String s = null;
+			byte ab[] = br.gov.jfrj.siga.cp.util.Blob.toByteArray(src);
+			if (ab != null)
+				s = Base64.encode(ab);
+			return new JsonPrimitive(s);
+		}
+
+		public Blob deserialize(JsonElement json, Type type,
+				JsonDeserializationContext context) throws JsonParseException {
+			String s = json.getAsString();
 			if (s != null) {
-		    	byte ab[] = Base64.decode(s);
+				byte ab[] = Base64.decode(s);
 				return Hibernate.createBlob(ab);
 			}
 			return null;
-	    }
-	  }
+		}
+	}
 
-	public String toJSON(ExMobil mobil) {
-		//Prune
-		ExMobil mob = (ExMobil) Objeto.getImplementation(mobil);
-		mob.setExDocumento((ExDocumento) Objeto.getImplementation(mob.doc()));
+	private static class HibernateProxySerializer implements
+			JsonSerializer<HibernateProxy>, JsonDeserializer<HibernateProxy> {
+		private Gson gson;
+
+		public JsonElement serialize(HibernateProxy src, Type srcType,
+				JsonSerializationContext context) {
+			Object obj = ((HibernateProxy) src).getHibernateLazyInitializer()
+					.getImplementation();
+
+			return gson.toJsonTree(obj);
+		}
+
+		public void setGson(Gson gson) {
+			this.gson = gson;
+		}
+
+		public HibernateProxy deserialize(JsonElement arg0, Type arg1,
+				JsonDeserializationContext arg2) throws JsonParseException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	}
+
+	private static class ObjetoBaseSerializer implements
+			JsonSerializer<ObjetoBase>, JsonDeserializer<ObjetoBase> {
+		private Gson gson;
+
+		public JsonElement serialize(ObjetoBase src, Type srcType,
+				JsonSerializationContext context) {
+			
+			return gson.toJsonTree(src);
+		}
+
+		public void setGson(Gson gson) {
+			this.gson = gson;
+		}
+
+		public ObjetoBase deserialize(JsonElement arg0, Type arg1,
+				JsonDeserializationContext arg2) throws JsonParseException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	}
+	
+	public static Object getImplementationDeep(Object obj) throws Exception {
+		if (obj instanceof HibernateProxy) {
+			obj = ((HibernateProxy) obj).getHibernateLazyInitializer()
+					.getImplementation();
+		}
+		prune((Objeto)obj);
+		getImplementationDeep(obj, obj.getClass(), new HashSet<Objeto>());
+		return obj;
+	}
+	public static Object getImplementationDeep(Object o, Class clazz, HashSet<Objeto> set) throws Exception, IllegalAccessException {
+		Field f[] = clazz.getDeclaredFields();
+		AccessibleObject.setAccessible(f, true);
+		
+		for (int i = 0; i < f.length; i++) {
+			final Object object = f[i].get(o);
+			if (object instanceof ObjetoBase) {
+				Objeto objeto = (Objeto)object;
+				
+				if (objeto instanceof HibernateProxy) {
+					objeto = (Objeto)(((HibernateProxy) objeto).getHibernateLazyInitializer()
+							.getImplementation());
+				}
+				
+				prune(objeto);
+				
+				if (!set.contains(objeto)) {
+					set.add(objeto);
+					objeto = (Objeto) getImplementationDeep(objeto, objeto.getClass(), set);
+				}
+				f[i].set(o, objeto);
+			}
+		}
+		if (clazz.getSuperclass().getSuperclass() != null) {
+			System.out.println("*** Classe: " + clazz.getName() + " - " + clazz.getSuperclass().getName());
+			getImplementationDeep(o, clazz.getSuperclass(), set);
+		}
+		return o;
+	}
+
+	private static void prune(Objeto objeto) {
+		if (objeto instanceof ExTipoDocumento) {
+			((ExTipoDocumento) objeto).setExFormaDocumentoSet(null);
+		}
+		
+		if (objeto instanceof DpLotacao) {
+			((DpLotacao) objeto).setDpLotacaoSubordinadosSet(null);
+			((DpLotacao) objeto).setLotacaoInicial(null);
+			((DpLotacao) objeto).setLotacaoPai(null);
+			((DpLotacao) objeto).setLotacoesPosteriores(null);
+		}
+		
+		if (objeto instanceof DpPessoa) {
+			((DpPessoa) objeto).setPessoaInicial(null);
+			((DpPessoa) objeto).setPessoasPosteriores(null);
+		}
+		
+		if (objeto instanceof ExMobil) {
+			((ExMobil) objeto).setExMarcaSet(null);
+			((ExMobil) objeto).setExDocumentoFilhoSet(null);
+			((ExMobil) objeto).setExMovimentacaoReferenciaSet(null);
+			((ExMobil) objeto).setExMovimentacaoSet(null);
+		}
+	}
+
+	public String toJSON(ExMobil mobil) throws Exception {
+		// Prune
+		ExMobil mob = (ExMobil) getImplementationDeep(mobil);
+		
+		//mob.setExDocumento((ExDocumento) Objeto.getImplementation(mob.doc()));
 		mob.setExDocumentoFilhoSet(null);
-		mob.setExMarcaSet(null);
+		//mob.setExMarcaSet(null);
 		mob.setExMovimentacaoReferenciaSet(null);
 		mob.setExMovimentacaoSet(null);
 		mob.setExTipoMobil(null);
-		
+
 		ExDocumento doc = mob.doc();
 		//doc.setCadastrante(null);
 		//doc.setDestinatario(null);
-		doc.setExBoletimDocSet(null); 
+		doc.setExBoletimDocSet(null);
 		doc.setExClassificacao(null);
 		doc.setExDocAnterior(null);
 		doc.setExFormaDocumento(null);
@@ -5420,26 +5541,37 @@ public class ExBL extends CpBL {
 		doc.setExMobilSet(null);
 		doc.setExModelo(null);
 		doc.setExNivelAcesso(null);
-		doc.setExTipoDocumento(null);
+		//doc.setExTipoDocumento(null);
+		//doc.getExTipoDocumento().setExFormaDocumentoSet(null);
 		doc.setLotaCadastrante(null);
 		doc.setLotaDestinatario(null);
-		//doc.setLotaSubscritor((DpLotacao) Objeto.getImplementation(doc.getLotaSubscritor()));
-		doc.setLotaSubscritor(null);
-		doc.setLotaTitular(null);
-		doc.setCadastrante(null);
-		doc.setDestinatario(null);
-		doc.setSubscritor(null);
-		doc.setTitular(null);
-		doc.setOrgaoExterno(null);
-		doc.setOrgaoExternoDestinatario(null);
-		doc.setOrgaoUsuario(null);
+		//doc.setLotaSubscritor((DpLotacao)
+		// Objeto.getImplementation(doc.getLotaSubscritor()));
+		//doc.setLotaSubscritor(null);
+		//doc.setLotaTitular(null);
+		//doc.setCadastrante(null);
+		//doc.setDestinatario(null);
+		//doc.setSubscritor(null);
+		//doc.setTitular(null);
+		//doc.setOrgaoExterno(null);
+		//doc.setOrgaoExternoDestinatario(null);
+		//doc.setOrgaoUsuario(null);
 		
+		ObjetoBaseSerializer hps = new ObjetoBaseSerializer();
+
 		Gson gson = new GsonBuilder()
 				.registerTypeAdapter(java.sql.Blob.class, new BlobSerializer())
+				//.registerTypeAdapter(ObjetoBase.class, hps)
 				.setPrettyPrinting()
 				.setFieldNamingPolicy(
 						FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+		hps.setGson(gson);
+
 		String jsonOutput = gson.toJson(mob);
+
+		// Importante para que as alterações do "prune" não sejam salvas no BD.
+		dao().getSessao().clear();
+		
 		return jsonOutput;
 	}
 

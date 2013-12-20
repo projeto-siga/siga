@@ -23,7 +23,9 @@ import java.util.Set;
 
 import javax.persistence.OneToMany;
 
-public abstract class AbstractExPapel implements Serializable {
+import br.gov.jfrj.siga.model.Objeto;
+
+public abstract class AbstractExPapel extends Objeto implements Serializable {
 
 	private java.lang.Long idPapel;
 	private java.lang.String descPapel;

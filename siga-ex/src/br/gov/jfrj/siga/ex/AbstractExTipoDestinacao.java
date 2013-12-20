@@ -23,12 +23,14 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 /**
  * A class that represents a row in the EX_TIPO_DESTINACAO table. You can
  * customize the behavior of this class by editing the class,
  * {@link ExTipoDestinacao()}.
  */
-public abstract class AbstractExTipoDestinacao implements Serializable {
+public abstract class AbstractExTipoDestinacao extends Objeto implements Serializable {
 	/** The value of the simple descrTipoDestinacao property. */
 	private java.lang.String descrTipoDestinacao;
 

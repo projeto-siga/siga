@@ -202,7 +202,7 @@
 								<filtering>true</filtering>
 		        			</resource>
 		        		</resources>
-		        		<outputDirectory>${project.basedir}</outputDirectory>
+		        		<outputDirectory>${project.basedir}/eclipse</outputDirectory>
 		        	</configuration>
 				
 				</execution>        	

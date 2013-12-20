@@ -12,7 +12,8 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 
 public class GcInformacaoFiltro extends GcInformacao {
-
+	
+	public boolean pesquisa = false;
 	public String dtIni;
 	public String dtFim;
 	public CpMarcador situacao;
@@ -22,8 +23,20 @@ public class GcInformacaoFiltro extends GcInformacao {
 	public GcTag tag;
 
 	public List<GcInformacao> buscar() {
-		String query = "from GcInformacao inf where inf.hisDtFim is null ";
-
+		
+		String query = null;
+		//todos os status
+		if(situacao == null)
+			query = "from GcInformacao inf where inf.hisDtIni is not null ";
+		else {
+			//status cancelado
+			if(situacao.getIdMarcador() == 10)
+				query = "from GcInformacao inf where inf.hisDtFim is not null ";
+			//todos os status, menos o cancelado
+			else
+				query = "from GcInformacao inf where inf.hisDtFim is null ";
+		}	
+		
 		if(orgaoUsu != null)
 			query += " and inf.ou = " + orgaoUsu.getId();
 		
@@ -35,8 +48,8 @@ public class GcInformacaoFiltro extends GcInformacao {
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();
 		
 		if(lotacao != null)
-			query += " and inf.lotacao.idLotacaoIni = "
-					+ lotacao.getIdInicial();
+			query += " and inf.lotacao.idLotacaoIni = " + lotacao.getIdInicial();
+		
 		if(tipo != null)
 				query += " and inf.tipo = " + tipo.id;
 		
@@ -65,7 +78,8 @@ public class GcInformacaoFiltro extends GcInformacao {
 
 		if (dtIni != null)
 			try {
-				query += " and inf.hisDtIni >= to_date('"
+				//query += " and inf.hisDtIni >= to_date('"
+				query += " and inf.elaboracaoFim >= to_date('"
 						+ dfHibernate.format(dfUsuario.parse(dtIni))
 						+ "', 'yyyy-MM-dd') ";
 			} catch (ParseException e) {
@@ -74,7 +88,8 @@ public class GcInformacaoFiltro extends GcInformacao {
 
 		if (dtFim != null)
 			try {
-				query += " and inf.hisDtIni <= to_date('"
+				//query += " and inf.hisDtIni <= to_date('"
+				query += " and inf.elaboracaoFim <= to_date('"
 						+ dfHibernate.format(dfUsuario.parse(dtFim))
 						+ " 23:59', 'yyyy-MM-dd HH24:mi') ";
 			} catch (ParseException e) {
@@ -83,10 +98,9 @@ public class GcInformacaoFiltro extends GcInformacao {
 
 		String subquery = "";
 
-		if (situacao != null && situacao.getIdMarcador() != null
-				&& situacao.getIdMarcador() > 0)
+		if (situacao != null && situacao.getIdMarcador() != null && situacao.getIdMarcador() > 0)
 			subquery += " and situacao.cpMarcador.idMarcador = "
-					+ situacao.getIdMarcador();
+						+ situacao.getIdMarcador();
 		// if (atendente != null)
 		// subquery += "and situacao.dpPessoaIni.idPessoa = "
 		// + atendente.getIdInicial();

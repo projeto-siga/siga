@@ -32,6 +32,7 @@ public class GcCloud extends Cloud{
 
 		map.clear();
 		map.put("filtro.tag.sigla", tag[0].toString());//tag[0] - titulo
+		map.put("filtro.pesquisa", true);
 		String link = Router.reverse("Application.listar", map).url;
 		Tag tagCloud =  new Tag(tag[0].toString(), link, Double.parseDouble(tag[1].toString())); //tag[1] - contador 
 		this.addTag(tagCloud);
@@ -44,6 +45,7 @@ public class GcCloud extends Cloud{
 		map.clear();
 		map.put("filtro.tag.sigla", tag[0].toString());//tag[0] - titulo
 		map.put("filtro.lotacao", idLotacao);
+		map.put("filtro.pesquisa", true);
 		String link = Router.reverse("Application.listar", map).url;
 		Tag tagCloud =  new Tag(tag[0].toString(), link, Double.parseDouble(tag[1].toString())); //tag[1] - contador 
 		this.addTag(tagCloud);

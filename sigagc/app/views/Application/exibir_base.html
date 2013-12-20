@@ -32,10 +32,10 @@ Informação'/}
 				- ${informacao?.lotacao?.sigla}
 			</p>
 			<p>
-				<b>Data:</b> ${informacao?.dtIniString}
+				<b>Data de criação:</b> ${informacao?.dtIniString}
 			</p>
 			<p>
-				<b>Finalizado em:</b> ${informacao?.elaboracaoFim}
+				<b>Finalizado em:</b> ${informacao?.elaboracaoFim?.format('dd/MM/yyyy HH:mm:ss')}
 			</p>
 			<!--  -->
 			#{set cls = informacao?.arq?.classificacao?.split(",") /}

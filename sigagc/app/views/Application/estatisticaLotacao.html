@@ -8,36 +8,75 @@
 	google.load('visualization', '1', {
 		packages : [ 'corechart', 'gauge' ]
 	});
-</script>
-<script type="text/javascript">
-function drawGraphs() {
-	drawEvolution();
-}
+	google.setOnLoadCallback(drawEvolution);
 
-function drawEvolution() {
-	// Some raw data (not necessarily accurate)
+	function drawEvolution() {
+		// Some raw data (not necessarily accurate)
 		var data = google.visualization.arrayToDataTable([${evolucao.raw()}]);
 
 		// Create and draw the visualization.
-		var ac = new google.visualization.ComboChart(document
-				.getElementById('evolution'));
-		ac.draw(data, {
-			seriesType : "bars",
+		var grafico = new google.visualization.ColumnChart(document.getElementById('evolution'));
+		grafico.draw(data, {
 			legend : {position: 'top', alignment : 'center'},
-			isStacked : true,
 			width : "100%",
 			height : "100%"
 		});
-}
-
-	google.setOnLoadCallback(drawGraphs);
+		google.visualization.events.addListener(grafico, "select", function(){
+			var selecao = grafico.getSelection()[0];
+			var mesAno = data.getValue(selecao.row,0).split("/");
+			var numeroMes = converteMes(mesAno[0]);
+				
+			location.href = //"@{Application.listar}?filtro.situacao=" + (selecao.column == 1 ? "" : "37") +
+							"@{Application.listar}?filtro.situacao=" + (selecao.column == 1 ? "" : "") +
+							"&filtro.dtIni=" + encodeURIComponent(primeiroDiaMes(mesAno[1],numeroMes)) + 
+							"&filtro.dtFim=" + encodeURIComponent(ultimoDiaMes(mesAno[1],numeroMes)) + 
+							"&filtro.lotacao=" + ${lotacao.id} + 
+							"&filtro.pesquisa=true";
+		});
+	}
+	/* 
+	* recebe abreviação do mês e retorna o numero referente a esse mês.
+	* parametro = Nov
+	* retorno 	= 11   
+	*/	
+	function converteMes(mes) {
+		var numeroMes = new Array();
+		numeroMes[1] = "Jan";
+		numeroMes[2] = "Fev";
+		numeroMes[3] = "Mar";
+		numeroMes[4] = "Abr";
+		numeroMes[5] = "Mai";
+		numeroMes[6] = "Jun";
+		numeroMes[7] = "Jul";
+		numeroMes[8] = "Ago";
+		numeroMes[9] = "Set";
+		numeroMes[10] = "Out";
+		numeroMes[11] = "Nov";
+		numeroMes[12] = "Dez";
+		return numeroMes.indexOf(mes);
+	}	
+	/*
+	* recebe ano e mês, e retorna o primeiro dia do mês desse ano
+	* no formato dd/mm/yyyy
+	*/
+	function primeiroDiaMes(ano, mes) {
+		var anoCompleto = "20" + ano;
+		return new Date(anoCompleto, mes-1,1).toLocaleDateString();
+	}
+	/*
+	* recebe ano e mês, e retorna o último dia do mês desse ano
+	* no formato dd/mm/yyyy
+	*/
+	function ultimoDiaMes(ano, mes) {
+		var anoCompleto = "20" + ano;
+		return new Date(anoCompleto, mes,0).toLocaleDateString();
+	}	
 </script>
-
 #{/set}
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-		<h3>Estatísticas - ${siglaLotacao}</h3><br />
+		<h3>Estatísticas - ${lotacao.descricaoIniciaisMaiusculas}</h3><br />
 		<div class="gt-left-col">
 			<h2>Conhecimentos Mais Recentes</h2>
 			#{if listaMaisRecentes != null}
@@ -118,7 +157,7 @@ function drawEvolution() {
 							}*
 							<td style="width: 65%;">${p[0]}</td>
 							<td style="width: 15%;">${p[2]}</td>
-							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.autor=${p[1]}">${p[3]}</a></td>
+							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.autor=${p[1]}&filtro.pesquisa=true">${p[3]}</a></td>
 						</tr>
 						#{/list}
 					</tbody>

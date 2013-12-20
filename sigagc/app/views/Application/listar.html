@@ -11,32 +11,29 @@
 				$("#dicaNumero").hide("fast");
 			});			
 		});
+		alert(history.previous);
 </script>
-#{/set}
+#{/set}#{set count: 0 /}
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2>Pesquisa de Conhecimento</h2>
-		#{if lista.size() == 0}
-			*{<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>}*
-			<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
-		#{/if}
-		#{else}
+		#{if lista.size != 0} 
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-table">
 				<thead>
 					<tr>
 						<th rowspan="3" align="left">Número</th>
-						<th colspan="3" align="center">Tópico de Informação</th>
-						<th colspan="4" align="center">Situação</th>
+						<th colspan="3">Tópico de Informação</th>
+						<th colspan="4">Situação</th>
 						<th rowspan="3">Tipo</th>
 						<th rowspan="3">Título</th>
 					</tr>
 					<tr>
-						<th rowspan="2" align="left">Data</th>
-						<th colspan="2" align="center">Autor</th>
-						<th rowspan="2" align="center">Data</th>
-						<th colspan="2" align="center">Responsável</th>
-						<th rowspan="2" align="center">Situação</th>
+						<th rowspan="2" style="width:5%;">Data de Criação</th>
+						<th colspan="2" style="text-align: center !important;">Autor</th>
+						<th rowspan="2">Data</th>
+						<th colspan="2" style="text-align: center !important;">Responsável</th>
+						<th rowspan="2" style="text-align: center !important;">Situação</th>
 					</tr>
 					<tr>
 						<th align="center">Lotação</th>
@@ -50,7 +47,9 @@
 
 					#{list items:lista, as:'i'} #{set cmarcas = i.marcas.size()/} #{set
 					m0 = cmarcas > 0 ? i.marcas.first() : null /}
-
+					#{if (m0?.cpMarcador?.idMarcador == 10) && (paginaAnterior == estatistica)}
+						#{set count: count++ /}
+					#{/if}#{else}	
 					<tr class="even">
 						<td width="11.5%" align="left" rowspan="${cmarcas}"><a
 							href="@{Application.exibir(i.sigla)}">${i.sigla}</a></td>
@@ -62,7 +61,7 @@
 							title="${i.autor.descricao} - ${i.autor.sigla}">${i.autor.nomeAbreviado}</span>
 						</td>
 
-						<td width="5%" align="center">${m0?.dtIniMarcaDDMMYYYY}</td>
+						<td width="5%" align="left">${m0?.dtIniMarcaDDMMYYYY}</td>
 						<td width="4%" align="center"><span
 							title="${m0?.dpLotacaoIni?.descricao}">${m0?.dpLotacaoIni?.sigla}</span>
 						</td>
@@ -80,7 +79,7 @@
 					#{set fprimeiro = true /} #{list items:i.marcas, as:'m'} #{if
 					!fprimeiro}
 					<tr>
-						<td width="5%" align="center">${m.dtIniMarcaDDMMYYYY}</td>
+						<td width="5%" align="left">${m.dtIniMarcaDDMMYYYY}</td>
 						<td width="4%" align="center"><span
 							title="${m.dpLotacaoIni?.descricao}">${m.dpLotacaoIni?.sigla}</span>
 						</td>
@@ -89,12 +88,22 @@
 						</td>
 						<td width="10.5%" align="center">${m.cpMarcador.descrMarcador}</td>
 					</tr>
-					#{/if} #{set fprimeiro = false /} #{/list} #{/list}
-
+					#{/if} #{set fprimeiro = false /} #{/list} 
+					#{/else}
+					#{/list}
 				</tbody>
 			</table>
 		</div>
-		#{/else}
+		#{/if}
+		#{elseif filtro?.pesquisa}
+			*{<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>}*
+			<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
+		#{/elseif}
+		#{if count != 0} 
+			<br />	
+			<h6 style="background:#d8d8c0;padding:3px 10px;">${count} Conhecimento${count.pluralize()} fo${count.pluralize('i','ram')} Cancelado${count.pluralize()}, por isso não const${count.pluralize('a','am')} como Nov${count.pluralize('o','os')} no resultado acima.</h6>
+			#{set count: 0 /}
+		#{/if}
 		<!-- </table></div> -->
 		<br>
 		<div class="gt-content-box gt-for-table">
@@ -102,6 +111,7 @@
 			<form id="listar" name="listar"
 				onsubmit="javascript: return limpaCampos()" method="GET"
 				class="form100">
+				<input type="hidden" name="filtro.pesquisa" value="true" />
 				<table class="gt-form-table">
 					<colgroup>
 						<col style="width: 10em;">

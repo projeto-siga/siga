@@ -170,7 +170,16 @@
                     <goal>dependencies</goal>
                   </goals>
                 </execution>
-
+                
+                <execution>
+                  <id>default-start-server</id>
+                  <phase>none</phase>
+                </execution>
+                <execution>
+                  <id>default-stop-server</id>
+                  <phase>none</phase>
+                </execution>
+                
               </executions>
 
             </plugin>

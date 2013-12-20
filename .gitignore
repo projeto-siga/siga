@@ -49,7 +49,9 @@ sigari/precompiled/
 sigasr/sigasr-start.launch
 sigasr/lib
 sigasr/modules
+sigasr/eclipse
 
 sigagc/sigagc-start.launch
 sigagc/lib
 sigagc/modules
+sigagc/eclipse

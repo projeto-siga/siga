@@ -641,7 +641,7 @@ public class ExBL extends CpBL {
 					m = CpMarcador.MARCADOR_DISPONIBILIZADO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
 					m = CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO;
-				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE && !apensadoAVolumeDoMesmoProcesso)
 					m = CpMarcador.MARCADOR_ARQUIVADO_CORRENTE;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE)
 					m = CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE;

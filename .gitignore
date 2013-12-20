@@ -55,3 +55,16 @@ sigagc/sigagc-start.launch
 sigagc/lib
 sigagc/modules
 sigagc/eclipse
+
+siga-play-module/app/br/gov/jfrj/siga/base/
+siga-play-module/app/br/gov/jfrj/siga/cp/
+siga-play-module/app/br/gov/jfrj/siga/dp/
+siga-play-module/app/br/gov/jfrj/siga/model/Assemelhavel.java
+siga-play-module/app/br/gov/jfrj/siga/model/ClassUtils.java
+siga-play-module/app/br/gov/jfrj/siga/model/Diagram.java
+siga-play-module/app/br/gov/jfrj/siga/model/Historico.java
+siga-play-module/app/br/gov/jfrj/siga/model/Selecionavel.java
+siga-play-module/app/br/gov/jfrj/siga/model/dao/
+siga-play-module/app/br/gov/jfrj/siga/model/prop/
+siga-play-module/app/br/gov/jfrj/siga/parser/
+siga-play-module/app/br/gov/jfrj/siga/sinc/

@@ -180,6 +180,16 @@
                     <goal>dependencies</goal>
                   </goals>
                 </execution>
+                
+                <execution>
+                  <id>default-start-server</id>
+                  <phase>none</phase>
+                </execution>
+                <execution>
+                  <id>default-stop-server</id>
+                  <phase>none</phase>
+                </execution>
+                
 
               </executions>
 
@@ -308,6 +318,7 @@
 
 <properties>
   <play.version>1.2.4</play.version>
+  <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 </properties>
 
 </project>

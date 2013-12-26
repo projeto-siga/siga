@@ -156,7 +156,9 @@ var newwin = null;
                                 <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao')&& (xintervalo =='Não')}">
                                      <fmt:formatNumber var="xhoraTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
-                                     Total de horas:<input type="text" name="totalHoras${i}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}" value="${xminutoTotal}" size="2" readonly/>min  
+                                     Total de horas:<input type="text" name="totalHoras${i}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}" value="${xminutoTotal}" size="2" readonly/>min
+                                     <mod:oculto var="totalHorasf${i}" valor="${xhoraTotal}" />
+                                     <mod:oculto var="totalMinutosf${i}" valor="${xminutoTotal}" />    
                                   </c:if>
                                  
                                  <c:if test="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))<= 60) && (xintervalo =='Sim') }">
@@ -168,6 +170,8 @@ var newwin = null;
                                     <fmt:formatNumber var="xhoraTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))-((xhoraFimIntervalo * 60 + xminutoFimIntervalo)-(xhoraIniIntervalo * 60 + xminutoIniIntervalo)))/60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      <fmt:formatNumber var="xminutoTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))-((xhoraFimIntervalo * 60 + xminutoFimIntervalo)-(xhoraIniIntervalo * 60 + xminutoIniIntervalo)))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      Total de horas:<input type="text" name="totalHoras${i}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}" value="${xminutoTotal}" size="2" readonly/>min
+                                     <mod:oculto var="totalHorasf${i}" valor="${xhoraTotal}" />
+                                     <mod:oculto var="totalMinutosf${i}" valor="${xminutoTotal}" />    
                                 </c:if>
                           
                  </mod:grupo>
@@ -295,12 +299,12 @@ var newwin = null;
                 <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaIniIntervalo',i)]} ${requestScope[f:concat('horaIniIntervaloNao',i)]}:${requestScope[f:concat('minutoIniIntervalo',i)]} ${requestScope[f:concat('minutoIniIntervaloNao',i)]} </td>
                 <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaFimIntervalo',i)]}${requestScope[f:concat('horaFimIntervaloNao',i)]}:${requestScope[f:concat('minutoFimIntervalo',i)]}${requestScope[f:concat('minutoFimIntervaloNao',i)]}</td>               
                 <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaFim',i)]}:${requestScope[f:concat('minutoFim',i)]}</td>
-                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('totalHoras',i)]}:${requestScope[f:concat('totalMinutos',i)]}   </td>                
+                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('totalHorasf',i)]}:${requestScope[f:concat('totalMinutosf',i)]}   </td>                
                     
             </tr>
 
-                        <c:set var="xhoraTotal2" value="${requestScope[f:concat('totalHoras',i)]}" />
-                        <c:set var="xminutoTotal2" value="${requestScope[f:concat('totalMinutos',i)]}" />
+                        <c:set var="xhoraTotal2" value="${requestScope[f:concat('totalHorasf',i)]}" />
+                        <c:set var="xminutoTotal2" value="${requestScope[f:concat('totalMinutosf',i)]}" />
                         <c:set var="xdiaSemana" value="${requestScope[f:concat('diaSemana',i)]}" />
                         <c:set var="xferiado" value="${requestScope[f:concat('feriado',i)]}" /> 
                                        

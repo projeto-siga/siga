@@ -1120,10 +1120,10 @@
 			</result>
 		</action>
 	</package>
-	<package name="emailNotificacao" extends="default" namespace="/emailNotificacao">
+	<package name="emailNotificacao" extends="default" namespace="/expediente/emailNotificacao">
 		<action name="exibir" class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction"
 			method="aExibir">
-						
+		</action>						
 		<action name="listar" method="aListar"
 			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
 			<result>/paginas/emailNotificacao/lista.jsp</result>
@@ -1139,11 +1139,9 @@
 			<result type="redirect-action">listar</result>
 		</action>
 		<action name="excluir" method="aExcluir"
-			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
+			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
 			<result type="redirect-action">listar</result>
-		</action>
-			
-		</action>
+		</action>	
 	</package>
 	
 	

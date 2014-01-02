@@ -25,6 +25,8 @@
 package br.gov.jfrj.webwork.action;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.opensymphony.xwork.Action;
 
@@ -62,8 +64,41 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	private DpPessoaSelecao pessEmailSel;
 	private Long id;
 	private List itens;
+	private String strBuscarFechadas;
+	private Integer tipoDest;
+	private Integer tipoEmail;
 	
 	
+	public ExEmailNotificacaoAction() {
+	
+		lotaSel = new DpLotacaoSelecao();
+		lotaEmailSel = new DpLotacaoSelecao();
+		pessSel = new DpPessoaSelecao();
+		pessEmailSel = new DpPessoaSelecao();
+		tipoDest = 1;
+		tipoEmail = 1;
+		setStrBuscarFechadas("buscarFechadas=false");
+	
+	}
+	
+	
+
+	public Integer getTipoEmail() {
+		return tipoEmail;
+	}
+
+	public void setTipoEmail(Integer tipoEmailMov) {
+		this.tipoEmail = tipoEmail;
+	}
+
+	public Integer getTipoDest() {
+		return tipoDest;
+	}
+
+	public void setTipoDest(Integer tipoDestMov) {
+		this.tipoDest = tipoDest;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -151,46 +186,76 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	public void setItens(List itens) {
 		this.itens = itens;
 	}
+	
+	
+	public String getStrBuscarFechadas() {
+		return strBuscarFechadas;
+	}
 
-	public String aListar() throws Exception {				
+	public void setStrBuscarFechadas(String strBuscarFechadas) {
+		this.strBuscarFechadas = strBuscarFechadas;
+	}
+
+	public ExEmailNotificacao daoEmail(long id) {
+		return dao().consultar(id, ExEmailNotificacao.class, false);
+	}
+
+	public String aListar() throws Exception {
+		assertAcesso("FE:Ferramentas;EMAIL:Email de Notificação");
+		
 		setItens(ExDao.getInstance().consultar(new ExEmailNotificacao(), null));		
 		return Action.SUCCESS;
 	}
 	
-/*	public String aExcluir() throws Exception {
-		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+	public Map<Integer, String> getListaTipoDest() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, "Matrícula");
+		map.put(2, "Órgão Integrado");
+		return map;
+	}
+	
+	public Map<Integer, String> getListaTipoEmail() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, "Matrícula");
+		map.put(2, "Órgão Integrado");		
+		map.put(3, "Email");
+		return map;
+	}
+	
+	public String aExcluir() throws Exception {
+		assertAcesso("FE:Ferramentas;EMAIL:Email de Notificação");
 		if (getId() != null) {
 			try {
 				dao().iniciarTransacao();
-				CpOrgao orgao = daoOrgao(getId());				
-				dao().excluir(orgao);				
+				ExEmailNotificacao email = daoEmail(getId());				
+				dao().excluir(email);				
 				dao().commitTransacao();				
 			} catch (final Exception e) {
 				dao().rollbackTransacao();
-				throw new AplicacaoException("Erro na exclusão de Orgão", 0, e);
+				throw new AplicacaoException("Erro na exclusão do email", 0, e);
 			}
 		} else
 			throw new AplicacaoException("ID não informada");
 
 		return Action.SUCCESS;
 	}
-	
+		
 	public String aEditar() throws Exception {
 
 		if (getId() != null) {
-			CpOrgao orgao = daoOrgao(getId());	
-			this.setNmOrgao(orgao.getNmOrgao());
-			this.setSiglaOrgao(orgao.getSigla());
-			if (orgao.getAtivo() != null && !orgao.getAtivo().isEmpty())
-				this.setAtivo(orgao.getAtivo().charAt(0));
-			else
-				this.setAtivo('N');
-			this.setIdOrgaoUsu(orgao.getOrgaoUsuario().getId());
+			ExEmailNotificacao emailNot = daoEmail(getId());
+			this.setDpLotacao(emailNot.getDpLotacao());
+			this.setDpPessoa(emailNot.getDpPessoa());
+			this.setEmail(emailNot.getEmail());
+			this.setPessoaEmail(emailNot.getPessoaEmail());
+			this.setLotacaoEmail(emailNot.getLotacaoEmail());		
 		}
+		
+		
 		
 		return Action.SUCCESS;
 	}
-	
+/*	
 	public String aEditarGravar() throws Exception {
 		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		

@@ -23,7 +23,7 @@
 		<div class="gt-content clearfix">
 				
 			<h2 class="gt-table-head">Emails de notificação cadastrados</h2>
-			<div class="gt-content-box gt-for-table" style="width: 80% !important;">
+			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table">
 					<thead>
 						<tr>							
@@ -37,32 +37,43 @@
 					
 					<tbody>
 						<c:forEach var="email" items="${itens}">
-							<tr>							
-								<ww:url id="url" action="listar" namespace="/feriado">
-									<ww:param name="id">${email.idEmailNotificacao}</ww:param>
-								</ww:url>												
+							<tr>																		
 								<td align="left"><c:if test="${not empty email.dpPessoa}">
 									<siga:selecionado sigla="${email.dpPessoa.iniciais}"
 											descricao="${email.dpPessoa.descricao}" /></c:if>
 								</td>
-								<td><c:if test="${not empty email.dplotacao}">
-									<siga:selecionado sigla="${email.dplotacao.sigla}"
-										descricao="${email.dplotacao.descricao}" /></c:if>
+								<td><c:if test="${not empty email.dpLotacao}">
+									<siga:selecionado sigla="${email.dpLotacao.sigla}"
+										descricao="${email.dpLotacao.descricao}" /></c:if>
 								</td>	
-								<td>email.email</td>	
+								<td>${email.email}</td>	
 								<td><c:if test="${not empty email.pessoaEmail}">
 									<siga:selecionado sigla="${email.pessoaEmail.iniciais}"
 											descricao="${email.pessoaEmail.descricao}" /></c:if>
 								</td>
-								<td><c:if test="${not empty email.emailLotacao}">
-									<siga:selecionado sigla="${email.emailLotacao.sigla}"
-										descricao="${email.emailLotacao.descricao}" /></c:if>
+								<td><c:if test="${not empty email.lotacaoEmail}">
+									<siga:selecionado sigla="${email.lotacaoEmail.sigla}"
+										descricao="${email.lotacaoEmail.descricao}" /></c:if>
+								</td>
+								<td align="center" width="10%">									
+	 			 					<a href="javascript:if (confirm('Deseja excluir o email?')) location.href='/siga/expediente/emailNotificacao/excluir.action?id=${email.idEmailNotificacao}';">
+											<img style="display: inline;"
+											src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir email"							
+											onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+											onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
+									</a>															
 								</td>																			 							
 							</tr>
 						</c:forEach>
 					</tbody>
-				</table>				
+				</table>								
 			</div>				
 		</div>	
+		<div class="gt-table-buttons">
+					<ww:url id="url" action="editar" namespace="/expediente/emailNotificacao"></ww:url>
+					<input type="button" value="Incluir"
+						onclick="javascript:window.location.href='${url}'"
+						class="gt-btn-medium gt-btn-left">
+		</div>		
 	</div>		
 </siga:pagina>

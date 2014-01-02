@@ -322,20 +322,20 @@ var newwin = null;
               </c:if>
 
              </c:forEach>
-                   <c:set var="horaDomingo2" value="${(((horaDomingo*60)+minutoDomingo)/60)-0.5}"/>
+                   <c:set var="horaDomingo2" value="${(((horaDomingo*60)+minutoDomingo)/60)}"/>
                    <c:set var="minutoDomingo2" value="${((horaDomingo*60)+minutoDomingo)%60}"/>
                    
                    <fmt:formatNumber var="horaDomingoF" value="${(horaDomingo2)}" maxFractionDigits="0" minIntegerDigits="2" /> 
                    <fmt:formatNumber var="minutoDomingoF" value="${minutoDomingo2}" maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
                    
                    
-                   <c:set var="horaDiaUtilF2" value="${(((horaDiaUtil*60)+minutoDiaUtil)/60)-0.5}"/>
+                   <c:set var="horaDiaUtilF2" value="${(((horaDiaUtil*60)+minutoDiaUtil)/60)}"/>
                    <c:set var="minutoDiaUtilF2" value="${((horaDiaUtil*60)+minutoDiaUtil)%60}"/>
                    
                    <fmt:formatNumber var="horaDiaUtilF" value="${horaDiaUtilF2}" maxFractionDigits="0" minIntegerDigits="2" /> 
                    <fmt:formatNumber var="minutoDiaUtilF" value="${minutoDiaUtilF2}" maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
                                   
-                   <fmt:formatNumber var="horaExtra" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))/60)-0.5}" maxFractionDigits="0" minIntegerDigits="2" /> 
+                   <fmt:formatNumber var="horaExtra" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))/60)}" maxFractionDigits="0" minIntegerDigits="2" /> 
                    <fmt:formatNumber var="minutoExtra" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))%60)}" maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
         </table>
         

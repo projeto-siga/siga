@@ -32,7 +32,7 @@ public class GcInformacaoFiltro extends GcInformacao {
 			//status cancelado
 			if(situacao.getIdMarcador() == 10)
 				query = "from GcInformacao inf where inf.hisDtFim is not null ";
-			//todos os status, menos o cancelado
+			//qualquer status, menos o cancelado
 			else
 				query = "from GcInformacao inf where inf.hisDtFim is null ";
 		}	
@@ -42,7 +42,7 @@ public class GcInformacaoFiltro extends GcInformacao {
 		
 		if(tag != null)
 			//query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = " + tag.id;
-			query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.titulo = '" + tag.titulo + "'";
+			query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where tag.titulo = '" + tag.titulo + "'";
 			//query += " and inf.tags.id = " + tag.id;
 		if(autor != null)
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();
@@ -64,7 +64,7 @@ public class GcInformacaoFiltro extends GcInformacao {
 				/*query += " and lower(inf.arq.conteudo) like '%"
 						+ s.toLowerCase() + "%' ";
 				 */		
-				//forma de consultar num coluna BLOB através do SQL
+				//forma de consultar em uma coluna BLOB através do SQL
 				query += " and dbms_lob.instr(inf.arq.conteudo,utl_raw.cast_to_raw('" + s + "'),1,1) > 0";
 			}	
 		}

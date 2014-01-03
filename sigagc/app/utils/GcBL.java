@@ -403,9 +403,9 @@ public class GcBL {
 			acrescentarMarca(set, inf, CpMarcador.MARCADOR_EM_ELABORACAO,
 					inf.hisDtIni, null, inf.autor, inf.lotacao);
 		} else {
-			acrescentarMarca(set, inf, CpMarcador.MARCADOR_ATIVO, inf.hisDtIni,
+			acrescentarMarca(set, inf, CpMarcador.MARCADOR_ATIVO, inf.elaboracaoFim,
 					null, inf.autor, inf.lotacao);
-			acrescentarMarca(set, inf, CpMarcador.MARCADOR_NOVO, inf.hisDtIni,
+			acrescentarMarca(set, inf, CpMarcador.MARCADOR_NOVO, inf.elaboracaoFim,
 					new Date(inf.hisDtIni.getTime() + TEMPO_NOVIDADE),
 					inf.autor, inf.lotacao);
 		}

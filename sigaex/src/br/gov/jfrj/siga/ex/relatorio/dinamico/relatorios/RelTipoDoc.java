@@ -59,11 +59,9 @@ public class RelTipoDoc extends RelatorioTemplate {
 			throws DJBuilderException, JRException {
 
 		this.setTitle("Relação de Documentos Criados");
-		this.addColuna("Tipo de Documento", 35, RelatorioRapido.ESQUERDA,
-				false, false);
-		this.addColuna("Forma do Documento", 40, RelatorioRapido.ESQUERDA,
-				false, false);
-		this.addColuna("Total", 25, RelatorioRapido.CENTRO, false, false);
+		this.addColuna("Tipo de Documento", 35, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Forma do Documento", 40, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Total", 25, RelatorioRapido.CENTRO, false);
 		return this;
 
 	}
@@ -132,7 +130,7 @@ public class RelTipoDoc extends RelatorioTemplate {
 		if (l > 0)
 			d.add(l.toString());
 		else
-			d.add("");
+			d.add("0");
 	}
 
 	private String chave(String tipodoc, String formadoc) {

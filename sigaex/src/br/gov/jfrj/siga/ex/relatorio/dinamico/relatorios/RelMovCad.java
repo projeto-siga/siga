@@ -80,7 +80,7 @@ public class RelMovCad extends RelatorioTemplate {
 								+ "and mov.lotaCadastrante.idLotacao = :id "
 								+ "and mov.dtIniMov >= :dtini "
 								+ "and mov.dtIniMov <= :dtfim "
-								+ "order by mov.resp.idPessoa, mov.exMobil.idMobil, mov.dtIniMov");
+								+ "order by mov.resp.idPessoa");
 
 		query.setParameter("id",
 				Long.valueOf((String) parametros.get("lotacao")));
@@ -103,7 +103,7 @@ public class RelMovCad extends RelatorioTemplate {
 			ExMovimentacao mov = (ExMovimentacao) obj[0];
 			ExMobil mob = (ExMobil) obj[1];
 			ExDocumento doc = (ExDocumento) obj[2];
-			if (mov.getCadastrante().getNomePessoa() != null) {
+			if (mov.getCadastrante().getIdPessoa() != null) {
 				d.add(mov.getCadastrante().getNomePessoa().toString());
 			} else {
 				d.add("");

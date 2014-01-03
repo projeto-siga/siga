@@ -1,9 +1,12 @@
 package reports;
 
+import java.text.DateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import models.SrMovimentacao;
@@ -13,6 +16,8 @@ import org.hibernate.Query;
 
 import play.db.jpa.JPA;
 
+import ar.com.fdvs.dj.core.layout.HorizontalBandAlignment;
+import ar.com.fdvs.dj.domain.AutoText;
 import ar.com.fdvs.dj.domain.DJCalculation;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;

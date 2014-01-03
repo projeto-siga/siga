@@ -367,8 +367,8 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao",
-				getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("tipoFormaDoc", getRequest()
+				getRequest().getParameter("lotacaoDestinatarioSel"));
+				parametros.put("tipoFormaDoc", getRequest()
 				.getParameter("tipoFormaDoc"));
 		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
 		parametros.put("incluirSubordinados",

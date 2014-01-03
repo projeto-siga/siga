@@ -70,7 +70,7 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 		// TODO Auto-generated method stub
 		this.setTitle("Relação de Documentos entre Datas");
 		this.addColuna("Código do Documento", 20, RelatorioRapido.ESQUERDA,
-				false, true);
+				 true);
 		this.addColuna("Descrição do documento", 67, RelatorioRapido.ESQUERDA,
 				false);
 		this.addColuna("Lotação do Cadastrante", 20, RelatorioRapido.ESQUERDA,

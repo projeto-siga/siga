@@ -130,8 +130,7 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
         pagina.setWidth(new Integer(100));
         pagina.setWidth2(new Integer(100));
 //        this.addAutoText(pagina);
-        
-        
+
 	}
 	
 	/**

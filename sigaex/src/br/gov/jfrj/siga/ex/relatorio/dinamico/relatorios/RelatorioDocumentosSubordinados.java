@@ -55,6 +55,10 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 			throw new DJBuilderException(
 					"Parâmetro secaoUsuario não informado!");
 		}
+		if (parametros.get("lotacao") == null) {
+			throw new DJBuilderException(
+					"Parâmetro lotação não informado!");
+		}
 		if (parametros.get("link_siga") == null) {
 			throw new DJBuilderException("Parâmetro link_siga não informado!");
 		}
@@ -67,7 +71,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 		this.setTitle("Relatório de Documentos em Setores Subordinados");
 		this.addColuna("Setor", 0, RelatorioRapido.ESQUERDA, true);
-		this.addColuna("Documento", 25, RelatorioRapido.ESQUERDA, false, true);
+		this.addColuna("Documento", 25, RelatorioRapido.ESQUERDA,  true);
 		this.addColuna("Descrição", 50, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Responsável", 30, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Situação", 30, RelatorioRapido.ESQUERDA, false);

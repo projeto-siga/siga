@@ -154,7 +154,8 @@ var newwin = null;
                                 </c:if>
                                 
                                 <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao')&& (xintervalo =='Não')}">
-                                     <fmt:formatNumber var="xhoraTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" maxFractionDigits="0" minIntegerDigits="2" />
+                                     <fmt:formatNumber var="xhoraTotalC" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" type="number" pattern="##.##" />
+                                     <fmt:parseNumber var="xhoraTotal" value="${xhoraTotalC}" type="number" integerOnly="true"/>
                                      <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      Total de horas:<input type="text" name="totalHoras${i}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}" value="${xminutoTotal}" size="2" readonly/>min
                                      <mod:oculto var="totalHorasf${i}" valor="${xhoraTotal}" />
@@ -167,8 +168,9 @@ var newwin = null;
                                  </c:if>  
                                  
                                 <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao') && (xintervalo =='Sim')}">
-                                    <fmt:formatNumber var="xhoraTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))-((xhoraFimIntervalo * 60 + xminutoFimIntervalo)-(xhoraIniIntervalo * 60 + xminutoIniIntervalo)))/60)}" maxFractionDigits="0" minIntegerDigits="2" />
-                                     <fmt:formatNumber var="xminutoTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))-((xhoraFimIntervalo * 60 + xminutoFimIntervalo)-(xhoraIniIntervalo * 60 + xminutoIniIntervalo)))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
+                                    <fmt:formatNumber var="xhoraTotalC" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))-((xhoraFimIntervalo * 60 + xminutoFimIntervalo)-(xhoraIniIntervalo * 60 + xminutoIniIntervalo)))/60)}" type="number" pattern="##.##" />
+                                    <fmt:parseNumber var="xhoraTotal" value="${xhoraTotalC}" type="number" integerOnly="true"/>
+                                    <fmt:formatNumber var="xminutoTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))-((xhoraFimIntervalo * 60 + xminutoFimIntervalo)-(xhoraIniIntervalo * 60 + xminutoIniIntervalo)))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      Total de horas:<input type="text" name="totalHoras${i}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}" value="${xminutoTotal}" size="2" readonly/>min
                                      <mod:oculto var="totalHorasf${i}" valor="${xhoraTotal}" />
                                      <mod:oculto var="totalMinutosf${i}" valor="${xminutoTotal}" />    
@@ -325,17 +327,20 @@ var newwin = null;
                    <c:set var="horaDomingo2" value="${(((horaDomingo*60)+minutoDomingo)/60)}"/>
                    <c:set var="minutoDomingo2" value="${((horaDomingo*60)+minutoDomingo)%60}"/>
                    
-                   <fmt:formatNumber var="horaDomingoF" value="${(horaDomingo2)}" maxFractionDigits="0" minIntegerDigits="2" /> 
+                   <fmt:formatNumber var="horaDomingoFC" value="${(horaDomingo2)}" type="number" pattern="##.##"  /> 
+                   <fmt:parseNumber var="horaDomingoF" value="${horaDomingoFC}" type="number" integerOnly="true"/>
                    <fmt:formatNumber var="minutoDomingoF" value="${minutoDomingo2}" maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
                    
                    
                    <c:set var="horaDiaUtilF2" value="${(((horaDiaUtil*60)+minutoDiaUtil)/60)}"/>
                    <c:set var="minutoDiaUtilF2" value="${((horaDiaUtil*60)+minutoDiaUtil)%60}"/>
                    
-                   <fmt:formatNumber var="horaDiaUtilF" value="${horaDiaUtilF2}" maxFractionDigits="0" minIntegerDigits="2" /> 
+                   <fmt:formatNumber var="horaDiaUtilFC" value="${horaDiaUtilF2}" type="number" pattern="##.##" /> 
+                   <fmt:parseNumber var="horaDiaUtilF" value="${horaDiaUtilFC}" type="number" integerOnly="true"/>
                    <fmt:formatNumber var="minutoDiaUtilF" value="${minutoDiaUtilF2}" maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
                                   
-                   <fmt:formatNumber var="horaExtra" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))/60)}" maxFractionDigits="0" minIntegerDigits="2" /> 
+                   <fmt:formatNumber var="horaExtraC" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))/60)}" type="number" pattern="##.##" />
+                   <fmt:parseNumber var="horaExtra" value="${horaExtraC}" type="number" integerOnly="true"/> 
                    <fmt:formatNumber var="minutoExtra" value="${((((horaDiaUtilF*60)+minutoDiaUtilF)+((horaDomingoF*60)+minutoDomingoF))%60)}" maxFractionDigits="0" minIntegerDigits="2" maxIntegerDigits="2"/> 
         </table>
         

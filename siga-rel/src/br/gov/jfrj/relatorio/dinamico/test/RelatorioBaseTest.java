@@ -38,7 +38,7 @@ public class RelatorioBaseTest {
 		rel.addColuna("Forma", 20,RelatorioRapido.ESQUERDA,false);
 		rel.addColuna("Modelo", 50,RelatorioRapido.ESQUERDA,false);
 		rel.addColuna("Class Documental", 15,RelatorioRapido.CENTRO,false);
-		rel.addColuna("Class Criação", 15,RelatorioRapido.CENTRO,false,true);
+		//rel.addColuna("Class Criação", 15,RelatorioRapido.CENTRO,false,true);
 		
 		List<String> dados = new ArrayList<String>();
 		for (int i=0; i<100; i++){

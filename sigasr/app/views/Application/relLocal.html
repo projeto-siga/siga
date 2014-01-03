@@ -15,7 +15,12 @@
 					</tr>
 					<tr>
 						<td>Local (Solicitante)</td>
-						<td> #{select name:'local', items:locais, valueProperty:'idComplexo', labelProperty:'nomeComplexo', value:local?.idComplexo /} </td>	
+						<td> 
+						#{select name:'local', items:locais, valueProperty:'idComplexo', labelProperty:'nomeComplexo', 
+						value:local?.idComplexo} 
+						#{option 0}Todas#{/option}
+						#{/select}
+						</td>	
 					</tr>
 					<tr>
 						<td>Atendente</td>

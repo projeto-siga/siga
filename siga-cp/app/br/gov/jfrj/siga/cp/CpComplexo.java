@@ -27,8 +27,6 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.dp.DpLotacao;
-
 @Entity
 @Table(name = "CP_COMPLEXO", schema = "CORPORATIVO")
 public class CpComplexo extends AbstractCpComplexo {

@@ -98,8 +98,8 @@ public class RelMovimentacao extends RelatorioTemplate {
 		while (it.hasNext()) {
 			Object[] obj = (Object[]) it.next();
 			ExMovimentacao mov = (ExMovimentacao) obj[0];
-			ExMobil mob = (ExMobil) obj[1];
-			ExDocumento doc = (ExDocumento) obj[2];
+			//ExMobil mob = (ExMobil) obj[1];
+			//ExDocumento doc = (ExDocumento) obj[2];
 			if (mov.getExMobil().getSigla()  != null) {
 				d.add(mov.getExMobil().getSigla());
 			} else {

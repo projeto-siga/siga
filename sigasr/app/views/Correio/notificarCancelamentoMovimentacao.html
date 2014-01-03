@@ -9,12 +9,12 @@
 		<p style="text-decoration: line-through;">${movimentacao.descrMovimentacao}</p>
 		<p>
 			<b>Cancelada</b> por
-			${movimentacao.movCanceladora.cadastrante.descricaoIniciaisMaiusculas}
-			(${movimentacao.movCanceladora.lotaCadastrante.siglaLotacao})
+			${movimentacao.movCanceladora.cadastrante?.descricaoIniciaisMaiusculas}
+			(${movimentacao.movCanceladora.lotaCadastrante?.siglaLotacao})
 		</p>
 		<p>Movimentação havia sido realizada por
-			${movimentacao.cadastrante.descricaoIniciaisMaiusculas}
-			(${movimentacao.lotaCadastrante.siglaLotacao})</p>
+			${movimentacao.cadastrante?.descricaoIniciaisMaiusculas}
+			(${movimentacao.lotaCadastrante?.siglaLotacao})</p>
 	</blockquote>
 	<p>
 		Para acessar a solicitação, clique <a

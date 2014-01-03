@@ -1,11 +1,22 @@
 package controllers;
 
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +43,7 @@ import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import play.db.jpa.JPA;
@@ -50,6 +62,8 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
+
 
 public class Application extends SigaApplication {
 
@@ -967,9 +981,14 @@ public class Application extends SigaApplication {
 		listarLista();
 	}
 
-	public static void relSolicitacoes() throws Exception {
+	public static void relSolicitacoes(SrSolicitacaoFiltro filtro) throws Exception {
 		assertAcesso("REL:Relatorio");
-		render();
+		// Montando o filtro...
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		List<CpMarcador> marcadores = JPA.em()
+				.createQuery("select distinct cpMarcador from SrMarca")
+				.getResultList();
+		render(tipos, marcadores, filtro);
 	}
 
 	public static void relTransferencias(SrSolicitacao solicitacao)
@@ -1155,4 +1174,30 @@ public class Application extends SigaApplication {
 		return Double.valueOf(map.get(key).toString());
 	}
 
+	public static void concluirAutomatico() throws Exception {
+		
+		List<SrMovimentacao> movs = SrMovimentacao.find("select mov from SrMovimentacao mov " +
+				"where mov.tipoMov = 15 and exists (select 1 from SrMovimentacao movfc  " +
+				"where movfc.solicitacao = mov.solicitacao and movfc.tipoMov = 15 " +
+				"and movfc.dtIniMov = (select max(movm.dtIniMov) from SrMovimentacao movm " +
+				"where movm.solicitacao = movfc.solicitacao and movm.tipoMov = 15)) " +
+				"and not exists (select 1 from SrMovimentacao movrev where movrev.solicitacao = mov.solicitacao " +
+				"and movrev.tipoMov in (7,14,16) and movrev.dtIniMov > mov.dtIniMov)").fetch();
+	
+		Set<SrSolicitacao> solsnaoconcluidas = new HashSet<SrSolicitacao>(); 
+		for (int k  = 0; k < movs.size(); k++){
+			solsnaoconcluidas.add(movs.get(k).solicitacao);
+			System.out.println(movs.get(k).solicitacao.idSolicitacao);
+		}
+
+		Iterator it = solsnaoconcluidas.iterator();
+		while (it.hasNext()){
+			SrSolicitacao sol = (SrSolicitacao) it.next();
+			sol.fechar(null, null, "Conclusão Automática");
+		}
+		
+		render(solsnaoconcluidas);
+		//retornar uma string pelo play - depois play dá render na string	???
+	}
 }
+	

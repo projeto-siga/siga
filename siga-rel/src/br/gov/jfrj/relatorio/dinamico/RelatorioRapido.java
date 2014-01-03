@@ -21,7 +21,6 @@ package br.gov.jfrj.relatorio.dinamico;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -97,18 +96,18 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 			boolean isAgrupado) {
 		// ESTE MÉTODO DEVE SER APERFEIÇOADO. A PORCENTAGEM DA LARGURA NÃO ESTÁ
 		// DE ACORDO COM O TAMANHO DA TELA
-		Coluna c = criarColuna(titulo, tamanho, alinhamento, isAgrupado);
+		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
 		colunas.add(c);
 	}
 
-	public void addColuna(String titulo, int tamanho, int alinhamento,
+	public void addColuna(String nome, String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado, boolean isHyperlink) {
-		Coluna c = criarColuna(titulo, tamanho, alinhamento, isAgrupado);
+		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
 		c.setHyperlink(isHyperlink);
 		colunas.add(c);
 	}
 
-	private Coluna criarColuna(String titulo, int tamanho, int alinhamento,
+	private Coluna criarColuna( String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado) {
 		Coluna c = new Coluna();
 		c.setTitulo(titulo);
@@ -118,9 +117,9 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 		return c;
 	}
 
-	public void delColuna(String titulo, int tamanho, int alinhamento,
+	public void delColuna(String nome, String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado) {
-		Coluna c = criarColuna(titulo, tamanho, alinhamento, isAgrupado);
+		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
 		colunas.remove(c);
 	}
 
@@ -161,7 +160,8 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 						.setColumnProperty(
 								IConstantes.PREFIXO_COLUNA_PROPERTY + i,
 								String.class.getName()).setStyle(
-								estiloAlinhamento).build();
+								estiloAlinhamento)
+								.build();
 
 				if (c.isHyperlink()) {
 					this.addField(IConstantes.PREFIXO_HYPERLINK_PARAMETER + i,
@@ -243,6 +243,7 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 
 class Coluna {
 	private String titulo;
+	private String nome;
 	private Integer tamanho;
 	private Integer alinhamento;
 	private boolean agrupado;
@@ -256,6 +257,14 @@ class Coluna {
 		this.titulo = titulo;
 	}
 
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String titulo) {
+		this.nome = nome;
+	}
+	
 	public Integer getTamanho() {
 		return tamanho;
 	}

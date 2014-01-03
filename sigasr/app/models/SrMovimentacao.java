@@ -71,11 +71,11 @@ public class SrMovimentacao extends GenericModel {
 	public DpLotacao lotaAtendente;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_CADASTRANTE", nullable = false)
+	@JoinColumn(name = "ID_CADASTRANTE")
 	public DpPessoa cadastrante;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
+	@JoinColumn(name = "ID_LOTA_CADASTRANTE")
 	public DpLotacao lotaCadastrante;
 
 	@ManyToOne
@@ -254,8 +254,8 @@ public class SrMovimentacao extends GenericModel {
 			throw new Exception(
 					"Movimentação precisa fazer parte de uma solicitação");
 
-		if (cadastrante == null)
-			throw new Exception("Cadastrante não pode ser nulo");
+		//if (cadastrante == null)
+		//	throw new Exception("Cadastrante não pode ser nulo");
 
 		if (dtIniMov == null)
 			dtIniMov = new Date();

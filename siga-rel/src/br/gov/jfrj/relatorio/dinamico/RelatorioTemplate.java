@@ -28,6 +28,7 @@ import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 
 /**
@@ -227,9 +228,10 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	 * @return Retorna um builder de relatórios.
 	 * @throws DJBuilderException
 	 * @throws JRException
+	 * @throws ColumnBuilderException 
 	 */
 	public abstract AbstractRelatorioBaseBuilder configurarRelatorio()
-			throws DJBuilderException, JRException;
+			throws DJBuilderException, JRException, ColumnBuilderException;
 
 	/**
 	 * Implemente este método para processar os dados que serão exibidos no

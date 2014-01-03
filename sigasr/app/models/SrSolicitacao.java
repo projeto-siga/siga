@@ -790,8 +790,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean estaCom(DpLotacao lota, DpPessoa pess) {
 		SrMovimentacao ultMov = getUltimaMovimentacao();
 		return ultMov != null
-				&& ((ultMov.atendente != null && pess != null && ultMov.atendente
-						.equivale(pess)) || ultMov.lotaAtendente.equivale(lota));
+				&& ((ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess)) 
+						|| ultMov.lotaAtendente.equivale(lota));
 	}
 	
 	public boolean estaForaAtendenteDesignado() throws Exception {
@@ -1539,7 +1539,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void fechar(DpLotacao lota, DpPessoa pess, String motivo)
 			throws Exception {
 
-		if (!podeFechar(lota, pess))
+		if ( (pess!= null) && !podeFechar(lota, pess))
 			throw new Exception("Operação não permitida");
 
 		long estadoAtual = 0L;
@@ -1572,6 +1572,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			} else	
 				fecharTotalmente(lota, pess, motivo);
 		}	
+		
+		if (estadoAtual == TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL)
+			fecharTotalmente(lota, pess, motivo);
 		
 		if (estadoAtual == TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE)
 			fecharTotalmente(lota, pess, motivo);

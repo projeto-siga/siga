@@ -34,6 +34,7 @@ import play.db.jpa.GenericModel;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
 import utils.WikiParser;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -45,12 +46,21 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @NamedQueries({
 		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentes", query = "from GcInformacao i where i.hisDtFim is null order by i.hisDtIni desc"),
+		@NamedQuery(name = "maisRecentesLotacao", query = "from GcInformacao i where i.hisDtFim is null and i.lotacao.idLotacao = :idLotacao order by i.hisDtIni desc"),
 		@NamedQuery(name = "maisVisitados", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null group by i order by count(*) desc"),
-		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
-		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
-		@NamedQuery(name = "principaisTags", query = "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
+		@NamedQuery(name = "maisVisitadosLotacao", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null and i.lotacao.idLotacao = :idLotacao group by i order by count(*) desc"),
+//		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
+		@NamedQuery(name = "principaisAutores", query = "select p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null group by p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao order by count(*) desc"),
+		@NamedQuery(name = "principaisAutoresLotacao", query = "select p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.lotacao.idLotacao = :idLotacao group by p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao order by count(*) desc"),
+//		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
+		@NamedQuery(name = "principaisLotacoes", query = "select l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao, count(*) from GcInformacao i inner join i.lotacao l where i.hisDtFim is null group by l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao order by count(*) desc"),
+//		@NamedQuery(name = "principaisTags", query = "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
+		@NamedQuery(name = "principaisTags", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),
+		@NamedQuery(name = "principaisTagsLotacao", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and i.lotacao.idLotacao = :idLotacao and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),	
 		@NamedQuery(name = "evolucaoNovos", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
-		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"), })
+		@NamedQuery(name = "evolucaoNovosLotacao", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null and inf.lotacao.idLotacao = :idLotacao group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
+		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"), 
+		@NamedQuery(name = "evolucaoVisitadosLotacao", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.lotacao.idLotacao = :idLotacao and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)")})
 // select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
 // inf.tags tag where tag in (:tags)
 public class GcInformacao extends GenericModel {
@@ -473,15 +483,20 @@ public class GcInformacao extends GenericModel {
 	/**
 	 * Identifica uma informação através do seu código (JFRJ-GC-2013/00002 ou TMPGC-23)
 	 **/
-	public GcInformacao findBySigla(String sigla){
+	public static GcInformacao findBySigla(String sigla){
 		String[] siglaParticionada = sigla.split("-");
-		
+		GcInformacao info = null;
 		//verificação necessária por conta dos arquivos temporários que são buscados pelo id, já os finalizados
 		//são buscados pela sua numeração
 		if(siglaParticionada[1].equals("GC"))
-			return GcInformacao.find("byNumero",Integer.parseInt(siglaParticionada[2].split("/")[1])).first();
+			info = GcInformacao.find("byNumero",Integer.parseInt(siglaParticionada[2].split("/")[1])).first();
 		else
-			return GcInformacao.findById(Long.parseLong(siglaParticionada[1]));	
-	}
+			info = GcInformacao.findById(Long.parseLong(siglaParticionada[1]));
 
+		if(info == null){
+			throw new AplicacaoException("Não foi possível encontrar um conhecimento com o código " + sigla + 
+			". Favor verificá-lo.");
+		} else
+			return info;
+	}
 }

@@ -144,7 +144,7 @@
 					devidos fins, que meu(minha) pai(mãe) <b>${requestScope[f:concat('maepai',i)]}</b> não aufere
 					rendimentos, de quaisquer espécies, superiores ao limite
 					estabelecido pela legislação do Imposto de Renda, ou seja, R$
-					1.710,78 (mil, setecentos e dez reais e setenta e oito centavos) mensais.</p>
+					1.787,77 (mil, setecentos e oitenta e sete reais e setenta e sete centavos) mensais.</p>
 
 					<p style="TEXT-INDENT: 2cm" align="justify">Outrossim, declaro
 					estar ciente de que a legislação do Imposto de Renda - Lei n&ordm;

@@ -1,16 +1,26 @@
 #{extends 'Application/exibir_base.html' /} #{set
 title:'Movimentações'/}
+#{set 'moreHead'}
+<script type="text/javascript">
+	$(document).ready(function(){
+        $("html, body").stop().animate({
+        	"scrollTop":$("#ancora_mov").offset().top
+        }, 900);
+        event.preventDefault();
+	});
+</script>
+#{/set}
 
 <div class="gt-bd" style="padding-bottom: 0px;">
 	<div class="gt-content">
-		<h3>Movimentações</h3>
+		<h3 id="ancora_mov">Movimentações</h3>
 	</div>
 
 	<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
 		<table class="gt-table mov">
 			<thead>
 				<tr>
-					<th align="center" rowspan="2">Data</th>
+					<th align="left" rowspan="2">Data</th>
 					<th rowspan="2">Evento</th>
 					<th colspan="2" align="left">Cadastrante</th>
 					<th colspan="2" align="left">Referente</th>
@@ -26,7 +36,7 @@ title:'Movimentações'/}
 			<tbody>
 				#{list items:informacao.movs, as:'m'}
 				<tr class="juntada ">
-					<td align="center">${m.hisDtIni.format()}</td>
+					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
 					<td>${m.tipo.nome}</td>
 					<td align="left"><span
 						title="${m.hisIdcIni.dpPessoa.lotacao.descricao}">${m.hisIdcIni.dpPessoa.lotacao.sigla}</span>
@@ -39,7 +49,11 @@ title:'Movimentações'/}
 					</td>
 					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span>
 					</td>
-					<td></td>
+					<td>
+						#{if m.tipo.id == 13}
+							${m.arq?.titulo} (${m.arq?.mimeType})
+						#{/if}
+					</td>
 				</tr>
 				#{/list}
 			</tbody>

@@ -641,7 +641,7 @@ public class ExBL extends CpBL {
 					m = CpMarcador.MARCADOR_DISPONIBILIZADO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
 					m = CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO;
-				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE && !apensadoAVolumeDoMesmoProcesso)
 					m = CpMarcador.MARCADOR_ARQUIVADO_CORRENTE;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE)
 					m = CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE;
@@ -4626,10 +4626,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento juntado");
 
-		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre))
+		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre) ||
+				!mob.estaNaMesmaLotacao(mobMestre))
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento que esteja em outra lotação");
-
+		
 		if (mobMestre.isEmTransito())
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento em trânsito");
@@ -5307,14 +5308,14 @@ public class ExBL extends CpBL {
 	public void incluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc) throws Exception {
 		
-		if(doc.getCosignatarios() != null && !doc.getCosignatarios().isEmpty())
-			excluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
+		final List<DpPessoa> cosignatariosDaEntrevista = obterCosignatariosDaEntrevista(doc.getForm());
 		
-		final List<DpPessoa> cosignatarios = obterCosignatariosDaEntrevista(doc.getForm());
-		
-		if(cosignatarios != null) {
+		if(cosignatariosDaEntrevista != null && !cosignatariosDaEntrevista.isEmpty()) {
 			
-			for (DpPessoa cosignatario : cosignatarios) {
+			if(doc.getCosignatarios() != null && !doc.getCosignatarios().isEmpty())
+				excluirCosignatariosAutomaticamente(cadastrante, lotaCadastrante, doc);
+			
+			for (DpPessoa cosignatario : cosignatariosDaEntrevista) {
 				
 				incluirCosignatario(cadastrante, lotaCadastrante, doc, null, cosignatario, null);
 			}

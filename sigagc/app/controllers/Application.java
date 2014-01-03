@@ -3,7 +3,6 @@ package controllers;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,9 +28,6 @@ import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.joda.time.LocalDate;
-import org.mcavallo.opencloud.Cloud;
-import org.mcavallo.opencloud.Tag;
 
 import play.Play;
 import play.Play.Mode;
@@ -40,9 +36,9 @@ import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
-import play.mvc.Router;
 import utils.GcArvore;
 import utils.GcBL;
+import utils.GcCloud;
 import utils.GcGraficoEvolucao;
 import utils.GcGraficoEvolucaoItem;
 import utils.GcInformacaoFiltro;
@@ -161,7 +157,7 @@ public class Application extends SigaApplication {
 			renderArgs.put("identidadeCadastrante", identidadeCadastrante);
 		}
 
-		int a = 0;
+		//int a = 0;
 
 		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
 			Date dt = GcBL.dt();
@@ -284,8 +280,8 @@ public class Application extends SigaApplication {
 		buscar(null);
 	}
 
-	public static void top10() {
-		List<GcInformacao> lista = GcInformacao.all().fetch();
+	public static void estatisticaGeral() {
+		//List<GcInformacao> lista = GcInformacao.all().fetch();
 
 		Query query1 = JPA.em().createNamedQuery("maisRecentes");
 		query1.setMaxResults(5);
@@ -311,29 +307,17 @@ public class Application extends SigaApplication {
 		if (listaPrincipaisLotacoes.size() == 0)
 			listaPrincipaisLotacoes = null;
 
-		Cloud cloud = null;
-
+		GcCloud cloud = new GcCloud(150.0, 60.0);
 		Query query5 = JPA.em().createNamedQuery("principaisTags");
 		query5.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query5.getResultList();
 		if (listaPrincipaisTags.size() == 0)
 			listaPrincipaisTags = null;
 		else {
-			cloud = new Cloud(); // create cloud
-			cloud.setMaxWeight(150.0); // max font size
-			cloud.setMinWeight(50.0);
-			double d = listaPrincipaisTags.size();
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			for (GcTag t : (List<GcTag>) (Object) listaPrincipaisTags) {
-				map.clear();
-				map.put("filtro.tag", t.id);
-				String link = Router.reverse("Application.listar", map).url;
-				Tag tag = new Tag(t.titulo, link, d);
-				cloud.addTag(tag);
-				d -= 1;
+			for (Object[] t : listaPrincipaisTags) {
+				cloud.criarCloud(t);
 			}
 		}
-
 		GcGraficoEvolucao set = new GcGraficoEvolucao();
 		Query query6 = JPA.em().createNamedQuery("evolucaoNovos");
 		List<Object[]> listaNovos = query6.getResultList();
@@ -348,40 +332,72 @@ public class Application extends SigaApplication {
 			set.add(new GcGraficoEvolucaoItem((Integer) visitados[0],
 					(Integer) visitados[1], 0, (Long) visitados[2], 0));
 		}
+		String evolucao = set.criarGrafico();
 
-		LocalDate ld = new LocalDate();
-		ld = new LocalDate(ld.getYear(), ld.getMonthOfYear(), 1);
-
-		// Header
-		StringBuilder sb = new StringBuilder();
-		sb.append("['Mês','Visitas','Novos'],");
-
-		// Values
-		for (int i = -6; i <= 0; i++) {
-			LocalDate ldl = ld.plusMonths(i);
-			sb.append("['");
-			sb.append(ldl.toString("MMM/yy"));
-			sb.append("',");
-			long novos = 0;
-			long visitados = 0;
-			GcGraficoEvolucaoItem o = new GcGraficoEvolucaoItem(
-					ldl.getMonthOfYear(), ldl.getYear(), 0, 0, 0);
-			if (set.contains(o)) {
-				o = set.floor(o);
-				novos = o.novos;
-				visitados = o.visitados;
-			}
-			sb.append(visitados);
-			sb.append(",");
-			sb.append(novos);
-			sb.append(",");
-			sb.append("],");
-		}
-		String evolucao = sb.toString();
-
-		render(lista, listaMaisRecentes, listaMaisVisitados,
+		render(listaMaisRecentes, listaMaisVisitados,
 				listaPrincipaisAutores, listaPrincipaisLotacoes,
 				listaPrincipaisTags, cloud, evolucao);
+	}
+
+	public static void estatisticaLotacao() {
+		//List<GcInformacao> lista = GcInformacao.all().fetch();
+	
+		Long idLotacao = lotaTitular().getId();
+		String siglaLotacao = lotaTitular().getDescricaoIniciaisMaiusculas();
+		
+		Query query1 = JPA.em().createNamedQuery("maisRecentesLotacao");
+		query1.setParameter("idLotacao", idLotacao);	
+		query1.setMaxResults(5);
+		List<Object[]> listaMaisRecentes = query1.getResultList();
+		if (listaMaisRecentes.size() == 0)
+			listaMaisRecentes = null;
+
+		Query query2 = JPA.em().createNamedQuery("maisVisitadosLotacao");
+		query2.setParameter("idLotacao", idLotacao);	
+		query2.setMaxResults(5);
+		List<Object[]> listaMaisVisitados = query2.getResultList();
+		if (listaMaisVisitados.size() == 0)
+			listaMaisVisitados = null;
+
+		Query query3 = JPA.em().createNamedQuery("principaisAutoresLotacao");
+		query3.setParameter("idLotacao", idLotacao);
+		query3.setMaxResults(5);
+		List<Object[]> listaPrincipaisAutores = query3.getResultList();
+		if (listaPrincipaisAutores.size() == 0)
+			listaPrincipaisAutores = null;
+
+		GcCloud cloud = new GcCloud(150.0, 60.0);
+		Query query4  = JPA.em().createNamedQuery("principaisTagsLotacao");
+		query4.setParameter("idLotacao", idLotacao);
+		query4.setMaxResults(50);
+		List<Object[]> listaPrincipaisTags = query4.getResultList();
+		if (listaPrincipaisTags.size() == 0)
+			listaPrincipaisTags = null;
+		else {
+			for (Object[] t : listaPrincipaisTags) {
+				cloud.criarCloud(t, idLotacao);
+			}
+		}
+		GcGraficoEvolucao set = new GcGraficoEvolucao();
+		Query query5 = JPA.em().createNamedQuery("evolucaoNovosLotacao");
+		query5.setParameter("idLotacao", idLotacao);
+		List<Object[]> listaNovos = query5.getResultList();
+		for (Object[] novos : listaNovos) {
+			set.add(new GcGraficoEvolucaoItem((Integer) novos[0],
+					(Integer) novos[1], (Long) novos[2], 0, 0));
+		}
+
+		Query query6 = JPA.em().createNamedQuery("evolucaoVisitadosLotacao");
+		query6.setParameter("idLotacao", idLotacao);
+		List<Object[]> listaVisitados = query6.getResultList();
+		for (Object[] visitados : listaVisitados) {
+			set.add(new GcGraficoEvolucaoItem((Integer) visitados[0],
+					(Integer) visitados[1], 0, (Long) visitados[2], 0));
+		}
+		String evolucao = set.criarGrafico();
+
+		render(siglaLotacao, listaMaisRecentes, listaMaisVisitados,
+				listaPrincipaisAutores, listaPrincipaisTags, cloud, evolucao);
 	}
 
 	public static void listar(GcInformacaoFiltro filtro) {
@@ -452,7 +468,7 @@ public class Application extends SigaApplication {
 		}
 
 		arvore.build();
-
+		
 		render(arvore, texto);
 	}
 
@@ -461,17 +477,12 @@ public class Application extends SigaApplication {
 	// render(informacoes);
 	// }
 
-	public static void exibir(String sigla) throws Exception {
-		
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void exibir(String sigla) throws Exception{
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		if (conteudo != null)
+			informacao.arq.setConteudoTXT(conteudo);
 		
-		if (informacao == null)
-			index();
-		else {
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-		}
 		if (!informacao.acessoPermitido(titular(), lotaTitular())) {
 			throw new AplicacaoException(
 					"O usuário corrente não tem acesso à informação solicitada.");
@@ -482,11 +493,11 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void editar(String sigla, String classificacao, String titulo,
-			String origem) throws IOException {
-		GcInformacao informacao = new GcInformacao();
+			String origem) throws Exception {
+		GcInformacao informacao = null;
 
 		if(sigla != null)
-			informacao = informacao.findBySigla(sigla);
+			informacao = GcInformacao.findBySigla(sigla);
 		else
 			informacao = new GcInformacao();
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
@@ -511,16 +522,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void historico(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
-
-		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
-		
-		if (informacao == null)
-			index();
-		else {
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-		}
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
 		diff_match_patch diff = new diff_match_patch();
 
@@ -572,27 +574,25 @@ public class Application extends SigaApplication {
 				}
 			}
 		}
+		
+		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+		if (conteudo != null)
+			informacao.arq.setConteudoTXT(conteudo);
 
 		render(informacao, list, mapTitulo, mapTxt);
 	}
 
 	public static void movimentacoes(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
-
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
-		
-		if (informacao == null)
-			index();
-		else {
-			if (conteudo != null)
+		if (conteudo != null)
 				informacao.arq.setConteudoTXT(conteudo);
-		}
 
 		render(informacao);
 	}
 
 	public static void fechar(String sigla) throws Exception {
-		GcInformacao inf = new GcInformacao().findBySigla(sigla);
+		GcInformacao inf = GcInformacao.findBySigla(sigla);
 		GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 				null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(inf, idc());
@@ -639,8 +639,8 @@ public class Application extends SigaApplication {
 			exibir(informacao.getSigla());
 	}
 
-	public static void remover(String sigla) throws AplicacaoException {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void remover(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
 		if (informacao.elaboracaoFim != null)
 			throw new AplicacaoException(
@@ -653,8 +653,8 @@ public class Application extends SigaApplication {
 		index();
 	}
 
-	public static void notificar(String sigla) {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void notificar(String sigla) throws Exception{
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -671,8 +671,8 @@ public class Application extends SigaApplication {
 		exibir(informacao.getSigla());
 	}
 
-	public static void solicitarRevisao(String sigla) {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void solicitarRevisao(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -689,8 +689,8 @@ public class Application extends SigaApplication {
 		exibir(informacao.getSigla());
 	}
 
-	public static void anexar(String sigla) {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+	public static void anexar(String sigla) throws Exception{
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		render(informacao);
 	}
 
@@ -704,7 +704,8 @@ public class Application extends SigaApplication {
 					if (file.getContentType() != null) {
 						String mimeType = file.getContentType().toLowerCase();
 						byte anexo[] = file.asBytes();
-						titulo = file.getFileName();
+						if (titulo == null)
+							titulo = file.getFileName();
 						DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa
 								.findById(pessoa) : null);
 						DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
@@ -718,6 +719,8 @@ public class Application extends SigaApplication {
 						exibir(informacao.getSigla());
 					}
 				}
+				else
+					throw new AplicacaoException("Não é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
 			}
 		}
 	}
@@ -730,7 +733,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void revisado(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		if (informacao.movs != null) {
 			for (GcMovimentacao mov : informacao.movs) {
 				if (mov.isCancelada())
@@ -751,19 +754,19 @@ public class Application extends SigaApplication {
 	}
 
 	public static void marcarComoInteressado(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		GcBL.interessado(informacao, idc(), titular(), true);
 		exibir(sigla);
 	}
 
 	public static void desmarcarComoInteressado(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		GcBL.interessado(informacao, idc(), titular(), false);
 		exibir(sigla);
 	}
 
 	public static void cancelar(String sigla) throws Exception {
-		GcInformacao informacao = new GcInformacao().findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		GcBL.cancelar(informacao, idc(), titular(), lotaTitular());
 		exibir(sigla);
 	}

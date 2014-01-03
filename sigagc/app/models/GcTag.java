@@ -1,5 +1,6 @@
 package models;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -11,7 +12,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.mcavallo.opencloud.Cloud;
+import org.mcavallo.opencloud.Tag;
+
 import play.db.jpa.GenericModel;
+import play.mvc.Router;
 import util.SigaPlaySelecionavel;
 import utils.GcBL;
 import br.gov.jfrj.siga.base.Texto;
@@ -162,8 +167,5 @@ public class GcTag extends GenericModel implements Comparable<GcTag>,
 	@Override
 	public String toString() {
 		return (tipo.id == 1 ? "@" : (tipo.id == 2 ? "#" : "^")) + (categoria != null ? categoria + ":" : "") + titulo;
-	}
-
-	
-	
+	}	
 }

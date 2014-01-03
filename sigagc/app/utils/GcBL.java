@@ -72,7 +72,7 @@ public class GcBL {
 			} else {
 				if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO)
 					//throw new Exception("Não é permitido salvar uma informação com título, conteúdo e classificação vazios.");
-					throw new AplicacaoException("Não é permitido salvar uma informação com título, conteúdo vazios.");
+					throw new AplicacaoException("Não é permitido salvar uma informação com título ou conteúdo vazios.");
 			}
 		}
 

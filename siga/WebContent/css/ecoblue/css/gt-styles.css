@@ -348,36 +348,13 @@ body {
 	border: none;
 }
 
-/****** Classes criadas para o sigaGC - top10.html *******/
-.gt-categories-link  a:link,  .gt-categories-link a:visited {
-	color: #365b6d !important;
-}
+/****** Classe criada para o sigaGC - top10.html *******/
 .gt-td td{
 	padding:7px 10px; !important;
 	border-top: 1px solid #ccc !important;
 	font-size: 90% !important;
 	font-weight:normal;
 	color: #333;
-}
-	
-.gt-categories-th {
-	font-weight: normal;
-	text-align: left !important;
-	padding-left: 10px !important;
-	vertical-align: middle !important;
-	font-size: 85%;
-	color: #666666 !important;
-}
-.gt-th {
-	padding-left: 5px !important;
-	text-align: right !important;
-}
-.gt-categories-td {
-	padding-left: 0 !important;
-	font-size: 85%;
-	font-weight: bold;
-	vertical-align: middle !important;
-	color: #666666 !important;
 }
 /********************************************************/
 
@@ -942,7 +919,7 @@ ul li {
 }
 .gt-search-inner {
 	height: 19px;
-	background: url(../images/gt/search-box-right.png) no-repeat 100% 0;
+	background: url(../images/gt/search-box-right2.png) no-repeat 100% 0;
 	padding: 3px 0 0 0;
 }
 .gt-search .gt-search-text {

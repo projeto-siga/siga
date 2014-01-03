@@ -73,10 +73,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public String getLocalidadeString() {
-		String s[] = getNomeLotacao().split(" de ");
+		String s[] = getNomeLotacao().toLowerCase().split(" de ");
 		String s2 = "";
 		if (s.length >= 2) {
-			s2 = s[s.length - 1];
+			s2 = s[s.length - 1].toLowerCase();
 			if (CpLocalidade.MUNICIPIOS.contains(s2))
 				return s2;
 			// Fix:

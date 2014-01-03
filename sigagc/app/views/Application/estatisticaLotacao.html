@@ -1,0 +1,146 @@
+#{extends 'main.html' /} #{set title:'Informações' /} 
+#{set 'metaTypeIE'} 
+	 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" >
+#{/set}
+#{set 'moreHead'}
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+	google.load('visualization', '1', {
+		packages : [ 'corechart', 'gauge' ]
+	});
+</script>
+<script type="text/javascript">
+function drawGraphs() {
+	drawEvolution();
+}
+
+function drawEvolution() {
+	// Some raw data (not necessarily accurate)
+		var data = google.visualization.arrayToDataTable([${evolucao.raw()}]);
+
+		// Create and draw the visualization.
+		var ac = new google.visualization.ComboChart(document
+				.getElementById('evolution'));
+		ac.draw(data, {
+			seriesType : "bars",
+			legend : {position: 'top', alignment : 'center'},
+			isStacked : true,
+			width : "100%",
+			height : "100%"
+		});
+}
+
+	google.setOnLoadCallback(drawGraphs);
+</script>
+
+#{/set}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h3>Estatísticas - ${siglaLotacao}</h3><br />
+		<div class="gt-left-col">
+			<h2>Conhecimentos Mais Recentes</h2>
+			#{if listaMaisRecentes != null}
+			<div class="gt-content-box gt-for-table">
+				<table border="0" class="gt-table gt-user-table">
+					<thead>
+						<tr>
+							<th width="45%">Título</th>
+							<th width="20%">Data</th>
+							<th width="20%">Autor</th>
+							<th width="15%">Lotação</th>	
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaMaisRecentes,as:'i'}
+						<tr class="gt-td">
+							<td width="45%"><h4 class="gt-categories-link"><a href="@{Application.exibir(i.sigla)}">${i?.arq?.titulo}</h4></a></td>
+							<td width="20%">${i.dtIniString}</td>
+							<td width="20%">${i.autor.primeiroNomeEIniciais}</td>
+							<td width="15%">${i.lotacao.sigla}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum conhecimento recente para essa lotação.</p>
+			#{/else} <br />
+
+			<!--  -->
+			<h2>Conhecimentos Mais Acessados</h2>
+			#{if listaMaisVisitados != null}
+			<div class="gt-content-box gt-for-table">
+				<table border="0" class="gt-table gt-user-table">
+					<thead>
+						<tr>
+							<th width="45%">Título</th>
+							<th width="20%">Data</th>
+							<th width="20%">Autor</th>
+							<th width="15%">Lotação</th>	
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaMaisVisitados,as:'i'}
+						<tr class="gt-td">
+							<td width="45%"><h4 class="gt-categories-link"><a href="@{Application.exibir(i.sigla)}">${i?.arq?.titulo}</h4></a></td>
+							<td width="20%">${i.dtIniString}</td>
+							<td width="20%">${i.autor.primeiroNomeEIniciais}</td>
+							<td width="15%">${i.lotacao.sigla}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum conhecimento visitado dessa lotação.</p>
+			#{/else}
+
+
+		</div>
+		<div class="gt-right-col">
+			<h2>Principais Autores</h2>
+			#{if listaPrincipaisAutores != null}
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-table gt-user-table">
+					<thead>
+						<tr>
+							<th width="65%">Autor</th>
+							<th width="15%">Lotação</th>
+							<th style="width: 20%;text-align: right;">Conhecimentos</th>	
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaPrincipaisAutores,as:'p'}
+						<tr>
+							*{
+								p[0] - nomePessoa/ p[1] - idPessoaInicial/ p[2] - lotacao.sigla/ p[3] - contador
+							}*
+							<td style="width: 65%;">${p[0]}</td>
+							<td style="width: 15%;">${p[2]}</td>
+							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.autor=${p[1]}">${p[3]}</a></td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum autor cadastrou um conhecimento nessa lotação.</p>
+			#{/else} <br />
+			
+			<h2>Principais Classificações</h2>
+			#{if cloud.size() > 0}
+			<div class="gt-content-box gt-tag-cloud">
+				#{list items:cloud.tags(),as:'tag'}
+					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a>
+				#{/list}
+			</div>
+			#{/if} #{else}
+			<p>Nenhuma classificação cadastrada.</p>
+			#{/else}
+			<br />
+			<h2>Evolução</h2>
+			<div id="evolution" class="gt-content-box gt-tag-cloud"></div>
+		</div>
+	</div>
+</div>

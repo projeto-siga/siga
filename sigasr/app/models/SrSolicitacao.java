@@ -1573,9 +1573,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				fecharTotalmente(lota, pess, motivo);
 		}	
 		
-		if (estadoAtual == TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL)
-			fecharTotalmente(lota, pess, motivo);
-		
 		if (estadoAtual == TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE)
 			fecharTotalmente(lota, pess, motivo);
 	}

@@ -41,7 +41,6 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.jus.trf2.component.PoliticaEnum;
 
 import com.lowagie.text.pdf.codec.Base64;
 

@@ -99,6 +99,7 @@ function assinar(){
 
 function Erro(err) {
   alert("Ocorreu um erro durante o processo de assinatura: " + err.message);
+  return "Ocorreu um erro durante o processo de assinatura: " + err.message;
 }
 
 function InicializarCapicom(){
@@ -124,9 +125,45 @@ function InicializarCapicom(){
 	return "OK";
 }
 
+function Conteudo(url){
+	//alert(url);
+	//objHTTP = new ActiveXObject("MSXML2.XMLHTTP");
+	//objHTTP.open("GET", url, false);
+	//objHTTP.send();
+	
+	//if(objHTTP.Status == 200){
+		var Conteudo, Inicio, Fim, Texto;
+		//alert("OK, enviado");
+		//Conteudo = objHTTP.responseText;
+		
+		//Conteudo = objHTTP.responseText;
+		Conteudo = VBConteudo(url);
+//		alert(Conteudo);
+//		alert(gVBAtributoAssinavelDataHora);
+//		alert(gVBConteudoArray);
+			
+		
+        if (Conteudo.indexOf("gt-error-page-hd") != -1) {
+			Inicio = Conteudo.indexOf("<h3>") + 4;
+			Fim = Conteudo.indexOf("</h3>",Inicio);
+			Texto = Conteudo.substr(Inicio, Fim - Inicio);
+			return "Não foi possível obter o conteúdo do documento a ser assinado: " + Texto;
+        }
+
+        Conteudo = gVBConteudoArray;
+        
+		//gAtributoAssinavelDataHora = objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora");
+		gAtributoAssinavelDataHora = gVBAtributoAssinavelDataHora;
+	  	return Conteudo;
+	//}
+	return "Não foi possível obter o conteúdo do documento a ser assinado.";
+}
+
 function AssinarDocumento(conteudo){
 	var ret = {};
-	try { 
+	try {
+//		alert(conteudo);
+//		gAssinatura.Content = gUtil.Base64Decode(conteudo)
 		gAssinatura.Content = conteudo;
 		ret.assinaturaB64 = gAssinatura.Sign(gSigner, true, 0);
 		var assinante = gAssinatura.Signers(1).Certificate.SubjectName;
@@ -210,7 +247,7 @@ function AssinarDocumentos(Copia, oElm){
 		    if(b){
 				process.push("gNome='" + oNome.value + "'; gUrlDocumento = '" + oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1'; if (typeof gCertificadoB64 != 'undefined'){gUrlDocumento = gUrlDocumento + '&certificadoB64=' + encodeURIComponent(gCertificadoB64);};");
 	      		process.push(function(){Log(gNome + ": Buscando no servidor...")});
-	      		process.push(function(){gDocumento = Conteudo(gUrlDocumento)});
+	      		process.push(function(){gDocumento = Conteudo(gUrlDocumento); if (typeof gDocumento == "string" && gDocumento.indexOf("Não") == 0) return gDocumento;});
 	
 	            var ret;
 	      		process.push(function(){Log(gNome + ": Assinando...")});
@@ -240,19 +277,6 @@ function AssinarDocumentos(Copia, oElm){
     process.push(function(){Log("Concluído, redirecionando...");});
     process.push(function(){location.href = oUrlNext.value;});
 	process.run();
-}
-
-function Conteudo(url){
-	//alert(url);
-	objHTTP = new ActiveXObject("MSXML2.XMLHTTP");
-	objHTTP.open("GET", url, false);
-	objHTTP.send();
-	
-	if(objHTTP.Status == 200){
-		gAtributoAssinavelDataHora = objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora");
-	  	return objHTTP.responseBody;
-	}
-	return Erro("Não foi possível obter o conteúdo do documento a ser assinado.")
 }
 
 function GravarAssinatura(url, datatosend) {
@@ -306,6 +330,335 @@ function TestCAPICOM() {
         }
 	}
 }
+
+//see doc on http://msdn.microsoft.com/en-us/library/ms535874(VS.85).aspx
+function getXMLHttpRequest() 
+{
+    if (window.XMLHttpRequest) {
+        return new window.XMLHttpRequest;
+    }
+    else {
+        try {
+            return new ActiveXObject("MSXML2.XMLHTTP"); 
+        }
+        catch(ex) {
+            return null;
+        }
+    }
+}
+
+if(/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+    var VBConteudo_Script =
+    '<!-- VBConteudo -->\r\n'+
+    '<script type="text/vbscript">\r\n'+
+    'Dim gVBConteudoArray, gVBAtributoAssinavelDataHora\r\n'+
+    'Function VBConteudo(url)\r\n'+
+	'	Set objHTTP = CreateObject("MSXML2.XMLHTTP")\r\n'+
+	'	objHTTP.open "GET", url, False\r\n'+
+	'	objHTTP.send\r\n'+
+	'	If objHTTP.Status = 200 Then\r\n'+
+	'	    gVBAtributoAssinavelDataHora = objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora")\r\n'+
+	'	    VBConteudo = objHTTP.responseText\r\n'+
+	'	    gVBConteudoArray = objHTTP.responseBody\r\n'+
+	'	End If\r\n'+
+	'End Function\r\n'+
+    '\<\/script>\r\n';
+
+    // inject VBScript
+    document.write(VBConteudo_Script);
+}
+
+
+/*
+if(/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+    var IEBinaryToArray_ByteStr_Script =
+    "<!-- IEBinaryToArray_ByteStr -->\r\n"+
+    "<script type='text/vbscript'>\r\n"+
+    "Function IEBinaryToArray_ByteStr(Binary)\r\n"+
+    "   IEBinaryToArray_ByteStr = CStr(Binary)\r\n"+
+    "End Function\r\n"+
+    "Function IEBinaryToArray_ByteStr_Last(Binary)\r\n"+
+    "   Dim lastIndex\r\n"+
+    "   lastIndex = LenB(Binary)\r\n"+
+    "   if lastIndex mod 2 Then\r\n"+
+    "       IEBinaryToArray_ByteStr_Last = Chr( AscB( MidB( Binary, lastIndex, 1 ) ) )\r\n"+
+    "   Else\r\n"+
+    "       IEBinaryToArray_ByteStr_Last = "+'""'+"\r\n"+
+    "   End If\r\n"+
+    "End Function\r\n"+
+    "\<\/script>\r\n";
+
+    // inject VBScript
+    document.write(IEBinaryToArray_ByteStr_Script);
+}
+
+// this fn is invoked if IE
+function IeBinFileReaderImpl(fileURL){
+    this.req = getXMLHttpRequest();
+    this.req.open("GET", fileURL, true);
+    this.req.setRequestHeader("Accept-Charset", "x-user-defined");
+    this.req.send();
+
+    // my helper to convert from responseBody to a "responseText" like thing
+    var convertResponseBodyToText = function (binary) {
+        var byteMapping = {};
+        for ( var i = 0; i < 256; i++ ) {
+            for ( var j = 0; j < 256; j++ ) {
+                byteMapping[ String.fromCharCode( i + j * 256 ) ] =
+                    String.fromCharCode(i) + String.fromCharCode(j);
+            }
+        }
+        // call into VBScript utility fns
+        var rawBytes = IEBinaryToArray_ByteStr(binary);
+        var lastChr = IEBinaryToArray_ByteStr_Last(binary);
+        return rawBytes.replace(/[\s\S]/g,
+                                function( match ) { return byteMapping[match]; }) + lastChr;
+    };
+
+	if(this.req.Status == 200){
+		// this doesn't work
+		//fileContents = that.req.responseBody.toArray(); 
+		
+		// this doesn't work
+		//fileContents = new VBArray(that.req.responseBody).toArray(); 
+		
+		// this works...
+		var fileContents = convertResponseBodyToText(that.req.responseBody);
+		
+		fileSize = fileContents.length-1;
+		if(that.fileSize < 0) throwException(_exception.FileLoadFailed);
+		that.readByteAt = function(i){
+		    return fileContents.charCodeAt(i) & 0xff;
+		};
+    };
+}
+
+function Conteudo2(url){
+	alert(url);
+	objHTTP = new ActiveXObject("MSXML2.XMLHTTP");
+	objHTTP.open("GET", url, false);
+	objHTTP.send();
+	
+    // my helper to convert from responseBody to a "responseText" like thing
+    var convertResponseBodyToText = function (binary) {
+        var byteMapping = {};
+        for ( var i = 0; i < 256; i++ ) {
+            for ( var j = 0; j < 256; j++ ) {
+                byteMapping[ String.fromCharCode( i + j * 256 ) ] =
+                    String.fromCharCode(i) + String.fromCharCode(j);
+            }
+        }
+        // call into VBScript utility fns
+        var rawBytes = IEBinaryToArray_ByteStr(binary);
+        var lastChr = IEBinaryToArray_ByteStr_Last(binary);
+        return rawBytes.replace(/[\s\S]/g,
+                                function( match ) { return byteMapping[match]; }) + lastChr;
+    };
+
+	if(objHTTP.Status == 200){
+		var Conteudo, Inicio, Fim, Texto;
+		//alert("OK, enviado");
+		
+		// this doesn't work
+		//Conteudo = objHTTP.responseText;
+		
+		// this doesn't work
+		//Conteudo = that.req.responseBody.toArray(); 
+		
+		// this doesn't work
+		//Conteudo = new VBArray(that.req.responseBody).toArray(); 
+		
+		// this works...
+		Conteudo = convertResponseBodyToText(objHTTP.responseBody);
+		
+		//fileSize = Conteudo.length-1;
+		//if(that.fileSize < 0) throwException(_exception.FileLoadFailed);
+		//that.readByteAt = function(i){
+		    //return fileContents.charCodeAt(i) & 0xff;
+		//};
+		
+        if (Conteudo.indexOf("gt-error-page-hd") != -1) {
+			Inicio = Conteudo.indexOf("<h3>") + 4;
+			Fim = Conteudo.indexOf("</h3>",Inicio);
+			Texto = Conteudo.substr(Inicio, Fim - Inicio);
+			return "Não foi possível obter o conteúdo do documento a ser assinado: " + Texto;
+        }
+        
+		gAtributoAssinavelDataHora = objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora");
+	  	return Conteudo;
+	}
+	return "Não foi possível obter o conteúdo do documento a ser assinado.";
+}
+
+
+
+// this fn is invoked if non IE
+function NormalBinFileReaderImpl(fileURL){
+    this.req = new XMLHttpRequest();
+    this.req.open('GET', fileURL, true);
+    this.req.onreadystatechange = function(aEvt) {
+        if (that.req.readyState == 4) {
+            if(that.req.status == 200){
+                var fileContents = that.req.responseText;
+                fileSize = fileContents.length;
+
+                that.readByteAt = function(i){
+                    return fileContents.charCodeAt(i) & 0xff;
+                }
+                if (typeof callback == "function"){ callback(that);}
+            }
+            else
+                throwException(_exception.FileLoadFailed);
+        }
+    };
+    //XHR binary charset opt by Marcus Granado 2006 [http://mgran.blogspot.com] 
+    this.req.overrideMimeType('text/plain; charset=x-user-defined');
+    this.req.send(null);
+}
+*/
+
+/**
+*
+*  Base64 encode / decode
+*  http://www.webtoolkit.info/
+*
+**/
+var Base64 = {
+
+// private property
+_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+// public method for encoding
+encode : function (input) {
+    var output = "";
+    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+    var i = 0;
+
+    input = Base64._utf8_encode(input);
+
+    while (i < input.length) {
+
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+
+        enc1 = chr1 >> 2;
+        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+        enc4 = chr3 & 63;
+
+        if (isNaN(chr2)) {
+            enc3 = enc4 = 64;
+        } else if (isNaN(chr3)) {
+            enc4 = 64;
+        }
+
+        output = output +
+        this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+        this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+
+    }
+
+    return output;
+},
+
+// public method for decoding
+decode : function (input) {
+    var output = "";
+    var chr1, chr2, chr3;
+    var enc1, enc2, enc3, enc4;
+    var i = 0;
+
+    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+    while (i < input.length) {
+
+        enc1 = this._keyStr.indexOf(input.charAt(i++));
+        enc2 = this._keyStr.indexOf(input.charAt(i++));
+        enc3 = this._keyStr.indexOf(input.charAt(i++));
+        enc4 = this._keyStr.indexOf(input.charAt(i++));
+
+        chr1 = (enc1 << 2) | (enc2 >> 4);
+        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+        chr3 = ((enc3 & 3) << 6) | enc4;
+
+        output = output + String.fromCharCode(chr1);
+
+        if (enc3 != 64) {
+            output = output + String.fromCharCode(chr2);
+        }
+        if (enc4 != 64) {
+            output = output + String.fromCharCode(chr3);
+        }
+
+    }
+
+    output = Base64._utf8_decode(output);
+
+    return output;
+
+},
+
+// private method for UTF-8 encoding
+_utf8_encode : function (string) {
+    string = string.replace(/\r\n/g,"\n");
+    var utftext = "";
+
+    for (var n = 0; n < string.length; n++) {
+
+        var c = string.charCodeAt(n);
+
+        if (c < 128) {
+            utftext += String.fromCharCode(c);
+        }
+        else if((c > 127) && (c < 2048)) {
+            utftext += String.fromCharCode((c >> 6) | 192);
+            utftext += String.fromCharCode((c & 63) | 128);
+        }
+        else {
+            utftext += String.fromCharCode((c >> 12) | 224);
+            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+            utftext += String.fromCharCode((c & 63) | 128);
+        }
+
+    }
+
+    return utftext;
+},
+
+// private method for UTF-8 decoding
+_utf8_decode : function (utftext) {
+    var string = "";
+    var i = 0;
+    var c = c1 = c2 = 0;
+
+    while ( i < utftext.length ) {
+
+        c = utftext.charCodeAt(i);
+
+        if (c < 128) {
+            string += String.fromCharCode(c);
+            i++;
+        }
+        else if((c > 191) && (c < 224)) {
+            c2 = utftext.charCodeAt(i+1);
+            string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+            i += 2;
+        }
+        else {
+            c2 = utftext.charCodeAt(i+1);
+            c3 = utftext.charCodeAt(i+2);
+            string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+            i += 3;
+        }
+
+    }
+
+    return string;
+}
+
+}
+
 
 
 </script>

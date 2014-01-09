@@ -10,10 +10,14 @@ import models.GcTipoInformacao;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class GcInformacaoFiltro extends GcInformacao {
 	
 	public boolean pesquisa = false;
+	public String dtCriacaoIni;
+	public String dtCriacaoFim;
 	public String dtIni;
 	public String dtFim;
 	public CpMarcador situacao;
@@ -21,33 +25,28 @@ public class GcInformacaoFiltro extends GcInformacao {
 	public String titulo;
 	public String conteudo;
 	public GcTag tag;
+	public DpPessoa responsavel;
+	public DpLotacao lotaResponsavel;
 
 	public List<GcInformacao> buscar() {
 		
 		String query = null;
-		//todos os status
-		if(situacao == null)
-			query = "from GcInformacao inf where inf.hisDtIni is not null ";
-		else {
-			//status cancelado
-			if(situacao.getIdMarcador() == 10)
-				query = "from GcInformacao inf where inf.hisDtFim is not null ";
-			//qualquer status, menos o cancelado
-			else
-				query = "from GcInformacao inf where inf.hisDtFim is null ";
-		}	
-		
+		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
+		final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
+
+		query = "from GcInformacao inf where inf.hisDtIni is not null ";
+
+		if(tag != null)
+			//query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = " + tag.id;
+			query = "select inf from GcInformacao inf inner join inf.tags tags where tags.titulo = '" + tag.titulo + "'";
+			//query += " and inf.tags.id = " + tag.id;
+
 		if(orgaoUsu != null)
 			query += " and inf.ou = " + orgaoUsu.getId();
 		
-		if(tag != null)
-			//query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = " + tag.id;
-			query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where tag.titulo = '" + tag.titulo + "'";
-			//query += " and inf.tags.id = " + tag.id;
 		if(autor != null)
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();
-		
-		if(lotacao != null)
+		else if(lotacao != null)
 			query += " and inf.lotacao.idLotacaoIni = " + lotacao.getIdInicial();
 		
 		if(tipo != null)
@@ -73,41 +72,51 @@ public class GcInformacaoFiltro extends GcInformacao {
 				query += " and lower(inf.arq.titulo) like '%" + t.toLowerCase() + "%' ";
 		}
 
-		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
-		final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
-
-		if (dtIni != null)
+		if (dtCriacaoIni != null && !dtCriacaoIni.trim().equals(""))
 			try {
-				//query += " and inf.hisDtIni >= to_date('"
-				query += " and inf.elaboracaoFim >= to_date('"
+				query += " and inf.hisDtIni >= to_date('"
+						+ dfHibernate.format(dfUsuario.parse(dtCriacaoIni))
+						+ "', 'yyyy-MM-dd') ";
+			} catch (ParseException e) {
+				//
+			}
+
+		if (dtCriacaoFim != null && !dtCriacaoFim.trim().equals(""))
+			try {
+				query += " and inf.hisDtIni <= to_date('"
+						+ dfHibernate.format(dfUsuario.parse(dtCriacaoFim))
+						+ " 23:59', 'yyyy-MM-dd HH24:mi') ";
+			} catch (ParseException e) {
+				//
+			}
+		
+		String subquery = "";
+
+		if (situacao != null && situacao.getIdMarcador() != null && situacao.getIdMarcador() > 0)
+			subquery += " and situacao.cpMarcador.idMarcador = " + situacao.getIdMarcador();
+
+		if (responsavel != null)
+			subquery += " and situacao.dpPessoaIni.idPessoa = " + responsavel.getIdInicial();
+		else if (lotaResponsavel != null)
+			subquery += " and situacao.dpLotacaoIni.idLotacao  = " + lotaResponsavel.getIdInicial();
+		
+		if (dtIni != null && !dtIni.trim().equals(""))
+			try {
+				subquery += " and situacao.dtIniMarca >= to_date('"
 						+ dfHibernate.format(dfUsuario.parse(dtIni))
 						+ "', 'yyyy-MM-dd') ";
 			} catch (ParseException e) {
 				//
 			}
 
-		if (dtFim != null)
+		if (dtFim != null && !dtFim.trim().equals(""))
 			try {
-				//query += " and inf.hisDtIni <= to_date('"
-				query += " and inf.elaboracaoFim <= to_date('"
+				subquery += " and situacao.dtIniMarca <= to_date('"
 						+ dfHibernate.format(dfUsuario.parse(dtFim))
 						+ " 23:59', 'yyyy-MM-dd HH24:mi') ";
 			} catch (ParseException e) {
 				//
 			}
-
-		String subquery = "";
-
-		if (situacao != null && situacao.getIdMarcador() != null && situacao.getIdMarcador() > 0)
-			subquery += " and situacao.cpMarcador.idMarcador = "
-						+ situacao.getIdMarcador();
-		// if (atendente != null)
-		// subquery += "and situacao.dpPessoaIni.idPessoa = "
-		// + atendente.getIdInicial();
-		// else if (lotaAtendente != null)
-		// subquery += "and situacao.dpLotacaoIni.idLotacao = "
-		// + lotaAtendente.getIdInicial();
-
 		if (subquery.length() > 0)
 			subquery = " and exists (from GcMarca situacao where situacao.inf = inf "
 					+ subquery + " )";

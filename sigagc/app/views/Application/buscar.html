@@ -47,10 +47,15 @@ $(function() {
 			<!-- /search -->
 		</div>
 		#{if (arvore.toString() == "")}
-			*{<h6 style="background:#d8d8c0;padding:3px;">Nenhum resultado encontrado.</h6>}*
 			<p class="gt-notice-box">A busca não retornou resultados.</p>
+			<br />
+			<div style="float:left;"><a href="/sigagc/buscar">voltar</a></div>
 		#{/if}
 		#{else}
+			#{if texto != null && texto != ""}
+				<div style="float:right;"><a href="/sigagc/buscar">remover filtro: "${texto}"</a></div>
+				<br />
+			#{/if}
 			<div>${arvore.toHTML().raw()}</div>
 		#{/else}
 	</div>

@@ -5,6 +5,14 @@
 #{set 'moreHead'}
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
+	$(document).ready(function(){
+		$("#dicaGrafico").hide();
+		$("#evolution").mouseenter(function(){
+			$("#dicaGrafico").show()
+		}).mouseleave(function(){
+			$("#dicaGrafico").hide();
+		});
+	});
 	google.load('visualization', '1', {
 		packages : [ 'corechart', 'gauge' ]
 	});
@@ -21,16 +29,24 @@
 			width : "100%",
 			height : "100%"
 		});
+		google.visualization.events.addListener(grafico,"onmouseover", function(){
+			$(document).ready(function(){
+				$("#evolution").css("cursor","pointer");
+			});
+		});
+		google.visualization.events.addListener(grafico,"onmouseout", function(){
+			$(document).ready(function(){
+				$("#evolution").css("cursor","default");
+			});
+		});
 		google.visualization.events.addListener(grafico, "select", function(){
 			var selecao = grafico.getSelection()[0];
 			var mesAno = data.getValue(selecao.row,0).split("/");
 			var numeroMes = converteMes(mesAno[0]);
-				
-			location.href = //"@{Application.listar}?filtro.situacao=" + (selecao.column == 1 ? "" : "36") +
-							"@{Application.listar}?filtro.situacao=" + (selecao.column == 1 ? "" : "") +
+			location.href = "@{Application.listar}?filtro.situacao=" + (selecao.column == 1 ? "" : "37") +
 							"&filtro.dtIni=" + encodeURIComponent(primeiroDiaMes(mesAno[1],numeroMes)) + 
 							"&filtro.dtFim=" + encodeURIComponent(ultimoDiaMes(mesAno[1],numeroMes)) +
-							"&filtro.pesquisa=true&paginaAnterior=estatistica";
+							"&filtro.pesquisa=true&estatistica=" + data.getValue(selecao.row,selecao.column);
 		});
 	}
 	/* 
@@ -132,8 +148,17 @@
 			#{/if} #{else}
 			<p>Nenhum conhecimento visitado.</p>
 			#{/else}
-
-
+			<br />
+			<h2>Principais Classificações</h2>
+			#{if cloud.size() > 0}
+			<div class="gt-content-box gt-tag-cloud">
+				#{list items:cloud.tags(),as:'tag'}
+					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a>
+				#{/list}
+			</div>
+			#{/if} #{else}
+			<p>Nenhuma classificação cadastrada.</p>
+			#{/else}
 		</div>
 		<div class="gt-right-col">
 			<h2>Principais Autores</h2>
@@ -214,20 +239,11 @@
 			</div>
 			#{/if} #{else}
 			<p>Nenhum autor.</p>
-			#{/else} }* <br />
-			<h2>Principais Classificações</h2>
-			#{if cloud.size() > 0}
-			<div class="gt-content-box gt-tag-cloud">
-				#{list items:cloud.tags(),as:'tag'}
-					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a>
-				#{/list}
-			</div>
-			#{/if} #{else}
-			<p>Nenhuma classificação cadastrada.</p>
-			#{/else}
+			#{/else} }* 
 			<br />
 			<h2>Evolução</h2>
 			<div id="evolution" class="gt-content-box gt-tag-cloud"></div>
+			<p id="dicaGrafico" style="font-size:88.5%;text-align: center;color:#365b6d;background:#d8d8c0;padding:3px 10px;">Clique nas barras vermelhas ou azuis para saber quais conhecimentos fazem parte dessa estatística no mês selecionado</p>
 			*{ <br />
 			<h2>Mês Passado</h2>
 			<div id="lastmonth" class="gt-content-box gt-tag-cloud"></div>

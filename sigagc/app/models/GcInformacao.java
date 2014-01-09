@@ -494,8 +494,10 @@ public class GcInformacao extends GenericModel {
 		GcInformacao info = null;
 		//verificação necessária por conta dos arquivos temporários que são buscados pelo id, já os finalizados
 		//são buscados pela sua numeração
-		if(siglaParticionada[1].equals("GC"))
-			info = GcInformacao.find("byNumero",Integer.parseInt(siglaParticionada[2].split("/")[1])).first();
+		if(siglaParticionada[1].equals("GC")){
+			String[] siglaAnoENumero = siglaParticionada[2].split("/");
+			info = GcInformacao.find("ano = ? and numero = ?",Integer.parseInt(siglaAnoENumero[0]),Integer.parseInt(siglaAnoENumero[1])).first();
+		}
 		else
 			info = GcInformacao.findById(Long.parseLong(siglaParticionada[1]));
 

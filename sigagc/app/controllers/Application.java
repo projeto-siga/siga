@@ -399,7 +399,7 @@ public class Application extends SigaApplication {
 				listaPrincipaisAutores, listaPrincipaisTags, cloud, evolucao);
 	}
 
-	public static void listar(GcInformacaoFiltro filtro, String paginaAnterior) {
+	public static void listar(GcInformacaoFiltro filtro, int estatistica) {
 		List<GcInformacao> lista; 
 		if(filtro.pesquisa)
 			lista = filtro.buscar();
@@ -426,14 +426,16 @@ public class Application extends SigaApplication {
 			filtro = new GcInformacaoFiltro();
 
 		render(lista, /*tipos,*/ marcadores, filtro, orgaosusuarios,
-				tiposinformacao, anos, paginaAnterior);
+				tiposinformacao, anos, estatistica);
 
 	}
 
 	public static void navegar() {
 		GcArvore arvore = new GcArvore();
 
-		List<GcInformacao> infs = GcInformacao.all().fetch();
+		//List<GcInformacao> infs = GcInformacao.all().fetch();
+		//não exibe conhecimentos cancelados
+		List<GcInformacao> infs = GcInformacao.find("from GcInformacao where hisDtFim is null").fetch();
 
 		for (GcInformacao inf : infs) {
 			for (GcTag tag : inf.tags) {
@@ -448,8 +450,10 @@ public class Application extends SigaApplication {
 
 	public static void buscar(String texto) {
 		GcArvore arvore = new GcArvore();
-		List<GcInformacao> infs = GcInformacao.all().fetch();
-
+		//List<GcInformacao> infs = GcInformacao.all().fetch();
+		//não exibe conhecimentos cancelados
+		List<GcInformacao> infs = GcInformacao.find("from GcInformacao where hisDtFim is null").fetch();
+		
 		if (texto != null && texto.trim().length() > 0) {
 			texto = texto.trim().toLowerCase();
 			texto = texto.replace("  ", " ");

@@ -1120,7 +1120,7 @@
 			</result>
 		</action>
 	</package>
-	<package name="emailNotificacao" extends="default" namespace="/expediente/emailNotificacao">
+	<package name="expediente/emailNotificacao" extends="default" namespace="/expediente/emailNotificacao">
 		<action name="exibir" class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction"
 			method="aExibir">
 		</action>						

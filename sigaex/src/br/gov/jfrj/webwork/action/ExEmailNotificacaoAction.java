@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoDaoFiltro;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
@@ -54,10 +55,11 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	private static final long serialVersionUID = 1098577621835510117L;	
 	
 	private DpLotacao dpLotacao;	
-	private DpPessoa dpPessoa;	
-	private String email;	
+	private DpPessoa dpPessoa;		
 	private DpLotacao lotacaoEmail;	
 	private DpPessoa pessoaEmail;
+	private String emailTela;
+	private String email;
 	private DpLotacaoSelecao lotaSel;
 	private DpLotacaoSelecao lotaEmailSel;
 	private DpPessoaSelecao pessSel;
@@ -67,6 +69,8 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	private String strBuscarFechadas;
 	private Integer tipoDest;
 	private Integer tipoEmail;
+	
+
 	
 	
 	public ExEmailNotificacaoAction() {
@@ -82,7 +86,22 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	}
 	
 	
+	public String getEmail() {
+		return email;
+	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}	
+	
+	public String getEmailTela() {
+		return emailTela;
+	}
+
+	public void setEmailTela(String emailTela) {
+		this.emailTela = emailTela;
+	}
+	
 	public Integer getTipoEmail() {
 		return tipoEmail;
 	}
@@ -122,15 +141,7 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	public void setDpPessoa(DpPessoa dpPessoa) {
 		this.dpPessoa = dpPessoa;
 	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
+	
 	public DpLotacao getLotacaoEmail() {
 		return lotacaoEmail;
 	}
@@ -216,9 +227,10 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	
 	public Map<Integer, String> getListaTipoEmail() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");		
-		map.put(3, "Email");
+		map.put(1, "Default");
+		map.put(2, "Matrícula");
+		map.put(3, "Órgão Integrado");		
+		map.put(4, "Email");
 		return map;
 	}
 	
@@ -244,18 +256,79 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 
 		if (getId() != null) {
 			ExEmailNotificacao emailNot = daoEmail(getId());
-			this.setDpLotacao(emailNot.getDpLotacao());
-			this.setDpPessoa(emailNot.getDpPessoa());
-			this.setEmail(emailNot.getEmail());
-			this.setPessoaEmail(emailNot.getPessoaEmail());
-			this.setLotacaoEmail(emailNot.getLotacaoEmail());		
+			
+			if (emailNot.getDpPessoa() != null){
+				tipoDest = 1;				
+				pessSel.buscarPorObjeto(emailNot.getDpPessoa());				
+			} else {
+				tipoDest = 2;
+				lotaSel.buscarPorObjeto(emailNot.getDpLotacao());
+			}
+			if (emailNot.getPessoaEmail() != null){
+				tipoEmail = 2;
+				pessEmailSel.buscarPorObjeto(emailNot.getPessoaEmail());
+			} else {
+				if (emailNot.getLotacaoEmail() != null) {
+					tipoEmail = 3;
+					lotaEmailSel.buscarPorObjeto(emailNot.getLotacaoEmail());
+				} else {
+					if (emailNot.getEmail() != null){
+						tipoEmail = 4;
+						emailTela = emailNot.getEmail();
+					} else 
+						tipoEmail = 1;					
+				}				
+			}
+			setDpPessoa(null);
+			setDpLotacao(null);
+			setPessoaEmail(null);
+			setLotacaoEmail(null);
+			setEmail(null);	
 		}
 		
+		return Action.SUCCESS;
+	}
+	
+	public String aEditarGravar() throws Exception {
+		assertAcesso("FE:Ferramentas;EMAIL:Email de Notificação");
 		
+		dpPessoa = getPessSel().buscarObjeto();
+		dpLotacao = getLotaSel().buscarObjeto();
+		pessoaEmail = getPessEmailSel().buscarObjeto();
+		lotacaoEmail = getLotaEmailSel().buscarObjeto();
+		email = getEmailTela();
+		
+		ExEmailNotificacao exEmail;		
+		if (getId() == null)
+			exEmail = new ExEmailNotificacao();
+		else
+			exEmail = daoEmail(getId());	
+		
+		exEmail.setDpPessoa(dpPessoa);
+		exEmail.setDpLotacao(dpLotacao);
+		exEmail.setPessoaEmail(pessoaEmail);
+		exEmail.setLotacaoEmail(lotacaoEmail);
+		exEmail.setEmail(email);
+		
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(exEmail);
+			dao().commitTransacao();			
+		} catch (final Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
 		
 		return Action.SUCCESS;
 	}
 /*	
+ * 
+ * if (getLotaResponsavelSel().getId() != null) {
+			mov.setLotaResp(dao().consultar(getLotaResponsavelSel().getId(),
+					DpLotacao.class, false));
+ * 
+ * 
+ * 
 	public String aEditarGravar() throws Exception {
 		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		

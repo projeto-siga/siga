@@ -121,7 +121,7 @@ public class GcInformacaoFiltro extends GcInformacao {
 			subquery = " and exists (from GcMarca situacao where situacao.inf = inf "
 					+ subquery + " )";
 
-		List listaRetorno = JPA.em().createQuery(query + subquery)
+		List listaRetorno = JPA.em().createQuery(query + subquery + "order by inf.hisDtIni desc")
 				.getResultList();
 
 		return listaRetorno;

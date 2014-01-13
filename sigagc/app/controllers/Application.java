@@ -435,7 +435,7 @@ public class Application extends SigaApplication {
 
 		//List<GcInformacao> infs = GcInformacao.all().fetch();
 		//não exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.find("from GcInformacao where hisDtFim is null").fetch();
+		List<GcInformacao> infs = GcInformacao.find("byHisDtFimIsNull").fetch();
 
 		for (GcInformacao inf : infs) {
 			for (GcTag tag : inf.tags) {
@@ -452,7 +452,7 @@ public class Application extends SigaApplication {
 		GcArvore arvore = new GcArvore();
 		//List<GcInformacao> infs = GcInformacao.all().fetch();
 		//não exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.find("from GcInformacao where hisDtFim is null").fetch();
+		List<GcInformacao> infs = GcInformacao.find("byHisDtFimIsNull").fetch();
 		
 		if (texto != null && texto.trim().length() > 0) {
 			texto = texto.trim().toLowerCase();
@@ -610,10 +610,11 @@ public class Application extends SigaApplication {
 	public static void gravar(GcInformacao informacao, String titulo,
 			String conteudo, String classificacao, String origem)
 			throws Exception {
-		DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
+		//DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
+		DpPessoa pessoa = (DpPessoa) renderArgs.get("titular");
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
-			informacao.lotacao = informacao.autor.getLotacao();
+			informacao.lotacao = pessoa.getLotacao();
 		}
 		if (informacao.ou == null) {
 			if (informacao.autor != null)
@@ -668,15 +669,19 @@ public class Application extends SigaApplication {
 
 	public static void notificarGravar(GcInformacao informacao, Long pessoa,
 			Long lotacao) throws Exception {
-		DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa.findById(pessoa)
-				: null);
-		DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
-				.findById(lotacao) : null);
-		GcBL.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pes, lot, null,
-				null, null, null, null, null, null);
-		GcBL.gravar(informacao, idc());
-		exibir(informacao.getSigla());
+		if(pessoa != null || lotacao != null) {
+			DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa.findById(pessoa)
+					: null);
+			DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
+					.findById(lotacao) : null);
+			GcBL.movimentar(informacao,
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pes, lot, null,
+					null, null, null, null, null, null);
+			GcBL.gravar(informacao, idc());
+			exibir(informacao.getSigla());
+		}
+		else
+			throw new AplicacaoException("Para notificar é necessário selecionar uma Pessoa ou uma Lotação.");
 	}
 
 	public static void solicitarRevisao(String sigla) throws Exception {
@@ -686,15 +691,19 @@ public class Application extends SigaApplication {
 
 	public static void solicitarRevisaoGravar(GcInformacao informacao,
 			Long pessoa, Long lotacao) throws Exception {
-		DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa.findById(pessoa)
-				: null);
-		DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
-				.findById(lotacao) : null);
-		GcBL.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pes,
-				lot, null, null, null, null, null, null, null);
-		GcBL.gravar(informacao, idc());
-		exibir(informacao.getSigla());
+		if(pessoa != null || lotacao != null) { 
+			DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa.findById(pessoa)
+					: null);
+			DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
+					.findById(lotacao) : null);
+			GcBL.movimentar(informacao,
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pes,
+					lot, null, null, null, null, null, null, null);
+			GcBL.gravar(informacao, idc());
+			exibir(informacao.getSigla());
+		}
+		else
+			throw new AplicacaoException("Para solicitar revisão é necessário selecionar uma Pessoa ou uma Lotação.");
 	}
 
 	public static void anexar(String sigla) throws Exception{

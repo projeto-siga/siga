@@ -44,7 +44,7 @@
 					}*
 
 				</div>
-				<div class="gt-form-row gt-width-100">
+				*{<div class="gt-form-row gt-width-100">
 					<label>Responsável</label> #{selecao tipo:'pessoa',
 					nome:'informacao.autor', value:informacao.autor /} <span
 						style="color: red">#{error 'informacao.autor' /}</span>
@@ -53,7 +53,7 @@
 					<label>Lotação Responsável</label> #{selecao tipo:'lotacao',
 					nome:'informacao.lotacao', value:informacao.lotacao /} <span
 						style="color: red">#{error 'informacao.lotacao' /}</span>
-				</div>
+				</div>}*
 
 
 				<div class="gt-form-row gt-width-100">
@@ -64,7 +64,7 @@
 
 				<div class="gt-form-row gt-width-100">
 					<label>Texto</label>
-					<textarea name="conteudo" cols="80" rows="20"
+					<textarea name="conteudo" cols="80" rows="25"
 						class="gt-form-textarea">${conteudo}</textarea>
 					<span style="color: red">#{error 'conteudo' /}</span>
 				</div>
@@ -133,10 +133,10 @@
 			</p>
 			#{/if} #{/list} #{/if}
 
-			<h3 style="padding-top: 1em">Opções de Formatação</h3>
+			<h3 style="padding-top: 1em">Opções de Formatação do Texto</h3>
 			<p>
-				O conteúdo do campo "Texto" pode ser receber <a
-					href="http://www.wikicreole.org"> marcações especiais</a>, clique <a
+				O conteúdo do campo "Texto" pode receber *{<a
+					href="http://www.wikicreole.org">}* marcações especiais*{</a>}*, clique <a
 					href="javascript: $('#cheatsheet').show();">aqui</a> para
 				visualizar as opções disponíveis.
 			</p>

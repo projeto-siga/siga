@@ -57,8 +57,7 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	private DpLotacao dpLotacao;	
 	private DpPessoa dpPessoa;		
 	private DpLotacao lotacaoEmail;	
-	private DpPessoa pessoaEmail;
-	private String emailTela;
+	private DpPessoa pessoaEmail;	
 	private String email;
 	private DpLotacaoSelecao lotaSel;
 	private DpLotacaoSelecao lotaEmailSel;
@@ -69,7 +68,6 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	private String strBuscarFechadas;
 	private Integer tipoDest;
 	private Integer tipoEmail;
-	
 
 	
 	
@@ -93,14 +91,6 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	public void setEmail(String email) {
 		this.email = email;
 	}	
-	
-	public String getEmailTela() {
-		return emailTela;
-	}
-
-	public void setEmailTela(String emailTela) {
-		this.emailTela = emailTela;
-	}
 	
 	public Integer getTipoEmail() {
 		return tipoEmail;
@@ -252,39 +242,8 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		return Action.SUCCESS;
 	}
 		
-	public String aEditar() throws Exception {
-
-		if (getId() != null) {
-			ExEmailNotificacao emailNot = daoEmail(getId());
-			
-			if (emailNot.getDpPessoa() != null){
-				tipoDest = 1;				
-				pessSel.buscarPorObjeto(emailNot.getDpPessoa());				
-			} else {
-				tipoDest = 2;
-				lotaSel.buscarPorObjeto(emailNot.getDpLotacao());
-			}
-			if (emailNot.getPessoaEmail() != null){
-				tipoEmail = 2;
-				pessEmailSel.buscarPorObjeto(emailNot.getPessoaEmail());
-			} else {
-				if (emailNot.getLotacaoEmail() != null) {
-					tipoEmail = 3;
-					lotaEmailSel.buscarPorObjeto(emailNot.getLotacaoEmail());
-				} else {
-					if (emailNot.getEmail() != null){
-						tipoEmail = 4;
-						emailTela = emailNot.getEmail();
-					} else 
-						tipoEmail = 1;					
-				}				
-			}
-			setDpPessoa(null);
-			setDpLotacao(null);
-			setPessoaEmail(null);
-			setLotacaoEmail(null);
-			setEmail(null);	
-		}
+	public String aEditar() throws Exception {	
+		assertAcesso("FE:Ferramentas;EMAIL:Email de Notificação");
 		
 		return Action.SUCCESS;
 	}
@@ -295,14 +254,9 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		dpPessoa = getPessSel().buscarObjeto();
 		dpLotacao = getLotaSel().buscarObjeto();
 		pessoaEmail = getPessEmailSel().buscarObjeto();
-		lotacaoEmail = getLotaEmailSel().buscarObjeto();
-		email = getEmailTela();
+		lotacaoEmail = getLotaEmailSel().buscarObjeto();	
 		
-		ExEmailNotificacao exEmail;		
-		if (getId() == null)
-			exEmail = new ExEmailNotificacao();
-		else
-			exEmail = daoEmail(getId());	
+		ExEmailNotificacao exEmail = new ExEmailNotificacao();		
 		
 		exEmail.setDpPessoa(dpPessoa);
 		exEmail.setDpLotacao(dpLotacao);
@@ -321,50 +275,4 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		
 		return Action.SUCCESS;
 	}
-/*	
- * 
- * if (getLotaResponsavelSel().getId() != null) {
-			mov.setLotaResp(dao().consultar(getLotaResponsavelSel().getId(),
-					DpLotacao.class, false));
- * 
- * 
- * 
-	public String aEditarGravar() throws Exception {
-		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
-		
-		if(this.getNmOrgao() == null)
-			throw new AplicacaoException("Nome do Órgão Externo não informado");
-		
-		if(this.getSiglaOrgao() == null)
-			throw new AplicacaoException("Sigla do Órgão Externo não informada");
-		
-		CpOrgao orgao;		
-		if (getId() == null)
-			orgao = new CpOrgao();
-		else
-			orgao = daoOrgao(getId());	
-		
-		orgao.setNmOrgao(this.getNmOrgao());
-		orgao.setSigla(this.getSiglaOrgao());
-		if (this.getIdOrgaoUsu() != null && this.getIdOrgaoUsu() != 0) {
-			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-			orgaoUsuario = dao().consultar(this.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);	
-			orgao.setOrgaoUsuario(orgaoUsuario);
-		}else
-			orgao.setOrgaoUsuario(null);
-		
-		orgao.setAtivo(String.valueOf(this.getAtivo()));
-		
-		try {
-			dao().iniciarTransacao();
-			dao().gravar(orgao);
-			dao().commitTransacao();			
-		} catch (final Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
-		}
-		
-		return Action.SUCCESS;
-	}
-	*/
 }

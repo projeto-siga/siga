@@ -6,64 +6,64 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
+
 <siga:pagina titulo="Cadastro de email de notificação">
+<script>
+	function hideShowSel(combo) {
+		var sel1Span = $('#spanPess' + combo.name.substring(4)); 
+		var sel2Span = $('#spanLota' + combo.name.substring(4)); 
+		var sel3Span = $('#spanText' + combo.name.substring(4));	
+
+		switch (combo.selectedIndex) {
+			case 0:	if(combo.name == $('#tipoDest').attr('name')){	
+						sel1Span.show();
+						sel2Span.hide();
+						sel3Span.hide();																
+						} else {	
+							sel1Span.hide();
+							sel2Span.hide();
+							sel3Span.hide();									
+						}
+						break;
+			case 1: if(combo.name == $('#tipoDest').attr('name')){
+						sel1Span.hide();
+						sel2Span.show();
+						sel3Span.hide();					
+					} else {
+						sel1Span.show();
+						sel2Span.hide();
+						sel3Span.hide();
+					}						
+					break;
+			case 2: sel1Span.hide();
+					sel2Span.show();
+					sel3Span.hide();
+					break;
+			case 3: sel1Span.hide();
+					sel2Span.hide();
+					sel3Span.show();
+					break;
+			default:sel1Span.hide();
+					sel2Span.hide();
+					sel3Span.hide();			
+		}					
+	}	
+
+	function validar() {
+		if ($('#pessSel_id').val() == "" && $('#lotaSel_id').val() == "")
+			alert("Preencha o destinatário.");
+		else
+			frm.submit();
+	}	
+		
+</script>	
+<body>
 	<!-- main content -->
 	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-
-			<ww:url id="url" action="editar" namespace="/expediente/emailNotificacao"></ww:url>
-
-			<script>
-				function sbmt() {
-					editar_gravar.action = '<ww:property value="%{url}"/>';
-					editar_gravar.submit();
-				}
-
-				function hideShowSel(combo) {
-					var sel1Span = $('#spanPess' + combo.name.substring(4)); 
-					var sel2Span = $('#spanLota' + combo.name.substring(4)); 
-					var sel3Span = $('#spanText' + combo.name.substring(4));	
-
-					switch (combo.selectedIndex) {
-						case 0:	if(combo.name == $('#tipoDest').attr('name')){	
-									sel1Span.show();
-									sel2Span.hide();
-									sel3Span.hide();																
-								} else {	
-									sel1Span.hide();
-									sel2Span.hide();
-									sel3Span.hide();
-									
-								}
-								break;
-						case 1: if(combo.name == $('#tipoDest').attr('name')){
-									sel1Span.hide();
-									sel2Span.show();
-									sel3Span.hide();					
-								} else {
-									sel1Span.show();
-									sel2Span.hide();
-									sel3Span.hide();
-									}						
-								break;
-						case 2: sel1Span.hide();
-								sel2Span.show();
-								sel3Span.hide();
-								break;
-						case 3: sel1Span.hide();
-								sel2Span.hide();
-								sel3Span.show();
-								break;
-						default:sel1Span.hide();
-								sel2Span.hide();
-								sel3Span.hide();			
-					}					
-				}			
-</script>	
-			   
+		<div class="gt-content clearfix">				   
 			<h2 class="gt-table-head">Cadastrar email de notificação</h2>
 			<div class="gt-content-box gt-for-table">
-				<form action="editar_gravar.action">
+				<form name="frm" action="editar_gravar.action">
 					<input type="hidden" name="postback" value="1" />
 					<ww:hidden name="id" />					
 					<table class="gt-form-table" width="100%">
@@ -127,7 +127,7 @@
 						<tr><td></td><td></td></tr>
 						
 						<tr class="button">
-							<td colspan="2"><input type="submit" value="Ok"
+							<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();"
 								class="gt-btn-medium gt-btn-left" /> <input type="button"
 								value="Cancela" onclick="javascript:history.back();"
 								class="gt-btn-medium gt-btn-left" />
@@ -137,4 +137,5 @@
 			</div>		
 		</div>
 	</div>
+</body>	
 </siga:pagina>

@@ -29,7 +29,7 @@
 					<thead>
 						<tr> 
 							<th style="text-align: center;" colspan="2">Destinatário da Movimentação</th>
-							<th rowspan="2" width="4%"></th>
+							<th rowspan="2" width="8%"></th>
 							<th style="text-align: center;" colspan="3">Enviar notificação para:</th>							
 						</tr>
 						<tr>							
@@ -62,13 +62,7 @@
 								<td><c:if test="${not empty email.lotacaoEmail}">
 									<siga:selecionado sigla="${email.lotacaoEmail.sigla}"
 										descricao="${email.lotacaoEmail.descricaoAmpliada}" /></c:if>
-								</td>
-								<td align="left" width="5%">
-									<ww:url id="url" action="editar" namespace="/expediente/emailNotificacao">											
-											<ww:param name="id">${email.idEmailNotificacao}</ww:param>
-									</ww:url>
-									<siga:link title="Alterar" url="${url}" />					
-								</td>
+								</td>								
 								<td align="center" width="5%">									
 	 			 					<a href="javascript:if (confirm('Deseja excluir o email?')) location.href='/sigaex/expediente/emailNotificacao/excluir.action?id=${email.idEmailNotificacao}';">
 											<img style="display: inline;"

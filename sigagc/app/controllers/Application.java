@@ -510,7 +510,7 @@ public class Application extends SigaApplication {
 		
 		if (!informacao.acessoPermitido(titular(), lotaTitular())) {
 			throw new AplicacaoException(
-					"O usuário corrente não tem acesso à informação solicitada.");
+					"Restrição de Acesso: O usuário não tem permissão para visualizar o conhecimento solicitado.");
 		}
 		GcBL.notificado(informacao, idc());
 		GcBL.logarVisita(informacao, idc());
@@ -529,11 +529,10 @@ public class Application extends SigaApplication {
 		List<GcAcesso> acessos = GcAcesso.all().fetch();
 		if (titulo == null)
 			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
-		String conteudo = (informacao.arq != null) ? informacao.arq
-				.getConteudoTXT() : null;
+		String conteudo = (informacao.arq != null) ? informacao.arq.getConteudoTXT() : null;
+		
 		if (classificacao == null || classificacao.isEmpty())
-			classificacao = (informacao.arq != null) ? informacao.arq.classificacao
-					: null;
+			classificacao = (informacao.arq != null) ? informacao.arq.classificacao: null;
 
 		if (informacao.autor == null) {
 			informacao.autor = titular();
@@ -567,7 +566,8 @@ public class Application extends SigaApplication {
 				if (mov.isCancelada())
 					continue;
 
-				if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO) {
+				if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO || 
+					t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
 					// Titulo
 					String titulo = mov.arq.titulo;
 					LinkedList<Diff> tituloDiffs = diff.diff_main(
@@ -623,15 +623,48 @@ public class Application extends SigaApplication {
 		GcBL.gravar(inf, idc());
 		exibir(inf.getSigla());
 	}
+	
+	public static void duplicar(String sigla) throws Exception {
+		GcInformacao infDuplicada = GcInformacao.findBySigla(sigla);
+		
+		GcBL.movimentar(infDuplicada, GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, 
+				null, null, null, null, null, null, null, null, null);
+		GcBL.gravar(infDuplicada, idc());
+		
+		GcInformacao inf = new GcInformacao();	
+		GcArquivo arq = new GcArquivo();
+		arq = infDuplicada.arq.duplicarConteudoInfo();
+		inf.autor = titular();
+		inf.lotacao = lotaTitular();
+		inf.ou = inf.autor.getOrgaoUsuario();
+		inf.tipo = GcTipoInformacao.findById(infDuplicada.tipo.id);
+		inf.acesso = GcAcesso.findById(infDuplicada.acesso.id);
+		
+		if (infDuplicada.movs != null) {
+			for (GcMovimentacao mov : infDuplicada.movs) {
+				if (mov.isCancelada())
+					continue;
+				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR) {
+					GcBL.movimentar(inf,
+							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null,
+							null, arq.titulo, arq.getConteudoTXT(), arq.classificacao, mov,
+							null, null, null);
+					GcBL.gravar(inf, idc());
+					exibir(inf.getSigla());
+				}
+			}
+		}
+	}
 
 	public static void gravar(GcInformacao informacao, String titulo,
 			String conteudo, String classificacao, String origem)
 			throws Exception {
 		//DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
-		DpPessoa pessoa = (DpPessoa) renderArgs.get("titular");
+		DpPessoa pessoa = titular();
+		DpLotacao lotacao = lotaTitular();
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
-			informacao.lotacao = pessoa.getLotacao();
+			informacao.lotacao = lotacao;
 		}
 		if (informacao.ou == null) {
 			if (informacao.autor != null)
@@ -649,7 +682,7 @@ public class Application extends SigaApplication {
 		// if (informacao.id != 0)
 		GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, pessoa,
-				pessoa.getLotacao(), titulo, conteudo, classificacao, null,
+				lotacao, titulo, conteudo, classificacao, null,
 				null, null, null);
 
 		GcBL.gravar(informacao, idc());
@@ -698,7 +731,7 @@ public class Application extends SigaApplication {
 			exibir(informacao.getSigla());
 		}
 		else
-			throw new AplicacaoException("Para notificar é necessário selecionar uma Pessoa ou uma Lotação.");
+			throw new AplicacaoException("Para notificar é necessário selecionar uma Pessoa ou Lotação.");
 	}
 
 	public static void solicitarRevisao(String sigla) throws Exception {
@@ -720,7 +753,7 @@ public class Application extends SigaApplication {
 			exibir(informacao.getSigla());
 		}
 		else
-			throw new AplicacaoException("Para solicitar revisão é necessário selecionar uma Pessoa ou uma Lotação.");
+			throw new AplicacaoException("Para solicitar revisão é necessário selecionar uma Pessoa ou Lotação.");
 	}
 
 	public static void anexar(String sigla) throws Exception{
@@ -738,7 +771,7 @@ public class Application extends SigaApplication {
 					if (file.getContentType() != null) {
 						String mimeType = file.getContentType().toLowerCase();
 						byte anexo[] = file.asBytes();
-						if (titulo == null)
+						if (titulo == null || titulo.trim().length() == 0)
 							titulo = file.getFileName();
 						DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa
 								.findById(pessoa) : null);
@@ -759,6 +792,26 @@ public class Application extends SigaApplication {
 		}
 	}
 
+	public static void removerAnexo(String sigla, Long id) throws Exception {
+		GcInformacao inf = GcInformacao.findBySigla(sigla);
+		GcMovimentacao movLocalizada = null;
+		for (GcMovimentacao mov : inf.movs) {
+			if (mov.isCancelada())
+				continue;
+			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
+					&& mov.arq.id == id) {
+				movLocalizada = mov;
+				break;
+			}
+		}
+		GcMovimentacao m = GcBL.movimentar(inf,
+								GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+								movLocalizada.pessoa, null, null, null, null,
+								movLocalizada, null, null, null);
+		movLocalizada.movCanceladora = m;
+		GcBL.gravar(inf, idc());
+	}
+	
 	public static void baixar(Long id) {
 		GcArquivo arq = GcArquivo.findById(id);
 		if (arq != null)

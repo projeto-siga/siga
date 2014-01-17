@@ -55,9 +55,10 @@ Informação'/}
 			#{/else} #{if informacao.contemArquivos}
 			<h3>Arquivos Anexos</h3>
 			#{list items:informacao.movs, as:'m'} #{if m.tipo.id ==
-			models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO}
+			models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO &&
+			m.movCanceladora == null}
 			<p>
-				<image src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
+				<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
 				<a target="_blank" href="@{Application.baixar(m.arq.id)}">${m.arq.titulo}</a>
 			</p>
 			#{/if} #{/list} #{/if}
@@ -91,7 +92,7 @@ Informação'/}
 						$(this).addClass("imgg");							
 					}
 				});
-				/*Se a número de imagens lado a lado for ímpar e diferente de 1 , 
+				/*Se o número de imagens lado a lado for ímpar e diferente de 1 , 
 				ou múltiplo de 3, segue esse padrão de montagem do layout*/
 				if(cont != 0) {
 					if ((cont%3 == 0) || ((cont%2 != 0) && (cont != 1))){

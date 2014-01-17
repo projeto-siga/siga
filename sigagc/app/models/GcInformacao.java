@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
@@ -26,7 +25,6 @@ import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.eclipse.jdt.core.dom.ThisExpression;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -35,7 +33,6 @@ import play.mvc.Router;
 import util.SigaPlayCalendar;
 import utils.WikiParser;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -257,6 +254,9 @@ public class GcInformacao extends GenericModel {
 		return !isCancelado();
 	}
 
+	public boolean podeDuplicar() {
+		return !isCancelado();
+	}
 	public SortedSet<GcAcaoVO> acoes(CpIdentidade idc, DpPessoa titular,
 			DpLotacao lotaTitular) {
 		SortedSet<GcAcaoVO> acoes = new TreeSet<GcAcaoVO>();
@@ -264,7 +264,7 @@ public class GcInformacao extends GenericModel {
 		addAcao(acoes, "pencil", "Editar", null, "Application.editar", null,
 				podeEditar());
 		addAcao(acoes, "delete", "Excluir", null, "Application.remover", null,
-				podeExcluir(), "Confirma a exclusão de tópico de informação?",
+				podeExcluir(), "Confirma a exclusão deste conhecimento?",
 				null, null);
 		addAcao(acoes, "eye", "Exibir Histórico de Alterações", null,
 				"Application.historico", "historico=true", true);
@@ -280,14 +280,9 @@ public class GcInformacao extends GenericModel {
 				podeMarcarComoInteressado(titular));
 		addAcao(acoes, "bell", "Notificar", null, "Application.notificar",
 				null, podeNotificar());
-		addAcao(acoes,
-				"lock",
-				"Finalizar Elaboração",
-				null,
-				"Application.fechar",
-				null,
-				podeFinalizar(),
-				"Confirma a finalização da elaboração deste tópico de informação?",
+		addAcao(acoes, "lock", "Finalizar Elaboração",null,
+				"Application.fechar", null, podeFinalizar(),
+				"Confirma a finalização da elaboração deste conhecimento?",
 				null, null);
 		addAcao(acoes, "folder_user", "Revisado", null, "Application.revisado",
 				null, podeRevisar(titular));
@@ -295,10 +290,13 @@ public class GcInformacao extends GenericModel {
 				"Application.solicitarRevisao", null, podeSolicitarRevisao());
 		addAcao(acoes, "cancel", "Cancelar", null, "Application.cancelar",
 				null, podeCancelar(titular, lotaTitular),
-				"Confirma o cancelamento deste tópico de informação?", null,
+				"Confirma o cancelamento deste conhecimento?", null,
 				null);
 		addAcao(acoes, "attach", "Anexar Arquivo", null, "Application.anexar",
 				null, podeAnexar());
+		addAcao(acoes, "arrow_divide","Duplicar", null, "Application.duplicar", 
+				null, podeDuplicar(),"Esta operação criará um conhecimento com os mesmos dados do atual. " +
+				"Prosseguir?", null, null);
 
 		// addAcao("printer.png","Visualizar Impressão",null,"", null, true,
 		// null);

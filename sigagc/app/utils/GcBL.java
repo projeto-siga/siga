@@ -70,7 +70,8 @@ public class GcBL {
 				arq.classificacao = classificacao;
 				mov.arq = arq;
 			} else {
-				if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO)
+				if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO ||
+					idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
 					//throw new Exception("Não é permitido salvar uma informação com título, conteúdo e classificação vazios.");
 					throw new AplicacaoException("Não é permitido salvar uma informação com título ou conteúdo vazios.");
 			}

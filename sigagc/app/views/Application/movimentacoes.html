@@ -35,7 +35,15 @@ title:'Movimentações'/}
 			</thead>
 			<tbody>
 				#{list items:informacao.movs, as:'m'}
-				<tr class="juntada ">
+					#{set descricao: '' /} #{set tipo: '' /} #{set classe: '' /}
+					#{if m.tipo.id == 13}
+						#{set descricao: m.arq?.titulo  /} #{set tipo: m.arq?.mimeType /}
+					#{/if}
+					#{if m.tipo.id == 12 && m.movRef != null}
+						#{set descricao: m.movRef.tipo.nome + m.movRef.arq?.titulo /} #{set tipo: m.movRef.arq?.mimeType  /}
+						#{set classe: 'disabled' /}
+					#{/if}
+				<tr class="juntada ${classe}">
 					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
 					<td>${m.tipo.nome}</td>
 					<td align="left"><span
@@ -50,9 +58,7 @@ title:'Movimentações'/}
 					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span>
 					</td>
 					<td>
-						#{if m.tipo.id == 13}
-							${m.arq?.titulo} (${m.arq?.mimeType})
-						#{/if}
+						${descricao?.raw()} (${tipo?.raw()})						
 					</td>
 				</tr>
 				#{/list}

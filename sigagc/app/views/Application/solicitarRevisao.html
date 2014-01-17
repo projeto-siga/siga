@@ -10,14 +10,23 @@ Informação' /}
 		<div class="gt-form gt-content-box">
 			<form action="@{Application.solicitarRevisaoGravar}">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
-				<div class="gt-form-row gt-width-100">
+				*{<div class="gt-form-row gt-width-100">
 					<label>Pessoa</label> #{selecao tipo:'pessoa', nome:'pessoa' /} <span
 						style="color: red">#{error 'pessoa' /}</span>
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Lotação</label> #{selecao tipo:'lotacao', nome:'lotacao' /}
 					<span style="color: red">#{error 'lotacao' /}</span>
+				</div>}*
+				<p>Escolha a Pessoa ou a Lotação que irá fazer a revisão desse conhecimento</p>
+				<br />
+				<div class="gt-form-row gt-width-100">
+					<label>Revisar</label>#{pessoaLotaSelecao nomeSelPessoa:'pessoa',
+					nomeSelLotacao:'lotacao',
+					valuePessoa:pessoa,
+					valueLotacao:lotacao /}
 				</div>
+				<br />
 				<div class="gt-form-row gt-width-100">
 					<input type="submit" value="Solicitar"
 						class="gt-btn-medium gt-btn-left" style="cursor: pointer;"/>

@@ -1,8 +1,12 @@
 package models;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 
 import javax.persistence.Column;
@@ -14,11 +18,13 @@ import javax.persistence.Table;
 
 import org.apache.commons.io.IOUtils;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+
 import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "GC_ARQUIVO")
-public class GcArquivo extends GenericModel {
+public class GcArquivo extends GenericModel implements Serializable{
 	@Id
 	@GeneratedValue
 	@Column(name = "ID_CONTEUDO")
@@ -64,5 +70,26 @@ public class GcArquivo extends GenericModel {
 		}
 		return "disk";
 	}
-
+	
+	/**
+	 * Duplica o conteúdo de um conhecimento através de serialização.
+	 * Uma das formas de se fazer deep copying do conteúdo, assim quando alterar
+	 * a cópia não modifica o original 
+	 */
+	public GcArquivo duplicarConteudoInfo() {
+		try {
+			ByteArrayOutputStream saida = new ByteArrayOutputStream();
+			ObjectOutputStream objSaida = new ObjectOutputStream(saida);
+			objSaida.writeObject(this);
+			objSaida.close();
+			
+			ByteArrayInputStream entrada = new ByteArrayInputStream(saida.toByteArray());
+			ObjectInputStream objEntrada = new ObjectInputStream(entrada);
+			
+			GcArquivo cloneConteudoInfo = (GcArquivo) objEntrada.readObject();
+			return cloneConteudoInfo;
+		} catch (Exception e) {
+			throw new AplicacaoException("Não foi possível duplicar esse conhecimento.");
+		}
+	}	
 }

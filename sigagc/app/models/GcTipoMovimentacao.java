@@ -39,6 +39,8 @@ public class GcTipoMovimentacao extends GenericModel {
 
 	public static final long TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO = 13;
 	
+	public static final long TIPO_MOVIMENTACAO_DUPLICAR = 14;
+	
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")
 	public long id;

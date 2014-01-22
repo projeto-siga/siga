@@ -310,7 +310,8 @@ public class ExServiceImpl implements ExService {
 				final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 				filter.setSigla(codigo);
 				mob = (ExMobil) dao().consultarPorSigla(filter);
-				return Ex.getInstance().getBL().toJSON(mob);
+				//return Ex.getInstance().getBL().toJSON(mob);
+				return "";
 			}
 		} catch (Exception e) {
 			if (!isHideStackTrace())

@@ -7,9 +7,7 @@
 			<tr>
 				<th>Tarefa</th>
 				<th style="text-align: center">Atendente</th>
-<%-- 				
 				<th style="text-align: center">Prioridade</th>
---%>				
 				<th style="text-align: right">Início</th>
 			</tr>
 		</thead>
@@ -18,7 +16,7 @@
 				<tr class="count">
 					<td><ww:url id="url" action="task">
 							<ww:param name="tiId">${taskInstance.id}</ww:param>
-						</ww:url> <a href="${url}">${taskInstance.task.name} - ${taskInstance.processInstance.processDefinition.name}</a> <%-- <c:if
+						</ww:url> <a href="${url}">${taskInstance.task.name}</a> <%-- <c:if
 				test="${empty taskInstance.actorId and wf:podePegarTarefa(cadastrante,titular,lotaCadastrante, lotaTitular,taskInstance) == true}">
 				<ww:url id="url" action="pegar">
 					<ww:param name="tiId">${taskInstance.id}</ww:param>
@@ -41,7 +39,6 @@
 							</span>
 						</c:if>
 					</td>
-<%-- 
 					<td align="center"><c:choose>
 							<c:when test="${taskInstance.priority == 1}">Muito Alta</c:when>
 							<c:when test="${taskInstance.priority == 2}">Alta</c:when>
@@ -50,7 +47,6 @@
 							<c:when test="${taskInstance.priority == 51}">Muito Baixa</c:when>
 						</c:choose>
 					</td>
---%>					
 					<td align="right">${fn:replace(f:esperaSimples(taskInstance.create),
 						" ", "&nbsp;")}</td>
 				</tr>

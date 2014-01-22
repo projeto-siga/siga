@@ -113,14 +113,33 @@ function InicializarCapicom(){
 		return Erro(err);
 	}
 	
-	//Infelizmente não é possível armazenar o objeto Signer e utilizá-lo na próxima chamada para Sign.;
-	//Renato: desabilitado temporariamente para não interferir com os testes de desempenho.;
-	gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado.";
-	var nothing;
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;REP:Acesso ao Repositório de Certificados Digitais')}">
+	var oStore = new ActiveXObject("CAPICOM.Store");
+	oStore.Open(2, "My", 0);
+	
+	var oCertificates = oStore.Certificates.Find(2, "ICP-Brasil", true);
+	
+	if (oCertificates.Count > 1) {
+		oCertificates = oCertificates.Select(
+		"Seleção de Certificado Digital",
+		"Escolha o certificado digital que deseja utilizar para assinar ou conferir cópia:", false);
+	}
 	gSigner = new ActiveXObject("CAPICOM.Signer");
-	Desprezar = gAssinatura.Sign(gSigner, 1, 0);
+	gSigner.Certificate = oCertificates.Item(1);
+	
+	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;ADRB:Política - Referência Básica')}">
+		gCertificadoB64 = gSigner.Certificate.Export(0);
+	</c:if>
+</c:if>
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;ADRB:Política - Referência Básica')}">
-	gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
+	if (typeof gCertificadoB64 == 'undefined') {
+		alert("Atenção: Produzindo assinatura apenas para obter o certificado.");
+		gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado.";
+		var nothing;
+		gSigner = new ActiveXObject("CAPICOM.Signer");
+		Desprezar = gAssinatura.Sign(gSigner, 1, 0);
+		gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
+	}
 </c:if>
 	return "OK";
 }

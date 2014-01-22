@@ -117,7 +117,7 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 		return c;
 	}
 
-	public void delColuna(String nome, String titulo, int tamanho, int alinhamento,
+	public void delColuna(String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado) {
 		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
 		colunas.remove(c);

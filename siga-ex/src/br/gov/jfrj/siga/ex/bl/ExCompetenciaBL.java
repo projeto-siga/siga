@@ -2178,6 +2178,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
+		
+		if(mov.isUltimaMovimentacao())
+			return false;
 
 		for (ExMovimentacao movAssinatura : mov.getExMobil()
 				.getExMovimentacaoSet()) {

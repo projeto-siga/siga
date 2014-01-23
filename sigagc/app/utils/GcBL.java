@@ -35,7 +35,16 @@ public class GcBL {
 			return null;
 		return s.trim();
 	}
-
+	public static GcMovimentacao movimentar(GcInformacao inf, GcArquivo arqDuplicado, long id) throws Exception {
+		GcMovimentacao mov = new GcMovimentacao();
+		mov.tipo = GcTipoMovimentacao.findById(id);
+		if (mov.tipo == null)
+			throw new Exception(
+					"Não foi possível localizar um tipo de movimentacão com id="
+							+ id);
+		mov.arq = arqDuplicado;
+		return movimentar(inf, mov);
+	}
 	public static GcMovimentacao movimentar(GcInformacao inf, long idTipo,
 			DpPessoa pessoa, DpLotacao lotacao, String titulo, String conteudo,
 			String classificacao, GcMovimentacao movRef, Date hisDtIni,
@@ -111,7 +120,7 @@ public class GcBL {
 		return new Date();
 	}
 
-	public static GcInformacao gravar(GcInformacao inf, CpIdentidade idc)
+	public static GcInformacao gravar(GcInformacao inf, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
 		Date dt = dt();
 		// dao().iniciarTransacao();
@@ -130,13 +139,16 @@ public class GcBL {
 			inf.hisIdcIni = idc;
 		if (inf.movs != null) {
 			for (GcMovimentacao mov : inf.movs) {
-				if (mov.arq != null && mov.arq.id == 0) {
+				if (mov.arq != null && mov.arq.id == 0) 
 					mov.arq.save();
-				}
 				if (mov.hisIdcIni == null)
 					mov.hisIdcIni = idc;
 				if (mov.hisDtIni == null)
 					mov.hisDtIni = dt;
+				if (mov.pessoaTitular == null)
+					mov.pessoaTitular = titular;
+				if (mov.lotacaoTitular == null)
+					mov.lotacaoTitular = lotaTitular;
 				if (inf.id == 0)
 					inf.save();
 				mov.inf = inf;
@@ -240,9 +252,11 @@ public class GcBL {
 
 			if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO) {
 				if (inf.autor == null)
-					inf.autor = mov.pessoa;
+					//inf.autor = mov.pessoa;
+					inf.autor = mov.pessoaTitular;
 				if (inf.lotacao == null)
-					inf.lotacao = mov.lotacao;
+					//inf.lotacao = mov.lotacao;
+					inf.lotacao = mov.lotacaoTitular;
 				inf.arq = mov.arq;
 			}
 		}
@@ -393,7 +407,7 @@ public class GcBL {
 				if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO)
 					acrescentarMarca(set, inf,
 							CpMarcador.MARCADOR_COMO_INTERESSADO, mov.hisDtIni,
-							null, mov.pessoa, mov.lotacao);
+							null, mov.pessoaTitular, mov.lotacaoTitular);
 			}
 		}
 
@@ -419,25 +433,25 @@ public class GcBL {
 				&& dt1.getYear() == dt2.getYear();
 	}
 
-	public static void logarVisita(GcInformacao informacao, CpIdentidade idc)
+	public static void logarVisita(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
 		Date dt = dt();
 		for (GcMovimentacao mov : informacao.movs) {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA
-					&& idc.getDpPessoa().equivale(mov.pessoa)
+					&& idc.getDpPessoa().equivale(mov.pessoaTitular)
+					//&& idc.getDpPessoa().equivale(mov.pessoa)
 					&& dtMesmoDia(dt, mov.hisDtIni))
 				return;
 		}
 		GcMovimentacao m = GcBL.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA, idc.getDpPessoa()
-						.getPessoaAtual(), null, null, null, null, null, null,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA, null, null, null, null, null, null, null,
 				null, null);
-		GcBL.gravar(informacao, idc);
+		GcBL.gravar(informacao, idc, titular, lotaTitular);
 	}
 
-	public static void notificado(GcInformacao informacao, CpIdentidade idc)
+	public static void notificado(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
 		for (GcMovimentacao mov : informacao.movs) {
 			if (mov.isCancelada())
@@ -446,41 +460,41 @@ public class GcBL {
 					&& idc.getDpPessoa().equivale(mov.pessoa)) {
 				GcMovimentacao m = GcBL.movimentar(informacao,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-						mov.pessoa, null, null, null, null, mov, null, null,
+						null, null, null, null, null, mov, null, null,
 						null);
 				mov.movCanceladora = m;
-				GcBL.gravar(informacao, idc);
+				GcBL.gravar(informacao, idc, titular, lotaTitular);
 				return;
 			}
 		}
 	}
 
 	public static void interessado(GcInformacao informacao, CpIdentidade idc,
-			DpPessoa titular, boolean fInteresse) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, boolean fInteresse) throws Exception {
 		GcMovimentacao movLocalizada = null;
 		for (GcMovimentacao mov : informacao.movs) {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO
-					&& titular.equivale(mov.pessoa)) {
+				&& titular.equivale(mov.pessoaTitular)) {
 				movLocalizada = mov;
 				break;
 			}
 		}
 		if (movLocalizada == null && fInteresse) {
 			GcMovimentacao m = GcBL.movimentar(informacao,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO, titular,
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO, null,
 					null, null, null, null, null, null, null, null);
-			GcBL.gravar(informacao, idc);
+			GcBL.gravar(informacao, idc, titular, lotaTitular);
 		} else if (movLocalizada != null && !fInteresse) {
 			GcMovimentacao m = GcBL
 					.movimentar(
 							informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-							movLocalizada.pessoa, null, null, null, null,
+							null, null, null, null, null,
 							movLocalizada, null, null, null);
 			movLocalizada.movCanceladora = m;
-			GcBL.gravar(informacao, idc);
+			GcBL.gravar(informacao, idc, movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
 		}
 	}
 
@@ -494,9 +508,9 @@ public class GcBL {
 				return;
 		}
 		GcMovimentacao m = GcBL.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, titular,
-				lotaTitular, null, null, null, null, null, null, null);
-		GcBL.gravar(informacao, idc);
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, null,
+				null, null, null, null, null, null, null, null);
+		GcBL.gravar(informacao, idc, titular, lotaTitular);
 	}
 
 	public static int compareStrings(String s1, String s2) {

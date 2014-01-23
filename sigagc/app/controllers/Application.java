@@ -177,10 +177,11 @@ public class Application extends SigaApplication {
 			mov.hisDtIni = dt;
 			mov.hisIdcIni = idc;
 			mov.tipo = GcTipoMovimentacao
-					.findById(GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO);
-			mov.pessoa = pessoa;
-			mov.lotacao = mov.pessoa.getLotacao();
-
+						.findById(GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO);
+			/* mov.pessoa ou mov.lotacao => responsavel por uma ação (notificar ou solicitar revisão)
+			 * mov.pessoa = pessoa;
+			 * mov.lotacao = mov.pessoa.getLotacao();
+			 */			
 			GcInformacao inf = new GcInformacao();
 			inf.autor = pessoa;
 			inf.lotacao = inf.autor.getLotacao();
@@ -191,7 +192,7 @@ public class Application extends SigaApplication {
 			inf.movs = new TreeSet<GcMovimentacao>();
 			inf.movs.add(mov);
 
-			GcBL.gravar(inf, idc);
+			GcBL.gravar(inf, idc, titular(), lotaTitular());
 		}
 
 		// } catch (Exception e) {
@@ -512,8 +513,8 @@ public class Application extends SigaApplication {
 			throw new AplicacaoException(
 					"Restrição de Acesso: O usuário não tem permissão para visualizar o conhecimento solicitado.");
 		}
-		GcBL.notificado(informacao, idc());
-		GcBL.logarVisita(informacao, idc());
+		GcBL.notificado(informacao, idc(), titular(), lotaTitular());
+		GcBL.logarVisita(informacao, idc(), titular(), lotaTitular());
 		render(informacao);
 	}
 	
@@ -620,7 +621,7 @@ public class Application extends SigaApplication {
 		GcInformacao inf = GcInformacao.findBySigla(sigla);
 		GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 				null, null, null, null, null, null, null, null, null);
-		GcBL.gravar(inf, idc());
+		GcBL.gravar(inf, idc(),titular(), lotaTitular());
 		exibir(inf.getSigla());
 	}
 	
@@ -629,10 +630,12 @@ public class Application extends SigaApplication {
 		
 		GcBL.movimentar(infDuplicada, GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, 
 				null, null, null, null, null, null, null, null, null);
-		GcBL.gravar(infDuplicada, idc());
+		GcBL.gravar(infDuplicada, idc(), titular(), lotaTitular());
 		
 		GcInformacao inf = new GcInformacao();	
 		GcArquivo arq = new GcArquivo();
+		GcMovimentacao movLocalizada = null;
+		
 		arq = infDuplicada.arq.duplicarConteudoInfo();
 		inf.autor = titular();
 		inf.lotacao = lotaTitular();
@@ -644,16 +647,32 @@ public class Application extends SigaApplication {
 			for (GcMovimentacao mov : infDuplicada.movs) {
 				if (mov.isCancelada())
 					continue;
-				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR) {
-					GcBL.movimentar(inf,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null,
-							null, arq.titulo, arq.getConteudoTXT(), arq.classificacao, mov,
-							null, null, null);
-					GcBL.gravar(inf, idc());
-					exibir(inf.getSigla());
+				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR) {				
+						movLocalizada = mov;
+						break;
 				}
 			}
 		}
+		GcBL.movimentar(inf,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null,
+				null, arq.titulo, arq.getConteudoTXT(), arq.classificacao, movLocalizada,
+				null, null, null);
+		GcBL.gravar(inf, idc(),titular(), lotaTitular());
+		
+		if (infDuplicada.isContemArquivos()) {
+			for (GcMovimentacao movDuplicado : infDuplicada.movs) {
+				if (movDuplicado.isCancelada())
+					continue;
+				if (movDuplicado.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
+					&& movDuplicado.movCanceladora == null) {
+					GcMovimentacao m = GcBL.movimentar(inf, movDuplicado.arq,
+											GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO);
+					m.movRef = movLocalizada;
+					GcBL.gravar(inf, idc(), titular(), lotaTitular());
+				}
+			}
+		}
+		exibir(inf.getSigla());
 	}
 
 	public static void gravar(GcInformacao informacao, String titulo,
@@ -681,17 +700,17 @@ public class Application extends SigaApplication {
 		classificacao = Util.findHashTag(conteudo, classificacao, CONTROLE_HASH_TAG);
 		// if (informacao.id != 0)
 		GcBL.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, pessoa,
-				lotacao, titulo, conteudo, classificacao, null,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null,
+				null, titulo, conteudo, classificacao, null,
 				null, null, null);
 
-		GcBL.gravar(informacao, idc());
+		GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 		if (origem != null && origem.trim().length() != 0) {
 			if (informacao.podeFinalizar()) {
 				GcBL.movimentar(informacao,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
 						null, null, null, null, null, null, null, null);
-				GcBL.gravar(informacao, idc());
+				GcBL.gravar(informacao, idc(), pessoa, lotacao);
 			}
 			redirect(origem);
 		} else 
@@ -720,14 +739,14 @@ public class Application extends SigaApplication {
 	public static void notificarGravar(GcInformacao informacao, Long pessoa,
 			Long lotacao) throws Exception {
 		if(pessoa != null || lotacao != null) {
-			DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa.findById(pessoa)
+			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa.findById(pessoa)
 					: null);
-			DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
+			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao
 					.findById(lotacao) : null);
 			GcBL.movimentar(informacao,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pes, lot, null,
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pesResponsavel, lotResponsavel, null,
 					null, null, null, null, null, null);
-			GcBL.gravar(informacao, idc());
+			GcBL.gravar(informacao, idc(),titular(), lotaTitular());
 			exibir(informacao.getSigla());
 		}
 		else
@@ -742,14 +761,14 @@ public class Application extends SigaApplication {
 	public static void solicitarRevisaoGravar(GcInformacao informacao,
 			Long pessoa, Long lotacao) throws Exception {
 		if(pessoa != null || lotacao != null) { 
-			DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa.findById(pessoa)
+			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa.findById(pessoa)
 					: null);
-			DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
+			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao
 					.findById(lotacao) : null);
 			GcBL.movimentar(informacao,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pes,
-					lot, null, null, null, null, null, null, null);
-			GcBL.gravar(informacao, idc());
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pesResponsavel,
+					lotResponsavel, null, null, null, null, null, null, null);
+			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 			exibir(informacao.getSigla());
 		}
 		else
@@ -773,16 +792,16 @@ public class Application extends SigaApplication {
 						byte anexo[] = file.asBytes();
 						if (titulo == null || titulo.trim().length() == 0)
 							titulo = file.getFileName();
-						DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa
+						/*DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa
 								.findById(pessoa) : null);
 						DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
 								.findById(lotacao) : null);
-						GcBL.movimentar(
+*/						GcBL.movimentar(
 								informacao,
 								GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-								pes, lot, titulo, null, null, null, null,
+								null, null, titulo, null, null, null, null,
 								anexo, mimeType);
-						GcBL.gravar(informacao, idc());
+						GcBL.gravar(informacao, idc(),titular(), lotaTitular());
 						exibir(informacao.getSigla());
 					}
 				}
@@ -806,10 +825,11 @@ public class Application extends SigaApplication {
 		}
 		GcMovimentacao m = GcBL.movimentar(inf,
 								GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-								movLocalizada.pessoa, null, null, null, null,
+								null, null, null, null, null,
 								movLocalizada, null, null, null);
 		movLocalizada.movCanceladora = m;
-		GcBL.gravar(inf, idc());
+		GcBL.gravar(inf, idc(), titular(), lotaTitular());
+		editar(sigla, null, null, null);
 	}
 	
 	public static void baixar(Long id) {
@@ -829,9 +849,9 @@ public class Application extends SigaApplication {
 						&& idc().getDpPessoa().equivale(mov.pessoa)) {
 					GcBL.movimentar(informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
-							mov.pessoa, mov.lotacao, null, null, null, mov,
+							null, null, null, null, null, mov,
 							null, null, null);
-					GcBL.gravar(informacao, idc());
+					GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 					exibir(sigla);
 				}
 			}
@@ -842,13 +862,13 @@ public class Application extends SigaApplication {
 
 	public static void marcarComoInteressado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		GcBL.interessado(informacao, idc(), titular(), true);
+		GcBL.interessado(informacao, idc(), titular(), lotaTitular(), true);
 		exibir(sigla);
 	}
 
 	public static void desmarcarComoInteressado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		GcBL.interessado(informacao, idc(), titular(), false);
+		GcBL.interessado(informacao, idc(), titular(), lotaTitular(), false);
 		exibir(sigla);
 	}
 

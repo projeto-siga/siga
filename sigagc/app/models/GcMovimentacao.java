@@ -49,6 +49,14 @@ public class GcMovimentacao extends GenericModel implements
 	public DpLotacao lotacao;
 
 	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_PESSOA_TITULAR")
+	public DpPessoa pessoaTitular;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_LOTACAO_TITULAR")
+	public DpLotacao lotacaoTitular;
+
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_CONTEUDO")
 	public GcArquivo arq;
 

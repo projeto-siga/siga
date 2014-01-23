@@ -23,7 +23,7 @@ title:'Movimentações'/}
 					<th align="left" rowspan="2">Data</th>
 					<th rowspan="2">Evento</th>
 					<th colspan="2" align="left">Cadastrante</th>
-					<th colspan="2" align="left">Referente</th>
+					<th colspan="2" align="left">Responsável</th>
 					<th rowspan="2">Descrição</th>
 				</tr>
 				<tr>
@@ -34,15 +34,23 @@ title:'Movimentações'/}
 				</tr>
 			</thead>
 			<tbody>
-				#{list items:informacao.movs, as:'m'}
-					#{set descricao: '' /} #{set tipo: '' /} #{set classe: '' /}
+				#{list items:informacao.movs, as:'m'}	
 					#{if m.tipo.id == 13}
-						#{set descricao: m.arq?.titulo  /} #{set tipo: m.arq?.mimeType /}
+						#{set descricao: m.arq?.titulo + " (" + m.arq?.mimeType + ")"  /}
+						#{if m.movCanceladora} #{set classe: 'disabled' /} #{/if}
+						#{else} #{set classe: '' /} #{/else}
 					#{/if}
-					#{if m.tipo.id == 12 && m.movRef != null}
-						#{set descricao: m.movRef.tipo.nome + m.movRef.arq?.titulo /} #{set tipo: m.movRef.arq?.mimeType  /}
+					#{elseif m.tipo.id == 12 && m.movRef != null}
+						#{if m.movRef.tipo.id == 13}
+							#{set descricao: m.movRef.tipo.nome + ": " + m.movRef.arq?.titulo + " (" + m.movRef.arq?.mimeType + ")"  /} 
+						#{/if}
+						#{else} #{set descricao: m.movRef.tipo.nome /}#{/else}
 						#{set classe: 'disabled' /}
-					#{/if}
+					#{/elseif}
+					#{else}
+						#{set descricao: '' /} #{set classe: '' /} 		
+					#{/else}
+					
 				<tr class="juntada ${classe}">
 					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
 					<td>${m.tipo.nome}</td>
@@ -58,7 +66,7 @@ title:'Movimentações'/}
 					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span>
 					</td>
 					<td>
-						${descricao?.raw()} (${tipo?.raw()})						
+						${descricao?.raw()}					
 					</td>
 				</tr>
 				#{/list}

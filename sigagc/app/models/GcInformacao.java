@@ -203,7 +203,7 @@ public class GcInformacao extends GenericModel {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO
-					&& titular.equivale(mov.pessoa)) {
+					&& titular.equivale(mov.pessoaTitular)) {
 				return false;
 			}
 		}
@@ -458,7 +458,8 @@ public class GcInformacao extends GenericModel {
 		if (movs == null)
 			return false;
 		for (GcMovimentacao m : movs)
-			if (m.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO)
+			if (m.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO &&
+				m.movCanceladora == null)
 				return true;
 		return false;
 	}

@@ -77,6 +77,7 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -508,6 +509,20 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(final CpAplicacaoFeriado apl) {
+		final Query query = getSessao().getNamedQuery(
+				"listarAplicacoesFeriado");
+		query.setLong("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado().getId());
+
+		query.setCacheable(true);
+		query.setCacheRegion(CACHE_QUERY_HOURS);
+
+		final List<CpAplicacaoFeriado> l = query.list();
+		return l;
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	public DpFuncaoConfianca consultarPorSigla(final DpFuncaoConfianca o) {
@@ -876,6 +891,16 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<CpUF> consultarUF() {
+
+		Query query = getSessao().createQuery(
+				"from CpUF l order by l.nmUF");
+		List l = query.list();
+		return l;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {
 
 		Query query = getSessao().createQuery(
@@ -885,6 +910,7 @@ public class CpDao extends ModeloDao {
 		return l;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidadesPorUF(final String siglaUF) {
 
 		Query query = getSessao().createQuery(
@@ -893,6 +919,15 @@ public class CpDao extends ModeloDao {
 		List l = query.list();
 		return l;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpLocalidade> consultarLocalidades() {
+
+		Query query = getSessao().createQuery(
+				"from CpLocalidade l order by l.nmLocalidade");
+		List l = query.list();
+		return l;
+	}	
 
 	@SuppressWarnings("unchecked")
 	public CpPersonalizacao consultarPersonalizacao(DpPessoa pes) {

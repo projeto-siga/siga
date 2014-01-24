@@ -626,7 +626,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			//
 			// df1.applyPattern("dd/MM/yyyy");
 			// df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
-			String s = getLocalidadeString();
+			String s = Texto.maiusculasEMinusculas(getLocalidadeString());
 
 			return s + ", " + df1.format(getDtDoc()).toLowerCase();
 		} catch (Exception e) {
@@ -1443,7 +1443,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				i = listVolumeAnterior.get(listVolumeAnterior.size() - 1)
 						.getPaginaFinal();
 			}
-
+			
+			removerDesentranhamentosQueNaoFazemParteDoDossie(list);
+			
 			for (ExArquivoNumerado an : list) {
 				i++;
 				an.setPaginaInicial(i);
@@ -1453,6 +1455,36 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 
 		return list;
+	}
+	
+	public void removerDesentranhamentosQueNaoFazemParteDoDossie(List<ExArquivoNumerado> list) {
+		//Verifica se tem movimentação de desentranhamento que não pertence ao documento principal
+		if(list != null && list.get(0) != null) {
+			ExArquivoNumerado arquivoPrincipal = list.get(0);
+			
+			if(arquivoPrincipal.getArquivo() instanceof ExDocumento) {
+				
+				List<ExArquivoNumerado> arquivosParaRemover = new ArrayList<ExArquivoNumerado>();
+				
+				for (ExArquivoNumerado an : list) {
+					if(an.getArquivo() instanceof ExMovimentacao) {
+						ExMovimentacao mov = (ExMovimentacao)an.getArquivo();
+						
+						if(mov.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+							
+							if(mov.getExMobilRef() != null && !mov.getExMobilRef().getId().equals(arquivoPrincipal.getMobil().getId())) {
+								
+								arquivosParaRemover.add(an);
+							}
+						}
+					}
+				}
+				
+				for (ExArquivoNumerado arquivoParaRemover : arquivosParaRemover) {
+					list.remove(arquivoParaRemover);
+				}
+			}
+		}
 	}
 
 	/**
@@ -1803,14 +1835,28 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (getSubscritor() != null)
 			subscritores.add(getSubscritor());
 
-		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
-			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
-					&& m.getExMovimentacaoCanceladora() == null) {
-				subscritores.add(m.getSubscritor());
-			}
-		}
+		subscritores.addAll(getCosignatarios());
 
 		return subscritores;
+	}
+	
+	/**
+	 * Retorna uma lista com o todos os cossignatários.
+	 */
+	public List<DpPessoa> getCosignatarios() {
+		
+		List<DpPessoa> cosignatarios = new ArrayList<DpPessoa>();
+		
+		if(getMobilGeral() != null && getMobilGeral().getExMovimentacaoSet() != null) {
+			for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+				if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+						&& m.getExMovimentacaoCanceladora() == null) {
+					cosignatarios.add(m.getSubscritor());
+				}
+			}
+		}
+		
+		return cosignatarios;
 	}
 
 	/**

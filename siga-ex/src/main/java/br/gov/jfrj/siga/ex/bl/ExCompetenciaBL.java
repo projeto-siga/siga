@@ -2178,6 +2178,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
+		
+		if(mov.isUltimaMovimentacao())
+			return false;
 
 		for (ExMovimentacao movAssinatura : mov.getExMobil()
 				.getExMovimentacaoSet()) {
@@ -2496,6 +2499,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (ultMovNaoCancelada == null)
+			return false;
+		
+		if(mob.doc().isEletronico() && mob.isVolumeApensadoAoProximo())
 			return false;
 
 		if (!mob.isApensado() || mob.isEmTransito() || mob.isCancelada()

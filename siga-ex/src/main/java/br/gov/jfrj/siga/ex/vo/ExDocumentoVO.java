@@ -55,6 +55,7 @@ public class ExDocumentoVO extends ExVO {
 	String dadosComplementares;
 	String forma;
 	String modelo;
+	String tipoFormaDocumento;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo) throws Exception {
@@ -88,6 +89,16 @@ public class ExDocumentoVO extends ExVO {
 				this.tipoDocumento = "externo";
 				break;
 			}
+		if (doc.getExFormaDocumento().getExTipoFormaDoc() != null)
+			switch (doc.getExFormaDocumento().getExTipoFormaDoc().getId().intValue()) {
+			case 1:
+				this.tipoFormaDocumento = "expediente";
+				break;
+			case 2:
+				this.tipoFormaDocumento = "processo_administrativo";
+				break;
+			}
+
 		this.dtFechamento = doc.getDtFechamentoDDMMYY();
 		if (doc.getExModelo() != null)
 			this.nmArqMod = doc.getExModelo().getNmArqMod();
@@ -553,5 +564,9 @@ public class ExDocumentoVO extends ExVO {
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+
+	public String getTipoFormaDocumento() {
+		return tipoFormaDocumento;
 	}
 }

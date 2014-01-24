@@ -780,6 +780,25 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return b;
 	}
+	
+	/**
+	 * Retorno o mobil a qual este mobil está juntado.
+	 * 
+	 * @return ExMobil a qual este mobil está juntado.
+	 * 
+	 */
+	public ExMobil getExMobilJuntado() {
+		ExMobil mobilRef = null;
+		for (ExMovimentacao mov : getExMovimentacaoSet()) {
+			if (mov.isCancelada())
+				continue;
+			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+				mobilRef = mov.getExMobilRef();
+			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)
+				mobilRef = null;
+		}
+		return mobilRef;
+	}	
 
 	/**
 	 * Verifica se um Mobil está juntado a outro mobil do tipo interno. Um Mobil
@@ -1458,6 +1477,17 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public String getReferenciaRTF() {
 		return getReferencia() + ".rtf";
 	};
+	
+	/**
+	 * Verifica se o mobil está na mesma lotação de outro
+	 * 
+	 */
+	public boolean estaNaMesmaLotacao(ExMobil outroMobil) {
+		if(getUltimaMovimentacao() != null && outroMobil.getUltimaMovimentacao() != null)
+			return getUltimaMovimentacao().getLotaResp().equivale(outroMobil.getUltimaMovimentacao().getLotaResp());
+		
+		return false;
+	}
 
 
 }

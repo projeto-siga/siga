@@ -6,7 +6,6 @@
 	<package name="default" extends="webwork-default">
 		<result-types>
  			<result-type name="stream-fixed" class="br.gov.jfrj.siga.libs.webwork.StreamResult"/> 
- 			<result-type name="do-nothing" class="br.gov.jfrj.siga.libs.webwork.DoNothingResult"/> 
  		</result-types>
 
 		<interceptors>
@@ -1098,7 +1097,6 @@
 				<param name="contentLength">${contentLength}</param>
 				<param name="contentDisposition">${contentDisposition}</param>
 			</result>
-			<result name="donothing" type="do-nothing"></result>
 		</action>
 		<action name="download" class="br.gov.jfrj.webwork.action.ExArquivoAction"
 			method="aDownload">
@@ -1122,6 +1120,30 @@
 			</result>
 		</action>
 	</package>
+	<package name="expediente/emailNotificacao" extends="default" namespace="/expediente/emailNotificacao">
+		<action name="exibir" class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction"
+			method="aExibir">
+		</action>						
+		<action name="listar" method="aListar"
+			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
+			<result>/paginas/emailNotificacao/lista.jsp</result>
+		</action>		
+		<action name="editar" method="aEditar"
+			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
+			<result>/paginas/emailNotificacao/edita.jsp</result>
+		</action>
+		<action name="editar_gravar" method="aEditarGravar"
+			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
+			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
+				/> -->
+			<result type="redirect-action">listar</result>
+		</action>
+		<action name="excluir" method="aExcluir"
+			class="br.gov.jfrj.webwork.action.ExEmailNotificacaoAction">
+			<result type="redirect-action">listar</result>
+		</action>	
+	</package>
+	
 	
 	<package name="expediente/rel" extends="default" namespace="/expediente/rel">
 		<!-- action principal : chama todos os jsp´s -->
@@ -1214,6 +1236,14 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		
+		<action name="emiteRelMovProcesso" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
+			method="aRelMovProcesso">
+			<result name="relatorio" type="stream-fixed">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
 
 		<action name="emiteRelTipoDoc" class="br.gov.jfrj.webwork.action.ExRelatorioAction"
 			method="aRelTipoDoc">
@@ -1254,6 +1284,18 @@
 			<result name="ajax_retorno">
 				/sigalibs/ajax_retorno.jsp
 			</result>
+		</action>
+	</package>
+	
+	<package name="cosignatario" extends="default" namespace="/cosignatario">
+		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
+			method="aBuscar">
+			<result name="busca">/sigalibs/pessoa_busca.jsp</result>
+		</action>
+		<action name="selecionar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
 	</package>
 

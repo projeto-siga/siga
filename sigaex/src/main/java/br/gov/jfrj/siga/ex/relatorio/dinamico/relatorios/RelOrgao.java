@@ -123,14 +123,14 @@ public class RelOrgao extends RelatorioTemplate {
 				d.add(s);
 				acrescentarColuna(d, map, s, "Expediente", "Recebimento");
 				acrescentarColuna(d, map, s, "Expediente", "Transferência");
-				acrescentarColuna(d, map, s, "Expediente", "Encerramento"); 
-				acrescentarColuna(d, map, s, "Expediente", "Reabertura");
+				acrescentarColuna(d, map, s, "Expediente", "Arquivamento Corrente"); 
+				acrescentarColuna(d, map, s, "Expediente", "Desarquivamento");
 				acrescentarColuna(d, map, s, "Processo Administrativo",
 				"Recebimento");
 				acrescentarColuna(d, map, s, "Processo Administrativo",
 						"Transferência");
-				acrescentarColuna(d, map, s, "Processo Administrativo", "Encerramento");
-				acrescentarColuna(d, map, s, "Processo Administrativo", "Reabertura");
+				acrescentarColuna(d, map, s, "Processo Administrativo", "Arquivamento Corrente");
+				acrescentarColuna(d, map, s, "Processo Administrativo", "Desarquivamento");
 			}
 		} else {
 		Query query = HibernateUtil
@@ -173,18 +173,15 @@ public class RelOrgao extends RelatorioTemplate {
 			d.add(s);
 			acrescentarColuna(d, map, s, "Expediente", "Recebimento");
 			acrescentarColuna(d, map, s, "Expediente", "Transferência");
-			acrescentarColuna(d, map, s, "Expediente", "Encerramento");
-			acrescentarColuna(d, map, s, "Expediente", "Reabertura"); 
+			acrescentarColuna(d, map, s, "Expediente", "Arquivamento Corrente");
+			acrescentarColuna(d, map, s, "Expediente", "Desarquivamento"); 
 			acrescentarColuna(d, map, s, "Processo Administrativo","Recebimento");
 			acrescentarColuna(d, map, s, "Processo Administrativo",	"Transferência");
-			acrescentarColuna(d, map, s, "Processo Administrativo", "Encerramento");
-			acrescentarColuna(d, map, s, "Processo Administrativo", "Reabertura");
+			acrescentarColuna(d, map, s, "Processo Administrativo", "Arquivamento Corrente");
+			acrescentarColuna(d, map, s, "Processo Administrativo", "Desarquivamento");
 		}
 
 		}
-		
-	
-
 		return d;
 	}
 
@@ -203,7 +200,7 @@ public class RelOrgao extends RelatorioTemplate {
 		if (l > 0)
 			d.add(l.toString());
 		else
-			d.add("");
+			d.add("-");
 	}
 
 	private String chave(String lotacao, String tipodoc, String tipomov) {

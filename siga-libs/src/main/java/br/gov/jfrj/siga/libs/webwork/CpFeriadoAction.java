@@ -26,17 +26,26 @@ package br.gov.jfrj.siga.libs.webwork;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
+import com.opensymphony.webwork.components.Set;
 import com.opensymphony.xwork.Action;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
+import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOcorrenciaFeriado;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpUF;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoDaoFiltro;
+
 
 
 public class CpFeriadoAction extends SigaAnonimoActionSupport {
@@ -49,12 +58,21 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	private Long idOcorrencia;
 	private String dscFeriado;
 	private Date dtIniFeriado;
-	private Date dtFimFeriado;
-	
+	private Date dtFimFeriado;	
 	private List itens;
+	private Long idOrgaoUsu;
+	private Long idLocalidade;
+	private Long idAplicacao;
+	private List localidades;	
+	private String nmUF;
+	private DpLotacaoSelecao lotacaoSel;
 	
 	
 		
+	public CpFeriadoAction() {
+		lotacaoSel = new DpLotacaoSelecao();
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -80,7 +98,6 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		this.dscFeriado = dscFeriado;	
 	}
 	
-	
 	public List getItens() {
 		return itens;
 	}
@@ -104,6 +121,55 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	public void setDtFimFeriado(Date dtFimFeriado) {
 		this.dtFimFeriado = dtFimFeriado;
 	}
+	
+	public DpLotacaoSelecao getLotacaoSel() {
+		return lotacaoSel;
+	}
+
+	public void setLotacaoSel(DpLotacaoSelecao lotacaoSel) {
+		this.lotacaoSel = lotacaoSel;
+	}
+
+	public List getLocalidades() {
+		return localidades;
+	}
+
+	public void setLocalidades(List localidades) {
+		this.localidades = localidades;
+	}
+	
+	public Long getIdLocalidade() {
+		return idLocalidade;
+	}
+
+	public void setIdLocalidade(Long idLocalidade) {
+		this.idLocalidade = idLocalidade;
+	}
+
+		public Long getIdOrgaoUsu() {
+		return idOrgaoUsu;
+	}
+
+	public void setIdOrgaoUsu(Long idOrgaoUsu) {
+		this.idOrgaoUsu = idOrgaoUsu;
+	}
+
+
+	public String getNmUF() {
+		return nmUF;
+	}
+
+	public void setNmUF(String nmUF) {
+		this.nmUF = nmUF;
+	}
+
+	public Long getIdAplicacao() {
+		return idAplicacao;
+	}
+
+	public void setIdAplicacao(Long idAplicacao) {
+		this.idAplicacao = idAplicacao;
+	}
 
 	public CpFeriado daoFeriado(Integer id) {
 		return dao().consultar(id, CpFeriado.class, false);
@@ -111,6 +177,10 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	
 	public CpOcorrenciaFeriado daoOcorrenciaFeriado(long id) {
 		return dao().consultar(id, CpOcorrenciaFeriado.class, false);
+	}
+	
+	public CpAplicacaoFeriado daoAplicacaoFeriado(long id) {
+		return dao().consultar(id, CpAplicacaoFeriado.class, false);
 	}
 
 	public String aListar() throws Exception {
@@ -188,6 +258,24 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		return Action.SUCCESS;
 	}
 	
+	public String aExcluirAplicacao() throws Exception {
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+		if (getIdAplicacao() != null) {
+			try {
+				dao().iniciarTransacao();
+				CpAplicacaoFeriado aplicacao = daoAplicacaoFeriado(getIdAplicacao());				
+				dao().excluir(aplicacao);				
+				dao().commitTransacao();				
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado", 0, e);
+			}
+		} else
+			throw new AplicacaoException("ID da ocorrencia não informada");
+
+		return Action.SUCCESS;
+	}
+	
 	public Date stringToDate(String data) throws Exception {   
         if (data == null || data.equals(""))  
             return null;            
@@ -206,17 +294,17 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 
 		if (getIdOcorrencia() != null) {
 			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getIdOcorrencia());	
+			this.setId(ocorrencia.getCpFeriado().getIdFeriado());
 			this.setDscFeriado(ocorrencia.getCpFeriado().getDescricao());		
 			this.setDtIniFeriado(stringToDate(ocorrencia.getDtRegIniDDMMYY()));
 			this.setDtFimFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYY()));			
-		
 		} else {
 			if (getId() != null) {
 				CpFeriado feriado = daoFeriado(getId());		
 				this.dscFeriado = feriado.getDescricao();				
 			} else		
 				throw new AplicacaoException("ID não informado");
-		}
+		}	
 		
 		return Action.SUCCESS;
 	}
@@ -225,6 +313,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 		
 		CpOcorrenciaFeriado ocorrencia;
+		CpAplicacaoFeriado aplicacao = new CpAplicacaoFeriado();			
 		
 		if(this.getDtIniFeriado() == null)
 			throw new AplicacaoException("Data de início do feriado não informada");
@@ -239,7 +328,35 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		ocorrencia.setDtIniFeriado(this.dtIniFeriado);
 		ocorrencia.setDtFimFeriado(this.dtFimFeriado);	
 		
-		try {
+		if ((getLotacaoSel().getId() != null && getLotacaoSel().getId()!= 0) ||
+				(getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0)	||
+				(getIdLocalidade() != null && getIdLocalidade() != 0)) {	
+			HashSet<CpAplicacaoFeriado> apls = new HashSet<CpAplicacaoFeriado>(); 
+		
+			if (getLotacaoSel().getId() != null && getLotacaoSel().getId() != 0) {
+				DpLotacao lotacao = dao().consultar(getLotacaoSel().getId(), DpLotacao.class, false);
+				aplicacao.setDpLotacao(lotacao);
+			}
+		
+			if(getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0){
+				CpOrgaoUsuario orgao = dao().consultar(getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
+				aplicacao.setOrgaoUsu(orgao);
+			}	
+		
+			if (getIdLocalidade() != null && getIdLocalidade() != 0) {
+				CpLocalidade localidade = dao().consultar(getIdLocalidade(), CpLocalidade.class, false);
+				aplicacao.setLocalidade(localidade);		
+			}
+			aplicacao.setCpOcorrenciaFeriado(ocorrencia);
+			aplicacao.setFgFeriado(null);
+		
+			apls.add(aplicacao);
+		
+			ocorrencia.setCpAplicacaoFeriadoSet(apls);	
+		}
+		
+		try 
+		{
 			dao().iniciarTransacao();
 			dao().gravar(ocorrencia);
 			dao().commitTransacao();			
@@ -250,4 +367,45 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		
 		return Action.SUCCESS;		
 	}
+	
+	public String aListarLocalidades() {
+
+			
+		return Action.SUCCESS;
+	}
+	
+	public List<CpLocalidade> getListaLocalidades(){
+		
+		List<CpLocalidade> localidades = new ArrayList<CpLocalidade>();
+		
+		if (this.nmUF == null || this.nmUF == ""){
+			localidades = dao().consultarLocalidades();
+		}else
+			localidades = dao().consultarLocalidadesPorUF(this.nmUF);
+		
+		return localidades;
+		
+	}	
+	
+	public List<CpUF> getListaUF(){
+		
+		List<CpUF> uf = new ArrayList<CpUF>();
+		uf = dao().consultarUF();
+		
+		return uf;
+		
+	}	
+	
+	public List<CpAplicacaoFeriado> getListaAplicacoes(){
+		
+		List<CpAplicacaoFeriado> aplicacoes = new ArrayList<CpAplicacaoFeriado>();
+		CpAplicacaoFeriado apl = new CpAplicacaoFeriado();
+		CpOcorrenciaFeriado ocorrencia = new CpOcorrenciaFeriado();
+		ocorrencia = dao().consultar(this.idOcorrencia, CpOcorrenciaFeriado.class, false);	
+		apl.setCpOcorrenciaFeriado(ocorrencia);		
+		aplicacoes = dao().listarAplicacoesFeriado(apl);
+		
+		return aplicacoes;
+		
+	}		
 }

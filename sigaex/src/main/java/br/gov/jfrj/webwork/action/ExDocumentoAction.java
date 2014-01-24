@@ -1156,8 +1156,19 @@ public class ExDocumentoAction extends ExActionSupport {
 							doc.getExTipoDocumento(),
 							doc.getExFormaDocumento(), doc.getExModelo(),
 							doc.getExClassificacao(), doc.getExNivelAcesso(),
-							CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+							CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
+			
+				if(!Ex.getInstance()
+						.getConf()
+						.podePorConfiguracao(getTitular(), getLotaTitular(),
+								null,
+								null, null,
+								doc.getExClassificacao(), null,
+								CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+					throw new AplicacaoException("Usuário não possui permissão de criar documento da classificação " + doc.getExClassificacao().getCodificacao());
+				
 				throw new AplicacaoException("Operação não permitida");
+			}
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
 					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
@@ -1209,11 +1220,20 @@ public class ExDocumentoAction extends ExActionSupport {
 
 			Ex.getInstance().getBL()
 					.gravar(getCadastrante(), getLotaTitular(), doc);
-
+			
 			lerEntrevista(doc);
 
 			if (getDesativarDocPai().equals("sim"))
 				setDesativ("&desativarDocPai=sim");
+			
+			try {
+				
+				Ex.getInstance().getBL().incluirCosignatariosAutomaticamente(getCadastrante(), getLotaTitular(), doc);
+				
+			} catch (Exception e) {
+				
+				throw new AplicacaoException("Erro ao tentar incluir os cosignatários deste documento", 0, e);
+			}
 
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro na gravação", 0, e);

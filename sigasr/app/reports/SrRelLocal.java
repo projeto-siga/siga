@@ -24,6 +24,7 @@ import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
+import br.gov.jfrj.relatorio.dinamico.Coluna;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -52,24 +53,27 @@ public class SrRelLocal extends RelatorioTemplate {
 		this.addColuna("Local", 100, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Item de Configuração", 50, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Ação", 50, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Total", 30, RelatorioRapido.CENTRO, false);
+		Coluna c = this.addColuna("Total", 40, RelatorioRapido.CENTRO, false, Long.class);
+		this.setColunaTotal(c);
 		return this;
 	}
 
 	@Override
 	public Collection processarDados() {
 
-		List<String> d = new LinkedList<String>();
+		List<Object> d = new LinkedList<Object>();
 		Long totsols = (long) 0;
 		
 		if (parametros.get("local").equals("0")) {
 			if (parametros.get("lotacao").equals("")) {
 				List<SrSolicitacao> lista = SrSolicitacao.find(
-						"select sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao, count(*) " +
+						"select sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " +
+						"sol.acao.tituloAcao, count(*) " +
 						"from SrSolicitacao sol " +
 						"where sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
 						"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-						"group by sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao").fetch();
+						"group by sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " +
+						"sol.acao.tituloAcao").fetch();
 						Iterator it = lista.listIterator(); 
 						while (it.hasNext()) {
 							Object[] obj = (Object[]) it.next();
@@ -81,7 +85,7 @@ public class SrRelLocal extends RelatorioTemplate {
 							d.add(itenslocais.toString());
 							d.add(itensconf.toString());
 							d.add(itensserv.toString());
-							d.add(total.toString());
+							d.add(total);
 						}
 			} else {
 							String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni " +
@@ -112,7 +116,7 @@ public class SrRelLocal extends RelatorioTemplate {
 									d.add(itenslocais.toString());
 									d.add(itensconf.toString());
 									d.add(itensserv.toString());
-									d.add(total.toString());
+									d.add(total);
 								}
 					}
 			} else {
@@ -125,7 +129,8 @@ public class SrRelLocal extends RelatorioTemplate {
 					if (i < ( lotacoes.size() - 1)) listalotacoes.append(",");
 				}
 				List<SrSolicitacao> lista = SrSolicitacao.find(
-					"select sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, sol.acao.tituloAcao, count(*) " +
+					"select sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " +
+					"sol.acao.tituloAcao, count(*) " +
 					"from SrSolicitacao sol " +
 					"where exists (select 1 from SrMovimentacao mov where mov.solicitacao = sol.idSolicitacao " +
 					"				and mov.lotaAtendente in (" + listalotacoes + "))" +
@@ -145,10 +150,9 @@ public class SrRelLocal extends RelatorioTemplate {
 						d.add(itenslocais.toString());
 						d.add(itensconf.toString());
 						d.add(itensserv.toString());
-						d.add(total.toString());
+						d.add(total);
 					}
 			}
-		//d.add(totsols.toString());
 		return d;
 		}
 		

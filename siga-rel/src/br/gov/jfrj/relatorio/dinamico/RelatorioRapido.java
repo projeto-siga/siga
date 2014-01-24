@@ -31,6 +31,7 @@ import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 //import org.hibernate.Query;
 
+import ar.com.fdvs.dj.domain.DJCalculation;
 import ar.com.fdvs.dj.domain.Style;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
@@ -64,6 +65,12 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 	public final static int DIREITA = 2;
 
 	private List<Coluna> colunas;
+	private Coluna colunaTotal;
+	
+	public void setColunaTotal (Coluna colunaTotal){
+		this.colunaTotal = colunaTotal;
+	}
+	
 	private int porcento;
 
 	public RelatorioRapido(Map parametros) throws DJBuilderException {
@@ -91,6 +98,7 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 	 *            RelatorioRapido.ESQUERDA<BR>
 	 *            RelatorioRapido.CENTRO<BR>
 	 *            RelatorioRapido.DIREITO
+	 * @param b 
 	 */
 	public void addColuna(String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado) {
@@ -100,7 +108,15 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 		colunas.add(c);
 	}
 
-	public void addColuna(String nome, String titulo, int tamanho, int alinhamento,
+	public Coluna addColuna(String titulo, int tamanho, int alinhamento,
+			boolean isAgrupado, Class tipo) {
+		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
+		c.setTipo(tipo);
+		colunas.add(c);
+		return c;
+	}
+	
+	public void addColuna(String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado, boolean isHyperlink) {
 		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
 		c.setHyperlink(isHyperlink);
@@ -110,6 +126,7 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 	private Coluna criarColuna( String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado) {
 		Coluna c = new Coluna();
+		c.setTipo(String.class);
 		c.setTitulo(titulo);
 		c.setTamanho(tamanho);
 		c.setAlinhamento(alinhamento);
@@ -132,6 +149,8 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 	private void processarColunas() {
 
 		int i = 0;
+		
+		AbstractColumn colunaTotalJasper = null;
 
 		for (Iterator iterator = colunas.iterator(); iterator.hasNext();) {
 			Coluna c = (Coluna) iterator.next();
@@ -163,6 +182,9 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 								estiloAlinhamento)
 								.build();
 
+				if (colunaTotal == c)
+					colunaTotalJasper = coluna;
+				
 				if (c.isHyperlink()) {
 					this.addField(IConstantes.PREFIXO_HYPERLINK_PARAMETER + i,
 							String.class.getName());
@@ -191,6 +213,10 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 				e.printStackTrace();
 			}
 		}
+		if (colunaTotal != null){
+			addGlobalFooterVariable(colunaTotalJasper, DJCalculation.SUM);
+			setGrandTotalLegend("Total de Solicitações:");
+		}
 	}
 
 	public void setDados(Collection dados) throws Exception {
@@ -200,17 +226,17 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 			dados = null;
 			System.gc();
 			Collection colecaoDados = new ArrayList<String>();
-			Map<String, String> mapDados = new TreeMap<String, String>();
+			Map<String, Object> mapDados = new TreeMap<String, Object>();
 			int atual = 0;
 			while (atual < arrayDados.length) {
 
 				for (int j = 0; j < colunas.size(); j++) {
 					mapDados.put(IConstantes.PREFIXO_COLUNA_PROPERTY + j,
-							(String) arrayDados[atual]);
+							arrayDados[atual]);
 
 					if (colunas.get(j).isHyperlink()) {
 						mapDados.put(IConstantes.PREFIXO_HYPERLINK_PARAMETER
-								+ j, (String) arrayDados[atual + 1]);
+								+ j, arrayDados[atual + 1]);
 						arrayDados[atual] = null;
 						atual++;
 					}
@@ -220,7 +246,7 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 				}
 
 				colecaoDados.add(mapDados);
-				mapDados = new TreeMap<String, String>();
+				mapDados = new TreeMap<String, Object>();
 			}
 
 			ds = new JRMapCollectionDataSource(colecaoDados);
@@ -241,64 +267,4 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 
 }
 
-class Coluna {
-	private String titulo;
-	private String nome;
-	private Integer tamanho;
-	private Integer alinhamento;
-	private boolean agrupado;
-	private boolean hyperlink;
 
-	public String getTitulo() {
-		return titulo;
-	}
-
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String titulo) {
-		this.nome = nome;
-	}
-	
-	public Integer getTamanho() {
-		return tamanho;
-	}
-
-	public void setTamanho(Integer tamanho) {
-		this.tamanho = tamanho;
-	}
-
-	public Integer getAlinhamento() {
-		return alinhamento;
-	}
-
-	public void setAlinhamento(Integer alinhamento) {
-		this.alinhamento = alinhamento;
-	}
-
-	public boolean isAgrupado() {
-		return agrupado;
-	}
-
-	public void setAgrupado(boolean agrupado) {
-		this.agrupado = agrupado;
-	}
-
-	public boolean isHyperlink() {
-		return hyperlink;
-	}
-
-	public void setHyperlink(boolean hyperlink) {
-		this.hyperlink = hyperlink;
-	}
-
-	public int compareTo(Object o) {
-		return 0;
-	}
-
-}

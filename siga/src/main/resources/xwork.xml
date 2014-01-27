@@ -261,6 +261,18 @@
 		</action>
 	</package>
 
+	<package name="cosignatario" extends="default" namespace="/cosignatario">
+		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
+			method="aBuscar">
+			<result name="busca">/sigalibs/pessoa_busca.jsp</result>
+		</action>
+		<action name="selecionar" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction"
+			method="aSelecionar">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
+		</action>
+	</package>
+
 	<package name="lotacao" extends="default" namespace="/lotacao">
 		<action name="buscar" class="br.gov.jfrj.siga.libs.webwork.DpLotacaoAction"
 			method="aBuscar">
@@ -337,6 +349,16 @@
 			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">			
 			<result type="redirect-action">listar</result>
 		</action>	
+		<action name="listar_localidades" method="aListarLocalidades"
+			class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction">			
+			<result>/paginas/feriado/listaLocalidades.jsp</result>
+		</action>	
+		<action name="excluir_aplicacao" class="br.gov.jfrj.siga.libs.webwork.CpFeriadoAction"
+			method="aExcluirAplicacao">
+			<result type="redirect-action">				
+				editar_ocorrencia?id=${id}&amp;idOcorrencia=${idOcorrencia}
+			</result>				
+		</action>
 	</package>
 	
 	

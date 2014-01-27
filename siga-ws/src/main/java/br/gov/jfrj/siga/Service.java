@@ -24,11 +24,11 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.transport.http.HTTPConduit;
+
+
+
+
+
 import org.springframework.context.support.AbstractApplicationContext;
 
 import br.gov.jfrj.siga.cd.service.CdService;

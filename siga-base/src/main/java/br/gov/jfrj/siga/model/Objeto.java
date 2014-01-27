@@ -24,7 +24,7 @@ import java.util.HashSet;
 
 import org.hibernate.proxy.HibernateProxy;
 
-import com.opensymphony.webwork.components.Set;
+
 
 public class Objeto extends ObjetoBase{
 

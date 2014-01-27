@@ -38,6 +38,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext-rtf</artifactId>
         </dependency>

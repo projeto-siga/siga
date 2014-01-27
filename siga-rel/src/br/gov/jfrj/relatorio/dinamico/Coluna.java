@@ -1,9 +1,6 @@
 package br.gov.jfrj.relatorio.dinamico;
 
-import ar.com.fdvs.dj.domain.DJCalculation;
-import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
-
-public class Coluna extends AbstractColumn{
+public class Coluna {
 	private String titulo;
 	private String nome;
 	private Integer tamanho;
@@ -68,34 +65,5 @@ public class Coluna extends AbstractColumn{
 		this.tipo = tipo;
 	}
 
-	@Override
-	public String getGroupVariableName(String arg0, String arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getInitialExpression(DJCalculation arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getTextForExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getValueClassNameForExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getVariableClassName(DJCalculation arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

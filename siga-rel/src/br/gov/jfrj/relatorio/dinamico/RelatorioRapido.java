@@ -100,12 +100,13 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 	 *            RelatorioRapido.DIREITO
 	 * @param b 
 	 */
-	public void addColuna(String titulo, int tamanho, int alinhamento,
+	public Coluna addColuna(String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado) {
 		// ESTE MÉTODO DEVE SER APERFEIÇOADO. A PORCENTAGEM DA LARGURA NÃO ESTÁ
 		// DE ACORDO COM O TAMANHO DA TELA
 		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
 		colunas.add(c);
+		return c;
 	}
 
 	public Coluna addColuna(String titulo, int tamanho, int alinhamento,
@@ -116,11 +117,12 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 		return c;
 	}
 	
-	public void addColuna(String titulo, int tamanho, int alinhamento,
+	public Coluna addColuna(String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado, boolean isHyperlink) {
 		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
 		c.setHyperlink(isHyperlink);
 		colunas.add(c);
+		return c;
 	}
 
 	private Coluna criarColuna( String titulo, int tamanho, int alinhamento,
@@ -172,13 +174,16 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 
 				estiloAlinhamento.setHorizontalAlign(alinhamento);
 
-				AbstractColumn coluna = ColumnBuilder.getInstance().setTitle(
-						c.getTitulo()).setWidth(
-						c.getTamanho()
-								* (this.options.getPrintableWidth() / 100))
+				AbstractColumn coluna = ColumnBuilder
+						.getInstance()
+						.setTitle(c.getTitulo())
+						.setWidth(
+								c.getTamanho()
+									* (this.options.getPrintableWidth() / 100))
 						.setColumnProperty(
 								IConstantes.PREFIXO_COLUNA_PROPERTY + i,
-								String.class.getName()).setStyle(
+								c.getTipo().getName())
+						.setStyle(
 								estiloAlinhamento)
 								.build();
 
@@ -205,11 +210,9 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 							GroupLayout.VALUE_IN_HEADER).build();
 					this.addGroup(grupo);
 					this.setRightMargin(10 * porcento);
-
 				}
 				i++;
 			} catch (ColumnBuilderException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

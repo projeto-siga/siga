@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
@@ -67,6 +68,9 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
+import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
+import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
+import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
@@ -78,8 +82,6 @@ import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -314,24 +316,6 @@ public class ExBL extends CpBL {
 			mar.setDpLotacaoIni(lota.getLotacaoInicial());
 		mar.setDtIniMarca(dt);
 		set.add(mar);
-	}
-
-	public void main(String args[]) throws Exception {
-
-		String classificacao = "00.01.01.01";
-
-		final Pattern p2 = Pattern
-				.compile("^([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])");
-
-		Matcher m = p2.matcher(classificacao);
-		boolean a = m.find();
-
-		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
-		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
-
-		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg, "");
-		marcarTudo(90000);
 	}
 
 	public void marcar(ExDocumento doc) throws Exception {
@@ -1442,6 +1426,10 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
+			
+			if(e.getMessage().contains("junta"))
+				throw new AplicacaoException("O documento foi assinado com sucesso mas não foi possível juntar este documento ao documento pai. O erro da juntada foi - " + e.getMessage(), 0, e);
+			
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
 		}
 
@@ -2612,10 +2600,9 @@ public class ExBL extends CpBL {
 					+ ". Terminou commit gravacao: "
 					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
-
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new AplicacaoException("Erro na gravação: " + e.getCause().getMessage(), 0, e);
 
 		}
 		try {
@@ -2847,6 +2834,14 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException(
 							"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");
 			}
+			
+			if(!mob.getDoc().isEletronico() && mobPai.getDoc().isEletronico())
+				throw new AplicacaoException(
+				 	"Não é possível juntar um documento físico a um documento eletrônico.");
+			
+			if(mobPai.isSobrestado())
+				throw new AplicacaoException(
+				 	"Não é possível juntar um documento a um volume sobrestado.");
 
 			// Verifica se o documeto pai já está apensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {
@@ -3876,7 +3871,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer anotação", 0, e);
+			throw new AplicacaoException("Erro ao tentar redefinir nível de acesso", 0, e);
 		}
 		alimentaFilaIndexacao(doc, true);
 	}
@@ -4444,6 +4439,13 @@ public class ExBL extends CpBL {
 		ExDao exDao = ExDao.getInstance();
 
 		for (ExDocumento docPubl : documentosPublicar) {
+			
+			if(docPubl.getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI).size() > 0)
+				throw new AplicacaoException(
+						"O documento "
+								+ docPubl.getCodigo()
+								+ " já foi publicado em outro boletim. Retire esse documento da lista de documentos a publicar e entre em contato com a equipe de suporte do siga-doc.");
+			
 			boletim = exDao.consultarBoletimPorDocumento(docPubl);
 			boletim.setBoletim(doc);
 			exDao.gravar(boletim);

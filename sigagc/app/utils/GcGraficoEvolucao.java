@@ -21,8 +21,8 @@ public class GcGraficoEvolucao extends TreeSet<GcGraficoEvolucaoItem> {
 
 		// Header
 		StringBuilder sb = new StringBuilder();
-		sb.append("['Mês','Visitas','Novos'],");
-
+		//sb.append("['Mês','Visitas','Novos'],");
+		sb.append("['Mês','Visitados','Criados'],");
 		// Values
 		for (int i = -6; i <= 0; i++) {
 			LocalDate ldl = ld.plusMonths(i);

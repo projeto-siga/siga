@@ -681,6 +681,7 @@ public class Application extends SigaApplication {
 		//DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = titular();
 		DpLotacao lotacao = lotaTitular();
+		
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
 			informacao.lotacao = lotacao;
@@ -698,11 +699,17 @@ public class Application extends SigaApplication {
 
 		//Atualiza a classificação com as hashTags encontradas
 		classificacao = Util.findHashTag(conteudo, classificacao, CONTROLE_HASH_TAG);
-		// if (informacao.id != 0)
-		GcBL.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null,
-				null, titulo, conteudo, classificacao, null,
-				null, null, null);
+		
+		if (informacao.id != 0)
+			GcBL.movimentar(informacao,
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null,
+					null, titulo, conteudo, classificacao, null,
+					null, null, null);
+		else
+			GcBL.movimentar(informacao,
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null,
+					null, titulo, conteudo, classificacao, null,
+					null, null, null);
 
 		GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 		if (origem != null && origem.trim().length() != 0) {

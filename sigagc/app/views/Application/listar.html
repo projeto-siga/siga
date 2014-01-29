@@ -1,17 +1,31 @@
 #{extends 'main.html' /} #{set title:'Informações' /}
 #{ set 'moreHead'}
-<script type="text/javascript">
+<script type="text/javascript"><!--
 		$(document).ready(function(){
 			//adiciona uma dica para o preenchimento - número do conhecimento
 			$("#dicaNumero").hide();
+			$("[class^='imgMinus-']").hide();
+			$("[class^='status-']").hide();
 			$("#filtronumero").focus(function (){
 				$("#dicaNumero").show("fast");
 			})
 			.focusout(function(){
 				$("#dicaNumero").hide("fast");
 			});	
+			
+			$("tr.even a").click(function (){
+				var idImg = $(this).attr("id");
+				var id = idImg.split("-")[1];
+				$(".status-" + id).toggle("fast");
+				$(".imgPlus-" + id).toggle("fast");
+				$(".imgMinus-" + id).toggle("fast");
+				//$(".imgPlus-" + id).hide(); $(".imgMinus-" + id).show();
+				//$(this).parent().siblings().eq(1).attr("rowspan");
+				var valRowSpan = $(this).siblings().eq(0).val();
+				$(this).parent().siblings("td[rowspan]").attr("rowspan",valRowSpan);
+			})	
 		});
-</script>
+--></script>
 #{/set}#{set count: 0 /}
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -43,17 +57,17 @@
 				</thead>
 
 				<tbody>
-					#{set count: estatistica - lista.size() /}
+					#{set count: estatistica - lista.size() /} #{set k: 1 /}
 					#{list items:lista, as:'i'} #{set cmarcas = i.marcas.size()/} 
 					#{set m0 = cmarcas > 0 ? i.marcas.first() : null /}
 					<tr class="even">
-						<td width="11.5%" align="left" rowspan="${cmarcas}"><a
+						<td width="11.5%" align="left" rowspan="1"><a
 							href="@{Application.exibir(i.sigla)}">${i.sigla}</a></td>
-						<td width="9%" align="left" rowspan="${cmarcas}">${i.dtIniString}</td>
-						<td width="4%" align="left" rowspan="${cmarcas}"><span
+						<td width="9%" align="left" rowspan="1">${i.dtIniString}</td>
+						<td width="4%" align="left" rowspan="1"><span
 							title="${i.lotacao.descricao}">${i.lotacao.sigla}</span>
 						</td>
-						<td width="4%" align="left" rowspan="${cmarcas}"><span
+						<td width="4%" align="left" rowspan="1"><span
 							title="${i.autor.descricao} - ${i.autor.sigla}">${i.autor.nomeAbreviado}</span>
 						</td>
 
@@ -66,25 +80,35 @@
 						</td>
 						<td width="10.5%" align="center">${m0?.cpMarcador?.descrMarcador}</td>
 
-						<td width="6%" rowspan="${cmarcas}">${i.tipo.nome}</td>
+						<td width="6%" rowspan="1">${i.tipo.nome}</td>
 
-						<td rowspan="${cmarcas}"><a
+						<td rowspan="1"><a
 							href="@{Application.exibir(i.sigla)}">${i.arq.titulo}</a>
 						</td>
+						<td rowspan="1">
+							<a id="btn-${k}" style="float: right;" href="#">
+								<img class="imgPlus-${k}" alt="ver detalhes" src="/siga/css/famfamfam/icons/bullet_toggle_plus.png">
+								<img class="imgMinus-${k}" alt="ver detalhes" src="/siga/css/famfamfam/icons/bullet_toggle_minus.png">
+							</a>
+							<input type="hidden" value="${cmarcas}"/>
+						</td>
 					</tr>
-					#{set fprimeiro = true /} #{list items:i.marcas, as:'m'} 
+					#{set fprimeiro = true /} #{list items:i.marcas, as:'m'}
 					#{if !fprimeiro}
-					<tr>
-						<td width="5%" align="left">${m.dtIniMarcaDDMMYYYY}</td>
-						<td width="4%" align="left"><span
-							title="${m.dpLotacaoIni?.descricao}">${m.dpLotacaoIni?.sigla}</span>
-						</td>
-						<td width="4%" align="left"><span
-							title="${m.dpPessoaIni?.descricao}">${m.dpPessoaIni?.sigla}</span>
-						</td>
-						<td width="10.5%" align="center">${m.cpMarcador.descrMarcador}</td>
-					</tr>
-					#{/if} #{set fprimeiro = false /} #{/list} 
+						<tr class="status-${k}">
+							#{if m.dtFimMarca == null || m.dtFimMarca.format('dd/MM/yy') > new Date().format('dd/MM/yy')}
+							<td width="5%" align="left">${m.dtIniMarcaDDMMYYYY}</td>
+							<td width="4%" align="left"><span
+								title="${m.dpLotacaoIni?.descricao}">${m.dpLotacaoIni?.sigla}</span>
+							</td>
+							<td width="4%" align="left"><span
+								title="${m.dpPessoaIni?.descricao}">${m.dpPessoaIni?.sigla}</span>
+							</td>
+							<td width="10.5%" align="center">${m.cpMarcador.descrMarcador}</td>
+							#{/if}
+						</tr>
+					#{/if} 
+					#{set fprimeiro = false /}#{/list}  #{set k: k++ /} 
 					#{/list}
 				</tbody>
 			</table>
@@ -95,7 +119,7 @@
 		#{/elseif}
 		#{if count > 0} 
 			<br />	
-			<h6 style="background:#d8d8c0;padding:3px 10px;">${count} Conhecimento${count.pluralize()} fo${count.pluralize('i','ram')} Cancelado${count.pluralize()}, por isso não const${count.pluralize('a','am')} como Nov${count.pluralize('o','os')} no resultado acima.</h6>
+			<h6 style="background:#d8d8c0;padding:3px 10px;">${count} Conhecimento${count.pluralize()} fo${count.pluralize('i','ram')} Cancelado${count.pluralize()}, por isso não const${count.pluralize('a','am')} no resultado acima.</h6>
 		#{/if} #{set count: 0 /}
 		<!-- </table></div> -->
 		<br>
@@ -170,11 +194,11 @@
 								valuePessoa:filtro.autor,
 								valueLotacao:filtro.lotacao /}</td>
 						</tr>
-						<tr>
+						*{<tr>
 							<td>Cadastrante:</td>
 							<td>#{pessoaLotaSelecao nomeSelPessoa:'cadastrante',
 								nomeSelLotacao:'lotaCadastrante', value:informacao?.autor /}</td>
-						</tr>
+						</tr>}*
 						<tr>
 							<td>Data da Situação:</td>
 							<td>de&nbsp;&nbsp; <input type="text" name="filtro.dtIni"

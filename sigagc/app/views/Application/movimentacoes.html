@@ -23,10 +23,13 @@ title:'Movimentações'/}
 					<th align="left" rowspan="2">Data</th>
 					<th rowspan="2">Evento</th>
 					<th colspan="2" align="left">Cadastrante</th>
-					<th colspan="2" align="left">Responsável</th>
+					<th colspan="2" align="left">Titular</th>
+					<th colspan="2" align="left">*Responsável*</th>
 					<th rowspan="2">Descrição</th>
 				</tr>
 				<tr>
+					<th align="left">Lotação</th>
+					<th align="left">Pessoa</th>
 					<th align="left">Lotação</th>
 					<th align="left">Pessoa</th>
 					<th align="left">Lotação</th>
@@ -35,10 +38,11 @@ title:'Movimentações'/}
 			</thead>
 			<tbody>
 				#{list items:informacao.movs, as:'m'}	
-					#{if m.tipo.id == 13}
-						#{set descricao: m.arq?.titulo + " (" + m.arq?.mimeType + ")"  /}
-						#{if m.movCanceladora} #{set classe: 'disabled' /} #{/if}
-						#{else} #{set classe: '' /} #{/else}
+					#{if m.movCanceladora} 
+						#{set classe: 'disabled' /}
+						#{if m.tipo.id == 13}
+							#{set descricao: m.arq?.titulo + " (" + m.arq?.mimeType + ")"  /}
+						#{/if}
 					#{/if}
 					#{elseif m.tipo.id == 12 && m.movRef != null}
 						#{if m.movRef.tipo.id == 13}
@@ -48,23 +52,21 @@ title:'Movimentações'/}
 						#{set classe: 'disabled' /}
 					#{/elseif}
 					#{else}
-						#{set descricao: '' /} #{set classe: '' /} 		
+						#{set descricao: '' /} #{set classe: '' /}
 					#{/else}
-					
 				<tr class="juntada ${classe}">
 					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
 					<td>${m.tipo.nome}</td>
-					<td align="left"><span
-						title="${m.hisIdcIni.dpPessoa.lotacao.descricao}">${m.hisIdcIni.dpPessoa.lotacao.sigla}</span>
+					<td align="left">
+						<span title="${m.hisIdcIni.dpPessoa.lotacao.descricao}">${m.hisIdcIni.dpPessoa.pessoaAtual.lotacao.sigla}</span>
 					</td>
 					<td align="left"><span
 						title="${m.hisIdcIni.dpPessoa.descricao}">${m.hisIdcIni.dpPessoa.nomeAbreviado}</span>
 					</td>
-
-					<td align="left"><span title="${m.lotacao?.descricao}">${m.lotacao?.sigla}</span>
-					</td>
-					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span>
-					</td>
+					<td align="left"><span title="${m.lotacao?.descricao}">${m.lotacaoTitular?.sigla}</span></td>
+					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoaTitular?.nomeAbreviado}</span></td>					
+					<td align="left"><span title="${m.lotacao?.descricao}">${m.lotacao?.sigla}</span></td>
+					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span></td>
 					<td>
 						${descricao?.raw()}					
 					</td>

@@ -93,7 +93,8 @@ public class GcInformacaoFiltro extends GcInformacao {
 		String subquery = "";
 
 		if (situacao != null && situacao.getIdMarcador() != null && situacao.getIdMarcador() > 0)
-			subquery += " and situacao.cpMarcador.idMarcador = " + situacao.getIdMarcador();
+			subquery += " and situacao.cpMarcador.idMarcador = " + situacao.getIdMarcador() + 
+						" and (situacao.dtFimMarca is null or situacao.dtFimMarca > sysdate)";
 
 		if (responsavel != null)
 			subquery += " and situacao.dpPessoaIni.idPessoa = " + responsavel.getIdInicial();

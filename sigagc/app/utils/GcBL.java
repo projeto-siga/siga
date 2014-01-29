@@ -298,6 +298,7 @@ public class GcBL {
 			// dao().salvar(i);
 			i.save();
 			i.inf.marcas.add(i);
+			Collections.sort(inf.marcas);
 		}
 		for (GcMarca e : excluir) {
 			if (e.inf.marcas == null) {
@@ -307,6 +308,7 @@ public class GcBL {
 			e.inf.marcas.remove(e);
 			e.delete();
 		}
+		
 	}
 
 	/**
@@ -407,7 +409,7 @@ public class GcBL {
 				if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO)
 					acrescentarMarca(set, inf,
 							CpMarcador.MARCADOR_COMO_INTERESSADO, mov.hisDtIni,
-							null, mov.pessoaTitular, mov.lotacaoTitular);
+							null, mov.pessoaTitular, null);
 			}
 		}
 

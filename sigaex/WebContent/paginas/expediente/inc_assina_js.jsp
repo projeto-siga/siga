@@ -124,6 +124,11 @@ function InicializarCapicom(){
 		"Seleção de Certificado Digital",
 		"Escolha o certificado digital que deseja utilizar para assinar ou conferir cópia:", false);
 	}
+
+	if (oCertificates.Count == 0) {
+		return "Nenhum certificado digital disponível.";
+	}
+	
 	gSigner = new ActiveXObject("CAPICOM.Signer");
 	gSigner.Certificate = oCertificates.Item(1);
 	

@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import models.SrItemConfiguracao;
+import models.SrPesquisa;
 import models.SrSelecionavel;
 import models.SrTipoAtributo;
 
@@ -14,13 +15,13 @@ import play.data.binding.TypeBinder;
 import play.db.jpa.JPA;
 
 @Global
-public class SrPesquisaBinder implements TypeBinder<SrTipoAtributo> {
+public class SrPesquisaBinder implements TypeBinder<SrPesquisa> {
 
 	@Override
 	public Object bind(String name, Annotation[] anns, String value,
 			Class clazz, Type arg4) throws Exception {
 		if (value != null && !value.equals(""))
-			return SrTipoAtributo.findById(Long.valueOf(value));
+			return SrPesquisa.findById(Long.valueOf(value));
 		return null;
 	}
 

@@ -18,7 +18,13 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.model;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.util.HashSet;
+
 import org.hibernate.proxy.HibernateProxy;
+
+import com.opensymphony.webwork.components.Set;
 
 public class Objeto extends ObjetoBase{
 
@@ -48,7 +54,7 @@ public class Objeto extends ObjetoBase{
 			return this;
 		}
 	}
-
+	
 	public boolean isInstance(Class clazz) {
 		return this.getClass().isAssignableFrom(clazz);
 	}

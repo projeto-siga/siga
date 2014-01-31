@@ -924,4 +924,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+	public boolean isUltimaMovimentacao() {
+		return getIdMov().equals(getExMobil().getUltimaMovimentacao().getIdMov());
+	}
 }

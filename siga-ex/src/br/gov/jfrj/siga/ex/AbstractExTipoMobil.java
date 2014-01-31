@@ -21,7 +21,9 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
-public abstract class AbstractExTipoMobil implements Serializable {
+import br.gov.jfrj.siga.model.Objeto;
+
+public abstract class AbstractExTipoMobil extends Objeto implements Serializable {
 
 	private java.lang.Long idTipoMobil;
 	private java.lang.String descTipoMobil;

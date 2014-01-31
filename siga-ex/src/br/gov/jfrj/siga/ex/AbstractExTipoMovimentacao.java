@@ -24,12 +24,14 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 /**
  * A class that represents a row in the EX_TIPO_MOVIMENTACAO table. You can
  * customize the behavior of this class by editing the class,
  * {@link ExTipoMovimentacao()}.
  */
-public abstract class AbstractExTipoMovimentacao implements Serializable {
+public abstract class AbstractExTipoMovimentacao extends Objeto implements Serializable {
 	private Set<ExEstadoDoc> deEstadoDocSet;
 
 	/** The value of the simple descrTipoMovimentacao property. */

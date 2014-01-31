@@ -18,7 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
-public class AbstractExTratamento {
+import br.gov.jfrj.siga.model.Objeto;
+
+public class AbstractExTratamento extends Objeto {
 	Integer idTratamento;
 	String autoridade;
 	String formaDeTratamento;

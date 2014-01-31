@@ -23,7 +23,9 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
-public abstract class AbstractExNivelAcesso implements Serializable {
+import br.gov.jfrj.siga.model.Objeto;
+
+public abstract class AbstractExNivelAcesso extends Objeto implements Serializable {
 
 	private java.lang.String dscNivelAcesso;
 

@@ -21,12 +21,14 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 /**
  * A class that represents a row in the EX_FORMA_DOCUMENTO table. You can
  * customize the behavior of this class by editing the class,
  * {@link ExFormaDocumento()}.
  */
-public abstract class AbstractExFormaDocumento implements Serializable {
+public abstract class AbstractExFormaDocumento extends Objeto implements Serializable {
 	/** The value of the simple descrFormaDoc property. */
 	private String descrFormaDoc;
 

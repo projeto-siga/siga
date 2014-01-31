@@ -38,12 +38,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 /**
  * A class that represents a row in the EX_MOBIL table. You can customize the
  * behavior of this class by editing the class, {@link ExMobil()}.
  */
 @MappedSuperclass
-public abstract class AbstractExMobil implements Serializable {
+public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@Id
 	@SequenceGenerator(name = "EX_MOBIL_SEQ")
 	

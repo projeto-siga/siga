@@ -626,7 +626,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			//
 			// df1.applyPattern("dd/MM/yyyy");
 			// df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
-			String s = getLocalidadeString();
+			String s = Texto.maiusculasEMinusculas(getLocalidadeString());
 
 			return s + ", " + df1.format(getDtDoc()).toLowerCase();
 		} catch (Exception e) {

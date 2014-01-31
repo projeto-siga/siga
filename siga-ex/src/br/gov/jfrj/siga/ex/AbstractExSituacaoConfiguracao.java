@@ -26,7 +26,9 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Date;
 
-public abstract class AbstractExSituacaoConfiguracao implements Serializable {
+import br.gov.jfrj.siga.model.Objeto;
+
+public abstract class AbstractExSituacaoConfiguracao extends Objeto implements Serializable {
 
 	private Long idSitConfiguracao;
 	private String dscSitConfiguracao;

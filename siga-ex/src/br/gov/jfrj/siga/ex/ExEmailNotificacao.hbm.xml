@@ -9,10 +9,10 @@
 			</generator>
   </id>
   <many-to-one class="br.gov.jfrj.siga.dp.DpLotacao" column="ID_LOTACAO" name="dpLotacao"/>
-  <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa" column="ID_PESSOA" name="dpPessoa"/>
+ <!--  <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa" column="ID_PESSOA" name="dpPessoa"/>  -->
   <property column="EMAIL" generated="never" lazy="false" name="email" type="string"/>
-  <many-to-one class="br.gov.jfrj.siga.dp.DpLotacao" column="ID_LOTA_EMAIL" name="lotacaoEmail"/>
-  <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa" column="ID_PESSOA_EMAIL" name="pessoaEmail"/>
+<!--  <many-to-one class="br.gov.jfrj.siga.dp.DpLotacao" column="ID_LOTA_EMAIL" name="lotacaoEmail"/>
+  <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa" column="ID_PESSOA_EMAIL" name="pessoaEmail"/> -->
  </class>
  <query name="consultarEmailPorLotacao">select email from ExEmailNotificacao 
 		where dpLotacao.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacaoIni)</query>

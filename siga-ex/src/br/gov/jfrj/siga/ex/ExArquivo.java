@@ -25,8 +25,9 @@ import java.util.Set;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class ExArquivo {
+public abstract class ExArquivo extends Objeto {
 	private Integer numPaginas;
 
 	public abstract String getAssinantesCompleto();

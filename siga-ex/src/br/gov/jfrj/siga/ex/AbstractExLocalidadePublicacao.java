@@ -26,8 +26,9 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 
 import br.gov.jfrj.siga.dp.CpLocalidade;
+import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class AbstractExLocalidadePublicacao implements Serializable {
+public abstract class AbstractExLocalidadePublicacao extends Objeto implements Serializable {
 
 	private Integer idLocalidadePublicacao;
 	

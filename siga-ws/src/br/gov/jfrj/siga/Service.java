@@ -24,6 +24,11 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.interceptor.LoggingInInterceptor;
+import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import br.gov.jfrj.siga.cd.service.CdService;
@@ -124,7 +129,29 @@ public abstract class Service {
 		QName SERVICE_NAME = new QName(qname, serviceName);
 		javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlURL,
 				SERVICE_NAME);
-		return service.getPort(remoteClass);
+		E e = service.getPort(remoteClass);
+		
+//		Client client = ClientProxy.getClient(e);
+		
+//		client.getInInterceptors().add(new LoggingInInterceptor());
+//	    client.getOutInterceptors().add(new LoggingOutInterceptor()); 
+		
+//		HTTPConduit http = (HTTPConduit) client.getConduit();
+
+//		http.getClient().setProxyServerType(ProxyServerType.HTTP); 
+//		http.getClient().setProxyServer("127.0.0.1"); 
+//		http.getClient().setProxyServerPort(8087);
+		
+//		HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+//		httpClientPolicy.setConnectionTimeout(36000);
+//		httpClientPolicy.setAllowChunking(false);
+//		httpClientPolicy.setReceiveTimeout(32000);
+//		httpClientPolicy.setProxyServerType(ProxyServerType.SOCKS); 
+//		httpClientPolicy.setProxyServer("127.0.0.1"); 
+//		httpClientPolicy.setProxyServerPort(8085);
+//		http.setClient(httpClientPolicy);
+		
+		return e;
 	}
 
 	// @SuppressWarnings("unchecked")

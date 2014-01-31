@@ -69,3 +69,8 @@ rename column pesquisa_satisfacao to id_pesquisa;
 
 alter table sigasr.sr_configuracao
 modify (id_pesquisa number (19,0));
+
+
+insert into sigasr.sr_tipo_pergunta values (1, 'Texto Livre', null);
+insert into sigasr.sr_tipo_pergunta values (1, 'Nota de 1 a 5', null);
+commit;

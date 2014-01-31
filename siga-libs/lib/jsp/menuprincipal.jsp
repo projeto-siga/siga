@@ -31,19 +31,12 @@
 						</li>
 					</c:if>
 
-					<li><a href="#">Agendas</a>
-						<ul>
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
-								<li><a href="/sigapp/">Perícias INSS</a>
-								</li>
-							</c:if>
-						</ul></li>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
 						<li><a href="/sigagc/">Gestão de Conhecimento</a>
 						</li>
 					</c:if>
+					
 
 					<!-- <li><a href="/sigatr/">Treinamento</a>
 					</li> -->
@@ -83,6 +76,24 @@
 
 						</ul>
 					</li>
+					
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de perícias do INSS')}">
+					<li><a href="#">Agendas</a>
+						<ul>
+							<c:if
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
+								<li><a href="/sigapp/">Perícias INSS</a>
+								</li>
+							</c:if>
+						</ul>
+					</li>
+					</c:if>
+						
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
+                    	<li><a href="/sigatp/">Transportes</a>
+                    </li>
+                </c:if>
+					
 				</ul>
 			</li>
 			<li><a href="#">Administração</a>

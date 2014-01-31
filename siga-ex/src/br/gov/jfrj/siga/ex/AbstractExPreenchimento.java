@@ -24,13 +24,14 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.model.Objeto;
 
 /**
  * A class that represents a row in the EX_TIPO_DESPACHO table. You can
  * customize the behavior of this class by editing the class,
  * {@link ExTipoDespacho()}.
  */
-public abstract class AbstractExPreenchimento implements Serializable {
+public abstract class AbstractExPreenchimento extends Objeto implements Serializable {
 
 	/** The composite primary key value. */
 

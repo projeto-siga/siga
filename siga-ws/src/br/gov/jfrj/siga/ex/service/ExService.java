@@ -56,4 +56,6 @@ public interface ExService extends Remote {
 	
 	public String criarVia(String codigoDocumento, String siglaCadastrante) throws Exception;
 
+	public String toJSON(String codigo) throws Exception;
+
 }

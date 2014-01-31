@@ -1591,7 +1591,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeEncerrar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-
+		
 		if (!mob.isVolume())
 			return false;
 
@@ -1599,6 +1599,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.isEmTransito())
+			return false;
+		
+		if(!mob.doc().isAssinado())
 			return false;
 
 		return podeMovimentar(titular, lotaTitular, mob)

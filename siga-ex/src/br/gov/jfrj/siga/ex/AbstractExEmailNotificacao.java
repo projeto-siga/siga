@@ -87,4 +87,5 @@ public class AbstractExEmailNotificacao {
 
 	public AbstractExEmailNotificacao() {
 	}
+	
 }

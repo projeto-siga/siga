@@ -58,4 +58,5 @@ public class AbstractExEmailNotificacao extends Objeto  {
 	public AbstractExEmailNotificacao() {
 	}
 	
+	
 }

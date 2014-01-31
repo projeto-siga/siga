@@ -25,9 +25,15 @@
 						value:informacao.tipo?.id} #{/select}
 					</div>
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<label>Acesso</label>#{select name:'informacao.acesso',
+						<label>Visualizacão</label>#{select name:'informacao.visualizacao',
 						items:acessos, labelProperty:'nome', valueProperty:'id',
-						value:informacao.acesso?.id} #{/select}
+						value:informacao.visualizacao?.id} #{/select}
+
+					</div>
+					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
+						<label>Edição</label>#{select name:'informacao.edicao',
+						items:acessos, labelProperty:'nome', valueProperty:'id',
+						value:informacao.edicao?.id} #{/select}
 
 					</div>
 					*{

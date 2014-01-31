@@ -62,6 +62,10 @@ public class Bootstrap extends Job {
 			new GcTipoMovimentacao(
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
 					"Anexação de arquivo").save();
+			
+			new GcTipoMovimentacao(
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR,
+					"Duplicado").save();
 
 			new GcTipoInformacao(
 					GcTipoInformacao.TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO,

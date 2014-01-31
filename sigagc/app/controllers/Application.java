@@ -505,14 +505,15 @@ public class Application extends SigaApplication {
 
 	public static void exibir(String sigla) throws Exception{
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+
+		if (!informacao.acessoPermitido(titular(), lotaTitular(), informacao.visualizacao.id)) {
+			throw new AplicacaoException(
+					"Restrição de Acesso (" + informacao.visualizacao.nome + ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
+		}
 		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
 		if (conteudo != null)
 			informacao.arq.setConteudoTXT(conteudo);
 		
-		if (!informacao.acessoPermitido(titular(), lotaTitular())) {
-			throw new AplicacaoException(
-					"Restrição de Acesso: O usuário não tem permissão para visualizar o conhecimento solicitado.");
-		}
 		GcBL.notificado(informacao, idc(), titular(), lotaTitular());
 		GcBL.logarVisita(informacao, idc(), titular(), lotaTitular());
 		render(informacao);
@@ -522,10 +523,16 @@ public class Application extends SigaApplication {
 			String origem) throws Exception {
 		GcInformacao informacao = null;
 
-		if(sigla != null)
+		if(sigla != null){
 			informacao = GcInformacao.findBySigla(sigla);
+			if (!informacao.acessoPermitido(titular(), lotaTitular(), informacao.edicao.id)) {
+				throw new AplicacaoException(
+						"Restrição de Acesso (" + informacao.edicao.nome + ") : O usuário não tem permissão para editar o conhecimento solicitado.");
+			}
+		}
 		else
 			informacao = new GcInformacao();
+		
 		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
 		List<GcAcesso> acessos = GcAcesso.all().fetch();
 		if (titulo == null)
@@ -641,7 +648,8 @@ public class Application extends SigaApplication {
 		inf.lotacao = lotaTitular();
 		inf.ou = inf.autor.getOrgaoUsuario();
 		inf.tipo = GcTipoInformacao.findById(infDuplicada.tipo.id);
-		inf.acesso = GcAcesso.findById(infDuplicada.acesso.id);
+		inf.visualizacao = GcAcesso.findById(infDuplicada.visualizacao.id);
+		inf.edicao = GcAcesso.findById(infDuplicada.edicao.id);
 		
 		if (infDuplicada.movs != null) {
 			for (GcMovimentacao mov : infDuplicada.movs) {

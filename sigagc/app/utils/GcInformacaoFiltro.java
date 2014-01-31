@@ -46,7 +46,7 @@ public class GcInformacaoFiltro extends GcInformacao {
 		
 		if(autor != null)
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();
-		else if(lotacao != null)
+		if(lotacao != null)
 			query += " and inf.lotacao.idLotacaoIni = " + lotacao.getIdInicial();
 		
 		if(tipo != null)
@@ -98,7 +98,7 @@ public class GcInformacaoFiltro extends GcInformacao {
 
 		if (responsavel != null)
 			subquery += " and situacao.dpPessoaIni.idPessoa = " + responsavel.getIdInicial();
-		else if (lotaResponsavel != null)
+		if (lotaResponsavel != null)
 			subquery += " and situacao.dpLotacaoIni.idLotacao  = " + lotaResponsavel.getIdInicial();
 		
 		if (dtIni != null && !dtIni.trim().equals(""))

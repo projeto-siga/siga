@@ -24,7 +24,7 @@ title:'Movimentações'/}
 					<th rowspan="2">Evento</th>
 					<th colspan="2" align="left">Cadastrante</th>
 					<th colspan="2" align="left">Titular</th>
-					<th colspan="2" align="left">*Responsável*</th>
+					<th colspan="2" align="left">Atendente</th>
 					<th rowspan="2">Descrição</th>
 				</tr>
 				<tr>
@@ -40,9 +40,9 @@ title:'Movimentações'/}
 				#{list items:informacao.movs, as:'m'}	
 					#{if m.movCanceladora} 
 						#{set classe: 'disabled' /}
-						#{if m.tipo.id == 13}
+					#{/if}
+					#{if m.tipo.id == 13}
 							#{set descricao: m.arq?.titulo + " (" + m.arq?.mimeType + ")"  /}
-						#{/if}
 					#{/if}
 					#{elseif m.tipo.id == 12 && m.movRef != null}
 						#{if m.movRef.tipo.id == 13}

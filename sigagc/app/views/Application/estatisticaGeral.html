@@ -127,7 +127,7 @@
 				</table>
 			</div>
 			#{/if} #{else}
-			<p>Nenhum conhecimento recente.</p>
+			<h6 style="background:#d8d8c0;padding:3px 10px;">Nenhum conhecimento recente.</h6>
 			#{/else} <br />
 
 			<!--  -->
@@ -156,7 +156,7 @@
 				</table>
 			</div>
 			#{/if} #{else}
-			<p>Nenhum conhecimento visitado.</p>
+			<h6 style="background:#d8d8c0;padding:3px 10px;">Nenhum conhecimento visitado.</h6>
 			#{/else}
 			<br />
 			<h2>Principais Classificações</h2>
@@ -167,7 +167,7 @@
 				#{/list}
 			</div>
 			#{/if} #{else}
-			<p>Nenhuma classificação cadastrada.</p>
+			<h6 style="background:#d8d8c0;padding:3px 10px;">Nenhuma classificação cadastrada.</h6>
 			#{/else}
 		</div>
 		<div class="gt-right-col">
@@ -189,18 +189,19 @@
 							<td style="width: 15%;">${p[0].lotacao.sigla}</td>
 							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.autor=${p[0].idInicial}">${p[1]}</a></td>}*
 							*{
-								p[0] - nomePessoa/ p[1] - idPessoaInicial/ p[2] - lotacao.sigla/ p[3] - contador
+								p[0] - nomePessoa/ p[1] - idPessoaInicial/ p[2] - lotacao.sigla
+								p[3] - idLotacao / p[4] - contador
 							}*
 							<td style="width: 65%;">${p[0]}</td>
 							<td style="width: 15%;">${p[2]}</td>
-							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.autor=${p[1]}&filtro.lotacaosigla=${p[2]}&filtro.situacao=36&filtro.pesquisa=true">${p[3]}</a></td>
+							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.autor=${p[1]}&filtro.lotacao=${p[3]}&filtro.situacao=36&filtro.pesquisa=true">${p[4]}</a></td>
 						</tr>
 						#{/list}
 					</tbody>
 				</table>
 			</div>
 			#{/if} #{else}
-			<p>Nenhum autor.</p>
+			<h6 style="background:#d8d8c0;padding:3px 10px;">Nenhum autor.</h6>
 			#{/else} <br />
 			<h2>Principais Lotações</h2>
 			#{if listaPrincipaisLotacoes != null}
@@ -224,14 +225,14 @@
 							}*
 							<td style="width: 65%;">${l[0]}</td>
 							<td style="width: 15%;">${l[2]}</td>
-							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.lotacao=${l[1]}&filtro.lotacaosigla=${p[2]}&filtro.situacao=36&filtro.pesquisa=true">${l[3]}</a></td>
+							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.lotacao=${l[1]}&filtro.situacao=36&filtro.pesquisa=true">${l[3]}</a></td>
 						</tr>
 						#{/list}
 					</tbody>
 				</table>
 			</div>
 			#{/if} #{else}
-			<p>Nenhuma Lotação.</p>
+			<h6 style="background:#d8d8c0;padding:3px 10px;">Nenhuma Lotação.</h6>
 			#{/else} *{ <br />
 			<h2>Principais Classificações</h2>
 			#{if listaPrincipaisTags != null}

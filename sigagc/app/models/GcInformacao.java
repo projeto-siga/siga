@@ -47,7 +47,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = "maisVisitados", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null and i.elaboracaoFim is not null group by i order by count(*) desc"),
 		@NamedQuery(name = "maisVisitadosLotacao", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacao = :idLotacao group by i order by count(*) desc"),
 //		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
-		@NamedQuery(name = "principaisAutores", query = "select p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.elaboracaoFim is not null group by p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao order by count(*) desc"),
+		@NamedQuery(name = "principaisAutores", query = "select p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.elaboracaoFim is not null group by p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni order by count(*) desc"),
 		@NamedQuery(name = "principaisAutoresLotacao", query = "select p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacao = :idLotacao group by p.nomePessoa, p.idPessoaIni, p.lotacao.siglaLotacao order by count(*) desc"),
 //		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
 		@NamedQuery(name = "principaisLotacoes", query = "select l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao, count(*) from GcInformacao i inner join i.lotacao l where i.hisDtFim is null and i.elaboracaoFim is not null group by l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao order by count(*) desc"),
@@ -56,10 +56,11 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = "principaisTagsLotacao", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacao = :idLotacao and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),	
 		@NamedQuery(name = "evolucaoNovos", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
 		@NamedQuery(name = "evolucaoNovosLotacao", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null and inf.lotacao.idLotacao = :idLotacao group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
-		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"), 
-		@NamedQuery(name = "evolucaoVisitadosLotacao", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.lotacao.idLotacao = :idLotacao and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
-		@NamedQuery(name = "dadosParaRecuperacaoDeInformacao", query = "select inf, arq,  mov.hisDtIni from GcInformacao as inf join inf.arq as arq join inf.movs mov where inf.elaboracaoFim is not null")})
-// select GcInformacao as i, i.arq as a, mov.hisDtIni as dt from GcInformacao inf join inf.movs mov where ((mov.tipo in {1, 10} and mov.arq = inf.arq) or (mov.tipo = 3)) and inf.elaboracaoFim is not null		
+		@NamedQuery(name = "dadosParaRecuperacaoDeInformacao", query = "select inf, arq,  mov.hisDtIni from GcInformacao as inf join inf.arq as arq join inf.movs mov where inf.elaboracaoFim is not null"),
+//		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
+		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.elaboracaoFim < mov.hisDtIni group by month(mov.hisDtIni), year(mov.hisDtIni)"),
+		@NamedQuery(name = "evolucaoVisitadosLotacao", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.lotacao.idLotacao = :idLotacao and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)")})
+// select GcInformacao as i, i.arq as a, mov.hisDtIni as dt from GcInformacao inf join inf.movs mov where ((mov.tipo in {1, 10} and mov.arq = inf.arq) or (mov.tipo = 3)) and inf.elaboracaoFim is not null
 // select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
 // inf.tags tag where tag in (:tags)
 public class GcInformacao extends GenericModel {
@@ -82,7 +83,11 @@ public class GcInformacao extends GenericModel {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_ACESSO")
-	public GcAcesso acesso;
+	public GcAcesso visualizacao;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ID_ACESSO_EDICAO")
+	public GcAcesso edicao;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_PESSOA")
@@ -427,13 +432,13 @@ public class GcInformacao extends GenericModel {
 		return fragment;
 	}
 
-	public boolean acessoPermitido(DpPessoa titular, DpLotacao lotaTitular) {
-		switch ((int) acesso.id) {
+	public boolean acessoPermitido(DpPessoa titular, DpLotacao lotaTitular, long id) {	
+		switch ((int) id) {
 		case (int) GcAcesso.ACESSO_PUBLICO:
 			return true;
 		case (int) GcAcesso.ACESSO_ORGAO_USU:
-			return ou.equals(titular.getOrgaoUsuario())
-					|| ou.equals(lotaTitular.getOrgaoUsuario());
+			return ou.getIdOrgaoUsu().equals(titular.getOrgaoUsuario().getIdOrgaoUsu())
+					|| ou.getIdOrgaoUsu().equals(lotaTitular.getOrgaoUsuario().getIdOrgaoUsu());
 		case (int) GcAcesso.ACESSO_LOTACAO_E_SUPERIORES:
 			for (DpLotacao lot = lotacao; lot != null; lot = lot
 					.getLotacaoPai())
@@ -501,6 +506,7 @@ public class GcInformacao extends GenericModel {
 		}
 		else
 			info = GcInformacao.findById(Long.parseLong(siglaParticionada[1]));
+			//info = GcInformacao.find("id = ?", Long.parseLong(siglaParticionada[1])).first();
 
 		if(info == null){
 			throw new AplicacaoException("Não foi possível encontrar um conhecimento com o código " + sigla + 

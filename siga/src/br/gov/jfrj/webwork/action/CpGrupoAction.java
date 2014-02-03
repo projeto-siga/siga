@@ -147,7 +147,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 						"Grupo não encontrado para Id do grupo: " + idCpGrupo
 								+ ".");
 			}
-			if (!grp.isHisAtivo()) {
+			if (!grp.isAtivo()) {
 				throw new AplicacaoException(
 						"Grupo antigo não pode ser editado. Favor atualizar a página da lista de grupos antes de selecionar um grupo para edição.");
 			}

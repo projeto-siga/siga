@@ -1441,7 +1441,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeCancelarJuntada(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível cancelar juntada");
 
-		if (!doc.isEletronico()) {
+		ExMobil mobilJuntado = mob.getExMobilJuntado();
+		if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
 			aCancelarJuntadaGravar();
 			return Action.SUCCESS;
 		}

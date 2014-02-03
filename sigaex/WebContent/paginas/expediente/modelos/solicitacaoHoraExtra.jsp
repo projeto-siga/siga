@@ -97,7 +97,7 @@ var newwin = null;
                                 
                                 
                                  <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao')&& (xintervalo =='Não')}">
-                                     <fmt:formatNumber var="xhoraTotalC" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}"  type="number" pattern="##.##" />
+                                     <fmt:formatNumber var="xhoraTotalC" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" type="number" pattern="##.##" />
                                      <fmt:parseNumber var="xhoraTotal" value="${xhoraTotalC}" type="number" integerOnly="true"/>
                                      <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
                                      <mod:oculto var="totalHoras${i}${j}" valor="${xhoraTotal}" />

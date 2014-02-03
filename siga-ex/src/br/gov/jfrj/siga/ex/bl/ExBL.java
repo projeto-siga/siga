@@ -2847,6 +2847,10 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException(
 							"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");
 			}
+			
+			if(!mob.getDoc().isEletronico() && mobPai.getDoc().isEletronico())
+				throw new AplicacaoException(
+				 	"Não é possível juntar um documento físico a um documento eletrônico.");
 
 			// Verifica se o documeto pai já está apensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {

@@ -88,7 +88,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 		return hisAtivo;
 	}
 
-	public boolean isHisAtivo() {
+	public boolean isAtivo() {
 		return this.hisDtFim == null;
 	}
 

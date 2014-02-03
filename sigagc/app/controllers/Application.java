@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -18,6 +19,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 import models.GcAcesso;
 import models.GcArquivo;
@@ -52,6 +54,7 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.DadosRI;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 //Obtaining Hibernate objects programmatically
@@ -78,7 +81,7 @@ public class Application extends SigaApplication {
 		// SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before
+	@Before(unless = "publicKnowledge")
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -207,8 +210,19 @@ public class Application extends SigaApplication {
 		render(contagens);
 	}
 
+	public static void publicKnowledge(Long id, String[] tags, String estilo, String msgvazio,
+			String urlvazio, String titulo) throws Exception {
+		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, true);
+	}
+
 	public static void knowledge(Long id, String[] tags, String estilo, String msgvazio,
 			String urlvazio, String titulo) throws Exception {
+		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, false);
+	}
+
+	private static void renderKnowledge(Long id, String[] tags, String estilo,
+			String msgvazio, String urlvazio, String titulo, boolean testarAcessoPublico)
+			throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
 		GcInformacao info = null;
@@ -217,23 +231,26 @@ public class Application extends SigaApplication {
 			set = GcBL.buscarTags(tags, true);
 		Query query = JPA.em().createNamedQuery("buscarConhecimento");
 		query.setParameter("tags", set);
-		List<Object[]> conhecimentos = query.getResultList();
-		for (Object[] o : conhecimentos) {
+		List<Object[]> conhecimentosCandidatos = query.getResultList();
+		List<Object[]> conhecimentos = new ArrayList<Object[]>();
+		for (Object[] o : conhecimentosCandidatos) {
 			idOutroConhecimento = Long.parseLong(o[0].toString());
-			if(id.equals(idOutroConhecimento))
-				index = conhecimentos.indexOf(o);
-			else {
-				info = GcInformacao.findById(idOutroConhecimento);
-				o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
-				if (o[2] != null && o[2] instanceof byte[]) {
-					String s = new String((byte[]) o[2], Charset.forName("utf-8"));
-					s = GcBL.ellipsize(s, 100);
-					o[2] = s;
-				}
+			if(idOutroConhecimento.equals(id))
+				continue;
+			
+			info = GcInformacao.findById(idOutroConhecimento);
+			
+			if (testarAcessoPublico && (info.acesso.id != GcAcesso.ACESSO_PUBLICO))
+				continue;
+			
+			o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
+			if (o[2] != null && o[2] instanceof byte[]) {
+				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
+				s = GcBL.ellipsize(s, 100);
+				o[2] = s;
 			}
+			conhecimentos.add(o);
 		}
-		if(index < conhecimentos.size())
-			conhecimentos.remove(index);
 		
 		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
 			GcInformacao inf = GcInformacao.findById(conhecimentos.get(0)[0]);
@@ -271,10 +288,10 @@ public class Application extends SigaApplication {
 			render("@knowledge_" + estilo, conhecimentos, classificacao,
 					msgvazio, urlvazio, titulo, referer);
 		else
-			render(conhecimentos, classificacao, msgvazio, urlvazio, titulo,
+			render("@knowledge", conhecimentos, classificacao, msgvazio, urlvazio, titulo,
 					referer);
 	}
-
+	
 	public static void index() {
 		//listar(null);
 		buscar(null);
@@ -812,6 +829,36 @@ public class Application extends SigaApplication {
 		}
 
 		render(itens, filtro, listaTagCategorias);
+	}
+	
+	public static void dadosRI(Date dtRecente,
+			Date dtAntigo) throws UnsupportedEncodingException {
+		if (dtRecente == null)
+			dtRecente = GcBL.dt();
+		if (dtAntigo == null)
+			dtAntigo = new Date(0L);
+
+		Query query = JPA.em().createNamedQuery(
+				"dadosParaRecuperacaoDeInformacao");
+		//query.setParameter("anterior_a", dtRecente, TemporalType.TIMESTAMP);
+		//query.setParameter("posterior_a", dtAntigo, TemporalType.TIMESTAMP);
+		List<Object[]> lista = query.getResultList();
+		if (lista.size() == 0)
+			renderJSON("{}");
+
+		List<DadosRI> resultado = new ArrayList<DadosRI>();
+		for (Object[] ao : lista) {
+			GcInformacao i = (GcInformacao) ao[0];
+			GcArquivo a = (GcArquivo) ao[1];
+			Date dt = (Date) ao[2];
+
+			DadosRI dri = new DadosRI();
+			dri.titulo = a.titulo;
+			dri.conteudo = new String(a.conteudo, "utf-8");
+			dri.ultimaAtualizacao = dt;
+			resultado.add(dri);
+		}
+		renderJSON(resultado);
 	}
 
 	public static void proxy(String url) throws Exception {

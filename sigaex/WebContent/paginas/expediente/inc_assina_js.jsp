@@ -113,6 +113,7 @@ function InicializarCapicom(){
 		return Erro(err);
 	}
 	
+	gSigner = new ActiveXObject("CAPICOM.Signer");
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;REP:Acesso ao Repositório de Certificados Digitais')}">
 	var oStore = new ActiveXObject("CAPICOM.Store");
 	oStore.Open(2, "My", 0);
@@ -124,7 +125,11 @@ function InicializarCapicom(){
 		"Seleção de Certificado Digital",
 		"Escolha o certificado digital que deseja utilizar para assinar ou conferir cópia:", false);
 	}
-	gSigner = new ActiveXObject("CAPICOM.Signer");
+
+	if (oCertificates.Count == 0) {
+		return "Nenhum certificado digital disponível.";
+	}
+	
 	gSigner.Certificate = oCertificates.Item(1);
 	
 	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;ADRB:Política - Referência Básica')}">

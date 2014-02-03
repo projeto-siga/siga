@@ -1,0 +1,257 @@
+#{extends 'main.html' /} #{set title:'Informações' /} 
+#{set 'metaTypeIE'} 
+	 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" >
+#{/set}
+#{set 'moreHead'}
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#dicaGrafico").hide();
+		$("#evolution").mouseenter(function(){
+			$("#dicaGrafico").show()
+		}).mouseleave(function(){
+			$("#dicaGrafico").hide();
+		});
+	});
+	google.load('visualization', '1', {
+		packages : [ 'corechart', 'gauge' ]
+	});
+	google.setOnLoadCallback(drawEvolution);
+	
+	function drawEvolution() {
+		// Some raw data (not necessarily accurate)
+		var data = google.visualization.arrayToDataTable([${evolucao.raw()}]);
+	
+		// Create and draw the visualization.
+		var grafico = new google.visualization.ColumnChart(document.getElementById('evolution'));
+		grafico.draw(data, {
+			legend : {position: 'top', alignment : 'center'},
+			width : "100%",
+			height : "100%"
+		});
+		google.visualization.events.addListener(grafico,"onmouseover", function(){
+			$(document).ready(function(){
+				$("#evolution").css("cursor","pointer");
+			});
+		});
+		google.visualization.events.addListener(grafico,"onmouseout", function(){
+			$(document).ready(function(){
+				$("#evolution").css("cursor","default");
+			});
+		});
+		google.visualization.events.addListener(grafico, "select", function(){
+			var selecao = grafico.getSelection()[0];
+			var mesAno = data.getValue(selecao.row,0).split("/");
+			var numeroMes = converteMes(mesAno[0]);
+			location.href = "@{Application.listar}?filtro.situacao=" + (selecao.column == 1 ? "" : "37") +
+							"&filtro.dtIni=" + encodeURIComponent(primeiroDiaMes(mesAno[1],numeroMes)) + 
+							"&filtro.dtFim=" + encodeURIComponent(ultimoDiaMes(mesAno[1],numeroMes)) +
+							"&filtro.pesquisa=true&estatistica=" + data.getValue(selecao.row,selecao.column);
+		});
+	}
+	/* 
+	* recebe abreviação do mês e retorna o numero referente a esse mês.
+	* parametro = Nov
+	* retorno 	= 11   
+	*/	
+	function converteMes(mes) {
+		var numeroMes = new Array();
+		numeroMes[1] = "Jan";
+		numeroMes[2] = "Fev";
+		numeroMes[3] = "Mar";
+		numeroMes[4] = "Abr";
+		numeroMes[5] = "Mai";
+		numeroMes[6] = "Jun";
+		numeroMes[7] = "Jul";
+		numeroMes[8] = "Ago";
+		numeroMes[9] = "Set";
+		numeroMes[10] = "Out";
+		numeroMes[11] = "Nov";
+		numeroMes[12] = "Dez";
+		return numeroMes.indexOf(mes);
+	}	
+	/*
+	* recebe ano e mês, e retorna o primeiro dia do mês desse ano
+	* no formato dd/mm/yyyy
+	*/
+	function primeiroDiaMes(ano, mes) {
+		var anoCompleto = "20" + ano;
+		return new Date(anoCompleto, mes-1,1).toLocaleDateString();
+	}
+	/*
+	* recebe ano e mês, e retorna o último dia do mês desse ano
+	* no formato dd/mm/yyyy
+	*/
+	function ultimoDiaMes(ano, mes) {
+		var anoCompleto = "20" + ano;
+		return new Date(anoCompleto, mes,0).toLocaleDateString();
+	}	
+</script>
+#{/set}
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h3>Estatísticas Gerais</h3><br />
+		<div class="gt-left-col">
+			<h2>Conhecimentos Mais Recentes</h2>
+			#{if listaMaisRecentes != null}
+			<div class="gt-content-box gt-for-table">
+				<table border="0" class="gt-table gt-user-table">
+					<thead>
+						<tr>
+							<th width="45%">Título</th>
+							<th width="20%">Data</th>
+							<th width="20%">Autor</th>
+							<th width="15%">Lotação</th>	
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaMaisRecentes,as:'i'}
+						<tr class="gt-td">
+							<td width="45%"><h4 class="gt-categories-link"><a href="@{Application.exibir(i.sigla)}">${i?.arq?.titulo}</h4></a></td>
+							<td width="20%">${i.dtElaboracaoFim}</td>
+							<td width="20%">${i.autor.primeiroNomeEIniciais}</td>
+							<td width="15%">${i.lotacao.sigla}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum conhecimento recente.</p>
+			#{/else} <br />
+
+			<!--  -->
+			<h2>Conhecimentos Mais Acessados</h2>
+			#{if listaMaisVisitados != null}
+			<div class="gt-content-box gt-for-table">
+				<table border="0" class="gt-table gt-user-table">
+					<thead>
+						<tr>
+							<th width="45%">Título</th>
+							<th width="20%">Data</th>
+							<th width="20%">Autor</th>
+							<th width="15%">Lotação</th>	
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaMaisVisitados,as:'i'}
+						<tr class="gt-td">
+							<td width="45%"><h4 class="gt-categories-link"><a href="@{Application.exibir(i.sigla)}">${i?.arq?.titulo}</h4></a></td>
+							<td width="20%">${i.dtElaboracaoFim}</td>
+							<td width="20%">${i.autor.primeiroNomeEIniciais}</td>
+							<td width="15%">${i.lotacao.sigla}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum conhecimento visitado.</p>
+			#{/else}
+			<br />
+			<h2>Principais Classificações</h2>
+			#{if cloud.size() > 0}
+			<div class="gt-content-box gt-tag-cloud">
+				#{list items:cloud.tags(),as:'tag'}
+					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a>
+				#{/list}
+			</div>
+			#{/if} #{else}
+			<p>Nenhuma classificação cadastrada.</p>
+			#{/else}
+		</div>
+		<div class="gt-right-col">
+			<h2>Principais Autores</h2>
+			#{if listaPrincipaisAutores != null}
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-table gt-user-table">
+					<thead>
+						<tr>
+							<th width="60%">Autor</th>
+							<th width="15%">Lotação</th>
+							<th style="width: 25%;text-align: right;">Conhecimentos</th>	
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaPrincipaisAutores,as:'p'}
+						<tr>
+							*{<td style="width: 65%;">${p[0].descricao}</td>
+							<td style="width: 15%;">${p[0].lotacao.sigla}</td>
+							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.autor=${p[0].idInicial}">${p[1]}</a></td>}*
+							*{
+								p[0] - nomePessoa/ p[1] - idPessoaInicial/ p[2] - lotacao.sigla/ p[3] - contador
+							}*
+							<td style="width: 65%;">${p[0]}</td>
+							<td style="width: 15%;">${p[2]}</td>
+							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.autor=${p[1]}&filtro.lotacaosigla=${p[2]}&filtro.situacao=36&filtro.pesquisa=true">${p[3]}</a></td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum autor.</p>
+			#{/else} <br />
+			<h2>Principais Lotações</h2>
+			#{if listaPrincipaisLotacoes != null}
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-table gt-user-table">
+					<thead>
+						<tr>
+							<th width="65%">Descrição da Lotação</th>
+							<th width="15%">Lotação</th>
+							<th style="width: 20%;text-align: right;">Conhecimentos</th>	
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaPrincipaisLotacoes,as:'l'}
+						<tr>
+							*{<td style="width: 65%;">${l[0].descricao}</td>
+							<td style="width: 15%;">${l[0].sigla}</td>
+							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.lotacao=${l[0].idInicial}">${l[1]}</a></td>}*
+							*{
+								l[0] - nomeLotacao/ l[1] - idLotacaoInicial/ l[2] - lotacao.sigla/ l[3] - contador
+							}*
+							<td style="width: 65%;">${l[0]}</td>
+							<td style="width: 15%;">${l[2]}</td>
+							<td style="width: 20%;text-align: right;"><a href="@{Application.listar}?filtro.lotacao=${l[1]}&filtro.lotacaosigla=${p[2]}&filtro.situacao=36&filtro.pesquisa=true">${l[3]}</a></td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhuma Lotação.</p>
+			#{/else} *{ <br />
+			<h2>Principais Classificações</h2>
+			#{if listaPrincipaisTags != null}
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-table gt-user-table">
+					<tbody>
+						#{list items:listaPrincipaisTags,as:'t'}
+						<tr>
+							<td style="width: 30%;">${t.categoria}</td>
+							<td style="width: 70%;">${t.titulo}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			#{/if} #{else}
+			<p>Nenhum autor.</p>
+			#{/else} }* 
+			<br />
+			<h2>Evolução</h2>
+			<div id="evolution" class="gt-content-box gt-tag-cloud"></div>
+			<p id="dicaGrafico" style="font-size:88.5%;text-align: center;color:#365b6d;background:#d8d8c0;padding:3px 10px;">Clique nas barras vermelhas ou azuis para saber quais conhecimentos fazem parte dessa estatística no mês selecionado</p>
+			*{ <br />
+			<h2>Mês Passado</h2>
+			<div id="lastmonth" class="gt-content-box gt-tag-cloud"></div>
+
+			<br />
+			<h2>Mês Corrente</h2>
+			<div id="thismonth" class="gt-content-box gt-tag-cloud"></div>
+			}*
+		</div>
+	</div>
+</div>

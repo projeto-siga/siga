@@ -11,6 +11,7 @@ import play.db.jpa.JPA;
 import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
+import play.templates.JavaExtensions;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -102,7 +103,7 @@ public class SigaApplication extends Controller {
 			// Edson: Quando as informações não puderam ser obtidas do Siga,
 			// manda para a página de login. Se não for esse o erro, joga
 			// exceção pra cima.
-			redirect("/siga");
+			redirect("/siga/redirect.action?uri=" + JavaExtensions.urlEncode(request.url));
 		}
 
 	}

@@ -19,6 +19,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 import models.GcAcesso;
 import models.GcArquivo;
@@ -53,6 +54,7 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.DadosRI;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 //Obtaining Hibernate objects programmatically
@@ -827,6 +829,36 @@ public class Application extends SigaApplication {
 		}
 
 		render(itens, filtro, listaTagCategorias);
+	}
+	
+	public static void dadosRI(Date dtRecente,
+			Date dtAntigo) throws UnsupportedEncodingException {
+		if (dtRecente == null)
+			dtRecente = GcBL.dt();
+		if (dtAntigo == null)
+			dtAntigo = new Date(0L);
+
+		Query query = JPA.em().createNamedQuery(
+				"dadosParaRecuperacaoDeInformacao");
+		//query.setParameter("anterior_a", dtRecente, TemporalType.TIMESTAMP);
+		//query.setParameter("posterior_a", dtAntigo, TemporalType.TIMESTAMP);
+		List<Object[]> lista = query.getResultList();
+		if (lista.size() == 0)
+			renderJSON("{}");
+
+		List<DadosRI> resultado = new ArrayList<DadosRI>();
+		for (Object[] ao : lista) {
+			GcInformacao i = (GcInformacao) ao[0];
+			GcArquivo a = (GcArquivo) ao[1];
+			Date dt = (Date) ao[2];
+
+			DadosRI dri = new DadosRI();
+			dri.titulo = a.titulo;
+			dri.conteudo = new String(a.conteudo, "utf-8");
+			dri.ultimaAtualizacao = dt;
+			resultado.add(dri);
+		}
+		renderJSON(resultado);
 	}
 
 	public static void proxy(String url) throws Exception {

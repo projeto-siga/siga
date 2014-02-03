@@ -24,11 +24,9 @@
 	<div class="gt-bd gt-cols clearfix">
 
 		<!-- main content -->
-		<div class="gt-content">
-			<ww:if
-				test="${f:podeUtilizarServicoPorConfiguracao(null,null,'SIGA;GC')}">
-
-				<c:url var="url" value="/../sigagc/knowledge">
+		<div id="gc-ancora" class="gt-content">
+			<ww:if test="${f:resource('siga.gc.paginadelogin')}">
+				<c:url var="url" value="/../sigagc/publicKnowledge" >
 					<c:param name="tags">^pagina-de-login</c:param>
 					<c:param name="estilo">inplace</c:param>
 					<c:param name="msgvazio">Ainda não existem informações para serem exibidas aqui. Por favor, clique <a

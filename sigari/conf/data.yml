@@ -1,0 +1,88 @@
+# you describe your data using the YAML notation here
+# and then load them using Fixtures.load("data.yml")
+
+GcTipoMovimentacao():
+  id: 1
+  nome: Criação
+    
+GcTipoMovimentacao():
+  id: 2
+  nome: Fechamento
+    
+GcTipoMovimentacao():
+  id: 3
+  nome: Cancelamento
+    
+GcTipoMovimentacao():
+  id: 4
+  nome: Pedido de Revisão
+    
+GcTipoMovimentacao():
+  id: 5
+  nome: Revisado
+    
+GcTipoMovimentacao():
+  id: 6
+  nome: Pedido de Ciência
+    
+GcTipoMovimentacao():
+  id: 7
+  nome: Ciente
+    
+GcTipoMovimentacao():
+  id: 8
+  nome: Classificacao
+    
+GcTipoMovimentacao():
+  id: 9
+  nome: Definição de Perfil
+
+GcTipoMovimentacao():
+  id: 10
+  nome: Alteração de Título
+
+GcTipoMovimentacao():
+  id: 11
+  nome: Alteração de Conteúdo
+  
+GcTipoClassificacao(PCTT):
+  id: 1
+  sigla: PCTT
+  desc: Plano de Classificação e Tabela de Temporalidades
+  urlXml: /sigaex/pctt.action
+  
+GcTipoInformacao(RegistroConhecimento):
+  id: 1
+  nome: Registro de Conhecimento
+  
+GcClassificacao(PCTT00010101):
+  id: 1
+  sigla: 00.01.01.01
+  titulo: "ORGANIZAÇÃO E FUNCIONAMENTO: ADMINISTRAÇÃO JUDICIÁRIA: ORGANIZAÇÃO ADMINISTRATIVA: Modernização Administrativa"
+  desc:
+  tipo: PCTT
+  hisIde: PCTT00010101
+  hisIdIni: 
+  hisDtIni: 2013-01-01
+  hisDtFim: null
+  hisAtivo: true
+  
+GcClassificacao(PCTT00010102):
+  id: 1
+  sigla: 00.01.01.02
+  titulo: "ORGANIZAÇÃO E FUNCIONAMENTO: ADMINISTRAÇÃO JUDICIÁRIA: ORGANIZAÇÃO ADMINISTRATIVA: Documentos operacionais referentes à modernização administrativa"
+  desc:
+  tipo: PCTT
+  hisIde: PCTT00010102
+  hisIdIni: 
+  hisDtIni: 2013-01-01
+  hisDtFim: null
+  hisAtivo: true
+  
+GcTipoClassificacao(Servico):
+  id: 2
+  sigla: SERV
+  desc: Serviço
+  urlXml: /sigasr/servicos.xml
+  
+  

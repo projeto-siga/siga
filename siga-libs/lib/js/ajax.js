@@ -148,6 +148,37 @@ the object to set the innerHTML for.</param>
 function SetInnerHTMLFromAjaxResponse(url, obj_id)
 {
   mostraCarregando();
+  active++;
+  
+  var jqxhr = $.get(url, function(s) {
+	if(typeof obj_id == 'object') {
+    	obj_id.innerHTML = s;
+	} else {
+    	document.getElementById(obj_id).innerHTML = s;
+	}
+  
+	// Caso seja necessario acrescentar algum script na pagina, ficou convencionado que
+	// o script deverá ser marcado com <script type="text/javascript" > e < /script>
+	if (s.indexOf('<script type="text/javascript">') != -1) {
+		var j = 0;
+		var len = 0;
+		do {
+			j = s.indexOf('<script type="text/javascript">', j);
+			if (j<=0)
+				break;
+			j = j + 31;
+			len = s.indexOf('</script>', j);
+			eval(s.substring(j, len));
+		} while (true)
+	}
+  })
+  .always(function() {
+		ocultaCarregando();
+  });
+  
+  return;
+
+  
   var xmlhttp = new GetXmlHttp();
   //now we got the XmlHttpRequest object, send the request.
   if (xmlhttp)

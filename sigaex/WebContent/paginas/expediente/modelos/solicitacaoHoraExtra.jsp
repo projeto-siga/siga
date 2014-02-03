@@ -47,7 +47,7 @@ var newwin = null;
 									<mod:selecao titulo="Adicional (AD) ou Banco de horas?" var="adicionalBanco${i}${j}" opcoes="BH;AD"/></br>
 						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-						    		largura="2" maxcaracteres="2" titulo="Horário inicial" var="horaIni${i}${j}" reler="ajax" idAjax="Func$${i}${j}" />h 
+						    		largura="2" maxcaracteres="2" titulo="Horário inicial" var="horaIni${i}${j}" reler="ajax" idAjax="Func${i}${j}" />h 
 						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" titulo="" largura="2" maxcaracteres="2" var="minutoIni${i}${j}" reler="ajax" idAjax="Func${i}${j}" />m &nbsp;&nbsp;&nbsp;&nbsp;
 						    		<span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=225,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${intervaloMsg}');"><u>
@@ -67,40 +67,41 @@ var newwin = null;
                                  
 
                                 <c:if test="${(xhoraIni > 24)}"> 
-								<p style="color:red">Hora de início deve ser menor ou igual a 24</p>
-								<c:set var="condicional" value="nao"/>
+								 <p style="color:red">Hora de início deve ser menor ou igual a 24</p>
+								 <c:set var="condicional" value="nao"/>
 								</c:if>
 								
 								<c:if test="${(xminutoIni > 59)}"> 
-                                <p style="color:red">Minuto de início deve ser menor ou igual a 59</p>
-                                <c:set var="condicional" value="nao"/>
+                                 <p style="color:red">Minuto de início deve ser menor ou igual a 59</p>
+                                 <c:set var="condicional" value="nao"/>
                                 </c:if>
                                 
 								<c:if test="${(xhoraFim > 24)}"> 
-								<p style="color:red">Hora de fim deve ser menor ou igual a 24.</p>
-								<c:set var="condicional" value="nao"/>
+								 <p style="color:red">Hora de fim deve ser menor ou igual a 24.</p>
+							 	<c:set var="condicional" value="nao"/>
 								</c:if>
 								
 								<c:if test="${(xminutoFim > 59)}"> 
-								<p style="color:red">Minuto de fim deve ser menor ou igual a 59.</p>
-								<c:set var="condicional" value="nao"/>
+								 <p style="color:red">Minuto de fim deve ser menor ou igual a 59.</p>
+								 <c:set var="condicional" value="nao"/>
 								</c:if>
 
                                 <c:if test="${(xhoraIni > xhoraFim)}">
-                                <p style="color:red">Horário inicial maior que Horário final.</p>
-                                <c:set var="condicional" value="nao"/>
+                                 <p style="color:red">Horário inicial maior que Horário final.</p>
+                                 <c:set var="condicional" value="nao"/>
                                 </c:if>
                                 <c:if test="${(xhoraIni == xhoraFim)&&(xminutoIni > xminutoFim) }">
-                                <p style="color:red">Horário inicial maior que Horário final.</p>
-                                <c:set var="condicional" value="nao"/>
+                                 <p style="color:red">Horário inicial maior que Horário final.</p>
+                                 <c:set var="condicional" value="nao"/>
                                 </c:if>
                                 
                                 
                                  <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao')&& (xintervalo =='Não')}">
-                                     <fmt:formatNumber var="xhoraTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" maxFractionDigits="0" minIntegerDigits="2" />
+                                     <fmt:formatNumber var="xhoraTotalC" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" type="number" pattern="##.##" />
+                                     <fmt:parseNumber var="xhoraTotal" value="${xhoraTotalC}" type="number" integerOnly="true"/>
                                      <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2" />
-                                     
-                                          
+                                     <mod:oculto var="totalHoras${i}${j}" valor="${xhoraTotal}" />
+                                     <mod:oculto var="totalMinutos${i}${j}" valor="${xminutoTotal}"/>                                           
                                 Total de horas solicitadas:<input type="text" name="totalHoras${i}${j}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}${j}" value="${xminutoTotal}" size="2" readonly/>min  
                                  </c:if>
                                  
@@ -110,11 +111,14 @@ var newwin = null;
                                  </c:if>  
                                  
                                  <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao') && (xintervalo =='Sim')}">
-                                     <fmt:formatNumber var="xhoraTotal" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)-1)}" maxFractionDigits="0" minIntegerDigits="2" />
-                                     <fmt:formatNumber var="xminutoTotal" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2"  />
-                                     Total de horas solicitadas:<input type="text" name="totalHoras${i}${j}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}${j}" value="${xminutoTotal}" size="2" readonly/>min
-                                                                           
+                                     <fmt:formatNumber var="xhoraTotalC" value="${((((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)-1)}" type="number" pattern="##.##" />
+                                     <fmt:parseNumber var="xhoraTotal" value="${xhoraTotalC}" type="number" integerOnly="true"/>
+                                     <fmt:formatNumber var="xminutoTotal"  value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))%60)}" maxFractionDigits="0" minIntegerDigits="2"  />
+                                     <mod:oculto var="totalHoras${i}${j}" valor="${xhoraTotal}" />
+                                     <mod:oculto var="totalMinutos${i}${j}" valor="${xminutoTotal}"/>
+                                Total de horas solicitadas:<input type="text" name="totalHoras${i}${j}" value="${xhoraTotal}" size="2" readonly/>h <input type="text" name="totalMinutos${i}${j}" value="${xminutoTotal}" size="2" readonly/>min
                                 </c:if>
+                                
                                 <c:if test="${(xhoraTotal > 10) or ((xhoraTotal== 10)and(xminutoTotal > 0))}">
                                  <p style="color:red">Total de Hora Extra não pode ser maior que 10h00m.</p>
                                  </c:if>
@@ -247,13 +251,10 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('adicionalBanco',i),j)]}</p></td>
-							<td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]}:
-							${requestScope[f:concat(f:concat('minutoIni',i),j)]}</p></td>
+							<td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]}:${requestScope[f:concat(f:concat('minutoIni',i),j)]}:00</p></td>
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
-						    <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:  
-                            ${requestScope[f:concat(f:concat('minutoFim',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:  
-                            ${requestScope[f:concat(f:concat('totalMinutos',i),j)]}</p></td>
+						    <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:${requestScope[f:concat(f:concat('minutoFim',i),j)]}:00</p></td>
+                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:${requestScope[f:concat(f:concat('totalMinutos',i),j)]}:00</p></td>
 						</ww:if>
 						<ww:else>
 							<tr>
@@ -264,13 +265,10 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
                             <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
                             <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
                             <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('adicionalBanco',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]} :  
-                            ${requestScope[f:concat(f:concat('minutoIni',i),j)]}</p></td>
+                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]}:${requestScope[f:concat(f:concat('minutoIni',i),j)]}:00</p></td>
                             <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]} : 
-                            ${requestScope[f:concat(f:concat('minutoFim',i),j)]} </p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]} :  
-                            ${requestScope[f:concat(f:concat('totalMinutos',i),j)]}  </p></td>
+                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:${requestScope[f:concat(f:concat('minutoFim',i),j)]}:00</p></td>
+                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:${requestScope[f:concat(f:concat('totalMinutos',i),j)]}:00</p></td>
 							</tr>
 						</ww:else>
 					</c:forEach>

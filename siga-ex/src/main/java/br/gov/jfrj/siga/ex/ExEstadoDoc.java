@@ -47,7 +47,7 @@ public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 
 	final static public long ESTADO_DOC_A_ARQUIVAR = 5;
 
-	final static public long ESTADO_DOC_ARQUIVADO_CORRENTE = 6;
+	final static public long ESTADO_DOC_ENCERRADO = 6;
 
 	final static public long ESTADO_DOC_A_DESCARTAR = 7;
 

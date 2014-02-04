@@ -1518,29 +1518,6 @@ public class CpDao extends ModeloDao {
 		AnnotationConfiguration cfg = new AnnotationConfiguration();
 
 		cfg.setProperty("hibernate.connection.datasource", datasource);
-
-		// bruno.lacerda@avantiprima.com.br
-		// Configuração do pool com c3p0.
-		/*
-		 * cfg.setProperty("hibernate.connection.provider_class",
-		 * "org.hibernate.connection.C3P0ConnectionProvider");
-		 * cfg.setProperty("hibernate.connection.driver_class",
-		 * "oracle.jdbc.driver.OracleDriver");
-		 * cfg.setProperty("hibernate.dialect",
-		 * "org.hibernate.dialect.Oracle9iDialect");
-		 * 
-		 * TODO Verificar se realmente precisa reescrever os parametros de
-		 * conexao cfg.setProperty("hibernate.connection.url",
-		 * "jdbc:oracle:thin:@servidor:1521:instancia");
-		 * cfg.setProperty("hibernate.connection.username", "usuario");
-		 * cfg.setProperty("hibernate.connection.password", "senha");
-		 * 
-		 * cfg.setProperty("hibernate.c3p0.min_size", "5"); // MIN POOL SIZE
-		 * cfg.setProperty("hibernate.c3p0.max_size", "20"); // MAX POOL SIZE
-		 * cfg.setProperty("hibernate.c3p0.timeout", "1"); //
-		 * cfg.setProperty("hibernate.c3p0.max_statements", "50");
-		 * cfg.setProperty("hibernate.c3p0.idle_test_periods", "50");
-		 */
 		configurarHibernate(cfg);
 
 		return cfg;
@@ -1562,20 +1539,26 @@ public class CpDao extends ModeloDao {
 		configurarHibernate(cfg);
 		return cfg;
 	}
-
+	
 	static public AnnotationConfiguration criarHibernateCfg(
 			CpAmbienteEnumBL ambiente) throws Exception {
 		CpPropriedadeBL prop = Cp.getInstance().getProp();
 		prop.setPrefixo(ambiente.getSigla());
+		return criarHibernateCfg(ambiente, prop);
+	}
+
+	static public AnnotationConfiguration criarHibernateCfg(
+			CpAmbienteEnumBL ambiente, CpPropriedadeBL prop) throws Exception {
+		
 		AnnotationConfiguration cfg = new AnnotationConfiguration();
 
 		// Isto é para manter o naming strategy do hibernate 3.5 na versão 3.6
 		cfg.setNamingStrategy(DefaultNamingStrategy.INSTANCE);
 		cfg.setProperty("hibernate.connection.url", prop.urlConexao());
 		cfg.setProperty("hibernate.connection.username",
-				prop.usuarioCorporativo());
+				prop.usuario());
 		cfg.setProperty("hibernate.connection.password",
-				prop.senhaCorporativo());
+				prop.senha());
 		cfg.setProperty("hibernate.connection.driver_class",
 				prop.driverConexao());
 		cfg.setProperty("c3p0.min_size", prop.c3poMinSize());

@@ -30,14 +30,14 @@
 			<ww:token />
 		</ww:form>
 
-		<h2>
+		<h2 style="margin-bottom: 0px;">
 			<c:if test="${empty ocultarCodigo}">${docVO.sigla}</c:if>
 		</h2>
 		<c:set var="primeiroMobil" value="${true}" />
 		<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
 			<ww:if
 				test="%{#attr.m.mob.geral or true or (((mob.geral or (mob.id == #attr.m.mob.id)) and (exibirCompleto or (#attr.m.mob.getUltimaMovimentacaoNaoCancelada() != null))))}">
-				<h3 style="margin-bottom: 0px;">
+				<h3 style="margin-top: 10px; margin-bottom: 0px;">
 					<ww:property
 						value="%{#attr.m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}"
 						escape="false" />
@@ -150,22 +150,26 @@
 									sigla="${mov.parte.lotaCadastrante.sigla}"
 									descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}"
 									lotacaoParam="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}" />
+
 							</td>
 							<td align="left"><siga:selecionado
 									sigla="${mov.parte.cadastrante.nomeAbreviado}"
 									descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}"
 									pessoaParam="${mov.parte.cadastrante.sigla}" />
+
 							</td>
 							<c:if test="${ (exibirCompleto == 'true')}">
 								<td align="left"><siga:selecionado
 										sigla="${mov.parte.lotaSubscritor.sigla}"
 										descricao="${mov.parte.lotaSubscritor.descricaoAmpliada}" 
 										lotacaoParam="${mov.parte.lotaSubscritor.siglaOrgao}${mov.parte.lotaSubscritor.sigla}" />
+
 								</td>
 								<td align="left"><siga:selecionado
 										sigla="${mov.parte.subscritor.nomeAbreviado}"
 										descricao="${mov.parte.subscritor.descricao} - ${mov.parte.subscritor.sigla}" 
 										pessoaParam="${mov.parte.subscritor.sigla}" />
+
 								</td>
 							</c:if>
 							<td align="left"><siga:selecionado
@@ -173,6 +177,9 @@
 									descricao="${mov.parte.lotaResp.descricaoAmpliada}" 
 									lotacaoParam="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}" /></td>
 							<td align="left"><siga:selecionado sigla="${mov.parte.resp.nomeAbreviado}"
+
+
+
 									descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" 
 									pessoaParam="${mov.parte.resp.sigla}"/>
 							</td>
@@ -388,7 +395,7 @@
 </c:if>
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-	<c:url var="url" value="/../sigagc/app/knowledge">
+	<c:url var="url" value="/../sigagc/knowledge">
 		<c:param name="tags">@documento</c:param>
 		<c:forEach var="tag" items="${docVO.tags}">
 			<c:param name="tags">${tag}</c:param>

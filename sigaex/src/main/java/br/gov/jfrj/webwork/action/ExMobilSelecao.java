@@ -33,7 +33,7 @@ public class ExMobilSelecao extends Selecao<ExMobil> {
 
 		try {
 			ExMobil o = ExDao.getInstance().consultarPorSigla(flt);
-			if (o == null) {
+			if (o == null || o.isEliminado()) {
 				apagar();
 				return false;
 			}
@@ -48,7 +48,7 @@ public class ExMobilSelecao extends Selecao<ExMobil> {
 	public boolean buscarPorId() throws AplicacaoException {
 		final ExMobil o = ExDao.getInstance().consultar(getId(), ExMobil.class,
 				false);
-		if (o == null)
+		if (o == null || o.isEliminado())
 			return false;
 
 		buscarPorObjeto(o);

@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.ex.vo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import br.gov.jfrj.siga.base.FormataTamanhoDeArquivo;
 import br.gov.jfrj.siga.base.SigaCalendar;
@@ -47,6 +48,7 @@ public class ExMobilVO extends ExVO {
 	Integer pagInicial;
 	Integer pagFinal;
 	String tamanhoDeArquivo;
+	boolean ocultar;
 
 	public List<ExMovimentacaoVO> getMovs() {
 		return movs;
@@ -66,37 +68,37 @@ public class ExMobilVO extends ExVO {
 
 	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
 			boolean completo) throws Exception {
-		this(mob, titular, lotaTitular,completo, null, false);
+		this(mob, titular, lotaTitular, completo, null, false);
 	}
 
-		
-	
 	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
-			boolean completo, Long tpMov, boolean movAssinada ) throws Exception {
+			boolean completo, Long tpMov, boolean movAssinada) throws Exception {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
 
-		if (!completo)
+		if (!completo || mob.isEliminado())
 			return;
 
 		long tempoIni = System.currentTimeMillis();
 
 		/*
 		 * Markenson: O código abaixo foi comentado por questões de desempenho.
-		 * Deve ser estudada uma maneira mais eficiente de calcular o tamanho dos PDFs
-		 * */
-		
-		// byteCount, pagIni e pagFim
-//		if (mob.getExDocumento().isEletronico()){
-			
-//			byteCount = mob.getByteCount();
-//			if (byteCount != null && byteCount > 0)
-//				tamanhoDeArquivo = FormataTamanhoDeArquivo
-//						.converterEmTexto(byteCount);
-//		}
+		 * Deve ser estudada uma maneira mais eficiente de calcular o tamanho
+		 * dos PDFs
+		 */
 
+		// byteCount, pagIni e pagFim
+		// if (mob.getExDocumento().isEletronico()){
+
+		// byteCount = mob.getByteCount();
+		// if (byteCount != null && byteCount > 0)
+		// tamanhoDeArquivo = FormataTamanhoDeArquivo
+		// .converterEmTexto(byteCount);
+		// }
 
 		for (ExMobil m : mob.getApensosDiretosExcetoVolumeApensadoAoProximo()) {
+			if (m.isEliminado())
+				continue;
 			apensos.add(new ExMobilVO(m, titular, lotaTitular, false));
 		}
 		System.out.println(mob.getExDocumento().getCodigoString()
@@ -106,8 +108,10 @@ public class ExMobilVO extends ExVO {
 
 		tempoIni = System.currentTimeMillis();
 		for (ExDocumento d : mob.getExDocumentoFilhoSet()) {
+			if (d.isEliminado())
+				continue;
 			filhos.add(new ExDocumentoVO(d, null, titular, lotaTitular, false));
-			if (d.getDtFechamento() == null || !d.isCancelado()) {
+			if (!d.isFinalizado() || !d.isCancelado()) {
 				if(d.isExpediente())
 					expedientesFilhosNaoCancelados.add(new ExDocumentoVO(d, null, titular,
 						lotaTitular, false));
@@ -130,23 +134,23 @@ public class ExMobilVO extends ExVO {
 						+ (System.currentTimeMillis() - tempoIni));
 
 		tempoIni = System.currentTimeMillis();
-		
+
 		if (tpMov == null)
-		  for (ExMovimentacao mov : mob.getCronologiaSet()) {
-			  movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
-		  }
+			for (ExMovimentacao mov : mob.getCronologiaSet()) {
+				movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
+			}
 		else
-		  for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov)) {
-			  if (!movAssinada) {
-				  if (!mov.isAssinada() && !mov.isCancelada())
-			         movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
-			  }  	  
-			  else {		  
-				  if (mov.isAssinada())
-					  movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
-			  }	  
-		  }
-		 	
+			for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov)) {
+				if (!movAssinada) {
+					if (!mov.isAssinada() && !mov.isCancelada())
+						movs.add(new ExMovimentacaoVO(this, mov, titular,
+								lotaTitular));
+				} else {
+					if (mov.isAssinada())
+						movs.add(new ExMovimentacaoVO(this, mov, titular,
+								lotaTitular));
+				}
+			}
 
 		// Calcula o tempo que o documento ficou em cada uma das lotações por
 		// onde ele passou.
@@ -257,7 +261,8 @@ public class ExMobilVO extends ExVO {
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
 		if (!mob.isGeral()) {
-			addAcao("application_side_tree", "Visualizar Dossiê",
+			addAcao("application_side_tree",
+					"Visualizar Dossiê",
 					"/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()
@@ -295,70 +300,120 @@ public class ExMobilVO extends ExVO {
 		addAcao("email_open", "Receber", "/expediente/mov", "receber", Ex.getInstance()
 				.getComp().podeReceber(titular, lotaTitular, mob), null, null, null, null, "once");
 
-		addAcao("email_edit", "Despachar/Transferir",
+		addAcao("email_edit",
+				"Despachar/Transferir",
 				"/expediente/mov",
 				"transferir",
 				Ex.getInstance().getComp()
-						.podeDespachar(titular, lotaTitular, mob));
+						.podeDespachar(titular, lotaTitular,mob) || Ex.getInstance().getComp()
+						.podeTransferir(titular, lotaTitular, mob));
 
 		if (mob.isVia() || mob.isVolume()) {
-			addAcao("attach","Anexar Arquivo",
+			addAcao("attach",
+					"Anexar Arquivo",
 					"/expediente/mov",
 					"anexar",
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));
-			addAcao("tag_yellow", "Fazer Anotação",
+			addAcao("tag_yellow",
+					"Fazer Anotação",
 					"/expediente/mov",
 					"anotar",
 					Ex.getInstance().getComp()
 							.podeFazerAnotacao(titular, lotaTitular, mob));
 		}
 
-		addAcao("package", "Arq. Corrente",
+		addAcao("package", "Encerrar", "/expediente/mov", "encerrar_gravar", Ex
+				.getInstance().getComp()
+				.podeEncerrar(titular, lotaTitular, mob), null, null, null, null, "once");
+
+		addAcao("database_add", "Indicar para Guarda Permanente", "/expediente/mov",
+				"indicar_permanente", Ex.getInstance().getComp()
+						.podeIndicarPermanente(titular, lotaTitular, mob));
+
+		addAcao("database_delete",
+				"Reverter Ind. Guarda Permanente",
 				"/expediente/mov",
-				"arquivar_corrente_gravar",
+				"reverter_indicacao_permanente",
+				Ex.getInstance()
+						.getComp()
+						.podeReverterIndicacaoPermanente(titular, lotaTitular,
+								mob));
+
+		addAcao("page_red",
+				"Retirar de Edital de Eliminação",
+				"/expediente/mov",
+				"retirar_de_edital_eliminacao",
+				Ex.getInstance()
+						.getComp()
+						.podeRetirarDeEditalEliminacao(titular, lotaTitular,
+								mob));
+
+		addAcao("table_edit",
+				"Reclassificar",
+				"/expediente/mov",
+				"reclassificar",
 				Ex.getInstance().getComp()
-						.podeArquivarCorrente(titular, lotaTitular, mob), null, null, null, null, "once");
-		
-		addAcao("hourglass_add", "Sobrestar",
+						.podeReclassificar(titular, lotaTitular, mob));
+
+		addAcao("table", "Avaliar", "/expediente/mov", "avaliar", Ex
+				.getInstance().getComp().podeAvaliar(titular, lotaTitular, mob));
+
+		addAcao("hourglass_add",
+				"Sobrestar",
 				"/expediente/mov",
 				"sobrestar_gravar",
 				Ex.getInstance().getComp()
 						.podeSobrestar(titular, lotaTitular, mob), null, null, null, null, "once");
 
-		addAcao("box","Arq. Permanente", "/expediente/mov",
+		addAcao("database", "Recolher ao Arq. Permanente", "/expediente/mov",
 				"arquivar_permanente_gravar", Ex.getInstance().getComp()
-						.podeArquivarPermanente(titular, lotaTitular, mob), null, null, null, null, "once");
+						.podeBotaoArquivarPermanente(titular, lotaTitular, mob), null, null, null, null, "once");
 
-		addAcao("package_go","Desarquivar",
+		addAcao("box", "Arq. Intermediário", "/expediente/mov",
+				"arquivar_intermediario", Ex.getInstance().getComp()
+						.podeBotaoArquivarIntermediario(titular, lotaTitular, mob), null, null, null, null, "once");
+
+		addAcao("package_go",
+				"Reabrir",
 				"/expediente/mov",
-				"desarquivar_gravar",
+				"reabrir_gravar",
 				Ex.getInstance().getComp()
-						.podeDesarquivar(titular, lotaTitular, mob), null, null, null, null, "once");
+						.podeReabrir(titular, lotaTitular, mob), null, null, null, null, "once");
 		
-		addAcao("hourglass_delete","Desobrestar",
+		addAcao("box_go",
+				"Desarq. Intermediário",
 				"/expediente/mov",
-				"desobrestar_gravar",
+				"desarquivar_intermediario_gravar",
 				Ex.getInstance().getComp()
+						.podeBotaoDesarquivarIntermediario(titular, lotaTitular, mob), null, null, null, null, "once");
+
+		addAcao("hourglass_delete", "Desobrestar", "/expediente/mov",
+				"desobrestar_gravar", Ex.getInstance().getComp()
 						.podeDesobrestar(titular, lotaTitular, mob), null, null, null, null, "once");
 
-		addAcao("link","Juntar", "/expediente/mov", "juntar", Ex.getInstance()
+		addAcao("link", "Juntar", "/expediente/mov", "juntar", Ex.getInstance()
 				.getComp().podeJuntar(titular, lotaTitular, mob));
 
-		addAcao("page_find","Vincular", "/expediente/mov", "referenciar", Ex.getInstance()
-				.getComp().podeReferenciar(titular, lotaTitular, mob));
+		addAcao("page_find",
+				"Vincular",
+				"/expediente/mov",
+				"referenciar",
+				Ex.getInstance().getComp()
+						.podeReferenciar(titular, lotaTitular, mob));
 
-		addAcao("link_add","Apensar", "/expediente/mov", "apensar", Ex.getInstance()
-				.getComp().podeApensar(titular, lotaTitular, mob));
+		addAcao("link_add", "Apensar", "/expediente/mov", "apensar", Ex
+				.getInstance().getComp().podeApensar(titular, lotaTitular, mob));
 
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários
-		if (mob.getExDocumento().getDtFechamento() != null
+		if (mob.getExDocumento().isFinalizado()
 				&& mob.getUltimaMovimentacaoNaoCancelada() != null
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 						.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)
-			addAcao("arrow_undo", "Desfazer "
-					+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),
+			addAcao("arrow_undo",
+					"Desfazer "
+							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),
 					"/expediente/mov",
 					"cancelarMovimentacao",
 					Ex.getInstance()
@@ -370,15 +425,13 @@ public class ExMobilVO extends ExVO {
 		// exibir+completo,
 		// confirmacao
 
-		addAcao("folder_page_white", "Encerrar Volume", "/expediente/mov", "encerrar_gravar", Ex
+		addAcao("folder_page_white", "Encerrar Volume", "/expediente/mov", "encerrar_volume_gravar", Ex
 				.getInstance().getComp()
-				.podeEncerrar(titular, lotaTitular, mob),
+				.podeEncerrarVolume(titular, lotaTitular, mob),
 				"Confirma o encerramento do volume?", null, null, null, "once");
 
-		addAcao("cancel", "Cancelar Via",
-				"/expediente/mov",
-				"cancelarMovimentacao",
-				Ex.getInstance().getComp()
+		addAcao("cancel", "Cancelar Via", "/expediente/mov",
+				"cancelarMovimentacao", Ex.getInstance().getComp()
 						.podeCancelarVia(titular, lotaTitular, mob),
 				"Confirma o cancelamento da via?", null, null, null, "once");
 		
@@ -395,10 +448,12 @@ public class ExMobilVO extends ExVO {
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {
 		StringBuilder sb = new StringBuilder();
 
+		Set<ExMarca> marcas = getMob().getExMarcaSetAtivas();
+
 		// Marcacoes para a propria lotacao e para a propria pessoa ou sem
 		// informacao de pessoa
 		//
-		for (ExMarca mar : getMob().getExMarcaSet()) {
+		for (ExMarca mar : marcas) {
 			if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
 					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
 					&& ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
@@ -415,7 +470,7 @@ public class ExMobilVO extends ExVO {
 		// Marcacoes para a propria lotacao e para outra pessoa
 		//
 		if (sb.length() == 0) {
-			for (ExMarca mar : getMob().getExMarcaSet()) {
+			for (ExMarca mar : marcas) {
 				if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
 						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO) {
 					if (sb.length() > 0)
@@ -437,7 +492,7 @@ public class ExMobilVO extends ExVO {
 		// Marcacoes para qualquer outra pessoa ou lotacao
 		//
 		if (sb.length() == 0) {
-			for (ExMarca mar : getMob().getExMarcaSet()) {
+			for (ExMarca mar : marcas) {
 				if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
 						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO) {
 					if (sb.length() > 0)
@@ -470,8 +525,7 @@ public class ExMobilVO extends ExVO {
 		String m = getMarcadoresEmHtml(pess, lota);
 		if (m == null)
 			return getMob().getDescricaoCompleta();
-		return getMob().getDescricaoCompleta() + " - "
-				+ getMarcadoresEmHtml(pess, lota);
+		return getMob().getDescricaoCompleta() + " - " + m;
 	}
 
 	public String getSigla() {

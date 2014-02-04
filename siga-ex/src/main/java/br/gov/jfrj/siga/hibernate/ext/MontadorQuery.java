@@ -39,11 +39,14 @@ public class MontadorQuery implements IMontadorQuery {
 		else
 			sbf.append("select doc, mob, label from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 
-		sbf.append(" where 1 = 1");
+		sbf.append(" where not exists (from ExMovimentacao where exTipoMovimentacao.idTpMov = 10 and (exMobil.idMobil = mob.idMobil ");
+		sbf.append("    or exMobil.idMobil = (from ExMobil where exTipoMobil.idTipoMobil = 1 and exDocumento.idDoc = mob.exDocumento.idDoc)))");
 
 		if (flt.getUltMovIdEstadoDoc() != null
 				&& flt.getUltMovIdEstadoDoc() != 0) {
 			sbf.append(" and label.cpMarcador.idMarcador = :ultMovIdEstadoDoc");
+			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < sysdate)");
+			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > sysdate)");
 		} else {
 			sbf.append(" and not (label.cpMarcador.idMarcador in (3, 14, 25))");
 		}
@@ -183,7 +186,7 @@ public class MontadorQuery implements IMontadorQuery {
 			else if (flt.getOrdem() == 2)
 				sbf.append(" order by doc.anoEmissao desc, doc.numExpediente desc, mob.numSequencia, doc.idDoc desc");
 			else if (flt.getOrdem() == 3)
-				sbf.append(" order by doc.dtFechamento desc, doc.idDoc desc");
+				sbf.append(" order by doc.dtFinalizacao desc, doc.idDoc desc");
 			else if (flt.getOrdem() == 4)
 				sbf.append(" order by doc.idDoc desc");
 		}

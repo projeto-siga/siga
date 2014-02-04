@@ -43,7 +43,7 @@
 							marcado="Sim" /></td>
 						<td><a href="javascript:void(0)"
 							onclick="javascript: window.open('/sigaex/expediente/doc/exibir.action?popup=true&id=${ex.idDoc}', '_new', 'width=700,height=500,scrollbars=yes,resizable')">${ex.codigo}</a></td>
-						<td style="padding-left: 30px">${ex.dtFechamentoDDMMYY}</td>
+						<td style="padding-left: 30px">${ex.dtFinalizacaoDDMMYY}</td>
 						<td style="padding-left: 30px">${ex.lotaCadastrante.sigla}</td>
 						<td style="padding-left: 30px">${ex.descrDocumento}</td>
 						<td style="padding-left: 30px">
@@ -65,7 +65,7 @@
 							marcado="Sim" /></td>
 						<td><a href="javascript:void(0)"
 							onclick="javascript: window.open('/sigaex/expediente/doc/exibir.action?popup=true&id=${ex.idDoc}', '_new', 'width=700,height=500,scrollbars=yes,resizable')">${ex.codigo}</a></td>
-						<td style="padding-left: 30px">${ex.dtFechamentoDDMMYY}</td>
+						<td style="padding-left: 30px">${ex.dtFinalizacaoDDMMYY}</td>
 						<td style="padding-left: 30px">${ex.lotaCadastrante.sigla}</td>
 						<td style="padding-left: 30px">${ex.descrDocumento}</td>
 					</tr>
@@ -230,4 +230,3 @@
 
 	</mod:finalizacao>--%>
 </mod:modelo>
-

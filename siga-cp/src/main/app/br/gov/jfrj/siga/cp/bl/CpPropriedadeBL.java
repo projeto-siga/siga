@@ -39,10 +39,10 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String driverConexao( ) throws Exception {
 		return this.obterPropriedade("hibernate.connection.driver_class");
 	}
-	public String usuarioCorporativo ( ) throws Exception {
+	public String usuario ( ) throws Exception {
 		return this.obterPropriedade("hibernate.connection.username");
 	}
-	public String senhaCorporativo ( ) throws Exception {
+	public String senha ( ) throws Exception {
 		return this.obterPropriedade("hibernate.connection.password");
 	}
 	public String c3poMinSize  ( ) throws Exception {

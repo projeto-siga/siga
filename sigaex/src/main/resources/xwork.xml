@@ -296,8 +296,8 @@
 			<interceptor-ref name="basicStack" />
 			<result>/paginas/expediente/fix_table_cols_result.jsp</result>
 		</action>
-		<action name="fechar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aFechar">
+		<action name="finalizar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aFinalizar">
 			<result type="redirect-action">
 				exibir?sigla=${doc.sigla}&amp;msg=${msg}
 			</result>
@@ -385,8 +385,8 @@
 				exibir?sigla=${doc.sigla}
 			</result>
 		</action>
-		<action name="reabrir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aReabrir">
+		<action name="refazer" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aRefazer">
 			<result type="redirect-action">
 				exibir?conviteEletronico=true&amp;sigla=${doc.sigla}
 			</result>
@@ -648,8 +648,81 @@
 				<param name="namespace">/expediente/doc</param>
 			</result>
 		</action>
-		<action name="arquivar_corrente_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aArquivarCorrenteGravar">
+		<action name="encerrar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aEncerrarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="indicar_permanente" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aIndicarPermanente">
+			<result>/paginas/expediente/indica_permanente.jsp</result>
+		</action>
+		<action name="indicar_permanente_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aIndicarPermanenteGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="reverter_indicacao_permanente" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aReverterIndicacaoPermanente">
+			<result>/paginas/expediente/reverte_indicacao_permanente.jsp</result>
+		</action>
+		<action name="reverter_indicacao_permanente_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aReverterIndicacaoPermanenteGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="reclassificar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aReclassificar">
+			<result>/paginas/expediente/reclassifica.jsp</result>
+		</action>
+		<action name="reclassificar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aReclassificarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="avaliar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAvaliar">
+			<result>/paginas/expediente/avalia.jsp</result>
+		</action>
+		<action name="avaliar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAvaliarGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="arquivar_intermediario" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aArquivarIntermediario">
+			<result>
+				/paginas/expediente/arquiva_intermediario.jsp
+			</result>
+			<result type="redirect-action" name="grava_direto">
+				<param name="actionName">
+					arquivar_intermediario_gravar?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/mov</param>
+			</result>
+		</action>
+		<action name="arquivar_intermediario_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aArquivarIntermediarioGravar">
 			<result type="redirect-action">
 				<param name="actionName">
 					exibir?sigla=${mob.sigla}
@@ -666,8 +739,30 @@
 				<param name="namespace">/expediente/doc</param>
 			</result>
 		</action>
-		<action name="desarquivar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aDesarquivarGravar">
+		<action name="retirar_de_edital_eliminacao" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aRetirarDeEditalEliminacao">
+			<result>/paginas/expediente/retira_de_edital_eliminacao.jsp</result>
+		</action>
+		<action name="retirar_de_edital_eliminacao_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aRetirarDeEditalEliminacaoGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="reabrir_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aReabrirGravar">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="desarquivar_intermediario_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aDesarquivarIntermediarioGravar">
 			<result type="redirect-action">
 				<param name="actionName">
 					exibir?sigla=${mob.sigla}
@@ -907,13 +1002,13 @@
 			</result>
 		</action>
 
-		<action name="fechar_assinar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aFecharAssinar">
+		<action name="finalizar_assinar" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aFinalizarAssinar">
 			<result>/paginas/expediente/assina.jsp</result>
 		</action>
 
-		<!-- <action name="fechar_assinar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction" 
-			method="aFecharAssinarGravar"> <result type="redirect-action"> <param name="actionName">exibir?id=${doc.idDoc}</param> 
+		<!-- <action name="finalizar_assinar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction" 
+			method="aFinalizarAssinarGravar"> <result type="redirect-action"> <param name="actionName">exibir?id=${doc.idDoc}</param> 
 			<param name="namespace">/expediente/doc</param> </result> </action> -->
 
 		<action name="transferir" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
@@ -935,8 +1030,8 @@
 			</result>
 		</action>
 
-		<action name="encerrar_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aEncerrarGravar">
+		<action name="encerrar_volume_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aEncerrarVolumeGravar">
 			<result type="redirect-action">
 				<param name="actionName">
 					exibir?sigla=${doc.sigla}
@@ -984,17 +1079,41 @@
 			method="aTransferirLoteGravar">
 			<result>/paginas/expediente/protocolo.jsp</result>
 		</action>
-		<action name="arquivar_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aArquivarLote">
-			<result>/paginas/expediente/arquiva_lote.jsp</result>
+		<action name="encerrar_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aEncerrarLote">
+			<result>/paginas/expediente/encerra_lote.jsp</result>
 		</action>
-		<action name="arquivar_lote_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aArquivarLoteGravar">
+		<action name="encerrar_lote_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aEncerrarLoteGravar">
 			<interceptor-ref name="token-session" />
 			<interceptor-ref name="basicStack" />
 			<result type="redirect-action">
-				<param name="actionName">arquivar_lote</param>
+				<param name="actionName">encerrar_lote</param>
 				<param name="namespace">/expediente/mov</param>
+			</result>
+		</action>
+		<action name="arquivar_intermediario_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aArquivarIntermediarioLote">
+			<result>/paginas/expediente/arquiva_intermediario_lote.jsp</result>
+		</action>
+		<action name="arquivar_intermediario_lote_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aArquivarIntermediarioLoteGravar">
+			<interceptor-ref name="token-session" />
+			<interceptor-ref name="basicStack" />
+			<result type="redirect-action">
+				arquivar_intermediario_lote?p.offset=${p.offset}
+			</result>
+		</action>
+		<action name="arquivar_permanente_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aArquivarPermanenteLote">
+			<result>/paginas/expediente/arquiva_permanente_lote.jsp</result>
+		</action>
+		<action name="arquivar_permanente_lote_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aArquivarPermanenteLoteGravar">
+			<interceptor-ref name="token-session" />
+			<interceptor-ref name="basicStack" />
+			<result type="redirect-action">
+				arquivar_permanente_lote?p.offset=${p.offset}
 			</result>
 		</action>
 		<action name="anotar_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"

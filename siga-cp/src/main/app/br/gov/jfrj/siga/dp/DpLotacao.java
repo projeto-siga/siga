@@ -354,11 +354,11 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		setDataFimLotacao(hisDtFim);
 	}
 
-	public int getHisAtivo() {
+	public Integer getHisAtivo() {
 		return getDataFimLotacao() != null ? 1 : 0;
 	}
 
-	public void setHisAtivo(int hisAtivo) {
+	public void setHisAtivo(Integer hisAtivo) {
 		//
 	}
 

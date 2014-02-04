@@ -46,7 +46,8 @@ public class ExDocumentoVO extends ExVO {
 	String nmNivelAcesso;
 	String paiSigla;
 	String tipoDocumento;
-	String dtFechamento;
+
+	String dtFinalizacao;
 	String nmArqMod;
 	String conteudoBlobHtmlString;
 	String sigla;
@@ -71,14 +72,14 @@ public class ExDocumentoVO extends ExVO {
 		this.nomeCompleto = doc.getNomeCompleto();
 		this.dtDocDDMMYY = doc.getDtDocDDMMYY();
 		this.subscritorString = doc.getSubscritorString();
-		this.cadastranteString = doc.getCadastranteString();
-		if(doc.getLotaCadastrante() != null)
-			this.lotaCadastranteString = "(" + doc.getLotaCadastrante().getSigla() + ")";
-		else
-			this.lotaCadastranteString = "";
-		if (doc.getExClassificacao() != null)
-			this.classificacaoDescricaoCompleta = doc.getExClassificacao()
-					.getDescricaoCompleta();
+
+
+
+
+
+		if (doc.getExClassificacaoAtual() != null)
+			this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()
+					.getAtual().getDescricaoCompleta();
 		this.destinatarioString = doc.getDestinatarioString();
 		if (doc.getExNivelAcesso() != null)
 			this.nmNivelAcesso = doc.getExNivelAcesso().getNmNivelAcesso();
@@ -97,7 +98,8 @@ public class ExDocumentoVO extends ExVO {
 				break;
 			}
 		if (doc.getExFormaDocumento().getExTipoFormaDoc() != null)
-			switch (doc.getExFormaDocumento().getExTipoFormaDoc().getId().intValue()) {
+			switch (doc.getExFormaDocumento().getExTipoFormaDoc().getId()
+					.intValue()) {
 			case 1:
 				this.tipoFormaDocumento = "expediente";
 				break;
@@ -106,7 +108,8 @@ public class ExDocumentoVO extends ExVO {
 				break;
 			}
 
-		this.dtFechamento = doc.getDtFechamentoDDMMYY();
+
+		this.dtFinalizacao = doc.getDtFinalizacaoDDMMYY();
 		if (doc.getExModelo() != null)
 			this.nmArqMod = doc.getExModelo().getNmArqMod();
 
@@ -221,18 +224,22 @@ public class ExDocumentoVO extends ExVO {
 				"exibir",
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob),
-				null, "&popup=true&arquivo=" + doc.getReferenciaPDF(), null, null, null);
+				null, "&popup=true&arquivo=" + doc.getReferenciaPDF(), null,
+				null, null);
 
 		vo.addAcao(
 				"lock",
 				"Finalizar",
 				"/expediente/doc",
-				"fechar",
+
+				"finalizar",
 				Ex.getInstance().getComp()
 						.podeFinalizar(titular, lotaTitular, mob),
-				"Confirma a finalização do documento?", null, null, null, "once");
+				"Confirma a finalização do documento?", null, null, null,
+				"once");
 
-		// addAcao("Finalizar e Assinar", "/expediente/mov", "fechar_assinar",
+		// addAcao("Finalizar e Assinar", "/expediente/mov",
+		// "finalizar_assinar",
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
 		// "Confirma a finalização do documento?", null, null, null);
 
@@ -280,17 +287,18 @@ public class ExDocumentoVO extends ExVO {
 						.podeDownloadConteudo(titular, lotaTitular, mob));
 
 		vo.addAcao("sitemap_color", "Exibir Todas as Vias", "/expediente/doc",
-				"exibir", doc.isExpediente() && doc.getDtFechamento() != null,
-				null, "&exibirCompleto=false", null, null, null);
+				"exibir", doc.isExpediente() && doc.isFinalizado(), null,
+				"&exibirCompleto=false", null, null, null);
 
 		vo.addAcao("sitemap_color", "Exibir Todos os Volumes",
 				"/expediente/doc", "exibir",
-				doc.isProcesso() && doc.getDtFechamento() != null, null,
+				doc.isProcesso() && doc.isFinalizado(), null,
 				"&exibirCompleto=false", null, null, "once");
 
 		vo.addAcao("add", "Criar Via", "/expediente/doc", "criarVia", Ex
 				.getInstance().getComp()
-				.podeCriarVia(titular, lotaTitular, mob), null, null, null, null, "once");
+				.podeCriarVia(titular, lotaTitular, mob), null, null, null,
+				null, "once");
 
 		vo.addAcao(
 				"add",
@@ -299,7 +307,8 @@ public class ExDocumentoVO extends ExVO {
 				"criarVolume",
 				Ex.getInstance().getComp()
 						.podeCriarVolume(titular, lotaTitular, mob),
-				"Confirma a abertura de um novo volume?", null, null, null, "once");
+				"Confirma a abertura de um novo volume?", null, null, null,
+				"once");
 
 		vo.addAcao(
 				"link_add",
@@ -328,7 +337,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeAssinar(titular, lotaTitular, mob));
 
-		if (doc.getDtFechamento() != null && doc.getNumExpediente() != null) {
+		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados
 			if (mob.temAnexos())
 				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov",
@@ -369,15 +378,17 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance()
 						.getComp()
 						.podeBotaoAgendarPublicacaoBoletim(titular,
-								lotaTitular, mob), null, null, null, null, "once");
+								lotaTitular, mob), null, null, null, null,
+				"once");
 
 		vo.addAcao(
 				"error_go",
 				"Refazer",
 				"/expediente/doc",
-				"reabrir",
+
+				"refazer",
 				Ex.getInstance().getComp()
-						.podeReabrir(titular, lotaTitular, mob),
+						.podeRefazer(titular, lotaTitular, mob),
 				"Esse documento será cancelado e seus dados serão copiados para um novo expediente em elaboração. Prosseguir?",
 				null, null, null, "once");
 
@@ -480,8 +491,9 @@ public class ExDocumentoVO extends ExVO {
 		return dtDocDDMMYY;
 	}
 
-	public String getDtFechamento() {
-		return dtFechamento;
+	public String getDtFinalizacao() {
+
+		return dtFinalizacao;
 	}
 
 	public List<ExMobilVO> getMobs() {
@@ -507,18 +519,21 @@ public class ExDocumentoVO extends ExVO {
 	public String getSigla() {
 		return sigla;
 	}
-	
+
+
 	public String getSiglaCurtaSubProcesso() {
-		if(doc.isProcesso() && doc.getExMobilPai() != null) {
+		if (doc.isProcesso() && doc.getExMobilPai() != null) {
 			try {
 				return sigla.substring(sigla.length() - 3, sigla.length());
 			} catch (Exception e) {
 				return sigla;
 			}
 		}
-		
+
+
 		return "";
-	}	
+
+	}
 
 	public String getSubscritorString() {
 		return subscritorString;

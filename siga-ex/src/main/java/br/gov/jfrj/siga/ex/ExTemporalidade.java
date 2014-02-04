@@ -21,14 +21,19 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import br.gov.jfrj.siga.model.Assemelhavel;
+import java.util.Calendar;
+import java.util.Date;
 
+import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
  * A class that represents a row in the 'EX_TEMPORALIDADE' table. This class may
  * be customized as it is never re-generated after being created.
  */
-public class ExTemporalidade extends AbstractExTemporalidade  {
+public class ExTemporalidade extends AbstractExTemporalidade implements
+		Comparable {
 	/**
 	 * 
 	 */
@@ -51,5 +56,52 @@ public class ExTemporalidade extends AbstractExTemporalidade  {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-	
+
+	public int getValorEmDias() {
+		if (getValorTemporalidade() == null || getCpUnidadeMedida() == null)
+			return 0;
+		int valor = getValorTemporalidade();
+		switch (getCpUnidadeMedida().getIdUnidadeMedida().intValue()) {
+		case CpUnidadeMedida.ANO:
+			valor *= 365;
+			break;
+		case CpUnidadeMedida.MES:
+			valor *= 30;
+			break;
+		case CpUnidadeMedida.DIA:
+			valor *= 1;
+			break;
+		}
+		return valor;
+	}
+
+	public Date getPrazoAPartirDaData(Date dt){
+		if (getCpUnidadeMedida() == null || getValorTemporalidade() == null)
+			return dt;
+		Calendar calFuturo = Calendar.getInstance();
+		calFuturo.setTime(dt);
+		int calendarField = 0;
+		switch (getCpUnidadeMedida().getIdUnidadeMedida().intValue()) {
+		case CpUnidadeMedida.ANO:
+			calendarField = Calendar.YEAR;
+			break;
+		case CpUnidadeMedida.MES:
+			calendarField = Calendar.MONTH;
+			break;
+		case CpUnidadeMedida.DIA:
+			calendarField = Calendar.DAY_OF_MONTH;
+			break;
+		}
+		calFuturo.add(calendarField, getValorTemporalidade());
+		return calFuturo.getTime();
+
+	}
+
+	public int compareTo(Object o) {
+		if (o == null)
+			return 1;
+		int a = getValorEmDias();
+		int b = ((ExTemporalidade) o).getValorEmDias();
+		return a > b ? 1 : a < b ? -1 : 0;
+	}
 }

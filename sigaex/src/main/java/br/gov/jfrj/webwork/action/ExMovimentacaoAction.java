@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -56,6 +57,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -65,6 +67,7 @@ import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
+import br.gov.jfrj.siga.ex.ExItemDestinacao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -73,6 +76,7 @@ import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
@@ -94,8 +98,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	 * 
 	 */
 	private static final long serialVersionUID = -8223202120027622708L;
-	
-	private static final Logger log = Logger.getLogger( ExMovimentacaoAction.class );
+
+
+	private static final Logger log = Logger
+			.getLogger(ExMovimentacaoAction.class);
 
 	private ExMobil mob;
 
@@ -108,7 +114,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String atributoAssinavelDataHora;
 
 	private Boolean copia;
-	
+
+
 	private Boolean podeAtenderPedidoPubl;
 
 	private String contentType;
@@ -139,6 +146,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String descrFeriado;
 
 	private ExMobilSelecao documentoRefSel;
+
+	private ExClassificacaoSelecao classificacaoSel;
 
 	private ExDocumentoSelecao documentoSel;
 
@@ -174,8 +183,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private boolean substituicao;
 
 	private DpLotacaoSelecao lotaResponsavelSel;
-	
-	private DpLotacaoSelecao lotaSubscritorSel;	
+
+
+	private DpLotacaoSelecao lotaSubscritorSel;
 
 	private ExMovimentacao mov = new ExMovimentacao();
 
@@ -217,23 +227,28 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	private Long nivelAcesso;
 
-	private boolean fechar;
+	private boolean finalizar;
 
 	private String mensagem;
 
 	private Long idPapel;
-	
-	private String lotPublicacao;	
-	
+
+
+	private String lotPublicacao;
+
+
 	private Long idLotPublicacao;
-	
+
+
 	private String descrPublicacao;
-	
+
+
 	private Integer tamMaxDescr;
-	
+
+
 	private Long idLotDefault;
 	
-	
+
 	public String getAtributoAssinavelDataHora() {
 		return atributoAssinavelDataHora;
 	}
@@ -279,9 +294,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	private void setLotPublicacao(String lotPublicacao) {
-		this.lotPublicacao = lotPublicacao;		
+		this.lotPublicacao = lotPublicacao;
 	}
-	
+
+
 	public Integer getTamMaxDescr() {
 		return 255 - doc.getDescrDocumento().length();
 	}
@@ -295,7 +311,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public Long getNivelAcesso() {
 		return nivelAcesso;
 	}
-	
+
+
 	public Boolean getPodeAtenderPedidoPubl() {
 		return podeAtenderPedidoPubl;
 	}
@@ -303,7 +320,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setPodeAtenderPedidoPubl(Boolean podeAtenderPedidoPubl) {
 		this.podeAtenderPedidoPubl = podeAtenderPedidoPubl;
 	}
-	
+
+
 	public DpLotacaoSelecao getLotaSubscritorSel() {
 		return lotaSubscritorSel;
 	}
@@ -322,6 +340,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		subscritorSel = new DpPessoaSelecao();
 		documentoViaSel = new ExMobilSelecao();
 		documentoRefSel = new ExMobilSelecao();
+		classificacaoSel = new ExClassificacaoSelecao();
 		cpOrgaoSel = new CpOrgaoSelecao();
 		documentoSel = new ExDocumentoSelecao();
 		responsavelSel = new DpPessoaSelecao();
@@ -352,12 +371,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	private void buscarDocumento(boolean fVerificarAcesso,
 			boolean fPodeNaoExistir) throws Exception {
-		
+
+
 		if (id != null) {
-			mov = dao().consultar( id, ExMovimentacao.class, false );
-			mob = getMov( mov );
+			mov = dao().consultar(id, ExMovimentacao.class, false);
+			mob = getMov(mov);
 		}
-		
+
+
 		if (mob == null && sigla != null) {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
@@ -386,17 +407,21 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			verificaNivelAcesso(mob);
 	}
 
-	private ExMobil getMov(ExMovimentacao movimentacao) throws AplicacaoException {
+	private ExMobil getMov(ExMovimentacao movimentacao)
+			throws AplicacaoException {
 		ExMobil mobil = null;
-		if ( movimentacao != null ) {
+		if (movimentacao != null) {
 			try {
 				mobil = movimentacao.getExMobil();
-			}catch (Exception e) {
-				log.warn( "[getMov] - Não foi possível recuperar o mobil da movimentação" );
-				throw new AplicacaoException( "Ocorreu um erro ao recuperar o mobil da movimentação.", 0, e );
+			} catch (Exception e) {
+				log.warn("[getMov] - Não foi possível recuperar o mobil da movimentação");
+				throw new AplicacaoException(
+						"Ocorreu um erro ao recuperar o mobil da movimentação.",
+						0, e);
 			}
 		}
-		
+
+
 		return mobil;
 	}
 
@@ -512,6 +537,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		buscarDocumento(true);
 
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+
+
 			throw new AplicacaoException(
 					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público.");
 
@@ -522,18 +549,21 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
-		setDescrPublicacao(doc.getDescrDocumento());	
+		setDescrPublicacao(doc.getDescrDocumento());
 
 		return Action.SUCCESS;
 	}
 
-	public String aPedirPublicacaoGravar() throws Exception {		
+	public String aPedirPublicacaoGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
-		
-		if (this.getIdLotPublicacao() != null)
-			this.setLotPublicacao(dao().consultar(this.getIdLotPublicacao(), DpLotacao.class, false).getSigla());
 
+
+
+
+		if (this.getIdLotPublicacao() != null)
+			this.setLotPublicacao(dao().consultar(this.getIdLotPublicacao(),
+					DpLotacao.class, false).getSigla());
 
 		if (!Ex.getInstance().getComp()
 				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
@@ -547,7 +577,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.pedirPublicacao(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor(),
 							mov.getTitular(), mov.getLotaTitular(),
-							mov.getDtDispPublicacao(), getTipoMateria(), getLotPublicacao(), getDescrPublicacao());
+							mov.getDtDispPublicacao(), getTipoMateria(),
+							getLotPublicacao(), getDescrPublicacao());
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -556,11 +587,15 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aAgendarPublicacao() throws Exception {		
-		
+	public String aAgendarPublicacao() throws Exception {
+
+
 		buscarDocumento(true);
 
+
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+
+
 			throw new AplicacaoException(
 					"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público.");
 
@@ -573,19 +608,26 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
 
-		if(getDescrPublicacao() == null)
-			setDescrPublicacao(doc.getDescrDocumento());	
-		
-		if(!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(),
-				CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)){
+		if (getDescrPublicacao() == null)
+			setDescrPublicacao(doc.getDescrDocumento());
+
+
+
+		if (!Ex.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+						getTitular(),
+						getLotaTitular(),
+						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)) {
 			this.setPodeAtenderPedidoPubl(false);
-		}else {
+		} else {
 			DpLotacaoSelecao lot = new DpLotacaoSelecao();
-			this.setPodeAtenderPedidoPubl(true);			
+			this.setPodeAtenderPedidoPubl(true);
 			lot.setId(doc.getSubscritor().getLotacao().getId());
 			lot.buscar();
-			setLotaSubscritorSel(lot);	
-		}	
+			setLotaSubscritorSel(lot);
+
+		}
 
 		return Action.SUCCESS;
 	}
@@ -593,40 +635,48 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aAgendarPublicacaoGravar() throws Exception {
 		Long idPubl = null;
 		buscarDocumento(true);
-		lerForm(mov);		
-		
+		lerForm(mov);
+
+
 		if (this.getIdLotPublicacao() != null)
 			idPubl = this.getIdLotPublicacao();
 		else {
 			if (getLotaSubscritorSel().getId() != null)
 				idPubl = getLotaSubscritorSel().getId();
-		}	
-		
-		this.setLotPublicacao(dao().consultar(idPubl, DpLotacao.class, false).getSigla());
+
+
+		}
+
+		this.setLotPublicacao(dao().consultar(idPubl, DpLotacao.class, false)
+				.getSigla());
 
 		if (!Ex.getInstance().getComp()
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
 					"Não foi possível o agendamento de publicação no DJE.");
-		
+
+
 		if (getDescrPublicacao().length() > 256)
 			throw new AplicacaoException(
 					"O campo descrição possui mais do que 256 caracteres.");
 
 		validarDataGravacao(mov, false);
-		
-//		if (getLotPublicacao() == null) {
-//			if (getLotaSubscritorSel().getId() != null) 
-//				this.setLotPublicacao(dao().consultar(getLotaSubscritorSel().getId(), 
-//						DpLotacao.class, false).getSigla());
-//		}
+
+
+		// if (getLotPublicacao() == null) {
+		// if (getLotaSubscritorSel().getId() != null)
+		// this.setLotPublicacao(dao().consultar(getLotaSubscritorSel().getId(),
+		// DpLotacao.class, false).getSigla());
+
+		// }
 
 		Ex.getInstance()
 				.getBL()
 				.remeterParaPublicacao(getCadastrante(), getLotaTitular(), mob,
 						dao().dt(), mov.getSubscritor(), mov.getTitular(),
 						getLotaTitular(), mov.getDtDispPublicacao(),
-						getTipoMateria().replaceAll("'", ""), getLotPublicacao(), getDescrPublicacao());	
+						getTipoMateria().replaceAll("'", ""),
+						getLotPublicacao(), getDescrPublicacao());
 		return Action.SUCCESS;
 	}
 
@@ -719,8 +769,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aAtenderPedidoPublicacao() throws Exception {
-		
-		
+
+
+
 		if (!Ex.getInstance()
 				.getConf()
 				.podePorConfiguracao(
@@ -729,8 +780,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO))
 			throw new AplicacaoException("Operação restrita");
 		setItensSolicitados(dao().listarSolicitados(
-				getTitular().getOrgaoUsuario()));		
-		
+				getTitular().getOrgaoUsuario()));
+
+
 		return Action.SUCCESS;
 	}
 
@@ -780,7 +832,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 									getLotaTitular(), doque.getMobilGeral(),
 									dao().dt(), getCadastrante(),
 									getCadastrante(), getLotaTitular(),
-									move.getDtDispPublicacao(), stipoMateria, move.getLotaPublicacao(), move.getDescrPublicacao()); 
+									move.getDtDispPublicacao(), stipoMateria,
+									move.getLotaPublicacao(),
+									move.getDescrPublicacao());
 				} catch (final Throwable e) {
 					cont++;
 					msgDocumentosErro.append(cont + ")" + doque.getCodigo()
@@ -845,7 +899,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			emailsSolicitantes.add(movPedidoDJE.getCadastrante()
 					.getEmailPessoaAtual());
 
-		
+
 			Correio.enviar(SigaBaseProperties
 					.getString("servidor.smtp.usuario.remetente"),
 					emailsSolicitantes.toArray(new String[emailsSolicitantes
@@ -853,7 +907,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"Cancelamento de pedido de publicação no DJE ("
 							+ movPedidoDJE.getLotaCadastrante()
 									.getSiglaLotacao() + ") ", sb.toString(),
-					sbHtml.toString()); 
+					sbHtml.toString());
 		}
 
 		return Action.SUCCESS;
@@ -874,7 +928,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aAnexar() throws Exception {
 		buscarDocumento(true);
 
-		if (!(mob.isGeral() && mob.doc().getDtFechamento() != null))
+		if (!(mob.isGeral() && mob.doc().isFinalizado()))
 			if (!Ex.getInstance().getComp()
 					.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
 				throw new AplicacaoException("Arquivo não pode ser anexado");
@@ -893,10 +947,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		mov.setConteudoTpMov(getArquivoContentType());
 
 		// bruno.lacerda@avantiprima.com.br
-		if ( this.arquivo == null ) {
-			throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
+		if (this.arquivo == null) {
+			throw new AplicacaoException(
+					"O arquivo a ser anexado não foi selecionado!");
 		}
-		
+
+
 		byte[] baArquivo = toByteArray(getArquivo());
 		if (baArquivo == null)
 			throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
@@ -911,8 +967,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"O arquivo "
 							+ getArquivoFileName()
 							+ " está corrompido. Favor gerá-lo novamente antes de anexar.");
-		
-		if(mob.isEncerrado()) {
+		if(mob.isVolumeEncerrado()) {
 			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");
 		}
 
@@ -957,17 +1012,21 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return aAnexar();
 
 	}
-	
+
+
 	public String aMostrarAnexosAssinados() throws Exception {
-		buscarDocumento(true);       
-				
-		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(), true,
-                ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
+		buscarDocumento(true);
+
+
+		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
+				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
 		this.getRequest().setAttribute("mobilVO", mobilVO);
 		return Action.SUCCESS;
 	}
-	
-	public String aArquivarCorrenteGravar() throws Exception {
+
+
+
+	public String aEncerrarGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -978,13 +1037,51 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 
 		if (!Ex.getInstance().getComp()
-				.podeArquivarCorrente(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Via não pode ser arquivada");
+				.podeEncerrar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Via ou processo não pode ser encerrado(a)");
 		try {
 			Ex.getInstance()
 					.getBL()
-					.arquivarCorrente(getCadastrante(), getLotaTitular(), mob,
+
+					.encerrar(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), null, mov.getSubscritor());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}
+
+	public String aArquivarIntermediario() throws Exception {
+		buscarDocumento(true);
+
+		if (!Ex.getInstance().getComp()
+				.podeArquivarIntermediario(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível fazer arquivamento intermediário. Verifique se o documento não se encontra em lotação diferente de "
+							+ getLotaTitular().getSigla());
+
+		if (doc.isEletronico())
+			return "grava_direto";
+
+		return Action.SUCCESS;
+	}
+
+	public String aArquivarIntermediarioGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance().getComp()
+				.podeArquivarIntermediario(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível fazer arquivamento intermediário");
+		try {
+			Ex.getInstance()
+					.getBL()
+					.arquivarIntermediario(getCadastrante(), getLotaTitular(),
+							mob, mov.getDtMov(), mov.getSubscritor(),
+							mov.getDescrMov());
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -998,7 +1095,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeArquivarPermanente(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Via não pode ser arquivada");
+			throw new AplicacaoException(
+					"Documento não pode ser arquivado. Verifique se ele não se encontra em lotação diferente de "
+							+ getLotaTitular().getSigla());
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1011,17 +1110,17 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aDesarquivarGravar() throws Exception {
+	public String aReabrirGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
 
 		if (!Ex.getInstance().getComp()
-				.podeDesarquivar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Via não pode ser desarquivada");
+				.podeReabrir(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Via não pode ser reaberta");
 		try {
 			Ex.getInstance()
 					.getBL()
-					.desarquivar(getCadastrante(), getLotaTitular(), mob,
+					.reabrir(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor());
 		} catch (final Exception e) {
 			throw e;
@@ -1029,7 +1128,32 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
-	
+
+
+	public String aDesarquivarIntermediarioGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeDesarquivarIntermediario(getTitular(), getLotaTitular(),
+						mob))
+			throw new AplicacaoException(
+					"Documento não pode ser retirado do arquivo intermediário. Verifique se ele não se encontra em lotação diferente de "
+							+ getLotaTitular().getSigla());
+		try {
+			Ex.getInstance()
+					.getBL()
+					.desarquivarIntermediario(getCadastrante(),
+							getLotaTitular(), mob, mov.getDtMov(),
+							mov.getSubscritor());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}
+
 	public String aDesobrestarGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
@@ -1048,7 +1172,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
-	
+
+
 	public String aSobrestarGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
@@ -1076,11 +1201,15 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aAssinar() throws Exception {
 		buscarDocumento(true);
-		
+
+
 		boolean fPreviamenteAssinado = doc.isAssinado();
 
-		if (!fPreviamenteAssinado && (doc.getExModelo() != null && ("template/freemarker".equals(doc.getExModelo().getConteudoTpBlob())))) {
-			Ex.getInstance().getBL().processarComandosEmTag(doc, "pre_assinatura");
+		if (!fPreviamenteAssinado
+				&& (doc.getExModelo() != null && ("template/freemarker"
+						.equals(doc.getExModelo().getConteudoTpBlob())))) {
+			Ex.getInstance().getBL()
+					.processarComandosEmTag(doc, "pre_assinatura");
 		}
 
 		return Action.SUCCESS;
@@ -1097,8 +1226,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	// public String aFecharAssinar() throws Exception{
-	// setFechar(true);
+	// public String aFinalizarAssinar() throws Exception{
+	// setFinalizar(true);
 	// return aAssinar();
 	// }
 
@@ -1123,10 +1252,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			certificado = null;
 
 		// if ("true".equals(getRequest().getParameter("politica"))) {
-//		CdService client = Service.getCdService();
-//
-//		assinatura = client.validarECompletarAssinatura(assinatura,
-//				doc.getConteudoBlobPdf(), true, mov.getDtMov());
+		// CdService client = Service.getCdService();
+
+		//
+		// assinatura = client.validarECompletarAssinatura(assinatura,
+		// doc.getConteudoBlobPdf(), true, mov.getDtMov());
 		// }
 
 		try {
@@ -1272,7 +1402,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	/*
-	 * public String aFecharAssinarGravar() throws Exception{ if (getId() ==
+	 * public String aFinalizarAssinarGravar() throws Exception{ if (getId() ==
 	 * null) throw new AplicacaoException("id não foi informada.");
 	 * 
 	 * doc = daoDoc(getId()); // doc = dao.consultarConteudoBlob(doc);
@@ -1283,7 +1413,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	 * getLotaTitular(), doc, numVia)) throw new
 	 * AplicacaoException("Operação não permitida");
 	 * 
-	 * Ex.getInstance().getBL().fechar(getTitular(), getLotaTitular(), doc);
+	 * Ex.getInstance().getBL().finalizar(getTitular(), getLotaTitular(), doc);
 	 * 
 	 * return aAssinarGravar(); }
 	 */
@@ -1734,22 +1864,29 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		final DpPessoa pes;
 		final ArrayList al = new ArrayList();
 		final DpPessoa oExemplo = new DpPessoa();
-		
+
+
 		String siglaPessoa = param("pessoa");
-		
-		if ( siglaPessoa == null || siglaPessoa.trim() == "" ) {
-			log.warn( "[aGerarProtocoloArq] - A sigla informada é nula ou inválida" );
-			throw new AplicacaoException( "A sigla informada é nula ou inválida." );
+
+
+		if (siglaPessoa == null || siglaPessoa.trim() == "") {
+			log.warn("[aGerarProtocoloArq] - A sigla informada é nula ou inválida");
+			throw new AplicacaoException(
+					"A sigla informada é nula ou inválida.");
 		}
-		
-		oExemplo.setSigla( siglaPessoa );
+
+
+		oExemplo.setSigla(siglaPessoa);
 		pes = CpDao.getInstance().consultarPorSigla(oExemplo);
 
-		if ( pes == null ) {
-			log.warn( "[aGerarProtocoloArq] - Não foi possível localizar DpPessoa com a sigla " + oExemplo.getSigla() );
-			throw new AplicacaoException( "Não foi localizada pessoa com a sigla informada." );
+		if (pes == null) {
+			log.warn("[aGerarProtocoloArq] - Não foi possível localizar DpPessoa com a sigla "
+					+ oExemplo.getSigla());
+			throw new AplicacaoException(
+					"Não foi localizada pessoa com a sigla informada.");
 		}
-		
+
+
 		Date dt = paramDate("dt");
 		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
 		for (ExMovimentacao m : movs) {
@@ -2117,8 +2254,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setItens(new ArrayList<ExMobil>());
 
 		for (ExMobil m : provItens) {
-			if (!m.isApensado() && Ex.getInstance().getComp()
-					.podeAcessarDocumento(getTitular(), getLotaTitular(), m))
+			if (!m.isApensado()
+					&& Ex.getInstance()
+							.getComp()
+							.podeAcessarDocumento(getTitular(),
+									getLotaTitular(), m))
 				getItens().add(m);
 		}
 
@@ -2163,22 +2303,25 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aArquivarLote() throws Exception {
-		List<ExMobil> provItens = dao().consultarParaArquivarEmLote(
+	public String aEncerrarLote() throws Exception {
+		List<ExMobil> provItens = dao().consultarParaEncerrarEmLote(
 				getLotaTitular());
 
 		setItens(new ArrayList<ExMobil>());
 
 		for (ExMobil m : provItens) {
-			if (!m.isApensado() && Ex.getInstance().getComp()
-					.podeAcessarDocumento(getTitular(), getLotaTitular(), m))
+			if (!m.isApensado()
+					&& Ex.getInstance()
+							.getComp()
+							.podeAcessarDocumento(getTitular(),
+									getLotaTitular(), m))
 				getItens().add(m);
 		}
 
 		return Action.SUCCESS;
 	}
 
-	public String aArquivarLoteGravar() throws Exception {
+	public String aEncerrarLoteGravar() throws Exception {
 		final ExMovimentacao mov = new ExMovimentacao();
 		lerForm(mov);
 
@@ -2198,9 +2341,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 					Ex.getInstance()
 							.getBL()
-							.arquivarCorrente(getCadastrante(),
-									getLotaTitular(), mob, mov.getDtMov(), dt,
-									mov.getSubscritor());
+							.encerrar(getCadastrante(), getLotaTitular(), mob,
+
+
+									mov.getDtMov(), dt, mov.getSubscritor());
 				}
 			}
 		} catch (final Exception e) {
@@ -2208,17 +2352,380 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
-	
-	
-	public String aAssinarLote() throws Exception {		
-		List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular());
-		List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
+
+
+
+	public String aArquivarIntermediarioLote() throws Exception {
+
+		int offset = 0;
+		if (getP().getOffset() != null) {
+			offset = getP().getOffset();
+		}
+		List<ExItemDestinacao> listaProv = dao()
+				.consultarParaArquivarIntermediarioEmLote(getLotaTitular(),
+						offset);
+
+		ExTopicoDestinacao digitais = new ExTopicoDestinacao(
+				"Digitais", true);
+		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos",
+				true);
+		ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao(
+				"Não disponíveis", false);
+
+		for (ExItemDestinacao item : listaProv) {
+			boolean pode = Ex
+					.getInstance()
+					.getComp()
+					.podeArquivarIntermediario(getTitular(), getLotaTitular(),
+							item.getMob());
+			if (pode) {
+				if (item.getMob().doc().isEletronico())
+					digitais.adicionar(item);
+				else
+					fisicos.adicionar(item);
+			} else
+				indisponiveis.adicionar(item);
+		}
+
+		List<ExTopicoDestinacao> listaFinal = new ArrayList<ExTopicoDestinacao>();
+		listaFinal.add(digitais);
+		listaFinal.add(fisicos);
+		listaFinal.add(indisponiveis);
+
+		setTamanho(dao().consultarQuantidadeParaArquivarIntermediarioEmLote(
+				getLotaTitular()));
+		setItens(listaFinal);
+
+		return Action.SUCCESS;
+	}
+
+	public String aArquivarIntermediarioLoteGravar() throws Exception {
+
+
+		final ExMovimentacao mov = new ExMovimentacao();
+		lerForm(mov);
+
+		final Pattern p = Pattern.compile("chk_([0-9]+)");
+
+		final Date dt = dao().dt();
+
+		try {
+			for (final String s : getPar().keySet()) {
+				if (s.startsWith("chk_") && param(s).equals("true")) {
+					final Matcher m = p.matcher(s);
+					if (!m.find())
+						throw new AplicacaoException(
+								"Não foi possível ler a Id do documento e o número da via.");
+					final ExMobil mob = dao().consultar(
+							Long.valueOf(m.group(1)), ExMobil.class, false);
+
+					Ex.getInstance()
+							.getBL()
+							.arquivarIntermediario(getCadastrante(),
+									getLotaTitular(), mob, mov.getDtMov(),
+									mov.getSubscritor(), mov.getDescrMov());
+				}
+			}
+		} catch (final Exception e) {
+			throw e;
+		}
+		return Action.SUCCESS;
+	}
+
+	public String aArquivarPermanenteLote() throws Exception {
+		int offset = 0;
+		if (getP().getOffset() != null) {
+			offset = getP().getOffset();
+		}
+		List<ExItemDestinacao> listaProv = dao().consultarParaArquivarPermanenteEmLote(
+				getLotaTitular(), offset);
+
+		ExTopicoDestinacao digitais = new ExTopicoDestinacao(
+				"Digitais", true);
+		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos",
+				true);
+		ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao(
+				"Não disponíveis", false);
+
+		for (ExItemDestinacao item : listaProv) {
+			boolean pode = Ex
+					.getInstance()
+					.getComp()
+					.podeArquivarPermanente(getTitular(), getLotaTitular(), item.getMob());
+			if (pode) {
+				if (item.getMob().doc().isEletronico())
+					digitais.adicionar(item);
+				else
+					fisicos.adicionar(item);
+			} else
+				indisponiveis.adicionar(item);
+		}
+
+		List<ExTopicoDestinacao> listaFinal = new ArrayList<ExTopicoDestinacao>();
+		listaFinal.add(digitais);
+		listaFinal.add(fisicos);
+		listaFinal.add(indisponiveis);
 		
+		setTamanho(dao().consultarQuantidadeParaArquivarPermanenteEmLote(
+				getLotaTitular()));
+		setItens(listaFinal);
+
+		return Action.SUCCESS;
+	}
+
+	public String aArquivarPermanenteLoteGravar() throws Exception {
+		final ExMovimentacao mov = new ExMovimentacao();
+		lerForm(mov);
+
+		final Pattern p = Pattern.compile("chk_([0-9]+)");
+
+		final Date dt = dao().dt();
+
+		String erro = "";
+
+		try {
+			for (final String s : getPar().keySet()) {
+				if (s.startsWith("chk_") && param(s).equals("true")) {
+					final Matcher m = p.matcher(s);
+					if (!m.find())
+						throw new AplicacaoException(
+								"Não foi possível ler a Id do documento e o número da via.");
+
+					final ExMobil mob = dao().consultar(
+							Long.valueOf(m.group(1)), ExMobil.class, false);
+
+					erro = mob.getSigla();
+
+					Ex.getInstance()
+							.getBL()
+							.arquivarPermanente(getCadastrante(),
+									getLotaTitular(), mob, mov.getDtMov(),
+									mov.getSubscritor());
+				}
+			}
+		} catch (final Exception e) {
+			throw new AplicacaoException(
+					"Ocorreu um erro no arquivamento do documento" + erro
+							+ ". ", 0, e);
+		}
+		return Action.SUCCESS;
+	}
+
+	public String aAssinarLote() throws Exception {
+		List<ExDocumento> itensComoSubscritor = dao()
+				.listarDocPendenteAssinatura(getTitular());
+		List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
+
 		for (ExDocumento doc : itensComoSubscritor) {
-			if (doc.getDtFechamento() != null) 
-				itensFinalizados.add(doc);			
+
+			if (doc.isFinalizado())
+				itensFinalizados.add(doc);
 		}
 		setItensSolicitados(itensFinalizados);
+		return Action.SUCCESS;
+	}
+
+	public String aReverterIndicacaoPermanente() throws Exception {
+		buscarDocumento(true);
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeReverterIndicacaoPermanente(getTitular(),
+						getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível reverter indicação para guarda permanente");
+
+		return Action.SUCCESS;
+	}
+
+	public String aReverterIndicacaoPermanenteGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeReverterIndicacaoPermanente(getTitular(),
+						getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível reverter indicação para guarda permanente");
+
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			setDtRegMov(sdf.format(new Date()).toString());
+			mov.setSubscritor(getTitular());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.reverterIndicacaoPermanente(getCadastrante(),
+							getLotaTitular(), mob, mov.getDtMov(),
+							mov.getSubscritor(), mov.getTitular(),
+							mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		setDoc(mov.getExDocumento());
+		return Action.SUCCESS;
+	}
+
+	public String aRetirarDeEditalEliminacao() throws Exception {
+		buscarDocumento(true);
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeRetirarDeEditalEliminacao(getTitular(), getLotaTitular(),
+						mob))
+			throw new AplicacaoException(
+					"Não é possível retirar o documento de edital de eliminação");
+
+		return Action.SUCCESS;
+	}
+
+	public String aRetirarDeEditalEliminacaoGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeRetirarDeEditalEliminacao(getTitular(), getLotaTitular(),
+						mob))
+			throw new AplicacaoException(
+					"Não é possível retirar o documento de edital de eliminação");
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.retirarDeEditalEliminacao(mob, getCadastrante(),
+							getLotaTitular(), mov.getSubscritor(),
+							mov.getLotaSubscritor(), mov.getTitular(),
+							mov.getLotaTitular(), mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		setDoc(mov.getExDocumento());
+		return Action.SUCCESS;
+	}
+
+	public String aIndicarPermanente() throws Exception {
+		buscarDocumento(true);
+
+		if (!Ex.getInstance().getComp()
+				.podeIndicarPermanente(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível fazer indicação para guarda permanente");
+
+		return Action.SUCCESS;
+	}
+
+	public String aIndicarPermanenteGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance().getComp()
+				.podeIndicarPermanente(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível fazer indicação para guarda permanente");
+
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			setDtRegMov(sdf.format(new Date()).toString());
+			mov.setSubscritor(getTitular());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.indicarPermanente(getCadastrante(), getLotaTitular(), mob,
+							mov.getDtMov(), mov.getSubscritor(),
+							mov.getTitular(), mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		setDoc(mov.getExDocumento());
+		return Action.SUCCESS;
+	}
+
+	public String aAvaliar() throws Exception {
+		buscarDocumento(true);
+
+		if (!Ex.getInstance().getComp()
+				.podeAvaliar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível avaliar");
+
+		return Action.SUCCESS;
+	}
+
+	public String aAvaliarGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance().getComp()
+				.podeAvaliar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível avaliar");
+
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			setDtRegMov(sdf.format(new Date()).toString());
+			mov.setSubscritor(getTitular());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.avaliarReclassificar(getCadastrante(), getLotaTitular(),
+							mob, mov.getDtMov(), mov.getSubscritor(),
+							mov.getExClassificacao(), mov.getDescrMov(), true);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		setDoc(mov.getExDocumento());
+		return Action.SUCCESS;
+	}
+
+	public String aReclassificar() throws Exception {
+		buscarDocumento(true);
+
+		if (!Ex.getInstance().getComp()
+				.podeReclassificar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível reclassificar");
+
+		return Action.SUCCESS;
+	}
+
+	public String aReclassificarGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+
+		if (!Ex.getInstance().getComp()
+				.podeReclassificar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível reclassificar");
+
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			setDtRegMov(sdf.format(new Date()).toString());
+			mov.setSubscritor(getTitular());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.avaliarReclassificar(getCadastrante(), getLotaTitular(),
+							mob, mov.getDtMov(), mov.getSubscritor(),
+							mov.getExClassificacao(), mov.getDescrMov(), false);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		setDoc(mov.getExDocumento());
 		return Action.SUCCESS;
 	}
 
@@ -2248,7 +2755,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			return "processa_modelo";
 		return Action.SUCCESS;
 	}
-	
+
+
 	public String aReferenciarGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
@@ -2324,14 +2832,19 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						.getResp().equivale(mov.getResp())))
 			throw new AplicacaoException(
 					"Novo responsável não pode ser igual ao atual");
-		
+
+
 		if (!Ex.getInstance().getComp()
-					.podeReceberPorConfiguracao(mov.getResp(), mov.getLotaResp())) 
-				throw new AplicacaoException("Destinatário não pode receber documentos");			
-		
-		
+				.podeReceberPorConfiguracao(mov.getResp(), mov.getLotaResp()))
+			throw new AplicacaoException(
+					"Destinatário não pode receber documentos");
+
+
+
 		if (!(Ex.getInstance().getComp()
-				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex.getInstance().getComp()
+
+				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex
+				.getInstance().getComp()
 				.podeDespachar(getTitular(), getLotaTitular(), mob)))
 			throw new AplicacaoException(
 					"Não é possível fazer despacho nem transferência");
@@ -2361,19 +2874,22 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aEncerrarGravar() throws Exception {
+
+	public String aEncerrarVolumeGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
 
-		if (mob.isEncerrado())
+		if (mob.isVolumeEncerrado())
 			throw new AplicacaoException(
-					"Não é permitido encerrar um documento que já foi encerrado antes");
+					"Não é permitido encerrar um volume já encerrado.");
 		try {
 			Ex.getInstance()
 					.getBL()
-					.encerrar(getCadastrante(), getLotaTitular(), mob,
+
+					.encerrarVolume(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor(),
-							mov.getTitular(), mov.getNmFuncaoSubscritor(), false);
+							mov.getTitular(), mov.getNmFuncaoSubscritor(),
+							false);
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -2433,8 +2949,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setItens(new ArrayList<ExMobil>());
 
 		for (ExMobil m : provItens) {
-			if (!m.isApensado() && Ex.getInstance().getComp()
-					.podeAcessarDocumento(getTitular(), getLotaTitular(), m))
+			if (!m.isApensado()
+					&& Ex.getInstance()
+							.getComp()
+							.podeAcessarDocumento(getTitular(),
+									getLotaTitular(), m))
 				getItens().add(m);
 		}
 
@@ -2536,8 +3055,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		for (ExMobil m : provItens) {
 			if (!m.isApensado() && Ex.getInstance().getComp()
 					.podeTransferir(getTitular(), getLotaTitular(), m) )
-				getItens().add(m);
-		}
+					
 
 		return Action.SUCCESS;
 	}
@@ -2748,6 +3266,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return documentoRefSel;
 	}
 
+	public ExClassificacaoSelecao getClassificacaoSel() {
+		return classificacaoSel;
+	}
+
 	public ExDocumentoSelecao getDocumentoSel() {
 		return documentoSel;
 	}
@@ -2790,7 +3312,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public List<ExNivelAcesso> getListaNivelAcesso() throws Exception {
 		ExFormaDocumento exForma = doc.getExFormaDocumento();
-		ExClassificacao exClassif = doc.getExClassificacao();
+		ExClassificacao exClassif = doc.getExClassificacaoAtual();
 		ExTipoDocumento exTipo = doc.getExTipoDocumento();
 		ExModelo exMod = doc.getExModelo();
 
@@ -2822,7 +3344,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public List<ExNivelAcesso> getListaTipoNivelAcesso() throws Exception {
 		return getListaNivelAcesso(getDoc().getExTipoDocumento(), getDoc()
 				.getExFormaDocumento(), getDoc().getExModelo(), getDoc()
-				.getExClassificacao());
+
+				.getExClassificacaoAtual());
 	}
 
 	public DpLotacaoSelecao getLotaDestinoFinalSel() {
@@ -2968,6 +3491,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (getDocumentoRefSel().getId() != null) {
 			mov.setExMobilRef(daoMob(getDocumentoRefSel().getId()));
+		}
+
+		if (getClassificacaoSel().getId() != null) {
+			mov.setExClassificacao(dao()
+					.consultar(getClassificacaoSel().getId(),
+							ExClassificacao.class, false));
 		}
 
 		if (getResponsavelSel().getId() != null) {
@@ -3180,6 +3709,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public void setDocumentoRefSel(final ExMobilSelecao documentoRefSel) {
 		this.documentoRefSel = documentoRefSel;
+	}
+
+	public void setClassificacaoSel(
+			final ExClassificacaoSelecao classificacaoSel) {
+		this.classificacaoSel = classificacaoSel;
 	}
 
 	public void setDocumentoSel(final ExDocumentoSelecao documentoSel) {
@@ -3401,9 +3935,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aBoletimAgendar() throws Exception {
 		buscarDocumento(true);
 
+
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+
+
 			throw new AplicacaoException(
 					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público.");
+
 
 		if (!Ex.getInstance()
 				.getComp()
@@ -3481,12 +4019,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.tipoMateria = tipoMateria;
 	}
 
-	public boolean isFechar() {
-		return fechar;
+	public boolean isFinalizar() {
+		return finalizar;
 	}
 
-	public void setFechar(boolean fechar) {
-		this.fechar = fechar;
+	public void setFinalizar(boolean finalizar) {
+
+		this.finalizar = finalizar;
 	}
 
 	public String getMensagem() {
@@ -3549,7 +4088,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setCopia(Boolean copia) {
 		this.copia = copia;
 	}
-	
+
+
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
@@ -3557,42 +4097,55 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public ExModelo getModelo() {
 		return dao().consultarExModelo(null, "Despacho Automático");
 	}
-	
-	
+
+
+
 	public List<DpLotacao> getListaLotPubl() throws Exception {
 		
+
 		List<DpLotacao> lotacoes = new ArrayList<DpLotacao>();
 		DpLotacao lotSubscritor, lotCadastrante, lotTitular, lotFiltro;
 		String siglaSubscritor, siglaCadastrante, siglaTitular;
 		
+
 		siglaSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(this.doc);
 		siglaCadastrante = getCadastrante().getLotacao().getSigla();		
 		siglaTitular = getLotaTitular().getSigla();
 		lotFiltro = new DpLotacao();
 		
+
 		lotFiltro.setOrgaoUsuario(this.doc.getOrgaoUsuario());		
 		lotFiltro.setSigla(siglaSubscritor);
 		lotSubscritor = dao().consultarPorSigla(lotFiltro);		
+
 		lotacoes.add(lotSubscritor);		
 				
+
 		if(!siglaSubscritor.equals(siglaCadastrante) &&
+
 				getCadastrante().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId())) {
 			lotFiltro.setSigla(siglaCadastrante);
 			lotCadastrante = dao().consultarPorSigla(lotFiltro);
 			lotacoes.add(lotCadastrante);
 		}
 		
+
 		if(!siglaSubscritor.equals(siglaTitular) && !siglaCadastrante.equals(siglaTitular) 
 				&&(
+
 				(getTitular().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId()))
+
+
 						|| getLotaTitular().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId()))){
 			lotFiltro.setSigla(siglaTitular);
 			lotTitular = dao().consultarPorSigla(lotFiltro);
 			lotacoes.add(lotTitular);
 		}
 		
+
 		this.setIdLotDefault(lotSubscritor.getId());
 		
+
 		return lotacoes;
 	}
 }

@@ -27,10 +27,6 @@
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
 				texto="Receber em lote" />
 		</li>
-		<li><ww:url id="url" action="arquivar_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Arquivar em lote" />
-		</li>
 		<li><ww:url id="url" action="anotar_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
 				texto="Anotar em lote" />
@@ -41,6 +37,28 @@
 				<li><ww:url id="url" action="assinar_lote"
 						namespace="/expediente/mov" /> <siga:monolink href="%{url}"
 						texto="Assinar em lote" />
+				</li>
+			</c:if>
+		</c:catch>
+		<li><ww:url id="url" action="encerrar_lote"
+				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+				texto="Encerrar em lote" />
+		</li>
+		<c:catch>
+			<c:if
+				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
+				<li><ww:url id="url" action="arquivar_intermediario_lote"
+					namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+					texto="Arquivar Intermediário em lote" />
+				</li>
+			</c:if>
+		</c:catch>
+		<c:catch>
+			<c:if
+				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
+				<li><ww:url id="url" action="arquivar_permanente_lote"
+					namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+					texto="Arquivar Permanente em lote" />
 				</li>
 			</c:if>
 		</c:catch>

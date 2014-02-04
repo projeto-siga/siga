@@ -48,7 +48,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	@Transient
 	//@Column(name = "HIS_ATIVO")
 	@Desconsiderar
-	private int hisAtivo;
+	private Integer hisAtivo;
 
 	/**
 	 * Atribui o hisAtivo já que o mesmo é sempre calculado
@@ -83,7 +83,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 		this.setAtivo();
 	}
 
-	public int getHisAtivo() {
+	public Integer getHisAtivo() {
 		this.setAtivo();
 		return hisAtivo;
 	}
@@ -92,7 +92,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 		return this.hisDtFim == null;
 	}
 
-	public void setHisAtivo(int hisAtivo) {
+	public void setHisAtivo(Integer hisAtivo) {
 		this.setAtivo();
 		// this.hisAtivo = hisAtivo;
 	}

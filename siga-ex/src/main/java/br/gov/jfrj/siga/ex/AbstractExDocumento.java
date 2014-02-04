@@ -89,7 +89,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private java.util.Date dtDocOriginal;
 
 	@Column(name = "DT_FECHAMENTO")
-	private Date dtFechamento;
+	private Date dtFinalizacao;
 
 	@Column(name = "DT_REG_DOC")
 	private java.util.Date dtRegDoc;
@@ -196,7 +196,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
 
 	private ExDocumento exDocAnterior;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_MOB_AUTUADO")
 	private ExMobil exMobilAutuado;
@@ -299,8 +299,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public Date getDtFechamento() {
-		return dtFechamento;
+	public Date getDtFinalizacao() {
+		return dtFinalizacao;
 	}
 
 	/**
@@ -651,8 +651,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.dtDocOriginal = dtDocOriginal;
 	}
 
-	public void setDtFechamento(final Date dtFechamento) {
-		this.dtFechamento = dtFechamento;
+	public void setDtFinalizacao(final Date dtFinalizacao) {
+		this.dtFinalizacao = dtFinalizacao;
 	}
 
 	/**

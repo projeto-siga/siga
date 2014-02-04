@@ -23,6 +23,7 @@ sigapp/bin/
 sigapp/precompiled/
 sigagc/bin/
 sigagc/precompiled/
+sigapp/precompiled/
 sigasr/tmp/
 sigawf/WebContent/WEB-INF/classes/
 siga-base/build/

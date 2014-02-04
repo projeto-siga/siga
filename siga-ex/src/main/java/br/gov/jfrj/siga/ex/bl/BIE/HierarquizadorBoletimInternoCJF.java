@@ -53,9 +53,9 @@ public class HierarquizadorBoletimInternoCJF {
 			else if (o1.getExFormaDocumento().getIdFormaDoc() < o2
 					.getExFormaDocumento().getIdFormaDoc())
 				return -1;
-			else if (o1.getDtFechamento().after(o2.getDtFechamento()))
+			else if (o1.getDtFinalizacao().after(o2.getDtFinalizacao()))
 				return 1;
-			else if (o1.getDtFechamento().before(o2.getDtFechamento()))
+			else if (o1.getDtFinalizacao().before(o2.getDtFinalizacao()))
 				return -1;
 			else
 				return 0;
@@ -65,9 +65,9 @@ public class HierarquizadorBoletimInternoCJF {
 	private class DataComparator implements Comparator<ExDocumento> {
 
 		public int compare(ExDocumento o1, ExDocumento o2) {
-			if (o1.getDtFechamento().after(o2.getDtFechamento()))
+			if (o1.getDtFinalizacao().after(o2.getDtFinalizacao()))
 				return 1;
-			else if (o1.getDtFechamento().before(o2.getDtFechamento()))
+			else if (o1.getDtFinalizacao().before(o2.getDtFinalizacao()))
 				return -1;
 			else
 				return 0;

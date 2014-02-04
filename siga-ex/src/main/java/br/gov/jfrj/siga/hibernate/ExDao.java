@@ -35,7 +35,6 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -69,10 +68,9 @@ import org.hibernate.util.ReflectHelper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.CpUnidadeMedida;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -84,6 +82,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
+import br.gov.jfrj.siga.ex.ExItemDestinacao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -99,6 +98,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
@@ -224,23 +224,29 @@ public class ExDao extends CpDao {
 		List l = query.list();
 		return l;
 	}
-	
-	
-	public void preencherParametros(final IExMobilDaoFiltro flt, final Query query)  {
+
+
+
+	public void preencherParametros(final IExMobilDaoFiltro flt,
+			final Query query) {
 		if (flt.getUltMovIdEstadoDoc() != null
 				&& flt.getUltMovIdEstadoDoc() != 0) {
-			
+
+
 			query.setLong("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
-		} 
+
+		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
-			
+
+
 			query.setLong("ultMovRespSelId", flt.getUltMovRespSelId());
 		}
 
 		if (flt.getUltMovLotaRespSelId() != null
 				&& flt.getUltMovLotaRespSelId() != 0) {
-			
+
+
 			query.setLong("ultMovLotaRespSelId", flt.getUltMovLotaRespSelId());
 		}
 
@@ -285,36 +291,46 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getDescrDocumento() != null
-				&& !flt.getDescrDocumento().trim().equals("")) {			
-			query.setString("descrDocumento", "%" + flt.getDescrDocumento().toUpperCase() + "%");
+
+				&& !flt.getDescrDocumento().trim().equals("")) {
+			query.setString("descrDocumento", "%"
+					+ flt.getDescrDocumento().toUpperCase() + "%");
 		}
 
-		if (flt.getDtDoc() != null) {			
-			query.setString("dtDoc", new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDoc()));
+
+		if (flt.getDtDoc() != null) {
+			query.setString("dtDoc",
+					new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDoc()));
 		}
 
-		if (flt.getDtDocFinal() != null) {			
-			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDocFinal()));
+
+		if (flt.getDtDocFinal() != null) {
+			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy")
+					.format(flt.getDtDocFinal()));
 		}
 
 		if (flt.getNumAntigoDoc() != null
-				&& !flt.getNumAntigoDoc().trim().equals("")) {			
-			query.setString("numAntigoDoc", "%" + flt.getNumAntigoDoc().toUpperCase() + "%");
+
+				&& !flt.getNumAntigoDoc().trim().equals("")) {
+			query.setString("numAntigoDoc", "%"
+					+ flt.getNumAntigoDoc().toUpperCase() + "%");
 		}
 
 		if (flt.getDestinatarioSelId() != null
-				&& flt.getDestinatarioSelId() != 0) {			
+				&& flt.getDestinatarioSelId() != 0) {
 			query.setLong("destinatarioSelId", flt.getDestinatarioSelId());
 		}
 
 		if (flt.getLotacaoDestinatarioSelId() != null
 				&& flt.getLotacaoDestinatarioSelId() != 0) {
-			query.setLong("lotacaoDestinatarioSelId", flt.getLotacaoDestinatarioSelId());
+			query.setLong("lotacaoDestinatarioSelId",
+					flt.getLotacaoDestinatarioSelId());
 		}
 
 		if (flt.getNmDestinatario() != null
 				&& !flt.getNmDestinatario().trim().equals("")) {
-			query.setString("nmDestinatario", "%" + flt.getNmDestinatario() + "%");
+			query.setString("nmDestinatario", "%" + flt.getNmDestinatario()
+					+ "%");
 		}
 
 		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
@@ -331,8 +347,10 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getNmSubscritorExt() != null
-				&& !flt.getNmSubscritorExt().trim().equals("")) {			
-			query.setString("nmSubscritorExt", "%" + flt.getNmSubscritorExt().toUpperCase() + "%");
+
+				&& !flt.getNmSubscritorExt().trim().equals("")) {
+			query.setString("nmSubscritorExt", "%"
+					+ flt.getNmSubscritorExt().toUpperCase() + "%");
 		}
 
 		if (flt.getOrgaoExternoSelId() != null
@@ -340,7 +358,7 @@ public class ExDao extends CpDao {
 			query.setLong("orgaoExternoSelId", flt.getOrgaoExternoSelId());
 		}
 
-		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {			
+		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {
 			query.setString("numExtDoc", "%" + flt.getNumExtDoc() + "%");
 		}
 
@@ -358,9 +376,11 @@ public class ExDao extends CpDao {
 		Query query = getSessao().createQuery(
 				montadorQuery.montaQueryConsultaporFiltro(flt, titular,
 						lotaTitular, false));
-		
+
+
 		preencherParametros(flt, query);
-		
+
+
 		if (offset > 0) {
 			query.setFirstResult(offset);
 		}
@@ -380,9 +400,11 @@ public class ExDao extends CpDao {
 		String s = montadorQuery.montaQueryConsultaporFiltro(flt, titular,
 				lotaTitular, true);
 		Query query = getSessao().createQuery(s);
-		
+
+
 		preencherParametros(flt, query);
-		
+
+
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
 		System.out.println("consultarQuantidadePorFiltroOtimizado: "
@@ -791,6 +813,8 @@ public class ExDao extends CpDao {
 			query.setLong("idPessoaIni", pess.getIdPessoaIni());
 		} else {
 			query = getSessao().getNamedQuery("consultarEmailporLotacao");
+
+
 			query.setLong("idLotacaoIni", lot.getIdLotacaoIni());
 		}		
 
@@ -853,7 +877,7 @@ public class ExDao extends CpDao {
 					+ " WHERE "
 					+ " ID_PESSOA_INICIAL = ? "
 					+ " AND DOCR.ID_CADASTRANTE = PES.ID_PESSOA "
-					+ " AND DOCR.DT_FECHAMENTO IS NULL "
+					+ " AND DOCR.DT_FINALIZACAO IS NULL "
 					+ " AND EST.ID_ESTADO_DOC = 1 "
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
@@ -919,7 +943,7 @@ public class ExDao extends CpDao {
 					+ " WHERE "
 					+ " ID_LOTACAO_INI = ? "
 					+ " AND DOCR.ID_LOTA_CADASTRANTE = LOT.ID_LOTACAO "
-					+ " AND DOCR.DT_FECHAMENTO IS NULL "
+					+ " AND DOCR.DT_FINALIZACAO IS NULL "
 					+ " AND EST.ID_ESTADO_DOC = 1 "
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
@@ -1432,11 +1456,56 @@ public class ExDao extends CpDao {
 		return query.list();
 	}
 
-	public List<ExMobil> consultarParaArquivarEmLote(DpLotacao lot) {
+	public List<ExMobil> consultarParaEncerrarEmLote(DpLotacao lot) {
 		final Query query = getSessao().getNamedQuery(
-				"consultarParaArquivarEmLote");
+
+				"consultarParaEncerrarEmLote");
 		query.setLong("lotaIni", lot.getIdLotacaoIni());
 		return query.list();
+	}
+
+	public List<ExItemDestinacao> consultarParaArquivarIntermediarioEmLote(
+			DpLotacao lot, int offset) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarParaArquivarIntermediarioEmLote");
+		query.setLong("idOrgaoUsu", lot.getOrgaoUsuario().getIdOrgaoUsu());
+		query.setFirstResult(offset);
+		query.setMaxResults(100);
+		List<Object[]> results = query.list();
+		List<ExItemDestinacao> listaFinal = new ArrayList<ExItemDestinacao>();
+		for (Object[] result : results) {
+			listaFinal.add(new ExItemDestinacao(result));
+		}
+		return listaFinal;
+	}
+
+	public int consultarQuantidadeParaArquivarIntermediarioEmLote(DpLotacao lot) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarQuantidadeParaArquivarIntermediarioEmLote");
+		query.setLong("idOrgaoUsu", lot.getOrgaoUsuario().getIdOrgaoUsu());
+		return ((Long) query.uniqueResult()).intValue();
+	}
+
+	public List<ExItemDestinacao> consultarParaArquivarPermanenteEmLote(
+			DpLotacao lot, int offset) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarParaArquivarPermanenteEmLote");
+		query.setLong("idOrgaoUsu", lot.getOrgaoUsuario().getIdOrgaoUsu());
+		query.setFirstResult(offset);
+		query.setMaxResults(100);
+		List<Object[]> results = query.list();
+		List<ExItemDestinacao> listaFinal = new ArrayList<ExItemDestinacao>();
+		for (Object[] result : results) {
+			listaFinal.add(new ExItemDestinacao(result));
+		}
+		return listaFinal;
+	}
+
+	public int consultarQuantidadeParaArquivarPermanenteEmLote(DpLotacao lot) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarQuantidadeParaArquivarPermanenteEmLote");
+		query.setLong("idOrgaoUsu", lot.getOrgaoUsuario().getIdOrgaoUsu());
+		return ((Long) query.uniqueResult()).intValue();
 	}
 
 	public List<ExMobil> consultarParaTransferirEmLote(DpLotacao lot) {
@@ -1451,6 +1520,47 @@ public class ExDao extends CpDao {
 				"consultarParaAnotarEmLote");
 		query.setLong("lotaIni", lot.getIdLotacaoIni());
 		return query.list();
+	}
+
+	public List<ExItemDestinacao> consultarAEliminar(CpOrgaoUsuario orgaoUsu,
+			Date dtIni, Date dtFim) {
+		final Query query = getSessao().getNamedQuery("consultarAEliminar");
+		query.setLong("idOrgaoUsu", orgaoUsu.getIdOrgaoUsu());
+		query.setDate("dtIni", dtIni);
+		query.setDate("dtFim", dtFim);
+		long ini = System.currentTimeMillis();
+		List<Object[]> results = query.list();
+		List<ExItemDestinacao> listaFinal = new ArrayList<ExItemDestinacao>();
+		for (Object[] result : results) {
+			listaFinal.add(new ExItemDestinacao(result));
+		}
+		long fim = System.currentTimeMillis() - ini;
+		return listaFinal;
+	}
+
+	public int consultarQuantidadeAEliminar(CpOrgaoUsuario orgaoUsu,
+			Date dtIni, Date dtFim) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarQuantidadeAEliminar");
+		query.setLong("idOrgaoUsu", orgaoUsu.getIdOrgaoUsu());
+		query.setDate("dtIni", dtIni);
+		query.setDate("dtFim", dtFim);
+		return ((Long) query.uniqueResult()).intValue();
+	}
+
+	public List<ExItemDestinacao> consultarEmEditalEliminacao(
+			CpOrgaoUsuario orgaoUsu, Date dtIni, Date dtFim) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarEmEditalEliminacao");
+		query.setLong("idOrgaoUsu", orgaoUsu.getIdOrgaoUsu());
+		query.setDate("dtIni", dtIni);
+		query.setDate("dtFim", dtFim);
+		List<Object[]> results = query.list();
+		List<ExItemDestinacao> listaFinal = new ArrayList<ExItemDestinacao>();
+		for (Object[] result : results) {
+			listaFinal.add(new ExItemDestinacao(result));
+		}
+		return listaFinal;
 	}
 
 	public ExFormaDocumento consultarPorSigla(ExFormaDocumento o) {
@@ -1545,36 +1655,45 @@ public class ExDao extends CpDao {
 		return cfg;
 	}
 
+	static public AnnotationConfiguration criarHibernateCfg(
+			CpAmbienteEnumBL ambiente) throws Exception {
+		CpPropriedadeBL prop = Ex.getInstance().getProp();
+		prop.setPrefixo("siga.ex." + ambiente.getSigla());
+		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente, prop);
+		ExDao.configurarHibernate(cfg);
+		return cfg;
+	}
+
 	static private void configurarHibernate(AnnotationConfiguration cfg)
 			throws Exception {
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExMobil.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExDocumento.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExFormaDocumento.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExConfiguracao.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExSituacaoConfiguracao.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExClassificacao.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExModelo.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExTemporalidade.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExTipoDespacho.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExTipoDestinacao.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExTipoDocumento.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExNivelAcesso.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExEstadoDoc.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExPreenchimento.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExTipoFormaDoc.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExTipoMovimentacao.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExVia.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExMovimentacao.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExTpDocPublicacao.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExTipoMobil.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExBoletimDoc.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExPapel.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/ex/ExEmailNotificacao.hbm.xml");
-		//
-		// cfg.addResource("br/gov/jfrj/siga/dp/CpTipoMarcador.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/dp/CpMarcador.hbm.xml");
-		// cfg.addResource("br/gov/jfrj/siga/dp/CpTipoMarca.hbm.xml");
-		// <mapping resource="br/gov/jfrj/siga/dp/CpMarca.hbm.xml" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		cfg.addClass(br.gov.jfrj.siga.ex.ExMobil.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExDocumento.class);
@@ -1617,7 +1736,8 @@ public class ExDao extends CpDao {
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExNivelAcesso",
 				"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao", "read-only", CACHE_EX);
+				"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao", "read-only",
+				CACHE_EX);
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
 		// "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDespacho",
@@ -1712,17 +1832,18 @@ public class ExDao extends CpDao {
 	public ExModelo consultarExModelo(String sForma, String sModelo) {
 		final Criteria crit = getSessao().createCriteria(ExModelo.class);
 		crit.add(Restrictions.eq("nmMod", sModelo));
-		crit.add(Restrictions.eq("hisAtivo", 1));
+
 		if (sForma != null) {
 			crit.createAlias("exFormaDocumento", "f");
 			crit.add(Restrictions.eq("f.descrFormaDoc", sForma));
 		}
 		return (ExModelo) crit.uniqueResult();
 	}
-	
+
+
 	public ExModelo consultarModeloAtual(ExModelo mod) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarModeloAtual");
+		final Query query = getSessao().getNamedQuery("consultarModeloAtual");
+
 		query.setLong("hisIdIni", mod.getHisIdIni());
 		return (ExModelo) query.uniqueResult();
 	}
@@ -1811,7 +1932,8 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTpDocPublicacao.class);
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
+				ExTpDocPublicacao.class);
 	}
 
 	public List<ExConfiguracao> listarExConfiguracoes() {
@@ -1835,7 +1957,8 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExTipoMovimentacao> listarExTiposMovimentacao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTipoMovimentacao.class);
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
+				ExTipoMovimentacao.class);
 	}
 
 	public List<ExModelo> listarExModelos() {

@@ -83,6 +83,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 	private ExMovimentacao exMovimentacaoRef;
 
 	private ExTipoDespacho exTipoDespacho;
+	
+	private ExClassificacao exClassificacao;
 
 	private ExTipoMovimentacao exTipoMovimentacao;
 
@@ -183,6 +185,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 	public ExTipoDespacho getExTipoDespacho() {
 		return exTipoDespacho;
 	}
+	
+	public ExClassificacao getExClassificacao() {
+		return exClassificacao;
+	}
 
 	public ExTipoMovimentacao getExTipoMovimentacao() {
 		return exTipoMovimentacao;
@@ -251,6 +257,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 
 	public void setExTipoDespacho(final ExTipoDespacho exTipoDespacho) {
 		this.exTipoDespacho = exTipoDespacho;
+	}
+	
+	public void setExClassificacao(ExClassificacao exClassificacao) {
+		this.exClassificacao = exClassificacao;
 	}
 
 	public void setExTipoMovimentacao(

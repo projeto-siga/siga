@@ -71,7 +71,7 @@ public class RelDocsClassificados extends RelatorioTemplate {
 		
 		for (ExDocumento d : listaDocs) {
 			dados.add(d.getCodigo()); //num doc
-			dados.add(d.getExClassificacao().getDescricaoCompleta()); //Descrição
+			dados.add(d.getExClassificacaoAtual().getDescricaoCompleta()); //Descrição
 			
 		}
 		

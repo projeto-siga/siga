@@ -36,6 +36,14 @@ public abstract class CpMarca extends AbstractCPMarca {
 		}
 		return "";
 	}
+	
+	public String getDtFimMarcaDDMMYYYY() {
+		if (getDtFimMarca() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(getDtFimMarca());
+		}
+		return "";
+	}
 
 
 }

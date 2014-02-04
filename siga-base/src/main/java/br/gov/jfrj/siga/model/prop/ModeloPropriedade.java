@@ -137,11 +137,18 @@ public abstract class ModeloPropriedade {
 	 */
 	public String obterPropriedade(String nome) throws Exception {
 		carregarPropriedades();
-		String pre = getPrefixo();
-		String value = propriedades.getProperty(pre + "." + nome);
-		if (value != null)
-			return value.trim();
-		if (propriedades.getProperty(nome) != null) {
+		if (prefixo != null) {
+			for (int i = 0; i < prefixo.length; i++) {
+				String prop = new String();
+				for (int j = i; j < prefixo.length; j++) {
+					prop += prefixo[j] + ".";
+				}
+				String value = propriedades.getProperty(prop + nome);
+				if (value != null)
+					return value.trim();
+			}
+		}
+		if (propriedades.getProperty(nome) !=null){
 			return propriedades.getProperty(nome).trim();
 		}
 		return null;

@@ -22,7 +22,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMEN
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO;
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
@@ -32,10 +32,11 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAME
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA;
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO;
@@ -46,6 +47,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCI
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.Map;
@@ -378,8 +380,32 @@ public class ExMovimentacaoVO extends ExVO {
 								" Descrição: " + mov.getExDocumento().getDescrDocumento(), null);
 			}
 		}
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO){
+			descricao = null;
+			if (originadaAqui) {
+				addAcao(null, mov.getExMobilRef().getSigla(),
+						"/expediente/doc", "exibir", true, null, "sigla="
+								+ mov.getExMobilRef().getSigla(),
+						"", null, null);
+			} else {
+				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
+						"exibir", true, null, "sigla="
+								+ mov.getExMobil().getSigla(), "",
+						null, null);
+			}
+		}
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_ELIMINACAO){
+			descricao = null;
+			if (originadaAqui) {
+				//Não faz nada, pois o documento eliminado nunca é exibido
+			} else {
+				descricao = mov.getExMobil().getSigla();
+			}
+		}
 
-		if (idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE
+		if (idTpMov == TIPO_MOVIMENTACAO_ENCERRAMENTO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
@@ -442,10 +468,11 @@ public class ExMovimentacaoVO extends ExVO {
 			case (int) TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
 				classe = "assinaturaMov";
 				break;
-			case (int) TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE:
+
+			case (int) TIPO_MOVIMENTACAO_ENCERRAMENTO:
 			case (int) TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE:
 			case (int) TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO:
-				classe = "arquivamento";
+				classe = "arquivamento_encerramento";
 				break;
 			case (int) TIPO_MOVIMENTACAO_JUNTADA:
 				classe = "juntada";
@@ -459,8 +486,8 @@ public class ExMovimentacaoVO extends ExVO {
 			case (int) TIPO_MOVIMENTACAO_REFERENCIA:
 				classe = "vinculo";
 				break;
-			case (int) TIPO_MOVIMENTACAO_ENCERRAMENTO:
-				classe = "encerramento";
+			case (int) TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME:
+				classe = "encerramento_volume";
 				break;
 			case (int) TIPO_MOVIMENTACAO_APENSACAO:
 				classe = "apensacao";

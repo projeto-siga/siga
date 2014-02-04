@@ -26,9 +26,11 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -136,6 +138,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	public String getSigla() {
 		return getCodigo();
+	}
+
+	/**
+	 * Retorna a classificação atual do documento.
+	 */
+	public ExClassificacao getExClassificacaoAtual() {
+		ExClassificacao cl = null;
+		if (getMobilGeral() != null
+				&& getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
+			cl = getMobilGeral().getUltimaMovimentacaoNaoCancelada()
+					.getExClassificacao();
+		if (cl != null)
+			return cl;
+		return super.getExClassificacao();
 	}
 
 	/**
@@ -381,7 +397,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		// Verifica se todos os subscritores assinaram o documento
 		try {
 			for (DpPessoa subscritor : getSubscritorECosignatarios()) {
-				if (isEletronico() && getDtFechamento() != null
+				if (isEletronico() && isFinalizado()
 						&& !jaAssinadoPor(subscritor)) {
 					String comentarioInicio = "<!-- INICIO SUBSCRITOR "
 							+ subscritor.getId() + " -->";
@@ -567,10 +583,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * Retorna a data de finalização do documento no formato dd/mm/aa, por
 	 * exemplo, 01/02/10.
 	 */
-	public String getDtFechamentoDDMMYY() {
-		if (getDtFechamento() != null) {
+	public String getDtFinalizacaoDDMMYY() {
+
+		if (isFinalizado()) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
-			return df.format(getDtFechamento());
+			return df.format(getDtFinalizacao());
 		}
 		return "";
 	}
@@ -799,6 +816,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
+	 * Verifica se um documento está finalizado, ou seja, se possui
+	 * dtFinalizacao definida
+	 */
+	public boolean isFinalizado() {
+		return getDtFinalizacao() != null;
+	}
+
+	/**
 	 * Verifica se um documento pode ser indexado conforme as regras
 	 * <b>(informar regras)</b>
 	 */
@@ -867,7 +892,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			vias = getExModelo().getExClassCriacaoVia().getExViaSet();
 		} else {
 			if (getExClassificacao() != null)
-				vias = getExClassificacao().getExViaSet();
+				vias = getExClassificacaoAtual().getExViaSet();
+		}
+
+		// Edson: Antigamente, quando se alterava uma via, a nova instância
+		// continuava apontando para a mesma classificação, pois esta não era
+		// alterada junto. Limpar o set de vias, garantido que só haja uma
+		// instância de cada via:
+		if (((ExVia) vias.toArray()[0]).getExClassificacao().isFechada()) {
+			HashMap<String, ExVia> viasUmaPorCodigo = new HashMap<String, ExVia>();
+			for (ExVia v : vias) {
+				ExVia vHash = viasUmaPorCodigo.get(v.getCodVia());
+				if (vHash == null || v.getHisDtIni().after(vHash.getHisDtIni()))
+					viasUmaPorCodigo.put(v.getCodVia(), v);
+			}
+			vias = new HashSet<ExVia>(viasUmaPorCodigo.values());
 		}
 
 		if (vias != null
@@ -928,7 +967,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		} else
 			return null;
 	}
-	
+
 	/**
 	 * COMPLETAR Retorna o nome do cadastrante.
 	 * 
@@ -1110,9 +1149,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Verifica se um documento já foi publicado no BIE ou se o BIE já foi publicado.
-	 */
+
+
+
 	public boolean isBoletimPublicado() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
@@ -1638,7 +1677,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Override
 	public boolean isRascunho() {
-		return getDtFechamento() == null || (isEletronico() && !isAssinado());
+		return !isFinalizado() || (isEletronico() && !isAssinado());
 	}
 
 	/**
@@ -1738,6 +1777,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Retorna todos os volumes de um processo administrativo.
+	 */
+	public Set<ExMobil> getVolumes() {
+		if (!isProcesso())
+			return new LinkedHashSet<ExMobil>();
+		Set<ExMobil> volumes = new LinkedHashSet<ExMobil>();
+		for (final ExMobil mobil : getExMobilSet())
+			if (mobil.isVolume())
+				volumes.add(mobil);
+		return volumes;
+	}
+	
 	/**
 	 * Retorna o móbil-via de um expediente de acordo com o seu número.
 	 */
@@ -1957,6 +2009,48 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Verifica se todos os móbiles do documento estão eliminados.
+	 */
+	public boolean isArquivadoPermanente() {
+
+		if (isProcesso())
+			return getMobilGeral().isArquivadoPermanente();
+
+		boolean arqPermanente = false;
+
+		for (ExMobil m : getExMobilSet())
+			if (!m.isGeral())
+				if (m.isArquivadoPermanente())
+					arqPermanente = true;
+				else {
+					return false;
+				}
+
+		return arqPermanente;
+	}
+
+	/**
+	 * Verifica se todos os móbiles do documento estão eliminados.
+	 */
+	public boolean isEliminado() {
+
+		if (isProcesso())
+			return getMobilGeral().isEliminado();
+
+		boolean eliminado = false;
+
+		for (ExMobil m : getExMobilSet())
+			if (!m.isGeral())
+				if (m.isEliminado())
+					eliminado = true;
+				else {
+					return false;
+				}
+
+		return eliminado;
 	}
 
 	/**

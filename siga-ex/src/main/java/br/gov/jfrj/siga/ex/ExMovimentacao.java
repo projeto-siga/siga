@@ -726,6 +726,19 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
+	 * verifica se uma movimentação é canceladora, ou seja, se é do tipo
+	 * Cancelamento de Movimentação.
+	 * 
+	 * @return Verdadeiro ou Falso.
+	 */
+	public boolean isCanceladora() {
+		return getExTipoMovimentacao() != null
+				&& getExTipoMovimentacao()
+						.getIdTpMov()
+						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
+	}
+
+	/**
 	 * verifica se uma movimentação de anexação de arquivo está assinada e não
 	 * está cancelada. Este tipo de movimentação está assinada quando existe
 	 * alguma movimentação de assinatura de movimentação com o seu atributo
@@ -830,7 +843,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	@Override
 	public boolean isCancelado() {
-		return getExMovimentacaoCanceladora() != null;
+		return isCancelada();
 	}
 
 	@Override

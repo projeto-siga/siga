@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -62,7 +63,9 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	/**
 	 * Verifica se uma classificação é do tipo intermediária.
 	 * 
-	 * @return Verdadeiro caso a classificação seja do tipo intermediária e Falso caso a classificação não seja do tipo intermediária.
+
+	 * @return Verdadeiro caso a classificação seja do tipo intermediária e
+	 *         Falso caso a classificação não seja do tipo intermediária.
 	 * 
 	 */
 	public boolean isIntermediaria() throws AplicacaoException {
@@ -81,7 +84,8 @@ public class ExClassificacao extends AbstractExClassificacao implements
 		return false;
 	}
 
-	
+
+
 	/**
 	 * Retorna a sigla de uma classificação.
 	 * 
@@ -101,14 +105,28 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 
 	/**
-	 * Retorna a descrição de uma classificação. A descrição de uma classificação
-	 * é formada pela descrição do Assunto, da classe e da subclasse.
+
+
+	 * Retorna a descrição de uma classificação. A descrição de uma
+	 * classificação é formada pela descrição do Assunto, da classe e da
+	 * subclasse.
 	 * 
 	 * @param sigla
 	 * 
 	 */
 	public String getDescricao() {
 		return ExDao.getInstance().consultarDescricaoExClassificacao(this);
+	}
+
+	/**
+	 * Retorna a sigla e a descrição simples, ou seja, não trazendo a informação
+	 * completa sobre a hierarquia a que a classificação pertence.
+	 * 
+	 * @param sigla
+	 * 
+	 */
+	public String getDescricaoSimples() {
+		return getSigla() + " - " + getDescrClassificacao();
 	}
 
 	public String getDescricaoCompleta() {
@@ -126,44 +144,71 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	public String getDestinacoesFinais() {
 		return "";
 	}
-	
-	public ExClassificacao getClassificacaoAtual() {
-		ExClassificacao classIni = getClassificacaoInicial();
-		if (classIni != null) {
-			Set<ExClassificacao> setClassificacoes = classIni.getClassificacoesPosteriores();
-			if (setClassificacoes != null)
-				for (ExClassificacao c : setClassificacoes)
-					return c;
-		}
-		return this;
-	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * Verifica se uma classificação está fechada.
 	 * 
-	 * @return Verdadeiro se a classificação está fechado e falso caso contrário.
+
+	 * @return Verdadeiro se a classificação está fechado e falso caso
+	 *         contrário.
 	 * 
-	*/
+	 */
 	public boolean isFechada() {
-		if(this.getHisDtFim() != null)
-			return true;
-		
-		return false;
+		if (this.getHisDtFim() == null)
+
+
+			return false;
+
+		return getAtual().getHisDtFim() != null;
+	}
+	
+	public ExClassificacao getAtual() {
+		ExClassificacao ini = getClassificacaoInicial();
+		if (ini == null)
+			ini = this;
+		Set<ExClassificacao> set = ini.getClassificacoesPosteriores();
+		if (set != null)
+			for (ExClassificacao c : set)
+				return c;
+		return this;
 	}
 
 	public void setId(Long id) {
 		setIdClassificacao(id);
-		
+
+
 	}
 
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-	
-	public int getNivel(){
+
+
+	public int getNivel() {
 		return MascaraUtil.getInstance().calcularNivel(this.getCodificacao());
 	}
-	
+
+
 	@Override
 	public String toString() {
 		return getCodificacao() + " " + getDescricao();

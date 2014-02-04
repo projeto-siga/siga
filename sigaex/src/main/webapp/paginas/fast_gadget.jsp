@@ -30,7 +30,7 @@ submitOk = function() {
 		<tbody>
 			<c:forEach var="listEstado" items="${listEstados}">
 				<c:if
-					test="${listEstado[0] != 9 && listEstado[0] != 10 
+					test="${listEstado[0] != 9 && listEstado[0] != 8  && listEstado[0] != 10 
 			&& listEstado[0] != 11 && listEstado[0] != 12 
 			&& listEstado[0] != 13 && listEstado[0] != 16
 			&& listEstado[0] != 18 && listEstado[0] != 20 
@@ -183,7 +183,7 @@ submitOk = function() {
 					<ww:select name="docAcao"
 						list="#{'/sigaex/expediente/doc/exibir.action':'Exibir', '/sigaex/expediente/mov/receber.action':'Receber', '/sigaex/expediente/mov/arquivar.action':'Arquivar'}"
 						onchange="javascript: if (this.value == '04') window.location='${url4}'; if (this.value == '05') window.location='${url5}'; if (this.value == '06') window.location='${url6}'; if (this.value == '07') window.location='${url7}';" />
-					<!-- , '04':'Transferir Lote', ${itemRemeter} '05':'Receber Lote', '06':'2� Via Protocolo'} -->
+					<!-- , '04':'Transferir Lote', ${itemRemeter} '05':'Receber Lote', '06':'2? Via Protocolo'} -->
 					<siga:selecao tema="simple" buscar="nao" propriedade="documentoVia"
 						ocultardescricao="sim" /> <input type="button" name="ok"
 					value="Ok" onclick="javascript:submitOk();" /> <ww:url id="url"

@@ -467,11 +467,11 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		setDataFimPessoa(hisDtFim);
 	}
 
-	public int getHisAtivo() {
+	public Integer getHisAtivo() {
 		return getHisDtFim() != null ? 1 : 0;
 	}
 
-	public void setHisAtivo(int hisAtivo) {
+	public void setHisAtivo(Integer hisAtivo) {
 		//
 	}
 	

@@ -46,7 +46,7 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_DIRETORFORO = 7;
 
-	public static final long TIPO_CONFIG_REABRIR = 8;
+	public static final long TIPO_CONFIG_REFAZER = 8;
 
 	public static final long TIPO_CONFIG_DUPLICAR = 9;
 
@@ -101,7 +101,7 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_SR_DESIGNACAO = 300;
 	
 	public static final long TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO = 301;
-	
+
 	public static final long TIPO_CONFIG_SR_PERMISSAO_USO_LISTA = 302;
 
 	public static final long TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO = 34;

@@ -96,6 +96,16 @@
   <function-signature>java.lang.Boolean podeDefinirPublicadoresPorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
+  <name>podeArquivarPermanentePorConfiguracao</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeArquivarPermanentePorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>
+ <function>
+  <name>podeArquivarIntermediarioPorConfiguracao</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeArquivarIntermediarioPorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>
+ <function>
   <name>descricaoConfidencial</name>
   <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
   <function-signature>java.lang.String descricaoConfidencial(br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
@@ -185,6 +195,16 @@
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>br.gov.jfrj.siga.ex.bl.HierarquizadorBoletimInternoCJF obterHierarquizadorBIECJF(br.gov.jfrj.siga.dp.CpOrgaoUsuario, br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
  </function> 
+ <function>
+  <name>editalEliminacao</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>br.gov.jfrj.siga.ex.ExEditalEliminacao editalEliminacao(br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
+ </function>
+ <function>
+  <name>termoEliminacao</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>br.gov.jfrj.siga.ex.ExTermoEliminacao termoEliminacao(br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
+ </function>
  <function>
   <name>buscaDocumentosAssinadosAgrupadosPorMetadado</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>

@@ -41,7 +41,7 @@ public interface Historico extends Assemelhavel {
 
 	public void setHisDtFim(Date hisDtFim);
 
-	public int getHisAtivo();
+	public Integer getHisAtivo();
 
-	public void setHisAtivo(int hisAtivo);
+	public void setHisAtivo(Integer hisAtivo);
 }

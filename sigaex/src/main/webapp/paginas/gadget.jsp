@@ -266,7 +266,7 @@ submitOk = function() {
 		<tr>
 			<td><ww:url id="url1" action="exibir"
 				namespace="/expediente/doc" /> <ww:url id="url2" action="receber"
-				namespace="/expediente/mov" /> <ww:url id="url3" action="arquivar"
+				namespace="/expediente/mov" /> <ww:url id="url3" action="encerrar"
 				namespace="/expediente/doc" /> <%--<c:if
 						test="${f:podeRemeterPorConfiguracao(titular,lotaTitular)}">
 						<ww:url id="url7" action="remeter_para_publicacao"
@@ -275,11 +275,11 @@ submitOk = function() {
 					</c:if> --%><ww:url id="url4" action="transferir_lote"
 				namespace="/expediente/mov" /> <ww:url id="url5"
 				action="receber_lote" namespace="/expediente/mov" /> <ww:url
-				id="url6" action="via_protocolo" namespace="/expediente/mov" /> <%-- <ww:select name="docAcao" list="#{%{url1}:'Exibir', %{url2}:'Receber', %{url3}:'Arquivar'}" /> --%>
+				id="url6" action="via_protocolo" namespace="/expediente/mov" /> <%-- <ww:select name="docAcao" list="#{%{url1}:'Exibir', %{url2}:'Receber', %{url3}:'Encerrar'}" /> --%>
 			<ww:select name="docAcao"
-				list="#{'/sigaex/expediente/doc/exibir.action':'Exibir', '/sigaex/expediente/mov/receber.action':'Receber', '/sigaex/expediente/mov/arquivar.action':'Arquivar'}"
+				list="#{'/sigaex/expediente/doc/exibir.action':'Exibir', '/sigaex/expediente/mov/receber.action':'Receber', '/sigaex/expediente/mov/encerrar.action':'Encerrar'}"
 				onchange="javascript: if (this.value == '04') window.location='${url4}'; if (this.value == '05') window.location='${url5}'; if (this.value == '06') window.location='${url6}'; if (this.value == '07') window.location='${url7}';" />
-			<!-- , '04':'Transferir Lote', ${itemRemeter} '05':'Receber Lote', '06':'2� Via Protocolo'} -->
+			<!-- , '04':'Transferir Lote', ${itemRemeter} '05':'Receber Lote', '06':'2? Via Protocolo'} -->
 			<siga:selecao tema="simple" buscar="nao" ocultardescricao="sim" propriedade="documentoVia" modulo="sigaex"/>
 			<input type="button" name="ok" value="Ok"
 				onclick="javascript:submitOk();" /> <ww:url id="url"

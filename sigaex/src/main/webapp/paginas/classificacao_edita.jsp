@@ -166,7 +166,7 @@
 	</div>
 	
 	<c:if test="${acao == 'editar_classificacao'}">
-		<c:if test="${numeroDeVias > 0}">
+		<c:if test="${exClass.numVias > 0}">
 			<div class="gt-bd clearfix">
 				<div class="gt-content">
 					<h2 class="gt-form-head">Vias</h2>
@@ -245,7 +245,7 @@
 							<!-- form row -->
 							<div class="gt-form-row botoesVias">
 								<a id="btEditarVia" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:editarExVia(${via.id})">Editar Via</a>
-								<c:if test="${via.codVia == numeroDeVias}">
+								<c:if test="${via.codVia == exClass.numVias}">
 									<p class="gt-cancel">
 										ou <ww:a href="excluirVia.action?idVia=${via.id}&codificacao=${codificacao}">excluir via</ww:a>
 									</p>

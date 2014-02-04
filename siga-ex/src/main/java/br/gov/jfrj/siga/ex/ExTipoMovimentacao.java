@@ -52,9 +52,9 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 
 	final static public long TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA = 8;
 
-	final static public long TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE = 9;
+	final static public long TIPO_MOVIMENTACAO_ENCERRAMENTO = 9;
 
-	final static public long TIPO_MOVIMENTACAO_DESCARTE = 10;
+	final static public long TIPO_MOVIMENTACAO_ELIMINACAO = 10;
 
 	final static public long TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO = 11;
 
@@ -80,7 +80,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 
 	final static public long TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO = 20;
 
-	final static public long TIPO_MOVIMENTACAO_DESARQUIVAMENTO = 21;
+	final static public long TIPO_MOVIMENTACAO_REABERTURA = 21;
 
 	final static public long TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO = 22;
 
@@ -124,7 +124,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 
 	final static public long TIPO_MOVIMENTACAO_DESAPENSACAO = 42;
 
-	final static public long TIPO_MOVIMENTACAO_ENCERRAMENTO = 43;
+	final static public long TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME = 43;
 	
 	final static public long TIPO_MOVIMENTACAO_VINCULACAO_PAPEL = 44;
 	
@@ -135,6 +135,23 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 	final static public long TIPO_MOVIMENTACAO_DESOBRESTAR = 47;
 	
 	final static public long TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO = 48;
+	
+	final static public long TIPO_MOVIMENTACAO_INDICACAO_GUARDA_PERMANENTE = 49;
+	
+	final static public long TIPO_MOVIMENTACAO_REVERSAO_INDICACAO_GUARDA_PERMANENTE = 50;
+	
+	final static public long TIPO_MOVIMENTACAO_RECLASSIFICACAO = 51;
+	
+	final static public long TIPO_MOVIMENTACAO_AVALIACAO = 52;
+	
+	final static public long TIPO_MOVIMENTACAO_AVALIACAO_COM_RECLASSIFICACAO = 53;
+	
+	final static public long TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO = 54;
+	
+	final static public long TIPO_MOVIMENTACAO_RETIRADA_DE_EDITAL_DE_ELIMINACAO = 55;
+	
+	final static public long TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO = 56;
+
 
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO

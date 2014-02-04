@@ -112,7 +112,7 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
-	public Boolean arquivarCorrente(String codigoDocumentoVia,
+	public Boolean encerrar(String codigoDocumentoVia,
 			String siglaDestino, String siglaCadastrante) throws Exception {
 		try {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
@@ -123,7 +123,7 @@ public class ExServiceImpl implements ExService {
 					siglaDestino);
 			Ex.getInstance()
 					.getBL()
-					.arquivarCorrente(cadastranteParser.getPessoa(),
+					.encerrar(cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(), mob, null, null,
 							destinoParser.getPessoa());
 			return true;

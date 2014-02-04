@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,10 +48,14 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExEditalEliminacao;
+import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTermoEliminacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTratamento;
+import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
@@ -79,7 +84,8 @@ public class FuncoesEL {
 			if (sAux.equals(s))
 				return true;
 		return false;
-		
+
+
 	}
 
 	public static Boolean extraiCamposDescrAutomatica(final String s) {
@@ -92,25 +98,28 @@ public class FuncoesEL {
 				.obterDocumentosBoletim(d));
 
 	}
-	
+
+
 	public static HierarquizadorBoletimInternoTRF2 obterHierarquizadorBIETRF2(
 			CpOrgaoUsuario orgao, ExDocumento d) {
-		return new HierarquizadorBoletimInternoTRF2(orgao, Ex.getInstance().getBL()
-				.obterDocumentosBoletim(d));
+		return new HierarquizadorBoletimInternoTRF2(orgao, Ex.getInstance()
+				.getBL().obterDocumentosBoletim(d));
 	}
 
 	public static HierarquizadorBoletimInternoES obterHierarquizadorBIEES(
 			CpOrgaoUsuario orgao, ExDocumento d) {
-		return new HierarquizadorBoletimInternoES(orgao, Ex.getInstance().getBL()
-				.obterDocumentosBoletim(d));
+		return new HierarquizadorBoletimInternoES(orgao, Ex.getInstance()
+				.getBL().obterDocumentosBoletim(d));
 	}
-	
+
+
 	public static HierarquizadorBoletimInternoCJF obterHierarquizadorBIECJF(
 			CpOrgaoUsuario orgao, ExDocumento d) {
-		return new HierarquizadorBoletimInternoCJF(orgao, Ex.getInstance().getBL()
-				.obterDocumentosBoletim(d));
+		return new HierarquizadorBoletimInternoCJF(orgao, Ex.getInstance()
+				.getBL().obterDocumentosBoletim(d));
 	}
-	
+
+
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
 		if (lotaTitular == null)
@@ -122,6 +131,36 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REMESSA_PARA_PUBLICACAO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+
+	}
+
+	public static Boolean podeArquivarPermanentePorConfiguracao(
+			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+		if (lotaTitular == null)
+			return false;
+		return Ex
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+
+	}
+	
+	public static Boolean podeArquivarIntermediarioPorConfiguracao(
+			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+		if (lotaTitular == null)
+			return false;
+		return Ex
+				.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 
 	}
@@ -191,7 +230,8 @@ public class FuncoesEL {
 
 		return dao().consultar(id, DpLotacao.class, false);
 	}
-	
+
+
 	public static CpOrgao orgao(Long id) throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
@@ -200,7 +240,7 @@ public class FuncoesEL {
 	}
 
 	public static String destinacaoPorNumeroVia(ExDocumento doc, Short i) {
-		br.gov.jfrj.siga.ex.ExVia via = doc.via(new Short(i.shortValue()));
+		ExVia via = doc.via(new Short(i.shortValue()));
 		String s = null;
 		if (via != null && via.getExTipoDestinacao() != null) {
 			s = via.getExTipoDestinacao().getDescrTipoDestinacao();
@@ -350,6 +390,37 @@ public class FuncoesEL {
 
 	public static String enxugaHtml(String html) {
 		return HierarquizadorBoletimInterno.enxugaHtml(html);
+	}
+
+	/*
+	public static List<Object[]> gerarEntrevistaEditalEliminacao(
+			ExDocumento edital) {
+		return ExEditalEliminacao.gerarEntrevista(edital);
+	}
+
+	public static List<ExMobil> obterInclusosNoEditalComBaseNaEntrevista(
+			ExDocumento edital) {
+		return ExEditalEliminacao
+				.obterInclusosNoEditalComBaseNaEntrevista(edital);
+	}
+
+	public static List<Object[]> obterInclusosNoEdital(Long idMobilEdital) {
+		ExMobil edital = dao().consultar(idMobilEdital, ExMobil.class, false);
+		return ExEditalEliminacao.obterInclusosNoEdital(edital.getExDocumento());
+	}
+
+	public static void eliminarInclusosNoTermo(ExDocumento termo,
+			DpPessoa cadastrante, DpLotacao lotaCadastrante) {
+		ExTermoEliminacao.eliminarInclusosNoTermo(termo, cadastrante,
+				lotaCadastrante);
+	}*/
+	
+	public static ExEditalEliminacao editalEliminacao(ExDocumento doc){
+		return new ExEditalEliminacao(doc);
+	}
+	
+	public static ExTermoEliminacao termoEliminacao(ExDocumento doc){
+		return new ExTermoEliminacao(doc);
 	}
 
 	public static String verificaGenero(String autoridade) {
@@ -811,18 +882,18 @@ public class FuncoesEL {
 		return lotRetorno.getDescricao();
 	}
 
-	public static String obterExtensaoBuscaTextual(CpOrgaoUsuario orgao, String valFullText)
-			throws Exception {
+	public static String obterExtensaoBuscaTextual(CpOrgaoUsuario orgao,
+			String valFullText) throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
-		Map attrs = new HashMap();		
+		Map attrs = new HashMap();
 		attrs.put("valFullText", valFullText);
 		attrs.put("nmMod", "macro extensaoBuscaTextual");
 		attrs.put("template", "[@extensaoBuscaTextual/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
 
-	public static String obterExtensaoEditor(CpOrgaoUsuario orgao, String nome, String conteudo, String serverAndPort)
-			throws Exception {
+	public static String obterExtensaoEditor(CpOrgaoUsuario orgao, String nome,
+			String conteudo, String serverAndPort) throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
 		Map attrs = new HashMap();
 		attrs.put("serverAndPort", serverAndPort);
@@ -832,35 +903,43 @@ public class FuncoesEL {
 		attrs.put("template", "[@extensaoEditor/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
-	
-	
-	
+
+
+
+
 	public static String obterExtensaoAssinador(CpOrgaoUsuario orgao,
 			String requestScheme, String requestServerName,
-			String requestLocalPort, String urlPath, 
-			String jspServer, String nextURL, String botao, String lote) throws Exception {
+
+			String requestLocalPort, String urlPath, String jspServer,
+			String nextURL, String botao, String lote) throws Exception {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
 		Map attrs = new HashMap();
 		String chaveUrl = null;
-		String urlStr = null;	
-		
-		attrs.put("code_base_path", SigaExProperties.getAssinaturaCodebasePath());
-		attrs.put("messages_url_path", SigaExProperties.getAssinaturaMessagesURLPath());
-		attrs.put("policy_url_path", SigaExProperties.getAssinaturaPorlicyUrlPath());
-		
+		String urlStr = null;
+
+
+		attrs.put("code_base_path",
+				SigaExProperties.getAssinaturaCodebasePath());
+		attrs.put("messages_url_path",
+				SigaExProperties.getAssinaturaMessagesURLPath());
+		attrs.put("policy_url_path",
+				SigaExProperties.getAssinaturaPorlicyUrlPath());
+
+
 		attrs.put("request_scheme", requestScheme);
 		attrs.put("request_serverName", requestServerName);
 		attrs.put("request_localPort", requestLocalPort);
-		attrs.put("urlPath", urlPath);		
+		attrs.put("urlPath", urlPath);
 		attrs.put("jspServer", jspServer);
-		attrs.put("nextURL", nextURL);		
+		attrs.put("nextURL", nextURL);
 		attrs.put("botao", botao);
 		attrs.put("lote", lote);
 		attrs.put("nmMod", "macro extensaoAssinador");
 		attrs.put("template", "[@extensaoAssinador/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
-	
+
+
 	public static boolean contemTagHTML(String parametro) {
 		return parametro.split("\\<.*\\>").length > 1;
 	}
@@ -875,4 +954,5 @@ public class FuncoesEL {
 		}
 		return "";
 	}
+	
 }

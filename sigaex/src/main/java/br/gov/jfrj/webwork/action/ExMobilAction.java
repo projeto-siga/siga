@@ -31,7 +31,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -573,8 +572,18 @@ public class ExMobilAction extends
 	public Selecionavel selecionarVerificar(Selecionavel sel)
 			throws AplicacaoException {
 
-		// Se for uma via ou volume, retornar
+
+		
 		ExMobil mob = (ExMobil) sel;
+		
+		if (mob.doc() == null)
+			return null;
+		
+		//Edson: Se a via, volume ou documento inteiro tiver sido eliminado(a), não retorna nada.
+		if (mob.isEliminado())
+			return null;
+		
+		// Se for uma via ou volume, retornar
 		if (mob.isVia() || mob.isVolume())
 			return mob;
 
@@ -583,7 +592,7 @@ public class ExMobilAction extends
 			// de numero mais baixo que esteja com o titular.
 			//
 			for (ExMobil m : mob.doc().getExMobilSet()) {
-				if (m.isGeral())
+				if (m.isGeral() || m.isEliminado())
 					continue;
 				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
 				if (mov != null && mov.getResp() != null
@@ -595,7 +604,7 @@ public class ExMobilAction extends
 			// Se nao encontrar, tentar encontrar uma na lotacao do titular
 			//
 			for (ExMobil m : mob.doc().getExMobilSet()) {
-				if (m.isGeral())
+				if (m.isGeral() || m.isEliminado())
 					continue;
 				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
 				if (mov != null && mov.getLotaResp() != null
@@ -865,9 +874,9 @@ public class ExMobilAction extends
 
 	public String aMarcarTudo() throws Exception {
 		int aPartirDe = 0;
-		if (param("apartir") != null)
-			aPartirDe = paramInteger("apartir");
-		Ex.getInstance().getBL().marcarTudo(aPartirDe);
+
+
+		Ex.getInstance().getBL().marcarTudo();
 
 		return Action.SUCCESS;
 	}
@@ -1006,6 +1015,10 @@ public class ExMobilAction extends
 		
 		List<ExFormaDocumento> formasDoc = new ArrayList<ExFormaDocumento>();
 		formasDoc.addAll(bl.obterFormasDocumento(
+
+
+
+
 						bl.obterListaModelos(null, false, null, false, getTitular(), getLotaTitular(), false), 
 						null, tipoForma));
 		return formasDoc;
@@ -1504,4 +1517,5 @@ public class ExMobilAction extends
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
 	}
+	
 }

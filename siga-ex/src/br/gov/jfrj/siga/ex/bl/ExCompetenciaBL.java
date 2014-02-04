@@ -1606,6 +1606,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if(!mob.doc().isAssinado())
 			return false;
+		
+		if(mob.isSobrestado())
+			return false;
 
 		return podeMovimentar(titular, lotaTitular, mob)
 				&& getConf().podePorConfiguracao(titular, lotaTitular,

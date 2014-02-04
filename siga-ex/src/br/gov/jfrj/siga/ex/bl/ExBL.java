@@ -2851,6 +2851,10 @@ public class ExBL extends CpBL {
 			if(!mob.getDoc().isEletronico() && mobPai.getDoc().isEletronico())
 				throw new AplicacaoException(
 				 	"Não é possível juntar um documento físico a um documento eletrônico.");
+			
+			if(mobPai.isSobrestado())
+				throw new AplicacaoException(
+				 	"Não é possível juntar um documento a um volume sobrestado.");
 
 			// Verifica se o documeto pai já está apensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {

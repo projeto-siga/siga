@@ -3880,7 +3880,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer anotação", 0, e);
+			throw new AplicacaoException("Erro ao tentar redefinir nível de acesso", 0, e);
 		}
 		alimentaFilaIndexacao(doc, true);
 	}

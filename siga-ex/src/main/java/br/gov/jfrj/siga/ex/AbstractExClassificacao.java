@@ -23,9 +23,11 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 
 /**
@@ -47,6 +49,9 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte 
 
 	private Set<ExModelo> exModeloSet;
 	private Set<ExModelo> exModeloCriacaoViaSet;
+	
+	private ExClassificacao classificacaoInicial;
+	private Set<ExClassificacao> classificacoesPosteriores = new HashSet<ExClassificacao>(0);
 
 	/**
 	 * The cached hash code value for this instance. Settting to 0 triggers
@@ -207,6 +212,23 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte 
 
 	public Set<ExModelo> getExModeloCriacaoViaSet() {
 		return exModeloCriacaoViaSet;
+	}
+
+	public ExClassificacao getClassificacaoInicial() {
+		return classificacaoInicial;
+	}
+
+	public void setClassificacaoInicial(ExClassificacao classificacaoInicial) {
+		this.classificacaoInicial = classificacaoInicial;
+	}
+
+	public Set<ExClassificacao> getClassificacoesPosteriores() {
+		return classificacoesPosteriores;
+	}
+
+	public void setClassificacoesPosteriores(
+			Set<ExClassificacao> classificacoesPosteriores) {
+		this.classificacoesPosteriores = classificacoesPosteriores;
 	}
 
 }

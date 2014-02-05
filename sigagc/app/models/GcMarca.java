@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Comparator;
+
 import javax.persistence.ColumnResult;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -113,5 +115,15 @@ public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 	public String toString() {
 		return getDescricao();
 	}
+
+/*	@Override
+	public int compare(GcMarca o1, GcMarca o2) {
+		 int diff = o1.getDtIniMarca().compareTo(o2.getDtIniMarca());  
+	        if (diff == 0){  
+	            // equal on description
+	            diff = o1.getCpMarcador().getDescrMarcador().compareTo(o2.getCpMarcador().getDescrMarcador());   
+	        }  
+	        return diff;  
+	}*/
 
 }

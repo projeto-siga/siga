@@ -827,9 +827,9 @@ public class Application extends SigaApplication {
 	}
 
 	public static void removerAnexo(String sigla, Long id) throws Exception {
-		GcInformacao inf = GcInformacao.findBySigla(sigla);
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		GcMovimentacao movLocalizada = null;
-		for (GcMovimentacao mov : inf.movs) {
+		for (GcMovimentacao mov : informacao.movs) {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
@@ -838,13 +838,14 @@ public class Application extends SigaApplication {
 				break;
 			}
 		}
-		GcMovimentacao m = GcBL.movimentar(inf,
+		GcMovimentacao m = GcBL.movimentar(informacao,
 								GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 								null, null, null, null, null,
 								movLocalizada, null, null, null);
 		movLocalizada.movCanceladora = m;
-		GcBL.gravar(inf, idc(), titular(), lotaTitular());
-		editar(sigla, null, null, null);
+		GcBL.gravar(informacao, idc(), titular(), lotaTitular());
+		render(informacao);
+		//editar(sigla, null, null, null);
 	}
 	
 	public static void baixar(Long id) {

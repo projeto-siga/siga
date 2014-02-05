@@ -79,11 +79,13 @@ Informação'/}
 		$(document).ready(function(){
 			var cont = 0;
 			var regex = /\S/;
+			//Cria estilo para a imagens dentro de tabela
+			$(".gt-content-box td > img").css({"width":"200px","display": "block"});
 			//Cria estilo para a imagens 
-			$(".gt-content-box img").css({"border":"1px silver solid","width":"30%","padding":"0.2em"});
-			$(".gt-content-box img:even").css({"float":"right","margin":"5px 0 5px 10px"});
-			$(".gt-content-box img:odd").css({"float":"left","margin":"5px 10px 5px 0"});
-			$(".gt-content-box").css({"overflow":"hidden"})
+			$(".gt-content-box > p > img").css({"border":"1px silver solid","width":"30%","padding":"0.2em"});
+			$(".gt-content-box > p > img:even").css({"float":"right","margin":"5px 0 5px 10px"});
+			$(".gt-content-box > p > img:odd").css({"float":"left","margin":"5px 10px 5px 0"});
+			$(".gt-content-box").css({"overflow":"hidden"});
 			/*Identifica uma galeria de imagens (pelo menos duas imagens colocadas lado a lado (irmãs))*/
 			$(".gt-content-box > p").each(function(){	
 				$(this).has("img").contents().filter(function(){

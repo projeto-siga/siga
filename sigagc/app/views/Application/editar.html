@@ -102,7 +102,7 @@
 	<div class="gt-sidebar">
 		<!-- Sidebar Content -->
 		<div class="gt-sidebar-content">
-	<script>				
+<script type="text/javascript">			
 	function insertTextAtCursor(el, text) {
 	    var val = el.value, endIndex, range;
 	    if (typeof el.selectionStart != "undefined" && typeof el.selectionEnd != "undefined") {
@@ -118,31 +118,40 @@
 	    }
 	}
 	$(document).ready(function(){
-		  $("textarea[readonly]").css({"background-color":"transparent","border":"none","overflow":"auto","height":"50px","resize":"none"});
+		$("textarea[readonly]").css({"background-color":"transparent","border":"none","overflow":"auto","height":"50px","resize":"none"});
+		/*$("#ajax_arquivo > p > a").click(function(){
+			if (confirm('Confirma a remoção deste anexo?')) {
+				var id = $(this).attr('id');
+				var  siglaInfo = $("#codigoInf").val();
+				ReplaceInnerHTMLFromAjaxResponse("removerAnexo?sigla=" + siglaInfo + "&id=" + id,
+												null, $("#ajax_arquivo"));
+			}
+		});	*/
 	});
-	</script>
-
+</script>
 			<h3>Informações sobre o Preenchimento</h3>
-			<p>O campo "Título" sempre será acessível, independente do contro
+			<p>O campo "Título" sempre será acessível, independente do controle
 				de acesso selecionado.</p>
-
-			#{if informacao.contemArquivos}
-			<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no Texto</h3>
-			<p>Clique em uma imagem/arquivo abaixo para incluir uma
-				referência no texto.</p>
-			#{list items:informacao.movs, as:'m'} #{if m.tipo.id ==
-			models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO &&
-			m.movCanceladora == null}
-			<p>
-				<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
-				<a style="padding-right:5px;"
-					href="javascript: var frm = document.getElementById('frm'); insertTextAtCursor(frm.conteudo, '#{if m.arq.image}{{${m.arq.id}|${m.arq.titulo}}}#{/if}#{else}[[${m.arq.id}|${m.arq.titulo}]]#{/else}');">${m.arq.titulo}</a>
-				[ <img style="margin-bottom: -1px;width:9px;" src="/siga/css/famfamfam/icons/cross.png" /> 
-				<span class="gt-table-action-list">
-				<a href="javascript:if (confirm('Confirma a remoção deste anexo?')) location.href='@{Application.removerAnexo(informacao?.sigla, m.arq.id)}';">remover </a></span> ]
-			</p>
-			#{/if} #{/list} #{/if}
-
+			<div id="ajax_arquivo">
+				#{if informacao.contemArquivos}
+					<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no Texto</h3>
+					<p>Clique em uma imagem/arquivo abaixo para incluir uma
+						referência no texto.</p>
+					#{list items:informacao.movs, as:'m'} 
+					#{if m.tipo.id == models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO &&
+						m.movCanceladora == null}
+					<p>
+						<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
+						<a style="padding-right:5px;"
+							href="javascript: var frm = document.getElementById('frm'); insertTextAtCursor(frm.conteudo, '#{if m.arq.image}{{${m.arq.id}|${m.arq.titulo}}}#{/if}#{else}[[${m.arq.id}|${m.arq.titulo}]]#{/else}');">${m.arq.titulo}</a>
+						[ <img style="margin-bottom: -1px;width:9px;" src="/siga/css/famfamfam/icons/cross.png" /> 
+						<span class="gt-table-action-list">
+						<a href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
+									ReplaceInnerHTMLFromAjaxResponse('removerAnexo?sigla=${informacao?.sigla}&id=${m.arq.id}',
+														null, document.getElementById('ajax_arquivo'));">remover </a></span> ]
+					</p>
+				#{/if} #{/list} #{/if}
+			</div>
 			<h3 style="padding-top: 1em">Opções de Formatação do Texto</h3>
 			<p>
 				O conteúdo do campo "Texto" pode receber *{<a

@@ -2,6 +2,7 @@ package utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
@@ -287,6 +288,7 @@ public class GcBL {
 		SortedSet<GcMarca> setB = calcularMarcadores(inf);
 		Set<GcMarca> incluir = new TreeSet<GcMarca>();
 		Set<GcMarca> excluir = new TreeSet<GcMarca>();
+		
 		encaixar(setA, setB, incluir, excluir);
 		for (GcMarca i : incluir) {
 			if (i.inf.marcas == null) {
@@ -298,7 +300,6 @@ public class GcBL {
 			// dao().salvar(i);
 			i.save();
 			i.inf.marcas.add(i);
-			Collections.sort(inf.marcas);
 		}
 		for (GcMarca e : excluir) {
 			if (e.inf.marcas == null) {

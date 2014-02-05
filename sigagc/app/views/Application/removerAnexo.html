@@ -1,21 +1,18 @@
-<h3>
-	Conhecimentos Relacionados<a style="float: right;" title="Registrar um novo conhecimento"
-		href="@{Application.editar}?classificacao=${classificacao}"><img
-		src="/siga/css/famfamfam/icons/add.png">
-	</a>
-</h3>
-#{if conhecimentos != null} #{list items:conhecimentos,as:'conhecimento'}
-<p>
-	<b>*{<a href="@{Application.exibir}?id=${conhecimento[0]}">${conhecimento[1]}</a>}*
-		<a href="@{Application.exibir}?sigla=${conhecimento[3]}">${conhecimento[1]}</a>
-	:</b>
-	${conhecimento[2]}
-</p>
-<!--  -->
-#{/list} #{/if} #{else}
-<p>
-	Nenhum conhecimento relacionado registrado. Clique <a
-		href="@{Application.editar}?classificacao=${classificacao}">aqui</a>
-	para registrar um novo conhecimento.
-</p>
-#{/else}
+#{if informacao.contemArquivos}
+	<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no Texto</h3>
+	<p>Clique em uma imagem/arquivo abaixo para incluir uma
+		referência no texto.</p>
+	#{list items:informacao.movs, as:'m'} 
+	#{if m.tipo.id == models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO &&
+		m.movCanceladora == null}
+	<p>
+		<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
+		<a style="padding-right:5px;"
+			href="javascript: var frm = document.getElementById('frm'); insertTextAtCursor(frm.conteudo, '#{if m.arq.image}{{${m.arq.id}|${m.arq.titulo}}}#{/if}#{else}[[${m.arq.id}|${m.arq.titulo}]]#{/else}');">${m.arq.titulo}</a>
+		[ <img style="margin-bottom: -1px;width:9px;" src="/siga/css/famfamfam/icons/cross.png" /> 
+		<span class="gt-table-action-list">
+		<a href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
+					ReplaceInnerHTMLFromAjaxResponse('removerAnexo?sigla=${informacao?.sigla}&id=${m.arq.id}',
+										null, document.getElementById('ajax_arquivo'));">remover </a></span> ]
+	</p>
+#{/if} #{/list} #{/if}

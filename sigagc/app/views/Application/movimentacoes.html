@@ -38,9 +38,6 @@ title:'Movimentações'/}
 			</thead>
 			<tbody>
 				#{list items:informacao.movs, as:'m'}	
-					#{if m.movCanceladora} 
-						#{set classe: 'disabled' /}
-					#{/if}
 					#{if m.tipo.id == 13}
 							#{set descricao: m.arq?.titulo + " (" + m.arq?.mimeType + ")"  /}
 					#{/if}
@@ -54,6 +51,9 @@ title:'Movimentações'/}
 					#{else}
 						#{set descricao: '' /} #{set classe: '' /}
 					#{/else}
+					#{if m.movCanceladora != null} 
+						#{set classe: 'disabled' /}
+					#{/if}
 				<tr class="juntada ${classe}">
 					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
 					<td>${m.tipo.nome}</td>

@@ -174,7 +174,7 @@ public class WikiParser {
 						closeListsAndTables(); // close lists if any
 						sb.append(newRow ? "</td></tr>\n<tr><td>"
 								: (endTable ? "</td></tr></table>\n"
-										: "</td>\n<td>"));
+										: "</td>\n<td style=\"padding: 0.5em\">"));
 						if (endTable)
 							mediawikiTableLevel--;
 						pos = pp + 1;
@@ -290,7 +290,7 @@ public class WikiParser {
 				if (pp == wikiLength || wikiChars[pp] == '\n') { // yes, it's
 																	// start of
 																	// a table
-					sb.append("<table border=\"1\"><tr><td>");
+					sb.append("<table border=\"1\"><tr><td style=\"padding: 0.5em\">");
 					mediawikiTableLevel++;
 					pos = pp + 1;
 					return pp < wikiLength;
@@ -423,7 +423,7 @@ public class WikiParser {
 				break;
 			}
 
-			sb.append(th ? "<th" : "<td");
+			sb.append(th ? "<th" : "<td style=\"padding: 0.5em\"");
 			if (colspan > 1)
 				sb.append(" colspan=\"" + colspan + "\"");
 			sb.append('>');

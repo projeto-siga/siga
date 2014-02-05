@@ -22,6 +22,7 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
@@ -124,6 +125,15 @@ public class ExClassificacao extends AbstractExClassificacao implements
 
 	public String getDestinacoesFinais() {
 		return "";
+	}
+	
+	public ExClassificacao getClassificacaoAtual() {
+		ExClassificacao classIni = getClassificacaoInicial();
+		Set<ExClassificacao> setClassificacoes = classIni.getClassificacoesPosteriores();
+		if (setClassificacoes != null)
+			for (ExClassificacao c : setClassificacoes)
+				return c;
+		return this;
 	}
 
 	/**

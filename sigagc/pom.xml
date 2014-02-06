@@ -242,6 +242,27 @@
                 <fork>true</fork>
             </configuration>
         </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <configuration>
+              <target>
+               <copy tofile="../target/${artifactId}.war">
+                  <fileset dir="${project.basedir}/target">
+                    <include name="**/*.war"/>
+                  </fileset>
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
         </plugins>
 

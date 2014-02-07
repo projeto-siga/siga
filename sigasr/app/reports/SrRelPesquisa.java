@@ -109,6 +109,8 @@ public class SrRelPesquisa extends RelatorioTemplate {
 		if (parametros.get("lotacao").equals("")) {
 			if (parametros.get("local").equals("0")) {
 					SortedSet<String> set = new TreeSet<String>();
+					SortedSet<String> setT = new TreeSet<String>();
+					SortedSet<String> setA = new TreeSet<String>();
 					TreeMap<String, Double> map = new TreeMap<String, Double>();
 					TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
 					
@@ -118,7 +120,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
-						+ "and resp.pergunta = 166 "
+						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 						+ "group by sol.local.nomeComplexo" )
@@ -143,7 +145,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and sol.local.nomeComplexo = '" + locais.toString() + "' "
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and mov.tipoMov =16 "
-							+ "and resp.pergunta = 166 "
+							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 							+ "and resp.descrPergunta in ('4','5') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
@@ -156,7 +158,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and sol.local.nomeComplexo = '" + locais.toString() + "' "
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and mov.tipoMov =16 "
-							+ "and resp.pergunta = 166 "
+							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 							+ "and resp.descrPergunta in ('1','2') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
@@ -178,11 +180,11 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							set.add(local);
 							map.put(chave(local,"abaixo"), Double.valueOf(totalabaixo));
 						}
-						for (String s : set) {
-							d.add(s);
-							percTotal = maptotais.get(s);
-							if (map.containsKey(chave(s, "acima"))) {
-								atendAcMedia = map.get(chave(s, "acima"));
+						//for (String s : set) {
+							d.add(locais);
+							percTotal = maptotais.get(locais);
+							if (map.containsKey(chave(locais, "acima"))) {
+								atendAcMedia = map.get(chave(locais, "acima"));
 								d.add(atendAcMedia);
 								d.add((atendAcMedia/percTotal)*100);
 							} else 	{
@@ -190,8 +192,8 @@ public class SrRelPesquisa extends RelatorioTemplate {
 								d.add(0D);
 							}
 							
-							if (map.containsKey(chave(s, "abaixo"))) {
-								atendAbMedia = map.get(chave(s, "abaixo"));
+							if (map.containsKey(chave(locais, "abaixo"))) {
+								atendAbMedia = map.get(chave(locais, "abaixo"));
 								d.add(atendAbMedia);
 								d.add((atendAbMedia/percTotal)*100);
 							} else 	{
@@ -199,7 +201,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 								d.add(0D);
 							}
 						} // final do for para o conjunto
-					}	// fim do for(String locais : set)
+					//}	// fim do for(String locais : set)
 				} else {	//else do if parametros.get("local").equals("0"), ou seja, local = complexo.
 						Long atendTotal = SrSolicitacao.find(
 							"select count(resp.descrPergunta) " 
@@ -208,7 +210,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and sol.local = '" + parametros.get("local") + "' "
 							+ "and mov.tipoMov =16 "
-							+ "and resp.pergunta = 166 "
+							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 							+ "group by sol.local.nomeComplexo" )
@@ -220,7 +222,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and sol.local = '" + parametros.get("local") + "' "
 							+ "and mov.tipoMov =16 "
-							+ "and resp.pergunta = 166 "
+							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 							+ "and resp.descrPergunta in ('4','5') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
@@ -233,7 +235,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and sol.local = '" + parametros.get("local") + "' "
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and mov.tipoMov =16 "
-							+ "and resp.pergunta = 166 "
+							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 							+ "and resp.descrPergunta in ('1','2') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
@@ -266,7 +268,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					+ "and mov.idMovimentacao = resp.movimentacao "
 					+ "and mov.lotaAtendente in (" + listalotacoes + ") "
 					+ "and mov.tipoMov =16 "
-					+ "and resp.pergunta = 166 "
+					+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 					+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 					+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 					+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
@@ -299,7 +301,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
-						+ "and resp.pergunta = 166 "
+						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 						+ "and resp.descrPergunta in ('4','5') "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
@@ -310,10 +312,9 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
-						//+ "and sol.local.nomeComplexo = '" + atendentes.toString() + "' "
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
-						+ "and resp.pergunta = 166 "
+						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 						+ "and resp.descrPergunta in ('1','2') "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
@@ -383,7 +384,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					+ "and mov.lotaAtendente in (" + listalotacoes + ") "
 					+ "and sol.local = '" + parametros.get("local") + "' "
 					+ "and mov.tipoMov =16 "
-					+ "and resp.pergunta = 166 "
+					+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 					+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 					+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 					+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
@@ -416,7 +417,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						+ "and sol.local.nomeComplexo = '" + atendentes.toString() + "' "
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
-						+ "and resp.pergunta = 166 "
+						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 						+ "and resp.descrPergunta in ('4','5') "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
@@ -430,7 +431,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						+ "and sol.local.nomeComplexo = '" + atendentes.toString() + "' "
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
-						+ "and resp.pergunta = 166 "
+						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 						+ "and resp.descrPergunta in ('1','2') "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "

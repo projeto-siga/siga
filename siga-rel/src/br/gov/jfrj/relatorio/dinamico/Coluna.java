@@ -8,6 +8,15 @@ public class Coluna {
 	private boolean agrupado;
 	private boolean hyperlink;
 	private Class tipo;
+	private String padrao;
+
+	public String getPadrao() {
+		return padrao;
+	}
+
+	public void setPadrao(String padrao) {
+		this.padrao = padrao;
+	}
 
 	public String getTitulo() {
 		return titulo;
@@ -64,6 +73,5 @@ public class Coluna {
 	public void setTipo(Class tipo) {
 		this.tipo = tipo;
 	}
-
 
 }

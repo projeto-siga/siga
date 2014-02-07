@@ -71,10 +71,10 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 		this.setTitle("Relatório de Documentos em Setores Subordinados");
 		this.addColuna("Setor", 0, RelatorioRapido.ESQUERDA, true);
-		this.addColuna("Documento", 25, RelatorioRapido.ESQUERDA,  true);
+		this.addColuna("Documento", 30, RelatorioRapido.ESQUERDA,  true, true);
 		this.addColuna("Descrição", 50, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Responsável", 30, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Situação", 30, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Responsável", 45, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Situação", 40, RelatorioRapido.ESQUERDA, false);
 		return this;
 
 	}

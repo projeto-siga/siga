@@ -1,4 +1,4 @@
-#Wed Dec 18 16:26:17 BRST 2013
+#Thu Feb 06 12:19:42 BRST 2014
 eclipse.preferences.version=1
 encoding//app/controllers/Application.java=UTF-8
 encoding//app/controllers/Bootstrap.java=UTF-8
@@ -33,6 +33,7 @@ encoding//app/views/Application/listarPesquisa.html=UTF-8
 encoding//app/views/Application/listarTipoAtributo.html=UTF-8
 encoding//app/views/Application/menu.html=UTF-8
 encoding//app/views/Application/relLocal.html=UTF-8
+encoding//app/views/Application/relPesquisa.html=UTF-8
 encoding//app/views/Application/relPrazo.html=UTF-8
 encoding//app/views/Application/relPrazoDetail.html=UTF-8
 encoding//app/views/Application/relSolicitacoes.html=UTF-8

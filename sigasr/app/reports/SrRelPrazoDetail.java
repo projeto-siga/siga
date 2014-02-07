@@ -110,15 +110,19 @@ public class SrRelPrazoDetail extends RelatorioTemplate {
 		}
 		
 		if (parametros.get("local").equals("0")) {
-			List<SrSolicitacao> lista = SrSolicitacao.find(
+				List<SrSolicitacao> lista = SrSolicitacao.find(
 					"select sol, mov " +
 					"from SrSolicitacao sol, SrMovimentacao mov " +
-					"where sol.idSolicitacao = mov.solicitacao " +
-					"and mov.lotaAtendente in (" + listalotacoes + ") " 
-					+ "and mov.dtIniMov = (select max(mov2.dtIniMov) " 
-					+ "	from SrMovimentacao mov2 where mov2.solicitacao = mov.solicitacao "
-					+ " and mov2.tipoMov = 7 " 
-					+ " and mov2.movCanceladora is null) "
+					"where sol.idSolicitacao = mov.solicitacao " 
+					+ "and mov.lotaAtendente in (" + listalotacoes + ") "
+					+ "and mov.dtIniMov = (select max(movult.dtIniMov) " 
+					+ "from SrMovimentacao movult " 
+					+ "where movult.solicitacao = mov.solicitacao "
+					+ " and movult.tipoMov = 7) "
+					+ "and not exists (select 1 from SrMovimentacao movfec " 
+					+	"where movfec.solicitacao = mov.solicitacao " 
+					+	"and movfec.dtIniMov > mov.dtIniMov " 
+					+	"and movfec.tipoMov <> 14) "
 					+ "and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " 
 					+ "and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
 				Iterator it = lista.listIterator(); 
@@ -132,47 +136,62 @@ public class SrRelPrazoDetail extends RelatorioTemplate {
 						DateTime end1 = new DateTime();
 				if (startemp.getHourOfDay() < 9) {
 						start1 = new DateTime (startemp.getYear(),startemp.getMonthOfYear(),startemp.getDayOfMonth()+1,10,0,0);
-					} else if (startemp.getHourOfDay() >= 18) {
+				} else if (startemp.getHourOfDay() >= 18) {
 						start1 = new DateTime (startemp.getYear(),startemp.getMonthOfYear(),startemp.getDayOfMonth()+1,10,0,0);							
-					} else start1 = startemp;
-					if (endtemp.getHourOfDay() < 9) {
+				} else start1 = startemp;
+				if (endtemp.getHourOfDay() < 9) {
 						end1 = new DateTime (endtemp.getYear(),endtemp.getMonthOfYear(),endtemp.getDayOfMonth()+1,10,0,0);
-					} else if (endtemp.getHourOfDay() >= 18) {
+				} else if (endtemp.getHourOfDay() >= 18) {
 							end1 = new DateTime (endtemp.getYear(),endtemp.getMonthOfYear(),endtemp.getDayOfMonth()+1,10,0,0);							
-					} else end1 = endtemp;
-					int dias =  Days.daysBetween(start1.toDateMidnight(), end1.toDateMidnight()).getDays();
-					HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(dataDosFeriados);
-					LocalDateKitCalculatorsFactory.getDefaultInstance().registerHolidays("BR", calendarioDeFeriados);
-					DateCalculator calendario =  LocalDateKitCalculatorsFactory.
-					  									getDefaultInstance().
-					   									getDateCalculator("BR", HolidayHandlerType.FORWARD);
-					int diasNaoUteis = 0;
-					int totalHorasTrabalhadas = 0;  
-					BigDecimal totalMinutosTrabalhados = new BigDecimal(0.0);
-					LocalDate dataInicialTemporaria = new LocalDate(start1);
-					LocalDate dataFinalTemporaria = new LocalDate(end1);
+				} else end1 = endtemp;
+				int dias =  Days.daysBetween(start1.toDateMidnight(), end1.toDateMidnight()).getDays();
+				HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(dataDosFeriados);
+				LocalDateKitCalculatorsFactory.getDefaultInstance().registerHolidays("BR", calendarioDeFeriados);
+				DateCalculator calendario =  LocalDateKitCalculatorsFactory.
+				  									getDefaultInstance().
+				   									getDateCalculator("BR", HolidayHandlerType.FORWARD);
+				int diasNaoUteis = 0;
+				int totalHorasTrabalhadas = 0;  
+				BigDecimal totalMinutosTrabalhados = new BigDecimal(0.0);
+					DateTime dataInicialTemporaria = new DateTime(start1);
+					DateTime dataFinalTemporaria = new DateTime(end1);
 					DateTime dtinitemp = new DateTime(start1);
 					DateTime dtendtemp = new DateTime(end1);
 					int i = 1;
 					while (!dataInicialTemporaria.isAfter(dataFinalTemporaria)) {
-					       if (calendario.isNonWorkingDay(dataInicialTemporaria)) {
-					           diasNaoUteis++;
-					       } else {
-					      	if (i==1) {
-					      		dtinitemp = new DateTime(start1);
-					       		dtendtemp = new DateTime(dataInicialTemporaria.getYear(), dataInicialTemporaria.getMonthOfYear(), dataInicialTemporaria.getDayOfMonth(), 18, 0, 0);
-					       	} else if (i>dias) {
-					       		dtinitemp = new DateTime(dataInicialTemporaria.getYear(), dataInicialTemporaria.getMonthOfYear(), dataInicialTemporaria.getDayOfMonth(), 9, 0, 0);
-				        		dtendtemp = new DateTime(end1);
-				        	} else {
-				        		dtinitemp = new DateTime(dataInicialTemporaria.getYear(), dataInicialTemporaria.getMonthOfYear(), dataInicialTemporaria.getDayOfMonth(), 9, 0, 0);
-				        		dtendtemp = new DateTime(dataInicialTemporaria.getYear(), dataInicialTemporaria.getMonthOfYear(), dataInicialTemporaria.getDayOfMonth(), 18, 0, 0);
-				        	}
-				           	totalHorasTrabalhadas += new Period(dtinitemp, dtendtemp).getHours();
-				        	totalMinutosTrabalhados = new BigDecimal(Minutes.minutesBetween(dtinitemp, dtendtemp).getMinutes()).add(totalMinutosTrabalhados);
-					       }
-		                   dataInicialTemporaria = dataInicialTemporaria.plusDays(1);
-						   i++;
+						if (calendario.isNonWorkingDay(dataInicialTemporaria.toLocalDate())) {
+							diasNaoUteis++;
+						} else {
+							if (i == dias) {
+								dtinitemp = new DateTime(dataInicialTemporaria);
+								dtendtemp = new DateTime(
+										dataInicialTemporaria.getYear(),
+										dataInicialTemporaria.getMonthOfYear(),
+										dataInicialTemporaria.getDayOfMonth(), 18,
+										0, 0);
+							} else if (i > dias) {
+								dtinitemp = new DateTime(dataInicialTemporaria);
+								dtendtemp = new DateTime(end1);
+							} else {
+								dtinitemp = new DateTime(dataInicialTemporaria);
+								dtendtemp = new DateTime(
+										dataInicialTemporaria.getYear(),
+										dataInicialTemporaria.getMonthOfYear(),
+										dataInicialTemporaria.getDayOfMonth(), 18,
+										0, 0);
+							}
+							totalHorasTrabalhadas += new Period(dtinitemp,
+									dtendtemp).getHours();
+							totalMinutosTrabalhados = new BigDecimal(Minutes
+									.minutesBetween(dtinitemp, dtendtemp)
+									.getMinutes()).add(totalMinutosTrabalhados);
+						}
+						dataInicialTemporaria = new DateTime(
+								dataInicialTemporaria.getYear(),
+								dataInicialTemporaria.getMonthOfYear(),
+								dataInicialTemporaria.getDayOfMonth(), 9,
+								0, 0).plusDays(1); 
+						i++;
 					}
 					BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(new BigDecimal("60"), 2, RoundingMode.HALF_UP);
 					d.add(sol.getCodigo().toString());
@@ -202,12 +221,16 @@ public class SrRelPrazoDetail extends RelatorioTemplate {
 					"select sol, mov " +
 					"from SrSolicitacao sol, SrMovimentacao mov " +
 					"where sol.idSolicitacao = mov.solicitacao " +
-					"and mov.lotaAtendente in (" + listalotacoes + ") " +
-					"and sol.local = " + parametros.get("local") + " " 
-					+ "and mov.dtIniMov = (select max(mov2.dtIniMov) " 
-					+ "	from SrMovimentacao mov2 where mov2.solicitacao = mov.solicitacao "
-					+ " and mov2.tipoMov = 7 " 
-					+ " and mov2.movCanceladora is null) "
+					"and mov.lotaAtendente in (" + listalotacoes + ") " 
+					+ "and sol.local = " + parametros.get("local") + " " 
+					+ "and mov.dtIniMov = (select max(movult.dtIniMov) " 
+					+ "from SrMovimentacao movult " 
+					+ "where movult.solicitacao = mov.solicitacao "
+					+ " and movult.tipoMov = 7) "
+					+ "and not exists (select 1 from SrMovimentacao movfec " 
+					+	"where movfec.solicitacao = mov.solicitacao " 
+					+	"and movfec.dtIniMov > mov.dtIniMov " 
+					+	"and movfec.tipoMov <> 14) "
 					+ "and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " 
 					+ "and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
 				Iterator it = lista.listIterator(); 
@@ -238,30 +261,45 @@ public class SrRelPrazoDetail extends RelatorioTemplate {
 					int diasNaoUteis = 0;
 					int totalHorasTrabalhadas = 0;  
 					BigDecimal totalMinutosTrabalhados = new BigDecimal(0.0);
-					LocalDate dataInicialTemporaria = new LocalDate(start1);
-					LocalDate dataFinalTemporaria = new LocalDate(end1);
+					DateTime dataInicialTemporaria = new DateTime(start1);
+					DateTime dataFinalTemporaria = new DateTime(end1);
 					DateTime dtinitemp = new DateTime(start1);
 					DateTime dtendtemp = new DateTime(end1);
 					int i = 1;
 					while (!dataInicialTemporaria.isAfter(dataFinalTemporaria)) {
-					       if (calendario.isNonWorkingDay(dataInicialTemporaria)) {
-					           diasNaoUteis++;
-					       } else {
-					      	if (i==1) {
-					      		dtinitemp = new DateTime(start1);
-					       		dtendtemp = new DateTime(dataInicialTemporaria.getYear(), dataInicialTemporaria.getMonthOfYear(), dataInicialTemporaria.getDayOfMonth(), 18, 0, 0);
-					       	} else if (i>dias) {
-					       		dtinitemp = new DateTime(dataInicialTemporaria.getYear(), dataInicialTemporaria.getMonthOfYear(), dataInicialTemporaria.getDayOfMonth(), 9, 0, 0);
-				        		dtendtemp = new DateTime(end1);
-				        	} else {
-				        		dtinitemp = new DateTime(dataInicialTemporaria.getYear(), dataInicialTemporaria.getMonthOfYear(), dataInicialTemporaria.getDayOfMonth(), 9, 0, 0);
-				        		dtendtemp = new DateTime(dataInicialTemporaria.getYear(), dataInicialTemporaria.getMonthOfYear(), dataInicialTemporaria.getDayOfMonth(), 18, 0, 0);
-				        	}
-				           	totalHorasTrabalhadas += new Period(dtinitemp, dtendtemp).getHours();
-				        	totalMinutosTrabalhados = new BigDecimal(Minutes.minutesBetween(dtinitemp, dtendtemp).getMinutes()).add(totalMinutosTrabalhados);
-					       }
-		                   dataInicialTemporaria = dataInicialTemporaria.plusDays(1);
-						   i++;
+						if (calendario.isNonWorkingDay(dataInicialTemporaria.toLocalDate())) {
+							diasNaoUteis++;
+						} else {
+							if (i == dias) {
+								dtinitemp = new DateTime(dataInicialTemporaria);
+								dtendtemp = new DateTime(
+										dataInicialTemporaria.getYear(),
+										dataInicialTemporaria.getMonthOfYear(),
+										dataInicialTemporaria.getDayOfMonth(), 18,
+										0, 0);
+							} else if (i > dias) {
+								dtinitemp = new DateTime(dataInicialTemporaria);
+								dtendtemp = new DateTime(end1);
+							} else {
+								dtinitemp = new DateTime(dataInicialTemporaria);
+								dtendtemp = new DateTime(
+										dataInicialTemporaria.getYear(),
+										dataInicialTemporaria.getMonthOfYear(),
+										dataInicialTemporaria.getDayOfMonth(), 18,
+										0, 0);
+							}
+							totalHorasTrabalhadas += new Period(dtinitemp,
+									dtendtemp).getHours();
+							totalMinutosTrabalhados = new BigDecimal(Minutes
+									.minutesBetween(dtinitemp, dtendtemp)
+									.getMinutes()).add(totalMinutosTrabalhados);
+						}
+						dataInicialTemporaria = new DateTime(
+								dataInicialTemporaria.getYear(),
+								dataInicialTemporaria.getMonthOfYear(),
+								dataInicialTemporaria.getDayOfMonth(), 9,
+								0, 0).plusDays(1); 
+						i++;
 					}
 					BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(new BigDecimal("60"), 2, RoundingMode.HALF_UP);
 					d.add(sol.getCodigo().toString());

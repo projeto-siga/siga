@@ -182,9 +182,6 @@ public class RelOrgao extends RelatorioTemplate {
 		}
 
 		}
-		
-	
-
 		return d;
 	}
 
@@ -203,7 +200,7 @@ public class RelOrgao extends RelatorioTemplate {
 		if (l > 0)
 			d.add(l.toString());
 		else
-			d.add("");
+			d.add("-");
 	}
 
 	private String chave(String lotacao, String tipodoc, String tipomov) {

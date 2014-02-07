@@ -2,7 +2,7 @@
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
- * 
+ *  * 
  *     SIGA is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
@@ -20,6 +20,7 @@ package br.gov.jfrj.relatorio.dinamico;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +33,15 @@ import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 //import org.hibernate.Query;
 
 import ar.com.fdvs.dj.domain.DJCalculation;
+import ar.com.fdvs.dj.domain.DJCrosstab;
+import ar.com.fdvs.dj.domain.DJCrosstabColumn;
+import ar.com.fdvs.dj.domain.DJCrosstabRow;
 import ar.com.fdvs.dj.domain.Style;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
+import ar.com.fdvs.dj.domain.builders.CrosstabBuilder;
+import ar.com.fdvs.dj.domain.builders.CrosstabColumnBuilder;
+import ar.com.fdvs.dj.domain.builders.CrosstabRowBuilder;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.builders.GroupBuilder;
 import ar.com.fdvs.dj.domain.constants.GroupLayout;
@@ -66,9 +73,14 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 
 	private List<Coluna> colunas;
 	private Coluna colunaTotal;
+	private Coluna colunaPercTotal;
 	
 	public void setColunaTotal (Coluna colunaTotal){
 		this.colunaTotal = colunaTotal;
+	}
+	
+	public void setColunaPercTotal (Coluna colunaPercTotal){
+		this.colunaPercTotal = colunaPercTotal;
 	}
 	
 	private int porcento;
@@ -153,14 +165,17 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 		int i = 0;
 		
 		AbstractColumn colunaTotalJasper = null;
-
+		AbstractColumn colunaPercTotalJasper = null;
+		
+		HashMap<Coluna, AbstractColumn> mapa = new HashMap<Coluna, AbstractColumn>();
+		
 		for (Iterator iterator = colunas.iterator(); iterator.hasNext();) {
-			Coluna c = (Coluna) iterator.next();
+			Coluna coluna = (Coluna) iterator.next();
 
 			try {
 				Style estiloAlinhamento = copiarEstilo(estiloColuna);
 				HorizontalAlign alinhamento = null;
-				switch (c.getAlinhamento()) {
+				switch (coluna.getAlinhamento()) {
 				case ESQUERDA:
 					alinhamento = HorizontalAlign.LEFT;
 					break;
@@ -173,40 +188,45 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 				}
 
 				estiloAlinhamento.setHorizontalAlign(alinhamento);
-
-				AbstractColumn coluna = ColumnBuilder
-						.getInstance()
-						.setTitle(c.getTitulo())
-						.setWidth(
-								c.getTamanho()
-									* (this.options.getPrintableWidth() / 100))
-						.setColumnProperty(
-								IConstantes.PREFIXO_COLUNA_PROPERTY + i,
-								c.getTipo().getName())
-						.setStyle(
-								estiloAlinhamento)
-								.build();
-
-				if (colunaTotal == c)
-					colunaTotalJasper = coluna;
+	
+				AbstractColumn	abstractColumn = ColumnBuilder
+					.getInstance()
+					.setTitle(coluna.getTitulo())
+					.setWidth(
+							coluna.getTamanho()
+								* (this.options.getPrintableWidth() / 100))
+					.setColumnProperty(
+							IConstantes.PREFIXO_COLUNA_PROPERTY + i,
+							coluna.getTipo().getName())
+					.setPattern(coluna.getPadrao())	
+					.setStyle(estiloAlinhamento)
+					.build();
+			
+				mapa.put(coluna, abstractColumn);
+								
+				if (colunaTotal == coluna)
+					colunaTotalJasper = abstractColumn;
 				
-				if (c.isHyperlink()) {
+				if (colunaPercTotal == coluna) 
+					colunaPercTotalJasper = abstractColumn;
+				
+				if (coluna.isHyperlink()) {
 					this.addField(IConstantes.PREFIXO_HYPERLINK_PARAMETER + i,
 							String.class.getName());
-					((SimpleColumn) coluna)
+					((SimpleColumn) abstractColumn)
 							.getColumnProperty()
 							.addFieldProperty(
 									IConstantes.PREFIXO_HYPERLINK_PARAMETER + i,
 									String.class.getName());
 				}
 
-				this.addColumn(coluna);
+				this.addColumn(abstractColumn);
 
-				if (c.isAgrupado()) {
-					coluna.setStyle(estiloTituloGrupo);
+				if (coluna.isAgrupado()) {
+					abstractColumn.setStyle(estiloTituloGrupo);
 					GroupBuilder grupoBuilder = new GroupBuilder();
 					DJGroup grupo = grupoBuilder.setCriteriaColumn(
-							(PropertyColumn) coluna).setGroupLayout(
+							(PropertyColumn) abstractColumn).setGroupLayout(
 							GroupLayout.VALUE_IN_HEADER).build();
 					this.addGroup(grupo);
 					this.setRightMargin(10 * porcento);
@@ -219,6 +239,10 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 		if (colunaTotal != null){
 			addGlobalFooterVariable(colunaTotalJasper, DJCalculation.SUM);
 			setGrandTotalLegend("Total de Solicitações:");
+		}
+		if (colunaPercTotal != null){
+			addGlobalFooterVariable(colunaPercTotalJasper, DJCalculation.SUM);
+			//setGrandTotalLegend("Total de Solicitações:");
 		}
 	}
 

@@ -67,6 +67,9 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
+import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
+import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
+import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
@@ -78,8 +81,6 @@ import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -314,24 +315,6 @@ public class ExBL extends CpBL {
 			mar.setDpLotacaoIni(lota.getLotacaoInicial());
 		mar.setDtIniMarca(dt);
 		set.add(mar);
-	}
-
-	public void main(String args[]) throws Exception {
-
-		String classificacao = "00.01.01.01";
-
-		final Pattern p2 = Pattern
-				.compile("^([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])");
-
-		Matcher m = p2.matcher(classificacao);
-		boolean a = m.find();
-
-		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
-		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
-
-		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg, "");
-		marcarTudo(90000);
 	}
 
 	public void marcar(ExDocumento doc) throws Exception {

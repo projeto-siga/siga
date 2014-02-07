@@ -1603,7 +1603,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.salvar(pess, lota);
 		for (SrPergunta pergunta : this.getPesquisaDesignada().perguntaSet){
 			for (SrResposta resp : respostas){
-				if (pergunta.idPergunta == resp.pergunta.idPergunta) {
+				if (pergunta.idPergunta.equals(resp.pergunta.idPergunta)) {
 					SrResposta resposta = new SrResposta();
 					resposta.pergunta = pergunta;
 					resposta.descrPergunta = resp.descrPergunta;

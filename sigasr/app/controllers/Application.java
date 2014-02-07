@@ -50,6 +50,7 @@ import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import reports.SrRelLocal;
+import reports.SrRelPesquisa;
 import reports.SrRelPrazo;
 import reports.SrRelPrazoDetail;
 import reports.SrRelSolicitacoes;
@@ -1032,6 +1033,18 @@ public class Application extends SigaApplication {
 										.getIdOrgaoUsu()).getResultList();
 		render(locais);
 	}
+	
+	public static void relPesquisa() throws Exception {
+		assertAcesso("REL:Relatorio");
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		locais = JPA
+				.em()
+				.createQuery(
+						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+								+ lotaTitular().getOrgaoUsuario()
+										.getIdOrgaoUsu()).getResultList();
+		render(locais);
+	}
 
 	public static void grelSolicitacoes(String secaoUsuario, String lotacao,
 			String situacao, String dtIni, String dtFim) throws Exception {
@@ -1112,7 +1125,8 @@ public class Application extends SigaApplication {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		//if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		parametros.put("lotacao", lotacao);
 		parametros.put("local", local);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
@@ -1150,6 +1164,30 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório Detalhado de Prazos", pdf.length,
+				"application/pdf", true);
+	}
+	
+	public static void grelPesquisa(String secaoUsuario, String lotacao,
+			String local, String dtIni, String dtFim) throws Exception {
+
+		assertAcesso("REL:Relatorio");
+
+		Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("lotacao", lotacao);
+		parametros.put("local", local);
+		parametros.put("dtIni", dtIni);
+		parametros.put("dtFim", dtFim);
+
+		SrRelPesquisa rel = new SrRelPesquisa(parametros);
+
+		rel.gerar();
+
+		byte[] pdf = rel.getRelatorioPDF();
+		InputStream is = new ByteArrayInputStream(pdf);
+
+		renderBinary(is, "Relatório de Indíces de Satisfação", pdf.length,
 				"application/pdf", true);
 	}
 

@@ -174,8 +174,7 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 	 */
 	public JasperPrint getRelatorioJasperPrint() throws JRException {
 		dr = this.build();
-	    
-//		return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, parametros);
+	    //return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, parametros);
 		return DynamicJasperHelper.generateJasperPrint(dr, new LayoutRelatorioDinamico(), ds, parametros);
 		
 	}

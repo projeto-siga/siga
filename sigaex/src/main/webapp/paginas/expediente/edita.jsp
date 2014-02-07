@@ -594,7 +594,7 @@ function tryAgainAutoSave(){
 						<input type="hidden" name="campos" value="classificacaoSel.id" />
 						<td colspan="3"><siga:span id="classificacao"
 							depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}" modulo="siga"
+							<siga:selecao desativar="${desativarClassif}" modulo="sigaex"
 								propriedade="classificacao" tema="simple" reler="sim" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>

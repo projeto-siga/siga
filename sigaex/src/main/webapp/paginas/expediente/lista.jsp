@@ -920,7 +920,7 @@ function limpaCampos()
 										</tr>
 
 										<siga:selecao titulo="Classificação:"
-											propriedade="classificacao" modulo="siga"/>
+											propriedade="classificacao" modulo="sigaex"/>
 
 										<ww:textfield label="Descrição" name="descrDocumento"
 											size="80" />

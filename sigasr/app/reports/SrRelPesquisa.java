@@ -273,6 +273,8 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					.fetch();
 				
 				SortedSet<String> set = new TreeSet<String>();
+				SortedSet<String> setT = new TreeSet<String>();
+				SortedSet<String> setA = new TreeSet<String>();
 				TreeMap<String, Double> map = new TreeMap<String, Double>();
 				TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
 								
@@ -282,11 +284,12 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					String complexo = (String) obj[0];
 					String lotaAtendente = (String) obj[1];
 					Long total_local = (Long) obj[2];
-					set.add(lotaAtendente);
+					setT.add(complexo);
+					setA.add(lotaAtendente);
 					maptotais.put(chave(complexo, lotaAtendente),total_local);
 				}	
 				
-				for (String locais : set) {
+				for (String atendentes : setT) {
 					atendAcMedia = 0;
 					atendAbMedia = 0;
 					List<SrSolicitacao>  atendAcimaMedia = SrSolicitacao.find(
@@ -307,6 +310,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
+						//+ "and sol.local.nomeComplexo = '" + atendentes.toString() + "' "
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
 						+ "and resp.pergunta = 166 "
@@ -321,7 +325,8 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						local = (String) obj[0];
 						String lotaAtendente = (String) obj[1];
 						Long totalacima= (Long) obj[2];
-						set.add(lotaAtendente);
+						setT.add(local);
+						setA.add(lotaAtendente);
 						map.put(chave(local + lotaAtendente,"acima"),Double.valueOf(totalacima));
 					}
 					Iterator itab = atendAbaixoMedia.listIterator();
@@ -330,33 +335,152 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						local = (String) obj[0];
 						String lotaAtendente = (String) obj[1];
 						Long totalabaixo= (Long) obj[2];
-						set.add(lotaAtendente);
+						setT.add(local);
+						setA.add(lotaAtendente);
 						map.put(chave(local + lotaAtendente,"abaixo"), Double.valueOf(totalabaixo));
 					}
-					for (String s : set) {
-						d.add(s);
-						percTotal = maptotais.get(s);
-						if (map.containsKey(chave(s, "acima"))) {
-							atendAcMedia = map.get(chave(s, "acima"));
-							d.add(atendAcMedia);
-							d.add((atendAcMedia/percTotal)*100);
-						} else 	{
-							d.add(0D);
-							d.add(0D);
-						}
-						
-						if (map.containsKey(chave(s, "abaixo"))) {
-							atendAbMedia = map.get(chave(s, "abaixo"));
-							d.add(atendAbMedia);
-							d.add((atendAbMedia/percTotal)*100);
-						} else 	{
-							d.add(0D);
-							d.add(0D);
-						}
-					} // final do for para o conjunto
-				}	// fim do for(String locais : set)
-			} 
-		} //fim do else referente ao if parametros.get("lotacao") preenchido 
+					//for (String compl: setT) {
+						for (String s : setA) {
+							d.add(atendentes + " - " + s);
+							percTotal = maptotais.get(atendentes+s);
+							if (map.containsKey(chave(atendentes+s, "acima"))) {
+								atendAcMedia = map.get(chave(atendentes+s, "acima"));
+								d.add(atendAcMedia);
+								d.add((atendAcMedia/percTotal)*100);
+							} else 	{
+								d.add(0D);
+								d.add(0D);
+							}
+							
+							if (map.containsKey(chave(atendentes+s, "abaixo"))) {
+								atendAbMedia = map.get(chave(atendentes+s, "abaixo"));
+								d.add(atendAbMedia);
+								d.add((atendAbMedia/percTotal)*100);
+							} else 	{
+								d.add(0D);
+								d.add(0D);
+							}
+						} // final do for para o conjunto
+				}// fim do for(String atendentes : setT)
+			} //fim do else referente ao if parametros.get("lotacao") preenchido - local = Todos 
+			  else { //inicio do else if parametros.get("lotacao") preenchido - local preenchido
+				String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni "
+					+ "from DpLotacao where idLotacao = "
+					+ parametros.get("lotacao") + ")";
+				List lotacoes = JPA.em().createQuery(query).getResultList();
+				StringBuilder listalotacoes = new StringBuilder();
+				for (int i = 0; i < lotacoes.size(); i++) {
+					listalotacoes.append(lotacoes.get(i));
+					if (i < (lotacoes.size() - 1))
+						listalotacoes.append(",");
+					}
+				
+				List<SrSolicitacao> listaTotal = SrSolicitacao.find(
+					"select sol.local.nomeComplexo,  mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+					+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
+					+ "where sol.idSolicitacao = mov.solicitacao "
+					+ "and mov.idMovimentacao = resp.movimentacao "
+					+ "and mov.lotaAtendente in (" + listalotacoes + ") "
+					+ "and sol.local = '" + parametros.get("local") + "' "
+					+ "and mov.tipoMov =16 "
+					+ "and resp.pergunta = 166 "
+					+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+					+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
+					+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
+					.fetch();
+				
+				SortedSet<String> setT = new TreeSet<String>();
+				SortedSet<String> setA = new TreeSet<String>();
+				TreeMap<String, Double> map = new TreeMap<String, Double>();
+				TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
+								
+				Iterator itTotal = listaTotal.listIterator();
+				while (itTotal.hasNext()) {
+					Object[] obj = (Object[]) itTotal.next();
+					String complexo = (String) obj[0];
+					String lotaAtendente = (String) obj[1];
+					Long total_local = (Long) obj[2];
+					setT.add(complexo);
+					setA.add(lotaAtendente);
+					maptotais.put(chave(complexo, lotaAtendente),total_local);
+				}	
+				
+				for (String atendentes : setT) {
+					atendAcMedia = 0;
+					atendAbMedia = 0;
+					List<SrSolicitacao>  atendAcimaMedia = SrSolicitacao.find(
+						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
+						+ "where sol.idSolicitacao = mov.solicitacao "
+						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
+						+ "and sol.local.nomeComplexo = '" + atendentes.toString() + "' "
+						+ "and mov.idMovimentacao = resp.movimentacao "
+						+ "and mov.tipoMov =16 "
+						+ "and resp.pergunta = 166 "
+						+ "and resp.descrPergunta in ('4','5') "
+						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
+						+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
+						.fetch();
+					List<SrSolicitacao>  atendAbaixoMedia = SrSolicitacao.find(
+						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
+						+ "where sol.idSolicitacao = mov.solicitacao "
+						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
+						+ "and sol.local.nomeComplexo = '" + atendentes.toString() + "' "
+						+ "and mov.idMovimentacao = resp.movimentacao "
+						+ "and mov.tipoMov =16 "
+						+ "and resp.pergunta = 166 "
+						+ "and resp.descrPergunta in ('1','2') "
+						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
+						+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
+						.fetch();
+					Iterator itac = atendAcimaMedia.listIterator();
+					while (itac.hasNext()) {
+						Object[] obj = (Object[]) itac.next();
+						local = (String) obj[0];
+						String lotaAtendente = (String) obj[1];
+						Long totalacima= (Long) obj[2];
+						setT.add(local);
+						setA.add(lotaAtendente);
+						map.put(chave(local + lotaAtendente,"acima"),Double.valueOf(totalacima));
+					}
+					Iterator itab = atendAbaixoMedia.listIterator();
+					while (itab.hasNext()) {
+						Object[] obj = (Object[]) itab.next();
+						local = (String) obj[0];
+						String lotaAtendente = (String) obj[1];
+						Long totalabaixo= (Long) obj[2];
+						setT.add(local);
+						setA.add(lotaAtendente);
+						map.put(chave(local + lotaAtendente,"abaixo"), Double.valueOf(totalabaixo));
+					}
+					//for (String compl: setT) {
+						for (String s : setA) {
+							d.add(atendentes + " - " + s);
+							percTotal = maptotais.get(atendentes+s);
+							if (map.containsKey(chave(atendentes+s, "acima"))) {
+								atendAcMedia = map.get(chave(atendentes+s, "acima"));
+								d.add(atendAcMedia);
+								d.add((atendAcMedia/percTotal)*100);
+							} else 	{
+								d.add(0D);
+								d.add(0D);
+							}
+							
+							if (map.containsKey(chave(atendentes+s, "abaixo"))) {
+								atendAbMedia = map.get(chave(atendentes+s, "abaixo"));
+								d.add(atendAbMedia);
+								d.add((atendAbMedia/percTotal)*100);
+							} else 	{
+								d.add(0D);
+								d.add(0D);
+							}
+						} // final do for para o conjunto
+				}// fim do for(String atendentes : setT)
+			}
+		} //fim do else referente ao if parametros.get("lotacao") preenchido - local preenchido
 		return d;															
 	}
 	

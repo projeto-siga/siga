@@ -63,7 +63,7 @@
 					</tr>
 					<tr>
 						<td>Classificação:</td>
-						<td><siga:selecao tema="simple" propriedade="classificacao" modulo="siga"/></td>
+						<td><siga:selecao tema="simple" propriedade="classificacao" modulo="sigaex"/></td>
 					</tr>
 
 					<tr>

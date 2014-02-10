@@ -68,3 +68,5 @@ siga-play-module/app/br/gov/jfrj/siga/model/dao/
 siga-play-module/app/br/gov/jfrj/siga/model/prop/
 siga-play-module/app/br/gov/jfrj/siga/parser/
 siga-play-module/app/br/gov/jfrj/siga/sinc/
+sigari/lib/
+sigari/modules/

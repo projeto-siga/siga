@@ -90,11 +90,11 @@ public class GcInformacao extends GenericModel {
 	public GcAcesso edicao;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "ID_PESSOA")
+	@JoinColumn(name = "ID_PESSOA_TITULAR")
 	public DpPessoa autor;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "ID_LOTACAO")
+	@JoinColumn(name = "ID_LOTACAO_TITULAR")
 	public DpLotacao lotacao;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -187,14 +187,15 @@ public class GcInformacao extends GenericModel {
 		return this.hisDtFim != null;
 	}
 
-	public boolean podeRevisar(DpPessoa titular) {
+	public boolean podeRevisar(DpPessoa titular, DpLotacao lotaTitular) {
 		if (isCancelado())
 			return false;
 		for (GcMovimentacao mov : movs) {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
-					&& titular.equivale(mov.pessoa)) {
+					&& (titular.equivale(mov.pessoaAtendente)
+							|| lotaTitular.equivale(mov.lotacaoAtendente))) {
 				return true;
 			}
 		}
@@ -235,28 +236,28 @@ public class GcInformacao extends GenericModel {
 				|| this.lotacao.equivale(lotaTitular);
 	}
 
-	public boolean podeEditar() {
-		return !isCancelado();
+	public boolean podeEditar(DpPessoa titular, DpLotacao lotaTitular) {
+		return (!isCancelado() && (podeRevisar(titular,lotaTitular) || acessoPermitido(titular, lotaTitular, edicao.id)));
 	}
 
-	public boolean podeExcluir() {
-		return !isFinalizado();
+	public boolean podeExcluir(DpPessoa titular, DpLotacao lotaTitular) {
+		return (!isFinalizado() && acessoPermitido(titular, lotaTitular, edicao.id));
 	}
 
-	public boolean podeNotificar() {
-		return !isCancelado();
+	public boolean podeNotificar(DpPessoa titular, DpLotacao lotaTitular) {
+		return (!isCancelado() && acessoPermitido(titular, lotaTitular, visualizacao.id));
 	}
 
-	public boolean podeFinalizar() {
-		return !isCancelado() && !isFinalizado();
+	public boolean podeFinalizar(DpPessoa titular, DpLotacao lotaTitular) {
+		return !isCancelado() && !isFinalizado() && acessoPermitido(titular, lotaTitular, edicao.id);
 	}
 
-	public boolean podeSolicitarRevisao() {
-		return !isCancelado();
+	public boolean podeSolicitarRevisao(DpPessoa titular, DpLotacao lotaTitular) {
+		return !isCancelado() && acessoPermitido(titular, lotaTitular, edicao.id);
 	}
 
-	public boolean podeAnexar() {
-		return !isCancelado();
+	public boolean podeAnexar(DpPessoa titular, DpLotacao lotaTitular) {
+		return (!isCancelado() && (podeRevisar(titular,lotaTitular) || acessoPermitido(titular, lotaTitular, edicao.id)));
 	}
 
 	public boolean podeDuplicar() {
@@ -267,9 +268,9 @@ public class GcInformacao extends GenericModel {
 		SortedSet<GcAcaoVO> acoes = new TreeSet<GcAcaoVO>();
 
 		addAcao(acoes, "pencil", "Editar", null, "Application.editar", null,
-				podeEditar());
+				podeEditar(titular, lotaTitular));
 		addAcao(acoes, "delete", "Excluir", null, "Application.remover", null,
-				podeExcluir(), "Confirma a exclusão deste conhecimento?",
+				podeExcluir(titular, lotaTitular), "Confirma a exclusão deste conhecimento?",
 				null, null);
 		addAcao(acoes, "eye", "Exibir Histórico de Alterações", null,
 				"Application.historico", "historico=true", true);
@@ -284,21 +285,21 @@ public class GcInformacao extends GenericModel {
 				"Application.marcarComoInteressado", null,
 				podeMarcarComoInteressado(titular));
 		addAcao(acoes, "bell", "Notificar", null, "Application.notificar",
-				null, podeNotificar());
+				null, podeNotificar(titular, lotaTitular));
 		addAcao(acoes, "lock", "Finalizar Elaboração",null,
-				"Application.fechar", null, podeFinalizar(),
+				"Application.fechar", null, podeFinalizar(titular, lotaTitular),
 				"Confirma a finalização da elaboração deste conhecimento?",
 				null, null);
 		addAcao(acoes, "folder_user", "Revisado", null, "Application.revisado",
-				null, podeRevisar(titular));
+				null, podeRevisar(titular, lotaTitular));
 		addAcao(acoes, "folder_user", "Solicitar Revisão", null,
-				"Application.solicitarRevisao", null, podeSolicitarRevisao());
+				"Application.solicitarRevisao", null, podeSolicitarRevisao(titular, lotaTitular));
 		addAcao(acoes, "cancel", "Cancelar", null, "Application.cancelar",
 				null, podeCancelar(titular, lotaTitular),
 				"Confirma o cancelamento deste conhecimento?", null,
 				null);
 		addAcao(acoes, "attach", "Anexar Arquivo", null, "Application.anexar",
-				null, podeAnexar());
+				null, podeAnexar(titular, lotaTitular));
 		addAcao(acoes, "arrow_divide","Duplicar", null, "Application.duplicar", 
 				null, podeDuplicar(),"Esta operação criará um conhecimento com os mesmos dados do atual. " +
 				"Prosseguir?", null, null);

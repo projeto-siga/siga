@@ -506,51 +506,54 @@ public class Application extends SigaApplication {
 	public static void exibir(String sigla) throws Exception{
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
-		if (!informacao.acessoPermitido(titular(), lotaTitular(), informacao.visualizacao.id)) {
+		if (informacao.podeRevisar(titular(), lotaTitular()) ||
+				informacao.acessoPermitido(titular(), lotaTitular(), informacao.visualizacao.id)) {
+			String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+			
+			GcBL.notificado(informacao, idc(), titular(), lotaTitular());
+			GcBL.logarVisita(informacao, idc(), titular(), lotaTitular());
+			render(informacao);
+		}
+		else
 			throw new AplicacaoException(
 					"Restrição de Acesso (" + informacao.visualizacao.nome + ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
-		}
-		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
-		if (conteudo != null)
-			informacao.arq.setConteudoTXT(conteudo);
-		
-		GcBL.notificado(informacao, idc(), titular(), lotaTitular());
-		GcBL.logarVisita(informacao, idc(), titular(), lotaTitular());
-		render(informacao);
 	}
 	
 	public static void editar(String sigla, String classificacao, String titulo,
 			String origem) throws Exception {
 		GcInformacao informacao = null;
 
-		if(sigla != null){
+		if(sigla != null)
 			informacao = GcInformacao.findBySigla(sigla);
-			if (!informacao.acessoPermitido(titular(), lotaTitular(), informacao.edicao.id)) {
-				throw new AplicacaoException(
-						"Restrição de Acesso (" + informacao.edicao.nome + ") : O usuário não tem permissão para editar o conhecimento solicitado.");
-			}
-		}
 		else
 			informacao = new GcInformacao();
 		
-		List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
-		List<GcAcesso> acessos = GcAcesso.all().fetch();
-		if (titulo == null)
-			titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
-		String conteudo = (informacao.arq != null) ? informacao.arq.getConteudoTXT() : null;
-		
-		if (classificacao == null || classificacao.isEmpty())
-			classificacao = (informacao.arq != null) ? informacao.arq.classificacao: null;
+		if (informacao.autor == null || informacao.podeRevisar(titular(), lotaTitular()) ||
+				informacao.acessoPermitido(titular(), lotaTitular(), informacao.edicao.id)) {
+			List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
+			List<GcAcesso> acessos = GcAcesso.all().fetch();
+			if (titulo == null)
+				titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
+			String conteudo = (informacao.arq != null) ? informacao.arq.getConteudoTXT() : null;
+			
+			if (classificacao == null || classificacao.isEmpty())
+				classificacao = (informacao.arq != null) ? informacao.arq.classificacao: null;
 
-		if (informacao.autor == null) {
-			informacao.autor = titular();
-		}
-		if (informacao.lotacao == null) {
-			informacao.lotacao = lotaTitular();
-		}
+			if (informacao.autor == null) {
+				informacao.autor = titular();
+			}
+			if (informacao.lotacao == null) {
+				informacao.lotacao = lotaTitular();
+			}
 
-		render(informacao, tiposInformacao, acessos, titulo, conteudo,
-				classificacao, origem);
+			render(informacao, tiposInformacao, acessos, titulo, conteudo,
+					classificacao, origem);
+		}
+		else
+			throw new AplicacaoException(
+					"Restrição de Acesso (" + informacao.edicao.nome + ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
 
 	public static void historico(String sigla) throws Exception {
@@ -626,10 +629,15 @@ public class Application extends SigaApplication {
 
 	public static void fechar(String sigla) throws Exception {
 		GcInformacao inf = GcInformacao.findBySigla(sigla);
-		GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
-				null, null, null, null, null, null, null, null, null);
-		GcBL.gravar(inf, idc(),titular(), lotaTitular());
-		exibir(inf.getSigla());
+		if(inf.acessoPermitido(titular(), lotaTitular(), inf.edicao.id)) {
+			GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
+					null, null, null, null, null, null, null, null, null);
+			GcBL.gravar(inf, idc(),titular(), lotaTitular());
+			exibir(inf.getSigla());
+		}
+		else
+			throw new AplicacaoException(
+					"Restrição de Acesso (" + inf.edicao.nome + ") : O usuário não tem permissão para finalizar o conhecimento solicitado.");
 	}
 	
 	public static void duplicar(String sigla) throws Exception {
@@ -721,7 +729,7 @@ public class Application extends SigaApplication {
 
 		GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 		if (origem != null && origem.trim().length() != 0) {
-			if (informacao.podeFinalizar()) {
+			if (informacao.podeFinalizar(pessoa, lotacao)) {
 				GcBL.movimentar(informacao,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
 						null, null, null, null, null, null, null, null);
@@ -862,11 +870,12 @@ public class Application extends SigaApplication {
 				if (mov.isCancelada())
 					continue;
 				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
-						&& idc().getDpPessoa().equivale(mov.pessoa)) {
-					GcBL.movimentar(informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
-							null, null, null, null, null, mov,
-							null, null, null);
+						&& (titular().equivale(mov.pessoaAtendente) || lotaTitular().equivale(mov.lotacaoAtendente))) {
+					GcMovimentacao m = GcBL.movimentar(informacao,
+										GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
+										null, null, null, null, null, mov,
+										null, null, null);
+					mov.movCanceladora = m;
 					GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 					exibir(sigla);
 				}

@@ -67,8 +67,14 @@ public class GcArquivo extends GenericModel implements Serializable{
 				return "image";
 			if (mimeType.startsWith("application/pdf"))
 				return "page_white_acrobat";
+			if (mimeType.startsWith("application/msword") || mimeType.endsWith(".wordprocessingml.document"))
+				return "page_white_word";	
+			if (mimeType.startsWith("application/vnd.ms-excel") || mimeType.endsWith(".spreadsheetml.sheet"))
+				return "page_white_excel";	
+			if (mimeType.startsWith("application/vnd.ms-powerpoint") || mimeType.endsWith(".presentationml.presentation"))
+				return "page_white_powerpoint";	
 		}
-		return "disk";
+		return "page_white_text";
 	}
 	
 	/**

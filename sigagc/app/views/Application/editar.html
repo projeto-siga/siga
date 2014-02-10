@@ -24,6 +24,8 @@
 						items:tiposInformacao, labelProperty:'nome', valueProperty:'id',
 						value:informacao.tipo?.id} #{/select}
 					</div>
+					#{if informacao.edicao?.id == null || 
+						informacao.acessoPermitido(titular,lotaTitular, informacao.edicao?.id)}
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
 						<label>Visualizacão</label>#{select name:'informacao.visualizacao',
 						items:acessos, labelProperty:'nome', valueProperty:'id',
@@ -36,6 +38,7 @@
 						value:informacao.edicao?.id} #{/select}
 
 					</div>
+					#{/if}
 					*{
 					<div class="gt-left-col gt-width-25">
 						<label>Data Início</label><input type="text" name="dtDocString"

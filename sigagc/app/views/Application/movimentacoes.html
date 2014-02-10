@@ -39,21 +39,22 @@ title:'Movimentações'/}
 			<tbody>
 				#{list items:informacao.movs, as:'m'}	
 					#{if m.tipo.id == 13}
-							#{set descricao: m.arq?.titulo + " (" + m.arq?.mimeType + ")"  /}
+							#{set descricao: m.arq?.titulo  /}
 					#{/if}
 					#{elseif m.tipo.id == 12 && m.movRef != null}
 						#{if m.movRef.tipo.id == 13}
-							#{set descricao: m.movRef.tipo.nome + ": " + m.movRef.arq?.titulo + " (" + m.movRef.arq?.mimeType + ")"  /} 
+							#{set descricao: m.movRef.tipo.nome + ": " + m.movRef.arq?.titulo /} 
 						#{/if}
 						#{else} #{set descricao: m.movRef.tipo.nome /}#{/else}
-						#{set classe: 'disabled' /}
 					#{/elseif}
 					#{else}
-						#{set descricao: '' /} #{set classe: '' /}
+						#{set descricao: '' /} 
 					#{/else}
-					#{if m.movCanceladora != null} 
+					
+					#{if m.movCanceladora != null || m.tipo.id == 12} 
 						#{set classe: 'disabled' /}
 					#{/if}
+					#{else} #{set classe: '' /} #{/else}
 				<tr class="juntada ${classe}">
 					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
 					<td>${m.tipo.nome}</td>
@@ -63,10 +64,10 @@ title:'Movimentações'/}
 					<td align="left"><span
 						title="${m.hisIdcIni.dpPessoa.descricao}">${m.hisIdcIni.dpPessoa.nomeAbreviado}</span>
 					</td>
-					<td align="left"><span title="${m.lotacao?.descricao}">${m.lotacaoTitular?.sigla}</span></td>
-					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoaTitular?.nomeAbreviado}</span></td>					
-					<td align="left"><span title="${m.lotacao?.descricao}">${m.lotacao?.sigla}</span></td>
-					<td align="left"><span title="${m.pessoa?.descricao}">${m.pessoa?.nomeAbreviado}</span></td>
+					<td align="left"><span title="${m.lotacaoTitular?.descricao}">${m.lotacaoTitular?.sigla}</span></td>
+					<td align="left"><span title="${m.pessoaTitular?.descricao}">${m.pessoaTitular?.nomeAbreviado}</span></td>					
+					<td align="left"><span title="${m.lotacaoAtendente?.descricao}">${m.lotacaoAtendente?.sigla}</span></td>
+					<td align="left"><span title="${m.pessoaAtendente?.descricao}">${m.pessoaAtendente?.nomeAbreviado}</span></td>
 					<td>
 						${descricao?.raw()}					
 					</td>

@@ -1,6 +1,7 @@
 package models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,15 +9,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Query;
 import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
 @Table(name = "GC_MOVIMENTACAO")
+@NamedQueries({
+		@NamedQuery(name = "numeroEquipeLotacao", query = "select count(distinct p.idPessoaIni) from DpPessoa p join p.lotacao l where l.idLotacao = :idLotacao"),
+		@NamedQuery(name = "numeroEquipeCiente", query = "select count(*) from GcMovimentacao m where m.tipo.id= 7 and m.inf.id = :idInfo and m.lotacaoAtendente.idLotacao = :idLotacao and m.movRef = :movRef")
+})
 public class GcMovimentacao extends GenericModel implements
 		Comparable<GcMovimentacao> {
 	@Id
@@ -41,12 +50,12 @@ public class GcMovimentacao extends GenericModel implements
 	public GcMovimentacao movCanceladora;
 
 	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_PESSOA")
-	public DpPessoa pessoa;
+	@JoinColumn(name = "ID_PESSOA_ATENDENTE")
+	public DpPessoa pessoaAtendente;
 
 	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_LOTACAO")
-	public DpLotacao lotacao;
+	@JoinColumn(name = "ID_LOTACAO_ATENDENTE")
+	public DpLotacao lotacaoAtendente;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_PESSOA_TITULAR")
@@ -102,5 +111,18 @@ public class GcMovimentacao extends GenericModel implements
 		if (o2.id < o1.id)
 			return -1;
 		return 0;
+	}
+	public boolean todaLotacaoCiente(GcMovimentacao movRef) {
+		Query query  = JPA.em().createNamedQuery("numeroEquipeLotacao");
+		query.setParameter("idLotacao", lotacaoAtendente.getId());
+		Long count = (Long) query.getSingleResult();
+		
+		Query query2  = JPA.em().createNamedQuery("numeroEquipeCiente");
+		query2.setParameter("idInfo", inf.id);
+		query2.setParameter("idLotacao", lotacaoAtendente.getId());
+		query2.setParameter("movRef", movRef);
+		Long count2 = (Long) query2.getSingleResult();
+
+		return (count == count2);
 	}
 }

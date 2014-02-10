@@ -88,7 +88,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					#{set count: estatistica - lista.size() /} #{set k: 1 /}
+					#{set k: 1 /}
 					#{list items:lista, as:'i'}
 					<tr class="even">
 						<td width="11.5%" align="left"><a
@@ -142,6 +142,7 @@
 		#{elseif filtro?.pesquisa}
 			<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
 		#{/elseif}
+		#{set count: estatistica - lista.size() /}
 		#{if count > 0} 
 			<br />	
 			<h6 style="background:#d8d8c0;padding:3px 10px;">${count} Conhecimento${count.pluralize()} fo${count.pluralize('i','ram')} Cancelado${count.pluralize()}, por isso não const${count.pluralize('a','am')} no resultado acima.</h6>

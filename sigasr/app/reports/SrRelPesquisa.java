@@ -212,8 +212,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and mov.tipoMov =16 "
 							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
-							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
-							+ "group by sol.local.nomeComplexo" )
+							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 							.first();
 						Long atendAcimaMedia = SrSolicitacao.find(
 							"select count(resp.descrPergunta) " 
@@ -225,8 +224,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 							+ "and resp.descrPergunta in ('4','5') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
-							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
-							+ "group by sol.local.nomeComplexo" )
+							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 							.first();
 						Long  atendAbaixoMedia = SrSolicitacao.find(
 							"select count(resp.descrPergunta) " 
@@ -238,8 +236,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
 							+ "and resp.descrPergunta in ('1','2') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
-							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
-							+ "group by sol.local.nomeComplexo" )
+							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 							.first();
 						CpComplexo complexo = CpComplexo.findById(Long.valueOf(parametros.get("local").toString()));
 						d.add( complexo.getNomeComplexo());

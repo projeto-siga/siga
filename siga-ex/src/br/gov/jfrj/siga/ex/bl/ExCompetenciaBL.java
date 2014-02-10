@@ -1611,6 +1611,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if(mob.isSobrestado())
 			return false;
+		
+		if(mob.isArquivado())
+			return false;
 
 		return podeMovimentar(titular, lotaTitular, mob)
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
@@ -1946,6 +1949,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		
 		if(mob.doc().isSemEfeito())
+			return false;
+		
+		if(mob.isArquivado())
+			return false;
+		
+		if(mob.isSobrestado())
 			return false;
 		
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);

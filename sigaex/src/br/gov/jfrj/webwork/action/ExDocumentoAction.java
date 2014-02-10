@@ -1156,8 +1156,19 @@ public class ExDocumentoAction extends ExActionSupport {
 							doc.getExTipoDocumento(),
 							doc.getExFormaDocumento(), doc.getExModelo(),
 							doc.getExClassificacao(), doc.getExNivelAcesso(),
-							CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+							CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
+			
+				if(!Ex.getInstance()
+						.getConf()
+						.podePorConfiguracao(getTitular(), getLotaTitular(),
+								null,
+								null, null,
+								doc.getExClassificacao(), null,
+								CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+					throw new AplicacaoException("Usuário não possui permissão de criar documento da classificação " + doc.getExClassificacao().getCodificacao());
+				
 				throw new AplicacaoException("Operação não permitida");
+			}
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
 					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()

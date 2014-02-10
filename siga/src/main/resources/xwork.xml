@@ -65,7 +65,7 @@
 
 		<action name="redirect" class="br.gov.jfrj.siga.libs.webwork.LogoffAction"
 			method="redirect">
-			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.localPort}${uri}
+			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.serverPort}${uri}
 			</result>
 		</action>
 

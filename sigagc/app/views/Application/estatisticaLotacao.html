@@ -87,7 +87,8 @@
 	*/
 	function primeiroDiaMes(ano, mes) {
 		var anoCompleto = "20" + ano;
-		return new Date(anoCompleto, mes-1,1).toLocaleDateString();
+		var data = new Date(anoCompleto, mes-1,1); 
+		return [data.getDate(),data.getMonth()+1,data.getFullYear()].join("/");
 	}
 	/*
 	* recebe ano e mês, e retorna o último dia do mês desse ano
@@ -95,7 +96,8 @@
 	*/
 	function ultimoDiaMes(ano, mes) {
 		var anoCompleto = "20" + ano;
-		return new Date(anoCompleto, mes,0).toLocaleDateString();
+		var data = new Date(anoCompleto, mes,0);
+		return [data.getDate(),data.getMonth()+1,data.getFullYear()].join("/");
 	}	
 </script>
 #{/set}

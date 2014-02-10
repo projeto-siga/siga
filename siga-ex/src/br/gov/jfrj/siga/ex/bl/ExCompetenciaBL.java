@@ -1554,11 +1554,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.doc().getUltimoVolume() != null
-				&& (mob.doc().getUltimoVolume().isEmTransito() || mob.doc().getUltimoVolume().isArquivado()))
+				&& (mob.doc().getUltimoVolume().isEmTransito() 
+						|| mob.doc().getUltimoVolume().isArquivado()
+						|| mob.doc().getUltimoVolume().isSobrestado()))
 			return false;
 		
 		if (!podeMovimentar(titular, lotaTitular, mob))
-			return false;		
+			return false;
+		
+		if(!mob.doc().isAssinado())
+			return false;
 		
 		if (mob.doc().getDtFechamento() != null
 				&& mob.doc().getUltimoVolume().isEncerrado()) {
@@ -1591,7 +1596,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeEncerrar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-
+		
 		if (!mob.isVolume())
 			return false;
 
@@ -1599,6 +1604,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.isEmTransito())
+			return false;
+		
+		if(!mob.doc().isAssinado())
+			return false;
+		
+		if(mob.isSobrestado())
+			return false;
+		
+		if(mob.isArquivado())
 			return false;
 
 		return podeMovimentar(titular, lotaTitular, mob)
@@ -1935,6 +1949,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		
 		if(mob.doc().isSemEfeito())
+			return false;
+		
+		if(mob.isArquivado())
+			return false;
+		
+		if(mob.isSobrestado())
 			return false;
 		
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);

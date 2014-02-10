@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+
+${metaTypeIE?.raw()} ${_cabecalho_pre_head.raw()} ${moreHead?.raw()} #{if _cabecalho_pre_menu
+!= null} ${_cabecalho_pre_menu.raw()}
+<li><a class="" href="@{Application.estatisticaGeral}">Conhecimentos</a>
+	<ul>
+		<li><a class="" href="@{Application.buscar}">Buscar por texto</a>
+		</li>
+		<li><a class="" href="#">Estatísticas</a>
+			<ul>
+				<li><a class="" href="@{Application.estatisticaGeral}">Gerais</a></li>
+			</ul>
+		</li>
+	</ul></li>
+#{/if} ${_cabecalho_pos.raw()} #{doLayout /} ${_rodape.raw()}

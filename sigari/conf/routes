@@ -1,0 +1,21 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /favicon.ico                            404
+GET     /                                       Application.index
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+
+*		/tag/selecionar							Application.selecionarTag
+*		/tag/buscar								Application.buscarTag
+
+*		/{tipo}/buscar							Application.buscarSiga
+*		/siga/{tipo}/buscar.action				Application.buscarSigaFromPopup
+*		/{tipo}/selecionar						Application.selecionarSiga
+
+# Catch all
+*       /{action}                  				Application.{action}
+*       /{controller}/{action}                  {controller}.{action}

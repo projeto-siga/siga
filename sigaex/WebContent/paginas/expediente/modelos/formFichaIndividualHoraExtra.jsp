@@ -297,11 +297,11 @@ var newwin = null;
                 <td bgcolor="#FFFFFF" width="05%" align="center">${requestScope[f:concat('dataServico',i)]}</td>
                 <td bgcolor="#FFFFFF" width="20%" align="center">${requestScope[f:concat('diaSemana',i)]}</td>
                 <td bgcolor="#FFFFFF" width="5%" align="center">${requestScope[f:concat('feriado',i)]}</td>  
-                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaIni',i)]}:${requestScope[f:concat('minutoIni',i)]}</td>                
-                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaIniIntervalo',i)]} ${requestScope[f:concat('horaIniIntervaloNao',i)]}:${requestScope[f:concat('minutoIniIntervalo',i)]} ${requestScope[f:concat('minutoIniIntervaloNao',i)]} </td>
-                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaFimIntervalo',i)]}${requestScope[f:concat('horaFimIntervaloNao',i)]}:${requestScope[f:concat('minutoFimIntervalo',i)]}${requestScope[f:concat('minutoFimIntervaloNao',i)]}</td>               
-                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaFim',i)]}:${requestScope[f:concat('minutoFim',i)]}</td>
-                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('totalHorasf',i)]}:${requestScope[f:concat('totalMinutosf',i)]}   </td>                
+                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaIni',i)]}:${requestScope[f:concat('minutoIni',i)]}:00</td>                
+                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaIniIntervalo',i)]}${requestScope[f:concat('horaIniIntervaloNao',i)]}:${requestScope[f:concat('minutoIniIntervalo',i)]}${requestScope[f:concat('minutoIniIntervaloNao',i)]}:00</td>
+                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaFimIntervalo',i)]}${requestScope[f:concat('horaFimIntervaloNao',i)]}:${requestScope[f:concat('minutoFimIntervalo',i)]}${requestScope[f:concat('minutoFimIntervaloNao',i)]}:00</td>               
+                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('horaFim',i)]}:${requestScope[f:concat('minutoFim',i)]}:00</td>
+                <td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('totalHorasf',i)]}:${requestScope[f:concat('totalMinutosf',i)]}:00   </td>                
                     
             </tr>
 
@@ -350,25 +350,25 @@ var newwin = null;
             <tr>
                 <td bgcolor="#FFFFFF" width="40%" align="left"><b>Total de Horas Extraordinárias em Dias Úteis e Sábados:</b> &nbsp; 
                <c:if test="${(empty minutoDiaUtilF) and (empty horaDiaUtilF)}">
-                00:00 
+                00:00:00
                 </c:if>
                 <c:if test="${(not empty minutoDiaUtilF) and (not empty horaDiaUtilF) }">
-                ${horaDiaUtilF}:${minutoDiaUtilF}
+                ${horaDiaUtilF}:${minutoDiaUtilF}:00
               </c:if>
                 </td>            
             </tr>
             <tr>
                 <td bgcolor="#FFFFFF" width="30%" align="left"><b>Total de Horas Extraordinárias em Domingos e Feriados:</b> &nbsp;
                 <c:if test="${(empty horaDomingoF) and (empty minutoDomingoF)}">
-                00:00
+                00:00:00
                 </c:if>
                 <c:if test="${(not empty horaDomingoF) and (not empty minutoDomingoF)}">
-                 ${horaDomingoF}:${minutoDomingoF}
+                 ${horaDomingoF}:${minutoDomingoF}:00
               </c:if>
                 </td>      
             </tr>
             <tr>
-                <td bgcolor="#FFFFFF" width="30%" align="left"><b>Total de Horas Extraordinárias:</b> &nbsp; ${horaExtra}:${minutoExtra}</td>        
+                <td bgcolor="#FFFFFF" width="30%" align="left"><b>Total de Horas Extraordinárias:</b> &nbsp; ${horaExtra}:${minutoExtra}:00</td>        
             </tr>           
         </table>        
         <br/>

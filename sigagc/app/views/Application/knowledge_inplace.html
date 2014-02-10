@@ -1,12 +1,14 @@
 #{if conhecimentos != null} #{list items:conhecimentos,as:'conhecimento'}
 	#{set "url"}*{@{Application.editar(conhecimento[0], null, null, referer)}}*
 		@{Application.editar(conhecimento[3], null, null, referer)}
-	#{/set} 
+	#{/set}
+#{if cadastrante!=null}	 
 <p>
 	<a style="float: right;" title="Editar conhecimento"
 		href="${url}"><img
 		src="/siga/css/famfamfam/icons/pencil.png"> </a>
 </p>
+#{/if}
 	${conhecimento[2].raw()}
 <!--  -->
 #{/list} #{/if} #{else}

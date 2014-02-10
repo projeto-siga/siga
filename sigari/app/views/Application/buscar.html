@@ -1,0 +1,65 @@
+#{extends 'main.html' /} #{set title:'Busca Textual' /}
+#{ set 'moreHead'}
+<script type="text/javascript">
+		$(document).ready(function(){
+			var placeHolder = "Digite as palavras da busca e tecle enter";
+			$("#texto").attr("value",placeHolder).keydown(function() {
+				if($(this).val() == placeHolder)
+					$("#texto").removeAttr("value");
+			}).focusout(function() {
+				if($(this).val() == "")
+					$("#texto").attr("value", placeHolder);
+			});
+		});
+</script>
+#{/set}
+<script type="text/javascript">
+// Using jQuery.
+
+$(function() {
+    $('form').each(function() {
+        $('input').keypress(function(e) {
+            // Enter pressed?
+            if(e.which == 10 || e.which == 13) {
+                this.form.submit();
+            }
+        });
+    });
+});
+</script>
+
+
+<div class="gt-bd clearfix">
+
+	<div class="gt-content clearfix">
+		<h2>Busca Textual</h2>
+		<div class="gt-sidebar-box gt-sidebar-box-blue">
+			<!-- search -->
+			<div class="gt-search">
+				<div class="gt-search-inner">
+					<form id="frm" action="@{Application.buscar}" method="get">
+						<input type="text" id="texto" name="texto" class="gt-search-text"
+							*{value="#{if texto != null}${texto}#{/if}#{else}Digite as palavras da busca e tecle enter#{/else}"
+							onfocus="javascript:if(this.value=='Digite as palavras da busca e tecle enter')this.value='';"}*>
+					</form>
+				</div>
+			</div>
+			<!-- /search -->
+		</div>
+		#{if (arvore.toString() == "")}
+			<p class="gt-notice-box">A busca não retornou resultados.</p>
+			<br />
+			<div class="gt-cancel" style="float:left;"><a href="/sigagc/buscar">voltar</a></div>
+		#{/if}
+		#{else}
+			#{if texto != null && texto != ""}
+				<div style="float:right;"><a href="/sigagc/buscar">remover filtro: "${texto}"</a></div>
+				<br />
+			#{/if}
+			<div>${resultado.raw()}</div>
+		#{/else}
+	</div>
+
+</div>
+
+<script>try{document.getElementById('texto').focus();document.getElementById('texto').select()}catch(e){};</script>

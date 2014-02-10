@@ -1427,7 +1427,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			} else if ((!mov.isCancelada())
 					&& (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INCLUSAO_LISTA || mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
 					&& (!listas.contains(mov.lista))
-					&& (mov.lista.isHisAtivo()))
+					&& (mov.lista.isAtivo()))
 				listaCompleta.add(mov.lista);
 		}
 		return listaCompleta;

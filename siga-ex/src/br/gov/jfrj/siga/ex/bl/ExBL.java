@@ -1425,6 +1425,10 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
+			
+			if(e.getMessage().contains("junta"))
+				throw new AplicacaoException("O documento foi assinado com sucesso mas não foi possível juntar este documento ao documento pai. O erro da juntada foi - " + e.getMessage(), 0, e);
+			
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
 		}
 
@@ -2830,6 +2834,14 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException(
 							"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");
 			}
+			
+			if(!mob.getDoc().isEletronico() && mobPai.getDoc().isEletronico())
+				throw new AplicacaoException(
+				 	"Não é possível juntar um documento físico a um documento eletrônico.");
+			
+			if(mobPai.isSobrestado())
+				throw new AplicacaoException(
+				 	"Não é possível juntar um documento a um volume sobrestado.");
 
 			// Verifica se o documeto pai já está apensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {
@@ -3859,7 +3871,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer anotação", 0, e);
+			throw new AplicacaoException("Erro ao tentar redefinir nível de acesso", 0, e);
 		}
 		alimentaFilaIndexacao(doc, true);
 	}

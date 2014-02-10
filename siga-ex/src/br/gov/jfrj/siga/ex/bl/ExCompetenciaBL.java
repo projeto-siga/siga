@@ -1954,6 +1954,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.isArquivado())
 			return false;
 		
+		if(mob.isSobrestado())
+			return false;
+		
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 		final boolean gerenteBIE = podeGerenciarPublicacaoBoletimPorConfiguracao(
 				titular, lotaTitular, mob);

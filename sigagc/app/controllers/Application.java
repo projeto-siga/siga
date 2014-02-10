@@ -241,7 +241,7 @@ public class Application extends SigaApplication {
 			
 			info = GcInformacao.findById(idOutroConhecimento);
 			
-			if (testarAcessoPublico && (info.acesso.id != GcAcesso.ACESSO_PUBLICO))
+			if (testarAcessoPublico && (info.visualizacao.id != GcAcesso.ACESSO_PUBLICO))
 				continue;
 			
 			o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");

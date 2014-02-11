@@ -47,7 +47,14 @@
 			<one-to-many class="ExModelo" />
 		</set>
 		
-
+		<many-to-one name="classificacaoInicial" column="HIS_ID_INI"
+			class="ExClassificacao" insert="false" update="false" />
+			
+		<set name="classificacoesPosteriores" order-by="HIS_DT_INI desc"
+			inverse="true">
+			<key column="HIS_ID_INI" />
+			<one-to-many class="ExClassificacao" />
+		</set>
 	</class>
 	
 	<query name="consultarExClassificacaoComExcecao">

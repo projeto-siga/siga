@@ -130,6 +130,9 @@
 												null, $("#ajax_arquivo"));
 			}
 		});	*/
+		$("#marcadores").click(function(){
+			$("#cheatsheet").show();
+		});
 	});
 </script>
 			<h3>Informações sobre o Preenchimento</h3>
@@ -159,7 +162,7 @@
 			<p>
 				O conteúdo do campo "Texto" pode receber *{<a
 					href="http://www.wikicreole.org">}* marcações especiais*{</a>}*, clique <a
-					href="javascript: $('#cheatsheet').show();">aqui</a> para
+					id="marcadores" href="#">aqui</a> para
 				visualizar as opções disponíveis.
 			</p>
 			<div id="cheatsheet" style="display: none;">

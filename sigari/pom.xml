@@ -162,7 +162,7 @@
                 <artifactId>play-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                  <warDependencyExcludes>jta,siga-base,siga-cd-base,siga-sinc-lib,siga-ws</warDependencyExcludes>
+                  <warDependencyExcludes>jta,siga-base,siga-cd-base,siga-sinc-lib,siga-ws,jboss-transaction-api_1.1_spec,netty</warDependencyExcludes>
                 </configuration>
                 <executions>
                   <execution>

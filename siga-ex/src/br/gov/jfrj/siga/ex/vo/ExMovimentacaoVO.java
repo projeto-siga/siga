@@ -239,10 +239,28 @@ public class ExMovimentacaoVO extends ExVO {
 					&& idTpMov != TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 					&& idTpMov != TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO
 					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO) {
-				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito()
-						&& !(mov.isAssinada()&& mov.mob().isEmTransito()))
-					addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir",
-							true, null, "&popup=true", null, null, null);
+				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito())
+					
+					if((idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
+							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO
+							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
+							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+							&& mov.isAssinada())
+						
+						addAcao(
+								"printer",
+								"Ver",
+								"/arquivo",
+								"exibir",
+								Ex.getInstance().getComp()
+										.podeVisualizarImpressao(titular, lotaTitular, mov.mob()),
+								null, "&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
+
+					else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
+						addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir",
+								true, null, "&popup=true", null, null, null);
+					}
 			}
 
 			if (mov.getExMovimentacaoReferenciadoraSet() != null) {

@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.base.Texto;
 
 @Entity
 @Table(name = "GC_TAG")
-@NamedQueries({ @NamedQuery(name = "listarTagCategorias", query = "select t.categoria from GcTag t where t.categoria is not null group by t.categoria order by t.categoria")})
+@NamedQueries({ @NamedQuery(name = "listarTagCategorias", query = "select t.categoria from GcTag t where t.categoria is not null group by t.categoria order by t.categoria"), })
 public class GcTag extends GenericModel implements Comparable<GcTag>,
 		SigaPlaySelecionavel {
 	@Id

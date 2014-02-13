@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name = "GC_ACESSO")
+@Table(name = "GC_ACESSO", schema = "SIGAGC")
 public class GcAcesso extends GenericModel {
 	public static final long ACESSO_PUBLICO = 1;
 	public static final long ACESSO_ORGAO_USU = 2;

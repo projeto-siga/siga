@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
-@Table(name = "GC_INFORMACAO")
+@Table(name = "GC_INFORMACAO", schema = "SIGAGC")
 @NamedQueries({
 		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentes", query = "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null order by i.hisDtIni desc"),

@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name = "GC_TIPO_INFORMACAO")
+@Table(name = "GC_TIPO_INFORMACAO", schema = "SIGAGC")
 public class GcTipoInformacao extends GenericModel {
 	final static public long TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO = 1;
 

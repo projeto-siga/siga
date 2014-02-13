@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name = "GC_TIPO_TAG")
+@Table(name = "GC_TIPO_TAG", schema = "SIGAGC")
 public class GcTipoTag extends GenericModel {
 	public static final long TIPO_TAG_CLASSIFICACAO = 1;
 	public static final long TIPO_TAG_HASHTAG = 2;

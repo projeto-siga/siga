@@ -532,37 +532,12 @@ public class Application extends SigaApplication {
 		render(solicitacao, lista, editar, priorizar, remover);
 	}
 
-	/*
-	 * Onde estou usando esses métodos??
-	 * ------------------------------------------
-	 */
-	public static void exibirListaAssoc(Long id) {
-		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		Set<SrLista> listas = solicitacao.getListaAssociada();
-		render(solicitacao, editar, listas);
-	}
-
-	public static void exibirListaAssoc(Long id, Long idLista) throws Exception {
-		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		Set<SrLista> listas = solicitacao.getListaAssociada();
-		render(solicitacao, editar, listas);
-	}
-
-	public static void associarLista(Long id) {
-		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		boolean editar = solicitacao.podeEditar(lotaTitular(), cadastrante());
-		List<SrLista> listas = solicitacao.getListaDisponivel(lotaTitular());
-		render(solicitacao, editar, listas);
-	}
-
 	public static void associarListaGravar(Long idSolicitacao, Long idLista)
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.associarLista(lista);
-		associarLista(idSolicitacao);
+		exibir(idSolicitacao, completo());
 	}
 
 	public static void desassociarLista(Long idSolicitacao, Long idLista)

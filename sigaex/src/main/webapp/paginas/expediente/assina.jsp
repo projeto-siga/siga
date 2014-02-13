@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
-<siga:pagina titulo="Documento" onLoad="javascript: TestCAPICOM();">
+<siga:pagina titulo="Documento" onLoad="javascript: TestarAssinaturaDigital();">
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
 	</c:if>

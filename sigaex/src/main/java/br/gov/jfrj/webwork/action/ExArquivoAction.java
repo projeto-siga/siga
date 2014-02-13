@@ -91,6 +91,8 @@ public class ExArquivoAction extends ExActionSupport {
 
 			byte[] certificado = null;
 			boolean pacoteAssinavel = getPar().containsKey("certificadoB64");
+			
+			boolean fB64 = getRequest().getHeader("Accept") != null && getRequest().getHeader("Accept").startsWith("text/vnd.siga.b64encoded"); 
 
 			boolean isPdf = arquivo.endsWith(".pdf");
 			boolean isHtml = arquivo.endsWith(".html");
@@ -167,23 +169,18 @@ public class ExArquivoAction extends ExActionSupport {
 							+ ".sa");
 					CdService client = Service.getCdService();
 					final Date dt = dao().consultarDataEHoraDoServidor();
+					getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
 					byte[] sa = client.produzPacoteAssinavel(certificado, certificado, ab, true,
 							dt);
-					this.setContentLength(sa.length);
-					getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
-					return writeByteArray(sa, "application/octet-stream");
+					
+					return writeByteArray(sa, "application/octet-stream", fB64);
 				}
 
 				if (hash != null) {
 					setContentDisposition("attachment; filename=" + filename
 							+ "." + hash.toLowerCase());
 					this.setContentLength(ab.length);
-					if (false) {
-						this.setInputStream(new ByteArrayInputStream(ab));
-						return "hash";
-					} else {
-						return writeByteArray(ab, "application/octet-stream");
-					}
+					return writeByteArray(ab, "application/octet-stream", fB64);
 				}
 
 				setContentDisposition("filename=" + filename + ".pdf");
@@ -226,14 +223,8 @@ public class ExArquivoAction extends ExActionSupport {
 			}
 			getResponse().setHeader("Pragma", null);
 
-			this.setContentLength(ab.length);
-			if (false) {
-				this.setInputStream(new ByteArrayInputStream(ab));
-				return isPdf ? "pdf" : "html";
-			} else {
-				return writeByteArray(ab, isPdf ? "application/pdf"
-						: "text/html");
-			}
+			return writeByteArray(ab, isPdf ? "application/pdf"
+					: "text/html", fB64);
 		} catch (Exception e) {
 			throw new ServletException("erro na geração do documento.", e);
 		}
@@ -244,8 +235,16 @@ public class ExArquivoAction extends ExActionSupport {
 	// algum memory leak na rotina de enviar uma stream como resultado. Assim
 	// que fique comprovado que não há interferência, essa rotina deve ser
 	// desativada.
-	private String writeByteArray(byte[] ab, String contentType)
+	private String writeByteArray(byte[] ab, String contentType, boolean fB64)
 			throws IOException {
+
+		if (fB64) {
+			ab = Base64.encodeBytes(ab).getBytes();
+			contentType = "text/plain";
+		}
+		
+		this.setContentLength(ab.length);
+
 		getResponse().setStatus(200);
 		getResponse().setContentLength(getContentLength());
 		getResponse().setContentType(contentType);

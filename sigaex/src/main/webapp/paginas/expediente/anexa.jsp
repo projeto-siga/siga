@@ -9,7 +9,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 
-<siga:pagina titulo="Movimentação" onLoad="javascript: TestCAPICOM();">
+<siga:pagina titulo="Movimentação" onLoad="javascript: TestarAssinaturaDigital();">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>

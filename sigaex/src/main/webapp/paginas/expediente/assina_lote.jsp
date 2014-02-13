@@ -8,7 +8,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Assinatura em Lote" onLoad="javascript: TestCAPICOM()">
+<siga:pagina titulo="Assinatura em Lote" onLoad="javascript: TestarAssinaturaDigital()">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>

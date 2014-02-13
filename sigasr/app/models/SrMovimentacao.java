@@ -254,9 +254,6 @@ public class SrMovimentacao extends GenericModel {
 			throw new Exception(
 					"Movimentação precisa fazer parte de uma solicitação");
 
-		//if (cadastrante == null)
-		//	throw new Exception("Cadastrante não pode ser nulo");
-
 		if (dtIniMov == null)
 			dtIniMov = new Date();
 
@@ -271,7 +268,7 @@ public class SrMovimentacao extends GenericModel {
 			}
 
 			if (numSequencia == null)
-				numSequencia = solicitacao.getUltimaMovimentacaoComCanceladas().numSequencia + 1;
+				numSequencia = solicitacao.getUltimaMovimentacaoMesmoSeCancelada().numSequencia + 1;
 		}
 
 		if (tipoMov == null)

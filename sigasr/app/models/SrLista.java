@@ -52,12 +52,6 @@ public class SrLista extends HistoricoSuporte {
 	@Column(name = "NOME_LISTA")
 	public String nomeLista;
 
-	//@Column(name = "DT_REG")
-	//@Temporal(TemporalType.TIMESTAMP)
-	//public Date dtReg;
-
-	// public void setHisDtFim(Date hisDtFim);
-
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
@@ -317,7 +311,7 @@ public class SrLista extends HistoricoSuporte {
 				});
 		for (SrMovimentacao mov : getPrioridadeListaSet(false)) {
 			SrMovimentacao movIncl = mov.solicitacao
-					.getMovimentacaoInclusao(this);
+					.getMovimentacaoInclusaoEmLista(this);
 			SrMovimentacao movAltAnt = mov.solicitacao
 					.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
 			/*
@@ -341,8 +335,8 @@ public class SrLista extends HistoricoSuporte {
 			Long i = prioremov;
 			while (itr.hasNext()) {
 				SrSolicitacao solic = (SrSolicitacao) itr.next();
-				solic.getPrioridade(this);
-				SrMovimentacao movIncl = solic.getMovimentacaoInclusao(this);
+				solic.getPrioridadeNaLista(this);
+				SrMovimentacao movIncl = solic.getMovimentacaoInclusaoEmLista(this);
 				SrMovimentacao movAltAnt = solic
 						.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
 				if (movAltAnt != null) {

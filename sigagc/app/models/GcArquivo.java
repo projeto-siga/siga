@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name = "GC_ARQUIVO")
+@Table(name = "GC_ARQUIVO", schema = "SIGAGC")
 public class GcArquivo extends GenericModel implements Serializable{
 	@Id
 	@GeneratedValue

@@ -174,7 +174,7 @@ public class WikiParser {
 						closeListsAndTables(); // close lists if any
 						sb.append(newRow ? "</td></tr>\n<tr><td>"
 								: (endTable ? "</td></tr></table>\n"
-										: "</td>\n<td style=\"padding: 0.5em\">"));
+										: "</td>\n<td>"));
 						if (endTable)
 							mediawikiTableLevel--;
 						pos = pp + 1;
@@ -290,7 +290,7 @@ public class WikiParser {
 				if (pp == wikiLength || wikiChars[pp] == '\n') { // yes, it's
 																	// start of
 																	// a table
-					sb.append("<table border=\"1\"><tr><td style=\"padding: 0.5em\">");
+					sb.append("<table border=\"1\"><tr><td>");
 					mediawikiTableLevel++;
 					pos = pp + 1;
 					return pp < wikiLength;
@@ -423,7 +423,7 @@ public class WikiParser {
 				break;
 			}
 
-			sb.append(th ? "<th" : "<td style=\"padding: 0.5em\"");
+			sb.append(th ? "<th" : "<td");
 			if (colspan > 1)
 				sb.append(" colspan=\"" + colspan + "\"");
 			sb.append('>');
@@ -1135,7 +1135,7 @@ public class WikiParser {
 		return parts.toArray(a);
 	}
 
-	private static final String translitTable = "Ã aÃ¡bÃ¢vÃ£gÃ¤dÃ¥eÂ¸eÃ¦zhÃ§zÃ¨iÃ©yÃªkÃ«lÃ¬mÃ­nÃ®oÃ¯pÃ°rÃ±sÃ²tÃ³uÃ´fÃµhÃ¶tsÃ·chÃ¸shÃ¹schÃ¼Ã»yÃºÃ½eÃ¾yuÃ¿yaÃ€AÃBÃ‚VÃƒGÃ„DÃ…EÂ¨EÃ†ZHÃ‡ZÃˆIÃ‰YÃŠKÃ‹LÃŒMÃNÃŽOÃPÃRÃ‘SÃ’TÃ“UÃ”FÃ•HÃ–TSÃ—CHÃ˜SHÃ™SCHÃœÃ›YÃšÃEÃžYUÃŸYA";
+	private static final String translitTable = "àaábâvãgädåe¸eæzhçzèiéyêkëlìmínîoïpðrñsòtóuôfõhöts÷chøshùschüûyúýeþyuÿyaÀAÁBÂVÃGÄDÅE¨EÆZHÇZÈIÉYÊKËLÌMÍNÎOÏPÐRÑSÒTÓUÔFÕHÖTS×CHØSHÙSCHÜÛYÚÝEÞYUßYA";
 
 	/**
 	 * Translates all non-basic-latin-letters characters into latin ones for use
@@ -1157,15 +1157,15 @@ public class WikiParser {
 			char ch = s.charAt(i);
 			// System.err.println("ch="+(int)ch);
 
-			if ((ch >= 'Ã ' && ch <= 'Ã¿') || (ch >= 'Ã€' && ch <= 'ÃŸ')
-					|| ch == 'Â¸' || ch == 'Â¨') {
+			if ((ch >= 'à' && ch <= 'ÿ') || (ch >= 'À' && ch <= 'ß')
+					|| ch == '¸' || ch == '¨') {
 				int idx = translitTable.indexOf(ch);
 				char c;
 				if (idx >= 0) {
 					for (idx++; idx < translitTableLength; idx++) {
 						c = translitTable.charAt(idx);
-						if ((c >= 'Ã ' && c <= 'Ã¿') || (c >= 'Ã€' && c <= 'ÃŸ')
-								|| c == 'Â¸' || c == 'Â¨')
+						if ((c >= 'à' && c <= 'ÿ') || (c >= 'À' && c <= 'ß')
+								|| c == '¸' || c == '¨')
 							break;
 						sb.append(c);
 					}

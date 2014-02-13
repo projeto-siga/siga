@@ -561,7 +561,7 @@ public class Application extends SigaApplication {
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.associarLista(solicitacao, lista);
+		solicitacao.associarLista(lista);
 		associarLista(idSolicitacao);
 	}
 
@@ -569,7 +569,7 @@ public class Application extends SigaApplication {
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.desassociarLista(solicitacao, lista);
+		solicitacao.desassociarLista(lista);
 		exibirLista(idLista);
 	}
 
@@ -1191,27 +1191,6 @@ public class Application extends SigaApplication {
 				"application/pdf", true);
 	}
 
-	private static Map<String, Object> map = new HashMap<String, Object>();
-
-	// setter
-	public static void setValue(String key, Object value) {
-		map.put(key, value);
-	}
-
-	// general getter would work well with String, also numeric types (only for
-	// displaying purposes! - not for calculations or comparisons!)
-	public static Object getValue(String key) {
-		return map.get(key);
-	}
-
-	public static Boolean isTrue(String key) {
-		return Boolean.valueOf(map.get(key).toString());
-	}
-
-	public static Double getDouble(String key) {
-		return Double.valueOf(map.get(key).toString());
-	}
-
 	public static void concluirAutomatico() throws Exception {
 		
 		List<SrMovimentacao> movs = SrMovimentacao.find("select mov from SrMovimentacao mov " +
@@ -1235,7 +1214,6 @@ public class Application extends SigaApplication {
 		}
 		
 		render(solsnaoconcluidas);
-		//retornar uma string pelo play - depois play dá render na string	???
 	}
 }
 	

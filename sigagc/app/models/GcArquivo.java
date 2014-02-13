@@ -14,19 +14,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.io.IOUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-
 import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "GC_ARQUIVO", schema = "SIGAGC")
 public class GcArquivo extends GenericModel implements Serializable{
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcArquivoSeq")
+	@GeneratedValue(generator = "gcArquivoSeq")
 	@Column(name = "ID_CONTEUDO")
 	public long id;
 

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.mcavallo.opencloud.Cloud;
@@ -27,7 +28,8 @@ import br.gov.jfrj.siga.base.Texto;
 public class GcTag extends GenericModel implements Comparable<GcTag>,
 		SigaPlaySelecionavel {
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcTagSeq")
+	@GeneratedValue(generator = "gcTagSeq")
 	@Column(name = "ID_TAG")
 	public long id;
 

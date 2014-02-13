@@ -22,6 +22,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -65,7 +66,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 // inf.tags tag where tag in (:tags)
 public class GcInformacao extends GenericModel {
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcInformacaoSeq")
+	@GeneratedValue(generator = "gcInformacaoSeq")
 	@Column(name = "ID_INFORMACAO")
 	public long id;
 

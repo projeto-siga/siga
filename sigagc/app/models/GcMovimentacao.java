@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Query;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
@@ -29,7 +30,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public class GcMovimentacao extends GenericModel implements
 		Comparable<GcMovimentacao> {
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcMovimentacaoSeq")
+	@GeneratedValue(generator = "gcMovimentacaoSeq")
 	@Column(name = "ID_MOVIMENTACAO")
 	public long id;
 

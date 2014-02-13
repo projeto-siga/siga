@@ -1019,10 +1019,12 @@ public class Application extends SigaApplication {
 		render(message, stackTrace);
 	}
 
-	@Catch(value = AplicacaoException.class, priority = 1)
+	@Catch(value = Throwable.class, priority = 1)
 	public static void catchError(Throwable throwable) {
-		// if (Play.mode.isDev())
-		// return;
+		if (!(throwable instanceof AplicacaoException)) {
+			if (Play.mode.isDev())
+				return;
+		}
 
 		// Flash.current().clear();
 		// Flash.current().put("_cabecalho_pre",

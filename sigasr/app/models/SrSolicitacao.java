@@ -727,15 +727,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean sofreuMov(long idTpMov, long... idsTpsReversores) {
-		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == idTpMov)
-				return true;
-			else
-				for (long idTpReversor : idsTpsReversores)
-					if (mov.tipoMov.idTipoMov == idTpReversor)
-						return false;
-		}
-		return false;
+		return sofreuMov(new long[] {idTpMov}, idsTpsReversores);
 	}
 
 	public boolean sofreuMov(long[] idsTpsMovs, long... idsTpsReversores) {
@@ -989,7 +981,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		operacoes.add(new SrOperacao("text_list_numbers", "Definir Lista",
 				podeAssociarLista(lotaTitular, titular),
-				"Application.associarLista"));
+				"associarLista", "modal=true"));
 
 		operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(lotaTitular,
 				titular), "fechar", "modal=true"));
@@ -1383,10 +1375,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean isEmLista() {
-		return getListaAssociada().size() > 0;
+		return getListasAssociadas().size() > 0;
 	}
 
-	public List<SrLista> getListaDisponivel(DpLotacao lotaTitular) {
+	public List<SrLista> getListasDisponiveisParaInclusao(DpLotacao lotaTitular) {
 		SrLista rol = new SrLista();
 		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
@@ -1406,7 +1398,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaDisponiveis;
 	}
 
-	public Set<SrLista> getListaAssociada() {
+	public Set<SrLista> getListasAssociadas() {
 		Set<SrLista> listaCompleta = new HashSet<SrLista>();
 		Set<SrLista> listas = new HashSet<SrLista>();
 		for (SrMovimentacao mov : getMovimentacaoSet()) {

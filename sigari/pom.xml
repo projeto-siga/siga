@@ -41,14 +41,6 @@
 			<artifactId>lucene-highlighter</artifactId>
 			<version>4.6.0</version>
 		</dependency>
-            
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>siga-play-module</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>module-min</classifier>
-                    <type>zip</type>
-                 </dependency>
 
                 <dependency>
                     <groupId>${project.groupId}</groupId>

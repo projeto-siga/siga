@@ -13,19 +13,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>projeto-siga</groupId>
-            <artifactId>siga-cp</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-            <exclusions>
-              <exclusion>
-                <groupId>projeto-siga</groupId>
-                <artifactId>siga-base</artifactId>
-              </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
             <version>3.5.5-Final</version>
@@ -82,15 +69,7 @@
                     <exclude>br/gov/jfrj/siga/model/ObjetoBase.java</exclude>
                   </excludes>
                 </resource>
-              <!-- siga-cd-base -->
-<!--               
-                <resource>
-                  <directory>../siga-cd-base/src/main/java</directory>
-                  <excludes>
-                    <exclude>br/gov/jfrj/siga/cd/ac/**</exclude>
-                  </excludes>
-                </resource>
- -->                
+
               <!-- siga-cp (app) -->
                 <resource>
                   <directory>../siga-cp/src/main/app</directory>
@@ -101,11 +80,7 @@
                   </excludes>
                 </resource>
               <!-- siga-rel -->
-<!--               
-                <resource>
-                  <directory>../siga-rel/src/main/java</directory>
-                </resource>
- -->                
+
               <!-- siga-sinc-lib -->
                 <resource>
                   <directory>../siga-sinc-lib/src/main/java</directory>
@@ -116,34 +91,6 @@
           </execution>
         </executions>
       </plugin>
-
-
-    <plugin>
-      <artifactId>maven-assembly-plugin</artifactId>
-      <version>2.3</version>
-      <configuration>
-                <descriptors>
-                    <descriptor>src/assembly/module-min.xml</descriptor>
-                </descriptors>
-              <formats>
-                <format>zip</format>
-              </formats>
-      </configuration>
-
-      <executions>
-            <execution>
-                <id>module-min</id>
-                <goals>
-                    <goal>single</goal>
-                </goals>
-                <phase>package</phase>
-
-            </execution>
-      </executions>
-
-
-
-    </plugin>
 
 
     <plugin>

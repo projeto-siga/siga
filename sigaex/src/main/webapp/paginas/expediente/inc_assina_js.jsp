@@ -84,6 +84,7 @@ function TestarAssinaturaDigital() {
 			gTecnologia = "Ittru ActiveX";
 		}
 	} catch(Err) {
+		gPolitica = false;
 		return TestCAPICOM();
 	}
 }
@@ -112,12 +113,22 @@ function AssinarDigitalmente(conteudo) {
 //			alert(conteudo);
 //			gAssinatura.Content = gUtil.Base64Decode(conteudo)
 			if (gPolitica) {
-				ret.assinaturaB64 = ittruSignAx.sign("sha1", conteudo);
+				if (ittruSignAx.getKeySize() >= 2048) {
+					ret.assinaturaB64 = ittruSignAx.sign("sha256", conteudo);
+				} else {
+					ret.assinaturaB64 = ittruSignAx.sign("sha1", conteudo);
+				}
 			} else {
 				ret.assinaturaB64 = ittruSignAx.sign("PKCS7", conteudo);
 			}
 //			alert(ret.assinaturaB64);
-			ret.assinante = "TESTE ASSINANTE";
+			ret.assinante = ittruSignAx.getSubject();
+
+			var re = /CN=([^,]+),/gi; 
+			var m;
+			if ((m = re.exec(ret.assinante)) != null) {
+				ret.assinante = m[1];
+			}
 			ret.status = "OK"
 				return ret;
 		} catch(err) {
@@ -161,18 +172,18 @@ function InicializarCapicom(){
 	
 	gSigner.Certificate = oCertificates.Item(1);
 	
-	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;ADRB:Política - Referência Básica')}">
+	if (gPolitica) {
 		gCertificadoB64 = gSigner.Certificate.Export(0);
-	</c:if>
-</c:if>
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;ADRB:Política - Referência Básica')}">
-	if (typeof gCertificadoB64 == 'undefined') {
-		alert("Atenção: Produzindo assinatura apenas para obter o certificado.");
-		gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado.";
-		var nothing;
-		gSigner = new ActiveXObject("CAPICOM.Signer");
-		Desprezar = gAssinatura.Sign(gSigner, 1, 0);
-		gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
+	}
+	if (gPolitica) {
+		if (typeof gCertificadoB64 == 'undefined') {
+			alert("Atenção: Produzindo assinatura apenas para obter o certificado.");
+			gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado.";
+			var nothing;
+			gSigner = new ActiveXObject("CAPICOM.Signer");
+			Desprezar = gAssinatura.Sign(gSigner, 1, 0);
+			gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
+		}
 	}
 </c:if>
 	return "OK";

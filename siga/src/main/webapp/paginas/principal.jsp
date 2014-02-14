@@ -94,7 +94,7 @@
 							<div id='rightbottom2'></div>
 							<script type="text/javascript">
 								SetInnerHTMLFromAjaxResponse(
-										"/sigagc/gadget?ts=${currentTimeMillis}",
+										"/sigagc/app/gadget?ts=${currentTimeMillis}",
 										document.getElementById('rightbottom2'));
 							</script>
 						</c:if>

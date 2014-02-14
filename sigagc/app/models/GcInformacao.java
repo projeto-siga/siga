@@ -430,7 +430,7 @@ public class GcInformacao extends GenericModel {
 				.replace(" **** ", "\n**** ").replace(" ==", "\n==");
 		String fragment = WikiParser.renderXHTML(s);
 		fragment = fragment.replace("&lt;&lt;&lt;Internal image(?): ",
-				"<img src=\"/sigagc/baixar?id=")
+				"<img src=\"/sigagc/app/baixar?id=")
 				.replace("&gt;&gt;&gt;", "\"/>");
 		return fragment;
 	}

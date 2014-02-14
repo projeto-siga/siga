@@ -22,7 +22,7 @@ public class Util {
 	private	static final int CONTROLE_LINK_HASH_TAG = 2;
 	private static final String URL_SIGA_DOC = "/sigaex/expediente/doc/exibir.action?sigla=";
 	private static final String URL_SIGA_SR = "/sigasr/solicitacao/exibir?sigla=";
-	private static final String URL_SIGA_GC = "/sigagc/exibir?sigla=";
+	private static final String URL_SIGA_GC = "/sigagc/app/exibir?sigla=";
 	
 //	public static void salvar(Historico o) throws Exception {
 //		o.setHisDtIni(new Date());
@@ -205,7 +205,7 @@ public class Util {
 			if(controle == 1) 
 				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(0);
 			else if(controle == 2){
-				matcherHashTag.appendReplacement(sb,"[[/sigagc/listar?filtro.pesquisa=true&filtro.tag.sigla=" + 
+				matcherHashTag.appendReplacement(sb,"[[/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.sigla=" + 
 													matcherHashTag.group(0).substring(1)  + "|$0]]");
 			}
 		}

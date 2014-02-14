@@ -100,7 +100,7 @@ public class GcInformacao extends GenericModel {
 	public DpLotacao lotacao;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinTable(name = "GC_TAG_X_INFORMACAO", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
+	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
 	public Set<GcTag> tags;
 
 	@Column(name = "DT_ELABORACAO_FIM")

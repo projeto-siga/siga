@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
@@ -2599,10 +2600,9 @@ public class ExBL extends CpBL {
 					+ ". Terminou commit gravacao: "
 					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
-
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new AplicacaoException("Erro na gravação: " + e.getCause().getMessage(), 0, e);
 
 		}
 		try {
@@ -4439,6 +4439,13 @@ public class ExBL extends CpBL {
 		ExDao exDao = ExDao.getInstance();
 
 		for (ExDocumento docPubl : documentosPublicar) {
+			
+			if(docPubl.getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI).size() > 0)
+				throw new AplicacaoException(
+						"O documento "
+								+ docPubl.getCodigo()
+								+ " já foi publicado em outro boletim. Retire esse documento da lista de documentos a publicar e entre em contato com a equipe de suporte do siga-doc.");
+			
 			boletim = exDao.consultarBoletimPorDocumento(docPubl);
 			boletim.setBoletim(doc);
 			exDao.gravar(boletim);

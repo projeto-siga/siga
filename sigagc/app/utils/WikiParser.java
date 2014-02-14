@@ -836,7 +836,7 @@ public class WikiParser {
 				sb.append("</a>");
 			} 
 			else {
-				sb.append("<a href=\"/sigagc/baixar?id=" + escapeHTML(uri.toString())
+				sb.append("<a href=\"/sigagc/app/baixar?id=" + escapeHTML(uri.toString())
 						+ "\" target=\"_blank\" title=\"Internal link\">");
 				sb.append(escapeHTML(unescapeHTML(link.length >= 2
 						&& !isEmpty(link[1].trim()) ? link[1] : link[0])));
@@ -858,7 +858,7 @@ public class WikiParser {
 			sb.append("<img src=\"" + escapeHTML(uri.toString()) + "\" alt=\""
 					+ alt + "\" title=\"" + alt + "\" />");
 		} else {
-			sb.append("<img src=\"/sigagc/baixar?id=" + escapeHTML(uri.toString()) + "\" alt=\""
+			sb.append("<img src=\"/sigagc/app/baixar?id=" + escapeHTML(uri.toString()) + "\" alt=\""
 					+ alt + "\" title=\"" + alt + "\" />");
 		}
 	}

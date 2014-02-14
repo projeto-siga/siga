@@ -16,6 +16,7 @@ GET     /public/                                staticDir:public
 *		/siga/{tipo}/buscar.action				Application.buscarSigaFromPopup
 *		/{tipo}/selecionar						Application.selecionarSiga
 
+*       /publicKnowledge           				Application.publicKnowledge
+
 # Catch all
-*       /{action}                  				Application.{action}
-*       /{controller}/{action}                  {controller}.{action}
+*       /app/{action}                  				Application.{action}

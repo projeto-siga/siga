@@ -1022,7 +1022,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void grelLocal(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim) throws Exception {
+			String local, String dtIni, String dtFim, String atendente) throws Exception {
 
 		assertAcesso("REL:Relatorio");
 
@@ -1031,6 +1031,7 @@ public class Application extends SigaApplication {
 		parametros.put("secaoUsuario", secaoUsuario);
 		parametros.put("lotacao", lotacao);
 		parametros.put("local", local);
+		parametros.put("atendente", atendente);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
 

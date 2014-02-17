@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,8 +28,20 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel {
 
-	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
+	private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
+		@Override
+		public int compare(SrItemConfiguracao o1, SrItemConfiguracao o2) {
+			if (o1 != null && o2 != null
+					&& o1.idItemConfiguracao == o2.idItemConfiguracao)
+				return 0;
+			return o1.siglaItemConfiguracao.compareTo(o2.siglaItemConfiguracao);
+		}
+	};
 
+	private static String MASCARA_JAVA = "([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?";
+	//"([0-9][0-9])?([.])?([0-9][0-9])?([.])?([0-9][0-9])";
+	
+	
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
 	@GeneratedValue(generator = "srItemSeq")
@@ -205,14 +218,14 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			siglaItemConfiguracao = "";
 			tituloItemConfiguracao = "";
 		} else {
-			final Pattern p1 = Pattern.compile("^" + MASCARA_JAVA);
+			final Pattern p1 = Pattern.compile("^" + MASCARA_JAVA + "$");
 			final Matcher m1 = p1.matcher(sigla);
 			if (m1.find()) {
 				String s = "";
-				for (int i = 1; i <= m1.groupCount(); i++) {
-					s += m1.group(i);
-					s += (i < m1.groupCount()) ? "." : "";
-				}
+				 for (int i = 1; i <= m1.groupCount(); i++) {
+                     s += m1.group(i);
+                     s += (i < m1.groupCount() - 1) ? "." : "";
+				 }
 				siglaItemConfiguracao = s;
 			} else
 				tituloItemConfiguracao = sigla;

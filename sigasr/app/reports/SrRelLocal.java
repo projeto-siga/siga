@@ -21,7 +21,6 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.hibernate.Query;
 
 import play.db.jpa.JPA;
-
 import ar.com.fdvs.dj.core.DJConstants;
 import ar.com.fdvs.dj.core.layout.HorizontalBandAlignment;
 import ar.com.fdvs.dj.domain.AutoText;
@@ -78,10 +77,12 @@ public class SrRelLocal extends RelatorioTemplate {
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection processarDados() {
 
 		List<Object> d = new LinkedList<Object>();
+		String atendente = (String) parametros.get("atendente");
 		Long percTotal = (long) 0;
 			
 		if (parametros.get("local").equals("0")) {
@@ -134,8 +135,10 @@ public class SrRelLocal extends RelatorioTemplate {
 							d.add(doubleVal*100);
 						}
 			} else {
-							String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni " +
-							"from DpLotacao where idLotacao = " +  parametros.get("lotacao") + ")";
+							//String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni " +
+							//"from DpLotacao where idLotacao = " +  parametros.get("lotacao") + ")";
+							String query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni " +
+									"from DpLotacao where idLotacao in (" +  parametros.get("atendente") + "))";
 							List lotacoes = JPA.em().createQuery(query).getResultList();
 							StringBuilder listalotacoes= new StringBuilder();
 							for (int i  = 0; i < lotacoes.size(); i++){

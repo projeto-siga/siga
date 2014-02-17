@@ -1,5 +1,17 @@
 #{extends 'main.html' /} #{set title:'Edição de Item de Configuração' /}
 
+
+
+<script src="/sigasr/public/javascripts/jquery-1.6.4.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+
+<script>
+$(function(){
+	$("#itemConfiguracao").mask("99.99.99");
+});
+</script>
+
+
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2 class="gt-form-head">Item de Configuração</h2>
@@ -13,7 +25,8 @@
 				preenchidos ${error}</p>
 			#{/ifErrors}
 			<div class="gt-form-row gt-width-66">
-				<label>Código</label> <input type="text"
+				<label>Código</label> <input id="itemConfiguracao" 
+					type="text"
 					name="itemConfiguracao.siglaItemConfiguracao"
 					value="${itemConfiguracao?.siglaItemConfiguracao}" />
 					<span style="color: red">#{error

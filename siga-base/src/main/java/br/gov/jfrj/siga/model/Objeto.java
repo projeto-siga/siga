@@ -18,10 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.model;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.util.HashSet;
-
 import org.hibernate.proxy.HibernateProxy;
 
 

@@ -917,15 +917,25 @@ public class SigaCpSinc {
 			o.setIdExterna(parseStr(parser, "idPai"));
 			lotacao.setLotacaoPai(o);
 		}
-		if (parseStr(parser, "tipoLotacao") != null) {
-			CpTipoLotacao o = obterTipoLotacaoPorDescricao(parseStr(parser,
-					"tipoLotacao"));
+		String tipoLotacao = parseStr(parser, "tipoLotacao");
+		if (tipoLotacao != null && !isNumerico(tipoLotacao)) {
+			CpTipoLotacao o = obterTipoLotacaoPorDescricao(tipoLotacao);
 			lotacao.setCpTipoLotacao(o);
 		} else {
 			// inferir tipo de lotacao para a SJRJ se vier nulo no XML
 			inferirTipoLotacaoSJRJ(lotacao);
 		}
 		return lotacao;
+	}
+
+	private boolean isNumerico(String tipoLotacao) {
+		try{
+			new Long(tipoLotacao);
+			return true;
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		return false;
 	}
 
 	private DpPessoa importarXmlPessoa(XmlPullParser parser) throws Exception {

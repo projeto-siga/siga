@@ -197,7 +197,7 @@ function Conteudo(url){
 	//objHTTP.send();
 	
 	//if(objHTTP.Status == 200){
-		var Conteudo, Inicio, Fim, Texto;
+		var Conteudo, Inicio, Fim, Texto, err;
 		//alert("OK, enviado");
 		//Conteudo = objHTTP.responseText;
 		
@@ -214,6 +214,9 @@ function Conteudo(url){
 									gAtributoAssinavelDataHora = XMLHttpRequest.getResponseHeader('Atributo-Assinavel-Data-Hora'); 					    	        
 									Conteudo = data;
     		                  	},
+    		         error:     function(jqXHR, textStatus, errorThrown) {
+        		         			err = textStatus + ": " + errorThrown;
+        		         		},
     		         async:   	false,
     		         cache:		false
     		    });          
@@ -221,6 +224,9 @@ function Conteudo(url){
     	} else  { 
 			Conteudo = VBConteudo(url);
     	}
+
+    	if (err != undefined) 
+        	return err;
 
 //		alert(Conteudo);
 //		alert(gVBAtributoAssinavelDataHora);

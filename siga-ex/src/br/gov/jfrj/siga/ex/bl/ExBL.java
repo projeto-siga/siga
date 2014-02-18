@@ -4978,7 +4978,7 @@ public class ExBL extends CpBL {
 
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Erro ao copiar as propriedades do modelo anterior.");
+					"Erro ao copiar as propriedades do modelo anterior. " + e.getMessage());
 		}
 
 	}

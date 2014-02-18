@@ -125,7 +125,7 @@
 		<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 		<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
 		<c:set var="urlBase"
-			value="${request.scheme}://${request.serverName}:${request.localPort}" />
+			value="${request.scheme}://${request.serverName}:${request.serverPort}" />
 		<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
 	    						
 	    <c:set var="botao" value="ambos" />

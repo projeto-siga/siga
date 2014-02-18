@@ -691,6 +691,8 @@ public class ExBL extends CpBL {
 
 						if (!apensadoAVolumeDoMesmoProcesso)
 							m = CpMarcador.MARCADOR_EM_ANDAMENTO;
+						else
+							m = CpMarcador.MARCADOR_APENSADO;
 
 					} else if (mob.isApensado()) {
 						m = CpMarcador.MARCADOR_APENSADO;

@@ -4970,7 +4970,7 @@ public class ExBL extends CpBL {
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		verificarDuplicacaoTermoCompleto(exClassNovo, exClassAntigo);
 		try {
-
+			exClassNovo.setClassificacoesPosteriores(null);
 			dao().gravarComHistorico(exClassNovo, exClassAntigo, dt,
 					identidadeCadastrante);
 			copiarReferencias(exClassNovo, exClassAntigo, dt,

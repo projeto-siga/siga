@@ -1531,9 +1531,9 @@ public class CpDao extends ModeloDao {
 		 * 
 		 * TODO Verificar se realmente precisa reescrever os parametros de
 		 * conexao cfg.setProperty("hibernate.connection.url",
-		 * "jdbc:oracle:thin:@mclaren:1521:mcl");
-		 * cfg.setProperty("hibernate.connection.username", "corporativo");
-		 * cfg.setProperty("hibernate.connection.password", "corporativo");
+		 * "jdbc:oracle:thin:@servidor:1521:instancia");
+		 * cfg.setProperty("hibernate.connection.username", "usuario");
+		 * cfg.setProperty("hibernate.connection.password", "senha");
 		 * 
 		 * cfg.setProperty("hibernate.c3p0.min_size", "5"); // MIN POOL SIZE
 		 * cfg.setProperty("hibernate.c3p0.max_size", "20"); // MAX POOL SIZE

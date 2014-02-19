@@ -390,8 +390,8 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 /*
 	public static void main(String args[]) throws Exception {
 		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
-				"jdbc:oracle:thin:@mclaren:1521:mcl", "corporativo",
-				"corporativo");
+				"jdbc:oracle:thin:@servidor:1521:instancia", "usuario",
+				"senha");
 		HibernateUtil.configurarHibernate(cfg, "");
 		Map<String, String> listaParametros = new HashMap<String, String>();
 		listaParametros.put("idPessoa", "129972");

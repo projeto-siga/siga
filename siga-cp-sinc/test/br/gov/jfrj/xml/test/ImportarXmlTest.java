@@ -68,8 +68,8 @@ public class ImportarXmlTest extends TestCase {
 		AnnotationConfiguration cfg;
 		// desenvolvimento
 		/*
-		 * cfg = CpDao.criarHibernateCfg("jdbc:oracle:thin:@mclaren:1521:mcl",
-		 * "corporativo", "corporativo");
+		 * cfg = CpDao.criarHibernateCfg("jdbc:oracle:thin:@servidor:1521:instancia",
+		 * "usuario", "senha");
 		 */
 		cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
 		// cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);

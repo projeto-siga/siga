@@ -71,7 +71,7 @@ public class CpDaoTest extends TestCase {
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 		/*
 		 * AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
-		 * "jdbc:oracle:thin:@mclaren:1521:mcl", "corporativo", "corporativo");
+		 * "jdbc:oracle:thin:@servidor:1521:instancia", "usuario", "senha");
 		 */
 		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
 		// CpDao.configurarHibernateParaDebug(cfg);

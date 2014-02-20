@@ -21,4 +21,8 @@ GET     /public/                                staticDir:public
 *       /publicKnowledge           				Application.publicKnowledge
 
 # Catch all
+#*       /dadosrh/                  				Corporativo.dadosRH
+
+*       /dadosRI                  					Application.dadosRI
+
 *       /app/{action}                  				Application.{action}

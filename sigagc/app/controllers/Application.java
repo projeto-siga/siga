@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,6 +58,9 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.DadosRI;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 //Obtaining Hibernate objects programmatically
 //
 //You can always get access to a Hibernate Session object from an EntityManager instance through the standard EntityManager.getDelegate() method. This is a JPA specification feature.
@@ -81,7 +85,7 @@ public class Application extends SigaApplication {
 		// SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(unless = "publicKnowledge")
+	@Before(unless = {"publicKnowledge", "dadosRI"})
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -929,34 +933,47 @@ public class Application extends SigaApplication {
 		render(itens, filtro, listaTagCategorias);
 	}
 	
-	public static void dadosRI(Date dtRecente,
-			Date dtAntigo) throws UnsupportedEncodingException {
-		if (dtRecente == null)
-			dtRecente = GcBL.dt();
-		if (dtAntigo == null)
-			dtAntigo = new Date(0L);
+	public static void dadosRI(Long ultimaAtualizacao,
+			Long desempate) throws UnsupportedEncodingException {
+		Date dtUltimaAtualizacao = new Date(0L);
+		Long idDesempate = 0L;
+		if (ultimaAtualizacao != null)
+			dtUltimaAtualizacao = new Date(ultimaAtualizacao);
+		if (desempate != null)
+			idDesempate = desempate;
 
 		Query query = JPA.em().createNamedQuery(
 				"dadosParaRecuperacaoDeInformacao");
-		//query.setParameter("anterior_a", dtRecente, TemporalType.TIMESTAMP);
-		//query.setParameter("posterior_a", dtAntigo, TemporalType.TIMESTAMP);
+		query.setParameter("dt", dtUltimaAtualizacao, TemporalType.TIMESTAMP);
+		query.setParameter("desempate", idDesempate);
+		query.setMaxResults(10);
 		List<Object[]> lista = query.getResultList();
 		if (lista.size() == 0)
-			renderJSON("{}");
+			renderJSON("[]");
 
 		List<DadosRI> resultado = new ArrayList<DadosRI>();
 		for (Object[] ao : lista) {
 			GcInformacao i = (GcInformacao) ao[0];
 			GcArquivo a = (GcArquivo) ao[1];
 			Date dt = (Date) ao[2];
+			long idMov = (Long) ao[3];
+			boolean ativo = !((Long)ao[4]).equals(3L);
 
 			DadosRI dri = new DadosRI();
+			dri.url = "/sigagc/app/exibir?sigla=" + i.getSigla();
+			dri.sigla = i.getSigla();
 			dri.titulo = a.titulo;
-			dri.conteudo = new String(a.conteudo, "utf-8");
 			dri.ultimaAtualizacao = dt;
+			dri.idDesempate = idMov;
+			dri.ativo = ativo;
+			if (ativo) {
+				dri.conteudo = new String(a.conteudo, "utf-8");
+			}
 			resultado.add(dri);
 		}
-		renderJSON(resultado);
+		Gson gson = new GsonBuilder()
+		   .setDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").create();
+		renderJSON(gson.toJson(resultado));
 	}
 
 	public static void proxy(String url) throws Exception {

@@ -73,6 +73,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import static models.SrTipoMovimentacao.*;
 
 @Entity
 @Table(name = "SR_SOLICITACAO", schema = "SIGASR")
@@ -1115,9 +1116,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(
 				lotaTitular, titular), "Application.reabrir"));
 
-		operacoes.add(new SrOperacao("clock_pause", "Deixar Pendente",
-				podeDeixarPendente(lotaTitular, titular),
-				"Application.deixarPendente"));
+		//operacoes.add(new SrOperacao("clock_pause", "Deixar Pendente",
+			//	podeDeixarPendente(lotaTitular, titular),"Application.deixarPendente"));
+		
+		operacoes.add(new SrOperacao("clock_pause", "Deixar Pendente", podeDeixarPendente(lotaTitular,
+				titular), "deixarPendente", "modal=true"));
+
 
 		operacoes.add(new SrOperacao("clock_play", "Terminar Pendência",
 				podeTerminarPendencia(lotaTitular, titular),
@@ -1307,6 +1311,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				marcadorAnterior = marcador;
 				movMarcaAnterior = movMarca;
 				marcador = CpMarcador.MARCADOR_SOLICITACAO_PENDENTE;
+				if (!mov.dtIniAgendamento.equals(""))
+					marcador = CpMarcador.MARCADOR_SOLICITACAO_AGENDADO;
 				movMarca = mov;
 			}
 			if (t == TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
@@ -1755,13 +1761,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.lotaAtendente = getUltimoAtendenteEtapaAtendimento();
 		mov.salvar(pess, lota);
 	}
-
-	public void deixarPendente(DpLotacao lota, DpPessoa pess) throws Exception {
+	
+	public void deixarPendente(DpLotacao lota, DpPessoa pess, String motivo, 
+			String calendario, String horario) throws Exception {
 		if (!podeDeixarPendente(lota, pess))
 			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
+		movimentacao.dtIniAgendamento = calendario;
+		movimentacao.horIniAgendamento = horario;
 		movimentacao.salvar(pess, lota);
 	}
 

@@ -601,9 +601,9 @@ public class Application extends SigaApplication {
 		exibir(sol.idSolicitacao, completo());
 	}
 
-	public static void deixarPendente(Long id) throws Exception {
+	public static void deixarPendente(Long id, String motivo, String calendario, String horario) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.deixarPendente(lotaTitular(), cadastrante());
+		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario, horario);
 		exibir(id, completo());
 	}
 
@@ -1047,14 +1047,15 @@ public class Application extends SigaApplication {
 	}
 
 	public static void grelPrazo(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim) throws Exception {
+			String local, String dtIni, String dtFim, String atendente) throws Exception {
 
 		assertAcesso("REL:Relatorio");
 
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		// if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		//if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		parametros.put("atendente", atendente);
 		parametros.put("lotacao", lotacao);
 		parametros.put("local", local);
 		parametros.put("dtIni", dtIni);

@@ -10,8 +10,7 @@ $(function(){
 	$("#botaoIncluir").click(function(){
 		var lotacao = $("#lotacao_sigla").val();
 		var idlotacao = $("#lotacao").val();
-		jAtendentes.append("<p></p>");
-        jAtendentes.append("<li style=\"cursor: move\" id =\"" + lotacao + "\">" + lotacao +
+		jAtendentes.append("<li style=\"cursor: move\" id =\"" + lotacao + "\">" + lotacao +
         		"<input type=\"hidden\" name=\"atendente\" value =\"" + idlotacao + "\"></li>" );
      });
 });

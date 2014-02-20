@@ -1,5 +1,22 @@
 #{extends 'main.html' /}
 
+<script src="/sigasr/public/javascripts/jquery-1.6.4.min.js"></script>
+
+<script>
+$(function(){
+	
+	var jAtendentes = $("#atendentes");
+	
+	$("#botaoIncluir").click(function(){
+		var lotacao = $("#lotacao_sigla").val();
+		var idlotacao = $("#lotacao").val();
+		jAtendentes.append("<li style=\"cursor: move\" id =\"" + lotacao + "\">" + lotacao +
+        		"<input type=\"hidden\" name=\"atendente\" value =\"" + idlotacao + "\"></li>" );
+     });
+});
+</script>
+  
+
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
@@ -15,7 +32,13 @@
 					</tr>
 					<tr>
 						<td>Atendente</td>
-						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /}</td>	
+						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /} 
+							<p>
+							<input type="button" value="Incluir" id="botaoIncluir"  
+										class="gt-btn-small" style="font-size: 10px;" />
+							<p>
+							<ul id="atendentes" style="color: #365b6d"></ul>
+						 </td>		
 					</tr>
 					<tr>
 						<td>Local (Solicitante)</td>

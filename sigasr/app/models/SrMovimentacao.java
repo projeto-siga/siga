@@ -107,6 +107,12 @@ public class SrMovimentacao extends GenericModel {
 	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao")
 	//@OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
+	
+	@Column(name = "DT_INI_AGENDAMENTO")
+	public String dtIniAgendamento;
+
+	@Column(name = "HOR_INI_AGENDAMENTO")
+	public String horIniAgendamento;
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -280,6 +286,9 @@ public class SrMovimentacao extends GenericModel {
 
 		if (lotaAtendente == null)
 			lotaAtendente = atendente.getLotacao();
+		
+		if (dtIniAgendamento != null)
+			dtIniAgendamento = dtIniAgendamento.toString();
 	}
 
 	public void notificar() {

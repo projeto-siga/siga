@@ -73,7 +73,7 @@ public class SrRelLocal extends RelatorioTemplate {
 		this.setColunaTotal(c);
 		Coluna perc = this.addColuna("% do Total", 30, RelatorioRapido.ESQUERDA, false, Double.class);
 		this.setColunaPercTotal(perc);
-		perc.setPadrao("#.00");
+		perc.setPadrao("0.00%");
 		return this;
 	}
 
@@ -86,7 +86,8 @@ public class SrRelLocal extends RelatorioTemplate {
 		Long percTotal = (long) 0;
 			
 		if (parametros.get("local").equals("0")) {
-			if (parametros.get("lotacao").equals("")) {
+			//if (parametros.get("lotacao").equals("")) {
+			if ((parametros.get("lotacao").equals("")) || (parametros.get("atendente") == null)) {
 				percTotal = SrSolicitacao.find(
 						"select count(*) " 
 						+ "from SrSolicitacao sol, SrMovimentacao mov " 
@@ -132,7 +133,7 @@ public class SrRelLocal extends RelatorioTemplate {
 							d.add(itensserv.toString());
 							d.add(total);
 							double doubleVal = (double)total/(double)percTotal;
-							d.add(doubleVal*100);
+							d.add(doubleVal);
 						}
 			} else {
 							//String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni " +
@@ -195,12 +196,14 @@ public class SrRelLocal extends RelatorioTemplate {
 									d.add(itensserv.toString());
 									d.add(total);
 									double doubleVal = (double)total/(double)percTotal;
-									d.add(doubleVal*100);
+									d.add(doubleVal);
 								}
 					}
 			} else {
-				String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni " +
-				"from DpLotacao where idLotacao = " +  parametros.get("lotacao") + ")";
+				//String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni " +
+				//"from DpLotacao where idLotacao = " +  parametros.get("lotacao") + ")";
+				String query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni " +
+						"from DpLotacao where idLotacao in (" +  parametros.get("atendente") + "))";
 				List lotacoes = JPA.em().createQuery(query).getResultList();
 				StringBuilder listalotacoes= new StringBuilder();
 				for (int i  = 0; i < lotacoes.size(); i++){
@@ -259,7 +262,7 @@ public class SrRelLocal extends RelatorioTemplate {
 						d.add(itensserv.toString());
 						d.add(total);
 						double doubleVal = (double)total/(double)percTotal;
-						d.add(doubleVal*100);
+						d.add(doubleVal);
 					}
 			}
 		return d;

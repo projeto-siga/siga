@@ -1,5 +1,8 @@
 package br.gov.jfrj.relatorio.dinamico;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class Coluna {
 	private String titulo;
 	private String nome;
@@ -9,7 +12,8 @@ public class Coluna {
 	private boolean hyperlink;
 	private Class tipo;
 	private String padrao;
-
+	private DecimalFormat formato;
+	
 	public String getPadrao() {
 		return padrao;
 	}
@@ -17,7 +21,18 @@ public class Coluna {
 	public void setPadrao(String padrao) {
 		this.padrao = padrao;
 	}
+	
+	public void setFormato(DecimalFormat formato) {
+		this.formato = formato;
+		
+	}
+	
+	public DecimalFormat getFormato() {
+		return formato;
+		
+	}
 
+	
 	public String getTitulo() {
 		return titulo;
 	}
@@ -73,5 +88,8 @@ public class Coluna {
 	public void setTipo(Class tipo) {
 		this.tipo = tipo;
 	}
+
+
+	
 
 }

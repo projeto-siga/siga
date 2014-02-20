@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -42,21 +43,16 @@ import org.joda.time.chrono.ISOChronology;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
-
 import models.SrMovimentacao;
 import models.SrSolicitacao;
 import play.db.jpa.JPA;
-import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.Font;
-import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
-import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.Coluna;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.CpOcorrenciaFeriado;
-import br.gov.jfrj.siga.dp.DpLotacao;
 
 public class SrRelPrazo extends RelatorioTemplate {
 
@@ -79,44 +75,44 @@ public class SrRelPrazo extends RelatorioTemplate {
 		
 		this.setTitle("Relatório de Solicitações por Nível de Serviço");
 		estiloTituloColuna.setFont(new Font(8,"Arial",true));
-
+		
 		this.addColuna("Local", 100, RelatorioRapido.DIREITA,true, String.class);
 		Coluna cls_1 = this.addColuna("Até 1h", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
 		cls_1.setPadrao("0");
 		Coluna perc_cls_1 = this.addColuna("%Total", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
-		perc_cls_1.setPadrao("0,00%");
+		perc_cls_1.setPadrao("0.00%");
 		Coluna cls_2 = this.addColuna("Até 2hs", 11, RelatorioRapido.DIREITA, 
 				false, Double.class);
 		cls_2.setPadrao("0");
 		Coluna perc_cls_2 = this.addColuna("%Total", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
-		perc_cls_2.setPadrao("0,00%");
+		perc_cls_2.setPadrao("0.00%");
 		Coluna cls_4 = this.addColuna("Até 4hs", 11,RelatorioRapido.DIREITA, 
 				false, Double.class);
 		cls_4.setPadrao("0");
 		Coluna perc_cls_4 = this.addColuna("%Total", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
-		perc_cls_4.setPadrao("0,00%");
+		perc_cls_4.setPadrao("0.00%");
 		Coluna cls_12 = this.addColuna("Até 12hs", 11, RelatorioRapido.DIREITA, 
 				false, Double.class);
 		cls_12.setPadrao("0");
 		Coluna perc_cls_12 = this.addColuna("%Total", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
-		perc_cls_12.setPadrao(".##");
+		perc_cls_12.setPadrao("0.00%");
 		Coluna cls_24 = this.addColuna("Até 24 hs", 11,RelatorioRapido.DIREITA, 
 				false, Double.class);
 		cls_24.setPadrao("0");
 		Coluna perc_cls_24 = this.addColuna("%Total", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
-		perc_cls_24.setPadrao("#.00");
+		perc_cls_24.setPadrao("0.00%");
 		Coluna cls_ac24 = this.addColuna("Acima de 24 hs", 12, RelatorioRapido.DIREITA, 
 				false, Double.class);
 		cls_ac24.setPadrao("0");
 		Coluna perc_cls_ac24 = this.addColuna("%Total", 12, RelatorioRapido.DIREITA,
 				false, Double.class);
-		perc_cls_ac24.setPadrao("#.00");
+		perc_cls_ac24.setPadrao("0.00%");
 		return this;
 	}
 
@@ -136,7 +132,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 		double cls_12 = 0;
 		double cls_24 = 0;
 		double cls_ac24 = 0;
-		Long percTotal = (long) 0;
+		Long percTotal = (long) 0.;		
 		while (it1.hasNext()) {
 			Object[] obj = (Object[]) it1.next();
 			DateTime inifer = new DateTime(obj[0]);
@@ -148,8 +144,9 @@ public class SrRelPrazo extends RelatorioTemplate {
 				dataDosFeriados.add(new LocalDate(fimfer));
 			}
 		}
-		if (parametros.get("lotacao").equals("")) {
-			if (parametros.get("local").equals("0")) {
+		//Checar o else referente a esse if!!!
+		if ((parametros.get("lotacao").equals("")) || (parametros.get("atendente") == null)) {
+				if (parametros.get("local").equals("0")) {
 					SortedSet<String> set = new TreeSet<String>();
 					TreeMap<String, Double> map = new TreeMap<String, Double>();
 					TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
@@ -322,7 +319,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							if (map.containsKey(chave(s, "1"))) {
 								cls_1 = map.get(chave(s, "1"));
 								d.add(cls_1);
-								d.add((cls_1/percTotal)*100);
+								d.add((cls_1/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);
@@ -331,7 +328,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							if (map.containsKey(chave(s, "2"))) {
 								cls_2 = map.get(chave(s, "2"));
 								d.add(cls_2);
-								d.add((cls_2/percTotal)*100);
+								d.add((cls_2/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);
@@ -340,7 +337,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							if (map.containsKey(chave(s, "4"))) {
 								cls_4 = map.get(chave(s, "4"));
 								d.add(cls_4);
-								d.add((cls_4/percTotal)*100);
+								d.add((cls_4/percTotal));
 							} else {
 								d.add(0D);
 								d.add(0D);
@@ -349,7 +346,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							if (map.containsKey(chave(s, "12"))) {
 								cls_12 = map.get(chave(s, "12"));
 								d.add(cls_12);
-								d.add((cls_12/percTotal)*100);
+								d.add((cls_12/percTotal));
 							} else {
 								d.add(0D);
 								d.add(0D);
@@ -358,7 +355,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							if (map.containsKey(chave(s, "24"))) {
 								cls_24 = map.get(chave(s, "24"));
 								d.add(cls_24);
-								d.add((cls_24/percTotal)*100);
+								d.add((cls_24/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);
@@ -367,7 +364,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							if (map.containsKey(chave(s, "ac24"))) {
 								cls_ac24 = map.get(chave(s, "ac24"));
 								d.add(cls_ac24);
-								d.add((cls_ac24/percTotal)*100);
+								d.add((cls_ac24/percTotal));
 							} else  {
 								d.add(0D);
 								d.add(0D);
@@ -436,8 +433,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 										endtemp.getDayOfMonth() + 1, 10, 0, 0);
 							} else
 								end1 = endtemp;
-							int dias = Days.daysBetween(start1.toDateMidnight(),
-									end1.toDateMidnight()).getDays();
+							int dias = Days.daysBetween(start1.toDateTime(),
+									end1.toDateTime()).getDays();
 							HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
 									dataDosFeriados);
 							LocalDateKitCalculatorsFactory.getDefaultInstance()
@@ -515,22 +512,24 @@ public class SrRelPrazo extends RelatorioTemplate {
 						}
 						d.add(local);
 						d.add(cls_1);
-						d.add((cls_1/percTotal)*100);
+						d.add((cls_1/percTotal));
 						d.add(cls_2);
-						d.add((cls_2/percTotal)*100);
+						d.add((cls_2/percTotal));
 						d.add(cls_4); 
-						d.add((cls_4/percTotal)*100);
+						d.add((cls_4/percTotal));
 						d.add(cls_12);
-						d.add((cls_12/percTotal)*100);
+						d.add((cls_12/percTotal));
 						d.add(cls_24);
-						d.add((cls_24/percTotal)*100);
+						d.add((cls_24/percTotal));
 						d.add(cls_ac24);
-						d.add((cls_ac24/percTotal)*100);
+						d.add((cls_ac24/percTotal));
 					} // fim do else referente ao if parametros.get("local").equals("0") 
 		} else if (parametros.get("lotacao").equals("0")) {
-			String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni "
-					+ "from DpLotacao where idLotacao = "
-					+ parametros.get("lotacao") + ")";
+				//String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni "
+				//	+ "from DpLotacao where idLotacao = "
+				//	+ parametros.get("lotacao") + ")";
+				String query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni " +
+						"from DpLotacao where idLotacao in (" +  parametros.get("atendente") + "))";
 				List lotacoes = JPA.em().createQuery(query).getResultList();
 				StringBuilder listalotacoes = new StringBuilder();
 				for (int i = 0; i < lotacoes.size(); i++) {
@@ -678,22 +677,24 @@ public class SrRelPrazo extends RelatorioTemplate {
 				}
 				d.add(local);
 				d.add(cls_1);
-				d.add((cls_1/percTotal)*100);
+				d.add((cls_1/percTotal));
 				d.add(cls_2);
-				d.add((cls_2/percTotal)*100);
+				d.add((cls_2/percTotal));
 				d.add(cls_4); 
-				d.add((cls_4/percTotal)*100);
+				d.add((cls_4/percTotal));
 				d.add(cls_12);
-				d.add((cls_12/percTotal)*100);
+				d.add((cls_12/percTotal));
 				d.add(cls_24);
-				d.add((cls_24/percTotal)*100);
+				d.add((cls_24/percTotal));
 				d.add(cls_ac24);
-				d.add((cls_ac24/percTotal)*100);
+				d.add((cls_ac24/percTotal));
 		} //fim do else referente ao if (parametros.get("lotacao").equals("")) 
 		else {
-			String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni "
-				+ "from DpLotacao where idLotacao = "
-				+ parametros.get("lotacao") + ")";
+			//String query = "select idLotacao from DpLotacao where idLotacaoIni = (select idLotacaoIni "
+			//	+ "from DpLotacao where idLotacao = "
+			//	+ parametros.get("lotacao") + ")";
+			String query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni " +
+					"from DpLotacao where idLotacao in (" +  parametros.get("atendente") + "))";
 			List lotacoes = JPA.em().createQuery(query).getResultList();
 			StringBuilder listalotacoes = new StringBuilder();
 			for (int i = 0; i < lotacoes.size(); i++) {
@@ -764,8 +765,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 							endtemp.getDayOfMonth() + 1, 10, 0, 0);
 				} else
 					end1 = endtemp;
-				int dias = Days.daysBetween(start1.toDateMidnight(),
-						end1.toDateMidnight()).getDays();
+				int dias = Days.daysBetween(start1.toDateTime(),
+						end1.toDateTime()).getDays();
 				HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
 						dataDosFeriados);
 				LocalDateKitCalculatorsFactory.getDefaultInstance()
@@ -843,17 +844,17 @@ public class SrRelPrazo extends RelatorioTemplate {
 			}
 			d.add(local);
 			d.add(cls_1);
-			d.add((cls_1/percTotal)*100);
+			d.add((cls_1/percTotal));
 			d.add(cls_2);
-			d.add((cls_2/percTotal)*100);
+			d.add((cls_2/percTotal));
 			d.add(cls_4); 
-			d.add((cls_4/percTotal)*100);
+			d.add((cls_4/percTotal));
 			d.add(cls_12);
-			d.add((cls_12/percTotal)*100);
+			d.add((cls_12/percTotal));
 			d.add(cls_24);
-			d.add((cls_24/percTotal)*100);
+			d.add((cls_24/percTotal));
 			d.add(cls_ac24);
-			d.add((cls_ac24/percTotal)*100);
+			d.add((cls_ac24/percTotal));
 		}
 		return d;															
 	}

@@ -198,7 +198,7 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 					.setColumnProperty(
 							IConstantes.PREFIXO_COLUNA_PROPERTY + i,
 							coluna.getTipo().getName())
-					.setPattern(coluna.getPadrao())	
+					.setPattern(coluna.getPadrao())
 					.setStyle(estiloAlinhamento)
 					.build();
 			

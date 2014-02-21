@@ -65,7 +65,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
-
 public class Application extends SigaApplication {
 
 	@Before
@@ -138,27 +137,7 @@ public class Application extends SigaApplication {
 
 	public static void exibirLocalERamal(SrSolicitacao solicitacao)
 			throws Exception {
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		if (solicitacao.solicitante != null)
-			locais = JPA
-					.em()
-					.createQuery(
-							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-									+ solicitacao.solicitante.getOrgaoUsuario()
-											.getIdOrgaoUsu()).getResultList();
-		render(solicitacao.deduzirLocalERamal(), locais);
-	}
-
-	public static void exibirLocal(SrSolicitacao solicitacao) throws Exception {
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		if (solicitacao.solicitante != null)
-			locais = JPA
-					.em()
-					.createQuery(
-							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-									+ lotaTitular().getOrgaoUsuario()
-											.getIdOrgaoUsu()).getResultList();
-		render(locais);
+		render(solicitacao.deduzirLocalERamal());
 	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao)
@@ -168,14 +147,12 @@ public class Application extends SigaApplication {
 
 	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
 			throws Exception {
-		if (!SrItemConfiguracao.listarPorPessoaELocal(solicitacao.solicitante,
-				solicitacao.local).contains(solicitacao.itemConfiguracao))
+		if (solicitacao.getItensDisponiveis().contains(
+				solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
-		Map<SrAcao, DpLotacao> acoesEAtendentes = SrAcao
-				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
-						solicitacao.solicitante, solicitacao.local,
-						solicitacao.itemConfiguracao);
+		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao
+				.getAcoesDisponiveisComAtendenteOrdemTitulo();
 		if (solicitacao.acao == null
 				|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
 			if (acoesEAtendentes.size() > 0)
@@ -187,10 +164,8 @@ public class Application extends SigaApplication {
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-		Map<SrAcao, DpLotacao> acoesEAtendentes = SrAcao
-				.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
-						solicitacao.solicitante, solicitacao.local,
-						solicitacao.itemConfiguracao);
+		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao
+				.getAcoesDisponiveisComAtendenteOrdemTitulo();
 		if (solicitacao.acao == null
 				|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
 			if (acoesEAtendentes.size() > 0)
@@ -209,10 +184,8 @@ public class Application extends SigaApplication {
 
 		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
 		if (solicitacao.itemConfiguracao != null) {
-			acoesEAtendentes = SrAcao
-					.listarComAtendentePorPessoaLocalEItemOrdemTitulo(
-							solicitacao.solicitante, solicitacao.local,
-							solicitacao.itemConfiguracao);
+			acoesEAtendentes = solicitacao
+					.getAcoesDisponiveisComAtendenteOrdemTitulo();
 			if (solicitacao.acao == null
 					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
 				if (acoesEAtendentes.size() > 0)
@@ -271,15 +244,15 @@ public class Application extends SigaApplication {
 					"Título não informado");
 		}
 
-		for(play.data.validation.Error error : validation.errors()) {
-	        System.out.println(error.message());
-	    }
-		
+		for (play.data.validation.Error error : validation.errors()) {
+			System.out.println(error.message());
+		}
+
 		if (validation.hasErrors()) {
 			render("@editarItem", itemConfiguracao);
 		}
 	}
-	
+
 	private static void validarFormEditarAcao(SrAcao acao) {
 
 		if (acao.siglaAcao.equals("")) {
@@ -301,22 +274,26 @@ public class Application extends SigaApplication {
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
 				&& (designacao.posAtendente == null)
 				&& (designacao.equipeQualidade == null)) {
-			validation.addError("designacao.atendente",	"Atendente não informado.");
-			validation.addError("designacao.preAtendente","Pré-atendente não informado.");
-			validation.addError("designacao.posAtendente","Pós-atendente não informado.");
-			validation.addError("designacao.equipeQualidade","Equipe de qualidade não informada.");
+			validation.addError("designacao.atendente",
+					"Atendente não informado.");
+			validation.addError("designacao.preAtendente",
+					"Pré-atendente não informado.");
+			validation.addError("designacao.posAtendente",
+					"Pós-atendente não informado.");
+			validation.addError("designacao.equipeQualidade",
+					"Equipe de qualidade não informada.");
 		}
-		
-		if ((designacao.itemConfiguracao == null) 
-				&& (designacao.acao == null)) {
-			validation.addError("designacao.itemConfiguracao","Código não informado.");
-			validation.addError("designacao.acao","Código não informado.");
+
+		if ((designacao.itemConfiguracao == null) && (designacao.acao == null)) {
+			validation.addError("designacao.itemConfiguracao",
+					"Código não informado.");
+			validation.addError("designacao.acao", "Código não informado.");
 		}
-		
-		for(play.data.validation.Error error : validation.errors()) {
-            System.out.println(error.message());
-        }
-		
+
+		for (play.data.validation.Error error : validation.errors()) {
+			System.out.println(error.message());
+		}
+
 		if (validation.hasErrors()) {
 			List<CpOrgaoUsuario> orgaos = JPA.em()
 					.createQuery("from CpOrgaoUsuario").getResultList();
@@ -596,7 +573,8 @@ public class Application extends SigaApplication {
 		render(sol);
 	}
 
-	public static void responderPesquisaGravar(Long id, HashMap<Long, String> respostaMap) throws Exception {
+	public static void responderPesquisaGravar(Long id,
+			HashMap<Long, String> respostaMap) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrMovimentacao movimentacao = new SrMovimentacao();
 		List<SrResposta> respostas = movimentacao.setRespostaMap(respostaMap);
@@ -673,7 +651,8 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find("hisDtFim is null").fetch();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
+				"hisDtFim is null").fetch();
 		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
@@ -739,13 +718,14 @@ public class Application extends SigaApplication {
 		render(itemConfiguracao);
 	}
 
-	public static void gravarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
+	public static void gravarItem(SrItemConfiguracao itemConfiguracao)
+			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarItem(itemConfiguracao);
 		itemConfiguracao.salvar();
 		listarItem();
 	}
-	
+
 	public static void desativarItem(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
@@ -753,37 +733,29 @@ public class Application extends SigaApplication {
 		listarItem();
 	}
 
-	public static void selecionarItem(String sigla, Long pessoa, Long local)
+	public static void selecionarItem(String sigla, SrSolicitacao sol)
 			throws Exception {
-		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
-				pessoa) : null;
-		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
-				local) : null;
 		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
-				dpPessoa, cpComplexo);
+				sol.getItensDisponiveis());
 		render("@selecionar", sel);
 	}
 
 	public static void buscarItem(String sigla, String nome,
-			SrItemConfiguracao filtro, Long pessoa, Long local) {
+			SrItemConfiguracao filtro, SrSolicitacao sol) {
 
 		List<SrItemConfiguracao> itens = null;
-		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
-				pessoa) : null;
-		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
-				local) : null;
 
 		try {
 			if (filtro == null)
 				filtro = new SrItemConfiguracao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(dpPessoa, cpComplexo);
+			itens = filtro.buscar(sol.getItensDisponiveis());
 		} catch (Exception e) {
 			itens = new ArrayList<SrItemConfiguracao>();
 		}
 
-		render(itens, filtro, nome, pessoa, local);
+		render(itens, filtro, nome, sol);
 	}
 
 	public static void listarTipoAtributo() throws Exception {
@@ -813,10 +785,10 @@ public class Application extends SigaApplication {
 					"Nome de atributo não informado");
 		}
 
-		for(play.data.validation.Error error : validation.errors()) {
-	        System.out.println(error.message());
-	    }
-		
+		for (play.data.validation.Error error : validation.errors()) {
+			System.out.println(error.message());
+		}
+
 		if (validation.hasErrors()) {
 			render("@editarTipoAtributo", att);
 		}
@@ -885,41 +857,28 @@ public class Application extends SigaApplication {
 		listarAcao();
 	}
 
-	public static void selecionarAcao(String sigla, Long pessoa, Long local,
-			Long item) throws Exception {
-		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
-				pessoa) : null;
-		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
-				local) : null;
-		SrItemConfiguracao srItem = item != null ? (SrItemConfiguracao) SrItemConfiguracao
-				.findById(item) : null;
+	public static void selecionarAcao(String sigla, SrSolicitacao sol)
+			throws Exception {
 
-		SrAcao sel = new SrAcao().selecionar(sigla, dpPessoa, cpComplexo,
-				srItem);
+		SrAcao sel = new SrAcao().selecionar(sigla, sol.getAcoesDisponiveis());
 		render("@selecionar", sel);
 	}
 
 	public static void buscarAcao(String sigla, String nome, SrAcao filtro,
-			Long pessoa, Long local, Long item) {
+			SrSolicitacao sol) {
 		List<SrAcao> itens = null;
-		DpPessoa dpPessoa = pessoa != null ? JPA.em().find(DpPessoa.class,
-				pessoa) : null;
-		CpComplexo cpComplexo = local != null ? JPA.em().find(CpComplexo.class,
-				local) : null;
-		SrItemConfiguracao srItem = item != null ? (SrItemConfiguracao) SrItemConfiguracao
-				.findById(item) : null;
 
 		try {
 			if (filtro == null)
 				filtro = new SrAcao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(dpPessoa, cpComplexo, srItem);
+			itens = filtro.buscar(sol.getAcoesDisponiveis());
 		} catch (Exception e) {
 			itens = new ArrayList<SrAcao>();
 		}
 
-		render(itens, filtro, nome, pessoa, local, item);
+		render(itens, filtro, nome, sol);
 	}
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
@@ -957,7 +916,8 @@ public class Application extends SigaApplication {
 		listarLista();
 	}
 
-	public static void relSolicitacoes(SrSolicitacaoFiltro filtro) throws Exception {
+	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)
+			throws Exception {
 		assertAcesso("REL:Relatorio");
 		// Montando o filtro...
 		String[] tipos = new String[] { "Pessoa", "Lotação" };
@@ -1008,7 +968,7 @@ public class Application extends SigaApplication {
 										.getIdOrgaoUsu()).getResultList();
 		render(locais);
 	}
-	
+
 	public static void relPesquisa() throws Exception {
 		assertAcesso("REL:Relatorio");
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
@@ -1028,7 +988,8 @@ public class Application extends SigaApplication {
 
 		Map<String, String> parametros = new HashMap<String, String>();
 
-		if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		if (!lotacao.equals(""))
+			parametros.put("lotacao", lotacao);
 		parametros.put("secaoUsuario", secaoUsuario);
 		parametros.put("situacao", situacao);
 		parametros.put("dtIni", dtIni);
@@ -1053,7 +1014,8 @@ public class Application extends SigaApplication {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		if (!lotacao.equals(""))
+			parametros.put("lotacao", lotacao);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
 
@@ -1100,7 +1062,7 @@ public class Application extends SigaApplication {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		//if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		// if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
 		parametros.put("lotacao", lotacao);
 		parametros.put("local", local);
 		parametros.put("dtIni", dtIni);
@@ -1125,8 +1087,9 @@ public class Application extends SigaApplication {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		//parametros.put("lotacao", lotacao);
-		if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		// parametros.put("lotacao", lotacao);
+		if (!lotacao.equals(""))
+			parametros.put("lotacao", lotacao);
 		parametros.put("local", local);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
@@ -1141,7 +1104,7 @@ public class Application extends SigaApplication {
 		renderBinary(is, "Relatório Detalhado de Prazos", pdf.length,
 				"application/pdf", true);
 	}
-	
+
 	public static void grelPesquisa(String secaoUsuario, String lotacao,
 			String local, String dtIni, String dtFim) throws Exception {
 
@@ -1167,28 +1130,29 @@ public class Application extends SigaApplication {
 	}
 
 	public static void concluirAutomatico() throws Exception {
-		
-		List<SrMovimentacao> movs = SrMovimentacao.find("select mov from SrMovimentacao mov " +
-				"where mov.tipoMov = 15 and exists (select 1 from SrMovimentacao movfc  " +
-				"where movfc.solicitacao = mov.solicitacao and movfc.tipoMov = 15 " +
-				"and movfc.dtIniMov = (select max(movm.dtIniMov) from SrMovimentacao movm " +
-				"where movm.solicitacao = movfc.solicitacao and movm.tipoMov = 15)) " +
-				"and not exists (select 1 from SrMovimentacao movrev where movrev.solicitacao = mov.solicitacao " +
-				"and movrev.tipoMov in (7,14,16) and movrev.dtIniMov > mov.dtIniMov)").fetch();
-	
-		Set<SrSolicitacao> solsnaoconcluidas = new HashSet<SrSolicitacao>(); 
-		for (int k  = 0; k < movs.size(); k++){
+
+		List<SrMovimentacao> movs = SrMovimentacao
+				.find("select mov from SrMovimentacao mov "
+						+ "where mov.tipoMov = 15 and exists (select 1 from SrMovimentacao movfc  "
+						+ "where movfc.solicitacao = mov.solicitacao and movfc.tipoMov = 15 "
+						+ "and movfc.dtIniMov = (select max(movm.dtIniMov) from SrMovimentacao movm "
+						+ "where movm.solicitacao = movfc.solicitacao and movm.tipoMov = 15)) "
+						+ "and not exists (select 1 from SrMovimentacao movrev where movrev.solicitacao = mov.solicitacao "
+						+ "and movrev.tipoMov in (7,14,16) and movrev.dtIniMov > mov.dtIniMov)")
+				.fetch();
+
+		Set<SrSolicitacao> solsnaoconcluidas = new HashSet<SrSolicitacao>();
+		for (int k = 0; k < movs.size(); k++) {
 			solsnaoconcluidas.add(movs.get(k).solicitacao);
 			System.out.println(movs.get(k).solicitacao.idSolicitacao);
 		}
 
 		Iterator it = solsnaoconcluidas.iterator();
-		while (it.hasNext()){
+		while (it.hasNext()) {
 			SrSolicitacao sol = (SrSolicitacao) it.next();
 			sol.fechar(null, null, "Conclusão Automática");
 		}
-		
+
 		render(solsnaoconcluidas);
 	}
 }
-	

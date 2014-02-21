@@ -63,7 +63,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
-
+import br.gov.jfrj.siga.sinc.lib.ItemComparator;
 import static models.SrTipoMovimentacao.*;
 
 @Entity
@@ -727,7 +727,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean sofreuMov(long idTpMov, long... idsTpsReversores) {
-		return sofreuMov(new long[] {idTpMov}, idsTpsReversores);
+		return sofreuMov(new long[] { idTpMov }, idsTpsReversores);
 	}
 
 	public boolean sofreuMov(long[] idsTpsMovs, long... idsTpsReversores) {
@@ -847,8 +847,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeRetornarAoPreAtendimento(DpLotacao lota, DpPessoa pess)
 			throws Exception {
-		return isEmAtendimento() && estaCom(lota, pess) && 
-				(getPreAtendenteDesignado() != null);
+		return isEmAtendimento() && estaCom(lota, pess)
+				&& (getPreAtendenteDesignado() != null);
 	}
 
 	public boolean podeFinalizarPreAtendimento(DpLotacao lota, DpPessoa pess) {
@@ -949,6 +949,113 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<CpComplexo> getLocaisDisponiveis() {
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		if (solicitante != null)
+			locais = JPA
+					.em()
+					.createQuery(
+							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+									+ solicitante.getOrgaoUsuario()
+											.getIdOrgaoUsu()).getResultList();
+		return locais;
+	}
+
+	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
+		Set<SrItemConfiguracao> listaFinal = new TreeSet<SrItemConfiguracao>(
+				new SrItemConfiguracaoComparator());
+
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
+				solicitante, local, null, null,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
+						SrConfiguracaoBL.ITEM_CONFIGURACAO,
+						SrConfiguracaoBL.ACAO });
+
+		for (SrConfiguracao conf : confs) {
+			if (conf.itemConfiguracao == null)
+				listaFinal.addAll(SrItemConfiguracao.listar());
+			else {
+				listaFinal.addAll(conf.itemConfiguracao.getAtual()
+						.listarItemETodosDescendentes());
+				SrItemConfiguracao itemPai = conf.itemConfiguracao.getAtual()
+						.getPai();
+				while (itemPai != null) {
+					if (!listaFinal.contains(itemPai))
+						listaFinal.add(itemPai);
+					itemPai = itemPai.getPai();
+				}
+			}
+		}
+		return new ArrayList(listaFinal);
+	}
+
+	public List<SrAcao> getAcoesDisponiveis() throws Exception {
+		return new ArrayList(getAcoesDisponiveisComAtendente().keySet());
+	}
+
+	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendente()
+			throws Exception {
+		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
+				this.solicitante, this.local, this.itemConfiguracao, null,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
+				new int[] { SrConfiguracaoBL.ACAO });
+		for (SrConfiguracao conf : confs) {
+			// Edson: o && !containsKey, abaixo, Ã© necessÃ¡rio pra que
+			// atendentes
+			// de configuraÃ§Ãµes mais genÃ©ricas nÃ£o substituam os das mais
+			// especÃ­ficas, que vÃªm antes
+			if (conf.acao == null) {
+				for (SrAcao acao : SrAcao.listar())
+					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
+						listaFinal.put(acao, conf.atendente);
+				break;
+			} else
+				for (SrAcao acao : conf.acao.getAtual()
+						.listarAcaoETodasDescendentes())
+					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
+						listaFinal.put(acao, conf.atendente);
+		}
+
+		return listaFinal;
+	}
+
+	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendenteOrdemSigla()
+			throws Exception {
+		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
+				new Comparator<SrAcao>() {
+					@Override
+					public int compare(SrAcao o1, SrAcao o2) {
+						if (o1 != null && o2 != null && o1.idAcao == o2.idAcao)
+							return 0;
+						return o1.siglaAcao.compareTo(o2.siglaAcao);
+					}
+				});
+
+		m.putAll(getAcoesDisponiveisComAtendente());
+		return m;
+	}
+
+	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendenteOrdemTitulo()
+			throws Exception {
+		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
+				new Comparator<SrAcao>() {
+					@Override
+					public int compare(SrAcao o1, SrAcao o2) {
+						int i = o1.tituloAcao.compareTo(o2.tituloAcao);
+						if (i != 0)
+							return i;
+						return o1.idAcao.compareTo(o2.idAcao);
+					}
+				});
+
+		m.putAll(getAcoesDisponiveisComAtendente());
+		return m;
+	}
+
 	public SortedSet<SrOperacao> operacoes(final DpLotacao lotaTitular,
 			final DpPessoa titular, final boolean vendoHistoricoCompleto)
 			throws Exception {
@@ -980,8 +1087,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						"Application.criarFilha"));
 
 		operacoes.add(new SrOperacao("text_list_numbers", "Definir Lista",
-				podeAssociarLista(lotaTitular, titular),
-				"associarLista", "modal=true"));
+				podeAssociarLista(lotaTitular, titular), "associarLista",
+				"modal=true"));
 
 		operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(lotaTitular,
 				titular), "fechar", "modal=true"));
@@ -1575,8 +1682,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_AVALIACAO);
 		movimentacao.salvar(pess, lota);
-		for (SrPergunta pergunta : this.getPesquisaDesignada().perguntaSet){
-			for (SrResposta resp : respostas){
+		for (SrPergunta pergunta : this.getPesquisaDesignada().perguntaSet) {
+			for (SrResposta resp : respostas) {
 				if (pergunta.idPergunta.equals(resp.pergunta.idPergunta)) {
 					SrResposta resposta = new SrResposta();
 					resposta.pergunta = pergunta;

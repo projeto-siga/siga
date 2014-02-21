@@ -22,7 +22,7 @@ function carregouAcao(response, param){
 				<label>Item</label> #{selecao tipo:'item',
 				nome:'solicitacao.itemConfiguracao',
 				value:solicitacao.itemConfiguracao, grande:true, onchange:'carregarAcao();',
-				params:'pessoa='+solicitacao.solicitante?.idPessoa+'&local='+solicitacao.local?.idComplexo /} <span style="color: red">#{error
+				params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo /} <span style="color: red">#{error
 					'solicitacao.itemConfiguracao' /}</span>
 </div>
 

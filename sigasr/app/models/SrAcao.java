@@ -98,10 +98,9 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		if (nivel == 2) {
 			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrAcao configuracao = SrAcao.find(
-					"bySiglaAcaoAndHisDtFimIsNull", sigla_raiz).first();
-			desc_nivel = configuracao.tituloAcao + " : "
-					+ this.tituloAcao;
+			SrAcao configuracao = SrAcao.find("bySiglaAcaoAndHisDtFimIsNull",
+					sigla_raiz).first();
+			desc_nivel = configuracao.tituloAcao + " : " + this.tituloAcao;
 		}
 		return desc_nivel;
 	}
@@ -142,13 +141,13 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Override
 	public SrAcao selecionar(String sigla) throws Exception {
-		return selecionar(sigla, null, null, null);
+		return selecionar(sigla, null);
 	}
 
-	public SrAcao selecionar(String sigla, DpPessoa pess, CpComplexo local,
-			SrItemConfiguracao item) throws Exception {
+	public SrAcao selecionar(String sigla, List<SrAcao> listaBase)
+			throws Exception {
 		setSigla(sigla);
-		List<SrAcao> itens = buscar(pess, local, item);
+		List<SrAcao> itens = buscar(listaBase);
 		if (itens.size() == 0 || itens.size() > 1)
 			return null;
 		return itens.get(0);
@@ -157,20 +156,18 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Override
 	public List<SrAcao> buscar() throws Exception {
-		return buscar(null, null, null);
+		return buscar(null);
 	}
 
-	public List<SrAcao> buscar(DpPessoa pess, CpComplexo local,
-			SrItemConfiguracao item) throws Exception {
+	public List<SrAcao> buscar(List<SrAcao> listaBase) throws Exception {
 
 		List<SrAcao> lista = new ArrayList<SrAcao>();
 		List<SrAcao> listaFinal = new ArrayList<SrAcao>();
 
-		if (pess == null)
+		if (listaBase == null)
 			lista = listar();
 		else
-			lista.addAll(listarComAtendentePorPessoaLocalEItem(pess, local,
-					item).keySet());
+			lista = listaBase;
 
 		if ((siglaAcao == null || siglaAcao.equals(""))
 				&& (tituloAcao == null || tituloAcao.equals("")))
@@ -260,70 +257,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		return SrAcao.find("hisDtFim is null order by siglaAcao").fetch();
 	}
 
-	public static Map<SrAcao, DpLotacao> listarComAtendentePorPessoaLocalEItem(
-			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
-			throws Exception {
-		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess,
-				local, item, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ACAO });
-		for (SrConfiguracao conf : confs) {
-			// Edson: o && !containsKey, abaixo, é necessário pra que atendentes
-			// de configurações mais genéricas não substituam os das mais
-			// específicas, que vêm antes
-			if (conf.acao == null) {
-				for (SrAcao acao : listar())
-					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
-						listaFinal.put(acao, conf.atendente);
-				break;
-			} else
-				for (SrAcao acao : conf.acao.getAtual()
-						.listarAcaoETodasDescendentes())
-					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
-						listaFinal.put(acao, conf.atendente);
-		}
-
-		return listaFinal;
-	}
-
-	public static Map<SrAcao, DpLotacao> listarComAtendentePorPessoaLocalEItemOrdemSigla(
-			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
-			throws Exception {
-		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
-				new Comparator<SrAcao>() {
-					@Override
-					public int compare(SrAcao o1, SrAcao o2) {
-						if (o1 != null && o2 != null
-								&& o1.idAcao == o2.idAcao)
-							return 0;
-						return o1.siglaAcao.compareTo(o2.siglaAcao);
-					}
-				});
-
-		m.putAll(listarComAtendentePorPessoaLocalEItem(pess, local, item));
-		return m;
-	}
-
-	public static Map<SrAcao, DpLotacao> listarComAtendentePorPessoaLocalEItemOrdemTitulo(
-			DpPessoa pess, CpComplexo local, SrItemConfiguracao item)
-			throws Exception {
-		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
-				new Comparator<SrAcao>() {
-					@Override
-					public int compare(SrAcao o1, SrAcao o2) {
-						int i = o1.tituloAcao.compareTo(o2.tituloAcao);
-						if (i != 0)
-							return i;
-						return o1.idAcao.compareTo(o2.idAcao);
-					}
-				});
-
-		m.putAll(listarComAtendentePorPessoaLocalEItem(pess, local, item));
-		return m;
-	}
-
 	public String getGcTags() {
 		String sigla = this.siglaAcao;
 
@@ -334,12 +267,11 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		if (nivel == 2) {
 			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrAcao configuracao = SrAcao.find("bySiglaAcao",
-					sigla_raiz).first();
+			SrAcao configuracao = SrAcao.find("bySiglaAcao", sigla_raiz)
+					.first();
 			tags = "&tags=@"
 					+ Texto.slugify(configuracao.tituloAcao, true, false)
-					+ "&tags=@"
-					+ Texto.slugify(this.tituloAcao, true, false);
+					+ "&tags=@" + Texto.slugify(this.tituloAcao, true, false);
 		}
 		return tags;
 	}

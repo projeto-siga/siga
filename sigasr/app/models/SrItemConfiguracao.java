@@ -13,7 +13,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,10 +20,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import util.Util;
-
-import models.siga.PlayHistoricoSuporte;
 
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -37,16 +32,6 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel {
-
-	private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
-		@Override
-		public int compare(SrItemConfiguracao o1, SrItemConfiguracao o2) {
-			if (o1 != null && o2 != null
-					&& o1.idItemConfiguracao == o2.idItemConfiguracao)
-				return 0;
-			return o1.siglaItemConfiguracao.compareTo(o2.siglaItemConfiguracao);
-		}
-	};
 
 	private static String MASCARA_JAVA = "([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9]).?([0-9][0-9])";
 
@@ -152,52 +137,37 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 
 	@Override
 	public SrItemConfiguracao selecionar(String sigla) throws Exception {
-		return selecionar(sigla, null, null);
+		return selecionar(sigla, null);
 	}
 
-	public SrItemConfiguracao selecionar(String sigla, DpPessoa pess, CpComplexo local)
-			throws Exception {
+	public SrItemConfiguracao selecionar(String sigla, List<SrItemConfiguracao> listaBase) throws Exception {
 		setSigla(sigla);
-		List<SrItemConfiguracao> itens = buscar(pess, local, false);
+		List<SrItemConfiguracao> itens = buscar(listaBase, false);
 		if (itens.size() == 0 || itens.size() > 1 || itens.get(0).isGenerico())
 			return null;
 		return itens.get(0);
 	}
 
-	public List<SrItemConfiguracao> buscarOld() {
-		String query = "from SrItemConfiguracao where 1=1";
-		if (tituloItemConfiguracao != null
-				&& !tituloItemConfiguracao.equals("")) {
-			for (String s : tituloItemConfiguracao.toLowerCase().split("\\s"))
-				query += " and lower(tituloItemConfiguracao) like '%" + s
-						+ "%'";
-		}
-		if (siglaItemConfiguracao != null && !siglaItemConfiguracao.equals(""))
-			query += " and siglaItemConfiguracao like '%" + getSigla() + "%' ";
-		query += " and hisDtFim is null order by siglaItemConfiguracao";
-
-		return SrItemConfiguracao.find(query).fetch();
-	}
-
 	@Override
 	public List<SrItemConfiguracao> buscar() throws Exception {
-		return buscar(null, null);
+		return buscar(null);
 	}
 
-	public List<SrItemConfiguracao> buscar(DpPessoa pess, CpComplexo local) throws Exception {
-		return buscar(pess, local, true);
+	public List<SrItemConfiguracao> buscar(List<SrItemConfiguracao> listaBase)
+			throws Exception {
+		return buscar(listaBase, true);
 	}
 
-	public List<SrItemConfiguracao> buscar(DpPessoa pess, CpComplexo local,
+	public List<SrItemConfiguracao> buscar(List<SrItemConfiguracao> listaBase,
 			boolean comHierarquia) throws Exception {
 
 		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 
-		if (pess == null)
+		if (listaBase == null)
 			lista = listar();
 		else
-			lista = listarPorPessoaELocal(pess, local);
+			lista = listaBase;
 
 		if ((siglaItemConfiguracao == null || siglaItemConfiguracao.equals(""))
 				&& (tituloItemConfiguracao == null || tituloItemConfiguracao
@@ -231,7 +201,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				listaFinal.add(item);
 		}
 
-		Collections.sort(listaFinal, comparator);
+		Collections.sort(listaFinal, new SrItemConfiguracaoComparator());
 		return listaFinal;
 	}
 
@@ -315,35 +285,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	public static List<SrItemConfiguracao> listar() {
 		return SrItemConfiguracao.find(
 				"hisDtFim is null order by siglaItemConfiguracao").fetch();
-	}
-
-	public static List<SrItemConfiguracao> listarPorPessoaELocal(DpPessoa pess,
-			CpComplexo local) throws Exception {
-		Set<SrItemConfiguracao> listaFinal = new TreeSet<SrItemConfiguracao>(
-				comparator);
-
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(pess,
-				local, null, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
-						SrConfiguracaoBL.ITEM_CONFIGURACAO,
-						SrConfiguracaoBL.ACAO });
-		for (SrConfiguracao conf : confs) {
-			if (conf.itemConfiguracao == null)
-				listaFinal.addAll(listar());
-			else {
-				listaFinal.addAll(conf.itemConfiguracao.getAtual()
-						.listarItemETodosDescendentes());
-				SrItemConfiguracao itemPai = conf.itemConfiguracao.getAtual()
-						.getPai();
-				while (itemPai != null) {
-					if (!listaFinal.contains(itemPai))
-						listaFinal.add(itemPai);
-					itemPai = itemPai.getPai();
-				}
-			}
-		}
-		return new ArrayList(listaFinal);
 	}
 
 	@Override

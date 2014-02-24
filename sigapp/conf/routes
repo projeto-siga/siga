@@ -18,6 +18,8 @@
 	POST	/agendamento_insert						Application.agendamento_insert
 	GET     /agendamento_excluir					Application.agendamento_excluir
 	POST 	/agendamento_delete						Application.agendamento_delete
+	GET     /agendamento_atualiza					Application.agendamento_atualiza
+	POST	/agendamento_update						Application.agendamento_update
 	GET 	/agendadas_hoje							Application.agendadas_hoje
 	GET		/usuario_atualiza						Application.usuario_atualiza					
 	GET 	/creditos								Application.creditos

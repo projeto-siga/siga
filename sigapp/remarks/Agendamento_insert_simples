@@ -1,0 +1,52 @@
+public static void agendamento_insert(String frm_data_ag, String frm_hora_ag,
+			String frm_cod_local, String matricula, String periciado,
+			String perito_juizo, String perito_parte, String orgao,
+			String processo, Integer lote) {
+		System.out.println(" === ");
+		System.out.println("Lote: "+lote);
+		System.out.println(" === ");
+		matricula = cadastrante().getMatricula().toString();
+		String resposta = "";
+		Locais auxLocal = Locais.findById(frm_cod_local);
+		String hr;
+		/*
+		auxLocal.cod_local = frm_cod_local;
+		auxLocal.local = "";
+		auxLocal.dias = "";
+		auxLocal.endereco = "";
+		auxLocal.exibir = 1;
+		auxLocal.forumFk = null;
+		auxLocal.hora_fim = "";
+		auxLocal.hora_ini = "";
+		auxLocal.intervalo_atendimento = 0;
+		*/
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			Date parametro = df.parse(frm_data_ag);
+			Agendamentos objAgendamento = new Agendamentos(parametro, frm_hora_ag,
+					auxLocal, matricula , periciado, perito_juizo, perito_parte,
+					processo, orgao);
+			hr = frm_hora_ag;
+			//begin transaction, que, segundo o Da Rocha é automático; no inicio da action
+			//sloop
+		   String hrAux="";
+		   for(int i=1;i<lote;i++){
+			if (hr != null && (!hr.isEmpty())) {
+				objAgendamento.hora_ag = hr.substring(0, 2)
+						+ hr.substring(3, 5);
+				objAgendamento.save();
+				hrAux=hr.substring(0,2);
+				resposta = "Ok.";
+			}else{resposta="Não Ok.";}
+		   }
+			//floop
+			//end transaction, que, segundo o Da Rocha é automático; no fim da action
+		} catch (Exception e) {
+			//rollback transaction, que segundo o Da Rocha é automático; ocorre em qualquer erro
+			e.printStackTrace();
+			resposta = "Não Ok. Verifique se preencheu todos os campos do agendamento.";
+		} finally {
+			JPA.em().flush();
+			render(resposta);
+		}
+	}

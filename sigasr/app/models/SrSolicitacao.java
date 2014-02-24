@@ -972,7 +972,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
 						SrConfiguracaoBL.ITEM_CONFIGURACAO,
 						SrConfiguracaoBL.ACAO });
-
+		
 		for (SrConfiguracao conf : confs) {
 			if (conf.itemConfiguracao == null)
 				listaFinal.addAll(SrItemConfiguracao.listar());

@@ -177,6 +177,14 @@
 
             </plugin>
 
+		<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+                <argLine>-Dsiga.properties.file=${siga.properties.file} -Xmx512m</argLine>
+            </configuration>
+        </plugin>
+
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>

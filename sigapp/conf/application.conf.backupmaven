@@ -1,6 +1,6 @@
 # This is the main configuration file for the application.
 # ~~~~~
-application.name=sigagpp
+application.name=sigapp
 
 # Application mode
 # ~~~~~
@@ -13,19 +13,7 @@ application.mode=dev
 # ~~~~~
 # The secret key is used to secure cryptographics functions
 # If you deploy your application to several instances be sure to use the same key !
-application.secret=Ekl457RE9GJ2Epp0F9SVAWK7j2evwGqduyHnditio05CoBsJrg1kcJuO347a5it4
-
-# Additional modules
-# ~~~~~
-# A module is another play! application. Add a line for each module you want
-# to add to your application. Modules path are either absolutes or relative to
-# the application root.
-# They get loaded from top to bottom; Syntax: module.{name}={path}
-#
-# Keep the next line as is to help the play script to manage modules.
-# ---- MODULES ----
-#module.siga-play=${play.path}/siga-play-module
-#module.siga-play=../siga-play-module
+application.secret=pVsFDKa261EvjAMvtTxfy3xZvkFAP4yc2h9mroNVhmXk4RvyNjiBnPBuqfExWOVy
 
 # i18n
 # ~~~~~
@@ -35,19 +23,22 @@ application.secret=Ekl457RE9GJ2Epp0F9SVAWK7j2evwGqduyHnditio05CoBsJrg1kcJuO347a5
 
 # Date format
 # ~~~~~
-date.format=yyyy-MM-dd
-# date.format.fr=dd/MM/yyyy
+# date.format=yyyy-MM-dd
+  date.format.fr=dd/MM/yyyy
 
 # Server configuration
 # ~~~~~
 # If you need to change the HTTP port, uncomment this (default is set to 9000)
 http.port=9003
-http.path=/sigapp
-
 #
 # By default the server listen for HTTP on the wilcard address.
 # You can restrict this.
 # http.address=127.0.0.1
+#
+# Use this if you don't host your Play application at the root of the domain
+# you're serving it from. This parameter has no effect when deployed as a
+# war, because the path will be handled by the application server.
+http.path=/sigapp
 
 # Session configuration
 # ~~~~~~~~~~~~~~~~~~~~~~
@@ -58,10 +49,18 @@ http.path=/sigapp
 # application.session.maxAge=1h
 # application.session.secure=false
 
+# Session/Cookie sharing between subdomain
+# ~~~~~~~~~~~~~~~~~~~~~~
+# By default a cookie is only valid for a specific domain. By setting
+# application.defaultCookieDomain to '.example.com', the cookies
+# will be valid for all domains ending with '.example.com', ie:
+# foo.example.com and bar.example.com
+# application.defaultCookieDomain=.example.com
+
 # JVM configuration
 # ~~~~~
 # Define which port is used by JPDA when application is in debug mode (default is set to 8000)
-jpda.port=8002
+# jpda.port=8000
 #
 # Java source level => 1.5, 1.6 or 1.7 (experimental)
 # java.source=1.5
@@ -76,26 +75,29 @@ jpda.port=8002
 # application.log.path=/log4j.properties
 # application.log.system.out=off
 
-# comentei para ver o log no console, descomentar para ver na produÃ§Ã£o
-%prod.application.log.path=/log4j-prod.properties
-
 # Database configuration
 # ~~~~~ 
 # Enable a database engine if needed.
 #
 # To quickly set up a development database, use either:
-#   - mem : for a transient in memory database (HSQL in memory)
-#   - fs  : for a simple file written database (HSQL file stored)
-#db=mem
+#   - mem : for a transient in memory database (H2 in memory)
+#   - fs  : for a simple file written database (H2 file stored)
+# db=mem
 #
 # To connect to a local MySQL5 database, use:
-# db=mysql:user:pwd@database_name
+# db=mysql://user:pwd@host/database
+#
+# To connect to a local PostgreSQL9 database, use:
+# db=postgres://user:pwd@host/database
 #
 # If you need a full JDBC configuration use the following :
 # db.url=jdbc:postgresql:database_name
 # db.driver=org.postgresql.Driver
 # db.user=root
 # db.pass=secret
+#
+ O R A C L E  "jdbc:oracle:thin:@mclaren:1521/mcl","sigapmp","sigapmp"
+#
 #
 # Connections pool configuration :
 # db.pool.timeout=1000
@@ -104,6 +106,11 @@ jpda.port=8002
 #
 # If you want to reuse an existing Datasource from your application server, use:
 # db=java:/comp/env/jdbc/myDatasource
+#
+# When using an existing Datasource, it's sometimes needed to destroy it when
+# the application is stopped. Depending on the datasource, you can define a
+# generic "destroy" method :
+# db.destroyMethod=close
 
 # JPA Configuration (Hibernate)
 # ~~~~~
@@ -113,17 +120,18 @@ jpda.port=8002
 #
 # Specify the ddl generation pattern to use. Set to none to disable it 
 # (default to update in DEV mode, and none in PROD mode):
+#  jpa.ddl=create-drop
 # jpa.ddl=update
-#
-# Debug SQL statements (logged using DEBUG level):
-# jpa.debugSQL=true
+jpa.ddl=none
+jpa.dialect=org.hibernate.dialect.Oracle9Dialect
+
 #
 # You can even specify additional hibernate properties here:
 # hibernate.use_sql_comments=true
 # ...
 #
 # Store path for Blob content
-attachments.path=data/attachments
+ attachments.path=data/attachments
 
 # Memcached configuration
 # ~~~~~ 
@@ -136,7 +144,10 @@ attachments.path=data/attachments
 # Or you can specify multiple host to build a distributed cache
 # memcached.1.host=127.0.0.1:11211
 # memcached.2.host=127.0.0.1:11212
-memcached=disabled
+#
+# Use plain SASL to authenticate for memcached
+# memcached.user=
+# memcached.password=
 
 # HTTP Response headers control for static files
 # ~~~~~
@@ -154,6 +165,9 @@ memcached=disabled
 
 # WS configuration
 # ~~~~~
+# Default engine is Async Http Client, uncomment to use
+# the JDK's internal implementation
+# webservice = urlfetch
 # If you need to set proxy params for WS requests
 # http.proxyHost = localhost
 # http.proxyPort = 3128
@@ -170,6 +184,13 @@ mail.smtp=mock
 # mail.smtp.user=admin
 # mail.smtp.pass=
 # mail.smtp.channel=ssl
+
+# Url-resolving in Jobs
+# ~~~~~~
+# When rendering templates with reverse-url-resoling (@@{..}) in Jobs (which do not have an inbound Http.Request),
+# ie if sending a HtmlMail, Play need to know which url your users use when accessing your app.
+# %test.application.baseUrl=http://localhost:9000/
+# %prod.application.baseUrl=http://www.yourdomain.com/
 
 # Jobs executor
 # ~~~~~~
@@ -194,27 +215,9 @@ mail.smtp=mock
 # ~~~~~
 #%test.module.cobertura=${play.path}/modules/cobertura
 %test.application.mode=dev
-%test.db=mem
-%test.jpa.ddl=create-drop
+%test.db.url=jdbc:h2:mem:play;MODE=MYSQL;LOCK_MODE=0
+%test.jpa.ddl=create
 %test.mail.smtp=mock
 
-#db.url=jdbc:oracle:thin:@mclaren:1521:mcl
-#db.driver=oracle.jdbc.OracleDriver
-#db.user=SIGAGC
-#db.pass=SIGAGC
-#jpa.dialect=org.hibernate.dialect.Oracle9Dialect
-#jpa.debugSQL=true
-
-jpa.ddl=none
-#jpa.ddl=create-drop
-%prod.jpa.ddl=none
-mail.smtp=mock
-
-#jpa.entities=br.gov.jfrj.siga.cp.CpConfiguracao, br.gov.jfrj.siga.cp.CpGrupo, br.gov.jfrj.siga.cp.CpGrupoDeEmail, br.gov.jfrj.siga.cp.CpIdentidade, br.gov.jfrj.siga.cp.CpModelo, br.gov.jfrj.siga.cp.CpPapel, br.gov.jfrj.siga.cp.CpPerfil, br.gov.jfrj.siga.cp.CpPerfilJEE, br.gov.jfrj.siga.cp.CpServico, br.gov.jfrj.siga.cp.CpSituacaoConfiguracao, br.gov.jfrj.siga.cp.CpTipoGrupo, br.gov.jfrj.siga.cp.CpTipoIdentidade, br.gov.jfrj.siga.cp.CpTipoPapel, br.gov.jfrj.siga.cp.CpTipoServico, br.gov.jfrj.siga.dp.CpAplicacaoFeriado, br.gov.jfrj.siga.dp.CpFeriado, br.gov.jfrj.siga.dp.CpLocalidade, br.gov.jfrj.siga.dp.CpMarca, br.gov.jfrj.siga.dp.CpMarcador, br.gov.jfrj.siga.dp.CpOcorrenciaFeriado, br.gov.jfrj.siga.dp.CpOrgao, br.gov.jfrj.siga.dp.CpOrgaoUsuario, br.gov.jfrj.siga.dp.CpPersonalizacao, br.gov.jfrj.siga.dp.CpTipoLotacao, br.gov.jfrj.siga.dp.CpTipoMarca, br.gov.jfrj.siga.dp.CpTipoMarcador, br.gov.jfrj.siga.dp.CpTipoPessoa, br.gov.jfrj.siga.cp.CpTipoConfiguracao, br.gov.jfrj.siga.dp.CpUF, br.gov.jfrj.siga.dp.DpCargo, br.gov.jfrj.siga.dp.DpFuncaoConfianca, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpSubstituicao
-
-#jpa.entities=br.gov.jfrj.siga.dp.DpSubstituicao
-
-#Configuração necessária para compatibilidade JBoss EAP 5.2
-#REF:https://community.jboss.org/thread/153894
-hibernate.validator.apply_to_ddl=false
-hibernate.validator.autoregister_listeners=false
+#module.siga-play=../siga-play-module
+#module.siga-cp=../siga-cp

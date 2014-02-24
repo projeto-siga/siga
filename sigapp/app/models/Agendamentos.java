@@ -1,5 +1,4 @@
 package models;
-import java.text.DateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -9,13 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.beanutils.converters.DateTimeConverter;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.OptimisticLock;
-
-import br.gov.jfrj.siga.base.DateUtils;
 import play.db.jpa.GenericModel;
-import play.db.jpa.Model;
 
 @Entity(name = "Agendamentos")
 @Table(name = "Agendamentos", schema = "SIGAPMP")

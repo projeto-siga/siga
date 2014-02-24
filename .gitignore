@@ -19,6 +19,8 @@ siga-wf/bin/
 siga/WebContent/WEB-INF/classes/.gitignore
 siga/WebContent/WEB-INF/classes/
 sigaex/WebContent/WEB-INF/classes/
+sigapp/bin/
+sigapp/precompiled/
 sigagc/bin/
 sigagc/precompiled/
 sigasr/tmp/
@@ -31,6 +33,7 @@ siga-ldap/build/
 siga-libs/build/
 siga-sinc-lib/bin/
 sigagc/eclipse/classes/
+sigapp/eclipse/classes/
 sigasr/eclipse/classes/
 sigasr/precompiled/
 sigasr/lib
@@ -55,6 +58,11 @@ sigagc/sigagc-start.launch
 sigagc/lib
 sigagc/modules
 sigagc/eclipse
+
+sigapp/sigapp-start.launch
+sigapp/lib
+sigapp/modules
+sigapp/eclipse
 
 siga-play-module/app/br/gov/jfrj/siga/base/
 siga-play-module/app/br/gov/jfrj/siga/cp/

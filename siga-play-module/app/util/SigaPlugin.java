@@ -14,20 +14,34 @@ public class SigaPlugin extends PlayPlugin {
 		super.onConfigurationRead();
 		String applicationName = Play.configuration
 				.getProperty("application.name");
-		String applicationMode = SigaBaseProperties.getAmbiente();
+
+		String applicationMode = "";
+		if ("test".equals(Play.id))
+			applicationMode = "test";
+		else
+			applicationMode = SigaBaseProperties.getAmbiente();
 
 		try {
 			HashMap<String, String> propsPlay = SigaBaseProperties.obterTodas();
 			for (String s : propsPlay.keySet()) {
 				if (s.startsWith(applicationName + "." + applicationMode
 						+ ".play.")
-						|| s.startsWith(applicationMode + ".play."))
+						|| s.startsWith(applicationMode + ".play.")) {
+					System.out.println(s.substring(s.indexOf(".play.") + 6)
+							+ ": " + propsPlay.get(s));
 					Play.configuration.put(
 							s.substring(s.indexOf(".play.") + 6),
 							propsPlay.get(s));
+				}
 			}
-			Play.configuration.put("servidor.principal",
-					propsPlay.get(applicationMode + ".servidor.principal"));
+
+			String servidor = null;
+			servidor = propsPlay.get(applicationMode + ".servidor.principal");
+			if (servidor == null)
+				servidor = propsPlay.get("servidor.principal");
+			if (servidor != null)
+				Play.configuration.put("servidor.principal", servidor);
+
 		} catch (Exception e) {
 			Logger.error("Ocorreu um erro ao configurar o Play: "
 					+ e.getMessage());

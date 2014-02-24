@@ -1,62 +1,24 @@
 package controllers;
 
-import groovy.sql.Sql;
-import groovy.ui.text.FindReplaceUtility;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.sql.*;
 
-import javax.management.Query;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
-import javax.swing.plaf.metal.MetalBorders.Flush3DBorder;
-
-import net.sf.ehcache.hibernate.management.impl.NullHibernateStats;
-
-import org.apache.commons.collections.functors.NullIsExceptionPredicate;
-import org.apache.commons.lang.NullArgumentException;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.codehaus.groovy.runtime.DateGroovyMethods;
-import org.codehaus.groovy.runtime.NullObject;
-import org.hibernate.PersistentObjectException;
-import org.hibernate.bytecode.buildtime.ExecutionException;
-import org.hibernate.cfg.annotations.Nullability;
-import org.hibernate.ejb.EntityManagerFactoryImpl;
-import org.hibernate.ejb.EntityManagerImpl;
-import org.hibernate.engine.transaction.NullSynchronizationException;
-import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.exception.SQLExceptionConverter;
-import org.hibernate.util.JDBCExceptionReporter.WarningHandler;
-
-import com.sun.org.apache.bcel.internal.ExceptionConstants;
-
-import br.gov.jfrj.siga.base.DateUtils;
-import br.gov.jfrj.siga.base.util.MatriculaUtils;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.sinc.lib.test.Pessoa;
-
-import oracle.jdbc.driver.SQLUtil;
 
 import models.Agendamentos;
 import models.Foruns;
 import models.Locais;
 import models.UsuarioForum;
-import play.db.helper.JpqlSelect;
-import play.db.helper.SqlQuery;
-import play.db.helper.SqlUnion;
+
+import org.hibernate.bytecode.buildtime.ExecutionException;
+
 import play.db.jpa.JPA;
-import play.exceptions.PlayException;
 import play.mvc.Before;
 import play.mvc.Catch;
-import play.mvc.Scope;
-import sun.misc.JavaLangAccess;
+import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class Application extends SigaApplication {
 

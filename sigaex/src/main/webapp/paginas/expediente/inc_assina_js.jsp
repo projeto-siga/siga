@@ -85,7 +85,9 @@ function TestarAssinaturaDigital() {
 		}
 	} catch(Err) {
 		gPolitica = false;
-		return TestCAPICOM();
+		if (window.navigator.userAgent.indexOf("MSIE ") > 0) {
+			return TestCAPICOM();
+		}
 	}
 }
 

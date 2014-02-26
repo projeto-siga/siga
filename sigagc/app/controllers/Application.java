@@ -563,72 +563,85 @@ public class Application extends SigaApplication {
 	public static void historico(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
-		diff_match_patch diff = new diff_match_patch();
+		if (informacao.podeRevisar(titular(), lotaTitular()) ||
+				informacao.acessoPermitido(titular(), lotaTitular(), informacao.visualizacao.id)) {
 
-		String txtAnterior = "";
-		String tituloAnterior = "";
-
-		SortedSet<GcMovimentacao> list = new TreeSet<GcMovimentacao>();
-		HashMap<GcMovimentacao, String> mapTitulo = new HashMap<GcMovimentacao, String>();
-		HashMap<GcMovimentacao, String> mapTxt = new HashMap<GcMovimentacao, String>();
-		if (informacao.movs != null) {
-			GcMovimentacao[] array = informacao.movs
-					.toArray(new GcMovimentacao[informacao.movs.size()]);
-			ArrayUtils.reverse(array);
-			for (GcMovimentacao mov : array) {
-				Long t = mov.tipo.id;
-
-				if (mov.isCancelada())
-					continue;
-
-				if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO || 
-					t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
-					// Titulo
-					String titulo = mov.arq.titulo;
-					LinkedList<Diff> tituloDiffs = diff.diff_main(
-							tituloAnterior, titulo, true);
-					String tituloDiffHtml = diff.diff_prettyHtml(tituloDiffs);
-					boolean tituloAlterado = tituloDiffs == null
-							|| tituloDiffs.size() != 1
-							|| tituloDiffs.size() == 1
-							&& tituloDiffs.get(0).operation != Operation.EQUAL;
-
-					// Texto
-					String txt = mov.arq.getConteudoTXT();
-					LinkedList<Diff> txtDiffs = diff.diff_main(txtAnterior,
-							txt, true);
-					String txtDiffHtml = diff.diff_prettyHtml(txtDiffs);
-					boolean txtAlterado = txtDiffs == null
-							|| txtDiffs.size() != 1 || txtDiffs.size() == 1
-							&& txtDiffs.get(0).operation != Operation.EQUAL;
-
-					if (tituloAlterado || txtAlterado) {
-						list.add(mov);
-						if (tituloAlterado)
-							mapTitulo.put(mov, tituloDiffHtml);
-						if (txtAlterado)
-							mapTxt.put(mov, txtDiffHtml);
+			diff_match_patch diff = new diff_match_patch();
+	
+			String txtAnterior = "";
+			String tituloAnterior = "";
+	
+			SortedSet<GcMovimentacao> list = new TreeSet<GcMovimentacao>();
+			HashMap<GcMovimentacao, String> mapTitulo = new HashMap<GcMovimentacao, String>();
+			HashMap<GcMovimentacao, String> mapTxt = new HashMap<GcMovimentacao, String>();
+			if (informacao.movs != null) {
+				GcMovimentacao[] array = informacao.movs
+						.toArray(new GcMovimentacao[informacao.movs.size()]);
+				ArrayUtils.reverse(array);
+				for (GcMovimentacao mov : array) {
+					Long t = mov.tipo.id;
+	
+					if (mov.isCancelada())
+						continue;
+	
+					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO || 
+						t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
+						// Titulo
+						String titulo = mov.arq.titulo;
+						LinkedList<Diff> tituloDiffs = diff.diff_main(
+								tituloAnterior, titulo, true);
+						String tituloDiffHtml = diff.diff_prettyHtml(tituloDiffs);
+						boolean tituloAlterado = tituloDiffs == null
+								|| tituloDiffs.size() != 1
+								|| tituloDiffs.size() == 1
+								&& tituloDiffs.get(0).operation != Operation.EQUAL;
+	
+						// Texto
+						String txt = mov.arq.getConteudoTXT();
+						LinkedList<Diff> txtDiffs = diff.diff_main(txtAnterior,
+								txt, true);
+						String txtDiffHtml = diff.diff_prettyHtml(txtDiffs);
+						boolean txtAlterado = txtDiffs == null
+								|| txtDiffs.size() != 1 || txtDiffs.size() == 1
+								&& txtDiffs.get(0).operation != Operation.EQUAL;
+	
+						if (tituloAlterado || txtAlterado) {
+							list.add(mov);
+							if (tituloAlterado)
+								mapTitulo.put(mov, tituloDiffHtml);
+							if (txtAlterado)
+								mapTxt.put(mov, txtDiffHtml);
+						}
+						txtAnterior = txt;
+						tituloAnterior = titulo;
 					}
-					txtAnterior = txt;
-					tituloAnterior = titulo;
 				}
 			}
-		}
-		
-		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
-		if (conteudo != null)
-			informacao.arq.setConteudoTXT(conteudo);
+			
+			String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+			
+			render(informacao, list, mapTitulo, mapTxt);
+		} 
+		else
+			throw new AplicacaoException(
+					"Restrição de Acesso (" + informacao.visualizacao.nome + ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 
-		render(informacao, list, mapTitulo, mapTxt);
 	}
 
 	public static void movimentacoes(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
-		if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-
-		render(informacao);
+		if (informacao.podeRevisar(titular(), lotaTitular()) ||
+				informacao.acessoPermitido(titular(), lotaTitular(), informacao.visualizacao.id)) {		
+			String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
+			if (conteudo != null)
+					informacao.arq.setConteudoTXT(conteudo);
+			render(informacao);
+		}
+		else
+			throw new AplicacaoException(
+					"Restrição de Acesso (" + informacao.visualizacao.nome + ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 	}
 
 	public static void fechar(String sigla) throws Exception {
@@ -774,6 +787,7 @@ public class Application extends SigaApplication {
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pesResponsavel, lotResponsavel, null,
 					null, null, null, null, null, null);
 			GcBL.gravar(informacao, idc(),titular(), lotaTitular());
+			flash.success("Notificação realizada com sucesso!");
 			exibir(informacao.getSigla());
 		}
 		else
@@ -796,6 +810,7 @@ public class Application extends SigaApplication {
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pesResponsavel,
 					lotResponsavel, null, null, null, null, null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
+			flash.success(" Solicitação de revisão realizada com sucesso!");
 			exibir(informacao.getSigla());
 		}
 		else
@@ -808,7 +823,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void anexarGravar(GcInformacao informacao, Long pessoa,
-			Long lotacao, String titulo, File fake) throws Exception {
+			Long lotacao, String titulo, File fake, String origem) throws Exception {
 
 		List<Upload> files = (List<Upload>) request.args.get("__UPLOADS");
 		if (files != null) {
@@ -829,7 +844,10 @@ public class Application extends SigaApplication {
 								null, null, titulo, null, null, null, null,
 								anexo, mimeType);
 						GcBL.gravar(informacao, idc(),titular(), lotaTitular());
-						exibir(informacao.getSigla());
+						if(origem == null)
+							exibir(informacao.getSigla());
+						else
+							renderTemplate("app/views/Application/removerAnexo.html", informacao);
 					}
 				}
 				else
@@ -870,18 +888,24 @@ public class Application extends SigaApplication {
 	public static void revisado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		if (informacao.movs != null) {
+			DpPessoa titular = titular();
+			DpLotacao lotaTitular = lotaTitular();
 			for (GcMovimentacao mov : informacao.movs) {
 				if (mov.isCancelada())
 					continue;
 				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
-						&& (titular().equivale(mov.pessoaAtendente) || lotaTitular().equivale(mov.lotacaoAtendente))) {
+						&& (titular.equivale(mov.pessoaAtendente) || lotaTitular.equivale(mov.lotacaoAtendente))) {
 					GcMovimentacao m = GcBL.movimentar(informacao,
 										GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
 										null, null, null, null, null, mov,
 										null, null, null);
 					mov.movCanceladora = m;
-					GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-					exibir(sigla);
+					GcBL.gravar(informacao, idc(), titular, lotaTitular);
+					flash.success("Conhecimento revisado com sucesso!");
+					if(informacao.acessoPermitido(titular, lotaTitular, informacao.visualizacao.id))
+						exibir(sigla);
+					else
+						buscar(null);
 				}
 			}
 		}

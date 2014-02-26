@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Documento" popup="true" onLoad="javascript: TestCAPICOM();">
+<siga:pagina titulo="Documento" popup="true" onLoad="javascript: TestarAssinaturaDigital();">
 
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -301,7 +301,6 @@ function visualizarImpressao(via) {
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
-					<!--[if IE]>
 					<div id="capicom-div">
 						<c:choose>
 							<c:when
@@ -323,9 +322,17 @@ function visualizarImpressao(via) {
 							</c:when>
 						</c:choose>
 					</div>
-					<![endif]-->
-					<![if !IE]><p>A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p><![endif]>
+					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
 					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+				<script type="text/javascript">
+					 if (window.navigator.userAgent.indexOf("MSIE ") > 0) {
+						 document.getElementById("capicom-div").style.display = "block";
+						 document.getElementById("ie-missing").style.display = "none";
+					} else {
+						 document.getElementById("capicom-div").style.display = "none";
+						 document.getElementById("ie-missing").style.display = "block";
+					}
+				 </script>
 				</c:if>
 
 				<c:if

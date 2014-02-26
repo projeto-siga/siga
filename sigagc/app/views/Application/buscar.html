@@ -18,6 +18,7 @@
 	            }
 	        });
 	    });
+		$(".gt-success").delay(5000).fadeOut("slow", "linear");
 	});
 </script>
 #{/set}
@@ -26,6 +27,7 @@
 
 	<div class="gt-content clearfix">
 		<h2>Busca Textual</h2>
+		#{if flash.success} <p class="gt-success">${flash.success}</p> #{/if}
 		<div class="gt-sidebar-box gt-sidebar-box-blue">
 			<!-- search -->
 			<div class="gt-search">

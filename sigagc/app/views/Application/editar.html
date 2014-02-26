@@ -120,24 +120,120 @@
 	        range.select();
 	    }
 	}
+	
+	function fileUpload(form, div_id) {
+	    // Create the iframe...
+	    var iframe = document.createElement("iframe");
+	    iframe.setAttribute("id", "upload_iframe");
+	    iframe.setAttribute("name", "upload_iframe");
+	    iframe.setAttribute("width", "0");
+	    iframe.setAttribute("height", "0");
+	    iframe.setAttribute("border", "0");
+	    iframe.setAttribute("style", "width: 0; height: 0; border: none;");
+	 
+	    // Add to document...
+	    form.parentNode.appendChild(iframe);
+	    window.frames['upload_iframe'].name = "upload_iframe";
+	 
+	    iframeId = document.getElementById("upload_iframe");
+	 
+	    // Add event...
+	    var eventHandler = function () {
+	 
+	            if (iframeId.detachEvent) iframeId.detachEvent("onload", eventHandler);
+	            else iframeId.removeEventListener("load", eventHandler, false);
+	 
+	            // Message from server...
+	            if (iframeId.contentDocument) {
+	                content = iframeId.contentDocument.body.innerHTML;
+	            } else if (iframeId.contentWindow) {
+	                content = iframeId.contentWindow.document.body.innerHTML;
+	            } else if (iframeId.document) {
+	                content = iframeId.document.body.innerHTML;
+	            }
+	 
+	            document.getElementById(div_id).innerHTML = content;
+	 
+	            // Del the iframe...
+	            setTimeout('iframeId.parentNode.removeChild(iframeId)', 250);
+	        }
+	 
+	    if (iframeId.addEventListener) iframeId.addEventListener("load", eventHandler, true);
+	    if (iframeId.attachEvent) iframeId.attachEvent("onload", eventHandler);
+	 
+	    // Set properties of form...
+	    form.setAttribute("target", "upload_iframe");
+	    //form.setAttribute("action", action_url);
+	    //form.setAttribute("method", "post");
+	    form.setAttribute("enctype", "multipart/form-data");
+	    //form.setAttribute("encoding", "multipart/form-data");
+	
+	    // Submit the form...
+	    form.submit();
+	 
+	    document.getElementById(div_id).innerHTML = "<br /><h6 style='background:#d8d8c0;padding:3px 10px;'>Carregando anexo...</h6>";
+		$(document).ready(function(){
+	    	$("#anexar-div").hide();
+			$(".once").show();
+		});
+	}
+	
 	$(document).ready(function(){
+		$("#anexar-div").hide();
 		$("textarea[readonly]").css({"background-color":"transparent","border":"none","overflow":"auto","height":"50px","resize":"none"});
-		/*$("#ajax_arquivo > p > a").click(function(){
-			if (confirm('Confirma a remoção deste anexo?')) {
-				var id = $(this).attr('id');
-				var  siglaInfo = $("#codigoInf").val();
-				ReplaceInnerHTMLFromAjaxResponse("removerAnexo?sigla=" + siglaInfo + "&id=" + id,
-												null, $("#ajax_arquivo"));
-			}
-		});	*/
 		$("#marcadores").click(function(){
 			$("#cheatsheet").show();
+		});
+		$(".once").click(function(){
+			$("#formAnexo").trigger("reset");
+			$("#anexar-div").show();
+			$(this).hide();
+		});
+		$("#anexar-cancel").click(function(){
+			$("#anexar-div").hide();
+			$(".once").show();
 		});
 	});
 </script>
 			<h3>Informações sobre o Preenchimento</h3>
 			<p>O campo "Título" sempre será acessível, independente do controle
 				de acesso selecionado.</p>
+				
+			<h3 style="padding-top: 1em">Anexar Novo Arquivo</h3>
+			<a class="once" href="#"> 
+				<img src="/siga/css/famfamfam/icons/attach.png" style="margin-right: 5px;">Anexar Arquivo</a>
+			<div id="anexar-div" class="gt-form gt-content-box">
+			<form id="formAnexo" action="@{Application.anexarGravar}?origem=editar" enctype="multipart/form-data" method="post">
+				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
+				#{if false}
+				<div class="gt-form-row gt-width-100">
+					<label>Pessoa</label> #{selecao tipo:'pessoa', nome:'pessoa' /} <span
+						style="color: red">#{error 'pessoa' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Lotação</label> #{selecao tipo:'lotacao', nome:'lotacao' /}
+					<span style="color: red">#{error 'lotacao' /}</span>
+				</div>
+				#{/if}
+				<div class="gt-form-row gt-width-100">
+					<label>Título da Imagem</label> <input type="text" name="titulo" value=""
+						class="gt-form-text">#{error 'titulo' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Arquivo</label> <input type="file" name="arquivo" value=""
+						class="gt-form-text">#{error 'titulo' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<input type="button" value="Anexar"
+						onClick="fileUpload(this.form,'ajax_arquivo'); return false;"
+						class="gt-btn-small gt-btn-left" style="cursor: pointer;" />
+					<p class="gt-cancel">
+						ou  <a id="anexar-cancel" href="#">cancelar</a>
+					</p>
+				</div>
+			</form>
+		</div>
+			
 			<div id="ajax_arquivo">
 				#{if informacao.contemArquivos}
 					<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no Texto</h3>
@@ -195,11 +291,10 @@
 						</tr>
 						<tr>
 							<td>#classificacao-conhecimento (HashTag)<br>
-							Obs.: Não usar caracteres especiais e espaço
+							Obs.: Não usar caracteres especiais ou espaço
 							<br>
 							<td class="arrow">→</td>
-							<td><a
-								href="#">classificacao-conhecmento</a></td>
+							<td><a href="#">#classificacao-conhecimento</a></td>
 						</tr>
 
 						<!-- 

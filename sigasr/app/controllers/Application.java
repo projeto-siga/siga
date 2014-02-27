@@ -37,6 +37,7 @@ import org.joda.time.LocalDate;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
+import reports.SrRelAgendado;
 import reports.SrRelLocal;
 import reports.SrRelPesquisa;
 import reports.SrRelPrazo;
@@ -122,10 +123,32 @@ public class Application extends SigaApplication {
 
 		formEditar(solicitacao.deduzirLocalERamal());
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	public static void exibirLocalERamal(SrSolicitacao solicitacao)
 			throws Exception {
-		render(solicitacao.deduzirLocalERamal());
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		if (solicitacao.solicitante != null)
+			locais = JPA
+					.em()
+					.createQuery(
+							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+									+ solicitacao.solicitante.getOrgaoUsuario()
+											.getIdOrgaoUsu()).getResultList();
+		render(solicitacao.deduzirLocalERamal(), locais);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void exibirLocal(SrSolicitacao solicitacao) throws Exception {
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		if (solicitacao.solicitante != null)
+			locais = JPA
+					.em()
+					.createQuery(
+							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+									+ lotaTitular().getOrgaoUsuario()
+											.getIdOrgaoUsu()).getResultList();
+		render(locais);
 	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao)
@@ -535,6 +558,14 @@ public class Application extends SigaApplication {
 		if (arq != null)
 			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
 	}
+	
+	public static void exibirPesquisa(Long idMovimentacao) throws Exception {
+		SrMovimentacao movimentacao = SrMovimentacao.findById(idMovimentacao);
+		//exibir(mov.solicitacao.idSolicitacao, completo());
+		SrPesquisa pesquisa = movimentacao.pesquisa; 
+		Set<SrPergunta> perguntas = movimentacao.pesquisa.getPerguntaSetAtivas();
+		render(movimentacao, pesquisa, perguntas);
+	}
 
 	public static void darAndamento(SrMovimentacao movimentacao)
 			throws Exception {
@@ -564,9 +595,8 @@ public class Application extends SigaApplication {
 		render(sol);
 	}
 
-	public static void responderPesquisaGravar(Long id,
-			HashMap<Long, String> respostaMap) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
+	public static void responderPesquisaGravar(Long id, HashMap<Long, Object> respostaMap) throws Exception {
+	SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrMovimentacao movimentacao = new SrMovimentacao();
 		List<SrResposta> respostas = movimentacao.setRespostaMap(respostaMap);
 		sol.responderPesquisa(lotaTitular(), cadastrante(), respostas);
@@ -971,7 +1001,19 @@ public class Application extends SigaApplication {
 										.getIdOrgaoUsu()).getResultList();
 		render(locais);
 	}
-
+	
+	public static void relAgendado() throws Exception {
+		assertAcesso("REL:Relatorio");
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		locais = JPA
+				.em()
+				.createQuery(
+						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+								+ lotaTitular().getOrgaoUsuario()
+										.getIdOrgaoUsu()).getResultList();
+		render(locais);
+	}
+	
 	public static void grelSolicitacoes(String secaoUsuario, String lotacao,
 			String situacao, String dtIni, String dtFim) throws Exception {
 
@@ -1120,6 +1162,31 @@ public class Application extends SigaApplication {
 
 		renderBinary(is, "Relatório de Indíces de Satisfação", pdf.length,
 				"application/pdf", true);
+	}
+	
+	public static void grelAgendado(String secaoUsuario, String lotacao,
+			String local, String dtIni, String dtFim, String atendente) throws Exception {
+
+		assertAcesso("REL:Relatorio");
+
+		Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("lotacao", lotacao);
+		parametros.put("local", local);
+		parametros.put("atendente", atendente);
+		parametros.put("dtIni", dtIni);
+		parametros.put("dtFim", dtFim);
+
+		SrRelAgendado rel = new SrRelAgendado(parametros);
+
+		rel.gerar();
+
+		byte[] pdf = rel.getRelatorioPDF();
+		InputStream is = new ByteArrayInputStream(pdf);
+
+		renderBinary(is, "Relatório de Solicitações por Localidade",
+				pdf.length, "application/pdf", true);
 	}
 
 	public static void concluirAutomatico() throws Exception {

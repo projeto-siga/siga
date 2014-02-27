@@ -5,10 +5,12 @@
 $(function(){
     $('#formSubmit').submit(function() {
     	var url=window.opener.location.href;
+    	var params=$("#idPergunta").val() + $("#idGrauSatisfacao").val() ;
+    	window.alert(params);
     	$.ajax({
  	  	   type: "POST",
  	  	   async: false,
- 	  	   data:  $("#formSubmit").serializeArray(),
+ 	  	   data:  $("#formSubmit").jQuery.param(params),
  	  	   url: "/sigasr/solicitacao/responderPesquisa",
  	  	   success: function(){
  	  		   	window.alert('Obrigado por responder a pesquisa!');
@@ -28,7 +30,7 @@ $(function(){
 		#{if pergunta.tipoPergunta.idTipoPergunta == 1}
 			<div class="gt-form-row">
 				<label>${pergunta.descrPergunta}</label><p>
-				<textarea cols="50" rows="6" 
+				<textarea cols="50" rows="6" id="idPergunta"
 					name="respostaMap[${pergunta.idPergunta}]" value="${resposta?.descrPergunta}">
 				</textarea>
 			</div> 
@@ -37,11 +39,9 @@ $(function(){
 		<div class="gt-form gt-content-box">
 		<div class="gt-form-row">
 				<label>${pergunta.descrPergunta}</label>
-				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="1">Muito Ruim&nbsp;
-				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="2">Ruim&nbsp;
-				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="3">Regular&nbsp;
-				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="4">Bom&nbsp;
-				<input type="radio" name="respostaMap[${pergunta.idPergunta}]" value="5">Muito Bom&nbsp;
+				#{list items:models.SrGrauSatisfacao.values(), as:'mapa'}
+				<input type="radio" id="idGrauSatisfacao" name="respostaMap[${pergunta.idPergunta}]" value="${mapa.idGrauSatisfacao}">&nbsp;&nbsp;${mapa.descrGrauSatisfacao}&nbsp;
+				#{/list}
 		</div>
 		#{/elseif}
 		</div>

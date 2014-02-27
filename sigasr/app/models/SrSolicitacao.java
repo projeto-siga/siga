@@ -59,7 +59,9 @@ import javax.persistence.TypedQuery;
 import notifiers.Correio;
 
 import org.hibernate.annotations.Where;
-
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import play.db.jpa.JPA;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
@@ -827,7 +829,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeDesfazerMovimentacao(DpLotacao lota, DpPessoa pess) {
 		SrMovimentacao ultCancelavel = getUltimaMovimentacaoCancelavel();
-		if (ultCancelavel == null)
+		if (ultCancelavel == null || ultCancelavel.cadastrante == null)
 			return false;
 		return ultCancelavel.lotaCadastrante.equivale(lota);
 	}
@@ -1311,7 +1313,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				marcadorAnterior = marcador;
 				movMarcaAnterior = movMarca;
 				marcador = CpMarcador.MARCADOR_SOLICITACAO_PENDENTE;
-				if (!mov.dtIniAgendamento.equals(""))
+				if (mov.dtAgenda != null)
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_AGENDADO;
 				movMarca = mov;
 			}
@@ -1725,8 +1727,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (getEquipeQualidadeDesignada() != null)
 			iniciarControleQualidade(lota, pess);
 		else
-			fecharTotalmente(null, null, "Pesquisa não satisfatória");
-	}
+			fecharTotalmente(null, null, "Fechado.");
+	}									  		
 
 	private void iniciarControleQualidade(DpLotacao lota, DpPessoa pess)
 			throws Exception {
@@ -1767,10 +1769,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (!podeDeixarPendente(lota, pess))
 			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
+		DateTime datetime = new DateTime();
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+		if (!calendario.equals("")) {
+			datetime = new DateTime (formatter.parseDateTime(calendario + " " + horario));
+			movimentacao.dtIniAgendamento = calendario;
+			movimentacao.horIniAgendamento = horario;
+			movimentacao.dtAgenda =  datetime.toDate();
+		}
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
-		movimentacao.dtIniAgendamento = calendario;
-		movimentacao.horIniAgendamento = horario;
+		movimentacao.descrMovimentacao = motivo;
 		movimentacao.salvar(pess, lota);
 	}
 

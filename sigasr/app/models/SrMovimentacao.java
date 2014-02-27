@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,11 +32,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import notifiers.Correio;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
+
+
+
+import notifiers.Correio;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 import play.db.jpa.Model;
@@ -99,20 +104,24 @@ public class SrMovimentacao extends GenericModel {
 
 	@Column(name = "ID_PRIORIDADE")
 	public Long prioridade;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "ID_PESQUISA")
 	public SrPesquisa pesquisa;
-	
+
 	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao")
 	//@OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
-	
+
 	@Column(name = "DT_INI_AGENDAMENTO")
 	public String dtIniAgendamento;
 
 	@Column(name = "HOR_INI_AGENDAMENTO")
 	public String horIniAgendamento;
+
+	@Column(name = "DT_AGENDAMENTO")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date dtAgenda;
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -128,32 +137,40 @@ public class SrMovimentacao extends GenericModel {
 			}
 		}
 	}
-	
+
 	public List<SrResposta> getRespostaSet() {
 		if (respostaSet == null)
 			return new ArrayList<SrResposta>();
 		return respostaSet;
 	}
-	
-	public List<SrResposta> setRespostaMap(HashMap<Long, String> respostas) throws Exception {
+
+	public List<SrResposta> setRespostaMap(HashMap<Long, Object> respostas)
+			throws Exception {
+		
 		respostaSet = new ArrayList<SrResposta>();
-		Iterator<Map.Entry<Long, String>> entries = respostas.entrySet().iterator();
+		Iterator<Map.Entry<Long, Object>> entries = respostas.entrySet()
+				.iterator();
 		while (entries.hasNext()) {
-			Map.Entry<Long, String> entry = entries.next();
+			Entry<Long, Object> entry = entries.next();
 			SrResposta resp = new SrResposta();
-		    Long entrada = entry.getKey();
-		    resp.pergunta = SrPergunta.findById(entrada);
-		    resp.descrResposta = entry.getValue();
-		    respostaSet.add(resp);
+			Long entrada = entry.getKey();
+			resp.pergunta = SrPergunta.findById(entrada);
+			if (resp.pergunta.tipoPergunta.idTipoPergunta == 1) 
+					resp.descrResposta = (String) entry.getValue();
+			else resp.grauSatisfacao = (SrGrauSatisfacao) entry.getValue();
+			respostaSet.add(resp);
 		}
-		return respostaSet;	
+		return respostaSet;
 	}
-	
+
 	public HashMap<Long, String> getRespostaMap() {
 		HashMap<Long, String> map = new HashMap<Long, String>();
 		if (respostaSet != null)
 			for (SrResposta resp : respostaSet) {
-				map.put(resp.pergunta.idPergunta, resp.descrResposta);
+				if (!resp.descrResposta.equals(""))
+					map.put(resp.pergunta.idPergunta, resp.descrResposta);
+				else 
+					map.put(resp.pergunta.idPergunta, resp.grauSatisfacao.descrGrauSatisfacao);
 			}
 		return map;
 	}
@@ -188,6 +205,14 @@ public class SrMovimentacao extends GenericModel {
 		if (dtIniMov != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
 			return df.format(dtIniMov);
+		}
+		return "";
+	}
+
+	public String getDtAgendaDDMMYYHHMM() {
+		if (dtAgenda != null) {
+			DateTime dateTime =new DateTime(dtAgenda);
+			return dateTime.toString("dd/MM/yyyy HH:mm");
 		}
 		return "";
 	}
@@ -274,7 +299,8 @@ public class SrMovimentacao extends GenericModel {
 			}
 
 			if (numSequencia == null)
-				numSequencia = solicitacao.getUltimaMovimentacaoMesmoSeCancelada().numSequencia + 1;
+				numSequencia = solicitacao
+						.getUltimaMovimentacaoMesmoSeCancelada().numSequencia + 1;
 		}
 
 		if (tipoMov == null)
@@ -286,7 +312,7 @@ public class SrMovimentacao extends GenericModel {
 
 		if (lotaAtendente == null)
 			lotaAtendente = atendente.getLotacao();
-		
+
 		if (dtIniAgendamento != null)
 			dtIniAgendamento = dtIniAgendamento.toString();
 	}

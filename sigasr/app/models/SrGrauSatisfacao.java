@@ -17,9 +17,12 @@ public enum SrGrauSatisfacao {
 	public long idGrauSatisfacao;
 	public String descrGrauSatisfacao;
 
+
 	SrGrauSatisfacao(int id, String descricao) {
 		this.idGrauSatisfacao = id;
 		this.descrGrauSatisfacao = descricao;
 	}
+	
+
 
 }

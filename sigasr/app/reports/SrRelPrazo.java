@@ -7,8 +7,10 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -43,8 +45,10 @@ import org.joda.time.chrono.ISOChronology;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
+import models.SrLista;
 import models.SrMovimentacao;
 import models.SrSolicitacao;
+import models.SrTipoMovimentacao;
 import play.db.jpa.JPA;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.Font;
@@ -117,7 +121,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 	}
 
 	@Override
-	public Collection processarDados() throws ParseException {
+	public Collection processarDados() throws Exception {
 
 		String local = new String();
 		List<Object> d = new LinkedList<Object>();
@@ -185,7 +189,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 						cls_24 = 0;
 						cls_ac24 = 0;
 						List<SrSolicitacao> solicDoComplexo = SrSolicitacao.find(
-								"select sol.local.nomeComplexo, sol.dtReg, mov.dtIniMov "
+								"select sol.local.nomeComplexo, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
 								+ "from SrSolicitacao sol, SrMovimentacao mov "
 								+ "where sol.idSolicitacao = mov.solicitacao "
 								+ "and sol.local.nomeComplexo = '" + locais.toString() + "' "
@@ -205,8 +209,9 @@ public class SrRelPrazo extends RelatorioTemplate {
 							Object[] obj = (Object[]) it.next();
 							local = (String) obj[0];
 							set.add(local);
-							DateTime startemp = new DateTime(obj[1]);
-							DateTime endtemp = new DateTime( obj[2]);
+							SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
+							DateTime startemp = new DateTime(obj[2]);
+							DateTime endtemp = new DateTime( obj[3]);
 							DateTime start1 = new DateTime();
 							DateTime end1 = new DateTime();
 							if (startemp.getHourOfDay() < 10) {
@@ -229,8 +234,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 										endtemp.getDayOfMonth() + 1, 10, 0, 0);
 							} else
 								end1 = endtemp;
-							int dias = Days.daysBetween(start1.toDateMidnight(),
-									end1.toDateMidnight()).getDays();
+							int dias = Days.daysBetween(start1.toLocalDateTime(),
+									end1.toLocalDateTime()).getDays();
 							HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
 									dataDosFeriados);
 							LocalDateKitCalculatorsFactory.getDefaultInstance()
@@ -281,6 +286,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 										0, 0).plusDays(1); 
 								i++;
 							}
+							BigDecimal totalMinutosPendentes = calcularPendencias(sol);
+							totalMinutosTrabalhados = totalMinutosTrabalhados.subtract(totalMinutosPendentes);
 							BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(
 							new BigDecimal("60"), 2, RoundingMode.HALF_UP);
 							if (horasLiquidas.doubleValue() <= 1) {
@@ -390,7 +397,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							.first();
 						
 						List<SrSolicitacao> lista = SrSolicitacao.find(
-							"select sol.local.nomeComplexo, sol.dtReg, mov.dtIniMov "
+							"select sol.local.nomeComplexo, sol.dtReg, mov.dtIniMov,sol.idSolicitacao "
 									+ "from SrSolicitacao sol, SrMovimentacao mov "
 									+ "where sol.idSolicitacao = mov.solicitacao "
 									+ "and sol.local = " + parametros.get("local") + " "
@@ -411,8 +418,11 @@ public class SrRelPrazo extends RelatorioTemplate {
 							local = (String) obj[0];
 							DateTime startemp = new DateTime(obj[1]);
 							DateTime endtemp = new DateTime( obj[2]);
+							SrSolicitacao sol = SrSolicitacao.findById(obj[3]);
 							DateTime start1 = new DateTime();
 							DateTime end1 = new DateTime();
+							DateTime startp = new DateTime();
+							DateTime endp = new DateTime();
 							if (startemp.getHourOfDay() < 10) {
 								start1 = new DateTime(startemp.getYear(),
 										startemp.getMonthOfYear(),
@@ -433,8 +443,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 										endtemp.getDayOfMonth() + 1, 10, 0, 0);
 							} else
 								end1 = endtemp;
-							int dias = Days.daysBetween(start1.toDateTime(),
-									end1.toDateTime()).getDays();
+							int dias = Days.daysBetween(start1.toLocalDateTime(),
+									end1.toLocalDateTime()).getDays();
 							HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
 									dataDosFeriados);
 							LocalDateKitCalculatorsFactory.getDefaultInstance()
@@ -444,6 +454,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 											HolidayHandlerType.FORWARD);
 							int diasNaoUteis = 0;
 							int totalHorasTrabalhadas = 0;
+							int totalHorasPendentes = 0;
 							BigDecimal totalMinutosTrabalhados = new BigDecimal(0.0);
 							DateTime dataInicialTemporaria = new DateTime(start1);
 							DateTime dataFinalTemporaria = new DateTime(end1);
@@ -485,6 +496,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 										0, 0).plusDays(1); 
 								i++;
 							}
+							BigDecimal totalMinutosPendentes = calcularPendencias(sol);
+							totalMinutosTrabalhados = totalMinutosTrabalhados.subtract(totalMinutosPendentes);
 							BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(
 									new BigDecimal("60"), 2, RoundingMode.HALF_UP);
 							if (horasLiquidas.doubleValue() <= 1) {
@@ -553,9 +566,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 					+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 					+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 					.first();
-			
 				List<SrSolicitacao> lista = SrSolicitacao.find(
-					"select mov.lotaAtendente.siglaLotacao, sol.dtReg, mov.dtIniMov "
+					"select mov.lotaAtendente.siglaLotacao, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.lotaAtendente in (" + listalotacoes + ") "
@@ -574,8 +586,9 @@ public class SrRelPrazo extends RelatorioTemplate {
 				while (it.hasNext()) {
 					Object[] obj = (Object[]) it.next();
 					local = (String) obj[0];
-					DateTime startemp = new DateTime(obj[1]);
-					DateTime endtemp = new DateTime( obj[2]);
+					SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
+					DateTime startemp = new DateTime(obj[2]);
+					DateTime endtemp = new DateTime( obj[3]);
 					DateTime start1 = new DateTime();
 					DateTime end1 = new DateTime();
 					if (startemp.getHourOfDay() < 10) {
@@ -598,8 +611,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 								endtemp.getDayOfMonth() + 1, 10, 0, 0);
 					} else
 						end1 = endtemp;
-					int dias = Days.daysBetween(start1.toDateMidnight(),
-							end1.toDateMidnight()).getDays();
+					int dias = Days.daysBetween(start1.toLocalDateTime(),
+							end1.toLocalDateTime()).getDays();
 					HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
 							dataDosFeriados);
 					LocalDateKitCalculatorsFactory.getDefaultInstance()
@@ -650,6 +663,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 								0, 0).plusDays(1); 
 						i++;
 					}
+					BigDecimal totalMinutosPendentes = calcularPendencias(sol);
+					totalMinutosTrabalhados = totalMinutosTrabalhados.subtract(totalMinutosPendentes);
 					BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(
 							new BigDecimal("60"), 2, RoundingMode.HALF_UP);
 					if (horasLiquidas.doubleValue() <= 1) {
@@ -721,7 +736,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 				.first();
 		
 			List<SrSolicitacao> lista = SrSolicitacao.find(
-				"select mov.lotaAtendente.siglaLotacao, sol.dtReg, mov.dtIniMov "
+				"select mov.lotaAtendente.siglaLotacao, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
 						+ "from SrSolicitacao sol, SrMovimentacao mov "
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.lotaAtendente in (" + listalotacoes + ") " 
@@ -741,8 +756,9 @@ public class SrRelPrazo extends RelatorioTemplate {
 			while (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
 				local = (String) obj[0];
-				DateTime startemp = new DateTime(obj[1]);
-				DateTime endtemp = new DateTime( obj[2]);
+				SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
+				DateTime startemp = new DateTime(obj[2]);
+				DateTime endtemp = new DateTime( obj[3]);
 				DateTime start1 = new DateTime();
 				DateTime end1 = new DateTime();
 				if (startemp.getHourOfDay() < 10) {
@@ -765,8 +781,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 							endtemp.getDayOfMonth() + 1, 10, 0, 0);
 				} else
 					end1 = endtemp;
-				int dias = Days.daysBetween(start1.toDateTime(),
-						end1.toDateTime()).getDays();
+				int dias = Days.daysBetween(start1.toLocalDateTime(),
+						end1.toLocalDateTime()).getDays();
 				HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
 						dataDosFeriados);
 				LocalDateKitCalculatorsFactory.getDefaultInstance()
@@ -817,6 +833,8 @@ public class SrRelPrazo extends RelatorioTemplate {
 							0, 0).plusDays(1); 
 					i++;
 				}
+				BigDecimal totalMinutosPendentes = calcularPendencias(sol);
+				totalMinutosTrabalhados = totalMinutosTrabalhados.subtract(totalMinutosPendentes);
 				BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(
 						new BigDecimal("60"), 2, RoundingMode.HALF_UP);
 				if (horasLiquidas.doubleValue() <= 1) {
@@ -859,6 +877,121 @@ public class SrRelPrazo extends RelatorioTemplate {
 		return d;															
 	}
 	
+	private BigDecimal calcularPendencias(SrSolicitacao sol) {
+		
+		BigDecimal totalMinutosPendentes = new BigDecimal(0.0);
+		
+		List<DateTime> listaPendentes = new ArrayList<DateTime>();
+		
+		List<Object> d = new LinkedList<Object>();
+		List<CpOcorrenciaFeriado> ferjust = CpOcorrenciaFeriado.find(
+				"select dtIniFeriado, dtFimFeriado from CpOcorrenciaFeriado")
+				.fetch();
+		Set dataDosFeriados = new HashSet();
+		Iterator it1 = ferjust.listIterator();	
+		while (it1.hasNext()) {
+			Object[] obj = (Object[]) it1.next();
+			DateTime inifer = new DateTime(obj[0]);
+			DateTime fimfer = new DateTime(obj[1]);
+			if (inifer != null) {
+				dataDosFeriados.add(new LocalDate(inifer));
+			}
+			if (fimfer != null) {
+				dataDosFeriados.add(new LocalDate(fimfer));
+			}
+		}
+				
+		for (SrMovimentacao mov: sol.getMovimentacaoSet()){
+				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
+					listaPendentes.add(new DateTime(mov.dtIniMov));
+				}		
+				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
+					listaPendentes.add(new DateTime(mov.dtIniMov));
+				}
+		}	
+		
+			for (int j = 0; j < listaPendentes.size(); j++) {
+				DateTime startemp = new DateTime(listaPendentes.get(j+1));
+				DateTime endtemp = new DateTime(listaPendentes.get(j));
+				DateTime start1 = new DateTime();
+				DateTime end1 = new DateTime();
+				if (startemp.getHourOfDay() < 10) {
+					start1 = new DateTime(startemp.getYear(),
+							startemp.getMonthOfYear(),
+							startemp.getDayOfMonth() + 1, 10, 0, 0);
+				} else if (startemp.getHourOfDay() >= 18) {
+					start1 = new DateTime(startemp.getYear(),
+							startemp.getMonthOfYear(),
+							startemp.getDayOfMonth() + 1, 10, 0, 0);
+				} else
+					start1 = startemp;
+				if (endtemp.getHourOfDay() < 10) {
+					end1 = new DateTime(endtemp.getYear(),
+							endtemp.getMonthOfYear(),
+							endtemp.getDayOfMonth() + 1, 10, 0, 0);
+				} else if (endtemp.getHourOfDay() >= 18) {
+					end1 = new DateTime(endtemp.getYear(),
+							endtemp.getMonthOfYear(),
+							endtemp.getDayOfMonth() + 1, 10, 0, 0);
+				} else
+					end1 = endtemp;
+			int dias = Days.daysBetween(start1.toLocalDateTime(),
+					end1.toLocalDateTime()).getDays();
+			HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
+					dataDosFeriados);
+			LocalDateKitCalculatorsFactory.getDefaultInstance()
+					.registerHolidays("BR", calendarioDeFeriados);
+			DateCalculator calendario = LocalDateKitCalculatorsFactory
+					.getDefaultInstance().getDateCalculator("BR",
+							HolidayHandlerType.FORWARD);
+			int diasNaoUteis = 0;
+			int totalHorasTrabalhadas = 0;
+			int totalHorasPendentes = 0;
+			DateTime dataInicialTemporaria = new DateTime(start1);
+			DateTime dataFinalTemporaria = new DateTime(end1);
+			DateTime dtinitemp = new DateTime(start1);
+			DateTime dtendtemp = new DateTime(end1);
+			int i = 1;
+			while (!dataInicialTemporaria.isAfter(dataFinalTemporaria)) {
+				if (calendario.isNonWorkingDay(dataInicialTemporaria.toLocalDate())) {
+					diasNaoUteis++;
+				} else {
+					if (i == dias) {
+						dtinitemp = new DateTime(dataInicialTemporaria);
+						dtendtemp = new DateTime(
+								dataInicialTemporaria.getYear(),
+								dataInicialTemporaria.getMonthOfYear(),
+								dataInicialTemporaria.getDayOfMonth(), 18,
+								0, 0);
+					} else if (i > dias) {
+						dtinitemp = new DateTime(dataInicialTemporaria);
+						dtendtemp = new DateTime(end1);
+					} else {
+						dtinitemp = new DateTime(dataInicialTemporaria);
+						dtendtemp = new DateTime(
+								dataInicialTemporaria.getYear(),
+								dataInicialTemporaria.getMonthOfYear(),
+								dataInicialTemporaria.getDayOfMonth(), 18,
+								0, 0);
+					}
+					totalHorasTrabalhadas += new Period(dtinitemp,
+							dtendtemp).getHours();
+					totalMinutosPendentes = new BigDecimal(Minutes
+							.minutesBetween(dtinitemp, dtendtemp)
+							.getMinutes()).add(totalMinutosPendentes);
+				}
+				dataInicialTemporaria = new DateTime(
+						dataInicialTemporaria.getYear(),
+						dataInicialTemporaria.getMonthOfYear(),
+						dataInicialTemporaria.getDayOfMonth(), 9,
+						0, 0).plusDays(1); 
+				i++;
+			}
+			j= j+1;
+		}	
+		return 	totalMinutosPendentes;
+	}		
+			
 	private String chave(String local, String nivel) {
 		return local + nivel;
 	}

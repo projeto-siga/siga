@@ -34,7 +34,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
-
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
@@ -101,5 +100,5 @@ public class SrPergunta extends HistoricoSuporte {
 			return null;
 		return perguntas.get(0);
 	}
-
+	
 }

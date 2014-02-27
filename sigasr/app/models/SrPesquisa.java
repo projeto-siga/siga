@@ -113,6 +113,11 @@ public class SrPesquisa extends HistoricoSuporte {
 		return listaCompleta;
 	}
 
+	public String getPergunta(Long idPergunta) {
+		SrPergunta pergunta = SrPergunta.findById(idPergunta);
+		return pergunta.descrPergunta;
+	}
+
 	// Edson: Não consegui fazer com que esse cascade fosse automático.
 	@Override
 	public void finalizar() throws Exception {

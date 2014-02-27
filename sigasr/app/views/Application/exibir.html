@@ -93,14 +93,17 @@ $(function(){
 					#{if completo}
 					<col width="5%" />
 					<col width="15%" />
+					<col width="8%" />
 					<col width="10%" />
 					<col width="10%" />
-					<col width="65" />
+					<col width="10%" />
+					<col width="10%" />
+					<col width="34%" />
 					#{/if} #{else}
-					<col width="20%" />
+					<col width="15%" />
 					<col width="10%" />
 					<col width="10%" />
-					<col width="60" />
+					<col width="65%" />
 					#{/else}
 				</colgroup>
 				<thead>
@@ -137,13 +140,17 @@ $(function(){
 							sigla:movimentacao.atendente?.nomeAbreviado,
 							descricao:movimentacao.atendente?.descricaoIniciaisMaiusculas /}</td>
 						#{/if}
-						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}#{if
-							movimentacao.arquivo}&nbsp;&nbsp;|&nbsp;&nbsp;#{arquivo
-							arquivo:movimentacao.arquivo /}#{/if}</td>
+						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
+						#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
+							arquivo:movimentacao.arquivo /}#{/if}
+						#{if movimentacao.tipoMov.idTipoMov == 16}&nbsp;|&nbsp;
+						 <a	style="color: #365b6d; text-decoration: none" href="@{Application.exibirPesquisa(movimentacao.idMovimentacao)}">
+							Olá</a>#{/if}
+						</td>
 						<script language="javascript">
 							var descricao = document.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
 							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
-					</script>
+						</script>
 					</tr>
 					#{/list}
 				</tbody>
@@ -193,6 +200,11 @@ $(function(){
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent}
 					${solicitacao.GUTString}</span>
 			</p>
+			#{if (solicitacao.pendente) && (solicitacao.getUltimaMovimentacaoPorTipo(9).dtAgenda != "")}
+			<p>
+				<b>Agendamento:</b> ${solicitacao.getUltimaMovimentacaoPorTipo(9).getDtAgendaDDMMYYHHMM()}
+			</p>
+			#{/if}
 		</div>
 	</div>
 

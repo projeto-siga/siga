@@ -30,12 +30,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import models.SrUrgencia;
+import models.SrGrauSatisfacao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
-
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 import play.db.jpa.JPABase;
@@ -54,9 +55,10 @@ public class SrResposta extends GenericModel {
 	@Column(name = "DESCR_RESPOSTA")
 	public String descrResposta;
 
-	@Enumerated()
+	
 	@Column(name = "VALOR_RESPOSTA")
-	public SrFormaAcompanhamento valorResposta;
+	@Enumerated()
+	public SrGrauSatisfacao grauSatisfacao;
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_PERGUNTA")
@@ -69,6 +71,7 @@ public class SrResposta extends GenericModel {
 	@ManyToOne()
 	@JoinColumn(name = "ID_AVALIACAO")
 	public SrMovimentacao avaliacao;
+	
 
 	public SrResposta() {
 
@@ -81,5 +84,10 @@ public class SrResposta extends GenericModel {
 	public void setId(Long id) {
 		idResposta = id;
 	}
+	
+	public String getGrauSatisfacao() {
+		return grauSatisfacao.descrGrauSatisfacao;
+	}
+	
 
 }

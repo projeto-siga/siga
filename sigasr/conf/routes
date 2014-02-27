@@ -62,6 +62,8 @@ GET     /public/                                staticDir:public
 *		/solicitacao/relPrazoDetail/gerar  				Application.grelPrazoDetail
 *		/solicitacao/relPesquisa  						Application.relPesquisa
 *		/solicitacao/relPesquisa/gerar  				Application.grelPesquisa
+*		/solicitacao/relAgendado	 					Application.relAgendado
+*		/solicitacao/relAgendado/gerar  				Application.grelAgendado
 *		/solicitacao/listarLista/gravar 				Application.gravarLista
 *		/solicitacao/exibirLista/{id}		 			Application.exibirLista
 *		/solicitacao/priorizarLista		 				Application.priorizarLista

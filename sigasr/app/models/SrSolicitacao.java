@@ -1,11 +1,27 @@
 package models;
 
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,7 +49,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.PostLoad;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -43,14 +58,9 @@ import javax.persistence.TypedQuery;
 
 import notifiers.Correio;
 
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Where;
-import org.joda.time.DateTime;
 
-import play.Logger;
 import play.db.jpa.JPA;
-import play.db.jpa.JPABase;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
 import util.Util;
@@ -63,8 +73,6 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.sinc.lib.ItemComparator;
-import static models.SrTipoMovimentacao.*;
 
 @Entity
 @Table(name = "SR_SOLICITACAO", schema = "SIGASR")
@@ -418,15 +426,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 								&& (tipoMov == null || movimentacao.tipoMov.idTipoMov == tipoMov))
 							listaCompleta.add(movimentacao);
 		return listaCompleta;
-	}
-
-	public SrMovimentacao getMovimentacaoInclusaoEmLista(SrLista lista)
-			throws Exception {
-		SrMovimentacao movIncl = new SrMovimentacao();
-		for (SrMovimentacao movimentacao : getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_INCLUSAO_LISTA))
-			if (movimentacao.lista == lista)
-				return movIncl;
-		return null;
 	}
 
 	public SrMovimentacao getUltimaMovimentacao() {
@@ -972,7 +971,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
 						SrConfiguracaoBL.ITEM_CONFIGURACAO,
 						SrConfiguracaoBL.ACAO });
-		
+
 		for (SrConfiguracao conf : confs) {
 			if (conf.itemConfiguracao == null)
 				listaFinal.addAll(SrItemConfiguracao.listar());
@@ -1481,75 +1480,56 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
+	public List<SrLista> getListasDisponiveisParaInclusao(DpLotacao lotaTitular) {
+		List<SrLista> listaFinal = SrLista.listarPorLotacao(lotaTitular);
+		listaFinal.removeAll(getListasAssociadas());
+		return listaFinal;
+	}
+
+	public Set<SrLista> getListasAssociadas() {
+		Set<SrLista> associadas = new HashSet<SrLista>();
+		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente())
+			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INCLUSAO_LISTA
+					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA
+					&& mov.lista.isAtivo())
+				associadas.add(mov.lista);
+			else if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)
+				associadas.remove(mov.lista);
+		return associadas;
+	}
+
 	public boolean isEmLista() {
 		return getListasAssociadas().size() > 0;
 	}
 
-	public List<SrLista> getListasDisponiveisParaInclusao(DpLotacao lotaTitular) {
-		SrLista rol = new SrLista();
-		ArrayList<SrLista> listaCompleta = new ArrayList<SrLista>();
+	public boolean isEmLista(SrLista lista) {
+		for (SrLista l : getListasAssociadas())
+			if (l.equivale(lista))
+				return true;
+		return false;
+	}
+
+	public long getPrioridadeNaLista(SrLista lista) throws Exception {
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)
-				rol = mov.lista;
-			if (mov.lista != null && mov.lista != rol)
-				listaCompleta.add(mov.lista);
+			if (mov.lista != null && mov.lista.equivale(lista))
+				return mov.prioridade != null ? mov.prioridade : -1;
 		}
-		SrLista lista = new SrLista();
-		ArrayList<SrLista> listaTodos = new ArrayList<SrLista>();
-		for (SrLista listas : lista.getListaSet(lotaTitular)) {
-			if (listas != null)
-				listaTodos.add(listas);
-		}
-		ArrayList<SrLista> listaDisponiveis = new ArrayList<SrLista>(listaTodos);
-		listaDisponiveis.removeAll(listaCompleta);
-		return listaDisponiveis;
+		return -1;
 	}
 
-	public Set<SrLista> getListasAssociadas() {
-		Set<SrLista> listaCompleta = new HashSet<SrLista>();
-		Set<SrLista> listas = new HashSet<SrLista>();
-		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
-				listas.add(mov.lista);
-			} else if ((!mov.isCancelada())
-					&& (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INCLUSAO_LISTA || mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
-					&& (!listas.contains(mov.lista)) && (mov.lista.isAtivo()))
-				listaCompleta.add(mov.lista);
-		}
-		return listaCompleta;
-	}
+	public void associarLista(SrLista lista, DpPessoa pess, DpLotacao lota)
+			throws Exception {
+		if (lista == null)
+			throw new IllegalArgumentException("Lista não informada");
 
-	public Long getPrioridadeNaLista(SrLista lista) throws Exception {
-		Long prioridade = 0L;
-		SrMovimentacao movIncl = getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_INCLUSAO_LISTA); // getMovimentacaoInclusao(lista);
-		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		if (movAltAnt != null && movAltAnt.dtIniMov.after(movIncl.dtIniMov)) {
-			prioridade = movAltAnt.prioridade;
-		} else if (movIncl != null) {
-			prioridade = movIncl.prioridade;
-		}
-		return prioridade;
-	}
+		if (isEmLista(lista))
+			throw new IllegalArgumentException("Lista " + lista.nomeLista
+					+ " já contém a solicitação " + getCodigo());
 
-	public SrMovimentacao getMovPrioridade(SrLista lista) throws Exception {
 		SrMovimentacao mov = new SrMovimentacao();
-		SrMovimentacao movIncl = getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		SrMovimentacao movAltAnt = getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		if (movAltAnt != null && movAltAnt.dtIniMov.after(movIncl.dtIniMov)) {
-			mov = movAltAnt;
-		} else if (movIncl != null) {
-			mov = movIncl;
-		}
-		return mov;
-	}
-
-	public void associarLista(SrLista lista) throws Exception {
-		SrMovimentacao mov = new SrMovimentacao();
-		if (lista != null) {
-			mov.prioridade = lista.getProximaPosicao();
-		}
-		mov.cadastrante = cadastrante;
-		mov.lotaCadastrante = lotaCadastrante;
+		mov.prioridade = (long) lista.getProximaPosicao();
+		mov.cadastrante = pess;
+		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista
@@ -1557,22 +1537,44 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.lista = lista;
 		mov.solicitacao = this;
 		mov.salvar();
-		meuMovimentacaoSet.add(mov);
+		lista.refresh();
 	}
 
-	public void desassociarLista(SrLista lista) throws Exception {
+	public void desassociarLista(SrLista lista, DpPessoa pess, DpLotacao lota)
+			throws Exception {
+		if (lista == null)
+			throw new IllegalArgumentException("Lista não informada");
+
 		SrMovimentacao mov = new SrMovimentacao();
-		mov.cadastrante = cadastrante;
-		mov.lotaCadastrante = lotaCadastrante;
+		mov.cadastrante = pess;
+		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		mov.solicitacao = this;
 		mov.lista = lista;
 		mov.salvar();
-		meuMovimentacaoSet.add(mov);
-		refresh();
-		lista.recalcularPrioridade(this.getPrioridadeNaLista(lista));
+		lista.refresh();
+
+		lista.recalcularPrioridade(pess, lota);
+	}
+
+	// Edson: este método é protected porque não pode ser chamado pelo usuário,
+	// mas sim pela SrLista, passando a posição correta a ser colocada a solicitação
+	protected void priorizar(SrLista lista, long prioridade, DpPessoa pess,
+			DpLotacao lota) throws Exception {
+		SrMovimentacao mov = new SrMovimentacao();
+		mov.prioridade = prioridade;
+		mov.cadastrante = pess;
+		mov.lotaCadastrante = lota;
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
+		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista
+				+ " com a prioridade " + mov.prioridade;
+		mov.lista = lista;
+		mov.solicitacao = this;
+		mov.salvar();
+		lista.refresh();
 	}
 
 	private void iniciarPreAtendimento(DpLotacao lota, DpPessoa pess)

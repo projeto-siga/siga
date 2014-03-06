@@ -1,42 +1,32 @@
 package model;
 
+import static model.TestUtil.*;
+
 import java.util.List;
 
-import models.SrAcao;
-import models.SrConfiguracao;
 import models.SrItemConfiguracao;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static model.TestUtil.*;
 import play.test.UnitTest;
 
 public class SrItemConfiguracaoTest extends UnitTest {
 
 	@BeforeClass
-	public static void criarDadosBasicos() throws Exception{
-		sigadoc();
-		sigawf();
-		systrab();
-		assertEquals(5, SrItemConfiguracao.count());
-		
-		tipoConfigDesignacao();
-		
+	public static void antesDeTudo() throws Exception {
+		criarDadosBasicos();
 		prepararSessao();
 	}
-	
+
 	@AfterClass
-	public static void limparDadosCriados() throws Exception{
+	public static void depoisDeTudo() throws Exception {
 		limparBase();
 	}
-	
+
 	@Test
-	public void reposicionarNaHierarquiaETestarHistorico()
-			throws Exception {
+	public void reposicionarNaHierarquiaETestarHistorico() throws Exception {
 		SrItemConfiguracao sigaWf = sigawf();
 		sigaWf.siglaItemConfiguracao = "99.02.01";
 		sigaWf.salvar();
@@ -73,5 +63,5 @@ public class SrItemConfiguracaoTest extends UnitTest {
 		assertEquals(itemAnterior.getAtual(), sigaDoc);
 		assertEquals(sigaDoc.getAtual(), sigaDoc);
 	}
-	
+
 }

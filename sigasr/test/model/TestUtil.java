@@ -1,10 +1,14 @@
 package model;
 
+import static model.TestUtil.attNumDoc;
+import static model.TestUtil.attPrazo;
 import static model.TestUtil.criarSoft;
 import static model.TestUtil.manterSoft;
 import static model.TestUtil.sigadoc;
 import static model.TestUtil.sigawf;
 import static model.TestUtil.systrab;
+import static model.TestUtil.tipoConfigAssociacao;
+import static model.TestUtil.tipoConfigDesignacao;
 
 import java.util.List;
 
@@ -14,6 +18,7 @@ import models.SrConfiguracaoBL;
 import models.SrItemConfiguracao;
 import models.SrSubTipoConfiguracao;
 import models.SrTipoAtributo;
+import models.SrTipoMovimentacao;
 
 import org.hibernate.Session;
 
@@ -25,7 +30,10 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpLocalidade;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoMarca;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -72,9 +80,11 @@ public class TestUtil {
 	}
 
 	public static CpComplexo barroso() {
-		CpComplexo barroso = (CpComplexo) CpOrgaoUsuario.findById(3L);
+		CpComplexo barroso = (CpComplexo) CpComplexo.find("byNomeComplexo",
+				"Almirante Barroso").first();
 		if (barroso == null) {
 			barroso = new CpComplexo();
+			barroso.setIdComplexo(1L);
 			barroso.setLocalidade(cidadeRio());
 			barroso.setNomeComplexo("Almirante Barroso");
 			barroso.setOrgaoUsuario(rj());
@@ -144,6 +154,7 @@ public class TestUtil {
 			eeh = new DpPessoa();
 			eeh.setNomePessoa("Edson");
 			eeh.setSiglaPessoa("EEH");
+			eeh.setEmailPessoa("eeh@abc.com");
 			eeh.setOrgaoUsuario(rj());
 			eeh.setLotacao(sesia());
 			eeh.salvar();
@@ -305,10 +316,10 @@ public class TestUtil {
 		}
 		return manter;
 	}
-	
-	public static SrTipoAtributo attPrazo() throws Exception{
-		SrTipoAtributo prazo = SrTipoAtributo.find("byNomeTipoAtributoAndHisDtFimIsNull", "Prazo")
-				.first();
+
+	public static SrTipoAtributo attPrazo() throws Exception {
+		SrTipoAtributo prazo = SrTipoAtributo.find(
+				"byNomeTipoAtributoAndHisDtFimIsNull", "Prazo").first();
 		if (prazo == null) {
 			prazo = new SrTipoAtributo();
 			prazo.nomeTipoAtributo = "Prazo";
@@ -318,9 +329,10 @@ public class TestUtil {
 		}
 		return prazo;
 	}
-	
-	public static SrTipoAtributo attNumDoc() throws Exception{
-		SrTipoAtributo numDoc = SrTipoAtributo.find("byNomeTipoAtributoAndHisDtFimIsNull", "Numero do Documento")
+
+	public static SrTipoAtributo attNumDoc() throws Exception {
+		SrTipoAtributo numDoc = SrTipoAtributo.find(
+				"byNomeTipoAtributoAndHisDtFimIsNull", "Numero do Documento")
 				.first();
 		if (numDoc == null) {
 			numDoc = new SrTipoAtributo();
@@ -330,6 +342,119 @@ public class TestUtil {
 			numDoc.refresh();
 		}
 		return numDoc;
+	}
+
+	public static void tiposMov() {
+		new SrTipoMovimentacao(1L, "Início do Atendimento").save();
+		new SrTipoMovimentacao(2L, "Andamento").save();
+		new SrTipoMovimentacao(3L, "Inclusao em Lista").save();
+		new SrTipoMovimentacao(4L, "Início do Pré-Atendimento").save();
+		new SrTipoMovimentacao(5L, "Início do Pós-Atendimento").save();
+		new SrTipoMovimentacao(6L, "Cancelamento de Inclusão em Lista").save();
+		new SrTipoMovimentacao(7L, "Fechamento").save();
+		new SrTipoMovimentacao(8L, "Cancelamento da Solicitação").save();
+		new SrTipoMovimentacao(9L, "Início de Pendência").save();
+		new SrTipoMovimentacao(10L, "Reabertura").save();
+		new SrTipoMovimentacao(11L, "Fim de Pendência").save();
+		new SrTipoMovimentacao(12L, "Anexação de Arquivo").save();
+		new SrTipoMovimentacao(13L, "Alteração de Prioridade em Lista").save();
+		new SrTipoMovimentacao(14L, "Cancelamento de Movimentação").save();
+		new SrTipoMovimentacao(15L, "Fechamento Parcial").save();
+		new SrTipoMovimentacao(16L, "Avaliação").save();
+		new SrTipoMovimentacao(17L, "Início do Controle de Qualidade").save();
+	}
+	
+	public static void marcadores(){
+		
+		CpTipoMarca t = new CpTipoMarca();
+		t.setIdTpMarca(2L);
+		t.setDescrTipoMarca("Siga-SR");
+		t.save();
+		
+		CpTipoMarcador cptm = new CpTipoMarcador();
+		cptm.setIdTpMarcador(1L);
+		cptm.setDescrTipoMarcador("Sistema");
+		cptm.save();
+		
+		CpMarcador m41 = new CpMarcador();
+		m41.setIdMarcador(41L);
+		m41.setDescrMarcador("A Receber");
+		m41.setCpTipoMarcador(cptm);
+		m41.save();
+		
+		CpMarcador m42 = new CpMarcador();
+		m42.setIdMarcador(42L);
+		m42.setDescrMarcador("Em Andamento");
+		m42.setCpTipoMarcador(cptm);
+		m42.save();
+		
+		CpMarcador m43 = new CpMarcador();
+		m43.setIdMarcador(43L);
+		m43.setDescrMarcador("Fechado");
+		m43.setCpTipoMarcador(cptm);
+		m43.save();
+		
+		CpMarcador m44 = new CpMarcador();
+		m44.setIdMarcador(44L);
+		m44.setDescrMarcador("Pendente");
+		m44.setCpTipoMarcador(cptm);
+		m44.save();
+		
+		CpMarcador m45 = new CpMarcador();
+		m45.setIdMarcador(45L);
+		m45.setDescrMarcador("Cancelado");
+		m45.setCpTipoMarcador(cptm);
+		m45.save();
+		
+		CpMarcador m46 = new CpMarcador();
+		m46.setIdMarcador(46L);
+		m46.setDescrMarcador("Pré-Atendimento");
+		m46.setCpTipoMarcador(cptm);
+		m46.save();
+		
+		CpMarcador m47 = new CpMarcador();
+		m47.setIdMarcador(47L);
+		m47.setDescrMarcador("Pós-Atendimento");
+		m47.setCpTipoMarcador(cptm);
+		m47.save();
+		
+		CpMarcador m48 = new CpMarcador();
+		m48.setIdMarcador(48L);
+		m48.setDescrMarcador("Como Cadastrante");
+		m48.setCpTipoMarcador(cptm);
+		m48.save();
+		
+		CpMarcador m49 = new CpMarcador();
+		m49.setIdMarcador(49L);
+		m49.setDescrMarcador("Como Solicitante");
+		m49.setCpTipoMarcador(cptm);
+		m49.save();
+		
+		CpMarcador m53 = new CpMarcador();
+		m53.setIdMarcador(53L);
+		m53.setDescrMarcador("Fechado Parcial");
+		m53.setCpTipoMarcador(cptm);
+		m53.save();
+		
+		CpMarcador m54 = new CpMarcador();
+		m54.setIdMarcador(54L);
+		m54.setDescrMarcador("Em Controle de Qualidade");
+		m54.setCpTipoMarcador(cptm);
+		m54.save();
+	}
+
+	public static void criarDadosBasicos() throws Exception {
+		sigadoc();
+		sigawf();
+		systrab();
+		manterSoft();
+		criarSoft();
+		attNumDoc();
+		attPrazo();
+		tiposMov();
+		marcadores();
+		tipoConfigDesignacao();
+		tipoConfigAssociacao();
 	}
 
 	public static void prepararSessao() throws Exception {
@@ -345,7 +470,13 @@ public class TestUtil {
 		SrItemConfiguracao.deleteAll();
 		DpPessoa.deleteAll();
 		DpLotacao.deleteAll();
+		CpComplexo.deleteAll();
+		CpLocalidade.deleteAll();
 		CpOrgaoUsuario.deleteAll();
+		SrTipoMovimentacao.deleteAll();
+		CpMarcador.deleteAll();
+		CpTipoMarcador.deleteAll();
+		CpTipoMarca.deleteAll();
 	}
 
 	public static void apagaCacheDesignacao() throws Exception {
@@ -354,6 +485,14 @@ public class TestUtil {
 				.limparCache(
 						(CpTipoConfiguracao) CpTipoConfiguracao
 								.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+	}
+
+	public static void apagaCacheAssociacao() throws Exception {
+		SrConfiguracaoBL
+				.get()
+				.limparCache(
+						(CpTipoConfiguracao) CpTipoConfiguracao
+								.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 	}
 
 }

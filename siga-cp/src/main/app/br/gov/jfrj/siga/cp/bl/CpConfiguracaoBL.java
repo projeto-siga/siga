@@ -768,11 +768,12 @@ public class CpConfiguracaoBL {
 					.getListaPorTipo(
 							CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracao c : configs) {
+				DpLotacao lotacaoAtual = c.getLotacao().getLotacaoAtual();
 				if (c.getHisAtivo() == 1
-						&& c.getLotacao().getDataFim() == null
+						&& lotacaoAtual.getDataFim() == null
 						&& c.getDpPessoa().getIdInicial()
 								.equals(pes.getIdInicial())) {
-					resultado.add(c.getLotacao());
+					resultado.add(lotacaoAtual);
 				}
 			}
 

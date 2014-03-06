@@ -1,22 +1,12 @@
 package controllers;
 
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +24,6 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
-import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
@@ -43,7 +32,6 @@ import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import play.db.jpa.JPA;
@@ -63,7 +51,7 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.sinc.lib.test.Lotacao;
 
 public class Application extends SigaApplication {
 
@@ -502,18 +490,14 @@ public class Application extends SigaApplication {
 
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
-		TreeSet<SrSolicitacao> solicitacao = lista.getSolicSet();
-		boolean editar = lista.podeEditar(lotaTitular());
-		boolean priorizar = lista.podePriorizar(lotaTitular());
-		boolean remover = lista.podeRemover(lotaTitular());
-		render(solicitacao, lista, editar, priorizar, remover);
+		render(lista);
 	}
 
 	public static void associarListaGravar(Long idSolicitacao, Long idLista)
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.associarLista(lista);
+		solicitacao.associarLista(lista, cadastrante(), lotaTitular());
 		exibir(idSolicitacao, completo());
 	}
 
@@ -521,14 +505,14 @@ public class Application extends SigaApplication {
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.desassociarLista(lista);
+		solicitacao.desassociarLista(lista, cadastrante(), lotaTitular());
 		exibirLista(idLista);
 	}
 
-	public static void priorizarLista(ArrayList ids, Long id,
+	public static void priorizarLista(List<SrSolicitacao> sols, Long id,
 			DpPessoa cadastrante, DpLotacao lotaCadastrante) throws Exception {
 		SrLista lista = SrLista.findById(id);
-		lista.priorizar(ids, id, cadastrante(), lotaTitular());
+		lista.priorizar(cadastrante(), lotaTitular(), sols);
 		exibirLista(id);
 	}
 

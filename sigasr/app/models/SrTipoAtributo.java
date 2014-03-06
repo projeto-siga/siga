@@ -20,27 +20,26 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
-
 import play.db.jpa.GenericModel;
 import play.db.jpa.Model;
 import models.siga.PlayHistoricoSuporte;
 
 @Entity
-@Table(name="SR_TIPO_ATRIBUTO", schema="SIGASR")
+@Table(name = "SR_TIPO_ATRIBUTO", schema = "SIGASR")
 public class SrTipoAtributo extends HistoricoSuporte {
-	
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
 	@GeneratedValue(generator = "srTipoAtributoSeq")
 	@Column(name = "ID_TIPO_ATRIBUTO")
 	public Long idTipoAtributo;
-	
-	@Column(name="NOME")
+
+	@Column(name = "NOME")
 	public String nomeTipoAtributo;
-	
-	@Column(name="DESCRICAO")
+
+	@Column(name = "DESCRICAO")
 	public String descrTipoAtributo;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrTipoAtributo tipoAtributoInicial;
@@ -60,11 +59,11 @@ public class SrTipoAtributo extends HistoricoSuporte {
 		// TODO Auto-generated method stub
 		idTipoAtributo = id;
 	}
-	
+
 	public static List<SrTipoAtributo> listar() {
 		return SrTipoAtributo.find("byHisDtFimIsNull").fetch();
-	}	
-	
+	}
+
 	public List<SrTipoAtributo> getHistoricoTipoAtributo() {
 		if (tipoAtributoInicial != null)
 			return tipoAtributoInicial.meuTipoAtributoHistoricoSet;

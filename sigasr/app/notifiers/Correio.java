@@ -1,13 +1,7 @@
 package notifiers;
 
-import javax.mail.internet.MimeMultipart;
-
 import models.SrMovimentacao;
 import models.SrSolicitacao;
-
-import org.apache.commons.mail.EmailAttachment;
-import org.apache.commons.mail.HtmlEmail;
-
 import play.mvc.Mailer;
 
 public class Correio extends Mailer {
@@ -17,6 +11,7 @@ public class Correio extends Mailer {
 		addRecipient(sol.solicitante.getEmailPessoa());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(sol);
+		
 	}
 	
 	public static void notificarMovimentacao(SrMovimentacao movimentacao) {

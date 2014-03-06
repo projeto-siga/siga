@@ -27,8 +27,6 @@ public class SigaPlugin extends PlayPlugin {
 				if (s.startsWith(applicationName + "." + applicationMode
 						+ ".play.")
 						|| s.startsWith(applicationMode + ".play.")) {
-					System.out.println(s.substring(s.indexOf(".play.") + 6)
-							+ ": " + propsPlay.get(s));
 					Play.configuration.put(
 							s.substring(s.indexOf(".play.") + 6),
 							propsPlay.get(s));

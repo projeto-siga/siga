@@ -21,7 +21,7 @@ $(function(){
  	    $.ajax({
  	  	   type: "POST",
  	  	   async: false,
- 	  	   data: {ids:ids, id:"${lista.idLista}"},
+ 	  	   data: {"sols.idSolicitacao":ids, id:"${lista.idLista}"},
  	  	   url: "/sigasr/solicitacao/priorizarLista",
  	  	   success: function(){
  	  		 window.location.reload();
@@ -36,7 +36,7 @@ $(function(){
 	<h2> ${lista.nomeLista}</h2>
 	
 		<p class="gt-table-action-list">
-			#{if editar} <a class="once"
+			#{if lista.podeEditar(lotaTitular, cadastrante)} <a class="once"
 				href="@{Application.editarLista(lista?.idLista)}"> <img
 				src="/siga/css/famfamfam/icons/pencil.png"
 				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
@@ -98,7 +98,7 @@ $(function(){
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 				<input type="hidden" name="idLista" value="${lista.idLista}">
 				<input type="hidden" name="idSolicitacao" value="${sol.idSolicitacao}">
-				#{if remover} 
+				#{if lista.podeRemover(lotaTitular, cadastrante)} 
 				<a class="once" href="@{Application.desassociarLista(sol.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.idSolicitacao}">
 				<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> </a>#{/if}
 			</td>
@@ -114,7 +114,7 @@ $(function(){
 		<!-- /content box -->
 		<div class="gt-table-buttons">
 		<input type="hidden" name="idLista" value="${lista.idLista}">
-		#{if editar} 
+		#{if lista.podeEditar(lotaTitular, cadastrante)} 
 		<input type="button" id="btn" value="Priorizar" class="gt-btn-medium gt-btn-left" />#{/if}
 		<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
 

@@ -1,11 +1,6 @@
 package model;
 
-import static model.TestUtil.criarSoft;
-import static model.TestUtil.limparBase;
-import static model.TestUtil.manterSoft;
-import static model.TestUtil.prepararSessao;
-import static model.TestUtil.tipoConfigDesignacao;
-import models.SrAcao;
+import static model.TestUtil.*;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,18 +11,13 @@ import play.test.UnitTest;
 public class SrAcaoTest extends UnitTest {
 
 	@BeforeClass
-	public static void criarDadosBasicos() throws Exception{
-		manterSoft();
-		criarSoft();
-		assertEquals(3, SrAcao.count());
-		
-		tipoConfigDesignacao();
-		
+	public static void antesDeTudo() throws Exception{
+		criarDadosBasicos();
 		prepararSessao();
 	}
 	
 	@AfterClass
-	public static void limparDadosCriados() throws Exception{
+	public static void depoisDeTudo() throws Exception{
 		limparBase();
 	}
 	

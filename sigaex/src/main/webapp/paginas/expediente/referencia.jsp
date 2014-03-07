@@ -72,7 +72,7 @@ function sbmt() {
 							tema="simple" modulo="siga"/></td>
 				</tr>
 
-				<siga:selecao titulo="Documento:" propriedade="documentoRef" modulo="siga"/>
+				<siga:selecao titulo="Documento:" propriedade="documentoRef" modulo="sigaex"/>
 				<tr class="button">
 					<td colspan="2"><input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>

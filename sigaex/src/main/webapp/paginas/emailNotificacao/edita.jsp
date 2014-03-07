@@ -83,9 +83,9 @@
 									</c:when>								
 								</c:choose>															
 								<span id="spanPessDest" style="${destMovStyle}">
-								 <siga:selecao propriedade="pess" tema="simple" /> </span> 
+								 <siga:selecao propriedade="pess" tema="simple" modulo="siga"/> </span> 
 								<span id="spanLotaDest" style="${lotaDestMovStyle}"> 
-								<siga:selecao propriedade="lota" tema="simple" paramList="${strBuscarFechadas}"/> </span>										
+								<siga:selecao propriedade="lota" tema="simple" paramList="${strBuscarFechadas}" modulo="siga"/> </span>										
 							</td>							
 						</tr>
 						
@@ -117,9 +117,9 @@
 									</c:otherwise> 																	
 								</c:choose>																									
 								<span id="spanPessEmail" style="${emailMovStyle}">
-								 <siga:selecao propriedade="pessEmail" tema="simple" /> </span> 
+								 <siga:selecao propriedade="pessEmail" tema="simple" modulo="siga"/> </span> 
 								<span id="spanLotaEmail" style="${lotaEmailMovStyle}"> 
-								<siga:selecao propriedade="lotaEmail" tema="simple" paramList="${strBuscarFechadas}"/> </span>
+								<siga:selecao propriedade="lotaEmail" tema="simple" paramList="${strBuscarFechadas}" modulo="siga"/> </span>
 								<span id="spanTextEmail" style="${emailStyle}">
 								 <ww:textfield name="emailTela" size="40" maxLength="40" theme="simple" /> </span> 										
 							</td>							

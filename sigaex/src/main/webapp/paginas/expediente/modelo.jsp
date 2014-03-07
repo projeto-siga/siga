@@ -68,7 +68,7 @@
 
 					<tr>
 						<td>Classificação para criação de vias:</td>
-						<td><siga:selecao tema="simple" modulo="siga"
+						<td><siga:selecao tema="simple" modulo="sigaex"
 							propriedade="classificacaoCriacaoVias" /></td>
 					</tr>
 					<tr>

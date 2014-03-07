@@ -66,7 +66,7 @@
 				</tr>	
 				<tr>
 					<td>Lotação:</td>
-					<td><siga:selecao  propriedade="lotacao" tema="simple" />
+					<td><siga:selecao  propriedade="lotacao" tema="simple" modulo="siga"/>
 				</tr>	
 				<tr>
 					<td>UF:</td>

@@ -280,7 +280,7 @@ submitOk = function() {
 				list="#{'/sigaex/expediente/doc/exibir.action':'Exibir', '/sigaex/expediente/mov/receber.action':'Receber', '/sigaex/expediente/mov/arquivar.action':'Arquivar'}"
 				onchange="javascript: if (this.value == '04') window.location='${url4}'; if (this.value == '05') window.location='${url5}'; if (this.value == '06') window.location='${url6}'; if (this.value == '07') window.location='${url7}';" />
 			<!-- , '04':'Transferir Lote', ${itemRemeter} '05':'Receber Lote', '06':'2� Via Protocolo'} -->
-			<siga:selecao tema="simple" buscar="nao" ocultardescricao="sim" propriedade="documentoVia" modulo="siga"/>
+			<siga:selecao tema="simple" buscar="nao" ocultardescricao="sim" propriedade="documentoVia" modulo="sigaex"/>
 			<input type="button" name="ok" value="Ok"
 				onclick="javascript:submitOk();" /> <ww:url id="url"
 				action="editar" namespace="/expediente/doc" /></td>

@@ -397,7 +397,7 @@ function tryAgainAutoSave(){
 					<tr style="display: none;">
 						<td>Documento Pai:</td>
 						<td colspan="3"><siga:selecao titulo="Documento Pai:"
-							propriedade="mobilPai" tema="simple" modulo="siga"
+							propriedade="mobilPai" tema="simple" modulo="sigaex"
 							desativar="${desativarDocPai}" reler="sim" /></td>
 					</tr>
 					<tr>

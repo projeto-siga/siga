@@ -73,7 +73,7 @@ function sbmt() {
 					<tr>
 						<td>Documento Mestre:</td>
 						<td><siga:selecao tema='simple' titulo="Documento Mestre:"
-							propriedade="documentoRef" modulo="siga" /></td>
+							propriedade="documentoRef" modulo="sigaex" /></td>
 					</tr>
 					
 				<tr class="button">

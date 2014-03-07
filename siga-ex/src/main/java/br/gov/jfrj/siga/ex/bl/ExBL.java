@@ -2228,6 +2228,10 @@ public class ExBL extends CpBL {
 
 		if (doc.getDtFechamento() != null)
 			throw new AplicacaoException("Documento já está fechado.");
+		
+		if (!doc.getExClassificacao().isAtivo())
+			throw new AplicacaoException("Classificação documental encerrada. Selecione outra na tela de edição.");
+
 
 		Set<ExVia> setVias = doc.getSetVias();
 

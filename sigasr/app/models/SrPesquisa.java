@@ -40,11 +40,11 @@ public class SrPesquisa extends HistoricoSuporte {
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrPesquisa pesquisaInicial;
-	
-	@OneToMany(targetEntity = SrPesquisa.class,  mappedBy = "pesquisaInicial", cascade = CascadeType.PERSIST)
+
+	@OneToMany(targetEntity = SrPesquisa.class, mappedBy = "pesquisaInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
 	public List<SrPesquisa> meuPesquisaHistoricoSet;
-	
+
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrPergunta.class, mappedBy = "pesquisa")
 	@OrderBy("ordemPergunta")
 	public Set<SrPergunta> perguntaSet;
@@ -65,7 +65,7 @@ public class SrPesquisa extends HistoricoSuporte {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-	
+
 	public List<SrPesquisa> getHistoricoPesquisa() {
 		if (pesquisaInicial != null)
 			return pesquisaInicial.meuPesquisaHistoricoSet;
@@ -87,12 +87,13 @@ public class SrPesquisa extends HistoricoSuporte {
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-		for (SrPergunta pergunta : perguntaSet) {
-			pergunta.pesquisa = this;
-			pergunta.salvar();
-		}
+		if (perguntaSet != null)
+			for (SrPergunta pergunta : perguntaSet) {
+				pergunta.pesquisa = this;
+				pergunta.salvar();
+			}
 	}
-	
+
 	public Set<SrPergunta> getPerguntaSetAtivas() {
 		if (pesquisaInicial == null)
 			return null;
@@ -103,20 +104,22 @@ public class SrPesquisa extends HistoricoSuporte {
 						return a1.ordemPergunta.compareTo(a2.ordemPergunta);
 					}
 				});
-		for (SrPesquisa pesquisas : getHistoricoPesquisa())
-			if (pesquisas.meuPesquisaHistoricoSet != null)
-				for (SrPergunta perg : pesquisas.perguntaSet)
-					if (perg.getHisDtFim() == null)
-						listaCompleta.add(perg);
+		for (SrPesquisa pesquisa : getHistoricoPesquisa())
+			if (pesquisa.meuPesquisaHistoricoSet != null)
+				if (pesquisa.perguntaSet != null)
+					for (SrPergunta perg : pesquisa.perguntaSet)
+						if (perg.getHisDtFim() == null)
+							listaCompleta.add(perg);
 		return listaCompleta;
 	}
-	
+
 	// Edson: Não consegui fazer com que esse cascade fosse automático.
 	@Override
 	public void finalizar() throws Exception {
 		super.finalizar();
-		for (SrPergunta pergunta : perguntaSet) {
-			pergunta.finalizar();
-		}
+		if (perguntaSet != null)
+			for (SrPergunta pergunta : perguntaSet) {
+				pergunta.finalizar();
+			}
 	}
 }

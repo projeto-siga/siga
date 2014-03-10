@@ -52,7 +52,7 @@ public class SrResposta extends GenericModel {
 	public Long idResposta;
 
 	@Column(name = "DESCR_RESPOSTA")
-	public String descrPergunta;
+	public String descrResposta;
 
 	@Enumerated()
 	@Column(name = "VALOR_RESPOSTA")

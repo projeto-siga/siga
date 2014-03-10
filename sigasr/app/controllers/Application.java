@@ -509,8 +509,15 @@ public class Application extends SigaApplication {
 		exibirLista(idLista);
 	}
 
-	public static void priorizarLista(List<SrSolicitacao> sols, Long id,
-			DpPessoa cadastrante, DpLotacao lotaCadastrante) throws Exception {
+	public static void priorizarLista(List<Long> ids, Long id) throws Exception {
+		
+		//Edson: as 3 linhas abaixo nao deveriam estar sendo necessarias, mas o Play
+		//nao estah fazendo o binding direito caso o parametro seja List<SrSolicitacao>
+		//em vez de List<Long>. Ver o que estah havendo.
+		List<SrSolicitacao> sols = new ArrayList<SrSolicitacao>();
+		for (Long l : ids)
+			sols.add((SrSolicitacao)SrSolicitacao.findById(l));
+		
 		SrLista lista = SrLista.findById(id);
 		lista.priorizar(cadastrante(), lotaTitular(), sols);
 		exibirLista(id);

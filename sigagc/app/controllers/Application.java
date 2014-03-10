@@ -1001,7 +1001,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void proxy(String url) throws Exception {
-		URL u = new URL(url);
+		URL u = new URL(getBaseSiga() + url);
 		URLConnection conn = u.openConnection();
 		for (Http.Header h : request.headers.values())
 			conn.setRequestProperty(h.name, h.value());
@@ -1028,14 +1028,14 @@ public class Application extends SigaApplication {
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("http://localhost:8080/siga/" + tipo + "/selecionar.action?"
+		proxy("/" + tipo + "/selecionar.action?"
 				+ "propriedade=" + tipo + nome + "&sigla="
 				+ URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action?"
+		proxy("/" + tipo + "/buscar.action?"
 				+ "propriedade=" + tipo + nome + "&sigla="
 				+ URLEncoder.encode(sigla, "UTF-8"));
 	}
@@ -1047,7 +1047,7 @@ public class Application extends SigaApplication {
 				paramString += s + "="
 						+ URLEncoder.encode(request.params.get(s), "UTF-8")
 						+ "&";
-		proxy("http://localhost:8080/siga/" + tipo + "/buscar.action"
+		proxy("/" + tipo + "/buscar.action"
 				+ paramString);
 	}
 

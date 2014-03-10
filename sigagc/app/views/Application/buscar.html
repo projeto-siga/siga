@@ -45,10 +45,10 @@
 			#{if arvore.toString() == ""}
 				<p class="gt-notice-box">A busca não retornou resultados.</p>
 				<br />
-				<div class="gt-cancel" style="float:left;"><a href="/sigagc/buscar">voltar</a></div>
+				<div class="gt-cancel" style="float:left;"><a href="/sigagc/app/buscar">voltar</a></div>
 			#{/if}
 			#{else}
-				<div style="float:right;"><a href="/sigagc/buscar">remover filtro: "${texto}"</a></div>
+				<div style="float:right;"><a href="/sigagc/app/buscar">remover filtro: "${texto}"</a></div>
 				<br />	
 				<div>${arvore.toHTML().raw()}</div>		
 			#{/else} 

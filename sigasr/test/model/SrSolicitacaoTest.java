@@ -13,6 +13,8 @@ import static model.TestUtil.funcionarioTRF;
 import static model.TestUtil.limparBase;
 import static model.TestUtil.manterSoft;
 import static model.TestUtil.prepararSessao;
+import static model.TestUtil.tipoPerguntaNota1A5;
+import static model.TestUtil.tipoPerguntaTexto;
 import static model.TestUtil.sesia;
 import static model.TestUtil.sesuti;
 import static model.TestUtil.sigadoc;
@@ -34,6 +36,7 @@ import models.SrMarca;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
+import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
@@ -72,6 +75,12 @@ public class SrSolicitacaoTest extends UnitTest {
 		for (SrConfiguracao c : SrConfiguracao.find("order by hisDtIni desc")
 				.<SrConfiguracao> fetch())
 			c.delete();
+		for (SrPergunta p : SrPergunta.find("order by hisDtIni desc")
+				.<SrPergunta> fetch())
+			p.delete();
+		for (SrPesquisa p : SrPesquisa.find("order by hisDtIni desc")
+				.<SrPesquisa> fetch())
+			p.delete();
 		apagaCacheDesignacao();
 	}
 
@@ -278,15 +287,8 @@ public class SrSolicitacaoTest extends UnitTest {
 		sol.cadastrante = eeh();
 		sol.solicitante = eeh();
 		sol.salvar();
-
-		boolean temMarcaPreAtendente = false;
-		for (SrMarca m : sol.getMarcaSet())
-			if (m.getCpMarcador().getIdMarcador()
-					.equals(CpMarcador.MARCADOR_SOLICITACAO_PRE_ATENDIMENTO)
-					&& m.getDpLotacaoIni().equivale(csis())) {
-				temMarcaPreAtendente = true;
-			}
-		assertTrue(temMarcaPreAtendente);
+		assertTrue(sol.isMarcada(
+				CpMarcador.MARCADOR_SOLICITACAO_PRE_ATENDIMENTO, csis()));
 
 		assertTrue(sol.isEmPreAtendimento());
 		assertTrue(sol.podeFinalizarPreAtendimento(csis(), eeh()));
@@ -333,25 +335,13 @@ public class SrSolicitacaoTest extends UnitTest {
 
 		sol.deixarPendente(sesia(), eeh());
 		assertTrue(sol.isPendente());
-		boolean temMarcaPendente = false;
-		for (SrMarca m : sol.getMarcaSet())
-			if (m.getCpMarcador().getIdMarcador()
-					.equals(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE)
-					&& m.getDpLotacaoIni().equivale(sesia())) {
-				temMarcaPendente = true;
-			}
-		assertTrue(temMarcaPendente);
+		assertTrue(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
+				sesia()));
 
 		sol.terminarPendencia(sesia(), eeh());
 		assertFalse(sol.isPendente());
-		temMarcaPendente = false;
-		for (SrMarca m : sol.getMarcaSet())
-			if (m.getCpMarcador().getIdMarcador()
-					.equals(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE)
-					&& m.getDpLotacaoIni().equivale(sesia())) {
-				temMarcaPendente = true;
-			}
-		assertFalse(temMarcaPendente);
+		assertFalse(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
+				sesia()));
 	}
 
 	@Test
@@ -428,7 +418,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		assertNull(sol
 				.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA));
 	}
-	
+
 	@Test
 	public void posAtendimento() throws Exception {
 		SrConfiguracao d = new SrConfiguracao();
@@ -440,66 +430,66 @@ public class SrSolicitacaoTest extends UnitTest {
 		sol.cadastrante = eeh();
 		sol.solicitante = eeh();
 		sol.salvar();
-		assertTrue(sol.estaCom(sesia(), null));
-		
+
 		sol.fechar(sesia(), eeh(), "Fechando. Iniciar pós-atendimento.");
-		boolean temMarcaPosAtendente = false;
-		for (SrMarca m : sol.getMarcaSet())
-			if (m.getCpMarcador().getIdMarcador()
-					.equals(CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO)
-					&& m.getDpLotacaoIni().equivale(csis())) {
-				temMarcaPosAtendente = true;
-			}
-		assertTrue(temMarcaPosAtendente);
 		assertTrue(sol.isEmPosAtendimento());
+		assertTrue(sol.isMarcada(
+				CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO, csis()));
 		assertFalse(sol.podeFechar(sesia(), null));
 		assertTrue(sol.podeFechar(csis(), null));
-		
+
 		sol.fechar(csis(), eeh(), "Fechando em definitivo");
 		assertFalse(sol.isEmPosAtendimento());
 		assertTrue(sol.isFechado());
 	}
-	
+
 	@Test
 	public void pesquisaSatisfacao() throws Exception {
-		
-		SrTipoPergunta multiplaEscolha = new SrTipoPergunta();
-		
+
 		SrPesquisa pesq = new SrPesquisa();
 		pesq.salvar();
+
 		SrPergunta pergunta1 = new SrPergunta();
 		pergunta1.ordemPergunta = 2L;
 		pergunta1.pesquisa = pesq;
-		pergunta1.tipoPergunta = multiplaEscolha;
-		
+		pergunta1.tipoPergunta = tipoPerguntaTexto();
+		pergunta1.salvar();
+
+		SrPergunta pergunta2 = new SrPergunta();
+		pergunta2.ordemPergunta = 1L;
+		pergunta2.pesquisa = pesq;
+		pergunta2.tipoPergunta = tipoPerguntaNota1A5();
+
 		SrConfiguracao d = new SrConfiguracao();
 		d.atendente = sesia();
+		d.pesquisaSatisfacao = pesq;
 		d.salvarComoDesignacao();
 
 		SrSolicitacao sol = new SrSolicitacao();
 		sol.cadastrante = eeh();
-		sol.solicitante = eeh();
+		sol.solicitante = funcionarioTRF();
 		sol.salvar();
-		assertTrue(sol.estaCom(sesia(), null));
+
+		sol.fechar(sesia(), eeh(), "Fechando. Enviar pesquisa...");
+		assertTrue(sol.isFechadoParcialmente());
+		assertTrue(sol.isMarcada(
+				CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL, sesia()));
+
+		// Não pode fechar diretamente nesse estágio
+		assertFalse(sol.podeFechar(sesia(), eeh()));
+
+		// Soh quem pode responder a pesquisa eh o subscritor
+		assertFalse(sol.podeResponderPesquisa(sesia(), eeh()));
+		assertTrue(sol.podeResponderPesquisa(sesuti(), funcionarioTRF()));
 		
-		sol.fechar(sesia(), eeh(), "Fechando. Iniciar pós-atendimento.");
-		boolean temMarcaPosAtendente = false;
-		for (SrMarca m : sol.getMarcaSet())
-			if (m.getCpMarcador().getIdMarcador()
-					.equals(CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO)
-					&& m.getDpLotacaoIni().equivale(csis())) {
-				temMarcaPosAtendente = true;
-			}
-		assertTrue(temMarcaPosAtendente);
-		assertTrue(sol.isEmPosAtendimento());
-		assertFalse(sol.podeFechar(sesia(), null));
-		assertTrue(sol.podeFechar(csis(), null));
+		// Responder pesquisa
+		// ...
 		
-		sol.fechar(csis(), eeh(), "Fechando em definitivo");
-		assertFalse(sol.isEmPosAtendimento());
-		assertTrue(sol.isFechado());
+		// Controle de qualidade
+		// ...
+		
+		// Fechar definitivamente
+		// ...
 	}
-	
-	
 
 }

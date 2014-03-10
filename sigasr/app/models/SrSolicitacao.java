@@ -887,7 +887,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return (isEmPreAtendimento() || isEmAtendimento() || isPendente());
 	}
 
-	private boolean podeImprimirTermoAtendimento(DpLotacao lota, DpPessoa pess) {
+	public boolean podeImprimirTermoAtendimento(DpLotacao lota, DpPessoa pess) {
 		return isEmAtendimento() && estaCom(lota, pess);
 	}
 
@@ -899,7 +899,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return estaCom(lota, pess) && isEmAtendimento();
 	}
 
-	private boolean podeResponderPesquisa(DpLotacao lotaTitular,
+	public boolean podeResponderPesquisa(DpLotacao lotaTitular,
 			DpPessoa titular) {
 		return (isFechadoParcialmente() && foiSolicitadaPor(lotaTitular,
 				titular));
@@ -1474,6 +1474,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return sb.toString();
 	}
 
+	public boolean isMarcada(long marcador) {
+		return isMarcada(marcador, null, null);
+	}
+
+	public boolean isMarcada(long marcador, DpLotacao lota) {
+		return isMarcada(marcador, lota, null);
+	}
+
+	public boolean isMarcada(long marcador, DpLotacao lota, DpPessoa pess) {
+		for (SrMarca m : getMarcaSet())
+			if (m.getCpMarcador().getIdMarcador().equals(marcador)
+					&& (lota == null || m.getDpLotacaoIni().equivale(lota))
+					&& (pess == null || m.getDpPessoaIni().equivale(pess)))
+				return true;
+		return false;
+	}
+
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		// TODO Auto-generated method stub
@@ -1560,7 +1577,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	// Edson: este método é protected porque não pode ser chamado pelo usuário,
-	// mas sim pela SrLista, passando a posição correta a ser colocada a solicitação
+	// mas sim pela SrLista, passando a posição correta a ser colocada a
+	// solicitação
 	protected void priorizar(SrLista lista, long prioridade, DpPessoa pess,
 			DpLotacao lota) throws Exception {
 		SrMovimentacao mov = new SrMovimentacao();
@@ -1689,7 +1707,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (pergunta.idPergunta.equals(resp.pergunta.idPergunta)) {
 					SrResposta resposta = new SrResposta();
 					resposta.pergunta = pergunta;
-					resposta.descrPergunta = resp.descrPergunta;
+					resposta.descrResposta = resp.descrResposta;
 					resposta.movimentacao = movimentacao;
 					resposta.save();
 				}

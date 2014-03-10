@@ -106,7 +106,7 @@ public class SrMovimentacao extends GenericModel {
 	
 	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao")
 	//@OrderBy("pergunta asc")
-	protected List<SrResposta> meuRespostaSet;
+	protected List<SrResposta> respostaSet;
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -124,30 +124,30 @@ public class SrMovimentacao extends GenericModel {
 	}
 	
 	public List<SrResposta> getRespostaSet() {
-		if (meuRespostaSet == null)
+		if (respostaSet == null)
 			return new ArrayList<SrResposta>();
-		return meuRespostaSet;
+		return respostaSet;
 	}
 	
 	public List<SrResposta> setRespostaMap(HashMap<Long, String> respostas) throws Exception {
-		meuRespostaSet = new ArrayList<SrResposta>();
+		respostaSet = new ArrayList<SrResposta>();
 		Iterator<Map.Entry<Long, String>> entries = respostas.entrySet().iterator();
 		while (entries.hasNext()) {
 			Map.Entry<Long, String> entry = entries.next();
 			SrResposta resp = new SrResposta();
 		    Long entrada = entry.getKey();
 		    resp.pergunta = SrPergunta.findById(entrada);
-		    resp.descrPergunta = entry.getValue();
-		    meuRespostaSet.add(resp);
+		    resp.descrResposta = entry.getValue();
+		    respostaSet.add(resp);
 		}
-		return meuRespostaSet;	
+		return respostaSet;	
 	}
 	
 	public HashMap<Long, String> getRespostaMap() {
 		HashMap<Long, String> map = new HashMap<Long, String>();
-		if (meuRespostaSet != null)
-			for (SrResposta resp : meuRespostaSet) {
-				map.put(resp.pergunta.idPergunta, resp.descrPergunta);
+		if (respostaSet != null)
+			for (SrResposta resp : respostaSet) {
+				map.put(resp.pergunta.idPergunta, resp.descrResposta);
 			}
 		return map;
 	}

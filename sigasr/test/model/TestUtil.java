@@ -1,32 +1,16 @@
 package model;
 
-import static model.TestUtil.attNumDoc;
-import static model.TestUtil.attPrazo;
-import static model.TestUtil.criarSoft;
-import static model.TestUtil.manterSoft;
-import static model.TestUtil.sigadoc;
-import static model.TestUtil.sigawf;
-import static model.TestUtil.systrab;
-import static model.TestUtil.tipoConfigAssociacao;
-import static model.TestUtil.tipoConfigDesignacao;
-
-import java.util.List;
-
 import models.SrAcao;
-import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
 import models.SrItemConfiguracao;
-import models.SrSubTipoConfiguracao;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
+import models.SrTipoPergunta;
 
 import org.hibernate.Session;
 
-import com.google.code.play.selenium.step.AssertEqualsStep;
-
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -168,6 +152,7 @@ public class TestUtil {
 		if (fff == null) {
 			fff = new DpPessoa();
 			fff.setNomePessoa("Pessoa Simulada");
+			fff.setEmailPessoa("usuTrf@abc.com");
 			fff.setSiglaPessoa("FFF");
 			fff.setOrgaoUsuario(t2());
 			fff.setLotacao(sesuti());
@@ -344,6 +329,30 @@ public class TestUtil {
 		return numDoc;
 	}
 
+	public static SrTipoPergunta tipoPerguntaTexto() throws Exception {
+		SrTipoPergunta texto = SrTipoPergunta.findById(1L);
+		if (texto == null) {
+			texto = new SrTipoPergunta();
+			texto.idTipoPergunta = 1L;
+			texto.nomeTipoPergunta = "Texto Livre";
+			texto.save();
+			texto.refresh();
+		}
+		return texto;
+	}
+	
+	public static SrTipoPergunta tipoPerguntaNota1A5() throws Exception {
+		SrTipoPergunta nota = SrTipoPergunta.findById(2L);
+		if (nota == null) {
+			nota = new SrTipoPergunta();
+			nota.idTipoPergunta = 2L;
+			nota.nomeTipoPergunta = "Nota de 1 a 5";
+			nota.save();
+			nota.refresh();
+		}
+		return nota;
+	}
+
 	public static void tiposMov() {
 		new SrTipoMovimentacao(1L, "Início do Atendimento").save();
 		new SrTipoMovimentacao(2L, "Andamento").save();
@@ -363,79 +372,79 @@ public class TestUtil {
 		new SrTipoMovimentacao(16L, "Avaliação").save();
 		new SrTipoMovimentacao(17L, "Início do Controle de Qualidade").save();
 	}
-	
-	public static void marcadores(){
-		
+
+	public static void marcadores() {
+
 		CpTipoMarca t = new CpTipoMarca();
 		t.setIdTpMarca(2L);
 		t.setDescrTipoMarca("Siga-SR");
 		t.save();
-		
+
 		CpTipoMarcador cptm = new CpTipoMarcador();
 		cptm.setIdTpMarcador(1L);
 		cptm.setDescrTipoMarcador("Sistema");
 		cptm.save();
-		
+
 		CpMarcador m41 = new CpMarcador();
 		m41.setIdMarcador(41L);
 		m41.setDescrMarcador("A Receber");
 		m41.setCpTipoMarcador(cptm);
 		m41.save();
-		
+
 		CpMarcador m42 = new CpMarcador();
 		m42.setIdMarcador(42L);
 		m42.setDescrMarcador("Em Andamento");
 		m42.setCpTipoMarcador(cptm);
 		m42.save();
-		
+
 		CpMarcador m43 = new CpMarcador();
 		m43.setIdMarcador(43L);
 		m43.setDescrMarcador("Fechado");
 		m43.setCpTipoMarcador(cptm);
 		m43.save();
-		
+
 		CpMarcador m44 = new CpMarcador();
 		m44.setIdMarcador(44L);
 		m44.setDescrMarcador("Pendente");
 		m44.setCpTipoMarcador(cptm);
 		m44.save();
-		
+
 		CpMarcador m45 = new CpMarcador();
 		m45.setIdMarcador(45L);
 		m45.setDescrMarcador("Cancelado");
 		m45.setCpTipoMarcador(cptm);
 		m45.save();
-		
+
 		CpMarcador m46 = new CpMarcador();
 		m46.setIdMarcador(46L);
 		m46.setDescrMarcador("Pré-Atendimento");
 		m46.setCpTipoMarcador(cptm);
 		m46.save();
-		
+
 		CpMarcador m47 = new CpMarcador();
 		m47.setIdMarcador(47L);
 		m47.setDescrMarcador("Pós-Atendimento");
 		m47.setCpTipoMarcador(cptm);
 		m47.save();
-		
+
 		CpMarcador m48 = new CpMarcador();
 		m48.setIdMarcador(48L);
 		m48.setDescrMarcador("Como Cadastrante");
 		m48.setCpTipoMarcador(cptm);
 		m48.save();
-		
+
 		CpMarcador m49 = new CpMarcador();
 		m49.setIdMarcador(49L);
 		m49.setDescrMarcador("Como Solicitante");
 		m49.setCpTipoMarcador(cptm);
 		m49.save();
-		
+
 		CpMarcador m53 = new CpMarcador();
 		m53.setIdMarcador(53L);
 		m53.setDescrMarcador("Fechado Parcial");
 		m53.setCpTipoMarcador(cptm);
 		m53.save();
-		
+
 		CpMarcador m54 = new CpMarcador();
 		m54.setIdMarcador(54L);
 		m54.setDescrMarcador("Em Controle de Qualidade");
@@ -447,12 +456,20 @@ public class TestUtil {
 		sigadoc();
 		sigawf();
 		systrab();
+		
 		manterSoft();
 		criarSoft();
+		
 		attNumDoc();
 		attPrazo();
+		
+		tipoPerguntaTexto();
+		tipoPerguntaNota1A5();
+		
 		tiposMov();
+		
 		marcadores();
+		
 		tipoConfigDesignacao();
 		tipoConfigAssociacao();
 	}

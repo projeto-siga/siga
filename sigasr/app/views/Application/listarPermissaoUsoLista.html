@@ -1,0 +1,48 @@
+#{extends 'main.html' /} #{set title:'Permissões para Uso de Lista de Prioridade' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Permissões para Uso de Lista de Prioridade</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box">
+			<table border="0" class="gt-table">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Local</th>
+						<th>Lotação</th>
+						<th>Pessoa</th>
+						<th>Cargo</th>
+						<th>Função</th>
+						<th>Lista de Prioridade</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:permissoes, as:'perm'}
+					<tr
+						onclick="javascript:window.location='@{Application.editarPermissaoUsoLista(perm.idConfiguracao)}'"
+						style="cursor: pointer;">
+						<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
+						<td>${perm.complexo?.nomeComplexo}</td>
+						<td>${perm.lotacao?.lotacaoAtual?.siglaLotacao}</td>
+						<td>${perm.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>
+						<td>${perm.cargo?.descricao}</td>
+						<td>${perm.funcaoConfianca?.descricao}</td>
+						<td>${perm.listaPrioridade?.nomeLista}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarPermissaoUsoLista}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

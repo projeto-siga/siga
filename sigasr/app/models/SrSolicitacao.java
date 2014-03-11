@@ -835,7 +835,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
-		return estaCom(lota, pess)
+		return (estaCom(lota, pess) || isEmListaPertencenteA(lota))
 				&& (isEmPreAtendimento() || isEmAtendimento());
 	}
 
@@ -902,8 +902,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return estaCom(lota, pess) && isEmAtendimento();
 	}
 
-	public boolean podeResponderPesquisa(DpLotacao lotaTitular,
-			DpPessoa titular) {
+	public boolean podeResponderPesquisa(DpLotacao lotaTitular, DpPessoa titular) {
 		return (isFechadoParcialmente() && foiSolicitadaPor(lotaTitular,
 				titular));
 	}
@@ -968,7 +967,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Set<SrItemConfiguracao> listaFinal = new TreeSet<SrItemConfiguracao>(
 				new SrItemConfiguracaoComparator());
 
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(null,
 				solicitante, local, null, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
@@ -1000,7 +999,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendente()
 			throws Exception {
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(null,
 				this.solicitante, this.local, this.itemConfiguracao, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
@@ -1505,10 +1504,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
-	public List<SrLista> getListasDisponiveisParaInclusao(DpLotacao lotaTitular) {
-		List<SrLista> listaFinal = SrLista.listarPorLotacao(lotaTitular);
+	public List<SrLista> getListasDisponiveisParaInclusao(
+			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
+		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
+
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
+				lotaTitular, cadastrante,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA,
+				new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
+
+		for (SrConfiguracao conf : confs) {
+			SrLista listaAtual = conf.listaPrioridade.getListaAtual();
+			if (!listaFinal.contains(listaAtual))
+				listaFinal.add(listaAtual);
+		}
+
 		listaFinal.removeAll(getListasAssociadas());
-		return listaFinal;
+		return new ArrayList<SrLista>(listaFinal);
 	}
 
 	public Set<SrLista> getListasAssociadas() {
@@ -1525,6 +1537,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean isEmLista() {
 		return getListasAssociadas().size() > 0;
+	}
+	
+	public boolean isEmListaPertencenteA(DpLotacao lota) {
+		for (SrLista l : getListasAssociadas()){
+			if (l.lotaCadastrante.equivale(lota))
+				return true;
+		}
+		return false;
 	}
 
 	public boolean isEmLista(SrLista lista) {
@@ -1595,8 +1615,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista
-				+ " com a prioridade " + mov.prioridade;
+		mov.descrMovimentacao = "Alteração de prioridade na lista " + lista.nomeLista
+				+ ": " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = this;
 		mov.salvar();

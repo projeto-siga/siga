@@ -19,6 +19,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
 	public static int ACAO = 32;
 
+	public static int LISTA_PRIORIDADE = 33;
+
 	public static SrConfiguracaoBL get() {
 		return instancia;
 	}
@@ -41,6 +43,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			conf.acao.getAtual();
 		if (conf.tipoAtributo != null)
 			conf.tipoAtributo.getAtual();
+		if (conf.listaPrioridade != null)
+			conf.listaPrioridade.getListaAtual();
 	}
 
 	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)
@@ -57,6 +61,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.itemConfiguracao = srConf.itemConfiguracao.getAtual();
 			if (srConf.acao != null)
 				srConf.acao = srConf.acao.getAtual();
+			if (srConf.listaPrioridade != null)
+				srConf.listaPrioridade = srConf.listaPrioridade.getListaAtual();
 		}
 
 	}
@@ -86,7 +92,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE
 					&& conf.posAtendente == null)
 				return false;
-			
+
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE
 					&& conf.equipeQualidade == null)
 				return false;
@@ -102,6 +108,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null && !conf.itemConfiguracao
 							.getAtual()
 							.isPaiDeOuIgualA(filtro.itemConfiguracao))))
+				return false;
+
+			if (!atributosDesconsiderados.contains(LISTA_PRIORIDADE)
+					&& conf.listaPrioridade != null
+					&& (filtro.listaPrioridade == null || (filtro.listaPrioridade != null && !conf.listaPrioridade
+							.getListaAtual().equivale(filtro.listaPrioridade))))
 				return false;
 
 		}

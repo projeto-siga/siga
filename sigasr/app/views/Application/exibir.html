@@ -303,7 +303,7 @@ $(function(){
    				</tr>
    			</thead>
 			<tbody>
-			#{list items:solicitacao.getListasDisponiveisParaInclusao(lotaTitular), as:'lista'}
+			#{list items:solicitacao.getListasDisponiveisParaInclusao(lotaTitular, cadastrante), as:'lista'}
 			<tr>
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 				<input type="radio" name="idLista" value="${lista.idLista}">	

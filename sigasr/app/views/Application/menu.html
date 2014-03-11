@@ -1,9 +1,14 @@
 <li><a href="#">Serviços</a>
 <ul>
 <li><a href="@{Application.editar}">Cadastrar</a></li>
-<li><a href="@{Application.listar}">Listar</a>
+<li><a href="@{Application.listar}">Listar</a></li>
 </ul>
-<li><a href="@{Application.listarLista}">Listas</a>
+<li><a href="}">Listas</a>
+<ul>
+<li><a href="@{Application.editarLista}">Cadastrar</a></li>
+<li><a href="@{Application.listarLista}">Listar</a></li>
+<li><a href="@{Application.listarPermissaoUsoLista}">Definir Permissões</a></li>
+</ul>
 #{if exibirMenuAdministrar}
 <li><a href="#">Administração</a>
 <ul>
@@ -13,6 +18,7 @@
 <li><a href="@{Application.listarTipoAtributo}">Tipo de atributo</a></li>
 <li><a href="@{Application.listarAssociacao}">Associação de tipo de atributo</a></li>
 <li><a href="@{Application.listarPesquisa}">Pesquisa de Satisfação</a></li>
+<li><a href="@{Application.listarPermissaoUsoLista}">Permissão para Uso de Lista</a></li>
 </ul>
 </li>
 #{/if}

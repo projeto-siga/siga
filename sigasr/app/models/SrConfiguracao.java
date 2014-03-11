@@ -56,7 +56,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToOne
 	@JoinColumn(name = "ID_POS_ATENDENTE")
 	public DpLotacao posAtendente;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_EQUIPE_QUALIDADE")
 	public DpLotacao equipeQualidade;
@@ -72,7 +72,11 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToOne
 	@JoinColumn(name = "ID_PESQUISA")
 	public SrPesquisa pesquisaSatisfacao;
-	
+
+	@ManyToOne
+	@JoinColumn(name = "ID_LISTA")
+	public SrLista listaPrioridade;
+
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
 	public boolean atributoObrigatorio;
@@ -84,21 +88,23 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	}
 
-	public SrConfiguracao(DpPessoa pess, CpComplexo local,
-			SrItemConfiguracao item, SrAcao acao,
+	public SrConfiguracao(DpLotacao lota, DpPessoa pess, CpComplexo local,
+			SrItemConfiguracao item, SrAcao acao, SrLista lista,
 			CpTipoConfiguracao tipo, SrSubTipoConfiguracao subTipoConfig) {
+		this.setLotacao(lota);
 		this.setDpPessoa(pess);
 		this.setComplexo(local);
 		this.itemConfiguracao = item;
 		this.acao = acao;
+		this.listaPrioridade = lista;
 		this.setCpTipoConfiguracao(tipo);
 		this.subTipoConfig = subTipoConfig;
 	}
-	
+
 	public String getPesquisaSatisfacaoString() {
-		return pesquisaSatisfacao.nomePesquisa; 
+		return pesquisaSatisfacao.nomePesquisa;
 	}
-	
+
 	public String getAtributoObrigatorioString() {
 		return atributoObrigatorio ? "Sim" : "Não";
 	}
@@ -116,6 +122,24 @@ public class SrConfiguracao extends CpConfiguracao {
 						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
 								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario",
+						SrConfiguracao.class).getResultList();
+	}
+
+	public void salvarComoPermissaoUsoLista() throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+		salvar();
+	}
+
+	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota) {
+		return JPA
+				.em()
+				.createQuery(
+						"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = "
+								+ CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA
+								+ " and conf.listaPrioridade.lotaCadastrante.idLotacaoIni = "
+								+ lota.getLotacaoInicial().getIdLotacao()
+								+ " and conf.hisDtFim is null order by conf.orgaoUsuario",
 						SrConfiguracao.class).getResultList();
 	}
 
@@ -163,8 +187,23 @@ public class SrConfiguracao extends CpConfiguracao {
 			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
 			long idTipo, SrSubTipoConfiguracao subTipo) throws Exception {
 
-		SrConfiguracao conf = new SrConfiguracao(pess, local, item, acao,
-				JPA.em().find(CpTipoConfiguracao.class, idTipo), subTipo);
+		return getConfiguracao(null, pess, local, item, acao, null, idTipo,
+				subTipo);
+	}
+
+	public static SrConfiguracao getConfiguracao(DpLotacao lotaTitular,
+			DpPessoa pess, long idTipo, SrLista lista) throws Exception {
+		return getConfiguracao(lotaTitular, pess, null, null, null, lista,
+				idTipo, null);
+	}
+
+	public static SrConfiguracao getConfiguracao(DpLotacao lota, DpPessoa pess,
+			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
+			SrLista lista, long idTipo, SrSubTipoConfiguracao subTipo)
+			throws Exception {
+
+		SrConfiguracao conf = new SrConfiguracao(lota, pess, local, item, acao,
+				lista, JPA.em().find(CpTipoConfiguracao.class, idTipo), subTipo);
 
 		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
 	}
@@ -172,16 +211,22 @@ public class SrConfiguracao extends CpConfiguracao {
 	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
 			CpComplexo complexo, SrItemConfiguracao item, SrAcao acao,
 			long idTipo, SrSubTipoConfiguracao subTipo) throws Exception {
-		return getConfiguracoes(pess, complexo, item, acao, idTipo, subTipo, 
-				new int[] {});
+		return getConfiguracoes(null, pess, complexo, item, acao, idTipo,
+				subTipo, new int[] {});
 	}
 
-	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
-			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
-			long idTipo, SrSubTipoConfiguracao subTipo,
+	public static List<SrConfiguracao> getConfiguracoes(DpLotacao lotaTitular,
+			DpPessoa pess, long idTipo, int atributoDesconsideradoFiltro[] ) throws Exception {
+		return getConfiguracoes(lotaTitular, pess, null, null, null, idTipo,
+				null, atributoDesconsideradoFiltro);
+	}
+
+	public static List<SrConfiguracao> getConfiguracoes(DpLotacao lota,
+			DpPessoa pess, CpComplexo local, SrItemConfiguracao item,
+			SrAcao acao, long idTipo, SrSubTipoConfiguracao subTipo,
 			int atributoDesconsideradoFiltro[]) throws Exception {
-		SrConfiguracao conf = new SrConfiguracao(pess, local, item, acao, 
-				JPA.em().find(CpTipoConfiguracao.class, idTipo), subTipo);
+		SrConfiguracao conf = new SrConfiguracao(lota, pess, local, item, acao,
+				null, JPA.em().find(CpTipoConfiguracao.class, idTipo), subTipo);
 		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf,
 				atributoDesconsideradoFiltro);
 	}
@@ -195,4 +240,5 @@ public class SrConfiguracao extends CpConfiguracao {
 	public void setId(Long id) {
 		setIdConfiguracao(id);
 	}
+
 }

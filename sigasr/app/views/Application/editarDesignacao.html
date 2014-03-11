@@ -1,11 +1,11 @@
- #{extends 'main.html' /} #{set title:'Designação de solicita��es' /}
+ #{extends 'main.html' /} #{set title:'Designação de solicitações' /}
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		#{if designacao?.idConfiguracao}
-		<h2 class="gt-form-head">Designa��o N� ${designacao.hisIdIni}</h2>
+		<h2 class="gt-form-head">Designação</h2>
 		#{/if} #{else}
-		<h2 class="gt-form-head">Nova designa��o</h2>
+		<h2 class="gt-form-head">Nova designação</h2>
 		#{/else}
 
 		<div class="gt-form gt-content-box">
@@ -14,11 +14,11 @@
 				name="designacao.idConfiguracao"
 				value="${designacao.idConfiguracao}"> #{/if}
 			#{ifErrors}
-			<p class="gt-error">Alguns campos obrigat�rios n�o foram
+			<p class="gt-error">Alguns campos obrigatórios não foram
 				preenchidos ${error}</p>
 			#{/ifErrors}	
 			<div class="gt-form-row gt-width-66">
-				<label>�rg�o</label> 
+				<label>Órgão</label> 
 				#{select name:'designacao.orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
 				labelProperty:'nmOrgaoUsu', value:designacao.orgaoUsuario?.idOrgaoUsu}
 				#{option 0}Nenhum#{/option} 
@@ -29,10 +29,12 @@
 			<div class="gt-form-row gt-width-66">		
 				<label>Local</label> 
 				#{select name:'designacao.complexo', items:locais, valueProperty:'idComplexo',
-				labelProperty:'nomeComplexo', value:designacao.complexo?.idComplexo /}
+				labelProperty:'nomeComplexo', value:designacao.complexo?.idComplexo}
+				#{option 0}Nenhum#{/option} 
+				#{/select}
 			</div>		
 			<div class="gt-form-row gt-width-66">
-				<label>Lota��o</label>#{selecao
+				<label>Lotação</label>#{selecao
 					tipo:'lotacao', nome:'designacao.lotacao',
 					value:designacao.lotacao?.lotacaoAtual /}
 			</div>
@@ -50,7 +52,7 @@
 			</div>
 			
 			<div class="gt-form-row gt-width-66">
-				<label>Fun��o</label>#{selecao
+				<label>Função</label>#{selecao
 					tipo:'funcao', nome:'designacao.funcaoConfianca',
 					value:designacao.funcaoConfianca /}
 			</div>
@@ -73,13 +75,13 @@
 					<span style="display:inline;color: red">#{error 'designacao.atendente' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Pr�-atendente</label>#{selecao
+				<label>Pré-atendente</label>#{selecao
 					tipo:'lotacao', nome:'designacao.preAtendente',
 					value:designacao.preAtendente?.lotacaoAtual /}
 					<span style="display:inline;color: red">#{error 'designacao.preAtendente' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>P�s-atendente</label> #{selecao
+				<label>Pós-atendente</label> #{selecao
 					tipo:'lotacao', nome:'designacao.posAtendente',
 					value:designacao.posAtendente?.lotacaoAtual /}
 					<span style="display:inline;color: red">#{error 'designacao.posAtendente' /}</span>
@@ -91,7 +93,7 @@
 					<span style="display:inline;color: red">#{error 'designacao.equipeQualidade' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Pesquisa de satisfa��o</label> 
+				<label>Pesquisa de satisfação</label> 
 				#{select name:'designacao.pesquisaSatisfacao', items:pesquisaSatisfacao, valueProperty:'idPesquisa',
 				labelProperty:'nomePesquisa', value:designacao.pesquisaSatisfacao?.idPesquisa}
 				#{option 0}Nenhuma#{/option} 

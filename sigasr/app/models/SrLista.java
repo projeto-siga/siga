@@ -22,6 +22,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -82,7 +83,7 @@ public class SrLista extends HistoricoSuporte {
 		return SrLista.find("hisDtFim is null order by idLista").fetch();
 	}
 
-	public static List<SrLista> listarPorLotacao(DpLotacao lota) {
+	public static List<SrLista> getCriadasPelaLotacao(DpLotacao lota) {
 		return SrLista.find(
 				"hisDtFim is null and lotaCadastrante.idLotacaoIni = "
 						+ lota.getIdLotacaoIni()).fetch();
@@ -140,16 +141,20 @@ public class SrLista extends HistoricoSuporte {
 		return null;
 	}
 
-	public boolean podeEditar(DpLotacao lota) {
+	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
 		return (lota.equals(lotaCadastrante));
 	}
 
-	public boolean podePriorizar(DpLotacao lotaTitular) {
+	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess) throws Exception{
 		return (lotaTitular.equals(lotaCadastrante));
 	}
 
-	public boolean podeRemover(DpLotacao lotaTitular) {
-		return (lotaTitular.equals(lotaCadastrante));
+	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception{
+		if ((lotaTitular.equals(lotaCadastrante)))
+			return true;
+		SrConfiguracao conf = SrConfiguracao.getConfiguracao(lotaTitular, pess,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA, this);
+		return conf != null;
 	}
 
 	public Set<SrSolicitacao> getSolicitacaoSet() throws Exception {

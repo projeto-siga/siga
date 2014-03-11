@@ -35,6 +35,7 @@ import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
 
+import play.data.binding.As;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
@@ -312,6 +313,9 @@ public class Application extends SigaApplication {
 			render("@editarDesignacao", designacao, orgaos);
 		}
 	}
+	
+	private static void validarFormEditarPermissaoUsoLista(SrConfiguracao designacao) {
+	}
 
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
 		validarFormEditar(solicitacao);
@@ -533,7 +537,7 @@ public class Application extends SigaApplication {
 		exibirLista(idLista);
 	}
 
-	public static void priorizarLista(List<Long> ids, Long id) throws Exception {
+	public static void priorizarLista(@As(",")List<Long> ids, Long id) throws Exception {
 		
 		//Edson: as 3 linhas abaixo nao deveriam estar sendo necessarias, mas o Play
 		//nao estah fazendo o binding direito caso o parametro seja List<SrSolicitacao>
@@ -695,6 +699,40 @@ public class Application extends SigaApplication {
 		designacao.finalizar();
 		listarDesignacao();
 	}
+	
+	public static void listarPermissaoUsoLista() throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrConfiguracao> permissoes = SrConfiguracao.listarPermissoesUsoLista(lotaTitular());
+		render(permissoes);
+	}
+
+	public static void editarPermissaoUsoLista(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<SrLista> listasPrioridade = SrLista.getCriadasPelaLotacao(lotaTitular());
+		SrConfiguracao permissao = new SrConfiguracao();
+		if (id != null)
+			permissao = JPA.em().find(SrConfiguracao.class, id);
+		render(permissao, orgaos, locais, listasPrioridade);
+	}
+
+	public static void gravarPermissaoUsoLista(SrConfiguracao permissao)
+			throws Exception {
+		assertAcesso("ADM:Administrar");
+		validarFormEditarPermissaoUsoLista(permissao);
+		permissao.salvarComoPermissaoUsoLista();
+		listarPermissaoUsoLista();
+	}
+
+	public static void desativarPermissaoUsoLista(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
+		designacao.finalizar();
+		listarDesignacao();
+	}
+
 
 	public static void listarAssociacao() throws Exception {
 		assertAcesso("ADM:Administrar");

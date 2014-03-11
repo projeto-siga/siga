@@ -377,7 +377,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		sol3.solicitante = eeh();
 		sol3.salvar();
 
-		assertEquals(1, sol.getListasDisponiveisParaInclusao(sesia()).size());
+		assertEquals(1, sol.getListasDisponiveisParaInclusao(sesia(), null).size());
 
 		// Incluir as solicitacoes na lista e checar ordem
 		sol.associarLista(lista, eeh(), sesia());

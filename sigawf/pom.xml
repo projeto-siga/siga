@@ -307,16 +307,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ar.com.fdvs</groupId>
-            <artifactId>DynamicJasper</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <scope>provided</scope>
@@ -377,6 +367,11 @@
             <groupId>projeto-siga</groupId>
             <artifactId>siga-libs</artifactId>
         </dependency>
+        <dependency>
+            <groupId>projeto-siga</groupId>
+            <artifactId>siga-rel</artifactId>
+        </dependency>
+        
     </dependencies>
 
 </project>

@@ -79,7 +79,7 @@ public class Application extends SigaApplication {
 				e.printStackTrace();
 			}
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 	}
 
@@ -91,7 +91,7 @@ public class Application extends SigaApplication {
 		if (objUsuario != null) {
 			render();
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 	}
 
@@ -106,7 +106,7 @@ public class Application extends SigaApplication {
 					.createQuery(
 							"from Locais where cod_local ='" + varCodLocal
 									+ "'").getSingleResult());
-			resposta = "Sala j√° existe. Confira o c√≥digo da sala. ";
+			resposta = "Sala j· existe. Confira o cÛdigo da sala. ";
 		} catch (Exception e) {
 			try {
 				System.out.println(JPA.em().createQuery(
@@ -115,7 +115,7 @@ public class Application extends SigaApplication {
 				JPA.em().flush();
 				resposta = "Ok.";
 			} catch (Exception e2) {
-				resposta = "Forum da sala n√£o cadastrado. Confira o c√≥digo do forum.";
+				resposta = "Forum da sala n„o cadastrado. Confira o cÛdigo do forum.";
 			}
 		}
 		render(resposta);
@@ -197,7 +197,7 @@ public class Application extends SigaApplication {
 				}
 			}
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 	}
 
@@ -212,7 +212,7 @@ public class Application extends SigaApplication {
 				resposta = "Esta sala possui agendamentos. Delete primeiro os agendamentos referenciados.";
 			}
 		} else {
-			resposta = "N√£o Ok.";
+			resposta = "N„o Ok.";
 		}
 		render(resposta);
 	}
@@ -225,7 +225,7 @@ public class Application extends SigaApplication {
 		if (objUsuario != null) {
 			render();
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 	}
 
@@ -239,10 +239,10 @@ public class Application extends SigaApplication {
 			resposta = "Ok.";
 		} catch (PersistenceException e) {
 			e.printStackTrace();
-			resposta = "N√£o Ok.";
+			resposta = "N„o Ok.";
 			if (e.getMessage().substring(23, 53)
 					.equals(".ConstraintViolationException:")) {
-				resposta = "F√≥rum j√° existe. Verifique se o c√≥digo est√° correto.";
+				resposta = "FÛrum j· existe. Verifique se o cÛdigo est· correto.";
 			}
 		} finally {
 			render(resposta);
@@ -285,7 +285,7 @@ public class Application extends SigaApplication {
 				render(listForuns);
 			}
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 	}
 
@@ -299,7 +299,7 @@ public class Application extends SigaApplication {
 				if (e.getMessage().substring(23, 53)
 						.equals(".ConstraintViolationException:")) {
 					System.out.println(e.getMessage());
-					resposta = "Forum possui refer√™ncia. Delete primeiro as salas referenciadas.";
+					resposta = "Forum possui referÍncia. Delete primeiro as salas referenciadas.";
 				} else {
 					resposta = "erro.";
 				}
@@ -308,7 +308,7 @@ public class Application extends SigaApplication {
 				render(resposta);
 			}
 		} else {
-			resposta = "N√£o Ok.";
+			resposta = "N„o Ok.";
 			render(resposta);
 		}
 	}
@@ -320,13 +320,13 @@ public class Application extends SigaApplication {
 		UsuarioForum objUsuario = UsuarioForum.find(
 				"matricula_usu =" + matriculaSessao).first();
 		if (objUsuario != null) {
-			// Pega o usu√°rio do sistema, e, busca os locais(salas) daquele
-			// forum onde ele est√°.
+			// Pega o usu·rio do sistema, e, busca os locais(salas) daquele
+			// forum onde ele est·.
 			listSalas = (List) Locais.find(
 					"cod_forum='" + objUsuario.forumFk.cod_forum
 							+ "' order by ordem_apresentacao ").fetch(); // isso
-																			// n√£o
-																			// d√°
+																			// n„o
+																			// d·
 																			// erro
 																			// no
 																			// caso
@@ -335,7 +335,7 @@ public class Application extends SigaApplication {
 																			// vazio.
 			render(listSalas);
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 	}
 
@@ -368,12 +368,12 @@ public class Application extends SigaApplication {
 				// conta os agendamentos de cada dia, do local que
 				// veio do form
 				for (Iterator it = listDatasDoMes.iterator(); it.hasNext();) {
-					dia_ag_prox = (String) it.next(); // pegou o pr√≥ximo
+					dia_ag_prox = (String) it.next(); // pegou o prÛximo
 					if (i == 0) {
 						dia_ag_ant = dia_ag_prox;
 					}
 					if (dia_ag_prox.equals(dia_ag_ant)) {
-						i++; // contou a repeti√ß√£o
+						i++; // contou a repetiÁ„o
 					} else {
 						i = 1;
 						dia_ag_ant = dia_ag_prox;
@@ -386,7 +386,7 @@ public class Application extends SigaApplication {
 				// veio algum agendamento
 				System.out.println(results.size() + " agendamentos...");
 			} else {
-				// n√£o veio nenhum agendamento
+				// n„o veio nenhum agendamento
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -472,7 +472,7 @@ public class Application extends SigaApplication {
 				e.printStackTrace();
 				if (e.getMessage().equals("-1")) {
 					listHorasLivres.clear();
-					listHorasLivres.add("Erro de hor√°rio inv√°lido na base.");
+					listHorasLivres.add("Erro de hor·rio inv·lido na base.");
 				}
 			} finally {
 				render(listHorasLivres);
@@ -523,7 +523,7 @@ public class Application extends SigaApplication {
 				// end transaction, que, segundo o Da Rocha √© autom√°tico; no fim
 				// da action
 			} else {
-				resposta = "N√£o Ok.";
+				resposta = "N„o Ok.";
 			}
 		} catch (Exception e) {
 			// rollback transaction, que segundo o Da Rocha √© autom√°tico; ocorre
@@ -531,9 +531,9 @@ public class Application extends SigaApplication {
 			e.printStackTrace();
 			String erro = e.getMessage();
 			if (erro.substring(24, 52).equals("ConstraintViolationException")) {
-				resposta = "N√£o Ok. O lote n√£o foi agendado.";
+				resposta = "N„o Ok. O lote n„o foi agendado.";
 			} else {
-				resposta = "N√£o Ok. Verifique se preencheu todos os campos do agendamento.";
+				resposta = "N„o Ok. Verifique se preencheu todos os campos do agendamento.";
 			}
 		} finally {
 			render(resposta);
@@ -591,7 +591,7 @@ public class Application extends SigaApplication {
 				render();
 			}
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 
 	}
@@ -611,7 +611,7 @@ public class Application extends SigaApplication {
 			resultado = "Ok.";
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = "N√£o Ok.";
+			resultado = "N„o Ok.";
 		} finally {
 			render(resultado);
 		}
@@ -624,13 +624,13 @@ public class Application extends SigaApplication {
 		UsuarioForum objUsuario = UsuarioForum.find(
 				"matricula_usu =" + matriculaSessao).first();
 		if (objUsuario != null) {
-			// Pega o usu√°rio do sistema, e, busca os locais(salas) daquele
-			// forum onde ele est√°.
+			// Pega o usu·rio do sistema, e, busca os locais(salas) daquele
+			// forum onde ele est·.
 			Locais objSala = Locais.find(
 					"cod_forum='" + objUsuario.forumFk.cod_forum
 							+ "' and cod_local='" + cod_sala + "'").first(); // isso
 																				// n√£o
-																				// d√°
+																				// d·
 																				// erro
 																				// no
 																				// caso
@@ -662,10 +662,10 @@ public class Application extends SigaApplication {
 				JPA.em().flush();
 				render(sala_ag, cod_sala, data_ag, hora_ag, processo, periciado, perito_juizo, perito_parte, orgao_julgador);
 			}else{
-				Excecoes("Esse agendamento n√£o pode ser modificado; pertence a outra vara.");
+				Excecoes("Esse agendamento n„o pode ser modificado; pertence a outra vara.");
 			}
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 	}
 	public static void agendamento_update(String cod_sala, String data_ag, String hora_ag, String processo, String periciado, String perito_juizo, String perito_parte, String orgao_ag){
@@ -675,18 +675,18 @@ public class Application extends SigaApplication {
 			JPA.em().flush();
 			Agendamentos objAgendamento = (Agendamentos) Agendamentos.find("cod_local='"+cod_sala+"' and  hora_ag='"+hora_ag.substring(0,2)+hora_ag.substring(3,5)+"' and data_ag=to_date('"+data_ag+"')" ).first();
 			if(objAgendamento==null){
-				resultado = "N√£o Ok.";
+				resultado = "N„o Ok.";
 			}else{
 				resultado = "Ok.";
 			}
 		}catch(PersistenceException e){
 			e.printStackTrace();
-			resultado = "N√£o Ok.";
+			resultado = "N„o Ok.";
 		}catch(Exception ee){
 			ee.printStackTrace();
-			resultado = "N√£o Ok.";
+			resultado = "N„o Ok.";
 		}finally{
-			render(resultado);
+			render(resultado,data_ag);
 		}
 	}
 	public static void agendadas_hoje() {
@@ -725,7 +725,7 @@ public class Application extends SigaApplication {
 				render();
 			}
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 
 	}
@@ -756,7 +756,7 @@ public class Application extends SigaApplication {
 					mensagem = "Ok.";
 				} catch (Exception e) {
 					e.printStackTrace();
-					mensagem = "N√£o Ok.";
+					mensagem = "N„o Ok.";
 				}
 			} else {
 				paramCodForum = Integer.toString(objUsuario.forumFk.cod_forum);
@@ -771,7 +771,7 @@ public class Application extends SigaApplication {
 			render(objUsuario, paramCodForum, descricaoForum, mensagem,
 					outrosForuns);
 		} else {
-			Excecoes("Usu√°rio sem permiss√£o");
+			Excecoes("Usu·rio sem permiss„o");
 		}
 	}
 

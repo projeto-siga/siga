@@ -1,8 +1,12 @@
 package br.gov.jfrj.siga.wf.webwork.action;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.jbpm.bytes.ByteArray;
 import org.jbpm.graph.def.Node;
 import org.jbpm.graph.exe.Token;
 
@@ -57,6 +61,27 @@ public class WfAdminAction extends WfSigaActionSupport {
 		return Action.SUCCESS;
 	}
 
+	public void downloadArquivoDeployed() throws IOException{
+		Long id_processimage = null;
+		Long id_processdefinition = null;
+		Long id_gpd = null;
+		ByteArray b = dao().consultar(id_processimage, ByteArray.class, false);
+		FileOutputStream fos = new FileOutputStream("processimage.jpg");
+		fos.write(b.getBytes());
+		fos.close();
+		
+		b = dao().consultar(id_processdefinition, ByteArray.class, false);
+		fos = new FileOutputStream("processdefinition.xml");
+		fos.write(b.getBytes());
+		fos.close();
+
+		b = dao().consultar(id_gpd, ByteArray.class, false);
+		fos = new FileOutputStream("gpd.xml");
+		fos.write(b.getBytes());
+		fos.close();
+		
+	}
+	
 	public String deleteProcessInstance() throws AplicacaoException, Exception {
 		assertAcesso("EXCLUIR:Excluir instancia de processo");
 		Wf.getInstance().getBL().excluirProcessInstance(paramLong("idPI"));

@@ -1,9 +1,8 @@
-<h3>
-	Conhecimentos Relacionados<a style="float: right;" title="Registrar um novo conhecimento"
-		href="@{Application.editar}?classificacao=${classificacao}"><img
-		src="/siga/css/famfamfam/icons/add.png">
-	</a>
-</h3>
+<a title="Registrar um novo conhecimento" style="float: right;"
+	href="@{Application.editar}?classificacao=${classificacao}">
+	<img src="/siga/css/famfamfam/icons/add.png">
+</a>
+<h3>Conhecimentos Relacionados</h3>
 #{if conhecimentos != null} #{list items:conhecimentos,as:'conhecimento'}
 <p>
 	<b>*{<a href="@{Application.exibir}?id=${conhecimento[0]}">${conhecimento[1]}</a>}*

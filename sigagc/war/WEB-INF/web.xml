@@ -44,7 +44,6 @@
     <web-resource-collection>
       <web-resource-name>Paginas do Sistema</web-resource-name>
 	  <url-pattern>/</url-pattern>
-	  <url-pattern>/tag/*</url-pattern>
 	  <url-pattern>/app/*</url-pattern>
     </web-resource-collection>
     

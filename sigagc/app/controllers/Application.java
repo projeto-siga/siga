@@ -367,21 +367,22 @@ public class Application extends SigaApplication {
 		DpLotacao lotacao = lotaTitular();
 	
 		Query query1 = JPA.em().createNamedQuery("maisRecentesLotacao");
-		query1.setParameter("idLotacao", lotacao.getId());	
+		//query1.setParameter("idLotacao", lotacao.getId());	
+		query1.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query1.setMaxResults(5);
 		List<Object[]> listaMaisRecentes = query1.getResultList();
 		if (listaMaisRecentes.size() == 0)
 			listaMaisRecentes = null;
 
 		Query query2 = JPA.em().createNamedQuery("maisVisitadosLotacao");
-		query2.setParameter("idLotacao", lotacao.getId());	
+		query2.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query2.setMaxResults(5);
 		List<Object[]> listaMaisVisitados = query2.getResultList();
 		if (listaMaisVisitados.size() == 0)
 			listaMaisVisitados = null;
 
 		Query query3 = JPA.em().createNamedQuery("principaisAutoresLotacao");
-		query3.setParameter("idLotacao", lotacao.getId());
+		query3.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query3.setMaxResults(5);
 		List<Object[]> listaPrincipaisAutores = query3.getResultList();
 		if (listaPrincipaisAutores.size() == 0)
@@ -389,7 +390,7 @@ public class Application extends SigaApplication {
 
 		GcCloud cloud = new GcCloud(150.0, 60.0);
 		Query query4  = JPA.em().createNamedQuery("principaisTagsLotacao");
-		query4.setParameter("idLotacao", lotacao.getId());
+		query4.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query4.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query4.getResultList();
 		if (listaPrincipaisTags.size() == 0)
@@ -401,7 +402,7 @@ public class Application extends SigaApplication {
 		}
 		GcGraficoEvolucao set = new GcGraficoEvolucao();
 		Query query5 = JPA.em().createNamedQuery("evolucaoNovosLotacao");
-		query5.setParameter("idLotacao", lotacao.getId());
+		query5.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		List<Object[]> listaNovos = query5.getResultList();
 		for (Object[] novos : listaNovos) {
 			set.add(new GcGraficoEvolucaoItem((Integer) novos[0],
@@ -409,7 +410,7 @@ public class Application extends SigaApplication {
 		}
 
 		Query query6 = JPA.em().createNamedQuery("evolucaoVisitadosLotacao");
-		query6.setParameter("idLotacao", lotacao.getId());
+		query6.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		List<Object[]> listaVisitados = query6.getResultList();
 		for (Object[] visitados : listaVisitados) {
 			set.add(new GcGraficoEvolucaoItem((Integer) visitados[0],

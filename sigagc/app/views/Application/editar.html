@@ -93,7 +93,7 @@
 					<input type="submit" value="Gravar"
 						class="gt-btn-medium gt-btn-left" style="cursor: pointer;"/>
 					<p class="gt-cancel">
-						ou <a href="">cancelar alterações</a> #{if informacao != null &&
+						ou <a href="@{Application.editar(informacao?.sigla)}">cancelar alterações</a> #{if informacao != null &&
 						informacao.id != null && informacao.id != 0} ou <a
 							href="@{Application.movimentacoes(informacao?.sigla)}">exibir
 							movimentações</a> #{/if}
@@ -232,7 +232,7 @@
 					</p>
 				</div>
 			</form>
-		</div>}*
+			</div>}*
 			
 			<div id="ajax_arquivo">
 				#{if informacao.contemArquivos}
@@ -250,7 +250,7 @@
 						<span class="gt-table-action-list">
 						<a href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
 									ReplaceInnerHTMLFromAjaxResponse('removerAnexo?sigla=${informacao?.sigla}&id=${m.arq.id}',
-														null, document.getElementById('ajax_arquivo'));">remover </a></span> ]
+														null, document.getElementById('ajax_arquivo'));">${"remover".pad(1).raw()} </a></span> ]
 					</p>
 				#{/if} #{/list} #{/if}
 			</div>

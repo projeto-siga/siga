@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -258,10 +259,22 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		
 		ExEmailNotificacao exEmail = new ExEmailNotificacao();		
 		
-		exEmail.setDpPessoa(dpPessoa);
-		exEmail.setDpLotacao(dpLotacao);
-		exEmail.setPessoaEmail(pessoaEmail);
-		exEmail.setLotacaoEmail(lotacaoEmail);
+		if (dpPessoa != null)
+			exEmail.setDpPessoa(dpPessoa.getPessoaInicial());
+		else
+			exEmail.setDpPessoa(null);
+		if (dpLotacao != null)
+			exEmail.setDpLotacao(dpLotacao.getLotacaoInicial());
+		else
+			exEmail.setDpLotacao(null);
+		if (pessoaEmail != null)
+			exEmail.setPessoaEmail(pessoaEmail.getPessoaInicial());
+		else 
+			exEmail.setPessoaEmail(null);
+		if(lotacaoEmail != null)
+			exEmail.setLotacaoEmail(lotacaoEmail.getLotacaoInicial());
+		else
+			exEmail.setLotacaoEmail(null);
 		exEmail.setEmail(email);
 		
 		try {

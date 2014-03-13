@@ -96,6 +96,7 @@ import br.gov.jfrj.siga.ex.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -2238,7 +2239,6 @@ public class ExBL extends CpBL {
 				&& doc.getExMobilPai().getExDocumento().isEletronico())
 			throw new AplicacaoException("Não é possível criar Subprocesso físico de processo eletrônico.");
 
-
 		Set<ExVia> setVias = doc.getSetVias();
 
 		try {
@@ -3537,7 +3537,7 @@ public class ExBL extends CpBL {
 
 			sDestinatario = lotaResponsavel.getNomeLotacao();
 
-			List<String> listaDeEmails = dao().consultarEmailNotificacao(
+			List<ExEmailNotificacao> listaDeEmails = dao().consultarEmailNotificacao(responsavel,
 
 			lotaResponsavel);
 
@@ -3545,7 +3545,7 @@ public class ExBL extends CpBL {
 
 			if (listaDeEmails.size() > 0) {
 
-				for (String email : listaDeEmails) {
+				for (ExEmailNotificacao email : listaDeEmails) {
 
 					// Caso exista alguma configuração com email
 
@@ -3565,7 +3565,7 @@ public class ExBL extends CpBL {
 
 					} else {
 
-						dest.add(email);
+//						dest.add(email);
 
 					}
 

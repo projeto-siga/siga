@@ -81,6 +81,7 @@ import br.gov.jfrj.siga.ex.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -782,11 +783,16 @@ public class ExDao extends CpDao {
 		return query.list();
 	}
 
-	public List<String> consultarEmailNotificacao(DpLotacao lot) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarEmailPorLotacao");
-
-		query.setLong("idLotacaoIni", lot.getIdLotacaoIni());
+	public List<ExEmailNotificacao> consultarEmailNotificacao(DpPessoa pess, DpLotacao lot) {
+		final Query query;
+		
+		if(pess != null){
+			query = getSessao().getNamedQuery("consultarEmailporPessoa");
+			query.setLong("idPessoaIni", pess.getIdPessoaIni());
+		} else {
+			query = getSessao().getNamedQuery("consultarEmailporLotacao");
+			query.setLong("idLotacaoIni", lot.getIdLotacaoIni());
+		}		
 
 		return query.list();
 	}

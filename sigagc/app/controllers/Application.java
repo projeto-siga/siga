@@ -985,7 +985,7 @@ public class Application extends SigaApplication {
 			boolean ativo = !((Long)ao[4]).equals(3L);
 
 			DadosRI dri = new DadosRI();
-			dri.url = "/sigagc/app/exibir?sigla=" + i.getSigla();
+			dri.uri = "/sigagc/app/exibir?sigla=" + i.getSigla();
 			dri.sigla = i.getSigla();
 			dri.titulo = a.titulo;
 			dri.ultimaAtualizacao = dt;

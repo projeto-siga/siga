@@ -70,83 +70,24 @@ public class SrRelTransferencias extends RelatorioTemplate {
 			listalotacoes.append(lotacoes.get(i));
 			if (i < ( lotacoes.size() - 1)) listalotacoes.append(",");
 		}
-		//pega mais de uma movimentacao...
-		List<SrSolicitacao> lista = SrSolicitacao.find(
-				"select sol, mov " +
-				"from SrSolicitacao sol, SrMovimentacao mov " +
-				"where mov.solicitacao=sol.hisIdIni " +
-				"and mov.lotaAtendente in (" + listalotacoes + ") " +
-				"and sol.hisDtFim is not null " +
-				"and sol.hisIdIni <> sol.idSolicitacao " +
-				//"and sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-				//"and sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
-				"and mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-                "and mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss')) " +
-				"order by mov.tipoMov").fetch();
-		
+
 		List<SrSolicitacao> lst = SrSolicitacao.find(
 				"select sol, mov " +
 				"from SrSolicitacao sol, SrMovimentacao mov " +
 				"where mov.solicitacao=sol.idSolicitacao " +
 				"and mov.lotaAtendente in (" + listalotacoes + ") " +
-				"and exists (select 1 from SrMovimentacao where solicitacao = mov.solicitacao and dtIniMov > mov.dtIniMov " +
-				"and lotaAtendente <> mov.lotaAtendente " +
-				"and dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
-                "and dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss')) " +
+				"and exists (select 1 from SrMovimentacao where solicitacao = mov.solicitacao " + 
+					"and dtIniMov > mov.dtIniMov " +
+					"and lotaAtendente <> mov.lotaAtendente " +
+					"and dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
+					"and dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss')) " +
+				"and mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') " +
+				"and mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') " +
                	"order by mov.tipoMov").fetch();
 		
 		SortedSet<String> set = new TreeSet<String>();
 		TreeMap<String, String> map = new TreeMap<String, String>();
 		
-		Iterator it = lista.listIterator();
-		while (it.hasNext()) {
-			Object[] obj = (Object[]) it.next();
-			SrSolicitacao solic = (SrSolicitacao) obj[0];
-			SrMovimentacao mov = (SrMovimentacao) obj[1];
-			String dtreg, descricao, lotaSolicitante, lotaAtendente, descrEstado, itemConfig, descAcao;
-			if (mov.getDtIniString() != null) {
-				dtreg = mov.getDtIniString().toString();
-			} else {
-				dtreg = "";
-			}
-			//Descrição da solicitação - 3º elemento
-			if (solic.getDescricao() != null) {
-				descricao = solic.getDescricao().toString();
-			} else {
-				descricao = "";
-			}
-			//Lotação solicitante - 4º elemento
-			if (solic.solicitante.getLotacao().getDescricao() != null) {
-				lotaSolicitante = solic.solicitante.getLotacao().getDescricao();
-			} else {
-				lotaSolicitante = "";
-			}
-			// Lotação atendente - 5º elemento
-			if (mov.getAtendenteString() != null) {
-				lotaAtendente = mov.getAtendenteString();
-			} else {
-				lotaAtendente = "";
-			}
-			//Estado da solicitação - 6º elemento
-				descrEstado = mov.tipoMov.nome;
-				//descrEstado = "";
-
-			//Item de configuração - 7º elemento
-			if (solic.itemConfiguracao != null) {
-				itemConfig = solic.itemConfiguracao.tituloItemConfiguracao.toString();
-			} else {
-				itemConfig = "";
-			}
-			//Açao - 8º elemento
-			if (solic.acao != null) {
-				descAcao = solic.acao.tituloAcao.toString();
-			} else {
-				descAcao = "";
-			}
-			String solicitacao = dtreg + ";" + descricao + ";" + lotaSolicitante + ";" + lotaAtendente + ";" + descrEstado + ";" + itemConfig + ";" + descAcao;
-			set.add(solic.getCodigo().toString());
-			map.put(solic.getCodigo().toString(), solicitacao);
-		}
 		Iterator itl = lst.listIterator(); 
 		while (itl.hasNext()) {
 			Object[] obj = (Object[]) itl.next();

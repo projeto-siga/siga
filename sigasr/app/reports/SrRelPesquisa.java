@@ -87,13 +87,13 @@ public class SrRelPesquisa extends RelatorioTemplate {
 		cls_1.setPadrao("0");
 		Coluna perc_cls_1 = this.addColuna("%Total", 34, RelatorioRapido.DIREITA,
 				false, Double.class);
-		perc_cls_1.setPadrao("0,00%");
+		perc_cls_1.setPadrao("0.00%");
 		Coluna cls_2 = this.addColuna("Atendimento Ruim", 33, RelatorioRapido.DIREITA, 
 				false, Double.class);
 		cls_2.setPadrao("0");
 		Coluna perc_cls_2 = this.addColuna("%Total", 33, RelatorioRapido.DIREITA,
 				false, Double.class);
-		perc_cls_2.setPadrao("0,00%");
+		perc_cls_2.setPadrao("0.00%");
 		return this;
 	}
 
@@ -115,7 +115,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
 					
 					List<SrSolicitacao> listaTotal = SrSolicitacao.find(
-						"select sol.local.nomeComplexo, count(resp.descrPergunta) " 
+						"select sol.local.nomeComplexo, count(resp.descrResposta) " 
 						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.idMovimentacao = resp.movimentacao "
@@ -139,27 +139,27 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						atendAcMedia = 0;
 						atendAbMedia = 0;
 						List<SrSolicitacao>  atendAcimaMedia = SrSolicitacao.find(
-							"select sol.local.nomeComplexo, count(resp.descrPergunta) " 
+							"select sol.local.nomeComplexo, count(resp.descrResposta) " 
 							+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and sol.local.nomeComplexo = '" + locais.toString() + "' "
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and mov.tipoMov =16 "
 							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
-							+ "and resp.descrPergunta in ('4','5') "
+							+ "and resp.descrResposta in ('4','5') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 							+ "group by sol.local.nomeComplexo" )
 							.fetch();
 						List<SrSolicitacao>  atendAbaixoMedia = SrSolicitacao.find(
-							"select sol.local.nomeComplexo, count(resp.descrPergunta) " 
+							"select sol.local.nomeComplexo, count(resp.descrResposta) " 
 							+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and sol.local.nomeComplexo = '" + locais.toString() + "' "
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and mov.tipoMov =16 "
 							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
-							+ "and resp.descrPergunta in ('1','2') "
+							+ "and resp.descrResposta in ('1','2') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 							+ "group by sol.local.nomeComplexo" )
@@ -186,7 +186,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							if (map.containsKey(chave(locais, "acima"))) {
 								atendAcMedia = map.get(chave(locais, "acima"));
 								d.add(atendAcMedia);
-								d.add((atendAcMedia/percTotal)*100);
+								d.add((atendAcMedia/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);
@@ -195,7 +195,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							if (map.containsKey(chave(locais, "abaixo"))) {
 								atendAbMedia = map.get(chave(locais, "abaixo"));
 								d.add(atendAbMedia);
-								d.add((atendAbMedia/percTotal)*100);
+								d.add((atendAbMedia/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);
@@ -204,7 +204,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					//}	// fim do for(String locais : set)
 				} else {	//else do if parametros.get("local").equals("0"), ou seja, local = complexo.
 						Long atendTotal = SrSolicitacao.find(
-							"select count(resp.descrPergunta) " 
+							"select count(resp.descrResposta) " 
 							+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.idMovimentacao = resp.movimentacao "
@@ -215,35 +215,36 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 							.first();
 						Long atendAcimaMedia = SrSolicitacao.find(
-							"select count(resp.descrPergunta) " 
+							"select count(resp.descrResposta) " 
 							+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and sol.local = '" + parametros.get("local") + "' "
 							+ "and mov.tipoMov =16 "
 							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
-							+ "and resp.descrPergunta in ('4','5') "
+							+ "and resp.descrResposta in ('4','5') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 							.first();
 						Long  atendAbaixoMedia = SrSolicitacao.find(
-							"select count(resp.descrPergunta) " 
+							"select count(resp.descrResposta) " 
 							+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and sol.local = '" + parametros.get("local") + "' "
 							+ "and mov.idMovimentacao = resp.movimentacao "
 							+ "and mov.tipoMov =16 "
 							+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
-							+ "and resp.descrPergunta in ('1','2') "
+							+ "and resp.descrResposta in ('1','2') "
 							+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 							.first();
 						CpComplexo complexo = CpComplexo.findById(Long.valueOf(parametros.get("local").toString()));
 						d.add( complexo.getNomeComplexo());
+						//double doubleVal = (double)total/(double)percTotal;
 						d.add((double)atendAcimaMedia);
-						d.add(((double)atendAcimaMedia/(double)atendTotal)*100);
+						d.add(((double)atendAcimaMedia/(double)atendTotal));
 						d.add((double)atendAbaixoMedia);
-						d.add(((double)atendAbaixoMedia/(double)atendTotal)*100);
+						d.add(((double)atendAbaixoMedia/(double)atendTotal));
 					} // fim do else referente ao if parametros.get("local").equals("0") 
 		} else  { //else do if lotacao (atendente) preenchido
 			if (parametros.get("local").equals("0")) {
@@ -259,7 +260,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					}
 				
 				List<SrSolicitacao> listaTotal = SrSolicitacao.find(
-					"select sol.local.nomeComplexo,  mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+					"select sol.local.nomeComplexo,  mov.lotaAtendente.siglaLotacao, count(resp.descrResposta) " 
 					+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 					+ "where sol.idSolicitacao = mov.solicitacao "
 					+ "and mov.idMovimentacao = resp.movimentacao "
@@ -292,27 +293,27 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					atendAcMedia = 0;
 					atendAbMedia = 0;
 					List<SrSolicitacao>  atendAcimaMedia = SrSolicitacao.find(
-						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrResposta) " 
 						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
 						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
-						+ "and resp.descrPergunta in ('4','5') "
+						+ "and resp.descrResposta in ('4','5') "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 						+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
 						.fetch();
 					List<SrSolicitacao>  atendAbaixoMedia = SrSolicitacao.find(
-						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrResposta) " 
 						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
 						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
-						+ "and resp.descrPergunta in ('1','2') "
+						+ "and resp.descrResposta in ('1','2') "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 						+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
@@ -344,7 +345,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							if (map.containsKey(chave(atendentes+s, "acima"))) {
 								atendAcMedia = map.get(chave(atendentes+s, "acima"));
 								d.add(atendAcMedia);
-								d.add((atendAcMedia/percTotal)*100);
+								d.add((atendAcMedia/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);
@@ -353,7 +354,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							if (map.containsKey(chave(atendentes+s, "abaixo"))) {
 								atendAbMedia = map.get(chave(atendentes+s, "abaixo"));
 								d.add(atendAbMedia);
-								d.add((atendAbMedia/percTotal)*100);
+								d.add((atendAbMedia/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);
@@ -374,7 +375,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					}
 				
 				List<SrSolicitacao> listaTotal = SrSolicitacao.find(
-					"select sol.local.nomeComplexo,  mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+					"select sol.local.nomeComplexo,  mov.lotaAtendente.siglaLotacao, count(resp.descrResposta) " 
 					+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 					+ "where sol.idSolicitacao = mov.solicitacao "
 					+ "and mov.idMovimentacao = resp.movimentacao "
@@ -407,7 +408,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 					atendAcMedia = 0;
 					atendAbMedia = 0;
 					List<SrSolicitacao>  atendAcimaMedia = SrSolicitacao.find(
-						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrResposta) " 
 						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
@@ -415,13 +416,13 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
 						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
-						+ "and resp.descrPergunta in ('4','5') "
+						+ "and resp.descrResposta in ('4','5') "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 						+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
 						.fetch();
 					List<SrSolicitacao>  atendAbaixoMedia = SrSolicitacao.find(
-						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrPergunta) " 
+						"select sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao, count(resp.descrResposta) " 
 						+ "from SrSolicitacao sol, SrMovimentacao mov, SrResposta resp "
 						+ "where sol.idSolicitacao = mov.solicitacao "
 						+ "and mov.lotaAtendente in (" + listalotacoes + ") "
@@ -429,7 +430,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 						+ "and mov.idMovimentacao = resp.movimentacao "
 						+ "and mov.tipoMov =16 "
 						+ "and resp.pergunta.descrPergunta = 'Avaliação Final' "
-						+ "and resp.descrPergunta in ('1','2') "
+						+ "and resp.descrResposta in ('1','2') "
 						+ "and  sol.dtReg >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
 						+ "and  sol.dtReg <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 						+ "group by sol.local.nomeComplexo, mov.lotaAtendente.siglaLotacao" )
@@ -461,7 +462,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							if (map.containsKey(chave(atendentes+s, "acima"))) {
 								atendAcMedia = map.get(chave(atendentes+s, "acima"));
 								d.add(atendAcMedia);
-								d.add((atendAcMedia/percTotal)*100);
+								d.add((atendAcMedia/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);
@@ -470,7 +471,7 @@ public class SrRelPesquisa extends RelatorioTemplate {
 							if (map.containsKey(chave(atendentes+s, "abaixo"))) {
 								atendAbMedia = map.get(chave(atendentes+s, "abaixo"));
 								d.add(atendAbMedia);
-								d.add((atendAbMedia/percTotal)*100);
+								d.add((atendAbMedia/percTotal));
 							} else 	{
 								d.add(0D);
 								d.add(0D);

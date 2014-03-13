@@ -74,6 +74,8 @@ GET     /public/                                staticDir:public
 *		/solicitacao/{action}							Application.{action}
 *		/solicitacao/{action}/{id}						Application.{action}
 
+*		/corporativo/dadosrh							Corporativo.dadosrh						
+
 
 *		/{tipo}/buscar									Application.buscarSiga
 *		/{tipo}/selecionar								Application.selecionarSiga

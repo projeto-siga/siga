@@ -183,6 +183,17 @@ public class TestUtil {
 		}
 		return assoc;
 	}
+	
+	public static CpTipoConfiguracao tipoConfigPermissaoUsoLista() throws Exception {
+		CpTipoConfiguracao design = CpTipoConfiguracao.findById(302L);
+		if (design == null) {
+			design = new CpTipoConfiguracao();
+			design.setIdTpConfiguracao(302L);
+			design.setDscTpConfiguracao("Permissão para Uso de Lista");
+			design.salvar();
+		}
+		return design;
+	}
 
 	public static SrItemConfiguracao software() throws Exception {
 		SrItemConfiguracao soft = SrItemConfiguracao.find(
@@ -472,6 +483,7 @@ public class TestUtil {
 		
 		tipoConfigDesignacao();
 		tipoConfigAssociacao();
+		tipoConfigPermissaoUsoLista();
 	}
 
 	public static void prepararSessao() throws Exception {

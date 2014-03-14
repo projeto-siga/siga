@@ -333,7 +333,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		sol.solicitante = eeh();
 		sol.salvar();
 
-		sol.deixarPendente(sesia(), eeh());
+		sol.deixarPendente(sesia(), eeh(), "Teste", "", "");
 		assertTrue(sol.isPendente());
 		assertTrue(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
 				sesia()));

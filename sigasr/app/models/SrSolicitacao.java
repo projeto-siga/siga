@@ -1793,8 +1793,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
 		if (!calendario.equals("")) {
 			datetime = new DateTime (formatter.parseDateTime(calendario + " " + horario));
-			movimentacao.dtIniAgendamento = calendario;
-			movimentacao.horIniAgendamento = horario;
 			movimentacao.dtAgenda =  datetime.toDate();
 		}
 		movimentacao.tipoMov = SrTipoMovimentacao

@@ -7,9 +7,10 @@
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form id="frm" action="@{Application.gravar}">
+			<form id="frm">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
 				<input type="hidden" name="origem" value="${origem}" /> 
+				<input type="hidden" id="siglaId" name="sigla" value="${informacao?.sigla}" /> 
 				*{
 				<div class="gt-form-row gt-width-100">
 					<label>Tópico pai:</label> #{selecao tipo:'pessoa',
@@ -90,8 +91,10 @@
 				</div>
 
 				<div class="gt-form-row gt-width-100">
-					<input type="submit" value="Gravar"
+					
+					<input id="btn-save" type="submit" value="Gravar"
 						class="gt-btn-medium gt-btn-left" style="cursor: pointer;"/>
+					
 					<p class="gt-cancel">
 						#{if informacao != null && informacao.id != null && informacao.id != 0}
 							ou <a href="@{Application.editar(informacao?.sigla)}">cancelar alterações</a>
@@ -194,6 +197,29 @@
 			$("#anexar-div").hide();
 			$(".once").show();
 		});
+
+
+
+
+		var $inps = $('#frm').find('input,select,textarea')
+		  , formAltered = false
+		;
+		$inps.change(function() {
+		    formAltered = true;
+		    $inps.unbind('change'); // saves this function running every time.
+		});
+
+	
+		$("#btn-save").click(function(){
+			if(formAltered == true){
+				$('#frm').attr('action', '@{Application.gravar}');
+			}	
+			else{ 
+				var siglaId = $("#siglaId").val();
+				$('#frm').attr('action', '@{Application.exibir}?sigla=siglaId');
+			}
+		});
+		
 	});
 </script>
 			<h3>Informações sobre o Preenchimento</h3>

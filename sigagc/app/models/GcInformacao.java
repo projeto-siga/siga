@@ -306,14 +306,23 @@ public class GcInformacao extends GenericModel {
 				"Application.fechar", null, podeFinalizar(titular, lotaTitular),
 				"Confirma a finalização da elaboração deste conhecimento?",
 				null, null);
+		
+		/*addAcao(acoes, "folder_user", "Revisado", null, "Application.revisado",
+				null, podeRevisar(titular, lotaTitular));*/
+		
 		addAcao(acoes, "folder_user", "Revisado", null, "Application.revisado",
-				null, podeRevisar(titular, lotaTitular));
+				null, podeRevisar(titular, lotaTitular),
+				"Confirma a revisão deste conhecimento?", null,
+				null);
+		
 		addAcao(acoes, "folder_user", "Solicitar Revisão", null,
 				"Application.solicitarRevisao", null, podeSolicitarRevisao(titular, lotaTitular));
+		
 		addAcao(acoes, "cancel", "Cancelar", null, "Application.cancelar",
 				null, podeCancelar(titular, lotaTitular),
 				"Confirma o cancelamento deste conhecimento?", null,
 				null);
+		
 		addAcao(acoes, "attach", "Anexar Arquivo", null, "Application.anexar",
 				null, podeAnexar(titular, lotaTitular));
 		addAcao(acoes, "arrow_divide","Duplicar", null, "Application.duplicar", 

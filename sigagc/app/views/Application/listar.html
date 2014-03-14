@@ -33,6 +33,20 @@
 				$("#imgMinus-" + id).show("fast");
 				$(".status-" + id).show("fast");	
 			});	
+			$("#btn-clear").click(function(){	
+				$('.form100')[0].reset();
+				$("#filtrolotacaoSpan").empty();
+				$("#filtrolotaResponsavelSpan").empty();
+				$("#filtrotagSpan").empty();
+				$("#filtronumero").val('');
+				$("#dtIniString").val('');
+				$("#dtFimString").val('');
+				$("#dtSituacaoIniString").val('');
+				$("#dtSituacaoFimString").val('');
+				$("#titulo").val('');
+				$("#conteudo").val('');
+				$("#descrMarcador").val('');
+			});	
 		});
 </script>
 <style>
@@ -223,10 +237,10 @@
 						<tr>
 							<td>Data da Situação:</td>
 							<td>de&nbsp;&nbsp; <input type="text" name="filtro.dtIni"
-								value="${filtro.dtIni}" id="dtIniString"
+								value="${filtro.dtIni}" id="dtSituacaoIniString"
 								onblur="javascript:verifica_data(this,0);">
 								&nbsp;&nbsp;até &nbsp;&nbsp;<input type="text" name="filtro.dtFim"
-								value="${filtro.dtFim}" id="dtFimString"
+								value="${filtro.dtFim}" id="dtSituacaoFimString"
 								onblur="javascript:verifica_data(this,0);"></td>
 						</tr>
 						<tr>
@@ -258,9 +272,12 @@
 								name="filtro.conteudo"></td>
 						</tr>
 						<tr>
-							<td colspan="2"><input type="submit"
+							<td><input type="submit"
 								onclick="javascript:  if (isCarregando()) return false; carrega();"
 								class="gt-btn-medium gt-btn-left" style="cursor: pointer;" value="Buscar">
+							</td>
+							<td><input type="button" id="btn-clear"								
+								class="gt-btn-medium" style="cursor: pointer;" value="Limpar">
 							</td>
 						</tr>
 					</tbody>

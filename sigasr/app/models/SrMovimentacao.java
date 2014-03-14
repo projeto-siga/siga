@@ -5,46 +5,32 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Type;
+import notifiers.Correio;
+
 import org.joda.time.DateTime;
 
-
-
-
-import notifiers.Correio;
+import play.db.jpa.GenericModel;
+import util.SigaPlayCalendar;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import play.db.jpa.GenericModel;
-import play.db.jpa.JPA;
-import play.db.jpa.Model;
-import util.SigaPlayCalendar;
 
 @Entity
 @Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
@@ -112,12 +98,6 @@ public class SrMovimentacao extends GenericModel {
 	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao")
 	//@OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
-
-	@Column(name = "DT_INI_AGENDAMENTO")
-	public String dtIniAgendamento;
-
-	@Column(name = "HOR_INI_AGENDAMENTO")
-	public String horIniAgendamento;
 
 	@Column(name = "DT_AGENDAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -312,9 +292,6 @@ public class SrMovimentacao extends GenericModel {
 
 		if (lotaAtendente == null)
 			lotaAtendente = atendente.getLotacao();
-
-		if (dtIniAgendamento != null)
-			dtIniAgendamento = dtIniAgendamento.toString();
 	}
 
 	public void notificar() {

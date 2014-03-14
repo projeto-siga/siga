@@ -129,28 +129,7 @@ public class Application extends SigaApplication {
 	@SuppressWarnings("unchecked")
 	public static void exibirLocalERamal(SrSolicitacao solicitacao)
 			throws Exception {
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		if (solicitacao.solicitante != null)
-			locais = JPA
-					.em()
-					.createQuery(
-							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-									+ solicitacao.solicitante.getOrgaoUsuario()
-											.getIdOrgaoUsu()).getResultList();
-		render(solicitacao.deduzirLocalERamal(), locais);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static void exibirLocal(SrSolicitacao solicitacao) throws Exception {
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		if (solicitacao.solicitante != null)
-			locais = JPA
-					.em()
-					.createQuery(
-							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-									+ lotaTitular().getOrgaoUsuario()
-											.getIdOrgaoUsu()).getResultList();
-		render(locais);
+		render(solicitacao.deduzirLocalERamal());
 	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao)

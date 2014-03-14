@@ -126,6 +126,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_SOLICITACAO_FECHADO_PARCIAL = 53;
 	
 	final static public long MARCADOR_SOLICITACAO_EM_CONTROLE_QUALIDADE = 54;
+	
+	final static public long MARCADOR_SOLICITACAO_AGENDADO = 55;
 
 	public CpMarcador() {
 		super();

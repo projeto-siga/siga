@@ -299,7 +299,7 @@ public class ExMovimentacaoVO extends ExVO {
 					addAcao(null, mov.getExMobilRef().getSigla(),
 							"/expediente/doc", "exibir", true, null, "sigla="
 									+ mov.getExMobilRef().getSigla(),
-							"Juntado ao documento: ", null, null);
+							"Juntado ao documento: ", " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
 				} else {
 					descricao = "Juntado ao documento: " + mov.getDescrMov();
 				}
@@ -307,7 +307,7 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
-						"Documento juntado: ", null, null);
+						"Documento juntado: ", " Descrição: " + mov.getExDocumento().getDescrDocumento(), null);
 			}
 		}
 
@@ -355,12 +355,12 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobilRef().getSigla(),
 						"/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
-						"Ver também: ", null, null);
+						"Ver também: ",  " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
 			} else {
 				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(), "Ver também: ",
-						null, null);
+								" Descrição: " + mov.getExDocumento().getDescrDocumento(), null);
 			}
 		}
 

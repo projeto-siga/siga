@@ -1477,6 +1477,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					lotaTitular))
 				return false;
 		}
+		
+		//Não é possível cancelar a última via de um documento pois estava gerando erros nas marcas do mobil geral.
+		boolean isUnicaViaNaoCancelada = true;
+		for (ExMobil outroMobil : mob.getDoc().getExMobilSet()) {
+			if(!outroMobil.isGeral() &&  !outroMobil.isCancelada()
+					&& !outroMobil.getIdMobil().equals(mob.getIdMobil())) {
+				isUnicaViaNaoCancelada = false;
+				break;
+			}
+		}
+		
+		if(isUnicaViaNaoCancelada)
+			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_VIA);

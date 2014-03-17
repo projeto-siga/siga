@@ -66,7 +66,7 @@ public class Corporativo extends Controller {
 			Element e = doc.createElement("cargo");
 			setAttr(e, "id", c.cargo_id.toString());
 			setAttr(e, "nome", c.cargo_nome);
-			setAttr(e, "sigla", c.cargo_sigla);
+			//setAttr(e, "sigla", c.cargo_sigla);
 			cargos.appendChild(e);
 		}
 

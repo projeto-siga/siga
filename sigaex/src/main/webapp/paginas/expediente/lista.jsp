@@ -519,21 +519,25 @@ function limpaCampos()
 										<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
 										<td width="4%" align="center"><siga:selecionado
 												sigla="${documento[0].lotaSubscritor.sigla}"
-												descricao="${documento[0].lotaSubscritor.descricao}" />
+												descricao="${documento[0].lotaSubscritor.descricao}" 
+												lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
 										</td>
 										<td width="4%" align="center"><siga:selecionado
 												sigla="${documento[0].subscritor.iniciais}"
-												descricao="${documento[0].subscritor.descricao}" />
+												descricao="${documento[0].subscritor.descricao}"
+												pessoaParam="${documento[0].subscritor.sigla}" />
 										</td>
 
 										<td width="5%" align="center">${documento[2].dtIniMarcaDDMMYYYY}</td>
 										<td width="4%" align="center"><siga:selecionado
 												sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
-												descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" />
+												descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
+												lotacaoParam="${documento[2].dpLotacaoIni.orgaoUsuario.siglaOrgaoUsu}${documento[2].dpLotacaoIni.sigla}" />
 										</td>
 										<td width="4%" align="center"><siga:selecionado
 												sigla="${documento[2].dpPessoaIni.iniciais}"
-												descricao="${documento[2].dpPessoaIni.descricao}" />
+												descricao="${documento[2].dpPessoaIni.descricao}"
+												pessoaParam="${documento[2].dpPessoaIni.sigla}" />
 										</td>
 
 										<td width="10.5%" align="center">${documento[2].cpMarcador.descrMarcador}</td>
@@ -543,11 +547,13 @@ function limpaCampos()
 										<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
 										<td width="4%" align="center"><siga:selecionado
 												sigla="${documento[0].lotaSubscritor.sigla}"
-												descricao="${documento[0].lotaSubscritor.descricao}" />
+												descricao="${documento[0].lotaSubscritor.descricao}"
+												lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
 										</td>
 										<td width="4%" align="center"><siga:selecionado
 												sigla="${documento[0].subscritor.iniciais}"
-												descricao="${documento[0].subscritor.descricao}" />
+												descricao="${documento[0].subscritor.descricao}"
+												pessoaParam="${documento[0].subscritor.sigla}" />
 										</td>
 										<td width="5%" align="center">tag1</td>
 										<td width="4%" align="center"></td>

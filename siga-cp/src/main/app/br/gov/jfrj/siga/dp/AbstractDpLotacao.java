@@ -88,6 +88,9 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoPai")
 	@Desconsiderar
 	private Set<DpLotacao> dpLotacaoSubordinadosSet = new HashSet<DpLotacao>(0);
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "idLotacao")
+    @Desconsiderar
+    private Set<DpPessoa> dpPessoaLotadosSet  = new HashSet<DpPessoa>(0);
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_LOTACAO")
 	private CpTipoLotacao cpTipoLotacao;
@@ -274,6 +277,14 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	public void setDpLotacaoSubordinadosSet(
 			Set<DpLotacao> dpLotacaoSubordinadosSet) {
 		this.dpLotacaoSubordinadosSet = dpLotacaoSubordinadosSet;
+	}
+
+	public Set<DpPessoa> getDpPessoaLotadosSet() {
+		return dpPessoaLotadosSet;
+	}
+
+	public void setDpPessoaLotadosSet(Set<DpPessoa> dpPessoaLotadosSet) {
+		this.dpPessoaLotadosSet = dpPessoaLotadosSet;
 	}
 
 }

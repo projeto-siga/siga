@@ -27,6 +27,7 @@ public class ExParteVO {
 	String descricao;
 	String descricaoAmpliada;
 	String iniciais;
+	String siglaOrgao;
 
 	public String getSigla() {
 		return sigla;
@@ -46,6 +47,10 @@ public class ExParteVO {
 
 	public String getIniciais() {
 		return iniciais;
+	}
+	
+	public String getSiglaOrgao() {
+		return siglaOrgao;
 	}
 
 	public String getNomeAbreviado() {
@@ -70,6 +75,7 @@ public class ExParteVO {
 		descricao = lota.getDescricao();
 		descricaoAmpliada = lota.getDescricaoAmpliada();
 		iniciais = lota.getIniciais();
+		siglaOrgao = lota.getOrgaoUsuario().getSigla();
 	}
 
 	public ExParteVO(DpPessoa pess) {
@@ -78,6 +84,6 @@ public class ExParteVO {
 		descricao = pess.getDescricao();
 		descricaoAmpliada = pess.getDescricao();
 		iniciais = pess.getIniciais();
+		siglaOrgao = pess.getOrgaoUsuario().getSigla();
 	}
-
 }

@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
-		Selecionavel, Historico, Sincronizavel {
+		Selecionavel, Historico, Sincronizavel,  Comparable  {
 
 	/**
 	 * 
@@ -373,5 +374,44 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		}
 		return idOrgaoUsuario;
 	}
+	
+	 /**
+     * Retorna a data de início da lotação no formato dd/mm/aa HH:MI:SS,
+     * por exemplo, 01/02/10 14:10:00.
+     * 
+     * @return Data de início da pessoa no formato dd/mm/aa HH:MI:SS, por
+     *         exemplo, 01/02/10 14:10:00.
+     * 
+     */
+    public String getDtInicioLotacaoDDMMYYHHMMSS() {
+            if (getDataInicioLotacao() != null) {
+                    final SimpleDateFormat df = new SimpleDateFormat(
+                                    "dd/MM/yy HH:mm:ss");
+                    return df.format(getDataInicioLotacao());
+            }
+            return "";
+    }
 
+    /**
+     * Retorna a data de fim da lotação no formato dd/mm/aa HH:MI:SS,
+     * por exemplo, 01/02/10 14:10:00.
+     * 
+     * @return Data de início da fim no formato dd/mm/aa HH:MI:SS, por
+     *         exemplo, 01/02/10 14:10:00.
+     * 
+     */
+    public String getDtFimLotacaoDDMMYYHHMMSS() {
+            if (getDataFimLotacao() != null) {
+                    final SimpleDateFormat df = new SimpleDateFormat(
+                                    "dd/MM/yy HH:mm:ss");
+                    return df.format(getDataFimLotacao());
+            }
+            return "";
+    }       
+    
+    public int compareTo(Object o) {
+            DpLotacao other = (DpLotacao) o;
+
+            return getNomeLotacao().compareTo(other.getNomeLotacao());
+    }
 }

@@ -46,6 +46,11 @@
 			<key column="ID_LOTACAO_PAI" />
 			<one-to-many class="DpLotacao" />
 		</set>
+		<set name="dpPessoaLotadosSet" order-by="ID_PESSOA"
+            inverse="true" lazy="true" batch-size="500" where="DATA_FIM_PESSOA is null" sort="natural">
+        	<key column="ID_LOTACAO" />
+            <one-to-many class="DpPessoa" />
+        </set>
 		<!-- Gestao de Identidade : Drive K e grupo de e-mail -->
 		<many-to-one name="cpTipoLotacao" column="ID_TP_LOTACAO"
 			class="br.gov.jfrj.siga.dp.CpTipoLotacao" />

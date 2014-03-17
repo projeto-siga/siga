@@ -26,9 +26,10 @@ package br.gov.jfrj.siga.libs.webwork;
 
 import java.util.List;
 
+import com.opensymphony.xwork.Action;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 
@@ -43,11 +44,22 @@ public class DpLotacaoAction extends
 	private static final long serialVersionUID = 3768576909382652437L;
 
 	private Long orgaoUsu;
+	
+	private String sigla;
+    
+    private DpLotacao lotacao;
 
 	public String aBuscar() throws Exception {
 		if (param("postback") == null)
 			setOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 		return super.aBuscar();
+	}
+	
+	public String aExibir() throws Exception {
+        if(sigla != null)
+                setLotacao(dao().getLotacaoFromSigla(sigla));
+        
+        return Action.SUCCESS;
 	}
 
 	public Long getOrgaoUsu() {
@@ -89,6 +101,22 @@ public class DpLotacaoAction extends
 			if (l.size() == 1)
 				return (DpLotacao) l.get(0);
 		return null;
+	}
+
+	public String getSigla() {
+		return sigla;
+	}
+
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
+	}
+
+	public DpLotacao getLotacao() {
+		return lotacao;
+	}
+
+	public void setLotacao(DpLotacao lotacao) {
+		this.lotacao = lotacao;
 	}
 
 }

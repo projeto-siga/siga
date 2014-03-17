@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -55,7 +56,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "SELECT sysdate dt FROM dual", resultSetMapping = "scalar")
 @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null")
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
-		Selecionavel, Historico, Sincronizavel {
+		Selecionavel, Historico, Sincronizavel, Comparable {
 	/**
 	 * 
 	 */
@@ -482,6 +483,46 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		}
 		
 	}
+	
+    /**
+     * Retorna a data de início da pessoa no formato dd/mm/aa HH:MI:SS,
+     * por exemplo, 01/02/10 14:10:00.
+     * 
+     * @return Data de início da pessoa no formato dd/mm/aa HH:MI:SS, por
+     *         exemplo, 01/02/10 14:10:00.
+     * 
+     */
+    public String getDtInicioPessoaDDMMYYHHMMSS() {
+            if (getDataInicioPessoa() != null) {
+                    final SimpleDateFormat df = new SimpleDateFormat(
+                                    "dd/MM/yy HH:mm:ss");
+                    return df.format(getDataInicioPessoa());
+            }
+            return "";
+    }
+    
+    /**
+     * Retorna a data de fim da pessoa no formato dd/mm/aa HH:MI:SS,
+     * por exemplo, 01/02/10 14:10:00.
+     * 
+     * @return Data de início da fim no formato dd/mm/aa HH:MI:SS, por
+     *         exemplo, 01/02/10 14:10:00.
+     * 
+     */
+    public String getDtFimPessoaDDMMYYHHMMSS() {
+            if (getDataFimPessoa() != null) {
+                    final SimpleDateFormat df = new SimpleDateFormat(
+                                    "dd/MM/yy HH:mm:ss");
+                    return df.format(getDataFimPessoa());
+            }
+            return "";
+    }	
+	
+    public int compareTo(Object o) {
+        DpPessoa other = (DpPessoa) o;
+
+        return getNomePessoa().compareTo(other.getNomePessoa());
+    }
 
 
 }

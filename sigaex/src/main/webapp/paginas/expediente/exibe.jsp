@@ -148,28 +148,33 @@
 							<td>${mov.descrTipoMovimentacao}</td>
 							<td align="left"><siga:selecionado
 									sigla="${mov.parte.lotaCadastrante.sigla}"
-									descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}" />
+									descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}"
+									lotacaoParam="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}" />
 							</td>
 							<td align="left"><siga:selecionado
 									sigla="${mov.parte.cadastrante.nomeAbreviado}"
-									descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}" />
+									descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}"
+									pessoaParam="${mov.parte.cadastrante.sigla}" />
 							</td>
 							<c:if test="${ (exibirCompleto == 'true')}">
 								<td align="left"><siga:selecionado
 										sigla="${mov.parte.lotaSubscritor.sigla}"
-										descricao="${mov.parte.lotaSubscritor.descricaoAmpliada}" />
+										descricao="${mov.parte.lotaSubscritor.descricaoAmpliada}" 
+										lotacaoParam="${mov.parte.lotaSubscritor.siglaOrgao}${mov.parte.lotaSubscritor.sigla}" />
 								</td>
 								<td align="left"><siga:selecionado
 										sigla="${mov.parte.subscritor.nomeAbreviado}"
-										descricao="${mov.parte.subscritor.descricao} - ${mov.parte.subscritor.sigla}" />
+										descricao="${mov.parte.subscritor.descricao} - ${mov.parte.subscritor.sigla}" 
+										pessoaParam="${mov.parte.subscritor.sigla}" />
 								</td>
 							</c:if>
 							<td align="left"><siga:selecionado
 									sigla="${mov.parte.lotaResp.sigla}"
-									descricao="${mov.parte.lotaResp.descricaoAmpliada}" /></td>
-							<td align="left"><siga:selecionado
-									sigla="${mov.parte.resp.nomeAbreviado}"
-									descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" />
+									descricao="${mov.parte.lotaResp.descricaoAmpliada}" 
+									lotacaoParam="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}" /></td>
+							<td align="left"><siga:selecionado sigla="${mov.parte.resp.nomeAbreviado}"
+									descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" 
+									pessoaParam="${mov.parte.resp.sigla}"/>
 							</td>
 							<td>${mov.descricao} <c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 								<c:set var="assinadopor" value="${true}" /> <siga:links

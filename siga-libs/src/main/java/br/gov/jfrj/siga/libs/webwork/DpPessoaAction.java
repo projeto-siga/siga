@@ -26,12 +26,12 @@ package br.gov.jfrj.siga.libs.webwork;
 
 import java.util.List;
 
+import com.opensymphony.xwork.Action;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -47,6 +47,43 @@ public class DpPessoaAction extends
 	private String nome;
 
 	private Long orgaoUsu;
+	
+	private String matricula;
+	
+	private DpPessoa pessoa;
+	
+	public class GenericoSelecao implements Selecionavel {
+
+		private Long id;
+
+		private String sigla;
+
+		private String descricao;
+
+		public String getDescricao() {
+			return descricao;
+		}
+
+		public void setDescricao(String descricao) {
+			this.descricao = descricao;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getSigla() {
+			return sigla;
+		}
+
+		public void setSigla(String sigla) {
+			this.sigla = sigla;
+		}
+	}
 
 	public String aBuscar() throws Exception {
 		DpLotacao lotacaoTitular = getLotaTitular();
@@ -56,6 +93,13 @@ public class DpPessoaAction extends
 		}
 		return super.aBuscar();
 	}
+	
+	 public String aExibir() throws Exception {
+         if(matricula != null)
+                 setPessoa(dao().getPessoaPorPrincipal(matricula));
+
+         return Action.SUCCESS;
+	 }
 
 	public Long getOrgaoUsu() {
 		return orgaoUsu;
@@ -118,6 +162,20 @@ public class DpPessoaAction extends
 				return (DpPessoa) pessoas.get(0);
 		return null;
 	}
+	
+	@Override
+	public String aSelecionar() throws Exception {
+		String s = super.aSelecionar();
+		if (getSel() != null && getMatricula() != null) {
+			GenericoSelecao sel = new GenericoSelecao();
+			sel.setId(getSel().getId());
+			sel.setSigla(getSel().getSigla());
+			sel.setDescricao("/siga/pessoa/exibir.action?matricula="
+					+ sel.getSigla());
+			setSel(sel);
+		}
+		return s;
+	}
 
 	public void setLotacaoSel(final DpLotacaoSelecao lotacaoSel) {
 		this.lotacaoSel = lotacaoSel;
@@ -126,6 +184,22 @@ public class DpPessoaAction extends
 	@Override
 	public void setNome(final String nome) {
 		this.nome = nome;
+	}
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
+	}
+
+	public DpPessoa getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(DpPessoa pessoa) {
+		this.pessoa = pessoa;
 	}
 
 }

@@ -259,6 +259,9 @@
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
 			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
+		<action name="exibir" class="br.gov.jfrj.siga.libs.webwork.DpPessoaAction" method="aExibir">
+            <result>/paginas/pessoa/exibi.jsp</result>
+        </action>
 	</package>
 
 	<package name="cosignatario" extends="default" namespace="/cosignatario">
@@ -283,6 +286,9 @@
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
 			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
+		<action name="exibir" class="br.gov.jfrj.siga.libs.webwork.DpLotacaoAction" method="aExibir">
+	        <result>/paginas/lotacao/exibi.jsp</result>
+        </action>
 	</package>
 
 	<package name="orgao" extends="default" namespace="/orgao">

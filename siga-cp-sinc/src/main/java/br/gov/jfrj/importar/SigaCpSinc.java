@@ -259,7 +259,7 @@ public class SigaCpSinc {
 			if (opr.getOperacao().equals(Operacao.incluir)){
 					List<DpPessoa> historicoPessoa = CpDao.getInstance()
 					.consultarPorMatriculaEOrgao(pesNova.getMatricula(),pesNova.getOrgaoUsuario().getId(),true,true);
-					
+					log ("*****************************" + pesNova.getMatricula());
 					if (historicoPessoa.size() > 0){
 						DpPessoa pesAnterior = historicoPessoa.get(0);	
 						if (pesAnterior!=null && !pesAnterior.getIdInicial().equals(pesNova.getIdInicial())){

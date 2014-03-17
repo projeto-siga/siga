@@ -923,6 +923,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	public int compareTo(Object o) {
+		if (this == o)
+			return 0;
 		ExMobil other = (ExMobil) o;
 		int i;
 		i = other.getExDocumento().getIdDoc()

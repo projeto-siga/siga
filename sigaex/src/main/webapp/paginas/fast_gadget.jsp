@@ -30,7 +30,7 @@ submitOk = function() {
 		<tbody>
 			<c:forEach var="listEstado" items="${listEstados}">
 				<c:if
-					test="${listEstado[0] != 6 && listEstado[0] != 9 && listEstado[0] != 10 
+					test="${listEstado[0] != 9 && listEstado[0] != 10 
 			&& listEstado[0] != 11 && listEstado[0] != 12 
 			&& listEstado[0] != 13 && listEstado[0] != 16
 			&& listEstado[0] != 18 && listEstado[0] != 20 

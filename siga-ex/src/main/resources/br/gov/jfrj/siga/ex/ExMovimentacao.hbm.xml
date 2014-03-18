@@ -50,6 +50,8 @@
 			class="ExTipoDespacho" />
 		<many-to-one name="resp" column="ID_RESP"
 			class="br.gov.jfrj.siga.dp.DpPessoa" />
+		<many-to-one name="exClassificacao" column="ID_CLASSIFICACAO"
+			class="br.gov.jfrj.siga.ex.ExClassificacao" />
 		<many-to-one name="lotaResp" column="ID_LOTA_RESP"
 			class="br.gov.jfrj.siga.dp.DpLotacao" />
 		<many-to-one name="cadastrante" column="ID_CADASTRANTE"
@@ -123,11 +125,83 @@
 	</query>
 
 	<!-- Somente os "em andamento", "Transferido para Órgão Externo" -->
-	<query name="consultarParaArquivarEmLote">
+
+	<query name="consultarParaEncerrarEmLote">
 		<![CDATA[select mob from ExMobil mob join mob.exMarcaSet mar 
 		where (mar.dpLotacaoIni.idLotacao=:lotaIni
 		and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=11)		
 		) order by mar.dtIniMarca desc]]>
+	</query>
+	
+	<!-- Somente os "a recolher para arquivo intermediário" -->
+	<query name="consultarParaArquivarIntermediarioEmLote">
+		<![CDATA[select mob, mar from ExMobil mob join mob.exMarcaSet mar 
+		where mar.cpMarcador.idMarcador=51		
+		and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
+		and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
+		and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+		order by mob.exDocumento.dtDoc asc]]>
+	</query>
+	<query name="consultarQuantidadeParaArquivarIntermediarioEmLote">
+		<![CDATA[select count(*) from ExMobil mob join mob.exMarcaSet mar 
+		where mar.cpMarcador.idMarcador=51		
+		and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
+		and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
+		and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+		)]]>
+	</query>
+	
+	<!-- Somente os "a recolher para arquivo permanente" -->
+	<query name="consultarParaArquivarPermanenteEmLote">
+		<![CDATA[select mob, mar from ExMobil mob join mob.exMarcaSet mar 
+		where mar.cpMarcador.idMarcador=50	
+		and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
+		and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
+		and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+		order by mob.exDocumento.dtDoc asc]]>
+	</query>
+	<query name="consultarQuantidadeParaArquivarPermanenteEmLote">
+		<![CDATA[select count(*) from ExMobil mob join mob.exMarcaSet mar 
+		where mar.cpMarcador.idMarcador=50		
+		and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
+		and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
+		and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+		)]]>
+	</query>
+	
+	<!-- Somente os "a eliminar"-->
+	<query name="consultarAEliminar">
+		<![CDATA[select mob, mar from ExMobil mob join mob.exMarcaSet mar 
+		where (mar.cpMarcador.idMarcador=7)
+		and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
+		and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)
+		and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim) 
+		and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
+		and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)]]>
+	</query>
+	
+	<query name="consultarQuantidadeAEliminar">
+		<![CDATA[select count(*) from ExMobil mob join mob.exMarcaSet mar 
+		where mar.cpMarcador.idMarcador=7		
+		and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
+		and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)
+		and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim) 
+		and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
+		and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+		)]]>
+	</query>
+	
+	<!-- Somente os "em edital de eliminação"-->
+	<query name="consultarEmEditalEliminacao">
+		<![CDATA[select mob, mar 
+		from ExMobil mob 
+		join mob.exMarcaSet mar
+		join mob.exDocumento doc 
+		where (mar.cpMarcador.idMarcador=52)
+		and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
+		and (:dtIni is null or doc.dtDoc >= :dtIni)
+		and (:dtFim is null or doc.dtDoc <= :dtFim) 
+		order by doc.dtDoc desc]]>
 	</query>
 	
 	<!-- Somente os "em andamento" ou "pendentes de assinatura" -->

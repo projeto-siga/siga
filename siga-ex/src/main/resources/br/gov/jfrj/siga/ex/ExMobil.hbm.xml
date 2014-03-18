@@ -40,7 +40,7 @@
 		</set>
 
 		<set name="exMarcaSet" sort="natural" inverse="true" lazy="true"
-			batch-size="500">
+			batch-size="500" where="ID_TP_MARCA=1">
 			<key column="ID_REF" />
 			<one-to-many class="ExMarca" />
 		</set>

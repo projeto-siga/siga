@@ -24,7 +24,7 @@
   <property column="DT_REG_DOC" generated="never" lazy="false"
    name="dtRegDoc" not-null="true" type="java.util.Date"/>
   <property column="DT_FECHAMENTO" generated="never" lazy="false"
-   name="dtFechamento" type="java.util.Date"/>
+   name="dtFinalizacao" type="java.util.Date"/>
   <property column="NM_SUBSCRITOR_EXT" generated="never" lazy="false"
    name="nmSubscritorExt" type="java.lang.String"/>
   <property column="NM_FUNCAO_SUBSCRITOR" generated="never" lazy="false"
@@ -253,7 +253,7 @@
 		<![CDATA[select doc from ExDocumento doc left join fetch doc.exClassificacao
 		where doc.exClassificacao.codificacao like :mascara
 		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario
-		and doc.dtFechamento is not null
+		and doc.dtFinalizacao is not null
 		]]>
 	</query>
 	
@@ -263,7 +263,7 @@
 		where doc.exClassificacao.codificacao like :mascara
 			and (doc.lotaTitular.id = :idLotacao)
 			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario
-			and doc.dtFechamento is not null
+			and doc.dtFinalizacao is not null
 		]]>
 	</query>
 		

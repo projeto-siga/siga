@@ -336,6 +336,11 @@
             <artifactId>bctsp-jdk16</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>projeto-siga</groupId>
@@ -370,6 +375,43 @@
         <dependency>
             <groupId>projeto-siga</groupId>
             <artifactId>siga-rel</artifactId>
+            <exclusions>
+		        <exclusion>
+		            <groupId>bouncycastle</groupId>
+		            <artifactId>bcmail-jdk14</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>bouncycastle</groupId>
+		            <artifactId>bcprov-jdk14</artifactId>
+		        </exclusion>
+           		<exclusion>
+		            <groupId>commons-digester</groupId>
+		            <artifactId>commons-digester</artifactId>
+		        </exclusion>
+           		<exclusion>
+		            <groupId>com.lowagie</groupId>
+		            <artifactId>itext</artifactId>
+		        </exclusion>
+           		<exclusion>
+		            <groupId>jfree</groupId>
+		            <artifactId>jcommon</artifactId>
+		        </exclusion>
+           		<exclusion>
+		            <groupId>jfree</groupId>
+		            <artifactId>jfreechart</artifactId>
+		        </exclusion>
+           		<exclusion>
+		            <groupId>eclipse</groupId>
+		            <artifactId>jdtcore</artifactId>
+		        </exclusion>
+           		<exclusion>
+		            <groupId>jasperreports</groupId>
+		            <artifactId>jasperreports</artifactId>
+		        </exclusion>
+		        
+            
+            </exclusions>
+
         </dependency>
         
     </dependencies>

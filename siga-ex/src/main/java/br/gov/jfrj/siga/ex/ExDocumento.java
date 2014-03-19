@@ -2080,4 +2080,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public boolean isInternoProduzido() {
 		return true;
 	}
+
+	public boolean temPerfil(DpPessoa titular, DpLotacao lotaTitular,
+			long papel) {
+		for (ExMovimentacao mov : getMobilGeral().getExMovimentacaoSet()) {
+			if(!mov.isCancelada() && 
+					mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) &&
+					mov.getExPapel().getIdPapel().equals(papel) &&
+					((mov.getSubscritor() != null && mov.getSubscritor().equivale(titular)) || (mov.getSubscritor() == null && mov.getLotaSubscritor().equivale(lotaTitular))))
+				return true;
+		} 
+		
+		return false;
+	}
 }

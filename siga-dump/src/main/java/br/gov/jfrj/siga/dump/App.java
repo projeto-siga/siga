@@ -1,5 +1,10 @@
 package br.gov.jfrj.siga.dump;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,7 +34,7 @@ public class App {
 		this.arquivoSaida = arquivoSaida;
 	}
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, IOException {
 		processarArgumentos(args);
 		App app = new App(_tabs,_arq);
 		app.dump();
@@ -38,17 +43,32 @@ public class App {
 	/**
 	 * Executa o dump
 	 * @throws SQLException 
+	 * @throws IOException 
 	 */
-	private void dump() throws SQLException {
+	private void dump() throws SQLException, IOException {
 		 DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 		 connection = DriverManager.getConnection( "jdbc:oracle:thin:@192.168.56.101:1521:xe", "siga", "siga" );
 		 
+		 List<String> resultado = null;
 		 for (String t:tabelas) {
-			 dump(t);
+			 resultado = dump(t);
 		}
+		
+		enviarParaSaida(resultado);
+	}
+
+	private void enviarParaSaida(List<String> resultado) throws IOException {
+		File file = new File(arquivoSaida);
+		FileWriter fw = new FileWriter(file);
+		for (String linha : resultado) {
+			fw.write(linha + "\n");
+		}
+		fw.close();
 	}
 
 	private List<String> dump(String nomeTabela) throws SQLException {
+		inserts.add("\n\n-- INSERTS " + nomeTabela + "\n\n");
+		updates.add("\n\n-- UPDATES " + nomeTabela+ "\n\n");
 		PreparedStatement stm = connection.prepareStatement("select * from " + nomeTabela + " ORDER BY ID_MOD");
 		ResultSet rs = stm.executeQuery();
 		
@@ -119,7 +139,7 @@ public class App {
 			}
 		}
 		
-		String updt =  "UPDATE " + nomeTabela + " SET " + lstSet + " WHERE " + pk + " = " + valorPk;
+		String updt =  "UPDATE " + nomeTabela + " SET " + lstSet + " WHERE " + pk + " = " + valorPk +";";
 		return updt.replaceAll("\\[|\\]", "");
 	}
 

@@ -69,7 +69,10 @@ public class App {
 	private List<String> dump(String nomeTabela) throws SQLException {
 		inserts.add("\n\n-- INSERTS " + nomeTabela + "\n\n");
 		updates.add("\n\n-- UPDATES " + nomeTabela+ "\n\n");
-		PreparedStatement stm = connection.prepareStatement("select * from " + nomeTabela + " ORDER BY ID_MOD");
+		
+		String pk = getPrimaryKey(nomeTabela) ;
+		
+		PreparedStatement stm = connection.prepareStatement("select * from " + nomeTabela + " ORDER BY " + pk);
 		ResultSet rs = stm.executeQuery();
 		
 		List<String> colunas = new ArrayList<String>();
@@ -92,7 +95,6 @@ public class App {
 				
 			}
 			
-			String pk = getPrimaryKey(nomeTabela) ;
 			inserts.add(getInsertCmd(nomeTabela,colunas,valores));
 			updates.add(getUpdateCmd(nomeTabela,pk,colunas,valores));
 			

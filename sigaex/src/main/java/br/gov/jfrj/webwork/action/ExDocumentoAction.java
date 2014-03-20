@@ -2273,9 +2273,18 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		if (getClassificacaoSel().getId() != null
 				&& getClassificacaoSel().getId() != 0) {
-			doc.setExClassificacao(dao()
+			
+			ExClassificacao classificacao = dao()
 					.consultar(getClassificacaoSel().getId(),
-							ExClassificacao.class, false));
+							ExClassificacao.class, false);
+			
+			if(classificacao !=null && !classificacao.isFechada())
+				doc.setExClassificacao(classificacao);
+			else {
+				doc.setExClassificacao(null);
+				getClassificacaoSel().apagar();
+			}
+				
 		} else
 			doc.setExClassificacao(null);
 		if (getCpOrgaoSel().getId() != null) {

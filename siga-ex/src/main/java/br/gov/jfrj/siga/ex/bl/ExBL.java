@@ -2231,6 +2231,12 @@ public class ExBL extends CpBL {
 		
 		if (!doc.getExClassificacao().isAtivo())
 			throw new AplicacaoException("Classificação documental encerrada. Selecione outra na tela de edição.");
+		
+		if(!doc.isEletronico() 
+				&& doc.isProcesso() 
+				&& doc.getExMobilPai().getExDocumento().isProcesso()
+				&& doc.getExMobilPai().getExDocumento().isEletronico())
+			throw new AplicacaoException("Não é possível criar Subprocesso físico de processo eletrônico.");
 
 
 		Set<ExVia> setVias = doc.getSetVias();

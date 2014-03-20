@@ -20,10 +20,16 @@ public class App {
 
 	private final static List<String> _tabs=new ArrayList<String>();
 	private static String _arq = null;
+	private static Boolean _ins = true;
+	private static Boolean _upt = true;
 	
 	
 	private List<String> tabelas;
 	private String arquivoSaida;
+	private Boolean processarInserts;
+	private Boolean processarUpdates;
+	
+	
 	private Connection connection;
 	
 	private List<String> inicioScript = new ArrayList<String>();
@@ -31,14 +37,16 @@ public class App {
 	private List<String> updates = new ArrayList<String>();
 	private List<String> fimScript = new ArrayList<String>();
 	
-	public App(List<String> tabelas, String arquivoSaida) {
+	public App(List<String> tabelas, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates) {
 		this.tabelas = tabelas;
 		this.arquivoSaida = arquivoSaida;
+		this.processarInserts = processarInserts;
+		this.processarUpdates = processarUpdates;
 	}
 
 	public static void main(String[] args) throws SQLException, IOException {
 		processarArgumentos(args);
-		App app = new App(_tabs,_arq);
+		App app = new App(_tabs,_arq,_ins,_upt);
 		app.dump();
 	}
 
@@ -125,18 +133,27 @@ public class App {
 				
 			}
 			
+			
 			inserts.add(getInsertCmd(nomeTabela,colunas,valores));
 			if(contemBlob  && blobValue !=null){
 				inserts.add(getUpdateBlobCmd(nomeTabela,campoBlob,blobValue,pk,pkValue));
+				updates.add(getUpdateBlobCmd(nomeTabela,campoBlob,blobValue,pk,pkValue));
+			}else{
+				updates.add(getUpdateCmd(nomeTabela,pk,colunas,valores));	
 			}
-			updates.add(getUpdateCmd(nomeTabela,pk,colunas,valores));
+			
 			
 			valores = new ArrayList<Object>();
 		}
 		
 		List<String> result = new ArrayList<String>();
-		result.addAll(inserts);
-		result.addAll(updates);
+		if(processarInserts){
+			result.addAll(inserts);	
+		}
+		if(processarUpdates){
+			result.addAll(updates);	
+		}
+		
 
 		return result;
 	}
@@ -144,8 +161,9 @@ public class App {
 	private String getUpdateBlobCmd(String nomeTabela, String campoBlob, String blobValue, String pk, String pkValue) {
 		StringBuffer sb = new StringBuffer();
 		getInicioScript();
-		sb.append("\tupdate "	+ nomeTabela + " set " + campoBlob + " = utl_raw.cast_to_raw(' ') where " + pk + " = " + pkValue + ";\n");
-		sb.append("\tselect "	+ campoBlob	+ " into dest_blob from " + nomeTabela + " where " + pk + " = " + pkValue + " for update;\n");
+		sb.append("\n");
+		sb.append("\tUPDATE "	+ nomeTabela + " SET " + campoBlob + " = utl_raw.cast_to_raw(' ') WHERE " + pk + " = " + pkValue + ";\n");
+		sb.append("\tSELECT "	+ campoBlob	+ " INTO dest_blob FROM " + nomeTabela + " WHERE " + pk + " = " + pkValue + " FOR UPDATE;\n");
 		sb.append("\tsrc_blob := utl_raw.cast_to_raw(convert('");
 		sb.append(blobValue);
 		sb.append("','AL32UTF8'));\n");
@@ -227,6 +245,16 @@ public class App {
 				String a = param.split("=")[1];
 				_arq=a;
 			}
+			
+			if (param.startsWith("-inserts=")) {
+				String a = param.split("=")[1];
+				_ins=Boolean.valueOf(a);
+			}
+			if (param.startsWith("-updates=")) {
+				String a = param.split("=")[1];
+				_upt=Boolean.valueOf(a);
+			}
+
 			
 		}
 

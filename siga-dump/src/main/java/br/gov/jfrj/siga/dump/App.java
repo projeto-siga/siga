@@ -26,8 +26,10 @@ public class App {
 	private String arquivoSaida;
 	private Connection connection;
 	
+	private List<String> inicioScript = new ArrayList<String>();
 	private List<String> inserts = new ArrayList<String>();
 	private List<String> updates = new ArrayList<String>();
+	private List<String> fimScript = new ArrayList<String>();
 	
 	public App(List<String> tabelas, String arquivoSaida) {
 		this.tabelas = tabelas;
@@ -49,20 +51,31 @@ public class App {
 		 DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 		 connection = DriverManager.getConnection( "jdbc:oracle:thin:@192.168.56.101:1521:xe", "siga", "siga" );
 		 
-		 List<String> resultado = null;
+		 inicioScript.add(getInicioScript());
+		 List<String> resultadoDump = null;
 		 for (String t:tabelas) {
-			 resultado = dump(t);
+			 resultadoDump = dump(t);
 		}
+		 fimScript.add(getFimScript());
 		
-		enviarParaSaida(resultado);
+		 
+		enviarParaSaida(resultadoDump);
 	}
 
-	private void enviarParaSaida(List<String> resultado) throws IOException {
+	private void enviarParaSaida(List<String> resultadoDump) throws IOException {
 		File file = new File(arquivoSaida);
 		FileWriter fw = new FileWriter(file);
-		for (String linha : resultado) {
+		
+		for (String linha : inicioScript) {
 			fw.write(linha + "\n");
 		}
+		for (String linha : resultadoDump) {
+			fw.write(linha + "\n");
+		}
+		for (String linha : fimScript) {
+			fw.write(linha + "\n");
+		}
+		
 		fw.close();
 	}
 
@@ -84,11 +97,28 @@ public class App {
 		
 		while(rs.next()){
 			
+			String pkValue=null;
+			
+			boolean contemBlob = false;
+			String campoBlob = null;
+			String blobValue =null;
+			
 			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+				if(rs.getMetaData().getColumnName(i).equals(pk)){
+					pkValue = rs.getObject(i).toString();
+				}
+				
 				if (rs.getMetaData().getColumnType(i) == Types.BLOB){
-					valores.add(getAspas(blobToString(rs.getBytes(i))));
+					contemBlob=true;
+					campoBlob=rs.getMetaData().getColumnName(i);
+					valores.add(null);
+					blobValue = rs.getBytes(i)==null?null:blobToString(rs.getBytes(i));
+				}else if(rs.getMetaData().getColumnType(i) == Types.TIMESTAMP){
+					valores.add(rs.getString(i)==null?null:toDate(rs.getString(i)));
+					
 				}else if (rs.getMetaData().getColumnType(i) == Types.VARCHAR){
-					valores.add(getAspas(rs.getString(i)));
+					valores.add(rs.getString(i)==null?null:getAspas(rs.getString(i)));
+					
 				}else {
 					valores.add(rs.getObject(i));	
 				}
@@ -96,6 +126,9 @@ public class App {
 			}
 			
 			inserts.add(getInsertCmd(nomeTabela,colunas,valores));
+			if(contemBlob  && blobValue !=null){
+				inserts.add(getUpdateBlobCmd(nomeTabela,campoBlob,blobValue,pk,pkValue));
+			}
 			updates.add(getUpdateCmd(nomeTabela,pk,colunas,valores));
 			
 			valores = new ArrayList<Object>();
@@ -108,8 +141,41 @@ public class App {
 		return result;
 	}
 
+	private String getUpdateBlobCmd(String nomeTabela, String campoBlob, String blobValue, String pk, String pkValue) {
+		StringBuffer sb = new StringBuffer();
+		getInicioScript();
+		sb.append("\tupdate "	+ nomeTabela + " set " + campoBlob + " = utl_raw.cast_to_raw(' ') where " + pk + " = " + pkValue + ";\n");
+		sb.append("\tselect "	+ campoBlob	+ " into dest_blob from " + nomeTabela + " where " + pk + " = " + pkValue + " for update;\n");
+		sb.append("\tsrc_blob := utl_raw.cast_to_raw(convert('");
+		sb.append(blobValue);
+		sb.append("','AL32UTF8'));\n");
+		sb.append("\tdbms_lob.append(dest_blob, src_blob);\n");
+		getFimScript();
+		return sb.toString();
+	}
+
+	private String getFimScript() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("END;\n");
+		sb.append("/\n");
+		return sb.toString();
+	}
+
+	private String getInicioScript() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("DECLARE\n");
+		sb.append("\tdest_blob BLOB;\n");
+		sb.append("\tsrc_blob BLOB;\n");
+		sb.append("BEGIN\n");
+		return sb.toString();
+	}
+
+	private String toDate(String str) {
+		return "to_date('" + str + "','yyyy-mm-dd HH24:mi:ss')";
+	}
+
 	private String getAspas(String str) {
-		return "'" + str + "'";
+		return "'" + str.replaceAll("'", " || chr(39) || ") + "'";
 	}
 
 	private String getPrimaryKey(String nomeTabela) throws SQLException {
@@ -119,15 +185,13 @@ public class App {
 	}
 
 	private String blobToString(byte[] bytes) {
-		if (bytes!=null){
-			return new String(bytes);	
-		}
-		return null;
+		return new String(bytes).replaceAll("'", " || chr(39) || ");
+
 	}
 
 	private String getInsertCmd(String nomeTabela,List<String> colunas, List<Object> valores) {
-		String lstColunas = colunas.toString().replaceAll("\\[|\\]", "");
-		String lstValores = valores.toString().replaceAll("\\[|\\]", "");
+		String lstColunas = colunas.toString().replaceAll("^\\[|\\]$", "");
+		String lstValores = valores.toString().replaceAll("^\\[|\\]$", "");
 		return "INSERT INTO " + nomeTabela + " (" + lstColunas + ") VALUES (" + lstValores + ");";
 	}
 
@@ -135,7 +199,7 @@ public class App {
 		List<String> lstSet = new ArrayList<String>();
 		String valorPk = null;
 		for (int i = 0; i < colunas.size(); i++) {
-			lstSet.add(colunas.get(i) + "=" + valores.get(i));
+			lstSet.add(colunas.get(i) + "=" + String.valueOf(valores.get(i)));
 			if (colunas.get(i).equals(pk)){
 				valorPk = valores.get(i).toString();
 			}

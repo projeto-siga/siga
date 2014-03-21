@@ -18,16 +18,30 @@ import java.util.TreeMap;
 
 public class App {
 
+	private static final String PARAM_PWD_DB = "-pwdDB=";
+	private static final String PARAM_USR_DB = "-usrDB=";
+	private static final String PARAM_URL_DB = "-urlDB=";
+	private static final String PARAM_UPDATES = "-updates=";
+	private static final String PARAM_INSERTS = "-inserts=";
+	private static final String PARAM_ARQUIVO_SAIDA = "-arquivoSaida=";
+	private static final String PARAM_TABELAS = "-tabelas=";
 	private final static List<String> _tabs=new ArrayList<String>();
 	private static String _arq = null;
 	private static Boolean _ins = true;
 	private static Boolean _upt = true;
+	private static String _url_db = null;
+	private static String _usr_db = null;
+	private static String _pwd_db = null;
 	
 	
 	private List<String> tabelas;
 	private String arquivoSaida;
 	private Boolean processarInserts;
 	private Boolean processarUpdates;
+	private String urlDB;
+	private String userDB;
+	private String passDB;
+	
 	
 	
 	private Connection connection;
@@ -37,16 +51,20 @@ public class App {
 	private List<String> updates = new ArrayList<String>();
 	private List<String> fimScript = new ArrayList<String>();
 	
-	public App(List<String> tabelas, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates) {
+
+	public App(List<String> tabelas, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates, String urlDB, String userDB, String passDB) {
 		this.tabelas = tabelas;
 		this.arquivoSaida = arquivoSaida;
 		this.processarInserts = processarInserts;
 		this.processarUpdates = processarUpdates;
+		this.urlDB = urlDB;
+		this.userDB = userDB;
+		this.passDB = passDB;		
 	}
 
 	public static void main(String[] args) throws SQLException, IOException {
 		processarArgumentos(args);
-		App app = new App(_tabs,_arq,_ins,_upt);
+		App app = new App(_tabs,_arq,_ins,_upt,_url_db, _usr_db,_pwd_db);
 		app.dump();
 	}
 
@@ -57,7 +75,7 @@ public class App {
 	 */
 	private void dump() throws SQLException, IOException {
 		 DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-		 connection = DriverManager.getConnection( "jdbc:oracle:thin:@192.168.56.101:1521:xe", "siga", "siga" );
+		 connection = DriverManager.getConnection(urlDB, userDB, passDB);
 		 
 		 inicioScript.add(getInicioScript());
 		 List<String> resultadoDump = null;
@@ -232,28 +250,50 @@ public class App {
 	 * @param pars
 	 */
 	private static void processarArgumentos(String[] pars) {
-		if (pars.length < 2) {
+		if (pars.length < 5) {
 			System.err.println("Número de Parametros inválidos!");
+			System.err.println("Parâmetros possíveis:");
+			System.err.println(PARAM_TABELAS);
+			System.err.println(PARAM_ARQUIVO_SAIDA);
+			System.err.println(PARAM_INSERTS);
+			System.err.println(PARAM_UPDATES);
+			System.err.println(PARAM_URL_DB);
+			System.err.println(PARAM_USR_DB);
+			System.err.println(PARAM_PWD_DB);
 		}
 
 		for (String param : Arrays.asList(pars)) {
-			if (param.startsWith("-tabelas=")) {
+			if (param.startsWith(PARAM_TABELAS)) {
 				String t = param.split("=")[1];
 				_tabs.addAll(Arrays.asList(t.split(",")));
 			}
-			if (param.startsWith("-arquivoSaida=")) {
+			if (param.startsWith(PARAM_ARQUIVO_SAIDA)) {
 				String a = param.split("=")[1];
 				_arq=a;
 			}
 			
-			if (param.startsWith("-inserts=")) {
+			if (param.startsWith(PARAM_INSERTS)) {
 				String a = param.split("=")[1];
 				_ins=Boolean.valueOf(a);
 			}
-			if (param.startsWith("-updates=")) {
+			if (param.startsWith(PARAM_UPDATES)) {
 				String a = param.split("=")[1];
 				_upt=Boolean.valueOf(a);
 			}
+			if (param.startsWith(PARAM_URL_DB)) {
+				String a = param.split("=")[1];
+				_url_db=a;
+			}
+			if (param.startsWith(PARAM_USR_DB)) {
+				String a = param.split("=")[1];
+				_usr_db=a;
+			}
+			if (param.startsWith(PARAM_PWD_DB)) {
+				String a = param.split("=")[1];
+				_pwd_db=a;
+			}
+			
+			
 
 			
 		}

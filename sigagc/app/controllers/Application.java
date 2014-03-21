@@ -493,11 +493,17 @@ public class Application extends SigaApplication {
 		}
 
 		for (GcInformacao inf : infs) {
-			for (GcTag tag : inf.tags) {
-				arvore.add(tag, inf);
+			if(!inf.getTags().isEmpty()){
+				for (GcTag tag : inf.tags) {
+					arvore.add(tag, inf);
+				}
 			}
+			else{
+				GcTag EmptyTag = new GcTag(null, "", "Conhecimentos sem classificacao");
+				arvore.add(EmptyTag, inf);	
+			}	
 		}
-
+		
 		arvore.build();
 		
 		render(arvore, texto);

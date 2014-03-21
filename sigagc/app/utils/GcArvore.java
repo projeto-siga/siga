@@ -98,8 +98,9 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 		for (GcArvoreNo no : nos) {
 			for (int i = 0; i < ident; i++)
 				sb.append("  ");
-			sb.append(no.tag.titulo);
 
+			sb.append(no.tag.titulo);
+			
 			for (GcTag tagIrmao : no.tagsIrmaos) {
 				sb.append(", ");
 				sb.append(tagIrmao.titulo);
@@ -113,50 +114,92 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 		}
 	}
 
-	public String toHTML() throws Exception {
+	public String toHTML(String texto) throws Exception {
 		StringBuilder sb = new StringBuilder();
-		printNosHTML(sb, raiz.nosOrdenados, 0);
+		printNosHTML(sb, raiz.nosOrdenados, 0, texto);
 		return sb.toString();
 	}
 
 	public void printNosHTML(StringBuilder sb, SortedSet<GcArvoreNo> nos,
-			int ident) throws Exception {
+			int ident, String texto) throws Exception {
 		sb.append("<ul>");
 		for (GcArvoreNo no : nos) {
 			for (int i = 0; i < ident; i++)
 				sb.append("  ");
-			sb.append("<li><b>");
-			sb.append(no.tag.titulo);
 
-			for (GcTag tagIrmao : no.tagsIrmaos) {
-				sb.append(", ");
-				sb.append(tagIrmao.titulo);
-			}
+			if(no.tag.titulo == "Conhecimentos sem classificacao" && texto== null){
+				sb.append("<li style='display:none'><b>");
+				sb.append(no.tag.titulo);
 
-			sb.append(" (");
-			final int size = no.infs.size();
-			sb.append(size);
-			sb.append(")</b></li>");
-
-			if (size > 0) {
-				for (GcArvoreNo noFilho : no.nosOrdenados) {
-					no.infs.removeAll(noFilho.infs);
+				for (GcTag tagIrmao : no.tagsIrmaos) {
+					sb.append(", ");
+					sb.append(tagIrmao.titulo);
 				}
-			}
 
-			if (no.infs.size() > 0) {
-				sb.append("<ul>");
-				for (GcInformacao inf : no.infs) {
-					//sb.append("<li><a href=\"exibir?id=" + inf.id + "\">");
-					sb.append("<li><a href=\"exibir?sigla=" + URLEncoder.encode(inf.getSigla(), "UTF-8") + "\">");
-					sb.append(inf.arq.titulo);
-					sb.append("</a></li>");
+				sb.append(" (");
+				final int size = no.infs.size();
+				sb.append(size);
+				sb.append(")</b></li>");
+
+				if (size > 0) {
+					for (GcArvoreNo noFilho : no.nosOrdenados) {
+						no.infs.removeAll(noFilho.infs);
+					}
 				}
-				sb.append("</ul>");
+
+				if (no.infs.size() > 0) {
+					sb.append("<ul>");
+					for (GcInformacao inf : no.infs) {
+						//sb.append("<li><a href=\"exibir?id=" + inf.id + "\">");
+						sb.append("<li style='display:none'><a href=\"exibir?sigla=" + URLEncoder.encode(inf.getSigla(), "UTF-8") + "\">");
+						sb.append(inf.arq.titulo);
+						sb.append("</a></li>");
+					}
+					sb.append("</ul>");
+				}
+
+				if (no.nos.size() > 0)
+					printNosHTML(sb, no.nosOrdenados, ident + 1, texto);
+
 			}
 
-			if (no.nos.size() > 0)
-				printNosHTML(sb, no.nosOrdenados, ident + 1);
+			else{
+
+				sb.append("<li><b>");
+				sb.append(no.tag.titulo);
+
+				for (GcTag tagIrmao : no.tagsIrmaos) {
+					sb.append(", ");
+					sb.append(tagIrmao.titulo);
+				}
+
+				sb.append(" (");
+				final int size = no.infs.size();
+				sb.append(size);
+				sb.append(")</b></li>");
+
+				if (size > 0) {
+					for (GcArvoreNo noFilho : no.nosOrdenados) {
+						no.infs.removeAll(noFilho.infs);
+					}
+				}
+
+				if (no.infs.size() > 0) {
+					sb.append("<ul>");
+					for (GcInformacao inf : no.infs) {
+						//sb.append("<li><a href=\"exibir?id=" + inf.id + "\">");
+						sb.append("<li><a href=\"exibir?sigla=" + URLEncoder.encode(inf.getSigla(), "UTF-8") + "\">");
+						sb.append(inf.arq.titulo);
+						sb.append("</a></li>");
+					}
+					sb.append("</ul>");
+				}
+
+				if (no.nos.size() > 0)
+					printNosHTML(sb, no.nosOrdenados, ident + 1, texto);
+
+			}
+
 		}
 		sb.append("</ul>");
 	}

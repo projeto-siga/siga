@@ -50,11 +50,11 @@
 			#{else}
 				<div style="float:right;"><a href="/sigagc/app/buscar">remover filtro: "${texto}"</a></div>
 				<br />	
-				<div>${arvore.toHTML().raw()}</div>		
+				<div>${arvore.toHTML(texto).raw()}</div>		
 			#{/else} 
 		#{/if}
 		#{else}
-			<div>${arvore.toHTML().raw()}</div>
+			<div>${arvore.toHTML(texto).raw()}</div>
 		#{/else}
 	</div>
 </div>

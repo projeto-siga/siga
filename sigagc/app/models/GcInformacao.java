@@ -540,4 +540,8 @@ public class GcInformacao extends GenericModel {
 		} else
 			return info;
 	}
+	
+	public Set<GcTag> getTags(){
+		return this.tags;
+	}
 }

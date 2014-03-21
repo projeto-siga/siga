@@ -516,14 +516,15 @@ public class GcBL {
 					null, null, null, null, null, null, null, null);
 			GcBL.gravar(informacao, idc, titular, lotaTitular);
 		} else if (movLocalizada != null && !fInteresse) {
-			GcMovimentacao m = GcBL
+			cancelarMovimentacao(informacao, movLocalizada, idc, movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
+/*			GcMovimentacao m = GcBL
 					.movimentar(
 							informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 							null, null, null, null, null,
 							movLocalizada, null, null, null);
 			movLocalizada.movCanceladora = m;
-			GcBL.gravar(informacao, idc, movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
+			GcBL.gravar(informacao, idc, movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);*/
 		}
 	}
 
@@ -595,5 +596,15 @@ public class GcBL {
 			return classificacao;
 		else
 			return classificacao.concat(", ").concat(hashTag).trim();
+	}
+	
+	public static void cancelarMovimentacao (GcInformacao info, GcMovimentacao mov, CpIdentidade idc,
+			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+		GcMovimentacao m = GcBL.movimentar(info,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+				null, null, null, null, null,
+				mov, null, null, null);
+		mov.movCanceladora = m;
+		GcBL.gravar(info, idc, titular, lotaTitular);
 	}
 }

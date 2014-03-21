@@ -661,13 +661,13 @@ public class Application extends SigaApplication {
 	public static void duplicar(String sigla) throws Exception {
 		GcInformacao infDuplicada = GcInformacao.findBySigla(sigla);
 		
-		GcBL.movimentar(infDuplicada, GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, 
-				null, null, null, null, null, null, null, null, null);
+		GcMovimentacao movLocalizada = GcBL.movimentar(infDuplicada, 
+											GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, 
+											null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(infDuplicada, idc(), titular(), lotaTitular());
 		
 		GcInformacao inf = new GcInformacao();	
 		GcArquivo arq = new GcArquivo();
-		GcMovimentacao movLocalizada = null;
 		
 		arq = infDuplicada.arq.duplicarConteudoInfo();
 		inf.autor = titular();
@@ -677,28 +677,21 @@ public class Application extends SigaApplication {
 		inf.visualizacao = GcAcesso.findById(infDuplicada.visualizacao.id);
 		inf.edicao = GcAcesso.findById(infDuplicada.edicao.id);
 		
-		if (infDuplicada.movs != null) {
-			for (GcMovimentacao mov : infDuplicada.movs) {
-				if (mov.isCancelada())
-					continue;
-				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR) {				
-						movLocalizada = mov;
-						break;
-				}
-			}
-		}
-		GcBL.movimentar(inf,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null,
-				null, arq.titulo, arq.getConteudoTXT(), arq.classificacao, movLocalizada,
-				null, null, null);
+		GcMovimentacao movCriada = GcBL.movimentar(inf,
+										GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null,
+										null, arq.titulo, arq.getConteudoTXT(), arq.classificacao, movLocalizada,
+										null, null, null);
 		GcBL.gravar(inf, idc(),titular(), lotaTitular());
 		
+		movLocalizada.movRef = movCriada;
+		GcBL.gravar(infDuplicada, idc(),titular(), lotaTitular());
+						
 		if (infDuplicada.isContemArquivos()) {
 			for (GcMovimentacao movDuplicado : infDuplicada.movs) {
 				if (movDuplicado.isCancelada())
 					continue;
 				if (movDuplicado.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
-					&& movDuplicado.movCanceladora == null) {
+						&& movDuplicado.movCanceladora == null) {
 					GcMovimentacao m = GcBL.movimentar(inf, movDuplicado.arq,
 											GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO);
 					m.movRef = movLocalizada;
@@ -811,7 +804,7 @@ public class Application extends SigaApplication {
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pesResponsavel,
 					lotResponsavel, null, null, null, null, null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-			flash.success(" Solicitação de revisão realizada com sucesso!");
+			flash.success("Solicitação de revisão realizada com sucesso!");
 			exibir(informacao.getSigla());
 		}
 		else
@@ -857,10 +850,13 @@ public class Application extends SigaApplication {
 		}
 	}
 
-	public static void removerAnexo(String sigla, Long id) throws Exception {
+	public static void removerAnexo(String sigla, long idArq, long idMov) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		GcMovimentacao movLocalizada = null;
-		for (GcMovimentacao mov : informacao.movs) {
+		GcMovimentacao mov = GcMovimentacao.findById(idMov);
+		
+		if(mov.arq.id == idArq)
+			GcBL.cancelarMovimentacao(informacao, mov, idc(), titular(), lotaTitular());
+/*		for (GcMovimentacao mov : informacao.movs) {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
@@ -874,9 +870,8 @@ public class Application extends SigaApplication {
 								null, null, null, null, null,
 								movLocalizada, null, null, null);
 		movLocalizada.movCanceladora = m;
-		GcBL.gravar(informacao, idc(), titular(), lotaTitular());
+		GcBL.gravar(informacao, idc(), titular(), lotaTitular());*/
 		render(informacao);
-		//editar(sigla, null, null, null);
 	}
 	
 	public static void baixar(Long id) {
@@ -1084,6 +1079,14 @@ public class Application extends SigaApplication {
 		if (message == null)
 			message = "Nenhuma informação disponível.";
 		erro(message, stackTrace);
+	}
+	
+	public static void desfazer(String sigla, long movId) throws Exception {
+		GcInformacao info = GcInformacao.findBySigla(sigla);
+		GcMovimentacao mov = GcMovimentacao.findById(movId);
+		
+		GcBL.cancelarMovimentacao(info, mov, idc(), titular(), lotaTitular());
+		movimentacoes(sigla);
 	}
 
 }

@@ -1,58 +1,5 @@
 #{extends 'Application/exibir_base.html' /} #{set
 title:'Movimentações'/}
-#{set 'moreHead'}
-<script type="text/javascript">
-	$(document).ready(function(){
-		var cont = 0;
-		var regex = /\S/;
-		$(".gt-content-box td").css({"padding": "0.5em"});
-		//Cria estilo para a imagens dentro de tabela
-		$(".gt-content-box td > img").css({"width":"200px","display": "block"});
-		//Cria estilo para a imagens 
-		$(".gt-content-box > p > img").css({"border":"1px silver solid","width":"30%","padding":"0.2em"});
-		$(".gt-content-box > p > img:even").css({"float":"right","margin":"5px 0 5px 10px"});
-		$(".gt-content-box > p > img:odd").css({"float":"left","margin":"5px 10px 5px 0"});
-		$(".gt-content-box").css({"overflow":"hidden"});
-		/*Identifica uma galeria de imagens (pelo menos duas imagens colocadas lado a lado (irmãs))*/
-		$(".gt-content-box > p").each(function(){	
-			$(this).has("img").contents().filter(function(){
-				return (this.nodeType === 3 && regex.test(this.nodeValue));
-			}).wrap("<span></span>");
-			$(this).children("img").each(function(){
-				if($(this).next().is("img") || $(this).prev().is("img")){
-					cont++;
-					$(this).addClass("imgg");							
-				}
-			});
-			/*Se o número de imagens lado a lado for ímpar e diferente de 1 , 
-			ou múltiplo de 3, segue esse padrão de montagem do layout*/
-			if(cont != 0) {
-				if ((cont%3 == 0) || ((cont%2 != 0) && (cont != 1))){
-					$(this).children(".imgg").css({"float":"none","margin":"5px"}).wrapAll("<div class='bloco-img-impar'></div>");
-					cont = 0;
-					$(this).children(".bloco-img-impar").css({"display":"inline-block"}).after("<span style='display:block'></span>");	
-				}
-				/*Todas as demais (número par que não seja múltiplo de 3)*/
-				else{
-					$(this).find(".imgg").css({"float":"none","margin":"10px"});
-					for(var i = 0;cont > i; i+=2){
-						$(this).find(".imgg").slice(i,i+2).wrapAll("<div class='bloco-img-par'></div>");
-					}		
-					cont = 0;	
-					$(".bloco-img-par").css({"padding-left":"15%","display":"inline"});
-					$(this).children(".bloco-img-par").wrap("<div style='clear:both'></div>");						
-				}
-			}		
-		});
-
-		$("body").css({"overflow-x":"hidden"});
-        $("html, body").stop().animate({
-        	"scrollTop":$("#ancora_mov").offset().top
-        }, 900);
-        //event.preventDefault();
-	});
-</script>
-#{/set}
 
 <div class="gt-bd" style="padding-bottom: 0px;">
 	<div class="gt-content">
@@ -100,7 +47,14 @@ title:'Movimentações'/}
 					#{else} #{set classe: '' /} #{/else}
 				<tr class="juntada ${classe}">
 					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
-					<td>${m.tipo.nome}</td>
+					#{if informacao.podeDesfazer(titular, m)}
+						<td>${m.tipo.nome} 
+						[ <img style="margin-bottom: -2px;width:11px;" src="/siga/css/famfamfam/icons/cross.png" /> 
+						<span class="gt-table-action-list">
+						<a href="javascript:if (confirm('Deseja desfazer essa movimentação?')) 
+									location.href = '@{Application.desfazer(informacao.sigla, m.id)}';">desfazer</a></span> &nbsp;]
+					#{/if}
+					#{else} <td>${m.tipo.nome}</td> #{/else}
 					<td align="left">												
 						<span title="${m.hisIdcIni.pessoaAtual.lotacao.descricao}">${m.hisIdcIni.pessoaAtual.lotacao.sigla}</span>
 					</td>
@@ -120,3 +74,13 @@ title:'Movimentações'/}
 		</table>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("body").css({"overflow-x":"hidden"});
+        $("html, body").stop().animate({
+        	"scrollTop":$("#ancora_mov").offset().top
+        }, 900);
+        //event.preventDefault();
+	});
+</script>

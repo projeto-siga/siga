@@ -190,6 +190,18 @@ public class GcInformacao extends GenericModel {
 	public boolean isCancelado() {
 		return this.hisDtFim != null;
 	}
+	
+	public boolean podeDesfazer(DpPessoa titular, GcMovimentacao mov) {
+		if(isCancelado())
+			return false;
+		if((mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO 
+			|| mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR) 
+					&& mov.movCanceladora == null 
+						&& titular.equivale(mov.pessoaTitular))
+			return true;
+		else 
+			return false;
+	}
 
 	public boolean podeRevisar(DpPessoa titular, DpLotacao lotaTitular) {
 		if (isCancelado())

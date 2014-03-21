@@ -12,9 +12,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 public class App {
 
@@ -26,7 +23,9 @@ public class App {
 	private static final String PARAM_INSERTS = "-inserts=";
 	private static final String PARAM_ARQUIVO_SAIDA = "-arquivoSaida=";
 	private static final String PARAM_TABELAS = "-tabelas=";
-	private final static Map<String,String> _tabs= new TreeMap<String,String>();
+	private final static List<String> _tabs= new ArrayList<String>();
+	private final static List<String> _tabs_opts= new ArrayList<String>();
+
 	private static String _arq = null;
 	private static Boolean _ins = true;
 	private static Boolean _upt = true;
@@ -35,7 +34,8 @@ public class App {
 	private static String _pwd_db = null;
 	
 	
-	private Map<String,String> tabelas;
+	private List<String> tabelas;
+	private List<String> tabelasOpcoes;
 	private String arquivoSaida;
 	private Boolean processarInserts;
 	private Boolean processarUpdates;
@@ -53,8 +53,9 @@ public class App {
 	private List<String> fimScript = new ArrayList<String>();
 	
 
-	public App(Map<String,String> tabelas, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates, String urlDB, String userDB, String passDB) {
+	public App(List<String> tabelas,List<String> tabelasOpcoes, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates, String urlDB, String userDB, String passDB) {
 		this.tabelas = tabelas;
+		this.tabelasOpcoes = tabelasOpcoes;
 		this.arquivoSaida = arquivoSaida;
 		this.processarInserts = processarInserts;
 		this.processarUpdates = processarUpdates;
@@ -64,9 +65,11 @@ public class App {
 	}
 
 	public static void main(String[] args) throws SQLException, IOException {
+		System.out.println("Iniciando exportação...");
 		processarArgumentos(args);
-		App app = new App(_tabs,_arq,_ins,_upt,_url_db, _usr_db,_pwd_db);
+		App app = new App(_tabs,_tabs_opts,_arq,_ins,_upt,_url_db, _usr_db,_pwd_db);
 		app.dump();
+		System.out.println("Aplicação encerrada!");
 	}
 
 	/**
@@ -80,9 +83,10 @@ public class App {
 		 
 		 inicioScript.add(getInicioScript());
 		 List<String> resultadoDump = null;
-		 for (Entry<String, String> t:tabelas.entrySet()) {
-			 resultadoDump = dump(t.getKey(),t.getValue());
-		}
+		 for (int i = 0; i < tabelas.size(); i++) {
+			 resultadoDump = dump(tabelas.get(i),tabelasOpcoes.get(i));
+		 }
+			 
 		 fimScript.add(getFimScript());
 		
 		 
@@ -153,7 +157,12 @@ public class App {
 					contemBlob=true;
 					campoBlob=rs.getMetaData().getColumnName(i);
 					valores.add(null);
-					blobValue = rs.getBytes(i)==null?null:blobToString(rs.getBytes(i));
+					try {
+						blobValue = rs.getBytes(i)==null?null:blobToString(rs.getBytes(i));
+					} catch (Exception e) {
+						System.out.println(nomeTabela + "." + campoBlob + " com tamanho excedido (>32k)." + pk + "=" + pkValue );
+						blobValue = "BLOB MAIOR QUE 32K!";
+					}
 				}else if(rs.getMetaData().getColumnType(i) == Types.TIMESTAMP){
 					valores.add(rs.getString(i)==null?null:toDate(rs.getString(i)));
 					
@@ -241,6 +250,7 @@ public class App {
 
 	private String getInicioScript() {
 		StringBuffer sb = new StringBuffer();
+		sb.append("SET DEFINE OFF\n");
 		sb.append("DECLARE\n");
 		sb.append("\tdest_blob BLOB;\n");
 		sb.append("\tsrc_blob BLOB;\n");
@@ -267,8 +277,14 @@ public class App {
 		
 	}
 
-	private String blobToString(byte[] bytes) {
-		return new String(bytes).replaceAll("'", " || chr(39) || ");
+	private String blobToString(byte[] bytes) throws Exception {
+		int dbms_output_limit = 2^32*1000; //32kB
+		if(bytes.length<=dbms_output_limit){
+			return new String(bytes).replaceAll("'", " || chr(39) || ");	
+		}else{
+			throw new Exception("Um blob é maior que 32k!" + bytes.length);
+		}
+		
 
 	}
 
@@ -316,7 +332,8 @@ public class App {
 				for (String tab : lstTabs) {
 					String nomeTab = tab.replaceAll("[{].*", "");
 					String tabParams = tab.replaceAll(".*[{]|[}]", "");
-					_tabs.put(nomeTab, tabParams.equals(nomeTab)?null:tabParams);
+					_tabs.add(nomeTab);
+					_tabs_opts.add(tabParams.equals(nomeTab)?null:tabParams);
 				}
 			}
 			

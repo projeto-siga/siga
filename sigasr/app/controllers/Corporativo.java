@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
 
 import play.mvc.Controller;
 
-public class Corporativo extends Controller {
+public class Corporativo extends SigaApplication {
 	public static void dadosrh() throws ParserConfigurationException {
 		Map<Long, Cargo> mc = new TreeMap<Long, Cargo>();
 		Map<Long, Lotacao> ml = new TreeMap<Long, Lotacao>();
@@ -125,6 +125,7 @@ public class Corporativo extends Controller {
 		}
 
 		renderXml(doc);
+		
 	}
 
 	private static void setAttr(Element e, String name, Object value) {

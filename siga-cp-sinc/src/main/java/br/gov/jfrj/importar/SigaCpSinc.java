@@ -21,6 +21,7 @@ package br.gov.jfrj.importar;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
@@ -31,11 +32,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Scanner;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.naming.NamingException;
 
+import org.apache.axis.utils.IOUtils;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -56,7 +59,6 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Item.Operacao;
@@ -490,6 +492,8 @@ public class SigaCpSinc {
 			/* */
 			@SuppressWarnings("unused")
 			InputStream st = connMumps.getInputStream();
+			//String inputStreamString = new Scanner(st,"UTF-8").useDelimiter("\\A").next();
+			//System.out.println(inputStreamString);
 			importarXml(connMumps.getInputStream());
 			log("Importando: BD");
 			setAntigo.addAll(importarTabela());

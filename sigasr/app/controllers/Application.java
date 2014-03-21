@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
+import javax.xml.parsers.ParserConfigurationException;
 
 import models.SrAcao;
 import models.SrArquivo;
@@ -44,6 +45,7 @@ import reports.SrRelLocal;
 import reports.SrRelPesquisa;
 import reports.SrRelPrazo;
 import reports.SrRelPrazoDetail;
+import reports.SrRelPrazoTRF;
 import reports.SrRelSolicitacoes;
 import reports.SrRelTransferencias;
 import util.SrSolicitacaoAtendidos;
@@ -65,7 +67,7 @@ public class Application extends SigaApplication {
 	}
 
 	@Before(unless = { "exibirAtendente", "exibirAtributos",
-			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao" })
+			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao"})
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -113,6 +115,15 @@ public class Application extends SigaApplication {
 		query.setParameter("idLotacaoIni", lotaTitular().getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
+	}
+	
+	public void corporativo() {
+		try {
+			Corporativo.dadosrh();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void editar(Long id) throws Exception {
@@ -995,6 +1006,18 @@ public class Application extends SigaApplication {
 										.getIdOrgaoUsu()).getResultList();
 		render(locais);
 	}
+	
+	public static void relPrazoTRF() throws Exception {
+		assertAcesso("REL:Relatorio");
+		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		locais = JPA
+				.em()
+				.createQuery(
+						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+								+ lotaTitular().getOrgaoUsuario()
+										.getIdOrgaoUsu()).getResultList();
+		render(locais);
+	}
 
 	public static void relPrazoDetail() throws Exception {
 		assertAcesso("REL:Relatorio");
@@ -1129,6 +1152,31 @@ public class Application extends SigaApplication {
 		InputStream is = new ByteArrayInputStream(pdf);
 
 		renderBinary(is, "Relatório de Prazos", pdf.length, "application/pdf",
+				true);
+	}
+
+	public static void grelPrazoTRF(String secaoUsuario, String lotacao,
+			String local, String dtIni, String dtFim, String atendente) throws Exception {
+
+		assertAcesso("REL:Relatorio");
+
+		Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("atendente", atendente);
+		parametros.put("lotacao", lotacao);
+		parametros.put("local", local);
+		parametros.put("dtIni", dtIni);
+		parametros.put("dtFim", dtFim);
+
+		SrRelPrazoTRF rel = new SrRelPrazoTRF(parametros);
+
+		rel.gerar();
+
+		byte[] pdf = rel.getRelatorioPDF();
+		InputStream is = new ByteArrayInputStream(pdf);
+
+		renderBinary(is, "Relatório de Prazos - TRF", pdf.length, "application/pdf",
 				true);
 	}
 

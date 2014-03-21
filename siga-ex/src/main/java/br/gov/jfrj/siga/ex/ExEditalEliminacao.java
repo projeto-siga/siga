@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.ex;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +17,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExEditalEliminacao {
 
-	class EditalComparator implements Comparator<ExItemDestinacao> {
-		public int compare(ExItemDestinacao c1, ExItemDestinacao c2) {
-			return c1.getMob().getDoc().getDtDoc()
-					.compareTo(c2.getMob().getDoc().getDtDoc()) * -1;
-		}
-	}
-
 	private static ExDao dao() {
 		return ExDao.getInstance();
 	}
@@ -36,8 +28,8 @@ public class ExEditalEliminacao {
 	private static ExCompetenciaBL comp() {
 		return Ex.getInstance().getComp();
 	}
-	
-	private EditalComparator editalComparator = new EditalComparator();
+
+	private ExEditalComparator editalComparator;
 
 	private ExDocumento doc;
 
@@ -82,17 +74,18 @@ public class ExEditalEliminacao {
 	public int getQuantidadeDisponiveis() {
 		if (quantidadeDisponiveisEntrevista == -1) {
 			quantidadeDisponiveisEntrevista = dao()
-					.consultarQuantidadeAEliminar(getDoc().getOrgaoUsuario(),
+					.consultarQuantidadeAEliminar(getDoc().getSubscritor().getOrgaoUsuario(),
 							getDtIniEntrevista(), getDtFimEntrevista());
 		}
 		return quantidadeDisponiveisEntrevista;
 	}
 
 	public ExEditalEliminacao() {
-
+		this(null);
 	}
 
 	public ExEditalEliminacao(ExDocumento edital) {
+		editalComparator = new ExEditalComparator();
 		setDoc(edital);
 	}
 
@@ -147,6 +140,11 @@ public class ExEditalEliminacao {
 
 		List<ExTopicoDestinacao> listaFinal = new ArrayList<ExTopicoDestinacao>();
 
+		if (getDoc().getSubscritor() == null) {
+			msgErro = "É necessário informar um subscritor para listar os documentos a eliminar do Órgão correspondente";
+			return listaFinal;
+		}
+
 		if (getQuantidadeDisponiveis() > 1000) {
 			msgErro = "Há "
 					+ getQuantidadeDisponiveis()
@@ -155,20 +153,21 @@ public class ExEditalEliminacao {
 		}
 
 		List<ExItemDestinacao> provisorio = new ArrayList<ExItemDestinacao>();
-		provisorio.addAll(dao().consultarAEliminar(getDoc().getOrgaoUsuario(),
+		provisorio.addAll(dao().consultarAEliminar(
+				getDoc().getSubscritor().getOrgaoUsuario(),
 				getDtIniEntrevista(), getDtFimEntrevista()));
 
 		List<ExItemDestinacao> jaInclusos = getEfetivamenteInclusosDoPeriodo();
 		quantidadeDisponiveisEntrevista += jaInclusos.size();
 		provisorio.addAll(jaInclusos);
-		
+
 		if (provisorio.size() == 0) {
 			msgErro = "Não há dados para o período informado.";
 			return listaFinal;
 		}
-		
+
 		Collections.sort(provisorio, editalComparator);
-		
+
 		ExTopicoDestinacao digitais = new ExTopicoDestinacao(
 				"Documentos Digitais a Eliminar", true);
 		ExTopicoDestinacao fisicos = new ExTopicoDestinacao(

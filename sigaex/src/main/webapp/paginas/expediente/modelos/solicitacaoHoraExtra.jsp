@@ -45,17 +45,17 @@ var newwin = null;
 									<mod:selecao titulo="Dia da Semana" var="dataSemana${i}${j}" opcoes="Sábado;Domingo;Segunda;Terça;Quarta;Quinta;Sexta"/> &nbsp;&nbsp;&nbsp;&nbsp;
 									<mod:selecao titulo="Feriado?" var="feriado${i}${j}" opcoes="Não;Sim"/>&nbsp;&nbsp;&nbsp;&nbsp;
 									<mod:selecao titulo="Adicional (AD) ou Banco de horas?" var="adicionalBanco${i}${j}" opcoes="BH;AD"/></br>
-						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
+						    		<mod:texto valor="00" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
 						    		largura="2" maxcaracteres="2" titulo="Horário inicial" var="horaIni${i}${j}" reler="ajax" idAjax="Func${i}${j}" />h 
-						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
+						    		<mod:texto valor="00" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" titulo="" largura="2" maxcaracteres="2" var="minutoIni${i}${j}" reler="ajax" idAjax="Func${i}${j}" />m &nbsp;&nbsp;&nbsp;&nbsp;
 						    		<span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste2',null,'height=225,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${intervaloMsg}');"><u>
                                     Intervalo?</u></span>
 						    		<mod:selecao titulo="" var="intervalo${i}${j}" opcoes="Não;Sim" reler="ajax" idAjax="Func${i}${j}" />&nbsp;&nbsp;&nbsp;&nbsp;
-						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
+						    		<mod:texto valor="00" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"largura="2" maxcaracteres="2" titulo="Horário final" var="horaFim${i}${j}" reler="ajax" idAjax="Func${i}${j}" />h
-						    		<mod:texto onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
+						    		<mod:texto valor="00" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
                                     if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"titulo="" largura="2" maxcaracteres="2" var="minutoFim${i}${j}" reler="ajax" idAjax="Func${i}${j}" />m&nbsp;&nbsp;&nbsp;&nbsp;
 
                             
@@ -95,7 +95,7 @@ var newwin = null;
                                  <c:set var="condicional" value="nao"/>
                                 </c:if>
                                 
-                                
+                               
                                  <c:if test="${(not empty xhoraIni)&& (not empty xhoraFim) && (not empty xminutoFim) && (not empty xminutoIni)&& (condicional != 'nao')&& (xintervalo =='Não')}">
                                      <fmt:formatNumber var="xhoraTotalC" value="${(((xhoraFim * 60 + xminutoFim)-(xhoraIni * 60 + xminutoIni))/60)}" type="number" pattern="##.##" />
                                      <fmt:parseNumber var="xhoraTotal" value="${xhoraTotalC}" type="number" integerOnly="true"/>
@@ -123,7 +123,12 @@ var newwin = null;
                                  <p style="color:red">Total de Hora Extra não pode ser maior que 10h00m.</p>
                                  </c:if>
                                 
-                                 
+                                <c:if test="${((xhoraTotal > 7)||((xhoraTotal==7)&&(xminutoTotal>0))) && (xintervalo == 'Não')}"> 
+                                 <p style="color:red">Para total de horas maior do que 7 horas deve-se obrigatoriamente informar um intervalo de 1 hora</p>
+                                 <c:set var="condicional" value="nao"/>
+                                </c:if>
+                                
+                                
                                 </mod:grupo>
 
 								

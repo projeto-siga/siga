@@ -47,7 +47,7 @@ function sbmt() {
 				</tr>
 				<tr>
 					<td>Responsável:</td>
-					<td><siga:selecao tema="simple" propriedade="subscritor" />
+					<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
 					&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 						onclick="javascript:displayTitular(this);" />Substituto</td>
 				</tr>
@@ -63,9 +63,9 @@ function sbmt() {
 				<td>Titular:</td>
 					<input type="hidden" name="campos" value="titularSel.id" />
 				<td colspan="3"><siga:selecao propriedade="titular"
-							tema="simple" /></td>
+							tema="simple" modulo="siga" /></td>
 				</tr>
-				<siga:selecao titulo="Nova Classificação (opcional):" propriedade="classificacao" />
+				<siga:selecao titulo="Nova Classificação (opcional):" propriedade="classificacao" modulo="sigaex" />
 				<tr>
 					<td>Motivo da reclassificação<br/> (obrigatório se informada nova classificação):</td>
 					<td width="75%"><ww:textfield

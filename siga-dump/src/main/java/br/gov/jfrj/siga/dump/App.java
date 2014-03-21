@@ -1,8 +1,6 @@
 package br.gov.jfrj.siga.dump;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,10 +12,13 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 public class App {
 
+	private static final String OPT_TAB_PK_SEQ = "pkSeq";
 	private static final String PARAM_PWD_DB = "-pwdDB=";
 	private static final String PARAM_USR_DB = "-usrDB=";
 	private static final String PARAM_URL_DB = "-urlDB=";
@@ -25,7 +26,7 @@ public class App {
 	private static final String PARAM_INSERTS = "-inserts=";
 	private static final String PARAM_ARQUIVO_SAIDA = "-arquivoSaida=";
 	private static final String PARAM_TABELAS = "-tabelas=";
-	private final static List<String> _tabs=new ArrayList<String>();
+	private final static Map<String,String> _tabs= new TreeMap<String,String>();
 	private static String _arq = null;
 	private static Boolean _ins = true;
 	private static Boolean _upt = true;
@@ -34,7 +35,7 @@ public class App {
 	private static String _pwd_db = null;
 	
 	
-	private List<String> tabelas;
+	private Map<String,String> tabelas;
 	private String arquivoSaida;
 	private Boolean processarInserts;
 	private Boolean processarUpdates;
@@ -52,7 +53,7 @@ public class App {
 	private List<String> fimScript = new ArrayList<String>();
 	
 
-	public App(List<String> tabelas, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates, String urlDB, String userDB, String passDB) {
+	public App(Map<String,String> tabelas, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates, String urlDB, String userDB, String passDB) {
 		this.tabelas = tabelas;
 		this.arquivoSaida = arquivoSaida;
 		this.processarInserts = processarInserts;
@@ -79,8 +80,8 @@ public class App {
 		 
 		 inicioScript.add(getInicioScript());
 		 List<String> resultadoDump = null;
-		 for (String t:tabelas) {
-			 resultadoDump = dump(t);
+		 for (Entry<String, String> t:tabelas.entrySet()) {
+			 resultadoDump = dump(t.getKey(),t.getValue());
 		}
 		 fimScript.add(getFimScript());
 		
@@ -105,13 +106,15 @@ public class App {
 		fw.close();
 	}
 
-	private List<String> dump(String nomeTabela) throws SQLException {
+	private List<String> dump(String nomeTabela, String optTabela) throws SQLException {
 		inserts.add("\n\n-- INSERTS " + nomeTabela + "\n\n");
 		updates.add("\n\n-- UPDATES " + nomeTabela+ "\n\n");
 		
 		String pk = getPrimaryKey(nomeTabela) ;
 		
-		PreparedStatement stm = connection.prepareStatement("select * from " + nomeTabela + " ORDER BY " + pk);
+		String sql = "select * from " + nomeTabela + (pk==null?"":" ORDER BY " + pk);
+		
+		PreparedStatement stm = connection.prepareStatement(sql);
 		ResultSet rs = stm.executeQuery();
 		
 		List<String> colunas = new ArrayList<String>();
@@ -130,8 +133,20 @@ public class App {
 			String blobValue =null;
 			
 			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-				if(rs.getMetaData().getColumnName(i).equals(pk)){
+				//pk
+				if(pk!=null && rs.getMetaData().getColumnName(i).equals(pk)){
 					pkValue = rs.getObject(i).toString();
+					String pkSeq = getPkSequence(optTabela);
+					if(pkSeq!=null){
+						valores.add(pkSeq);
+						continue;
+					}
+				}
+				
+				//nulls
+				if(campoDeveSeNulo(rs.getMetaData().getColumnName(i),optTabela)){
+					valores.add(null);
+					continue;
 				}
 				
 				if (rs.getMetaData().getColumnType(i) == Types.BLOB){
@@ -176,6 +191,33 @@ public class App {
 		return result;
 	}
 
+	private boolean campoDeveSeNulo(String nomeColuna, String optTabela) {
+		String useNull = getValorOpt("useNull", optTabela); 
+		if (useNull!=null){
+			List<String> lstNulls = Arrays.asList(useNull.split(","));	
+			return lstNulls.contains(nomeColuna);
+		}
+		
+		return false;
+	}
+
+	private String getPkSequence(String optTabela) {
+		return getValorOpt(OPT_TAB_PK_SEQ, optTabela);
+	}
+
+	private String getValorOpt(String campoOpt, String listaOpt) {
+		if(listaOpt==null){
+			return null;
+		}
+		List<String> lstOpts = Arrays.asList(listaOpt.split("&"));
+		for (String o : lstOpts) {
+			if(o.contains(campoOpt +":")){
+				return o.split(":")[1];
+			}
+		}
+		return null;
+	}
+
 	private String getUpdateBlobCmd(String nomeTabela, String campoBlob, String blobValue, String pk, String pkValue) {
 		StringBuffer sb = new StringBuffer();
 		getInicioScript();
@@ -217,7 +259,12 @@ public class App {
 	private String getPrimaryKey(String nomeTabela) throws SQLException {
 		ResultSet rsPK = connection.getMetaData().getPrimaryKeys(null, null, nomeTabela);
 		rsPK.next();
-		return rsPK.getString(4);
+		try{
+			return rsPK.getString(4);	
+		}catch(Exception e){
+			return null;
+		}
+		
 	}
 
 	private String blobToString(byte[] bytes) {
@@ -265,8 +312,14 @@ public class App {
 		for (String param : Arrays.asList(pars)) {
 			if (param.startsWith(PARAM_TABELAS)) {
 				String t = param.split("=")[1];
-				_tabs.addAll(Arrays.asList(t.split(",")));
+				List<String> lstTabs = Arrays.asList(t.split(";"));
+				for (String tab : lstTabs) {
+					String nomeTab = tab.replaceAll("[{].*", "");
+					String tabParams = tab.replaceAll(".*[{]|[}]", "");
+					_tabs.put(nomeTab, tabParams.equals(nomeTab)?null:tabParams);
+				}
 			}
+			
 			if (param.startsWith(PARAM_ARQUIVO_SAIDA)) {
 				String a = param.split("=")[1];
 				_arq=a;

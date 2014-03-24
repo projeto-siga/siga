@@ -117,7 +117,7 @@ public class App {
 		
 		String pk = getPrimaryKey(nomeTabela) ;
 		
-		String sql = "select * from " + nomeTabela + (pk==null?"":" ORDER BY " + pk);
+		String sql = "select * from " + nomeTabela + " " + getWhere(optTabela) + " " + getOrderBy(pk);
 		
 		PreparedStatement stm = connection.prepareStatement(sql);
 		ResultSet rs = stm.executeQuery();
@@ -199,6 +199,14 @@ public class App {
 		
 
 		return result;
+	}
+
+	private String getOrderBy(String pk) {
+		return pk==null?"":" ORDER BY " + pk;
+	}
+
+	private String getWhere(String optTabela) {
+		return "";
 	}
 
 	private boolean campoDeveSeNulo(String nomeColuna, String optTabela) {

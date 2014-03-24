@@ -15,6 +15,7 @@ import java.util.List;
 
 public class App {
 
+	private static final String OPT_TAB_USE_NULL = "useNull";
 	private static final String OPT_TAB_PK_SEQ = "pkSeq";
 	private static final String PARAM_PWD_DB = "-pwdDB=";
 	private static final String PARAM_USR_DB = "-usrDB=";
@@ -201,7 +202,7 @@ public class App {
 	}
 
 	private boolean campoDeveSeNulo(String nomeColuna, String optTabela) {
-		String useNull = getValorOpt("useNull", optTabela); 
+		String useNull = getValorOpt(OPT_TAB_USE_NULL, optTabela); 
 		if (useNull!=null){
 			List<String> lstNulls = Arrays.asList(useNull.split(","));	
 			return lstNulls.contains(nomeColuna);

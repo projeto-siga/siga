@@ -15,6 +15,7 @@ import java.util.List;
 
 public class DumpApp {
 
+	private static final String OPT_TAB_USE_VALOR = "useValor";
 	private static final String OPT_TAB_WHERE = "where";
 	private static final String OPT_TAB_USE_NULL = "useNull";
 	private static final String OPT_TAB_PK_SEQ = "pkSeq";
@@ -155,6 +156,14 @@ public class DumpApp {
 					continue;
 				}
 				
+				//campo tem valor definido
+				String valorDefinido = campoComValorDefinido(rs.getMetaData().getColumnName(i),optTabela);
+				if(valorDefinido !=null){
+					valores.add(valorDefinido);
+					continue;
+				}
+				
+				
 				if (rs.getMetaData().getColumnType(i) == Types.BLOB){
 					contemBlob=true;
 					campoBlob=rs.getMetaData().getColumnName(i);
@@ -200,6 +209,20 @@ public class DumpApp {
 		
 
 		return result;
+	}
+
+	private String campoComValorDefinido(String nomeColuna, String optTabela) {
+		String valoresDefinidos = getValorOpt(OPT_TAB_USE_VALOR, optTabela);
+		if(valoresDefinidos !=null){
+			List<String> lstValoresDefinidos = Arrays.asList(valoresDefinidos.split(","));
+			for (String valorDefinido : lstValoresDefinidos) {
+				if(valorDefinido.split("=")[0].equals(nomeColuna)){
+					return valorDefinido.split("=")[1];
+				}
+			}
+		}
+
+		return null;
 	}
 
 	private String getOrderBy(String pk) {

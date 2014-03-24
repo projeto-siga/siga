@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class App {
+public class DumpApp {
 
 	private static final String OPT_TAB_WHERE = "where";
 	private static final String OPT_TAB_USE_NULL = "useNull";
@@ -55,7 +55,7 @@ public class App {
 	private List<String> fimScript = new ArrayList<String>();
 	
 
-	public App(List<String> tabelas,List<String> tabelasOpcoes, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates, String urlDB, String userDB, String passDB) {
+	public DumpApp(List<String> tabelas,List<String> tabelasOpcoes, String arquivoSaida, Boolean processarInserts, Boolean processarUpdates, String urlDB, String userDB, String passDB) {
 		this.tabelas = tabelas;
 		this.tabelasOpcoes = tabelasOpcoes;
 		this.arquivoSaida = arquivoSaida;
@@ -69,7 +69,7 @@ public class App {
 	public static void main(String[] args) throws SQLException, IOException {
 		System.out.println("Iniciando exportação...");
 		processarArgumentos(args);
-		App app = new App(_tabs,_tabs_opts,_arq,_ins,_upt,_url_db, _usr_db,_pwd_db);
+		DumpApp app = new DumpApp(_tabs,_tabs_opts,_arq,_ins,_upt,_url_db, _usr_db,_pwd_db);
 		app.dump();
 		System.out.println("Aplicação encerrada!");
 	}

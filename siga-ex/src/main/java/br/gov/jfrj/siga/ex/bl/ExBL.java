@@ -2234,7 +2234,7 @@ public class ExBL extends CpBL {
 		
 		if(!doc.isEletronico() 
 				&& doc.isProcesso() 
-				&& doc.getExMobilPai().getExDocumento().isProcesso()
+				&& doc.getExMobilPai() != null && doc.getExMobilPai().getExDocumento().isProcesso()
 				&& doc.getExMobilPai().getExDocumento().isEletronico())
 			throw new AplicacaoException("Não é possível criar Subprocesso físico de processo eletrônico.");
 

@@ -116,7 +116,7 @@ public class DumpApp {
 		inserts.add("\n\n-- INSERTS " + nomeTabela + "\n\n");
 		updates.add("\n\n-- UPDATES " + nomeTabela+ "\n\n");
 		
-		String pk = getPrimaryKey(nomeTabela) ;
+		String pk = getPrimaryKey(nomeTabela,optTabela) ;
 		
 		String sql = "select * from " + nomeTabela + " " + getWhere(optTabela) + " " + getOrderBy(pk);
 		
@@ -280,7 +280,17 @@ public class DumpApp {
 		return "'" + str.replaceAll("'", " || chr(39) || ") + "'";
 	}
 
-	private String getPrimaryKey(String nomeTabela) throws SQLException {
+	private String getPrimaryKey(String nomeTabela, String optTabela) throws SQLException {
+		String pkDefinida = getValorOpt("pk", optTabela);  
+		if (pkDefinida!=null){
+			return pkDefinida;
+		}else{
+			return detectarPK(nomeTabela);
+		}
+		
+	}
+
+	private String detectarPK(String nomeTabela) throws SQLException {
 		ResultSet rsPK = connection.getMetaData().getPrimaryKeys(null, null, nomeTabela);
 		rsPK.next();
 		try{
@@ -288,7 +298,6 @@ public class DumpApp {
 		}catch(Exception e){
 			return null;
 		}
-		
 	}
 
 	private String blobToString(byte[] bytes) throws Exception {

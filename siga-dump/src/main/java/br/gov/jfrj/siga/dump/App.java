@@ -15,6 +15,7 @@ import java.util.List;
 
 public class App {
 
+	private static final String OPT_TAB_WHERE = "where";
 	private static final String OPT_TAB_USE_NULL = "useNull";
 	private static final String OPT_TAB_PK_SEQ = "pkSeq";
 	private static final String PARAM_PWD_DB = "-pwdDB=";
@@ -206,6 +207,10 @@ public class App {
 	}
 
 	private String getWhere(String optTabela) {
+		String where  = getValorOpt(OPT_TAB_WHERE, optTabela);
+		if (where!=null && where.length()>0){
+			return "WHERE " +where;
+		}
 		return "";
 	}
 
@@ -336,7 +341,7 @@ public class App {
 
 		for (String param : Arrays.asList(pars)) {
 			if (param.startsWith(PARAM_TABELAS)) {
-				String t = param.split("=")[1];
+				String t = param.split(PARAM_TABELAS)[1];
 				List<String> lstTabs = Arrays.asList(t.split(";"));
 				for (String tab : lstTabs) {
 					String nomeTab = tab.replaceAll("[{].*", "");

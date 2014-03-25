@@ -67,7 +67,7 @@ public class Application extends SigaApplication {
 	}
 
 	@Before(unless = { "exibirAtendente", "exibirAtributos",
-			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao"})
+			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao" })
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -116,7 +116,7 @@ public class Application extends SigaApplication {
 		List contagens = query.getResultList();
 		render(contagens);
 	}
-	
+
 	public void corporativo() {
 		try {
 			Corporativo.dadosrh();
@@ -136,7 +136,7 @@ public class Application extends SigaApplication {
 
 		formEditar(solicitacao.deduzirLocalERamal());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static void exibirLocalERamal(SrSolicitacao solicitacao)
 			throws Exception {
@@ -303,8 +303,9 @@ public class Application extends SigaApplication {
 			render("@editarDesignacao", designacao, orgaos);
 		}
 	}
-	
-	private static void validarFormEditarPermissaoUsoLista(SrConfiguracao designacao) {
+
+	private static void validarFormEditarPermissaoUsoLista(
+			SrConfiguracao designacao) {
 	}
 
 	public static void gravar(SrSolicitacao solicitacao) throws Exception {
@@ -527,15 +528,18 @@ public class Application extends SigaApplication {
 		exibirLista(idLista);
 	}
 
-	public static void priorizarLista(@As(",")List<Long> ids, Long id) throws Exception {
-		
-		//Edson: as 3 linhas abaixo nao deveriam estar sendo necessarias, mas o Play
-		//nao estah fazendo o binding direito caso o parametro seja List<SrSolicitacao>
-		//em vez de List<Long>. Ver o que estah havendo.
+	public static void priorizarLista(@As(",") List<Long> ids, Long id)
+			throws Exception {
+
+		// Edson: as 3 linhas abaixo nao deveriam estar sendo necessarias, mas o
+		// Play
+		// nao estah fazendo o binding direito caso o parametro seja
+		// List<SrSolicitacao>
+		// em vez de List<Long>. Ver o que estah havendo.
 		List<SrSolicitacao> sols = new ArrayList<SrSolicitacao>();
 		for (Long l : ids)
-			sols.add((SrSolicitacao)SrSolicitacao.findById(l));
-		
+			sols.add((SrSolicitacao) SrSolicitacao.findById(l));
+
 		SrLista lista = SrLista.findById(id);
 		lista.priorizar(cadastrante(), lotaTitular(), sols);
 		exibirLista(id);
@@ -553,12 +557,13 @@ public class Application extends SigaApplication {
 		if (arq != null)
 			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
 	}
-	
+
 	public static void exibirPesquisa(Long idMovimentacao) throws Exception {
 		SrMovimentacao movimentacao = SrMovimentacao.findById(idMovimentacao);
-		//exibir(mov.solicitacao.idSolicitacao, completo());
-		SrPesquisa pesquisa = movimentacao.pesquisa; 
-		Set<SrPergunta> perguntas = movimentacao.pesquisa.getPerguntaSetAtivas();
+		// exibir(mov.solicitacao.idSolicitacao, completo());
+		SrPesquisa pesquisa = movimentacao.pesquisa;
+		Set<SrPergunta> perguntas = movimentacao.pesquisa
+				.getPerguntaSetAtivas();
 		render(movimentacao, pesquisa, perguntas);
 	}
 
@@ -590,8 +595,9 @@ public class Application extends SigaApplication {
 		render(sol);
 	}
 
-	public static void responderPesquisaGravar(Long id, HashMap<Long, Object> respostaMap) throws Exception {
-	SrSolicitacao sol = SrSolicitacao.findById(id);
+	public static void responderPesquisaGravar(Long id,
+			HashMap<Long, Object> respostaMap) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrMovimentacao movimentacao = new SrMovimentacao();
 		List<SrResposta> respostas = movimentacao.setRespostaMap(respostaMap);
 		sol.responderPesquisa(lotaTitular(), cadastrante(), respostas);
@@ -626,9 +632,11 @@ public class Application extends SigaApplication {
 		exibir(sol.idSolicitacao, completo());
 	}
 
-	public static void deixarPendente(Long id, String motivo, String calendario, String horario) throws Exception {
+	public static void deixarPendente(Long id, String motivo,
+			String calendario, String horario) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario, horario);
+		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario,
+				horario);
 		exibir(id, completo());
 	}
 
@@ -689,10 +697,11 @@ public class Application extends SigaApplication {
 		designacao.finalizar();
 		listarDesignacao();
 	}
-	
+
 	public static void listarPermissaoUsoLista() throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> permissoes = SrConfiguracao.listarPermissoesUsoLista(lotaTitular());
+		List<SrConfiguracao> permissoes = SrConfiguracao
+				.listarPermissoesUsoLista(lotaTitular());
 		render(permissoes);
 	}
 
@@ -701,7 +710,8 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<SrLista> listasPrioridade = SrLista.getCriadasPelaLotacao(lotaTitular());
+		List<SrLista> listasPrioridade = SrLista
+				.getCriadasPelaLotacao(lotaTitular());
 		SrConfiguracao permissao = new SrConfiguracao();
 		if (id != null)
 			permissao = JPA.em().find(SrConfiguracao.class, id);
@@ -722,7 +732,6 @@ public class Application extends SigaApplication {
 		designacao.finalizar();
 		listarDesignacao();
 	}
-
 
 	public static void listarAssociacao() throws Exception {
 		assertAcesso("ADM:Administrar");
@@ -800,7 +809,8 @@ public class Application extends SigaApplication {
 				filtro = new SrItemConfiguracao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(sol.getItensDisponiveis());
+			itens = filtro.buscar(sol != null && (sol.solicitante != null || sol.local != null) ? sol.getItensDisponiveis()
+					: null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrItemConfiguracao>();
 		}
@@ -923,7 +933,8 @@ public class Application extends SigaApplication {
 				filtro = new SrAcao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(sol.getAcoesDisponiveis());
+			itens = filtro.buscar(sol != null && (sol.solicitante != null || sol.local != null) ? sol.getAcoesDisponiveis()
+					: null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrAcao>();
 		}
@@ -1006,7 +1017,7 @@ public class Application extends SigaApplication {
 										.getIdOrgaoUsu()).getResultList();
 		render(locais);
 	}
-	
+
 	public static void relPrazoTRF() throws Exception {
 		assertAcesso("REL:Relatorio");
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
@@ -1042,7 +1053,7 @@ public class Application extends SigaApplication {
 										.getIdOrgaoUsu()).getResultList();
 		render(locais);
 	}
-	
+
 	public static void relAgendado() throws Exception {
 		assertAcesso("REL:Relatorio");
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
@@ -1054,7 +1065,7 @@ public class Application extends SigaApplication {
 										.getIdOrgaoUsu()).getResultList();
 		render(locais);
 	}
-	
+
 	public static void grelSolicitacoes(String secaoUsuario, String lotacao,
 			String situacao, String dtIni, String dtFim) throws Exception {
 
@@ -1105,7 +1116,8 @@ public class Application extends SigaApplication {
 	}
 
 	public static void grelLocal(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim, String atendente) throws Exception {
+			String local, String dtIni, String dtFim, String atendente)
+			throws Exception {
 
 		assertAcesso("REL:Relatorio");
 
@@ -1130,14 +1142,15 @@ public class Application extends SigaApplication {
 	}
 
 	public static void grelPrazo(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim, String atendente) throws Exception {
+			String local, String dtIni, String dtFim, String atendente)
+			throws Exception {
 
 		assertAcesso("REL:Relatorio");
 
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
-		//if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
+		// if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
 		parametros.put("atendente", atendente);
 		parametros.put("lotacao", lotacao);
 		parametros.put("local", local);
@@ -1156,7 +1169,8 @@ public class Application extends SigaApplication {
 	}
 
 	public static void grelPrazoTRF(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim, String atendente) throws Exception {
+			String local, String dtIni, String dtFim, String atendente)
+			throws Exception {
 
 		assertAcesso("REL:Relatorio");
 
@@ -1176,8 +1190,8 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Prazos - TRF", pdf.length, "application/pdf",
-				true);
+		renderBinary(is, "Relatório de Prazos - TRF", pdf.length,
+				"application/pdf", true);
 	}
 
 	public static void grelPrazoDetail(String secaoUsuario, String lotacao,
@@ -1229,9 +1243,10 @@ public class Application extends SigaApplication {
 		renderBinary(is, "Relatório de Indíces de Satisfação", pdf.length,
 				"application/pdf", true);
 	}
-	
+
 	public static void grelAgendado(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim, String atendente) throws Exception {
+			String local, String dtIni, String dtFim, String atendente)
+			throws Exception {
 
 		assertAcesso("REL:Relatorio");
 

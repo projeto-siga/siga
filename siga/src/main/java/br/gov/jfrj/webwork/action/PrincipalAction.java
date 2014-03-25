@@ -164,10 +164,6 @@ public class PrincipalAction extends SigaActionSupport {
 				}
 			if (copiaSigla.startsWith("-"))
 				copiaSigla = copiaSigla.substring(1);
-			
-			final Pattern p2 = Pattern.compile("^[0-9]{1,5}");
-			final Matcher m2 = p2.matcher(copiaSigla);
-			final boolean pesquisarPessoa = m2.find(); 
 
 			if (copiaSigla.startsWith("SR")) {
 				if (Cp.getInstance()
@@ -176,34 +172,23 @@ public class PrincipalAction extends SigaActionSupport {
 					URLSelecionar = urlBase + "/sigasr" + testes
 							+ "/solicitacao/selecionar?sigla=" + getSigla()
 							+ incluirMatricula;
-			}else if(pesquisarPessoa) {
-				URLSelecionar = urlBase + "/siga" + testes
-						+ "/pessoa/selecionar?sigla=" + getSigla()
-						+ incluirMatricula;
 			} else
 				URLSelecionar = urlBase + "/sigaex"
 						+ (testes.length() > 0 ? testes : "/expediente")
 						+ "/selecionar.action?sigla=" + getSigla()
 						+ incluirMatricula;
 
-			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders()).split(";");
-				
+			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
+					.split(";");
 
-			if (copiaSigla.startsWith("SR")) {
+			if (copiaSigla.startsWith("SR"))
 				uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
-			} else if(pesquisarPessoa) {
-				uRLExibir = urlBase + "/siga" + testes
-						+ "/pessoa/exibir.action?matricula=" + getSigla()
-						+ incluirMatricula;
-			} else
+			else
 				uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];
 
-			if(!pesquisarPessoa) {
-				sel.setId(Long.valueOf(response[1]));
-				sel.setSigla(response[2]);
-			}
-			sel.setId(1L);
+			sel.setId(Long.valueOf(response[1]));
+			sel.setSigla(response[2]);
 			sel.setDescricao(uRLExibir);
 
 			return "ajax_retorno";

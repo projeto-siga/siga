@@ -24,7 +24,7 @@
 #{/if}
 
 #{if exibirMenuRelatorios}
-<li><a href="#">Relatórios</a>
+<li><a href="#">Relatório</a>
 <ul>
 <li><a href="@{Application.estatistica}">Estatísticas</a></li>
 <li><a href="@{Application.relSolicitacoes}">Relatório de Solicitações</a></li>
@@ -35,9 +35,9 @@
 <li><a href="@{Application.relPrazo}">Relatório de Totalizações de Prazos</a></li>
 #{/if}
 #{if titular.getOrgaoUsuario().idOrgaoUsu == 3 }
-<li><a href="@{Application.relPrazoDetail}">Relatório de Totalizações de Prazos (TRF)</a></li>
+<li><a href="@{Application.relPrazo}">Relatório de Totalizações de Prazos (TRF)</a></li>
 #{/if}
-<li><a href="@{Application.relPesquisa}">Relatório de Índice de Satisfação</a></li>
+<li><a href="@{Application.relPesquisa}">Relatório de  Índice de Satisfação</a></li>
 <li><a href="@{Application.relAgendado}">Relatório de Solicitações Agendadas por Localidade</a></li>
 </ul>
 </li>

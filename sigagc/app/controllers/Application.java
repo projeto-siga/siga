@@ -499,7 +499,7 @@ public class Application extends SigaApplication {
 				}
 			}
 			else{
-				GcTag EmptyTag = new GcTag(null, "", "Conhecimentos sem classificação");
+				GcTag EmptyTag = new GcTag(null, "", "Conhecimentos sem classificacao");
 				arvore.add(EmptyTag, inf);	
 			}	
 		}

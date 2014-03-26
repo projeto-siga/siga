@@ -499,7 +499,7 @@ public class Application extends SigaApplication {
 				}
 			}
 			else{
-				GcTag EmptyTag = new GcTag(null, "", "Conhecimentos sem classificacao");
+				GcTag EmptyTag = new GcTag(null, "", "Conhecimentos sem classificação");
 				arvore.add(EmptyTag, inf);	
 			}	
 		}
@@ -516,15 +516,20 @@ public class Application extends SigaApplication {
 
 	public static void exibir(String sigla) throws Exception{
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-
-		if (informacao.podeRevisar(titular(), lotaTitular()) ||
-				informacao.acessoPermitido(titular(), lotaTitular(), informacao.visualizacao.id)) {
+		DpPessoa titular = titular();
+		DpLotacao lotaTitular = lotaTitular();
+		CpIdentidade idc = idc();
+		GcMovimentacao movNotificacao = informacao.podeTomarCiencia(titular, lotaTitular);
+		
+		if (informacao.acessoPermitido(titular, lotaTitular, informacao.visualizacao.id) 
+				|| informacao.podeRevisar(titular, lotaTitular) 
+					|| movNotificacao != null) {
 			String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
 			if (conteudo != null)
 				informacao.arq.setConteudoTXT(conteudo);
-			
-			GcBL.notificado(informacao, idc(), titular(), lotaTitular());
-			GcBL.logarVisita(informacao, idc(), titular(), lotaTitular());
+			if (movNotificacao != null)
+				GcBL.notificado(informacao, idc, titular, lotaTitular, movNotificacao);
+			GcBL.logarVisita(informacao, idc, titular, lotaTitular);
 			render(informacao);
 		}
 		else
@@ -535,14 +540,16 @@ public class Application extends SigaApplication {
 	public static void editar(String sigla, String classificacao, String titulo,
 			String origem) throws Exception {
 		GcInformacao informacao = null;
-
+		DpPessoa titular = titular();
+		DpLotacao lotaTitular = lotaTitular();
+		
 		if(sigla != null)
 			informacao = GcInformacao.findBySigla(sigla);
 		else
 			informacao = new GcInformacao();
 		
-		if (informacao.autor == null || informacao.podeRevisar(titular(), lotaTitular()) ||
-				informacao.acessoPermitido(titular(), lotaTitular(), informacao.edicao.id)) {
+		if (informacao.autor == null || informacao.podeRevisar(titular, lotaTitular) ||
+				informacao.acessoPermitido(titular, lotaTitular, informacao.edicao.id)) {
 			List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
 			List<GcAcesso> acessos = GcAcesso.all().fetch();
 			if (titulo == null)
@@ -553,10 +560,10 @@ public class Application extends SigaApplication {
 				classificacao = (informacao.arq != null) ? informacao.arq.classificacao: null;
 
 			if (informacao.autor == null) {
-				informacao.autor = titular();
+				informacao.autor = titular;
 			}
 			if (informacao.lotacao == null) {
-				informacao.lotacao = lotaTitular();
+				informacao.lotacao = lotaTitular;
 			}
 
 			render(informacao, tiposInformacao, acessos, titulo, conteudo,

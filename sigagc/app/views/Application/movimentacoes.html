@@ -35,6 +35,11 @@ title:'Movimentações'/}
 						#{if m.movRef.tipo.id == 13}
 							#{set descricao: m.movRef.tipo.nome + ": " + m.movRef.arq?.titulo /} 
 						#{/if}
+						#{elseif m.movRef.tipo.id == 4 || m.movRef.tipo.id == 6}
+							#{set pessoa: m.movRef.pessoaAtendente?.nomeAbreviado ?: "" /}
+							#{set lotacao: m.movRef.lotacaoAtendente?.sigla ?: "" /}
+							#{set descricao: m.movRef.tipo.nome + ": " + lotacao + pessoa /}
+						#{/elseif}
 						#{else} #{set descricao: m.movRef.tipo.nome /}#{/else}
 					#{/elseif}
 					#{else}

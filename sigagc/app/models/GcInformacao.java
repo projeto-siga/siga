@@ -203,6 +203,31 @@ public class GcInformacao extends GenericModel {
 			return false;
 	}
 
+	public GcMovimentacao podeTomarCiencia(DpPessoa titular, DpLotacao lotaTitular) {
+		GcMovimentacao movNotificar = null;
+		if(isCancelado())
+			return null;
+		for (GcMovimentacao mov : movs) {
+			if (mov.isCancelada())
+				continue;
+			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR
+					&& (titular.equivale(mov.pessoaAtendente) 
+							|| lotaTitular.equivale(mov.lotacaoAtendente))) {
+				movNotificar = mov;
+				break;
+			}
+		}
+		if (movNotificar != null) 
+			for (GcMovimentacao movCiente : movs) {
+				if (movCiente.isCancelada())
+					continue;
+				if (movCiente.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE
+						&& movCiente.movRef == movNotificar 
+							&& movCiente.pessoaTitular.equivale(titular))
+					return movNotificar = null;
+			}
+		return movNotificar;
+	}
 	public boolean podeRevisar(DpPessoa titular, DpLotacao lotaTitular) {
 		if (isCancelado())
 			return false;

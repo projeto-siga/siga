@@ -456,40 +456,28 @@ public class GcBL {
 		GcBL.gravar(informacao, idc, titular, lotaTitular);
 	}
 
-	public static void notificado(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
-		GcMovimentacao movLocalizada = null;
-		for (GcMovimentacao mov : informacao.movs) {
-			if (mov.isCancelada())
-				continue;
-			if(mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR){
-				movLocalizada = mov;
-				break;
-			}
-		}
+	public static void notificado(GcInformacao informacao, CpIdentidade idc, DpPessoa titular,
+									DpLotacao lotaTitular, GcMovimentacao movNotificacao) throws Exception {
 		for (GcMovimentacao movs : informacao.movs) {
-			if(movs.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE
-					&& movs.movRef == movLocalizada && movs.pessoaTitular.equivale(titular))
-				return;
 			if (movs.isCancelada())
 				continue;
-			if(movLocalizada != null && movs.tipo.id == movLocalizada.tipo.id){
-				if (titular.equivale(movLocalizada.pessoaAtendente)){
+			if (movs.tipo.id == movNotificacao.tipo.id){
+				if (titular.equivale(movNotificacao.pessoaAtendente)){
 					GcMovimentacao m = GcBL.movimentar(informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-							null, null, null, null, null, movLocalizada, null, null,
+							null, null, null, null, null, movNotificacao, null, null,
 							null);
-					movLocalizada.movCanceladora = m;
+					movNotificacao.movCanceladora = m;
 					GcBL.gravar(informacao, idc, titular, lotaTitular);
 				}
-				else if (lotaTitular.equivale(movLocalizada.lotacaoAtendente)) {
+				else if (lotaTitular.equivale(movNotificacao.lotacaoAtendente)) {
 					GcMovimentacao m = GcBL.movimentar(informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-							null, movLocalizada.lotacaoAtendente, null, null, null, movLocalizada, null, null,
+							null, movNotificacao.lotacaoAtendente, null, null, null, movNotificacao, null, null,
 							null);
 					GcBL.gravar(informacao, idc, titular, lotaTitular);
-					if(m.todaLotacaoCiente(movLocalizada)){
-						movLocalizada.movCanceladora = m;
+					if(m.todaLotacaoCiente(movNotificacao)){
+						movNotificacao.movCanceladora = m;
 						GcBL.gravar(informacao, idc, titular, lotaTitular);
 					}
 				}

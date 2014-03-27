@@ -88,7 +88,7 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoPai")
 	@Desconsiderar
 	private Set<DpLotacao> dpLotacaoSubordinadosSet = new HashSet<DpLotacao>(0);
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "idLotacao")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacao")
     @Desconsiderar
     private Set<DpPessoa> dpPessoaLotadosSet  = new HashSet<DpPessoa>(0);
 	@ManyToOne(fetch = FetchType.LAZY)

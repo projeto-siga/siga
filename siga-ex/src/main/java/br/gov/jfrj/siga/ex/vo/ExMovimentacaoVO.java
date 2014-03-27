@@ -296,18 +296,33 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = null;
 			if (originadaAqui) {
 				if (mov.getExMobilRef() != null) {
+					
+					String mensagemPos = null;
+					
+					if(!mov.getExMobilRef().getExDocumento().getDescrDocumento().equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
+						mensagemPos = " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
+					
+					
 					addAcao(null, mov.getExMobilRef().getSigla(),
 							"/expediente/doc", "exibir", true, null, "sigla="
 									+ mov.getExMobilRef().getSigla(),
-							"Juntado ao documento: ", " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
+							"Juntado ao documento: ", mensagemPos, null);
 				} else {
 					descricao = "Juntado ao documento: " + mov.getDescrMov();
 				}
 			} else {
+				
+				String mensagemPos = null;
+				
+				if(!mov.getExMobil().getExDocumento().getDescrDocumento().equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
+					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
+				
+				
+				
 				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
-						"Documento juntado: ", " Descrição: " + mov.getExDocumento().getDescrDocumento(), null);
+						"Documento juntado: ", mensagemPos, null);
 			}
 		}
 

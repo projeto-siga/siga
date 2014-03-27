@@ -58,7 +58,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
 
-		this.setTitle("Relat�rio de Solicita��es por N�vel de Servi�o");
+		this.setTitle("Relatório de Solicitações por Nível de Serviço");
 		estiloTituloColuna.setFont(new Font(8, "Arial", true));
 
 		this.addColuna("Local", 100, RelatorioRapido.DIREITA, true,
@@ -108,11 +108,6 @@ public class SrRelPrazo extends RelatorioTemplate {
 
 		String local = new String();
 		List<Object> d = new LinkedList<Object>();
-		List<CpOcorrenciaFeriado> ferjust = CpOcorrenciaFeriado.find(
-				"select dtIniFeriado, dtFimFeriado from CpOcorrenciaFeriado")
-				.fetch();
-		Set dataDosFeriados = new HashSet();
-		Iterator it1 = ferjust.listIterator();
 		double cls_1 = 0;
 		double cls_2 = 0;
 		double cls_4 = 0;
@@ -120,17 +115,9 @@ public class SrRelPrazo extends RelatorioTemplate {
 		double cls_24 = 0;
 		double cls_ac24 = 0;
 		Long percTotal = (long) 0.;
-		while (it1.hasNext()) {
-			Object[] obj = (Object[]) it1.next();
-			DateTime inifer = new DateTime(obj[0]);
-			DateTime fimfer = new DateTime(obj[1]);
-			if (inifer != null) {
-				dataDosFeriados.add(new LocalDate(inifer));
-			}
-			if (fimfer != null) {
-				dataDosFeriados.add(new LocalDate(fimfer));
-			}
-		}
+
+		Set dataDosFeriados = calculaFeriados();
+
 		if ((parametros.get("lotacao").equals(""))
 				&& (parametros.get("atendente") == null)) {
 			if (parametros.get("local").equals("0")) {
@@ -198,6 +185,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 									+ parametros.get("dtFim")
 									+ " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 							.fetch();
+					
 					Iterator it = solicDoComplexo.listIterator();
 					while (it.hasNext()) {
 						Object[] obj = (Object[]) it.next();
@@ -1309,6 +1297,26 @@ public class SrRelPrazo extends RelatorioTemplate {
 			d.add((cls_ac24 / percTotal));
 		}
 		return d;
+	}
+
+	private Set calculaFeriados() {
+		List<CpOcorrenciaFeriado> ferjust = CpOcorrenciaFeriado.find(
+				"select dtIniFeriado, dtFimFeriado from CpOcorrenciaFeriado")
+				.fetch();
+		Set dataDosFeriados = new HashSet();
+		Iterator it1 = ferjust.listIterator();
+		while (it1.hasNext()) {
+			Object[] obj = (Object[]) it1.next();
+			DateTime inifer = new DateTime(obj[0]);
+			DateTime fimfer = new DateTime(obj[1]);
+			if (inifer != null) {
+				dataDosFeriados.add(new LocalDate(inifer));
+			}
+			if (fimfer != null) {
+				dataDosFeriados.add(new LocalDate(fimfer));
+			}
+		}
+		return dataDosFeriados;
 	}
 
 	private BigDecimal calcularPendencias(SrSolicitacao sol) {

@@ -37,6 +37,7 @@ import br.gov.jfrj.relatorio.dinamico.Coluna;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.CpOcorrenciaFeriado;
+import br.gov.jfrj.siga.dp.DpLotacao;
 
 public class SrRelPrazoTRF extends RelatorioTemplate {
 
@@ -58,6 +59,8 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 		this.setTitle("Relatório de Solicitações por Nível de Serviço");
 		estiloTituloColuna.setFont(new Font(9, "Arial", true));
 
+		this.addColuna("Local", 100, RelatorioRapido.DIREITA, true,
+				String.class);
 		Coluna cls_15m = this.addColuna("Até 15m", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
 		cls_15m.setPadrao("0");
@@ -94,7 +97,7 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Collection processarDados() throws Exception {
-		
+
 		String local = new String();
 		List<Object> d = new LinkedList<Object>();
 		double cls_15m = 0;
@@ -103,17 +106,18 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 		double cls_8 = 0;
 		double cls_15 = 0;
 		Long percTotal = (long) 0.;
-		
+
 		Set dataDosFeriados = calculaFeriados();
-		
+
 		if ((parametros.get("lotacao").equals(""))
 				&& (parametros.get("atendente") == null)) {
+
 			SortedSet<String> set = new TreeSet<String>();
 			TreeMap<String, Double> map = new TreeMap<String, Double>();
 			TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
 
-			List<SrSolicitacao> listaTotal = SrSolicitacao
-					.find("select sol.local.nomeComplexo, count(*) "
+			percTotal = SrSolicitacao
+					.find("select count(*) "
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.dtIniMov = (select max(movult.dtIniMov) "
@@ -130,232 +134,17 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('"
 							+ parametros.get("dtFim")
-							+ " 23:59:59','dd/MM/yy hh24:mi:ss') "
-							+ "group by sol.local.nomeComplexo").fetch();
+							+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").first();
 
-			Iterator itTotal = listaTotal.listIterator();
-			while (itTotal.hasNext()) {
-				Object[] obj = (Object[]) itTotal.next();
-				String complexo = (String) obj[0];
-				Long total_local = (Long) obj[1];
-				set.add(complexo);
-				maptotais.put(complexo, total_local);
-			}
-
-			for (String locais : set) {
-				cls_15m = 0;
-				cls_1 = 0;
-				cls_3 = 0;
-				cls_8 = 0;
-				cls_15 = 0;
-				List<SrSolicitacao> solicDoComplexo = SrSolicitacao
-						.find("select sol.local.nomeComplexo, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
-								+ "from SrSolicitacao sol, SrMovimentacao mov "
-								+ "where sol.idSolicitacao = mov.solicitacao "
-								+ "and sol.local.nomeComplexo = '"
-								+ locais.toString()
-								+ "' "
-								+ "and mov.dtIniMov = (select max(movult.dtIniMov) "
-								+ "from SrMovimentacao movult "
-								+ "where movult.solicitacao = mov.solicitacao "
-								+ " and movult.tipoMov = 7) "
-								+ "and not exists (select 1 from SrMovimentacao movfec "
-								+ "where movfec.solicitacao = mov.solicitacao "
-								+ "and movfec.dtIniMov > mov.dtIniMov "
-								+ "and movfec.tipoMov <> 14) "
-								+ "and  sol.dtReg >= to_date('"
-								+ parametros.get("dtIni")
-								+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
-								+ "and  sol.dtReg <= to_date('"
-								+ parametros.get("dtFim")
-								+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
-				Iterator it = solicDoComplexo.listIterator();
-				while (it.hasNext()) {
-					Object[] obj = (Object[]) it.next();
-					local = (String) obj[0];
-					set.add(local);
-					SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
-					DateTime startemp = new DateTime(obj[2]);
-					DateTime endtemp = new DateTime(obj[3]);
-					DateTime start1 = new DateTime();
-					DateTime end1 = new DateTime();
-					if (startemp.getHourOfDay() < 10) {
-						start1 = new DateTime(startemp.getYear(),
-								startemp.getMonthOfYear(),
-								startemp.getDayOfMonth() + 1, 10, 0, 0);
-					} else if (startemp.getHourOfDay() >= 18) {
-						start1 = new DateTime(startemp.getYear(),
-								startemp.getMonthOfYear(),
-								startemp.getDayOfMonth() + 1, 10, 0, 0);
-					} else
-						start1 = startemp;
-					if (endtemp.getHourOfDay() < 10) {
-						end1 = new DateTime(endtemp.getYear(),
-								endtemp.getMonthOfYear(),
-								endtemp.getDayOfMonth() + 1, 10, 0, 0);
-					} else if (endtemp.getHourOfDay() >= 18) {
-						end1 = new DateTime(endtemp.getYear(),
-								endtemp.getMonthOfYear(),
-								endtemp.getDayOfMonth() + 1, 10, 0, 0);
-					} else
-						end1 = endtemp;
-					int dias = Days.daysBetween(start1.toLocalDateTime(),
-							end1.toLocalDateTime()).getDays();
-					HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
-							dataDosFeriados);
-					LocalDateKitCalculatorsFactory.getDefaultInstance()
-							.registerHolidays("BR", calendarioDeFeriados);
-					DateCalculator calendario = LocalDateKitCalculatorsFactory
-							.getDefaultInstance().getDateCalculator("BR",
-									HolidayHandlerType.FORWARD);
-					BigDecimal totalMinutosTrabalhados = new BigDecimal(0.0);
-					DateTime dataInicialTemporaria = new DateTime(start1);
-					DateTime dataFinalTemporaria = new DateTime(end1);
-					DateTime dtinitemp = new DateTime(start1);
-					DateTime dtendtemp = new DateTime(end1);
-					int i = 1;
-					while (!dataInicialTemporaria.isAfter(dataFinalTemporaria)) {
-						if (calendario.isNonWorkingDay(dataInicialTemporaria
-								.toLocalDate())) {
-						} else {
-							if (i == dias) {
-								dtinitemp = new DateTime(dataInicialTemporaria);
-								dtendtemp = new DateTime(
-										dataInicialTemporaria.getYear(),
-										dataInicialTemporaria.getMonthOfYear(),
-										dataInicialTemporaria.getDayOfMonth(),
-										18, 0, 0);
-							} else if (i > dias) {
-								dtinitemp = new DateTime(dataInicialTemporaria);
-								dtendtemp = new DateTime(end1);
-							} else {
-								dtinitemp = new DateTime(dataInicialTemporaria);
-								dtendtemp = new DateTime(
-										dataInicialTemporaria.getYear(),
-										dataInicialTemporaria.getMonthOfYear(),
-										dataInicialTemporaria.getDayOfMonth(),
-										18, 0, 0);
-							}
-							new Period(dtinitemp,
-									dtendtemp).getHours();
-							totalMinutosTrabalhados = new BigDecimal(Minutes
-									.minutesBetween(dtinitemp, dtendtemp)
-									.getMinutes()).add(totalMinutosTrabalhados);
-						}
-						dataInicialTemporaria = new DateTime(
-								dataInicialTemporaria.getYear(),
-								dataInicialTemporaria.getMonthOfYear(),
-								dataInicialTemporaria.getDayOfMonth(), 9, 0, 0)
-								.plusDays(1);
-						i++;
-					}
-					BigDecimal totalMinutosPendentes = calcularPendencias(sol);
-					totalMinutosTrabalhados = totalMinutosTrabalhados
-							.subtract(totalMinutosPendentes);
-					BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(
-							new BigDecimal("60"), 2, RoundingMode.HALF_UP);
-					if (totalMinutosTrabalhados.doubleValue() <= 15) {
-						cls_15m = cls_15m + 1;
-						map.put(chave(local, "15m"), cls_15m);
-					}
-					if (totalMinutosTrabalhados.doubleValue() > 15
-							&& horasLiquidas.doubleValue() <= 1) {
-						cls_1 = cls_1 + 1;
-						map.put(chave(local, "1"), cls_1);
-					}
-					if (horasLiquidas.doubleValue() > 1
-							&& horasLiquidas.doubleValue() <= 3) {
-						cls_3 = cls_3 + 1;
-						map.put(chave(local, "3"), cls_3);
-					}
-					if (horasLiquidas.doubleValue() > 3
-							&& horasLiquidas.doubleValue() <= 8) {
-						cls_8 = cls_8 + 1;
-						map.put(chave(local, "8"), cls_8);
-					}
-					if (horasLiquidas.doubleValue() > 8
-							&& horasLiquidas.doubleValue() <= 15) {
-						cls_15 = cls_15 + 1;
-						map.put(chave(local, "15"), cls_15);
-					}
-				}
-			}
-			for (String s : set) {
-				percTotal = maptotais.get(s);
-				if (map.containsKey(chave(s, "15m"))) {
-					cls_15m = map.get(chave(s, "15m"));
-					d.add(cls_15m);
-					d.add((cls_15m / percTotal));
-				} else {
-					d.add(0D);
-					d.add(0D);
-				}
-				if (map.containsKey(chave(s, "1"))) {
-					cls_1 = map.get(chave(s, "1"));
-					d.add(cls_1);
-					d.add((cls_1 / percTotal));
-				} else {
-					d.add(0D);
-					d.add(0D);
-				}
-				if (map.containsKey(chave(s, "3"))) {
-					cls_3 = map.get(chave(s, "3"));
-					d.add(cls_3);
-					d.add((cls_3 / percTotal));
-				} else {
-					d.add(0D);
-					d.add(0D);
-				}
-				if (map.containsKey(chave(s, "8"))) {
-					cls_8 = map.get(chave(s, "8"));
-					d.add(cls_8);
-					d.add((cls_8 / percTotal));
-				} else {
-					d.add(0D);
-					d.add(0D);
-				}
-				if (map.containsKey(chave(s, "15"))) {
-					cls_15 = map.get(chave(s, "15"));
-					d.add(cls_15);
-					d.add((cls_15 / percTotal));
-				} else {
-					d.add(0D);
-					d.add(0D);
-				}
-			} // final do for para o conjunto
-		} else if (!(parametros.get("lotacao").equals(""))
-				&& !(parametros.get("atendente") == null)) { //else do 1º if
-			String query = "";
-			if (parametros.get("atendente") != null)
-				query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni "
-						+ "from DpLotacao where idLotacao in ("
-						+ parametros.get("atendente") + "))";
-			else
-				query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni "
-						+ "from DpLotacao where idLotacao in ("
-						+ parametros.get("lotacao") + "))";
-			List lotacoes = JPA.em().createQuery(query).getResultList();
-			StringBuilder listalotacoes = new StringBuilder();
-			for (int i = 0; i < lotacoes.size(); i++) {
-				listalotacoes.append(lotacoes.get(i));
-				if (i < (lotacoes.size() - 1))
-					listalotacoes.append(",");
-			}
-			SortedSet<String> set = new TreeSet<String>();
-			TreeMap<String, Double> map = new TreeMap<String, Double>();
-			TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
-
-			List<SrSolicitacao> listaTotal = SrSolicitacao
-					.find("select sol.local.nomeComplexo, count(*) "
+			List<SrSolicitacao> solicDoOrgao = SrSolicitacao
+					.find("select sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
-							+ "and mov.lotaAtendente in ("
-							+ listalotacoes
-							+ ") "
 							+ "and mov.dtIniMov = (select max(movult.dtIniMov) "
 							+ "from SrMovimentacao movult "
 							+ "where movult.solicitacao = mov.solicitacao "
-							+ " and movult.tipoMov = 7) "
+							+ " and movult.tipoMov = 7 "
+							+ " and movult.lotaAtendente.orgaoUsuario = 3) "
 							+ "and not exists (select 1 from SrMovimentacao movfec "
 							+ "where movfec.solicitacao = mov.solicitacao "
 							+ "and movfec.dtIniMov > mov.dtIniMov "
@@ -365,171 +154,198 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('"
 							+ parametros.get("dtFim")
-							+ " 23:59:59','dd/MM/yy hh24:mi:ss') "
-							+ "group by sol.local.nomeComplexo").fetch();
+							+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
 
-			Iterator itTotal = listaTotal.listIterator();
-			while (itTotal.hasNext()) {
-				Object[] obj = (Object[]) itTotal.next();
-				String complexo = (String) obj[0];
-				Long total_local = (Long) obj[1];
-				set.add(complexo);
-				maptotais.put(complexo, total_local);
+			Iterator it = solicDoOrgao.listIterator();
+			while (it.hasNext()) {
+
+				Object[] obj = (Object[]) it.next();
+
+				BigDecimal totalMinutosTrabalhados = calculaTotalMinutosTrabalhados(
+						obj, dataDosFeriados);
+				BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(
+						new BigDecimal("60"), 2, RoundingMode.HALF_UP);
+
+				if (totalMinutosTrabalhados.doubleValue() <= 15) {
+					cls_15m = cls_15m + 1;
+				}
+				if (totalMinutosTrabalhados.doubleValue() > 15
+						&& horasLiquidas.doubleValue() <= 1) {
+					cls_1 = cls_1 + 1;
+				}
+				if (horasLiquidas.doubleValue() > 1
+						&& horasLiquidas.doubleValue() <= 3) {
+					cls_3 = cls_3 + 1;
+				}
+				if (horasLiquidas.doubleValue() > 3
+						&& horasLiquidas.doubleValue() <= 8) {
+					cls_8 = cls_8 + 1;
+				}
+				if (horasLiquidas.doubleValue() > 8
+						&& horasLiquidas.doubleValue() <= 15) {
+					cls_15 = cls_15 + 1;
+				}
 			}
 
-			for (String locais : set) {
-				cls_15m = 0;
-				cls_1 = 0;
-				cls_3 = 0;
-				cls_8 = 0;
-				cls_15 = 0;
-				List<SrSolicitacao> solicDoComplexo = SrSolicitacao
-						.find("select sol.local.nomeComplexo, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
-								+ "from SrSolicitacao sol, SrMovimentacao mov "
-								+ "where sol.idSolicitacao = mov.solicitacao "
-								+ "and mov.lotaAtendente in ("
-								+ listalotacoes
-								+ ") "
-								+ "and sol.local.nomeComplexo = '"
-								+ locais.toString()
-								+ "' "
-								+ "and mov.dtIniMov = (select max(movult.dtIniMov) "
-								+ "from SrMovimentacao movult "
-								+ "where movult.solicitacao = mov.solicitacao "
-								+ " and movult.tipoMov = 7) "
-								+ "and not exists (select 1 from SrMovimentacao movfec "
-								+ "where movfec.solicitacao = mov.solicitacao "
-								+ "and movfec.dtIniMov > mov.dtIniMov "
-								+ "and movfec.tipoMov <> 14) "
-								+ "and  sol.dtReg >= to_date('"
-								+ parametros.get("dtIni")
-								+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
-								+ "and  sol.dtReg <= to_date('"
-								+ parametros.get("dtFim")
-								+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
-				Iterator it = solicDoComplexo.listIterator();
-				while (it.hasNext()) {
-					Object[] obj = (Object[]) it.next();
-					local = (String) obj[0];
-					set.add(local);
-					SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
-					DateTime startemp = new DateTime(obj[2]);
-					DateTime endtemp = new DateTime(obj[3]);
-					DateTime start1 = new DateTime();
-					DateTime end1 = new DateTime();
-					if (startemp.getHourOfDay() < 10) {
-						start1 = new DateTime(startemp.getYear(),
-								startemp.getMonthOfYear(),
-								startemp.getDayOfMonth() + 1, 10, 0, 0);
-					} else if (startemp.getHourOfDay() >= 18) {
-						start1 = new DateTime(startemp.getYear(),
-								startemp.getMonthOfYear(),
-								startemp.getDayOfMonth() + 1, 10, 0, 0);
-					} else
-						start1 = startemp;
-					if (endtemp.getHourOfDay() < 10) {
-						end1 = new DateTime(endtemp.getYear(),
-								endtemp.getMonthOfYear(),
-								endtemp.getDayOfMonth() + 1, 10, 0, 0);
-					} else if (endtemp.getHourOfDay() >= 18) {
-						end1 = new DateTime(endtemp.getYear(),
-								endtemp.getMonthOfYear(),
-								endtemp.getDayOfMonth() + 1, 10, 0, 0);
-					} else
-						end1 = endtemp;
-					int dias = Days.daysBetween(start1.toLocalDateTime(),
-							end1.toLocalDateTime()).getDays();
-					HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
-							dataDosFeriados);
-					LocalDateKitCalculatorsFactory.getDefaultInstance()
-							.registerHolidays("BR", calendarioDeFeriados);
-					DateCalculator calendario = LocalDateKitCalculatorsFactory
-							.getDefaultInstance().getDateCalculator("BR",
-									HolidayHandlerType.FORWARD);
-					BigDecimal totalMinutosTrabalhados = new BigDecimal(0.0);
-					DateTime dataInicialTemporaria = new DateTime(start1);
-					DateTime dataFinalTemporaria = new DateTime(end1);
-					DateTime dtinitemp = new DateTime(start1);
-					DateTime dtendtemp = new DateTime(end1);
-					int i = 1;
-					while (!dataInicialTemporaria.isAfter(dataFinalTemporaria)) {
-						if (calendario.isNonWorkingDay(dataInicialTemporaria
-								.toLocalDate())) {
-						} else {
-							if (i == dias) {
-								dtinitemp = new DateTime(dataInicialTemporaria);
-								dtendtemp = new DateTime(
-										dataInicialTemporaria.getYear(),
-										dataInicialTemporaria.getMonthOfYear(),
-										dataInicialTemporaria.getDayOfMonth(),
-										18, 0, 0);
-							} else if (i > dias) {
-								dtinitemp = new DateTime(dataInicialTemporaria);
-								dtendtemp = new DateTime(end1);
-							} else {
-								dtinitemp = new DateTime(dataInicialTemporaria);
-								dtendtemp = new DateTime(
-										dataInicialTemporaria.getYear(),
-										dataInicialTemporaria.getMonthOfYear(),
-										dataInicialTemporaria.getDayOfMonth(),
-										18, 0, 0);
-							}
-							new Period(dtinitemp,
-									dtendtemp).getHours();
-							totalMinutosTrabalhados = new BigDecimal(Minutes
-									.minutesBetween(dtinitemp, dtendtemp)
-									.getMinutes()).add(totalMinutosTrabalhados);
-						}
-						dataInicialTemporaria = new DateTime(
-								dataInicialTemporaria.getYear(),
-								dataInicialTemporaria.getMonthOfYear(),
-								dataInicialTemporaria.getDayOfMonth(), 9, 0, 0)
-								.plusDays(1);
-						i++;
-					}
-					BigDecimal totalMinutosPendentes = calcularPendencias(sol);
-					totalMinutosTrabalhados = totalMinutosTrabalhados
-							.subtract(totalMinutosPendentes);
-					BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(
-							new BigDecimal("60"), 2, RoundingMode.HALF_UP);
-					if (totalMinutosTrabalhados.doubleValue() <= 15) {
-						cls_15m = cls_15m + 1;
-						map.put(chave(local, "15m"), cls_15m);
-					}
-					if (totalMinutosTrabalhados.doubleValue() > 15
-							&& horasLiquidas.doubleValue() <= 1) {
-						cls_1 = cls_1 + 1;
-						map.put(chave(local, "1"), cls_1);
-					}
-					if (horasLiquidas.doubleValue() > 1
-							&& horasLiquidas.doubleValue() <= 3) {
-						cls_3 = cls_3 + 1;
-						map.put(chave(local, "3"), cls_3);
-					}
-					if (horasLiquidas.doubleValue() > 3
-							&& horasLiquidas.doubleValue() <= 8) {
-						cls_8 = cls_8 + 1;
-						map.put(chave(local, "8"), cls_8);
-					}
-					if (horasLiquidas.doubleValue() > 8
-							&& horasLiquidas.doubleValue() <= 15) {
-						cls_15 = cls_15 + 1;
-						map.put(chave(local, "15"), cls_15);
-					}
+			d.add(cls_15m);
+			d.add((cls_15m / percTotal));
+			d.add(cls_1);
+			d.add((cls_1 / percTotal));
+			d.add(cls_3);
+			d.add((cls_3 / percTotal));
+			d.add(cls_8);
+			d.add((cls_8 / percTotal));
+			d.add(cls_15);
+			d.add((cls_15 / percTotal));
+
+		} else if (!(parametros.get("lotacao").equals(""))
+				&& !(parametros.get("atendente") == null)) {
+
+			String query = "";
+			if (parametros.get("atendente") != null)
+				query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni "
+						+ "from DpLotacao where idLotacao in ("
+						+ parametros.get("atendente") + "))";
+			else
+				query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni "
+						+ "from DpLotacao where idLotacao in ("
+						+ parametros.get("lotacao") + "))";
+
+			StringBuilder listalotacoes = listaLotacoes(query);
+
+			SortedSet<String> set = new TreeSet<String>();
+			TreeMap<String, Double> map = new TreeMap<String, Double>();
+			TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
+
+			/*
+			 * percTotal = SrSolicitacao
+			 		.find("select count(*) "
+							+ "from SrSolicitacao sol, SrMovimentacao mov "
+							+ "where sol.idSolicitacao = mov.solicitacao "
+							+ "and mov.lotaAtendente in ("
+							+ listalotacoes
+							+ ") "
+							+ "and mov.dtIniMov = (select max(movult.dtIniMov) "
+							+ "from SrMovimentacao movult "
+							+ "where movult.solicitacao = mov.solicitacao "
+							+ " and movult.tipoMov = 7 "
+							+ " and movult.lotaAtendente.orgaoUsuario = 3) "
+							+ "and not exists (select 1 from SrMovimentacao movfec "
+							+ "where movfec.solicitacao = mov.solicitacao "
+							+ "and movfec.dtIniMov > mov.dtIniMov "
+							+ "and movfec.tipoMov <> 14) "
+							+ "and  sol.dtReg >= to_date('"
+							+ parametros.get("dtIni")
+							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
+							+ "and  sol.dtReg <= to_date('"
+							+ parametros.get("dtFim")
+							+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").first();
+			 */
+			
+			List<SrSolicitacao> solicPorAtendente = SrSolicitacao
+					.find("select mov.lotaAtendente, count(*) "
+							+ "from SrSolicitacao sol, SrMovimentacao mov "
+							+ "where sol.idSolicitacao = mov.solicitacao "
+							+ "and mov.lotaAtendente in ("
+							+ listalotacoes
+							+ ") "
+							+ "and mov.dtIniMov = (select max(movult.dtIniMov) "
+							+ "from SrMovimentacao movult "
+							+ "where movult.solicitacao = mov.solicitacao "
+							+ " and movult.tipoMov = 7 "
+							+ " and movult.lotaAtendente.orgaoUsuario = 3) "
+							+ "and not exists (select 1 from SrMovimentacao movfec "
+							+ "where movfec.solicitacao = mov.solicitacao "
+							+ "and movfec.dtIniMov > mov.dtIniMov "
+							+ "and movfec.tipoMov <> 14) "
+							+ "and  sol.dtReg >= to_date('"
+							+ parametros.get("dtIni")
+							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
+							+ "and  sol.dtReg <= to_date('"
+							+ parametros.get("dtFim")
+							+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
+
+			Iterator itTotal = solicPorAtendente.listIterator();
+			while (itTotal.hasNext()) {
+				Object[] obj = (Object[]) itTotal.next();
+				String lotaAtendente = (String) obj[0];
+				Long totalPorAtendente = (Long) obj[1];
+				set.add(lotaAtendente);
+				maptotais.put(lotaAtendente, totalPorAtendente);
+			}
+
+			List<SrSolicitacao> solicDoOrgao = SrSolicitacao
+					.find("select sol.idSolicitacao, sol.dtReg, mov.dtIniMov, mov.lotaAtendente "
+							+ "from SrSolicitacao sol, SrMovimentacao mov "
+							+ "where sol.idSolicitacao = mov.solicitacao "
+							+ "and mov.lotaAtendente in ("
+							+ listalotacoes
+							+ ") "
+							+ "and mov.dtIniMov = (select max(movult.dtIniMov) "
+							+ "from SrMovimentacao movult "
+							+ "where movult.solicitacao = mov.solicitacao "
+							+ " and movult.tipoMov = 7 "
+							+ " and movult.lotaAtendente.orgaoUsuario = 3) "
+							+ "and not exists (select 1 from SrMovimentacao movfec "
+							+ "where movfec.solicitacao = mov.solicitacao "
+							+ "and movfec.dtIniMov > mov.dtIniMov "
+							+ "and movfec.tipoMov <> 14) "
+							+ "and  sol.dtReg >= to_date('"
+							+ parametros.get("dtIni")
+							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
+							+ "and  sol.dtReg <= to_date('"
+							+ parametros.get("dtFim")
+							+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
+
+			Iterator it = solicDoOrgao.listIterator();
+			while (it.hasNext()) {
+
+				Object[] obj = (Object[]) it.next();
+
+				SrMovimentacao mov = (SrMovimentacao) (obj[4]);
+				String lotaAtendente = mov.lotaAtendente.getNomeLotacao();
+				
+				BigDecimal totalMinutosTrabalhados = calculaTotalMinutosTrabalhados(
+						obj, dataDosFeriados);
+				BigDecimal horasLiquidas = totalMinutosTrabalhados.divide(
+						new BigDecimal("60"), 2, RoundingMode.HALF_UP);
+
+				if (totalMinutosTrabalhados.doubleValue() <= 15) {
+					cls_15m = cls_15m + 1;
+					map.put(chave(lotaAtendente, "15m"), cls_15m);
+				}
+				if (totalMinutosTrabalhados.doubleValue() > 15
+						&& horasLiquidas.doubleValue() <= 1) {
+					cls_1 = cls_1 + 1;
+					map.put(chave(lotaAtendente, "1"), cls_1);
+				}
+				if (horasLiquidas.doubleValue() > 1
+						&& horasLiquidas.doubleValue() <= 3) {
+					cls_3 = cls_3 + 1;
+					map.put(chave(lotaAtendente, "3"), cls_3);
+				}
+				if (horasLiquidas.doubleValue() > 3
+						&& horasLiquidas.doubleValue() <= 8) {
+					cls_8 = cls_8 + 1;
+					map.put(chave(lotaAtendente, "8"), cls_8);
+				}
+				if (horasLiquidas.doubleValue() > 8
+						&& horasLiquidas.doubleValue() <= 15) {
+					cls_15 = cls_15 + 1;
+					map.put(chave(lotaAtendente, "15"), cls_15);
 				}
 			}
 			for (String s : set) {
 				d.add(s);
 				percTotal = maptotais.get(s);
 				if (map.containsKey(chave(s, "15m"))) {
-					cls_15m = map.get(chave(s, "15m"));
+					cls_1 = map.get(chave(s, "15m"));
 					d.add(cls_15m);
 					d.add((cls_15m / percTotal));
 				} else {
 					d.add(0D);
 					d.add(0D);
 				}
-
 				if (map.containsKey(chave(s, "1"))) {
 					cls_1 = map.get(chave(s, "1"));
 					d.add(cls_1);
@@ -538,16 +354,14 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 					d.add(0D);
 					d.add(0D);
 				}
-
 				if (map.containsKey(chave(s, "3"))) {
-					cls_3 = map.get(chave(s, "3"));
+					cls_1 = map.get(chave(s, "3"));
 					d.add(cls_3);
 					d.add((cls_3 / percTotal));
 				} else {
 					d.add(0D);
 					d.add(0D);
 				}
-
 				if (map.containsKey(chave(s, "8"))) {
 					cls_8 = map.get(chave(s, "8"));
 					d.add(cls_8);
@@ -556,7 +370,6 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 					d.add(0D);
 					d.add(0D);
 				}
-
 				if (map.containsKey(chave(s, "15"))) {
 					cls_15 = map.get(chave(s, "15"));
 					d.add(cls_15);
@@ -565,9 +378,95 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 					d.add(0D);
 					d.add(0D);
 				}
-			} // final do for para o conjunto
-		} 
+			}
+		}
 		return d;
+	}
+
+	private StringBuilder listaLotacoes(String query) {
+		List lotacoes = JPA.em().createQuery(query).getResultList();
+		StringBuilder listalotacoes = new StringBuilder();
+		for (int i = 0; i < lotacoes.size(); i++) {
+			listalotacoes.append(lotacoes.get(i));
+			if (i < (lotacoes.size() - 1))
+				listalotacoes.append(",");
+		}
+		return listalotacoes;
+	}
+
+	private BigDecimal calculaTotalMinutosTrabalhados(Object[] obj,
+			Set dataDosFeriados) {
+
+		SrSolicitacao sol = SrSolicitacao.findById(obj[0]);
+		DateTime startemp = new DateTime(obj[1]);
+		DateTime endtemp = new DateTime(obj[2]);
+		DateTime start1 = new DateTime();
+		DateTime end1 = new DateTime();
+		if (startemp.getHourOfDay() < 10) {
+			start1 = new DateTime(startemp.getYear(),
+					startemp.getMonthOfYear(), startemp.getDayOfMonth() + 1,
+					10, 0, 0);
+		} else if (startemp.getHourOfDay() >= 18) {
+			start1 = new DateTime(startemp.getYear(),
+					startemp.getMonthOfYear(), startemp.getDayOfMonth() + 1,
+					10, 0, 0);
+		} else
+			start1 = startemp;
+		if (endtemp.getHourOfDay() < 10) {
+			end1 = new DateTime(endtemp.getYear(), endtemp.getMonthOfYear(),
+					endtemp.getDayOfMonth() + 1, 10, 0, 0);
+		} else if (endtemp.getHourOfDay() >= 18) {
+			end1 = new DateTime(endtemp.getYear(), endtemp.getMonthOfYear(),
+					endtemp.getDayOfMonth() + 1, 10, 0, 0);
+		} else
+			end1 = endtemp;
+		int dias = Days.daysBetween(start1.toLocalDateTime(),
+				end1.toLocalDateTime()).getDays();
+		HolidayCalendar calendarioDeFeriados = new DefaultHolidayCalendar(
+				dataDosFeriados);
+		LocalDateKitCalculatorsFactory.getDefaultInstance().registerHolidays(
+				"BR", calendarioDeFeriados);
+		DateCalculator calendario = LocalDateKitCalculatorsFactory
+				.getDefaultInstance().getDateCalculator("BR",
+						HolidayHandlerType.FORWARD);
+		BigDecimal totalMinutosTrabalhados = new BigDecimal(0.0);
+		DateTime dataInicialTemporaria = new DateTime(start1);
+		DateTime dataFinalTemporaria = new DateTime(end1);
+		DateTime dtinitemp = new DateTime(start1);
+		DateTime dtendtemp = new DateTime(end1);
+		int i = 1;
+		while (!dataInicialTemporaria.isAfter(dataFinalTemporaria)) {
+			if (calendario.isNonWorkingDay(dataInicialTemporaria.toLocalDate())) {
+			} else {
+				if (i == dias) {
+					dtinitemp = new DateTime(dataInicialTemporaria);
+					dtendtemp = new DateTime(dataInicialTemporaria.getYear(),
+							dataInicialTemporaria.getMonthOfYear(),
+							dataInicialTemporaria.getDayOfMonth(), 18, 0, 0);
+				} else if (i > dias) {
+					dtinitemp = new DateTime(dataInicialTemporaria);
+					dtendtemp = new DateTime(end1);
+				} else {
+					dtinitemp = new DateTime(dataInicialTemporaria);
+					dtendtemp = new DateTime(dataInicialTemporaria.getYear(),
+							dataInicialTemporaria.getMonthOfYear(),
+							dataInicialTemporaria.getDayOfMonth(), 18, 0, 0);
+				}
+				new Period(dtinitemp, dtendtemp).getHours();
+				totalMinutosTrabalhados = new BigDecimal(Minutes
+						.minutesBetween(dtinitemp, dtendtemp).getMinutes())
+						.add(totalMinutosTrabalhados);
+			}
+			dataInicialTemporaria = new DateTime(
+					dataInicialTemporaria.getYear(),
+					dataInicialTemporaria.getMonthOfYear(),
+					dataInicialTemporaria.getDayOfMonth(), 9, 0, 0).plusDays(1);
+			i++;
+		}
+		BigDecimal totalMinutosPendentes = calcularPendencias(sol);
+		totalMinutosTrabalhados = totalMinutosTrabalhados
+				.subtract(totalMinutosPendentes);
+		return (totalMinutosTrabalhados);
 	}
 
 	private Set calculaFeriados() {
@@ -588,8 +487,7 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 			}
 		}
 		return dataDosFeriados;
-		
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -688,8 +586,7 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 								dataInicialTemporaria.getMonthOfYear(),
 								dataInicialTemporaria.getDayOfMonth(), 18, 0, 0);
 					}
-					new Period(dtinitemp, dtendtemp)
-							.getHours();
+					new Period(dtinitemp, dtendtemp).getHours();
 					totalMinutosPendentes = new BigDecimal(Minutes
 							.minutesBetween(dtinitemp, dtendtemp).getMinutes())
 							.add(totalMinutosPendentes);

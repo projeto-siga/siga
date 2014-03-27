@@ -85,7 +85,7 @@ function TestarAssinaturaDigital() {
 		}
 	} catch(Err) {
 		gPolitica = false;
-		if (window.navigator.userAgent.indexOf("MSIE ") > 0) {
+		if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
 			return TestCAPICOM();
 		}
 	}
@@ -444,7 +444,7 @@ function getXMLHttpRequest()
     }
 }
 
-if(/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+if((window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) && !/opera/i.test(navigator.userAgent)) {
     var VBConteudo_Script =
     '<!-- VBConteudo -->\r\n'+
     '<script type="text/vbscript">\r\n'+
@@ -467,7 +467,7 @@ if(/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
 
 
 /*
-if(/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+if((window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) && !/opera/i.test(navigator.userAgent)) {
     var IEBinaryToArray_ByteStr_Script =
     "<!-- IEBinaryToArray_ByteStr -->\r\n"+
     "<script type='text/vbscript'>\r\n"+

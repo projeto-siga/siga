@@ -34,10 +34,22 @@
 				$(".status-" + id).show("fast");	
 			});	
 			$("#btn-clear").click(function(){	
-				$('.form100')[0].reset();
+				$("#selectSituacao").val('');
+				$("#selectOrgao").val('');
+				$("#selectTipo").val('');
+				$("#selectAno").val('');
+								
+				//$("#filtroautorfiltrolotacao").val('');
+				//$("#filtroresponsavelfiltrolotaResponsavel").val('');
+							
 				$("#filtrolotacaoSpan").empty();
 				$("#filtrolotaResponsavelSpan").empty();
 				$("#filtrotagSpan").empty();
+
+				$("#filtrolotacao_sigla").val('');
+				$("#filtrolotaResponsavel_sigla").val('');
+				$("#filtrotag_sigla").val('');
+				
 				$("#filtronumero").val('');
 				$("#dtIniString").val('');
 				$("#dtFimString").val('');
@@ -45,7 +57,7 @@
 				$("#dtSituacaoFimString").val('');
 				$("#titulo").val('');
 				$("#conteudo").val('');
-				$("#descrMarcador").val('');
+				$("#descrMarcador").val('');			
 			});	
 		});
 </script>
@@ -183,7 +195,7 @@
 							<td>Situação:</td>
 							<td>#{select name:'filtro.situacao', items:marcadores,
 								labelProperty:'descrMarcador', valueProperty:'idMarcador',
-								value:filtro?.situacao?.idMarcador} #{option null}Todas#{/option}
+								value:filtro?.situacao?.idMarcador, id:'selectSituacao'} #{option null}Todas#{/option}
 								#{/select} *{&nbsp;&nbsp;&nbsp;&nbsp;Pessoa/Lotação:
 								#{pessoaLotaSelecao nomeSelPessoa:'marcado',
 								nomeSelLotacao:'lotaMarcado', value:informacao?.autor /}</td>}*
@@ -192,19 +204,19 @@
 							<td>Órgão:</td>
 							<td>#{select name:'filtro.orgaoUsu', items:orgaosusuarios,
 								labelProperty:'descricao', valueProperty:'id',
-								value:filtro?.orgaoUsu?.id} #{option null}Todas#{/option} #{/select}</td>
+								value:filtro?.orgaoUsu?.id, id:'selectOrgao'} #{option null}Todas#{/option} #{/select}</td>
 						</tr>
 						<tr id="trTipo" style="display: ">
 							<td>Tipo:</td>
 							<td>#{select name:'filtro.tipo', items:tiposinformacao,
 								labelProperty:'nome', valueProperty:'id',
-								value:filtro?.tipo?.id} #{option null}Todas#{/option} #{/select}</td>
+								value:filtro?.tipo?.id, id:'selectTipo'} #{option null}Todas#{/option} #{/select}</td>
 						</tr>
 						<tr>
 							<td>Ano de Emissão:</td>
 							<td>#{select name:'filtro.ano', items:anos,
 								labelProperty:'toString()', valueProperty:'toString()',
-								value:filtro?.ano} #{option null}Todos#{/option} #{/select}
+								value:filtro?.ano, id:'selectAno'} #{option null}Todos#{/option} #{/select}
 								&nbsp;&nbsp;&nbsp;&nbsp;Número: <input type="text"
 								name="filtro.numero" size="7" maxlength="6" value="${filtro.numero}"
 								id="filtronumero">

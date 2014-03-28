@@ -613,7 +613,7 @@ public class Application extends SigaApplication {
 			e.printStackTrace();
 			resultado = "Não Ok.";
 		} finally {
-			render(resultado);
+			render(resultado,dtt);
 		}
 	}
 
@@ -782,7 +782,6 @@ public class Application extends SigaApplication {
 	@Catch
 	public static void Excecoes(String e) {
 		String msg = e;
-		System.out.println("+++ Excecoes  Exceptions  +++");
 		render("Application/erro.html", msg);
 	}
 }

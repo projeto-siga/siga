@@ -329,9 +329,9 @@ public class Notificador {
 		// conteúdo texto
 		conteudo.append("Documento: ");
 		conteudo.append(mov.getExMobil().getSigla());
-		conteudo.append("Descrição:");
+		conteudo.append("\nDescrição:");
 		conteudo.append(mov.getExDocumento().getDescrDocumento());
-		conteudo.append("Movimentação:");
+		conteudo.append("\nMovimentação:");
 		if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO
 				|| tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
 			conteudo.append(mov.getExTipoMovimentacao().getDescricao());
@@ -340,7 +340,7 @@ public class Notificador {
 			conteudo.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()+"(Cancelamento)");
 		}
 		if (mov.getCadastrante() != null) {
-			conteudo.append("Realizada por '"
+			conteudo.append("\nRealizada por '"
 					+ mov.getCadastrante().getNomePessoa() + " (Matrícula: "
 					+ mov.getCadastrante().getMatricula() + ")'.\n\n");
 
@@ -360,24 +360,24 @@ public class Notificador {
 		// conteúdo html
 		conteudoHTML.append("<html><body>");
 		
-		conteudo.append("Documento: <b>");
-		conteudo.append(mov.getExMobil().getSigla()+ "</b>");
-		conteudo.append("Descrição: <b>");
-		conteudo.append(mov.getExDocumento().getDescrDocumento()+"</b>");
-		conteudo.append("Movimentação: <b>");		
+		conteudoHTML.append("Documento: <b>");
+		conteudoHTML.append(mov.getExMobil().getSigla()+ "</b><br>");
+		conteudoHTML.append("Descrição: <b>");
+		conteudoHTML.append(mov.getExDocumento().getDescrDocumento()+"</b><br>");
+		conteudoHTML.append("Movimentação: <b>");		
 
 		if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO
 				|| tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
-			conteudoHTML.append(mov.getExTipoMovimentacao().getDescricao() + "</b>");
+			conteudoHTML.append(mov.getExTipoMovimentacao().getDescricao() + "</b><br>");
 		}
 		if (tipoNotificacao == TIPO_NOTIFICACAO_CANCELAMENTO) {
 			conteudoHTML.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()
-					+ "(Cancelamento)</b>.");
+					+ "(Cancelamento)</b><br>.");
 		}
 		if (mov.getCadastrante() != null) {
 			conteudoHTML.append("<br/>Realizada por <b>"
 					+ mov.getCadastrante().getNomePessoa() + " (Matrícula: "
-					+ mov.getCadastrante().getMatricula() + ")</b>");
+					+ mov.getCadastrante().getMatricula() + ")</b><br>");
 		}
 
 		if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA

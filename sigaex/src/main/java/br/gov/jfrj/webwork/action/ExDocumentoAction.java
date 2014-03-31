@@ -627,10 +627,9 @@ public class ExDocumentoAction extends ExActionSupport {
 			idMod = ((ExModelo) dao().consultarAtivoPorIdInicial(
 					ExModelo.class, 507L)).getIdMod();
 		}
-		
-		if (getDespachando() && getId() == null && (getPostback() == null || getPostback() == 0)) {
 
-
+		if (getDespachando() && getId() == null
+				&& (getPostback() == null || getPostback() == 0)) {
 
 			idFormaDoc = 8;
 
@@ -847,18 +846,15 @@ public class ExDocumentoAction extends ExActionSupport {
 
 			if (doc.isFinalizado())
 
-
 				throw new AplicacaoException(
 						"Documento já foi finalizado e não pode ser excluído",
 						2);
 			for (ExMobil m : doc.getExMobilSet()) {
 				Set set = m.getExMovimentacaoSet();
 
-
 				if (!Ex.getInstance().getComp()
 						.podeExcluir(getTitular(), getLotaTitular(), m))
 					throw new AplicacaoException("Não é possível excluir");
-
 
 				if (set.size() > 0) {
 					final Object[] aMovimentacao = set.toArray();
@@ -1218,18 +1214,19 @@ public class ExDocumentoAction extends ExActionSupport {
 							doc.getExTipoDocumento(),
 							doc.getExFormaDocumento(), doc.getExModelo(),
 
-							doc.getExClassificacaoAtual(), doc.getExNivelAcesso(),
+							doc.getExClassificacaoAtual(),
+							doc.getExNivelAcesso(),
 							CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
-			
-				if(!Ex.getInstance()
+
+				if (!Ex.getInstance()
 						.getConf()
 						.podePorConfiguracao(getTitular(), getLotaTitular(),
-								null,
-								null, null,
-								doc.getExClassificacao(), null,
-								CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
-					throw new AplicacaoException("Usuário não possui permissão de criar documento da classificação " + doc.getExClassificacao().getCodificacao());
-				
+								null, null, null, doc.getExClassificacao(),
+								null, CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+					throw new AplicacaoException(
+							"Usuário não possui permissão de criar documento da classificação "
+									+ doc.getExClassificacao().getCodificacao());
+
 				throw new AplicacaoException("Operação não permitida");
 			}
 
@@ -1287,23 +1284,24 @@ public class ExDocumentoAction extends ExActionSupport {
 
 			Ex.getInstance().getBL()
 					.gravar(getCadastrante(), getLotaTitular(), doc);
-			
+
 			lerEntrevista(doc);
 
 			if (getDesativarDocPai().equals("sim"))
 				setDesativ("&desativarDocPai=sim");
-			
+
 			try {
-				
 
+				Ex.getInstance()
+						.getBL()
+						.incluirCosignatariosAutomaticamente(getCadastrante(),
+								getLotaTitular(), doc);
 
-				Ex.getInstance().getBL().incluirCosignatariosAutomaticamente(getCadastrante(), getLotaTitular(), doc);
-
-				
 			} catch (Exception e) {
-				
 
-				throw new AplicacaoException("Erro ao tentar incluir os cosignatários deste documento", 0, e);
+				throw new AplicacaoException(
+						"Erro ao tentar incluir os cosignatários deste documento",
+						0, e);
 
 			}
 
@@ -1447,32 +1445,6 @@ public class ExDocumentoAction extends ExActionSupport {
 	// return Action.SUCCESS;
 	// }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public String aTesteEnvioDJE() throws Exception {
 
 		try {
@@ -1543,25 +1515,6 @@ public class ExDocumentoAction extends ExActionSupport {
 			 * zip.adicionarStream(nome, conteudo, arqZip);
 			 * setConteudoBlobMov2(conteudoZip);
 			 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		}
 		return Action.SUCCESS;
@@ -1669,49 +1622,15 @@ public class ExDocumentoAction extends ExActionSupport {
 					if (idForma != null)
 						setIdFormaDoc(idForma);
 
-
-
-					getClassificacaoSel().setId(
-							mobPai.doc().getExClassificacaoAtual().getId());
+					if (getClassificacaoSel() != null
+							&& getClassificacaoSel().getId() == null)
+						getClassificacaoSel().setId(
+								mobPai.doc().getExClassificacaoAtual().getId());
 
 					setDescrDocumento(mobPai.doc().getDescrDocumento());
 
 					setDesativarDocPai("sim");
 				}
-
-				/*
-				 * if (getIdFormaDoc() == 8 || getIdFormaDoc() == 60) { if
-				 * (mobilPaiSel.getId() != null) {
-				 * 
-				 * if (getIdFormaDoc() == 8) { // Campos da Entrevista do
-				 * Despacho getRequest().setAttribute("tipoDeDocumento",
-				 * mobPai.doc().getDescrFormaDoc());
-				 * getRequest().setAttribute("numero", mobPai.getSigla());
-				 * getRequest().setAttribute("data",
-				 * mobPai.doc().getDtDocDDMMYY()); getRequest().setAttribute(
-				 * "orgao", mobPai.doc().getOrgaoUsuario()
-				 * .getAcronimoOrgaoUsu()); } else if (getIdFormaDoc() == 60) {
-				 * getSubscritorSel().setId(
-				 * mobPai.doc().getSubscritor().getId()); } }
-				 * 
-				 * }
-				 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 			}
 
@@ -1739,10 +1658,6 @@ public class ExDocumentoAction extends ExActionSupport {
 				// tipo
 				// automaticamente, dentro daquela origem
 
-
-
-
-
 				final List<ExFormaDocumento> formasDoc = getFormasDocPorTipo();
 
 				ExFormaDocumento forma = dao().consultar(getIdFormaDoc(),
@@ -1755,7 +1670,6 @@ public class ExDocumentoAction extends ExActionSupport {
 				}
 
 				// Fim -- Mudou origem? Escolhe um tipo automaticamente--------
-
 
 				if (forma.getExModeloSet().size() == 0) {
 					setIdMod(0L);
@@ -1835,21 +1749,6 @@ public class ExDocumentoAction extends ExActionSupport {
 	 * 
 	 * return null; }
 	 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	private void escreverForm() throws IllegalAccessException,
 			NoSuchMethodException, AplicacaoException,
@@ -2437,19 +2336,19 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		if (getClassificacaoSel().getId() != null
 				&& getClassificacaoSel().getId() != 0) {
-			
+
 			ExClassificacao classificacao = dao()
 
-					.consultar(getClassificacaoSel().getId(),
-							ExClassificacao.class, false);
-			
-			if(classificacao !=null && !classificacao.isFechada())
+			.consultar(getClassificacaoSel().getId(), ExClassificacao.class,
+					false);
+
+			if (classificacao != null && !classificacao.isFechada())
 				doc.setExClassificacao(classificacao);
 			else {
 				doc.setExClassificacao(null);
 				getClassificacaoSel().apagar();
 			}
-				
+
 		} else
 			doc.setExClassificacao(null);
 		if (getCpOrgaoSel().getId() != null) {

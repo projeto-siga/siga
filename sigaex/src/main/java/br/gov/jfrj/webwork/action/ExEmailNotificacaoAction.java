@@ -97,7 +97,7 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		return tipoEmail;
 	}
 
-	public void setTipoEmail(Integer tipoEmailMov) {
+	public void setTipoEmail(Integer tipoEmail) {
 		this.tipoEmail = tipoEmail;
 	}
 
@@ -105,7 +105,7 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		return tipoDest;
 	}
 
-	public void setTipoDest(Integer tipoDestMov) {
+	public void setTipoDest(Integer tipoDest) {
 		this.tipoDest = tipoDest;
 	}
 
@@ -252,30 +252,30 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	public String aEditarGravar() throws Exception {
 		assertAcesso("FE:Ferramentas;EMAIL:Email de Notificação");
 		
-		dpPessoa = getPessSel().buscarObjeto();
-		dpLotacao = getLotaSel().buscarObjeto();
-		pessoaEmail = getPessEmailSel().buscarObjeto();
-		lotacaoEmail = getLotaEmailSel().buscarObjeto();	
+		ExEmailNotificacao exEmail = new ExEmailNotificacao();	
+		exEmail.setDpPessoa(null);
+		exEmail.setDpLotacao(null);
+		exEmail.setPessoaEmail(null);
+		exEmail.setEmail(null);
 		
-		ExEmailNotificacao exEmail = new ExEmailNotificacao();		
-		
-		if (dpPessoa != null)
+		if (tipoDest == 1) {
+			dpPessoa = getPessSel().buscarObjeto();
 			exEmail.setDpPessoa(dpPessoa.getPessoaInicial());
-		else
-			exEmail.setDpPessoa(null);
-		if (dpLotacao != null)
-			exEmail.setDpLotacao(dpLotacao.getLotacaoInicial());
-		else
-			exEmail.setDpLotacao(null);
-		if (pessoaEmail != null)
-			exEmail.setPessoaEmail(pessoaEmail.getPessoaInicial());
-		else 
-			exEmail.setPessoaEmail(null);
-		if(lotacaoEmail != null)
-			exEmail.setLotacaoEmail(lotacaoEmail.getLotacaoInicial());
-		else
-			exEmail.setLotacaoEmail(null);
-		exEmail.setEmail(email);
+		}else { /* destinatário da movimentação é uma lotação */
+			dpLotacao = getLotaSel().buscarObjeto();
+			exEmail.setDpLotacao(dpLotacao.getLotacaoInicial());			
+		}
+		
+		switch (tipoEmail) {
+			case 2 : pessoaEmail = getPessEmailSel().buscarObjeto();
+					 exEmail.setPessoaEmail(pessoaEmail.getPessoaInicial());
+					 break;
+			case 3 : lotacaoEmail = getLotaEmailSel().buscarObjeto();
+					 exEmail.setLotacaoEmail(lotacaoEmail.getLotacaoInicial());
+					 break;
+			case 4 : exEmail.setEmail(email);
+		}
+		
 		
 		try {
 			dao().iniciarTransacao();

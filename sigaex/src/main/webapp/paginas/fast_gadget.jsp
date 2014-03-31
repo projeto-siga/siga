@@ -194,3 +194,7 @@ submitOk = function() {
 			</tr>
 		</table>
 	</ww:form>
+	
+	--%>
+	
+	</c:if>

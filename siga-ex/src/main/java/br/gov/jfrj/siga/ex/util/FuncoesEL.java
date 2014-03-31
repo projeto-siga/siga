@@ -865,5 +865,15 @@ public class FuncoesEL {
 	public static boolean contemTagHTML(String parametro) {
 		return parametro.split("\\<.*\\>").length > 1;
 	}
-
+	
+	/**
+	 * Retorna a data no formato dd/mm/aaaa, por exemplo, 01/02/2010.
+	*/
+	public static String getDataDDMMYYYY(Date data) {
+		if (data != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(data);
+		}
+		return "";
+	}
 }

@@ -885,18 +885,25 @@ public class ExBL extends CpBL {
 
 				sbHtml.append("</body></html>");
 				
-				String emailsAtendentes[] = {"andre.silva@jfrj.jus.br"};
+				
+				String emailsAtendentes[] = null;
+				String sDest = SigaExProperties.getString("bie.lista.destinatario.publicacao");
+				
+				
+				if (sDest != null && !sDest.isEmpty())
+					emailsAtendentes = sDest.split(",");
+				
 
-				Correio.enviar(
+				if(emailsAtendentes != null && emailsAtendentes.length > 0) {
+					Correio.enviar(
 						SigaBaseProperties
 								.getString("servidor.smtp.usuario.remetente"),
 						emailsAtendentes,
 						"Documento disponibilizado no Boletim Interno " + doc.getCodigo(),
 						sb.toString(), sbHtml.toString());
-				
+				}
 			} catch (Exception e) {
-				throw new AplicacaoException("Erro ao enivar email de disponibilização.",
-						0, e);
+				
 			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -1072,18 +1079,26 @@ public class ExBL extends CpBL {
 
 				sbHtml.append("</body></html>");
 				
-				String emailsAtendentes[] = {"andre.silva@jfrj.jus.br", "scp@jfrj.jus.br"};
+				
+				String emailsAtendentes[] = null;
+				String sDest = SigaExProperties.getString("dje.lista.destinatario.publicacao");
+				
+				
+				if (sDest != null && !sDest.isEmpty())
+					emailsAtendentes = sDest.split(",");
+				
 
-				Correio.enviar(
-						SigaBaseProperties
-								.getString("servidor.smtp.usuario.remetente"),
-						emailsAtendentes,
-						"Documento disponibilizado no Diário " + mob.getExDocumento().getCodigo(),
-						sb.toString(), sbHtml.toString());
+				if(emailsAtendentes != null && emailsAtendentes.length > 0) {
+					Correio.enviar(
+							SigaBaseProperties
+									.getString("servidor.smtp.usuario.remetente"),
+							emailsAtendentes,
+							"Documento disponibilizado no Diário " + mob.getExDocumento().getCodigo(),
+							sb.toString(), sbHtml.toString());
+				}
 				
 			} catch (Exception e) {
-				throw new AplicacaoException("Erro ao enivar email de disponibilização.",
-						0, e);
+				
 			}			
 		} catch (final Exception e) {
 			cancelarAlteracao();

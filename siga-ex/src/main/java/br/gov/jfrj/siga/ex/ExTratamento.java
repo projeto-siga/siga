@@ -69,10 +69,10 @@ public class ExTratamento extends AbstractExTratamento {
 		l.add(new ExTratamento("Presidente do Tribunal de Contas da União", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor Presidente do Tribunal", "Excelentíssimo Senhor Juiz"));
 		l.add(new ExTratamento("Membro do Tribunal de Contas da União", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora Presidente do Tribunal", "Excelentíssima Senhora Juiza"));
 		l.add(new ExTratamento("Membro do Tribunal de Contas da União", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor Presidente do Tribunal", "Excelentíssimo Senhor Juiz"));
-		l.add(new ExTratamento("Presidente do Tribunal Regional Federal", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora Presidente do Tribunal", "Excelentíssima Senhora Juiza"));
-		l.add(new ExTratamento("Presidente do Tribunal Regional Federal", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor Presidente do Tribunal", "Excelentíssimo Senhor Juiz"));
-		l.add(new ExTratamento("Membro do Tribunal Regional Federal", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora Presidente do Tribunal", "Excelentíssima Senhora Juiza"));
-		l.add(new ExTratamento("Membro do Tribunal Regional Federal", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor Presidente do Tribunal", "Excelentíssimo Senhor Juiz"));
+		l.add(new ExTratamento("Presidente do Tribunal Regional Federal", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora Presidente do Tribunal", "Excelentíssima Senhora Desembargadora Federal"));
+		l.add(new ExTratamento("Presidente do Tribunal Regional Federal", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor Presidente do Tribunal", "Excelentíssimo Senhor Desembargador Federal"));
+		l.add(new ExTratamento("Membro do Tribunal Regional Federal", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora Presidente do Tribunal", "Excelentíssima Senhora Desembargadora Federal"));
+		l.add(new ExTratamento("Membro do Tribunal Regional Federal", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor Presidente do Tribunal", "Excelentíssimo Senhor Desembargador Federal"));
 		l.add(new ExTratamento("Presidente do Tribunal de Justiça", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora Presidente do Tribunal", "Excelentíssima Senhora Juiza"));
 		l.add(new ExTratamento("Presidente do Tribunal de Justiça", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor Presidente do Tribunal", "Excelentíssimo Senhor Juiz"));
 		l.add(new ExTratamento("Membro do Tribunal de Justiça", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora Presidente do Tribunal", "Excelentíssima Senhora Juiza"));

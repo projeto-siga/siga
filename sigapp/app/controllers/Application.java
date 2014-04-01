@@ -563,7 +563,7 @@ public class Application extends SigaApplication {
 				// Verifica se existe local naquele forum do usu√°rio
 				if (listAgendamentos.size() != 0) {
 					// para cada agendamento, inlcui na lista a sala que √© do
-					// forum daquele usu√°rio
+					// forum daquele usu·rio
 					List<Agendamentos> auxAgendamentos = new ArrayList<Agendamentos>();
 					for (Integer i = 0; i < listAgendamentos.size(); i++) {
 						// pega o agendamento
@@ -607,8 +607,25 @@ public class Application extends SigaApplication {
 							+ "' and localFk.cod_local='" + cod_local
 							+ "' and data_ag = to_date('" + dtt
 							+ "','dd/mm/yy')").first();
+			//--------------------------
+			String lotacaoSessao = cadastrante().getLotacao().getIdLotacao()
+					.toString();
+			//System.out.println(lotacaoSessao);
+			String matricula_ag = ag.matricula;
+			DpPessoa p = (DpPessoa) DpPessoa.find(
+					"orgaoUsuario.idOrgaoUsu = "
+							+ cadastrante().getOrgaoUsuario().getIdOrgaoUsu()
+							+ " and dataFimPessoa is null and matricula='"
+							+ matricula_ag + "'").first();
+			String lotacao_ag = p.getLotacao().getIdLotacao().toString(); 
+			//System.out.println(p.getNomePessoa().toString()+ "Lotado em:" + lotacao_ag);
+			if(lotacaoSessao.trim().equals(lotacao_ag.trim())){
+			//--------------------------
 			ag.delete();
 			resultado = "Ok.";
+			}else{
+				Excecoes("Esse agendamento nao pode ser deletado; pertence a outra vara.");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = "N„o Ok.";
@@ -640,7 +657,7 @@ public class Application extends SigaApplication {
 			String sala_ag = objSala.local;
 			String lotacaoSessao = cadastrante().getLotacao().getIdLotacao()
 					.toString();
-			System.out.println(lotacaoSessao);
+			//System.out.println(lotacaoSessao);
 			Agendamentos objAgendamento = Agendamentos.find(
 					"cod_local='" + cod_sala + "' and data_ag = to_date('"
 							+ data_ag + "','yy-mm-dd') and hora_ag='" + hora_ag
@@ -652,7 +669,7 @@ public class Application extends SigaApplication {
 							+ " and dataFimPessoa is null and matricula='"
 							+ matricula_ag + "'").first();
 			String lotacao_ag = p.getLotacao().getIdLotacao().toString(); 
-			System.out.println(p.getNomePessoa().toString()+ "Lotado em:" + lotacao_ag);
+			//System.out.println(p.getNomePessoa().toString()+ "Lotado em:" + lotacao_ag);
 			if(lotacaoSessao.trim().equals(lotacao_ag.trim())){
 				String processo = objAgendamento.processo;
 				String periciado = objAgendamento.periciado;
@@ -662,7 +679,7 @@ public class Application extends SigaApplication {
 				JPA.em().flush();
 				render(sala_ag, cod_sala, data_ag, hora_ag, processo, periciado, perito_juizo, perito_parte, orgao_julgador);
 			}else{
-				Excecoes("Esse agendamento n„o pode ser modificado; pertence a outra vara.");
+				Excecoes("Esse agendamento nao pode ser modificado; pertence a outra vara.");
 			}
 		} else {
 			Excecoes("Usu·rio sem permiss„o");
@@ -695,14 +712,25 @@ public class Application extends SigaApplication {
 		UsuarioForum objUsuario = UsuarioForum.find(
 				"matricula_usu =" + matriculaSessao).first();
 		if (objUsuario != null) {
+			// busca locais em funÁ„o da configuraÁ„o do usu·rio
+			String criterioSalas="";
+			List<Locais> listaDeSalas = Locais.find("forumFk="+objUsuario.forumFk.cod_forum).fetch();
+			// monta string de criterio
+			for(int j=0;j<listaDeSalas.size();j++){
+				criterioSalas = criterioSalas + "'" +listaDeSalas.get(j).cod_local.toString() + "'";
+				if(j+1<listaDeSalas.size()){
+					criterioSalas = criterioSalas + ",";
+				}
+			}
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 			Date hoje = new Date();
 			String dtt = df.format(hoje);
 			// busca agendamentos de hoje
-			List<Agendamentos> listAgendamentos = Agendamentos.find(
+			if(criterioSalas.equals("")){criterioSalas="''";}
+			 List<Agendamentos> listAgendamentos = Agendamentos.find(
 					"data_ag = to_date('" + dtt
-							+ "','dd-mm-yy') order by hora_ag").fetch();
-			if (listAgendamentos.size() != 0) {
+							+ "','dd-mm-yy') and localFk in("+criterioSalas+") order by hora_ag").fetch();
+			 if (listAgendamentos.size() != 0) {
 				// busca as salas daquele forum
 				List<Locais> listLocais = Locais.find(
 						"cod_forum='" + objUsuario.forumFk.cod_forum + "'")

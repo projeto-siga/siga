@@ -369,4 +369,9 @@ public class WfDao extends CpDao {
 		return WfContextBuilder
 		.getJbpmContext().getGraphSession().getProcessDefinition(id);
 	}
+	
+	public List<ProcessDefinition> getTodasAsVersoesProcessDefinition(String nome) {
+		return WfContextBuilder.getJbpmContext().getGraphSession().findAllProcessDefinitionVersions(nome);
+	}
+
 }

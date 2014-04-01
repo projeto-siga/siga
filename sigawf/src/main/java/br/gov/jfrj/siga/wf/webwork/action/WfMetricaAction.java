@@ -20,13 +20,14 @@ package br.gov.jfrj.siga.wf.webwork.action;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.graph.node.TaskNode;
 import org.jbpm.taskmgmt.def.Task;
 
 import br.gov.jfrj.siga.wf.SigaWfProperties;
@@ -130,12 +131,15 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	}
 
 	private String getNomeGrupo(Long idGrupo) {
-		for (Object o: getProcedimentoEscolhido().getTaskMgmtDefinition().getTasks().values()) {
-			Task t = (Task)o;
-			if (t.getId()==idGrupo.longValue()){
-				return t.getName();
-			}
-		} 
+		List<ProcessDefinition> lstPD = WfDao.getInstance().getTodasAsVersoesProcessDefinition(getProcedimentoEscolhido().getName());
+		for (ProcessDefinition pd : lstPD) {
+			for (Object o: pd.getTaskMgmtDefinition().getTasks().values()) {
+				Task t = (Task)o;
+				if (t.getId()==idGrupo.longValue()){
+					return t.getName();
+				}
+			} 
+		}
 		
 		return null;
 		
@@ -262,21 +266,37 @@ public class WfMetricaAction extends WfSigaActionSupport {
 		return SigaWfProperties.getRelEstatGeraisMaxMediaTrunc().toString().replace(".", ",");
 	}
 	
-	public List<Task> getLstGruposIni(){
-		List<Task> result = new ArrayList<Task>();
-		Map map = getProcedimentoEscolhido().getTaskMgmtDefinition().getTasks();
-		for (Object o : map.values()) {
-			Task t = (Task)o;
-			if (t.getTaskNode()!=null){
-				result.add(t);	
+	public Set<Task> getLstGruposIni(){
+		
+		Set<Task> result = new TreeSet<Task>(new Comparator<Task>() {
+
+			@Override
+			public int compare(Task t1, Task t2) {
+				return t1.getName().compareTo(t2.getName());
 			}
 			
+		});
+		List<ProcessDefinition> lstPD = WfDao.getInstance().getTodasAsVersoesProcessDefinition(getProcedimentoEscolhido().getName());
+		for (ProcessDefinition pd : lstPD) {
+			try {
+				Map map = pd.getTaskMgmtDefinition().getTasks();
+				for (Object o : map.values()) {
+					Task t = (Task)o;
+					if (t.getTaskNode()!=null){
+						result.add(t);	
+					}
+					
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 		
 		return result;
 	}
-	
-	public List<Task>  getLstGruposFim(){
+
+	public Set<Task>  getLstGruposFim(){
 		return getLstGruposIni();
 	}
 

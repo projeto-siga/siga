@@ -217,9 +217,8 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 			TreeMap<String, Double> map = new TreeMap<String, Double>();
 			TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
 
-			/*
-			 * percTotal = SrSolicitacao
-			 		.find("select count(*) "
+			percTotal = SrSolicitacao
+					.find("select count(*) "
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.lotaAtendente in ("
@@ -240,10 +239,9 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 							+ "and  sol.dtReg <= to_date('"
 							+ parametros.get("dtFim")
 							+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").first();
-			 */
-			
+
 			List<SrSolicitacao> solicPorAtendente = SrSolicitacao
-					.find("select mov.lotaAtendente, count(*) "
+					.find("select mov.lotaAtendente.siglaLotacao, count(*) "
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.lotaAtendente in ("
@@ -263,7 +261,9 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 							+ " 00:00:00','dd/MM/yy hh24:mi:ss') "
 							+ "and  sol.dtReg <= to_date('"
 							+ parametros.get("dtFim")
-							+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").fetch();
+							+ " 23:59:59','dd/MM/yy hh24:mi:ss') "
+							+ "group by mov.lotaAtendente.siglaLotacao")
+					.fetch();
 
 			Iterator itTotal = solicPorAtendente.listIterator();
 			while (itTotal.hasNext()) {
@@ -275,7 +275,7 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 			}
 
 			List<SrSolicitacao> solicDoOrgao = SrSolicitacao
-					.find("select sol.idSolicitacao, sol.dtReg, mov.dtIniMov, mov.lotaAtendente "
+					.find("select sol.idSolicitacao, sol.dtReg, mov.dtIniMov, mov.lotaAtendente.siglaLotacao "
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
 							+ "and mov.lotaAtendente in ("
@@ -302,8 +302,7 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 
 				Object[] obj = (Object[]) it.next();
 
-				SrMovimentacao mov = (SrMovimentacao) (obj[4]);
-				String lotaAtendente = mov.lotaAtendente.getNomeLotacao();
+				String lotaAtendente = (String) (obj[3]);
 				
 				BigDecimal totalMinutosTrabalhados = calculaTotalMinutosTrabalhados(
 						obj, dataDosFeriados);
@@ -337,9 +336,9 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 			}
 			for (String s : set) {
 				d.add(s);
-				percTotal = maptotais.get(s);
+				//percTotal = maptotais.get(s);
 				if (map.containsKey(chave(s, "15m"))) {
-					cls_1 = map.get(chave(s, "15m"));
+					cls_15m = map.get(chave(s, "15m"));
 					d.add(cls_15m);
 					d.add((cls_15m / percTotal));
 				} else {
@@ -355,7 +354,7 @@ public class SrRelPrazoTRF extends RelatorioTemplate {
 					d.add(0D);
 				}
 				if (map.containsKey(chave(s, "3"))) {
-					cls_1 = map.get(chave(s, "3"));
+					cls_3 = map.get(chave(s, "3"));
 					d.add(cls_3);
 					d.add((cls_3 / percTotal));
 				} else {

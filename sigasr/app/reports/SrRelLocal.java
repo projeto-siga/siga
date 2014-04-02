@@ -1,49 +1,19 @@
 package reports;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import models.SrMovimentacao;
 import models.SrSolicitacao;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
-import org.hibernate.Query;
-
 import play.db.jpa.JPA;
-import ar.com.fdvs.dj.core.DJConstants;
-import ar.com.fdvs.dj.core.layout.HorizontalBandAlignment;
-import ar.com.fdvs.dj.domain.AutoText;
-import ar.com.fdvs.dj.domain.DJCalculation;
-import ar.com.fdvs.dj.domain.DJCrosstab;
-import ar.com.fdvs.dj.domain.DJCrosstabColumn;
-import ar.com.fdvs.dj.domain.DJCrosstabRow;
-import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
-import ar.com.fdvs.dj.domain.builders.CrosstabBuilder;
-import ar.com.fdvs.dj.domain.builders.CrosstabColumnBuilder;
-import ar.com.fdvs.dj.domain.builders.CrosstabRowBuilder;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
-import ar.com.fdvs.dj.domain.constants.Border;
-import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
-import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.Coluna;
-import br.gov.jfrj.relatorio.dinamico.IConstantes;
-import br.gov.jfrj.relatorio.dinamico.LayoutRelatorioDinamico;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 public class SrRelLocal extends RelatorioTemplate {
 
@@ -77,7 +47,6 @@ public class SrRelLocal extends RelatorioTemplate {
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection processarDados() {
 
@@ -111,6 +80,7 @@ public class SrRelLocal extends RelatorioTemplate {
 							+ "from SrMovimentacao movult " 
 							+ "where movult.solicitacao = mov.solicitacao "
 							+ " and movult.tipoMov = 7) "
+						//	+ " and movult.lotaAtendente.orgaoUsuario = ) "
 						+ "and not exists (select 1 from SrMovimentacao movfec " 
 						+		"where movfec.solicitacao = mov.solicitacao " 
 						+		"and movfec.dtIniMov > mov.dtIniMov " 

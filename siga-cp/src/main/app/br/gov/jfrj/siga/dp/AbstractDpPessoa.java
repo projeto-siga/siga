@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -162,7 +163,8 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pessoaInicial")
 	@Desconsiderar
-	private Set<DpPessoa> pessoasPosteriores = new HashSet<DpPessoa>(0);
+	//private Set<DpPessoa> pessoasPosteriores = new HashSet<DpPessoa>(0);
+	private Set<DpPessoa> pessoasPosteriores = new TreeSet<DpPessoa>();
 
 	/**
 	 * @return the cpTipoPessoa

@@ -1047,9 +1047,8 @@ public class SigaCpSinc {
 				o.setIdExterna(parseStr(parser, "lotacao"));
 				pessoa.setLotacao(o);
 			}
-			if (parseStr(parser, "tipo") != null) {
-				CpTipoPessoa o = obterTipoPessoaPorDescricao(parseStr(parser,
-						"tipo"));
+			if (parseStr(parser, "tipo_rh") != null) {
+				CpTipoPessoa o = obterTipoPessoaPorId ( Integer.valueOf(parseStr(parser,"tipo_rh")));
 				pessoa.setCpTipoPessoa(o);
 			} else {
 				// inferir tipo de pessoa para a SJRJ se vier nulo no XML

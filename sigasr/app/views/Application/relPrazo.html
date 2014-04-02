@@ -20,10 +20,10 @@ $(function(){
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		#{if titular.getOrgaoUsuario().idOrgaoUsu == 1 }
+		#{if lotaTitular.getOrgaoUsuario().idOrgaoUsu == 1 }
 		<form id="grelprazo" action="@{Application.grelPrazo}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100" target="relPrazo">
 		#{/if}
-		#{elseif titular.getOrgaoUsuario().idOrgaoUsu == 3 }
+		#{elseif lotaTitular.getOrgaoUsuario().idOrgaoUsu == 3 }
 		<form id="grelprazo" action="@{Application.grelPrazoTRF}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100" target="relPrazo">
 		#{/elseif} 
 		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
@@ -45,7 +45,7 @@ $(function(){
 							<ul id="atendentes" style="color: #365b6d"></ul>
 						 </td>		
 					</tr>
-					#{if titular.getOrgaoUsuario().idOrgaoUsu == 1 }
+					#{if lotaTitular.getOrgaoUsuario().idOrgaoUsu == 1 }
 					<tr>
 					   <td>Local (Solicitante)</td>
 						<td>#{select name:'local', items:locais, labelProperty:'nomeComplexo', 

@@ -121,6 +121,7 @@ public class Corporativo extends SigaApplication {
 			setAttr(e, "lotacao", p.lotacao_id);
 			setAttr(e, "cargo", p.cargo_id);
 			setAttr(e, "funcaoConfianca", p.funcao_id);
+			setAttr(e, "tipo_rh", p.tipo_rh);
 			pessoas.appendChild(e);
 		}
 

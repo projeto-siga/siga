@@ -26,8 +26,8 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -80,17 +80,17 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private DpLotacao lotacaoPai;
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoInicial")
 	@Desconsiderar
-	private Set<DpLotacao> lotacoesPosteriores = new HashSet<DpLotacao>(0);
+	private Set<DpLotacao> lotacoesPosteriores = new TreeSet<DpLotacao>();
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoPai")
 	@Desconsiderar
-	private Set<DpLotacao> dpLotacaoSubordinadosSet = new HashSet<DpLotacao>(0);
+	private Set<DpLotacao> dpLotacaoSubordinadosSet = new TreeSet<DpLotacao>();
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacao")
     @Desconsiderar
-    private Set<DpPessoa> dpPessoaLotadosSet  = new HashSet<DpPessoa>(0);
+    private Set<DpPessoa> dpPessoaLotadosSet  = new TreeSet<DpPessoa>();
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_LOTACAO")
 	private CpTipoLotacao cpTipoLotacao;

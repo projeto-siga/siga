@@ -69,6 +69,7 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	private String strBuscarFechadas;
 	private Integer tipoDest;
 	private Integer tipoEmail;
+	private String emailTela;
 
 	
 	
@@ -77,7 +78,7 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 		lotaSel = new DpLotacaoSelecao();
 		lotaEmailSel = new DpLotacaoSelecao();
 		pessSel = new DpPessoaSelecao();
-		pessEmailSel = new DpPessoaSelecao();
+		pessEmailSel = new DpPessoaSelecao();		
 		tipoDest = 1;
 		tipoEmail = 1;
 		setStrBuscarFechadas("buscarFechadas=false");
@@ -85,12 +86,12 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 	}
 	
 	
-	public String getEmail() {
-		return email;
+	public String getEmailTela() {
+		return  emailTela;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setEmailTela(String emailTela) {
+		this.emailTela= emailTela;
 	}	
 	
 	public Integer getTipoEmail() {
@@ -273,7 +274,7 @@ public class ExEmailNotificacaoAction extends SigaAnonimoActionSupport {
 			case 3 : lotacaoEmail = getLotaEmailSel().buscarObjeto();
 					 exEmail.setLotacaoEmail(lotacaoEmail.getLotacaoInicial());
 					 break;
-			case 4 : exEmail.setEmail(email);
+			case 4 : exEmail.setEmail(this.getEmailTela());
 		}
 		
 		

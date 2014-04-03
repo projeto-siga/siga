@@ -57,12 +57,9 @@ public class Notificador {
 
 	
 	private static ExDao exDao() {
-		return ExDao.getInstance();
-	}
+		return ExDao.getInstance();	}
 	
-	private static CpDao cpDao() {
-		return CpDao.getInstance();
-	}
+	
 
 	
 	/**
@@ -210,7 +207,7 @@ public class Notificador {
 								CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))	
 							emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());								
 					} else {
-						for (DpPessoa pes : cpDao().pessoasPorLotacao(emailNot.getDpLotacao().getId(), false, true)) {
+						for (DpPessoa pes : emailNot.getDpLotacao().getLotacaoAtual().getDpPessoaLotadosSet()) {							
 							if (Ex.getInstance()
 									.getConf()
 									.podePorConfiguracao(
@@ -240,7 +237,7 @@ public class Notificador {
 								emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());								
 						} else {
 							if (emailNot.getLotacaoEmail() != null) {
-								for (DpPessoa pes : cpDao().pessoasPorLotacao(emailNot.getLotacaoEmail().getId(), false, true)) {
+								for (DpPessoa pes : emailNot.getLotacaoEmail().getLotacaoAtual().getDpPessoaLotadosSet()) {
 									if (Ex.getInstance()
 											.getConf()
 											.podePorConfiguracao(
@@ -273,7 +270,7 @@ public class Notificador {
 						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))
 					emailsTemp.add(pess.getEmailPessoaAtual());			
 			} else {
-				for (DpPessoa pes : cpDao().pessoasPorLotacao(lot.getId(), false, true)) {
+				for (DpPessoa pes : lot.getLotacaoAtual().getDpPessoaLotadosSet()) {
 					if (Ex.getInstance()
 							.getConf()
 							.podePorConfiguracao(
@@ -365,7 +362,7 @@ public class Notificador {
 								+ " (sigla: " + mov.getLotaResp().getSigla()
 								+ ")" + "</b>");
 			} else {
-				conteudo.append("Lotação Destinatária<b>"
+				conteudo.append("Lotação Destinatária: <b>"
 								+ mov.getLotaResp().getNomeLotacao()
 								+ " (sigla: "
 								+ mov.getLotaResp().getSigla()
@@ -426,7 +423,7 @@ public class Notificador {
 								+ ")" + "</b></p>");
 			} else {
 				conteudoHTML
-						.append("<p>Lotação Destinatária<b>"
+						.append("<p>Lotação Destinatária: <b>"
 								+ mov.getLotaResp().getNomeLotacao()
 								+ " (sigla: "
 								+ mov.getLotaResp().getSigla()

@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jbpm.graph.def.ProcessDefinition;
+import org.jbpm.graph.node.TaskNode;
 import org.jbpm.taskmgmt.def.Task;
 
 import br.gov.jfrj.siga.wf.SigaWfProperties;
@@ -35,7 +36,6 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.relatorio.RelEstatisticaProcedimento;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDoc;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDocDetalhado;
-import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
  * Classe responsável pelas exibições das estatísticas dos procedimentos.
@@ -130,18 +130,14 @@ public class WfMetricaAction extends WfSigaActionSupport {
 		return "relatorioPDF";
 	}
 
+	/**
+	 * Método utilizado para 
+	 * @param idGrupo
+	 * @return
+	 */
 	private String getNomeGrupo(Long idGrupo) {
-		List<ProcessDefinition> lstPD = WfDao.getInstance().getTodasAsVersoesProcessDefinition(getProcedimentoEscolhido().getName());
-		for (ProcessDefinition pd : lstPD) {
-			for (Object o: pd.getTaskMgmtDefinition().getTasks().values()) {
-				Task t = (Task)o;
-				if (t.getId()==idGrupo.longValue()){
-					return t.getName();
-				}
-			} 
-		}
-		
-		return null;
+		Task t = WfDao.getInstance().consultar(idGrupo, Task.class, false);
+		return t.getName();
 		
 	}
 
@@ -268,33 +264,9 @@ public class WfMetricaAction extends WfSigaActionSupport {
 	
 	public Set<Task> getLstGruposIni(){
 		
-		Set<Task> result = new TreeSet<Task>(new Comparator<Task>() {
-
-			@Override
-			public int compare(Task t1, Task t2) {
-				return t1.getName().compareTo(t2.getName());
-			}
-			
-		});
-		List<ProcessDefinition> lstPD = WfDao.getInstance().getTodasAsVersoesProcessDefinition(getProcedimentoEscolhido().getName());
-		for (ProcessDefinition pd : lstPD) {
-			try {
-				Map map = pd.getTaskMgmtDefinition().getTasks();
-				for (Object o : map.values()) {
-					Task t = (Task)o;
-					if (t.getTaskNode()!=null){
-						result.add(t);	
-					}
-					
-				}
-				
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-		}
-		
-		return result;
+		return WfDao.getInstance().getTodasAsTarefas(getProcedimentoEscolhido().getName());
 	}
+
 
 	public Set<Task>  getLstGruposFim(){
 		return getLstGruposIni();

@@ -474,8 +474,6 @@
                 <artifactId>gson</artifactId>
                 <version>2.2.4</version>
             </dependency>
-                        
-
         </dependencies>
     </dependencyManagement>
 

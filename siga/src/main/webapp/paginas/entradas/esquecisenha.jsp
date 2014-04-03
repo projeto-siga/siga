@@ -155,14 +155,24 @@ function refreshWindow(){
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
+			<c:if test="${not empty mensagem}">
+					<div id="mensagem" class="gt-success">${mensagem}</div>
+					<script>
+						setTimeout(function() {
+							$('#mensagem').fadeTo(1000, 0, function() {
+								$('#mensagem').slideUp(1000);
+								window.location.replace("/siga");
+							});
+						}, 5000); // <-- time in milliseconds
+					</script>
+			</c:if>
+		
 			<c:if test="${baseTeste}">
 					<p id="msgSenha" class="gt-error">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</p>
 			</c:if>
 	
 			<h1 class="gt-form-head">${param.titulo}</h1>
 
-			<h2>${mensagem}</h2>
-	
 			<h2 class="gt-form-head">Método 1 - Envio de senha nova para o
 				e-mail</h2>
 			<p id="msgExplicacao"></p>

@@ -95,7 +95,7 @@
 		<action name="esqueci_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aEsqueciSenhaGravar">
 			<result type="redirect-action">
-				<param name="actionName">principal</param>
+				<param name="actionName">esqueci_senha</param>
 				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>

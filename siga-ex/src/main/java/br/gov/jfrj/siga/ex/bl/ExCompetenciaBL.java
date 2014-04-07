@@ -1957,8 +1957,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isSemEfeito()
 				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
-
-
 						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
 				// && mob.doc().isAssinadoPorTodosOsSignatarios()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
@@ -3288,7 +3286,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
 
-		if (mob.isCancelada() || mob.isEncerradoOuArquivado() || mob.isSobrestado() || (!mob.isEmTransito()))
+		if (mob.isCancelada() || mob.isSobrestado() || (!mob.isEmTransito()))
 			return false;
 		else if (!mob.isEmTransitoExterno()) {
 			if (!exMov.getLotaResp().equivale(lotaTitular))
@@ -3651,6 +3649,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 
 				&& !mob.isArquivadoPermanente()
+				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
+						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
+						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
 				&& !mob.isEmEditalEliminacao()
 				// && !mob.isEncerradoOuArquivado()
 				&& !mob.isSobrestado()
@@ -3972,5 +3973,4 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (!mob.isGeral() && mob.doc().isExpediente()
 				&& mob.doc().isAssinado() && !mob.isEmTransito() && podeMovimentar);
 
-	}
-}
+	}}

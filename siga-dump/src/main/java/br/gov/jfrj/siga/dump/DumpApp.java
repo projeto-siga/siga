@@ -300,7 +300,7 @@ public class DumpApp {
 	}
 
 	private String getAspas(String str) {
-		return "'" + str.replaceAll("'", " || chr(39) || ") + "'";
+		return "'" + str.replaceAll("'", "''") + "'";
 	}
 
 	private String getPrimaryKey(String nomeTabela, String optTabela) throws SQLException {
@@ -326,7 +326,7 @@ public class DumpApp {
 	private String blobToString(byte[] bytes) throws Exception {
 		int dbms_output_limit = 2^32*1000; //32kB
 		if(bytes.length<=dbms_output_limit){
-			return new String(bytes).replaceAll("'", " || chr(39) || ");	
+			return new String(bytes).replaceAll("'", "''");	
 		}else{
 			throw new Exception("Um blob é maior que 32k!" + bytes.length);
 		}

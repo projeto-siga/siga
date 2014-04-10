@@ -3553,7 +3553,7 @@ public class ExBL extends CpBL {
 
 					// todos da lotação
 
-					if (email == null) {
+					if (email.getEmail() == null) {
 
 						for (DpPessoa pes : dao().pessoasPorLotacao(
 
@@ -3565,7 +3565,7 @@ public class ExBL extends CpBL {
 
 					} else {
 
-//						dest.add(email);
+						dest.add(email.getEmail());
 
 					}
 

@@ -172,6 +172,16 @@ public class PrincipalAction extends SigaActionSupport {
 					URLSelecionar = urlBase + "/sigasr" + testes
 							+ "/solicitacao/selecionar?sigla=" + getSigla()
 							+ incluirMatricula;
+			} else if (copiaSigla.startsWith("MTP")
+					|| copiaSigla.startsWith("RTP")
+					|| copiaSigla.startsWith("STP")) {
+				if (Cp.getInstance()
+						.getConf()
+						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;TP")) {
+					URLSelecionar = urlBase + "/sigatp"
+							+ "/selecionar.action?sigla=" + getSigla()
+							+ incluirMatricula;
+				}
 			} else
 				URLSelecionar = urlBase + "/sigaex"
 						+ (testes.length() > 0 ? testes : "/expediente")
@@ -183,6 +193,10 @@ public class PrincipalAction extends SigaActionSupport {
 
 			if (copiaSigla.startsWith("SR"))
 				uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
+			else if (copiaSigla.startsWith("MTP")
+					|| copiaSigla.startsWith("STP")
+					|| copiaSigla.startsWith("RTP"))
+				uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
 			else
 				uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];

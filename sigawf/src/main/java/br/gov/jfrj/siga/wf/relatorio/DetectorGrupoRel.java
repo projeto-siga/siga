@@ -1,6 +1,10 @@
 package br.gov.jfrj.siga.wf.relatorio;
 
-
+/**
+ * Classe responsável por separar em grupos as linhas especificadas
+ * @author kpf
+ *
+ */
 public class DetectorGrupoRel {
 
 	public static enum GrupoEmProcessamento{

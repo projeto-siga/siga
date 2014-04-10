@@ -4665,6 +4665,10 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento arquivado");
 
+		if (mobMestre.isSobrestado())
+			throw new AplicacaoException(
+					"Não é possível apensar a um documento Sobrestado");
+
 		if (mobMestre.isJuntado())
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento juntado");

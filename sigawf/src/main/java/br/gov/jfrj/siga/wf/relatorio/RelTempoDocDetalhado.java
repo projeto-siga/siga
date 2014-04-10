@@ -157,16 +157,20 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 
 
 	private void addLinhaSumarioGrupo(EstatisticaGrupoRel est , Tarefa t, List<String> dados) {
-		addLinhaEmBranco(t, dados);
-		
-		dados.add(t.getNumeroDocumento() + " ("
-				+ t.getDuracaoProcedimento() + ")");
+		String mediaGrupo = est.getMediaGrupo(t.getNumeroDocumento());
+		if (!mediaGrupo.equals("0")){
+			addLinhaEmBranco(t, dados);
+			
+			dados.add(t.getNumeroDocumento() + " ("
+					+ t.getDuracaoProcedimento() + ")");
 
-		dados.add("MEDIA [Grupos]");
-		dados.add("");
-		dados.add("");
-		dados.add(est.getMediaGrupo(t.getNumeroDocumento()));
-		addLinhaEmBranco(t, dados);
+			dados.add("MEDIA [Grupos]");
+			dados.add("");
+			dados.add("");
+			dados.add(est.getMediaGrupo(t.getNumeroDocumento()));
+			addLinhaEmBranco(t, dados);
+			
+		}
 	}
 
 	private void addLinha(List<String> dados, Tarefa t) {

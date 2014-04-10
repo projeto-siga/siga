@@ -118,7 +118,6 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 			
 			if (detectGrupo.fazParteDoGrupo(t.getNome()) && detectGrupo.isInicio()){
 				linhaInicioGrupo = dados.size();
-//				addLinhaEmBranco(t,dados);
 				detectGrupo.continuar();
 			}
 			
@@ -157,10 +156,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 	}
 
 	private void addLinhaTotalGrupo(List<Tarefa> grupoAtual, List<String> dados) {
-		long duracao = 0;
-		for (Tarefa t : grupoAtual) {
-			duracao += t.getDuracaoEmMili();
-		}
+		long duracao = calcularDuracao(grupoAtual);
 		
 		dados.add(grupoAtual.get(0).getNumeroDocumento() + " ("
 				+ grupoAtual.get(0).getDuracaoProcedimento() + ")");
@@ -168,6 +164,14 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		dados.add("");
 		dados.add("");
 		dados.add(SigaCalendar.formatDHM(duracao));
+	}
+
+	private long calcularDuracao(List<Tarefa> tarefas) {
+		long duracao = 0;
+		for (Tarefa t : tarefas) {
+			duracao += t.getDuracaoEmMili();
+		}
+		return duracao;
 	}
 
 	private void addLinhaEmBranco(Tarefa t, List<String> dados,int posicao) {

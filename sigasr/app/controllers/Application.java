@@ -60,13 +60,13 @@ import br.gov.jfrj.siga.sinc.lib.test.Lotacao;
 
 public class Application extends SigaApplication {
 
-	@Before
+	@Before(priority=1)
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
 		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(unless = { "exibirAtendente", "exibirAtributos",
+	@Before(priority=2, unless = { "exibirAtendente", "exibirAtributos",
 			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao" })
 	public static void addDefaults() throws Exception {
 

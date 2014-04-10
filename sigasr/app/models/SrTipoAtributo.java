@@ -1,17 +1,13 @@
 package models;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -20,9 +16,6 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import play.db.jpa.GenericModel;
-import play.db.jpa.Model;
-import models.siga.PlayHistoricoSuporte;
 
 @Entity
 @Table(name = "SR_TIPO_ATRIBUTO", schema = "SIGASR")

@@ -115,17 +115,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	@Override
-	public int getHisAtivo() {
-		return getHisDtFim() != null ? 1 : 0;
-	}
-
-	@Override
-	public void setHisAtivo(int hisAtivo) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}

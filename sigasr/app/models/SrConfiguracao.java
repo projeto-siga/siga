@@ -11,13 +11,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import models.siga.PlayConfiguracao;
-
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
-import play.db.jpa.JPABase;
-import util.Util;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;

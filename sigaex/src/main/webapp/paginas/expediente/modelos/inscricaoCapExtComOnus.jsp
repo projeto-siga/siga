@@ -204,16 +204,10 @@
 				<mod:grupo
 					titulo="Responsabilizo-me pelas informações prestadas e pela multiplicação do conhecimento
 				   adquirido pelos indicados, assim como pelo atesto ao final da ação de capacitação.">
-				</mod:grupo>
-				<br>
-				<b><mod:mensagem texto="ESTE FORMULÁRIO DEVERÁ SER ENCAMINHADO À SECRETARIA GERAL-SG, APÓS A ASSINATURA DIGITAL DO DIRETOR DA SUBSECRETARIA."></mod:mensagem></b>
-				<br>					
-					<mod:caixaverif obrigatorio="Sim"
-						titulo="Ciente"
-						var="cienteEncaminhamento" />
+				</mod:grupo>								
 			</mod:grupo>
-		</mod:grupo>
-		<br>
+		</mod:grupo>	
+		<br>	
 		<mod:mensagem
 			texto="A SOLICITAÇÃO DE
 				PAGAMENTO DE DIÁRIAS, SE FOR O CASO, DEVERÁ SER ENCAMINHADA PARA A
@@ -495,15 +489,7 @@
 			</tr>
 		</table>
 		<br>
-		<table width="90%" align="left" border="0" cellspacing="0">
-			
-			<tr>
-				<td align="justify">
-					<font size="1">ESTE FORMULÁRIO DEVERÁ SER ENCAMINHADO
-					À SECRETARIA GERAL-SG, APÓS A ASSINATURA DIGITAL DO DIRETOR DA SUBSECRETARIA.</font>
-				</td>
-			</tr>
-			
+		<table width="90%" align="left" border="0" cellspacing="0">					
 			<tr>
 				<td align="justify"><font size="1">A SOLICITAÇÃO DE
 				PAGAMENTO DE DIÁRIAS, SE FOR O CASO, DEVERÁ SER ENCAMINHADA PARA A

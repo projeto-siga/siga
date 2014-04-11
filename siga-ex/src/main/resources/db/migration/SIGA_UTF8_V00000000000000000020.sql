@@ -1,0 +1,3 @@
+--Inclui configuracao padrao para autuavel
+Insert into CORPORATIVO.CP_CONFIGURACAO (ID_CONFIGURACAO,HIS_DT_INI,ID_SIT_CONFIGURACAO,ID_TP_CONFIGURACAO) values (CORPORATIVO.CP_CONFIGURACAO_SEQ.nextval,to_timestamp('11/04/14 17:03:01,000000000','DD/MM/RR HH24:MI:SS,FF'),'1','35');
+Insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO_EX,ID_MOD) values (CORPORATIVO.CP_CONFIGURACAO_SEQ.currval,(select id_mod from siga.ex_modelo where nm_mod = 'Processo Administrativo'));

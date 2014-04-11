@@ -164,10 +164,10 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 	
 		dados.add("Informações Gerais");
 
-		dados.add("MEDIA TOTAL [Grupos]");
+		dados.add("MEDIA GERAL [Grupos]");
 		dados.add("");
 		dados.add("");
-		dados.add(est.getMediaTotalGrupos());
+		dados.add(est.getMediaGeralGrupos());
 
 	}
 

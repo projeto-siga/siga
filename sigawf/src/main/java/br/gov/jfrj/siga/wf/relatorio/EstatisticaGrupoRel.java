@@ -11,7 +11,7 @@ import br.gov.jfrj.siga.wf.relatorio.RelTempoDocDetalhado.Tarefa;
 public class EstatisticaGrupoRel {
 
 	private long somaMedias = 0L; 
-	private long somaTotalGrupos = 0L;
+	private long somaGeralGrupos = 0L;
 	
 	private Map<String,List<List<Tarefa>>> mapGrupos = new HashMap<String, List<List<Tarefa>>>();
 
@@ -40,7 +40,7 @@ public class EstatisticaGrupoRel {
 		
 		if(listaGrupos!=null){
 			totalGrupos+=listaGrupos.size();
-			somaTotalGrupos+=totalGrupos;
+			somaGeralGrupos+=totalGrupos;
 			for (List<Tarefa> listaTarefas : listaGrupos) {
 				
 				for (Tarefa tarefa : listaTarefas) {
@@ -63,9 +63,9 @@ public class EstatisticaGrupoRel {
 		return SigaCalendar.formatDHM(somaMedias);
 	}
 	
-	public String getMediaTotalGrupos(){
-		if (somaTotalGrupos!=0){
-			return SigaCalendar.formatDHM(somaMedias/somaTotalGrupos);	
+	public String getMediaGeralGrupos(){
+		if (somaGeralGrupos!=0){
+			return SigaCalendar.formatDHM(somaMedias/somaGeralGrupos);	
 		}else{
 			return "0";
 		}

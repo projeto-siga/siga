@@ -39,6 +39,7 @@ import org.hibernate.type.StringType;
 
 
 
+
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
@@ -150,11 +151,25 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 			ultimoDoc = t.getNumeroDocumento();
 			ultimaTarefa = t;
 		}
+		
+		addLinhaFinal(estatisticaGrp,dados,ultimaTarefa);
 
 		return dados;
 
 	}
 
+
+	private void addLinhaFinal(EstatisticaGrupoRel est,
+			List<String> dados, Tarefa ultimaTarefa) {
+	
+		dados.add("Informações Gerais");
+
+		dados.add("MEDIA TOTAL [Grupos]");
+		dados.add("");
+		dados.add("");
+		dados.add(est.getMediaTotalGrupos());
+
+	}
 
 	private void addLinhaSumarioGrupo(EstatisticaGrupoRel est , Tarefa t, List<String> dados) {
 		String mediaGrupo = est.getMediaGrupo(t.getNumeroDocumento());

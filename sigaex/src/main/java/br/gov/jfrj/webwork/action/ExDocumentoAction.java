@@ -81,6 +81,7 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
+import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
@@ -2410,6 +2411,13 @@ public class ExDocumentoAction extends ExActionSupport {
 							if (parametro.contains(m))
 								parametro = parametro.replaceAll(m, "");
 						}
+						if(!FuncoesEL.contemTagHTML(parametro)) {
+							if(parametro.contains("\"")) {
+								parametro = parametro.replace("\"", "&quot;");
+								setParam(s, parametro);
+							}
+						}
+						
 						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
 								.getBytes());
 					}

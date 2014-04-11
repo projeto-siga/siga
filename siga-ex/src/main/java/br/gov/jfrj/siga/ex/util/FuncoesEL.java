@@ -861,5 +861,9 @@ public class FuncoesEL {
 		attrs.put("template", "[@extensaoAssinador/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
+	
+	public static boolean contemTagHTML(String parametro) {
+		return parametro.split("\\<.*\\>").length > 1;
+	}
 
 }

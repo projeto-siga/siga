@@ -184,7 +184,7 @@ public class SigaCpSinc {
 
 			for (Item opr : list) {
 				log(opr.getDescricao());
-				
+
 				if (opr.getNovo() != null && opr.getNovo() instanceof DpLotacao)
 					if (opr.getAntigo() != null)
 						opr.getAntigo().semelhante(opr.getNovo(), 0);
@@ -192,9 +192,8 @@ public class SigaCpSinc {
 				if (opr.getAntigo() != null) {
 					manterNomeExibicao(opr.getAntigo(), opr.getNovo());
 				}
-				
-				manterHistoricoSeNecessario(opr);
 
+				manterHistoricoSeNecessario(opr);
 
 			}
 			/*
@@ -221,19 +220,20 @@ public class SigaCpSinc {
 				log("");
 				log("");
 				CpDao.getInstance().rollbackTransacao();
-			} else if (maxSinc>0 && list.size()>maxSinc){
+			} else if (maxSinc > 0 && list.size() > maxSinc) {
 				log("");
 				log("");
 				log("***ATENÇÃO***: Limite de operações por sincronismo excedido!");
-				log("Operações a serem executadas: " + list.size() + "\nOperações permitidas: " +maxSinc);
+				log("Operações a serem executadas: " + list.size()
+						+ "\nOperações permitidas: " + maxSinc);
 				log("Ajuste o paâmetro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
 				log("As alterações não serão efetivadas! Executando rollback...");
 				log("");
 				log("");
 
 				CpDao.getInstance().rollbackTransacao();
-			}else{
-				
+			} else {
+
 				CpDao.getInstance().commitTransacao();
 				log("Transação confirmada");
 			}
@@ -249,88 +249,116 @@ public class SigaCpSinc {
 	}
 
 	/**
-	 * Verifica se a entidade que está sendo incluída é uma entidade que já existe e foi 
-	 * removida indevidamente ocasionando a perda do histórico
-	 * @param opr 
+	 * Verifica se a entidade que está sendo incluída é uma entidade que já
+	 * existe e foi removida indevidamente ocasionando a perda do histórico
+	 * 
+	 * @param opr
 	 * @return
 	 */
 	private void manterHistoricoSeNecessario(Item opr) {
-		//Pessoa
-		if (opr.getNovo()!=null && opr.getNovo() instanceof DpPessoa){
+		// Pessoa
+		if (opr.getNovo() != null && opr.getNovo() instanceof DpPessoa) {
 			DpPessoa pesNova = (DpPessoa) opr.getNovo();
-			if (opr.getOperacao().equals(Operacao.incluir)){
-					List<DpPessoa> historicoPessoa = CpDao.getInstance()
-					.consultarPorMatriculaEOrgao(pesNova.getMatricula(),pesNova.getOrgaoUsuario().getId(),true,true);
-					log ("*****************************" + pesNova.getMatricula());
-					if (historicoPessoa.size() > 0){
-						DpPessoa pesAnterior = historicoPessoa.get(0);	
-						if (pesAnterior!=null && !pesAnterior.getIdInicial().equals(pesNova.getIdInicial())){
-							pesNova.setIdInicial(pesAnterior.getIdInicial());
-							log("AVISO (PESSOA): ID_INICIAL reconectada (" + pesNova.getSigla() + ")" );
-						}
-
+			if (opr.getOperacao().equals(Operacao.incluir)) {
+				List<DpPessoa> historicoPessoa = CpDao.getInstance()
+						.consultarPorMatriculaEOrgao(pesNova.getMatricula(),
+								pesNova.getOrgaoUsuario().getId(), true, true);
+				log("*****************************" + pesNova.getMatricula());
+				if (historicoPessoa.size() > 0) {
+					DpPessoa pesAnterior = historicoPessoa.get(0);
+					if (pesAnterior != null
+							&& !pesAnterior.getIdInicial().equals(
+									pesNova.getIdInicial())) {
+						pesNova.setIdInicial(pesAnterior.getIdInicial());
+						log("AVISO (PESSOA): ID_INICIAL reconectada ("
+								+ pesNova.getSigla() + ")");
 					}
+
+				}
 			}
-			
+
 		}
-		
-		//Lotacao
-		if (opr.getNovo()!=null && opr.getNovo() instanceof DpLotacao){
+
+		// Lotacao
+		if (opr.getNovo() != null && opr.getNovo() instanceof DpLotacao) {
 
 			DpLotacao novo = (DpLotacao) opr.getNovo();
-			if (opr.getOperacao().equals(Operacao.incluir)){
-					List<DpLotacao> historico = (List<DpLotacao>) CpDao.getInstance().consultarFechadosPorIdExterna(DpLotacao.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
-					
-					if (historico.size() > 0){
-						DpLotacao anterior = historico.get(0);	
-						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
-							novo.setIdInicial(anterior.getIdInicial());
-							log("AVISO (LOTACAO): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
-						}
+			if (opr.getOperacao().equals(Operacao.incluir)) {
+				List<DpLotacao> historico = (List<DpLotacao>) CpDao
+						.getInstance().consultarFechadosPorIdExterna(
+								DpLotacao.class, novo.getIdExterna(),
+								novo.getOrgaoUsuario().getId());
 
+				if (historico.size() > 0) {
+					DpLotacao anterior = historico.get(0);
+					if (anterior != null
+							&& (anterior.getIdExterna().equals(novo
+									.getIdExterna()))
+							&& (!anterior.getIdInicial().equals(
+									novo.getIdInicial()))) {
+						novo.setIdInicial(anterior.getIdInicial());
+						log("AVISO (LOTACAO): ID_INICIAL reconectada ("
+								+ novo.getIdInicial() + ")");
 					}
+
+				}
 			}
-			
+
 		}
-		
-		//Cargo
-		if (opr.getNovo()!=null && opr.getNovo() instanceof DpCargo){
+
+		// Cargo
+		if (opr.getNovo() != null && opr.getNovo() instanceof DpCargo) {
 
 			DpCargo novo = (DpCargo) opr.getNovo();
-			if (opr.getOperacao().equals(Operacao.incluir)){
-					List<DpCargo> historico = (List<DpCargo>) CpDao.getInstance().consultarFechadosPorIdExterna(DpCargo.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
-					
-					if (historico.size() > 0){
-						DpCargo anterior = historico.get(0);	
-						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
-							novo.setIdInicial(anterior.getIdInicial());
-							log("AVISO (CARGO): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
-						}
+			if (opr.getOperacao().equals(Operacao.incluir)) {
+				List<DpCargo> historico = (List<DpCargo>) CpDao.getInstance()
+						.consultarFechadosPorIdExterna(DpCargo.class,
+								novo.getIdExterna(),
+								novo.getOrgaoUsuario().getId());
 
+				if (historico.size() > 0) {
+					DpCargo anterior = historico.get(0);
+					if (anterior != null
+							&& (anterior.getIdExterna().equals(novo
+									.getIdExterna()))
+							&& (!anterior.getIdInicial().equals(
+									novo.getIdInicial()))) {
+						novo.setIdInicial(anterior.getIdInicial());
+						log("AVISO (CARGO): ID_INICIAL reconectada ("
+								+ novo.getIdInicial() + ")");
 					}
+
+				}
 			}
-			
+
 		}
-		
-		//Funcao confianca
-		if (opr.getNovo()!=null && opr.getNovo() instanceof DpFuncaoConfianca){
+
+		// Funcao confianca
+		if (opr.getNovo() != null && opr.getNovo() instanceof DpFuncaoConfianca) {
 
 			DpFuncaoConfianca novo = (DpFuncaoConfianca) opr.getNovo();
-			if (opr.getOperacao().equals(Operacao.incluir)){
-					List<DpFuncaoConfianca> historico = (List<DpFuncaoConfianca>) CpDao.getInstance().consultarFechadosPorIdExterna(DpFuncaoConfianca.class,novo.getIdExterna(),novo.getOrgaoUsuario().getId());
-					
-					if (historico.size() > 0){
-						DpFuncaoConfianca anterior = historico.get(0);	
-						if (anterior!=null && (anterior.getIdExterna().equals(novo.getIdExterna())) && (!anterior.getIdInicial().equals(novo.getIdInicial()))){
-							novo.setIdInicial(anterior.getIdInicial());
-							log("AVISO (FUNCAO CONFIANCA): ID_INICIAL reconectada (" + novo.getIdInicial() + ")" );
-						}
+			if (opr.getOperacao().equals(Operacao.incluir)) {
+				List<DpFuncaoConfianca> historico = (List<DpFuncaoConfianca>) CpDao
+						.getInstance().consultarFechadosPorIdExterna(
+								DpFuncaoConfianca.class, novo.getIdExterna(),
+								novo.getOrgaoUsuario().getId());
 
+				if (historico.size() > 0) {
+					DpFuncaoConfianca anterior = historico.get(0);
+					if (anterior != null
+							&& (anterior.getIdExterna().equals(novo
+									.getIdExterna()))
+							&& (!anterior.getIdInicial().equals(
+									novo.getIdInicial()))) {
+						novo.setIdInicial(anterior.getIdInicial());
+						log("AVISO (FUNCAO CONFIANCA): ID_INICIAL reconectada ("
+								+ novo.getIdInicial() + ")");
 					}
-			}
-			
-		}
 
+				}
+			}
+
+		}
 
 	}
 
@@ -363,8 +391,8 @@ public class SigaCpSinc {
 			if (param.equals("-modoLog=true")) {
 				modoLog = true;
 			}
-			
-			if(param.startsWith("-maxSinc=")){
+
+			if (param.startsWith("-maxSinc=")) {
 				maxSinc = Integer.valueOf(param.split("=")[1]);
 				System.out.println("MAX SINC = " + maxSinc);
 			}
@@ -407,13 +435,13 @@ public class SigaCpSinc {
 	public void run(String[] args) throws Exception, NamingException,
 			AplicacaoException {
 		AnnotationConfiguration cfg;
-		if (servidor.contains("prod"))
+		if (servidor.equals("prod"))
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
-		else if (servidor.contains("homolo"))
+		else if (servidor.equals("homolo"))
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);
-		else if (servidor.contains("treina"))
+		else if (servidor.equals("treina"))
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.TREINAMENTO);
-		else if (servidor.contains("desenv"))
+		else if (servidor.equals("desenv"))
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
 		else
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
@@ -421,7 +449,7 @@ public class SigaCpSinc {
 		HibernateUtil.configurarHibernate(cfg, "");
 
 		verificarOrigemDeDados();
-		
+
 		dt = new Date();
 		log("--- Processando  " + dt + "--- ");
 		log("--- Parametros: servidor= " + servidor + "  e url= " + url);
@@ -440,21 +468,24 @@ public class SigaCpSinc {
 
 	private void verificarOrigemDeDados() throws AplicacaoException {
 		boolean orgaoValido = false;
-		for (CpOrgaoUsuario orgao : CpDao.getInstance().consultaCpOrgaoUsuario()) {
-			if (orgao.getAcronimoOrgaoUsu().equalsIgnoreCase(url.replace("-", ""))){
-				orgaoValido =true;
+		for (CpOrgaoUsuario orgao : CpDao.getInstance()
+				.consultaCpOrgaoUsuario()) {
+			if (orgao.getAcronimoOrgaoUsu().equalsIgnoreCase(
+					url.replace("-", ""))) {
+				orgaoValido = true;
 				break;
 			}
 		}
-		
-		if (!orgaoValido){
-			
-			if (url==null || (!url.startsWith("-url") && url.length() < 3) || (url.replace("-url=", "").startsWith("-"))) {
+
+		if (!orgaoValido) {
+
+			if (url == null || (!url.startsWith("-url") && url.length() < 3)
+					|| (url.replace("-url=", "").startsWith("-"))) {
 				throw new AplicacaoException(("url não informada"));
 			}
-			
+
 		}
-		
+
 	}
 
 	public void importxml() {
@@ -483,6 +514,9 @@ public class SigaCpSinc {
 				}
 				urlOrigem = ImportarXmlProperties.getString("url."
 						.concat(acron));
+				if (urlOrigem == null || urlOrigem.trim().equals(""))
+					urlOrigem = ImportarXmlProperties.getString("url.".concat(
+							acron + ".").concat(servidor));
 			}
 			URL urlMumps = new URL(urlOrigem);
 
@@ -492,8 +526,9 @@ public class SigaCpSinc {
 			/* */
 			@SuppressWarnings("unused")
 			InputStream st = connMumps.getInputStream();
-			//String inputStreamString = new Scanner(st,"UTF-8").useDelimiter("\\A").next();
-			//System.out.println(inputStreamString);
+			// String inputStreamString = new
+			// Scanner(st,"UTF-8").useDelimiter("\\A").next();
+			// System.out.println(inputStreamString);
 			importarXml(connMumps.getInputStream());
 			log("Importando: BD");
 			setAntigo.addAll(importarTabela());
@@ -517,7 +552,7 @@ public class SigaCpSinc {
 		else
 			aUrl = args[1].toLowerCase();
 
-		this.servidor = oServidor;
+		this.servidor = oServidor.substring(oServidor.indexOf("-") + 1);
 		this.url = aUrl;
 	}
 
@@ -679,7 +714,7 @@ public class SigaCpSinc {
 		boolean contemPessoa = false;
 		boolean contemFuncao = false;
 		boolean contemLotacao = false;
-		
+
 		importarListasDeTipos();
 
 		obterLotacaoSJRJ();
@@ -724,10 +759,10 @@ public class SigaCpSinc {
 								"NotificarPorEmail");
 					} else if (parser.getName().equals("cargo")) {
 						setNovo.add(importarXmlCargo(parser));
-						contemCargo=true;
+						contemCargo = true;
 					} else if (parser.getName().equals("funcao")) {
 						setNovo.add(importarXmlFuncao(parser));
-						contemFuncao=true;
+						contemFuncao = true;
 					} else if (parser.getName().equals("orgao")) {
 						if (getVersaoInteira().intValue() < 2)
 							throw new Exception(
@@ -735,10 +770,10 @@ public class SigaCpSinc {
 						setNovo.add(importarXmlOrgao(parser));
 					} else if (parser.getName().equals("lotacao")) {
 						setNovo.add(importarXmlLotacao(parser));
-						contemLotacao=true;
+						contemLotacao = true;
 					} else if (parser.getName().equals("pessoa")) {
 						setNovo.add(importarXmlPessoa(parser));
-						contemPessoa=true;
+						contemPessoa = true;
 					} else if (parser.getName().equals("papel")) {
 						if (getVersaoInteira().intValue() < 2)
 							throw new Exception(
@@ -759,19 +794,19 @@ public class SigaCpSinc {
 		} catch (IOException e) {
 			throw e;
 		}
-		
-		
-		if (!contemCargo){
+
+		if (!contemCargo) {
 			throw new AplicacaoException("XML não contém cargo!");
 		}
-		if (!contemLotacao){
+		if (!contemLotacao) {
 			throw new AplicacaoException("XML não contém lotação!");
 		}
-		if (!contemPessoa){
+		if (!contemPessoa) {
 			throw new AplicacaoException("XML não contém pessoa!");
 		}
-		if (!contemFuncao){
-//			throw new AplicacaoException("XML não contém função de confiança!");
+		if (!contemFuncao) {
+			// throw new
+			// AplicacaoException("XML não contém função de confiança!");
 		}
 
 		if (!fDocumentoCompleto) {
@@ -933,10 +968,10 @@ public class SigaCpSinc {
 	}
 
 	private boolean isNumerico(String tipoLotacao) {
-		try{
+		try {
 			new Long(tipoLotacao);
 			return true;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 		}
 		return false;
@@ -979,7 +1014,8 @@ public class SigaCpSinc {
 
 			pessoa.setEmailPessoa(parseStr(parser, "email"));
 			if (pessoa.getEmailPessoaAtual() != null)
-				pessoa.setEmailPessoa(pessoa.getEmailPessoaAtual().toLowerCase());
+				pessoa.setEmailPessoa(pessoa.getEmailPessoaAtual()
+						.toLowerCase());
 			pessoa.setSesbPessoa(cpOrgaoUsuario.getSiglaOrgaoUsu());
 			pessoa.setDataInicioPessoa(new Date());
 			pessoa.setSiglaPessoa(parseStr(parser, "sigla"));
@@ -1047,8 +1083,18 @@ public class SigaCpSinc {
 				o.setIdExterna(parseStr(parser, "lotacao"));
 				pessoa.setLotacao(o);
 			}
-			if (parseStr(parser, "tipo_rh") != null) {
-				CpTipoPessoa o = obterTipoPessoaPorId ( Integer.valueOf(parseStr(parser,"tipo_rh")));
+			CpTipoPessoa o;
+			// Edson: 1) alguns XML's informam a descrição do tipo
+			// ("Servidor", por exemplo) em vez do ID. 2) Alterar o nome do atributo de
+			// tipo_rh para tipo e, na hora de importar, ver se o valor é ID ou
+			// descrição. Ou então solicitar que os órgãos passem a enviar o ID, não
+			// a descrição
+			if (parseStr(parser, "tipo") != null) {
+				o = obterTipoPessoaPorDescricao(parseStr(parser, "tipo"));
+				pessoa.setCpTipoPessoa(o);
+			} else if (parseStr(parser, "tipo_rh") != null) {
+				o = obterTipoPessoaPorId(Integer.valueOf(parseStr(parser,
+						"tipo_rh")));
 				pessoa.setCpTipoPessoa(o);
 			} else {
 				// inferir tipo de pessoa para a SJRJ se vier nulo no XML
@@ -1237,13 +1283,13 @@ public class SigaCpSinc {
 				lotPaiJur = lotPaiJur.getLotacaoPai();
 			}
 		}
-		
-		//se for turma recursal, trata como judicial
-		if(lot.getSiglaLotacao().contains("TR-")){
+
+		// se for turma recursal, trata como judicial
+		if (lot.getSiglaLotacao().contains("TR-")) {
 			lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("100")));
-		}else{
+		} else {
 			// Se é exceção, trata como administrativo
-			lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));	
+			lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));
 		}
 		return;
 	}
@@ -1382,7 +1428,8 @@ public class SigaCpSinc {
 
 	protected void exibirMensagemMaxSinc(List<Item> list) {
 		log("***ATENÇÃO***: Limite de operações por sincronismo excedido!");
-		log("Operações a serem executadas: " + list.size() + "\nOperações permitidas: " +maxSinc);
+		log("Operações a serem executadas: " + list.size()
+				+ "\nOperações permitidas: " + maxSinc);
 		log("Ajuste o paâmetro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
 		log("As alterações não serão efetivadas! Executando rollback...");
 	}

@@ -1712,6 +1712,7 @@ public class ExDao extends CpDao {
 	public ExModelo consultarExModelo(String sForma, String sModelo) {
 		final Criteria crit = getSessao().createCriteria(ExModelo.class);
 		crit.add(Restrictions.eq("nmMod", sModelo));
+		crit.add(Restrictions.eq("hisAtivo", 1));
 		if (sForma != null) {
 			crit.createAlias("exFormaDocumento", "f");
 			crit.add(Restrictions.eq("f.descrFormaDoc", sForma));

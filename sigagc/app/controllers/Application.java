@@ -499,7 +499,7 @@ public class Application extends SigaApplication {
 				}
 			}
 			else{
-				GcTag EmptyTag = new GcTag(null, "", "Conhecimentos sem classificacao");
+				GcTag EmptyTag = new GcTag(null, "", "Conhecimentos_Sem_Classificacao");
 				arvore.add(EmptyTag, inf);	
 			}	
 		}
@@ -508,7 +508,51 @@ public class Application extends SigaApplication {
 		
 		render(arvore, texto);
 	}
+	
+	public static void buscar(String texto, String classificacao) {
+		GcArvore arvore = new GcArvore();
+		//List<GcInformacao> infs = GcInformacao.all().fetch();
+		//não exibe conhecimentos cancelados
+		List<GcInformacao> infs = GcInformacao.find("byHisDtFimIsNull").fetch();
+		
+		if (texto != null && texto.trim().length() > 0) {
+			texto = texto.trim().toLowerCase();
+			texto = texto.replace("  ", " ");
+			String[] palavras = texto.split(" ");
 
+			List<GcInformacao> infsFiltrada = new ArrayList<GcInformacao>();
+
+			for (GcInformacao inf : infs) {
+				if (inf.fts(palavras))
+					infsFiltrada.add(inf);
+			}
+
+			infs = infsFiltrada;
+		}
+
+		for (GcInformacao inf : infs) {
+			if(!inf.getTags().isEmpty()){
+				for (GcTag tag : inf.tags) {
+					arvore.add(tag, inf);
+				}
+			}
+			else{
+				GcTag EmptyTag = new GcTag(null, "", "Conhecimentos_Sem_Classificacao");
+				arvore.add(EmptyTag, inf);	
+			}	
+		}
+		
+		if(classificacao == null || classificacao.isEmpty() || classificacao == ""){
+			arvore.build();
+		}
+		else{
+			arvore.build(classificacao);
+		}
+		//render(arvore);
+		//render(arvore, texto);
+		render(arvore, texto, classificacao);
+	}
+	
 	// public static void listar() {
 	// List<GcInformacao> informacoes = GcInformacao.all().fetch();
 	// render(informacoes);

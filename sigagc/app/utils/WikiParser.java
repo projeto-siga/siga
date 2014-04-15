@@ -77,12 +77,12 @@ public class WikiParser {
 			"</li></ul>\n", "</li></ol>\n", "</blockquote>\n", "</div>\n",
 			"</div>\n" };
 
-	private static final String FORMAT_CHARS = "*/_#";
-	private static final String[] FORMAT_DELIM = { "**", "//", "__", "##" };
+	private static final String FORMAT_CHARS = "*/_#&";
+	private static final String[] FORMAT_DELIM = { "**", "//", "__", "##", "&&" };
 	private static final String[] FORMAT_TAG_OPEN = { "<strong>", "<em>",
-			"<span class=\"underline\">", "<tt>" };
+			"<span class=\"underline\">", "<tt>", "<mark>" };
 	private static final String[] FORMAT_TAG_CLOSE = { "</strong>", "</em>",
-			"</span>", "</tt>" };
+			"</span>", "</tt>", "</mark>" };
 
 	public static String renderXHTML(String wikiText) {
 		return new WikiParser(wikiText).toString();

@@ -3432,13 +3432,14 @@ public class ExBL extends CpBL {
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
+		ExMovimentacao mov;
+		
+		mov = new ExMovimentacao();
 
 		try {
 			iniciarAlteracao();
 
-			for (ExMobil m : set) {
-
-				final ExMovimentacao mov;
+			for (ExMobil m : set) {	
 
 				Long idTpMov;
 				if (!fDespacho) {
@@ -3582,15 +3583,17 @@ public class ExBL extends CpBL {
 					// transferência que não estiver assinado.
 					if (tpDespacho == null && descrMov == null
 							&& !m.isApensadoAVolumeDoMesmoProcesso())
-						emailDeTransferência(responsavel, lotaResponsavel,
+						Notificador.notificarPerfisVinculados(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+						
+/*						emailDeTransferência(responsavel, lotaResponsavel,
 								m.getSigla(), m.getExDocumento()
 										.getCodigoString(), m.getExDocumento()
-										.getDescrDocumento());
+										.getDescrDocumento()); */
 
 				} catch (final Exception e) {
 					try {
 						emailDeTransferênciaAdministrador(m.getExDocumento()
-								.getCodigoString(), e);
+								.getCodigoString(), e);						
 					} catch (final Exception e1) {
 
 					}

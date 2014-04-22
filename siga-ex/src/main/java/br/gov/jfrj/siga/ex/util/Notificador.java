@@ -86,6 +86,10 @@ public class Notificador {
 		HashSet<Destinatario> destinatarioPerfil = new HashSet<Destinatario>();
 
 		List<Notificacao> notificacoes = new ArrayList<Notificacao>();
+		
+		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)) {
+			
+		}
 
 		/*
 		 * Para cada movimentação do mobil geral (onde fica as movimentações

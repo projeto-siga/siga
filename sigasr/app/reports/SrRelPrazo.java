@@ -45,13 +45,13 @@ public class SrRelPrazo extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("dtIni").equals("")) {
 			throw new DJBuilderException(
-					"Par�metro data inicial n�o informado!");
+					"Parâmetro data inicial não informado!");
 		}
 		if (parametros.get("dtFim").equals("")) {
-			throw new DJBuilderException("Par�metro data final n�o informado!");
+			throw new DJBuilderException("Parâmetro data final não informado!");
 		}
 		if (parametros.get("local") == null) {
-			throw new DJBuilderException("Par�metro local n�o informado!");
+			throw new DJBuilderException("Parâmetro local não informado!");
 		}
 	}
 

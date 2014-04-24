@@ -31,6 +31,15 @@ $(function(){
 						</td>
 					</tr>
 					<tr>
+						<td>Órgão</td>
+						<td> 
+						#{select name:'orgao', items:orgaos, valueProperty:'idOrgaoUsu', labelProperty:'nmOrgaoUsu', 
+						value:orgao?.idOrgaoUsu} 
+						#{option 0}Todos#{/option}
+						#{/select}
+						</td>	
+					</tr>
+					<tr>
 						<td>Local (Solicitante)</td>
 						<td> 
 						#{select name:'local', items:locais, valueProperty:'idComplexo', labelProperty:'nomeComplexo', 

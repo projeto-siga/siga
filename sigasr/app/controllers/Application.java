@@ -996,6 +996,11 @@ public class Application extends SigaApplication {
 
 	public static void relLocal() throws Exception {
 		assertAcesso("REL:Relatorio");
+		List<CpComplexo> orgaos = new ArrayList<CpComplexo>();
+		orgaos = JPA
+				.em()
+				.createQuery(
+						"from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
 		locais = JPA
 				.em()
@@ -1003,7 +1008,7 @@ public class Application extends SigaApplication {
 						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
 								+ lotaTitular().getOrgaoUsuario()
 										.getIdOrgaoUsu()).getResultList();
-		render(locais);
+		render(locais, orgaos);
 	}
 
 	public static void relPrazo() throws Exception {
@@ -1056,6 +1061,11 @@ public class Application extends SigaApplication {
 
 	public static void relAgendado() throws Exception {
 		assertAcesso("REL:Relatorio");
+		List<CpComplexo> orgaos = new ArrayList<CpComplexo>();
+		orgaos = JPA
+				.em()
+				.createQuery(
+						"from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
 		locais = JPA
 				.em()

@@ -53,7 +53,7 @@ public class SrRelLocal extends RelatorioTemplate {
 		List<Object> d = new LinkedList<Object>();
 		String atendente = (String) parametros.get("atendente");
 		Long percTotal = (long) 0;
-			
+		Object local = parametros.get("local");	
 		if (parametros.get("local").equals("0")) {
 			if ((parametros.get("lotacao").equals("")) && (parametros.get("atendente") == null)) {
 				percTotal = SrSolicitacao.find(

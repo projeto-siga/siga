@@ -115,6 +115,7 @@ import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
+import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.ex.util.Notificador;
@@ -858,6 +859,52 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
+			
+			try {
+				String mensagemTeste = null;
+				if (!SigaExProperties.isAmbienteProducao())
+					mensagemTeste = SigaExProperties.getString("email.baseTeste");
+
+				StringBuffer sb = new StringBuffer(
+						"Documento publicado no Boletim Interno "
+								+ doc.getCodigo());
+
+				if (mensagemTeste != null)
+					sb.append("\n " + mensagemTeste + "\n");
+
+				StringBuffer sbHtml = new StringBuffer(
+						"<html><body><p>Publicado no Boletim Interno: " + boletim.getCodigo() + " em " + FuncoesEL.getDataDDMMYYYY(dtPubl) + "</p> ");
+
+				sbHtml.append(
+						"<p>Documento: " + doc.getCodigo() + "</p> ");
+				sbHtml.append(
+						"<p>Descrição: " + doc.getDescrDocumento() + "</p> ");
+				
+				if (mensagemTeste != null)
+					sbHtml.append("<p><b>" + mensagemTeste + "</b></p>");
+
+				sbHtml.append("</body></html>");
+				
+				
+				String emailsAtendentes[] = null;
+				String sDest = SigaExProperties.getString("bie.lista.destinatario.publicacao");
+				
+				
+				if (sDest != null && !sDest.isEmpty())
+					emailsAtendentes = sDest.split(",");
+				
+
+				if(emailsAtendentes != null && emailsAtendentes.length > 0) {
+					Correio.enviar(
+						SigaBaseProperties
+								.getString("servidor.smtp.usuario.remetente"),
+						emailsAtendentes,
+						"Documento disponibilizado no Boletim Interno " + doc.getCodigo(),
+						sb.toString(), sbHtml.toString());
+				}
+			} catch (Exception e) {
+				
+			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao notificar publicação.", 0, e);
@@ -997,20 +1044,62 @@ public class ExBL extends CpBL {
 
 			mov.setPagPublicacao(pagPublicacao);
 
-			/*
-			 * mov .setDescrMov("Documento disponibilizado no Diário em " + new
-			 * SimpleDateFormat("dd/MM/yy").format(mov .getDtMov()) + ", pág " +
-			 * mov.getPagPublicacao() + ". Data de publicação: data de
-			 * disponibilização + 1, conforme prevê art. 4º, parágrafo 3º da Lei
-			 * 11419 / 2006 ");
-			 */
-
 			mov.setDescrMov("Documento disponibilizado no Diário");
-
-			// mov.setDtEfetivaDispPublicacao(dtEfetivaDispPublicacao);
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
+			
+			
+			try {
+				String mensagemTeste = null;
+				if (!SigaExProperties.isAmbienteProducao())
+					mensagemTeste = SigaExProperties.getString("email.baseTeste");
+
+				StringBuffer sb = new StringBuffer(
+						"Documento disponibilizado no Diário "
+								+ mob.getExDocumento().getCodigo());
+
+				if (mensagemTeste != null)
+					sb.append("\n " + mensagemTeste + "\n");
+
+				StringBuffer sbHtml = new StringBuffer(
+						"<html><body><p>Documento disponibilizado no Diário.</p> ");
+
+				sbHtml.append(
+						"<p>Documento: " + mob.getExDocumento().getCodigo() + "</p> ");
+				sbHtml.append(
+						"<p>Descrição: " + mob.getExDocumento().getDescrDocumento() + "</p> ");
+				sbHtml.append(
+						"<p>Data: " + FuncoesEL.getDataDDMMYYYY(dtMov) + "</p> ");
+				sbHtml.append(
+						"<p>Página: " + pagPublicacao + "</p> ");
+
+				if (mensagemTeste != null)
+					sbHtml.append("<p><b>" + mensagemTeste + "</b></p>");
+
+				sbHtml.append("</body></html>");
+				
+				
+				String emailsAtendentes[] = null;
+				String sDest = SigaExProperties.getString("dje.lista.destinatario.publicacao");
+				
+				
+				if (sDest != null && !sDest.isEmpty())
+					emailsAtendentes = sDest.split(",");
+				
+
+				if(emailsAtendentes != null && emailsAtendentes.length > 0) {
+					Correio.enviar(
+							SigaBaseProperties
+									.getString("servidor.smtp.usuario.remetente"),
+							emailsAtendentes,
+							"Documento disponibilizado no Diário " + mob.getExDocumento().getCodigo(),
+							sb.toString(), sbHtml.toString());
+				}
+				
+			} catch (Exception e) {
+				
+			}			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao registrar disponibilização.",

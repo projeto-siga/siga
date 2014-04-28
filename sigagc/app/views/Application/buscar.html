@@ -1,4 +1,7 @@
 #{extends 'main.html' /} #{set title:'Busca Textual' /}
+#{set 'metaTypeIE'} 
+	 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" >
+#{/set}
 #{ set 'moreHead'}
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -63,15 +66,14 @@
 			}
 		});	
 		
-		$("[class^='classificacao'").mouseover(function(){	
+		$("[class^='classificacao']").mouseover(function(){	
 			var classificacao = $(this).text();
 			if(classificacao != "Conhecimentos_Sem_Classificacao"){
 				$(this).css({"cursor": "pointer", "background-color": "yellow"});
 			}
 		});
-		$("[class^='classificacao'").mouseleave(function(){	
+		$("[class^='classificacao']").mouseleave(function(){
 			$(this).css({"background-color": "#f1f4e2"});
-			
 		});
 
 	});

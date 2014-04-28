@@ -302,7 +302,8 @@ public class GcInformacao extends GenericModel {
 	}
 
 	public boolean podeDuplicar() {
-		return !isCancelado();
+		//return !isCancelado();
+		return true;
 	}
 	public SortedSet<GcAcaoVO> acoes(CpIdentidade idc, DpPessoa titular,
 			DpLotacao lotaTitular) {

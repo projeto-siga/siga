@@ -1036,6 +1036,7 @@ public class SigaCpSinc {
 			pessoa.setGrauInstrucao(parseStr(parser, "grauInstrucao"));
 			pessoa.setTipoSanguineo(parseStr(parser, "tipoSanguineo"));
 			pessoa.setNacionalidade(parseStr(parser, "nacionalidade"));
+			pessoa.setNaturalidade(parseStr(parser, "naturalidade"));
 			Date dtPosse = parseData(parser, "dtPosse");
 			if (dtPosse != null)
 				pessoa.setDataPosse(dtPosse);
@@ -1092,10 +1093,10 @@ public class SigaCpSinc {
 			if (parseStr(parser, "tipo") != null) {
 				o = obterTipoPessoaPorDescricao(parseStr(parser, "tipo"));
 				pessoa.setCpTipoPessoa(o);
-			} else if (parseStr(parser, "tipo_rh") != null) {
+			/*}else if (parseStr(parser, "tipo_rh") != null) {
 				o = obterTipoPessoaPorId(Integer.valueOf(parseStr(parser,
 						"tipo_rh")));
-				pessoa.setCpTipoPessoa(o);
+				pessoa.setCpTipoPessoa(o);*/
 			} else {
 				// inferir tipo de pessoa para a SJRJ se vier nulo no XML
 				inferirTipoPessoaSJRJ(pessoa);

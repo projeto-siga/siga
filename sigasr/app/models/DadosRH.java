@@ -17,7 +17,11 @@ public class DadosRH extends GenericModel {
 	public String pessoa_nome;
 	public String pessoa_sexo;
 	public Date pessoa_data_nascimento;
-
+	public String pessoa_rua;
+	public String pessoa_bairro;
+	public String pessoa_cidade;
+	public String pessoa_uf;
+	public String pessoa_cep;
 	public Long pessoa_matricula;
 	public Date pessoa_data_inicio_exercicio;
 	public String pessoa_ato_nomeacao;
@@ -34,7 +38,10 @@ public class DadosRH extends GenericModel {
 	private String pessoa_grau_de_instrucao;
 	public String pessoa_sigla;
 	public String pessoa_email;
-	public Integer tipo_rh;
+	public String tipo_rh;
+	public String pessoa_tp_sanguineo;
+	public String pessoa_naturalidade;
+	public String pessoa_nacionalidade;
 	public Long cargo_id;
 	public String cargo_nome;
 	public String cargo_sigla;
@@ -48,6 +55,7 @@ public class DadosRH extends GenericModel {
 	public Long lotacao_id_pai;
 	public Integer lotacao_tipo;
 	public Integer lotacao_tipo_papel;
+	
 
 	public class Pessoa {
 		public Long pessoa_id;
@@ -55,6 +63,11 @@ public class DadosRH extends GenericModel {
 		public String pessoa_nome;
 		public String pessoa_sexo;
 		public Date pessoa_data_nascimento;
+		public String pessoa_rua;
+		public String pessoa_bairro;
+		public String pessoa_cidade;
+		public String pessoa_uf;
+		public String pessoa_cep;
 		public Long pessoa_matricula;
 		public Date pessoa_data_inicio_exercicio;
 		public String pessoa_ato_nomeacao;
@@ -71,8 +84,10 @@ public class DadosRH extends GenericModel {
 		public String pessoa_grau_de_instrucao;
 		public String pessoa_sigla;
 		public String pessoa_email;
-		public Integer tipo_rh;
-
+		public String tipo_rh;
+		public String pessoa_tp_sanguineo;
+		public String pessoa_naturalidade;
+		public String pessoa_nacionalidade;
 		public Long cargo_id;
 		public Long funcao_id;
 		public Long lotacao_id;
@@ -108,6 +123,11 @@ public class DadosRH extends GenericModel {
 		o.pessoa_cpf = pessoa_cpf;
 		o.pessoa_sexo = pessoa_sexo;
 		o.pessoa_data_nascimento = pessoa_data_nascimento;
+		o.pessoa_rua = pessoa_rua;
+		o.pessoa_bairro = pessoa_bairro;
+		o.pessoa_cidade = pessoa_cidade;
+		o.pessoa_uf = pessoa_uf;
+		o.pessoa_cep = pessoa_cep;
 		o.pessoa_matricula = pessoa_matricula;
 		o.pessoa_data_inicio_exercicio = pessoa_data_inicio_exercicio;
 		o.pessoa_ato_nomeacao = pessoa_ato_nomeacao;
@@ -125,7 +145,9 @@ public class DadosRH extends GenericModel {
 		o.pessoa_sigla = pessoa_sigla;
 		o.pessoa_email = pessoa_email;
 		o.tipo_rh = tipo_rh;
-
+		o.pessoa_tp_sanguineo = pessoa_tp_sanguineo;
+		o.pessoa_naturalidade = pessoa_naturalidade;
+		o.pessoa_nacionalidade = pessoa_nacionalidade;
 		o.cargo_id = cargo_id;
 		o.funcao_id = funcao_id;
 		o.lotacao_id = lotacao_id;

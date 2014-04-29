@@ -66,7 +66,6 @@ public class Corporativo extends SigaApplication {
 			Element e = doc.createElement("cargo");
 			setAttr(e, "id", c.cargo_id.toString());
 			setAttr(e, "nome", c.cargo_nome);
-			//setAttr(e, "sigla", c.cargo_sigla);
 			cargos.appendChild(e);
 		}
 
@@ -102,6 +101,11 @@ public class Corporativo extends SigaApplication {
 			setAttr(e, "nome", p.pessoa_nome);
 			setAttr(e, "sexo", p.pessoa_sexo);
 			setAttr(e, "dtNascimento", p.pessoa_data_nascimento);
+			setAttr(e, "rua", p.pessoa_rua);
+			setAttr(e, "bairro", p.pessoa_bairro);
+			setAttr(e, "cidade", p.pessoa_cidade);
+			setAttr(e, "uf", p.pessoa_uf);
+			setAttr(e, "cep", p.pessoa_cep);
 			setAttr(e, "atoNomeacao", p.pessoa_ato_nomeacao);
 			setAttr(e, "dtAtoPublicacao", p.pessoa_dt_publ_nomeacao);
 			setAttr(e, "dtInicioExercicio", p.pessoa_data_inicio_exercicio);
@@ -121,7 +125,10 @@ public class Corporativo extends SigaApplication {
 			setAttr(e, "lotacao", p.lotacao_id);
 			setAttr(e, "cargo", p.cargo_id);
 			setAttr(e, "funcaoConfianca", p.funcao_id);
-			setAttr(e, "tipo_rh", p.tipo_rh);
+			setAttr(e, "tipo", p.tipo_rh);
+			setAttr(e, "tipoSanguineo", p.pessoa_tp_sanguineo);
+			setAttr(e, "naturalidade", p.pessoa_naturalidade);
+			setAttr(e, "nacionalidade", p.pessoa_nacionalidade);
 			pessoas.appendChild(e);
 		}
 

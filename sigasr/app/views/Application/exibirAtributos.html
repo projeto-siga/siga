@@ -10,8 +10,10 @@
 	<div style="margin:0px;" >
 		<span id="gc-ancora"></span>
 	</div>
+	*{
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?tags=${solicitacao.gcTagAbertura}&estilo=inplace&msgvazio=Ainda não existe uma explicação do que deve ser verificado antes de abrir uma solicitação deste tipo. Por favor, clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.gcTituloAbertura}&ts=${currentTimeMillis}",document.getElementById('gc-ancora'));
+		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.gcTagAbertura}&estilo=inplace&msgvazio=NÃ£o existe nenhum conhecimento relacionado registrado. Clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.gcTituloAbertura}&ts=${currentTimeMillis}",document.getElementById('gc-ancora'));
 	</script>
+	}*
 #{/if}
 

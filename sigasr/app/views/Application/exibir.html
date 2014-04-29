@@ -145,7 +145,7 @@ $(function(){
 							arquivo:movimentacao.arquivo /}#{/if}
 						#{if movimentacao.tipoMov.idTipoMov == 16}&nbsp;|&nbsp;
 						 <a	style="color: #365b6d; text-decoration: none" href="@{Application.exibirPesquisa(movimentacao.idMovimentacao)}">
-							Ol·</a>#{/if}
+							Ol√°</a>#{/if}
 						</td>
 						<script language="javascript">
 							var descricao = document.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
@@ -215,7 +215,6 @@ $(function(){
 			<p>#{listaArvore
 				solicitacao:solicitacao.paiDaArvore,visualizando:solicitacao /}</p>
 		</div>
-		<div class="gt-sidebar-content" id="gc"></div>
 	</div>
 	#{/if} #{if solicitacao.emLista}
 	<div class="gt-sidebar">
@@ -249,11 +248,15 @@ $(function(){
 			</p>
 		</div>
 	</div>
-	#{/if} #{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
+	#{/if} 
+	*{<div class="gt-sidebar">
+	<div class="gt-sidebar-content" id="gc"></div>
+	</div>
+	#{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("/../sigagc/knowledge?${solicitacao.gcTags.raw()}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
-</script>
-	#{/if} #{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
+		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?${solicitacao.gcTags.raw()}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
+	</script>
+	#{/if} }* #{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
 			enctype="multipart/form-data">

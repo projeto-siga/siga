@@ -221,7 +221,7 @@ public class ExArquivoAction extends ExActionSupport {
 					return "donothing";
 				}
 			}
-			getResponse().setHeader("Pragma", null);
+			getResponse().setHeader("Pragma", "");
 
 			return writeByteArray(ab, isPdf ? "application/pdf"
 					: "text/html", fB64);

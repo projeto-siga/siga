@@ -61,7 +61,7 @@ title:'Movimentações'/}
 					#{/if}
 					#{else} <td>${m.tipo.nome}</td> #{/else}
 					<td align="left">												
-						<span title="${m.hisIdcIni.dpPessoa.lotacao.descricao}">${m.hisIdcIni.dpPessoa.lotacao.sigla}</span>
+						<span title="${m.hisIdcIni?.pessoaAtual?.lotacao?.descricao}">${m.hisIdcIni?.pessoaAtual?.lotacao?.sigla}</span>
 					</td>
 					<td align="left"><span
 						title="${m.hisIdcIni.dpPessoa.descricao}">${m.hisIdcIni.dpPessoa.nomeAbreviado}</span>

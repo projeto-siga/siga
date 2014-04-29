@@ -37,6 +37,9 @@ import org.hibernate.type.CalendarType;
 import org.hibernate.type.StringType;
 
 
+
+
+
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
@@ -100,15 +103,21 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		String grupoIni = parametros.get("inicioGrupo")==null?"-1":(String) parametros.get("inicioGrupo");
 		String grupoFim = parametros.get("fimGrupo")==null?"-1":(String) parametros.get("fimGrupo");
 		
+		EstatisticaGrupoRel estatisticaGrp = new EstatisticaGrupoRel();
 		Set<Tarefa> tarefas = consultarTarefas(procedimento, dataInicialDe,
 				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
 		List<String> dados = new ArrayList<String>();
 		
 		String ultimoDoc = null;
+		Tarefa ultimaTarefa = null;
 		DetectorGrupoRel detectGrupo = null;
 		List<Tarefa> grupoAtual = new ArrayList<RelTempoDocDetalhado.Tarefa>();
 		int linhaInicioGrupo = -1;
 		for (Tarefa t : tarefas) {
+			
+			if (ultimoDoc != null && !t.getNumeroDocumento().equals(ultimoDoc)){
+				addLinhaSumarioGrupo(estatisticaGrp,ultimaTarefa,dados);
+			}
 			
 			//processamento inicial de grupo
 			if (ultimoDoc == null || !t.getNumeroDocumento().equals(ultimoDoc)){
@@ -116,9 +125,10 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 				grupoAtual.clear();
 			}
 			
+			
+			
 			if (detectGrupo.fazParteDoGrupo(t.getNome()) && detectGrupo.isInicio()){
 				linhaInicioGrupo = dados.size();
-//				addLinhaEmBranco(t,dados);
 				detectGrupo.continuar();
 			}
 			
@@ -133,17 +143,49 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 				addLinhaEmBranco(t,dados,linhaInicioGrupo);
 				addLinhaTotalGrupo(grupoAtual,dados);
 				addLinhaEmBranco(t,dados);
+				estatisticaGrp.addGrupo(grupoAtual);
 				detectGrupo.reiniciarAvaliacao();
 				grupoAtual.clear();
 			}
 			
-			
 			ultimoDoc = t.getNumeroDocumento();
-
+			ultimaTarefa = t;
 		}
+		
+		addLinhaFinal(estatisticaGrp,dados,ultimaTarefa);
 
 		return dados;
 
+	}
+
+
+	private void addLinhaFinal(EstatisticaGrupoRel est,
+			List<String> dados, Tarefa ultimaTarefa) {
+	
+		dados.add("Informações Gerais");
+
+		dados.add("MEDIA GERAL [Grupos]");
+		dados.add("");
+		dados.add("");
+		dados.add(est.getMediaGeralGrupos());
+
+	}
+
+	private void addLinhaSumarioGrupo(EstatisticaGrupoRel est , Tarefa t, List<String> dados) {
+		String mediaGrupo = est.getMediaGrupo(t.getNumeroDocumento());
+		if (!mediaGrupo.equals("0")){
+			addLinhaEmBranco(t, dados);
+			
+			dados.add(t.getNumeroDocumento() + " ("
+					+ t.getDuracaoProcedimento() + ")");
+
+			dados.add("MEDIA [Grupos]");
+			dados.add("");
+			dados.add("");
+			dados.add(est.getMediaGrupo(t.getNumeroDocumento()));
+			addLinhaEmBranco(t, dados);
+			
+		}
 	}
 
 	private void addLinha(List<String> dados, Tarefa t) {
@@ -157,10 +199,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 	}
 
 	private void addLinhaTotalGrupo(List<Tarefa> grupoAtual, List<String> dados) {
-		long duracao = 0;
-		for (Tarefa t : grupoAtual) {
-			duracao += t.getDuracaoEmMili();
-		}
+		long duracao = calcularDuracao(grupoAtual);
 		
 		dados.add(grupoAtual.get(0).getNumeroDocumento() + " ("
 				+ grupoAtual.get(0).getDuracaoProcedimento() + ")");
@@ -168,6 +207,14 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		dados.add("");
 		dados.add("");
 		dados.add(SigaCalendar.formatDHM(duracao));
+	}
+
+	private long calcularDuracao(List<Tarefa> tarefas) {
+		long duracao = 0;
+		for (Tarefa t : tarefas) {
+			duracao += t.getDuracaoEmMili();
+		}
+		return duracao;
 	}
 
 	private void addLinhaEmBranco(Tarefa t, List<String> dados,int posicao) {

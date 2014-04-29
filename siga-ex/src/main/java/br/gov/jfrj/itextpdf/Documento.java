@@ -52,6 +52,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
@@ -800,7 +801,7 @@ public class Documento {
 						.isInternoProduzido(), an.getArquivo().getQRCode(), an
 						.getArquivo().getMensagem(), an.getPaginaInicial(),
 						an.getPaginaFinal(), an.getOmitirNumeracao(),
-						"Justiça Federal", mob.getExDocumento()
+						SigaExProperties.getTextoSuperiorCarimbo(), mob.getExDocumento()
 								.getOrgaoUsuario().getDescricao());
 
 				// we create a reader for a certain document

@@ -20,10 +20,12 @@ package br.gov.jfrj.siga.wf.webwork.action;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.node.TaskNode;
@@ -34,7 +36,6 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.relatorio.RelEstatisticaProcedimento;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDoc;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDocDetalhado;
-import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
  * Classe responsável pelas exibições das estatísticas dos procedimentos.
@@ -129,15 +130,14 @@ public class WfMetricaAction extends WfSigaActionSupport {
 		return "relatorioPDF";
 	}
 
+	/**
+	 * Método utilizado para 
+	 * @param idGrupo
+	 * @return
+	 */
 	private String getNomeGrupo(Long idGrupo) {
-		for (Object o: getProcedimentoEscolhido().getTaskMgmtDefinition().getTasks().values()) {
-			Task t = (Task)o;
-			if (t.getId()==idGrupo.longValue()){
-				return t.getName();
-			}
-		} 
-		
-		return null;
+		Task t = WfDao.getInstance().consultar(idGrupo, Task.class, false);
+		return t.getName();
 		
 	}
 
@@ -262,21 +262,13 @@ public class WfMetricaAction extends WfSigaActionSupport {
 		return SigaWfProperties.getRelEstatGeraisMaxMediaTrunc().toString().replace(".", ",");
 	}
 	
-	public List<Task> getLstGruposIni(){
-		List<Task> result = new ArrayList<Task>();
-		Map map = getProcedimentoEscolhido().getTaskMgmtDefinition().getTasks();
-		for (Object o : map.values()) {
-			Task t = (Task)o;
-			if (t.getTaskNode()!=null){
-				result.add(t);	
-			}
-			
-		}
+	public Set<Task> getLstGruposIni(){
 		
-		return result;
+		return WfDao.getInstance().getTodasAsTarefas(getProcedimentoEscolhido().getName());
 	}
-	
-	public List<Task>  getLstGruposFim(){
+
+
+	public Set<Task>  getLstGruposFim(){
 		return getLstGruposIni();
 	}
 

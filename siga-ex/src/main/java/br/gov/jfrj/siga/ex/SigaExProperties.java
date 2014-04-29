@@ -215,6 +215,10 @@ public class SigaExProperties extends ModeloPropriedade {
 			throw new Exception("Erro ao obter propriedade para o data inicial de obrigação de assinatura de anexos e despachos em documentos eletrônicos");
 		}
 	}
+
+	public static String getTextoSuperiorCarimbo() {
+		return getString("textoSuperiorCarimbo");
+	}
 	
 
 }

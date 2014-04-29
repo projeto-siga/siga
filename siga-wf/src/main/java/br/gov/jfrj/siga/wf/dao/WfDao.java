@@ -23,7 +23,10 @@
  */
 package br.gov.jfrj.siga.wf.dao;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -33,6 +36,8 @@ import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
+import org.jbpm.graph.node.TaskNode;
+import org.jbpm.taskmgmt.def.Task;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -369,4 +374,32 @@ public class WfDao extends CpDao {
 		return WfContextBuilder
 		.getJbpmContext().getGraphSession().getProcessDefinition(id);
 	}
+	
+	public List<ProcessDefinition> getTodasAsVersoesProcessDefinition(String nome) {
+		return WfContextBuilder.getJbpmContext().getGraphSession().findAllProcessDefinitionVersions(nome);
+	}
+
+	public Set<Task> getTodasAsTarefas(String nomeProcessDefinition) {
+		Set<Task> result = new TreeSet<Task>(new Comparator<Task>() {
+
+			@Override
+			public int compare(Task t1, Task t2) {
+				return t1.getName().compareTo(t2.getName());
+			}
+			
+		});
+
+		List<ProcessDefinition> lstPD = WfDao.getInstance().getTodasAsVersoesProcessDefinition(nomeProcessDefinition);
+		for (ProcessDefinition pd : lstPD) {
+			for (Object o : pd.getNodes()) {
+				if (o instanceof TaskNode){
+					TaskNode t = (TaskNode)o;
+					result.addAll(t.getTasks());
+				}
+				
+			}
+		}
+		return result;
+	}
+
 }

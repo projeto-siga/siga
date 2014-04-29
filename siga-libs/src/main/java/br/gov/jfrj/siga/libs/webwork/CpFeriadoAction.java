@@ -359,6 +359,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		{
 			dao().iniciarTransacao();
 			dao().gravar(ocorrencia);
+			dao().gravar(aplicacao);
 			dao().commitTransacao();			
 		} catch (final Exception e) {
 			dao().rollbackTransacao();

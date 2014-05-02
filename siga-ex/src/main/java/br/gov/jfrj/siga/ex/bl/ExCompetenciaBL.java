@@ -2090,6 +2090,49 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR_ANEXO);
 	}
+	
+	/**
+	 * Retorna se é possível excluir uma movimentação de Inclusão de Cossignatário 
+	 * <ul>
+	 * <li>Não pode estar cancelada</li>	
+	 * <li>Não pode estar assinado</li>
+	 * <li>Se o documento for físico, não pode estar finalizado</li>
+	 * <li>Não pode estar assinado</li>
+	 * <li>Lotação do usuário tem de ser a lotação cadastrante da movimentação</li>
+	 * <li>Não pode haver configuração impeditiva. Tipo de configuração: Excluir
+	 * Anexo</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @param mov
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeExcluirCosignatario(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob,
+			final ExMovimentacao mov) throws Exception {
+		
+		if (mov.isCancelada())
+			return false;
+		
+		if (mov.isAssinada())
+			return false;
+
+		if (mob.doc().getDtFechamento() != null && !mob.doc().isEletronico()) {
+			return false;
+		}
+
+		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
+			return false;
+
+		if(mov.getExDocumento().isAssinado())
+			return false;
+
+		return getConf().podePorConfiguracao(titular, lotaTitular,
+				CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR);
+	}	
 
 	/**
 	 * Retorna se é possível cancelar uma movimentação mov, de anexação de

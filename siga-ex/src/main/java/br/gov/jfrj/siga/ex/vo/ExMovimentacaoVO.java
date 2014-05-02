@@ -194,7 +194,7 @@ public class ExMovimentacaoVO extends ExVO {
 						"excluir",
 						Ex.getInstance()
 								.getComp()
-								.podeExcluirAnexo(titular, lotaTitular,
+								.podeExcluirCosignatario(titular, lotaTitular,
 										mov.mob(), mov));
 			}
 

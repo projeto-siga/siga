@@ -3411,6 +3411,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.isApensado())
 			return false;
 		
+		if(mob.isArquivado())
+			return false;
+		
+		if(mob.isSobrestado())
+			return false;
+		
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 
 		return (!mob.isGeral() && mob.doc().isExpediente() && mob.doc().isAssinado() && !mob.isEmTransito() && podeMovimentar);

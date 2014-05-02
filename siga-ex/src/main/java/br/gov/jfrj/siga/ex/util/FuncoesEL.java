@@ -251,7 +251,6 @@ public class FuncoesEL {
 			for (DpPessoa pes : lst) {
 				if (pes.getCargo() == null
 						|| pes.getCargo().getNomeCargo() == null) {
-					lstCompleta.add(pes);
 					continue;
 				}
 				String cargo = pes.getCargo().getNomeCargo().toUpperCase();

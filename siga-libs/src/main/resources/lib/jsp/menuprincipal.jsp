@@ -33,7 +33,7 @@
 
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
-						<li><a href="/sigagc/app/buscar">Gestão de Conhecimento</a>
+						<li><a href="/sigagc/app/estatisticaGeral">Gestão de Conhecimento</a>
 						</li>
 					</c:if>
 					

@@ -298,9 +298,7 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void index() {
-		//listar(null);
-		//buscar(null);
-		buscar(null, null);
+		estatisticaGeral();
 	}
 
 	public static void estatisticaGeral() {

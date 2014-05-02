@@ -391,7 +391,7 @@ public class ExDocumentoVO extends ExVO {
 				"/expediente/doc",
 				"exibir",
 				Ex.getInstance().getComp()
-						.podeDuplicar(titular, lotaTitular, mob), null,
+						.podeExibirInformacoesCompletas(titular, lotaTitular, mob), null,
 				"&exibirCompleto=true", null, null, null);
 
 		vo.addAcao(

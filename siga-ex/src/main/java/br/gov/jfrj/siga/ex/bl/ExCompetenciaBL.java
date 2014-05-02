@@ -1765,6 +1765,20 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_DUPLICAR);
 	}
+	
+	/**
+	 * Retorna se é possível exibir informações completas.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeExibirInformacoesCompletas(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		return mob.doc().getDtFechamento() != null;
+	}
 
 	/**
 	 * Retorna se é possível editar um documento, conforme as seguintes regras:

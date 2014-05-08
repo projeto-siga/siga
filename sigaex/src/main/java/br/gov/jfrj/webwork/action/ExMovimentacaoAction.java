@@ -3397,11 +3397,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aBoletimAgendar() throws Exception {
 		buscarDocumento(true);
 
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO
-				&& doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 			throw new AplicacaoException(
-					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público ou"
-							+ " Limitado ao órgão. Redefina o nível de acesso.");
+					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público.");
 
 		if (!Ex.getInstance()
 				.getComp()

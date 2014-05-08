@@ -3098,6 +3098,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeRedefinirNivelAcesso(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isBoletimPublicado() || mob.doc().isDJEPublicado()) {
+			if(podeAtenderPedidoPublicacao(titular, lotaTitular, mob) || podeGerenciarPublicacaoBoletimPorConfiguracao(titular, lotaTitular, mob))
+				return true;
+			
+			return false;
+		}
+			
 		return podeAcessarDocumento(titular, lotaTitular, mob)
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& getConf()

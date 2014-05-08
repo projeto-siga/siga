@@ -511,11 +511,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aPedirPublicacao() throws Exception {
 		buscarDocumento(true);
 
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO
-				&& doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 			throw new AplicacaoException(
-					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público ou"
-							+ " Limitado ao órgão. Redefina o nível de acesso.");
+					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público.");
 
 		if (!Ex.getInstance().getComp()
 				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
@@ -562,11 +560,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		
 		buscarDocumento(true);
 
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO
-				&& doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 			throw new AplicacaoException(
-					"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público ou"
-							+ " Limitado ao órgão. Redefina o nível de acesso.");
+					"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público.");
 
 		if (!Ex.getInstance().getComp()
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))

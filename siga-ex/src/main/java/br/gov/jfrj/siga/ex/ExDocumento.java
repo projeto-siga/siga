@@ -1096,11 +1096,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
+	/**
+	 * Verifica se um documento já foi publicado no BIE ou se o BIE já foi publicado.
+	 */
 	public boolean isBoletimPublicado() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
 		for (final ExMovimentacao mov : movs) {
-			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM)
+			if (((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM
+					|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI))
 					&& mov.getExMovimentacaoCanceladora() == null) {
 				return true;
 			}

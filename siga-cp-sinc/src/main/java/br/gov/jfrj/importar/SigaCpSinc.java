@@ -1410,7 +1410,7 @@ public class SigaCpSinc {
 	}
 
 	protected void setServidor(String servidor) {
-		this.servidor = servidor;
+		this.servidor = servidor.replace("-", "");
 	}
 
 	protected void setUrl(String url) {

@@ -2953,7 +2953,7 @@ public class ExBL extends CpBL {
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado, arquivado ou encontra-se em outra lotação");
+						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado, arquivado, pendente de assinatura ou encontra-se em outra lotação");
 		}
 
 		final ExMovimentacao mov;

@@ -2008,9 +2008,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.isJuntado())
 			return false;
 		
-		if(mob.doc().isEletronico() && !mob.doc().isAssinadoEletronicoPorTodosOsSignatarios())
-			return false;
-		
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 		final boolean gerenteBIE = podeGerenciarPublicacaoBoletimPorConfiguracao(
 				titular, lotaTitular, mob);

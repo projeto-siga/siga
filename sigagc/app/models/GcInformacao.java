@@ -554,7 +554,10 @@ public class GcInformacao extends GenericModel {
 		//são buscados pela sua numeração
 		if(siglaParticionada[1].equals("GC")){
 			String[] siglaAnoENumero = siglaParticionada[2].split("/");
-			info = GcInformacao.find("ano = ? and numero = ?",Integer.parseInt(siglaAnoENumero[0]),Integer.parseInt(siglaAnoENumero[1])).first();
+			info = GcInformacao.find("ano = ? and numero = ? and ou.acronimoOrgaoUsu = ?",
+						Integer.parseInt(siglaAnoENumero[0]),
+						Integer.parseInt(siglaAnoENumero[1]),
+						siglaParticionada[0]).first();
 		}
 		else
 			info = GcInformacao.findById(Long.parseLong(siglaParticionada[1]));

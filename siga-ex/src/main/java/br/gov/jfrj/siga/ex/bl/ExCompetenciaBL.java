@@ -539,9 +539,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAnexarArquivo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		
-		if(mob.doc().isEletronico() && !mob.doc().isAssinadoEletronicoPorTodosOsSignatarios())
-			return false;
-		
 		if (mob.doc().getDtFechamento() != null)
 			return !mob.isEmTransito()
 					&& !mob.isGeral()

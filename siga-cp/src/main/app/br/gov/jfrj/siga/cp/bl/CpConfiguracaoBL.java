@@ -738,8 +738,7 @@ public class CpConfiguracaoBL {
 					.getListaPorTipo(
 							CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracao c : configs) {
-				DpPessoa pesAtual = dao().consultarPorIdInicial(
-						c.getDpPessoa().getIdInicial());
+				DpPessoa pesAtual = c.getDpPessoa().getPessoaAtual();
 				if (c.getDpPessoa().equivale(pesAtual)) {
 					if (c.getHisAtivo() == 1
 							&& pesAtual.getDataFim() == null

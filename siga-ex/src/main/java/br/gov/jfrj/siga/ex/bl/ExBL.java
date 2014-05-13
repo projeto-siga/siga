@@ -2825,7 +2825,7 @@ public class ExBL extends CpBL {
 		if (!mov.getExTipoMovimentacao()
 				.getIdTpMov()
 				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)) {
-			Notificador.notificarPerfisVinculados(mov,
+			Notificador.notificarDestinariosEmail(mov,
 					Notificador.TIPO_NOTIFICACAO_GRAVACAO);
 		}
 	}
@@ -2846,7 +2846,7 @@ public class ExBL extends CpBL {
 			dao().gravar(movCancelada);
 		}
 
-		Notificador.notificarPerfisVinculados(mov,
+		Notificador.notificarDestinariosEmail(mov,
 				Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
 	}
 
@@ -2868,7 +2868,7 @@ public class ExBL extends CpBL {
 		dao().excluir(mov);
 		mov.getExMobil().getExMovimentacaoSet().remove(mov);
 
-		Notificador.notificarPerfisVinculados(mov,
+		Notificador.notificarDestinariosEmail(mov,
 				Notificador.TIPO_NOTIFICACAO_EXCLUSAO);
 	}
 
@@ -3570,10 +3570,7 @@ public class ExBL extends CpBL {
 			// email
 			// pois o despacho deve ser assinado primeiro
 
-			if ((m.getExDocumento().isEletronico() && !fDespacho)
-					|| getConf().podePorConfiguracao(responsavel,
-							lotaResponsavel, m.doc().getExModelo(),
-							CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL)) {
+			if (m.getExDocumento().isEletronico() && !fDespacho) {
 
 				try {
 					if (!fTranferencia)
@@ -3581,9 +3578,8 @@ public class ExBL extends CpBL {
 					// Orlando: Inseri a condição abaixo para que o e-mail não
 					// seja enviado quando tratar-se de despacho com
 					// transferência que não estiver assinado.
-					if (tpDespacho == null && descrMov == null
-							&& !m.isApensadoAVolumeDoMesmoProcesso())
-						Notificador.notificarPerfisVinculados(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+					if (tpDespacho == null && descrMov == null)
+						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);  
 						
 /*						emailDeTransferência(responsavel, lotaResponsavel,
 								m.getSigla(), m.getExDocumento()

@@ -32,8 +32,12 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
@@ -70,7 +74,7 @@ public class Notificador {
 	 *            - Se é uma gravação, cancelamento ou exclusão de movimentação.
 	 * @throws AplicacaoException
 	 */
-	public static void notificarPerfisVinculados(ExMovimentacao mov,
+	public static void notificarDestinariosEmail(ExMovimentacao mov,
 			int tipoNotificacao) throws AplicacaoException {
 		
 		if(mov.getExMobil().isApensadoAVolumeDoMesmoProcesso())
@@ -83,12 +87,22 @@ public class Notificador {
 
 		// lista de destinatários com informações adicionais de perfil e código
 		// da movimentação que adicionou o perfil para permitir o cancelamento.
-		HashSet<Destinatario> destinatarioPerfil = new HashSet<Destinatario>();
+		HashSet<Destinatario> destinatariosEmail = new HashSet<Destinatario>();
 
 		List<Notificacao> notificacoes = new ArrayList<Notificacao>();
 		
 		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)) {
-			
+			DpLotacao  lotacao;			
+			try {
+				if (mov.getResp() != null)
+					lotacao = null;
+				else lotacao = mov.getLotaResp();
+					adicionarDestinatariosEmail(mov, destinatariosEmail, null, mov.getResp(), lotacao); /* verificar ExEmailNotificação também */
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Erro ao enviar email de notificação de movimentação.", 0,
+						e);
+			}	
 		}
 
 		/*
@@ -108,23 +122,58 @@ public class Notificador {
 					&& m.getExTipoMovimentacao()
 							.getIdTpMov()
 							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
-
-				incluirDestinatarioPerfil(mov, destinatarioPerfil, m);
-
+				
+				try {
+					if (m.getSubscritor() != null) {
+						/*
+						 * Se a movimentação é um cancelamento de uma
+						 * movimentação que pode ser notificada, adiciona o
+						 * e-mail.
+						 */
+						if (mov.getExMovimentacaoRef() != null)
+							adicionarDestinatariosEmail(mov.getExMovimentacaoRef(), destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação */
+						else
+							adicionarDestinatariosEmail(mov, destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação também */				
+					} else {
+						if (m.getLotaSubscritor() != null) {
+							/*
+							 * Se a movimentação é um cancelamento de uma
+							 * movimentação que pode ser notificada, adiciona o
+							 * e-mail.
+							 */
+							if (mov.getExMovimentacaoRef() != null)
+								adicionarDestinatariosEmail(mov.getExMovimentacaoRef(), destinatariosEmail, m, null, m.getLotaSubscritor().getLotacaoAtual()); /* verificar ExEmailNotificação tmb*/
+							else 
+								adicionarDestinatariosEmail(mov, destinatariosEmail, m, null, m.getLotaSubscritor().getLotacaoAtual()); /* verificar ExEmailNotificação tmb*/
+						}
+					}
+				} catch (Exception e) {
+					throw new AplicacaoException(
+							"Erro ao enviar email de notificação de movimentação.", 0,
+							e);
+				}	
+				
 			}
 		}
 
-		for (Destinatario dest : destinatarioPerfil) {
-			prepararTextoPapeisVinculados(dest, conteudo, conteudoHTML, mov,
+		for (Destinatario dest : destinatariosEmail) {			
+			
+			prepararTexto(dest, conteudo, conteudoHTML, mov,
 					tipoNotificacao);
 
 			String html = conteudoHTML.toString();
 			String txt = conteudo.toString();
+			String assunto;
+			
+			if (dest.tipo == "P")
+				assunto = "Notificação Automática -"+ mov.getExMobil().getSigla() +"- Movimentação de Documento";			
+			else /* transferencia */ 
+				assunto = "Documento transferido para " + dest.sigla;
 
 			conteudoHTML.delete(0, conteudoHTML.length());
 			conteudo.delete(0, conteudo.length());
 
-			Notificacao not = new Notificacao(dest, html, txt, mov.getExMobil().getSigla());
+			Notificacao not = new Notificacao(dest, html, txt, assunto);
 			notificacoes.add(not);
 		}
 
@@ -142,41 +191,6 @@ public class Notificador {
 	 * @throws AplicacaoException
 	 */
 	
-	private static void incluirDestinatarioPerfil(ExMovimentacao mov,
-			HashSet<Destinatario> destinatariosEmail, ExMovimentacao m)
-			throws AplicacaoException {
-
-		try {
-			if (m.getSubscritor() != null) {
-				/*
-				 * Se a movimentação é um cancelamento de uma
-				 * movimentação que pode ser notificada, adiciona o
-				 * e-mail.
-				 */
-				if (mov.getExMovimentacaoRef() != null)
-					adicionarDestinatariosEmail(mov.getExMovimentacaoRef(), destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação */
-				else
-					adicionarDestinatariosEmail(mov, destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação também */				
-			} else {
-				if (m.getLotaSubscritor() != null) {
-					/*
-					 * Se a movimentação é um cancelamento de uma
-					 * movimentação que pode ser notificada, adiciona o
-					 * e-mail.
-					 */
-					if (mov.getExMovimentacaoRef() != null)
-						adicionarDestinatariosEmail(mov.getExMovimentacaoRef(), destinatariosEmail, m, null, m.getLotaSubscritor().getLotacaoAtual()); /* verificar ExEmailNotificação tmb*/
-					else 
-						adicionarDestinatariosEmail(mov, destinatariosEmail, m, null, m.getLotaSubscritor().getLotacaoAtual()); /* verificar ExEmailNotificação tmb*/
-				}
-			}
-		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro ao enviar email de notificação de movimentação.", 0,
-					e);
-		}
-	}
-
 	private static void adicionarDestinatariosEmail(ExMovimentacao mov,
 			HashSet<Destinatario> destinatariosEmail, ExMovimentacao m, DpPessoa pess, DpLotacao lot)
 			throws AplicacaoException, Exception {
@@ -184,9 +198,16 @@ public class Notificador {
 	//	Destinatario dest = new Destinatario();				
 		HashSet<String> emailsTemp = new HashSet<String>();
 		String sigla;
+		ExPapel papel = new ExPapel();
+		Long idMovPapel = null;
 		
+		List<ExEmailNotificacao> listaDeEmails = exDao().consultarEmailNotificacao(pess, lot);		
+		papel = null;
 		
-		List<ExEmailNotificacao> listaDeEmails = exDao().consultarEmailNotificacao(pess, lot);
+		if (m != null) {
+			papel = m.getExPapel();
+			idMovPapel = m.getIdMov();
+		}	
 		
 		if (listaDeEmails.size() > 0) {			
 			
@@ -194,113 +215,120 @@ public class Notificador {
 				// Caso exista alguma configuração com pessoaEmail, lotacaoEmail e email
 				// nulos, significa que deve ser enviado para a pessoa ou para
 				// todos da lotação				
-
+				
 				if (emailNot.getPessoaEmail() == null  // configuração default
 						&& emailNot.getLotacaoEmail() == null
 						&& emailNot.getEmail() == null) {
 					if (emailNot.getDpPessoa() != null){
-						if (Ex.getInstance()
-								.getConf()
-								.podePorConfiguracao(
-								mov.getExDocumento()
-								.getExFormaDocumento()
-								.getExTipoFormaDoc(),
-								m.getExPapel(),
-								emailNot.getDpPessoa(),
-								mov.getExTipoMovimentacao(),
-								CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))	
-							emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());								
+						if (m != null){ /* perfil */
+							if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+									papel, emailNot.getDpPessoa(), mov.getExTipoMovimentacao()))								
+								emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
+						} else {  /* transferência */ 
+							if (temPermissao(emailNot.getDpPessoa(), emailNot.getDpPessoa().getLotacao(), mov.getExDocumento().getExModelo() ))						
+								emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
+						}	
 					} else {
-						for (DpPessoa pes : emailNot.getDpLotacao().getLotacaoAtual().getDpPessoaLotadosSet()) {							
-							if (Ex.getInstance()
-									.getConf()
-									.podePorConfiguracao(
-									mov.getExDocumento()
-									.getExFormaDocumento()
-									.getExTipoFormaDoc(),
-									m.getExPapel(),
-									pes,
-									mov.getExTipoMovimentacao(),
-									CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))
-								
-								emailsTemp.add(pes.getEmailPessoaAtual());						
-						}						
+						for (DpPessoa pes : emailNot.getDpLotacao().getLotacaoAtual().getDpPessoaLotadosSet()) {
+							if (m != null) {/* perfil */ 
+								if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+									papel, pes, mov.getExTipoMovimentacao()))							
+								emailsTemp.add(pes.getEmailPessoaAtual());	
+							}else { /* transferência */
+								if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo() ))						
+									emailsTemp.add(pes.getEmailPessoaAtual());
+							}	
+						}	
 					}					
 				} else {				
 						if(emailNot.getPessoaEmail() != null){ // Mandar para pessoa
-							if (Ex.getInstance()
-									.getConf()
-									.podePorConfiguracao(
-									mov.getExDocumento()
-									.getExFormaDocumento()
-									.getExTipoFormaDoc(),
-									m.getExPapel(),
-									emailNot.getPessoaEmail(),
-									mov.getExTipoMovimentacao(),
-									CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))
-								emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());								
+							if (m != null) {/* perfil */ 
+								if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+									papel, emailNot.getPessoaEmail(), mov.getExTipoMovimentacao()))							
+								emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());	
+							}else { /* transferência */
+								if (temPermissao(emailNot.getPessoaEmail(), emailNot.getPessoaEmail().getLotacao(), mov.getExDocumento().getExModelo()))						
+									emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());
+							}	
 						} else {
 							if (emailNot.getLotacaoEmail() != null) {
 								for (DpPessoa pes : emailNot.getLotacaoEmail().getLotacaoAtual().getDpPessoaLotadosSet()) {
-									if (Ex.getInstance()
-											.getConf()
-											.podePorConfiguracao(
-											mov.getExDocumento()
-											.getExFormaDocumento()
-											.getExTipoFormaDoc(),
-											m.getExPapel(),
-											pes,
-											mov.getExTipoMovimentacao(),
-											CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))
-										emailsTemp.add(pes.getEmailPessoaAtual());									
+									if (m != null) /* perfil */ 
+										if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+											papel, pes, mov.getExTipoMovimentacao()))							
+											emailsTemp.add(pes.getEmailPessoaAtual());	
+									else /* transferência */
+										if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo() ))						
+											emailsTemp.add(pes.getEmailPessoaAtual());								
 								}
 							} else {
 								emailsTemp.add(emailNot.getEmail());								
-							 }
+							}
 						}						
 					}
 				}	
 		} else { /* não há ocorrencias em Ex_email_notificacao */
 			if (pess != null){
-				if (Ex.getInstance()
-						.getConf()
-						.podePorConfiguracao(
-						mov.getExDocumento()
-						.getExFormaDocumento()
-						.getExTipoFormaDoc(),
-						m.getExPapel(),
-						pess,
-						mov.getExTipoMovimentacao(),
-						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))
-					emailsTemp.add(pess.getEmailPessoaAtual());			
+				if (m != null) { /* perfil */ 
+					if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+						papel, pess, mov.getExTipoMovimentacao()))							
+						emailsTemp.add(pess.getEmailPessoaAtual());	
+				} else {/* transferência */
+					if (temPermissao(pess, pess.getLotacao(), mov.getExDocumento().getExModelo() ))						
+						emailsTemp.add(pess.getEmailPessoaAtual());
+				}	
 			} else {
 				for (DpPessoa pes : lot.getLotacaoAtual().getDpPessoaLotadosSet()) {
-					if (Ex.getInstance()
-							.getConf()
-							.podePorConfiguracao(
-							mov.getExDocumento()
-							.getExFormaDocumento()
-							.getExTipoFormaDoc(),
-							m.getExPapel(),
-							pes,
-							mov.getExTipoMovimentacao(),
-							CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL))
-						emailsTemp.add(pes.getEmailPessoaAtual());					
+					if (m != null) /* perfil */ 
+						if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+							papel, pes, mov.getExTipoMovimentacao()))							
+						emailsTemp.add(pes.getEmailPessoaAtual());	
+					else /* transferência */
+						if (temPermissao(pes, pess.getLotacao(), mov.getExDocumento().getExModelo() ))						
+							emailsTemp.add(pes.getEmailPessoaAtual());				
 				}				
 			}
-		}	
+		}
+		
 		if (pess != null)
 			sigla = pess.getPessoaAtual().getNomePessoa() + " (" + pess.getPessoaAtual().getSigla() + ")";
 		else
-			sigla = lot.getNomeLotacao() + " (" + lot.getLotacaoAtual().getSigla() + ")";
+			sigla = lot.getLotacaoAtual().getNomeLotacao() + " (" + lot.getLotacaoAtual().getSigla() + ")";
 		
-		if (!emailsTemp.isEmpty())	
-			destinatariosEmail.add(new Destinatario(sigla, m.getExPapel().getDescPapel(),
-					m.getIdMov(), emailsTemp));	
+		if (m != null) /* perfil */{			
+			if (!emailsTemp.isEmpty())	
+				destinatariosEmail.add(new Destinatario("P", sigla, papel.getDescPapel(),
+					idMovPapel, null, null, emailsTemp));
+		} else { /* transferencia */
+			if (!emailsTemp.isEmpty())	
+				destinatariosEmail.add(new Destinatario("T", sigla, null, null, mov.getExMobil().getSigla(), 
+						mov.getExDocumento().getDescrDocumento(), emailsTemp));
+		}	
+	}	
+	
+	private static boolean temPermissao(ExTipoFormaDoc tipoFormaDoc,
+			ExPapel papel, DpPessoa pessoa, ExTipoMovimentacao tipoMovimentacao) throws AplicacaoException, Exception {		
+		
+				return (Ex.getInstance()
+						.getConf()
+						.podePorConfiguracao(
+						tipoFormaDoc,
+						papel,
+						pessoa,
+						tipoMovimentacao,
+						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL));
+				
 	}
 	
-
-	/**
+	private static boolean temPermissao(DpPessoa pessoa, DpLotacao lotacao, ExModelo modelo) throws AplicacaoException, Exception {
+		
+			return (Ex.getInstance().getConf().podePorConfiguracao(pessoa,
+							lotacao, modelo,
+							CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL));		
+				
+	}
+	
+	/*
 	 * Notifica os destinatários assincronamente.
 	 * 
 	 * @param conteudo
@@ -331,133 +359,190 @@ public class Notificador {
 	 * @param tipoNotificacao
 	 *            - Se é uma gravação, cancelamento ou exclusão de movimentação.
 	 */
-	private static void prepararTextoPapeisVinculados(Destinatario dest,
+	private static void prepararTexto(Destinatario dest,
 			StringBuilder conteudo, StringBuilder conteudoHTML,
 			ExMovimentacao mov, int tipoNotificacao) {
-
+        
+		if (dest.tipo == "P") {
 		// conteúdo texto
-		conteudo.append("Documento: ");
-		conteudo.append(mov.getExMobil().getSigla());
-		conteudo.append("\nDescrição:");
-		conteudo.append(mov.getExDocumento().getDescrDocumento());
-		conteudo.append("\nMovimentação:");
-		if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO
-				|| tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
-			conteudo.append(mov.getExTipoMovimentacao().getDescricao());
-		}
-		if (tipoNotificacao == TIPO_NOTIFICACAO_CANCELAMENTO) {
-			conteudo.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()+"(Cancelamento)");
-		}
-		if (mov.getCadastrante() != null) {
-			conteudo.append("\nRealizada por '"
-					+ mov.getCadastrante().getNomePessoa() + " (Matrícula: "
-					+ mov.getCadastrante().getMatricula() + ")'.\n\n");
-
-		}
-		
-		if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-				|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
-			if (mov.getResp() != null) {
-				conteudo.append("Destinatário:  <b>"
-								+ mov.getResp().getNomePessoa()
-								+ " (Matrícula: "
-								+ mov.getResp().getMatricula() + ") do (a) "
-								+ mov.getLotaResp().getNomeLotacao()
-								+ " (sigla: " + mov.getLotaResp().getSigla()
-								+ ")" + "</b>");
-			} else {
-				conteudo.append("Lotação Destinatária: <b>"
-								+ mov.getLotaResp().getNomeLotacao()
-								+ " (sigla: "
-								+ mov.getLotaResp().getSigla()
-								+ ")" + "</b>");
+			conteudo.append("Documento: ");
+			conteudo.append(mov.getExMobil().getSigla());
+			conteudo.append("\nDescrição:");
+			conteudo.append(mov.getExDocumento().getDescrDocumento());
+			conteudo.append("\nMovimentação:");
+			if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO
+					|| tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
+				conteudo.append(mov.getExTipoMovimentacao().getDescricao());
 			}
-		}
-		conteudo.append("<p>Para visualizar o documento, ");
-		conteudo.append("clique <a href=\"");
-		conteudo.append(servidor
-				+ "/expediente/doc/exibir.action?sigla=");
-		conteudo.append(mov.getExDocumento().getSigla());
-		conteudo.append("\">aqui</a>.</p>");
+			if (tipoNotificacao == TIPO_NOTIFICACAO_CANCELAMENTO) {
+				conteudo.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()+"(Cancelamento)");
+			}
+			if (mov.getCadastrante() != null) {
+				conteudo.append("\nRealizada por '"
+						+ mov.getCadastrante().getNomePessoa() + " (Matrícula: "
+						+ mov.getCadastrante().getMatricula() + ")'.\n\n");
+
+			}
 		
-		conteudo.append("\n\nEste email foi enviado porque ");
-		conteudo.append(dest.sigla);
-		conteudo.append(" tem o perfil de '");
-		conteudo.append(dest.papel);
-		conteudo.append("' no documento ");
-		conteudo.append(mov.getExDocumento().getSigla());
-		conteudo.append(". Caso não deseje mais receber notificações desse documento, clique no link abaixo para se descadastrar:\n\n");
-		conteudo.append(servidor + "/expediente/mov/cancelar.action?id=");
-		conteudo.append(dest.idMovPapel);
+			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+					|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
+				if (mov.getResp() != null) {
+					conteudo.append("Destinatário:  <b>"
+							+ mov.getResp().getNomePessoa()
+							+ " (Matrícula: "
+							+ mov.getResp().getMatricula() + ") do (a) "
+							+ mov.getLotaResp().getNomeLotacao()
+							+ " (sigla: " + mov.getLotaResp().getSigla()
+							+ ")" + "</b>");
+				} else {
+					conteudo.append("Lotação Destinatária: <b>"
+							+ mov.getLotaResp().getNomeLotacao()
+							+ " (sigla: "
+							+ mov.getLotaResp().getSigla()
+							+ ")" + "</b>");
+				}	
+			}
+			conteudo.append("<p>Para visualizar o documento, ");
+			conteudo.append("clique <a href=\"");
+			conteudo.append(servidor
+					+ "/expediente/doc/exibir.action?sigla=");
+			conteudo.append(mov.getExDocumento().getSigla());
+			conteudo.append("\">aqui</a>.</p>");		
+			conteudo.append("\n\nEste email foi enviado porque ");
+			conteudo.append(dest.sigla);
+			conteudo.append(" tem o perfil de '");
+			conteudo.append(dest.papel);
+			conteudo.append("' no documento ");
+			conteudo.append(mov.getExDocumento().getSigla());
+			conteudo.append(". Caso não deseje mais receber notificações desse documento, clique no link abaixo para se descadastrar:\n\n");
+			conteudo.append(servidor + "/expediente/mov/cancelar.action?id=");
+			conteudo.append(dest.idMovPapel);
 		
 		
 		// conteúdo html
-		conteudoHTML.append("<html><body>");
+			conteudoHTML.append("<html><body>");
 		
-		conteudoHTML.append("<p>Documento: <b>");
-		conteudoHTML.append(mov.getExMobil().getSigla()+ "</b></p>");
-		conteudoHTML.append("<p>Descrição: <b>");
-		conteudoHTML.append(mov.getExDocumento().getDescrDocumento()+"</b></p>");
-		conteudoHTML.append("<p>Movimentação: <b>");		
+			conteudoHTML.append("<p>Documento: <b>");
+			conteudoHTML.append(mov.getExMobil().getSigla()+ "</b></p>");
+			conteudoHTML.append("<p>Descrição: <b>");
+			conteudoHTML.append(mov.getExDocumento().getDescrDocumento()+"</b></p>");
+			conteudoHTML.append("<p>Movimentação: <b>");		
 
-		if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO
-				|| tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
-			conteudoHTML.append(mov.getExTipoMovimentacao().getDescricao() + "</b></p>");
-		}
-		if (tipoNotificacao == TIPO_NOTIFICACAO_CANCELAMENTO) {
-			conteudoHTML.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()
-					+ "</b></p>.");
-		}
-		if (mov.getCadastrante() != null) {
-			conteudoHTML.append("Realizada por <b>"
-					+ mov.getCadastrante().getNomePessoa() + " (Matrícula: "
-					+ mov.getCadastrante().getMatricula() + ")</b></p>");
-		}
-
-		if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-				|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
-			if (mov.getResp() != null) {
-				conteudoHTML
-						.append("<p>Destinatário:  <b>"
-								+ mov.getResp().getNomePessoa()
-								+ " (Matrícula: "
-								+ mov.getResp().getMatricula() + ") do (a) "
-								+ mov.getLotaResp().getNomeLotacao()
-								+ " (sigla: " + mov.getLotaResp().getSigla()
-								+ ")" + "</b></p>");
-			} else {
-				conteudoHTML
-						.append("<p>Lotação Destinatária: <b>"
-								+ mov.getLotaResp().getNomeLotacao()
-								+ " (sigla: "
-								+ mov.getLotaResp().getSigla()
-								+ ")" + "</b></p>");
+			if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO
+					|| tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
+				conteudoHTML.append(mov.getExTipoMovimentacao().getDescricao() + "</b></p>");
 			}
-		} 
+			if (tipoNotificacao == TIPO_NOTIFICACAO_CANCELAMENTO) {
+				conteudoHTML.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()
+						+ "</b></p>.");
+			}
+			if (mov.getCadastrante() != null) {
+				conteudoHTML.append("Realizada por <b>"
+						+ mov.getCadastrante().getNomePessoa() + " (Matrícula: "
+						+ mov.getCadastrante().getMatricula() + ")</b></p>");
+			}
 
-		conteudoHTML.append("<p>Para visualizar o documento, ");
-		conteudoHTML.append("clique <a href=\"");
-		conteudoHTML.append(servidor
-				+ "/expediente/doc/exibir.action?sigla=");
-		conteudoHTML.append(mov.getExDocumento().getSigla());
-		conteudoHTML.append("\">aqui</a>.</p>");
+			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+					|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
+				if (mov.getResp() != null) {
+					conteudoHTML.append("<p>Destinatário:  <b>"
+							+ mov.getResp().getNomePessoa() + " (Matrícula: "
+							+ mov.getResp().getMatricula() + ") do (a) "
+							+ mov.getLotaResp().getNomeLotacao() + " (sigla: "
+							+ mov.getLotaResp().getSigla() + ")" + "</b></p>");
+				} else {
+					conteudoHTML.append("<p>Lotação Destinatária: <b>"
+							+ mov.getLotaResp().getNomeLotacao() + " (sigla: "
+							+ mov.getLotaResp().getSigla() + ")" + "</b></p>");
+				}
+			}
 
-		conteudoHTML.append("<p>Este email foi enviado porque <b>");
-		conteudoHTML.append(dest.sigla);
-		conteudoHTML.append(" </b> tem o perfil de '");
-		conteudoHTML.append(dest.papel);
-		conteudoHTML.append("' no documento ");
-		conteudoHTML.append(mov.getExDocumento().getSigla());
-		conteudoHTML
-				.append(". <br> Caso não deseje mais receber notificações desse documento, clique <a href=\"");
-		conteudoHTML.append(servidor
-				+ "/expediente/mov/cancelar.action?id=");
-		conteudoHTML.append(dest.idMovPapel);
-		conteudoHTML.append("\">aqui</a> para descadastrar.</p>");
+			conteudoHTML.append("<p>Para visualizar o documento, ");
+			conteudoHTML.append("clique <a href=\"");
+			conteudoHTML.append(servidor
+					+ "/expediente/doc/exibir.action?sigla=");
+			conteudoHTML.append(mov.getExDocumento().getSigla());
+			conteudoHTML.append("\">aqui</a>.</p>");
 
-		conteudoHTML.append("</body></html>");
+			conteudoHTML.append("<p>Este email foi enviado porque <b>");
+			conteudoHTML.append(dest.sigla);
+			conteudoHTML.append(" </b> tem o perfil de '");
+			conteudoHTML.append(dest.papel);
+			conteudoHTML.append("' no documento ");
+			conteudoHTML.append(mov.getExDocumento().getSigla());
+			conteudoHTML
+					.append(". <br> Caso não deseje mais receber notificações desse documento, clique <a href=\"");
+			conteudoHTML.append(servidor
+					+ "/expediente/mov/cancelar.action?id=");
+			conteudoHTML.append(dest.idMovPapel);
+			conteudoHTML.append("\">aqui</a> para descadastrar.</p>");
 
+			conteudoHTML.append("</body></html>");
+		} else {
+			String mensagemTeste = null;
+			if (!SigaExProperties.isAmbienteProducao())
+				mensagemTeste = SigaExProperties.getString("email.baseTeste");
+
+			conteudo.append("O documento ");
+
+			conteudo.append(dest.siglaMobil);
+
+			conteudo.append(", com descrição '");
+
+			conteudo.append(dest.descrDocumento);
+
+			conteudo.append("', foi transferido para ");
+
+			conteudo.append(dest.sigla);
+
+			conteudo.append(" e aguarda recebimento.\n\n");
+
+			conteudo.append("Para visualizar o documento, ");
+
+			conteudo.append("clique no link abaixo:\n\n");
+
+			conteudo.append("http://siga/sigaex/expediente/doc/exibir.action?sigla=");
+
+			conteudo.append(dest.siglaMobil);
+
+			if (mensagemTeste != null)
+				conteudo.append("\n " + mensagemTeste + "\n");
+
+			conteudoHTML.append("<html><body>");
+
+			conteudoHTML.append("<p>O documento <b>");
+
+			conteudoHTML.append(dest.siglaMobil);
+
+			conteudoHTML.append("</b>, com descrição '<b>");
+
+			conteudoHTML.append(dest.descrDocumento);
+
+			conteudoHTML.append("</b>', foi transferido para <b>");
+
+			conteudoHTML.append(dest.sigla);
+
+			conteudoHTML.append("</b> e aguarda recebimento.</p>");
+
+			conteudoHTML.append("<p>Para visualizar o documento, ");
+
+			conteudoHTML.append("clique <a href=\"");
+
+			conteudoHTML
+					.append("http://siga/sigaex/expediente/doc/exibir.action?sigla=");
+
+			conteudoHTML.append(dest.siglaMobil);
+
+			conteudoHTML.append("\">aqui</a>.</p>");
+
+			if (mensagemTeste != null)
+				conteudoHTML.append("<p><b>" + mensagemTeste + "</b></p>");
+
+			conteudoHTML.append("</body></html>");
+		}
 	}
+
+
 
 	/**
 	 * Classe que representa um thread de envio de e-mail. Há a necessidade do
@@ -483,17 +568,11 @@ public class Notificador {
 			try {
 				for (Notificacao not : notificacoes){
 					txt = not.txt;
-					html = not.html;					
-					
-				/*	for (String email : not.dest.emails) {
-						dests[cont] = email;
-						cont++;						
-					} */
+					html = not.html;				
 					Correio.enviar(SigaBaseProperties
 								.getString("servidor.smtp.usuario.remetente"),
 								not.dest.emails.toArray(new String[not.dest.emails.size()]),		
-								"Notificação Automática -"+not.doc+ "- Movimentação de Documento",
-								txt, html);					
+								not.assunto, txt, html);					
 				}
 					
 			} catch (Exception e) {
@@ -507,31 +586,38 @@ public class Notificador {
 		Destinatario dest;
 		String html;
 		String txt;
-		String doc;
+		String assunto;
 
-		public Notificacao(Destinatario dest, String html, String txt, String doc) {
+		public Notificacao(Destinatario dest, String html, String txt, String assunto) {
 			super();
 			this.dest = dest;
 			this.html = html;
-			this.txt = txt;
-			this.doc = doc;
+			this.txt = txt;	
+			this.assunto = assunto;
 		}
 	}
 
 	static class Destinatario implements Comparable<Destinatario> {
 
+		public String tipo;
 		public String sigla;
 		public String papel;
-		public long idMovPapel;
+		public Long idMovPapel;
+		public String siglaMobil;		
+		public String descrDocumento;		
 		public HashSet<String> emails = new HashSet<String>();
 		
-		public Destinatario(String sigla, String papel,
-				long idMovPapel, HashSet<String> emails ) {
+		public Destinatario(String tipo, String sigla, String papel,
+				Long idMovPapel, String siglaMobil, String descrDocumento, 
+				HashSet<String> emails ) {
 			super();			
+			this.tipo = tipo;
 			this.sigla = sigla;
 			this.papel = papel;
 			this.idMovPapel = idMovPapel;
-			this.emails = emails;
+			this.siglaMobil = siglaMobil;	
+			this.descrDocumento = descrDocumento;	
+			this.emails = emails;				
 		}
 
 		public int compareTo(Destinatario o) {

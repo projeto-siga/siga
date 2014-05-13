@@ -52,14 +52,14 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
     CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'VARA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
-      THEN 2
-      ELSE 1
+      THEN 'Unidade Judicial'
+      ELSE 'Unidade da Administração'
     END AS LOTACAO_TIPO,
-    1   AS LOTACAO_TIPO_PAPEL
+    'Principal'   AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
   ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -161,14 +161,14 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
     CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'VARA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
-      THEN 2
-      ELSE 1
+      THEN 'Unidade Judicial'
+      ELSE 'Unidade da Administração'
     END AS LOTACAO_TIPO,
-    1   AS LOTACAO_TIPO_PAPEL
+    'Principal'   AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
   ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -266,16 +266,16 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U.NM_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_NOME,
     U.SG_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_SIGLA,
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
-    CASE TC.NM_TIPO_CATEGORIA
+   CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'VARA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
-      THEN 2
-      ELSE 1
+      THEN 'Unidade Judicial'
+      ELSE 'Unidade da Administração'
     END AS LOTACAO_TIPO,
-    1   AS LOTACAO_TIPO_PAPEL
+    'Principal'   AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
   ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -373,16 +373,16 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U.NM_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_NOME,
     U.SG_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_SIGLA,
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
-    CASE TC.NM_TIPO_CATEGORIA
+   CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'VARA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
-      THEN 2
-      ELSE 1
+      THEN 'Unidade Judicial'
+      ELSE 'Unidade da Administração'
     END AS LOTACAO_TIPO,
-    1   AS LOTACAO_TIPO_PAPEL
+    'Principal'   AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
   ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -482,14 +482,14 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
     CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'VARA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
-      THEN 2
-      ELSE 1
+      THEN 'Unidade Judicial'
+      ELSE 'Unidade da Administração'
     END AS LOTACAO_TIPO,
-    1   AS LOTACAO_TIPO_PAPEL
+    'Principal'   AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
   ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -577,8 +577,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U.NM_UNIDADE                    AS LOTACAO_NOME,
     U.SG_UNIDADE                    AS LOTACAO_SIGLA,
     U_PAI.ID_LOT_UNIDADE            AS LOTACAO_ID_PAI,
-    1                               AS LOTACAO_TIPO,
-    2                               AS LOTACAO_TIPO_PAPEL
+    'Agrupamento Operacional'      AS LOTACAO_TIPO,
+    'Funcional'                     AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_EXTERNO CRE
   ON CRE.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -660,14 +660,14 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
     CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'VARA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
-      THEN 2
-      ELSE 1
+      THEN 'Unidade Judicial'
+      ELSE 'Unidade da Administração'
     END AS LOTACAO_TIPO,
-    1   AS LOTACAO_TIPO_PAPEL
+    'Principal'   AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
   ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -768,14 +768,14 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
     CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'VARA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
-      THEN 2
-      ELSE 1
+      THEN 'Unidade Judicial'
+      ELSE 'Unidade da Administração'
     END AS LOTACAO_TIPO,
-    1   AS LOTACAO_TIPO_PAPEL
+    'Principal'   AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
   ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -906,8 +906,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     NULL                 AS TIPO_RH,
     NULL                 AS CARGO_ID,
     NULL                 AS CARGO_NOME,
-    NULL                 AS CARGO_SIGLA,
     NULL                 AS FUNCAO_ID,
+    NULL                 AS CARGO_SIGLA,
     NULL                 AS FUNCAO_NOME,
     NULL                 AS FUNCAO_SIGLA,
     U.ID_LOT_UNIDADE     AS LOTACAO_ID,
@@ -916,14 +916,14 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U_PAI.ID_LOT_UNIDADE AS LOTACAO_ID_PAI,
     CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'VARA'
-      THEN 2
+      THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
-      THEN 2
-      ELSE 1
+      THEN 'Unidade Judicial'
+      ELSE 'Unidade da Administração'
     END AS LOTACAO_TIPO,
-    1   AS LOTACAO_TIPO_PAPEL
+    'Principal'   AS LOTACAO_TIPO_PAPEL
   FROM SIGARH.LOT_UNIDADE U
   INNER JOIN SIGARH.LOT_ORGANIZACIONAL O
   ON O.ID_LOT_UNIDADE=U.ID_LOT_UNIDADE

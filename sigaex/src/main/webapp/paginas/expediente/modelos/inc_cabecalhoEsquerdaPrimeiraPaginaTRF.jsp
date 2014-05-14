@@ -15,7 +15,7 @@
 				<tr>
 					<td width="100%" align="left">
 						<p style="font-family: AvantGarde Bk BT, Arial; font-size: 16pt;">
-							${f:resource('siga.ex.modelo.cabecalho.titulo')}
+							${f:resource('siga.ex.modelos.cabecalho.titulo')}
 						</p>
 					</td>
 				</tr>

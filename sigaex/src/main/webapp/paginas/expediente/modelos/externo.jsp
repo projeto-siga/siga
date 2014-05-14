@@ -29,11 +29,11 @@
 							<td width="100%" align="center"><img src="contextpath/imagens/brasao2.png" width="50" height="50"/></td>
 						</tr>
 						<tr>
-							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:11pt;">${f:resource('siga.ex.modelo.cabecalho.titulo')}</td>
+							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:11pt;">${f:resource('siga.ex.modelos.cabecalho.titulo')}</td>
 						</tr>
-						<c:if test="${not empty f:resource('siga.ex.modelo.cabecalho.subtitulo')}">
+						<c:if test="${not empty f:resource('siga.ex.modelos.cabecalho.subtitulo')}">
 							<tr>
-								<td width="100%" align="center" style="font-family:Arial;font-size:10pt;font-weight: bold;">${f:resource('siga.ex.modelo.cabecalho.subtitulo')}</td>
+								<td width="100%" align="center" style="font-family:Arial;font-size:10pt;font-weight: bold;">${f:resource('siga.ex.modelos.cabecalho.subtitulo')}</td>
 							</tr>
 						</c:if>
 						<tr>
@@ -64,11 +64,11 @@
 				<td width="100%"> 
 					<table width="100%" border="0" cellpadding="2">
 						<tr>
-							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:11pt;">${f:resource('siga.ex.modelo.cabecalho.titulo')}</td>
+							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:11pt;">${f:resource('siga.ex.modelos.cabecalho.titulo')}</td>
 						</tr>
-						<c:if test="${not empty f:resource('siga.ex.modelo.cabecalho.subtitulo')}">
+						<c:if test="${not empty f:resource('siga.ex.modelos.cabecalho.subtitulo')}">
 							<tr>
-								<td width="100%" align="center" style="font-family:Arial;font-size:10pt;font-weight: bold;">${f:resource('siga.ex.modelo.cabecalho.subtitulo')}</td>
+								<td width="100%" align="center" style="font-family:Arial;font-size:10pt;font-weight: bold;">${f:resource('siga.ex.modelos.cabecalho.subtitulo')}</td>
 							</tr>
 						</c:if>
 						<tr>

@@ -195,7 +195,7 @@ public class WfTaskVO {
 										+ lotEX.getSigla() + ", for devolvido.");
 							}
 							if (!podeMovimentar && !estaComTarefa) {
-								if (!lotWF.equivale(lotEX)) {
+								if (lotWF!=null && !lotWF.equivale(lotEX)) {
 									setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
 											+ documento
 											+ ", que está com "

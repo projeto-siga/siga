@@ -567,7 +567,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     NULL                            AS PESSOA_NATURALIDADE,
     NULL                            AS PESSOA_NACIONALIDADE,
     'TERCEIRIZADO'                  AS TIPO_RH,
-    NULL                            AS CARGO_ID,
+    999                             AS CARGO_ID,
     NULL                            AS CARGO_NOME,
     NULL                            AS CARGO_SIGLA,
     NULL                            AS FUNCAO_ID,

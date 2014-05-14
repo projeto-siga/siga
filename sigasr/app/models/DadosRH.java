@@ -55,7 +55,6 @@ public class DadosRH extends GenericModel {
 	public Long lotacao_id_pai;
 	public String lotacao_tipo;
 	public String lotacao_tipo_papel;
-	public Long papel_id;
 
 	public class Pessoa {
 		public Long pessoa_id;
@@ -116,12 +115,11 @@ public class DadosRH extends GenericModel {
 	}
 	
 	public class Papel {
-		public Long papel_id;
+		public Long papel_pessoa_id;
 		public Long papel_lotacao_id;
 		public Long papel_cargo_id;
 		public Long papel_funcao_id;
 		public String papel_lotacao_tipo;
-		public Long papel_pessoa_id;
 	}
 
 	public Pessoa getPessoa() {
@@ -199,11 +197,10 @@ public class DadosRH extends GenericModel {
 	}
 	
 	public Papel getPapel() {
-		if (papel_id == null)
+		if (pessoa_id == null)
 			return null;
 		Papel o = new Papel();
 		o.papel_pessoa_id = pessoa_id;
-		o.papel_id = papel_id;
 		o.papel_lotacao_id = lotacao_id;
 		o.papel_cargo_id = cargo_id;
 		o.papel_funcao_id = funcao_id;

@@ -61,13 +61,12 @@ public class SrRelLocal extends RelatorioTemplate {
 		List<Object> d = new LinkedList<Object>();
 		String atendente = (String) parametros.get("atendente");
 		Long percTotal = (long) 0;
-		Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
 		Object local = parametros.get("local");
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		Date dtIni = formatter.parse((String) parametros.get("dtIni"));
-		Date dtFim = formatter.parse((String) parametros.get("dtFim"));
 		if (parametros.get("local").equals("0")) {
 			if ((parametros.get("lotacao").equals("")) && (parametros.get("atendente") == null)) {
+				Date dtIni = formatter.parse((String) parametros.get("dtIni"));
+				Date dtFim = formatter.parse((String) parametros.get("dtFim"));
 				percTotal = SrSolicitacao.find(
 						"select count(*) " 
 						+ "from SrSolicitacao sol, SrMovimentacao mov " 
@@ -83,6 +82,7 @@ public class SrRelLocal extends RelatorioTemplate {
 						+ "and  mov.dtIniMov >= ? "
 						+ "and  mov.dtIniMov <= ?", dtIni, dtFim)
 						.first();
+				Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
 				List<SrSolicitacao> lista = SrSolicitacao.find(
 						"select sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " +
 						"sol.acao.tituloAcao, count(*) " +
@@ -118,14 +118,12 @@ public class SrRelLocal extends RelatorioTemplate {
 						}
 			} else {
 							String query = "";
-							Object par_atendente = parametros.get("atendente") ;
-							Object par_lotacao = parametros.get("lotacao");
 							if  (parametros.get("atendente") != null)
 								query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni " +
-										"from DpLotacao where idLotacao in (" +  par_atendente + "))";
+										"from DpLotacao where idLotacao in (" +  parametros.get("atendente") + "))";
 							else
 								query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni " +
-										"from DpLotacao where idLotacao in (" +  par_lotacao + "))";
+										"from DpLotacao where idLotacao in (" +  parametros.get("lotacao") + "))";
 							List lotacoes = JPA.em().createQuery(query).getResultList();
 							StringBuilder listalotacoes= new StringBuilder();
 							for (int i  = 0; i < lotacoes.size(); i++){
@@ -147,8 +145,9 @@ public class SrRelLocal extends RelatorioTemplate {
 									+		"where movfec.solicitacao = mov.solicitacao " 
 									+		"and movfec.dtIniMov > mov.dtIniMov " 
 									+		"and movfec.tipoMov <> 14) "
-									+ "and  mov.dtIniMov >= ? "
-									+ "and  mov.dtIniMov <= ?", dtIni, dtFim).first();
+									+ "and  mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+									+ "and  mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
+									.first();
 							List<SrSolicitacao> lista = SrSolicitacao.find(
 								"select sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " +
 								"sol.acao.tituloAcao, count(*) " 
@@ -165,10 +164,10 @@ public class SrRelLocal extends RelatorioTemplate {
 								+		"where movfec.solicitacao = mov.solicitacao " 
 								+		"and movfec.dtIniMov > mov.dtIniMov " 
 								+		"and movfec.tipoMov <> 14) "
-								+ "and  mov.dtIniMov >= ? "
-								+ "and  mov.dtIniMov <= ?"
+								+ "and  mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+								+ "and  mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
 								+ " group by sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " 
-								+ "sol.acao.tituloAcao", dtIni, dtFim).fetch();
+								+ "sol.acao.tituloAcao").fetch();
 								Iterator it = lista.listIterator(); 
 								while (it.hasNext()) {
 									Object[] obj = (Object[]) it.next();
@@ -200,8 +199,9 @@ public class SrRelLocal extends RelatorioTemplate {
 							+		"where movfec.solicitacao = mov.solicitacao " 
 							+		"and movfec.dtIniMov > mov.dtIniMov " 
 							+		"and movfec.tipoMov <> 14) "
-							+ "and  mov.dtIniMov >= ? "
-							+ "and  mov.dtIniMov <= ?", dtIni, dtFim).first();
+							+ "and  mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+							+ "and  mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
+							.first();
 					List<SrSolicitacao> lista = SrSolicitacao.find(
 							"select sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " 
 							+ "sol.acao.tituloAcao, count(*) " 
@@ -216,10 +216,10 @@ public class SrRelLocal extends RelatorioTemplate {
 									+ "where movfec.solicitacao = mov.solicitacao " 
 									+ "and movfec.dtIniMov > mov.dtIniMov " 
 									+ "and movfec.tipoMov <> 14) "
-									+ "and  mov.dtIniMov >= ? "
-									+ "and  mov.dtIniMov <= ?"
-									+ " group by sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " 
-									+ "sol.acao.tituloAcao", dtIni, dtFim).fetch();
+							+ "and  mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+							+ "and  mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
+							+ " group by sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " 
+							+ "sol.acao.tituloAcao").fetch();
 						Iterator it = lista.listIterator(); 
 						while (it.hasNext()) {
 							Object[] obj = (Object[]) it.next();
@@ -236,14 +236,12 @@ public class SrRelLocal extends RelatorioTemplate {
 						}
 				} else {
 					String query =  "";
-					Object par_atendente = parametros.get("atendente");
-					Object par_lotacao = parametros.get("lotacao");
 					if (parametros.get("atendente") != null)
 						query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni " +
-									"from DpLotacao where idLotacao in (" +  par_atendente + "))";
+									"from DpLotacao where idLotacao in (" +  parametros.get("atendente") + "))";
 					else 
 						query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni " +
-								"from DpLotacao where idLotacao in (" +  par_lotacao + "))";
+								"from DpLotacao where idLotacao in (" +  parametros.get("lotacao") + "))";
 					List lotacoes = JPA.em().createQuery(query).getResultList();
 					StringBuilder listalotacoes= new StringBuilder();
 					for (int i  = 0; i < lotacoes.size(); i++){
@@ -266,8 +264,8 @@ public class SrRelLocal extends RelatorioTemplate {
 							+		"where movfec.solicitacao = mov.solicitacao " 
 							+		"and movfec.dtIniMov > mov.dtIniMov " 
 							+		"and movfec.tipoMov <> 14) "
-							+ "and  mov.dtIniMov >= ? "
-							+ "and  mov.dtIniMov <= ?")
+							+ "and  mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+							+ "and  mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') ")
 							.first();
 					List<SrSolicitacao> lista = SrSolicitacao.find(
 						"select sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " 
@@ -277,8 +275,7 @@ public class SrRelLocal extends RelatorioTemplate {
 											+ "where mov.solicitacao = sol.idSolicitacao " 
 											+ " and mov.lotaAtendente in (" + listalotacoes + "))" 
 						+ "and sol.idSolicitacao = mov.solicitacao "
-						//+ "and sol.local = " + parametros.get("local") + " "
-						+ "and sol.local = ? "
+						+ "and sol.local = " + parametros.get("local") + " "
 						+ "and mov.dtIniMov = (select max(movult.dtIniMov) " 
 											+ "from SrMovimentacao movult " 
 											+ "where movult.solicitacao = mov.solicitacao "
@@ -287,10 +284,10 @@ public class SrRelLocal extends RelatorioTemplate {
 								+ "where movfec.solicitacao = mov.solicitacao " 
 								+ "and movfec.dtIniMov > mov.dtIniMov " 
 								+ "and movfec.tipoMov <> 14) "
-								+ "and  mov.dtIniMov >= ? "
-								+ "and  mov.dtIniMov <= ?"
-								+ " group by sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " 
-						+ "sol.acao.tituloAcao", local, dtIni, dtFim).fetch();
+						+ "and  mov.dtIniMov >= to_date('" + parametros.get("dtIni") + " 00:00:00','dd/MM/yy hh24:mi:ss') "
+						+ "and  mov.dtIniMov <= to_date('" + parametros.get("dtFim") + " 23:59:59','dd/MM/yy hh24:mi:ss') "
+						+ " group by sol.local.nomeComplexo, sol.itemConfiguracao.tituloItemConfiguracao, " 
+						+ "sol.acao.tituloAcao").fetch();
 						Iterator it = lista.listIterator(); 
 						while (it.hasNext()) {
 							Object[] obj = (Object[]) it.next();

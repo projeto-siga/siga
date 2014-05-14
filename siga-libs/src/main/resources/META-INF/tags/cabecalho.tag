@@ -166,7 +166,7 @@ ${meta}
 								src="/siga/imagens/logo.png">
 						</div>
 						<div class="gt-company">
-							<strong>Justi&ccedil;a Federal <c:catch>
+							<strong>${f:resource('siga.cabecalho.titulo')} <c:catch>
 									<c:if test="${not empty titular.orgaoUsuario.descricao}">
 - ${titular.orgaoUsuario.descricao}
 </c:if>

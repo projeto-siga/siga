@@ -16,16 +16,16 @@
 		<table align="left" width="100%">
 			<tr>
 				<td width="100%" align="left">
-				<p style="font-size: 11pt;">PODER
-				JUDICIÁRIO</p>
+				<p style="font-size: 11pt;">${f:resource('siga.ex.modelo.cabecalho.titulo')}</p>
 				</td>
 			</tr>
-			<tr>
-				<td width="100%" align="left">
-				<p style="font-size: 10pt; font-weight: bold;">JUSTIÇA
-				FEDERAL</p>
-				</td>
-			</tr>
+			<c:if test="${not empty f:resource('siga.ex.modelo.cabecalho.subtitulo')}">
+				<tr>
+					<td width="100%" align="left">
+					<p style="font-size: 10pt; font-weight: bold;">${f:resource('siga.ex.modelo.cabecalho.subtitulo')}</p>
+					</td>
+				</tr>
+			</c:if>
 			<tr>
 				<td width="100%" align="left">
 				<p style="font-size: 8pt;">

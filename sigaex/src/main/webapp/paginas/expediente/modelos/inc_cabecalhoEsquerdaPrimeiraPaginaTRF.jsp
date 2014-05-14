@@ -15,7 +15,7 @@
 				<tr>
 					<td width="100%" align="left">
 						<p style="font-family: AvantGarde Bk BT, Arial; font-size: 16pt;">
-							PODER JUDICIÁRIO
+							${f:resource('siga.ex.modelo.cabecalho.titulo')}
 						</p>
 					</td>
 				</tr>

@@ -11,16 +11,16 @@
 		<table width="100%" border="0" cellpadding="2">
 			<tr>
 				<td width="100%" align="center">
-				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER
-				JUDICIÁRIO</p>
+				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${f:resource('siga.ex.modelo.cabecalho.titulo')}</p>
 				</td>
 			</tr>
-			<tr>
-				<td width="100%" align="center">
-				<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA
-				FEDERAL</p>
-				</td>
-			</tr>
+			<c:if test="${not empty f:resource('siga.ex.modelo.cabecalho.subtitulo')}">
+				<tr>
+					<td width="100%" align="center">
+					<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${f:resource('siga.ex.modelo.cabecalho.subtitulo')}</p>
+					</td>
+				</tr>
+			</c:if>
 			<tr>
 				<td width="100%" align="center">
 				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;"><c:choose>

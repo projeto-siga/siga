@@ -106,10 +106,12 @@ public class GiServiceImpl implements GiService {
 					.getCpTipoLotacao().getSiglaTpLotacao() : "null");
 
 			DpCargo c = p.getCargo();
-			cargo.put("idCargo", c.getId());
-			cargo.put("idExternaCargo", c.getIdExterna());
-			cargo.put("nomeCargo", c.getNomeCargo());
-			cargo.put("siglaCargo", c.getSigla());
+			if (c!=null){
+				cargo.put("idCargo", c.getId());
+				cargo.put("idExternaCargo", c.getIdExterna());
+				cargo.put("nomeCargo", c.getNomeCargo());
+				cargo.put("siglaCargo", c.getSigla());
+			}
 
 			DpFuncaoConfianca f = p.getFuncaoConfianca();
 			if (f !=null){

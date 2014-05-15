@@ -3565,43 +3565,44 @@ public class ExBL extends CpBL {
 		}
 
 		// Inicio envio e-mail
-		for (ExMobil m : set) {
-			// Se o documento for eletrônico e houve despacho, não envia
-			// email
-			// pois o despacho deve ser assinado primeiro
-
-			if (m.getExDocumento().isEletronico() && !fDespacho) {
-
-				try {
-					if (!fTranferencia)
-						return;
-					// Orlando: Inseri a condição abaixo para que o e-mail não
-					// seja enviado quando tratar-se de despacho com
-					// transferência que não estiver assinado.
-					if (tpDespacho == null && descrMov == null)
-						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);  
-						
-/*						emailDeTransferência(responsavel, lotaResponsavel,
-								m.getSigla(), m.getExDocumento()
-										.getCodigoString(), m.getExDocumento()
-										.getDescrDocumento()); */
-
-				} catch (final Exception e) {
-					try {
-						emailDeTransferênciaAdministrador(m.getExDocumento()
-								.getCodigoString(), e);						
-					} catch (final Exception e1) {
-
-					}
-
-					/*
-					 * throw new AplicacaoException(
-					 * "Erro ao enviar email de notificação de transferência." ,
-					 * 0, e);
-					 */
-				}
-			}
-		}
+//		for (ExMobil m : set) {
+//			// Se o documento for eletrônico e houve despacho, não envia
+//			// email
+//			// pois o despacho deve ser assinado primeiro
+//
+//			if (m.getExDocumento().isEletronico() && !fDespacho) {
+//
+//				try {
+//					if (!fTranferencia)
+//						return;
+//					// Orlando: Inseri a condição abaixo para que o e-mail não
+//					// seja enviado quando tratar-se de despacho com
+//					// transferência que não estiver assinado.
+//					if (tpDespacho == null && descrMov == null)
+//						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);  
+//						
+///*						emailDeTransferência(responsavel, lotaResponsavel,
+//								m.getSigla(), m.getExDocumento()
+//										.getCodigoString(), m.getExDocumento()
+//										.getDescrDocumento()); */
+//
+//				} catch (final Exception e) {
+//					try {
+//						emailDeTransferênciaAdministrador(m.getExDocumento()
+//								.getCodigoString(), e);						
+//					} catch (final Exception e1) {
+//
+//					}
+//
+//					/*
+//					 * throw new AplicacaoException(
+//					 * "Erro ao enviar email de notificação de transferência." ,
+//					 * 0, e);
+//					 */
+//				}
+//			}
+//
+//		}
 
 	}
 

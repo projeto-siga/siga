@@ -428,10 +428,12 @@ public class Notificador {
 			conteudoHTML.append(mov.getExDocumento().getDescrDocumento()+"</b></p>");
 			conteudoHTML.append("<p>Movimentação: <b>");		
 
-			if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO
-					|| tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
+			if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO)					 {
 				conteudoHTML.append(mov.getExTipoMovimentacao().getDescricao() + "</b></p>");
 			}
+			if (tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
+				conteudoHTML.append(mov.getExTipoMovimentacao().getDescricao() + " (Excluída)</b></p>");
+			}			
 			if (tipoNotificacao == TIPO_NOTIFICACAO_CANCELAMENTO) {
 				conteudoHTML.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()
 						+ "</b></p>.");

@@ -46,22 +46,22 @@
 						<c:forEach var="email" items="${itens}">
 							<tr>																		
 								<td align="left"><c:if test="${not empty email.dpPessoa}">
-									<siga:selecionado sigla="${email.dpPessoa.nomeAbreviado}"
-											descricao="${email.dpPessoa.descricao} - ${email.dpPessoa.sigla}" /></c:if>
+									<siga:selecionado sigla="${email.dpPessoa.pessoaAtual.nomeAbreviado}"
+											descricao="${email.dpPessoa.pessoaAtual.descricao} - ${email.dpPessoa.pessoaAtual.sigla}" /></c:if>
 								</td>
 								<td><c:if test="${not empty email.dpLotacao}">
-									<siga:selecionado sigla="${email.dpLotacao.sigla}"
-										descricao="${email.dpLotacao.descricaoAmpliada}" /></c:if>
+									<siga:selecionado sigla="${email.dpLotacao.lotacaoAtual.sigla}"
+										descricao="${email.dpLotacao.lotacaoAtual.descricaoAmpliada}" /></c:if>
 								</td>	
 								<td></td>
 								<td>${email.email}</td>	
 								<td><c:if test="${not empty email.pessoaEmail}">
-									<siga:selecionado sigla="${email.pessoaEmail.nomeAbreviado}"
-											descricao="${email.pessoaEmail.descricao} - ${email.pessoaEmail.sigla}" /></c:if>
+									<siga:selecionado sigla="${email.pessoaEmail.pessoaAtual.nomeAbreviado}"
+											descricao="${email.pessoaEmail.pessoaAtual.descricao} - ${email.pessoaEmail.pessoaAtual.sigla}" /></c:if>
 								</td>
 								<td><c:if test="${not empty email.lotacaoEmail}">
-									<siga:selecionado sigla="${email.lotacaoEmail.sigla}"
-										descricao="${email.lotacaoEmail.descricaoAmpliada}" /></c:if>
+									<siga:selecionado sigla="${email.lotacaoEmail.lotacaoAtual.sigla}"
+										descricao="${email.lotacaoEmail.lotacaoAtual.descricaoAmpliada}" /></c:if>
 								</td>								
 								<td align="center" width="5%">									
 	 			 					<a href="javascript:if (confirm('Deseja excluir o email?')) location.href='/sigaex/expediente/emailNotificacao/excluir.action?id=${email.idEmailNotificacao}';">

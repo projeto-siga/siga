@@ -1118,6 +1118,29 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
+	
+	/**
+	 * Retorna se é possível ser subscritor de um documento.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeSerSubscritor(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExModelo mod) throws Exception {
+		return getConf()
+				.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						titular.getCargo(),
+						titular.getFuncaoConfianca(),
+						mod.getExFormaDocumento(),
+						mod,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
 
 	/**
 	 * Retorna se é possível publicar o Boletim Interno que possui mob, segundo

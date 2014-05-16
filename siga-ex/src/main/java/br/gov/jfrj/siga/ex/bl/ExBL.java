@@ -2809,6 +2809,9 @@ public class ExBL extends CpBL {
 				&& doc.getExMobilPai().getExDocumento().isEletronico())
 			throw new AplicacaoException(
 					"Não é possível criar Subprocesso físico de processo eletrônico.");
+		
+		if(!getComp().podeSerSubscritor(doc.getTitular(), doc.getLotaTitular(), doc.getExModelo()))
+			throw new AplicacaoException("O usuário não pode ser subscritor do documento");
 
 		Set<ExVia> setVias = doc.getSetVias();
 

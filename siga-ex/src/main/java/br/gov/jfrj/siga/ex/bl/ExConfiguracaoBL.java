@@ -351,6 +351,25 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				null, exTpMov, null, null, null, dpLotacao, dpPessoa, null,
 				idTpConf);
 	}
+	
+	/**
+	 * 
+	 * Usado para se saber se uma pessoa pode fazer uma certa movimentação
+	 * 
+	 * @param dpPessoa
+	 * @param dpLotacao
+	 * @param idTpMov
+	 * @param idTpConf
+	 * @throws Exception
+	 */
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, DpCargo cargo, DpFuncaoConfianca funcaoConficanca, ExFormaDocumento tipo, ExModelo modelo,
+			long idTpMov, long idTpConf) throws Exception {
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
+				ExTipoMovimentacao.class, false);
+		return podePorConfiguracao(null, null, null, null, tipo, modelo, null,
+				null, exTpMov, cargo, null, funcaoConficanca, dpLotacao, dpPessoa, null,
+				idTpConf);
+	}	
 
 	public boolean podePorConfiguracao(ExModelo mod, long idTpConf)
 			throws Exception {

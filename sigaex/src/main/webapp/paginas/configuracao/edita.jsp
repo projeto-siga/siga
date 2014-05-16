@@ -82,6 +82,10 @@ function sbmt() {
 				<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
+				<td>Cargo</td>
+				<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
+			</tr>			
+			<tr>
 				<td>Função de Confiança</td>
 				<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
 			</tr>

@@ -230,11 +230,11 @@ public class Notificador {
 						}	
 					} else {
 						for (DpPessoa pes : emailNot.getDpLotacao().getLotacaoAtual().getDpPessoaLotadosSet()) {
-							if (m != null) {/* perfil */ 
+							if (m != null) { /* perfil */ 
 								if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
 									papel, pes, mov.getExTipoMovimentacao()))							
 								emailsTemp.add(pes.getEmailPessoaAtual());	
-							}else { /* transferência */
+							} else { /* transferência */
 								if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo() ))						
 									emailsTemp.add(pes.getEmailPessoaAtual());
 							}	
@@ -253,11 +253,11 @@ public class Notificador {
 						} else {
 							if (emailNot.getLotacaoEmail() != null) {
 								for (DpPessoa pes : emailNot.getLotacaoEmail().getLotacaoAtual().getDpPessoaLotadosSet()) {
-									if (m != null) /* perfil */ 
+									if (m != null) {/* perfil */ 
 										if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
 											papel, pes, mov.getExTipoMovimentacao()))							
 											emailsTemp.add(pes.getEmailPessoaAtual());	
-									else /* transferência */
+									} else /* transferência */
 										if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo() ))						
 											emailsTemp.add(pes.getEmailPessoaAtual());								
 								}
@@ -279,14 +279,15 @@ public class Notificador {
 				}	
 			} else {
 				for (DpPessoa pes : lot.getLotacaoAtual().getDpPessoaLotadosSet()) {
-					if (m != null) /* perfil */ 
+					if (m != null) { /* perfil */ 
 						if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
 							papel, pes, mov.getExTipoMovimentacao()))							
 						emailsTemp.add(pes.getEmailPessoaAtual());	
-					else /* transferência */
+					} else  {/* transferência */
 						if (temPermissao(pes, pess.getLotacao(), mov.getExDocumento().getExModelo() ))						
 							emailsTemp.add(pes.getEmailPessoaAtual());				
-				}				
+					}	
+				}			
 			}
 		}
 		

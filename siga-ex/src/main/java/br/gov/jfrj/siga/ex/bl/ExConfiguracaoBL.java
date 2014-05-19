@@ -234,6 +234,18 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		return buscaSituacao(exConfig);
 
 	}
+	public CpSituacaoConfiguracao buscaSituacao(ExModelo mod, ExTipoDocumento tipo,DpPessoa pess,
+			DpLotacao lota, long idTpConfig) throws Exception {
+		ExConfiguracao exConfig = new ExConfiguracao();
+		exConfig.setDpPessoa(pess);
+		exConfig.setLotacao(lota);
+		exConfig.setExModelo(mod);
+		exConfig.setExTipoDocumento(tipo);
+		exConfig.setCpTipoConfiguracao(ExDao.getInstance().consultar(
+				idTpConfig, CpTipoConfiguracao.class, false));
+		return buscaSituacao(exConfig);
+
+	}
 
 	/**
 	 * 

@@ -666,7 +666,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		Long idSit = Ex
 				.getInstance()
 				.getConf()
-				.buscaSituacao(getModelo(), getTitular(), getLotaTitular(),
+				.buscaSituacao(getModelo(), doc.getExTipoDocumento(),getTitular(), getLotaTitular(),
 						CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
 				.getIdSitConfiguracao();
 

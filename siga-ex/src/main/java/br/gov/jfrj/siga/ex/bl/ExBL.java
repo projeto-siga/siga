@@ -78,6 +78,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -4381,51 +4382,43 @@ public class ExBL extends CpBL {
 		return obterDocumentosBoletim(doque.getForm());
 
 	}
-
-	public List<ExFormaDocumento> obterFormasDocumento(DpPessoa titular,
-			DpLotacao lotaTitular, ExTipoDocumento tipoDoc,
-			ExTipoFormaDoc tipoForma, boolean protegido, boolean despachando,
-			boolean autuando)
+	
+	/**
+	 * Obtem a lista de formas de documentos a partir dos modelos selecionados e
+	 * das restrições de tipo (interno, externo) e de tipo da forma (expediente,
+	 * processo)
+	 * 
+	 * @param modelos
+	 * @param tipoDoc
+	 * @param tipoForma
+	 * @return
+	 * @throws Exception
+	 */
+	public SortedSet<ExFormaDocumento> obterFormasDocumento(
+			List<ExModelo> modelos, ExTipoDocumento tipoDoc,
+			ExTipoFormaDoc tipoForma)
 
 	throws Exception {
-		List<ExFormaDocumento> formasSet = new ArrayList<ExFormaDocumento>();
-		ArrayList<ExFormaDocumento> formasFinal = new ArrayList<ExFormaDocumento>();
+		SortedSet<ExFormaDocumento> formasSet = new TreeSet<ExFormaDocumento>();
+		SortedSet<ExFormaDocumento> formasFinal = new TreeSet<ExFormaDocumento>();
 		// Por enquanto, os parâmetros tipoForma e tipoDoc não podem ser
 		// preenchidos simultaneamente. Melhorar isso.
-		if (tipoDoc != null)
-			formasSet = new ArrayList<ExFormaDocumento>(
-					tipoDoc.getExFormaDocumentoSet());
+		if (tipoDoc != null && tipoForma != null) {
+			formasSet.addAll(SetUtils.intersection(tipoDoc.getExFormaDocumentoSet(), tipoForma.getExFormaDocSet()));
+		} else if (tipoDoc != null)
+			formasSet.addAll(tipoDoc.getExFormaDocumentoSet());
 		else if (tipoForma != null)
-			formasSet = new ArrayList<ExFormaDocumento>(
-					tipoForma.getExFormaDocSet());
+			formasSet.addAll(tipoForma.getExFormaDocSet());
 		else
-			formasSet = ExDao.getInstance().listarTodosOrdenarPorDescricao();
-		if (despachando) {
-			for (ExFormaDocumento forma : formasSet) {
-				if (getConf().podePorConfiguracao(titular, lotaTitular, forma,
-						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL))
-					formasFinal.add(forma);
-			}
-			formasSet = formasFinal;
-			formasFinal = new ArrayList<ExFormaDocumento>();
+			formasSet = null;
+
+		for (ExModelo mod : modelos) {
+			if (mod.getExFormaDocumento() == null)
+				continue;
+			if (formasSet == null || formasSet.contains(mod.getExFormaDocumento()))
+				formasFinal.add(mod.getExFormaDocumento());
 		}
-		if (autuando) {
-			for (ExFormaDocumento forma : formasSet) {
-				if (getConf().podePorConfiguracao(titular, lotaTitular, forma,
-						CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL))
-					formasFinal.add(forma);
-			}
-			formasSet = formasFinal;
-			formasFinal = new ArrayList<ExFormaDocumento>();
-		}
-		if (protegido)
-			for (ExFormaDocumento forma : formasSet) {
-				if (getConf().podePorConfiguracao(titular, lotaTitular, forma,
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
-					formasFinal.add(forma);
-			}
-		else
-			formasFinal.addAll(formasSet);
+
 		return formasFinal;
 	}
 

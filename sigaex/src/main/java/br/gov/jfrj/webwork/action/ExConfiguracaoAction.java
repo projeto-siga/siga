@@ -24,8 +24,8 @@
 package br.gov.jfrj.webwork.action;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +51,8 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.DpCargoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpFuncaoConfiancaSelecao;
@@ -399,8 +401,15 @@ public class ExConfiguracaoAction extends ExActionSupport {
 		} else
 			config.setOrgaoUsuario(null);
 												
-		List<ExConfiguracao> listConfig = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);		
-		
+		List<ExConfiguracao> listConfig = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);
+		Collections.sort(listConfig, new Comparator<CpConfiguracao>() {
+			@Override
+			public int compare(CpConfiguracao o1, CpConfiguracao o2) {
+				return o1.getId().compareTo(o2.getId());
+			}
+		});
+		 
+		Collections.sort(listConfig, new ExConfiguracaoComparator());
 		
 		this.getRequest().setAttribute("listConfig", listConfig);
 		this.getRequest().setAttribute("tpConfiguracao", config.getCpTipoConfiguracao());
@@ -660,9 +669,9 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	@SuppressWarnings("all")
-	public List<ExFormaDocumento> getListaFormas() throws Exception {
-		return Ex.getInstance().getBL().obterFormasDocumento(null, null, null,
-				null, false, false, false);
+	public Set<ExFormaDocumento> getListaFormas() throws Exception {
+		ExBL bl = Ex.getInstance().getBL();
+		return bl.obterFormasDocumento(bl.obterListaModelos(null, false, null, false, null, null, false), null, null);
 	}
 
 	public List<ExTipoDocumento> getListaTiposDocumento() throws Exception {

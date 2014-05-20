@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
@@ -279,6 +280,8 @@ public class ExDocumentoAction extends ExActionSupport {
 	private boolean criandoAnexo;
 
 	private List<ExFormaDocumento> formasDoc;
+
+	private List<ExModelo> modelos;
 
 	private Long idMobilAutuado;
 
@@ -1626,7 +1629,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			mod = dao().consultar(getIdMod(), ExModelo.class, false);
 		}
 
-		final List<ExModelo> modelos = getModelos();
+		modelos = getModelos();
 		if (mod == null || !modelos.contains(mod)) {
 			mod = (ExModelo) (modelos.toArray())[0];
 
@@ -2440,18 +2443,20 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public List<ExFormaDocumento> getFormasDocPorTipo() throws Exception {
-		if (formasDoc == null)
-			formasDoc = Ex
-					.getInstance()
-					.getBL()
-					.obterFormasDocumento(getTitular(), getLotaTitular(),
-							doc.getExTipoDocumento(), null, true,
-							getDespachando(), getAutuando());
+		if (formasDoc == null) {
+			formasDoc = new ArrayList<ExFormaDocumento>();
+			ExBL bl = Ex.getInstance().getBL();
+			formasDoc.addAll(bl
+				.obterFormasDocumento(
+						bl.obterListaModelos(null, getDespachando(), null, true, getTitular(), getLotaTitular(), getAutuando()), 
+						doc.getExTipoDocumento(), null));
+		}
 		return formasDoc;
 	}
 
 	public List<ExModelo> getModelos() throws Exception {
-
+		if (modelos != null)
+			return modelos;
 		ExFormaDocumento forma = null;
 		if (getIdFormaDoc() != null && getIdFormaDoc() != 0)
 			forma = dao().consultar(this.getIdFormaDoc(),
@@ -2461,11 +2466,12 @@ public class ExDocumentoAction extends ExActionSupport {
 		if (getTipoDocumento() != null && getTipoDocumento().equals("antigo"))
 			headerValue = "Não Informado";
 
-		return Ex
+		modelos = Ex
 				.getInstance()
 				.getBL()
 				.obterListaModelos(forma, getDespachando(), headerValue, true,
 						getTitular(), getLotaTitular(), getAutuando());
+		return modelos;
 
 	}
 

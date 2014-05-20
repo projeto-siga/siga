@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * may be customized as it is never re-generated after being created.
  */
 public class ExFormaDocumento extends AbstractExFormaDocumento implements
-		Serializable, Selecionavel {
+		Serializable, Selecionavel, Comparable<ExFormaDocumento> {
 	/**
 	 * 
 	 */
@@ -76,4 +76,16 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		return this.getDescricao();
 	}
 	/* Add customized code below */
+
+	@Override
+	public int compareTo(ExFormaDocumento o) {
+		int i = 0;
+		
+		if (this.getDescricao() != null) {
+			i = this.getDescricao().compareTo(o.getDescricao());
+			if (i != 0)
+				return i;
+		}
+		return this.getId().compareTo(o.getId());
+	}
 }

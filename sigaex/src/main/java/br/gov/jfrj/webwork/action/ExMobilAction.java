@@ -31,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -50,6 +51,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
@@ -996,16 +998,20 @@ public class ExMobilAction extends
 
 	public List<ExFormaDocumento> getTodasFormasDocPorTipoForma()
 			throws Exception {
+		ExBL bl = Ex.getInstance().getBL();
 		ExTipoFormaDoc tipoForma = null;
 		if (getIdTipoFormaDoc() != null && getIdTipoFormaDoc() != 0)
 			tipoForma = dao().consultar(getIdTipoFormaDoc(),
 					ExTipoFormaDoc.class, false);
-
-		return Ex
-				.getInstance()
-				.getBL()
-				.obterFormasDocumento(getTitular(), getLotaTitular(), null,
-						tipoForma, false, false, false);
+		
+		List<ExFormaDocumento> formasDoc = new ArrayList<ExFormaDocumento>();
+		formasDoc.addAll(bl.obterFormasDocumento(
+						bl.obterListaModelos(null, false, null, false, getTitular(), getLotaTitular(), false), 
+						null, tipoForma));
+		return formasDoc;
+//		return bl.obterFormasDocumento(
+//				bl.obterListaModelos(null, false, null, false, getTitular(), getLotaTitular(), false), 
+//				doc.getExTipoDocumento(), null);
 	}
 
 	public List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {

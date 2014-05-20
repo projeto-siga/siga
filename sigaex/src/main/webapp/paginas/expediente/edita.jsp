@@ -519,25 +519,26 @@ function tryAgainAutoSave(){
 							</c:if></td>
 						</tr>
 
-						<tr>
-							<td>Modelo:</td>
-							<td colspan="3"><siga:div id="modelo" depende="forma">
-								<ww:if test="%{modelos.size > 1}">
-									<ww:select name="idMod"
-										onchange="document.getElementById('alterouModelo').value='true';sbmt();"
-										list="modelos" listKey="idMod" listValue="nmMod" 
-										cssStyle="${estiloTipo}" />
-									<c:if test="${not empty doc.exModelo}">
-										<span style="${estiloTipoSpan}">${doc.exModelo.nmMod}</span>
-									</c:if>
-									<!-- sbmt('modelo') -->
-									<c:if test='${tipoDocumento!="interno"}'>(opcional)</c:if>
-								</ww:if>
-								<ww:else>
-									<ww:hidden name="idMod" value="%{modelo.idMod}" />
-								</ww:else>
-							</siga:div></td>
-						</tr>
+						<ww:if test="%{modelos.size > 1}">
+							<tr>
+								<td>Modelo:</td>
+								<td colspan="3"><siga:div id="modelo" depende="forma">
+										<ww:select name="idMod"
+											onchange="document.getElementById('alterouModelo').value='true';sbmt();"
+											list="modelos" listKey="idMod" listValue="nmMod" 
+											cssStyle="${estiloTipo}" />
+										<c:if test="${not empty doc.exModelo}">
+											<span style="${estiloTipoSpan}">${doc.exModelo.nmMod}</span>
+										</c:if>
+										<!-- sbmt('modelo') -->
+										<c:if test='${tipoDocumento!="interno"}'>(opcional)</c:if>
+								</siga:div></td>
+							</tr>
+						</ww:if>
+							<ww:else>
+							<ww:hidden name="idMod" value="%{modelo.idMod}" />
+						</ww:else>
+						
 						<tr>
 							<td>Preenchimento Automático:</td>
 							<input type="hidden" name="campos" value="preenchimento" />
@@ -587,7 +588,8 @@ function tryAgainAutoSave(){
 					</ww:if>
 				</c:if>--%>
 
-					<tr>
+						
+					<tr style="display:<ww:if test="%{modelo.exClassificacao!=null}">none</ww:if><ww:else>visible</ww:else>">
 						<td>Classificação:</td>
 						<c:if test="${modelo.exClassificacao!=null}">
 							<c:set var="desativarClassif" value="sim" />

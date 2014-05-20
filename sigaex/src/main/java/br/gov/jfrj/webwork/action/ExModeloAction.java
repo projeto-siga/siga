@@ -26,9 +26,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,6 +39,7 @@ import org.kxml2.io.KXmlSerializer;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpModelo;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -270,6 +274,24 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 		if ("Aplicar".equals(param("submit")))
 			return "aplicar";
 		return Action.SUCCESS;
+	}
+	
+	public Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
+		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(
+				new Comparator() {
+
+					public int compare(Object o1, Object o2) {
+						return ((CpSituacaoConfiguracao) o1)
+								.getDscSitConfiguracao().compareTo(
+										((CpSituacaoConfiguracao) o2)
+												.getDscSitConfiguracao());
+					}
+
+				});
+
+		s.addAll(dao().listarSituacoesConfiguracao());
+
+		return s;
 	}
 
 	@Override

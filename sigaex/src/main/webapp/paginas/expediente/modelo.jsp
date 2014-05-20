@@ -7,6 +7,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
+<%@ taglib prefix="ww" uri="/webwork"%>
 
 <link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css">
 <script src="/siga/codemirror/lib/codemirror.js"></script> 
@@ -104,6 +105,35 @@
 				</table>
 			</ww:form>
 		</div></div></div>
+		
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">		
+			<h2>Permissão para Assinar</h2>
+			<div class="gt-content-box gt-for-table">	
+				<input type="hidden" name="postback" value="1" />
+				<table class="gt-form-table">
+					<tr class="header">
+						<td colspan="2">Dados da configuração</td>
+					</tr>
+					<tr>
+						<td><b>Situação</b></td>
+						<td><ww:select name="idSituacao" list="listaSituacao"
+							listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
+							theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
+					</tr>
+					<tr class="button">
+						<td><input type="submit" value="Ok" class="gt-btn-large gt-btn-left" /> <input type="button"
+							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>
+						<td></td>
+					</tr>	
+				</table>
+			</div> 			
+			<div class="gt-content clearfix">	  
+				<div id="tableCadastradas"></div>		
+	 		</div> 
+		</div>
+	</div>
+	
 	<ww:url id="urlEditar" action="editar" namespace="/modelo" /> 
 	<script> 
 		var editor = null;
@@ -155,6 +185,23 @@
 		});
 		
 		muda_escolha(document.getElementById("tipoModelo"));
+
+		function montaTableCadastradas(){	
+		    
+//		    alert($('#idTpConfiguracao').val());
+//		    alert($('#idOrgaoUsu').val());
+		    var idTpConf = $('#idTpConfiguracao').val();
+		    var idOrgao = $('#idOrgaoUsu').val();
+			$('#tableCadastradas').html('Carregando...');			
+			$.ajax({				     				  
+				  url:'/sigaex/expediente/configuracao/listar_cadastradas.action?idTpConfiguracao='+1+'&idOrgaoUsu='+1,					    					   					 
+				  success: function(data) {
+			    	$('#tableCadastradas').html(data);				    
+			 	 }
+			});	
+		}
+
+		 montaTableCadastradas();		
 	</script>
 	
 </siga:pagina>

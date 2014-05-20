@@ -42,40 +42,47 @@
 					</li> -->
 					<!-- <li><a href="/SigaServicos/">Serviços</a>
 					</li> -->
-					<li><a href="#">Pessoas</a>
-						<ul>
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
-								<li><a href="${f:getURLSistema('siga.sgp.aq')}">AQ</a></li>
-							</c:if>
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios')}">
-								<li><a href="${f:getURLSistema('siga.sgp.bnf')}">Benefícios</a>
-								</li>
-							</c:if>
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro')}">
-								<li><a href="${f:getURLSistema('siga.sgp.cad')}">Cadastro</a>
-								</li>
-							</c:if>
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas')}">
-								<li><a href="${f:getURLSistema('siga.sgp.cst')}">Consultas</a>
-								</li>
-							</c:if>
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação')}">
-								<li><a href="${f:getURLSistema('siga.sgp.lot')}">Lotação</a>
-								</li>
-							</c:if>
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento')}">
-								<li><a href="${f:getURLSistema('siga.sgp.trn')}">Treinamento</a>
-								</li>
-							</c:if>
-
-						</ul>
-					</li>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento')}">
+						<li><a href="#">Pessoas</a>
+							<ul>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
+									<li><a href="${f:getURLSistema('siga.sgp.aq')}">AQ</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios')}">
+									<li><a href="${f:getURLSistema('siga.sgp.bnf')}">Benefícios</a>
+									</li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro')}">
+									<li><a href="${f:getURLSistema('siga.sgp.cad')}">Cadastro</a>
+									</li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas')}">
+									<li><a href="${f:getURLSistema('siga.sgp.cst')}">Consultas</a>
+									</li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação')}">
+									<li><a href="${f:getURLSistema('siga.sgp.lot')}">Lotação</a>
+									</li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento')}">
+									<li><a href="${f:getURLSistema('siga.sgp.trn')}">Treinamento</a>
+									</li>
+								</c:if>
+							</ul>
+						</li>
+					</c:if>
 					
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de perícias do INSS')}">
 					<li><a href="#">Agendas</a>

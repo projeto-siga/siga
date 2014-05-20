@@ -89,7 +89,7 @@
 						<ul>
 							<c:if
 								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
-								<li><a href="/sigapp/">Perícias INSS</a>
+								<li><a href="/sigapp/">Perícias Médicas</a>
 								</li>
 							</c:if>
 						</ul>

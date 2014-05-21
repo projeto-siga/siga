@@ -284,7 +284,7 @@ public class Notificador {
 							papel, pes, mov.getExTipoMovimentacao()))							
 						emailsTemp.add(pes.getEmailPessoaAtual());	
 					} else  {/* transferência */
-						if (temPermissao(pes, pess.getLotacao(), mov.getExDocumento().getExModelo() ))						
+						if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo() ))						
 							emailsTemp.add(pes.getEmailPessoaAtual());				
 					}	
 				}			

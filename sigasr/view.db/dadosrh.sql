@@ -108,6 +108,107 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   AND PF.ID_CAD_TP_SANGUINEO  = TPS.ID_CAD_TP_SANGUINEO
   AND PF.ID_CAD_NACIONALIDADE = NAC.ID_CAD_NACIONALIDADE
   UNION
+    SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
+    PF.CPF                        AS PESSOA_CPF,
+    PF.NM_PESSOA                  AS PESSOA_NOME,
+    PF.SEXO                       AS PESSOA_SEXO,
+    PF.DT_NASCIMENTO              AS PESSOA_DATA_NASCIMENTO,
+    NVL((PF.NM_LOGRADOURO
+    || ' '
+    || PF.NUM_LOGRADOURO
+    || ' '
+    || PF.COMPLEMENTO_LOGRADOURO), ' ') AS PESSOA_RUA,
+    PF.BAIRRO                           AS PESSOA_BAIRRO,
+    PF.CIDADE                           AS PESSOA_CIDADE,
+    PF.UF_LOGRADOURO                    AS PESSOA_UF,
+    PF.CEP                              AS PESSOA_CEP,
+    RH.MATRICULA                        AS PESSOA_MATRICULA,
+    TP.DT_EXERCICIO                     AS PESSOA_DATA_INICIO_EXERCICIO,
+    TP.ATO_NOMEACAO                     AS PESSOA_ATO_NOMEACAO,
+    TP.DT_NOMEACAO                      AS PESSOA_DATA_NOMEACAO,
+    TP.DT_PUBL_ATO_NOMEACAO             AS PESSOA_DT_PUBL_NOMEACAO,
+    TP.DT_POSSE                         AS PESSOA_DATA_POSSE,   CASE
+      WHEN C.SG_CLASSE IS NOT NULL
+      THEN C.SG_CLASSE
+        || '-'
+        || P.SG_PADRAO
+      ELSE ''
+   END
+   AS PESSOA_PADRAO_REFERENCIA ,
+   TP.ID_SITUACAO_FUNCIONAL                                                                                                                                                                                                                     AS PESSOA_SITUACAO ,
+    PF.NUM_RG                                                                                                                                                                                                                                    AS PESSOA_RG,
+    PF.ORG_EXPEDIDOR                                                                                                                                                                                                                             AS PESSOA_RG_ORGAO,
+    PF.UF_EXPEDIDOR_RG                                                                                                                                                                                                                           AS PESSOA_RG_UF,
+    PF.DT_EXPEDIDOR                                                                                                                                                                                                                              AS PESSOA_DATA_EXPEDICAO_RG,
+    PF.ID_CAD_ESTADO_CIVIL                                                                                                                                                                                                                       AS PESSOA_ESTADO_CIVIL,
+    RH.SG_SERVIDOR                                                                                                                                                                                                                               AS PESSOA_SIGLA,
+    DECODE (RH.EMAIL_INSTITUCIONAL,NULL,DECODE (PF.EMAIL_PESSOAL,NULL,PF.EMAIL_PESSOAL2,'',PF.EMAIL_PESSOAL2,PF.EMAIL_PESSOAL),'',DECODE (PF.EMAIL_PESSOAL,NULL,PF.EMAIL_PESSOAL2,'',PF.EMAIL_PESSOAL2,PF.EMAIL_PESSOAL),RH.EMAIL_INSTITUCIONAL) AS PESSOA_EMAIL,
+    NC.NIVEL_CURSO                                                                                                                                                                                                                               AS PESSOA_GRAU_DE_INSTRUCAO,
+    NVL(TPS.NM_TP_SANGUINEO,' ')                                                                                                                                                                                                                 AS PESSOA_TP_SANGUINEO,
+    NVL(PF.NATURALIDADE, ' ')                                                                                                                                                                                                                    AS PESSOA_NATURALIDADE,
+    NVL(NAC.DSC_NACIONALIDADE, ' ')                                                                                                                                                                                                              AS PESSOA_NACIONALIDADE,
+    'SERVIDOR'                                                                                                                                                                                                                                   AS TIPO_RH,
+    TP.ID_CARGO                                                                                                                                                                                                                                  AS CARGO_ID,
+    MC.NM_CARGO                                                                                                                                                                                                                                  AS CARGO_NOME,
+    MC.COD_CARGO2                                                                                                                                                                                                                                AS CARGO_SIGLA,
+    MF.ID_FUNCAO                                                                                                                                                                                                                                 AS FUNCAO_ID,
+    MF.DSC_FUNCAO                                                                                                                                                                                                                                AS FUNCAO_NOME,
+    MF.COD_FUNCAO                                                                                                                                                                                                                                AS FUNCAO_SIGLA,
+    U.ID_LOT_UNIDADE                                                                                                                                                                                                                             AS LOTACAO_ID,
+    U.NM_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_NOME,
+    U.SG_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_SIGLA,
+    U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
+   'Unidade da Administração'      AS LOTACAO_TIPO,
+   'Funcional' AS LOTACAO_TIPO_PAPEL
+  FROM SIGARH.CAD_PESSOA_FISICA PF
+  INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
+  ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
+  LEFT OUTER JOIN SIGARH.CAD_TP_SANGUINEO TPS
+  ON TPS.ID_CAD_TP_SANGUINEO=PF.ID_CAD_TP_SANGUINEO
+  INNER JOIN SIGARH.CAD_NACIONALIDADE NAC
+  ON NAC.ID_CAD_NACIONALIDADE=PF.ID_CAD_NACIONALIDADE
+  INNER JOIN SIGARH.CAD_TEMP_PROVIMENTO TP
+  ON TP.ID_CAD_TEMP_PROVIMENTO=RH.ID_CAD_TEMP_PROVIMENTO
+  INNER JOIN SIGARH.CAD_SERVIDOR S
+  ON S.ID_CAD_SERVIDOR=RH.ID_CAD_RECURSO_HUMANO
+  INNER JOIN SIGARH.MUMPS_CARGO MC
+  ON MC.ID_CARGO=TP.ID_CARGO
+  INNER JOIN SIGARH.LOT_ALOCACAO_FUNCIONAL LAF
+  ON LAF.ID_CAD_RECURSO_HUMANO = RH.ID_CAD_RECURSO_HUMANO
+  INNER JOIN SIGARH.LOT_LOTACAO L
+  ON L.ID_LOT_LOTACAO=LAF.id_lot_lotacao
+  AND L.DT_FIM      IS NULL
+  INNER JOIN SIGARH.LOT_UNIDADE U
+  ON U.ID_LOT_UNIDADE =LAF.ID_LOT_UNIDADE
+  INNER JOIN SIGARH.lot_equip_trab_funcional O
+  ON O.ID_LOT_UNIDADE=U.ID_LOT_UNIDADE
+  INNER JOIN SIGARH.LOT_HIST_HIERARQUIA HH
+  ON HH.DT_FIM              IS NULL
+  AND HH.LOT_UNIDADE_INFERIOR=U.ID_LOT_UNIDADE
+  INNER JOIN SIGARH.LOT_UNIDADE U_PAI
+  ON U_PAI.ID_LOT_UNIDADE =HH.LOT_UNIDADE_SUPERIOR
+  INNER JOIN SIGARH.LOT_EQUIP_TRAB_FUNCIONAL LETF
+  ON LETF.ID_LOT_UNIDADE=U.ID_LOT_UNIDADE
+  INNER JOIN SIGARH.LOT_TIPO_CATEGORIA_FUNCIONAL LTCF
+  ON LTCF.ID_LOT_TP_CATEGORIA_FUNCIONAL = LETF.ID_LOT_TP_CATEGORIA_FUNCIONAL
+  INNER JOIN SIGARH.CAD_NIVEL_CURSO NC
+  ON NC.ID_CAD_NIVEL_CURSO=RH.GRAU_INSTRUCAO
+  LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
+  ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
+  AND CPS.DT_FIM_VIGENCIA IS NULL
+  LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
+  ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
+  LEFT OUTER JOIN SIGARH.CAD_CLASSE C
+  ON C.ID_CAD_CLASSE=CP.ID_CAD_CLASSE
+  LEFT OUTER JOIN SIGARH.CAD_PADRAO P
+  ON P.ID_CAD_PADRAO=CP.ID_CAD_PADRAO
+  LEFT OUTER JOIN SIGARH.MUMPS_FUNCAO_SHF MF
+  ON MF.ID_FUNCAO             =TP.ID_FUNCAO
+  WHERE RH.ID_CAD_ORGAO       = 1
+  AND U.ID_CAD_ORGAO          = 1
+  AND PF.ID_CAD_TP_SANGUINEO  = TPS.ID_CAD_TP_SANGUINEO
+  AND PF.ID_CAD_NACIONALIDADE = NAC.ID_CAD_NACIONALIDADE
+  UNION
   --SERVIDOR REQUISITADO DA CARREIRA JUDICIÁRIA
   SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,

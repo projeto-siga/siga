@@ -236,7 +236,7 @@ public class GeradorRTF {
 
 	private String removerTabela(String html) {
 		final String tags[] = { "<table", "</table", "<tr", "</tr", "<td", "</td", "<th", "</th", 
-								"<tbody", "</tbody", "<tfoot", "</tfoot", "<thead", "</thead"};
+								"<tbody", "</tbody", "<tfoot", "</tfoot", "<thead", "</thead", "<caption", "</caption"};
 		
 		for (String tag : tags) {
 			if(html.contains(tag)) {

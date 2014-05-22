@@ -32,7 +32,7 @@ public class Corporativo extends SigaApplication {
 		Map<Long, Funcao> mf = new TreeMap<Long, Funcao>();
 		Map<Long, Pessoa> mp = new TreeMap<Long, Pessoa>();
 		Map<Long, List<Papel>> mpp = new TreeMap<Long, List<Papel>>();
-
+		
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory
 				.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -106,15 +106,6 @@ public class Corporativo extends SigaApplication {
 			lotacoes.appendChild(e);
 		}
 
-		/*
-		 * Element papel = doc.createElement("papel"); for (Papel pp :
-		 * mpp.values()) { setAttr(papel, "id", pp.papel_pessoa_id);
-		 * setAttr(papel, "papel",pp.papel_lotacao_tipo); setAttr(papel,
-		 * "cargo", pp.papel_cargo_id); setAttr(papel, "funcaoConfianca",
-		 * pp.papel_funcao_id); setAttr(papel, "lotacao", pp.papel_lotacao_id);
-		 * }
-		 */
-
 		Element pessoas = doc.createElement("pessoas");
 		rootElement.appendChild(pessoas);
 		for (Pessoa p : mp.values()) {
@@ -156,18 +147,14 @@ public class Corporativo extends SigaApplication {
 			if (mpp.containsKey(p.pessoa_id)) {
 				for (Papel papeis : mpp.get(p.pessoa_id))	{
 					Element papel = doc.createElement("papel"); 
-					setAttr(papel, "id", papeis.papel_pessoa_id); 
+					setAttr(papel, "id", papeis.papel_id); 
 					setAttr(papel, "papel",papeis.papel_lotacao_tipo);
 					setAttr(papel, "cargo", papeis.papel_cargo_id); 
 					setAttr(papel,"funcaoConfianca", papeis.papel_funcao_id); 
 					setAttr(papel, "lotacao", papeis.papel_lotacao_id); 
 					pessoas.appendChild(papel);	
 				}
-				
 			}
-			
-			 
-
 		}
 
 		renderXml(doc);

@@ -1827,7 +1827,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				return false;
 		
 		if (!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExFormaDocumento(),
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR) ||
+						CpTipoConfiguracao.TIPO_CONFIG_CRIAR) &&
 						!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExModelo(),
 								CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
 			return false;

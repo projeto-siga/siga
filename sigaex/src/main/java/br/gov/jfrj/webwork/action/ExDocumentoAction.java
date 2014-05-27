@@ -1028,13 +1028,6 @@ public class ExDocumentoAction extends ExActionSupport {
 						+ ", é necessário definir um destinatário");
 		}
 
-		if ((doc.getExFormaDocumento().getExTipoFormaDoc().getIdTipoFormaDoc() == 2)
-				&& (doc.getExTipoDocumento().getIdTpDoc() == 2)
-				&& (doc.getNumAntigoDoc() == null || doc.getNumAntigoDoc()
-						.trim().equals("")))
-			throw new AplicacaoException(
-					"Ao cadastrar processo administrativo já existente, é necessário informar o **número antigo** do processo.");
-
 		if (doc.getExClassificacao() == null)
 			throw new AplicacaoException(
 					"É necessário informar a classificação documental.");

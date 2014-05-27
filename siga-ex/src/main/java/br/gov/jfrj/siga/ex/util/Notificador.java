@@ -504,7 +504,7 @@ public class Notificador {
 
 			conteudo.append("clique no link abaixo:\n\n");
 
-			conteudo.append("http://siga/sigaex/expediente/doc/exibir.action?sigla=");
+			conteudo.append(servidor + "/expediente/doc/exibir.action?sigla=");
 
 			conteudo.append(dest.siglaMobil);
 
@@ -532,7 +532,7 @@ public class Notificador {
 			conteudoHTML.append("clique <a href=\"");
 
 			conteudoHTML
-					.append("http://siga/sigaex/expediente/doc/exibir.action?sigla=");
+					.append(servidor + "/expediente/doc/exibir.action?sigla=");
 
 			conteudoHTML.append(dest.siglaMobil);
 

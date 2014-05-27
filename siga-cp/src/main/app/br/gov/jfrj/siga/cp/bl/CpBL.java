@@ -334,7 +334,10 @@ public class CpBL {
 			}
 
 		} else {
-			if (pessoa.getEmailPessoaAtual() == null) {
+			if(pessoa == null) {
+				throw new AplicacaoException(
+						"Não foi encontrado usuário com matrícula e cpf informados.");
+			} else if (pessoa.getEmailPessoaAtual() == null) {
 				throw new AplicacaoException(
 						"Este usuário não possui e-mail cadastrado");
 			} else {

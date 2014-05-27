@@ -225,7 +225,7 @@ public class Notificador {
 									papel, emailNot.getDpPessoa(), mov.getExTipoMovimentacao()))								
 								emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
 						} else {  /* transferência */ 
-							if (temPermissao(emailNot.getDpPessoa(), emailNot.getDpPessoa().getLotacao(), mov.getExDocumento().getExModelo() ))						
+							if (temPermissao(emailNot.getDpPessoa(), emailNot.getDpPessoa().getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
 								emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
 						}	
 					} else {
@@ -235,7 +235,7 @@ public class Notificador {
 									papel, pes, mov.getExTipoMovimentacao()))							
 								emailsTemp.add(pes.getEmailPessoaAtual());	
 							} else { /* transferência */
-								if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo() ))						
+								if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
 									emailsTemp.add(pes.getEmailPessoaAtual());
 							}	
 						}	
@@ -247,7 +247,7 @@ public class Notificador {
 									papel, emailNot.getPessoaEmail(), mov.getExTipoMovimentacao()))							
 								emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());	
 							}else { /* transferência */
-								if (temPermissao(emailNot.getPessoaEmail(), emailNot.getPessoaEmail().getLotacao(), mov.getExDocumento().getExModelo()))						
+								if (temPermissao(emailNot.getPessoaEmail(), emailNot.getPessoaEmail().getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov()))						
 									emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());
 							}	
 						} else {
@@ -258,7 +258,7 @@ public class Notificador {
 											papel, pes, mov.getExTipoMovimentacao()))							
 											emailsTemp.add(pes.getEmailPessoaAtual());	
 									} else /* transferência */
-										if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo() ))						
+										if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
 											emailsTemp.add(pes.getEmailPessoaAtual());								
 								}
 							} else {
@@ -274,7 +274,7 @@ public class Notificador {
 						papel, pess, mov.getExTipoMovimentacao()))							
 						emailsTemp.add(pess.getEmailPessoaAtual());	
 				} else {/* transferência */
-					if (temPermissao(pess, pess.getLotacao(), mov.getExDocumento().getExModelo() ))						
+					if (temPermissao(pess, pess.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
 						emailsTemp.add(pess.getEmailPessoaAtual());
 				}	
 			} else {
@@ -284,7 +284,7 @@ public class Notificador {
 							papel, pes, mov.getExTipoMovimentacao()))							
 						emailsTemp.add(pes.getEmailPessoaAtual());	
 					} else  {/* transferência */
-						if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo() ))						
+						if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
 							emailsTemp.add(pes.getEmailPessoaAtual());				
 					}	
 				}			
@@ -321,10 +321,10 @@ public class Notificador {
 				
 	}
 	
-	private static boolean temPermissao(DpPessoa pessoa, DpLotacao lotacao, ExModelo modelo) throws AplicacaoException, Exception {
+	private static boolean temPermissao(DpPessoa pessoa, DpLotacao lotacao, ExModelo modelo, Long idTpMov) throws AplicacaoException, Exception {
 		
 			return (Ex.getInstance().getConf().podePorConfiguracao(pessoa,
-							lotacao, modelo,
+							lotacao, modelo,idTpMov,
 							CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL));		
 				
 	}

@@ -545,7 +545,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
 					&& !mob.isSobrestado()
-					&& !mob.isEncerrado()
 					&& podeMovimentar(titular, lotaTitular, mob)
 					&& !mob.doc().isSemEfeito()
 					&& podePorConfiguracao(titular, lotaTitular,

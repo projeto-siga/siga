@@ -911,6 +911,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"O arquivo "
 							+ getArquivoFileName()
 							+ " está corrompido. Favor gerá-lo novamente antes de anexar.");
+		
+		if(mob.isEncerrado()) {
+			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");
+		}
 
 		if (!Ex.getInstance().getComp()
 				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))

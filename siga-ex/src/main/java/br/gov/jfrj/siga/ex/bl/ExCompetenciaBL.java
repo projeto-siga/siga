@@ -2439,7 +2439,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 							.getSubscritor().equivale(titular))
 					&& (mob.doc().getTitular() != null && !mob.doc()
 							.getTitular().equivale(titular))
-			)
+					&& !mob.getExDocumento().temPerfil(titular, lotaTitular, ExPapel.PAPEL_GESTOR))
 				return false;
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR);

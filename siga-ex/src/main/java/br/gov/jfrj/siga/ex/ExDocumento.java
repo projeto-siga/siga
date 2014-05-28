@@ -927,6 +927,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		} else
 			return null;
 	}
+	
+	/**
+	 * COMPLETAR Retorna o nome do cadastrante.
+	 * 
+	 * @return Nome do cadastrante.
+	 */
+	@Field(name = "cadastranteString", index = Index.NO, store = Store.COMPRESS)
+	public String getCadastranteString() {
+		if (getCadastrante() != null)
+			return getCadastrante().getDescricaoIniciaisMaiusculas();
+
+		return null;
+	}
 
 	/**
 	 * Retorna o subscritor do documento, caso exista. Se não, retorna o

@@ -56,6 +56,8 @@ public class ExDocumentoVO extends ExVO {
 	String forma;
 	String modelo;
 	String tipoFormaDocumento;
+	String cadastranteString;
+	String lotaCadastranteString;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo) throws Exception {
@@ -69,6 +71,11 @@ public class ExDocumentoVO extends ExVO {
 		this.nomeCompleto = doc.getNomeCompleto();
 		this.dtDocDDMMYY = doc.getDtDocDDMMYY();
 		this.subscritorString = doc.getSubscritorString();
+		this.cadastranteString = doc.getCadastranteString();
+		if(doc.getLotaCadastrante() != null)
+			this.lotaCadastranteString = "(" + doc.getLotaCadastrante().getSigla() + ")";
+		else
+			this.lotaCadastranteString = "";
 		if (doc.getExClassificacao() != null)
 			this.classificacaoDescricaoCompleta = doc.getExClassificacao()
 					.getDescricaoCompleta();

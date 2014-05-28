@@ -356,6 +356,9 @@
 			<p>
 				<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 			</p>
+			<p>
+				<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
+			</p>
 			<c:if test="${not empty docVO.paiSigla}">
 				<p>
 					<b>Documento Pai:</b>

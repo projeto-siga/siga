@@ -576,4 +576,12 @@ public class ExDocumentoVO extends ExVO {
 	public String getTipoFormaDocumento() {
 		return tipoFormaDocumento;
 	}
+
+	public String getCadastranteString() {
+		return cadastranteString;
+	}
+
+	public String getLotaCadastranteString() {
+		return lotaCadastranteString;
+	}
 }

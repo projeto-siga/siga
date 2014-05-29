@@ -938,7 +938,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (getCadastrante() != null)
 			return getCadastrante().getDescricaoIniciaisMaiusculas();
 
-		return null;
+		return "";
 	}
 
 	/**

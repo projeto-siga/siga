@@ -91,7 +91,11 @@ public class Notificador {
 
 		List<Notificacao> notificacoes = new ArrayList<Notificacao>();
 		
-		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)) {
+		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
+				|| (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)  
+						&& (mov.getExMovimentacaoRef().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA) 
+								|| mov.getExMovimentacaoRef().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)))
+				) {
 			DpLotacao  lotacao;			
 			try {
 				if (mov.getResp() != null)

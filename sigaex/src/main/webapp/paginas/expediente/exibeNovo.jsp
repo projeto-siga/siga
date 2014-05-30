@@ -230,6 +230,9 @@
 			<p>
 				<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 			</p>
+			<p>
+				<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
+			</p>
 			<c:if test="${not empty docVO.paiSigla}">
 				<p>
 					<b>Documento Pai:</b>
@@ -240,8 +243,84 @@
 				</p>
 			</c:if>
 			<c:if test="${not empty docVO.dadosComplementares}">
-	    	${docVO.dadosComplementares}
-		</c:if>
+		    	${docVO.dadosComplementares}
+			</c:if>
+		
+			<c:if test="${not empty docVO.outrosMobs}">
+				<p class="apensados" style="margin-top: 0pt;">
+					<b>${docVO.viasOuVolumesString}</b>
+					<c:forEach var="outroMobil" items="${docVO.outrosMobs}">
+						<ww:url id="url" action="exibir" namespace="/expediente/doc">
+							<ww:param name="sigla">${outroMobil.sigla}</ww:param>
+						</ww:url>
+						<ww:a href="%{url}" title="${outroMobil.doc.descrDocumento}">
+							${outroMobil.siglaFinal}
+						</ww:a>&nbsp;
+					</c:forEach>
+				</p>
+			</c:if>
+			
+	<!-- Lista sucinta de documentos filhos - Falta incluir -->
+	<c:if test="${not empty m.expedientesFilhosNaoCancelados}">
+		<c:set var="first" value="true" />
+		<p class="apensados" style="margin-top: 0pt;">
+			<b>Documento
+			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
+			Filho
+			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
+			:</b>
+			<c:forEach var="docFilho" items="${m.expedientesFilhosNaoCancelados}">
+				<ww:url id="url" action="exibir" namespace="/expediente/doc" >
+					<ww:param name="sigla">${docFilho.sigla}</ww:param>
+				</ww:url>
+				<c:if test="${not first}">, </c:if>
+				<ww:a href="%{url}" title="${docFilho.descrDocumento}">
+					${docFilho.sigla}
+				</ww:a>
+				<c:set var="first" value="false" />
+			</c:forEach>
+		</p>
+	</c:if>
+	
+	<!-- Lista sucinta de documentos filhos - Falta incluir -->
+	<c:if test="${not empty m.processosFilhosNaoCancelados}">
+		<c:set var="first" value="true" />
+		<p class="apensados" style="margin-top: 0pt;">
+			<b>Subprocesso
+			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
+			:</b>
+			<c:forEach var="docFilho" items="${m.processosFilhosNaoCancelados}">
+				<ww:url id="url" action="exibir" namespace="/expediente/doc">
+					<ww:param name="sigla">${docFilho.sigla}</ww:param>
+				</ww:url>
+				<c:if test="${not first}">, </c:if>
+				<ww:a href="%{url}" title="${docFilho.descrDocumento}">
+					${docFilho.siglaCurtaSubProcesso}
+				</ww:a>
+				<c:set var="first" value="false" />
+			</c:forEach>
+		</p>
+	</c:if>	
+
+	<!-- Lista sucinta de documentos apensados -->
+	<c:if test="${not empty m.apensos}">
+		<c:set var="first" value="true" />
+		<p class="apensados" style="margin-top: 0pt;">
+			<b>Documento
+			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
+			Apensado
+			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
+			:</b>
+			<c:forEach var="mobItem" items="${m.apensos}">
+				<ww:url id="url" action="exibir" namespace="/expediente/doc">
+					<ww:param name="sigla">${mobItem.sigla}</ww:param>
+				</ww:url>
+				<c:if test="${not first}">, </c:if>
+				<ww:a href="%{url}" title="${mobItem.mob.doc.descrDocumento}">${mobItem.sigla}</ww:a>
+				<c:set var="first" value="false" />
+			</c:forEach>
+		</p>
+	</c:if>			
 
 		</div>
 
@@ -253,67 +332,7 @@
 </div>
 	
 
-	<!-- Lista sucinta de documentos filhos - Falta incluir -->
-	<c:if test="${not empty m.expedientesFilhosNaoCancelados}">
-		<c:set var="first" value="true" />
-		<p class="apensados" style="margin-top: 0pt;">
-			Documento
-			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
-			Filho
-			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
-			:
-			<c:forEach var="docFilho" items="${m.expedientesFilhosNaoCancelados}">
-				<ww:url id="url" action="exibir" namespace="/expediente/doc" >
-					<ww:param name="sigla">${docFilho.sigla}</ww:param>
-				</ww:url>
-				<c:if test="${not first}">, </c:if>
-				<ww:a href="%{url}" title="${docFilho.descrDocumento}">
-					<b>${docFilho.sigla}</b>
-				</ww:a>
-				<c:set var="first" value="false" />
-			</c:forEach>
-		</p>
-	</c:if>
-	
-	<!-- Lista sucinta de documentos filhos - Falta incluir -->
-	<c:if test="${not empty m.processosFilhosNaoCancelados}">
-		<c:set var="first" value="true" />
-		<p class="apensados" style="margin-top: 0pt;">
-			Subprocesso
-			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
-			:
-			<c:forEach var="docFilho" items="${m.processosFilhosNaoCancelados}">
-				<ww:url id="url" action="exibir" namespace="/expediente/doc">
-					<ww:param name="sigla">${docFilho.sigla}</ww:param>
-				</ww:url>
-				<c:if test="${not first}">, </c:if>
-				<ww:a href="%{url}" title="${docFilho.descrDocumento}">
-					<b>${docFilho.siglaCurtaSubProcesso}</b>
-				</ww:a>
-				<c:set var="first" value="false" />
-			</c:forEach>
-		</p>
-	</c:if>	
 
-	<!-- Lista sucinta de documentos apensados -->
-	<c:if test="${not empty m.apensos}">
-		<c:set var="first" value="true" />
-		<p class="apensados" style="margin-top: 0pt;">
-			Documento
-			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
-			Apensado
-			<c:if test="%{#attr.apensos.size() gt 1}">s</c:if>
-			:
-			<c:forEach var="mobItem" items="${m.apensos}">
-				<ww:url id="url" action="exibir" namespace="/expediente/doc">
-					<ww:param name="sigla">${mobItem.sigla}</ww:param>
-				</ww:url>
-				<c:if test="${not first}">, </c:if>
-				<ww:a href="%{url}" title="${mobItem.mob.doc.descrDocumento}">${mobItem.sigla}</ww:a>
-				<c:set var="first" value="false" />
-			</c:forEach>
-		</p>
-	</c:if>
 	</ww:if>
 	</c:forEach>
 

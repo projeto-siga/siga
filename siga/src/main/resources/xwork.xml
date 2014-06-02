@@ -124,6 +124,13 @@
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
 			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
+		
+		<action name="checkEmailValido" class="br.gov.jfrj.webwork.action.UsuarioAction"
+			method="isEmailValido">
+			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
+			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
+		</action>
+		
 
 	</package>
 

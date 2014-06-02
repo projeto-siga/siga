@@ -40,9 +40,22 @@
 	background: #399800;
 	width: 250px;
 }
+
+.email-invalido {
+	display: block;
+	color: red;
+	font-style: bold;
+}
+
+.oculto {
+	display: none;
+}
+
+
 </style>
 
 <ww:url action="integracaoLdap" id="integracao_url"></ww:url>
+<ww:url action="checkEmailValido" id="check_email_valido_url"></ww:url>
 <script type="text/javascript" language="Javascript1.1">
 
 function checkIntegradoAD(){
@@ -63,6 +76,22 @@ function exibirDadosIntegracaoAD(response,param){
 		document.getElementById('pass2Met1').value = "";
 		document.getElementById('msgExplicacao').innerHTML = 'O sistema gera uma nova senha aleatoriamente e a envia para o email da pessoa informada.';
 	}
+}
+
+function checkEmailValido(){
+	var matricula = document.getElementById('txtMatricula').value;
+	PassAjaxResponseToFunction('${check_email_valido_url}?matricula=' + matricula, 'permitirInclusaoUsuario',  false,true, null);
+}
+
+function permitirInclusaoUsuario(response,param){
+	if (response == "0"){
+		document.getElementById('painel-dados-usuario').style.display = 'none';
+		document.getElementById('msgEmail').className = 'email-invalido';
+	}else{
+		document.getElementById('painel-dados-usuario').style.display = 'block';
+		document.getElementById('msgEmail').className = 'oculto';
+	}
+
 }
 
 /*  converte para maiúscula a sigla do estado  */
@@ -185,7 +214,7 @@ function refreshWindow(){
 						<div class="gt-left-col gt-width-33">
 							<label>Matrícula</label>
 							<ww:textfield name="matricula" id="txtMatricula"
-								onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);" theme="simple"
+								onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);javascript:checkEmailValido(this);" theme="simple"
 								cssClass="gt-form-text" />
 						</div>
 						<div class="gt-right-col gt-width-66">
@@ -195,40 +224,46 @@ function refreshWindow(){
 						</div>
 					</div>
 
-					<div class="gt-form-row gt-width-33">
-						<label>CPF</label>
-						<ww:textfield name="cpf" theme="simple" cssClass="gt-form-text" />
-					</div>
 					
-					<div class="gt-form-row gt-width-100" id="dadosIntegracaoAD" style="display: none;">
+					<div id="painel-dados-usuario">
 
-							<div class="gt-left-col gt-width-33">
-								<label>Nova Senha</label>
-								<ww:password name="senhaNova" id="passMet1"
-									onkeyup="passwordStrength(this.value,'Met1')" theme="simple"
-									cssClass="gt-form-text" />
-							</div>
+						<div class="gt-form-row gt-width-33">
+							<label>CPF</label>
+							<ww:textfield name="cpf" theme="simple" cssClass="gt-form-text" />
+						</div>
+						
+						<div class="gt-form-row gt-width-100" id="dadosIntegracaoAD" style="display: none;">
+	
+								<div class="gt-left-col gt-width-33">
+									<label>Nova Senha</label>
+									<ww:password name="senhaNova" id="passMet1"
+										onkeyup="passwordStrength(this.value,'Met1')" theme="simple"
+										cssClass="gt-form-text" />
+								</div>
+	
+	
+								<div class="gt-left-col gt-width-33">
+									<label>Repetição da nova senha</label>
+									<ww:password name="senhaConfirma" id="pass2Met1"
+										onblur="javascript:converteUsuario(this)" theme="simple"
+										cssClass="gt-form-text" />
+								</div>
+	
+								<div class="gt-left-col gt-width-33">
+									<label>Força da senha</label>
+									<div id="passwordDescriptionMet1">Senha não informada</div>
+									<div id="passwordStrengthMet1" class="strength0"></div>
+								</div>
+						</div>
+						
+						<div class="gt-form-row">
+							<ww:submit label="OK" value="OK" theme="simple"
+								cssClass="gt-btn-medium gt-btn-left"/>
+						</div>
 
 
-							<div class="gt-left-col gt-width-33">
-								<label>Repetição da nova senha</label>
-								<ww:password name="senhaConfirma" id="pass2Met1"
-									onblur="javascript:converteUsuario(this)" theme="simple"
-									cssClass="gt-form-text" />
-							</div>
-
-							<div class="gt-left-col gt-width-33">
-								<label>Força da senha</label>
-								<div id="passwordDescriptionMet1">Senha não informada</div>
-								<div id="passwordStrengthMet1" class="strength0"></div>
-							</div>
 					</div>
-					
-					<div class="gt-form-row">
-						<ww:submit label="OK" value="OK" theme="simple"
-							cssClass="gt-btn-medium gt-btn-left"/>
-					</div>
-
+					<p id="msgEmail" class="oculto">Você ainda não possui um e-mail válido. Tente mais tarde.</p>
 				</ww:form>
 			</div>
 

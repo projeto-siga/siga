@@ -24,12 +24,15 @@
  */
 package br.gov.jfrj.webwork.action;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
@@ -408,6 +411,35 @@ public class UsuarioAction extends SigaActionSupport {
 		return isIntegradoAD(getMatricula())==true?"ajax_retorno":"ajax_vazio";
 	}
 	
+	public String isEmailValido() throws AplicacaoException {
+		return isEmailValido(getMatricula())==true?"ajax_retorno":"ajax_vazio";
+	}
+
+	
+
+	private boolean isEmailValido(String matricula) {
+		
+		DpPessoa pessoaFlt = new DpPessoa();
+		CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
+		
+		if ( matricula == null || matricula.length() < 2 ) {
+			log.warn( "A matrícula informada é nula ou inválida" );
+			throw new AplicacaoException( "A matrícula informada é nula ou inválida." );
+		}
+		
+		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
+		CpOrgaoUsuario orgaoUsu = dao().consultarPorSigla(orgaoFlt);
+
+		List<DpPessoa> lstPessoa = dao().consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
+
+		if (lstPessoa != null && lstPessoa.size() == 1) {
+			DpPessoa p = lstPessoa.get(0);
+			return p.getEmailPessoaAtual() != null && p.getEmailPessoaAtual().trim().length() > 0;
+		}
+		
+		return false;
+
+	}
 
 	public Long getIdOrgao() {
 		return idOrgao;

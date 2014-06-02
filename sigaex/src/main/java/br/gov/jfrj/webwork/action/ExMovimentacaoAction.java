@@ -2535,7 +2535,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		for (ExMobil m : provItens) {
 			if (!m.isApensado() && Ex.getInstance().getComp()
-					.podeAcessarDocumento(getTitular(), getLotaTitular(), m) )
+					.podeTransferir(getTitular(), getLotaTitular(), m) )
 				getItens().add(m);
 		}
 

@@ -249,7 +249,7 @@ public class UsuarioAction extends SigaActionSupport {
 	}
 
 	public String aIncluirUsuarioGravar() throws Exception {
-		String msgAD = "";
+		String msgComplemento = "";
 		getRequest().setAttribute("volta", "incluir");
 		getRequest().setAttribute("titulo", "Novo Usuário");
 		String[] senhaGerada = new String[1];
@@ -261,6 +261,9 @@ public class UsuarioAction extends SigaActionSupport {
 			
 			idNova = Cp.getInstance().getBL().criarIdentidade(matricula,
 					cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada,isIntegradoAoAD);
+			if (isIntegradoAoAD){
+				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
+			}
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(auxiliar1,cpf1,senha1,auxiliar2,cpf2,senha2,matricula,cpf,senhaNova)){
@@ -273,7 +276,6 @@ public class UsuarioAction extends SigaActionSupport {
 			}else{
 				idNova = Cp.getInstance().getBL().criarIdentidade(matricula,cpf, getIdentidadeCadastrante(),senhaNova,senhaGerada,
 						isIntegradoAoAD);
-				
 			}
 			break;
 		default:
@@ -282,21 +284,19 @@ public class UsuarioAction extends SigaActionSupport {
 		}
 		
 		if (isIntegradoAoAD){
-//			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
-			msgAD = "<br/> Atenção: Seu usuário de rede e caixa postal serão criados na rede em até 1 hora.";
-		}
-//		
-//		if (isIntegradoAD(matricula) && senhaTrocadaAD){
-//			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.";
-//		}
-//		
-//		if (isIntegradoAD(matricula) && !senhaTrocadaAD){
-//			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
-//		}
-//		
-//		setMensagem("Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ msgAD);
+			
+			if (senhaTrocadaAD){
+				msgComplemento = "<br/> Atenção: Sua senha de rede e e-mail foi definida com sucesso.";
+			}else{
+				msgComplemento = "<br/> ATENÇÃO: A senha de rede e e-mail NÃO foi definida embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
+			}
 
-		setMensagem("Usuário cadastrado com sucesso. O seu login e senha foram enviados para seu email"+ msgAD);
+			
+		}else{
+			msgComplemento = "<br/> O seu login e senha foram enviados para seu email.";
+		}
+
+		setMensagem("Usuário cadastrado com sucesso." + msgComplemento);
 
 		return Action.SUCCESS;
 

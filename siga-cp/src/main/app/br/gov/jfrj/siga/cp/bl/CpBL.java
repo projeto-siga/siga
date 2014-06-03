@@ -390,21 +390,6 @@ public class CpBL {
 								CpTipoIdentidade.class, false));
 						idNova.setHisDtIni(idNova.getDtCriacaoIdentidade());
 
-						// somente se integrado ao AD
-						if (marcarParaSinc) {
-							BASE64Encoder encoderBase64 = new BASE64Encoder();
-
-							String chave = encoderBase64.encode(idNova
-									.getDpPessoa().getIdInicial().toString()
-									.getBytes());
-							String senhaCripto = encoderBase64
-									.encode(Criptografia.criptografar(
-											novaSenha, chave));
-
-							idNova.setDscSenhaIdentidadeCripto(null);
-							idNova.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
-						}
-
 						dao().iniciarTransacao();
 						dao().gravarComHistorico(idNova, idCadastrante);
 						Correio.enviar(

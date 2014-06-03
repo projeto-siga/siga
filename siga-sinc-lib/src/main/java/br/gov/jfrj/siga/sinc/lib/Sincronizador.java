@@ -48,8 +48,8 @@ public class Sincronizador {
 		return setNovo;
 	}
 
-	public void setSetNovo(SortedSet<Sincronizavel> setNovo) {
-		this.setNovo = setNovo;
+	public void setSetNovo(SortedSet<Sincronizavel> setNovo2) {
+		this.setNovo = setNovo2;
 	}
 
 	public SortedSet<Sincronizavel> getSetAntigo() {
@@ -251,13 +251,13 @@ public class Sincronizador {
 	// Varrer todos os objetos, encontrar seus membros sincronizaveis e
 	// substitui-los pela versao importada do xml
 	//
-	public void religarListaPorIdExterna(SortedSet<Sincronizavel> set) {
+	public void religarListaPorIdExterna(SortedSet<Sincronizavel> setNovo2) {
 		Map<String, Sincronizavel> mapAux = new HashMap<String, Sincronizavel>();
 
-		for (Sincronizavel s : set)
+		for (Sincronizavel s : setNovo2)
 			mapAux.put(getSicronizavelKey(s), s);
 
-		for (Sincronizavel s : set) {
+		for (Sincronizavel s : setNovo2) {
 			Class cls = s.getClass();
 			do {
 				try {

@@ -53,9 +53,9 @@ public class DadosRH extends GenericModel {
 	public String lotacao_nome;
 	public String lotacao_sigla;
 	public Long lotacao_id_pai;
-	public Integer lotacao_tipo;
-	public Integer lotacao_tipo_papel;
-	
+	public String lotacao_tipo;
+	public String lotacao_tipo_papel;
+	public Long papel_id;
 
 	public class Pessoa {
 		public Long pessoa_id;
@@ -91,6 +91,7 @@ public class DadosRH extends GenericModel {
 		public Long cargo_id;
 		public Long funcao_id;
 		public Long lotacao_id;
+		public String lotacao_tipo_papel;
 	}
 
 	public class Cargo {
@@ -110,8 +111,17 @@ public class DadosRH extends GenericModel {
 		public String lotacao_nome;
 		public String lotacao_sigla;
 		public Long lotacao_id_pai;
-		public Integer lotacao_tipo;
-		public Integer lotacao_tipo_papel;
+		public String lotacao_tipo;
+		public String lotacao_tipo_papel;
+	}
+	
+	public class Papel {
+		public Long papel_id;
+		public Long papel_lotacao_id;
+		public Long papel_cargo_id;
+		public Long papel_funcao_id;
+		public String papel_lotacao_tipo;
+		public Long papel_pessoa_id;
 	}
 
 	public Pessoa getPessoa() {
@@ -151,6 +161,7 @@ public class DadosRH extends GenericModel {
 		o.cargo_id = cargo_id;
 		o.funcao_id = funcao_id;
 		o.lotacao_id = lotacao_id;
+		o.lotacao_tipo_papel = lotacao_tipo_papel;
 		return o;
 	}
 
@@ -184,6 +195,19 @@ public class DadosRH extends GenericModel {
 		o.lotacao_id_pai = lotacao_id_pai;
 		o.lotacao_tipo = lotacao_tipo;
 		o.lotacao_tipo_papel = lotacao_tipo_papel;
+		return o;
+	}
+	
+	public Papel getPapel() {
+		if (papel_id == null)
+			return null;
+		Papel o = new Papel();
+		o.papel_pessoa_id = pessoa_id;
+		o.papel_id = papel_id;
+		o.papel_lotacao_id = lotacao_id;
+		o.papel_cargo_id = cargo_id;
+		o.papel_funcao_id = funcao_id;
+		o.papel_lotacao_tipo = lotacao_tipo_papel;
 		return o;
 	}
 

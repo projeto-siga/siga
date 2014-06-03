@@ -14,6 +14,23 @@ $(function(){
         		"<input type=\"hidden\" name=\"atendente\" value =\"" + idlotacao + "\"></li>" );
      });
 });
+
+$(document).ready(function(){
+    $("#orgao").change(function(){
+       var orgao = $(this).val();
+       var datastring = 'orgao='+ orgao;
+       $.ajax({
+ 	  	   type: "GET",
+ 	  	   data: datastring,
+ 	  	   url: "/sigasr/solicitacao/relLocal",
+ 	  	   success: function(locOrgao){
+ 	 	  	   
+ 	  		$("#escolherLocal").html(locOrgao);}
+ 	  	});
+       
+    });
+});
+
 </script>
   
 
@@ -32,21 +49,14 @@ $(function(){
 					</tr>
 					<tr>
 						<td>Órgão</td>
-						<td> 
-						#{select name:'orgao', items:orgaos, valueProperty:'idOrgaoUsu', labelProperty:'nmOrgaoUsu', 
-						value:orgao?.idOrgaoUsu} 
-						#{option 0}Todos#{/option}
+						<td> #{select name:'orgao', id:'orgao', items:orgaos, valueProperty:'idOrgaoUsu', labelProperty:'nmOrgaoUsu', 
+						value:orgao?.idOrgaoUsu, onchange:'carregarLocal()'} 
+						#{option 0}	#{/option}
 						#{/select}
 						</td>	
 					</tr>
-					<tr>
-						<td>Local (Solicitante)</td>
-						<td> 
-						#{select name:'local', items:locais, valueProperty:'idComplexo', labelProperty:'nomeComplexo', 
-						value:local?.idComplexo} 
-						#{option 0}Todas#{/option}
-						#{/select}
-						</td>	
+					<tr id="escolherLocal">
+					
 					</tr>
 					<tr>
 						<td>Atendente</td>

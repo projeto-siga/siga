@@ -60,13 +60,13 @@ import br.gov.jfrj.siga.sinc.lib.test.Lotacao;
 
 public class Application extends SigaApplication {
 
-	@Before(priority=1)
+	@Before(priority = 1)
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
 		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(priority=2, unless = { "exibirAtendente", "exibirAtributos",
+	@Before(priority = 2, unless = { "exibirAtendente", "exibirAtributos",
 			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao" })
 	public static void addDefaults() throws Exception {
 
@@ -809,8 +809,9 @@ public class Application extends SigaApplication {
 				filtro = new SrItemConfiguracao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(sol != null && (sol.solicitante != null || sol.local != null) ? sol.getItensDisponiveis()
-					: null);
+			itens = filtro.buscar(sol != null
+					&& (sol.solicitante != null || sol.local != null) ? sol
+					.getItensDisponiveis() : null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrItemConfiguracao>();
 		}
@@ -933,8 +934,9 @@ public class Application extends SigaApplication {
 				filtro = new SrAcao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(sol != null && (sol.solicitante != null || sol.local != null) ? sol.getAcoesDisponiveis()
-					: null);
+			itens = filtro.buscar(sol != null
+					&& (sol.solicitante != null || sol.local != null) ? sol
+					.getAcoesDisponiveis() : null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrAcao>();
 		}
@@ -994,13 +996,10 @@ public class Application extends SigaApplication {
 		render();
 	}
 
-	public static void relLocal() throws Exception {
+	public static void relLocal(Long orgao) throws Exception {
 		assertAcesso("REL:Relatorio");
 		List<CpComplexo> orgaos = new ArrayList<CpComplexo>();
-		orgaos = JPA
-				.em()
-				.createQuery(
-						"from CpOrgaoUsuario").getResultList();
+		orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
 		locais = JPA
 				.em()
@@ -1008,6 +1007,15 @@ public class Application extends SigaApplication {
 						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
 								+ lotaTitular().getOrgaoUsuario()
 										.getIdOrgaoUsu()).getResultList();
+		List<CpComplexo> locOrgaos = new ArrayList<CpComplexo>();
+		if (orgao != null) {
+			locOrgaos = JPA
+					.em()
+					.createQuery(
+							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+									+ orgao).getResultList();
+			render("app/views/Application/locais.html", locOrgaos);
+		}
 		render(locais, orgaos);
 	}
 
@@ -1062,10 +1070,7 @@ public class Application extends SigaApplication {
 	public static void relAgendado() throws Exception {
 		assertAcesso("REL:Relatorio");
 		List<CpComplexo> orgaos = new ArrayList<CpComplexo>();
-		orgaos = JPA
-				.em()
-				.createQuery(
-						"from CpOrgaoUsuario").getResultList();
+		orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
 		locais = JPA
 				.em()
@@ -1125,8 +1130,8 @@ public class Application extends SigaApplication {
 				"application/pdf", true);
 	}
 
-	public static void grelLocal(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim, String atendente)
+	public static void grelLocal(String secaoUsuario, String orgao, String lotacao,
+			String locOrgao, String dtIni, String dtFim, String atendente)
 			throws Exception {
 
 		assertAcesso("REL:Relatorio");
@@ -1134,8 +1139,9 @@ public class Application extends SigaApplication {
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("secaoUsuario", secaoUsuario);
+		parametros.put("orgao", orgao);
 		parametros.put("lotacao", lotacao);
-		parametros.put("local", local);
+		parametros.put("local", locOrgao);
 		parametros.put("atendente", atendente);
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);

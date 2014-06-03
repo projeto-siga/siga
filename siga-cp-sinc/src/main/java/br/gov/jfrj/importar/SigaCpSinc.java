@@ -157,6 +157,7 @@ public class SigaCpSinc {
 			sinc.setSetAntigo(setAntigo);
 
 			// verifica se as pessoas possuem lotação
+			
 			if (modoLog) {
 				for (Sincronizavel item : setNovo) {
 					if (item instanceof DpPessoa) {
@@ -489,6 +490,7 @@ public class SigaCpSinc {
 	}
 
 	public void importxml() {
+		long inicio = System.currentTimeMillis();
 		try {
 			if (modoLog) {
 				log("");
@@ -538,6 +540,9 @@ public class SigaCpSinc {
 			e.printStackTrace();
 			log(e.getMessage());
 		}
+		long total = (System.currentTimeMillis()-inicio)/1000;
+		log("Tempo total de execução: " + total + " segundos (" + total/60 +" min)" );
+
 	}
 
 	public SigaCpSinc(String[] args) {
@@ -714,6 +719,7 @@ public class SigaCpSinc {
 		boolean contemPessoa = false;
 		boolean contemFuncao = false;
 		boolean contemLotacao = false;
+		boolean contemPapel = false;
 
 		importarListasDeTipos();
 
@@ -805,6 +811,10 @@ public class SigaCpSinc {
 			throw new AplicacaoException("XML não contém pessoa!");
 		}
 		if (!contemFuncao) {
+			// throw new
+			// AplicacaoException("XML não contém função de confiança!");
+		}
+		if (!contemPapel) {
 			// throw new
 			// AplicacaoException("XML não contém função de confiança!");
 		}
@@ -966,7 +976,7 @@ public class SigaCpSinc {
 		}
 		return lotacao;
 	}
-
+	
 	private boolean isNumerico(String tipoLotacao) {
 		try {
 			new Long(tipoLotacao);
@@ -1114,8 +1124,12 @@ public class SigaCpSinc {
 		papel.setIdExterna(parseStr(parser, "id"));
 		criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "papel", "idExterna",
 				parseStr(parser, "id"), dpPessoaCorrente.getIdExterna());
-		if (parseStr(parser, "tipo") != null) {
-			CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
+		//if (parseStr(parser, "tipo") != null) {
+		//	CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
+		//	papel.setCpTipoPapel(o);
+		//}
+		if (parseStr(parser, "papel") != null) {
+			CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "papel"));
 			papel.setCpTipoPapel(o);
 		}
 		// papel.setSigla(parseStr(parser, "sigla"));
@@ -1131,6 +1145,7 @@ public class SigaCpSinc {
 			o.setIdExterna(parseStr(parser, "lotacao"));
 			papel.setDpLotacao(o);
 		}
+		
 		return papel;
 	}
 

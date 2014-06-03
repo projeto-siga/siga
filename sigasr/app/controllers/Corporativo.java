@@ -1,8 +1,12 @@
 package controllers;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,6 +17,7 @@ import models.DadosRH;
 import models.DadosRH.Cargo;
 import models.DadosRH.Funcao;
 import models.DadosRH.Lotacao;
+import models.DadosRH.Papel;
 import models.DadosRH.Pessoa;
 
 import org.w3c.dom.Document;
@@ -26,7 +31,8 @@ public class Corporativo extends SigaApplication {
 		Map<Long, Lotacao> ml = new TreeMap<Long, Lotacao>();
 		Map<Long, Funcao> mf = new TreeMap<Long, Funcao>();
 		Map<Long, Pessoa> mp = new TreeMap<Long, Pessoa>();
-
+		Map<Long, List<Papel>> mpp = new TreeMap<Long, List<Papel>>();
+		
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory
 				.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -38,7 +44,7 @@ public class Corporativo extends SigaApplication {
 					&& !mp.containsKey(p.pessoa_id)
 					&& (p.pessoa_situacao.equals(1)
 							|| p.pessoa_situacao.equals(2) || p.pessoa_situacao
-							.equals(31)))
+								.equals(31)))
 				mp.put(p.pessoa_id, p);
 
 			Lotacao x = d.getLotacao();
@@ -52,12 +58,20 @@ public class Corporativo extends SigaApplication {
 			Funcao f = d.getFuncao();
 			if (f != null && !mf.containsKey(f.funcao_id))
 				mf.put(f.funcao_id, f);
+
+			Papel pp = d.getPapel();
+			if (pp != null && !mpp.containsKey(pp.papel_pessoa_id))
+				mpp.put(pp.papel_pessoa_id, new ArrayList<Papel>());
+			if (pp != null)
+				mpp.get(pp.papel_pessoa_id).add(pp);
+
 		}
 
 		// root elements
 		Document doc = docBuilder.newDocument();
 		Element rootElement = doc.createElement("base");
 		rootElement.setAttribute("orgaoUsuario", "RJ");
+		rootElement.setAttribute("versao", "2"); // forcei a versao para testar
 		doc.appendChild(rootElement);
 
 		Element cargos = doc.createElement("cargos");
@@ -130,10 +144,21 @@ public class Corporativo extends SigaApplication {
 			setAttr(e, "naturalidade", p.pessoa_naturalidade);
 			setAttr(e, "nacionalidade", p.pessoa_nacionalidade);
 			pessoas.appendChild(e);
+			if (mpp.containsKey(p.pessoa_id)) {
+				for (Papel papeis : mpp.get(p.pessoa_id))	{
+					Element papel = doc.createElement("papel"); 
+					setAttr(papel, "id", papeis.papel_id); 
+					setAttr(papel, "papel",papeis.papel_lotacao_tipo);
+					setAttr(papel, "cargo", papeis.papel_cargo_id); 
+					setAttr(papel,"funcaoConfianca", papeis.papel_funcao_id); 
+					setAttr(papel, "lotacao", papeis.papel_lotacao_id); 
+					pessoas.appendChild(papel);	
+				}
+			}
 		}
 
 		renderXml(doc);
-		
+
 	}
 
 	private static void setAttr(Element e, String name, Object value) {

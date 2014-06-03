@@ -37,28 +37,27 @@ MANUTENÇÃO VANTAGENS PESSOAIS  -->
 		<c:import url="/paginas/expediente/modelos/inc_tit_SraDiretoraSubsecretariaRH.jsp" />
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
+	${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
 		classe ${requestScope.classe} e padrão ${requestScope.padrao}, 
-		lotado(a) no(a)${subscritor.lotacao.descricao},
-			
+		lotado(a) no(a)${subscritor.lotacao.descricao}, 
 		vem respeitosamente requerer a Vossa Excelência, em razão de mudança nesta 
 		Seção Judiciária, a manutenção das seguintes vantagens pessoais vinculadas 
-		ao cargo de ${cargoServ}, e matrícula ${doc.subscritor.siga}.
+		ao cargo de ${cargoServ}, e matrícula ${doc.subscritor.sigla}.
 		</p>
 		
 		
 		<B>
-			<c:if test="${ adicionalTempoServiço== 'Sim'}">
+			<c:if test="${adicionalTempoServiço== 'Sim'}">
 			    Adiconal por Tempo de Serviço;
 			    <br>	
 			</c:if>
 			
-			<c:if test="${ manutencaoDependentes== 'Sim'}">
+			<c:if test="${manutencaoDependentes== 'Sim'}">
 			    Manutenção de dependentes para fins de dedução no Imposto de Renda na fonte;
 			    <br>		
 			</c:if>
 			
-			<c:if test="${ decimosQuintos== 'Sim'}">
+			<c:if test="${decimosQuintos== 'Sim'}">
 			    Décimos/Quintos incorporados; 
 			    <br>
 			</c:if>	

@@ -1,0 +1,9 @@
+ #{if !locOrgaos.empty}
+<td>Local (Solicitante)</td>
+<td>#{select name:'locOrgao', id:'locOrgao', items:locOrgaos, valueProperty:'idComplexo', labelProperty:'nomeComplexo', 
+				value:locOrgao?.idComplexo} 
+	#{option 0}Todas#{/option}
+	#{/select}
+	
+</td>
+#{/if}

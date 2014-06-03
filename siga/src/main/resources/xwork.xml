@@ -112,7 +112,7 @@
 		<action name="incluir_usuario_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aIncluirUsuarioGravar">
 			<result type="redirect-action">
-				<param name="actionName">principal</param>
+				<param name="actionName">incluir_usuario</param>
 				<param name="namespace">/</param>
 				<param name="mensagem">${mensagem}</param>
 			</result>

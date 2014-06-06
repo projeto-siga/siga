@@ -1,17 +1,36 @@
 var newwindow = '';
-function popitup(url) {
+
+/*function popitup(url) {
 	if (!newwindow.closed && newwindow.location) {
+		console.log("teste 1"); 
 	} else {
-		var popW = 600;
-		var popH = 400;
-		var winleft = (screen.width - popW) / 2;
-		var winUp = (screen.height - popH) / 2;
-		winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
-				+ ',top=' + winUp + ',scrollbars=yes,resizable'
-		newwindow = window.open(url, 'mov', winProp);
-		// newwindow.name='mov';
-		// newwindow.navigate(url);
+
+	var popW = 600;
+	var popH = 400;
+	var winleft = (screen.width - popW) / 2;
+	var winUp = (screen.height - popH) / 2;
+	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
+	+ ',top=' + winUp + ',scrollbars=yes,resizable'
+	//newwindow = window.open(url, 'mov', winProp);
+	newwindow = window.open(url,'_blank', 'mov');
+	// newwindow.name='mov';
+	// newwindow.navigate(url);
 	}
+
+	if (window.focus) {
+		newwindow.focus()
+	}
+}*/
+
+function popitup(url) {
+	var popW = 600;
+	var popH = 400;
+	var winleft = (screen.width - popW) / 2;
+	var winUp = (screen.height - popH) / 2;
+	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
+	+ ',top=' + winUp + ',scrollbars=yes,resizable';
+
+	newwindow = window.open(url, url, winProp);
 
 	if (window.focus) {
 		newwindow.focus()
@@ -27,8 +46,8 @@ function NewWindow(mypage, myname, w, h, scroll, size) {
 		TopPosition = 100;
 	}
 	settings = 'height=' + h + ',width=' + w + ',top=' + TopPosition + ',left='
-			+ LeftPosition + ',scrollbars=' + scroll + ',resizable=' + size
-			+ ''
+	+ LeftPosition + ',scrollbars=' + scroll + ',resizable=' + size
+	+ ''
 	win = window.open(mypage, myname, settings)
 	if (win.window.focus) {
 		win.window.focus();
@@ -37,18 +56,18 @@ function NewWindow(mypage, myname, w, h, scroll, size) {
 
 function tokenize(url) {
 	return url + '&webwork.token='
-			+ document.getElementsByName('webwork.token')[0].value
-			+ '&webwork.token.name='
-			+ document.getElementsByName('webwork.token.name')[0].value;
+	+ document.getElementsByName('webwork.token')[0].value
+	+ '&webwork.token.name='
+	+ document.getElementsByName('webwork.token.name')[0].value;
 }
 
-// Abre janela com o resultado das pesquisas
+//Abre janela com o resultado das pesquisas
 function abreEnquete(clicou_voto, form, num_opcao) {
 	window
-			.open(
-					"",
-					"enquete",
-					"directories=no,height=276,width=520,hotkeys=no,location=no,menubar=no,resizable=no,scrollbars=yes,status=no,toolbar=no,copyhistory=no");
+	.open(
+			"",
+			"enquete",
+	"directories=no,height=276,width=520,hotkeys=no,location=no,menubar=no,resizable=no,scrollbars=yes,status=no,toolbar=no,copyhistory=no");
 
 	// Se receber o nome do formul�rio por par�metro, utiliza-o;
 	// caso contr�rio, usa o nome do formul�rio padr�o (enquete)
@@ -123,7 +142,7 @@ function verifica_data(data, naoObriga) {
 		mySplit = mydata.split("/");
 		if (mySplit[0] == mydata) {
 			mydata = mydata.substring(0, 2) + "/" + mydata.substring(2, 4)
-					+ "/" + mydata.substring(4, mydata.length);
+			+ "/" + mydata.substring(4, mydata.length);
 			mySplit = mydata.split("/");
 		}
 
@@ -134,7 +153,7 @@ function verifica_data(data, naoObriga) {
 		if ((dia == null) || (mes == null) || (ano == null) || (dia == "")
 				|| (mes == "") || (ano == "")) {
 			msg = msg
-					+ "A data deve estar num dos seguintes formatos: DD/MM/AAAA ou DDMMAAAA\n";
+			+ "A data deve estar num dos seguintes formatos: DD/MM/AAAA ou DDMMAAAA\n";
 			alert(msg);
 			return;
 		}
@@ -181,72 +200,72 @@ function verifica_data(data, naoObriga) {
 	}
 }
 
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao para consistir horas digitadas.
  * Data da Criacao : 18/03/2011 
  * chamada : onblur="javascript:verifica_hora(this)
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function verifica_hora(hora,naoObriga){ 
-    myhora = new String(hora.value); 
-    var mySplit;
-    var msg="";
-    if (myhora.length==0 && naoObriga==null) {
-    	msg=msg + "O campo hora deve ser preenchido\n";
-    	alert(msg);
-    	return;
-    }
-    if (myhora.length>0) {
-	    mySplit = myhora.split(":"); 
-	    if (mySplit[0]==myhora) {
-	    	myhora=myhora.substring(0,2)+":"+myhora.substring(2,4);
-	   		mySplit = myhora.split(":");	
-	    }
-	
-	    hrs = mySplit[0];
-	    min = mySplit[1];
-        
-        if ((hrs==null) || (min==null) ||(hrs=="") || (min=="")) {
-	    	msg=msg + "A hora deve estar num dos seguintes formatos: HH:MM ou HHMM\n";
-	    	alert(msg);
-	    	return;
-	    }
-	    
-	    if (isNaN(hrs) || isNaN(min)) {
-	    	msg=msg + "A hora sÃ³ pode conter caracteres numÃ©ricos\n";
-	    	alert(msg);
-	    	return;
-	    }
-              
-      // verifica hrs e min 
-      if ((hrs < 00 ) || (hrs > 23) || ( min < 00) ||( min > 59)){ 
-      	msg=msg + "Hora invÃ¡lida!";
-      	alert(msg);
-      	return; 
-      }
-      if (msg.length>0) { 
-	    alert(msg); 
-	    return;
-	  }
-      if (hrs.length<2) {
-	    	hrs="00"+hrs;
-	    	hrs=hrs.substring(hrs.length-2,hrs.length);
-	  }
-	  if (min.length<2) {
-	    	min="00"+min;
-	    	min=min.substring(min.length-2,min.length);
-	  }
-	  hora.value=hrs+":"+min;
+	myhora = new String(hora.value); 
+	var mySplit;
+	var msg="";
+	if (myhora.length==0 && naoObriga==null) {
+		msg=msg + "O campo hora deve ser preenchido\n";
+		alert(msg);
+		return;
+	}
+	if (myhora.length>0) {
+		mySplit = myhora.split(":"); 
+		if (mySplit[0]==myhora) {
+			myhora=myhora.substring(0,2)+":"+myhora.substring(2,4);
+			mySplit = myhora.split(":");	
+		}
+
+		hrs = mySplit[0];
+		min = mySplit[1];
+
+		if ((hrs==null) || (min==null) ||(hrs=="") || (min=="")) {
+			msg=msg + "A hora deve estar num dos seguintes formatos: HH:MM ou HHMM\n";
+			alert(msg);
+			return;
+		}
+
+		if (isNaN(hrs) || isNaN(min)) {
+			msg=msg + "A hora sÃ³ pode conter caracteres numÃ©ricos\n";
+			alert(msg);
+			return;
+		}
+
+		// verifica hrs e min 
+		if ((hrs < 00 ) || (hrs > 23) || ( min < 00) ||( min > 59)){ 
+			msg=msg + "Hora invÃ¡lida!";
+			alert(msg);
+			return; 
+		}
+		if (msg.length>0) { 
+			alert(msg); 
+			return;
+		}
+		if (hrs.length<2) {
+			hrs="00"+hrs;
+			hrs=hrs.substring(hrs.length-2,hrs.length);
+		}
+		if (min.length<2) {
+			min="00"+min;
+			min=min.substring(min.length-2,min.length);
+		}
+		hora.value=hrs+":"+min;
 	}
 } 
 
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao para negar a digitacao de caracteres nao numericos Exceto o "." Data
  * da Criacao : 02/01/2007 chamada : onkeypress="return sonumeroMesmo(event)"
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function sonumeroMesmo(e) {
 	var key = '';
 	var strCheck = '0123456789';
@@ -276,12 +295,12 @@ function handleEnter(field, event) {
 	} else
 		return true;
 }
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao para Formatar numeros Data da Criacao : 07/01/2007 chamada :
  * onkeypress="return formataReais(this,'.',',',event)"
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function formataReais(fld, milSep, decSep, e) {
 	var sep = 0;
 	var key = '';
@@ -329,12 +348,12 @@ function formataReais(fld, milSep, decSep, e) {
 	}
 	return false;
 }
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao para retornar o valor por extenso de um numero Data da Criacao :
  * 07/01/2007 chamada : onBlur="extenso(${var}); "
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function extenso(label, valor) {
 	var m = valor.value;
 	var c = m.replace(".", "");
@@ -514,33 +533,33 @@ function extenso(label, valor) {
 		}
 	}
 }
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao que nao permite digitacao de letras em campos numericos Data da
  * Criacao : 07/01/2007 chamada : onKeypress="return verificaNumero(event);"
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function verificaNumero(e) {
 	var unicode = e.charCode ? e.charCode : e.keyCode
-	if (unicode != 8) { // if the key isn't the backspace key (which we should
-						// allow)
+			if (unicode != 8) { // if the key isn't the backspace key (which we should
+				// allow)
 
-		if (unicode < 48 || unicode > 57) // if not a number
-			return false // disable key press
-	}
+				if (unicode < 48 || unicode > 57) // if not a number
+					return false // disable key press
+			}
 }
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao que verifica se "#### TODOS ####" os campos do form foram preenchidos.
  * Data da Criacao : 11/01/2007 chamada : onchange="verificaCampos();"
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function verificaCampos() {
 	var i;
 	// Verifica se todos os campos foram preenchidos
 	for (i = 0; i < 18; i++) {
 		if (document.form3.elements[i].value == ""
-				|| document.form3.elements[i].value == " ") {
+			|| document.form3.elements[i].value == " ") {
 			document.form3.elements[i].style.backgroundColor = "#FF333A";
 			document.form3.elements[i].focus();
 			alert("Preencha o campo '" + document.form3.elements[i].name
@@ -554,13 +573,13 @@ function verificaCampos() {
 	return false;
 }
 
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao que compara Datas. Data da Criacao : 11/01/2007 chamada :
  * onchange="dataMaiorIgual(datafim,datainicio);"
  */
-// *-------------------------------------------------------------*//
-// Verifica se a data1 � maior ou igual que a data 2
+//*-------------------------------------------------------------*//
+//Verifica se a data1 � maior ou igual que a data 2
 function dataMaiorIgual(dt1, dt2) {
 	alert("Entrou na funcao data Maior");
 	var hoje = new Date();
@@ -568,8 +587,8 @@ function dataMaiorIgual(dt1, dt2) {
 
 	if (ano >= 50 && ano <= 99)
 		ano = 1900 + ano
-	else
-		ano = 2000 + ano;
+		else
+			ano = 2000 + ano;
 
 	var pos1 = dt1.indexOf("/", 0)
 	var dd = dt1.substring(0, pos1)
@@ -580,8 +599,8 @@ function dataMaiorIgual(dt1, dt2) {
 	if (aa.length < 4)
 		if (ano > 1999)
 			aa = (2000 + parseInt(aa, 10))
-		else
-			aa = (1900 + parseInt(aa, 10));
+			else
+				aa = (1900 + parseInt(aa, 10));
 
 	var data1 = new Date(parseInt(aa, 10), parseInt(mm, 10) - 1, parseInt(dd,
 			10));
@@ -593,8 +612,8 @@ function dataMaiorIgual(dt1, dt2) {
 	if (aa.length < 4)
 		if (ano > 80 && ano <= 99)
 			aa = (1900 + parseInt(aa, 10))
-		else
-			aa = (2000 + parseInt(aa, 10));
+			else
+				aa = (2000 + parseInt(aa, 10));
 	var data2 = new Date(parseInt(aa, 10), parseInt(mm, 10) - 1, parseInt(dd,
 			10));
 
@@ -603,12 +622,12 @@ function dataMaiorIgual(dt1, dt2) {
 	else
 		return false;
 }
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao para retornar o valor literal de um numero Data da Criacao :
  * 22/01/2007 chamada : onBlur="numeroExtenso(${var}); "
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function numeroExtenso(label, valor) {
 	var m = valor.value;
 	var c = m.replace(".", "");
@@ -777,12 +796,12 @@ function numeroExtenso(label, valor) {
 	}
 }
 
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao replaceAll Data da Criacao : 02/03/2010 chamada : s = replaceAll(s,
  * "a", "b");
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function replaceAll(string, token, newtoken) {
 	while (string.indexOf(token) != -1) {
 		string = string.replace(token, newtoken);
@@ -790,12 +809,12 @@ function replaceAll(string, token, newtoken) {
 	return string;
 }
 
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 /*
  * Funcao que substitui caracteres por suas entities correspondentes Data da
  * Criacao : 02/03/2010 chamada : s = toEntities(s);
  */
-// *-------------------------------------------------------------*//
+//*-------------------------------------------------------------*//
 function toEntities(s) {
 	s = replaceAll(s, " ", "&nbsp;");
 	s = replaceAll(s, String.fromCharCode(160), "&nbsp;");
@@ -841,36 +860,36 @@ function setDisabled(el, val) {
 	}
 }
 /** =======================================================================
-*
-*    Estrutura para submissão Ajax e tratamento de retorno RPC  - LAGS - 08/10/2010
-*
-*   ======================================================================
-*     //Exemplo de solicitação síncrona :
-*
-* var t_smrRequisicao = new SimpleMethodRequestRPCGet ();
-* var t_strUrl = '/siga/servico/gravar!aGravar.action';
-* t_smrRequisicao.setUrl(t_strUrl);
-* t_smrRequisicao.addUrlParam("idPessoaConfiguracao", p_strIdPessoa);
-* t_smrRequisicao.addUrlParam("idServicoConfiguracao", p_strIdServico);
-* t_smrRequisicao.addUrlParam("idSituacaoConfiguracao", t_strIdSituacao);
-* try {
-*     var t_objResult = t_smrRequisicao.submeterSincrono();
-*     // os atributos  de retorno  SimpleMethod...
-*     // têm os parâmtros de retorno inseridos no objeto de retorno
-*     alert( "o valor de xxx é: " t_objResult.xxx); 
-* } catch (e) {
-*     // a exceção também ocorre em caso de erros vindos do servidor.
-*     alert(e.description);
-* }	
-*/
+ *
+ *    Estrutura para submissão Ajax e tratamento de retorno RPC  - LAGS - 08/10/2010
+ *
+ *   ======================================================================
+ *     //Exemplo de solicitação síncrona :
+ *
+ * var t_smrRequisicao = new SimpleMethodRequestRPCGet ();
+ * var t_strUrl = '/siga/servico/gravar!aGravar.action';
+ * t_smrRequisicao.setUrl(t_strUrl);
+ * t_smrRequisicao.addUrlParam("idPessoaConfiguracao", p_strIdPessoa);
+ * t_smrRequisicao.addUrlParam("idServicoConfiguracao", p_strIdServico);
+ * t_smrRequisicao.addUrlParam("idSituacaoConfiguracao", t_strIdSituacao);
+ * try {
+ *     var t_objResult = t_smrRequisicao.submeterSincrono();
+ *     // os atributos  de retorno  SimpleMethod...
+ *     // têm os parâmtros de retorno inseridos no objeto de retorno
+ *     alert( "o valor de xxx é: " t_objResult.xxx); 
+ * } catch (e) {
+ *     // a exceção também ocorre em caso de erros vindos do servidor.
+ *     alert(e.description);
+ * }	
+ */
 /**
-* Função (não classe) que decodifica (transforma em conteúdo Javascript)
-* o node dom que é o primeiro nó <value> em um documento no formato RPC
-*/
+ * Função (não classe) que decodifica (transforma em conteúdo Javascript)
+ * o node dom que é o primeiro nó <value> em um documento no formato RPC
+ */
 function decodeMainValueRPC(p_nodValueRaiz) {
 	/** seleciona do tipo do value RPC e direciona para decodificacao
-	*   correta do noh filho
-	*/
+	 *   correta do noh filho
+	 */
 	var decodeNodeValue = function(p_nodValor) {
 		var t_nodTipo = p_nodValor.firstChild;
 		if (t_nodTipo) {
@@ -888,8 +907,8 @@ function decodeMainValueRPC(p_nodValueRaiz) {
 		return null;
 	};
 	/** decodifica um filho de value RPC 
-	*   do tipo String (retorna uma String com o conteuhdo ou null)
-	*/
+	 *   do tipo String (retorna uma String com o conteuhdo ou null)
+	 */
 	var decodeNodeString = function(p_nodTipo ) {
 		if (p_nodTipo){
 			if (p_nodTipo.nodeName == "string") {
@@ -902,8 +921,8 @@ function decodeMainValueRPC(p_nodValueRaiz) {
 		return null;
 	};
 	/** decodifica um filho de value RPC 
-	*   do tipo Array (retorna um Array com o conteuhdo ou null)
-	*/
+	 *   do tipo Array (retorna um Array com o conteuhdo ou null)
+	 */
 	var decodeNodeArray = function(p_nodTipo ){
 		if (p_nodTipo){
 			if (p_nodTipo.nodeName == "array") {
@@ -927,21 +946,21 @@ function decodeMainValueRPC(p_nodValueRaiz) {
 		return null;
 	};
 	/** decodifica um filho de value RPC 
-	*   do tipo Struct (retorna um Objeto com os atrubutos 
-	*   de nomes/conteudos iguai ao node/value ou null)
-	*/
+	 *   do tipo Struct (retorna um Objeto com os atrubutos 
+	 *   de nomes/conteudos iguai ao node/value ou null)
+	 */
 	var decodeNodeStruct = function(p_nodTipo) {
 		if (p_nodTipo) {
 			if (p_nodTipo.nodeName == "struct") {
-			    	var t_arr1TipoChild = p_nodTipo.childNodes;
-					var t_objStruct = new Object();
-			    	for (var t_intContaMember = 0; t_intContaMember < t_arr1TipoChild.length; t_intContaMember++) {
+				var t_arr1TipoChild = p_nodTipo.childNodes;
+				var t_objStruct = new Object();
+				for (var t_intContaMember = 0; t_intContaMember < t_arr1TipoChild.length; t_intContaMember++) {
 					var t_nodMember = t_arr1TipoChild[t_intContaMember];
 					var t_strMemberName = null;
 					var t_objMemberValue = null;
 					if (t_nodMember.nodeName == "member") {
-					    	var t_arr1Atribs =  t_nodMember.childNodes;
-					    	for (var t_intContaAttrib = 0; t_intContaAttrib < t_arr1Atribs.length; t_intContaAttrib++) {
+						var t_arr1Atribs =  t_nodMember.childNodes;
+						for (var t_intContaAttrib = 0; t_intContaAttrib < t_arr1Atribs.length; t_intContaAttrib++) {
 							t_nodAttrib = t_arr1Atribs[t_intContaAttrib ];
 							if (t_nodAttrib.nodeName == "name") {
 								var t_nodTxt = t_nodAttrib.firstChild;
@@ -974,11 +993,11 @@ function decodeMainValueRPC(p_nodValueRaiz) {
 	return decodeNodeValue(p_nodValueRaiz);
 }
 /**
-* Função (não classe) que interpreta o DOM
-* recebido com parâmetro e identifica e
-* redireciona para a decodificação específica 
-* (Simple,Table ou Fault)
-*/
+ * Função (não classe) que interpreta o DOM
+ * recebido com parâmetro e identifica e
+ * redireciona para a decodificação específica 
+ * (Simple,Table ou Fault)
+ */
 function decodeMethodResponseRPC( p_domDocument) {
 	var t2_funDecodeMainValueRPC = decodeMainValueRPC; 
 	if (!p_domDocument) { 
@@ -1016,11 +1035,11 @@ function decodeMethodResponseRPC( p_domDocument) {
 	return null;
 }
 /**
-* Classe que submete uma requisição RPC (Ajax)
-* com o método GET
-* O retorno é no formato Simples (Pode ser simples ou tabela)
-* no caso de erro é retornado no formato 'RPC Fault'
-*/
+ * Classe que submete uma requisição RPC (Ajax)
+ * com o método GET
+ * O retorno é no formato Simples (Pode ser simples ou tabela)
+ * no caso de erro é retornado no formato 'RPC Fault'
+ */
 function SimpleMethodRequestRPCGet () {
 	var t2_funDecodeMethodResponseRPC = decodeMethodResponseRPC;
 	var _params = new Array();
@@ -1069,6 +1088,6 @@ function SimpleMethodRequestRPCGet () {
 SimpleMethodRequestRPCGet.prototype = new Object() ;
 SimpleMethodRequestRPCGet.prototype.constructor = SimpleMethodRequestRPCGet;
 /* =======================================================================
-*    Fim da strutura para submissão Ajax e tratamento de retorno RPC  
-*  ======================================================================
-*/
+ *    Fim da strutura para submissão Ajax e tratamento de retorno RPC  
+ *  ======================================================================
+ */

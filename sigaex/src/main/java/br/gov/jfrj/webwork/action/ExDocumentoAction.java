@@ -679,6 +679,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
 			setEletronico(2);
 			setEletronicoFixo(true);
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT) {
+			setEletronico(1);
 		} else if (isAlterouModelo()) {
 			if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT) {
 				setEletronico(1);

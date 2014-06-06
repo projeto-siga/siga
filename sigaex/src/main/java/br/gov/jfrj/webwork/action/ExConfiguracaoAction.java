@@ -411,6 +411,19 @@ public class ExConfiguracaoAction extends ExActionSupport {
 					CpOrgaoUsuario.class, false));
 		} else
 			config.setOrgaoUsuario(null);
+		
+		if (getIdTpMov() != null && getIdTpMov() != 0) {
+			config.setExTipoMovimentacao(dao().consultar(getIdTpMov(),
+					ExTipoMovimentacao.class, false));
+		} else
+			config.setExTipoMovimentacao(null);
+		
+		if (getIdMod() != null && getIdMod() != 0) {
+			config.setExModelo(dao().consultar(getIdMod(),
+					ExModelo.class, false));
+		} else
+			config.setExTipoMovimentacao(null);
+		
 												
 		List<ExConfiguracao> listConfig = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);
 		 

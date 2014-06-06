@@ -105,6 +105,107 @@
 				</table>
 			</ww:form>
 		</div></div></div>
+	
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">		
+			<h2>Configuração de Eletrônico</h2>
+			<div class="gt-content-box gt-for-table">	
+				<input type="hidden" name="postback" value="1" />
+				<table class="gt-form-table">
+					<tr class="header">
+						<td colspan="2">Dados da configuração</td>
+					</tr>
+					<tr>
+						<td><b>Situação</b></td>
+						<td><ww:select name="idSituacao" list="listaSituacao"
+							listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
+							theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
+					</tr>
+					<tr>
+						<td>Pessoa</td>
+						<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Lotação</td>
+						<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Cargo</td>
+						<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
+					</tr>			
+					<tr>
+						<td>Função de Confiança</td>
+						<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Órgão</td>
+						<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
+							listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+							headerValue="[Indefinido]" headerKey="0" /></td>
+					</tr>					
+					<tr class="button">
+						<td><input type="submit" value="Ok" class="gt-btn-large gt-btn-left" /> <input type="button"
+							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>
+						<td></td>
+					</tr>	
+				</table>
+				<div class="gt-content clearfix">	  
+					<div id="tableCadastradasEletronico"></div>		
+	 			</div>
+			</div> 			
+ 		</div>
+	</div>
+	
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">		
+			<h2>Permissão para Criar</h2>
+			<div class="gt-content-box gt-for-table">	
+				<input type="hidden" name="postback" value="1" />
+				<table class="gt-form-table">
+					<tr class="header">
+						<td colspan="2">Dados da configuração</td>
+					</tr>
+					<tr>
+						<td><b>Situação</b></td>
+						<td><ww:select name="idSituacao" list="listaSituacao"
+							listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
+							theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
+					</tr>
+					<tr>
+						<td>Pessoa</td>
+						<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Lotação</td>
+						<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Cargo</td>
+						<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
+					</tr>			
+					<tr>
+						<td>Função de Confiança</td>
+						<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Órgão</td>
+						<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
+							listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+							headerValue="[Indefinido]" headerKey="0" /></td>
+					</tr>					
+					<tr class="button">
+						<td><input type="submit" value="Ok" class="gt-btn-large gt-btn-left" /> <input type="button"
+							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>
+						<td></td>
+					</tr>	
+				</table>
+				<div class="gt-content clearfix">	  
+					<div id="tableCadastradasCriar"></div>		
+	 			</div>
+			</div> 			
+ 		</div>
+	</div>
+	
 		
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">		
@@ -121,18 +222,40 @@
 							listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
 							theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
 					</tr>
+					<tr>
+						<td>Pessoa</td>
+						<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Lotação</td>
+						<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Cargo</td>
+						<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
+					</tr>			
+					<tr>
+						<td>Função de Confiança</td>
+						<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
+					</tr>
+					<tr>
+						<td>Órgão</td>
+						<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
+							listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+							headerValue="[Indefinido]" headerKey="0" /></td>
+					</tr>					
 					<tr class="button">
 						<td><input type="submit" value="Ok" class="gt-btn-large gt-btn-left" /> <input type="button"
 							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>
 						<td></td>
 					</tr>	
 				</table>
+				<div class="gt-content clearfix">	  
+					<div id="tableCadastradasAssinar"></div>		
+	 			</div>
 			</div> 			
-			<div class="gt-content clearfix">	  
-				<div id="tableCadastradas"></div>		
-	 		</div> 
-		</div>
-	</div>
+ 		</div>
+	</div>	
 	
 	<ww:url id="urlEditar" action="editar" namespace="/modelo" /> 
 	<script> 
@@ -186,17 +309,33 @@
 		
 		muda_escolha(document.getElementById("tipoModelo"));
 
-		function montaTableCadastradas(){	
+		function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idMod){	
 		    
 //		    alert($('#idTpConfiguracao').val());
 //		    alert($('#idOrgaoUsu').val());
 		    var idTpConf = $('#idTpConfiguracao').val();
 		    var idOrgao = $('#idOrgaoUsu').val();
-			$('#tableCadastradas').html('Carregando...');			
+			$('#tableCadastradasAssinar').html('Carregando...');			
 			$.ajax({				     				  
-				  url:'/sigaex/expediente/configuracao/listar_cadastradas.action?idTpConfiguracao='+1+'&idOrgaoUsu='+1,					    					   					 
+				  url:'/sigaex/expediente/configuracao/listar_cadastradas.action?idTpConfiguracao=' + 1 + '&idTpMov=' + 11 +'&idMod=' +1510,
+				  type: "GET",
+				  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idMod : idMod}					    					   					 
 				  success: function(data) {
-			    	$('#tableCadastradas').html(data);				    
+			    	$('#tableCadastradasAssinar').html(data);				    
+			 	 }
+			});	
+			$('#tableCadastradasCriar').html('Carregando...');			
+			$.ajax({				     				  
+				  url:'/sigaex/expediente/configuracao/listar_cadastradas.action?idTpConfiguracao=' + 2 +'&idMod='+1510,					    					   					 
+				  success: function(data) {
+			    	$('#tableCadastradasCriar').html(data);				    
+			 	 }
+			});	
+			$('#tableCadastradasEletronico').html('Carregando...');			
+			$.ajax({				     				  
+				  url:'/sigaex/expediente/configuracao/listar_cadastradas.action?idTpConfiguracao=' + 4 + '&idMod='+1510,					    					   					 
+				  success: function(data) {
+			    	$('#tableCadastradasEletronico').html(data);				    
 			 	 }
 			});	
 		}

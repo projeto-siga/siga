@@ -38,7 +38,7 @@ import org.jfree.util.Log;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 
 public class LogThreadFilter implements Filter {
-
+	/*
 	private static final Logger logger = Logger.getLogger(LogThreadFilter.class);
 
 	static {
@@ -53,6 +53,7 @@ public class LogThreadFilter implements Filter {
 			ioe.printStackTrace();
 		}
 	}
+	*/
 
 	public void doFilter(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)

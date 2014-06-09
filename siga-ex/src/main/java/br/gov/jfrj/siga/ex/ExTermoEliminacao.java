@@ -1,23 +1,10 @@
 package br.gov.jfrj.siga.ex;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.dp.CpMarca;
-import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -116,9 +103,10 @@ public class ExTermoEliminacao {
 
 	public void gravar() throws AplicacaoException {
 		ExDocumento editalIncluso = getEdital().getDoc();
-		if (!editalIncluso.isDJEPublicado())
-			throw new AplicacaoException(
-					"O edital não pode ser selecionado pois não está publicado.");
+		//Edson: comentando pra facilitar homologacao
+		//if (!editalIncluso.isDJEPublicado())
+			//throw new AplicacaoException(
+			//		"O edital não pode ser selecionado pois não está publicado.");
 	}
 
 	public void eliminarInclusos() {

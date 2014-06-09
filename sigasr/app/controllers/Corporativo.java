@@ -148,11 +148,11 @@ public class Corporativo extends SigaApplication {
 				for (Papel papeis : mpp.get(p.pessoa_id))	{
 					Element papel = doc.createElement("papel"); 
 					setAttr(papel, "id", papeis.papel_id); 
-					setAttr(papel, "papel",papeis.papel_lotacao_tipo);
+					setAttr(papel, "tipo",papeis.papel_lotacao_tipo);
 					setAttr(papel, "cargo", papeis.papel_cargo_id); 
 					setAttr(papel,"funcaoConfianca", papeis.papel_funcao_id); 
 					setAttr(papel, "lotacao", papeis.papel_lotacao_id); 
-					pessoas.appendChild(papel);	
+					e.appendChild(papel);	
 				}
 			}
 		}

@@ -1122,14 +1122,14 @@ public class SigaCpSinc {
 
 		CpPapel papel = new CpPapel();
 		papel.setIdExterna(parseStr(parser, "id"));
-		criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "papel", "idExterna",
+		criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "tipo", "idExterna",
 				parseStr(parser, "id"), dpPessoaCorrente.getIdExterna());
 		//if (parseStr(parser, "tipo") != null) {
 		//	CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
 		//	papel.setCpTipoPapel(o);
 		//}
-		if (parseStr(parser, "papel") != null) {
-			CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "papel"));
+		if (parseStr(parser, "tipo") != null) {
+			CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
 			papel.setCpTipoPapel(o);
 		}
 		// papel.setSigla(parseStr(parser, "sigla"));

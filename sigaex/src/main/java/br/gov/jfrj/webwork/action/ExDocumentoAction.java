@@ -679,7 +679,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
 			setEletronico(2);
 			setEletronicoFixo(true);
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT) {
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT && (getEletronico() == null || getEletronico() == 0)) {
 			setEletronico(1);
 		} else if (isAlterouModelo()) {
 			if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT) {

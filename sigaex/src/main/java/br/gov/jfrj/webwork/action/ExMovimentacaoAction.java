@@ -119,6 +119,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private Boolean podeAtenderPedidoPubl;
 
 	private String contentType;
+	
+	private Integer tamanho;
 
 	private String sigla;
 
@@ -296,7 +298,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private void setLotPublicacao(String lotPublicacao) {
 		this.lotPublicacao = lotPublicacao;
 	}
+	
+	public Integer getTamanho() {
+		return tamanho;
+	}
 
+	public void setTamanho(Integer tamanho) {
+		this.tamanho = tamanho;
+	}
 
 	public Integer getTamMaxDescr() {
 		return 255 - doc.getDescrDocumento().length();
@@ -3055,8 +3064,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		for (ExMobil m : provItens) {
 			if (!m.isApensado() && Ex.getInstance().getComp()
 					.podeTransferir(getTitular(), getLotaTitular(), m) )
-					
-
+				getItens().add(m);
+		}
 		return Action.SUCCESS;
 	}
 

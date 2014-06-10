@@ -375,6 +375,31 @@
 					<ww:a href="%{url}">${docVO.paiSigla}</ww:a>
 				</p>
 			</c:if>
+			<p>
+				<jsp:useBean id="now" class="java.util.Date"/>
+				<b>Marcas:</b> 
+					<c:forEach var="mobilVO" items="${docVO.mobs}" varStatus="loop">
+					<c:if test="${!empty mobilVO.mob.exMarcaSet}">
+					<p style="text-indent: 10px">${mobilVO.mob.descricaoCompleta}:
+						<c:forEach var="marca" items="${mobilVO.mob.exMarcaSet}" varStatus="loop">
+						<p style="text-indent: 20px">
+							${marca.cpMarcador.descrMarcador} 
+							[${marca.dpLotacaoIni.sigla}
+							<c:if test="${not empty marca.dpPessoaIni}">
+								, ${marca.dpPessoaIni.sigla}]
+							</c:if>
+							<c:if test="${marca.dtIniMarca gt now}">
+								a partir de ${marca.dtIniMarcaDDMMYYYY}
+							</c:if>
+							<c:if test="${not empty marca.dtFimMarca}"> 
+								até ${marca.dtFimMarcaDDMMYYYY}
+							</c:if>
+						</p>
+						</c:forEach>
+					</p>
+					</c:if>
+					</c:forEach>
+			</p>
 			<c:if test="${not empty docVO.dadosComplementares}">
 	    	${docVO.dadosComplementares}
 		</c:if>

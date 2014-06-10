@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Entity;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;

@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
@@ -167,7 +168,8 @@ public abstract class SincronizavelSuporte extends Objeto implements
 
 					if (((fld.getModifiers() & Modifier.STATIC) != 0)
 							|| fld.isAnnotationPresent(Desconsiderar.class)
-							|| fld.isAnnotationPresent(DesconsiderarParaSemelhanca.class)
+							|| (fld.isAnnotationPresent(DesconsiderarParaSemelhanca.class) && condicaoValida(
+									fld, DesconsiderarParaSemelhanca.class,s))
 							|| (fld.isAnnotationPresent(NaoPropagar.class) && (nivel > 0)))
 						continue;
 
@@ -237,6 +239,26 @@ public abstract class SincronizavelSuporte extends Objeto implements
 			cls = cls.getSuperclass();
 		} while (!cls.equals(Object.class));
 		return true;
+	}
+
+	private static boolean condicaoValida(Field fld,
+			Class<DesconsiderarParaSemelhanca> clazz, Assemelhavel obj) {
+		String[] condicao = fld.getAnnotation(clazz).condicao();
+		if(condicao[0].length()==0){
+			return true;
+		}
+		try {
+			String campoCondicao = condicao[0];
+			Boolean valorCondicao = Boolean.valueOf(condicao[1]);
+
+			Field f =  fld.getDeclaringClass().getDeclaredField(campoCondicao);
+			f.setAccessible(true);
+			return f.getBoolean(obj) == valorCondicao;
+
+		} catch (Exception e) {
+			return false;
+		}
+
 	}
 
 	private static boolean semelhante(Collection c1, Collection c2, int nivel) {

@@ -284,6 +284,19 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 *         descrição do tipo de destinação.
 	 */
 	public String getDescricaoCompleta() {
+		return getDescricaoCompleta(true);
+	}
+	
+	/**
+	 * Retorna o número de sequência e a descrição de tipo de mobil
+	 * 
+	 * @return O número de sequência, a descrição de tipo de mobil
+	 */
+	public String getDescricaoCompletaSemDestinacao(){
+		return getDescricaoCompleta(false);
+	}
+	
+	private String getDescricaoCompleta(boolean incluindoTpDestinacao) {
 		String descTipoMobil = getExTipoMobil().getDescTipoMobil();
 
 		if (isGeral())
@@ -300,7 +313,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		String s = getNumSequencia() + (isVia() ? "&ordf; " : "&ordm; ")
 				+ descTipoMobil;
 
-		if (isVia()) {
+		if (incluindoTpDestinacao && isVia()) {
 			ExVia via = getDoc().via(getNumSequencia().shortValue());
 			if (via != null && via.getExTipoDestinacao() != null) {
 				s += " (" + via.getExTipoDestinacao().getDescrTipoDestinacao()

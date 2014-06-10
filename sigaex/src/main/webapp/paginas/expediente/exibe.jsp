@@ -363,6 +363,29 @@
 			<p>
 				<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 			</p>
+				<p>
+				<jsp:useBean id="now" class="java.util.Date"/>
+				<div style="font-weight: bold; font-size: 85%; margin-bottom: 2px">Marcas:</div> 
+				<c:forEach var="mobilVO" items="${docVO.mobs}" varStatus="loop">
+					<c:if test="${!empty mobilVO.mob.exMarcaSet}">
+						<p style="margin-left: 8px; margin-bottom: 2px">${mobilVO.mob.descricaoCompletaSemDestinacao}: 
+						<c:forEach var="marca" items="${mobilVO.mob.exMarcaSet}" varStatus="loop">
+							${marca.cpMarcador.descrMarcador} 
+							<c:if test="${marca.dtIniMarca gt now}">
+								em ${marca.dtIniMarcaDDMMYYYY}
+							</c:if>
+							<c:if test="${not empty marca.dtFimMarca}"> 
+								até ${marca.dtFimMarcaDDMMYYYY}
+							</c:if>
+							[${marca.dpLotacaoIni.sigla}
+							<c:if test="${not empty marca.dpPessoaIni}">
+								&nbsp;${marca.dpPessoaIni.sigla}]
+							</c:if>
+						</c:forEach>
+						</p>
+					</c:if>
+				</c:forEach>
+			</p>
 			<p>
 				<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
 			</p>
@@ -375,31 +398,6 @@
 					<ww:a href="%{url}">${docVO.paiSigla}</ww:a>
 				</p>
 			</c:if>
-			<p>
-				<jsp:useBean id="now" class="java.util.Date"/>
-				<b>Marcas:</b> 
-					<c:forEach var="mobilVO" items="${docVO.mobs}" varStatus="loop">
-					<c:if test="${!empty mobilVO.mob.exMarcaSet}">
-					<p style="text-indent: 10px">${mobilVO.mob.descricaoCompleta}:
-						<c:forEach var="marca" items="${mobilVO.mob.exMarcaSet}" varStatus="loop">
-						<p style="text-indent: 20px">
-							${marca.cpMarcador.descrMarcador} 
-							[${marca.dpLotacaoIni.sigla}
-							<c:if test="${not empty marca.dpPessoaIni}">
-								, ${marca.dpPessoaIni.sigla}]
-							</c:if>
-							<c:if test="${marca.dtIniMarca gt now}">
-								a partir de ${marca.dtIniMarcaDDMMYYYY}
-							</c:if>
-							<c:if test="${not empty marca.dtFimMarca}"> 
-								até ${marca.dtFimMarcaDDMMYYYY}
-							</c:if>
-						</p>
-						</c:forEach>
-					</p>
-					</c:if>
-					</c:forEach>
-			</p>
 			<c:if test="${not empty docVO.dadosComplementares}">
 	    	${docVO.dadosComplementares}
 		</c:if>

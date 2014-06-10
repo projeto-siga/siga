@@ -323,7 +323,7 @@ public class ExMobilVO extends ExVO {
 							.podeFazerAnotacao(titular, lotaTitular, mob));
 		}
 
-		addAcao("package", "Encerrar", "/expediente/mov", "encerrar_gravar", Ex
+		addAcao("package", "Arq. Corrente", "/expediente/mov", "encerrar_gravar", Ex
 				.getInstance().getComp()
 				.podeEncerrar(titular, lotaTitular, mob), null, null, null, null, "once");
 
@@ -375,7 +375,7 @@ public class ExMobilVO extends ExVO {
 						.podeBotaoArquivarIntermediario(titular, lotaTitular, mob), null, null, null, null, "once");
 
 		addAcao("package_go",
-				"Reabrir",
+				"Desarq. Corrente",
 				"/expediente/mov",
 				"reabrir_gravar",
 				Ex.getInstance().getComp()

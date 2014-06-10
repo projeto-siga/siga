@@ -167,8 +167,7 @@ public abstract class SincronizavelSuporte extends Objeto implements
 
 					if (((fld.getModifiers() & Modifier.STATIC) != 0)
 							|| fld.isAnnotationPresent(Desconsiderar.class)
-							|| fld
-									.isAnnotationPresent(DesconsiderarParaSemelhanca.class)
+							|| fld.isAnnotationPresent(DesconsiderarParaSemelhanca.class)
 							|| (fld.isAnnotationPresent(NaoPropagar.class) && (nivel > 0)))
 						continue;
 
@@ -282,9 +281,12 @@ public abstract class SincronizavelSuporte extends Objeto implements
 		i2 = null;
 		return true;
 	}
+
 	/**
 	 * retorna se ativo na data
-	 * @param dt data quando ser saber se estava ativo
+	 * 
+	 * @param dt
+	 *            data quando ser saber se estava ativo
 	 * @return true or false
 	 */
 	public boolean ativoNaData(Date dt) {

@@ -299,7 +299,7 @@ public class ExMobilVO extends ExVO {
 				"/expediente/mov",
 				"transferir",
 				Ex.getInstance().getComp()
-						.podeDespachar(titular, lotaTitular, mob), null, "&popup=true", null, null, null);
+						.podeDespachar(titular, lotaTitular, mob));
 
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach","Anexar Arquivo",

@@ -327,7 +327,7 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 	<mod:assinatura>
 		<c:if test="${doc.orgaoUsuario.idOrgaoUsu == '1'}">
 			{Solicitação Assinada! Iniciando procedimento "Serviço extraordinário".}
-			<c:set var="f" value="${f:criarWorkflow('Serviço extraordinario', doc, cadastrante, titular, lotaCadastrante, lotaTitular)}" />
+			<c:set var="f" value="${f:criarWorkflow('Serviço extraordinário', doc, cadastrante, titular, lotaCadastrante, lotaTitular)}" />
 	    </c:if>
 	</mod:assinatura>
 </mod:modelo>

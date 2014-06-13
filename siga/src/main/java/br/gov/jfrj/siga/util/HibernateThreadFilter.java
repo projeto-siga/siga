@@ -78,6 +78,7 @@ public class HibernateThreadFilter extends ThreadFilter {
 		} finally {
 			this.fechaSessaoHibernate();
 			this.liberaInstanciaDao();
+			Thread.interrupted();
 		}
 
 		super.terminaAuditoria(csv);

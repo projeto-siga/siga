@@ -75,6 +75,7 @@ public class WfThreadFilter extends ThreadFilter {
 			this.fechaContextoWorkflow();
 			this.fechaSessaoHibernate();
 			this.liberaInstanciaDao();
+			Thread.interrupted();
 		}
 
 		super.terminaAuditoria(csv);

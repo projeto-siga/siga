@@ -107,102 +107,110 @@
 		</div></div></div>
 	
 	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">		
-			<h2>Configuração de Eletrônico</h2>
-			<div class="gt-content-box gt-for-table">	
-				<input type="hidden" name="postback" value="1" />
-				<table class="gt-form-table">
-					<tr class="header">
-						<td colspan="2">Dados da configuração</td>
-					</tr>
-					<tr>
-						<td><b>Situação</b></td>
-						<td><ww:select name="idSituacao" list="listaSituacao"
-							listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
-							theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
-					</tr>
-					<tr>
-						<td>Pessoa</td>
-						<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
-					</tr>
-					<tr>
-						<td>Lotação</td>
-						<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
-					</tr>
-					<tr>
-						<td>Cargo</td>
-						<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
-					</tr>			
-					<tr>
-						<td>Função de Confiança</td>
-						<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
-					</tr>
-					<tr>
-						<td>Órgão</td>
-						<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
-							listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
-							headerValue="[Indefinido]" headerKey="0" /></td>
-					</tr>					
-					<tr class="button">
-						<td><input type="submit" value="Ok" class="gt-btn-large gt-btn-left" /> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>
-						<td></td>
-					</tr>	
-				</table>
-				<div class="gt-content clearfix">	  
-					<div id="tableCadastradasEletronico"></div>		
-	 			</div>
-			</div> 			
- 		</div>
+		<div class="gt-content clearfix">
+			<div class="gt-content-box gt-for-table">
+				<h2>Configuração de Eletrônico</h2>
+				
+				<div id="tableCadastradasEletronico"></div>		
+				<div>
+					<br/>	 
+					<input type="button" name="novoFormEletronico" id="novoFormEletronico" value="Novo" class="gt-btn-large gt-btn-left" onclick="exibirFormConfiguracao('formEletronico', 'novoFormEletronico');"/>
+				</div>
+
+				<form id="formEletronico" name="formEletronico" action="/sigaex/expediente/configuracao/editar_gravar.action">
+					<input type="hidden" name="nmTipoRetorno" id="nmRetorno" value="ajax" />
+					<input type="hidden" name="idTpConfiguracao" id="idTpConfiguracao" value="4" />
+					<input type="hidden" name="idMod" id="idMod" value="${id}" />
+					<table class="gt-form-table">
+						<tr class="header">
+							<td colspan="2">Dados da configuração</td>
+						</tr>
+						<tr>
+							<td><b>Situação</b></td>
+							<td><ww:select name="idSituacao" list="listaSituacao"
+								listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
+								theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
+						</tr>
+						<tr>
+							<td>Pessoa</td>
+							<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
+						</tr>
+						<tr>
+							<td>Lotação</td>
+							<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
+						</tr>
+						<tr>
+							<td>Cargo</td>
+							<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
+						</tr>			
+						<tr>
+							<td>Função de Confiança</td>
+							<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
+						</tr>
+						<tr>
+							<td>Órgão</td>
+							<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
+								listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+								headerValue="[Indefinido]" headerKey="0" /></td>
+						</tr>					
+						<tr class="button">
+							<td><input type="button" value="Ok" class="gt-btn-large gt-btn-left" onclick="gravarConfiguracao();"/></td>
+							<td></td>
+						</tr>	
+					</table>
+				</form>		
+		</div> 	
+		</div>
 	</div>
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">		
-			<h2>Permissão para Criar</h2>
-			<div class="gt-content-box gt-for-table">	
-				<input type="hidden" name="postback" value="1" />
-				<table class="gt-form-table">
-					<tr class="header">
-						<td colspan="2">Dados da configuração</td>
-					</tr>
-					<tr>
-						<td><b>Situação</b></td>
-						<td><ww:select name="idSituacao" list="listaSituacao"
-							listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
-							theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
-					</tr>
-					<tr>
-						<td>Pessoa</td>
-						<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
-					</tr>
-					<tr>
-						<td>Lotação</td>
-						<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
-					</tr>
-					<tr>
-						<td>Cargo</td>
-						<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
-					</tr>			
-					<tr>
-						<td>Função de Confiança</td>
-						<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
-					</tr>
-					<tr>
-						<td>Órgão</td>
-						<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
-							listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
-							headerValue="[Indefinido]" headerKey="0" /></td>
-					</tr>					
-					<tr class="button">
-						<td><input type="submit" value="Ok" class="gt-btn-large gt-btn-left" /> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>
-						<td></td>
-					</tr>	
-				</table>
-				<div class="gt-content clearfix">	  
-					<div id="tableCadastradasCriar"></div>		
-	 			</div>
-			</div> 			
+			<form id="formCriar">		
+				<h2>Permissão para Criar</h2>
+				<div class="gt-content-box gt-for-table">	
+					<input type="hidden" name="postback" value="1" />
+					<table class="gt-form-table">
+						<tr class="header">
+							<td colspan="2">Dados da configuração</td>
+						</tr>
+						<tr>
+							<td><b>Situação</b></td>
+							<td><ww:select name="idSituacao" list="listaSituacao"
+								listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
+								theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
+						</tr>
+						<tr>
+							<td>Pessoa</td>
+							<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
+						</tr>
+						<tr>
+							<td>Lotação</td>
+							<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
+						</tr>
+						<tr>
+							<td>Cargo</td>
+							<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
+						</tr>			
+						<tr>
+							<td>Função de Confiança</td>
+							<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
+						</tr>
+						<tr>
+							<td>Órgão</td>
+							<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
+								listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+								headerValue="[Indefinido]" headerKey="0" /></td>
+						</tr>					
+						<tr class="button">
+							<td><input type="button" value="Ok" class="gt-btn-large gt-btn-left" /></td>
+							<td></td>
+						</tr>	
+					</table>
+					<div class="gt-content clearfix">	  
+						<div id="tableCadastradasCriar"></div>		
+		 			</div>
+				</div> 		
+			</form>	
  		</div>
 	</div>
 	
@@ -371,6 +379,49 @@
 			});	
 		}
 
+		function gravarConfiguracao(){
+			$('#tableCadastradasEletronico').html('Gravando Configuração...');			
+			$("#formEletronico").submit(); //Submit  the FORM
+		}
+
+		function montarChamadaSubmit(nomeDoFormulario, nomeDoBotaoNovo, nomeDaTabela) {
+			//callback handler for form submit
+			$("#" + nomeDoFormulario).submit(function(e)
+			{
+				$("#" + nomeDoFormulario).hide();
+				$("#" + nomeDoBotaoNovo).hide();
+			    var postData = $(this).serializeArray();
+			    var formURL = $(this).attr("action");
+			    $.ajax(
+			    {
+			        url : formURL,
+			        type: "GET",
+			        data : postData,
+			        success:function(data, textStatus, jqXHR) 
+			        {
+			        	$("#" + nomeDaTabela).html(data);
+			        	$("#" + nomeDoBotaoNovo).show();
+			     	 },
+			        error: function(jqXHR, textStatus, errorThrown) 
+			        {
+			        	$("#" + nomeDaTabela).html('Erro ao tentar gravar configuração ...');  
+			        	$("#" + nomeDoBotaoNovo).show();
+			        }
+			    });
+			    e.preventDefault(); //STOP default action
+			    e.unbind(); //unbind. to stop multiple form submit.
+			});
+		}
+
+		function exibirFormConfiguracao(nomeDoFormulario, nomeDoBotaoNovo) {
+			$("#" + nomeDoFormulario).show();
+			$("#" + nomeDoBotaoNovo).hide();
+		}
+
+		montarChamadaSubmit('formEletronico', 'novoFormEletronico', 'tableCadastradasEletronico');
+
+		$('#formEletronico').hide();
+		 
 		montaTableCadastradas('tableCadastradasAssinar', 1, 11 ,${id});		
 		montaTableCadastradas('tableCadastradasCriar', 2, 0 ,${id});
 		montaTableCadastradas('tableCadastradasEletronico', 4, 0 ,${id});

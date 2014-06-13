@@ -102,6 +102,8 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	private DpPessoaSelecao pessoaSel;
 
 	private DpLotacaoSelecao lotacaoSel;
+	
+	private String nmTipoRetorno;
 
 	// private HashMap<String, List<ExConfiguracao>> configsPorModelo;
 
@@ -357,6 +359,9 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
+		
+		if(getNmTipoRetorno() != null)
+			return getNmTipoRetorno();
 
 		return Action.SUCCESS;
 	}
@@ -801,6 +806,14 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 	public void setIdOrgaoObjeto(Long idOrgaoObjeto) {
 		this.idOrgaoObjeto = idOrgaoObjeto;
+	}
+
+	public String getNmTipoRetorno() {
+		return nmTipoRetorno;
+	}
+
+	public void setNmTipoRetorno(String nmTipoRetorno) {
+		this.nmTipoRetorno = nmTipoRetorno;
 	}
 
 	/*

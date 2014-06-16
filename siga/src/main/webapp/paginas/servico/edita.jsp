@@ -35,6 +35,8 @@
 								<c:when test="${servico.siglaServico == 'FS-SEC'}">(K) SECRETARIA</c:when>
 								<c:when test="${servico.siglaServico == 'FS-JUIZ'}">(K) JUIZ</c:when>
 								<c:when test="${servico.siglaServico == 'FS-PUB'}">(K) PÚBLICA</c:when>
+								<c:when test="${servico.siglaServico == 'FS-AUD'}">(K) AUDIÊNCIA</c:when>
+								<c:when test="${servico.siglaServico == 'FS-VIDEO'}">(K) VIDEOCONF.</c:when>
 								<c:otherwise>${servico.siglaServico}</c:otherwise>
 							</c:choose>
 

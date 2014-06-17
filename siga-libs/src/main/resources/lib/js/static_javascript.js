@@ -30,7 +30,9 @@ function popitup(url) {
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 
-	newwindow = window.open(url, 'xyz', winProp);
+	var nameWindow =  url.replace(/[^a-zA-Z 0-9]+/g,'');
+	
+	newwindow = window.open(url, nameWindow, winProp);
 
 	if (window.focus) {
 		newwindow.focus()

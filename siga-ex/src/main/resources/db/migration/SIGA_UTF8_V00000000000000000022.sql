@@ -2,8 +2,8 @@
 --	SCRIPT:DESTINACAO
 -------------------------------------------
 
-update siga.ex_tipo_movimentacao set descr_tipo_movimentacao = 'Encerramento' where id_tp_mov = 9;
-update siga.ex_tipo_movimentacao set descr_tipo_movimentacao = 'Reabertura' where id_tp_mov = 21;
+--update siga.ex_tipo_movimentacao set descr_tipo_movimentacao = 'Encerramento' where id_tp_mov = 9;
+--update siga.ex_tipo_movimentacao set descr_tipo_movimentacao = 'Reabertura' where id_tp_mov = 21;
 update siga.ex_tipo_movimentacao set descr_tipo_movimentacao = 'Encerramento de Volume' where id_tp_mov = 43;
 update siga.ex_tipo_movimentacao set descr_tipo_movimentacao = 'Recolhimento ao Arq. Permanente' where id_tp_mov = 19;
 update siga.ex_tipo_movimentacao set descr_tipo_movimentacao = 'Eliminação' where id_tp_mov = 10;

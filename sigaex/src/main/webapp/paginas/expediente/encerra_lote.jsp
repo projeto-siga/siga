@@ -10,7 +10,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Encerramento em Lote">
+<siga:pagina titulo="Arquivamento em Lote">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
@@ -49,7 +49,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Encerramento em Lote</h2>
+			<h2>Arquivamento em Lote</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -63,7 +63,7 @@
 				<td colspan="2">Encerramento</td>
 			</tr>
 			<tr class="button">
-				<td colspan="2"><input type="submit" value="Encerrar" class="gt-btn-small gt-btn-left" /></td>
+				<td colspan="2"><input type="submit" value="Arquivar" class="gt-btn-small gt-btn-left" /></td>
 			</tr>
 		</table>
 		</div>

@@ -42,7 +42,7 @@
 		</c:catch>
 		<li><ww:url id="url" action="encerrar_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Encerrar em lote" />
+				texto="Arquivar em lote" />
 		</li>
 		<c:catch>
 			<c:if

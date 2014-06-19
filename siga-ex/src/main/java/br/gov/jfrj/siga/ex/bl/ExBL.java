@@ -998,8 +998,9 @@ public class ExBL extends CpBL {
 					movDest[nivelMDest].getDtIniMov(),
 					movDest[nivelMDest].getResp(),
 					movDest[nivelMDest].getLotaResp());
-			calcularMarcadoresFuturosTemporalidade(set, mob,
-					movDest[nivelMDest], mDest[nivelMDest]);
+			//Edson: nao calcular nada, por enquanto
+			//calcularMarcadoresFuturosTemporalidade(set, mob,
+			//		movDest[nivelMDest], mDest[nivelMDest]);
 		}
 
 		return set;

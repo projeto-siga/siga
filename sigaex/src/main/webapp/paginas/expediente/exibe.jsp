@@ -363,7 +363,7 @@
 			<p>
 				<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 			</p>
-				<p>
+			<%--	<p>
 				<jsp:useBean id="now" class="java.util.Date"/>
 				<div style="font-weight: bold; font-size: 85%; margin-bottom: 2px">Marcas:</div> 
 				<c:forEach var="mobilVO" items="${docVO.mobs}" varStatus="loop">
@@ -385,7 +385,7 @@
 						</p>
 					</c:if>
 				</c:forEach>
-			</p>
+			</p> --%>
 			<p>
 				<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
 			</p>

@@ -673,7 +673,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		Long idSit = Ex
 				.getInstance()
 				.getConf()
-				.buscaSituacao(getModelo(), doc.getExTipoDocumento(),getTitular(), getLotaTitular(),
+				.buscaSituacao(getModelo(), doc.getExTipoDocumento(),
+						getTitular(), getLotaTitular(),
 						CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
 				.getIdSitConfiguracao();
 
@@ -683,7 +684,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
 			setEletronico(2);
 			setEletronicoFixo(true);
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT && (getEletronico() == null || getEletronico() == 0)) {
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT
+				&& (getEletronico() == null || getEletronico() == 0)) {
 			setEletronico(1);
 		} else if (isAlterouModelo()) {
 			if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT) {
@@ -755,9 +757,6 @@ public class ExDocumentoAction extends ExActionSupport {
 			// Testa se existe algum valor preenchido em documento.
 			// Se não houver gera ObjectNotFoundException
 			final Date d = documento.getDtRegDoc();
-
-
-
 
 			if (documento.isFinalizado())
 
@@ -840,9 +839,6 @@ public class ExDocumentoAction extends ExActionSupport {
 				throw new AplicacaoException(
 						"Documento já foi excluído anteriormente", 1, e);
 			}
-
-
-
 
 			if (doc.isFinalizado())
 
@@ -1070,13 +1066,6 @@ public class ExDocumentoAction extends ExActionSupport {
 						+ ", é necessário definir um destinatário");
 		}
 
-		
-		
-		
-		
-		
-		
-		
 		if (doc.getExClassificacao() == null)
 			throw new AplicacaoException(
 					"É necessário informar a classificação documental.");
@@ -1161,13 +1150,6 @@ public class ExDocumentoAction extends ExActionSupport {
 				}
 			}
 
-
-
-
-
-
-
-
 		} catch (final Throwable t) {
 			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
 		}
@@ -1176,9 +1158,6 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aFinalizarAssinar() throws Exception {
-
-
-
 
 		aFinalizar();
 
@@ -1248,9 +1227,6 @@ public class ExDocumentoAction extends ExActionSupport {
 				throw new AplicacaoException(
 						"O campo descrição possui mais do que "
 								+ getTamanhoMaximoDescricao() + " caracteres.");
-
-
-
 
 			if (doc.isFinalizado()) {
 
@@ -1466,6 +1442,31 @@ public class ExDocumentoAction extends ExActionSupport {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public String aCorrigirArquivamentosVolume() throws Exception {
+		int idPrimeiroDoc, idUltimoDoc;
+		boolean efetivar;
+		try {
+			idPrimeiroDoc = Integer.valueOf(param("de"));
+		} catch (Exception e) {
+			idPrimeiroDoc = 1;
+		}
+		try {
+			idUltimoDoc = Integer.valueOf(param("ate"));
+		} catch (Exception e) {
+			idUltimoDoc = 999999999;
+		}
+		try {
+			efetivar = Boolean.parseBoolean(param("efetivar"));
+		} catch (Exception e) {
+			efetivar = false;
+		}
+		Ex.getInstance()
+				.getBL()
+				.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc,
+						efetivar);
+		return Action.SUCCESS;
 	}
 
 	public String aTesteExclusaoDJE() throws Exception {
@@ -2320,9 +2321,6 @@ public class ExDocumentoAction extends ExActionSupport {
 		doc.setExTipoDocumento(dao().consultar(getIdTpDoc(),
 				ExTipoDocumento.class, false));
 
-
-
-
 		if (!doc.isFinalizado())
 			doc.setExFormaDocumento(dao().consultar(getIdFormaDoc(),
 					ExFormaDocumento.class, false));
@@ -2474,14 +2472,12 @@ public class ExDocumentoAction extends ExActionSupport {
 							if (parametro.contains(m))
 								parametro = parametro.replaceAll(m, "");
 						}
-						if(!FuncoesEL.contemTagHTML(parametro)) {
-							if(parametro.contains("\"")) {
+						if (!FuncoesEL.contemTagHTML(parametro)) {
+							if (parametro.contains("\"")) {
 								parametro = parametro.replace("\"", "&quot;");
 								setParam(s, parametro);
 							}
 						}
-
-
 
 						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
 								.getBytes());
@@ -2510,11 +2506,9 @@ public class ExDocumentoAction extends ExActionSupport {
 			ExBL bl = Ex.getInstance().getBL();
 			formasDoc.addAll(bl
 
-
-
-				.obterFormasDocumento(
-						bl.obterListaModelos(null, getDespachando(), null, true, getTitular(), getLotaTitular(), getAutuando()), 
-						doc.getExTipoDocumento(), null));
+			.obterFormasDocumento(bl.obterListaModelos(null, getDespachando(),
+					null, true, getTitular(), getLotaTitular(), getAutuando()),
+					doc.getExTipoDocumento(), null));
 		}
 
 		return formasDoc;

@@ -362,8 +362,9 @@ public class ExBL extends CpBL {
 		Ex.getInstance().getBL().corrigirArquivamentosEmVolume(300000, 400000, false);
 	}
 
-	private void corrigirArquivamentosEmVolume(int primeiro, int ultimo,
+	public void corrigirArquivamentosEmVolume(int primeiro, int ultimo,
 			boolean efetivar) {
+		Long ini = System.currentTimeMillis();
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
 		Query query = dao().getSessao().createQuery(
@@ -390,7 +391,7 @@ public class ExBL extends CpBL {
 				DpLotacao lota = mov.getLotaResp();
 
 				System.out.println();
-				System.out.println(doc.getCodigo());
+				System.out.println(doc.getCodigo() + " (" + doc.getIdDoc() + ")");
 
 				if (!Ex.getInstance().getComp()
 						.podeEncerrar(pess, lota, doc.getMobilGeral()))
@@ -408,6 +409,7 @@ public class ExBL extends CpBL {
 				e.printStackTrace();
 			}
 		}
+		System.out.println(index + " itens; " + (System.currentTimeMillis()-ini) + " ms");
 	}
 
 	public void marcar(ExDocumento doc) throws Exception {

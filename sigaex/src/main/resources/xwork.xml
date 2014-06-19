@@ -445,7 +445,10 @@
 				exibir?sigla=${sigla}
 			</result>
 		</action>
-
+		<action name="corrigir_arquivamentos_volume" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aCorrigirArquivamentosVolume">
+			<result>/paginas/expediente/corrigir_arquivamentos_volume.jsp</result>
+		</action>
 
 	</package>
 

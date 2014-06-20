@@ -1522,6 +1522,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			}
 		}
 		
+		//Não deixa desfazer os antigos arquivamentos feitos em volume de processo
+		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO 
+				&& !podeReabrir(titular, lotaTitular, mob)) {
+			return false;
+			
+		}
+		
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO 
 				&& !podeCancelarAnexo(titular, lotaTitular, mob, exUltMovNaoCanc)) {
 			return false;

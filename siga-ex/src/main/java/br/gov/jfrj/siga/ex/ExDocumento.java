@@ -895,19 +895,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				vias = getExClassificacaoAtual().getExViaSet();
 		}
 
-		// Edson: Antigamente, quando se alterava uma via, a nova instância
+		// Edson: Antes da versão Destinação, quando se alterava uma via, a nova instância
 		// continuava apontando para a mesma classificação, pois esta não era
-		// alterada junto. Limpar o set de vias, garantido que só haja uma
+		// alterada junto. Isso não dava problema porque o exViaSet, no exClassificacao.hbm.xml,
+		// estava com his_ativo = 1, de modo que o hibernate montava o set só com as vias ativas.
+		// Isso não daria certo, porém, com classificacoes antigas, portanto o his_ativo = 1 não
+		// está mais lá. Por isso, é preciso limpar o set de vias, garantido que só haja uma
 		// instância de cada via:
-		if (((ExVia) vias.toArray()[0]).getExClassificacao().isFechada()) {
-			HashMap<String, ExVia> viasUmaPorCodigo = new HashMap<String, ExVia>();
-			for (ExVia v : vias) {
-				ExVia vHash = viasUmaPorCodigo.get(v.getCodVia());
-				if (vHash == null || v.getHisDtIni().after(vHash.getHisDtIni()))
-					viasUmaPorCodigo.put(v.getCodVia(), v);
-			}
-			vias = new HashSet<ExVia>(viasUmaPorCodigo.values());
+		HashMap<String, ExVia> viasUmaPorCodigo = new HashMap<String, ExVia>();
+		for (ExVia v : vias) {
+			ExVia vHash = viasUmaPorCodigo.get(v.getCodVia());
+			if (vHash == null || v.getHisDtIni().after(vHash.getHisDtIni()))
+			viasUmaPorCodigo.put(v.getCodVia(), v);
 		}
+		vias = new HashSet<ExVia>(viasUmaPorCodigo.values());
 
 		if (vias != null
 				&& vias.size() > 0

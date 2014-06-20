@@ -8,7 +8,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Protocolo de Encerramento" popup="true">
+<siga:pagina titulo="Protocolo de Arquivamento" popup="true">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
@@ -16,7 +16,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-		<h2>Protocolo de Encerramento</h2>
+		<h2>Protocolo de Arquivamento</h2>
 
 			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
 			
@@ -125,7 +125,7 @@
 			</c:if>
 			<br />
 			<br />
-			<p align="center">Encerrado em: _____/_____/_____ às _____:_____</p>
+			<p align="center">Arquivado em: _____/_____/_____ às _____:_____</p>
 			<br />
 			<br />
 			<br />

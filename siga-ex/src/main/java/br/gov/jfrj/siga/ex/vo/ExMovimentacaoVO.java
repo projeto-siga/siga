@@ -22,7 +22,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMEN
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO;
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
@@ -405,7 +405,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
-		if (idTpMov == TIPO_MOVIMENTACAO_ENCERRAMENTO
+		if (idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
@@ -469,10 +469,10 @@ public class ExMovimentacaoVO extends ExVO {
 				classe = "assinaturaMov";
 				break;
 
-			case (int) TIPO_MOVIMENTACAO_ENCERRAMENTO:
+			case (int) TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE:
 			case (int) TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE:
 			case (int) TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO:
-				classe = "arquivamento_encerramento";
+				classe = "arquivamento";
 				break;
 			case (int) TIPO_MOVIMENTACAO_JUNTADA:
 				classe = "juntada";

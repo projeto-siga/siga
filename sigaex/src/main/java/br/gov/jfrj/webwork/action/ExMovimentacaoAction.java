@@ -1035,7 +1035,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 
 
-	public String aEncerrarGravar() throws Exception {
+	public String aArquivarCorrenteGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -1046,14 +1046,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 
 		if (!Ex.getInstance().getComp()
-				.podeEncerrar(getTitular(), getLotaTitular(), mob))
+				.podeArquivarCorrente(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Via ou processo não pode ser encerrado(a)");
+					"Via ou processo não pode ser arquivado(a)");
 		try {
 			Ex.getInstance()
 					.getBL()
 
-					.encerrar(getCadastrante(), getLotaTitular(), mob,
+					.arquivarCorrente(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), null, mov.getSubscritor());
 		} catch (final Exception e) {
 			throw e;
@@ -1124,12 +1124,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		lerForm(mov);
 
 		if (!Ex.getInstance().getComp()
-				.podeReabrir(getTitular(), getLotaTitular(), mob))
+				.podeDesarquivarCorrente(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Via não pode ser reaberta");
 		try {
 			Ex.getInstance()
 					.getBL()
-					.reabrir(getCadastrante(), getLotaTitular(), mob,
+					.desarquivarCorrente(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor());
 		} catch (final Exception e) {
 			throw e;
@@ -2312,8 +2312,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aEncerrarLote() throws Exception {
-		List<ExMobil> provItens = dao().consultarParaEncerrarEmLote(
+	public String aArquivarCorrenteLote() throws Exception {
+		List<ExMobil> provItens = dao().consultarParaArquivarCorrenteEmLote(
 				getLotaTitular());
 
 		setItens(new ArrayList<ExMobil>());
@@ -2330,7 +2330,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	public String aEncerrarLoteGravar() throws Exception {
+	public String aArquivarCorrenteLoteGravar() throws Exception {
 		final ExMovimentacao mov = new ExMovimentacao();
 		lerForm(mov);
 
@@ -2350,7 +2350,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 					Ex.getInstance()
 							.getBL()
-							.encerrar(getCadastrante(), getLotaTitular(), mob,
+							.arquivarCorrente(getCadastrante(), getLotaTitular(), mob,
 
 
 									mov.getDtMov(), dt, mov.getSubscritor());

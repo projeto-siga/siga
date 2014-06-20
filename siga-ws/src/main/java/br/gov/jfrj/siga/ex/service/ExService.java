@@ -35,7 +35,7 @@ public interface ExService extends Remote {
 			throws Exception;
 
 
-	public Boolean encerrar(String codigoDocumentoVia,
+	public Boolean arquivarCorrente(String codigoDocumentoVia,
 			String siglaDestino, String siglaCadastrante) throws Exception;
 
 	public Boolean podeMovimentar(String codigoDocumento,

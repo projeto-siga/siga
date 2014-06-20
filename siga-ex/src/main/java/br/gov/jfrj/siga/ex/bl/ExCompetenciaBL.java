@@ -523,7 +523,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <ul>
 	 * <li>Móbil não pode estar em trânsito</li>
 	 * <li>Móbil não pode estar juntado</li>
-	  * <li>Móbil não pode estar arquivado ou encerrado</li>
+	  * <li>Móbil não pode estar arquivado</li>
 	 * <li>Volume não pode estar encerrado</li>
 	 * <li>Móbil tem de estar finalizado</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o móbil / usuário</li>
@@ -543,7 +543,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return !mob.isEmTransito()
 					&& !mob.isGeral()
 					&& !mob.isJuntado()
-					&& !mob.isEncerradoOuArquivado()
+					&& !mob.isArquivado()
 					&& !mob.isSobrestado()
 					&& !mob.isVolumeEncerrado()
 					&& podeMovimentar(titular, lotaTitular, mob)
@@ -656,7 +656,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se é possível fazer encerramento de um móbil, segundo as regras a
+	 * Retorna se é possível fazer arquivamento corrente de um móbil, segundo as regras a
 
 	 * seguir:
 	 * <ul>
@@ -664,7 +664,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Móbil tem de ser via ou geral de processo (caso em que se condidera a
 	 * situação do último volume)</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
-	 * <li>Móbil não pode estar encerrado/arquivado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Móbil não pode estar juntado</li>
 	 * <li>Móbil não pode estar em trânsito</li>
 	 * <li>Não pode haver configuração impeditiva</li>
@@ -676,7 +676,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeEncerrar(final DpPessoa titular,
+	public boolean podeArquivarCorrente(final DpPessoa titular,
 			final DpLotacao lotaTitular, ExMobil mob) throws Exception {
 
 		if(mob.doc().isEletronico() && !mob.doc().isAssinadoEletronicoPorTodosOsSignatarios())
@@ -697,12 +697,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return mob != null
 				&& mob.doc().isAssinado()
 				&& podeMovimentar(titular, lotaTitular, mob)
-				&& !mob.isEncerradoOuArquivado()
+				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
 				&& !mob.isEmTransito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
@@ -715,7 +715,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Documento tem de estar assinado</li>
 	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Móbil não pode estar juntado</li>
 	 * <li>Móbil não pode estar em trânsito</li>
 	 * <li>Não pode haver configuração impeditiva</li>
@@ -739,7 +739,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return mob.doc().isFinalizado()
 				&& (mob.isVia() || mob.isVolume())
 				&& podeMovimentar(titular, lotaTitular, mob)
-				&& !mob.isEncerradoOuArquivado()
+				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
 				&& !mob.isEmTransito()
@@ -761,7 +761,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Documento tem de estar assinado</li>
 	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
 	 * <li>Móbil não pode estar juntado</li>
 	 * <li>Móbil não pode estar em trânsito</li>
 	 * <li>Não pode haver configuração impeditiva</li>
@@ -857,7 +856,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
-				&& !mob.isEncerradoOuArquivado()
+				&& !mob.isArquivado()
 				&& mob.doc().isAssinado()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
@@ -871,7 +870,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Documento não pode estar cancelado</li>
 	 * <li>Volume não pode estar encerrado, pelo fato de documento filho
 	 * representar conteúdo agregado ao móbil</li>
-	 * <li>Móbil não pode estar encerrado/arquivado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
 	 * <li>Não pode haver configuração impeditiva</li>
 	 * </ul>
@@ -887,9 +886,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
-				&& !mob.isEncerrado()
 				&& !mob.isVolumeEncerrado()
-				&& !mob.isEncerradoOuArquivado()
+				&& !mob.isArquivado()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
 						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO);
@@ -917,7 +915,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Móbil tem de ser via ou geral de processo</li>
 
 	 * <li>Móbil tem de estar assinado</li>
-	 * <li>Móbil tem de estar encerrado</li>
+	 * <li>Móbil tem de estar arquivado corrente</li>
 	 * <li>PCTT tem de prever, para o móbil, tempo de permanência no arquivo
 	 * intermediário</li>
 	 * <li>Móbil não pode estar arquivado intermediário nem permanente</li>
@@ -941,7 +939,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return mob != null
 				&& mob.doc().isAssinado()
-				&& mob.isEncerrado()
+				&& mob.isArquivadoCorrente()
 				&& mob.temTemporalidadeIntermediario()
 				&& !mob.isArquivadoIntermediario()
 				&& !mob.isArquivadoPermanente()
@@ -980,7 +978,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Móbil tem de ser via ou geral de processo</li>
 	 * <li>Móbil não pode estar sem efeito</li>
 	 * <li>Móbil tem de estar assinado</li>
-	 * <li>Móbil tem de estar encerrado ou arquivado intermediário; não pode ter
+	 * <li>Móbil tem de estar arquivado corrente ou intermediário; não pode ter
 	 * sido arquivado permanentemente</li>
 	 * <li>Tem de estar prevista guarda permanente, seja por PCTT ou por
 	 * indicação</li>
@@ -1005,7 +1003,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return mob != null
 				&& mob.doc().isAssinado()
-				&& ((!mob.temTemporalidadeIntermediario() && mob.isEncerrado()) || mob
+				&& ((!mob.temTemporalidadeIntermediario() && mob.isArquivadoCorrente()) || mob
 						.isArquivadoIntermediario())
 				&& !mob.isArquivadoPermanente()
 				&& mob.isDestinacaoGuardaPermanente()
@@ -1047,7 +1045,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * tem de ser verdadeiro para o móbil / usuário</li>
 	 * <li>Documento tem de estar finalizado</li>
 	 * <li>Documento não pode estar cancelado</li>
-	 * <li>Documento não pode encerrado, arquivado nem eliminado</li>
+	 * <li>Documento não pode estar em algum arquivo nem eliminado</li>
 	 * <li>Não pode haver configuração impeditiva</li>
 	 * </ul>
 	 * 
@@ -1064,7 +1062,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& mob.getExDocumento().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
 			return false;
 
-		if (mob.isEncerradoOuArquivado() || mob.isEliminado())
+		if (mob.isArquivado() || mob.isEliminado())
 			return false;
 
 		// cosignatario pode assinar depois que o subscritor já tiver assinado
@@ -1435,7 +1433,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		//Não deixa cancelar juntada quando o documento está juntado a um expediente/processo que já sofreu outra movimentação
 		if(exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
 			
-			if (exUltMovNaoCanc.getExMobilRef().isEncerradoOuArquivado())
+			if (exUltMovNaoCanc.getExMobilRef().isArquivado())
 				return false;
 			
 			ExMovimentacao ultimaMovimentacaoDaReferencia = exUltMovNaoCanc.getExMobilRef().getUltimaMovimentacao();
@@ -1523,8 +1521,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 		
 		//Não deixa desfazer os antigos arquivamentos feitos em volume de processo
-		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO 
-				&& !podeReabrir(titular, lotaTitular, mob)) {
+		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
+				&& !podeDesarquivarCorrente(titular, lotaTitular, mob)) {
 			return false;
 			
 		}
@@ -1729,7 +1727,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						.getUltimoVolume().isSobrestado()))
 			return false;
 			
-		if (mob.isEncerrado())
+		if (mob.isArquivadoCorrente())
 			return false;
 		
 		if (!podeMovimentar(titular, lotaTitular, mob))
@@ -1756,7 +1754,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <ul>
 	 * <li>Móbil tem de ser volume</li>
 	 * <li>Volume não pode estar encerrado</li>
-	 * <li>Móbil não pode estar encerrado/arquivado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Móbil não pode estar spbrestado</li>
 	 * <li>Volume não pode estar em trânsito</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
@@ -1778,7 +1776,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isVolumeEncerrado())
 			return false;
 
-		if (mob.isEncerradoOuArquivado())
+		if (mob.isArquivado())
 			return false;
 
 		if (mob.isEmTransito())
@@ -1807,7 +1805,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <ul>
 	 * <li>Móbil tem de ser via ou geral de processo.</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
-	 * <li>Móbil tem de estar arquivado/encerrado, mas não permanentemente</li>
+	 * <li>Móbil tem de estar arquivado corrente ou intermediário, mas não permanentemente</li>
 	 * <li>Móbil não pode estar em edital de eliminação</li>
 	 * <li>Móbil não pode estar em trânsito</li>
 	 * <li>Não pode haver configuração impeditiva</li>
@@ -1819,7 +1817,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeReabrir(final DpPessoa titular,
+	public boolean podeDesarquivarCorrente(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 
 		if (!mob.isVia() && !mob.isGeralDeProcesso())
@@ -1830,12 +1828,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (ultMovNaoCancelada == null)
 			return false;
 		return podeMovimentar(titular, lotaTitular, mob)
-				&& (mob.isEncerrado() || mob.isArquivadoIntermediario())
+				&& (mob.isArquivadoCorrente() || mob.isArquivadoIntermediario())
 				&& !mob.isArquivadoPermanente()
 				&& !mob.isEmEditalEliminacao()
 				&& !mob.isEmTransito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 
@@ -1843,7 +1841,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * Retorna se é possível reabrir um móbil, segundo as seguintes regras:
 	 * <ul>
 	 * <li>Móbil tem de ser via ou geral de processo.</li>
-	 * <li>Móbil tem de estar arquivado/encerrado, mas não permanentemente</li>
+	 * <li>Móbil tem de estar em arquivo intermediário, não permanente</li>
 	 * <li>Móbil não pode estar em edital de eliminação</li>
 	 * <li>Móbil não pode estar em trânsito</li>
 	 * <li>Não pode haver configuração impeditiva</li>
@@ -1934,7 +1932,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Móbil não pode ter despacho pendente de assinatura</li>
 	 * <li>Móbil tem de ser via ou volume. Não pode ser geral</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Móbil não pode estar em edital de eliminação</li>
 	 * <li>Móbil tem de estar assinado ou ser externo. <b>Mas documento externo
 	 * não é cnsiderado assinado? <i>isAssinado</i> não deveria retornar
@@ -1958,7 +1956,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isJuntado()
-				&& !mob.isEncerradoOuArquivado()
+				&& !mob.isArquivado()
 				&& !mob.isEmEditalEliminacao()
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()
@@ -2073,7 +2071,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Documento tem de estar assinado</li>
 	 * <li>Não pode haver agendamento de publicação direta em aberto</li>
 	 * <li>Não pode haver agendamento de publicação indireta em aberto</li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Móbil não pode estar eliminado</li>
 	 * <li>Nada é dito a respeito do Boletim Interno</li>
 	 * <li>Não pode haver configuração impeditiva</li>
@@ -2096,7 +2094,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| mob.doc().isPublicacaoAgendada()
 				|| mob.doc().isSemEfeito()
 				|| mob.doc().isEliminado()
-				|| mob.isEncerradoOuArquivado())
+				|| mob.isArquivado())
 			return false;
 		if (podeAtenderPedidoPublicacao(titular, lotaTitular,null))
 			return true;
@@ -2144,7 +2142,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Documento tem de estar assinado</li>
 	 * <li>Não pode haver outra solicitação de publicação no DJE em aberto</li>
 	 * <li>Não pode pode haver solicitação de publicação no Boletim em aberto</li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Móbil não pode estar eliminado</li>
 	 * <li>Não pode haver agendamento de publicação direta em aberto
 	 * <b>(verificação desnecessária?)</b></li>
@@ -2176,7 +2174,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.doc().isPublicacaoAgendada()
 					&& !mob.doc().isSemEfeito()
 					&& !mob.doc().isEliminado()
-					&& !mob.isEncerradoOuArquivado()
+					&& !mob.isArquivado()
 					&& getConf()
 							.podePorConfiguracao(
 									titular,
@@ -2192,7 +2190,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <ul>
 	 * <li>Documento tem de estar finalizado</li>
 	 * <li>Documento tem de ser interno produzido</li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
 	 * </ul>
 	 * 
@@ -2214,10 +2212,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().isExpediente() && mob.doc().getPai() != null)
 			return false;
 		
-		if (mob.doc().isProcesso() && mob.isEncerrado())
+		if (mob.doc().isProcesso() && mob.isArquivadoCorrente())
 			return false;
 		
-		if (mob.isEncerradoOuArquivado())
+		if (mob.isArquivado())
 			return false;
 		
 		if(mob.doc().isSemEfeito())
@@ -2731,9 +2729,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * com as condições a seguir:
 	 * <ul>
 	 * <li>Móbil tem de ser via ou geral de processo</li>
-	 * <li>Móbil tem de estar encerrado</li>
+	 * <li>Móbil tem de estar em arquivo corrente ou intermediário</li>
 	 * <li>PCTT tem de prever, para o móbil, destinação final Eliminação</li>
-	 * <li>Móbil tem de estar encerrado ou arquivado intermediário</li>
 	 * <li>Móbil não pode estar arquivado permanentemente</li>
 	 * <li>Documento a que o móbil pertence tem de ser digital ou estar na
 	 * lotação titular</li>
@@ -2760,7 +2757,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			mobVerif = mob.doc().getUltimoVolume();
 
 		return mobVerif != null
-				&& (mobVerif.isEncerrado() || mobVerif
+				&& (mobVerif.isArquivadoCorrente() || mobVerif
 						.isArquivadoIntermediario())
 				&& !mobVerif.isArquivadoPermanente()
 				&& mobVerif.isDestinacaoEliminacao()
@@ -2785,7 +2782,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Documento tem de estar assinado</li>
 	 * <li>Móbil não pode estar juntado <b>(mas pode ser juntado estando
 	 * apensado?)</b></li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Não pode haver configuração impeditiva</li>
 	 * </ul>
 	 * 
@@ -2811,7 +2808,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						.isAssinadoEletronicoPorTodosOsSignatarios()))
 				&& !mob.isJuntado()
 				&& !mob.isApensado()
-				&& !mob.isEncerradoOuArquivado()
+				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()
 				&& podePorConfiguracao(titular, lotaTitular,
@@ -2830,7 +2827,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o móbil/usuário</li>
 	 * <li>Documento tem de estar assinado</li>
 	 * <li>Móbil não pode estar juntado</li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Não pode haver configuração impeditiva</li>
 	 * </ul>
 	 * 
@@ -2856,7 +2853,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& mob.doc().isAssinado()
 				&& !mob.isApensado()
 				&& !mob.isJuntado()
-				&& !mob.isEncerradoOuArquivado()
+				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO,
@@ -2872,7 +2869,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Precisa estar apensado</li>
 	 * <li>Não pode estar em trânsito <b>(o que é isEmTransito?)</b></li>
 	 * <li>Não pode estar cancelado</li>
-	 * <li>Não pode estar arquivado/encerrado</li>
+	 * <li>Não pode estar em algum arquivo</li>
 	 * <li>Não pode estar juntado <b>(mas pode ser juntado estando
 	 * apensado?)</b></li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o móbil/usuário</li>
@@ -2901,7 +2898,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (!mob.isApensado() || mob.isEmTransito() || mob.isCancelada()
-				|| mob.isEncerradoOuArquivado()
+				|| mob.isArquivado()
 				|| !podeMovimentar(titular, lotaTitular, mob)
 				|| mob.isJuntado())
 			return false;
@@ -3269,7 +3266,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <ul>
 	 * <li>Móbil tem de ser via ou volume</li>
 	 * <li>Móbil não pode estar cancelado</li>
-	 * <li>Móbil não pode estar arquivado/encerrado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Móbil tem de estar em trânsito</li>
 	 * <li>Lotação do usuário tem de ser a do atendente definido na última
 	 * movimentação</li>
@@ -3428,7 +3425,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * próprio subscritor ou titular do documento</li>
 	 * <li>Documento não pode ser eletrônico</li>
 	 * <li>Documento tem de estar finalizado</li>
-	 * <li>Móbil não pode estar encerrado/arquivado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Móbil não pode ter sido eliminado</li>
 	 * <li>Não pode haver configuração impeditiva</li>
 	 * </ul>
@@ -3443,7 +3440,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		if (!mob.isGeral())
 			return false;
-		if (mob.isEncerradoOuArquivado() || mob.isEliminado())
+		if (mob.isArquivado() || mob.isEliminado())
 			return false;
 		if (mob.getExDocumento().isProcesso()
 				&& mob.getExDocumento().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
@@ -3506,7 +3503,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Publicação no boletim não pode ter sido já agendada para o documento</li>
 	 * <li>Documento tem de estar assinado</li>
 	 * <li>Documento não pode ter sido eliminado</li>
-	 * <li>Móbil não pode estar encerrado/arquivado</li>
+	 * <li>Móbil não pode estar em algum arquivo</li>
 	 * <li>Não pode haver configuração impeditiva</li>
 	 * 
 	 * </ul>
@@ -3539,7 +3536,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isBoletimPublicado()
 				&& mob.doc().isAssinado()
 				&& !mob.doc().isPublicacaoBoletimSolicitada()
-				&& !mob.isEncerradoOuArquivado()
+				&& !mob.isArquivado()
 				&& (getConf()
 						.podePorConfiguracao(
 								titular,
@@ -3589,7 +3586,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <ul>
 	 * <li>Não pode estar cancelado</li>
 	 * <li>Volume não pode estar encerrado</li>
-	 * <li>Não pode estar arquivado/encerrado</li>
+	 * <li>Não pode estar em algum arquivo</li>
 	 * <li>Não pode estar juntado</li>
 	 * <li>Não pode estar em trânsito</li>
 	 * <li><i>podeMovimentar()</i> precisa retornar verdadeiro para ele</li>
@@ -3609,7 +3606,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return !mob.isCancelada() && !mob.isVolumeEncerrado()
 				&& mob.doc().isAssinado() && !mob.isJuntado()
-				&& !mob.isEmTransito() && !mob.isEncerradoOuArquivado()
+				&& !mob.isEmTransito() && !mob.isArquivado()
 				&& podeMovimentar(titular, lotaTitular, mob);
 	}
 
@@ -3634,7 +3631,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * Retorna se é possível fazer transferência. As regras são as seguintes
 	 * para este móbil: <ul <li>Precisa ser via ou volume (não pode ser geral)</li>
 	 * <li>Não pode estar em trânsito</li> <li>Não pode estar juntado.</li> <li>
-	 * Não pode estar arquivado/encerrado.</li> <li><i>podeMovimentar()</i>
+	 * Não pode estar em arquivo permanente.</li> <li><i>podeMovimentar()</i>
 	 * precisa retornar verdadeiro para ele</li> <li>Não pode haver configuração
 	 * impeditiva</li> </ul>
 	 * 
@@ -3660,7 +3657,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
 						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
 				&& !mob.isEmEditalEliminacao()
-				// && !mob.isEncerradoOuArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
@@ -3966,7 +3962,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isApensado())
 			return false;
 			
-		if(mob.isEncerradoOuArquivado())
+		if(mob.isArquivado())
 			return false;
 		
 		if(mob.isSobrestado())

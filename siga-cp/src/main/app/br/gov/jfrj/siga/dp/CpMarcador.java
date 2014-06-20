@@ -39,7 +39,7 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_A_ARQUIVAR = 5;
 
-	final static public long MARCADOR_ENCERRADO = 6;
+	final static public long MARCADOR_ARQUIVADO_CORRENTE = 6;
 
 	final static public long MARCADOR_A_ELIMINAR = 7;
 

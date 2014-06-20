@@ -126,7 +126,7 @@
 
 	<!-- Somente os "em andamento", "Transferido para Órgão Externo" -->
 
-	<query name="consultarParaEncerrarEmLote">
+	<query name="consultarParaArquivarCorrenteEmLote">
 		<![CDATA[select mob from ExMobil mob join mob.exMarcaSet mar 
 		where (mar.dpLotacaoIni.idLotacao=:lotaIni
 		and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=11)		

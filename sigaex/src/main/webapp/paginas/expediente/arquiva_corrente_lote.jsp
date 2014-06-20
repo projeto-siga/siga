@@ -16,7 +16,7 @@
 		src="<c:url value="/staticJavascript.action"/>"></script>
 
 	<script type="text/javascript" language="Javascript1.1">
-	<ww:url id="url" action="encerrar_lote" namespace="/expediente/mov"/>
+	<ww:url id="url" action="arquivar_corrente_lote" namespace="/expediente/mov"/>
 	function sbmt(offset) {
 		frm.action = '${url}';
 		frm.submit();
@@ -54,13 +54,13 @@
 			<div class="gt-content-box gt-for-table">
 
 
-	<ww:form name="frm" action="encerrar_lote_gravar"
+	<ww:form name="frm" action="arquivar_corrente_lote_gravar"
 		namespace="/expediente/mov" method="GET" theme="simple">
 		<ww:token />
 		<ww:hidden name="postback" value="1" />
 		<table class="gt-form-table">
 			<tr class="header">
-				<td colspan="2">Encerramento</td>
+				<td colspan="2">Arquivamento</td>
 			</tr>
 			<tr class="button">
 				<td colspan="2"><input type="submit" value="Arquivar" class="gt-btn-small gt-btn-left" /></td>

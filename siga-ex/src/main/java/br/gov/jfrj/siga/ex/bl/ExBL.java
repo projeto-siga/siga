@@ -394,12 +394,12 @@ public class ExBL extends CpBL {
 				System.out.println(doc.getCodigo() + " (" + doc.getIdDoc() + ")");
 
 				if (!Ex.getInstance().getComp()
-						.podeEncerrar(pess, lota, doc.getMobilGeral()))
+						.podeArquivarCorrente(pess, lota, doc.getMobilGeral()))
 					System.out.println("NAO PODE");
 				else if (efetivar)
 					Ex.getInstance()
 							.getBL()
-							.encerrar(pess, lota, doc.getMobilGeral(),
+							.arquivarCorrente(pess, lota, doc.getMobilGeral(),
 									mov.getDtIniMov(), null, pess);
 				// if (index % 10 == 0){
 				dao().getSessao().clear();
@@ -928,11 +928,11 @@ public class ExBL extends CpBL {
 				if (!mob.isEliminado())
 					acrescentarMarca(set, mob, m, dt, null, null);
 			} else {
-				// Edson: Os marcadores "Encerrado" e
+				// Edson: Os marcadores "Arq Corrente" e
 				// "Aguardando andamento" são mutuamente exclusivos
 				if (m != CpMarcador.MARCADOR_EM_ANDAMENTO
-						|| !(mob.isEncerradoOuArquivado() || mob.doc()
-								.getMobilGeral().isEncerradoOuArquivado()))
+						|| !(mob.isArquivado() || mob.doc()
+								.getMobilGeral().isArquivado()))
 					acrescentarMarca(set, mob, m, dt, ultMovNaoCanc.getResp(),
 							ultMovNaoCanc.getLotaResp());
 			}
@@ -964,9 +964,9 @@ public class ExBL extends CpBL {
 
 			Long t = mov.getIdTpMov();
 
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO) {
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {
 				nivelMDest++;
-				mDest[nivelMDest] = CpMarcador.MARCADOR_ENCERRADO;
+				mDest[nivelMDest] = CpMarcador.MARCADOR_ARQUIVADO_CORRENTE;
 				movDest[nivelMDest] = mov;
 			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO) {
 				nivelMDest++;
@@ -987,7 +987,7 @@ public class ExBL extends CpBL {
 				nivelMDest++;
 				mDest[nivelMDest] = CpMarcador.MARCADOR_ELIMINADO;
 				movDest[nivelMDest] = mov;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA) {
+			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE) {
 				nivelMDest = 0;
 			}
 
@@ -1009,7 +1009,7 @@ public class ExBL extends CpBL {
 	private void calcularMarcadoresFuturosTemporalidade(SortedSet<ExMarca> set,
 			ExMobil mob, ExMovimentacao mov, Long marcador) {
 
-		if (marcador != CpMarcador.MARCADOR_ENCERRADO
+		if (marcador != CpMarcador.MARCADOR_ARQUIVADO_CORRENTE
 				&& marcador != CpMarcador.MARCADOR_ARQUIVADO_INTERMEDIARIO)
 			return;
 
@@ -1021,7 +1021,7 @@ public class ExBL extends CpBL {
 		Date dtIniMarca = mov.getDtIniMov();
 		Long marcadorFuturo = 0L;
 
-		if (marcador == CpMarcador.MARCADOR_ENCERRADO) {
+		if (marcador == CpMarcador.MARCADOR_ARQUIVADO_CORRENTE) {
 			if (tmpCorrente != null)
 				dtIniMarca = tmpCorrente.getPrazoAPartirDaData(dtIniMarca);
 			if (tmpIntermed != null)
@@ -1533,7 +1533,7 @@ public class ExBL extends CpBL {
 					"Não foi possível movimentar a via porque ela encontra-se apensada ou possui apensos.");
 	}
 
-	public void encerrar(DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+	public void arquivarCorrente(DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			ExMobil mob, Date dtMov, Date dtMovIni, DpPessoa subscritor)
 			throws Exception {
 
@@ -1544,7 +1544,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO,
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null,
 					null, null, dt);
 
@@ -1561,7 +1561,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao encerrar documento.", 0, e);
+			throw new AplicacaoException("Erro ao arquivar documento.", 0, e);
 		}
 	}
 
@@ -2264,9 +2264,9 @@ public class ExBL extends CpBL {
 				final ExMobil mobPai = mov.getExMovimentacaoRef()
 						.getExMobilRef();
 
-				if (mobPai.isEncerradoOuArquivado())
+				if (mobPai.isArquivado())
 					throw new AplicacaoException(
-							"Não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se encerrado.");
+							"Não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
 
 				final ExMovimentacao ultMovPai = mobPai.getUltimaMovimentacao();
 
@@ -2413,18 +2413,6 @@ public class ExBL extends CpBL {
 					.getUltimaMovimentacaoNaoCancelada();
 			switch ((int) (long) movACancelar.getExTipoMovimentacao()
 					.getIdTpMov()) {
-
-			// Edson: comentando, pois movs de destinação não são mais feitas em
-			// volumes,
-			// mas sim no geral, e, no caso de via, não é mais permitido
-			// fazê-las se
-			// houver apensação
-			// case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO:
-			// case (int)
-			// ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO:
-			// case (int)
-			// ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE:
-			// case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR:
 				set = mob.getMobilETodosOsApensos();
@@ -2672,15 +2660,15 @@ public class ExBL extends CpBL {
 		return ExDao.getInstance();
 	}
 
-	public void reabrir(final DpPessoa cadastrante,
+	public void desarquivarCorrente(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor)
 			throws AplicacaoException {
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
 		for (ExMobil m : set) {
-			if (!m.isEncerradoOuArquivado())
+			if (!m.isArquivado())
 				throw new AplicacaoException(
-						"Não é possível reabrir um documento que não esteja encerrado");
+						"Não é possível desarquivar um documento não arquivado");
 		}
 
 		Date dt = dao().dt();
@@ -2689,7 +2677,7 @@ public class ExBL extends CpBL {
 
 			for (ExMobil m : set) {
 				final ExMovimentacao mov = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
 						cadastrante, lotaCadastrante, m, dtMov, subscritor,
 						null, null, null, dt);
 				gravarMovimentacao(mov);
@@ -3433,7 +3421,7 @@ public class ExBL extends CpBL {
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele está em trânsito, encerrado, juntado, cancelado, arquivado, pendente de assinatura ou encontra-se em outra lotação");
+						"A via não pode ser juntada ao documento porque ele está em trânsito, arquivado, juntado, cancelado, arquivado, pendente de assinatura ou encontra-se em outra lotação");
 		}
 
 		final ExMovimentacao mov;
@@ -3919,7 +3907,7 @@ public class ExBL extends CpBL {
 					&& !getComp()
 							.podeDespachar(cadastrante, lotaCadastrante, m))
 				throw new AplicacaoException(
-						"Não é permitido fazer despacho. Verifique se a via ou processo não está encerrado(a) e se não possui despachos pendentes de assinatura.");
+						"Não é permitido fazer despacho. Verifique se a via ou processo não está arquivado(a) e se não possui despachos pendentes de assinatura.");
 
 			if (fTranferencia) {
 
@@ -5069,9 +5057,9 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não é possível apensar a um documento não finalizado");
 
-		if (mobMestre.isEncerradoOuArquivado())
+		if (mobMestre.isArquivado())
 			throw new AplicacaoException(
-					"Não é possível apensar a um documento arquivado/encerrado");
+					"Não é possível apensar a um documento arquivado");
 
 		if (mobMestre.isSobrestado())
 			throw new AplicacaoException(

@@ -1456,10 +1456,10 @@ public class ExDao extends CpDao {
 		return query.list();
 	}
 
-	public List<ExMobil> consultarParaEncerrarEmLote(DpLotacao lot) {
+	public List<ExMobil> consultarParaArquivarCorrenteEmLote(DpLotacao lot) {
 		final Query query = getSessao().getNamedQuery(
 
-				"consultarParaEncerrarEmLote");
+				"consultarParaArquivarCorrenteEmLote");
 		query.setLong("lotaIni", lot.getIdLotacaoIni());
 		return query.list();
 	}

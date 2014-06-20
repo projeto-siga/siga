@@ -801,11 +801,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se o mobil está encerrado
+	 * Verifica se o mobil está arquivado corrente
 	 */
-	public boolean isEncerrado() {
-		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA,
+	public boolean isArquivadoCorrente() {
+		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
 				getMobilParaMovimentarDestinacao());
 	}
 
@@ -815,7 +815,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public boolean isArquivadoPermanente() {
 		return sofreuMov(
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
 				getMobilParaMovimentarDestinacao());
 	}
 
@@ -826,16 +826,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return sofreuMov(
 				new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO },
 				new long[] {
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO },
 				getMobilParaMovimentarDestinacao());
 	}
 
 	/**
-	 * Verifica se o mobil está encerrado/arquivado
+	 * Verifica se o mobil está em arquivo, seja corrente, intermediário ou permanente
 	 */
-	public boolean isEncerradoOuArquivado() {
-		return isEncerrado() || isArquivadoIntermediario()
+	public boolean isArquivado() {
+		return isArquivadoCorrente() || isArquivadoIntermediario()
 				|| isArquivadoPermanente();
 	}
 
@@ -1442,16 +1442,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * @return Verdadeiro se o volume está encerrado e Falso caso contrário.
 	 * 
 	 */
-
-
-
-
-
 	public boolean isVolumeEncerrado() {
 		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME);
-
-
-
 	}
 
 	/**
@@ -1785,7 +1777,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		SortedSet<ExMarca> setFinal = new TreeSet<ExMarca>();
 		for (ExMarca m : getExMarcaSet()) {
 			long idM = m.getCpMarcador().getIdMarcador();
-			if (idM == MARCADOR_ENCERRADO
+			if (idM == MARCADOR_ARQUIVADO_CORRENTE
 					|| idM == MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO
 					|| idM == MARCADOR_ARQUIVADO_INTERMEDIARIO
 					|| idM == MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE

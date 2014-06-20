@@ -52,7 +52,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 
 	final static public long TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA = 8;
 
-	final static public long TIPO_MOVIMENTACAO_ENCERRAMENTO = 9;
+	final static public long TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE = 9;
 
 	final static public long TIPO_MOVIMENTACAO_ELIMINACAO = 10;
 
@@ -80,7 +80,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 
 	final static public long TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO = 20;
 
-	final static public long TIPO_MOVIMENTACAO_REABERTURA = 21;
+	final static public long TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE = 21;
 
 	final static public long TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO = 22;
 

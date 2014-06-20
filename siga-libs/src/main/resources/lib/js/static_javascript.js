@@ -27,10 +27,19 @@ function popitup(url) {
 	var popH = 400;
 	var winleft = (screen.width - popW) / 2;
 	var winUp = (screen.height - popH) / 2;
+	
+	var nameWindow =  url.replace(/[^a-zA-Z 0-9]+/g,'');
+	
+	//Redimensionamento da janela pop up apenas para a opção despachar/transferir
+	if(nameWindow.indexOf("transferir") > -1){
+		popW = 900;
+		popH = 600;
+		winleft = 100;
+		winUp = 100;
+	}
+	
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
-
-	var nameWindow =  url.replace(/[^a-zA-Z 0-9]+/g,'');
 	
 	newwindow = window.open(url, nameWindow, winProp);
 

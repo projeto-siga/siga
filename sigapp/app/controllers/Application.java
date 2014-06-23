@@ -314,6 +314,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void agendamento_incluir_ajax() {
+		String lotacaoSessao = cadastrante().getLotacao().getSiglaLotacao();
 		List<Locais> listSalas = new ArrayList();
 		// pega usuario do sistema
 		String matriculaSessao = cadastrante().getMatricula().toString();
@@ -324,16 +325,8 @@ public class Application extends SigaApplication {
 			// forum onde ele está.
 			listSalas = (List) Locais.find(
 					"cod_forum='" + objUsuario.forumFk.cod_forum
-							+ "' order by ordem_apresentacao ").fetch(); // isso
-																			// não
-																			// dá
-																			// erro
-																			// no
-																			// caso
-																			// de
-																			// retorno
-																			// vazio.
-			render(listSalas);
+							+ "' order by ordem_apresentacao ").fetch(); // isso não dá erro no caso de retorno vazio.
+			render(listSalas,lotacaoSessao);
 		} else {
 			Excecoes("Usuário sem permissão");
 		}

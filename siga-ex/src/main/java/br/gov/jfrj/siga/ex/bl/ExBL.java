@@ -5453,18 +5453,20 @@ public class ExBL extends CpBL {
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		try {
 			for (ExVia viaAntiga : exClassAntigo.getExViaSet()) {
-				ExVia viaNova = new ExVia();
+				if (viaAntiga.isAtivo()){
+					ExVia viaNova = new ExVia();
 
-				PropertyUtils.copyProperties(viaNova, viaAntiga);
-				viaNova.setId(null);
-				viaNova.setExClassificacao(exClassNovo);
+					PropertyUtils.copyProperties(viaNova, viaAntiga);
+					viaNova.setId(null);
+					viaNova.setExClassificacao(exClassNovo);
 
-				dao().gravarComHistorico(viaNova, viaAntiga, dt,
+					dao().gravarComHistorico(viaNova, viaAntiga, dt,
 						identidadeCadastrante);
-				if (exClassNovo.getExViaSet() == null) {
-					exClassNovo.setExViaSet(new HashSet<ExVia>());
+					if (exClassNovo.getExViaSet() == null) {
+						exClassNovo.setExViaSet(new HashSet<ExVia>());
+					}
+					exClassNovo.getExViaSet().add(viaNova);
 				}
-				exClassNovo.getExViaSet().add(viaNova);
 
 			}
 		} catch (Exception e) {

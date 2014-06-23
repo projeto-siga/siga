@@ -899,9 +899,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		// continuava apontando para a mesma classificação, pois esta não era
 		// alterada junto. Isso não dava problema porque o exViaSet, no exClassificacao.hbm.xml,
 		// estava com his_ativo = 1, de modo que o hibernate montava o set só com as vias ativas.
-		// Isso não daria certo, porém, com classificacoes antigas, portanto o his_ativo = 1 não
-		// está mais lá. Por isso, é preciso limpar o set de vias, garantido que só haja uma
-		// instância de cada via:
+		// Como isso não permitiria saber quais eram as vias de uma classificação num certo
+		// momento do histórico, a alteração/criação/exclusão de via passou a gerar outro registro
+		// de classificação, e o his_ativo = 1 não está mais lá. Por isso, é preciso limpar o set 
+		// de vias, garantido que só haja uma instância de cada via:
 		HashMap<String, ExVia> viasUmaPorCodigo = new HashMap<String, ExVia>();
 		for (ExVia v : vias) {
 			ExVia vHash = viasUmaPorCodigo.get(v.getCodVia());

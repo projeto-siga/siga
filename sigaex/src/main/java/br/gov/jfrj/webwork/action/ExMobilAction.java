@@ -297,7 +297,7 @@ public class ExMobilAction extends
 		ultMovLotaRespSel = new DpLotacaoSelecao();
 		ultMovRespSel = new DpPessoaSelecao();
 		cadastranteSel = new DpPessoaSelecao();
-		setItemPagina(10);
+		setItemPagina(50);
 		lotaCadastranteSel = new DpLotacaoSelecao();
 		paramsEntrevista = new TreeMap<String, String>();
 		cpOrgaoSel = new CpOrgaoSelecao();

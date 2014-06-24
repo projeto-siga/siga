@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+
+	<display-name>Siga Identity Provider</display-name>
+	<description>Este projeto e o centralizador do processo de autenticacao do siga</description>
+
+	<listener>
+		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
+	</listener>
+
+	<!-- Define a security constraint that gives unlimted access to images -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Imagens</web-resource-name>
+			<url-pattern>/imagens/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<!-- Define a Security Constraint on this Application -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Area restrita</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<!-- Define the Login Configuration for this Application -->
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>PicketLink IDP Application</realm-name>
+		<form-login-config>
+			<form-login-page>/jsp/login.jsp</form-login-page>
+			<form-error-page>/jsp/login-error.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+
+	<!-- Security roles referenced by this web application -->
+	<security-role>
+		<role-name>*</role-name>
+	</security-role>
+</web-app>

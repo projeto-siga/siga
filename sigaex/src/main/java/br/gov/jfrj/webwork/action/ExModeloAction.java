@@ -44,6 +44,10 @@ import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.libs.webwork.DpCargoSelecao;
+import br.gov.jfrj.siga.libs.webwork.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
+import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 import com.opensymphony.webwork.ServletActionContext;
@@ -68,9 +72,19 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 	private ExClassificacaoSelecao classificacaoSel;
 	private ExClassificacaoSelecao classificacaoCriacaoViasSel;
 
+	private DpPessoaSelecao pessoaSel;
+	private DpLotacaoSelecao lotacaoSel;
+	private DpCargoSelecao cargoSel;
+
+	private DpFuncaoConfiancaSelecao funcaoSel;	
+	
 	public ExModeloAction() {
 		classificacaoSel = new ExClassificacaoSelecao();
 		classificacaoCriacaoViasSel = new ExClassificacaoSelecao();
+		pessoaSel = new DpPessoaSelecao();
+		lotacaoSel = new DpLotacaoSelecao();
+		cargoSel = new DpCargoSelecao();
+		funcaoSel = new DpFuncaoConfiancaSelecao();
 	}
 
 	public List<ExNivelAcesso> getListaNivelAcesso() throws Exception {
@@ -395,5 +409,37 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 	public void setClassificacaoCriacaoViasSel(
 			ExClassificacaoSelecao classificacaoCriacaoViasSel) {
 		this.classificacaoCriacaoViasSel = classificacaoCriacaoViasSel;
+	}
+
+	public DpPessoaSelecao getPessoaSel() {
+		return pessoaSel;
+	}
+
+	public void setPessoaSel(DpPessoaSelecao pessoaSel) {
+		this.pessoaSel = pessoaSel;
+	}
+
+	public DpLotacaoSelecao getLotacaoSel() {
+		return lotacaoSel;
+	}
+
+	public void setLotacaoSel(DpLotacaoSelecao lotacaoSel) {
+		this.lotacaoSel = lotacaoSel;
+	}
+
+	public DpCargoSelecao getCargoSel() {
+		return cargoSel;
+	}
+
+	public void setCargoSel(DpCargoSelecao cargoSel) {
+		this.cargoSel = cargoSel;
+	}
+
+	public DpFuncaoConfiancaSelecao getFuncaoSel() {
+		return funcaoSel;
+	}
+
+	public void setFuncaoSel(DpFuncaoConfiancaSelecao funcaoSel) {
+		this.funcaoSel = funcaoSel;
 	}
 }

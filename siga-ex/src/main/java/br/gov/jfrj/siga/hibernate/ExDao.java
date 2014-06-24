@@ -1271,6 +1271,19 @@ public class ExDao extends CpDao {
 			sbf.append(" and cp.id_tp_configuracao = ");
 			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
 		}
+		
+		if (exemplo.getExTipoMovimentacao() != null && exemplo.getExTipoMovimentacao().getIdTpMov() != null
+                && exemplo.getExTipoMovimentacao().getIdTpMov() != 0) {
+	        sbf.append(" and ex.id_tp_mov = ");
+	        sbf.append(exemplo.getExTipoMovimentacao().getIdTpMov());
+        }
+
+		if (exemplo.getExModelo() != null && exemplo.getExModelo().getIdMod() != null
+                && exemplo.getExModelo().getIdMod() != 0) {
+	        sbf.append(" and (ex.id_mod = ");
+	        sbf.append(exemplo.getExModelo().getIdMod());
+	        sbf.append(" or ex.id_mod is null)");
+		}
 
 		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
 			sbf.append(" and (cp.id_orgao_usu = ");

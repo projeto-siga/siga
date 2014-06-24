@@ -7,11 +7,27 @@
 
 function funcData(){
 	var dt = document.getElementById('datepicker').value;
+	var sl = document.getElementById('frm_cod_local01').value;
+	if(sl=="Escolha a sala"){
+		alert('A sala de perícia não foi escolhida.');
+		return;	
+	}
+	if(dt==""){
+		alert('A data não foi escolhida');
+		return;
+	}
+	if(document.getElementById('frm_hora_ag01').value==""){	
+		alert('A hora não foi escolhida');
+		return;
+	}
 	if(dt=="--"){
 		document.getElementById('datepicker').value="";
+		alert('Campo data não foi preenchido');
+		return;
 	}else{
 		if(dt!=""){
 			document.getElementById('datepicker').value = dt.substr(6,4)+"-"+dt.substr(3,2)+"-"+dt.substr(0,2);
+			frm_inclui_agendamento.submit();
 		}
 	}
 }
@@ -79,8 +95,8 @@ function mudou_data(){
 <br>
  <div style="position: absolute;left:05%;">
 	<h1 class="ui-accordion-header">Passo um</h1>
-	<select class="ui-widget" name="frm_cod_local" onchange="mudouSala()">
-		<option value="">Escolha a sala</option>
+	<select class="ui-widget" name="frm_cod_local" id="frm_cod_local01" onchange="mudouSala()">
+		<option value="Escolha a sala">Escolha a sala</option>
 		#{list items:listSalas, as:'sala'}
 		<option value="${sala.cod_local}">${sala.local}</option>
 		#{/list}
@@ -95,7 +111,7 @@ function mudou_data(){
 <h1 class="ui-accordion-header" style="position:absolute;left:65%;">Passo três</h1>
 <br> <br>
  <div id="passo03" style="position: absolute;left:65%;">
- 	<input type="hidden" name="frm_hora_ag">
+ 	<input type="hidden" name="frm_hora_ag" id="frm_hora_ag01">
 	<div id="horario01">
 	</div>	
  </div>
@@ -123,7 +139,7 @@ function mudou_data(){
   <br><br>
   <font class="ui-state-default" size="3px" style="position:absolute;left:25%;">Perito juízo: </font>
   
-  <input class="ui-widget" name="perito_juizo" type="text" style="position:absolute;left:40%;" size="50" maxlength="50" />
+  <input class="ui-widget" name="perito_juizo" type="text" style="position:absolute;left:40%;" value="${fixo_perito_juizo}" size="50" maxlength="50" />
   <br><br>
   <font class="ui-state-default" size="3px" style="position:absolute;left:25%;">Perito parte: </font>
   
@@ -133,7 +149,7 @@ function mudou_data(){
  
   <input class="ui-widget" name="orgao" type="text" style="position:absolute;left:40%;" value="${lotacaoSessao}" size="50" maxlength="15" />
   <br><br><br>
-  <input class="ui-button" style="position: absolute; left:25%;" type="submit" value="Agendar" onclick="funcData()" />
+  <input class="ui-button" style="position: absolute; left:25%;" type="button" value="Agendar" onclick="funcData()" />
 	<br><br><br><br>
 	<a style="position:absolute;left:25%;" class="ui-state-hover" href="/sigapp/">Voltar</a>  
  </div>

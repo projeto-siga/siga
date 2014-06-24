@@ -79,7 +79,7 @@ public class Application extends SigaApplication {
 				e.printStackTrace();
 			}
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 	}
 
@@ -91,7 +91,7 @@ public class Application extends SigaApplication {
 		if (objUsuario != null) {
 			render();
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 	}
 
@@ -197,7 +197,7 @@ public class Application extends SigaApplication {
 				}
 			}
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 	}
 
@@ -225,7 +225,7 @@ public class Application extends SigaApplication {
 		if (objUsuario != null) {
 			render();
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 	}
 
@@ -285,7 +285,7 @@ public class Application extends SigaApplication {
 				render(listForuns);
 			}
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 	}
 
@@ -313,7 +313,7 @@ public class Application extends SigaApplication {
 		}
 	}
 
-	public static void agendamento_incluir_ajax() {
+	public static void agendamento_incluir_ajax(String fixo_perito_juizo) {
 		String lotacaoSessao = cadastrante().getLotacao().getSiglaLotacao();
 		List<Locais> listSalas = new ArrayList();
 		// pega usuario do sistema
@@ -326,9 +326,9 @@ public class Application extends SigaApplication {
 			listSalas = (List) Locais.find(
 					"cod_forum='" + objUsuario.forumFk.cod_forum
 							+ "' order by ordem_apresentacao ").fetch(); // isso não dá erro no caso de retorno vazio.
-			render(listSalas,lotacaoSessao);
+			render(listSalas,lotacaoSessao, fixo_perito_juizo);
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 	}
 
@@ -529,7 +529,7 @@ public class Application extends SigaApplication {
 				resposta = "Não Ok. Verifique se preencheu todos os campos do agendamento.";
 			}
 		} finally {
-			render(resposta);
+			render(resposta, perito_juizo);
 		}
 	}
 
@@ -584,7 +584,7 @@ public class Application extends SigaApplication {
 				render();
 			}
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 
 	}
@@ -675,7 +675,7 @@ public class Application extends SigaApplication {
 				Excecoes("Esse agendamento nao pode ser modificado; pertence a outra vara.");
 			}
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 	}
 	public static void agendamento_update(String cod_sala, String data_ag, String hora_ag, String processo, String periciado, String perito_juizo, String perito_parte, String orgao_ag){
@@ -746,7 +746,7 @@ public class Application extends SigaApplication {
 				render();
 			}
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 
 	}
@@ -792,7 +792,7 @@ public class Application extends SigaApplication {
 			render(objUsuario, paramCodForum, descricaoForum, mensagem,
 					outrosForuns);
 		} else {
-			Excecoes("Usuário sem permissão");
+			Excecoes("Usuario sem permissao");
 		}
 	}
 

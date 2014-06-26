@@ -2324,7 +2324,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.getComp()
 							.podeAcessarDocumento(getTitular(),
 									getLotaTitular(), m))
-				getItens().add(m);
+				getItens().add(m.isVolume() ? m.doc().getMobilGeral()
+						: m);
 		}
 
 		return Action.SUCCESS;

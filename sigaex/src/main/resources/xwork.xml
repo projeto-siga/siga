@@ -134,6 +134,15 @@
 					${idMod}
 				</param>				
 			</result>
+			<result name="modelo" type="redirect-action">
+				<param name="namespace">/sigaex/modelo</param>
+			    <param name="actionName">
+					editar
+				</param>
+				<param name="id">
+					${idMod}
+				</param>
+			</result>
 		</action>
 		<action name="excluir" method="aExcluir"
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">

@@ -43,7 +43,8 @@ function sbmt() {
 
 
 		<form action="editar_gravar.action">
-		<input type="hidden" name="postback" value="1" /> <ww:hidden
+		<input type="hidden" name="postback" value="1" />
+		<input type="hidden" name="nmTipoRetorno" value="${nmTipoRetorno}" /> <ww:hidden
 			name="id" /> <c:set var="dataFim" value="" />
 		<h1>Cadastro de configuração <c:if
 			test="${not empty configuracao}">

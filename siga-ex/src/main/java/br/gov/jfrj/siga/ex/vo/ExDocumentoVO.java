@@ -76,10 +76,11 @@ public class ExDocumentoVO extends ExVO {
 		this.nomeCompleto = doc.getNomeCompleto();
 		this.dtDocDDMMYY = doc.getDtDocDDMMYY();
 		this.subscritorString = doc.getSubscritorString();
-
-
-
-
+		this.cadastranteString = doc.getCadastranteString();
+		if(doc.getLotaCadastrante() != null)
+			this.lotaCadastranteString = "(" + doc.getLotaCadastrante().getSigla() + ")";
+		else
+			this.lotaCadastranteString = "";
 
 		if (doc.getExClassificacaoAtual() != null)
 			this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()

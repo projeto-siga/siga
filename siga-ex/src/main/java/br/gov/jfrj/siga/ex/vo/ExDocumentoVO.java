@@ -29,13 +29,16 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 
 public class ExDocumentoVO extends ExVO {
 	ExDocumento doc;
+	ExMobil mob;
 	String classe;
 	List<ExMobilVO> mobs = new ArrayList<ExMobilVO>();
+	List<ExMobil> outrosMobs = new ArrayList<ExMobil>();
 	String nomeCompleto;
 	String dtDocDDMMYY;
 	String subscritorString;
@@ -63,6 +66,7 @@ public class ExDocumentoVO extends ExVO {
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo) throws Exception {
 		this.doc = doc;
+		this.mob = mob;
 		this.sigla = doc.getSigla();
 		this.descrDocumento = doc.getDescrDocumento();
 
@@ -196,6 +200,58 @@ public class ExDocumentoVO extends ExVO {
 		}
 
 	}
+	
+	public void novoExibe() {
+		List<Long> movimentacoesPermitidas = new ArrayList<Long>();
+	
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
+		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
+		
+		
+		for (ExMobilVO mobVO : mobs) {
+			
+			//Limpa as Movimentações
+			List<ExMovimentacaoVO> movimentacoesFinais = new ArrayList<ExMovimentacaoVO>();
+			for (ExMovimentacaoVO exMovVO : mobVO.getMovs()) {
+				if(movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
+					movimentacoesFinais.add(exMovVO);
+				}
+			}
+			
+			mobVO.setMovs(movimentacoesFinais);
+		}	
+		
+		
+		ExMobilVO mobilGeral = null;
+		ExMobilVO mobilEspecifico = null;
+		
+		for (ExMobilVO mobilVO : mobs) {
+			if(mobilVO.getMob().isGeral())
+				mobilGeral = mobilVO;
+			else
+				mobilEspecifico = mobilVO;
+		}
+		
+		if(mobilEspecifico != null && mobilGeral != null) {
+			mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
+			mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
+			mobs.remove(mobilGeral);
+		}
+		
+		for (ExMobil mobil : doc.getExMobilSet()) {
+			if(!mobil.isGeral() && !mobil.equals(mob)) {
+				outrosMobs.add(mobil);
+			}
+		}
+	}	
 
 	/**
 	 * @param doc
@@ -486,6 +542,10 @@ public class ExDocumentoVO extends ExVO {
 	public ExDocumento getDoc() {
 		return doc;
 	}
+	
+	public ExMobil getMob() {
+		return mob;
+	}
 
 	public String getDtDocDDMMYY() {
 		return dtDocDDMMYY;
@@ -598,5 +658,9 @@ public class ExDocumentoVO extends ExVO {
 
 	public String getLotaCadastranteString() {
 		return lotaCadastranteString;
+	}
+	
+	public List<ExMobil> getOutrosMobs() {
+		return outrosMobs;
 	}
 }

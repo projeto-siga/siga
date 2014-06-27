@@ -259,6 +259,15 @@
 				/paginas/expediente/cuidado_reserva.jsp?"
 			</result>
 		</action>
+		<action name="exibirNovo" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aExibirNovo">
+			<result>
+				/paginas/expediente/exibeNovo.jsp?podeExibir="true"
+			</result>
+			<result name="reservado">
+				/paginas/expediente/cuidado_reserva.jsp?"
+			</result>
+		</action>		
 
 		<action name="exibirProcesso" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
 			method="aExibir">

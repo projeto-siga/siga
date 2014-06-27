@@ -987,6 +987,59 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
+	
+	
+	public String aExibirNovo() throws Exception {
+		buscarDocumento(true);
+
+		if (!Ex.getInstance().getComp()
+				.podeAcessarAberto(getTitular(), getLotaTitular(), mob)
+				|| !Ex.getInstance()
+						.getComp()
+						.podeAcessarCancelado(getTitular(), getLotaTitular(),
+								mob)
+				|| !Ex.getInstance()
+						.getComp()
+						.podeAcessarSemEfeito(getTitular(), getLotaTitular(),
+								mob)) {
+			throw new AplicacaoException("Documento " + mob.getSigla()
+					+ " inacessível ao usuário " + getTitular().getSigla()
+					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
+		}
+
+		if (!Ex.getInstance().getComp()
+				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Acesso permitido a usuários autorizados.");
+
+		if (Ex.getInstance().getComp()
+				.podeReceberEletronico(getTitular(), getLotaTitular(), mob))
+			Ex.getInstance()
+					.getBL()
+					.receber(getCadastrante(), getLotaTitular(), mob,
+							new Date());
+		
+		if(mob == null || mob.isGeral()) {
+			if(mob.getDoc().isFinalizado()) {
+				if(doc.isProcesso())
+					mob = doc.getUltimoVolume();
+				else
+					mob = doc.getPrimeiraVia();
+			}
+		}
+
+		ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getTitular(),
+				getLotaTitular(), true);
+		
+		
+		docVO.novoExibe();
+		
+		super.getRequest().setAttribute("docVO", docVO);
+
+		// logStatistics();
+
+		return Action.SUCCESS;
+	}
 
 	public String aCorrigirPDF() throws Exception {
 		if (sigla != null) {

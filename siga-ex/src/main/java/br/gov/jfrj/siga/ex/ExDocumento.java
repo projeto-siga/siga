@@ -858,6 +858,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                 }
                 return maxNumVia;
         }
+        
+    	/**
+    	 * Retorna o número da primeira via do documento.
+    	 */
+    	public int getNumPrimeiraVia() {
+    		int minNumVia = 1;
+    		for (final ExMobil mob : getExMobilSet()) {
+    			if (mob.isVia() && mob.getNumSequencia() < minNumVia) {
+    				minNumVia = mob.getNumSequencia();
+    			}
+    		}
+    		return minNumVia;
+    	}
 
         /**
          * Retorna o número da última via não cancelada.
@@ -1855,6 +1868,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
         public ExMobil getUltimaVia() {
                 return getVia(getNumUltimaVia());
         }
+        
+    	/**
+    	 * Retorna a primeira via do documento.
+    	 */
+    	public ExMobil getPrimeiraVia() {
+    		return getVia(getNumPrimeiraVia());
+    	}
 
         /**
          * Retorna o nome completo de um documento, composto pela descrição da

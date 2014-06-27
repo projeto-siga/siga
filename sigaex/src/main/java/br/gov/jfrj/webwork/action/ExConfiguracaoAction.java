@@ -402,12 +402,6 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			config.setOrgaoUsuario(null);
 												
 		List<ExConfiguracao> listConfig = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);
-		Collections.sort(listConfig, new Comparator<CpConfiguracao>() {
-			@Override
-			public int compare(CpConfiguracao o1, CpConfiguracao o2) {
-				return o1.getId().compareTo(o2.getId());
-			}
-		});
 		 
 		Collections.sort(listConfig, new ExConfiguracaoComparator());
 		

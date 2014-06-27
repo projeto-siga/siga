@@ -146,23 +146,16 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	public ExClassificacao getClassificacaoAtual() {
+		ExClassificacao classIni = getClassificacaoInicial();
+		if (classIni != null) {
+			Set<ExClassificacao> setClassificacoes = classIni.getClassificacoesPosteriores();
+			if (setClassificacoes != null)
+				for (ExClassificacao c : setClassificacoes)
+					return c;
+		}
+		return this;
+	}
 
 
 	/**

@@ -27,7 +27,6 @@ import java.util.Set;
 import org.hibernate.LockMode;
 
 import sun.security.action.GetLongAction;
-
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
@@ -220,14 +219,23 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @param lotaTitular
 	 * @param mob
 	 * @return
+	 * @throws Exception 
 	 */
 	public boolean podeAcessarPorNivel(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) {
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		if (mob == null)
 			return false;
 
 		if (mob.doc().getExNivelAcesso() == null) {
 			return true;
+		}
+		
+		if(mob.doc().getOrgaoUsuario() != null  
+				&& mob.doc().getOrgaoUsuario().getIdOrgaoUsu() != null 
+				&& mob.doc().getOrgaoUsuario().getIdOrgaoUsu() != 4L) {
+			if(podePorConfiguracao(titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_ACESSAR)) {
+				return true;	
+			}
 		}
 
 		if (mob.getExMobilPai() != null

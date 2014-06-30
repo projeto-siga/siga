@@ -135,7 +135,7 @@
 				</param>				
 			</result>
 			<result name="modelo" type="redirect-action">
-				<param name="namespace">/sigaex/modelo</param>
+				<param name="namespace">/modelo</param>
 			    <param name="actionName">
 					editar
 				</param>

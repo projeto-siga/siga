@@ -65,20 +65,6 @@ public class ExGadgetAction extends ExActionSupport {
 		this.documentoViaSel = documentoViaSel;
 	}
 
-	public String slowExecute() throws Exception {
-		listEstados = dao().consultarPorResponsavel(getTitular(),
-				getLotaTitular());
-		documentoViaSel = new ExMobilSelecao();
-		super.getRequest().setAttribute(
-				"_cadastrante",
-				super.getTitular().getSigla()
-						+ "@"
-						+ super.getLotaTitular().getOrgaoUsuario()
-								.getSiglaOrgaoUsu()
-						+ super.getLotaTitular().getSigla());
-		return Action.SUCCESS;
-	}
-
 	@Override
 	public String execute() throws Exception {
 		if (getIdTpFormaDoc() == null || getIdTpFormaDoc() == 0)

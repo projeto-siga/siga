@@ -64,9 +64,9 @@
 					<c:otherwise>
 					    a Excelentíssima Juíza Federal
 					</c:otherwise>
-		</c:choose>	
-		da
-		${pessoa_convoc.lotacao.descricao},
+			</c:choose>	
+			da
+			${pessoa_convoc.lotacao.descricao},
 			<c:choose>
 				<c:when test="${genero2 == 'F'}">Drª.</c:when>
 				<c:otherwise>Dr.</c:otherwise>

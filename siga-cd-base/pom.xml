@@ -16,23 +16,21 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk16</artifactId>
-            <version>1.44</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcmail-jdk16</artifactId>
-            <version>1.44</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bctsp-jdk16</artifactId>
-            <version>1.44</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_2.5_spec</artifactId>
         </dependency>
+        
         <dependency>
             <groupId>projeto-siga</groupId>
             <artifactId>siga-base</artifactId>

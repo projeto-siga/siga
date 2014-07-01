@@ -15,15 +15,15 @@
     <dependencies>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk16</artifactId>
+            <artifactId>bcprov-jdk15on</artifactId>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcmail-jdk16</artifactId>
+            <artifactId>bcmail-jdk15on</artifactId>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bctsp-jdk16</artifactId>
+            <artifactId>bcpkix-jdk15on</artifactId>
         </dependency>
 
         <dependency>

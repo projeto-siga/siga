@@ -161,7 +161,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeAcessarDocumento(final DpPessoa titular,
+	public boolean podeAcessarDocumentoAntigo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		
 		if(mob.doc().getOrgaoUsuario() != null  
@@ -188,6 +188,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeAcessarCancelado(titular, lotaTitular, mob)
 				&& podeAcessarSemEfeito(titular, lotaTitular, mob);
 	}
+
+	public boolean podeAcessarDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		ExAcesso acesso = new ExAcesso();
+		String s = acesso.getAcessosString(mob.doc());
+		AcessoConsulta ac = new AcessoConsulta(titular == null ? 0L
+				: titular.getIdInicial(), lotaTitular == null ? 0
+				: lotaTitular.getIdInicial(), titular == null ? 0L : titular
+				.getOrgaoUsuario().getId(), lotaTitular == null ? 0L
+				: lotaTitular.getOrgaoUsuario().getId());
+		return ac.podeAcessar(s);
+	}
+
 
 	/**
 	 * Retorna se é possível acessar documento reservado, considerando se o

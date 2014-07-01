@@ -422,12 +422,8 @@
 		            <groupId>jasperreports</groupId>
 		            <artifactId>jasperreports</artifactId>
 		        </exclusion>
-		        
-            
             </exclusions>
-
         </dependency>
-        
     </dependencies>
 
 </project>

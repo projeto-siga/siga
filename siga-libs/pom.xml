@@ -66,6 +66,7 @@
             </exclusions>
         </dependency>
 
+		<!-- Siga -->
         <dependency>
             <groupId>projeto-siga</groupId>
             <artifactId>siga-cp</artifactId>

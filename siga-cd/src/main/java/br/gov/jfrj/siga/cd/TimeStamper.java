@@ -36,35 +36,42 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.CertStore;
-import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.util.Store;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
@@ -246,71 +253,6 @@ public class TimeStamper {
 		}
 	}
 
-	private static byte[] sign(byte[] data) {
-		byte[] res = null;
-
-		// ---- in real implementation, provide some SECURE way to get keystore
-		// ---- password from user! -------
-		String password = "12345"; // keystore password
-		String pfxFileName = "my.pfx";
-
-		KeyStore ks = null;
-		PublicKey pub = null;
-		PrivateKey priv = null;
-		java.security.cert.Certificate storecert = null;
-		java.security.cert.Certificate[] certChain = null;
-		ArrayList certList = new ArrayList();
-		CertStore certs = null;
-
-		try {
-			ks = KeyStore.getInstance("pkcs12");
-			ks.load(new FileInputStream(pfxFileName), password.toCharArray());
-			String ALIAS = (String) ks.aliases().nextElement();
-
-			certChain = ks.getCertificateChain(ALIAS);
-			for (int i = 0; i < certChain.length; i++)
-				certList.add(certChain[i]);
-			certs = CertStore.getInstance("Collection",
-					new CollectionCertStoreParameters(certList), "BC");
-
-			priv = (PrivateKey) (ks.getKey(ALIAS, password.toCharArray()));
-
-			storecert = ks.getCertificate(ALIAS);
-			pub = ks.getCertificate(ALIAS).getPublicKey();
-		} catch (Exception exc) {
-			System.out.println("Problem with keystore access: "
-					+ exc.toString());
-			return null;
-		}
-
-		// System.out.println("Public Key Format: " + pub.getFormat());
-		// System.out.println("Certificate " + storecert.toString());
-
-		byte[] contentbytes = data;
-
-		try {
-			CMSSignedDataGenerator signGen = new CMSSignedDataGenerator();
-
-			signGen.addSigner(priv, (X509Certificate) storecert,
-					CMSSignedDataGenerator.DIGEST_SHA1);
-			signGen.addCertificatesAndCRLs(certs);
-			CMSProcessable content = new CMSProcessableByteArray(contentbytes);
-
-			// generate signed data
-			CMSSignedData signedData = signGen.generate(content, "BC");
-			// add timestamp to signed data
-			signedData = addTimestamp(signedData);
-			byte[] signeddata = signedData.getEncoded();
-			System.out.println("Created signed message: " + signeddata.length
-					+ " bytes");
-
-			res = signeddata;
-		} catch (Exception ex) {
-			System.out.println("Couldn't generate CMS signed message\n"
-					+ ex.toString());
-		}
-		return res;
-	}
 
 	/**
 	 * Modyfy PKCS#7 data by adding timestamp
@@ -322,18 +264,17 @@ public class TimeStamper {
 		Collection ss = signedData.getSignerInfos().getSigners();
 		SignerInformation si = (SignerInformation) ss.iterator().next();
 		TimeStampToken tok = getTimeStampToken(si.getSignature());
+		
+//		CertStore certs = tok.getCertificatesAndCRLs("Collection", "BC");
+		Store certs = tok.getCertificates();
+		Store certsAndCrls = AssinaturaDigital.buscarCrlParaCadaCertificado(certs);
 
-		CertStore certs = tok.getCertificatesAndCRLs("Collection", "BC");
-		CertStore certsAndCrls = AssinaturaDigital
-				.buscarCrlParaCadaCertificado(certs);
-
-		CMSSignedData cmssdcrl = CMSSignedData.replaceCertificatesAndCRLs(tok
-				.toCMSSignedData(), certsAndCrls);
+		CMSSignedData cmssdcrl = CMSSignedData.replaceCertificatesAndCRLs(tok.toCMSSignedData(), certsAndCrls, certsAndCrls, certsAndCrls);
 
 		tok = new TimeStampToken(cmssdcrl);
 
 		ASN1InputStream asn1InputStream = new ASN1InputStream(tok.getEncoded());
-		DERObject tstDER = asn1InputStream.readObject();
+		ASN1Primitive tstDER = asn1InputStream.readObject();
 		DERSet ds = new DERSet(tstDER);
 		Attribute a = new Attribute(
 				PKCSObjectIdentifiers.id_aa_signatureTimeStampToken, ds);
@@ -431,11 +372,11 @@ public class TimeStamper {
 		BigInteger cert_serial_number = signer_id.getSerialNumber();
 
 		System.out.println("Signer ID serial " + signer_id.getSerialNumber());
-		System.out.println("Signer ID issuer " + signer_id.getIssuerAsString());
+		System.out.println("Signer ID issuer " + signer_id.getIssuer().toString());
 
-		CertStore cs = tsToken.getCertificatesAndCRLs("Collection", "BC");
+		Store cs = tsToken.getCertificates();
 
-		Collection certs = cs.getCertificates(null);
+		Collection certs = cs.getMatches(null);
 
 		Iterator iter = certs.iterator();
 		X509Certificate certificate = null;
@@ -463,12 +404,11 @@ public class TimeStamper {
 		// Nato: validação do carimbo de tempo está desabilitada porque existe
 		// um problema no certificado do STF
 		if (!fSTF)
-			tsToken.validate(certificate, "BC");
-		System.out
-				.println("TS info " + tsToken.getTimeStampInfo().getGenTime());
+			tsToken.validate(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(certificate));
+		
+		System.out.println("TS info " + tsToken.getTimeStampInfo().getGenTime());
 		System.out.println("TS info " + tsToken.getTimeStampInfo());
-		System.out.println("TS info "
-				+ tsToken.getTimeStampInfo().getAccuracy());
+		System.out.println("TS info " + tsToken.getTimeStampInfo().getAccuracy());
 		System.out.println("TS info " + tsToken.getTimeStampInfo().getNonce());
 		return tsToken;
 	}

@@ -33,16 +33,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CRLException;
-import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
 import java.security.cert.CertificateException;
-import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,22 +53,29 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.output.NullOutputStream;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.CertificateList;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.X509CRLObject;
+import org.bouncycastle.operator.ContentVerifierProvider;
+import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.util.Store;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cd.ac.FachadaDeCertificadosAC;
@@ -82,14 +88,21 @@ import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfString;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
+/**
+ * Links uteis:
+ * 			http://www.bouncycastle.org/wiki/display/JA1/BC+Version+2+APIs
+ * 			http://www.bouncycastle.org/wiki/display/JA1/Porting+from+earlier+BC+releases+to+1.47+and+later
+ * 			https://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cms/CMSSignedDataGenerator.html
+ *
+ */
 public class AssinaturaDigital {
 
 	protected static String verificarAssinatura(final byte[] conteudo,
 			final byte[] assinatura, String sMimeType, Date dtAssinatura)
-			throws InvalidKeyException, SecurityException, CRLException,
-			CertificateException, NoSuchProviderException,
-			NoSuchAlgorithmException, SignatureException, AplicacaoException,
-			ChainValidationException, IOException, Exception {
+					throws InvalidKeyException, SecurityException, CRLException,
+					CertificateException, NoSuchProviderException,
+					NoSuchAlgorithmException, SignatureException, AplicacaoException,
+					ChainValidationException, IOException, Exception {
 
 		if (sMimeType.equals("application/cms-signature"))
 			return verificarAssinaturaCMSeCarimboDeTempo(conteudo, assinatura,
@@ -299,7 +312,8 @@ public class AssinaturaDigital {
 
 		final CMSSignedData signedData = new CMSSignedData(assinatura);
 
-		CertStore certs = signedData.getCertificatesAndCRLs("Collection", "BC");
+		//		CertStore certs = signedData.getCertificatesAndCRLs("Collection", "BC");
+		Store certs = signedData.getCertificates();
 		SignerInformationStore signers = signedData.getSignerInfos();
 		Collection c = signers.getSigners();
 		Iterator it = c.iterator();
@@ -309,7 +323,8 @@ public class AssinaturaDigital {
 
 		while (it.hasNext()) {
 			SignerInformation signer = (SignerInformation) it.next();
-			Collection certCollection = certs.getCertificates(signer.getSID());
+			//			Collection certCollection = certs.getCertificates(signer.getSID());
+			Collection certCollection = certs.getMatches(signer.getSID());
 
 			@SuppressWarnings("unused")
 			String ss = signer.getDigestAlgOID();
@@ -341,8 +356,7 @@ public class AssinaturaDigital {
 			 * subjectAlternativeName.get(1); props.put("email", email); break;
 			 * default: break; } } return props;
 			 */
-			return CertificadoUtil
-					.recuperarPropriedadesNomesAlteranativos(cert);
+			return CertificadoUtil.recuperarPropriedadesNomesAlteranativos(cert);
 		}
 		return null;
 	}
@@ -361,8 +375,10 @@ public class AssinaturaDigital {
 				pkcs7.getSignerInfos());
 
 		ASN1EncodableVector vec = new ASN1EncodableVector();
+
 		for (X509CRLObject crl : (Collection<X509CRLObject>) crls)
-			vec.add(ASN1Object.fromByteArray(crl.getEncoded()));
+			vec.add(ASN1Primitive.fromByteArray(crl.getEncoded()));
+
 		DERSet set = new DERSet(vec);
 
 		// for (X509CRLObject crl : (Collection<X509CRLObject>) crls)
@@ -380,19 +396,24 @@ public class AssinaturaDigital {
 	/**
 	 * Read an existing PKCS#7 object from a DER encoded byte array
 	 */
-	protected static org.bouncycastle.asn1.pkcs.SignedData pkcs7SignedData(
-			byte[] in) {
+	protected static org.bouncycastle.asn1.pkcs.SignedData pkcs7SignedData(byte[] in) {
 		ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(in));
 
 		//
 		// Basic checks to make sure it's a PKCS#7 SignedData Object
 		//
-		DERObject pkcs;
+		ASN1Primitive pkcs;
 
 		try {
 			pkcs = din.readObject();
 		} catch (IOException e) {
 			throw new SecurityException("can't decode PKCS7SignedData object");
+		}finally{
+			try {
+				din.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (!(pkcs instanceof ASN1Sequence)) {
@@ -417,12 +438,18 @@ public class AssinaturaDigital {
 		//
 		// Basic checks to make sure it's a PKCS#7 SignedData Object
 		//
-		DERObject cms;
+		ASN1Primitive cms;
 
 		try {
 			cms = din.readObject();
 		} catch (IOException e) {
 			throw new SecurityException("can't decode CMSSignedData object");
+		}finally{
+			try {
+				din.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (!(cms instanceof ASN1Sequence)) {
@@ -439,10 +466,10 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static CertStore buscarCrlParaCadaCertificado(CertStore certs)
+	protected static Store buscarCrlParaCadaCertificado(Store certs)
 			throws CertStoreException, Exception {
 		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta((Collection<X509Certificate>) (certs
-				.getCertificates(null)));
+				.getMatches(null)));
 
 		List certList = new ArrayList();
 		for (X509Certificate cert : cadeiaTotal)
@@ -452,24 +479,18 @@ public class AssinaturaDigital {
 			certList.add(crl);
 		// certList.add(ASN1Object.fromByteArray(crl.getEncoded()));
 
-		//
-		// create a CertStore containing the certificates we
-		// want carried
-		// in the signature
-		//
-		CertStore certsAndCrls = CertStore.getInstance("Collection",
-				new CollectionCertStoreParameters(certList), "BC");
-		return certsAndCrls;
+
+		return new JcaCertStore(certList);
 	}
 
 	@SuppressWarnings("static-access")
 	protected static byte[] converterPkcs7EmCMSComCertificadosECRLs(
 			final byte[] assinatura) throws Exception {
 		CMSSignedData cmssd = new CMSSignedData(assinatura);
-		CertStore certs = cmssd.getCertificatesAndCRLs("Collection", "BC");
-		CertStore certsAndCrls = buscarCrlParaCadaCertificado(certs);
-		CMSSignedData cmssdcrl = cmssd.replaceCertificatesAndCRLs(cmssd,
-				certsAndCrls);
+
+		Store certs = cmssd.getCertificates();
+		Store certsAndCrls = buscarCrlParaCadaCertificado(certs);
+		CMSSignedData cmssdcrl = cmssd.replaceCertificatesAndCRLs(cmssd, certsAndCrls, certsAndCrls, certsAndCrls);
 
 		return cmssdcrl.getEncoded();
 	}
@@ -618,9 +639,9 @@ public class AssinaturaDigital {
 		dic2.put(PdfName.CONTENTS, new PdfString(outc).setHexWriting(true));
 		sap.close(dic2);
 		System.out
-				.println("Hash: "
-						+ MessageDigest.getInstance("MD5").digest(data, 0,
-								data.length));
+		.println("Hash: "
+				+ MessageDigest.getInstance("MD5").digest(data, 0,
+						data.length));
 		return data;
 	}
 
@@ -643,10 +664,10 @@ public class AssinaturaDigital {
 	@SuppressWarnings("unchecked")
 	protected static String validarAssinaturaCMS(byte[] digest,
 			String digestAlgorithm, byte[] assinatura, Date dtAssinatura)
-			throws InvalidKeyException, SecurityException, CRLException,
-			CertificateException, NoSuchProviderException,
-			NoSuchAlgorithmException, SignatureException, AplicacaoException,
-			ChainValidationException, IOException, Exception {
+					throws InvalidKeyException, SecurityException, CRLException,
+					CertificateException, NoSuchProviderException,
+					NoSuchAlgorithmException, SignatureException, AplicacaoException,
+					ChainValidationException, IOException, Exception {
 
 		final CMSSignedData s;
 		if (digest != null) {
@@ -657,27 +678,27 @@ public class AssinaturaDigital {
 			s = new CMSSignedData(assinatura);
 		}
 
-		CertStore certs = s.getCertificatesAndCRLs("Collection", "BC");
+
+		Store certs = s.getCertificates();
 		SignerInformationStore signers = s.getSignerInfos();
 		Collection c = signers.getSigners();
 		Iterator it = c.iterator();
-		X509Certificate firstSignerCert = null;
+		X509CertificateHolder firstSignerCert = null;
 
 		while (it.hasNext()) {
 			SignerInformation signer = (SignerInformation) it.next();
-			Collection certCollection = certs.getCertificates(signer.getSID());
+			Collection certCollection = certs.getMatches(signer.getSID());
 
 			Iterator certIt = certCollection.iterator();
-			X509Certificate cert = (X509Certificate) certIt.next();
+			X509CertificateHolder cert = (X509CertificateHolder)certIt.next();
 			if (firstSignerCert == null)
 				firstSignerCert = cert;
 
-			boolean bVerified;
-			bVerified = signer.verify(cert.getPublicKey(), "BC");
+			ContentVerifierProvider contentVerifierProvider = new JcaContentVerifierProviderBuilder().setProvider("BC").build(cert);
 
-			if (!bVerified) {
+			if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert)))
 				throw new Exception("Assinatura inválida!");
-			}
+
 
 			System.out.println("\nSigner Info: \n");
 			System.out.println("Is Signature Valid? true");
@@ -688,14 +709,24 @@ public class AssinaturaDigital {
 
 		}
 
-		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta((Collection<X509Certificate>) (certs
-				.getCertificates(null)));
+		//		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta((Collection<X509Certificate>) (certs.getCertificates(null)));
+		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta((Collection<X509Certificate>) (certs.getMatches(null)));
+
+		List<X509CRLObject> crls = new ArrayList<>();
+		if (certs.getMatches(null) != null){
+			Enumeration ec = ASN1Set.getInstance(certs.getMatches(null)).getObjects();
+
+			while (ec.hasMoreElements()){
+				crls.add(new X509CRLObject(CertificateList.getInstance(ec.nextElement())));
+			}
+		}
 
 		final X509ChainValidator cadeia = new X509ChainValidator(cadeiaTotal,
-		/* trustedAnchors */new HashSet(
-				FachadaDeCertificadosAC.getTrustAnchors()), certs.getCRLs(null)
-				.toArray(new X509CRLObject[0]));
+				/* trustedAnchors */new HashSet(
+						FachadaDeCertificadosAC.getTrustAnchors()), crls.toArray(new X509CRLObject[0]));
+		
 		cadeia.checkCRL(true);
+		
 		try {
 			cadeia.validateChain(dtAssinatura);
 		} catch (Exception e1) {
@@ -703,8 +734,7 @@ public class AssinaturaDigital {
 				String s1 = e1.getMessage() + " Current date: ["
 						+ new Date().toString() + "]. Record date: ["
 						+ dtAssinatura + "]. LCRs' dates [";
-				for (X509CRLObject crl : (Collection<X509CRLObject>) certs
-						.getCRLs(null)) {
+				for (X509CRLObject crl : (Collection<X509CRLObject>) certs.getMatches(null)) {
 					String s2 = crl.getIssuerX500Principal().getName();
 					s2 = s2.split(",")[0];
 
@@ -717,7 +747,9 @@ public class AssinaturaDigital {
 				throw e1;
 		}
 
-		String s1 = firstSignerCert.getSubjectDN().getName();
+
+		//		String s1 = firstSignerCert.getSubjectDN().getName();
+		String s1 = firstSignerCert.getSubject().toString();
 		s1 = obterNomeExibicao(s1);
 
 		return s1;
@@ -727,10 +759,10 @@ public class AssinaturaDigital {
 	protected static String validarAssinaturaCMSeCarimboDeTempo(
 			final byte[] digest, final String digestAlgorithm,
 			final byte[] assinatura, Date dtAssinatura)
-			throws InvalidKeyException, SecurityException, CRLException,
-			CertificateException, NoSuchProviderException,
-			NoSuchAlgorithmException, SignatureException, AplicacaoException,
-			ChainValidationException, IOException, Exception {
+					throws InvalidKeyException, SecurityException, CRLException,
+					CertificateException, NoSuchProviderException,
+					NoSuchAlgorithmException, SignatureException, AplicacaoException,
+					ChainValidationException, IOException, Exception {
 
 		String nome = validarAssinaturaCMS(digest, digestAlgorithm, assinatura,
 				dtAssinatura);
@@ -744,15 +776,14 @@ public class AssinaturaDigital {
 
 		Attribute attr = si.getUnsignedAttributes().get(
 				PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
-		CMSSignedData cmsTS = new CMSSignedData(attr.getAttrValues()
-				.getObjectAt(0).getDERObject().getEncoded());
+		CMSSignedData cmsTS = new CMSSignedData(attr.getAttrValues().getObjectAt(0).toASN1Primitive().getEncoded());
 
 		TimeStampToken tok = new TimeStampToken(cmsTS);
-		CertStore cs = tok.getCertificatesAndCRLs("Collection", "BC");
+		Store cs = tok.getCertificates();
 
 		SignerId signer_id = tok.getSID();
 		BigInteger cert_serial_number = signer_id.getSerialNumber();
-		Collection certs = cs.getCertificates(null);
+		Collection certs = cs.getMatches(null);
 		Iterator iter = certs.iterator();
 		X509Certificate certificate = null;
 		while (iter.hasNext()) {
@@ -767,8 +798,8 @@ public class AssinaturaDigital {
 				}
 			}
 		}
-		tok.validate(certificate, "BC");
 
+		tok.validate(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(certificate));
 		// Nato: falta validar as CRLs do carimbo de tempo
 
 		if (!Arrays.equals(tok.getTimeStampInfo().getMessageImprintDigest(),
@@ -792,17 +823,17 @@ public class AssinaturaDigital {
 	static String validarAssinaturaPKCS7(final byte[] digest,
 			final String digestAlgorithm, final byte[] assinatura,
 			Date dtAssinatura, boolean verificarLCRs)
-			throws InvalidKeyException, SecurityException, CRLException,
-			CertificateException, NoSuchProviderException,
-			NoSuchAlgorithmException, SignatureException, AplicacaoException,
-			ChainValidationException, IOException, Exception {
+					throws InvalidKeyException, SecurityException, CRLException,
+					CertificateException, NoSuchProviderException,
+					NoSuchAlgorithmException, SignatureException, AplicacaoException,
+					ChainValidationException, IOException, Exception {
 
 		Map<String, byte[]> map = new HashMap<String, byte[]>();
 		map.put(digestAlgorithm, digest);
-		final CMSSignedData s = new CMSSignedData(map, assinatura);
+		final CMSSignedData signedData = new CMSSignedData(map, assinatura);
 
-		CertStore certs = s.getCertificatesAndCRLs("Collection", "BC");
-		SignerInformationStore signers = s.getSignerInfos();
+		Store certs = signedData.getCertificates();
+		SignerInformationStore signers = signedData.getSignerInfos();
 		Collection c = signers.getSigners();
 		Iterator it = c.iterator();
 
@@ -810,7 +841,7 @@ public class AssinaturaDigital {
 
 		while (it.hasNext()) {
 			SignerInformation signer = (SignerInformation) it.next();
-			Collection certCollection = certs.getCertificates(signer.getSID());
+			Collection certCollection = certs.getMatches(signer.getSID());
 
 			@SuppressWarnings("unused")
 			String ss = signer.getDigestAlgOID();
@@ -820,9 +851,8 @@ public class AssinaturaDigital {
 			Iterator certIt = certCollection.iterator();
 			X509Certificate cert = (X509Certificate) certIt.next();
 
-			if (!signer.verify(cert.getPublicKey(), "BC")) {
-				throw new AplicacaoException("Assinatura inválida");
-			}
+			if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert)))
+				throw new Exception("Assinatura inválida!");
 
 			X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta(certCollection);
 
@@ -854,10 +884,10 @@ public class AssinaturaDigital {
 
 	private static String verificarAssinaturaCMS(final byte[] conteudo,
 			final byte[] assinatura, Date dtAssinatura)
-			throws InvalidKeyException, SecurityException, CRLException,
-			CertificateException, NoSuchProviderException,
-			NoSuchAlgorithmException, SignatureException, AplicacaoException,
-			ChainValidationException, IOException, Exception {
+					throws InvalidKeyException, SecurityException, CRLException,
+					CertificateException, NoSuchProviderException,
+					NoSuchAlgorithmException, SignatureException, AplicacaoException,
+					ChainValidationException, IOException, Exception {
 
 		return validarAssinaturaCMS(
 				MessageDigest.getInstance("SHA1").digest(conteudo),
@@ -867,10 +897,10 @@ public class AssinaturaDigital {
 
 	protected static String verificarAssinaturaCMSeCarimboDeTempo(
 			final byte[] conteudo, final byte[] assinatura, Date dtAssinatura)
-			throws InvalidKeyException, SecurityException, CRLException,
-			CertificateException, NoSuchProviderException,
-			NoSuchAlgorithmException, SignatureException, AplicacaoException,
-			ChainValidationException, IOException, Exception {
+					throws InvalidKeyException, SecurityException, CRLException,
+					CertificateException, NoSuchProviderException,
+					NoSuchAlgorithmException, SignatureException, AplicacaoException,
+					ChainValidationException, IOException, Exception {
 
 		return validarAssinaturaCMSeCarimboDeTempo(
 				MessageDigest.getInstance("SHA1").digest(conteudo),
@@ -880,10 +910,10 @@ public class AssinaturaDigital {
 	@SuppressWarnings("unused")
 	private static String verificarAssinaturaPKCS7(final byte[] conteudo,
 			final byte[] assinatura, Date dtAssinatura, boolean verificarLCRs)
-			throws InvalidKeyException, SecurityException, CRLException,
-			CertificateException, NoSuchProviderException,
-			NoSuchAlgorithmException, SignatureException, AplicacaoException,
-			ChainValidationException, IOException, Exception {
+					throws InvalidKeyException, SecurityException, CRLException,
+					CertificateException, NoSuchProviderException,
+					NoSuchAlgorithmException, SignatureException, AplicacaoException,
+					ChainValidationException, IOException, Exception {
 
 		return validarAssinaturaPKCS7(
 				MessageDigest.getInstance("SHA1").digest(conteudo),

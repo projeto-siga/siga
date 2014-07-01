@@ -28,12 +28,12 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERString;
 
 public class CertificadoUtil {
 	/**
@@ -57,11 +57,11 @@ public class CertificadoUtil {
 		inps.close();
 		Enumeration en = seq.getObjects();
 		oid = (DERObjectIdentifier) en.nextElement();
-		DERObject obj = ((ASN1TaggedObject) ((ASN1TaggedObject) en
+		ASN1Primitive obj = ((ASN1TaggedObject) ((ASN1TaggedObject) en
 				.nextElement()).getObject()).getObject();
-		if (obj instanceof DERString) { // Certificados antigos SERASA -
+		if (obj instanceof ASN1String) { // Certificados antigos SERASA -
 			// incorretos
-			conteudo = ((DERString) obj).getString();
+			conteudo = ((ASN1String) obj).getString();
 		} else if (obj instanceof DEROctetString) { // Certificados corretos
 			conteudo = new String(((DEROctetString) obj).getOctets(),
 					"ISO-8859-1");

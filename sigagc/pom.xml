@@ -76,7 +76,6 @@
                           <groupId>eclipse</groupId>
                           <artifactId>jdtcore</artifactId>
                         </exclusion>
-
                       </exclusions>
                   </dependency>
             

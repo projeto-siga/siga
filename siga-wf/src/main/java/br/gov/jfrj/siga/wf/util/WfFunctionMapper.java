@@ -57,6 +57,15 @@ public class WfFunctionMapper implements FunctionMapper {
 		return b;
 	}
 
+	public static String ex_form(String codigoDocumento, String variavel)
+			throws Exception {
+		if (codigoDocumento == null || codigoDocumento.length() == 0)
+			throw new AplicacaoException(
+					"Código do documento precisa ser informado quando é feita uma chamada para ex:form.");
+		String s = Service.getExService().form(codigoDocumento, variavel);
+		return s;
+	}
+
 	public static String wf_prosseguirCondicional() {
 		return "br.gov.jfrj.siga.wf.util.WfProsseguirCondicionalActionHandler";
 	}

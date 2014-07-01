@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.wf.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.jws.WebService;
 
@@ -58,5 +59,25 @@ public interface WfService extends Remote {
 	 */
 	Boolean atualizarWorkflowsDeDocumento(String codigoDocumento)
 			throws Exception;
+
+	/**
+	 * Varre todas as instancias de todos os Workflows, procurando um tarefa que
+	 * contenha uma action e possua uma variavel de controle mapiada para uma
+	 * variavel de contexto iniciada por "doc_" e seja somente leitura. Se essa
+	 * variavel de controle começar com o valor do parametro 'codigoDocumento',
+	 * é recuperado o valor da variável cujo nome foi passado como parâmetro.
+	 * 
+	 * @param codigoDocumento
+	 * @return
+	 * @throws Exception
+	 */
+	Object variavelPorDocumento(String codigoDocumento, String nomeDaVariavel)
+			throws Exception;
+
+	// List<Long> instanciasDeProcessoPorDocumento(String codigoDocumento)
+	// throws Exception;
+	//
+	// String variavelPorInstanciaDeProcesso(Long instanciaDeProcesso)
+	// throws Exception;
 
 }

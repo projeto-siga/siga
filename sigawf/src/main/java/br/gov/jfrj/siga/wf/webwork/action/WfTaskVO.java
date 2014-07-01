@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jbpm.context.def.VariableAccess;
 import org.jbpm.graph.def.Node;
@@ -32,6 +34,7 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.node.EndState;
 import org.jbpm.graph.node.TaskNode;
+import org.jbpm.jpdl.el.impl.JbpmExpressionEvaluator;
 import org.jbpm.taskmgmt.def.Task;
 import org.jbpm.taskmgmt.exe.PooledActor;
 import org.jbpm.taskmgmt.exe.SwimlaneInstance;
@@ -137,6 +140,20 @@ public class WfTaskVO {
 					.getTask().getTaskController().getVariableAccesses();
 
 			for (VariableAccess va : variableAccesses) {
+				if (va.getAccess().toString().contains("value=")) {
+					Pattern pattern = Pattern.compile("value\\=(\\{[^}]+\\})");
+					Matcher matcher = pattern.matcher(va.getAccess().toString());
+					if (matcher.find()) {
+						String expression = matcher.group(1);
+						Object resultado = JbpmExpressionEvaluator.evaluate(
+								"#" + expression,
+								new ExecutionContext(taskInstance.getToken()));
+						taskInstance.getContextInstance().setVariableLocally(
+								va.getMappedName(), resultado,
+								taskInstance.getToken());
+					}
+				}
+
 				WfVariableAccessVO wfva = new WfVariableAccessVO(va);
 				if (wfva.getMappedName().startsWith("doc_")) {
 					String documento = (String) taskInstance
@@ -195,7 +212,7 @@ public class WfTaskVO {
 										+ lotEX.getSigla() + ", for devolvido.");
 							}
 							if (!podeMovimentar && !estaComTarefa) {
-								if (lotWF!=null && !lotWF.equivale(lotEX)) {
+								if (lotWF != null && !lotWF.equivale(lotEX)) {
 									setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
 											+ documento
 											+ ", que está com "
@@ -231,9 +248,13 @@ public class WfTaskVO {
 							|| nextNode instanceof EndState)
 						break;
 					if (nextNode.getLeavingTransitions() != null
-							&& nextNode.getLeavingTransitions().size() == 1)
+							&& nextNode.getLeavingTransitions().size() == 1) {
 						nextNode = ((Transition) nextNode
 								.getLeavingTransitions().get(0)).getTo();
+					} else {
+						nextNode = null;
+						break;
+					}
 				}
 				if (nextNode != null) {
 					if (nextNode instanceof EndState) {

@@ -21,17 +21,25 @@ package br.gov.jfrj.siga.wf.webwork.action;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jbpm.context.def.VariableAccess;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.Comment;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
+import org.jbpm.graph.node.TaskNode;
 import org.jbpm.logging.log.ProcessLog;
+import org.jbpm.taskmgmt.def.Swimlane;
+import org.jbpm.taskmgmt.def.Task;
 import org.jbpm.taskmgmt.exe.PooledActor;
+import org.jbpm.taskmgmt.exe.SwimlaneInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import br.gov.jfrj.siga.Service;
@@ -45,7 +53,9 @@ import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.wf.WfConhecimento;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.util.WfAssignmentHandler;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
+import br.gov.jfrj.siga.wf.util.WfGraphFactory;
 
 import com.opensymphony.xwork.Action;
 
@@ -91,6 +101,8 @@ public class WfTaskAction extends WfSigaActionSupport {
 
 	protected DpPessoaSelecao atorSel = new DpPessoaSelecao();
 	protected DpLotacaoSelecao lotaAtorSel = new DpLotacaoSelecao();
+
+	protected String dot;
 
 	/**
 	 * Retorna o comentário da tarefa.
@@ -200,7 +212,119 @@ public class WfTaskAction extends WfSigaActionSupport {
 				carregarAtorEGrupo();
 			}
 		inicializarTaskVO();
+
+		ProcessInstance pi = taskInstance.getProcessInstance();
+		ProcessDefinition pd = pi.getProcessDefinition();
+		byte ab[] = pd.getFileDefinition().getBytes("processdefinition.xml");
+		String sXML = new String(ab, "UTF-8");
+
+		WfGraphFactory graph = new WfGraphFactory();
+
+		// Build a delegation map
+		Map<String, String> map = new HashMap<String, String>();
+		// for (TaskInstance ti : ((Collection<TaskInstance>) pi
+		// .getTaskMgmtInstance().getTaskInstances())) {
+		// if (ti.getSwimlaneInstance() != null)
+		// map.put(ti.getTask().getParent().getName(),
+		// designacao(ti.getSwimlaneInstance().getActorId(), ti
+		// .getSwimlaneInstance().getPooledActors()));
+		// else if (ti.getTask().getSwimlane() == null) {
+		// map.put(ti.getTask().getParent().getName(),
+		// designacao(ti.getActorId(), ti.getPooledActors()));
+		// }
+		// }
+
+		WfAssignmentHandler ah = new WfAssignmentHandler();
+		ExecutionContext ctx = new ExecutionContext(taskInstance.getToken());
+		for (Task t : ((Collection<Task>) pd.getTaskMgmtDefinition().getTasks()
+				.values())) {
+			String designacao = null;
+			TaskNode taskNode = t.getTaskNode();
+			if (t.getSwimlane() != null) {
+				{
+					SwimlaneInstance si;
+					si = taskInstance.getTaskMgmtInstance()
+							.getSwimlaneInstance(t.getSwimlane().getName());
+					if (si != null)
+						designacao = designacao(si.getActorId(),
+								si.getPooledActors());
+					if (designacao != null) {
+						if (taskNode != null)
+							map.put(taskNode.getName(), designacao);
+					} else {
+						si = new SwimlaneInstance(t.getSwimlane());
+						si.setTaskMgmtInstance(taskInstance
+								.getTaskMgmtInstance());
+						try {
+							ctx.setTaskInstance(taskInstance);
+							ah.assign(si, ctx);
+							designacao = designacao(si.getActorId(),
+									si.getPooledActors());
+							map.put(taskNode.getName(), designacao);
+						} catch (AplicacaoException e) {
+
+						}
+					}
+				}
+			} else {
+				TaskInstance ti = new TaskInstance();
+				ti.setTask(t);
+				ti.setTaskMgmtInstance(taskInstance.getTaskMgmtInstance());
+				try {
+					ctx.setTaskInstance(ti);
+					ah.assign(ti, ctx);
+					designacao = designacao(ti.getActorId(),
+							ti.getPooledActors());
+					map.put(taskNode.getName(), designacao);
+				} catch (AplicacaoException e) {
+
+				}
+			}
+		}
+
+		// for (Swimlane s : ((Collection<Swimlane>) pd.getTaskMgmtDefinition()
+		// .getSwimlanes().values())) {
+		// if (s.getTasks() != null)
+		// for (Object t : s.getTasks()) {
+		// System.out.println(((Task) t).toString());
+		// }
+		// if (s.getAssignmentDelegation() == null)
+		// s.setAssignmentDelegation(d);
+		// }
+		//
+		// for (Task t : ((Collection<Task>)
+		// pd.getTaskMgmtDefinition().getTasks()
+		// .values())) {
+		// if (t.getSwimlane() == null && t.getAssignmentDelegation() == null)
+		// t.setAssignmentDelegation(d);
+		// }
+
+		dot = graph.gerarDOT(sXML,
+				taskInstance.getTask().getParent().getName(), map);
+
+		dot = dot.replace("\n", " ");
+		dot = dot.replace("\r", " ");
+
 		return Action.SUCCESS;
+	}
+
+	private String designacao(String actorId, Set pooledActors) {
+		if (actorId == null && pooledActors == null)
+			return null;
+		if (pooledActors == null || pooledActors.size() == 0)
+			return actorId;
+		String pa = "";
+		for (Object a : pooledActors) {
+			if (pa.length() > 0)
+				pa += "/";
+			if (a instanceof PooledActor)
+				pa += ((PooledActor)a).getActorId();
+		}
+
+		if (actorId == null)
+			return pa;
+
+		return actorId + " - " + pa;
 	}
 
 	/**
@@ -451,11 +575,12 @@ public class WfTaskAction extends WfSigaActionSupport {
 		for (Transition transition : (List<Transition>) (taskInstance
 				.getAvailableTransitions())) {
 			if ((transition.getName() == null && transitionName == null)
-					|| ((transition.getName() != null && transitionName != null) && (transition.getName()
-							.equals(new String(transitionName
-									.getBytes("ISO-8859-1")))))
-					|| ((transition.getName() != null && transitionName != null) && (transition.getName()
-							.equals(new String(transitionName.getBytes("UTF-8")))))) {
+					|| ((transition.getName() != null && transitionName != null) && (transition
+							.getName().equals(new String(transitionName
+							.getBytes("ISO-8859-1")))))
+					|| ((transition.getName() != null && transitionName != null) && (transition
+							.getName().equals(new String(transitionName
+							.getBytes("UTF-8")))))) {
 				taskInstance.end(transition);
 				break;
 			}
@@ -909,15 +1034,13 @@ public class WfTaskAction extends WfSigaActionSupport {
 	}
 
 	public String getConhecimento() {
-		// Corrige o proble do encoding ao editar a descrição da Tarefa - 01/08/2012
+		// Corrige o proble do encoding ao editar a descrição da Tarefa -
+		// 01/08/2012
 		/*
-		try {
-			return new String(conhecimento.getBytes("ISO-8859-1"));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
+		 * try { return new String(conhecimento.getBytes("ISO-8859-1")); } catch
+		 * (UnsupportedEncodingException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
 		return conhecimento;
 	}
 
@@ -939,6 +1062,14 @@ public class WfTaskAction extends WfSigaActionSupport {
 
 	public void setJustificativa(String justificativa) {
 		this.justificativa = justificativa;
+	}
+
+	public String getDot() {
+		return dot;
+	}
+
+	public void setDot(String dot) {
+		this.dot = dot;
 	}
 
 }

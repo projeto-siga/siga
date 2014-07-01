@@ -26,6 +26,8 @@ import javax.jws.WebService;
 import org.hibernate.Query;
 import org.jbpm.JbpmContext;
 import org.jbpm.context.def.VariableAccess;
+import org.jbpm.context.exe.VariableInstance;
+import org.jbpm.context.exe.variableinstance.StringInstance;
 import org.jbpm.db.GraphSession;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -102,14 +104,14 @@ public class WfServiceImpl implements WfService {
 									.getVariable(mapping);
 							if (value != null
 									&& value.startsWith(codigoDocumento)) {
-								ExecutionContext ec = new ExecutionContext(ti
-										.getToken());
+								ExecutionContext ec = new ExecutionContext(
+										ti.getToken());
 								ec.setTaskInstance(ti);
 								ec.setTask(ti.getTask());
 								ti.getTask().fireEvent("context-change", ec);
-								
+
 								executarAcoes(codigoDocumento, ti);
-								
+
 								b = true;
 							}
 						}
@@ -125,7 +127,8 @@ public class WfServiceImpl implements WfService {
 	}
 
 	/**
-	 * Executa ações na tarefa baseando-se nos serviços externos associados à tarefa.
+	 * Executa ações na tarefa baseando-se nos serviços externos associados à
+	 * tarefa.
 	 * 
 	 * @param codigoDocumento
 	 * @param ti
@@ -136,9 +139,10 @@ public class WfServiceImpl implements WfService {
 		ExService exSvc = Service.getExService();
 		WfBL bl = Wf.getInstance().getBL();
 		WfDao dao = WfDao.getInstance();
-		
-		if (exSvc.isSemEfeito(codigoDocumento)){
-			bl.encerrarProcessInstance(ti.getProcessInstance().getId(), dao.consultarDataEHoraDoServidor());
+
+		if (exSvc.isSemEfeito(codigoDocumento)) {
+			bl.encerrarProcessInstance(ti.getProcessInstance().getId(),
+					dao.consultarDataEHoraDoServidor());
 		}
 	}
 
@@ -165,7 +169,9 @@ public class WfServiceImpl implements WfService {
 			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
 					siglaTitular);
 
-			ProcessInstance pi = Wf.getInstance().getBL()
+			ProcessInstance pi = Wf
+					.getInstance()
+					.getBL()
 					.createProcessInstance(pd.getId(),
 							cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(),
@@ -174,6 +180,60 @@ public class WfServiceImpl implements WfService {
 
 			WfTaskAction.transferirDocumentosVinculados(pi, siglaTitular);
 			return true;
+		} catch (Exception e) {
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+
+	@Override
+	public Object variavelPorDocumento(String codigoDocumento,
+			String nomeDaVariavel) throws Exception {
+		try {
+			// TODO Auto-generated method stub
+			Boolean b = false;
+			GraphSession graph = WfContextBuilder.getJbpmContext()
+					.getGraphSession();
+			JbpmContext ctx = WfContextBuilder.getJbpmContext()
+					.getJbpmContext();
+			// List<TaskInstance> tis = ctx.getTaskList();
+
+			// Get latest processInstance that references a certain document
+//			Query qpi = WfDao
+//					.getInstance()
+//					.getSessao()
+//					.createQuery(
+//							"select max(vi.processInstance) from org.jbpm.context.exe.variableinstance.StringInstance as vi, vi.processInstance pi"
+//									+ " where pi.end is null and vi.name like 'doc_%' and vi.value = :codigoDocumento");
+			Query qpi = WfDao
+					.getInstance()
+					.getSessao()
+					.createQuery(
+							"select max(vi.processInstance.id) from org.jbpm.context.exe.variableinstance.StringInstance as vi inner join vi.processInstance as pi"
+									+ " where pi.end is null and vi.name like 'doc_%' and vi.value = :codigoDocumento");
+			qpi.setParameter("codigoDocumento", codigoDocumento);
+
+			Long pid = (Long) qpi.uniqueResult();
+
+			if (pid == null)
+				return null;
+
+			Query qvi = WfDao
+					.getInstance()
+					.getSessao()
+					.createQuery(
+							"select vi from org.jbpm.context.exe.variableinstance.StringInstance as vi"
+									+ " where vi.processInstance.id = :pid and vi.name = :nomeDaVariavel");
+			qvi.setParameter("pid", pid);
+			qvi.setParameter("nomeDaVariavel", nomeDaVariavel);
+			List<VariableInstance> vis = qvi.list();
+
+			for (VariableInstance vi : vis) {
+				if (vi.getValue() != null)
+					return vi.getValue();
+			}
+			return null;
 		} catch (Exception e) {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);

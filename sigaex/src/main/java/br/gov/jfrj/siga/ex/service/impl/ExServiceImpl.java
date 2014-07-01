@@ -303,6 +303,20 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
+	public String form(String codigoDocumento, String variavel)
+			throws Exception {
+		if (codigoDocumento == null)
+			return null;
+		try {
+			ExMobil mob = buscarMobil(codigoDocumento);
+			return mob.doc().getForm().get(variavel);
+		} catch (Exception e) {
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			return null;
+		}
+	}
+
 	public String toJSON(String codigo) throws Exception {
 		try {
 			ExMobil mob = null;

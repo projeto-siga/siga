@@ -75,7 +75,7 @@
 												<input name="fieldNames" type="hidden"
 													value="${variable.mappedName}" />
 											</c:if> <ww:if
-												test="%{#attr.variable.mappedName.startsWith('doc_')}">
+												test="%{#attr.variable.mappedName.startsWith('doc_') or #attr.variable.mappedName.startsWith('(doc_')}">
 												<c:choose>
 													<c:when test="${editable}">
 														<siga:selecao propriedade="${variable.mappedName}"
@@ -339,18 +339,24 @@
 			</div>
 			<!-- /Sidebar Box -->
 --%>
+			
 			<!-- Sidebar List -->
 			<div class="gt-sidebar-list">
 				<h3>Mapa do Procedimento</h3>
-				<ul class="gt-sidebar-list-content">
-					<li class="gt-sidebar-list-row"><a
-						onclick="javascript: document.getElementById('page').style.display='none'; document.getElementById('map').style.display='block';"
-						title="Zoom" href="#"><img style="width: 100%"
-							src="loadPhoto?tId=${taskInstance.id}" /> </a> <%--<tags:wfImage task="${taskInstance.id}"
-								token="${taskInstance.token.id}" /> --%>
-					</li>
-				</ul>
+				<div style="display: none" id="input">
+					digraph G {
+						graph[size="3,3", rankdir="LR"];
+						<ww:property value="dot" escape="false"/>
+					}
+				</div>
+				<a
+						onclick="javascript: document.getElementById('page').style.display='none'; document.getElementById('svg').style.display='block'; bigmap();"
+						title="Zoom" href="#">
+				<div class="gt-sidebar-list-content" id="output">
+				</div>
+				</a>
 			</div>
+			
 			<!-- /Sidebar List -->
 
 			<div class="gt-sidebar-content" id="gc"></div>
@@ -372,6 +378,28 @@
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
 	</div>
+	
+	<div class="gt-bd clearfix" style="display: none" id="svg">
+		<div class="gt-content clearfix">
+			<div id="desc_editar">
+				<h3>Mapa do Procedimento</h3>
+				<div style="display: none" id="input2">
+					digraph G {
+						graph[size="100,100", rankdir="LR"];
+						<ww:property value="dot" escape="false"/>
+					}
+				</div>
+				
+				<div class="gt-form gt-content-box" style="padding-bottom: 15px;" id="output2">
+				</div>
+			</div>
+		</div>
+		<a href="task.action?tiId=${taskInstance.id}"
+			class="gt-btn-large gt-btn-left">Voltar</a>
+
+	</div>
+
+	
 
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
@@ -399,4 +427,75 @@
 	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
 	</script>
 	</c:if>
+	
+	<!-- <script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script> -->
+	<script src="http://mdaines.github.io/viz.js/viz.js"></script>
+	
+	<script>
+		function bigmap() {
+			var input = 'digraph G { graph[size="100,100"]; <ww:property value="dot" escape="false"/> }';
+			var format = "svg";
+			var engine = "dot";
+			
+			var result = Viz(input, format, engine);
+			
+			if (format == "svg") {
+			  document.getElementById("output2").innerHTML = result;
+			} else {
+			  document.getElementById("output2").innerHTML = "";
+			}
+			$(document).ready(function () {
+			    updateContainer();
+			});
+		}
+		
+		function smallmap() {
+			var input = 'digraph G { graph[size="3,3"]; <ww:property value="dot" escape="false"/> }';
+			var format = "svg";
+			var engine = "dot";
+			
+			var result = Viz(input, format, engine);
+			
+			if (format == "svg") {
+			  document.getElementById("output").innerHTML = result;
+			} else {
+			  document.getElementById("output").innerHTML = "";
+			}
+		}
+
+		smallmap();
+
+		$(document).ready(function () {
+		    updateContainer();
+		    $(window).resize(function() {
+		        updateContainer();
+		    });
+		});
+		function updateContainer() {
+		    var smallwidth = $('#output').width(); 
+		    var smallsvg = $('#output :first-child').first(); 
+		    var smallviewbox = smallsvg.attr('viewBox');
+		      
+		    if(typeof smallviewbox != 'undefined') {
+			    var a = smallviewbox.split(' ');  
+	
+			    // set attrs and 'resume' force 
+			    smallsvg.attr('width', smallwidth);
+			    smallsvg.attr('height', smallwidth * a[3] / a[2]);
+		    }
+		    
+		    var bigwidth = $('#output2').width(); 
+		    var bigsvg = $('#output2 :first-child').first(); 
+		    var bigviewbox = bigsvg.attr('viewBox');
+		      
+		    if(typeof bigviewbox != 'undefined') {
+			    var a = bigviewbox.split(' ');  
+	
+			    // set attrs and 'resume' force 
+			    bigsvg.attr('width', bigwidth);
+			    bigsvg.attr('height', bigwidth * a[3] / a[2]);
+		    }
+		}
+    </script>
+	
 </siga:pagina>

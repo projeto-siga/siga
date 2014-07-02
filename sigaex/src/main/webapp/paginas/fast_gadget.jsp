@@ -56,7 +56,6 @@ submitOk = function() {
 							<c:set var="titulo2"
 								value="Documentos que já foram assinados ou tiveram a assinatura manual registrada. Também contém os documentos que já foram recebidos pelo usuário ${titular.nomePessoa}."></c:set>
 							<c:set var="titulo3" value="${titulo1}"></c:set>
-							<c:set var="ordem" value="1"/>
 							<c:set var="visualizacao" value="1"/>
 						</c:when>
 						<c:when test="${listEstado[0]==3}">

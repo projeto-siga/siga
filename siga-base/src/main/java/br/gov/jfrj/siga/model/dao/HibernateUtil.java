@@ -26,13 +26,13 @@
 package br.gov.jfrj.siga.model.dao;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -241,7 +241,7 @@ public class HibernateUtil {
 		}
 	}
 
-	public static void configurarHibernate(AnnotationConfiguration cfg,	String hibernateConnectionUrl, Class<?>... classesAnotadas) {
+	public static void configurarHibernate(Configuration cfg,	String hibernateConnectionUrl, Class<?>... classesAnotadas) {
 		
 		try {
 			
@@ -310,7 +310,7 @@ public class HibernateUtil {
 		return sessionFactory;
 	}
 	
-	private static void configurarHibernateParaDebug(AnnotationConfiguration cfg) {
+	private static void configurarHibernateParaDebug(Configuration cfg) {
 		boolean isDebugHibernateHabilitado = SigaBaseProperties.getBooleanValue("configura.hibernate.para.debug");
 		if ( isDebugHibernateHabilitado ) {
 			ModeloDao.configurarHibernateParaDebug( cfg );

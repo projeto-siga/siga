@@ -3,14 +3,14 @@ package br.gov.jfrj.siga.base.auditoria.hibernate.auditor;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.event.DeleteEvent;
-import org.hibernate.event.PostLoadEvent;
-import org.hibernate.event.PreLoadEvent;
-import org.hibernate.event.SaveOrUpdateEvent;
-import org.hibernate.event.def.DefaultDeleteEventListener;
-import org.hibernate.event.def.DefaultPostLoadEventListener;
-import org.hibernate.event.def.DefaultPreLoadEventListener;
-import org.hibernate.event.def.DefaultSaveOrUpdateEventListener;
+import org.hibernate.event.internal.DefaultDeleteEventListener;
+import org.hibernate.event.internal.DefaultPostLoadEventListener;
+import org.hibernate.event.internal.DefaultPreLoadEventListener;
+import org.hibernate.event.internal.DefaultSaveOrUpdateEventListener;
+import org.hibernate.event.spi.DeleteEvent;
+import org.hibernate.event.spi.PostLoadEvent;
+import org.hibernate.event.spi.PreLoadEvent;
+import org.hibernate.event.spi.SaveOrUpdateEvent;
 
 import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
 
@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUti
  *
  */
 public class SigaHibernateChamadaAuditor extends SigaAuditor {
-	
+
 	public static final String HABILITA_AUDITORIA_PROPERTY_NAME = "habilita.auditoria.tempo.chamada.hibernate.por.entidade";
 	public static final String HABILITA_AUDITORIA_LISTENERS_PROPERTY_NAME = "habilita.auditoria.chamada.listeners";
 	public static final String HABILITA_AUDITORIA_INTERCEPTOR_PROPERTY_NAME = "habilita.auditoria.chamada.interceptor";
@@ -32,7 +32,7 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 	public static final String CATEGORIA_LOG_LISTENER_PROPERTY_NAME = "auditoria.categoria.log.chamada.listeners";
 	public static final String CATEGORIA_LOG_INTERCEPTOR_PROPERTY_NAME = "auditoria.categoria.log.chamada.interceptor";
 	public static final String CATEGORIA_LOG_TEMPO_LIMITE_ULTRAPASSADO_PROPERTY_NAME = "auditoria.categoria.log.tempo.limite.duracao.chamada.ultrapassado";
-	
+
 	public SigaHibernateChamadaAuditor(Configuration cfg) {
 		super( cfg );
 	}
@@ -43,11 +43,13 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 		log.info("###### Tempo limite para logar listeners    : " + getTempoLimite( TEMPO_LIMITE_LOG_LISTENER_PROPERTY_NAME ) + "s" );
 		log.info("###### Categoria de Log para logar listeners: " + getCategoriaDeLogParaListeners() );
 		log.info("##############################################################################");
-		super.cfg.setListener( SigaPreLoadEventListener.TYPE, new SigaPreLoadEventListener() );
-		super.cfg.setListener( SigaPostLoadEventListener.TYPE, new SigaPostLoadEventListener() );
+		
+		//TODO 
+//		super.cfg.setListener( SigaPreLoadEventListener.TYPE, new SigaPreLoadEventListener() );
+//		super.cfg.setListener( SigaPostLoadEventListener.TYPE, new SigaPostLoadEventListener() );
 		return this;
 	}
-	
+
 	@Override
 	public SigaAuditor configuraInterceptorDeAuditoria() {
 		log.info("##############################################################################");
@@ -57,7 +59,7 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 		super.cfg.setInterceptor( new SigaAuditorInterceptor() );
 		return this;
 	}
-	
+
 	protected class SigaSaveOrUpdateListener extends DefaultSaveOrUpdateEventListener {
 		private static final long serialVersionUID = 1L;
 		public static final String TYPE = "save-update";
@@ -73,7 +75,7 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 			}
 		}
 	}
-	
+
 	protected class SigaDeleteEventListener extends DefaultDeleteEventListener {
 		private static final long serialVersionUID = 1L;
 		public static final String TYPE = "delete";
@@ -89,10 +91,11 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 			}
 		}
 	}
-	
+
 	protected class SigaPreLoadEventListener extends DefaultPreLoadEventListener {
 		private static final long serialVersionUID = 1L;
 		public static final String TYPE = "pre-load";
+
 		@Override
 		public void onPreLoad(PreLoadEvent event) {
 			if ( isAuditoriaHabilitada() ) {
@@ -102,7 +105,7 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 			super.onPreLoad( event );
 		}
 	}
-	
+
 	protected class SigaPostLoadEventListener extends DefaultPostLoadEventListener{
 		private static final long serialVersionUID = 1L;
 		public static final String TYPE = "post-load";
@@ -115,7 +118,7 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 			super.onPostLoad( event );
 		}
 	}
-	
+
 	protected class SigaAuditorInterceptor extends EmptyInterceptor{
 		private static final long serialVersionUID = 1L;
 		@Override
@@ -127,15 +130,15 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 			return super.onPrepareStatement( sql );
 		}
 	}
-	
+
 	protected void logaListener( String categoriaDeLog, String tipoEvento, String nomeEntidade ){
 		SigaHibernateAuditorLogUtil.loga( getCategoriaDeLogParaListeners(), "[" + tipoEvento + "] - [" + nomeEntidade + "]");
 	}
-	
+
 	private String getCategoriaLogTempoLimiteUltrapassado() {
 		return System.getProperty( CATEGORIA_LOG_TEMPO_LIMITE_ULTRAPASSADO_PROPERTY_NAME );
 	}
-	
+
 	@Override
 	public boolean isAuditoriaHabilitada() {
 		return new Boolean( System.getProperty( HABILITA_AUDITORIA_PROPERTY_NAME ) );

@@ -55,6 +55,7 @@ import org.hibernate.cfg.DefaultNamingStrategy;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.jdbc.Work;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -142,7 +143,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome() {
 		try {
@@ -154,7 +155,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpFeriado> listarCpFeriadoPorDescricao() {
 		try {
@@ -285,16 +286,16 @@ public class CpDao extends ModeloDao {
 	// }
 
 	public int consultarQuantidade(final DaoFiltro o) throws Exception,
-			SecurityException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	SecurityException, IllegalAccessException,
+	InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
 		return (Integer) this.getClass()
 				.getMethod("consultarQuantidade", argType).invoke(this, o);
 	}
 
 	public Selecionavel consultarPorSigla(final DaoFiltro o) throws Exception,
-			SecurityException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	SecurityException, IllegalAccessException,
+	InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
 		return (Selecionavel) this.getClass()
 				.getMethod("consultarPorSigla", argType).invoke(this, o);
@@ -509,7 +510,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(final CpAplicacaoFeriado apl) {
 		final Query query = getSessao().getNamedQuery(
@@ -522,7 +523,7 @@ public class CpDao extends ModeloDao {
 		final List<CpAplicacaoFeriado> l = query.list();
 		return l;
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	public DpFuncaoConfianca consultarPorSigla(final DpFuncaoConfianca o) {
@@ -596,7 +597,7 @@ public class CpDao extends ModeloDao {
 
 			if (!o.isBuscarFechadas())
 				query = getSessao()
-						.getNamedQuery("consultarPorFiltroDpLotacao");
+				.getNamedQuery("consultarPorFiltroDpLotacao");
 			else
 				query = getSessao().getNamedQuery(
 						"consultarPorFiltroDpLotacaoInclusiveFechadas");
@@ -899,7 +900,7 @@ public class CpDao extends ModeloDao {
 		List l = query.list();
 		return l;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {
 
@@ -919,7 +920,7 @@ public class CpDao extends ModeloDao {
 		List l = query.list();
 		return l;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidades() {
 
@@ -1021,7 +1022,7 @@ public class CpDao extends ModeloDao {
 
 			if (!flt.isBuscarFechadas())
 				query = getSessao()
-						.getNamedQuery("consultarQuantidadeDpPessoa");
+				.getNamedQuery("consultarQuantidadeDpPessoa");
 			else
 				query = getSessao().getNamedQuery(
 						"consultarQuantidadeDpPessoaInclusiveFechadas");
@@ -1201,7 +1202,7 @@ public class CpDao extends ModeloDao {
 	public List<DpPessoa> pessoasPorLotacao(Long id,
 			Boolean incluirSublotacoes, Boolean somenteServidor,
 			SituacaoFuncionalEnum situacoesFuncionais)
-			throws AplicacaoException {
+					throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
 
@@ -1238,7 +1239,7 @@ public class CpDao extends ModeloDao {
 			if (somenteServidor) {
 				c.add(Restrictions.not(Restrictions.in("c.nomeCargo",
 						new String[] { "ESTAGIARIO", "JUIZ SUBSTITUTO",
-								"JUIZ FEDERAL" })));
+				"JUIZ FEDERAL" })));
 			}
 
 			c.add(Restrictions.in("situacaoFuncionalPessoa",
@@ -1384,73 +1385,83 @@ public class CpDao extends ModeloDao {
 	 * @throws AplicacaoException
 	 */
 	public void importarAcessoTomcat() throws SQLException,
-			InvalidKeyException, NoSuchAlgorithmException,
-			NoSuchPaddingException, IllegalBlockSizeException,
-			BadPaddingException, AplicacaoException {
+	InvalidKeyException, NoSuchAlgorithmException,
+	NoSuchPaddingException, IllegalBlockSizeException,
+	BadPaddingException, AplicacaoException {
 		final Date dt = consultarDataEHoraDoServidor();
-		String s = "SELECT * FROM ACESSO_TOMCAT.USUARIO";
+		final String s = "SELECT * FROM ACESSO_TOMCAT.USUARIO";
 
-		final Connection conn = getSessao().connection();
-		final PreparedStatement ps = conn.prepareStatement(s);
-		final String j = ps.toString();
+		getSessao().doWork(
+				new Work() {
+					public void execute(Connection conn) throws SQLException 
+					{ 
+						final PreparedStatement ps = conn.prepareStatement(s);
+						try{
+							final ResultSet rset = ps.executeQuery();
+							CpTipoIdentidade tid = consultar(1, CpTipoIdentidade.class, false);
+							while (rset.next()) {
+								final String login = (String) rset.getObject(1);
+								final String senha = (String) rset.getObject(2);
+								Long cpf;
+								try {
+									cpf = ((BigDecimal) rset.getObject(4)).longValue();
+								} catch (NullPointerException e1) {
+									System.out.println("CPF nulo:" + login);
+									continue;
+								}
+								if (!Character.isDigit(login.charAt(2))) {
+									System.out.println("Login sem matrícula:" + login);
+									continue;
+								}
+								final long longmatricula = Long.parseLong(login.substring(2));
+	
+								DpPessoa pessoa;
+								try {
+									pessoa = consultarPorCpfMatricula(cpf, longmatricula);
+								} catch (org.hibernate.NonUniqueResultException e) {
+									System.out.println("Mais de um registro retornado:" + login);
+									continue;
+								}
+								if (pessoa == null) {
+									System.out.println("Pessoa não localizada:" + login);
+									continue;
+								}
+	
+								CpIdentidade id = new CpIdentidade();
+								id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
+								id.setCpTipoIdentidade(tid);
+								id.setDpPessoa(pessoa);
+								id.setDscSenhaIdentidade(senha);
+	
+								// BASE64Encoder encoderBase64 = new BASE64Encoder();
+								// String chave =
+								// encoderBase64.encode(id.getDpPessoa().getIdInicial()
+								// .toString().getBytes());
+								// String senhaCripto = encoderBase64.encode(Criptografia
+								// .criptografar(senha, chave));
+								// id.setDscSenhaIdentidadeCripto(senhaCripto);
+								// id.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+	
+								id.setDtCancelamentoIdentidade(null);
+								id.setDtCriacaoIdentidade(dt);
+								id.setDtExpiracaoIdentidade(null);
+								id.setHisDtFim(null);
+								id.setHisDtIni(dt);
+								// id.setIdCpIdentidade(null);
+								id.setNmLoginIdentidade(login);
+								gravar(id);
+								id.setHisIdIni(id.getIdIdentidade());
+								gravar(id);
+							} 
+						}catch(Exception ex){
+							ex.printStackTrace();
+						}finally{
+							ps.close();
+						}
+					}
+				});
 
-		final ResultSet rset = ps.executeQuery();
-
-		CpTipoIdentidade tid = consultar(1, CpTipoIdentidade.class, false);
-		while (rset.next()) {
-			final String login = (String) rset.getObject(1);
-			final String senha = (String) rset.getObject(2);
-			Long cpf;
-			try {
-				cpf = ((BigDecimal) rset.getObject(4)).longValue();
-			} catch (NullPointerException e1) {
-				System.out.println("CPF nulo:" + login);
-				continue;
-			}
-			if (!Character.isDigit(login.charAt(2))) {
-				System.out.println("Login sem matrícula:" + login);
-				continue;
-			}
-			final long longmatricula = Long.parseLong(login.substring(2));
-
-			DpPessoa pessoa;
-			try {
-				pessoa = consultarPorCpfMatricula(cpf, longmatricula);
-			} catch (org.hibernate.NonUniqueResultException e) {
-				System.out.println("Mais de um registro retornado:" + login);
-				continue;
-			}
-			if (pessoa == null) {
-				System.out.println("Pessoa não localizada:" + login);
-				continue;
-			}
-
-			CpIdentidade id = new CpIdentidade();
-			id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
-			id.setCpTipoIdentidade(tid);
-			id.setDpPessoa(pessoa);
-			id.setDscSenhaIdentidade(senha);
-
-			// BASE64Encoder encoderBase64 = new BASE64Encoder();
-			// String chave =
-			// encoderBase64.encode(id.getDpPessoa().getIdInicial()
-			// .toString().getBytes());
-			// String senhaCripto = encoderBase64.encode(Criptografia
-			// .criptografar(senha, chave));
-			// id.setDscSenhaIdentidadeCripto(senhaCripto);
-			// id.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
-
-			id.setDtCancelamentoIdentidade(null);
-			id.setDtCriacaoIdentidade(dt);
-			id.setDtExpiracaoIdentidade(null);
-			id.setHisDtFim(null);
-			id.setHisDtIni(dt);
-			// id.setIdCpIdentidade(null);
-			id.setNmLoginIdentidade(login);
-			gravar(id);
-			id.setHisIdIni(id.getIdIdentidade());
-			gravar(id);
-		}
+		
 	}
 
 	public HistoricoAuditavel gravarComHistorico(HistoricoAuditavel oNovo,
@@ -1525,7 +1536,7 @@ public class CpDao extends ModeloDao {
 
 	static public AnnotationConfiguration criarHibernateCfg(
 			String connectionUrl, String username, String password)
-			throws Exception {
+					throws Exception {
 		AnnotationConfiguration cfg = new AnnotationConfiguration();
 		cfg.setProperty("hibernate.connection.url", connectionUrl);
 		cfg.setProperty("hibernate.connection.username", username);
@@ -1539,7 +1550,7 @@ public class CpDao extends ModeloDao {
 		configurarHibernate(cfg);
 		return cfg;
 	}
-	
+
 	static public AnnotationConfiguration criarHibernateCfg(
 			CpAmbienteEnumBL ambiente) throws Exception {
 		CpPropriedadeBL prop = Cp.getInstance().getProp();
@@ -1549,7 +1560,7 @@ public class CpDao extends ModeloDao {
 
 	static public AnnotationConfiguration criarHibernateCfg(
 			CpAmbienteEnumBL ambiente, CpPropriedadeBL prop) throws Exception {
-		
+
 		AnnotationConfiguration cfg = new AnnotationConfiguration();
 
 		// Isto é para manter o naming strategy do hibernate 3.5 na versão 3.6
@@ -1791,8 +1802,8 @@ public class CpDao extends ModeloDao {
 			for (CpModelo mod : lista) {
 				if ((mod.getCpOrgaoUsuario() == null && orgUsu == null)
 						|| (mod.getCpOrgaoUsuario() != null && orgUsu != null && mod
-								.getCpOrgaoUsuario().getId()
-								.equals(orgUsu.getId()))) {
+						.getCpOrgaoUsuario().getId()
+						.equals(orgUsu.getId()))) {
 					listaFinal.add(mod);
 					fFound = true;
 				}
@@ -1840,7 +1851,7 @@ public class CpDao extends ModeloDao {
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> listarOrgaos() {
 		return findByCriteria(CpOrgao.class);

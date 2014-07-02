@@ -24,11 +24,6 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-
-
-
-
-
 import org.springframework.context.support.AbstractApplicationContext;
 
 import br.gov.jfrj.siga.cd.service.CdService;

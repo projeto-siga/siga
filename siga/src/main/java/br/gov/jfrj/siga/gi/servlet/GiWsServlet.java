@@ -35,8 +35,7 @@ public class GiWsServlet extends CXFNonSpringServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public void loadBus(ServletConfig servletConfig) throws ServletException {
+	public void loadBus(ServletConfig servletConfig) {
 		super.loadBus(servletConfig);
 		
 		// Desta forma dava erro na versão EAP 5.1.2: 

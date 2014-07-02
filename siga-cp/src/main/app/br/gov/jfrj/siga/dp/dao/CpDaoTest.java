@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +35,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.jdbc.Work;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
 import sun.misc.BASE64Decoder;
@@ -106,7 +108,7 @@ public class CpDaoTest extends TestCase {
 	}
 
 	public void testGravarGrupoEAtualizar() throws AplicacaoException,
-			Exception, IllegalAccessException {
+	Exception, IllegalAccessException {
 
 		CpTipoGrupo tpGrp = dao.consultar(
 				CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
@@ -138,7 +140,7 @@ public class CpDaoTest extends TestCase {
 	}
 
 	public void testAtualizarGrupoSemAlteracao() throws AplicacaoException,
-			Exception, IllegalAccessException {
+	Exception, IllegalAccessException {
 
 		dao.iniciarTransacao();
 
@@ -157,7 +159,7 @@ public class CpDaoTest extends TestCase {
 	}
 
 	public void testAtualizarGrupoComAlteracao() throws AplicacaoException,
-			Exception, IllegalAccessException {
+	Exception, IllegalAccessException {
 
 		dao.iniciarTransacao();
 
@@ -205,7 +207,7 @@ public class CpDaoTest extends TestCase {
 	 * da integração contínua.
 	 */
 	public void __DESATIVADO__testBL() throws AplicacaoException, Exception,
-			IllegalAccessException {
+	IllegalAccessException {
 
 		// Carrega uma identidade ativa
 		CpIdentidade idAntiga = null;
@@ -272,13 +274,13 @@ public class CpDaoTest extends TestCase {
 
 		// Bloquear a pessoa
 		Cp.getInstance().getBL()
-				.bloquearPessoa(idAlterada.getDpPessoa(), null, true);
+		.bloquearPessoa(idAlterada.getDpPessoa(), null, true);
 		assertTrue(idAlterada.isBloqueada());
 		assertTrue(idAlterada.getDpPessoa().isBloqueada());
 
 		// Desnloquear a pessoa
 		Cp.getInstance().getBL()
-				.bloquearPessoa(idAlterada.getDpPessoa(), null, false);
+		.bloquearPessoa(idAlterada.getDpPessoa(), null, false);
 		assertFalse(idAlterada.getDpPessoa().isBloqueada());
 
 		// Depois de desbloquear a pessoa, a identidade continua bloqueada. Por
@@ -352,8 +354,8 @@ public class CpDaoTest extends TestCase {
 	 * @throws SecurityException
 	 */
 	public static void main(String[] args) throws SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, Exception {
+	IllegalAccessException, InvocationTargetException,
+	NoSuchMethodException, Exception {
 
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
@@ -421,22 +423,20 @@ public class CpDaoTest extends TestCase {
 
 	public static void printSchemaUpdateScript(final SessionFactory sf,
 			final Configuration cfg, final Dialect dialect) {
-		DatabaseMetadata metadata;
-		try {
-			metadata = new DatabaseMetadata(HibernateUtil.getSessao()
-					.connection(), dialect);
-			String[] schemaUpdateScript = cfg.generateSchemaUpdateScript(
-					dialect, metadata);
-			for (String stmt : schemaUpdateScript) {
-				System.out.println(stmt + ";");
+		HibernateUtil.getSessao().doWork(new Work() {
+			@Override
+			public void execute(Connection conn) throws SQLException {
+				DatabaseMetadata metadata = new DatabaseMetadata(conn, dialect);
+				String[] schemaUpdateScript = cfg.generateSchemaUpdateScript(dialect, metadata);
+
+				for (String stmt : schemaUpdateScript) {
+					System.out.println(stmt + ";");
+				}
+
 			}
-		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		});
+
+
 	}
 
 }

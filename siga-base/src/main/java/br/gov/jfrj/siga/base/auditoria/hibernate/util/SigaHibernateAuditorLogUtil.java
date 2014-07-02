@@ -4,13 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.NumberFormat;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
-/**
- * 
- * @author bruno.lacerda@avantiprima.com.br
- *
- */
 public class SigaHibernateAuditorLogUtil {
 	
 	private static final Logger log = Logger.getLogger( "[AUDITORIA]" );

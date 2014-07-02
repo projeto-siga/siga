@@ -26,8 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.log4j.Logger;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
@@ -44,8 +44,7 @@ public class HibernateThreadFilter extends ThreadFilter {
 
 	private static final Object classLock = HibernateThreadFilter.class;
 
-	private static final Logger log = Logger
-			.getLogger(HibernateThreadFilter.class);
+	private static final Logger log = Logger.getLogger(HibernateThreadFilter.class);
 
 	// static {
 	// try {
@@ -94,24 +93,20 @@ public class HibernateThreadFilter extends ThreadFilter {
 					try {
 						// TODO: _LAGS - Trocar para obter os parametros do
 						// "web.xml"
-						AnnotationConfiguration cfg = CpDao
-								.criarHibernateCfg("java:/SigaCpDS");
+						Configuration cfg = CpDao.criarHibernateCfg("java:/SigaCpDS");
 
 						// bruno.lacerda@avantiprima.com.br
 						// Configura listeners de auditoria de acordo com os
 						// parametros definidos no arquivo
 						// siga.auditoria.properties
-						SigaAuditor
-								.configuraAuditoria(new SigaHibernateChamadaAuditor(
-										cfg));
+						SigaAuditor.configuraAuditoria(new SigaHibernateChamadaAuditor(cfg));
 
 						registerTransactionClasses(cfg);
 
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {
-						// Make sure you log the exception, as it might be
-						// swallowed
+						// Make sure you log the exception, as it might be swallowed
 						log.error("Não foi possível configurar o hibernate. ",
 								ex);
 						// ex.printStackTrace();

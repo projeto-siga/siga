@@ -943,26 +943,12 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public String aExibir() throws Exception {
 		buscarDocumento(true);
-
-		if (!Ex.getInstance().getComp()
-				.podeAcessarAberto(getTitular(), getLotaTitular(), mob)
-				|| !Ex.getInstance()
-						.getComp()
-						.podeAcessarCancelado(getTitular(), getLotaTitular(),
-								mob)
-				|| !Ex.getInstance()
-						.getComp()
-						.podeAcessarSemEfeito(getTitular(), getLotaTitular(),
-								mob)) {
+		
+		if(!Ex.getInstance().getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Documento " + mob.getSigla()
 					+ " inacessível ao usuário " + getTitular().getSigla()
 					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
-		}
-
-		if (!Ex.getInstance().getComp()
-				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException(
-					"Acesso permitido a usuários autorizados.");
 
 		if (Ex.getInstance().getComp()
 				.podeReceberEletronico(getTitular(), getLotaTitular(), mob))
@@ -992,25 +978,11 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aExibirNovo() throws Exception {
 		buscarDocumento(true);
 
-		if (!Ex.getInstance().getComp()
-				.podeAcessarAberto(getTitular(), getLotaTitular(), mob)
-				|| !Ex.getInstance()
-						.getComp()
-						.podeAcessarCancelado(getTitular(), getLotaTitular(),
-								mob)
-				|| !Ex.getInstance()
-						.getComp()
-						.podeAcessarSemEfeito(getTitular(), getLotaTitular(),
-								mob)) {
+		if(!Ex.getInstance().getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Documento " + mob.getSigla()
 					+ " inacessível ao usuário " + getTitular().getSigla()
 					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
-		}
-
-		if (!Ex.getInstance().getComp()
-				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException(
-					"Acesso permitido a usuários autorizados.");
 
 		if (Ex.getInstance().getComp()
 				.podeReceberEletronico(getTitular(), getLotaTitular(), mob))

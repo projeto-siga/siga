@@ -62,6 +62,7 @@ public class ExDocumentoVO extends ExVO {
 	String tipoFormaDocumento;
 	String cadastranteString;
 	String lotaCadastranteString;
+	private List<Object> listaDeAcessos;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo) throws Exception {
@@ -88,6 +89,7 @@ public class ExDocumentoVO extends ExVO {
 		this.destinatarioString = doc.getDestinatarioString();
 		if (doc.getExNivelAcesso() != null)
 			this.nmNivelAcesso = doc.getExNivelAcesso().getNmNivelAcesso();
+		this.listaDeAcessos = doc.getListaDeAcessos();
 		if (doc.getExMobilPai() != null)
 			this.paiSigla = doc.getExMobilPai().getSigla();
 		if (doc.getExTipoDocumento() != null)
@@ -182,6 +184,10 @@ public class ExDocumentoVO extends ExVO {
 		// if (doc.getExModelo() != null)
 		// tags.add("@doc-modelo:" + Texto.slugify(doc.getExModelo().getNmMod(),
 		// true, true));
+	}
+
+	public List<Object> getListaDeAcessos() {
+		return listaDeAcessos;
 	}
 
 	public ExDocumentoVO(ExDocumento doc) throws Exception {

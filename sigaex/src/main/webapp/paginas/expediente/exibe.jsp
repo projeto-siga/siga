@@ -340,7 +340,21 @@
 				<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 			</p>
 			<p>
-				<b>Nível de Acesso:</b> ${docVO.nmNivelAcesso}
+				<b>Nível de Acesso:</b> ${docVO.nmNivelAcesso} 
+				<c:if test="${not empty docVO.listaDeAcessos}">
+					<ww:if test="%{#attr.docVO.listaDeAcessos.size() eq 1}">
+						<c:forEach var="acesso" items="${docVO.listaDeAcessos}" varStatus="loop">
+							(${acesso.sigla})
+						</c:forEach>
+					</ww:if>
+					<ww:else>
+						<ul>	
+						<c:forEach var="acesso" items="${docVO.listaDeAcessos}" varStatus="loop">
+							<li>${acesso.sigla}</li>
+						</c:forEach>
+						</ul>
+					</ww:else>
+				</c:if>
 			</p>
 			<p>
 				<b>Data:</b> ${docVO.dtDocDDMMYY}

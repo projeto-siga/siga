@@ -191,14 +191,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 	public boolean podeAcessarDocumento(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-		ExAcesso acesso = new ExAcesso();
-		String s = acesso.getAcessosString(mob.doc());
+		ExDocumento doc = mob.doc();
+		if (doc.getDnmAcesso() == null) {
+			Ex.getInstance().getBL().atualizarDnmAcesso(doc);
+		}
 		AcessoConsulta ac = new AcessoConsulta(titular == null ? 0L
 				: titular.getIdInicial(), lotaTitular == null ? 0
 				: lotaTitular.getIdInicial(), titular == null ? 0L : titular
 				.getOrgaoUsuario().getId(), lotaTitular == null ? 0L
 				: lotaTitular.getOrgaoUsuario().getId());
-		return ac.podeAcessar(s);
+		return ac.podeAcessar(doc.getDnmAcesso());
 	}
 
 

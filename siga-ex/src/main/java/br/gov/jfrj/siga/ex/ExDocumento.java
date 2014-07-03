@@ -42,7 +42,6 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Entity;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
@@ -56,9 +55,11 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.lucene.HtmlBridge;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
@@ -1473,7 +1474,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
         public byte[] getPdf() {
                 return getConteudoBlobPdf();
         }
-
+        
         /**
          * COMPLETAR
          * 
@@ -2191,6 +2192,27 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                                 return getResponsaveisPorPapel(papel);
                 }
                 return null;
+        }
+        
+        public List<Object> getListaDeAcessos() {
+        	if (getDnmAcesso() == null)
+        		return null;
+        	if (ExAcesso.ACESSO_PUBLICO.equals(getDnmAcesso())) 
+        		return null;
+        	ExDao dao = ExDao.getInstance();
+        	List<Object> l = new ArrayList<Object>();
+        	String a[] = getDnmAcesso().split(",");
+
+    		for (String s : a) {
+    			if (s.startsWith("O"))
+    				l.add(dao.consultar(Long.parseLong(s.substring(1)), CpOrgaoUsuario.class, false));
+    			else if (s.startsWith("L"))
+    				l.add(dao.consultar(Long.parseLong(s.substring(1)), DpLotacao.class, false));
+    			else if (s.startsWith("P"))
+    				l.add(dao.consultar(Long.parseLong(s.substring(1)), DpPessoa.class, false));
+    		}
+
+    		return l;
         }
 
         public List<DpResponsavel> getResponsaveisPorPapel(ExPapel papel) {

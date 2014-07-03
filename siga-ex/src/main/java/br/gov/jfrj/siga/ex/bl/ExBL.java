@@ -3250,6 +3250,39 @@ public class ExBL extends CpBL {
 			doc.setConteudoBlobResumo(resumo.getBytes());
 		}
 	}
+	
+	public void atualizarDnmAcesso(ExDocumento doc) {
+		Date dt = ExDao.getInstance().dt();
+		ExAcesso acesso = new ExAcesso();
+
+		// Se houve alteração, propagar para os documentos juntados em cada mobil
+		//
+		for (ExMobil mob : doc.getExMobilSet()) {
+			int pularInferiores = 0;
+			for (ExArquivoNumerado an : doc.getArquivosNumerados(mob)) {
+				if (an.getArquivo() instanceof ExDocumento) {
+					if (pularInferiores < an.getNivel())
+						continue;
+					else
+						pularInferiores = 0;
+					ExDocumento d = (ExDocumento)(an.getArquivo());
+					if (dt.equals(d.getDnmDtAcesso()))
+						continue;
+					
+					String sAcessoAntigo = d.getDnmAcesso();
+					String sAcessoNovo = acesso.getAcessosString(d, dt);
+					if (!sAcessoNovo.equals(sAcessoAntigo)) {
+						d.setDnmAcesso(sAcessoNovo);
+						d.setDnmDtAcesso(dt);
+						ExDao.getInstance().gravar(d);
+					} else {
+						pularInferiores = an.getNivel();
+					}
+				}
+				
+			}
+		}
+	}
 
 	public void bCorrigirDataFimMov(final ExMovimentacao mov) throws Exception {
 		try {
@@ -4604,14 +4637,18 @@ public class ExBL extends CpBL {
 			threadAlteracaoParcial.set(new TreeSet<ExMobil>());
 			set = threadAlteracaoParcial.get();
 		}
-		if (mob.doc() != null)
+		if (mob.doc() != null) {
 			atualizarMarcas(mob.doc());
+			atualizarDnmAcesso(mob.doc());
+		}
 		set.add(mob);
 	}
 
 	private void concluirAlteracao(ExDocumento doc) throws Exception {
-		if (doc != null)
+		if (doc != null) {
 			atualizarMarcas(doc);
+			atualizarDnmAcesso(doc);
+		}
 		ExDao.commitTransacao();
 		// if (doc != null)
 		// atualizarWorkflow(doc, null);

@@ -126,6 +126,12 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	private Integer numSequencia;
 
+	@Column(name = "DNM_DT_ACESSO")
+	private Date dnmDtAcesso;
+
+	@Column(name = "DNM_ACESSO")
+	private String dnmAcesso;
+
 	@ManyToOne
 	@JoinColumn(name = "ID_SUBSCRITOR")
 	private DpPessoa subscritor;
@@ -841,5 +847,21 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setExMobilAutuado(ExMobil exMobilAutuado) {
 		this.exMobilAutuado = exMobilAutuado;
+	}
+
+	public Date getDnmDtAcesso() {
+		return dnmDtAcesso;
+	}
+
+	public void setDnmDtAcesso(Date dnmDtAcesso) {
+		this.dnmDtAcesso = dnmDtAcesso;
+	}
+
+	public String getDnmAcesso() {
+		return dnmAcesso;
+	}
+
+	public void setDnmAcesso(String dnmAcesso) {
+		this.dnmAcesso = dnmAcesso;
 	}
 }

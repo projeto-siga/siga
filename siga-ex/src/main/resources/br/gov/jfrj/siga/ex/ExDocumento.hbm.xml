@@ -52,6 +52,10 @@
    name="descrClassifNovo" type="java.lang.String"/>
   <property column="NUM_SEQUENCIA" generated="never" lazy="false"
    name="numSequencia" type="int"/>
+  <property column="DNM_DT_ACESSO" generated="never" lazy="false"
+   name="dnmDtAcesso" type="java.util.Date"/>
+  <property column="DNM_ACESSO" generated="never" lazy="false"
+   name="dnmAcesso" type="string"/>
   <many-to-one class="br.gov.jfrj.siga.ex.ExNivelAcesso"
    column="ID_NIVEL_ACESSO" name="exNivelAcesso"/>
   <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa"

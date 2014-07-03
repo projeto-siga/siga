@@ -472,6 +472,14 @@ public class CpConfiguracaoBL {
 						.getCpTipoLotacao() == null) && !atributosDesconsiderados
 						.contains(TIPO_LOTACAO))))
 			return false;
+		
+		if (cfg.getOrgaoObjeto() != null
+				&& ((cfgFiltro.getOrgaoObjeto() != null && !cfg
+						.getOrgaoObjeto().getIdOrgaoUsu()
+						.equals(cfgFiltro.getOrgaoObjeto().getIdOrgaoUsu())) || ((cfgFiltro
+						.getOrgaoObjeto() == null) && !atributosDesconsiderados
+						.contains(ORGAO))))
+			return false;
 
 		return true;
 	}

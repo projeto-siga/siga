@@ -23,6 +23,7 @@
 				<td align="center" width="05%"><b>Lotação</b></td>
 				<td align="center" width="05%"><b>Função</b></td>
 				<td align="center" width="03%"><b>Órgão</b></td>
+				<td align="center" width="03%"><b>Órgão Objeto</b></td>
 				<td align="center" width="05%"><b>Cargo</b></td>
 				<td align="center" width="12%"><b>Tipo de Movimentação</b></td>
 				<td align="center" width="05%"><b>Via</b></td>
@@ -53,6 +54,7 @@
 					</c:if></td>
 					<td><c:if test="${not empty configuracao.funcaoConfianca}">${configuracao.funcaoConfianca.nomeFuncao}</c:if></td>
 					<td><c:if test="${not empty configuracao.orgaoUsuario}">${configuracao.orgaoUsuario.acronimoOrgaoUsu}</c:if></td>
+					<td><c:if test="${not empty configuracao.orgaoObjeto}">${configuracao.orgaoObjeto.acronimoOrgaoUsu}</c:if></td>
 					<td><c:if test="${not empty configuracao.cargo}">${configuracao.cargo.nomeCargo}</c:if></td>
 					<td><c:if test="${not empty configuracao.exTipoMovimentacao}">${configuracao.exTipoMovimentacao.descrTipoMovimentacao}</c:if></td>
 					<td><c:if test="${not empty configuracao.exVia}">${configuracao.exVia.exTipoDestinacao}(${configuracao.exVia.codVia})</c:if></td>

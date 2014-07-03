@@ -155,6 +155,11 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Desconsiderar
 	private Set<CpConfiguracao> configuracoesPosteriores = new HashSet<CpConfiguracao>(
 			0);
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_OBJETO")
+	@NaoRecursivo
+	private CpOrgaoUsuario orgaoObjeto;
 
 	public Set<CpConfiguracao> getConfiguracoesPosteriores() {
 		return configuracoesPosteriores;
@@ -365,6 +370,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	 */
 	public void setCpTipoLotacao(CpTipoLotacao cpTipoLotacao) {
 		this.cpTipoLotacao = cpTipoLotacao;
+	}
+
+	public CpOrgaoUsuario getOrgaoObjeto() {
+		return orgaoObjeto;
+	}
+
+	public void setOrgaoObjeto(CpOrgaoUsuario orgaoObjeto) {
+		this.orgaoObjeto = orgaoObjeto;
 	}
 
 }

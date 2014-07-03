@@ -70,6 +70,8 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	private Long id;
 
 	private Long idOrgaoUsu;
+	
+	private Long idOrgaoObjeto;
 
 	private DpCargoSelecao cargoSel;
 
@@ -224,6 +226,12 @@ public class ExConfiguracaoAction extends ExActionSupport {
 					ExClassificacao.class, false));
 		} else
 			c.setExClassificacao(null);
+		
+		if (getIdOrgaoObjeto() != null && getIdOrgaoObjeto() != 0) {
+			c.setOrgaoObjeto(dao().consultar(getIdOrgaoObjeto(),
+					CpOrgaoUsuario.class, false));
+		} else
+			c.setOrgaoUsuario(null);
 	}
 
 	private void escreverForm(ExConfiguracao c) throws Exception {
@@ -273,6 +281,9 @@ public class ExConfiguracaoAction extends ExActionSupport {
 		if (c.getExClassificacao() != null) {
 			getClassificacaoSel().buscarPorObjeto(c.getExClassificacao());
 		}
+		
+		if (c.getOrgaoObjeto() != null)
+			setIdOrgaoObjeto(c.getOrgaoObjeto().getIdOrgaoUsu());
 	}
 	
 	public Long getIdTpFormaDoc() {
@@ -769,6 +780,14 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 	public void setTipoPublicador(Integer tipoPublicador) {
 		this.tipoPublicador = tipoPublicador;
+	}
+
+	public Long getIdOrgaoObjeto() {
+		return idOrgaoObjeto;
+	}
+
+	public void setIdOrgaoObjeto(Long idOrgaoObjeto) {
+		this.idOrgaoObjeto = idOrgaoObjeto;
 	}
 
 	/*

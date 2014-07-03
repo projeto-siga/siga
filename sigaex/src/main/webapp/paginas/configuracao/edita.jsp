@@ -138,7 +138,13 @@ function sbmt() {
 				<td><ww:select name="idTpDoc" list="listaTiposDocumento"
 					listKey="idTpDoc" listValue="descrTipoDocumento" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" /></td>
-			</tr>			
+			</tr>
+			<tr>
+				<td>Órgão Objeto</td>
+				<td><ww:select name="idOrgaoObjeto" list="orgaosUsu"
+					listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+					headerValue="[Indefinido]" headerKey="0" /></td>
+			</tr>
 			<tr>
 			</tr>
 			<tr class="button">

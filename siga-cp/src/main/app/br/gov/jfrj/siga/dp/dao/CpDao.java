@@ -628,10 +628,20 @@ public class CpDao extends ModeloDao {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpLotacao");
 		query.setString("siglaLotacao", o.getSigla());
-		if (o.getOrgaoUsuario() != null)
-			query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
-		else
+		if (o.getOrgaoUsuario() != null) {
+			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) {
+				query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
+				query.setString("siglaOrgaoUsu", "null");
+			}
+			else {
+				query.setLong("idOrgaoUsu", 0);
+				query.setString("siglaOrgaoUsu", o.getOrgaoUsuario().getSiglaOrgaoUsu());
+			}	
+		}
+		else {
 			query.setLong("idOrgaoUsu", 0);
+			query.setString("siglaOrgaoUsu", "null");
+		}
 		query.setCacheable(true);
 		query.setCacheRegion(CACHE_QUERY_CONFIGURACAO);
 		final List<DpLotacao> l = query.list();
@@ -673,9 +683,12 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpLotacaoDaoFiltro flt) {
 		final DpLotacao o = new DpLotacao();
 		o.setSigla(flt.getSigla());
-		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
+		if(o.getOrgaoUsuario().getIdOrgaoUsu() == null 
+				&& o.getOrgaoUsuario().getSiglaOrgaoUsu() == null)
+			o.getOrgaoUsuario().setIdOrgaoUsu(flt.getIdOrgaoUsu());
+/*		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 		cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu());
-		o.setOrgaoUsuario(cpOrgao);
+		o.setOrgaoUsuario(cpOrgao);*/
 
 		return consultarPorSigla(o);
 	}

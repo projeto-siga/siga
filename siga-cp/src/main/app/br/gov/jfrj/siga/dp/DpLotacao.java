@@ -27,7 +27,10 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -35,6 +38,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -142,7 +146,25 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public void setSigla(String sigla) {
-		setSiglaLotacao(sigla);
+		String siglasOrgaoUsu = "";
+		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
+		List<CpOrgaoUsuario> lou = CpDao.getInstance()
+				.listarOrgaosUsuarios();
+		for (CpOrgaoUsuario ou : lou) {
+			siglasOrgaoUsu += (siglasOrgaoUsu.length() > 0 ? "|" : "")
+					+ ou.getSiglaOrgaoUsu();
+		}
+		final Pattern p1 = Pattern.compile("^(" + siglasOrgaoUsu + ")([a-zA-Z]+)");
+		final Matcher m = p1.matcher(sigla.toUpperCase());
+		if (m.find()) {
+			cpOrgao.setSiglaOrgaoUsu(m.group(1).toUpperCase());
+			setOrgaoUsuario(cpOrgao);
+			setSiglaLotacao(m.group(2).toUpperCase());
+		}
+		else {
+			setOrgaoUsuario(cpOrgao);
+			setSiglaLotacao(sigla.toUpperCase());
+		}
 	}
 
 	/*

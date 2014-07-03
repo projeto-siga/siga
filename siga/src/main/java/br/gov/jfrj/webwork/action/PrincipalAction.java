@@ -182,7 +182,26 @@ public class PrincipalAction extends SigaActionSupport {
 							+ "/selecionar.action?sigla=" + getSigla()
 							+ incluirMatricula;
 				}
-			} else
+			} 
+			//verificar se após a retirada dos prefixos referente 
+			//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ)
+			//a string copiaSigla somente possui números
+			else if (copiaSigla.matches("[0-9]+")) {
+				URLSelecionar = urlBase + "/siga"
+						+ (testes.length() > 0 ? testes : "/pessoa")
+						+ "/selecionar.action?sigla=" + getSigla()
+						+ incluirMatricula;
+			}
+			//verificar se após a retirada dos prefixos referente 
+			//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ)
+			//a string copiaSigla somente possui letras
+			else if (copiaSigla.matches("[a-zA-Z]+")) {
+				URLSelecionar = urlBase + "/siga"
+						+ (testes.length() > 0 ? testes : "/lotacao")
+						+ "/selecionar.action?sigla=" + getSigla()
+						+ incluirMatricula;
+			}
+			else
 				URLSelecionar = urlBase + "/sigaex"
 						+ (testes.length() > 0 ? testes : "/expediente")
 						+ "/selecionar.action?sigla=" + getSigla()
@@ -197,6 +216,12 @@ public class PrincipalAction extends SigaActionSupport {
 					|| copiaSigla.startsWith("STP")
 					|| copiaSigla.startsWith("RTP"))
 				uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
+			else if (copiaSigla.matches("[0-9]+")) 
+				uRLExibir = "/siga/pessoa/exibir.action?matricula="
+						+ response[2];
+			else if (copiaSigla.matches("[a-zA-Z]+")) 
+				uRLExibir = "/siga/lotacao/exibir.action?sigla="
+						+ response[2];
 			else
 				uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
 						+ response[2];

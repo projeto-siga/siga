@@ -2785,6 +2785,14 @@ public class ExBL extends CpBL {
 		if (!doc.getExClassificacao().isAtivo())
 			throw new AplicacaoException("Classificação documental encerrada. Selecione outra na tela de edição.");
 		
+		if (doc.getExModelo() != null && doc.getExModelo().isFechado()) {
+			throw new AplicacaoException("Este modelo não está mais em uso. Selecione outro na tela de edição");
+		}
+		
+		if(doc.getExModelo() != null  && !doc.getExModelo().isAtivo()) {
+			throw new AplicacaoException("Este modelo foi alterado. Edite-o para atualizá-lo");	
+		}
+		
 		if(!doc.isEletronico() 
 				&& doc.isProcesso() 
 				&& doc.getExMobilPai() != null && doc.getExMobilPai().getExDocumento().isProcesso()

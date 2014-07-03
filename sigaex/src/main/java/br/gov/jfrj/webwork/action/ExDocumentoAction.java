@@ -1735,6 +1735,9 @@ public class ExDocumentoAction extends ExActionSupport {
 		if (getIdMod() != null && getIdMod() != 0) {
 			mod = dao().consultar(getIdMod(), ExModelo.class, false);
 		}
+		if (mod != null) {
+			mod = mod.getModeloAtual();
+		}
 
 		modelos = getModelos();
 		if (mod == null || !modelos.contains(mod)) {
@@ -1835,8 +1838,13 @@ public class ExDocumentoAction extends ExActionSupport {
 			getClassificacaoSel().buscarPorObjeto(classif.getAtual());
 		getSubscritorSel().buscarPorObjeto(doc.getSubscritor());
 		// form.getDestinatarioSel().buscarPorObjeto(doc.getDestinatario());
-		if (doc.getExModelo() != null)
-			setIdMod(doc.getExModelo().getIdMod());
+		if (doc.getExModelo() != null) {
+			ExModelo modeloAtual = doc.getExModelo().getModeloAtual();
+			if (modeloAtual != null) {
+				setIdMod(modeloAtual.getIdMod());	
+			}	
+		}
+			
 		if (doc.getDestinatario() != null) {
 			getDestinatarioSel().buscarPorObjeto(doc.getDestinatario());
 			setTipoDestinatario(1);
@@ -2378,11 +2386,12 @@ public class ExDocumentoAction extends ExActionSupport {
 			doc.setExFormaDocumento(dao().consultar(getIdFormaDoc(),
 					ExFormaDocumento.class, false));
 		doc.setNmDestinatario(getNmDestinatario());
-
+		
+		doc.setExModelo(null);
 		if (getIdMod() != 0) {
-			doc.setExModelo(dao().consultar(getIdMod(), ExModelo.class, false));
-		} else {
-			doc.setExModelo(null);
+			ExModelo modelo = dao().consultar(getIdMod(), ExModelo.class, false);
+			if (modelo != null) 								
+				doc.setExModelo(modelo.getModeloAtual());			
 		}
 
 		if (getClassificacaoSel().getId() != null

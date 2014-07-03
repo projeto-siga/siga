@@ -389,7 +389,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	}
 /*
 	public static void main(String args[]) throws Exception {
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
+		Configuration cfg = CpDao.criarHibernateCfg(
 				"jdbc:oracle:thin:@servidor:1521:instancia", "usuario",
 				"senha");
 		HibernateUtil.configurarHibernate(cfg, "");

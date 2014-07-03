@@ -44,11 +44,6 @@ public class SigaCalendar extends GregorianCalendar {
 	 */
 	public static final long MILLISECS_PER_HOUR = 60 * MILLISECS_PER_MINUTE;
 
-	/**
-	 * Number of leap seconds per day expect on <BR/>1. days when a leap second
-	 * has been inserted, e.g. 1999 JAN 1. <BR/>2. Daylight-savings "spring
-	 * forward" or "fall back" days.
-	 */
 	protected static final long MILLISECS_PER_DAY = 24 * MILLISECS_PER_HOUR;
 
 	/***************************************************************************

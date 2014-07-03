@@ -32,7 +32,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.jdbc.Work;
@@ -72,10 +72,10 @@ public class CpDaoTest extends TestCase {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 		/*
-		 * AnnotationConfiguration cfg = CpDao.criarHibernateCfg(
+		 * Configuration cfg = CpDao.criarHibernateCfg(
 		 * "jdbc:oracle:thin:@servidor:1521:instancia", "usuario", "senha");
 		 */
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
+		Configuration cfg = CpDao.criarHibernateCfg(ambiente);
 		// CpDao.configurarHibernateParaDebug(cfg);
 		HibernateUtil.configurarHibernate(cfg, "");
 
@@ -360,7 +360,7 @@ public class CpDaoTest extends TestCase {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
+		Configuration cfg = CpDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 
 		CpDao dao = CpDao.getInstance();

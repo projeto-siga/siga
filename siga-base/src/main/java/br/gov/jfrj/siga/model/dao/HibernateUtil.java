@@ -30,7 +30,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.jboss.logging.Logger;
 
@@ -241,16 +240,16 @@ public class HibernateUtil {
 		}
 	}
 
-	public static void configurarHibernate(Configuration cfg,	String hibernateConnectionUrl, Class<?>... classesAnotadas) {
+	public static void configurarHibernate(Configuration cfg, String hibernateConnectionUrl) {
 		
 		try {
-			
-			for (Class<?> clazz : classesAnotadas) {
-				cfg.addAnnotatedClass(clazz);
-			}
+//			
+//			for (Class<?> clazz : classesAnotadas) {
+//				cfg.addAnnotatedClass(clazz);
+//			}
 			
 			// bruno.lacerda@avantiprima.com.br
-			configurarHibernateParaDebug( cfg );
+		//	configurarHibernateParaDebug( cfg );
 			
 			//cfg.configure();
 			conf = cfg;
@@ -272,7 +271,7 @@ public class HibernateUtil {
 	 * @return
 	 */
 	public static Configuration criarConfiguracao(String resource) {
-		Configuration conf = new AnnotationConfiguration();
+		Configuration conf = new Configuration();
 		conf.configure(resource);
 		
 		return conf;
@@ -280,7 +279,7 @@ public class HibernateUtil {
 
 	public static Configuration criarConfiguracao(String resource, Class<?>... classesAnotadas) {
 		
-		AnnotationConfiguration conf = new AnnotationConfiguration();
+		Configuration conf = new Configuration();
 		
 		for (Class<?> clazz : classesAnotadas) {
 			conf.addAnnotatedClass(clazz);

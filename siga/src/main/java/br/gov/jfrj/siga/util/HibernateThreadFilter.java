@@ -93,7 +93,7 @@ public class HibernateThreadFilter extends ThreadFilter {
 					try {
 						// TODO: _LAGS - Trocar para obter os parametros do
 						// "web.xml"
-						Configuration cfg = CpDao.criarHibernateCfg("java:/SigaCpDS");
+						Configuration cfg = CpDao.criarHibernateCfg("java:/jboss/datasources/SigaCpDS");
 
 						// bruno.lacerda@avantiprima.com.br
 						// Configura listeners de auditoria de acordo com os

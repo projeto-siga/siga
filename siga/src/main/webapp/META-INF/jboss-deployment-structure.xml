@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<deployment>
+		<module-alias name="siga"/>
+	
+		<dependencies>
+			<module name="org.hibernate" export="true" />
+			<module name="org.picketlink" />
+			<module name="org.apache.cxf" />
+			<module name="javax.wsdl4j.api"/>
+            <module name="org.apache.ws.xmlschema"/>
+            <module name="org.apache.neethi"/>
+            <module name="org.codehaus.woodstox"/>
+		</dependencies>
+		
+		<!-- 
+		<exclude-subsystems>
+            <subsystem name="webservices" />
+            <subsystem name="weld" /> 
+        </exclude-subsystems>
+         -->
+	</deployment>
+</jboss-deployment-structure>

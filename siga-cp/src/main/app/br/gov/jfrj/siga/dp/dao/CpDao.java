@@ -50,7 +50,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultNamingStrategy;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
@@ -1523,10 +1523,10 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(String datasource)
+	static public Configuration criarHibernateCfg(String datasource)
 			throws Exception {
 
-		AnnotationConfiguration cfg = new AnnotationConfiguration();
+		Configuration cfg = new Configuration();
 
 		cfg.setProperty("hibernate.connection.datasource", datasource);
 		configurarHibernate(cfg);
@@ -1534,10 +1534,10 @@ public class CpDao extends ModeloDao {
 		return cfg;
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(
+	static public Configuration criarHibernateCfg(
 			String connectionUrl, String username, String password)
 					throws Exception {
-		AnnotationConfiguration cfg = new AnnotationConfiguration();
+		Configuration cfg = new Configuration();
 		cfg.setProperty("hibernate.connection.url", connectionUrl);
 		cfg.setProperty("hibernate.connection.username", username);
 		cfg.setProperty("hibernate.connection.password", password);
@@ -1551,27 +1551,24 @@ public class CpDao extends ModeloDao {
 		return cfg;
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(
+	static public Configuration criarHibernateCfg(
 			CpAmbienteEnumBL ambiente) throws Exception {
 		CpPropriedadeBL prop = Cp.getInstance().getProp();
 		prop.setPrefixo(ambiente.getSigla());
 		return criarHibernateCfg(ambiente, prop);
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(
+	static public Configuration criarHibernateCfg(
 			CpAmbienteEnumBL ambiente, CpPropriedadeBL prop) throws Exception {
 
-		AnnotationConfiguration cfg = new AnnotationConfiguration();
+		Configuration cfg = new Configuration();
 
 		// Isto é para manter o naming strategy do hibernate 3.5 na versão 3.6
 		cfg.setNamingStrategy(DefaultNamingStrategy.INSTANCE);
 		cfg.setProperty("hibernate.connection.url", prop.urlConexao());
-		cfg.setProperty("hibernate.connection.username",
-				prop.usuario());
-		cfg.setProperty("hibernate.connection.password",
-				prop.senha());
-		cfg.setProperty("hibernate.connection.driver_class",
-				prop.driverConexao());
+		cfg.setProperty("hibernate.connection.username", prop.usuario());
+		cfg.setProperty("hibernate.connection.password", prop.senha());
+		cfg.setProperty("hibernate.connection.driver_class", prop.driverConexao());
 		cfg.setProperty("c3p0.min_size", prop.c3poMinSize());
 		cfg.setProperty("c3p0.max_size", prop.c3poMaxSize());
 		cfg.setProperty("c3p0.timeout", prop.c3poTimeout());
@@ -1583,24 +1580,19 @@ public class CpDao extends ModeloDao {
 		return cfg;
 	}
 
-	static private void configurarHibernate(AnnotationConfiguration cfg)
+	static private void configurarHibernate(Configuration cfg)
 			throws Exception {
-		cfg.setProperty("hibernate.dialect",
-				"org.hibernate.dialect.Oracle10gDialect");
+		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
 
-		cfg.setProperty("hibernate.transaction.factory_class",
-				"org.hibernate.transaction.JDBCTransactionFactory");
 		cfg.setProperty("hibernate.current_session_context_class", "thread");
 		cfg.setProperty("hibernate.query.substitutions", "true 1, false 0");
 
-		// Alterado para compatibilizar com hibernate 3.61
-		cfg.setProperty("hibernate.cache.provider_class",
-				"org.hibernate.cache.SingletonEhCacheProvider");
-		// cfg.setProperty("hibernate.cache.region.factory_class",
-		// "net.sf.ehcache.hibernate.EhCacheRegionFactory");
-		// "net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
-
+		cfg.setProperty("hibernate.cache.region.factory_class", "org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
+		
 		cfg.setProperty("hibernate.cache.use_second_level_cache", "true");
+		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
+		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+			
 		cfg.setProperty("hibernate.cache.use_query_cache", "true");
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
@@ -1714,51 +1706,31 @@ public class CpDao extends ModeloDao {
 			config.setOverflowToDisk(false);
 			config.setMaxElementsOnDisk(0);
 		}
-
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpLotacao",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoPessoa",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpPessoa",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.dp.DpFuncaoConfianca",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgaoUsuario",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpCargo",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgao",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpLocalidade",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpUF",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpFeriado",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoServico",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.cp.CpTipoConfiguracao",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoIdentidade",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoPapel",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoGrupo",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade",
-				"nonstrict-read-write", CACHE_SECONDS);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao",
-				"nonstrict-read-write", CACHE_QUERY_SUBSTITUICAO);
+		
+		
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao","transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpLotacao", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoPessoa","transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpPessoa", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpFuncaoConfianca", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgaoUsuario", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpCargo", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgao", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpLocalidade",	"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpUF", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpFeriado", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoServico", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoConfiguracao", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoIdentidade", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoPapel", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoGrupo", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade", "transactional", CACHE_SECONDS);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao", "transactional", CACHE_QUERY_SUBSTITUICAO);
 
 		// Desabilitado pois o hibernate não permite cache de blobs.
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpModelo",
-		// "nonstrict-read-write", CACHE_SECONDS);
+		// "transactional", CACHE_SECONDS);
 	}
 
 	public DpPessoa getPessoaFromSigla(String sigla) {

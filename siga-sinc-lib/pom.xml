@@ -18,6 +18,7 @@
             <artifactId>junit</artifactId>
         </dependency>
 
+		<!-- Siga -->
         <dependency>
             <groupId>projeto-siga</groupId>
             <artifactId>siga-base</artifactId>

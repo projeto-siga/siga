@@ -3667,7 +3667,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito() && !mob.isJuntado()
 
 
-				&& !mob.isArquivadoPermanente()
+				&& !mob.isArquivado()
 				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
 						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))

@@ -103,6 +103,10 @@ public class SigaExProperties extends ModeloPropriedade {
 		return getString("classificacao.mascara.saida");
 	}
 	
+	public static String getExClassificacaoMascaraExibicao() {
+		return getString("classificacao.mascara.exibicao");
+	}
+	
 	public static List<String> getExClassificacaoNomesNiveis() throws AplicacaoException{
 		try {
 			return instance.obterPropriedadeLista("siga.ex.classificacao.mascara.nomeNivel");
@@ -220,6 +224,6 @@ public class SigaExProperties extends ModeloPropriedade {
 	public static String getTextoSuperiorCarimbo() {
 		return getString("textoSuperiorCarimbo");
 	}
-	
+
 
 }

@@ -121,6 +121,12 @@
     </build>
 
     <dependencies>
+		<dependency>
+			<groupId>org.mvel</groupId>
+			<artifactId>mvel2</artifactId>
+			<version>2.1.9.Final</version>
+		</dependency>
+    
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -202,6 +208,7 @@
             <groupId>projeto-siga</groupId>
             <artifactId>siga-ext</artifactId>
         </dependency>
+        
     </dependencies>
 
 

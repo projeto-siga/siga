@@ -54,20 +54,23 @@
 			<result>/paginas/entradas/administracao.jsp</result> </action> <action name="simulacao" 
 			class="br.gov.jfrj.webwork.action.AdministracaoAction" method="aSimular"> 
 			<result>/paginas/principal.jsp</result> </action> -->
+		
+		<!-- 	
 		<action name="logoff" class="br.gov.jfrj.siga.libs.webwork.LogoffAction">
 			<result name="success" type="redirect-action">
 				<param name="actionName">principal</param>
 				<param name="namespace">/</param>
 			</result>
 			<result name="CLIENT_CERT_AUTH_LOGOFF">/sigalibs/client_cert_auth_logoff.jsp</result>
-
 		</action>
+		
 
 		<action name="redirect" class="br.gov.jfrj.siga.libs.webwork.LogoffAction"
 			method="redirect">
 			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.serverPort}${uri}
 			</result>
 		</action>
+		-->
 
 		<action name="trocar_senha" class="br.gov.jfrj.webwork.action.UsuarioAction"
 			method="aTrocarSenha">

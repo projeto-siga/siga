@@ -62,7 +62,7 @@ public class GiServiceImpl implements GiService {
 			DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
 			flt.setSigla(matricula);
 
-			DpPessoa p = (DpPessoa) dao.consultarPorSigla(flt);
+		//	DpPessoa p = (DpPessoa) dao.consultarPorSigla(flt);
 			CpIdentidade id = null;
 			id = dao.consultaIdentidadeCadastrante(matricula, true);
 			if (id != null && id.getDscSenhaIdentidade().equals(hashAtual)) {
@@ -155,8 +155,7 @@ public class GiServiceImpl implements GiService {
 				lot = (DpLotacao) dao.consultarPorSigla(fltLot);
 			}
 
-			boolean pode = Cp.getInstance().getConf()
-					.podeUtilizarServicoPorConfiguracao(p, lot, servico);
+//			boolean pode = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(p, lot, servico);
 
 			CpServico srv = dao.consultarCpServicoPorChave(servico);
 

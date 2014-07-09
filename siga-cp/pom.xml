@@ -52,6 +52,11 @@
 			<version>2.4.4</version>
 		</dependency>
 
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+		</dependency>
+
 		<!-- Siga -->
 		<dependency>
 			<groupId>projeto-siga</groupId>

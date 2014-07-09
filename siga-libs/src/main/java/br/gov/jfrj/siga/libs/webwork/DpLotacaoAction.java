@@ -138,14 +138,15 @@ public class DpLotacaoAction extends
 	@Override
 	public String aSelecionar() throws Exception {
 		String s = super.aSelecionar();
-		/*if (getSel() != null) {
+		if (getSel() != null) {
 			GenericoSelecao sel = new GenericoSelecao();
 			sel.setId(getSel().getId());
-			sel.setSigla(getSel().getSigla());
-			sel.setDescricao("/siga/lotacao/exibir.action?sigla="
-					+ sel.getSigla());
+			sel.setSigla(getSigla());
+			sel.setDescricao(getSel().getDescricao());
+/*			sel.setDescricao("/siga/lotacao/exibir.action?sigla="
+					+ sel.getSigla());*/
 			setSel(sel);
-		}*/
+		}
 		return s;
 	}
 	

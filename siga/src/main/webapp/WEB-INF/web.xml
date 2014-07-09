@@ -17,13 +17,8 @@
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
 	</listener>
-
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
-	</listener>
-
-	<listener>
-		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
 	</listener>
 
 	<filter>
@@ -81,20 +76,11 @@
 		<servlet-name>CXFServlet</servlet-name>
 		<url-pattern>/servicos/*</url-pattern>
 	</servlet-mapping>
-
+ 	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>
-			<url-pattern>/principal.action</url-pattern>
-			<url-pattern>/substituicao/*</url-pattern>
-			<url-pattern>/configuracao/*</url-pattern>
-			<url-pattern>/administracao/*</url-pattern>
-			<url-pattern>/expediente/*</url-pattern>
-			<url-pattern>/modelo/*</url-pattern>
-			<url-pattern>/generico/*</url-pattern>
-			<url-pattern>/gi/*</url-pattern>
-			<url-pattern>/administracao.action</url-pattern>
-			<url-pattern>/redirect.action</url-pattern>
+			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>sigausuario</role-name>
@@ -127,13 +113,38 @@
 			<role-name>superusuario</role-name>
 		</auth-constraint>
 	</security-constraint>
+	
+	<!-- Libera acesso aos seguintes diretorios -->
+ 	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>css</web-resource-name>
+			<url-pattern>/css/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>imagens</web-resource-name>
+			<url-pattern>/imagens/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>javascript</web-resource-name>
+			<url-pattern>/javascript/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>arquivos</web-resource-name>
+			<url-pattern>/arquivos/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>sigalibs</web-resource-name>
+			<url-pattern>/sigalibs/*</url-pattern>
+		</web-resource-collection>
+		
+	</security-constraint>
 
 	<login-config>
 		<auth-method>FORM</auth-method>
-		<realm-name>Siga IDP</realm-name>
+		<realm-name>siga</realm-name>
 		<form-login-config>
-			<form-login-page>/paginas/entradas/login.jsp</form-login-page>
-			<form-error-page>/paginas/entradas/loginInvalido.jsp</form-error-page>
+			<form-login-page>/paginas/login.jsp</form-login-page>
+			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
 		</form-login-config>
 	</login-config>
 

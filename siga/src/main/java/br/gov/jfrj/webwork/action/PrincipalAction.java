@@ -27,8 +27,6 @@ import java.io.DataInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.SigaBaseProperties;

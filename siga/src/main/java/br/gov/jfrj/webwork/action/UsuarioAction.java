@@ -26,7 +26,7 @@ package br.gov.jfrj.webwork.action;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;

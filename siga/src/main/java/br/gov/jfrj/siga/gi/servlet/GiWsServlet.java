@@ -29,10 +29,6 @@ import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 import br.gov.jfrj.siga.gi.service.impl.GiServiceImpl;
 
 public class GiWsServlet extends CXFNonSpringServlet {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public void loadBus(ServletConfig servletConfig) {

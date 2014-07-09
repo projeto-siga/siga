@@ -7,36 +7,35 @@
 <c:set var="ambiente">
 	<c:if test="${f:resource('isVersionTest') || f:resource('isBaseTest')}">
 		<c:if test="${f:resource('isVersionTest')}">SISTEMA</c:if>
-		<c:if
-			test="${f:resource('isVersionTest') && f:resource('isBaseTest')}"> / </c:if>
+		<c:if test="${f:resource('isVersionTest') && f:resource('isBaseTest')}"> / </c:if>
 		<c:if test="${f:resource('isBaseTest')}">BASE</c:if> DE TESTES
-</c:if>
+	</c:if>
 </c:set>
 
 <html>
 <head>
-<title>SIGA - ${titulo_pagina}</title>
-<META HTTP-EQUIV="Expires" CONTENT="0">
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
-<META HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
-${cabecalho_meta}
-<c:import url="/paginas/estilos.jsp" />
-<link rel="shortcut icon" href="imagens/siga.ico" />
+	<title>SIGA - ${titulo_pagina}</title>
+	<META HTTP-EQUIV="Expires" CONTENT="0">
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+	<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+	<META HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
+	${cabecalho_meta}
+	<c:import url="/paginas/estilos.jsp" />
+	<link rel="shortcut icon" href="imagens/siga.ico" />
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
 <siga:cabecalho titulo="${titulo_pagina}" menu="menu" barra="nao" ambiente="${ambiente}" />
-<TABLE WIDTH="100%" height="100%" BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	<TR>
+<table width="100%" height="100%" border=0 cellpadding=0 cellspacing=0>
+	<tr>
 		<c:if test="${titulo_pagina == 'Página Inicial'}">
-			<TR>
-				<TD width="186" height="88" valign="top"><IMG
-					SRC="<c:url value='/imagens/companyslogan.gif'/>" WIDTH=186
-					HEIGHT=88 ALT=""></TD>
-				<TD rowspan="2" valign="top" style="padding: 0">
-				<TABLE width="100%" BORDER=0 CELLPADDING=0 CELLSPACING=0>
-					<TR>
-						<TD width="100%" height="88" valign="top"
+			<tr>
+				<td width="186" height="88" valign="top"><img
+					src="<c:url value='/imagens/companyslogan.gif'/>" width=186
+					height=88 alt=""></TD>
+				<td rowspan="2" valign="top" style="padding: 0">
+				<table width="100%" border=0 cellpadding=0 cellspacing=0>
+					<tr>
+						<td width="100%" height="88" valign="top"
 							background="<c:url value='/imagens/middlebg.gif'/>"
 							style="padding: 0">
 						<table width="100%" height="100%" border="0" cellspacing="0"
@@ -67,21 +66,21 @@ ${cabecalho_meta}
 							</tr>
 						</table>
 						</TD>
-						<TD height="168" ROWSPAN=2 valign="top"><IMG
-							SRC="<c:url value='/imagens/mainpic.gif'/>" WIDTH=245 HEIGHT=168
-							ALT=""></TD>
-					</TR>
-					<TR>
-						<TD width="344" height="80" valign="top"
+						<td height="168" rowspan=2 valign="top"><img
+							src="<c:url value='/imagens/mainpic.gif'/>" width=245 height=168
+							alt=""></TD>
+					<tr>
+					<tr>
+						<td width="344" height="80" valign="top"
 							style="padding-left: 12; padding-top: 7">
 						<h1>Página Inicial</h1>
 						</TD>
-					</TR>
+					<tr>
 				</TABLE>
 				</TD>
-			</TR>
-			<TR>
-				<TD width="114" rowspan="2" valign="top"
+			<tr>
+			<tr>
+				<td width="114" rowspan="2" valign="top"
 					style="border-right: 1px dotted; padding-left: 19"><br>
 				<table width="136" border="0" cellpadding="0" cellspacing="0">
 					<tr>
@@ -115,22 +114,22 @@ ${cabecalho_meta}
 				</table>
 				<br>
 				</TD>
-			</TR>
+			<tr>
 		</c:if>
-	<TR>
+	<tr>
 		<c:if test="${titulo_pagina == 'Página Inicial'}">
-			<TD colspan="3" valign="top"
+			<td colspan="3" valign="top"
 				style="padding-left: 12; padding-top: 7; padding-right: 12; padding =bottom: 7;">
 		</c:if>
 		<c:if test="${titulo_pagina != 'Página Inicial'}">
-			<TD colspan="4" valign="top"
+			<td colspan="4" valign="top"
 				style="padding-left: 12; padding-top: 7; padding-right: 12; padding =bottom: 7;">
 		</c:if>
 		<%--
 			--%>
 		<c:if test="${title=='false'}">
-	</TR>
-</TABLE>
+	<tr>
+</table>
 </body>
 </html>
 </c:if>

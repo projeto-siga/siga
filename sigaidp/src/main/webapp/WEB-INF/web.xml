@@ -11,6 +11,20 @@
 		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
 	</listener>
 
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>webwork</filter-name>
+		<filter-class>com.opensymphony.webwork.dispatcher.FilterDispatcher</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>webwork</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+
 	<!-- Define a security constraint that gives unlimted access to images -->
 	<security-constraint>
 		<web-resource-collection>
@@ -33,15 +47,35 @@
 	<!-- Define the Login Configuration for this Application -->
 	<login-config>
 		<auth-method>FORM</auth-method>
-		<realm-name>PicketLink IDP Application</realm-name>
+		<realm-name>Siga IDP</realm-name>
 		<form-login-config>
-			<form-login-page>/jsp/login.jsp</form-login-page>
-			<form-error-page>/jsp/login-error.jsp</form-error-page>
+			<form-login-page>/paginas/login.jsp</form-login-page>
+			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
 		</form-login-config>
 	</login-config>
 
 	<!-- Security roles referenced by this web application -->
 	<security-role>
-		<role-name>*</role-name>
+		<role-name>sigausuario</role-name>
 	</security-role>
+	<security-role>
+		<role-name>sigaadministrador</role-name>
+	</security-role>
+	<security-role>
+		<role-name>sigadesenvolvimento</role-name>
+	</security-role>
+	<security-role>
+		<role-name>superusuario</role-name>
+	</security-role>
+
+	<error-page>
+		<error-code>403</error-code>
+		<location>/sigalibs/erro403.jsp</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/sigalibs/erroGeral.jsp</location>
+	</error-page>
+
 </web-app>

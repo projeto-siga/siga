@@ -1,5 +1,8 @@
-<jboss-web> 
-    <security-domain>java:/jaas/SigaPolicy</security-domain>
-    
-    <context-root>sigaidp</context-root>
+<jboss-web>
+	<security-domain>SigaPolicy</security-domain>
+	<context-root>sigaidp</context-root>
+	
+	<valve>
+		<class-name>org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve</class-name>
+	</valve>
 </jboss-web>

@@ -84,7 +84,7 @@ novidades.</font></p>
 				align="justify"> <b>Documentos Digitais</b><br>
 			Cerca de um quinto dos documentos criados hoje são totalmente
 			digitais, e o número tende a aumentar. Leia o <a
-				href="roteiro_eletronicos.pdf" style="color: blue">roteiro para
+				href="/siga/arquivos/roteiro_eletronicos.pdf" style="color: blue">roteiro para
 			assinatura digital</a>.</font></td>
 		</tr>
 		<tr>

@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <h2 class="gt-table-head">
 	<b>Bem-vindo ao SIGA.</b>
 </h2>
@@ -29,7 +30,7 @@ Os módulos estarão disponíveis de acordo com as permissões dos usuários logados.
 	Siga-Doc possui um novo editor de textos, com mais recursos e menos
 	problemas de formatação. Inicialmente, ele está disponível apenas em
 	alguns modelos. Gradualmente, o antigo editor será substituído. <a
-		href="AjudaEditorTextosSigaDoc.pdf"><b>Veja instruções</b> </a> sobre
+		href="/siga/arquivos/AjudaEditorTextosSigaDoc.pdf"><b>Veja instruções</b> </a> sobre
 	o uso do editor.
 </p>
 
@@ -70,7 +71,7 @@ Os módulos estarão disponíveis de acordo com as permissões dos usuários logados.
 			align="justify"> <b>Mudança na exibição do status</b><br>
 				Na tela de visualização de documentos, o estado em que uma via se
 				encontra agora é exibido mais acima, ao lado do número da via. <a
-				style="font-weight: bold" href="exibeEstado.htm" target="new">Veja
+				style="font-weight: bold" href="/siga/arquivos/exibeEstado.htm" target="new">Veja
 					a diferença na imagem</a>.</font></td>
 	</tr>
 
@@ -80,7 +81,7 @@ Os módulos estarão disponíveis de acordo com as permissões dos usuários logados.
 				possível consultar documentos através do estado, incluindo <i>Transferido</i>
 				e <i>Como Subscritor</i>. Basta selecionar a situação desejada na
 				lista e, ao lado, a pessoa ou lotação a quem o estado se refere. <a
-				style="font-weight: bold" href="novaListaJsp.JPG" target="new">Veja
+				style="font-weight: bold" href="/siga/arquivos/novaListaJsp.JPG" target="new">Veja
 					a imagem</a>.</font></td>
 	</tr>
 
@@ -229,7 +230,7 @@ Os módulos estarão disponíveis de acordo com as permissões dos usuários logados.
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Documentos Digitais</b><br> Cerca de
 				um quinto dos documentos criados hoje são totalmente digitais, e o
-				número tende a aumentar. Leia o <a href="roteiro_eletronicos.pdf"
+				número tende a aumentar. Leia o <a href="/siga/arquvios/roteiro_eletronicos.pdf"
 				style="color: blue">roteiro para assinatura digital</a>.</font></td>
 	</tr>
 	<tr>

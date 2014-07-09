@@ -1,0 +1,35 @@
+<!DOCTYPE xwork PUBLIC "-//OpenSymphony Group//XWork 1.1.1//EN" "http://struts.apache.org/dtds/xwork-1.1.1.dtd">
+
+<xwork>
+	<include file="webwork-default.xml" />
+
+	<package name="default" extends="webwork-default" namespace="/">
+		<interceptors>
+			<interceptor name="siga-exception" class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
+
+			<interceptor-stack name="defaultStackWithExceptionMapping">
+				<interceptor-ref name="fileUpload"/>
+				<interceptor-ref name="siga-exception" />
+				<interceptor-ref name="servlet-config" />
+				<interceptor-ref name="prepare" />
+				<interceptor-ref name="static-params" />
+				<interceptor-ref name="params" />
+				<interceptor-ref name="conversionError" />
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="defaultStackWithExceptionMapping" />
+
+		<!-- <default-action-ref name="erroGeral" /> -->
+		<global-results>
+			<result name="erroGeral" type="dispatcher">
+				/sigalibs/erroGeral.jsp
+			</result>
+		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception" result="erroGeral" />
+		</global-exception-mappings>
+
+	</package>
+</xwork>

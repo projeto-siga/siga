@@ -21,19 +21,15 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
+        
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>
+        
         <dependency>
-            <groupId>opensymphony</groupId>
+            <groupId>com.opensymphony</groupId>
             <artifactId>webwork</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>freemarker</artifactId>
-                    <groupId>freemarker</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
 		<!-- Siga -->

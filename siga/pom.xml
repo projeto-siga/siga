@@ -59,23 +59,23 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.codehaus.jettison</groupId>
-			<artifactId>jettison</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>opensymphony</groupId>
+			<groupId>com.opensymphony</groupId>
 			<artifactId>webwork</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
@@ -106,73 +106,14 @@
 		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga-cp</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>bcmail-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bcprov-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jasperreports</artifactId>
-					<groupId>jasperreports</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-beanutils</artifactId>
-					<groupId>commons-beanutils</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-collections</artifactId>
-					<groupId>commons-collections</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mail</artifactId>
-					<groupId>javax.mail</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>axis</artifactId>
-					<groupId>org.apache.axis</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>junit</artifactId>
-					<groupId>junit</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jaxrpc-api</artifactId>
-					<groupId>javax.xml</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jettison</artifactId>
-					<groupId>org.codehaus.jettison</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- SIGA -->
 		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga-libs</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>oscore</artifactId>
-					<groupId>opensymphony</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>ognl</artifactId>
-					<groupId>ognl</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>junit</artifactId>
-					<groupId>junit</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga-ldap</artifactId>
@@ -227,11 +168,5 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-
 	</dependencies>
 </project>

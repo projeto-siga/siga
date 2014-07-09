@@ -249,22 +249,8 @@
             <artifactId>freemarker</artifactId>
         </dependency>
         <dependency>
-            <groupId>opensymphony</groupId>
+            <groupId>com.opensymphony</groupId>
             <artifactId>webwork</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>oscore</artifactId>
-                    <groupId>opensymphony</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>ognl</artifactId>
-                    <groupId>ognl</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>ys.wikiparser</groupId>

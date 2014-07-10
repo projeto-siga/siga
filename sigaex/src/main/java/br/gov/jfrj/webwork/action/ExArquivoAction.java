@@ -156,6 +156,8 @@ public class ExArquivoAction extends ExActionSupport {
 				else
 					ab = Documento.getDocumento(mob, mov, completo, estampar,
 							hash, null);
+				if (ab == null)
+					throw new Exception("PDF inválido!");
 
 				String filename = null;
 				if (mov != null) {
@@ -188,6 +190,8 @@ public class ExArquivoAction extends ExActionSupport {
 			if (isHtml) {
 				ab = Documento.getDocumentoHTML(mob, mov, completo,
 						contextpath, servernameport);
+				if (ab == null)
+					throw new Exception("HTML inválido!");
 			}
 
 			if (imutavel) {
@@ -237,6 +241,8 @@ public class ExArquivoAction extends ExActionSupport {
 	// desativada.
 	private String writeByteArray(byte[] ab, String contentType, boolean fB64)
 			throws IOException {
+		if (ab == null)
+			throw new RuntimeException("Conteúdo inválido!");
 
 		if (fB64) {
 			ab = Base64.encodeBytes(ab).getBytes();

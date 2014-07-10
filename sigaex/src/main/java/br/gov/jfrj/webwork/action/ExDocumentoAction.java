@@ -916,27 +916,14 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aAcessar() throws Exception {
-		buscarDocumento(true);
+		buscarDocumento(false);
 
-		if (!Ex.getInstance().getComp()
-				.podeAcessarAberto(getTitular(), getLotaTitular(), mob)
-				|| !Ex.getInstance()
-						.getComp()
-						.podeAcessarCancelado(getTitular(), getLotaTitular(),
-								mob)
-				|| !Ex.getInstance()
-						.getComp()
-						.podeAcessarSemEfeito(getTitular(), getLotaTitular(),
-								mob)) {
+		if(!Ex.getInstance().getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Documento " + mob.getSigla()
 					+ " inacessível ao usuário " + getTitular().getSigla()
 					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
-		}
 
-		if (!Ex.getInstance().getComp()
-				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException(
-					"Acesso permitido a usuários autorizados.");
 
 		return Action.SUCCESS;
 	}

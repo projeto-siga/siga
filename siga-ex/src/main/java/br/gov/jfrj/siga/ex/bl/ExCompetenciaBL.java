@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.LockMode;
@@ -82,24 +83,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob == null)
 			return false;
 		if (!mob.doc().isAssinado()
-				&& !mob.doc().getLotaCadastrante().equivale(lotaTitular)
-				&& !titular.equivale(mob.doc().getSubscritor())
+				&& !mob.doc().getLotaCadastrante().equivale(lotaTitular)				
 				&& !titular.equivale(mob.doc().getTitular())
-				&& !podeMovimentar(titular, lotaTitular, mob)) {
-
-			if (pessoaTemPerfilVinculado(mob.doc(), titular, lotaTitular)) {
-				return true;
-			}
-			
-			for (ExMovimentacao m : mob.doc().getMobilGeral()
-					.getExMovimentacaoSet()) {
-				if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
-						&& m.getExMovimentacaoCanceladora() == null
-						&& (m.getSubscritor() != null && m.getSubscritor()
-								.equivale(titular))) {
-					return true;					
-				}			
-			}
+				&& !podeMovimentar(titular, lotaTitular, mob)) {			
 			return false;
 		}
 		return true;
@@ -182,7 +168,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			if(podePorConfiguracao(titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_ACESSAR, mob.doc().getOrgaoUsuario())) {
 				return true;	
 			}
+		}		
+		
+		for (DpPessoa autorizado : mob.doc().getSubscritorECosignatarios()) {
+			if (titular.equivale(autorizado))
+				return true;
+		}	
+		
+		if (pessoaTemPerfilVinculado(mob.doc(), titular, lotaTitular)) {
+			return true;
 		}
+		
 
 		return /*
 				 * podeAcessarPublico(titular, lotaTitular, mob) &&

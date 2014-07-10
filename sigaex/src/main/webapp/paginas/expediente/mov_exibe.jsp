@@ -208,7 +208,8 @@ function visualizarImpressao(via) {
 														</c:if>
 													</tr>
 												</table>
-											</c:if></td>
+											</c:if>
+										</td>
 									</tr>
 								</table></td>
 						</tr>
@@ -271,7 +272,6 @@ function visualizarImpressao(via) {
 					</c:if>
 				</div>
 			</ww:form>
-
 			<div style="padding-left: 10;">
 				<div id="dados-assinatura" style="visible: hidden">
 					<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
@@ -298,6 +298,7 @@ function visualizarImpressao(via) {
 					</ww:else>
 					<c:set var="lote" value="false" />
 				</div>		
+				<p><b>Link para assinatura externa: </b>${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})</p>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/paginas/expediente/inc_assina_js.jsp" />

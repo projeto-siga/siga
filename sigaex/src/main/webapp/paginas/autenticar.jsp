@@ -23,7 +23,7 @@
 						<ww:textfield id="id_number" name="n" label="Número de referência"
 							cssStyle="width:150px;" />
 						<tr>
-							<td width="30%" valign="top">Digite os caractéres conforme
+							<td width="30%" valign="top">Digite os caracteres conforme
 								são mostrados na imagem ao lado:</td>
 							<td><jsp:useBean id="now" class="java.util.Date" /> <img
 								src="<c:url value="/autenticar.action?sc=1" />&ts=${now.time}"><br />

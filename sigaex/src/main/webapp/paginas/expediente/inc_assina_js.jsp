@@ -386,8 +386,11 @@ function GravarAssinatura(url, datatosend) {
 		var Conteudo, Inicio, Fim, Texto;
 		//alert("OK, enviado");
 		Conteudo = objHTTP.responseText;
-		
-        if (Conteudo.indexOf("gt-error-page-hd") != -1) {
+
+		//Edson: adicionei a segunda sentença ao if abaixo porque, no caso da assinatura externa, a página
+		//de retorno é esta mesma, que obviamente já tem o texto gt-error-page-hd (na linha abaixo) sem
+		//significar que seja uma página de erro
+        if (Conteudo.indexOf("gt-error-page-hd") != -1 && Conteudo.indexOf("function GravarAssinatura") < 0) {
 			Inicio = Conteudo.indexOf("<h3>") + 4;
 			Fim = Conteudo.indexOf("</h3>",Inicio);
 			Texto = Conteudo.substr(Inicio, Fim - Inicio);

@@ -33,6 +33,48 @@
 				</ul>
 				<br/>
 				<a href="/sigaex/autenticar.action" class="gt-btn-large gt-btn-left">Autenticar outro Documento</a>
+				<c:if test="${mostrarBotaoAssinarExterno}">
+				<div style="padding-left: 10;">
+					<div id="dados-assinatura" style="visible: hidden">
+						<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
+						<ww:hidden name="urlchk_${mov.idMov}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
+
+						<c:set var="jspServer"
+							value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/autenticar.action?n=${n}&ass=1&answer=${answer}" />
+						<c:set var="nextURL"
+							value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/autenticar.action?n=${n}&answer=${answer}" />
+						<c:set var="urlPath" value="${request.contextPath}" />
+					
+						<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
+						<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
+						<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
+						<c:set var="urlBase"
+							value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+						<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
+						<c:set var="lote" value="false" />
+					</div>		
+					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
+					<div id="capicom-div">
+						<a id="bot-assinar" href="#" onclick="vbscript: AssinarDocumentos 'false', Me" class="gt-btn-alternate-large gt-btn-left">Assinar</a> 
+					</div>
+					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. </p>
+					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+					<script type="text/javascript">
+					 	if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
+					 		document.getElementById("capicom-div").style.display = "block";
+					 		document.getElementById("ie-missing").style.display = "none";
+						} else {
+						 	document.getElementById("capicom-div").style.display = "none";
+					 		document.getElementById("ie-missing").style.display = "block";
+						}
+				 	</script>
+
+					<%--<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+	    				${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
+			  	  	</c:if> --%>
+				</div>
+				</c:if>
 			</div>
 		</div>
 	</div>

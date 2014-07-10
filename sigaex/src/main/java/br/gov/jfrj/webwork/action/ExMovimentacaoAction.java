@@ -232,6 +232,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private boolean finalizar;
 
 	private String mensagem;
+	
+	private String enderecoAutenticacao;
 
 	private Long idPapel;
 
@@ -259,6 +261,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.atributoAssinavelDataHora = atributoAssinavelDataHora;
 	}
 	
+	public String getEnderecoAutenticacao() {
+		return enderecoAutenticacao;
+	}
+
+	public void setEnderecoAutenticacao(String enderecoAutenticacao) {
+		this.enderecoAutenticacao = enderecoAutenticacao;
+	}
+
 	public String getCertificadoB64() {
 		return certificadoB64;
 	}
@@ -1772,6 +1782,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException("id não foi informada.");
 
 		mov = dao().consultar(getId(), ExMovimentacao.class, false);
+		
+		setEnderecoAutenticacao(SigaExProperties.getEnderecoAutenticidadeDocs());
 
 		return Action.SUCCESS;
 	}

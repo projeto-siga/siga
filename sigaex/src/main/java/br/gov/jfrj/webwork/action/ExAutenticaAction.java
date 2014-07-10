@@ -21,14 +21,18 @@ package br.gov.jfrj.webwork.action;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+
+import org.apache.xerces.impl.dv.util.Base64;
 
 import nl.captcha.Captcha;
 import nl.captcha.noise.StraightLineNoiseProducer;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 
 public class ExAutenticaAction extends ExActionSupport {
@@ -40,6 +44,8 @@ public class ExAutenticaAction extends ExActionSupport {
 	private String n;
 
 	private String sc;
+	
+	private String ass;
 
 	private byte[] bytes;
 
@@ -52,10 +58,20 @@ public class ExAutenticaAction extends ExActionSupport {
 	private boolean assinado;
 
 	private Set<ExMovimentacao> assinaturas;
+	
+	private ExMovimentacao mov;
 
 	private Long idMov;
 
 	private InputStream inputStream;
+
+	private boolean mostrarBotaoAssinarExterno;
+	
+	private String assinaturaB64;
+
+	private String certificadoB64;
+
+	private String atributoAssinavelDataHora;
 
 	public String getCode() {
 		return code;
@@ -130,6 +146,14 @@ public class ExAutenticaAction extends ExActionSupport {
 	public void setAssinaturas(Set<ExMovimentacao> assinaturas) {
 		this.assinaturas = assinaturas;
 	}
+	
+	public boolean isMostrarBotaoAssinarExterno() {
+		return mostrarBotaoAssinarExterno;
+	}
+
+	public void setMostrarBotaoAssinarExterno(boolean assinar) {
+		this.mostrarBotaoAssinarExterno = assinar;
+	}
 
 	public Long getIdMov() {
 		return idMov;
@@ -137,6 +161,38 @@ public class ExAutenticaAction extends ExActionSupport {
 
 	public void setIdMov(Long idMov) {
 		this.idMov = idMov;
+	}
+
+	public String getAss() {
+		return ass;
+	}
+
+	public void setAss(String ass) {
+		this.ass = ass;
+	}
+
+	public String getAssinaturaB64() {
+		return assinaturaB64;
+	}
+
+	public void setAssinaturaB64(String assinaturaB64) {
+		this.assinaturaB64 = assinaturaB64;
+	}
+
+	public String getCertificadoB64() {
+		return certificadoB64;
+	}
+
+	public void setCertificadoB64(String certificadoB64) {
+		this.certificadoB64 = certificadoB64;
+	}
+
+	public String getAtributoAssinavelDataHora() {
+		return atributoAssinavelDataHora;
+	}
+
+	public void setAtributoAssinavelDataHora(String atributoAssinavelDataHora) {
+		this.atributoAssinavelDataHora = atributoAssinavelDataHora;
 	}
 
 	public String exec() throws Exception {
@@ -175,6 +231,36 @@ public class ExAutenticaAction extends ExActionSupport {
 					.buscarPorNumeroAssinatura(n);
 
 			setAssinaturas(arq.getAssinaturasDigitais());
+			
+			setMostrarBotaoAssinarExterno(arq.isCodigoParaAssinaturaExterna(n));
+			
+			if (isMostrarBotaoAssinarExterno()){
+				setMov( (ExMovimentacao) arq);
+			}
+			
+			if (ass != null && ass.trim().length() != 0) {
+				byte[] assinatura = Base64.decode(getAssinaturaB64());
+				byte[] certificado = Base64.decode(getCertificadoB64());
+				Date dt = getMov().getDtMov();
+				if (certificado != null && certificado.length != 0)
+					dt = new Date(Long.valueOf(getAtributoAssinavelDataHora()));
+				else
+					certificado = null;
+				try {
+					Ex.getInstance()
+							.getBL()
+							.assinarMovimentacao(
+									null,
+									null,
+									getMov(),
+									dt,
+									assinatura,
+									certificado,
+									ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO);
+				} catch (final Exception e) {
+					throw e;
+				}
+			}
 
 			return "autenticado";
 		} else {
@@ -245,5 +331,13 @@ public class ExAutenticaAction extends ExActionSupport {
 
 	public void setContentLength(int contentLength) {
 		this.contentLength = contentLength;
+	}
+	
+	public ExMovimentacao getMov() {
+		return mov;
+	}
+
+	public void setMov(ExMovimentacao mov) {
+		this.mov = mov;
 	}
 }

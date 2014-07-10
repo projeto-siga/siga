@@ -67,7 +67,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	private static final long serialVersionUID = 2559924666592487436L;
 	
 	private byte[] cacheConteudoBlobMov;
-
+	
 	/**
 	 * Simple constructor of ExMovimentacao instances.
 	 */
@@ -769,6 +769,15 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				+ Math.abs((getExDocumento().getDescrCurta() + getIdMov())
 						.hashCode() % 10000);
 	}
+	
+	public String getSiglaAssinaturaExterna() {
+		return getExDocumento().getIdDoc()
+				+ "."
+				+ getIdMov()
+				+ "-"
+				+ Math.abs((getExDocumento().getDescrCurta() + getIdMov() + "AssinaturaExterna")
+						.hashCode() % 10000);
+	}
 
 	public Set<ExMovimentacao> getAssinaturasDigitais() {
 		TreeSet<ExMovimentacao> movs = new TreeSet<ExMovimentacao>();
@@ -940,5 +949,18 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	
 	public boolean isUltimaMovimentacao() {
 		return getIdMov().equals(getExMobil().getUltimaMovimentacao().getIdMov());
+	}
+
+	@Override
+	public boolean isCodigoParaAssinaturaExterna(String num) {
+
+		int hash = Integer.parseInt(num.substring(num.indexOf("-") + 1));
+
+		for (ExMovimentacao mov : getExDocumento().getExMovimentacaoSet())
+			if (Math.abs((getExDocumento().getDescrCurta() + mov.getIdMov() + "AssinaturaExterna")
+					.hashCode() % 10000) == hash)
+				return true;
+		return false;
+
 	}
 }

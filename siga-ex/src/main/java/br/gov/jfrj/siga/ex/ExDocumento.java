@@ -2227,4 +2227,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                 
                 return false;
         }
+
+		@Override
+		public boolean isCodigoParaAssinaturaExterna(String num) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public String getSiglaAssinaturaExterna() {
+			// TODO Auto-generated method stub
+			return "";
+		}
 }

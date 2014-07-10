@@ -242,6 +242,8 @@ public abstract class ExArquivo extends Objeto {
 	};
 
 	public abstract String getSiglaAssinatura();
+	
+	public abstract String getSiglaAssinaturaExterna();
 
 	/**
 	 * Verifica se um arquivo foi assinado digitalmente.
@@ -266,5 +268,7 @@ public abstract class ExArquivo extends Objeto {
 	public void setNumPaginas(Integer numPaginas) {
 		this.numPaginas = numPaginas;
 	}
+	
+	public abstract boolean isCodigoParaAssinaturaExterna(String num);
 
 }

@@ -230,6 +230,8 @@ public class ExArquivoAction extends ExActionSupport {
 			return writeByteArray(ab, isPdf ? "application/pdf"
 					: "text/html", fB64);
 		} catch (Exception e) {
+			if (e.getClass().getSimpleName().equals("ClientAbortException"))
+				return null;
 			throw new ServletException("erro na geração do documento.", e);
 		}
 	}

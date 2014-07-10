@@ -179,7 +179,8 @@ public class WfTaskVO {
 							// wfva.setRespWF(lotWF.getSigla());
 
 							// if (wfva.isAviso())
-							this.variableList.add(wfva);
+							if (wfva != null)
+								this.variableList.add(wfva);
 							// }
 
 							boolean podeMovimentar = service.podeMovimentar(

@@ -2044,6 +2044,12 @@ public class ExBL extends CpBL {
 				cms = client.validarECompletarAssinatura(pkcs7, data, true, dtMov);
 			}
 
+			if (cms == null)
+				throw new Exception("Assinatura inválida!");
+				
+			if (data == null)
+				throw new Exception("Conteúdo inválido na validação da assinatura!");
+				
 			sNome = client
 					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
 

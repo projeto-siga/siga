@@ -116,4 +116,10 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 	public boolean semelhante(Assemelhavel obj, int nivel) {
 		return SincronizavelSuporte.semelhante(this, obj, nivel);
 	}
+	
+	@Override
+	public String toString() {
+		return getSigla();
+	}
+
 }

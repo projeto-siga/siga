@@ -54,6 +54,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 
 	final static public long TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE = 9;
 
+	//TODO: remover o teste da existencia de tipo de movimentacao de eliminacao na hora da busca, pois isso aumenta muito o tempo do query. Se for o caso, criar um DNM_ELIMINADO.
 	final static public long TIPO_MOVIMENTACAO_ELIMINACAO = 10;
 
 	final static public long TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO = 11;

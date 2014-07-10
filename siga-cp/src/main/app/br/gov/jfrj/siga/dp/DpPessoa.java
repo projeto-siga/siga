@@ -524,5 +524,12 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
         return getNomePessoa().compareTo(other.getNomePessoa());
     }
 
+	@Override
+	public String toString() {
+		return getSiglaCompleta();
+	}
+    
+    
+
 
 }

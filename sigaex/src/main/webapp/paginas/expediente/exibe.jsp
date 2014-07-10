@@ -344,7 +344,12 @@
 				<c:if test="${not empty docVO.listaDeAcessos}">
 					<ww:if test="%{#attr.docVO.listaDeAcessos.size() eq 1}">
 						<c:forEach var="acesso" items="${docVO.listaDeAcessos}" varStatus="loop">
-							(${acesso.sigla})
+							<ww:if test="${acesso eq 'PUBLICO'}">
+								(Público)
+							</ww:if>
+							<ww:else>
+								(${acesso.sigla})
+							</ww:else>
 						</c:forEach>
 					</ww:if>
 					<ww:else>

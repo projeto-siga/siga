@@ -414,4 +414,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
             return getNomeLotacao().compareTo(other.getNomeLotacao());
     }
+    
+	@Override
+	public String toString() {
+		return getSiglaCompleta();
+	}
+
 }

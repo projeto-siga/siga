@@ -115,6 +115,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
         // @Override
         public ExNivelAcesso getExNivelAcesso() {
                 log.debug("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
+                //TODO: criar DNM_EX_NIVEL_ACESSO
                 ExNivelAcesso nivel = null;
                 if (getMobilGeral() != null
                                 && getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
@@ -2197,14 +2198,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
         public List<Object> getListaDeAcessos() {
         	if (getDnmAcesso() == null)
         		return null;
-        	if (ExAcesso.ACESSO_PUBLICO.equals(getDnmAcesso())) 
+        	if (getExNivelAcesso().getIdNivelAcesso().equals(ExNivelAcesso.NIVEL_ACESSO_PUBLICO) && ExAcesso.ACESSO_PUBLICO.equals(getDnmAcesso())) 
         		return null;
         	ExDao dao = ExDao.getInstance();
         	List<Object> l = new ArrayList<Object>();
         	String a[] = getDnmAcesso().split(",");
 
     		for (String s : a) {
-    			if (s.startsWith("O"))
+    			if (s.equals(ExAcesso.ACESSO_PUBLICO))
+    				l.add(s);
+    			else if (s.startsWith("O"))
     				l.add(dao.consultar(Long.parseLong(s.substring(1)), CpOrgaoUsuario.class, false));
     			else if (s.startsWith("L"))
     				l.add(dao.consultar(Long.parseLong(s.substring(1)), DpLotacao.class, false));

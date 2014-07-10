@@ -75,7 +75,7 @@ public class ExAcesso {
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
 				add(mov.getLotaResp());
 				if (mov.getResp() != null)
-					add(mov.getResp().getOrgaoUsuario());
+					add(mov.getResp().getLotacao());
 			}
 		}
 	}
@@ -150,8 +150,8 @@ public class ExAcesso {
 			Set<ExDocumento> set) {
 		if (set == null) {
 			set = new HashSet<ExDocumento>();
-			set.add(doc);
 		}
+		set.add(doc);
 
 		for (ExMobil mob : doc.getExMobilSet()) {
 			ExMobil pai = mob.getExMobilPai();
@@ -273,8 +273,8 @@ public class ExAcesso {
 			}
 
 			// Combina os acessos de todos os documentos para gerar o resultado
+			acessos = new HashSet<Object>();
 			for (ExDocumento d : documentoESeusPais) {
-				acessos = new HashSet<Object>();
 
 				for (Object o : cache.get(d))
 					add(o);
@@ -308,18 +308,21 @@ public class ExAcesso {
 		if (acessos.contains(ACESSO_PUBLICO)) {
 			return ACESSO_PUBLICO;
 		}
+		
+		acessos.remove(null);
 
 		// Otimizar a lista removendo todas as pessoas e lotações de um órgão,
 		// quando este órgão todo pode acessar o documento
 		Set<Object> toRemove = new HashSet<Object>();
 		for (Object o : acessos) {
 			if (o instanceof CpOrgaoUsuario) {
+				CpOrgaoUsuario ou = (CpOrgaoUsuario)o;
 				for (Object oo : acessos) {
 					if (oo instanceof DpLotacao) {
-						if (((DpLotacao) oo).getOrgaoUsuario().equals(o))
+						if (((DpLotacao) oo).getOrgaoUsuario().getId().equals(ou.getId()))
 							toRemove.add(oo);
 					} else if (oo instanceof DpPessoa) {
-						if (((DpPessoa) oo).getOrgaoUsuario().equals(o))
+						if (((DpPessoa) oo).getOrgaoUsuario().getId().equals(ou.getId()))
 							toRemove.add(oo);
 					}
 				}

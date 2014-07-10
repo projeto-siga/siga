@@ -566,7 +566,7 @@ function limpaCampos()
 
 									<c:set var="acessivel" value="" />
 									<c:set var="acessivel"
-										value="${f:testaCompetencia('acessarAberto',titular,lotaTitular,documento[1])}" />
+										value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular,documento[1])}" />
 
 									<c:choose>
 										<c:when test="${acessivel eq true}">
@@ -591,6 +591,7 @@ function limpaCampos()
 									</c:choose>
 								</tr>
 							</siga:paginador>
+							
 							<!-- </table></div> -->
 							<br />
 							</c:if>

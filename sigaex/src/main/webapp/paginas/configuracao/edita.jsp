@@ -57,10 +57,20 @@ function sbmt() {
 			</tr>
 			<tr>
 				<td><b>Tipo de Configuração</b></td>
-				<td><ww:select name="idTpConfiguracao"
-					list="listaTiposConfiguracao" listKey="idTpConfiguracao"
-					listValue="dscTpConfiguracao" theme="simple"
-					headerValue="[Indefinido]" headerKey="0" /></td>
+				<td>
+					<c:choose>
+						<c:when test="${campoFixo && not empty config.cpTipoConfiguracao}">
+							<ww:hidden name="idTpConfiguracao" />
+							${config.cpTipoConfiguracao.dscTpConfiguracao}
+						</c:when>
+						<c:otherwise>
+							<ww:select name="idTpConfiguracao"
+							   list="listaTiposConfiguracao" listKey="idTpConfiguracao"
+							   listValue="dscTpConfiguracao" theme="simple"
+							   headerValue="[Indefinido]" headerKey="0" />
+						</c:otherwise>
+					</c:choose>
+				</td>
 			</tr>
 			<tr>
 				<td><b>Situação</b></td>
@@ -102,9 +112,19 @@ function sbmt() {
 			</tr>--%>
 			<tr>
 				<td>Tipo de Movimentação</td>
-				<td><ww:select name="idTpMov" list="listaTiposMovimentacao"
-					listKey="idTpMov" listValue="descrTipoMovimentacao" theme="simple"
-					headerValue="[Indefinido]" headerKey="0" /></td>
+				<td>
+					<c:choose>
+						<c:when test="${campoFixo && not empty config.exTipoMovimentacao}">
+							<ww:hidden name="idTpMov" />
+							${config.exTipoMovimentacao.descrTipoMovimentacao}
+						</c:when>
+						<c:otherwise>
+							<ww:select name="idTpMov" list="listaTiposMovimentacao"
+								listKey="idTpMov" listValue="descrTipoMovimentacao" theme="simple"
+								headerValue="[Indefinido]" headerKey="0" />
+						</c:otherwise>
+					</c:choose>
+				</td>
 			</tr>
 			<%--<tr>
 				<td>Via</td>
@@ -114,13 +134,22 @@ function sbmt() {
 			</tr> --%>
 			<tr>
 				<td>Tipo:</td>
-				<td><ww:select name="idTpFormaDoc" list="tiposFormaDoc"
-		                       listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
-				      		   theme="simple" headerKey="0" headerValue="[Indefinido]"
-							   onchange="javascript:alteraTipoDaForma();" id="tipoForma" />&nbsp;&nbsp;&nbsp;
-						       <div style="display: inline" id="comboFormaDiv">
-							   		<script type="text/javascript">alteraTipoDaForma();</script>
-							   </div>
+				<td>
+					<c:choose>
+						<c:when test="${campoFixo && not empty config.exModelo}">
+							<ww:hidden name="idMod" />
+							${config.exModelo.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc} - ${config.exModelo.exFormaDocumento.descrFormaDoc}
+						</c:when>
+						<c:otherwise>
+							<ww:select name="idTpFormaDoc" list="tiposFormaDoc"
+					                       listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
+							      		   theme="simple" headerKey="0" headerValue="[Indefinido]"
+										   onchange="javascript:alteraTipoDaForma();" id="tipoForma" />&nbsp;&nbsp;&nbsp;
+									       <div style="display: inline" id="comboFormaDiv">
+										   		<script type="text/javascript">alteraTipoDaForma();</script>
+										   </div>
+						</c:otherwise>
+					</c:choose>
 				</td>
 			</tr>
 			<!-- Esse timeout no modelo está estranho. Está sendo necessário porque primeiro
@@ -129,9 +158,17 @@ function sbmt() {
 			<tr>
 				<td>Modelo:</td>
 				<td>
-					<div style="display: inline" id="comboModeloDiv">
-						<script type="text/javascript">setTimeout("alteraForma()",500);</script>
-					</div>
+					<c:choose>
+						<c:when test="${campoFixo && not empty config.exModelo}">
+							<ww:hidden name="idMod" />
+							${config.exModelo.descMod}
+						</c:when>
+						<c:otherwise>
+							<div style="display: inline" id="comboModeloDiv">
+								<script type="text/javascript">setTimeout("alteraForma()",500);</script>
+							</div>
+						</c:otherwise>
+					</c:choose>
 				</td>
 			</tr>		
 			<tr>

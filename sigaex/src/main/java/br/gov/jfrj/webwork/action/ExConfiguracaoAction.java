@@ -104,6 +104,11 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	private DpLotacaoSelecao lotacaoSel;
 	
 	private String nmTipoRetorno;
+	
+	private boolean campoFixo;
+	
+	private ExConfiguracao config;
+	
 
 	// private HashMap<String, List<ExConfiguracao>> configsPorModelo;
 
@@ -135,9 +140,13 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 		if (getId() != null) {
 			config = daoCon(getId());
+		} else if(campoFixo) {
+			lerForm(config);
 		}
 
 		escreverForm(config);
+		
+		this.config = config;
 
 		return Action.SUCCESS;
 	}
@@ -360,7 +369,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
 		
-		if(getNmTipoRetorno() != null)
+		if(getNmTipoRetorno() != null && !getNmTipoRetorno().isEmpty())
 			return getNmTipoRetorno();
 
 		return Action.SUCCESS;
@@ -814,6 +823,22 @@ public class ExConfiguracaoAction extends ExActionSupport {
 
 	public void setNmTipoRetorno(String nmTipoRetorno) {
 		this.nmTipoRetorno = nmTipoRetorno;
+	}
+
+	public boolean isCampoFixo() {
+		return campoFixo;
+	}
+
+	public void setCampoFixo(boolean campoFixo) {
+		this.campoFixo = campoFixo;
+	}
+
+	public ExConfiguracao getConfig() {
+		return config;
+	}
+
+	public void setConfig(ExConfiguracao config) {
+		this.config = config;
 	}
 
 	/*

@@ -112,7 +112,7 @@
 				<h2>Configuração de Eletrônico</h2>
 				
 				<div id="tableCadastradasEletronico"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo" class="gt-btn-large gt-btn-left">Novo</a></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True" class="gt-btn-large gt-btn-left">Novo</a></div>	
 			</div> 	
 		</div>
 	</div>
@@ -123,7 +123,7 @@
 				<h2>Permissão para Criar</h2>
 				
 				<div id="tableCadastradasCriar"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo" class="gt-btn-large gt-btn-left">Novo</a></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True" class="gt-btn-large gt-btn-left">Novo</a></div>	
 			</div>
  		</div>
 	</div>
@@ -135,7 +135,7 @@
 				<h2>Permissão para Assinar</h2>
 				
 				<div id="tableCadastradasAssinar"></div>
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo" class="gt-btn-large gt-btn-left">Novo</a></div>		
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo&campoFixo=True" class="gt-btn-large gt-btn-left">Novo</a></div>		
  			</div>
  		</div>
 	</div>	
@@ -150,6 +150,28 @@
 			</div> 			
  		</div>
 	</div>		
+	
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<div class="gt-content-box gt-for-table">
+				<h2>Configuração de Nível de Acesso Máximo</h2>
+				
+				<div id="tableCadastradasNivelAcessoMaximo"></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=18&nmTipoRetorno=modelo&campoFixo=True" class="gt-btn-large gt-btn-left">Novo</a></div>	
+			</div> 	
+		</div>
+	</div>
+	
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<div class="gt-content-box gt-for-table">
+				<h2>Configuração de Nível de Acesso Mínimo</h2>
+				
+				<div id="tableCadastradasNivelAcessoMinimo"></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=19&nmTipoRetorno=modelo&campoFixo=True" class="gt-btn-large gt-btn-left">Novo</a></div>	
+			</div> 	
+		</div>
+	</div>
 	
 	<ww:url id="urlEditar" action="editar" namespace="/modelo" /> 
 	<script> 
@@ -219,6 +241,8 @@
 		montaTableCadastradas('tableCadastradasCriar', 2, 0 ,${id});
 		montaTableCadastradas('tableCadastradasAssinar', 1, 11 ,${id});	
 		montaTableCadastradas('tableCadastradasAcessar', 6, 0 ,${id});
+		montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
+		montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});
 	</script>
 	
 </siga:pagina>

@@ -67,15 +67,41 @@
 					<td><c:if test="${not empty configuracao.cpServico}">${configuracao.cpServico.dscServico}</c:if></td>
 					<td><c:if
 						test="${not empty configuracao.cpSituacaoConfiguracao}">${configuracao.cpSituacaoConfiguracao.dscSitConfiguracao}</c:if></td>
-					<td><ww:url id="url" action="editar"
-						namespace="/expediente/configuracao">
-						<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
-					</ww:url> <ww:a href="%{url}">Alterar<br></ww:a> 
+					<td>
+					<c:if
+						test="${not empty nmTipoRetorno}">
+						<ww:url id="url" action="editar"
+							namespace="/expediente/configuracao">
+							<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
+							<ww:param name="idMod">${idMod}</ww:param>
+							<ww:param name="nmTipoRetorno">${nmTipoRetorno}</ww:param>
+							<ww:param name="campoFixo">${campoFixo}</ww:param>
+						</ww:url> 
+					</c:if>
+					<c:if
+						test="${empty nmTipoRetorno}">
+						<ww:url id="url" action="editar"
+							namespace="/expediente/configuracao">
+							<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
+						</ww:url> 
+					</c:if>					
+					<ww:a href="%{url}">Alterar<br></ww:a> 
 					
-					
-					<ww:url id="urlExcluir" action="excluir" namespace="/expediente/configuracao">
-						<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
-	                </ww:url>					
+					<c:if
+						test="${not empty nmTipoRetorno}">
+						<ww:url id="urlExcluir" action="excluir" namespace="/expediente/configuracao">
+							<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
+							<ww:param name="idMod">${idMod}</ww:param>
+							<ww:param name="nmTipoRetorno">${nmTipoRetorno}</ww:param>
+		                </ww:url>	
+	                </c:if>				
+					<c:if
+						test="${empty nmTipoRetorno}">
+						<ww:url id="urlExcluir" action="excluir" namespace="/expediente/configuracao">
+							<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
+		                </ww:url>	
+	                </c:if>				
+
 					<siga:link title="Excluir" url="${urlExcluir}" 
 							popup="excluir" confirm="Deseja excluir configuração?" />				
 			

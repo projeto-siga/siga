@@ -147,6 +147,15 @@
 		<action name="excluir" method="aExcluir"
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">
 			<result type="redirect-action">listar</result>
+			<result name="modelo" type="redirect-action">
+				<param name="namespace">/modelo</param>
+			    <param name="actionName">
+					editar
+				</param>
+				<param name="id">
+					${idMod}
+				</param>
+			</result>
 		</action>
 		<action name="definir_publicadores" method="aDefinirPublicadores"
 			class="br.gov.jfrj.webwork.action.ExConfiguracaoAction">

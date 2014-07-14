@@ -137,7 +137,6 @@ function sbmt() {
 				<td>
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.exModelo}">
-							<ww:hidden name="idMod" />
 							${config.exModelo.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc} - ${config.exModelo.exFormaDocumento.descrFormaDoc}
 						</c:when>
 						<c:otherwise>

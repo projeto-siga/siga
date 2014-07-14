@@ -393,6 +393,10 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			}
 		} else
 			throw new AplicacaoException("ID não informada");
+		
+		if(getNmTipoRetorno() != null && !getNmTipoRetorno().isEmpty())
+			return getNmTipoRetorno();
+
 
 		return Action.SUCCESS;
 	}

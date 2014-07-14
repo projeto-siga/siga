@@ -230,7 +230,7 @@
 			$.ajax({				     				  
 				  url:'/sigaex/expediente/configuracao/listar_cadastradas.action',
 				  type: "GET",
-				  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idMod : idMod},					    					   					 
+				  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idMod : idMod, nmTipoRetorno : "modelo", campoFixo : "True"},					    					   					 
 				  success: function(data) {
 			    	$('#' + tabelaAlvo).html(data);				    
 			 	 }

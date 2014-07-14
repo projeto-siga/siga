@@ -1282,8 +1282,14 @@ public class ExDao extends CpDao {
                 && exemplo.getExModelo().getIdMod() != 0) {
 	        sbf.append(" and (ex.id_mod = ");
 	        sbf.append(exemplo.getExModelo().getIdMod());
-	        sbf.append(" or ex.id_mod is null)");
-		}
+	        sbf.append(" or (ex.id_mod is null and ex.id_forma_doc is null and ex.id_tp_forma_doc is null)");
+	        sbf.append(" or (ex.id_mod is null and ex.id_forma_doc = ");
+	        sbf.append(exemplo.getExModelo().getExFormaDocumento().getId());
+	        sbf.append(")");
+	        sbf.append(" or (ex.id_mod is null and ex.id_forma_doc is null and ex.id_tp_forma_doc = ");
+	        sbf.append(exemplo.getExModelo().getExFormaDocumento().getExTipoFormaDoc().getId());
+	        sbf.append(" ))");
+	   	}
 
 		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
 			sbf.append(" and (cp.id_orgao_usu = ");

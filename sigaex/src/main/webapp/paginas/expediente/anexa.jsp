@@ -128,6 +128,31 @@
 								<ww:file name="arquivo" label="Arquivo" accept="application/pdf"
 									     onchange="testpdf(this.form)" />
 							</tr>
+							
+							<c:set var="pendencias" value="${false}"/>
+							<c:forEach var="mov" items="${mobilCompletoVO.movs}">
+							    <c:if test="${(not mov.cancelada) and (mov.idTpMov eq 57)}">
+										<c:set var="pendencias" value="${true}"/>
+							    </c:if>
+						    </c:forEach>
+						    <c:if test="${pendencias}">
+								<tr class="header">
+									<td colspan="2">Pendencias de Anexação</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<div class="gt-form">
+											<label>A anexação deste arquivo resolve as seguintes pendências:</label>
+											<c:forEach var="mov" items="${mobilCompletoVO.movs}">
+											    <c:if test="${(not mov.cancelada) and (mov.idTpMov eq 57)}">
+														<label class="gt-form-element-label"><input type="checkbox" class="gt-form-checkbox" name="pendencia_de_anexacao" value="${mov.idMov}"> ${mov.descricao}</label>
+											    </c:if>
+										    </c:forEach>
+										</div>
+									</td>
+								</tr>
+						    </c:if>
+							
 							<tr>
 								<td colspan="2"><input type="submit" value="Ok"
 									class="gt-btn-medium gt-btn-left" onclick="javascript: return validaSelecaoAnexo( this.form );" /> 

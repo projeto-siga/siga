@@ -79,6 +79,8 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			root.put("gerar_resumo", true);
 		if (attrs.containsKey("finalizacao"))
 			root.put("gerar_finalizacao", true);
+		if (attrs.containsKey("gravacao"))
+			root.put("gerar_gravacao", true);
 		if (attrs.containsKey("assinatura"))
 			root.put("gerar_assinatura", true);
 		if (attrs.containsKey("pre_assinatura"))

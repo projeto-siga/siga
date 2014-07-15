@@ -80,3 +80,4 @@ siga-play-module/app/br/gov/jfrj/siga/sinc/
 sigari/lib/
 sigari/modules/
 sigari/eclipse/sigari-start.launch.template
+*.rej

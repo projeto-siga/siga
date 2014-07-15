@@ -45,5 +45,14 @@ public abstract class CpMarca extends AbstractCPMarca {
 		return "";
 	}
 
+	@Override
+	public String toString() {
+		return "CpMarca [Tipo=" +  ((getCpTipoMarca() != null) ? getCpTipoMarca().getDescrTipoMarca() : "null") + ", DtIni="
+				+ getDtIniMarca() + ", DtFim=" + getDtFimMarca()
+				+ ", Marcador=" + getCpMarcador().getDescrMarcador()
+				+ ", Pessoa=" + ((getDpPessoaIni() != null) ? getDpPessoaIni().getSiglaCompleta() : "null")
+				+ ", Lotacao=" + ((getDpLotacaoIni() != null) ? getDpLotacaoIni().getSiglaCompleta() : "null") + "]";
+	}
 
+	
 }

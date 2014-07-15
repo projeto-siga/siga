@@ -38,12 +38,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,12 +58,10 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
@@ -80,7 +79,6 @@ import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
-import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
@@ -955,6 +953,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
 		this.getRequest().setAttribute("mobilVO", mobilVO);
+		
+		ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
+				true, null, false);
+		this.getRequest().setAttribute("mobilCompletoVO", mobilCompletoVO);
 		return Action.SUCCESS;
 	}
 
@@ -996,6 +998,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!getArquivoContentType().equals("application/pdf"))
 			throw new AplicacaoException(
 					"Somente é permitido anexar arquivo PDF.");
+		
+		// Obtem as pendencias que serão resolvidas
+		String aidMov[] = getRequest().getParameterValues("pendencia_de_anexacao");
+		Set<ExMovimentacao> pendencias = null;
+		if (aidMov != null) {
+			pendencias = new TreeSet<ExMovimentacao>();
+			for (String s : aidMov) {
+				pendencias.add(dao().consultar(Long.parseLong(s), ExMovimentacao.class, false));
+			}
+		}
 
 		try {
 			// Nato: Precisei usar o código abaixo para adaptar o charset do
@@ -1013,7 +1025,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
 							mov.getTitular(), mov.getLotaTitular(),
 							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
-							getDescrMov());
+							getDescrMov(), pendencias);
 		} catch (final Exception e) {
 			throw e;
 		}

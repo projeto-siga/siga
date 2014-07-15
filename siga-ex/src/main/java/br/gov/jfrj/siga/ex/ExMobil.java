@@ -992,6 +992,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 	}
 	
+	public boolean isPendenteDeAnexacao () {
+		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO);
+	}
+	
 	/**
      * Retorno o mobil a qual este mobil está juntado.
      *
@@ -1097,6 +1101,29 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return m;
 	}
+	
+	
+	public ExMovimentacao anexoPendente(final String descrMov, final boolean fIncluirCancelados) {
+		if (getExMovimentacaoSet() == null)
+			return null;
+		
+		ExMobil m = null;
+		for (ExMovimentacao mov : getExMovimentacaoSet()) {
+			if ((!fIncluirCancelados) && mov.isCancelada())
+				continue;
+			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO) {
+				if (descrMov == null) {
+					return mov;
+				}
+				if (descrMov.equals(mov.getDescrMov()))
+					return mov;
+			}
+		}
+		return null;
+	}
+
+
+
 
 	public Long getId() {
 		return getIdMobil();

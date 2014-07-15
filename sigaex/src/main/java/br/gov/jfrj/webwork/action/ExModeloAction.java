@@ -279,8 +279,8 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 		assertAcesso("MOD:Gerenciar modelos");
 		lerForm();
 		ExModelo modAntigo = null;
-		if (getId()!=null){
-			modAntigo = dao().consultar(getId(), ExModelo.class, false);
+		if (mod.getIdInicial() != null){
+			modAntigo = dao().consultar(mod.getIdInicial(), ExModelo.class, false).getModeloAtual();
 		}
 		Ex.getInstance().getBL().gravarModelo(mod,modAntigo,null,getIdentidadeCadastrante());
 		setId(mod.getId());

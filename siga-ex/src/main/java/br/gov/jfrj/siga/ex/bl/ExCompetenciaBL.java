@@ -1183,6 +1183,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isBoletimPublicado()
 				&& !mob.doc().isSemEfeito()
 				&& !mob.doc().isEliminado()
+				&& !mob.isPendenteDeAnexacao()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -1455,6 +1456,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 			
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO)
+			return false;
+
+		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)
 			return false;
 
 		// Não deixa cancelar assinatura
@@ -2009,6 +2013,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isEmEditalEliminacao()
 				&& !mob.isSobrestado()
+				&& !mob.isPendenteDeAnexacao()
 				&& !mob.doc().isSemEfeito()
 				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
@@ -2146,6 +2151,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| mob.doc().isEliminado()
 				|| mob.isArquivado())
 			return false;
+		
+		if (mob.isPendenteDeAnexacao())
+			return false;
+
 		if (podeAtenderPedidoPublicacao(titular, lotaTitular,null))
 			return true;
 		
@@ -2177,6 +2186,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeRemeterParaPublicacaoSolicitada(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		if (mob.isPendenteDeAnexacao())
+			return false;
 		return mob.doc().isPublicacaoSolicitada()
 				&& podeAtenderPedidoPublicacao(titular, lotaTitular, mob);
 	}
@@ -2708,6 +2719,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (lotaTitular.isFechada())
 			return false;
+		if (mob.isPendenteDeAnexacao())
+			return false;
 		if (mob.doc().getExTipoDocumento().getIdTpDoc() != 2
 				&& mob.doc().getExTipoDocumento().getIdTpDoc() != 3)
 			if (!mob.doc().getLotaCadastrante().equivale(lotaTitular)
@@ -2848,6 +2861,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!mob.isVia())
 			return false;
 
+		if (mob.isPendenteDeAnexacao())
+			return false;
+		
 		return !mob.isCancelada()
 				&& !mob.isVolumeEncerrado()
 				&& !mob.isEmTransito()
@@ -3154,6 +3170,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeIndicarPermanente(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 
+		if (mob.isPendenteDeAnexacao())
+			return false;
+		
 		return (mob.doc().isAssinado()
 				&& (mob.isVia() || mob.isGeralDeProcesso())
 				&& !mob.isCancelada() && !mob.isEmTransito()
@@ -3696,6 +3715,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if(mob.doc().isEletronico() && !mob.doc().isAssinadoEletronicoPorTodosOsSignatarios())
 			return false;
+		
+		if (mob.isPendenteDeAnexacao())
+			return false;
 
 		return (mob.isVia() || mob.isVolume())
 				&& podeMovimentar(titular, lotaTitular, mob)
@@ -3998,7 +4020,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAutuar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-
+		
+		if (mob.isPendenteDeAnexacao())
+			return false;
 
 		if (mob.doc().isSemEfeito())
 			return false;

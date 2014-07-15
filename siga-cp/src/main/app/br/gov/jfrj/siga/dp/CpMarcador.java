@@ -135,6 +135,8 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_SOLICITACAO_AGENDADO = 55;
 
+	final static public long MARCADOR_PENDENTE_DE_ANEXACAO = 60;
+	
 	public CpMarcador() {
 		super();
 	}

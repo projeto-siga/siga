@@ -60,4 +60,7 @@ public interface ExService extends Remote {
 	
 	public String toJSON(String codigo) throws Exception;
 
+	Boolean exigirAnexo(String codigoDocumentoVia, String siglaCadastrante,
+			String descricaoDoAnexo) throws Exception;
+
 }

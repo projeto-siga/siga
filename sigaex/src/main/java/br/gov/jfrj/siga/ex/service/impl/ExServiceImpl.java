@@ -317,6 +317,25 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
+	@Override
+	public Boolean exigirAnexo(String codigoDocumentoVia, String siglaCadastrante, String descricaoDoAnexo) throws Exception {
+		try {
+			ExMobil mob = buscarMobil(codigoDocumentoVia);
+
+			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
+					siglaCadastrante);
+			Ex.getInstance()
+					.getBL()
+					.exigirAnexo(cadastranteParser.getPessoa(),
+							cadastranteParser.getLotacao(), mob, descricaoDoAnexo);
+			return true;
+		} catch (Exception e) {
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+
 	public String toJSON(String codigo) throws Exception {
 		try {
 			ExMobil mob = null;

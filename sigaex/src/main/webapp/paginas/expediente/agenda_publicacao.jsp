@@ -72,9 +72,6 @@
 	
 </script>
 
-<!-- A linha abaixo é temporária, pois está presente num dos cabeçalhos  -->
-<div id="carregando" style="position:absolute;top:0px;right:0px;background-color:red;font-weight:bold;padding:4px;color:white;display:none">Carregando...</div>
-
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">		
 			<h2>Agendamento de Publicação - ${mob.siglaEDescricaoCompleta}</h2>

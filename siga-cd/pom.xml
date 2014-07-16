@@ -15,8 +15,9 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<scope>provided</scope>
 		</dependency>
+		
+		<!-- Bouncycastle -->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
@@ -29,6 +30,8 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
 		</dependency>
+		
+		<!-- Siga -->
 		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga-cd-base</artifactId>

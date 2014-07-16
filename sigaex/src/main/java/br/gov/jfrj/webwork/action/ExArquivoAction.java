@@ -219,7 +219,7 @@ public class ExArquivoAction extends ExActionSupport {
 				getResponse().setDateHeader("Expires", 0);
 				getResponse().setHeader("ETag", etag);
 
-				if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+				if ((etag).equals(ifNoneMatch) && ifNoneMatch != null) {
 					getResponse()
 							.sendError(HttpServletResponse.SC_NOT_MODIFIED);
 					return "donothing";
@@ -256,7 +256,8 @@ public class ExArquivoAction extends ExActionSupport {
 		getResponse().setStatus(200);
 		getResponse().setContentLength(getContentLength());
 		getResponse().setContentType(contentType);
-		getResponse().setHeader("Content-Disposition", getContentDisposition());
+		if (!getPar().get("arquivo")[0].endsWith(".html"))
+			getResponse().setHeader("Content-Disposition",getContentDisposition());
 		getResponse().getOutputStream().write(ab);
 		getResponse().getOutputStream().flush();
 		getResponse().getOutputStream().close();
@@ -371,7 +372,7 @@ public class ExArquivoAction extends ExActionSupport {
 					"must-revalidate, " + cacheControl);
 			getResponse().setDateHeader("Expires", 0);
 			getResponse().setHeader("ETag", etag);
-			getResponse().setHeader("Pragma", null);
+			getResponse().setHeader("Pragma", "");
 			if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
 				getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
 				return null;

@@ -603,7 +603,6 @@ public class Application extends SigaApplication {
 			//--------------------------
 			String lotacaoSessao = cadastrante().getLotacao().getIdLotacao()
 					.toString();
-			//System.out.println(lotacaoSessao);
 			String matricula_ag = ag.matricula;
 			DpPessoa p = (DpPessoa) DpPessoa.find(
 					"orgaoUsuario.idOrgaoUsu = "
@@ -700,7 +699,7 @@ public class Application extends SigaApplication {
 		}
 	}
 	public static void agendadas_hoje() {
-		// pega usu√°rio do sistema
+		// pega usu·rio do sistema
 		String matriculaSessao = cadastrante().getMatricula().toString();
 		UsuarioForum objUsuario = UsuarioForum.find(
 				"matricula_usu =" + matriculaSessao).first();
@@ -749,6 +748,41 @@ public class Application extends SigaApplication {
 			Excecoes("Usuario sem permissao");
 		}
 
+	}
+	public static void agendamento_imprime(String frm_data_ag){
+		String matriculaSessao = cadastrante().getMatricula().toString();
+		String lotacaoSessao = cadastrante().getLotacao().getSiglaLotacao();
+		List<Agendamentos> listAgendamentos = new ArrayList<Agendamentos>();
+		UsuarioForum objUsuario = UsuarioForum.find(
+				"matricula_usu =" + matriculaSessao).first();
+	if (objUsuario != null) {
+		if(frm_data_ag==null){
+			frm_data_ag = "";
+		}else{
+			listAgendamentos = Agendamentos.find( "data_ag=to_date('" + frm_data_ag + "','dd-mm-yy')" ).fetch();
+			DpPessoa p = null;
+			// deleta os agendamentos de outros org„os
+			for(int i=0;i<listAgendamentos.size();i++){
+				 p = (DpPessoa) DpPessoa.find("orgaoUsuario.idOrgaoUsu = " + cadastrante().getOrgaoUsuario().getIdOrgaoUsu() 
+									+ " and dataFimPessoa is null and matricula='"+ listAgendamentos.get(i).matricula + "'").first(); 
+				if(lotacaoSessao.trim().equals(p.getLotacao().getSiglaLotacao().toString().trim())){
+					System.out.println("");
+				}else{
+					listAgendamentos.remove(i);
+					i--;
+				}
+			}
+		}
+		render(listAgendamentos);
+	}else{
+		Excecoes("usuario sem permissao");
+	}
+	}
+	public static void agendamento_print(String frm_data_ag, String frm_sala_ag, String frm_processo_ag, String frm_periciado ){
+		
+		//and hora_ag='"+frm_hora_ag+"'"
+		List listAgendamentos = (List) Agendamentos.find("data_ag=to_date('"+frm_data_ag.substring(0,10)+"','yy-mm-dd') and localFk.cod_local='"+frm_sala_ag+"' and processo='"+frm_processo_ag+"' and periciado='"+frm_periciado+"'" ).fetch();
+		render(frm_processo_ag,listAgendamentos);
 	}
 
 	public static void usuario_atualiza(String paramCodForum) throws Exception {

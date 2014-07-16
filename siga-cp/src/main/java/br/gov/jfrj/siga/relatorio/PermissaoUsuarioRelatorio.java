@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2006 - 2011 SJRJ.
- * 
- *     This file is part of SIGA.
- * 
- *     SIGA is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- * 
- *     SIGA is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- * 
- *     You should have received a copy of the GNU General Public License
- *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
 package br.gov.jfrj.siga.relatorio;
 
 import java.text.SimpleDateFormat;
@@ -28,7 +10,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.sf.jasperreports.engine.JRException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.Page;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
@@ -46,7 +27,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
  */
 public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	private DpPessoa dpPessoa;
-	@SuppressWarnings("unchecked")
 	public PermissaoUsuarioRelatorio(Map parametros) throws DJBuilderException {
 		super(parametros);
 		if (parametros.get("idPessoa") == null){
@@ -62,7 +42,7 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	}
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
-			throws DJBuilderException, JRException {
+			throws DJBuilderException {
 		this.setTemplateFile(null);
 		this.setTitle("Permissão de " 
 				        + getDescricaoTipoConfiguracao() 

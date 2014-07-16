@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.hibernate.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
@@ -123,7 +121,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
-			throws DJBuilderException, JRException {
+			throws DJBuilderException {
 		this.setTemplateFile(null);
 		this.setTitle("Histórico de Usuário: " + "(" + dpPessoa.getSesbPessoa()
 				+ dpPessoa.getMatricula() + ") " + dpPessoa.getNomePessoa());

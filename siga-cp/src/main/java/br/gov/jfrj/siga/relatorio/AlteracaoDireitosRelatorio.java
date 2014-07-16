@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.sf.jasperreports.engine.JRException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
@@ -99,7 +98,7 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
-			throws DJBuilderException, JRException {// jar:file:/fullpath/main.jar!/a.resource
+			throws DJBuilderException {// jar:file:/fullpath/main.jar!/a.resource
 		this.setTemplateFile(null);
 		this.setTitle("Alteracao de Direitos - de "
 				+ parametros.get("dataInicio") + " até "

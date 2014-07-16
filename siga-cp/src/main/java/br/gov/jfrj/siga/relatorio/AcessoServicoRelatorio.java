@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
@@ -112,7 +111,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
-			throws DJBuilderException, JRException {
+			throws DJBuilderException {
 		this.setTemplateFile(null);
 		this.setTitle("Acesso - " + getDescricaoTipoConfiguracao() + " - "
 				+ "(" + cpServico.getSiglaServico() + ") "

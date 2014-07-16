@@ -33,7 +33,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Query;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.node.TaskNode;
@@ -109,23 +109,22 @@ public class WfDao extends CpDao {
 	}
 
 
-	static public AnnotationConfiguration criarHibernateCfg(String datasource)
+	static public Configuration criarHibernateCfg(String datasource)
 			throws Exception {
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(datasource);
+		Configuration cfg = CpDao.criarHibernateCfg(datasource);
 		WfDao.configurarHibernate(cfg);
 		return cfg;
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(
+	static public Configuration criarHibernateCfg(
 			String connectionUrl, String username, String password)
 			throws Exception {
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(connectionUrl,
-				username, password);
+		Configuration cfg = CpDao.criarHibernateCfg(connectionUrl,username, password);
 		WfDao.configurarHibernate(cfg);
 		return cfg;
 	}
 
-	static private void configurarHibernate(AnnotationConfiguration cfg)
+	static private void configurarHibernate(Configuration cfg)
 			throws Exception {
 		cfg.addClass(br.gov.jfrj.siga.wf.WfConfiguracao.class);
 		cfg.addClass(br.gov.jfrj.siga.wf.WfConhecimento.class);
@@ -255,103 +254,42 @@ public class WfDao extends CpDao {
 
 		cfg.addClass(br.gov.jfrj.siga.wf.util.WfTaskInstance.class);
 
-		cfg.setCacheConcurrencyStrategy("org.jbpm.context.def.VariableAccess",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.file.def.FileDefinition.processFiles",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.action.Script.variableAccesses",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Action",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Event",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Event.actions", "nonstrict-read-write",
-				CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ExceptionHandler",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ExceptionHandler.actions",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Node",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.events", "nonstrict-read-write",
-				CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.exceptionHandlers",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.leavingTransitions",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.arrivingTransitions",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.events",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.exceptionHandlers",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.nodes",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.actions",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.definitions",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.SuperState.nodes", "nonstrict-read-write",
-				CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Transition",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Transition.events", "nonstrict-read-write",
-				CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Transition.exceptionHandlers",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.node.Decision.decisionConditions",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.node.ProcessState.variableAccesses",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.node.TaskNode.tasks", "nonstrict-read-write",
-				CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.instantiation.Delegation",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.module.def.ModuleDefinition",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.Swimlane.tasks", "nonstrict-read-write",
-				CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskController",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.TaskController.variableAccesses",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.Task.events", "nonstrict-read-write",
-				CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.Task.exceptionHandlers",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.swimlanes",
-				"nonstrict-read-write", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.tasks",
-				"nonstrict-read-write", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.context.def.VariableAccess","transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.file.def.FileDefinition.processFiles", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.action.Script.variableAccesses", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Action", "transactional", CACHE_WF);	
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Event",	"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Event.actions", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ExceptionHandler", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ExceptionHandler.actions","transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Node", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Node.events", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Node.exceptionHandlers", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Node.leavingTransitions",	"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Node.arrivingTransitions", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition",	"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.events", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.exceptionHandlers",	"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.nodes",	"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.actions", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.definitions", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.SuperState.nodes", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Transition","transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Transition.events", "transactional",CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Transition.exceptionHandlers", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.node.Decision.decisionConditions", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.node.ProcessState.variableAccesses", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.node.TaskNode.tasks", "transactional",	CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.instantiation.Delegation","transactional", CACHE_WF);		
+		cfg.setCacheConcurrencyStrategy("org.jbpm.module.def.ModuleDefinition", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Swimlane.tasks", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskController", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskController.variableAccesses", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task.events", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task.exceptionHandlers", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskMgmtDefinition.swimlanes", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskMgmtDefinition.tasks", "transactional", CACHE_WF);
 
 		CacheManager manager = CacheManager.getInstance();
 		Cache cache;

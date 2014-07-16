@@ -36,6 +36,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.type.CalendarType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
@@ -306,7 +307,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 		try {
 			CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 			Wf.getInstance().getProp().setPrefixo(ambiente.getSigla());
-			AnnotationConfiguration cfg = WfDao.criarHibernateCfg(ambiente);
+			Configuration cfg = WfDao.criarHibernateCfg(ambiente);
 			CpDao.configurarHibernateParaDebug(cfg);
 			HibernateUtil.configurarHibernate(cfg, "");
 

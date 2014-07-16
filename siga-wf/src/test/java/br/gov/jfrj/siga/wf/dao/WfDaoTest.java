@@ -20,7 +20,7 @@ package br.gov.jfrj.siga.wf.dao;
 
 import junit.framework.TestCase;
 
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.jbpm.taskmgmt.exe.Assignable;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
@@ -49,7 +49,7 @@ public class WfDaoTest extends TestCase {
 	public WfDaoTest() throws Exception {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente);
+		Configuration cfg = CpDao.criarHibernateCfg(ambiente);
 		ModeloDao.configurarHibernateParaDebug(cfg);
 		HibernateUtil.configurarHibernate(cfg, "");
 

@@ -46,32 +46,16 @@ public class WfContextBuilder {
 	 * @return
 	 */
 	public static JbpmConfiguration getConfiguration() {
-		// if (configuration == null) {
-		// try {
-		// HibernateUtil
-		// .configurarHibernate("/br/gov/jfrj/siga/wf/dao/hibernate.cfg.xml");
-		// configuration = JbpmConfiguration.getInstance("jbpm.cfg.xml");
-		// // configuration.startJobExecutor();
-		// return configuration;
-		// } catch (Exception ex) {
-		// throw new RuntimeException(ex.getMessage());
-		// }
-		// } else
-		// return configuration;
-
 		if (!fConfigured) {
 			synchronized (classLock) {
 				if (!fConfigured) {
 					try {
-						configuration = JbpmConfiguration
-								.getInstance("jbpm.cfg.xml");
-						SessionFactory fabricaDeSessao = WfDao.getInstance()
-								.getFabricaDeSessao();
+						configuration = JbpmConfiguration.getInstance("jbpm.cfg.xml");
+						SessionFactory fabricaDeSessao = WfDao.getInstance().getFabricaDeSessao();
 						if (fabricaDeSessao == null)
-							throw new AplicacaoException(
-									"Não foi possivel obter uma configuração do Jbpm pois a sessionFactory do Hibernate não estava criada.");
-						configuration.getInstance().createJbpmContext()
-								.setSessionFactory(fabricaDeSessao);
+							throw new AplicacaoException("Não foi possivel obter uma configuração do Jbpm pois a sessionFactory do Hibernate não estava criada.");
+						
+						configuration.createJbpmContext().setSessionFactory(fabricaDeSessao);
 						configuration.startJobExecutor();
 						fConfigured = true;
 						return configuration;

@@ -42,7 +42,7 @@ public class WfWsServlet extends CXFNonSpringServlet {
 	 * Inicia a classe WfServiceImpl.java como um webservice.
 	 */
 	@Override
-	public void loadBus(ServletConfig servletConfig) throws ServletException {
+	public void loadBus(ServletConfig servletConfig){
 		super.loadBus(servletConfig);
 
 		// You could add the endpoint publish codes here

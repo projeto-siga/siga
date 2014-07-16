@@ -27,7 +27,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.apache.log4j.Logger;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
@@ -96,11 +96,9 @@ public class WfThreadFilter extends ThreadFilter {
 
 		// Novo
 		if (!WfDao.getInstance().sessaoEstahAberta())
-			throw new AplicacaoException(
-					"Erro: sessão do Hibernate está fechada.");
+			throw new AplicacaoException("Erro: sessão do Hibernate está fechada.");
 
-		WfContextBuilder.getJbpmContext().getJbpmContext()
-				.setSession(WfDao.getInstance().getSessao());
+		WfContextBuilder.getJbpmContext().getJbpmContext().setSession(WfDao.getInstance().getSessao());
 
 		// Velho
 		// GraphSession s = WfContextBuilder.getJbpmContext()
@@ -126,8 +124,7 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			log.warn("[doFiltro] - Ocorreu um erro durante a execução da operação: "
-					+ e.getMessage());
+			log.warn("[doFiltro] - Ocorreu um erro durante a execução da operação: "+ e.getMessage());
 			throw new AplicacaoException("Ocorreu um erro inesperado", 0, e);
 		}
 	}
@@ -141,8 +138,7 @@ public class WfThreadFilter extends ThreadFilter {
 				if (!fConfigured) {
 					try {
 						Wf.getInstance();
-						AnnotationConfiguration cfg = WfDao
-								.criarHibernateCfg("java:/SigaWfDS");
+						Configuration cfg = WfDao.criarHibernateCfg("java:jboss/datasource/SigaWfDS");
 
 						// bruno.lacerda@avantiprima.com.br
 						// Configura listeners de auditoria de acordo com os
@@ -156,11 +152,8 @@ public class WfThreadFilter extends ThreadFilter {
 						HibernateUtil.configurarHibernate(cfg, "");
 						fConfigured = true;
 					} catch (final Throwable ex) {
-						// Make sure you log the exception, as it might be
-						// swallowed
-						log.error(
-								"[configuraHibernate] - Não foi possível configurar o hibernate.",
-								ex);
+						// Make sure you log the exception, as it might be swallowed
+						log.error("[configuraHibernate] - Não foi possível configurar o hibernate.", ex);
 						throw new ExceptionInInitializerError(ex);
 					}
 				}
@@ -173,9 +166,7 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			WfContextBuilder.closeContext();
 		} catch (Exception ex) {
-			log.error(
-					"[fechaContextoWorkflow] - Ocorreu um erro ao fechar o contexto do Workflow",
-					ex);
+			log.error("[fechaContextoWorkflow] - Ocorreu um erro ao fechar o contexto do Workflow",	ex);
 			// ex.printStackTrace();
 		}
 	}
@@ -184,9 +175,7 @@ public class WfThreadFilter extends ThreadFilter {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error(
-					"[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessão do Hibernate",
-					ex);
+			log.error("[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessão do Hibernate",	ex);
 			// ex.printStackTrace();
 		}
 	}

@@ -47,8 +47,7 @@ public class WfJbpmContext {
 	 */
 	public JbpmContext getJbpmContext() {
 		if (jbpmContext == null)
-			jbpmContext = WfContextBuilder.getConfiguration()
-					.createJbpmContext();
+			jbpmContext = WfContextBuilder.getConfiguration().createJbpmContext();
 		return jbpmContext;
 	}
 

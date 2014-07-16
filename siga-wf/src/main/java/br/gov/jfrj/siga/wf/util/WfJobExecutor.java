@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
+import org.jbpm.JbpmConfiguration;
 import org.jbpm.job.executor.JobExecutor;
 
 /**
@@ -35,6 +36,7 @@ public class WfJobExecutor extends JobExecutor {
 	@Override
 	protected Thread createThread(String threadName) {
 		Thread t = new WfJobExecutorThread(threadName, this);
+		
 		if (t.getContextClassLoader() != Thread.currentThread()
 				.getContextClassLoader())
 			t.setContextClassLoader(Thread.currentThread()

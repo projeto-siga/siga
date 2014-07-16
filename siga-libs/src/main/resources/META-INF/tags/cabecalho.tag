@@ -158,7 +158,7 @@ ${meta}
 						</c:if>
 						<!-- / utility box -->
 						<!-- logo -->
-						<a href="${pageContext.request.contextPath}" title="Página inicial" class="link-sem-estilo">
+						<a href="/siga" title="Página inicial" class="link-sem-estilo">
 							<div class="gt-logo" style="padding: 0;">
 								<img style="margin-top: 3px; margin-bottom: -13px;"
 									src="/siga/imagens/logo.png">

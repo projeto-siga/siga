@@ -231,7 +231,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			c.setOrgaoObjeto(dao().consultar(getIdOrgaoObjeto(),
 					CpOrgaoUsuario.class, false));
 		} else
-			c.setOrgaoUsuario(null);
+			c.setOrgaoObjeto(null);
 	}
 
 	private void escreverForm(ExConfiguracao c) throws Exception {

@@ -13,6 +13,8 @@
     <artifactId>siga-cd-base</artifactId>
 
     <dependencies>
+    
+    	<!-- Bouncycastle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>

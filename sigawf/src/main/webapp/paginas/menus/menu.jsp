@@ -1,14 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="128kb"%>
-<%@ taglib prefix="c" uri="/core"%>
-<%@ taglib prefix="fmt" uri="/fmt"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib prefix="tags" uri="/tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib prefix="wf" uri="/META-INF/func.tld"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib uri="http://localhost/libstag" prefix="ff"%>
-
+<%@ include file="/WEB-INF/page/include.jsp"%>
 
 <li><a href="#">Procedimentos</a>
 	<ul>
@@ -18,7 +8,7 @@
 		</li>
 
 		<c:if
-			test="${ff:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;OPERAR:Executar comandos da tela inicial')}">
+			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;OPERAR:Executar comandos da tela inicial')}">
 			<li><a href="#">Iniciar</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
@@ -34,11 +24,11 @@
 				</ul></li>
 		</c:if>
 	</ul> <c:if
-		test="${ff:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;FE:Ferramentas')}">
+		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;FE:Ferramentas')}">
 		<li><a href="#">Ferramentas</a>
 			<ul>
 				<c:if
-					test="${ff:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;CONFIGURAR:Configurar iniciadores')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;CONFIGURAR:Configurar iniciadores')}">
 					<li><a href="#">Configurar</a>
 						<ul class="navmenu-large">
 							<c:forEach var="pd" items="${processDefinitions}">
@@ -55,7 +45,7 @@
 				</c:if>
 
 				<c:if
-					test="${ff:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;DESIGNAR:Designar tarefas')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;DESIGNAR:Designar tarefas')}">
 					<li><a href="#">Designar Tarefas</a>
 						<ul class="navmenu-large">
 							<c:forEach var="pd" items="${processDefinitions}">
@@ -75,11 +65,11 @@
 	</c:if>
 </li>
 <c:if
-	test="${ff:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;MEDIR: Analisar mÃ©tricas')}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;MEDIR: Analisar métricas')}">
 
-	<li><a href="#">RelatÃ³rios</a>
+	<li><a href="#">Relatórios</a>
 		<ul>
-			<li><a href="#">Apresentar MÃ©tricas</a>
+			<li><a href="#">Apresentar Métricas</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
 						<ww:url id="url" action="medir" namespace="/">

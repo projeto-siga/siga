@@ -18,10 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import static br.gov.jfrj.siga.dp.CpMarcador.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,16 +38,12 @@ import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
 
-import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarca;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-
-import static br.gov.jfrj.siga.dp.CpMarcador.*;
 
 @Entity
 @Table(name = "EX_MOBIL")

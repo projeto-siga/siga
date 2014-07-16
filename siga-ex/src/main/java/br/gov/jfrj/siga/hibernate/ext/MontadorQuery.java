@@ -39,8 +39,10 @@ public class MontadorQuery implements IMontadorQuery {
 		else
 			sbf.append("select doc, mob, label from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 
-		sbf.append(" where not exists (from ExMovimentacao where exTipoMovimentacao.idTpMov = 10 and (exMobil.idMobil = mob.idMobil ");
-		sbf.append("    or exMobil.idMobil = (from ExMobil where exTipoMobil.idTipoMobil = 1 and exDocumento.idDoc = mob.exDocumento.idDoc)))");
+		//Nato: desabilitei este where pois causava muito impacto na velocidade da consulta. Precisamos criar uma variavel denormalizada mais a frente para resolver esse problema.
+		//sbf.append(" where not exists (from ExMovimentacao where exTipoMovimentacao.idTpMov = 10 and (exMobil.idMobil = mob.idMobil ");
+		//sbf.append("    or exMobil.idMobil = (from ExMobil where exTipoMobil.idTipoMobil = 1 and exDocumento.idDoc = mob.exDocumento.idDoc)))");
+		sbf.append(" where");
 
 		if (flt.getUltMovIdEstadoDoc() != null
 				&& flt.getUltMovIdEstadoDoc() != 0) {
@@ -190,8 +192,11 @@ public class MontadorQuery implements IMontadorQuery {
 			else if (flt.getOrdem() == 4)
 				sbf.append(" order by doc.idDoc desc");
 		}
+		
+		String s = sbf.toString();
+		s = s.replace("where and", "where");
 
-		return sbf.toString();
+		return s;
 
 	}
 

@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
 import br.gov.jfrj.siga.ex.util.Compactador;
@@ -114,16 +115,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
         // @Override
         public ExNivelAcesso getExNivelAcesso() {
-                log.debug("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
-                //TODO: criar DNM_EX_NIVEL_ACESSO
-                ExNivelAcesso nivel = null;
-                if (getMobilGeral() != null
-                                && getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
-                        nivel = getMobilGeral().getUltimaMovimentacaoNaoCancelada()
-                                        .getExNivelAcesso();
-                if (nivel != null)
-                        return nivel;
-                return super.getExNivelAcesso();
+        	ExNivelAcesso nivel = getDnmExNivelAcesso();
+        	if (nivel == null)
+        		return Ex.getInstance().getBL().atualizarDnmNivelAcesso(this);
+        	return nivel;
         }
 
         /**

@@ -6,7 +6,7 @@
 	<!-- Created Mon Nov 14 13:32:27 GMT-03:00 2005    -->
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
 
-	<class name="ExMovimentacao" schema="SIGA" table="EX_MOVIMENTACAO">
+	<class name="ExMovimentacao" schema="SIGA" table="EX_MOVIMENTACAO" dynamic-update="true">
 		<id name="idMov" column="ID_MOV" type="long">
 			<generator class="sequence">
 				<param name="sequence">EX_MOVIMENTACAO_SEQ</param>

@@ -185,6 +185,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private ExNivelAcesso exNivelAcesso;
 
 	@ManyToOne
+	@JoinColumn(name = "DNM_ID_NIVEL_ACESSO")
+	private ExNivelAcesso dnmExNivelAcesso;
+
+	@ManyToOne
 	@JoinColumn(name = "ID_ORGAO")
 	private CpOrgao orgaoExterno;
 
@@ -863,5 +867,13 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setDnmAcesso(String dnmAcesso) {
 		this.dnmAcesso = dnmAcesso;
+	}
+
+	public ExNivelAcesso getDnmExNivelAcesso() {
+		return dnmExNivelAcesso;
+	}
+
+	public void setDnmExNivelAcesso(ExNivelAcesso dnmExNivelAcesso) {
+		this.dnmExNivelAcesso = dnmExNivelAcesso;
 	}
 }

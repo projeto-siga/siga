@@ -53,6 +53,9 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@Column(name = "ID_MOBIL")
 	private java.lang.Long IdMobil;
 
+	@Column(name = "DNM_ULTIMA_ANOTACAO")
+	private java.lang.String dnmUltimaAnotacao;
+
 	@ManyToOne
 	@JoinColumn(name = "ID_DOC")
 	private ExDocumento exDocumento;
@@ -140,6 +143,14 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 
 	public void setExMarcaSet(java.util.SortedSet<ExMarca> exMarcaSet) {
 		this.exMarcaSet = exMarcaSet;
+	}
+
+	public java.lang.String getDnmUltimaAnotacao() {
+		return dnmUltimaAnotacao;
+	}
+
+	public void setDnmUltimaAnotacao(java.lang.String dnmUltimaAnotacao) {
+		this.dnmUltimaAnotacao = dnmUltimaAnotacao;
 	}
 
 }

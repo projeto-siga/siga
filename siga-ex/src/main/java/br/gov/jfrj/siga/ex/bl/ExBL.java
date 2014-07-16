@@ -3088,18 +3088,23 @@ public class ExBL extends CpBL {
 	public static String anotacaoConfidencial(ExMobil mob, DpLotacao lotaTitular) {
 		if (mostraDescricaoConfidencial(mob.doc(), lotaTitular))
 			return "CONFIDENCIAL";
-		else {
-			//TODO: criar DNM_ULTIMA_ANOTACAO
-			String s = "";
-			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
-				if (mov.isCancelada())
-					continue;
-				if (mov.getExTipoMovimentacao().getIdTpMov()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO))
-					s = mov.getDescrMov();
-			}
+		String s = mob.getDnmUltimaAnotacao();
+		if (s != null)
 			return s;
+		s = "";
+		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+			if (mov.isCancelada())
+				continue;
+			if (mov.getExTipoMovimentacao().getIdTpMov()
+					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO))
+				s = mov.getDescrMov();
 		}
+		//Nato: precisei gravar um espaco pois estava desconsiderando a string vazia e gravando nulo.
+		if (s == null || s.length() == 0)
+			s = " ";
+		mob.setDnmUltimaAnotacao(s);
+		ExDao.getInstance().gravar(mob);
+		return s;
 	}
 
 	public ExDocumento gravar(final DpPessoa cadastrante,
@@ -3252,6 +3257,20 @@ public class ExBL extends CpBL {
 		}
 	}
 	
+	public ExNivelAcesso atualizarDnmNivelAcesso(ExDocumento doc) {
+		log.debug("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
+		ExNivelAcesso nivel = null;
+		if (doc.getMobilGeral() != null
+		                && doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
+		        nivel = doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada()
+		                        .getExNivelAcesso();
+		if (nivel == null)
+			nivel = doc.getExNivelAcessoDoDocumento();
+		doc.setDnmExNivelAcesso(nivel);
+		ExDao.getInstance().gravar(doc);
+		return nivel;
+	}
+
 	public void atualizarDnmAcesso(ExDocumento doc) {
 		Date dt = ExDao.getInstance().dt();
 		ExAcesso acesso = new ExAcesso();
@@ -4643,15 +4662,20 @@ public class ExBL extends CpBL {
 		}
 		if (mob.doc() != null) {
 			atualizarMarcas(mob.doc());
-			atualizarDnmAcesso(mob.doc());
+			atualizarVariaveisDenormalizadas(mob.doc());
 		}
 		set.add(mob);
+	}
+
+	private void atualizarVariaveisDenormalizadas(ExDocumento doc) {
+		atualizarDnmAcesso(doc);
+		doc.setDnmExNivelAcesso(doc.getExNivelAcesso());
 	}
 
 	private void concluirAlteracao(ExDocumento doc) throws Exception {
 		if (doc != null) {
 			atualizarMarcas(doc);
-			atualizarDnmAcesso(doc);
+			atualizarVariaveisDenormalizadas(doc);
 		}
 		ExDao.commitTransacao();
 		// if (doc != null)

@@ -58,6 +58,8 @@
    name="dnmAcesso" type="string"/>
   <many-to-one class="br.gov.jfrj.siga.ex.ExNivelAcesso"
    column="ID_NIVEL_ACESSO" name="exNivelAcesso"/>
+  <many-to-one class="br.gov.jfrj.siga.ex.ExNivelAcesso"
+   column="DNM_ID_NIVEL_ACESSO" name="dnmExNivelAcesso"/>
   <many-to-one class="br.gov.jfrj.siga.dp.DpPessoa"
    column="ID_CADASTRANTE" name="cadastrante" not-null="true"/>
   <many-to-one class="br.gov.jfrj.siga.dp.DpLotacao"

@@ -472,3 +472,14 @@ a.link-sem-estilo {
 div.login-invalido p {
 	color: red;
 }
+
+div#carregando {
+	position:absolute;
+	top:35px;
+	right:0px;
+	background-color:red;
+	font-weight:bold;
+	padding:4px;
+	color:white;
+	display:none;
+}

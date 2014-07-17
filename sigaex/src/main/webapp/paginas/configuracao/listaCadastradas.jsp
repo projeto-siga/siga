@@ -9,40 +9,36 @@
 
   <div class="gt-content clearfix">	
 		 
-		<h1>${tpConfiguracao.dscTpConfiguracao}</h1>
-		<b> Situação default: </b> ${tpConfiguracao.situacaoDefault.dscSitConfiguracao} <br/>		
-		<br />
+		<h2 style="margin-top: 20px;">${tpConfiguracao.dscTpConfiguracao} <span style="float: right; font-size: 70%">(Situação default: </b> ${tpConfiguracao.situacaoDefault.dscSitConfiguracao})</span></h2>
 		
 		<div class="gt-content-box gt-for-table">
 		
-		<table class="gt-list-table" width="100%" border="1">
+		<table class="gt-table" width="100%">
 			<tr class="header">
-				<td align="center" width="03%"><b>ID</b></td>
-				<td align="center" width="05%"><b>Nível de acesso</b></td>
-				<td align="center" width="05%"><b>Pessoa</b></td>
-				<td align="center" width="05%"><b>Lotação</b></td>
-				<td align="center" width="05%"><b>Função</b></td>
-				<td align="center" width="03%"><b>Órgão</b></td>
-				<td align="center" width="03%"><b>Órgão Objeto</b></td>
-				<td align="center" width="05%"><b>Cargo</b></td>
-				<td align="center" width="12%"><b>Tipo de Movimentação</b></td>
-				<td align="center" width="05%"><b>Via</b></td>
-				<td align="center" width="13%"><b>Modelo</b></td>
-				<td align="center" width="05%"><b>Classificação</b></td>
-				<td align="center" width="05%"><b>Tipo forma de documento</b></td>
-				<td align="center" width="10%"><b>Forma de documento</b></td>
-				<td align="center" width="05%"><b>Tipo de Documento</b></td>
-				<td align="center" width="03%"><b>Vínculo</b></td>
-				<td align="center" width="05%"><b>Serviço</b></td>
-				<td align="center" width="05%"><b>Situação</b></td>
-				<td align="right" width="10%"></td>
+				<th align="center">Nível de acesso</th>
+				<th align="center">Pessoa</th>
+				<th align="center">Lotação</th>
+				<th align="center">Função</th>
+				<th align="center">Órgão</th>
+				<th align="center">Órgão Objeto</th>
+				<th align="center">Cargo</th>
+				<th align="center">Tipo de Movimentação</th>
+				<th align="center">Via</th>
+				<th align="center">Modelo</th>
+				<th align="center">Classificação</th>
+				<th align="center">Tipo forma de documento</th>
+				<th align="center">Forma de documento</th>
+				<th align="center">Tipo de Documento</th>
+				<th align="center">Vínculo</th>
+				<th align="center">Serviço</th>
+				<th align="center">Situação</th>
+				<th align="center" style="width: 70px;"></th>
 			</tr>
 			<c:set var="evenorodd" value="" />
 			<c:set var="tamanho" value="0" />
 
 			<c:forEach var="configuracao" items="${listConfig}">		
 				<tr class="${evenorodd}">				
-					<td align="right">${configuracao.idConfiguracao}</td>
 					<td><c:if test="${not empty configuracao.exNivelAcesso}">${configuracao.exNivelAcesso.nmNivelAcesso}(${configuracao.exNivelAcesso.grauNivelAcesso})</c:if></td>
 					<td><c:if test="${not empty configuracao.dpPessoa}">
 						<siga:selecionado sigla="${configuracao.dpPessoa.iniciais}"
@@ -84,8 +80,9 @@
 							namespace="/expediente/configuracao">
 							<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
 						</ww:url> 
-					</c:if>					
-					<ww:a href="%{url}">Alterar<br></ww:a> 
+					</c:if>
+					<siga:links estilo="margin-bottom: 0; text-align: center;">					
+					<siga:link icon="pencil" titleImg="Alterar" url="${url}" estilo="margin-bottom: 0; text-align: center; padding: 2px;"/>				
 					
 					<c:if
 						test="${not empty nmTipoRetorno}">
@@ -102,8 +99,9 @@
 		                </ww:url>	
 	                </c:if>				
 
-					<siga:link title="Excluir" url="${urlExcluir}" 
+					<siga:link icon="delete" titleImg="Excluir" url="${urlExcluir}" 
 							popup="excluir" confirm="Deseja excluir configuração?" />				
+					</siga:links>					
 			
 			     </td>	
 				</tr>					
@@ -117,12 +115,12 @@
 				</c:choose>
 				<c:set var="tamanho" value="${tamanho + 1 }" />			
 			</c:forEach>
+<!-- 			
 			<tr class="footer">
 				<td colspan="8">Total Listado: ${tamanho}</td>
 			</tr>
+ -->			
 		</table>
-		<br />
-		
 		</div>
 		
 	</div>	

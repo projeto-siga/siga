@@ -3,6 +3,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ attribute name="inline"%>
 <%@ attribute name="separator"%>
+<%@ attribute name="estilo"%>
 
 <c:remove var="linkSeparator" scope="request" />
 <c:remove var="linkInline" scope="request" />
@@ -16,7 +17,7 @@
 
 <c:if test="${not empty linkSeparator}">
 	<c:if test="${empty linkInline}">
-		<p class="gt-table-action-list">
+		<p class="gt-table-action-list" style="${estilo}">
 	</c:if>
 </c:if>
 

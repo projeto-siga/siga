@@ -13,6 +13,7 @@
 <%@ attribute name="ajax"%>
 <%@ attribute name="idAjax"%>
 <%@ attribute name="classe"%>
+<%@ attribute name="estilo"%>
 
 <c:if test="${not empty confirm}">
 	<c:set var="linkConfirm" value="if (confirm('${confirm}')) " />
@@ -27,7 +28,7 @@
 	<c:if test="${not empty linkSeparator}"><span class="gt-separator"> |</span> </c:if>
 	<c:if test="${empty linkSeparator}">
 		<c:if test="${empty linkInline}">
-			<p class="gt-table-action-list">
+			<p class="gt-table-action-list" style="${estilo}">
 		</c:if>
 		<c:set var="linkSeparator" value="${true}" scope="request" />
 	</c:if>

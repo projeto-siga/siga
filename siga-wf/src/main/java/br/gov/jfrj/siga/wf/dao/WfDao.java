@@ -103,29 +103,18 @@ public class WfDao extends CpDao {
 	}
 	
 	 public List<ProcessInstance> consultarInstanciasDoProcessInstance(Long id) {
-			return WfContextBuilder
-					.getJbpmContext().getGraphSession().findProcessInstances(
-							id);
+			return WfContextBuilder.getJbpmContext().getGraphSession().findProcessInstances(id);
 	}
 
 
-	static public Configuration criarHibernateCfg(String datasource)
-			throws Exception {
+	static public Configuration criarHibernateCfg(String datasource) throws Exception {
 		Configuration cfg = CpDao.criarHibernateCfg(datasource);
 		WfDao.configurarHibernate(cfg);
 		return cfg;
 	}
 
-	static public Configuration criarHibernateCfg(
-			String connectionUrl, String username, String password)
-			throws Exception {
-		Configuration cfg = CpDao.criarHibernateCfg(connectionUrl,username, password);
-		WfDao.configurarHibernate(cfg);
-		return cfg;
-	}
 
-	static private void configurarHibernate(Configuration cfg)
-			throws Exception {
+	static private void configurarHibernate(Configuration cfg) throws Exception {
 		cfg.addClass(br.gov.jfrj.siga.wf.WfConfiguracao.class);
 		cfg.addClass(br.gov.jfrj.siga.wf.WfConhecimento.class);
 

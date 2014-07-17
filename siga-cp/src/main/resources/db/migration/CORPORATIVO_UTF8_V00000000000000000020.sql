@@ -1,24 +1,24 @@
 -------------------------------------------
---	SCRIPT: ADICIONAR SERVIÇO
+--	SCRIPT: ADICIONAR SERVIÃ‡O
 -------------------------------------------
 
--- Adicionar serviço para acesso a pasta de videoconferência
+-- Adicionar serviÃ§o para acesso a pasta de videoconferÃªncia
 insert into corporativo.cp_servico (id_servico,sigla_servico,desc_servico,id_servico_pai,id_tp_servico)
-      values (corporativo.cp_servico_seq.nextval,'FS-VIDEO','Acesso ao Diretório de Videoconferência', 
+      values (corporativo.cp_servico_seq.nextval,'FS-VIDEO','Acesso ao DiretÃ³rio de VideoconferÃªncia', 
                 (select cp.id_servico from corporativo.cp_servico cp where cp.sigla_servico = 'FS'), -- id_servico_pai = 5
-                (select tp.id_tp_servico from corporativo.cp_tipo_servico tp where tp.desc_tp_servico = 'Diretório') -- id_tp_servico = 1
+                (select tp.id_tp_servico from corporativo.cp_tipo_servico tp where tp.desc_tp_servico = 'DiretÃ³rio') -- id_tp_servico = 1
              );
              
--- Adicionar serviço para acesso a pasta de audiência
+-- Adicionar serviÃ§o para acesso a pasta de audiÃªncia
 insert into corporativo.cp_servico (id_servico,sigla_servico,desc_servico,id_servico_pai,id_tp_servico)
-      values (corporativo.cp_servico_seq.nextval,'FS-AUD','Acesso ao Diretório de Audiência', 
+      values (corporativo.cp_servico_seq.nextval,'FS-AUD','Acesso ao DiretÃ³rio de AudiÃªncia', 
               (select cp.id_servico from corporativo.cp_servico cp where cp.sigla_servico = 'FS'), -- id_servico_pai = 5
-              (select tp.id_tp_servico from corporativo.cp_tipo_servico tp where tp.desc_tp_servico = 'Diretório') -- id_tp_servico = 1
+              (select tp.id_tp_servico from corporativo.cp_tipo_servico tp where tp.desc_tp_servico = 'DiretÃ³rio') -- id_tp_servico = 1
              );
              
 
 -------------------------------------------
---	SCRIPT: ADICIONAR CONFIGURAÇÃO
+--	SCRIPT: ADICIONAR CONFIGURAÃ‡ÃƒO
 -------------------------------------------
 
 insert into corporativo.cp_configuracao (id_configuracao,his_dt_ini,id_sit_configuracao,id_tp_configuracao,id_servico,id_tp_lotacao)

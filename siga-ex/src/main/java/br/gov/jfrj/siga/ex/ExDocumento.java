@@ -1623,17 +1623,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                 }
 
                 // Incluir os documentos juntados
-                for (ExMovimentacao m : mob.getExMovimentacaoReferenciaSet()) {
-                        if (!m.isCancelada()) {
-                                if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
-                                        set.add(m);
-                                } else if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
-                                        set.remove(m.getExMovimentacaoRef());
-                                        if (m.getPdf() != null)
-                                                set.add(m);
-                                }
-                        }
-                }
+                if (mob.getExMovimentacaoReferenciaSet() != null)
+	                for (ExMovimentacao m : mob.getExMovimentacaoReferenciaSet()) {
+	                        if (!m.isCancelada()) {
+	                                if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
+	                                        set.add(m);
+	                                } else if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+	                                        set.remove(m.getExMovimentacaoRef());
+	                                        if (m.getPdf() != null)
+	                                                set.add(m);
+	                                }
+	                        }
+	                }
         }
 
         /**

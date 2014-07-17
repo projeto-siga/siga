@@ -1580,8 +1580,7 @@ public class CpDao extends ModeloDao {
 		return cfg;
 	}
 
-	static private void configurarHibernate(Configuration cfg)
-			throws Exception {
+	static private void configurarHibernate(Configuration cfg) throws Exception {
 		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
 
 		cfg.setProperty("hibernate.current_session_context_class", "thread");

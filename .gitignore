@@ -81,3 +81,4 @@ sigari/lib/
 sigari/modules/
 sigari/eclipse/sigari-start.launch.template
 *.rej
+siga-dump/bin/pom.xml

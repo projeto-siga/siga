@@ -65,7 +65,8 @@ public class StyleSheet {
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(isCSS));
 			final CSSOMParser parser = new CSSOMParser();
 			final InputSource is = new InputSource(reader);
-			final CSSStyleSheet stylesheet = parser.parseStyleSheet(is);
+
+			final CSSStyleSheet stylesheet = parser.parseStyleDeclaration(is).getParentRule().getParentStyleSheet();
 			final CSSRuleList rules = stylesheet.getCssRules();
 			CSSRule rule;
 			String css;

@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.util.CalculoPCD;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import org.hibernate.cfg.Configuration;
 
 /**
  * Testa as funcionalidades de cálculo da ExCalculoPCD.
@@ -59,7 +60,7 @@ public class CalculoPCDTest extends TestCase {
 	public CalculoPCDTest() throws Exception {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
-		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
+		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 	}
 

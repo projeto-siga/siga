@@ -48,13 +48,10 @@ public abstract class ModeloDao {
 
 	private static final ThreadLocal<ModeloDao> threadDao = new ThreadLocal<ModeloDao>();
 
-	protected ModeloDao() {
-
-	}
+	protected ModeloDao() {}
 
 	@SuppressWarnings("unchecked")
-	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,
-			Session sessao) {
+	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,Session sessao) {
 		T dao = null;
 
 		try {

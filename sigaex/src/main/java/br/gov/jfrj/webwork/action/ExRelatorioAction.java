@@ -26,14 +26,18 @@
 package br.gov.jfrj.webwork.action;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.jdbc.Work;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -119,17 +123,17 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		assertAcesso("FORMS:Relação de formulários");
 
 		Map<String, String> parametros = new HashMap<String, String>(); 
-		
+
 		//parametros.put("lotacao",
-//				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));
+		//				getRequest().getParameter("lotacaoDestinatarioSel.sigla"));
 		parametros.put("secaoUsuario", getRequest()
 				.getParameter("secaoUsuario"));
 		//parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		//parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-//		parametros.put("link_siga", "http://" + getRequest().getServerName()
-//				+ ":" + getRequest().getServerPort()
-//				+ getRequest().getContextPath()
-//				+ "/expediente/doc/exibir.action?sigla=");
+		//		parametros.put("link_siga", "http://" + getRequest().getServerName()
+		//				+ ":" + getRequest().getServerPort()
+		//				+ getRequest().getContextPath()
+		//				+ "/expediente/doc/exibir.action?sigla=");
 
 		parametros.put("orgaoUsuario", getRequest()
 				.getParameter("orgaoUsuario"));
@@ -258,31 +262,33 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		return "relExpPag"; 
 	}
 
-	public String aGeraRelatorio(Map parameters) throws JRException, Exception {
+	public String aGeraRelatorio(final Map parameters) throws JRException, Exception {
 
-		String cam = (String) getRequest().getRealPath(
-				"/paginas/expediente/relatorios/");
+		final String cam = (String) getContext().getRealPath("/paginas/expediente/relatorios/");
 
 		try {
-			try {
-				JasperDesign design = JRXmlLoader.load(cam + "/"
-						+ (String) parameters.get("tipoRelatorio"));
 
-				JasperReport jr = JasperCompileManager.compileReport(design);
 
-				JasperPrint relGerado = JasperFillManager.fillReport(jr,
-						parameters, HibernateUtil.getSessao().connection());
-				JasperExportManager.exportReportToPdfStream(relGerado,
-						ServletActionContext.getResponse().getOutputStream());
-			} catch (Exception e) {
-				throw e;
-			}
+			HibernateUtil.getSessao().doWork(new Work() {
 
-			// Relatorio rel = new Relatorio(parameters, cam);
-			// rel.exibirStreamRelatorio();
-		} catch (final Exception e) {
+				JasperDesign design = JRXmlLoader.load(cam + "/"+ (String) parameters.get("tipoRelatorio"));
+				final JasperReport jr = JasperCompileManager.compileReport(design);
+				@Override
+				public void execute(Connection connection) throws SQLException {
+					try {
+						JasperPrint relGerado = JasperFillManager.fillReport(jr, parameters, connection);
+						JasperExportManager.exportReportToPdfStream(relGerado,ServletActionContext.getResponse().getOutputStream());
+					} catch (JRException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		} catch (Exception e) {
 			throw e;
 		}
+
 		return "osPDF";
 	}
 
@@ -367,7 +373,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		//parametros.put("lotacao",
-			//	getRequest().getParameter("lotacaoDestinatarioSel"));
+		//	getRequest().getParameter("lotacaoDestinatarioSel"));
 		parametros.put("lotacao",
 				getRequest().getParameter("lotacaoDestinatarioSel.id"));
 		parametros.put("tipoFormaDoc", getRequest()
@@ -398,7 +404,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		return "relatorio";
 	}
 
-	
+
 	public String aRelMovDocumentosSubordinados() throws Exception {
 
 		assertAcesso("MVSUB:Relatório de movimentação de documentos em setores subordinados");
@@ -434,7 +440,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		// ByteArrayInputStream(rel.getRelatorioHTML().toString().getBytes("utf-8")));
 		return "relatorio";
 	}
-	
+
 	public String aRelDocsSubCriados() throws Exception {
 
 		assertAcesso("CRSUB:Relatório de criação de documentos em setores subordinados");
@@ -470,7 +476,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		return "relatorio";
 	}
 
-	
+
 	public List<ExTipoFormaDoc> getListaExTipoFormaDoc() {
 		List<ExTipoFormaDoc> listaQry = (List<ExTipoFormaDoc>) HibernateUtil
 				.getSessao().createQuery("from ExTipoFormaDoc").list();
@@ -520,7 +526,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 
 		return "relatorio";
 	}
-	
+
 	public String aRelMovimentacao() throws Exception {
 
 		assertAcesso("DATAS:Relação de documentos entre datas");
@@ -598,7 +604,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 
 		return "relatorio";
 	}
-	
+
 	public String aRelOrgao() throws Exception {
 
 		assertAcesso("DATAS:Relação de documentos entre datas");
@@ -634,7 +640,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 		rel.gerar();
 
 		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
-		
+
 		return "relatorio";
 	}
 
@@ -663,7 +669,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 				+ "/expediente/doc/exibir.action?sigla=");
 
 		//parametros.put("orgao", getRequest()
-			//	.getParameter("orgaoUsu"));
+		//	.getParameter("orgaoUsu"));
 		parametros.put("lotacaoTitular",
 				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
@@ -676,7 +682,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 
 		return "relatorio";
 	}
-	
+
 	public String aRelMovProcesso() throws Exception {
 
 		assertAcesso("RELMVP:Relação de movimentações de processos");
@@ -712,7 +718,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 	}
 	public String aRelClassificacao() throws AplicacaoException, Exception {
 		assertAcesso("CLSD:Classificação Documental;CLASS:Relação de classificações");
-		
+
 		Map<String, String> parametros = new HashMap<String, String>();
 		parametros.put("codificacao", getRequest().getParameter("codificacao"));
 		parametros.put("secaoUsuario",getRequest().getParameter("secaoUsuario"));
@@ -725,44 +731,44 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 	}
 	public String aRelClassDocDocumentos() throws AplicacaoException, Exception {
 		assertAcesso("CLSD:Classificação Documental;DOCS:Relação de documentos classificados");
-		
+
 		Map<String, String> parametros = new HashMap<String, String>();
 		String codificacao = getRequest().getParameter("codificacao");
 		String idLotacao = getRequest().getParameter("lotacaoDestinatarioSel.id");
 		String idOrgaoUsu = getRequest().getParameter("orgaoUsuario");
 		String secaoUsuario = getRequest().getParameter("secaoUsuario");
-		
+
 		if ((codificacao==null || codificacao.length()==0)&& (idLotacao == null || idLotacao.length()==0)){
 			throw new AplicacaoException("Especifique pelo menos um dos parâmetros!");
 		}
-		
+
 		parametros.put("codificacao", codificacao);
 		parametros.put("idLotacao", idLotacao);
 		parametros.put("idOrgaoUsu", idOrgaoUsu);	
 		parametros.put("secaoUsuario", secaoUsuario);
-		
+
 		RelDocsClassificados rel = new RelDocsClassificados(parametros);
 		rel.gerar();
 
 		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
 
-		
+
 		return "relatorio";
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException,
-			Exception {
+	Exception {
 		super.assertAcesso("REL:Gerar relatórios;" + pathServico);
 	}
-	
+
 	public String getMascaraEntrada(){
 		return MascaraUtil.getInstance().getMascaraEntrada();
 	}
-	
+
 	public String getMascaraSaida(){
 		return MascaraUtil.getInstance().getMascaraSaida();
 	}
-	
+
 	public String getMascaraJavascript(){
 		return SigaExProperties.getExClassificacaoMascaraJavascript();
 	}

@@ -20,37 +20,6 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.br.BrazilianAnalyzer;
-import org.apache.xerces.impl.dv.util.Base64;
-import org.hibernate.Hibernate;
-import org.hibernate.annotations.Entity;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
-
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.lucene.HtmlBridge;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -59,6 +28,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
@@ -67,7 +37,23 @@ import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
+import br.gov.jfrj.siga.ex.util.*;
+
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
+
+import org.apache.lucene.analysis.br.BrazilianAnalyzer;
+import org.apache.xerces.impl.dv.util.Base64;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.Entity;
+import org.hibernate.search.annotations.*;
+import org.jboss.logging.Logger;
+
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * A class that represents a row in the 'EX_DOCUMENTO' table. This class may be
@@ -348,7 +334,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
          * Retorna, em formato array de bytes, o conteúdo do arquivo <b>html</b>
          * contido no zip gravado no blob do documento.
          */
-        @Field(name = "conteudoBlobDocHtml", index = Index.TOKENIZED)
+        @Field(name = "conteudoBlobDocHtml")
         @FieldBridge(impl = HtmlBridge.class)
         @Analyzer(impl = BrazilianAnalyzer.class)
         public byte[] getConteudoBlobHtml() {
@@ -455,7 +441,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
         /**
          * Retorna a descrição completa do documento.
          */
-        @Field(index = Index.TOKENIZED, name = "descrDocumento", store = Store.COMPRESS)
+        @Field(name = "descrDocumento", store = Store.COMPRESS)
         @Analyzer(impl = BrazilianAnalyzer.class)
         @Override
         public String getDescrDocumento() {
@@ -475,7 +461,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
          * momento da criação do documento, desconsiderando as redefinições de
          * nível.
          */
-        @Field(index = Index.TOKENIZED, name = "nivelAcesso", store = Store.COMPRESS)
+        @Field(name = "nivelAcesso", store = Store.COMPRESS)
         public String getNivelAcesso() {
                 log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
                 String nivel = null;
@@ -1008,7 +994,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
         /**
          * Retorna o nome do modelo do documento
          */
-        @Field(name = "nmMod", index = Index.TOKENIZED, store = Store.COMPRESS)
+        @Field(name = "nmMod", store = Store.COMPRESS)
         @Analyzer(impl = BrazilianAnalyzer.class)
         public String getNmMod() {
                 if (getExModelo() != null)
@@ -2124,7 +2110,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
         public void setConteudoBlobDoc2(byte[] blob) {
                 if (blob != null)
-                        setConteudoBlobDoc(Hibernate.createBlob(blob));
+                        setConteudoBlobDoc(HibernateUtil.getSessao().getLobHelper().createBlob(blob));
                 cacheConteudoBlobDoc = blob;
         }
 

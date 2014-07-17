@@ -23,6 +23,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.util.Set;
 
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import org.hibernate.Hibernate;
 
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -59,7 +60,7 @@ public class ExModelo extends AbstractExModelo {
 	/* Add customized code below */
 	public void setConteudoBlobMod2(final byte[] blob) {
 		if (blob != null)
-			setConteudoBlobMod(Hibernate.createBlob(blob));
+			setConteudoBlobMod(HibernateUtil.getSessao().getLobHelper().createBlob(blob));
 		cacheConteudoBlobMod = blob;
 	}
 

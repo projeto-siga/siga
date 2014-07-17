@@ -53,16 +53,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.proxy.HibernateProxy;
+import org.jboss.logging.Logger;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -352,10 +353,9 @@ public class ExBL extends CpBL {
 
 	public static void main(String args[]) throws Exception {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.PRODUCAO;
-		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
+		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
-		Ex.getInstance().getBL()
-				.corrigirArquivamentosEmVolume(300000, 400000, false);
+		Ex.getInstance().getBL().corrigirArquivamentosEmVolume(300000, 400000, false);
 	}
 
 	public void corrigirArquivamentosEmVolume(int primeiro, int ultimo,
@@ -6022,7 +6022,7 @@ public class ExBL extends CpBL {
 			String s = json.getAsString();
 			if (s != null) {
 				byte ab[] = Base64.decode(s);
-				return Hibernate.createBlob(ab);
+				return HibernateUtil.getSessao().getLobHelper().createBlob(ab);
 			}
 			return null;
 		}

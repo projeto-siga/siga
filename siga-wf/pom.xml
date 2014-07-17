@@ -44,6 +44,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>net.sf.kxml</groupId>
+			<artifactId>kxml2</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga-cp</artifactId>
 		</dependency>

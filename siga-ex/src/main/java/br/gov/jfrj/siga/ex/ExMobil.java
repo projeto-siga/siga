@@ -36,14 +36,14 @@ import java.util.regex.Pattern;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.apache.log4j.Logger;
-
+import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import org.jboss.logging.Logger;
 
 @Entity
 @Table(name = "EX_MOBIL")

@@ -211,10 +211,8 @@ public abstract class ThreadFilter implements Filter {
 
 	public void registerTransactionClasses(Configuration cfg) {
 		// bruno.lacerda@avantiprima.com.br
-		this.registerTransactionClass("hibernate.transaction.factory_class",
-				cfg);
-		this.registerTransactionClass(
-				"hibernate.transaction.manager_lookup_class", cfg);
+//		this.registerTransactionClass("hibernate.transaction.factory_class",cfg);
+		this.registerTransactionClass("hibernate.transaction.manager_lookup_class", cfg);
 	}
 
 	private void registerTransactionClass(String propertyName, Configuration cfg) {

@@ -36,7 +36,7 @@ public class ExWsServlet extends CXFNonSpringServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void loadBus(ServletConfig servletConfig) throws ServletException {
+	public void loadBus(ServletConfig servletConfig) {
 		super.loadBus(servletConfig);
 
 		// You could add the endpoint publish codes here

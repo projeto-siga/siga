@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.Hibernate;
@@ -98,7 +99,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	/* Add customized code below */
 
-	@Field(name = "descrTipoMovimentacao", index = Index.TOKENIZED, store = Store.COMPRESS)
+	@Field(name = "descrTipoMovimentacao", store = Store.COMPRESS)
 	@Analyzer(impl = BrazilianAnalyzer.class)
 	public String getDescrTipoMovimentacao() {
 		String s = getExTipoMovimentacao().getSigla();
@@ -158,7 +159,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	public void setConteudoBlobMov2(byte[] blob) {
 		if (blob != null)
-			setConteudoBlobMov(Hibernate.createBlob(blob));
+			setConteudoBlobMov(HibernateUtil.getSessao().getLobHelper().createBlob(blob));
 		cacheConteudoBlobMov = blob;
 	}
 
@@ -286,7 +287,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * 
 	 * @return Descrição da movimentação.
 	 */
-	@Field(name = "descrMov", index = Index.TOKENIZED, store = Store.COMPRESS)
+	@Field(name = "descrMov", store = Store.COMPRESS)
 	@Analyzer(impl = BrazilianAnalyzer.class)
 	@Override
 	public String getDescrMov() {
@@ -445,7 +446,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		setConteudoBlobMov2(conteudoZip);
 	}
 
-	@Field(name = "conteudoBlobMovHtml", index = Index.TOKENIZED)
+	@Field(name = "conteudoBlobMovHtml")
 	@Analyzer(impl = BrazilianAnalyzer.class)
 	@FieldBridge(impl = HtmlBridge.class)
 	public byte[] getConteudoBlobHtml() {
@@ -463,7 +464,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 	}
 
-	@Field(name = "conteudoBlobMovPdf", index = Index.TOKENIZED)
+	@Field(name = "conteudoBlobMovPdf")
 	@Analyzer(impl = BrazilianAnalyzer.class)
 	@FieldBridge(impl = PDFBridge.class)
 	public byte[] getConteudoBlobPdfNecessario() {

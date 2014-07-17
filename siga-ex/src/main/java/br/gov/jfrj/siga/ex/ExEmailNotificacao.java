@@ -18,12 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
-import java.io.Serializable;
-
-public class ExEmailNotificacao extends AbstractExEmailNotificacao implements Serializable {
+public class ExEmailNotificacao extends AbstractExEmailNotificacao{
 	
-	public ExEmailNotificacao() {
-		
-	}
+	public ExEmailNotificacao() {}
 
 }

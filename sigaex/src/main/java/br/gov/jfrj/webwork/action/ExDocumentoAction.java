@@ -918,24 +918,31 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aAcessar() throws Exception {
 		buscarDocumento(false);
 
-		if(!Ex.getInstance().getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Documento " + mob.getSigla()
-					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
-
+		assertAcesso();
 
 		return Action.SUCCESS;
+	}
+
+	private void assertAcesso() throws Exception {
+		if(!Ex.getInstance().getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			String s = "";
+			try { 
+				s += mob.doc().getListaDeAcessosString();
+				s = "(" + s + ")";
+				s = " " + mob.doc().getExNivelAcesso().getNmNivelAcesso() + " " + s;
+			} catch (Exception e) {
+			}
+			throw new AplicacaoException("Documento " + mob.getSigla()
+					+ " inacessível ao usuário " + getTitular().getSigla()
+					+ "/" + getLotaTitular().getSiglaCompleta() + "." + s);
+		}
 	}
 
 	public String aExibir() throws Exception {
 		buscarDocumento(false);
 		
-		if(!Ex.getInstance().getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Documento " + mob.getSigla()
-					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
+		assertAcesso();
 
 		if (Ex.getInstance().getComp()
 				.podeReceberEletronico(getTitular(), getLotaTitular(), mob))
@@ -965,11 +972,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aExibirNovo() throws Exception {
 		buscarDocumento(true);
 
-		if(!Ex.getInstance().getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Documento " + mob.getSigla()
-					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta() + ".");
+		assertAcesso();
 
 		if (Ex.getInstance().getComp()
 				.podeReceberEletronico(getTitular(), getLotaTitular(), mob))

@@ -14,7 +14,7 @@ public class AcessoConsulta {
 		if (idPessoaIni != 0L)
 			sb.append("|((^|,)P" + idPessoaIni + "($|,))");
 		if (idLotacaoIni != 0L)
-			sb.append("|((^|,)L" + idPessoaIni + "($|,))");
+			sb.append("|((^|,)L" + idLotacaoIni + "($|,))");
 		if (idOrgaoUsuPessoa != 0L)
 			sb.append("|((^|,)O" + idOrgaoUsuPessoa + "($|,))");
 		if (idOrgaoUsuLotacao != idOrgaoUsuPessoa && idOrgaoUsuLotacao != 0L)

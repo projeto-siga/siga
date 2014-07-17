@@ -218,7 +218,7 @@
 						<td width="4%" align="center"></td>
 						<td width="10.5%" align="center"></td>
 					</c:if>
-					<td width="44%">${f:descricaoConfidencial(mob.doc,
+					<td width="44%">${f:descricaoSePuderAcessar(mob.doc, titular,
 						lotaTitular)}</td>
 				</tr>
 			</c:forEach>

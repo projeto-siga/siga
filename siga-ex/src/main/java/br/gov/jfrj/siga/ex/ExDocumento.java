@@ -2213,6 +2213,28 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
     		return l;
         }
 
+        public String getListaDeAcessosString() {
+        	String s = "";
+        	List<Object> l = getListaDeAcessos();
+        	
+        	for (Object o : l) {
+        		if (s.length() > 0)
+        			s += ", ";
+        		if (ExAcesso.ACESSO_PUBLICO.equals(o))
+        			s += "Público";
+        		else if (o instanceof CpOrgaoUsuario)
+        			s += ((CpOrgaoUsuario)o).getSigla();
+        		else if (o instanceof DpLotacao)
+        			s += ((DpLotacao)o).getSiglaCompleta();
+        		else if (o instanceof DpPessoa)
+        			s += ((DpPessoa)o).getSiglaCompleta();
+        		else 
+        			s += o.toString();
+        	}
+        	
+    		return s;
+        }
+
         public List<DpResponsavel> getResponsaveisPorPapel(ExPapel papel) {
                 List<DpResponsavel> lista = new ArrayList<DpResponsavel>();
                 List<ExMovimentacao> movs = getMobilGeral().getMovimentacoesPorTipo(

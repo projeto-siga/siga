@@ -133,7 +133,7 @@
 						sigla="${documento.lotaSubscritor.sigla}"
 						descricao="${documento.lotaSubscritor.descricao}" /></td>
 
-					<td width="44%">${f:descricaoConfidencial(documento,
+					<td width="44%">${f:descricaoSePuderAcessar(documento, titular,
 					lotaTitular)}</td>
 				</tr>
 			</c:forEach>

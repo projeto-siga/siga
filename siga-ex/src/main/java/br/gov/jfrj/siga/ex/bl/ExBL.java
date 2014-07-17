@@ -687,7 +687,12 @@ public class ExBL extends CpBL {
 							continue;
 						Long m = null;
 						Long t = mov.getIdTpMov();
-						if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+						if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO) {
+							acrescentarMarca(set, mob, CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO,
+									mov.getDtIniMov(),
+									mov.getCadastrante(),
+									mov.getLotaCadastrante());
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 							switch ((int) (long) mov.getExPapel().getIdPapel()) {
 							case (int) ExPapel.PAPEL_GESTOR:
 								m = CpMarcador.MARCADOR_COMO_GESTOR;
@@ -792,6 +797,8 @@ public class ExBL extends CpBL {
 				if (mov.isCancelada())
 					continue;
 				Long t = mov.getIdTpMov();
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO) 
+					m = CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO)
 					m = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
@@ -1444,7 +1451,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, final String nmArqMov,
 			final DpPessoa titular, final DpLotacao lotaTitular,
-			final byte[] conteudo, final String tipoConteudo, String motivo)
+			final byte[] conteudo, final String tipoConteudo, String motivo, Set<ExMovimentacao> pendenciasResolvidas)
 			throws AplicacaoException {
 
 		final ExMovimentacao mov;
@@ -1463,6 +1470,15 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(motivo);
 
 			gravarMovimentacao(mov);
+			
+			// Cancelar pendencias de anexação
+			if (pendenciasResolvidas != null) {
+				for (ExMovimentacao m : pendenciasResolvidas) {
+					m.setExMovimentacaoCanceladora(mov); 
+					gravarMovimentacao(m);
+				}
+			}
+			
 			concluirAlteracao(mov.getExDocumento());
 
 		} catch (final Exception e) {
@@ -3014,6 +3030,14 @@ public class ExBL extends CpBL {
 		atualizarWorkFlow(doc);
 	}
 
+	public static String descricaoSePuderAcessar(ExDocumento doc, DpPessoa titular,
+			DpLotacao lotaTitular) {
+		if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
+			return "CONFIDENCIAL";
+		else
+			return doc.getDescrDocumento();
+	}
+
 	public static String descricaoConfidencial(ExDocumento doc,
 			DpLotacao lotaTitular) {
 		if (mostraDescricaoConfidencial(doc, lotaTitular))
@@ -3021,7 +3045,7 @@ public class ExBL extends CpBL {
 		else
 			return doc.getDescrDocumento();
 	}
-
+	
 	public String descricaoConfidencialDoDocumento(ExMobil mob,
 			DpPessoa titular, DpLotacao lotaTitular) {
 
@@ -3040,13 +3064,13 @@ public class ExBL extends CpBL {
 			DpLotacao lotaTitular, DpPessoa titular) {
 		if (sel instanceof ExDocumento) {
 			ExDocumento doc = (ExDocumento) sel;
-			if (mostraDescricaoConfidencial(doc, lotaTitular))
+			if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
 				return "CONFIDENCIAL";
 			else
 				return doc.getDescrDocumento();
 		} else if (sel instanceof ExMobil) {
 			ExDocumento doc = ((ExMobil) sel).getExDocumento();
-			if (mostraDescricaoConfidencial(doc, lotaTitular))
+			if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
 				return "CONFIDENCIAL";
 			else
 				return doc.getDescrDocumento();
@@ -3070,6 +3094,15 @@ public class ExBL extends CpBL {
 			return true;
 		return false;
 	}
+	
+	public static boolean mostraDescricaoConfidencial(ExDocumento doc, DpPessoa titular,
+			DpLotacao lotaTitular) {
+		try {
+			return !Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, doc.getMobilGeral());
+		} catch (Exception e) {
+			return true;
+		}
+	}
 
 	public boolean mostraDescricaoConfidencialDoDocumento(ExDocumento doc,
 			DpLotacao lotaTitular) {
@@ -3085,8 +3118,8 @@ public class ExBL extends CpBL {
 		return false;
 	}
 
-	public static String anotacaoConfidencial(ExMobil mob, DpLotacao lotaTitular) {
-		if (mostraDescricaoConfidencial(mob.doc(), lotaTitular))
+	public static String anotacaoConfidencial(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		if (mostraDescricaoConfidencial(mob.doc(), titular, lotaTitular))
 			return "CONFIDENCIAL";
 		String s = mob.getDnmUltimaAnotacao();
 		if (s != null)
@@ -3146,6 +3179,17 @@ public class ExBL extends CpBL {
 
 			long tempoIni = System.currentTimeMillis();
 
+			// Remover eventuais pendencias de anexos que foram inseridar por modelos anteriores e que não são necessárias no motelo atual.
+			if (!doc.isFinalizado()) {
+				while (true) {
+					ExMovimentacao mov = doc.getMobilGeral().anexoPendente(null, false);
+					if (mov == null)
+						break;
+					doc.getMobilGeral().getExMovimentacaoSet().remove(mov);
+					dao().excluir(mov);
+				}
+			}
+
 			// a estrutura try catch abaixo foi colocada de modo a impedir que
 			// os erros na formatação impeçam a gravação do documento
 			try {
@@ -3184,7 +3228,9 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-
+			
+			String s = processarComandosEmTag(doc, "gravacao");
+			
 			concluirAlteracao(doc);
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -3413,6 +3459,11 @@ public class ExBL extends CpBL {
 		// }
 		dao().excluir(mov);
 		mov.getExMobil().getExMovimentacaoSet().remove(mov);
+		for (ExMovimentacao m : mov.getExMobil().getExMovimentacaoSet()) {
+			if (mov.equals(m.getExMovimentacaoCanceladora())) {
+				m.setExMovimentacaoCanceladora(null);
+			}
+		}
 
 		Notificador.notificarDestinariosEmail(mov,
 				Notificador.TIPO_NOTIFICACAO_EXCLUSAO);
@@ -4306,6 +4357,45 @@ public class ExBL extends CpBL {
 					"Erro ao tentar redefinir nível de acesso", 0, e);
 		}
 		alimentaFilaIndexacao(doc, true);
+	}
+	
+	public void exigirAnexo(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob, final String descrMov) throws AplicacaoException {
+		
+		if (mob.doc().getIdDoc() == null)
+			return;
+
+		if (descrMov == null) {
+			throw new AplicacaoException(
+					"Não foram informados dados para a exigência de anexação");
+		}
+		
+		boolean fGravarMov = false;
+		try {
+			String as[] = descrMov.split(";");
+			for (String s : as) {
+				if (mob.anexoPendente(s, true) != null)
+					continue;
+
+				if (!fGravarMov) {
+					iniciarAlteracao();
+					fGravarMov = true;
+				}
+	
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO, cadastrante,
+						lotaCadastrante, mob, null, null, null, null,
+						null, null);
+				mov.setDescrMov(s);
+				gravarMovimentacao(mov);
+			}
+			if (fGravarMov) 
+				concluirAlteracao(mob.getExDocumento());
+		} catch (final Exception e) {
+			if (fGravarMov) 
+				cancelarAlteracao();
+			throw new AplicacaoException("Erro ao exigir anexação.", 0, e);
+		}
 	}
 
 	/* Daqui para frente não são movimentacoes, mas sim funcoes auxiliares */
@@ -5625,6 +5715,10 @@ public class ExBL extends CpBL {
 
 			// novo id
 			exClassCopia.setId(null);
+			exClassCopia.setHisDtFim(null);
+			exClassCopia.setHisDtIni(null);
+			exClassCopia.setAtivo();
+			
 			// objeto collection deve ser diferente (mas com mesmos elementos),
 			// senão ocorre exception
 			// HibernateException:Found shared references to a collection
@@ -5703,6 +5797,9 @@ public class ExBL extends CpBL {
 
 			// novo id
 			exTempCopia.setId(null);
+			exTempCopia.setHisDtFim(null);
+			exTempCopia.setHisDtIni(null);
+			exTempCopia.setAtivo();
 			// objeto collection deve ser diferente (mas com mesmos elementos),
 			// senão ocorre exception
 			// HibernateException:Found shared references to a collection
@@ -5782,6 +5879,9 @@ public class ExBL extends CpBL {
 
 			// novo id
 			exModCopia.setId(null);
+			exModCopia.setHisDtFim(null);
+			exModCopia.setHisDtIni(null);
+			exModCopia.setAtivo();
 
 		} catch (Exception e) {
 			throw new AplicacaoException(

@@ -192,7 +192,7 @@
 								<td width="4%" align="center"><siga:selecionado
 									sigla="${mob.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
 									descricao="${mob.ultimaMovimentacaoNaoCancelada.resp.descricao}" /></td>--%>
-								<td width="40%">${f:descricaoConfidencial(mob.doc,
+								<td width="40%">${f:descricaoSePuderAcessar(mob.doc, titular,
 								lotaTitular)}</td>
 							</tr>
 				</c:forEach>

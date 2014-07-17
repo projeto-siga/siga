@@ -80,10 +80,10 @@
 						<c:when test="${acessivel eq true}">
 							<c:set var="estilo" value="" />
 							<c:if
-								test="${f:mostraDescricaoConfidencial(mobItem.doc, lotaTitular) eq true}">
+								test="${f:mostraDescricaoConfidencial(mobItem.doc, titular, lotaTitular) eq true}">
 								<c:set var="estilo" value="confidencial" />
 							</c:if>
-							<td class="${estilo}" width="44%">${f:descricaoConfidencial(mobItem.doc,
+							<td class="${estilo}" width="44%">${f:descricaoSePuderAcessar(mobItem.doc, titular,
 							lotaTitular)}</td>
 						</c:when>
 						<c:otherwise>

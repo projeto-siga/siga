@@ -572,13 +572,13 @@ function limpaCampos()
 										<c:when test="${acessivel eq true}">
 											<c:set var="estilo" value="" />
 											<c:if
-												test="${f:mostraDescricaoConfidencial(documento[0], lotaTitular) eq true}">
+												test="${f:mostraDescricaoConfidencial(documento[0], titular, lotaTitular) eq true}">
 												<c:set var="estilo" value="confidencial" />
 											</c:if>
-											<td class="${estilo}" width="38%">${f:descricaoConfidencial(documento[0],
+											<td class="${estilo}" width="38%">${f:descricaoSePuderAcessar(documento[0], titular,
 												lotaTitular)}</td>
 											<c:if test="${visualizacao == 1}"> 
-												<td class="${estilo}" width="38%">${f:anotacaoConfidencial(documento[1],
+												<td class="${estilo}" width="38%">${f:anotacaoConfidencial(documento[1], titular,
 													lotaTitular)}</td>
 											</c:if>
 										</c:when>

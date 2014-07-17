@@ -155,7 +155,7 @@ public class ExActionSupport extends SigaActionSupport {
 
 	public String getDescrDocConfidencial(ExDocumento doc) {
 		return Ex.getInstance().getBL()
-				.descricaoConfidencial(doc, getLotaTitular());
+				.descricaoSePuderAcessar(doc, getTitular(), getLotaTitular());
 	}
 
 	public List<ExTipoDocumento> getTiposDocumento() throws AplicacaoException {

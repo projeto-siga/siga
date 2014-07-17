@@ -111,6 +111,11 @@
   <function-signature>java.lang.String descricaoConfidencial(br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
+  <name>descricaoSePuderAcessar</name>
+  <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
+  <function-signature>java.lang.String descricaoSePuderAcessar(br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>
+ <function>
   <name>selDescricaoConfidencial</name>
   <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
   <function-signature>java.lang.String selDescricaoConfidencial(br.gov.jfrj.siga.model.Selecionavel, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.dp.DpPessoa)</function-signature>
@@ -118,12 +123,12 @@
  <function>
   <name>mostraDescricaoConfidencial</name>
   <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
-  <function-signature>java.lang.Boolean mostraDescricaoConfidencial( br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+  <function-signature>java.lang.Boolean mostraDescricaoConfidencial( br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
   <name>anotacaoConfidencial</name>
   <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
-  <function-signature>java.lang.String anotacaoConfidencial(br.gov.jfrj.siga.ex.ExMobil, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+  <function-signature>java.lang.String anotacaoConfidencial(br.gov.jfrj.siga.ex.ExMobil, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
   <name>pessoa</name>

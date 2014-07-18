@@ -80,7 +80,8 @@
 
 						<tbody>
 							<c:forEach var="pessoa"
-								items="${pessoa.pessoaInicial.pessoasPosteriores}">
+								items="${pessoa.historicoInfoCorporativas}">
+								<%-- items="${pessoa.pessoaInicial.pessoasPosteriores}"> --%>
 								<tr>
 									<td>${pessoa.dtInicioPessoaDDMMYYHHMMSS}</td>
 									<%-- <td>${pessoa.dtFimPessoaDDMMYYHHMMSS}</td> --%>

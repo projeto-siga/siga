@@ -13,7 +13,7 @@
 		</div>
 		<div class="gt-form gt-content-box">
 			<p>
-				<b>Nome:</b> ${lotacao.nomeLotacao}
+				<b>Nome: ${lotacao.nomeLotacao} </b>
 			</p>
 			<p>
 				<b>Sigla:</b> ${lotacao.sigla}
@@ -60,7 +60,7 @@
 						<tr>							
 							<th align="right">Nome</th>														
 							<th align="right">Matricula</th>														
-							<th align="right">Lotacao</th>														
+							<!-- <th align="right">Lotacao</th> -->														
 							<th align="right">Cargo</th>														
 							<th align="right">Função</th>														
 							<th align="right">Email</th>														
@@ -76,10 +76,10 @@
 									descricao="${pessoa.descricao} - ${pessoa.sigla}"
 									pessoaParam="${pessoa.sigla}" />
 								</td>							
-								<td><siga:selecionado 
+								<%-- <td><siga:selecionado 
 									sigla="${pessoa.lotacao.sigla}"
 									descricao="${pessoa.lotacao.descricaoAmpliada}"
-									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" /></td>	
+									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" /></td> --%>	
 								<td>${pessoa.cargo.descricao}</td>							
 								<td>${pessoa.funcaoConfianca.descricao}</td>							
 								<td>${pessoa.emailPessoa}</td>							

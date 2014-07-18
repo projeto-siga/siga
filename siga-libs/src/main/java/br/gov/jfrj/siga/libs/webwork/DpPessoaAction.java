@@ -48,7 +48,9 @@ public class DpPessoaAction extends
 
 	private Long orgaoUsu;
 	
-	private String matricula;
+/*	private String matricula;*/
+	
+	private String sigla;
 	
 	private DpPessoa pessoa;
 	
@@ -95,8 +97,8 @@ public class DpPessoaAction extends
 	}
 	
 	 public String aExibir() throws Exception {
-         if(matricula != null)
-                 setPessoa(dao().getPessoaPorPrincipal(matricula));
+         if(sigla != null)
+                 setPessoa(dao().getPessoaPorPrincipal(sigla));
 
          return Action.SUCCESS;
 	 }
@@ -166,14 +168,14 @@ public class DpPessoaAction extends
 	@Override
 	public String aSelecionar() throws Exception {
 		String s = super.aSelecionar();
-		if (getSel() != null && getMatricula() != null) {
+/*		if (getSel() != null && getMatricula() != null) {
 			GenericoSelecao sel = new GenericoSelecao();
 			sel.setId(getSel().getId());
 			sel.setSigla(getSel().getSigla());
 			sel.setDescricao("/siga/pessoa/exibir.action?matricula="
 					+ sel.getSigla());
 			setSel(sel);
-		}
+		}*/
 		return s;
 	}
 
@@ -186,12 +188,20 @@ public class DpPessoaAction extends
 		this.nome = nome;
 	}
 
-	public String getMatricula() {
+/*	public String getMatricula() {
 		return matricula;
 	}
 
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
+	}*/
+	
+	public String getSigla() {
+		return sigla;
+	}
+
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
 	}
 
 	public DpPessoa getPessoa() {

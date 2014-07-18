@@ -217,7 +217,7 @@ public class PrincipalAction extends SigaActionSupport {
 					|| copiaSigla.startsWith("RTP"))
 				uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
 			else if (copiaSigla.matches("[0-9]+")) 
-				uRLExibir = "/siga/pessoa/exibir.action?matricula="
+				uRLExibir = "/siga/pessoa/exibir.action?sigla="
 						+ response[2];
 			else if (copiaSigla.matches("[a-zA-Z]+")) 
 				uRLExibir = "/siga/lotacao/exibir.action?sigla="

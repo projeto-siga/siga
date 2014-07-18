@@ -11,7 +11,7 @@
 </c:if>
 
 <c:if test="${not empty pessoaParam}">
-       <a href="/siga/pessoa/exibir.action?matricula=${pessoaParam}"><span ${estilo} title="${descricao}">${sigla}</span></a>
+       <a href="/siga/pessoa/exibir.action?sigla=${pessoaParam}"><span ${estilo} title="${descricao}">${sigla}</span></a>
 </c:if>
 
 <c:if test="${not empty lotacaoParam}">

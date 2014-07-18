@@ -1621,12 +1621,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
          */
         private void incluirArquivos(ExMobil mob, SortedSet<ExMovimentacao> set) {
                 // Incluir os documentos anexos
+        	if(mob.getExMovimentacaoSet() != null){
                 for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
                         if (!m.isCancelada() && m.isPdf()) {
                                 set.add(m);
                         }
                 }
-
+        	}
                 // Incluir os documentos juntados
                 if (mob.getExMovimentacaoReferenciaSet() != null)
 	                for (ExMovimentacao m : mob.getExMovimentacaoReferenciaSet()) {

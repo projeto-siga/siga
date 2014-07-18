@@ -81,25 +81,29 @@ public class ExAcesso {
 	}
 
 	private void incluirCossignatarios(ExDocumento doc) {
-		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
-			if (mov.getExTipoMovimentacao()
-					.getIdTpMov()
-					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)
-					&& mov.getExMovimentacaoCanceladora() == null)
-				add(mov.getSubscritor());
+		if (doc.getMobilGeral().getExMovimentacaoSet() != null){
+			for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
+				if (mov.getExTipoMovimentacao()
+						.getIdTpMov()
+						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)
+						&& mov.getExMovimentacaoCanceladora() == null)
+					add(mov.getSubscritor());
+			}
 		}
 	}
 
 	private void incluirPerfis(ExDocumento doc) {
-		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
-			if (!mov.isCancelada()
-					&& mov.getExTipoMovimentacao()
-							.getIdTpMov()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
-				if (mov.getSubscritor() != null) {
-					add(mov.getSubscritor());
-				} else {
-					add(mov.getLotaSubscritor());
+		if (doc.getMobilGeral().getExMovimentacaoSet() != null){
+			for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
+				if (!mov.isCancelada()
+						&& mov.getExTipoMovimentacao()
+								.getIdTpMov()
+								.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+					if (mov.getSubscritor() != null) {
+						add(mov.getSubscritor());
+					} else {
+						add(mov.getLotaSubscritor());
+					}
 				}
 			}
 		}

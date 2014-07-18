@@ -12,6 +12,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.persistence.TemporalType;
+
 import net.sf.jasperreports.engine.JRException;
 
 import org.hibernate.Query;
@@ -81,7 +83,7 @@ public class RelOrgao extends RelatorioTemplate {
 	@Override
 	public Collection processarDados() throws Exception {
 
-		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 		List<String> d = new ArrayList<String>();
 
@@ -95,16 +97,18 @@ public class RelOrgao extends RelatorioTemplate {
 							+ "and mov.exTipoMovimentacao in (3,6,4,9,21) "
 							+ "and mov.exMovimentacaoCanceladora is null "
 							+ "and mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc in (1,2) "
-							+ "and mov.dtIniMov between :dtini and :dtfim " 
+							+ "and mov.dtIniMov >= :dtini " 
+							+ "and mov.dtIniMov <= :dtfim " 
 							+ "group by mov.lotaCadastrante.siglaLotacao, " 
 							+ "mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, " 
 							+ "mov.exTipoMovimentacao.descrTipoMovimentacao");
+			
 			Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
 			query.setLong("orgaoUsu", orgaoUsu);
-			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
-			query.setDate("dtini", dtini);
-			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-			query.setDate("dtfim", dtfim);
+			Date dtini = formatter.parse((String) (parametros.get("dataInicial") + " 00:00:00"));
+			query.setTimestamp("dtini", dtini);
+			Date dtfim = formatter.parse((String) (parametros.get("dataFinal") + " 23:59:59"));
+			query.setTimestamp("dtfim", dtfim);
 
 			SortedSet<String> set = new TreeSet<String>();
 			TreeMap<String, Long> map = new TreeMap<String, Long>();
@@ -143,7 +147,8 @@ public class RelOrgao extends RelatorioTemplate {
 						+ "and mov.exTipoMovimentacao in (3,6,4,9,21) "
 						+ "and mov.exMovimentacaoCanceladora is null "
 						+ "and mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc in (1,2) "
-						+ "and mov.dtIniMov between :dtini and :dtfim " 
+						+ "and mov.dtIniMov >= :dtini " 
+						+ "and mov.dtIniMov <= :dtfim " 
 						+ "group by mov.lotaCadastrante.siglaLotacao, " 
 						+ "mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, " 
 						+ "mov.exTipoMovimentacao.descrTipoMovimentacao");
@@ -151,10 +156,10 @@ public class RelOrgao extends RelatorioTemplate {
 		query.setLong("orgaoUsu", orgaoUsu);
 		Long lotacaodest = Long.valueOf((String) parametros.get("lotacao"));
 		query.setLong("lotacaodest", lotacaodest);
-		Date dtini = formatter.parse((String) parametros.get("dataInicial"));
-		query.setDate("dtini", dtini);
-		Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-		query.setDate("dtfim", dtfim);
+		Date dtini = formatter.parse((String) (parametros.get("dataInicial") + " 00:00:00"));
+		query.setTimestamp("dtini", dtini);
+		Date dtfim = formatter.parse((String) (parametros.get("dataFinal") + " 23:59:59"));
+		query.setTimestamp("dtfim", dtfim);
 
 		SortedSet<String> set = new TreeSet<String>();
 		TreeMap<String, Long> map = new TreeMap<String, Long>();

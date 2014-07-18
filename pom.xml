@@ -97,8 +97,10 @@
 			<id>JBoss deprecated</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/deprecated</url>
 		</repository>
+		
+		<!-- repositorio adicionado para a swetake -->
 		<repository>
-			<id>as</id>
+			<id>Itrc</id>
 			<url>http://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/</url>
 		</repository>
 
@@ -411,11 +413,13 @@
 				<artifactId>pdfbox</artifactId>
 				<version>0.7.3</version>
 			</dependency>
+
 			<dependency>
 				<groupId>swetake</groupId>
 				<artifactId>qrcode</artifactId>
 				<version>0.1</version>
 			</dependency>
+
 			<dependency>
 				<groupId>com.lowagie</groupId>
 				<artifactId>itext-rtf</artifactId>
@@ -437,9 +441,9 @@
 				<version>0.9.14</version>
 			</dependency>
 			<dependency>
-				<groupId>com.google.code.maven-play-plugin.org.playframework</groupId>
-				<artifactId>jj-simplecaptcha</artifactId>
-				<version>1.1</version>
+				<groupId>org.gatein.captcha</groupId>
+				<artifactId>simplecaptcha</artifactId>
+				<version>1.1.1-GA-Patch01</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.ws.rs</groupId>

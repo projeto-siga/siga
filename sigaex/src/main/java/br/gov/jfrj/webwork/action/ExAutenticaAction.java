@@ -26,8 +26,8 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
-import jj.play.ns.nl.captcha.Captcha;
-import jj.play.ns.nl.captcha.noise.StraightLineNoiseProducer;
+import nl.captcha.Captcha;
+import nl.captcha.noise.StraightLineNoiseProducer;
 
 import org.apache.xerces.impl.dv.util.Base64;
 

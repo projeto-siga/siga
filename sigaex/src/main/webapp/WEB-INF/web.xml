@@ -9,6 +9,7 @@
 	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
 	<!--distributable/ -->
 
+<<<<<<< HEAD
 	<!-- <jsp-config> <taglib> <taglib-uri>http://jsptags.com/tags/navigation/pager</taglib-uri> 
 		<taglib-location>/WEB-INF/jsp/pager-taglib.tld</taglib-location> </taglib> 
 		<taglib> <taglib-uri>http://localhost/modelostag</taglib-uri> <taglib-location>/WEB-INF/tld/modelos.tld</taglib-location> 
@@ -18,6 +19,8 @@
 		<session-timeout>120</session-timeout>
 	</session-config>
 
+=======
+>>>>>>> trocando politica de seguranca pra protege tudo e libera necessario
 	<servlet>
 		<servlet-name>AudioCaptcha</servlet-name>
 		<servlet-class>nl.captcha.servlet.AudioCaptchaServlet</servlet-class>
@@ -230,32 +233,46 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>
-			<url-pattern>/principal.action</url-pattern>
-			<url-pattern>/substituicao/*</url-pattern>
-			<url-pattern>/configuracao/*</url-pattern>
-			<url-pattern>/administracao/*</url-pattern>
-			<url-pattern>/expediente/*</url-pattern>
-			<url-pattern>/modelo/*</url-pattern>
-			<url-pattern>/arquivo/*</url-pattern>
-			<url-pattern>/despacho/*</url-pattern>
-			<url-pattern>/administracao.action</url-pattern>
-			<url-pattern>/anexo/*</url-pattern>
-			<url-pattern>*.pdf</url-pattern>
-			<url-pattern>*.html</url-pattern>
+			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
+	
+	<!-- Libera acesso aos seguintes diretorios -->
+ 	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>arquivos</web-resource-name>
+			<url-pattern>/arquivos/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>imagens</web-resource-name>
+			<url-pattern>/imagens/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>w3c</web-resource-name>
+			<url-pattern>/w3c/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>freemarker</web-resource-name>
+			<url-pattern>/freemarker/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
 
 	<login-config>
 		<auth-method>FORM</auth-method>
+		<realm-name>sigaex</realm-name>
 		<form-login-config>
+<<<<<<< HEAD
 			<form-login-page>/login</form-login-page>
 			<form-error-page>/loginInvalido</form-error-page>
+=======
+			<form-login-page>/paginas/login.jsp</form-login-page>
+			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
+>>>>>>> trocando politica de seguranca pra protege tudo e libera necessario
 		</form-login-config>
 	</login-config>
-
 	<security-role>
 		<role-name>sigausuario</role-name>
 	</security-role>

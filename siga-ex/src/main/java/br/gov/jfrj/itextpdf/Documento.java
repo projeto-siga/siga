@@ -653,6 +653,7 @@ public class Documento {
 
 	public static java.awt.Image createQRCodeImage(String url) {
 		Qrcode x = new Qrcode();
+
 		x.setQrcodeErrorCorrect('M'); // 15%
 		x.setQrcodeEncodeMode('B'); // Bynary
 		boolean[][] matrix = x.calQrcode(url.getBytes());

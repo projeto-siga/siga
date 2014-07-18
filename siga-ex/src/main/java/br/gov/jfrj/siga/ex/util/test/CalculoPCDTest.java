@@ -18,12 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util.test;
 
-import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.hibernate.cfg.AnnotationConfiguration;
-
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -32,7 +26,10 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.util.CalculoPCD;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import junit.framework.TestCase;
 import org.hibernate.cfg.Configuration;
+
+import java.util.List;
 
 /**
  * Testa as funcionalidades de cálculo da ExCalculoPCD.

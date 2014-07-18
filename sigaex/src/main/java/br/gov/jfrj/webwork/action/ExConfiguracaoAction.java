@@ -88,7 +88,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	private Integer idFormaDoc;
 
 	private Long idMod;
-
+	
 	private ExClassificacaoSelecao classificacaoSel;
 
 	private Long idVia;
@@ -440,7 +440,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			config.setExModelo(dao().consultar(getIdMod(),
 					ExModelo.class, false));
 		} else
-			config.setExTipoMovimentacao(null);
+			config.setExModelo(null);
 		
 												
 		List<ExConfiguracao> listConfig = Ex.getInstance().getConf().buscarConfiguracoesVigentes(config);

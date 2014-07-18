@@ -51,16 +51,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>jsp-api</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
 			<scope>provided</scope>
@@ -70,10 +60,16 @@
 			<groupId>com.opensymphony</groupId>
 			<artifactId>webwork</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>opensymphony</groupId>
 			<artifactId>oscore</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>jsptags</groupId>
+            <artifactId>pager-taglib</artifactId>
+        </dependency>
 		
 		<dependency>
 			<groupId>projeto-siga</groupId>

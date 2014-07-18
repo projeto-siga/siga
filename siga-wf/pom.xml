@@ -1,56 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<artifactId>projeto-siga</artifactId>
-		<groupId>projeto-siga</groupId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>projeto-siga</artifactId>
+        <groupId>projeto-siga</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>siga-wf</artifactId>
+    <artifactId>siga-wf</artifactId>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.opensymphony</groupId>
-			<artifactId>webwork</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.opensymphony</groupId>
+            <artifactId>webwork</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>info.bliki.wiki</groupId>
-			<artifactId>bliki-core</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>info.bliki.wiki</groupId>
+            <artifactId>bliki-core</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers</artifactId>
+        </dependency>
 
-		<!-- JBPM -->
-		<dependency>
-			<groupId>org.jbpm.jbpm3</groupId>
-			<artifactId>jbpm-identity</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jbpm.jbpm3</groupId>
-			<artifactId>jbpm-jpdl</artifactId>
-		</dependency>
+        <!-- JBPM -->
+        <dependency>
+            <groupId>org.jbpm.jbpm3</groupId>
+            <artifactId>jbpm-identity</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm.jbpm3</groupId>
+            <artifactId>jbpm-jpdl</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_2.5_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>net.sf.kxml</groupId>
-			<artifactId>kxml2</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>net.sf.kxml</groupId>
+            <artifactId>kxml2</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>projeto-siga</groupId>
-			<artifactId>siga-cp</artifactId>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>backport-util-concurrent</groupId>
+            <artifactId>backport-util-concurrent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>projeto-siga</groupId>
+            <artifactId>siga-cp</artifactId>
+        </dependency>
+    </dependencies>
 </project>

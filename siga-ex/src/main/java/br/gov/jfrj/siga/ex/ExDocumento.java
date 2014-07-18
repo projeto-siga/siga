@@ -1471,6 +1471,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                 return getConteudoBlobPdf();
         }
         
+        @Override
+        public boolean isPdf() {
+                return true;
+        }
+        
         /**
          * COMPLETAR
          * 
@@ -1617,7 +1622,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
         private void incluirArquivos(ExMobil mob, SortedSet<ExMovimentacao> set) {
                 // Incluir os documentos anexos
                 for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
-                        if (!m.isCancelada() && m.getPdf() != null) {
+                        if (!m.isCancelada() && m.isPdf()) {
                                 set.add(m);
                         }
                 }
@@ -1630,7 +1635,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	                                        set.add(m);
 	                                } else if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
 	                                        set.remove(m.getExMovimentacaoRef());
-	                                        if (m.getPdf() != null)
+	                                        if (m.isPdf())
 	                                                set.add(m);
 	                                }
 	                        }

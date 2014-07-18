@@ -60,6 +60,7 @@ public class WfContextBuilder {
 						fConfigured = true;
 						return configuration;
 					} catch (final Throwable ex) {
+                        ex.printStackTrace();
 						// Make sure you log the exception, as it might be
 						// swallowed
 						// log.error("Não foi possível configurar o hibernate.",

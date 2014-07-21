@@ -18,23 +18,17 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import org.apache.log4j.Logger;
-import org.hibernate.cfg.Configuration;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import org.apache.log4j.Logger;
+import org.hibernate.cfg.Configuration;
+
+import javax.servlet.*;
+import java.io.IOException;
 
 /**
  * Filtro que pega a sessão do JBPM e coloca-a no Hibernate.
@@ -138,7 +132,7 @@ public class WfThreadFilter extends ThreadFilter {
 				if (!fConfigured) {
 					try {
 						Wf.getInstance();
-						Configuration cfg = WfDao.criarHibernateCfg("java:jboss/datasource/SigaWfDS");
+						Configuration cfg = WfDao.criarHibernateCfg("java:jboss/datasources/SigaWfDS");
 
 						// bruno.lacerda@avantiprima.com.br
 						// Configura listeners de auditoria de acordo com os

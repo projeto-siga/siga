@@ -15,6 +15,7 @@
 			<module name="org.apache.xalan" />
 			<module name="asm.asm" />
 			<module name="sigadoc.org.bouncycastle" export="true"/>
+
 		</dependencies>
 	</deployment>
 </jboss-deployment-structure>

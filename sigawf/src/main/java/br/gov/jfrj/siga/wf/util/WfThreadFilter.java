@@ -138,7 +138,7 @@ public class WfThreadFilter extends ThreadFilter {
 				if (!fConfigured) {
 					try {
 						Wf.getInstance();
-						Configuration cfg = WfDao.criarHibernateCfg("java:jboss/datasource/SigaWfDS");
+						Configuration cfg = WfDao.criarHibernateCfg("java:jboss/datasources/SigaWfDS");
 
 						// bruno.lacerda@avantiprima.com.br
 						// Configura listeners de auditoria de acordo com os

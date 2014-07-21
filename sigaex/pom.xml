@@ -46,7 +46,7 @@
 
 
     <dependencies>
-        <!-- Apache CXF -->
+        <!-- Apache CXF
         <dependency>
             <groupId>org.jboss.ws.cxf</groupId>
             <artifactId>jbossws-cxf-client</artifactId>
@@ -71,6 +71,7 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-ws-policy</artifactId>
         </dependency>
+        -->
 
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -166,6 +167,10 @@
         <dependency>
             <groupId>projeto-siga</groupId>
             <artifactId>siga-ex</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>projeto-siga</groupId>
+            <artifactId>siga-ext</artifactId>
         </dependency>
     </dependencies>
 </project>

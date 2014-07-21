@@ -3,7 +3,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<!-- 
+
 	<jaxws:endpoint id="exService" implementor="br.gov.jfrj.siga.ex.service.impl.ExServiceImpl" address="/ExService" />
-	 -->
+
 </beans>

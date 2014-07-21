@@ -4,8 +4,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	
-	<!-- 
 	<jaxws:endpoint id="wfService" implementor="br.gov.jfrj.siga.wf.service.impl.WfServiceImpl" address="/WfService" />
-	 -->
-	 
+
 </beans>

@@ -7,7 +7,6 @@
 			<module name="org.hibernate" export="true" />
 
 			<module name="org.picketlink" />
-			<module name="org.apache.cxf" />
 			<module name="org.apache.commons.lang" />
 			<module name="org.apache.ws.xmlschema" />
 			<module name="javax.wsdl4j.api" />
@@ -15,7 +14,6 @@
 			<module name="org.apache.xalan" />
 			<module name="asm.asm" />
 			<module name="org.bouncycastle" export="true"/>
-			
 		</dependencies>
 	</deployment>
 </jboss-deployment-structure>

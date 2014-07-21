@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	version="2.4"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
-        http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
 
@@ -158,13 +156,12 @@
 
 	<!-- Inicio de WebServer -->
 	<servlet>
-		<servlet-name>CXFServlet</servlet-name>
-		<servlet-class>br.gov.jfrj.siga.servlets.ExWsServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<servlet-name>ExService</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>CXFServlet</servlet-name>
-		<url-pattern>/servicos/*</url-pattern>
+		<servlet-name>ExService</servlet-name>
+		<url-pattern>/servicos/ExServiceImpl</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

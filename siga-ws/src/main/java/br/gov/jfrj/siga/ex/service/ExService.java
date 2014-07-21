@@ -18,49 +18,63 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service;
 
-import javax.jws.WebService;
-
 import br.gov.jfrj.siga.Remote;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
 
 @WebService
 public interface ExService extends Remote {
 
+    @WebMethod
 	public Boolean transferir(String codigoDocumentoVia, String siglaDestino,
 			String siglaCadastrante) throws Exception;
 
+    @WebMethod
 	public Boolean isAssinado(String codigoDocumento, String siglaCadastrante)
 			throws Exception;
-	
+
+    @WebMethod
 	public Boolean isSemEfeito(String codigoDocumento)
 			throws Exception;
 
 
+    @WebMethod
 	public Boolean arquivarCorrente(String codigoDocumentoVia,
 			String siglaDestino, String siglaCadastrante) throws Exception;
 
+    @WebMethod
 	public Boolean podeMovimentar(String codigoDocumento,
 			String siglaCadastrante) throws Exception;
 
+    @WebMethod
 	public Boolean podeTransferir(String codigoDocumento,
 			String siglaCadastrante) throws Exception;
 
+    @WebMethod
 	public Boolean isAtendente(String codigoDocumento, String siglaCadastrante)
 			throws Exception;
 
+    @WebMethod
 	public String getAtendente(String codigoDocumento, String siglaTitular)
 			throws Exception;
 
+    @WebMethod
 	public byte[] obterPdfPorNumeroAssinatura(String num) throws Exception;
-	
+
+    @WebMethod
 	public String buscarPorCodigo(String codigo) throws Exception;
-	
+
+    @WebMethod
 	public String criarVia(String codigoDocumento, String siglaCadastrante) throws Exception;
 
+    @WebMethod
 	public String form(String codigoDocumento, String variavel) throws Exception;
-	
+
+    @WebMethod
 	public String toJSON(String codigo) throws Exception;
 
+    @WebMethod
 	Boolean exigirAnexo(String codigoDocumentoVia, String siglaCadastrante,
 			String descricaoDoAnexo) throws Exception;
-
 }

@@ -18,18 +18,16 @@
  ******************************************************************************/
 package br.gov.jfrj.siga;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.namespace.QName;
-
-import org.springframework.context.support.AbstractApplicationContext;
-
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.wf.service.WfService;
+import org.springframework.context.support.AbstractApplicationContext;
+
+import javax.xml.namespace.QName;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public abstract class Service {
 
@@ -122,8 +120,7 @@ public abstract class Service {
 			throw new Error(e);
 		}
 		QName SERVICE_NAME = new QName(qname, serviceName);
-		javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlURL,
-				SERVICE_NAME);
+		javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlURL, SERVICE_NAME);
 		E e = service.getPort(remoteClass);
 		
 //		Client client = ClientProxy.getClient(e);

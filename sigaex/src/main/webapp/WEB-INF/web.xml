@@ -161,7 +161,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ExService</servlet-name>
-		<url-pattern>/servicos/ExServiceImpl</url-pattern>
+		<url-pattern>/servicos/ExService</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

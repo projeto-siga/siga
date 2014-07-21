@@ -32,7 +32,7 @@ import br.gov.jfrj.webwork.action.ExMobilSelecao;
 import javax.jws.WebService;
 import java.lang.reflect.InvocationTargetException;
 
-@WebService(name = "ExService", serviceName = "ExService", endpointInterface = "br.gov.jfrj.siga.ex.service.ExService")
+@WebService(serviceName = "ExService", endpointInterface = "br.gov.jfrj.siga.ex.service.ExService")
 public class ExServiceImpl implements ExService {
 
 	private boolean hideStackTrace = false;

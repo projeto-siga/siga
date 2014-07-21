@@ -41,10 +41,6 @@ tr.fisicoeven:hover td {
 	padding: 0;
 	margin: 0;
 }
-.gt-for-table-custom td:nth-child(2) {
-	width: 70%;
-	text-align: left;
-}
 
 .gt-for-table-custom td, 
 .gt-for-table-custom th {

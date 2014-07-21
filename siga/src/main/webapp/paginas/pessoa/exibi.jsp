@@ -19,7 +19,7 @@
 				</tr>
 				<tr>
 					<th><b>Lotação:</b></th>
-					<td><siga:selecionado 
+					<td width="70%"><siga:selecionado 
 									sigla="${pessoa.lotacao.sigla} - ${pessoa.lotacao.descricaoAmpliada}"
 									descricao="${pessoa.lotacao.descricaoAmpliada}"
 									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" />

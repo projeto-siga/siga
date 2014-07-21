@@ -3,7 +3,7 @@
 		ServerEnvironment="tomcat" BindingType="POST">
 		<IdentityURL>${idp.url::http://localhost:8080/sigaidp/}</IdentityURL>
 		
-		<ServiceURL>${sales-post.url::http://localhost:8080/sigawf/}</ServiceURL>
+		<ServiceURL>${sigawf.url::http://localhost:8080/sigawf/}</ServiceURL>
 	</PicketLinkSP>
 	
 	<Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1">

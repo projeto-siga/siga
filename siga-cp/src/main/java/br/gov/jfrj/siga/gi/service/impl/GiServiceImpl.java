@@ -18,14 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service.impl;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-
-import javax.jws.WebService;
-
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
@@ -39,6 +31,12 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.service.GiService;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
+import javax.jws.WebService;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * Esta classe implementa os métodos de gestão de identidade O acesso à esta
@@ -48,9 +46,10 @@ import br.gov.jfrj.siga.gi.service.GiService;
  * @author tah
  * 
  */
-@WebService(endpointInterface = "br.gov.jfrj.siga.gi.service.GiService")
+@WebService(serviceName = "GiService",endpointInterface = "br.gov.jfrj.siga.gi.service.GiService")
 public class GiServiceImpl implements GiService {
 
+    @Override
 	public String login(String matricula, String senha) {
 		String resultado = "";
 		try {

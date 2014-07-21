@@ -26,34 +26,6 @@
 
 package br.gov.jfrj.webwork.action;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.apache.xerces.impl.dv.util.Base64;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -62,21 +34,7 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.ex.ExClassificacao;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExEstadoDoc;
-import br.gov.jfrj.siga.ex.ExFormaDocumento;
-import br.gov.jfrj.siga.ex.ExItemDestinacao;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExNivelAcesso;
-import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.ExTipoDespacho;
-import br.gov.jfrj.siga.ex.ExTipoDocumento;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
-import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.*;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
@@ -87,8 +45,19 @@ import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-
 import com.opensymphony.xwork.Action;
+import org.apache.xerces.impl.dv.util.Base64;
+import org.jboss.logging.Logger;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExMovimentacaoAction extends ExActionSupport {
 
@@ -98,8 +67,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private static final long serialVersionUID = -8223202120027622708L;
 
 
-	private static final Logger log = Logger
-			.getLogger(ExMovimentacaoAction.class);
+	private static final Logger log = Logger.getLogger(ExMovimentacaoAction.class);
 
 	private ExMobil mob;
 

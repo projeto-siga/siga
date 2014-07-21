@@ -141,7 +141,12 @@
 			<version>2.0b5</version>
 		</dependency>
 
-		<!-- SIGA -->
+        <dependency>
+            <groupId>jsptags</groupId>
+            <artifactId>pager-taglib</artifactId>
+        </dependency>
+
+        <!-- SIGA -->
 		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga-wf</artifactId>

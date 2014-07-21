@@ -18,10 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service.impl;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.ws.rs.Path;
-
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -33,8 +29,10 @@ import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.webwork.action.ExMobilSelecao;
 
-//@WebService(endpointInterface = "br.gov.jfrj.siga.ex.service.ExService")
-@Path("/servicos")
+import javax.jws.WebService;
+import java.lang.reflect.InvocationTargetException;
+
+@WebService(name = "ExService", serviceName = "ExService", endpointInterface = "br.gov.jfrj.siga.ex.service.ExService")
 public class ExServiceImpl implements ExService {
 
 	private boolean hideStackTrace = false;

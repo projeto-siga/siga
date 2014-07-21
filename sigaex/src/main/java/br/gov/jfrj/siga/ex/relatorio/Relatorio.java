@@ -24,39 +24,23 @@
 
 package br.gov.jfrj.siga.ex.relatorio;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jasperreports.engine.JREmptyDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperPrintManager;
-import net.sf.jasperreports.engine.JasperReport;
+import br.gov.jfrj.siga.persistencia.oracle.JDBCUtilOracle;
+import com.opensymphony.webwork.ServletActionContext;
+import com.opensymphony.xwork.ActionContext;
+import com.opensymphony.xwork.ActionInvocation;
+import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
+import org.jboss.logging.Logger;
 
-import org.apache.log4j.Logger;
-
-import br.gov.jfrj.siga.persistencia.oracle.JDBCUtilOracle;
-
-import com.opensymphony.webwork.ServletActionContext;
-import com.opensymphony.xwork.ActionContext;
-import com.opensymphony.xwork.ActionInvocation;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URL;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Relatorio {
 

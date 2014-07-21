@@ -46,33 +46,6 @@
 
 
     <dependencies>
-        <!-- Apache CXF
-        <dependency>
-            <groupId>org.jboss.ws.cxf</groupId>
-            <artifactId>jbossws-cxf-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.ws.cxf</groupId>
-            <artifactId>jbossws-cxf-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-bindings-soap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-bindings-http</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-ws-policy</artifactId>
-        </dependency>
-        -->
-
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
@@ -108,13 +81,6 @@
             <groupId>jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
         </dependency>
-
-        <!--
-        <dependency>
-            <artifactId>kxml2</artifactId>
-            <groupId>net.sf.kxml</groupId>
-        </dependency>
-    -->
 
         <!-- Spring -->
         <dependency>
@@ -167,10 +133,6 @@
         <dependency>
             <groupId>projeto-siga</groupId>
             <artifactId>siga-ex</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>projeto-siga</groupId>
-            <artifactId>siga-ext</artifactId>
         </dependency>
     </dependencies>
 </project>

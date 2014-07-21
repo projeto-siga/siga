@@ -39,8 +39,6 @@
 		<hibernate.version>4.2.0.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>
-		<cfx.jboss.version>4.2.3.Final</cfx.jboss.version>
-		<cfx.version>2.7.7</cfx.version>
 	</properties>
 
 	<build>
@@ -566,7 +564,6 @@
 				<version>${picketlink.version}</version>
 			</dependency>
 
-			<!-- Dependencias pra resolver alguns warnings do eclipse -->
 			<dependency>
 				<groupId>jstl</groupId>
 				<artifactId>jstl</artifactId>
@@ -590,40 +587,6 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-web</artifactId>
 				<version>${spring.version}</version>
-			</dependency>
-
-			<!-- Apache CXF -->
-			<dependency>
-				<groupId>org.jboss.ws.cxf</groupId>
-				<artifactId>jbossws-cxf-client</artifactId>
-				<version>${cfx.jboss.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.ws.cxf</groupId>
-				<artifactId>jbossws-cxf-server</artifactId>
-				<version>${cfx.jboss.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-transports-http</artifactId>
-				<version>${cfx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-bindings-soap</artifactId>
-				<version>${cfx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-bindings-http</artifactId>
-				<version>2.5.9</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-ws-policy</artifactId>
-				<version>${cfx.version}</version>
 			</dependency>
 
 			<dependency>

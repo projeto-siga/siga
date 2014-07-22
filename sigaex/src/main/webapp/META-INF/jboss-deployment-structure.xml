@@ -16,6 +16,8 @@
 
 			<module name="sigadoc.org.bouncycastle" export="true"/>
             <module name="sigadoc.ext" />
+
+            <module name="org.javassist" />
 		</dependencies>
 	</deployment>
 </jboss-deployment-structure>

@@ -5,10 +5,6 @@
 	<display-name>Sistema Integrado de Gestão Administrativa</display-name>
 
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-
-	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
 	</listener>
 	

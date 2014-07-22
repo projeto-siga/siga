@@ -85,7 +85,7 @@ public class ExThreadFilter extends ThreadFilter {
 				if (!fConfigured) {
 					try {
 						Ex.getInstance();
-						Configuration cfg = ExDao.criarHibernateCfg("java:jboss/datasource/SigaExDS");
+						Configuration cfg = ExDao.criarHibernateCfg("java:jboss/datasources/SigaExDS");
 
 						// bruno.lacerda@avantiprima.com.br
 						// Configura listeners de auditoria de acordo com os

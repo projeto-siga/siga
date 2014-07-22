@@ -198,8 +198,9 @@ public class PrincipalAction extends SigaActionSupport {
 			}
 			//verificar se após a retirada dos prefixos referente 
 			//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ)
-			//a string copiaSigla somente possui letras
-			else if (copiaSigla.matches("[a-zA-Z]+")) {
+			//a string copiaSigla aceita: SESIA, 04vf, 02TR-PRES ou 02tr-gab2
+			else if ( copiaSigla.matches("^[0-9]*.*[a-zA-Z]+$") || 
+						copiaSigla.matches("^[0-9]+.*[a-zA-Z]+[0-9]+$") ) {
 				URLSelecionar = urlBase + "/siga"
 						+ (testes.length() > 0 ? testes : "/lotacao")
 						+ "/selecionar.action?sigla=" + getSigla()
@@ -224,7 +225,8 @@ public class PrincipalAction extends SigaActionSupport {
 			else if (copiaSigla.matches("[0-9]+")) 
 				uRLExibir = "/siga/pessoa/exibir.action?sigla="
 						+ response[2];
-			else if (copiaSigla.matches("[a-zA-Z]+")) 
+			else if ( copiaSigla.matches("^[0-9]*.*[a-zA-Z]+$") || 
+						copiaSigla.matches("^[0-9]+.*[a-zA-Z]+[0-9]+$") ) 
 				uRLExibir = "/siga/lotacao/exibir.action?sigla="
 						+ response[2];
 			else

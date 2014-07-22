@@ -38,14 +38,16 @@
 					</thead>
 					<tbody>
 						<c:forEach var="lotacaoSubordinada" items="${lotacao.dpLotacaoSubordinadosSet}">
-							<tr>
-								<td><siga:selecionado 
-										sigla="${lotacaoSubordinada.sigla}"
-										descricao="${lotacaoSubordinada.descricaoAmpliada}"
-										lotacaoParam="${lotacaoSubordinada.orgaoUsuario.sigla}${lotacaoSubordinada.sigla}" />
-								</td>
-								<td>${lotacaoSubordinada.nomeLotacao}</td>							
-							</tr>
+							<c:if test="${empty lotacaoSubordinada.dataFimLotacao}">
+								<tr>
+									<td><siga:selecionado 
+											sigla="${lotacaoSubordinada.sigla}"
+											descricao="${lotacaoSubordinada.descricaoAmpliada}"
+											lotacaoParam="${lotacaoSubordinada.orgaoUsuario.sigla}${lotacaoSubordinada.sigla}" />
+									</td>
+									<td>${lotacaoSubordinada.nomeLotacao}</td>							
+								</tr>
+							</c:if>
 						</c:forEach>
 					</tbody>
 				</table>				
@@ -53,7 +55,7 @@
 		</div>
 		<br/><br/>
 		<div class="gt-content clearfix">		
-			<h2 class="gt-table-head">Servidores</h2>
+			<h2 class="gt-table-head">Magistrados/ Servidores</h2>
 			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table">
 					<thead>

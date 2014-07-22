@@ -15,6 +15,7 @@
 			<module name="org.apache.commons.logging" />
 			<module name="org.apache.xalan" />
 			<module name="asm.asm" />
+            <module name="org.javassist" />
 			
 			<module name="sigadoc.org.bouncycastle" export="true"/>
 		</dependencies>

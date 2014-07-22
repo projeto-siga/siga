@@ -1721,4 +1721,22 @@
 			method="aExportar">
 		</action>
 	</package>
+	
+	<package name="forma" extends="default" namespace="/forma">
+
+
+		<action name="listar" class="br.gov.jfrj.webwork.action.ExFormaDocumentoAction"
+			method="aListar">
+			<result>/paginas/expediente/lista_forma.jsp</result>
+		</action>
+		<action name="editar" class="br.gov.jfrj.webwork.action.ExFormaDocumentoAction"
+			method="aEditar">
+			<result>/paginas/expediente/forma.jsp</result>
+		</action>
+		<action name="gravar" class="br.gov.jfrj.webwork.action.ExFormaDocumentoAction"
+			method="aEditarGravar">
+			<result name="aplicar" type="redirect-action">editar?id=${id}</result>
+			<result type="redirect-action">listar</result>
+		</action>
+	</package>	
 </xwork>

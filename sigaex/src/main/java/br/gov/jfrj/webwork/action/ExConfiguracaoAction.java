@@ -436,6 +436,12 @@ public class ExConfiguracaoAction extends ExActionSupport {
 		} else
 			config.setExTipoMovimentacao(null);
 		
+		if (getIdFormaDoc() != null && getIdFormaDoc() != 0) {
+			config.setExFormaDocumento(dao().consultar(getIdFormaDoc(),
+					ExFormaDocumento.class, false));
+		} else
+			config.setExFormaDocumento(null);
+
 		if (getIdMod() != null && getIdMod() != 0) {
 			config.setExModelo(dao().consultar(getIdMod(),
 					ExModelo.class, false));

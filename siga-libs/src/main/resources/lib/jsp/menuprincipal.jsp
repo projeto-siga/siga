@@ -205,6 +205,11 @@
 				<ul>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
+						<li><ww:a href="/siga/modelo/listar.action">Cadastro de Forma</ww:a>
+						</li>
+					</c:if>				
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
 						<li><ww:a href="/siga/modelo/listar.action">Cadastro de modelos</ww:a>
 						</li>
 					</c:if>

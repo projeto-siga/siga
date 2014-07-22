@@ -15,9 +15,9 @@
 		<!-- Habilitar a linha seguinte para ler as configuracoes do oracle-ds.xml no jboss
 		-->
 		<property name="siga.connection.datasource">
-			java:/SigaExDS
+			java:jboss/datasources/SigaExDS
 		</property>
-		<property name="connection.datasource">java:/SigaExDS</property>
+		<property name="connection.datasource">java:jboss/datasources/SigaExDS</property>
 
 		<!-- 
 			<property name="hibernate.connection.url">

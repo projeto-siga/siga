@@ -53,7 +53,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void home() {
-		// pÃ¡gina inicial do sigapmp
+		// página inicial do sigapmp
 		String matriculaSessao = cadastrante().getMatricula().toString();
 		UsuarioForum objUsuario = UsuarioForum.find(
 				"matricula_usu =" + matriculaSessao).first();
@@ -775,16 +775,45 @@ public class Application extends SigaApplication {
 		}
 		render(listAgendamentos);
 	}else{
-		Excecoes("usuario sem permissao");
+		Excecoes("Usuario sem permissao");
 	}
 	}
 	public static void agendamento_print(String frm_data_ag, String frm_sala_ag, String frm_processo_ag, String frm_periciado ){
-		
-		//and hora_ag='"+frm_hora_ag+"'"
 		List listAgendamentos = (List) Agendamentos.find("data_ag=to_date('"+frm_data_ag.substring(0,10)+"','yy-mm-dd') and localFk.cod_local='"+frm_sala_ag+"' and processo='"+frm_processo_ag+"' and periciado='"+frm_periciado+"'" ).fetch();
-		render(frm_processo_ag,listAgendamentos);
+		if(frm_periciado.isEmpty()){
+			Excecoes("Relatorio depende de nome de periciado preenchido para ser impresso.");
+		}else if(frm_processo_ag.isEmpty()){
+			Excecoes("Relatorio depende de numero de processo preenchido para ser impresso.");
+		}else{
+			render(frm_processo_ag,listAgendamentos);
+		}
 	}
-
+	
+	public static void agendamento_sala_lista(String frm_cod_local, String frm_data_ag){
+		String lotacaoSessao = cadastrante().getLotacao().getSiglaLotacao();
+		List<Locais> listSalas = new ArrayList();
+		// pega usuario do sistema
+		String matriculaSessao = cadastrante().getMatricula().toString();
+		UsuarioForum objUsuario = UsuarioForum.find(
+				"matricula_usu =" + matriculaSessao).first();
+		if (objUsuario != null) {
+			// Pega o usuário do sistema, e, busca os locais(salas) daquele
+			// forum onde ele está.
+			listSalas = (List) Locais.find(
+					"cod_forum='" + objUsuario.forumFk.cod_forum + "' order by ordem_apresentacao ").fetch(); // isso não dá erro no caso de retorno vazio.
+			List<Agendamentos> listAgendamentosMeusSala = new ArrayList();
+			if(!(frm_cod_local.isEmpty()||frm_data_ag.isEmpty())){
+				//lista os agendamentos do dia, e, da lotação do cadastrante
+				listAgendamentosMeusSala = (List) Agendamentos.find("localFk.cod_local='" + frm_cod_local + "' and data_ag = to_date('" + frm_data_ag + "','yy-mm-dd')");
+				render(listSalas,listAgendamentosMeusSala,lotacaoSessao);
+			}else{
+				listAgendamentosMeusSala = null;
+				render(listSalas,listAgendamentosMeusSala ,lotacaoSessao);
+			}
+		} else {
+			Excecoes("Usuario sem permissao");
+		}
+	}
 	public static void usuario_atualiza(String paramCodForum) throws Exception {
 		String mensagem = "";
 		// pega usuario do sistema

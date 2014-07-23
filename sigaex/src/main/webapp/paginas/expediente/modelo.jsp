@@ -105,37 +105,39 @@
 				</table>
 			</ww:form>
 		</div>
-		</div>
-			<div style="clear: both; margin-bottom: 20px;">		
-			<div id="tableCadastradasEletronico"></div>	
-			<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+		<c:if test="${not empty id}">
 			</div>
-			
-			<div style="clear: both; margin-bottom: 20px;">		
-			<div id="tableCadastradasCriar"></div>	
-			<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div style="clear: both; margin-bottom: 20px;">		
+				<div id="tableCadastradasEletronico"></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				</div>
+				
+				<div style="clear: both; margin-bottom: 20px;">		
+				<div id="tableCadastradasCriar"></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				</div>
+	
+				<div style="clear: both; margin-bottom: 20px;">		
+				<div id="tableCadastradasAssinar"></div>
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				</div>
+	
+				<div style="clear: both; margin-bottom: 20px;">		
+				<div id="tableCadastradasAcessar"></div>
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=6&nmTipoRetorno=modelo" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				</div>
+	
+				<div style="clear: both; margin-bottom: 20px;">		
+				<div id="tableCadastradasNivelAcessoMaximo"></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=18&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				</div>
+	
+				<div style="clear: both; margin-bottom: 20px;">		
+				<div id="tableCadastradasNivelAcessoMinimo"></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=19&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				</div>
 			</div>
-
-			<div style="clear: both; margin-bottom: 20px;">		
-			<div id="tableCadastradasAssinar"></div>
-			<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
-			</div>
-
-			<div style="clear: both; margin-bottom: 20px;">		
-			<div id="tableCadastradasAcessar"></div>
-			<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=6&nmTipoRetorno=modelo" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
-			</div>
-
-			<div style="clear: both; margin-bottom: 20px;">		
-			<div id="tableCadastradasNivelAcessoMaximo"></div>	
-			<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=18&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
-			</div>
-
-			<div style="clear: both; margin-bottom: 20px;">		
-			<div id="tableCadastradasNivelAcessoMinimo"></div>	
-			<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=19&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
-			</div>
-		</div>
+		</c:if>
 	
 	
 	<ww:url id="urlEditar" action="editar" namespace="/modelo" /> 
@@ -189,25 +191,26 @@
 		});
 		
 		muda_escolha(document.getElementById("tipoModelo"));
-
-		function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idMod){	
-			$('#' + tabelaAlvo).html('Carregando...');			
-			$.ajax({				     				  
-				  url:'/sigaex/expediente/configuracao/listar_cadastradas.action',
-				  type: "GET",
-				  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idMod : idMod, nmTipoRetorno : "modelo", campoFixo : "True"},					    					   					 
-				  success: function(data) {
-			    	$('#' + tabelaAlvo).html(data);				    
-			 	 }
-			});	
-		}
-			
-		montaTableCadastradas('tableCadastradasEletronico', 4, 0 ,${id});
-		montaTableCadastradas('tableCadastradasCriar', 2, 0 ,${id});
-		montaTableCadastradas('tableCadastradasAssinar', 1, 11 ,${id});	
-		montaTableCadastradas('tableCadastradasAcessar', 6, 0 ,${id});
-		montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
-		montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});
+		<c:if test="${not empty id}">
+			function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idMod){	
+				$('#' + tabelaAlvo).html('Carregando...');			
+				$.ajax({				     				  
+					  url:'/sigaex/expediente/configuracao/listar_cadastradas.action',
+					  type: "GET",
+					  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idMod : idMod, nmTipoRetorno : "modelo", campoFixo : "True"},					    					   					 
+					  success: function(data) {
+				    	$('#' + tabelaAlvo).html(data);				    
+				 	 }
+				});	
+			}
+				
+			montaTableCadastradas('tableCadastradasEletronico', 4, 0 ,${id});
+			montaTableCadastradas('tableCadastradasCriar', 2, 0 ,${id});
+			montaTableCadastradas('tableCadastradasAssinar', 1, 11 ,${id});	
+			montaTableCadastradas('tableCadastradasAcessar', 6, 0 ,${id});
+			montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
+			montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});
+		</c:if>
 	</script>
 	
 </siga:pagina>

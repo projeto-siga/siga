@@ -55,6 +55,7 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
+import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.Preparable;
 
 public abstract class CpGrupoAction<T extends CpGrupo> extends
@@ -370,22 +371,26 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 
 	public String aGravarGestorGrupo() {
 		DpLotacao lot = getLotacaoGestoraSel().getObjeto();
-		CpTipoConfiguracao tpConf = dao().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,
-				CpTipoConfiguracao.class, false);
-		CpSituacaoConfiguracao situacao = dao().consultar(
-				CpSituacaoConfiguracao.SITUACAO_PODE,
-				CpSituacaoConfiguracao.class, false);
-
-		CpConfiguracao conf = new CpConfiguracao();
-		conf.setLotacao(lot);
-		conf.setCpTipoConfiguracao(tpConf);
-		conf.setCpSituacaoConfiguracao(situacao);
-		conf.setCpGrupo(daoGrupo(idCpGrupo));
-		conf.setHisDtIni(dao().consultarDataEHoraDoServidor());
-		dao().gravarComHistorico(conf, getIdentidadeCadastrante());
-
-		setIdCpGrupo(getIdCpGrupo());
+		if (lot == null){
+			throw new AplicacaoException("A unidade deve ser definida!");
+		}else{
+			CpTipoConfiguracao tpConf = dao().consultar(
+					CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,
+					CpTipoConfiguracao.class, false);
+			CpSituacaoConfiguracao situacao = dao().consultar(
+					CpSituacaoConfiguracao.SITUACAO_PODE,
+					CpSituacaoConfiguracao.class, false);
+			
+			CpConfiguracao conf = new CpConfiguracao();
+			conf.setLotacao(lot);
+			conf.setCpTipoConfiguracao(tpConf);
+			conf.setCpSituacaoConfiguracao(situacao);
+			conf.setCpGrupo(daoGrupo(idCpGrupo));
+			conf.setHisDtIni(dao().consultarDataEHoraDoServidor());
+			dao().gravarComHistorico(conf, getIdentidadeCadastrante());
+			
+			setIdCpGrupo(getIdCpGrupo());
+		}
 
 		return SUCCESS;
 	}

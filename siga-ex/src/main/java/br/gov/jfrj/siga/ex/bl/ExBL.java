@@ -5627,6 +5627,26 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao salvar um modelo.", 0, e);
 		}
 	}
+	
+	public void gravarForma(ExFormaDocumento forma) throws AplicacaoException {
+		if (forma.getDescrFormaDoc() == null || forma.getDescrFormaDoc().isEmpty())
+			throw new AplicacaoException(
+					"Não é possível salvar um tipo sem informar a descrição.");
+		if (forma.getSigla() == null || forma.getSigla().isEmpty())
+			throw new AplicacaoException(
+					"Não é possível salvar um tipo sem informar a sigla.");
+		if (forma.getExTipoFormaDoc() == null)
+			throw new AplicacaoException(
+					"Não é possível salvar um tipo sem informar se é processo ou expediente.");
+		try {
+			ExDao.iniciarTransacao();
+			dao().gravar(forma);
+			ExDao.commitTransacao();
+		} catch (Exception e) {
+			ExDao.rollbackTransacao();
+			throw new AplicacaoException("Erro ao salvar um tipo.", 0, e);
+		}
+	}	
 
 	public void DesfazerCancelamentoDocumento(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {

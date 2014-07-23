@@ -159,7 +159,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 		this.exModeloSet = exModeloSet;
 	}
 
-	public void setExTipoDocumentoSet(final Set exTipoDocumentoSet) {
+	public void setExTipoDocumentoSet(final Set<ExTipoDocumento> exTipoDocumentoSet) {
 		ExTipoDocumentoSet = exTipoDocumentoSet;
 	}
 

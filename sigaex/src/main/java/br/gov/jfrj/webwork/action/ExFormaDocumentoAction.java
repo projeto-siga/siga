@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -124,6 +125,18 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 			forma.setSigla(sigla);
 			forma.setExTipoFormaDoc(dao().consultar(getIdTipoFormaDoc(), ExTipoFormaDoc.class, false));
 		}
+		
+		if(forma.getExTipoDocumentoSet() == null)
+			forma.setExTipoDocumentoSet(new TreeSet<ExTipoDocumento>());
+		
+		if(isOrigemInternoProduzido())
+			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class, false));
+
+		if(isOrigemInternoImportado())
+			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO, ExTipoDocumento.class, false));
+		
+		if(isOrigemExterno())
+			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO, ExTipoDocumento.class, false));
 	}
 
 	private void escreverForm() throws AplicacaoException,
@@ -152,17 +165,13 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 	}
 
 	public String aEditarGravar() throws Exception {
-/*		assertAcesso("MOD:Gerenciar modelos");
+		assertAcesso("MOD:Gerenciar modelos");
 		lerForm();
-		ExModelo modAntigo = null;
-		if (mod.getIdInicial() != null){
-			modAntigo = dao().consultar(mod.getIdInicial(), ExModelo.class, false).getModeloAtual();
-		}
-		Ex.getInstance().getBL().gravarModelo(mod,modAntigo,null,getIdentidadeCadastrante());
-		setId(mod.getId());
+		Ex.getInstance().getBL().gravarForma(forma);;
+		setId(forma.getIdFormaDoc());
 		Map<String, String[]> l = getPar();
 		if ("Aplicar".equals(param("submit")))
-			return "aplicar";*/
+			return "aplicar";
 		return Action.SUCCESS;
 	}
 	

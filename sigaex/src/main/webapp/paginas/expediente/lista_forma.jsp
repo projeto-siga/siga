@@ -49,7 +49,12 @@
 		<c:set var="tamanho" value="0" />
 		<c:forEach var="forma" items="${itens}">
 			<tr class="${evenorodd}">
-				<td>${forma.descrFormaDoc}</td>
+				<td>
+				    <ww:url id="url" action="editar"
+						namespace="/forma">
+						<ww:param name="id">${forma.idFormaDoc}</ww:param>
+					</ww:url> <ww:a href="%{url}">${forma.descrFormaDoc}</ww:a>
+				</td>
 				<td>${forma.sigla}</td>
 				<td>${forma.exTipoFormaDoc.descricao}</td>
 				<td>

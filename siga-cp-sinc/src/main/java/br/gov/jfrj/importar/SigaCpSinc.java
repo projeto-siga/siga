@@ -113,6 +113,8 @@ public class SigaCpSinc {
 	private String dataHora;
 
 	private String versao;
+	
+	List<Item> list;
 
 	/*
 	 * // para compatibilizar os arquivos novos e antigos
@@ -148,7 +150,7 @@ public class SigaCpSinc {
 	//
 	@SuppressWarnings("static-access")
 	public void gravar(Date dt) throws Exception {
-		List<Item> list;
+		//List<Item> list;
 		Sincronizador sinc = new Sincronizador();
 		try {
 			sinc.religarListaPorIdExterna(setNovo);
@@ -1169,9 +1171,12 @@ public class SigaCpSinc {
 			texto = texto + "Arquivo XML gerado em " + getDataHora() + "\n";
 		}
 		texto = texto + sbLog.toString();
+		String assunto = new String();
+		if (list.size() > maxSinc) assunto = "Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente."; 
+		else assunto = "Log de Importação";
 		Correio.enviar(
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
-				destinatarios, "Log de importação", texto, null);
+				destinatarios, assunto, texto, null);
 	}
 
 	private Date parseData(XmlPullParser parser, String campo) {

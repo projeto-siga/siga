@@ -30,13 +30,13 @@
 							title="${servico.descricao}">
 							
 							<c:choose>
-								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">(K) RAIZ</c:when>
-								<c:when test="${servico.siglaServico == 'FS-GAB'}">(K) GABINETE</c:when>
-								<c:when test="${servico.siglaServico == 'FS-SEC'}">(K) SECRETARIA</c:when>
-								<c:when test="${servico.siglaServico == 'FS-JUIZ'}">(K) JUIZ</c:when>
-								<c:when test="${servico.siglaServico == 'FS-PUB'}">(K) PÚBLICA</c:when>
-								<c:when test="${servico.siglaServico == 'FS-AUD'}">(K) AUDIÊNCIA</c:when>
-								<c:when test="${servico.siglaServico == 'FS-VIDEO'}">(K) VIDEOCONF.</c:when>
+								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-GAB'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-SEC'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-JUIZ'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-PUB'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-AUD'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-VIDEO'}">${servico.labelServico}</c:when>
 								<c:otherwise>${servico.siglaServico}</c:otherwise>
 							</c:choose>
 

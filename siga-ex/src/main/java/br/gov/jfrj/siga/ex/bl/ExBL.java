@@ -4777,8 +4777,8 @@ public class ExBL extends CpBL {
 	}
 
 	private void atualizarVariaveisDenormalizadas(ExDocumento doc) {
+		atualizarDnmNivelAcesso(doc);
 		atualizarDnmAcesso(doc);
-		doc.setDnmExNivelAcesso(doc.getExNivelAcesso());
 	}
 
 	private void concluirAlteracao(ExDocumento doc) throws Exception {

@@ -404,7 +404,7 @@
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 
-		<c:url var="url" value="/../sigagc/knowledge">
+		<c:url var="url" value="/../sigagc/app/knowledge">
 			<c:param name="tags">${task.ancora}</c:param>
 			<c:param name="estilo">inplace</c:param>
 			<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a href="$1">aqui</a> para contribuir.</c:param>
@@ -415,7 +415,7 @@
 	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc-ancora'));
 	</script>
 
-		<c:url var="url" value="/../sigagc/knowledge">
+		<c:url var="url" value="/../sigagc/app/knowledge">
 			<c:param name="tags">@workflow</c:param>
 			<c:forEach var="tag" items="${task.tags}">
 				<c:param name="tags">${tag}</c:param>

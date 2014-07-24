@@ -26,7 +26,7 @@
 		<!-- main content -->
 		<div id="gc-ancora" class="gt-content">
 			<ww:if test="${f:resource('siga.gc.paginadelogin')}">
-				<c:url var="url" value="/../sigagc/publicKnowledge" >
+				<c:url var="url" value="/../sigagc/app/publicKnowledge" >
 					<c:param name="tags">^pagina-de-login</c:param>
 					<c:param name="estilo">inplace</c:param>
 					<c:param name="msgvazio">Ainda não existem informações para serem exibidas aqui. Por favor, clique <a

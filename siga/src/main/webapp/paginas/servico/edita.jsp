@@ -26,53 +26,56 @@
 					<th>Matrícula</th>
 					<th>Nome</th>
 					<c:forEach var="servico" items="${cpServicosDisponiveis}">
-						<th><a href="#" alt="${servico.descricao}"
-							title="${servico.descricao}">
-							
-							<c:choose>
-								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-GAB'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-SEC'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-JUIZ'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-PUB'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-AUD'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-VIDEO'}">${servico.labelServico}</c:when>
-								<c:otherwise>${servico.siglaServico}</c:otherwise>
-							</c:choose>
-
-							</a>
-						</th>
+						<c:if test="${(servico.siglaServico != 'FS-AUD') && (servico.siglaServico != 'FS-VIDEO') }">
+							<th><a href="#" alt="${servico.descricao}"
+								title="${servico.descricao}">
+								
+								<c:choose>
+									<c:when test="${servico.siglaServico == 'FS-RAIZ'}">${servico.labelServico}</c:when>
+									<c:when test="${servico.siglaServico == 'FS-GAB'}">${servico.labelServico}</c:when>
+									<c:when test="${servico.siglaServico == 'FS-SEC'}">${servico.labelServico}</c:when>
+									<c:when test="${servico.siglaServico == 'FS-JUIZ'}">${servico.labelServico}</c:when>
+									<c:when test="${servico.siglaServico == 'FS-PUB'}">${servico.labelServico}</c:when>
+									<c:when test="${servico.siglaServico == 'FS-AUD'}">${servico.labelServico}</c:when>
+									<c:when test="${servico.siglaServico == 'FS-VIDEO'}">${servico.labelServico}</c:when>
+									<c:otherwise>${servico.siglaServico}</c:otherwise>
+								</c:choose>
+								</a>
+							</th>
+						</c:if>
 					</c:forEach> </theader>
 					<c:forEach var="pessoa" items="${dpPessoasDaLotacao}">
 						<tr class="">
 							<td>${pessoa.sesbPessoa}${pessoa.matricula}</td>
 							<td>${pessoa.nomePessoa}</td>
 							<c:forEach var="servico" items="${cpServicosDisponiveis}">
-								<c:forEach var="config" items="${cpConfiguracoesAdotadas}">
-									<%--${config.dpPessoa.matricula} --- ${pessoa.matricula} :::: ${config.cpServico.idServico} --- ${servico.idServico}<br/> --%>
-									<c:if
-										test="${(config.dpPessoa.matricula == pessoa.matricula) && (config.cpServico.idServico == servico.idServico) }">
-										<td><select name="configuracao_pessoa_servico"
-											id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
-											valorSalvo="${config.cpSituacaoConfiguracao.idSitConfiguracao}"
-											onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvc});">
-												<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
-												<c:forEach var="sit"
-													items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
-													<c:if
-														test="${sit.idSitConfiguracao == config.cpSituacaoConfiguracao.idSitConfiguracao }">
-														<option value="${sit.idSitConfiguracao}"
-															selected="selected">${sit.dscSitConfiguracao}</option>
-													</c:if>
-													<c:if
-														test="${sit.idSitConfiguracao != config.cpSituacaoConfiguracao.idSitConfiguracao }">
-														<option value="${sit.idSitConfiguracao}">
-															${sit.dscSitConfiguracao}</option>
-													</c:if>
-												</c:forEach>
-										</select></td>
-									</c:if>
-								</c:forEach>
+								<c:if test="${(servico.siglaServico != 'FS-AUD') && (servico.siglaServico != 'FS-VIDEO') }">
+									<c:forEach var="config" items="${cpConfiguracoesAdotadas}">
+										<%--${config.dpPessoa.matricula} --- ${pessoa.matricula} :::: ${config.cpServico.idServico} --- ${servico.idServico}<br/> --%>
+										<c:if
+											test="${(config.dpPessoa.matricula == pessoa.matricula) && (config.cpServico.idServico == servico.idServico) }">
+											<td><select name="configuracao_pessoa_servico"
+												id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
+												valorSalvo="${config.cpSituacaoConfiguracao.idSitConfiguracao}"
+												onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvc});">
+													<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
+													<c:forEach var="sit"
+														items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
+														<c:if
+															test="${sit.idSitConfiguracao == config.cpSituacaoConfiguracao.idSitConfiguracao }">
+															<option value="${sit.idSitConfiguracao}"
+																selected="selected">${sit.dscSitConfiguracao}</option>
+														</c:if>
+														<c:if
+															test="${sit.idSitConfiguracao != config.cpSituacaoConfiguracao.idSitConfiguracao }">
+															<option value="${sit.idSitConfiguracao}">
+																${sit.dscSitConfiguracao}</option>
+														</c:if>
+													</c:forEach>
+											</select></td>
+										</c:if>
+									</c:forEach>
+								</c:if>
 							</c:forEach>
 						</tr>
 					</c:forEach>

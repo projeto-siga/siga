@@ -1759,8 +1759,8 @@ public class ExDao extends CpDao {
 		// "read-only", "ex");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExEstadoDoc",
 				"read-only", CACHE_EX);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExFormaDocumento",
-				"read-only", CACHE_EX);
+		//cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExFormaDocumento",
+		//	"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExNivelAcesso",
 				"read-only", CACHE_EX);
 		cfg.setCacheConcurrencyStrategy(

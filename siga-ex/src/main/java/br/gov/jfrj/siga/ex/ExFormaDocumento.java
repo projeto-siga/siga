@@ -22,6 +22,8 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -87,5 +89,23 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 				return i;
 		}
 		return this.getId().compareTo(o.getId());
+	}
+	
+	public boolean isSiglaValida() {
+		return isSiglaValida(getSigla());
+	}
+	
+	public boolean isSiglaValida(String sigla) {
+		if(sigla != null && !sigla.isEmpty()) {
+			final Pattern p1 = Pattern
+					.compile("^[A-Za-z]{3}");
+			final Matcher m1 = p1.matcher(sigla);
+			
+			if (m1.matches())   {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

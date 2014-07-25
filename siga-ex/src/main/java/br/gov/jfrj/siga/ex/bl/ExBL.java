@@ -5632,12 +5632,19 @@ public class ExBL extends CpBL {
 		if (forma.getDescrFormaDoc() == null || forma.getDescrFormaDoc().isEmpty())
 			throw new AplicacaoException(
 					"Não é possível salvar um tipo sem informar a descrição.");
-		if (forma.getSigla() == null || forma.getSigla().isEmpty())
-			throw new AplicacaoException(
-					"Não é possível salvar um tipo sem informar a sigla.");
 		if (forma.getExTipoFormaDoc() == null)
 			throw new AplicacaoException(
 					"Não é possível salvar um tipo sem informar se é processo ou expediente.");
+		if (!forma.isSiglaValida())
+			throw new AplicacaoException(
+					"Sigla inválida. A sigla deve ser formada por 3 letras.");
+		
+		ExFormaDocumento formaConsulta = dao().consultarPorSigla(forma);
+		if((forma.getIdFormaDoc() == null && formaConsulta != null) ||
+				(forma.getIdFormaDoc() != null && formaConsulta != null && !formaConsulta.getIdFormaDoc().equals(forma.getIdFormaDoc())))
+			throw new AplicacaoException(
+					"Esta sigla já está sendo utilizada.");
+		
 		try {
 			ExDao.iniciarTransacao();
 			dao().gravar(forma);

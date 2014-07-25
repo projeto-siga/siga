@@ -1738,5 +1738,9 @@
 			<result name="aplicar" type="redirect-action">editar?id=${id}</result>
 			<result type="redirect-action">listar</result>
 		</action>
+		<action name="verificarSigla" class="br.gov.jfrj.webwork.action.ExFormaDocumentoAction"
+			method="aVerificarSigla">
+			<result>/paginas/expediente/mensagemAjax.jsp</result>
+		</action>
 	</package>	
 </xwork>

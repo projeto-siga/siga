@@ -42,7 +42,7 @@
 
 			<div class="gt-content-box gt-for-table">
 			
-			<ww:form name="frm" action="gravar" namespace="/modelo"
+			<ww:form name="frm" action="gravar" namespace="/forma"
 				theme="simple" method="POST">
 				<ww:hidden name="postback" value="1" />
 				<ww:hidden name="id" value="${id}" id="modelo_gravar_id" />
@@ -60,7 +60,10 @@
 					</tr>
 					<tr>
 						<td>Sigla:</td>
-						<td><ww:textfield name="sigla" size="3" /></td>
+						<td>
+							<ww:textfield name="sigla" size="3" />
+							<span id="mensagem"></span>
+						</td>
 					</tr>
 					<tr>
 						<td>Tipo:</td>
@@ -120,8 +123,27 @@
 	
 	
 	<ww:url id="urlEditar" action="editar" namespace="/modelo" /> 
-	<c:if test="${not empty id}">
-		<script> 
+	<script> 
+	
+		$("#gravar_sigla").change(function () {
+		    var sigla = $("#gravar_sigla").val().toUpperCase();
+			$("#gravar_sigla").attr("value", sigla);
+			var characterReg = /^[A-Za-z]{3}$/;
+			if(!characterReg.test(sigla)) {
+				$('#mensagem').html('Sigla inválida. A sigla deve ser formada por 3 letras.').css('color','#FF0000');
+				return;
+		    }	
+			$.ajax({				     				  
+				  url:'/sigaex/forma/verificarSigla.action',
+				  type: "GET",
+				  data: { sigla : sigla},					    					   					 
+				  success: function(data) {
+			    	$('#mensagem').html(data);				    
+			 	 }
+			});	
+		});
+
+		<c:if test="${not empty id}">
 			function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idFormaDoc){	
 				$('#' + tabelaAlvo).html('Carregando...');			
 				$.ajax({				     				  
@@ -140,6 +162,6 @@
 			montaTableCadastradas('tableCadastradasAcessar', 6, 0 ,${id});
 			montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
 			montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});
-		</script>
-	</c:if>
+		</c:if>
+	</script>
 </siga:pagina>

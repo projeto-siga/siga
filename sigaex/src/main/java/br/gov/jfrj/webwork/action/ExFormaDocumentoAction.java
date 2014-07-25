@@ -22,27 +22,15 @@
  */
 package br.gov.jfrj.webwork.action;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.kxml2.io.KXmlSerializer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpModelo;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
-import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -53,7 +41,6 @@ import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
-import com.opensymphony.webwork.ServletActionContext;
 import com.opensymphony.xwork.Action;
 
 public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
@@ -61,7 +48,7 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 	public Integer id;
 	public String descricao;
 	public String sigla;
-	public Integer idTipoFormaDoc;
+	public Long idTipoFormaDoc;
 	public String tipoModelo;
 	public String script;
 	
@@ -79,7 +66,9 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 	private DpLotacaoSelecao lotacaoSel;
 	private DpCargoSelecao cargoSel;
 
-	private DpFuncaoConfiancaSelecao funcaoSel;	
+	private DpFuncaoConfiancaSelecao funcaoSel;
+	
+	private String mensagem;
 	
 	public ExFormaDocumentoAction() {
 		classificacaoSel = new ExClassificacaoSelecao();
@@ -121,22 +110,22 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 		}
 
 		if (getPostback() != null) {
-			forma.setDescrFormaDoc(descricao);
-			forma.setSigla(sigla);
+			forma.setDescrFormaDoc(getDescricao());
+			forma.setSigla(getSigla());
 			forma.setExTipoFormaDoc(dao().consultar(getIdTipoFormaDoc(), ExTipoFormaDoc.class, false));
-		}
-		
-		if(forma.getExTipoDocumentoSet() == null)
-			forma.setExTipoDocumentoSet(new TreeSet<ExTipoDocumento>());
-		
-		if(isOrigemInternoProduzido())
-			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class, false));
+			
+			if(forma.getExTipoDocumentoSet() == null)
+				forma.setExTipoDocumentoSet(new TreeSet<ExTipoDocumento>());
+			
+			if(isOrigemInternoProduzido())
+				forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class, false));
 
-		if(isOrigemInternoImportado())
-			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO, ExTipoDocumento.class, false));
-		
-		if(isOrigemExterno())
-			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO, ExTipoDocumento.class, false));
+			if(isOrigemInternoImportado())
+				forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO, ExTipoDocumento.class, false));
+			
+			if(isOrigemExterno())
+				forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO, ExTipoDocumento.class, false));
+		}
 	}
 
 	private void escreverForm() throws AplicacaoException,
@@ -144,7 +133,7 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 		descricao = forma.getDescrFormaDoc();
 		sigla = forma.getSigla();
 		idTipoFormaDoc =  forma.getExTipoFormaDoc() != null ? forma.getExTipoFormaDoc()
-				.getIdTipoFormaDoc().intValue() : null;
+				.getIdTipoFormaDoc() : null;
 				
 		setOrigemExterno(false);
 		setOrigemInternoImportado(false);
@@ -175,22 +164,23 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 		return Action.SUCCESS;
 	}
 	
-	public Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
-		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(
-				new Comparator() {
-
-					public int compare(Object o1, Object o2) {
-						return ((CpSituacaoConfiguracao) o1)
-								.getDscSitConfiguracao().compareTo(
-										((CpSituacaoConfiguracao) o2)
-												.getDscSitConfiguracao());
-					}
-
-				});
-
-		s.addAll(dao().listarSituacoesConfiguracao());
-
-		return s;
+	public String aVerificarSigla() throws Exception {
+		ExFormaDocumento formaConsulta = new ExFormaDocumento();
+		
+		if(getSigla() != null && !getSigla().isEmpty()) {
+		
+			if (!formaConsulta.isSiglaValida(getSigla()))   {
+				setMensagem("Sigla inválida. A sigla deve ser formada por 3 letras.");
+			}
+			
+			formaConsulta.setSigla(getSigla());
+			formaConsulta = dao().consultarPorSigla(formaConsulta);
+			
+			if(formaConsulta != null)
+				setMensagem("Esta sigla já está sendo utilizada");
+		}
+		
+		return Action.SUCCESS;
 	}
 	
 	@Override
@@ -271,11 +261,11 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 		this.funcaoSel = funcaoSel;
 	}
 
-	public Integer getIdTipoFormaDoc() {
+	public Long getIdTipoFormaDoc() {
 		return idTipoFormaDoc;
 	}
 
-	public void setIdTipoFormaDoc(Integer idTipoFormaDoc) {
+	public void setIdTipoFormaDoc(Long idTipoFormaDoc) {
 		this.idTipoFormaDoc = idTipoFormaDoc;
 	}
 
@@ -312,10 +302,18 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 	}
 
 	public String getSigla() {
-		return sigla;
+		return sigla.toUpperCase();
 	}
 
 	public void setSigla(String sigla) {
-		this.sigla = sigla;
+		this.sigla = sigla.toUpperCase();
+	}
+
+	public String getMensagem() {
+		return mensagem;
+	}
+
+	public void setMensagem(String mensagem) {
+		this.mensagem = mensagem;
 	}
 }

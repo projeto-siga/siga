@@ -192,10 +192,15 @@ public class SigaActionSupport extends SigaAnonimoActionSupport implements
 		if (!Cp.getInstance()
 				.getConf()
 				.podeUtilizarServicoPorConfiguracao(getTitular(),
-						getLotaTitular(), servico))
+						getLotaTitular(), servico)){
+			
+			String siglaUsuario = getTitular()==null?"Indefinido":getTitular().getSigla();
+			String siglaLotacao = getLotaTitular()==null?"Indefinida":getLotaTitular().getSiglaCompleta();
+			
 			throw new AplicacaoException("Acesso negado. Serviço: '" + servico
-					+ "' usuário: " + getTitular().getSigla() + " lotação: "
-					+ getLotaTitular().getSiglaCompleta());
+					+ "' usuário: " + siglaUsuario + " lotação: "
+					+ siglaLotacao);
+		}
 	}
 
 	public CpIdentidade getIdentidadeCadastrante() {

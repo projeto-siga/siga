@@ -13,13 +13,13 @@
 			</generator>
 		</id>
 
-		<property name="descrFormaDoc" column="DESCR_FORMA_DOC"
+		<property name="descrFormaDoc" column="DESCR_FORMA_DOC" lazy="false"
 			type="string" not-null="true" />
 
-		<property name="siglaFormaDoc" column="SIGLA_FORMA_DOC"
+		<property name="siglaFormaDoc" column="SIGLA_FORMA_DOC" lazy="false"
 			type="string" not-null="true" />
 
-		<many-to-one name="exTipoFormaDoc" column="ID_TIPO_FORMA_DOC"
+		<many-to-one name="exTipoFormaDoc" column="ID_TIPO_FORMA_DOC" lazy="false"
 			class="ExTipoFormaDoc" not-null="true" />
 
 		<set name="exModeloSet" order-by="NM_MOD" inverse="true" where="HIS_ATIVO = 1">

@@ -133,6 +133,9 @@
 				<param name="idMod">
 					${idMod}
 				</param>				
+				<param name="idFormaDoc">
+					${idFormaDoc}
+				</param>			
 			</result>
 			<result name="modelo" type="redirect-action">
 				<param name="namespace">/modelo</param>
@@ -141,6 +144,15 @@
 				</param>
 				<param name="id">
 					${idMod}
+				</param>
+			</result>
+			<result name="forma" type="redirect-action">
+				<param name="namespace">/forma</param>
+			    <param name="actionName">
+					editar
+				</param>
+				<param name="id">
+					${idFormaDoc}
 				</param>
 			</result>
 		</action>
@@ -154,6 +166,15 @@
 				</param>
 				<param name="id">
 					${idMod}
+				</param>
+			</result>
+			<result name="forma" type="redirect-action">
+				<param name="namespace">/forma</param>
+			    <param name="actionName">
+					editar
+				</param>
+				<param name="id">
+					${idFormaDoc}
 				</param>
 			</result>
 		</action>

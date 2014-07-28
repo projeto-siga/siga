@@ -286,6 +286,11 @@
   <function-signature>java.lang.Integer idadeEmAnos(java.lang.String)</function-signature>
  </function>
  <function>
+  <name>formatarCNPJ</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.String formatarCNPJ(java.lang.String)</function-signature>
+ </function>
+  <function>
   <name>formatarCPF</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.String formatarCPF(java.lang.String)</function-signature>

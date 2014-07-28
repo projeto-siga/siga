@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.text.MaskFormatter;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
@@ -835,6 +837,26 @@ public class FuncoesEL {
 		termo4 = cpf.substring(9);
 
 		return termo1 + "." + termo2 + "." + termo3 + "-" + termo4;
+	}
+	
+	/**
+	 * Aplica o formato de CNP. Ex: 1234567891012 para 12.345.678/9101-23
+	 * 
+	 * @param cnpj
+	 *            - CNPJ formatado.
+	 * @return
+	 * @throws ParseException 
+	 */
+	public static String formatarCNPJ(String cnpj) throws ParseException  {
+		if(cnpj != null) {
+			cnpj = cnpj.replaceAll("\\.", "").replaceAll("\\/", "").replaceAll("\\-", "");
+			
+			MaskFormatter mf = new MaskFormatter("##.###.###/####-##");  
+		    mf.setValueContainsLiteralCharacters(false);  
+		    return mf.valueToString(cnpj);
+		}
+		
+		return "";
 	}
 
 	public static String classNivPadr(String s) {

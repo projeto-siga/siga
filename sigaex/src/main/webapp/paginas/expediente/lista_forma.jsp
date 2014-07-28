@@ -18,16 +18,14 @@
 	<form id="listar" name="listar" method="GET" class="form100">
 		<table class="gt-form-table">
 			<tr class="header">
-				<td align="center" valign="top" colspan="4">Dados para a pesquisa</td>
+				<td align="center" valign="top" colspan="4">Ordenar Por</td>
 			</tr>
 			<tr>
-				<td class="tdLabel"><label for="script" class="label">Script:</label>
+				<td style="width: 10%;">
+				   <input type="radio" name="ordenar" value="descricao" onclick="this.form.submit();">Descrição<br>
 				</td>
-				<td><input type="text" name="script" size="40" value="${script}"
-					id="script" /></td>
-			</tr>
-			<tr>
-				<td colspan="2"><siga:monobotao inputType="submit" value="Buscar" cssClass="gt-btn-small gt-btn-left" />
+				<td>
+				   <input type="radio" name="ordenar" value="sigla" onclick="this.form.submit();">Sigla
 				</td>
 			</tr>
 		</table>

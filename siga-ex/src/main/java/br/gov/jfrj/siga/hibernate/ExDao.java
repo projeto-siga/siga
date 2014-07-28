@@ -516,6 +516,13 @@ public class ExDao extends CpDao {
 		crit.addOrder(Order.asc("descrFormaDoc"));
 		return crit.list();
 	}
+	
+	public List<ExFormaDocumento> listarTodosOrdenarPorSigla() {
+		final Criteria crit = getSessao()
+				.createCriteria(ExFormaDocumento.class);
+		crit.addOrder(Order.asc("siglaFormaDoc"));
+		return crit.list();
+	}
 
 	public List<ExDocumento> consultarPorModeloEAssinatura(
 			CpOrgaoUsuario orgaoUsu, ExModelo mod, Date dtAssinaturaIni,

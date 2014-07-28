@@ -50,7 +50,7 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 	public String sigla;
 	public Long idTipoFormaDoc;
 	public String tipoModelo;
-	public String script;
+	public String ordenar;
 	
 	private boolean origemExterno;
 	private boolean origemInternoProduzido;
@@ -88,7 +88,11 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 
 	public String aListar() throws Exception {
 		assertAcesso("MOD:Gerenciar modelos");
-		setItens(dao().listarTodosOrdenarPorDescricao());
+		if(getOrdenar() != null && getOrdenar().equals("sigla"))
+			setItens(dao().listarTodosOrdenarPorSigla());
+		else
+			setItens(dao().listarTodosOrdenarPorDescricao());
+		
 		return Action.SUCCESS;
 	}
 
@@ -315,5 +319,13 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;
+	}
+
+	public String getOrdenar() {
+		return ordenar;
+	}
+
+	public void setOrdenar(String ordenar) {
+		this.ordenar = ordenar;
 	}
 }

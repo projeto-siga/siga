@@ -45,7 +45,7 @@
 			<ww:form name="frm" action="gravar" namespace="/forma"
 				theme="simple" method="POST">
 				<ww:hidden name="postback" value="1" />
-				<ww:hidden name="id" value="${id}" id="modelo_gravar_id" />
+				<ww:hidden name="id" value="${id}" id="forma_gravar_id" />
 				<!--
  				<ww:hidden name="mobilPaiSel.sigla" value=""
 					id="transferir_gravar_pai" />
@@ -91,32 +91,32 @@
 			</div>
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasEletronico"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 				
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasCriar"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasAssinar"></div>
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasAcessar"></div>
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=modelo" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasNivelAcessoMaximo"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=18&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=18&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasNivelAcessoMinimo"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=19&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=19&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 			</div>
 		</c:if>

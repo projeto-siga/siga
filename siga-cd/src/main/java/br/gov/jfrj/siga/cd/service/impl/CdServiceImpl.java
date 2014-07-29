@@ -23,6 +23,7 @@ import java.util.Date;
 import javax.jws.WebService;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cd.AssinaturaDigital;
 import br.gov.jfrj.siga.cd.Cd;
 import br.gov.jfrj.siga.cd.service.CdService;
@@ -50,6 +51,7 @@ public class CdServiceImpl implements CdService {
 
 	public String validarAssinatura(byte[] assinatura, byte[] documento,
 			Date dtAssinatura, boolean verificarLCRs) {
+		assertAssinatura(assinatura);
 		try {
 			return Cd
 					.getInstance()
@@ -65,6 +67,7 @@ public class CdServiceImpl implements CdService {
 
 	public String validarAssinaturaPKCS7(byte[] digest, String digestAlgorithm,
 			byte[] assinatura, Date dtAssinatura, boolean verificarLCRs) {
+		assertAssinatura(assinatura);
 		try {
 			return AssinaturaDigital.validarAssinaturaPKCS7(digest,
 					digestAlgorithm, assinatura, dtAssinatura, verificarLCRs);
@@ -133,6 +136,7 @@ public class CdServiceImpl implements CdService {
 	public byte[] validarECompletarAssinatura(byte[] assinatura,
 			byte[] documento, boolean politica, Date dtAssinatura)
 			throws Exception {
+		assertAssinatura(assinatura);
 		return Cd
 				.getInstance()
 				.getAssinaturaDigital()
@@ -154,11 +158,19 @@ public class CdServiceImpl implements CdService {
 	public byte[] validarECompletarPacoteAssinavel(byte[] certificado,
 			byte[] documento, byte[] assinatura, boolean politica,
 			Date dtAssinatura) throws Exception {
+		assertAssinatura(assinatura);
 		return Cd
 				.getInstance()
 				.getAssinaturaDigital()
 				.validarECompletarPacoteAssinavel(certificado, documento,
 						assinatura, politica, dtAssinatura);
+	}
+
+	private void assertAssinatura(byte[] assinatura) {
+		if (assinatura==null){
+			throw new AplicacaoException("A assinatura não foi enviada para validação! Principais motivos: 1) o usuário cancelou "
+					+ "a operação de assinatura; 2) o usuário impediu que o navegador acessasse o certificado.");
+		}
 	};
 
 }

@@ -1926,7 +1926,8 @@ public class ExBL extends CpBL {
 			// writeB64File("c:/trabalhos/java/cd_teste_cms.b64", cms);
 
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro na assinatura de um documento",
+			throw new AplicacaoException("Erro na assinatura de um documento: " + 
+					e.getMessage()==null?"":e.getMessage(),
 					0, e);
 		}
 

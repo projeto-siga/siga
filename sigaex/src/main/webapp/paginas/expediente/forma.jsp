@@ -91,12 +91,12 @@
 			</div>
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasEletronico"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 				
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasCriar"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
@@ -122,7 +122,7 @@
 		</c:if>
 	
 	
-	<ww:url id="urlEditar" action="editar" namespace="/modelo" /> 
+	<ww:url id="urlEditar" action="editar" namespace="/forma" /> 
 	<script> 
 	
 		$("#gravar_sigla").change(function () {
@@ -149,7 +149,7 @@
 				$.ajax({				     				  
 					  url:'/sigaex/expediente/configuracao/listar_cadastradas.action',
 					  type: "GET",
-					  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idFormaDoc : idFormaDoc, nmTipoRetorno : "modelo", campoFixo : "True"},					    					   					 
+					  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idFormaDoc : idFormaDoc, nmTipoRetorno : "forma", campoFixo : "True"},					    					   					 
 					  success: function(data) {
 				    	$('#' + tabelaAlvo).html(data);				    
 				 	 }

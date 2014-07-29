@@ -139,6 +139,9 @@ function sbmt() {
 						<c:when test="${campoFixo && not empty config.exModelo}">
 							${config.exModelo.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc} - ${config.exModelo.exFormaDocumento.descrFormaDoc}
 						</c:when>
+						<c:when test="${campoFixo && not empty config.exFormaDocumento}">
+							${config.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc} - ${config.exFormaDocumento.descrFormaDoc}
+						</c:when>
 						<c:otherwise>
 							<ww:select name="idTpFormaDoc" list="tiposFormaDoc"
 					                       listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
@@ -161,6 +164,9 @@ function sbmt() {
 						<c:when test="${campoFixo && not empty config.exModelo}">
 							<ww:hidden name="idMod" />
 							${config.exModelo.descMod}
+						</c:when>
+						<c:when test="${campoFixo && not empty config.exFormaDocumento}">
+							<ww:hidden name="idFormaDoc" />
 						</c:when>
 						<c:otherwise>
 							<div style="display: inline" id="comboModeloDiv">

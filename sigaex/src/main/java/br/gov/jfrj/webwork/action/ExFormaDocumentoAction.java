@@ -120,6 +120,8 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 			
 			if(forma.getExTipoDocumentoSet() == null)
 				forma.setExTipoDocumentoSet(new TreeSet<ExTipoDocumento>());
+			else
+				forma.getExTipoDocumentoSet().clear();
 			
 			if(isOrigemInternoProduzido())
 				forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class, false));
@@ -306,7 +308,10 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 	}
 
 	public String getSigla() {
-		return sigla.toUpperCase();
+		if(sigla != null)
+			sigla.toUpperCase();
+		
+		return sigla;
 	}
 
 	public void setSigla(String sigla) {

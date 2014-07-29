@@ -1742,6 +1742,114 @@ public class ExBL extends CpBL {
 		}
 
 	}
+	
+	public void simularAssinaturaDocumento(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc){
+		
+		if (doc.isCancelado())
+			throw new AplicacaoException(
+					"Não é possível assinar um documento cancelado.");
+
+		boolean fPreviamenteAssinado = doc.isAssinado();
+
+		if (!fPreviamenteAssinado) {
+			try {
+				processarComandosEmTag(doc, "pre_assinatura");
+			} catch (AplicacaoException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new Error(e);
+			}
+		}
+		
+		try {
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), new Date(),
+					doc.getSubscritor(), null, null, null, null);
+
+			
+			mov.setDescrMov(doc.getSubscritor().getNomePessoa());
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov.getExDocumento());
+
+			// Verifica se o documento possui documento pai e faz a juntada
+			// automática. Caso o pai seja um volume de um processo, primeiro
+			// verifica se o volume está encerrado, se estiver procura o último
+			// volume para juntar.
+
+			if (doc.getExMobilPai() != null) {
+				if (doc.getExMobilPai().getDoc().isProcesso()
+						&& doc.getExMobilPai().isVolumeEncerrado()) {
+					doc.setExMobilPai(doc.getExMobilPai().doc()
+							.getUltimoVolume());
+					gravar(cadastrante, lotaCadastrante, doc);
+				}
+				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, mov.getDtMov(),
+						cadastrante, cadastrante, mov);
+			}
+
+			if (doc.getExMobilAutuado() != null) {
+				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc,
+						mov.getDtMov(), cadastrante, cadastrante, mov);
+			}
+
+			if (!fPreviamenteAssinado && doc.isAssinado()) {
+				processarComandosEmTag(doc, "assinatura");
+			}
+
+		} catch (final Exception e) {
+			cancelarAlteracao();
+
+			if (e.getMessage().contains("junta"))
+				throw new AplicacaoException(
+						"O documento foi assinado com sucesso mas não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
+								+ e.getMessage(), 0, e);
+
+			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
+		}
+
+	}
+	
+	public void simularAssinaturaMovimentacao(DpPessoa cadastrante,
+			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
+			final Date dtMov, long tpMovAssinatura) throws AplicacaoException {
+
+		if (movAlvo == null) {
+			throw new AplicacaoException(
+					"Não é possível assinar uma movimentação cancelada.");
+		}
+
+		if (movAlvo.isCancelada()) {
+			throw new AplicacaoException(
+					"Não é possível assinar uma movimentação cancelada.");
+		}
+
+		try{
+			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
+						cadastrante, lotaCadastrante, movAlvo.getExMobil(), null,
+						null, null, null, null, null);
+			
+			mov.setExMovimentacaoRef(movAlvo);
+			
+			mov.setSubscritor(movAlvo.getSubscritor() != null ? movAlvo.getSubscritor() : movAlvo.getCadastrante());
+			mov.setDescrMov(movAlvo.getSubscritor().getNomePessoa());
+			
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov.getExDocumento());
+		} catch (final AplicacaoException e) {
+			cancelarAlteracao();
+			throw e;
+		} catch (final Exception e) {
+			log.error("Erro ao assinar movimentação.", e);
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao assinar movimentação.", 0, e);
+		}
+
+	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,

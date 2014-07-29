@@ -26,8 +26,10 @@
 
 package br.gov.jfrj.webwork.action;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -88,6 +90,9 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
 import com.opensymphony.xwork.Action;
 
 public class ExMovimentacaoAction extends ExActionSupport {
@@ -1257,10 +1262,87 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	// public String aFinalizarAssinar() throws Exception{
-	// setFinalizar(true);
-	// return aAssinar();
-	// }
+	public String aSimularAssinatura() throws Exception {
+		buscarDocumento(true);
+		Ex
+		.getInstance()
+		.getBL().simularAssinaturaDocumento(getCadastrante(), getLotaTitular(), doc);
+		return Action.SUCCESS;
+	}
+	
+	public String aSimularAssinaturaMov() throws Exception {
+		buscarDocumento(true);
+		Ex.getInstance()
+		.getBL()
+		.simularAssinaturaMovimentacao(getCadastrante(), getLotaTitular(),
+				mov, new Date(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO);
+		return Action.SUCCESS;
+	}
+	
+	public String aSimularAnexacao() throws Exception {
+		Document document = new Document();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfWriter.getInstance(document, baos);
+		document.open();
+		document.addTitle("PDF de teste");
+		Paragraph preface = new Paragraph();
+	    preface.add(new Paragraph("Este é um documento de teste"));
+	    document.add(preface);
+		document.close();
+
+		buscarDocumento(true);
+		lerForm(mov);
+
+		mov.setNmArqMov("teste.pdf");
+		mov.setConteudoTpMov("application/pdf");
+
+		mov.setConteudoBlobMov2(baos.toByteArray());
+
+		if(mob.isVolumeEncerrado()) {
+			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");
+		}
+
+		if (!Ex.getInstance().getComp()
+				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Arquivo não pode ser anexado");
+		
+		
+		// Obtem as pendencias que serão resolvidas
+		String aidMov[] = getRequest().getParameterValues("pendencia_de_anexacao");
+		Set<ExMovimentacao> pendencias = null;
+		if (aidMov != null) {
+			pendencias = new TreeSet<ExMovimentacao>();
+			for (String s : aidMov) {
+				pendencias.add(dao().consultar(Long.parseLong(s), ExMovimentacao.class, false));
+			}
+		}
+
+		try {
+			// Nato: Precisei usar o código abaixo para adaptar o charset do
+			// nome do arquivo
+			String s1 = new String(mov.getNmArqMov().getBytes(), "utf-8");
+			byte[] ab = mov.getNmArqMov().getBytes();
+			for (int i = 0; i < ab.length; i++)
+				if (ab[i] == -29)
+					ab[i] = -61;
+			String sNmArqMov = new String(ab, "utf-8");
+
+			Ex.getInstance()
+					.getBL()
+					.anexarArquivo(getCadastrante(), getLotaTitular(), mob,
+							mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
+							mov.getTitular(), mov.getLotaTitular(),
+							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
+							getDescrMov(), pendencias);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		// request.setAttribute("doc", mov.getExDocumento());
+		setDoc(mov.getExDocumento());
+
+		return Action.SUCCESS;
+	}
 
 	public String aAssinarGravar() throws Exception {
 		boolean fApplet = getRequest().getParameter("QTYDATA") != null;

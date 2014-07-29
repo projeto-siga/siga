@@ -1236,6 +1236,35 @@
 			method="aAssinarLote">
 			<result>/paginas/expediente/assina_lote.jsp</result>
 		</action>
+		
+		<action name="simular_assinatura" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSimularAssinatura">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="simular_anexacao" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSimularAnexacao">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="simular_assinatura_mov" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSimularAssinaturaMov">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+
 
 	</package>
 	

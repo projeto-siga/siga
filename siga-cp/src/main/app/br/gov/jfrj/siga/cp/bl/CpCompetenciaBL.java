@@ -48,10 +48,15 @@ public class CpCompetenciaBL {
 	 * @return
 	 */
 	public DpLotacao getSubsecretaria(DpLotacao lota) {
-		if (lota == null)
+		DpLotacao l = lota;
+		if (l == null)
 			return null;
-		while (!lota.isSubsecretaria() && lota.getLotacaoPai() != null) {
-			lota = lota.getLotacaoPai();
+		if (l.isSubsecretaria())
+			return l;
+		while (l.getLotacaoPai() != null) {
+			l = l.getLotacaoPai();
+			if (l.isSubsecretaria())
+				return l;
 		}
 		return lota;
 	}

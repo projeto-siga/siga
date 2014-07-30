@@ -76,13 +76,17 @@ public class DpLotacaoSelecao extends Selecao<DpLotacao> {
 		oExemplo.setOrgaoUsuario(ou);
 		oExemplo.setSigla(getSigla().substring(2));
 
-		final DpLotacao o = CpDao.getInstance().consultarPorSigla(oExemplo);
+		try{
+			final DpLotacao o = CpDao.getInstance().consultarPorSigla(oExemplo);
 
-		if (o == null) {
+			if (o == null) {
+				return false;
+			}
+
+			buscarPorObjeto(o);
+		}catch(Exception e){
 			return false;
 		}
-
-		buscarPorObjeto(o);
 		return true;
 	}
 

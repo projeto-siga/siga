@@ -677,9 +677,11 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpLotacaoDaoFiltro flt) {
 		final DpLotacao o = new DpLotacao();
 		o.setSigla(flt.getSigla());
-		if(o.getOrgaoUsuario()!=null && o.getOrgaoUsuario().getIdOrgaoUsu() == null 
-				&& o.getOrgaoUsuario().getSiglaOrgaoUsu() == null)
-			o.getOrgaoUsuario().setIdOrgaoUsu(flt.getIdOrgaoUsu());
+		if (o.getOrgaoUsuario() == null && flt.getIdOrgaoUsu() != null){
+			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
+			o.setOrgaoUsuario(cpOrgaoUsu);
+		}
+		
 		
 /*		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 		cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu());

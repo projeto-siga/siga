@@ -168,8 +168,8 @@ public class PrincipalAction extends SigaActionSupport {
 			//alterada a condição que verifica se é uma solicitação do siga-sr
 			//dessa forma a regex verifica se a sigla começa com SR ou sr e termina com números
 			//necessário para não dar conflito caso exista uma lotação que inicie com SR
-			//if (copiaSigla.startsWith("SR")) {
-			if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
+			if (copiaSigla.startsWith("SR")) {
+//			if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
 				if (Cp.getInstance()
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
@@ -215,8 +215,8 @@ public class PrincipalAction extends SigaActionSupport {
 			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
 					.split(";");
 
-//			if (copiaSigla.startsWith("SR"))
-			if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
+			if (copiaSigla.startsWith("SR"))
+//			if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
 				uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
 			else if (copiaSigla.startsWith("MTP")
 					|| copiaSigla.startsWith("STP")

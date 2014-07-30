@@ -105,8 +105,8 @@
 				</table>
 			</ww:form>
 		</div>
-		<c:if test="${not empty id}">
 			</div>
+		<c:if test="${not empty id}">			
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasEletronico"></div>	
 				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	

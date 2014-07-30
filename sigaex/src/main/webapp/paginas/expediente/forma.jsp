@@ -87,9 +87,9 @@
 				</table>
 			</ww:form>
 		</div>
-        <c:if test="${not empty id}">
 			</div>
-				<div style="clear: both; margin-bottom: 20px;">		
+        <c:if test="${not empty id}">
+        		<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasEletronico"></div>	
 				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>

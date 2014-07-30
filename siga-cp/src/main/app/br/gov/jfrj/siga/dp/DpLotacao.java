@@ -147,7 +147,6 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	public void setSigla(String sigla) {
 		String siglasOrgaoUsu = "";
-		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 		List<CpOrgaoUsuario> lou = CpDao.getInstance()
 				.listarOrgaosUsuarios();
 		for (CpOrgaoUsuario ou : lou) {
@@ -157,12 +156,12 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		final Pattern p1 = Pattern.compile("^(" + siglasOrgaoUsu + ")([a-zA-Z]+)");
 		final Matcher m = p1.matcher(sigla.toUpperCase());
 		if (m.find()) {
+			CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 			cpOrgao.setSiglaOrgaoUsu(m.group(1).toUpperCase());
 			setOrgaoUsuario(cpOrgao);
 			setSiglaLotacao(m.group(2).toUpperCase());
 		}
 		else {
-			setOrgaoUsuario(cpOrgao);
 			setSiglaLotacao(sigla.toUpperCase());
 		}
 	}

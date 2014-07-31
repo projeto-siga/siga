@@ -333,8 +333,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public List<ExTpDocPublicacao> getListaPublicacao() {
-		ExModelo mod = dao().consultar(getIdMod(), ExModelo.class, false);
-		return PublicacaoDJEBL.obterListaTiposMaterias(mod.getHisIdIni());
+		return FuncoesEL.listaPublicacao(getIdMod());
 	}
 
 	public List<ExDocumento> getListaDocsAPublicarBoletim() {

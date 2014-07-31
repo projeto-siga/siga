@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
@@ -975,6 +976,11 @@ public class FuncoesEL {
 			return df.format(data);
 		}
 		return "";
+	}
+	
+	public static List<ExTpDocPublicacao> listaPublicacao(Long idMod) {
+		ExModelo mod = dao().consultar(idMod, ExModelo.class, false);
+		return PublicacaoDJEBL.obterListaTiposMaterias(mod.getHisIdIni());
 	}
 	
 }

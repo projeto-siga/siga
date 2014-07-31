@@ -290,6 +290,18 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 		return Action.SUCCESS;
 	}
 	
+	public String aDesativar() throws Exception {
+		dao().iniciarTransacao();
+		assertAcesso("MOD:Gerenciar modelos");
+		if (getId() == null) 
+			throw new Exception("ID não informada");
+		mod = dao().consultar(getId(), ExModelo.class, false);
+		dao().excluirComHistorico(mod, dao().consultarDataEHoraDoServidor(),
+				getIdentidadeCadastrante());
+		dao().commitTransacao();
+		return Action.SUCCESS;
+	}
+	
 	public Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
 		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(
 				new Comparator() {

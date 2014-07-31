@@ -99,7 +99,12 @@
 						</td>
 					</tr>
 					<tr class="button">
-						<td colspan="2"><input type="submit" value="Ok"  class="gt-btn-medium gt-btn-left"/> <input type="submit" name="submit" value="Aplicar"  class="gt-btn-medium gt-btn-left"/> <input type="button"
+						<td colspan="2"><input type="submit" value="Ok"  class="gt-btn-medium gt-btn-left"/> <input type="submit" name="submit" value="Aplicar"  class="gt-btn-medium gt-btn-left"/>
+						<ww:url id="urlDesativar" action="desativar" namespace="/modelo" /> 
+						<input type="button" value="Desativar"
+							class="gt-btn-medium gt-btn-left"
+							onclick="location.href='<ww:property value="%{urlDesativar}"/>?id=${id}'" /> 
+						<input type="button"
 							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/></td>
 					</tr>
 				</table>

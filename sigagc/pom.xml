@@ -10,8 +10,10 @@
 		<version>1.0.0-beta6</version>
 	</parent>
 
-	<modelVersion>4.0.0</modelVersion>
+	<groupId>projeto-siga</groupId>
 	<artifactId>sigagc</artifactId>
+	<modelVersion>4.0.0</modelVersion>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>play</packaging>
 
 	<properties>
@@ -27,17 +29,20 @@
 		<!-- fim local dependency -->
 
 		<dependency>
-			<groupId>projeto-siga</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>siga-play-module</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<classifier>module-min</classifier>
 			<type>zip</type>
+
 		</dependency>
+
 		<dependency>
-			<groupId>projeto-siga</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>siga-play-module</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -95,6 +100,43 @@
 		</dependency>
 	</dependencies>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<build>
 		<sourceDirectory>/app</sourceDirectory>
 		<plugins>
@@ -138,6 +180,54 @@
 					</execution>
 				</executions>
 
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-verify</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>selenium-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-verify</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>selenium-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
 			</plugin>
 
 			<plugin>

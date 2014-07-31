@@ -23,8 +23,6 @@ package utils;
  * Comments, suggestions, and bug reports welcome: yarosla@gmail.com
  */
 
-import static ys.wikiparser.Utils.*;
-
 import java.net.*;
 import java.util.HashSet;
 import java.util.*;

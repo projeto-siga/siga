@@ -19,7 +19,9 @@ public abstract class ObjetoBase extends GenericModel {
 				this.save();
 				thisHistorico.setHisIdIni(thisHistorico.getId());
 			} else {
-				JPA.em().detach(this);
+//				JPA.em().detach(this); TODO VERIFICAR KARINA
+				JPA.em().remove(this);
+				
 				// Edson: Na linha abaixo, não funciona findById. Dá
 				// UnsupportedOpException.
 				// Isso porque ObjetoBase não está anotado com @Entity. No

@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1050,8 +1049,7 @@ public class Application extends SigaApplication {
 			}
 			resultado.add(dri);
 		}
-		Gson gson = new GsonBuilder()
-		   .setDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").create();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").create();
 		renderJSON(gson.toJson(resultado));
 	}
 

@@ -337,9 +337,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public List<ExDocumento> getListaDocsAPublicarBoletim() {
-		final List<ExDocumento> l = dao().consultarPorModeloParaPublicar(
-				getLotaTitular().getOrgaoUsuario());
-		return l;
+		return FuncoesEL.listaDocsAPublicarBoletim(getLotaTitular().getOrgaoUsuario());
 	}
 
 	public List<ExDocumento> getListaDocsAPublicarBoletimPorDocumento() {

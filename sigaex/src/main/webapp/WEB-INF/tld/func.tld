@@ -336,4 +336,10 @@
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>List&lt;ExTpDocPublicacao&gt; listaPublicacao(java.lang.Long)</function-signature>
  </function>
+  <function>
+  <name>calculoPCD</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>CalculoPCD calculoPCD(java.lang.String, java.lang.String, br.gov.jfrj.siga.dp.DpPessoa, java.lang.String, java.lang.String, 
+			java.lang.Boolean, java.lang.Boolean, java.lang.Integer, java.lang.Float, java.lang.Float, java.lang.Boolean)</function-signature>
+ </function>
 </taglib>

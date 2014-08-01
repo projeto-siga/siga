@@ -30,29 +30,24 @@ public class SigaApplication extends Controller {
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
-	protected static void obterCabecalhoEUsuario(String backgroundColor)
-			throws Exception {
+	protected static void obterCabecalhoEUsuario(String backgroundColor) throws Exception {
 		try {
 
-			// Obter cabeçalho e rodapé do Siga
+			// Obter cabecalho e rodape do Siga
 			HashMap<String, String> atributos = new HashMap<String, String>();
 			for (Http.Header h : request.headers.values())
 				if (!h.name.equals("content-type"))
 					atributos.put(h.name, h.value());
 
 			String popup = params.get("popup");
-			if (popup == null
-					|| (!popup.equals("true") && !popup.equals("false")))
+			if (popup == null	|| (!popup.equals("true") && !popup.equals("false")))
 				popup = "false";
-			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
-					+ "/pagina_vazia.action?popup=" + popup, atributos);
+			String paginaVazia = ConexaoHTTP.get(getBaseSiga()	+ "/pagina_vazia.action?popup=" + popup, atributos);
 			String[] pageText = paginaVazia.split("<!-- insert body -->");
 			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
 
 			if (backgroundColor != null)
-				cabecalho[0] = cabecalho[0].replace("<html>",
-						"<html style=\"background-color: " + backgroundColor
-								+ " !important;\">");
+				cabecalho[0] = cabecalho[0].replace("<html>","<html style=\"background-color: " + backgroundColor	+ " !important;\">");
 
 			String[] cabecalho_pre = cabecalho[0].split("</head>");
 
@@ -71,38 +66,32 @@ public class SigaApplication extends Controller {
 			renderArgs.put("_cabecalho_pos", cabecalhoPos);
 			renderArgs.put("_rodape", rodape);
 
-			// Obter usuário logado
-			String[] IDs = ConexaoHTTP.get(
-					getBaseSiga() + "/usuario_autenticado.action", atributos)
-					.split(";");
+			// Obter usuario logado
+			String[] IDs = ConexaoHTTP.get(getBaseSiga() + "/usuario_autenticado.action", atributos).split(";");
 
 			renderArgs.put("cadastrante",
 					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
 
 			if (IDs[1] != null && !IDs[1].equals(""))
-				renderArgs.put("lotaCadastrante",
-						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
+				renderArgs.put("lotaCadastrante",JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
 
 			if (IDs[2] != null && !IDs[2].equals(""))
-				renderArgs.put("titular",
-						JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
+				renderArgs.put("titular",JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
 
 			if (IDs[3] != null && !IDs[3].equals(""))
-				renderArgs.put("lotaTitular",
-						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
+				renderArgs.put("lotaTitular",JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
 
 			if (IDs[4] != null && !IDs[4].equals("")) {
-				CpIdentidade identidadeCadastrante = JPA.em().find(
-						CpIdentidade.class, Long.parseLong(IDs[4]));
+				CpIdentidade identidadeCadastrante = JPA.em().find(CpIdentidade.class, Long.parseLong(IDs[4]));
 				renderArgs.put("identidadeCadastrante", identidadeCadastrante);
 			}
 
 			renderArgs.put("currentTimeMillis", new Date().getTime());
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Edson: Quando as informações não puderam ser obtidas do Siga,
-			// manda para a página de login. Se não for esse o erro, joga
-			// exceção pra cima.
+			// Edson: Quando as informacoes nao puderem ser obtidas do Siga,
+			// manda para a pagina de login. Se nao for esse o erro, joga
+			// excecao pra cima.
 			redirect("/siga/redirect.action?uri=" + JavaExtensions.urlEncode(request.url));
 		}
 
@@ -127,7 +116,7 @@ public class SigaApplication extends Controller {
 					+ "' usuário: " + cadastrante().getSigla() + " lotação: "
 					+ lotaTitular().getSiglaCompleta());
 	}
-	
+
 	protected static void tratarExcecoes(Exception e) {
 		// MailUtils.sendErrorMail(e);
 		if (cadastrante() != null)
@@ -157,12 +146,12 @@ public class SigaApplication extends Controller {
 		return "http://" + Play.configuration.getProperty("servidor.principal")
 				+ ":8080/siga";
 	}
-	
+
 	@Catch(value = Throwable.class, priority = 1)
 	public static void catchError(Throwable throwable) {
 		if (Play.mode.isDev())
 			return;
-		
+
 		// Flash.current().clear();
 		// Flash.current().put("_cabecalho_pre",
 		// renderArgs.get("_cabecalho_pre"));
@@ -180,7 +169,7 @@ public class SigaApplication extends Controller {
 			message = "Nenhuma informação disponível.";
 		erro(message, stackTrace);
 	}
-	
+
 	public static void erro(String message, String stackTrace) {
 		render(message, stackTrace);
 	}

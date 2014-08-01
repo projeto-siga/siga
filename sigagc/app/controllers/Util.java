@@ -136,12 +136,18 @@ public class Util {
 	 * 
 	 **/
 	public static String marcarLinkNoConteudo(String conteudo) throws Exception {
+		if (conteudo == null)
+			return null;
 			
 		if(acronimoOrgao == null) {
 			acronimoOrgao = "";
 			List<String> acronimo = CpOrgaoUsuario.find("select acronimoOrgaoUsu from CpOrgaoUsuario").fetch();
 			for(String ao : acronimo) 
 				acronimoOrgao += (acronimoOrgao.isEmpty() ? "" : "|") + ao;
+		}
+		if (conteudo.startsWith("<")) {
+			conteudo = findSiglaHTML(conteudo);
+			return findHashTagHTML(conteudo, null, CONTROLE_LINK_HASH_TAG);
 		}
 		conteudo = findSigla(conteudo);
 		return findHashTag(conteudo, null, CONTROLE_LINK_HASH_TAG);
@@ -179,6 +185,45 @@ public class Util {
 				else {
 					matcherSigla.appendReplacement(sb,"[[" + URL_SIGA_DOC +
 							URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
+				}
+			}
+		}
+		matcherSigla.appendTail(sb);
+		return sb.toString();
+	}
+
+	private static String findSiglaHTML(String conteudo) throws Exception{
+		String sigla = null;
+		GcInformacao infoReferenciada = null;
+		StringBuffer sb = new StringBuffer();
+
+		//lembrar de retirar o RJ quando for para a produção. 
+		Pattern padraoSigla = Pattern.compile(
+								//reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01, JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01, TRF2-PRO-2013/00001-V01
+								"(?i)(?:(?:RJ|" + acronimoOrgao + ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)"
+								); 
+
+		Matcher matcherSigla = padraoSigla.matcher(conteudo);
+		while(matcherSigla.find()){
+			//identifica que é um código de um conhecimento, ou serviço ou documento
+			if(matcherSigla.group(1) != null) {
+				sigla = matcherSigla.group(0).toUpperCase().trim();
+				//conhecimento
+				if(matcherSigla.group(1).toUpperCase().equals("GC")) {
+					infoReferenciada = GcInformacao.findBySigla(sigla);
+					matcherSigla.appendReplacement(sb,"<a href=\"" + URL_SIGA_GC + 
+							URLEncoder.encode(sigla, "UTF-8") + "\">" + sigla + " - " +
+							infoReferenciada.arq.titulo + "</a>");						
+				}
+				//serviço
+				else if(matcherSigla.group(1).toUpperCase().equals("SR")) {
+					matcherSigla.appendReplacement(sb,"<a href=\"" + URL_SIGA_SR + 
+							URLEncoder.encode(sigla, "UTF-8") + "\">" + sigla + "</a>");
+				}
+				//documento
+				else {
+					matcherSigla.appendReplacement(sb,"<a href=\"" + URL_SIGA_DOC +
+							URLEncoder.encode(sigla, "UTF-8") + "\">" + sigla + "</a>");
 				}
 			}
 		}
@@ -225,4 +270,56 @@ public class Util {
 		else	
 			return null;
 	}
+
+	public static String escapeHashTag(String conteudo) {
+		StringBuffer sb = new StringBuffer();
+		String hashTag = new String();
+			
+		Pattern padraoHashTag = Pattern.compile(
+								//reconhece uma hashTag (#)
+								"(#[\\w-]+)"
+								);
+				
+		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
+		while(matcherHashTag.find()) {
+			matcherHashTag.appendReplacement(sb,"{{{" + matcherHashTag.group(0) + "}}}");
+		}
+		return sb.toString();
+	}
+
+	public static String findHashTagHTML(String conteudo, String classificacao, int controle) {
+		StringBuffer sb = new StringBuffer();
+		String hashTag = new String();
+			
+		Pattern padraoHashTag = Pattern.compile(
+								//reconhece uma hashTag (#)
+								"(#[\\w-]+)"
+								);
+				
+		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
+		while(matcherHashTag.find()) {
+			if(controle == 1) 
+				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(0);
+			else if(controle == 2){
+				matcherHashTag.appendReplacement(sb,"<a href=\"/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.sigla=" + 
+													matcherHashTag.group(0).substring(1)  + "\">$0</a>");
+			}
+		}
+		if(controle == 1) {
+			if(classificacao != null)
+				//remove todas as hashTag da classificacao, caso exista. Necessário para manter a classificacao
+				//atualizada. Ao final serão inseridas as hashTags que foram acrescentadas/mantidas no conteudo
+				classificacao = classificacao.replaceAll("[,\\s]*#[,\\w-]+", "").trim();
+			else
+				classificacao = "";
+			return GcBL.atualizarClassificacao(classificacao, hashTag);
+		}
+		else if(controle == 2){
+			matcherHashTag.appendTail(sb);
+			return sb.toString();
+		}
+		else	
+			return null;
+	}
+
 }

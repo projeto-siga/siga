@@ -3304,9 +3304,12 @@ public class ExBL extends CpBL {
 			if (doc.getIdDoc() == null)
 				doc = ExDao.getInstance().gravar(doc);
 			
-			
-			if(doc.getExModelo().isDescricaoAutomatica())
+			if(doc.getExModelo().isDescricaoAutomatica()) 
 				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
+				
+			if(doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
+				throw new AplicacaoException(
+						"A descrição do documento não pode ser vazia.");
 
 			long tempoIni = System.currentTimeMillis();
 

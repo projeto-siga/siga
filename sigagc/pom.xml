@@ -2,13 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!-- <parent> <groupId>com.google.code.maven-play-plugin</groupId> <artifactId>play-app-default-parent</artifactId> 
+	<!-- <parent> <artifactId>play-app-default-parent</artifactId> <groupId>com.google.code.maven-play-plugin</groupId> 
 		<version>1.0.0-beta6</version> </parent> -->
-	<parent>
-		<artifactId>play-app-default-parent</artifactId>
-		<groupId>com.google.code.maven-play-plugin</groupId>
-		<version>1.0.0-beta6</version>
-	</parent>
 
 	<groupId>projeto-siga</groupId>
 	<artifactId>sigagc</artifactId>
@@ -19,14 +14,19 @@
 	<properties>
 		<play.version>1.3.0-RC1</play.version>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+
+		<!-- novas -->
+		<play.plugin.version>1.0.0-beta6</play.plugin.version>
+		<play.testId>test</play.testId>
+		<play.startTimeout>0</play.startTimeout>
+		<play.stopTimeout>0</play.stopTimeout>
+		<selenium.server.version>2.33.0</selenium.server.version>
+		<play.seleniumSkip>true</play.seleniumSkip>
 	</properties>
 
 	<dependencies>
-		<!-- local dependency -->
-		<!-- <dependency> <groupId> com.playframework</groupId> <artifactId>play</artifactId> 
-			<version>1.3</version> </dependency> -->
 
-		<!-- fim local dependency -->
+		<!-- Siga Play Module -->
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -34,7 +34,6 @@
 			<version>${project.version}</version>
 			<classifier>module-min</classifier>
 			<type>zip</type>
-
 		</dependency>
 
 		<dependency>
@@ -43,7 +42,7 @@
 			<version>${project.version}</version>
 		</dependency>
 
-
+		<!-- Demais dependencias -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -93,56 +92,178 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- <dependency> <groupId>org.javassist</groupId> <artifactId>javassist</artifactId> 
+			<version>3.18.1-GA</version> <scope>provided</scope> </dependency> -->
+
+		<!-- Play Dependencies -->
 		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.18.2-GA</version>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.3-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.maven-play-plugin.org.playframework</groupId>
+			<artifactId>play</artifactId>
+			<version>${play.version}</version>
+			<classifier>framework-min</classifier>
+			<type>zip</type>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.maven-play-plugin</groupId>
+			<artifactId>play-selenium-junit4</artifactId>
+			<version>${play.plugin.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- local dependency -->
+		<dependency>
+			<groupId>com.google.code.maven-play-plugin.org.playframework</groupId>
+			<artifactId>play</artifactId>
+			<version>1.3.x</version>
+		</dependency>
+
 	</dependencies>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	<build>
 		<sourceDirectory>/app</sourceDirectory>
 		<plugins>
+			<!-- NOVOS -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.15</version>
+				<configuration>
+					<debugForkedProcess>-XX:-UseSplitVerifier</debugForkedProcess> <!-- for Java7 compatibility -->
+					<excludes>
+						<exclude>**/*SeleniumTest.java</exclude>
+					</excludes>
+					<properties>
+						<property>
+							<name>play.testId</name>
+							<value>${play.testId}</value>
+						</property>
+						<property>
+							<name>play.startTimeout</name>
+							<value>${play.startTimeout}</value>
+						</property>
+						<property>
+							<name>play.stopTimeout</name>
+							<value>${play.stopTimeout}</value>
+						</property>
+					</properties>
+					<runOrder>alphabetical</runOrder>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.google.code.maven-play-plugin</groupId>
+						<artifactId>surefire-play-junit4</artifactId>
+						<version>${play.plugin.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.7.2</version>
+				<configuration>
+					<skip>${play.seleniumSkip}</skip>
+					<forkMode>never</forkMode> <!-- no need to fork, two servers already forked: Play! and Selenium -->
+					<includes>
+						<include>**/*SeleniumTest.java</include>
+					</includes>
+					<runOrder>alphabetical</runOrder>
+					<systemPropertyVariables>
+						<selenium.browser>${selenium.browser}</selenium.browser>
+						<selenium.url>${selenium.url}</selenium.url>
+						<selenium.test.trace>${selenium.test.trace}</selenium.test.trace>
+					</systemPropertyVariables>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-verify</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>selenium-maven-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<background>true</background>
+					<browserSessionReuse>true</browserSessionReuse> <!--experimental -->
+					<debug>true</debug>
+					<defaultUserExtensionsEnabled>false</defaultUserExtensionsEnabled>
+					<logOutput>true</logOutput>
+					<skip>${play.seleniumSkip}</skip>
+					<userExtensions>${project.build.directory}/play/home/modules/testrunner/public/test-runner/selenium/scripts/user-extensions.js</userExtensions>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.seleniumhq.selenium</groupId>
+						<artifactId>selenium-server</artifactId>
+						<version>${selenium.server.version}</version>
+					</dependency>
+
+					<dependency>
+						<groupId>org.seleniumhq.selenium</groupId>
+						<artifactId>selenium-remote-driver</artifactId>
+						<version>${selenium.server.version}</version>
+					</dependency>
+
+					<dependency>
+						<groupId>org.seleniumhq.selenium</groupId>
+						<artifactId>selenium-api</artifactId>
+						<version>${selenium.server.version}</version>
+					</dependency>
+
+
+				</dependencies>
+
+
+
+			</plugin>
+
+			<!-- FIM NOVOS -->
+
+
 			<plugin>
 				<groupId>com.google.code.maven-play-plugin</groupId>
 				<artifactId>play-maven-plugin</artifactId>
+				<version>1.0.0-beta7</version>
 				<extensions>true</extensions>
 				<configuration>
 					<warDependencyExcludes>jta,siga-base,siga-cd-base,siga-sinc-lib,siga-ws,jboss-transaction-api_1.1_spec,netty</warDependencyExcludes>
@@ -179,56 +300,8 @@
 						<phase>none</phase>
 					</execution>
 				</executions>
-
 			</plugin>
 
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-verify</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>selenium-maven-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-verify</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>selenium-maven-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -276,12 +349,14 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<fork>true</fork>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.7</version>
@@ -290,7 +365,7 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<copy tofile="../target/${artifactId}.war">
+								<copy tofile="../target/${project.artifactId}.war">
 									<fileset dir="${project.basedir}/target">
 										<include name="**/*.war" />
 									</fileset>
@@ -370,5 +445,19 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 </project>

@@ -46,7 +46,9 @@ import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
+import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoEmail;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
+import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFormula;
 import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
@@ -278,6 +280,10 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 					.obterPara(tpGrp, codigoTipoConfiguracaoNova);
 			if (tpCfgGrpEnum != null) {
 				ConfiguracaoGrupo cfgGrp = fabrica.getInstance(tpCfgGrpEnum);
+				if (!podeGravarConfiguracaoAvancada(cfgGrp)){
+					throw new AplicacaoException("Você nâo tem permissão para configurar " + tpCfgGrpEnum.getDescricao()+ ". Por favor, entre em contato com o suporte técnico para realizar tal configuração.");
+				}
+
 				cfgGrp.setConteudoConfiguracao(conteudoConfiguracaoNova);
 				if (cfgGrp.getConteudoConfiguracao() == null
 						|| cfgGrp.getConteudoConfiguracao().equals("")) {
@@ -327,9 +333,13 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 									.getCodigo())
 									|| !cfgConteudo.equals(cfgGrpGravada
 											.getConteudoConfiguracao())) {
+								TipoConfiguracaoGrupoEnum tpCfgGrpNova = TipoConfiguracaoGrupoEnum
+														.obterPara(tpGrp, tpCfg);
 								ConfiguracaoGrupo cfgGrpNova = fabrica
-										.getInstance(TipoConfiguracaoGrupoEnum
-												.obterPara(tpGrp, tpCfg));
+										.getInstance(tpCfgGrpNova);
+								if (!podeGravarConfiguracaoAvancada(cfgGrpNova)){
+									throw new AplicacaoException("Você nâo tem permissão para configurar " + tpCfgGrpNova.getDescricao()+ ". Por favor, entre em contato com o suporte técnico para realizar tal configuração.");
+								}
 								if (cfgConteudo == null
 										|| cfgConteudo.equals("")) {
 									throw new AplicacaoException(
@@ -367,6 +377,20 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 		}
 
 		return "edita";
+	}
+
+	private boolean podeGravarConfiguracaoAvancada(ConfiguracaoGrupo cfgGrupo) throws Exception {
+		return podeIncluirGrupoDeDistribuicao() && isConfiguracaoAvancada(cfgGrupo);
+	}
+
+	private boolean isConfiguracaoAvancada(
+			ConfiguracaoGrupo cfgGrupo) {
+		return cfgGrupo instanceof ConfiguracaoGrupoEmail
+				|| cfgGrupo instanceof ConfiguracaoGrupoFormula;
+	}
+
+	private boolean podeIncluirGrupoDeDistribuicao() throws Exception {
+		return Cp.getInstance().getComp().getConfiguracaoBL().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA;GI;GDISTR;INC:Incluir");
 	}
 
 	public String aGravarGestorGrupo() {

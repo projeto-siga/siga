@@ -14,6 +14,7 @@
 <%@ attribute name="onLoad"%>
 <%@ attribute name="desabilitarbusca"%>
 <%@ attribute name="desabilitarmenu"%>
+<%@ attribute name="incluirJs"%>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -78,13 +79,12 @@ ${meta}
 
 <script src="/siga/javascript/jquery/1.6/jquery-1.6.4.min.js" type="text/javascript"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"
-	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"
-	type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection">
 <!-- <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/development-bundle/themes/base/jquery.ui.all.css"
 	type="text/css" media="screen, projection"> -->
-	
+<c:if test="${not empty incluirJs}">
+    <script src="/siga/${incluirJs}" type="text/javascript"></script>
+</c:if>
 		
 <%-- Desabilitado porque requer o jquery 1.7 ou maior. 	
 <script language="JavaScript"

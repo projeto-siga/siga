@@ -123,15 +123,5 @@
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 		</dependency>
-
-		<!-- Picketlink -->
-		<dependency>
-			<groupId>org.picketlink</groupId>
-			<artifactId>picketlink-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.picketlink</groupId>
-			<artifactId>picketlink-impl</artifactId>
-		</dependency>
 	</dependencies>
 </project>

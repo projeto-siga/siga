@@ -24,7 +24,7 @@
 		<module>sigaex</module>
 		<module>siga-ext</module>
 		<module>siga-ex</module>
-		<!-- <module>siga-cd</module> <module>sigacd</module> <module>siga-wf</module> 
+		<!-- <module>siga-cd</module> <module>sigacd</module> <module>siga-wf</module>
 			<module>sigawf</module> <module>siga-autenticidade</module> <module>siga-cd-aut</module> 
 			<module>siga-cp-sinc</module> <module>siga-play-module</module> <module>sigasr</module> 
 			<module>sigagc</module> <module>sigapp</module> <module>sigari</module> <module>siga-assinador</module> 
@@ -35,7 +35,7 @@
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<siga.version>${project.version}</siga.version>
-		<picketlink.version>2.6.0.Beta3</picketlink.version>
+		<picketlink.version>2.6.0.Final</picketlink.version>
 		<hibernate.version>4.2.0.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>
@@ -107,14 +107,6 @@
             <id>simplecaptcha</id>
             <url>http://maven.nfms4redd.org/</url>
         </repository>
-
-        <!--
-        <repository>
-            <id>pd4ml</id>
-            <url>http://mvn.carbonfive.com/nexus/content/groups/public/</url>
-        </repository>
-        -->
-
 	</repositories>
 
 	<dependencyManagement>
@@ -560,9 +552,15 @@
 			<dependency>
 				<groupId>org.picketlink</groupId>
 				<artifactId>picketlink-impl</artifactId>
-				<scope>runtime</scope>
+                <scope>runtime</scope>
 				<version>${picketlink.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.picketlink</groupId>
+                <artifactId>picketlink-federation</artifactId>
+                <scope>provided</scope>
+                <version>${picketlink.version}</version>
+            </dependency>
 
 			<dependency>
 				<groupId>jstl</groupId>
@@ -663,6 +661,20 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
 		</dependency>
+
+        <!-- Picketlink -->
+        <dependency>
+            <groupId>org.picketlink</groupId>
+            <artifactId>picketlink-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.picketlink</groupId>
+            <artifactId>picketlink-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.picketlink</groupId>
+            <artifactId>picketlink-federation</artifactId>
+        </dependency>
 	</dependencies>
 
 </project>

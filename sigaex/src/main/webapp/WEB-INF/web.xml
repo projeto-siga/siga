@@ -24,8 +24,7 @@
 
     <filter>
         <filter-name>SalvamentoAutomaticoFilter</filter-name>
-        <filter-class>
-            br.gov.jfrj.webwork.action.SalvamentoAutomaticoThreadFilter</filter-class>
+        <filter-class>br.gov.jfrj.webwork.action.SalvamentoAutomaticoThreadFilter</filter-class>
     </filter>
 
     <filter>
@@ -205,9 +204,19 @@
 			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
 		</form-login-config>
 	</login-config>
-	<security-role>
-		<role-name>sigausuario</role-name>
-	</security-role>
+
+    <security-role>
+        <role-name>sigausuario</role-name>
+    </security-role>
+    <security-role>
+        <role-name>sigaadministrador</role-name>
+    </security-role>
+    <security-role>
+        <role-name>sigadesenvolvimento</role-name>
+    </security-role>
+    <security-role>
+        <role-name>superusuario</role-name>
+    </security-role>
 
 	<error-page>
 		<error-code>403</error-code>

@@ -483,3 +483,7 @@ div#carregando {
 	color:white;
 	display:none;
 }
+
+.escondido {
+    display: none;
+}

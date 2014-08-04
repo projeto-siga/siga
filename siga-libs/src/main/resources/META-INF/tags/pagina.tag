@@ -9,6 +9,7 @@
 <%@ attribute name="onLoad"%>
 <%@ attribute name="desabilitarbusca"%>
 <%@ attribute name="desabilitarmenu"%>
+<%@ attribute name="incluirJs"%>
 
 <c:if test="${not empty pagina_de_erro}">
 	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}" />
@@ -17,7 +18,7 @@
 <c:set var="titulo_pagina" scope="request">${titulo}</c:set>
 <siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}"
 	onLoad="${onLoad}" desabilitarbusca="${desabilitarbusca}"
-	desabilitarmenu="${desabilitarmenu}" />
+	desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}" />
 
 <jsp:doBody />
 

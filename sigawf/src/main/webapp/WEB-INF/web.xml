@@ -19,12 +19,6 @@
 		</taglib>
 	</jsp-config>
 	
-	<!-- Inicio de WebServer -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>WEB-INF/applicationContext.xml</param-value>
-	</context-param>
-	
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
 	</listener>
@@ -132,7 +126,7 @@
 			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>*</role-name>
+			<role-name>sigausuario</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -175,18 +169,18 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role>
-		<role-name>sigausuario</role-name>
-	</security-role>
-	<security-role>
-		<role-name>sigaadministrador</role-name>
-	</security-role>
-	<security-role>
-		<role-name>sigadesenvolvimento</role-name>
-	</security-role>
-	<security-role>
-		<role-name>superusuario</role-name>
-	</security-role>
+    <security-role>
+        <role-name>sigausuario</role-name>
+    </security-role>
+    <security-role>
+        <role-name>sigaadministrador</role-name>
+    </security-role>
+    <security-role>
+        <role-name>sigadesenvolvimento</role-name>
+    </security-role>
+    <security-role>
+        <role-name>superusuario</role-name>
+    </security-role>
 
 	<error-page>
 		<error-code>403</error-code>

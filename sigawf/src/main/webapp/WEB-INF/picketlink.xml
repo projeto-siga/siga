@@ -1,6 +1,5 @@
 <PicketLink xmlns="urn:picketlink:identity-federation:config:2.1">
-	<PicketLinkSP xmlns="urn:picketlink:identity-federation:config:2.1"
-		ServerEnvironment="tomcat" BindingType="POST">
+	<PicketLinkSP xmlns="urn:picketlink:identity-federation:config:2.1" ServerEnvironment="tomcat" BindingType="POST">
 		<IdentityURL>${idp.url::http://localhost:8080/sigaidp/}</IdentityURL>
 		<ServiceURL>${sigawf.url::http://localhost:8080/sigawf/}</ServiceURL>
 	</PicketLinkSP>

@@ -21,6 +21,7 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 import org.hibernate.Hibernate;
@@ -93,5 +94,20 @@ public class ExModelo extends AbstractExModelo {
 	public ExModelo getModeloAtual() {
 		return ExDao.getInstance().consultarModeloAtual(this);
 	}	
+	
+	public boolean isDescricaoAutomatica() {
+		try {
+			if ("template/freemarker".equals(getConteudoTpBlob())
+					&& getConteudoBlobMod2() != null
+					&& (new String(getConteudoBlobMod2(), "utf-8"))
+							.contains("@descricao"))
+				return true;
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		return false;
+	}
 	
 }

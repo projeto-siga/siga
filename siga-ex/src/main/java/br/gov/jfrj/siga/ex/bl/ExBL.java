@@ -3303,6 +3303,10 @@ public class ExBL extends CpBL {
 			// Nato: para obter o numero do TMP na primeira gravação
 			if (doc.getIdDoc() == null)
 				doc = ExDao.getInstance().gravar(doc);
+			
+			
+			if(doc.getExModelo().isDescricaoAutomatica())
+				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
 
 			long tempoIni = System.currentTimeMillis();
 
@@ -3357,7 +3361,7 @@ public class ExBL extends CpBL {
 			}
 			
 			String s = processarComandosEmTag(doc, "gravacao");
-			
+
 			concluirAlteracao(doc);
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()

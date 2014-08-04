@@ -71,8 +71,9 @@ function validar(silencioso){
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
+	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
 
-	if (descr==null || descr=="") {
+	if (descricaoAutomatica == null && (descr==null || descr=="")) {
 		aviso("Preencha o campo Descrição antes de gravar o documento.", silencioso);
 		return false;
 	}
@@ -611,7 +612,10 @@ function tryAgainAutoSave(){
 							</siga:span></td>
 						</tr>
 					</c:if>
-					<tr>
+					<tr style="display:<ww:if test="%{modelo.descricaoAutomatica}">none</ww:if><ww:else>visible</ww:else>">
+					    <c:if test="${modelo.descricaoAutomatica}">
+							<input type="hidden" id="descricaoAutomatica" value="sim" />
+						</c:if>
 						<input type="hidden" name="campos" value="descrDocumento" />
 						<td>Descrição:</td>
 						<td colspan="3"><ww:textarea name="descrDocumento" cols="80"

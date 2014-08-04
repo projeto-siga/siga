@@ -107,7 +107,7 @@ public class ExArquivoNumerado implements Comparable {
 	}
 
 	public String getReferenciaPDF() {
-		if (getArquivo().getPdf() == null)
+		if (!getArquivo().isPdf())
 			return null;
 		return getReferencia() + ".pdf";
 	}

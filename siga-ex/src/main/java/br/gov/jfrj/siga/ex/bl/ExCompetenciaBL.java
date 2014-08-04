@@ -1134,6 +1134,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
+	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {
+		
+		if(doc.getExTipoDocumento().getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO))
+			return true;
+		
+		return podeSerSubscritor(doc.getTitular(), doc.getLotaTitular(), doc.getExModelo());
+	}
+	
 	/**
 	 * Retorna se é possível ser subscritor de um documento.
 	 * 
@@ -1145,6 +1153,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeSerSubscritor(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExModelo mod) throws Exception {
+		
+		if(titular == null || mod == null)
+			return false;
+		
 		return getConf()
 				.podePorConfiguracao(
 						titular,

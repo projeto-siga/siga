@@ -99,7 +99,8 @@ public class SigaAnonimoActionSupport extends ActionSupport implements
 
 	public DpLotacao daoLot(String sigla) {
 		DpLotacaoDaoFiltro flt = new DpLotacaoDaoFiltro();
-		flt.setSiglaCompleta(sigla);
+		flt.setSigla(sigla);
+		//flt.setSiglaCompleta(sigla);
 		return (DpLotacao) dao().consultarPorSigla(flt);
 	}
 

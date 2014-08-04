@@ -163,7 +163,11 @@ public class PrincipalAction extends SigaActionSupport {
 			if (copiaSigla.startsWith("-"))
 				copiaSigla = copiaSigla.substring(1);
 
+			//alterada a condição que verifica se é uma solicitação do siga-sr
+			//dessa forma a regex verifica se a sigla começa com SR ou sr e termina com números
+			//necessário para não dar conflito caso exista uma lotação que inicie com SR
 			if (copiaSigla.startsWith("SR")) {
+//			if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
 				if (Cp.getInstance()
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
@@ -180,7 +184,8 @@ public class PrincipalAction extends SigaActionSupport {
 							+ "/selecionar.action?sigla=" + getSigla()
 							+ incluirMatricula;
 				}
-			} else
+			} 
+			else
 				URLSelecionar = urlBase + "/sigaex"
 						+ (testes.length() > 0 ? testes : "/expediente")
 						+ "/selecionar.action?sigla=" + getSigla()
@@ -189,16 +194,47 @@ public class PrincipalAction extends SigaActionSupport {
 			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
 					.split(";");
 
-			if (copiaSigla.startsWith("SR"))
-				uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
-			else if (copiaSigla.startsWith("MTP")
-					|| copiaSigla.startsWith("STP")
-					|| copiaSigla.startsWith("RTP"))
-				uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
-			else
-				uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
-						+ response[2];
-
+			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
+				//verificar se após a retirada dos prefixos referente 
+				//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e não achar resultado com as opções anteriores 
+				//a string copiaSigla somente possui números
+				if (copiaSigla.matches("(^[0-9]+$)")) {
+					URLSelecionar = urlBase + "/siga"
+							+ (testes.length() > 0 ? testes : "/pessoa")
+							+ "/selecionar.action?sigla=" + getSigla()
+							+ incluirMatricula;
+				}
+				//encontrar lotações
+				else {
+					URLSelecionar = urlBase + "/siga"
+						+ (testes.length() > 0 ? testes : "/lotacao")
+						+ "/selecionar.action?sigla=" + getSigla()
+						+ incluirMatricula;
+				}
+				
+				response = ConexaoHTTP.get(URLSelecionar, getHeaders())
+						.split(";");
+				
+				if (copiaSigla.matches("(^[0-9]+$)")) 
+					uRLExibir = "/siga/pessoa/exibir.action?sigla="
+							+ response[2];
+				else
+					uRLExibir = "/siga/lotacao/exibir.action?sigla="
+							+ response[2];
+			}
+			else {
+				if (copiaSigla.startsWith("SR"))
+//					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
+						uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
+				else if (copiaSigla.startsWith("MTP")
+						|| copiaSigla.startsWith("STP")
+						|| copiaSigla.startsWith("RTP"))
+					uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
+				else
+					uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
+							+ response[2];
+			}
+			
 			sel.setId(Long.valueOf(response[1]));
 			sel.setSigla(response[2]);
 			sel.setDescricao(uRLExibir);

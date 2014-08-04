@@ -1193,9 +1193,10 @@ public class ExDocumentoAction extends ExActionSupport {
 			long tempoIni = System.currentTimeMillis();
 
 			if (!validar()) {
-				aEditar();
-				setAlerta("Sim");
-				return "form_incompleto";
+		         aEditar();
+		         getPar().put("alerta", new String[]{"Sim"});
+		         setAlerta("Sim");
+		         return "form_incompleto";
 			}
 
 			ByteArrayOutputStream baos = null;

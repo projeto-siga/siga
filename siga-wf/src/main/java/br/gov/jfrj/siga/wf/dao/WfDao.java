@@ -109,12 +109,12 @@ public class WfDao extends CpDao {
 
 	static public Configuration criarHibernateCfg(String datasource) throws Exception {
 		Configuration cfg = CpDao.criarHibernateCfg(datasource);
-		WfDao.configurarHibernate(cfg);
-		return cfg;
+
+		return WfDao.configurarHibernate(cfg);
 	}
 
 
-	static private void configurarHibernate(Configuration cfg) throws Exception {
+	static private Configuration configurarHibernate(Configuration cfg) throws Exception {
 		cfg.addClass(br.gov.jfrj.siga.wf.WfConfiguracao.class);
 		cfg.addClass(br.gov.jfrj.siga.wf.WfConhecimento.class);
 
@@ -294,7 +294,7 @@ public class WfDao extends CpDao {
 			config.setMaxElementsOnDisk(1000000);
 		}
 
-		// ModeloDao.configurarHibernateParaDebug(cfg);
+		return cfg;
 	}
 
 	public ProcessDefinition getProcessDefinition(Long id) {

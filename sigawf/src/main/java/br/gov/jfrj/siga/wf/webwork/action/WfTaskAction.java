@@ -501,33 +501,23 @@ public class WfTaskAction extends WfSigaActionSupport {
 				for (int n = 0, c = 0; n < fieldNames.length; n++) {
 					// Associa cada variavel com seu valore especifico
 					for (VariableAccess variable : vList) {
-						if (variable.getMappedName().equals(fieldNames[n])
-								&& variable.isWritable()) {
+						if (variable.getMappedName().equals(fieldNames[n]) && variable.isWritable()) {
 							Object value;
 							if (variable.getMappedName().startsWith("doc_")) {
-								value = param(variable.getMappedName()
-										+ "_expedienteSel.sigla");
-							} else if (variable.getMappedName().startsWith(
-									"pes_")) {
-								value = param(variable.getMappedName()
-										+ "_pessoaSel.sigla");
-							} else if (variable.getMappedName().startsWith(
-									"lot_")) {
-								value = param(variable.getMappedName()
-										+ "_lotacaoSel.sigla");
-							} else if (variable.getMappedName().startsWith(
-									"dt_")) {
-								value = SigaCalendar
-										.converteStringEmData(fieldValues[c]);
+								value = param(variable.getMappedName() + "_expedienteSel.sigla");
+							} else if (variable.getMappedName().startsWith("pes_")) {
+								value = param(variable.getMappedName() + "_pessoaSel.sigla");
+							} else if (variable.getMappedName().startsWith("lot_")) {
+								value = param(variable.getMappedName() + "_lotacaoSel.sigla");
+							} else if (variable.getMappedName().startsWith("dt_")) {
+								value = SigaCalendar.converteStringEmData(fieldValues[c]);
 								c++;
-							} else if (variable.getMappedName().startsWith(
-									"sel_")) {
+							} else if (variable.getMappedName().startsWith("sel_")) {
 								value = fieldValues[c];
 								c++;
 							} else {
 								value = fieldValues[c];
 								c++;
-
 							}
 							// Verifica se as variáveis "required" foram
 							// preenchidas"

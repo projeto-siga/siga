@@ -118,7 +118,7 @@ public class LdapDaoProxy extends LdapDaoImpl {
 					valorAtributo);
 		} else {
 			log.info(MSG_LOG_SOMENTE_LEITURA + " Inserindo atributo \nObjeto: "
-					+ dn + "\nAtributo: " + nomeAtributo);
+					+ dn + "\nAtributo: " + nomeAtributo + "\nValor:" + valorAtributo);
 		}
 	}
 
@@ -141,7 +141,7 @@ public class LdapDaoProxy extends LdapDaoImpl {
 					valorAtributo);
 		} else {
 			log.info(MSG_LOG_SOMENTE_LEITURA + " Removendo valor do \nObjeto: "
-					+ dn + "\nAtributo: " + nomeAtributo);
+					+ dn + "\nAtributo: " + nomeAtributo + "\nValor: " + valorAtributo);
 		}
 	}
 

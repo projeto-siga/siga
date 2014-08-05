@@ -1535,7 +1535,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aDuplicar() throws Exception {
-		buscarDocumento(true);
+		buscarDocumento(false);
 		if (!Ex.getInstance().getComp()
 				.podeDuplicar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível duplicar o documento");

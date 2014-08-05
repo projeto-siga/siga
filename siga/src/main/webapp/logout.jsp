@@ -5,9 +5,9 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <c:catch var="catchException">
-	<siga:pagina titulo="Login Inválido" desabilitarbusca="sim">
-		<%-- cria a url para redirecionar --%>
-		<c:url var="urlPagina" value="${pagina}" />
+	<siga:pagina titulo="Siga - Logout" desabilitarbusca="sim"
+                 meta="<META HTTP-EQUIV='refresh' CONTENT='1;URL='/siga/'>" >
+
 		<div class="gt-bd clearfix">
 			<div class="gt-content clearfix">
 
@@ -24,19 +24,10 @@
 								</table>
 							</td>
 						</tr>
-						<tr>
-						
-						</tr>
+						<tr></tr>
 					</table>
-				</div>
-				<div style="padding-top: 10px;">
-					<input type="button" id="show_stack" value="Tentar Novamente"
-						class="gt-btn-large gt-btn-right"
-						onclick="javascript:history.back();" />
 				</div>
 			</div>
 		</div>
-
-		<c:remove var="pagina" scope="session" />
 	</siga:pagina>
 </c:catch>

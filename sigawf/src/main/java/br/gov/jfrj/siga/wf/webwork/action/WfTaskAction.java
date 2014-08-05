@@ -236,8 +236,7 @@ public class WfTaskAction extends WfSigaActionSupport {
 
 		WfAssignmentHandler ah = new WfAssignmentHandler();
 		ExecutionContext ctx = new ExecutionContext(taskInstance.getToken());
-		for (Task t : ((Collection<Task>) pd.getTaskMgmtDefinition().getTasks()
-				.values())) {
+		for (Task t : ((Collection<Task>) pd.getTaskMgmtDefinition().getTasks().values())) {
 			String designacao = null;
 			TaskNode taskNode = t.getTaskNode();
 			if (t.getSwimlane() != null) {

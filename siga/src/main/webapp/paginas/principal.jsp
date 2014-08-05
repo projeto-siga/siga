@@ -33,9 +33,7 @@
 						<h2 class="gt-table-head">Expedientes</h2>
 						<!-- content box -->
 						<div id='left'>
-                            <div class="loading escondido">
-                                <img src="/siga/imagens/ajax-load.png" alt="carregando..." />
-                            </div>
+                            <jsp:include page="loading.jsp" />
 						</div>
 						<!-- Expedientes -->
 						<br />
@@ -43,9 +41,7 @@
 						<h2 class="gt-table-head">Processos Administrativos</h2>
 						<!-- content box -->
 						<div id='leftbottom'>
-                            <div class="loading escondido">
-                                <img src="/siga/imagens/ajax-load.png" alt="carregando..." />
-                            </div>
+                            <jsp:include page="loading.jsp" />
 						</div>
 						<!-- Processos -->
 					</div>
@@ -56,7 +52,9 @@
 							test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Gestão de Conhecimento')}">
 							<h2 class="gt-table-head">Tarefas</h2>
 							<!-- content box -->
-							<span id='right' style="margin: 0; padding: 0;"></span>
+							<span id='right' style="margin: 0; padding: 0;">
+                                <jsp:include page="loading.jsp" />
+							</span>
 							<!-- 
 							<div class="gt-table-buttons">
 								<a href="" class="gt-btn-green-large gt-btn-right">Iniciar
@@ -69,9 +67,7 @@
                             <h2 class="gt-table-head">Solicitações</h2>
                             <!-- content box -->
                             <span id='rightbottom' style="margin:0;padding:0;">
-                                 <div class="loading escondido">
-                                     <img src="/siga/imagens/ajax-load.png" alt="carregando..." />
-                                 </div>
+                                 <jsp:include page="loading.jsp" />
                             </span>
                             </c:if>
                             <br />
@@ -79,9 +75,7 @@
 							<h2 class="gt-table-head">Gestão de Conhecimento</h2>
 							<!-- content box -->
 							<div id='rightbottom2'>
-                                <div class="loading escondido">
-                                    <img src="/siga/imagens/ajax-load.png" alt="carregando..." />
-                                </div>
+                                <jsp:include page="loading.jsp" />
 							</div>
 						</c:if>
 						<br />

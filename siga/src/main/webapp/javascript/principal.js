@@ -39,6 +39,14 @@ function addTsAttributeToUrl(url){
 
     return url + "ts="+getCurrentTimeInMillis();
 }
+
+function display(target, text){
+    target.hide();
+    target.html(text);
+    target.fadeIn("slow");
+}
+
+
 $(function() {
     // Itera sobre todos os modulos do siga
     $.each(modules, function(k, model) {
@@ -79,14 +87,14 @@ $(function() {
                         type: "POST",
                         data: jsonData
                     }).done(function(result) {
-                        target.html(result);
+                        display(target, result);
                     });
                 });
             }else{
-                target.html(result);
+                display(target, result);
             }
         }).fail(function() {
-            target.html("M&oacute;dulo indispon&iacute;vel");
+            display(target, "M&oacute;dulo indispon&iacute;vel");
         });
     });
 });

@@ -1499,7 +1499,7 @@ public class ExBL extends CpBL {
 
 		if (mob.isGeralDeProcesso()) {
 
-			String sobrestados = "", emTransito = "", foraDaLota = "", apensados = "", msgFinal = "";
+			String sobrestados = "", emTransito = "", foraDaLota = "", apensados = "", msgFinal = "", comApensos = "";
 
 			DpLotacao lotaBase = null, lotaVerif = null;
 
@@ -1509,7 +1509,7 @@ public class ExBL extends CpBL {
 						.getLotaResp();
 
 				if (lotaBase != null && !lotaVerif.equivale(lotaBase))
-					foraDaLota += (foraDaLota.length() < 2 ? " O(s) seguinte(s) volume(s) encontra(m)-se em lotação diferente de "
+					foraDaLota += (foraDaLota.length() < 2 ? " Os seguintes volumes encontram-se em lotação diferente de "
 							+ lotaBase.getSigla() + ": "
 							: ", ")
 							+ mobVerif.getSigla();
@@ -1518,23 +1518,30 @@ public class ExBL extends CpBL {
 					lotaBase = lotaVerif;
 
 				if (mobVerif.isSobrestado())
-					sobrestados += (sobrestados.length() < 2 ? " O(s) seguinte(s) volume(s) encontra(m)-se sobrestado(s): "
+					sobrestados += (sobrestados.length() < 2 ? " Os seguintes volumes encontram-se sobrestados: "
 							: ", ")
 							+ mobVerif.getSigla();
 
 				if (mobVerif.isEmTransito())
-					emTransito += (emTransito.length() < 2 ? " O(s) seguinte(s) volume(s) encontra(m)-se em trânsito: "
+					emTransito += (emTransito.length() < 2 ? " Os seguintes volumes encontram-se em trânsito: "
 							: ", ")
 							+ mobVerif.getSigla();
 
 				if (mobVerif.isApensado()
 						&& !mobVerif.getMestre().doc().equals(mobVerif.doc()))
-					apensados += (emTransito.length() < 2 ? " O(s) seguinte(s) volume(s) encontra(m)-se apensado(s) a outro processo: "
+					apensados += (apensados.length() < 2 ? " Os seguintes volumes encontram-se apensados a outro processo: "
 							: ", ")
 							+ mobVerif.getSigla();
+				
+				for (ExMobil apenso : mobVerif.getApensos()){
+					if (!apenso.doc().equals(mobVerif.doc()))
+						comApensos += (comApensos.length() < 2 ? " Os seguintes volumes possuem volumes de outros processos apensados: "
+								: ", ")
+								+ apenso.getSigla() + " apensado a " + mobVerif.getSigla();
+				}
 			}
 
-			msgFinal += foraDaLota + sobrestados + emTransito + apensados;
+			msgFinal += foraDaLota + sobrestados + emTransito + apensados + comApensos;
 			if (msgFinal.length() > 2)
 				throw new AplicacaoException(
 						"Não foi possível movimentar o processo." + msgFinal);

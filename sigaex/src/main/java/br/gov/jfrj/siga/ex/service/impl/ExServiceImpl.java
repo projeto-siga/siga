@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -82,7 +83,7 @@ public class ExServiceImpl implements ExService {
 						.getBL()
 						.transferir(null, null, cadastranteParser.getPessoa(),
 								cadastranteParser.getLotacao(), mob, null,
-								null, destinoParser.getLotacao(),
+								null, null, destinoParser.getLotacao(),
 								destinoParser.getPessoa(), null, null, null,
 								null, null, false, null, null, null);
 			}

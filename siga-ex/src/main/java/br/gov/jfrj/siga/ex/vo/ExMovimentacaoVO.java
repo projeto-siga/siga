@@ -72,6 +72,7 @@ public class ExMovimentacaoVO extends ExVO {
 	String complemento;
 	Map<String, ExParteVO> parte = new TreeMap<String, ExParteVO>();
 	String dtRegMovDDMMYYHHMMSS;
+	String dtFimMovDDMMYYHHMMSS;
 	String descrTipoMovimentacao;
 	long idMov;
 	ExMobilVO mobVO;
@@ -423,6 +424,10 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_TRANSFERENCIA
 				|| idTpMov == TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 				|| idTpMov == TIPO_MOVIMENTACAO_RECEBIMENTO_TRANSITORIO) {
+			String pre =  null;
+			if(mov.getDtFimMovDDMMYY() != ""){
+				pre = "Devolver até " + mov.getDtFimMovDDMMYY() + " | ";
+			}
 			if (!mov.isCancelada())
 				addAcao(null, "Protocolo", "/expediente/mov",
 						"protocolo_transf", true, null,
@@ -430,7 +435,7 @@ public class ExMovimentacaoVO extends ExVO {
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
 								+ mov.getDtRegMovDDMMYYYYHHMMSS()
-								+ "&popup=true", null, null, null);
+								+ "&popup=true", pre, null, null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
@@ -551,6 +556,9 @@ public class ExMovimentacaoVO extends ExVO {
 		return dtRegMovDDMMYYHHMMSS.substring(0, 8);
 	}
 
+	public Object getDtFimMovDDMMYYHHMMSS(){
+		return dtFimMovDDMMYYHHMMSS;
+	}
 	public long getIdMov() {
 		return idMov;
 	}

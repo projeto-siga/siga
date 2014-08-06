@@ -229,6 +229,39 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
+	 * Retorna a data de retorno da movimentação no formato dd/mm/aa, por
+	 * exemplo, 01/02/10.
+	 * 
+	 * @return Data de retorno da movimentação no formato dd/mm/aa, por exemplo,
+	 *         01/02/10.
+	 * 
+	 */
+	public String getDtFimMovDDMMYY() {
+		if (getDtFimMov() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			return df.format(getDtFimMov());
+		}
+		return "";
+	}
+	
+	/**
+	 * Retorna a data de retorno da movimentação no formato dd/mm/aa HH:MI:SS,
+	 * por exemplo, 01/02/10 14:10:00.
+	 * 
+	 * @return Data de retorno da movimentação no formato dd/mm/aa HH:MI:SS, por
+	 *         exemplo, 01/02/10 14:10:00.
+	 * 
+	 */
+	public String getDtFimMovDDMMYYHHMMSS() {
+		if (getDtFimMov() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat(
+					"dd/MM/yy HH:mm:ss");
+			return df.format(getDtFimMov());
+		}
+		return "";
+	}
+	
+	/**
 	 * Retorna a data da movimentação por extenso. no formato "Rio de Janeiro,
 	 * 01 de fevereiro de 2010", por exemplo.
 	 * 
@@ -400,7 +433,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			strReturn = strReturn + " - " + getResp().getDescricao();
 		return strReturn;
 	}
-
+	
 	public String getConteudoBlobHtmlB64() {
 		return Base64.encode(getConteudoBlobHtml());
 	}

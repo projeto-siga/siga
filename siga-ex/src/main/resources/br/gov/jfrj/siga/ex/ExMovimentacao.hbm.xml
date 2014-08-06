@@ -17,7 +17,7 @@
 			not-null="true" />
 		<property name="dtIniMov" column="DT_INI_MOV" type="java.util.Date"
 			not-null="true" />
-<!-- 		<property name="dtFimMov" column="DT_FIM_MOV" type="java.util.Date" /> -->
+		<property name="dtFimMov" column="DT_FIM_MOV" type="java.util.Date" /> 
 		<property name="dtDispPublicacao" column="DT_DISP_PUBLICACAO"
 			type="java.util.Date" />
 		<property name="dtEfetivaDispPublicacao" column="DT_EFETIVA_DISP_PUBLICACAO"

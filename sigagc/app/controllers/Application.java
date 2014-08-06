@@ -35,9 +35,12 @@ import play.Play;
 import play.Play.Mode;
 import play.data.Upload;
 import play.db.jpa.JPA;
+import play.db.jpa.Model;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
+import play.mvc.Http.Request;
+import play.mvc.Scope.RenderArgs;
 import utils.GcArvore;
 import utils.GcBL;
 import utils.GcCloud;
@@ -86,9 +89,9 @@ public class Application extends SigaApplication {
 
 	@Before(unless = {"publicKnowledge", "dadosRI"})
 	public static void addDefaults() throws Exception {
-
 		try {
 			obterCabecalhoEUsuario("#f1f4e2");
+			Request.current();
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
@@ -96,9 +99,10 @@ public class Application extends SigaApplication {
 
 		try {
 			assertAcesso("ADM:Administrar");
-			renderArgs.put("exibirMenuAdministrar", true);
+			
+			RenderArgs.current().put("exibirMenuAdministrar", true);
 		} catch (Exception e) {
-			renderArgs.put("exibirMenuAdministrar", false);
+			RenderArgs.current().put("exibirMenuAdministrar", false);
 		}
 	}
 
@@ -108,7 +112,7 @@ public class Application extends SigaApplication {
 		if (request.url.contains("proxy"))
 			return;
 
-		renderArgs.put("_base", HTTP_LOCALHOST_8080);
+		RenderArgs.current().put("_base", HTTP_LOCALHOST_8080);
 
 		HashMap<String, String> atributos = new HashMap<String, String>();
 		for (Http.Header h : request.headers.values())
@@ -120,10 +124,10 @@ public class Application extends SigaApplication {
 
 		String[] pageText = paginaVazia.split("<!-- insert body -->");
 		String[] cabecalho = pageText[0].split("<!-- insert menu -->");
-		renderArgs.put("_cabecalho_pre", cabecalho[0]);
-		renderArgs.put("_cabecalho_pos", cabecalho[1]);
+		RenderArgs.current().put("_cabecalho_pre", cabecalho[0]);
+		RenderArgs.current().put("_cabecalho_pos", cabecalho[1]);
 		// renderArgs.put("_cabecalho", pageText[0]);
-		renderArgs.put("_rodape", pageText[1]);
+		RenderArgs.current().put("_rodape", pageText[1]);
 
 		String[] IDs = ConexaoHTTP.get(
 				HTTP_LOCALHOST_8080 + "/siga/usuario_autenticado.action",
@@ -132,21 +136,21 @@ public class Application extends SigaApplication {
 		// DpPessoa cadastrante = (DpPessoa) JPA.em().find(DpPessoa.class,
 		// Long.parseLong(IDs[0]));
 		DpPessoa cadastrante = DpPessoa.findById(Long.parseLong(IDs[0]));
-		renderArgs.put("cadastrante", cadastrante);
+		RenderArgs.current().put("cadastrante", cadastrante);
 
 		if (IDs[1] != null && !IDs[1].equals("")) {
 			// DpLotacao lotaCadastrante = (DpLotacao) JPA.em().find(
 			// DpLotacao.class, Long.parseLong(IDs[1]));
 			DpLotacao lotaCadastrante = DpLotacao.findById(Long
 					.parseLong(IDs[1]));
-			renderArgs.put("lotaCadastrante", lotaCadastrante);
+			RenderArgs.current().put("lotaCadastrante", lotaCadastrante);
 		}
 
 		if (IDs[2] != null && !IDs[2].equals("")) {
 			// DpPessoa titular = (DpPessoa) JPA.em().find(DpPessoa.class,
 			// Long.parseLong(IDs[2]));
 			DpPessoa titular = DpPessoa.findById(Long.parseLong(IDs[2]));
-			renderArgs.put("titular", titular);
+			RenderArgs.current().put("titular", titular);
 		}
 
 		if (IDs[3] != null && !IDs[3].equals("")) {
@@ -154,22 +158,20 @@ public class Application extends SigaApplication {
 			// Long.parseLong(IDs[3]));
 			DpLotacao lotaTitular = DpLotacao.findById(Long.parseLong(IDs[3]));
 			// lotaTitular = (DpLotacao) GcDao.getImplementation(lotaTitular);
-			renderArgs.put("lotaTitular", lotaTitular);
+			RenderArgs.current().put("lotaTitular", lotaTitular);
 		}
 
 		if (IDs[4] != null && !IDs[4].equals("")) {
-			CpIdentidade identidadeCadastrante = JPA.em().find(
-					CpIdentidade.class, Long.parseLong(IDs[4]));
-			renderArgs.put("identidadeCadastrante", identidadeCadastrante);
+			CpIdentidade identidadeCadastrante = JPA.em().find(	CpIdentidade.class, Long.parseLong(IDs[4]));
+			RenderArgs.current().put("identidadeCadastrante", identidadeCadastrante);
 		}
 
 		//int a = 0;
 
 		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
 			Date dt = GcBL.dt();
-			CpIdentidade idc = (CpIdentidade) renderArgs
-					.get("identidadeCadastrante");
-			DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
+			CpIdentidade idc = (CpIdentidade) RenderArgs.current().get("identidadeCadastrante");
+			DpPessoa pessoa = (DpPessoa) RenderArgs.current().get("cadastrante");
 
 			GcArquivo arq = new GcArquivo();
 			arq.setConteudoTXT("teste 123");
@@ -179,8 +181,7 @@ public class Application extends SigaApplication {
 			mov.arq = arq;
 			mov.hisDtIni = dt;
 			mov.hisIdcIni = idc;
-			mov.tipo = GcTipoMovimentacao
-						.findById(GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO);
+			mov.tipo = GcTipoMovimentacao.findById(GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO);
 			/* mov.pessoa ou mov.lotacao => responsavel por uma ação (notificar ou solicitar revisão)
 			 * mov.pessoa = pessoa;
 			 * mov.lotacao = mov.pessoa.getLotacao();
@@ -206,10 +207,8 @@ public class Application extends SigaApplication {
 
 	public static void gadget() {
 		Query query = JPA.em().createNamedQuery("contarGcMarcas");
-		query.setParameter("idPessoaIni",
-				((DpPessoa) renderArgs.get("cadastrante")).getIdInicial());
-		query.setParameter("idLotacaoIni",
-				((DpLotacao) renderArgs.get("lotaTitular")).getIdInicial());
+		query.setParameter("idPessoaIni", ((DpPessoa) RenderArgs.current().get("cadastrante")).getIdInicial());
+		query.setParameter("idLotacaoIni", ((DpLotacao) RenderArgs.current().get("lotaTitular")).getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
 	}
@@ -224,9 +223,7 @@ public class Application extends SigaApplication {
 		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, false);
 	}
 
-	private static void renderKnowledge(Long id, String[] tags, String estilo,
-			String msgvazio, String urlvazio, String titulo, boolean testarAcessoPublico)
-			throws UnsupportedEncodingException, Exception {
+	private static void renderKnowledge(Long id, String[] tags, String estilo,	String msgvazio, String urlvazio, String titulo, boolean testarAcessoPublico) throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
 		GcInformacao info = null;
@@ -432,7 +429,7 @@ public class Application extends SigaApplication {
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from GcMarca")
 				.getResultList();
-
+		
 		List<CpOrgaoUsuario> orgaosusuarios = CpOrgaoUsuario.all().fetch();
 
 		List<GcTipoInformacao> tiposinformacao = GcTipoInformacao.all().fetch();
@@ -757,9 +754,7 @@ public class Application extends SigaApplication {
 		exibir(inf.getSigla());
 	}
 
-	public static void gravar(GcInformacao informacao, String titulo,
-			String conteudo, String classificacao, String origem)
-			throws Exception {
+	public static void gravar(GcInformacao informacao, String titulo, String conteudo, String classificacao, String origem) 	throws Exception {
 		//DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = titular();
 		DpLotacao lotacao = lotaTitular();
@@ -1105,8 +1100,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento"
-				+ path);
+		SigaApplication.assertAcesso("GC:Modulo de Gest�o de Conhecimento"+ path);
 	}
 
 	public static void erro(String message, String stackTrace) {

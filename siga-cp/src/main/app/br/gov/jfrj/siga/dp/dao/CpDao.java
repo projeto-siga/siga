@@ -1527,7 +1527,6 @@ public class CpDao extends ModeloDao {
 			throws Exception {
 
 		Configuration cfg = new Configuration();
-
 		cfg.setProperty("hibernate.connection.datasource", datasource);
 		configurarHibernate(cfg);
 

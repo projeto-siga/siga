@@ -35,6 +35,8 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
+import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 
 public class HibernateUtil {
 
@@ -54,9 +56,7 @@ public class HibernateUtil {
 		
 		Session s = HibernateUtil.threadSession.get();
 
-		// Open a new Session, if this Thread has none yet
 		try {
-			
 			if (s == null) {
 				s = HibernateUtil.sessionFactory.openSession();
 				HibernateUtil.threadSession.set(s);

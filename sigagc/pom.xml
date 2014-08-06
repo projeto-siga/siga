@@ -4,11 +4,14 @@
 
 	<!-- <parent> <artifactId>play-app-default-parent</artifactId> <groupId>com.google.code.maven-play-plugin</groupId> 
 		<version>1.0.0-beta6</version> </parent> -->
+	<parent>
+		<artifactId>projeto-siga</artifactId>
+		<groupId>projeto-siga</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-	<groupId>projeto-siga</groupId>
 	<artifactId>sigagc</artifactId>
 	<modelVersion>4.0.0</modelVersion>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>play</packaging>
 
 	<properties>
@@ -93,8 +96,8 @@
 		</dependency>
 
 		<!-- <dependency> <groupId>org.javassist</groupId> <artifactId>javassist</artifactId> 
-			<version>3.18.1-GA</version> <scope>provided</scope> </dependency> -->
-
+			<version>3.18.2-GA</version> <version>3.15.0-GA</version> <scope>provided</scope> 
+			</dependency> -->
 		<!-- Play Dependencies -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

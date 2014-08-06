@@ -123,5 +123,9 @@
             <groupId>projeto-siga</groupId>
             <artifactId>siga-ex</artifactId>
         </dependency>
+        <dependency>
+            <groupId>projeto-siga</groupId>
+            <artifactId>siga-ext</artifactId>
+        </dependency>
     </dependencies>
 </project>

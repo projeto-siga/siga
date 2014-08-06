@@ -88,6 +88,9 @@ public class ExGadgetAction extends ExActionSupport {
 			listEstados = listEstadosReduzida;
 		}
 
+		if (super.getTitular() == null) 
+			throw new Exception(
+					"Titular nulo, verificar se usuário está ativo no RH");
 		super.getRequest().setAttribute(
 				"_cadastrante",
 				super.getTitular().getSigla()

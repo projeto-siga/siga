@@ -429,7 +429,7 @@ public class Application extends SigaApplication {
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from GcMarca")
 				.getResultList();
-		
+		 JPA.em().createQuery("select cp from CpOrgaoUsuario cp").getResultList();
 		List<CpOrgaoUsuario> orgaosusuarios = CpOrgaoUsuario.all().fetch();
 
 		List<GcTipoInformacao> tiposinformacao = GcTipoInformacao.all().fetch();

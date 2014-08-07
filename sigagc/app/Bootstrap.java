@@ -15,6 +15,26 @@ public class Bootstrap extends Job {
 
 	public void doJob() throws Exception {
 
+		if (false && !Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa")) {
+			System.out.println("\n\n\n*********************** INICIALIZANDO CLASSES *****************************");
+			System.out.println(Play.usePrecompiled);
+			Play.javaPath.add(VirtualFile.fromRelativePath("/modules/siga-play-module-0.0.1-SNAPSHOT/app"));
+			System.out.println(Play.javaPath);
+
+			// Play.classloader
+			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpConfiguracao");
+			
+
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.CpOrgaoUsuario"));
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpCargo"));
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpFuncaoConfianca"));
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpLotacao"));
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpPessoa"));
+
+			System.out.println(Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa"));
+			System.out.println("classes carregadas...");
+		}
+		
 		if (GcTipoMovimentacao.count() == 0) {
 			System.out.println("\n\n\n*** INICIALIZANDO BANCO DE DADOS ***");
 			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, "Criação").save();
@@ -43,79 +63,6 @@ public class Bootstrap extends Job {
 			new GcAcesso(GcAcesso.ACESSO_PESSOAL, "Pessoal").save();
 		}
 
-		if (false && !Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa")) {
-			System.out.println("\n\n\n*********************** INICIALIZANDO CLASSES *****************************");
-			System.out.println(Play.usePrecompiled);
-			Play.javaPath.add(VirtualFile.fromRelativePath("../siga-cp/src/"));
-			System.out.println(Play.javaPath);
-
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpConfiguracao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpGrupo");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpGrupoDeEmail");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpIdentidade");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpModelo");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpPapel");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpPerfil");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpPerfilJEE");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpServico");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpSituacaoConfiguracao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoGrupo");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoIdentidade");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoPapel");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoServico");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpAplicacaoFeriado");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpFeriado");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpLocalidade");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpMarca");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpMarcador");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpOcorrenciaFeriado");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpOrgao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpPersonalizacao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpTipoLotacao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpTipoMarca");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpTipoMarcador");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpTipoPessoa");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoConfiguracao");
-			// Play.classloader.loadApplicationClass("br.gov.jfrj.siga.dp.CpUF");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.DpSubstituicao");
-
-			Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.CpOrgaoUsuario");
-			Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpCargo");
-			Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpFuncaoConfianca");
-			Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpLotacao");
-			Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpPessoa");
-
-			System.out.println(Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa"));
-			System.out.println("classes carregadas...");
-		}
 
 		// CpTipoMarcador cpTipoMarcador = CpTipoMarcador.findById(1L);
 		// CpTipoMarcador cpTipoMarcador = new CpTipoMarcador();

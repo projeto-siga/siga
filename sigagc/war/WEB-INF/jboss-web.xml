@@ -1,4 +1,3 @@
-
 <jboss-web>
 	<security-domain>sp</security-domain>
 	<context-root>sigagc</context-root>

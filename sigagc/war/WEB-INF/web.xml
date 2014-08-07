@@ -62,5 +62,4 @@
 	<security-role>
 		<role-name>superusuario</role-name>
 	</security-role>
-
 </web-app>

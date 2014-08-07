@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<info primitiveTypes='attribute'>
+	<element name='cargo'>
+		<attribute name='id' property='idCargo' />
+		<attribute name='nome' property='nomeCargo' />
+	</element>
+</info>

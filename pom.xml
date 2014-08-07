@@ -24,11 +24,13 @@
 		<module>sigaex</module>
 		<module>siga-ext</module>
 		<module>siga-ex</module>
-		<!-- <module>siga-cd</module> <module>sigacd</module> <module>siga-wf</module>
+		<module>siga-play-module</module>
+		<module>sigagc</module>
+		
+		<!-- <module>siga-cd</module> <module>sigacd</module> <module>siga-wf</module> 
 			<module>sigawf</module> <module>siga-autenticidade</module> <module>siga-cd-aut</module> 
-			<module>siga-cp-sinc</module> <module>siga-play-module</module> <module>sigasr</module> 
-			<module>sigagc</module> <module>sigapp</module> <module>sigari</module> <module>siga-assinador</module> 
-			<module>siga-dump</module> -->
+			<module>siga-cp-sinc</module> <module>sigasr</module> <module>sigapp</module> 
+			<module>sigari</module> <module>siga-assinador</module> <module>siga-dump</module> -->
 	</modules>
 
 
@@ -93,18 +95,19 @@
 			<id>JBoss deprecated</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/deprecated</url>
 		</repository>
-		
+
 		<!-- repositorio adicionado para a swetake -->
 		<repository>
 			<id>swetake</id>
 			<url>http://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/</url>
 		</repository>
 
-        <!-- repositorio adicionado para a simplecaptcha -->
-        <repository>
-            <id>simplecaptcha</id>
-            <url>http://maven.nfms4redd.org/</url>
-        </repository>
+		<!-- repositorio adicionado para a simplecaptcha -->
+		<repository>
+			<id>simplecaptcha</id>
+			<url>http://maven.nfms4redd.org/</url>
+		</repository>
+
 	</repositories>
 
 	<dependencyManagement>
@@ -417,18 +420,9 @@
 				<version>0.7.3</version>
 			</dependency>
 
-            <!--
-            <dependency>
-                <groupId>org.zefer.pd4ml</groupId>
-                <artifactId>pd4ml</artifactId>
-                <version>3.2.3fx5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.zefer.pd4ml</groupId>
-                <artifactId>pd4ml-taglib</artifactId>
-                <version>3.2.3fx5</version>
-            </dependency>
-            -->
+			<!-- <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml</artifactId> 
+				<version>3.2.3fx5</version> </dependency> <dependency> <groupId>org.zefer.pd4ml</groupId> 
+				<artifactId>pd4ml-taglib</artifactId> <version>3.2.3fx5</version> </dependency> -->
 
 			<dependency>
 				<groupId>swetake</groupId>
@@ -456,11 +450,11 @@
 				<artifactId>cssparser</artifactId>
 				<version>0.9.14</version>
 			</dependency>
-            <dependency>
-                <groupId>nl.captcha</groupId>
-                <artifactId>simpleCaptcha</artifactId>
-                <version>1.2.1</version>
-            </dependency>
+			<dependency>
+				<groupId>nl.captcha</groupId>
+				<artifactId>simpleCaptcha</artifactId>
+				<version>1.2.1</version>
+			</dependency>
 			<dependency>
 				<groupId>javax.ws.rs</groupId>
 				<artifactId>jsr311-api</artifactId>
@@ -619,7 +613,9 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<scope>provided</scope>
+
 		</dependency>
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>

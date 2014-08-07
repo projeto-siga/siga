@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<deployment>
+		<module-alias name="sigagc" />
+
+		<dependencies>
+			<module name="deployment.ojdbc6.jar" />
+			<!-- <module name="deployment.siga-play-module-0.0.1-SNAPSHOT.jar" /> -->
+
+			<module name="org.picketlink" />
+			<module name="asm.asm" />
+			<module name="org.hibernate" export="true" />
+
+			<!-- <module name="sigadoc.ws"/> <module name="org.apache.commons.lang" 
+				/> <module name="org.apache.ws.xmlschema" /> <module name="javax.wsdl4j.api" 
+				/> <module name="org.apache.commons.logging" /> <module name="org.apache.xalan" 
+				/> <module name="sigadoc.org.bouncycastle" export="true"/> -->
+
+			<module name="org.javassist" export="true"/> 
+		</dependencies>
+<!-- 
+		<exclusions>
+			<module name="org.javassist" />
+		</exclusions> -->
+	</deployment>
+</jboss-deployment-structure>

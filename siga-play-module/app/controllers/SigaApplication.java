@@ -11,6 +11,8 @@ import play.db.jpa.JPA;
 import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
+import play.mvc.Http.Request;
+import play.mvc.Scope.RenderArgs;
 import play.templates.JavaExtensions;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -30,79 +32,74 @@ public class SigaApplication extends Controller {
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
-	protected static void obterCabecalhoEUsuario(String backgroundColor)
-			throws Exception {
+	protected static void obterCabecalhoEUsuario(String backgroundColor) throws Exception {
 		try {
-
-			// Obter cabeçalho e rodapé do Siga
+			request = (request == null) ? Request.current() : request;
+			params = (params == null) ? params.current() : params;
+			renderArgs = RenderArgs.current();
+			
+			// Obter cabecalho e rodape do Siga
 			HashMap<String, String> atributos = new HashMap<String, String>();
 			for (Http.Header h : request.headers.values())
 				if (!h.name.equals("content-type"))
 					atributos.put(h.name, h.value());
 
 			String popup = params.get("popup");
-			if (popup == null
-					|| (!popup.equals("true") && !popup.equals("false")))
+			if (popup == null	|| (!popup.equals("true") && !popup.equals("false")))
 				popup = "false";
-			String paginaVazia = ConexaoHTTP.get(getBaseSiga()
-					+ "/pagina_vazia.action?popup=" + popup, atributos);
-			String[] pageText = paginaVazia.split("<!-- insert body -->");
-			String[] cabecalho = pageText[0].split("<!-- insert menu -->");
 
-			if (backgroundColor != null)
-				cabecalho[0] = cabecalho[0].replace("<html>",
-						"<html style=\"background-color: " + backgroundColor
-								+ " !important;\">");
+			String paginaVazia = ConexaoHTTP.get(getBaseSiga()	+ "/pagina_vazia.action?popup=" + popup, atributos);
+			if (!paginaVazia.contains("/sigaidp")){
+				String[] pageText = paginaVazia.split("<!-- insert body -->");
+				String[] cabecalho = pageText[0].split("<!-- insert menu -->");
 
-			String[] cabecalho_pre = cabecalho[0].split("</head>");
+				if (backgroundColor != null)
+					cabecalho[0] = cabecalho[0].replace("<html>","<html style=\"background-color: " + backgroundColor	+ " !important;\">");
 
-			String cabecalhoPreHead = cabecalho_pre[0];
-			String cabecalhoPreMenu = "</head>" + cabecalho_pre[1];
-			String cabecalhoPos = cabecalho.length > 1 ? cabecalho[1] : null;
-			String rodape = pageText[1];
+				String[] cabecalho_pre = cabecalho[0].split("</head>");
 
-			if (cabecalhoPos == null) {
-				cabecalhoPos = cabecalhoPreMenu;
-				cabecalhoPreMenu = null;
+				String cabecalhoPreHead = cabecalho_pre[0];
+				String cabecalhoPreMenu = "</head>" + cabecalho_pre[1];
+				String cabecalhoPos = cabecalho.length > 1 ? cabecalho[1] : null;
+				String rodape = pageText[1];
+
+				if (cabecalhoPos == null) {
+					cabecalhoPos = cabecalhoPreMenu;
+					cabecalhoPreMenu = null; 
+				}
+
+				RenderArgs.current().put("_cabecalho_pre_head", cabecalhoPreHead);
+				RenderArgs.current().put("_cabecalho_pre_menu", cabecalhoPreMenu);
+				RenderArgs.current().put("_cabecalho_pos", cabecalhoPos);
+				RenderArgs.current().put("_rodape", rodape);
 			}
-
-			renderArgs.put("_cabecalho_pre_head", cabecalhoPreHead);
-			renderArgs.put("_cabecalho_pre_menu", cabecalhoPreMenu);
-			renderArgs.put("_cabecalho_pos", cabecalhoPos);
-			renderArgs.put("_rodape", rodape);
-
-			// Obter usuário logado
-			String[] IDs = ConexaoHTTP.get(
-					getBaseSiga() + "/usuario_autenticado.action", atributos)
-					.split(";");
-
-			renderArgs.put("cadastrante",
-					JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
+			
+			// Obter usuario logado
+			//String[] IDs = ConexaoHTTP.get(getBaseSiga() + "/usuario_autenticado.action", atributos).split(";");
+			String[] IDs = "184202;;184202;5053;1872".split(";");
+			
+			RenderArgs.current().put("cadastrante",JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
 
 			if (IDs[1] != null && !IDs[1].equals(""))
-				renderArgs.put("lotaCadastrante",
-						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
+				RenderArgs.current().put("lotaCadastrante",JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
 
 			if (IDs[2] != null && !IDs[2].equals(""))
-				renderArgs.put("titular",
-						JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
+				RenderArgs.current().put("titular",JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
 
 			if (IDs[3] != null && !IDs[3].equals(""))
-				renderArgs.put("lotaTitular",
-						JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
+				RenderArgs.current().put("lotaTitular",JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
 
 			if (IDs[4] != null && !IDs[4].equals("")) {
-				CpIdentidade identidadeCadastrante = JPA.em().find(
-						CpIdentidade.class, Long.parseLong(IDs[4]));
-				renderArgs.put("identidadeCadastrante", identidadeCadastrante);
+				CpIdentidade identidadeCadastrante = JPA.em().find(CpIdentidade.class, Long.parseLong(IDs[4]));
+				RenderArgs.current().put("identidadeCadastrante", identidadeCadastrante);
 			}
 
-			renderArgs.put("currentTimeMillis", new Date().getTime());
+			RenderArgs.current().put("currentTimeMillis", new Date().getTime());
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Edson: Quando as informações não puderam ser obtidas do Siga,
-			// manda para a página de login. Se não for esse o erro, joga
-			// exceção pra cima.
+			// Edson: Quando as informacoes nao puderem ser obtidas do Siga,
+			// manda para a pagina de login. Se nao for esse o erro, joga
+			// excecao pra cima.
 			redirect("/siga/redirect.action?uri=" + JavaExtensions.urlEncode(request.url));
 		}
 
@@ -110,15 +107,11 @@ public class SigaApplication extends Controller {
 
 	protected static boolean podeUtilizarServico(String servico)
 			throws Exception {
-		return Cp
-				.getInstance()
-				.getConf()
-				.podeUtilizarServicoPorConfiguracao(cadastrante(),
-						lotaTitular(), servico);
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante(),lotaTitular(), servico);
 	}
 
 	protected static void assertAcesso(String pathServico) throws Exception {
-		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
+		String servico = "SIGA:Sistema Integrado de Gest�o Administrativa;"
 				+ pathServico;
 		if (servico.endsWith(";"))
 			servico = servico.substring(0, servico.length()-1);
@@ -127,42 +120,41 @@ public class SigaApplication extends Controller {
 					+ "' usuário: " + cadastrante().getSigla() + " lotação: "
 					+ lotaTitular().getSiglaCompleta());
 	}
-	
+
 	protected static void tratarExcecoes(Exception e) {
 		// MailUtils.sendErrorMail(e);
 		if (cadastrante() != null)
-			Logger.error("Erro Siga-SR; Pessoa: " + cadastrante().getSigla()
+			Logger.error("Erro Siga-GC; Pessoa: " + cadastrante().getSigla()
 					+ "; Lotação: " + lotaTitular().getSigla(), e);
 		e.printStackTrace();
 		error(e.getMessage());
 	}
 
 	static DpPessoa cadastrante() {
-		return (DpPessoa) renderArgs.get("cadastrante");
+		return (DpPessoa) RenderArgs.current().get("cadastrante");
 	}
 
 	static DpPessoa titular() {
-		return (DpPessoa) renderArgs.get("titular");
+		return (DpPessoa) RenderArgs.current().get("titular");
 	}
 
 	static DpLotacao lotaTitular() {
-		return (DpLotacao) renderArgs.get("lotaTitular");
+		return (DpLotacao) RenderArgs.current().get("lotaTitular");
 	}
 
 	static CpIdentidade idc() {
-		return (CpIdentidade) renderArgs.get("identidadeCadastrante");
+		return (CpIdentidade) RenderArgs.current().get("identidadeCadastrante");
 	}
 
 	static String getBaseSiga() {
-		return "http://" + Play.configuration.getProperty("servidor.principal")
-				+ ":8080/siga";
+		return "http://" + Play.configuration.getProperty("servidor.principal")+ ":8080/siga";
 	}
-	
+
 	@Catch(value = Throwable.class, priority = 1)
 	public static void catchError(Throwable throwable) {
 		if (Play.mode.isDev())
 			return;
-		
+
 		// Flash.current().clear();
 		// Flash.current().put("_cabecalho_pre",
 		// renderArgs.get("_cabecalho_pre"));
@@ -180,7 +172,7 @@ public class SigaApplication extends Controller {
 			message = "Nenhuma informação disponível.";
 		erro(message, stackTrace);
 	}
-	
+
 	public static void erro(String message, String stackTrace) {
 		render(message, stackTrace);
 	}

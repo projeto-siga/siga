@@ -2,6 +2,9 @@ import models.GcAcesso;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 import models.GcTipoTag;
+
+import org.jboss.logging.Logger;
+
 import play.Play;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
@@ -12,158 +15,54 @@ public class Bootstrap extends Job {
 
 	public void doJob() throws Exception {
 
-		if (GcTipoMovimentacao.count() == 0) {
-			System.out.println("\n\n\n*** INICIALIZANDO BANCO DE DADOS ***");
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, "Criação")
-					.save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
-					"Concluído").save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO,
-					"Cancelado").save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO,
-					"Solicitação de revisão").save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO, "Revisado")
-					.save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR,
-					"Notificação").save();
-
-			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-					"Ciente").save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CLASSIFICACAO,
-					"Classificação").save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO,
-					"Interesse").save();
-
-			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO,
-					"Edição").save();
-
-			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA,
-					"Visita").save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-					"Cancelamento de movimentação").save();
-
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-					"Anexação de arquivo").save();
-			
-			new GcTipoMovimentacao(
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR,
-					"Duplicado").save();
-
-			new GcTipoInformacao(
-					GcTipoInformacao.TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO,
-					"Registro de Conhecimento").save();
-
-			new GcTipoTag(GcTipoTag.TIPO_TAG_CLASSIFICACAO, "Classificação")
-					.save();
-			new GcTipoTag(GcTipoTag.TIPO_TAG_HASHTAG, "Marcador").save();
-			new GcTipoTag(GcTipoTag.TIPO_TAG_ANCORA, "Âncora").save();
-
-			new GcAcesso(GcAcesso.ACESSO_PUBLICO, "Público").save();
-			new GcAcesso(GcAcesso.ACESSO_ORGAO_USU, "Restrito ao órgão").save();
-			new GcAcesso(GcAcesso.ACESSO_LOTACAO_E_SUPERIORES,
-					"Lotação e superiores").save();
-			new GcAcesso(GcAcesso.ACESSO_LOTACAO_E_INFERIORES,
-					"Lotação e inferiores").save();
-			new GcAcesso(GcAcesso.ACESSO_LOTACAO, "Lotação").save();
-			new GcAcesso(GcAcesso.ACESSO_PESSOAL, "Pessoal").save();
-
-		}
-
 		if (false && !Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa")) {
-			System.out
-					.println("\n\n\n*********************** INICIALIZANDO CLASSES *****************************");
+			System.out.println("\n\n\n*********************** INICIALIZANDO CLASSES *****************************");
 			System.out.println(Play.usePrecompiled);
-			Play.javaPath.add(VirtualFile.fromRelativePath("../siga-cp/src/"));
+			Play.javaPath.add(VirtualFile.fromRelativePath("/modules/siga-play-module-0.0.1-SNAPSHOT/app"));
 			System.out.println(Play.javaPath);
 
 			// Play.classloader
 			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpConfiguracao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpGrupo");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpGrupoDeEmail");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpIdentidade");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpModelo");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpPapel");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpPerfil");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpPerfilJEE");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpServico");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpSituacaoConfiguracao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoGrupo");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoIdentidade");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoPapel");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoServico");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpAplicacaoFeriado");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpFeriado");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpLocalidade");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpMarca");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpMarcador");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpOcorrenciaFeriado");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpOrgao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpPersonalizacao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpTipoLotacao");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpTipoMarca");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpTipoMarcador");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.CpTipoPessoa");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.cp.CpTipoConfiguracao");
-			// Play.classloader.loadApplicationClass("br.gov.jfrj.siga.dp.CpUF");
-			// Play.classloader
-			// .loadApplicationClass("br.gov.jfrj.siga.dp.DpSubstituicao");
+			
 
-			Play.classes
-					.getApplicationClass("br.gov.jfrj.siga.dp.CpOrgaoUsuario");
-			Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpCargo");
-			Play.classes
-					.getApplicationClass("br.gov.jfrj.siga.dp.DpFuncaoConfianca");
-			Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpLotacao");
-			Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpPessoa");
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.CpOrgaoUsuario"));
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpCargo"));
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpFuncaoConfianca"));
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpLotacao"));
+			System.out.println(Play.classes.getApplicationClass("br.gov.jfrj.siga.dp.DpPessoa"));
 
-			System.out.println(Play.classes
-					.hasClass("br.gov.jfrj.siga.dp.DpPessoa"));
+			System.out.println(Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa"));
 			System.out.println("classes carregadas...");
 		}
+		
+		if (GcTipoMovimentacao.count() == 0) {
+			System.out.println("\n\n\n*** INICIALIZANDO BANCO DE DADOS ***");
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, "Criação").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,"Concluído").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO,"Cancelado").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO,"Solicitação de revisão").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO, "Revisado").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR,"Notificação").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,"Ciente").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_CLASSIFICACAO,"Classificação").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO,"Interesse").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO,"Edição").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA,"Visita").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,"Cancelamento de movimentação").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,"Anexação de arquivo").save();
+			new GcTipoMovimentacao(GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR,"Duplicado").save();
+			new GcTipoInformacao(GcTipoInformacao.TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO,"Registro de Conhecimento").save();
+			new GcTipoTag(GcTipoTag.TIPO_TAG_CLASSIFICACAO, "Classificação").save();
+			new GcTipoTag(GcTipoTag.TIPO_TAG_HASHTAG, "Marcador").save();
+			new GcTipoTag(GcTipoTag.TIPO_TAG_ANCORA, "Âncora").save();
+			new GcAcesso(GcAcesso.ACESSO_PUBLICO, "Público").save();
+			new GcAcesso(GcAcesso.ACESSO_ORGAO_USU, "Restrito ao órgão").save();
+			new GcAcesso(GcAcesso.ACESSO_LOTACAO_E_SUPERIORES,"Lotação e superiores").save();
+			new GcAcesso(GcAcesso.ACESSO_LOTACAO_E_INFERIORES,"Lotação e inferiores").save();
+			new GcAcesso(GcAcesso.ACESSO_LOTACAO, "Lotação").save();
+			new GcAcesso(GcAcesso.ACESSO_PESSOAL, "Pessoal").save();
+		}
+
 
 		// CpTipoMarcador cpTipoMarcador = CpTipoMarcador.findById(1L);
 		// CpTipoMarcador cpTipoMarcador = new CpTipoMarcador();

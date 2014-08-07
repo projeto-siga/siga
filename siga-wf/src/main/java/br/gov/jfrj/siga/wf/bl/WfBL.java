@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -28,12 +29,15 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jbpm.JbpmContext;
 import org.jbpm.db.GraphSession;
 import org.jbpm.graph.def.Node;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
+import org.jbpm.instantiation.Delegation;
+import org.jbpm.taskmgmt.def.Swimlane;
 import org.jbpm.taskmgmt.def.Task;
 import org.jbpm.taskmgmt.exe.SwimlaneInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
@@ -429,6 +433,55 @@ public class WfBL extends CpBL {
 	public void encerrarProcessInstanceDaTarefa(Long idTI, Date dtFim) throws AplicacaoException {
 		TaskInstance ti = WfContextBuilder.getJbpmContext().getJbpmContext().getTaskInstance(idTI);
 		encerrarProcessInstance(ti.getProcessInstance().getId(), dtFim);
+	}
+	
+	public String gravarProcessDefinition(String xml) {
+		JbpmContext jbpmContext = WfContextBuilder.getJbpmContext().getJbpmContext();
+		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(xml);
+		jbpmContext.deployProcessDefinition(processDefinition);
+		long id = processDefinition.getId();
+
+		String sReturn = "Definição de Procedimento: " + processDefinition.getName()
+				+ " atualizada com sucesso.";
+
+		// ProcessDefinition pi = jbpmContext.getGraphSession()
+		// .loadProcessDefinition(id);
+
+		Delegation d = new Delegation(
+				"br.gov.jfrj.siga.wf.util.WfAssignmentHandler");
+
+		for (Swimlane s : ((Collection<Swimlane>) processDefinition
+				.getTaskMgmtDefinition().getSwimlanes().values())) {
+			if (s.getTasks() != null)
+				for (Object t : s.getTasks()) {
+					System.out.println(((Task) t).toString());
+				}
+			if (s.getAssignmentDelegation() == null)
+				s.setAssignmentDelegation(d);
+		}
+
+		for (Task t : ((Collection<Task>) processDefinition
+				.getTaskMgmtDefinition().getTasks().values())) {
+			if (t.getSwimlane() == null
+					&& t.getAssignmentDelegation() == null)
+				t.setAssignmentDelegation(d);
+		}
+		return sReturn; 
+	}
+
+	public String lerProcessDefinition(String nome) {
+		JbpmContext jbpmContext = WfContextBuilder.getJbpmContext().getJbpmContext();
+		ProcessDefinition pd = jbpmContext.getGraphSession().findLatestProcessDefinition(nome);
+
+		byte ab[] = pd.getFileDefinition().getBytes("processdefinition.xml");
+		String sXML;
+		try {
+			sXML = new String(ab, "UTF-8");
+			return sXML; 
+		} catch (UnsupportedEncodingException e) {
+			return null;
+		}
+		
 	}
 
 }

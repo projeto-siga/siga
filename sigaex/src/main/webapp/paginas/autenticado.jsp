@@ -37,7 +37,7 @@
 				<div style="padding-left: 10;">
 					<div id="dados-assinatura" style="visible: hidden">
 						<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
-						<ww:hidden name="urlchk_${mov.idMov}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
+						<ww:hidden name="urlchk_${mov.idMov}" value="/${pdf}" />
 
 						<c:set var="jspServer"
 							value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/autenticar.action?n=${n}&ass=1&answer=${answer}" />

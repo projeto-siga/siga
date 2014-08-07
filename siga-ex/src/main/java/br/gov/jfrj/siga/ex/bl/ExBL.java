@@ -2470,7 +2470,7 @@ public class ExBL extends CpBL {
 						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
 					cancelarPedidoBI(m.doc());
 				}
-
+				
 				final ExMovimentacao ultMov = m.getUltimaMovimentacao();
 				final ExMovimentacao ultMovNaoCancelada = m
 						.getUltimaMovimentacaoNaoCancelada(movACancelar);
@@ -2492,7 +2492,7 @@ public class ExBL extends CpBL {
 
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
 				mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
-
+				
 				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
 					PublicacaoDJEBL.cancelarRemessaPublicacao(mov);
 
@@ -2540,6 +2540,11 @@ public class ExBL extends CpBL {
 				}
 
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
+
+				if (ultMovNaoCancelada.getExTipoMovimentacao()
+						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) {
+					atualizarDnmAnotacao(m);
+				}
 
 				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO
 						|| ultMovNaoCancelada.getExTipoMovimentacao()
@@ -2826,7 +2831,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não é possível criar Subprocesso físico de processo eletrônico.");
 		
-		if(!getComp().podeSerSubscritor(doc.getTitular(), doc.getLotaTitular(), doc.getExModelo()))
+		if(!getComp().podeSerSubscritor(doc))
 			throw new AplicacaoException("O usuário não pode ser subscritor do documento");
 
 		Set<ExVia> setVias = doc.getSetVias();
@@ -3124,6 +3129,12 @@ public class ExBL extends CpBL {
 		String s = mob.getDnmUltimaAnotacao();
 		if (s != null)
 			return s;
+		s = atualizarDnmAnotacao(mob);
+		return s;
+	}
+
+	private static String atualizarDnmAnotacao(ExMobil mob) {
+		String s;
 		s = "";
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (mov.isCancelada())
@@ -3463,6 +3474,11 @@ public class ExBL extends CpBL {
 			if (mov.equals(m.getExMovimentacaoCanceladora())) {
 				m.setExMovimentacaoCanceladora(null);
 			}
+		}
+		
+		if (mov.getExTipoMovimentacao()
+				.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) {
+			atualizarDnmAnotacao(mov.getExMobil());
 		}
 
 		Notificador.notificarDestinariosEmail(mov,
@@ -4233,7 +4249,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer anotação.", 0, e);
+			throw new AplicacaoException("Erro ao registrar acesso reservado.", 0, e);
 		}
 	}
 
@@ -4265,6 +4281,9 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(descrMov);
 
 			gravarMovimentacao(mov);
+			
+			atualizarDnmAnotacao(mov.getExMobil());
+			
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -4758,8 +4777,8 @@ public class ExBL extends CpBL {
 	}
 
 	private void atualizarVariaveisDenormalizadas(ExDocumento doc) {
+		atualizarDnmNivelAcesso(doc);
 		atualizarDnmAcesso(doc);
-		doc.setDnmExNivelAcesso(doc.getExNivelAcesso());
 	}
 
 	private void concluirAlteracao(ExDocumento doc) throws Exception {

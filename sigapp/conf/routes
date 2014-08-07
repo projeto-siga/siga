@@ -22,6 +22,7 @@
 	POST	/agendamento_update						Application.agendamento_update
 	GET		/agendamento_imprime					Application.agendamento_imprime
 	GET		/agendamento_print						Application.agendamento_print
+	GET		/agendamento_sala_lista					Application.agendamento_sala_lista
 	GET 	/agendadas_hoje							Application.agendadas_hoje
 	GET		/usuario_atualiza						Application.usuario_atualiza					
 	GET 	/creditos								Application.creditos

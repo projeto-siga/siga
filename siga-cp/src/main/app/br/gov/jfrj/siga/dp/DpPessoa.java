@@ -26,7 +26,11 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
+import java.util.Collections;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -529,7 +533,47 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return getSiglaCompleta();
 	}
     
-    
-
+   /**
+    * Método que filtra o pessoaPosteriores para que apareça somente o histórico com informações corporativas, comparando 
+    * uma linha da lista com a próxima para verificar se ocorreu alguma alteração de lotação, função ou padrão.
+    * @return lista com histórico referentes as seguintes informações: lotações, função e padrão.
+    */
+    public List<DpPessoa> getHistoricoInfoCorporativas() {
+    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o começo 
+    	List<DpPessoa> listaPessoaPosterioresA = new ArrayList<DpPessoa>(getPessoaInicial().getPessoasPosteriores());
+    	List<DpPessoa> listaPessoaPosterioresB = listaPessoaPosterioresA;
+    	List<DpPessoa> listaHistoricoPessoa = new ArrayList<DpPessoa>();
+    	//define que o iterator começa pelo fim da lista 
+    	ListIterator<DpPessoa> itPessoaPosteriorA = listaPessoaPosterioresA.listIterator(listaPessoaPosterioresA.size());
+    	ListIterator<DpPessoa> itPessoaPosteriorB = listaPessoaPosterioresB.listIterator(listaPessoaPosterioresB.size());
+    	DpPessoa pessoaPost = null;
+    	DpPessoa pessoaHist = null;
+    	
+		if (itPessoaPosteriorB.hasPrevious()) {
+			pessoaHist = itPessoaPosteriorB.previous();
+			listaHistoricoPessoa.add(pessoaHist);
+		}
+    	while (itPessoaPosteriorB.hasPrevious() ) {
+			pessoaPost = itPessoaPosteriorA.previous();
+			pessoaHist = itPessoaPosteriorB.previous();
+			//verifica se a lotação da lista listaPessoaPosterioresA é a mesma que da lista listaPessoaPosterioresB, 
+			//que está um registro a frente (linha seguinte)
+			//somente adiciona na lista listaHistoricoPessoa,que será retornada pelo método, caso as lotações sejam diferentes
+			if(!pessoaHist.getLotacao().getSigla().equals(pessoaPost.getLotacao().getSigla())) 
+				listaHistoricoPessoa.add(pessoaHist);
+			//verifica se o padrão de referência da lista listaPessoaPosterioresA é o mesma que da lista listaPessoaPosterioresB
+			else if((pessoaHist.getPadraoReferencia() == null ^ pessoaPost.getPadraoReferencia() == null) || 
+						((pessoaHist.getPadraoReferencia() != null && pessoaPost.getPadraoReferencia() != null) &&
+								!pessoaHist.getPadraoReferencia().equals(pessoaPost.getPadraoReferencia())) ) 
+				listaHistoricoPessoa.add(pessoaHist);	
+			//verifica se a função de confiança da lista listaPessoaPosterioresA é a mesma que da lista listaPessoaPosterioresB
+			else if((pessoaHist.getFuncaoConfianca() == null ^ pessoaPost.getFuncaoConfianca() == null) || 
+						((pessoaHist.getFuncaoConfianca() != null && pessoaPost.getFuncaoConfianca() != null) &&
+								!pessoaHist.getFuncaoConfianca().getNomeFuncao().equals(pessoaPost.getFuncaoConfianca().getNomeFuncao())) ) 
+				listaHistoricoPessoa.add(pessoaHist);				
+    	}
+    	Collections.reverse(listaHistoricoPessoa);
+    	return listaHistoricoPessoa;
+    } 
 
 }

@@ -160,6 +160,8 @@ public abstract class ExArquivo extends Objeto {
 	}
 
 	public abstract byte[] getPdf();
+	
+	public abstract boolean isPdf();
 
 	public long getByteCount() {
 		byte[] ab = getPdf();

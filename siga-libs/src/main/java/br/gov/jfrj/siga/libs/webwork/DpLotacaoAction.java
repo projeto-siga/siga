@@ -32,7 +32,6 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
-
 import br.gov.jfrj.siga.model.Selecionavel;
 
 public class DpLotacaoAction extends
@@ -48,6 +47,39 @@ public class DpLotacaoAction extends
 	private String sigla;
     
     private DpLotacao lotacao;
+    
+	public class GenericoSelecao implements Selecionavel {
+
+		private Long id;
+
+		private String sigla;
+
+		private String descricao;
+
+		public String getDescricao() {
+			return descricao;
+		}
+
+		public void setDescricao(String descricao) {
+			this.descricao = descricao;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getSigla() {
+			return sigla;
+		}
+
+		public void setSigla(String sigla) {
+			this.sigla = sigla;
+		}
+	}
 
 	public String aBuscar() throws Exception {
 		if (param("postback") == null)
@@ -103,6 +135,21 @@ public class DpLotacaoAction extends
 		return null;
 	}
 
+	@Override
+	public String aSelecionar() throws Exception {
+		String s = super.aSelecionar();
+		if (getSel() != null) {
+			GenericoSelecao sel = new GenericoSelecao();
+			sel.setId(getSel().getId());
+			sel.setSigla(getSigla());
+			sel.setDescricao(getSel().getDescricao());
+/*			sel.setDescricao("/siga/lotacao/exibir.action?sigla="
+					+ sel.getSigla());*/
+			setSel(sel);
+		}
+		return s;
+	}
+	
 	public String getSigla() {
 		return sigla;
 	}

@@ -13,7 +13,7 @@
 		</div>
 		<div class="gt-form gt-content-box">
 			<p>
-				<b>Nome:</b> ${lotacao.nomeLotacao}
+				<b>Nome: ${lotacao.nomeLotacao} </b>
 			</p>
 			<p>
 				<b>Sigla:</b> ${lotacao.sigla}
@@ -38,14 +38,16 @@
 					</thead>
 					<tbody>
 						<c:forEach var="lotacaoSubordinada" items="${lotacao.dpLotacaoSubordinadosSet}">
-							<tr>
-								<td><siga:selecionado 
-										sigla="${lotacaoSubordinada.sigla}"
-										descricao="${lotacaoSubordinada.descricaoAmpliada}"
-										lotacaoParam="${lotacaoSubordinada.orgaoUsuario.sigla}${lotacaoSubordinada.sigla}" />
-								</td>
-								<td>${lotacaoSubordinada.nomeLotacao}</td>							
-							</tr>
+							<c:if test="${empty lotacaoSubordinada.dataFimLotacao}">
+								<tr>
+									<td><siga:selecionado 
+											sigla="${lotacaoSubordinada.sigla}"
+											descricao="${lotacaoSubordinada.descricaoAmpliada}"
+											lotacaoParam="${lotacaoSubordinada.orgaoUsuario.sigla}${lotacaoSubordinada.sigla}" />
+									</td>
+									<td>${lotacaoSubordinada.nomeLotacao}</td>							
+								</tr>
+							</c:if>
 						</c:forEach>
 					</tbody>
 				</table>				
@@ -53,14 +55,14 @@
 		</div>
 		<br/><br/>
 		<div class="gt-content clearfix">		
-			<h2 class="gt-table-head">Servidores</h2>
+			<h2 class="gt-table-head">Magistrados/ Servidores</h2>
 			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table">
 					<thead>
 						<tr>							
 							<th align="right">Nome</th>														
 							<th align="right">Matricula</th>														
-							<th align="right">Lotacao</th>														
+							<!-- <th align="right">Lotacao</th> -->														
 							<th align="right">Cargo</th>														
 							<th align="right">Função</th>														
 							<th align="right">Email</th>														
@@ -76,10 +78,10 @@
 									descricao="${pessoa.descricao} - ${pessoa.sigla}"
 									pessoaParam="${pessoa.sigla}" />
 								</td>							
-								<td><siga:selecionado 
+								<%-- <td><siga:selecionado 
 									sigla="${pessoa.lotacao.sigla}"
 									descricao="${pessoa.lotacao.descricaoAmpliada}"
-									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" /></td>	
+									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" /></td> --%>	
 								<td>${pessoa.cargo.descricao}</td>							
 								<td>${pessoa.funcaoConfianca.descricao}</td>							
 								<td>${pessoa.emailPessoa}</td>							

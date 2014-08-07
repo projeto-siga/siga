@@ -629,10 +629,14 @@ public class CpDao extends ModeloDao {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpLotacao");
 		query.setString("siglaLotacao", o.getSigla());
-		if (o.getOrgaoUsuario() != null)
-			query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
+		if (o.getOrgaoUsuario() != null) 
+			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) 
+				query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
+			else 
+				query.setLong("idOrgaoUsu", consultarPorSigla(o.getOrgaoUsuario()).getId());	
 		else
 			query.setLong("idOrgaoUsu", 0);
+
 		query.setCacheable(true);
 		query.setCacheRegion(CACHE_QUERY_CONFIGURACAO);
 		final List<DpLotacao> l = query.list();
@@ -674,10 +678,15 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpLotacaoDaoFiltro flt) {
 		final DpLotacao o = new DpLotacao();
 		o.setSigla(flt.getSigla());
-		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
+		if (o.getOrgaoUsuario() == null && flt.getIdOrgaoUsu() != null){
+			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
+			o.setOrgaoUsuario(cpOrgaoUsu);
+		}
+		
+		
+/*		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 		cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu());
-		o.setOrgaoUsuario(cpOrgao);
-
+		o.setOrgaoUsuario(cpOrgao);*/
 		return consultarPorSigla(o);
 	}
 
@@ -1515,27 +1524,23 @@ public class CpDao extends ModeloDao {
 	public void invalidarCache(Object entidade) {
 		if (entidade == null)
 			return;
-		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
-				.getSessionFactory();
+		SessionFactory sfCpDao = CpDao.getInstance().getSessao().getSessionFactory();
 		if (entidade instanceof DpSubstituicao) {
 			sfCpDao.evict(DpSubstituicao.class);
 			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
 		}
 	}
 
-	static public Configuration criarHibernateCfg(String datasource)
-			throws Exception {
+	static public Configuration criarHibernateCfg(String datasource) throws Exception {
 
 		Configuration cfg = new Configuration();
 		cfg.setProperty("hibernate.connection.datasource", datasource);
-		configurarHibernate(cfg);
 
-		return cfg;
+		return configurarHibernate(cfg);
 	}
 
-	static public Configuration criarHibernateCfg(
-			String connectionUrl, String username, String password)
-					throws Exception {
+	static public Configuration criarHibernateCfg(String connectionUrl,
+                                                  String username, String password) throws Exception {
 		Configuration cfg = new Configuration();
 		cfg.setProperty("hibernate.connection.url", connectionUrl);
 		cfg.setProperty("hibernate.connection.username", username);
@@ -1546,8 +1551,8 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("c3p0.max_size", "20");
 		cfg.setProperty("c3p0.timeout", "300");
 		cfg.setProperty("c3p0.max_statements", "50");
-		configurarHibernate(cfg);
-		return cfg;
+
+		return configurarHibernate(cfg);
 	}
 
 	static public Configuration criarHibernateCfg(
@@ -1557,8 +1562,7 @@ public class CpDao extends ModeloDao {
 		return criarHibernateCfg(ambiente, prop);
 	}
 
-	static public Configuration criarHibernateCfg(
-			CpAmbienteEnumBL ambiente, CpPropriedadeBL prop) throws Exception {
+	static public Configuration criarHibernateCfg(CpAmbienteEnumBL ambiente, CpPropriedadeBL prop) throws Exception {
 
 		Configuration cfg = new Configuration();
 
@@ -1579,7 +1583,7 @@ public class CpDao extends ModeloDao {
 		return cfg;
 	}
 
-	static private void configurarHibernate(Configuration cfg) throws Exception {
+	static private Configuration configurarHibernate(Configuration cfg) throws Exception {
 		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
 
 		cfg.setProperty("hibernate.current_session_context_class", "thread");
@@ -1595,7 +1599,7 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
 		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
-		// cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
+	    cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
 
 		// descomentar para inpecionar o SQL
 		// cfg.setProperty("hibernate.show_sql", "true");
@@ -1726,9 +1730,7 @@ public class CpDao extends ModeloDao {
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade", "transactional", CACHE_SECONDS);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao", "transactional", CACHE_QUERY_SUBSTITUICAO);
 
-		// Desabilitado pois o hibernate não permite cache de blobs.
-		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpModelo",
-		// "transactional", CACHE_SECONDS);
+		return cfg;
 	}
 
 	public DpPessoa getPessoaFromSigla(String sigla) {

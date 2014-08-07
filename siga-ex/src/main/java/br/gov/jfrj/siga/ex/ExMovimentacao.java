@@ -704,6 +704,11 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return getConteudoBlobpdf();
 	}
 
+	@Override
+	public boolean isPdf() {
+		return (getNumPaginas() != null && getNumPaginas() > 0) || (getPdf() != null);
+	}
+
 	/**
 	 * Retorna a data da movimentação.
 	 * 

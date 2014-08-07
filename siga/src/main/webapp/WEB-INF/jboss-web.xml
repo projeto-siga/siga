@@ -1,7 +1,8 @@
 <jboss-web>
 	<security-domain>sp</security-domain>
 	<context-root>siga</context-root>
-	<valve>
+
+    <valve>
         <class-name>org.picketlink.identity.federation.bindings.tomcat.sp.ServiceProviderAuthenticator</class-name>
     </valve>
 </jboss-web>

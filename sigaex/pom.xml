@@ -82,17 +82,6 @@
             <artifactId>jasperreports</artifactId>
         </dependency>
 
-        <!-- Spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-
-
         <dependency>
             <groupId>org.apache.axis</groupId>
             <artifactId>axis</artifactId>
@@ -133,6 +122,10 @@
         <dependency>
             <groupId>projeto-siga</groupId>
             <artifactId>siga-ex</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>projeto-siga</groupId>
+            <artifactId>siga-ext</artifactId>
         </dependency>
     </dependencies>
 </project>

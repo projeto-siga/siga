@@ -39,6 +39,11 @@ tr.fisicoeven:hover td {
 	margin: 0;
 }
 
+.gt-for-table-custom td, 
+.gt-for-table-custom th {
+	padding: 5px;
+}
+
 .gt-hd-top {
 	height: auto !important;
 }
@@ -482,4 +487,8 @@ div#carregando {
 	padding:4px;
 	color:white;
 	display:none;
+}
+
+.escondido {
+    display: none;
 }

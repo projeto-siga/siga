@@ -74,9 +74,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<packagingExcludes>
-						WEB-INF/lib/siga-ext-*.jar
-					</packagingExcludes>
+					<packagingExcludes>WEB-INF/lib/siga-ext-*.jar</packagingExcludes>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -192,10 +190,12 @@
 				<artifactId>siga-sinc-lib</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
+            <!-- Biblioteca configurada como modulo do Jboss -->
 			<dependency>
 				<groupId>projeto-siga</groupId>
 				<artifactId>siga-ext</artifactId>
 				<version>${siga.version}</version>
+                <scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>projeto-siga</groupId>

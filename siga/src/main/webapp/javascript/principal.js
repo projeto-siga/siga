@@ -22,6 +22,7 @@ modules["sigaex"] = { name: "sigaex",
                       },
                       viewId: "left"
                     }
+
 subModule["processos"] = { name: "processos",
                            url: "/sigaex/expediente/doc/gadget.action",
                            params: {
@@ -107,6 +108,8 @@ function loadSubModule(model){
     }
 }
 
+// Quando a pagina for carregada ele inicia este metodo.
+// Eh neste trecho que e o main
 $(function() {
     // Itera sobre todos os modulos do siga
     $.each(modules, function(k, model) {

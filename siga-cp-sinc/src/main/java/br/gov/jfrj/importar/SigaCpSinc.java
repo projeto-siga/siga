@@ -21,7 +21,6 @@ package br.gov.jfrj.importar;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
@@ -32,21 +31,20 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Scanner;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 
-import org.apache.axis.utils.IOUtils;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpPapel;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
@@ -81,7 +79,7 @@ public class SigaCpSinc {
 
 	private String url = "";
 
-	private String destinatariosExtras = "";
+	private static String destinatariosExtras = "";
 
 	public String getServidor() {
 		return servidor;
@@ -95,7 +93,6 @@ public class SigaCpSinc {
 		return dt;
 	}
 
-	private String aditionalEmails = "";
 
 	private SincronizavelComparator sc = new SincronizavelComparator();
 
@@ -134,7 +131,7 @@ public class SigaCpSinc {
 	private DpLotacao lotacaoSJRJ;
 	private DpLotacao lotacaoDIRFO;
 	//
-	private StringBuilder sbLog = new StringBuilder();
+	private Logger log = Logger.getLogger("br.gov.jfrj.log.sinc");
 	/*
 	 * verificar duplicidades (árvore de Hashtables : nivel 0: orgaoUsuario,
 	 * nivel 1: entidade, nivel 2: atributo,valor
@@ -142,6 +139,7 @@ public class SigaCpSinc {
 	Hashtable<String, Hashtable<String, Hashtable<String, Hashtable<String, String>>>> unicidades = new Hashtable<String, Hashtable<String, Hashtable<String, Hashtable<String, String>>>>();
 
 	protected Date dt;
+	private SincLogHandler logHandler = new SincLogHandler();
 
 	protected void setOrgaoUsuario(long orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
@@ -399,6 +397,11 @@ public class SigaCpSinc {
 				maxSinc = Integer.valueOf(param.split("=")[1]);
 				System.out.println("MAX SINC = " + maxSinc);
 			}
+
+			if (param.startsWith("-destinatariosExtras")){
+				setDestinatariosExtras(param.split("=")[1]);
+			}
+			
 		}
 
 		return 0;
@@ -548,6 +551,7 @@ public class SigaCpSinc {
 	}
 
 	public SigaCpSinc(String[] args) {
+		log.addHandler(logHandler);
 		int result = parseParametros(args);
 		if (result != 0)
 			System.exit(result);
@@ -717,6 +721,8 @@ public class SigaCpSinc {
 	}
 
 	public void importarXml(InputStream in) throws Exception {
+		String aditionalEmails = "";
+
 		boolean contemCargo = false;
 		boolean contemPessoa = false;
 		boolean contemFuncao = false;
@@ -765,6 +771,11 @@ public class SigaCpSinc {
 						orgaoUsuario = cpOrgaoUsuario.getIdOrgaoUsu();
 						aditionalEmails = parser.getAttributeValue(null,
 								"NotificarPorEmail");
+						
+						if (destinatariosExtras != null && aditionalEmails != null){
+							destinatariosExtras = destinatariosExtras + (!aditionalEmails.trim().equals("") ? "," + aditionalEmails : "");
+						}
+						
 					} else if (parser.getName().equals("cargo")) {
 						setNovo.add(importarXmlCargo(parser));
 						contemCargo = true;
@@ -1152,31 +1163,23 @@ public class SigaCpSinc {
 	}
 
 	public void log(String s) {
-		System.out.println(s);
-		sbLog.append(s);
-		sbLog.append("\n");
+		log.log(new LogRecord(Level.INFO, s));
 	}
 
 	public void logEnd() throws Exception {
 		String sDest = ImportarXmlProperties.getString("lista.destinatario")
 				+ (!destinatariosExtras.trim().equals("") ? ","
 						+ destinatariosExtras : "");
-		if (sDest != null && aditionalEmails != null)
-			sDest = sDest
-					+ (!aditionalEmails.trim().equals("") ? ","
-							+ aditionalEmails : "");
-		String destinatarios[] = sDest.split(",");
-		String texto = new String();
 		if (getDataHora() != null) {
-			texto = texto + "Arquivo XML gerado em " + getDataHora() + "\n";
+			log("Arquivo XML gerado em " + getDataHora() + "\n");
 		}
-		texto = texto + sbLog.toString();
-		String assunto = new String();
-		if (maxSinc != -1 && list != null && (list.size() > maxSinc)) assunto = "Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente."; 
-		else assunto = "Log de Importação";
-		Correio.enviar(
-				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
-				destinatarios, assunto, texto, null);
+
+		if (maxSinc != -1 && list != null && (list.size() > maxSinc)){
+			logHandler.setAssunto("Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente.");
+		}
+		
+		logHandler.setDestinatariosEmail(sDest.split(","));
+
 	}
 
 	private Date parseData(XmlPullParser parser, String campo) {
@@ -1443,8 +1446,8 @@ public class SigaCpSinc {
 	 * @param destinatarios
 	 *            - lista de e-mails separados por vírgula
 	 */
-	protected void setDestinatariosExtras(String destinatarios) {
-		this.destinatariosExtras = destinatarios;
+	protected static void setDestinatariosExtras(String destinatarios) {
+		destinatariosExtras = destinatarios;
 	}
 
 	protected void exibirMensagemMaxSinc(List<Item> list) {

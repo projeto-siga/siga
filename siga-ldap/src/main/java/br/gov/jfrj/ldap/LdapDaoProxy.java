@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 
 public class LdapDaoProxy extends LdapDaoImpl {
 
-	Logger log = Logger.getLogger(LdapDaoProxy.class.getName());
+	Logger log =  Logger.getLogger("br.gov.jfrj.log.sinc.ldap.proxy");
 	private String MSG_LOG_SOMENTE_LEITURA = "<<<<SOMENTE LEITURA>>>>";
 
 	protected LdapDaoProxy(boolean somenteLeitura) {

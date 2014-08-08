@@ -26,20 +26,23 @@
 					</td>
 
 					<!-- <td>${taskInstance.task.processDefinition.name}</td> -->
-					<td align="center"><c:set var="atendente">
-							<ww:property value="%{getPooledActors(#attr.taskInstance)}" />
-						</c:set> <c:set var="atendenteNome">
+					<td align="center">
+                        <c:set var="atendente">
+						    <ww:property value="%{getPooledActors(#attr.taskInstance)}" />
+						</c:set>
+                        <c:set var="atendenteNome">
 							<ww:property value="%{getDescricao(atendente)}" />
-						</c:set> <c:if
-							test="${atendente != titular.sigla and atendente != lotaTitular.sigla}">
+						</c:set>
+                        <c:if test="${atendente != titular.sigla and atendente != lotaTitular.sigla}">
 							<span style="color: silver">
-						</c:if> <siga:selecionado sigla="${atendente}"
-							descricao="${atendenteNome}" /> <c:if
-							test="${atendente != titular.sigla and atendente != lotaTitular.sigla}">
+						</c:if>
+                        <siga:selecionado sigla="${atendente}" descricao="${atendenteNome}" />
+                        <c:if test="${atendente != titular.sigla and atendente != lotaTitular.sigla}">
 							</span>
 						</c:if>
 					</td>
-					<td align="center"><c:choose>
+					<td align="center">
+                        <c:choose>
 							<c:when test="${taskInstance.priority == 1}">Muito Alta</c:when>
 							<c:when test="${taskInstance.priority == 2}">Alta</c:when>
 							<c:when test="${taskInstance.priority == 3}">Média</c:when>
@@ -47,8 +50,7 @@
 							<c:when test="${taskInstance.priority == 51}">Muito Baixa</c:when>
 						</c:choose>
 					</td>
-					<td align="right">${fn:replace(f:esperaSimples(taskInstance.create),
-						" ", "&nbsp;")}</td>
+					<td align="right">${fn:replace(f:esperaSimples(taskInstance.create)," ", "&nbsp;")}</td>
 				</tr>
 			</c:forEach>
 		</tbody>

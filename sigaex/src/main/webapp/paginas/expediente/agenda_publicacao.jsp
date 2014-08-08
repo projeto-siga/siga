@@ -77,7 +77,7 @@
 			<h2>Agendamento de Publicação - ${mob.siglaEDescricaoCompleta}</h2>
 			<div class="gt-content-box gt-for-table">			
 		<form name="frm" action="agendar_publicacao_gravar.action"
-			namespace="/expediente/mov" cssClass="form" method="GET">
+namespace="/expediente/mov" cssClass="form" method="GET">
 			<ww:token/>
 			<input type="hidden" name="postback" value="1" />
 			<ww:hidden name="sigla" value="%{sigla}"/>

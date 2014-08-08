@@ -80,6 +80,7 @@ public class SigaCpSinc {
 	private String url = "";
 
 	private static String destinatariosExtras = "";
+	private static Level logLevel = Level.INFO; 
 
 	public String getServidor() {
 		return servidor;
@@ -131,7 +132,7 @@ public class SigaCpSinc {
 	private DpLotacao lotacaoSJRJ;
 	private DpLotacao lotacaoDIRFO;
 	//
-	private Logger log = Logger.getLogger("br.gov.jfrj.log.sinc");
+	private Logger logger = Logger.getLogger("br.gov.jfrj.log.sinc");
 	/*
 	 * verificar duplicidades (árvore de Hashtables : nivel 0: orgaoUsuario,
 	 * nivel 1: entidade, nivel 2: atributo,valor
@@ -402,9 +403,18 @@ public class SigaCpSinc {
 				setDestinatariosExtras(param.split("=")[1]);
 			}
 			
+			if (param.startsWith("-logLevel")){
+				setLogLevel(param.split("=")[1]);
+			}
+			
+			
 		}
 
 		return 0;
+	}
+
+	private static void setLogLevel(String nomeLevel) {
+		logLevel = Level.parse(nomeLevel);
 	}
 
 	/**
@@ -562,10 +572,13 @@ public class SigaCpSinc {
 	}
 
 	public SigaCpSinc(String[] args) {
-		log.addHandler(logHandler);
+		
 		int result = parseParametros(args);
 		if (result != 0)
 			System.exit(result);
+
+		logger.addHandler(logHandler);
+		logger.setLevel(logLevel);
 
 		String aUrl = "";
 		String oServidor = args[0].toLowerCase();
@@ -1169,12 +1182,12 @@ public class SigaCpSinc {
 			o.setIdExterna(parseStr(parser, "lotacao"));
 			papel.setDpLotacao(o);
 		}
-		
+
 		return papel;
 	}
 
 	public void log(String s) {
-		log.log(new LogRecord(Level.INFO, s));
+		logger.log(new LogRecord(logLevel, s));
 	}
 
 	public void logEnd() throws Exception {

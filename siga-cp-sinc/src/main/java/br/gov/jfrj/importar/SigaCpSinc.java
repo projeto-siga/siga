@@ -141,6 +141,7 @@ public class SigaCpSinc {
 
 	protected Date dt;
 	private SincLogHandler logHandler = new SincLogHandler();
+	private String[] args;
 
 	protected void setOrgaoUsuario(long orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
@@ -396,7 +397,6 @@ public class SigaCpSinc {
 
 			if (param.startsWith("-maxSinc=")) {
 				maxSinc = Integer.valueOf(param.split("=")[1]);
-				System.out.println("MAX SINC = " + maxSinc);
 			}
 
 			if (param.startsWith("-destinatariosExtras")){
@@ -445,10 +445,10 @@ public class SigaCpSinc {
 	 */
 	public static void main(String[] args) throws Exception {
 		SigaCpSinc sinc = new SigaCpSinc(args);
-		sinc.run(args);
+		sinc.run();
 	}
 
-	public void run(String[] args) throws Exception, NamingException,
+	public void run() throws Exception, NamingException,
 			AplicacaoException {
 		AnnotationConfiguration cfg;
 		if (servidor.equals("prod"))
@@ -507,9 +507,6 @@ public class SigaCpSinc {
 	public void importxml() {
 		long inicio = System.currentTimeMillis();
 		try {
-			if (modoLog) {
-				logComDestaque(">>>Iniciando em modo LOG!<<<");
-			}
 			log("Importando: XML");
 			/* -------------------------- */
 			// Mensagens.getString("url.origem")
@@ -559,26 +556,28 @@ public class SigaCpSinc {
 	}
 
 	private void logComDestaque(String msg) {
-		int ESPACO_LINHA = 10;
-		for (int i = 0; i < ESPACO_LINHA; i++) {
-			log("");
+		String espaco = "";
+		for (int i = 0; i < 10; i++) {
+			espaco+="\n";
 		}
-		
-		log(msg);
-		
-		for (int i = 0; i < ESPACO_LINHA; i++) {
-			log("");
-		}
+		log(espaco + msg + espaco);
 	}
 
 	public SigaCpSinc(String[] args) {
-		
+		this.args = args;
 		int result = parseParametros(args);
 		if (result != 0)
 			System.exit(result);
 
 		logger.addHandler(logHandler);
 		logger.setLevel(logLevel);
+		
+		
+		if (modoLog) {
+			logComDestaque(">>>Iniciando em modo LOG!<<<\nUse -modoLog=false para sair do modo LOG e escrever as alterações");
+		}
+		log("MAX SINC = " + maxSinc);
+
 
 		String aUrl = "";
 		String oServidor = args[0].toLowerCase();
@@ -589,10 +588,6 @@ public class SigaCpSinc {
 
 		this.servidor = oServidor.substring(oServidor.indexOf("-") + 1);
 		this.url = aUrl;
-	}
-
-	public SigaCpSinc() {
-		this(new String[] { "-desenv", "-sjrj" });
 	}
 
 	public List<Sincronizavel> importarTabela() {

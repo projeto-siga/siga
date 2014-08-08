@@ -59,7 +59,7 @@
 				<form method="post" action="j_security_check" enctype="application/x-www-form-urlencoded" class="gt-form">
 				<div class="login-invalido">
 					<div class="login-invalido-titulo">
-						<p>Login ou senha incorretos!</p>
+						<p>Login e/ou senha incorretos!</p>
 					</div>
 					
 					<div class="login-invalido-descricao">

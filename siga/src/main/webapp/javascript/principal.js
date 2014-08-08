@@ -9,70 +9,72 @@
  * O viewID corresponde ao local onde sera renderizado na tela o resultado
  * da consulta
  */
-
 var MAXIMUM_RETRY_ATTEMPTS = 3;
 var modules = {};
 var subModule = {};
-modules["sigaex"] = { name: "sigaex",
-                      url: "/sigaex/expediente/doc/gadget.action",
-                      params: {
-                          apenasQuadro: true,
-                          idTpFormaDoc: 1,
-                          ts: getCurrentTimeInMillis()
-                      },
-                      viewId: "left"
-                    }
 
-subModule["processos"] = { name: "processos",
-                           url: "/sigaex/expediente/doc/gadget.action",
-                           params: {
-                             idTpFormaDoc: 2,
-                             ts: getCurrentTimeInMillis()
-                           },
-                           viewId: "leftbottom"
-                         }
+modules["sigawf"] = {
+    name: "sigawf",
+    url: "/sigawf/inbox.action",
+    params: {
+      ts: getCurrentTimeInMillis()
+    },
+    viewId: "right"
+}
+modules["sigaex"] = {
+    name: "sigaex",
+    url: "/sigaex/expediente/doc/gadget.action",
+    params: {
+        apenasQuadro: true,
+        idTpFormaDoc: 1,
+        ts: getCurrentTimeInMillis()
+    },
+    viewId: "left"
+}
 
-modules["sigawf"] = { name: "sigawf",
-                      url: "/sigawf/inbox.action",
-                      params: {
-                          ts: getCurrentTimeInMillis()
-                      },
-                      viewId: "right"
-                    }
+subModule["processos"] = {
+    name: "processos",
+    url: "/sigaex/expediente/doc/gadget.action",
+    params: {
+        idTpFormaDoc: 2,
+        ts: getCurrentTimeInMillis()
+    },
+    viewId: "leftbottom"
+}
+modules["sigasr"] = {
+    name: "sigasr",
+    url: "/sigasr/solicitacao/gadget",
+    params: {
+        ts: getCurrentTimeInMillis()
+    },
+    viewId: "rightbottom"
+}
 
-modules["sigasr"] = { name: "sigasr",
-                      url: "/sigasr/solicitacao/gadget",
-                      params: {
-                          ts: getCurrentTimeInMillis()
-                      },
-                      viewId: "rightbottom"
-                    }
-
-modules["sigagc"] = { name: "sigagc",
-                      url: "/sigagc/app/gadget",
-                      params: {
-                          ts: getCurrentTimeInMillis()
-                      },
-                      viewId: "rightbottom2"
-                    }
+modules["sigagc"] = {
+    name: "sigagc",
+    url: "/sigagc/app/gadget",
+    params: {
+        ts: getCurrentTimeInMillis()
+    },
+    viewId: "rightbottom2"
+}
 
 function getCurrentTimeInMillis(){
     return new Date($.now()).getTime();
 }
 
 function display(target, text, model){
+    debugger;
     console.log("entrando no display");
     var tmp = $("<div id='tmp'/>");
     tmp.html(text);
 
-    debugger;
     //  Verifica se a pagina deu erro e se deve fazer uma nova tentativa
-    if ((tmp.find(".gt-error-page-hd").length && (target.find("[name='retry-count']").val() <= MAXIMUM_RETRY_ATTEMPTS)) || (text.trim() == "")){
+    if ((tmp.find(".gt-error-page-hd").length && (target.find("[name='retry-count']").val() <= MAXIMUM_RETRY_ATTEMPTS))){
         httpGet(model);
     }else{
-        target.hide();
-        target.html(text);
-        target.fadeIn("slow");
+        target.append(text);
+        $(target.find(".loading")).hide();
     }
 }
 
@@ -132,8 +134,9 @@ $(function() {
         }).done(function(result) {
             // Verifica se o SP foi previamente inicializado
             // Caso nao tenha sido apenas renderiza.
+            debugger;
             if (result.indexOf("SAMLRequest") > -1){
-                var form = $(result)[1];
+                var form = ($.browser.msie ? $(result)[0] : $(result)[1]);
                 var action = $(form).attr("action");
                 var samlRequestName = $(form).find("input").attr("name");
                 var samlRequestValue = $(form).find("input").attr("value");
@@ -151,7 +154,7 @@ $(function() {
                     type: "POST",
                     data: samlJson
                 }).done(function(result) {
-                    var form = $(result)[1];
+                    var form = ($.browser.msie ? $(result)[0] : $(result)[1]);
                     var action = $(form).attr("action");
 
                     var samlResponseName = $(form).find("input").attr("name");

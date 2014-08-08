@@ -498,9 +498,7 @@ public class SigaCpSinc {
 		long inicio = System.currentTimeMillis();
 		try {
 			if (modoLog) {
-				log("");
-				log(">>>Iniciando em modo LOG!<<<");
-				log("");
+				logComDestaque(">>>Iniciando em modo LOG!<<<");
 			}
 			log("Importando: XML");
 			/* -------------------------- */
@@ -548,6 +546,19 @@ public class SigaCpSinc {
 		long total = (System.currentTimeMillis()-inicio)/1000;
 		log("Tempo total de execução: " + total + " segundos (" + total/60 +" min)" );
 
+	}
+
+	private void logComDestaque(String msg) {
+		int ESPACO_LINHA = 10;
+		for (int i = 0; i < ESPACO_LINHA; i++) {
+			log("");
+		}
+		
+		log(msg);
+		
+		for (int i = 0; i < ESPACO_LINHA; i++) {
+			log("");
+		}
 	}
 
 	public SigaCpSinc(String[] args) {

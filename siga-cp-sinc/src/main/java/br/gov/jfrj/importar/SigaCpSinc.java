@@ -141,7 +141,7 @@ public class SigaCpSinc {
 
 	protected Date dt;
 	private SincLogHandler logHandler = new SincLogHandler();
-	private String[] args;
+	protected String[] args;
 
 	protected void setOrgaoUsuario(long orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;

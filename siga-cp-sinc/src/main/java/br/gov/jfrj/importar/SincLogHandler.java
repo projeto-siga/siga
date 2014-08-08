@@ -48,11 +48,16 @@ public class SincLogHandler extends Handler {
 	
 	public void enviarEmail() throws Exception {
 		sb.append("Enviando e-mails para: ");
+		
 		for (String d : destinatariosEmail) {
 			sb.append(d);
 			sb.append(",\n");
 		}
 		
+		if (sb.lastIndexOf(",") == (sb.length() - 1)){
+			sb.deleteCharAt(sb.lastIndexOf(","));
+		}
+				
 		Correio.enviar(
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
 				getDestinatariosEmail(), getAssunto(), sb.toString(), null);

@@ -47,6 +47,11 @@ public class SincLogHandler extends Handler {
 	}
 	
 	public void enviarEmail() throws Exception {
+		sb.append("Enviando e-mails para: ");
+		for (String d : destinatariosEmail) {
+			sb.append(d);
+			sb.append(",\n");
+		}
 		
 		Correio.enviar(
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),

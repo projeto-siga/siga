@@ -333,14 +333,11 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public List<ExTpDocPublicacao> getListaPublicacao() {
-		ExModelo mod = dao().consultar(getIdMod(), ExModelo.class, false);
-		return PublicacaoDJEBL.obterListaTiposMaterias(mod.getHisIdIni());
+		return FuncoesEL.listaPublicacao(getIdMod());
 	}
 
 	public List<ExDocumento> getListaDocsAPublicarBoletim() {
-		final List<ExDocumento> l = dao().consultarPorModeloParaPublicar(
-				getLotaTitular().getOrgaoUsuario());
-		return l;
+		return FuncoesEL.listaDocsAPublicarBoletim(getLotaTitular().getOrgaoUsuario());
 	}
 
 	public List<ExDocumento> getListaDocsAPublicarBoletimPorDocumento() {
@@ -1538,7 +1535,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aDuplicar() throws Exception {
-		buscarDocumento(true);
+		buscarDocumento(false);
 		if (!Ex.getInstance().getComp()
 				.podeDuplicar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível duplicar o documento");

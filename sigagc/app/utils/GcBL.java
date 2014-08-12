@@ -64,6 +64,12 @@ public class GcBL {
 
 		titulo = simplificarString(titulo);
 		conteudo = simplificarString(conteudo);
+
+		if (conteudo != null && conteudo.startsWith("<")) {
+			String canonicalizado = new ProcessadorHtml().canonicalizarHtml(conteudo, false, true, true, true, true);
+			conteudo = canonicalizado;
+		}
+
 		classificacao = simplificarString(classificacao);
 		if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO) {
 			GcArquivo arq = new GcArquivo();
@@ -134,6 +140,7 @@ public class GcBL {
 					inf.arq = mov.arq;
 			}
 		}
+		
 		if (inf.hisDtIni == null)
 			inf.hisDtIni = dt;
 		if (inf.hisIdcIni == null)

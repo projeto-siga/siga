@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
@@ -977,4 +978,33 @@ public class FuncoesEL {
 		return "";
 	}
 	
+	public static List<ExTpDocPublicacao> listaPublicacao(Long idMod) {
+		ExModelo mod = dao().consultar(idMod, ExModelo.class, false);
+		return PublicacaoDJEBL.obterListaTiposMaterias(mod.getHisIdIni());
+	}
+	
+	public static CalculoPCD calculoPCD(String cargo, String funcao, DpPessoa beneficiario, String dataInicio, String dataFim, 
+			Boolean solicitaAuxTransporte, Boolean carroOficial, Integer pernoite, Float descontoSalario, Float valorConcedido, Boolean executorMandado ) {
+		CalculoPCD calculo = new CalculoPCD();
+		
+		calculo.setCargo(cargo);
+		calculo.setFuncao(funcao);
+		calculo.setBeneficiario(beneficiario);
+		calculo.setDataInicio(dataInicio);
+		calculo.setDataFim(dataFim);
+		calculo.setSolicitaAuxTransporte(solicitaAuxTransporte);
+		calculo.setCarroOficial(carroOficial);
+		calculo.setPernoite(pernoite);
+		calculo.setDescontoSalario(descontoSalario);
+		calculo.setValorConcedido(valorConcedido);
+		calculo.setExecutorMandado(executorMandado);
+		
+		
+		return calculo;
+	}
+	
+	public static List<ExDocumento> listaDocsAPublicarBoletim(CpOrgaoUsuario orgaoUsuario) {
+		final List<ExDocumento> l = dao().consultarPorModeloParaPublicar(orgaoUsuario);
+		return l;
+	}
 }

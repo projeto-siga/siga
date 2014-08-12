@@ -18,6 +18,17 @@
 
                  <!-- Especifico do sigagc (extrair depois)-->
 
+	            <dependency>
+	                <groupId>net.sf.kxml</groupId>
+	                <artifactId>kxml2</artifactId>
+	                <version>2.2.2</version>
+	            </dependency>
+				<dependency>
+					<groupId>net.sf.jtidy</groupId>
+					<artifactId>jtidy</artifactId>
+					<version>r938</version>
+				</dependency>
+
 				<dependency>
 					<groupId>${project.groupId}</groupId>
                     <artifactId>siga-play-module</artifactId>
@@ -134,7 +145,6 @@
                     <version>1.0.0</version>
                 </dependency>
                 
-
         </dependencies>
 
     <build>

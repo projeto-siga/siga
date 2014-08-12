@@ -459,7 +459,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
         @Analyzer(impl = BrazilianAnalyzer.class)
         @Override
         public String getDescrDocumento() {
-                return super.getDescrDocumento();
+            return super.getDescrDocumento();
         }
 
         /**

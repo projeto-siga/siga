@@ -599,6 +599,13 @@ public class Application extends SigaApplication {
 				titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
 			String conteudo = (informacao.arq != null) ? informacao.arq.getConteudoTXT() : null;
 			
+			if (conteudo != null && !conteudo.startsWith("<")) {
+				conteudo = Util.escapeHashTag(conteudo);
+				informacao.arq.setConteudoTXT(conteudo);
+				conteudo = informacao.getConteudoHTML();
+				
+			}
+			
 			if (classificacao == null || classificacao.isEmpty())
 				classificacao = (informacao.arq != null) ? informacao.arq.classificacao: null;
 

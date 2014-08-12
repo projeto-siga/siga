@@ -1732,6 +1732,10 @@
 			method="aEditar">
 			<result>/paginas/expediente/modelo.jsp</result>
 		</action>
+		<action name="desativar" class="br.gov.jfrj.webwork.action.ExModeloAction"
+			method="aDesativar">
+			<result type="redirect-action">listar</result>
+		</action>
 		<action name="gravar" class="br.gov.jfrj.webwork.action.ExModeloAction"
 			method="aEditarGravar">
 			<result name="aplicar" type="redirect-action">editar?id=${id}</result>

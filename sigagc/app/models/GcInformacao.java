@@ -472,7 +472,14 @@ public class GcInformacao extends GenericModel {
 	public String getConteudoHTML() throws Exception {
 		if (this.arq == null || this.arq.conteudo == null)
 			return null;
-		String s = this.arq.getConteudoTXT().replace(" # ", "\n# ")
+		
+		String s = this.arq.getConteudoTXT();
+				
+		if (s.startsWith("<")) {
+			return s;
+		}
+		
+		s = s.replace(" # ", "\n# ")
 				.replace(" ## ", "\n## ").replace(" ### ", "\n### ")
 				.replace(" #### ", "\n#### ").replace(" * ", "\n* ")
 				.replace(" ** ", "\n** ").replace(" *** ", "\n*** ")

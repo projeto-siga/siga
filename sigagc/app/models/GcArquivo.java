@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import play.db.jpa.GenericModel;
+import utils.ProcessadorHtml;
 
 @Entity
 @Table(name = "GC_ARQUIVO", schema = "SIGAGC")
@@ -45,8 +46,12 @@ public class GcArquivo extends GenericModel implements Serializable{
 	public String mimeType;
 
 	public void setConteudoTXT(String html) {
+		if (html != null && html.startsWith("<")) {
+			mimeType = "text/html";
+		} else {
+			mimeType = "text/plain";
+		}
 		conteudo = html.getBytes(Charset.forName("utf-8"));
-		mimeType = "text/plain";
 	}
 
 	public String getConteudoTXT() throws IOException {

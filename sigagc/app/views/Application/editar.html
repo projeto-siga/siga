@@ -7,7 +7,7 @@
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form id="frm">
+			<form id="frm" action="@{Application.gravar}" method="POST">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
 				<input type="hidden" name="origem" value="${origem}" /> 
 				<input type="hidden" id="siglaId" name="sigla" value="${informacao?.sigla}" /> 
@@ -74,7 +74,7 @@
 
 				<div class="gt-form-row gt-width-100">
 					<label>Texto</label>
-					<textarea name="conteudo" cols="80" rows="25"
+					<textarea id="conteudo" name="conteudo" cols="80" rows="25"
 						class="gt-form-textarea">${conteudo}</textarea>
 					<span style="color: red">#{error 'conteudo' /}</span>
 				</div>
@@ -110,20 +110,16 @@
 		<!-- Sidebar Content -->
 		<div class="gt-sidebar-content">
 <script type="text/javascript">			
-	function insertTextAtCursor(el, text) {
-	    var val = el.value, endIndex, range;
-	    if (typeof el.selectionStart != "undefined" && typeof el.selectionEnd != "undefined") {
-	        endIndex = el.selectionEnd;
-	        el.value = val.slice(0, endIndex) + text + val.slice(endIndex);
-	        el.selectionStart = el.selectionEnd = endIndex + text.length;
-	    } else if (typeof document.selection != "undefined" && typeof document.selection.createRange != "undefined") {
-	        el.focus();
-	        range = document.selection.createRange();
-	        range.collapse(false);
-	        range.text = text;
-	        range.select();
-	    }
-	}
+function insertFileAtCursor(id, nome) {
+	var tag = '<a href="/sigagc/app/baixar?id=' + id + '">' + nome + '</a>';
+	CKEDITOR.instances.conteudo.insertHtml(tag);
+}
+function insertImageAtCursor(id, nome) {
+	var tag = '<img alt="' + nome + '" src="/sigagc/app/baixar?id=' + id + '" style="height: 150px; width: 200px;" title="' + nome + '" />';
+	CKEDITOR.instances.conteudo.insertHtml(tag);
+}
+
+	
 	
 	function fileUpload(form, div_id) {
 	    // Create the iframe...
@@ -201,22 +197,29 @@
 
 
 
-		var $inps = $('#frm').find('input,select,textarea')
+/* 		var $inps = $('#frm').find('input,select,textarea')
 		  , formAltered = false
 		;
 		$inps.change(function() {
 		    formAltered = true;
 		    $inps.unbind('change'); // saves this function running every time.
 		});
-
-	
-		$("#btn-save").click(function(){
-			if(formAltered == true){
+ */
+ 		formAltered = false;
+		$("#frm").submit(function(event){
+			if (CKEDITOR.instances.conteudo.checkDirty()) {
+			    $('#conteudo').text(CKEDITOR.instances.conteudo.getData());
+			    formAltered = true;
+			}
+/* 			if(formAltered == true){
 				$('#frm').attr('action', '@{Application.gravar}');
-			}	
-			else{ 
+			} 	
+			else{ */
+			if(formAltered != true)	{
+				event.preventDefault(); 
 				var siglaId = $("#siglaId").val();
-				$('#frm').attr('action', '@{Application.exibir}?sigla=siglaId');
+				//$('#frm').attr('action', '@{Application.exibir}?sigla=siglaId');
+				window.location.href = "@{Application.exibir}?sigla=" + siglaId;
 			}
 		});
 		
@@ -272,7 +275,7 @@
 					<p>
 						<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
 						<a style="padding-right:5px;"
-							href="javascript: var frm = document.getElementById('frm'); insertTextAtCursor(frm.conteudo, '#{if m.arq.image}{{${m.arq.id}|${m.arq.titulo}}}#{/if}#{else}[[${m.arq.id}|${m.arq.titulo}]]#{/else}');">${m.arq.titulo}</a>
+							href="javascript: var frm = document.getElementById('frm'); #{if m.arq.image}insertImageAtCursor(${m.arq.id},'${m.arq.titulo}');#{/if}#{else}insertFileAtCursor(${m.arq.id},'${m.arq.titulo}');#{/else}">${m.arq.titulo}</a>
 						[ <img style="margin-bottom: -1px;width:9px;" src="/siga/css/famfamfam/icons/cross.png" /> 
 						<span class="gt-table-action-list">
 						<a href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
@@ -397,3 +400,29 @@
 		</div>
 	</div>
 </div>
+
+<script src="/ckeditor/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+	//CKEDITOR.config.autoGrow_onStartup = true;
+	//CKEDITOR.config.autoGrow_bottomSpace = 50;
+	//CKEDITOR.config.autoGrow_maxHeight = 400;
+	CKEDITOR.config.removePlugins = 'elementspath'; 
+	CKEDITOR.config.image_previewText = ' ';
+	CKEDITOR.replace( 'conteudo', {
+		toolbar: [
+		    	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+		    	{ name: 'editing', groups: [ 'find', 'selection'], items: [ 'Find', 'Replace', '-', 'SelectAll'] },
+		    	{ name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+		      	{ name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: ['Maximize', '-', 'Source'] },
+		    	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+		    	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+		    	{ name: 'insert', items: [ 'Image', 'Table', 'Smiley', 'SpecialChar' ] },
+		    	{ name: 'styles', items: [ 'Styles', 'Format'] },
+		    	{ name: 'colors', items: [ 'TextColor', 'BGColor' ] }
+		    ]
+
+    	
+	});
+	  //$(".cke_botom").hide();
+</script>
+

@@ -80,7 +80,7 @@ public class SigaCpSinc {
 	private String url = "";
 
 	private static String destinatariosExtras = "";
-	private static Level logLevel = Level.INFO; 
+	private static Level logLevel = Level.WARNING; 
 
 	public String getServidor() {
 		return servidor;

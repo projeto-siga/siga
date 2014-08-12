@@ -115,6 +115,13 @@ public class SigaExProperties extends ModeloPropriedade {
 		}
 	}
 	
+	public static Integer getExClassificacaoNivelMinimoDeEnquadramento() {
+		String s = getString("classificacao.nivel.minimo.de.enquadramento");
+		if (s == null || s.trim().length() == 0)
+			return null;
+		return Integer.valueOf(s);
+	}
+	
 	public static boolean isAmbienteProducao(){
 		if (getAmbiente() != null && getAmbiente().equals("prod"))
 			return true;

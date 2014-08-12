@@ -280,7 +280,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 					.obterPara(tpGrp, codigoTipoConfiguracaoNova);
 			if (tpCfgGrpEnum != null) {
 				ConfiguracaoGrupo cfgGrp = fabrica.getInstance(tpCfgGrpEnum);
-				if (!podeGravarConfiguracaoAvancada(cfgGrp)){
+				if (isConfiguracaoAvancada(cfgGrp) && !podeEditarConfiguracoesAvancadas()){
 					throw new AplicacaoException("Você nâo tem permissão para configurar " + tpCfgGrpEnum.getDescricao()+ ". Por favor, entre em contato com o suporte técnico para realizar tal configuração.");
 				}
 
@@ -315,6 +315,10 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 						if (tpCfg.equals(-1)) {
 							// exclusão remove apenas logicamente, deixa o
 							// registro antigo como log
+							if (isConfiguracaoAvancada(cfgGrpGravada) && !podeEditarConfiguracoesAvancadas()){
+								throw new AplicacaoException("Você nâo tem permissão para remover " + cfgGrpGravada.getTipo().getDescricao()+ ". Por favor, entre em contato com o suporte técnico para realizar tal configuração.");
+							}
+							
 							cfgGrpGravada.getCpConfiguracao().setHisDtFim(dt);
 							dao().gravarComHistorico(
 									cfgGrpGravada.getCpConfiguracao(),
@@ -337,7 +341,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 														.obterPara(tpGrp, tpCfg);
 								ConfiguracaoGrupo cfgGrpNova = fabrica
 										.getInstance(tpCfgGrpNova);
-								if (!podeGravarConfiguracaoAvancada(cfgGrpNova)){
+								if (isConfiguracaoAvancada(cfgGrpNova) && !podeEditarConfiguracoesAvancadas()){
 									throw new AplicacaoException("Você nâo tem permissão para configurar " + tpCfgGrpNova.getDescricao()+ ". Por favor, entre em contato com o suporte técnico para realizar tal configuração.");
 								}
 								if (cfgConteudo == null
@@ -371,7 +375,6 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 									CpTipoConfiguracao.TIPO_CONFIG_PERTENCER,
 									CpTipoConfiguracao.class, false));
 		} catch (Exception e) {
-			ModeloDao.rollbackTransacao();
 			throw new AplicacaoException("Id do grupo: " + idCpGrupo
 					+ " erro ao gravar grupo e configurações.", 0, e);
 		}
@@ -380,7 +383,7 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 	}
 
 	private boolean podeGravarConfiguracaoAvancada(ConfiguracaoGrupo cfgGrupo) throws Exception {
-		return podeIncluirGrupoDeDistribuicao() && isConfiguracaoAvancada(cfgGrupo);
+		return isConfiguracaoAvancada(cfgGrupo) && podeEditarConfiguracoesAvancadas();
 	}
 
 	private boolean isConfiguracaoAvancada(
@@ -389,8 +392,8 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 				|| cfgGrupo instanceof ConfiguracaoGrupoFormula;
 	}
 
-	private boolean podeIncluirGrupoDeDistribuicao() throws Exception {
-		return Cp.getInstance().getComp().getConfiguracaoBL().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA;GI;GDISTR;INC:Incluir");
+	private boolean podeEditarConfiguracoesAvancadas() throws Exception {
+		return Cp.getInstance().getComp().getConfiguracaoBL().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA;GI;GDISTR;CONF_AVANC:Configuracões Avançadas");
 	}
 
 	public String aGravarGestorGrupo() {

@@ -382,10 +382,6 @@ public abstract class CpGrupoAction<T extends CpGrupo> extends
 		return "edita";
 	}
 
-	private boolean podeGravarConfiguracaoAvancada(ConfiguracaoGrupo cfgGrupo) throws Exception {
-		return isConfiguracaoAvancada(cfgGrupo) && podeEditarConfiguracoesAvancadas();
-	}
-
 	private boolean isConfiguracaoAvancada(
 			ConfiguracaoGrupo cfgGrupo) {
 		return cfgGrupo instanceof ConfiguracaoGrupoEmail

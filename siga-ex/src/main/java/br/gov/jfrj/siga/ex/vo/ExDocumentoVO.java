@@ -39,6 +39,8 @@ public class ExDocumentoVO extends ExVO {
 	String classe;
 	List<ExMobilVO> mobs = new ArrayList<ExMobilVO>();
 	List<ExMobil> outrosMobs = new ArrayList<ExMobil>();
+	List<ExDocumentoVO> documentosPublicados = new ArrayList<ExDocumentoVO>();
+	ExDocumentoVO boletim;
 	String nomeCompleto;
 	String dtDocDDMMYY;
 	String subscritorString;
@@ -176,6 +178,16 @@ public class ExDocumentoVO extends ExVO {
 				tags.add(ss);
 			}
 		}
+		
+		if(doc.getDocumentosPublicadosNoBoletim() != null) {
+			for (ExDocumento documentoPublicado : doc.getDocumentosPublicadosNoBoletim()) {
+				documentosPublicados.add(new ExDocumentoVO(documentoPublicado));
+			}
+		}
+		
+		if(doc.getPublicadoNoBoletim() != null)
+			boletim = new ExDocumentoVO(doc.getPublicadoNoBoletim());
+		
 		// if (doc.getExClassificacao() != null)
 		// tags.add("@doc-classe:" + doc.getExClassificacao().getSigla());
 		// if (doc.getExFormaDocumento() != null)
@@ -669,5 +681,13 @@ public class ExDocumentoVO extends ExVO {
 	
 	public List<ExMobil> getOutrosMobs() {
 		return outrosMobs;
+	}
+
+	public List<ExDocumentoVO> getDocumentosPublicados() {
+		return documentosPublicados;
+	}
+
+	public ExDocumentoVO getBoletim() {
+		return boletim;
 	}
 }

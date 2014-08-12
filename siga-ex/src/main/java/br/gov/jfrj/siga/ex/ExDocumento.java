@@ -2288,4 +2288,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			// TODO Auto-generated method stub
 			return "";
 		}
+		
+		public List<ExDocumento> getDocumentosPublicadosNoBoletim() {
+			return ExDao.getInstance().consultarPorBoletimParaPublicar(this); 
+		}
+		
+		public ExDocumento getPublicadoNoBoletim() {
+			if(isBoletimPublicado()) {
+				ExBoletimDoc boletimDoc =  ExDao.getInstance().consultarBoletimPorDocumento(this);
+				
+				if(boletimDoc != null)
+					return boletimDoc.getBoletim();
+			}
+			
+			return null; 
+		}
 }

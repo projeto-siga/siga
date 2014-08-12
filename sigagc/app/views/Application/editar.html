@@ -407,6 +407,7 @@ function insertImageAtCursor(id, nome) {
 	//CKEDITOR.config.autoGrow_bottomSpace = 50;
 	//CKEDITOR.config.autoGrow_maxHeight = 400;
 	CKEDITOR.config.removePlugins = 'elementspath'; 
+	CKEDITOR.config.image_previewText = ' ';
 	CKEDITOR.replace( 'conteudo', {
 		toolbar: [
 		    	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
@@ -419,7 +420,9 @@ function insertImageAtCursor(id, nome) {
 		    	{ name: 'styles', items: [ 'Styles', 'Format'] },
 		    	{ name: 'colors', items: [ 'TextColor', 'BGColor' ] }
 		    ]
-		  });
+
+    	
+	});
 	  //$(".cke_botom").hide();
 </script>
 

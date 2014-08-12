@@ -54,10 +54,10 @@ public class SincLogHandler extends Handler {
 			sb.append(",\n");
 		}
 		
-		if (sb.lastIndexOf(",") == (sb.length() - 1)){
+		if (destinatariosEmail.length > 1){
 			sb.deleteCharAt(sb.lastIndexOf(","));
 		}
-				
+		
 		Correio.enviar(
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
 				getDestinatariosEmail(), getAssunto(), sb.toString(), null);

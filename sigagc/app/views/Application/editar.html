@@ -7,7 +7,7 @@
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form id="frm">
+			<form id="frm" action="@{Application.gravar}" method="POST">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
 				<input type="hidden" name="origem" value="${origem}" /> 
 				<input type="hidden" id="siglaId" name="sigla" value="${informacao?.sigla}" /> 
@@ -197,25 +197,29 @@ function insertImageAtCursor(id, nome) {
 
 
 
-		var $inps = $('#frm').find('input,select,textarea')
+/* 		var $inps = $('#frm').find('input,select,textarea')
 		  , formAltered = false
 		;
 		$inps.change(function() {
 		    formAltered = true;
 		    $inps.unbind('change'); // saves this function running every time.
 		});
-
-		$("#btn-save").click(function(){
+ */
+ 		formAltered = false;
+		$("#frm").submit(function(event){
 			if (CKEDITOR.instances.conteudo.checkDirty()) {
 			    $('#conteudo').text(CKEDITOR.instances.conteudo.getData());
 			    formAltered = true;
 			}
-			if(formAltered == true){
+/* 			if(formAltered == true){
 				$('#frm').attr('action', '@{Application.gravar}');
-			}	
-			else{ 
+			} 	
+			else{ */
+			if(formAltered != true)	{
+				event.preventDefault(); 
 				var siglaId = $("#siglaId").val();
-				$('#frm').attr('action', '@{Application.exibir}?sigla=siglaId');
+				//$('#frm').attr('action', '@{Application.exibir}?sigla=siglaId');
+				window.location.href = "@{Application.exibir}?sigla=" + siglaId;
 			}
 		});
 		

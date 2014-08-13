@@ -428,8 +428,8 @@
 	</script>
 	</c:if>
 	
-	<!-- <script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script> -->
-	<script src="http://mdaines.github.io/viz.js/viz.js"></script>
+	<script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script> 
+	<!-- <script src="http://mdaines.github.io/viz.js/viz.js"></script>-->
 	
 	<script>
 		function bigmap() {

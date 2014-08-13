@@ -273,7 +273,7 @@ public class Util {
 
 	public static String escapeHashTag(String conteudo) {
 		StringBuffer sb = new StringBuffer();
-		String hashTag = new String();
+		//String hashTag = new String();
 			
 		Pattern padraoHashTag = Pattern.compile(
 								//reconhece uma hashTag (#)
@@ -284,6 +284,7 @@ public class Util {
 		while(matcherHashTag.find()) {
 			matcherHashTag.appendReplacement(sb,"{{{" + matcherHashTag.group(0) + "}}}");
 		}
+		matcherHashTag.appendTail(sb);
 		return sb.toString();
 	}
 

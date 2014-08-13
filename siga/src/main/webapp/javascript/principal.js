@@ -3,194 +3,152 @@
  */
 
 /**
- * Os modulos definido na variavel modules abaixo, serao carregados
+ * Os modulos definidos na variavel modules abaixo, serao carregados
  * carregados na pagina principal do siga, a variavel params corresponde
  * ao parametros que serao passados na requisicao GET ou POST.
  * O viewID corresponde ao local onde sera renderizado na tela o resultado
  * da consulta
  */
-var MAXIMUM_RETRY_ATTEMPTS = 3;
-var modules = {};
-var subModule = {};
-
-modules["sigawf"] = {
-    name: "sigawf",
-    url: "/sigawf/inbox.action",
-    params: {
-      ts: getCurrentTimeInMillis()
-    },
-    viewId: "right"
-}
-modules["sigaex"] = {
-    name: "sigaex",
-    url: "/sigaex/expediente/doc/gadget.action",
-    params: {
-        apenasQuadro: true,
-        idTpFormaDoc: 1,
-        ts: getCurrentTimeInMillis()
-    },
-    viewId: "left"
-}
-
-subModule["processos"] = {
-    name: "processos",
-    url: "/sigaex/expediente/doc/gadget.action",
-    params: {
-        idTpFormaDoc: 2,
-        ts: getCurrentTimeInMillis()
-    },
-    viewId: "leftbottom"
-}
-modules["sigasr"] = {
-    name: "sigasr",
-    url: "/sigasr/solicitacao/gadget",
-    params: {
-        ts: getCurrentTimeInMillis()
-    },
-    viewId: "rightbottom"
-}
-
-modules["sigagc"] = {
-    name: "sigagc",
-    url: "/sigagc/app/gadget",
-    params: {
-        ts: getCurrentTimeInMillis()
-    },
-    viewId: "rightbottom2"
-}
-
-function getCurrentTimeInMillis(){
-    return new Date($.now()).getTime();
-}
-
-function display(target, text, model){
-    debugger;
-    console.log("entrando no display");
-    var tmp = $("<div id='tmp'/>");
-    tmp.html(text);
-
-    //  Verifica se a pagina deu erro e se deve fazer uma nova tentativa
-    if ((tmp.find(".gt-error-page-hd").length && (target.find("[name='retry-count']").val() <= MAXIMUM_RETRY_ATTEMPTS))){
-        httpGet(model);
-    }else{
-        target.append(text);
-        $(target.find(".loading")).hide();
-    }
-}
-
-function incrementRetryCount(target){
-    console.log("Incrementando retry-count");
-    console.log("de -> "+target.find("[name='retry-count']").val());
-    target.find("[name='retry-count']").val( function(i, oldval) {
-        return ++oldval;
-    });
-}
-
-function httpGet(model){
-    console.log("entrando no metodo httpGet")
-    console.log("modulo -> "+model.name);
-    console.log("url -> "+model.url);
-    var target = $("#"+model.viewId);
-
-    $.ajax({
-        url: model.url,
-        type: "GET",
-        data: model.params,
-        beforeSend: function(){
-            incrementRetryCount(target);
-        }
-    }).done(function(result) {
-        display(target, result);
-    })
-}
-
-function loadSubModule(model){
-    if (model.name == "sigaex"){
-        httpGet(subModule["processos"]);
-    }
-}
 
 // Quando a pagina for carregada ele inicia este metodo.
-// Eh neste trecho que e o main
-$(function() {
-    // Itera sobre todos os modulos do siga
-    $.each(modules, function(k, model) {
+// main
+window.Siga = {
+
+    modules: {
+        sigawf: {
+            name: "sigawf",
+            url: "/sigawf/inbox.action",
+            params: {},
+            viewId: "right"
+        },
+        sigaex: {
+            name: "sigaex",
+            url: "/sigaex/expediente/doc/gadget.action",
+            params: {
+                idTpFormaDoc: 1
+            },
+            viewId: "left"
+        },
+        sigasr: {
+            name: "sigasr",
+            url: "/sigasr/solicitacao/gadget",
+            params: {},
+            viewId: "rightbottom"
+        },
+        sigagc: {
+            name: "sigagc",
+            url: "/sigagc/app/gadget",
+            params: {},
+            viewId: "rightbottom2"
+        }
+    },
+
+    subModules: {
+        processos: {
+            name: "processos",
+            url: "/sigaex/expediente/doc/gadget.action",
+            params: {
+                idTpFormaDoc: 2
+            },
+            viewId: "leftbottom"
+        }
+    },
+
+    currentTimeInMillis: function(){
+        return new Date($.now()).getTime();
+    },
+
+    display: function(target, text){
+        target.append(text);
+        $(target.find(".loading")).hide();
+    },
+
+    picketlinkResponse: function(textResponse){
+        var form = ($.browser.msie ? $(textResponse)[0] : $(textResponse)[1]);
+        var action = $(form).attr("action");
+
+        // Pode ser o SAMLRequest ou SAMLResponse
+        var samlParamName = $(form).find("input").attr("name");
+        var samlParamValue = $(form).find("input").attr("value");
+        var samlJson = {};
+        samlJson[samlParamName] = samlParamValue;
+
+        return {url: action, params: samlJson};
+    },
+
+    ajaxCall: function(ajax, doneCallback){
+        var self = this;
+        ajax.params["ts"] = self.currentTimeInMillis();
+
+        $.ajax({
+            url: ajax.url,
+            type: ajax.type,
+            data: ajax.params,
+            beforeSend: function(){
+                if (ajax.target != null){
+                    $(ajax.target.find(".loading")).show();
+                }
+            }
+        }).fail(function(){
+            ajax.target.html("M&oacute;dulo indispon&iacute;vel");
+        }).done(function(response){
+            doneCallback(response);
+        }).always(function(){
+            $(ajax.target.find(".loading")).hide();
+        });
+    },
+
+    loadSubModule: function(model){
+        var self = this;
+        if (model.name == "sigaex"){
+            model = this.subModules["processos"];
+            var target = $("#"+model.viewId);
+            self.ajaxCall({url: model.url, type: "GET", params: model.params, target: target}, function(responseText){
+                self.display(target, responseText);
+            });
+        }
+    },
+
+    loadModule: function(model){
+        var self = this;
         var target = $("#"+model.viewId);
 
-        // Efetua um GET para o SP (siga, sigaex, sigawf)
-        $.ajax({
-            url: model.url,
-            type: "GET",
-            data: model.params,
-            beforeSend: function(){
-                incrementRetryCount(target);
-                $(target.find(".loading")).show();
-                console.log("Efetuando o primeiro request (GET) ");
-                console.log(" name -> "+model.name);
-                console.log(" url -> "+model.url);
-                console.log(" params -> "+JSON.stringify(model.params));
-                console.log("  -------- ")
-            }
-        }).done(function(result) {
-            // Verifica se o SP foi previamente inicializado
-            // Caso nao tenha sido apenas renderiza.
-            debugger;
-            if (result.indexOf("SAMLRequest") > -1){
-                var form = ($.browser.msie ? $(result)[0] : $(result)[1]);
-                var action = $(form).attr("action");
-                var samlRequestName = $(form).find("input").attr("name");
-                var samlRequestValue = $(form).find("input").attr("value");
-                var samlJson = {};
-                samlJson[samlRequestName] = samlRequestValue;
-
-                console.log("Efetuando o segundo Request (POST) ");
-                console.log(" url -> "+action);
-                console.log("parametros -> "+JSON.stringify(samlJson));
-                console.log("  -------- ")
+        self.ajaxCall({url: model.url, type: "GET", params: model.params, target: target}, function(textResponse) {
+            // Verifica se o SP foi previamente inicializado, caso nao tenha sido apenas renderiza.
+            if (textResponse.indexOf("SAMLRequest") > -1){
+                var params = self.picketlinkResponse(textResponse);
 
                 // Envia um POST para o IDP com o atributo SAMLRequest da ultima requisicao
-                $.ajax({
-                    url: action,
-                    type: "POST",
-                    data: samlJson
-                }).done(function(result) {
-                    var form = ($.browser.msie ? $(result)[0] : $(result)[1]);
-                    var action = $(form).attr("action");
+                self.ajaxCall({url: params.url, type: "POST", params: params.params, target: null}, function(textResponse){
+                    var params = self.picketlinkResponse(textResponse);
 
-                    var samlResponseName = $(form).find("input").attr("name");
-                    var samlResponseValue = $(form).find("input").attr("value");
-                    var jsonData = {};
-                    jsonData[samlResponseName] = samlResponseValue;
-
-                    console.log("Efetuando o terceiro Request (POST) ");
-                    console.log(" url -> "+action);
-                    console.log("parametros -> "+JSON.stringify(jsonData));
-                    console.log("  -------- ")
-                    // Envia um POST para o SP com o SAMLResponse da ultima requisicao
-                    $.ajax({
-                        url: action,
-                        type: "POST",
-                        data: jsonData
-                    }).done(function(result) {
-                        if (result instanceof Array) {
+                    self.ajaxCall({url: params.url, type: "POST", params: params.params, target: null}, function(textResponse){
+                        if (textResponse instanceof Array) {
                             console.log("Autenticacao falhou para: "+model.name);
-                            console.log(" result -> "+result);
+                            console.log(" result -> "+textResponse);
                         }else{
-                            loadSubModule(model);
+                            self.display(target, textResponse);
+                            self.loadSubModule(model);
                         }
-                        display(target, result, model);
                     });
                 });
             }else{
-                console.log("Pulou para o else que assume que nao foi capturado pelo picketlink");
-                console.log("conferindo --> "+model.name);
-                loadSubModule(model);
-                display(target, result, model);
+                self.display(target, textResponse);
+                self.loadSubModule(model);
             }
-        }).fail(function() {
-            console.log("Request falhou para o objeto: "+model.name);
-            // Se ocorrer qualquer erro diferente de 200 exibe que o modulo esta indisponivel
-            display(target, "M&oacute;dulo indispon&iacute;vel", null);
         });
-    });
+    },
+
+    loadModules: function(){
+        this.loadModule(this.modules["sigaex"]);
+        this.loadModule(this.modules["sigawf"]);
+        this.loadModule(this.modules["sigagc"]);
+        this.loadModule(this.modules["sigasr"]);
+    }
+}
+var Siga = window.Siga;
+
+$(function() {
+    $.ajaxSetup({ cache: false });
+    Siga.loadModules();
 });

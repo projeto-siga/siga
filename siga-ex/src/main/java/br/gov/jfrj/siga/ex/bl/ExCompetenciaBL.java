@@ -2064,6 +2064,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeDuplicar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if (podeAcessarDocumento(titular, lotaTitular, mob))
+			return true;
+			
 
 		return !mob.isEliminado()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,

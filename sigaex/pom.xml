@@ -110,6 +110,11 @@
             <artifactId>pager-taglib</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+
         <!-- SIGA -->
         <dependency>
             <groupId>projeto-siga</groupId>

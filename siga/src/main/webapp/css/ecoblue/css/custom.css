@@ -492,3 +492,6 @@ div#carregando {
 .escondido {
     display: none;
 }
+
+input, textarea { color: #000; }
+.placeholder { color: #aaa; }

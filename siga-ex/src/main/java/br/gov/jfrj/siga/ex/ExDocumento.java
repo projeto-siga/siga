@@ -25,7 +25,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -200,6 +202,42 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                 if (getIdDoc() == null)
                         return "NOVO";
                 return "TMP-" + getIdDoc();
+        }
+        
+        /**
+         * Retorna o código do documento de modo resumido. Para resumir, o método considera o
+         * órgão de quem está solicitando o resumo e, opcionalmente, o documento de referência
+         * 
+         * @throws Exception
+         */
+        public String getCodigoResumido(CpOrgaoUsuario orgaoUsu, ExDocumento docRef){
+        	String cod = getCodigo();
+        	if (docRef != null){ 
+        		if (docRef.equals(this))
+        			return "";
+        		if (getExMobilPai() != null && getExMobilPai().doc().equals(docRef) && isProcesso()){
+        			String s = getNumSequencia().toString();
+        			while (s.length() < 2)
+                        s = "0" + s;
+        			return "." + s;
+        		}
+        	}
+        	if (getOrgaoUsuario() != null && orgaoUsu != null && orgaoUsu.equivale(getOrgaoUsuario())){
+        		cod = cod.replace(getOrgaoUsuario().getAcronimoOrgaoUsu() + "-", "");
+        		cod = cod.replace(getOrgaoUsuario().getSiglaOrgaoUsu() + "-", "");
+        	}
+        	if (getExFormaDocumento() != null){
+        		cod = cod.replace(getExFormaDocumento().getSiglaFormaDoc() + "-", getExFormaDocumento().getSiglaFormaDoc());
+        	}
+        	cod = cod.replace("/0000", "/");
+        	cod = cod.replace("/000", "/");
+        	cod = cod.replace("/00", "/");
+        	cod = cod.replace("/0", "/");
+        	String anoAtual = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
+        	if (getAnoEmissao() != null && anoAtual != null && anoAtual.equals(String.valueOf(getAnoEmissao())))
+        		cod = cod.replace(getAnoEmissao() + "/", "");
+        	
+        	return cod;
         }
 
         /**
@@ -2063,7 +2101,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
          */
         public boolean isEliminado() {
 
-                if (isProcesso())
+        	//Edson: este método, ainda mais nos lugares em que ele é chamado,
+        	//estava prejudicando a performance. Ver um jeito melhor de fazer
+        	return false;
+               /* if (isProcesso())
                         return getMobilGeral().isEliminado();
 
                 boolean eliminado = false;
@@ -2076,7 +2117,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                                         return false;
                                 }
 
-                return eliminado;
+                return eliminado;*/
         }
 
         /**
@@ -2275,6 +2316,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                 } 
                 
                 return false;
+        }
+        
+        public Map<ExPapel, List<Object>> getPerfis() {
+        	Map<ExPapel, List<Object>> mapa = new HashMap<ExPapel, List<Object>>();
+        	for (ExMovimentacao mov : getMobilGeral().getExMovimentacaoSet())
+        		if (!mov.isCancelada()
+        				&& mov.getExTipoMovimentacao()
+								.getId()
+								.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+        			if (mapa.get(mov.getExPapel()) == null)
+        				mapa.put(mov.getExPapel(), new ArrayList<Object>());
+        			mapa.get(mov.getExPapel()).add(
+        					mov.getSubscritor() != null ? mov.getSubscritor() : mov
+        							.getLotaSubscritor());
+        		}
+        	return mapa;
         }
 
 		@Override

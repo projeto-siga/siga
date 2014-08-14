@@ -88,7 +88,6 @@ window.Siga = {
     },
 
     loadSubModules: function(model){
-        debugger;
         var self = this;
         if (model.submodules){
             $.each(model.submodules, function(){

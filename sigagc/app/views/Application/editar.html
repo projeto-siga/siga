@@ -202,30 +202,18 @@
  */
 
 		//Verifica se manda "gravar" o conhecimento ou se redireciona direto para o "exibir"  
- 		formAltered = false;
-		formEmpty = false;
 		$("#frm").submit(function(event) {
-			if ($("#infoId").val() == 0) {
-				//situação 1: Conhecimento NOVO e está com o titulo ou o conteudo vazios - > grava (validação no servidor)
-				if (CKEDITOR.instances.conteudo.getData() == "" ||
-							$('#titulo').val() == "") 
-					formEmpty = true;
-				//situação 2: Conhecimento NOVO com titulo e conteudo preenchidos - > grava
-				//necessário quando se cria um conhecimento relacionado para gravar a hashTag(#) que já vem preenchida no conteudo e o checkDirty não pega
-				else 
-					formAltered = true;		
-			}
-			//situação 3: Conhecimento que teve conteudo alterado (checkDirty()) - > grava
-			else if (CKEDITOR.instances.conteudo.checkDirty()) {
-			    $('#conteudo').text(CKEDITOR.instances.conteudo.getData());
-			    formAltered = true;
-			}
-			//situação 4: Conhecimento que não esteja vazio e sem alteração no conteudo  - > exibir
-			if(!formAltered && !formEmpty)	{
+			//Conhecimento sem alteração no conteudo e que não seja novo - > exibir
+			//Inserida condição para verificar se o conhecimento não é novo para não pegar os seguintes casos que precisam passar pelo "gravar"
+			//Conhecimento novo e o conteudo vazio (validação no servidor). O checkDirty consta como não alterado
+			//Conhecimento novo relacionado a um outro com hashTag. A hashTag já vem preenchida no conteúdo. O checkDirty consta como não alterado
+			if(!CKEDITOR.instances.conteudo.checkDirty() && $("#infoId").val() != 0) {
 				event.preventDefault(); 
 				var siglaId = $("#siglaId").val();
 				window.location.href = "@{Application.exibir}?sigla=" + siglaId;
 			}
+			else
+				$('#conteudo').text(CKEDITOR.instances.conteudo.getData());
 		});
 		
 	});

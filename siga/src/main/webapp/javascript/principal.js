@@ -85,16 +85,17 @@ window.Siga = {
             type: ajax.type,
             data: ajax.params,
             beforeSend: function(){
-                if (ajax.target != null){
+                if (ajax.target != null)
                     $(ajax.target.find(".loading")).show();
-                }
             }
         }).fail(function(){
-            ajax.target.html("M&oacute;dulo indispon&iacute;vel");
+            if (ajax.target != null)
+                ajax.target.html("M&oacute;dulo indispon&iacute;vel");
         }).done(function(response){
             doneCallback(response);
         }).always(function(){
-            $(ajax.target.find(".loading")).hide();
+            if (ajax.target != null)
+                $(ajax.target.find(".loading")).hide();
         });
     },
 

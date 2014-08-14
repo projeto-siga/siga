@@ -113,7 +113,7 @@ public class SigaApplication extends Controller {
 		return Cp
 				.getInstance()
 				.getConf()
-				.podeUtilizarServicoPorConfiguracao(cadastrante(),
+				.podeUtilizarServicoPorConfiguracao(titular(),
 						lotaTitular(), servico);
 	}
 
@@ -124,7 +124,7 @@ public class SigaApplication extends Controller {
 			servico = servico.substring(0, servico.length()-1);
 		if (!podeUtilizarServico(servico))
 			throw new Exception("Acesso negado. Serviço: '" + servico
-					+ "' usuário: " + cadastrante().getSigla() + " lotação: "
+					+ "' usuário: " + titular().getSigla() + " lotação: "
 					+ lotaTitular().getSiglaCompleta());
 	}
 	

@@ -191,13 +191,13 @@ public class Application extends SigaApplication {
 
 	private static void atualizarDadosRI(IndexWriter w, DadosRI dri)
 			throws IOException {
-		Term term = new Term("url", dri.url);
+		Term term = new Term("url", dri.uri);
 		
 		if (dri.ativo) {
 			Document doc = new Document();
 			doc.add(new StringField("sigla", dri.sigla, Field.Store.YES));
 			doc.add(new TextField("titulo", dri.titulo, Field.Store.YES));
-			doc.add(new StringField("url", dri.url, Field.Store.YES));
+			doc.add(new StringField("url", dri.uri, Field.Store.YES));
 			doc.add(new StringField("data",
 					dri.ultimaAtualizacao.toGMTString(), Field.Store.YES));
 			doc.add(new StringField("desempate",

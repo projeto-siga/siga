@@ -8,7 +8,7 @@
 
 		<div class="gt-form gt-content-box">
 			<form id="frm" action="@{Application.gravar}" method="POST">
-				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
+				<input type="hidden" id="infoId" name="informacao.id" value="${informacao?.id}" />
 				<input type="hidden" name="origem" value="${origem}" /> 
 				<input type="hidden" id="siglaId" name="sigla" value="${informacao?.sigla}" /> 
 				*{
@@ -67,7 +67,7 @@
 
 
 				<div class="gt-form-row gt-width-100">
-					<label>Título</label> <input type="text" name="titulo"
+					<label>Título</label> <input type="text" id="titulo" name="titulo"
 						value="${titulo}" class="gt-form-text" /><span style="color: red">#{error
 						'titulo' /}</span>
 				</div>
@@ -110,17 +110,15 @@
 		<!-- Sidebar Content -->
 		<div class="gt-sidebar-content">
 <script type="text/javascript">			
-function insertFileAtCursor(id, nome) {
-	var tag = '<a href="/sigagc/app/baixar?id=' + id + '">' + nome + '</a>';
-	CKEDITOR.instances.conteudo.insertHtml(tag);
-}
-function insertImageAtCursor(id, nome) {
-	var tag = '<img alt="' + nome + '" src="/sigagc/app/baixar?id=' + id + '" style="width: 200px;" title="' + nome + '" />';
-	CKEDITOR.instances.conteudo.insertHtml(tag);
-}
+	function insertFileAtCursor(id, nome) {
+		var tag = '<a href="/sigagc/app/baixar?id=' + id + '">' + nome + '</a>';
+		CKEDITOR.instances.conteudo.insertHtml(tag);
+	}
+	function insertImageAtCursor(id, nome) {
+		var tag = '<img alt="' + nome + '" src="/sigagc/app/baixar?id=' + id + '" style="width: 200px;" title="' + nome + '" />';
+		CKEDITOR.instances.conteudo.insertHtml(tag);
+	}
 
-	
-	
 	function fileUpload(form, div_id) {
 	    // Create the iframe...
 	    var iframe = document.createElement("iframe");
@@ -194,9 +192,6 @@ function insertImageAtCursor(id, nome) {
 			$(".once").show();
 		});
 
-
-
-
 /* 		var $inps = $('#frm').find('input,select,textarea')
 		  , formAltered = false
 		;
@@ -205,20 +200,30 @@ function insertImageAtCursor(id, nome) {
 		    $inps.unbind('change'); // saves this function running every time.
 		});
  */
+
+		//Verifica se manda "gravar" o conhecimento ou se redireciona direto para o "exibir"  
  		formAltered = false;
-		$("#frm").submit(function(event){
-			if (CKEDITOR.instances.conteudo.checkDirty()) {
+		formEmpty = false;
+		$("#frm").submit(function(event) {
+			if ($("#infoId").val() == 0) {
+				//situação 1: Conhecimento NOVO e está com o titulo ou o conteudo vazios - > grava (validação no servidor)
+				if (CKEDITOR.instances.conteudo.getData() == "" ||
+							$('#titulo').val() == "") 
+					formEmpty = true;
+				//situação 2: Conhecimento NOVO com titulo e conteudo preenchidos - > grava
+				//necessário quando se cria um conhecimento relacionado para gravar a hashTag(#) que já vem preenchida no conteudo e o checkDirty não pega
+				else 
+					formAltered = true;		
+			}
+			//situação 3: Conhecimento que teve conteudo alterado (checkDirty()) - > grava
+			else if (CKEDITOR.instances.conteudo.checkDirty()) {
 			    $('#conteudo').text(CKEDITOR.instances.conteudo.getData());
 			    formAltered = true;
 			}
-/* 			if(formAltered == true){
-				$('#frm').attr('action', '@{Application.gravar}');
-			} 	
-			else{ */
-			if(formAltered != true)	{
+			//situação 4: Conhecimento que não esteja vazio e sem alteração no conteudo  - > exibir
+			if(!formAltered && !formEmpty)	{
 				event.preventDefault(); 
 				var siglaId = $("#siglaId").val();
-				//$('#frm').attr('action', '@{Application.exibir}?sigla=siglaId');
 				window.location.href = "@{Application.exibir}?sigla=" + siglaId;
 			}
 		});
@@ -284,17 +289,17 @@ function insertImageAtCursor(id, nome) {
 					</p>
 				#{/if} #{/list} #{/if}
 			</div>
-			<h3 style="padding-top: 1em">Opções de Formatação do Texto</h3>
+			<h3 style="padding-top: 1em">Inserir classificação no Texto</h3>
 			<p>
 				O conteúdo do campo "Texto" pode receber *{<a
-					href="http://www.wikicreole.org">}* marcações especiais*{</a>}*, clique <a
+					href="http://www.wikicreole.org">}* uma marcação especial para classificação.*{</a>}* Clique <a
 					id="marcadores" href="#">aqui</a> para
-				visualizar as opções disponíveis.
+				visualizar a opção disponível.
 			</p>
 			<div id="cheatsheet" style="display: none;">
 				<table class="side-bar-light-table">
 					<tbody>
-						<tr>
+						<!-- <tr>
 							<td>//itálico//</td>
 							<td class="arrow">→</td>
 							<td><em>itálico</em></td>
@@ -322,15 +327,12 @@ function insertImageAtCursor(id, nome) {
 							<td class="arrow">→</td>
 							<td>1. Lista numerada<br>2. Segundo item<br>2.1
 								Sub item</td>
-						</tr>
+						</tr> -->
 						<tr>
-							<td>#classificacao-conhecimento (HashTag)<br>
-							Obs.: Não usar caracteres especiais ou espaço
-							<br>
+							<td>#classificacao-conhecimento<br>
 							<td class="arrow">→</td>
 							<td><a href="#">#classificacao-conhecimento</a></td>
 						</tr>
-
 						<!-- 
 					<tr>
 						<td>Link para [[outro conhecimento]]</td>
@@ -341,7 +343,7 @@ function insertImageAtCursor(id, nome) {
 						</td>
 					</tr>
  -->
-						<tr>
+					<!-- 	<tr>
 							<td>[[URL|nome do link]]</td>
 							<td class="arrow">→</td>
 							<td><a
@@ -392,10 +394,11 @@ function insertImageAtCursor(id, nome) {
 							<td>{{{<br>== [[não|formatar]]<br />}}}</td>
 							<td class="arrow">→</td>
 							<td>== [[não|formatar]]:</td>
-						</tr>
+						</tr> -->
 					</tbody>
 				</table>
-
+				<br />
+				<p>Não usar caracteres especiais ou espaço</p>
 			</div>
 		</div>
 	</div>

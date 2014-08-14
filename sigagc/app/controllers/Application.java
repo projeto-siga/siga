@@ -608,7 +608,15 @@ public class Application extends SigaApplication {
 			
 			if (classificacao == null || classificacao.isEmpty())
 				classificacao = (informacao.arq != null) ? informacao.arq.classificacao: null;
-
+			//inserir hashTag no conteudo quando um conhecimento for relacionado
+			else if (classificacao.contains("#") && conteudo == null) {
+				conteudo = "";
+				String[] listaClassificacao = classificacao.split(",");
+				for (String somenteHashTag : listaClassificacao) {
+					if(somenteHashTag.trim().startsWith("#"))
+						conteudo += somenteHashTag.trim() + " "; 
+				}
+			}	
 			if (informacao.autor == null) {
 				informacao.autor = titular;
 			}

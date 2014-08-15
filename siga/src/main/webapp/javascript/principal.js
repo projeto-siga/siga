@@ -60,18 +60,38 @@ window.Siga = {
     display: function(target, text){
         var self = this;
         console.log("entrei no display");
+
         if (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1){
             console.log("autenticação falhou");
+            self.loadModule(self.moduleFromId(target.attr("id")));
+        }else{
+            target.append(text);
+            $(target.find(".loading")).hide();
 
-            $.each(self.modules, function(module){
-                if (target.attr("id") == this.viewId){
-                    self.loadModule(module);
-                }
-            });
+            self.loadSubModule(self.moduleFromId(target.attr("id")));
         }
+    },
 
-        target.append(text);
-        $(target.find(".loading")).hide();
+    moduleFromId: function(id){
+        var self = this;
+        var model = {};
+        $.each(self.modules, function(){
+            if (id == this.viewId){
+                model = this;
+                return;
+            }
+
+            if (this.submodules){
+                $.each(this.submodules, function(){
+                    if (id == this.viewId){
+                        model = this;
+                        return;
+                    }
+                });
+            }
+        });
+
+        return model;
     },
 
     picketlinkResponse: function(textResponse){
@@ -87,8 +107,9 @@ window.Siga = {
         return {url: action, params: samlJson};
     },
 
-    loadSubModules: function(model){
+    loadSubModule: function(model){
         var self = this;
+
         if (model.submodules){
             $.each(model.submodules, function(){
                 self.loadModule(this);
@@ -104,7 +125,6 @@ window.Siga = {
             url: ajax.url,
             type: ajax.type,
             data: ajax.params,
-            timeout: 1500,
             statusCode: {
                 404: function() {
                     if (ajax.target != null)
@@ -153,9 +173,7 @@ window.Siga = {
                     self.ajaxCall({url: params.url, type: "POST", params: params.params, target: target}, function(textResponse){
                         console.log("resposta do 2 POST -> "+model.name);
                         self.display(target, textResponse);
-                        self.loadSubModules(model);
                     });
-
                 });
             }else{
                 self.display(target, textResponse);

@@ -113,6 +113,109 @@
         </dependency>
     </dependencies>
 
+<profiles>
+    <profile>
+        <id>flyway</id>
+		
+  <build>
+    <plugins>
+	
+
+
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>sql-maven-plugin</artifactId>
+          <version>1.5</version>
+
+          <dependencies>
+            <!-- specify the dependent JDBC driver here -->
+            <dependency>
+               <groupId>com.oracle</groupId>
+              <artifactId>ojdbc6</artifactId>
+              <version>11.2.0.3.0</version>
+              <scope>runtime</scope>
+            </dependency>
+          </dependencies>
+
+          <!-- common configuration shared by all executions -->
+          <configuration>
+              <driver>oracle.jdbc.driver.OracleDriver</driver>
+              <url>jdbc:oracle:thin:@${server.ip}:49161:xe</url>
+              <username>system</username>
+              <password>oracle</password>
+          </configuration>
+
+          <executions>
+            <execution>
+              <phase>integration-test</phase>
+              <goals>
+                <goal>execute</goal>
+              </goals>
+              <!-- specific configuration for this execution -->
+              <configuration>
+                <!-- specify your SQL commands, can be all of the following configurations -->
+                <sqlCommand>CREATE USER corporativo IDENTIFIED BY corporativo default tablespace USERS;
+                CREATE USER siga IDENTIFIED BY siga default tablespace USERS;
+                CREATE USER sigawf IDENTIFIED BY sigawf default tablespace USERS;
+                grant connect,resource to SIGA;
+                grant connect,resource to SIGAWF;
+                Grant connect,resource to CORPORATIVO</sqlCommand>
+                <autocommit>true</autocommit>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+    <plugin>
+        <groupId>com.googlecode.flyway</groupId>
+        <artifactId>flyway-maven-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <driver>oracle.jdbc.driver.OracleDriver</driver>
+          <url>jdbc:oracle:thin:@${server.ip}:49161:xe</url>
+          <user>system</user>
+          <password>oracle</password>
+          <schemas>
+              <schema>CORPORATIVO</schema>
+          </schemas>
+          <sqlMigrationPrefix>CORPORATIVO_UTF8_V</sqlMigrationPrefix>
+          <placeholderPrefix>flyway${</placeholderPrefix>
+          <locations>
+              <location>filesystem:\siga-cp\src\main\resources</location>
+          </locations>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>migrate</goal>
+            </goals>
+
+          </execution>
+        </executions>
+        <dependencies>
+         <dependency>
+              <groupId>com.oracle</groupId>
+              <artifactId>ojdbc6</artifactId>
+              <version>11.2.0.3.0</version>
+              <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+    </plugin>
+
+            
+
+    </plugins>
+
+
+  </build>
+		
+    </profile>
+
+	
+	
+</profiles>
 
 
 </project>

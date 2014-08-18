@@ -499,11 +499,6 @@
 				<version>3.0.19</version>
 			</dependency>
 			<dependency>
-				<groupId>com.google.code.maven-play-plugin.org.playframework</groupId>
-				<artifactId>play</artifactId>
-				<version>1.2.4</version>
-			</dependency>
-			<dependency>
 				<groupId>org.mcavallo</groupId>
 				<artifactId>opencloud</artifactId>
 				<version>0.3</version>
@@ -613,7 +608,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<scope>provided</scope>
-
 		</dependency>
 
 		<dependency>

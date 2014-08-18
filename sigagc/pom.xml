@@ -2,12 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!-- <parent> <artifactId>play-app-default-parent</artifactId> <groupId>com.google.code.maven-play-plugin</groupId> 
-		<version>1.0.0-beta6</version> </parent> -->
 	<parent>
 		<artifactId>projeto-siga</artifactId>
 		<groupId>projeto-siga</groupId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>karina</relativePath>
 	</parent>
 
 	<artifactId>sigagc</artifactId>
@@ -28,13 +27,11 @@
 	</properties>
 
 	<dependencies>
-
 		<!-- Siga Play Module -->
-
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>siga-play-module</artifactId>
-			<version>${project.version}</version>
+			<version>0.0.1</version>
 			<classifier>module-min</classifier>
 			<type>zip</type>
 		</dependency>
@@ -42,10 +39,16 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>siga-play-module</artifactId>
-			<version>${project.version}</version>
+			<version>0.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Demais dependencias -->
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.15.0-GA</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -95,10 +98,8 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- <dependency> <groupId>org.javassist</groupId> <artifactId>javassist</artifactId> 
-			<version>3.18.2-GA</version> <version>3.15.0-GA</version> <scope>provided</scope> 
-			</dependency> -->
 		<!-- Play Dependencies -->
+
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -106,18 +107,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.code.maven-play-plugin.org.playframework</groupId>
-			<artifactId>play</artifactId>
-			<version>${play.version}</version>
-			<classifier>framework-min</classifier>
-			<type>zip</type>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.javassist</groupId>
-					<artifactId>javassist</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.3</version>
 		</dependency>
 
 		<dependency>
@@ -133,8 +125,24 @@
 			<artifactId>play</artifactId>
 			<version>1.3.x</version>
 		</dependency>
-	</dependencies>
 
+
+
+		<dependency>
+			<groupId>com.google.code.maven-play-plugin.org.playframework</groupId>
+			<artifactId>play</artifactId>
+			<version>${play.version}</version>
+			<classifier>framework-min</classifier>
+			<type>zip</type>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<sourceDirectory>/app</sourceDirectory>
@@ -158,7 +166,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.15</version>
 				<configuration>
-                    <skipTests>true</skipTests>
+					<skipTests>true</skipTests>
 					<debugForkedProcess>-XX:-UseSplitVerifier</debugForkedProcess> <!-- for Java7 compatibility -->
 					<excludes>
 						<exclude>**/*SeleniumTest.java</exclude>
@@ -260,18 +268,9 @@
 				<version>1.0.0-beta7</version>
 				<extensions>true</extensions>
 				<configuration>
-					<warDependencyExcludes>jta,siga-base,siga-cd-base,siga-sinc-lib,siga-ws,
-                        jboss-transaction-api_1.1_spec,netty,picketbox,picketlink-config,picketlink-federation
-                    </warDependencyExcludes>
+					<warDependencyExcludes>jta,siga-base,siga-cd-base,siga-sinc-lib,siga-ws,jboss-transaction-api_1.1_spec,netty,picketbox,picketlink-config,picketlink-federation</warDependencyExcludes>
 				</configuration>
 				<executions>
-					<execution>
-						<id>precompile</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>precompile</goal>
-						</goals>
-					</execution>
 					<execution>
 						<id>make-war</id>
 						<phase>package</phase>
@@ -279,6 +278,15 @@
 							<goal>war</goal>
 						</goals>
 					</execution>
+
+					<execution>
+						<id>precompile</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>precompile</goal>
+						</goals>
+					</execution>
+
 					<execution>
 						<id>play-dependencies</id>
 						<phase>validate</phase>
@@ -286,6 +294,7 @@
 							<goal>dependencies</goal>
 						</goals>
 					</execution>
+
 					<execution>
 						<id>default-start-server</id>
 						<phase>none</phase>

@@ -182,7 +182,7 @@
           <sqlMigrationPrefix>CORPORATIVO_UTF8_V</sqlMigrationPrefix>
           <placeholderPrefix>flyway${</placeholderPrefix>
           <locations>
-              <location>filesystem:\siga-cp\src\main\resources</location>
+              <location>filesystem:src\main\resources</location>
           </locations>
         </configuration>
         <executions>

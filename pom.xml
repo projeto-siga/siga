@@ -480,7 +480,7 @@
 	
 <profiles>
     <profile>
-        <id>flyway</id>
+        <id>docker</id>
 		
   <build>
     <plugins>
@@ -526,7 +526,8 @@
         <groupId>org.jolokia</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <version>0.9.9</version>
-
+		<inherited>false</inherited>
+		
         <configuration>
            <image>alexeiled/docker-oracle-xe-11g:latest</image>
            <ports>

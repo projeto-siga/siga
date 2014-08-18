@@ -51,6 +51,11 @@
 			<artifactId>ehcache</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+		</dependency>
+
 		<!-- Siga -->
 		<dependency>
 			<groupId>projeto-siga</groupId>

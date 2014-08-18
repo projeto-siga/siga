@@ -26,7 +26,7 @@
 		<module>siga-ex</module>
 		<module>siga-play-module</module>
 		<module>sigagc</module>
-		
+
 		<!-- <module>siga-cd</module> <module>sigacd</module> <module>siga-wf</module> 
 			<module>sigawf</module> <module>siga-autenticidade</module> <module>siga-cd-aut</module> 
 			<module>siga-cp-sinc</module> <module>sigasr</module> <module>sigapp</module> 
@@ -193,12 +193,12 @@
 				<artifactId>siga-sinc-lib</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
-            <!-- Biblioteca configurada como modulo do Jboss -->
+			<!-- Biblioteca configurada como modulo do Jboss -->
 			<dependency>
 				<groupId>projeto-siga</groupId>
 				<artifactId>siga-ext</artifactId>
 				<version>${siga.version}</version>
-                <scope>provided</scope>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>projeto-siga</groupId>
@@ -344,6 +344,11 @@
 						<artifactId>bcprov-jdk14</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports</artifactId>
+				<version>5.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ar.com.fdvs</groupId>
@@ -541,15 +546,15 @@
 			<dependency>
 				<groupId>org.picketlink</groupId>
 				<artifactId>picketlink-impl</artifactId>
-                <scope>runtime</scope>
+				<scope>runtime</scope>
 				<version>${picketlink.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>org.picketlink</groupId>
-                <artifactId>picketlink-federation</artifactId>
-                <scope>provided</scope>
-                <version>${picketlink.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>org.picketlink</groupId>
+				<artifactId>picketlink-federation</artifactId>
+				<scope>provided</scope>
+				<version>${picketlink.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>jstl</groupId>
@@ -582,23 +587,23 @@
 				<version>1.1.3</version>
 			</dependency>
 
-            <dependency>
-                <groupId>backport-util-concurrent</groupId>
-                <artifactId>backport-util-concurrent</artifactId>
-                <version>3.1</version>
-            </dependency>
+			<dependency>
+				<groupId>backport-util-concurrent</groupId>
+				<artifactId>backport-util-concurrent</artifactId>
+				<version>3.1</version>
+			</dependency>
 
-            <dependency>
-                <groupId>jaxen</groupId>
-                <artifactId>jaxen</artifactId>
-                <version>1.1.6</version>
-            </dependency>
+			<dependency>
+				<groupId>jaxen</groupId>
+				<artifactId>jaxen</artifactId>
+				<version>1.1.6</version>
+			</dependency>
 
-            <dependency>
-                <groupId>org.beanshell</groupId>
-                <artifactId>bsh</artifactId>
-                <version>2.0b5</version>
-            </dependency>
+			<dependency>
+				<groupId>org.beanshell</groupId>
+				<artifactId>bsh</artifactId>
+				<version>2.0b5</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -664,19 +669,19 @@
 			<artifactId>bcpkix-jdk15on</artifactId>
 		</dependency>
 
-        <!-- Picketlink -->
-        <dependency>
-            <groupId>org.picketlink</groupId>
-            <artifactId>picketlink-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.picketlink</groupId>
-            <artifactId>picketlink-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.picketlink</groupId>
-            <artifactId>picketlink-federation</artifactId>
-        </dependency>
+		<!-- Picketlink -->
+		<dependency>
+			<groupId>org.picketlink</groupId>
+			<artifactId>picketlink-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.picketlink</groupId>
+			<artifactId>picketlink-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.picketlink</groupId>
+			<artifactId>picketlink-federation</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>

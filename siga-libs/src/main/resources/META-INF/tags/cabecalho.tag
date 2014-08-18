@@ -60,12 +60,9 @@ ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
 
-<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css"
-	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css"
-	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
-	type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css" type="text/css" media="screen, projection">
 
 <!-- <link rel="StyleSheet" href="/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
 
@@ -79,11 +76,12 @@ ${meta}
 
 <script src="/siga/javascript/jquery/1.6/jquery-1.6.4.min.js" type="text/javascript"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+<script src="/siga/javascript/json2.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection">
 <!-- <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/development-bundle/themes/base/jquery.ui.all.css"
 	type="text/css" media="screen, projection"> -->
 <c:if test="${not empty incluirJs}">
-    <script src="/siga/${incluirJs}" type="text/javascript"></script>
+    <script src="/siga/javascript/${incluirJs}" type="text/javascript"></script>
 </c:if>
 		
 <%-- Desabilitado porque requer o jquery 1.7 ou maior. 	
@@ -200,10 +198,8 @@ ${meta}
 											tipo="generico" tema="simple" ocultardescricao="sim"
 											buscar="nao" siglaInicial="Buscar" modulo="siga" />
 										<script type="text/javascript">
-											var fld = document
-													.getElementById("buscar_genericoSel_sigla");
-											fld.setAttribute("class",
-													"gt-search-text");
+											var fld = document.getElementById("buscar_genericoSel_sigla");
+											fld.setAttribute("class","gt-search-text");
 											fld.className = "gt-search-text";
 											fld.onfocus = function() {
 												if (this.value == 'Buscar') {
@@ -219,22 +215,17 @@ ${meta}
 													ajax_buscar_generico();
 											};
 											fld.onkeypress = function(event) {
-												var fid = document
-												.getElementById("buscar_genericoSel_id");
+												var fid = document.getElementById("buscar_genericoSel_id");
 												
-												event = (event) ? event
-														: window.event
-												var keyCode = (event.which) ? event.which
-														: event.keyCode;
+												event = (event) ? event : window.event
+												var keyCode = (event.which) ? event.which : event.keyCode;
 												if (keyCode == 13) {
-													if (fid.value == null
-															|| fid.value == "") {
-														fld.onblur();
-													} else {
-														window.alert("1");
-														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
-																+ fld.value;
-													}
+													//if (fid.value == null || fid.value == "") {
+													//	fld.onblur();
+													//} else {
+													//	window.alert("1");
+														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla=' + fld.value;
+													//}
 													return false;
 												} else {
 													fid.value = '';
@@ -242,23 +233,18 @@ ${meta}
 												}
 											};
 
-											self.resposta_ajax_buscar_generico = function(
-													response, d1, d2, d3) {
-												var sigla = document
-														.getElementsByName('buscar_genericoSel.sigla')[0].value;
+											self.resposta_ajax_buscar_generico = function(response, d1, d2, d3) {
+                                                debugger;
+												var sigla = document.getElementsByName('buscar_genericoSel.sigla')[0].value;
 												var data = response.split(';');
 												if (data[0] == '1') {
-													retorna_buscar_generico(
-															data[1], data[2],
-															data[3]);
-													if (data[1] != null
-															&& data[1] != "") {
+													retorna_buscar_generico(data[1], data[2], data[3]);
+													if (data[1] != null	&& data[1] != "") {
 														window.location.href = data[3];
 													}
 													return
 												} 
-												retorna_buscar_generico('',
-														'', '');
+												retorna_buscar_generico('', '', '');
 
 												return;
 

@@ -41,9 +41,6 @@
 			lazy="false" />
 		<many-to-one name="cpIdentidade" column="ID_IDENTIDADE"
 			class="CpIdentidade" lazy="false" />
-		<many-to-one name="orgaoObjeto" column="ID_ORGAO_OBJETO"
-			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" lazy="false" />
-		
 
 		<!-- Identidade (drive k e grupo de email) -->
 		<many-to-one name="cpGrupo" column="ID_GRUPO"

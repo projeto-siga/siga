@@ -25,6 +25,8 @@
  */
 package br.gov.jfrj.siga.model.dao;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -32,11 +34,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.jboss.logging.Logger;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
-import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 
 public class HibernateUtil {
 
@@ -82,9 +79,9 @@ public class HibernateUtil {
 		// Resolucao do erro Session is Closed ao comitar uma transacao pois se o ThreadTransaction
 		// nao for nulo a threadTransaction pode ter sido obtida em uma sessao do hibernate diferente 
 		// da atual e por este motivo a sessao pode estar fechada.
-		
-		// Transaction tx = HibernateUtil.threadTransaction.get();		
-		Transaction tx = HibernateUtil.getSessao().beginTransaction();
+
+		Transaction tx = HibernateUtil.threadTransaction.get();
+		//Transaction tx = HibernateUtil.getSessao().beginTransaction();
 		
 		if (tx == null) {
 			tx = HibernateUtil.getSessao().beginTransaction();

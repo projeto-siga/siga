@@ -5,7 +5,8 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <siga:pagina titulo="Justiça Federal" desabilitarbusca="sim"
-	onLoad="try{document.getElementById('j_username').focus();document.getElementById('j_username').select()}catch(e){};">
+	onLoad="try{document.getElementById('j_username').focus();document.getElementById('j_username').select()}catch(e){};"
+    incluirJs="jquery.placeholder.js">
 
 	<script type="text/javascript">
 		/*  converte para maiúscula a sigla do estado  */
@@ -35,8 +36,7 @@
 					<c:param name="ts">${currentTimeMillis}</c:param>
 				</c:url>
 				<script type="text/javascript">
-					SetInnerHTMLFromAjaxResponse("${url}", document
-							.getElementById('gc-ancora'));
+					SetInnerHTMLFromAjaxResponse("${url}", document.getElementById('gc-ancora'));
 				</script>
 			</ww:if>
 			<ww:else>
@@ -99,4 +99,7 @@
 		</div>
 		<!-- / sidebar -->
 	</div>
+    <script type="text/javascript">
+        $('input, textarea').placeholder();
+    </script>
 </siga:pagina>

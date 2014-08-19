@@ -37,9 +37,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -1956,7 +1958,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		final DpPessoa pes;
 		final ArrayList al = new ArrayList();
 		final DpPessoa oExemplo = new DpPessoa();
-
+		
 		String siglaPessoa = param("pessoa");
 
 		if (siglaPessoa == null || siglaPessoa.trim() == "") {
@@ -3170,15 +3172,17 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aTransferirLoteGravar() throws Exception {
-		
-		final ExMovimentacao mov = new ExMovimentacao();
-		lerForm(mov);
 
+		lerForm(mov);
+		
 		final Pattern p = Pattern.compile("chk_([0-9]+)");
 		boolean despaUnico = false;
 		final Date dt = dao().dt();
-		String erro = "";
-		HashMap<String, AplicacaoException> MapMensagens = new HashMap<String, AplicacaoException>();
+		mov.setDtIniMov(dt);
+		ExMobil nmobil = new ExMobil();
+		HashMap<ExMobil, AplicacaoException> MapMensagens = new HashMap<ExMobil, AplicacaoException>();
+		List<ExMobil> Mobeis = new ArrayList<ExMobil>();
+		List<ExMobil> MobilSucesso = new ArrayList<ExMobil>();
 
 		if (mov.getResp() == null && mov.getLotaResp() == null)
 			throw new AplicacaoException(
@@ -3186,14 +3190,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (param("tpdall") != null && paramLong("tpdall") != 0)
 			despaUnico = true;
 		StringBuffer msgErroNivelAcessoso = null;
-		
-		for (final String s : getPar().keySet()) {
-		try {
-				if (s.startsWith("chk_") && param(s).equals("true")) {
 
+		for (final String s : getPar().keySet()) {
+			try {
+				if (s.startsWith("chk_") && param(s).equals("true")) {
 					final Long idTpDespacho;
 					if (!despaUnico)
-						idTpDespacho = Long.valueOf(param(s.replace("chk_","tpd_")));
+						idTpDespacho = Long.valueOf(param(s.replace("chk_",
+								"tpd_")));
 					else
 						idTpDespacho = Long.valueOf(param("tpdall"));
 
@@ -3204,10 +3208,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 					final Matcher m = p.matcher(s);
 					if (!m.find())
-						throw new AplicacaoException("Não foi possível ler a Id do documento e o número da via.");
-					
-					final ExMobil mobil = dao().consultar(Long.valueOf(m.group(1)), ExMobil.class, false);
-					
+						throw new AplicacaoException(
+								"Não foi possível ler a Id do documento e o número da via.");
+
+					final ExMobil mobil = dao().consultar(
+							Long.valueOf(m.group(1)), ExMobil.class, false);
+
 					if (!Ex.getInstance()
 							.getComp()
 							.podeAcessarPorNivel(getTitular(),
@@ -3226,7 +3232,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						if (txt.equals(""))
 							txt = null;
 
-						erro = mobil.getSigla();
+						nmobil = mobil;
+						Mobeis.add(mobil);
 
 						Ex.getInstance()
 								.getBL()
@@ -3240,22 +3247,60 @@ public class ExMovimentacaoAction extends ExActionSupport {
 										mov.getSubscritor(), mov.getTitular(),
 										tpd, false, txt, null,
 										mov.getNmFuncaoSubscritor());
+
 					}
 				}
-			}
-			catch (final AplicacaoException e) {
-				MapMensagens.put(erro, e); 	// throw new AplicacaoException("Ocorreu um erro na transferência do documento" + erro + ". ", 0, e);
-			}
-		}
-		
-		if (!MapMensagens.isEmpty()) {
-			Iterator<Entry<String, AplicacaoException>> it = MapMensagens.entrySet().iterator();
-			while (it.hasNext()){
-				Map.Entry mensagens = (Entry) it.next();
-				throw new AplicacaoException("Ocorreu um erro na transferência do documento" + mensagens.getKey() + ". " + mensagens.getValue());
+			} catch (final AplicacaoException e) {
+				MapMensagens.put(nmobil, e);
 			}
 		}
-		return aGerarProtocolo();// return Action.SUCCESS;
+
+		final ArrayList al = new ArrayList();
+		final ArrayList check = new ArrayList();
+		final ArrayList arrays = new ArrayList();
+
+		for (Iterator<ExMobil> it = Mobeis.iterator(); it.hasNext();) {
+			ExMobil mob = it.next();
+			if (!(MapMensagens.containsKey(mob))) {
+				MobilSucesso.add(mob);
+				System.out.println("Mobil Geral: " + mob.doc().getMobilGeral().isGeral()); 
+				final Object[] ao = { mob.doc(),
+						mob.getUltimaMovimentacaoNaoCancelada() };
+				System.out.println("Sucesso sigla: " + mob.doc().getSigla());
+				check.add(ao);
+			}
+		}
+
+		if (!(MapMensagens.isEmpty())) {
+			for (Iterator<Entry<ExMobil, AplicacaoException>> it = MapMensagens
+					.entrySet().iterator(); it.hasNext();) {
+				Entry<ExMobil, AplicacaoException> excep = it.next();
+				final Object[] ao = { excep.getKey().doc(),
+						excep.getValue().getMessage() };
+				System.out.println("Falha: " + excep.getKey().doc().getSigla());
+				System.out.println("Mensagem de erro: " + excep.getValue().getMessage());
+				al.add(ao);
+			}
+		}
+
+		Object[] arr = al.toArray();
+		Object[] arr_ = check.toArray();
+
+		al.clear();
+		check.clear();
+
+		for (int k = 0; k < arr.length; k++)
+			al.add(arr[k]);
+
+		for (int k = 0; k < arr_.length; k++)
+			check.add(arr_[k]);
+
+		arrays.add(al);
+		arrays.add(check);
+
+		setItens(arrays);
+
+		return Action.SUCCESS;
 	}
 
 	public String aViaProtocolo() throws Exception {

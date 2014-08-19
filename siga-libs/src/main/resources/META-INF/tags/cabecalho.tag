@@ -201,6 +201,9 @@ ${meta}
 											tipo="generico" tema="simple" ocultardescricao="sim"
 											buscar="nao" siglaInicial="Buscar" modulo="siga" />
 										<script type="text/javascript">
+											$("#menu_siga").focus(function(){
+												  $('#navmenu-h li ul').css({"display":"block"})
+											});
 											var fld = document
 													.getElementById("buscar_genericoSel_sigla");
 											fld.setAttribute("class",

@@ -59,10 +59,8 @@ window.Siga = {
 
     display: function(target, text){
         var self = this;
-        console.log("entrei no display");
 
         if (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1){
-            console.log("autenticação falhou");
             self.loadModule(self.moduleFromId(target.attr("id")));
         }else{
             target.append(text);
@@ -140,7 +138,6 @@ window.Siga = {
                     $(ajax.target.find(".loading")).show();
             }
         }).fail(function(){
-            console.log("fail!");
             if (ajax.target != null)
                 ajax.target.html("M&oacute;dulo indispon&iacute;vel");
         }).done(function(response){
@@ -155,23 +152,16 @@ window.Siga = {
         var self = this;
         var target = $("#"+model.viewId);
 
-        console.log("Ajax request to: "+model.url);
         self.ajaxCall({url: model.url, type: "GET", params: model.params, target: target}, function(textResponse) {
-            console.log("resposta do 1 GET-> "+model.name);
             // Verifica se o SP foi previamente inicializado, caso nao tenha sido apenas renderiza.
             if (textResponse.indexOf("SAMLRequest") > -1){
-                console.log("Efetuando processamento pelo picketlink: "+model.name);
                 var params = self.picketlinkResponse(textResponse);
 
                 // Envia um POST para o IDP com o atributo SAMLRequest da ultima requisicao
-                console.log("Efetuando primeiro POST para: "+model.name);
                 self.ajaxCall({url: params.url, type: "POST", params: params.params, target: target}, function(textResponse){
-                    console.log("resposta do 1 POST -> "+model.name);
                     var params = self.picketlinkResponse(textResponse);
 
-                    console.log("Efetuando o 2 POST para: "+model.name);
                     self.ajaxCall({url: params.url, type: "POST", params: params.params, target: target}, function(textResponse){
-                        console.log("resposta do 2 POST -> "+model.name);
                         self.display(target, textResponse);
                     });
                 });

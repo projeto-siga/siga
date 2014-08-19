@@ -5,7 +5,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<li><a class="" href="#">SIGA</a>
+<li><a id="menu_siga" class="" href="#">SIGA</a>
 	<ul>
 		<li><a href="/siga/principal.action">Página Inicial</a>
 		</li>

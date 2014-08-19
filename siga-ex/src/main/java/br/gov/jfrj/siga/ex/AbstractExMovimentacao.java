@@ -48,7 +48,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 
 	private DpPessoa destinoFinal;
 
-	// private Date dtFimMov;
+	
+	private Date dtFimMov;
 
 	private Date dtIniMov;
 
@@ -90,6 +91,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 
 	@DocumentId
 	private Long idMov;
+	
+	private Long idTpMov;
 
 	private DpLotacao lotaCadastrante;
 
@@ -166,9 +169,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 		return destinoFinal;
 	}
 
-	// public Date getDtFimMov() {
-	// return dtFimMov;
-	// }
+	public Date getDtFimMov() {
+		return dtFimMov;
+	}
 
 	public Date getDtIniMov() {
 		return dtIniMov;
@@ -218,6 +221,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 		return subscritor;
 	}
 
+	public void setIdTpMov(final Long idTpMov){
+		this.idTpMov = idTpMov;
+	}
+	
 	public void setCadastrante(final DpPessoa cadastrante) {
 		this.cadastrante = cadastrante;
 	}
@@ -238,9 +245,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 		this.destinoFinal = destinoFinal;
 	}
 
-	// public void setDtFimMov(final Date dtFimMov) {
-	// this.dtFimMov = dtFimMov;
-	// }
+	public void setDtFimMov(final Date dtFimMov) {
+		 this.dtFimMov = dtFimMov;
+	}
 
 	public void setDtIniMov(final Date dtIniMov) {
 		this.dtIniMov = dtIniMov;

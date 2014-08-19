@@ -417,10 +417,36 @@
 					<ww:a href="%{url}">${docVO.paiSigla}</ww:a>
 				</p>
 			</c:if>
-			<c:if test="${not empty docVO.dadosComplementares}">
-	    	${docVO.dadosComplementares}
-		</c:if>
+		
+			<c:if test="${not empty docVO.documentosPublicados}">
+				<p class="apensados" style="margin-top: 0pt;">
+					<b>Documentos Publicados: </b>
+					<c:forEach var="documentoPublicado" items="${docVO.documentosPublicados}">
+						<ww:url id="url" action="exibir" namespace="/expediente/doc">
+							<ww:param name="sigla">${documentoPublicado.sigla}</ww:param>
+						</ww:url>
+						<ww:a href="%{url}" title="${documentoPublicado.sigla}">
+							${documentoPublicado.sigla}
+						</ww:a>&nbsp;
+					</c:forEach>
+				</p>
+			</c:if>
 
+			<c:if test="${not empty docVO.boletim}">
+				<p class="apensados" style="margin-top: 0pt;">
+					<b>Publicado no Boletim: </b>
+					<ww:url id="url" action="exibir" namespace="/expediente/doc">
+						<ww:param name="sigla">${docVO.boletim.sigla}</ww:param>
+					</ww:url>
+					<ww:a href="%{url}" title="${docVO.boletim.sigla}">
+						${docVO.boletim.sigla}
+					</ww:a>
+				</p>
+			</c:if>
+			
+			<c:if test="${not empty docVO.dadosComplementares}">
+	        	${docVO.dadosComplementares}
+     		</c:if>
 		</div>
 
 		<div class="gt-sidebar-content" id="gc"></div>

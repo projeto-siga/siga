@@ -164,6 +164,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	/** The value of the simple dtDoc property. */
 	private String dtMovString;
+	
+	private String dtDevolucaoMovString;
 
 	/** The value of the simple dtRegDoc property. */
 	private String dtRegMov;
@@ -2970,7 +2972,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getBL()
 					.transferir(mov.getOrgaoExterno(), getObsOrgao(),
 							getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), null, mov.getLotaResp(),
+							mov.getDtMov(), mov.getDtIniMov(), mov.getDtFimMov(), mov.getLotaResp(),
 							mov.getResp(), mov.getLotaDestinoFinal(),
 							mov.getDestinoFinal(), mov.getSubscritor(),
 							mov.getTitular(), mov.getExTipoDespacho(), false,
@@ -3270,7 +3272,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 								.transferir(mov.getOrgaoExterno(),
 										getObsOrgao(), getCadastrante(),
 										getLotaTitular(), mobil,
-										mov.getDtMov(), dt, mov.getLotaResp(),
+										mov.getDtMov(), dt, mov.getDtFimMov(), mov.getLotaResp(),
 										mov.getResp(),
 										mov.getLotaDestinoFinal(),
 										mov.getDestinoFinal(),
@@ -3398,6 +3400,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return dtMovString;
 	}
 
+	public String getDtDevolucaoMovString() {
+		return dtDevolucaoMovString;
+	}
+	
 	public String getDtRegMov() {
 		return dtRegMov;
 	}
@@ -3666,6 +3672,15 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		} catch (final NullPointerException e) {
 			mov.setDtMov(null);
 		}
+		
+		final SimpleDateFormat ddf = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			mov.setDtFimMov(ddf.parse(getDtDevolucaoMovString()));
+		} catch (final ParseException e) {
+			mov.setDtFimMov(null);
+		} catch (final NullPointerException e) {
+			mov.setDtFimMov(null);
+		}
 
 		if (getDtPubl() != null) {
 			try {
@@ -3844,6 +3859,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.dtMovString = dtMovString;
 	}
 
+	public void setDtDevolucaoMovString(final String dtDevolucaoMovString) {
+		this.dtDevolucaoMovString = dtDevolucaoMovString;
+	}
+	
 	public void setDtRegMov(final String dtRegMov) {
 		this.dtRegMov = dtRegMov;
 	}

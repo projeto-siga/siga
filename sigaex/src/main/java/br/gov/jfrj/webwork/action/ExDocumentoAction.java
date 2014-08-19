@@ -1137,7 +1137,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		if (!fPodeNaoExistir && doc == null)
 			throw new AplicacaoException("Documento não informado");
-		if (fVerificarAcesso && mob != null)
+		if (fVerificarAcesso && mob != null && mob.getIdMobil() != null)
 			verificaNivelAcesso(mob);
 	}
 

@@ -115,7 +115,7 @@ function insertFileAtCursor(id, nome) {
 	CKEDITOR.instances.conteudo.insertHtml(tag);
 }
 function insertImageAtCursor(id, nome) {
-	var tag = '<img alt="' + nome + '" src="/sigagc/app/baixar?id=' + id + '" style="height: 150px; width: 200px;" title="' + nome + '" />';
+	var tag = '<img alt="' + nome + '" src="/sigagc/app/baixar?id=' + id + '" style="width: 200px;" title="' + nome + '" />';
 	CKEDITOR.instances.conteudo.insertHtml(tag);
 }
 

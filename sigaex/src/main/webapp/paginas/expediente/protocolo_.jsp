@@ -61,7 +61,7 @@
 							<ww:param name="sigla">${documento[0].sigla}</ww:param>
 							</ww:url> <ww:a href="%{url}">${documento[0].codigo}</ww:a> 
 							<td align="center">
-								<siga:selecionado sigla="${documento[0].lotaSubscritor.sigla}" descricao="${documento[0].lotaSubscritor.descricao}" />
+								<siga:selecionado sigla="${documento[0].doc.lotaSubscritor.sigla}" descricao="${documento[0].doc.lotaSubscritor.descricao}" />
 							</td>
 							<td align="center">
 								<siga:selecionado sigla="${documento[1]}" descricao="${documento[1]}" />

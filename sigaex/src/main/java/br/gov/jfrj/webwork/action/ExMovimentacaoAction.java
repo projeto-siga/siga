@@ -3191,7 +3191,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (param("tpdall") != null && paramLong("tpdall") != 0)
 			despaUnico = true;
 
-		StringBuffer msgErroNivelAcessoso = null;
+		AplicacaoException msgErroNivelAcessoso = null;
 
 		for (final String s : getPar().keySet()) {
 			try {
@@ -3221,10 +3221,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.podeAcessarPorNivel(getTitular(),
 									getLotaTitular(), mobil)) {
 						if (msgErroNivelAcessoso == null)
-							msgErroNivelAcessoso = new StringBuffer(
-									"Alguns documentos não puderam ser transferidos por estarem inacessíveis ao usuário:  ");
-						msgErroNivelAcessoso.append(doc.getCodigo());
-						msgErroNivelAcessoso.append("  ");
+							msgErroNivelAcessoso = new AplicacaoException(
+									"O documento não pode ser transferido por estar inacessível ao usuário.");
+						if (!(msgErroNivelAcessoso.equals(null)))
+							MapMensagens.put(mobil, msgErroNivelAcessoso);
 					} else {
 						String txt = "";
 						if (!despaUnico)
@@ -3266,7 +3266,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			for (Iterator<Entry<ExMobil, AplicacaoException>> it = MapMensagens
 					.entrySet().iterator(); it.hasNext();) {
 				Entry<ExMobil, AplicacaoException> excep = it.next();
-				final Object[] ao = { excep.getKey().doc(),
+				final Object[] ao = { excep.getKey(),
 						excep.getValue().getMessage() };
 				System.out.println("Falha: " + excep.getKey().doc().getSigla());
 				System.out.println("Mensagem de erro: "

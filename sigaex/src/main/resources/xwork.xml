@@ -1719,6 +1719,10 @@
 				/sigalibs/ajax_retorno.jsp
 			</result>
 		</action>
+		<action name="criarDocTest" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="acriarDocTest">
+			<result>/paginas/expediente/mensagemAjax.jsp</result>
+		</action>
 	</package>
 
 	<package name="modelo" extends="default" namespace="/modelo">

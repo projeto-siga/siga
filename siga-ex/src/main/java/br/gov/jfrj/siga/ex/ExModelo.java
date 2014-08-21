@@ -109,5 +109,12 @@ public class ExModelo extends AbstractExModelo {
 	
 		return false;
 	}
+
+	public boolean isClassificacaoAutomatica() {
+		if(getExClassificacao() != null)
+			return true;
+		
+		return false;
+	}
 	
 }

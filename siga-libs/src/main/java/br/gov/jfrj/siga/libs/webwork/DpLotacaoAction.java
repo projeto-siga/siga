@@ -26,6 +26,8 @@ package br.gov.jfrj.siga.libs.webwork;
 
 import java.util.List;
 
+import org.omg.CORBA.portable.ApplicationException;
+
 import com.opensymphony.xwork.Action;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -112,9 +114,13 @@ public class DpLotacaoAction extends
 		 * else flt.setIdOrgaoUsu(paramInteger("orgaoUsu"));
 		 */
 		flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
-		if (flt.getIdOrgaoUsu() == null)
+		if (flt.getIdOrgaoUsu() == null) {
+			if (getLotaTitular() == null)
+				throw new AplicacaoException("Usuário não está logado.");
+			else 
 			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario()
 					.getIdOrgaoUsu());
+		}
 		String buscarFechadas = param("buscarFechadas");
 		flt.setBuscarFechadas(buscarFechadas != null ? Boolean
 				.valueOf(buscarFechadas) : false);

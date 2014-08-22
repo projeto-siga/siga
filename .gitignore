@@ -70,3 +70,9 @@ sigari/modules/
 sigari/eclipse/sigari-start.launch.template
 *.rej
 siga-dump/bin/pom.xml
+sigagc/desktop.ini
+sigaex/.externalToolBuilders/org.eclipse.wst.validation.validationbuilder.launch
+sigaex/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator (1).launch
+sigaex/.externalToolBuilders/org.eclipse.wst.common.project.facet.core.builder.launch
+siga/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator.launch
+siga-libs/.externalToolBuilders/org.eclipse.wst.validation.validationbuilder (1).launch

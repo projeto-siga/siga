@@ -924,26 +924,32 @@ public class ExBL extends CpBL {
 				if (element.getLotaCadastrante() != null
 						&& !transferenciasSet.isEmpty()
 						&& !contemRetornoTransferencia(element)) {
+					
+					Date dtMarca = element.getDtFimMov();
+					dtMarca.setHours(23);
+					dtMarca.setMinutes(59);
+					dtMarca.setSeconds(59);
+					
 					acrescentarMarcaTransferencia(set, mob, m_aguardando, dt,
-							element.getDtFimMov(), element.getCadastrante(),
+							dtMarca, element.getCadastrante(),
 							element.getLotaCadastrante()); // acrescenta a
 															// marca
 															// "Aguardando Devolução"
 
+					acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
+							dtMarca, element.getResp(),
+							element.getLotaResp());// acrescenta a marca
+													// "A Devolver"
+
 					acrescentarMarcaTransferencia(set, mob, m_aguardandoFora,
-							element.getDtFimMov(), null,
+							dtMarca, null,
 							element.getCadastrante(),
 							element.getLotaCadastrante()); // acrescenta a
 															// marca
 															// "Aguardando Devolução (Fora do Prazo)"
-
-					acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
-							element.getDtFimMov(), element.getResp(),
-							element.getLotaResp());// acrescenta a marca
-													// "A Devolver"
-
+					
 					acrescentarMarcaTransferencia(set, mob, m_aDevolverFora,
-							element.getDtFimMov(), null, element.getResp(),
+							dtMarca, null, element.getResp(),
 							element.getLotaResp());// acrescenta
 													// a
 													// marca

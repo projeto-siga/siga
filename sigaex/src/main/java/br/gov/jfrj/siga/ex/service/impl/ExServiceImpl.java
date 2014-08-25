@@ -382,7 +382,7 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 	
-	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
+	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
 			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, Boolean finalizar) throws Exception {
     	try {
     		DpPessoa cadastrante = null;
@@ -575,10 +575,16 @@ public class ExServiceImpl implements ExService {
     			try {
         			destinatarioOrgaoExterno = dao().getOrgaoFromSiglaExata(destinatarioStr);
         			
-        			if(destinatarioOrgaoExterno != null)
+        			if(destinatarioOrgaoExterno != null) {
         				doc.setOrgaoExternoDestinatario(destinatarioOrgaoExterno);
+        				doc.setNmOrgaoExterno(destinatarioCampoExtraStr);
+        			}
 				} catch (Exception e) {
 				}
+    		}
+    		
+    		if(destinatarioStr != null && destinatarioLotacao == null && destinatarioPessoa == null && destinatarioOrgaoExterno == null) {
+    			doc.setNmDestinatario(destinatarioStr);
     		}
     		
     		doc.setSubscritor(subscritor);

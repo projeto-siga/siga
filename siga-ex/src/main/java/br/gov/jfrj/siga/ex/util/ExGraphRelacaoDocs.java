@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -16,18 +18,60 @@ public class ExGraphRelacaoDocs extends ExGraph {
 		public ExMobil getMob() {
 			return this.mob;
 		}
-		
-		public NodoMob(ExMobil mob, DpPessoa pessoaVisualizando){
+
+		public NodoMob(ExMobil mob, DpPessoa pessoaVisualizando) {
 			this(mob, pessoaVisualizando, null);
 		}
 
-		public NodoMob(ExMobil mob, DpPessoa pessoaVisualizando, ExDocumento docRef) {
+		public NodoMob(ExMobil mob, DpPessoa pessoaVisualizando,
+				ExDocumento docRef) {
 			super(mob.getSigla());
 			this.mob = mob;
 			setShape("rectangle");
-			setLabel(mob.getSiglaResumida(pessoaVisualizando.getOrgaoUsuario(), docRef));
+			setLabel(mob.getSiglaResumida(pessoaVisualizando.getOrgaoUsuario(),
+					docRef));
 			setTooltip(mob.getSigla());
 			setURL("exibirNovo.action?sigla=" + mob.getSigla() + "");
+		}
+	}
+
+	private class TransicaoMob extends Transicao {
+
+		private ExMobil mob1;
+		private ExMobil mob2;
+		private String tipo;
+
+		public ExMobil getMob1() {
+			return this.mob1;
+		}
+
+		public ExMobil getMob2() {
+			return this.mob2;
+		}
+
+		public TransicaoMob(ExMobil mob1, ExMobil mob2, String tipo) {
+			super(mob1.getSigla(), mob2.getSigla());
+			this.mob1 = mob1;
+			this.mob2 = mob2;
+			this.tipo = tipo;
+			if (tipo.equals("vinculacao")) {
+				setTooltip("Vincula&ccedil;&atilde;o");
+				setEstilo(ESTILO_TRACEJADO);
+				setCor("gray");
+				setDirected(false);
+			} else if (tipo.equals("juntada")) {
+				setTooltip("Juntada");
+				setEstilo(ESTILO_TRACEJADO);
+				setDirected(true).setAoContrario(true);
+			} else if (tipo.equals("apensacao")) {
+				setTooltip("Apensa&ccedil;&atilde;o");
+				setEstilo(ESTILO_TRACEJADO);
+				setDirected(true).setAoContrario(true);
+			} else if (tipo.equals("paternidade")) {
+				setTooltip(mob2.doc().isProcesso() ? "Subprocesso"
+						: "Documento filho");
+				setDirected(false);
+			}
 		}
 	}
 
@@ -52,25 +96,25 @@ public class ExGraphRelacaoDocs extends ExGraph {
 		// Apensações
 		for (ExMobil apenso : mobBase.getApensos(true, false)) {
 			adicionar(new NodoMob(apenso, pessVendo, mobBase.doc()));
-			adicionar(apensacao(mobBase, apenso));
+			adicionar(new TransicaoMob(mobBase, apenso, "apensacao"));
 		}
 		ExMobil mestre = mobBase.getMestre();
 		if (mestre != null && !mestre.doc().equals(mobBase)) {
 			adicionar(new NodoMob(mestre, pessVendo, mobBase.doc()));
-			adicionar(apensacao(mestre, mobBase));
+			adicionar(new TransicaoMob(mestre, mobBase, "apensacao"));
 		}
 
 		// Vinculações
 		for (ExMobil vinculado : mobBase.getVinculados()) {
 			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
-			adicionar(vinculacao(mobBase, vinculado));
+			adicionar(new TransicaoMob(mobBase, vinculado, "vinculacao"));
 		}
 
-		// Juntada
+		// Juntadas
 		ExMobil pai = mobBase.getExMobilPai();
 		if (pai != null) {
 			adicionar(new NodoMob(pai, pessVendo, mobBase.doc()));
-			adicionar(juntada(pai, mobBase));
+			adicionar(new TransicaoMob(pai, mobBase, "juntada"));
 		}
 
 		// Paternidades
@@ -78,75 +122,69 @@ public class ExGraphRelacaoDocs extends ExGraph {
 				.getExDocumentoFilhoSet()) {
 			boolean jaTemNodo = false;
 			for (Nodo n : getNodos())
-				if (((NodoMob) n).getMob().doc().equals(sub)){
+				if (((NodoMob) n).getMob().doc().equals(sub)) {
 					jaTemNodo = true;
 					break;
 				}
-			if (!jaTemNodo){
-				adicionar(new NodoMob(sub.getMobilGeral(), pessVendo, mobBase.doc()));
-				adicionar(paternidade(mobBase, sub.getMobilGeral()));
+			if (!jaTemNodo) {
+				adicionar(new NodoMob(sub.getMobilGeral(), pessVendo,
+						mobBase.doc()));
+				adicionar(new TransicaoMob(mobBase, sub.getMobilGeral(),
+						"paternidade"));
 			}
 		}
 		if (mobBase.doc().getExMobilPai() != null) {
 			boolean jaTemNodo = false;
 			for (Nodo n : getNodos())
-				if (((NodoMob) n).getMob().doc().equals(mobBase.doc().getExMobilPai().doc())){
+				if (((NodoMob) n).getMob().doc()
+						.equals(mobBase.doc().getExMobilPai().doc())) {
 					jaTemNodo = true;
 					break;
 				}
-			if (!jaTemNodo){
-				adicionar(new NodoMob(mobBase.doc().getExMobilPai(), pessVendo, mobBase.doc()));
-				adicionar(paternidade(mobBase.doc().getExMobilPai(), mobBase));
+			if (!jaTemNodo) {
+				adicionar(new NodoMob(mobBase.doc().getExMobilPai(), pessVendo,
+						mobBase.doc()));
+				adicionar(new TransicaoMob(mobBase.doc().getExMobilPai(),
+						mobBase, "paternidade"));
 			}
 		}
+	}
 
-		// Ver se algum dos nodos é filho de outro e conectar um ao outro como
-		// paternidade, pra facilitar visualização
-
-		/*for (NodoDoc nodoDocX : getNodosExcetoDocBase()) {
-			for (NodoDoc nodoDocY : getNodosExcetoDocBase()) {
-				if (nodoDocX.getDoc().getExMobilPai() != null
-						&& nodoDocX.getDoc().getExMobilPai().getDoc()
-								.equals(nodoDocY.getDoc())) {
-					adicionar(paternidade(nodoDocY.getDoc(), nodoDocX.getDoc()));
-					nodoDocX.setLabel(nodoDocX.getDoc().getPontoNumSequencia());
+	public Map<String, List<ExMobil>> getAsMap() {
+		Map<String, List<ExMobil>> mapa = new HashMap<String, List<ExMobil>>();
+		String cat = "";
+		ExMobil mobilAAdicionar = null;
+		for (Transicao t : getTransicoes()) {
+			TransicaoMob tMob = (TransicaoMob) t;
+			if (tMob.tipo.equals("vinculacao")) {
+				cat = "Veja também";
+				mobilAAdicionar = tMob.mob2;
+			} else if (tMob.tipo.equals("juntada")) {
+				cat = "Juntado ao documento";
+				mobilAAdicionar = tMob.mob1;
+			} else if (tMob.tipo.equals("apensacao"))
+				if (tMob.mob1.equals(mobBase)) {
+					cat = "Documentos Apensados";
+					mobilAAdicionar = tMob.mob2;
+				} else {
+					cat = "Apensado ao Documento";
+					mobilAAdicionar = tMob.mob1;
 				}
+			else if (tMob.tipo.equals("paternidade"))
+				if (tMob.mob1.equals(mobBase)) {
+					cat = "Subprocessos";
+					mobilAAdicionar = tMob.mob2;
+				} else {
+					cat = "Documento pai";
+					mobilAAdicionar = tMob.mob1;
+				}
+
+			if (mapa.get(cat) == null) {
+				mapa.put(cat, new ArrayList<ExMobil>());
 			}
-		}*/
-
-	}
-
-	private Transicao vinculacao(ExMobil mob1, ExMobil mob2) {
-		Transicao t = new Transicao(mob1.getSigla(), mob2.getSigla());
-		t.setTooltip("Vinculação: " + mob1.getSigla() + " -> "
-				+ mob2.getSigla());
-		t.setEstilo(ESTILO_TRACEJADO);
-		t.setCor("gray");
-		t.setDirected(false);
-		return t;
-	}
-
-	private Transicao juntada(ExMobil pai, ExMobil filho) {
-		Transicao t = new Transicao(pai.getSigla(), filho.getSigla());
-		t.setTooltip("Juntada");
-		t.setEstilo(ESTILO_TRACEJADO);
-		t.setDirected(true).setAoContrario(true);
-		return t;
-	}
-
-	private Transicao apensacao(ExMobil mestre, ExMobil escravo) {
-		Transicao t = new Transicao(mestre.getSigla(), escravo.getSigla());
-		t.setTooltip("Apensação");
-		t.setEstilo(ESTILO_TRACEJADO);
-		t.setDirected(true).setAoContrario(true);
-		return t;
-	}
-
-	private Transicao paternidade(ExMobil pai, ExMobil filho) {
-		Transicao t = new Transicao(pai.getSigla(), filho.getSigla());
-		t.setTooltip(filho.doc().isProcesso() ? "Subprocesso" : "Documento filho");
-		t.setDirected(false);
-		return t;
+			mapa.get(cat).add(mobilAAdicionar);
+		}
+		return mapa;
 	}
 
 }

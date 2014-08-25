@@ -1,4 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -22,8 +23,16 @@
 	</script>
 </c:if>
 <script type="text/javascript">
-				var css = "<style>a:link {text-decoration: none}</style>";
-				$(css).appendTo("head");
+	var css = "<style>a:link {text-decoration: none}</style>";
+	$(css).appendTo("head");
+
+	function escapeAcentos(s){
+		//Edson: o replace abaixo é necessário porque o viz.js não monta o gráfico corretamente se
+		//houver caracteres com acento...
+		return s.replace(/[ãâáàÃÁÀÂêéÊÉôõóÔÕÓúÚçÇ]/gim, function(i){
+			return '&#'+i.charCodeAt(0)+';';
+			});
+	}
 </script>
 
 <div class="gt-bd" style="padding-bottom: 0px;" id="page">
@@ -347,7 +356,7 @@
 	
 		<c:if test="${not empty docVO.outrosMobsLabel}">
 			<jsp:useBean id="now" class="java.util.Date"/>
-			<div class="gt-sidebar-content" style="padding-top: 10px">
+			<div class="gt-sidebar-content">
 				<h3>${docVO.outrosMobsLabel}</h3>
 					<ul style="list-style-type: none; margin: 0; padding: 0;">
 					<c:forEach var="entry" items="${docVO.marcasPorMobil}">
@@ -358,7 +367,7 @@
 						<li>
 						<c:choose>
 							<c:when test="${outroMob.numSequencia == m.mob.numSequencia}">
-								<i>${outroMob.terminacaoSigla}</i>
+								<i><b>${outroMob.terminacaoSigla}</b></i>
 							</c:when>
 							<c:otherwise>
 								<ww:a href="%{url}" title="${outroMob.doc.descrDocumento}" cssStyle="text-decoration: none">
@@ -395,13 +404,25 @@
 		<!-- Sidebar List -->
 		<div class="gt-sidebar-content">
 			<h3 style="margin-bottom: 10px">Documentos Relacionados</h3>
-			<div style="display: none" id="inputRelacaoDocs">
-			</div>
-			<a 
-			href="javascript:void(0)" style="text-decoration: none">
 			<div id="outputRelacaoDocs" style="border: 0px; background-color: #e2eaee; padding: 0px">
+				<c:forEach items="${docVO.dotRelacaoDocs.asMap}" var="mapa">
+					<p style="margin-bottom: 3px;">
+						<b>${mapa.key}:</b> 
+					</p>
+				<ul>
+				<c:forEach var="mobRelacionado" items="${mapa.value}">
+					<li>
+						<ww:url id="url" action="exibir" namespace="/expediente/doc" >
+							<ww:param name="sigla">${mobRelacionado.sigla}</ww:param>
+						</ww:url>
+						<ww:a href="%{url}" title="${mobRelacionado.doc.descrDocumento}" cssStyle="text-decoration: none">
+							${mobRelacionado.sigla}
+						</ww:a>	
+					</li>
+				</c:forEach>
+				</ul>
+				</c:forEach>
 			</div>
-			</a>
 		</div>
 	
 		<script>
@@ -414,9 +435,12 @@
 		    		modal: true,
 				    resizable: false
 		  		});
+				//if (!document.getElementById("outputRelacaoDocs").hasChildNodes()){
+				//}
 			});
 			function bigmapRelacaoDocs() {
 				var input = 'digraph "" { graph[tooltip="Documentos Relacionados"]; edge[penwidth=2]; ${docVO.dotRelacaoDocs} }';
+				input = escapeAcentos(input);
 				var format = "svg";
 				var engine = "dot";
 				
@@ -446,8 +470,7 @@
 				$("#outputRelacaoDocs").css("background-color", $("html").css("background-color"));
 				var bgcolor = rgb2hex($("#outputRelacaoDocs").css("background-color"));
 				var input = 'digraph "" { graph[ratio="0.4" tooltip="Documentos Relacionados" color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapRelacaoDocs();"]; node[fillcolor=white fontsize=20 style=filled]; edge[penwidth=2]; ${docVO.dotRelacaoDocs} }';
-				//var input = 'graph G { graph[ratio="1"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'"]; node[fillcolor=white fontsize=50 style=filled]; edge[fontsize=30];  "RJ-EOF-2010/01104"[shape="rectangle"][label="RJ-EOF-2010/01104"]; "JFRJ-ADM-2014/00010"[shape="rectangle"][label="JFRJ-ADM-2014/00010"]; "RJ-EOF-2010/01104" -> "JFRJ-ADM-2014/00010"; "JFRJ-ADM-2014/00010.01"[shape="rectangle"][label="JFRJ-ADM-2014/00010.01"]; "JFRJ-ADM-2014/00010" -> "JFRJ-ADM-2014/00010.01"; "JFRJ-ADM-2014/00010.01"[shape="rectangle"][label="JFRJ-ADM-2014/00010.01"]; "JFRJ-ADM-2014/00010" -> "JFRJ-ADM-2014/00010.01"; "JFRJ-ADM-2014/00015"[shape="rectangle"][label="JFRJ-ADM-2014/00015"]; "RJ-EOF-2010/01104" -> "JFRJ-ADM-2014/00015"; "JFRJ-ADM-2014/00015.01"[shape="rectangle"][label="JFRJ-ADM-2014/00015.01"]; "JFRJ-ADM-2014/00015" -> "JFRJ-ADM-2014/00015.01"; "JFRJ-ADM-2014/00015.01"[shape="rectangle"][label="JFRJ-ADM-2014/00015.01"]; "RJ-EOF-2010/01104" -> "JFRJ-ADM-2014/00015.01"; "RJ-EOF-2010/01104.01"[shape="rectangle"][label="RJ-EOF-2010/01104.01"]; "RJ-EOF-2010/01104" -> "RJ-EOF-2010/01104.01"; "RJ-EOF-2010/01104.02"[shape="rectangle"][label="RJ-EOF-2010/01104.02"]; "RJ-EOF-2010/01104" -> "RJ-EOF-2010/01104.02"; }';
-			
+				input = escapeAcentos(input);
 				var format = "svg";
 				var engine = "dot";
 				
@@ -527,6 +550,7 @@
 		});
 			function bigmapTramitacao() {
 				var input = 'digraph ""{ graph[tooltip="Tramitação"] ${docVO.dotTramitacao} }';
+				input = escapeAcentos(input);
 				var format = "svg";
 				var engine = "dot";
 				
@@ -568,10 +592,9 @@
 				$("#outputTramitacao").css("background-color", $("html").css("background-color"));
 				var bgcolor = rgb2hex($("#outputTramitacao").css("background-color"));
 				var input = 'digraph "" { graph[tooltip="Tramitação" ratio="' + ratioTramitacao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
-			
+				input = escapeAcentos(input);
 				var format = "svg";
 				var engine = "dot";
-				
 				var result = Viz(input, format, engine);
 				
 				if (format == "svg") {

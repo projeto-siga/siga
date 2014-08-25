@@ -41,6 +41,8 @@ import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 
 public class ExDocumentoVO extends ExVO {
+	DpPessoa titular;
+	DpLotacao lotaTitular;
 	ExDocumento doc;
 	ExMobil mob;
 	String classe;
@@ -78,6 +80,8 @@ public class ExDocumentoVO extends ExVO {
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo) throws Exception {
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
 		this.doc = doc;
 		this.mob = mob;
 		this.sigla = doc.getSigla();
@@ -197,11 +201,6 @@ public class ExDocumentoVO extends ExVO {
 		
 		if(doc.getPublicadoNoBoletim() != null)
 			boletim = new ExDocumentoVO(doc.getPublicadoNoBoletim());
-
-		if (mob != null){
-			this.dotTramitacao = new ExGraphTramitacao(mob);
-			this.dotRelacaoDocs = new ExGraphRelacaoDocs(mob, titular);
-		}
 
 	}
 
@@ -335,6 +334,9 @@ public class ExDocumentoVO extends ExVO {
 		//tiver informações que não aparecem no topo da tela
 		if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
 			outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
+		
+		this.dotTramitacao = new ExGraphTramitacao(mob);
+		this.dotRelacaoDocs = new ExGraphRelacaoDocs(mob, titular);
 		
 	}
 

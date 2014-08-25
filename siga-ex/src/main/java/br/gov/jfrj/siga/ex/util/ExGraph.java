@@ -82,13 +82,13 @@ public class ExGraph {
 			this.estilo = estilo;
 			return this;
 		}
-		
+
 		protected Transicao setCor(String cor) {
 			this.color = cor;
 			return this;
 		}
-		
-		protected Transicao setAoContrario(boolean aoContrario){
+
+		protected Transicao setAoContrario(boolean aoContrario) {
 			this.aoContrario = aoContrario;
 			return this;
 		}
@@ -131,26 +131,22 @@ public class ExGraph {
 		String toString = "";
 		for (Nodo nodo : nodos)
 			toString += "\n" + nodo + ";";
-		//if (misturaDirectedUndirected()) {
-			toString += " subgraph \"\" {";
-			for (Transicao t : trans)
-				if (t.directed)
-					toString += "\n" + t + ";";
-			toString += "} subgraph \"\" {edge [dir=none]";
-			for (Transicao t : trans)
-				if (!t.directed)
-					toString += "\n" + t + ";";
-			toString += "}";
-		//} else
-		//	for (Transicao t : trans)
-		//		toString += "\n" + t + ";";
+		toString += " subgraph \"\" {";
+		for (Transicao t : trans)
+			if (t.directed)
+				toString += "\n" + t + ";";
+		toString += "} subgraph \"\" {edge [dir=none]";
+		for (Transicao t : trans)
+			if (!t.directed)
+				toString += "\n" + t + ";";
+		toString += "}";
 		return toString.replace("\n", " ").replace("\r", " ");
 	}
 
 	public void adicionar(Nodo nodoAIncluir) {
 		Nodo nodoAExcluir = null;
 		for (Nodo n : nodos)
-			if (n.nome.equals(nodoAIncluir.nome)){
+			if (n.nome.equals(nodoAIncluir.nome)) {
 				nodoAExcluir = n;
 				break;
 			}
@@ -165,6 +161,10 @@ public class ExGraph {
 
 	public List<Nodo> getNodos() {
 		return this.nodos;
+	}
+	
+	public List<Transicao> getTransicoes() {
+		return this.trans;
 	}
 
 	public int getNumNodos() {

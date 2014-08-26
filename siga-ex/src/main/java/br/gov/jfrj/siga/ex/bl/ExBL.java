@@ -1955,14 +1955,17 @@ public class ExBL extends CpBL {
 	}
 	
 	public String criarDocTeste() throws Exception {
-		ExService client = Service.getExService();
+		//Método utilizado para testar criação de documentos por webService
+		/*ExService client = Service.getExService();
 		String s;
 		
 		s = client.criarDocumento("RJ13989", "RJ13989", "CEF", "Agência Av. Rio Branco, 326", 1L, 1681L, "20.05.00.01", "Teste de Criação de documento por webservice",
 				true, 6L, "texto_memorando=%3Cp+style%3D%22text-indent%3A2cm%3B+text-align%3A+justify%22%3E%0D%0A%09Conte%26uacute%3Bdo%3C%2Fp%3E%0D%0A&tamanhoLetra=Normal&fecho=Atenciosamente", 
 				true);
 		
-		return s;
+		return s;*/
+		
+		return null;
 	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,

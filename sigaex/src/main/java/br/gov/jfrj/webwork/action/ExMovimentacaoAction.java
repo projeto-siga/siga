@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -38,12 +37,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -55,6 +59,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
@@ -102,7 +108,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	 */
 	private static final long serialVersionUID = -8223202120027622708L;
 
-
 	private static final Logger log = Logger
 			.getLogger(ExMovimentacaoAction.class);
 
@@ -118,11 +123,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	private Boolean copia;
 
-
 	private Boolean podeAtenderPedidoPubl;
 
 	private String contentType;
-	
+
 	private Integer tamanho;
 
 	private String sigla;
@@ -164,7 +168,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	/** The value of the simple dtDoc property. */
 	private String dtMovString;
-	
+
 	private String dtDevolucaoMovString;
 
 	/** The value of the simple dtRegDoc property. */
@@ -190,7 +194,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private boolean substituicao;
 
 	private DpLotacaoSelecao lotaResponsavelSel;
-
 
 	private DpLotacaoSelecao lotaSubscritorSel;
 
@@ -237,26 +240,20 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private boolean finalizar;
 
 	private String mensagem;
-	
+
 	private String enderecoAutenticacao;
 
 	private Long idPapel;
 
-
 	private String lotPublicacao;
-
 
 	private Long idLotPublicacao;
 
-
 	private String descrPublicacao;
-
 
 	private Integer tamMaxDescr;
 
-
 	private Long idLotDefault;
-	
 
 	public String getAtributoAssinavelDataHora() {
 		return atributoAssinavelDataHora;
@@ -265,7 +262,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setAtributoAssinavelDataHora(String atributoAssinavelDataHora) {
 		this.atributoAssinavelDataHora = atributoAssinavelDataHora;
 	}
-	
+
 	public String getEnderecoAutenticacao() {
 		return enderecoAutenticacao;
 	}
@@ -313,7 +310,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private void setLotPublicacao(String lotPublicacao) {
 		this.lotPublicacao = lotPublicacao;
 	}
-	
+
 	public Integer getTamanho() {
 		return tamanho;
 	}
@@ -336,7 +333,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return nivelAcesso;
 	}
 
-
 	public Boolean getPodeAtenderPedidoPubl() {
 		return podeAtenderPedidoPubl;
 	}
@@ -344,7 +340,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setPodeAtenderPedidoPubl(Boolean podeAtenderPedidoPubl) {
 		this.podeAtenderPedidoPubl = podeAtenderPedidoPubl;
 	}
-
 
 	public DpLotacaoSelecao getLotaSubscritorSel() {
 		return lotaSubscritorSel;
@@ -396,12 +391,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private void buscarDocumento(boolean fVerificarAcesso,
 			boolean fPodeNaoExistir) throws Exception {
 
-
 		if (id != null) {
 			mov = dao().consultar(id, ExMovimentacao.class, false);
 			mob = getMov(mov);
 		}
-
 
 		if (mob == null && sigla != null) {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
@@ -444,7 +437,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						0, e);
 			}
 		}
-
 
 		return mobil;
 	}
@@ -562,7 +554,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 
-
 			throw new AplicacaoException(
 					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público.");
 
@@ -581,9 +572,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aPedirPublicacaoGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
-
-
-
 
 		if (this.getIdLotPublicacao() != null)
 			this.setLotPublicacao(dao().consultar(this.getIdLotPublicacao(),
@@ -613,12 +601,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aAgendarPublicacao() throws Exception {
 
-
 		buscarDocumento(true);
 
-
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
-
 
 			throw new AplicacaoException(
 					"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público.");
@@ -634,8 +619,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (getDescrPublicacao() == null)
 			setDescrPublicacao(doc.getDescrDocumento());
-
-
 
 		if (!Ex.getInstance()
 				.getConf()
@@ -661,13 +644,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		buscarDocumento(true);
 		lerForm(mov);
 
-
 		if (this.getIdLotPublicacao() != null)
 			idPubl = this.getIdLotPublicacao();
 		else {
 			if (getLotaSubscritorSel().getId() != null)
 				idPubl = getLotaSubscritorSel().getId();
-
 
 		}
 
@@ -679,13 +660,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException(
 					"Não foi possível o agendamento de publicação no DJE.");
 
-
 		if (getDescrPublicacao().length() > 256)
 			throw new AplicacaoException(
 					"O campo descrição possui mais do que 256 caracteres.");
 
 		validarDataGravacao(mov, false);
-
 
 		// if (getLotPublicacao() == null) {
 		// if (getLotaSubscritorSel().getId() != null)
@@ -794,8 +773,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aAtenderPedidoPublicacao() throws Exception {
 
-
-
 		if (!Ex.getInstance()
 				.getConf()
 				.podePorConfiguracao(
@@ -805,7 +782,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException("Operação restrita");
 		setItensSolicitados(dao().listarSolicitados(
 				getTitular().getOrgaoUsuario()));
-
 
 		return Action.SUCCESS;
 	}
@@ -923,7 +899,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			emailsSolicitantes.add(movPedidoDJE.getCadastrante()
 					.getEmailPessoaAtual());
 
-
 			Correio.enviar(SigaBaseProperties
 					.getString("servidor.smtp.usuario.remetente"),
 					emailsSolicitantes.toArray(new String[emailsSolicitantes
@@ -960,9 +935,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
 		this.getRequest().setAttribute("mobilVO", mobilVO);
-		
-		ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
-				true, null, false);
+
+		ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(),
+				getLotaTitular(), true, null, false);
 		this.getRequest().setAttribute("mobilCompletoVO", mobilCompletoVO);
 		return Action.SUCCESS;
 	}
@@ -980,7 +955,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"O arquivo a ser anexado não foi selecionado!");
 		}
 
-
 		byte[] baArquivo = toByteArray(getArquivo());
 		if (baArquivo == null)
 			throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
@@ -995,8 +969,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"O arquivo "
 							+ getArquivoFileName()
 							+ " está corrompido. Favor gerá-lo novamente antes de anexar.");
-		if(mob.isVolumeEncerrado()) {
-			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");
+		if (mob.isVolumeEncerrado()) {
+			throw new AplicacaoException(
+					"Não é possível anexar arquivo em volume encerrado.");
 		}
 
 		if (!Ex.getInstance().getComp()
@@ -1005,14 +980,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!getArquivoContentType().equals("application/pdf"))
 			throw new AplicacaoException(
 					"Somente é permitido anexar arquivo PDF.");
-		
+
 		// Obtem as pendencias que serão resolvidas
-		String aidMov[] = getRequest().getParameterValues("pendencia_de_anexacao");
+		String aidMov[] = getRequest().getParameterValues(
+				"pendencia_de_anexacao");
 		Set<ExMovimentacao> pendencias = null;
 		if (aidMov != null) {
 			pendencias = new TreeSet<ExMovimentacao>();
 			for (String s : aidMov) {
-				pendencias.add(dao().consultar(Long.parseLong(s), ExMovimentacao.class, false));
+				pendencias.add(dao().consultar(Long.parseLong(s),
+						ExMovimentacao.class, false));
 			}
 		}
 
@@ -1051,18 +1028,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	}
 
-
 	public String aMostrarAnexosAssinados() throws Exception {
 		buscarDocumento(true);
-
 
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
 		this.getRequest().setAttribute("mobilVO", mobilVO);
 		return Action.SUCCESS;
 	}
-
-
 
 	public String aArquivarCorrenteGravar() throws Exception {
 		buscarDocumento(true);
@@ -1158,15 +1131,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		try {
 			Ex.getInstance()
 					.getBL()
-					.desarquivarCorrente(getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), mov.getSubscritor());
+					.desarquivarCorrente(getCadastrante(), getLotaTitular(),
+							mob, mov.getDtMov(), mov.getSubscritor());
 		} catch (final Exception e) {
 			throw e;
 		}
 
 		return Action.SUCCESS;
 	}
-
 
 	public String aDesarquivarIntermediarioGravar() throws Exception {
 		buscarDocumento(true);
@@ -1211,7 +1183,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-
 	public String aSobrestarGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
@@ -1240,7 +1211,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aAssinar() throws Exception {
 		buscarDocumento(true);
 
-
 		boolean fPreviamenteAssinado = doc.isAssinado();
 
 		if (!fPreviamenteAssinado
@@ -1266,21 +1236,26 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public String aSimularAssinatura() throws Exception {
 		buscarDocumento(true);
-		Ex
-		.getInstance()
-		.getBL().simularAssinaturaDocumento(getCadastrante(), getLotaTitular(), doc);
+		Ex.getInstance()
+				.getBL()
+				.simularAssinaturaDocumento(getCadastrante(), getLotaTitular(),
+						doc);
 		return Action.SUCCESS;
 	}
-	
+
 	public String aSimularAssinaturaMov() throws Exception {
 		buscarDocumento(true);
 		Ex.getInstance()
-		.getBL()
-		.simularAssinaturaMovimentacao(getCadastrante(), getLotaTitular(),
-				mov, new Date(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO);
+				.getBL()
+				.simularAssinaturaMovimentacao(
+						getCadastrante(),
+						getLotaTitular(),
+						mov,
+						new Date(),
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO);
 		return Action.SUCCESS;
 	}
-	
+
 	public String aSimularAnexacao() throws Exception {
 		Document document = new Document();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1288,8 +1263,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		document.open();
 		document.addTitle("PDF de teste");
 		Paragraph preface = new Paragraph();
-	    preface.add(new Paragraph("Este é um documento de teste"));
-	    document.add(preface);
+		preface.add(new Paragraph("Este é um documento de teste"));
+		document.add(preface);
 		document.close();
 
 		buscarDocumento(true);
@@ -1300,22 +1275,24 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		mov.setConteudoBlobMov2(baos.toByteArray());
 
-		if(mob.isVolumeEncerrado()) {
-			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");
+		if (mob.isVolumeEncerrado()) {
+			throw new AplicacaoException(
+					"Não é possível anexar arquivo em volume encerrado.");
 		}
 
 		if (!Ex.getInstance().getComp()
 				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Arquivo não pode ser anexado");
-		
-		
+
 		// Obtem as pendencias que serão resolvidas
-		String aidMov[] = getRequest().getParameterValues("pendencia_de_anexacao");
+		String aidMov[] = getRequest().getParameterValues(
+				"pendencia_de_anexacao");
 		Set<ExMovimentacao> pendencias = null;
 		if (aidMov != null) {
 			pendencias = new TreeSet<ExMovimentacao>();
 			for (String s : aidMov) {
-				pendencias.add(dao().consultar(Long.parseLong(s), ExMovimentacao.class, false));
+				pendencias.add(dao().consultar(Long.parseLong(s),
+						ExMovimentacao.class, false));
 			}
 		}
 
@@ -1359,7 +1336,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
 		Date dt = mov.getDtMov();
-		
+
 		byte[] certificado = Base64.decode(getCertificadoB64());
 		if (certificado != null && certificado.length != 0)
 			dt = new Date(Long.valueOf(getAtributoAssinavelDataHora()));
@@ -1557,7 +1534,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
 		Date dt = mov.getDtMov();
-		
+
 		byte[] certificado = Base64.decode(getCertificadoB64());
 		if (certificado != null && certificado.length != 0)
 			dt = new Date(Long.valueOf(getAtributoAssinavelDataHora()));
@@ -1686,7 +1663,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeCancelarJuntada(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível cancelar juntada");
 
-		ExMobil mobilJuntado = mob.getExMobilJuntado();
+		ExMobil mobilJuntado = mob.getExMobilPai();
 		if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
 			aCancelarJuntadaGravar();
 			return Action.SUCCESS;
@@ -1878,7 +1855,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException("id não foi informada.");
 
 		mov = dao().consultar(getId(), ExMovimentacao.class, false);
-		
+
 		setEnderecoAutenticacao(SigaExProperties.getEnderecoAutenticidadeDocs());
 
 		return Action.SUCCESS;
@@ -1982,16 +1959,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		final ArrayList al = new ArrayList();
 		final DpPessoa oExemplo = new DpPessoa();
 
-
 		String siglaPessoa = param("pessoa");
-
 
 		if (siglaPessoa == null || siglaPessoa.trim() == "") {
 			log.warn("[aGerarProtocoloArq] - A sigla informada é nula ou inválida");
 			throw new AplicacaoException(
 					"A sigla informada é nula ou inválida.");
 		}
-
 
 		oExemplo.setSigla(siglaPessoa);
 		pes = CpDao.getInstance().consultarPorSigla(oExemplo);
@@ -2002,7 +1976,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException(
 					"Não foi localizada pessoa com a sigla informada.");
 		}
-
 
 		Date dt = paramDate("dt");
 		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
@@ -2432,8 +2405,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.getComp()
 							.podeAcessarDocumento(getTitular(),
 									getLotaTitular(), m))
-				getItens().add(m.isVolume() ? m.doc().getMobilGeral()
-						: m);
+				getItens().add(m.isVolume() ? m.doc().getMobilGeral() : m);
 		}
 
 		return Action.SUCCESS;
@@ -2459,8 +2431,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 					Ex.getInstance()
 							.getBL()
-							.arquivarCorrente(getCadastrante(), getLotaTitular(), mob,
-
+							.arquivarCorrente(getCadastrante(),
+									getLotaTitular(), mob,
 
 									mov.getDtMov(), dt, mov.getSubscritor());
 				}
@@ -2470,8 +2442,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 		return Action.SUCCESS;
 	}
-
-
 
 	public String aArquivarIntermediarioLote() throws Exception {
 
@@ -2483,10 +2453,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.consultarParaArquivarIntermediarioEmLote(getLotaTitular(),
 						offset);
 
-		ExTopicoDestinacao digitais = new ExTopicoDestinacao(
-				"Digitais", true);
-		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos",
-				true);
+		ExTopicoDestinacao digitais = new ExTopicoDestinacao("Digitais", true);
+		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos", true);
 		ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao(
 				"Não disponíveis", false);
 
@@ -2518,7 +2486,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aArquivarIntermediarioLoteGravar() throws Exception {
-
 
 		final ExMovimentacao mov = new ExMovimentacao();
 		lerForm(mov);
@@ -2555,13 +2522,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (getP().getOffset() != null) {
 			offset = getP().getOffset();
 		}
-		List<ExItemDestinacao> listaProv = dao().consultarParaArquivarPermanenteEmLote(
-				getLotaTitular(), offset);
+		List<ExItemDestinacao> listaProv = dao()
+				.consultarParaArquivarPermanenteEmLote(getLotaTitular(), offset);
 
-		ExTopicoDestinacao digitais = new ExTopicoDestinacao(
-				"Digitais", true);
-		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos",
-				true);
+		ExTopicoDestinacao digitais = new ExTopicoDestinacao("Digitais", true);
+		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos", true);
 		ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao(
 				"Não disponíveis", false);
 
@@ -2569,7 +2534,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			boolean pode = Ex
 					.getInstance()
 					.getComp()
-					.podeArquivarPermanente(getTitular(), getLotaTitular(), item.getMob());
+					.podeArquivarPermanente(getTitular(), getLotaTitular(),
+							item.getMob());
 			if (pode) {
 				if (item.getMob().doc().isEletronico())
 					digitais.adicionar(item);
@@ -2583,7 +2549,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		listaFinal.add(digitais);
 		listaFinal.add(fisicos);
 		listaFinal.add(indisponiveis);
-		
+
 		setTamanho(dao().consultarQuantidadeParaArquivarPermanenteEmLote(
 				getLotaTitular()));
 		setItens(listaFinal);
@@ -2874,7 +2840,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-
 	public String aReferenciarGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
@@ -2951,17 +2916,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException(
 					"Novo responsável não pode ser igual ao atual");
 
-
 		if (!Ex.getInstance().getComp()
 				.podeReceberPorConfiguracao(mov.getResp(), mov.getLotaResp()))
 			throw new AplicacaoException(
 					"Destinatário não pode receber documentos");
 
-
-
 		if (!(Ex.getInstance().getComp()
 
-				.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex
+		.podeTransferir(getTitular(), getLotaTitular(), mob) || Ex
 				.getInstance().getComp()
 				.podeDespachar(getTitular(), getLotaTitular(), mob)))
 			throw new AplicacaoException(
@@ -2972,7 +2934,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getBL()
 					.transferir(mov.getOrgaoExterno(), getObsOrgao(),
 							getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), mov.getDtIniMov(), mov.getDtFimMov(), mov.getLotaResp(),
+							mov.getDtMov(), mov.getDtIniMov(),
+							mov.getDtFimMov(), mov.getLotaResp(),
 							mov.getResp(), mov.getLotaDestinoFinal(),
 							mov.getDestinoFinal(), mov.getSubscritor(),
 							mov.getTitular(), mov.getExTipoDespacho(), false,
@@ -2991,7 +2954,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			return "protocolo";
 		return Action.SUCCESS;
 	}
-
 
 	public String aEncerrarVolumeGravar() throws Exception {
 		buscarDocumento(true);
@@ -3165,16 +3127,15 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aTransferirLote() throws Exception {
-		List<ExMobil> provItens = dao().consultarParaTransferirEmLote(
+		Iterator<ExMobil> provItens = dao().consultarParaTransferirEmLote(
 				getLotaTitular());
-
 		setItens(new ArrayList<ExMobil>());
 
-		for (ExMobil m : provItens) {
-			if (!m.isApensado() && Ex.getInstance().getComp()
-					.podeTransferir(getTitular(), getLotaTitular(), m) )
-				getItens().add(m);
+		while (provItens.hasNext()) {
+			ExMobil m = provItens.next();
+			getItens().add(m);
 		}
+
 		return Action.SUCCESS;
 	}
 
@@ -3212,25 +3173,29 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aTransferirLoteGravar() throws Exception {
-		final ExMovimentacao mov = new ExMovimentacao();
+
 		lerForm(mov);
 
 		final Pattern p = Pattern.compile("chk_([0-9]+)");
 		boolean despaUnico = false;
 		final Date dt = dao().dt();
+		mov.setDtIniMov(dt);
+		ExMobil nmobil = new ExMobil();
+		HashMap<ExMobil, AplicacaoException> MapMensagens = new HashMap<ExMobil, AplicacaoException>();
+		List<ExMobil> Mobeis = new ArrayList<ExMobil>();
+		List<ExMobil> MobilSucesso = new ArrayList<ExMobil>();
 
-		try {
+		if (mov.getResp() == null && mov.getLotaResp() == null)
+			throw new AplicacaoException(
+					"Não foi definido o destino da transferência.");
+		if (param("tpdall") != null && paramLong("tpdall") != 0)
+			despaUnico = true;
 
-			if (mov.getResp() == null && mov.getLotaResp() == null)
-				throw new AplicacaoException(
-						"Não foi definido o destino da transferência.");
+		AplicacaoException msgErroNivelAcessoso = null;
 
-			if (param("tpdall") != null && paramLong("tpdall") != 0)
-				despaUnico = true;
-			StringBuffer msgErroNivelAcessoso = null;
-			for (final String s : getPar().keySet()) {
+		for (final String s : getPar().keySet()) {
+			try {
 				if (s.startsWith("chk_") && param(s).equals("true")) {
-
 					final Long idTpDespacho;
 					if (!despaUnico)
 						idTpDespacho = Long.valueOf(param(s.replace("chk_",
@@ -3247,6 +3212,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					if (!m.find())
 						throw new AplicacaoException(
 								"Não foi possível ler a Id do documento e o número da via.");
+
 					final ExMobil mobil = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
 
@@ -3255,10 +3221,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.podeAcessarPorNivel(getTitular(),
 									getLotaTitular(), mobil)) {
 						if (msgErroNivelAcessoso == null)
-							msgErroNivelAcessoso = new StringBuffer(
-									"Alguns documentos não puderam ser transferidos por estarem inacessíveis ao usuário:  ");
-						msgErroNivelAcessoso.append(doc.getCodigo());
-						msgErroNivelAcessoso.append("  ");
+							msgErroNivelAcessoso = new AplicacaoException(
+									"O documento não pode ser transferido por estar inacessível ao usuário.");
+						if (!(msgErroNivelAcessoso.equals(null)))
+							MapMensagens.put(mobil, msgErroNivelAcessoso);
 					} else {
 						String txt = "";
 						if (!despaUnico)
@@ -3267,27 +3233,79 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							txt = param("txtall");
 						if (txt.equals(""))
 							txt = null;
+
+						nmobil = new ExMobil();
+						nmobil = mobil;
+						Mobeis.add(mobil);
+
 						Ex.getInstance()
 								.getBL()
 								.transferir(mov.getOrgaoExterno(),
 										getObsOrgao(), getCadastrante(),
 										getLotaTitular(), mobil,
-										mov.getDtMov(), dt, mov.getDtFimMov(), mov.getLotaResp(),
-										mov.getResp(),
+										mov.getDtMov(), dt, mov.getDtFimMov(),
+										mov.getLotaResp(), mov.getResp(),
 										mov.getLotaDestinoFinal(),
 										mov.getDestinoFinal(),
 										mov.getSubscritor(), mov.getTitular(),
 										tpd, false, txt, null,
 										mov.getNmFuncaoSubscritor());
-					}
 
+					}
 				}
+			} catch (AplicacaoException e) {
+				MapMensagens.put(nmobil, e);
 			}
-		} catch (final Exception e) {
-			throw e;
 		}
-		return aGerarProtocolo();
-		// return Action.SUCCESS;
+
+		final ArrayList al = new ArrayList();
+		final ArrayList check = new ArrayList();
+		final ArrayList arrays = new ArrayList();
+
+		if (!(MapMensagens.isEmpty())) {
+			for (Iterator<Entry<ExMobil, AplicacaoException>> it = MapMensagens
+					.entrySet().iterator(); it.hasNext();) {
+				Entry<ExMobil, AplicacaoException> excep = it.next();
+				final Object[] ao = { excep.getKey(),
+						excep.getValue().getMessage() };
+				System.out.println("Falha: " + excep.getKey().doc().getSigla());
+				System.out.println("Mensagem de erro: "
+						+ excep.getValue().getMessage());
+				al.add(ao);
+			}
+		}
+
+		for (Iterator<ExMobil> it = Mobeis.iterator(); it.hasNext();) {
+			ExMobil mob = it.next();
+			if (!(MapMensagens.containsKey(mob))) {
+				MobilSucesso.add(mob);
+				System.out.println("Mobil Geral: "
+						+ mob.doc().getMobilGeral().isGeral());
+				final Object[] ao = { mob.doc(),
+						mob.getUltimaMovimentacaoNaoCancelada() };
+				System.out.println("Sucesso sigla: " + mob.doc().getSigla());
+				check.add(ao);
+			}
+		}
+
+		Object[] arr = al.toArray();
+		Object[] arr_ = check.toArray();
+
+		al.clear();
+		check.clear();
+
+		for (int k = 0; k < arr.length; k++)
+			al.add(arr[k]);
+
+		for (int k = 0; k < arr_.length; k++)
+			check.add(arr_[k]);
+
+		arrays.add(al);
+		arrays.add(check);
+
+		setItens(arrays);
+
+		return Action.SUCCESS;
 	}
 
 	public String aViaProtocolo() throws Exception {
@@ -3403,7 +3421,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String getDtDevolucaoMovString() {
 		return dtDevolucaoMovString;
 	}
-	
+
 	public String getDtRegMov() {
 		return dtRegMov;
 	}
@@ -3467,7 +3485,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return getListaNivelAcesso(getDoc().getExTipoDocumento(), getDoc()
 				.getExFormaDocumento(), getDoc().getExModelo(), getDoc()
 
-				.getExClassificacaoAtual());
+		.getExClassificacaoAtual());
 	}
 
 	public DpLotacaoSelecao getLotaDestinoFinalSel() {
@@ -3672,7 +3690,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		} catch (final NullPointerException e) {
 			mov.setDtMov(null);
 		}
-		
+
 		final SimpleDateFormat ddf = new SimpleDateFormat("dd/MM/yyyy");
 		try {
 			mov.setDtFimMov(ddf.parse(getDtDevolucaoMovString()));
@@ -3862,7 +3880,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setDtDevolucaoMovString(final String dtDevolucaoMovString) {
 		this.dtDevolucaoMovString = dtDevolucaoMovString;
 	}
-	
+
 	public void setDtRegMov(final String dtRegMov) {
 		this.dtRegMov = dtRegMov;
 	}
@@ -4070,13 +4088,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aBoletimAgendar() throws Exception {
 		buscarDocumento(true);
 
-
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
-
 
 			throw new AplicacaoException(
 					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público.");
-
 
 		if (!Ex.getInstance()
 				.getComp()
@@ -4224,7 +4239,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.copia = copia;
 	}
 
-
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
@@ -4233,53 +4247,48 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return dao().consultarExModelo(null, "Despacho Automático");
 	}
 
-
-
 	public List<DpLotacao> getListaLotPubl() throws Exception {
-		
 
 		List<DpLotacao> lotacoes = new ArrayList<DpLotacao>();
 		DpLotacao lotSubscritor, lotCadastrante, lotTitular, lotFiltro;
 		String siglaSubscritor, siglaCadastrante, siglaTitular;
-		
 
 		siglaSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(this.doc);
-		siglaCadastrante = getCadastrante().getLotacao().getSigla();		
+		siglaCadastrante = getCadastrante().getLotacao().getSigla();
 		siglaTitular = getLotaTitular().getSigla();
 		lotFiltro = new DpLotacao();
-		
 
-		lotFiltro.setOrgaoUsuario(this.doc.getOrgaoUsuario());		
+		lotFiltro.setOrgaoUsuario(this.doc.getOrgaoUsuario());
 		lotFiltro.setSigla(siglaSubscritor);
-		lotSubscritor = dao().consultarPorSigla(lotFiltro);		
+		lotSubscritor = dao().consultarPorSigla(lotFiltro);
 
-		lotacoes.add(lotSubscritor);		
-				
+		lotacoes.add(lotSubscritor);
 
-		if(!siglaSubscritor.equals(siglaCadastrante) &&
+		if (!siglaSubscritor.equals(siglaCadastrante)
+				&&
 
-				getCadastrante().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId())) {
+				getCadastrante().getOrgaoUsuario().getId()
+						.equals(this.doc.getOrgaoUsuario().getId())) {
 			lotFiltro.setSigla(siglaCadastrante);
 			lotCadastrante = dao().consultarPorSigla(lotFiltro);
 			lotacoes.add(lotCadastrante);
 		}
-		
 
-		if(!siglaSubscritor.equals(siglaTitular) && !siglaCadastrante.equals(siglaTitular) 
-				&&(
+		if (!siglaSubscritor.equals(siglaTitular)
+				&& !siglaCadastrante.equals(siglaTitular)
+				&& (
 
-				(getTitular().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId()))
+				(getTitular().getOrgaoUsuario().getId().equals(this.doc
+						.getOrgaoUsuario().getId()))
 
-
-						|| getLotaTitular().getOrgaoUsuario().getId().equals(this.doc.getOrgaoUsuario().getId()))){
+				|| getLotaTitular().getOrgaoUsuario().getId()
+						.equals(this.doc.getOrgaoUsuario().getId()))) {
 			lotFiltro.setSigla(siglaTitular);
 			lotTitular = dao().consultarPorSigla(lotFiltro);
 			lotacoes.add(lotTitular);
 		}
-		
 
 		this.setIdLotDefault(lotSubscritor.getId());
-		
 
 		return lotacoes;
 	}

@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <siga.version>${project.version}</siga.version>
     </properties>
-
+	
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
@@ -476,5 +476,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
+	
+	
 </project>

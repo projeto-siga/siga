@@ -177,7 +177,14 @@ public class ExAcesso {
 
 		// Aberto
 		if (!doc.isAssinado()) {
-			add(doc.getLotaCadastrante());
+			switch (doc.getExNivelAcessoDoDocumento().getGrauNivelAcesso()) {
+			case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
+			case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
+				add(doc.getCadastrante());
+				break;
+			default:
+				add(doc.getLotaCadastrante());
+			}
 			add(doc.getSubscritor());
 			add(doc.getTitular());
 			// podeMovimentar(titular, lotaTitular, mob)

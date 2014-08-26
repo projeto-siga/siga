@@ -13,8 +13,6 @@ public class SigaPlugin extends PlayPlugin {
 	public void onConfigurationRead() {
 		super.onConfigurationRead();
 		String applicationName = Play.configuration.getProperty("application.name");
-		Logger.error("TESTANDO");
-		System.out.println("TESTE 2");
 
 		String applicationMode = "";
 		if ("test".equals(Play.id)) 

@@ -4,18 +4,18 @@
 	<deployment>
 		<module-alias name="sigagc" />
 
-		<dependencies>
-			<module name="deployment.ojdbc6.jar" />
+		<exclusions>
+			
+		</exclusions>
 
+		<dependencies>			
 			<module name="org.picketlink" />
 			<module name="asm.asm" />
-			<module name="org.hibernate" />
-
-			<!-- <module name="sigadoc.ws"/> <module name="org.apache.commons.lang" 
-				/> <module name="org.apache.ws.xmlschema" /> <module name="javax.wsdl4j.api" 
-				/> <module name="org.apache.commons.logging" /> <module name="org.apache.xalan" 
-				/> <module name="sigadoc.org.bouncycastle" export="true"/> -->
+			<module name="sigadoc.play" export="true"/>
+			<module name="org.hibernate" export="true"/>
+			
 
 		</dependencies>
+
 	</deployment>
 </jboss-deployment-structure>

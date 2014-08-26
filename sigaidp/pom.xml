@@ -45,17 +45,17 @@
 	</build>
 
 	<dependencies>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.4</version>
-        </dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.4</version>
+		</dependency>
 
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>fluent-hc</artifactId>
-            <version>4.3.4</version>
-        </dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>fluent-hc</artifactId>
+			<version>4.3.4</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.opensymphony</groupId>
@@ -67,21 +67,26 @@
 			<artifactId>oscore</artifactId>
 		</dependency>
 
-        <dependency>
-            <groupId>jsptags</groupId>
-            <artifactId>pager-taglib</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>jsptags</groupId>
+			<artifactId>pager-taglib</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.7.3</version>
-        </dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.7.3</version>
+		</dependency>
 		
+		<dependency>
+			<groupId>org.jboss.spec.javax.security.jacc</groupId>
+			<artifactId>jboss-jacc-api_1.4_spec</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga-libs</artifactId>
 		</dependency>
 
-    </dependencies>
+	</dependencies>
 </project>

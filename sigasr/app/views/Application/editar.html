@@ -2,45 +2,45 @@
 
 <script language="javascript">
 
-function carregarLocalERamal(){
-	frm = document.getElementById('formSolicitacao');
-	params = '';
-	for (i = 0; i < frm.length; i++){
-		if (frm[i].name && frm[i].value)
-			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+	function carregarLocalERamal(){
+		frm = document.getElementById('formSolicitacao');
+		params = '';
+		for (i = 0; i < frm.length; i++){
+			if (frm[i].name && frm[i].value)
+				params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+		}
+		PassAjaxResponseToFunction('@{Application.exibirLocalERamal()}?' + params, 'carregouLocalERamal', null, false, null);
 	}
-	PassAjaxResponseToFunction('@{Application.exibirLocalERamal()}?' + params, 'carregouLocalERamal', null, false, null);
-}
-
-function carregouLocalERamal(response, param){
-	var div = document.getElementById('divLocalERamal');
-	div.innerHTML = response;
-}
-
-function carregarItem(){
-	frm = document.getElementById('formSolicitacao');
-	params = '';
-	for (i = 0; i < frm.length; i++){
-		if (frm[i].name && frm[i].value)
-			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+	
+	function carregouLocalERamal(response, param){
+		var div = document.getElementById('divLocalERamal');
+		div.innerHTML = response;
 	}
-	PassAjaxResponseToFunction('@{Application.exibirItemConfiguracao()}?' + params, 'carregouItem', null, false, null);
-}
-
-function carregouItem(response, param){
-	var div = document.getElementById('divItem');
-	div.innerHTML = response;
-	var scripts = div.getElementsByTagName("script");
-	for(var i=0;i<scripts.length;i++)  
-	   eval(scripts[i].text);  
-}
+	
+	function carregarItem(){
+		frm = document.getElementById('formSolicitacao');
+		params = '';
+		for (i = 0; i < frm.length; i++){
+			if (frm[i].name && frm[i].value)
+				params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+		}
+		PassAjaxResponseToFunction('@{Application.exibirItemConfiguracao()}?' + params, 'carregouItem', null, false, null);
+	}
+	
+	function carregouItem(response, param){
+		var div = document.getElementById('divItem');
+		div.innerHTML = response;
+		var scripts = div.getElementsByTagName("script");
+		for(var i=0;i<scripts.length;i++)  
+		   eval(scripts[i].text);  
+	}
 
 </script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2>#{if solicitacao.idSolicitacao || solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
-			#{else}Cadastro de solicitação#{/else}</h2>
+			#{else}Cadastro de Solicitação#{/else}</h2>
 		<div class="gt-content-box gt-form">
 
 			#{form @Application.gravar(),
@@ -131,6 +131,7 @@ function carregouItem(response, param){
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" />
+				<a href="@{Application.listar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 			#{/form}
 		</div>

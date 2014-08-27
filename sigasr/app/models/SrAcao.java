@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,6 +25,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
 public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8387408543308440033L;
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ACAO_SEQ", name = "srAcaoSeq")
@@ -43,6 +49,18 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrAcao acaoInicial;
+	
+	@Column(name = "TIPO_ACAO")
+	@Enumerated()
+	public SrTipoAcao tipoAcao;
+	
+	@Column(name = "TIPO_EXECUCAO")
+	@Enumerated()
+	public SrTipoExecucaoAcao tipoExecucao;
+	
+	@Column(name = "FORMA_ATENDIMENTO")
+	@Enumerated()
+	public SrFormaAtendimentoAcao formaAtendimento;
 
 	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
@@ -81,7 +99,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public String getDescricaoCompleta() {
-		String sigla = this.siglaAcao;
 		int nivel = this.getNivel();
 		String desc_nivel = null;
 		if (nivel == 1) {
@@ -238,8 +255,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public String getGcTags() {
-		String sigla = this.siglaAcao;
-
 		int nivel = this.getNivel();
 		String tags = "";
 		if (nivel == 1) {

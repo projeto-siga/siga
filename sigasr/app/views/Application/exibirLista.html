@@ -115,9 +115,8 @@ $(function(){
 
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<input type="hidden" name="idLista" value="${lista.idLista}">
-		#{if podePriorizar} 
-		<input type="button" id="btn" value="Priorizar" class="gt-btn-medium gt-btn-left" />#{/if}
-		<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Voltar</a>
-
+			<input type="hidden" name="idLista" value="${lista.idLista}">
+			#{if podePriorizar} 
+			<input type="button" id="btn" value="Gravar" class="gt-btn-medium gt-btn-left" />#{/if}
+			<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 		</div>

@@ -2,7 +2,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Lista</h2>
+		<h2>Cadastro de Lista</h2>
 		<p class="gt-table-action-list">
 		#{if lista?.idLista} 
 		<a class="once" href="@{Application.desativarLista(lista.idLista)}">
@@ -18,11 +18,33 @@
 					name="lista.nomeLista"
 					value="${lista?.nomeLista}" size="100"/>
 			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Abrangência</label>
+				<textarea cols="85" rows="5" name="descrAbrangencia"
+					id="descrAbrangencia">${lista.descrAbrangencia}</textarea>
+				<span style="color: red">#{error
+					'lista.descrAbrangencia' /}</span>
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Justificativa</label>
+				<textarea cols="85" rows="5" name="lista.descrJustificativa"
+					id="descrJustificativa">${lista.descrJustificativa}</textarea>
+				<span style="color: red">#{error
+					'lista.descrJustificativa' /}</span>
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Priorização</label>
+				<textarea cols="85" rows="5" name="lista.descrPriorizacao"
+					id="descrPriorizacao"">${lista.descrPriorizacao}</textarea>
+				<span style="color: red">#{error
+					'lista.descrPriorizacao"' /}</span>
+			</div>
 			<div class="gt-form-row">
-			<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
-			<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
-			<input type="submit" value="OK" class="gt-btn-medium gt-btn-left" /> 
-			<a href="@{Application.exibirLista(lista.idLista)}" class="gt-btn-medium gt-btn-left">Voltar</a>
+				<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
+				<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
+				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left"/>
+				#{if lista?.idLista }<a href="@{Application.exibirLista(lista.idLista)}" class="gt-btn-medium gt-btn-left">Cancelar</a>#{/if}
+				#{else}<a href="@{Application.listarlista}" class="gt-btn-medium gt-btn-left">Cancelar</a>#{/else}
 			</div>
 			#{/form}
 		</div>

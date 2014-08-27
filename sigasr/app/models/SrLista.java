@@ -16,6 +16,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -62,6 +63,18 @@ public class SrLista extends HistoricoSuporte {
 
 	@Column(name = "NOME_LISTA")
 	public String nomeLista;
+	
+	@Lob
+	@Column(name = "DESCR_ABRANGENCIA", length = 8192)
+	public String descrAbrangencia;
+	
+	@Lob
+	@Column(name = "DESCR_JUSTIFICATIVA", length = 8192)
+	public String descrJustificativa;
+	
+	@Lob
+	@Column(name = "DESCR_PRIORIZACAO", length = 8192)
+	public String descrPriorizacao;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
@@ -183,15 +196,15 @@ public class SrLista extends HistoricoSuporte {
 
 		if (sols.size() != getSolicitacaoSet().size())
 			throw new IllegalArgumentException(
-					"O número de elementos passados ("
+					"O nÃ­mero de elementos passados ("
 							+ sols.size()
-							+ ") é diferente do número de solicitações existentes na lista ("
+							+ ") Ã© diferente do nÃºmero de solicitaÃ§Ãµes existentes na lista ("
 							+ getSolicitacaoSet().size() + ")");
 
 		for (SrSolicitacao sol : sols) {
 			if (!sol.isEmLista(this))
-				throw new IllegalArgumentException("A solicitação "
-						+ sol.getCodigo() + " não faz parte da lista");
+				throw new IllegalArgumentException("A solicitaÃ§Ã£o "
+						+ sol.getCodigo() + " nÃ£o faz parte da lista");
 		}
 
 		this.recalcularPrioridade(cadastrante, lotaCadastrante, sols);

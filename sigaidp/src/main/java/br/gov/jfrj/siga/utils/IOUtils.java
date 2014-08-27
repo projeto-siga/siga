@@ -1,9 +1,10 @@
-package br.gov.jfrj.utils;
+package br.gov.jfrj.siga.utils;
 
 import java.io.*;
 
 /**
- * Created by hodrigohamalho@gmail.com on 23/07/14.
+ * @author Rodrigo Ramalho
+ * 	       hodrigohamalho@gmail.com
  */
 public class IOUtils {
 

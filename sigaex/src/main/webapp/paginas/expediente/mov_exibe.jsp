@@ -138,7 +138,7 @@ function visualizarImpressao(via) {
 														<%-- TIPO_MOVIMENTACAO_ANEXACAO --%>
 														<c:if test="${exibemov == 'anexacao'}">
 															<c:url var='anexo'
-																value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
+																value='/arquivo/exibir.action?arquivo=${mov.nmPdf}' />
 															<td><b>Arquivo:</b> <a class="attached"
 																href="${anexo}" target="_blank">${mov.nmArqMov}</a>
 															</td>

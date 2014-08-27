@@ -183,15 +183,17 @@
 					var css = "<style>TABLE.mov TR.despacho { background-color: rgb(240, 255, 240);}";
 					css += "TABLE.mov TR.juntada,TR.desentranhamento { background-color: rgb(229, 240, 255);}";
 					css += "TABLE.mov TR.anotacao { background-color: rgb(255, 255, 255);}";
-					css += "TABLE.mov TR.anexacao { background-color: rgb(255, 255, 215);}</style>";
+					css += "TABLE.mov TR.anexacao { background-color: rgb(255, 255, 215);}";
+					css += "TABLE.mov TR.encerramento_volume { background-color: rgb(255, 218, 218);}</style>";
 					$(css).appendTo("head");
 			</script>
 			<table class="gt-table mov">
 				<thead>
 					<tr>
-						<th rowspan="2" align="center">Data</th>
-						<th rowspan="2">Evento</th>
-						<th rowspan="2">Descrição</th>
+						<th rowspan="2" align="center" style="padding: 5px 5px;">Data</th>
+						<th rowspan="2" style="padding: 5px 5px;">Lotação</th>
+						<th rowspan="2" style="padding: 5px 5px;">Evento</th>
+						<th rowspan="2" style="padding: 5px 5px;">Descrição</th>
 					</tr>
 				</thead>
 				<c:set var="evenorodd" value="odd" />
@@ -212,10 +214,19 @@
 							<ww:else>
 								<c:set var="dtUlt" value="${dt}" />
 							</ww:else>
+							
+							<c:set var="lota" value="${mov.mov.lotaResp.sigla}"/>
+							<ww:if test="${lota == lotaUlt}">
+								<c:set var="lota" value="" />
+							</ww:if>
+							<ww:else>
+								<c:set var="lotaUlt" value="${lota}" />
+							</ww:else>
 
-							<td align="center">${dt}</td>
-							<td>${mov.mov.exTipoMovimentacao.sigla}</td>
-							<td>${mov.descricao} <c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
+							<td align="center" style="padding: 5px 5px;">${dt}</td>
+							<td style="padding: 5px 5px;">${lota}</td>
+							<td style="padding: 5px 5px;">${mov.mov.exTipoMovimentacao.sigla}</td>
+							<td style="padding: 5px 5px;">${mov.descricao} <c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 								<c:set var="assinadopor" value="${true}" /> <siga:links
 									inline="${true}"
 									separator="${not empty mov.descricao and mov.descricao != null}">
@@ -427,34 +438,35 @@
 	
 		<script>
 			$(document).ready(function () {
-				$("#svgRelacaoDocs").attr("style", "max-width:" + $(window).width()*0.95 + ";"); 
+			    $(window).resize(function() {
+				   updateContainerRelacaoDocs();
+			    }); 
+
 				$("#svgRelacaoDocs").dialog({
 		    		autoOpen: false,
-		    		height: 'auto',
-		    		width: 'auto',
+		    		height: $(window).height()*0.9,
+			    	width: $(window).width()*0.9,
 		    		modal: true,
 				    resizable: false
 		  		});
-				//if (!document.getElementById("outputRelacaoDocs").hasChildNodes()){
-				//}
+				$("#output2RelacaoDocs").mousedown(function(e){
+					if (e.button == 0 && zoomRelacaoDocs < 3)
+						zoomRelacaoDocs +=0.2;
+					else if (e.button == 2 && zoomRelacaoDocs > 1)
+						zoomRelacaoDocs -= 0.2;
+					updateContainerRelacaoDocs();
+				});
 			});
+
 			function bigmapRelacaoDocs() {
-				var input = 'digraph "" { graph[tooltip="Documentos Relacionados"]; edge[penwidth=2]; ${docVO.dotRelacaoDocs} }';
-				input = escapeAcentos(input);
-				var format = "svg";
-				var engine = "dot";
-				
-				var result = Viz(input, format, engine);
-				
-				if (format == "svg") {
-			  	document.getElementById("output2RelacaoDocs").innerHTML = result;
-				} else {
-			  	document.getElementById("output2RelacaoDocs").innerHTML = "";
+				$('#svgRelacaoDocs').dialog('open');
+				if ($('#naoCarregouBigRelacaoDocs')[0] != undefined){
+					var input = 'digraph "" { graph[tooltip="Documentos Relacionados"]; edge[penwidth=2]; ${docVO.dotRelacaoDocs} }';
+					input = escapeAcentos(input);
+					var result = Viz(input, "svg", "dot");
+			  		document.getElementById("output2RelacaoDocs").innerHTML = result;
 				}
-				$("#svgRelacaoDocs").dialog("open");
-				//$(document).ready(function () {
-				//updateContainerRelacaoDocs();
-				//});
+			  	updateContainerRelacaoDocs();
 			} 
 
 			var hexDigits = new Array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
@@ -471,27 +483,12 @@
 				var bgcolor = rgb2hex($("#outputRelacaoDocs").css("background-color"));
 				var input = 'digraph "" { graph[ratio="0.4" tooltip="Documentos Relacionados" color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapRelacaoDocs();"]; node[fillcolor=white fontsize=20 style=filled]; edge[penwidth=2]; ${docVO.dotRelacaoDocs} }';
 				input = escapeAcentos(input);
-				var format = "svg";
-				var engine = "dot";
-				
-				var result = Viz(input, format, engine);
-				
-				if (format == "svg") {
+				var result = Viz(input, "svg", "dot");
 			  	document.getElementById("outputRelacaoDocs").innerHTML = result;
-				} else {
-			  	document.getElementById("outputRelacaoDocs").innerHTML = "";
-				}
+				updateContainerRelacaoDocs();
 			}
 	
-			smallmapRelacaoDocs();
-			updateContainerRelacaoDocs();
-	
-			$(document).ready(function () {
-			    updateContainerRelacaoDocs();
-		    	$(window).resize(function() {
-			        updateContainerRelacaoDocs();
-		    	});
-			});
+			var zoomRelacaoDocs = 1;
 			function updateContainerRelacaoDocs() {
 			    var smallwidth = $('#outputRelacaoDocs').width(); 
 		    	var smallsvg = $('#outputRelacaoDocs :first-child').first(); 
@@ -513,10 +510,11 @@
 				    var a = bigviewbox.split(' ');  
 		
 			    	// set attrs and 'resume' force 
-			    	bigsvg.attr('width', bigwidth);
-			    	bigsvg.attr('height', bigwidth * a[3] / a[2]);
+			    	bigsvg.attr('width', bigwidth * zoomRelacaoDocs);
+			    	bigsvg.attr('height', zoomRelacaoDocs * bigwidth * a[3] / a[2]);
 		    	}
 			}
+			smallmapRelacaoDocs();
     	</script>
     	</c:if>
     	<!-- Fim mapa relação entre documentos -->
@@ -526,7 +524,7 @@
 		<!-- Início mapa tramitação -->
 	
 		<!-- Sidebar List -->
-		<div class="gt-sidebar-content">
+		<div class="gt-sidebar-content" id="tramitacao">
 			<h3 style="margin-bottom: 10px">Tramitação</h3>
 			<div style="display: none" id="inputTramitacao">
 			</div>
@@ -538,106 +536,96 @@
 	
 		<script>
 		$(document).ready(function () {
-			//Edson: impedir que o gráfico ampliado fique maior que a janela:
-			$("#svgTramitacao").attr("style", "max-width:" + $(window).width()*0.95 + ";"); 
+		    $(window).resize(function() {
+			    updateContainerTramitacao();
+		    });
+		    	 
 			$("#svgTramitacao").dialog({
 		    	autoOpen: false,
-		    	height: 'auto',
-		    	width: 'auto',
+		    	height: $(window).height()*0.9,
+		    	width: $(window).width()*0.9,
 		    	modal: true,
 			    resizable: false
 		  	});
+			$("#output2Tramitacao").mousedown(function(e){
+				if (e.button == 0 && zoomTramitacao < 3)
+					zoomTramitacao += 0.2;
+				else if (e.button == 2 && zoomTramitacao > 1)
+					zoomTramitacao -= 0.2;
+				updateContainerTramitacao();
+			});
+			if (!document.getElementById("outputTramitacao").hasChildNodes()){
+				$("#tramitacao").hide();
+			}
 		});
-			function bigmapTramitacao() {
+		
+		function bigmapTramitacao() {
+			$('#svgTramitacao').dialog('open');
+			if ($('#naoCarregouBigTramitacao')[0] != undefined){
 				var input = 'digraph ""{ graph[tooltip="Tramitação"] ${docVO.dotTramitacao} }';
 				input = escapeAcentos(input);
-				var format = "svg";
-				var engine = "dot";
-				
-				var result = Viz(input, format, engine);
-				
-				if (format == "svg") {
-			  	document.getElementById("output2Tramitacao").innerHTML = result;
-				} else {
-			  	document.getElementById("output2Tramitacao").innerHTML = "";
-				}
-				$("#svgTramitacao").dialog("open");
-				//updateContainerTramitacao();
-				//$(document).ready(function () {
-				    //updateContainerTramitacao();
-				//});
-			} 
-
-			var hexDigits = new Array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
-			function rgb2hex(rgb) {
-				 rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-				 return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-			}			
-			function hex(x) {
-	  			return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
-	 		}
-
-	 		function ratioTramitacao(){
-		 		var x = ${docVO.dotTramitacao.numNodos};
-		 		if (x <= 2)
-			 		return '0.4';
-		 		else if (x ==3)
-			 		return '0.5';
-		 		else if (x ==4)
-			 		return '0.6';
-		 		else return '0.7';
-		 	}
-			
-			function smallmapTramitacao() {
-				$("#outputTramitacao").css("background-color", $("html").css("background-color"));
-				var bgcolor = rgb2hex($("#outputTramitacao").css("background-color"));
-				var input = 'digraph "" { graph[tooltip="Tramitação" ratio="' + ratioTramitacao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
-				input = escapeAcentos(input);
-				var format = "svg";
-				var engine = "dot";
-				var result = Viz(input, format, engine);
-				
-				if (format == "svg") {
-			  	document.getElementById("outputTramitacao").innerHTML = result;
-				} else {
-			  	document.getElementById("outputTramitacao").innerHTML = "";
-				}
+				var result = Viz(input, "svg", "dot");
+		  		document.getElementById("output2Tramitacao").innerHTML = result;
 			}
-	
-			smallmapTramitacao();
+		  	updateContainerTramitacao();
+		} 
+
+		var hexDigits = new Array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
+		function rgb2hex(rgb) {
+			 rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+			 return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+		}			
+		function hex(x) {
+  			return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+ 		}
+	 	function ratioTramitacao(){
+	 		var x = ${docVO.dotTramitacao.numNodos};
+	 		if (x <= 2)
+		 		return '0.4';
+	 		else if (x ==3)
+		 		return '0.5';
+	 		else if (x ==4)
+		 		return '0.6';
+	 		else return '0.7';
+	 	}
+		
+		function smallmapTramitacao() {
+			$("#outputTramitacao").css("background-color", $("html").css("background-color"));
+			var bgcolor = rgb2hex($("#outputTramitacao").css("background-color"));
+			var input = 'digraph "" { graph[tooltip="Tramitação" ratio="' + ratioTramitacao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
+			input = escapeAcentos(input);
+			var result = Viz(input, "svg", "dot");
+		  	document.getElementById("outputTramitacao").innerHTML = result;
 			updateContainerTramitacao();
+		}
+
+		var zoomTramitacao = 1;
+		function updateContainerTramitacao() {
+		    var smallwidth = $('#outputTramitacao').width(); 
+	    	var smallsvg = $('#outputTramitacao :first-child').first(); 
+	    	var smallviewbox = smallsvg.attr('viewBox');
+		      
+	    	if(typeof smallviewbox != 'undefined') {
+			    var a = smallviewbox.split(' ');  
 	
-			$(document).ready(function () {
-			    updateContainerTramitacao();
-		    	$(window).resize(function() {
-			        updateContainerTramitacao();
-		    	});
-			});
-			function updateContainerTramitacao() {
-			    var smallwidth = $('#outputTramitacao').width(); 
-		    	var smallsvg = $('#outputTramitacao :first-child').first(); 
-		    	var smallviewbox = smallsvg.attr('viewBox');
-			      
-		    	if(typeof smallviewbox != 'undefined') {
-				    var a = smallviewbox.split(' ');  
-		
-			    	// set attrs and 'resume' force 
-			    	smallsvg.attr('width', smallwidth);
-			    	smallsvg.attr('height', smallwidth * a[3] / a[2]);
-		    	}
-			    
-		    	var bigwidth = $('#output2Tramitacao').width(); 
-		    	var bigsvg = $('#output2Tramitacao :first-child').first(); 
-		    	var bigviewbox = bigsvg.attr('viewBox');
-			      
-		    	if(typeof bigviewbox != 'undefined') {
-				    var a = bigviewbox.split(' ');  
-		
-			    	// set attrs and 'resume' force 
-			    	bigsvg.attr('width', bigwidth);
-			    	bigsvg.attr('height', bigwidth * a[3] / a[2]);
-		    	}
-			}
+		    	// set attrs and 'resume' force 
+		    	smallsvg.attr('width', smallwidth);
+		    	smallsvg.attr('height', smallwidth * a[3] / a[2]);
+	    	}
+		    
+	    	var bigwidth = $('#output2Tramitacao').width(); 
+	    	var bigsvg = $('#output2Tramitacao :first-child').first(); 
+	    	var bigviewbox = bigsvg.attr('viewBox');
+		      
+	    	if(typeof bigviewbox != 'undefined') {
+			    var a = bigviewbox.split(' ');  
+	
+		    	// set attrs and 'resume' force 
+		    	bigsvg.attr('width', bigwidth * zoomTramitacao);
+		    	bigsvg.attr('height', zoomTramitacao * bigwidth * a[3] / a[2]);
+	    	};
+		}
+		smallmapTramitacao();
     	</script>
     	
     	<!-- Fim mapa tramitação -->
@@ -756,14 +744,12 @@
 <div class="gt-bd clearfix" id="svgRelacaoDocs" style="display: none; overflow-y: scroll;">
 		<div class="gt-content clearfix">
 			<div id="desc_editar_relacaoDocs">
-				<h3>Documentos Relacionados</h3>
-				<div style="display: none" id="input2RelacaoDocs">
-				</div>
-				
-				<div style="padding-bottom: 15px;" id="output2RelacaoDocs">
+				<div style="padding-bottom: 15px;" id="output2RelacaoDocs" oncontextmenu="return false;">
+					<h4 id="naoCarregouBigRelacaoDocs">Carregando...</h4>
 				</div>
 			</div>
 		</div>
+		<h4>Clique sobre a imagem com o botão esquerdo para ampliar ou com o direito para reduzir.</h4>
 		<a href="javascript:void(0)" onclick="javascript: $('#svgRelacaoDocs').dialog('close');"
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
@@ -772,14 +758,12 @@
 <div class="gt-bd clearfix" id="svgTramitacao" style="display: none; overflow-y: scroll;">
 		<div class="gt-content clearfix">
 			<div id="desc_editar_tramitacao">
-				<h3>Tramitação</h3>
-				<div style="display: none" id="input2Tramitacao">
-				</div>
-				
-				<div style="padding-bottom: 15px;" id="output2Tramitacao">
+				<div style="padding-bottom: 15px;" id="output2Tramitacao" oncontextmenu="return false;">
+					<h4 id="naoCarregouBigTramitacao">Carregando...</h4>
 				</div>
 			</div>
 		</div>
+		<h4>Clique sobre a imagem com o botão esquerdo para ampliar ou com o direito para reduzir.</h4>
 		<a href="javascript:void(0)" onclick="javascript: $('#svgTramitacao').dialog('close');"
 			class="gt-btn-large gt-btn-left">Voltar</a>
 

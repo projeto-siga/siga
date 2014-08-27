@@ -38,6 +38,7 @@
 		<web-resource-collection>
 			<web-resource-name>Recursos Publicos</web-resource-name>
 			<url-pattern>/public/*</url-pattern>
+			<url-pattern>/errors/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

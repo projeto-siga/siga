@@ -2,7 +2,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Tipo de Atributo</h2>
+		<h2>Cadastro de Tipo de Atributo</h2>
 
 		<div class="gt-form gt-content-box">
 			#{form @Application.gravarTipoAtributo()} #{if att?.idTipoAtributo} <input
@@ -25,9 +25,10 @@
 					value="${att?.descrTipoAtributo}" size="60" />
 			</div>
 			<div class="gt-form-row">
-				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" /> #{if
-				att?.idTipoAtributo} <input type="button" value="Desativar"
+				<input type="submit" value="Gravar"
+					class="gt-btn-medium gt-btn-left" />
+				<a href="@{Application.listarTipoAtributo}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				#{if att?.idTipoAtributo} <input type="button" value="Desativar"
 					class="gt-btn-medium gt-btn-left"
 					onclick="location.href='@{Application.desativarTipoAtributo()}?id=${att.idTipoAtributo}'" />
 				#{/if}

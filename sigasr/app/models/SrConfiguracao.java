@@ -5,8 +5,11 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -17,6 +20,7 @@ import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -24,6 +28,11 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4959384444345462871L;
 
 	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
@@ -72,16 +81,71 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToOne
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista listaPrioridade;
+	
+	@OneToMany(fetch = FetchType.LAZY, targetEntity = SrListaConfiguracao.class, mappedBy = "configuracao")
+	private List<SrListaConfiguracao> listaConfiguracaoSet;
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
 	public boolean atributoObrigatorio;
-
+	
+	@Column(name = "SLA_PRE_ATENDIMENTO_QUANT")
+	public Integer slaPreAtendimentoQuantidade;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_UNIDADE_PRE_ATENDIMENTO")
+	public CpUnidadeMedida unidadeMedidaPreAtendimento;
+	
+	@Column(name = "SLA_ATENDIMENTO_QUANT")
+	public Integer slaAtendimentoQuantidade;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_UNIDADE_ATENDIMENTO")
+	public CpUnidadeMedida unidadeMedidaAtendimento;
+	
+	@Column(name = "SLA_POS_ATENDIMENTO_QUANT")
+	public Integer slaPosAtendimentoQuantidade;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_UNIDADE_POS_ATENDIMENTO")
+	public CpUnidadeMedida unidadeMedidaPosAtendimento;
+	
+	@Column(name = "MARGEM_SEGURANCA")
+	public Integer margemSeguranca;
+	
+	@Lob
+	@Column(name = "OBSERVACAO_SLA", length = 8192)
+	public String observacaoSLA;
+	
+	@Column(name = "FG_DIVULGAR_SLA")
+	@Type(type = "yes_no")
+	public boolean divulgarSLA;
+	
+	@Column(name = "FG_NOTIFICAR_GESTOR")
+	@Type(type = "yes_no")
+	public boolean notificarGestor;
+	
+	@Column(name = "FG_NOTIFICAR_SOLICITANTE")
+	@Type(type = "yes_no")
+	public boolean notificarSolicitante;
+	
+	@Column(name = "FG_NOTIFICAR_CADASTRANTE")
+	@Type(type = "yes_no")
+	public boolean notificarCadastrante;
+	
+	@Column(name = "FG_NOTIFICAR_INTERLOCUTOR")
+	@Type(type = "yes_no")
+	public boolean notificarInterlocutor;
+	
+	@Column(name = "FG_NOTIFICAR_ATENDENTE")
+	@Type(type = "yes_no")
+	public boolean notificarAtendente;
+	
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;
 
 	public SrConfiguracao() {
-
+		
 	}
 
 	public SrConfiguracao(DpLotacao lota, DpPessoa pess, CpComplexo local,
@@ -237,4 +301,24 @@ public class SrConfiguracao extends CpConfiguracao {
 		setIdConfiguracao(id);
 	}
 
+	// Edson: NÃ£o consegui fazer com que esse cascade fosse automÃ¡tico.
+	@Override
+	public void salvar() throws Exception {
+		super.salvar();
+		if (this.listaConfiguracaoSet != null)
+			for (SrListaConfiguracao lista: this.listaConfiguracaoSet) {
+				lista.configuracao = this;
+				lista.salvar();
+			}
+	}
+	
+	public List<SrListaConfiguracao> getListaConfiguracaoSet() {
+		return listaConfiguracaoSet;
+	}
+	
+	public void setListaConfiguracaoSet(
+			List<SrListaConfiguracao> listaConfiguracaoSet) {
+		this.listaConfiguracaoSet = listaConfiguracaoSet;
+	}
+	
 }

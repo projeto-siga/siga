@@ -126,11 +126,12 @@ $(function() {
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-		<h2 class="gt-form-head">Item de Configuração</h2>
-		<div class="gt-form gt-content-box inline">
-			#{form @Application.gravarItem()} #{if
-			itemConfiguracao.idItemConfiguracao} <input type="hidden"
-				name="itemConfiguracao.idItemConfiguracao"
+
+		<h2 class="gt-form-head">Cadastro de Item de Configuração</h2>
+		<div class="gt-form gt-content-box">
+		#{form @Application.gravarItem()}
+			#{if itemConfiguracao.idItemConfiguracao} <input
+				type="hidden" name="itemConfiguracao.idItemConfiguracao"
 				value="${itemConfiguracao.idItemConfiguracao}"> #{/if}
 			#{ifErrors}
 			<p class="gt-error">Alguns campos obrigatórios não foram
@@ -172,10 +173,10 @@ $(function() {
 					id="descricaoSimilaridade">${itemConfiguracao.descricaoSimilaridade}</textarea>
 			</div>
 			<div class="gt-form-row">
-				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" /> #{if
-				itemConfiguracao?.idItemConfiguracao} <input type="button"
-					value="Desativar" class="gt-btn-medium gt-btn-left"
+				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+				<a href="@{Application.listarItem}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				#{if itemConfiguracao?.idItemConfiguracao} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
 					onclick="location.href='@{Application.desativarItem()}?id=${itemConfiguracao.idItemConfiguracao}'" />
 				#{/if}
 			</div>

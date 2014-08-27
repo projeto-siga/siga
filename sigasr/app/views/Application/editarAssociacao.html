@@ -5,7 +5,7 @@
 		#{if associacao?.idConfiguracao}
 		<h2 class="gt-form-head">Associação Nº ${associacao?.hisIdIni}</h2>
 		#{/if} #{else}
-		<h2 class="gt-form-head">Nova associação</h2>
+		<h2 class="gt-form-head">Cadastro de Associação</h2>
 		#{/else}
 
 		<div class="gt-form gt-content-box">
@@ -41,9 +41,10 @@
 						class="gt-btn-medium gt-btn-left" />
 				#{/if}
 				#{else}
-					<input type="submit" value="Salvar"
-						class="gt-btn-medium gt-btn-left" />#{if
-					associacao?.idConfiguracao} <input type="button" value="Desativar"
+					<input type="submit" value="Gravar"
+						class="gt-btn-medium gt-btn-left" />
+					<a href="@{Application.listarAssociacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					#{if associacao?.idConfiguracao} <input type="button" value="Desativar"
 						class="gt-btn-medium gt-btn-left"
 						onclick="location.href='@{Application.desativarAssociacao()}?id=${associacao.idConfiguracao}'" />
 				#{/if}

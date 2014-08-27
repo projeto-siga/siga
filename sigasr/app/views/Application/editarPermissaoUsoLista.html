@@ -2,7 +2,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-		<h2 class="gt-form-head">Permissão para Uso de Lista de Prioridade</h2>
+		<h2 class="gt-form-head">Cadastro de Permissão para Uso de Lista de Prioridade</h2>
 
 		<div class="gt-form gt-content-box">
 			#{form @Application.gravarPermissaoUsoLista()} #{if
@@ -60,9 +60,10 @@
 				#{/select}
 			</div>
 			<div class="gt-form-row">
-				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" />#{if
-				permissao?.idConfiguracao} <input type="button" value="Desativar"
+				<input type="submit" value="Gravar"
+					class="gt-btn-medium gt-btn-left" />
+				<a href="@{Application.listarPermissaoUsoLista}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				#{if permissao?.idConfiguracao} <input type="button" value="Desativar"
 					class="gt-btn-medium gt-btn-left"
 					onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${permissao.idConfiguracao}'" />
 				#{/if}

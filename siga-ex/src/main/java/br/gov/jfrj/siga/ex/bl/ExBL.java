@@ -4263,6 +4263,7 @@ public class ExBL extends CpBL {
 
 		Date dtUltReceb = null;
 
+		//Edson: apagar isto? A verificação já é feita no for abaixo...
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
 					"Não é possível fazer despacho em um documento que faça parte de um apenso");
@@ -4276,6 +4277,13 @@ public class ExBL extends CpBL {
 		}
 
 		for (ExMobil m : set) {
+			
+			if (!m.equals(mob)
+					&& fDespacho && fTranferencia) {
+				throw new AplicacaoException(
+						"Não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. Faça primeiro o despacho e depois transfira o documento.");
+			}
+			
 			if (fDespacho && m.isVolumeEncerrado())
 				if (m.isApensadoAVolumeDoMesmoProcesso())
 					continue;
@@ -4329,12 +4337,6 @@ public class ExBL extends CpBL {
 								"Não foram informados dados para o despacho/transferência");
 			}
 			
-			if (!m.equals(mob)
-					&& fDespacho && fTranferencia) {
-				throw new AplicacaoException(
-						"Não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. Faça primeiro o despacho e depois transfira o documento.");
-			}
-
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();

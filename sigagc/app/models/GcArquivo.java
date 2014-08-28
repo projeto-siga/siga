@@ -66,21 +66,35 @@ public class GcArquivo extends GenericModel implements Serializable{
 	public boolean isImage() {
 		return mimeType != null && mimeType.startsWith("image/");
 	}
+	public boolean isPDF() {
+        return mimeType != null && mimeType.endsWith("/pdf"); 
+    }
+    public boolean isWord() {
+        return mimeType != null && (mimeType.endsWith("/msword")
+        								|| mimeType.endsWith(".wordprocessingml.document"));
+    }
+    public boolean isExcel() {
+        return mimeType != null && (mimeType.endsWith("/vnd.ms-excel")
+        								|| mimeType.endsWith(".spreadsheetml.sheet"));
+    }
+    public boolean isPresentation() {
+        return mimeType != null && (mimeType.endsWith("/vnd.ms-powerpoint") 
+        								|| mimeType.endsWith(".presentationml.presentation"));
+    }
 
 	public String getIcon() {
-		if (mimeType != null) {
-			if (mimeType.startsWith("image/"))
-				return "image";
-			if (mimeType.startsWith("application/pdf"))
-				return "page_white_acrobat";
-			if (mimeType.startsWith("application/msword") || mimeType.endsWith(".wordprocessingml.document"))
-				return "page_white_word";	
-			if (mimeType.startsWith("application/vnd.ms-excel") || mimeType.endsWith(".spreadsheetml.sheet"))
-				return "page_white_excel";	
-			if (mimeType.startsWith("application/vnd.ms-powerpoint") || mimeType.endsWith(".presentationml.presentation"))
-				return "page_white_powerpoint";	
-		}
-		return "page_white_text";
+		if (isImage())
+            return "image";
+        if (isPDF())
+            return "page_white_acrobat";
+        if (isWord()) 
+            return "page_white_word";    
+        if (isExcel()) 
+            return "page_white_excel";    
+        if (isPresentation())
+            return "page_white_powerpoint";
+    
+        return "page_white";
 	}
 	
 	/**
@@ -103,5 +117,31 @@ public class GcArquivo extends GenericModel implements Serializable{
 		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível duplicar esse conhecimento.");
 		}
-	}	
+	}
+
+	/**
+     * Método criado pois a ferramenta plupload retornar um mime type padrão "octet stream".
+     * Então, é necessário que a aplicação identifique pela extensão do arquivo qual o mime type
+     * do anexo. 
+     * @return mimeType
+     */
+    public String obterMimeType() {
+        String extensao = titulo.split("\\.")[1];
+        
+        if (extensao != null) {
+            if (extensao.contentEquals("gif") || extensao.contentEquals("jpg") 
+                    || extensao.contentEquals("png") || extensao.contentEquals("tiff"))
+                return "image/" + extensao;
+            if (extensao.contains("pdf"))
+                return "application/pdf";
+            if (extensao.contains("doc"))
+                return "application/msword";    
+            if (extensao.contains("xls"))
+                return "application/vnd.ms-excel";    
+            if (extensao.contains("ppt"))
+                return "application/vnd.ms-powerpoint";
+        }
+        return null;
+    }
+	
 }

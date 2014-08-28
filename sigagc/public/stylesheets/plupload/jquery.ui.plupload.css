@@ -10,13 +10,13 @@
 .plupload_wrapper {
 	font: normal 11px Verdana,sans-serif;
 	width: 100%;
-	min-width: 700px;
+	min-width: 520px;
 	margin: 15px 0 5px 0;
 }
 
 .plupload_container {
-	_height: 360px;
-	min-height: 360px;
+	_height: 300px;
+	min-height: 300px;
 	position: relative;
 }
 
@@ -312,7 +312,7 @@
 	text-align: center;
 	vertical-align: middle;
 	border: 0;
-	line-height: 230px;
+	line-height: 180px;
 	display: none;
 }
 

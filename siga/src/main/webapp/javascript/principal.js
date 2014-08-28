@@ -1,5 +1,6 @@
 /**
- * Created by hodrigohamalho@gmail.com on 24/07/14.
+ * @author Rodrigo Ramalho da Silva
+ *         hodrigohamalho@gmail.com
  */
 
 /**
@@ -14,6 +15,8 @@
 // main
 window.Siga = {
 
+	MAXIMUM_RETRY_COUNT: 2,
+	
     modules: {
         sigawf: {
             name: "sigawf",
@@ -58,15 +61,18 @@ window.Siga = {
     },
 
     display: function(target, text){
+    	debugger;
         var self = this;
-
-        if (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1){
-            self.loadModule(self.moduleFromId(target.attr("id")));
+        var id = target.attr("id");
+        
+        if (self.isUnauthenticated(text) && self.retryCountNotExcedded(id)){        
+        	self.increment(id);
+            self.loadModule(self.moduleFromId(id));
         }else{
             target.append(text);
             $(target.find(".loading")).hide();
 
-            self.loadSubModule(self.moduleFromId(target.attr("id")));
+            self.loadSubModule(self.moduleFromId(id));
         }
     },
 
@@ -90,6 +96,21 @@ window.Siga = {
         });
 
         return model;
+    },
+    
+    isUnauthenticated: function(text){
+    	return (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1)
+    },
+    
+    retryCountNotExcedded: function(id){
+    	var retryCount = $("#"+id).find("input[name='retry-count']").val();
+    	return (retryCount < this.MAXIMUM_RETRY_COUNT);
+    },
+    
+    increment: function(id){
+    	$("#"+id).find("input[name='retry-count']").val( function(i, oldVal) {
+    	    return ++oldVal;
+    	});
     },
 
     picketlinkResponse: function(textResponse){
@@ -180,7 +201,9 @@ window.Siga = {
 }
 var Siga = window.Siga;
 
+// Funcao principal que sera chamada apos o load da pagina
 $(function() {
+	// Cache false pois o I.E tem serios problemas com cache de chamadas assincronas.
     $.ajaxSetup({ cache: false });
     Siga.loadModules();
 });

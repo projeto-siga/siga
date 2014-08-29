@@ -95,7 +95,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("SR:Módulo de Serviços;" + path);
+		SigaApplication.assertAcesso("SR:MÃ³dulo de ServiÃ§os;" + path);
 	}
 
 	@Catch()
@@ -205,16 +205,16 @@ public class Application extends SigaApplication {
 
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
-					"Item não informado");
+					"Item nÃ£o informado");
 		}
 		if (solicitacao.acao == null) {
-			validation.addError("solicitacao.acao", "Ação não informada");
+			validation.addError("solicitacao.acao", "AÃ§Ã£o nÃ£o informada");
 		}
 
 		if (solicitacao.descrSolicitacao == null
 				|| solicitacao.descrSolicitacao.trim().equals("")) {
 			validation.addError("solicitacao.descrSolicitacao",
-					"Descrição não informada");
+					"DescriÃ§Ã£o nÃ£o informada");
 		}
 
 		HashMap<Long, Boolean> obrigatorio = solicitacao
@@ -224,7 +224,7 @@ public class Application extends SigaApplication {
 					&& obrigatorio.get(att.tipoAtributo.idTipoAtributo))
 				validation.addError("solicitacao.atributoMap["
 						+ att.tipoAtributo.idTipoAtributo + "]",
-						att.tipoAtributo.nomeTipoAtributo + " não informado");
+						att.tipoAtributo.nomeTipoAtributo + " nÃ£o informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -237,12 +237,12 @@ public class Application extends SigaApplication {
 
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.siglaItemConfiguracao",
-					"Código não informado");
+					"CÃ³digo nÃ£o informado");
 		}
 
 		if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.tituloItemConfiguracao",
-					"Título não informado");
+					"TÃ­tulo nÃ£o informado");
 		}
 
 		for (play.data.validation.Error error : validation.errors()) {
@@ -257,11 +257,11 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarAcao(SrAcao acao) {
 
 		if (acao.siglaAcao.equals("")) {
-			validation.addError("acao.siglaAcao", "Código não informado");
+			validation.addError("acao.siglaAcao", "CÃ³digo nÃ£o informado");
 		}
 
 		if (acao.tituloAcao.equals("")) {
-			validation.addError("acao.tituloAcao", "Título não informado");
+			validation.addError("acao.tituloAcao", "TÃ­tulo nÃ£o informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -276,19 +276,19 @@ public class Application extends SigaApplication {
 				&& (designacao.posAtendente == null)
 				&& (designacao.equipeQualidade == null)) {
 			validation.addError("designacao.atendente",
-					"Atendente não informado.");
+					"Atendente nÃ£o informado.");
 			validation.addError("designacao.preAtendente",
-					"Pré-atendente não informado.");
+					"PrÃ©-atendente nÃ£o informado.");
 			validation.addError("designacao.posAtendente",
-					"Pós-atendente não informado.");
+					"PÃ³s-atendente nÃ£o informado.");
 			validation.addError("designacao.equipeQualidade",
-					"Equipe de qualidade não informada.");
+					"Equipe de qualidade nÃ£o informada.");
 		}
 
 		if ((designacao.itemConfiguracao == null) && (designacao.acao == null)) {
 			validation.addError("designacao.itemConfiguracao",
-					"Código não informado.");
-			validation.addError("designacao.acao", "Código não informado.");
+					"CÃ³digo nÃ£o informado.");
+			validation.addError("designacao.acao", "CÃ³digo nÃ£o informado.");
 		}
 
 		for (play.data.validation.Error error : validation.errors()) {
@@ -323,7 +323,7 @@ public class Application extends SigaApplication {
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
 
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		String[] tipos = new String[] { "Pessoa", "LotaÃ§Ã£o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -404,7 +404,7 @@ public class Application extends SigaApplication {
 
 		// Header
 		StringBuilder sbevol = new StringBuilder();
-		sbevol.append("['Mês','Fechados','Abertos'],");
+		sbevol.append("['MÃªs','Fechados','Abertos'],");
 
 		// Values
 		for (int i = -6; i <= 0; i++) {
@@ -443,7 +443,7 @@ public class Application extends SigaApplication {
 
 		// Header
 		StringBuilder sbtop = new StringBuilder();
-		sbtop.append("['Item de Configuração','Total'],");
+		sbtop.append("['Item de ConfiguraÃ§Ã£o','Total'],");
 
 		// Values
 		for (Iterator<String[]> itop = listaTop.iterator(); itop.hasNext();) {
@@ -473,7 +473,7 @@ public class Application extends SigaApplication {
 
 		// Header
 		StringBuilder sbGUT = new StringBuilder();
-		sbGUT.append("['Gravidade','Urgência','Total'],");
+		sbGUT.append("['Gravidade','UrgÃªncia','Total'],");
 
 		// Values
 		for (Iterator<String[]> itgut = listaGUT.iterator(); itgut.hasNext();) {
@@ -498,7 +498,7 @@ public class Application extends SigaApplication {
 	public static void exibir(Long id, boolean completo) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		if (solicitacao == null)
-			throw new Exception("Solicitação não encontrada");
+			throw new Exception("SolicitaÃ§Ã£o nÃ£o encontrada");
 		else
 			solicitacao = solicitacao.getSolicitacaoAtual();
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
@@ -589,7 +589,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		if (sol.getPesquisaDesignada() == null)
 			throw new Exception(
-					"Não foi encontrada nenhuma pesquisa designada para esta solicitação.");
+					"NÃ£o foi encontrada nenhuma pesquisa designada para esta solicitaÃ§Ã£o.");
 		render(sol);
 	}
 
@@ -676,7 +676,7 @@ public class Application extends SigaApplication {
 		List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
-		List<SrLista> listasPrioridade = SrLista.listar();
+		List<SrLista> listasPrioridade = SrLista.listar(false);
 		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
@@ -699,13 +699,13 @@ public class Application extends SigaApplication {
 		listarDesignacao();
 	}
 
-	public static void listarPermissaoUsoLista() throws Exception {
+	public static void listarPermissaoUsoLista(boolean mostrarDesativado) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> permissoes = SrConfiguracao
-				.listarPermissoesUsoLista(lotaTitular());
+				.listarPermissoesUsoLista(lotaTitular(), mostrarDesativado);
 		render(permissoes);
 	}
-
+	
 	public static void editarPermissaoUsoLista(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<CpOrgaoUsuario> orgaos = JPA.em()
@@ -724,7 +724,7 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
 		permissao.salvarComoPermissaoUsoLista();
-		listarPermissaoUsoLista();
+		listarPermissaoUsoLista(false);
 	}
 
 	public static void desativarPermissaoUsoLista(Long id) throws Exception {
@@ -844,7 +844,7 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarTipoAtributo(SrTipoAtributo att) {
 		if (att.nomeTipoAtributo.equals("")) {
 			validation.addError("att.nomeTipoAtributo",
-					"Nome de atributo não informado");
+					"Nome de atributo nÃ£o informado");
 		}
 
 		for (play.data.validation.Error error : validation.errors()) {
@@ -957,9 +957,9 @@ public class Application extends SigaApplication {
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
-	public static void listarLista() throws Exception {
-		List<SrLista> lista = SrLista.listar();
-		render(lista);
+	public static void listarLista(boolean mostrarDesativado) throws Exception {
+		List<SrLista> lista = SrLista.listar(true);
+		render(lista, true);
 	}
 
 	public static void editarLista(Long id) throws Exception {
@@ -971,20 +971,20 @@ public class Application extends SigaApplication {
 
 	public static void gravarLista(SrLista lista) throws Exception {
 		lista.salvar();
-		listarLista();
+		listarLista(Boolean.FALSE);
 	}
 
 	public static void desativarLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.finalizar();
-		listarLista();
+		listarLista(Boolean.FALSE);
 	}
 
 	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)
 			throws Exception {
 		assertAcesso("REL:Relatorio");
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		String[] tipos = new String[] { "Pessoa", "LotaÃ§Ã£o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -1103,7 +1103,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Solicitações", pdf.length,
+		renderBinary(is, "RelatÃ³rio de SolicitaÃ§Ãµes", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1127,7 +1127,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Transferências", pdf.length,
+		renderBinary(is, "RelatÃ³rio de TransferÃªncias", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1154,7 +1154,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Solicitações por Localidade",
+		renderBinary(is, "RelatÃ³rio de SolicitaÃ§Ãµes por Localidade",
 				pdf.length, "application/pdf", true);
 	}
 
@@ -1181,7 +1181,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Prazos", pdf.length, "application/pdf",
+		renderBinary(is, "RelatÃ³rio de Prazos", pdf.length, "application/pdf",
 				true);
 	}
 
@@ -1207,7 +1207,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Prazos - TRF", pdf.length,
+		renderBinary(is, "RelatÃ³rio de Prazos - TRF", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1233,7 +1233,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório Detalhado de Prazos", pdf.length,
+		renderBinary(is, "RelatÃ³rio Detalhado de Prazos", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1257,7 +1257,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Indíces de Satisfação", pdf.length,
+		renderBinary(is, "RelatÃ³rio de IndÃ­ces de SatisfaÃ§Ã£o", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1283,7 +1283,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Solicitações por Localidade",
+		renderBinary(is, "RelatÃ³rio de SolicitaÃ§Ãµes por Localidade",
 				pdf.length, "application/pdf", true);
 	}
 
@@ -1308,7 +1308,7 @@ public class Application extends SigaApplication {
 		Iterator it = solsnaoconcluidas.iterator();
 		while (it.hasNext()) {
 			SrSolicitacao sol = (SrSolicitacao) it.next();
-			sol.fechar(null, null, "Conclusão Automática");
+			sol.fechar(null, null, "ConclusÃ£o AutomÃ¡tica");
 		}
 
 		render(solsnaoconcluidas);

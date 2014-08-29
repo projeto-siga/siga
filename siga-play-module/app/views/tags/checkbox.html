@@ -1,9 +1,12 @@
  <script language="javascript">
 	function show(checked, divName){
 		var div = document.getElementById(divName);
-		if (checked)
-			div.style.display = 'inline';
-		else div.style.display = 'none';
+		if (div) {
+			if (checked)
+				div.style.display = 'inline';
+			else 
+				div.style.display = 'none';
+		}
 	}
 	
 	function change(){

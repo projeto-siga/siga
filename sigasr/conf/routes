@@ -3,13 +3,13 @@
 # ~~~~
 
 # Home page
-*     /                                       Application.index
+*     /                                     Application.index
 
 # Ignore favicon requests
-GET     /favicon.ico                            404
+GET     /favicon.ico                        404
 
 # Map static resources from the /app/public folder to the /public path
-GET     /public/                                staticDir:public
+GET     /public/                            staticDir:public
 
 *		/designacao/editar/{id}				Application.editarDesignacao
 *		/designacao/editar					Application.editarDesignacao
@@ -45,7 +45,7 @@ GET     /public/                                staticDir:public
 *		/associacao/gravar					Application.gravarAssociacao
 *		/associacao/listar					Application.listarAssociacao
 
-*		/acao/editar/{id}				Application.editarAcao
+*		/acao/editar/{id}					Application.editarAcao
 *		/acao/editar						Application.editarAcao
 *		/acao/gravar						Application.gravarAcao
 *		/acao/listar						Application.listarAcao

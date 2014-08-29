@@ -1,0 +1,15 @@
+.dataTables_div {
+    padding-top: 10px;
+}
+
+.dataTables_length {	
+    padding-left: 5px;
+}
+
+.dataTables_filter {
+    padding-right: 5px !important;
+}
+
+.dataTables_info {
+    padding-left: 5px;
+}

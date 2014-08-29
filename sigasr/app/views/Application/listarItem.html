@@ -1,11 +1,44 @@
 #{extends 'main.html' /} #{set title:'Designação de solicitações' /}
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+	/* Table initialization */
+	$(document).ready(function() {
+		$('#itens_configuracao_table').DataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			}
+		});
+	});
+</script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
 		<h2>Itens de Configuração</h2>
 		<!-- content bomex -->
-		<div class="gt-content-box">
-			<table border="0" class="gt-table">
+		<div class="gt-content-box dataTables_div">
+			<table id="itens_configuracao_table" border="0" class="gt-table">
 				<thead>
 					<tr>
 						<th>Código</th>

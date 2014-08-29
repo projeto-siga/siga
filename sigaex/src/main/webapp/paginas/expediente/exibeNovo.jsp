@@ -55,7 +55,7 @@
 		<c:set var="primeiroMobil" value="${true}" />
 		<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
 			<ww:if
-				test="%{#attr.m.mob.geral or true or (((mob.geral or (mob.id == #attr.m.mob.id)) and (exibirCompleto or (#attr.m.mob.getUltimaMovimentacaoNaoCancelada() != null))))}">
+				test="%{#attr.m.mob.geral or true or (((mob.geral or (mob.id == #attr.m.mob.id)) and ((#attr.m.mob.getUltimaMovimentacaoNaoCancelada() != null))))}">
 				<h3 style="margin-bottom: 0px;">
 					<ww:property
 						value="%{#attr.m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}"
@@ -153,7 +153,7 @@
 	<c:set var="temmov" value="${false}" />
 	<c:forEach var="mov" items="${m.movs}">
 		<c:if
-			test="${ (exibirCompleto == 'true') or (mov.idTpMov != 14 and
+			test="${ (mov.idTpMov != 14 and
 							          not mov.cancelada)}">
 			<c:set var="temmov" value="${true}" />
 		</c:if>
@@ -199,15 +199,10 @@
 				<c:set var="evenorodd" value="odd" />
 				<c:forEach var="mov" items="${m.movs}">
 					<c:if
-						test="${ (exibirCompleto == 'true') or (mov.idTpMov != 14 and
+						test="${ (mov.idTpMov != 14 and
 							          not mov.cancelada)}">
 						<tr class="${mov.classe} ${mov.disabled}">
-							<c:if test="${ (exibirCompleto == 'true')}">
-								<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
-							</c:if>
-							<c:if test="${ (exibirCompleto != 'true')}">
 								<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
-							</c:if>
 							<ww:if test="${dt == dtUlt}">
 								<c:set var="dt" value="" />
 							</ww:if>
@@ -215,7 +210,7 @@
 								<c:set var="dtUlt" value="${dt}" />
 							</ww:else>
 							
-							<c:set var="lota" value="${mov.mov.lotaResp.sigla}"/>
+							<c:set var="lota" value="${mov.mov.lotaCadastrante.sigla}"/>
 							<ww:if test="${lota == lotaUlt}">
 								<c:set var="lota" value="" />
 							</ww:if>
@@ -452,7 +447,7 @@
 				$("#output2RelacaoDocs").mousedown(function(e){
 					if (e.button == 0 && zoomRelacaoDocs < 3)
 						zoomRelacaoDocs +=0.2;
-					else if (e.button == 2 && zoomRelacaoDocs > 1)
+					else if (e.button == 2 && zoomRelacaoDocs > 0.5)
 						zoomRelacaoDocs -= 0.2;
 					updateContainerRelacaoDocs();
 				});
@@ -502,16 +497,15 @@
 			    	smallsvg.attr('height', smallwidth * a[3] / a[2]);
 		    	}
 			    
-		    	var bigwidth = $('#output2').width(); 
-		    	var bigsvg = $('#output2 :first-child').first(); 
+		    	var bigsvg = $('#output2RelacaoDocs :first-child').first(); 
 		    	var bigviewbox = bigsvg.attr('viewBox');
 			      
 		    	if(typeof bigviewbox != 'undefined') {
 				    var a = bigviewbox.split(' ');  
 		
 			    	// set attrs and 'resume' force 
-			    	bigsvg.attr('width', bigwidth * zoomRelacaoDocs);
-			    	bigsvg.attr('height', zoomRelacaoDocs * bigwidth * a[3] / a[2]);
+			    	bigsvg.attr('width', a[2] * zoomRelacaoDocs);
+			    	bigsvg.attr('height', a[3] * zoomRelacaoDocs);
 		    	}
 			}
 			smallmapRelacaoDocs();
@@ -550,7 +544,7 @@
 			$("#output2Tramitacao").mousedown(function(e){
 				if (e.button == 0 && zoomTramitacao < 3)
 					zoomTramitacao += 0.2;
-				else if (e.button == 2 && zoomTramitacao > 1)
+				else if (e.button == 2 && zoomTramitacao > 0.5)
 					zoomTramitacao -= 0.2;
 				updateContainerTramitacao();
 			});
@@ -613,7 +607,6 @@
 		    	smallsvg.attr('height', smallwidth * a[3] / a[2]);
 	    	}
 		    
-	    	var bigwidth = $('#output2Tramitacao').width(); 
 	    	var bigsvg = $('#output2Tramitacao :first-child').first(); 
 	    	var bigviewbox = bigsvg.attr('viewBox');
 		      
@@ -621,8 +614,8 @@
 			    var a = bigviewbox.split(' ');  
 	
 		    	// set attrs and 'resume' force 
-		    	bigsvg.attr('width', bigwidth * zoomTramitacao);
-		    	bigsvg.attr('height', zoomTramitacao * bigwidth * a[3] / a[2]);
+		    	bigsvg.attr('width', a[2] * zoomTramitacao);
+		    	bigsvg.attr('height', zoomTramitacao * a[3]);
 	    	};
 		}
 		smallmapTramitacao();

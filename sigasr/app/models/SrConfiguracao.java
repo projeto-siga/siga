@@ -191,16 +191,20 @@ public class SrConfiguracao extends CpConfiguracao {
 		salvar();
 	}
 
-	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota) {
+	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota, boolean mostrarDesativado) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
+		sb.append(" and conf.listaPrioridade.lotaCadastrante.idLotacaoIni = ");
+		sb.append(lota.getLotacaoInicial().getIdLotacao());
+		
+		if (!mostrarDesativado)
+			sb.append(" and conf.hisDtFim is null ");
+		
+		sb.append(" order by conf.orgaoUsuario");
+		
 		return JPA
 				.em()
-				.createQuery(
-						"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA
-								+ " and conf.listaPrioridade.lotaCadastrante.idLotacaoIni = "
-								+ lota.getLotacaoInicial().getIdLotacao()
-								+ " and conf.hisDtFim is null order by conf.orgaoUsuario",
-						SrConfiguracao.class).getResultList();
+				.createQuery(sb.toString(), SrConfiguracao.class).getResultList();
 	}
 
 	public void salvarComoAssociacaoTipoAtributo() throws Exception {
@@ -301,7 +305,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		setIdConfiguracao(id);
 	}
 
-	// Edson: NÃ£o consegui fazer com que esse cascade fosse automÃ¡tico.
+	// Edson: Não consegui fazer com que esse cascade fosse automático.
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();

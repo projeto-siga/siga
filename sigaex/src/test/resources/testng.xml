@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="TestAll">
+<!-- 	<test name="LoginPadrao">
+	<parameter name="baseURL" value="http://localhost:8080"/>
+	<parameter name="login" value="RJ13286" />
+	<parameter name="password" value="Teste123" />
+		<classes>
+			<class name="br.gov.jfrj.siga.teste.test.LoginConsultaIT"/>			
+		</classes>
+	</test> -->
+	
+	<test name="CriacaoDocumentos">
+	<parameter name="infoDocumentos" value="src/test/resources/InfoDocumentos.properties"/>
+	<parameter name="baseURL" value="http://localhost:8080"/>
+	<parameter name="login" value="RJ13286" />
+	<parameter name="password" value="Teste123" />
+		<classes>		
+			<class name="br.gov.jfrj.siga.integration.test.CriacaoDocumentoIT"/>
+			<class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoIT"/>			
+			<class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoDigitalIT"/>							
+		</classes>
+	</test>	
+</suite>

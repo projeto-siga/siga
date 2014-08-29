@@ -1141,7 +1141,7 @@
 		</action>
 		<action name="transferir_lote_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aTransferirLoteGravar">
-			<result>/paginas/expediente/retornoprotocolo.jsp</result>
+			<result>/paginas/expediente/protocolo_.jsp</result>
 		</action>
 		<action name="arquivar_corrente_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aArquivarCorrenteLote">
@@ -1718,6 +1718,10 @@
 			<result name="ajax_retorno">
 				/sigalibs/ajax_retorno.jsp
 			</result>
+		</action>
+		<action name="criarDocTest" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="acriarDocTest">
+			<result>/paginas/expediente/mensagemAjax.jsp</result>
 		</action>
 	</package>
 

@@ -168,7 +168,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	/** The value of the simple dtDoc property. */
 	private String dtMovString;
-	
+
 	private String dtDevolucaoMovString;
 
 	/** The value of the simple dtRegDoc property. */
@@ -1663,7 +1663,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeCancelarJuntada(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível cancelar juntada");
 
-		ExMobil mobilJuntado = mob.getExMobilJuntado();
+		ExMobil mobilJuntado = mob.getExMobilPai();
 		if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
 			aCancelarJuntadaGravar();
 			return Action.SUCCESS;
@@ -1958,7 +1958,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		final DpPessoa pes;
 		final ArrayList al = new ArrayList();
 		final DpPessoa oExemplo = new DpPessoa();
-		
+
 		String siglaPessoa = param("pessoa");
 
 		if (siglaPessoa == null || siglaPessoa.trim() == "") {
@@ -2934,7 +2934,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getBL()
 					.transferir(mov.getOrgaoExterno(), getObsOrgao(),
 							getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), mov.getDtIniMov(), mov.getDtFimMov(), mov.getLotaResp(),
+							mov.getDtMov(), mov.getDtIniMov(),
+							mov.getDtFimMov(), mov.getLotaResp(),
 							mov.getResp(), mov.getLotaDestinoFinal(),
 							mov.getDestinoFinal(), mov.getSubscritor(),
 							mov.getTitular(), mov.getExTipoDespacho(), false,
@@ -3174,7 +3175,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String aTransferirLoteGravar() throws Exception {
 
 		lerForm(mov);
-		
+
 		final Pattern p = Pattern.compile("chk_([0-9]+)");
 		boolean despaUnico = false;
 		final Date dt = dao().dt();
@@ -3189,7 +3190,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					"Não foi definido o destino da transferência.");
 		if (param("tpdall") != null && paramLong("tpdall") != 0)
 			despaUnico = true;
-		StringBuffer msgErroNivelAcessoso = null;
+
+		AplicacaoException msgErroNivelAcessoso = null;
 
 		for (final String s : getPar().keySet()) {
 			try {
@@ -3219,10 +3221,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.podeAcessarPorNivel(getTitular(),
 									getLotaTitular(), mobil)) {
 						if (msgErroNivelAcessoso == null)
-							msgErroNivelAcessoso = new StringBuffer(
-									"Alguns documentos não puderam ser transferidos por estarem inacessíveis ao usuário:  ");
-						msgErroNivelAcessoso.append(doc.getCodigo());
-						msgErroNivelAcessoso.append("  ");
+							msgErroNivelAcessoso = new AplicacaoException(
+									"O documento não pode ser transferido por estar inacessível ao usuário.");
+						if (!(msgErroNivelAcessoso.equals(null)))
+							MapMensagens.put(mobil, msgErroNivelAcessoso);
 					} else {
 						String txt = "";
 						if (!despaUnico)
@@ -3232,6 +3234,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						if (txt.equals(""))
 							txt = null;
 
+						nmobil = new ExMobil();
 						nmobil = mobil;
 						Mobeis.add(mobil);
 
@@ -3240,8 +3243,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 								.transferir(mov.getOrgaoExterno(),
 										getObsOrgao(), getCadastrante(),
 										getLotaTitular(), mobil,
-										mov.getDtMov(), dt, mov.getDtFimMov(), mov.getLotaResp(),
-										mov.getResp(),
+										mov.getDtMov(), dt, mov.getDtFimMov(),
+										mov.getLotaResp(), mov.getResp(),
 										mov.getLotaDestinoFinal(),
 										mov.getDestinoFinal(),
 										mov.getSubscritor(), mov.getTitular(),
@@ -3250,7 +3253,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 					}
 				}
-			} catch (final AplicacaoException e) {
+			} catch (AplicacaoException e) {
 				MapMensagens.put(nmobil, e);
 			}
 		}
@@ -3259,27 +3262,29 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		final ArrayList check = new ArrayList();
 		final ArrayList arrays = new ArrayList();
 
-		for (Iterator<ExMobil> it = Mobeis.iterator(); it.hasNext();) {
-			ExMobil mob = it.next();
-			if (!(MapMensagens.containsKey(mob))) {
-				MobilSucesso.add(mob);
-				System.out.println("Mobil Geral: " + mob.doc().getMobilGeral().isGeral()); 
-				final Object[] ao = { mob.doc(),
-						mob.getUltimaMovimentacaoNaoCancelada() };
-				System.out.println("Sucesso sigla: " + mob.doc().getSigla());
-				check.add(ao);
-			}
-		}
-
 		if (!(MapMensagens.isEmpty())) {
 			for (Iterator<Entry<ExMobil, AplicacaoException>> it = MapMensagens
 					.entrySet().iterator(); it.hasNext();) {
 				Entry<ExMobil, AplicacaoException> excep = it.next();
-				final Object[] ao = { excep.getKey().doc(),
+				final Object[] ao = { excep.getKey(),
 						excep.getValue().getMessage() };
 				System.out.println("Falha: " + excep.getKey().doc().getSigla());
-				System.out.println("Mensagem de erro: " + excep.getValue().getMessage());
+				System.out.println("Mensagem de erro: "
+						+ excep.getValue().getMessage());
 				al.add(ao);
+			}
+		}
+
+		for (Iterator<ExMobil> it = Mobeis.iterator(); it.hasNext();) {
+			ExMobil mob = it.next();
+			if (!(MapMensagens.containsKey(mob))) {
+				MobilSucesso.add(mob);
+				System.out.println("Mobil Geral: "
+						+ mob.doc().getMobilGeral().isGeral());
+				final Object[] ao = { mob.doc(),
+						mob.getUltimaMovimentacaoNaoCancelada() };
+				System.out.println("Sucesso sigla: " + mob.doc().getSigla());
+				check.add(ao);
 			}
 		}
 
@@ -3416,7 +3421,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public String getDtDevolucaoMovString() {
 		return dtDevolucaoMovString;
 	}
-	
+
 	public String getDtRegMov() {
 		return dtRegMov;
 	}
@@ -3685,7 +3690,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		} catch (final NullPointerException e) {
 			mov.setDtMov(null);
 		}
-		
+
 		final SimpleDateFormat ddf = new SimpleDateFormat("dd/MM/yyyy");
 		try {
 			mov.setDtFimMov(ddf.parse(getDtDevolucaoMovString()));
@@ -3875,7 +3880,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setDtDevolucaoMovString(final String dtDevolucaoMovString) {
 		this.dtDevolucaoMovString = dtDevolucaoMovString;
 	}
-	
+
 	public void setDtRegMov(final String dtRegMov) {
 		this.dtRegMov = dtRegMov;
 	}

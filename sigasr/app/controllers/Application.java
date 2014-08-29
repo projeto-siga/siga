@@ -676,7 +676,7 @@ public class Application extends SigaApplication {
 		List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
-		List<SrLista> listasPrioridade = SrLista.listar();
+		List<SrLista> listasPrioridade = SrLista.listar(false);
 		SrConfiguracao designacao = new SrConfiguracao();
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
@@ -699,13 +699,13 @@ public class Application extends SigaApplication {
 		listarDesignacao();
 	}
 
-	public static void listarPermissaoUsoLista() throws Exception {
+	public static void listarPermissaoUsoLista(boolean mostrarDesativado) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> permissoes = SrConfiguracao
-				.listarPermissoesUsoLista(lotaTitular());
+				.listarPermissoesUsoLista(lotaTitular(), mostrarDesativado);
 		render(permissoes);
 	}
-
+	
 	public static void editarPermissaoUsoLista(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<CpOrgaoUsuario> orgaos = JPA.em()
@@ -724,7 +724,7 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
 		permissao.salvarComoPermissaoUsoLista();
-		listarPermissaoUsoLista();
+		listarPermissaoUsoLista(false);
 	}
 
 	public static void desativarPermissaoUsoLista(Long id) throws Exception {
@@ -957,9 +957,9 @@ public class Application extends SigaApplication {
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
-	public static void listarLista() throws Exception {
-		List<SrLista> lista = SrLista.listar();
-		render(lista);
+	public static void listarLista(boolean mostrarDesativado) throws Exception {
+		List<SrLista> lista = SrLista.listar(true);
+		render(lista, true);
 	}
 
 	public static void editarLista(Long id) throws Exception {
@@ -971,13 +971,13 @@ public class Application extends SigaApplication {
 
 	public static void gravarLista(SrLista lista) throws Exception {
 		lista.salvar();
-		listarLista();
+		listarLista(Boolean.FALSE);
 	}
 
 	public static void desativarLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.finalizar();
-		listarLista();
+		listarLista(Boolean.FALSE);
 	}
 
 	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)
@@ -1127,7 +1127,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relatório de Transferências", pdf.length,
+		renderBinary(is, "Relatório de Transferêªncias", pdf.length,
 				"application/pdf", true);
 	}
 

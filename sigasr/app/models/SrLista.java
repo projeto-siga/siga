@@ -33,6 +33,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Table(name = "SR_LISTA", schema = "SIGASR")
 public class SrLista extends HistoricoSuporte {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private class SrSolicitacaoListaComparator implements
 			Comparator<SrSolicitacao> {
 
@@ -92,8 +97,15 @@ public class SrLista extends HistoricoSuporte {
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
 
-	public static List<SrLista> listar() {
-		return SrLista.find("hisDtFim is null order by idLista").fetch();
+	public static List<SrLista> listar(boolean mostrarDesativado) {
+		StringBuffer sb = new StringBuffer();
+		
+		if (!mostrarDesativado)
+			sb.append(" hisDtFim is null ");
+		
+		sb.append(" order by idLista ");
+		
+		return SrLista.find(sb.toString()).fetch();
 	}
 
 	public static List<SrLista> getCriadasPelaLotacao(DpLotacao lota) {

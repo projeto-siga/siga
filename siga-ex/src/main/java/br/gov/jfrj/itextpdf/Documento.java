@@ -890,10 +890,10 @@ public class Documento {
 
 	public static byte[] generatePdf(String sHtml) throws Exception {
 		return generatePdf(sHtml, AbstractConversorHTMLFactory.getInstance()
-				.getConversorPadrao());
+				.getConversorPadrao(), null);
 	}
 
-	public static byte[] generatePdf(String sHtml, ConversorHtml parser)
+	public static byte[] generatePdf(String sHtml, ConversorHtml parser, String realPath)
 			throws Exception {
 		// System.out.println(System.currentTimeMillis() + " - INI
 		// generatePdf");
@@ -910,8 +910,11 @@ public class Documento {
 		// HttpServletRequest req = ServletActionContext.getRequest();
 		// sHtml = sHtml.replace("contextpath", "http://" + req.getServerName()+
 		// ":" + req.getServerPort() + req.getContextPath());
-		sHtml = sHtml.replace("contextpath", ServletActionContext
+		if(realPath == null)
+			sHtml = sHtml.replace("contextpath", ServletActionContext
 				.getServletContext().getRealPath(""));
+		else
+			sHtml = sHtml.replace("contextpath", realPath);
 
 		// log.info("Processamento: prestes a entrar no nheengatu");
 

@@ -57,11 +57,11 @@ public abstract class AbstractCPMarca extends Objeto implements Serializable {
 	private java.lang.Long idMarca;
 
 	@Column(name = "DT_INI_MARCA")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtIniMarca;
 
 	@Column(name = "DT_FIM_MARCA")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtFimMarca;
 
 	@ManyToOne

@@ -19,15 +19,41 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeSet;
 
+import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.ws.rs.Path;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+import br.gov.jfrj.siga.ex.ExClassificacao;
+import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
+import br.gov.jfrj.siga.ex.ExTipoDocumento;
+import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
+import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
@@ -39,6 +65,8 @@ import br.gov.jfrj.webwork.action.ExMobilSelecao;
 public class ExServiceImpl implements ExService {
 
 	private boolean hideStackTrace = false;
+	@Resource
+	private WebServiceContext context;
 
 	public boolean isHideStackTrace() {
 		return hideStackTrace;
@@ -353,5 +381,258 @@ public class ExServiceImpl implements ExService {
 			throw e;
 		}
 	}
+	
+	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
+			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, Boolean finalizar) throws Exception {
+    	try {
+    		DpPessoa cadastrante = null;
+    		DpPessoa titular = null;
+    		DpPessoa subscritor = null;
+    		CpOrgaoUsuario orgaoUsuario = null;
+    		ExModelo modelo = null;
+    		ExFormaDocumento forma = null;
+    		ExTipoDocumento tipoDocumento = null;
+    		ExClassificacao classificacao = null;
+    		ExNivelAcesso nivelDeAcesso = null;
+    		DpLotacao destinatarioLotacao = null;
+    		DpPessoa destinatarioPessoa = null;
+    		CpOrgao destinatarioOrgaoExterno = null;
+    		
+    		ExDocumento doc = new ExDocumento();
+    		
+    		if(cadastranteStr == null || cadastranteStr.isEmpty())
+    			throw new AplicacaoException("A matrícula do cadastrante não foi informada.");
+    		
+    		if(subscritorStr == null || subscritorStr.isEmpty())
+    			throw new AplicacaoException("A matrícula do subscritor não foi informada.");
+
+    		cadastrante = dao().getPessoaFromSigla(cadastranteStr);
+    		
+    		if(cadastrante == null)
+    			throw new AplicacaoException("Não foi possível encontrar um cadastrante com a matrícula informada.");
+    		
+    		if(cadastrante.isFechada())
+    			throw new AplicacaoException("O cadastrante não está mais ativo.");
+    		
+    		subscritor = dao().getPessoaFromSigla(subscritorStr);
+    		
+    		if(subscritor == null)
+    			throw new AplicacaoException("Não foi possível encontrar um subscritor com a matrícula informada.");
+ 
+    		if(subscritor.isFechada())
+    			throw new AplicacaoException("O subscritor não está mais ativo.");
+    		
+    		if(tipoDeDocumentoLong == null)
+    			tipoDocumento = (dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class,
+        				false));
+    		else
+    			tipoDocumento = (dao().consultar(tipoDeDocumentoLong, ExTipoDocumento.class,
+        				false));
+    		
+    		if(tipoDocumento == null)
+    			throw new AplicacaoException("Não foi possível encontrar o Tipo de Documento. Os Tipos de Documentos aceitos são: 1-Interno Produzido, 2-Interno Importado, 3-Externo");
+    		
+    		if(modeloLong == null)
+    			throw new AplicacaoException("O modelo não foi informado.");
+    		
+    		modelo = dao().consultar(modeloLong, ExModelo.class,
+    				false);
+    		
+    		if(modelo == null)
+    			throw new AplicacaoException("Não foi possível encontrar um modelo com o id informado.");
+    		
+    		
+    		forma = modelo.getExFormaDocumento();
+    		
+    		if(!forma.podeSerDoTipo(tipoDocumento))
+    			throw new AplicacaoException("O documento do tipo " + forma.getDescricao() + " não pode ser " + tipoDocumento.getDescricao());
+    		
+       		if((classificacaoStr == null || classificacaoStr.isEmpty()) && !modelo.isClassificacaoAutomatica())
+       			throw new AplicacaoException("A Classificação não foi informada.");
+    		
+    		classificacao =  dao().consultarExClassificacao(classificacaoStr);
+    		
+    		if(classificacao == null)
+    			throw new AplicacaoException("Não foi possível encontrar uma classificação com o código informado.");
+    		
+    		if(eletronico == null)
+    			eletronico = true;
+
+    		Long idSit = Ex
+    				.getInstance()
+    				.getConf()
+    				.buscaSituacao(modelo, tipoDocumento,cadastrante, cadastrante.getLotacao(),
+    						CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
+    				.getIdSitConfiguracao();
+    		
+    		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+    			eletronico = true;
+    		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
+    			eletronico = false;
+    		} 
+    		
+    		if(nivelDeAcessoLong == null) {
+    			
+	    		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+	    		
+	    		ExConfiguracao config = new ExConfiguracao();
+	    		CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
+	    		CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
+	    		config.setDpPessoa(cadastrante);
+	    		config.setLotacao(cadastrante.getLotacao());
+	    		config.setExTipoDocumento(tipoDocumento);
+	    		config.setExFormaDocumento(forma);
+	    		config.setExModelo(modelo);
+	    		config.setExClassificacao(classificacao);
+	    		exTpConfig
+	    				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
+	    		config.setCpTipoConfiguracao(exTpConfig);
+	    		exStConfig
+	    			.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
+	    		config.setCpSituacaoConfiguracao(exStConfig);
+	    		
+	    		ExConfiguracao exConfig = ((ExConfiguracao) Ex
+	    				.getInstance()
+	    				.getConf()
+	    				.buscaConfiguracao(config,
+	    						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
+	    		
+	    		if(exConfig != null)
+	    			nivelDeAcesso = exConfig.getExNivelAcesso();
+    		} else {
+    			nivelDeAcesso = dao().consultar(nivelDeAcessoLong, ExNivelAcesso.class, false);
+    		}
+    		
+			if(nivelDeAcesso == null)
+				nivelDeAcesso = dao().consultar(6L, ExNivelAcesso.class, false);	
+			
+			List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
+			ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();
+			Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+
+			ExConfiguracao config = new ExConfiguracao();
+			CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
+			config.setDpPessoa(cadastrante);
+			config.setLotacao(cadastrante.getLotacao());
+			config.setExTipoDocumento(tipoDocumento);
+			config.setExFormaDocumento(forma);
+			config.setExModelo(modelo);
+			config.setExClassificacao(classificacao);
+			exTpConfig
+					.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
+			config.setCpTipoConfiguracao(exTpConfig);
+			int nivelMinimo = ((ExConfiguracao) Ex
+					.getInstance()
+					.getConf()
+					.buscaConfiguracao(config,
+							new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt))
+					.getExNivelAcesso().getGrauNivelAcesso();
+			exTpConfig
+					.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
+			config.setCpTipoConfiguracao(exTpConfig);
+			int nivelMaximo = ((ExConfiguracao) Ex
+					.getInstance()
+					.getConf()
+					.buscaConfiguracao(config,
+							new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt))
+					.getExNivelAcesso().getGrauNivelAcesso();
+
+			for (ExNivelAcesso nivelAcesso : listaNiveis) {
+				if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo
+						&& nivelAcesso.getGrauNivelAcesso() <= nivelMaximo)
+					niveisFinal.add(nivelAcesso);
+			}
+			
+			if(niveisFinal != null && !niveisFinal.isEmpty() & !niveisFinal.contains(nivelDeAcesso))
+				nivelDeAcesso = niveisFinal.get(0);
+    		
+    		doc.setCadastrante(cadastrante);
+    		doc.setLotaCadastrante(cadastrante.getLotacao());
+    		doc.setTitular(cadastrante);
+    		doc.setLotaTitular(cadastrante.getLotacao());
+    		
+    		if(destinatarioStr != null) {
+    			try {
+        			destinatarioLotacao = dao().getLotacaoFromSigla(destinatarioStr);
+
+        			if(destinatarioLotacao != null)
+        				doc.setLotaDestinatario(destinatarioLotacao);
+				} catch (Exception e) {
+				}
+    		}
+    		
+    		if(destinatarioStr != null && destinatarioLotacao == null) {
+    			try {
+        			destinatarioPessoa = dao().getPessoaFromSigla(destinatarioStr);
+        			
+        			if(destinatarioPessoa != null)
+        				doc.setDestinatario(destinatarioPessoa);
+				} catch (Exception e) {
+				}
+    		}
+    		
+    		if(destinatarioStr != null && destinatarioLotacao == null && destinatarioPessoa == null) {
+    			try {
+        			destinatarioOrgaoExterno = dao().getOrgaoFromSiglaExata(destinatarioStr);
+        			
+        			if(destinatarioOrgaoExterno != null) {
+        				doc.setOrgaoExternoDestinatario(destinatarioOrgaoExterno);
+        				doc.setNmOrgaoExterno(destinatarioCampoExtraStr);
+        			}
+				} catch (Exception e) {
+				}
+    		}
+    		
+    		if(destinatarioStr != null && destinatarioLotacao == null && destinatarioPessoa == null && destinatarioOrgaoExterno == null) {
+    			doc.setNmDestinatario(destinatarioStr);
+    		}
+    		
+    		doc.setSubscritor(subscritor);
+    		doc.setLotaSubscritor(subscritor.getLotacao());
+    		doc.setOrgaoUsuario(subscritor.getOrgaoUsuario());
+    		doc.setExTipoDocumento(tipoDocumento);
+    		doc.setExFormaDocumento(forma);
+    		doc.setExModelo(modelo);
+    		doc.setDescrDocumento(descricaoStr);
+    		doc.setExClassificacao(classificacao);
+    		if(eletronico)
+    			doc.setFgEletronico("S");
+    		else
+    			doc.setFgEletronico("N");
+    			
+    		doc.setExNivelAcesso(nivelDeAcesso);
+    		
+    		ExMobil mob = new ExMobil();
+			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL,
+					ExTipoMobil.class, false));
+			mob.setNumSequencia(1);
+			mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
+			mob.setExDocumento(doc);
+			
+			doc.setExMobilSet(new TreeSet<ExMobil>());
+			doc.getExMobilSet().add(mob);
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			baos.write(conteudo.getBytes());
+			
+			doc.setConteudoTpDoc("application/zip");
+			doc.setConteudoBlobForm(baos.toByteArray());
+			
+			ServletContext servletContext =
+				    (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
+			
+			String realPath = servletContext.getRealPath("");
+    		
+    		doc = Ex.getInstance()
+			       .getBL().gravar(cadastrante, cadastrante.getLotacao(), doc, realPath);
+    		
+    		if(finalizar)
+    			Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc, realPath);
+
+    		return doc.getSigla();
+		} catch (Exception e) {
+			throw e;
+		}	
+    }
 
 }

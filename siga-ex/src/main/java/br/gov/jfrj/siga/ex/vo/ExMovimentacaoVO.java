@@ -328,6 +328,40 @@ public class ExMovimentacaoVO extends ExVO {
 						"Documento juntado: ", mensagemPos, null);
 			}
 		}
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+			descricao = null;
+			if (originadaAqui) {
+				if (mov.getExMobilRef() != null) {
+					
+					String mensagemPos = null;
+					
+					if(!mov.getExMobilRef().getExDocumento().getDescrDocumento().equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
+						mensagemPos = " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
+					
+					
+					addAcao(null, mov.getExMobilRef().getSigla(),
+							"/expediente/doc", "exibir", true, null, "sigla="
+									+ mov.getExMobilRef().getSigla(),
+							"Desentranhado do documento: ", mensagemPos, null);
+				} else {
+					descricao = "Desentranhado do documento: " + mov.getDescrMov();
+				}
+			} else {
+				
+				String mensagemPos = null;
+				
+				if(!mov.getExMobil().getExDocumento().getDescrDocumento().equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
+					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
+				
+				
+				
+				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
+						"exibir", true, null, "sigla="
+								+ mov.getExMobil().getSigla(),
+						"Documento desentranhado: ", mensagemPos, null);
+			}
+		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_APENSACAO) {
 			descricao = null;

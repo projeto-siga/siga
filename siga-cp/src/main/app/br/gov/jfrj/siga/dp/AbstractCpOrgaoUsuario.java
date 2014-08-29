@@ -83,12 +83,12 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements Serializa
 	public boolean equals(final Object rhs) {
 		if ((rhs == null) || !(rhs instanceof CpOrgao))
 			return false;
-		final CpOrgao that = (CpOrgao) rhs;
+		final CpOrgaoUsuario that = (CpOrgaoUsuario) rhs;
 
-		if ((this.getIdOrgaoUsu() == null ? that.getIdOrgao() == null : this
-				.getIdOrgaoUsu().equals(that.getIdOrgao()))) {
-			if ((this.getNmOrgaoUsu() == null ? that.getNmOrgao() == null
-					: this.getNmOrgaoUsu().equals(that.getNmOrgao())))
+		if ((this.getIdOrgaoUsu() == null ? that.getIdOrgaoUsu() == null : this
+				.getIdOrgaoUsu().equals(that.getIdOrgaoUsu()))) {
+			if ((this.getNmOrgaoUsu() == null ? that.getNmOrgaoUsu() == null
+					: this.getNmOrgaoUsu().equals(that.getNmOrgaoUsu())))
 				return true;
 
 		}

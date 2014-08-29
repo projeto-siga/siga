@@ -1007,7 +1007,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			mob = (ExMobil) dao().consultarPorSigla(filter);
 
 			Ex.getInstance().getBL()
-					.processar(mob.getExDocumento(), true, false);
+					.processar(mob.getExDocumento(), true, false, null);
 		}
 		return Action.SUCCESS;
 	}
@@ -1153,7 +1153,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		try {
 
 			setMsg(Ex.getInstance().getBL()
-					.finalizar(getCadastrante(), getLotaTitular(), doc));
+					.finalizar(getCadastrante(), getLotaTitular(), doc, null));
 
 			if (doc.getForm() != null) {
 				String funcao = doc.getForm().get("acaoFinalizar");
@@ -1272,7 +1272,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 
 			Ex.getInstance().getBL()
-					.gravar(getCadastrante(), getLotaTitular(), doc);
+					.gravar(getCadastrante(), getLotaTitular(), doc, null);
 
 			lerEntrevista(doc);
 
@@ -1373,7 +1373,7 @@ public class ExDocumentoAction extends ExActionSupport {
 					.consultar(paramLong("idMod"), ExModelo.class, false));
 		}
 
-		Ex.getInstance().getBL().processar(doc, false, false);
+		Ex.getInstance().getBL().processar(doc, false, false, null);
 
 		setPdfStreamResult(new ByteArrayInputStream(doc.getConteudoBlobPdf()));
 
@@ -1607,6 +1607,18 @@ public class ExDocumentoAction extends ExActionSupport {
 		} catch (final Exception e) {
 			throw e;
 		}
+		return Action.SUCCESS;
+	}
+	
+	public String acriarDocTest() throws Exception {
+		try {
+			setMensagem(Ex.getInstance()
+					.getBL()
+					.criarDocTeste());
+		} catch (final Exception e) {
+			throw e;
+		}
+		
 		return Action.SUCCESS;
 	}
 

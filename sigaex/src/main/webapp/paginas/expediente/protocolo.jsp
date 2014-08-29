@@ -81,11 +81,12 @@
 							</c:otherwise>
 						</c:choose>
 						<tr class="${evenorodd}">
-							<td align="right"><ww:url id="url" action="exibir"
-									namespace="/expediente/doc">
+							<td align="right">
+								<ww:url id="url" action="exibir" namespace="/expediente/doc">
 									<ww:hidden name="sigla" value="%{documento[1].sigla}" />
-								</ww:url> <ww:a href="%{url}">${documento[1].exMobil.sigla}</ww:a> <c:if
-									test="${not documento[1].exMobil.geral}">
+									<ww:param name="sigla">${documento[1].exMobil.sigla}</ww:param>	
+								</ww:url> <ww:a href="%{url}">${documento[1].exMobil.codigo}</ww:a> 
+								<c:if test="${not documento[1].exMobil.geral}">
 									<td align="center">${documento[0].dtDocDDMMYY}</td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[0].lotaSubscritor.sigla}"
@@ -136,14 +137,17 @@
 			</div>
 
 			<br />
-			<ww:form name="frm" action="principal" namespace="/" method="GET"
-				theme="simple">
-				<input type="button" value="Imprimir" class="gt-btn-medium"
-					onclick="javascript: document.body.offsetHeight; window.print();" />
+			<ww:form name="frm" action="principal" namespace="/" method="GET" theme="simple">
+				<input type="button" value="Imprimir" class="gt-btn-medium gt-btn-left"
+					onclick="javascript: document.body.offsetHeight; window.print();"/>
 				<c:if test="${param.popup != true}">
-					<input type="button" value="Voltar"
+					<input type="button" value="Voltar" class="gt-btn-medium gt-btn-left" 
 						onclick="javascript:history.back();" />
 				</c:if>
+			</ww:form>
+			<br />
+			<br />
+			<div>	
 				<br />
 				<br />
 				<p align="center">Recebido em: _____/_____/_____ às _____:_____</p>
@@ -152,7 +156,7 @@
 				<br />
 				<p align="center">________________________________________________</p>
 				<p align="center">Assinatura do Servidor</p>
-			</ww:form>
+			</div>	
 		</div>
 	</div>
 </siga:pagina>

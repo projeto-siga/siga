@@ -41,7 +41,8 @@ PS: (A primeira vez isso pode demorar bastante).
 * JBoss -> Criar o módulo do Play! Framework, copiando a pasta ***projeto-siga/configuracao/Play/modulo/sigadoc*** em ***%JBOSS_HOME%/modules/***  
 * Maven -> Instalar a biblioteca no repositório local do maven executando o arquivo ***projeto-siga/configuracao/Play/maven/configure.bat***
 
-
+## Fonte do Play
+* Para compilar: na pasta framework, executar ant package
 ### Administração
 [Interface de administração](http://localhost:9990)
 usuário: admin

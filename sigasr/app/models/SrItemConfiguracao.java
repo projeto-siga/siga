@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,7 +22,6 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
@@ -72,9 +69,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
 	public List<SrItemConfiguracao> meuItemHistoricoSet;
-	
-	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
-	public Set<SrGestorItem> gestorSet;
 
 	public SrItemConfiguracao() {
 		this(null, null);
@@ -346,16 +340,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 					+ Texto.slugify(this.tituloItemConfiguracao, true, false);
 		}
 		return tags;
-	}
-	
-	@Override
-	public void salvar() throws Exception {
-		super.salvar();
-		if (gestorSet != null)
-			for (SrGestorItem gestor : gestorSet){
-				gestor.itemConfiguracao = this;
-				gestor.salvar();
-			}
 	}
 
 }

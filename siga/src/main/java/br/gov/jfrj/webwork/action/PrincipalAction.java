@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -44,11 +45,8 @@ public class PrincipalAction extends SigaActionSupport {
 	public class GenericoSelecao {
 
 		private Long id;
-
 		private String sigla;
-
 		private String matricula;
-
 		private String descricao;
 
 		public String getDescricao() {
@@ -87,44 +85,23 @@ public class PrincipalAction extends SigaActionSupport {
 	private static final String OK = "<span style=\"color: green;\">OK</span>";
 	private static final String ERRO = "<span style=\"color: red;\">ERRO</span>";
 	private static final String SIGA_TESTES_ACTION = "/siga/testes/testes.action";
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1630775520737927455L;
-
 	private List listEstados;
-
 	private String sigla;
-
 	private String matricula;
-
+	private String idp;
 	private GenericoSelecao sel;
 
-	public String getSigla() {
-		return sigla;
-	}
-
-	public void setSigla(String sigla) {
-		this.sigla = sigla;
-	}
-
-	public GenericoSelecao getSel() {
-		return sel;
-	}
-
-	public void setSel(GenericoSelecao sel) {
-		this.sel = sel;
-	}
-
-	public PrincipalAction() {
-		sel = new GenericoSelecao();
-	}
-
 	@Override
+	@SuppressWarnings("unchecked")
 	public String execute() throws Exception {
-		// super.getRequest ().setAttribute ( "_cadastrante" , super.getTitular
-		// ().getSigla () + "@" + super.getLotaTitular ().getOrgaoUsuario
-		// ().getSiglaOrgaoUsu ()+ super.getLotaTitular ().getSigla () );
+		try{
+			Map<String, Object> map = (Map<String, Object>) getRequest().getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
+			String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
+			setIdp(idpSessionID);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
 		return Action.SUCCESS;
 	}
 
@@ -306,6 +283,34 @@ public class PrincipalAction extends SigaActionSupport {
 
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
+	}
+
+	public String getSigla() {
+		return sigla;
+	}
+
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
+	}
+
+	public GenericoSelecao getSel() {
+		return sel;
+	}
+
+	public void setSel(GenericoSelecao sel) {
+		this.sel = sel;
+	}
+
+	public PrincipalAction() {
+		sel = new GenericoSelecao();
+	}
+	
+	public String getIdp() {
+		return idp;
+	}
+
+	public void setIdp(String idp) {
+		this.idp = idp;
 	}
 
 }

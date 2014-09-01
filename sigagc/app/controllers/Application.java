@@ -35,7 +35,6 @@ import play.Play;
 import play.Play.Mode;
 import play.data.Upload;
 import play.db.jpa.JPA;
-import play.db.jpa.Model;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
@@ -107,8 +106,9 @@ public class Application extends SigaApplication {
 	}
 
 	static void delme_addDefaults() throws Exception {
+		ConexaoHTTP http = new ConexaoHTTP();
 		ModeloDao.freeInstance();
-
+		
 		if (request.url.contains("proxy"))
 			return;
 
@@ -119,8 +119,8 @@ public class Application extends SigaApplication {
 			if (!h.name.equals("content-type"))
 				atributos.put(h.name, h.value());
 
-		String paginaVazia = ConexaoHTTP.get(HTTP_LOCALHOST_8080
-				+ "/siga/pagina_vazia.action?popup=false", atributos);
+		String IDPSessionID = params.get("idp");
+		String paginaVazia = http.get(getBaseSiga() + "/siga/pagina_vazia.action?popup=false", IDPSessionID);
 
 		String[] pageText = paginaVazia.split("<!-- insert body -->");
 		String[] cabecalho = pageText[0].split("<!-- insert menu -->");
@@ -129,9 +129,7 @@ public class Application extends SigaApplication {
 		// renderArgs.put("_cabecalho", pageText[0]);
 		RenderArgs.current().put("_rodape", pageText[1]);
 
-		String[] IDs = ConexaoHTTP.get(
-				HTTP_LOCALHOST_8080 + "/siga/usuario_autenticado.action",
-				atributos).split(";");
+		String[] IDs = http.get(getBaseSiga() + "/siga/usuario_autenticado.action", IDPSessionID).split(";");
 
 		// DpPessoa cadastrante = (DpPessoa) JPA.em().find(DpPessoa.class,
 		// Long.parseLong(IDs[0]));

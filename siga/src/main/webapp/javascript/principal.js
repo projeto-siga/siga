@@ -45,13 +45,17 @@ window.Siga = {
         sigasr: {
             name: "sigasr",
             url: "/sigasr/solicitacao/gadget",
-            params: {},
+            params: {
+            	idp: ""
+            },
             viewId: "rightbottom"
         },
         sigagc: {
             name: "sigagc",
             url: "/sigagc/app/gadget",
-            params: {},
+            params: { 
+            		idp: "" 
+            },
             viewId: "rightbottom2"
         }
     },
@@ -61,7 +65,6 @@ window.Siga = {
     },
 
     display: function(target, text){
-    	debugger;
         var self = this;
         var id = target.attr("id");
         
@@ -204,6 +207,10 @@ var Siga = window.Siga;
 // Funcao principal que sera chamada apos o load da pagina
 $(function() {
 	// Cache false pois o I.E tem serios problemas com cache de chamadas assincronas.
+	
+	Siga.modules["sigagc"].params["idp"] =  $("#idp").val()
+	Siga.modules["sigasr"].params["idp"] =  $("#idp").val()
+	
     $.ajaxSetup({ cache: false });
     Siga.loadModules();
 });

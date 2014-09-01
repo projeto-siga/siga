@@ -12,6 +12,7 @@ import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Request;
+import play.mvc.Scope.Params;
 import play.mvc.Scope.RenderArgs;
 import play.templates.JavaExtensions;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
@@ -33,22 +34,25 @@ public class SigaApplication extends Controller {
 	}
 
 	protected static void obterCabecalhoEUsuario(String backgroundColor) throws Exception {
+		ConexaoHTTP http = new ConexaoHTTP();
 		try {
 			request = (request == null) ? Request.current() : request;
-			params = (params == null) ? params.current() : params;
+			params = (params == null) ? Params.current() : params;
 			renderArgs = RenderArgs.current();
 			
 			// Obter cabecalho e rodape do Siga
 			HashMap<String, String> atributos = new HashMap<String, String>();
 			for (Http.Header h : request.headers.values())
-				if (!h.name.equals("content-type"))
+	 			if (!h.name.equals("content-type"))
 					atributos.put(h.name, h.value());
 
 			String popup = params.get("popup");
 			if (popup == null	|| (!popup.equals("true") && !popup.equals("false")))
 				popup = "false";
 
-			String paginaVazia = ConexaoHTTP.get(getBaseSiga()	+ "/pagina_vazia.action?popup=" + popup, atributos);
+			String url = getBaseSiga()	+ "/pagina_vazia.action?popup=" + popup;
+			String IDPSessionID = params.get("idp");
+			String paginaVazia = http.get(url, IDPSessionID);
 			if (!paginaVazia.contains("/sigaidp")){
 				String[] pageText = paginaVazia.split("<!-- insert body -->");
 				String[] cabecalho = pageText[0].split("<!-- insert menu -->");
@@ -75,11 +79,12 @@ public class SigaApplication extends Controller {
 			}
 			
 			// Obter usuario logado
-			//String[] IDs = ConexaoHTTP.get(getBaseSiga() + "/usuario_autenticado.action", atributos).split(";");
-			String[] IDs = "184202;;184202;5053;1872".split(";");
+			url = getBaseSiga() + "/usuario_autenticado.action";
+			String[] IDs = http.get(url, IDPSessionID).split(";");
 			
-			RenderArgs.current().put("cadastrante",JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0])));
-
+			DpPessoa pessoa = JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0]));
+			RenderArgs.current().put("cadastrante", pessoa);
+			
 			if (IDs[1] != null && !IDs[1].equals(""))
 				RenderArgs.current().put("lotaCadastrante",JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
 

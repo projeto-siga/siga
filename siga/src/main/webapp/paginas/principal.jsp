@@ -85,6 +85,7 @@
 
 			<input type="hidden" name="webwork.token.name" value="webwork.token">
             <input type="hidden" name="webwork.token" value="4V5NHN4JMVPK6WUKD6O5BS3S64ADKB9D">
+            <input type="hidden" id="idp" name="idp" value="${idp}">
 		</div>
 	</div>
 </siga:pagina>

@@ -7,10 +7,8 @@
 		<dependencies>			
 			<module name="org.picketlink" />
 			<module name="asm.asm" />
-			<module name="sigadoc.play" export="true"/>
+			<module name="sigadoc.play" export="true" slot="sigagc"/>
 			<module name="org.hibernate" export="true"/>
-			
-
 		</dependencies>
 
 	</deployment>

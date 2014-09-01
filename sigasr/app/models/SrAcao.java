@@ -162,7 +162,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrAcao> listaFinal = new ArrayList<SrAcao>();
 
 		if (listaBase == null)
-			lista = listar();
+			lista = listar(Boolean.FALSE);
 		else
 			lista = listaBase;
 
@@ -250,8 +250,15 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 				getSiglaSemZeros() + "%").fetch();
 	}
 
-	public static List<SrAcao> listar() {
-		return SrAcao.find("hisDtFim is null order by siglaAcao").fetch();
+	public static List<SrAcao> listar(boolean mostrarDesativados) {
+		StringBuffer sb = new StringBuffer();
+		
+		if (!mostrarDesativados)
+			sb.append(" hisDtFim is null");
+		
+		sb.append(" order by siglaAcao ");
+		
+		return SrAcao.find(sb.toString()).fetch();
 	}
 
 	public String getGcTags() {

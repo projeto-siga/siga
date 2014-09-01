@@ -985,7 +985,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		for (SrConfiguracao conf : confs) {
 			if (conf.itemConfiguracao == null)
-				listaFinal.addAll(SrItemConfiguracao.listar());
+				listaFinal.addAll(SrItemConfiguracao.listar(Boolean.FALSE));
 			else {
 				listaFinal.addAll(conf.itemConfiguracao.getAtual()
 						.listarItemETodosDescendentes());
@@ -1019,7 +1019,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			// de configuraÃ§Ãµes mais genÃ©ricas nÃ£o substituam os das mais
 			// especÃ­ficas, que vÃªm antes
 			if (conf.acao == null) {
-				for (SrAcao acao : SrAcao.listar())
+				for (SrAcao acao : SrAcao.listar(Boolean.FALSE))
 					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
 						listaFinal.put(acao, conf.atendente);
 				break;

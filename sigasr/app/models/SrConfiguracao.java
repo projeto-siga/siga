@@ -175,13 +175,19 @@ public class SrConfiguracao extends CpConfiguracao {
 		salvar();
 	}
 
-	public static List<SrConfiguracao> listarDesignacoes() {
+	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (!mostrarDesativados)
+			sb.append(" and conf.hisDtFim is null");
+		
+		sb.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario ");
+		
 		return JPA
 				.em()
 				.createQuery(
-						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario",
+						sb.toString(), 
 						SrConfiguracao.class).getResultList();
 	}
 

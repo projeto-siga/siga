@@ -1,6 +1,27 @@
 #{extends 'main.html' /} #{set title:'Edição de Item de Configuração' /}
 
-<script src="/sigasr/public/javascripts/jquery-1.11.1.min.js"></script>
+<style>
+.inline {
+	display: inline-flex !important;
+}
+.tabela {
+	margin: -10px 0 0 71px; 
+	min-width: 200px;
+}
+.tabela tr {
+	border: solid; 
+	border-color: rgb(169, 169, 169); 
+	border-width:1px; 
+	font-weight: bold;
+	line-height: 20px;
+}
+.tabela th {
+	color: #365b6d; 
+	font-size: 100%;
+	padding: 5px 10px;
+}
+</style>
+
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
 <script>
@@ -8,48 +29,184 @@ $(function(){
 	$("#itemConfiguracao").mask("99.99.99");
 });
 </script>
+<script>
+$(function() {
 
+        var jGestores = $("#gestoresTr"),
+        gestores = jGestores[0],
+        jDialog = $("#dialog"),
+        dialog = jDialog[0],
+        jSelect = $("#gestorpessoagestorlotacao");
+       
+        $("#botaoIncluir").click(function(){
+                jDialog.data('acao',gestores.incluirItem).dialog('open');
+        });
+       
+        jDialog.dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                resizable: false,
+                close: function() {
+                	$("#gestorpessoa_sigla").val('');
+                	$("#gestorlotacao_sigla").val('');
+                	$("#gestorpessoa_descricao").val('');
+                	$("#gestorlotacao_descricao").val('');
+                	$("#gestorpessoaSpan").html('');  
+                	$("#gestorlotacaoSpan").html('');  
+                    jDialog.data('gestorSet','');
+	            },
+	            open: function(){
+                    if (jDialog.data("gestorSet"))
+                            jDialog.dialog('option', 'title', 'Alterar Gestor');
+                    else
+                            jDialog.dialog('option', 'title', 'Incluir Gestor');  
+	            }
+        });
+        $("#modalOk").click(function(){
+                var acao = jDialog.data('acao');
+                var jTipoEscolhido = jSelect.find("option:selected");
+                
+                if(jTipoEscolhido.val() == 1) {
+                	acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
+                } else if (jTipoEscolhido.val() == 2) {
+                	acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
+                }
+                
+                jDialog.dialog('close');
+        });
+        $("#modalCancel").click(function(){
+                jDialog.dialog('close');
+        });
+
+        gestores["index"] = 0;
+        gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
+            if (!id)
+                id = 'novo_' + ++gestores["index"];
+            $("#tabelaDiv").show();
+            jGestores.append("<tr id =\"" + id + "\"></tr>");
+	        var jNewTr = jGestores.find("tr:last-child");
+	        jNewTr.append("<td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span id=\"" + tipoGestor + "\">" 
+	    	        + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" + idDerivadoGestor + "\">"
+	                + nomeGestor + "</span>&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer; float:right;\" /></td>");
+	        jNewTr.find("img:eq(0)").click(function(){
+	        	gestores.removerItem(jNewTr.attr("id"));
+	        });
+  		}
+        gestores.removerItem = function(idItem){
+                $("#"+idItem).remove();
+                gestores["index"]--;
+        }
+
+        #{list items:itemConfiguracao.gestorSet, as:'item'}
+        	#{if item.dpPessoa}
+	        	gestores.incluirItem('${item.dpPessoa.sesbPessoa}${item.dpPessoa.matricula}', '${item.dpPessoa.nomePessoa}', 'pessoa', ${item.dpPessoa.idPessoa}, ${item.idGestorItem});
+        	#{/if}
+	        #{if item.dpLotacao}
+	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
+	        #{/if}
+		#{/list}
+
+        $("[value='Gravar']").click(function(){
+                var jForm = $("form"),
+                        params = jForm.serialize();
+                jGestores.find("td").each(function(i){
+                        var jDivs=$(this).find("span");
+                        var tipo = jDivs[0].id;
+                        if(tipo === 'pessoa'){
+                        	params += '&itemConfiguracao.gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
+                        } else if (tipo === 'lotacao') {
+                        	params += '&itemConfiguracao.gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
+                        }
+                        if (this.id.indexOf("novo_") < 1)
+                        	 params += '&itemConfiguracao.gestorSet[' + i + '].idGestorItem=' + this.id.replace("novo_","");                               
+                });
+                location.href = '@{Application.gravarItem()}?' + params;
+        });
+});
+</script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
+
 		<h2 class="gt-form-head">Cadastro de Item de Configuração</h2>
 		<div class="gt-form gt-content-box">
-		#{form @Application.gravarItem()}
-			#{if itemConfiguracao.idItemConfiguracao} <input
-				type="hidden" name="itemConfiguracao.idItemConfiguracao"
+			<form id="form"> #{if
+			itemConfiguracao.idItemConfiguracao} <input type="hidden"
+				name="itemConfiguracao.idItemConfiguracao"
 				value="${itemConfiguracao.idItemConfiguracao}"> #{/if}
 			#{ifErrors}
 			<p class="gt-error">Alguns campos obrigatórios não foram
 				preenchidos ${error}</p>
 			#{/ifErrors}
-			<div class="gt-form-row gt-width-66">
-				<label>Código</label> <input id="itemConfiguracao" 
-					type="text"
+			<div class="gt-form-row gt-width-100">
+				<label style="margin-left: 17px;" class="inline">Código:</label> <input
+					id="itemConfiguracao" type="text"
 					name="itemConfiguracao.siglaItemConfiguracao"
-					value="${itemConfiguracao?.siglaItemConfiguracao}" />
-					<span style="color: red">#{error
-					'itemConfiguracao.siglaItemConfiguracao' /}</span>
-			</div>
-			<div class="gt-form-row">
-				<label>Título</label> <input type="text" id="itemConfiguracao.tituloItemConfiguracao"
-					name="itemConfiguracao.tituloItemConfiguracao" value="${itemConfiguracao?.tituloItemConfiguracao}" size="100" />
-				<span style="display:inline;color: red">#{error
+					value="${itemConfiguracao?.siglaItemConfiguracao}" /> <span
+					style="color: red;">#{error
+					'itemConfiguracao.siglaItemConfiguracao' /}</span> <label class="inline"
+					style="margin-left: 10px;">Título:</label> <input type="text"
+					id="itemConfiguracao.tituloItemConfiguracao"
+					name="itemConfiguracao.tituloItemConfiguracao"
+					value="${itemConfiguracao?.tituloItemConfiguracao}" size="84" /> <span
+					style="display: inline; color: red;">#{error
 					'itemConfiguracao.tituloItemConfiguracao' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Descrição</label> <input type="text"
+				<label class="inline">Descrição:</label> <input type="text"
 					name="itemConfiguracao.descrItemConfiguracao"
-					value="${itemConfiguracao?.descrItemConfiguracao}" size="100" />
+					value="${itemConfiguracao?.descrItemConfiguracao}" size="119" />
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label style="margin-left: 7px;">Gestores: <img
+					align="right" src="/siga/css/famfamfam/icons/add.png"
+					id="botaoIncluir" style="cursor: pointer; float: initial;" /></label>
+			</div>
+			<div class="gt-form-row gt-width-66" id="tabelaDiv" style="display: none;">
+				<table id="gestoresTr" class="tabela">
+					<tr>
+						<th colspan="2">Gestor</th>
+					</tr>
+				</table>
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label class="inline">Similaridade (Separar itens com ponto
+					e vírgula):</label>
+				<textarea cols="80" rows="4"
+					name="itemConfiguracao.descricaoSimilaridade"
+					id="descricaoSimilaridade">${itemConfiguracao.descricaoSimilaridade}</textarea>
 			</div>
 			<div class="gt-form-row">
-				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-				<a href="@{Application.listarItem}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-				#{if itemConfiguracao?.idItemConfiguracao} <input type="button" value="Desativar"
-					class="gt-btn-medium gt-btn-left"
+				<input type="button" value="Gravar"
+					class="gt-btn-medium gt-btn-left" /> <a
+					href="@{Application.listarItem}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				#{if itemConfiguracao?.idItemConfiguracao} <input type="button"
+					value="Desativar" class="gt-btn-medium gt-btn-left"
 					onclick="location.href='@{Application.desativarItem()}?id=${itemConfiguracao.idItemConfiguracao}'" />
 				#{/if}
 			</div>
-		#{/form}
+			</form> 
+		</div>
+	</div>
+</div>
+
+<div id="dialog">
+	<div class="gt-content">
+		<div class="gt-form gt-content-box">
+			<div class="gt-form-row ">
+				<label>Gestor: </label>
+				<div id="divGestor">#{pessoaLotaSelecao
+					nomeSelPessoa:'gestor.pessoa', nomeSelLotacao:'gestor.lotacao',
+					valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
+					disabled:disabled /}</div>
+			</div>
+			<div class="gt-form-row">
+				<input type="button" id="modalOk" value="Ok"
+					class="gt-btn-medium gt-btn-left" /> <input type="button"
+					value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+			</div>
 		</div>
 	</div>
 </div>

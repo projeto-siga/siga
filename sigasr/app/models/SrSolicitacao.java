@@ -49,6 +49,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -929,8 +930,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				+ "	where solicitante.idPessoa in ("
 				+ "		select idPessoa from DpPessoa "
 				+ "		where idPessoaIni = :idInicial" + "	)" + ")";
-		TypedQuery<SrSolicitacao> query = JPA.em().createQuery(queryString,
-				SrSolicitacao.class);
+		Query query = JPA.em().createQuery(queryString);
 		query.setParameter("idInicial", solicitante.getIdPessoaIni());
 		List<SrSolicitacao> listaProvisoria = query.getResultList();
 		SrSolicitacao ultima = null;
@@ -939,9 +939,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (ultima == null && lotaSolicitante != null) {
 			queryString = queryString.replace("solicitante.idPessoa",
-					"lotaSolicitante.idLotacao");
+					 "lotaSolicitante.idLotacao");
 			queryString = queryString.replace("Pessoa", "Lotacao");
-			query = JPA.em().createQuery(queryString, SrSolicitacao.class);
+			query = JPA.em().createQuery(queryString);
 			query.setParameter("idInicial", lotaSolicitante.getIdLotacaoIni());
 			listaProvisoria = query.getResultList();
 			if (listaProvisoria != null && listaProvisoria.size() > 0)

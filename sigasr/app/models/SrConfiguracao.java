@@ -117,8 +117,7 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(
 						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario",
-						SrConfiguracao.class).getResultList();
+								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario").getResultList();
 	}
 
 	public void salvarComoPermissaoUsoLista() throws Exception {
@@ -135,8 +134,7 @@ public class SrConfiguracao extends CpConfiguracao {
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA
 								+ " and conf.listaPrioridade.lotaCadastrante.idLotacaoIni = "
 								+ lota.getLotacaoInicial().getIdLotacao()
-								+ " and conf.hisDtFim is null order by conf.orgaoUsuario",
-						SrConfiguracao.class).getResultList();
+								+ " and conf.hisDtFim is null order by conf.orgaoUsuario").getResultList();
 	}
 
 	public void salvarComoAssociacaoTipoAtributo() throws Exception {
@@ -151,8 +149,7 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(
 						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario",
-						SrConfiguracao.class).getResultList();
+								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario").getResultList();
 	}
 
 	public static List<List<SrConfiguracao>> listarAssociacoesTipoAtributoDividindoAbertasEFechadas() {
@@ -161,16 +158,14 @@ public class SrConfiguracao extends CpConfiguracao {
 				+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
 				+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario";
 
-		List<SrConfiguracao> abertas = JPA.em()
-				.createQuery(query, SrConfiguracao.class).getResultList();
+		List<SrConfiguracao> abertas = JPA.em().createQuery(query).getResultList();
 
 		query = query.replace("conf.hisDtFim is null",
 				"conf.hisDtFim is not null and conf.hisDtIni = ("
 						+ "	select max(hisDtIni) from SrConfiguracao where "
 						+ "hisIdIni = conf.hisIdIni)");
 
-		List<SrConfiguracao> fechadas = JPA.em()
-				.createQuery(query, SrConfiguracao.class).getResultList();
+		List<SrConfiguracao> fechadas = JPA.em().createQuery(query).getResultList();
 
 		List<List<SrConfiguracao>> retorno = new ArrayList<List<SrConfiguracao>>();
 		retorno.add(abertas);

@@ -957,9 +957,13 @@ public class Application extends SigaApplication {
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
-	public static void listarLista(boolean mostrarDesativado) throws Exception {
-		List<SrLista> lista = SrLista.listar(true);
-		render(lista, true);
+	public static void listarLista(boolean mostrarDesativados) throws Exception {
+		List<SrLista> lista = SrLista.listar(mostrarDesativados);
+		render(lista, mostrarDesativados);
+	}
+	
+	public static void listarListaDesativados() throws Exception {
+		listarLista(true);
 	}
 
 	public static void editarLista(Long id) throws Exception {

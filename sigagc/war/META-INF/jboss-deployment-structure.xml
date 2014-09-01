@@ -4,10 +4,6 @@
 	<deployment>
 		<module-alias name="sigagc" />
 
-		<exclusions>
-			
-		</exclusions>
-
 		<dependencies>			
 			<module name="org.picketlink" />
 			<module name="asm.asm" />

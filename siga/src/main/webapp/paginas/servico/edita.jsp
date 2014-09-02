@@ -25,21 +25,19 @@
 					<theader>
 					<th>Matrícula</th>
 					<th>Nome</th>
-					<c:forEach var="servico" items="${cpServicosDisponiveis}">
+					<c:forEach var="servico" items="${cpServicosDisponiveis}">						
 						<th><a href="#" alt="${servico.descricao}"
 							title="${servico.descricao}">
-							
 							<c:choose>
-								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">(K) RAIZ</c:when>
-								<c:when test="${servico.siglaServico == 'FS-GAB'}">(K) GABINETE</c:when>
-								<c:when test="${servico.siglaServico == 'FS-SEC'}">(K) SECRETARIA</c:when>
-								<c:when test="${servico.siglaServico == 'FS-JUIZ'}">(K) JUIZ</c:when>
-								<c:when test="${servico.siglaServico == 'FS-PUB'}">(K) PÚBLICA</c:when>
-								<c:when test="${servico.siglaServico == 'FS-AUD'}">(K) AUDIÊNCIA</c:when>
-								<c:when test="${servico.siglaServico == 'FS-VIDEO'}">(K) VIDEOCONF.</c:when>
+								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-GAB'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-SEC'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-JUIZ'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-PUB'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-AUD'}">${servico.labelServico}</c:when>
+								<c:when test="${servico.siglaServico == 'FS-VIDEO'}">${servico.labelServico}</c:when>
 								<c:otherwise>${servico.siglaServico}</c:otherwise>
 							</c:choose>
-
 							</a>
 						</th>
 					</c:forEach> </theader>
@@ -47,7 +45,7 @@
 						<tr class="">
 							<td>${pessoa.sesbPessoa}${pessoa.matricula}</td>
 							<td>${pessoa.nomePessoa}</td>
-							<c:forEach var="servico" items="${cpServicosDisponiveis}">
+							<c:forEach var="servico" items="${cpServicosDisponiveis}">								
 								<c:forEach var="config" items="${cpConfiguracoesAdotadas}">
 									<%--${config.dpPessoa.matricula} --- ${pessoa.matricula} :::: ${config.cpServico.idServico} --- ${servico.idServico}<br/> --%>
 									<c:if
@@ -66,13 +64,13 @@
 													</c:if>
 													<c:if
 														test="${sit.idSitConfiguracao != config.cpSituacaoConfiguracao.idSitConfiguracao }">
-														<option value="${sit.idSitConfiguracao}">
-															${sit.dscSitConfiguracao}</option>
-													</c:if>
-												</c:forEach>
-										</select></td>
-									</c:if>
-								</c:forEach>
+															<option value="${sit.idSitConfiguracao}">
+																${sit.dscSitConfiguracao}</option>
+														</c:if>
+													</c:forEach>
+											</select></td>
+										</c:if>
+									</c:forEach>
 							</c:forEach>
 						</tr>
 					</c:forEach>

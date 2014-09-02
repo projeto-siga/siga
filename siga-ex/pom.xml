@@ -179,4 +179,55 @@
     </dependencies>
 
 
+
+	<profiles>
+		<profile>
+			<id>flyway</id>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+				<maven.main.skip>true</maven.main.skip>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.googlecode.flyway</groupId>
+						<artifactId>flyway-maven-plugin</artifactId>
+						<version>2.3.1</version>
+						<configuration>
+							<driver>oracle.jdbc.driver.OracleDriver</driver>
+							<url>jdbc:oracle:thin:@${server.ip}:49161:xe</url>
+							<user>system</user>
+							<password>oracle</password>
+							<schemas>
+								<schema>SIGA</schema>
+							</schemas>
+							<sqlMigrationPrefix>SIGA_UTF8_V</sqlMigrationPrefix>
+							<placeholderPrefix>flyway${</placeholderPrefix>
+							<locations>
+								<location>filesystem:src\main\resources</location>
+							</locations>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>migrate</goal>
+								</goals>
+	
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>com.oracle</groupId>
+								<artifactId>ojdbc6</artifactId>
+								<version>11.2.0.3.0</version>
+								<scope>runtime</scope>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>

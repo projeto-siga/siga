@@ -50,7 +50,7 @@ public class WfDaoTest extends TestCase {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 		Configuration cfg = CpDao.criarHibernateCfg(ambiente);
-		ModeloDao.configurarHibernateParaDebug(cfg);
+//		ModeloDao.configurarHibernateParaDebug(cfg);
 		HibernateUtil.configurarHibernate(cfg, "");
 
 		dao = WfDao.getInstance();

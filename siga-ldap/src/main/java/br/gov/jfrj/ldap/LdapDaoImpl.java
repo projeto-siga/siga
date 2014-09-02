@@ -19,9 +19,7 @@
 package br.gov.jfrj.ldap;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.naming.Context;

@@ -536,13 +536,17 @@ public class ExClassificacaoAction
 	}
 
 	public boolean exibirAdicaoDeVia() {
+		Integer i = SigaExProperties.getExClassificacaoNivelMinimoDeEnquadramento();
 		if (getCodificacao() != null) {
-			return MascaraUtil.getInstance().isUltimoNivel(getCodificacao());
+			if (i != null)
+				return MascaraUtil.getInstance().calcularNivel(getCodificacao()) >= i;
+			else
+				return MascaraUtil.getInstance().isUltimoNivel(getCodificacao());
 		}
 
 		return false;
 	}
-
+	
 	public void setNivelAlterado(Integer nivelAlterado) {
 		this.nivelAlterado = nivelAlterado;
 	}

@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
@@ -54,6 +55,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
@@ -1515,19 +1517,21 @@ public class ExDao extends CpDao {
         return ((Long) query.uniqueResult()).intValue();
     }
 
-    public List<ExMobil> consultarParaTransferirEmLote(DpLotacao lot) {
-        final Query query = getSessao().getNamedQuery(
-                "consultarParaTransferirEmLote");
-        query.setLong("lotaIni", lot.getIdLotacaoIni());
-        return query.list();
-    }
+	@SuppressWarnings("unchecked")
+	public Iterator<ExMobil> consultarParaTransferirEmLote(DpLotacao lot) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarParaTransferirEmLote");
+		query.setLong("lotaIni", lot.getIdLotacaoIni());
+		//return query;
+		return query.iterate();
+	}
 
-    public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {
-        final Query query = getSessao().getNamedQuery(
-                "consultarParaAnotarEmLote");
-        query.setLong("lotaIni", lot.getIdLotacaoIni());
-        return query.list();
-    }
+	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarParaAnotarEmLote");
+		query.setLong("lotaIni", lot.getIdLotacaoIni());
+		return query.list();
+	}
 
     public List<ExItemDestinacao> consultarAEliminar(CpOrgaoUsuario orgaoUsu,
                                                      Date dtIni, Date dtFim) {

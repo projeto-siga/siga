@@ -198,8 +198,13 @@ ${meta}
 											tipo="generico" tema="simple" ocultardescricao="sim"
 											buscar="nao" siglaInicial="Buscar" modulo="siga" />
 										<script type="text/javascript">
-											var fld = document.getElementById("buscar_genericoSel_sigla");
-											fld.setAttribute("class","gt-search-text");
+											//$("#menu_siga").focus(function(){
+												  //$('#navmenu-h li ul').css({"display":"block"})
+											//});
+											var fld = document
+													.getElementById("buscar_genericoSel_sigla");
+											fld.setAttribute("class",
+													"gt-search-text");
 											fld.className = "gt-search-text";
 											fld.onfocus = function() {
 												if (this.value == 'Buscar') {
@@ -215,17 +220,22 @@ ${meta}
 													ajax_buscar_generico();
 											};
 											fld.onkeypress = function(event) {
-												var fid = document.getElementById("buscar_genericoSel_id");
+												var fid = document
+												.getElementById("buscar_genericoSel_id");
 												
-												event = (event) ? event : window.event
-												var keyCode = (event.which) ? event.which : event.keyCode;
+												event = (event) ? event
+														: window.event
+												var keyCode = (event.which) ? event.which
+														: event.keyCode;
 												if (keyCode == 13) {
-													//if (fid.value == null || fid.value == "") {
-													//	fld.onblur();
-													//} else {
-													//	window.alert("1");
-														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla=' + fld.value;
-													//}
+													if (fid.value == null
+															|| fid.value == "") {
+														fld.onblur();
+													} else {
+														window.alert("1");
+														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
+																+ fld.value;
+													}
 													return false;
 												} else {
 													fid.value = '';
@@ -233,18 +243,23 @@ ${meta}
 												}
 											};
 
-											self.resposta_ajax_buscar_generico = function(response, d1, d2, d3) {
-                                                debugger;
-												var sigla = document.getElementsByName('buscar_genericoSel.sigla')[0].value;
+											self.resposta_ajax_buscar_generico = function(
+													response, d1, d2, d3) {
+												var sigla = document
+														.getElementsByName('buscar_genericoSel.sigla')[0].value;
 												var data = response.split(';');
 												if (data[0] == '1') {
-													retorna_buscar_generico(data[1], data[2], data[3]);
-													if (data[1] != null	&& data[1] != "") {
+													retorna_buscar_generico(
+															data[1], data[2],
+															data[3]);
+													if (data[1] != null
+															&& data[1] != "") {
 														window.location.href = data[3];
 													}
 													return
 												} 
-												retorna_buscar_generico('', '', '');
+												retorna_buscar_generico('',
+														'', '');
 
 												return;
 

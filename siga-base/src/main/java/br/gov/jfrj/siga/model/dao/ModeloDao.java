@@ -31,7 +31,6 @@ import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
 import org.jboss.logging.Logger;
@@ -216,12 +215,12 @@ public abstract class ModeloDao {
 		HibernateUtil.rollbackTransacao();
 	}
 
-	public static void configurarHibernateParaDebug(Configuration cfg) {
-		cfg.setProperty("hibernate.show_sql", "true");
-		cfg.setProperty("hibernate.format_sql", "true");
-		cfg.setProperty("generate_statistics", "true");
-		cfg.setProperty("hibernate.use_sql_comments", "true");
-	}
+//	public static void configurarHibernateParaDebug(Configuration cfg) {
+//		cfg.setProperty("hibernate.show_sql", "true");
+//		cfg.setProperty("hibernate.format_sql", "true");
+//		cfg.setProperty("generate_statistics", "true");
+//		cfg.setProperty("hibernate.use_sql_comments", "true");
+//	}
 
 	/**
 	 * @return true se a sessão do Hibernate não for nula e estiver aberta.

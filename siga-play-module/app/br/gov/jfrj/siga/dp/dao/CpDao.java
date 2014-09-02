@@ -1600,6 +1600,7 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
 		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
 	    cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
+	    cfg.setProperty("hibernate.show_sql", "false");
 
 		// descomentar para inpecionar o SQL
 		// cfg.setProperty("hibernate.show_sql", "true");
@@ -1746,6 +1747,27 @@ public class CpDao extends ModeloDao {
 		return (DpLotacao) consultarPorSigla(flt);
 	}
 
+	public CpOrgao getOrgaoFromSigla(String sigla) {
+		CpOrgao o = new CpOrgao();
+		o.setSigla(sigla);
+		return consultarPorSigla(o);
+	}
+	
+	public CpOrgao getOrgaoFromSiglaExata(String sigla) {
+		CpOrgao o = new CpOrgao();
+		o.setSigla(sigla);
+		
+		final Query query = getSessao().getNamedQuery(
+				"consultarPorSiglaExataCpOrgao");
+		query.setString("siglaOrgao", o.getSiglaOrgao());
+
+		final List<CpOrgao> l = query.list();
+		if (l.size() > 0)
+			return l.get(0);
+		
+		return null;
+	}
+	
 	public List<CpOrgaoUsuario> consultaCpOrgaoUsuario() {
 		final Query qry = getSessao().getNamedQuery("consultarCpOrgaoUsuario");
 

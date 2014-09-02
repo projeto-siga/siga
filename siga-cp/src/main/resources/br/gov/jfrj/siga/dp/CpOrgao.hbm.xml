@@ -56,6 +56,12 @@
 			and org.ativo='S' ]]>
 	</query>
 	
+	<query name="consultarPorSiglaExataCpOrgao">
+		<![CDATA[select org from CpOrgao org where
+			upper(org.siglaOrgao) = upper(:siglaOrgao)			
+			and org.ativo='S' ]]>
+	</query>
+	
 	<query name="consultarPorFiltroCpOrgao">
 	 <![CDATA[from CpOrgao org 
 	 	where ((upper(org.nmOrgaoAI) like upper('%' || :nome || '%')) or (upper(org.siglaOrgao) like upper('%' || :nome || '%')))

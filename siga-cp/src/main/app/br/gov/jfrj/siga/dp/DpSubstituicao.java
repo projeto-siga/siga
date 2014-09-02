@@ -79,6 +79,18 @@ public class DpSubstituicao extends AbstractDpSubstituicao implements Serializab
 		return true;
 	}
 	
+	public boolean isFutura(){		
+		Calendar dtIni = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		now.setTime(new Date());
+		if (getDtIniSubst()!=null){
+			dtIni.setTime(getDtIniSubst());
+			if (now.before(dtIni))
+				return true;
+		}		
+		return false;
+	}
+	
 	public boolean isTerminada(){
 		if (getDtFimSubst()==null)
 			return false;

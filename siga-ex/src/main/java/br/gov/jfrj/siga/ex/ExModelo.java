@@ -21,25 +21,17 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.util.Set;
+import java.io.UnsupportedEncodingException;
 
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import org.hibernate.Hibernate;
-
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * A class that represents a row in the 'EX_MODELO' table. This class may be
  * customized as it is never re-generated after being created.
  */
 public class ExModelo extends AbstractExModelo {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8115532259775923158L;
-
 	private byte[] cacheConteudoBlobMod;
 
 	/**
@@ -95,4 +87,25 @@ public class ExModelo extends AbstractExModelo {
 		return ExDao.getInstance().consultarModeloAtual(this);
 	}	
 	
+	public boolean isDescricaoAutomatica() {
+		try {
+			if ("template/freemarker".equals(getConteudoTpBlob())
+					&& getConteudoBlobMod2() != null
+					&& (new String(getConteudoBlobMod2(), "utf-8"))
+							.contains("@descricao"))
+				return true;
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		return false;
+	}
+
+	public boolean isClassificacaoAutomatica() {
+		if(getExClassificacao() != null)
+			return true;
+		
+		return false;
+	}
 }

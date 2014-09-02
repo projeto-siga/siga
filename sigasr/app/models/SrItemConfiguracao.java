@@ -188,7 +188,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 
 		if (listaBase == null)
-			lista = listar();
+			lista = listar(Boolean.FALSE);
 		else
 			lista = listaBase;
 
@@ -305,9 +305,15 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				getSiglaSemZeros() + "%").fetch();
 	}
 
-	public static List<SrItemConfiguracao> listar() {
-		return SrItemConfiguracao.find(
-				"hisDtFim is null order by siglaItemConfiguracao").fetch();
+	public static List<SrItemConfiguracao> listar(boolean mostrarDesativados) {
+		StringBuffer sb = new StringBuffer();
+		
+		if (!mostrarDesativados)
+			sb.append(" hisDtFim is null");
+
+		sb.append(" order by siglaItemConfiguracao ");
+		
+		return SrItemConfiguracao.find(sb.toString()).fetch();
 	}
 
 	@Override

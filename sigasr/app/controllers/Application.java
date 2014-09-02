@@ -662,10 +662,14 @@ public class Application extends SigaApplication {
 		formEditar(filha);
 	}
 
-	public static void listarDesignacao() throws Exception {
+	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes();
-		render(designacoes);
+		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados);
+		render(designacoes, mostrarDesativados);
+	}
+	
+	public static void listarDesignacaoDesativados() throws Exception {
+		listarDesignacao(Boolean.TRUE);
 	}
 
 	public static void editarDesignacao(Long id) throws Exception {
@@ -689,20 +693,20 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
-		listarDesignacao();
+		listarDesignacao(Boolean.TRUE);
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
-		listarDesignacao();
+		listarDesignacao(Boolean.TRUE);
 	}
 
-	public static void listarPermissaoUsoLista(boolean mostrarDesativado) throws Exception {
+	public static void listarPermissaoUsoLista(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> permissoes = SrConfiguracao
-				.listarPermissoesUsoLista(lotaTitular(), mostrarDesativado);
+				.listarPermissoesUsoLista(lotaTitular(), mostrarDesativados);
 		render(permissoes);
 	}
 	
@@ -731,7 +735,7 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
-		listarDesignacao();
+		listarDesignacao(Boolean.TRUE);
 	}
 
 	public static void listarAssociacao() throws Exception {
@@ -764,10 +768,14 @@ public class Application extends SigaApplication {
 		listarAssociacao();
 	}
 
-	public static void listarItem() throws Exception {
+	public static void listarItem(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar();
-		render(itens);
+		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar(mostrarDesativados);
+		render(itens, mostrarDesativados);
+	}
+	
+	public static void listarItemDesativados() throws Exception {
+		listarItem(Boolean.TRUE);
 	}
 
 	public static void editarItem(Long id) throws Exception {
@@ -783,14 +791,14 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarItem(itemConfiguracao);
 		itemConfiguracao.salvar();
-		listarItem();
+		listarItem(Boolean.FALSE);
 	}
 
 	public static void desativarItem(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
 		item.finalizar();
-		listarItem();
+		listarItem(Boolean.FALSE);
 	}
 
 	public static void selecionarItem(String sigla, SrSolicitacao sol)
@@ -891,10 +899,14 @@ public class Application extends SigaApplication {
 		listarPesquisa();
 	}
 
-	public static void listarAcao() throws Exception {
+	public static void listarAcao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrAcao> acoes = SrAcao.listar();
-		render(acoes);
+		List<SrAcao> acoes = SrAcao.listar(mostrarDesativados);
+		render(acoes, mostrarDesativados);
+	}
+	
+	public static void listarAcaoDesativados() throws Exception {
+		listarAcao(Boolean.TRUE);
 	}
 
 	public static void editarAcao(Long id) throws Exception {
@@ -909,14 +921,14 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAcao(acao);
 		acao.salvar();
-		listarAcao();
+		listarAcao(Boolean.FALSE);
 	}
 
 	public static void desativarAcao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcao acao = SrAcao.findById(id);
 		acao.finalizar();
-		listarAcao();
+		listarAcao(Boolean.FALSE);
 	}
 
 	public static void selecionarAcao(String sigla, SrSolicitacao sol)
@@ -957,9 +969,13 @@ public class Application extends SigaApplication {
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
-	public static void listarLista(boolean mostrarDesativado) throws Exception {
-		List<SrLista> lista = SrLista.listar(true);
-		render(lista, true);
+	public static void listarLista(boolean mostrarDesativados) throws Exception {
+		List<SrLista> lista = SrLista.listar(mostrarDesativados);
+		render(lista, mostrarDesativados);
+	}
+	
+	public static void listarListaDesativados() throws Exception {
+		listarLista(Boolean.TRUE);
 	}
 
 	public static void editarLista(Long id) throws Exception {

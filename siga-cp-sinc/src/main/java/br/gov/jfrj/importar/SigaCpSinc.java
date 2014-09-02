@@ -1172,7 +1172,7 @@ public class SigaCpSinc {
 		}
 		texto = texto + sbLog.toString();
 		String assunto = new String();
-		if (list.size() > maxSinc) assunto = "Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente."; 
+		if (maxSinc != -1 && list != null && (list.size() > maxSinc)) assunto = "Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente."; 
 		else assunto = "Log de Importação";
 		Correio.enviar(
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),

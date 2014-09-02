@@ -1545,9 +1545,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public boolean temAnexos() {
 		boolean b = false;
 		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
-			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO){
 				b = true;
-			break;
+				break;
+			}
 		}
 		return b;
 

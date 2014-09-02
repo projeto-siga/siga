@@ -108,4 +108,13 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		
 		return false;
 	}
+
+	public boolean podeSerDoTipo(ExTipoDocumento tipoDocumento) {
+		for (ExTipoDocumento tipo : getExTipoDocumentoSet()) {
+			if(tipo.getIdTpDoc().equals(tipoDocumento.getIdTpDoc()))
+				return true;
+		}
+		
+		return false;
+	}
 }

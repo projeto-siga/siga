@@ -305,4 +305,12 @@ public class HibernateUtil {
 	public static SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
+	
+//	private static void configurarHibernateParaDebug(Configuration cfg) {
+//		boolean isDebugHibernateHabilitado = SigaBaseProperties.getBooleanValue("configura.hibernate.para.debug");
+//		if ( isDebugHibernateHabilitado ) {
+//			ModeloDao.configurarHibernateParaDebug( cfg );
+//		}
+//	}
+
 }

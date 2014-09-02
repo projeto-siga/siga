@@ -225,4 +225,58 @@ public class Util {
 		else	
 			return null;
 	}
+
+
+	public static String escapeHashTag(String conteudo) {
+		StringBuffer sb = new StringBuffer();
+		//String hashTag = new String();
+			
+		Pattern padraoHashTag = Pattern.compile(
+								//reconhece uma hashTag (#)
+								"(#[\\w-]+)"
+								);
+				
+		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
+		while(matcherHashTag.find()) {
+			matcherHashTag.appendReplacement(sb,"{{{" + matcherHashTag.group(0) + "}}}");
+		}
+		matcherHashTag.appendTail(sb);
+		return sb.toString();
+	}
+
+	public static String findHashTagHTML(String conteudo, String classificacao, int controle) {
+		StringBuffer sb = new StringBuffer();
+		String hashTag = new String();
+			
+		Pattern padraoHashTag = Pattern.compile(
+								//reconhece uma hashTag (#)
+								"(#[\\w-]+)"
+								);
+				
+		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
+		while(matcherHashTag.find()) {
+			if(controle == 1) 
+				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(0);
+			else if(controle == 2){
+				matcherHashTag.appendReplacement(sb,"<a href=\"/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.sigla=" + 
+													matcherHashTag.group(0).substring(1)  + "\">$0</a>");
+			}
+		}
+		if(controle == 1) {
+			if(classificacao != null)
+				//remove todas as hashTag da classificacao, caso exista. Necessário para manter a classificacao
+				//atualizada. Ao final serão inseridas as hashTags que foram acrescentadas/mantidas no conteudo
+				classificacao = classificacao.replaceAll("[,\\s]*#[,\\w-]+", "").trim();
+			else
+				classificacao = "";
+			return GcBL.atualizarClassificacao(classificacao, hashTag);
+		}
+		else if(controle == 2){
+			matcherHashTag.appendTail(sb);
+			return sb.toString();
+		}
+		else	
+			return null;
+	}
+
 }

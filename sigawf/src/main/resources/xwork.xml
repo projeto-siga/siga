@@ -145,7 +145,10 @@
 		<action name="gravarDesignacao" method="aGravarDesignacao"
 			class='br.gov.jfrj.siga.wf.webwork.action.WfDesignacaoAction'>
 			<result name="SUCESS" type="redirect-action">
-				pesquisarDesignacao?orgao=${orgao}&amp;procedimento=${procedimento}
+				<param name="actionName">pesquisarDesignacao</param>
+				<param name="namespace">/</param>
+				<param name="orgao">${orgao}</param>
+				<param name="procedimento">${procedimento}</param>
 			</result>
 		</action>
 

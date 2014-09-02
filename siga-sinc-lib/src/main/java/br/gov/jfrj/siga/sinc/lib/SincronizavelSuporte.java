@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.sinc.lib;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -30,7 +31,7 @@ import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
 
 public abstract class SincronizavelSuporte extends Objeto implements
-		Sincronizavel {
+		Sincronizavel, Serializable {
 	private Long id;
 	private Long idInicial;
 	private String idExterna;

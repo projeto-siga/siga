@@ -103,7 +103,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 		return this.exModeloSet;
 	}
 
-	public Set getExTipoDocumentoSet() {
+	public Set<ExTipoDocumento> getExTipoDocumentoSet() {
 		return ExTipoDocumentoSet;
 	}
 
@@ -159,7 +159,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 		this.exModeloSet = exModeloSet;
 	}
 
-	public void setExTipoDocumentoSet(final Set exTipoDocumentoSet) {
+	public void setExTipoDocumentoSet(final Set<ExTipoDocumento> exTipoDocumentoSet) {
 		ExTipoDocumentoSet = exTipoDocumentoSet;
 	}
 
@@ -184,6 +184,4 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	public void setExTipoFormaDoc(ExTipoFormaDoc exTipoFormaDoc) {
 		this.exTipoFormaDoc = exTipoFormaDoc;
 	}
-	
-	
 }

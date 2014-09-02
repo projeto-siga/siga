@@ -877,7 +877,7 @@ public class AssinaturaDigital {
 		s = s.split(",")[0];
 		// Retira o CPF, se houver
 		String[] splitted = s.split(":");
-		if (Pattern.compile("[0-9]{11}").matcher(splitted[1]).matches())
+		if (splitted.length == 2 && Pattern.compile("[0-9]{11}").matcher(splitted[1]).matches())
 			return splitted[0];
 		return s;
 	}

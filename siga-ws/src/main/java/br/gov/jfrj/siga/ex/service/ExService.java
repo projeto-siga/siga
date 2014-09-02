@@ -21,6 +21,8 @@ package br.gov.jfrj.siga.ex.service;
 import br.gov.jfrj.siga.Remote;
 
 import javax.jws.WebMethod;
+import java.util.Date;
+
 import javax.jws.WebService;
 
 @WebService
@@ -75,6 +77,10 @@ public interface ExService extends Remote {
 	public String toJSON(String codigo) throws Exception;
 
     @WebMethod
-	Boolean exigirAnexo(String codigoDocumentoVia, String siglaCadastrante,
+	public Boolean exigirAnexo(String codigoDocumentoVia, String siglaCadastrante,
 			String descricaoDoAnexo) throws Exception;
+	
+    @WebMethod
+	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
+			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, Boolean finalizar)  throws Exception;
 }

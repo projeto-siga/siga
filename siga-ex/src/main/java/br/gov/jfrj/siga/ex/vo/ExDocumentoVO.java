@@ -20,25 +20,37 @@ package br.gov.jfrj.siga.ex.vo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
+import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 
 public class ExDocumentoVO extends ExVO {
+	DpPessoa titular;
+	DpLotacao lotaTitular;
 	ExDocumento doc;
 	ExMobil mob;
 	String classe;
 	List<ExMobilVO> mobs = new ArrayList<ExMobilVO>();
-	List<ExMobil> outrosMobs = new ArrayList<ExMobil>();
+	List<ExDocumentoVO> documentosPublicados = new ArrayList<ExDocumentoVO>();
+	ExDocumentoVO boletim;
+	Map<ExMobil, Set<ExMarca>> marcasPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
+	String outrosMobsLabel;
 	String nomeCompleto;
 	String dtDocDDMMYY;
 	String subscritorString;
@@ -62,10 +74,14 @@ public class ExDocumentoVO extends ExVO {
 	String tipoFormaDocumento;
 	String cadastranteString;
 	String lotaCadastranteString;
+	ExGraphTramitacao dotTramitacao;
+	ExGraphRelacaoDocs dotRelacaoDocs;
 	private List<Object> listaDeAcessos;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo) throws Exception {
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
 		this.doc = doc;
 		this.mob = mob;
 		this.sigla = doc.getSigla();
@@ -78,8 +94,9 @@ public class ExDocumentoVO extends ExVO {
 		this.dtDocDDMMYY = doc.getDtDocDDMMYY();
 		this.subscritorString = doc.getSubscritorString();
 		this.cadastranteString = doc.getCadastranteString();
-		if(doc.getLotaCadastrante() != null)
-			this.lotaCadastranteString = "(" + doc.getLotaCadastrante().getSigla() + ")";
+		if (doc.getLotaCadastrante() != null)
+			this.lotaCadastranteString = "("
+					+ doc.getLotaCadastrante().getSigla() + ")";
 		else
 			this.lotaCadastranteString = "";
 
@@ -114,7 +131,6 @@ public class ExDocumentoVO extends ExVO {
 				this.tipoFormaDocumento = "processo_administrativo";
 				break;
 			}
-
 
 		this.dtFinalizacao = doc.getDtFinalizacaoDDMMYY();
 		if (doc.getExModelo() != null)
@@ -176,14 +192,16 @@ public class ExDocumentoVO extends ExVO {
 				tags.add(ss);
 			}
 		}
-		// if (doc.getExClassificacao() != null)
-		// tags.add("@doc-classe:" + doc.getExClassificacao().getSigla());
-		// if (doc.getExFormaDocumento() != null)
-		// tags.add("@doc-tipo:" +
-		// Texto.slugify(doc.getExFormaDocumento().getSigla(), true, true));
-		// if (doc.getExModelo() != null)
-		// tags.add("@doc-modelo:" + Texto.slugify(doc.getExModelo().getNmMod(),
-		// true, true));
+		
+		if(doc.getDocumentosPublicadosNoBoletim() != null) {
+			for (ExDocumento documentoPublicado : doc.getDocumentosPublicadosNoBoletim()) {
+				documentosPublicados.add(new ExDocumentoVO(documentoPublicado));
+			}
+		}
+		
+		if(doc.getPublicadoNoBoletim() != null)
+			boletim = new ExDocumentoVO(doc.getPublicadoNoBoletim());
+
 	}
 
 	public List<Object> getListaDeAcessos() {
@@ -205,60 +223,124 @@ public class ExDocumentoVO extends ExVO {
 			this.fisicoOuEletronico = "Documento Físico";
 			this.fDigital = false;
 		}
-
 	}
-	
+
 	public void novoExibe() {
 		List<Long> movimentacoesPermitidas = new ArrayList<Long>();
-	
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
+
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME);
 		
-		
+		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_A_ELIMINAR);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_INTERMEDIARIO);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_EM_EDITAL_DE_ELIMINACAO);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PUBLICADO);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
+
 		for (ExMobilVO mobVO : mobs) {
-			
-			//Limpa as Movimentações
+
+			// Limpa as Movimentações
 			List<ExMovimentacaoVO> movimentacoesFinais = new ArrayList<ExMovimentacaoVO>();
+			List<ExMovimentacao> juntadasRevertidas = new ArrayList<ExMovimentacao>();
+
 			for (ExMovimentacaoVO exMovVO : mobVO.getMovs()) {
-				if(movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
-					movimentacoesFinais.add(exMovVO);
+				if (movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
+					if (exMovVO.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+						juntadasRevertidas.add(exMovVO.getMov()
+								.getExMovimentacaoRef());
+						// Edson: se não gerou peça, nem mostra o
+						// desentranhamento
+						if (exMovVO.getMov().getConteudoBlobMov() == null)
+							continue;
+					}
+					if (!exMovVO.isCancelada() && !juntadasRevertidas.contains(exMovVO.getMov()))
+						movimentacoesFinais.add(exMovVO);
 				}
+
 			}
-			
+
 			mobVO.setMovs(movimentacoesFinais);
-		}	
-		
-		
+		}
+
 		ExMobilVO mobilGeral = null;
 		ExMobilVO mobilEspecifico = null;
-		
+
 		for (ExMobilVO mobilVO : mobs) {
-			if(mobilVO.getMob().isGeral())
+			if (mobilVO.getMob().isGeral())
 				mobilGeral = mobilVO;
 			else
 				mobilEspecifico = mobilVO;
 		}
 		
-		if(mobilEspecifico != null && mobilGeral != null) {
-			mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
+		for (ExMobil cadaMobil: doc.getExMobilSet()){
+			if (!cadaMobil.isGeral())
+				marcasPorMobil.put(cadaMobil, cadaMobil.getExMarcaSet());
+		}
+		
+		if (mobilEspecifico != null && mobilGeral != null) {
+			for (ExAcaoVO acaoGeral : mobilGeral.getAcoes()){
+				if (!acaoGeral.getNome().contains("Exibir Tod"))
+					mobilEspecifico.getAcoes().add(acaoGeral);
+			}
 			mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
+			mobilEspecifico.anexosNaoAssinados
+					.addAll(mobilGeral.anexosNaoAssinados);
+			for (ExMarca m : mobilGeral.getMarcasAtivas())
+				if (marcasGeralPermitidas.contains(m.getCpMarcador().getIdMarcador()))
+					mobilEspecifico.getMarcasAtivas().add(m);
+			for (ExMarca m : mobilGeral.getMob().getExMarcaSet())
+				if (marcasGeralPermitidas.contains(m.getCpMarcador().getIdMarcador()))
+					for (ExMobil cadaMobil : marcasPorMobil.keySet())
+						marcasPorMobil.get(cadaMobil).add(m);
 			mobs.remove(mobilGeral);
 		}
 		
-		for (ExMobil mobil : doc.getExMobilSet()) {
-			if(!mobil.isGeral() && !mobil.equals(mob)) {
-				outrosMobs.add(mobil);
-			}
-		}
-	}	
+		//Edson: mostra lista de vias/volumes só se número de
+		//vias/volumes além do geral for > que 1 ou se o móbil
+		//tiver informações que não aparecem no topo da tela
+		if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
+			outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
+		
+		this.dotTramitacao = new ExGraphTramitacao(mob);
+		this.dotRelacaoDocs = new ExGraphRelacaoDocs(mob, titular);
+		
+	}
 
 	/**
 	 * @param doc
@@ -471,9 +553,11 @@ public class ExDocumentoVO extends ExVO {
 				"Exibir Informações Completas",
 				"/expediente/doc",
 				"exibir",
-				Ex.getInstance().getComp()
-						.podeExibirInformacoesCompletas(titular, lotaTitular, mob), null,
-				"&exibirCompleto=true", null, null, null);
+				Ex.getInstance()
+						.getComp()
+						.podeExibirInformacoesCompletas(titular, lotaTitular,
+								mob), null, "&exibirCompleto=true", null, null,
+				null);
 
 		vo.addAcao(
 				"report_link",
@@ -549,7 +633,7 @@ public class ExDocumentoVO extends ExVO {
 	public ExDocumento getDoc() {
 		return doc;
 	}
-	
+
 	public ExMobil getMob() {
 		return mob;
 	}
@@ -587,7 +671,6 @@ public class ExDocumentoVO extends ExVO {
 		return sigla;
 	}
 
-
 	public String getSiglaCurtaSubProcesso() {
 		if (doc.isProcesso() && doc.getExMobilPai() != null) {
 			try {
@@ -596,7 +679,6 @@ public class ExDocumentoVO extends ExVO {
 				return sigla;
 			}
 		}
-
 
 		return "";
 
@@ -666,8 +748,33 @@ public class ExDocumentoVO extends ExVO {
 	public String getLotaCadastranteString() {
 		return lotaCadastranteString;
 	}
-	
-	public List<ExMobil> getOutrosMobs() {
-		return outrosMobs;
+
+	public String getOutrosMobsLabel() {
+		return outrosMobsLabel;
 	}
+
+	public ExGraphTramitacao getDotTramitacao() {
+		return dotTramitacao;
+	}
+
+	public ExGraphRelacaoDocs getDotRelacaoDocs() {
+		return dotRelacaoDocs;
+	}
+
+	public List<ExDocumentoVO> getDocumentosPublicados() {
+		return documentosPublicados;
+	}
+
+	public ExDocumentoVO getBoletim() {
+		return boletim;
+	}
+
+	public Map<ExMobil, Set<ExMarca>> getMarcasPorMobil() {
+		return marcasPorMobil;
+	}
+
+	public void setMarcasPorMobil(Map<ExMobil, Set<ExMarca>> marcasPorMobil) {
+		this.marcasPorMobil = marcasPorMobil;
+	}
+
 }

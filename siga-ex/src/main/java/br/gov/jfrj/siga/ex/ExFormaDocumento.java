@@ -22,6 +22,8 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -31,11 +33,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  */
 public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		Serializable, Selecionavel, Comparable<ExFormaDocumento> {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8863713030171351063L;
-
+	
 	/**
 	 * Simple constructor of ExFormaDocumento instances.
 	 */
@@ -88,4 +86,32 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		}
 		return this.getId().compareTo(o.getId());
 	}
+	
+	public boolean isSiglaValida() {
+		return isSiglaValida(getSigla());
+	}
+	
+	public boolean isSiglaValida(String sigla) {
+		if(sigla != null && !sigla.isEmpty()) {
+			final Pattern p1 = Pattern
+					.compile("^[A-Za-z]{3}");
+			final Matcher m1 = p1.matcher(sigla);
+			
+			if (m1.matches())   {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	public boolean podeSerDoTipo(ExTipoDocumento tipoDocumento) {
+		for (ExTipoDocumento tipo : getExTipoDocumentoSet()) {
+			if(tipo.getIdTpDoc().equals(tipoDocumento.getIdTpDoc()))
+				return true;
+		}
+		
+		return false;
+	}
+	
 }

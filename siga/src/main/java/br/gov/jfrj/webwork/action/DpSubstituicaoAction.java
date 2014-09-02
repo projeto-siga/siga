@@ -307,7 +307,7 @@ public class DpSubstituicaoAction extends SigaActionSupport {
 	    	if (subst.getSubstituto() != null && (subst.getSubstituto().isFechada() 
 	    			|| subst.getSubstituto().isBloqueada()) && this.isSubstituicao == "false")
 	    		continue;
-	    	if (subst.isEmVoga()) {
+	    	if (subst.isEmVoga() || subst.isFutura()) {
 	    		substVigentes.add(subst);	    		
 	    	}
 	    }

@@ -274,7 +274,6 @@ function popitup_movimentacao() {
 							é necessário imprimi-lo e enviá-lo por papel.</b></span></td>
 						</tr>
 					</c:if>
-
 					<tr>
 						<td>Atendente:</td>
 
@@ -290,6 +289,11 @@ function popitup_movimentacao() {
 								<siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"/>
 							</c:when>
 						</c:choose></td>
+					</tr>
+					<tr>
+					<td>Data da devolução:</td>
+						<td><ww:textfield name="dtDevolucaoMovString"
+							onblur="javascript:verifica_data(this,0);" /> (Opcional)</td>
 					</tr>
 					<tr>
 						<td colspan=2><input type="checkbox" name="protocolo"

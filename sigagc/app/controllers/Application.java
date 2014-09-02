@@ -595,7 +595,15 @@ public class Application extends SigaApplication {
 			
 			if (classificacao == null || classificacao.isEmpty())
 				classificacao = (informacao.arq != null) ? informacao.arq.classificacao: null;
-
+			//inserir hashTag no conteudo quando um conhecimento for relacionado
+			else if (classificacao.contains("#") && conteudo == null) {
+				conteudo = "";
+				String[] listaClassificacao = classificacao.split(",");
+				for (String somenteHashTag : listaClassificacao) {
+					if(somenteHashTag.trim().startsWith("#"))
+						conteudo += somenteHashTag.trim() + " "; 
+				}
+			}	
 			if (informacao.autor == null) {
 				informacao.autor = titular;
 			}
@@ -699,7 +707,7 @@ public class Application extends SigaApplication {
 		GcInformacao inf = GcInformacao.findBySigla(sigla);
 		if(inf.acessoPermitido(titular(), lotaTitular(), inf.edicao.id)) {
 			GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
-					null, null, null, null, null, null, null, null, null);
+					null, null, null, null, null, null, null, null);
 			GcBL.gravar(inf, idc(),titular(), lotaTitular());
 			exibir(inf.getSigla());
 		}
@@ -713,7 +721,7 @@ public class Application extends SigaApplication {
 		
 		GcMovimentacao movLocalizada = GcBL.movimentar(infDuplicada, 
 											GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, 
-											null, null, null, null, null, null, null, null, null);
+											null, null, null, null, null, null, null, null);
 		GcBL.gravar(infDuplicada, idc(), titular(), lotaTitular());
 		
 		GcInformacao inf = new GcInformacao();	
@@ -730,7 +738,7 @@ public class Application extends SigaApplication {
 		GcMovimentacao movCriada = GcBL.movimentar(inf,
 										GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null,
 										null, arq.titulo, arq.getConteudoTXT(), arq.classificacao, movLocalizada,
-										null, null, null);
+										null, null);
 		GcBL.gravar(inf, idc(),titular(), lotaTitular());
 		
 		movLocalizada.movRef = movCriada;
@@ -779,19 +787,19 @@ public class Application extends SigaApplication {
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null,
 					null, titulo, conteudo, classificacao, null,
-					null, null, null);
+					null, null);
 		else
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null,
 					null, titulo, conteudo, classificacao, null,
-					null, null, null);
+					null, null);
 
 		GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 		if (origem != null && origem.trim().length() != 0) {
 			if (informacao.podeFinalizar(pessoa, lotacao)) {
 				GcBL.movimentar(informacao,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
-						null, null, null, null, null, null, null, null);
+						null, null, null, null, null, null, null);
 				GcBL.gravar(informacao, idc(), pessoa, lotacao);
 			}
 			redirect(origem);
@@ -827,7 +835,7 @@ public class Application extends SigaApplication {
 					.findById(lotacao) : null);
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pesResponsavel, lotResponsavel, null,
-					null, null, null, null, null, null);
+					null, null, null, null, null);
 			GcBL.gravar(informacao, idc(),titular(), lotaTitular());
 			flash.success("Notificação realizada com sucesso!");
 			exibir(informacao.getSigla());
@@ -850,7 +858,7 @@ public class Application extends SigaApplication {
 					.findById(lotacao) : null);
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO, pesResponsavel,
-					lotResponsavel, null, null, null, null, null, null, null);
+					lotResponsavel, null, null, null, null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 			flash.success("Solicitação de revisão realizada com sucesso!");
 			exibir(informacao.getSigla());
@@ -864,38 +872,30 @@ public class Application extends SigaApplication {
 		render(informacao);
 	}
 
-	public static void anexarGravar(GcInformacao informacao, Long pessoa,
-			Long lotacao, String titulo, File fake, String origem) throws Exception {
-
+	public static void anexarGravar(GcInformacao informacao, String titulo, File fake) throws Exception {
 		List<Upload> files = (List<Upload>) request.args.get("__UPLOADS");
-		if (files != null) {
+		DpPessoa titular = titular();
+		DpLotacao lotaTitular = lotaTitular();
+		CpIdentidade idc = idc();
+		if (files != null) 
 			for (Upload file : files) {
 				if (file.getSize() > 0) {
-					if (file.getContentType() != null) {
-						String mimeType = file.getContentType().toLowerCase();
-						byte anexo[] = file.asBytes();
+						/* ----Não pode ser usado porque o "plupload" retorna um mime type padrão "octet stream" 
+						  String mimeType = file.getContentType().toLowerCase(); */
+						byte anexo[] = file.asBytes(); 
 						if (titulo == null || titulo.trim().length() == 0)
 							titulo = file.getFileName();
-						/*DpPessoa pes = (DpPessoa) ((pessoa != null) ? DpPessoa
-								.findById(pessoa) : null);
-						DpLotacao lot = (DpLotacao) ((lotacao != null) ? DpLotacao
-								.findById(lotacao) : null);
-*/						GcBL.movimentar(
+						GcBL.movimentar(
 								informacao,
 								GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
 								null, null, titulo, null, null, null, null,
-								anexo, mimeType);
-						GcBL.gravar(informacao, idc(),titular(), lotaTitular());
-						if(origem == null)
-							exibir(informacao.getSigla());
-						else
-							renderTemplate("app/views/Application/removerAnexo.html", informacao);
-					}
+								anexo);
+						GcBL.gravar(informacao, idc, titular, lotaTitular);
+						renderText("success");
 				}
 				else
 					throw new AplicacaoException("Não é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
 			}
-		}
 	}
 
 	public static void removerAnexo(String sigla, long idArq, long idMov) throws Exception {
@@ -942,7 +942,7 @@ public class Application extends SigaApplication {
 					GcMovimentacao m = GcBL.movimentar(informacao,
 										GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
 										null, null, null, null, null, mov,
-										null, null, null);
+										null, null);
 					mov.movCanceladora = m;
 					GcBL.gravar(informacao, idc(), titular, lotaTitular);
 					flash.success("Conhecimento revisado com sucesso!");

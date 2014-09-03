@@ -302,19 +302,19 @@
 			method="aCarregarListaModelos">
 			<result>/paginas/expediente/lista_combo_modelo.jsp</result>
 		</action>
-		<action name="exibir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aExibir">
+		<action name="exibirAntigo" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aExibirAntigo">
 			<result>
-				/paginas/expediente/exibe.jsp?podeExibir="true"
+				/paginas/expediente/exibeAntigo.jsp?podeExibir="true"
 			</result>
 			<result name="reservado">
 				/paginas/expediente/cuidado_reserva.jsp?"
 			</result>
 		</action>
-		<action name="exibirNovo" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aExibirNovo">
+		<action name="exibir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aExibir">
 			<result>
-				/paginas/expediente/exibeNovo.jsp?podeExibir="true"
+				/paginas/expediente/exibe.jsp?podeExibir="true"
 			</result>
 			<result name="reservado">
 				/paginas/expediente/cuidado_reserva.jsp?"

@@ -12,8 +12,21 @@ function carregarAtributos(){
 function carregouAtributos(response, param){
 	var div = document.getElementById('divAtributos');
 	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
 }
 </script>
+
+#{if solicitacao.itemConfiguracao && controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
+	<div style="margin:0px;" >
+		<span id="gc-ancora-item"></span>
+	</div>
+	<script type="text/javascript">
+		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.itemConfiguracao.gcTagAbertura}&estilo=inplace&msgvazio=Não existe conhecimento registrado para ${solicitacao.itemConfiguracao.tituloItemConfiguracao}. Clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item'));
+	</script>
+#{/if}
+
 
 #{if solicitacao.itemConfiguracao && acoesEAtendentes} 
 <div class="gt-form-row gt-width-66">

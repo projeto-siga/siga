@@ -558,6 +558,14 @@ public class ExDocumentoVO extends ExVO {
 						.podeExibirInformacoesCompletas(titular, lotaTitular,
 								mob), null, "&exibirCompleto=true", null, null,
 				null);
+		
+		vo.addAcao(
+				"eye",
+				"Exibir Simplificado",
+				"/expediente/doc",
+				"exibirNovo",
+				true, null, "&exibirCompleto=false", null, null,
+				null);
 
 		vo.addAcao(
 				"report_link",

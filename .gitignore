@@ -77,3 +77,5 @@ sigaex/.externalToolBuilders/org.eclipse.wst.common.project.facet.core.builder.l
 siga/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator.launch
 siga-libs/.externalToolBuilders/org.eclipse.wst.validation.validationbuilder (1).launch
 sigasr/desktop.ini
+sigatp/
+siga-uteis-play-module/

@@ -30,9 +30,9 @@
 			<sql-query name="consultarTarefasAtivasPorDocumento">
 			<return class="org.jbpm.taskmgmt.exe.TaskInstance"></return>
 		<![CDATA[
-			select ti.* from jbpm_taskinstance ti, jbpm_variableinstance vi,jbpm_token tk where 
-			vi.token_ = tk.id_ and ti.token_ = tk.id_ and vi.name_ like 'doc_%' and vi.stringvalue_ like :siglaDoc
-			and ti.end_ is null
+			select ti.* from jbpm_variableaccess va, jbpm_task ta, jbpm_taskinstance ti, jbpm_processinstance pi, jbpm_variableinstance vi
+			where va.taskcontroller_ = ta.taskcontroller_ and ti.task_ = ta.id_ and pi.id_ = ti.procinst_ and vi.processinstance_ = pi.id_
+			and ti.issignalling_ = 1 and va.mappedname_ like 'doc_%' and vi.stringvalue_ like :siglaDoc	
 		]]>
 	</sql-query>
 </hibernate-mapping>

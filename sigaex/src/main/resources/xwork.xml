@@ -133,6 +133,9 @@
 				<param name="idMod">
 					${idMod}
 				</param>				
+				<param name="idFormaDoc">
+					${idFormaDoc}
+				</param>			
 			</result>
 			<result name="modelo" type="redirect-action">
 				<param name="namespace">/modelo</param>
@@ -141,6 +144,15 @@
 				</param>
 				<param name="id">
 					${idMod}
+				</param>
+			</result>
+			<result name="forma" type="redirect-action">
+				<param name="namespace">/forma</param>
+			    <param name="actionName">
+					editar
+				</param>
+				<param name="id">
+					${idFormaDoc}
 				</param>
 			</result>
 		</action>
@@ -154,6 +166,15 @@
 				</param>
 				<param name="id">
 					${idMod}
+				</param>
+			</result>
+			<result name="forma" type="redirect-action">
+				<param name="namespace">/forma</param>
+			    <param name="actionName">
+					editar
+				</param>
+				<param name="id">
+					${idFormaDoc}
 				</param>
 			</result>
 		</action>
@@ -281,19 +302,19 @@
 			method="aCarregarListaModelos">
 			<result>/paginas/expediente/lista_combo_modelo.jsp</result>
 		</action>
-		<action name="exibir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aExibir">
+		<action name="exibirAntigo" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aExibirAntigo">
 			<result>
-				/paginas/expediente/exibe.jsp?podeExibir="true"
+				/paginas/expediente/exibeAntigo.jsp?podeExibir="true"
 			</result>
 			<result name="reservado">
 				/paginas/expediente/cuidado_reserva.jsp?"
 			</result>
 		</action>
-		<action name="exibirNovo" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
-			method="aExibirNovo">
+		<action name="exibir" class="br.gov.jfrj.webwork.action.ExDocumentoAction"
+			method="aExibir">
 			<result>
-				/paginas/expediente/exibeNovo.jsp?podeExibir="true"
+				/paginas/expediente/exibe.jsp?podeExibir="true"
 			</result>
 			<result name="reservado">
 				/paginas/expediente/cuidado_reserva.jsp?"
@@ -1236,6 +1257,35 @@
 			method="aAssinarLote">
 			<result>/paginas/expediente/assina_lote.jsp</result>
 		</action>
+		
+		<action name="simular_assinatura" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSimularAssinatura">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="simular_anexacao" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSimularAnexacao">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+		<action name="simular_assinatura_mov" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aSimularAssinaturaMov">
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
+
 
 	</package>
 	
@@ -1686,6 +1736,10 @@
 			method="aEditar">
 			<result>/paginas/expediente/modelo.jsp</result>
 		</action>
+		<action name="desativar" class="br.gov.jfrj.webwork.action.ExModeloAction"
+			method="aDesativar">
+			<result type="redirect-action">listar</result>
+		</action>
 		<action name="gravar" class="br.gov.jfrj.webwork.action.ExModeloAction"
 			method="aEditarGravar">
 			<result name="aplicar" type="redirect-action">editar?id=${id}</result>
@@ -1696,4 +1750,26 @@
 			method="aExportar">
 		</action>
 	</package>
+	
+	<package name="forma" extends="default" namespace="/forma">
+
+
+		<action name="listar" class="br.gov.jfrj.webwork.action.ExFormaDocumentoAction"
+			method="aListar">
+			<result>/paginas/expediente/lista_forma.jsp</result>
+		</action>
+		<action name="editar" class="br.gov.jfrj.webwork.action.ExFormaDocumentoAction"
+			method="aEditar">
+			<result>/paginas/expediente/forma.jsp</result>
+		</action>
+		<action name="gravar" class="br.gov.jfrj.webwork.action.ExFormaDocumentoAction"
+			method="aEditarGravar">
+			<result name="aplicar" type="redirect-action">editar?id=${id}</result>
+			<result type="redirect-action">listar</result>
+		</action>
+		<action name="verificarSigla" class="br.gov.jfrj.webwork.action.ExFormaDocumentoAction"
+			method="aVerificarSigla">
+			<result>/paginas/expediente/mensagemAjax.jsp</result>
+		</action>
+	</package>	
 </xwork>

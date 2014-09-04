@@ -25,7 +25,6 @@
 
 package br.gov.jfrj.webwork.action;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,6 +97,11 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.opensymphony.xwork.Action;
 
 public class ExMovimentacaoAction extends ExActionSupport {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8223202120027622708L;
 
 	private static final Logger log = Logger
 			.getLogger(ExMovimentacaoAction.class);
@@ -410,7 +414,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// via = Integer.valueOf(paramInteger("via"));
 		// }
 		if (doc == null)
-			throw new AplicacaoException("Documento não informado");
+			throw new AplicacaoException("Documento nï¿½o informado");
 		if (fVerificarAcesso && mob != null)
 			verificaNivelAcesso(mob);
 	}
@@ -422,9 +426,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			try {
 				mobil = movimentacao.getExMobil();
 			} catch (Exception e) {
-				log.warn("[getMov] - Não foi possível recuperar o mobil da movimentação");
+				log.warn("[getMov] - Nï¿½o foi possï¿½vel recuperar o mobil da movimentaï¿½ï¿½o");
 				throw new AplicacaoException(
-						"Ocorreu um erro ao recuperar o mobil da movimentação.",
+						"Ocorreu um erro ao recuperar o mobil da movimentaï¿½ï¿½o.",
 						0, e);
 			}
 		}
@@ -444,7 +448,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// HashMap<Integer, ExMovimentacao> movPorVia = new HashMap<Integer,
 		// ExMovimentacao>();
 
-		// Inclui data de fim nas movimentações que não a possuem
+		// Inclui data de fim nas movimentaï¿½ï¿½es que nï¿½o a possuem
 		// for (ExMovimentacao move : mob.getExMovimentacaoSet()) {
 		//
 		// if (movPorVia.containsKey(move.getNumVia())) {
@@ -460,8 +464,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		//
 		// boolean stop = false;
 		// Nato: Nao precisamos apagar as movimentacoes de criacao duplicadas,
-		// pq o perigo agora é a duplicacao de ExMobil.
-		// Apaga movimentações de criação excedentes
+		// pq o perigo agora ï¿½ a duplicacao de ExMobil.
+		// Apaga movimentaï¿½ï¿½es de criaï¿½ï¿½o excedentes
 		// while (!stop) {
 		// stop = true;
 		// for (ExMovimentacao move : doque.getExMovimentacaoSet()) {
@@ -546,11 +550,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 
 			throw new AplicacaoException(
-					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público.");
+					"A solicitaï¿½ï¿½o de publicaï¿½ï¿½o no DJE somente ï¿½ permitida para documentos com nï¿½vel de acesso Pï¿½blico.");
 
 		if (!Ex.getInstance().getComp()
 				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Publicação não permitida");
+			throw new AplicacaoException("Publicaï¿½ï¿½o nï¿½o permitida");
 
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
@@ -570,7 +574,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Publicação não permitida");
+			throw new AplicacaoException("Publicaï¿½ï¿½o nï¿½o permitida");
 
 		validarDataGravacao(mov, true);
 
@@ -597,12 +601,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 
 			throw new AplicacaoException(
-					"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público.");
+					"O agendamento de publicaï¿½ï¿½o no DJE somente ï¿½ permitido para documentos com nï¿½vel de acesso Pï¿½blico.");
 
 		if (!Ex.getInstance().getComp()
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não foi possível o agendamento de publicação no DJE.");
+					"Nï¿½o foi possï¿½vel o agendamento de publicaï¿½ï¿½o no DJE.");
 
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
@@ -649,11 +653,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não foi possível o agendamento de publicação no DJE.");
+					"Nï¿½o foi possï¿½vel o agendamento de publicaï¿½ï¿½o no DJE.");
 
 		if (getDescrPublicacao().length() > 256)
 			throw new AplicacaoException(
-					"O campo descrição possui mais do que 256 caracteres.");
+					"O campo descriï¿½ï¿½o possui mais do que 256 caracteres.");
 
 		validarDataGravacao(mov, false);
 
@@ -678,7 +682,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			boolean apenasSolicitacao) throws AplicacaoException {
 		if (mov.getDtDispPublicacao() == null)
 			throw new AplicacaoException(
-					"A data desejada para a disponibilização precisa ser informada.");
+					"A data desejada para a disponibilizaï¿½ï¿½o precisa ser informada.");
 
 		DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(
 				mov.getDtDispPublicacao());
@@ -721,13 +725,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							movPedidoBI, null, null, null,
 							"Pedido cancelado pela unidade gestora do BI");
 
-			// Verifica se está na base de teste
+			// Verifica se estï¿½ na base de teste
 			String mensagemTeste = null;
 			if (!SigaExProperties.isAmbienteProducao())
 				mensagemTeste = SigaExProperties.getString("email.baseTeste");
 
 			StringBuffer sb = new StringBuffer(
-					"Informamos que o pedido de publicação no Boletim Interno do documento "
+					"Informamos que o pedido de publicaï¿½ï¿½o no Boletim Interno do documento "
 							+ mob.getExDocumento().getCodigo()
 							+ " foi cancelado pela unidade gestora do BI.\n ");
 
@@ -735,7 +739,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				sb.append("\n " + mensagemTeste + "\n");
 
 			StringBuffer sbHtml = new StringBuffer(
-					"<html><body><p>Informamos que o pedido de publicação no Boletim Interno do documento "
+					"<html><body><p>Informamos que o pedido de publicaï¿½ï¿½o no Boletim Interno do documento "
 							+ mob.getExDocumento().getCodigo()
 							+ " foi cancelado pela unidade gestora do BI.</p> ");
 
@@ -753,7 +757,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getString("servidor.smtp.usuario.remetente"),
 					emailsSolicitantes.toArray(new String[emailsSolicitantes
 							.size()]),
-					"Cancelamento de pedido de publicação no DJE ("
+					"Cancelamento de pedido de publicaï¿½ï¿½o no DJE ("
 							+ movPedidoBI.getLotaCadastrante()
 									.getSiglaLotacao() + ") ", sb.toString(),
 					sbHtml.toString());
@@ -770,7 +774,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						getTitular(),
 						getLotaTitular(),
 						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO))
-			throw new AplicacaoException("Operação restrita");
+			throw new AplicacaoException("Operaï¿½ï¿½o restrita");
 		setItensSolicitados(dao().listarSolicitados(
 				getTitular().getOrgaoUsuario()));
 
@@ -791,10 +795,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			if (s.startsWith("chk_") && param(s).equals("true")) {
 				final Matcher m = p.matcher(s);
 				try {
-					// joga exceção se não é uma id válida
+					// joga exceï¿½ï¿½o se nï¿½o ï¿½ uma id vï¿½lida
 					if (!m.find())
 						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento.");
+								"Nï¿½o foi possï¿½vel ler a Id do documento.");
 
 					doque = daoDoc(Long.valueOf(m.group(1)));
 
@@ -808,7 +812,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.podeRemeterParaPublicacaoSolicitada(getTitular(),
 									getLotaTitular(), doque.getMobilGeral()))
 						throw new AplicacaoException(
-								"O documento não está nas condições de ser remetido");
+								"O documento nï¿½o estï¿½ nas condiï¿½ï¿½es de ser remetido");
 
 					validarDataGravacao(move, false);
 
@@ -836,7 +840,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (cont > 0)
 			throw new AplicacaoException(
-					"Alguns documentos não puderam ser remetidos ->  "
+					"Alguns documentos nï¿½o puderam ser remetidos ->  "
 							+ msgDocumentosErro);
 
 		return Action.SUCCESS;
@@ -850,7 +854,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeAtenderPedidoPublicacao(getTitular(), getLotaTitular(),
 						mob))
 			throw new AplicacaoException(
-					"Usuário não tem permissão de cancelar pedido de publicação no DJE.");
+					"Usuï¿½rio nï¿½o tem permissï¿½o de cancelar pedido de publicaï¿½ï¿½o no DJE.");
 
 		ExMovimentacao movPedidoDJE = mob
 				.getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO);
@@ -862,13 +866,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							movPedidoDJE, null, null, null,
 							"Pedido cancelado pela unidade gestora do DJE");
 
-			// Verifica se está na base de teste
+			// Verifica se estï¿½ na base de teste
 			String mensagemTeste = null;
 			if (!SigaExProperties.isAmbienteProducao())
 				mensagemTeste = SigaExProperties.getString("email.baseTeste");
 
 			StringBuffer sb = new StringBuffer(
-					"Informamos que o pedido de publicação no DJE do documento "
+					"Informamos que o pedido de publicaï¿½ï¿½o no DJE do documento "
 							+ mob.getExDocumento().getCodigo()
 							+ " foi cancelado pela unidade gestora do DJE.\n ");
 
@@ -876,7 +880,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				sb.append("\n " + mensagemTeste + "\n");
 
 			StringBuffer sbHtml = new StringBuffer(
-					"<html><body><p>Informamos que o pedido de publicação no DJE do documento "
+					"<html><body><p>Informamos que o pedido de publicaï¿½ï¿½o no DJE do documento "
 							+ mob.getExDocumento().getCodigo()
 							+ " foi cancelado pela unidade gestora do DJE.</p> ");
 
@@ -894,7 +898,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.getString("servidor.smtp.usuario.remetente"),
 					emailsSolicitantes.toArray(new String[emailsSolicitantes
 							.size()]),
-					"Cancelamento de pedido de publicação no DJE ("
+					"Cancelamento de pedido de publicaï¿½ï¿½o no DJE ("
 							+ movPedidoDJE.getLotaCadastrante()
 									.getSiglaLotacao() + ") ", sb.toString(),
 					sbHtml.toString());
@@ -921,7 +925,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!(mob.isGeral() && mob.doc().isFinalizado()))
 			if (!Ex.getInstance().getComp()
 					.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
-				throw new AplicacaoException("Arquivo não pode ser anexado");
+				throw new AplicacaoException("Arquivo nï¿½o pode ser anexado");
 
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
@@ -943,15 +947,15 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// bruno.lacerda@avantiprima.com.br
 		if (this.arquivo == null) {
 			throw new AplicacaoException(
-					"O arquivo a ser anexado não foi selecionado!");
+					"O arquivo a ser anexado nï¿½o foi selecionado!");
 		}
 
 		byte[] baArquivo = toByteArray(getArquivo());
 		if (baArquivo == null)
-			throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
+			throw new AplicacaoException("Arquivo vazio nï¿½o pode ser anexado.");
 		if (baArquivo.length > 10 * 1024 * 1024)
 			throw new AplicacaoException(
-					"Não é permitida a anexação de arquivos com mais de 10MB.");
+					"Nï¿½o ï¿½ permitida a anexaï¿½ï¿½o de arquivos com mais de 10MB.");
 		mov.setConteudoBlobMov2(baArquivo);
 
 		if (mov.getContarNumeroDePaginas() == null
@@ -959,20 +963,20 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException(
 					"O arquivo "
 							+ getArquivoFileName()
-							+ " está corrompido. Favor gerá-lo novamente antes de anexar.");
+							+ " estï¿½ corrompido. Favor gerï¿½-lo novamente antes de anexar.");
 		if (mob.isVolumeEncerrado()) {
 			throw new AplicacaoException(
-					"Não é possível anexar arquivo em volume encerrado.");
+					"Nï¿½o ï¿½ possï¿½vel anexar arquivo em volume encerrado.");
 		}
 
 		if (!Ex.getInstance().getComp()
 				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Arquivo não pode ser anexado");
+			throw new AplicacaoException("Arquivo nï¿½o pode ser anexado");
 		if (!getArquivoContentType().equals("application/pdf"))
 			throw new AplicacaoException(
-					"Somente é permitido anexar arquivo PDF.");
+					"Somente ï¿½ permitido anexar arquivo PDF.");
 
-		// Obtem as pendencias que serão resolvidas
+		// Obtem as pendencias que serï¿½o resolvidas
 		String aidMov[] = getRequest().getParameterValues(
 				"pendencia_de_anexacao");
 		Set<ExMovimentacao> pendencias = null;
@@ -985,7 +989,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 
 		try {
-			// Nato: Precisei usar o código abaixo para adaptar o charset do
+			// Nato: Precisei usar o cï¿½digo abaixo para adaptar o charset do
 			// nome do arquivo
 			String s1 = new String(mov.getNmArqMov().getBytes(), "utf-8");
 			byte[] ab = mov.getNmArqMov().getBytes();
@@ -1035,13 +1039,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException(
-					"Acesso permitido a usuários autorizados.");
+					"Acesso permitido a usuï¿½rios autorizados.");
 		}
 
 		if (!Ex.getInstance().getComp()
 				.podeArquivarCorrente(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Via ou processo não pode ser arquivado(a)");
+					"Via ou processo nï¿½o pode ser arquivado(a)");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1061,7 +1065,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeArquivarIntermediario(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível fazer arquivamento intermediário. Verifique se o documento não se encontra em lotação diferente de "
+					"Nï¿½o ï¿½ possï¿½vel fazer arquivamento intermediï¿½rio. Verifique se o documento nï¿½o se encontra em lotaï¿½ï¿½o diferente de "
 							+ getLotaTitular().getSigla());
 
 		if (doc.isEletronico())
@@ -1077,7 +1081,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeArquivarIntermediario(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível fazer arquivamento intermediário");
+					"Nï¿½o ï¿½ possï¿½vel fazer arquivamento intermediï¿½rio");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1098,7 +1102,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeArquivarPermanente(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Documento não pode ser arquivado. Verifique se ele não se encontra em lotação diferente de "
+					"Documento nï¿½o pode ser arquivado. Verifique se ele nï¿½o se encontra em lotaï¿½ï¿½o diferente de "
 							+ getLotaTitular().getSigla());
 		try {
 			Ex.getInstance()
@@ -1118,7 +1122,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeDesarquivarCorrente(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Via não pode ser reaberta");
+			throw new AplicacaoException("Via nï¿½o pode ser reaberta");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1140,7 +1144,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeDesarquivarIntermediario(getTitular(), getLotaTitular(),
 						mob))
 			throw new AplicacaoException(
-					"Documento não pode ser retirado do arquivo intermediário. Verifique se ele não se encontra em lotação diferente de "
+					"Documento nï¿½o pode ser retirado do arquivo intermediï¿½rio. Verifique se ele nï¿½o se encontra em lotaï¿½ï¿½o diferente de "
 							+ getLotaTitular().getSigla());
 		try {
 			Ex.getInstance()
@@ -1161,7 +1165,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeDesobrestar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Via não pode ser desobrestada");
+			throw new AplicacaoException("Via nï¿½o pode ser desobrestada");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1181,12 +1185,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException(
-					"Acesso permitido a usuários autorizados.");
+					"Acesso permitido a usuï¿½rios autorizados.");
 		}
 
 		if (!Ex.getInstance().getComp()
 				.podeSobrestar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Via não pode ser sobrestada");
+			throw new AplicacaoException("Via nï¿½o pode ser sobrestada");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1218,7 +1222,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		buscarDocumento(true);
 
 		if (getId() == null)
-			throw new AplicacaoException("id não foi informada.");
+			throw new AplicacaoException("id nï¿½o foi informada.");
 
 		mov = dao().consultar(getId(), ExMovimentacao.class, false);
 
@@ -1254,7 +1258,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		document.open();
 		document.addTitle("PDF de teste");
 		Paragraph preface = new Paragraph();
-		preface.add(new Paragraph("Este é um documento de teste"));
+		preface.add(new Paragraph("Este ï¿½ um documento de teste"));
 		document.add(preface);
 		document.close();
 
@@ -1268,14 +1272,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (mob.isVolumeEncerrado()) {
 			throw new AplicacaoException(
-					"Não é possível anexar arquivo em volume encerrado.");
+					"Nï¿½o ï¿½ possï¿½vel anexar arquivo em volume encerrado.");
 		}
 
 		if (!Ex.getInstance().getComp()
 				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Arquivo não pode ser anexado");
+			throw new AplicacaoException("Arquivo nï¿½o pode ser anexado");
 
-		// Obtem as pendencias que serão resolvidas
+		// Obtem as pendencias que serï¿½o resolvidas
 		String aidMov[] = getRequest().getParameterValues(
 				"pendencia_de_anexacao");
 		Set<ExMovimentacao> pendencias = null;
@@ -1288,7 +1292,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 
 		try {
-			// Nato: Precisei usar o código abaixo para adaptar o charset do
+			// Nato: Precisei usar o cï¿½digo abaixo para adaptar o charset do
 			// nome do arquivo
 			String s1 = new String(mov.getNmArqMov().getBytes(), "utf-8");
 			byte[] ab = mov.getNmArqMov().getBytes();
@@ -1401,9 +1405,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 
 		// Recupera o Id da movimentacao
-		// #arquivo é alimentado com ExMovimentacao.nmPdf. Se existir ":" é uma
-		// assinatura de movimentação
-		// caso contrário, é uma assinatura de documento
+		// #arquivo ï¿½ alimentado com ExMovimentacao.nmPdf. Se existir ":" ï¿½ uma
+		// assinatura de movimentaï¿½ï¿½o
+		// caso contrï¿½rio, ï¿½ uma assinatura de documento
 
 		if (ARQUIVO.contains(":")) {
 			String[] partesArq = ARQUIVO.split(":");
@@ -1466,7 +1470,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// // Se o certificado nÃ£o existir, lanÃ§a erro.
 		// if (signerCert == null) {
 		// throw new Exception(
-		// "O certificado do assinante não foi encontrado");
+		// "O certificado do assinante nï¿½o foi encontrado");
 		// }
 		//
 		// // Verificar assinaura
@@ -1486,7 +1490,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	/*
 	 * public String aFinalizarAssinarGravar() throws Exception{ if (getId() ==
-	 * null) throw new AplicacaoException("id não foi informada.");
+	 * null) throw new AplicacaoException("id nï¿½o foi informada.");
 	 * 
 	 * doc = daoDoc(getId()); // doc = dao.consultarConteudoBlob(doc);
 	 * 
@@ -1494,7 +1498,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	 * 
 	 * if (!Ex.getInstance().getComp().podeFinalizarAssinar(getTitular(),
 	 * getLotaTitular(), doc, numVia)) throw new
-	 * AplicacaoException("Operação não permitida");
+	 * AplicacaoException("Operaï¿½ï¿½o nï¿½o permitida");
 	 * 
 	 * Ex.getInstance().getBL().finalizar(getTitular(), getLotaTitular(), doc);
 	 * 
@@ -1589,7 +1593,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeRedefinirNivelAcesso(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível redefinir o nível de acesso");
+					"Nï¿½o ï¿½ possï¿½vel redefinir o nï¿½vel de acesso");
 
 		try {
 			Ex.getInstance()
@@ -1652,7 +1656,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeCancelarJuntada(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível cancelar juntada");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel cancelar juntada");
 
 		ExMobil mobilJuntado = mob.getExMobilPai();
 		if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
@@ -1669,7 +1673,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeCancelarJuntada(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível cancelar juntada");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel cancelar juntada");
 
 		try {
 			Ex.getInstance()
@@ -1696,14 +1700,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				&& exUltMovNaoCanc.getIdMov() == exUltMov.getIdMov()) {
 			if (!Ex.getInstance().getComp()
 					.podeCancelarVia(getTitular(), getLotaTitular(), mob))
-				throw new AplicacaoException("Não é possível cancelar via");
+				throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel cancelar via");
 		} else {
 			if (!Ex.getInstance()
 					.getComp()
 					.podeCancelarMovimentacao(getTitular(), getLotaTitular(),
 							mob))
 				throw new AplicacaoException(
-						"Não é possível cancelar movimentação");
+						"Nï¿½o ï¿½ possï¿½vel cancelar movimentaï¿½ï¿½o");
 		}
 
 		try {
@@ -1725,14 +1729,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			if (!Ex.getInstance()
 					.getComp()
 					.podeCancelarAnexo(getTitular(), getLotaTitular(), mob, mov))
-				throw new AplicacaoException("Não é possível cancelar anexo");
+				throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel cancelar anexo");
 
 		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
 			if (!Ex.getInstance()
 					.getComp()
 					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob,
 							mov))
-				throw new AplicacaoException("Não é possível cancelar anexo");
+				throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel cancelar anexo");
 
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			if (!Ex.getInstance()
@@ -1740,7 +1744,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.podeCancelarVinculacaoPapel(getTitular(),
 							getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
-						"Não é possível cancelar definição de perfil");
+						"Nï¿½o ï¿½ possï¿½vel cancelar definiï¿½ï¿½o de perfil");
 
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance()
@@ -1748,19 +1752,19 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.podeCancelarVinculacaoDocumento(getTitular(),
 							getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
-						"Não é possível cancelar o documento vinculado.");
+						"Nï¿½o ï¿½ possï¿½vel cancelar o documento vinculado.");
 
 		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
-						"Não é permitido cancelar esta movimentação.");
+						"Nï¿½o ï¿½ permitido cancelar esta movimentaï¿½ï¿½o.");
 		}
 
 		// if
 		// (!Ex.getInstance().getComp().podeCancelarMovimentacao(getTitular(),
 		// getLotaTitular(), mob))
-		// throw new AplicacaoException("Não é possível cancelar movimentacao");
+		// throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel cancelar movimentacao");
 
 		// if (doc.isEletronico()) {
 		// aCancelarMovimentacaoGravar();
@@ -1779,13 +1783,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			if (!Ex.getInstance()
 					.getComp()
 					.podeCancelarAnexo(getTitular(), getLotaTitular(), mob, mov))
-				throw new AplicacaoException("Não é possível cancelar anexo");
+				throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel cancelar anexo");
 		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
 			if (!Ex.getInstance()
 					.getComp()
 					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob,
 							mov))
-				throw new AplicacaoException("Não é possível cancelar anexo");
+				throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel cancelar anexo");
 
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			if (!Ex.getInstance()
@@ -1793,7 +1797,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.podeCancelarVinculacaoPapel(getTitular(),
 							getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
-						"Não é possível cancelar definição de perfil");
+						"Nï¿½o ï¿½ possï¿½vel cancelar definiï¿½ï¿½o de perfil");
 
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance()
@@ -1801,13 +1805,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.podeCancelarVinculacaoDocumento(mov.getCadastrante(),
 							mov.getLotaCadastrante(), mob, mov))
 				throw new AplicacaoException(
-						"Não é possível cancelar o documento vinculado.");
+						"Nï¿½o ï¿½ possï¿½vel cancelar o documento vinculado.");
 
 		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
-						"Não é permitido cancelar esta movimentação.");
+						"Nï¿½o ï¿½ permitido cancelar esta movimentaï¿½ï¿½o.");
 		}
 
 		try {
@@ -1843,7 +1847,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		buscarDocumento(true);
 
 		if (getId() == null)
-			throw new AplicacaoException("id não foi informada.");
+			throw new AplicacaoException("id nï¿½o foi informada.");
 
 		mov = dao().consultar(getId(), ExMovimentacao.class, false);
 
@@ -1866,7 +1870,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					final Matcher m = p.matcher(s);
 					if (!m.find())
 						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
+								"Nï¿½o foi possï¿½vel ler a Id do documento e o nï¿½mero da via.");
 					final ExMobil mob = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
 					final Object[] ao = { mob.doc(),
@@ -1953,19 +1957,19 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		String siglaPessoa = param("pessoa");
 
 		if (siglaPessoa == null || siglaPessoa.trim() == "") {
-			log.warn("[aGerarProtocoloArq] - A sigla informada é nula ou inválida");
+			log.warn("[aGerarProtocoloArq] - A sigla informada ï¿½ nula ou invï¿½lida");
 			throw new AplicacaoException(
-					"A sigla informada é nula ou inválida.");
+					"A sigla informada ï¿½ nula ou invï¿½lida.");
 		}
 
 		oExemplo.setSigla(siglaPessoa);
 		pes = CpDao.getInstance().consultarPorSigla(oExemplo);
 
 		if (pes == null) {
-			log.warn("[aGerarProtocoloArq] - Não foi possível localizar DpPessoa com a sigla "
+			log.warn("[aGerarProtocoloArq] - Nï¿½o foi possï¿½vel localizar DpPessoa com a sigla "
 					+ oExemplo.getSigla());
 			throw new AplicacaoException(
-					"Não foi localizada pessoa com a sigla informada.");
+					"Nï¿½o foi localizada pessoa com a sigla informada.");
 		}
 
 		Date dt = paramDate("dt");
@@ -2039,7 +2043,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeJuntar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível fazer juntada");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel fazer juntada");
 
 		return Action.SUCCESS;
 	}
@@ -2050,7 +2054,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeJuntar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível fazer juntada");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel fazer juntada");
 
 		// Nato: precisamos rever o codigo abaixo, pois a movimentacao nao pode
 		// ser gravada sem hora, minuto e segundo.
@@ -2090,7 +2094,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeApensar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível apensar");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel apensar");
 
 		return Action.SUCCESS;
 	}
@@ -2101,7 +2105,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeApensar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível fazer apensar");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel fazer apensar");
 
 		try {
 			// Quando o documento e eletronico, o responsavel pela juntada fica
@@ -2131,7 +2135,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeDesapensar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível desapensar");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel desapensar");
 
 		if (doc.isEletronico()) {
 			aDesapensarGravar();
@@ -2147,7 +2151,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeDesapensar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível desapensar");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel desapensar");
 
 		try {
 			Ex.getInstance()
@@ -2175,7 +2179,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeRegistrarAssinatura(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível registrar a assinatura");
+					"Nï¿½o ï¿½ possï¿½vel registrar a assinatura");
 
 		setSubstituicao(false);
 
@@ -2187,12 +2191,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		lerForm(mov);
 
 		if (mov.getSubscritor() == null)
-			throw new AplicacaoException("Responsável não informado");
+			throw new AplicacaoException("Responsï¿½vel nï¿½o informado");
 
 		if (!Ex.getInstance().getComp()
 				.podeRegistrarAssinatura(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível registrar a assinatura");
+					"Nï¿½o ï¿½ possï¿½vel registrar a assinatura");
 
 		try {
 			setMsg(Ex
@@ -2213,7 +2217,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeIncluirCosignatario(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível incluir cossignatário");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel incluir cossignatï¿½rio");
 
 		return Action.SUCCESS;
 	}
@@ -2232,7 +2236,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeIncluirCosignatario(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível incluir cossignatário");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel incluir cossignatï¿½rio");
 
 		try {
 			Ex.getInstance()
@@ -2251,7 +2255,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeReceber(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Documento não pode ser recebido");
+			throw new AplicacaoException("Documento nï¿½o pode ser recebido");
 
 		aReceberGravar();
 		return "pula";
@@ -2267,7 +2271,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeReceber(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Documento não pode ser recebido");
+			throw new AplicacaoException("Documento nï¿½o pode ser recebido");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -2285,11 +2289,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		//
 		// if (!Ex.getInstance().getComp()
 		// .podeReceberPor(getTitular(), getLotaTitular(), mob))
-		// throw new AplicacaoException("Documento não pode ser recebido");
+		// throw new AplicacaoException("Documento nï¿½o pode ser recebido");
 		//
 		// if (!mob.isEmTransito())
 		// throw new AplicacaoException(
-		// "Documento não disponível para recebimento");
+		// "Documento nï¿½o disponï¿½vel para recebimento");
 		//
 		// aReceberPorGravar();
 		return "pula";
@@ -2359,7 +2363,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					final Matcher m = p.matcher(s);
 					if (!m.find())
 						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
+								"Nï¿½o foi possï¿½vel ler a Id do documento e o nï¿½mero da via.");
 					final ExMobil mob = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
 
@@ -2367,7 +2371,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.podeReceber(getTitular(), getLotaTitular(), mob)) {
 						if (msgErro == null)
 							msgErro = new StringBuffer(
-									"Alguns documentos não puderam ser recebidos:  ");
+									"Alguns documentos nï¿½o puderam ser recebidos:  ");
 						msgErro.append(doc.getCodigo());
 						msgErro.append("  ");
 					} else
@@ -2416,7 +2420,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					final Matcher m = p.matcher(s);
 					if (!m.find())
 						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
+								"Nï¿½o foi possï¿½vel ler a Id do documento e o nï¿½mero da via.");
 					final ExMobil mob = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
 
@@ -2445,9 +2449,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						offset);
 
 		ExTopicoDestinacao digitais = new ExTopicoDestinacao("Digitais", true);
-		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos", true);
+		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Fï¿½sicos", true);
 		ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao(
-				"Não disponíveis", false);
+				"Nï¿½o disponï¿½veis", false);
 
 		for (ExItemDestinacao item : listaProv) {
 			boolean pode = Ex
@@ -2491,7 +2495,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					final Matcher m = p.matcher(s);
 					if (!m.find())
 						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
+								"Nï¿½o foi possï¿½vel ler a Id do documento e o nï¿½mero da via.");
 					final ExMobil mob = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
 
@@ -2517,9 +2521,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.consultarParaArquivarPermanenteEmLote(getLotaTitular(), offset);
 
 		ExTopicoDestinacao digitais = new ExTopicoDestinacao("Digitais", true);
-		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos", true);
+		ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Fï¿½sicos", true);
 		ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao(
-				"Não disponíveis", false);
+				"Nï¿½o disponï¿½veis", false);
 
 		for (ExItemDestinacao item : listaProv) {
 			boolean pode = Ex
@@ -2564,7 +2568,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					final Matcher m = p.matcher(s);
 					if (!m.find())
 						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
+								"Nï¿½o foi possï¿½vel ler a Id do documento e o nï¿½mero da via.");
 
 					final ExMobil mob = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
@@ -2608,7 +2612,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeReverterIndicacaoPermanente(getTitular(),
 						getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível reverter indicação para guarda permanente");
+					"Nï¿½o ï¿½ possï¿½vel reverter indicaï¿½ï¿½o para guarda permanente");
 
 		return Action.SUCCESS;
 	}
@@ -2622,7 +2626,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeReverterIndicacaoPermanente(getTitular(),
 						getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível reverter indicação para guarda permanente");
+					"Nï¿½o ï¿½ possï¿½vel reverter indicaï¿½ï¿½o para guarda permanente");
 
 		if (mov.getExDocumento().isEletronico()) {
 			SimpleDateFormat sdf = new SimpleDateFormat();
@@ -2654,7 +2658,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeRetirarDeEditalEliminacao(getTitular(), getLotaTitular(),
 						mob))
 			throw new AplicacaoException(
-					"Não é possível retirar o documento de edital de eliminação");
+					"Nï¿½o ï¿½ possï¿½vel retirar o documento de edital de eliminaï¿½ï¿½o");
 
 		return Action.SUCCESS;
 	}
@@ -2668,7 +2672,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podeRetirarDeEditalEliminacao(getTitular(), getLotaTitular(),
 						mob))
 			throw new AplicacaoException(
-					"Não é possível retirar o documento de edital de eliminação");
+					"Nï¿½o ï¿½ possï¿½vel retirar o documento de edital de eliminaï¿½ï¿½o");
 
 		try {
 			Ex.getInstance()
@@ -2691,7 +2695,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeIndicarPermanente(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível fazer indicação para guarda permanente");
+					"Nï¿½o ï¿½ possï¿½vel fazer indicaï¿½ï¿½o para guarda permanente");
 
 		return Action.SUCCESS;
 	}
@@ -2703,7 +2707,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeIndicarPermanente(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível fazer indicação para guarda permanente");
+					"Nï¿½o ï¿½ possï¿½vel fazer indicaï¿½ï¿½o para guarda permanente");
 
 		if (mov.getExDocumento().isEletronico()) {
 			SimpleDateFormat sdf = new SimpleDateFormat();
@@ -2731,7 +2735,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeAvaliar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível avaliar");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel avaliar");
 
 		return Action.SUCCESS;
 	}
@@ -2742,7 +2746,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeAvaliar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível avaliar");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel avaliar");
 
 		if (mov.getExDocumento().isEletronico()) {
 			SimpleDateFormat sdf = new SimpleDateFormat();
@@ -2770,7 +2774,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeReclassificar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível reclassificar");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel reclassificar");
 
 		return Action.SUCCESS;
 	}
@@ -2781,7 +2785,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeReclassificar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível reclassificar");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel reclassificar");
 
 		if (mov.getExDocumento().isEletronico()) {
 			SimpleDateFormat sdf = new SimpleDateFormat();
@@ -2809,7 +2813,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeReferenciar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível fazer vinculação");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel fazer vinculaï¿½ï¿½o");
 
 		return Action.SUCCESS;
 	}
@@ -2837,10 +2841,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeReferenciar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível fazer vinculação");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel fazer vinculaï¿½ï¿½o");
 		if (mov.getExMobilRef() == null)
 			throw new AplicacaoException(
-					"Não foi selecionado um documento para a vinculação");
+					"Nï¿½o foi selecionado um documento para a vinculaï¿½ï¿½o");
 
 		if (mov.getExDocumento().isEletronico()) {
 			SimpleDateFormat sdf = new SimpleDateFormat();
@@ -2890,7 +2894,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.getInstance().getComp()
 				.podeDespachar(getTitular(), getLotaTitular(), mob)))
 			throw new AplicacaoException(
-					"Não é possível fazer despacho nem transferência");
+					"Nï¿½o ï¿½ possï¿½vel fazer despacho nem transferï¿½ncia");
 		return Action.SUCCESS;
 	}
 
@@ -2905,12 +2909,12 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				|| (mov.getResp() != null && UltMov.getResp() != null && UltMov
 						.getResp().equivale(mov.getResp())))
 			throw new AplicacaoException(
-					"Novo responsável não pode ser igual ao atual");
+					"Novo responsï¿½vel nï¿½o pode ser igual ao atual");
 
 		if (!Ex.getInstance().getComp()
 				.podeReceberPorConfiguracao(mov.getResp(), mov.getLotaResp()))
 			throw new AplicacaoException(
-					"Destinatário não pode receber documentos");
+					"Destinatï¿½rio nï¿½o pode receber documentos");
 
 		if (!(Ex.getInstance().getComp()
 
@@ -2918,7 +2922,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.getInstance().getComp()
 				.podeDespachar(getTitular(), getLotaTitular(), mob)))
 			throw new AplicacaoException(
-					"Não é possível fazer despacho nem transferência");
+					"Nï¿½o ï¿½ possï¿½vel fazer despacho nem transferï¿½ncia");
 
 		try {
 			Ex.getInstance()
@@ -2952,7 +2956,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (mob.isVolumeEncerrado())
 			throw new AplicacaoException(
-					"Não é permitido encerrar um volume já encerrado.");
+					"Nï¿½o ï¿½ permitido encerrar um volume jï¿½ encerrado.");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -2978,7 +2982,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeFazerAnotacao(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível fazer anotação");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel fazer anotaï¿½ï¿½o");
 
 		return Action.SUCCESS;
 	}
@@ -2992,7 +2996,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeFazerAnotacao(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível fazer anotação");
+			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel fazer anotaï¿½ï¿½o");
 
 		try {
 			Ex.getInstance()
@@ -3046,7 +3050,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					final Matcher m = p.matcher(s);
 					if (!m.find())
 						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
+								"Nï¿½o foi possï¿½vel ler a Id do documento e o nï¿½mero da via.");
 					final ExMobil mob = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
 
@@ -3071,7 +3075,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeFazerVinculacaoPapel(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível fazer vinculação de papel");
+					"Nï¿½o ï¿½ possï¿½vel fazer vinculaï¿½ï¿½o de papel");
 
 		return Action.SUCCESS;
 	}
@@ -3083,7 +3087,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (mov.getResp() == null && mov.getLotaResp() == null)
 			throw new AplicacaoException(
-					"Não foi informado o responsável ou lotação responsável para a vinculação de papel ");
+					"Nï¿½o foi informado o responsï¿½vel ou lotaï¿½ï¿½o responsï¿½vel para a vinculaï¿½ï¿½o de papel ");
 
 		if (mov.getResp() != null) {
 			mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
@@ -3100,7 +3104,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeFazerVinculacaoPapel(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Não é possível fazer vinculação de papel");
+					"Nï¿½o ï¿½ possï¿½vel fazer vinculaï¿½ï¿½o de papel");
 
 		try {
 			Ex.getInstance()
@@ -3118,7 +3122,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aTransferirLote() throws Exception {
-		Iterator<ExMobil> provItens = dao().consultarParaTransferirEmLote(getLotaTitular());
+		Iterator<ExMobil> provItens = dao().consultarParaTransferirEmLote(
+				getLotaTitular());
 		setItens(new ArrayList<ExMobil>());
 
 		while (provItens.hasNext()) {
@@ -3177,7 +3182,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (mov.getResp() == null && mov.getLotaResp() == null)
 			throw new AplicacaoException(
-					"Não foi definido o destino da transferência.");
+					"Nï¿½o foi definido o destino da transferï¿½ncia.");
 		if (param("tpdall") != null && paramLong("tpdall") != 0)
 			despaUnico = true;
 
@@ -3201,7 +3206,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					final Matcher m = p.matcher(s);
 					if (!m.find())
 						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
+								"Nï¿½o foi possï¿½vel ler a Id do documento e o nï¿½mero da via.");
 
 					final ExMobil mobil = dao().consultar(
 							Long.valueOf(m.group(1)), ExMobil.class, false);
@@ -3212,7 +3217,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 									getLotaTitular(), mobil)) {
 						if (msgErroNivelAcessoso == null)
 							msgErroNivelAcessoso = new AplicacaoException(
-									"O documento não pode ser transferido por estar inacessível ao usuário.");
+									"O documento nï¿½o pode ser transferido por estar inacessï¿½vel ao usuï¿½rio.");
 						if (!(msgErroNivelAcessoso.equals(null)))
 							MapMensagens.put(mobil, msgErroNivelAcessoso);
 					} else {
@@ -3325,16 +3330,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	/*
-	 * como usamos <ww:file name="arquivo" .../> o content Type do arquivo será
-	 * obtido através getter/setter de <file-tag-name>ContentType
+	 * como usamos <ww:file name="arquivo" .../> o content Type do arquivo serï¿½
+	 * obtido atravï¿½s getter/setter de <file-tag-name>ContentType
 	 */
 	public String getArquivoContentType() {
 		return contentType;
 	}
 
 	/*
-	 * como usamos <ww:file name="arquivo" .../> o nome do arquivo será obtido
-	 * através getter/setter de <file-tag-name>FileName
+	 * como usamos <ww:file name="arquivo" .../> o nome do arquivo serï¿½ obtido
+	 * atravï¿½s getter/setter de <file-tag-name>FileName
 	 */
 	public String getArquivoFileName() {
 		return fileName;
@@ -3451,23 +3456,23 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public Map<Integer, String> getListaTipoDestinoFinal() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Órgão Integrado");
-		map.put(2, "Matrícula");
+		map.put(1, "ï¿½rgï¿½o Integrado");
+		map.put(2, "Matrï¿½cula");
 		return map;
 	}
 
 	public Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Órgão Integrado");
-		map.put(2, "Matrícula");
-		map.put(3, "Órgão Externo");
+		map.put(1, "ï¿½rgï¿½o Integrado");
+		map.put(2, "Matrï¿½cula");
+		map.put(3, "ï¿½rgï¿½o Externo");
 		return map;
 	}
 
 	public Map<Integer, String> getListaTipoRespPerfil() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
+		map.put(1, "Matrï¿½cula");
+		map.put(2, "ï¿½rgï¿½o Integrado");
 		return map;
 	}
 
@@ -3708,7 +3713,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			mov.setDtDispPublicacao(null);
 		}
 
-		// Nato: Comentei isso porque acho que não é necessário e custaria um
+		// Nato: Comentei isso porque acho que nï¿½o ï¿½ necessï¿½rio e custaria um
 		// acesso ao Oracle
 		// if (mov.getDtIniMov() == null)
 		// mov.setDtIniMov(dao().dt());
@@ -3716,7 +3721,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if ((mov.getTitular() != null && mov.getSubscritor() == null)
 				|| (mov.getLotaTitular() != null && mov.getLotaSubscritor() == null))
 			throw new AplicacaoException(
-					"Não foi selecionado o substituto para o titular");
+					"Nï¿½o foi selecionado o substituto para o titular");
 	}
 
 	public void setArquivo(final File arquivo) {
@@ -3744,7 +3749,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	// if (form.getIdDoc() == null) {
 	// String sId = request.getParameter("id");
 	// if (sId == null) {
-	// throw new CsisException("id não foi informada.");
+	// throw new CsisException("id nï¿½o foi informada.");
 	// }
 	// form.setIdDoc(Long.valueOf(sId));
 	// }
@@ -3949,7 +3954,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.via = via;
 	}
 
-	// Retorna o conteúdo do arquivo em um array de Byte
+	// Retorna o conteï¿½do do arquivo em um array de Byte
 	public byte[] toByteArray(final File file) throws IOException {
 
 		final InputStream is = new FileInputStream(file);
@@ -3957,8 +3962,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// Get the size of the file
 		final long tamanho = file.length();
 
-		// Não podemos criar um array usando o tipo long.
-		// é necessário usar o tipo int.
+		// Nï¿½o podemos criar um array usando o tipo long.
+		// ï¿½ necessï¿½rio usar o tipo int.
 		if (tamanho > Integer.MAX_VALUE)
 			throw new IOException("Arquivo muito grande");
 
@@ -3977,7 +3982,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// Ensure all the bytes have been read in
 		if (offset < meuByteArray.length)
 			throw new IOException(
-					"Não foi possível ler o arquivo completamente "
+					"Nï¿½o foi possï¿½vel ler o arquivo completamente "
 							+ file.getName());
 
 		// Close the input stream and return bytes
@@ -4081,14 +4086,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 
 			throw new AplicacaoException(
-					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público.");
+					"A solicitaï¿½ï¿½o de publicaï¿½ï¿½o no BIE somente ï¿½ permitida para documentos com nï¿½vel de acesso Pï¿½blico.");
 
 		if (!Ex.getInstance()
 				.getComp()
 				.podeAgendarPublicacaoBoletim(getTitular(), getLotaTitular(),
 						mob))
 			throw new AplicacaoException(
-					"A solicitação de publicação no BIE apenas é permitida até as 17:00");
+					"A solicitaï¿½ï¿½o de publicaï¿½ï¿½o no BIE apenas ï¿½ permitida atï¿½ as 17:00");
 
 		try {
 			Ex.getInstance()
@@ -4113,7 +4118,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podePublicar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Publicação não permitida");
+			throw new AplicacaoException("Publicaï¿½ï¿½o nï¿½o permitida");
 
 		return Action.SUCCESS;
 
@@ -4234,7 +4239,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public ExModelo getModelo() {
-		return dao().consultarExModelo(null, "Despacho Automático");
+		return dao().consultarExModelo(null, "Despacho Automï¿½tico");
 	}
 
 	public List<DpLotacao> getListaLotPubl() throws Exception {

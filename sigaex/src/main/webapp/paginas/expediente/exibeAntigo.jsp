@@ -463,7 +463,7 @@
 </c:if>
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-	<c:url var="url" value="/../sigagc/knowledge">
+	<c:url var="url" value="/../sigagc/app/knowledge">
 		<c:param name="tags">@documento</c:param>
 		<c:forEach var="tag" items="${docVO.tags}">
 			<c:param name="tags">${tag}</c:param>

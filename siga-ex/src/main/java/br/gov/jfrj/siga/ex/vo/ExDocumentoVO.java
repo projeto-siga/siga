@@ -225,7 +225,7 @@ public class ExDocumentoVO extends ExVO {
 		}
 	}
 
-	public void novoExibe() {
+	public void exibe() {
 		List<Long> movimentacoesPermitidas = new ArrayList<Long>();
 
 		movimentacoesPermitidas
@@ -314,10 +314,7 @@ public class ExDocumentoVO extends ExVO {
 		}
 		
 		if (mobilEspecifico != null && mobilGeral != null) {
-			for (ExAcaoVO acaoGeral : mobilGeral.getAcoes()){
-				if (!acaoGeral.getNome().contains("Exibir Tod"))
-					mobilEspecifico.getAcoes().add(acaoGeral);
-			}
+			mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
 			mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
 			mobilEspecifico.anexosNaoAssinados
 					.addAll(mobilGeral.anexosNaoAssinados);
@@ -431,15 +428,6 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeDownloadConteudo(titular, lotaTitular, mob));
 
-		vo.addAcao("sitemap_color", "Exibir Todas as Vias", "/expediente/doc",
-				"exibir", doc.isExpediente() && doc.isFinalizado(), null,
-				"&exibirCompleto=false", null, null, null);
-
-		vo.addAcao("sitemap_color", "Exibir Todos os Volumes",
-				"/expediente/doc", "exibir",
-				doc.isProcesso() && doc.isFinalizado(), null,
-				"&exibirCompleto=false", null, null, "once");
-
 		vo.addAcao("add", "Criar Via", "/expediente/doc", "criarVia", Ex
 				.getInstance().getComp()
 				.podeCriarVia(titular, lotaTitular, mob), null, null, null,
@@ -552,7 +540,7 @@ public class ExDocumentoVO extends ExVO {
 				"eye",
 				"Exibir Informações Completas",
 				"/expediente/doc",
-				"exibir",
+				"exibirAntigo",
 				Ex.getInstance()
 						.getComp()
 						.podeExibirInformacoesCompletas(titular, lotaTitular,

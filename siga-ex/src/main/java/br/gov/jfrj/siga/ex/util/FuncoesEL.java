@@ -29,10 +29,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.text.MaskFormatter;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -49,11 +50,11 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
-import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
@@ -709,12 +710,12 @@ public class FuncoesEL {
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
 
-		// Nato: Nesse caso, o titular é considerado o subscritor do documento.
-		// Não sei se isso é 100% correto, mas acho que é uma abordagem bastante
-		// razoável.
+		// Nato: Nesse caso, o titular ï¿½ considerado o subscritor do documento.
+		// Nï¿½o sei se isso ï¿½ 100% correto, mas acho que ï¿½ uma abordagem bastante
+		// razoï¿½vel.
 		// Markenson: Conversando com o Renato, alteramos o titular para o
 		// titular do sistema
-		// e não do documento.
+		// e nï¿½o do documento.
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,
@@ -805,7 +806,7 @@ public class FuncoesEL {
 	 */
 	public static String formatarCPF(String cpf) {
 
-		// Se CPF já vem formatado, devolve cpf
+		// Se CPF jï¿½ vem formatado, devolve cpf
 		Pattern p = Pattern
 				.compile("[0-9]{2,3}?\\.[0-9]{3}?\\.[0-9]{3}?\\-[0-9]{2}?");
 		Matcher m = p.matcher(cpf);
@@ -814,15 +815,15 @@ public class FuncoesEL {
 			return cpf;
 		}
 
-		// O texto é truncado para 11 caracteres caso seja maior
+		// O texto ï¿½ truncado para 11 caracteres caso seja maior
 		if (cpf.length() > 11) {
 			cpf = cpf.substring(0, 11);
 		}
 
-		// Determina o número de zeros à esquerda
+		// Determina o nï¿½mero de zeros ï¿½ esquerda
 		int numZerosAEsquerda = 11 - cpf.length();
 
-		// aplica os zeros à esquerda
+		// aplica os zeros ï¿½ esquerda
 		for (int i = 0; i < numZerosAEsquerda; i++) {
 			cpf = "0" + cpf;
 		}
@@ -835,6 +836,26 @@ public class FuncoesEL {
 		termo4 = cpf.substring(9);
 
 		return termo1 + "." + termo2 + "." + termo3 + "-" + termo4;
+	}
+	
+	/**
+	 * Aplica o formato de CNP. Ex: 1234567891012 para 12.345.678/9101-23
+	 * 
+	 * @param cnpj
+	 *            - CNPJ formatado.
+	 * @return
+	 * @throws ParseException 
+	 */
+	public static String formatarCNPJ(String cnpj) throws ParseException  {
+		if(cnpj != null) {
+			cnpj = cnpj.replaceAll("\\.", "").replaceAll("\\/", "").replaceAll("\\-", "");
+			
+			MaskFormatter mf = new MaskFormatter("##.###.###/####-##");  
+		    mf.setValueContainsLiteralCharacters(false);  
+		    return mf.valueToString(cnpj);
+		}
+		
+		return "";
 	}
 
 	public static String classNivPadr(String s) {
@@ -857,13 +878,13 @@ public class FuncoesEL {
 			nivel = "Auxiliar";
 
 		if (nivel.indexOf('I') > 0)
-			nivel = "Intermediário";
+			nivel = "Intermediï¿½rio";
 
 		if (nivel.indexOf('S') > 0)
 			nivel = "Superior";
 
-		return "Nível " + nivel + ", Classe " + aux + classe + aux
-				+ ", Padrão " + aux + padrao + aux;
+		return "Nï¿½vel " + nivel + ", Classe " + aux + classe + aux
+				+ ", Padrï¿½o " + aux + padrao + aux;
 	}
 
 	public static String buscarLotacaoPorSigla(String sigla, Long idOrgaoUsu)
@@ -955,4 +976,33 @@ public class FuncoesEL {
 		return "";
 	}
 	
+	public static List<ExTpDocPublicacao> listaPublicacao(Long idMod) {
+		ExModelo mod = dao().consultar(idMod, ExModelo.class, false);
+		return PublicacaoDJEBL.obterListaTiposMaterias(mod.getHisIdIni());
+	}
+	
+	public static CalculoPCD calculoPCD(String cargo, String funcao, DpPessoa beneficiario, String dataInicio, String dataFim, 
+			Boolean solicitaAuxTransporte, Boolean carroOficial, Integer pernoite, Float descontoSalario, Float valorConcedido, Boolean executorMandado ) {
+		CalculoPCD calculo = new CalculoPCD();
+		
+		calculo.setCargo(cargo);
+		calculo.setFuncao(funcao);
+		calculo.setBeneficiario(beneficiario);
+		calculo.setDataInicio(dataInicio);
+		calculo.setDataFim(dataFim);
+		calculo.setSolicitaAuxTransporte(solicitaAuxTransporte);
+		calculo.setCarroOficial(carroOficial);
+		calculo.setPernoite(pernoite);
+		calculo.setDescontoSalario(descontoSalario);
+		calculo.setValorConcedido(valorConcedido);
+		calculo.setExecutorMandado(executorMandado);
+		
+		
+		return calculo;
+	}
+	
+	public static List<ExDocumento> listaDocsAPublicarBoletim(CpOrgaoUsuario orgaoUsuario) {
+		final List<ExDocumento> l = dao().consultarPorModeloParaPublicar(orgaoUsuario);
+		return l;
+	}
 }

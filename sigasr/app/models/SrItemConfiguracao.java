@@ -63,7 +63,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	@Lob
 	@Column(name = "DESCR_SIMILARIDADE", length = 8192)
 	public String descricaoSimilaridade;
-
+		
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrItemConfiguracao itemInicial;
@@ -75,6 +75,12 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
     public Set<SrGestorItem> gestorSet;
 
+	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
+	public int numFatorMultiplicacaoGeral;
+	
+	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
+	public Set<SrFatorMultiplicacao> fatorMultiplicacaoSet; 
+	
 	public SrItemConfiguracao() {
 		this(null, null);
 	}
@@ -369,6 +375,11 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
             for (SrGestorItem gestor : gestorSet){
                 gestor.itemConfiguracao = this;
                 gestor.salvar();
+            }
+        if (fatorMultiplicacaoSet != null)
+            for (SrFatorMultiplicacao fator : fatorMultiplicacaoSet){
+                fator.itemConfiguracao = this;
+                fator.salvar();
             }
     }
 

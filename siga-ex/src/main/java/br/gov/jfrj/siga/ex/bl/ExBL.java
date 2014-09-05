@@ -4304,7 +4304,7 @@ public class ExBL extends CpBL {
 							"Não é permitido transferir documento para lotação fechada");
 
 				if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
-					throw new AplicacaoException("Transferência não permitida");
+					throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
 				if (!m.getExDocumento().isAssinado()
 						&& !lotaResponsavel.equivale(m.getExDocumento()
 								.getLotaTitular())

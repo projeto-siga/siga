@@ -23,7 +23,7 @@
    name="dtDocOriginal" type="java.util.Date"/>
   <property column="DT_REG_DOC" generated="never" lazy="false"
    name="dtRegDoc" not-null="true" type="java.util.Date"/>
-  <property column="DT_FECHAMENTO" generated="never" lazy="false"
+  <property column="DT_FINALIZACAO" generated="never" lazy="false"
    name="dtFinalizacao" type="java.util.Date"/>
   <property column="NM_SUBSCRITOR_EXT" generated="never" lazy="false"
    name="nmSubscritorExt" type="java.lang.String"/>

@@ -248,7 +248,8 @@ public class Application extends SigaApplication {
 			if (testarAcessoPublico && (info.visualizacao.id != GcAcesso.ACESSO_PUBLICO))
 				continue;
 			
-			o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
+			//o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
+			o[3] = info.getSigla();
 			if (o[2] != null && o[2] instanceof byte[]) {
 				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
 				s = GcBL.ellipsize(s, 100);
@@ -283,7 +284,7 @@ public class Application extends SigaApplication {
 		}
 		//Necessário pq para criar um novo conhecimento a partir de um já existente, a classificação
 		//é passada como queryString. Sem fazer isso, as hashTags não são passadas.
-		classificacao = URLEncoder.encode(classificacao, "UTF-8");
+		//classificacao = URLEncoder.encode(classificacao, "UTF-8");
 		// if (msgvazio != null) {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");

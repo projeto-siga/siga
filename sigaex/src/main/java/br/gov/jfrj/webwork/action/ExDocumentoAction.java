@@ -936,7 +936,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 	}
 
-	public String aExibir() throws Exception {
+	public String aExibirAntigo() throws Exception {
 		buscarDocumento(false);
 		
 		assertAcesso();
@@ -966,7 +966,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 	
 	
-	public String aExibirNovo() throws Exception {
+	public String aExibir() throws Exception {
 		buscarDocumento(true);
 
 		assertAcesso();
@@ -991,7 +991,7 @@ public class ExDocumentoAction extends ExActionSupport {
 				getLotaTitular(), true);
 		
 		
-		docVO.novoExibe();
+		docVO.exibe();
 		
 		super.getRequest().setAttribute("docVO", docVO);
 

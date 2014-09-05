@@ -64,8 +64,8 @@ public class Application extends SigaApplication {
 		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(priority = 2, unless = { "exibirAtendente", "exibirAtributos",
-			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao" })
+	@Before(priority = 2, unless = { "exibirAtendente",
+			"exibirLocalERamal", "exibirItemConfiguracao" })
 	public static void addDefaults() throws Exception {
 
 		try {

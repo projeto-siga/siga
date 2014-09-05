@@ -31,7 +31,7 @@ public class ExGraphRelacaoDocs extends ExGraph {
 			setLabel(mob.getSiglaResumida(pessoaVisualizando.getOrgaoUsuario(),
 					docRef));
 			setTooltip(mob.getSigla());
-			setURL("exibirNovo.action?sigla=" + mob.getSigla() + "");
+			setURL("exibir.action?sigla=" + mob.getSigla() + "");
 		}
 	}
 

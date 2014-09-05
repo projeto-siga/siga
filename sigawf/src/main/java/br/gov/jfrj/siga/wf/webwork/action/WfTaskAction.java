@@ -34,9 +34,9 @@ import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.Comment;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
+import org.jbpm.graph.exe.Token;
 import org.jbpm.graph.node.TaskNode;
 import org.jbpm.logging.log.ProcessLog;
-import org.jbpm.taskmgmt.def.Swimlane;
 import org.jbpm.taskmgmt.def.Task;
 import org.jbpm.taskmgmt.exe.PooledActor;
 import org.jbpm.taskmgmt.exe.SwimlaneInstance;
@@ -598,19 +598,19 @@ public class WfTaskAction extends WfSigaActionSupport {
 		if (result != null)
 			return result;
 
-		// Verificar se um novo task foi criado para o token em questão. Se esse
+		// Verificar se um novo task foi criado para o process instance em questão. Se esse
 		// task existir e for designado para o mesmo ator, então a próxima
 		// página a ser exibida será a página de apresentação do task, e não a
 		// página inicial.
 		{
-			long idToken = taskInstance.getToken().getId();
+			long idpi = taskInstance.getProcessInstance().getId();
 			SortedSet<TaskInstance> tasks = Wf
 					.getInstance()
 					.getBL()
 					.getTaskList(getCadastrante(), getTitular(),
 							getLotaTitular());
 			for (TaskInstance ti : tasks) {
-				if (ti.getToken().getId() == idToken) {
+				if (ti.getProcessInstance().getId() == idpi) {
 					setTiId(ti.getId());
 					return "task";
 				}
@@ -664,16 +664,24 @@ public class WfTaskAction extends WfSigaActionSupport {
 	public static void transferirDocumentosVinculados(ProcessInstance pi,
 			String siglaTitular) throws Exception {
 		ExService service = Service.getExService();
+		
+		ArrayList<Token> tokens = new ArrayList<Token>();
+		pi.getRootToken().collectChildrenRecursively(tokens);
+		tokens.add(pi.getRootToken());
+		
+		ArrayList<TaskInstance> tis = new ArrayList<TaskInstance>();
+		for (Token t : tokens) {
+			tis.addAll((Collection<TaskInstance>) (pi
+				.getTaskMgmtInstance().getSignallingTasks(new ExecutionContext(t))));
+		}
 
-		for (TaskInstance ti : (Collection<TaskInstance>) (pi
-				.getTaskMgmtInstance().getSignallingTasks(new ExecutionContext(
-				pi.getRootToken())))) {
+		for (TaskInstance ti : tis) {
 			if (ti.getTask().getTaskController() != null) {
 				List<VariableAccess> variableAccesses = (List<VariableAccess>) ti
 						.getTask().getTaskController().getVariableAccesses();
 				for (VariableAccess variable : variableAccesses) {
 					if (variable.getMappedName().startsWith("doc_")
-							&& variable.isReadable() && !variable.isWritable()) {
+							&& variable.isReadable() && !variable.isWritable() && !variable.getAccess().toString().contains(WfTaskVO.DISABLE_DOC_FORWARD)) {
 						String value = (String) ti.getToken()
 								.getProcessInstance().getContextInstance()
 								.getVariable(variable.getMappedName());
@@ -703,7 +711,7 @@ public class WfTaskAction extends WfSigaActionSupport {
 					.getTask().getTaskController().getVariableAccesses();
 			for (VariableAccess variable : variableAccesses) {
 				if (variable.getMappedName().startsWith("doc_")
-						&& variable.isReadable() && !variable.isWritable()) {
+						&& variable.isReadable() && !variable.isWritable() && !variable.getAccess().toString().contains(WfTaskVO.DISABLE_DOC_FORWARD)) {
 					String value = (String) ti.getToken().getProcessInstance()
 							.getContextInstance()
 							.getVariable(variable.getMappedName());

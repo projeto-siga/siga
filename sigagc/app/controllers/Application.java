@@ -50,7 +50,7 @@ import utils.diff_match_patch;
 import utils.diff_match_patch.Diff;
 import utils.diff_match_patch.Operation;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -106,7 +106,7 @@ public class Application extends SigaApplication {
 	}
 
 	static void delme_addDefaults() throws Exception {
-		ConexaoHTTP http = new ConexaoHTTP();
+		SigaHTTP http = new SigaHTTP();
 		ModeloDao.freeInstance();
 		
 		if (request.url.contains("proxy"))

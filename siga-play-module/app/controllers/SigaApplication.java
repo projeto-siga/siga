@@ -15,7 +15,7 @@ import play.mvc.Http.Request;
 import play.mvc.Scope.Params;
 import play.mvc.Scope.RenderArgs;
 import play.templates.JavaExtensions;
-import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -34,7 +34,7 @@ public class SigaApplication extends Controller {
 	}
 
 	protected static void obterCabecalhoEUsuario(String backgroundColor) throws Exception {
-		ConexaoHTTP http = new ConexaoHTTP();
+		SigaHTTP http = new SigaHTTP();
 		try {
 			request = (request == null) ? Request.current() : request;
 			params = (params == null) ? Params.current() : params;

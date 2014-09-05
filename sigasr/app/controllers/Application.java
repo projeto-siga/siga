@@ -313,12 +313,12 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
+	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception {
 
 		List<SrSolicitacao> listaSolicitacao;
 
 		if (filtro.pesquisar)
-			listaSolicitacao = filtro.buscar();
+			listaSolicitacao = filtro.buscar(mostrarDesativados);
 		else
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
 
@@ -328,9 +328,9 @@ public class Application extends SigaApplication {
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
 
-		render(listaSolicitacao, tipos, marcadores, filtro);
+		render(listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
 	}
-
+	
 	public static void estatistica() throws Exception {
 		assertAcesso("REL:Relatorios");
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();

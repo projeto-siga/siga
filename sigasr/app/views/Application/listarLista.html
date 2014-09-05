@@ -28,7 +28,7 @@
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados;
+			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados === 'true';
 			
 			if (document.getElementById('checkmostrarDesativado').checked)
 				document.getElementById('checkmostrarDesativado').value='true';

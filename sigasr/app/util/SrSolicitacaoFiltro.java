@@ -2,19 +2,13 @@ package util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Distinct;
-
+import models.SrSolicitacao;
 import play.db.jpa.JPA;
-
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-
-import models.SrSolicitacao;
 
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
@@ -32,9 +26,15 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public boolean naoDesignados;
 
-	public List<SrSolicitacao> buscar() throws Exception {
+	public List<SrSolicitacao> buscar(boolean mostrarDesativados) throws Exception {
 
-		String query = "from SrSolicitacao sol where sol.hisDtFim is null ";
+		String query = "from SrSolicitacao sol where ";
+		
+		if (!mostrarDesativados)
+			query += " sol.hisDtFim is null ";
+		else
+			query += " 1 = 1 ";
+		
 
 		if (cadastrante != null)
 			query += " and sol.cadastrante.idPessoaIni = "

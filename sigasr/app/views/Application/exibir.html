@@ -249,14 +249,10 @@ $(function(){
 		</div>
 	</div>
 	#{/if} 
-	*{<div class="gt-sidebar">
-	<div class="gt-sidebar-content" id="gc"></div>
-	</div>
-	#{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
-	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?${solicitacao.gcTags.raw()}&estilo=sidebar&ts=${currentTimeMillis}",document.getElementById('gc'));
-	</script>
-	#{/if} }* #{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
+	<div id="divConhecimentosRelacionados">#{include
+				'Application/exibirConhecimentosRelacionados.html' /}</div>
+	
+	#{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
 			enctype="multipart/form-data">

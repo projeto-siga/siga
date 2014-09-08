@@ -45,7 +45,7 @@ public class Texto {
 	public static String removeAcento(String acentuado) {
 		if (acentuado == null)
 			return null;
-		String temp = acentuado;
+		String temp = new String(acentuado);
 		temp = temp.replaceAll("[цбаю]", "A");
 		temp = temp.replaceAll("[ихй]", "E");
 		temp = temp.replaceAll("[млн]", "I");

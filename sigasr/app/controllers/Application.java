@@ -179,6 +179,11 @@ public class Application extends SigaApplication {
 
 		render(solicitacao, acoesEAtendentes);
 	}
+	
+	public static void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) 
+			throws Exception{
+		render(solicitacao);
+	}
 
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
 

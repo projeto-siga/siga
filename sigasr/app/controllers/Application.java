@@ -313,6 +313,7 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception {
 
 		List<SrSolicitacao> listaSolicitacao;
@@ -329,6 +330,10 @@ public class Application extends SigaApplication {
 				.getResultList();
 
 		render(listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
+	}
+	
+	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
+		listar(filtro, Boolean.FALSE);
 	}
 	
 	public static void estatistica() throws Exception {

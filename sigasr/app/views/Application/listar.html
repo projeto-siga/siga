@@ -42,12 +42,10 @@
 				filtro = 'mostrarDesativados=true&' + filtro;
 			
 			if (document.getElementById('checkmostrarDesativado').checked) {
-				//location.href = '@{Application.listarDesativados}';
 				filtro = filtro.replace('mostrarDesativados=false', 'mostrarDesativados=true');
 				window.location='@{Application.listar}?' + filtro;
 			}
 			else {
-				//location.href = '@{Application.listar}';
 				filtro = filtro.replace('mostrarDesativados=true', 'mostrarDesativados=false');
 				window.location='@{Application.listar}?' + filtro;
 			}

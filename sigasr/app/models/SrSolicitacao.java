@@ -1236,6 +1236,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 		movimentacao.desfazer(cadastrante, lotaCadastrante);
+		
+		reinserirListasDePrioridade(lotaCadastrante, cadastrante);
 	}
 
 	public SrSolicitacao criarFilhaSemSalvar() throws Exception {
@@ -1781,6 +1783,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_FECHAMENTO);
 		mov.descrMovimentacao = motivo;
 		mov.salvar(pess, lota);
+		
+		removerDasListasDePrioridade(lota, pess);
+	}
+	
+	private void removerDasListasDePrioridade(DpLotacao lota, DpPessoa pess) throws Exception {
+		for (SrLista lista : this.getListasAssociadas()) {
+			this.desassociarLista(lista, pess, lota);
+		}
 	}
 
 	public void reabrir(DpLotacao lota, DpPessoa pess) throws Exception {
@@ -1791,6 +1801,26 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
 		mov.lotaAtendente = getUltimoAtendenteEtapaAtendimento();
 		mov.salvar(pess, lota);
+		
+		reinserirListasDePrioridade(lota, pess);
+	}
+	
+	private void reinserirListasDePrioridade(DpLotacao lota, DpPessoa pess) throws Exception {
+		boolean encontrouMovimentacao = false;
+		for (SrMovimentacao mov : this.getMovimentacaoSet()) {
+			// procurar quais são do tipo TIPO_MOVIMENTACAO_FECHAMENTO (fechamento) ou
+			// TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO
+			// caso seja, procurar as próximas que forem do tipo 
+			// TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA e "reabrir" todas
+			if (encontrouMovimentacao) {
+				if(mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
+					this.associarLista(mov.lista, pess, lota);
+				}
+			}
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO ||
+					mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO)
+				encontrouMovimentacao = true;
+		}
 	}
 	
 	public void deixarPendente(DpLotacao lota, DpPessoa pess, String motivo, 
@@ -1827,6 +1857,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
 		movimentacao.salvar(pess, lota);
+		
+		removerDasListasDePrioridade(lota, pess);
 	}
 
 	public String getGcTags() {

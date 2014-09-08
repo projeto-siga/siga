@@ -186,8 +186,9 @@ public class SrLista extends HistoricoSuporte {
 		Set<SrSolicitacao> sols = new TreeSet<SrSolicitacao>(
 				new SrSolicitacaoListaComparator(this));
 		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
-			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INCLUSAO_LISTA
-					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
+			if ((mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INCLUSAO_LISTA
+					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA) 
+					&& !mov.solicitacao.isCancelado() && !mov.solicitacao.isFechado())
 				sols.add(mov.solicitacao);
 			else
 				sols.remove(mov.solicitacao);

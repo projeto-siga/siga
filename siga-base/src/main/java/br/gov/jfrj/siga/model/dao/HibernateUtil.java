@@ -25,8 +25,6 @@
  */
 package br.gov.jfrj.siga.model.dao;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -34,6 +32,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.jboss.logging.Logger;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 
 public class HibernateUtil {
 

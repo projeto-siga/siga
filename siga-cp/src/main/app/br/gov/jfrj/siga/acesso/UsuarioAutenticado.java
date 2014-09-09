@@ -86,6 +86,7 @@ public class UsuarioAutenticado {
 			carregarUsuario(idCertEncontrada, ioc);
 		}
 	}
+	
 
 	@SuppressWarnings("static-access")
 	public static void carregarUsuario(CpIdentidade id, ConheceUsuario ioc)

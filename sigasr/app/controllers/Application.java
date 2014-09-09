@@ -332,9 +332,9 @@ public class Application extends SigaApplication {
 		render(listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
 	}
 	
-	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
-		listar(filtro, Boolean.FALSE);
-	}
+//	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
+////		listar(filtro, Boolean.FALSE);
+//	}
 	
 	public static void estatistica() throws Exception {
 		assertAcesso("REL:Relatorios");

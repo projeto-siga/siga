@@ -1005,4 +1005,10 @@ public class FuncoesEL {
 		final List<ExDocumento> l = dao().consultarPorModeloParaPublicar(orgaoUsuario);
 		return l;
 	}
+	
+	public static List<ExDocumento> listaDocsAPublicarBoletimFM(Long idOrgaoUsu) {
+		
+		final CpOrgaoUsuario orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);
+		return listaDocsAPublicarBoletim(orgaoUsuario);		
+	}
 }

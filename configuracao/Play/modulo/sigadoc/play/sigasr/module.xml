@@ -105,6 +105,7 @@
       <module name="javax.api"> </module>        
       <module name="javax.transaction.api" />
       <module name="sigadoc.org.apache.http" />
+      <module name="org.picketbox" />
       <system export="true">  
         <paths>  
           <path name="org/xml/sax"/>  

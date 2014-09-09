@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.hibernate.Session;
+import org.jboss.security.SecurityContextAssociation;
 
 import play.Logger;
 import play.Play;
@@ -15,15 +16,17 @@ import play.mvc.Http.Request;
 import play.mvc.Scope.Params;
 import play.mvc.Scope.RenderArgs;
 import play.templates.JavaExtensions;
+import br.gov.jfrj.siga.acesso.UsuarioAutenticado;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.Usuario;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
-public class SigaApplication extends Controller {
+public class SigaApplication extends Controller{
 
 	protected static void prepararSessao() throws Exception {
 		Session playSession = (Session) JPA.em().getDelegate();
@@ -52,7 +55,7 @@ public class SigaApplication extends Controller {
 
 			String url = getBaseSiga()	+ "/pagina_vazia.action?popup=" + popup;
 			String IDPSessionID = params.get("idp");
-			String paginaVazia = http.get(url, IDPSessionID);
+			String paginaVazia = http.get(url, request.cookies.get("JSESSIONID").value, IDPSessionID);
 			if (!paginaVazia.contains("/sigaidp")){
 				String[] pageText = paginaVazia.split("<!-- insert body -->");
 				String[] cabecalho = pageText[0].split("<!-- insert menu -->");
@@ -79,25 +82,17 @@ public class SigaApplication extends Controller {
 			}
 			
 			// Obter usuario logado
-			url = getBaseSiga() + "/usuario_autenticado.action";
-			String[] IDs = http.get(url, IDPSessionID).split(";");
+			String user = SecurityContextAssociation.getPrincipal().getName();
+			Usuario usuario = new Usuario();
+			CpDao dao = CpDao.getInstance();
+			CpIdentidade id = dao.consultaIdentidadeCadastrante(user, true);
+			UsuarioAutenticado.carregarUsuario(id, usuario);
 			
-			DpPessoa pessoa = JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0]));
-			RenderArgs.current().put("cadastrante", pessoa);
-			
-			if (IDs[1] != null && !IDs[1].equals(""))
-				RenderArgs.current().put("lotaCadastrante",JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1])));
-
-			if (IDs[2] != null && !IDs[2].equals(""))
-				RenderArgs.current().put("titular",JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2])));
-
-			if (IDs[3] != null && !IDs[3].equals(""))
-				RenderArgs.current().put("lotaTitular",JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3])));
-
-			if (IDs[4] != null && !IDs[4].equals("")) {
-				CpIdentidade identidadeCadastrante = JPA.em().find(CpIdentidade.class, Long.parseLong(IDs[4]));
-				RenderArgs.current().put("identidadeCadastrante", identidadeCadastrante);
-			}
+			RenderArgs.current().put("cadastrante", usuario.getCadastrante());
+			RenderArgs.current().put("lotaCadastrante", usuario.getLotaTitular());
+			RenderArgs.current().put("titular", usuario.getTitular());
+			RenderArgs.current().put("lotaTitular", usuario.getLotaTitular());
+			RenderArgs.current().put("identidadeCadastrante", usuario.getIdentidadeCadastrante());
 
 			RenderArgs.current().put("currentTimeMillis", new Date().getTime());
 

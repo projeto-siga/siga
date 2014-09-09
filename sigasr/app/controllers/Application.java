@@ -66,8 +66,8 @@ public class Application extends SigaApplication {
 		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(priority = 2, unless = { "exibirAtendente", "exibirAtributos",
-			"exibirLocalERamal", "exibirItemConfiguracao", "exibirAcao" })
+	@Before(priority = 2, unless = { "exibirAtendente",
+			"exibirLocalERamal", "exibirItemConfiguracao" })
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -178,6 +178,11 @@ public class Application extends SigaApplication {
 		}
 
 		render(solicitacao, acoesEAtendentes);
+	}
+	
+	public static void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) 
+			throws Exception{
+		render(solicitacao);
 	}
 
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {

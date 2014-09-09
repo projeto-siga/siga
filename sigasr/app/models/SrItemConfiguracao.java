@@ -336,5 +336,13 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		}
 		return tags;
 	}
+	
+	public String getGcTagAbertura(){
+			String s = "^sr:"
+						+ Texto.slugify(tituloItemConfiguracao,
+								true, false);
+			return s;
+	}
+
 
 }

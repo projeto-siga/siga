@@ -49,7 +49,7 @@ public class GcBL {
 	public static GcMovimentacao movimentar(GcInformacao inf, long idTipo,
 			DpPessoa pessoa, DpLotacao lotacao, String titulo, String conteudo,
 			String classificacao, GcMovimentacao movRef, Date hisDtIni,
-			byte[] anexo, String mimeType) throws Exception {
+			byte[] anexo) throws Exception {
 
 		GcMovimentacao mov = new GcMovimentacao();
 		mov.tipo = GcTipoMovimentacao.findById(idTipo);
@@ -75,19 +75,19 @@ public class GcBL {
 			GcArquivo arq = new GcArquivo();
 			arq.titulo = titulo;
 			arq.classificacao = null;
-			arq.setConteudoBinario(anexo, mimeType);
+            arq.setConteudoBinario(anexo, arq.obterMimeType());
 			mov.arq = arq;
-		} else {
-			//if (titulo != null || conteudo != null || classificacao != null) {
+		} 
+		else {
 			if (titulo != null && conteudo != null) {
-				GcArquivo arq = new GcArquivo();
-				arq.titulo = titulo;
-				arq.setConteudoTXT(conteudo);
-				arq.classificacao = classificacao;
-				mov.arq = arq;
-			} else {
-				if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO ||
-					idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
+					GcArquivo arq = new GcArquivo();
+					arq.titulo = titulo;
+					arq.setConteudoTXT(conteudo);
+					arq.classificacao = classificacao;
+					mov.arq = arq;
+			}
+			else if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO ||
+					idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
 					//throw new Exception("Não é permitido salvar uma informação com título, conteúdo e classificação vazios.");
 					throw new AplicacaoException("Não é permitido salvar uma informação com título ou conteúdo vazios.");
 			}
@@ -459,7 +459,7 @@ public class GcBL {
 		}
 		GcMovimentacao m = GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA, null, null, null, null, null, null, null,
-				null, null);
+				null);
 		GcBL.gravar(informacao, idc, titular, lotaTitular);
 	}
 
@@ -472,16 +472,14 @@ public class GcBL {
 				if (titular.equivale(movNotificacao.pessoaAtendente)){
 					GcMovimentacao m = GcBL.movimentar(informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-							null, null, null, null, null, movNotificacao, null, null,
-							null);
+							null, null, null, null, null, movNotificacao, null, null);
 					movNotificacao.movCanceladora = m;
 					GcBL.gravar(informacao, idc, titular, lotaTitular);
 				}
 				else if (lotaTitular.equivale(movNotificacao.lotacaoAtendente)) {
 					GcMovimentacao m = GcBL.movimentar(informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-							null, movNotificacao.lotacaoAtendente, null, null, null, movNotificacao, null, null,
-							null);
+							null, movNotificacao.lotacaoAtendente, null, null, null, movNotificacao, null, null);
 					GcBL.gravar(informacao, idc, titular, lotaTitular);
 					if(m.todaLotacaoCiente(movNotificacao)){
 						movNotificacao.movCanceladora = m;
@@ -508,7 +506,7 @@ public class GcBL {
 		if (movLocalizada == null && fInteresse) {
 			GcMovimentacao m = GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO, null,
-					null, null, null, null, null, null, null, null);
+					null, null, null, null, null, null, null);
 			GcBL.gravar(informacao, idc, titular, lotaTitular);
 		} else if (movLocalizada != null && !fInteresse) {
 			cancelarMovimentacao(informacao, movLocalizada, idc, movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
@@ -534,7 +532,7 @@ public class GcBL {
 		}
 		GcMovimentacao m = GcBL.movimentar(informacao,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, null,
-				null, null, null, null, null, null, null, null);
+				null, null, null, null, null, null, null);
 		GcBL.gravar(informacao, idc, titular, lotaTitular);
 	}
 
@@ -598,7 +596,7 @@ public class GcBL {
 		GcMovimentacao m = GcBL.movimentar(info,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 				null, null, null, null, null,
-				mov, null, null, null);
+				mov, null, null);
 		mov.movCanceladora = m;
 		GcBL.gravar(info, idc, titular, lotaTitular);
 	}

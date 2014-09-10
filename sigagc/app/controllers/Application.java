@@ -49,6 +49,7 @@ import utils.GcInformacaoFiltro;
 import utils.diff_match_patch;
 import utils.diff_match_patch.Diff;
 import utils.diff_match_patch.Operation;
+import br.gov.jfrj.siga.acesso.UsuarioAutenticado;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -56,7 +57,9 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.DadosRI;
+import br.gov.jfrj.siga.model.Usuario;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 import com.google.gson.Gson;
@@ -74,23 +77,22 @@ import com.google.gson.GsonBuilder;
 //  javax.persistence.Query query = manager.createQuery(...);
 //  query.setHint("org.hibernate.cacheable", true);
 
-public class Application extends SigaApplication {
+public class Application extends SigaApplication{
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 	private static final int CONTROLE_HASH_TAG = 1;
 
-	@Before
+	@Before(priority = 1)
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
 		// TAH: Copiar essa classe e fazer as alterações necessárias
 		// SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(unless = {"publicKnowledge", "dadosRI"})
+	@Before(priority = 2,unless = {"publicKnowledge", "dadosRI"})
 	public static void addDefaults() throws Exception {
 		try {
-			obterCabecalhoEUsuario("#f1f4e2");
-			Request.current();
+			SigaApplication.obterCabecalhoEUsuario("#f1f4e2");
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
@@ -105,7 +107,7 @@ public class Application extends SigaApplication {
 		}
 	}
 
-	static void delme_addDefaults() throws Exception {
+	void delme_addDefaults() throws Exception {
 		SigaHTTP http = new SigaHTTP();
 		ModeloDao.freeInstance();
 		
@@ -120,7 +122,8 @@ public class Application extends SigaApplication {
 				atributos.put(h.name, h.value());
 
 		String IDPSessionID = params.get("idp");
-		String paginaVazia = http.get(getBaseSiga() + "/siga/pagina_vazia.action?popup=false", IDPSessionID);
+		String url = getBaseSiga() + "/siga/pagina_vazia.action?popup=false";
+		String paginaVazia = http.get(url, request.cookies.get("JSESSIONID").value, IDPSessionID);
 
 		String[] pageText = paginaVazia.split("<!-- insert body -->");
 		String[] cabecalho = pageText[0].split("<!-- insert menu -->");
@@ -129,42 +132,17 @@ public class Application extends SigaApplication {
 		// renderArgs.put("_cabecalho", pageText[0]);
 		RenderArgs.current().put("_rodape", pageText[1]);
 
-		String[] IDs = http.get(getBaseSiga() + "/siga/usuario_autenticado.action", IDPSessionID).split(";");
-
-		// DpPessoa cadastrante = (DpPessoa) JPA.em().find(DpPessoa.class,
-		// Long.parseLong(IDs[0]));
-		DpPessoa cadastrante = DpPessoa.findById(Long.parseLong(IDs[0]));
-		RenderArgs.current().put("cadastrante", cadastrante);
-
-		if (IDs[1] != null && !IDs[1].equals("")) {
-			// DpLotacao lotaCadastrante = (DpLotacao) JPA.em().find(
-			// DpLotacao.class, Long.parseLong(IDs[1]));
-			DpLotacao lotaCadastrante = DpLotacao.findById(Long
-					.parseLong(IDs[1]));
-			RenderArgs.current().put("lotaCadastrante", lotaCadastrante);
-		}
-
-		if (IDs[2] != null && !IDs[2].equals("")) {
-			// DpPessoa titular = (DpPessoa) JPA.em().find(DpPessoa.class,
-			// Long.parseLong(IDs[2]));
-			DpPessoa titular = DpPessoa.findById(Long.parseLong(IDs[2]));
-			RenderArgs.current().put("titular", titular);
-		}
-
-		if (IDs[3] != null && !IDs[3].equals("")) {
-			// DpLotacao lotaTitular = JPA.em().find(DpLotacao.class,
-			// Long.parseLong(IDs[3]));
-			DpLotacao lotaTitular = DpLotacao.findById(Long.parseLong(IDs[3]));
-			// lotaTitular = (DpLotacao) GcDao.getImplementation(lotaTitular);
-			RenderArgs.current().put("lotaTitular", lotaTitular);
-		}
-
-		if (IDs[4] != null && !IDs[4].equals("")) {
-			CpIdentidade identidadeCadastrante = JPA.em().find(	CpIdentidade.class, Long.parseLong(IDs[4]));
-			RenderArgs.current().put("identidadeCadastrante", identidadeCadastrante);
-		}
-
-		//int a = 0;
+		String user = request.user;
+		CpDao dao = CpDao.getInstance();
+		CpIdentidade id = dao.consultaIdentidadeCadastrante(user, true);
+		Usuario usuario = new Usuario();
+		UsuarioAutenticado.carregarUsuario(id, usuario);
+		
+		RenderArgs.current().put("cadastrante", usuario.getCadastrante());
+		RenderArgs.current().put("lotaCadastrante", usuario.getLotaTitular());
+		RenderArgs.current().put("titular", usuario.getTitular());
+		RenderArgs.current().put("lotaTitular", usuario.getLotaTitular());
+		RenderArgs.current().put("identidadeCadastrante", usuario.getIdentidadeCadastrante());
 
 		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
 			Date dt = GcBL.dt();
@@ -1138,5 +1116,9 @@ public class Application extends SigaApplication {
 		GcBL.cancelarMovimentacao(info, mov, idc(), titular(), lotaTitular());
 		movimentacoes(sigla);
 	}
-
+	
+	@Catch()
+	public static void tratarExcecoes(Exception e) {
+		SigaApplication.tratarExcecoes(e);
+	}
 }

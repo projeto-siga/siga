@@ -61,6 +61,8 @@ import br.gov.jfrj.siga.wf.util.WfWikiParser;
  * 
  */
 public class WfTaskVO {
+	public static final String DISABLE_DOC_FORWARD = "disable_doc_forward";
+
 	protected TaskInstance taskInstance;
 
 	protected List<VariableAccess> variableList = new ArrayList<VariableAccess>();
@@ -140,9 +142,10 @@ public class WfTaskVO {
 					.getTask().getTaskController().getVariableAccesses();
 
 			for (VariableAccess va : variableAccesses) {
-				if (va.getAccess().toString().contains("value=")) {
+				String access = va.getAccess().toString();
+				if (access.contains("value=")) {
 					Pattern pattern = Pattern.compile("value\\=(\\{[^}]+\\})");
-					Matcher matcher = pattern.matcher(va.getAccess().toString());
+					Matcher matcher = pattern.matcher(access);
 					if (matcher.find()) {
 						String expression = matcher.group(1);
 						Object resultado = JbpmExpressionEvaluator.evaluate(
@@ -163,68 +166,64 @@ public class WfTaskVO {
 						if (siglaDoc == null || !documento.startsWith(siglaDoc)) {
 							this.variableList.add(wfva);
 						} else {
-							// if (!service.isAtendente(value, siglaTitular)) {
-							String respEX = service.getAtendente(documento,
-									siglaTitular);
-							DpLotacao lotEX = new PessoaLotacaoParser(respEX)
-									.getLotacaoOuLotacaoPrincipalDaPessoa();
-							// if (lotEX != null &&
-							// !lotaTitular.equivale(lotEX))
-							// wfva.setRespEX(lotEX.getSigla());
-
-							DpLotacao lotWF = new PessoaLotacaoParser(respWF)
-									.getLotacaoOuLotacaoPrincipalDaPessoa();
-							// if (lotWF != null &&
-							// !lotaTitular.equivale(lotWF))
-							// wfva.setRespWF(lotWF.getSigla());
-
-							// if (wfva.isAviso())
 							if (wfva != null)
 								this.variableList.add(wfva);
-							// }
-
-							boolean podeMovimentar = service.podeMovimentar(
-									documento, siglaTitular);
-							boolean estaComTarefa = titular
-									.equivale(new PessoaLotacaoParser(respWF)
-											.getPessoa());
-							respEX = service.getAtendente(documento,
-									siglaTitular);
-							lotEX = new PessoaLotacaoParser(respEX)
-									.getLotacaoOuLotacaoPrincipalDaPessoa();
-
-							if (podeMovimentar && estaComTarefa) {
-								setMsgAviso("");
-							}
-							if (podeMovimentar && !estaComTarefa) {
-								if (!lotWF.equivale(lotEX)) {
-									setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
-											+ documento
-											+ " for transferido para "
-											+ lotWF.getSigla() + ".");
-								} else {
-									setMsgAviso("");
+							setMsgAviso("");
+							if (!access.contains(DISABLE_DOC_FORWARD)) {
+								// if (!service.isAtendente(value, siglaTitular)) {
+								String respEX = service.getAtendente(documento,
+										siglaTitular);
+								DpLotacao lotEX = new PessoaLotacaoParser(respEX)
+										.getLotacaoOuLotacaoPrincipalDaPessoa();
+								// if (lotEX != null &&
+								// !lotaTitular.equivale(lotEX))
+								// wfva.setRespEX(lotEX.getSigla());
+	
+								DpLotacao lotWF = new PessoaLotacaoParser(respWF)
+										.getLotacaoOuLotacaoPrincipalDaPessoa();
+								// if (lotWF != null &&
+								// !lotaTitular.equivale(lotWF))
+								// wfva.setRespWF(lotWF.getSigla());
+	
+								// if (wfva.isAviso())
+								// }
+	
+								boolean podeMovimentar = service.podeMovimentar(
+										documento, siglaTitular);
+								boolean estaComTarefa = titular
+										.equivale(new PessoaLotacaoParser(respWF)
+												.getPessoa());
+								respEX = service.getAtendente(documento,
+										siglaTitular);
+								lotEX = new PessoaLotacaoParser(respEX)
+										.getLotacaoOuLotacaoPrincipalDaPessoa();
+	
+								if (podeMovimentar && !estaComTarefa) {
+									if (!lotWF.equivale(lotEX)) {
+										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
+												+ documento
+												+ " for transferido para "
+												+ lotWF.getSigla() + ".");
+									}
 								}
-							}
-							if (!podeMovimentar && estaComTarefa) {
-								setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
-										+ documento
-										+ ", que está com "
-										+ lotEX.getSigla() + ", for devolvido.");
-							}
-							if (!podeMovimentar && !estaComTarefa) {
-								if (lotWF != null && !lotWF.equivale(lotEX)) {
+								if (!podeMovimentar && estaComTarefa) {
 									setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
 											+ documento
 											+ ", que está com "
-											+ lotEX.getSigla()
-											+ ", for transferido para "
-											+ lotWF.getSigla() + ".");
-								} else {
-									setMsgAviso("");
+											+ lotEX.getSigla() + ", for devolvido.");
 								}
+								if (!podeMovimentar && !estaComTarefa) {
+									if (lotWF != null && !lotWF.equivale(lotEX)) {
+										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
+												+ documento
+												+ ", que está com "
+												+ lotEX.getSigla()
+												+ ", for transferido para "
+												+ lotWF.getSigla() + ".");
+									}
+								}
+	
 							}
-
 						}
 					} else {
 						this.variableList.add(wfva);
@@ -275,13 +274,15 @@ public class WfTaskVO {
 												.getSwimlaneInstance(
 														t.getSwimlane()
 																.getName());
-										if (si.getActorId() != null)
-											set.add(si.getActorId());
-										if (si.getPooledActors() != null) {
-											for (Object s : si
-													.getPooledActors())
-												set.add(((PooledActor) s)
-														.getActorId());
+										if (si != null) {
+											if (si.getActorId() != null)
+												set.add(si.getActorId());
+											if (si.getPooledActors() != null) {
+												for (Object s : si
+														.getPooledActors())
+													set.add(((PooledActor) s)
+															.getActorId());
+											}
 										}
 									}
 									if (set.size() == 0) {
@@ -331,7 +332,7 @@ public class WfTaskVO {
 				// nextNode deve pular para o próximo se não for um tasknode e
 				// se só tiver uma saida
 
-				System.out.println(set);
+				//System.out.println(set);
 
 				this.transitions.add(new WfTransitionVO(transition, set));
 			}

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
@@ -55,11 +54,9 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.sinc.lib.test.Lotacao;
 
-public class Application extends SigaApplication {
-
+public class Application extends SigaApplication{
+	
 	@Before(priority = 1)
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
@@ -71,7 +68,7 @@ public class Application extends SigaApplication {
 	public static void addDefaults() throws Exception {
 
 		try {
-			obterCabecalhoEUsuario("rgb(235, 235, 232)");
+			SigaApplication.obterCabecalhoEUsuario("rgb(235, 235, 232)");
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
@@ -178,6 +175,11 @@ public class Application extends SigaApplication {
 		}
 
 		render(solicitacao, acoesEAtendentes);
+	}
+	
+	public static void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) 
+			throws Exception{
+		render(solicitacao);
 	}
 
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
@@ -1312,4 +1314,5 @@ public class Application extends SigaApplication {
 
 		render(solsnaoconcluidas);
 	}
+
 }

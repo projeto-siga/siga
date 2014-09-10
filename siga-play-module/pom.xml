@@ -121,6 +121,13 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.7.3</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.picketbox</groupId>
+			<artifactId>picketbox</artifactId>
+			<version>4.0.21.Beta3</version>
+		</dependency>
+
 	</dependencies>
 
 
@@ -151,6 +158,7 @@
 									<directory>../siga-base/src/main/java</directory>
 									<excludes>
 										<exclude>br/gov/jfrj/siga/model/ObjetoBase.java</exclude>
+										<exclude>br/gov/jfrj/siga/base/ConexaoHTTP.java</exclude>
 									</excludes>
 								</resource>
 
@@ -160,7 +168,8 @@
 									<excludes>
 										<exclude>br/gov/jfrj/siga/gi/**</exclude>
 										<exclude>br/gov/jfrj/siga/relatorio/**</exclude>
-										<exclude>br/gov/jfrj/siga/acesso/**</exclude>
+										<!-- <exclude>br/gov/jfrj/siga/acesso/**</exclude> -->
+										<exclude>br/gov/jfrj/siga/acesso/UsuarioAutenticado.java</exclude>
 									</excludes>
 								</resource>
 								<!-- siga-rel -->

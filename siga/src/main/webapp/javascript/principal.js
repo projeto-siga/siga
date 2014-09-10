@@ -102,6 +102,8 @@ window.Siga = {
     },
     
     isUnauthenticated: function(text){
+    	// essa primeira verificacao é pra verificar se é do picketlink
+    	// a segunda é pra ver se veio a página completa do siga ou só o que interessa
     	return (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1)
     },
     

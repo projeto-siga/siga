@@ -25,9 +25,4 @@
 			class="br.gov.jfrj.siga.acesso.Usuario" />
  -->			
 	</class>
-
-	<query name="consultarPersonalizacao">
-		<![CDATA[select per from CpPersonalizacao per, DpPessoa pes 
-		where per.pessoa.idPessoa = pes.idPessoa and pes.idPessoaIni = :idPessoaIni]]>
-	</query>
 </hibernate-mapping>

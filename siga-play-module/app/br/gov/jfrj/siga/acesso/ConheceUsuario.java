@@ -16,15 +16,28 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.dp;
+package br.gov.jfrj.siga.acesso;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 
-@Entity
-@Table(name = "CP_PERSONALIZACAO", schema="CORPORATIVO")
-@NamedQuery(name = "consultarPersonalizacao", query = "select per from CpPersonalizacao per, DpPessoa pes where per.pessoa.idPessoa = pes.idPessoa and pes.idPessoaIni = :idPessoaIni")
-public class CpPersonalizacao extends AbstractCpPersonalizacao {
+public interface ConheceUsuario {
+
+	void setIdentidadeCadastrante(CpIdentidade idc);
+
+	CpIdentidade getIdentidadeCadastrante();
+
+	void setCadastrante(DpPessoa pessoa);
+
+	DpPessoa getCadastrante();
+
+	void setTitular(DpPessoa pesSubstituindo);
+
+	void setLotaTitular(DpLotacao lotaSubstituindo);
+
+	DpPessoa getTitular();
+
+	DpLotacao getLotaTitular();
 
 }

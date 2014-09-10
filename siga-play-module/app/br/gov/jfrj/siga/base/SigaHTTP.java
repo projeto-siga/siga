@@ -50,7 +50,7 @@ public class SigaHTTP {
 	private final String JSESSIONID_PREFIX = "JSESSIONID=";
 	private final String SET_COOKIE = "set-cookie";
 
-	public String get(String URL, String IDPSessionID) throws AplicacaoException {
+	public String get(String URL, String cookie, String IDPSessionID) throws AplicacaoException {
 		String html = "";
 		
 		try{
@@ -71,7 +71,14 @@ public class SigaHTTP {
 			// Verifica se retornou o form de autenticação do picketlink 
 			if (html.contains("HTTP Post Binding (Request)")){
 				// Atribui o cookie recuperado no response anterior
-				String setCookie = extractCookieFromHeader(getHeader(SET_COOKIE));
+				String setCookie = null;
+				try{
+					setCookie = extractCookieFromHeader(getHeader(SET_COOKIE));
+				}catch(ElementNotFoundException elnf){
+					setCookie = cookie;
+					log.info("Nao encontrou o set-cookie");
+				}
+				
 				// Atribui o valor do SAMLRequest contido no html retornado no GET efetuado.
 				String SAMLRequestValue = getAttributeValueFromHtml(html, SAMLRequest);
 				// Atribui a URL do IDP (sigaidp)

@@ -2093,7 +2093,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeExibirInformacoesCompletas(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-		return mob.doc().isFinalizado();
+		return true;
 	}
 
 	/**

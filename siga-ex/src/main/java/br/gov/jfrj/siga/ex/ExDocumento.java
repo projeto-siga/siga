@@ -1992,6 +1992,25 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                 
                 return cosignatarios;
         }
+        
+        /**
+         * Retorna uma lista com o todos os cossignatários.
+         */
+        public List<ExMovimentacao> getMovsCosignatario() {
+                
+                List<ExMovimentacao> cosignatarios = new ArrayList<ExMovimentacao>();
+                
+                if(getMobilGeral() != null && getMobilGeral().getExMovimentacaoSet() != null) {
+                        for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+                                if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+                                                && m.getExMovimentacaoCanceladora() == null) {
+                                        cosignatarios.add(m);
+                                }
+                        }
+                }
+                
+                return cosignatarios;
+        }
 
         /**
          * Retorna uma lista com os subscritores de todos os despachos não

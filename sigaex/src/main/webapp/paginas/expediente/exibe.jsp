@@ -221,7 +221,7 @@
 							<td align="center" style="padding: 5px 5px;">${dt}</td>
 							<td style="padding: 5px 5px;">${lota}</td>
 							<td style="padding: 5px 5px;">${mov.mov.exTipoMovimentacao.sigla}</td>
-							<td style="padding: 5px 5px;">${mov.descricao} <c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
+							<td style="padding: 5px 5px; word-break: break-all;">${mov.descricao} <c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 								<c:set var="assinadopor" value="${true}" /> <siga:links
 									inline="${true}"
 									separator="${not empty mov.descricao and mov.descricao != null}">
@@ -657,6 +657,20 @@
 			<c:if test="${not empty docVO.dadosComplementares}">
 		    	${docVO.dadosComplementares}
 			</c:if>
+			
+			<%-- <c:if test="${not empty docVO.doc.movsCosignatario}">
+			<div class="gt-sidebar-content" style="padding-top: 10px">
+			<h3>Cossignatários</h3>
+			<ul>
+			<c:forEach var="cossig" items="${docVO.doc.movsCosignatario}">
+				<li>
+					${cossig.subscritor.nomePessoa}&nbsp;|
+					<a href="/sigaex/expediente/mov/excluir.action?id=${cossig.idMov}" >Excluir</a>
+				</li>
+			</c:forEach>
+			</ul>
+			</div>
+			</c:if>--%> 
 			
 			<c:if test="${not empty docVO.doc.perfis}">
 			<div class="gt-sidebar-content" style="padding-top: 10px">

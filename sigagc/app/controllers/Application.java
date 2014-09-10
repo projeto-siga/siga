@@ -82,18 +82,17 @@ public class Application extends SigaApplication{
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 	private static final int CONTROLE_HASH_TAG = 1;
 
-	@Before
+	@Before(priority = 1)
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
 		// TAH: Copiar essa classe e fazer as alterações necessárias
 		// SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(unless = {"publicKnowledge", "dadosRI"})
+	@Before(priority = 2,unless = {"publicKnowledge", "dadosRI"})
 	public static void addDefaults() throws Exception {
 		try {
-			obterCabecalhoEUsuario("#f1f4e2");
-			Request.current();
+			SigaApplication.obterCabecalhoEUsuario("#f1f4e2");
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
@@ -1116,5 +1115,10 @@ public class Application extends SigaApplication{
 		
 		GcBL.cancelarMovimentacao(info, mov, idc(), titular(), lotaTitular());
 		movimentacoes(sigla);
+	}
+	
+	@Catch()
+	public static void tratarExcecoes(Exception e) {
+		SigaApplication.tratarExcecoes(e);
 	}
 }

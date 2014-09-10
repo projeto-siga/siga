@@ -297,7 +297,7 @@
 				<version>${play.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<warDependencyExcludes>jta,siga-base,siga-cd-base,siga-sinc-lib,siga-ws,jboss-transaction-api_1.1_spec,picketbox,picketlink-config,picketlink-federation,bcprov-jdk14,bcprov-jdk15,hibernate-core,hibernate-jpa-2.0-api,gson</warDependencyExcludes>
+					<warDependencyExcludes>jta,siga-base,siga-cd-base,siga-sinc-lib,siga-ws,jboss-transaction-api_1.1_spec,picketbox,picketlink-config,picketlink-federation,bcprov-jdk14,bcprov-jdk15,hibernate-core,hibernate-jpa-2.0-api,gson,guava,xalan,serializer</warDependencyExcludes>
 				</configuration>
 				<executions>
 					<execution>

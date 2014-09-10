@@ -27,7 +27,6 @@ import java.io.DataInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -92,16 +91,7 @@ public class PrincipalAction extends SigaActionSupport {
 	private GenericoSelecao sel;
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public String execute() throws Exception {
-		try{
-			Map<String, Object> map = (Map<String, Object>) getRequest().getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
-			String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
-			setIdp(idpSessionID);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
 		return Action.SUCCESS;
 	}
 

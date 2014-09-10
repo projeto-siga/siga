@@ -45,17 +45,11 @@ window.Siga = {
         sigasr: {
             name: "sigasr",
             url: "/sigasr/solicitacao/gadget",
-            params: {
-            	idp: ""
-            },
             viewId: "rightbottom"
         },
         sigagc: {
             name: "sigagc",
             url: "/sigagc/app/gadget",
-            params: { 
-            		idp: "" 
-            },
             viewId: "rightbottom2"
         }
     },
@@ -102,8 +96,8 @@ window.Siga = {
     },
     
     isUnauthenticated: function(text){
-    	// essa primeira verificacao é pra verificar se é do picketlink
-    	// a segunda é pra ver se veio a página completa do siga ou só o que interessa
+    	// essa primeira verificacao ï¿½ pra verificar se ï¿½ do picketlink
+    	// a segunda ï¿½ pra ver se veio a pï¿½gina completa do siga ou sï¿½ o que interessa
     	return (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1)
     },
     
@@ -143,8 +137,6 @@ window.Siga = {
 
     ajaxCall: function(ajax, doneCallback){
         var self = this;
-        ajax.params["ts"] = self.currentTimeInMillis();
-
         $.ajax({
             url: ajax.url,
             type: ajax.type,
@@ -209,10 +201,6 @@ var Siga = window.Siga;
 // Funcao principal que sera chamada apos o load da pagina
 $(function() {
 	// Cache false pois o I.E tem serios problemas com cache de chamadas assincronas.
-	
-	Siga.modules["sigagc"].params["idp"] =  $("#idp").val()
-	Siga.modules["sigasr"].params["idp"] =  $("#idp").val()
-	
     $.ajaxSetup({ cache: false });
     Siga.loadModules();
 });

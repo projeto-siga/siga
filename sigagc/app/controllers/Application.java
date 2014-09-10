@@ -121,9 +121,8 @@ public class Application extends SigaApplication{
 			if (!h.name.equals("content-type"))
 				atributos.put(h.name, h.value());
 
-		String IDPSessionID = params.get("idp");
 		String url = getBaseSiga() + "/siga/pagina_vazia.action?popup=false";
-		String paginaVazia = http.get(url, request.cookies.get("JSESSIONID").value, IDPSessionID);
+		String paginaVazia = http.get(url);
 
 		String[] pageText = paginaVazia.split("<!-- insert body -->");
 		String[] cabecalho = pageText[0].split("<!-- insert menu -->");

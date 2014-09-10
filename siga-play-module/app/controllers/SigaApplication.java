@@ -54,8 +54,7 @@ public class SigaApplication extends Controller{
 				popup = "false";
 
 			String url = getBaseSiga()	+ "/pagina_vazia.action?popup=" + popup;
-			String IDPSessionID = params.get("idp");
-			String paginaVazia = http.get(url, request.cookies.get("JSESSIONID").value, IDPSessionID);
+			String paginaVazia = http.get(url);
 			if (!paginaVazia.contains("/sigaidp")){
 				String[] pageText = paginaVazia.split("<!-- insert body -->");
 				String[] cabecalho = pageText[0].split("<!-- insert menu -->");

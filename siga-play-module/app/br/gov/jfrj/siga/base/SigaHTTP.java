@@ -50,7 +50,7 @@ public class SigaHTTP {
 	private final String JSESSIONID_PREFIX = "JSESSIONID=";
 	private final String SET_COOKIE = "set-cookie";
 
-	public String get(String URL, String cookie, String IDPSessionID) throws AplicacaoException {
+	public String get(String URL) throws AplicacaoException {
 		String html = "";
 		
 		try{
@@ -75,7 +75,6 @@ public class SigaHTTP {
 				try{
 					setCookie = extractCookieFromHeader(getHeader(SET_COOKIE));
 				}catch(ElementNotFoundException elnf){
-					setCookie = cookie;
 					log.info("Nao encontrou o set-cookie");
 				}
 				
@@ -85,7 +84,7 @@ public class SigaHTTP {
 				String idpURL = getAttributeActionFromHtml(html);
 
 				// Faz um novo POST para o IDP com o SAMLRequest como parametro e utilizando o sessionID do IDP
-				html = Request.Post(idpURL).addHeader(COOKIE, JSESSIONID_PREFIX+IDPSessionID).
+				html = Request.Post(idpURL).//addHeader(COOKIE, JSESSIONID_PREFIX+IDPSessionID).
 						bodyForm(Form.form().add(SAMLRequest, SAMLRequestValue).build()).execute().returnContent().toString();
 
 				// Extrai o valor do SAMLResponse

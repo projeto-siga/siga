@@ -22,7 +22,15 @@ $(function(){
 	<div class="gt-content clearfix">
 		<h2>${solicitacao.codigo}</h2>
 		<p></p>
-		<h3>${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)}</h3>
+		<h3>
+			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)}
+		 	#{if solicitacao.solicitacaoJuntada} a 
+		 		<a href="@{Application.exibir(solicitacao.solicitacaoJuntada.idSolicitacao)}">
+					${solicitacao.solicitacaoJuntada.codigo}
+				</a>						
+		 	#{/if}
+		</h3>
+		
 		#{if solicitacao.estaForaAtendenteDesignado()} 
 		<div style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
 			<img src="/siga/css/famfamfam/icons/error.png" style="margin-right: 1px;">
@@ -251,6 +259,20 @@ $(function(){
 		</div>
 	</div>
 	#{/if} 
+	#{if solicitacao.meuSolicitacaoJuntadasSet}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Juntada a esta solicitação</h3>
+			<p>
+				#{list items:solicitacao.meuSolicitacaoJuntadasSet, as:'juntada'}
+				<a href="@{Application.exibir(juntada.idSolicitacao)}">
+					${juntada.codigo}
+				</a> ,  
+				#{/list}
+			</p>
+		</div>
+	</div>
+	#{/if} 
 	*{<div class="gt-sidebar">
 	<div class="gt-sidebar-content" id="gc"></div>
 	</div>
@@ -329,40 +351,3 @@ $(function(){
 		</form>
 		</div>
 	#{/modal}
-	#{modal nome:'deixarPendente', titulo:'Pendente'}
-	<form action="@{Application.deixarPendente()}" method="post"
-		enctype="multipart/form-data">
-		<div style="display: inline" class="gt-form-row gt-width-66">
-		<label>Em caso de agendamento, preencha a data/hora desejada:</label>
-		<table border="0" class="gt-table">
-			<col width="20%" />
-    		<col width="20%" />
-     		<tbody>
-     			<tr class="gt-celula-nowrap">
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Data</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Hora</th>
-   				</tr>
-   			<tr>
-			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				<input type="text" name="calendario" id="calendario">
-			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
-				<input type="text" name="horario" id="horario"> 
-			</td>
-			</tr>		
-			</tbody>
-		</table>	
-		</div>
-		<p>
-		<div style="display: inline" class="gt-form-row gt-width-66">
-			<label>Motivo</label>
-			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
-		</div>
-		<input type="hidden" name="completo" value="${completo}" /> 
-		<input type="hidden" name="id" value="${solicitacao.id}" /> 
-		<input 	type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-	</form>
-	#{/modal} 
-	
-
-	

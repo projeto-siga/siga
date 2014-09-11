@@ -255,7 +255,7 @@
 		</li>
 
 
-		<li><ww:a href="/siga/logoff.action">Logoff</ww:a>
+		<li><ww:a href="/siga/?GLO=true">Logoff</ww:a>
 		</li>
 
 	</ul>

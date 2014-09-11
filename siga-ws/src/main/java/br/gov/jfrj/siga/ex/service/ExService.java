@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.Remote;
 public interface ExService extends Remote {
 
 	public Boolean transferir(String codigoDocumentoVia, String siglaDestino,
-			String siglaCadastrante) throws Exception;
+			String siglaCadastrante, Boolean forcarTransferencia) throws Exception;
 
 	public Boolean isAssinado(String codigoDocumento, String siglaCadastrante)
 			throws Exception;
@@ -44,7 +44,7 @@ public interface ExService extends Remote {
 			String siglaCadastrante) throws Exception;
 
 	public Boolean podeTransferir(String codigoDocumento,
-			String siglaCadastrante) throws Exception;
+			String siglaCadastrante, Boolean forcarTransferencia) throws Exception;
 
 	public Boolean isAtendente(String codigoDocumento, String siglaCadastrante)
 			throws Exception;

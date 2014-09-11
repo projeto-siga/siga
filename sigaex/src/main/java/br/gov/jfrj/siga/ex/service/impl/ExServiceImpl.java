@@ -81,7 +81,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean transferir(String codigoDocumentoVia, String siglaDestino,
-			String siglaCadastrante) throws Exception {
+			String siglaCadastrante, Boolean forcarTransferencia) throws Exception {
 		if (codigoDocumentoVia == null)
 			return false;
 		try {
@@ -113,7 +113,7 @@ public class ExServiceImpl implements ExService {
 								cadastranteParser.getLotacao(), mob, null,
 								null, null, destinoParser.getLotacao(),
 								destinoParser.getPessoa(), null, null, null,
-								null, null, false, null, null, null);
+								null, null, false, null, null, null, forcarTransferencia);
 			}
 			return true;
 		} catch (Exception e) {
@@ -235,18 +235,24 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean podeTransferir(String codigoDocumento,
-			String siglaCadastrante) throws Exception {
+			String siglaCadastrante, Boolean forcarTransferencia) throws Exception {
 		try {
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
 			ExMobil mob = buscarMobil(codigoDocumento);
 			if (mob.isGeral() && mob.doc().isProcesso())
 				mob = mob.doc().getUltimoVolume();
-			return Ex
-					.getInstance()
-					.getComp()
-					.podeTransferir(cadastranteParser.getPessoa(),
-							cadastranteParser.getLotacao(), mob);
+			if (forcarTransferencia)
+				return Ex
+						.getInstance()
+						.getComp()
+						.podeSerTransferido(mob);
+			else
+				return Ex
+						.getInstance()
+						.getComp()
+						.podeTransferir(cadastranteParser.getPessoa(),
+								cadastranteParser.getLotacao(), mob);
 		} catch (Exception e) {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);

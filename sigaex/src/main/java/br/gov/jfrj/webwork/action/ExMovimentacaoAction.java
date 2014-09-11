@@ -2940,7 +2940,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							mov.getDestinoFinal(), mov.getSubscritor(),
 							mov.getTitular(), mov.getExTipoDespacho(), false,
 							mov.getDescrMov(), conteudo,
-							mov.getNmFuncaoSubscritor());
+							mov.getNmFuncaoSubscritor(), false);
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -3249,7 +3249,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 										mov.getDestinoFinal(),
 										mov.getSubscritor(), mov.getTitular(),
 										tpd, false, txt, null,
-										mov.getNmFuncaoSubscritor());
+										mov.getNmFuncaoSubscritor(), false);
 
 					}
 				}

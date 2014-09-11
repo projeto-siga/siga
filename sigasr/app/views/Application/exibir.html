@@ -23,22 +23,21 @@ $(function(){
 		<h2>${solicitacao.codigo}</h2>
 		<p></p>
 		<h3>
-			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)}
-		 	#{if solicitacao.solicitacaoJuntada} a 
-		 		<a href="@{Application.exibir(solicitacao.solicitacaoJuntada.idSolicitacao)}">
-					${solicitacao.solicitacaoJuntada.codigo}
-				</a>						
-		 	#{/if}
+			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)} #{if
+			solicitacao.solicitacaoJuntada} a <a
+				href="@{Application.exibir(solicitacao.solicitacaoJuntada.idSolicitacao)}">
+				${solicitacao.solicitacaoJuntada.codigo} </a> #{/if}
 		</h3>
-		
-		#{if solicitacao.estaForaAtendenteDesignado()} 
-		<div style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
-			<img src="/siga/css/famfamfam/icons/error.png" style="margin-right: 1px;">
-			O atendente atual não é o atendente designado.
-		</div> 
-		#{/if}
-		#{links acoes:solicitacao.operacoes(lotaTitular, titular, completo),
-		base:_base /}
+
+		#{if solicitacao.estaForaAtendenteDesignado()}
+		<div
+			style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
+			<img src="/siga/css/famfamfam/icons/error.png"
+				style="margin-right: 1px;"> O atendente atual não é o
+			atendente designado.
+		</div>
+		#{/if} #{links acoes:solicitacao.operacoes(lotaTitular, titular,
+		completo), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
 				${solicitacao.itemConfiguracao?.descricao} -
@@ -83,9 +82,9 @@ $(function(){
 				</div>
 
 				<div class="gt-form-row">
-					<input type="submit" value="Gravar" 
-						class="gt-btn-medium gt-btn-left" />
-					<a href="@{Application.listarlista}" 
+					<input type="submit" value="Gravar"
+						class="gt-btn-medium gt-btn-left" /> <a
+						href="@{Application.listarlista}"
 						class="gt-btn-medium gt-btn-left">Cancelar</a>
 				</div>
 			</form>
@@ -151,11 +150,12 @@ $(function(){
 							descricao:movimentacao.atendente?.descricaoIniciaisMaiusculas /}</td>
 						#{/if}
 						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
-						#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
-							arquivo:movimentacao.arquivo /}#{/if}
-						#{if movimentacao.tipoMov.idTipoMov == 16}&nbsp;|&nbsp;
-						 <a	style="color: #365b6d; text-decoration: none" href="@{Application.exibirPesquisa(movimentacao.idMovimentacao)}">
-							Olá</a>#{/if}
+							#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
+							arquivo:movimentacao.arquivo /}#{/if} #{if
+							movimentacao.tipoMov.idTipoMov == 16}&nbsp;|&nbsp; <a
+							style="color: #365b6d; text-decoration: none"
+							href="@{Application.exibirPesquisa(movimentacao.idMovimentacao)}">
+								Olá</a>#{/if}
 						</td>
 						<script language="javascript">
 							var descricao = document.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
@@ -210,9 +210,11 @@ $(function(){
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent}
 					${solicitacao.GUTString}</span>
 			</p>
-			#{if (solicitacao.pendente) && (solicitacao.getUltimaMovimentacaoPorTipo(9).dtAgenda != "")}
+			#{if (solicitacao.pendente) &&
+			(solicitacao.getUltimaMovimentacaoPorTipo(9).dtAgenda != "")}
 			<p>
-				<b>Agendamento:</b> ${solicitacao.getUltimaMovimentacaoPorTipo(9).getDtAgendaDDMMYYHHMM()}
+				<b>Agendamento:</b>
+				${solicitacao.getUltimaMovimentacaoPorTipo(9).getDtAgendaDDMMYYHHMM()}
 			</p>
 			#{/if}
 		</div>
@@ -239,7 +241,8 @@ $(function(){
 						value="${listas?.idLista}"> <a
 						style="color: #365b6d; text-decoration: none"
 						href="@{Application.exibirLista(listas?.idLista)}">
-							${listas?.nomeLista} </a></td>
+							${listas?.nomeLista} </a>
+					</td>
 				</tr>
 				#{/list}
 			</p>
@@ -258,23 +261,20 @@ $(function(){
 			</p>
 		</div>
 	</div>
-	#{/if} 
-	#{if solicitacao.meuSolicitacaoJuntadasSet}
+	#{/if} #{if solicitacao.meuSolicitacaoJuntadasSet}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Juntada a esta solicitação</h3>
 			<p>
-				#{list items:solicitacao.meuSolicitacaoJuntadasSet, as:'juntada'}
-				<a href="@{Application.exibir(juntada.idSolicitacao)}">
-					${juntada.codigo}
-				</a> ,  
-				#{/list}
+				#{list items:solicitacao.meuSolicitacaoJuntadasSet, as:'juntada'} <a
+					href="@{Application.exibir(juntada.idSolicitacao)}">
+					${juntada.codigo} </a> , #{/list}
 			</p>
 		</div>
 	</div>
-	#{/if} 
-	*{<div class="gt-sidebar">
-	<div class="gt-sidebar-content" id="gc"></div>
+	#{/if} *{
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content" id="gc"></div>
 	</div>
 	#{if controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
 	<script type="text/javascript">
@@ -315,39 +315,80 @@ $(function(){
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>
-	#{/modal} 
-	#{modal nome:'associarLista', titulo:'Definir Lista'}
-		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form action="@{Application.associarListaGravar(solicitacao?.idSolicitacao, lista?.idLista)}">
-		<div style="max-height: 500px; overflow-y: scroll;">
-		<table border="0" class="gt-table">
-			<col width="20%" />
-    		<col width="20%" />
-     		<thead>
-				<tr class="gt-celula-nowrap">
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Incluir</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descrição da Lista</th>
-   				</tr>
-   			</thead>
-			<tbody>
-			#{list items:solicitacao.getListasDisponiveisParaInclusao(lotaTitular, cadastrante), as:'lista'}
-			<tr>
-			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				<input type="radio" name="idLista" value="${lista.idLista}">	
-			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrLista">
-				${lista.nomeLista}
-			</td>
-			</tr>		
-			#{/list}
-			</tbody>
-		</table>	
-		</div>	
-		<div class="gt-table-button gt-width-66">
-			<input type="hidden" name="idSolicitacao" value="${solicitacao.idSolicitacao}">
-			<input type="submit" value="Selecionar Lista" class="gt-btn-medium gt-btn-left" />
-			<a href="@{Application.exibir(solicitacao.idSolicitacao)}" class="gt-btn-medium gt-btn-left">Voltar</a>
-		</div>
+	#{/modal} #{modal nome:'associarLista', titulo:'Definir Lista'}
+	<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
+		<form
+			action="@{Application.associarListaGravar(solicitacao?.idSolicitacao, lista?.idLista)}">
+			<div style="max-height: 500px; overflow-y: scroll;">
+				<table border="0" class="gt-table">
+					<col width="20%" />
+					<col width="20%" />
+					<thead>
+						<tr class="gt-celula-nowrap">
+							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Incluir</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descrição
+								da Lista</th>
+						</tr>
+					</thead>
+					<tbody>
+						#{list
+						items:solicitacao.getListasDisponiveisParaInclusao(lotaTitular,
+						cadastrante), as:'lista'}
+						<tr>
+							<td class="gt-celula-nowrap"
+								style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+								<input type="radio" name="idLista" value="${lista.idLista}">
+							</td>
+							<td class="gt-celula-nowrap"
+								style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;"
+								"id="descrLista">${lista.nomeLista}</td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			<div class="gt-table-button gt-width-66">
+				<input type="hidden" name="idSolicitacao"
+					value="${solicitacao.idSolicitacao}"> <input type="submit"
+					value="Selecionar Lista" class="gt-btn-medium gt-btn-left" /> <a
+					href="@{Application.exibir(solicitacao.idSolicitacao)}"
+					class="gt-btn-medium gt-btn-left">Voltar</a>
+			</div>
 		</form>
+	</div>
+	#{/modal} #{modal nome:'deixarPendente', titulo:'Pendente'}
+	<form action="@{Application.deixarPendente()}" method="post"
+		enctype="multipart/form-data">
+		<div style="display: inline" class="gt-form-row gt-width-66">
+			<label>Em caso de agendamento, preencha a data/hora desejada:</label>
+			<table border="0" class="gt-table">
+				<col width="20%" />
+				<col width="20%" />
+				<tbody>
+					<tr class="gt-celula-nowrap">
+						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Data</th>
+						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Hora</th>
+					</tr>
+					<tr>
+						<td class="gt-celula-nowrap"
+							style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+							<input type="text" name="calendario" id="calendario">
+						</td>
+						<td class="gt-celula-nowrap"
+							style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
+							<input type="text" name="horario" id="horario">
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
+		<p>
+		<div style="display: inline" class="gt-form-row gt-width-66">
+			<label>Motivo</label>
+			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
+		</div>
+		<input type="hidden" name="completo" value="${completo}" /> <input
+			type="hidden" name="id" value="${solicitacao.id}" /> <input
+			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+	</form>
 	#{/modal}

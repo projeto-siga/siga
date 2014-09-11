@@ -1255,6 +1255,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			DpLotacao lotaCadastrante) throws Exception {
 		if (!podeDesfazerMovimentacao(lotaCadastrante, cadastrante))
 			throw new Exception("Operação não permitida");
+		reInserirListasDePrioridade(lotaCadastrante, cadastrante);
+		
 		SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 		if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO) {
 			Query query = JPA.em().createQuery("UPDATE SrSolicitacao sol SET sol.solicitacaoJuntada = :solRecebeJuntada WHERE sol.idSolicitacao = :idSol");
@@ -1263,8 +1265,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			query.executeUpdate();
 		}
 		movimentacao.desfazer(cadastrante, lotaCadastrante);
-		
-		reinserirListasDePrioridade(lotaCadastrante, cadastrante);
 	}
 
 	public SrSolicitacao criarFilhaSemSalvar() throws Exception {
@@ -1815,6 +1815,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.descrMovimentacao = motivo;
 		mov.salvar(pess, lota);
 		
+		// remove das listas apos finalizar, para que seja possivel reabrir depois
 		removerDasListasDePrioridade(lota, pess);
 	}
 	
@@ -1827,31 +1828,44 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void reabrir(DpLotacao lota, DpPessoa pess) throws Exception {
 		if (!podeReabrir(lota, pess))
 			throw new Exception("Operação não permitida");
+		reInserirListasDePrioridade(lota, pess);
+		
 		SrMovimentacao mov = new SrMovimentacao(this);
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
 		mov.lotaAtendente = getUltimoAtendenteEtapaAtendimento();
 		mov.salvar(pess, lota);
-		
-		reinserirListasDePrioridade(lota, pess);
 	}
 	
-	private void reinserirListasDePrioridade(DpLotacao lota, DpPessoa pess) throws Exception {
+	private void reInserirListasDePrioridade(DpLotacao lota, DpPessoa pess) throws Exception {
 		boolean encontrouMovimentacao = false;
-		for (SrMovimentacao mov : this.getMovimentacaoSet()) {
-			// procurar quais são do tipo TIPO_MOVIMENTACAO_FECHAMENTO (fechamento) ou
-			// TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO
-			// caso seja, procurar as próximas que forem do tipo 
-			// TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA e "reabrir" todas
-			if (encontrouMovimentacao) {
-				if(mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
-					this.associarLista(mov.lista, pess, lota);
+		SrMovimentacao movimentacaoFechamento = this.getUltimaMovimentacaoFinalizadora();
+		
+		if (movimentacaoFechamento != null) {
+			for (SrMovimentacao mov : this.getMovimentacaoSet(false, null, true)) {
+				if (encontrouMovimentacao) {
+					if(mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
+						this.associarLista(mov.lista, pess, lota);
+					}
 				}
+				else if (movimentacaoFechamento.dtIniMov.equals(mov.dtIniMov))
+					encontrouMovimentacao = true;
 			}
-			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO ||
-					mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO)
-				encontrouMovimentacao = true;
 		}
+	}
+	
+	private SrMovimentacao getUltimaMovimentacaoFinalizadora() {
+		SrMovimentacao ultimoFechamento = this.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
+		SrMovimentacao ultimoCancelamento = this.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
+		
+		if (ultimoFechamento == null)
+			return ultimoCancelamento;
+		else if (ultimoCancelamento == null)
+			return ultimoFechamento;
+		else if (ultimoFechamento.dtIniMov.compareTo(ultimoCancelamento.dtIniMov) < 0)
+			return ultimoFechamento;
+		else
+			return ultimoCancelamento;
 	}
 	
 	public void deixarPendente(DpLotacao lota, DpPessoa pess, String motivo, 
@@ -1889,6 +1903,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
 		movimentacao.salvar(pess, lota);
 		
+		// remove das listas apos finalizar, para que seja possivel reabrir depois
 		removerDasListasDePrioridade(lota, pess);
 	}
 

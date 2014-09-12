@@ -158,7 +158,6 @@
 									<directory>../siga-base/src/main/java</directory>
 									<excludes>
 										<exclude>br/gov/jfrj/siga/model/ObjetoBase.java</exclude>
-										<exclude>br/gov/jfrj/siga/base/ConexaoHTTP.java</exclude>
 									</excludes>
 								</resource>
 

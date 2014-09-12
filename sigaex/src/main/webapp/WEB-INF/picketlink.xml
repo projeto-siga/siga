@@ -8,6 +8,7 @@
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" />
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" />
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.RolesGenerationHandler" />
+		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AttributeHandler"/>
 	</Handlers>
 	
 </PicketLink>

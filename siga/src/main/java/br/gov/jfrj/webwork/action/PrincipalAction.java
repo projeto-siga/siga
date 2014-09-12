@@ -28,8 +28,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -55,8 +55,8 @@ public class PrincipalAction extends SigaActionSupport {
 		public void setDescricao(String descricao) {
 			this.descricao = descricao;
 		}
-
-		public Long getId() {
+		
+		public Long getId(){
 			return id;
 		}
 
@@ -87,8 +87,8 @@ public class PrincipalAction extends SigaActionSupport {
 	private List listEstados;
 	private String sigla;
 	private String matricula;
-	private String idp;
 	private GenericoSelecao sel;
+	private String idp;
 
 	@Override
 	public String execute() throws Exception {
@@ -158,8 +158,8 @@ public class PrincipalAction extends SigaActionSupport {
 						+ "/selecionar.action?sigla=" + getSigla()
 						+ incluirMatricula;
 
-			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
-					.split(";");
+			SigaHTTP http = new SigaHTTP();
+			String[] response = http.get(URLSelecionar, getRequest()).split(";");
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
 				//verificar se após a retirada dos prefixos referente 
@@ -179,8 +179,7 @@ public class PrincipalAction extends SigaActionSupport {
 						+ incluirMatricula;
 				}
 				
-				response = ConexaoHTTP.get(URLSelecionar, getHeaders())
-						.split(";");
+				response = http.get(URLSelecionar, getRequest()).split(";");
 				
 				if (copiaSigla.matches("(^[0-9]+$)")) 
 					uRLExibir = "/siga/pessoa/exibir.action?sigla="
@@ -293,14 +292,6 @@ public class PrincipalAction extends SigaActionSupport {
 
 	public PrincipalAction() {
 		sel = new GenericoSelecao();
-	}
-	
-	public String getIdp() {
-		return idp;
-	}
-
-	public void setIdp(String idp) {
-		this.idp = idp;
 	}
 
 }

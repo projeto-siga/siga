@@ -8,12 +8,10 @@
 	</PicketLinkIDP>
 	
 	<Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1">
-	    <!-- 
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AttributeHandler">
 			<Option Key="ATTRIBUTE_MANAGER" Value="br.gov.jfrj.siga.picketlink.SAMLAttributeManager"></Option>
 			<Option Key="ATTRIBUTE_KEYS" Value="IDPsessionID" />
 		</Handler>
-		 -->
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2IssuerTrustHandler" />
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" />
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" />

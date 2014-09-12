@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.libs.webwork;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +38,7 @@ import com.opensymphony.webwork.interceptor.PrincipalAware;
 import com.opensymphony.webwork.interceptor.PrincipalProxy;
 
 public class SigaActionSupport extends SigaAnonimoActionSupport implements
-		PrincipalAware, ConheceUsuario {
+PrincipalAware, ConheceUsuario {
 	/**
 	 * 
 	 */
@@ -185,7 +186,7 @@ public class SigaActionSupport extends SigaAnonimoActionSupport implements
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException,
-			Exception {
+	Exception {
 		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
 				+ pathServico;
 		if (!Cp.getInstance()

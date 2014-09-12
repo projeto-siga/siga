@@ -475,7 +475,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			for (String valor : getPar().get("obrigatorios"))
 				if (getPar().get(valor) == null
 						|| getPar().get(valor)[0].trim().equals("")
-						|| getPar().get(valor)[0].trim().equals("Nï¿½o")
+						|| getPar().get(valor)[0].trim().equals("NÃ£o")
 						|| getPar().get(valor)[0].trim().equals("Nao"))
 					return false;
 		return true;
@@ -484,7 +484,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aCarregarPreenchimento() throws Exception {
 		ExPreenchimento exPreenchimento = new ExPreenchimento();
 
-		// Obtï¿½m arrStrBanco[], com os parï¿½metros vindos do banco
+		// Obtwm arrStrBanco[], com os parametros vindos do banco
 		exPreenchimento = dao().consultar(preenchimento, ExPreenchimento.class,
 				false);
 		String strBanco = new String(exPreenchimento.getPreenchimentoBA());
@@ -544,12 +544,12 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 		}
 
-		// Obtï¿½m arrStrURL[], com os parï¿½metros atuais da edita.jsp
+		// Obtem arrStrURL[], com os parametros atuais da edita.jsp
 		String strURL = getUrlEncodedParameters();
 		String arrStrURL[] = strURL.split("&");
 		String strURLLimpa = "";
 
-		// limpa a url vinda do browser, tirando o que jï¿½ consta na string do
+		// limpa a url vinda do browser, tirando o que ja consta na string do
 		// banco, tirando tambï¿½m os .sigla e .descricao
 		if (arrStrURL.length > 0) {
 			for (String s : arrStrURL) {
@@ -2084,9 +2084,9 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	public Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrï¿½cula");
-		map.put(2, "ï¿½rgï¿½o Integrado");
-		map.put(3, "ï¿½rgï¿½o Externo");
+		map.put(1, "Matrícula");
+		map.put(2, "Orgão Integrado");
+		map.put(3, "Orgão Externo");
 		map.put(4, "Campo Livre");
 		return map;
 	}

@@ -83,7 +83,7 @@ function popitup_movimentacao(url) {
 		</tr>
 		--%>
 			<!--  <tr>
-		<td>&lt;&lt;Mais Op��es&gt;&gt;</td>
+		<td>&lt;&lt;Mais Opções&gt;&gt;</td>
 		</tr>-->
 		</table>
 		<ul style="font-size: 10px">

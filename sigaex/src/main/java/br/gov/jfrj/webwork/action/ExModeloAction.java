@@ -235,7 +235,7 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 			// if (!ExCompetenciaBL
 			// .podeEditar(getTitular(), getLotaTitular(), mob))
 			// throw new AplicacaoException(
-			// "N�o � permitido editar documento fechado");
+			// "Não é permitido editar documento fechado");
 
 		}
 
@@ -294,7 +294,7 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 		dao().iniciarTransacao();
 		assertAcesso("MOD:Gerenciar modelos");
 		if (getId() == null) 
-			throw new Exception("ID n�o informada");
+			throw new Exception("ID não informada");
 		mod = dao().consultar(getId(), ExModelo.class, false);
 		dao().excluirComHistorico(mod, dao().consultarDataEHoraDoServidor(),
 				getIdentidadeCadastrante());

@@ -176,14 +176,14 @@ public class ExFormaDocumentoAction extends ExSelecionavelActionSupport {
 		if(getSigla() != null && !getSigla().isEmpty()) {
 		
 			if (!formaConsulta.isSiglaValida(getSigla()))   {
-				setMensagem("Sigla inv�lida. A sigla deve ser formada por 3 letras.");
+				setMensagem("Sigla inválida. A sigla deve ser formada por 3 letras.");
 			}
 			
 			formaConsulta.setSigla(getSigla());
 			formaConsulta = dao().consultarPorSigla(formaConsulta);
 			
 			if(formaConsulta != null)
-				setMensagem("Esta sigla j� est� sendo utilizada");
+				setMensagem("Esta sigla já está sendo utilizada");
 		}
 		
 		return Action.SUCCESS;

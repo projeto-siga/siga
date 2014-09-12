@@ -30,7 +30,7 @@
 					<font fontName="Arial" pdfFontName="Helvetica" size="11" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="false"
 						pdfEncoding="Cp1252" isStrikeThrough="false" />
 				</textElement>
-				<text><![CDATA[PODER JUDICI�RIO]]></text>
+				<text><![CDATA[PODER JUDICIÁRIO]]></text>
 			</staticText>
 			<image scaleImage="RetainShape" vAlign="Middle" hAlign="Center" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"
 				hyperlinkTarget="Self">
@@ -77,7 +77,7 @@
 					<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="false"
 						pdfEncoding="Cp1252" isStrikeThrough="false" />
 				</textElement>
-				<text><![CDATA[Emiss�o:]]></text>
+				<text><![CDATA[Emissão:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
 				<reportElement mode="Opaque" x="72" y="40" width="199" height="12" forecolor="#000000" backcolor="#FFFFFF" key="textField"

@@ -93,6 +93,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITANTE")
 	public DpPessoa solicitante;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_INTERLOCUTOR")
+	public DpPessoa interlocutor;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_SOLICITANTE")
@@ -1226,6 +1230,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			solicitante = cadastrante;
 
+		if (interlocutor == null)
+			interlocutor = solicitante;
+		
 		if (lotaSolicitante == null)
 			lotaSolicitante = solicitante.getLotacao();
 

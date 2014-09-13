@@ -95,23 +95,20 @@
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
 
-			#{if solicitacao.podePriorizar(lotaTitular,cadastrante)}
 			<div class="gt-form-row gt-width-66">
-				<label>Os prejuízos ou dificuldades relativos ao problema
-					são</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
-				labelProperty:'respostaEnunciado', value:solicitacao.gravidade /}
+				<label>Gravidade</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
+				labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>O problema deve ser resolvido</label> #{select
+				<label>Urgência</label> #{select
 				name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
-				labelProperty:'respostaEnunciado', value:solicitacao.urgencia /}
+				labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Se nada for feito, a situação</label> #{select
+				<label>Tendência</label> #{select
 				name:'solicitacao.tendencia', items:models.SrTendencia.values(),
-				labelProperty:'respostaEnunciado', value:solicitacao.tendencia /}
+				labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO', style:'width:235px;' /}
 			</div>
-			#{/if}
 			
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label>

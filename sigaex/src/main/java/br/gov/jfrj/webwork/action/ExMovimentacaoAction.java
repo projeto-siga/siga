@@ -89,6 +89,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
+import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
@@ -2604,6 +2605,18 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				itensFinalizados.add(doc);
 		}
 		setItensSolicitados(itensFinalizados);
+		return Action.SUCCESS;
+	}
+	
+	public String aAssinarDespachoLote() throws Exception {		
+		List<ExMovimentacao> itensComoSubscritor = dao().
+					listarDespachoPendenteAssinatura(getTitular());
+
+		setItens(new ArrayList<ExMovimentacao>());
+
+		for (ExMovimentacao mov : itensComoSubscritor) {
+				getItens().add();
+		}
 		return Action.SUCCESS;
 	}
 

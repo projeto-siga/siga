@@ -13,8 +13,6 @@ import models.Foruns;
 import models.Locais;
 import models.UsuarioForum;
 
-import org.hibernate.bytecode.buildtime.ExecutionException;
-
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
@@ -22,12 +20,12 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class Application extends SigaApplication {
 
-	@Before
+	@Before(priority = 1)
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
 	}
 
-	@Before
+	@Before(priority = 2,unless = {"publicKnowledge", "dadosRI"})
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -59,11 +57,8 @@ public class Application extends SigaApplication {
 				"matricula_usu =" + matriculaSessao).first();
 		if (objUsuario != null) {
 			try {
-				List<Locais> lstLocais = Locais.find(
-						"forumFk=" + objUsuario.forumFk.cod_forum
-								+ "order by ordem_apresentacao ").fetch();
-				Foruns objForum = Foruns.find(
-						"cod_forum=" + objUsuario.forumFk.cod_forum).first();
+				List<Locais> lstLocais = Locais.find("forumFk=" + objUsuario.forumFk.cod_forum	+ "order by ordem_apresentacao ").fetch();
+				Foruns objForum = Foruns.find("cod_forum=" + objUsuario.forumFk.cod_forum).first();
 				ArrayList vetorForuns = new ArrayList();
 				String texto = objForum.mural;
 				int i = 0;
@@ -101,16 +96,11 @@ public class Application extends SigaApplication {
 		String varCodLocal = formLocal.cod_local;
 		String resposta = "";
 		try {
-			System.out.println(JPA
-					.em()
-					.createQuery(
-							"from Locais where cod_local ='" + varCodLocal
-									+ "'").getSingleResult());
+			System.out.println(JPA.em().createQuery("from Locais where cod_local ='" + varCodLocal	+ "'").getSingleResult());
 			resposta = "Sala já existe. Confira o código da sala. ";
 		} catch (Exception e) {
 			try {
-				System.out.println(JPA.em().createQuery(
-						"from Foruns where cod_forum=" + cod_forum));
+				System.out.println(JPA.em().createQuery("from Foruns where cod_forum=" + cod_forum));
 				formLocal.save();
 				JPA.em().flush();
 				resposta = "Ok.";
@@ -154,12 +144,8 @@ public class Application extends SigaApplication {
 				}
 			} else if (!sala.isEmpty()) {
 				try {
-					listLocais = JPA
-							.em()
-							.createQuery(
-									"from Locais where local like '" + sala
-											+ "%'").getResultList();
-				} catch (ExecutionException e) {
+					listLocais = JPA.em().createQuery(	"from Locais where local like '" + sala	+ "%'").getResultList();
+				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					render(listLocais);
@@ -190,7 +176,7 @@ public class Application extends SigaApplication {
 							System.out.println("- Detalhe -");
 						}
 					}
-				} catch (ExecutionException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					render(listLocais);

@@ -967,7 +967,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	
 	
 	public String aExibir() throws Exception {
-		buscarDocumento(true);
+		buscarDocumento(false);
 
 		assertAcesso();
 

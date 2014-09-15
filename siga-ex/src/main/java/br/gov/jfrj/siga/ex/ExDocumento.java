@@ -212,7 +212,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
          */
         public String getCodigoResumido(CpOrgaoUsuario orgaoUsu, ExDocumento docRef){
         	String cod = getCodigo();
-        	if (docRef != null){ 
+        	if (docRef != null && getNumSequencia()!=null){ 
         		if (docRef.equals(this))
         			return "";
         		if (getExMobilPai() != null && getExMobilPai().doc().equals(docRef) && isProcesso()){

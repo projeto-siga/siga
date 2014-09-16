@@ -4247,9 +4247,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return dao().consultarExModelo(null, "Despacho Automático");
 	}
 
-	public List<DpLotacao> getListaLotPubl() throws Exception {
+	public Set<DpLotacao> getListaLotPubl() throws Exception {
 
-		List<DpLotacao> lotacoes = new ArrayList<DpLotacao>();
+		Set<DpLotacao> lotacoes = new HashSet<DpLotacao>();
 		DpLotacao lotSubscritor, lotCadastrante, lotTitular, lotFiltro;
 		String siglaSubscritor, siglaCadastrante, siglaTitular;
 

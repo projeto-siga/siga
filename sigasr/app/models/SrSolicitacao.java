@@ -904,7 +904,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeAssociarLista(DpLotacao lota, DpPessoa pess) {
-		return !isFechado() && estaCom(lota, pess);
+		return !isFechado();
 	}
 
 	public boolean podeTrocarAtendente(DpLotacao lota, DpPessoa pess) {

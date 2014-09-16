@@ -246,6 +246,11 @@ public class Application extends SigaApplication {
 					"Título não informado");
 		}
 
+		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
+			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
+					"Fator de multiplicação menor que 1");
+		}
+		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
 		}

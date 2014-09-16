@@ -167,6 +167,7 @@ $(function() {
                 	jDialogFator.data('fatorMultiplicacaoSet','');
 	            },
 	            open: function(){
+	            	$('#erroNumFatorMult').hide();
                     if (jDialogFator.data("gestorSet"))
                     	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
                     else
@@ -176,14 +177,20 @@ $(function() {
         $("#modalOkFator").click(function(){
                 var acaoFator = jDialogFator.data('acaoFator');
                 var jTipoEscolhidoFator = jSelectFator.find("option:selected");
+                var numFatorMult = $('#numfatorMult');
+				
+				if(numFatorMult.val() > 0) {
+	                if(jTipoEscolhidoFator.val() == 1) {
+	                	acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
+	                } else if (jTipoEscolhidoFator.val() == 2) {
+	                	acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
+	                }
+	                jDialogFator.dialog('close');
+				} else {
+					$('#erroNumFatorMult').show();
+				}
                 
-                if(jTipoEscolhidoFator.val() == 1) {
-                	acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
-                } else if (jTipoEscolhidoFator.val() == 2) {
-                	acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
-                }
                 
-                jDialogFator.dialog('close');
         });
         $("#modalCancelFator").click(function(){
         	jDialogFator.dialog('close');
@@ -348,6 +355,7 @@ $(function() {
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
  								type="text" name="itemConfiguracao.numFatorMultiplicacaoGeral" value="${itemConfiguracao?.numFatorMultiplicacaoGeral}" size="20" />
+ 								<span style="display: inline; color: red;">#{error 'itemConfiguracao.numFatorMultiplicacaoGeral' /}</span>
 						</td>
 					</tr>
 					<tr>
@@ -419,6 +427,7 @@ $(function() {
 				<label>Fator de Multiplicação: </label>
 				<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
 					   type="text" name="numfatorMult" value="1" size="43" />
+					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
 			</div>
 			<div class="gt-form-row">
 				<input type="button" id="modalOkFator" value="Ok"

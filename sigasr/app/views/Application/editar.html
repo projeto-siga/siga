@@ -65,15 +65,15 @@
 			#{/ifErrors}
 
 			<div class="gt-form-row gt-width-66">
+				<label>Cadastrante</label> 
+				${cadastrante.nomePessoa}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
 				onchange:'carregarLocalERamal();carregarItem()' /}
 				<span style="margin-left: 10px;">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
-			</div>
-			
-			<div class="gt-form-row gt-width-66">
-				<label>Cadastrante</label> 
-				${cadastrante.nomePessoa}
 			</div>
 			
 			<div class="gt-form-row gt-width-66" id="interlocutor" style="display: none;">

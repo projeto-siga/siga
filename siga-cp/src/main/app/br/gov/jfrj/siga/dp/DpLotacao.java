@@ -153,7 +153,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			siglasOrgaoUsu += (siglasOrgaoUsu.length() > 0 ? "|" : "")
 					+ ou.getSiglaOrgaoUsu();
 		}
-		final Pattern p1 = Pattern.compile("^(" + siglasOrgaoUsu + ")([a-zA-Z]+)");
+		final Pattern p1 = Pattern.compile("^(" + siglasOrgaoUsu + ")(.+)");
 		final Matcher m = p1.matcher(sigla.toUpperCase());
 		if (m.find()) {
 			CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();

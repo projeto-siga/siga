@@ -582,25 +582,34 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void editar(String sigla, String classificacao, String titulo,
-			String origem) throws Exception {
+			String origem, String conteudo, GcTipoInformacao tipo) throws Exception {
 		GcInformacao informacao = null;
 		DpPessoa titular = titular();
 		DpLotacao lotaTitular = lotaTitular();
 		
-		if(sigla != null)
+		//Edson: está estranho referenciar o TMPGC-0. Ver solução melhor.
+		if(sigla != null && !sigla.equals("TMPGC-0"))
 			informacao = GcInformacao.findBySigla(sigla);
 		else
 			informacao = new GcInformacao();
 		
 		if (informacao.autor == null || informacao.podeRevisar(titular, lotaTitular) ||
 				informacao.acessoPermitido(titular, lotaTitular, informacao.edicao.id)) {
-			List<GcInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
+			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.all().fetch();
 			List<GcAcesso> acessos = GcAcesso.all().fetch();
 			if (titulo == null)
 				titulo = (informacao.arq != null) ? informacao.arq.titulo : null;
-			String conteudo = (informacao.arq != null) ? informacao.arq.getConteudoTXT() : null;
 			
-			if (conteudo != null && !conteudo.startsWith("<")) {
+			if (conteudo == null)
+				conteudo = (informacao.arq != null) ? informacao.arq.getConteudoTXT() : null;
+			
+			if (tipo == null || tipo.id == 0)
+				tipo = (informacao.tipo != null) ? informacao.tipo : tiposInformacao.get(0);
+			
+			if (informacao.arq == null)
+				conteudo = (tipo.arq != null) ? tipo.arq.getConteudoTXT() : null;
+			
+			if (conteudo != null && !conteudo.trim().startsWith("<")) {
 				conteudo = Util.escapeHashTag(conteudo);
 				informacao.arq.setConteudoTXT(conteudo);
 				conteudo = informacao.getConteudoHTML();
@@ -626,7 +635,7 @@ public class Application extends SigaApplication {
 			}
 
 			render(informacao, tiposInformacao, acessos, titulo, conteudo,
-					classificacao, origem);
+					classificacao, origem, tipo);
 		}
 		else
 			throw new AplicacaoException(
@@ -775,7 +784,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void gravar(GcInformacao informacao, String titulo,
-			String conteudo, String classificacao, String origem)
+			String conteudo, String classificacao, String origem, GcTipoInformacao tipo)
 			throws Exception {
 		//DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = titular();
@@ -793,8 +802,8 @@ public class Application extends SigaApplication {
 			else if (pessoa != null)
 				informacao.ou = pessoa.getOrgaoUsuario();
 		}
-		if (informacao.tipo == null)
-			informacao.tipo = GcTipoInformacao.all().first();
+		
+		informacao.tipo = tipo;
 
 		//Atualiza a classificaÃ§Ã£o com as hashTags encontradas
 		classificacao = Util.findHashTag(conteudo, classificacao, CONTROLE_HASH_TAG);

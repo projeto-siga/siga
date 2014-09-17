@@ -943,7 +943,7 @@ public class ExDocumentoAction extends ExActionSupport {
 							new Date());
 
 		ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getTitular(),
-				getLotaTitular(), true);
+				getLotaTitular(), true,true);
 		super.getRequest().setAttribute("docVO", docVO);
 
 		// logStatistics();
@@ -982,7 +982,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getTitular(),
-				getLotaTitular(), true);
+				getLotaTitular(), true,false);
 		
 		
 		docVO.exibe();

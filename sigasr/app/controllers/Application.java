@@ -20,6 +20,7 @@ import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
+import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
@@ -880,10 +881,15 @@ public class Application extends SigaApplication {
 
 	public static void editarTipoAtributo(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
+		String formatoAnterior = null;
 		SrTipoAtributo att = new SrTipoAtributo();
-		if (id != null)
+		if (id != null) {
 			att = SrTipoAtributo.findById(id);
-		render(att);
+			if(att.formatoCampo != null) {
+				formatoAnterior = att.formatoCampo.name();
+			}
+		}
+		render(att, formatoAnterior);
 	}
 
 	public static void gravarTipoAtributo(SrTipoAtributo att) throws Exception {
@@ -899,6 +905,12 @@ public class Application extends SigaApplication {
 					"Nome de atributo não informado");
 		}
 
+		if (att.formatoCampo == SrFormatoCampo.VL_PRE_DEFINIDO 
+				&& att.descrPreDefinido.equals("")) {
+			validation.addError("att.descrPreDefinido",
+					"Valores Pré-definido não informados");
+		}
+		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
 		}

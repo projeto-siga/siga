@@ -24,7 +24,7 @@ function carregouAtributos(response, param){
 		<div id="gc-ancora-item"></div>
 	</div>
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.itemConfiguracao.gcTagAbertura}&estilo=inplace&msgvazio=Não existe conhecimento registrado para ${solicitacao.itemConfiguracao.tituloItemConfiguracao}. Clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item'));
+		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.itemConfiguracao.gcTagAbertura}&estilo=inplace&popup=true&msgvazio=Não existe conhecimento registrado para ${solicitacao.itemConfiguracao.tituloItemConfiguracao}. Clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item'));
 	</script>
 #{/if}
 

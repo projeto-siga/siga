@@ -216,17 +216,17 @@ public class Application extends SigaApplication {
 	}
 
 	public static void publicKnowledge(Long id, String[] tags, String estilo, String msgvazio,
-			String urlvazio, String titulo) throws Exception {
-		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, true);
+			String urlvazio, String titulo, boolean popup) throws Exception {
+		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, true, popup);
 	}
 
 	public static void knowledge(Long id, String[] tags, String estilo, String msgvazio,
-			String urlvazio, String titulo) throws Exception {
-		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, false);
+			String urlvazio, String titulo, boolean popup) throws Exception {
+		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, false, popup);
 	}
 
 	private static void renderKnowledge(Long id, String[] tags, String estilo,
-			String msgvazio, String urlvazio, String titulo, boolean testarAcessoPublico)
+			String msgvazio, String urlvazio, String titulo, boolean testarAcessoPublico, boolean popup)
 			throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
@@ -292,10 +292,10 @@ public class Application extends SigaApplication {
 
 		if (estilo != null)
 			render("@knowledge_" + estilo, conhecimentos, classificacao,
-					msgvazio, urlvazio, titulo, referer);
+					msgvazio, urlvazio, titulo, referer, popup);
 		else
 			render("@knowledge", conhecimentos, classificacao, msgvazio, urlvazio, titulo,
-					referer);
+					referer, popup);
 	}
 	
 	public static void index() {

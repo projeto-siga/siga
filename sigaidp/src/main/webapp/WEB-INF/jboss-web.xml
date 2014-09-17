@@ -3,6 +3,9 @@
 	<context-root>sigaidp</context-root>
 
     <valve>
+    	<class-name>br.gov.jfrj.siga.picketlink.CORSValve</class-name>
+    </valve>
+    <valve>
         <class-name>org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve</class-name>
     </valve>
 </jboss-web>

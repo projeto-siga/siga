@@ -7,20 +7,13 @@
 	<display-name>Siga Identity Provider</display-name>
 	<description>Este projeto e o centralizador do processo de autenticacao do siga</description>
 
-    <listener>
-        <listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
-    </listener>
-
-
-    <listener>
-		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	<listener>
+		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
 	</listener>
-
 	<filter>
 		<filter-name>webwork</filter-name>
 		<filter-class>com.opensymphony.webwork.dispatcher.FilterDispatcher</filter-class>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>webwork</filter-name>
 		<url-pattern>*.action</url-pattern>
@@ -36,13 +29,13 @@
 			<role-name>sigausuario</role-name>
 		</auth-constraint>
 	</security-constraint>
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>js</web-resource-name>
-            <url-pattern>/javascript/*</url-pattern>
-        </web-resource-collection>
-    </security-constraint>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>js</web-resource-name>
+			<url-pattern>/javascript/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
 
 	<!-- Define the Login Configuration for this Application -->
 	<login-config>

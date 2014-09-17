@@ -19,7 +19,11 @@
 package br.gov.jfrj.siga.base;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -49,13 +53,21 @@ public class SigaHTTP {
 	private final String SAMLResponse = "SAMLResponse";
 	private final String JSESSIONID_PREFIX = "JSESSIONID=";
 	private final String SET_COOKIE = "set-cookie";
+	private final String HTTP_POST_BINDING_REQUEST = "HTTP Post Binding (Request)";
+	private String idp;
 
-	public String get(String URL) throws AplicacaoException {
+	/**
+	 * @param URL
+	 * @param request (se for modulo play, setar pra null)
+	 * @param cookieValue (necessario apenas nos modulos play)
+	 */
+	public String get(String URL, HttpServletRequest request, String cookieValue) {
 		String html = "";
 		
 		try{
 			 // Efetua o request para o Service Provider (módulo)
 			 Request req = Request.Get(URL);
+			 req.addHeader(COOKIE, JSESSIONID_PREFIX+getCookie(request, cookieValue));
 			 // Atribui o html retornado e pega o header do Response
 			 // Se a aplicação já efetuou a autenticação entre o módulo da URL o conteúdo será trago nesse primeiro GET
 			 // Caso contrário passará pelo processo de autenticação (if abaixo)
@@ -69,13 +81,15 @@ public class SigaHTTP {
 			});
 
 			// Verifica se retornou o form de autenticação do picketlink 
-			if (html.contains("HTTP Post Binding (Request)")){
+			if (html.contains(HTTP_POST_BINDING_REQUEST)){
 				// Atribui o cookie recuperado no response anterior
 				String setCookie = null;
 				try{
 					setCookie = extractCookieFromHeader(getHeader(SET_COOKIE));
 				}catch(ElementNotFoundException elnf){
 					log.info("Nao encontrou o set-cookie");
+					log.info("retornando string vazia");
+					setCookie = request.getSession().getId();
 				}
 				
 				// Atribui o valor do SAMLRequest contido no html retornado no GET efetuado.
@@ -84,8 +98,7 @@ public class SigaHTTP {
 				String idpURL = getAttributeActionFromHtml(html);
 
 				// Faz um novo POST para o IDP com o SAMLRequest como parametro e utilizando o sessionID do IDP
-				html = Request.Post(idpURL).//addHeader(COOKIE, JSESSIONID_PREFIX+IDPSessionID).
-						bodyForm(Form.form().add(SAMLRequest, SAMLRequestValue).build()).execute().returnContent().toString();
+				html = Request.Post(idpURL).addHeader(COOKIE, JSESSIONID_PREFIX+getIdp(request)).bodyForm(Form.form().add(SAMLRequest, SAMLRequestValue).build()).execute().returnContent().toString();
 
 				// Extrai o valor do SAMLResponse
 				// Caso o SAMLResponse não esteja disponível aqui, é porque o JSESSIONID utilizado não foi o do IDP.
@@ -98,7 +111,7 @@ public class SigaHTTP {
 				
 				// Agora que estamos autenticado efetua o GET para página desejada.
 				html = Request.Get(URL).addHeader(COOKIE, JSESSIONID_PREFIX+setCookie).execute().returnContent().toString();
-				if (html.contains("HTTP Post Binding (Request)")){
+				if (html.contains(HTTP_POST_BINDING_REQUEST)){
 					log.info("Alguma coisa falhou na autenticação!: "+idpURL);
 				}
 			}
@@ -107,6 +120,14 @@ public class SigaHTTP {
 		}
 
 		return html;
+	}
+
+
+	private String getCookie(HttpServletRequest request, String cookieValue) {
+		if (cookieValue == null || cookieValue.isEmpty()){
+			return request.getSession().getId();
+		}
+		return cookieValue;
 	}
 
 
@@ -143,5 +164,26 @@ public class SigaHTTP {
 	private String getAttributeActionFromHtml(String htmlContent){
 		Document doc = Jsoup.parse(htmlContent);
 		return doc.select("form").attr("action");
+	}
+	
+	public String getIdp(HttpServletRequest request) {
+		try{
+			if (idp == null || idp.isEmpty()){
+				Map<String, Object> map = (Map<String, Object>) request.getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
+				String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
+				if (idpSessionID != null){
+					idp = idpSessionID;
+				}
+			}else{
+				idp = "";
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return idp;
+	}
+
+	public void setIdp(String idp) {
+		this.idp = idp;
 	}
 }

@@ -38,6 +38,7 @@ import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
+import play.mvc.Scope;
 import play.mvc.Http.Request;
 import play.mvc.Scope.RenderArgs;
 import utils.GcArvore;
@@ -122,7 +123,7 @@ public class Application extends SigaApplication{
 				atributos.put(h.name, h.value());
 
 		String url = getBaseSiga() + "/siga/pagina_vazia.action?popup=false";
-		String paginaVazia = http.get(url);
+		String paginaVazia = http.get(url, null, Scope.Session.current().getId());
 
 		String[] pageText = paginaVazia.split("<!-- insert body -->");
 		String[] cabecalho = pageText[0].split("<!-- insert menu -->");

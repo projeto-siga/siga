@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaHTTP;
@@ -90,8 +91,17 @@ public class PrincipalAction extends SigaActionSupport {
 	private GenericoSelecao sel;
 	private String idp;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String execute() throws Exception {
+		try{
+			Map<String, Object> map = (Map<String, Object>) getRequest().getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
+			String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
+			setIdp(idpSessionID);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
 		return Action.SUCCESS;
 	}
 
@@ -108,10 +118,8 @@ public class PrincipalAction extends SigaActionSupport {
 				incluirMatricula = "&matricula=" + matricula;
 			}
 
-			String urlBase = "http://"
-					+ SigaBaseProperties.getString(SigaBaseProperties
-							.getString("ambiente") + ".servidor.principal")
-					+ ":8080";
+			// TODO não precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
+			String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ ":8080";
 
 			String URLSelecionar = "";
 			String uRLExibir = "";
@@ -159,7 +167,7 @@ public class PrincipalAction extends SigaActionSupport {
 						+ incluirMatricula;
 
 			SigaHTTP http = new SigaHTTP();
-			String[] response = http.get(URLSelecionar, getRequest()).split(";");
+			String[] response = http.get(URLSelecionar, getRequest(), null).split(";");
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
 				//verificar se após a retirada dos prefixos referente 
@@ -179,7 +187,7 @@ public class PrincipalAction extends SigaActionSupport {
 						+ incluirMatricula;
 				}
 				
-				response = http.get(URLSelecionar, getRequest()).split(";");
+				response = http.get(URLSelecionar, getRequest(), null).split(";");
 				
 				if (copiaSigla.matches("(^[0-9]+$)")) 
 					uRLExibir = "/siga/pessoa/exibir.action?sigla="
@@ -292,6 +300,14 @@ public class PrincipalAction extends SigaActionSupport {
 
 	public PrincipalAction() {
 		sel = new GenericoSelecao();
+	}
+
+	public String getIdp() {
+		return idp;
+	}
+
+	public void setIdp(String idp) {
+		this.idp = idp;
 	}
 
 }

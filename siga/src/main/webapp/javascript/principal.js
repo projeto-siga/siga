@@ -137,10 +137,12 @@ window.Siga = {
 
     ajaxCall: function(ajax, doneCallback){
         var self = this;
+        var fields = (ajax.type == "POST") ? { withCredentials: true } : {};
         $.ajax({
             url: ajax.url,
             type: ajax.type,
             data: ajax.params,
+            xhrFields: fields,
             statusCode: {
                 404: function() {
                     if (ajax.target != null)
@@ -184,6 +186,7 @@ window.Siga = {
                     });
                 });
             }else{
+            	console.log("Renderizando direto!!");
                 self.display(target, textResponse);
             }
         });

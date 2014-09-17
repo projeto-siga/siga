@@ -77,7 +77,7 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.7.3</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jboss.spec.javax.security.jacc</groupId>
 			<artifactId>jboss-jacc-api_1.4_spec</artifactId>
@@ -86,6 +86,13 @@
 		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga-libs</artifactId>
+		</dependency>
+
+		<dependency>
+		  <groupId>org.apache.tomcat</groupId>
+		  <artifactId>tomcat-catalina</artifactId>
+		  <version>8.0.11</version>
+		  <scope>provided</scope>
 		</dependency>
 
 	</dependencies>

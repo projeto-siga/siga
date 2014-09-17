@@ -11,26 +11,16 @@
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
 	</listener>
-
+	
 	<filter>
 		<filter-name>HibernateFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.util.HibernateThreadFilter</filter-class>
 	</filter>
-
-	<filter-mapping>
-		<filter-name>HibernateFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
-	</filter-mapping>
-
+	
 	<filter>
 		<filter-name>webwork</filter-name>
 		<filter-class>com.opensymphony.webwork.dispatcher.FilterDispatcher</filter-class>
 	</filter>
-
-	<filter-mapping>
-		<filter-name>webwork</filter-name>
-		<url-pattern>*.action</url-pattern>
-	</filter-mapping>
 
 	<filter>
 		<filter-name>ResponseHeaderFilter</filter-name>
@@ -40,7 +30,17 @@
 			<param-value>max-age=3600</param-value>
 		</init-param>
 	</filter>
+	
+	<filter-mapping>
+		<filter-name>HibernateFilter</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
 
+	<filter-mapping>
+		<filter-name>webwork</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/imagens/*</url-pattern>

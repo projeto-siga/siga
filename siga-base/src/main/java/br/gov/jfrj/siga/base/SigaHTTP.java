@@ -56,13 +56,18 @@ public class SigaHTTP {
 	private final String HTTP_POST_BINDING_REQUEST = "HTTP Post Binding (Request)";
 	private String idp;
 
-	public String get(String URL, HttpServletRequest request) {
+	/**
+	 * @param URL
+	 * @param request (se for modulo play, setar pra null)
+	 * @param cookieValue (necessario apenas nos modulos play)
+	 */
+	public String get(String URL, HttpServletRequest request, String cookieValue) {
 		String html = "";
 		
 		try{
 			 // Efetua o request para o Service Provider (módulo)
 			 Request req = Request.Get(URL);
-			 req.addHeader(COOKIE, JSESSIONID_PREFIX+request.getSession().getId());
+			 req.addHeader(COOKIE, JSESSIONID_PREFIX+getCookie(request, cookieValue));
 			 // Atribui o html retornado e pega o header do Response
 			 // Se a aplicação já efetuou a autenticação entre o módulo da URL o conteúdo será trago nesse primeiro GET
 			 // Caso contrário passará pelo processo de autenticação (if abaixo)
@@ -115,6 +120,14 @@ public class SigaHTTP {
 		}
 
 		return html;
+	}
+
+
+	private String getCookie(HttpServletRequest request, String cookieValue) {
+		if (cookieValue == null || cookieValue.isEmpty()){
+			return request.getSession().getId();
+		}
+		return cookieValue;
 	}
 
 

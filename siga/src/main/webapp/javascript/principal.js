@@ -186,7 +186,6 @@ window.Siga = {
                     });
                 });
             }else{
-            	console.log("Renderizando direto!!");
                 self.display(target, textResponse);
             }
         });

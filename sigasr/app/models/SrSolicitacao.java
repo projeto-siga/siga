@@ -1958,7 +1958,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
 		
-		removerDasListasDePrioridade(lota, pess);
 	}
 	
 	@SuppressWarnings("unchecked")

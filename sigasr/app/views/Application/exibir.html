@@ -272,7 +272,18 @@ $(function(){
 			</p>
 		</div>
 	</div>
-	#{/if} *{
+	#{/if} #{if solicitacao.temSolicitacaoVinculada()}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Vinculada a esta solicitação</h3>
+			<p>
+				#{list items:solicitacao.getSolicitacaoVinculadaSet(), as:'vinculada'} <a
+					href="@{Application.exibir(vinculada.idSolicitacao)}">
+					${vinculada.codigo} </a> , #{/list}
+			</p>
+		</div>
+	</div>
+	#{/if}	*{
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content" id="gc"></div>
 	</div>

@@ -15,9 +15,9 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALID
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBE_JUNCAO_SOLICITACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -202,7 +202,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	protected Set<SrMarca> meuMarcaSet;
 
 	public SrSolicitacao() {
-
+		
 	}
 
 	@Override
@@ -335,7 +335,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao()
 				+ "/" + numString;
 	}
-
+	
 	public String getDtRegString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtReg);
@@ -859,6 +859,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				&& !isJuntada();
 	}
 
+	public boolean podeVincular(DpLotacao lotaTitular, DpPessoa titular) {
+		return true;
+	}
+
 	public boolean podeDesfazerMovimentacao(DpLotacao lota, DpPessoa pess) {
 		SrMovimentacao ultCancelavel = getUltimaMovimentacaoCancelavel();
 		if (ultCancelavel == null || ultCancelavel.cadastrante == null)
@@ -1113,6 +1117,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		operacoes.add(new SrOperacao("pencil", "Editar", podeEditar(
 				lotaTitular, titular), "Application.editar"));
+
+		operacoes.add(new SrOperacao("table_relationship", "Vincular", podeVincular(
+				lotaTitular, titular), "Application.vincularSolicitacoes", "popup=true" ));
 
 		operacoes.add(new SrOperacao("arrow_divide", "Criar Solicitação Filha",
 				podeCriarFilha(lotaTitular, titular), "Application.criarFilha"));
@@ -1583,7 +1590,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				associadas.remove(mov.lista);
 		return associadas;
 	}
-
+	
+	public boolean temSolicitacaoVinculada() {
+		return getMovimentacaoSet(Boolean.TRUE, TIPO_MOVIMENTACAO_VINCULACAO).size() > 0;
+	}
+	
+	public Set<SrSolicitacao> getSolicitacaoVinculadaSet() {
+		Set<SrSolicitacao> vinculadas = new HashSet<SrSolicitacao>();
+		for (SrMovimentacao mov : getMovimentacaoSet(Boolean.TRUE, TIPO_MOVIMENTACAO_VINCULACAO))
+			if(mov.vinculo.solicitacaoA.solicitacaoInicial.idSolicitacao == this.solicitacaoInicial.idSolicitacao)
+				vinculadas.add(mov.vinculo.solicitacaoB);
+			else if(mov.vinculo.solicitacaoB.solicitacaoInicial.idSolicitacao == this.solicitacaoInicial.idSolicitacao)
+				vinculadas.add(mov.vinculo.solicitacaoA);
+					
+		return vinculadas;
+	}
+	
 	public boolean isEmLista() {
 		return getListasAssociadas().size() > 0;
 	}
@@ -1937,6 +1959,37 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.salvar(pess, lota);
 		
 		removerDasListasDePrioridade(lota, pess);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void vincular(DpLotacao lota, DpPessoa pess, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
+		if ((pess != null) && !podeVincular(lota, pess))
+			throw new Exception("Operação não permitida");
+		
+		String query = "from SrSolicitacaoVinculo where ( solicitacaoA.idSolicitacao = " + this.idSolicitacao
+				+ " and solicitacaoB.idSolicitacao = " + solRecebeVinculo.idSolicitacao + " ) "
+				+ " or ( solicitacaoA.idSolicitacao = " + solRecebeVinculo.idSolicitacao
+				+ " and solicitacaoB.idSolicitacao = " + this.idSolicitacao + " ) ";
+		
+		List<SrSolicitacaoVinculo> list = (List<SrSolicitacaoVinculo>) JPA.em().createQuery(query).getResultList();
+		
+		if (list.size() > 0)
+			throw new Exception("Vinculo já existente.");
+		
+		SrSolicitacaoVinculo vinculo = new SrSolicitacaoVinculo(this, solRecebeVinculo);
+		vinculo.salvar();
+		
+		SrMovimentacao movimentacao = new SrMovimentacao(this);
+		movimentacao.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_VINCULACAO);
+		movimentacao.vinculo = vinculo;
+		movimentacao.descrMovimentacao = justificativa;
+		movimentacao.salvar(pess, lota);
+		
+		SrMovimentacao mov = new SrMovimentacao(solRecebeVinculo);
+		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_VINCULACAO);
+		mov.vinculo = vinculo;
+		mov.descrMovimentacao = justificativa;
+		mov.salvar(pess, lota);
 	}
 	
 	public String getGcTags() {

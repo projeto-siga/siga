@@ -29,6 +29,7 @@ import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
+import models.SrSolicitacaoVinculo;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
@@ -351,6 +352,38 @@ public class Application extends SigaApplication {
 		sol.juntar(lotaTitular(), cadastrante(), solRecebeJuntada, justificativa);
 		exibir(idSolicitacaoAJuntar, completo());
 	}
+	
+	@SuppressWarnings("unchecked")
+    public static void vincularSolicitacoes(Long id, Long idSolicitacaoRecebeVinculo, SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception{
+        List<SrSolicitacao> listaSolicitacao;
+        SrSolicitacao solicitacaoRecebeJuntada = null;
+        
+        SrSolicitacao solicitacaoAVincular =  SrSolicitacao.findById(id);
+
+        if(idSolicitacaoRecebeVinculo != null)
+            solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
+        
+        if (filtro.pesquisar)
+            listaSolicitacao = filtro.buscar(Boolean.FALSE);
+        else
+            listaSolicitacao = new ArrayList<SrSolicitacao>();
+
+        String[] tipos = new String[] { "Pessoa", "Lotação" };
+        
+        List<CpMarcador> marcadores = JPA.em()
+                .createQuery("select distinct cpMarcador from SrMarca")
+                .getResultList();
+        listaSolicitacao.remove(solicitacaoAVincular);
+
+        render(solicitacaoAVincular, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
+    }
+
+    public static void vincularSolicitacoesGravar(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
+        SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAVincular);
+        SrSolicitacao solRecebeVinculo = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
+        
+        sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
+    }
 	
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception {

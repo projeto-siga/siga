@@ -417,7 +417,7 @@ public class ExBL extends CpBL {
 									mov.getDtIniMov(), null, pess);
 				// if (index % 10 == 0){
 				dao().getSessao().clear();
-				System.gc();
+				//System.gc();
 				// }
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -506,7 +506,7 @@ public class ExBL extends CpBL {
 
 		do {
 			long inicio = System.currentTimeMillis();
-			System.gc();
+			//System.gc();
 			iniciarAlteracao();
 			crit.setFirstResult(index);
 			list = crit.list();
@@ -521,8 +521,9 @@ public class ExBL extends CpBL {
 					System.out.println("Erro ao marcar o doc " + doc);
 					e.printStackTrace();
 				}
-				if (index % 50 == 0)
-					System.gc();
+				if (index % 50 == 0){
+//					System.gc();
+				}
 				System.out.print(doc.getIdDoc() + " ok - ");
 			}
 			ExDao.commitTransacao();
@@ -536,7 +537,7 @@ public class ExBL extends CpBL {
 					+ " numerados de " + totalDocs);
 		} while (list.size() > 0);
 
-		System.gc();
+		//System.gc();
 	}
 
 	public void marcarTudo() throws Exception {
@@ -641,7 +642,7 @@ public class ExBL extends CpBL {
 			}
 			if (efetivar) {
 				ExDao.commitTransacao();
-				System.gc();
+				//System.gc();
 			}
 			dao().getSessao().clear();
 		} while (list.size() > 0);
@@ -651,7 +652,7 @@ public class ExBL extends CpBL {
 		out.println(" - Fim");
 		out.println("-----------------------------------------------");
 
-		System.gc();
+		//System.gc();
 	}
 
 	/**

@@ -707,7 +707,7 @@ public class ExDao extends CpDao {
 					fullTextSession.index(doc);
 
 				if (index % 100 == 0) {
-					System.gc();
+					//System.gc();
 					// fullTextSession.flush();
 					// fullTextSession.clear();
 				}
@@ -718,7 +718,7 @@ public class ExDao extends CpDao {
 			System.out.print(String.valueOf(index)
 					+ " documentos já indexados. --  -- ");
 		} while (list.size() > 0);
-		System.gc();
+		//System.gc();
 
 		// fullTextSession.close();
 		System.out.println("Duração da indexação de documentos: "
@@ -763,7 +763,7 @@ public class ExDao extends CpDao {
 		tx.commit();
 		fullTextSession.clear();
 		getSessao().clear();
-		System.gc();
+		//System.gc();
 
 		// fullTextSession.close();
 		System.out.println("Duração da indexação de documentos: "

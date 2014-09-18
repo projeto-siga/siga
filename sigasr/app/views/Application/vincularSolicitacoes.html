@@ -109,10 +109,10 @@ ${moreHead?.raw()}
 		var justificativa = $("#justificativa").val();
 		if(justificativa != "") {
 			document.getElementById("formGravarVinculo").submit();
-// 			setTimeout(function() {
-// 				opener.location.href = "@{Application.exibir(solicitacaoAVincular.idSolicitacao, false)}";
-// 				window.close();
-// 			}, 2000);
+			setTimeout(function() {
+				opener.location.href = "@{Application.exibir(solicitacaoAVincular.idSolicitacao, false)}";
+				window.close();
+			}, 2000);
 		} else {
 			$("#erroJustificativa").show();
 		}

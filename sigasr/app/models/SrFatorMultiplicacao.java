@@ -26,7 +26,7 @@ public class SrFatorMultiplicacao extends Objeto{
 	public Long idFatorMultiplicacao;
 	
 	@Column(name = "NUM_FATOR_MULTIPLICACAO")
-	public int numFatorMultiplicacao;
+	public int numFatorMultiplicacao = 1;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESSOA")

@@ -76,7 +76,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
     public Set<SrGestorItem> gestorSet;
 
 	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
-	public int numFatorMultiplicacaoGeral;
+	public int numFatorMultiplicacaoGeral = 1;
 	
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
 	public Set<SrFatorMultiplicacao> fatorMultiplicacaoSet; 

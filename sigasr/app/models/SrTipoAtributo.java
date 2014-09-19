@@ -1,10 +1,14 @@
 package models;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,6 +36,12 @@ public class SrTipoAtributo extends HistoricoSuporte {
 
 	@Column(name = "DESCRICAO")
 	public String descrTipoAtributo;
+	
+	@Enumerated
+	public SrFormatoCampo formatoCampo;
+	
+	@Column(name = "DESCR_PRE_DEFINIDO")
+	public String descrPreDefinido;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
@@ -74,6 +84,14 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public Set<String> getPreDefinidoSet() {
+		Set<String> preDefinidos = new HashSet<String>();
+		if (formatoCampo == SrFormatoCampo.VL_PRE_DEFINIDO){
+			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";"))); 
+		}
+		return preDefinidos;
 	}
 
 }

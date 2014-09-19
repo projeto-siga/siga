@@ -77,6 +77,10 @@ public class SrMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista lista;
 
+	@ManyToOne
+	@JoinColumn(name = "ID_SOLICITACAO_VINCULO")
+	public SrSolicitacaoVinculo vinculo;
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_CANCELADORA")
 	public SrMovimentacao movCanceladora;

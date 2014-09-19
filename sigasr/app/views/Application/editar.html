@@ -65,9 +65,21 @@
 			#{/ifErrors}
 
 			<div class="gt-form-row gt-width-66">
+				<label>Cadastrante</label> 
+				${cadastrante.nomePessoa}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
 				onchange:'carregarLocalERamal();carregarItem()' /}
+				<span style="margin-left: 10px;">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
+			</div>
+			
+			<div class="gt-form-row gt-width-66" id="interlocutor" style="display: none;">
+				<label>Interlocutor</label> #{selecao tipo:'pessoa',
+				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor,
+				onchange:'' /}
 			</div>
 			
 			<div class="gt-form-row gt-width-66">
@@ -83,25 +95,20 @@
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
 
-			#{if solicitacao.podePriorizar(lotaTitular,cadastrante)}
 			<div class="gt-form-row gt-width-66">
-				<label>Os prejuízos ou dificuldades relativos ao problema
-					são</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
-				labelProperty:'respostaEnunciado', value:solicitacao.gravidade /}
+				<label>Gravidade</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
+				labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>O problema deve ser resolvido</label> 
-				#{select name:'solicitacao.urgencia', 
-				items:models.SrUrgencia.values(),
-				labelProperty:'respostaEnunciado', 
-				value:solicitacao.urgencia /}
+				<label>Urgência</label> #{select
+				name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
+				labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Se nada for feito, a situação</label> #{select
+				<label>Tendência</label> #{select
 				name:'solicitacao.tendencia', items:models.SrTendencia.values(),
-				labelProperty:'respostaEnunciado', value:solicitacao.tendencia /}
+				labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO', style:'width:235px;' /}
 			</div>
-			#{/if}
 			
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label>
@@ -139,3 +146,14 @@
 		</div>
 	</div>
 </div>
+<script>
+	var checkInter = document.getElementById('checkmostrarInterlocutor');
+	checkInter.addEventListener("change", function () {
+		if(!checkInter.checked) {
+			document.getElementById('solicitacaointerlocutor').value = "";
+			document.getElementById('solicitacaointerlocutor_descricao').value = "";
+			document.getElementById('solicitacaointerlocutor_sigla').value = "";
+			document.getElementById('solicitacaointerlocutorSpan').innerHTML = "";
+		}		
+	});
+</script>

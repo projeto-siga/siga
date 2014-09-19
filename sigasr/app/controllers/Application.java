@@ -20,6 +20,7 @@ import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
+import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
@@ -28,6 +29,7 @@ import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
+import models.SrSolicitacaoVinculo;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
@@ -190,11 +192,12 @@ public class Application extends SigaApplication {
 					.getAcoesDisponiveisComAtendenteOrdemTitulo();
 			if (solicitacao.acao == null
 					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
-				if (acoesEAtendentes.size() > 0)
+				if (acoesEAtendentes.size() > 0) {
 					solicitacao.acao = acoesEAtendentes.keySet().iterator()
 							.next();
-				else
+				} else {
 					solicitacao.acao = null;
+				}
 			}
 		}
 
@@ -246,6 +249,11 @@ public class Application extends SigaApplication {
 					"Título não informado");
 		}
 
+		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
+			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
+					"Fator de multiplicação menor que 1");
+		}
+		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
 		}
@@ -314,6 +322,70 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
+	@SuppressWarnings("unchecked")
+	public static void juntarSolicitacoes(Long id, Long idSolicitacaoRecebeJuntada, SrSolicitacaoFiltro filtro) throws Exception {
+		List<SrSolicitacao> listaSolicitacao;
+		SrSolicitacao solicitacaoRecebeJuntada = null;
+		
+		SrSolicitacao solicitacaoAJuntar =  SrSolicitacao.findById(id);
+
+		if(idSolicitacaoRecebeJuntada != null)
+			solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
+		
+		if (filtro.pesquisar)
+			listaSolicitacao = filtro.buscar(Boolean.FALSE);
+		else
+			listaSolicitacao = new ArrayList<SrSolicitacao>();
+
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		
+		List<CpMarcador> marcadores = JPA.em()
+				.createQuery("select distinct cpMarcador from SrMarca m where m.cpMarcador.idMarcador in (42, 44, 46, 47)")
+				.getResultList();
+		listaSolicitacao.remove(solicitacaoAJuntar);
+
+		render(solicitacaoAJuntar, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, Boolean.FALSE);
+	}
+	
+	public static void juntarSolicitacoesGravar(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAJuntar);
+		SrSolicitacao solRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
+		sol.juntar(lotaTitular(), cadastrante(), solRecebeJuntada, justificativa);
+		exibir(idSolicitacaoAJuntar, completo());
+	}
+	
+	@SuppressWarnings("unchecked")
+    public static void vincularSolicitacoes(Long id, Long idSolicitacaoRecebeVinculo, SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception{
+        List<SrSolicitacao> listaSolicitacao;
+        SrSolicitacao solicitacaoRecebeJuntada = null;
+        
+        SrSolicitacao solicitacaoAVincular =  SrSolicitacao.findById(id);
+
+        if(idSolicitacaoRecebeVinculo != null)
+            solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
+        
+        if (filtro.pesquisar)
+            listaSolicitacao = filtro.buscar(Boolean.FALSE);
+        else
+            listaSolicitacao = new ArrayList<SrSolicitacao>();
+
+        String[] tipos = new String[] { "Pessoa", "Lotação" };
+        
+        List<CpMarcador> marcadores = JPA.em()
+                .createQuery("select distinct cpMarcador from SrMarca")
+                .getResultList();
+        listaSolicitacao.remove(solicitacaoAVincular);
+
+        render(solicitacaoAVincular, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
+    }
+
+    public static void vincularSolicitacoesGravar(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
+        SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAVincular);
+        SrSolicitacao solRecebeVinculo = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
+        
+        sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
+    }
+	
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception {
 
@@ -504,6 +576,7 @@ public class Application extends SigaApplication {
 		else
 			solicitacao = solicitacao.getSolicitacaoAtual();
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
+
 		render(solicitacao, movimentacao, completo);
 	}
 
@@ -594,7 +667,7 @@ public class Application extends SigaApplication {
 					"Não foi encontrada nenhuma pesquisa designada para esta solicitação.");
 		render(sol);
 	}
-
+	
 	public static void responderPesquisaGravar(Long id,
 			HashMap<Long, Object> respostaMap) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
@@ -663,7 +736,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao filha = sol.criarFilhaSemSalvar();
 		formEditar(filha);
 	}
-
+	
 	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados);
@@ -838,10 +911,15 @@ public class Application extends SigaApplication {
 
 	public static void editarTipoAtributo(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
+		String formatoAnterior = null;
 		SrTipoAtributo att = new SrTipoAtributo();
-		if (id != null)
+		if (id != null) {
 			att = SrTipoAtributo.findById(id);
-		render(att);
+			if(att.formatoCampo != null) {
+				formatoAnterior = att.formatoCampo.name();
+			}
+		}
+		render(att, formatoAnterior);
 	}
 
 	public static void gravarTipoAtributo(SrTipoAtributo att) throws Exception {
@@ -857,6 +935,12 @@ public class Application extends SigaApplication {
 					"Nome de atributo não informado");
 		}
 
+		if (att.formatoCampo == SrFormatoCampo.VL_PRE_DEFINIDO 
+				&& att.descrPreDefinido.equals("")) {
+			validation.addError("att.descrPreDefinido",
+					"Valores Pré-definido não informados");
+		}
+		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
 		}

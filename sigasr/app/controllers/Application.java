@@ -24,12 +24,12 @@ import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
+import models.SrMeioComunicacao;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
-import models.SrSolicitacaoVinculo;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
@@ -181,7 +181,10 @@ public class Application extends SigaApplication {
 	}
 
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
-
+		
+		String calendario = null;
+		String horario = null;
+		
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 
@@ -199,8 +202,30 @@ public class Application extends SigaApplication {
 				}
 			}
 		}
+		
+		if (solicitacao.idSolicitacao == null) {
+			StringBuffer query = new StringBuffer();
+			query.append("from SrSolicitacao where hisDtIni = (select max(sol.hisDtIni) from SrSolicitacao sol where sol.cadastrante.idPessoa = ");
+			query.append(cadastrante().getId());
+			query.append(" ) and cadastrante.idPessoa = ");
+			query.append(cadastrante().getId());
+			
+			List<SrSolicitacao> solicitacoes = JPA.em().createQuery(query.toString()).getResultList();
+			SrSolicitacao ultimaSolicitacao = null;
+			if(solicitacoes.size() > 0) {
+				ultimaSolicitacao = solicitacoes.get(0);
+				if(ultimaSolicitacao.meioComunicacao != null) {
+					solicitacao.meioComunicacao = ultimaSolicitacao.meioComunicacao;
+				}
+			}
+		} else {
+			String data = solicitacao.getDtRegDDMMYYYYHHMM();
+			String[] array = data.split(" ");
+			calendario = array[0];
+			horario = array[1];
+		}
 
-		render("@editar", solicitacao, locais, acoesEAtendentes);
+		render("@editar", solicitacao, locais, acoesEAtendentes, calendario, horario);
 	}
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
@@ -232,6 +257,32 @@ public class Application extends SigaApplication {
 
 		if (validation.hasErrors()) {
 			formEditar(solicitacao);
+		}
+	}
+	
+	private static void validarFormEditar(SrSolicitacao solicitacao, String calendario, String horario)
+			throws Exception {
+		
+		if(solicitacao.meioComunicacao == SrMeioComunicacao.EMAIL
+				|| solicitacao.meioComunicacao == SrMeioComunicacao.PANDION
+				|| solicitacao.meioComunicacao == SrMeioComunicacao.CHAT) {
+			if(calendario.isEmpty() || calendario == null) {
+				validation.addError("calendario",
+						"Data não informada");
+			}
+			if(horario.isEmpty() || horario == null) {
+				validation.addError("horario",
+						"Hora não informada");
+			} else {
+				String[] array = horario.split(":");
+				int hora = Integer.parseInt(array[0]);
+				int minuto = Integer.parseInt(array[1]);
+					if (hora > 23 || minuto > 59) {
+						validation.addError("horario",
+								"Hora inválida");
+					}
+			}
+			validarFormEditar(solicitacao);
 		}
 	}
 
@@ -314,9 +365,9 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao) throws Exception {
-		validarFormEditar(solicitacao);
-		solicitacao.salvar(cadastrante(), lotaTitular());
+	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario) throws Exception {
+        validarFormEditar(solicitacao, calendario, horario);
+		solicitacao.salvar(cadastrante(), lotaTitular(), calendario, horario);
 		Long id = solicitacao.idSolicitacao;
 		exibir(id, completo());
 	}

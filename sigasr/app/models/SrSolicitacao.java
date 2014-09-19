@@ -124,6 +124,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Enumerated
 	public SrFormaAcompanhamento formaAcompanhamento;
+	
+	@Enumerated
+	public SrMeioComunicacao meioComunicacao;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
@@ -1196,6 +1199,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return operacoes;
 	}
 
+	public void salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante, String calendario, String horario)
+			throws Exception {
+		DateTime datetime = new DateTime();
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+		if (!calendario.isEmpty() || !horario.isEmpty()) {
+			datetime = new DateTime (formatter.parseDateTime(calendario + " " + horario));
+			dtReg =  datetime.toDate();
+		}
+		salvar(cadastrante, lotaCadastrante);
+	}
+	
 	public void salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
 			throws Exception {
 		this.cadastrante = cadastrante;
@@ -1228,8 +1242,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (cadastrante == null)
 			throw new Exception("Cadastrante não pode ser nulo");
-
-		dtReg = new Date();
+		
+		if (dtReg == null)
+			dtReg = new Date();
 
 		if (lotaCadastrante == null)
 			lotaCadastrante = cadastrante.getLotacao();
@@ -1257,7 +1272,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
-
+		
 		if (!temAtendenteDesignado() && !temPreAtendenteDesignado())
 			throw new Exception(
 					"Não foi encontrado nenhum atendente designado "

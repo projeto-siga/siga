@@ -36,6 +36,20 @@
 	}
 
 </script>
+<script>
+$(function() {
+    $( "#calendario" ).datepicker({
+        showOn: "button",
+        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+        buttonImageOnly: true,
+        dateFormat: 'dd/mm/yy'
+    });
+});
+
+$(function(){
+	$("#horario").mask("99:99");
+});
+</script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -83,12 +97,36 @@
 			</div>
 			
 			<div class="gt-form-row gt-width-66">
+				<label>Meio de Comunicação</label>
+				#{select name:'solicitacao.meioComunicacao',
+				items:models.SrMeioComunicacao.values(),
+				labelProperty:'descrMeioComunicacao',
+				value:solicitacao.meioComunicacao /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66" style="display: none;" id="dtInicioMeioComunicacao">
+				<label>Preencha a data/hora do contato inicial:</label>
+				<div class="gt-form-row gt-width-66" style="margin-left: 15px;">
+					<label>Data</label>
+					<input type="text" name="calendario" id="calendario" value="${calendario}">
+					<span style="color: red">#{error 'calendario' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-66" style="margin-left: 15px;">
+					<label>Hora</label>
+					<input type="text" name="horario" id="horario" value="${horario}">
+					<span style="color: red">#{error 'horario' /}</span>
+				</div>
+				
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
 				<label>Quando deseja receber notificação de movimentacao?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
 				items:models.SrFormaAcompanhamento.values(),
 				labelProperty:'descrFormaAcompanhamento',
 				value:solicitacao.formaAcompanhamento /}
 			</div>
+			
 			<div id="divLocalERamal">#{include
 				'Application/exibirLocalERamal.html' /}</div>
 
@@ -147,13 +185,30 @@
 	</div>
 </div>
 <script>
-	var checkInter = document.getElementById('checkmostrarInterlocutor');
-	checkInter.addEventListener("change", function () {
-		if(!checkInter.checked) {
-			document.getElementById('solicitacaointerlocutor').value = "";
-			document.getElementById('solicitacaointerlocutor_descricao').value = "";
-			document.getElementById('solicitacaointerlocutor_sigla').value = "";
-			document.getElementById('solicitacaointerlocutorSpan').innerHTML = "";
-		}		
+
+		if($('#solicitacaosolicitante').val() != $('#solicitacaointerlocutor').val()
+				&& $('#solicitacaointerlocutor').val() != "") {
+			$('#checkmostrarInterlocutor').prop('checked', true);	
+			$('#interlocutor').show();		
+		}
+	
+	var meioComunicacao = $("select[name='solicitacao.meioComunicacao']");
+	function verificarFormatoCampo() {
+		if(meioComunicacao.val() === 'EMAIL'
+			|| meioComunicacao.val() === 'PANDION'
+			|| meioComunicacao.val() === 'CHAT') {
+			$('#dtInicioMeioComunicacao').show();
+			return;
+		}
+		$('#dtInicioMeioComunicacao').hide();
+	};
+
+	verificarFormatoCampo(); 
+
+	meioComunicacao.change(function() {
+		verificarFormatoCampo(); 
 	});
+
+	
+	
 </script>

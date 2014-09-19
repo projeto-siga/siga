@@ -42,7 +42,9 @@ CREATE SEQUENCE SR_FATOR_MULTIPLICACAO_SEQ
 	MAXVALUE 9999999999999999999999999999 
 	MINVALUE 1 
 	CACHE 20;
-	
+
+-- OS_FS0004 - Item 3: Alterando tabela para conter Tipo de Permissao 
+alter table SR_CONFIGURACAO add TIPO_PERMISSAO number(2);
 	
 --DIA 2014-09-08
 -- OS_FS0005 Item 9: Alterando a tabela SR_SOLICITACAO para conter um novo campo

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -141,6 +142,10 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Type(type = "yes_no")
 	public boolean notificarAtendente;
 	
+	@Column(name = "TIPO_PERMISSAO")
+	@Enumerated
+	public SrTipoPermissaoLista tipoPermissao;
+	
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;
 
@@ -202,6 +207,22 @@ public class SrConfiguracao extends CpConfiguracao {
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
 		sb.append(" and conf.listaPrioridade.lotaCadastrante.idLotacaoIni = ");
 		sb.append(lota.getLotacaoInicial().getIdLotacao());
+		
+		if (!mostrarDesativado)
+			sb.append(" and conf.hisDtFim is null ");
+		
+		sb.append(" order by conf.orgaoUsuario");
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString(), SrConfiguracao.class).getResultList();
+	}
+	
+	public static List<SrConfiguracao> listarPermissoesUsoLista(SrLista lista, boolean mostrarDesativado) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
+		sb.append(" and conf.listaPrioridade.idLista = ");
+		sb.append(lista.getId());
 		
 		if (!mostrarDesativado)
 			sb.append(" and conf.hisDtFim is null ");

@@ -2093,7 +2093,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeExibirInformacoesCompletas(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-		return mob.doc().isFinalizado();
+		return true;
 	}
 
 	/**
@@ -3162,7 +3162,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								.getSubscritor().equivale(titular)) || (mob
 						.doc().getTitular() != null && mob.doc().getTitular()
 						.equivale(titular)))
-						&& (!mob.doc().isAssinado() || (mob.doc()
+						&& (!mob.doc().isAssinadoEletronicoPorTodosOsSignatarios() || (mob.doc()
 								.getExTipoDocumento().getIdTpDoc() != 1L && !mob
 								.doc().hasPDF())) && (mob.doc()
 						.getNumUltimaViaNaoCancelada() != 0 || (mob.doc()

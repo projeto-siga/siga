@@ -35,6 +35,24 @@
 		   eval(scripts[i].text);  
 	}
 
+function carregarConhecimentosRelacionados(){
+	frm = document.getElementById('formSolicitacao');
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		if (frm[i].name && frm[i].value)
+			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+	}
+	PassAjaxResponseToFunction('@{Application.exibirConhecimentosRelacionados()}?' + params, 'carregouConhecimentosRelacionados', null, false, null);
+}
+
+function carregouConhecimentosRelacionados(response, param){
+	var div = document.getElementById('divConhecimentosRelacionados');
+	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
+}
+
 </script>
 <script>
 $(function() {
@@ -51,7 +69,7 @@ $(function(){
 });
 </script>
 
-<div class="gt-bd clearfix">
+<div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
 		<h2>#{if solicitacao.idSolicitacao || solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
 			#{else}Cadastro de Solicitação#{/else}</h2>
@@ -86,7 +104,7 @@ $(function(){
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
-				onchange:'carregarLocalERamal();carregarItem()' /}
+				onchange:'carregarLocalERamal();carregarItem();carregarConhecimentosRelacionados();' /}
 				<span style="margin-left: 10px;">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
 			</div>
 			
@@ -126,7 +144,7 @@ $(function(){
 				labelProperty:'descrFormaAcompanhamento',
 				value:solicitacao.formaAcompanhamento /}
 			</div>
-			
+
 			<div id="divLocalERamal">#{include
 				'Application/exibirLocalERamal.html' /}</div>
 
@@ -174,6 +192,14 @@ $(function(){
 					name="solicitacao.motivoFechamentoAbertura"
 					id="motivoFechamentoAbertura" />
 			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Quando deseja receber notificação de movimentacao?</label>
+				#{select name:'solicitacao.formaAcompanhamento',
+				items:models.SrFormaAcompanhamento.values(),
+				labelProperty:'descrFormaAcompanhamento',
+				value:solicitacao.formaAcompanhamento /}
+			</div>
 
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
@@ -183,6 +209,8 @@ $(function(){
 			#{/form}
 		</div>
 	</div>
+	<div id="divConhecimentosRelacionados">#{include
+				'Application/exibirConhecimentosRelacionados.html' /}</div>
 </div>
 <script>
 
@@ -208,7 +236,4 @@ $(function(){
 	meioComunicacao.change(function() {
 		verificarFormatoCampo(); 
 	});
-
-	
-	
 </script>

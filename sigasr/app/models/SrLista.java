@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
@@ -96,7 +97,10 @@ public class SrLista extends HistoricoSuporte {
 	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", cascade = CascadeType.PERSIST)
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
-
+	
+	@Transient
+	public List<SrConfiguracao> permissoes;
+	
 	public static List<SrLista> listar(boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer();
 		
@@ -121,7 +125,7 @@ public class SrLista extends HistoricoSuporte {
 	public void setId(Long id) {
 		idLista = id;
 	}
-
+	
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
@@ -235,6 +239,19 @@ public class SrLista extends HistoricoSuporte {
 			i++;
 			if (s.getPrioridadeNaLista(this) != i)
 				s.priorizar(this, i, pessoa, lota);
+		}
+	}
+	
+	@Override
+	public void salvar() throws Exception {
+		super.salvar();
+		
+		// DB1: precisa salvar item a item 
+		if (this.permissoes != null) {
+			for (SrConfiguracao permissao : this.permissoes) {
+				permissao.listaPrioridade = this;
+				permissao.salvarComoPermissaoUsoLista();
+			}
 		}
 	}
 

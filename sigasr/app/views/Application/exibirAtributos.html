@@ -23,8 +23,8 @@
 	});
 </script>
 #{if solicitacao.itemConfiguracao && solicitacao.acao && controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
-	<div style="margin:0px;" >
-		<span id="gc-ancora-item-acao"></span>
+	<div style="display: inline-block" >
+		<div id="gc-ancora-item-acao"></div>
 	</div>
 	<script type="text/javascript">
 		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.gcTagAbertura}&estilo=inplace&msgvazio=Não existe conhecimento registrado para ${solicitacao.itemConfiguracao.tituloItemConfiguracao} - ${solicitacao.acao.tituloAcao}. Clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.gcTituloAbertura}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));

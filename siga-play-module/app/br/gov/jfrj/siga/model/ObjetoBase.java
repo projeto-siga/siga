@@ -20,10 +20,10 @@ public abstract class ObjetoBase extends GenericModel {
 				thisHistorico.setHisIdIni(thisHistorico.getId());
 			} else {
 				JPA.em().detach(this);
-				// Edson: Na linha abaixo, n√£o funciona findById. D√°
+				// Edson: Na linha abaixo, n„o funciona findById. D·
 				// UnsupportedOpException.
-				// Isso porque ObjetoBase n√£o est√° anotado com @Entity. No
-				// m√°ximo, √© @MappedSuperclass
+				// Isso porque ObjetoBase n„o est· anotado com @Entity. No
+				// m·ximo, È @MappedSuperclass
 				// Veja
 				// https://groups.google.com/forum/?fromgroups=#!topic/play-framework/waYNFtLCH40
 				ObjetoBase thisAntigo = JPA.em().find(this.getClass(),

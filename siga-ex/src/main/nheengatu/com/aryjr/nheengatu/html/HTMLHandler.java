@@ -77,7 +77,7 @@ public class HTMLHandler extends DefaultHandler {
 				html.generateFile();
 			}
 			// TODO html = null;
-			//System.gc();
+			////System.gc();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

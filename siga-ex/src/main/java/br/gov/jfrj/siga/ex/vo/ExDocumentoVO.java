@@ -79,7 +79,7 @@ public class ExDocumentoVO extends ExVO {
 	private List<Object> listaDeAcessos;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
-			DpLotacao lotaTitular, boolean completo) throws Exception {
+			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo) throws Exception {
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 		this.doc = doc;
@@ -167,7 +167,7 @@ public class ExDocumentoVO extends ExVO {
 					mobs.add(new ExMobilVO(m, titular, lotaTitular, completo));
 			}
 
-			addAcoes(doc, titular, lotaTitular);
+			addAcoes(doc, titular, lotaTitular,exibirAntigo);
 		}
 
 		addDadosComplementares();
@@ -346,7 +346,7 @@ public class ExDocumentoVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExDocumento doc, DpPessoa titular,
-			DpLotacao lotaTitular) throws Exception {
+			DpLotacao lotaTitular,boolean exibirAntigo) throws Exception {
 		ExVO vo = this;
 		for (ExMobilVO mobvo : mobs) {
 			if (mobvo.getMob().isGeral())
@@ -544,8 +544,20 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance()
 						.getComp()
 						.podeExibirInformacoesCompletas(titular, lotaTitular,
-								mob), null, "&exibirCompleto=true", null, null,
+								mob) && !exibirAntigo, null, null, null, null,
 				null);
+
+		vo.addAcao(
+				"eye",
+				"Exibir Informações Completas",
+				"/expediente/doc",
+				"exibirAntigo",
+				Ex.getInstance()
+						.getComp()
+						.podeExibirInformacoesCompletas(titular, lotaTitular,
+								mob) && exibirAntigo, null, "&exibirCompleto=true", null, null,
+				null);
+		
 
 		vo.addAcao(
 				"report_link",

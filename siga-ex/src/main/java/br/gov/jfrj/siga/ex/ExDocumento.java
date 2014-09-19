@@ -212,7 +212,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
          */
         public String getCodigoResumido(CpOrgaoUsuario orgaoUsu, ExDocumento docRef){
         	String cod = getCodigo();
-        	if (docRef != null){ 
+        	if (docRef != null && getNumSequencia()!=null){ 
         		if (docRef.equals(this))
         			return "";
         		if (getExMobilPai() != null && getExMobilPai().doc().equals(docRef) && isProcesso()){
@@ -1986,6 +1986,25 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                                 if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
                                                 && m.getExMovimentacaoCanceladora() == null) {
                                         cosignatarios.add(m.getSubscritor());
+                                }
+                        }
+                }
+                
+                return cosignatarios;
+        }
+        
+        /**
+         * Retorna uma lista com o todos os cossignatários.
+         */
+        public List<ExMovimentacao> getMovsCosignatario() {
+                
+                List<ExMovimentacao> cosignatarios = new ArrayList<ExMovimentacao>();
+                
+                if(getMobilGeral() != null && getMobilGeral().getExMovimentacaoSet() != null) {
+                        for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+                                if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+                                                && m.getExMovimentacaoCanceladora() == null) {
+                                        cosignatarios.add(m);
                                 }
                         }
                 }

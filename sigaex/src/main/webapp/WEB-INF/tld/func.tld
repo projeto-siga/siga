@@ -347,4 +347,9 @@
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>List&lt;ExDocumento&gt; listaDocsAPublicarBoletim(br.gov.jfrj.siga.dp.CpOrgaoUsuario)</function-signature>
  </function>
+ <function>
+  <name>listaDocsAPublicarBoletimPorDocumento</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>List&lt;ExDocumento&gt; listaDocsAPublicarBoletimPorDocumento(br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
+ </function>
 </taglib>

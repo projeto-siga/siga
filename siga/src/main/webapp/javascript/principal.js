@@ -142,6 +142,7 @@ window.Siga = {
             url: ajax.url,
             type: ajax.type,
             data: ajax.params,
+            // Necessário para cross domain
             xhrFields: fields,
             statusCode: {
                 404: function() {

@@ -30,6 +30,7 @@ import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.jboss.security.SecurityContextAssociation;
 
 import play.Play;
 import play.Play.Mode;
@@ -132,7 +133,7 @@ public class Application extends SigaApplication{
 		// renderArgs.put("_cabecalho", pageText[0]);
 		RenderArgs.current().put("_rodape", pageText[1]);
 
-		String user = request.user;
+		String user = SecurityContextAssociation.getPrincipal().getName();;
 		CpDao dao = CpDao.getInstance();
 		CpIdentidade id = dao.consultaIdentidadeCadastrante(user, true);
 		Usuario usuario = new Usuario();

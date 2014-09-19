@@ -166,6 +166,7 @@ public class SigaHTTP {
 		return doc.select("form").attr("action");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String getIdp(HttpServletRequest request) {
 		try{
 			if (idp == null || idp.isEmpty()){

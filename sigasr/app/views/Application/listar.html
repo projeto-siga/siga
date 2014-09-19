@@ -52,7 +52,7 @@
 		});
 		
 		/* Table initialization */
-		$('#solicitacoes_table').DataTable({
+		var table = $('#solicitacoes_table').DataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -77,6 +77,38 @@
 			    }
 			}
 		});
+		
+		/* Função de formatação para células de detalhes */
+		function format ( d ) {
+		    // 'd' é o objeto contendo os dados da linha
+		    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+		        '<tr>'+
+		            '<td><b>Teor:</b></td>'+
+		            '<td>'+d[2]+'</td>'+
+		        '</tr>'+
+		        '<tr>'+
+		            '<td><b>Último Andamento:</b></td>'+
+		            '<td>'+d[6]+'</td>'+
+		        '</tr>'+
+		    '</table>';
+		}
+		 
+	    // Adicionando listener para tratar a abertura e fechamento dos detalhes
+	    $('#solicitacoes_table tbody').on('click', 'td.details-control', function () {
+	    	var tr = $(this).closest('tr');
+	    	var row = table.row( tr );
+	    	
+	    	if ( row.child.isShown() ) {
+	    		// Se alguma linha já está com os detalhes abertos, fecha-o
+	    		row.child.hide();
+	    		tr.removeClass('shown');
+	    	}
+	    	else {
+	    		// Abre a linha
+	    		row.child(format(row.data())).show();
+	    		tr.addClass('shown');
+	    	}
+	    });
 	});
 </script>
 	<div class="gt-bd clearfix">
@@ -88,14 +120,16 @@
 					<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
 				</div>
 				<table id="solicitacoes_table" border="0" class="gt-table-nowrap">
+					<col width="2%" />
 					<col width="15%" />
 		    		<col width="35%" />
 		    		<col width="10%" />
 		    		<col width="15%" />
-		    		<col width="15%" />
-		    		<col width="15%" />
+		    		<col width="14%" />
+		    		<col width="14%" />
 		    		<thead>
 						<tr>
+							<th style="color: #333;"></th>
 							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
 							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
@@ -107,6 +141,7 @@
 					<tbody>
 						#{list items:listaSolicitacao, as:'sol'}
 							<tr>
+								<td class="gt-celula-nowrap details-control"></td>
 								<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 									<a href="@{Application.exibir(sol.idSolicitacao)}">
 										${sol.codigo}

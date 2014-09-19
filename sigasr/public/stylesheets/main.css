@@ -37,3 +37,11 @@
 .div-modal-table {
 	margin-bottom: 5px;
 }
+
+td.details-control {
+    background: url('/siga/css/famfamfam/icons/add.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('/siga/css/famfamfam/icons/delete.png') no-repeat center center;
+}

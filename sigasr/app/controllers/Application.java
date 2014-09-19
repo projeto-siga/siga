@@ -31,6 +31,7 @@ import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
+import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
@@ -331,10 +332,6 @@ public class Application extends SigaApplication {
 
 		render(listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
 	}
-	
-//	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
-////		listar(filtro, Boolean.FALSE);
-//	}
 	
 	public static void estatistica() throws Exception {
 		assertAcesso("REL:Relatorios");
@@ -983,11 +980,24 @@ public class Application extends SigaApplication {
 		listarLista(Boolean.TRUE);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void editarLista(Long id) throws Exception {
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		
 		SrLista lista = new SrLista();
 		if (id != null)
 			lista = SrLista.findById(id);
-		render(lista);
+		
+		try {
+			assertAcesso("ADM:Administrar");
+			lista.permissoes = SrConfiguracao
+					.listarPermissoesUsoLista(lista, false);
+		} catch (Exception e) {
+		}
+		
+		render(lista, orgaos, locais);
 	}
 
 	public static void gravarLista(SrLista lista) throws Exception {

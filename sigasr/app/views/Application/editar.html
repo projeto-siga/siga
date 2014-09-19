@@ -90,9 +90,11 @@
 				labelProperty:'respostaEnunciado', value:solicitacao.gravidade /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>O problema deve ser resolvido</label> #{select
-				name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
-				labelProperty:'respostaEnunciado', value:solicitacao.urgencia /}
+				<label>O problema deve ser resolvido</label> 
+				#{select name:'solicitacao.urgencia', 
+				items:models.SrUrgencia.values(),
+				labelProperty:'respostaEnunciado', 
+				value:solicitacao.urgencia /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Se nada for feito, a situação</label> #{select

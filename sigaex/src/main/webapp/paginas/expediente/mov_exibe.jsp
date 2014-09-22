@@ -277,10 +277,8 @@ function visualizarImpressao(via) {
 					<ww:hidden name="pdfchk_${mov.idMov}" value="${mov.referencia}" />
 					<ww:hidden name="urlchk_${mov.idMov}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
 
-					<c:set var="jspServer"
-						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
-					<c:set var="nextURL"
-						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
+					<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+					<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
 					
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />

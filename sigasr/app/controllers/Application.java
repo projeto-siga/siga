@@ -1,5 +1,10 @@
 package controllers;
 
+import static models.SrMeioComunicacao.CHAT;
+import static models.SrMeioComunicacao.EMAIL;
+import static models.SrMeioComunicacao.PANDION;
+import static org.joda.time.format.DateTimeFormat.forPattern;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -13,6 +18,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.xml.parsers.ParserConfigurationException;
 
 import models.SrAcao;
@@ -24,7 +30,6 @@ import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
-import models.SrMeioComunicacao;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
@@ -33,10 +38,11 @@ import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
-import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormatter;
 
 import play.data.binding.As;
 import play.db.jpa.JPA;
@@ -210,18 +216,27 @@ public class Application extends SigaApplication {
 		}
 		
 		if (solicitacao.idSolicitacao == null) {
-			StringBuffer query = new StringBuffer();
-			query.append("from SrSolicitacao where hisDtIni = (select max(sol.hisDtIni) from SrSolicitacao sol where sol.cadastrante.idPessoa = ");
-			query.append(cadastrante().getId());
-			query.append(" ) and cadastrante.idPessoa = ");
-			query.append(cadastrante().getId());
+			StringBuffer queryString = new StringBuffer();
+			queryString.append(" from SrSolicitacao where hisDtIni = (select max(sol.hisDtIni) from SrSolicitacao sol where sol.cadastrante.idPessoa = :idCadastrante ) ");
+			queryString.append(" and cadastrante.idPessoa = :idCadastrante ");
 			
-			List<SrSolicitacao> solicitacoes = JPA.em().createQuery(query.toString()).getResultList();
+			TypedQuery<SrSolicitacao> query = JPA.em().createQuery(queryString.toString(), SrSolicitacao.class);
+			query.setParameter("idCadastrante", cadastrante().getId());
+			
+			List<SrSolicitacao> solicitacoes = query.getResultList();
 			SrSolicitacao ultimaSolicitacao = null;
 			if(solicitacoes.size() > 0) {
 				ultimaSolicitacao = solicitacoes.get(0);
-				if(ultimaSolicitacao.meioComunicacao != null) {
+				if(ultimaSolicitacao.meioComunicacao != null && solicitacao.meioComunicacao == null) {
 					solicitacao.meioComunicacao = ultimaSolicitacao.meioComunicacao;
+					if(solicitacao.meioComunicacao == EMAIL
+							|| solicitacao.meioComunicacao == PANDION
+							|| solicitacao.meioComunicacao == CHAT) {
+						String data = ultimaSolicitacao.getDtRegDDMMYYYYHHMM();
+						String[] array = data.split(" ");
+						calendario = array[0];
+						horario = array[1];
+					}
 				}
 			}
 		} else {
@@ -269,9 +284,9 @@ public class Application extends SigaApplication {
 	private static void validarFormEditar(SrSolicitacao solicitacao, String calendario, String horario)
 			throws Exception {
 		
-		if(solicitacao.meioComunicacao == SrMeioComunicacao.EMAIL
-				|| solicitacao.meioComunicacao == SrMeioComunicacao.PANDION
-				|| solicitacao.meioComunicacao == SrMeioComunicacao.CHAT) {
+		if(solicitacao.meioComunicacao == EMAIL
+				|| solicitacao.meioComunicacao == PANDION
+				|| solicitacao.meioComunicacao == CHAT) {
 			if(calendario.isEmpty() || calendario == null) {
 				validation.addError("calendario",
 						"Data não informada");
@@ -373,7 +388,17 @@ public class Application extends SigaApplication {
 
 	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario) throws Exception {
         validarFormEditar(solicitacao, calendario, horario);
-		solicitacao.salvar(cadastrante(), lotaTitular(), calendario, horario);
+        if(solicitacao.meioComunicacao == EMAIL
+				|| solicitacao.meioComunicacao == PANDION
+				|| solicitacao.meioComunicacao == CHAT) {
+			
+			DateTime datetime = new DateTime();
+			DateTimeFormatter formatter = forPattern("dd/MM/yyyy HH:mm");
+			if (!calendario.isEmpty() || !horario.isEmpty())
+				solicitacao.dtReg = new DateTime (formatter.parseDateTime(calendario + " " + horario)).toDate();
+			
+        }
+		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
 		exibir(id, completo());
 	}

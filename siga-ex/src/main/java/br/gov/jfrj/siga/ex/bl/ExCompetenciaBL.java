@@ -3034,11 +3034,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		 */
 
 		if (exMov.getLotaResp() != null
-				&& !exMov.getLotaResp().equivale(lotaTitular)
-				&& exMov.getResp() != null
-				&& !exMov.getResp().equivale(titular))
-			// && !exMov.getCadastrante().getLotacao().equivale(lotaTitular))
+				&& !exMov.getLotaResp().equivale(lotaTitular)){
 			return false;
+		}
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);

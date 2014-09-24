@@ -1,7 +1,10 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +20,12 @@ import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -25,8 +33,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @Table(name = "GC_MOVIMENTACAO", schema = "SIGAGC")
 @NamedQueries({
 		@NamedQuery(name = "numeroEquipeLotacao", query = "select count(distinct p.idPessoaIni) from DpPessoa p join p.lotacao l where l.idLotacao = :idLotacao"),
-		@NamedQuery(name = "numeroEquipeCiente", query = "select count(*) from GcMovimentacao m where m.tipo.id= 7 and m.inf.id = :idInfo and m.lotacaoAtendente.idLotacao = :idLotacao and m.movRef = :movRef")
-})
+		@NamedQuery(name = "numeroEquipeCiente", query = "select count(*) from GcMovimentacao m where m.tipo.id= 7 and m.inf.id = :idInfo and m.lotacaoAtendente.idLotacao = :idLotacao and m.movRef = :movRef") })
 public class GcMovimentacao extends GenericModel implements
 		Comparable<GcMovimentacao> {
 	@Id
@@ -59,6 +66,14 @@ public class GcMovimentacao extends GenericModel implements
 	@JoinColumn(name = "ID_LOTACAO_ATENDENTE")
 	public DpLotacao lotacaoAtendente;
 
+	//Edson: pode ser usado quando o grupo de e-mail notificado for do siga-gi
+	//@ManyToOne(optional = true)
+	//@JoinColumn(name = "ID_GRUPO")
+	//public CpGrupoDeEmail grupo;
+	
+	@Column(name = "DESCRICAO")
+	public String descricao;
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_PESSOA_TITULAR")
 	public DpPessoa pessoaTitular;
@@ -77,7 +92,7 @@ public class GcMovimentacao extends GenericModel implements
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "HIS_IDC_INI")
 	public CpIdentidade hisIdcIni;
-	
+
 	/**
 	 * verifica se uma movimentação está cancelada. Uma movimentação está
 	 * cancelada quando o seu atributo movimentacaoCanceladora está preenchido
@@ -114,12 +129,13 @@ public class GcMovimentacao extends GenericModel implements
 			return -1;
 		return 0;
 	}
+
 	public boolean todaLotacaoCiente(GcMovimentacao movRef) {
-		Query query  = JPA.em().createNamedQuery("numeroEquipeLotacao");
+		Query query = JPA.em().createNamedQuery("numeroEquipeLotacao");
 		query.setParameter("idLotacao", lotacaoAtendente.getId());
 		Long count = (Long) query.getSingleResult();
-		
-		Query query2  = JPA.em().createNamedQuery("numeroEquipeCiente");
+
+		Query query2 = JPA.em().createNamedQuery("numeroEquipeCiente");
 		query2.setParameter("idInfo", inf.id);
 		query2.setParameter("idLotacao", lotacaoAtendente.getId());
 		query2.setParameter("movRef", movRef);
@@ -127,4 +143,29 @@ public class GcMovimentacao extends GenericModel implements
 
 		return (count == count2);
 	}
+
+	/*Edson: pode ser usado quando o grupo de e-mail notificado for do siga-gi
+	 * public Map<DpLotacao, List<DpPessoa>> getLotasEPessoasDoGrupo()
+			throws Exception {
+		Map<DpLotacao, List<DpPessoa>> mapa = new HashMap<DpLotacao, List<DpPessoa>>();
+		if (grupo == null)
+			return mapa;
+		for (CpConfiguracao cfg : Cp.getInstance().getConf()
+				.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
+			if (cfg.getCpGrupo() == null || !cfg.getCpGrupo().equivale(grupo)
+					|| cfg.getHisDtFim() != null)
+				continue;
+
+			if (cfg.getDpPessoa() != null) {
+				if (mapa.get(cfg.getDpPessoa().getLotacao()) == null)
+					mapa.put(cfg.getDpPessoa().getLotacao(),
+							new ArrayList<DpPessoa>());
+				mapa.get(cfg.getDpPessoa().getLotacao()).add(cfg.getDpPessoa());
+			} else if (cfg.getLotacao() != null) {
+				if (mapa.get(cfg.getLotacao()) == null)
+					mapa.put(cfg.getLotacao(), new ArrayList<DpPessoa>());
+			}
+		}
+		return mapa;
+	}*/
 }

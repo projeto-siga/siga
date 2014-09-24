@@ -29,6 +29,7 @@ import models.GcMovimentacao;
 import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
+import notifiers.Correio;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -50,6 +51,7 @@ import utils.diff_match_patch.Diff;
 import utils.diff_match_patch.Operation;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -754,7 +756,7 @@ public class Application extends SigaApplication {
 		if (inf.acessoPermitido(titular(), lotaTitular(), inf.edicao.id)) {
 			GcBL.movimentar(inf,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
-					null, null, null, null, null, null, null);
+					null, null, null, null, null, null, null, null);
 			GcBL.gravar(inf, idc(), titular(), lotaTitular());
 			exibir(inf.getSigla());
 		} else
@@ -769,7 +771,7 @@ public class Application extends SigaApplication {
 
 		GcMovimentacao movLocalizada = GcBL.movimentar(infDuplicada,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, null, null,
-				null, null, null, null, null, null);
+				null, null, null, null, null, null, null);
 		GcBL.gravar(infDuplicada, idc(), titular(), lotaTitular());
 
 		GcInformacao inf = new GcInformacao();
@@ -784,7 +786,7 @@ public class Application extends SigaApplication {
 		inf.edicao = GcAcesso.findById(infDuplicada.edicao.id);
 
 		GcMovimentacao movCriada = GcBL.movimentar(inf,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null, null,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null, null, null,
 				arq.titulo, arq.getConteudoTXT(), arq.classificacao,
 				movLocalizada, null, null);
 		GcBL.gravar(inf, idc(), titular(), lotaTitular());
@@ -840,18 +842,18 @@ public class Application extends SigaApplication {
 		if (informacao.id != 0)
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null, null,
-					titulo, conteudo, classificacao, null, null, null);
+					null, titulo, conteudo, classificacao, null, null, null);
 		else
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null, null,
-					titulo, conteudo, classificacao, null, null, null);
+					null, titulo, conteudo, classificacao, null, null, null);
 
 		GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 		if (origem != null && origem.trim().length() != 0) {
 			if (informacao.podeFinalizar(pessoa, lotacao)) {
 				GcBL.movimentar(informacao,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
-						null, null, null, null, null, null, null);
+						null, null, null, null, null, null, null, null);
 				GcBL.gravar(informacao, idc(), pessoa, lotacao);
 			}
 			redirect(origem);
@@ -879,17 +881,19 @@ public class Application extends SigaApplication {
 	}
 
 	public static void notificarGravar(GcInformacao informacao, Long pessoa,
-			Long lotacao) throws Exception {
-		if (pessoa != null || lotacao != null) {
+			Long lotacao, String email) throws Exception {
+		if (pessoa != null || lotacao != null || email != null) {
 			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa
 					.findById(pessoa) : null);
 			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao
 					.findById(lotacao) : null);
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR,
-					pesResponsavel, lotResponsavel, null, null, null, null,
-					null, null);
+					pesResponsavel, lotResponsavel, email, null,
+					null, null, null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
+			Correio.notificar(informacao, pesResponsavel, lotResponsavel,
+					email);
 			flash.success("Notificação realizada com sucesso!");
 			exibir(informacao.getSigla());
 		} else
@@ -912,7 +916,7 @@ public class Application extends SigaApplication {
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO,
 					pesResponsavel, lotResponsavel, null, null, null, null,
-					null, null);
+					null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 			flash.success("Solicitação de revisão realizada com sucesso!");
 			exibir(informacao.getSigla());
@@ -946,7 +950,8 @@ public class Application extends SigaApplication {
 					GcBL.movimentar(
 							informacao,
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-							null, null, titulo, null, null, null, null, anexo);
+							null, null, null, titulo, null, null, null, null,
+							anexo);
 					GcBL.gravar(informacao, idc, titular, lotaTitular);
 					renderText("success");
 				} else
@@ -995,9 +1000,12 @@ public class Application extends SigaApplication {
 				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
 						&& (titular.equivale(mov.pessoaAtendente) || lotaTitular
 								.equivale(mov.lotacaoAtendente))) {
-					GcMovimentacao m = GcBL.movimentar(informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
-							null, null, null, null, null, mov, null, null);
+					GcMovimentacao m = GcBL
+							.movimentar(
+									informacao,
+									GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
+									null, null, null, null, null, null, mov,
+									null, null);
 					mov.movCanceladora = m;
 					GcBL.gravar(informacao, idc(), titular, lotaTitular);
 					flash.success("Conhecimento revisado com sucesso!");
@@ -1132,14 +1140,16 @@ public class Application extends SigaApplication {
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/selecionar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
+		proxy("/" + tipo + "/selecionar.action?"
+				+ "propriedade=" + tipo + nome + "&sigla="
+				+ URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/buscar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
+		proxy("/" + tipo + "/buscar.action?"
+				+ "propriedade=" + tipo + nome + "&sigla="
+				+ URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSigaFromPopup(String tipo) throws Exception {

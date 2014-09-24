@@ -618,7 +618,7 @@ public class Application extends SigaApplication {
 
 			if (tipo == null || tipo.id == 0)
 				tipo = (informacao.tipo != null) ? informacao.tipo
-						: tiposInformacao.get(0);
+						: tiposInformacao.get(2);
 
 			if (informacao.arq == null)
 				conteudo = (tipo.arq != null) ? tipo.arq.getConteudoTXT()

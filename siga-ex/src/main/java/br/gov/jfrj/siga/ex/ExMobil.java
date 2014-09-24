@@ -1300,6 +1300,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				}
 			}
 		set.remove(this);
+		if (!isGeral())
+			set.addAll(doc().getMobilGeral().getVinculados());
 		return set;
 	}
 

@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<parent>
-		<groupId>projeto-siga</groupId>
+		<groupId>siga</groupId>
 		<artifactId>play-dependencies</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom-play.xml</relativePath>

@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>projeto-siga</groupId>
-	<artifactId>projeto-siga</artifactId>
+	<groupId>siga</groupId>
+	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 
@@ -122,7 +122,7 @@
 			</dependency>
 
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-cp</artifactId>
 				<version>${siga.version}</version>
 				<exclusions>
@@ -137,17 +137,17 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-base</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-ws</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-rel</artifactId>
 				<version>${siga.version}</version>
 				<exclusions>
@@ -190,59 +190,59 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-sinc-lib</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<!-- Biblioteca configurada como modulo do Jboss -->
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-ext</artifactId>
 				<version>${siga.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-cd-base</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-libs</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-ldap</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-ex</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>sigaex</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>sigacd</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-cd</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-wf</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>sigawf</artifactId>
 				<version>${siga.version}</version>
 			</dependency>

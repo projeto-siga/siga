@@ -40,6 +40,10 @@
 	background: #399800;
 	width: 250px;
 }
+
+.tabela-senha td {
+	padding: 3px 5px 3px 5px;
+}
 </style>
 
 <script type="text/javascript" language="Javascript1.1">
@@ -114,69 +118,57 @@ function passwordStrength(password) {
 
 			<h2>${mensagem}</h2>
 			<h2 class="gt-form-head">Trocar senha</h2>
-			<div class="gt-form gt-content-box">
+			<div class="gt-form gt-content-box tabela-senha">
 				<ww:form action="trocar_senha_gravar"
 					onsubmit="return validateUsuarioForm(this);" method="post">
 					<ww:hidden name="page" value="1" />
 					<h1>${mensagem }</h1>
 
-					<div class="gt-form-row gt-width-100">
-						<div class="gt-left-col gt-width-33">
-							<label>Matrícula<a href="#"
+					<tr>
+							<td><label>Matrícula<a href="#"
 								title="Ex.:	XX99999, onde XX é a sigla do seu órgão (T2, RJ e ES) e 99999 é o número da sua matrícula."><img
 									style="position: relative; margin-top: -3px; top: +3px; left: +3px; z-index: 0;"
-									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
-							<ww:textfield name="nomeUsuario"
+									src="/siga/css/famfamfam/icons/information.png" /> </a> </label></td>
+							<td><label>Senha atual</label></td>									
+					</tr>
+
+					<tr>
+						
+							<td><ww:textfield name="nomeUsuario"
 								onblur="javascript:converteUsuario(this)" theme="simple"
-								cssClass="gt-form-text" />
-						</div>
-
-						<div class="gt-left-col gt-width-33">
-							<label>Senha atual</label>
-							<ww:password name="senhaAtual" theme="simple"
-								cssClass="gt-form-text" />
-						</div>
+								cssClass="gt-form-text" /></td>
+						<td><ww:password name="senhaAtual" theme="simple"
+							cssClass="gt-form-text" /></td>
+					</tr>
 
 					</div>
-					<div class="gt-form-row gt-width-100">
 
-						<div class="gt-left-col gt-width-33">
-							<label>Nova Senha<a href="#"
-								title="Utilize maiúsculas, minúsculas e números para aumentar a força da senha."><img
-									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
-									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
-							<ww:password name="senhaNova" id="pass"
-								onkeyup="passwordStrength(this.value)" theme="simple"
-								cssClass="gt-form-text" />
-						</div>
+					<tr>
+						<td><label>Nova Senha<a href="#"
+							title="Utilize maiúsculas, minúsculas e números para aumentar a força da senha."><img
+								style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
+								src="/siga/css/famfamfam/icons/information.png" /> </a> </label></td>
+						<td><label>Repetição da nova senha</label></td>								
+						<td><label>Força da nova senha</label></td>
+					</tr>
 
-						<div class="gt-left-col gt-width-33">
-							<label>Repetição da nova senha</label>
-							<ww:password name="senhaConfirma" id="pass2" theme="simple"
-								cssClass="gt-form-text" />
-						</div>
-
-						<div class="gt-left-col gt-width-33">
-							<label>Força da nova senha</label>
-							<div id="passwordDescription">Senha não informada</div>
-							<div id="passwordStrength" class="strength0"></div>
-						</div>
-					</div>
-					
-					<div class="gt-form-row">
-						<div class="gt-left-col gt-width-100">
-							<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;INT_LDAP:Integrar ao Ldap')}">
-								<input type="checkbox" checked="checked" id="trocarSenhaRede" name="trocarSenhaRede" style="float: left" class="gt-form-checkbox"></input>
-								<label>Trocar também a senha do computador, da rede e do e-mail</label>
-							</c:if>
+					<tr>
+						<td><ww:password name="senhaNova" id="pass"
+							onkeyup="passwordStrength(this.value)" theme="simple"
+							cssClass="gt-form-text" /></td>
 						
-							<ww:submit label="OK" value="OK" theme="simple"
-								cssClass="gt-btn-medium gt-btn-left" />
-						</div>
-						
-					</div>
+						<td><ww:password name="senhaConfirma" id="pass2" theme="simple"
+							cssClass="gt-form-text" /></td>
+						<td><div id="passwordDescription">Senha não informada</div><div id="passwordStrength" class="strength0"></div></td>
+					</tr>
 
-					
+					<tr>
+						<td><input type="checkbox" checked="checked" id="trocarSenhaRede" name="trocarSenhaRede" style="float: left" class="gt-form-checkbox"></input><label>Trocar também a senha do computador, da rede e do e-mail</label></td>
+					</tr>
+					<tr>
+						<td><ww:submit label="OK" value="OK" theme="simple"
+							cssClass="gt-btn-medium gt-btn-left" /></td>
+					</tr>
 				</ww:form>
 			</div>
 		</div>

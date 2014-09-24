@@ -1110,6 +1110,24 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
                 }
                 return true;
         }
+        
+        /**
+         * Verifica se um documento está arquivado, o que é verdadeiro quando todas
+         * as vias estão arquivadas.
+         */
+        public boolean isArquivado() {
+                // Documento só possível a via geral
+                if (getExMobilSet().size() == 1)
+                        return false;
+
+                for (ExMobil mob : getExMobilSet()) {
+                        if (mob.getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VIA
+                                        || mob.getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME)
+                                if (!mob.isArquivado())
+                                        return false;
+                }
+                return true;
+        }
 
         /**
          * Retorna a data de assinatura do documento.

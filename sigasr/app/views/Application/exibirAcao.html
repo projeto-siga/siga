@@ -32,13 +32,13 @@ function carregouAtributos(response, param){
 #{if solicitacao.itemConfiguracao && acoesEAtendentes} 
 <div class="gt-form-row gt-width-66">
 	<label>Ação</label> 
-	#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:'carregarAtributos();carregarConhecimentosRelacionados();'}
 		#{list items:acoesEAtendentes.keySet(), as:'acao' }
-			#{option acao.idAcao}
-				${acao.tituloAcao} (${acoesEAtendentes[acao].sigla})
-			#{/option}
+			#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();carregarConhecimentosRelacionados();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
+					#{option acao.idAcao}
+						${acao.tituloAcao} (${acoesEAtendentes[acao].sigla})
+					#{/option}
+			#{/select}
 		#{/list}
-	#{/select}
 	
 	 <span
 		style="color: red">#{error 'solicitacao.acao' /}</span>

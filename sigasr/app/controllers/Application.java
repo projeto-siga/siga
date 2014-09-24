@@ -149,6 +149,26 @@ public class Application extends SigaApplication {
 			throws Exception {
 		render(solicitacao.deduzirLocalERamal());
 	}
+	
+	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean mostrarDesativados, boolean carregarLotaSolicitante) 
+			throws Exception{
+		if(carregarLotaSolicitante){
+			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
+			solicitacao.solicitante = null;
+    	}
+		List<SrSolicitacao> solicitacoesRelacionadas = solicitacao.buscar(mostrarDesativados);
+		List<SrSolicitacao> solicitacoesList = new ArrayList<SrSolicitacao>();
+		if(!mostrarDesativados) 
+			for (SrSolicitacao sol : solicitacoesRelacionadas) {
+				if(sol.isEmPreAtendimento() || sol.isEmAtendimento() || sol.isEmPosAtendimento())
+					solicitacoesList.add(sol);
+			}
+		if(solicitacoesList.size() > 0)
+			solicitacoesRelacionadas = solicitacoesList;
+		int i = solicitacoesRelacionadas.size() > 10? 10 : solicitacoesRelacionadas.size();
+		solicitacoesRelacionadas = new ArrayList<SrSolicitacao>(solicitacoesRelacionadas.subList(0, i));
+		render(solicitacoesRelacionadas);
+	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao)
 			throws Exception {
@@ -183,7 +203,7 @@ public class Application extends SigaApplication {
 			else
 				solicitacao.acao = null;
 		}
-
+		
 		render(solicitacao, acoesEAtendentes);
 	}
 	
@@ -468,15 +488,20 @@ public class Application extends SigaApplication {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception {
+	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados, boolean carregarLotaSolicitante) throws Exception {
 
 		List<SrSolicitacao> listaSolicitacao;
 
-		if (filtro.pesquisar)
+		if (filtro.pesquisar) {
+			if(carregarLotaSolicitante){
+	    		filtro.lotaSolicitante = filtro.solicitante.getLotacao();
+	    		filtro.solicitante = null;
+	    	}
 			listaSolicitacao = filtro.buscar(mostrarDesativados);
-		else
+		} else {
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
-
+		}
+		
 		// Montando o filtro...
 		String[] tipos = new String[] { "Pessoa", "Lotação" };
 		List<CpMarcador> marcadores = JPA.em()

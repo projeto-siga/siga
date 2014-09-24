@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import models.SrAtributo;
 import models.SrSolicitacao;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -66,7 +67,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				query += " and lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ";
 		}
-
+				
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
 		final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -89,7 +90,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			}
 
 		String subquery = "";
-
+		
 		if (situacao != null && situacao.getIdMarcador() != null
 				&& situacao.getIdMarcador() > 0)
 			subquery += " and situacao.cpMarcador.idMarcador = "
@@ -105,15 +106,29 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				subquery += "and situacao.dpLotacaoIni.idLotacao = "
 						+ lotaAtendente.getIdInicial();
 		}
-
+		
 		if (subquery.length() > 0)
 			subquery = " and exists (from SrMarca situacao where situacao.solicitacao.solicitacaoInicial = sol.solicitacaoInicial "
 					+ subquery + " )";
+		
+		String subqueryAtributo = "";
+		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
+			SrAtributo att = meuAtributoSet.get(0);
+			subqueryAtributo += " and att.tipoAtributo.idTipoAtributo = "
+					+ att.tipoAtributo.idTipoAtributo;
+			if (att.valorAtributo != null && !att.valorAtributo.equals(""))
+				subqueryAtributo += " and att.valorAtributo = '"
+						+ att.valorAtributo + "' ";
+		}
+
+		if (subqueryAtributo.length() > 0)
+			subqueryAtributo = " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial "
+					+ subqueryAtributo + " )";
 
 		List listaRetorno = JPA
 				.em()
 				.createQuery(
-						query + subquery + " order by sol.idSolicitacao desc")
+						query + subquery + subqueryAtributo + " order by sol.idSolicitacao desc")
 				.getResultList();
 
 		return listaRetorno;

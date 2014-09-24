@@ -161,10 +161,11 @@ function passwordStrength(password) {
 							cssClass="gt-form-text" /></td>
 						<td><div id="passwordDescription">Senha não informada</div><div id="passwordStrength" class="strength0"></div></td>
 					</tr>
-
-					<tr>
-						<td><input type="checkbox" checked="checked" id="trocarSenhaRede" name="trocarSenhaRede" style="float: left" class="gt-form-checkbox"></input><label>Trocar também a senha do computador, da rede e do e-mail</label></td>
-					</tr>
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;INT_LDAP:Integrar ao Ldap')}">
+						<tr>
+							<td><input type="checkbox" checked="checked" id="trocarSenhaRede" name="trocarSenhaRede" style="float: left" class="gt-form-checkbox"></input><label>Trocar também a senha do computador, da rede e do e-mail</label></td>
+						</tr>
+					</c:if>
 					<tr>
 						<td><ww:submit label="OK" value="OK" theme="simple"
 							cssClass="gt-btn-medium gt-btn-left" /></td>

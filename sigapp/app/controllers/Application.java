@@ -14,7 +14,6 @@ import models.Locais;
 import models.UsuarioForum;
 
 import org.hibernate.bytecode.buildtime.ExecutionException;
-import org.jsoup.select.Evaluator.IsEmpty;
 
 import play.db.jpa.JPA;
 import play.mvc.Before;

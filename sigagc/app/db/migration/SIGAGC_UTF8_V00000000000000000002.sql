@@ -7,7 +7,9 @@ alter table sigagc.gc_tipo_informacao add arquivo number (19,0) constraint TIPO_
 
 insert into sigagc.gc_arquivo (id_conteudo, conteudo_tipo, titulo, conteudo) values ((select max(id_conteudo)+1 from sigagc.gc_arquivo), 'text/html', 'Template para Erro Conhecido', utl_raw.cast_to_raw(' '));
 insert into GC_TIPO_INFORMACAO (ID_TIPO_INFORMACAO, NOME_TIPO_INFORMACAO, arquivo) values (2, 'Erro Conhecido', (select max(id_conteudo) from sigagc.gc_arquivo))
+commit;
 
+set define off
 DECLARE
   dest_blob BLOB;
   src_blob BLOB;
@@ -72,8 +74,10 @@ end;
 --------------------------------------------------------------
 
 insert into sigagc.gc_arquivo (id_conteudo, conteudo_tipo, titulo, conteudo) values ((select max(id_conteudo)+1 from sigagc.gc_arquivo), 'text/html', 'Template para Procedimento', utl_raw.cast_to_raw(' '));
-insert into GC_TIPO_INFORMACAO (ID_TIPO_INFORMACAO, NOME_TIPO_INFORMACAO, arquivo) values (2, 'Erro Conhecido', (select max(id_conteudo) from sigagc.gc_arquivo))
+insert into GC_TIPO_INFORMACAO (ID_TIPO_INFORMACAO, NOME_TIPO_INFORMACAO, arquivo) values (3, 'Procedimento', (select max(id_conteudo) from sigagc.gc_arquivo))
+commit;
 
+set define off
 DECLARE
   dest_blob BLOB;
   src_blob BLOB;

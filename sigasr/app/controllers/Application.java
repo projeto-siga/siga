@@ -819,6 +819,14 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
+	public static void replanejar(Long id, String motivo,
+		String calendario, String horario) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.replanejar(lotaTitular(), cadastrante(), motivo, calendario,
+				horario);
+		exibir(id, completo());
+	}
+
 	public static void terminarPendencia(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.terminarPendencia(lotaTitular(), cadastrante());

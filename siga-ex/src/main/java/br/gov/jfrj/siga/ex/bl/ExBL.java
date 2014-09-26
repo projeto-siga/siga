@@ -1028,9 +1028,11 @@ public class ExBL extends CpBL {
 		
 		while (itr.hasNext()) {
 			ExMovimentacao element = (ExMovimentacao) itr.next();
+			if(ExTipoMovimentacao.hasTransferencia(element.getIdTpMov()) == ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov()))
 			if (mov != null){
 				if (element.getIdMov() != mov.getIdMov()
-						&& element.getIdTpMov() == mov.getIdTpMov()
+						&& ExTipoMovimentacao.hasTransferencia(element.getIdTpMov())
+						&& ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov())
 						&& mov.getLotaCadastrante() == element.getLotaResp()
 						) {
 					contains = !contains;

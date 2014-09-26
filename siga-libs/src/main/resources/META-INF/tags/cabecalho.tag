@@ -227,6 +227,10 @@ ${meta}
 														if (lastItem) {
 															lastItem.onblur = function() {
 																this.parentNode.parentNode.style.display = 'none';
+																  if (this.id == "relclassificados"){
+	                                                                    var rel = document.getElementById("relatorios");
+	                                                                    rel.style.display = 'none';
+	                                                                }
 															}
 															lastItem.parentNode.onblur = function() {
 																this.parentNode.style.display = '';

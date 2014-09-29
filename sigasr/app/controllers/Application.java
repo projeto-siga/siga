@@ -30,6 +30,7 @@ import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
+import models.SrMarca;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
@@ -323,8 +324,8 @@ public class Application extends SigaApplication {
 								"Hora inválida");
 					}
 			}
-			validarFormEditar(solicitacao);
 		}
+		validarFormEditar(solicitacao);
 	}
 
 	private static void validarFormEditarItem(
@@ -407,12 +408,12 @@ public class Application extends SigaApplication {
 	}
 
 	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario) throws Exception {
-        validarFormEditar(solicitacao, calendario, horario);
+        if(!solicitacao.rascunho)
+        	validarFormEditar(solicitacao, calendario, horario);
         if(solicitacao.meioComunicacao == EMAIL
 				|| solicitacao.meioComunicacao == PANDION
 				|| solicitacao.meioComunicacao == CHAT) {
 			
-			DateTime datetime = new DateTime();
 			DateTimeFormatter formatter = forPattern("dd/MM/yyyy HH:mm");
 			if (!calendario.isEmpty() || !horario.isEmpty())
 				solicitacao.dtReg = new DateTime (formatter.parseDateTime(calendario + " " + horario)).toDate();
@@ -490,16 +491,16 @@ public class Application extends SigaApplication {
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados, boolean carregarLotaSolicitante) throws Exception {
 
-		List<SrSolicitacao> listaSolicitacao;
+		List<SrSolicitacao> list;
 
 		if (filtro.pesquisar) {
 			if(carregarLotaSolicitante){
 	    		filtro.lotaSolicitante = filtro.solicitante.getLotacao();
 	    		filtro.solicitante = null;
 	    	}
-			listaSolicitacao = filtro.buscar(mostrarDesativados);
+			list = filtro.buscar(mostrarDesativados);
 		} else {
-			listaSolicitacao = new ArrayList<SrSolicitacao>();
+			list = new ArrayList<SrSolicitacao>();
 		}
 		
 		// Montando o filtro...
@@ -507,6 +508,14 @@ public class Application extends SigaApplication {
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
+		
+		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
+		for (SrSolicitacao sol : list) 
+			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))
+					listaSolicitacao.add(sol);
+			else
+				if (sol.lotaCadastrante == lotaTitular())
+					listaSolicitacao.add(sol);
 
 		render(listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
 	}
@@ -766,6 +775,12 @@ public class Application extends SigaApplication {
 		exibir(sol.idSolicitacao, completo());
 	}
 
+	public static void excluir(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.excluir(lotaTitular(), cadastrante());
+		editar(null);
+	}
+	
 	public static void responderPesquisa(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		if (sol.getPesquisaDesignada() == null)

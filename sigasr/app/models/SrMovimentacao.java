@@ -295,9 +295,11 @@ public class SrMovimentacao extends GenericModel {
 			tipoMov = SrTipoMovimentacao
 					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
 
-		if (atendente == null && lotaAtendente == null)
-			throw new Exception("Atendente não pode ser nulo");
-
+		if (!solicitacao.rascunho) {
+			if (atendente == null && lotaAtendente == null)
+				throw new Exception("Atendente não pode ser nulo");
+		}
+			
 		if (lotaAtendente == null)
 			lotaAtendente = atendente.getLotacao();
 	}

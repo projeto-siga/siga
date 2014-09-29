@@ -328,12 +328,28 @@
 				labelProperty:'descrFormaAcompanhamento',
 				value:solicitacao.formaAcompanhamento /}
 			</div>
-
+			#{if !solicitacao.idSolicitacao || solicitacao.rascunho}
+			<div class="gt-form-row">
+				<label>&nbsp;</label>
+				<label> 
+					<script language="javascript">
+						function changesolicitacaorascunho(){
+							if (document.getElementById('checksolicitacao.rascunho').checked)
+								document.getElementById('solicitacao.rascunho').value='true';
+							else document.getElementById('solicitacao.rascunho').value='false';
+						}
+					</script>
+					<input type="hidden" name="solicitacao.rascunho" id="solicitacao.rascunho" value="false" />
+					<input id="checksolicitacao.rascunho" type="checkbox" value="false" ${solicitacao.rascunho ? 'checked':''} onchange="javascript:changesolicitacaorascunho(); " />
+					Rascunho
+				</label>
+			</div>
+			#{/if}
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" />
 				<a href="@{Application.listar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-			</div>
+ 			</div>
 			#{/form}
 		</div>
 	</div>
@@ -379,6 +395,14 @@
 		$('#checkmostrarInterlocutor').prop('checked', true);	
 		$('#interlocutor').show();		
 	}
+
+	$('#checkRascunho').change(function() {
+		if(this.checked) {
+			$('#checkRascunho').prop('value', 'true');
+			return;
+		}
+		$('#checkRascunho').prop('value', 'false');
+	});
 	
 	var meioComunicacao = $("select[name='solicitacao.meioComunicacao']");
 	function verificarFormatoCampo() {
@@ -398,4 +422,5 @@
 	});
 
 	carregarFiltrosAoIniciar();
+	changesolicitacaorascunho();
 </script>

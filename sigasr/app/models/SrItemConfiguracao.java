@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
@@ -31,6 +32,12 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@SuppressWarnings("unused")
 	private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
 		@Override
 		public int compare(SrItemConfiguracao o1, SrItemConfiguracao o2) {
@@ -81,6 +88,9 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
 	public Set<SrFatorMultiplicacao> fatorMultiplicacaoSet; 
 	
+	@Transient
+	public List<SrConfiguracao> designacoes;
+	
 	public SrItemConfiguracao() {
 		this(null, null);
 	}
@@ -108,7 +118,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	}
 
 	public String getDescricaoCompleta() {
-		String sigla = this.siglaItemConfiguracao;
 		int nivel = this.getNivel();
 		String desc_nivel = null;
 		if (nivel == 1) {
@@ -358,12 +367,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public String getGcTags() {
-		String sigla = this.siglaItemConfiguracao;
 		int nivel = this.getNivel();
 		String tags = "";
 		if (nivel == 1) {
@@ -421,6 +428,14 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
                 fator.itemConfiguracao = this;
                 fator.salvar();
             }
+        
+        // DB1: precisa salvar item a item 
+ 		if (this.designacoes != null) {
+ 			for (SrConfiguracao designacao : this.designacoes) {
+ 				designacao.itemConfiguracao = this;
+ 				designacao.salvarComoDesignacao();
+ 			}
+ 		}
     }
-
+    
 }

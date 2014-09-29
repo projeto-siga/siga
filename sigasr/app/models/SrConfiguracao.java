@@ -15,6 +15,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import models.SrListaConfiguracao.SrListaConfiguracaoVO;
+
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
@@ -24,6 +26,10 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.Selecionavel;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
@@ -148,7 +154,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;
-
+	
 	public SrConfiguracao() {
 		
 	}
@@ -165,6 +171,17 @@ public class SrConfiguracao extends CpConfiguracao {
 		this.setCpTipoConfiguracao(tipo);
 		this.subTipoConfig = subTipoConfig;
 	}
+	
+	public Selecionavel getSolicitante() {
+		if (this.getDpPessoa() != null)
+			return this.getDpPessoa();
+		else if (this.getLotacao() != null)
+			return this.getLotacao();
+		else if (this.getCargo() != null)
+			return this.getCargo();
+		else
+			return this.getFuncaoConfianca();
+	}
 
 	public String getPesquisaSatisfacaoString() {
 		return pesquisaSatisfacao.nomePesquisa;
@@ -180,9 +197,14 @@ public class SrConfiguracao extends CpConfiguracao {
 		salvar();
 	}
 
-	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados) {
+	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, Long idItemConfiguracao) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (idItemConfiguracao != null) {
+			sb.append(" and item.idItemConfiguracao = ");
+			sb.append(idItemConfiguracao);
+		}
 		
 		if (!mostrarDesativados)
 			sb.append(" and conf.hisDtFim is null");
@@ -350,6 +372,62 @@ public class SrConfiguracao extends CpConfiguracao {
 	public void setListaConfiguracaoSet(
 			List<SrListaConfiguracao> listaConfiguracaoSet) {
 		this.listaConfiguracaoSet = listaConfiguracaoSet;
+	}
+	
+	/**
+	 * Método que retorna um número referente ao tipo de solicitante selecionado. Esse número
+	 * refere-se ao índice do item selecionado no componente pessoaLotaFuncCargoSelecao.html
+	 * 
+	 * @return 
+	 * <li>1 para Pessoa;
+	 * <li>2 para Lotação;
+	 * <li>3 para Funcao;
+	 * <li>4 para Cargo;
+	 */
+	public int getTipoSolicitante() {
+		if (this.getLotacao() != null && this.getLotacao().getLotacaoAtual() != null)
+			return 2;
+		else if (this.getFuncaoConfianca() != null)
+			return 3;
+		else if (this.getCargo() != null)
+			return 4;
+		else return 1;
+	}
+	
+	/**
+	 * Retorna um Json de {@link SrConfiguracaoVO} que contém as {@link SrListaConfiguracaoVO}
+	 * vinculadas a ele.
+	 */
+	public String getListaConfiguracaoSetJson() {
+		return new SrConfiguracaoVO(listaConfiguracaoSet).toJson();
+	}
+	
+	/**
+	 * Classe que representa um {@link SrConfiguracaoVO VO} da classe {@link SrConfiguracao}.
+	 * 
+	 * @author DB1
+	 */
+	public class SrConfiguracaoVO {
+		public List<SrListaConfiguracao.SrListaConfiguracaoVO> listaConfiguracaoSetVO; 
+
+		public SrConfiguracaoVO(List<SrListaConfiguracao> listaConfiguracaoSet) {
+			listaConfiguracaoSetVO = new ArrayList<SrListaConfiguracao.SrListaConfiguracaoVO>();
+			
+			for (SrListaConfiguracao item : listaConfiguracaoSet) {
+				listaConfiguracaoSetVO.add(item.toVO());
+			}
+		}
+		
+		/**
+		 * Converte o objeto para Json.
+		 */
+		public String toJson() {
+			GsonBuilder builder = new GsonBuilder();
+	        builder.setPrettyPrinting().serializeNulls();
+	        Gson gson = builder.create();
+	        
+	        return gson.toJson(this);
+		}
 	}
 	
 }

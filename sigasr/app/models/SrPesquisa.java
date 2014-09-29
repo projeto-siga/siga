@@ -25,6 +25,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Table(name = "SR_PESQUISA", schema = "SIGASR")
 public class SrPesquisa extends HistoricoSuporte {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_PESQUISA_SEQ", name = "srPesquisaSeq")
 	@GeneratedValue(generator = "srPesquisaSeq")

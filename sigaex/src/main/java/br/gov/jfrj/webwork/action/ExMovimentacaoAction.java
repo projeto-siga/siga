@@ -1042,7 +1042,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		lerForm(mov);
 
 		if (!Ex.getInstance().getComp()
-				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob)) {
+				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException(
 					"Acesso permitido a usuários autorizados.");
 		}
@@ -1188,7 +1188,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		lerForm(mov);
 
 		if (!Ex.getInstance().getComp()
-				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob)) {
+				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException(
 					"Acesso permitido a usuários autorizados.");
 		}
@@ -3218,7 +3218,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 					if (!Ex.getInstance()
 							.getComp()
-							.podeAcessarPorNivel(getTitular(),
+							.podeAcessarDocumento(getTitular(),
 									getLotaTitular(), mobil)) {
 						if (msgErroNivelAcessoso == null)
 							msgErroNivelAcessoso = new AplicacaoException(

@@ -1092,6 +1092,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAssinar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if (mob.getDoc().isAssinadoEletronicoPorTodosOsSignatarios())
+			return false;
 
 		if (mob.getExDocumento().isProcesso()
 				&& mob.getExDocumento().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)

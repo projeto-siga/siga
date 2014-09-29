@@ -38,8 +38,8 @@
 		<ww:set name="tipoSel" value="" scope="request" />
 	</c:when>
 	<c:otherwise>
-				<ww:set name="acaoBusca" value="%{'/'+#attr.tipo}" />
-		<ww:set name="tipoSel" value="%{'_'+#attr.tipo}" scope="request" />
+				<c:set var="acaoBusca" value="/${tipo}" />
+		<c:set var="tipoSel" value="_${tipo}" scope="request" />
 	</c:otherwise>
 </c:choose>
 
@@ -78,11 +78,11 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
  
 <c:choose>
 <c:when test="${empty modulo}">
-<ww:set name="urlPrefix" value="/" />
+<c:set var="urlPrefix" value="/" />
 </c:when>
 <c:otherwise> 
 <%--<ww:set name="urlPrefix" value="%{request.scheme+'://'+request.serverName+':'+request.localPort+'/'+#attr.modulo}"></ww:set>--%>
-<ww:set name="urlPrefix" value="%{'/'+#attr.modulo}"></ww:set>
+<c:set var="urlPrefix" value="${modulo}" />
 </c:otherwise>
 </c:choose>
 

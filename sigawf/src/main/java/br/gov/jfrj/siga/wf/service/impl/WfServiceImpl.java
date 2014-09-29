@@ -27,7 +27,6 @@ import org.hibernate.Query;
 import org.jbpm.JbpmContext;
 import org.jbpm.context.def.VariableAccess;
 import org.jbpm.context.exe.VariableInstance;
-import org.jbpm.context.exe.variableinstance.StringInstance;
 import org.jbpm.db.GraphSession;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -42,7 +41,7 @@ import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.service.WfService;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
-import br.gov.jfrj.siga.wf.webwork.action.WfTaskAction;
+import br.gov.jfrj.siga.wf.vraptor.WfUtil;
 
 /**
  * Classe que representa o webservice do workflow. O SIGA-DOC faz a chamada
@@ -178,7 +177,7 @@ public class WfServiceImpl implements WfService {
 							titularParser.getPessoa(),
 							titularParser.getLotacao(), keys, values, false);
 
-			WfTaskAction.transferirDocumentosVinculados(pi, siglaTitular);
+			WfUtil.transferirDocumentosVinculados(pi, siglaTitular);
 			return true;
 		} catch (Exception e) {
 			if (!isHideStackTrace())
@@ -200,12 +199,13 @@ public class WfServiceImpl implements WfService {
 			// List<TaskInstance> tis = ctx.getTaskList();
 
 			// Get latest processInstance that references a certain document
-//			Query qpi = WfDao
-//					.getInstance()
-//					.getSessao()
-//					.createQuery(
-//							"select max(vi.processInstance) from org.jbpm.context.exe.variableinstance.StringInstance as vi, vi.processInstance pi"
-//									+ " where pi.end is null and vi.name like 'doc_%' and vi.value = :codigoDocumento");
+			// Query qpi = WfDao
+			// .getInstance()
+			// .getSessao()
+			// .createQuery(
+			// "select max(vi.processInstance) from org.jbpm.context.exe.variableinstance.StringInstance as vi, vi.processInstance pi"
+			// +
+			// " where pi.end is null and vi.name like 'doc_%' and vi.value = :codigoDocumento");
 			Query qpi = WfDao
 					.getInstance()
 					.getSessao()

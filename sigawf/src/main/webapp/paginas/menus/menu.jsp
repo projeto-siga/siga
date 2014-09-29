@@ -1,20 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="128kb"%>
 <%@ taglib prefix="c" uri="/core"%>
-<%@ taglib prefix="fmt" uri="/fmt"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
-<%@ taglib prefix="tags" uri="/tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib prefix="wf" uri="/META-INF/func.tld"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://localhost/libstag" prefix="ff"%>
 
 
 <li><a href="#">Procedimentos</a>
 	<ul>
-		<ww:url id="url" action="resumo" namespace="/">
-		</ww:url>
-		<li><ww:a href="%{url}">Ativos</ww:a>
+		<li><a href="${linkTo[WorkflowController].resumo}">Ativos</a>
 		</li>
 
 		<c:if
@@ -22,13 +14,7 @@
 			<li><a href="#">Iniciar</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
-						<ww:url id="url" action="initializeProcess" namespace="/">
-							<ww:param name="orgao">${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}</ww:param>
-							<ww:param name="procedimento">${pd.name}</ww:param>
-							<ww:param name="pdId">${pd.id}</ww:param>
-							<ww:param name="secaoUsuario">${lotaTitular.orgaoUsuario.descricaoMaiusculas}</ww:param>
-						</ww:url>
-						<li><ww:a href="%{url}">${pd.name}</ww:a>
+						<li><a href="${linkTo[WorkflowController].initializeProcess}?pdId=${pd.name}">${pd.name}</a>
 						</li>
 					</c:forEach>
 				</ul></li>
@@ -42,13 +28,7 @@
 					<li><a href="#">Configurar</a>
 						<ul class="navmenu-large">
 							<c:forEach var="pd" items="${processDefinitions}">
-								<ww:url id="url" action="configurar" namespace="/">
-									<ww:param name="orgao">${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}</ww:param>
-									<ww:param name="procedimento">${pd.name}</ww:param>
-									<ww:param name="pdId">${pd.id}</ww:param>
-									<ww:param name="secaoUsuario">${lotaTitular.orgaoUsuario.descricaoMaiusculas}</ww:param>
-								</ww:url>
-								<li><ww:a href="%{url}">${pd.name}</ww:a>
+								<li><a href="${linkTo[ConfiguracaoController].pesquisar}?orgao=${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}&procedimento=${pd.name}">${pd.name}</a>
 								</li>
 							</c:forEach>
 						</ul></li>
@@ -59,13 +39,7 @@
 					<li><a href="#">Designar Tarefas</a>
 						<ul class="navmenu-large">
 							<c:forEach var="pd" items="${processDefinitions}">
-								<ww:url id="url" action="pesquisarDesignacao" namespace="/">
-									<ww:param name="orgao">${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}</ww:param>
-									<ww:param name="procedimento">${pd.name}</ww:param>
-									<ww:param name="pdId">${pd.id}</ww:param>
-									<ww:param name="secaoUsuario">${lotaTitular.orgaoUsuario.descricaoMaiusculas}</ww:param>
-								</ww:url>
-								<li><ww:a href="%{url}">${pd.name}</ww:a>
+								<li><a href="${linkTo[DesignacaoController].pesquisar}?orgao=${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}&procedimento=${pd.name}">${pd.name}</a>
 								</li>
 							</c:forEach>
 						</ul></li>
@@ -82,12 +56,7 @@
 			<li><a href="#">Apresentar Métricas</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
-						<ww:url id="url" action="medir" namespace="/">
-							<ww:param name="orgao">${lotaTitular.orgaoUsuario.idOrgaoUsu}</ww:param>
-							<ww:param name="procedimento">${pd.name}</ww:param>
-							<ww:param name="pdId">${pd.id}</ww:param>
-						</ww:url>
-						<li><ww:a href="%{url}">${pd.name}</ww:a>
+						<li><a href="${linkTo[MedicaoController].medir}?orgao=${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}&procedimento=${pd.name}">${pd.name}</a>
 						</li>
 					</c:forEach>
 				</ul></li>

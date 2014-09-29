@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.wf.webwork.action;
+package br.gov.jfrj.siga.wf.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -459,5 +459,18 @@ public class WfTaskVO {
 
 	public void setAncora(String ancora) {
 		this.ancora = ancora;
+	}
+	
+	public String getCadastrante() {
+		return (String) getTaskInstance().getVariable("wf_cadastrante");
+	}
+	public String getLotaCadastrante() {
+		return (String) getTaskInstance().getVariable("wf_lota_cadastrante");
+	}
+	public String getTitular() {
+		return (String) getTaskInstance().getVariable("wf_titular");
+	}
+	public String getLotaTitular() {
+		return (String) getTaskInstance().getVariable("wf_lota_titular");
 	}
 }

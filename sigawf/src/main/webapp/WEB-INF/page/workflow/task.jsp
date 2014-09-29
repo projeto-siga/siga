@@ -8,8 +8,7 @@
 				<div id="desc_editar" style="display: none;">
 					<h3>Descrição da Tarefa</h3>
 					<div class="gt-form gt-content-box">
-						<ww:url action="saveKnowledge" id="url"></ww:url>
-						<form method="POST" action="${url}">
+						<form method="POST" action="${linkTo[WorkflowController].saveKnowledge}">
 							<input name="tiId" type="hidden" value="${tiId}" />
 							<div class="gt-form-row gt-width-100">
 								<label>Descrição</label>
@@ -28,8 +27,7 @@
 			</c:if>
 
 			<!-- Adicionando a lista de Tarefas -->
-			<ww:url action="executeTask" id="url"></ww:url>
-			<form method="POST" action="${url}">
+			<form method="POST" action="executeTask">
 				<h3>Execução da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<div style="margin:10px;" >
@@ -62,20 +60,21 @@
 							<c:forEach var="variable" items="${task.variableList}">
 								<c:if test="${not variable.aviso}">
 									<tr>
-										<ww:if test="%{#attr.variable.mappedName.startsWith('sel_')}">
+									<c:choose>
+									<c:when test="${fn:startsWith(variable.mappedName,'sel_')}">
 											<td width="">${fn:substring(variable.variableName,0,fn:indexOf(variable.variableName,'('))}</td>
-										</ww:if>
-										<ww:else>
-											<td width="">${variable.variableName}</td>
-										</ww:else>
+									</c:when>
+									<c:otherwise>
+										<td width="">${variable.variableName}</td>
+									</c:otherwise>
+									</c:choose>
 
 										<td width=""><c:set var="editable"
 												value="${variable.writable and (variable.readable or empty taskInstance.token.processInstance.contextInstance.variables[variable.mappedName])}" />
 											<c:if test="${editable}">
 												<input name="fieldNames" type="hidden"
 													value="${variable.mappedName}" />
-											</c:if> <ww:if
-												test="%{#attr.variable.mappedName.startsWith('doc_') or #attr.variable.mappedName.startsWith('(doc_')}">
+											</c:if> <c:choose><c:when test="${fn:startsWith(variable.mappedName,'doc_')}">
 												<c:choose>
 													<c:when test="${editable}">
 														<siga:selecao propriedade="${variable.mappedName}"
@@ -88,8 +87,8 @@
 															href="/sigaex/expediente/doc/exibir.action?sigla=${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}">${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}</a>
 													</c:otherwise>
 												</c:choose>
-											</ww:if> <ww:elseif
-												test="%{#attr.variable.mappedName.startsWith('pes_')}">
+											</c:when> <c:when
+											test="${fn:startsWith(variable.mappedName,'pes_')}">
 												<c:choose>
 													<c:when test="${editable}">
 														<siga:selecao propriedade="${variable.mappedName}"
@@ -101,8 +100,8 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 								</c:otherwise>
 												</c:choose>
-											</ww:elseif> <ww:elseif
-												test="%{#attr.variable.mappedName.startsWith('lot_')}">
+											</c:when>  <c:when
+											test="${fn:startsWith(variable.mappedName,'lot_')}">
 												<c:choose>
 													<c:when test="${editable}">
 														<siga:selecao propriedade="${variable.mappedName}"
@@ -114,8 +113,8 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 								</c:otherwise>
 												</c:choose>
-											</ww:elseif> <ww:elseif
-												test="%{#attr.variable.mappedName.startsWith('dt_')}">
+											</c:when>  <c:when
+											test="${fn:startsWith(variable.mappedName,'dt_')}">
 												<c:choose>
 													<c:when test="${editable}">
 														<input name="fieldValues" type="text"
@@ -127,8 +126,8 @@
 															value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
 													</c:otherwise>
 												</c:choose>
-											</ww:elseif> <ww:elseif
-												test="%{#attr.variable.mappedName.startsWith('sel_')}">
+											</c:when>  <c:when
+											test="${fn:startsWith(variable.mappedName,'sel_')}">
 												<c:choose>
 													<c:when test="${editable}">
 														<select name="fieldValues">
@@ -142,7 +141,7 @@
 										${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
 												</c:choose>
-											</ww:elseif> <ww:else>
+											</c:when> <c:otherwise>
 												<c:choose>
 													<c:when test="${editable}">
 														<input name="fieldValues" type="text"
@@ -152,7 +151,7 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
 												</c:choose>
-											</ww:else></td>
+											</c:otherwise></c:choose></td>
 									</tr>
 								</c:if>
 							</c:forEach>
@@ -169,12 +168,12 @@
 						</div>
 					</c:if>
 					<c:forEach var="variable" items="${task.variableList}">
-						<ww:if test="%{#attr.variable.mappedName.startsWith('doc_')}">
+						<c:if test="${fn:startsWith(variable.mappedName,'doc_')}">
 							<!-- 							<c:if test="${variable.aviso}">  -->
 							<!-- 							</c:if>	-->
 							<span style="color: red; font-weight: bold;">
 								${task.msgAviso}</span>
-						</ww:if>
+						</c:if>
 					</c:forEach>
 				</div>
 			</form>
@@ -182,24 +181,29 @@
 				test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance))}">
 				<h3 class="gt-form-head">Designaçao da Tarefa</h3>
 				<div class="gt-form gt-content-box">
-					<ww:url id="url" action="assignTask" />
-					<form method="POST" action="${url}">
+					<form method="POST" action="${linkTo[WorkflowController].assignTask}">
 						<input name="tiId" type="hidden" value="${tiId}" />
 						<div class="gt-form-row gt-width-100">
 							<label>Pessoa</label>
-							<siga:selecao propriedade="ator" modulo="../sigaex" tema="simple" />
+							<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
+										propriedade="ator"
+										siglaInicial="${atorSel.sigla}"
+										idInicial="${atorSel.id}"
+										descricaoInicial="${atorSel.descricao}" />
+							
 						</div>
 						<div class="gt-form-row gt-width-100">
 
 							<label>Lotação</label>
-							<siga:selecao propriedade="lotaAtor" modulo="../sigaex"
-								tema="simple" />
+							<siga:selecao modulo="/siga" tipo="lotacao" tema="simple"
+										propriedade="lotaAtor"
+										siglaInicial="${lotaAtorSel.sigla}"
+										idInicial="${lotaAtorSel.id}"
+										descricaoInicial="${lotaAtorSel.descricao}" />
 						</div>
 						<div class="gt-form-row gt-width-33" style="float: left">
 							<label>Prioridade</label>
-							<ww:select name="prioridade"
-								list="#{1:'Muito Alta', 2:'Alta', 3:'Média', 4:'Baixa', 5:'Muito Baixa'}"
-								theme="simple" />
+							<siga:select name="prioridade" list="prioridades" listKey="id" listValue="descr" theme="simple" />
 						</div>
 						<div class="gt-form-row gt-width-66" style="float: right">
 							<label>Justificativa (opcional)</label> <input type="text"
@@ -209,11 +213,8 @@
 							<input name="designar" type="submit" value="Designar"
 								class="gt-btn-medium gt-btn-left" />
 							<c:if test="${empty taskInstance.actorId}">
-								<ww:url id="url" action="pegar">
-									<ww:param name="tiId">${taskInstance.id}</ww:param>
-								</ww:url>
 								<input type="button" value="Pegar tarefa para mim"
-									onclick="javascript:window.location.href='${url}'"
+									onclick="javascript:window.location.href='${linkTo[WorkflowController].pegar}?tiId=${taskInstance.id}'"
 									class="gt-btn-large gt-btn-left">
 							</c:if>
 						</div>
@@ -232,21 +233,20 @@
 							<c:forEach var="c" items="${wf:ordenarComentarios(ti)}">
 								<tr>
 									<td>${f:espera(c.time)}</td>
-									<td><ww:property value="%{#attr.c.actorId}" /></td>
-									<td><ww:property value="%{#attr.c.message}" /></td>
+									<td>${c.actorId}</td>
+									<td>${c.message}</td>
 								</tr>
 							</c:forEach>
 							<tr>
 								<td>${f:espera(ti.create)}</td>
-								<td><ww:property value="%{#attr.ti.actorId}" /></td>
-								<td><b><ww:property value="%{#attr.ti.name}" /> </b></td>
+								<td>${ti.actorId}</td>
+								<td><b>${ti.name}</b></td>
 							</tr>
 						</c:forEach>
 					</table>
 				</div>
 				<div class="gt-form gt-content-box">
-					<ww:url id="url" action="commentTask" />
-					<form method="POST" action="${url}">
+					<form method="POST" action="${linkTo[WorkflowController].commentTask}">
 						<input name="tiId" type="hidden" value="${tiId}" /> <label>Comentário</label>
 						<div class="gt-form-row gt-width-100">
 							<input type="text" size="80" name="comentario"
@@ -282,22 +282,10 @@
 					</c:choose>
 				</p>
 				<p>
-					<b>Cadastrante:</b>
-					<ww:property
-						value="%{#attr.taskInstance.getVariable('wf_cadastrante')}" />
-					(
-					<ww:property
-						value="%{#attr.taskInstance.getVariable('wf_lota_cadastrante')}" />
-					)
+					<b>Cadastrante:</b> ${task.cadastrante} (${task.lotaCadastrante})
 				</p>
 				<p>
-					<b>Titular:</b>
-					<ww:property
-						value="%{#attr.taskInstance.getVariable('wf_titular')}" />
-					(
-					<ww:property
-						value="%{#attr.taskInstance.getVariable('wf_lota_titular')}" />
-					)
+					<b>Titular:</b> ${task.titular} (${task.lotaTitular})
 				</p>
 				<p>
 					<b>Início:</b> ${f:espera(taskInstance.create)}
@@ -345,8 +333,7 @@
 				<h3>Mapa do Procedimento</h3>
 				<div style="display: none" id="input">
 					digraph G {
-						graph[size="3,3", rankdir="LR"];
-						<ww:property value="dot" escape="false"/>
+						graph[size="3,3", rankdir="LR"]; ${dot}
 					}
 				</div>
 				<a
@@ -385,8 +372,7 @@
 				<h3>Mapa do Procedimento</h3>
 				<div style="display: none" id="input2">
 					digraph G {
-						graph[size="100,100", rankdir="LR"];
-						<ww:property value="dot" escape="false"/>
+						graph[size="100,100", rankdir="LR"]; ${dot}
 					}
 				</div>
 				
@@ -433,7 +419,7 @@
 	
 	<script>
 		function bigmap() {
-			var input = 'digraph G { graph[size="100,100"]; <ww:property value="dot" escape="false"/> }';
+			var input = 'digraph G { graph[size="100,100"]; ${dot} }';
 			var format = "svg";
 			var engine = "dot";
 			
@@ -450,7 +436,7 @@
 		}
 		
 		function smallmap() {
-			var input = 'digraph G { graph[size="3,3"]; <ww:property value="dot" escape="false"/> }';
+			var input = 'digraph G { graph[size="3,3"]; ${dot} }';
 			var format = "svg";
 			var engine = "dot";
 			

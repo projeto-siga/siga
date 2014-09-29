@@ -29,11 +29,9 @@ import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
-import models.SrSolicitacaoVinculo;
 import models.SrTipoAtributo;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
-import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
@@ -744,7 +742,7 @@ public class Application extends SigaApplication {
 	
 	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados);
+		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
 		render(designacoes, mostrarDesativados);
 	}
 	
@@ -858,12 +856,27 @@ public class Application extends SigaApplication {
 		listarItem(Boolean.TRUE);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void editarItem(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
+		List<SrConfiguracao> designacoes;
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
+				"hisDtFim is null").fetch();
+		List<SrLista> listasPrioridade = SrLista.listar(false);
+		
 		SrItemConfiguracao itemConfiguracao = new SrItemConfiguracao();
-		if (id != null)
+		if (id != null) {
 			itemConfiguracao = SrItemConfiguracao.findById(id);
-		render(itemConfiguracao);
+			designacoes = SrConfiguracao.listarDesignacoes(false, id);
+		}
+		else
+			designacoes = new ArrayList<SrConfiguracao>();
+		
+		render(itemConfiguracao, designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 
 	public static void gravarItem(SrItemConfiguracao itemConfiguracao)

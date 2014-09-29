@@ -41,5 +41,28 @@ public class SrListaConfiguracao extends Objeto {
 	public void setId(Long id) {
 		idListaConfiguracao = id;
 	}
+	
+	/**
+	 * Classe que representa um V.O. de {@link SrListaConfiguracao}.
+	 */
+	public class SrListaConfiguracaoVO {
+		
+		public Long idLista;
+		public String nomeLista;
+		public Long idListaConfiguracao;
+		
+		public SrListaConfiguracaoVO(Long idLista, String nomeLista, Long idListaConfiguracao) {
+			this.idLista = idLista;
+			this.nomeLista = nomeLista;
+			this.idListaConfiguracao = idListaConfiguracao;
+		}
+	}
+	
+	public SrListaConfiguracaoVO toVO() {
+		if (this.lista != null)
+			return new SrListaConfiguracaoVO(this.lista.idLista, this.lista.nomeLista, this.idListaConfiguracao);
+		else
+			return null;
+	}
 
 }

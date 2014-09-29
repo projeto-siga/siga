@@ -6,6 +6,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_EXCLUSAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA;
@@ -16,9 +17,10 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RASCUNHO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -62,6 +64,7 @@ import javax.persistence.TypedQuery;
 
 import notifiers.Correio;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -204,6 +207,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@Where(clause = "ID_TP_MARCA=2")
 	protected Set<SrMarca> meuMarcaSet;
+	
+	@Column(name = "FG_RASCUNHO")
+	@Type(type = "yes_no")
+	public boolean rascunho;
 
 	public SrSolicitacao() {
 		
@@ -328,9 +335,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public String getCodigo() {
 
+		if (rascunho || numSolicitacao == null)
+			return "TMPSR-" + idSolicitacao;
+
 		if (solicitacaoPai != null)
 			return solicitacaoPai.getCodigo() + "." + getNumSequenciaString();
-
+		
 		String numString = numSolicitacao.toString();
 
 		while (numString.length() < 5)
@@ -710,6 +720,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO) != null;
 	}
 
+	public boolean isRascunho() {
+		return rascunho;
+	}
+	
+	public boolean isExcluido() {
+		return sofreuMov(TIPO_MOVIMENTACAO_EXCLUSAO);
+	}
+	
 	public boolean isFechadoParcialmente() {
 		return sofreuMov(TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL,
 				TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO)
@@ -880,7 +898,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
 		return (estaCom(lota, pess) || isEmListaPertencenteA(lota))
-				&& (isEmPreAtendimento() || isEmAtendimento());
+				&& (isEmPreAtendimento() || isEmAtendimento() || isRascunho())
+				&& !isExcluido();
 	}
 
 	public boolean podePriorizar(DpLotacao lota, DpPessoa pess) {
@@ -907,6 +926,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						|| isEmPosAtendimento() || isEmControleQualidade());
 	}
 
+	public boolean podeExcluir(DpLotacao lota, DpPessoa pess) {
+		return foiCadastradaPor(lota, pess)
+				&& isRascunho();
+	}
+	
 	public boolean podeRetornarAoAtendimento(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess) && isEmControleQualidade();
 	}
@@ -1179,6 +1203,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("clock_go", "Replanejar", podeReplanejar(lotaTitular,
 				titular), "replanejar", "modal=true"));
 
+		operacoes.add(new SrOperacao("cross", "Excluir", podeExcluir(lotaTitular,
+				titular), "excluir", "modal=true"));
+		
 		operacoes.add(new SrOperacao("clock_play", "Terminar Pendência",
 				podeTerminarPendencia(lotaTitular, titular),
 				"Application.terminarPendencia"));
@@ -1223,18 +1250,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		super.salvar();
 
-		if (getMovimentacaoSetComCancelados().size() == 0) {
+		if (getMovimentacaoSetComCancelados().size() == 0 && !rascunho) {
 			if (fecharAoAbrir)
 				fechar(lotaCadastrante, cadastrante, motivoFechamentoAbertura);
 			else if (temPreAtendenteDesignado())
 				iniciarPreAtendimento(lotaCadastrante, cadastrante);
 			else
 				iniciarAtendimento(lotaCadastrante, cadastrante);
+			
 			if (!isEditado()
 					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
 				Correio.notificarAbertura(this);
-		} else
+		} 
+		else if (rascunho)
+			rascunho(lotaCadastrante, cadastrante);
+		else if (getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_RASCUNHO).size() > 0) {
+			iniciarAtendimento(lotaCadastrante, cadastrante);
+		}	
+		else
 			atualizarMarcas();
 	}
 
@@ -1262,7 +1296,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			orgaoUsuario = lotaSolicitante.getOrgaoUsuario();
 
 		if (numSolicitacao == null)
-			numSolicitacao = getProximoNumero();
+			if(!rascunho)
+				numSolicitacao = getProximoNumero();
 
 		if (gravidade == null)
 			gravidade = SrGravidade.NORMAL;
@@ -1336,7 +1371,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	private SortedSet<SrMarca> calcularMarcadores() {
 		SortedSet<SrMarca> set = new TreeSet<SrMarca>();
-
+ 
 		Long marcador = 0L, marcadorAnterior = 0L;
 		SrMovimentacao movMarca = null, movMarcaAnterior = null;
 		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
@@ -1377,6 +1412,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			}
 			if (t == TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO) {
 				marcador = CpMarcador.MARCADOR_JUNTADO;
+				movMarca = mov;
+			}
+			if (t == TIPO_MOVIMENTACAO_RASCUNHO) {
+				marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO;
 				movMarca = mov;
 			}
 			if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
@@ -1751,6 +1790,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.salvar(pess, lota);
 	}
 
+	private void rascunho(DpLotacao lota, DpPessoa pess)
+			throws Exception {
+		SrMovimentacao mov = new SrMovimentacao(this);
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(TIPO_MOVIMENTACAO_RASCUNHO);
+		mov.lotaAtendente = mov.solicitacao.getAtendenteDesignado();
+		mov.salvar(pess, lota);
+	}
+	
 	public void fechar(DpLotacao lota, DpPessoa pess, String motivo)
 			throws Exception {
 
@@ -1790,6 +1838,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (estadoAtual == TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL
 				|| estadoAtual == TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE)
 			fecharTotalmente(lota, pess, motivo);
+	}
+	
+	public void excluir(DpLotacao lota, DpPessoa pess) throws Exception{
+		 
+		if ((pess != null) && !podeExcluir(lota, pess))
+			throw new Exception("Operação não permitida");
+		
+		SrMovimentacao mov = new SrMovimentacao(this);
+		mov.tipoMov = SrTipoMovimentacao
+				.findById(TIPO_MOVIMENTACAO_EXCLUSAO);
+		mov.descrMovimentacao = "Solicitação Excluída";
+		mov.salvar(pess, lota);
+		finalizar();
 	}
 
 	public void enviarPesquisa() throws Exception {

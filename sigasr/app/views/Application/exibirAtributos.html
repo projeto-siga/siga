@@ -1,25 +1,24 @@
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script>
 	$(function() {
-	    $( "#calendario" ).datepicker({
+	    $( "#calendarioAtributo" ).datepicker({
 	        showOn: "button",
 	        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
 	        buttonImageOnly: true,
 	        dateFormat: 'dd/mm/yy'
 	    });
-		$("#calendario").mask("99/99/9999");
+		$("#calendarioAtributo").mask("99/99/9999");
 
-		$("#horario").mask("99:99");
-		$("#horario").blur(function() {
+		$("#horarioAtributo").mask("99:99");
+		$("#horarioAtributo").blur(function() {
 			var hora = this.value;
 			var array = hora.split(':');
 			if (array[0] > 23 || array[1] > 59) {
-				$('#erroHora').show(); 
+				$('#erroHoraAtributo').show(); 
 				return;
 			}
-			$('#erroHora').hide();	
+			$('#erroHoraAtributo').hide();	
 		});
-
 	});
 </script>
 #{if solicitacao.itemConfiguracao && solicitacao.acao && controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
@@ -31,44 +30,54 @@
 	</script>
 #{/if}
 
-#{list items:solicitacao.tiposAtributoAssociados, as:'tipoAtributo'}
-	<div class="gt-form-row gt-width-66">
-		<label>
-			${tipoAtributo.nomeTipoAtributo} 
-			#{if tipoAtributo.descrTipoAtributo != null && tipoAtributo.descrTipoAtributo != ""}
-				(${tipoAtributo.descrTipoAtributo})
+<div id="atributos">
+	#{list items:solicitacao.tiposAtributoAssociados, as:'tipoAtributo'}
+		<div class="gt-form-row gt-width-66">
+			<label>
+				${tipoAtributo.nomeTipoAtributo} 
+				#{if tipoAtributo.descrTipoAtributo != null && tipoAtributo.descrTipoAtributo != ""}
+					(${tipoAtributo.descrTipoAtributo})
+				#{/if}
+			</label>
+			#{if tipoAtributo.formatoCampo.name() == "TEXTO"}
+				<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" class="${tipoAtributo.idTipoAtributo}"
+					onchange="notificarCampoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');" />
+				<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
 			#{/if}
-		</label>
-		#{if tipoAtributo.formatoCampo.name() == "TEXTO"}
-			<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" />
-			<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
-		#{/if}
-		#{if tipoAtributo.formatoCampo.name() == "DATA"}
-			<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" id="calendario" />
-			<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
-		#{/if}
-		#{if tipoAtributo.formatoCampo.name() == "NUM_INTEIRO"}
-			<input type="text" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-				name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" />
-			<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
-		#{/if}
-		#{if tipoAtributo.formatoCampo.name() == "NUM_DECIMAL"}
-			<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" id="numDecimal" pattern="^\d*(\.\d{2}$)?" title="Somente número e com duas casas decimais EX: 222.22" />
-			<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
-		#{/if}
-		#{if tipoAtributo.formatoCampo.name() == "HORA"}
-			<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" id="horario" />
-			<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
-			<span style="color: red; display: none;" id="erroHora">Horário inválido</span>
-		#{/if}
-		#{if tipoAtributo.formatoCampo.name() == "VL_PRE_DEFINIDO"}
-			#{select name:'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']', value:solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}
-				#{list items:tipoAtributo.preDefinidoSet, as:'valorAtributo' }
-					#{option valorAtributo}
-						${valorAtributo}
-					#{/option}
-				#{/list}
-			#{/select}
-		#{/if}
-	</div>
-#{/list}
+			#{if tipoAtributo.formatoCampo.name() == "DATA"}
+				<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" id="calendarioAtributo" class="${tipoAtributo.idTipoAtributo}"
+					onchange="notificarCampoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');" />
+				<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+			#{/if}
+			#{if tipoAtributo.formatoCampo.name() == "NUM_INTEIRO"}
+				<input type="text" class="${tipoAtributo.idTipoAtributo}"
+					onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
+					onchange="notificarCampoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');"
+					name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" />
+				<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+			#{/if}
+			#{if tipoAtributo.formatoCampo.name() == "NUM_DECIMAL"}
+				<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" 
+					id="numDecimal" pattern="^\d*(\.\d{2}$)?" title="Somente número e com duas casas decimais EX: 222.22" class="${tipoAtributo.idTipoAtributo}"
+					onchange="notificarCampoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');" />
+				<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+			#{/if}
+			#{if tipoAtributo.formatoCampo.name() == "HORA"}
+				<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" id="horarioAtributo" class="${tipoAtributo.idTipoAtributo}"
+					onchange="notificarCampoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');" />
+				<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+				<span style="color: red; display: none;" id="erroHoraAtributo">Horário inválido</span>
+			#{/if}
+			#{if tipoAtributo.formatoCampo.name() == "VL_PRE_DEFINIDO"}
+				#{select name:'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']', value:solicitacao.atributoMap[tipoAtributo.idTipoAtributo], class:tipoAtributo.idTipoAtributo+' ',
+					 onchange:"notificarCampoMudou('."+tipoAtributo.idTipoAtributo+"', '"+tipoAtributo.nomeTipoAtributo+"', 'solicitacao.atributoMap["+tipoAtributo.idTipoAtributo+"]');"}
+					#{list items:tipoAtributo.preDefinidoSet, as:'valorAtributo' }
+						#{option valorAtributo}
+							${valorAtributo}
+						#{/option}
+					#{/list}
+				#{/select}
+			#{/if}
+		</div>
+	#{/list}
+</div>

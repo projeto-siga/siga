@@ -51,6 +51,8 @@ public class SrTipoMovimentacao extends GenericModel {
 
 	final static public long TIPO_MOVIMENTACAO_VINCULACAO = 20;
 
+	final static public long TIPO_MOVIMENTACAO_REPLANEJAMENTO = 21;
+
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")
 	public long idTipoMov;

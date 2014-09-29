@@ -1,5 +1,10 @@
 package controllers;
 
+import static models.SrMeioComunicacao.CHAT;
+import static models.SrMeioComunicacao.EMAIL;
+import static models.SrMeioComunicacao.PANDION;
+import static org.joda.time.format.DateTimeFormat.forPattern;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -13,6 +18,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.xml.parsers.ParserConfigurationException;
 
 import models.SrAcao;
@@ -34,7 +40,9 @@ import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormatter;
 
 import play.data.binding.As;
 import play.db.jpa.JPA;
@@ -141,6 +149,26 @@ public class Application extends SigaApplication {
 			throws Exception {
 		render(solicitacao.deduzirLocalERamal());
 	}
+	
+	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean mostrarDesativados, boolean carregarLotaSolicitante) 
+			throws Exception{
+		if(carregarLotaSolicitante){
+			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
+			solicitacao.solicitante = null;
+    	}
+		List<SrSolicitacao> solicitacoesRelacionadas = solicitacao.buscar(mostrarDesativados);
+		List<SrSolicitacao> solicitacoesList = new ArrayList<SrSolicitacao>();
+		if(!mostrarDesativados) 
+			for (SrSolicitacao sol : solicitacoesRelacionadas) {
+				if(sol.isEmPreAtendimento() || sol.isEmAtendimento() || sol.isEmPosAtendimento())
+					solicitacoesList.add(sol);
+			}
+		if(solicitacoesList.size() > 0)
+			solicitacoesRelacionadas = solicitacoesList;
+		int i = solicitacoesRelacionadas.size() > 10? 10 : solicitacoesRelacionadas.size();
+		solicitacoesRelacionadas = new ArrayList<SrSolicitacao>(solicitacoesRelacionadas.subList(0, i));
+		render(solicitacoesRelacionadas);
+	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao)
 			throws Exception {
@@ -175,7 +203,7 @@ public class Application extends SigaApplication {
 			else
 				solicitacao.acao = null;
 		}
-
+		
 		render(solicitacao, acoesEAtendentes);
 	}
 	
@@ -185,7 +213,10 @@ public class Application extends SigaApplication {
 	}
 
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
-
+		
+		String calendario = null;
+		String horario = null;
+		
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 
@@ -203,8 +234,39 @@ public class Application extends SigaApplication {
 				}
 			}
 		}
+		
+		if (solicitacao.idSolicitacao == null) {
+			StringBuffer queryString = new StringBuffer();
+			queryString.append(" from SrSolicitacao where hisDtIni = (select max(sol.hisDtIni) from SrSolicitacao sol where sol.cadastrante.idPessoa = :idCadastrante ) ");
+			queryString.append(" and cadastrante.idPessoa = :idCadastrante ");
+			
+			TypedQuery<SrSolicitacao> query = JPA.em().createQuery(queryString.toString(), SrSolicitacao.class);
+			query.setParameter("idCadastrante", cadastrante().getId());
+			
+			List<SrSolicitacao> solicitacoes = query.getResultList();
+			SrSolicitacao ultimaSolicitacao = null;
+			if(solicitacoes.size() > 0) {
+				ultimaSolicitacao = solicitacoes.get(0);
+				if(ultimaSolicitacao.meioComunicacao != null && solicitacao.meioComunicacao == null) {
+					solicitacao.meioComunicacao = ultimaSolicitacao.meioComunicacao;
+					if(solicitacao.meioComunicacao == EMAIL
+							|| solicitacao.meioComunicacao == PANDION
+							|| solicitacao.meioComunicacao == CHAT) {
+						String data = ultimaSolicitacao.getDtRegDDMMYYYYHHMM();
+						String[] array = data.split(" ");
+						calendario = array[0];
+						horario = array[1];
+					}
+				}
+			}
+		} else {
+			String data = solicitacao.getDtRegDDMMYYYYHHMM();
+			String[] array = data.split(" ");
+			calendario = array[0];
+			horario = array[1];
+		}
 
-		render("@editar", solicitacao, locais, acoesEAtendentes);
+		render("@editar", solicitacao, locais, acoesEAtendentes, calendario, horario);
 	}
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
@@ -236,6 +298,32 @@ public class Application extends SigaApplication {
 
 		if (validation.hasErrors()) {
 			formEditar(solicitacao);
+		}
+	}
+	
+	private static void validarFormEditar(SrSolicitacao solicitacao, String calendario, String horario)
+			throws Exception {
+		
+		if(solicitacao.meioComunicacao == EMAIL
+				|| solicitacao.meioComunicacao == PANDION
+				|| solicitacao.meioComunicacao == CHAT) {
+			if(calendario.isEmpty() || calendario == null) {
+				validation.addError("calendario",
+						"Data não informada");
+			}
+			if(horario.isEmpty() || horario == null) {
+				validation.addError("horario",
+						"Hora não informada");
+			} else {
+				String[] array = horario.split(":");
+				int hora = Integer.parseInt(array[0]);
+				int minuto = Integer.parseInt(array[1]);
+					if (hora > 23 || minuto > 59) {
+						validation.addError("horario",
+								"Hora inválida");
+					}
+			}
+			validarFormEditar(solicitacao);
 		}
 	}
 
@@ -318,8 +406,18 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao) throws Exception {
-		validarFormEditar(solicitacao);
+	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario) throws Exception {
+        validarFormEditar(solicitacao, calendario, horario);
+        if(solicitacao.meioComunicacao == EMAIL
+				|| solicitacao.meioComunicacao == PANDION
+				|| solicitacao.meioComunicacao == CHAT) {
+			
+			DateTime datetime = new DateTime();
+			DateTimeFormatter formatter = forPattern("dd/MM/yyyy HH:mm");
+			if (!calendario.isEmpty() || !horario.isEmpty())
+				solicitacao.dtReg = new DateTime (formatter.parseDateTime(calendario + " " + horario)).toDate();
+			
+        }
 		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
 		exibir(id, completo());
@@ -390,15 +488,20 @@ public class Application extends SigaApplication {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception {
+	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados, boolean carregarLotaSolicitante) throws Exception {
 
 		List<SrSolicitacao> listaSolicitacao;
 
-		if (filtro.pesquisar)
+		if (filtro.pesquisar) {
+			if(carregarLotaSolicitante){
+	    		filtro.lotaSolicitante = filtro.solicitante.getLotacao();
+	    		filtro.solicitante = null;
+	    	}
 			listaSolicitacao = filtro.buscar(mostrarDesativados);
-		else
+		} else {
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
-
+		}
+		
 		// Montando o filtro...
 		String[] tipos = new String[] { "Pessoa", "Lotação" };
 		List<CpMarcador> marcadores = JPA.em()
@@ -712,6 +815,14 @@ public class Application extends SigaApplication {
 			String calendario, String horario) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario,
+				horario);
+		exibir(id, completo());
+	}
+
+	public static void replanejar(Long id, String motivo,
+		String calendario, String horario) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.replanejar(lotaTitular(), cadastrante(), motivo, calendario,
 				horario);
 		exibir(id, completo());
 	}

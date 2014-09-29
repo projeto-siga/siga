@@ -162,6 +162,10 @@ public class SrMovimentacao extends GenericModel {
 	public boolean isCancelada() {
 		return movCanceladora != null;
 	}
+	
+	public boolean isReplanejada() {
+		return tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
+	}
 
 	public boolean isCanceladoOuCancelador() {
 		return isCancelada()
@@ -299,7 +303,9 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public void notificar() {
-		if (!isCancelada())
+		if (isReplanejada())
+			Correio.notificarReplanejamentoMovimentacao(this);
+		else if (!isCancelada())
 			Correio.notificarMovimentacao(this);
 		else
 			Correio.notificarCancelamentoMovimentacao(this);

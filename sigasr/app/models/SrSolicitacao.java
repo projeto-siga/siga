@@ -18,6 +18,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -124,6 +125,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Enumerated
 	public SrFormaAcompanhamento formaAcompanhamento;
+	
+	@Enumerated
+	public SrMeioComunicacao meioComunicacao;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
@@ -729,6 +733,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				TIPO_MOVIMENTACAO_FIM_PENDENCIA) && !isCancelado();
 	}
 
+	public boolean isReplanejada() {
+		return sofreuMov(TIPO_MOVIMENTACAO_REPLANEJAMENTO);
+	}
+
 	public boolean isEmPosAtendimento() {
 		return sofreuMov(TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL,
@@ -912,6 +920,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return isEmAtendimento() && !isPendente() && estaCom(lota, pess);
 	}
 
+	public boolean podeReplanejar(DpLotacao lota, DpPessoa pess) {
+		return true;
+	}
+	
 	public boolean podeTerminarPendencia(DpLotacao lota, DpPessoa pess) {
 		return isPendente() && estaCom(lota, pess);
 	}
@@ -1164,6 +1176,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("clock_pause", "Deixar Pendente", podeDeixarPendente(lotaTitular,
 				titular), "deixarPendente", "modal=true"));
 
+		operacoes.add(new SrOperacao("clock_go", "Replanejar", podeReplanejar(lotaTitular,
+				titular), "replanejar", "modal=true"));
 
 		operacoes.add(new SrOperacao("clock_play", "Terminar Pendência",
 				podeTerminarPendencia(lotaTitular, titular),
@@ -1228,8 +1242,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (cadastrante == null)
 			throw new Exception("Cadastrante não pode ser nulo");
-
-		dtReg = new Date();
+		
+		if (dtReg == null)
+			dtReg = new Date();
 
 		if (lotaCadastrante == null)
 			lotaCadastrante = cadastrante.getLotacao();
@@ -1257,7 +1272,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
-
+		
 		if (!temAtendenteDesignado() && !temPreAtendenteDesignado())
 			throw new Exception(
 					"Não foi encontrado nenhum atendente designado "
@@ -1914,6 +1929,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.salvar(pess, lota);
 	}
 
+	public void replanejar(DpLotacao lota, DpPessoa pess, String motivo, 
+			String calendario, String horario) throws Exception {
+		if (!podeReplanejar(lota, pess))
+			throw new Exception("Operação não permitida");
+		SrMovimentacao movimentacao = new SrMovimentacao(this);
+		DateTime datetime = new DateTime();
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+		if (!calendario.equals("")) {
+			datetime = new DateTime (formatter.parseDateTime(calendario + " " + horario));
+			movimentacao.dtAgenda =  datetime.toDate();
+		}
+		movimentacao.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO);
+		movimentacao.descrMovimentacao = motivo;
+		movimentacao.salvar(pess, lota);
+	}
+	
 	public void terminarPendencia(DpLotacao lota, DpPessoa pess)
 			throws Exception {
 		if (!podeTerminarPendencia(lota, pess))

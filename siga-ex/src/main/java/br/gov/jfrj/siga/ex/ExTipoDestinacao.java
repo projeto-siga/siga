@@ -39,6 +39,8 @@ public class ExTipoDestinacao extends AbstractExTipoDestinacao implements
 	public static final long TIPO_DESTINACAO_ELIMINACAO = 1;
 
 	public static final long TIPO_DESTINACAO_GUARDA_PERMANENTE = 2;
+	
+	public static final long TIPO_DESTINACAO_SETOR_COMPETENTE = 58;
 
 	// Edson: isto está estranho. Ver soluçao melhor.
 	public static ExTipoDestinacao guardaPermanente() {

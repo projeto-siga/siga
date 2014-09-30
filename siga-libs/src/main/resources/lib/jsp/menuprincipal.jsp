@@ -166,13 +166,10 @@
 							<li><ww:a href="/siga/gi/perfiljee/listar.action">Perfil de Acesso do JEE</ww:a>
 							</li>
 						</c:if>
-<%--						<c:if
+						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR:Gerenciar grupos de distribuição') || f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;GERIR:Gerir grupos específicos')
-							       || (f:podeGerirAlgumGrupo(titular,lotaTitular,2) && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDELEG:Gerenciar grupos de distribuicao delegados'))}">
- --%>							
- 							<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDELEG:Gerenciar grupos de distribuicao delegados')}">       
-							<li><ww:a
+							       || (f:podeGerirAlgumGrupo(titular,lotaTitular,2) && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDELEG:Gerenciar grupos de distribuição delegados'))}">		
+ 							<li><ww:a
 									href="${serverAndPort}/siga/gi/email/listar.action">Grupo de Distribuição</ww:a>
 							</li>
 						</c:if>

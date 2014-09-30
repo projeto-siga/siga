@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +31,6 @@ import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
-import models.SrMarca;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
@@ -217,6 +217,7 @@ public class Application extends SigaApplication {
 		
 		String calendario = null;
 		String horario = null;
+		Long dtIniEdicao;
 		
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
@@ -244,6 +245,8 @@ public class Application extends SigaApplication {
 			TypedQuery<SrSolicitacao> query = JPA.em().createQuery(queryString.toString(), SrSolicitacao.class);
 			query.setParameter("idCadastrante", cadastrante().getId());
 			
+			dtIniEdicao = new Date().getTime();
+			
 			List<SrSolicitacao> solicitacoes = query.getResultList();
 			SrSolicitacao ultimaSolicitacao = null;
 			if(solicitacoes.size() > 0) {
@@ -261,13 +264,14 @@ public class Application extends SigaApplication {
 				}
 			}
 		} else {
+			dtIniEdicao = new Date().getTime();
 			String data = solicitacao.getDtRegDDMMYYYYHHMM();
 			String[] array = data.split(" ");
 			calendario = array[0];
 			horario = array[1];
 		}
 
-		render("@editar", solicitacao, locais, acoesEAtendentes, calendario, horario);
+		render("@editar", solicitacao, locais, acoesEAtendentes, calendario, horario, dtIniEdicao);
 	}
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
@@ -407,8 +411,9 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario) throws Exception {
-        if(!solicitacao.rascunho)
+	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario, long dtIniEdicao) throws Exception {
+        solicitacao.dtIniEdicao = new Date(dtIniEdicao);
+		if(!solicitacao.rascunho)
         	validarFormEditar(solicitacao, calendario, horario);
         if(solicitacao.meioComunicacao == EMAIL
 				|| solicitacao.meioComunicacao == PANDION

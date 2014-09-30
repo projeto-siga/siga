@@ -67,6 +67,7 @@ import notifiers.Correio;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -161,6 +162,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtReg;
 
+	@Column(name = "DT_EDICAO_INI")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date dtIniEdicao;
+	
 	@ManyToOne
 	@JoinColumn(name = "ID_COMPLEXO")
 	public CpComplexo local;
@@ -706,6 +711,29 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (sol.meuMarcaSet != null)
 					listaCompleta.addAll(sol.meuMarcaSet);
 		return listaCompleta;
+	}
+	
+	private Long getTempoCadastramento() {
+		if (dtIniEdicao == null)
+			return 0L;
+		
+		Duration duration = new Duration(dtIniEdicao.getTime(), getHisDtIni().getTime());
+		return duration.getMillis();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Long getTempoCadastramentoTotal() {
+		String stringQuery = "from SrSolicitacao where solicitacaoInicial.idSolicitacao = "
+				+ getIdInicial();
+		List<SrSolicitacao> list = JPA.em().createQuery(stringQuery).getResultList();
+		Duration duration = new Duration(0L);
+		for (SrSolicitacao sol : list) {
+			duration = duration.plus(sol.getTempoCadastramento());			
+		}
+		if (duration == null)
+			return 0L;
+		
+		return duration.getMillis();
 	}
 	
 	public boolean isJuntada() {

@@ -204,7 +204,9 @@
 		getIdFieldSolicitante(itemArray[4]).val(itemArray[5]);
 		getDescricaoFieldSolicitante(itemArray[4]).val(itemArray[6]);
         getSiglaFieldSolicitante(itemArray[4]).val(itemArray[7]);
-        getSpanFieldSolicitante(itemArray[4]).val(itemArray[6]);
+        getSpanFieldSolicitante(itemArray[4]).html(itemArray[6]);
+        
+        $("#dpPessoalotacaofuncaoConfiancacargo")[0].onchange();
 	};
 	
 	function findSelectedIndexByValue(comboBox, value) {

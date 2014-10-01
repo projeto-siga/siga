@@ -174,7 +174,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST)
 	protected List<SrAtributo> meuAtributoSet;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -184,7 +184,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
 	// entre os modulos, e o Hibernate acaba trazendo tambem marcas do Siga-Doc
-	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST)
 	@Where(clause = "ID_TP_MARCA=2")
 	protected Set<SrMarca> meuMarcaSet;
 

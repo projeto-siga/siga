@@ -29,6 +29,8 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -37,6 +39,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "CP_ORGAO_USUARIO", schema = "CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 		Serializable, Selecionavel, Assemelhavel {
 

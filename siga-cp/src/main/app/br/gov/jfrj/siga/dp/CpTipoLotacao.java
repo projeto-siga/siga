@@ -21,8 +21,12 @@ package br.gov.jfrj.siga.dp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(schema="CORPORATIVO", name="CP_TIPO_LOTACAO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpTipoLotacao extends AbstractCpTipoLotacao {
 
 }

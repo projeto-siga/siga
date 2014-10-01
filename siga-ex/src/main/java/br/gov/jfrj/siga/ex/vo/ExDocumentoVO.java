@@ -272,6 +272,12 @@ public class ExDocumentoVO extends ExVO {
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE);
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO);
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_COMO_SUBSCRITOR);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_REVISAR);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO);
 
 		for (ExMobilVO mobVO : mobs) {
 

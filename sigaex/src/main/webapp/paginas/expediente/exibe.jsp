@@ -659,19 +659,20 @@
 		    	${docVO.dadosComplementares}
 			</c:if>
 			
-			<%-- <c:if test="${not empty docVO.doc.movsCosignatario}">
+			<c:if test="${not empty docVO.cossignatarios}">
 			<div class="gt-sidebar-content" style="padding-top: 10px">
 			<h3>Cossignatários</h3>
 			<ul>
-			<c:forEach var="cossig" items="${docVO.doc.movsCosignatario}">
+			<c:forEach var="cossig" items="${docVO.cossignatarios}">
 				<li>
-					${cossig.subscritor.nomePessoa}&nbsp;|
-					<a href="/sigaex/expediente/mov/excluir.action?id=${cossig.idMov}" >Excluir</a>
+					${cossig.key.subscritor.nomePessoa}
+					<c:if test="${cossig.value}">&nbsp;
+					<a href="/sigaex/expediente/mov/excluir.action?id=${cossig.key.idMov}" >Excluir</a></c:if>
 				</li>
 			</c:forEach>
 			</ul>
 			</div>
-			</c:if>--%> 
+			</c:if>
 			
 			<c:if test="${not empty docVO.doc.perfis}">
 			<div class="gt-sidebar-content" style="padding-top: 10px">

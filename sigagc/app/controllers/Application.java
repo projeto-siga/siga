@@ -10,6 +10,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -938,6 +939,9 @@ public class Application extends SigaApplication {
 		CpIdentidade idc = idc();
 		if (files != null)
 			for (Upload file : files) {
+				if (file.getSize() > 2097152)
+					throw new AplicacaoException("O tamanho do arquivo é maior que o "
+							+ "máximo permitido (2MB)");
 				if (file.getSize() > 0) {
 					/*
 					 * ----NÃ£o pode ser usado porque o "plupload" retorna um

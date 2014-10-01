@@ -389,7 +389,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
-			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, Boolean finalizar) throws Exception {
+			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, String siglaDocPai, Boolean finalizar) throws Exception {
     	try {
     		DpPessoa cadastrante = null;
     		DpPessoa titular = null;
@@ -403,6 +403,7 @@ public class ExServiceImpl implements ExService {
     		DpLotacao destinatarioLotacao = null;
     		DpPessoa destinatarioPessoa = null;
     		CpOrgao destinatarioOrgaoExterno = null;
+    		ExDocumento docPai = null;
     		
     		ExDocumento doc = new ExDocumento();
     		
@@ -614,6 +615,24 @@ public class ExServiceImpl implements ExService {
 			mob.setNumSequencia(1);
 			mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
 			mob.setExDocumento(doc);
+			
+    		if(siglaDocPai != null && !siglaDocPai.isEmpty()) {
+    			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+    			filter.setSigla(siglaDocPai);
+    			ExMobil mobPai = (ExMobil) dao().consultarPorSigla(filter);
+    			if (mobPai != null) {
+    				docPai = mobPai.getExDocumento();
+    				
+    				if(docPai.getExMobilPai() != null)
+    					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") já é documento filho.");
+    				
+    				if((docPai.isEletronico() && !docPai.isAssinadoEletronicoPorTodosOsSignatarios()) ||
+    						(!docPai.isEletronico() && !docPai.isAssinado()))
+    					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") ainda não foi assinado.");
+    				
+    				doc.setExMobilPai(docPai.getMobilGeral());
+    			}
+    		}
 			
 			doc.setExMobilSet(new TreeSet<ExMobil>());
 			doc.getExMobilSet().add(mob);

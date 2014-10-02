@@ -98,9 +98,7 @@ public class PrincipalAction extends SigaActionSupport {
 			Map<String, Object> map = (Map<String, Object>) getRequest().getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
 			String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
 			setIdp(idpSessionID);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		}catch(Exception e){}
 		
 		return Action.SUCCESS;
 	}

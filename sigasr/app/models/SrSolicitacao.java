@@ -42,6 +42,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javassist.expr.NewArray;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -569,6 +571,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return conf.pesquisaSatisfacao;
 		return null;
 	}
+	
+	public Set<SrMovimentacao> getPendentes() {
+		Set<SrMovimentacao> setIni = getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
+		Set<SrMovimentacao> setPendentes = new HashSet<SrMovimentacao>();
+		
+		for (SrMovimentacao ini : setIni) {
+			if (ini.movFinalizadora == null)
+				setPendentes.add(ini);
+		}
+		
+		return setPendentes;
+	}
 
 	// Edson: ver comentario abaixo, em getTiposAtributoAssociados()
 	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados()
@@ -775,8 +789,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean isPendente() {
-		return sofreuMov(TIPO_MOVIMENTACAO_INICIO_PENDENCIA,
-				TIPO_MOVIMENTACAO_FIM_PENDENCIA) && !isCancelado();
+		Set<SrMovimentacao> setIni = getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_INICIO_PENDENCIA); 
+		for (SrMovimentacao ini : setIni) {
+			if (ini.movFinalizadora == null)
+				return true;
+		}
+		return false;
 	}
 
 	public boolean isReplanejada() {
@@ -969,7 +987,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeDeixarPendente(DpLotacao lota, DpPessoa pess) {
-		return isEmAtendimento() && !isPendente() && estaCom(lota, pess);
+		return (isEmAtendimento() || isPendente() || isRascunho()) && estaCom(lota, pess);
 	}
 
 	public boolean podeReplanejar(DpLotacao lota, DpPessoa pess) {
@@ -1225,8 +1243,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		//operacoes.add(new SrOperacao("clock_pause", "Deixar Pendente",
 			//	podeDeixarPendente(lotaTitular, titular),"Application.deixarPendente"));
 		
-		operacoes.add(new SrOperacao("clock_pause", "Deixar Pendente", podeDeixarPendente(lotaTitular,
-				titular), "deixarPendente", "modal=true"));
+		operacoes.add(new SrOperacao("clock_pause", "Pendência", podeDeixarPendente(lotaTitular,
+				titular), "pendencia", "modal=true"));
 
 		operacoes.add(new SrOperacao("clock_go", "Replanejar", podeReplanejar(lotaTitular,
 				titular), "replanejar", "modal=true"));
@@ -1234,10 +1252,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("cross", "Excluir", podeExcluir(lotaTitular,
 				titular), "excluir", "modal=true"));
 		
-		operacoes.add(new SrOperacao("clock_play", "Terminar Pendência",
-				podeTerminarPendencia(lotaTitular, titular),
-				"Application.terminarPendencia"));
-
 		operacoes.add(new SrOperacao("attach", "Anexar Arquivo",
 				podeAnexarArquivo(lotaTitular, titular), "anexarArquivo",
 				"modal=true"));
@@ -2001,8 +2015,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return ultimoCancelamento;
 	}
 	
-	public void deixarPendente(DpLotacao lota, DpPessoa pess, String motivo, 
-			String calendario, String horario) throws Exception {
+	public void deixarPendente(DpLotacao lota, DpPessoa pess, SrTipoMotivoPendencia motivo, 
+			String calendario, String horario, String detalheMotivo) throws Exception {
 		if (!podeDeixarPendente(lota, pess))
 			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
@@ -2014,7 +2028,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
-		movimentacao.descrMovimentacao = motivo;
+		movimentacao.descrMovimentacao = detalheMotivo;
+		movimentacao.motivoPendencia = motivo;
 		movimentacao.salvar(pess, lota);
 	}
 
@@ -2034,15 +2049,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.descrMovimentacao = motivo;
 		movimentacao.salvar(pess, lota);
 	}
-	
-	public void terminarPendencia(DpLotacao lota, DpPessoa pess)
+
+	public void terminarPendencia(DpLotacao lota, DpPessoa pess, String descricao, SrTipoMotivoPendencia motivo, Long idMovimentacao)
 			throws Exception {
 		if (!podeTerminarPendencia(lota, pess))
 			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
-		movimentacao.salvar(pess, lota);
+		movimentacao.descrMovimentacao = descricao;
+		movimentacao.motivoPendencia = motivo;
+		movimentacao = movimentacao.salvar(pess, lota);
+		SrMovimentacao movFinalizada = SrMovimentacao.findById(idMovimentacao);
+		movFinalizada.movFinalizadora = movimentacao;
+		movFinalizada.salvar();
+		
 	}
 
 	public void cancelar(DpLotacao lota, DpPessoa pess) throws Exception {

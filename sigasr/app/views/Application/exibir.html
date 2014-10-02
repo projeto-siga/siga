@@ -290,7 +290,21 @@ $(function(){
 			</p>
 		</div>
 	</div>
-	#{/if}
+	#{/if} #{if solicitacao.isPendente()}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Pendências</h3>
+			#{list items:solicitacao.getPendentes(), as:'pendencia'}
+				<p>
+					<b>${pendencia.descrMovimentacao}</b>
+					<a href="javascript:terminarPendencia('${pendencia.motivoPendencia}', '${pendencia.idMovimentacao}');"> 
+						<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
+					</a> 
+				</p>
+			#{/list}
+		</div>
+	</div>
+	#{/if} 
 	<div id="divConhecimentosRelacionados">#{include
 				'Application/exibirConhecimentosRelacionados.html' /}</div>
 	
@@ -396,18 +410,20 @@ $(function(){
 			</div>
 		</form>
 	</div>
-	#{/modal} #{modal nome:'deixarPendente', titulo:'Pendente'}
+	#{/modal} #{modal nome:'pendencia', titulo:'Pendência'}
 	<form action="@{Application.deixarPendente()}" method="post"
 		enctype="multipart/form-data">
 		<div style="display: inline" class="gt-form-row gt-width-66">
 			<label>Em caso de agendamento, preencha a data/hora desejada:</label>
 			<table border="0" class="gt-table">
-				<col width="20%" />
-				<col width="20%" />
+				<col width="30%" />
+				<col width="30%" />
+				<col width="40%" />
 				<tbody>
 					<tr class="gt-celula-nowrap">
 						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Data</th>
 						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Hora</th>
+						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Motivo</th>
 					</tr>
 					<tr>
 						<td class="gt-celula-nowrap"
@@ -418,14 +434,20 @@ $(function(){
 							style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
 							<input type="text" name="horario" id="horario">
 						</td>
+						<td class="gt-celula-nowrap"
+							style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
+							#{select
+								name:'motivo', items:models.SrTipoMotivoPendencia.values(),
+								labelProperty:'descrTipoMotivoPendencia', style:'width:235px;' /}
+						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 		<p>
 		<div style="display: inline" class="gt-form-row gt-width-66">
-			<label>Motivo</label>
-			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
+			<label>Detalhamento do Motivo</label>
+			<textarea style="width: 100%" name="detalheMotivo" cols="50" rows="4"> </textarea>
 		</div>
 		<input type="hidden" name="completo" value="${completo}" /> <input
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
@@ -467,3 +489,39 @@ $(function(){
 				type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 		</form>
 	#{/modal}
+	
+<script language="javascript">
+
+function terminarPendencia(motivo, idMov){
+	$("#motivoId").val(motivo);
+	$("#movimentacaoId").val(idMov);
+	$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
+}
+
+</script>
+
+#{modal nome:'terminarPendenciaModal', titulo:'Terminar Pendencia'}
+	<form action="@{Application.terminarPendencia()}" method="post"
+		enctype="multipart/form-data">
+		<div style="display: inline" class="gt-form-row gt-width-66">
+			<label>Descrição</label>
+			<textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
+		</div>
+		<input type="hidden" name="completo" value="${completo}" /> <input
+			type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
+			type="hidden" name="motivo" id="motivoId" value="" /><input
+			type="hidden" name="id" value="${solicitacao.id}" /> <input
+			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+	</form>
+#{/modal}
+
+<script>
+$("#terminarPendenciaModal_dialog").dialog({
+    autoOpen: false,
+    height: 'auto',
+    width: 'auto',
+    modal: true,
+    resizable: false
+  });
+  
+</script>

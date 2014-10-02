@@ -330,13 +330,6 @@
 					id="motivoFechamentoAbertura" />
 			</div>
 			
-			<div class="gt-form-row gt-width-66">
-				<label>Quando deseja receber notificação de movimentacao?</label>
-				#{select name:'solicitacao.formaAcompanhamento',
-				items:models.SrFormaAcompanhamento.values(),
-				labelProperty:'descrFormaAcompanhamento',
-				value:solicitacao.formaAcompanhamento /}
-			</div>
 			#{if !solicitacao.idSolicitacao || solicitacao.rascunho}
 			<div class="gt-form-row">
 				<label>&nbsp;</label>

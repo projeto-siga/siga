@@ -37,6 +37,7 @@ import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
+import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
@@ -831,11 +832,11 @@ public class Application extends SigaApplication {
 		exibir(sol.idSolicitacao, completo());
 	}
 
-	public static void deixarPendente(Long id, String motivo,
-			String calendario, String horario) throws Exception {
+	public static void deixarPendente(Long id, SrTipoMotivoPendencia motivo,String calendario,
+			String horario, String detalheMotivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario,
-				horario);
+				horario, detalheMotivo);
 		exibir(id, completo());
 	}
 
@@ -847,9 +848,10 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	public static void terminarPendencia(Long id) throws Exception {
+	public static void terminarPendencia(Long id, String descricao,
+			SrTipoMotivoPendencia motivo, Long idMovimentacao) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.terminarPendencia(lotaTitular(), cadastrante());
+		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, motivo, idMovimentacao);
 		exibir(id, completo());
 	}
 

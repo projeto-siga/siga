@@ -108,10 +108,10 @@ ALTER TABLE SR_SOLICITACAO
 ADD (FG_RASCUNHO CHAR(1 CHAR) );
 
 -- OS_FS0005 Item 01: Inserindo na tabela SR_TIPO_MOVIMENTACAO para conter um novo status
-INSERT INTO "SIGASR"."SR_TIPO_MOVIMENTACAO" (ID_TIPO_MOVIMENTACAO, NOME_TIPO_MOVIMENTACAO) VALUES ('22', 'Em Elaboração')
+INSERT INTO "SIGASR"."SR_TIPO_MOVIMENTACAO" (ID_TIPO_MOVIMENTACAO, NOME_TIPO_MOVIMENTACAO) VALUES ('22', 'Em Elaboração');
 
 -- OS_FS0005 Item 01: Inserindo na tabela CP_MARCADOR para conter um novo status
-INSERT INTO "CORPORATIVO"."CP_MARCADOR" (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES ('61', 'Em Elaboração', '1')
+INSERT INTO "CORPORATIVO"."CP_MARCADOR" (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES ('61', 'Em Elaboração', '1');
 
 -- OS_FS0005 Item 01: Alterando a tabela SR_MOVIMENTACAO para permitir campo nulo
 ALTER TABLE SR_MOVIMENTACAO  
@@ -119,7 +119,51 @@ MODIFY (ID_LOTA_ATENDENTE NULL);
 
 --DIA 2014-09-29
 -- OS_FS0005 Item 01: Inserindo na tabela SR_TIPO_MOVIMENTACAO para conter um novo status
-INSERT INTO "SIGASR"."SR_TIPO_MOVIMENTACAO" (ID_TIPO_MOVIMENTACAO, NOME_TIPO_MOVIMENTACAO) VALUES ('23', 'Exclusão')
+INSERT INTO "SIGASR"."SR_TIPO_MOVIMENTACAO" (ID_TIPO_MOVIMENTACAO, NOME_TIPO_MOVIMENTACAO) VALUES ('23', 'Exclusão');
+
+
+-- OS_FS0006 - Item 5: Herança de designações 
+create sequence SR_CONFIGURACAO_IGNORADA_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+
+-- OS_FS0006 - Item 5: Herança de designações - Criação da Tabela
+create table SR_CONFIGURACAO_IGNORADA
+(
+  ID_CONFIGURACAO_IGNORADA NUMBER(19) not null,
+  ID_ITEM_CONFIGURACAO     NUMBER(19) not null,
+  ID_CONFIGURACAO          NUMBER(19) not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+
+-- OS_FS0006 - Item 5: Herança de designações - Criação das constraints
+alter table SR_CONFIGURACAO_IGNORADA
+  add constraint PK_SR_CONFIG_IGNORADA primary key (ID_CONFIGURACAO_IGNORADA)
+  using index 
+  tablespace KDB1
+  pctfree 10
+  initrans 2
+  maxtrans 255;
+alter table SR_CONFIGURACAO_IGNORADA
+  add constraint FK_CONF_IGN_CONFIGURACAO foreign key (ID_CONFIGURACAO)
+  references SR_CONFIGURACAO (ID_CONFIGURACAO_SR);
+alter table SR_CONFIGURACAO_IGNORADA
+  add constraint FK_CONF_IGN_ITEM foreign key (ID_ITEM_CONFIGURACAO)
+  references SR_ITEM_CONFIGURACAO (ID_ITEM_CONFIGURACAO);
+
 
 -- OS_FS0005 Item 02: Alterando a tabela SR_SOLICITACAO para conter um novo campo
 ALTER TABLE SR_SOLICITACAO 

@@ -334,6 +334,37 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		return SrItemConfiguracao.find(
 				"byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
 	}
+	
+	/**
+	 * Retorna a lista de {@link SrItemConfiguracao Pai} que este item possui.
+	 */
+	private List<SrItemConfiguracao> getListaPai() {
+		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
+		SrItemConfiguracao itemPai = this.getPai();
+		
+		while (itemPai != null) {
+			if (!lista.contains(itemPai))
+				lista.add(itemPai);
+				
+			itemPai = itemPai.getPai();
+		}
+		
+		return lista;
+	}
+	
+	/**
+	 * Lista as Designações que são vinculadas aos {@link SrItemConfiguracao Pai} deste item.
+	 */
+	public List<SrConfiguracao> getDesignacoesPai() {
+		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
+		
+		for (SrItemConfiguracao pai : this.getListaPai()) {
+			listasDesignacoesPai.addAll(SrConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(false, pai.getId()), this));
+		}
+		
+		return listasDesignacoesPai;
+	}
+	
 
 	public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
 		if (outroItem == null || outroItem.getSigla() == null)
@@ -433,7 +464,35 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
  		if (this.designacoes != null) {
  			for (SrConfiguracao designacao : this.designacoes) {
  				designacao.itemConfiguracao = this;
- 				designacao.salvarComoDesignacao();
+ 				
+ 				// se for uma configuração herdada
+ 				if (designacao.isHerdado) {
+ 					// se estiver marcada como "não Herdar"
+ 					if (!designacao.utilizarItemHerdado) {
+ 						// cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
+ 						SrConfiguracaoIgnorada.createNew(this, designacao).salvar();
+ 					}
+ 					
+ 					// verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)
+ 					else {
+ 						List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(designacao);
+ 						
+ 						for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
+ 							// se a configuração for do Item ou de um de seus históricos, remove
+ 	 						if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
+ 								for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
+ 									if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
+ 										igItem.delete();
+ 										break;
+ 									}
+ 								}
+ 							}
+ 						}
+ 					}
+ 				}
+ 				else {
+ 					designacao.salvarComoDesignacao();
+ 				}
  			}
  		}
     }

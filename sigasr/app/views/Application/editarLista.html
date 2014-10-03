@@ -190,10 +190,10 @@
 			prioridadesTable.rows().indexes().each(function (i) {
 				var rowValues = prioridadesTable.row(i).data();
 				
-				if (rowValues[0] != '')
+				if (rowValues[0] != '' && rowValues[0] > 0)
 					params += '&lista.permissoes[' + i + '].orgaoUsuario.idOrgaoUsu=' + rowValues[0];
 				
-				if (rowValues[2] != '')
+				if (rowValues[2] != '' && rowValues[2] > 0)
                 	params += '&lista.permissoes[' + i + '].complexo.idComplexo=' + rowValues[2];
 				
 				if (rowValues[4] != '')

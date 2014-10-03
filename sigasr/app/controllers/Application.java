@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,13 +31,13 @@ import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
-import models.SrMarca;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
+import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
@@ -217,6 +218,7 @@ public class Application extends SigaApplication {
 		
 		String calendario = null;
 		String horario = null;
+		Long dtIniEdicao;
 		
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
@@ -244,6 +246,8 @@ public class Application extends SigaApplication {
 			TypedQuery<SrSolicitacao> query = JPA.em().createQuery(queryString.toString(), SrSolicitacao.class);
 			query.setParameter("idCadastrante", cadastrante().getId());
 			
+			dtIniEdicao = new Date().getTime();
+			
 			List<SrSolicitacao> solicitacoes = query.getResultList();
 			SrSolicitacao ultimaSolicitacao = null;
 			if(solicitacoes.size() > 0) {
@@ -261,13 +265,14 @@ public class Application extends SigaApplication {
 				}
 			}
 		} else {
+			dtIniEdicao = new Date().getTime();
 			String data = solicitacao.getDtRegDDMMYYYYHHMM();
 			String[] array = data.split(" ");
 			calendario = array[0];
 			horario = array[1];
 		}
 
-		render("@editar", solicitacao, locais, acoesEAtendentes, calendario, horario);
+		render("@editar", solicitacao, locais, acoesEAtendentes, calendario, horario, dtIniEdicao);
 	}
 
 	private static void validarFormEditar(SrSolicitacao solicitacao)
@@ -407,8 +412,9 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario) throws Exception {
-        if(!solicitacao.rascunho)
+	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario, long dtIniEdicao) throws Exception {
+        solicitacao.dtIniEdicao = new Date(dtIniEdicao);
+		if(!solicitacao.rascunho)
         	validarFormEditar(solicitacao, calendario, horario);
         if(solicitacao.meioComunicacao == EMAIL
 				|| solicitacao.meioComunicacao == PANDION
@@ -826,11 +832,11 @@ public class Application extends SigaApplication {
 		exibir(sol.idSolicitacao, completo());
 	}
 
-	public static void deixarPendente(Long id, String motivo,
-			String calendario, String horario) throws Exception {
+	public static void deixarPendente(Long id, SrTipoMotivoPendencia motivo,String calendario,
+			String horario, String detalheMotivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario,
-				horario);
+				horario, detalheMotivo);
 		exibir(id, completo());
 	}
 
@@ -842,9 +848,10 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	public static void terminarPendencia(Long id) throws Exception {
+	public static void terminarPendencia(Long id, String descricao,
+			SrTipoMotivoPendencia motivo, Long idMovimentacao) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.terminarPendencia(lotaTitular(), cadastrante());
+		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, motivo, idMovimentacao);
 		exibir(id, completo());
 	}
 

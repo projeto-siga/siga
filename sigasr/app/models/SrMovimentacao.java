@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -106,6 +107,13 @@ public class SrMovimentacao extends GenericModel {
 	@Column(name = "DT_AGENDAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtAgenda;
+	
+	@Enumerated
+	public SrTipoMotivoPendencia motivoPendencia;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_MOV_FINALIZADORA")
+	public SrMovimentacao movFinalizadora;
 
 	public SrMovimentacao() throws Exception {
 		this(null);

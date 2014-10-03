@@ -11,6 +11,13 @@
 	border-radius: 5px 5px 0 0 !important;
 	margin-top: -15px !important;
 }
+.tempo h3{
+	color: #365b6d;
+	font-weight: normal; 
+	margin-bottom: 0px;
+	font-size: 138.5%;
+	border: 0;
+}
 </style>
 <script language="javascript">
 
@@ -195,6 +202,8 @@
 				<input type="hidden"
 				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
 				<input type="hidden"
+				name="dtIniEdicao" value="${dtIniEdicao}" />
+				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 			
 			<div class="gt-form-table">
@@ -321,29 +330,24 @@
 					id="motivoFechamentoAbertura" />
 			</div>
 			
-			<div class="gt-form-row gt-width-66">
-				<label>Quando deseja receber notificação de movimentacao?</label>
-				#{select name:'solicitacao.formaAcompanhamento',
-				items:models.SrFormaAcompanhamento.values(),
-				labelProperty:'descrFormaAcompanhamento',
-				value:solicitacao.formaAcompanhamento /}
-			</div>
 			#{if !solicitacao.idSolicitacao || solicitacao.rascunho}
 			<div class="gt-form-row">
 				<label>&nbsp;</label>
 				<label> 
-					<script language="javascript">
-						function changesolicitacaorascunho(){
-							if (document.getElementById('checksolicitacao.rascunho').checked)
-								document.getElementById('solicitacao.rascunho').value='true';
-							else document.getElementById('solicitacao.rascunho').value='false';
-						}
-					</script>
 					<input type="hidden" name="solicitacao.rascunho" id="solicitacao.rascunho" value="false" />
 					<input id="checksolicitacao.rascunho" type="checkbox" value="false" ${solicitacao.rascunho ? 'checked':''} onchange="javascript:changesolicitacaorascunho(); " />
 					Rascunho
 				</label>
 			</div>
+			<script language="javascript">
+				function changesolicitacaorascunho(){
+					if (document.getElementById('checksolicitacao.rascunho').checked)
+						document.getElementById('solicitacao.rascunho').value='true';
+					else document.getElementById('solicitacao.rascunho').value='false';
+				}
+
+				changesolicitacaorascunho();
+			</script>
 			#{/if}
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
@@ -357,10 +361,17 @@
 		<div class="gt-sidebar-content"><h2>&nbsp;</h2></div>
 	</div>
 	<div class="gt-sidebar">
+		<div class="gt-sidebar-content tempo">
+			<h3><img src="/siga/css/famfamfam/icons/clock_play.png" width="20px;" style="vertical-align: bottom;">
+				Atendimento: <span id="andamento"></span> horas</h3>
+			<h3 style="margin-left: 25px;">Total: <span id="total"></span> horas</h3>
+		</div>
+	</div>
+	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Solicitações relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
 			<div class="gt-content-box gt-form" id="filtroSolicitacoes">
-				<label>Filtro</label>
+				<label>Filtro</label> 
 				<select name="filtro" id="filtro" onchange="carregarSolRelacionadas(this.value)"><option value="">Selecione um filtro...</option></select>
 				<span style="margin-left: 21px;"><input type="checkbox" name="checkAtivos" id="checkAtivos" onclick="carregarSolRelacionadasPeloAtivo()" ><b> Incluir Inativas</b></span>
 			
@@ -421,6 +432,28 @@
 		verificarFormatoCampo(); 
 	});
 
+	function formatarValorTimer(num) {
+		if (num.toString().length == 1) 
+      		return "0" + num;
+
+  		return num;
+	}
+
+	var andamento = 0;	
+	function moveRelogio(mili){ 
+		andamento = andamento + mili;
+	   	dtAndamento = new Date(andamento);
+	   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
+	   	
+	   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
+	   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
+
+	   	$('#andamento').html(andamentoString);
+	   	$('#total').html(totalString);
+
+	   	setTimeout("moveRelogio(60000)",60000);
+	} 
+
 	carregarFiltrosAoIniciar();
-	changesolicitacaorascunho();
+	moveRelogio(0);
 </script>

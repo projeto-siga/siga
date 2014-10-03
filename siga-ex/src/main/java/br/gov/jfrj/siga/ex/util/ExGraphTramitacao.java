@@ -21,8 +21,8 @@ public class ExGraphTramitacao extends ExGraph {
 
 				if (atendenteAnterior != null) {
 					numTransicao++;
-					adicionar(new Transicao(atendenteAnterior.getSigla(), mov
-							.getLotaResp().getSigla())
+					adicionar(new Transicao(atendenteAnterior.getSiglaCompleta(), mov
+							.getLotaResp().getSiglaCompleta())
 							.setDirected(true)
 							.setLabel(String.valueOf(numTransicao))
 							.setTooltip(
@@ -30,7 +30,8 @@ public class ExGraphTramitacao extends ExGraph {
 				} else
 					atendenteInicial = mov.getLotaResp();
 
-				adicionar(new Nodo(mov.getLotaResp().getSigla())
+				adicionar(new Nodo(mov.getLotaResp().getSiglaCompleta())
+						.setLabel(mov.getLotaResp().getSigla())
 						.setShape(
 								mov.getLotaResp().equals(atendenteInicial) ? "oval"
 										: "rectangle")

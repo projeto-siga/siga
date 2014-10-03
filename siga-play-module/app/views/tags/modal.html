@@ -1,7 +1,17 @@
 <script language="javascript">
 
 function ${_nome}(){
-	$( "#${_nome}_dialog" ).dialog( "open" );
+	#{if _url}
+		PassAjaxResponseToFunction('${_url}', 'carregouAjax${_nome}', null, false, null);
+	#{/if}
+	#{else}
+		$( "#${_nome}_dialog" ).dialog( "open" );
+	#{/else}
+}
+
+function carregouAjax${_nome}(response, param){
+		$("#${_nome}_dialog").html(response);
+		$("#${_nome}_dialog").dialog( "open" );
 }
 
 </script>

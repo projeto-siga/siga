@@ -15,7 +15,7 @@ import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "SR_TIPO_MOVIMENTACAO", schema = "SIGASR")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SrTipoMovimentacao extends GenericModel {
 
 	final static public long TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO = 1;

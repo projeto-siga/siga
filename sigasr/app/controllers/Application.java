@@ -16,6 +16,7 @@ import java.util.TreeSet;
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
 
+import models.Sr;
 import models.SrAcao;
 import models.SrArquivo;
 import models.SrAtributo;
@@ -520,6 +521,12 @@ public class Application extends SigaApplication {
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		render(lista);
+	}
+	
+	public static void associarLista(Long idSolicitacao) throws Exception {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
+		solicitacao = solicitacao.getSolicitacaoAtual();
+		render(solicitacao);
 	}
 
 	public static void associarListaGravar(Long idSolicitacao, Long idLista)

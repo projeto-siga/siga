@@ -67,7 +67,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -75,7 +75,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrLista listaInicial;
 
-	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
 
@@ -109,6 +109,8 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public SrLista getListaAtual() {
+		if (getHisDtFim() == null)
+			return this;
 		List<SrLista> listas = getHistoricoLista();
 		if (listas == null)
 			return null;
@@ -145,11 +147,13 @@ public class SrLista extends HistoricoSuporte {
 		return (lota.equals(lotaCadastrante));
 	}
 
-	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess) throws Exception{
+	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess)
+			throws Exception {
 		return (lotaTitular.equals(lotaCadastrante));
 	}
 
-	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception{
+	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess)
+			throws Exception {
 		if ((lotaTitular.equals(lotaCadastrante)))
 			return true;
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(lotaTitular, pess,
@@ -211,6 +215,21 @@ public class SrLista extends HistoricoSuporte {
 			if (s.getPrioridadeNaLista(this) != i)
 				s.priorizar(this, i, pessoa, lota);
 		}
+	}
+
+	@Override
+	public void salvar() throws Exception {
+		super.salvar();
+
+		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
+		// instancia do objeto, caso contrario, nao ha configuracao
+		// referenciando
+		if (listaInicial != null)
+			SrConfiguracaoBL
+					.get()
+					.limparCache(
+							(CpTipoConfiguracao) CpTipoConfiguracao
+									.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 	}
 
 }

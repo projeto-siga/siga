@@ -89,3 +89,11 @@ td.padding-table {
     display: -webkit-flex;
     display: flex;
 }
+
+.configuracaoHerdada {
+    color: gray !important;
+}
+
+.checkbox-hidden {
+	visibility: hidden;
+}

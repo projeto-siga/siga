@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -155,6 +156,12 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;
 	
+	@Transient
+	public boolean isHerdado;
+	
+	@Transient
+	public boolean utilizarItemHerdado;
+	
 	public SrConfiguracao() {
 		
 	}
@@ -217,7 +224,7 @@ public class SrConfiguracao extends CpConfiguracao {
 						sb.toString(), 
 						SrConfiguracao.class).getResultList();
 	}
-
+	
 	public void salvarComoPermissaoUsoLista() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
@@ -428,6 +435,62 @@ public class SrConfiguracao extends CpConfiguracao {
 	        
 	        return gson.toJson(this);
 		}
+	}
+
+	/**
+	 * Marca os itens como  herdados.
+	 */
+	public static List<SrConfiguracao> marcarComoHerdadas(List<SrConfiguracao> listasDesignacoesPai, SrItemConfiguracao item) {
+		Iterator<SrConfiguracao> i = listasDesignacoesPai.iterator();
+		
+		while (i.hasNext()) {
+			SrConfiguracao conf = i.next();
+			boolean encontrou = false;
+			
+			conf.isHerdado = true;
+			conf.utilizarItemHerdado = true;
+			
+			List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(conf);
+			
+			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
+				// Se a configuração for do Item, vai como desmarcado
+				if (item.getId().equals(igItem.itemConfiguracao.getId())) {
+					conf.utilizarItemHerdado = false;
+				}
+				
+				// se a configuração for do Item (histórico), vai como desmarcado
+				else if (item.getHistoricoItemConfiguracao() != null && item.getHistoricoItemConfiguracao().size() > 0) {
+					for (SrItemConfiguracao itemHist : item.getHistoricoItemConfiguracao()) {
+						if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
+							conf.utilizarItemHerdado = false;
+							encontrou = true;
+							break;
+						}
+					}
+				}
+				
+				else {
+					SrItemConfiguracao itemPai = item.getPai();
+					
+					while(itemPai != null) {
+						
+						// Se for configuração do pai, não aparece na tela caso esteja marcada para Ignorar no Pai
+						if (itemPai.getId().equals(igItem.itemConfiguracao.getId())) {
+							i.remove();
+							break;
+						}
+						else
+							itemPai = itemPai.getPai();
+					}
+				}
+				
+				// Caso tenha encontrado a configuração correta, interrompe o loop
+				if (encontrou)
+					break;
+			}
+		}
+		
+		return listasDesignacoesPai;
 	}
 	
 }

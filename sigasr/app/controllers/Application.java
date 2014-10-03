@@ -997,10 +997,12 @@ public class Application extends SigaApplication {
 		SrItemConfiguracao itemConfiguracao = new SrItemConfiguracao();
 		if (id != null) {
 			itemConfiguracao = SrItemConfiguracao.findById(id);
-			designacoes = SrConfiguracao.listarDesignacoes(false, id);
+			designacoes = itemConfiguracao.getDesignacoesPai();
+			designacoes.addAll(SrConfiguracao.listarDesignacoes(false, id));
 		}
-		else
+		else {
 			designacoes = new ArrayList<SrConfiguracao>();
+		}
 		
 		render(itemConfiguracao, designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}

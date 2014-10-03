@@ -8,7 +8,7 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:selecao titulo="Ano da Remoção" opcoes="2012;2013;2014;2015;2016;2017;2018"
+			<mod:selecao titulo="Ano da Remoção" opcoes="2014;2015;2016;2017;2018"
 			var="anoRemocao" />
 			&nbsp;&nbsp;&nbsp;
 			<mod:data  var="dataEdital" titulo="Data de publicação do Edital" obrigatorio="Sim"/>
@@ -82,7 +82,7 @@ first-page-body {
 		Concurso Nacional de Remoção ${anoRemocao},com base no art. 20 da Lei n. 11.416/2006 c/c a Lei n.
 8.112/1990, no Anexo IV da Portaria Conjunta n. 3, de 31 de maio de 2007, e no art. 27, § 3º,
 da Resolução n. 3, de 10 de março de 2008, do Conselho da Justiça Federal e declaro que
-concordo com os termos do Edital do CJF de ${dataEdital}.</p>
+concordo com os termos do EDITAL n. CJF-EDT-2014/00003, de ${dataEdital}.</p>
 		
 		<br />
 		<p>Nestes termos,</p>

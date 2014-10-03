@@ -50,10 +50,8 @@ public class WfMail extends Mail {
 	@Override
 	public String getText() {
 		String rodape = "\n\n----------\n";
-		String linkTarefa = getLinkTarefa();
-		String linkDocumento = getLinkDocumento();
 		if (tiId != null) {
-			rodape += "Link para a tarefa no SIGA-WF: " + linkTarefa
+			rodape += "Link para a tarefa no SIGA-WF: " + Wf.getInstance().getProp().getMailLinkTarefa()
 					+ this.tiId + "\n";
 		}
 
@@ -65,7 +63,7 @@ public class WfMail extends Mail {
 					
 					rodape += "Link para o "
 							+ v.getVariableName()
-							+ " no SIGA: " + linkDocumento
+							+ " no SIGA: " + Wf.getInstance().getProp().getMailLinkDocumento()
 							+ docVariables.get(v.getMappedName()) + "\n";
 				}
 
@@ -75,21 +73,6 @@ public class WfMail extends Mail {
 		return super.getText() + rodape;
 	}
 
-	private String getLinkDocumento() {
-		try {
-			return Wf.getInstance().getProp().getMailLinkDocumento();
-		} catch (Exception e) {
-			return "indefinido";
-		}
-	}
-
-	private String getLinkTarefa() {
-		try {
-			return Wf.getInstance().getProp().getMailLinkTarefa();
-		} catch (Exception e) {
-			return "indefinido";
-		}
-	}
 
 	/**
 	 * Ao iniciar a manipulação do e-mail, esse método captura as informações

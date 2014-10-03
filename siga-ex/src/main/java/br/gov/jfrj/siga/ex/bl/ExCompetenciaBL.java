@@ -3023,6 +3023,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!podeSerMovimentado(mob))
 			return false;
 
+		if (mob.isGeral()) {
+			for (ExMobil m : mob.doc().getExMobilSet()) {
+				if (!m.isGeral() && podeMovimentar(titular, lotaTitular, m))
+					return true;
+			}
+			return false;
+		}
+
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
 		if (exMov == null) {
 			return false;

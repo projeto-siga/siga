@@ -70,46 +70,35 @@ first-page-body {
 		FIM CABECALHO -->
 		<br />
 
-		<br />
+
 		<p align="justify" style="line-height: 150%">Excelentíssimo Senhor
 		Diretor do Foro</p>
-		<br />
-		<br />
+
+
 		<p align="justify" style="line-height: 200%">Eu,
-		${doc.subscritor.descricao}, nascido no dia  <fmt:formatDate pattern="dd/MM/yyyy" value="${doc.subscritor.dataNascimento}" />, ocupante do cargo efetivo de ${doc.subscritor.cargo.nomeCargo},
+		${doc.subscritor.descricao}, ocupante do cargo efetivo de ${doc.subscritor.cargo.nomeCargo},
 		área ${area}, do quadro pessoal da Seção Judiciária do Rio de Janeiro, matrícula nº
 		RJ${doc.subscritor.matricula}, venho requerer a V. Exa. a inscrição no
-		Concurso Nacional de Remoção a Pedido Mediante Permuta ${anoRemocao}, com base
-		no art. 20 da Lei nº 11.416/2006 c/c a Lei nº 8.112/1990, e nos termos
-		da Portaria Conjunta nº 3/2007, da Resolução 3/2008 alterada pela
-		Resolução nº 66/2009 e pela Resolução n° 229/2013 do Conselho da Justiça Federal e declaro que
-		concordo com os termos do Edital do CJF de ${dataEdital}.</p>
-		<br />
+		Concurso Nacional de Remoção ${anoRemocao},com base no art. 20 da Lei n. 11.416/2006 c/c a Lei n.
+8.112/1990, no Anexo IV da Portaria Conjunta n. 3, de 31 de maio de 2007, e no art. 27, § 3º,
+da Resolução n. 3, de 10 de março de 2008, do Conselho da Justiça Federal e declaro que
+concordo com os termos do Edital do CJF de ${dataEdital}.</p>
+		
 		<br />
 		<p>Nestes termos,</p>
 		<p>Peço deferimento.</p>
-		<br />
-		<br />
 
 		<p align="center">${doc.dtExtenso}</p>
 		<br />
-		<br />
-		<br />
-		<br />
-
-		<p></p>
-		<p></p>
-
 
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
 
 		<p>Informações adicionais:</p>
-		<p>CPF: ${f:formatarCPF(doc.subscritor.cpfPessoa)}</p>
-		<p>E-mail: ${email}</p>
+		<p>CPF: ${f:formatarCPF(doc.subscritor.cpfPessoa)} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E-mail: ${email}</p>
 		<c:if test="${empty qtdFilhos}">
 			<c:set var="qtdFilhos" value="0" />
 		</c:if>
-		<p>Quantidade de filhos: ${qtdFilhos}</p>
+		<p>Quantidade de filhos: ${qtdFilhos}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Data de nascimento: <fmt:formatDate pattern="dd/MM/yyyy" value="${doc.subscritor.dataNascimento}" /></p>
 
 		<!-- INICIO PRIMEIRO RODAPE
 		<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental2.jsp" />
@@ -118,7 +107,15 @@ first-page-body {
 		<!-- INICIO RODAPE
 		<c:import url="/paginas/expediente/modelos/inc_rodapeNumeracaoADireita2.jsp" />
 		FIM RODAPE -->
-
+		<p align="center">Termo de ciência e concordância:</p>
+&nbsp;&nbsp;&nbsp;Afirmo que estou ciente do prazo para desistência previsto no edital e assumo a
+responsabilidade pela participação no certame.<br/>
+&nbsp;&nbsp;&nbsp;Afirmo que estou ciente que posso ser removido para qualquer das opções
+escolhidas e concordo com as regras previstas no edital do concurso Nacional de
+Remoção de 2014.<br/>
+&nbsp;&nbsp;&nbsp;Afirmo que estou ciente de que, se contemplado com a remoção, deverei cancelar as
+férias deferidas pelo órgão de origem para remarcá-las diretamente no órgão de
+destino.
 		</body>
 		</html>
 	</mod:documento>

@@ -63,6 +63,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
+import javax.swing.event.ListSelectionEvent;
 
 import notifiers.Correio;
 
@@ -1291,8 +1292,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		checarEPreencherCampos();
 
 		super.salvar();
-
+		
 		if (getMovimentacaoSetComCancelados().size() == 0 && !rascunho) {
+			
 			if (fecharAoAbrir)
 				fechar(lotaCadastrante, cadastrante, motivoFechamentoAbertura);
 			else if (temPreAtendenteDesignado())
@@ -1300,6 +1302,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			else
 				iniciarAtendimento(lotaCadastrante, cadastrante);
 			
+			List<SrLista> listas = getListasParaInclusaoAutomatica(lotaCadastrante);
+			for (SrLista lista : listas) {
+				if (!isEmLista(lista))
+					associarLista(lista, cadastrante, lotaCadastrante);
+			}
+
 			if (!isEditado()
 					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
@@ -1656,6 +1664,26 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
+	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular) throws Exception {
+		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
+		
+		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(solicitante,
+				local, itemConfiguracao, acao,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
+		
+		for (SrConfiguracao conf : confs) {
+			for (SrListaConfiguracao listaConf : conf.getListaConfiguracaoSet()) {
+				SrLista listaAtual = listaConf.lista.getListaAtual();
+				if (!listaFinal.contains(listaAtual))
+					listaFinal.add(listaAtual);
+			}
+		}
+
+		listaFinal.removeAll(getListasAssociadas());
+		return new ArrayList<SrLista>(listaFinal);
+	}
+	
 	public List<SrLista> getListasDisponiveisParaInclusao(
 			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);

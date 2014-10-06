@@ -42,8 +42,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javassist.expr.NewArray;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,7 +61,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
-import javax.swing.event.ListSelectionEvent;
 
 import notifiers.Correio;
 
@@ -91,6 +88,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Entity
 @Table(name = "SR_SOLICITACAO", schema = "SIGASR")
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_SOLICITACAO_SEQ", name = "srSolicitacaoSeq")
@@ -1082,6 +1084,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return locais;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
 		Set<SrItemConfiguracao> listaFinal = new TreeSet<SrItemConfiguracao>(
 				new SrItemConfiguracaoComparator());
@@ -1111,6 +1114,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return new ArrayList(listaFinal);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
 		return new ArrayList(getAcoesDisponiveisComAtendente().keySet());
 	}
@@ -1176,6 +1180,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return m;
 	}
 
+	@SuppressWarnings("serial")
 	public SortedSet<SrOperacao> operacoes(final DpLotacao lotaTitular,
 			final DpPessoa titular, final boolean vendoHistoricoCompleto)
 			throws Exception {
@@ -1530,9 +1535,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					a = null;
 			} else {
 
-				if (a == null) {
-					int i = 0;
-				}
 				// O registro existe nos dois - atualizar.add(new Par(b, a));
 				if (ib.hasNext())
 					b = ib.next();

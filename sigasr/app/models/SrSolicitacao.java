@@ -23,6 +23,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1016,7 +1017,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeAssociarLista(DpLotacao lota, DpPessoa pess) {
-		return !isFechado() && estaCom(lota, pess);
+		return !isFechado();
 	}
 
 	public boolean podeTrocarAtendente(DpLotacao lota, DpPessoa pess) {
@@ -1334,6 +1335,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		
 		if (dtReg == null)
 			dtReg = new Date();
+
+		if (arquivo != null) {
+			double lenght = (double)arquivo.blob.length / 1024 / 1024;
+			if (lenght > 2)
+				throw new IllegalArgumentException("O tamanho do arquivo ("
+						+ new DecimalFormat("#.00").format(lenght)
+						+ "MB) � maior que o m�ximo permitido (2MB)");
+		}
 
 		if (lotaCadastrante == null)
 			lotaCadastrante = cadastrante.getLotacao();

@@ -127,6 +127,22 @@
 					}
 				</script>
 
+	<c:set var="dtUlt" value="" />
+
+	<!-- Verifica se haverá alguma movimentação para ser exibida -->
+	<c:set var="temmov" value="${false}" />
+	<c:forEach var="mov" items="${m.movs}">
+		<c:if
+			test="${ (mov.idTpMov != 14 and
+							          not mov.cancelada)}">
+			<c:set var="temmov" value="${true}" />
+		</c:if>
+	</c:forEach>
+	
+<div class="gt-bd gt-cols clearfix"
+	style="padding-top: 0px; margin-top: 25px;padding-left: 0px;">
+	<div class="gt-content">
+
 				<!-- Somente quando o workflow está ativado -->
 				<c:if test="${f:resource('isWorkflowEnabled')}">
 				<!-- Se for um processo administrativo, colocar a caixa do wf geral no último volume -->
@@ -147,21 +163,6 @@
 				
 				</c:if>
 	
-	<c:set var="dtUlt" value="" />
-
-	<!-- Verifica se haverá alguma movimentação para ser exibida -->
-	<c:set var="temmov" value="${false}" />
-	<c:forEach var="mov" items="${m.movs}">
-		<c:if
-			test="${ (mov.idTpMov != 14 and
-							          not mov.cancelada)}">
-			<c:set var="temmov" value="${true}" />
-		</c:if>
-	</c:forEach>
-	
-<div class="gt-bd gt-cols clearfix"
-	style="padding-top: 0px; margin-top: 25px;padding-left: 0px;">
-	<div class="gt-content">
 		<!-- Dados do documento -->
 		<div class="gt-content-box" style="padding: 10px;">
 			<table style="width: 100%">
@@ -658,19 +659,20 @@
 		    	${docVO.dadosComplementares}
 			</c:if>
 			
-			<%-- <c:if test="${not empty docVO.doc.movsCosignatario}">
+			<c:if test="${not empty docVO.cossignatarios}">
 			<div class="gt-sidebar-content" style="padding-top: 10px">
 			<h3>Cossignatários</h3>
 			<ul>
-			<c:forEach var="cossig" items="${docVO.doc.movsCosignatario}">
+			<c:forEach var="cossig" items="${docVO.cossignatarios}">
 				<li>
-					${cossig.subscritor.nomePessoa}&nbsp;|
-					<a href="/sigaex/expediente/mov/excluir.action?id=${cossig.idMov}" >Excluir</a>
+					${cossig.key.subscritor.nomePessoa}
+					<c:if test="${cossig.value}">&nbsp;
+					<a href="/sigaex/expediente/mov/excluir.action?id=${cossig.key.idMov}" >Excluir</a></c:if>
 				</li>
 			</c:forEach>
 			</ul>
 			</div>
-			</c:if>--%> 
+			</c:if>
 			
 			<c:if test="${not empty docVO.doc.perfis}">
 			<div class="gt-sidebar-content" style="padding-top: 10px">

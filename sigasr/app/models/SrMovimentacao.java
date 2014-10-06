@@ -1,6 +1,7 @@
 package models;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -101,7 +102,7 @@ public class SrMovimentacao extends GenericModel {
 	public SrPesquisa pesquisa;
 
 	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao")
-	//@OrderBy("pergunta asc")
+	// @OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
 
 	@Column(name = "DT_AGENDAMENTO")
@@ -138,7 +139,7 @@ public class SrMovimentacao extends GenericModel {
 
 	public List<SrResposta> setRespostaMap(HashMap<Long, Object> respostas)
 			throws Exception {
-		
+
 		respostaSet = new ArrayList<SrResposta>();
 		Iterator<Map.Entry<Long, Object>> entries = respostas.entrySet()
 				.iterator();
@@ -147,9 +148,10 @@ public class SrMovimentacao extends GenericModel {
 			SrResposta resp = new SrResposta();
 			Long entrada = entry.getKey();
 			resp.pergunta = SrPergunta.findById(entrada);
-			if (resp.pergunta.tipoPergunta.idTipoPergunta == 1) 
-					resp.descrResposta = (String) entry.getValue();
-			else resp.grauSatisfacao = (SrGrauSatisfacao) entry.getValue();
+			if (resp.pergunta.tipoPergunta.idTipoPergunta == 1)
+				resp.descrResposta = (String) entry.getValue();
+			else
+				resp.grauSatisfacao = (SrGrauSatisfacao) entry.getValue();
 			respostaSet.add(resp);
 		}
 		return respostaSet;
@@ -161,8 +163,9 @@ public class SrMovimentacao extends GenericModel {
 			for (SrResposta resp : respostaSet) {
 				if (!resp.descrResposta.equals(""))
 					map.put(resp.pergunta.idPergunta, resp.descrResposta);
-				else 
-					map.put(resp.pergunta.idPergunta, resp.grauSatisfacao.descrGrauSatisfacao);
+				else
+					map.put(resp.pergunta.idPergunta,
+							resp.grauSatisfacao.descrGrauSatisfacao);
 			}
 		return map;
 	}
@@ -207,7 +210,7 @@ public class SrMovimentacao extends GenericModel {
 
 	public String getDtAgendaDDMMYYHHMM() {
 		if (dtAgenda != null) {
-			DateTime dateTime =new DateTime(dtAgenda);
+			DateTime dateTime = new DateTime(dtAgenda);
 			return dateTime.toString("dd/MM/yyyy HH:mm");
 		}
 		return "";
@@ -280,6 +283,14 @@ public class SrMovimentacao extends GenericModel {
 		if (solicitacao == null)
 			throw new Exception(
 					"Movimentação precisa fazer parte de uma solicitação");
+
+		if (arquivo != null) {
+			double lenght = (double)arquivo.blob.length / 1024 / 1024;
+			if (lenght > 2)
+				throw new IllegalArgumentException("O tamanho do arquivo ("
+						+ new DecimalFormat("#.00").format(lenght)
+						+ "MB) � maior que o m�ximo permitido (2MB)");
+		}
 
 		if (dtIniMov == null)
 			dtIniMov = new Date();

@@ -27,6 +27,10 @@ import org.jbpm.graph.exe.Token;
 import org.jbpm.identity.assignment.ExpressionAssignmentException;
 import org.jbpm.identity.assignment.ExpressionAssignmentHandler;
 import org.jbpm.identity.assignment.TermTokenizer;
+import org.jbpm.jpdl.el.ExpressionEvaluator;
+import org.jbpm.jpdl.el.FunctionMapper;
+import org.jbpm.jpdl.el.VariableResolver;
+import org.jbpm.jpdl.el.impl.ExpressionEvaluatorImpl;
 import org.jbpm.security.SecurityHelper;
 import org.jbpm.taskmgmt.exe.Assignable;
 import org.jbpm.taskmgmt.exe.SwimlaneInstance;
@@ -137,6 +141,24 @@ public class WfExpressionAssignmentHandler {
 			if (value == null) {
 				throw new ExpressionAssignmentException("variable '"
 						+ variableName + "' is null");
+
+			} else if (value instanceof String) {
+				try {
+					entity = getUserByName((String) value);
+				} catch (Exception ex) {
+					entity = getGroupByName((String) value);
+				}
+			} else if (value instanceof DpResponsavel) {
+				entity = (DpResponsavel) value;
+			}
+
+		} else if ((term.startsWith("expression(")) && (term.endsWith(")"))) {
+			String expressionName = term.substring(11, term.length() - 1).trim();
+			Object value = getExpression(expressionName);
+
+			if (value == null) {
+				throw new ExpressionAssignmentException("expression '"
+						+ expressionName + "' is null");
 
 			} else if (value instanceof String) {
 				try {
@@ -300,6 +322,20 @@ public class WfExpressionAssignmentHandler {
 		Token token = executionContext.getToken();
 		return executionContext.getContextInstance().getVariable(variableName,
 				token);
+	}
+
+	/**
+	 * Retorna a variável do contexto de execução, caso exista.
+	 * 
+	 * @param variableName
+	 * @return
+	 */
+	protected Object getExpression(String expression) {
+		FunctionMapper fm = new WfFunctionMapper();
+		VariableResolver vr = new WfVariableResolver(executionContext);
+		ExpressionEvaluator ee = new ExpressionEvaluatorImpl();
+		Object result = ee.evaluate("${" + expression + "}", String.class, vr, fm);
+		return result;
 	}
 
 	/**

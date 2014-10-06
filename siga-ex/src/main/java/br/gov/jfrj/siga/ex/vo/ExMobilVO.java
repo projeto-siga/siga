@@ -539,9 +539,11 @@ public class ExMobilVO extends ExVO {
 									.getIdInicial()
 									.equals(mar.getDpPessoaIni().getIdInicial()))) {
 						sb.append(mar.getCpMarcador().getDescrMarcador());
-						sb.append(" [");
+						sb.append(" [<span title=\"");
+						sb.append(mar.getDpPessoaIni().getNomePessoa());
+						sb.append("\">");
 						sb.append(mar.getDpPessoaIni().getSigla());
-						sb.append("]");
+						sb.append("</span>]");
 					}
 				}
 			}
@@ -567,7 +569,11 @@ public class ExMobilVO extends ExVO {
 							if (mar.getDpLotacaoIni() != null) {
 								sb.append(", ");
 							}
+							sb.append(" [<span title=\"");
+							sb.append(mar.getDpPessoaIni().getNomePessoa());
+							sb.append("\">");
 							sb.append(mar.getDpPessoaIni().getSigla());
+							sb.append("</span>]");
 						}
 						sb.append("]");
 					}

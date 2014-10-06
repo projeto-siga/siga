@@ -21,6 +21,10 @@ public class GcTipoInformacao extends GenericModel {
 
 	@Column(name = "NOME_TIPO_INFORMACAO", nullable = false)
 	public String nome;
+	
+	@ManyToOne()
+	@JoinColumn(name = "ARQUIVO")
+	public GcArquivo arq;
 
 	public GcTipoInformacao(long id, String nome) {
 		super();

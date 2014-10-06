@@ -42,6 +42,7 @@
 			<ww:else>
 				<c:import url="comentario.jsp" />
 			</ww:else>
+			<h4>Versão: ${siga.versao}</h4>
 		</div>
 		<!-- / main content -->
 

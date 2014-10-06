@@ -4,7 +4,7 @@
 	#{/set}
 #{if cadastrante!=null}	 
 	<a style="float: right;" title="Editar conhecimento"
-		href="${url}"><img
+		href="${url}" target="#{if popup}_blank#{/if}"><img
 		src="/siga/css/famfamfam/icons/pencil.png"> </a>
 #{/if}
 	${conhecimento[2].raw()}
@@ -14,12 +14,12 @@
 		@{Application.editar(null, classificacao, titulo, referer)}
 	#{/set} 
 	<a style="float: right;" title="Registrar um novo conhecimento"
-		href="${url}"><img src="/siga/css/famfamfam/icons/add.png"> </a>
+		href="${url}" target="#{if popup}_blank#{/if}"><img src="/siga/css/famfamfam/icons/add.png"> </a>
 	#{if msgvazio != null}
 		<p>${msgvazio.replace("\$1", url).raw()}</p>
 	#{/if}
 	#{else}
-	Nenhum conhecimento relacionado registrado. Clique <a href="${url}">aqui</a>
+	Nenhum conhecimento relacionado registrado. Clique <a href="${url}" target="#{if popup}_blank#{/if}">aqui</a>
 	para registrar um novo conhecimento.
 	#{/else}
 #{/else}

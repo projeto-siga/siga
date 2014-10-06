@@ -57,6 +57,7 @@
 						<c:forEach var="variable" items="${task.variableList}">
 							<c:if test="${not variable.aviso}">
 								<tr>
+									<c:if test="${(empty doc_ref) or (not (doc_ref eq taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]))}">
 									<ww:if test="%{#attr.variable.mappedName.startsWith('sel_')}">
 										<td width="">${fn:substring(variable.variableName,0,fn:indexOf(variable.variableName,'('))}</td>
 									</ww:if>
@@ -146,8 +147,10 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
 											</c:choose>
-										</ww:else></td>
+										</ww:else>
+									</td>
 								</tr>
+								</c:if>
 							</c:if>
 						</c:forEach>
 						<c:if

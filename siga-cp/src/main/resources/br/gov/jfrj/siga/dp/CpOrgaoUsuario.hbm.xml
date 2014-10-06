@@ -61,8 +61,8 @@
 
 	<query name="consultarSiglaOrgaoUsuario">
 		<![CDATA[from CpOrgaoUsuario org 
-		where org.siglaOrgaoUsu = :sigla 
-		or upper(org.acronimoOrgaoUsu) like upper('%' || :sigla || '%')]]>
+		where upper(org.siglaOrgaoUsu) = upper(:sigla) 
+		or upper(org.acronimoOrgaoUsu) = upper(:sigla)]]>
 	</query>
 	
 	<query name="consultarCpOrgaoUsuario">

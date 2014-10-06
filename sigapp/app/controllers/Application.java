@@ -478,9 +478,6 @@ public class Application extends SigaApplication {
 			String frm_hora_ag, String frm_cod_local, String matricula,
 			String periciado, String perito_juizo, String perito_parte,
 			String orgao, String processo, Integer lote) {
-		System.out.println(" === ");
-		System.out.println("Lote: " + lote);
-		System.out.println(" === ");
 		matricula = cadastrante().getMatricula().toString();
 		String resposta = "";
 		Locais auxLocal = Locais.findById(frm_cod_local);
@@ -637,15 +634,7 @@ public class Application extends SigaApplication {
 			// forum onde ele está.
 			Locais objSala = Locais.find(
 					"cod_forum='" + objUsuario.forumFk.cod_forum
-							+ "' and cod_local='" + cod_sala + "'").first(); // isso
-																				// nÃ£o
-																				// dá
-																				// erro
-																				// no
-																				// caso
-																				// de
-																				// retorno
-																				// vazio?
+							+ "' and cod_local='" + cod_sala + "'").first(); // isso não dá erro no caso de retorno vazio?
 			String sala_ag = objSala.local;
 			String lotacaoSessao = cadastrante().getLotacao().getIdLotacao()
 					.toString();
@@ -790,6 +779,7 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void agendamento_sala_lista(String frm_cod_local, String frm_data_ag){
+		String local = "";
 		String lotacaoSessao = cadastrante().getLotacao().getSiglaLotacao();
 		List<Locais> listSalas = new ArrayList();
 		// pega usuario do sistema
@@ -799,17 +789,19 @@ public class Application extends SigaApplication {
 		if (objUsuario != null) {
 			// Pega o usuário do sistema, e, busca os locais(salas) daquele
 			// forum onde ele está.
-			listSalas = (List) Locais.find(
-					"cod_forum='" + objUsuario.forumFk.cod_forum + "' order by ordem_apresentacao ").fetch(); // isso não dá erro no caso de retorno vazio.
+			listSalas = ((List) Locais.find("forumFk='" + objUsuario.forumFk.cod_forum + "' order by ordem_apresentacao ").fetch()); // isso não dá erro no caso de retorno vazio.
 			List<Agendamentos> listAgendamentosMeusSala = new ArrayList();
-			if(!(frm_cod_local.isEmpty()||frm_data_ag.isEmpty())){
+			if(!(frm_cod_local==null||frm_data_ag.isEmpty())){
 				//lista os agendamentos do dia, e, da lotação do cadastrante
-				listAgendamentosMeusSala = (List) Agendamentos.find("localFk.cod_local='" + frm_cod_local + "' and data_ag = to_date('" + frm_data_ag + "','yy-mm-dd')");
-				render(listSalas,listAgendamentosMeusSala,lotacaoSessao);
-			}else{
-				listAgendamentosMeusSala = null;
-				render(listSalas,listAgendamentosMeusSala ,lotacaoSessao);
+				listAgendamentosMeusSala = ((List) Agendamentos.find("localFk.cod_local='" + frm_cod_local + "' and data_ag = to_date('" + frm_data_ag + "','yy-mm-dd')").fetch());
+				for(int i=0;i<listSalas.size();i++){
+					if(listSalas.get(i).cod_local.equals(frm_cod_local)){
+						local = listSalas.get(i).local;
+					}
+				}
+				
 			}
+			render(local, listSalas,listAgendamentosMeusSala,lotacaoSessao);
 		} else {
 			Excecoes("Usuario sem permissao");
 		}
@@ -855,7 +847,42 @@ public class Application extends SigaApplication {
 			render(objUsuario, paramCodForum, descricaoForum, mensagem,
 					outrosForuns);
 		} else {
-			Excecoes("Usuario sem permissao");
+			Excecoes("Usuario sem permissao.");
+		}
+	}
+	public static void permissao_inclui(String matricula_permitida, String nome_permitido, String forum_permitido ) throws Exception{
+		String mensagem = "";
+		// pega usuário do sistema
+		String matriculaSessao = cadastrante().getMatricula().toString();
+		// String nomeSessao = cadastrante().getNomeAbreviado();
+		String lotacaoSessao = cadastrante().getLotacao().getSiglaLotacao();
+		UsuarioForum objUsuario = UsuarioForum.find("matricula_usu = '"+matriculaSessao+"'").first();
+		if ((objUsuario !=null) && (lotacaoSessao.trim().equals("CSIS"))){
+			if((matricula_permitida!=null) && (nome_permitido!=null) && (forum_permitido!=null) && (!matricula_permitida.isEmpty()) && (!nome_permitido.isEmpty()) && (!forum_permitido.isEmpty())){
+				Foruns atribForum = (Foruns) Foruns.find("cod_forum='"+forum_permitido+"'").first();
+				UsuarioForum usuarioPermitido = new UsuarioForum(matricula_permitida, nome_permitido, atribForum);
+				try {
+					usuarioPermitido.save();
+					JPA.em().flush();
+					JPA.em().clear();
+					mensagem = "Ok.";
+				}catch (Exception e) {
+					e.printStackTrace();
+					if ((e.getMessage().substring(0,89).equals("a different object with the same identifier value was already associated with the session")) || (e.getMessage().substring(54,89).equals("Could not execute JDBC batch update"))){
+						mensagem="Usuario ja tinha permissao.";
+					}else{
+						mensagem = "Nao Ok.";
+					}
+				}finally{
+					render(mensagem);
+				}
+			}else{
+				mensagem="";
+				render(mensagem);
+			}
+			
+		}else{
+			Excecoes("Usuario sem permissao.");
 		}
 	}
 

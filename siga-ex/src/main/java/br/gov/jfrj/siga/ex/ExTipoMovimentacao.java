@@ -195,6 +195,14 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO;
 	}
 
+	public static boolean hasTransferencia(long id) {
+		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
+				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
+	}
+	
 	/* Add customized code below */
 
 }

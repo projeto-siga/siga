@@ -26,4 +26,25 @@ public class WfPropriedadeBL extends CpPropriedadeBL {
 	public String getPrefixoModulo() {
 		return "siga.wf";
 	}
+	
+	public String getMailLinkTarefa() {
+		String result = "indefinido";
+		try {
+			result = this.obterPropriedade("mail.link.tarefa");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public String getMailLinkDocumento() {
+		String result = "indefinido";
+		try {
+			result = this.obterPropriedade("mail.link.documento");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 }

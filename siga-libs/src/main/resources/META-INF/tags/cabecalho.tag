@@ -201,9 +201,41 @@ ${meta}
 											tipo="generico" tema="simple" ocultardescricao="sim"
 											buscar="nao" siglaInicial="Buscar" modulo="siga" />
 										<script type="text/javascript">
-											//$("#menu_siga").focus(function(){
-												  //$('#navmenu-h li ul').css({"display":"block"})
-											//});
+
+											var lis = document
+													.getElementsByTagName('li');
+											 
+											for (var i = 0, li; li = lis[i]; i++) {
+												var link = li
+														.getElementsByTagName('a')[0];
+
+												if (link) {
+													link.onfocus = function() {
+														var ul = this.parentNode
+																.getElementsByTagName('ul')[0];
+														if (ul){
+															ul.style.display = 'block';
+														}
+													}
+													var ul = link.parentNode
+															.getElementsByTagName('ul')[0];
+													if (ul) {
+														var ullinks = ul
+																.getElementsByTagName('a');
+														var ullinksqty = ullinks.length;
+														var lastItem = ullinks[ullinksqty - 1];
+														if (lastItem) {
+															lastItem.onblur = function() {
+																this.parentNode.parentNode.style.display = 'none';
+															}
+															lastItem.parentNode.onblur = function() {
+																this.parentNode.style.display = '';
+															}
+														}
+													}
+												}
+											}
+
 											var fld = document
 													.getElementById("buscar_genericoSel_sigla");
 											fld.setAttribute("class",
@@ -224,8 +256,8 @@ ${meta}
 											};
 											fld.onkeypress = function(event) {
 												var fid = document
-												.getElementById("buscar_genericoSel_id");
-												
+														.getElementById("buscar_genericoSel_id");
+
 												event = (event) ? event
 														: window.event
 												var keyCode = (event.which) ? event.which
@@ -260,9 +292,10 @@ ${meta}
 														window.location.href = data[3];
 													}
 													return
-												} 
-												retorna_buscar_generico('',
-														'', '');
+
+												}
+												retorna_buscar_generico('', '',
+														'');
 
 												return;
 

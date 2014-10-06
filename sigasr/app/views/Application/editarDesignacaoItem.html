@@ -12,85 +12,97 @@
 
 <script>
 	$(function() {
-        var jListasDesignacao = $("#listasDesignacao"),
-        listasDesignacao = jListasDesignacao[0],
-        jDialogDesignacao = $("#dialogDesignacao"),
-        dialogDesignacao = jDialogDesignacao[0],
-        jDescrLista = $("#descrLista");
-        jListasDesignacaoSelecionada = $("#itemListaDesignacao");
-       
-        $( "#listasDesignacao" ).sortable({placeholder: "ui-state-highlight"});
-        $( "#listasDesignacao" ).disableSelection();
-       
-        $("#botaoIncluirDesignacaoLista").click(function(){
-        	jDialogDesignacao.data('acaoListaDesignacao',listasDesignacao.incluirItem).dialog('open');
-        });
-       
-        jDialogDesignacao.dialog({
-                autoOpen: false,
-                height: 'auto',
-                width: 'auto',
-                modal: true,
-                resizable: false,
-                close: function() {
-                        jDescrLista.val('');
-                        jDialogDesignacao.data('lista','');
-                },
-                open: function(){
-                        if (jDialogDesignacao.data("lista"))
-                                jDialogDesignacao.dialog('option', 'title', 'Alterar Lista de Prioridade');
-                        else
-                                jDialogDesignacao.dialog('option', 'title', 'Incluir Lista de Prioridade');                  
-                        jDescrLista.val(jDialogDesignacao.data("lista.nomeLista"));
-                }
-        });
-        $("#modalOkLista").click(function(){
-				var acaoListaDesignacao = jDialogDesignacao.data('acaoListaDesignacao');
-            	var jTipoEscolhidoDesignacao = jListasDesignacaoSelecionada.find("option:selected");
-            	acaoListaDesignacao(jTipoEscolhidoDesignacao.val(), jTipoEscolhidoDesignacao.text(), jDialogDesignacao.data("id"));
-            	jDialogDesignacao.dialog('close');
-        });
-        $("#modalCancelLista").click(function(){
-                jDialogDesignacao.dialog('close');
-        });
-
-        listasDesignacao["index"] = 0;
-        
-        listasDesignacao.incluirItem = function(idLista, descrLista, id){
-                if (!id)
-                        id = 'listaNovo_' + ++listasDesignacao["index"];
-                
-                jListasDesignacao.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
-                var jNewTr = jListasDesignacao.find("li:last-child");
-                jNewTr.append("<span>" + idLista + "</span> - <span style=\"display: inline-block\" id=\"" + idLista + "\">"
-                        + descrLista + "</span>");
-                jNewTr.append("&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
-                jNewTr.find("img:eq(0)").click(function(){
-                        listasDesignacao.removerItem(jNewTr.attr("id"));
-                });
-                jNewTr.mouseover(function(){
-                        jNewTr.find("img").css("visibility", "visible");
-                });
-                jNewTr.mouseout(function(){
-                        jNewTr.find("img").css("visibility", "hidden");
-                });
-        }
-        
-        listasDesignacao.removerItem = function(idItem){
-                $("#"+idItem).remove();
-                listasDesignacao["index"]--;
-        }
-
-        $("[value='OkDesignacao']").click(function(){
-                var jForm = $("form"),
-                	params = jForm.serialize();
-                jListasDesignacao.find("li").each(function(i){
-	                var jDivs=$(this).find("span");
-	                params += '&designacao.listaConfiguracaoSet[' + i + '].lista.idLista=' + jDivs[1].id;
-                });
-                
-                location.href = '@{Application.gravarDesignacao()}?' + params;
-        });
+		var jListasDesignacao = $("#listasDesignacao"),
+		listasDesignacao = jListasDesignacao[0];
+		
+		listasDesignacao["index"] = 0;
+		
+		listasDesignacao.incluirItem = function(idLista, descrLista, id){
+		    jListasDesignacao.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
+		    var jNewTr = jListasDesignacao.find("li:last-child");
+		    jNewTr.append("<span>" + idLista + "</span> - <span style=\"display: inline-block\" id=\"" + idLista + "\">"
+		            + descrLista + "</span>");
+		    jNewTr.append("&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
+		    
+		    jNewTr.append("<input type='hidden' name='"+idLista+"' value='"+idLista+"' id='idLista_"+idLista+"'>");
+		    jNewTr.append("<input type='hidden' name='"+descrLista+"' value='"+descrLista+"' id='descrLista_"+descrLista+"'>");
+		    
+		    jNewTr.find("img:eq(0)").click(function(){
+				var option = document.createElement("option");
+				option.value = jNewTr.val();
+				option.text = jNewTr.text();
+				jListasDesignacaoSelecionada[0].add(option);
+				
+				listasDesignacao.removerItem(jNewTr.attr("id"));
+		    });
+		    jNewTr.mouseover(function(){
+		        jNewTr.find("img").css("visibility", "visible");
+		    });
+		    jNewTr.mouseout(function(){
+		        jNewTr.find("img").css("visibility", "hidden");
+		    });
+		}
+		
+		listasDesignacao.removerItem = function(idItem){
+		    $("#"+idItem).remove();
+		    listasDesignacao["index"]--;
+		}
+	});
+	
+	var jListasDesignacao = $("#listasDesignacao"),
+	listasDesignacao = jListasDesignacao[0],
+	jDialogDesignacao = $("#dialogDesignacao"),
+	dialogDesignacao = jDialogDesignacao[0],
+	jDescrLista = $("#descrLista");
+	jListasDesignacaoSelecionada = $("#itemListaDesignacao");
+	
+	$( "#listasDesignacao" ).sortable({placeholder: "ui-state-highlight"});
+	$( "#listasDesignacao" ).disableSelection();
+	
+	$("#botaoIncluirDesignacaoLista").click(function(){
+		jDialogDesignacao.data('acaoListaDesignacao',listasDesignacao.incluirItem).dialog('open');
+	});
+		
+	jDialogDesignacao.dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: 'auto',
+	    modal: true,
+	    resizable: false,
+	    close: function() {
+	        jDescrLista.val('');
+	        jDialogDesignacao.data('lista','');
+	    },
+	    open: function(){
+	        if (jDialogDesignacao.data("lista"))
+	                jDialogDesignacao.dialog('option', 'title', 'Alterar Lista de Prioridade');
+	        else
+	                jDialogDesignacao.dialog('option', 'title', 'Incluir Lista de Prioridade');                  
+	        jDescrLista.val(jDialogDesignacao.data("lista.nomeLista"));
+	    }
+	});
+	
+	$("[value='OkDesignacao']").click(function(){
+	    var jForm = $("form"),
+	    	params = jForm.serialize();
+	    jListasDesignacao.find("li").each(function(i){
+	     var jDivs=$(this).find("span");
+	     params += '&designacao.listaConfiguracaoSet[' + i + '].lista.idLista=' + jDivs[1].id;
+	    });
+	    
+	    location.href = '@{Application.gravarDesignacao()}?' + params;
+	});
+	
+	$("#modalOkLista").click(function(){
+		var acaoListaDesignacao = jDialogDesignacao.data('acaoListaDesignacao'),
+	  		jTipoEscolhidoDesignacao = jListasDesignacaoSelecionada.find("option:selected");
+	  	acaoListaDesignacao(jTipoEscolhidoDesignacao.val(), jTipoEscolhidoDesignacao.text(), jDialogDesignacao.data("id"));
+	  	jListasDesignacaoSelecionada[0].remove(jListasDesignacaoSelecionada[0].selectedIndex);
+	  	jDialogDesignacao.dialog('close');
+	});
+	
+	$("#modalCancelLista").click(function(){
+	    jDialogDesignacao.dialog('close');
 	});
 </script>
 

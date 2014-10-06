@@ -106,10 +106,18 @@ ${moreHead?.raw()}
 
 	function sair()
 	{
-	document.getElementById("formGravar").submit();
-	opener.location.href = "@{Application.exibir(solicitacaoAJuntar.idSolicitacao, false)}";
-	window.close();
+		var justificativa = $("#justificativa").val();
+		if(justificativa != "") {
+			document.getElementById("formGravar").submit();
+			setTimeout(function() {
+				opener.location.href = "@{Application.exibir(solicitacaoAJuntar.idSolicitacao, false)}";
+				window.close();
+			}, 2000);
+		} else {
+			$("#erroJustificativa").show();
+		}
 	}
+
 </script>
 	<input type="hidden" name="id" value="${solicitacaoAJuntar.idSolicitacao}"> 
 	<div class="gt-bd clearfix">
@@ -126,6 +134,9 @@ ${moreHead?.raw()}
 				<div style="display: inline" class="gt-form-row gt-width-66">
 					<label>Justificativa</label>
 					<textarea style="width: 60%" name="justificativa" id="justificativa" cols="70" rows="4" maxlength="255" value=""></textarea>
+				</div>
+				<div style="display: none" id="erroJustificativa" class="gt-form-row gt-width-66">
+					<span style="color: red;">Justificativa não informada.</span>
 				</div>
 				<div style="display: inline" class="gt-form-row ">
 					<input type="button" onclick="sair();" value="Gravar" class="gt-btn-medium gt-btn-left" />
@@ -261,7 +272,7 @@ ${moreHead?.raw()}
 							<tr>
 								<td>Descrição</td>
 								<td><input type="text" name="filtro.descrSolicitacao"
-									id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="100"></input>
+									id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="60"></input>
 								</td>
 							</tr>
 							<tr>

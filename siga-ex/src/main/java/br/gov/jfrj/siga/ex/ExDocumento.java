@@ -1085,9 +1085,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;
 		}
 
-		ExMovimentacao mov = getMovAssinatura();
-		if (mov == null)
+		if(isEletronico() && !isAssinadoEletronicoPorTodosOsSignatarios())
 			return false;
+					
+		if(!isEletronico()) {			
+			ExMovimentacao mov = getMovAssinatura();
+			if (mov == null)
+				return false;
+		}
+
 		return true;
 	}
 
@@ -2104,7 +2110,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * Verifica se um documento foi assinado pelo subscritor e por todos os
 	 * cosignatários
 	 */
-	public boolean isAssinadoEletronicoPorTodosOsSignatarios() {
+	private boolean isAssinadoEletronicoPorTodosOsSignatarios() {
 		// Interno antigo e externo são considerados como assinados
 		if (getExTipoDocumento().getIdTpDoc() != 1L) {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;

@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -43,27 +44,37 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @Table(name = "GC_INFORMACAO", schema = "SIGAGC")
 @NamedQueries({
 		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc"),
+		@NamedQuery(name = "buscarConhecimentoTudoIgual", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags)) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
+		@NamedQuery(name = "buscarConhecimentoAlgumIgualNenhumDiferente", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i not in (select i2 from GcInformacao i2 inner join i2.tags t2 where t2 not in (:tags)) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentes", query = "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null order by i.hisDtIni desc"),
-//		@NamedQuery(name = "maisRecentesLotacao", query = "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacao = :idLotacao order by i.hisDtIni desc"),
+		// @NamedQuery(name = "maisRecentesLotacao", query =
+		// "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacao = :idLotacao order by i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentesLotacao", query = "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial order by i.hisDtIni desc"),
 		@NamedQuery(name = "maisVisitados", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null and i.elaboracaoFim is not null group by i order by count(*) desc"),
 		@NamedQuery(name = "maisVisitadosLotacao", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial group by i order by count(*) desc"),
-//		@NamedQuery(name = "principaisAutores", query = "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
+		// @NamedQuery(name = "principaisAutores", query =
+		// "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
 		@NamedQuery(name = "principaisAutores", query = "select p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.elaboracaoFim is not null group by p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni order by count(*) desc"),
 		@NamedQuery(name = "principaisAutoresLotacao", query = "select p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial group by p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni order by count(*) desc"),
-//		@NamedQuery(name = "principaisLotacoes", query = "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
+		// @NamedQuery(name = "principaisLotacoes", query =
+		// "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
 		@NamedQuery(name = "principaisLotacoes", query = "select l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao, count(*) from GcInformacao i inner join i.lotacao l where i.hisDtFim is null and i.elaboracaoFim is not null group by l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao order by count(*) desc"),
-//		@NamedQuery(name = "principaisTags", query = "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
+		// @NamedQuery(name = "principaisTags", query =
+		// "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
 		@NamedQuery(name = "principaisTags", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and i.elaboracaoFim is not null and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),
-		@NamedQuery(name = "principaisTagsLotacao", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),	
+		@NamedQuery(name = "principaisTagsLotacao", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),
 		@NamedQuery(name = "evolucaoNovos", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
 		@NamedQuery(name = "evolucaoNovosLotacao", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null and inf.lotacao.idLotacaoIni = :idlotacaoInicial group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
-//		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
+		// @NamedQuery(name = "evolucaoVisitados", query =
+		// "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
 		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.elaboracaoFim < mov.hisDtIni group by month(mov.hisDtIni), year(mov.hisDtIni)"),
-//		@NamedQuery(name = "evolucaoVisitadosLotacao", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.lotacao.idLotacaoIni = :idlotacaoInicial and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
+		// @NamedQuery(name = "evolucaoVisitadosLotacao", query =
+		// "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.lotacao.idLotacaoIni = :idlotacaoInicial and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
 		@NamedQuery(name = "evolucaoVisitadosLotacao", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.elaboracaoFim < mov.hisDtIni and inf.lotacao.idLotacaoIni = :idlotacaoInicial group by month(mov.hisDtIni), year(mov.hisDtIni)"),
-		@NamedQuery(name = "dadosParaRecuperacaoDeInformacao", query = "select inf, arq,  mov.hisDtIni, mov.id, (mov.tipo.id) as ativo from GcInformacao as inf join inf.arq as arq join inf.movs mov where ((mov.tipo in (1, 10) and mov.arq = inf.arq) or (mov.tipo = 3)) and inf.elaboracaoFim is not null and ((mov.hisDtIni > :dt) or (mov.hisDtIni = :dt and mov.id > :desempate)) order by mov.hisDtIni, mov.id")})
-// select GcInformacao as i, i.arq as a, mov.hisDtIni as dt from GcInformacao inf join inf.movs mov where ((mov.tipo in {1, 10} and mov.arq = inf.arq) or (mov.tipo = 3)) and inf.elaboracaoFim is not null
+		@NamedQuery(name = "dadosParaRecuperacaoDeInformacao", query = "select inf, arq,  mov.hisDtIni, mov.id, (mov.tipo.id) as ativo from GcInformacao as inf join inf.arq as arq join inf.movs mov where ((mov.tipo in (1, 10) and mov.arq = inf.arq) or (mov.tipo = 3)) and inf.elaboracaoFim is not null and ((mov.hisDtIni > :dt) or (mov.hisDtIni = :dt and mov.id > :desempate)) order by mov.hisDtIni, mov.id") })
+// select GcInformacao as i, i.arq as a, mov.hisDtIni as dt from GcInformacao
+// inf join inf.movs mov where ((mov.tipo in {1, 10} and mov.arq = inf.arq) or
+// (mov.tipo = 3)) and inf.elaboracaoFim is not null
 // select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
 // inf.tags tag where tag in (:tags)
 public class GcInformacao extends GenericModel {
@@ -88,7 +99,7 @@ public class GcInformacao extends GenericModel {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_ACESSO")
 	public GcAcesso visualizacao;
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_ACESSO_EDICAO")
 	public GcAcesso edicao;
@@ -143,7 +154,9 @@ public class GcInformacao extends GenericModel {
 
 	@PostLoad
 	private void onLoad() {
-		marcas = GcMarca.find("inf.id = ? and (dtFimMarca is null or dtFimMarca > sysdate) order by dtIniMarca, cpMarcador.descrMarcador", this.id).fetch();
+		marcas = GcMarca
+				.find("inf.id = ? and (dtFimMarca is null or dtFimMarca > sysdate) order by dtIniMarca, cpMarcador.descrMarcador",
+						this.id).fetch();
 		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
 		// this.id).fetch();
 	}
@@ -153,7 +166,7 @@ public class GcInformacao extends GenericModel {
 		cal.setTime(hisDtIni);
 		return cal.getTempoTranscorridoString(true);
 	}
-	
+
 	public String getDtElaboracaoFim() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(elaboracaoFim);
@@ -190,44 +203,46 @@ public class GcInformacao extends GenericModel {
 	public boolean isCancelado() {
 		return this.hisDtFim != null;
 	}
-	
+
 	public boolean podeDesfazer(DpPessoa titular, GcMovimentacao mov) {
-		if(isCancelado())
+		if (isCancelado())
 			return false;
-		if((mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO 
-			|| mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR) 
-					&& mov.movCanceladora == null 
-						&& titular.equivale(mov.pessoaTitular))
+		if ((mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO || mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
+				&& mov.movCanceladora == null
+				&& titular.equivale(mov.pessoaTitular))
 			return true;
-		else 
+		else
 			return false;
 	}
 
-	public GcMovimentacao podeTomarCiencia(DpPessoa titular, DpLotacao lotaTitular) {
+	public GcMovimentacao podeTomarCiencia(DpPessoa titular,
+			DpLotacao lotaTitular) throws Exception {
 		GcMovimentacao movNotificar = null;
-		if(isCancelado())
+		if (isCancelado())
 			return null;
 		for (GcMovimentacao mov : movs) {
 			if (mov.isCancelada())
 				continue;
-			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR
-					&& (titular.equivale(mov.pessoaAtendente) 
-							|| lotaTitular.equivale(mov.lotacaoAtendente))) {
-				movNotificar = mov;
-				break;
-			}
+			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
+				if (titular.equivale(mov.pessoaAtendente)
+						|| lotaTitular.equivale(mov.lotacaoAtendente)) {
+					movNotificar = mov;
+					break;
+				}
 		}
-		if (movNotificar != null) 
+
+		if (movNotificar != null)
 			for (GcMovimentacao movCiente : movs) {
 				if (movCiente.isCancelada())
 					continue;
 				if (movCiente.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE
-						&& movCiente.movRef == movNotificar 
-							&& movCiente.pessoaTitular.equivale(titular))
+						&& movCiente.movRef == movNotificar
+						&& movCiente.pessoaTitular.equivale(titular))
 					return movNotificar = null;
 			}
 		return movNotificar;
 	}
+
 	public boolean podeRevisar(DpPessoa titular, DpLotacao lotaTitular) {
 		if (isCancelado())
 			return false;
@@ -235,8 +250,8 @@ public class GcInformacao extends GenericModel {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
-					&& (titular.equivale(mov.pessoaAtendente)
-							|| lotaTitular.equivale(mov.lotacaoAtendente))) {
+					&& (titular.equivale(mov.pessoaAtendente) || lotaTitular
+							.equivale(mov.lotacaoAtendente))) {
 				return true;
 			}
 		}
@@ -278,33 +293,40 @@ public class GcInformacao extends GenericModel {
 	}
 
 	public boolean podeEditar(DpPessoa titular, DpLotacao lotaTitular) {
-		return (!isCancelado() && (podeRevisar(titular,lotaTitular) || acessoPermitido(titular, lotaTitular, edicao.id)));
+		return (!isCancelado() && (podeRevisar(titular, lotaTitular) || acessoPermitido(
+				titular, lotaTitular, edicao.id)));
 	}
 
 	public boolean podeExcluir(DpPessoa titular, DpLotacao lotaTitular) {
-		return (!isFinalizado() && acessoPermitido(titular, lotaTitular, edicao.id));
+		return (!isFinalizado() && acessoPermitido(titular, lotaTitular,
+				edicao.id));
 	}
 
 	public boolean podeNotificar(DpPessoa titular, DpLotacao lotaTitular) {
-		return (!isCancelado() && acessoPermitido(titular, lotaTitular, visualizacao.id));
+		return (!isCancelado() && acessoPermitido(titular, lotaTitular,
+				visualizacao.id));
 	}
 
 	public boolean podeFinalizar(DpPessoa titular, DpLotacao lotaTitular) {
-		return !isCancelado() && !isFinalizado() && acessoPermitido(titular, lotaTitular, edicao.id);
+		return !isCancelado() && !isFinalizado()
+				&& acessoPermitido(titular, lotaTitular, edicao.id);
 	}
 
 	public boolean podeSolicitarRevisao(DpPessoa titular, DpLotacao lotaTitular) {
-		return !isCancelado() && acessoPermitido(titular, lotaTitular, edicao.id);
+		return !isCancelado()
+				&& acessoPermitido(titular, lotaTitular, edicao.id);
 	}
 
 	public boolean podeAnexar(DpPessoa titular, DpLotacao lotaTitular) {
-		return (!isCancelado() && (podeRevisar(titular,lotaTitular) || acessoPermitido(titular, lotaTitular, edicao.id)));
+		return (!isCancelado() && (podeRevisar(titular, lotaTitular) || acessoPermitido(
+				titular, lotaTitular, edicao.id)));
 	}
 
 	public boolean podeDuplicar() {
-		//return !isCancelado();
+		// return !isCancelado();
 		return true;
 	}
+
 	public SortedSet<GcAcaoVO> acoes(CpIdentidade idc, DpPessoa titular,
 			DpLotacao lotaTitular) {
 		SortedSet<GcAcaoVO> acoes = new TreeSet<GcAcaoVO>();
@@ -312,8 +334,8 @@ public class GcInformacao extends GenericModel {
 		addAcao(acoes, "pencil", "Editar", null, "Application.editar", null,
 				podeEditar(titular, lotaTitular));
 		addAcao(acoes, "delete", "Excluir", null, "Application.remover", null,
-				podeExcluir(titular, lotaTitular), "Confirma a exclusão deste conhecimento?",
-				null, null);
+				podeExcluir(titular, lotaTitular),
+				"Confirma a exclusão deste conhecimento?", null, null);
 		addAcao(acoes, "eye", "Exibir Histórico de Alterações", null,
 				"Application.historico", "historico=true", true);
 		addAcao(acoes, "eye", "Exibir Movimentações", null,
@@ -328,32 +350,35 @@ public class GcInformacao extends GenericModel {
 				podeMarcarComoInteressado(titular));
 		addAcao(acoes, "bell", "Notificar", null, "Application.notificar",
 				null, podeNotificar(titular, lotaTitular));
-		addAcao(acoes, "lock", "Finalizar Elaboração",null,
-				"Application.fechar", null, podeFinalizar(titular, lotaTitular),
+		addAcao(acoes, "lock", "Finalizar Elaboração", null,
+				"Application.fechar", null,
+				podeFinalizar(titular, lotaTitular),
 				"Confirma a finalização da elaboração deste conhecimento?",
 				null, null);
-		
-		/*addAcao(acoes, "folder_user", "Revisado", null, "Application.revisado",
-				null, podeRevisar(titular, lotaTitular));*/
-		
+
+		/*
+		 * addAcao(acoes, "folder_user", "Revisado", null,
+		 * "Application.revisado", null, podeRevisar(titular, lotaTitular));
+		 */
+
 		addAcao(acoes, "folder_user", "Revisado", null, "Application.revisado",
 				null, podeRevisar(titular, lotaTitular),
-				"Confirma a revisão deste conhecimento?", null,
-				null);
-		
+				"Confirma a revisão deste conhecimento?", null, null);
+
 		addAcao(acoes, "folder_user", "Solicitar Revisão", null,
-				"Application.solicitarRevisao", null, podeSolicitarRevisao(titular, lotaTitular));
-		
+				"Application.solicitarRevisao", null,
+				podeSolicitarRevisao(titular, lotaTitular));
+
 		addAcao(acoes, "cancel", "Cancelar", null, "Application.cancelar",
 				null, podeCancelar(titular, lotaTitular),
-				"Confirma o cancelamento deste conhecimento?", null,
-				null);
-		
+				"Confirma o cancelamento deste conhecimento?", null, null);
+
 		addAcao(acoes, "attach", "Anexar Arquivo", null, "Application.anexar",
 				null, podeAnexar(titular, lotaTitular));
-		addAcao(acoes, "arrow_divide","Duplicar", null, "Application.duplicar", 
-				null, podeDuplicar(),"Esta operação criará um conhecimento com os mesmos dados do atual. " +
-				"Prosseguir?", null, null);
+		addAcao(acoes, "arrow_divide", "Duplicar", null,
+				"Application.duplicar", null, podeDuplicar(),
+				"Esta operação criará um conhecimento com os mesmos dados do atual. "
+						+ "Prosseguir?", null, null);
 
 		// addAcao("printer.png","Visualizar Impressão",null,"", null, true,
 		// null);
@@ -371,11 +396,11 @@ public class GcInformacao extends GenericModel {
 	protected void addAcao(SortedSet<GcAcaoVO> acoes, String icone,
 			String nome, String nameSpace, String action, String parametros,
 			boolean pode, String msgConfirmacao, String pre, String pos) {
-		//TreeMap<String, String> params = new TreeMap<String, String>();
+		// TreeMap<String, String> params = new TreeMap<String, String>();
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("sigla",this.getSigla());
+		map.put("sigla", this.getSigla());
 		if (parametros != null)
 			mapFromUrlEncodedForm(map, parametros);
 
@@ -472,32 +497,35 @@ public class GcInformacao extends GenericModel {
 	public String getConteudoHTML() throws Exception {
 		if (this.arq == null || this.arq.conteudo == null)
 			return null;
-		
+
 		String s = this.arq.getConteudoTXT();
-				
+
 		if (s.startsWith("<")) {
 			return s;
 		}
-		
-		s = s.replace(" # ", "\n# ")
-				.replace(" ## ", "\n## ").replace(" ### ", "\n### ")
-				.replace(" #### ", "\n#### ").replace(" * ", "\n* ")
-				.replace(" ** ", "\n** ").replace(" *** ", "\n*** ")
-				.replace(" **** ", "\n**** ").replace(" ==", "\n==");
+
+		s = s.replace(" # ", "\n# ").replace(" ## ", "\n## ")
+				.replace(" ### ", "\n### ").replace(" #### ", "\n#### ")
+				.replace(" * ", "\n* ").replace(" ** ", "\n** ")
+				.replace(" *** ", "\n*** ").replace(" **** ", "\n**** ")
+				.replace(" ==", "\n==");
 		String fragment = WikiParser.renderXHTML(s);
 		fragment = fragment.replace("&lt;&lt;&lt;Internal image(?): ",
-				"<img src=\"/sigagc/app/baixar?id=")
-				.replace("&gt;&gt;&gt;", "\"/>");
+				"<img src=\"/sigagc/app/baixar?id=").replace("&gt;&gt;&gt;",
+				"\"/>");
 		return fragment;
 	}
 
-	public boolean acessoPermitido(DpPessoa titular, DpLotacao lotaTitular, long id) {	
+	public boolean acessoPermitido(DpPessoa titular, DpLotacao lotaTitular,
+			long id) {
 		switch ((int) id) {
 		case (int) GcAcesso.ACESSO_PUBLICO:
 			return true;
 		case (int) GcAcesso.ACESSO_ORGAO_USU:
-			return ou.getIdOrgaoUsu().equals(titular.getOrgaoUsuario().getIdOrgaoUsu())
-					|| ou.getIdOrgaoUsu().equals(lotaTitular.getOrgaoUsuario().getIdOrgaoUsu());
+			return ou.getIdOrgaoUsu().equals(
+					titular.getOrgaoUsuario().getIdOrgaoUsu())
+					|| ou.getIdOrgaoUsu().equals(
+							lotaTitular.getOrgaoUsuario().getIdOrgaoUsu());
 		case (int) GcAcesso.ACESSO_LOTACAO_E_SUPERIORES:
 			for (DpLotacao lot = lotacao; lot != null; lot = lot
 					.getLotacaoPai())
@@ -522,8 +550,8 @@ public class GcInformacao extends GenericModel {
 		if (movs == null)
 			return false;
 		for (GcMovimentacao m : movs)
-			if (m.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO &&
-				m.movCanceladora == null)
+			if (m.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
+					&& m.movCanceladora == null)
 				return true;
 		return false;
 	}
@@ -541,43 +569,47 @@ public class GcInformacao extends GenericModel {
 		}
 		return true;
 	}
-	
+
 	public String getGcTags() throws Exception {
 		String s = "";
 		for (GcTag tag : tags) {
-			//s = "&tags=" + tag.toString();
-			s += "&tags=" + URLEncoder.encode(tag.toString(),"UTF-8");
+			// s = "&tags=" + tag.toString();
+			s += "&tags=" + URLEncoder.encode(tag.toString(), "UTF-8");
 		}
 		return s;
 	}
-	
+
 	/**
-	 * Identifica uma informação através do seu código (JFRJ-GC-2013/00002 ou TMPGC-23)
+	 * Identifica uma informação através do seu código (JFRJ-GC-2013/00002
+	 * ou TMPGC-23)
 	 **/
-	public static GcInformacao findBySigla(String sigla){
+	public static GcInformacao findBySigla(String sigla) {
 		String[] siglaParticionada = sigla.split("-");
 		GcInformacao info = null;
-		//verificação necessária por conta dos arquivos temporários que são buscados pelo id, já os finalizados
-		//são buscados pela sua numeração
-		if(siglaParticionada[1].equals("GC")){
+		// verificação necessária por conta dos arquivos temporários que
+		// são buscados pelo id, já os finalizados
+		// são buscados pela sua numeração
+		if (siglaParticionada[1].equals("GC")) {
 			String[] siglaAnoENumero = siglaParticionada[2].split("/");
-			info = GcInformacao.find("ano = ? and numero = ? and ou.acronimoOrgaoUsu = ?",
-						Integer.parseInt(siglaAnoENumero[0]),
-						Integer.parseInt(siglaAnoENumero[1]),
-						siglaParticionada[0]).first();
-		}
-		else
+			info = GcInformacao.find(
+					"ano = ? and numero = ? and ou.acronimoOrgaoUsu = ?",
+					Integer.parseInt(siglaAnoENumero[0]),
+					Integer.parseInt(siglaAnoENumero[1]), siglaParticionada[0])
+					.first();
+		} else
 			info = GcInformacao.findById(Long.parseLong(siglaParticionada[1]));
-			//info = GcInformacao.find("id = ?", Long.parseLong(siglaParticionada[1])).first();
+		// info = GcInformacao.find("id = ?",
+		// Long.parseLong(siglaParticionada[1])).first();
 
-		if(info == null){
-			throw new AplicacaoException("Não foi possível encontrar um conhecimento com o código " + sigla + 
-			". Favor verificá-lo.");
+		if (info == null) {
+			throw new AplicacaoException(
+					"Não foi possível encontrar um conhecimento com o código "
+							+ sigla + ". Favor verificá-lo.");
 		} else
 			return info;
 	}
-	
-	public Set<GcTag> getTags(){
+
+	public Set<GcTag> getTags() {
 		return this.tags;
 	}
 }

@@ -127,6 +127,22 @@
 					}
 				</script>
 
+	<c:set var="dtUlt" value="" />
+
+	<!-- Verifica se haverá alguma movimentação para ser exibida -->
+	<c:set var="temmov" value="${false}" />
+	<c:forEach var="mov" items="${m.movs}">
+		<c:if
+			test="${ (mov.idTpMov != 14 and
+							          not mov.cancelada)}">
+			<c:set var="temmov" value="${true}" />
+		</c:if>
+	</c:forEach>
+	
+<div class="gt-bd gt-cols clearfix"
+	style="padding-top: 0px; margin-top: 25px;padding-left: 0px;">
+	<div class="gt-content">
+
 				<!-- Somente quando o workflow está ativado -->
 				<c:if test="${f:resource('isWorkflowEnabled')}">
 				<!-- Se for um processo administrativo, colocar a caixa do wf geral no último volume -->
@@ -147,21 +163,6 @@
 				
 				</c:if>
 	
-	<c:set var="dtUlt" value="" />
-
-	<!-- Verifica se haverá alguma movimentação para ser exibida -->
-	<c:set var="temmov" value="${false}" />
-	<c:forEach var="mov" items="${m.movs}">
-		<c:if
-			test="${ (mov.idTpMov != 14 and
-							          not mov.cancelada)}">
-			<c:set var="temmov" value="${true}" />
-		</c:if>
-	</c:forEach>
-	
-<div class="gt-bd gt-cols clearfix"
-	style="padding-top: 0px; margin-top: 25px;padding-left: 0px;">
-	<div class="gt-content">
 		<!-- Dados do documento -->
 		<div class="gt-content-box" style="padding: 10px;">
 			<table style="width: 100%">

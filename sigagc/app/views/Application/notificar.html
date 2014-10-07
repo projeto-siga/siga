@@ -10,15 +10,7 @@ Informação' /}
 		<div class="gt-form gt-content-box">
 			<form action="@{Application.notificarGravar}">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
-				*{<div class="gt-form-row gt-width-100">
-					<label>Pessoa</label> #{selecao tipo:'pessoa', nome:'pessoa' /} <span
-						style="color: red">#{error 'pessoa' /}</span>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Lotação</label> #{selecao tipo:'lotacao', nome:'lotacao' /}
-					<span style="color: red">#{error 'lotacao' /}</span>
-				</div>}*
-				<p>Escolha a Pessoa ou a Lotação que será notificada sobre esse conhecimento</p>
+				<p>Escolha quem será notificado sobre esse conhecimento</p>
 				<br />
 				<div class="gt-form-row gt-width-100">
 					<label>Tomar Ciência</label>#{pessoaLotaSelecao nomeSelPessoa:'pessoa',
@@ -26,6 +18,32 @@ Informação' /}
 					valuePessoa:pessoa,
 					valueLotacao:lotacao /}
 				</div>
+				<span style="display: none;" id="spanEmail">
+					<input type='text' name='email' size="70" /> Obs.: Ao informar v&aacute;rios, separar por espa&ccedil;o.
+				</span>
+				<script>
+				$("#pessoalotacao").append('<option value=3>E-mail</option>');
+				$("#spanEmail").insertAfter("#spanLotacaolotacao");
+				$("#pessoalotacao").change(function(){
+					if ($("#pessoalotacao").val() == '1'){
+						$('#spanEmail').hide();
+					} else if (select.value == '2'){
+						$('#spanEmail').hide();
+					} else {
+						$('#spanPessoapessoa').hide();
+						$('#spanLotacaolotacao').hide();
+						$('#spanEmail').show();
+						$('#lotacao').val("");
+						$('#lotacao_sigla').val("");
+						$('#lotacao_descricao').val("");
+						$('#lotacaoSpan').text("");
+					}
+					});
+				</script>
+				
+				<siga:selecao tema='simple' titulo="Perfil:"
+											propriedade="perfil" modulo="siga"/>
+				
 				<br />
 				<div class="gt-form-row gt-width-100">
 					<input type="submit" value="Notificar"

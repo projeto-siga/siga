@@ -4254,7 +4254,7 @@ public class ExBL extends CpBL {
 			final DpPessoa subscritor, final DpPessoa titular,
 			final ExTipoDespacho tpDespacho, final boolean fInterno,
 			final String descrMov, final String conteudo,
-			String nmFuncaoSubscritor) throws AplicacaoException, Exception {
+			String nmFuncaoSubscritor, boolean forcarTransferencia) throws AplicacaoException, Exception {
 
 
 		boolean fDespacho = tpDespacho != null || descrMov != null
@@ -4306,8 +4306,13 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException(
 							"Não é permitido transferir documento para lotação fechada");
 
-				if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
-					throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+				if (forcarTransferencia) {
+					if (!getComp().podeSerTransferido(m))
+						throw new AplicacaoException("Transferência não pode ser realizada (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+				} else {
+					if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m)) 
+						throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+				}
 				if (!m.getExDocumento().isAssinado()
 						&& !lotaResponsavel.equivale(m.getExDocumento()
 								.getLotaTitular())

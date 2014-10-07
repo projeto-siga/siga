@@ -695,7 +695,7 @@ public class WfTaskAction extends WfSigaActionSupport {
 								break;
 							}
 						if (value != null && destino != null)
-							service.transferir(value, destino, siglaTitular);
+							service.transferir(value, destino, siglaTitular, true);
 					}
 				}
 			}
@@ -716,7 +716,7 @@ public class WfTaskAction extends WfSigaActionSupport {
 							.getContextInstance()
 							.getVariable(variable.getMappedName());
 					if (value != null && value.trim().length() != 0)
-						if (!service.podeTransferir(value, siglaTitular)) {
+						if (!service.podeTransferir(value, siglaTitular, true)) {
 							throw new AplicacaoException(
 									"A tarefa não pode prosseguir porque o documento '"
 											+ value

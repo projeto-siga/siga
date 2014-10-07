@@ -1436,6 +1436,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 		return Texto.extrai(s, inicioNumero, fimNumero);
 
+
 		} catch (UnsupportedEncodingException e) {
 
 			return null;

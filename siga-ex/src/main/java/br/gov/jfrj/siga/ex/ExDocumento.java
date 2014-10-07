@@ -1096,6 +1096,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 		return true;
 	}
+	
+	/**
+	 * Verifica se um documento possui uma assinatura digital
+	 */
+	public boolean possuiPeloMenosUmaAssinaturaDigital() {
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Verifica se um documento já foi assinado pelo Subscritor.

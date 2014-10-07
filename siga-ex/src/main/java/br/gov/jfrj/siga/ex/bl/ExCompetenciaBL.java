@@ -2117,7 +2117,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (mob.doc().isCancelado() || mob.doc().isSemEfeito())
 			return false;
-		if (mob.doc().isAssinado() && mob.doc().isEletronico())
+		if (mob.doc().isAssinado() || (mob.doc().isEletronico() && mob.doc().possuiPeloMenosUmaAssinaturaDigital()))
 			return false;
 		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular)
 				&& (mob.doc().getSubscritor() != null && !mob.doc()
@@ -2459,7 +2459,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
 
-		if(mov.getExDocumento().isAssinado())
+		if(mov.getExDocumento().isAssinado() || (mob.doc().isEletronico() && mob.doc().possuiPeloMenosUmaAssinaturaDigital()))
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
@@ -2792,7 +2792,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (mob.doc().isFinalizado() && !mob.doc().isEletronico())
 			return false;
-		if (mob.doc().isAssinado() && mob.doc().isEletronico())
+		if (mob.doc().isAssinado() || (mob.doc().isEletronico() && mob.doc().possuiPeloMenosUmaAssinaturaDigital()))
 			return false;
 		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular))
 			return false;

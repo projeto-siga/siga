@@ -3058,6 +3058,9 @@ public class ExBL extends CpBL {
 		
 		if(!getComp().podeSerSubscritor(doc))
 			throw new AplicacaoException("O usuário não pode ser subscritor do documento");
+		
+		if(doc.isProcesso() && doc.getMobilGeral().temAnexos())
+			throw new AplicacaoException("Processos não podem possuir anexos antes da finalização. Exclua todos os anexos para poder finalizar. Os anexos poderão ser incluídos no primeiro volume após a finalização.");
 
 		Set<ExVia> setVias = doc.getSetVias();
 

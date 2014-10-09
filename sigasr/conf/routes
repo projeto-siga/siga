@@ -74,9 +74,9 @@ POST	/item/gravar						Application.gravarItem
 *		/solicitacao/listarLista/gravar 				Application.gravarLista
 *		/solicitacao/exibirLista/{id}		 			Application.exibirLista
 *		/solicitacao/priorizarLista		 				Application.priorizarLista
-*		/solicitacao/associarLista/{id}				    Application.associarLista
-*		/solicitacao/associarListaGravar/{id}			Application.associarListaGravar
-*		/solicitacao/desassociarLista					Application.desassociarLista
+*		/solicitacao/incluirEmLista/{id}				Application.incluirEmLista
+*		/solicitacao/incluirEmListaGravar/{id}			Application.incluirEmListaGravar
+*		/solicitacao/retirarDeLista						Application.retirarDeLista
 *		/solicitacao/editarLista/{id}					Application.editarLista
 *		/solicitacao/{action}							Application.{action}
 *		/solicitacao/{action}/{id}						Application.{action}

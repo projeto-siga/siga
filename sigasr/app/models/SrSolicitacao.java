@@ -4,7 +4,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_L
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_EXCLUSAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
@@ -508,7 +508,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrMovimentacao getUltimaMovimentacaoCancelavel() {
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
 			if (mov.numSequencia > 1
-					&& mov.tipoMov.idTipoMov != TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA
+					&& mov.tipoMov.idTipoMov != TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA
 					&& mov.tipoMov.idTipoMov != TIPO_MOVIMENTACAO_INCLUSAO_LISTA
 					&& mov.tipoMov.idTipoMov != TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA
 					&& mov.tipoMov.idTipoMov != TIPO_MOVIMENTACAO_AVALIACAO
@@ -1006,7 +1006,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return isEmAtendimento() && estaCom(lota, pess);
 	}
 
-	public boolean podeAssociarLista(DpLotacao lota, DpPessoa pess) {
+	public boolean podeIncluirEmLista(DpLotacao lota, DpPessoa pess) {
 		return !isFechado();
 	}
 
@@ -1219,8 +1219,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeJuntar(lotaTitular, titular),
 				"Application.juntarSolicitacoes", "popup=true"));
 
-		operacoes.add(new SrOperacao("text_list_numbers", "Definir Lista",
-				podeAssociarLista(lotaTitular, titular), "associarLista",
+		operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista",
+				podeIncluirEmLista(lotaTitular, titular), "incluirEmLista",
 				"modal=true"));
 
 		operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(lotaTitular,
@@ -1319,7 +1319,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			List<SrLista> listas = getListasParaInclusaoAutomatica(lotaCadastrante);
 			for (SrLista lista : listas) {
 				if (!isEmLista(lista))
-					associarLista(lista, cadastrante, lotaCadastrante);
+					incluirEmLista(lista, cadastrante, lotaCadastrante);
 			}
 
 			if (!isEditado()
@@ -1499,7 +1499,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				movMarca = mov;
 			}
 			if (t == TIPO_MOVIMENTACAO_RASCUNHO) {
-				marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO;
+				marcador = 61L;
 				movMarca = mov;
 			}
 			if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
@@ -1749,7 +1749,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA
 					&& mov.lista.isAtivo())
 				associadas.add(mov.lista);
-			else if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA)
+			else if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA)
 				associadas.remove(mov.lista);
 		return associadas;
 	}
@@ -1796,7 +1796,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return -1;
 	}
 
-	public void associarLista(SrLista lista, DpPessoa pess, DpLotacao lota)
+	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota)
 			throws Exception {
 		if (lista == null)
 			throw new IllegalArgumentException("Lista não informada");
@@ -1820,7 +1820,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		lista.refresh();
 	}
 
-	public void desassociarLista(SrLista lista, DpPessoa pess, DpLotacao lota)
+	public void retirarDeLista(SrLista lista, DpPessoa pess, DpLotacao lota)
 			throws Exception {
 		if (lista == null)
 			throw new IllegalArgumentException("Lista não informada");
@@ -1829,7 +1829,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.cadastrante = pess;
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
-				.findById(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
+				.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
 		mov.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		mov.solicitacao = this;
 		mov.lista = lista.listaInicial != null ? lista.listaInicial
@@ -2041,7 +2041,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	private void removerDasListasDePrioridade(DpLotacao lota, DpPessoa pess) throws Exception {
 		for (SrLista lista : this.getListasAssociadas()) {
-			this.desassociarLista(lista, pess, lota);
+			this.retirarDeLista(lista, pess, lota);
 		}
 	}
 
@@ -2058,34 +2058,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	private void reInserirListasDePrioridade(DpLotacao lota, DpPessoa pess) throws Exception {
-		boolean encontrouMovimentacao = false;
-		SrMovimentacao movimentacaoFechamento = this.getUltimaMovimentacaoFinalizadora();
-		
-		if (movimentacaoFechamento != null) {
-			for (SrMovimentacao mov : this.getMovimentacaoSet(false, null, true)) {
-				if (encontrouMovimentacao) {
-					if(mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA) {
-						this.associarLista(mov.lista, pess, lota);
-					}
-				}
-				else if (movimentacaoFechamento.dtIniMov.equals(mov.dtIniMov))
-					encontrouMovimentacao = true;
-			}
+		for (SrMovimentacao mov : getMovimentacaoSet()){
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO 
+					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO)
+				break;
+			if(mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA) 
+				incluirEmLista(mov.lista, pess, lota);
 		}
-	}
-	
-	private SrMovimentacao getUltimaMovimentacaoFinalizadora() {
-		SrMovimentacao ultimoFechamento = this.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO);
-		SrMovimentacao ultimoCancelamento = this.getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
-		
-		if (ultimoFechamento == null)
-			return ultimoCancelamento;
-		else if (ultimoCancelamento == null)
-			return ultimoFechamento;
-		else if (ultimoFechamento.dtIniMov.compareTo(ultimoCancelamento.dtIniMov) < 0)
-			return ultimoFechamento;
-		else
-			return ultimoCancelamento;
 	}
 	
 	public void deixarPendente(DpLotacao lota, DpPessoa pess, SrTipoMotivoPendencia motivo, 

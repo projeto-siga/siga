@@ -524,7 +524,7 @@ public class Application extends SigaApplication {
 		// DB1: Trecho de código que garante que só sejam exibidos as solicitações para a lotação cadastrante
 		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
 		for (SrSolicitacao sol : list) 
-			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))
+			if (!sol.isMarcada(61))
 					listaSolicitacao.add(sol);
 			else
 				if (sol.lotaCadastrante == lotaTitular())
@@ -719,19 +719,19 @@ public class Application extends SigaApplication {
 		render(solicitacao);
 	}
 
-	public static void associarListaGravar(Long idSolicitacao, Long idLista)
+	public static void incluirEmListaGravar(Long idSolicitacao, Long idLista)
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.associarLista(lista, cadastrante(), lotaTitular());
+		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular());
 		exibir(idSolicitacao, completo());
 	}
 
-	public static void desassociarLista(Long idSolicitacao, Long idLista)
+	public static void retirarDeLista(Long idSolicitacao, Long idLista)
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.desassociarLista(lista, cadastrante(), lotaTitular());
+		solicitacao.retirarDeLista(lista, cadastrante(), lotaTitular());
 		exibirLista(idLista);
 	}
 
@@ -901,7 +901,7 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
+		//List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
 		List<SrLista> listasPrioridade = SrLista.listar(false);
@@ -909,7 +909,7 @@ public class Application extends SigaApplication {
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
 		
-		render(designacao, orgaos, locais, pesquisaSatisfacao, unidadesMedida, listasPrioridade);
+		render(designacao, orgaos, locais, pesquisaSatisfacao, /*unidadesMedida,*/ listasPrioridade);
 	}
 	
 	public static void gravarDesignacao(SrConfiguracao designacao)
@@ -1009,7 +1009,7 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
+		//List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
 		List<SrLista> listasPrioridade = SrLista.listar(false);
@@ -1024,7 +1024,7 @@ public class Application extends SigaApplication {
 			designacoes = new ArrayList<SrConfiguracao>();
 		}
 		
-		render(itemConfiguracao, designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
+		render(itemConfiguracao, designacoes, orgaos, locais, /*unidadesMedida,*/ pesquisaSatisfacao, listasPrioridade);
 	}
 
 	public static void gravarItem(SrItemConfiguracao itemConfiguracao)

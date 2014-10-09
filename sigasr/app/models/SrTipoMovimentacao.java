@@ -25,7 +25,7 @@ public class SrTipoMovimentacao extends GenericModel {
 
 	final static public long TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO = 5;
 
-	final static public long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA = 6;
+	final static public long TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA = 6;
 
 	final static public long TIPO_MOVIMENTACAO_FECHAMENTO = 7;
 

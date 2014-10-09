@@ -1085,10 +1085,32 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;
 		}
 
-		ExMovimentacao mov = getMovAssinatura();
-		if (mov == null)
+		if(isEletronico() && !isAssinadoEletronicoPorTodosOsSignatarios())
 			return false;
+					
+		if(!isEletronico()) {			
+			ExMovimentacao mov = getMovAssinatura();
+			if (mov == null)
+				return false;
+		}
+
 		return true;
+	}
+	
+	/**
+	 * Verifica se um documento eletrônico possui pelo menos uma assinatura digital
+	 */
+	public boolean isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() {
+		if(!isEletronico())
+			return false;
+		
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**
@@ -2104,7 +2126,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * Verifica se um documento foi assinado pelo subscritor e por todos os
 	 * cosignatários
 	 */
-	public boolean isAssinadoEletronicoPorTodosOsSignatarios() {
+	private boolean isAssinadoEletronicoPorTodosOsSignatarios() {
 		// Interno antigo e externo são considerados como assinados
 		if (getExTipoDocumento().getIdTpDoc() != 1L) {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;

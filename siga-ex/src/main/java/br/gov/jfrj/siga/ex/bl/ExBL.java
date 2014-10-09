@@ -873,11 +873,7 @@ public class ExBL extends CpBL {
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
-					if (!mob.doc().isEletronico()
-							&& (mob.doc().isAssinado())
-							|| (mob.doc().isEletronico() && mob
-									.doc()
-									.isAssinadoEletronicoPorTodosOsSignatarios())
+					if (mob.doc().isAssinado()
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
 
@@ -3062,6 +3058,9 @@ public class ExBL extends CpBL {
 		
 		if(!getComp().podeSerSubscritor(doc))
 			throw new AplicacaoException("O usuário não pode ser subscritor do documento");
+		
+		if(doc.isProcesso() && doc.getMobilGeral().temAnexos())
+			throw new AplicacaoException("Processos não podem possuir anexos antes da finalização. Exclua todos os anexos para poder finalizar. Os anexos poderão ser incluídos no primeiro volume após a finalização.");
 
 		Set<ExVia> setVias = doc.getSetVias();
 
@@ -4332,7 +4331,7 @@ public class ExBL extends CpBL {
 				if (m.getExDocumento().isEletronico()
 						&& !m.getExDocumento().jaTransferido()
 						&& !m.getExDocumento()
-								.isAssinadoEletronicoPorTodosOsSignatarios())
+								.isAssinado())
 					throw new AplicacaoException(
 							"Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 

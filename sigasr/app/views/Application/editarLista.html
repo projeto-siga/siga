@@ -44,13 +44,8 @@
 		
 		$('#prioridades_table tbody').on('click', 'tr', function () {
 			if (prioridadesTable.row(this).data() != undefined) {
-				if ( $(this).hasClass('selected') ) {
-		            $(this).removeClass('selected');
-		        }
-		        else {
-		        	prioridadesTable.$('tr.selected').removeClass('selected');
-		            $(this).addClass('selected');
-		        }
+	        	prioridadesTable.$('tr.selected').removeClass('selected');
+	            $(this).addClass('selected');
 	
 				atualizarControleAcessoModal(prioridadesTable.row(this).data());
 			    controleAcessoModalAbrir(true);
@@ -190,29 +185,32 @@
 			prioridadesTable.rows().indexes().each(function (i) {
 				var rowValues = prioridadesTable.row(i).data();
 				
-				if (rowValues[0] != '' && rowValues[0] > 0)
-					params += '&lista.permissoes[' + i + '].orgaoUsuario.idOrgaoUsu=' + rowValues[0];
-				
-				if (rowValues[2] != '' && rowValues[2] > 0)
-                	params += '&lista.permissoes[' + i + '].complexo.idComplexo=' + rowValues[2];
-				
-				if (rowValues[4] != '')
-                	params += '&lista.permissoes[' + i + '].lotacao.id=' + rowValues[4];
-				
-				if (rowValues[7] != '')
-                	params += '&lista.permissoes[' + i + '].dpPessoa.id=' + rowValues[7];
-				
-				if (rowValues[10] != '')
-                	params += '&lista.permissoes[' + i + '].cargo.id=' + rowValues[10];
-				
-				if (rowValues[13] != '')
-                	params += '&lista.permissoes[' + i + '].funcaoConfianca.id=' + rowValues[13];
-				
-				if (rowValues[16] != '')
-                	params += '&lista.permissoes[' + i + '].tipoPermissao=' + rowValues[16];
-				
-				if (rowValues[18] != '')
-					params += '&lista.permissoes[' + i + '].id=' + rowValues[18];
+				// caso exista algum item na tabela
+				if (rowValues) {
+					if (rowValues[0] != '' && rowValues[0] > 0)
+						params += '&lista.permissoes[' + i + '].orgaoUsuario.idOrgaoUsu=' + rowValues[0];
+					
+					if (rowValues[2] != '' && rowValues[2] > 0)
+	                	params += '&lista.permissoes[' + i + '].complexo.idComplexo=' + rowValues[2];
+					
+					if (rowValues[4] != '')
+	                	params += '&lista.permissoes[' + i + '].lotacao.id=' + rowValues[4];
+					
+					if (rowValues[7] != '')
+	                	params += '&lista.permissoes[' + i + '].dpPessoa.id=' + rowValues[7];
+					
+					if (rowValues[10] != '')
+	                	params += '&lista.permissoes[' + i + '].cargo.id=' + rowValues[10];
+					
+					if (rowValues[13] != '')
+	                	params += '&lista.permissoes[' + i + '].funcaoConfianca.id=' + rowValues[13];
+					
+					if (rowValues[16] != '')
+	                	params += '&lista.permissoes[' + i + '].tipoPermissao=' + rowValues[16];
+					
+					if (rowValues[18] != '')
+						params += '&lista.permissoes[' + i + '].id=' + rowValues[18];
+				}
 			});
             
             location.href = '@{Application.gravarLista()}?' + params;

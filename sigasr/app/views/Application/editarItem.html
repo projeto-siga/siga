@@ -100,7 +100,8 @@
 				if (aData[43] == 'true') {
 					$('td', nRow).addClass('configuracaoHerdada');
 					$('td:eq(0)', nRow).removeClass('checkbox-hidden');
-					document.getElementById("check"+aData[42]).checked = aData[44] == 'true';
+					if (document.getElementById("check"+aData[42]))
+						document.getElementById("check"+aData[42]).checked = aData[44] == 'true';
 				}
 				
 				// ajusta a String das listas de prioridade
@@ -696,7 +697,15 @@
                 
                 params += serializeDesignacoes();
                 
-                location.href = '@{Application.gravarItem()}?' + params;
+                $.ajax({
+	               	type: "POST",
+	               	url: "@{Application.gravarItem()}",
+	               	data: params,
+	               	dataType: "text",
+	               	success: function() {
+	               		location.href = "@{Application.listarItem()}?false";
+	               	}
+               	});
         });
         
         function serializeDesignacoes() {

@@ -28,7 +28,7 @@ GET     /public/                            staticDir:public
 
 *		/item/editar/{id}					Application.editarItem
 *		/item/editar						Application.editarItem
-*		/item/gravar						Application.gravarItem
+POST	/item/gravar						Application.gravarItem
 *		/item/listar						Application.listarItem
 *		/item/selecionar					Application.selecionarItem
 *		/item/buscar						Application.buscarItem
@@ -85,6 +85,3 @@ GET     /public/                            staticDir:public
 
 *		/{tipo}/buscar									Application.buscarSiga
 *		/{tipo}/selecionar								Application.selecionarSiga
-
-
-

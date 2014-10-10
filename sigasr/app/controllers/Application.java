@@ -1019,7 +1019,6 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarItem(itemConfiguracao);
 		itemConfiguracao.salvar();
-		listarItem(Boolean.FALSE);
 	}
 
 	public static void desativarItem(Long id) throws Exception {

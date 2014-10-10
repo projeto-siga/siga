@@ -3,6 +3,7 @@
 <c:forEach var="item" items="${mobilMap}">
 	<!--ajax:${item.key}-->
 	<c:forEach var="t" items="${item.value}">
+	    <c:set var="doc_ref" value="${item.key}" scope="request" />
 		<c:set var="task" value="${t}" scope="request" />
 		<c:set var="variableList" value="${task.variableList}" scope="request" />
 		<c:set var="taskInstance" value="${task.taskInstance}" scope="request" />

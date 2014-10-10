@@ -251,7 +251,7 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 		try {
 			Object[] arrayDados = dados.toArray();
 			dados = null;
-			System.gc();
+			//System.gc();
 			Collection colecaoDados = new ArrayList<String>();
 			Map<String, Object> mapDados = new TreeMap<String, Object>();
 			int atual = 0;

@@ -1,5 +1,13 @@
 #{extends 'main.html' /} #{set title:'Edição de Tópico de Informação' /}
 
+<script>
+function postback(){
+	var frm = document.getElementById('frm');
+	frm.action = '@{Application.editar}';
+	frm.submit();
+}
+</script>
+
 <div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
 		<h2>
@@ -21,9 +29,9 @@
 				}*
 				<div class="gt-form-row gt-width-100">
 					<div class="gt-left-col gt-width-25" style="margin-right: 2em">
-						<label>Tipo</label>#{select name:'informacao.tipo',
+						<label>Tipo</label>#{select name:'tipo.id',
 						items:tiposInformacao, labelProperty:'nome', valueProperty:'id',
-						value:informacao.tipo?.id} #{/select}
+						value:tipo?.id, onchange:'postback();'} #{/select}
 					</div>
 					#{if informacao.edicao?.id == null || 
 						informacao.acessoPermitido(titular,lotaTitular, informacao.edicao?.id)}

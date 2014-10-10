@@ -24,7 +24,8 @@
 	GET		/agendamento_print						Application.agendamento_print
 	GET		/agendamento_sala_lista					Application.agendamento_sala_lista
 	GET 	/agendadas_hoje							Application.agendadas_hoje
-	GET		/usuario_atualiza						Application.usuario_atualiza					
+	GET		/usuario_atualiza						Application.usuario_atualiza
+	GET		/permissao_inclui						Application.permissao_inclui					
 	GET 	/creditos								Application.creditos
 		
 # Ignore favicon requests

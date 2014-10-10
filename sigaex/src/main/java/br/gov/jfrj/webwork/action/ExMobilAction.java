@@ -698,7 +698,7 @@ public class ExMobilAction extends
 					if (nivel <= 20
 							|| Ex.getInstance()
 									.getComp()
-									.podeAcessarPorNivel(getTitular(),
+									.podeAcessarDocumento(getTitular(),
 											getLotaTitular(),
 											doque.getMobilGeral())) {
 						if ((i >= offset) && (i < offset + itemPagina))

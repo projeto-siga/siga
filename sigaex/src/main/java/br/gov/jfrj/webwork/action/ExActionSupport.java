@@ -55,7 +55,7 @@ public class ExActionSupport extends SigaActionSupport {
 
 	protected void verificaNivelAcesso(ExMobil mob) throws Exception {
 		if (!Ex.getInstance().getComp()
-				.podeAcessarPorNivel(getTitular(), getLotaTitular(), mob)) {
+				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException("Acesso ao documento "
 					+ mob.getSigla()
 					+ " permitido somente a usuários autorizados. ("

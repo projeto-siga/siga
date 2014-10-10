@@ -417,7 +417,7 @@ public class ExBL extends CpBL {
 									mov.getDtIniMov(), null, pess);
 				// if (index % 10 == 0){
 				dao().getSessao().clear();
-				System.gc();
+				//System.gc();
 				// }
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -506,7 +506,7 @@ public class ExBL extends CpBL {
 
 		do {
 			long inicio = System.currentTimeMillis();
-			System.gc();
+			//System.gc();
 			iniciarAlteracao();
 			crit.setFirstResult(index);
 			list = crit.list();
@@ -521,8 +521,9 @@ public class ExBL extends CpBL {
 					System.out.println("Erro ao marcar o doc " + doc);
 					e.printStackTrace();
 				}
-				if (index % 50 == 0)
-					System.gc();
+				if (index % 50 == 0){
+//					System.gc();
+				}
 				System.out.print(doc.getIdDoc() + " ok - ");
 			}
 			ExDao.commitTransacao();
@@ -536,7 +537,7 @@ public class ExBL extends CpBL {
 					+ " numerados de " + totalDocs);
 		} while (list.size() > 0);
 
-		System.gc();
+		//System.gc();
 	}
 
 	public void marcarTudo() throws Exception {
@@ -641,7 +642,7 @@ public class ExBL extends CpBL {
 			}
 			if (efetivar) {
 				ExDao.commitTransacao();
-				System.gc();
+				//System.gc();
 			}
 			dao().getSessao().clear();
 		} while (list.size() > 0);
@@ -651,7 +652,7 @@ public class ExBL extends CpBL {
 		out.println(" - Fim");
 		out.println("-----------------------------------------------");
 
-		System.gc();
+		//System.gc();
 	}
 
 	/**
@@ -1027,9 +1028,11 @@ public class ExBL extends CpBL {
 		
 		while (itr.hasNext()) {
 			ExMovimentacao element = (ExMovimentacao) itr.next();
+			if(ExTipoMovimentacao.hasTransferencia(element.getIdTpMov()) == ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov()))
 			if (mov != null){
 				if (element.getIdMov() != mov.getIdMov()
-						&& element.getIdTpMov() == mov.getIdTpMov()
+						&& ExTipoMovimentacao.hasTransferencia(element.getIdTpMov())
+						&& ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov())
 						&& mov.getLotaCadastrante() == element.getLotaResp()
 						) {
 					contains = !contains;
@@ -1956,16 +1959,16 @@ public class ExBL extends CpBL {
 	
 	public String criarDocTeste() throws Exception {
 		//Método utilizado para testar criação de documentos por webService
-		/*ExService client = Service.getExService();
+		ExService client = Service.getExService();
 		String s;
 		
 		s = client.criarDocumento("RJ13989", "RJ13989", "CEF", "Agência Av. Rio Branco, 326", 1L, 1681L, "20.05.00.01", "Teste de Criação de documento por webservice",
 				true, 6L, "texto_memorando=%3Cp+style%3D%22text-indent%3A2cm%3B+text-align%3A+justify%22%3E%0D%0A%09Conte%26uacute%3Bdo%3C%2Fp%3E%0D%0A&tamanhoLetra=Normal&fecho=Atenciosamente", 
-				true);
+				"JFRJ-MEM-2014/00321", true);
 		
-		return s;*/
+		return s;
 		
-		return null;
+		//return null;
 	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,
@@ -4251,7 +4254,7 @@ public class ExBL extends CpBL {
 			final DpPessoa subscritor, final DpPessoa titular,
 			final ExTipoDespacho tpDespacho, final boolean fInterno,
 			final String descrMov, final String conteudo,
-			String nmFuncaoSubscritor) throws AplicacaoException, Exception {
+			String nmFuncaoSubscritor, boolean forcarTransferencia) throws AplicacaoException, Exception {
 
 
 		boolean fDespacho = tpDespacho != null || descrMov != null
@@ -4303,8 +4306,13 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException(
 							"Não é permitido transferir documento para lotação fechada");
 
-				if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
-					throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+				if (forcarTransferencia) {
+					if (!getComp().podeSerTransferido(m))
+						throw new AplicacaoException("Transferência não pode ser realizada (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+				} else {
+					if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m)) 
+						throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+				}
 				if (!m.getExDocumento().isAssinado()
 						&& !lotaResponsavel.equivale(m.getExDocumento()
 								.getLotaTitular())

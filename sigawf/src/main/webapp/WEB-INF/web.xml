@@ -27,6 +27,10 @@
 		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
 	</listener>
 
+	<welcome-file-list>
+		<welcome-file>inbox.action</welcome-file>
+	</welcome-file-list>
+
 	<filter>
 		<filter-name>WorkFlowFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.wf.util.WfThreadFilter</filter-class>

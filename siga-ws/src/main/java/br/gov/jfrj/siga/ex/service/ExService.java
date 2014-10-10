@@ -30,7 +30,7 @@ public interface ExService extends Remote {
 
     @WebMethod
 	public Boolean transferir(String codigoDocumentoVia, String siglaDestino,
-			String siglaCadastrante) throws Exception;
+			String siglaCadastrante, Boolean forcarTransferencia) throws Exception;
 
     @WebMethod
 	public Boolean isAssinado(String codigoDocumento, String siglaCadastrante)
@@ -51,7 +51,7 @@ public interface ExService extends Remote {
 
     @WebMethod
 	public Boolean podeTransferir(String codigoDocumento,
-			String siglaCadastrante) throws Exception;
+			String siglaCadastrante, Boolean forcarTransferencia) throws Exception;
 
     @WebMethod
 	public Boolean isAtendente(String codigoDocumento, String siglaCadastrante)
@@ -82,5 +82,5 @@ public interface ExService extends Remote {
 	
     @WebMethod
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
-			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, Boolean finalizar)  throws Exception;
+			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo,  String siglaDocPai, Boolean finalizar)  throws Exception;
 }

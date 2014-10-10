@@ -81,7 +81,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean transferir(String codigoDocumentoVia, String siglaDestino,
-			String siglaCadastrante) throws Exception {
+			String siglaCadastrante, Boolean forcarTransferencia) throws Exception {
 		if (codigoDocumentoVia == null)
 			return false;
 		try {
@@ -113,7 +113,7 @@ public class ExServiceImpl implements ExService {
 								cadastranteParser.getLotacao(), mob, null,
 								null, null, destinoParser.getLotacao(),
 								destinoParser.getPessoa(), null, null, null,
-								null, null, false, null, null, null);
+								null, null, false, null, null, null, forcarTransferencia);
 			}
 			return true;
 		} catch (Exception e) {
@@ -235,18 +235,24 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean podeTransferir(String codigoDocumento,
-			String siglaCadastrante) throws Exception {
+			String siglaCadastrante, Boolean forcarTransferencia) throws Exception {
 		try {
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
 			ExMobil mob = buscarMobil(codigoDocumento);
 			if (mob.isGeral() && mob.doc().isProcesso())
 				mob = mob.doc().getUltimoVolume();
-			return Ex
-					.getInstance()
-					.getComp()
-					.podeTransferir(cadastranteParser.getPessoa(),
-							cadastranteParser.getLotacao(), mob);
+			if (forcarTransferencia)
+				return Ex
+						.getInstance()
+						.getComp()
+						.podeSerTransferido(mob);
+			else
+				return Ex
+						.getInstance()
+						.getComp()
+						.podeTransferir(cadastranteParser.getPessoa(),
+								cadastranteParser.getLotacao(), mob);
 		} catch (Exception e) {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);
@@ -382,7 +388,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
-			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, Boolean finalizar) throws Exception {
+			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, String siglaDocPai, Boolean finalizar) throws Exception {
     	try {
     		DpPessoa cadastrante = null;
     		DpPessoa titular = null;
@@ -396,6 +402,7 @@ public class ExServiceImpl implements ExService {
     		DpLotacao destinatarioLotacao = null;
     		DpPessoa destinatarioPessoa = null;
     		CpOrgao destinatarioOrgaoExterno = null;
+    		ExDocumento docPai = null;
     		
     		ExDocumento doc = new ExDocumento();
     		
@@ -607,6 +614,24 @@ public class ExServiceImpl implements ExService {
 			mob.setNumSequencia(1);
 			mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
 			mob.setExDocumento(doc);
+			
+    		if(siglaDocPai != null && !siglaDocPai.isEmpty()) {
+    			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+    			filter.setSigla(siglaDocPai);
+    			ExMobil mobPai = (ExMobil) dao().consultarPorSigla(filter);
+    			if (mobPai != null) {
+    				docPai = mobPai.getExDocumento();
+    				
+    				if(docPai.getExMobilPai() != null)
+    					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") já é documento filho.");
+    				
+    				if((docPai.isEletronico() && !docPai.isAssinadoEletronicoPorTodosOsSignatarios()) ||
+    						(!docPai.isEletronico() && !docPai.isAssinado()))
+    					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") ainda não foi assinado.");
+    				
+    				doc.setExMobilPai(docPai.getMobilGeral());
+    			}
+    		}
 			
 			doc.setExMobilSet(new TreeSet<ExMobil>());
 			doc.getExMobilSet().add(mob);

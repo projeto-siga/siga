@@ -43,7 +43,7 @@ title:'Movimentações'/}
 						#{else} #{set descricao: m.movRef.tipo.nome /}#{/else}
 					#{/elseif}
 					#{else}
-						#{set descricao: '' /} 
+						#{set descricao: m.descricao /} 
 					#{/else}
 					
 					#{if m.movCanceladora != null || m.tipo.id == 12} 

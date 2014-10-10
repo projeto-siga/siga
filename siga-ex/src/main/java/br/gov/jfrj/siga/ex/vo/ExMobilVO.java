@@ -129,16 +129,16 @@ public class ExMobilVO extends ExVO {
 			if (!d.isFinalizado() || !d.isCancelado()) {
 				if (d.isExpediente())
 					expedientesFilhosNaoCancelados.add(new ExDocumentoVO(d,
-							null, titular, lotaTitular, false));
+							null, titular, lotaTitular, false,false));
 				else
 					processosFilhosNaoCancelados.add(new ExDocumentoVO(d, null,
-							titular, lotaTitular, false));
+							titular, lotaTitular, false,false));
 			}
 		}
 		
 		for (ExDocumento doc : mob.getDocsFilhosNaoJuntados())
 			expedientesFilhosNaoJuntados.add(new ExDocumentoVO(doc, null,
-					titular, lotaTitular, false));
+					titular, lotaTitular, false,false));
 
 		System.out.println(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()
@@ -539,9 +539,11 @@ public class ExMobilVO extends ExVO {
 									.getIdInicial()
 									.equals(mar.getDpPessoaIni().getIdInicial()))) {
 						sb.append(mar.getCpMarcador().getDescrMarcador());
-						sb.append(" [");
+						sb.append(" [<span title=\"");
+						sb.append(mar.getDpPessoaIni().getNomePessoa());
+						sb.append("\">");
 						sb.append(mar.getDpPessoaIni().getSigla());
-						sb.append("]");
+						sb.append("</span>]");
 					}
 				}
 			}
@@ -567,7 +569,11 @@ public class ExMobilVO extends ExVO {
 							if (mar.getDpLotacaoIni() != null) {
 								sb.append(", ");
 							}
+							sb.append(" [<span title=\"");
+							sb.append(mar.getDpPessoaIni().getNomePessoa());
+							sb.append("\">");
 							sb.append(mar.getDpPessoaIni().getSigla());
+							sb.append("</span>]");
 						}
 						sb.append("]");
 					}

@@ -4,7 +4,10 @@
 		<div id="gc-ancora-item-acao"></div>
 	</div>
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.gcTagAbertura}&estilo=inplace&msgvazio=Não existe conhecimento registrado para ${solicitacao.itemConfiguracao.tituloItemConfiguracao} - ${solicitacao.acao.tituloAcao}. Clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.gcTituloAbertura}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));
+		<!-- Edson: carrega o conhecimento do item + acao -->
+		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.gcTagAbertura}&estilo=inplace&popup=true&msgvazio=Não existe conhecimento registrado para ${solicitacao.itemConfiguracao.tituloItemConfiguracao} - ${solicitacao.acao.tituloAcao}. Clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.gcTituloAbertura}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));
+
+		carregarConhecimentosRelacionados();
 	</script>
 #{/if}
 

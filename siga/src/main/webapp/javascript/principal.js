@@ -14,27 +14,23 @@
 
 /**
  * Os modulos definidos na variavel modules abaixo, serao carregados
- * carregados na pagina principal do siga, a variavel params corresponde
+ * na pagina principal do siga. A variavel params corresponde
  * ao parametros que serao passados na requisicao GET ou POST.
  * O viewID corresponde ao local onde sera renderizado na tela o resultado
  * da consulta
  */
 
-// Quando a pagina for carregada ele inicia este metodo.
-// main
 window.Siga = {
 
 	MAXIMUM_RETRY_COUNT: 2,
 	
     modules: {
         sigawf: {
-            name: "sigawf",
-            url: "http://localhost:8080/sigawf/inbox.action",
+            url: "/sigawf/inbox.action",
             params: {},
             viewId: "right"
         },
         sigaex: {
-            name: "sigaex",
             url: "/sigaex/expediente/doc/gadget.action",
             params: {
                 idTpFormaDoc: 1
@@ -42,7 +38,6 @@ window.Siga = {
             viewId: "left",
             submodules: {
                 processos: {
-                    name: "processos",
                     url: "/sigaex/expediente/doc/gadget.action",
                     params: {
                         idTpFormaDoc: 2
@@ -52,16 +47,16 @@ window.Siga = {
             }
         },
         sigasr: {
-            name: "sigasr",
             url: "/sigasr/solicitacao/gadget",
             viewId: "rightbottom"
         },
         sigagc: {
-            name: "sigagc",
             url: "/sigagc/app/gadget",
             viewId: "rightbottom2"
         }
     },
+    
+    // A partir daqui sugiro que leia esse arquivo pelo fim.
 
     currentTimeInMillis: function(){
         return new Date($.now()).getTime();
@@ -180,8 +175,9 @@ window.Siga = {
 
     loadModule: function(model){
         var self = this;
+        // Local onde o conteúdo será renderizado
         var target = $("#"+model.viewId);
-
+        																				   // Este function ja é a resposta da chamada feita (callback)
         self.ajaxCall({url: model.url, type: "GET", params: model.params, target: target}, function(textResponse) {
             // Verifica se o SP foi previamente inicializado, caso nao tenha sido apenas renderiza.
             if (textResponse.indexOf("SAMLRequest") > -1){
@@ -191,6 +187,7 @@ window.Siga = {
                 self.ajaxCall({url: params.url, type: "POST", params: params.params, target: target}, function(textResponse){
                     var params = self.picketlinkResponse(textResponse);
 
+                    // Envia um POST para o SP com o atributo SAMLResponse da ultima requisicao
                     self.ajaxCall({url: params.url, type: "POST", params: params.params, target: target}, function(textResponse){
                         self.display(target, textResponse);
                     });

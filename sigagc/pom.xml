@@ -8,13 +8,12 @@
 		<version>1.1</version>
 		<relativePath>../pom-play.xml</relativePath>
 	</parent>
-	
+
 	<artifactId>sigagc</artifactId>
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>play</packaging>
 
 	<dependencies>
-
 		<!-- Bouncy Castle -->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
@@ -58,6 +57,12 @@
 					<artifactId>jdtcore</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-ex</artifactId>
+			<version>1.1</version>
 		</dependency>
 	</dependencies>
 </project>

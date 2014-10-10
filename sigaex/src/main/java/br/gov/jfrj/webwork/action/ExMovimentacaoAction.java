@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -2935,7 +2936,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							mov.getDestinoFinal(), mov.getSubscritor(),
 							mov.getTitular(), mov.getExTipoDespacho(), false,
 							mov.getDescrMov(), conteudo,
-							mov.getNmFuncaoSubscritor());
+							mov.getNmFuncaoSubscritor(), false);
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -3244,7 +3245,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 										mov.getDestinoFinal(),
 										mov.getSubscritor(), mov.getTitular(),
 										tpd, false, txt, null,
-										mov.getNmFuncaoSubscritor());
+										mov.getNmFuncaoSubscritor(), false);
 
 					}
 				}
@@ -4242,9 +4243,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return dao().consultarExModelo(null, "Despacho Automático");
 	}
 
-	public List<DpLotacao> getListaLotPubl() throws Exception {
+	public Set<DpLotacao> getListaLotPubl() throws Exception {
 
-		List<DpLotacao> lotacoes = new ArrayList<DpLotacao>();
+		Set<DpLotacao> lotacoes = new HashSet<DpLotacao>();
 		DpLotacao lotSubscritor, lotCadastrante, lotTitular, lotFiltro;
 		String siglaSubscritor, siglaCadastrante, siglaTitular;
 

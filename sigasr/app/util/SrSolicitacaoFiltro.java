@@ -50,10 +50,11 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 					+ lotaSolicitante.getIdInicial();
 		if (itemConfiguracao != null
 				&& itemConfiguracao.idItemConfiguracao > 0L)
-			query += " and sol.itemConfiguracao.idItemConfiguracao = "
-					+ itemConfiguracao.idItemConfiguracao;
+			query += " and sol.itemConfiguracao.itemInicial.idItemConfiguracao = "
+					+ itemConfiguracao.itemInicial.idItemConfiguracao;
 		if (acao != null && acao.idAcao > 0L)
-			query += " and sol.acao.idAcao = " + acao.idAcao;
+			query += " and sol.acao.acaoInicial.idAcao = "
+					+ acao.acaoInicial.idAcao;
 		if (urgencia != null && urgencia.nivelUrgencia > 0)
 			query += " and sol.urgencia = " + urgencia.ordinal();
 		if (tendencia != null && tendencia.nivelTendencia > 0)
@@ -100,7 +101,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		else if (lotaAtendente != null) {
 			if (naoDesignados)
 				subquery += "and situacao.dpLotacaoIni.idLotacao = "
-						+ lotaAtendente.getIdInicial() + " and situacao.dpPessoaIni is null";
+						+ lotaAtendente.getIdInicial()
+						+ " and situacao.dpPessoaIni is null";
 			else
 				subquery += "and situacao.dpLotacaoIni.idLotacao = "
 						+ lotaAtendente.getIdInicial();

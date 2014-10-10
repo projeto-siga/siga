@@ -340,15 +340,9 @@ public class ExDocumentoAction extends ExActionSupport {
 		return FuncoesEL.listaDocsAPublicarBoletim(getLotaTitular().getOrgaoUsuario());
 	}
 
-	public List<ExDocumento> getListaDocsAPublicarBoletimPorDocumento() {
-		if (getDoc().getIdDoc() != null) {
-			final List<ExDocumento> l = dao().consultarPorBoletimParaPublicar(
-					getDoc());
-			return l;
-		}
-
-		return null;
-	}
+	 public List<ExDocumento> getListaDocsAPublicarBoletimPorDocumento() {
+         return FuncoesEL.listaDocsAPublicarBoletimPorDocumento(getDoc());
+	 }
 
 	public HierarquizadorBoletimInterno getHierarquizadorBIE() {
 		return new HierarquizadorBoletimInterno(getLotaTitular()
@@ -949,7 +943,7 @@ public class ExDocumentoAction extends ExActionSupport {
 							new Date());
 
 		ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getTitular(),
-				getLotaTitular(), true);
+				getLotaTitular(), true,true);
 		super.getRequest().setAttribute("docVO", docVO);
 
 		// logStatistics();
@@ -967,7 +961,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	
 	
 	public String aExibir() throws Exception {
-		buscarDocumento(true);
+		buscarDocumento(false);
 
 		assertAcesso();
 
@@ -988,7 +982,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getTitular(),
-				getLotaTitular(), true);
+				getLotaTitular(), true,false);
 		
 		
 		docVO.exibe();

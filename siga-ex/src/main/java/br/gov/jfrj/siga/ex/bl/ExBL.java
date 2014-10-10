@@ -873,11 +873,7 @@ public class ExBL extends CpBL {
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
-					if (!mob.doc().isEletronico()
-							&& (mob.doc().isAssinado())
-							|| (mob.doc().isEletronico() && mob
-									.doc()
-									.isAssinadoEletronicoPorTodosOsSignatarios())
+					if (mob.doc().isAssinado()
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 							|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
 
@@ -1959,16 +1955,16 @@ public class ExBL extends CpBL {
 	
 	public String criarDocTeste() throws Exception {
 		//Método utilizado para testar criação de documentos por webService
-		ExService client = Service.getExService();
+		/*ExService client = Service.getExService();
 		String s;
 		
 		s = client.criarDocumento("RJ13989", "RJ13989", "CEF", "Agência Av. Rio Branco, 326", 1L, 1681L, "20.05.00.01", "Teste de Criação de documento por webservice",
 				true, 6L, "texto_memorando=%3Cp+style%3D%22text-indent%3A2cm%3B+text-align%3A+justify%22%3E%0D%0A%09Conte%26uacute%3Bdo%3C%2Fp%3E%0D%0A&tamanhoLetra=Normal&fecho=Atenciosamente", 
 				"JFRJ-MEM-2014/00321", true);
 		
-		return s;
+		return s;*/
 		
-		//return null;
+		return null;
 	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,
@@ -3062,6 +3058,9 @@ public class ExBL extends CpBL {
 		
 		if(!getComp().podeSerSubscritor(doc))
 			throw new AplicacaoException("O usuário não pode ser subscritor do documento");
+		
+		if(doc.isProcesso() && doc.getMobilGeral().temAnexos())
+			throw new AplicacaoException("Processos não podem possuir anexos antes da finalização. Exclua todos os anexos para poder finalizar. Os anexos poderão ser incluídos no primeiro volume após a finalização.");
 
 		Set<ExVia> setVias = doc.getSetVias();
 
@@ -4332,7 +4331,7 @@ public class ExBL extends CpBL {
 				if (m.getExDocumento().isEletronico()
 						&& !m.getExDocumento().jaTransferido()
 						&& !m.getExDocumento()
-								.isAssinadoEletronicoPorTodosOsSignatarios())
+								.isAssinado())
 					throw new AplicacaoException(
 							"Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 

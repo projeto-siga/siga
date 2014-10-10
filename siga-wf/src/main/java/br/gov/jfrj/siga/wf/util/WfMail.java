@@ -22,10 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.jbpm.context.def.VariableAccess;
-import org.jbpm.context.exe.VariableInstance;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.mail.Mail;
 import org.jbpm.taskmgmt.def.TaskController;
+
+import br.gov.jfrj.siga.wf.bl.Wf;
 
 /**
  * Classe que representa o serviço de e-mail. Esta classe é definida em
@@ -50,7 +51,7 @@ public class WfMail extends Mail {
 	public String getText() {
 		String rodape = "\n\n----------\n";
 		if (tiId != null) {
-			rodape += "Link para a tarefa no SIGA-WF: http://localhost:8080/sigawf/task.action?tiId="
+			rodape += "Link para a tarefa no SIGA-WF: " + Wf.getInstance().getProp().getMailLinkTarefa()
 					+ this.tiId + "\n";
 		}
 
@@ -59,10 +60,10 @@ public class WfMail extends Mail {
 				if (v.getMappedName().startsWith("doc_") && !v.isWritable()
 						&& v.isReadable()
 						&& docVariables.get(v.getMappedName()) != null) {
-
+					
 					rodape += "Link para o "
 							+ v.getVariableName()
-							+ " no SIGA: http://localhost:8080/sigaex/expediente/doc/exibir.action?sigla="
+							+ " no SIGA: " + Wf.getInstance().getProp().getMailLinkDocumento()
 							+ docVariables.get(v.getMappedName()) + "\n";
 				}
 
@@ -71,6 +72,7 @@ public class WfMail extends Mail {
 		rodape += "Mensagem gerada automaticamente pelo sistema SIGA.";
 		return super.getText() + rodape;
 	}
+
 
 	/**
 	 * Ao iniciar a manipulação do e-mail, esse método captura as informações

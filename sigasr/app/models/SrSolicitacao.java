@@ -1676,7 +1676,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular) throws Exception {
-		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
+		List<SrLista> listaFinal = new ArrayList<SrLista>();
 		
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(solicitante,
 				local, itemConfiguracao, acao,
@@ -1691,7 +1691,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			}
 		}
 
-		listaFinal.removeAll(getListasAssociadas());
 		return new ArrayList<SrLista>(listaFinal);
 	}
 	

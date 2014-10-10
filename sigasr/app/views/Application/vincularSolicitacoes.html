@@ -52,12 +52,9 @@ ${moreHead?.raw()}
 	$(document).ready(function() {
 		$("#vincularSolicitacao").hide();
 		
-		if (QueryString.mostrarDesativados) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados === 'true';
-			
-			if (document.getElementById('checkmostrarDesativado').checked)
-				document.getElementById('checkmostrarDesativado').value='true';
-			else document.getElementById('checkmostrarDesativado').value='false';
+		if (QueryString.mostrarDesativados != undefined) {
+			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
 		}
 			
 		$("#checkmostrarDesativado").click(function() {

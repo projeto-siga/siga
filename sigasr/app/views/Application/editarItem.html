@@ -706,81 +706,84 @@
    			designacoesTable.api().rows().indexes().each(function (i) {
    				var rowValues = designacoesTable.api().row(i).data();
    				
-   				if (rowValues[6] != '')
-                   	params += '&itemConfiguracao.designacoes[' + i + '].idSolicitante=' + rowValues[6];
-   				
-   				if (rowValues[1] != '' && rowValues[1] > 0)
-   					params += '&itemConfiguracao.designacoes[' + i + '].orgaoUsuario.idOrgaoUsu=' + rowValues[1];
-   				
-   				if (rowValues[3] != '' && rowValues[3] > 0)
-                   	params += '&itemConfiguracao.designacoes[' + i + '].complexo.idComplexo=' + rowValues[3];
-   				
-   				if (rowValues[9] != '')
-                   	params += '&itemConfiguracao.designacoes[' + i + '].acao.id=' + rowValues[9];
-   				
-   				if (rowValues[12] != '')
-                   	params += '&itemConfiguracao.designacoes[' + i + '].atendente.id=' + rowValues[12];
-   				
-   				if (rowValues[15] != '')
-                   	params += '&itemConfiguracao.designacoes[' + i + '].preAtendente.id=' + rowValues[15];
-   				
-   				if (rowValues[18] != '')
-                   	params += '&itemConfiguracao.designacoes[' + i + '].posAtendente.id=' + rowValues[18];
-   				
-   				if (rowValues[21] != '')
-                   	params += '&itemConfiguracao.designacoes[' + i + '].equipeQualidade.id=' + rowValues[21];
-   				
-   				if (rowValues[24] != '' && rowValues[24] > 0)
-   					params += '&itemConfiguracao.designacoes[' + i + '].pesquisaSatisfacao.id=' + rowValues[24];
-   				
-   				if (rowValues[26] != '')
-   					params += '&itemConfiguracao.designacoes[' + i + '].slaPreAtendimentoQuantidade=' + rowValues[26];
-   				
-   				if (rowValues[27] != '' && rowValues[27] > 0)
-   					params += '&itemConfiguracao.designacoes[' + i + '].unidadeMedidaPreAtendimento=' + rowValues[27];
-   				
-   				if (rowValues[28] != '')
-   					params += '&itemConfiguracao.designacoes[' + i + '].slaAtendimentoQuantidade=' + rowValues[28];
-   				
-   				if (rowValues[29] != '' && rowValues[29] > 0)
-   					params += '&itemConfiguracao.designacoes[' + i + '].unidadeMedidaAtendimento=' + rowValues[29];
-   				
-   				if (rowValues[30] != '')
-   					params += '&itemConfiguracao.designacoes[' + i + '].slaPosAtendimentoQuantidade=' + rowValues[30];
-   				
-   				if (rowValues[31] != '' && rowValues[31] > 0)
-   					params += '&itemConfiguracao.designacoes[' + i + '].unidadeMedidaPosAtendimento=' + rowValues[31];
-   				
-   				if (rowValues[32] != '')
-   					params += '&itemConfiguracao.designacoes[' + i + '].margemSeguranca=' + rowValues[32];
-   				
-   				if (rowValues[34] != '')
-   					params += '&itemConfiguracao.designacoes[' + i + '].observacaoSLA=' + rowValues[34];
-   				
-   				if (rowValues[42] != '' && rowValues[42] != undefined)
-   					params += '&itemConfiguracao.designacoes[' + i + '].id=' + rowValues[42];
-   				
-   				// atualiza o solicitante
-   				params += getDadosSolicitante(rowValues, i);
-   				
-   				// Valores Booleanos
-   				params += '&itemConfiguracao.designacoes[' + i + '].divulgarSLA=' + rowValues[33];
-				params += '&itemConfiguracao.designacoes[' + i + '].notificarGestor=' + rowValues[35];
-				params += '&itemConfiguracao.designacoes[' + i + '].notificarSolicitante=' + rowValues[36];
-				params += '&itemConfiguracao.designacoes[' + i + '].notificarCadastrante=' + rowValues[37];
-				params += '&itemConfiguracao.designacoes[' + i + '].notificarInterlocutor=' + rowValues[38];
-				params += '&itemConfiguracao.designacoes[' + i + '].notificarAtendente=' + rowValues[39];
-				
-				// Item de configuração herdado
-				if (rowValues[43] == "true") {
-					var isTrue = document.getElementById("check"+rowValues[42]).checked;
-					
-					params += '&itemConfiguracao.designacoes[' + i + '].utilizarItemHerdado=' + isTrue;
-					params += '&itemConfiguracao.designacoes[' + i + '].isHerdado=' + rowValues[43];
-				} 
-				
-				// lista de prioridades da designacao
-				params += rowValues[45];
+   				// valida se existe algum item na tabela
+   				if (rowValues) {
+   					if (rowValues[6] != '')
+   	                   	params += '&itemConfiguracao.designacoes[' + i + '].idSolicitante=' + rowValues[6];
+   	   				
+   	   				if (rowValues[1] != '' && rowValues[1] > 0)
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].orgaoUsuario.idOrgaoUsu=' + rowValues[1];
+   	   				
+   	   				if (rowValues[3] != '' && rowValues[3] > 0)
+   	                   	params += '&itemConfiguracao.designacoes[' + i + '].complexo.idComplexo=' + rowValues[3];
+   	   				
+   	   				if (rowValues[9] != '')
+   	                   	params += '&itemConfiguracao.designacoes[' + i + '].acao.id=' + rowValues[9];
+   	   				
+   	   				if (rowValues[12] != '')
+   	                   	params += '&itemConfiguracao.designacoes[' + i + '].atendente.id=' + rowValues[12];
+   	   				
+   	   				if (rowValues[15] != '')
+   	                   	params += '&itemConfiguracao.designacoes[' + i + '].preAtendente.id=' + rowValues[15];
+   	   				
+   	   				if (rowValues[18] != '')
+   	                   	params += '&itemConfiguracao.designacoes[' + i + '].posAtendente.id=' + rowValues[18];
+   	   				
+   	   				if (rowValues[21] != '')
+   	                   	params += '&itemConfiguracao.designacoes[' + i + '].equipeQualidade.id=' + rowValues[21];
+   	   				
+   	   				if (rowValues[24] != '' && rowValues[24] > 0)
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].pesquisaSatisfacao.id=' + rowValues[24];
+   	   				
+   	   				if (rowValues[26] != '')
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].slaPreAtendimentoQuantidade=' + rowValues[26];
+   	   				
+   	   				if (rowValues[27] != '' && rowValues[27] > 0)
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].unidadeMedidaPreAtendimento=' + rowValues[27];
+   	   				
+   	   				if (rowValues[28] != '')
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].slaAtendimentoQuantidade=' + rowValues[28];
+   	   				
+   	   				if (rowValues[29] != '' && rowValues[29] > 0)
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].unidadeMedidaAtendimento=' + rowValues[29];
+   	   				
+   	   				if (rowValues[30] != '')
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].slaPosAtendimentoQuantidade=' + rowValues[30];
+   	   				
+   	   				if (rowValues[31] != '' && rowValues[31] > 0)
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].unidadeMedidaPosAtendimento=' + rowValues[31];
+   	   				
+   	   				if (rowValues[32] != '')
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].margemSeguranca=' + rowValues[32];
+   	   				
+   	   				if (rowValues[34] != '')
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].observacaoSLA=' + rowValues[34];
+   	   				
+   	   				if (rowValues[42] != '' && rowValues[42] != undefined)
+   	   					params += '&itemConfiguracao.designacoes[' + i + '].id=' + rowValues[42];
+   	   				
+   	   				// atualiza o solicitante
+   	   				params += getDadosSolicitante(rowValues, i);
+   	   				
+   	   				// Valores Booleanos
+   	   				params += '&itemConfiguracao.designacoes[' + i + '].divulgarSLA=' + rowValues[33];
+   					params += '&itemConfiguracao.designacoes[' + i + '].notificarGestor=' + rowValues[35];
+   					params += '&itemConfiguracao.designacoes[' + i + '].notificarSolicitante=' + rowValues[36];
+   					params += '&itemConfiguracao.designacoes[' + i + '].notificarCadastrante=' + rowValues[37];
+   					params += '&itemConfiguracao.designacoes[' + i + '].notificarInterlocutor=' + rowValues[38];
+   					params += '&itemConfiguracao.designacoes[' + i + '].notificarAtendente=' + rowValues[39];
+   					
+   					// Item de configuração herdado
+   					if (rowValues[43] == "true") {
+   						var isTrue = document.getElementById("check"+rowValues[42]).checked;
+   						
+   						params += '&itemConfiguracao.designacoes[' + i + '].utilizarItemHerdado=' + isTrue;
+   						params += '&itemConfiguracao.designacoes[' + i + '].isHerdado=' + rowValues[43];
+   					} 
+   					
+   					// lista de prioridades da designacao
+   					params += rowValues[45];
+   				}
    			});
        		
        		return params;

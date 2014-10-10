@@ -16,6 +16,7 @@ import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import utils.ProcessadorHtml;
 import play.db.jpa.GenericModel;
 import br.gov.jfrj.siga.base.AplicacaoException;
 

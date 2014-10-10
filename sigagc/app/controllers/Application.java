@@ -29,6 +29,7 @@ import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 import notifiers.Correio;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.jboss.security.SecurityContextAssociation;
@@ -705,9 +706,7 @@ public class Application extends SigaApplication{
 	public static void fechar(String sigla) throws Exception {
 		GcInformacao inf = GcInformacao.findBySigla(sigla);
 		if (inf.acessoPermitido(titular(), lotaTitular(), inf.edicao.id)) {
-			GcBL.movimentar(inf,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
-					null, null, null, null, null, null, null, null);
+			GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,	null, null, null, null, null, null, null, null);
 			GcBL.gravar(inf, idc(), titular(), lotaTitular());
 			exibir(inf.getSigla());
 		} else
@@ -720,9 +719,7 @@ public class Application extends SigaApplication{
 	public static void duplicar(String sigla) throws Exception {
 		GcInformacao infDuplicada = GcInformacao.findBySigla(sigla);
 
-		GcMovimentacao movLocalizada = GcBL.movimentar(infDuplicada,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, null, null,
-				null, null, null, null, null, null, null);
+		GcMovimentacao movLocalizada = GcBL.movimentar(infDuplicada, GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(infDuplicada, idc(), titular(), lotaTitular());
 
 		GcInformacao inf = new GcInformacao();
@@ -889,6 +886,9 @@ public class Application extends SigaApplication{
 		CpIdentidade idc = idc();
 		if (files != null)
 			for (Upload file : files) {
+				if (file.getSize() > 2097152)
+					throw new AplicacaoException("O tamanho do arquivo é maior que o máximo permitido (2MB)");
+				
 				if (file.getSize() > 0) {
 					/*
 					 * ----Não pode ser usado porque o "plupload" retorna um

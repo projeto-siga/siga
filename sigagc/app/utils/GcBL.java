@@ -2,9 +2,10 @@ package utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -20,6 +21,7 @@ import models.GcTipoMovimentacao;
 import models.GcTipoTag;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
@@ -36,29 +38,34 @@ public class GcBL {
 			return null;
 		return s.trim();
 	}
-	public static GcMovimentacao movimentar(GcInformacao inf, GcArquivo arqDuplicado, long id) throws Exception {
+
+	public static GcMovimentacao movimentar(GcInformacao inf,
+			GcArquivo arqDuplicado, long id) throws Exception {
 		GcMovimentacao mov = new GcMovimentacao();
 		mov.tipo = GcTipoMovimentacao.findById(id);
 		if (mov.tipo == null)
 			throw new Exception(
-					"N„o foi possÌvel localizar um tipo de movimentac„o com id="
+					"N√£o foi poss√≠vel localizar um tipo de movimentac√£o com id="
 							+ id);
 		mov.arq = arqDuplicado;
 		return movimentar(inf, mov);
 	}
+
 	public static GcMovimentacao movimentar(GcInformacao inf, long idTipo,
-			DpPessoa pessoa, DpLotacao lotacao, String titulo, String conteudo,
-			String classificacao, GcMovimentacao movRef, Date hisDtIni,
-			byte[] anexo) throws Exception {
+			DpPessoa pessoa, DpLotacao lotacao, String descricao,
+			String titulo, String conteudo, String classificacao,
+			GcMovimentacao movRef, Date hisDtIni, byte[] anexo)
+			throws Exception {
 
 		GcMovimentacao mov = new GcMovimentacao();
 		mov.tipo = GcTipoMovimentacao.findById(idTipo);
 		if (mov.tipo == null)
 			throw new Exception(
-					"N„o foi possÌvel localizar um tipo de movimentac„o com id="
+					"N√£o foi poss√≠vel localizar um tipo de movimentac√£o com id="
 							+ idTipo);
 		mov.pessoaAtendente = pessoa;
 		mov.lotacaoAtendente = lotacao;
+		mov.descricao = descricao;
 		mov.movRef = movRef;
 		mov.hisDtIni = hisDtIni;
 
@@ -66,7 +73,8 @@ public class GcBL {
 		conteudo = simplificarString(conteudo);
 
 		if (conteudo != null && conteudo.startsWith("<")) {
-			String canonicalizado = new ProcessadorHtml().canonicalizarHtml(conteudo, false, true, true, true, true);
+			String canonicalizado = new ProcessadorHtml().canonicalizarHtml(
+					conteudo, false, true, true, true, true);
 			conteudo = canonicalizado;
 		}
 
@@ -75,21 +83,21 @@ public class GcBL {
 			GcArquivo arq = new GcArquivo();
 			arq.titulo = titulo;
 			arq.classificacao = null;
-            arq.setConteudoBinario(anexo, arq.obterMimeType());
+			arq.setConteudoBinario(anexo, arq.obterMimeType());
 			mov.arq = arq;
-		} 
-		else {
+		} else {
 			if (titulo != null && conteudo != null) {
-					GcArquivo arq = new GcArquivo();
-					arq.titulo = titulo;
-					arq.setConteudoTXT(conteudo);
-					arq.classificacao = classificacao;
-					mov.arq = arq;
-			}
-			else if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO ||
-					idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
-					//throw new Exception("N„o È permitido salvar uma informaÁ„o com tÌtulo, conte˙do e classificaÁ„o vazios.");
-					throw new AplicacaoException("N„o È permitido salvar uma informaÁ„o com tÌtulo ou conte˙do vazios.");
+				GcArquivo arq = new GcArquivo();
+				arq.titulo = titulo;
+				arq.setConteudoTXT(conteudo);
+				arq.classificacao = classificacao;
+				mov.arq = arq;
+			} else if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO
+					|| idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
+				// throw new
+				// Exception("N√£o √© permitido salvar uma informa√ß√£o com t√≠tulo, conte√∫do e classifica√ß√£o vazios.");
+				throw new AplicacaoException(
+						"N√£o √© permitido salvar uma informa√ß√£o com t√≠tulo ou conte√∫do vazios.");
 			}
 		}
 
@@ -103,12 +111,10 @@ public class GcBL {
 			mov.hisDtIni = dt;
 		}
 		mov.inf = inf;
-		/*if (mov.isCanceladora()) {
-			for (GcMovimentacao mv : inf.movs) {
-				if (mv.id == mov.movRef.id)
-					mv.movCanceladora = mov;
-			}
-		}*/
+		/*
+		 * if (mov.isCanceladora()) { for (GcMovimentacao mv : inf.movs) { if
+		 * (mv.id == mov.movRef.id) mv.movCanceladora = mov; } }
+		 */
 
 		if (inf.movs == null)
 			inf.movs = new TreeSet<GcMovimentacao>();
@@ -127,27 +133,27 @@ public class GcBL {
 		return new Date();
 	}
 
-	public static GcInformacao gravar(GcInformacao inf, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
+	public static GcInformacao gravar(GcInformacao inf, CpIdentidade idc,
+			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 		Date dt = dt();
 		// dao().iniciarTransacao();
 		// try {
-		
-		// Atualiza o campo arq, pois este n„o pode ser nulo
+
+		// Atualiza o campo arq, pois este n√£o pode ser nulo
 		if (inf.movs != null) {
 			for (GcMovimentacao mov : inf.movs) {
 				if (inf.arq == null)
 					inf.arq = mov.arq;
 			}
 		}
-		
+
 		if (inf.hisDtIni == null)
 			inf.hisDtIni = dt;
 		if (inf.hisIdcIni == null)
 			inf.hisIdcIni = idc;
 		if (inf.movs != null) {
 			for (GcMovimentacao mov : inf.movs) {
-				if (mov.arq != null && mov.arq.id == 0) 
+				if (mov.arq != null && mov.arq.id == 0)
 					mov.arq.save();
 				if (mov.hisIdcIni == null)
 					mov.hisIdcIni = idc;
@@ -181,6 +187,7 @@ public class GcBL {
 			inf.tags = buscarTags(a, false);
 		}
 	}
+
 	public static Set<GcTag> buscarTags(String[] a, boolean fValidos) {
 		Set<GcTag> set = new TreeSet<GcTag>();
 		for (String s : a) {
@@ -227,7 +234,7 @@ public class GcBL {
 				set.add(tag);
 			}
 		}
-		
+
 		if (set.size() == 0)
 			return null;
 		return set;
@@ -260,10 +267,10 @@ public class GcBL {
 
 			if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO) {
 				if (inf.autor == null)
-					//inf.autor = mov.pessoa;
+					// inf.autor = mov.pessoa;
 					inf.autor = mov.pessoaTitular;
 				if (inf.lotacao == null)
-					//inf.lotacao = mov.lotacao;
+					// inf.lotacao = mov.lotacao;
 					inf.lotacao = mov.lotacaoTitular;
 				inf.arq = mov.arq;
 			}
@@ -281,7 +288,7 @@ public class GcBL {
 		}
 	}
 
-	public static void atualizarMarcas(GcInformacao inf) {
+	public static void atualizarMarcas(GcInformacao inf) throws Exception {
 		SortedSet<GcMarca> setA = new TreeSet<GcMarca>();
 		if (inf.marcas != null) {
 			// Excluir marcas duplicadas
@@ -295,7 +302,7 @@ public class GcBL {
 		SortedSet<GcMarca> setB = calcularMarcadores(inf);
 		Set<GcMarca> incluir = new TreeSet<GcMarca>();
 		Set<GcMarca> excluir = new TreeSet<GcMarca>();
-		
+
 		encaixar(setA, setB, incluir, excluir);
 		for (GcMarca i : incluir) {
 			if (i.inf.marcas == null) {
@@ -316,11 +323,11 @@ public class GcBL {
 			e.inf.marcas.remove(e);
 			e.delete();
 		}
-		
+
 	}
 
 	/**
-	 * Executa algoritmo de comparaÁ„o entre dois sets e preenche as listas:
+	 * Executa algoritmo de compara√ß√£o entre dois sets e preenche as listas:
 	 * inserir, excluir e atualizar.
 	 */
 	private static void encaixar(SortedSet<GcMarca> setA,
@@ -390,28 +397,28 @@ public class GcBL {
 	}
 
 	/**
-	 * Calcula quais as marcas cada informaÁ„o ter· com base nas movimentaÁıes
-	 * que foram feitas na informacao.
+	 * Calcula quais as marcas cada informa√ß√£o ter√° com base nas
+	 * movimenta√ß√µes que foram feitas na informacao.
 	 * 
 	 * @param inf
 	 */
-	private static SortedSet<GcMarca> calcularMarcadores(GcInformacao inf) {
+	private static SortedSet<GcMarca> calcularMarcadores(GcInformacao inf)
+			throws Exception {
 		SortedSet<GcMarca> set = new TreeSet<GcMarca>();
 
 		if (inf.hisDtFim != null) {
 			acrescentarMarca(set, inf, CpMarcador.MARCADOR_CANCELADO,
 					inf.hisDtFim, null, inf.autor, inf.lotacao);
-		} 
-		else {
+		} else {
 			if (inf.elaboracaoFim == null) {
 				acrescentarMarca(set, inf, CpMarcador.MARCADOR_EM_ELABORACAO,
 						inf.hisDtIni, null, inf.autor, inf.lotacao);
 			} else {
-				acrescentarMarca(set, inf, CpMarcador.MARCADOR_ATIVO, inf.elaboracaoFim,
-						null, inf.autor, inf.lotacao);
-				acrescentarMarca(set, inf, CpMarcador.MARCADOR_NOVO, inf.elaboracaoFim,
-						new Date(inf.hisDtIni.getTime() + TEMPO_NOVIDADE),
-						inf.autor, inf.lotacao);
+				acrescentarMarca(set, inf, CpMarcador.MARCADOR_ATIVO,
+						inf.elaboracaoFim, null, inf.autor, inf.lotacao);
+				acrescentarMarca(set, inf, CpMarcador.MARCADOR_NOVO,
+						inf.elaboracaoFim, new Date(inf.hisDtIni.getTime()
+								+ TEMPO_NOVIDADE), inf.autor, inf.lotacao);
 			}
 			if (inf.movs != null) {
 				for (GcMovimentacao mov : inf.movs) {
@@ -422,17 +429,35 @@ public class GcBL {
 
 					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO)
 						acrescentarMarca(set, inf, CpMarcador.MARCADOR_REVISAR,
-								mov.hisDtIni, null, mov.pessoaAtendente, mov.lotacaoAtendente);
+								mov.hisDtIni, null, mov.pessoaAtendente,
+								mov.lotacaoAtendente);
 
-					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
+					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR
+							&& (mov.pessoaAtendente != null || mov.lotacaoAtendente != null)) {
+
+						/*
+						 * /*Edson: pode ser usado quando o grupo de e-mail
+						 * notificado for do siga-gi if (mov.grupo != null) {
+						 * Map<DpLotacao, List<DpPessoa>> mapa = mov
+						 * .getLotasEPessoasDoGrupo(); for (DpLotacao l :
+						 * mapa.keySet()) if (mapa.get(l).size() == 0) {
+						 * acrescentarMarca(set, inf,
+						 * CpMarcador.MARCADOR_TOMAR_CIENCIA, mov.hisDtIni,
+						 * null, null, l); } else { for (DpPessoa p :
+						 * mapa.get(l)) acrescentarMarca( set, inf,
+						 * CpMarcador.MARCADOR_TOMAR_CIENCIA, mov.hisDtIni,
+						 * null, p, l); } }
+						 */
 						acrescentarMarca(set, inf,
-								CpMarcador.MARCADOR_TOMAR_CIENCIA, mov.hisDtIni,
-								null, mov.pessoaAtendente, mov.lotacaoAtendente);
+								CpMarcador.MARCADOR_TOMAR_CIENCIA,
+								mov.hisDtIni, null, mov.pessoaAtendente,
+								mov.lotacaoAtendente);
+					}
 
 					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO)
 						acrescentarMarca(set, inf,
-								CpMarcador.MARCADOR_COMO_INTERESSADO, mov.hisDtIni,
-								null, mov.pessoaTitular, null);
+								CpMarcador.MARCADOR_COMO_INTERESSADO,
+								mov.hisDtIni, null, mov.pessoaTitular, null);
 				}
 			}
 		}
@@ -445,46 +470,53 @@ public class GcBL {
 				&& dt1.getYear() == dt2.getYear();
 	}
 
-	public static void logarVisita(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
+	public static void logarVisita(GcInformacao informacao, CpIdentidade idc,
+			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 		Date dt = dt();
 		for (GcMovimentacao mov : informacao.movs) {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA
 					&& titular.equivale(mov.pessoaTitular)
-					//&& idc.getDpPessoa().equivale(mov.pessoa)
+					// && idc.getDpPessoa().equivale(mov.pessoa)
 					&& dtMesmoDia(dt, mov.hisDtIni))
 				return;
 		}
 		GcMovimentacao m = GcBL.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA, null, null, null, null, null, null, null,
-				null);
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA, null, null, null,
+				null, null, null, null, null, null);
 		GcBL.gravar(informacao, idc, titular, lotaTitular);
 	}
 
-	public static void notificado(GcInformacao informacao, CpIdentidade idc, DpPessoa titular,
-									DpLotacao lotaTitular, GcMovimentacao movNotificacao) throws Exception {
+	public static void notificado(GcInformacao informacao, CpIdentidade idc,
+			DpPessoa titular, DpLotacao lotaTitular,
+			GcMovimentacao movNotificacao) throws Exception {
 		for (GcMovimentacao movs : informacao.movs) {
 			if (movs.isCancelada())
 				continue;
-			if (movs.tipo.id == movNotificacao.tipo.id){
-				if (titular.equivale(movNotificacao.pessoaAtendente)){
+			if (movs.tipo.id == movNotificacao.tipo.id) {
+				if (titular.equivale(movNotificacao.pessoaAtendente)) {
 					GcMovimentacao m = GcBL.movimentar(informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-							null, null, null, null, null, movNotificacao, null, null);
+							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE, null,
+							null, null, null, null, null, movNotificacao, null,
+							null);
 					movNotificacao.movCanceladora = m;
 					GcBL.gravar(informacao, idc, titular, lotaTitular);
-				}
-				else if (lotaTitular.equivale(movNotificacao.lotacaoAtendente)) {
+				} else if (lotaTitular
+						.equivale(movNotificacao.lotacaoAtendente)) {
 					GcMovimentacao m = GcBL.movimentar(informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE,
-							null, movNotificacao.lotacaoAtendente, null, null, null, movNotificacao, null, null);
+							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE, null,
+							movNotificacao.lotacaoAtendente, null, null, null,
+							null, movNotificacao, null, null);
 					GcBL.gravar(informacao, idc, titular, lotaTitular);
-					if(m.todaLotacaoCiente(movNotificacao)){
+					if (m.todaLotacaoCiente(movNotificacao)) {
 						movNotificacao.movCanceladora = m;
 						GcBL.gravar(informacao, idc, titular, lotaTitular);
 					}
+				} else {
+					// Edson: desenvolver esquema para marcar ciÔøΩncia de grupo
+					// de e-mail,
+					// chamando, inclusive, um todoGrupoCiente()
 				}
 				return;
 			}
@@ -492,13 +524,14 @@ public class GcBL {
 	}
 
 	public static void interessado(GcInformacao informacao, CpIdentidade idc,
-			DpPessoa titular, DpLotacao lotaTitular, boolean fInteresse) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, boolean fInteresse)
+			throws Exception {
 		GcMovimentacao movLocalizada = null;
 		for (GcMovimentacao mov : informacao.movs) {
 			if (mov.isCancelada())
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO
-				&& titular.equivale(mov.pessoaTitular)) {
+					&& titular.equivale(mov.pessoaTitular)) {
 				movLocalizada = mov;
 				break;
 			}
@@ -506,18 +539,19 @@ public class GcBL {
 		if (movLocalizada == null && fInteresse) {
 			GcMovimentacao m = GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO, null,
-					null, null, null, null, null, null, null);
+					null, null, null, null, null, null, null, null);
 			GcBL.gravar(informacao, idc, titular, lotaTitular);
 		} else if (movLocalizada != null && !fInteresse) {
-			cancelarMovimentacao(informacao, movLocalizada, idc, movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
-/*			GcMovimentacao m = GcBL
-					.movimentar(
-							informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-							null, null, null, null, null,
-							movLocalizada, null, null, null);
-			movLocalizada.movCanceladora = m;
-			GcBL.gravar(informacao, idc, movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);*/
+			cancelarMovimentacao(informacao, movLocalizada, idc,
+					movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
+			/*
+			 * GcMovimentacao m = GcBL .movimentar( informacao,
+			 * GcTipoMovimentacao
+			 * .TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO, null, null,
+			 * null, null, null, movLocalizada, null, null, null);
+			 * movLocalizada.movCanceladora = m; GcBL.gravar(informacao, idc,
+			 * movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
+			 */
 		}
 	}
 
@@ -531,7 +565,7 @@ public class GcBL {
 				return;
 		}
 		GcMovimentacao m = GcBL.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, null,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, null, null,
 				null, null, null, null, null, null, null);
 		GcBL.gravar(informacao, idc, titular, lotaTitular);
 	}
@@ -579,24 +613,27 @@ public class GcBL {
 
 		return text.substring(0, end) + "...";
 	}
-	
-	public static String atualizarClassificacao(String classificacao, String hashTag) {		
-		if(classificacao.isEmpty() && hashTag.isEmpty())
+
+	public static String atualizarClassificacao(String classificacao,
+			String hashTag) {
+		if (classificacao.isEmpty() && hashTag.isEmpty())
 			return null;
 		else if (classificacao.isEmpty() && !hashTag.isEmpty())
 			return hashTag.trim();
-		else if(!classificacao.isEmpty() && hashTag.isEmpty())
+		else if (!classificacao.isEmpty() && hashTag.isEmpty())
 			return classificacao;
 		else
 			return classificacao.concat(", ").concat(hashTag).trim();
 	}
-	
-	public static void cancelarMovimentacao (GcInformacao info, GcMovimentacao mov, CpIdentidade idc,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		GcMovimentacao m = GcBL.movimentar(info,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-				null, null, null, null, null,
-				mov, null, null);
+
+	public static void cancelarMovimentacao(GcInformacao info,
+			GcMovimentacao mov, CpIdentidade idc, DpPessoa titular,
+			DpLotacao lotaTitular) throws Exception {
+		GcMovimentacao m = GcBL
+				.movimentar(
+						info,
+						GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+						null, null, null, null, null, null, mov, null, null);
 		mov.movCanceladora = m;
 		GcBL.gravar(info, idc, titular, lotaTitular);
 	}

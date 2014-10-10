@@ -1441,6 +1441,36 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return naoAssinados;
 	}
+	
+	/**
+	 * Retorna a lista de movimentações de pendência anexação
+	 * 
+	 * @return Verdadeiro se o Mobil possui pendência de anexos e False caso
+	 *         contrário.
+	 * 
+	 */
+	public List<ExMovimentacao> getPendenciasDeAnexacao() {
+
+		List<ExMovimentacao> pendenciasDeAnexacao = new ArrayList<ExMovimentacao>();
+
+		for (ExMovimentacao mov : this.getExMovimentacaoSet()) {
+			if (!mov.isCancelada() && mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)
+				pendenciasDeAnexacao.add(mov);
+		}
+
+		return pendenciasDeAnexacao;
+	}
+	
+	/**
+	 * Verifica se um Mobil possui Pendências de Anexação
+	 * 
+	 * @return Verdadeiro se o Mobil possui pendências de anexos e False caso
+	 *         contrário.
+	 * 
+	 */
+	public boolean temPendenciasDeAnexacao() {
+		return getPendenciasDeAnexacao().size() > 0;
+	}
 
 	/**
 	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura

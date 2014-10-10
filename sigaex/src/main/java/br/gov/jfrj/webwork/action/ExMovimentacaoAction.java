@@ -2613,9 +2613,9 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					listarDespachoPendenteAssinatura(getTitular());
 
 		setItens(new ArrayList<ExMovimentacao>());
-
 		for (ExMovimentacao mov : itensComoSubscritor) {
-				getItens().add();
+				if(!mov.isAssinada() && !mov.isCancelada())
+					getItens().add(mov);
 		}
 		return Action.SUCCESS;
 	}

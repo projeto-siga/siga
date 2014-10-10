@@ -101,7 +101,7 @@
 		    <table class="gt-table">			    
 			    <tr>
 			        <th width="3%"></th>
-			        <th width="13%" align="left">Número</th>	
+			        <th width="17%" align="left">Número</th>	
 			        <th  width="5%"></th>		       	        
 			        <th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>	
 			        <th width="15%"></th>	 <th width="49%"></th>			       
@@ -114,33 +114,31 @@
 			        <th width="10%" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lotacao</th>
 			        <th width="5%" align="left">Pessoa</th>			        
 			        <th width="15%" align="left">Tipo</th>
-			        <th width="49%" align="left">Descrição</th>				 
+			        <th width="45%" align="left">Descrição</th>				 
 			    </tr>	   		   
 			    <c:forEach var="mov" items="${itens}">
-			   		<c:if test="${mov.idTpMov == 5 and not mov.cancelada}">
-				        <c:set var="x" scope="request">chk_${mov.mob.id}</c:set>
-					    <c:remove var="x_checked" scope="request" />
-					    <c:if test="${param[x] == 'true'}">
-					       <c:set var="x_checked" scope="request">checked</c:set>
-					    </c:if>
-				        <tr class="even">
-					        <td width="3%"align="center"><input type="checkbox" name="${x}"
-					           value="true" ${x_checked} /></td>		       
-	     			        <td width="13%"align="left">
-		    		            <ww:url id="url" action="exibir" namespace="/expediente/doc">
-			    		            <ww:param name="sigla">${mov.mob.sigla}</ww:param>
-				    		    </ww:url>
-					            <ww:a href="%{url}">${mov.mob.codigo}</ww:a>
-				            </td>
-				            <td width="5%" align="center">${mov.dtRegMovDDMMYY}</td>
-				            <td width="10%" align="center">${mov.mov.lotaCadastrante.sigla}</td>
-				            <td width="5%" align="left">${mov.mov.cadastrante.sigla}</td>			            
-				            <td width="15%" align="left">${mov.mov.exTipoMovimentacao.sigla}</td>
-				            <td width="49%"align="left">${mov.descricao}</td> 	            				    
-				        </tr>			         		         
-				        <ww:hidden name="pdf${x}" value="${mov.mob.sigla}" />
-					    <ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.mob.codigoCompacto}.pdf"/>
-					</c:if>
+			        <c:set var="x" scope="request">chk_${mov.exMobil.id}</c:set>
+				    <c:remove var="x_checked" scope="request" />
+				    <c:if test="${param[x] == 'true'}">
+				       <c:set var="x_checked" scope="request">checked</c:set>
+				    </c:if>
+			        <tr class="even">
+				        <td width="3%"align="center"><input type="checkbox" name="${x}"
+				           value="true" ${x_checked} /></td>		       
+     			        <td width="17%"align="left">
+	    		            <ww:url id="url" action="exibir" namespace="/expediente/doc">
+		    		            <ww:param name="sigla">${mov.exMobil.sigla}</ww:param>
+			    		    </ww:url>
+				            <ww:a href="%{url}">${mov.exMobil.codigo}</ww:a>
+			            </td>
+			            <td width="5%" align="center">${mov.dtRegMovDDMMYY}</td>
+			            <td width="10%" align="center">${mov.lotaCadastrante.sigla}</td>
+			            <td width="5%" align="left">${mov.cadastrante.sigla}</td>			            
+			            <td width="15%" align="left">${mov.exTipoMovimentacao.sigla}</td>
+			            <td width="45%"align="left">${mov.obs}</td> 	            				    
+			        </tr>			         		         
+			        <ww:hidden name="pdf${x}" value="${mov.exMobil.sigla}" />
+				    <ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.exMobil.codigoCompacto}.pdf"/>
 			    </c:forEach>   
 			 </table>
 	         </div>

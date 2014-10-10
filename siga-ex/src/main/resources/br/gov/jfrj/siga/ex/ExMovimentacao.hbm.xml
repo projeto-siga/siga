@@ -212,12 +212,10 @@
         </query>
         
         <query name="listarDespachoPendenteAssinatura">
-        	 <![CDATA[select mob from ExMobil mob join mob.exMarcaSet mar
-        	 		where (mar.dpPessoaIni.idPessoa=:idPessoaIni
-        	 		and mar.cpMarcador.idMarcador = 29)
-        	 		order by mar.dtIniMarca desc]]>
+				<![CDATA[select mov from ExMovimentacao mov join mov.exMobil mob join mob.exMarcaSet mar
+				where mar.dpPessoaIni.idPessoa=:idPessoaIni and mar.cpMarcador.idMarcador = 29 and mov.exTipoMovimentacao.idTpMov = 5
+				order by mar.dtIniMarca desc]]>
 		</query>
-	
 
         <!-- Somente os "em transferencia", "em transferencia eletronica" ou "transferido para orgao externo" -->
         <query name="consultarParaViaDeProtocolo">

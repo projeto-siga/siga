@@ -1896,7 +1896,7 @@ public class ExDao extends CpDao {
 		return query.list();
 	}
 	
-	public List<ExMobil> listarDespachoPendenteAssinatura(DpPessoa pessoa) {
+	public List<ExMovimentacao> listarDespachoPendenteAssinatura(DpPessoa pessoa) {
 		final Query query = getSessao().getNamedQuery(
 				"listarDespachoPendenteAssinatura");
 		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());

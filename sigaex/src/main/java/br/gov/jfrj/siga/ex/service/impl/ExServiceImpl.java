@@ -154,7 +154,7 @@ public class ExServiceImpl implements ExService {
 					.getBL()
 					.arquivarCorrente(cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(), mob, null, null,
-							destinoParser.getPessoa());
+							destinoParser.getPessoa(), false);
 			return true;
 		} catch (Exception e) {
 			if (!isHideStackTrace())

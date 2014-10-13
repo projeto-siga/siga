@@ -414,7 +414,7 @@ public class ExBL extends CpBL {
 					Ex.getInstance()
 							.getBL()
 							.arquivarCorrente(pess, lota, doc.getMobilGeral(),
-									mov.getDtIniMov(), null, pess);
+									mov.getDtIniMov(), null, pess, false);
 				// if (index % 10 == 0){
 				dao().getSessao().clear();
 				//System.gc();
@@ -1645,10 +1645,17 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não foi possível movimentar a via porque ela encontra-se apensada ou possui apensos.");
 	}
+	
+	
+	public void arquivarCorrenteAutomatico(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, ExMobil mob) throws Exception {
+			
+	    arquivarCorrente(cadastrante, lotaCadastrante, mob, null, null, null, true);
+	}	
 
 	public void arquivarCorrente(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
-			Date dtMovIni, DpPessoa subscritor) throws Exception {
+			Date dtMovIni, DpPessoa subscritor, boolean automatico) throws Exception {
 
 		permitirOuNaoMovimentarDestinacao(mob);
 
@@ -1670,6 +1677,10 @@ public class ExBL extends CpBL {
 					mov.setResp(ultMovNanCanc.getResp());
 				}
 			}
+			
+			if (automatico)
+				mov.setDescrMov("Arquivamento automatico.");
+			
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -4216,6 +4227,19 @@ public class ExBL extends CpBL {
 		alimentaFilaIndexacao(doc, true);
 		return s;
 	}
+	
+	public void transferirAutomatico(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, DpPessoa resp, DpLotacao lotaResp, ExMobil mob) throws Exception {
+			
+		transferir(null, null,
+				cadastrante, lotaCadastrante, mob,
+				null, null,
+				null, lotaResp,
+				resp, null,
+				null, null, null, null, false,
+				null, null, null, false, true);
+	}	
+	
 
 	/**
 	 * Transfere um documento de um local para outro. Esse método trata tanto da
@@ -4253,7 +4277,7 @@ public class ExBL extends CpBL {
 			final DpPessoa subscritor, final DpPessoa titular,
 			final ExTipoDespacho tpDespacho, final boolean fInterno,
 			final String descrMov, final String conteudo,
-			String nmFuncaoSubscritor, boolean forcarTransferencia) throws AplicacaoException, Exception {
+			String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico) throws AplicacaoException, Exception {
 
 
 		boolean fDespacho = tpDespacho != null || descrMov != null
@@ -4269,81 +4293,81 @@ public class ExBL extends CpBL {
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
 					"Não é possível fazer despacho em um documento que faça parte de um apenso");
+		
+		if(!automatico) {
 
-		if (fTranferencia && mob.doc().isEletronico()) {
-			if (mob.doc().getMobilGeral().temAnexosNaoAssinados()
-					|| mob.doc().getMobilGeral().temDespachosNaoAssinados())
-				throw new AplicacaoException(
-						"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
-
-		}
-
-		for (ExMobil m : set) {
-			
-			if (!m.equals(mob)
-					&& fDespacho && fTranferencia) {
-				throw new AplicacaoException(
-						"Não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. Faça primeiro o despacho e depois transfira o documento.");
-			}
-			
-			if (fDespacho && m.isVolumeEncerrado())
-				if (m.isApensadoAVolumeDoMesmoProcesso())
-					continue;
-				else
-					throw new AplicacaoException(
-							"Não é permitido fazer despacho em volume que esta encerrado");
-
-			if (fDespacho
-					&& !getComp()
-							.podeDespachar(cadastrante, lotaCadastrante, m))
-				throw new AplicacaoException(
-						"Não é permitido fazer despacho. Verifique se a via ou processo não está arquivado(a) e se não possui despachos pendentes de assinatura.");
-
-			if (fTranferencia) {
-
-				if (lotaResponsavel.isFechada())
-					throw new AplicacaoException(
-							"Não é permitido transferir documento para lotação fechada");
-
-				if (forcarTransferencia) {
-					if (!getComp().podeSerTransferido(m))
-						throw new AplicacaoException("Transferência não pode ser realizada (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
-				} else {
-					if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m)) 
-						throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
-				}
-				if (!m.getExDocumento().isAssinado()
-						&& !lotaResponsavel.equivale(m.getExDocumento()
-								.getLotaTitular())
-						&& !getComp().podeReceberDocumentoSemAssinatura(
-								responsavel, lotaResponsavel, m))
-					throw new AplicacaoException(
-							"Não é permitido fazer transferência em documento que ainda não foi assinado");
-
-				if (m.doc().isEletronico()) {
-					if (m.temAnexosNaoAssinados()
-							|| m.temDespachosNaoAssinados())
+			if (fTranferencia && mob.doc().isEletronico()) {
+				if (mob.doc().getMobilGeral().temAnexosNaoAssinados()
+						|| mob.doc().getMobilGeral().temDespachosNaoAssinados())
 						throw new AplicacaoException(
 								"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
 
+			}
+
+			for (ExMobil m : set) {
+			
+				if (!m.equals(mob)
+						&& fDespacho && fTranferencia) {
+					throw new AplicacaoException(
+							"Não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. Faça primeiro o despacho e depois transfira o documento.");
+				}
+			
+				if (fDespacho && m.isVolumeEncerrado())
+					if (m.isApensadoAVolumeDoMesmoProcesso())
+						continue;
+					else
+						throw new AplicacaoException(
+								"Não é permitido fazer despacho em volume que esta encerrado");
+
+				if (fDespacho	
+						&& !getComp()
+						.podeDespachar(cadastrante, lotaCadastrante, m))
+					throw new AplicacaoException(
+							"Não é permitido fazer despacho. Verifique se a via ou processo não está arquivado(a) e se não possui despachos pendentes de assinatura.");
+
+				if (fTranferencia) {
+					
+					if (lotaResponsavel.isFechada())
+						throw new AplicacaoException(
+								"Não é permitido transferir documento para lotação fechada");
+
+					if (forcarTransferencia) {
+						if (!getComp().podeSerTransferido(m))
+							throw new AplicacaoException("Transferência não pode ser realizada (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+					} else {
+						if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m)) 
+							throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+					}
+					if (!m.getExDocumento().isAssinado()
+							&& !lotaResponsavel.equivale(m.getExDocumento()
+									.getLotaTitular())
+									&& !getComp().podeReceberDocumentoSemAssinatura(
+											responsavel, lotaResponsavel, m))
+						throw new AplicacaoException(
+								"Não é permitido fazer transferência em documento que ainda não foi assinado");
+
+					if (m.doc().isEletronico()) {
+						if (m.temAnexosNaoAssinados()
+								|| m.temDespachosNaoAssinados())
+							throw new AplicacaoException(
+									"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+					}
+
+					if (m.getExDocumento().isEletronico()
+							&& !m.getExDocumento().jaTransferido()
+							&& !m.getExDocumento().isAssinado())
+						throw new AplicacaoException(
+								"Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
+
 				}
 
-				if (m.getExDocumento().isEletronico()
-						&& !m.getExDocumento().jaTransferido()
-						&& !m.getExDocumento()
-								.isAssinado())
-					throw new AplicacaoException(
-							"Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
-
+				if (!fDespacho) {
+					if (responsavel == null && lotaResponsavel == null)
+						if (orgaoExterno == null && obsOrgao == null)
+							throw new AplicacaoException(
+									"Não foram informados dados para o despacho/transferência");
+				}			
 			}
-
-			if (!fDespacho) {
-				if (responsavel == null && lotaResponsavel == null)
-					if (orgaoExterno == null && obsOrgao == null)
-						throw new AplicacaoException(
-								"Não foram informados dados para o despacho/transferência");
-			}
-			
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
@@ -4451,6 +4475,9 @@ public class ExBL extends CpBL {
 						mov.setConteudoBlobPdf(pdf);
 						mov.setConteudoTpMov("application/zip");
 					}
+					if (automatico)
+						mov.setDescrMov("Transferencia automatica.");
+					
 					gravarMovimentacao(mov);
 					concluirAlteracaoParcial(m);
 				}

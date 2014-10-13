@@ -917,6 +917,19 @@ public class ExDocumentoAction extends ExActionSupport {
 	private void assertAcesso() throws Exception {
 		if(!Ex.getInstance().getComp()
 				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			ExMovimentacao ultimaMov = mob.getUltimaMovimentacaoNaoCancelada();
+			if (ultimaMov.getResp().ativaNaData(new Date())) {
+				if (!ultimaMov.getLotaResp().equivale(ultimaMov.getResp().getLotacao())) {
+					Ex.getInstance()
+					.getBL()
+					.transferirAutomatico(getCadastrante(), getLotaTitular(), 
+							ultimaMov.getResp(), ultimaMov.getResp().getLotacao(), mob);
+				}					
+			} else {					
+					Ex.getInstance()
+						.getBL()
+						.arquivarCorrenteAutomatico(getCadastrante(), getLotaTitular(), mob);							
+			}			
 			String s = "";
 			try { 
 				s += mob.doc().getListaDeAcessosString();
@@ -926,7 +939,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 			throw new AplicacaoException("Documento " + mob.getSigla()
 					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta() + "." + s);
+					+ "/" + getLotaTitular().getSiglaCompleta() + "." + s);/* acrescentar mensagem */
 		}
 	}
 

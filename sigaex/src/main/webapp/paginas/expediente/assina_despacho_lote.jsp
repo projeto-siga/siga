@@ -53,7 +53,7 @@
 			<tr class="button">
 			<td>
 				<div id="dados-assinatura" style="visible: hidden">
-				    <c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action" />
+				    <c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 		   	 	    <c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/siga/principal.action"  />
 		    	    <c:set var="urlPath" value="${request.contextPath}" />
 		
@@ -103,21 +103,22 @@
 			        <th width="3%"></th>
 			        <th width="17%" align="left">Número</th>	
 			        <th  width="5%"></th>		       	        
-			        <th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>	
+			        <th width="15%" colspan="2" align="left">Cadastrante</th>	
 			        <th width="15%"></th>	 <th width="49%"></th>			       
 			    </tr>
 			    <tr>
 			        <th width="3%" align="right"><input type="checkbox" name="checkall"
 			    					onclick="checkUncheckAll(this)" /></th>	
 			     	<th width="13%"></th>													
-			        <th width="5%" align="center">Data</th>
-			        <th width="10%" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lotacao</th>
-			        <th width="5%" align="left">Pessoa</th>			        
-			        <th width="15%" align="left">Tipo</th>
+			        <th width="7%" align="left">Data</th>
+			        <th width="8%" align="left">Lotação</th>
+			        <th width="7%" align="left">Pessoa</th>			        
+			        <th width="13%" align="left">Tipo</th>
 			        <th width="45%" align="left">Descrição</th>				 
 			    </tr>	   		   
 			    <c:forEach var="mov" items="${itens}">
-			        <c:set var="x" scope="request">chk_${mov.exMobil.id}</c:set>
+			       <%--  <c:set var="x" scope="request">chk_${mov.exMobil.id}</c:set> --%>
+			        <c:set var="x" scope="request">chk_${mov.idMov}</c:set>
 				    <c:remove var="x_checked" scope="request" />
 				    <c:if test="${param[x] == 'true'}">
 				       <c:set var="x_checked" scope="request">checked</c:set>
@@ -131,15 +132,15 @@
 			    		    </ww:url>
 				            <ww:a href="%{url}">${mov.exMobil.codigo}</ww:a>
 			            </td>
-			            <td width="5%" align="center">${mov.dtRegMovDDMMYY}</td>
-			            <td width="10%" align="center">${mov.lotaCadastrante.sigla}</td>
-			            <td width="5%" align="left">${mov.cadastrante.sigla}</td>			            
-			            <td width="15%" align="left">${mov.exTipoMovimentacao.sigla}</td>
+			            <td width="7%" align="left">${mov.dtRegMovDDMMYY}</td>
+			            <td width="8%" align="left">${mov.lotaCadastrante.sigla}</td>
+			            <td width="7%" align="left">${mov.cadastrante.sigla}</td>			            
+			            <td width="13%" align="left">${mov.exTipoMovimentacao.sigla}</td>
 			            <td width="45%"align="left">${mov.obs}</td> 	            				    
 			        </tr>			         		         
-			        <ww:hidden name="pdf${x}" value="${mov.exMobil.sigla}" />
-				    <ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.exMobil.codigoCompacto}.pdf"/>
-			    </c:forEach>   
+					<ww:hidden name="pdf${x}" value="${mov.referencia}" />
+					<ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
+				</c:forEach>   
 			 </table>
 	         </div>
 	      </c:if>       		    

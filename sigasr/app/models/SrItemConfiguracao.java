@@ -19,6 +19,10 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import play.Logger;
+import play.Play;
+import play.db.jpa.JPA;
+import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -39,9 +43,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	};
 
 	private static String MASCARA_JAVA = "([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?";
-	//"([0-9][0-9])?([.])?([0-9][0-9])?([.])?([0-9][0-9])";
-	
-	
+	// "([0-9][0-9])?([.])?([0-9][0-9])?([.])?([0-9][0-9])";
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
 	@GeneratedValue(generator = "srItemSeq")
@@ -147,7 +150,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		return selecionar(sigla, null);
 	}
 
-	public SrItemConfiguracao selecionar(String sigla, List<SrItemConfiguracao> listaBase) throws Exception {
+	public SrItemConfiguracao selecionar(String sigla,
+			List<SrItemConfiguracao> listaBase) throws Exception {
 		setSigla(sigla);
 		List<SrItemConfiguracao> itens = buscar(listaBase, false);
 		if (itens.size() == 0 || itens.size() > 1 || itens.get(0).isGenerico())
@@ -222,10 +226,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			final Matcher m1 = p1.matcher(sigla);
 			if (m1.find()) {
 				String s = "";
-				 for (int i = 1; i <= m1.groupCount(); i++) {
-                     s += m1.group(i);
-                     s += (i < m1.groupCount() - 1) ? "." : "";
-				 }
+				for (int i = 1; i <= m1.groupCount(); i++) {
+					s += m1.group(i);
+					s += (i < m1.groupCount() - 1) ? "." : "";
+				}
 				siglaItemConfiguracao = s;
 			} else
 				tituloItemConfiguracao = sigla;
@@ -301,48 +305,19 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	}
 
 	public String getGcTags() {
-		String sigla = this.siglaItemConfiguracao;
-		int nivel = this.getNivel();
 		String tags = "";
-		if (nivel == 1) {
-			tags = "&tags=@"
-					+ Texto.slugify(this.tituloItemConfiguracao, true, false);
-		}
-		if (nivel == 2) {
-			String sigla_nivelpai = this.getSigla().substring(0, 2) + ".00.00";
-			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivelpai).first();
-			tags = "&tags=@"
-					+ Texto.slugify(configuracao.tituloItemConfiguracao, true,
-							false) + "&tags=@"
-					+ Texto.slugify(this.tituloItemConfiguracao, true, false);
-		}
-		if (nivel == 3) {
-			String sigla_nivelpai = this.getSigla().substring(0, 5) + ".00";
-			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivelpai).first();
-			String sigla_nivel_anterior = this.getSigla().substring(0, 2)
-					+ ".00.00";
-			SrItemConfiguracao configuracao_anterior = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivel_anterior).first();
-			tags = "&tags=@"
-					+ Texto.slugify(
-							configuracao_anterior.tituloItemConfiguracao, true,
-							false)
-					+ "&tags=@"
-					+ Texto.slugify(configuracao.tituloItemConfiguracao, true,
-							false) + "&tags=@"
-					+ Texto.slugify(this.tituloItemConfiguracao, true, false);
-		}
-		return tags;
-	}
-	
-	public String getGcTagAbertura(){
-			String s = "^sr:"
-						+ Texto.slugify(tituloItemConfiguracao,
-								true, false);
-			return s;
+		SrItemConfiguracao pai = getPai();
+		if (pai != null)
+			tags += pai.getGcTags();
+		return tags + "&tags=@" + getTituloSlugify();
 	}
 
+	public String getGcTagAbertura() {
+		String s = "^sr:" + getTituloSlugify();
+		return s;
+	}
 
+	public String getTituloSlugify() {
+		return Texto.slugify(tituloItemConfiguracao, true, false);
+	}
 }

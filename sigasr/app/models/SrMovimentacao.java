@@ -38,6 +38,11 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
 public class SrMovimentacao extends GenericModel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
 	@GeneratedValue(generator = "srMovimentacaoSeq")
@@ -289,7 +294,7 @@ public class SrMovimentacao extends GenericModel {
 			if (lenght > 2)
 				throw new IllegalArgumentException("O tamanho do arquivo ("
 						+ new DecimalFormat("#.00").format(lenght)
-						+ "MB) é maior que o máximo permitido (2MB)");
+						+ "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
 		}
 
 		if (dtIniMov == null)

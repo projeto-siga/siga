@@ -1383,16 +1383,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			DpLotacao lotaCadastrante) throws Exception {
 		if (!podeDesfazerMovimentacao(lotaCadastrante, cadastrante))
 			throw new Exception("Operação não permitida");
-		reInserirListasDePrioridade(lotaCadastrante, cadastrante);
 		
 		SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
-		if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO) {
-			Query query = JPA.em().createQuery("UPDATE SrSolicitacao sol SET sol.solicitacaoJuntada = :solRecebeJuntada WHERE sol.idSolicitacao = :idSol");
-			query.setParameter("solRecebeJuntada", null);
-			query.setParameter("idSol", this.idSolicitacao);
-			query.executeUpdate();
+		
+		// tratamento pois pode ter retorno nulo do método getUltimaMovimentacaoCancelave()
+		if (movimentacao != null) {
+			
+			if (movimentacao.tipoMov != null) {
+				// caso seja movimentacao cancelada ou fechada, reinsere nas listas de prioridade
+				if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO 
+						|| movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_FECHAMENTO)
+					reInserirListasDePrioridade(lotaCadastrante, cadastrante);
+				
+				if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO) {
+					Query query = JPA.em().createQuery("UPDATE SrSolicitacao sol SET sol.solicitacaoJuntada = :solRecebeJuntada WHERE sol.idSolicitacao = :idSol");
+					query.setParameter("solRecebeJuntada", null);
+					query.setParameter("idSol", this.idSolicitacao);
+					query.executeUpdate();
+				}
+			}
+			
+			movimentacao.desfazer(cadastrante, lotaCadastrante);
 		}
-		movimentacao.desfazer(cadastrante, lotaCadastrante);
 	}
 
 	public SrSolicitacao criarFilhaSemSalvar() throws Exception {

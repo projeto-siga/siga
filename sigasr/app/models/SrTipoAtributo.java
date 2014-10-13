@@ -25,6 +25,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Table(name = "SR_TIPO_ATRIBUTO", schema = "SIGASR")
 public class SrTipoAtributo extends HistoricoSuporte {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
 	@GeneratedValue(generator = "srTipoAtributoSeq")

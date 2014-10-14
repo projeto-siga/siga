@@ -46,10 +46,13 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
 
+import play.Logger;
+import play.Play;
 import play.data.binding.As;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
+import play.mvc.Http;
 import reports.SrRelAgendado;
 import reports.SrRelLocal;
 import reports.SrRelPesquisa;
@@ -61,6 +64,8 @@ import reports.SrRelTransferencias;
 import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
+import br.gov.jfrj.siga.base.ConexaoHTTP;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -75,8 +80,8 @@ public class Application extends SigaApplication {
 		SrConfiguracaoBL.get().limparCacheSeNecessario();
 	}
 
-	@Before(priority = 2, unless = { "exibirAtendente",
-			"exibirLocalERamal", "exibirItemConfiguracao" })
+	@Before(priority = 2, unless = { "exibirAtendente", "exibirLocalERamal",
+			"exibirItemConfiguracao" })
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -208,9 +213,9 @@ public class Application extends SigaApplication {
 		
 		render(solicitacao, acoesEAtendentes);
 	}
-	
-	public static void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) 
-			throws Exception{
+
+	public static void exibirConhecimentosRelacionados(SrSolicitacao solicitacao)
+			throws Exception {
 		render(solicitacao);
 	}
 
@@ -1020,6 +1025,34 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarItem(itemConfiguracao);
 		itemConfiguracao.salvar();
+
+		// Atualiza os conhecimentos relacionados
+		// Edson: deveria ser feito por webservice. Nao estah sendo coberta
+		// a atualizacao da classificacao quando ocorre mudanca de posicao na
+		// hierarquia, pois isso eh mais complexo de acertar.
+		try {
+			HashMap<String, String> atributos = new HashMap<String, String>();
+			for (Http.Header h : request.headers.values())
+				if (!h.name.equals("content-type"))
+					atributos.put(h.name, h.value());
+
+			SrItemConfiguracao anterior = itemConfiguracao
+					.getHistoricoItemConfiguracao().get(0);
+			if (anterior != null
+					&& !itemConfiguracao.tituloItemConfiguracao
+							.equals(anterior.tituloItemConfiguracao))
+				ConexaoHTTP.get("http://"
+						+ Play.configuration.getProperty("servidor.principal")
+						+ ":8080/sigagc/app/updateTag?before="
+						+ anterior.getTituloSlugify() + "&after="
+						+ itemConfiguracao.getTituloSlugify(), atributos);
+		} catch (Exception e) {
+			Logger.error("Item " + itemConfiguracao.idItemConfiguracao
+					+ " salvo, mas nao foi possivel atualizar conhecimento");
+			e.printStackTrace();
+		}
+		
+		listarItem(false);
 	}
 
 	public static void desativarItem(Long id) throws Exception {
@@ -1160,7 +1193,34 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAcao(acao);
 		acao.salvar();
-		listarAcao(Boolean.FALSE);
+		
+		// Atualiza os conhecimentos relacionados. 
+		// Edson: deveria ser feito por webservice. Nao estah sendo coberta
+		// a atualizacao da classificacao quando ocorre mudanca de posicao na
+		// hierarquia, pois isso eh mais complexo de acertar.
+		try {
+			HashMap<String, String> atributos = new HashMap<String, String>();
+			for (Http.Header h : request.headers.values())
+				if (!h.name.equals("content-type"))
+					atributos.put(h.name, h.value());
+			
+			SrAcao anterior = acao
+					.getHistoricoAcao().get(0);
+			if (anterior != null
+					&& !acao.tituloAcao
+							.equals(anterior.tituloAcao))
+				ConexaoHTTP.get("http://"
+						+ Play.configuration.getProperty("servidor.principal")
+						+ ":8080/sigagc/app/updateTag?before="
+						+ anterior.getTituloSlugify() + "&after="
+						+ acao.getTituloSlugify(), atributos);
+		} catch (Exception e) {
+			Logger.error("Acao " + acao.idAcao
+					+ " salva, mas nao foi possivel atualizar conhecimento");
+			e.printStackTrace();
+		}
+				
+		listarAcao(false);
 	}
 
 	public static void desativarAcao(Long id) throws Exception {
@@ -1399,9 +1459,9 @@ public class Application extends SigaApplication {
 				"application/pdf", true);
 	}
 
-	public static void grelLocal(String secaoUsuario, String orgao, String lotacao,
-			String locOrgao, String dtIni, String dtFim, String atendente)
-			throws Exception {
+	public static void grelLocal(String secaoUsuario, String orgao,
+			String lotacao, String locOrgao, String dtIni, String dtFim,
+			String atendente) throws Exception {
 
 		assertAcesso("REL:Relatorio");
 

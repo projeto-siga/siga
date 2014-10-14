@@ -274,6 +274,23 @@
 		<c:if test="${m.pendencias}">
 		<div class="gt-sidebar-content" id="pendencias">
 			<h3>Pendências</h3>
+			<c:if test="${not empty m.pendenciasDeAnexacao}">
+			<p style="margin-bottom: 3px;">
+				<b style="color: rgb(195, 0, 0)">Anexos Pendentes:</b> 
+			</p>
+			<ul>
+			<c:forEach var="anexoPendente" items="${m.pendenciasDeAnexacao}">
+				<li>
+					<ww:url id="url" action="anexar" namespace="/expediente/mov" >
+						<ww:param name="sigla">${m.sigla}</ww:param>
+					</ww:url>
+					<ww:a href="%{url}" title="${anexoPendente.descricao}" cssStyle="text-decoration: none">
+						${anexoPendente.descricao}
+					</ww:a>
+				</li>
+			</c:forEach>
+			</ul>
+			</c:if>
 			<c:if test="${not empty m.anexosNaoAssinados}">
 			<p style="margin-bottom: 3px;">
 				<b style="color: rgb(195, 0, 0)">Anexos não assinados:</b> 

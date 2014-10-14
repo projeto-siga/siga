@@ -228,6 +228,19 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 			posFimComparacao = getSigla().length() - 1;
 		return getSigla().substring(0, posFimComparacao + 1);
 	}
+	
+	public SrAcao getPai() {
+		String sigla = getSiglaSemZeros();
+		sigla = sigla.substring(0, sigla.length() - 1);
+		if (sigla.lastIndexOf(".") == -1)
+			return null;
+		sigla = sigla.substring(0, sigla.lastIndexOf("."));
+		for (int i = 0; i < 2 - (getNivel() - 1); i++) {
+			sigla += ".00";
+		}
+		return SrAcao.find(
+				"byHisDtFimIsNullAndSiglaAcao", sigla).first();
+	}
 
 	public boolean isPaiDeOuIgualA(SrAcao outraAcao) {
 		if (outraAcao == null || outraAcao.getSigla() == null)
@@ -261,21 +274,18 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		return SrAcao.find(sb.toString()).fetch();
 	}
 
+	@SuppressWarnings("unused")
 	public String getGcTags() {
 		int nivel = this.getNivel();
 		String tags = "";
-		if (nivel == 1) {
-			tags = "&tags=@" + Texto.slugify(this.tituloAcao, true, false);
-		}
-		if (nivel == 2) {
-			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrAcao configuracao = SrAcao.find("bySiglaAcao", sigla_raiz)
-					.first();
-			tags = "&tags=@"
-					+ Texto.slugify(configuracao.tituloAcao, true, false)
-					+ "&tags=@" + Texto.slugify(this.tituloAcao, true, false);
-		}
-		return tags;
+		SrAcao pai = getPai();
+		if (pai != null)
+			tags += pai.getGcTags();
+		return tags + "&tags=@" + getTituloSlugify();
+	}
+	
+	public String getTituloSlugify() {
+		return Texto.slugify(tituloAcao, true, false);
 	}
 	
 }

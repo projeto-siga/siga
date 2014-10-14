@@ -909,12 +909,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public int getNumPrimeiraVia() {
 
 		int minNumVia = 1;
-		ExTipoDestinacao tp_dest = new ExTipoDestinacao();
 
+		
 		for (final ExMobil mob : getExMobilSet()) {
 			if (mob.isVia()) {
 				ExVia via = mob.getViaPCTT();
-				if (via.getExTipoDestinacao().getIdTpDestinacao() == tp_dest.TIPO_DESTINACAO_SETOR_COMPETENTE)
+				if (via !=null && via.getExTipoDestinacao() != null && via.getExTipoDestinacao().getIdTpDestinacao() != null && via.getExTipoDestinacao().getIdTpDestinacao() == ExTipoDestinacao.TIPO_DESTINACAO_SETOR_COMPETENTE)
 					minNumVia = mob.getNumSequencia();
 			}
 		}

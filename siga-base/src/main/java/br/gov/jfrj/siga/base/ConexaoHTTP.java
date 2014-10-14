@@ -18,13 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.base;
 
-import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
@@ -33,19 +31,42 @@ public class ConexaoHTTP {
 
 	public static String get(String URL, HashMap<String, String> header)
 			throws AplicacaoException {
+		return get(URL, header, null, null);
+	}
+
+	public static String get(String URL, HashMap<String, String> header, Integer timeout, String payload)
+			throws AplicacaoException {
 
 		try {
 
 			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
 					.openConnection();
-
+			
+			if (timeout != null) {
+				conn.setConnectTimeout(timeout);
+				conn.setReadTimeout(timeout);
+			}
+			
 			//conn.setInstanceFollowRedirects(true);
 
-			for (String s : header.keySet()) {
-					conn.setRequestProperty(s, header.get(s));
-			}
+			if (header != null) {
+				for (String s : header.keySet()) {
+						conn.setRequestProperty(s, header.get(s));
+				}
+			}	
 
 			System.setProperty("http.keepAlive", "false");
+			
+			if (payload != null) {
+				byte ab[] = payload.getBytes("UTF-8");
+				conn.setRequestMethod("POST");
+				// Send post request
+				conn.setDoOutput(true);
+				OutputStream os = conn.getOutputStream();
+				os.write(ab);
+				os.flush();
+				os.close();
+			}
 
 			//StringWriter writer = new StringWriter();
 			//IOUtils.copy(conn.getInputStream(), writer, "UTF-8");

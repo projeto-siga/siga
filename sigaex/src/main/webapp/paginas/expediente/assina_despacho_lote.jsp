@@ -113,8 +113,8 @@
 			        <th width="7%" align="left">Data</th>
 			        <th width="8%" align="left">Lotação</th>
 			        <th width="7%" align="left">Pessoa</th>			        
-			        <th width="13%" align="left">Tipo</th>
-			        <th width="45%" align="left">Descrição</th>				 
+			        <th width="18%" align="left">Tipo</th>
+			        <th width="40%" align="left">Descrição</th>				 
 			    </tr>	   		   
 			    <c:forEach var="mov" items="${itens}">
 			       <%--  <c:set var="x" scope="request">chk_${mov.exMobil.id}</c:set> --%>
@@ -135,8 +135,8 @@
 			            <td width="7%" align="left">${mov.dtRegMovDDMMYY}</td>
 			            <td width="8%" align="left">${mov.lotaCadastrante.sigla}</td>
 			            <td width="7%" align="left">${mov.cadastrante.sigla}</td>			            
-			            <td width="13%" align="left">${mov.exTipoMovimentacao.sigla}</td>
-			            <td width="45%"align="left">${mov.obs}</td> 	            				    
+			            <td width="18%" align="left">${mov.exTipoMovimentacao.sigla}</td>
+			            <td width="40%"align="left">${mov.obs}</td> 	            				    
 			        </tr>			         		         
 					<ww:hidden name="pdf${x}" value="${mov.referencia}" />
 					<ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />

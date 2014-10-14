@@ -60,3 +60,10 @@ a.button:active{
 #siga-box{
     margin-top: 10%;
 }
+
+#descricao {
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 20px;
+    width: 22%;
+}

@@ -23,12 +23,6 @@
 
 package br.gov.jfrj.webwork.action;
 
-import java.io.DataInputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -36,8 +30,13 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
-
 import com.opensymphony.xwork.Action;
+
+import java.io.DataInputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class PrincipalAction extends SigaActionSupport {
 
@@ -98,7 +97,7 @@ public class PrincipalAction extends SigaActionSupport {
 			Map<String, Object> map = (Map<String, Object>) getRequest().getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
 			String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
 			setIdp(idpSessionID);
-		}catch(Exception e){}
+		}catch(NullPointerException e){}
 		
 		return Action.SUCCESS;
 	}

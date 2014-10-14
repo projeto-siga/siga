@@ -1299,8 +1299,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		super.salvar();
 		
-		if (getMovimentacaoSetComCancelados().size() == 0 && !rascunho) {
-			
+		if (rascunho)
+			rascunho(lotaCadastrante, cadastrante);
+		
+		// DB1: Caso seja cadastro, a lista estará com tamanho zero. Caso seja edição de rascunho em que o usuário estiver
+		// editando e finalizando o cadastro, deverá existir pelo menos uma movimentação do tipo 
+		// TIPO_MOVIMENTACAO_RASCUNHO, mas que deve seguir o fluxo normal de validação. 
+		else if (getMovimentacaoSetComCancelados().size() == 0 || 
+				getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_RASCUNHO).size() > 0) {
 			if (fecharAoAbrir)
 				fechar(lotaCadastrante, cadastrante, motivoFechamentoAbertura);
 			else if (temPreAtendenteDesignado())
@@ -1319,11 +1325,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
 				Correio.notificarAbertura(this);
 		} 
-		else if (rascunho)
-			rascunho(lotaCadastrante, cadastrante);
-		else if (getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_RASCUNHO).size() > 0) {
-			iniciarAtendimento(lotaCadastrante, cadastrante);
-		}	
 		else
 			atualizarMarcas();
 	}
@@ -1372,7 +1373,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
 		
-		if (!temAtendenteDesignado() && !temPreAtendenteDesignado())
+		// só valida o atendente caso não seja rascunho
+		if (!rascunho && !temAtendenteDesignado() && !temPreAtendenteDesignado())
 			throw new Exception(
 					"Não foi encontrado nenhum atendente designado "
 							+ "para esta solicitação. Sugestão: alterar item de "
@@ -1887,7 +1889,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrMovimentacao mov = new SrMovimentacao(this);
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_RASCUNHO);
-		mov.lotaAtendente = mov.solicitacao.getAtendenteDesignado();
+		
+		// DB1: Deixar a solicitação com a lotação do próprio cadastrante enquanto for rascunho
+		mov.lotaAtendente = pess.getLotacao();
 		mov.salvar(pess, lota);
 	}
 	

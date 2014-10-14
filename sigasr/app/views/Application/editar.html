@@ -334,18 +334,9 @@
 			<div class="gt-form-row">
 				<label>&nbsp;</label>
 				<label> 
-					<input type="hidden" name="solicitacao.rascunho" id="solicitacao.rascunho" value="false" />
-					<input id="checksolicitacao.rascunho" type="checkbox" value="false" ${solicitacao.rascunho ? 'checked':''} onchange="javascript:changesolicitacaorascunho(); " />
-					Rascunho
+					#{checkbox name:'solicitacao.rascunho', value:solicitacao.rascunho /} Rascunho
 				</label>
 			</div>
-			<script language="javascript">
-				function changesolicitacaorascunho(){
-					if (document.getElementById('checksolicitacao.rascunho').checked)
-						document.getElementById('solicitacao.rascunho').value='true';
-					else document.getElementById('solicitacao.rascunho').value='false';
-				}();
-			</script>
 			#{/if}
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"

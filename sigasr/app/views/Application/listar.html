@@ -140,9 +140,16 @@
 							<tr>
 								<td class="gt-celula-nowrap details-control"></td>
 								<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-									<a href="@{Application.exibir(sol.idSolicitacao)}">
-										${sol.codigo}
-									</a>	
+									#{if sol.rascunho}
+										<a href="@{Application.editar(sol.idSolicitacao)}">
+											${sol.codigo}
+										</a>
+									#{/if}
+									#{else}
+										<a href="@{Application.exibir(sol.idSolicitacao)}">
+											${sol.codigo}
+										</a>
+									#{/else}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
 									<b style="color: #333">

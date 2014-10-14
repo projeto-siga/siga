@@ -515,6 +515,7 @@ public class Application extends SigaApplication {
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
 		
+		// DB1: Trecho de código que garante que só sejam exibidos as solicitações para a lotação cadastrante
 		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
 		for (SrSolicitacao sol : list) 
 			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))

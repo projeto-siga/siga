@@ -524,7 +524,7 @@ public class Application extends SigaApplication {
 		// DB1: Trecho de código que garante que só sejam exibidos as solicitações para a lotação cadastrante
 		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
 		for (SrSolicitacao sol : list) 
-			if (!sol.isMarcada(61))
+			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))
 					listaSolicitacao.add(sol);
 			else
 				if (sol.lotaCadastrante == lotaTitular())

@@ -1499,7 +1499,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				movMarca = mov;
 			}
 			if (t == TIPO_MOVIMENTACAO_RASCUNHO) {
-				marcador = 61L;
+				marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO;
 				movMarca = mov;
 			}
 			if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {

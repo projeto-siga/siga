@@ -19,13 +19,21 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 	
+   <servlet>
+              <description>Inicializacao do SIGA</description>
+              <display-name>SigaInitServlet</display-name>
+              <servlet-name>SigaInitServlet</servlet-name>
+              <servlet-class>br.gov.jfrj.siga.servlet.SigaInitServlet</servlet-class>
+              <load-on-startup>1</load-on-startup>
+      </servlet>
+	
 	<servlet>
 		<display-name>CXF Servlet</display-name>
 		<servlet-name>CXFServlet</servlet-name>
 		<servlet-class>
 			br.gov.jfrj.siga.gi.servlet.GiWsServlet
 		</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 	
 	<servlet-mapping>

@@ -3,7 +3,7 @@
 	<PicketLinkIDP xmlns="urn:picketlink:identity-federation:config:2.1" HostedURI="/" >
 		<IdentityURL>${idp.url::https://localhost:8443/sigaidp/}</IdentityURL>
 		<Trust>
-			<Domains>localhost,dev-siga.corp.jfrj.gov.br,volvofh16,volvofh16.corp.jfrj.gov.br</Domains>
+			<Domains>localhost,dev-siga.corp.jfrj.gov.br,volvofh16,volvofh16.corp.jfrj.gov.br,volvov60,volvov60.corp.jfrj.gov.br</Domains>
 		</Trust>
 	</PicketLinkIDP>
 	

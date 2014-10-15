@@ -31,6 +31,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -403,7 +405,7 @@ public class WfConfiguracaoAction extends WfSigaActionSupport {
 				CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO,
 				CpTipoConfiguracao.class, false);
 
-		Wf.getInstance().getConf().evictListaPorTipo(tipoConfig);
+		Wf.getInstance().getConf().limparCacheSeNecessario();
 
 		sfWfDao.evict(CpConfiguracao.class);
 		sfWfDao.evict(WfConfiguracao.class);

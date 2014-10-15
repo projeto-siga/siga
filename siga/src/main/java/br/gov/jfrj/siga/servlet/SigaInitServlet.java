@@ -22,6 +22,7 @@ public class SigaInitServlet extends HttpServlet implements Servlet {
                                        .criarHibernateCfg("java:/SigaCpDS");
 
                        HibernateUtil.configurarHibernate(cfg, "");
+                       Cp.getInstance().getConf().inicializarCache();
                } catch (Exception e) {
                        // TODO Auto-generated catch block
                        e.printStackTrace();

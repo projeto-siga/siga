@@ -182,7 +182,7 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public boolean isReplanejada() {
-		return tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
+		return tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO;
 	}
 
 	public boolean isCanceladoOuCancelador() {

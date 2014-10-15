@@ -848,10 +848,10 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	public static void replanejar(Long id, String motivo,
+	public static void alterarPrazo(Long id, String motivo,
 		String calendario, String horario) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.replanejar(lotaTitular(), cadastrante(), motivo, calendario,
+		sol.alterarPrazo(lotaTitular(), cadastrante(), motivo, calendario,
 				horario);
 		exibir(id, completo());
 	}

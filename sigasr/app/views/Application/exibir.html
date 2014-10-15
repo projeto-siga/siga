@@ -9,7 +9,7 @@ $(function() {
         buttonImageOnly: true,
         dateFormat: 'dd/mm/yy'
     });
-    $( "#calendarioReplanejar" ).datepicker({
+    $( "#calendarioAlterarPrazo" ).datepicker({
         showOn: "button",
         buttonImage: "/siga/css/famfamfam/icons/calendar.png",
         buttonImageOnly: true,
@@ -21,7 +21,7 @@ $(function() {
 <script>
 $(function(){
 	$("#horario").mask("99:99");
-	$("#horarioReplanejar").mask("99:99");
+	$("#horarioAlterarPrazo").mask("99:99");
 });
 </script>
 
@@ -374,81 +374,50 @@ $(function(){
 	#{modal nome:'pendencia', titulo:'PendÃªncia'}
 	<form action="@{Application.deixarPendente()}" method="post"
 		enctype="multipart/form-data">
-		<div style="display: inline" class="gt-form-row gt-width-66">
-			<label>Em caso de agendamento, preencha a data/hora desejada:</label>
-			<table border="0" class="gt-table">
-				<col width="30%" />
-				<col width="30%" />
-				<col width="40%" />
-				<tbody>
-					<tr class="gt-celula-nowrap">
-						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Data</th>
-						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Hora</th>
-						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Motivo</th>
-					</tr>
-					<tr>
-						<td class="gt-celula-nowrap"
-							style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<input type="text" name="calendario" id="calendario">
-						</td>
-						<td class="gt-celula-nowrap"
-							style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
-							<input type="text" name="horario" id="horario">
-						</td>
-						<td class="gt-celula-nowrap"
-							style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
-							#{select
+		<div class="gt-form-row gt-width-66">
+			<label>Data</label>
+			<input type="text" name="calendario" id="calendario">
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Horário</label>
+			<input type="text" name="horario" id="horario">
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Motivo</label>
+			#{select
 								name:'motivo', items:models.SrTipoMotivoPendencia.values(),
 								labelProperty:'descrTipoMotivoPendencia', style:'width:235px;' /}
-						</td>
-					</tr>
-				</tbody>
-			</table>
 		</div>
-		<p>
-		<div style="display: inline" class="gt-form-row gt-width-66">
+		<div class="gt-form-row gt-width-66">
 			<label>Detalhamento do Motivo</label>
-			<textarea style="width: 100%" name="detalheMotivo" cols="50" rows="4"> </textarea>
+			<textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
 		</div>
 		<input type="hidden" name="completo" value="${completo}" /> <input
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>
-	#{/modal} #{modal nome:'replanejar', titulo:'Replanejar'}
-		<form action="@{Application.replanejar()}" method="post"
+	</div>
+	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
+		<div class="gt-form gt-content-box">
+		<form action="@{Application.alterarPrazo()}" method="post"
 			enctype="multipart/form-data">
-			<div style="display: inline" class="gt-form-row gt-width-66">
-				<label>Preencha a data/hora desejada:</label>
-				<table border="0" class="gt-table">
-					<col width="20%" />
-					<col width="20%" />
-					<tbody>
-						<tr class="gt-celula-nowrap">
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Data</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Hora</th>
-						</tr>
-						<tr>
-							<td class="gt-celula-nowrap"
-								style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-								<input type="text" name="calendario" id="calendarioReplanejar">
-							</td>
-							<td class="gt-celula-nowrap"
-								style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
-								<input type="text" name="horario" id="horarioReplanejar">
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<p>
-			<div style="display: inline" class="gt-form-row gt-width-66">
-				<label>Motivo</label>
-				<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
-			</div>
-			<input type="hidden" name="completo" value="${completo}" /> <input
-				type="hidden" name="id" value="${solicitacao.id}" /> <input
-				type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+				<div class="gt-form-row gt-width-66">
+					<label>Data</label>
+					<input type="text" name="calendario" id="calendarioAlterarPrazo">
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Hora</label>
+					<input type="text" name="horario" id="horarioAlterarPrazo">
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Motivo</label>
+					<textarea name="motivo" cols="50" rows="4"> </textarea> 
+				</div>
+				<input type="hidden" name="completo" value="${completo}" />
+				<input type="hidden" name="id" value="${solicitacao.id}" /> 
+				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 		</form>
+		</div>
 	#{/modal}
 	
 <script language="javascript">

@@ -1,3 +1,4 @@
+
 --Atualizando referencias a solicitacoes, visto que movs, atributos, 
 --marcas e solicitacoes filhas passam a apontar para a solicitacao inicial
 update sigasr.sr_movimentacao m set id_solicitacao = (select his_id_ini from sigasr.sr_solicitacao where id_solicitacao = m.id_solicitacao);
@@ -7,3 +8,6 @@ update sigasr.sr_solicitacao sol set id_solicitacao_pai = (select his_id_ini fro
 
 alter table sr_item_configuracao add ID_PAI number(19,0)
 alter table sr_acao add ID_PAI number(19,0)
+
+
+update sigasr.sr_tipo_movimentacao set nome_tipo_movimentacao = 'Alteração de Prazo' where id_tipo_movimentacao = 21

@@ -115,10 +115,10 @@ public class SrMovimentacao extends GenericModel {
 	@Column(name = "DT_AGENDAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtAgenda;
-	
+
 	@Enumerated
 	public SrTipoMotivoPendencia motivoPendencia;
-	
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_FINALIZADORA")
 	public SrMovimentacao movFinalizadora;
@@ -180,7 +180,7 @@ public class SrMovimentacao extends GenericModel {
 	public boolean isCancelada() {
 		return movCanceladora != null;
 	}
-	
+
 	public boolean isReplanejada() {
 		return tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
 	}
@@ -335,10 +335,10 @@ public class SrMovimentacao extends GenericModel {
 		if (!solicitacao.rascunho) {
 			if (atendente == null && lotaAtendente == null)
 				throw new Exception("Atendente não pode ser nulo");
+
+			if (lotaAtendente == null)
+				lotaAtendente = atendente.getLotacao();
 		}
-			
-		if (lotaAtendente == null)
-			lotaAtendente = atendente.getLotacao();
 	}
 
 	public void notificar() {

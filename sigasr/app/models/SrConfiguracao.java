@@ -125,6 +125,9 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Column(name = "OBSERVACAO_SLA", length = 8192)
 	public String observacaoSLA;
 	
+	//Edson: mudei de boolean pra Boolean porque havia configs no banco
+	//com FG_DIVULGAR_SLA nulo (havia duas versoes parelelas), o que
+	//gerava "Null value was assigned to a property of primitive type" 
 	@Column(name = "FG_DIVULGAR_SLA")
 	@Type(type = "yes_no")
 	public Boolean divulgarSLA;

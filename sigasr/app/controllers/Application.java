@@ -503,16 +503,16 @@ public class Application extends SigaApplication {
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro, boolean carregarLotaSolicitante) throws Exception {
 
-		List<SrSolicitacao> list;
+		List<SrSolicitacao> listaSolicitacao;
 
 		if (filtro.pesquisar) {
 			if(carregarLotaSolicitante){
 	    		filtro.lotaSolicitante = filtro.solicitante.getLotacao();
 	    		filtro.solicitante = null;
 	    	}
-			list = filtro.buscar();
+			listaSolicitacao = filtro.buscar();
 		} else {
-			list = new ArrayList<SrSolicitacao>();
+			listaSolicitacao = new ArrayList<SrSolicitacao>();
 		}
 		
 		// Montando o filtro...
@@ -520,15 +520,6 @@ public class Application extends SigaApplication {
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
-		
-		// DB1: Trecho de código que garante que só sejam exibidos as solicitações para a lotação cadastrante
-		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
-		for (SrSolicitacao sol : list) 
-			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))
-					listaSolicitacao.add(sol);
-			else
-				if (sol.lotaCadastrante == lotaTitular())
-					listaSolicitacao.add(sol);
 
 		render(listaSolicitacao, tipos, marcadores, filtro);
 	}
@@ -703,6 +694,10 @@ public class Application extends SigaApplication {
 			throw new Exception("Solicitação não encontrada");
 		else
 			solicitacao = solicitacao.getSolicitacaoAtual();
+		
+		if (solicitacao == null)
+			throw new Exception("Esta solicita��o foi exclu�da");
+		
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
 		render(solicitacao, movimentacao, completo);
@@ -796,7 +791,7 @@ public class Application extends SigaApplication {
 
 	public static void excluir(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.excluir(lotaTitular(), cadastrante());
+		sol.finalizar();
 		editar(null);
 	}
 	

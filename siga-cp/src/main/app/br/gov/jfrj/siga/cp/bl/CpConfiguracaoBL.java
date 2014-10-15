@@ -137,7 +137,7 @@ public class CpConfiguracaoBL {
 
 
 			List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
-			Logger.getAnonymousLogger().info("Número de alterações no cache: " + alteracoes.size());
+			Logger.getLogger("siga.conf.cache").fine("Número de alterações no cache: " + alteracoes.size());
 			if (alteracoes.size() > 0){
 				evitarLazy(alteracoes);
 				inicializarCache(idTipoConfig);
@@ -849,7 +849,7 @@ public class CpConfiguracaoBL {
 				try{
 			        inicializarCache(cpTpConf.getIdTpConfiguracao());
 				}catch(Exception e){
-					
+					Logger.getLogger("siga.conf.cache").warning("Não foi possível inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
 				}
 			}
 			cacheInicializado = true;

@@ -63,6 +63,15 @@
 			        "sortAscending":  ": clique para ordenação crescente",
 			        "sortDescending": ": clique para ordenação decrescente"
 			    }
+			},
+			"columnDefs": [{
+				"targets": [2],
+				"visible": false,
+				"searchable": false
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				if (aData[2] == 'false')
+					$('td', nRow).addClass('item-desativado');
 			}
 		});
 	});
@@ -81,6 +90,7 @@
 					<tr>
 						<th>Nome</th>
 						<th>Lotação</th>
+						<th>Item Ativado?</th>
 					</tr>
 				</thead>
 
@@ -90,6 +100,7 @@
 						<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'"
 						style="cursor: pointer;"> ${lista.nomeLista}</td>
 						<td>${lista.lotaCadastrante.nomeLotacao}</td>
+						<td>${lista.isAtivo()}</td>
 					</tr>
 					</a> #{/list}
 				</tbody>

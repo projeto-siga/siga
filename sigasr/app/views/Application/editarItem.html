@@ -98,7 +98,7 @@
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				if (aData[43] == 'true') {
-					$('td', nRow).addClass('configuracaoHerdada');
+					$('td', nRow).addClass('item-desativado');
 					$('td:eq(0)', nRow).removeClass('checkbox-hidden');
 					if (document.getElementById("check"+aData[42]))
 						document.getElementById("check"+aData[42]).checked = aData[44] == 'true';

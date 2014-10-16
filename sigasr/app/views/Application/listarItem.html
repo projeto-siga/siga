@@ -63,6 +63,15 @@
 			        "sortAscending":  ": clique para ordenação crescente",
 			        "sortDescending": ": clique para ordenação decrescente"
 			    }
+			},
+			"columnDefs": [{
+				"targets": [3],
+				"visible": false,
+				"searchable": false
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				if (aData[3] == 'false')
+					$('td', nRow).addClass('item-desativado');
 			}
 		});
 	});
@@ -82,6 +91,7 @@
 						<th>Código</th>
 						<th>Título</th>
 						<th>Descrição</th>
+						<th>Item Ativado?</th>
 					</tr>
 				</thead>
 
@@ -93,6 +103,7 @@
 						<td>${item.siglaItemConfiguracao}</td>
 						<td><span style="margin-left: ${(item.nivel-1)*2}em; #{if item.nivel == 1}font-weight: bold;#{/if} #{if item.nivel == 2}font-style: italic;#{/if}">${item.tituloItemConfiguracao}</span></td>
 						<td>${item.descrItemConfiguracao}</td>
+						<td>${item.isAtivo()}</td>
 					</tr>
 					</a> #{/list}
 				</tbody>

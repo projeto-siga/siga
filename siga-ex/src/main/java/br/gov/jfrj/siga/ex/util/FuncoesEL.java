@@ -1033,6 +1033,7 @@ public class FuncoesEL {
 		// Remover todos os namespaces
 		xml = xml.replaceAll("(</?)[a-z]+:", "$1");
 		xml = xml.replaceAll("( xmlns(:[a-z]+)?=\"[^\"]+\")","");
+		xml = xml.replaceAll(" ([a-z]+:)([a-zA-Z]+=\"[^\"]+\")"," $2");
 		InputSource inputSource = new InputSource( new StringReader( xml ) );
 		return freemarker.ext.dom.NodeModel.parse(inputSource);
 	}

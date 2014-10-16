@@ -106,7 +106,7 @@ public class Application extends SigaApplication {
 					.createQuery(
 							"from Locais where cod_local ='" + varCodLocal
 									+ "'").getSingleResult());
-			resposta = "Sala já existe. Confira o código da sala. ";
+			resposta = "Sala ja existe. Confira o codigo da sala. ";
 		} catch (Exception e) {
 			try {
 				System.out.println(JPA.em().createQuery(
@@ -115,7 +115,7 @@ public class Application extends SigaApplication {
 				JPA.em().flush();
 				resposta = "Ok.";
 			} catch (Exception e2) {
-				resposta = "Forum da sala não cadastrado. Confira o código do forum.";
+				resposta = "Forum da sala nao cadastrado. Confira o codigo do forum.";
 			}
 		}
 		render(resposta);
@@ -883,6 +883,40 @@ public class Application extends SigaApplication {
 			
 		}else{
 			Excecoes("Usuario sem permissao.");
+		}
+	}
+	
+	public static void permissao_exclui(String matricula_proibida){
+		String mensagem = "";
+		// pega usuário do sistema
+		String matriculaSessao = cadastrante().getMatricula().toString();
+		String lotacaoSessao = cadastrante().getLotacao().getSiglaLotacao();
+		UsuarioForum objUsuario = UsuarioForum.find("matricula_usu = '"+matriculaSessao+"'").first();
+		if ((objUsuario !=null) && (lotacaoSessao.trim().equals("CSIS"))){ //pode excluir a permissão
+			List<UsuarioForum> listPermitidos = new ArrayList<UsuarioForum>();
+			if((matricula_proibida!=null) && (!matricula_proibida.isEmpty())){ // deleta permissao
+				try{
+					UsuarioForum objUsuarioProibido = UsuarioForum.find("matricula_usu='"+matricula_proibida+"'").first();
+					objUsuarioProibido.delete();
+					JPA.em().flush();
+					JPA.em().clear();
+					mensagem = "Ok";
+				}catch(Exception e){
+					e.printStackTrace();
+					mensagem = "Nao Ok";
+				}finally{
+					render(mensagem);
+				}
+			 } else{ // lista permitidos
+				try{
+					 listPermitidos = (List) UsuarioForum.find(" order by nome_usu ").fetch(); // isso não dá erro no caso de retorno vazio.
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				finally{
+					render(listPermitidos);
+				}
+			}
 		}
 	}
 

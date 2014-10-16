@@ -1679,7 +1679,7 @@ public class ExBL extends CpBL {
 			}
 			
 			if (automatico)
-				mov.setDescrMov("Arquivamento automatico.");
+				mov.setDescrMov("Arquivamento automático.");
 			
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
@@ -3698,6 +3698,85 @@ public class ExBL extends CpBL {
 		Notificador.notificarDestinariosEmail(mov,
 				Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
 	}
+	
+	public void excluirDocumentoAutomatico(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) 
+			throws Exception{
+		excluirDocumento(doc, titular, lotaTitular, true);
+	}
+	
+	
+	public void excluirDocumento(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular, 
+			boolean automatico) /* somente documentos temporários */
+			throws Exception {
+		try {
+			ExDao.iniciarTransacao();
+
+			try {
+				final Date d = doc.getDtRegDoc();
+			} catch (final ObjectNotFoundException e) {
+				throw new AplicacaoException(
+						"Documento já foi excluído anteriormente", 1, e);
+			}
+
+			if (doc.isFinalizado())
+
+				throw new AplicacaoException(
+						"Documento já foi finalizado e não pode ser excluído",
+						2);
+			for (ExMobil m : doc.getExMobilSet()) {
+				Set set = m.getExMovimentacaoSet();
+				
+				if (!automatico && !Ex.getInstance().getComp()
+						.podeExcluir(titular, lotaTitular, m))
+					throw new AplicacaoException("Não é possível excluir");
+
+				if (set.size() > 0) {
+					final Object[] aMovimentacao = set.toArray();
+					for (int i = 0; i < set.size(); i++) {
+						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
+						dao().excluir(movimentacao);
+					}
+				}
+
+				for (ExMarca marc : m.getExMarcaSet())
+					dao().excluir(marc);
+
+				set = m.getExMovimentacaoReferenciaSet();
+				if (set.size() > 0) {
+					final Object[] aMovimentacao = set.toArray();
+					for (int i = 0; i < set.size(); i++) {
+						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
+						Ex.getInstance()
+								.getBL()
+								.excluirMovimentacao(titular,
+										lotaTitular,
+										movimentacao.getExMobil(),
+										movimentacao.getIdMov());
+					}
+				}
+
+				dao().excluir(m);
+			}
+
+			// Exclui documento da tabela de Boletim Interno
+			String funcao = doc.getForm().get("acaoExcluir");
+			if (funcao != null) {
+				obterMetodoPorString(funcao, doc);
+			}
+
+			dao().excluir(doc);
+			ExDao.commitTransacao();
+		} catch (final AplicacaoException e) {
+			ExDao.rollbackTransacao();
+			throw e;
+		} catch (final Exception e) {
+			ExDao.rollbackTransacao();
+			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
+					0, e);
+		}
+
+	}
+	
 
 	public void excluirMovimentacao(final ExMovimentacao mov)
 			throws AplicacaoException, SQLException {
@@ -4476,7 +4555,7 @@ public class ExBL extends CpBL {
 						mov.setConteudoTpMov("application/zip");
 					}
 					if (automatico)
-						mov.setDescrMov("Transferencia automatica.");
+						mov.setDescrMov("Transferência automática.");
 					
 					gravarMovimentacao(mov);
 					concluirAlteracaoParcial(m);

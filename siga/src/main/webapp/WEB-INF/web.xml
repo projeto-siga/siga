@@ -7,10 +7,31 @@
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
 	</listener>
-	
+
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
 	</listener>
+
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<!--distributable/-->
+	
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
+	<!-- The Usual Welcome File List -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+   <servlet>
+              <description>Inicializacao do SIGA</description>
+              <display-name>SigaInitServlet</display-name>
+              <servlet-name>SigaInitServlet</servlet-name>
+              <servlet-class>br.gov.jfrj.siga.servlet.SigaInitServlet</servlet-class>
+              <load-on-startup>1</load-on-startup>
+      </servlet>
+
 	
 	<filter>
 		<filter-name>HibernateFilter</filter-name>

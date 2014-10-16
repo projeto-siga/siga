@@ -641,7 +641,7 @@ public class WfDesignacaoAction extends WfSigaActionSupport {
 				CpTipoConfiguracao.TIPO_CONFIG_DESIGNAR_TAREFA,
 				CpTipoConfiguracao.class, false);
 
-		Wf.getInstance().getConf().evictListaPorTipo(tipoConfig);
+		Wf.getInstance().getConf().limparCacheSeNecessario();
 
 		sfWfDao.evict(CpConfiguracao.class);
 		sfWfDao.evict(WfConfiguracao.class);

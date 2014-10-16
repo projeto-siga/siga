@@ -116,8 +116,8 @@ public class SigaApplication extends Controller{
 		if (servico.endsWith(";"))
 			servico = servico.substring(0, servico.length()-1);
 		if (!podeUtilizarServico(servico))
-			throw new Exception("Acesso negado. Serviço: '" + servico
-					+ "' usuário: " + titular().getSigla() + " lotação: "
+			throw new Exception("Acesso negado. Servico: '" + servico
+					+ "' usuario: " + titular().getSigla() + " lotacao: "
 					+ lotaTitular().getSiglaCompleta());
 	}
 
@@ -125,7 +125,7 @@ public class SigaApplication extends Controller{
 		// MailUtils.sendErrorMail(e);
 		if (cadastrante() != null)
 			Logger.error("Erro Siga-GC; Pessoa: " + cadastrante().getSigla()
-					+ "; Lotação: " + lotaTitular().getSigla(), e);
+					+ "; Lotacao: " + lotaTitular().getSigla(), e);
 		e.printStackTrace();
 		error(e.getMessage());
 	}

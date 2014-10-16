@@ -187,4 +187,40 @@ public class SigaHTTP {
 	public void setIdp(String idp) {
 		this.idp = idp;
 	}
+	
+	
+	// TODO: commit f405c51011d663e5865351ddcf1147b495fb69f5
+//	public static String get(String URL, HashMap<String, String> header, Integer timeout, String payload) throws AplicacaoException {
+//	 
+//	 		try {
+//	 
+//	 			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
+//	 					.openConnection();
+//				
+//				if (timeout != null) {
+//					conn.setConnectTimeout(timeout);
+//					conn.setReadTimeout(timeout);
+//				}
+//				
+//	 			//conn.setInstanceFollowRedirects(true);
+//	 
+//				if (header != null) {
+//					for (String s : header.keySet()) {
+//							conn.setRequestProperty(s, header.get(s));
+//			}
+//				}	
+//	 
+//	 			System.setProperty("http.keepAlive", "false");
+//				
+//				if (payload != null) {
+//					byte ab[] = payload.getBytes("UTF-8");
+//					conn.setRequestMethod("POST");
+//					// Send post request
+//					conn.setDoOutput(true);
+//					OutputStream os = conn.getOutputStream();
+//					os.write(ab);
+//					os.flush();
+//					os.close();
+//				}
+	 
 }

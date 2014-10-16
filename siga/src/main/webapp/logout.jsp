@@ -5,8 +5,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <c:catch var="catchException">
-	<siga:pagina titulo="Siga - Logout" desabilitarbusca="sim"
-                 meta="<META HTTP-EQUIV='refresh' CONTENT='1;URL='/siga/'>" >
+	<siga:pagina titulo="Siga - Logout" desabilitarbusca="sim"  meta="<META HTTP-EQUIV='refresh' CONTENT='1;URL='/siga/'>" >
 
 		<div class="gt-bd clearfix">
 			<div class="gt-content clearfix">

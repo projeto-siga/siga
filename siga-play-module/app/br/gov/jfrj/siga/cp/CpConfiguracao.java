@@ -184,5 +184,14 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 
 		return this;
 	}
+	
+	@Override
+	public String toString() {
+		return  "id: " + getId()
+				+ " ,pessoa: " + (getDpPessoa()!=null?getDpPessoa().getNomePessoa():"")
+				+ " ,lotacao: " + (getLotacao()!=null?getLotacao().getSigla():"")
+				+ " ,situação: " + (getCpSituacaoConfiguracao()!=null?getCpSituacaoConfiguracao().getDscSitConfiguracao():"")
+				+ " ,tipo conf: " + (getCpTipoConfiguracao().getDscTpConfiguracao());
+	}
 
 }

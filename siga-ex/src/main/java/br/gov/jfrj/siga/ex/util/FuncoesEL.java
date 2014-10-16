@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.DateFormat;
@@ -34,6 +35,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.text.MaskFormatter;
+
+import org.xml.sax.InputSource;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -65,6 +68,7 @@ import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoES;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
 import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import freemarker.ext.dom.NodeModel;
 
 public class FuncoesEL {
 	public static ExDao dao() {
@@ -710,12 +714,12 @@ public class FuncoesEL {
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
 
-		// Nato: Nesse caso, o titular eh considerado o subscritor do documento.
-		// Nao sei se isso e 100% correto, mas acho que e uma abordagem bastante
-		// razoavel.
+		// Nato: Nesse caso, o titular é considerado o subscritor do documento.
+		// Não sei se isso é 100% correto, mas acho que é uma abordagem bastante
+		// razoável.
 		// Markenson: Conversando com o Renato, alteramos o titular para o
 		// titular do sistema
-		// e nao do documento.
+		// e não do documento.
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,
@@ -806,7 +810,7 @@ public class FuncoesEL {
 	 */
 	public static String formatarCPF(String cpf) {
 
-		// Se CPF ja vem formatado, devolve cpf
+		// Se CPF já vem formatado, devolve cpf
 		Pattern p = Pattern
 				.compile("[0-9]{2,3}?\\.[0-9]{3}?\\.[0-9]{3}?\\-[0-9]{2}?");
 		Matcher m = p.matcher(cpf);
@@ -815,15 +819,15 @@ public class FuncoesEL {
 			return cpf;
 		}
 
-		// O texto e truncado para 11 caracteres caso seja maior
+		// O texto é truncado para 11 caracteres caso seja maior
 		if (cpf.length() > 11) {
 			cpf = cpf.substring(0, 11);
 		}
 
-		// Determina o numero de zeros a esquerda
+		// Determina o número de zeros à esquerda
 		int numZerosAEsquerda = 11 - cpf.length();
 
-		// aplica os zeros a esquerda
+		// aplica os zeros à esquerda
 		for (int i = 0; i < numZerosAEsquerda; i++) {
 			cpf = "0" + cpf;
 		}
@@ -878,13 +882,13 @@ public class FuncoesEL {
 			nivel = "Auxiliar";
 
 		if (nivel.indexOf('I') > 0)
-			nivel = "IntermediÃ¡rio";
+			nivel = "Intermediário";
 
 		if (nivel.indexOf('S') > 0)
 			nivel = "Superior";
 
-		return "NÃ­vel " + nivel + ", Classe " + aux + classe + aux
-				+ ", PadrÃ£o " + aux + padrao + aux;
+		return "Nível " + nivel + ", Classe " + aux + classe + aux
+				+ ", Padrão " + aux + padrao + aux;
 	}
 
 	public static String buscarLotacaoPorSigla(String sigla, Long idOrgaoUsu)
@@ -1014,5 +1018,23 @@ public class FuncoesEL {
         }
 
         return null;
+	}
+	
+	public static String webservice(String url, String corpo, Integer timeout) {
+		HashMap<String,String> headers = new HashMap<String, String>();
+		headers.put("Content-Type", "text/xml;charset=UTF-8");
+		String s = "";
+		//String s = ConexaoHTTP.get(url, headers, timeout, corpo); //TODO Reescrever para utilizar o SigaHTTP Commit: f405c51011d663e5865351ddcf1147b495fb69f5
+		return s;
+	}
+	
+	public static NodeModel parseXML(String xml) throws Exception  {
+		xml = URLDecoder.decode(xml, "UTF-8");
+		// Remover todos os namespaces
+		xml = xml.replaceAll("(</?)[a-z]+:", "$1");
+		xml = xml.replaceAll("( xmlns(:[a-z]+)?=\"[^\"]+\")","");
+		xml = xml.replaceAll(" ([a-z]+:)([a-zA-Z]+=\"[^\"]+\")"," $2");
+		InputSource inputSource = new InputSource( new StringReader( xml ) );
+		return freemarker.ext.dom.NodeModel.parse(inputSource);
 	}
 }

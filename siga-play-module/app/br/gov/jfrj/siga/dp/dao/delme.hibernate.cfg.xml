@@ -10,8 +10,8 @@
   <property name="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</property>
   <!-- Habilitar a linha seguinte para ler as configuracoes do oracle-ds.xml no jboss
 		-->
-  <property name="connection.datasource">java:/SigaCpDS</property>
-  <property name="siga.connection.datasource">java:/SigaCpDS</property>
+  <property name="connection.datasource">java:/jboss/datasources/SigaCpDS</property>
+  <property name="siga.connection.datasource">java:/jboss/datasources/SigaCpDS</property>
   <!-- JDBC connection properties (begin) 
  
 

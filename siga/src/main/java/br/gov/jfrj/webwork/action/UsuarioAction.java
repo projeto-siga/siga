@@ -429,6 +429,10 @@ public class UsuarioAction extends SigaActionSupport {
 		
 		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
 		CpOrgaoUsuario orgaoUsu = dao().consultarPorSigla(orgaoFlt);
+		
+		if (orgaoUsu == null){
+			throw new AplicacaoException("O órgão informado é nulo ou inválido." );
+		}
 
 		List<DpPessoa> lstPessoa = dao().consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
 

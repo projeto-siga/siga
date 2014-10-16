@@ -17,7 +17,7 @@ public class ExGraphTramitacao extends ExGraph {
 		int numTransicao = 0;
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (!mov.isCancelada() && !mov.isCanceladora()
-					&& !mov.getLotaResp().equivale(atendenteAnterior)) {
+					&& mov.getLotaResp() != null && !mov.getLotaResp().equivale(atendenteAnterior)) {
 
 				if (atendenteAnterior != null) {
 					numTransicao++;

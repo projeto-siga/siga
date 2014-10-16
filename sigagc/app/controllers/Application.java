@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,19 +29,15 @@ import models.GcTag;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
 import notifiers.Correio;
-import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.jboss.security.SecurityContextAssociation;
 
 import play.Play;
-import play.Play.Mode;
 import play.data.Upload;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
-import play.mvc.Scope;
 import play.mvc.Scope.RenderArgs;
 import utils.GcArvore;
 import utils.GcBL;
@@ -53,18 +48,13 @@ import utils.GcInformacaoFiltro;
 import utils.diff_match_patch;
 import utils.diff_match_patch.Diff;
 import utils.diff_match_patch.Operation;
-import br.gov.jfrj.siga.acesso.UsuarioAutenticado;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.DadosRI;
-import br.gov.jfrj.siga.model.Usuario;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -99,78 +89,6 @@ public class Application extends SigaApplication{
 		}
 	}
 
-	void delme_addDefaults() throws Exception {
-		SigaHTTP http = new SigaHTTP();
-		ModeloDao.freeInstance();
-		
-		if (request.url.contains("proxy"))
-			return;
-
-		RenderArgs.current().put("_base", HTTP_LOCALHOST_8080);
-
-		HashMap<String, String> atributos = new HashMap<String, String>();
-		for (Http.Header h : request.headers.values())
-			if (!h.name.equals("content-type"))
-				atributos.put(h.name, h.value());
-
-		String url = getBaseSiga() + "/siga/pagina_vazia.action?popup=false";
-		String paginaVazia = http.get(url, null, Scope.Session.current().getId());
-
-		String[] pageText = paginaVazia.split("<!-- insert body -->");
-		String[] cabecalho = pageText[0].split("<!-- insert menu -->");
-		RenderArgs.current().put("_cabecalho_pre", cabecalho[0]);
-		RenderArgs.current().put("_cabecalho_pos", cabecalho[1]);
-		// renderArgs.put("_cabecalho", pageText[0]);
-		RenderArgs.current().put("_rodape", pageText[1]);
-
-		String user = SecurityContextAssociation.getPrincipal().getName();;
-		CpDao dao = CpDao.getInstance();
-		CpIdentidade id = dao.consultaIdentidadeCadastrante(user, true);
-		Usuario usuario = new Usuario();
-		UsuarioAutenticado.carregarUsuario(id, usuario);
-		
-		RenderArgs.current().put("cadastrante", usuario.getCadastrante());
-		RenderArgs.current().put("lotaCadastrante", usuario.getLotaTitular());
-		RenderArgs.current().put("titular", usuario.getTitular());
-		RenderArgs.current().put("lotaTitular", usuario.getLotaTitular());
-		RenderArgs.current().put("identidadeCadastrante", usuario.getIdentidadeCadastrante());
-
-		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
-			Date dt = GcBL.dt();
-			CpIdentidade idc = (CpIdentidade) RenderArgs.current().get("identidadeCadastrante");
-			DpPessoa pessoa = (DpPessoa) RenderArgs.current().get("cadastrante");
-
-			GcArquivo arq = new GcArquivo();
-			arq.setConteudoTXT("teste 123");
-			arq.titulo = "teste";
-
-			GcMovimentacao mov = new GcMovimentacao();
-			mov.arq = arq;
-			mov.hisDtIni = dt;
-			mov.hisIdcIni = idc;
-			mov.tipo = GcTipoMovimentacao.findById(GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO);
-			/* mov.pessoa ou mov.lotacao => responsavel por uma a√ß√£o (notificar ou solicitar revis√£o)
-			 * mov.pessoa = pessoa;
-			 * mov.lotacao = mov.pessoa.getLotacao();
-			 */			
-			GcInformacao inf = new GcInformacao();
-			inf.autor = pessoa;
-			inf.lotacao = inf.autor.getLotacao();
-			inf.hisDtIni = dt;
-			inf.hisIdcIni = idc;
-			inf.tipo = GcTipoInformacao.findById(1L);
-			inf.ou = inf.autor.getOrgaoUsuario();
-			inf.movs = new TreeSet<GcMovimentacao>();
-			inf.movs.add(mov);
-
-			GcBL.gravar(inf, idc, titular(), lotaTitular());
-		}
-
-		// } catch (Exception e) {
-		// redirect("http://localhost:8080/siga");
-		// }
-
-	}
 
 	public static void gadget() {
 		Query query = JPA.em().createNamedQuery("contarGcMarcas");
@@ -180,6 +98,7 @@ public class Application extends SigaApplication{
 		render(contagens);
 	}
 
+	
 	public static void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
 			String estiloBusca) throws Exception {
@@ -270,6 +189,57 @@ public class Application extends SigaApplication{
 		else
 			render("@knowledge", conhecimentos, classificacao, msgvazio,
 					urlvazio, titulo, referer, popup);
+	}
+
+	public static void updateTag(String before, String after) {
+		
+		// Edson: Atualizando tags de classificacao:
+		JPA.em()
+				.createQuery(
+						"update GcTag set titulo = '" + after
+								+ "' where titulo = '" + before + "'")
+				.executeUpdate();
+
+		// Edson: Atualizando tags de ancora. O problema aqui eh que, 
+		// muitas vezes, o before aparece em tags ancora acompanhado de 
+		// outra classificacao. Por exemplo, cadeira-consertar, onde 
+		// before eh consertar. Os patterns abaixo funcionam, mas nao 
+		// sempre. Por exemplo, se houver uma tag cadeira-tentar-consertar
+		// alem da cadeira-consertar, ela vai ser erroneamente atualizada.
+		List<GcTag> tags = JPA
+				.em()
+				.createQuery(
+						"from GcTag where titulo like '%" + before
+								+ "%' and tipo.id = 3").getResultList();
+		for (GcTag t : tags) {
+			t.titulo = t.titulo.replaceAll("^" + before + "(-.+|$)", after
+					+ "$1");
+			t.titulo = t.titulo.replaceAll("(.+-|^)" + before + "$", "$1"
+					+ after);
+			t.save();
+		}
+
+		//Edson: Atualizando os arquivos:
+		List<GcArquivo> arqs = JPA
+				.em()
+				.createQuery(
+						"select arq from GcInformacao inf inner join inf.arq arq"
+								+ " where inf.hisDtFim is null and arq.classificacao like '%"
+								+ before + "%'").getResultList();
+		for (GcArquivo arq : arqs) {
+			if (arq.classificacao.startsWith("^")) {
+				arq.classificacao = arq.classificacao.replace(":" + before, ":"
+						+ after);
+				arq.classificacao = arq.classificacao.replaceAll("-" + before
+						+ "$", "-" + after);
+			} else {
+				arq.classificacao = arq.classificacao.replaceAll("(@" + before
+						+ ")(,|$)", "@" + after + "$2");
+			}
+			arq.save();
+		}
+
+		renderText("OK");
 	}
 
 	public static void index() {
@@ -838,17 +808,17 @@ public class Application extends SigaApplication{
 					.findById(lotacao) : null);
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR,
-					pesResponsavel, lotResponsavel, email, null,
-					null, null, null, null, null);
+					pesResponsavel, lotResponsavel, email, null, null, null,
+					null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-			Correio.notificar(informacao, pesResponsavel, lotResponsavel,
-					email);
-			flash.success("NotificaÁ„o realizada com sucesso!");
+			Correio.notificar(informacao, pesResponsavel, lotResponsavel, email);
+			flash.success("Notificacao realizada com sucesso!");
 			exibir(informacao.getSigla());
 		} else
 			throw new AplicacaoException(
-					"Para notificar È necess·rio selecionar uma Pessoa ou LotaÁ„o.");
+					"Para notificar so e necessario selecionar uma Pessoa ou Lotacao.");
 	}
+
 
 	public static void solicitarRevisao(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
@@ -888,12 +858,13 @@ public class Application extends SigaApplication{
 		if (files != null)
 			for (Upload file : files) {
 				if (file.getSize() > 2097152)
-					throw new AplicacaoException("O tamanho do arquivo È maior que o m·ximo permitido (2MB)");
-				
+					throw new AplicacaoException(
+							"O tamanho do arquivo È maior que o "
+									+ "m·ximo permitido (2MB)");
 				if (file.getSize() > 0) {
 					/*
-					 * ----N„o pode ser usado porque o "plupload" retorna um
-					 * mime type padr„o "octet stream" String mimeType =
+					 * ----N√£o pode ser usado porque o "plupload" retorna um
+					 * mime type padr√£o "octet stream" String mimeType =
 					 * file.getContentType().toLowerCase();
 					 */
 					byte anexo[] = file.asBytes();
@@ -908,7 +879,7 @@ public class Application extends SigaApplication{
 					renderText("success");
 				} else
 					throw new AplicacaoException(
-							"N„o È permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+							"Nao e permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
 			}
 	}
 
@@ -1092,16 +1063,14 @@ public class Application extends SigaApplication{
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/selecionar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla="
-				+ URLEncoder.encode(sigla, "UTF-8"));
+		proxy("/" + tipo + "/selecionar.action?" + "propriedade=" + tipo + nome
+				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/buscar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla="
-				+ URLEncoder.encode(sigla, "UTF-8"));
+		proxy("/" + tipo + "/buscar.action?" + "propriedade=" + tipo + nome
+				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSigaFromPopup(String tipo) throws Exception {

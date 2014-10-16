@@ -268,6 +268,11 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		
 		if (!mostrarDesativados)
 			sb.append(" hisDtFim is null");
+		else {
+			sb.append(" idAcao in (");
+			sb.append(" SELECT max(idAcao) as idAcao FROM ");
+			sb.append(" SrAcao GROUP BY hisIdIni) ");
+		}
 		
 		sb.append(" order by siglaAcao ");
 		

@@ -106,6 +106,11 @@ public class SrLista extends HistoricoSuporte {
 		
 		if (!mostrarDesativado)
 			sb.append(" hisDtFim is null ");
+		else {
+			sb.append(" idLista in (");
+			sb.append(" SELECT max(idLista) as idLista FROM ");
+			sb.append(" SrLista GROUP BY hisIdIni) ");
+		}
 		
 		sb.append(" order by idLista ");
 		

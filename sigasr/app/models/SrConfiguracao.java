@@ -127,27 +127,27 @@ public class SrConfiguracao extends CpConfiguracao {
 	
 	@Column(name = "FG_DIVULGAR_SLA")
 	@Type(type = "yes_no")
-	public boolean divulgarSLA;
+	public Boolean divulgarSLA;
 	
 	@Column(name = "FG_NOTIFICAR_GESTOR")
 	@Type(type = "yes_no")
-	public boolean notificarGestor;
+	public Boolean notificarGestor;
 	
 	@Column(name = "FG_NOTIFICAR_SOLICITANTE")
 	@Type(type = "yes_no")
-	public boolean notificarSolicitante;
+	public Boolean notificarSolicitante;
 	
 	@Column(name = "FG_NOTIFICAR_CADASTRANTE")
 	@Type(type = "yes_no")
-	public boolean notificarCadastrante;
+	public Boolean notificarCadastrante;
 	
 	@Column(name = "FG_NOTIFICAR_INTERLOCUTOR")
 	@Type(type = "yes_no")
-	public boolean notificarInterlocutor;
+	public Boolean notificarInterlocutor;
 	
 	@Column(name = "FG_NOTIFICAR_ATENDENTE")
 	@Type(type = "yes_no")
-	public boolean notificarAtendente;
+	public Boolean notificarAtendente;
 	
 	@Column(name = "TIPO_PERMISSAO")
 	@Enumerated

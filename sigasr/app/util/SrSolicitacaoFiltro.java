@@ -13,6 +13,11 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public boolean pesquisar = false;
 
 	public String dtIni;
@@ -27,46 +32,48 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public boolean naoDesignados;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SrSolicitacao> buscar(boolean mostrarDesativados) throws Exception {
-
-		String query = "from SrSolicitacao sol where ";
+		StringBuffer query = new StringBuffer(" from SrSolicitacao sol where ");
 		
 		if (!mostrarDesativados)
-			query += " sol.hisDtFim is null ";
-		else
-			query += " 1 = 1 ";
-		
+			query.append(" sol.hisDtFim is null ");
+		else {
+			query.append(" idSolicitacao in ( ");
+			query.append(" SELECT max(idSolicitacao) as idSolicitacao FROM ");
+			query.append(" SrSolicitacao GROUP BY hisIdIni) ");
+		}
 
 		if (cadastrante != null)
-			query += " and sol.cadastrante.idPessoaIni = "
-					+ cadastrante.getIdInicial();
+			query.append(" and sol.cadastrante.idPessoaIni = "
+					+ cadastrante.getIdInicial());
 		if (lotaCadastrante != null)
-			query += " and sol.lotaCadastrante.idLotacaoIni = "
-					+ lotaCadastrante.getIdInicial();
+			query.append(" and sol.lotaCadastrante.idLotacaoIni = "
+					+ lotaCadastrante.getIdInicial());
 		if (solicitante != null)
-			query += " and sol.solicitante.idPessoaIni = "
-					+ solicitante.getIdInicial();
+			query.append(" and sol.solicitante.idPessoaIni = "
+					+ solicitante.getIdInicial());
 		if (lotaSolicitante != null)
-			query += " and sol.lotaSolicitante.idLotacaoIni = "
-					+ lotaSolicitante.getIdInicial();
+			query.append(" and sol.lotaSolicitante.idLotacaoIni = "
+					+ lotaSolicitante.getIdInicial());
 		if (itemConfiguracao != null
 				&& itemConfiguracao.idItemConfiguracao > 0L)
-			query += " and sol.itemConfiguracao.itemInicial.idItemConfiguracao = "
-					+ itemConfiguracao.itemInicial.idItemConfiguracao;
+			query.append(" and sol.itemConfiguracao.itemInicial.idItemConfiguracao = "
+					+ itemConfiguracao.itemInicial.idItemConfiguracao);
 		if (acao != null && acao.idAcao > 0L)
-			query += " and sol.acao.acaoInicial.idAcao = "
-					+ acao.acaoInicial.idAcao;
+			query.append(" and sol.acao.acaoInicial.idAcao = "
+					+ acao.acaoInicial.idAcao);
 		if (urgencia != null && urgencia.nivelUrgencia > 0)
-			query += " and sol.urgencia = " + urgencia.ordinal();
+			query.append(" and sol.urgencia = " + urgencia.ordinal());
 		if (tendencia != null && tendencia.nivelTendencia > 0)
-			query += " and sol.tendencia = " + tendencia.ordinal();
+			query.append(" and sol.tendencia = " + tendencia.ordinal());
 		if (gravidade != null && gravidade.nivelGravidade > 0)
-			query += " and sol.gravidade = " + gravidade.ordinal();
+			query.append(" and sol.gravidade = " + gravidade.ordinal());
 
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
 			for (String s : descrSolicitacao.split(" "))
-				query += " and lower(sol.descrSolicitacao) like '%"
-						+ s.toLowerCase() + "%' ";
+				query.append(" and lower(sol.descrSolicitacao) like '%"
+						+ s.toLowerCase() + "%' ");
 		}
 				
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
@@ -74,63 +81,65 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 		if (dtIni != null)
 			try {
-				query += " and sol.dtReg >= to_date('"
+				query.append(" and sol.dtReg >= to_date('"
 						+ dfHibernate.format(dfUsuario.parse(dtIni))
-						+ "', 'yyyy-MM-dd') ";
+						+ "', 'yyyy-MM-dd') ");
 			} catch (ParseException e) {
 				//
 			}
 
 		if (dtFim != null)
 			try {
-				query += " and sol.dtReg <= to_date('"
+				query.append(" and sol.dtReg <= to_date('"
 						+ dfHibernate.format(dfUsuario.parse(dtFim))
-						+ " 23:59', 'yyyy-MM-dd HH24:mi') ";
+						+ " 23:59', 'yyyy-MM-dd HH24:mi') ");
 			} catch (ParseException e) {
 				//
 			}
 
-		String subquery = "";
+		StringBuffer subquery = new StringBuffer();
 		
 		if (situacao != null && situacao.getIdMarcador() != null
 				&& situacao.getIdMarcador() > 0)
-			subquery += " and situacao.cpMarcador.idMarcador = "
-					+ situacao.getIdMarcador();
+			subquery.append(" and situacao.cpMarcador.idMarcador = "
+					+ situacao.getIdMarcador());
 		if (atendente != null)
-			subquery += "and situacao.dpPessoaIni.idPessoa = "
-					+ atendente.getIdInicial();
+			subquery.append("and situacao.dpPessoaIni.idPessoa = "
+					+ atendente.getIdInicial());
 		else if (lotaAtendente != null) {
 			if (naoDesignados)
-				subquery += "and situacao.dpLotacaoIni.idLotacao = "
+				subquery.append("and situacao.dpLotacaoIni.idLotacao = "
 						+ lotaAtendente.getIdInicial()
-						+ " and situacao.dpPessoaIni is null";
+						+ " and situacao.dpPessoaIni is null");
 			else
-				subquery += "and situacao.dpLotacaoIni.idLotacao = "
-						+ lotaAtendente.getIdInicial();
+				subquery.append("and situacao.dpLotacaoIni.idLotacao = "
+						+ lotaAtendente.getIdInicial());
 		}
 		
-		if (subquery.length() > 0)
-			subquery = " and exists (from SrMarca situacao where situacao.solicitacao.solicitacaoInicial = sol.solicitacaoInicial "
-					+ subquery + " )";
+		if (subquery.length() > 0) {
+			subquery.insert(0, " and exists (from SrMarca situacao where situacao.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
+			subquery.append(" )");
+		}
 		
-		String subqueryAtributo = "";
+		StringBuffer subqueryAtributo = new StringBuffer();
 		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
 			SrAtributo att = meuAtributoSet.get(0);
-			subqueryAtributo += " and att.tipoAtributo.idTipoAtributo = "
-					+ att.tipoAtributo.idTipoAtributo;
+			subqueryAtributo.append(" and att.tipoAtributo.idTipoAtributo = "
+					+ att.tipoAtributo.idTipoAtributo);
 			if (att.valorAtributo != null && !att.valorAtributo.equals(""))
-				subqueryAtributo += " and att.valorAtributo = '"
-						+ att.valorAtributo + "' ";
+				subqueryAtributo.append(" and att.valorAtributo = '"
+						+ att.valorAtributo + "' ");
 		}
 
-		if (subqueryAtributo.length() > 0)
-			subqueryAtributo = " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial "
-					+ subqueryAtributo + " )";
+		if (subqueryAtributo.length() > 0) {
+			subqueryAtributo.insert(0, " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
+			subqueryAtributo.append(" )");
+		}
 
 		List listaRetorno = JPA
 				.em()
 				.createQuery(
-						query + subquery + subqueryAtributo + " order by sol.idSolicitacao desc")
+						query.toString() + subquery.toString() + subqueryAtributo.toString() + " order by sol.idSolicitacao desc")
 				.getResultList();
 
 		return listaRetorno;

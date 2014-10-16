@@ -389,7 +389,12 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		StringBuffer sb = new StringBuffer();
 		
 		if (!mostrarDesativados)
-			sb.append(" hisDtFim is null");
+			sb.append(" hisDtFim is null ");
+		else {
+			sb.append(" idItemConfiguracao in (");
+			sb.append(" SELECT max(idItemConfiguracao) as idItemConfiguracao FROM ");
+			sb.append(" SrItemConfiguracao GROUP BY hisIdIni) ");
+		}
 
 		sb.append(" order by siglaItemConfiguracao ");
 		

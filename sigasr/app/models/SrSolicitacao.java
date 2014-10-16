@@ -221,7 +221,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	@Column(name = "FG_RASCUNHO")
 	@Type(type = "yes_no")
-	public boolean rascunho;
+	public Boolean rascunho;
 
 	public SrSolicitacao() {
 		
@@ -346,7 +346,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public String getCodigo() {
 
-		if (rascunho || numSolicitacao == null)
+		if (isRascunho() || numSolicitacao == null)
 			return "TMPSR-" + idSolicitacao;
 
 		if (solicitacaoPai != null)
@@ -766,8 +766,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO) != null;
 	}
 
-	public boolean isRascunho() {
-		return rascunho;
+	public Boolean isRascunho() {
+		return rascunho != null ? rascunho : false;
 	}
 	
 	public boolean isExcluido() {
@@ -1299,7 +1299,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		super.salvar();
 		
-		if (rascunho)
+		if (isRascunho())
 			rascunho(lotaCadastrante, cadastrante);
 		
 		// DB1: Caso seja cadastro, a lista estará com tamanho zero. Caso seja edição de rascunho em que o usuário estiver
@@ -1361,7 +1361,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			orgaoUsuario = lotaSolicitante.getOrgaoUsuario();
 
 		if (numSolicitacao == null)
-			if(!rascunho)
+			if(!isRascunho())
 				numSolicitacao = getProximoNumero();
 
 		if (gravidade == null)
@@ -1374,7 +1374,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
 		
 		// só valida o atendente caso não seja rascunho
-		if (!rascunho && !temAtendenteDesignado() && !temPreAtendenteDesignado())
+		if (!isRascunho() && !temAtendenteDesignado() && !temPreAtendenteDesignado())
 			throw new Exception(
 					"Não foi encontrado nenhum atendente designado "
 							+ "para esta solicitação. Sugestão: alterar item de "

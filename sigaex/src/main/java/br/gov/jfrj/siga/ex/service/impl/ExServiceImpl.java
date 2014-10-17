@@ -643,6 +643,8 @@ public class ExServiceImpl implements ExService {
 			doc.setExMobilSet(new TreeSet<ExMobil>());
 			doc.getExMobilSet().add(mob);
 			
+			if (conteudo == null)
+				conteudo = "";
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			baos.write(conteudo.getBytes());
 			

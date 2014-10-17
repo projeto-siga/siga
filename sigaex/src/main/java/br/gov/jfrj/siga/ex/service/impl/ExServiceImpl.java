@@ -446,6 +446,8 @@ public class ExServiceImpl implements ExService {
     		
     		if(modelo == null)
     			throw new AplicacaoException("Não foi possível encontrar um modelo com o id informado.");
+    		else
+    			modelo = modelo.getModeloAtual();
     		
     		
     		forma = modelo.getExFormaDocumento();
@@ -456,10 +458,15 @@ public class ExServiceImpl implements ExService {
        		if((classificacaoStr == null || classificacaoStr.isEmpty()) && !modelo.isClassificacaoAutomatica())
        			throw new AplicacaoException("A Classificação não foi informada.");
     		
-    		classificacao =  dao().consultarExClassificacao(classificacaoStr);
+    		if(modelo.isClassificacaoAutomatica()) 
+    			classificacao = modelo.getExClassificacao();
+    		else
+    			classificacao =  dao().consultarExClassificacao(classificacaoStr);
     		
     		if(classificacao == null)
     			throw new AplicacaoException("Não foi possível encontrar uma classificação com o código informado.");
+    		else
+    			classificacao = classificacao.getClassificacaoAtual();
     		
     		if(eletronico == null)
     			eletronico = true;
@@ -599,7 +606,10 @@ public class ExServiceImpl implements ExService {
     		doc.setExTipoDocumento(tipoDocumento);
     		doc.setExFormaDocumento(forma);
     		doc.setExModelo(modelo);
-    		doc.setDescrDocumento(descricaoStr);
+    		
+    		if(!modelo.isDescricaoAutomatica())
+    			doc.setDescrDocumento(descricaoStr);
+    		
     		doc.setExClassificacao(classificacao);
     		if(eletronico)
     			doc.setFgEletronico("S");

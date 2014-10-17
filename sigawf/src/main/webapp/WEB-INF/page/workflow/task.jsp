@@ -27,7 +27,7 @@
 			</c:if>
 
 			<!-- Adicionando a lista de Tarefas -->
-			<form method="POST" action="executeTask">
+			<form method="POST" action="${linkTo[WorkflowController].executeTask}">
 				<h3>Execução da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<div style="margin:10px;" >

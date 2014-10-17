@@ -15,7 +15,7 @@
 			scope="request" />
 		<c:set var="ajax" value="sim" scope="request" />
 
-		<form method="POST" action="/sigawf/executeTask.action"
+		<form method="POST" action="/sigawf/workflow/executeTask"
 			style="margin: 0px; padding: 0px; border: 0px;" id="form${tiId}">
 			<input name="result" type="hidden" value="doc" /> <input
 				name="sigla" type="hidden" value="${item.key}" /> <input

@@ -25,7 +25,8 @@
 	GET		/agendamento_sala_lista					Application.agendamento_sala_lista
 	GET 	/agendadas_hoje							Application.agendadas_hoje
 	GET		/usuario_atualiza						Application.usuario_atualiza
-	GET		/permissao_inclui						Application.permissao_inclui					
+	GET		/permissao_inclui						Application.permissao_inclui
+	GET		/permissao_exclui						Application.permissao_exclui					
 	GET 	/creditos								Application.creditos
 		
 # Ignore favicon requests

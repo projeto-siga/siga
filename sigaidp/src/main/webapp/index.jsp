@@ -1,9 +1,6 @@
 <html>
 <head>
     <title>SIGA - Provedor de identidades</title>
-    <!-- 
-    <META HTTP-EQUIV="refresh" CONTENT="0;URL=?SAML_VERSION=2.0&TARGET=http%3A//volvofh16%3a8080/siga/">
-     -->
     <link rel="stylesheet" href="css/main.css" type="text/css" media="screen" />
 </head>
 <body>

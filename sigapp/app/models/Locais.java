@@ -32,7 +32,7 @@ public class Locais extends GenericModel {
 	public String local;
 	@ManyToOne
 	@JoinColumn(name = "cod_forum", nullable=true) //fk, e, tem que atribuir programaticamente como objeto.
-	public Foruns forumFk; // Isso Ã© coluna, mas,  tem que atribuir como objeto.
+	public Foruns forumFk; // Isso e´ coluna, mas,  tem que atribuir como objeto.
 	@Column(name="dias", length=40, nullable=true)
 	public String dias;
 	@Column(name="hora_ini", length=8, nullable=true)

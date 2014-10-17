@@ -4,7 +4,7 @@
 <!-- Criado em 21 Dez 2005 -->
 <hibernate-mapping package="br.gov.jfrj.siga.cp"
 	schema="CORPORATIVO">
-	<class mutable="false" name="CpComplexo" table="DP_COMPLEXO">
+	<class mutable="false" name="CpComplexo" table="CP_COMPLEXO">
 		<id column="ID_COMPLEXO" name="idComplexo" type="long" />
 		<property column="NOME_COMPLEXO" generated="never" lazy="false"
 			name="nomeComplexo" not-null="true" type="string" />

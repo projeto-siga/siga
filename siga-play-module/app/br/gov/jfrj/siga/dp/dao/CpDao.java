@@ -1303,12 +1303,12 @@ public class CpDao extends ModeloDao {
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
 	//	Query sql = (Query) getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
 		Query sql = (Query) HibernateUtil.getSessionFactory().openStatelessSession().getNamedQuery("consultarDataUltimaAtualizacao");
-
+		
 		sql.setCacheable(false);
 		List result = sql.list();
 		if (result.size() != 1)
 			throw new AplicacaoException(
-					"Nao foi possivel obter a data e a hora de atualizaca das configuracoes.");
+					"Nao foi possivel obter a data e a hora de atualizacao das configuracoes.");
 
 		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
 		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];

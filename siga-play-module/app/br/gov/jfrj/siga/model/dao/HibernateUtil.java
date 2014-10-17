@@ -304,6 +304,9 @@ public class HibernateUtil {
 	}
 
 	public static SessionFactory getSessionFactory() {
+		if (sessionFactory == null && getSessao() != null){
+			configurarHibernate(HibernateUtil.getSessao());  //Corrigindo erro de nullpointer
+		}
 		return sessionFactory;
 	}
 	

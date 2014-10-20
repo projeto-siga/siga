@@ -388,6 +388,16 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 	
+	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, String nomeForma ,String nomeModelo, String classificacaoStr, 
+			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception {
+		ExModelo modelo = null;
+		
+		modelo = dao().consultarExModelo(nomeForma, nomeModelo);
+		
+		return criarDocumento(cadastranteStr, subscritorStr, destinatarioStr, destinatarioCampoExtraStr, tipoDeDocumentoLong, modelo.getModeloAtual().getId(), classificacaoStr, 
+				descricaoStr, eletronico, nivelDeAcessoLong, conteudo, siglaMobilPai, finalizar);
+	}
+
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
 			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception {
     	try {

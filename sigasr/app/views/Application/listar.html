@@ -88,7 +88,7 @@
 		/* Função de formatação para células de detalhes */
 		function format ( d ) {
 		    // 'd' é o objeto contendo os dados da linha
-		    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+		    return '<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
 		        '<tr>'+
 		            '<td><b>Teor:</b></td>'+
 		            '<td>'+d[2]+'</td>'+
@@ -103,7 +103,7 @@
 	    // Adicionando listener para tratar a abertura e fechamento dos detalhes
 	    $('#solicitacoes_table tbody').on('click', 'td.details-control', function () {
 	    	var tr = $(this).closest('tr');
-	    	var row = table.row( tr );
+	    	var row = table.api().row( tr );
 	    	
 	    	if ( row.child.isShown() ) {
 	    		// Se alguma linha já está com os detalhes abertos, fecha-o
@@ -126,7 +126,7 @@
 				<div class="gt-form-row dataTables_length">
 					<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
 				</div>
-				<table id="solicitacoes_table" border="0" class="gt-table-nowrap">
+				<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
 					<col width="2%" />
 					<col width="15%" />
 		    		<col width="35%" />

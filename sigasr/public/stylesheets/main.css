@@ -55,11 +55,11 @@ div.right {
 }
 
 td.details-control {
-    background: url('/siga/css/famfamfam/icons/add.png') no-repeat center center;
+    background: url('/siga/css/famfamfam/icons/bullet_toggle_plus.png') no-repeat center center;
     cursor: pointer;
 }
 tr.shown td.details-control {
-    background: url('/siga/css/famfamfam/icons/delete.png') no-repeat center center;
+    background: url('/siga/css/famfamfam/icons/bullet_toggle_minus.png') no-repeat center center;
 }
 
 td.padding-table {

@@ -53,7 +53,7 @@
 				#{/if}
 				#{if tipoAtributo.formatoCampo.name() == "NUM_DECIMAL"}
 					<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" 
-						id="numDecimal" pattern="^\d*(\.\d{2}$)?" title="Somente número e com duas casas decimais EX: 222.22" class="${tipoAtributo.idTipoAtributo}"
+						id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${tipoAtributo.idTipoAtributo}"
 						onchange="notificarCampoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');" />
 					<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
 				#{/if}

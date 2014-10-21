@@ -63,13 +63,11 @@ public class SrTipoAtributo extends HistoricoSuporte {
 
 	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
 		return idTipoAtributo;
 	}
 
 	@Override
 	public void setId(Long id) {
-		// TODO Auto-generated method stub
 		idTipoAtributo = id;
 	}
 
@@ -94,7 +92,6 @@ public class SrTipoAtributo extends HistoricoSuporte {
 
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

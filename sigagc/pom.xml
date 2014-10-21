@@ -112,10 +112,10 @@
                   </dependency>
                   
                   <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-ehcache</artifactId>
-            <version>3.6.2.Final</version>
-        </dependency>
+                  	<groupId>org.hibernate</groupId>
+			        <artifactId>hibernate-ehcache</artifactId>
+			        <version>3.6.2.Final</version>
+			      </dependency>
 
     
                   <dependency>

@@ -8,7 +8,8 @@
 		Designação
 	</div>
 </div>
-#{if solicitacao.locaisDisponiveis.size() > 1}
+#{set locaisDisponiveis:solicitacao.locaisDisponiveis /}
+#{if locaisDisponiveis.size() > 1}	
 	<div class="gt-form-row gt-width-66">
 		<label>Local</label> 
 		#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',

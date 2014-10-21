@@ -388,23 +388,11 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 	
-	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, String nomeForma ,String nomeModelo, String classificacaoStr, 
-			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception {
-		ExModelo modelo = null;
-		
-		modelo = dao().consultarExModelo(nomeForma, nomeModelo);
-		
-		return criarDocumento(cadastranteStr, subscritorStr, destinatarioStr, destinatarioCampoExtraStr, tipoDeDocumentoLong, modelo.getModeloAtual().getId(), classificacaoStr, 
-				descricaoStr, eletronico, nivelDeAcessoLong, conteudo, siglaMobilPai, finalizar);
-	}
-
-	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
-			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception {
+	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
+			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception {
     	try {
     		DpPessoa cadastrante = null;
-    		DpPessoa titular = null;
     		DpPessoa subscritor = null;
-    		CpOrgaoUsuario orgaoUsuario = null;
     		ExModelo modelo = null;
     		ExFormaDocumento forma = null;
     		ExTipoDocumento tipoDocumento = null;
@@ -438,27 +426,27 @@ public class ExServiceImpl implements ExService {
     		if(subscritor.isFechada())
     			throw new AplicacaoException("O subscritor não está mais ativo.");
     		
-    		if(tipoDeDocumentoLong == null)
+    		if(descricaoTipoDeDocumento == null)
     			tipoDocumento = (dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class,
         				false));
-    		else
-    			tipoDocumento = (dao().consultar(tipoDeDocumentoLong, ExTipoDocumento.class,
-        				false));
+    		else 
+    			tipoDocumento = dao().consultarExTipoDocumento(descricaoTipoDeDocumento);
     		
     		if(tipoDocumento == null)
     			throw new AplicacaoException("Não foi possível encontrar o Tipo de Documento. Os Tipos de Documentos aceitos são: 1-Interno Produzido, 2-Interno Importado, 3-Externo");
     		
-    		if(modeloLong == null)
-    			throw new AplicacaoException("O modelo não foi informado.");
+    		if(nomeForma == null)
+    			throw new AplicacaoException("O Tipo não foi informado.");
     		
-    		modelo = dao().consultar(modeloLong, ExModelo.class,
-    				false);
+    		if(nomeModelo == null)
+    			throw new AplicacaoException("O modelo não foi informado.");
+
+    		modelo = dao().consultarExModelo(nomeForma, nomeModelo);
     		
     		if(modelo == null)
-    			throw new AplicacaoException("Não foi possível encontrar um modelo com o id informado.");
+    			throw new AplicacaoException("Não foi possível encontrar um modelo com os dados informados.");
     		else
     			modelo = modelo.getModeloAtual();
-    		
     		
     		forma = modelo.getExFormaDocumento();
     		
@@ -494,7 +482,7 @@ public class ExServiceImpl implements ExService {
     			eletronico = false;
     		} 
     		
-    		if(nivelDeAcessoLong == null) {
+    		if(nomeNivelDeAcesso == null) {
     			
 	    		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 	    		
@@ -523,7 +511,7 @@ public class ExServiceImpl implements ExService {
 	    		if(exConfig != null)
 	    			nivelDeAcesso = exConfig.getExNivelAcesso();
     		} else {
-    			nivelDeAcesso = dao().consultar(nivelDeAcessoLong, ExNivelAcesso.class, false);
+    			nivelDeAcesso = dao().consultarExNidelAcesso(nomeNivelDeAcesso);
     		}
     		
 			if(nivelDeAcesso == null)

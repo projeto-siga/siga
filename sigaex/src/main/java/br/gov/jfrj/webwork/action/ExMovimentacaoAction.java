@@ -1054,9 +1054,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		try {
 			Ex.getInstance()
 					.getBL()
-
 					.arquivarCorrente(getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), null, mov.getSubscritor());
+							mov.getDtMov(), null, mov.getSubscritor(), false);
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -2433,8 +2432,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.getBL()
 							.arquivarCorrente(getCadastrante(),
 									getLotaTitular(), mob,
-
-									mov.getDtMov(), dt, mov.getSubscritor());
+									mov.getDtMov(), dt, mov.getSubscritor(), false);
 				}
 			}
 		} catch (final Exception e) {
@@ -2940,7 +2938,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							mov.getDestinoFinal(), mov.getSubscritor(),
 							mov.getTitular(), mov.getExTipoDespacho(), false,
 							mov.getDescrMov(), conteudo,
-							mov.getNmFuncaoSubscritor(), false);
+							mov.getNmFuncaoSubscritor(), false, false);
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -3249,7 +3247,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 										mov.getDestinoFinal(),
 										mov.getSubscritor(), mov.getTitular(),
 										tpd, false, txt, null,
-										mov.getNmFuncaoSubscritor(), false);
+										mov.getNmFuncaoSubscritor(), false, false);
 
 					}
 				}

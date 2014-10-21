@@ -19,6 +19,7 @@ siga-wf/bin/
 siga/WebContent/WEB-INF/classes/.gitignore
 siga/WebContent/WEB-INF/classes/
 sigaex/WebContent/WEB-INF/classes/
+sigaex/test-output/
 sigapp/bin/
 sigapp/precompiled/
 sigagc/bin/

@@ -22,6 +22,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.xml.parsers.ParserConfigurationException;
 
+import models.Sr;
 import models.SrAcao;
 import models.SrArquivo;
 import models.SrAtributo;
@@ -219,6 +220,7 @@ public class Application extends SigaApplication {
 		render(solicitacao);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
 		
 		String calendario = null;
@@ -248,7 +250,7 @@ public class Application extends SigaApplication {
 			queryString.append(" from SrSolicitacao where hisDtIni = (select max(sol.hisDtIni) from SrSolicitacao sol where sol.cadastrante.idPessoa = :idCadastrante ) ");
 			queryString.append(" and cadastrante.idPessoa = :idCadastrante ");
 			
-			TypedQuery<SrSolicitacao> query = JPA.em().createQuery(queryString.toString(), SrSolicitacao.class);
+			Query query = JPA.em().createQuery(queryString.toString());
 			query.setParameter("idCadastrante", cadastrante().getId());
 			
 			dtIniEdicao = new Date().getTime();
@@ -710,6 +712,12 @@ public class Application extends SigaApplication {
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		render(lista);
+	}
+	
+	public static void associarLista(Long idSolicitacao) throws Exception {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
+		solicitacao = solicitacao.getSolicitacaoAtual();
+		render(solicitacao);
 	}
 
 	public static void associarListaGravar(Long idSolicitacao, Long idLista)

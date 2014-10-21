@@ -26,6 +26,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -49,7 +52,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 		+ "and (pes.situacaoFuncionalPessoa = '1' "
 		+ "or pes.situacaoFuncionalPessoa = '2' "
 		+ "or pes.situacaoFuncionalPessoa = '31') ") })
-		
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpIdentidade extends AbstractCpIdentidade {
 	
 	public DpPessoa getPessoaAtual() {

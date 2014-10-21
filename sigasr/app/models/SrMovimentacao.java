@@ -10,11 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -102,11 +104,11 @@ public class SrMovimentacao extends GenericModel {
 	@Column(name = "ID_PRIORIDADE")
 	public Long prioridade;
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESQUISA")
 	public SrPesquisa pesquisa;
 
-	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao")
+	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY)
 	// @OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
 
@@ -253,10 +255,18 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public SrMovimentacao salvar() throws Exception {
+		
+		//Edson: considerar deixar esse codigo em SrSolicitacao.movimentar(),
+		//visto que sao chamadas muitas operacoes daquela classe
+		
 		checarCampos();
 		super.save();
+		
 		// Edson: atualizando o srMovimentacaoSet...
-		solicitacao.refresh();
+		if (solicitacao.meuMovimentacaoSet == null)
+			solicitacao.meuMovimentacaoSet = new TreeSet<SrMovimentacao>();
+		solicitacao.meuMovimentacaoSet.add(this);
+		
 		solicitacao.atualizarMarcas();
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
@@ -289,8 +299,11 @@ public class SrMovimentacao extends GenericModel {
 			throw new Exception(
 					"Movimentação precisa fazer parte de uma solicitação");
 
+		solicitacao = solicitacao.solicitacaoInicial != null ? solicitacao.solicitacaoInicial
+				: solicitacao;
+
 		if (arquivo != null) {
-			double lenght = (double)arquivo.blob.length / 1024 / 1024;
+			double lenght = (double) arquivo.blob.length / 1024 / 1024;
 			if (lenght > 2)
 				throw new IllegalArgumentException("O tamanho do arquivo ("
 						+ new DecimalFormat("#.00").format(lenght)

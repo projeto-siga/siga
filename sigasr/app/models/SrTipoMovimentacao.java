@@ -5,10 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "SR_TIPO_MOVIMENTACAO", schema = "SIGASR")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SrTipoMovimentacao extends GenericModel {
 
 	final static public long TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO = 1;

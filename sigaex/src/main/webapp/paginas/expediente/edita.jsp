@@ -472,22 +472,21 @@ function tryAgainAutoSave(){
 								<c:when test='${tipoDestinatario == 1}'>
 									<input type="hidden" name="campos" value="destinatarioSel.id" />
 									<siga:selecao propriedade="destinatario" tema="simple"
-										reler="sim" modulo="siga" />
-									<!--  idAjax="destinatario"  -->
+										idAjax="destinatario" modulo="siga" />
+									    
 								</c:when>
 								<c:when test='${tipoDestinatario == 2}'>
 									<input type="hidden" name="campos"
 										value="lotacaoDestinatarioSel.id" />
 									<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-										reler="sim" modulo="siga" /></td>
-						<!--  idAjax="destinatario" -->
+										idAjax="destinatario" modulo="siga" /></td>
+						   
 						</c:when>
 						<c:when test='${tipoDestinatario == 3}'>
 							<input type="hidden" name="campos"
 								value="orgaoExternoDestinatarioSel.id" />
 							<siga:selecao propriedade="orgaoExternoDestinatario"
-								tema="simple" reler="sim" modulo="siga" />
-							<!-- idAjax="destinatario" -->
+								tema="simple" idAjax="destinatario" modulo="siga" />
 							<br>
 							<ww:textfield name="nmOrgaoExterno" size="120" maxLength="256" />
 							<input type="hidden" name="campos" value="nmOrgaoExterno" />
@@ -597,7 +596,7 @@ function tryAgainAutoSave(){
 						<td colspan="3"><siga:span id="classificacao"
 							depende="forma;modelo">
 							<siga:selecao desativar="${desativarClassif}" modulo="sigaex"
-								propriedade="classificacao" tema="simple" reler="sim" />
+								propriedade="classificacao" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>

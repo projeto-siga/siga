@@ -1,22 +1,22 @@
 <div class="gt-form-row gt-width-66">
-				<label>Telefone</label> <input type="text"
-					name="solicitacao.telPrincipal" id="telPrincipal"
-					value="${solicitacao.telPrincipal}" />
-			</div>
-			<div class="gt-form-table">
-				<div class="barra-subtitulo header" align="center" valign="top">
-					Designação
-				</div>
-			</div>
-			#{if solicitacao.locaisDisponiveis.size() > 1}
-			<div class="gt-form-row gt-width-66">
-				<label>Local</label> 
-				#{select name:'solicitacao.local', items:solicitacao.locaisDisponiveis, valueProperty:'idComplexo',
-				labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
-			</div>
-			<script>
-				$("#local").change(function() {
-					  carregarItem();
-				});
-			</script>
-			#{/if}
+	<label>Telefone</label> <input type="text"
+		name="solicitacao.telPrincipal" id="telPrincipal"
+		value="${solicitacao.telPrincipal}" />
+</div>
+<div class="gt-form-table">
+	<div class="barra-subtitulo header" align="center" valign="top">
+		Designação
+	</div>
+</div>
+#{if solicitacao.locaisDisponiveis.size() > 1}
+	<div class="gt-form-row gt-width-66">
+		<label>Local</label> 
+		#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
+		labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
+	</div>
+	<script>
+		$("#local").change(function() {
+			  carregarItem();
+		});
+	</script>
+#{/if}

@@ -18,11 +18,16 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_TIPO_ATRIBUTO", schema = "SIGASR")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SrTipoAtributo extends HistoricoSuporte {
 
 	/**
@@ -79,6 +84,8 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	}
 
 	public SrTipoAtributo getAtual() {
+		if (getHisDtFim() == null)
+			return this;
 		List<SrTipoAtributo> sols = getHistoricoTipoAtributo();
 		if (sols == null)
 			return null;
@@ -97,6 +104,21 @@ public class SrTipoAtributo extends HistoricoSuporte {
 			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";"))); 
 		}
 		return preDefinidos;
+	}
+
+	@Override
+	public void salvar() throws Exception {
+		super.salvar();
+
+		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
+		// instancia do objeto, caso contrario, nao ha configuracao
+		// referenciando
+		if (tipoAtributoInicial != null)
+			SrConfiguracaoBL
+					.get()
+					.limparCache(
+							(CpTipoConfiguracao) CpTipoConfiguracao
+									.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 	}
 
 }

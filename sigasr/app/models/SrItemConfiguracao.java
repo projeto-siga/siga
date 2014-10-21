@@ -23,12 +23,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel {
 
@@ -71,10 +76,17 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	public String descricaoSimilaridade;
 		
 	@ManyToOne()
+	@JoinColumn(name = "ID_PAI")
+	public SrItemConfiguracao pai;
+
+	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "pai", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	public List<SrItemConfiguracao> filhoSet;
+
+	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrItemConfiguracao itemInicial;
 
-	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrItemConfiguracao> meuItemHistoricoSet;
    
@@ -116,34 +128,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		return tituloItemConfiguracao;
 	}
 
-	public String getDescricaoCompleta() {
-		int nivel = this.getNivel();
-		String desc_nivel = null;
-		if (nivel == 1) {
-			desc_nivel = this.tituloItemConfiguracao;
-		}
-		if (nivel == 2) {
-			String sigla_nivelpai = this.getSigla().substring(0, 2) + ".00.00";
-			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivelpai).first();
-			desc_nivel = configuracao.tituloItemConfiguracao + " : "
-					+ this.tituloItemConfiguracao;
-		}
-		if (nivel == 3) {
-			String sigla_nivelpai = this.getSigla().substring(0, 5) + ".00";
-			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivelpai).first();
-			String sigla_nivel_anterior = this.getSigla().substring(0, 2)
-					+ ".00.00";
-			SrItemConfiguracao configuracao_anterior = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivel_anterior).first();
-			desc_nivel = configuracao_anterior.tituloItemConfiguracao + " : "
-					+ configuracao.tituloItemConfiguracao + " : "
-					+ this.tituloItemConfiguracao;
-		}
-		return desc_nivel;
-	}
-
 	@Override
 	public void setId(Long id) {
 		this.idItemConfiguracao = id;
@@ -160,6 +144,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	}
 
 	public SrItemConfiguracao getAtual() {
+		if (getHisDtFim() == null)
+			return this;
 		List<SrItemConfiguracao> sols = getHistoricoItemConfiguracao();
 		if (sols == null)
 			return null;
@@ -227,7 +213,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				do {
 					if (!listaFinal.contains(item))
 						listaFinal.add(item);
-					item = item.getPai();
+					item = item.pai;
 				} while (item != null);
 			else
 				listaFinal.add(item);
@@ -269,7 +255,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				do {
 					if (!listaSimilares.contains(itemSimilar))
 						listaSimilares.add(itemSimilar);
-					itemSimilar = itemSimilar.getPai();
+					itemSimilar = itemSimilar.pai;
 				} while (itemSimilar != null);
 			else
 				listaSimilares.add(itemSimilar);
@@ -322,7 +308,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		return getSigla().substring(0, posFimComparacao + 1);
 	}
 
-	public SrItemConfiguracao getPai() {
+	public SrItemConfiguracao getPaiPorSigla() {
 		String sigla = getSiglaSemZeros();
 		sigla = sigla.substring(0, sigla.length() - 1);
 		if (sigla.lastIndexOf(".") == -1)
@@ -340,13 +326,13 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	 */
 	private List<SrItemConfiguracao> getListaPai() {
 		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
-		SrItemConfiguracao itemPai = this.getPai();
+		SrItemConfiguracao itemPai = this.pai;
 		
 		while (itemPai != null) {
 			if (!lista.contains(itemPai))
 				lista.add(itemPai);
 				
-			itemPai = itemPai.getPai();
+			itemPai = itemPai.pai;
 		}
 		
 		return lista;
@@ -379,12 +365,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		return outroItem.isPaiDeOuIgualA(this);
 	}
 
-	public List<SrItemConfiguracao> listarItemETodosDescendentes() {
-		return SrItemConfiguracao.find(
-				"byHisDtFimIsNullAndSiglaItemConfiguracaoLike",
-				getSiglaSemZeros() + "%").fetch();
-	}
-
 	public static List<SrItemConfiguracao> listar(boolean mostrarDesativados) {
 		StringBuffer sb = new StringBuffer();
 		
@@ -410,7 +390,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	public String getGcTags() {
 		int nivel = this.getNivel();
 		String tags = "";
-		SrItemConfiguracao pai = getPai();
+		SrItemConfiguracao pai = this.pai;
 		if (pai != null)
 			tags += pai.getGcTags();
 		return tags + "&tags=@" + getTituloSlugify();
@@ -421,21 +401,40 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		return s;
 	}
 
+    public String getTituloSlugify() {
+		return Texto.slugify(tituloItemConfiguracao, true, false);
+	}
+    
     @Override
     public void salvar() throws Exception {
-        super.salvar();
+    	if (getNivel() > 1) {
+			pai = getPaiPorSigla();
+		}
+		super.salvar();
+
+		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
+		// instancia do objeto, caso contrario, nao ha configuracao
+		// referenciando
+		if (itemInicial != null)
+			SrConfiguracaoBL
+					.get()
+					.limparCache(
+							(CpTipoConfiguracao) CpTipoConfiguracao
+									.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		
         if (gestorSet != null)
             for (SrGestorItem gestor : gestorSet){
                 gestor.itemConfiguracao = this;
                 gestor.salvar();
             }
+        
         if (fatorMultiplicacaoSet != null)
             for (SrFatorMultiplicacao fator : fatorMultiplicacaoSet){
                 fator.itemConfiguracao = this;
                 fator.salvar();
             }
         
-        // DB1: precisa salvar item a item 
+        // DB1: precisa salvar item a item da Designação
  		if (this.designacoes != null) {
  			for (SrConfiguracao designacao : this.designacoes) {
  				designacao.itemConfiguracao = this;
@@ -465,6 +464,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
  						}
  					}
  				}
+ 				
  				else {
  					designacao.salvarComoDesignacao();
  				}
@@ -472,7 +472,12 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
  		}
     }
     
-	public String getTituloSlugify() {
-		return Texto.slugify(tituloItemConfiguracao, true, false);
+	public List<SrItemConfiguracao> getItemETodosDescendentes() {
+		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
+		lista.add(this);
+		for (SrItemConfiguracao filho : filhoSet) {
+			lista.addAll(filho.getItemETodosDescendentes());
+		}
+		return lista;
 	}
 }

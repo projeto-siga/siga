@@ -46,13 +46,14 @@ public class SrConfiguracaoIgnorada extends Objeto {
 		return newItem;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static SrConfiguracaoIgnorada findByItemEConfiguracao(SrItemConfiguracao item, SrConfiguracao configuracao) {
 		StringBuffer sb = new StringBuffer("select ig from SrConfiguracaoIgnorada as ig where ig.itemConfiguracao.id = ");
 		sb.append(item.getId());
 		sb.append(" and ig.configuracao.id = ");
 		sb.append(configuracao.getId());
 		
-		List<SrConfiguracaoIgnorada> list = JPA.em().createQuery(sb.toString(), SrConfiguracaoIgnorada.class).getResultList();
+		List<SrConfiguracaoIgnorada> list = JPA.em().createQuery(sb.toString()).getResultList();
 		
 		if (list != null && list.size() > 0)
 			return list.get(0);
@@ -60,11 +61,12 @@ public class SrConfiguracaoIgnorada extends Objeto {
 			return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracaoIgnorada> findByConfiguracao(SrConfiguracao configuracao) {
 		StringBuffer sb = new StringBuffer("select ig from SrConfiguracaoIgnorada as ig where ig.configuracao.id = ");
 		sb.append(configuracao.getId());
 		
-		List<SrConfiguracaoIgnorada> list = JPA.em().createQuery(sb.toString(), SrConfiguracaoIgnorada.class).getResultList();
+		List<SrConfiguracaoIgnorada> list = JPA.em().createQuery(sb.toString()).getResultList();
 		
 		return list;
 	}

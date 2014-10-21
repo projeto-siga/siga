@@ -204,11 +204,11 @@ $(function(){
 			<p>
 				<b>Item de Configuração:</b>
 				${solicitacao.itemConfiguracao?.siglaItemConfiguracao} -
-				${solicitacao.itemConfiguracao?.descricaoCompleta}
+				${solicitacao.itemConfiguracao?.descricao}
 			</p>
 			<p>
 				<b>Ação:</b> ${solicitacao.acao?.siglaAcao} -
-				${solicitacao.acao?.descricaoCompleta}
+				${solicitacao.acao?.descricao}
 			</p>
 			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
 			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
@@ -260,8 +260,7 @@ $(function(){
 		<div class="gt-sidebar-content">
 			<h3>Arquivos Anexos</h3>
 			<p>
-				#{list items:solicitacao.arquivosAnexosNaCriacao, as:'anexo'}
-				#{arquivo arquivo:anexo /} <br /> #{/list} #{list
+				#{arquivo arquivo:solicitacao.arquivoAnexoNaCriacao /} <br /> #{list
 				items:solicitacao.movimentacoesAnexacao, as:'anexacao'} #{arquivo
 				arquivo:anexacao.arquivo /} ${anexacao.descrMovimentacao}<br />
 				#{/list}

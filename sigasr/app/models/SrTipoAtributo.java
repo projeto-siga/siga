@@ -87,15 +87,18 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	public void salvar() throws Exception {
 		super.salvar();
 
+		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
+		//tem de ser corrigido.
+		
+		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
+		//serao recarregadas do banco, e precisarao reconhecer o novo estado deste tipo de atributo
+		//refresh();
+		
 		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
 		// instancia do objeto, caso contrario, nao ha configuracao
 		// referenciando
-		if (tipoAtributoInicial != null)
-			SrConfiguracaoBL
-					.get()
-					.limparCache(
-							(CpTipoConfiguracao) CpTipoConfiguracao
-									.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+		//if (tipoAtributoInicial != null)
+		//	SrConfiguracao.notificarQueMudou(this);
 	}
 
 }

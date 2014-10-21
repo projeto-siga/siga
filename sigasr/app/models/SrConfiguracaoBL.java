@@ -19,10 +19,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
 	public static int LISTA_PRIORIDADE = 33;
 
-	public static SrConfiguracaoBL get(){
+	public static int TIPO_ATRIBUTO = 34;
+
+	public static SrConfiguracaoBL get() {
 		return (SrConfiguracaoBL) Sr.getInstance().getConf();
 	}
-	
+
 	public SrConfiguracaoBL() {
 		super();
 		setComparator(new SrConfiguracaoComparator());
@@ -97,6 +99,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 							.getListaAtual().equivale(filtro.listaPrioridade))))
 				return false;
 
+			if (!atributosDesconsiderados.contains(TIPO_ATRIBUTO)
+					&& conf.tipoAtributo != null
+					&& (filtro.tipoAtributo == null || (filtro.tipoAtributo != null && !conf.tipoAtributo
+							.getAtual().equivale(filtro.tipoAtributo))))
+				return false;
+
 		}
 		return true;
 	}
@@ -123,7 +131,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		}
 		return listaFinal;
 	}
-	
+
 	@Override
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		super.evitarLazy(provResults);
@@ -165,6 +173,21 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.listaPrioridade.getListaAtual();
 
 		}
+	}
+
+	public void atualizarConfiguracoesDoCache(List<SrConfiguracao> configs) {
+		List<SrConfiguracao> evitarLazy = new ArrayList<SrConfiguracao>();
+		for (SrConfiguracao conf : configs) {
+			hashListas.get(conf.getCpTipoConfiguracao().getIdTpConfiguracao())
+					.remove(conf);
+			SrConfiguracao newConf = SrConfiguracao.findById(conf
+					.getIdConfiguracao());
+			hashListas.get(
+					newConf.getCpTipoConfiguracao().getIdTpConfiguracao()).add(
+					newConf);
+			evitarLazy.add(newConf);
+		}
+		evitarLazy((List<CpConfiguracao>) (List<?>) evitarLazy);
 	}
 
 }

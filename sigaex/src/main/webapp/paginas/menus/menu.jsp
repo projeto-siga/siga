@@ -40,6 +40,15 @@
 				</li>
 			</c:if>
 		</c:catch>
+		<c:catch>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+				<li><ww:url id="url" action="assinar_despacho_lote"
+						namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+						texto="Assinar Despacho em lote" />
+				</li>
+			</c:if>
+		</c:catch>
 		<li><ww:url id="url" action="arquivar_corrente_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
 				texto="Arquivar em lote" />

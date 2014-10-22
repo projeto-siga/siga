@@ -162,12 +162,12 @@ public class SrLista extends HistoricoSuporte {
 	public Set<SrMovimentacao> getMovimentacaoSet(boolean ordemCrescente) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new SrMovimentacaoComparator(ordemCrescente));
-		if (listaInicial != null)
-			for (SrLista lista : getHistoricoLista())
-				if (lista.meuMovimentacaoSet != null)
-					for (SrMovimentacao movimentacao : lista.meuMovimentacaoSet)
-						if ((!movimentacao.isCanceladoOuCancelador()))
-							listaCompleta.add(movimentacao);
+		SrLista ini = listaInicial != null ? listaInicial
+				: this;
+		if (ini.meuMovimentacaoSet != null)
+			for (SrMovimentacao movimentacao : ini.meuMovimentacaoSet)
+				if ((!movimentacao.isCanceladoOuCancelador()))
+					listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
 
@@ -254,6 +254,13 @@ public class SrLista extends HistoricoSuporte {
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
+		
+		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
+		//tem de ser corrigido.
+		
+		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
+		//serao recarregadas do banco, e precisarao reconhecer o novo estado desta lista
+		//refresh();
 
 		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
 		// instancia do objeto, caso contrario, nao ha configuracao
@@ -272,6 +279,9 @@ public class SrLista extends HistoricoSuporte {
 				permissao.salvarComoPermissaoUsoLista();
 			}
 		}
+		
+		//if (listaInicial != null)
+		//	SrConfiguracao.notificarQueMudou(this);
 	}
 
 }

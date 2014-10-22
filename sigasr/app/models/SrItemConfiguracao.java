@@ -75,18 +75,18 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	@Column(name = "DESCR_SIMILARIDADE", length = 8192)
 	public String descricaoSimilaridade;
 		
-	@ManyToOne()
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ID_PAI")
 	public SrItemConfiguracao pai;
 
-	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "pai", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "pai", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	public List<SrItemConfiguracao> filhoSet;
 
-	@ManyToOne()
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrItemConfiguracao itemInicial;
 
-	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrItemConfiguracao> meuItemHistoricoSet;
    
@@ -412,6 +412,13 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		}
 		super.salvar();
 
+		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
+		//tem de ser corrigido.
+		
+		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
+		//serao recarregadas do banco, e precisarao reconhecer o novo estado deste item 
+		//refresh();
+		
 		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
 		// instancia do objeto, caso contrario, nao ha configuracao
 		// referenciando
@@ -470,13 +477,17 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
  				}
  			}
  		}
-    }
     
+		//if (itemInicial != null)
+		//	SrConfiguracao.notificarQueMudou(this);
+	}
+
 	public List<SrItemConfiguracao> getItemETodosDescendentes() {
 		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
 		lista.add(this);
 		for (SrItemConfiguracao filho : filhoSet) {
-			lista.addAll(filho.getItemETodosDescendentes());
+			if (filho.getHisDtFim() == null)
+				lista.addAll(filho.getItemETodosDescendentes());
 		}
 		return lista;
 	}

@@ -54,6 +54,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -84,8 +85,7 @@ public class Application extends SigaApplication {
 	@Before
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
-		// TAH: Copiar essa classe e fazer as alterações necessárias
-		// SrConfiguracaoBL.get().limparCacheSeNecessario();
+		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
 	@Before(unless = { "publicKnowledge", "dadosRI" })
@@ -211,7 +211,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void updateTag(String before, String after) {
-		
+
 		// Edson: Atualizando tags de classificacao:
 		JPA.em()
 				.createQuery(
@@ -219,10 +219,10 @@ public class Application extends SigaApplication {
 								+ "' where titulo = '" + before + "'")
 				.executeUpdate();
 
-		// Edson: Atualizando tags de ancora. O problema aqui eh que, 
-		// muitas vezes, o before aparece em tags ancora acompanhado de 
-		// outra classificacao. Por exemplo, cadeira-consertar, onde 
-		// before eh consertar. Os patterns abaixo funcionam, mas nao 
+		// Edson: Atualizando tags de ancora. O problema aqui eh que,
+		// muitas vezes, o before aparece em tags ancora acompanhado de
+		// outra classificacao. Por exemplo, cadeira-consertar, onde
+		// before eh consertar. Os patterns abaixo funcionam, mas nao
 		// sempre. Por exemplo, se houver uma tag cadeira-tentar-consertar
 		// alem da cadeira-consertar, ela vai ser erroneamente atualizada.
 		List<GcTag> tags = JPA
@@ -238,7 +238,7 @@ public class Application extends SigaApplication {
 			t.save();
 		}
 
-		//Edson: Atualizando os arquivos:
+		// Edson: Atualizando os arquivos:
 		List<GcArquivo> arqs = JPA
 				.em()
 				.createQuery(

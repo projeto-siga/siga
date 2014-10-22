@@ -71,6 +71,7 @@ import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import play.db.jpa.JPA;
 import play.mvc.Router;
 import util.SigaPlayCalendar;
@@ -443,9 +444,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrAtributo> getAtributoSet() {
-		if (meuAtributoSet == null)
-			return new ArrayList<SrAtributo>();
-		return meuAtributoSet;
+		return meuAtributoSet != null ? meuAtributoSet
+				: new ArrayList<SrAtributo>();
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoSet() {
@@ -613,8 +613,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		for (SrConfiguracao conf : SrConfiguracao.getConfiguracoes(solicitante,
 				local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
-				null)) {
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO, null,
+				new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO })) {
 			SrTipoAtributo tipo = conf.tipoAtributo.getAtual();
 			if (tipo != null && !listaFinal.contains(tipo)) {
 				listaFinal.add(tipo);
@@ -675,23 +675,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// mandar criar os atributos, caso se quisesse permitir um
 	// solicitacao.getAtributoSet().put...
 	public void setAtributoMap(HashMap<Long, String> atributos) {
-		SrSolicitacao sol = solicitacaoInicial != null ? solicitacaoInicial
-				: this;
-		sol.meuAtributoSet = new ArrayList<SrAtributo>();
+		meuAtributoSet = new ArrayList<SrAtributo>();
 		for (Long idTipoAtt : atributos.keySet()) {
 			SrTipoAtributo tipoAtt = SrTipoAtributo.findById(idTipoAtt);
 			SrAtributo att = new SrAtributo(tipoAtt, atributos.get(idTipoAtt),
-					sol);
-			sol.meuAtributoSet.add(att);
+					this);
+			meuAtributoSet.add(att);
 		}
 	}
 
 	public HashMap<Long, String> getAtributoMap() {
-		SrSolicitacao sol = solicitacaoInicial != null ? solicitacaoInicial
-				: this;
 		HashMap<Long, String> map = new HashMap<Long, String>();
-		if (sol.meuAtributoSet != null)
-			for (SrAtributo att : sol.meuAtributoSet) {
+		if (meuAtributoSet != null)
+			for (SrAtributo att : meuAtributoSet) {
 				map.put(att.tipoAtributo.idTipoAtributo, att.valorAtributo);
 			}
 		return map;
@@ -1032,30 +1028,32 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (lotaSolicitante == null)
 			lotaSolicitante = solicitante.getLotacao();
 
-		//Tenta buscar a �ltima aberta pelo solicitante
+		// Tenta buscar a �ltima aberta pelo solicitante
 		String queryString = "from SrSolicitacao sol where sol.idSolicitacao = ("
 				+ "	select max(idSolicitacao) from SrSolicitacao "
 				+ "	where solicitante.idPessoa in ("
 				+ "		select idPessoa from DpPessoa "
-				+ "		where idPessoaIni = "+solicitante.getIdPessoaIni()+"))";
-		List<SrSolicitacao> listaProvisoria = JPA.em().createQuery(queryString).getResultList();
+				+ "		where idPessoaIni = "
+				+ solicitante.getIdPessoaIni() + "))";
+		List<SrSolicitacao> listaProvisoria = JPA.em().createQuery(queryString)
+				.getResultList();
 		SrSolicitacao ultima = null;
 		if (listaProvisoria != null && listaProvisoria.size() > 0)
 			ultima = listaProvisoria.get(0);
 
-		//Tenta buscar a �ltima aberta pela lota��o dele
+		// Tenta buscar a �ltima aberta pela lota��o dele
 		if (ultima == null && lotaSolicitante != null) {
 			queryString = "from SrSolicitacao sol where sol.idSolicitacao = ("
 					+ "	select max(idSolicitacao) from SrSolicitacao "
 					+ "	where lotaSolicitante.idLotacao in ("
 					+ "		select idLotacao from DpLotacao "
-					+ "		where idLotacaoIni = "+lotaSolicitante.getIdLotacaoIni()+"))";
-			listaProvisoria =JPA.em().createQuery(queryString).getResultList();
+					+ "		where idLotacaoIni = "
+					+ lotaSolicitante.getIdLotacaoIni() + "))";
+			listaProvisoria = JPA.em().createQuery(queryString).getResultList();
 			if (listaProvisoria != null && listaProvisoria.size() > 0)
 				ultima = listaProvisoria.get(0);
 		}
 
-		
 		if (ultima != null) {
 			telPrincipal = ultima.telPrincipal;
 			local = ultima.local;
@@ -1086,7 +1084,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				new SrItemConfiguracaoComparator());
 
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(null,
-				solicitante, local, null, null,
+				solicitante, local, null, null, null, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
 						SrConfiguracaoBL.ITEM_CONFIGURACAO,
@@ -1125,7 +1123,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(null,
 				this.solicitante, this.local, this.itemConfiguracao, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+				null, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
 				new int[] { SrConfiguracaoBL.ACAO });
 		for (SrConfiguracao conf : confs) {
@@ -1584,9 +1582,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	private void acrescentarMarca(SortedSet<SrMarca> set, Long idMarcador,
 			Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota) {
 		SrMarca mar = new SrMarca();
-		//Edson: nao eh necessario ser this.solicitacaoInicial em vez de this
-		//porque este metodo soh eh chamado por atualizarMarcas(), que ja se
-		//certifica de chamar este metodo apenas para a solicitacao inicial
+		// Edson: nao eh necessario ser this.solicitacaoInicial em vez de this
+		// porque este metodo soh eh chamado por atualizarMarcas(), que ja se
+		// certifica de chamar este metodo apenas para a solicitacao inicial
 		mar.solicitacao = this;
 		mar.setCpMarcador((CpMarcador) CpMarcador.findById(idMarcador));
 		if (pess != null)
@@ -1705,7 +1703,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(solicitante,
 				local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
+				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, 
+				new int[] {});
 		
 		for (SrConfiguracao conf : confs) {
 			for (SrListaConfiguracao listaConf : conf.getListaConfiguracaoSet()) {
@@ -1734,6 +1733,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 
 		listaFinal.removeAll(getListasAssociadas());
+		Collections.sort(listaFinal, new Comparator<SrLista>() {
+			@Override
+			public int compare(SrLista l1, SrLista l2) {
+				return l1.nomeLista.compareTo(l2.nomeLista);
+			}
+		});
 		return new ArrayList<SrLista>(listaFinal);
 	}
 
@@ -1808,7 +1813,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista
 				+ " com a prioridade " + mov.prioridade;
-		mov.lista = lista;
+		mov.lista = lista.listaInicial != null ? lista.listaInicial
+				: lista;
 		mov.solicitacao = this;
 		mov.salvar();
 		lista.refresh();
@@ -1826,7 +1832,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.findById(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		mov.solicitacao = this;
-		mov.lista = lista;
+		mov.lista = lista.listaInicial != null ? lista.listaInicial
+				: lista;
 		mov.salvar();
 		lista.refresh();
 
@@ -1847,7 +1854,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
 		mov.descrMovimentacao = "Alteração de prioridade na lista "
 				+ lista.nomeLista + ": " + mov.prioridade;
-		mov.lista = lista;
+		mov.lista = lista.listaInicial != null ? lista.listaInicial
+				: lista;
 		mov.solicitacao = this;
 		mov.salvar();
 		lista.refresh();

@@ -1895,6 +1895,13 @@ public class ExDao extends CpDao {
 		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
 		return query.list();
 	}
+	
+	public List<ExMovimentacao> listarDespachoPendenteAssinatura(DpPessoa pessoa) {
+		final Query query = getSessao().getNamedQuery(
+				"listarDespachoPendenteAssinatura");
+		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
+		return query.list();
+	}
 
 	public String consultarDescricaoExClassificacao(ExClassificacao exClass) {
 		String[] pais = MascaraUtil.getInstance().getPais(

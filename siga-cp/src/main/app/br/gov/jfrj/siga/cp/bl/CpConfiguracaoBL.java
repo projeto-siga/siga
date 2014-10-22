@@ -103,6 +103,10 @@ public class CpConfiguracaoBL {
 	}
 
 	public HashMap<Long, TreeSet<CpConfiguracao>> getHashListas() {
+		if (!cacheInicializado){
+			inicializarCache();
+		}
+
 		return hashListas;
 	}
 

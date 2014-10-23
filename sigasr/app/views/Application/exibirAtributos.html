@@ -32,7 +32,7 @@
 					<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" id="calendarioAtributo${tipoAtributo.idTipoAtributo}" class="${tipoAtributo.idTipoAtributo}"
 						onchange="notificarCampoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');" />
 					<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
-					<script type="text/javascript">
+					<script>
 						$(function() {
 							$( "#calendarioAtributo${tipoAtributo.idTipoAtributo}" ).datepicker({
 						        showOn: "button",
@@ -41,7 +41,7 @@
 						        dateFormat: 'dd/mm/yy'
 						    });
 							$("#calendarioAtributo${tipoAtributo.idTipoAtributo}").mask("99/99/9999");
-						}
+						};
 					</script>
 				#{/if}
 				#{if tipoAtributo.formatoCampo.name() == "NUM_INTEIRO"}

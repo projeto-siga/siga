@@ -15,10 +15,4 @@ public enum SrFormatoCampo {
 		this.idFormatoCampo = nivel;
 		this.descrFormatoCampo = descrFormato;
 	}
-	
-	@Override
-	public String toString() {
-		return this.descrFormatoCampo;
-	}
-
 }

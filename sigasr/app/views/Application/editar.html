@@ -137,10 +137,12 @@
 		atributos = $('#atributos').find('div');
 		var atrClass, atrHtml, atrName;
 		for(j=0; j < atributos.length; j++) {
-			atrClass = '.'+atributos[j].children[1].className;
-			atrHtml = atributos[j].firstElementChild.innerText;
-			atrName = atributos[j].children[1].name;
-			addFiltro(comboFiltro, atrClass, atrHtml, atrName);
+			if (atributos[j].children[1] != undefined) {
+				atrClass = '.'+atributos[j].children[1].className;
+				atrHtml = atributos[j].firstElementChild.innerText;
+				atrName = atributos[j].children[1].name;
+				addFiltro(comboFiltro, atrClass, atrHtml, atrName);
+			}
 		}
 		carregarSolRelacionadas(comboFiltro.val());
 	}

@@ -197,8 +197,10 @@ public class CpConfiguracaoBL {
 				cfg.getCargo().getDescricao();
 			if (cfg.getFuncaoConfianca() != null)
 				cfg.getFuncaoConfianca().getDescricao();
-			if (cfg.getDpPessoa() != null)
+			if (cfg.getDpPessoa() != null){
 				cfg.getDpPessoa().getDescricao();
+				cfg.getDpPessoa().getPessoaAtual().getDescricao();
+			}
 			if (cfg.getCpTipoConfiguracao() != null)
 				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
 			if (cfg.getCpServico() != null)

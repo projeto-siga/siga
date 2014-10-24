@@ -11,8 +11,10 @@
 		<interceptors>
 			<interceptor name="siga-exception"
 				class="br.gov.jfrj.siga.libs.webwork.SigaExceptionHandler" />
+				<!-- 
 			<interceptor name="siga-multiple-request-deny"
 				class="br.gov.jfrj.siga.libs.webwork.SigaMultipleRequestDenyHandler" />
+				 -->
 
 			<interceptor-stack name="defaultStackWithExceptionMapping">
 				<interceptor-ref name="fileUpload"/>

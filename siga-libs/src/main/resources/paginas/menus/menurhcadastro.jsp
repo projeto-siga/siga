@@ -7,11 +7,11 @@
 				<div class="imsc">
 					<div class="imsubc" style="width:146px;top:0px;left:0px;">
 						<ul style="">
-							<li><a href="/SigaRH/ListarCadAgencia.action">Agencia</a></li>
-							<li><a href="/SigaRH/ListarCadBanco.action">Banco</a></li>
-							<li><a href="/SigaRH/ListarCadNacionalidade.action">Nacionalidade</a></li>
-							<li><a href="/SigaRH/ListarCadParentesco.action">Parentesco</a></li>
-							<li><a href="/SigaRH/ListarCadFinalidade.action">Finalidade</a></li>
+							<li><a href="/sigarh/ListarCadAgencia.action">Agencia</a></li>
+							<li><a href="/sigarh/ListarCadBanco.action">Banco</a></li>
+							<li><a href="/sigarh/ListarCadNacionalidade.action">Nacionalidade</a></li>
+							<li><a href="/sigarh/ListarCadParentesco.action">Parentesco</a></li>
+							<li><a href="/sigarh/ListarCadFinalidade.action">Finalidade</a></li>
 						</ul>
 					</div>
 				</div>
@@ -21,21 +21,21 @@
 				<div class="imsc">
 					<div class="imsubc" style="width:146px;top:0px;left:0px;">
 						<ul style="">
-							<li><a href="/SigaRH/ListarCadPessoaFisica.action">Dados Pessoais</a></li>
+							<li><a href="/sigarh/ListarCadPessoaFisica.action">Dados Pessoais</a></li>
 							<li><a href="#">
 							<span class="imea imeas"><span></span></span>Dados Funcionais</a>
 								<div class="imsc">
 									<div class="imsubc" style="width:146px;top:-18px;left:130px;">
 										<ul style="">
-											<li><a href="/SigaRH/ListarCadEstagiario.action">Estagi&aacute;rio</a></li>
-											<li><a href="/SigaRH/ListarCadJuiz.action">Juiz</a></li>
-											<li><a href="/SigaRH/ListarCadServidor.action">Servidor</a></li>
+											<li><a href="/sigarh/ListarCadEstagiario.action">Estagi&aacute;rio</a></li>
+											<li><a href="/sigarh/ListarCadJuiz.action">Juiz</a></li>
+											<li><a href="/sigarh/ListarCadServidor.action">Servidor</a></li>
 										</ul>
 									</div>
 								</div>
 							</li>							
 							</li>
-							<li><a href="/SigaRH/ListarCadDependente.action">Dependentes</a></li>							
+							<li><a href="/sigarh/ListarCadDependente.action">Dependentes</a></li>							
 						</ul>
 					</div>
 				</div>

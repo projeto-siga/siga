@@ -277,8 +277,10 @@ public class WorkflowController extends WfController {
 		//
 		String redirectTo = (String) taskInstance.getVariable(WF_REDIRECT_TO);
 		if (redirectTo != null) {
-			taskInstance.deleteVariable(WF_REDIRECT_TO);
+			//taskInstance.deleteVariable(WF_REDIRECT_TO);
+			WfDao.getInstance().getSessao().flush();
 			taskInstance.getProcessInstance().getContextInstance().deleteVariable(WF_REDIRECT_TO);
+			WfDao.getInstance().getSessao().flush();
 			result.redirectTo(redirectTo);
 			return;
 		}

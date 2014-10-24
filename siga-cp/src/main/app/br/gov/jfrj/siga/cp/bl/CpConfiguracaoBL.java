@@ -64,7 +64,7 @@ public class CpConfiguracaoBL {
 
 	protected Comparator<CpConfiguracao> comparator = null;
 
-	public HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+	protected HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
 
 	public static int PESSOA = 1;
 

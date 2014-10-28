@@ -158,19 +158,18 @@ public class Application extends SigaApplication {
 		render(solicitacao.deduzirLocalERamal());
 	}
 	
-	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean mostrarDesativados, boolean carregarLotaSolicitante) 
+	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean carregarLotaSolicitante) 
 			throws Exception{
 		if(carregarLotaSolicitante){
 			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
 			solicitacao.solicitante = null;
     	}
-		List<SrSolicitacao> solicitacoesRelacionadas = solicitacao.buscar(mostrarDesativados);
+		List<SrSolicitacao> solicitacoesRelacionadas = solicitacao.buscar();
 		List<SrSolicitacao> solicitacoesList = new ArrayList<SrSolicitacao>();
-		if(!mostrarDesativados) 
-			for (SrSolicitacao sol : solicitacoesRelacionadas) {
-				if(sol.isEmPreAtendimento() || sol.isEmAtendimento() || sol.isEmPosAtendimento())
-					solicitacoesList.add(sol);
-			}
+		for (SrSolicitacao sol : solicitacoesRelacionadas) {
+			if(sol.isEmPreAtendimento() || sol.isEmAtendimento() || sol.isEmPosAtendimento())
+				solicitacoesList.add(sol);
+		}
 		if(solicitacoesList.size() > 0)
 			solicitacoesRelacionadas = solicitacoesList;
 		int i = solicitacoesRelacionadas.size() > 10? 10 : solicitacoesRelacionadas.size();
@@ -448,7 +447,7 @@ public class Application extends SigaApplication {
 			solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
 		
 		if (filtro.pesquisar)
-			listaSolicitacao = filtro.buscar(Boolean.FALSE);
+			listaSolicitacao = filtro.buscar();
 		else
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
 
@@ -480,7 +479,7 @@ public class Application extends SigaApplication {
             solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
         
         if (filtro.pesquisar)
-            listaSolicitacao = filtro.buscar(Boolean.FALSE);
+            listaSolicitacao = filtro.buscar();
         else
             listaSolicitacao = new ArrayList<SrSolicitacao>();
 
@@ -502,7 +501,7 @@ public class Application extends SigaApplication {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static void listar(SrSolicitacaoFiltro filtro, boolean mostrarDesativados, boolean carregarLotaSolicitante) throws Exception {
+	public static void listar(SrSolicitacaoFiltro filtro, boolean carregarLotaSolicitante) throws Exception {
 
 		List<SrSolicitacao> list;
 
@@ -511,7 +510,7 @@ public class Application extends SigaApplication {
 	    		filtro.lotaSolicitante = filtro.solicitante.getLotacao();
 	    		filtro.solicitante = null;
 	    	}
-			list = filtro.buscar(mostrarDesativados);
+			list = filtro.buscar();
 		} else {
 			list = new ArrayList<SrSolicitacao>();
 		}
@@ -531,7 +530,7 @@ public class Application extends SigaApplication {
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
 
-		render(listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
+		render(listaSolicitacao, tipos, marcadores, filtro);
 	}
 	
 	public static void estatistica() throws Exception {

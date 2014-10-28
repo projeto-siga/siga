@@ -33,16 +33,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public boolean naoDesignados;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<SrSolicitacao> buscar(boolean mostrarDesativados) throws Exception {
+	public List<SrSolicitacao> buscar() throws Exception {
 		StringBuffer query = new StringBuffer(" from SrSolicitacao sol where ");
-		
-		if (!mostrarDesativados)
-			query.append(" sol.hisDtFim is null ");
-		else {
-			query.append(" idSolicitacao in ( ");
-			query.append(" SELECT max(idSolicitacao) as idSolicitacao FROM ");
-			query.append(" SrSolicitacao GROUP BY hisIdIni) ");
-		}
+		query.append(" sol.hisDtFim is null ");
 
 		if (cadastrante != null)
 			query.append(" and sol.cadastrante.idPessoaIni = "

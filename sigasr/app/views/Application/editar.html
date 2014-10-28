@@ -97,16 +97,12 @@
 		carregarSolRelacionadas($('#filtro').val());
 	}
 	
-	function carregarSolRelacionadasPeloAtivo(){
-		carregarSolRelacionadas($('#filtro').val());
-	}
-	
 	function carregarSolRelacionadas(comboFiltroVl){
 		if(comboFiltroVl != ""){
 			frm = document.getElementById('formSolicitacao');
 			params = '';
 			params = params + frm[0].name+ '=' + encodeURI(frm[0].value) + '&';
-			params = params + 'mostrarDesativados=' + $('#checkAtivos')[0].checked + '&';
+			
 			if(comboFiltroVl == 'solicitacao.lotaSolicitante'){
 				params = params + 'carregarLotaSolicitante=true&';
 				comboFiltroVl = 'solicitacao.solicitante';			
@@ -154,7 +150,7 @@
 		params = '';
 		params = params + frm[0].name+ '=' + encodeURI(frm[0].value) + '&';
 		params = params + 'filtro.pesquisar=true&';
-		params = params + 'mostrarDesativados=' + $('#checkAtivos')[0].checked + '&';
+		
 		if(comboVl == 'solicitacao.lotaSolicitante'){
 			params = params + 'carregarLotaSolicitante=true&';
 			comboVl = 'solicitacao.solicitante';			
@@ -364,7 +360,6 @@
 			<div class="gt-content-box gt-form" id="filtroSolicitacoes">
 				<label>Filtro</label> 
 				<select name="filtro" id="filtro" onchange="carregarSolRelacionadas(this.value)"><option value="">Selecione um filtro...</option></select>
-				<span style="margin-left: 21px;"><input type="checkbox" name="checkAtivos" id="checkAtivos" onclick="carregarSolRelacionadasPeloAtivo()" ><b> Incluir Inativas</b></span>
 			
 				<div class="gt-content-box " style="margin: 10px -16px -6px -16px; border-radius: 0 0 5px 5px !important;">
 					<table border="0" width="100%" class="gt-table">

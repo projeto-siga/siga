@@ -11,6 +11,7 @@ import org.jbpm.bytes.ByteArray;
 import org.jbpm.graph.def.Node;
 import org.jbpm.graph.exe.Token;
 
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;

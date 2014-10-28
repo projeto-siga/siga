@@ -27,7 +27,7 @@
 	</session-config>
 
 	<welcome-file-list>
-		<welcome-file>inbox.action</welcome-file>
+		<welcome-file>app/inbox</welcome-file>
 	</welcome-file-list>
  
 	<filter>
@@ -37,7 +37,7 @@
 
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>/app/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
@@ -169,16 +169,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>
-			<url-pattern>/inbox.action</url-pattern>
-			<url-pattern>/task.action</url-pattern>
-			<url-pattern>/doc.action</url-pattern>
-			<url-pattern>/pesquisarDesignacao.action</url-pattern>
-			<url-pattern>/gravarDesignacao.action</url-pattern>
-			<url-pattern>/gerarRelatorioDesignacao.action</url-pattern>
-			<url-pattern>/configurar.action</url-pattern>
-			<url-pattern>/gravarConfiguracao.action</url-pattern>
-			<url-pattern>/medir.action</url-pattern>
-			<url-pattern>/emitirRelatorio.action</url-pattern>
+			<url-pattern>/app/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

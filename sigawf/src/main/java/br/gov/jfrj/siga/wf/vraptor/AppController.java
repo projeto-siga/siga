@@ -38,23 +38,13 @@ import br.gov.jfrj.siga.wf.util.WfTaskVO;
 
 @Resource
 @SuppressWarnings("unchecked")
-public class WorkflowController extends WfController {
+public class AppController extends WfController {
 
 	private static final String WF_REDIRECT_TO = "wf_redirect_to";
 
-	public WorkflowController(HttpServletRequest request, Result result,
+	public AppController(HttpServletRequest request, Result result,
 			WfDao dao, SigaObjects so, WfUtil util) {
 		super(request, result, dao, so, util);
-	}
-
-	@Path("/inbox.action")
-	public void endpointForInbox() throws Exception {
-		result.forwardTo(this).inbox();
-	}
-
-	@Path("/doc.action")
-	public void endpointForDoc(String sigla) throws Exception {
-		result.forwardTo(this).doc(sigla);
 	}
 
 	public void resumo() throws Exception {
@@ -134,6 +124,7 @@ public class WorkflowController extends WfController {
 	 * 
 	 * @return Action.SUCCESS
 	 */
+	@Path("/app/task/{tiId}")
 	public void task(Long tiId) throws Exception {
 		TaskInstance taskInstance = loadTaskInstance(tiId);
 		List<SigaIdDescr> prioridades = new ArrayList<SigaIdDescr>();

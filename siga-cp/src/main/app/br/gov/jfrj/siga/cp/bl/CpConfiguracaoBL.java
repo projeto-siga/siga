@@ -59,12 +59,12 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
  */
 public class CpConfiguracaoBL {
 
-	private Date dtUltimaAtualizacaoCache = null;
-	private boolean cacheInicializado = false;
+	private static Date dtUltimaAtualizacaoCache = null;
+	private static boolean cacheInicializado = false;
 
 	protected Comparator<CpConfiguracao> comparator = null;
 
-	public HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+	protected HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
 
 	public static int PESSOA = 1;
 
@@ -126,38 +126,40 @@ public class CpConfiguracaoBL {
 	}
 
 	private synchronized void atualizarCache(Long idTipoConfig) {
-		if (!cacheInicializado){
-			inicializarCache();
-			return;
-		}
-		Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
-
-		if (dtUltimaAtualizacaoCache == null || dt.after(dtUltimaAtualizacaoCache)) {
-
-			SessionFactory sfCpDao = CpDao.getInstance().getSessao()
-					.getSessionFactory();
-			
-			sfCpDao.evict(CpConfiguracao.class);
-
-
-			List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
-			Logger.getLogger("siga.conf.cache").fine("Número de alterações no cache: " + alteracoes.size());
-			if (alteracoes.size() > 0){
-				evitarLazy(alteracoes);
-				inicializarCache(idTipoConfig);
+		if (this.getClass().equals(CpConfiguracaoBL.class)){
+			if (!cacheInicializado){
+				inicializarCache();
+				return;
+			}
+			Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
+	
+			if (dtUltimaAtualizacaoCache == null || dt.after(dtUltimaAtualizacaoCache)) {
+	
+				SessionFactory sfCpDao = CpDao.getInstance().getSessao()
+						.getSessionFactory();
 				
-				for (CpConfiguracao cpConfiguracao : alteracoes) {
-					Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
-					inicializarCache(idTpConf);
-					if (cpConfiguracao.ativaNaData(new Date())){
-						hashListas.get(idTpConf).add(cpConfiguracao);	
-					}else{
-						hashListas.get(idTpConf).remove(cpConfiguracao);
+				sfCpDao.evict(CpConfiguracao.class);
+	
+	
+				List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
+				Logger.getLogger("siga.conf.cache").fine("Número de alterações no cache: " + alteracoes.size());
+				if (alteracoes.size() > 0){
+					evitarLazy(alteracoes);
+					inicializarCache(idTipoConfig);
+					
+					for (CpConfiguracao cpConfiguracao : alteracoes) {
+						Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
+						inicializarCache(idTpConf);
+						if (cpConfiguracao.ativaNaData(dt)){
+							hashListas.get(idTpConf).add(cpConfiguracao);	
+						}else{
+							hashListas.get(idTpConf).remove(cpConfiguracao);
+						}
 					}
 				}
+	
+				dtUltimaAtualizacaoCache = dt;
 			}
-
-			dtUltimaAtualizacaoCache = dt;
 		}
 	}
 
@@ -195,8 +197,10 @@ public class CpConfiguracaoBL {
 				cfg.getCargo().getDescricao();
 			if (cfg.getFuncaoConfianca() != null)
 				cfg.getFuncaoConfianca().getDescricao();
-			if (cfg.getDpPessoa() != null)
+			if (cfg.getDpPessoa() != null){
 				cfg.getDpPessoa().getDescricao();
+				cfg.getDpPessoa().getPessoaAtual().getDescricao();
+			}
 			if (cfg.getCpTipoConfiguracao() != null)
 				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
 			if (cfg.getCpServico() != null)
@@ -857,7 +861,7 @@ public class CpConfiguracaoBL {
 				}
 			}
 			cacheInicializado = true;
-			dtUltimaAtualizacaoCache = dao().consultarDataUltimaAtualizacao();
+			
 			
 		}
 	}

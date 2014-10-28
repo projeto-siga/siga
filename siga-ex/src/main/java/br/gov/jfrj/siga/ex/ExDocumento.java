@@ -1213,6 +1213,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		else
 			return false;
 	}
+	
+	/**
+	 * Verifica se um documento é do tipo físico.
+	 */
+	public boolean isFisico() {
+		return !isEletronico();
+	}
 
 	/**
 	 * Verifica se um documento possui agendamento de publicação no DJE. ()

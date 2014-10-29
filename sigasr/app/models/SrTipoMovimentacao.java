@@ -49,7 +49,7 @@ public class SrTipoMovimentacao extends GenericModel {
 	
 	final static public long TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE = 17;
 
-	final static public long TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO = 18;
+	final static public long TIPO_MOVIMENTACAO_JUNTADA = 18;
 	
 	final static public long TIPO_MOVIMENTACAO_RECEBE_JUNCAO_SOLICITACAO = 19;
 

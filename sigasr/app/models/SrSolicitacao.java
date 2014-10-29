@@ -14,7 +14,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALID
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA;
@@ -765,7 +765,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean isJuntada() {
-		return sofreuMov(TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO);
+		return sofreuMov(TIPO_MOVIMENTACAO_JUNTADA);
 	}
 
 	public boolean isEditado() {
@@ -1227,7 +1227,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				"Criar Solicitação Filha", podeCriarFilha(lotaTitular,
 						titular), "Application.criarFilha"));
 
-		operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitações",
+		operacoes.add(new SrOperacao("arrow_join", "Juntar",
 				podeJuntar(lotaTitular, titular),
 				"Application.juntarSolicitacoes", "popup=true"));
 
@@ -1405,7 +1405,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						|| movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_FECHAMENTO)
 					reInserirListasDePrioridade(lotaCadastrante, cadastrante);
 
-				if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO) {
+				if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_JUNTADA) {
 					Query query = JPA
 							.em()
 							.createQuery(
@@ -1514,7 +1514,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_CANCELADO;
 					movMarca = mov;
 				}
-				if (t == TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO) {
+				if (t == TIPO_MOVIMENTACAO_JUNTADA) {
 					marcador = CpMarcador.MARCADOR_JUNTADO;
 					movMarca = mov;
 				}
@@ -2152,7 +2152,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO);
+				.findById(TIPO_MOVIMENTACAO_JUNTADA);
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
 

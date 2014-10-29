@@ -20,8 +20,12 @@
 }
 </style>
 <script language="javascript">
-
-	function carregarLocalERamal(){
+	$(document).ready(function() {
+		document.getElementById("solicitacaosolicitante_sigla").focusout = validarCadastranteSolicitante();
+		validarCadastranteSolicitante();
+	});
+	
+	function carregarLocalERamal() {
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
@@ -95,6 +99,29 @@
 			option.remove();
 		}
 		carregarSolRelacionadas($('#filtro').val());
+		validarCadastranteSolicitante();
+	}
+	
+	// Valida se o cadastrante é o solicitante, e neste caso irá ocultar
+	// alguns campos na tela
+	function validarCadastranteSolicitante() {
+		var siglaCadastrante = $('#siglaCadastrante').val();
+		var siglaSolicitante = $('#solicitacaosolicitante_sigla')[0].value;
+		
+		mudarVisibilidadeCampos(siglaCadastrante == siglaSolicitante);
+	}
+	
+	function mudarVisibilidadeCampos(saoIguais) {
+		if (saoIguais) {
+			$('#spanInterlocutor')[0].style.display='none';
+			$('#meioComunicacao')[0].style.display='none';
+			$('#dtInicioMeioComunicacao').hide();
+		}
+		else {
+			$('#spanInterlocutor')[0].style.display='inline';
+			$('#meioComunicacao')[0].style.display='inline';
+			$('#dtInicioMeioComunicacao').show();
+		}
 	}
 	
 	function carregarSolRelacionadas(comboFiltroVl){
@@ -218,6 +245,8 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Cadastrante</label> 
 				${cadastrante.nomePessoa}
+				<input type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
+				value="${cadastrante.sigla}" /> 
 			</div>
 			
 			<div class="gt-form-row gt-width-66">
@@ -226,13 +255,26 @@
 				onchange:"carregarLocalERamal();carregarItem();carregarConhecimentosRelacionados();
 				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
 				notificarCampoMudou('#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');" /}
-				<span style="margin-left: 10px;">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
+				<span style="margin-left: 10px;" id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
 			</div>
 			<div class="gt-form-row gt-width-66" id="interlocutor" style="display: none;">
 				<label>Interlocutor</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor,
 				onchange:'' /}
 			</div>
+			#{set locaisDisponiveis:solicitacao.locaisDisponiveis /}
+			#{if locaisDisponiveis.size() > 1}	
+				<div class="gt-form-row gt-width-66">
+					<label>Local</label> 
+					#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
+					labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
+				</div>
+				<script>
+					$("#local").change(function() {
+						  carregarItem();
+					});
+				</script>
+			#{/if}
 			
 			<div class="gt-form-table" style="margin-top: 10px;">
 				<div class="barra-subtitulo header" align="center" valign="top">
@@ -240,27 +282,26 @@
 				</div>
 			</div>
 			
-			<div class="gt-form-row gt-width-66">
-				<label>Meio de Comunicação</label>
+			<div class="gt-form-row gt-width-66" id="meioComunicacao">
+				<label>Origem da Demanda</label>
 				#{select name:'solicitacao.meioComunicacao',
 				items:models.SrMeioComunicacao.values(),
 				labelProperty:'descrMeioComunicacao',
 				value:solicitacao.meioComunicacao /}
 			</div>
 			
-			<div class="gt-form-row gt-width-66" style="display: none;" id="dtInicioMeioComunicacao">
-				<label>Preencha a data/hora do contato inicial:</label>
-				<div class="gt-form-row gt-width-66" style="margin-left: 15px;">
+			<div class="gt-form-row box-wrapper" style="margin-left: 15px; padding-top: 5px;" id="dtInicioMeioComunicacao">
+				<div class="box box-left gt-width-50" >
+					<label>Preencha a data/hora do contato inicial:</label>
 					<label>Data</label>
 					<input type="text" name="calendario" id="calendarioComunicacao" value="${calendario}">
 					<span style="color: red">#{error 'calendario' /}</span>
 				</div>
-				<div class="gt-form-row gt-width-66" style="margin-left: 15px;">
+				<div class="box box-right gt-width-50" style="padding-top: 20px !important">
 					<label>Hora</label>
 					<input type="text" name="horario" id="horarioComunicacao" value="${horario}">
 					<span style="color: red">#{error 'horario' /}</span>
 				</div>
-				
 			</div>
 			
 			<div class="gt-form-row gt-width-66">
@@ -277,30 +318,6 @@
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
 			
-			<div class="gt-form-table">
-				<div class="barra-subtitulo header" align="center" valign="top">
-					Índice GUT
-				</div>
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Gravidade</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
-				labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Urgência</label> #{select
-				name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
-				labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Tendência</label> #{select
-				name:'solicitacao.tendencia', items:models.SrTendencia.values(),
-				labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO', style:'width:235px;' /}
-			</div>
-			<div class="gt-form-table">
-				<div class="barra-subtitulo header" align="center" valign="top">
-					Detalhamento
-				</div>
-			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label>
 				<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
@@ -311,6 +328,28 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Anexar arquivo</label> <input type="file"
 					name="solicitacao.arquivo" />
+			</div>
+			
+			<div class="gt-form-table">
+				<div class="barra-subtitulo header" align="center" valign="top">
+					Prioridade
+				</div>
+			</div>
+			<div class="gt-form-row box-wrapper">
+				<div class="gt-form-row gt-width-33">
+					<label>Gravidade</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
+					labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
+				</div>
+				<div class="gt-form-row gt-width-33">
+					<label>Urgência</label> #{select
+					name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
+					labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
+				</div>
+				<div class="gt-form-row gt-width-33">
+					<label>Tendência</label> #{select
+					name:'solicitacao.tendencia', items:models.SrTendencia.values(),
+					labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO', style:'width:235px;' /}
+				</div>
 			</div>
 
 			#{if solicitacao.podeAbrirJaFechando(lotaTitular,cadastrante)}
@@ -330,7 +369,6 @@
 			
 			#{if !solicitacao.jaFoiDesignada()}
 			<div class="gt-form-row">
-				<label>&nbsp;</label>
 				<label> 
 					#{checkbox name:'solicitacao.rascunho', value:solicitacao.rascunho /} Rascunho
 				</label>

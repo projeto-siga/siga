@@ -13,16 +13,15 @@
 	<!--  -->
 	#{if linkSeparator} <span class="gt-separator">|</span>#{/if}
 	<!--  -->
-	#{set linkSeparator = true /} ${acao.pre} #{if acao.popup} <a
-		class="once" href="javascript:${linkConfirm?linkConfirm.raw():''}popitup('${acao.url}');">${img.raw()}${acao.nome}</a>
-	#{/if} #{elseif acao.ajax} <span id="spanAjax_${acao.idAjax}"> <a
-		class="once"
+	#{set linkSeparator = true /} ${acao.pre} #{if acao.popup} <a 
+		href="javascript:${linkConfirm?linkConfirm.raw():''}popitup('${acao.url}');">${img.raw()}${acao.nome}</a>
+	#{/if} #{elseif acao.ajax} <span id="spanAjax_${acao.idAjax}"> <a 
 		href="javascript: SetInnerHTMLFromAjaxResponse('${acao.url}', 'spanAjax_${acao.idAjax}');">${img.raw()}${acao.nome}</a>
 	</span> #{/elseif} #{elseif acao.modal} <a
 		href="javascript: ${acao.url}();">${img.raw()}${acao.nome}</a>
-      #{/elseif} #{else} #{if linkConfirm != null} <a class="once"
+      #{/elseif} #{else} #{if linkConfirm != null} <a 
 		href="javascript:${linkConfirm.raw()}location.href='${acao.url}';">${img.raw()}${acao.nome}</a>
-	#{/if}#{else} <a class="once" href="${acao.url}">${img.raw()}${acao.nome}</a>
+	#{/if}#{else} <a href="${acao.url}">${img.raw()}${acao.nome}</a>
 	#{/else} #{/else} ${acao.pos} #{/list}
 </p>
 

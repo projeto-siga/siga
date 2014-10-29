@@ -5,19 +5,6 @@
 </div>
 <div class="gt-form-table">
 	<div class="barra-subtitulo header" align="center" valign="top">
-		Designação
+		Detalhamento
 	</div>
 </div>
-#{set locaisDisponiveis:solicitacao.locaisDisponiveis /}
-#{if locaisDisponiveis.size() > 1}	
-	<div class="gt-form-row gt-width-66">
-		<label>Local</label> 
-		#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
-		labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
-	</div>
-	<script>
-		$("#local").change(function() {
-			  carregarItem();
-		});
-	</script>
-#{/if}

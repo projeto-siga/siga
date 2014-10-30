@@ -708,7 +708,7 @@ public class Application extends SigaApplication {
 		render(lista);
 	}
 	
-	public static void associarLista(Long idSolicitacao) throws Exception {
+	public static void incluirEmLista(Long idSolicitacao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		solicitacao = solicitacao.getSolicitacaoAtual();
 		render(solicitacao);

@@ -6,11 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -264,7 +264,7 @@ public class SrMovimentacao extends GenericModel {
 		
 		// Edson: atualizando o srMovimentacaoSet...
 		if (solicitacao.meuMovimentacaoSet == null)
-			solicitacao.meuMovimentacaoSet = new TreeSet<SrMovimentacao>();
+			solicitacao.meuMovimentacaoSet = new HashSet<SrMovimentacao>();
 		solicitacao.meuMovimentacaoSet.add(this);
 		
 		solicitacao.atualizarMarcas();

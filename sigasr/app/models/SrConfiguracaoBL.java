@@ -167,6 +167,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				if (atual != null)
 					atual.getAcaoETodasDescendentes();
 			}
+			
+			if (srConf.getListaConfiguracaoSet() != null) {
+				for (SrListaConfiguracao listaConf : srConf.getListaConfiguracaoSet()){
+					listaConf.lista.getListaAtual(); 
+				}
+			}
 			if (srConf.tipoAtributo != null)
 				srConf.tipoAtributo.getAtual();
 			if (srConf.listaPrioridade != null)

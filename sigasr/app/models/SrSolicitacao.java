@@ -1357,7 +1357,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				iniciarAtendimento(lotaCadastrante, cadastrante);
 
 			for (SrLista lista : getListasParaInclusaoAutomatica(lotaCadastrante)) {
-				incluirEmLista(lista,
+				//Edson: consultando a lista do banco novamente porque ela foi
+				//obtida do cache manual (CpConfiguracaoBl), o que acarreta erro
+				//de Lazy Loading no SrLista.meuMovimentacaoSet. Ficaria 
+				//custoso guardar esse Set inteiro no cache.
+				incluirEmLista((SrLista) SrLista.findById(lista.idLista),
 						cadastrante, lotaCadastrante);
 			}
 

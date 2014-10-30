@@ -21,7 +21,7 @@ public class SigaInitServlet extends HttpServlet implements Servlet {
                        Configuration cfg = CpDao
                                        .criarHibernateCfg("java:/jboss/datasources/SigaCpDS");
 
-                       HibernateUtil.configurarHibernate(cfg, "");
+                       HibernateUtil.configurarHibernate(cfg);
                        Cp.getInstance().getConf().inicializarCache();
                } catch (Exception e) {
                        // TODO Auto-generated catch block

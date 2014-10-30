@@ -42,24 +42,24 @@
 				</executions>
 			</plugin>
 			<plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                  <packagingExcludes>
-                    WEB-INF/lib/siga-ext-*.jar
-                  </packagingExcludes>
-		          <webResources>
-        			<resource>
-						<directory>/src/main/webapp/paginas/entradas</directory>
-						<filtering>true</filtering>
-						<includes>
-							<include>login.jsp</include>
-						</includes>
-						<targetPath>/paginas/entradas</targetPath>
-        			</resource>
-		          </webResources>
-                  
-                </configuration>
-              </plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<packagingExcludes>
+						WEB-INF/lib/siga-ext-*.jar
+					</packagingExcludes>
+					<webResources>
+						<resource>
+							<directory>/src/main/webapp/paginas/entradas</directory>
+							<filtering>true</filtering>
+							<includes>
+								<include>login.jsp</include>
+							</includes>
+							<targetPath>/paginas/entradas</targetPath>
+						</resource>
+					</webResources>
+
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -81,7 +81,7 @@
 			<groupId>com.opensymphony</groupId>
 			<artifactId>webwork</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -94,7 +94,7 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
@@ -132,7 +132,7 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-libs</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-ldap</artifactId>
@@ -141,6 +141,13 @@
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
+		</dependency>
+
+		<!-- CDI -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

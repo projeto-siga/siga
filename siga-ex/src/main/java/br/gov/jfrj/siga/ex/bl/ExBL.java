@@ -370,7 +370,7 @@ public class ExBL extends CpBL {
 	public static void main(String args[]) throws Exception {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.PRODUCAO;
 		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg, "");
+		HibernateUtil.configurarHibernate(cfg);
 		Ex.getInstance().getBL()
 				.corrigirArquivamentosEmVolume(300000, 400000, false);
 	}

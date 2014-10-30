@@ -95,7 +95,7 @@ public class ExThreadFilter extends ThreadFilter {
 
 						registerTransactionClasses(cfg);
 
-						HibernateUtil.configurarHibernate(cfg, "");
+						HibernateUtil.configurarHibernate(cfg);
 						fConfigured = true;
 					} catch (final Throwable ex) {
 						log.error("Não foi possível configurar o Hibernate. ", ex);

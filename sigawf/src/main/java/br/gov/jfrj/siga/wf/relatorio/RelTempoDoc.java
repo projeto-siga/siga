@@ -307,7 +307,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 			Wf.getInstance().getProp().setPrefixo(ambiente.getSigla());
 			Configuration cfg = WfDao.criarHibernateCfg(ambiente);
 //			CpDao.configurarHibernateParaDebug(cfg);
-			HibernateUtil.configurarHibernate(cfg, "");
+			HibernateUtil.configurarHibernate(cfg);
 
 			RelTempoDoc rep = new RelTempoDoc(parametros);
 			rep.gerar();

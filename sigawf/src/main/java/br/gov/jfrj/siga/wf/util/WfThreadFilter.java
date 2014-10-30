@@ -143,7 +143,7 @@ public class WfThreadFilter extends ThreadFilter {
 
 						registerTransactionClasses(cfg);
 
-						HibernateUtil.configurarHibernate(cfg, "");
+						HibernateUtil.configurarHibernate(cfg);
 						fConfigured = true;
 					} catch (final Throwable ex) {
 						// Make sure you log the exception, as it might be swallowed

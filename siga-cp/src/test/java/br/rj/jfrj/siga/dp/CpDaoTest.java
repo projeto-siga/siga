@@ -77,7 +77,7 @@ public class CpDaoTest extends TestCase {
 		 */
 		Configuration cfg = CpDao.criarHibernateCfg(ambiente);
 		// CpDao.configurarHibernateParaDebug(cfg);
-		HibernateUtil.configurarHibernate(cfg, "");
+		HibernateUtil.configurarHibernate(cfg);
 
 		dao = CpDao.getInstance();
 	}
@@ -361,7 +361,7 @@ public class CpDaoTest extends TestCase {
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 
 		Configuration cfg = CpDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg, "");
+		HibernateUtil.configurarHibernate(cfg);
 
 		CpDao dao = CpDao.getInstance();
 

@@ -58,7 +58,7 @@ public class CalculoPCDTest extends TestCase {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg, "");
+		HibernateUtil.configurarHibernate(cfg);
 	}
 
 	public void testDadosExcelPlanilha1Linha20() {

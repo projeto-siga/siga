@@ -1251,17 +1251,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("pencil", "Editar", podeEditar(
 				lotaTitular, titular), "Application.editar"));
 
-		operacoes.add(new SrOperacao("table_relationship", "Vincular",
+		/*operacoes.add(new SrOperacao("table_relationship", "Vincular",
 				podeVincular(lotaTitular, titular),
-				"Application.vincularSolicitacoes", "popup=true"));
+				"Application.vincularSolicitacoes", "popup=true"));*/
 
 		operacoes.add(new SrOperacao("arrow_divide",
 				"Criar SolicitaÃ§Ã£o Filha", podeCriarFilha(lotaTitular,
 						titular), "Application.criarFilha"));
 
-		operacoes.add(new SrOperacao("arrow_join", "Juntar", podeJuntar(
+		/*operacoes.add(new SrOperacao("arrow_join", "Juntar", podeJuntar(
 				lotaTitular, titular), "Application.juntarSolicitacoes",
-				"popup=true"));
+				"popup=true"));*/
 
 		operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista",
 				podeIncluirEmLista(lotaTitular, titular), "incluirEmLista",
@@ -1292,10 +1292,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(
 				lotaTitular, titular), "Application.reabrir"));
-
-		// operacoes.add(new SrOperacao("clock_pause", "Deixar Pendente",
-		// podeDeixarPendente(lotaTitular,
-		// titular),"Application.deixarPendente"));
 
 		operacoes.add(new SrOperacao("clock_pause", "Pendência",
 				podeDeixarPendente(lotaTitular, titular), "pendencia",

@@ -201,10 +201,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			if (tituloItemConfiguracao != null
 					&& !tituloItemConfiguracao.equals("")) {
 				boolean naoAtende = false;
-				for (String s : tituloItemConfiguracao.toLowerCase().split(
-						"\\s"))
-					if (!item.tituloItemConfiguracao.toLowerCase().contains(s))
+				for (String s : tituloItemConfiguracao.toLowerCase().split("\\s"))
+					if (!item.tituloItemConfiguracao.toLowerCase().contains(s) && !(item.descricaoSimilaridade != null && item.descricaoSimilaridade.toLowerCase().contains(s)))
 						naoAtende = true;
+				
 				if (naoAtende)
 					continue;
 			}
@@ -219,50 +219,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				listaFinal.add(item);
 		}
 		
-		if (listaFinal.isEmpty()) {
-			List<SrItemConfiguracao> listarSimilares = listarSimilares(lista, comHierarquia);
-			if(listarSimilares != null && !listarSimilares.isEmpty()){
-				listaFinal.addAll(listarSimilares);
-			}
-        }
-
 		Collections.sort(listaFinal, new SrItemConfiguracaoComparator());
 		return listaFinal;
 	}
 
-	private List<SrItemConfiguracao> listarSimilares(List<SrItemConfiguracao> lista, boolean comHierarquia) {
-		
-		List<SrItemConfiguracao> listaSimilares = new ArrayList<SrItemConfiguracao>();
-		
-		for (SrItemConfiguracao itemSimilar : lista) {
-		    if (tituloItemConfiguracao != null
-		            && !tituloItemConfiguracao.equals("")) {
-		        boolean naoAtende = false;
-		        for (String s : tituloItemConfiguracao.toLowerCase().split(
-		                "\\s")) {
-		        	if (itemSimilar.descricaoSimilaridade == null){
-		            	naoAtende = true;
-		            	continue;
-		            }
-	            	if (!itemSimilar.descricaoSimilaridade.toLowerCase().contains(s))
-		                naoAtende = true;
-		        }
-		        if (naoAtende)
-		            continue;
-		    }
-		    
-		    if (comHierarquia)
-				do {
-					if (!listaSimilares.contains(itemSimilar))
-						listaSimilares.add(itemSimilar);
-					itemSimilar = itemSimilar.pai;
-				} while (itemSimilar != null);
-			else
-				listaSimilares.add(itemSimilar);
-		}
-		return listaSimilares;
-	}	
-	
 	@Override
 	public void setSigla(String sigla) {
 		if (sigla == null) {

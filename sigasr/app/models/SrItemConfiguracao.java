@@ -491,4 +491,9 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		}
 		return lista;
 	}
+	
+	@Override
+	public String toString() {
+		return siglaItemConfiguracao + " - " + tituloItemConfiguracao;
+	}
 }

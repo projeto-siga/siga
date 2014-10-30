@@ -316,4 +316,9 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return lista;
 	}
+	
+	@Override
+	public String toString() {
+		return siglaAcao + " - " + tituloAcao;
+	}
 }

@@ -249,7 +249,7 @@
 				value="${cadastrante.sigla}" /> 
 			</div>
 			
-			<div class="gt-form-row gt-width-66">
+			<div class="gt-form-row gt-width-99">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
 				onchange:"carregarLocalERamal();carregarItem();carregarConhecimentosRelacionados();
@@ -291,8 +291,8 @@
 			</div>
 			
 			<div class="gt-form-row box-wrapper" style="margin-left: 15px; padding-top: 5px;" id="dtInicioMeioComunicacao">
+				<label>Preencha a data/hora do contato inicial:</label>
 				<div class="box box-left gt-width-50" >
-					<label>Preencha a data/hora do contato inicial:</label>
 					<label>Data</label>
 					<input type="text" name="calendario" id="calendarioComunicacao" value="${calendario}">
 					<span style="color: red">#{error 'calendario' /}</span>

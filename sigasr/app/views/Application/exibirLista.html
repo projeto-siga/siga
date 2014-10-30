@@ -112,9 +112,8 @@ $(function(){
 							</a>	
 				</td>
 				<td class="gt-celula-nowrap"  style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
-				<b style="color: #333">
-				${sol.itemConfiguracao?.descricao}:</b>&nbsp;
-				#{selecionado sigla:sol.descrSolicitacao,descricao:sol?.descrSolicitacao /}
+				<b>${sol.descrItem}:</b>&nbsp;
+				#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
 				</td>
 					
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px; text-align:center;" >
@@ -127,7 +126,7 @@ $(function(){
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 					<b>${sol?.lotaAtendente.siglaLotacao}</b></td>
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					${sol.ultimaMovimentacao.descrMovimentacao}
+					#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}
 				</td>
 				#{if podeRemover} 
 				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">

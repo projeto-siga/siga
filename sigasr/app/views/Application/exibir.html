@@ -47,9 +47,9 @@ $(function(){
 		completo), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-				${solicitacao.itemConfiguracao?.descricao} -
-				${solicitacao.acao?.descricao}</p>
-			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descrSolicitacao}</p>
+				${solicitacao.descrItem} -
+				${solicitacao.descrAcao}</p>
+			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 			<script language="javascript">
 				var descricao = document.getElementById('descrSolicitacao');
 				descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
@@ -207,12 +207,11 @@ $(function(){
 			</p>
 			<p>
 				<b>Item de Configuração:</b>
-				${solicitacao.itemConfiguracao?.siglaItemConfiguracao} -
-				${solicitacao.itemConfiguracao?.descricao}
+				${solicitacao.siglaEDescrItem}
 			</p>
 			<p>
-				<b>Ação:</b> ${solicitacao.acao?.siglaAcao} -
-				${solicitacao.acao?.descricao}
+				<b>Ação:</b>
+				${solicitacao.siglaEDescrAcao}
 			</p>
 			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
 			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}

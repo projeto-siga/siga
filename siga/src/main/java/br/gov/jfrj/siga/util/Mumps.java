@@ -37,8 +37,6 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import javax.swing.JProgressBar;
-
 /**
  * 
  * Classe PSAExtraFolhaDao.

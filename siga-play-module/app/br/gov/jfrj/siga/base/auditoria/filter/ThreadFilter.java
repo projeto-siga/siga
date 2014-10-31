@@ -184,17 +184,9 @@ public abstract class ThreadFilter implements Filter {
 				+ principalName, ex);
 	}
 
-	public void init(FilterConfig arg0) throws ServletException {
-		log.info("INIT THREAD FILTER");
-	}
-
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 
-	}
-
-	public void destroy() {
-		log.info("DESTROY THREAD FILTER");
 	}
 
 	protected String montaMensagemErroExcecoes(Exception ex) {

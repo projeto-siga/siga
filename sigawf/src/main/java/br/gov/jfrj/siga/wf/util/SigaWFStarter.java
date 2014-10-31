@@ -36,18 +36,18 @@ public class SigaWFStarter {
 		}
 	}
 
-	private void initJBPM() {
-		JbpmConfiguration configuration = JbpmConfiguration.getInstance(JBPM_CFG_XML);
-		configuration.createJbpmContext().setSessionFactory(HibernateUtil.getSessionFactory());
-		configuration.startJobExecutor();
-		WfContextBuilder.setConfiguration(configuration);
-	}
-
 	private void initHibernate() throws Exception {
 		Wf.getInstance();
 		Configuration cfg = WfDao.criarHibernateCfg(DATASOURCE);
 		HibernateUtil.configurarHibernate(cfg);
 		SigaAuditor.configuraAuditoria(new SigaHibernateChamadaAuditor(cfg));
+	}
+	
+	private void initJBPM() {
+		JbpmConfiguration configuration = JbpmConfiguration.getInstance(JBPM_CFG_XML);
+		configuration.createJbpmContext().setSessionFactory(HibernateUtil.getSessionFactory());
+		configuration.startJobExecutor();
+		WfContextBuilder.setConfiguration(configuration);
 	}
 	
 }

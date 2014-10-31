@@ -26,23 +26,15 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
-import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
-import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import org.hibernate.cfg.Configuration;
-import org.jboss.logging.Logger;
 
 public class ExThreadFilter extends ThreadFilter {
-
-	private static boolean fConfigured = false;
-
-	private static final Object classLock = ExThreadFilter.class;
 
 	private static final Logger log = Logger.getLogger(ExThreadFilter.class);
 
@@ -54,8 +46,6 @@ public class ExThreadFilter extends ThreadFilter {
 			throws IOException, ServletException {
 
 		final StringBuilder csv = super.iniciaAuditoria(request);
-
-		this.configuraHibernate();
 
 		try {
 			this.executaFiltro(request, response, chain);
@@ -74,36 +64,6 @@ public class ExThreadFilter extends ThreadFilter {
 
 		super.terminaAuditoria(csv);
 
-	}
-
-	private void configuraHibernate() throws ExceptionInInitializerError {
-		// Nato: usei um padrao de instanciacao de singleton para configurar a
-		// sessionFactory do Hibernate
-		// na primeira chamada ao filtro.
-		if (!fConfigured) {
-			synchronized (classLock) {
-				if (!fConfigured) {
-					try {
-						Ex.getInstance();
-						Configuration cfg = ExDao.criarHibernateCfg("java:jboss/datasources/SigaExDS");
-
-						// bruno.lacerda@avantiprima.com.br
-						// Configura listeners de auditoria de acordo com os
-						// parametros definidos no arquivo
-						// siga.auditoria.properties
-						SigaAuditor.configuraAuditoria(new SigaHibernateChamadaAuditor(cfg));
-
-						registerTransactionClasses(cfg);
-
-						HibernateUtil.configurarHibernate(cfg);
-						fConfigured = true;
-					} catch (final Throwable ex) {
-						log.error("Não foi possível configurar o Hibernate. ", ex);
-						throw new ExceptionInInitializerError(ex);
-					}
-				}
-			}
-		}
 	}
 
 	private void executaFiltro(final ServletRequest request,

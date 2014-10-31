@@ -244,15 +244,6 @@ public class HibernateUtil {
 	public static void configurarHibernate(Configuration configuration) {
 		
 		try {
-//			
-//			for (Class<?> clazz : classesAnotadas) {
-//				cfg.addAnnotatedClass(clazz);
-//			}
-			
-			// bruno.lacerda@avantiprima.com.br
-		//	configurarHibernateParaDebug( cfg );
-			
-			//cfg.configure();
 			conf = configuration;
 			serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
 		    sessionFactory = configuration.buildSessionFactory(serviceRegistry);

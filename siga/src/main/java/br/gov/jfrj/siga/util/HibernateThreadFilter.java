@@ -21,28 +21,20 @@ package br.gov.jfrj.siga.util;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.hibernate.cfg.Configuration;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
-import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
-import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class HibernateThreadFilter extends ThreadFilter {
-
-	private static boolean fConfigured = false;
-
-	private static final Object classLock = HibernateThreadFilter.class;
 
 	private static final Logger log = Logger.getLogger(HibernateThreadFilter.class);
 
@@ -164,15 +156,6 @@ public class HibernateThreadFilter extends ThreadFilter {
 			log.error(ex.getMessage(), ex);
 			// ex.printStackTrace();
 		}
-	}
-
-	public void init(final FilterConfig filterConfig) throws ServletException {
-		HibernateThreadFilter.log
-				.debug("Initializing filter, obtaining Hibernate SessionFactory from HibernateUtil");
-		// sf = HibernateUtil.getSessionFactory();
-	}
-
-	public void destroy() {
 	}
 
 }

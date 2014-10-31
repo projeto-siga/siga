@@ -23,16 +23,7 @@
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	
-   <servlet>
-              <description>Inicializacao do SIGA</description>
-              <display-name>SigaInitServlet</display-name>
-              <servlet-name>SigaInitServlet</servlet-name>
-              <servlet-class>br.gov.jfrj.siga.servlet.SigaInitServlet</servlet-class>
-              <load-on-startup>1</load-on-startup>
-      </servlet>
 
-	
 	<filter>
 		<filter-name>HibernateFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.util.HibernateThreadFilter</filter-class>

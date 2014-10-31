@@ -18,17 +18,21 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+import org.apache.log4j.Logger;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
-import org.apache.log4j.Logger;
-import org.hibernate.cfg.Configuration;
-
-import javax.servlet.*;
-import java.io.IOException;
 
 /**
  * Filtro que pega a sessão do JBPM e coloca-a no Hibernate.
@@ -37,10 +41,6 @@ import java.io.IOException;
  * 
  */
 public class WfThreadFilter extends ThreadFilter {
-
-	private static boolean fConfigured = false;
-
-	private static final Object classLock = WfThreadFilter.class;
 
 	private static final Logger log = Logger.getLogger(WfThreadFilter.class);
 
@@ -53,7 +53,7 @@ public class WfThreadFilter extends ThreadFilter {
 
 		final StringBuilder csv = super.iniciaAuditoria(request);
 
-		this.configuraHibernate();
+		//this.configuraHibernate();
 
 		try {
 
@@ -111,9 +111,7 @@ public class WfThreadFilter extends ThreadFilter {
 		WfDao.commitTransacao();
 	}
 
-	private void doFiltro(final ServletRequest request,
-			final ServletResponse response, final FilterChain chain)
-			throws Exception {
+	private void doFiltro(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws Exception {
 
 		try {
 			chain.doFilter(request, response);
@@ -123,38 +121,38 @@ public class WfThreadFilter extends ThreadFilter {
 		}
 	}
 
-	private void configuraHibernate() throws ExceptionInInitializerError {
-		// Nato: usei um padrao de instanciacao de singleton para configurar a
-		// sessionFactory do Hibernate
-		// na primeira chamada ao filtro.
-		if (!fConfigured) {
-			synchronized (classLock) {
-				if (!fConfigured) {
-					try {
-						Wf.getInstance();
-						Configuration cfg = WfDao.criarHibernateCfg("java:jboss/datasources/SigaWfDS");
-
-						// bruno.lacerda@avantiprima.com.br
-						// Configura listeners de auditoria de acordo com os
-						// parametros definidos no arquivo
-						// siga.auditoria.properties
-						// SigaAuditor.configuraAuditoria( new
-						// SigaHibernateChamadaAuditor( cfg ) );
-
-						registerTransactionClasses(cfg);
-
-						HibernateUtil.configurarHibernate(cfg);
-						fConfigured = true;
-					} catch (final Throwable ex) {
-						// Make sure you log the exception, as it might be swallowed
-						log.error("[configuraHibernate] - Não foi possível configurar o hibernate.", ex);
-						throw new ExceptionInInitializerError(ex);
-					}
-				}
-
-			}
-		}
-	}
+//	private void configuraHibernate() throws ExceptionInInitializerError {
+//		// Nato: usei um padrao de instanciacao de singleton para configurar a
+//		// sessionFactory do Hibernate
+//		// na primeira chamada ao filtro.
+//		if (!fConfigured) {
+//			synchronized (classLock) {
+//				if (!fConfigured) {
+//					try {
+//						Wf.getInstance();
+//						Configuration cfg = WfDao.criarHibernateCfg("java:jboss/datasources/SigaWfDS");
+//
+//						// bruno.lacerda@avantiprima.com.br
+//						// Configura listeners de auditoria de acordo com os
+//						// parametros definidos no arquivo
+//						// siga.auditoria.properties
+//						// SigaAuditor.configuraAuditoria( new
+//						// SigaHibernateChamadaAuditor( cfg ) );
+//
+//						registerTransactionClasses(cfg);
+//
+//						HibernateUtil.configurarHibernate(cfg);
+//						fConfigured = true;
+//					} catch (final Throwable ex) {
+//						// Make sure you log the exception, as it might be swallowed
+//						log.error("[configuraHibernate] - Não foi possível configurar o hibernate.", ex);
+//						throw new ExceptionInInitializerError(ex);
+//					}
+//				}
+//
+//			}
+//		}
+//	}
 
 	private void fechaContextoWorkflow() {
 		try {
@@ -181,19 +179,5 @@ public class WfThreadFilter extends ThreadFilter {
 			log.error(ex.getMessage(), ex);
 			// ex.printStackTrace();
 		}
-	}
-
-	/**
-	 * Executa ao destruir o filtro.
-	 */
-	public void destroy() {
-
-	}
-
-	/**
-	 * Executa ao inciar o filtro.
-	 */
-	public void init(FilterConfig arg0) throws ServletException {
-
 	}
 }

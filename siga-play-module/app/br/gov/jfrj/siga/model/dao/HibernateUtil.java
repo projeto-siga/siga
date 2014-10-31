@@ -31,6 +31,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -41,6 +43,7 @@ public class HibernateUtil {
 	private static Logger logger = Logger.getLogger(HibernateUtil.class);
 
 	private static SessionFactory sessionFactory = null;
+	private static ServiceRegistry serviceRegistry = null;
 
 	public static Configuration conf = null;
 
@@ -238,21 +241,12 @@ public class HibernateUtil {
 		}
 	}
 
-	public static void configurarHibernate(Configuration cfg, String hibernateConnectionUrl) {
+	public static void configurarHibernate(Configuration configuration) {
 		
 		try {
-//			
-//			for (Class<?> clazz : classesAnotadas) {
-//				cfg.addAnnotatedClass(clazz);
-//			}
-			
-			// bruno.lacerda@avantiprima.com.br
-		//	configurarHibernateParaDebug( cfg );
-			
-			//cfg.configure();
-			conf = cfg;
-			sessionFactory = conf.buildSessionFactory();
-			
+			conf = configuration;
+			serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
+		    sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 		} catch (final Throwable ex) {
 			
 			// Make sure you log the exception, as it might be swallowed

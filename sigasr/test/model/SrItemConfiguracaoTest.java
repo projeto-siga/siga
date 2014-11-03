@@ -30,11 +30,11 @@ public class SrItemConfiguracaoTest extends UnitTest {
 		SrItemConfiguracao sigaWf = sigawf();
 		sigaWf.siglaItemConfiguracao = "99.02.01";
 		sigaWf.salvar();
-		assertEquals(sigaWf.getPai().siglaItemConfiguracao, "99.02.00");
+		assertEquals(sigaWf.pai.siglaItemConfiguracao, "99.02.00");
 
 		sigaWf.siglaItemConfiguracao = "99.01.02";
 		sigaWf.salvar();
-		assertEquals(sigaWf.getPai().siglaItemConfiguracao, "99.01.00");
+		assertEquals(sigaWf.pai.siglaItemConfiguracao, "99.01.00");
 
 		sigaWf.refresh();
 		List<SrItemConfiguracao> historico = sigaWf

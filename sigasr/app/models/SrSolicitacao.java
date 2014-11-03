@@ -631,7 +631,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Set<SrMovimentacao> setPendentes = new HashSet<SrMovimentacao>();
 
 		for (SrMovimentacao ini : setIni) {
-			if (ini.movFinalizadora == null)
+			if (ini.movFinalizadora == null && 
+					(ini.dtAgenda == null || ini.dtAgenda.after(new Date())))
 				setPendentes.add(ini);
 		}
 
@@ -769,6 +770,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return sol.meuMarcaSet != null ? sol.meuMarcaSet
 				: new TreeSet<SrMarca>();
 	}
+	
+	public Set<SrMarca> getMarcaSetAtivas() {
+		Set<SrMarca> set = new TreeSet<SrMarca>();
+		Date agora = new Date();
+		for (SrMarca m : getMarcaSet()){
+			if ((m.getDtIniMarca() == null  || m.getDtIniMarca().before(agora)) 
+					&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(agora)))
+			set.add(m);
+		}
+		return set;
+	}
 
 	private Long getTempoCadastramento() {
 		if (dtIniEdicao == null)
@@ -828,7 +840,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean isPendente() {
 		Set<SrMovimentacao> setIni = getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
 		for (SrMovimentacao ini : setIni) {
-			if (ini.movFinalizadora == null)
+			if (ini.movFinalizadora == null && (ini.dtAgenda == null 
+					|| ini.dtAgenda.after(new Date())))
 				return true;
 		}
 		return false;
@@ -1293,13 +1306,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(
 				lotaTitular, titular), "Application.reabrir"));
 
-		operacoes.add(new SrOperacao("clock_pause", "Pendência",
+		operacoes.add(new SrOperacao("clock_pause", "Incluir Pendência",
 				podeDeixarPendente(lotaTitular, titular), "pendencia",
 				"modal=true"));
 
-		operacoes.add(new SrOperacao("clock_go", "Alterar Prazo",
+		/*operacoes.add(new SrOperacao("clock_go", "Alterar Prazo",
 				podeAlterarPrazo(lotaTitular, titular), "alterarPrazo",
-				"modal=true"));
+				"modal=true"));*/
 
 		operacoes.add(new SrOperacao("cross", "Excluir", podeExcluir(
 				lotaTitular, titular), "excluir", "modal=true"));
@@ -1511,8 +1524,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Set<SrMovimentacao> movs = getMovimentacaoSetOrdemCrescente();
 
 		if (movs != null && movs.size() > 0) {
-			Long marcador = 0L, marcadorAnterior = 0L;
-			SrMovimentacao movMarca = null, movMarcaAnterior = null;
+			Long marcador = 0L;
+			SrMovimentacao movMarca = null;
+			Date dtAgenda = null;
+			int pendencias = 0;
 			for (SrMovimentacao mov : movs) {
 				Long t = mov.tipoMov.idTipoMov;
 				if (mov.isCancelada())
@@ -1554,24 +1569,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					movMarca = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
-					marcadorAnterior = marcador;
-					movMarcaAnterior = movMarca;
-					marcador = CpMarcador.MARCADOR_SOLICITACAO_PENDENTE;
-					if (mov.dtAgenda != null)
-						marcador = CpMarcador.MARCADOR_SOLICITACAO_AGENDADO;
-					movMarca = mov;
+					pendencias++;
+					if (mov.dtAgenda != null && (dtAgenda == null || mov.dtAgenda.after(dtAgenda)))
+						dtAgenda = mov.dtAgenda;
 				}
 				if (t == TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
-					marcador = marcadorAnterior;
-					movMarca = movMarcaAnterior;
+					pendencias--;
 				}
 				if (t == TIPO_MOVIMENTACAO_ANDAMENTO) {
 					movMarca = mov;
 				}
 			}
-
+			
 			acrescentarMarca(set, marcador, movMarca.dtIniMov, null,
 					movMarca.atendente, movMarca.lotaAtendente);
+			
+			if (pendencias > 0)
+				acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, movMarca.dtIniMov, dtAgenda,
+						movMarca.atendente, movMarca.lotaAtendente);
 
 			if (!isFechado() && !isCancelado()) {
 				acrescentarMarca(set,
@@ -1661,7 +1676,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (pess != null && lota != null) {
 			// Marcacoes para a propria lotacao e para a propria pessoa ou sem
 			// informacao de pessoa
-			for (SrMarca mar : getMarcaSet()) {
+			for (SrMarca mar : getMarcaSetAtivas()) {
 				if (marcadoresDesconsiderar.contains(mar.getCpMarcador()
 						.getIdMarcador()))
 					continue;
@@ -1677,7 +1692,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			}
 			// Marcacoes para a propria lotacao e para outra pessoa
 			if (sb.length() == 0) {
-				for (SrMarca mar : getMarcaSet()) {
+				for (SrMarca mar : getMarcaSetAtivas()) {
 					if (marcadoresDesconsiderar.contains(mar.getCpMarcador()
 							.getIdMarcador()))
 						continue;
@@ -1699,7 +1714,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		// Marcacoes para qualquer outra pessoa ou lotacao
 		if (sb.length() == 0) {
-			for (SrMarca mar : getMarcaSet()) {
+			for (SrMarca mar : getMarcaSetAtivas()) {
 				if (marcadoresDesconsiderar.contains(mar.getCpMarcador()
 						.getIdMarcador()))
 					continue;

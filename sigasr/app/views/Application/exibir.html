@@ -375,6 +375,8 @@ $(function(){
 	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao} 
 	#{/modal} 
 	#{modal nome:'pendencia', titulo:'Pendência'}
+	<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
+	<div class="gt-content-box gt-for-table gt-form">
 	<form action="@{Application.deixarPendente()}" method="post"
 		enctype="multipart/form-data">
 		<div class="gt-form-row gt-width-66">
@@ -395,10 +397,13 @@ $(function(){
 			<label>Detalhamento do Motivo</label>
 			<textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
 		</div>
+		<div class="gt-form-row">
 		<input type="hidden" name="completo" value="${completo}" /> <input
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+		</div>
 	</form>
+	</div>
 	</div>
 	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
 		<div class="gt-form gt-content-box">

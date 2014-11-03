@@ -1028,7 +1028,7 @@ public class FuncoesEL {
 			String s = ConexaoHTTP.get(url, headers, timeout, corpo);
 			return s;
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
 		return "";

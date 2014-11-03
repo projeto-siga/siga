@@ -1122,7 +1122,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		//condições para assinatura digital de cosignatários em documentos físicos 
 		if 	((mob.doc().getSubscritor() != null && mob.doc().getSubscritor().equivale(titular) 
-				|| isConsignatario) && mob.doc().isFisico())
+				|| isConsignatario) && mob.doc().isFisico() && mob.doc().isFinalizado())
 			return true;
 		
 		return ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor()

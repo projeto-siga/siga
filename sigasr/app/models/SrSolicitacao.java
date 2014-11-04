@@ -19,6 +19,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
+import static org.joda.time.format.DateTimeFormat.forPattern;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -182,6 +183,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Transient
 	public String motivoFechamentoAbertura;
+
+	@Transient
+	public String stringDtMeioContato;
 
 	@Column(name = "NUM_SOLICITACAO")
 	public Long numSolicitacao;
@@ -430,6 +434,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getDtRegDDMMYYYYHHMM() {
 		if (dtReg != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return df.format(dtReg);
+		}
+		return "";
+	}
+
+	public String getDtRegDDMMYYYY() {
+		if (dtReg != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(dtReg);
+		}
+		return "";
+	}
+	public String getDtRegHHMM() {
+		if (dtReg != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 			return df.format(dtReg);
 		}
 		return "";
@@ -1074,7 +1093,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	@SuppressWarnings("unchecked")
-	public SrSolicitacao deduzirLocalERamal() {
+	public SrSolicitacao deduzirLocalRamalEMeioContato() {
 
 		if (solicitante == null)
 			return this;
@@ -1111,6 +1130,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (ultima != null) {
 			telPrincipal = ultima.telPrincipal;
 			local = ultima.local;
+			meioComunicacao = ultima.meioComunicacao;
+			if((meioComunicacao != null)
+					&& (meioComunicacao.equals(SrMeioComunicacao.EMAIL)
+					|| meioComunicacao.equals(SrMeioComunicacao.PANDION)
+					|| meioComunicacao.equals(SrMeioComunicacao.CHAT))) {
+				dtReg = ultima.dtReg;
+			}
 		} else {
 			telPrincipal = "";
 			local = null;
@@ -2279,6 +2305,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (itemConfiguracao != null)
 			s += " - " + itemConfiguracao.tituloItemConfiguracao;
 		return s;
+	}
+
+	public String getStringDtMeioContato() {
+		return stringDtMeioContato;
+	}
+
+	public void setStringDtMeioContato(String stringDtMeioContato) {
+		if(meioComunicacao.equals(SrMeioComunicacao.EMAIL)
+				|| meioComunicacao.equals(SrMeioComunicacao.PANDION)
+				|| meioComunicacao.equals(SrMeioComunicacao.CHAT)) {
+
+			DateTimeFormatter formatter = forPattern("dd/MM/yyyy HH:mm");
+			if (stringDtMeioContato != null 
+					&& !stringDtMeioContato.isEmpty()
+					&& stringDtMeioContato.contains("/") 
+					&& stringDtMeioContato.contains(":"))
+				this.dtReg = new DateTime (formatter.parseDateTime(stringDtMeioContato)).toDate();
+        }
+		this.stringDtMeioContato = stringDtMeioContato;
 	}
 
 }

@@ -1,0 +1,33 @@
+<div class="gt-form-row gt-width-66">
+	<label>Telefone</label> <input type="text"
+		name="solicitacao.telPrincipal" id="telPrincipal"
+		value="${solicitacao.telPrincipal}" />
+</div>
+
+<div class="gt-form-table">
+	<div class="barra-subtitulo header" align="center" valign="top">
+		Detalhamento
+	</div>
+</div>
+
+<div class="gt-form-row gt-width-66" id="meioComunicacao">
+	<label>Origem da Demanda</label>
+	#{select name:'solicitacao.meioComunicacao',
+	items:models.SrMeioComunicacao.values(),
+	labelProperty:'descrMeioComunicacao',
+	value:solicitacao.meioComunicacao /}
+</div>
+
+<div class="gt-form-row box-wrapper" style="margin-left: 15px; padding-top: 5px;" id="dtInicioMeioComunicacao">
+	<div class="box box-left gt-width-50" >
+		<label>Preencha a data/hora do contato inicial:</label>
+		<label>Data</label>
+		<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtRegDDMMYYYY}">
+		<span style="color: red">#{error 'calendario' /}</span>
+	</div>
+	<div class="box box-right gt-width-50" style="padding-top: 20px !important">
+		<label>Hora</label>
+		<input type="text" name="horario" id="horarioComunicacao" value="${solicitacao.dtRegHHMM}">
+		<span style="color: red">#{error 'horario' /}</span>
+	</div>
+</div>

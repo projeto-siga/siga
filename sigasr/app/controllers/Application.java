@@ -1,8 +1,5 @@
 package controllers;
 
-import static models.SrMeioComunicacao.CHAT;
-import static models.SrMeioComunicacao.EMAIL;
-import static models.SrMeioComunicacao.PANDION;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +29,7 @@ import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
+import models.SrMeioComunicacao;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
@@ -149,13 +147,13 @@ public class Application extends SigaApplication {
 		} else
 			solicitacao = SrSolicitacao.findById(id);
 
-		formEditar(solicitacao.deduzirLocalERamal());
+		formEditar(solicitacao.deduzirLocalRamalEMeioContato());
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void exibirLocalERamal(SrSolicitacao solicitacao)
+	public static void exibirLocalRamalEMeioContato(SrSolicitacao solicitacao)
 			throws Exception {
-		render(solicitacao.deduzirLocalERamal());
+		render(solicitacao.deduzirLocalRamalEMeioContato());
 	}
 	
 	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean carregarLotaSolicitante) 
@@ -222,10 +220,6 @@ public class Application extends SigaApplication {
 	@SuppressWarnings("unchecked")
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
 		
-		String calendario = null;
-		String horario = null;
-		Long dtIniEdicao;
-		
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 
@@ -244,45 +238,35 @@ public class Application extends SigaApplication {
 			}
 		}
 		
-		if (solicitacao.idSolicitacao == null) {
-			StringBuffer queryString = new StringBuffer();
-			queryString.append(" from SrSolicitacao where hisDtIni = (select max(sol.hisDtIni) from SrSolicitacao sol where sol.cadastrante.idPessoa = :idCadastrante ) ");
-			queryString.append(" and cadastrante.idPessoa = :idCadastrante ");
-			
-			Query query = JPA.em().createQuery(queryString.toString());
-			query.setParameter("idCadastrante", cadastrante().getId());
-			
-			dtIniEdicao = new Date().getTime();
-			
-			List<SrSolicitacao> solicitacoes = query.getResultList();
-			SrSolicitacao ultimaSolicitacao = null;
-			if(solicitacoes.size() > 0) {
-				ultimaSolicitacao = solicitacoes.get(0);
-				if(ultimaSolicitacao.meioComunicacao != null && solicitacao.meioComunicacao == null) {
-					solicitacao.meioComunicacao = ultimaSolicitacao.meioComunicacao;
-					if(solicitacao.meioComunicacao == EMAIL
-							|| solicitacao.meioComunicacao == PANDION
-							|| solicitacao.meioComunicacao == CHAT) {
-						String data = ultimaSolicitacao.getDtRegDDMMYYYYHHMM();
-						String[] array = data.split(" ");
-						calendario = array[0];
-						horario = array[1];
-					}
-				}
-			}
-		} else {
-			dtIniEdicao = new Date().getTime();
-			String data = solicitacao.getDtRegDDMMYYYYHHMM();
-			String[] array = data.split(" ");
-			calendario = array[0];
-			horario = array[1];
-		}
-
-		render("@editar", solicitacao, locais, acoesEAtendentes, calendario, horario, dtIniEdicao);
+		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
+	@SuppressWarnings("static-access")
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
+
+		if(solicitacao.meioComunicacao.equals(SrMeioComunicacao.EMAIL)
+				|| solicitacao.meioComunicacao.equals(SrMeioComunicacao.PANDION)
+				|| solicitacao.meioComunicacao.equals(SrMeioComunicacao.CHAT)) {
+			
+			if(solicitacao.stringDtMeioContato == null 
+					|| !solicitacao.stringDtMeioContato.contains("/"))
+				validation.addError("calendario", "Data não informada");
+			
+			if(solicitacao.stringDtMeioContato == null 
+					|| !solicitacao.stringDtMeioContato.contains(":")) 
+				validation.addError("horario", "Hora não informada");
+				
+		} else {
+				String[] stringData = solicitacao.stringDtMeioContato.split(":");
+				String[] time = stringData[1].split(":");
+				int hora = Integer.parseInt(time[0]);
+				int minuto = Integer.parseInt(time[1]);
+				if (hora > 23 || minuto > 59) {
+					validation.addError("horario",
+							"Hora inválida");
+				}
+		}
 
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
@@ -311,32 +295,6 @@ public class Application extends SigaApplication {
 		if (validation.hasErrors()) {
 			formEditar(solicitacao);
 		}
-	}
-	
-	private static void validarFormEditar(SrSolicitacao solicitacao, String calendario, String horario)
-			throws Exception {
-		
-		if(solicitacao.meioComunicacao == EMAIL
-				|| solicitacao.meioComunicacao == PANDION
-				|| solicitacao.meioComunicacao == CHAT) {
-			if(calendario.isEmpty() || calendario == null) {
-				validation.addError("calendario",
-						"Data não informada");
-			}
-			if(horario.isEmpty() || horario == null) {
-				validation.addError("horario",
-						"Hora não informada");
-			} else {
-				String[] array = horario.split(":");
-				int hora = Integer.parseInt(array[0]);
-				int minuto = Integer.parseInt(array[1]);
-					if (hora > 23 || minuto > 59) {
-						validation.addError("horario",
-								"Hora inválida");
-					}
-			}
-		}
-		validarFormEditar(solicitacao);
 	}
 
 	private static void validarFormEditarItem(
@@ -418,19 +376,11 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao, String calendario, String horario, long dtIniEdicao) throws Exception {
+	public static void gravar(SrSolicitacao solicitacao, long dtIniEdicao) throws Exception {
         solicitacao.dtIniEdicao = new Date(dtIniEdicao);
 		if(!solicitacao.rascunho)
-        	validarFormEditar(solicitacao, calendario, horario);
-        if(solicitacao.meioComunicacao == EMAIL
-				|| solicitacao.meioComunicacao == PANDION
-				|| solicitacao.meioComunicacao == CHAT) {
-			
-			DateTimeFormatter formatter = forPattern("dd/MM/yyyy HH:mm");
-			if (!calendario.isEmpty() || !horario.isEmpty())
-				solicitacao.dtReg = new DateTime (formatter.parseDateTime(calendario + " " + horario)).toDate();
-			
-        }
+        	validarFormEditar(solicitacao);
+        
 		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
 		exibir(id, completo());

@@ -263,7 +263,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		SrSolicitacao sol2 = new SrSolicitacao();
 		sol2.solicitante = eeh();
 		sol2.cadastrante = eeh();
-		sol2.deduzirLocalERamal();
+		sol2.deduzirLocalRamalEMeioContato();
 		assertEquals(barroso(), sol2.local);
 		assertEquals("ramal 9700", sol2.telPrincipal);
 		sol2.local = null;
@@ -272,7 +272,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		SrSolicitacao sol3 = new SrSolicitacao();
 		sol3.solicitante = eeh();
 		sol3.cadastrante = eeh();
-		sol3.deduzirLocalERamal();
+		sol3.deduzirLocalRamalEMeioContato();
 		assertEquals(null, sol3.local);
 		assertEquals("ramal 9700", sol3.telPrincipal);
 	}

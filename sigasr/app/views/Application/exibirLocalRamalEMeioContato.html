@@ -1,33 +1,48 @@
+
+#{set locaisDisponiveis:solicitacao.locaisDisponiveis /}
+			#{if locaisDisponiveis.size() > 1}	
+				<div class="gt-form-row gt-width-66">
+					<label>Local</label> 
+					#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
+					labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
+				</div>
+				<script>
+					$("#local").change(function() {
+						  carregarItem();
+					});
+				</script>
+			#{/if}
+
 <div class="gt-form-row gt-width-66">
 	<label>Telefone</label> <input type="text"
 		name="solicitacao.telPrincipal" id="telPrincipal"
 		value="${solicitacao.telPrincipal}" />
 </div>
 
-<div class="gt-form-table">
-	<div class="barra-subtitulo header" align="center" valign="top">
-		Detalhamento
-	</div>
-</div>
-
-<div class="gt-form-row gt-width-66" id="meioComunicacao">
+<div id="meioComunicacao">
+	<div class="gt-form-row gt-width-66">
 	<label>Origem da Demanda</label>
 	#{select name:'solicitacao.meioComunicacao',
 	items:models.SrMeioComunicacao.values(),
 	labelProperty:'descrMeioComunicacao',
 	value:solicitacao.meioComunicacao /}
-</div>
+	</div>
 
-<div class="gt-form-row box-wrapper" style="margin-left: 15px; padding-top: 5px;" id="dtInicioMeioComunicacao">
-	<div class="box box-left gt-width-50" >
-		<label>Preencha a data/hora do contato inicial:</label>
+	<div class="gt-form-row" style="margin-left: 15px;">
+		<label>Contato inicial</label>
 		<label>Data</label>
-		<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtRegDDMMYYYY}">
+		<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}">
 		<span style="color: red">#{error 'calendario' /}</span>
 	</div>
-	<div class="box box-right gt-width-50" style="padding-top: 20px !important">
+	<div class="gt-form-row" style="margin-left: 15px;">
 		<label>Hora</label>
-		<input type="text" name="horario" id="horarioComunicacao" value="${solicitacao.dtRegHHMM}">
+		<input type="text" name="horario" id="horarioComunicacao" value="${solicitacao.dtOrigemHHMM}">
 		<span style="color: red">#{error 'horario' /}</span>
 	</div>
+	<input type="hidden" name="solicitacao.dtOrigemString"
+				id="stringDtMeioContato" value="${solicitacao.dtOrigemDDMMYYYYHHMM}">
 </div>
+
+<script>
+	validarCadastranteSolicitante();
+</script>

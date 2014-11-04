@@ -21,8 +21,51 @@
 </style>
 <script language="javascript">
 	$(document).ready(function() {
-		document.getElementById("solicitacaosolicitante_sigla").focusout = validarCadastranteSolicitante();
-		validarCadastranteSolicitante();
+
+		$('#gravar').click(function() {
+			if ($('#siglaCadastrante').val() != $('#solicitacaosolicitante_sigla')[0].value) {
+				var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
+				$('#stringDtMeioContato').val(stringDt);
+			} 
+		}); 
+
+		if($('#solicitacaointerlocutor').val() != "") {
+			$('#checkmostrarInterlocutor').prop('checked', true);	
+			$('#interlocutor').show();		
+		}
+
+		$('#checkRascunho').change(function() {
+			if(this.checked) {
+				$('#checkRascunho').prop('value', 'true');
+				return;
+			}
+			$('#checkRascunho').prop('value', 'false');
+		});
+
+		function formatarValorTimer(num) {
+			if (num.toString().length == 1) 
+	      		return "0" + num;
+
+	  		return num;
+		};
+
+		var andamento = 0;	
+		function moveRelogio(mili){ 
+			andamento = andamento + mili;
+		   	dtAndamento = new Date(andamento);
+		   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
+		   	
+		   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
+		   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
+
+		   	$('#andamento').html(andamentoString);
+		   	$('#total').html(totalString);
+
+		   	setTimeout("moveRelogio(60000)",60000);
+		}; 
+
+		carregarFiltrosAoIniciar();
+		//moveRelogio(0);
 	});
 
 	function carregarLocalRamalEMeioContato() {
@@ -48,7 +91,9 @@
 		$("#calendarioComunicacao").mask("99/99/9999");
 		$("#horarioComunicacao").mask("99:99");
 
-		verificarFormatoCampo(); 
+		var scripts = div.getElementsByTagName("script");
+		for(var i=0;i<scripts.length;i++)  
+			   eval(scripts[i].text); 
 	}
 	
 	function carregarItem(){
@@ -112,7 +157,6 @@
 			option.remove();
 		}
 		carregarSolRelacionadas($('#filtro').val());
-		validarCadastranteSolicitante();
 	}
 	
 	// Valida se o cadastrante é o solicitante, e neste caso irá ocultar
@@ -120,23 +164,17 @@
 	function validarCadastranteSolicitante() {
 		var siglaCadastrante = $('#siglaCadastrante').val();
 		var siglaSolicitante = $('#solicitacaosolicitante_sigla')[0].value;
-		
-		mudarVisibilidadeCampos(siglaCadastrante == siglaSolicitante);
-	}
-	
-	function mudarVisibilidadeCampos(saoIguais) {
-		if (saoIguais) {
+
+		if (siglaCadastrante == siglaSolicitante) {
 			$('#spanInterlocutor')[0].style.display='none';
 			$('#meioComunicacao')[0].style.display='none';
-			$('#dtInicioMeioComunicacao').hide();
 		}
 		else {
 			$('#spanInterlocutor')[0].style.display='inline';
 			$('#meioComunicacao')[0].style.display='inline';
-			$('#dtInicioMeioComunicacao').show();
 		}
 	}
-	
+
 	function carregarSolRelacionadas(comboFiltroVl){
 		return;
 		if(comboFiltroVl != ""){
@@ -233,8 +271,6 @@
 				name="dtIniEdicao" value="${dtIniEdicao}" />
 				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" /> 
-				<input type="hidden" name="solicitacao.stringDtMeioContato"
-				id="stringDtMeioContato" value="${solicitacao.dtRegDDMMYYYYHHMM}">
 
 			<div class="gt-form-table">
 				<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
@@ -267,58 +303,23 @@
 				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor,
 				onchange:'' /}
 			</div>
-			#{set locaisDisponiveis:solicitacao.locaisDisponiveis /}
-			#{if locaisDisponiveis.size() > 1}	
-				<div class="gt-form-row gt-width-66">
-					<label>Local</label> 
-					#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
-					labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
-				</div>
-				<script>
-					$("#local").change(function() {
-						  carregarItem();
-					});
-				</script>
-			#{/if}
 			
-			<div class="gt-form-table" style="margin-top: 10px;">
-				<div class="barra-subtitulo header" align="center" valign="top">
-					Contato
-				</div>
-			</div>
-			
-			<div class="gt-form-row gt-width-66" id="meioComunicacao">
-				<label>Origem da Demanda</label>
-				#{select name:'solicitacao.meioComunicacao',
-				items:models.SrMeioComunicacao.values(),
-				labelProperty:'descrMeioComunicacao',
-				value:solicitacao.meioComunicacao /}
-			</div>
-			
-			<div class="gt-form-row box-wrapper" style="margin-left: 15px; padding-top: 5px;" id="dtInicioMeioComunicacao">
-				<label>Preencha a data/hora do contato inicial:</label>
-				<div class="box box-left gt-width-50" >
-					<label>Data</label>
-					<input type="text" name="calendario" id="calendarioComunicacao" value="${calendario}">
-					<span style="color: red">#{error 'calendario' /}</span>
-				</div>
-				<div class="box box-right gt-width-50" style="padding-top: 20px !important">
-					<label>Hora</label>
-					<input type="text" name="horario" id="horarioComunicacao" value="${horario}">
-					<span style="color: red">#{error 'horario' /}</span>
-				</div>
-			</div>
-			
+			<div id="divLocalRamalEMeioContato">#{include
+				'Application/exibirLocalRamalEMeioContato.html' /}</div>
+				
 			<div class="gt-form-row gt-width-66">
 				<label>Quando deseja receber notificação de movimentacao?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
 				items:models.SrFormaAcompanhamento.values(),
 				labelProperty:'descrFormaAcompanhamento',
 				value:solicitacao.formaAcompanhamento /}
+			</div>	
+				
+			<div class="gt-form-table">
+				<div class="barra-subtitulo header" align="center" valign="top">
+					Detalhamento
+				</div>
 			</div>
-
-			<div id="divLocalRamalEMeioContato">#{include
-				'Application/exibirLocalRamalEMeioContato.html' /}</div>
 			
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
@@ -427,70 +428,3 @@
 	
 	<div id="divConhecimentosRelacionados"/>
 </div>
-
-<script>
-	
-	$('#gravar').click(function() {
-		if ($('#siglaCadastrante').val() != $('#solicitacaosolicitante_sigla')[0].value) {
-			var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
-			$('#stringDtMeioContato').val(stringDt);
-		} 
-	}); 
-	
-	if($('#solicitacaosolicitante').val() != $('#solicitacaointerlocutor').val()
-			&& $('#solicitacaointerlocutor').val() != "") {
-		$('#checkmostrarInterlocutor').prop('checked', true);	
-		$('#interlocutor').show();		
-	}
-
-	$('#checkRascunho').change(function() {
-		if(this.checked) {
-			$('#checkRascunho').prop('value', 'true');
-			return;
-		}
-		$('#checkRascunho').prop('value', 'false');
-	});
-	
-	var meioComunicacao = $("select[name='solicitacao.meioComunicacao']");
-	function verificarFormatoCampo() {
-		meioComunicacao = $("select[name='solicitacao.meioComunicacao']");
-		if(meioComunicacao.val() === 'EMAIL'
-			|| meioComunicacao.val() === 'PANDION'
-			|| meioComunicacao.val() === 'CHAT') {
-			$('#dtInicioMeioComunicacao').show();
-			return;
-		}
-		$('#dtInicioMeioComunicacao').hide();
-	};
-
-	verificarFormatoCampo(); 
-
-	meioComunicacao.change(function() {
-		verificarFormatoCampo(); 
-	});
-
-	function formatarValorTimer(num) {
-		if (num.toString().length == 1) 
-      		return "0" + num;
-
-  		return num;
-	};
-
-	var andamento = 0;	
-	function moveRelogio(mili){ 
-		andamento = andamento + mili;
-	   	dtAndamento = new Date(andamento);
-	   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
-	   	
-	   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
-	   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
-
-	   	$('#andamento').html(andamentoString);
-	   	$('#total').html(totalString);
-
-	   	setTimeout("moveRelogio(60000)",60000);
-	}; 
-
-	carregarFiltrosAoIniciar();
-	//moveRelogio(0);
-</script>

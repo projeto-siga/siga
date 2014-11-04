@@ -40,7 +40,7 @@ $(function(){
 		<div
 			style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
 			<img src="/siga/css/famfamfam/icons/error.png"
-				style="margin-right: 1px;"> O atendente atual não é o
+				style="margin-right: 1px;"> O atendente atual n�o � o
 			atendente designado.
 		</div>
 		#{/if} #{links acoes:solicitacao.operacoes(lotaTitular, titular,
@@ -183,11 +183,7 @@ $(function(){
 			<h3>Dados da Solicitação</h3>
 			<p>
 				<b>Solicitante:</b>
-				${solicitacao?.solicitante?.descricaoIniciaisMaiusculas}
-			</p>
-			<p>
-				<b>Origem da Demanda:</b>
-				${solicitacao?.meioComunicacao?.descrMeioComunicacao}
+				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}
 			</p>
 			<p>
 				<b>Lotação:</b> ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
@@ -200,10 +196,22 @@ $(function(){
 			#{/if}
 			<p>
 				<b>Cadastrante:</b>
-				${solicitacao?.cadastrante?.descricaoIniciaisMaiusculas}
+				${solicitacao.cadastrante?.descricaoIniciaisMaiusculas}
 			</p>
+			#{if solicitacao.meioComunicacao}
 			<p>
-				<b>Abertura:</b> ${solicitacao.solicitacaoInicial.dtRegString}
+				<b>Origem da Demanda:</b>
+				${solicitacao.meioComunicacao?.descrMeioComunicacao}
+			</p>
+			#{/if}
+			#{if solicitacao.dtOrigem}
+			<p>
+				<b>Contato Inicial:</b>
+				${solicitacao.dtOrigemString}
+			</p>
+			#{/if}
+			<p>
+				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>
 			<p>
 				<b>Item de Configuração:</b>
@@ -384,7 +392,7 @@ $(function(){
 			<input type="text" name="calendario" id="calendario">
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Hor�rio</label>
+			<label>Horário</label>
 			<input type="text" name="horario" id="horario">
 		</div>
 		<div class="gt-form-row gt-width-66">

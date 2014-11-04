@@ -146,6 +146,9 @@ public class Application extends SigaApplication {
 			solicitacao.solicitante = titular();
 		} else
 			solicitacao = SrSolicitacao.findById(id);
+		
+		if (solicitacao.dtOrigem == null)
+			solicitacao.dtOrigem = new Date();
 
 		formEditar(solicitacao.deduzirLocalRamalEMeioContato());
 	}
@@ -245,35 +248,12 @@ public class Application extends SigaApplication {
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
 
-		if(solicitacao.meioComunicacao.equals(SrMeioComunicacao.EMAIL)
-				|| solicitacao.meioComunicacao.equals(SrMeioComunicacao.PANDION)
-				|| solicitacao.meioComunicacao.equals(SrMeioComunicacao.CHAT)) {
-			
-			if(solicitacao.stringDtMeioContato == null 
-					|| !solicitacao.stringDtMeioContato.contains("/"))
-				validation.addError("calendario", "Data não informada");
-			
-			if(solicitacao.stringDtMeioContato == null 
-					|| !solicitacao.stringDtMeioContato.contains(":")) 
-				validation.addError("horario", "Hora não informada");
-				
-		} else {
-				String[] stringData = solicitacao.stringDtMeioContato.split(":");
-				String[] time = stringData[1].split(":");
-				int hora = Integer.parseInt(time[0]);
-				int minuto = Integer.parseInt(time[1]);
-				if (hora > 23 || minuto > 59) {
-					validation.addError("horario",
-							"Hora inválida");
-				}
-		}
-
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
 					"Item não informado");
 		}
 		if (solicitacao.acao == null) {
-			validation.addError("solicitacao.acao", "Ação não informada");
+			validation.addError("solicitacao.acao", "A��o não informada");
 		}
 
 		if (solicitacao.descrSolicitacao == null
@@ -289,7 +269,7 @@ public class Application extends SigaApplication {
 					&& obrigatorio.get(att.tipoAtributo.idTipoAtributo))
 				validation.addError("solicitacao.atributoMap["
 						+ att.tipoAtributo.idTipoAtributo + "]",
-						att.tipoAtributo.nomeTipoAtributo + " não informado");
+						att.tipoAtributo.nomeTipoAtributo + " n�o informado");
 		}
 
 		if (validation.hasErrors()) {

@@ -126,7 +126,6 @@ public class CpConfiguracaoBL {
 	}
 
 	private synchronized void atualizarCache(Long idTipoConfig) {
-		if (this.getClass().equals(CpConfiguracaoBL.class)){
 			if (!cacheInicializado){
 				inicializarCache();
 				return;
@@ -160,7 +159,6 @@ public class CpConfiguracaoBL {
 	
 				dtUltimaAtualizacaoCache = dt;
 			}
-		}
 	}
 
 	private void inicializarCache(Long idTipoConfig) {
@@ -185,8 +183,10 @@ public class CpConfiguracaoBL {
 	 */
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		for (CpConfiguracao cfg : provResults) {
-			if (cfg.getCpSituacaoConfiguracao() != null)
+			if (cfg.getCpSituacaoConfiguracao() != null){
 				cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
+				cfg.getCpSituacaoConfiguracao().getCpTiposServicoSet();
+			}
 			if (cfg.getOrgaoUsuario() != null)
 				cfg.getOrgaoUsuario().getDescricao();
 			if (cfg.getComplexo() != null)

@@ -129,6 +129,7 @@
 			method="isEmailValido">
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
 			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
+			<result name="error">/sigalibs/ajax_msg_erro.jsp</result>
 		</action>
 		
 

@@ -91,7 +91,11 @@
       
       <resource-root path="../main/opencloud-0.3.jar"/>
       <resource-root path="../main/ojdbc6.jar" />
-
+      
+      <!-- especifico do sigasr -->
+      <resource-root path="freemarker-2.3.20.jar" />
+      <resource-root path="backport-util-concurrent-3.1.jar" />
+      <resource-root path="bsh-2.0b4.jar" />
     </resources>
 
     <dependencies>

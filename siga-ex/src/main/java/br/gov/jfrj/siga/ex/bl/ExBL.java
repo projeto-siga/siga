@@ -4047,7 +4047,7 @@ public class ExBL extends CpBL {
 		novoDoc.setObsOrgao(doc.getObsOrgao());
 		novoDoc.setOrgaoExterno(doc.getOrgaoExterno());
 		novoDoc.setOrgaoExternoDestinatario(doc.getOrgaoExternoDestinatario());
-		novoDoc.setExMobilPai(doc.getExMobilPai());
+		novoDoc.setExMobilPai(null);
 		novoDoc.setOrgaoUsuario(doc.getOrgaoUsuario());
 
 		if (doc.getTitular() != null && !doc.getTitular().isFechada())

@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,12 +18,17 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Id
@@ -44,9 +50,16 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrAcao acaoInicial;
 
-	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrAcao> meuAcaoHistoricoSet;
+
+	@ManyToOne()
+	@JoinColumn(name = "ID_PAI")
+	public SrAcao pai;
+
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "pai", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	public List<SrAcao> filhoSet;
 
 	public SrAcao() {
 		this(null, null);
@@ -80,22 +93,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		return tituloAcao;
 	}
 
-	public String getDescricaoCompleta() {
-		String sigla = this.siglaAcao;
-		int nivel = this.getNivel();
-		String desc_nivel = null;
-		if (nivel == 1) {
-			desc_nivel = this.tituloAcao;
-		}
-		if (nivel == 2) {
-			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrAcao configuracao = SrAcao.find("bySiglaAcaoAndHisDtFimIsNull",
-					sigla_raiz).first();
-			desc_nivel = configuracao.tituloAcao + " : " + this.tituloAcao;
-		}
-		return desc_nivel;
-	}
-
 	@Override
 	public void setDescricao(String descricao) {
 		this.tituloAcao = descricao;
@@ -108,6 +105,8 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public SrAcao getAtual() {
+		if (getHisDtFim() == null)
+			return this;
 		List<SrAcao> sols = getHistoricoAcao();
 		if (sols == null)
 			return null;
@@ -212,6 +211,18 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		return getSigla().substring(0, posFimComparacao + 1);
 	}
 
+	public SrAcao getPaiPorSigla() {
+		String sigla = getSiglaSemZeros();
+		sigla = sigla.substring(0, sigla.length() - 1);
+		if (sigla.lastIndexOf(".") == -1)
+			return null;
+		sigla = sigla.substring(0, sigla.lastIndexOf("."));
+		for (int i = 0; i < 2 - (getNivel() - 1); i++) {
+			sigla += ".00";
+		}
+		return SrAcao.find("byHisDtFimIsNullAndSiglaAcao", sigla).first();
+	}
+
 	public boolean isPaiDeOuIgualA(SrAcao outraAcao) {
 		if (outraAcao == null || outraAcao.getSigla() == null)
 			return false;
@@ -228,31 +239,49 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		return outroItem.isPaiDeOuIgualA(this);
 	}
 
-	public List<SrAcao> listarAcaoETodasDescendentes() {
-		return SrAcao.find("byHisDtFimIsNullAndSiglaAcaoLike",
-				getSiglaSemZeros() + "%").fetch();
-	}
-
 	public static List<SrAcao> listar() {
 		return SrAcao.find("hisDtFim is null order by siglaAcao").fetch();
 	}
 
 	public String getGcTags() {
-		String sigla = this.siglaAcao;
-
-		int nivel = this.getNivel();
 		String tags = "";
-		if (nivel == 1) {
-			tags = "&tags=@" + Texto.slugify(this.tituloAcao, true, false);
+		SrAcao pai = this.pai;
+		if (pai != null)
+			tags += pai.getGcTags();
+		return tags + "&tags=@" + getTituloSlugify();
+	}
+
+	public String getTituloSlugify() {
+		return Texto.slugify(tituloAcao, true, false);
+	}
+
+	public void salvar() throws Exception {
+		if (getNivel() > 1) {
+			pai = getPaiPorSigla();
 		}
-		if (nivel == 2) {
-			String sigla_raiz = this.getSigla().substring(0, 2) + ".00";
-			SrAcao configuracao = SrAcao.find("bySiglaAcao", sigla_raiz)
-					.first();
-			tags = "&tags=@"
-					+ Texto.slugify(configuracao.tituloAcao, true, false)
-					+ "&tags=@" + Texto.slugify(this.tituloAcao, true, false);
+		super.salvar();
+		
+		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
+		//tem de ser corrigido.
+		
+		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
+		//serao recarregadas do banco, e precisarao reconhecer o novo estado desta acao
+		//refresh();
+
+		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
+		// instancia do objeto, caso contrario, nao ha configuracao
+		// referenciando
+		//if (acaoInicial != null)
+		//	SrConfiguracao.notificarQueMudou(this);
+	}
+
+	public List<SrAcao> getAcaoETodasDescendentes() {
+		List<SrAcao> lista = new ArrayList<SrAcao>();
+		lista.add(this);
+		for (SrAcao filho : filhoSet) {
+			if (filho.getHisDtFim() == null)
+				lista.addAll(filho.getAcaoETodasDescendentes());
 		}
-		return tags;
+		return lista;
 	}
 }

@@ -89,6 +89,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
+import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
@@ -1054,9 +1055,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		try {
 			Ex.getInstance()
 					.getBL()
-
 					.arquivarCorrente(getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), null, mov.getSubscritor());
+							mov.getDtMov(), null, mov.getSubscritor(), false);
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -2433,8 +2433,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							.getBL()
 							.arquivarCorrente(getCadastrante(),
 									getLotaTitular(), mob,
-
-									mov.getDtMov(), dt, mov.getSubscritor());
+									mov.getDtMov(), dt, mov.getSubscritor(), false);
 				}
 			}
 		} catch (final Exception e) {
@@ -2606,6 +2605,18 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				itensFinalizados.add(doc);
 		}
 		setItensSolicitados(itensFinalizados);
+		return Action.SUCCESS;
+	}
+	
+	public String aAssinarDespachoLote() throws Exception {		
+		List<ExMovimentacao> itensComoSubscritor = dao().
+					listarDespachoPendenteAssinatura(getTitular());
+
+		setItens(new ArrayList<ExMovimentacao>());
+		for (ExMovimentacao mov : itensComoSubscritor) {
+				if(!mov.isAssinada() && !mov.isCancelada())
+					getItens().add(mov);
+		}
 		return Action.SUCCESS;
 	}
 
@@ -2940,7 +2951,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 							mov.getDestinoFinal(), mov.getSubscritor(),
 							mov.getTitular(), mov.getExTipoDespacho(), false,
 							mov.getDescrMov(), conteudo,
-							mov.getNmFuncaoSubscritor(), false);
+							mov.getNmFuncaoSubscritor(), false, false);
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -3249,7 +3260,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 										mov.getDestinoFinal(),
 										mov.getSubscritor(), mov.getTitular(),
 										tpd, false, txt, null,
-										mov.getNmFuncaoSubscritor(), false);
+										mov.getNmFuncaoSubscritor(), false, false);
 
 					}
 				}

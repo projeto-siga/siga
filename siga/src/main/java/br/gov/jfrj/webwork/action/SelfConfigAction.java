@@ -131,6 +131,7 @@ public class SelfConfigAction 	extends SigaActionSupport
 																	  	obterCpTipoConfiguracaoAConfigurar(idTipoConfiguracao),
 																		t_cpsServico);
                 
+                t_cfgConfigGravada.toString();
                 // devolve os ids como confirmação
 				HashMap<String, String> t_hmpRetorno = new HashMap<String, String>();
 				t_hmpRetorno.put("idpessoa", /*idPessoaConfiguracao*/ String.valueOf(t_cfgConfigGravada.getDpPessoa().getIdPessoa()));

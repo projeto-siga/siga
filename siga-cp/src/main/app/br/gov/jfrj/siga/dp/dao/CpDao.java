@@ -45,13 +45,16 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.DefaultNamingStrategy;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -106,6 +109,10 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_QUERY_HOURS = "query.hours";
 	public static final String CACHE_SECONDS = "seconds";
 
+	public static CpDao getInstance(Session sessao, StatelessSession sessaoStateless) {
+		return ModeloDao.getInstance(CpDao.class, sessao, sessaoStateless);
+	}
+	
 	public static CpDao getInstance(Session sessao) {
 		return ModeloDao.getInstance(CpDao.class, sessao);
 	}
@@ -1291,9 +1298,10 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
-		Query sql = (Query) getSessao().getNamedQuery(
+		Query sql = getSessaoStateless().getNamedQuery(
 				"consultarDataUltimaAtualizacao");
 
+		
 		sql.setCacheable(false);
 		List result = sql.list();
 		if (result.size() != 1)
@@ -2055,6 +2063,15 @@ public class CpDao extends ModeloDao {
 		}
 
 		return null;
+	}
+
+	public List<CpConfiguracao> consultarConfiguracoesDesde(
+			Date desde) {
+		Criteria c = HibernateUtil.getSessao().createCriteria(CpConfiguracao.class);
+		LogicalExpression confsAtivas = Restrictions.and(Restrictions.ge("hisDtIni", desde),Restrictions.isNull("hisDtFim"));
+		LogicalExpression confsInativas = Restrictions.and(Restrictions.ge("hisDtFim", desde),Restrictions.isNotNull("hisDtFim"));
+		c.add(Restrictions.or(confsAtivas,confsInativas));
+		return c.list();
 	}
 
 }

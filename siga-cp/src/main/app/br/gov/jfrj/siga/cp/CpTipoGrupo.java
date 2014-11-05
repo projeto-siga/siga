@@ -21,8 +21,12 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "CP_TIPO_GRUPO", schema="CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpTipoGrupo extends AbstractCpTipoGrupo {
 	public static final int TIPO_GRUPO_PERFIL_DE_ACESSO = 1;
 	public static final int TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO = 2;

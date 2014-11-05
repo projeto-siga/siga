@@ -23,6 +23,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @NamedQueries({
@@ -33,6 +36,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 				+ "where upper(org.siglaServico) like upper(:siglaServico)") })
 @Entity
 @Table(name = "CP_SERVICO", schema = "CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	/**

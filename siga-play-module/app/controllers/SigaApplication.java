@@ -25,9 +25,8 @@ public class SigaApplication extends Controller {
 	protected static void prepararSessao() throws Exception {
 		Session playSession = (Session) JPA.em().getDelegate();
 		CpDao.freeInstance();
-		CpDao.getInstance(playSession);
+		CpDao.getInstance(playSession, playSession.getSessionFactory().openStatelessSession());
 		HibernateUtil.setSessao(playSession);
-		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
 	protected static void obterCabecalhoEUsuario(String backgroundColor)

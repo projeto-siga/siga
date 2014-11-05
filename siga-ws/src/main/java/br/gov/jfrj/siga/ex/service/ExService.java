@@ -65,7 +65,7 @@ public interface ExService extends Remote {
 	Boolean exigirAnexo(String codigoDocumentoVia, String siglaCadastrante,
 			String descricaoDoAnexo) throws Exception;
 	
-	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
-			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo,  String siglaDocPai, Boolean finalizar)  throws Exception;
+	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
+			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception;
 
 }

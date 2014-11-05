@@ -40,6 +40,15 @@
 				</li>
 			</c:if>
 		</c:catch>
+		<c:catch>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+				<li><ww:url id="url" action="assinar_despacho_lote"
+						namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+						texto="Assinar Despacho em lote" />
+				</li>
+			</c:if>
+		</c:catch>
 		<li><ww:url id="url" action="arquivar_corrente_lote"
 				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
 				texto="Arquivar em lote" />
@@ -139,7 +148,7 @@
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios')}">
 
 	<li><a href="#">Relatórios</a>
-		<ul class="navmenu-large">
+		<ul id="relatorios" class="navmenu-large">
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;FORMS:Relação de formulários')}">
 				<li><ww:url id="url" action="relRelatorios"
@@ -258,7 +267,7 @@
 							<li><ww:url id="url" action="relRelatorios"
 									namespace="/expediente/rel">
 									<ww:param name="nomeArquivoRel">relDocsClassificados.jsp</ww:param>
-								</ww:url> <ww:a href="%{url}">Relação de Documentos Classificados</ww:a></li>
+								</ww:url> <ww:a id="relclassificados" href="%{url}">Relação de Documentos Classificados</ww:a></li>
 						</c:if>
 						
 					</ul>		

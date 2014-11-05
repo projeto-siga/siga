@@ -54,6 +54,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -84,8 +85,7 @@ public class Application extends SigaApplication {
 	@Before
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
-		// TAH: Copiar essa classe e fazer as alterações necessárias
-		// SrConfiguracaoBL.get().limparCacheSeNecessario();
+		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
 	@Before(unless = { "publicKnowledge", "dadosRI" })
@@ -104,109 +104,6 @@ public class Application extends SigaApplication {
 		} catch (Exception e) {
 			renderArgs.put("exibirMenuAdministrar", false);
 		}
-	}
-
-	static void delme_addDefaults() throws Exception {
-		ModeloDao.freeInstance();
-
-		if (request.url.contains("proxy"))
-			return;
-
-		renderArgs.put("_base", HTTP_LOCALHOST_8080);
-
-		HashMap<String, String> atributos = new HashMap<String, String>();
-		for (Http.Header h : request.headers.values())
-			if (!h.name.equals("content-type"))
-				atributos.put(h.name, h.value());
-
-		String paginaVazia = ConexaoHTTP.get(HTTP_LOCALHOST_8080
-				+ "/siga/pagina_vazia.action?popup=false", atributos);
-
-		String[] pageText = paginaVazia.split("<!-- insert body -->");
-		String[] cabecalho = pageText[0].split("<!-- insert menu -->");
-		renderArgs.put("_cabecalho_pre", cabecalho[0]);
-		renderArgs.put("_cabecalho_pos", cabecalho[1]);
-		// renderArgs.put("_cabecalho", pageText[0]);
-		renderArgs.put("_rodape", pageText[1]);
-
-		String[] IDs = ConexaoHTTP.get(
-				HTTP_LOCALHOST_8080 + "/siga/usuario_autenticado.action",
-				atributos).split(";");
-
-		// DpPessoa cadastrante = (DpPessoa) JPA.em().find(DpPessoa.class,
-		// Long.parseLong(IDs[0]));
-		DpPessoa cadastrante = DpPessoa.findById(Long.parseLong(IDs[0]));
-		renderArgs.put("cadastrante", cadastrante);
-
-		if (IDs[1] != null && !IDs[1].equals("")) {
-			// DpLotacao lotaCadastrante = (DpLotacao) JPA.em().find(
-			// DpLotacao.class, Long.parseLong(IDs[1]));
-			DpLotacao lotaCadastrante = DpLotacao.findById(Long
-					.parseLong(IDs[1]));
-			renderArgs.put("lotaCadastrante", lotaCadastrante);
-		}
-
-		if (IDs[2] != null && !IDs[2].equals("")) {
-			// DpPessoa titular = (DpPessoa) JPA.em().find(DpPessoa.class,
-			// Long.parseLong(IDs[2]));
-			DpPessoa titular = DpPessoa.findById(Long.parseLong(IDs[2]));
-			renderArgs.put("titular", titular);
-		}
-
-		if (IDs[3] != null && !IDs[3].equals("")) {
-			// DpLotacao lotaTitular = JPA.em().find(DpLotacao.class,
-			// Long.parseLong(IDs[3]));
-			DpLotacao lotaTitular = DpLotacao.findById(Long.parseLong(IDs[3]));
-			// lotaTitular = (DpLotacao) GcDao.getImplementation(lotaTitular);
-			renderArgs.put("lotaTitular", lotaTitular);
-		}
-
-		if (IDs[4] != null && !IDs[4].equals("")) {
-			CpIdentidade identidadeCadastrante = JPA.em().find(
-					CpIdentidade.class, Long.parseLong(IDs[4]));
-			renderArgs.put("identidadeCadastrante", identidadeCadastrante);
-		}
-
-		// int a = 0;
-
-		if (Play.mode == Mode.DEV && GcInformacao.count() == 0) {
-			Date dt = GcBL.dt();
-			CpIdentidade idc = (CpIdentidade) renderArgs
-					.get("identidadeCadastrante");
-			DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
-
-			GcArquivo arq = new GcArquivo();
-			arq.setConteudoTXT("teste 123");
-			arq.titulo = "teste";
-
-			GcMovimentacao mov = new GcMovimentacao();
-			mov.arq = arq;
-			mov.hisDtIni = dt;
-			mov.hisIdcIni = idc;
-			mov.tipo = GcTipoMovimentacao
-					.findById(GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO);
-			/*
-			 * mov.pessoa ou mov.lotacao => responsavel por uma ação
-			 * (notificar ou solicitar revisão) mov.pessoa = pessoa;
-			 * mov.lotacao = mov.pessoa.getLotacao();
-			 */
-			GcInformacao inf = new GcInformacao();
-			inf.autor = pessoa;
-			inf.lotacao = inf.autor.getLotacao();
-			inf.hisDtIni = dt;
-			inf.hisIdcIni = idc;
-			inf.tipo = GcTipoInformacao.findById(1L);
-			inf.ou = inf.autor.getOrgaoUsuario();
-			inf.movs = new TreeSet<GcMovimentacao>();
-			inf.movs.add(mov);
-
-			GcBL.gravar(inf, idc, titular(), lotaTitular());
-		}
-
-		// } catch (Exception e) {
-		// redirect("http://localhost:8080/siga");
-		// }
-
 	}
 
 	public static void gadget() {
@@ -311,6 +208,57 @@ public class Application extends SigaApplication {
 		else
 			render("@knowledge", conhecimentos, classificacao, msgvazio,
 					urlvazio, titulo, referer, popup);
+	}
+
+	public static void updateTag(String before, String after) {
+
+		// Edson: Atualizando tags de classificacao:
+		JPA.em()
+				.createQuery(
+						"update GcTag set titulo = '" + after
+								+ "' where titulo = '" + before + "'")
+				.executeUpdate();
+
+		// Edson: Atualizando tags de ancora. O problema aqui eh que,
+		// muitas vezes, o before aparece em tags ancora acompanhado de
+		// outra classificacao. Por exemplo, cadeira-consertar, onde
+		// before eh consertar. Os patterns abaixo funcionam, mas nao
+		// sempre. Por exemplo, se houver uma tag cadeira-tentar-consertar
+		// alem da cadeira-consertar, ela vai ser erroneamente atualizada.
+		List<GcTag> tags = JPA
+				.em()
+				.createQuery(
+						"from GcTag where titulo like '%" + before
+								+ "%' and tipo.id = 3").getResultList();
+		for (GcTag t : tags) {
+			t.titulo = t.titulo.replaceAll("^" + before + "(-.+|$)", after
+					+ "$1");
+			t.titulo = t.titulo.replaceAll("(.+-|^)" + before + "$", "$1"
+					+ after);
+			t.save();
+		}
+
+		// Edson: Atualizando os arquivos:
+		List<GcArquivo> arqs = JPA
+				.em()
+				.createQuery(
+						"select arq from GcInformacao inf inner join inf.arq arq"
+								+ " where inf.hisDtFim is null and arq.classificacao like '%"
+								+ before + "%'").getResultList();
+		for (GcArquivo arq : arqs) {
+			if (arq.classificacao.startsWith("^")) {
+				arq.classificacao = arq.classificacao.replace(":" + before, ":"
+						+ after);
+				arq.classificacao = arq.classificacao.replaceAll("-" + before
+						+ "$", "-" + after);
+			} else {
+				arq.classificacao = arq.classificacao.replaceAll("(@" + before
+						+ ")(,|$)", "@" + after + "$2");
+			}
+			arq.save();
+		}
+
+		renderText("OK");
 	}
 
 	public static void index() {
@@ -890,11 +838,10 @@ public class Application extends SigaApplication {
 					.findById(lotacao) : null);
 			GcBL.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR,
-					pesResponsavel, lotResponsavel, email, null,
-					null, null, null, null, null);
+					pesResponsavel, lotResponsavel, email, null, null, null,
+					null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-			Correio.notificar(informacao, pesResponsavel, lotResponsavel,
-					email);
+			Correio.notificar(informacao, pesResponsavel, lotResponsavel, email);
 			flash.success("Notificação realizada com sucesso!");
 			exibir(informacao.getSigla());
 		} else
@@ -940,8 +887,9 @@ public class Application extends SigaApplication {
 		if (files != null)
 			for (Upload file : files) {
 				if (file.getSize() > 2097152)
-					throw new AplicacaoException("O tamanho do arquivo � maior que o "
-							+ "m�ximo permitido (2MB)");
+					throw new AplicacaoException(
+							"O tamanho do arquivo � maior que o "
+									+ "m�ximo permitido (2MB)");
 				if (file.getSize() > 0) {
 					/*
 					 * ----Não pode ser usado porque o "plupload" retorna um
@@ -1144,16 +1092,14 @@ public class Application extends SigaApplication {
 
 	public static void selecionarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/selecionar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla="
-				+ URLEncoder.encode(sigla, "UTF-8"));
+		proxy("/" + tipo + "/selecionar.action?" + "propriedade=" + tipo + nome
+				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSiga(String sigla, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/buscar.action?"
-				+ "propriedade=" + tipo + nome + "&sigla="
-				+ URLEncoder.encode(sigla, "UTF-8"));
+		proxy("/" + tipo + "/buscar.action?" + "propriedade=" + tipo + nome
+				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSigaFromPopup(String tipo) throws Exception {

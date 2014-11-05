@@ -32,6 +32,7 @@ import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
@@ -43,6 +44,8 @@ public abstract class ModeloDao {
 	private static final Logger log = Logger.getLogger(ModeloDao.class);
 
 	protected Session sessao;
+	
+	protected StatelessSession sessaoStateless;
 
 	protected String cacheRegion = null;
 
@@ -55,6 +58,12 @@ public abstract class ModeloDao {
 	@SuppressWarnings("unchecked")
 	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,
 			Session sessao) {
+		return getInstance(clazz, sessao, null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,
+			Session sessao, StatelessSession sessaoStateless) {
 		T dao = null;
 
 		try {
@@ -73,6 +82,12 @@ public abstract class ModeloDao {
 					dao.sessao = s;
 				} else {
 					dao.sessao = sessao;
+				}
+				if (sessaoStateless == null) {
+					StatelessSession stateless = HibernateUtil.getSessionFactory().openStatelessSession();
+					dao.sessaoStateless = stateless;
+				} else {
+					dao.sessaoStateless = sessaoStateless;
 				}
 			} catch (Exception e) {
 				throw new Error(e);
@@ -146,6 +161,16 @@ public abstract class ModeloDao {
 			throw new IllegalStateException(
 					"Vari�vel Session n�o foi atribu�da para este DAO");
 		return sessao;
+	}
+	
+	/**
+	 * @return Retorna o atributo sessaoStateless.
+	 */
+	public StatelessSession getSessaoStateless() {
+		if (sessaoStateless == null)
+			throw new IllegalStateException(
+					"Vari�vel Session n�o foi atribu�da para este DAO");
+		return sessaoStateless;
 	}
 
 	/**

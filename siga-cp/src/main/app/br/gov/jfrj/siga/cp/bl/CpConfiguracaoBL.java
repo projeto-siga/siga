@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.proxy.HibernateProxy;
@@ -58,11 +59,12 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
  */
 public class CpConfiguracaoBL {
 
-	private Date dtUltimaAtualizacao = null;
+	private static Date dtUltimaAtualizacaoCache = null;
+	private static boolean cacheInicializado = false;
 
 	protected Comparator<CpConfiguracao> comparator = null;
 
-	public HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+	protected HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
 
 	public static int PESSOA = 1;
 
@@ -101,6 +103,10 @@ public class CpConfiguracaoBL {
 	}
 
 	public HashMap<Long, TreeSet<CpConfiguracao>> getHashListas() {
+		if (!cacheInicializado){
+			inicializarCache();
+		}
+
 		return hashListas;
 	}
 
@@ -116,24 +122,55 @@ public class CpConfiguracaoBL {
 
 	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig)
 			throws Exception {
-		synchronized (this) {
-			if (!getHashListas().containsKey(idTipoConfig)) {
-				TreeSet<CpConfiguracao> tree = new TreeSet<CpConfiguracao>(
-						comparator);
-				CpConfiguracao cpConfiguracao = createNewConfiguracao();
-
-				cpConfiguracao.setCpTipoConfiguracao(dao().consultar(
-						idTipoConfig, CpTipoConfiguracao.class, false));
-				List<CpConfiguracao> provResults = (List<CpConfiguracao>) CpDao
-						.getInstance().consultar(cpConfiguracao);
-
-				evitarLazy(provResults);
-
-				if (provResults != null)
-					tree.addAll(provResults);
-				getHashListas().put(idTipoConfig, tree);
-			}
 			return getHashListas().get(idTipoConfig);
+	}
+
+	private synchronized void atualizarCache(Long idTipoConfig) {
+			if (!cacheInicializado){
+				inicializarCache();
+				return;
+			}
+			Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
+	
+			if (dtUltimaAtualizacaoCache == null || dt.after(dtUltimaAtualizacaoCache)) {
+	
+				SessionFactory sfCpDao = CpDao.getInstance().getSessao()
+						.getSessionFactory();
+				
+				sfCpDao.evict(CpConfiguracao.class);
+	
+	
+				List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
+				Logger.getLogger("siga.conf.cache").fine("Número de alterações no cache: " + alteracoes.size());
+				if (alteracoes.size() > 0){
+					evitarLazy(alteracoes);
+					inicializarCache(idTipoConfig);
+					
+					for (CpConfiguracao cpConfiguracao : alteracoes) {
+						Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
+						inicializarCache(idTpConf);
+						if (cpConfiguracao.ativaNaData(dt)){
+							hashListas.get(idTpConf).add(cpConfiguracao);	
+						}else{
+							hashListas.get(idTpConf).remove(cpConfiguracao);
+						}
+					}
+				}
+	
+				dtUltimaAtualizacaoCache = dt;
+			}
+	}
+
+	private void inicializarCache(Long idTipoConfig) {
+		if (idTipoConfig!= null && hashListas.get(idTipoConfig) == null){
+			TreeSet<CpConfiguracao> tree = new TreeSet<CpConfiguracao>(comparator);
+			CpConfiguracao searchConf = createNewConfiguracao();
+			searchConf.setCpTipoConfiguracao(dao().consultar(idTipoConfig, CpTipoConfiguracao.class, false));
+			List<CpConfiguracao> results = (List<CpConfiguracao>) dao().consultar(searchConf);
+			evitarLazy(results);
+			tree.addAll(results);
+			hashListas.put(idTipoConfig, tree);
+
 		}
 	}
 
@@ -146,8 +183,10 @@ public class CpConfiguracaoBL {
 	 */
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		for (CpConfiguracao cfg : provResults) {
-			if (cfg.getCpSituacaoConfiguracao() != null)
+			if (cfg.getCpSituacaoConfiguracao() != null){
 				cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
+				cfg.getCpSituacaoConfiguracao().getCpTiposServicoSet();
+			}
 			if (cfg.getOrgaoUsuario() != null)
 				cfg.getOrgaoUsuario().getDescricao();
 			if (cfg.getComplexo() != null)
@@ -158,8 +197,10 @@ public class CpConfiguracaoBL {
 				cfg.getCargo().getDescricao();
 			if (cfg.getFuncaoConfianca() != null)
 				cfg.getFuncaoConfianca().getDescricao();
-			if (cfg.getDpPessoa() != null)
+			if (cfg.getDpPessoa() != null){
 				cfg.getDpPessoa().getDescricao();
+				cfg.getDpPessoa().getPessoaAtual().getDescricao();
+			}
 			if (cfg.getCpTipoConfiguracao() != null)
 				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
 			if (cfg.getCpServico() != null)
@@ -177,27 +218,8 @@ public class CpConfiguracaoBL {
 		}
 	}
 
-	public void evictListaPorTipo(CpTipoConfiguracao cpTipoConfig)
-			throws Exception {
-		synchronized (this) {
-			if (cpTipoConfig == null) {
-				getHashListas().clear();
-				return;
-			}
-			Long id = cpTipoConfig.getIdTpConfiguracao();
-			if (getHashListas().containsKey(id)) {
-				getHashListas().remove(id);
-			}
-			return;
-		}
-	}
-
 	public void limparCacheSeNecessario() throws Exception {
-		Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
-		if (dtUltimaAtualizacao == null || dt.after(dtUltimaAtualizacao)) {
-			limparCache(null);
-			dtUltimaAtualizacao = dt;
-		}
+		atualizarCache(null);
 	}
 
 	/**
@@ -209,18 +231,7 @@ public class CpConfiguracaoBL {
 	 */
 	public void limparCache(CpTipoConfiguracao cpTipoConfig) throws Exception {
 
-		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
-				.getSessionFactory();
-
-		evictListaPorTipo(cpTipoConfig);
-
-		sfCpDao.evict(CpConfiguracao.class);
-		sfCpDao.evict(DpLotacao.class);
-
-		// sfCpDao.evictQueries("query.CpConfiguracao");
-		// sfCpDao.evictQueries("query.DpLotacao");
-
-		return;
+		atualizarCache(cpTipoConfig!=null?cpTipoConfig.getIdTpConfiguracao():null);
 
 	}
 
@@ -837,6 +848,22 @@ public class CpConfiguracaoBL {
 		}
 
 		return false;
+	}
+
+	public synchronized void inicializarCache() {
+		if (!cacheInicializado){
+			List<CpTipoConfiguracao> tiposConfiguracao = CpDao.getInstance().listarTiposConfiguracao();
+			for (CpTipoConfiguracao cpTpConf : tiposConfiguracao) {
+				try{
+			        inicializarCache(cpTpConf.getIdTpConfiguracao());
+				}catch(Exception e){
+					Logger.getLogger("siga.conf.cache").warning("Não foi possível inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
+				}
+			}
+			cacheInicializado = true;
+			
+			
+		}
 	}
 
 }

@@ -47,6 +47,7 @@ public class ExMobilVO extends ExVO {
 	List<ExMovimentacaoVO> anexosNaoAssinados = new ArrayList<ExMovimentacaoVO>();
 	List<ExMovimentacaoVO> despachosNaoAssinados = new ArrayList<ExMovimentacaoVO>();
 	List<ExDocumentoVO> expedientesFilhosNaoJuntados = new ArrayList<ExDocumentoVO>();
+	List<ExMovimentacaoVO> pendenciasDeAnexacao = new ArrayList<ExMovimentacaoVO>();
 
 	List<ExMovimentacaoVO> movs = new ArrayList<ExMovimentacaoVO>();
 	List<ExMarca> marcasAtivas = new ArrayList<ExMarca>();
@@ -182,6 +183,12 @@ public class ExMobilVO extends ExVO {
 
 			for (ExMovimentacao mov : mob.getDespachosNaoAssinados())
 				despachosNaoAssinados.add(new ExMovimentacaoVO(this, mov,
+						titular, lotaTitular));
+		}
+		
+		if(mob.getPendenciasDeAnexacao() != null) {
+			for (ExMovimentacao mov : mob.getPendenciasDeAnexacao())
+				pendenciasDeAnexacao.add(new ExMovimentacaoVO(this, mov,
 						titular, lotaTitular));
 		}
 		
@@ -625,6 +632,10 @@ public class ExMobilVO extends ExVO {
 		return processosFilhosNaoCancelados;
 	}
 
+	public List<ExMovimentacaoVO> getPendenciasDeAnexacao() {
+		return pendenciasDeAnexacao;
+	}
+
 	@Override
 	public String toString() {
 		return getSigla() + "[" + getAcoes() + "] ";
@@ -657,7 +668,8 @@ public class ExMobilVO extends ExVO {
 	public boolean isPendencias() {
 		return anexosNaoAssinados.size() > 0
 				|| despachosNaoAssinados.size() > 0
-				|| expedientesFilhosNaoJuntados.size() > 0;
+				|| expedientesFilhosNaoJuntados.size() > 0
+				|| pendenciasDeAnexacao.size() > 0;
 	}
 
 }

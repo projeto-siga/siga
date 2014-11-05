@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.DateFormat;
@@ -29,14 +30,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.text.MaskFormatter;
 
+import org.xml.sax.InputSource;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.Texto;
@@ -51,7 +54,6 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
-import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
@@ -67,6 +69,7 @@ import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoES;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
 import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import freemarker.ext.dom.NodeModel;
 
 public class FuncoesEL {
 	public static ExDao dao() {
@@ -1016,5 +1019,22 @@ public class FuncoesEL {
         }
 
         return null;
+	}
+	
+	public static String webservice(String url, String corpo, Integer timeout) {
+		HashMap<String,String> headers = new HashMap<String, String>();
+		headers.put("Content-Type", "text/xml;charset=UTF-8");
+		String s = ConexaoHTTP.get(url, headers, timeout, corpo);
+		return s;
+	}
+	
+	public static NodeModel parseXML(String xml) throws Exception  {
+		xml = URLDecoder.decode(xml, "UTF-8");
+		// Remover todos os namespaces
+		xml = xml.replaceAll("(</?)[a-z]+:", "$1");
+		xml = xml.replaceAll("( xmlns(:[a-z]+)?=\"[^\"]+\")","");
+		xml = xml.replaceAll(" ([a-z]+:)([a-zA-Z]+=\"[^\"]+\")"," $2");
+		InputSource inputSource = new InputSource( new StringReader( xml ) );
+		return freemarker.ext.dom.NodeModel.parse(inputSource);
 	}
 }

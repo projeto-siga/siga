@@ -32,10 +32,14 @@ import java.util.GregorianCalendar;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "CP_FERIADO", schema="CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpFeriado extends AbstractCpFeriado implements Serializable,
 		Selecionavel {
 

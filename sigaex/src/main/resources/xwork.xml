@@ -1257,6 +1257,10 @@
 			method="aAssinarLote">
 			<result>/paginas/expediente/assina_lote.jsp</result>
 		</action>
+		<action name="assinar_despacho_lote" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAssinarDespachoLote">
+			<result>/paginas/expediente/assina_despacho_lote.jsp</result>
+		</action>
 		
 		<action name="simular_assinatura" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aSimularAssinatura">

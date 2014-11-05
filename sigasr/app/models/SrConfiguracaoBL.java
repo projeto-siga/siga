@@ -13,38 +13,21 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 
 public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
-	private static SrConfiguracaoBL instancia = new SrConfiguracaoBL();
-
 	public static int ITEM_CONFIGURACAO = 31;
 
 	public static int ACAO = 32;
 
 	public static int LISTA_PRIORIDADE = 33;
 
+	public static int TIPO_ATRIBUTO = 34;
+
 	public static SrConfiguracaoBL get() {
-		return instancia;
+		return (SrConfiguracaoBL) Sr.getInstance().getConf();
 	}
 
 	public SrConfiguracaoBL() {
 		super();
 		setComparator(new SrConfiguracaoComparator());
-	}
-
-	private void evitaSessionClosed(SrConfiguracao conf) {
-		if (conf.preAtendente != null)
-			conf.preAtendente.getLotacaoAtual();
-		if (conf.atendente != null)
-			conf.atendente.getLotacaoAtual();
-		if (conf.posAtendente != null)
-			conf.posAtendente.getLotacaoAtual();
-		if (conf.itemConfiguracao != null)
-			conf.itemConfiguracao.getAtual();
-		if (conf.acao != null)
-			conf.acao.getAtual();
-		if (conf.tipoAtributo != null)
-			conf.tipoAtributo.getAtual();
-		if (conf.listaPrioridade != null)
-			conf.listaPrioridade.getListaAtual();
 	}
 
 	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)
@@ -116,6 +99,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 							.getListaAtual().equivale(filtro.listaPrioridade))))
 				return false;
 
+			if (!atributosDesconsiderados.contains(TIPO_ATRIBUTO)
+					&& conf.tipoAtributo != null
+					&& (filtro.tipoAtributo == null || (filtro.tipoAtributo != null && !conf.tipoAtributo
+							.getAtual().equivale(filtro.tipoAtributo))))
+				return false;
+
 		}
 		return true;
 	}
@@ -144,14 +133,61 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	}
 
 	@Override
-	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig)
-			throws Exception {
-		TreeSet<CpConfiguracao> lista = super.getListaPorTipo(idTipoConfig);
-		for (CpConfiguracao conf : lista) {
-			if (conf instanceof SrConfiguracao)
-				evitaSessionClosed((SrConfiguracao) conf);
+	protected void evitarLazy(List<CpConfiguracao> provResults) {
+		super.evitarLazy(provResults);
+
+		for (CpConfiguracao conf : provResults) {
+			if (!(conf instanceof SrConfiguracao))
+				continue;
+			SrConfiguracao srConf = (SrConfiguracao) conf;
+			if (srConf.preAtendente != null)
+				srConf.preAtendente.getLotacaoAtual();
+			if (srConf.atendente != null)
+				srConf.atendente.getLotacaoAtual();
+			if (srConf.posAtendente != null)
+				srConf.posAtendente.getLotacaoAtual();
+
+			if (srConf.itemConfiguracao != null) {
+				SrItemConfiguracao atual = srConf.itemConfiguracao.getAtual();
+				if (atual != null)
+					atual.getItemETodosDescendentes();
+
+				// Edson: varrer os pais é necessário porque o
+				// getItensDisponiveis() precisa dessa
+				// informação
+				SrItemConfiguracao itemPai = atual.pai;
+				while (itemPai != null) {
+					itemPai.getDescricao();
+					itemPai = itemPai.pai;
+				}
+			}
+
+			if (srConf.acao != null) {
+				SrAcao atual = srConf.acao.getAtual();
+				if (atual != null)
+					atual.getAcaoETodasDescendentes();
+			}
+			if (srConf.tipoAtributo != null)
+				srConf.tipoAtributo.getAtual();
+			if (srConf.listaPrioridade != null)
+				srConf.listaPrioridade.getListaAtual();
+
 		}
-		return lista;
+	}
+
+	public void atualizarConfiguracoesDoCache(List<SrConfiguracao> configs) {
+		List<SrConfiguracao> evitarLazy = new ArrayList<SrConfiguracao>();
+		for (SrConfiguracao conf : configs) {
+			hashListas.get(conf.getCpTipoConfiguracao().getIdTpConfiguracao())
+					.remove(conf);
+			SrConfiguracao newConf = SrConfiguracao.findById(conf
+					.getIdConfiguracao());
+			hashListas.get(
+					newConf.getCpTipoConfiguracao().getIdTpConfiguracao()).add(
+					newConf);
+			evitarLazy.add(newConf);
+		}
+		evitarLazy((List<CpConfiguracao>) (List<?>) evitarLazy);
 	}
 
 }

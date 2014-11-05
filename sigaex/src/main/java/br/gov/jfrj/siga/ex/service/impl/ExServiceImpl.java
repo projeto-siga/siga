@@ -113,7 +113,7 @@ public class ExServiceImpl implements ExService {
 								cadastranteParser.getLotacao(), mob, null,
 								null, null, destinoParser.getLotacao(),
 								destinoParser.getPessoa(), null, null, null,
-								null, null, false, null, null, null, forcarTransferencia);
+								null, null, false, null, null, null, forcarTransferencia, false);
 			}
 			return true;
 		} catch (Exception e) {
@@ -154,7 +154,7 @@ public class ExServiceImpl implements ExService {
 					.getBL()
 					.arquivarCorrente(cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(), mob, null, null,
-							destinoParser.getPessoa());
+							destinoParser.getPessoa(), false);
 			return true;
 		} catch (Exception e) {
 			if (!isHideStackTrace())
@@ -388,13 +388,11 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 	
-	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, Long tipoDeDocumentoLong, Long modeloLong, String classificacaoStr, 
-			String descricaoStr, Boolean eletronico, Long nivelDeAcessoLong, String conteudo, String siglaDocPai, Boolean finalizar) throws Exception {
+	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
+			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception {
     	try {
     		DpPessoa cadastrante = null;
-    		DpPessoa titular = null;
     		DpPessoa subscritor = null;
-    		CpOrgaoUsuario orgaoUsuario = null;
     		ExModelo modelo = null;
     		ExFormaDocumento forma = null;
     		ExTipoDocumento tipoDocumento = null;
@@ -403,7 +401,6 @@ public class ExServiceImpl implements ExService {
     		DpLotacao destinatarioLotacao = null;
     		DpPessoa destinatarioPessoa = null;
     		CpOrgao destinatarioOrgaoExterno = null;
-    		ExDocumento docPai = null;
     		
     		ExDocumento doc = new ExDocumento();
     		
@@ -429,25 +426,27 @@ public class ExServiceImpl implements ExService {
     		if(subscritor.isFechada())
     			throw new AplicacaoException("O subscritor não está mais ativo.");
     		
-    		if(tipoDeDocumentoLong == null)
+    		if(descricaoTipoDeDocumento == null)
     			tipoDocumento = (dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class,
         				false));
-    		else
-    			tipoDocumento = (dao().consultar(tipoDeDocumentoLong, ExTipoDocumento.class,
-        				false));
+    		else 
+    			tipoDocumento = dao().consultarExTipoDocumento(descricaoTipoDeDocumento);
     		
     		if(tipoDocumento == null)
     			throw new AplicacaoException("Não foi possível encontrar o Tipo de Documento. Os Tipos de Documentos aceitos são: 1-Interno Produzido, 2-Interno Importado, 3-Externo");
     		
-    		if(modeloLong == null)
-    			throw new AplicacaoException("O modelo não foi informado.");
+    		if(nomeForma == null)
+    			throw new AplicacaoException("O Tipo não foi informado.");
     		
-    		modelo = dao().consultar(modeloLong, ExModelo.class,
-    				false);
+    		if(nomeModelo == null)
+    			throw new AplicacaoException("O modelo não foi informado.");
+
+    		modelo = dao().consultarExModelo(nomeForma, nomeModelo);
     		
     		if(modelo == null)
-    			throw new AplicacaoException("Não foi possível encontrar um modelo com o id informado.");
-    		
+    			throw new AplicacaoException("Não foi possível encontrar um modelo com os dados informados.");
+    		else
+    			modelo = modelo.getModeloAtual();
     		
     		forma = modelo.getExFormaDocumento();
     		
@@ -457,10 +456,15 @@ public class ExServiceImpl implements ExService {
        		if((classificacaoStr == null || classificacaoStr.isEmpty()) && !modelo.isClassificacaoAutomatica())
        			throw new AplicacaoException("A Classificação não foi informada.");
     		
-    		classificacao =  dao().consultarExClassificacao(classificacaoStr);
+    		if(modelo.isClassificacaoAutomatica()) 
+    			classificacao = modelo.getExClassificacao();
+    		else
+    			classificacao =  dao().consultarExClassificacao(classificacaoStr);
     		
     		if(classificacao == null)
     			throw new AplicacaoException("Não foi possível encontrar uma classificação com o código informado.");
+    		else
+    			classificacao = classificacao.getClassificacaoAtual();
     		
     		if(eletronico == null)
     			eletronico = true;
@@ -478,7 +482,7 @@ public class ExServiceImpl implements ExService {
     			eletronico = false;
     		} 
     		
-    		if(nivelDeAcessoLong == null) {
+    		if(nomeNivelDeAcesso == null) {
     			
 	    		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 	    		
@@ -507,7 +511,7 @@ public class ExServiceImpl implements ExService {
 	    		if(exConfig != null)
 	    			nivelDeAcesso = exConfig.getExNivelAcesso();
     		} else {
-    			nivelDeAcesso = dao().consultar(nivelDeAcessoLong, ExNivelAcesso.class, false);
+    			nivelDeAcesso = dao().consultarExNidelAcesso(nomeNivelDeAcesso);
     		}
     		
 			if(nivelDeAcesso == null)
@@ -600,7 +604,10 @@ public class ExServiceImpl implements ExService {
     		doc.setExTipoDocumento(tipoDocumento);
     		doc.setExFormaDocumento(forma);
     		doc.setExModelo(modelo);
-    		doc.setDescrDocumento(descricaoStr);
+    		
+    		if(!modelo.isDescricaoAutomatica())
+    			doc.setDescrDocumento(descricaoStr);
+    		
     		doc.setExClassificacao(classificacao);
     		if(eletronico)
     			doc.setFgEletronico("S");
@@ -616,12 +623,12 @@ public class ExServiceImpl implements ExService {
 			mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
 			mob.setExDocumento(doc);
 			
-    		if(siglaDocPai != null && !siglaDocPai.isEmpty()) {
+    		if(siglaMobilPai != null && !siglaMobilPai.isEmpty()) {
     			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
-    			filter.setSigla(siglaDocPai);
+    			filter.setSigla(siglaMobilPai);
     			ExMobil mobPai = (ExMobil) dao().consultarPorSigla(filter);
     			if (mobPai != null) {
-    				docPai = mobPai.getExDocumento();
+    	    		ExDocumento docPai = mobPai.getExDocumento();
     				
     				if(docPai.getExMobilPai() != null)
     					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") já é documento filho.");
@@ -629,7 +636,7 @@ public class ExServiceImpl implements ExService {
     				if(!docPai.isAssinado())
     					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") ainda não foi assinado.");
     				
-    				doc.setExMobilPai(docPai.getMobilGeral());
+    				doc.setExMobilPai(mobPai);
     			}
     		}
 			

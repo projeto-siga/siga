@@ -1881,6 +1881,20 @@ public class ExDao extends CpDao {
 		return (ExModelo) crit.uniqueResult();
 	}
 
+	
+	public ExTipoDocumento consultarExTipoDocumento(String descricao) {
+		final Criteria crit = getSessao().createCriteria(ExTipoDocumento.class);
+		crit.add(Restrictions.eq("descrTipoDocumento", descricao));
+
+		return (ExTipoDocumento) crit.uniqueResult();
+	}
+	
+	public ExNivelAcesso consultarExNidelAcesso(String nome) {
+		final Criteria crit = getSessao().createCriteria(ExNivelAcesso.class);
+		crit.add(Restrictions.eq("nmNivelAcesso", nome));
+
+		return (ExNivelAcesso) crit.uniqueResult();
+	}
 
 	public ExModelo consultarModeloAtual(ExModelo mod) {
 		final Query query = getSessao().getNamedQuery("consultarModeloAtual");
@@ -1892,6 +1906,13 @@ public class ExDao extends CpDao {
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa) {
 		final Query query = getSessao().getNamedQuery(
 				"listarDocPendenteAssinatura");
+		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
+		return query.list();
+	}
+	
+	public List<ExMovimentacao> listarDespachoPendenteAssinatura(DpPessoa pessoa) {
+		final Query query = getSessao().getNamedQuery(
+				"listarDespachoPendenteAssinatura");
 		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
 		return query.list();
 	}

@@ -78,7 +78,6 @@
 			<artifactId>siga-rel</artifactId>
 		</dependency>
 	</dependencies>
-
 	<profiles>
 
 		<profile>
@@ -103,7 +102,8 @@
 											<message>
 												${line.separator}
 												${line.separator}
-												*** DEFINA A PROPRIEDADE server.ip ! ***
+												*** DEFINA A
+												PROPRIEDADE server.ip ! ***
 												${line.separator}
 												${line.separator}
 											</message>
@@ -111,7 +111,8 @@
 											<regexMessage>
 												${line.separator}
 												${line.separator}
-												*** FORMATO INVALIDO DE server.ip (ex: 192.168.0.1)! ***
+												*** FORMATO
+												INVALIDO DE server.ip (ex: 192.168.0.1)! ***
 												${line.separator}
 												${line.separator}
 											</regexMessage>
@@ -199,11 +200,15 @@
 									<!-- specify your SQL commands, can be all of the following configurations -->
 									<sqlCommand>CREATE USER corporativo IDENTIFIED BY corporativo
 										default tablespace USERS;
-										CREATE USER siga IDENTIFIED BY siga default tablespace USERS;
-										CREATE USER sigawf IDENTIFIED BY sigawf default tablespace USERS;
-										grant connect,resource to SIGA;
+										CREATE USER siga IDENTIFIED BY siga
+										default tablespace USERS;
+										CREATE USER sigawf IDENTIFIED BY
+										sigawf default tablespace USERS;
+										grant connect,resource to
+										SIGA;
 										grant connect,resource to SIGAWF;
-										Grant connect,resource to CORPORATIVO</sqlCommand>
+										Grant connect,resource
+										to CORPORATIVO</sqlCommand>
 									<autocommit>true</autocommit>
 								</configuration>
 							</execution>
@@ -249,7 +254,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 	</profiles>
 
 

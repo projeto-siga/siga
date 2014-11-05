@@ -469,7 +469,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			for (String valor : getPar().get("obrigatorios"))
 				if (getPar().get(valor) == null
 						|| getPar().get(valor)[0].trim().equals("")
-						|| getPar().get(valor)[0].trim().equals("NÃ£o")
+						|| getPar().get(valor)[0].trim().equals("Não")
 						|| getPar().get(valor)[0].trim().equals("Nao"))
 					return false;
 		return true;
@@ -478,7 +478,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aCarregarPreenchimento() throws Exception {
 		ExPreenchimento exPreenchimento = new ExPreenchimento();
 
-		// Obtwm arrStrBanco[], com os parametros vindos do banco
+		// Obtém arrStrBanco[], com os parâmetros vindos do banco
 		exPreenchimento = dao().consultar(preenchimento, ExPreenchimento.class,
 				false);
 		String strBanco = new String(exPreenchimento.getPreenchimentoBA());
@@ -538,13 +538,13 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 		}
 
-		// Obtem arrStrURL[], com os parametros atuais da edita.jsp
+		// Obtém arrStrURL[], com os parâmetros atuais da edita.jsp
 		String strURL = getUrlEncodedParameters();
 		String arrStrURL[] = strURL.split("&");
 		String strURLLimpa = "";
 
-		// limpa a url vinda do browser, tirando o que ja consta na string do
-		// banco, tirando tambï¿½m os .sigla e .descricao
+		// limpa a url vinda do browser, tirando o que já consta na string do
+		// banco, tirando também os .sigla e .descricao
 		if (arrStrURL.length > 0) {
 			for (String s : arrStrURL) {
 				String arrStrURL2[] = s.split("=");
@@ -566,7 +566,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeCriarVia(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Nï¿½o ï¿½ possï¿½vel criar vias neste documento");
+					"Não é possível criar vias neste documento");
 		try {
 			Ex.getInstance().getBL()
 					.criarVia(getCadastrante(), getLotaTitular(), doc);
@@ -583,7 +583,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		if (!Ex.getInstance().getComp()
 				.podeCriarVolume(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Nï¿½o ï¿½ possï¿½vel criar volumes neste documento");
+					"Não é possível criar volumes neste documento");
 		try {
 			Ex.getInstance().getBL()
 					.criarVolume(getCadastrante(), getLotaTitular(), doc);
@@ -632,13 +632,13 @@ public class ExDocumentoAction extends ExActionSupport {
 		if (getId() == null) {
 			if (getLotaTitular().isFechada())
 				throw new AplicacaoException(
-						"A lotaï¿½ï¿½o "
+						"A lotação "
 								+ getLotaTitular().getSiglaLotacao()
 								+ " foi extinta em "
 								+ new SimpleDateFormat("dd/MM/yyyy")
 										.format(getLotaTitular()
 												.getDataFimLotacao())
-								+ ". Nï¿½o ï¿½ possï¿½vel gerar expedientes em lotaï¿½ï¿½o extinta.");
+								+ ". Não é possível gerar expedientes em lotação extinta.");
 			doc = new ExDocumento();
 			doc.setOrgaoUsuario(getTitular().getOrgaoUsuario());
 		} else {
@@ -647,7 +647,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			if (!Ex.getInstance().getComp()
 					.podeEditar(getTitular(), getLotaTitular(), mob))
 				throw new AplicacaoException(
-						"Nï¿½o ï¿½ permitido editar documento fechado");
+						"Não é permitido editar documento fechado");
 
 			if (getPostback() == null) {
 				escreverForm();
@@ -690,7 +690,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		lerForm();
 
 		// O (&& classif.getCodAssunto() != null) foi adicionado para permitir
-		// que as classificaï¿½ï¿½es antigas, ainda nï¿½o linkadas por equivalï¿½ncia,
+		// que as classificações antigas, ainda não linkadas por equivalência,
 		// possam ser usadas
 		ExClassificacao classif = getClassificacaoSel().buscarObjeto();
 		if (classif != null && classif.getHisDtFim() != null
@@ -719,14 +719,14 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		registraErroExtEditor();
 
-		// Usado pela extensï¿½o editor...
+		// Usado pela extensão editor...
 		getPar().put(
 				"serverAndPort",
 				new String[] { getRequest().getServerName()
 						+ (getRequest().getServerPort() > 0 ? ":"
 								+ getRequest().getServerPort() : "") });
 
-		// ...inclusive nas operaï¿½ï¿½es com preenchimento automï¿½tico
+		// ...inclusive nas operações com preenchimento automático
 		if (getPreenchRedirect() != null && getPreenchRedirect().length() > 2) {
 			setPreenchRedirect(getPreenchRedirect() + "&serverAndPort="
 					+ getPar().get("serverAndPort")[0]);
@@ -746,16 +746,16 @@ public class ExDocumentoAction extends ExActionSupport {
 			verificaNivelAcesso(doc.getMobilGeral());
 
 			// Testa se existe algum valor preenchido em documento.
-			// Se nï¿½o houver gera ObjectNotFoundException
+			// Se não houver gera ObjectNotFoundException
 			final Date d = documento.getDtRegDoc();
 
 			if (documento.isFinalizado())
 
 				throw new AplicacaoException(
-						"Documento jï¿½ foi finalizado e nï¿½o pode ser excluï¿½do");
+						"Documento já foi finalizado e não pode ser excluído");
 			if (!Ex.getInstance().getComp()
 					.podeExcluir(getTitular(), getLotaTitular(), mob))
-				throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel excluir");
+				throw new AplicacaoException("Não é possível excluir");
 
 			// Exclui documento da tabela de Boletim Interno
 			String funcao = doc.getForm().get("acaoExcluir");
@@ -771,13 +771,13 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		} catch (final ObjectNotFoundException e) {
 			throw new AplicacaoException(
-					"Documento jï¿½ foi excluï¿½do anteriormente");
+					"Documento já foi excluído anteriormente");
 		} catch (final AplicacaoException e) {
 			ExDao.rollbackTransacao();
 			throw e;
 		} catch (final Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a Operaï¿½ï¿½o",
+			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
 					0, e);
 		}
 
@@ -828,20 +828,20 @@ public class ExDocumentoAction extends ExActionSupport {
 				final Date d = doc.getDtRegDoc();
 			} catch (final ObjectNotFoundException e) {
 				throw new AplicacaoException(
-						"Documento jï¿½ foi excluï¿½do anteriormente", 1, e);
+						"Documento já foi excluído anteriormente", 1, e);
 			}
 
 			if (doc.isFinalizado())
 
 				throw new AplicacaoException(
-						"Documento jï¿½ foi finalizado e nï¿½o pode ser excluï¿½do",
+						"Documento já foi finalizado e não pode ser excluído",
 						2);
 			for (ExMobil m : doc.getExMobilSet()) {
 				Set set = m.getExMovimentacaoSet();
 
 				if (!Ex.getInstance().getComp()
 						.podeExcluir(getTitular(), getLotaTitular(), m))
-					throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel excluir");
+					throw new AplicacaoException("Não é possível excluir");
 
 				if (set.size() > 0) {
 					final Object[] aMovimentacao = set.toArray();
@@ -884,7 +884,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			throw e;
 		} catch (final Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a Operaï¿½ï¿½o",
+			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
 					0, e);
 		}
 
@@ -915,8 +915,44 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	private void assertAcesso() throws Exception {
+		DpPessoa dest;
+		String msgDestinoDoc = "";
 		if(!Ex.getInstance().getComp()
 				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			if (mob.doc().isFinalizado()) {
+				if (!mob.doc().isArquivado()) {				
+					dest = mob.getUltimaMovimentacaoNaoCancelada().getResp().getPessoaAtual();
+					if (dest.ativaNaData(new Date())) {
+						if (!mob.getUltimaMovimentacaoNaoCancelada().getLotaResp().equivale(dest.getLotacao())) {
+							Ex.getInstance()
+							.getBL()
+							.transferirAutomatico(getCadastrante(), getLotaTitular(), 
+									dest, dest.getLotacao(), mob);	
+							msgDestinoDoc = "documento sendo tranferido automaticamente";
+						}	
+					} else {					
+						Ex.getInstance()
+						.getBL()
+						.arquivarCorrenteAutomatico(dest, getLotaTitular(), mob);	
+						msgDestinoDoc = "documento sendo arquivado automaticamente";
+					}
+				}	
+			} else { /* doc temporário */
+				dest = mob.doc().getCadastrante().getPessoaAtual();						
+				if (dest.ativaNaData(new Date())) {
+					if (!mob.doc().getLotaCadastrante().equivale(dest.getLotacao())) {
+						mob.doc().setLotaCadastrante(dest.getLotacao());
+						Ex.getInstance()
+						.getBL().gravar(dest, dest.getLotacao(), mob.doc(), null);						
+						msgDestinoDoc = "documento  temporário sendo reposicionado automaticamente";
+					}	
+				} else { /* excluir */
+					Ex.getInstance().getBL().excluirDocumentoAutomatico(mob.doc(), getCadastrante(),
+							getLotaTitular());						
+					msgDestinoDoc = "documento sendo excluído automaticamente";
+				}				
+			}
+			
 			String s = "";
 			try { 
 				s += mob.doc().getListaDeAcessosString();
@@ -925,8 +961,8 @@ public class ExDocumentoAction extends ExActionSupport {
 			} catch (Exception e) {
 			}
 			throw new AplicacaoException("Documento " + mob.getSigla()
-					+ " inacessï¿½vel ao usuï¿½rio " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta() + "." + s);
+					+ " inacessível ao usuário " + getTitular().getSigla()
+					+ "/" + getLotaTitular().getSiglaCompleta() + "." + s + " " + msgDestinoDoc);
 		}
 	}
 
@@ -1050,7 +1086,7 @@ public class ExDocumentoAction extends ExActionSupport {
 						.getExFormaDocumento().getExTipoFormaDoc()
 						.getIdTipoFormaDoc() != 2))
 			throw new AplicacaoException(
-					"ï¿½ necessï¿½rio definir um subscritor para o documento.");
+					"É necessário definir um subscritor para o documento.");
 
 		if (doc.getDestinatario() == null
 				&& doc.getLotaDestinatario() == null
@@ -1069,12 +1105,12 @@ public class ExDocumentoAction extends ExActionSupport {
 			if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO)
 				throw new AplicacaoException("Para documentos do modelo "
 						+ doc.getExModelo().getNmMod()
-						+ ", ï¿½ necessï¿½rio definir um destinatï¿½rio");
+						+ ", é necessário definir um destinatário");
 		}
 
 		if (doc.getExClassificacao() == null)
 			throw new AplicacaoException(
-					"ï¿½ necessï¿½rio informar a classificaï¿½ï¿½o documental.");
+					"É necessário informar a classificação documental.");
 
 	}
 
@@ -1130,7 +1166,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			mob = doc.getMobilGeral();
 
 		if (!fPodeNaoExistir && doc == null)
-			throw new AplicacaoException("Documento nï¿½o informado");
+			throw new AplicacaoException("Documento não informado");
 		if (fVerificarAcesso && mob != null && mob.getIdMobil() != null)
 			verificaNivelAcesso(mob);
 	}
@@ -1142,7 +1178,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeFinalizar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel Finalizar");
+			throw new AplicacaoException("Não é possível Finalizar");
 
 		try {
 
@@ -1210,10 +1246,10 @@ public class ExDocumentoAction extends ExActionSupport {
 								null, null, null, doc.getExClassificacao(),
 								null, CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
 					throw new AplicacaoException(
-							"Usuï¿½rio nï¿½o possui permissï¿½o de criar documento da classificaï¿½ï¿½o "
+							"Usuário não possui permissão de criar documento da classificação "
 									+ doc.getExClassificacao().getCodificacao());
 
-				throw new AplicacaoException("Operaï¿½ï¿½o nï¿½o permitida");
+				throw new AplicacaoException("Operação não permitida");
 			}
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -1228,11 +1264,11 @@ public class ExDocumentoAction extends ExActionSupport {
 					&& (descrClassifNovo == null || descrClassifNovo.trim()
 							.length() == 0))
 				throw new AplicacaoException(
-						"Quando a classificaï¿½ï¿½o selecionada nï¿½o traz informaï¿½ï¿½o para criaï¿½ï¿½o de vias, o sistema exige que, antes de gravar o documento, seja informada uma sugestï¿½o de classificaï¿½ï¿½o para ser incluï¿½da na prï¿½xima revisï¿½o da tabela de classificaï¿½ï¿½es.");
+						"Quando a classificação selecionada não traz informação para criação de vias, o sistema exige que, antes de gravar o documento, seja informada uma sugestão de classificação para ser incluída na próxima revisão da tabela de classificações.");
 
 			if (doc.getDescrDocumento().length() > getTamanhoMaximoDescricao())
 				throw new AplicacaoException(
-						"O campo descriï¿½ï¿½o possui mais do que "
+						"O campo descrição possui mais do que "
 								+ getTamanhoMaximoDescricao() + " caracteres.");
 
 			if (doc.isFinalizado()) {
@@ -1251,7 +1287,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 				if (c.before(dtDocCalendar))
 					throw new Exception(
-							"Nï¿½o ï¿½ permitido criar documento com data futura");
+							"Não é permitido criar documento com data futura");
 
 				verificaDocumento();
 			}
@@ -1283,13 +1319,13 @@ public class ExDocumentoAction extends ExActionSupport {
 			} catch (Exception e) {
 
 				throw new AplicacaoException(
-						"Erro ao tentar incluir os cosignatï¿½rios deste documento",
+						"Erro ao tentar incluir os cosignatários deste documento",
 						0, e);
 
 			}
 
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro na gravaï¿½ï¿½o", 0, e);
+			throw new AplicacaoException("Erro na gravação", 0, e);
 		} finally {
 		}
 
@@ -1379,7 +1415,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		if (!Ex.getInstance().getComp()
 				.podeRefazer(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel refazer o documento");
+			throw new AplicacaoException("Não é possível refazer o documento");
 		try {
 			doc = Ex.getInstance().getBL()
 					.refazer(getCadastrante(), getLotaTitular(), doc);
@@ -1439,7 +1475,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			fakeMov.setConteudoBlobRTF(nomeArq, gerador.geraRTF(doque));
 			fakeMov.setConteudoBlobXML(nomeArq, PublicacaoDJEBL
 					.gerarXMLPublicacao(fakeMov, "A", "SESIA",
-							"Teste descriï¿½ï¿½o"));
+							"Teste descrição"));
 			fakeMov.setNmArqMov(nomeArq + ".zip");
 
 			PublicacaoDJEBL.primeiroEnvio(fakeMov);
@@ -1532,7 +1568,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		buscarDocumento(false);
 		if (!Ex.getInstance().getComp()
 				.podeDuplicar(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Nï¿½o ï¿½ possï¿½vel duplicar o documento");
+			throw new AplicacaoException("Não é possível duplicar o documento");
 		try {
 			doc = Ex.getInstance().getBL()
 					.duplicar(getCadastrante(), getLotaTitular(), doc);
@@ -1564,7 +1600,7 @@ public class ExDocumentoAction extends ExActionSupport {
 				.podeDesfazerCancelamentoDocumento(getTitular(),
 						getLotaTitular(), mob))
 			throw new AplicacaoException(
-					"Nï¿½o ï¿½ possï¿½vel desfazer o cancelamento deste documento");
+					"Não é possível desfazer o cancelamento deste documento");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1584,7 +1620,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	public String aTornarDocumentoSemEfeitoGravar() throws Exception {
 		if (getDescrMov() == null || getDescrMov().trim().length() == 0) {
 			throw new AplicacaoException(
-					"O preenchimento do campo MOTIVO ï¿½ obrigatï¿½rio!");
+					"O preenchimento do campo MOTIVO é obrigatório!");
 		}
 		buscarDocumento(true);
 		if (!Ex.getInstance()
@@ -1592,7 +1628,7 @@ public class ExDocumentoAction extends ExActionSupport {
 				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(),
 						mob))
 			throw new AplicacaoException(
-					"Nï¿½o ï¿½ possï¿½vel tornar documento sem efeito.");
+					"Não é possível tornar documento sem efeito.");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1622,7 +1658,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		doc.setExTipoDocumento(dao().consultar(idTpDoc, ExTipoDocumento.class,
 				false));
 
-		// Questï¿½es referentes a doc pai-----------------------------
+		// Questões referentes a doc pai-----------------------------
 
 		if (doc.getIdDoc() == null) {
 			String req = "nao";
@@ -1665,7 +1701,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			}
 		}
 
-		// Fim das questï¿½es referentes a doc pai--------------------
+		// Fim das questões referentes a doc pai--------------------
 
 		Integer idFormaDoc = getIdFormaDoc();
 		if (idFormaDoc != null) {
@@ -1674,7 +1710,7 @@ public class ExDocumentoAction extends ExActionSupport {
 			} else {
 
 				// Mudou origem? Escolhe um tipo automaticamente--------
-				// Vï¿½ se usuï¿½rio alterou campo Origem. Caso sim, seleciona um
+				// Vê se usuário alterou campo Origem. Caso sim, seleciona um
 				// tipo
 				// automaticamente, dentro daquela origem
 
@@ -1785,7 +1821,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		setTitular(backupTitular);
 		setLotaTitular(backupLotaTitular);
-		// Orlando: Inclusï¿½o da linha, abaixo, para preservar o cadastrante do
+		// Orlando: Inclusão da linha, abaixo, para preservar o cadastrante do
 		// ambiente.
 		setCadastrante(backupCadastrante);
 
@@ -1835,9 +1871,9 @@ public class ExDocumentoAction extends ExActionSupport {
 		}
 
 		// TODO Verificar se ha realmente a necessidade de setar novamente o
-		// nï¿½vel de acesso do documento
-		// tendo em vista que o nï¿½vel de acesso jï¿½ foi setado anteriormente
-		// neste mesmo mï¿½todo sem que o documento fosse alterado
+		// nível de acesso do documento
+		// tendo em vista que o nível de acesso já foi setado anteriormente
+		// neste mesmo método sem que o documento fosse alterado
 		setNivelAcesso(doc.getIdExNivelAcesso());
 
 		if (doc.getOrgaoExternoDestinatario() != null) {
@@ -1900,16 +1936,16 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	/*
-	 * como usamos <ww:file name="arquivo" .../> o content Type do arquivo serï¿½
-	 * obtido atravï¿½s getter/setter de <file-tag-name>ContentType
+	 * como usamos <ww:file name="arquivo" .../> o content Type do arquivo será
+	 * obtido através getter/setter de <file-tag-name>ContentType
 	 */
 	public String getArquivoContentType() {
 		return arquivoContentType;
 	}
 
 	/*
-	 * como usamos <ww:file name="arquivo" .../> o nome do arquivo serï¿½ obtido
-	 * atravï¿½s getter/setter de <file-tag-name>FileName
+	 * como usamos <ww:file name="arquivo" .../> o nome do arquivo será obtido
+	 * através getter/setter de <file-tag-name>FileName
 	 */
 	public String getArquivoFileName() {
 		return arquivoFileName;
@@ -2003,7 +2039,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		try {
 			minhaData = df1.parse(getDtDocString());
 		} catch (final ParseException e) {
-			return "Ocorreu um erro na conversï¿½o da Data";
+			return "Ocorreu um erro na conversão da Data";
 		}
 		df1.applyPattern("'" + "Rio de Janeiro" + ",' dd 'de' MMMM 'de' yyyy.");
 		return df1.format(minhaData);
@@ -2079,8 +2115,8 @@ public class ExDocumentoAction extends ExActionSupport {
 	public Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
-		map.put(2, "Orgão Integrado");
-		map.put(3, "Orgão Externo");
+		map.put(2, "Órgão Integrado");
+		map.put(3, "Órgão Externo");
 		map.put(4, "Campo Livre");
 		return map;
 	}
@@ -2294,8 +2330,8 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String getEletronicoString() {
-		return (getEletronico() == 1) ? "Documento Eletrï¿½nico"
-				: "Documento Fï¿½sico";
+		return (getEletronico() == 1) ? "Documento Eletrônico"
+				: "Documento Físico";
 	}
 
 	public boolean isSubstituicao() {
@@ -2383,12 +2419,12 @@ public class ExDocumentoAction extends ExActionSupport {
 		} else
 			doc.setOrgaoExterno(null);
 
-		// Orlando: Alterei o IF abaixo incluindo a instruï¿½ï¿½o
+		// Orlando: Alterei o IF abaixo incluindo a instrução
 		// "doc.setLotaCadastrante(getLotaTitular());".
-		// Esta linha estava "solta",apï¿½s o IF, e era executada sempre.
-		// Fiz esta modificaï¿½ï¿½o porque esta linha alterava a lotaï¿½ï¿½o do
-		// cadastrante, nï¿½o permitindo que este,
-		// ao preencher o campo subscritor com a matrï¿½cula de outro usuï¿½rio,
+		// Esta linha estava "solta",após o IF, e era executada sempre.
+		// Fiz esta modificação porque esta linha alterava a lotação do
+		// cadastrante, não permitindo que este,
+		// ao preencher o campo subscritor com a matrícula de outro usuário,
 		// tivesse acesso ao documento.
 
 		if (doc.getCadastrante() == null) {
@@ -2553,7 +2589,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 		String headerValue = null;
 		if (getTipoDocumento() != null && getTipoDocumento().equals("antigo"))
-			headerValue = "Nï¿½o Informado";
+			headerValue = "Não Informado";
 
 		modelos = Ex
 
@@ -2761,7 +2797,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		this.titularSel = subscritorTitularSel;
 	}
 
-	// Retorna o conteï¿½do do arquivo em um array de Byte
+	// Retorna o conteúdo do arquivo em um array de Byte
 	public byte[] toByteArray(final File file) throws IOException {
 
 		final InputStream is = new FileInputStream(file);
@@ -2769,8 +2805,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		// Get the size of the file
 		final long tamanho = file.length();
 
-		// Nï¿½o podemos criar um array usando o tipo long.
-		// ï¿½ necessï¿½rio usar o tipo int.
+		// Não podemos criar um array usando o tipo long.
+		// é necessário usar o tipo int.
 		if (tamanho > Integer.MAX_VALUE)
 			throw new IOException("Arquivo muito grande");
 
@@ -2789,7 +2825,7 @@ public class ExDocumentoAction extends ExActionSupport {
 		// Ensure all the bytes have been read in
 		if (offset < meuByteArray.length)
 			throw new IOException(
-					"Nï¿½o foi possï¿½vel ler o arquivo completamente "
+					"Não foi possível ler o arquivo completamente "
 							+ file.getName());
 
 		// Close the input stream and return bytes

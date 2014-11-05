@@ -6,6 +6,7 @@ import models.GcTipoTag;
 import org.jboss.logging.Logger;
 
 import play.Play;
+import play.db.jpa.JPA;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 import play.vfs.VirtualFile;

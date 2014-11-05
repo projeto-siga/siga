@@ -414,7 +414,7 @@ public class ExBL extends CpBL {
 					Ex.getInstance()
 							.getBL()
 							.arquivarCorrente(pess, lota, doc.getMobilGeral(),
-									mov.getDtIniMov(), null, pess);
+									mov.getDtIniMov(), null, pess, false);
 				// if (index % 10 == 0){
 				dao().getSessao().clear();
 				//System.gc();
@@ -1645,10 +1645,17 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não foi possível movimentar a via porque ela encontra-se apensada ou possui apensos.");
 	}
+	
+	
+	public void arquivarCorrenteAutomatico(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, ExMobil mob) throws Exception {
+			
+	    arquivarCorrente(cadastrante, lotaCadastrante, mob, null, null, null, true);
+	}	
 
 	public void arquivarCorrente(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
-			Date dtMovIni, DpPessoa subscritor) throws Exception {
+			Date dtMovIni, DpPessoa subscritor, boolean automatico) throws Exception {
 
 		permitirOuNaoMovimentarDestinacao(mob);
 
@@ -1670,6 +1677,10 @@ public class ExBL extends CpBL {
 					mov.setResp(ultMovNanCanc.getResp());
 				}
 			}
+			
+			if (automatico)
+				mov.setDescrMov("Arquivamento automático.");
+			
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -1958,9 +1969,9 @@ public class ExBL extends CpBL {
 		/*ExService client = Service.getExService();
 		String s;
 		
-		s = client.criarDocumento("RJ13989", "RJ13989", "CEF", "Agência Av. Rio Branco, 326", 1L, 1681L, "20.05.00.01", "Teste de Criação de documento por webservice",
-				true, 6L, "texto_memorando=%3Cp+style%3D%22text-indent%3A2cm%3B+text-align%3A+justify%22%3E%0D%0A%09Conte%26uacute%3Bdo%3C%2Fp%3E%0D%0A&tamanhoLetra=Normal&fecho=Atenciosamente", 
-				"JFRJ-MEM-2014/00321", true);
+		s = client.criarDocumento("RJ13989", "RJ13989", "CEF", "Agência Av. Rio Branco, 326", "Interno Produzido", "Formulário", "Formulário de Solicitação de Deslocamento", null, null,
+				true, "Limitado entre pessoas", "alteracao=N%E3o&solicitacaoDentroDoPrazo=Sim&razoesDoDeslocamento=Cursos%2C+Semin%E1rios%2C+Simp%F3sios%2C+Debates%2C+F%F3runs+e+afins&internacional=N%E3o&uf=AC&cidadeCacheAC=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CRETORNA_CIDADES_ESTADOResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CRETORNA_CIDADES_ESTADOResult%253E%253Cxs%253Aschema%2520id%253D%2522NewDataSet%2522%2520xmlns%253D%2522%2522%2520xmlns%253Axs%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%2520xmlns%253Amsdata%253D%2522urn%253Aschemas-microsoft-com%253Axml-msdata%2522%253E%253Cxs%253Aelement%2520name%253D%2522NewDataSet%2522%2520msdata%253AIsDataSet%253D%2522true%2522%2520msdata%253AUseCurrentLocale%253D%2522true%2522%253E%253Cxs%253AcomplexType%253E%253Cxs%253Achoice%2520minOccurs%253D%25220%2522%2520maxOccurs%253D%2522unbounded%2522%253E%253Cxs%253Aelement%2520name%253D%2522CIDADES%2522%253E%253Cxs%253AcomplexType%253E%253Cxs%253Asequence%253E%253Cxs%253Aelement%2520name%253D%2522CODCID%2522%2520type%253D%2522xs%253Aint%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522NOMCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522ESTCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522DDDCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522CEPCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253C%252Fxs%253Asequence%253E%253C%252Fxs%253AcomplexType%253E%253C%252Fxs%253Aelement%253E%253C%252Fxs%253Achoice%253E%253C%252Fxs%253AcomplexType%253E%253C%252Fxs%253Aelement%253E%253C%252Fxs%253Aschema%253E%253Cdiffgr%253Adiffgram%2520xmlns%253Amsdata%253D%2522urn%253Aschemas-microsoft-com%253Axml-msdata%2522%2520xmlns%253Adiffgr%253D%2522urn%253Aschemas-microsoft-com%253Axml-diffgram-v1%2522%253E%253CNewDataSet%2520xmlns%253D%2522%2522%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES1%2522%2520msdata%253ArowOrder%253D%25220%2522%253E%253CCODCID%253E43%253C%252FCODCID%253E%253CNOMCID%253EACRELANDIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69945000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES2%2522%2520msdata%253ArowOrder%253D%25221%2522%253E%253CCODCID%253E711%253C%252FCODCID%253E%253CNOMCID%253EASSIS%2520BRASIL%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69935000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES3%2522%2520msdata%253ArowOrder%253D%25222%2522%253E%253CCODCID%253E1397%253C%252FCODCID%253E%253CNOMCID%253EBRASILEIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69932000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES4%2522%2520msdata%253ArowOrder%253D%25223%2522%253E%253CCODCID%253E1463%253C%252FCODCID%253E%253CNOMCID%253EBUJARI%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69923000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES5%2522%2520msdata%253ArowOrder%253D%25224%2522%253E%253CCODCID%253E1970%253C%252FCODCID%253E%253CNOMCID%253ECAPIXABA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69922000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES6%2522%2520msdata%253ArowOrder%253D%25225%2522%253E%253CCODCID%253E2714%253C%252FCODCID%253E%253CNOMCID%253ECRUZEIRO%2520DO%2520SUL%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69980000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES7%2522%2520msdata%253ArowOrder%253D%25226%2522%253E%253CCODCID%253E3062%253C%252FCODCID%253E%253CNOMCID%253EEPITACIOLANDIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69934000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES8%2522%2520msdata%253ArowOrder%253D%25227%2522%253E%253CCODCID%253E3223%253C%252FCODCID%253E%253CNOMCID%253EFEIJO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69960000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES9%2522%2520msdata%253ArowOrder%253D%25228%2522%253E%253CCODCID%253E4659%253C%252FCODCID%253E%253CNOMCID%253EJORDAO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69975000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES10%2522%2520msdata%253ArowOrder%253D%25229%2522%253E%253CCODCID%253E5157%253C%252FCODCID%253E%253CNOMCID%253EMANCIO%2520LIMA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69990000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES11%2522%2520msdata%253ArowOrder%253D%252210%2522%253E%253CCODCID%253E5188%253C%252FCODCID%253E%253CNOMCID%253EMANOEL%2520URBANO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69950000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES12%2522%2520msdata%253ArowOrder%253D%252211%2522%253E%253CCODCID%253E5263%253C%252FCODCID%253E%253CNOMCID%253EMARECHAL%2520THAUMATURGO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69983000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES13%2522%2520msdata%253ArowOrder%253D%252212%2522%253E%253CCODCID%253E6870%253C%252FCODCID%253E%253CNOMCID%253EPLACIDO%2520DE%2520CASTRO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69928000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES14%2522%2520msdata%253ArowOrder%253D%252213%2522%253E%253CCODCID%253E7006%253C%252FCODCID%253E%253CNOMCID%253EPORTO%2520ACRE%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69921000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES15%2522%2520msdata%253ArowOrder%253D%252214%2522%253E%253CCODCID%253E7065%253C%252FCODCID%253E%253CNOMCID%253EPORTO%2520WALTER%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69982000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES16%2522%2520msdata%253ArowOrder%253D%252215%2522%253E%253CCODCID%253E7435%253C%252FCODCID%253E%253CNOMCID%253ERIO%2520BRANCO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%2520%252F%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES17%2522%2520msdata%253ArowOrder%253D%252216%2522%253E%253CCODCID%253E7562%253C%252FCODCID%253E%253CNOMCID%253ERODRIGUES%2520ALVES%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69985000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES18%2522%2520msdata%253ArowOrder%253D%252217%2522%253E%253CCODCID%253E7913%253C%252FCODCID%253E%253CNOMCID%253ESANTA%2520ROSA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69955000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES19%2522%2520msdata%253ArowOrder%253D%252218%2522%253E%253CCODCID%253E8871%253C%252FCODCID%253E%253CNOMCID%253ESENA%2520MADUREIRA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69940000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES20%2522%2520msdata%253ArowOrder%253D%252219%2522%253E%253CCODCID%253E8880%253C%252FCODCID%253E%253CNOMCID%253ESENADOR%2520GUIOMARD%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69925000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES21%2522%2520msdata%253ArowOrder%253D%252220%2522%253E%253CCODCID%253E9263%253C%252FCODCID%253E%253CNOMCID%253ETARAUACA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CDDDCID%253E68%253C%252FDDDCID%253E%253CCEPCID%253E69970000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES22%2522%2520msdata%253ArowOrder%253D%252221%2522%253E%253CCODCID%253E9960%253C%252FCODCID%253E%253CNOMCID%253EXAPURI%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69930000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253C%252FNewDataSet%253E%253C%252Fdiffgr%253Adiffgram%253E%253C%252FRETORNA_CIDADES_ESTADOResult%253E%253C%252FRETORNA_CIDADES_ESTADOResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&cidade=ACRELANDIA&diaUnico=N%E3o&numDePeriodos=1&dataIniPeriodo1=&dataFimPeriodo1=&proposto=CJF&numDePropostos=2&propostos1_pessoaSel.id=262253&propostos1_pessoaSel.sigla=RJ14054&propostos1_pessoaSel.descricao=ADRIANA+GRASSI+MARTINS+RIBEIRO+DE+ALMEIDA&ramal1=&solicitacaoComo1=Escolha&precisaAutorizacao1=Nao&propostos2_pessoaSel.id=279603&propostos2_pessoaSel.sigla=RJ13989&propostos2_pessoaSel.descricao=ANDRE+LUIS+SOUSA+DA+SILVA&ramal2=&solicitacaoComo2=Escolha&precisaAutorizacao2=Nao&contadorDePropostos=2&nomeDoEvento=&entidadePromotora=CEJ&cargaHoraria=1h&areaDeConhecimento=Escolha&abrangencia=Sim&foraDaRegiaoMetropolitana=Sim&idaDiaAnterior1=Nao&voltaDiaSubsequente1=Nao&diarias=Sim&agecccache14054=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CConsultaDadosBancariosResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CConsultaDadosBancariosResult%253E%253CMatricula%253E14054%253C%252FMatricula%253E%253CNome%253EADRIANA%2520GRASSI%2520MARTINS%2520RIBEIRO%2520DE%2520ALMEIDA%253C%252FNome%253E%253CEmpresa%253E2%253C%252FEmpresa%253E%253CBanco%253E1%253C%252FBanco%253E%253CAgencia%253E24767%253C%252FAgencia%253E%253CContaCorrente%253E351725%253C%252FContaCorrente%253E%253C%252FConsultaDadosBancariosResult%253E%253C%252FConsultaDadosBancariosResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&banco1=1&agencia1=24767&contaCorrente1=175994&agecccache13989=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CConsultaDadosBancariosResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CConsultaDadosBancariosResult%253E%253CMatricula%253E13989%253C%252FMatricula%253E%253CNome%253EANDRE%2520LUIS%2520SOUSA%2520DA%2520SILVA%253C%252FNome%253E%253CEmpresa%253E2%253C%252FEmpresa%253E%253CBanco%253E1%253C%252FBanco%253E%253CAgencia%253E24767%253C%252FAgencia%253E%253CContaCorrente%253E175994%253C%252FContaCorrente%253E%253C%252FConsultaDadosBancariosResult%253E%253C%252FConsultaDadosBancariosResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&banco2=1&agencia2=24767&contaCorrente2=175994&passagemAerea=Nao&usoDeCarroOficial=Nao", 
+				null, false);
 		
 		return s;*/
 		
@@ -3687,6 +3698,85 @@ public class ExBL extends CpBL {
 		Notificador.notificarDestinariosEmail(mov,
 				Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
 	}
+	
+	public void excluirDocumentoAutomatico(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) 
+			throws Exception{
+		excluirDocumento(doc, titular, lotaTitular, true);
+	}
+	
+	
+	public void excluirDocumento(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular, 
+			boolean automatico) /* somente documentos temporários */
+			throws Exception {
+		try {
+			ExDao.iniciarTransacao();
+
+			try {
+				final Date d = doc.getDtRegDoc();
+			} catch (final ObjectNotFoundException e) {
+				throw new AplicacaoException(
+						"Documento já foi excluído anteriormente", 1, e);
+			}
+
+			if (doc.isFinalizado())
+
+				throw new AplicacaoException(
+						"Documento já foi finalizado e não pode ser excluído",
+						2);
+			for (ExMobil m : doc.getExMobilSet()) {
+				Set set = m.getExMovimentacaoSet();
+				
+				if (!automatico && !Ex.getInstance().getComp()
+						.podeExcluir(titular, lotaTitular, m))
+					throw new AplicacaoException("Não é possível excluir");
+
+				if (set.size() > 0) {
+					final Object[] aMovimentacao = set.toArray();
+					for (int i = 0; i < set.size(); i++) {
+						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
+						dao().excluir(movimentacao);
+					}
+				}
+
+				for (ExMarca marc : m.getExMarcaSet())
+					dao().excluir(marc);
+
+				set = m.getExMovimentacaoReferenciaSet();
+				if (set.size() > 0) {
+					final Object[] aMovimentacao = set.toArray();
+					for (int i = 0; i < set.size(); i++) {
+						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
+						Ex.getInstance()
+								.getBL()
+								.excluirMovimentacao(titular,
+										lotaTitular,
+										movimentacao.getExMobil(),
+										movimentacao.getIdMov());
+					}
+				}
+
+				dao().excluir(m);
+			}
+
+			// Exclui documento da tabela de Boletim Interno
+			String funcao = doc.getForm().get("acaoExcluir");
+			if (funcao != null) {
+				obterMetodoPorString(funcao, doc);
+			}
+
+			dao().excluir(doc);
+			ExDao.commitTransacao();
+		} catch (final AplicacaoException e) {
+			ExDao.rollbackTransacao();
+			throw e;
+		} catch (final Exception e) {
+			ExDao.rollbackTransacao();
+			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
+					0, e);
+		}
+
+	}
+	
 
 	public void excluirMovimentacao(final ExMovimentacao mov)
 			throws AplicacaoException, SQLException {
@@ -4216,6 +4306,19 @@ public class ExBL extends CpBL {
 		alimentaFilaIndexacao(doc, true);
 		return s;
 	}
+	
+	public void transferirAutomatico(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, DpPessoa resp, DpLotacao lotaResp, ExMobil mob) throws Exception {
+			
+		transferir(null, null,
+				cadastrante, lotaCadastrante, mob,
+				null, null,
+				null, lotaResp,
+				resp, null,
+				null, null, null, null, false,
+				null, null, null, false, true);
+	}	
+	
 
 	/**
 	 * Transfere um documento de um local para outro. Esse método trata tanto da
@@ -4253,7 +4356,7 @@ public class ExBL extends CpBL {
 			final DpPessoa subscritor, final DpPessoa titular,
 			final ExTipoDespacho tpDespacho, final boolean fInterno,
 			final String descrMov, final String conteudo,
-			String nmFuncaoSubscritor, boolean forcarTransferencia) throws AplicacaoException, Exception {
+			String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico) throws AplicacaoException, Exception {
 
 
 		boolean fDespacho = tpDespacho != null || descrMov != null
@@ -4269,81 +4372,81 @@ public class ExBL extends CpBL {
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
 					"Não é possível fazer despacho em um documento que faça parte de um apenso");
+		
+		if(!automatico) {
 
-		if (fTranferencia && mob.doc().isEletronico()) {
-			if (mob.doc().getMobilGeral().temAnexosNaoAssinados()
-					|| mob.doc().getMobilGeral().temDespachosNaoAssinados())
-				throw new AplicacaoException(
-						"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
-
-		}
-
-		for (ExMobil m : set) {
-			
-			if (!m.equals(mob)
-					&& fDespacho && fTranferencia) {
-				throw new AplicacaoException(
-						"Não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. Faça primeiro o despacho e depois transfira o documento.");
-			}
-			
-			if (fDespacho && m.isVolumeEncerrado())
-				if (m.isApensadoAVolumeDoMesmoProcesso())
-					continue;
-				else
-					throw new AplicacaoException(
-							"Não é permitido fazer despacho em volume que esta encerrado");
-
-			if (fDespacho
-					&& !getComp()
-							.podeDespachar(cadastrante, lotaCadastrante, m))
-				throw new AplicacaoException(
-						"Não é permitido fazer despacho. Verifique se a via ou processo não está arquivado(a) e se não possui despachos pendentes de assinatura.");
-
-			if (fTranferencia) {
-
-				if (lotaResponsavel.isFechada())
-					throw new AplicacaoException(
-							"Não é permitido transferir documento para lotação fechada");
-
-				if (forcarTransferencia) {
-					if (!getComp().podeSerTransferido(m))
-						throw new AplicacaoException("Transferência não pode ser realizada (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
-				} else {
-					if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m)) 
-						throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
-				}
-				if (!m.getExDocumento().isAssinado()
-						&& !lotaResponsavel.equivale(m.getExDocumento()
-								.getLotaTitular())
-						&& !getComp().podeReceberDocumentoSemAssinatura(
-								responsavel, lotaResponsavel, m))
-					throw new AplicacaoException(
-							"Não é permitido fazer transferência em documento que ainda não foi assinado");
-
-				if (m.doc().isEletronico()) {
-					if (m.temAnexosNaoAssinados()
-							|| m.temDespachosNaoAssinados())
+			if (fTranferencia && mob.doc().isEletronico()) {
+				if (mob.doc().getMobilGeral().temAnexosNaoAssinados()
+						|| mob.doc().getMobilGeral().temDespachosNaoAssinados())
 						throw new AplicacaoException(
 								"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
 
+			}
+
+			for (ExMobil m : set) {
+			
+				if (!m.equals(mob)
+						&& fDespacho && fTranferencia) {
+					throw new AplicacaoException(
+							"Não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. Faça primeiro o despacho e depois transfira o documento.");
+				}
+			
+				if (fDespacho && m.isVolumeEncerrado())
+					if (m.isApensadoAVolumeDoMesmoProcesso())
+						continue;
+					else
+						throw new AplicacaoException(
+								"Não é permitido fazer despacho em volume que esta encerrado");
+
+				if (fDespacho	
+						&& !getComp()
+						.podeDespachar(cadastrante, lotaCadastrante, m))
+					throw new AplicacaoException(
+							"Não é permitido fazer despacho. Verifique se a via ou processo não está arquivado(a) e se não possui despachos pendentes de assinatura.");
+
+				if (fTranferencia) {
+					
+					if (lotaResponsavel.isFechada())
+						throw new AplicacaoException(
+								"Não é permitido transferir documento para lotação fechada");
+
+					if (forcarTransferencia) {
+						if (!getComp().podeSerTransferido(m))
+							throw new AplicacaoException("Transferência não pode ser realizada (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+					} else {
+						if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m)) 
+							throw new AplicacaoException("Transferência não permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+					}
+					if (!m.getExDocumento().isAssinado()
+							&& !lotaResponsavel.equivale(m.getExDocumento()
+									.getLotaTitular())
+									&& !getComp().podeReceberDocumentoSemAssinatura(
+											responsavel, lotaResponsavel, m))
+						throw new AplicacaoException(
+								"Não é permitido fazer transferência em documento que ainda não foi assinado");
+
+					if (m.doc().isEletronico()) {
+						if (m.temAnexosNaoAssinados()
+								|| m.temDespachosNaoAssinados())
+							throw new AplicacaoException(
+									"Não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+					}
+
+					if (m.getExDocumento().isEletronico()
+							&& !m.getExDocumento().jaTransferido()
+							&& !m.getExDocumento().isAssinado())
+						throw new AplicacaoException(
+								"Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
+
 				}
 
-				if (m.getExDocumento().isEletronico()
-						&& !m.getExDocumento().jaTransferido()
-						&& !m.getExDocumento()
-								.isAssinado())
-					throw new AplicacaoException(
-							"Não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
-
+				if (!fDespacho) {
+					if (responsavel == null && lotaResponsavel == null)
+						if (orgaoExterno == null && obsOrgao == null)
+							throw new AplicacaoException(
+									"Não foram informados dados para o despacho/transferência");
+				}			
 			}
-
-			if (!fDespacho) {
-				if (responsavel == null && lotaResponsavel == null)
-					if (orgaoExterno == null && obsOrgao == null)
-						throw new AplicacaoException(
-								"Não foram informados dados para o despacho/transferência");
-			}
-			
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
@@ -4451,6 +4554,9 @@ public class ExBL extends CpBL {
 						mov.setConteudoBlobPdf(pdf);
 						mov.setConteudoTpMov("application/zip");
 					}
+					if (automatico)
+						mov.setDescrMov("Transferência automática.");
+					
 					gravarMovimentacao(mov);
 					concluirAlteracaoParcial(m);
 				}

@@ -25,8 +25,12 @@ package br.gov.jfrj.siga.dp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_EM_ELABORACAO = 1;

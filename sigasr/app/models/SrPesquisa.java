@@ -41,11 +41,11 @@ public class SrPesquisa extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrPesquisa pesquisaInicial;
 
-	@OneToMany(targetEntity = SrPesquisa.class, mappedBy = "pesquisaInicial", cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrPesquisa.class, mappedBy = "pesquisaInicial", cascade = CascadeType.PERSIST, fetch=FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrPesquisa> meuPesquisaHistoricoSet;
 
-	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrPergunta.class, mappedBy = "pesquisa")
+	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "pesquisa", fetch=FetchType.LAZY)
 	@OrderBy("ordemPergunta")
 	public Set<SrPergunta> perguntaSet;
 
@@ -73,6 +73,8 @@ public class SrPesquisa extends HistoricoSuporte {
 	}
 
 	public SrPesquisa getPesquisaAtual() {
+		if (getHisDtFim() == null)
+			return this;
 		List<SrPesquisa> pesquisas = getHistoricoPesquisa();
 		if (pesquisas == null)
 			return null;

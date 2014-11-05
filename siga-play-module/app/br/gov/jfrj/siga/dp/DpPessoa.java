@@ -42,6 +42,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -59,6 +61,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @SqlResultSetMapping(name = "scalar", columns = @ColumnResult(name = "dt"))
 @NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "SELECT sysdate dt FROM dual", resultSetMapping = "scalar")
 @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable {
 	/**

@@ -27,8 +27,12 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "CP_COMPLEXO", schema = "CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpComplexo extends AbstractCpComplexo {
 
 	@Override

@@ -30,6 +30,8 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -40,6 +42,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 		Serializable, Selecionavel, Sincronizavel {
 

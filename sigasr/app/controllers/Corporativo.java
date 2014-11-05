@@ -17,6 +17,7 @@ import models.DadosRH;
 import models.DadosRH.Cargo;
 import models.DadosRH.Funcao;
 import models.DadosRH.Lotacao;
+import models.DadosRH.Orgao;
 import models.DadosRH.Papel;
 import models.DadosRH.Pessoa;
 
@@ -64,6 +65,8 @@ public class Corporativo extends SigaApplication {
 				mpp.put(pp.papel_pessoa_id, new ArrayList<Papel>());
 			if (pp != null)
 				mpp.get(pp.papel_pessoa_id).add(pp);
+			
+			Orgao org = d.getOrgao();
 
 		}
 

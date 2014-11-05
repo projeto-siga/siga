@@ -27,13 +27,13 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Usuario;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
-public class SigaApplication extends Controller{
+public class SigaApplication extends Controller {
 
 	protected static void prepararSessao() throws Exception {
 		Session playSession = (Session) JPA.em().getDelegate();
 		CpDao.freeInstance();
+		HibernateUtil.setSessao(playSession); //Karina: Esta linha deve vir antes da linha de baixo, obrigatoriamente ou o podem ocorrer NPEs
 		CpDao.getInstance(playSession);
-		HibernateUtil.setSessao(playSession);
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
@@ -97,9 +97,9 @@ public class SigaApplication extends Controller{
 			RenderArgs.current().put("currentTimeMillis", new Date().getTime());
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Edson: Quando as informacoes nao puderem ser obtidas do Siga,
-			// manda para a pagina de login. Se nao for esse o erro, joga
-			// excecao pra cima.
+			// Edson: Quando as informações não puderam ser obtidas do Siga,
+			// manda para a página de login. Se não for esse o erro, joga
+			// exceção pra cima.
 			redirect("/siga/redirect.action?uri=" + JavaExtensions.urlEncode(request.url));
 		}
 
@@ -116,16 +116,16 @@ public class SigaApplication extends Controller{
 		if (servico.endsWith(";"))
 			servico = servico.substring(0, servico.length()-1);
 		if (!podeUtilizarServico(servico))
-			throw new Exception("Acesso negado. Servico: '" + servico
-					+ "' usuario: " + titular().getSigla() + " lotacao: "
+			throw new Exception("Acesso negado. Serviço: '" + servico
+					+ "' usuário: " + titular().getSigla() + " lotação: "
 					+ lotaTitular().getSiglaCompleta());
 	}
-
+	
 	protected static void tratarExcecoes(Exception e) {
 		// MailUtils.sendErrorMail(e);
 		if (cadastrante() != null)
-			Logger.error("Erro Siga-GC; Pessoa: " + cadastrante().getSigla()
-					+ "; Lotacao: " + lotaTitular().getSigla(), e);
+			Logger.error("Erro Siga-SR; Pessoa: " + cadastrante().getSigla()
+					+ "; Lotação: " + lotaTitular().getSigla(), e);
 		e.printStackTrace();
 		error(e.getMessage());
 	}
@@ -149,12 +149,12 @@ public class SigaApplication extends Controller{
 	static String getBaseSiga() {
 		return "http://" + Play.configuration.getProperty("servidor.principal")+ ":8080/siga";
 	}
-
+	
 	@Catch(value = Throwable.class, priority = 1)
 	public static void catchError(Throwable throwable) {
 		if (Play.mode.isDev())
 			return;
-
+		
 		// Flash.current().clear();
 		// Flash.current().put("_cabecalho_pre",
 		// renderArgs.get("_cabecalho_pre"));
@@ -169,10 +169,10 @@ public class SigaApplication extends Controller{
 		String stackTrace = sw.toString();
 		String message = throwable.getMessage();
 		if (message == null)
-			message = "Nenhuma informaÃ§Ã£o disponÃ­vel.";
+			message = "Nenhuma informação disponível.";
 		erro(message, stackTrace);
 	}
-
+	
 	public static void erro(String message, String stackTrace) {
 		render(message, stackTrace);
 	}

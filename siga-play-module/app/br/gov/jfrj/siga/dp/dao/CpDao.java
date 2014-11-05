@@ -50,6 +50,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultNamingStrategy;
 import org.hibernate.criterion.LogicalExpression;
@@ -108,6 +109,10 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_QUERY_HOURS = "query.hours";
 	public static final String CACHE_SECONDS = "seconds";
 
+	public static CpDao getInstance(Session sessao, StatelessSession sessaoStateless) {
+		return ModeloDao.getInstance(CpDao.class, sessao, sessaoStateless);
+	}
+	
 	public static CpDao getInstance(Session sessao) {
 		return ModeloDao.getInstance(CpDao.class, sessao);
 	}

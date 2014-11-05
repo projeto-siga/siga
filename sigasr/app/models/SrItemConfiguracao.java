@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -19,14 +20,18 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import models.SrSelecionavel;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
-public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionavel {
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class SrItemConfiguracao extends HistoricoSuporte implements
+		SrSelecionavel {
 
 	private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
 		@Override
@@ -56,11 +61,18 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	@Column(name = "TITULO_ITEM_CONFIGURACAO")
 	public String tituloItemConfiguracao;
 
-	@ManyToOne()
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "ID_PAI")
+	public SrItemConfiguracao pai;
+
+	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "pai", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	public List<SrItemConfiguracao> filhoSet;
+
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrItemConfiguracao itemInicial;
 
-	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrItemConfiguracao> meuItemHistoricoSet;
 
@@ -90,35 +102,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		return tituloItemConfiguracao;
 	}
 
-	public String getDescricaoCompleta() {
-		String sigla = this.siglaItemConfiguracao;
-		int nivel = this.getNivel();
-		String desc_nivel = null;
-		if (nivel == 1) {
-			desc_nivel = this.tituloItemConfiguracao;
-		}
-		if (nivel == 2) {
-			String sigla_nivelpai = this.getSigla().substring(0, 2) + ".00.00";
-			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivelpai).first();
-			desc_nivel = configuracao.tituloItemConfiguracao + " : "
-					+ this.tituloItemConfiguracao;
-		}
-		if (nivel == 3) {
-			String sigla_nivelpai = this.getSigla().substring(0, 5) + ".00";
-			SrItemConfiguracao configuracao = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivelpai).first();
-			String sigla_nivel_anterior = this.getSigla().substring(0, 2)
-					+ ".00.00";
-			SrItemConfiguracao configuracao_anterior = SrItemConfiguracao.find(
-					"bySiglaItemConfiguracao", sigla_nivel_anterior).first();
-			desc_nivel = configuracao_anterior.tituloItemConfiguracao + " : "
-					+ configuracao.tituloItemConfiguracao + " : "
-					+ this.tituloItemConfiguracao;
-		}
-		return desc_nivel;
-	}
-
 	@Override
 	public void setId(Long id) {
 		this.idItemConfiguracao = id;
@@ -135,6 +118,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	}
 
 	public SrItemConfiguracao getAtual() {
+		if (getHisDtFim() == null)
+			return this;
 		List<SrItemConfiguracao> sols = getHistoricoItemConfiguracao();
 		if (sols == null)
 			return null;
@@ -202,7 +187,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 				do {
 					if (!listaFinal.contains(item))
 						listaFinal.add(item);
-					item = item.getPai();
+					item = item.pai;
 				} while (item != null);
 			else
 				listaFinal.add(item);
@@ -257,7 +242,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		return getSigla().substring(0, posFimComparacao + 1);
 	}
 
-	public SrItemConfiguracao getPai() {
+	public SrItemConfiguracao getPaiPorSigla() {
 		String sigla = getSiglaSemZeros();
 		sigla = sigla.substring(0, sigla.length() - 1);
 		if (sigla.lastIndexOf(".") == -1)
@@ -283,12 +268,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		return outroItem.isPaiDeOuIgualA(this);
 	}
 
-	public List<SrItemConfiguracao> listarItemETodosDescendentes() {
-		return SrItemConfiguracao.find(
-				"byHisDtFimIsNullAndSiglaItemConfiguracaoLike",
-				getSiglaSemZeros() + "%").fetch();
-	}
-
 	public static List<SrItemConfiguracao> listar() {
 		return SrItemConfiguracao.find(
 				"hisDtFim is null order by siglaItemConfiguracao").fetch();
@@ -302,7 +281,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 
 	public String getGcTags() {
 		String tags = "";
-		SrItemConfiguracao pai = getPai();
+		SrItemConfiguracao pai = this.pai;
 		if (pai != null)
 			tags += pai.getGcTags();
 		return tags + "&tags=@" + getTituloSlugify();
@@ -315,5 +294,36 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 
 	public String getTituloSlugify() {
 		return Texto.slugify(tituloItemConfiguracao, true, false);
+	}
+
+	@Override
+	public void salvar() throws Exception {
+		if (getNivel() > 1) {
+			pai = getPaiPorSigla();
+		}
+		super.salvar();
+
+		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
+		//tem de ser corrigido.
+		
+		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
+		//serao recarregadas do banco, e precisarao reconhecer o novo estado deste item 
+		//refresh();
+		
+		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
+		// instancia do objeto, caso contrario, nao ha configuracao
+		// referenciando
+		//if (itemInicial != null)
+		//	SrConfiguracao.notificarQueMudou(this);
+	}
+
+	public List<SrItemConfiguracao> getItemETodosDescendentes() {
+		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
+		lista.add(this);
+		for (SrItemConfiguracao filho : filhoSet) {
+			if (filho.getHisDtFim() == null)
+				lista.addAll(filho.getItemETodosDescendentes());
+		}
+		return lista;
 	}
 }

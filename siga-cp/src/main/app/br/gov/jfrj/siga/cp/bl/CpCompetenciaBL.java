@@ -87,8 +87,7 @@ public class CpCompetenciaBL {
 	public boolean isIdentidadeBloqueada(CpIdentidade cpIdentidade)
 			throws AplicacaoException {
 		try {
-			return !configuracaoBL.podePorConfiguracao(cpIdentidade,
-					CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN);
+			return !configuracaoBL.podePorConfiguracao(cpIdentidade, CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN);
 		} catch (final Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível verificar se a identidade está bloqueada.",

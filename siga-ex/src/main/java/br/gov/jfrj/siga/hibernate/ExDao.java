@@ -446,6 +446,7 @@ public class ExDao extends CpDao {
 	}
 
 	public int consultarQuantidade(final ExDocumentoDaoFiltro flt) {
+		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -533,8 +534,8 @@ public class ExDao extends CpDao {
 	public Object[] consultarPorTexto(String query, int offset, int itemPagina)
 			throws Exception {
 
-		// Substitui n espacos brancos seguidos de letra ou numero por " +"
-		// As duas linhas abaixo poderao ser substituidas por uma
+		// Substitui n espaços brancos seguidos de letra ou número por " +"
+		// As duas linhas abaixo poderão ser substituídas por uma
 		// query = "+"+query.replaceAll("(\\s+)", " +");
 		// query = query.replaceAll("\\+\\-", "-");
 
@@ -662,7 +663,7 @@ public class ExDao extends CpDao {
 			fullTextSession.clear();
 			getSessao().clear();
 		} catch (Throwable t) {
-			// Nao havia documentos a excluir
+			// Não havia documentos a excluir
 		}
 
 		final Criteria crit = getSessao().createCriteria(ExDocumento.class);
@@ -684,7 +685,7 @@ public class ExDao extends CpDao {
 				index++;
 				// if (aguarde != null)
 				// aguarde.setMensagem(String.valueOf(index)
-				// + " documentos ja indexados.");
+				// + " documentos já indexados.");
 				if (doc.isIndexavel())
 					fullTextSession.index(doc);
 
@@ -698,12 +699,12 @@ public class ExDao extends CpDao {
 			fullTextSession.clear();
 			getSessao().clear();
 			System.out.print(String.valueOf(index)
-					+ " documentos jÃ¡ indexados. --  -- ");
+					+ " documentos já indexados. --  -- ");
 		} while (list.size() > 0);
 		//System.gc();
 
 		// fullTextSession.close();
-		System.out.println("DuraÃ§Ã£o da indexaÃ§Ã£o de documentos: "
+		System.out.println("Duração da indexação de documentos: "
 				+ (new Date().getTime() - inicio));
 
 		if (aguarde != null)
@@ -748,7 +749,7 @@ public class ExDao extends CpDao {
 		//System.gc();
 
 		// fullTextSession.close();
-		System.out.println("DuraÃ§Ã£o da indexaÃ§Ã£o de documentos: "
+		System.out.println("Duração da indexação de documentos: "
 				+ (new Date().getTime() - inicio));
 
 	}
@@ -828,7 +829,7 @@ public class ExDao extends CpDao {
 			fullTextSession.purge(ExDocumento.class, entidade.getIdDoc());
 			tx.commit();
 		} catch (Throwable t) {
-			// NÃ£o havia aquela movimentaÃ§Ã£o no Ã­ndice
+			// Não havia aquela movimentação no índice
 		}
 	}
 
@@ -873,7 +874,7 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
 					+ " UNION "
-					+ " SELECT -1 ID, 'Em TrÃ¢nsito' DESCR, 3, COUNT(1) C1, 0 C2 "
+					+ " SELECT -1 ID, 'Em Trânsito' DESCR, 3, COUNT(1) C1, 0 C2 "
 					+ " FROM EX_ESTADO_DOC EST, DP_PESSOA_SIN PES, EX_MOVIMENTACAO MOVR "
 					+ " WHERE "
 					+ " ID_PESSOA_INICIAL = ? "
@@ -886,7 +887,7 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
 					+ " UNION "
-					+ " SELECT -3 ID, 'Em TrÃ¢nsito EletrÃ´nico' DESCR, 4, COUNT(1) C1, 0 C2 "
+					+ " SELECT -3 ID, 'Em Trânsito Eletrônico' DESCR, 4, COUNT(1) C1, 0 C2 "
 					+ " FROM EX_ESTADO_DOC EST, DP_PESSOA_SIN PES, EX_MOVIMENTACAO MOVR, EX_DOCUMENTO DOC "
 					+ " WHERE "
 					+ " ID_PESSOA_INICIAL = ? "
@@ -939,7 +940,7 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
 					+ " UNION "
-					+ " SELECT -1 ID, 'Em TrÃ¢nsito' DESCR, 3, 0 C1, COUNT(1) C2 "
+					+ " SELECT -1 ID, 'Em Trânsito' DESCR, 3, 0 C1, COUNT(1) C2 "
 					+ " FROM EX_ESTADO_DOC EST, DP_LOTACAO_SIN LOT, EX_MOVIMENTACAO MOVR "
 					+ " WHERE "
 					+ " ID_LOTACAO_INI = ? "
@@ -952,7 +953,7 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
 					+ " UNION "
-					+ " SELECT -3 ID, 'Em TrÃ¢nsito EletrÃ´nico' DESCR, 4, 0 C1, COUNT(1) C2 "
+					+ " SELECT -3 ID, 'Em Trânsito Eletrônico' DESCR, 4, 0 C1, COUNT(1) C2 "
 					+ " FROM EX_ESTADO_DOC EST, DP_LOTACAO_SIN LOT, EX_MOVIMENTACAO MOVR, EX_DOCUMENTO DOC "
 					+ " WHERE "
 					+ " ID_LOTACAO_INI = ? "
@@ -1025,7 +1026,7 @@ public class ExDao extends CpDao {
 
 	/**
 	 * Le da tabela o campo do tipo BLOB e converte para um array de bytes.
-	 * metodo nao usa as facilidade do HIBERNATE em virtude da ausencia de
+	 * método não usa as facilidade do HIBERNATE em virtude da ausencia de
 	 * suporte para estes campos.
 	 */
 	// public ExModelo consultarConteudoBlob(final ExModelo modelo)
@@ -1066,12 +1067,12 @@ public class ExDao extends CpDao {
 
 	/**
 	 * Grava na tabela Ex_Modelo o conteudo do array de byte como um blob. O
-	 * metodo nao usa as facilidade do HIBERNATE em virtude da ausencia de
+	 * método não usa as facilidade do HIBERNATE em virtude da ausencia de
 	 * suporte para estes campos.
 	 * 
 	 * @param modelo
 	 *            - O objeto da Classe contendo um array de bytes para gravar.
-	 * @return O objeto apos a gravacao
+	 * @return O objeto após a gravação
 	 * @throws SQLException
 	 * @throws AplicacaoException
 	 */
@@ -1090,7 +1091,7 @@ public class ExDao extends CpDao {
 	// final int i = psBlob.executeUpdate();
 	// if (i < 1)
 	// throw new AplicacaoException(
-	// "Ocorreu ao inserir Blob em Documento " + "que nao existe");
+	// "Ocorreu ao inserir Blob em Documento " + "que não existe");
 	// psBlob.close();
 	// psBlob = conn.prepareStatement(cmd.toString());
 	// psBlob.setLong(1, modelo.getIdMod());
@@ -1484,7 +1485,7 @@ public class ExDao extends CpDao {
 
 			return (ExTpDocPublicacao) query.list().get(0);
 		} catch (final Throwable t) {
-			// engolindo a excecao. Melhorar isso.
+			// engolindo a exceção. Melhorar isso.
 			return null;
 		}
 	}
@@ -1643,9 +1644,9 @@ public class ExDao extends CpDao {
 	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
 
 		if (pes == null || dt == null) {
-			log.error("[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentaÃ§Ãµes nÃ£o podem ser nulos.");
+			log.error("[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentações não podem ser nulos.");
 			throw new IllegalStateException(
-					"A pessoa e/ou a data informada para a realizacao da consulta Ã© nula.");
+					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -1878,6 +1879,20 @@ public class ExDao extends CpDao {
 		return (ExModelo) crit.uniqueResult();
 	}
 
+	
+	public ExTipoDocumento consultarExTipoDocumento(String descricao) {
+		final Criteria crit = getSessao().createCriteria(ExTipoDocumento.class);
+		crit.add(Restrictions.eq("descrTipoDocumento", descricao));
+
+		return (ExTipoDocumento) crit.uniqueResult();
+	}
+	
+	public ExNivelAcesso consultarExNidelAcesso(String nome) {
+		final Criteria crit = getSessao().createCriteria(ExNivelAcesso.class);
+		crit.add(Restrictions.eq("nmNivelAcesso", nome));
+
+		return (ExNivelAcesso) crit.uniqueResult();
+	}
 
 	public ExModelo consultarModeloAtual(ExModelo mod) {
 		final Query query = getSessao().getNamedQuery("consultarModeloAtual");
@@ -1889,6 +1904,13 @@ public class ExDao extends CpDao {
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa) {
 		final Query query = getSessao().getNamedQuery(
 				"listarDocPendenteAssinatura");
+		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
+		return query.list();
+	}
+	
+	public List<ExMovimentacao> listarDespachoPendenteAssinatura(DpPessoa pessoa) {
+		final Query query = getSessao().getNamedQuery(
+				"listarDespachoPendenteAssinatura");
 		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
 		return query.list();
 	}

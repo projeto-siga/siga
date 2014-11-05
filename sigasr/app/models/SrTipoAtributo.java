@@ -14,11 +14,16 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_TIPO_ATRIBUTO", schema = "SIGASR")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SrTipoAtributo extends HistoricoSuporte {
 
 	@Id
@@ -64,6 +69,8 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	}
 
 	public SrTipoAtributo getAtual() {
+		if (getHisDtFim() == null)
+			return this;
 		List<SrTipoAtributo> sols = getHistoricoTipoAtributo();
 		if (sols == null)
 			return null;
@@ -74,6 +81,24 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void salvar() throws Exception {
+		super.salvar();
+
+		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
+		//tem de ser corrigido.
+		
+		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
+		//serao recarregadas do banco, e precisarao reconhecer o novo estado deste tipo de atributo
+		//refresh();
+		
+		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
+		// instancia do objeto, caso contrario, nao ha configuracao
+		// referenciando
+		//if (tipoAtributoInicial != null)
+		//	SrConfiguracao.notificarQueMudou(this);
 	}
 
 }

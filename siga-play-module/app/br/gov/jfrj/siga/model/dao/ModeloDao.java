@@ -31,6 +31,7 @@ import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
 import org.jboss.logging.Logger;
@@ -43,6 +44,8 @@ public abstract class ModeloDao {
 
 	protected Session sessao;
 
+	protected StatelessSession sessaoStateless;
+
 	protected String cacheRegion = null;
 
 	private static final ThreadLocal<ModeloDao> threadDao = new ThreadLocal<ModeloDao>();
@@ -50,7 +53,13 @@ public abstract class ModeloDao {
 	protected ModeloDao() {}
 
 	@SuppressWarnings("unchecked")
-	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,Session sessao) {
+	protected static <T extends ModeloDao> T getInstance(Class<T> clazz, Session sessao) {
+		return getInstance(clazz, sessao, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,
+			Session sessao, StatelessSession sessaoStateless) {
 		T dao = null;
 
 		try {
@@ -69,6 +78,12 @@ public abstract class ModeloDao {
 					dao.sessao = s;
 				} else {
 					dao.sessao = sessao;
+				}
+				if (sessaoStateless == null) {
+					StatelessSession stateless = HibernateUtil.getSessionFactory().openStatelessSession();
+					dao.sessaoStateless = stateless;
+				} else {
+					dao.sessaoStateless = sessaoStateless;
 				}
 			} catch (Exception e) {
 				throw new Error(e);
@@ -145,6 +160,16 @@ public abstract class ModeloDao {
 	}
 
 	/**
+	 * @return Retorna o atributo sessaoStateless.
+	 */
+	public StatelessSession getSessaoStateless() {
+		if (sessaoStateless == null)
+			throw new IllegalStateException(
+					"Variï¿½vel Session nï¿½o foi atribuï¿½da para este DAO");
+		return sessaoStateless;
+	}
+
+	/**
 	 * @return Retorna a sessionFactory do Hibernate
 	 */
 	public SessionFactory getFabricaDeSessao() {
@@ -158,11 +183,11 @@ public abstract class ModeloDao {
 	}
 
 	// Renato: desativei esse método pois ele não informar questões de cache ou de ordenação. É melhor termos métodos específicos, então.
-//	public <T> List<T> listarTodos(Class<T> clazz) {
-//		// Criteria crit = getSessao().createCriteria(getPersistentClass());
-//		// return crit.list();
-//		return findByCriteria(clazz);
-//	}
+	//	public <T> List<T> listarTodos(Class<T> clazz) {
+	//		// Criteria crit = getSessao().createCriteria(getPersistentClass());
+	//		// return crit.list();
+	//		return findByCriteria(clazz);
+	//	}
 
 	/**
 	 * Use this inside subclasses as a convenience method.
@@ -215,12 +240,12 @@ public abstract class ModeloDao {
 		HibernateUtil.rollbackTransacao();
 	}
 
-//	public static void configurarHibernateParaDebug(Configuration cfg) {
-//		cfg.setProperty("hibernate.show_sql", "true");
-//		cfg.setProperty("hibernate.format_sql", "true");
-//		cfg.setProperty("generate_statistics", "true");
-//		cfg.setProperty("hibernate.use_sql_comments", "true");
-//	}
+	//	public static void configurarHibernateParaDebug(Configuration cfg) {
+	//		cfg.setProperty("hibernate.show_sql", "true");
+	//		cfg.setProperty("hibernate.format_sql", "true");
+	//		cfg.setProperty("generate_statistics", "true");
+	//		cfg.setProperty("hibernate.use_sql_comments", "true");
+	//	}
 
 	/**
 	 * @return true se a sessão do Hibernate não for nula e estiver aberta.

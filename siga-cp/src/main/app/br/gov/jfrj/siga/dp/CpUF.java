@@ -29,10 +29,14 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "CP_UF", schema = "CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpUF extends AbstractCpUF implements Serializable,
 		Selecionavel {
 

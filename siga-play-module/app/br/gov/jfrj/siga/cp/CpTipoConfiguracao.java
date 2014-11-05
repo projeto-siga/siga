@@ -21,8 +21,12 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "CP_TIPO_CONFIGURACAO", schema="CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	/**

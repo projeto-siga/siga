@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.Texto;
@@ -48,6 +50,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		Selecionavel, Historico, Sincronizavel,  Comparable  {
 

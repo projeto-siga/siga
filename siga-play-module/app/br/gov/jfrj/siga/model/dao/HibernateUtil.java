@@ -283,7 +283,6 @@ public class HibernateUtil {
 		return conf;
 	}
 
-	// TODO Este metodo nao e chamado em nenhuma classe
 	public static void configurarHibernate(Session session) {
 		
 		try {

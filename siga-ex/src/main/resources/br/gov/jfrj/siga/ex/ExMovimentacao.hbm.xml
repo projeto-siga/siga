@@ -210,6 +210,15 @@
                 and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=15)              
                 ) order by mar.dtIniMarca desc]]>
         </query>
+        
+        <query name="listarDespachoPendenteAssinatura">	
+				<![CDATA[select mov from ExMovimentacao mov join mov.exMobil mobil 
+					where mobil in (select distinct(mob) from ExMobil mob join mob.exMarcaSet mar
+               		where mar.cpMarcador.idMarcador = 29) and (mov.exTipoMovimentacao.idTpMov = 5 or mov.exTipoMovimentacao.idTpMov = 6 
+               			or mov.exTipoMovimentacao.idTpMov = 7 or mov.exTipoMovimentacao.idTpMov = 8 or mov.exTipoMovimentacao.idTpMov = 18)
+					and mov.subscritor.idPessoaIni = :idPessoaIni
+					order by mov.dtIniMov desc]]>
+		</query>
 
         <!-- Somente os "em transferencia", "em transferencia eletronica" ou "transferido para orgao externo" -->
         <query name="consultarParaViaDeProtocolo">

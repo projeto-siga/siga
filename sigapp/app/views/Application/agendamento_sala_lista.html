@@ -63,11 +63,13 @@ function calendario_resposta(param){
 	<br>
 	<h4 class="ui-accordion-header">SALA: &nbsp<input class="ui-spinner-input" type="text" value="${local}" readonly="true" /></h4>
 	</div> 
-<table class="ui-tabs"  align="center" style="font-size:125%;">
+<table class="ui-tabs"  align="center" style="font-size:100%;">
 	<tr bgcolor="Silver"><th>&nbsp Data &nbsp</th><th>&nbsp Hora &nbsp</th><th>&nbsp Periciado &nbsp</th><th>&nbsp Processo &nbsp</th><th>&nbsp Perito Juízo &nbsp</th><th>&nbsp Perito Parte &nbsp</th><th>&nbsp</th>
  	</tr>
-	#{list items:listAgendamentosMeusSala, as:'ag'}
-	<tr>
+	  #{list items:listAgendamentosMeusSala, as:'ag'}
+	  #{if !b} <tr class="ui-button-icon-only" bgcolor="#dddddd"> #{/if}
+	  #{if b} <tr class="ui-button-icon-only" > #{/if}
+	  #{set b: !b /}
 	  <td>&nbsp ${ag.data_ag.toString().substring(8,10)}/${ag.data_ag.toString().substring(5,7)}/${ag.data_ag.toString().substring(0,4)}</td>
 	  <td>&nbsp ${ag.hora_ag.substring(0,2)}:${ag.hora_ag.substring(2,4)}</td>
 	  <td>&nbsp ${ag.periciado}</td>
@@ -100,5 +102,4 @@ function calendario_resposta(param){
 	<br><br><br><br>
 	<a style="position:absolute;left:05%;" class="ui-state-hover" href="/sigapp/">Voltar</a>  
  </div>
- 
 </form>

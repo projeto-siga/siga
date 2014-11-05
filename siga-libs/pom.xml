@@ -18,6 +18,10 @@
             <artifactId>jboss-servlet-api_2.5_spec</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
@@ -32,7 +36,7 @@
             <artifactId>webwork</artifactId>
         </dependency>
 
-		<!-- Siga -->
+        <!-- Siga -->
         <dependency>
             <groupId>siga</groupId>
             <artifactId>siga-cp</artifactId>

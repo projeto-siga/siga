@@ -21,8 +21,12 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(schema = "CORPORATIVO", name = "CP_TIPO_SERVICO")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpTipoServico extends AbstractCpTipoServico {
 	public static final int TIPO_SERVICO_DIRETORIO = 1;
 	public static final int TIPO_CONFIG_SISTEMA = 2;

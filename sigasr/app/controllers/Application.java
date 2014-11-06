@@ -70,6 +70,7 @@ import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class Application extends SigaApplication {
 
@@ -826,7 +827,7 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		//List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
 		List<SrLista> listasPrioridade = SrLista.listar(false);
@@ -834,7 +835,7 @@ public class Application extends SigaApplication {
 		if (id != null)
 			designacao = JPA.em().find(SrConfiguracao.class, id);
 		
-		render(designacao, orgaos, locais, pesquisaSatisfacao, /*unidadesMedida,*/ listasPrioridade);
+		render(designacao, orgaos, locais, pesquisaSatisfacao, unidadesMedida, listasPrioridade);
 	}
 	
 	public static void gravarDesignacao(SrConfiguracao designacao)
@@ -934,7 +935,7 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		//List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
 		List<SrLista> listasPrioridade = SrLista.listar(false);
@@ -949,7 +950,7 @@ public class Application extends SigaApplication {
 			designacoes = new ArrayList<SrConfiguracao>();
 		}
 		
-		render(itemConfiguracao, designacoes, orgaos, locais, /*unidadesMedida,*/ pesquisaSatisfacao, listasPrioridade);
+		render(itemConfiguracao, designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 
 	public static void gravarItem(SrItemConfiguracao itemConfiguracao)

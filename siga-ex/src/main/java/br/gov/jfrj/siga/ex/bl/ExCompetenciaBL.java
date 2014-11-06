@@ -1147,6 +1147,32 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
+	/*
+	 * Retorna se é possível assinar um documento com login e senha:
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAssinarComLoginESenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob.doc().isFisico())
+			return false;
+		
+		if (!podeAssinar(titular, lotaTitular, mob))
+			return false;
+
+		return getConf()
+						.podePorConfiguracao(
+								titular,
+								lotaTitular,
+								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA,
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+
 	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {
 		
 		if(doc.getExTipoDocumento().getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO))
@@ -1489,6 +1515,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		// Não deixa cancelar assinatura
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+						|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
 			return false;

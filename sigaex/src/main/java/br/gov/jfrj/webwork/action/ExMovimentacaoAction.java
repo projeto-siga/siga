@@ -255,6 +255,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private Integer tamMaxDescr;
 
 	private Long idLotDefault;
+	
+	private String nomeUsuarioSubscritor;
+
+	private String senhaUsuarioSubscritor;
 
 	public String getAtributoAssinavelDataHora() {
 		return atributoAssinavelDataHora;
@@ -1372,6 +1376,25 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
+	
+	public String aAssinarLoginESenhaGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+		
+		try {
+			setMsg(Ex
+					.getInstance()
+					.getBL()
+					.assinarDocumentoComLoginESenha(getCadastrante(), getLotaTitular(),
+							doc, mov.getDtMov(), getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(),
+							mov.getTitular()));
+		} catch (final Exception e) {
+
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}	
 
 	private static byte[] hexStringToByteArray(String s) {
 		int len = s.length();
@@ -4302,5 +4325,21 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.setIdLotDefault(lotSubscritor.getId());
 
 		return lotacoes;
+	}
+
+	public String getNomeUsuarioSubscritor() {
+		return nomeUsuarioSubscritor;
+	}
+
+	public void setNomeUsuarioSubscritor(String nomeUsuarioSubscritor) {
+		this.nomeUsuarioSubscritor = nomeUsuarioSubscritor;
+	}
+
+	public String getSenhaUsuarioSubscritor() {
+		return senhaUsuarioSubscritor;
+	}
+
+	public void setSenhaUsuarioSubscritor(String senhaUsuarioSubscritor) {
+		this.senhaUsuarioSubscritor = senhaUsuarioSubscritor;
 	}
 }

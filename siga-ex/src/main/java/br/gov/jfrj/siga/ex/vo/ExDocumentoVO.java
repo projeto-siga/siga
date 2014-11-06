@@ -494,6 +494,14 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeAssinar(titular, lotaTitular, mob));
 
+		vo.addAcao(
+				"application_form",
+				"Assinar Com Login e Senha",
+				"/expediente/mov",
+				"assinar",
+				Ex.getInstance().getComp()
+						.podeAssinarComLoginESenha(titular, lotaTitular, mob));
+		
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados
 			if (mob.temAnexos())

@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -75,6 +76,7 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.util.SetUtils;
@@ -82,6 +84,7 @@ import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -875,6 +878,7 @@ public class ExBL extends CpBL {
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
 					if (mob.doc().isAssinado()
@@ -2224,6 +2228,72 @@ public class ExBL extends CpBL {
 		alimentaFilaIndexacao(doc, true);
 
 		return s;
+	}
+
+	public String assinarDocumentoComLoginESenha(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc,
+			final Date dtMov, final String nomeSubscritor, final String senhaSubscritor, final DpPessoa titular)
+			throws AplicacaoException, NoSuchAlgorithmException {
+		
+		DpPessoa subscritor = null;
+		
+		final String hashAtual = GeraMessageDigest.executaHash(
+				senhaSubscritor.getBytes(), "MD5");
+
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
+				nomeSubscritor, true);
+		// se o usuário não existir
+		if (id == null)
+			throw new AplicacaoException("O usuário não está cadastrado.");
+		
+		subscritor = id.getDpPessoa();
+
+		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+		
+		if (!senhaValida) {
+			throw new AplicacaoException("Senha do subscritor inválida.");
+		}
+		
+		
+		boolean fPreviamenteAssinado = doc.isAssinado();
+
+		if (!doc.isFinalizado())
+			throw new AplicacaoException(
+					"Não é possível registrar assinatura de um documento não finalizado");
+
+		if (doc.isCancelado())
+			throw new AplicacaoException(
+					"Não é possível assinar um documento cancelado.");
+
+		String s = null;
+		try {
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA,
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+					subscritor, null, null, null, null);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc);
+
+			// Verifica se o documento possui documento pai e faz a juntada
+			// automática.
+			if (doc.getExMobilPai() != null) {
+				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
+						subscritor, titular, mov);
+			}
+
+			if (!fPreviamenteAssinado && doc.isAssinado())
+				s = processarComandosEmTag(doc, "assinatura");
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
+		}
+
+		alimentaFilaIndexacao(doc, true);
+		return s;
+
 	}
 
 	/**

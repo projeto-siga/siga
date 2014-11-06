@@ -1,0 +1,1 @@
+insert into siga.ex_tipo_movimentacao values(58, 'Assinatura com login e senha');

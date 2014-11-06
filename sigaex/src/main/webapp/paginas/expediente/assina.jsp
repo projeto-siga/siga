@@ -8,6 +8,18 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
 <siga:pagina titulo="Documento" onLoad="javascript: TestarAssinaturaDigital();">
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>
+	
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
 	</c:if>
@@ -98,4 +110,45 @@
 			</div>
 		</div>
 	</div>
+		<c:if test="${f:podeAssinarComLoginESenha(titular,lotaTitular,mob)}">
+		<br/><br/><br/>
+        <div class="gt-bd" style="padding-bottom: 0px;">
+		   <div class="gt-content">
+
+			<h2>Assinar com Login e Senha</h2>
+            <!-- login box -->
+			<div class="gt-mylogin-box">
+				<!-- login form -->
+				<form method="post" action="/sigaex/expediente/mov/assinar_login_senha_gravar.action" class="gt-form">
+				    <ww:hidden id="sigla" name="sigla"
+						value="${sigla}" />
+					<!-- form row -->
+					<div class="gt-form-row">
+						<label class="gt-label">Matrícula</label> <input id="nomeUsuarioSubscritor"
+							type="text" name="nomeUsuarioSubscritor"
+							onblur="javascript:converteUsuario(this)" class="gt-form-text">
+							
+					</div>
+					<!-- /form row -->
+
+					<!-- form row -->
+					<div class="gt-form-row">
+						<label class="gt-label">Senha</label> <input type="password"
+							name="senhaUsuarioSubscritor" class="gt-form-text">
+					</div>
+					<!-- /form row -->
+
+					<!-- form row -->
+					<div class="gt-form-row">
+						<input type="submit" value="Assinar"
+							class="gt-btn-medium gt-btn-right">
+					</div>
+					<!-- /form row -->
+				</form>
+				<!-- /login form -->
+			</div>
+			<!-- /login box -->
+			</div>
+		</div>
+		</c:if>	
 </siga:pagina>

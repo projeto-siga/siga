@@ -77,25 +77,6 @@ function printpage()
 			</font>
 			</p>
 		</div>
-		<div style="width: 45%; float: right;">
-			<p>
-			<font style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Equipamentos:
-			</font>
-			</p>
-			<p style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Nº de Série:
-			</p>
-			<p style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Nº de Etiqueta:
-			</p>
-			<p style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Nº de Patrimônio:
-			</p>
-			<p style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Etiqueta Externa:
-			</p>
-		</div>
 		
 		<div style="clear:both;text-align:left;">
 		<p>
@@ -103,12 +84,12 @@ function printpage()
 			Item de Configuração:&nbsp;
 			</font>
 			<font style="font-size: 11pt;">
-			${solicitacao.itemConfiguracao?.siglaItemConfiguracao} - ${solicitacao.itemConfiguracao?.descricaoCompleta}
+			${solicitacao.itemConfiguracao?.siglaItemConfiguracao} - ${solicitacao.itemConfiguracao?.descricao}
 			</font>
 			</p>
 			<p>
 			<b>Ação:</b>
-			${solicitacao.acao?.siglaAcao} - ${solicitacao.acao?.descricaoCompleta}
+			${solicitacao.acao?.siglaAcao} - ${solicitacao.acao?.descricao}
 			</p>
 		</div>
 		
@@ -168,7 +149,7 @@ function printpage()
 		ACEITAÇÃO DO USUÁRIO
 		<p></p>
 		<font style="font-weight: normal;">
-		DECLARO ESTAR CIENTE E DE ACORDO COM AS CONDIÃ‡Ã•ES DE ATENDIMENTO E QUE OS SERVIÃ‡OS DA PRESENTE SOLICITAÇÃO FORAM 
+		DECLARO ESTAR CIENTE E DE ACORDO COM AS CONDIÇÕES DE ATENDIMENTO E QUE OS SERVIÇOS DA PRESENTE SOLICITAÇÃO FORAM 
 		EFETIVAMENTE TESTADOS TENDO SIDO DADOS COMO ACEITOS POR MIM NESTA DATA. 
 		</font>
 		</div>

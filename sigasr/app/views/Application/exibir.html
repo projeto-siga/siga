@@ -228,13 +228,6 @@ $(function(){
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent}
 					${solicitacao.GUTString}</span>
 			</p>
-			#{if (solicitacao.pendente) &&
-			(solicitacao.getUltimaMovimentacaoPorTipo(9).dtAgenda != "")}
-			<p>
-				<b>Agendamento:</b>
-				${solicitacao.getUltimaMovimentacaoPorTipo(9).getDtAgendaDDMMYYHHMM()}
-			</p>
-			#{/if}
 		</div>
 	</div>
 
@@ -304,7 +297,7 @@ $(function(){
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Pendências</h3>
-			#{list items:solicitacao.getPendentes(), as:'pendencia'}
+			#{list items:solicitacao.pendencias, as:'pendencia'}
 				<p>
 					<b>${pendencia.descrMovimentacao}</b>
 					<a href="javascript:terminarPendencia('${pendencia.motivoPendencia}', '${pendencia.idMovimentacao}');"> 
@@ -388,11 +381,11 @@ $(function(){
 	<form action="@{Application.deixarPendente()}" method="post"
 		enctype="multipart/form-data">
 		<div class="gt-form-row gt-width-66">
-			<label>Data</label>
+			<label>Data de Término</label>
 			<input type="text" name="calendario" id="calendario">
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Horário</label>
+			<label>Horário de Término</label>
 			<input type="text" name="horario" id="horario">
 		</div>
 		<div class="gt-form-row gt-width-66">

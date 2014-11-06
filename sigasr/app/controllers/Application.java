@@ -358,7 +358,7 @@ public class Application extends SigaApplication {
 
 	public static void gravar(SrSolicitacao solicitacao, long dtIniEdicao) throws Exception {
         solicitacao.dtIniEdicao = new Date(dtIniEdicao);
-		if(!solicitacao.rascunho)
+		if(!solicitacao.isRascunho())
         	validarFormEditar(solicitacao);
         
 		solicitacao.salvar(cadastrante(), lotaTitular());

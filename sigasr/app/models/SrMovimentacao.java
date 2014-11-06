@@ -67,7 +67,7 @@ public class SrMovimentacao extends GenericModel {
 	public DpPessoa atendente;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_LOTA_ATENDENTE", nullable = false)
+	@JoinColumn(name = "ID_LOTA_ATENDENTE")
 	public DpLotacao lotaAtendente;
 
 	@ManyToOne
@@ -255,24 +255,20 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public SrMovimentacao salvar() throws Exception {
-		
+
 		//Edson: considerar deixar esse codigo em SrSolicitacao.movimentar(),
 		//visto que sao chamadas muitas operacoes daquela classe
-		
+
 		checarCampos();
 		super.save();
-		
-		// Edson: atualizando o srMovimentacaoSet...
-		if (solicitacao.meuMovimentacaoSet == null)
-			solicitacao.meuMovimentacaoSet = new HashSet<SrMovimentacao>();
-		solicitacao.meuMovimentacaoSet.add(this);
-		
+		solicitacao.refresh();
+
 		solicitacao.atualizarMarcas();
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
-						&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
+				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
 		return this;
 	}
@@ -297,17 +293,14 @@ public class SrMovimentacao extends GenericModel {
 
 		if (solicitacao == null)
 			throw new Exception(
-					"MovimentaÃ§Ã£o precisa fazer parte de uma solicitaÃ§Ã£o");
-
-		solicitacao = solicitacao.solicitacaoInicial != null ? solicitacao.solicitacaoInicial
-				: solicitacao;
+					"Movimentação precisa fazer parte de uma solicitação");
 
 		if (arquivo != null) {
 			double lenght = (double) arquivo.blob.length / 1024 / 1024;
 			if (lenght > 2)
 				throw new IllegalArgumentException("O tamanho do arquivo ("
 						+ new DecimalFormat("#.00").format(lenght)
-						+ "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
+						+ "MB) é maior que o máximo permitido (2MB)");
 		}
 
 		if (dtIniMov == null)
@@ -325,16 +318,16 @@ public class SrMovimentacao extends GenericModel {
 
 			if (numSequencia == null)
 				numSequencia = solicitacao
-						.getUltimaMovimentacaoMesmoSeCancelada().numSequencia + 1;
+				.getUltimaMovimentacaoMesmoSeCancelada().numSequencia + 1;
 		}
 
 		if (tipoMov == null)
 			tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
+			.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
 
-		if (!solicitacao.rascunho) {
+		if (!solicitacao.isRascunho()) {
 			if (atendente == null && lotaAtendente == null)
-				throw new Exception("Atendente nÃ£o pode ser nulo");
+				throw new Exception("Atendente não pode ser nulo");
 
 			if (lotaAtendente == null)
 				lotaAtendente = atendente.getLotacao();

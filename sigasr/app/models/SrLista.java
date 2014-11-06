@@ -40,7 +40,7 @@ public class SrLista extends HistoricoSuporte {
 	private static final long serialVersionUID = 1L;
 
 	private class SrSolicitacaoListaComparator implements
-			Comparator<SrSolicitacao> {
+	Comparator<SrSolicitacao> {
 
 		private SrLista lista;
 
@@ -69,15 +69,15 @@ public class SrLista extends HistoricoSuporte {
 
 	@Column(name = "NOME_LISTA")
 	public String nomeLista;
-	
+
 	@Lob
 	@Column(name = "DESCR_ABRANGENCIA", length = 8192)
 	public String descrAbrangencia;
-	
+
 	@Lob
 	@Column(name = "DESCR_JUSTIFICATIVA", length = 8192)
 	public String descrJustificativa;
-	
+
 	@Lob
 	@Column(name = "DESCR_PRIORIZACAO", length = 8192)
 	public String descrPriorizacao;
@@ -86,7 +86,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -94,16 +94,16 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrLista listaInicial;
 
-	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
-	
+
 	@Transient
 	public List<SrConfiguracao> permissoes;
-	
+
 	public static List<SrLista> listar(boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer();
-		
+
 		if (!mostrarDesativado)
 			sb.append(" hisDtFim is null ");
 		else {
@@ -111,9 +111,9 @@ public class SrLista extends HistoricoSuporte {
 			sb.append(" SELECT max(idLista) as idLista FROM ");
 			sb.append(" SrLista GROUP BY hisIdIni) ");
 		}
-		
+
 		sb.append(" order by idLista ");
-		
+
 		return SrLista.find(sb.toString()).fetch();
 	}
 
@@ -130,7 +130,7 @@ public class SrLista extends HistoricoSuporte {
 	public void setId(Long id) {
 		idLista = id;
 	}
-	
+
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
@@ -162,12 +162,12 @@ public class SrLista extends HistoricoSuporte {
 	public Set<SrMovimentacao> getMovimentacaoSet(boolean ordemCrescente) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new SrMovimentacaoComparator(ordemCrescente));
-		SrLista ini = listaInicial != null ? listaInicial
-				: this;
-		if (ini.meuMovimentacaoSet != null)
-			for (SrMovimentacao movimentacao : ini.meuMovimentacaoSet)
-				if ((!movimentacao.isCanceladoOuCancelador()))
-					listaCompleta.add(movimentacao);
+		if (listaInicial != null)
+			for (SrLista lista : getHistoricoLista())
+				if (lista.meuMovimentacaoSet != null)
+					for (SrMovimentacao movimentacao : lista.meuMovimentacaoSet)
+						if ((!movimentacao.isCanceladoOuCancelador()))
+							listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
 
@@ -178,17 +178,17 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
-		return (lota.equals(lotaCadastrante));
+		return (lota.equivale(lotaCadastrante));
 	}
 
 	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess)
 			throws Exception {
-		return (lotaTitular.equals(lotaCadastrante));
+		return (lotaTitular.equivale(lotaCadastrante));
 	}
 
 	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess)
 			throws Exception {
-		if ((lotaTitular.equals(lotaCadastrante)))
+		if ((lotaTitular.equivale(lotaCadastrante)))
 			return true;
 		SrConfiguracao conf = SrConfiguracao.getConfiguracao(lotaTitular, pess,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA, this);
@@ -250,14 +250,14 @@ public class SrLista extends HistoricoSuporte {
 				s.priorizar(this, i, pessoa, lota);
 		}
 	}
-	
+
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-		
+
 		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
 		//tem de ser corrigido.
-		
+
 		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
 		//serao recarregadas do banco, e precisarao reconhecer o novo estado desta lista
 		//refresh();
@@ -267,11 +267,11 @@ public class SrLista extends HistoricoSuporte {
 		// referenciando
 		if (listaInicial != null)
 			SrConfiguracaoBL
-					.get()
-					.limparCache(
-							(CpTipoConfiguracao) CpTipoConfiguracao
-									.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-		
+			.get()
+			.limparCache(
+					(CpTipoConfiguracao) CpTipoConfiguracao
+					.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+
 		// DB1: precisa salvar item a item 
 		if (this.permissoes != null) {
 			for (SrConfiguracao permissao : this.permissoes) {
@@ -279,7 +279,7 @@ public class SrLista extends HistoricoSuporte {
 				permissao.salvarComoPermissaoUsoLista();
 			}
 		}
-		
+
 		//if (listaInicial != null)
 		//	SrConfiguracao.notificarQueMudou(this);
 	}

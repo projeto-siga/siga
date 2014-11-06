@@ -90,13 +90,13 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	@OrderBy("hisDtIni desc")
 	public List<SrItemConfiguracao> meuItemHistoricoSet;
    
-	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
+	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
     public Set<SrGestorItem> gestorSet;
 
 	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
 	public int numFatorMultiplicacaoGeral = 1;
 	
-	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
+	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
 	public Set<SrFatorMultiplicacao> fatorMultiplicacaoSet; 
 	
 	@Transient

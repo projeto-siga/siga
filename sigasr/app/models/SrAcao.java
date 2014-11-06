@@ -68,7 +68,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	@Enumerated()
 	public SrFormaAtendimentoAcao formaAtendimento;
 
-	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrAcao> meuAcaoHistoricoSet;
 
@@ -76,7 +76,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_PAI")
 	public SrAcao pai;
 
-	@OneToMany(targetEntity = SrAcao.class, mappedBy = "pai", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "pai", fetch = FetchType.LAZY)
 	public List<SrAcao> filhoSet;
 
 	public SrAcao() {

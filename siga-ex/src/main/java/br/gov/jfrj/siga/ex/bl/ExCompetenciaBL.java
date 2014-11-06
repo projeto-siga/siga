@@ -1164,13 +1164,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if (!podeAssinar(titular, lotaTitular, mob))
 			return false;
+		
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA,
+				ExTipoMovimentacao.class, false);
 
-		return getConf()
-						.podePorConfiguracao(
-								titular,
-								lotaTitular,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 
 	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {

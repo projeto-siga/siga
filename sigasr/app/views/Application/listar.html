@@ -145,7 +145,7 @@
 		#{/elseif }
 		
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-			<form action="@{Application.listar}">
+			<form action="@{Application.listar}" onsubmit="javascript: return block();">
 				<input type="hidden" name="filtro.pesquisar" value="true" />
 				<table class="gt-form-table">
 					<tr class="header">

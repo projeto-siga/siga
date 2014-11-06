@@ -255,7 +255,7 @@
 		<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
 
 			#{form @Application.gravar(),
-			enctype:'multipart/form-data',id:'formSolicitacao' } 
+			enctype:'multipart/form-data',id:'formSolicitacao',onsubmit:'javascript:return block();' } 
 				#{if solicitacao.solicitacaoPai}
 				<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao"
 				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 

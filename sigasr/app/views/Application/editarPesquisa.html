@@ -101,6 +101,8 @@ $(function() {
         #{/list}
 
         $("[value='Gravar']").click(function(){
+            	if (!block())
+                	return false;
                 var jForm = $("form"),
                         params = jForm.serialize();
                 jPerguntas.find("li").each(function(i){

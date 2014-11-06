@@ -670,6 +670,8 @@
 
 // 		UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO
         $("[value='Gravar']").click(function(){
+            	if (!block())
+                	return false;
                 var jForm = $("form"),
                         params = jForm.serialize();
                 jGestores.find("td").each(function(i){

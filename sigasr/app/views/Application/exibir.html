@@ -66,7 +66,7 @@ $(function(){
 		<div class="gt-content-box gt-form"
 			style="margin-bottom: 0px !important">
 			<form action="@{Application.darAndamento()}" method="post"
-				enctype="multipart/form-data">
+				enctype="multipart/form-data" onsubmit="javascript: return block();">
 				<input type="hidden" name="completo" value="${completo}" /> <input
 					type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
@@ -314,7 +314,7 @@ $(function(){
 	#{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
-			enctype="multipart/form-data">
+			enctype="multipart/form-data" onsubmit="javascript: return block();">
 			<input type="hidden" name="completo" value="${completo}" /> <input
 				type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 				value="${movimentacao.solicitacao.idSolicitacao}"> <input
@@ -337,7 +337,7 @@ $(function(){
 	</div>
 	#{/modal} #{modal nome:'fechar', titulo:'Fechar'}
 	<form action="@{Application.fechar()}" method="post"
-		enctype="multipart/form-data">
+		enctype="multipart/form-data" onsubmit="javascript: return block();">
 		<div style="display: inline" class="gt-form-row gt-width-66">
 			<label>Motivo</label>
 			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
@@ -346,32 +346,6 @@ $(function(){
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>
-	#{/modal} #{modal nome:'excluir', titulo:'Excluir'}
-	<form action="@{Application.excluir()}" method="post"
-		enctype="multipart/form-data">
-		<div style="display: inline" class="gt-form-row gt-width-100">
-			<table border="0" class="gt-table">
-				<col width="100%" />
-				<thead>
-					<tr class="gt-celula-nowrap">
-						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Deseja realmente excluir esta solicitação?</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="gt-celula-nowrap"
-							style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<input type="hidden" name="completo" value="${completo}" /> <input
-								type="hidden" name="id" value="${solicitacao.id}" /> <input
-								type="submit" value="Excluir" class="gt-btn-medium gt-btn-left" />
-							 <a href="@{Application.exibir(solicitacao.idSolicitacao)}"
-								class="gt-btn-medium gt-btn-left">Voltar</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</form>
 	#{/modal}
 	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao} 
 	#{/modal} 
@@ -379,7 +353,7 @@ $(function(){
 	<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
 	<div class="gt-content-box gt-for-table gt-form">
 	<form action="@{Application.deixarPendente()}" method="post"
-		enctype="multipart/form-data">
+		enctype="multipart/form-data" onsubmit="javascript: return block();">
 		<div class="gt-form-row gt-width-66">
 			<label>Data de Término</label>
 			<input type="text" name="calendario" id="calendario">
@@ -409,7 +383,7 @@ $(function(){
 	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
 		<div class="gt-form gt-content-box">
 		<form action="@{Application.alterarPrazo()}" method="post"
-			enctype="multipart/form-data">
+			enctype="multipart/form-data" onsubmit="javascript: return block();">
 				<div class="gt-form-row gt-width-66">
 					<label>Data</label>
 					<input type="text" name="calendario" id="calendarioAlterarPrazo">

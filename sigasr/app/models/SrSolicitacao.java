@@ -1336,8 +1336,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeAlterarPrazo(lotaTitular, titular), "alterarPrazo",
 				"modal=true"));*/
 
-		operacoes.add(new SrOperacao("cross", "Excluir", podeExcluir(
-				lotaTitular, titular), "excluir", "modal=true"));
+		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",
+				podeExcluir(lotaTitular, titular),
+				"Deseja realmente excluir esta solicitação?", null, "", ""));
 
 		operacoes.add(new SrOperacao("attach", "Anexar Arquivo",
 				podeAnexarArquivo(lotaTitular, titular), "anexarArquivo",

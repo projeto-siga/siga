@@ -344,7 +344,7 @@ public class UsuarioAction extends SigaActionSupport {
 		senhaAtual = getSenhaAtual();
 		senhaNova = getSenhaNova();
 		senhaConfirma = getSenhaConfirma();
-		nomeUsuario = getNomeUsuario();
+		nomeUsuario = getNomeUsuario().toUpperCase();
 		
 		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
 				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,

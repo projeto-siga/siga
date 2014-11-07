@@ -30,11 +30,6 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		setComparator(new SrConfiguracaoComparator());
 	}
 
-	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)
-			throws Exception {
-		return (SrConfiguracao) buscaConfiguracao(conf, new int[] { 0 }, null);
-	}
-
 	@Override
 	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
 		super.deduzFiltro(cpConfiguracao);
@@ -146,37 +141,21 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.atendente.getLotacaoAtual();
 			if (srConf.posAtendente != null)
 				srConf.posAtendente.getLotacaoAtual();
-
 			if (srConf.itemConfiguracao != null) {
-				SrItemConfiguracao atual = srConf.itemConfiguracao.getAtual();
-				if (atual != null)
-					atual.getItemETodosDescendentes();
-
-				// Edson: varrer os pais é necessário porque o
-				// getItensDisponiveis() precisa dessa
-				// informação
-				SrItemConfiguracao itemPai = atual.pai;
-				while (itemPai != null) {
-					itemPai.getDescricao();
-					itemPai = itemPai.pai;
-				}
+				srConf.itemConfiguracao.getDescricao();
 			}
-
 			if (srConf.acao != null) {
-				SrAcao atual = srConf.acao.getAtual();
-				if (atual != null)
-					atual.getAcaoETodasDescendentes();
+				srConf.acao.getDescricao();
 			}
-			
 			if (srConf.getListaConfiguracaoSet() != null) {
 				for (SrListaConfiguracao listaConf : srConf.getListaConfiguracaoSet()){
-					listaConf.lista.getListaAtual(); 
+					listaConf.getId();
 				}
 			}
 			if (srConf.tipoAtributo != null)
-				srConf.tipoAtributo.getAtual();
+				srConf.tipoAtributo.getHisIdIni();
 			if (srConf.listaPrioridade != null)
-				srConf.listaPrioridade.getListaAtual();
+				srConf.listaPrioridade.getHisIdIni();
 
 		}
 	}

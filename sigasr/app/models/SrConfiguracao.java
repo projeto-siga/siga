@@ -168,21 +168,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrConfiguracao() {
 		
 	}
-
-	public SrConfiguracao(DpLotacao lota, DpPessoa pess, CpComplexo local,
-			SrItemConfiguracao item, SrAcao acao, SrTipoAtributo tipoAtributo,
-			SrLista lista, CpTipoConfiguracao tipo,
-			SrSubTipoConfiguracao subTipoConfig) {
-		this.setLotacao(lota);
-		this.setDpPessoa(pess);
-		this.setComplexo(local);
-		this.itemConfiguracao = item;
-		this.acao = acao;
-		this.tipoAtributo = tipoAtributo;
-		this.listaPrioridade = lista;
-		this.setCpTipoConfiguracao(tipo);
-		this.subTipoConfig = subTipoConfig;
-	}
 	
 	public Selecionavel getSolicitante() {
 		if (this.getDpPessoa() != null)
@@ -289,112 +274,14 @@ public class SrConfiguracao extends CpConfiguracao {
 				.getResultList();
 	}
 
-	public static SrConfiguracao getConfiguracao(DpPessoa pess,
-			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
-			long idTipo, SrSubTipoConfiguracao subTipo) throws Exception {
-
-		return getConfiguracao(null, pess, local, item, acao, null, idTipo,
-				subTipo);
+	public static SrConfiguracao buscar(SrConfiguracao conf) throws Exception {
+		return buscar(conf, new int[] {});
 	}
 
-	public static SrConfiguracao getConfiguracao(DpLotacao lotaTitular,
-			DpPessoa pess, long idTipo, SrLista lista) throws Exception {
-		return getConfiguracao(lotaTitular, pess, null, null, null, lista,
-				idTipo, null);
-	}
-
-	public static SrConfiguracao getConfiguracao(DpLotacao lota, DpPessoa pess,
-			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
-			SrLista lista, long idTipo, SrSubTipoConfiguracao subTipo)
-			throws Exception {
-
-		SrConfiguracao conf = new SrConfiguracao(lota, pess, local, item, acao,
-				null, lista, JPA.em().find(CpTipoConfiguracao.class, idTipo),
-				subTipo);
-
-		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
-	}
-
-	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
-			CpComplexo complexo, SrItemConfiguracao item, SrAcao acao,
-			long idTipo, SrSubTipoConfiguracao subTipo, int atributosDesconsideradosFiltro[]) throws Exception {
-		return getConfiguracoes(null, pess, complexo, item, acao, null, null,
-				idTipo, subTipo, atributosDesconsideradosFiltro);
-	}
-
-	public static List<SrConfiguracao> getConfiguracoes(DpLotacao lotaTitular,
-			DpPessoa pess, long idTipo, int atributoDesconsideradoFiltro[])
-			throws Exception {
-		return getConfiguracoes(lotaTitular, pess, null, null, null, null,
-				null, idTipo, null, atributoDesconsideradoFiltro);
-	}
-
-	public static List<SrConfiguracao> getConfiguracoes(DpLotacao lota,
-			DpPessoa pess, CpComplexo local, SrItemConfiguracao item,
-			SrAcao acao, SrTipoAtributo tpAtt, SrLista lista, long idTipo,
-			SrSubTipoConfiguracao subTipo, int atributoDesconsideradoFiltro[])
-			throws Exception {
-		SrConfiguracao conf = new SrConfiguracao(lota, pess, local, item, acao,
-				tpAtt, lista, JPA.em().find(CpTipoConfiguracao.class, idTipo),
-				subTipo);
-		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf,
-				atributoDesconsideradoFiltro);
-	}
-
-	public static void notificarQueMudou(SrItemConfiguracao item)
-			throws Exception {
-		if (item == null)
-			return;
-		List<SrConfiguracao> designacoesApontando = getConfiguracoes(null,
-				null, null, item, null, null, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ACAO });
-		List<SrConfiguracao> designacoesAAtualizar = new ArrayList<SrConfiguracao>();
-		for (SrConfiguracao c : designacoesApontando)
-			if (c.itemConfiguracao != null)
-				designacoesAAtualizar.add(c);
-		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
-				designacoesAAtualizar);
-	}
-
-	public static void notificarQueMudou(SrAcao acao) throws Exception {
-		if (acao == null)
-			return;
-		List<SrConfiguracao> designacoesApontando = getConfiguracoes(null,
-				null, null, null, acao, null, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO });
-		List<SrConfiguracao> designacoesAAtualizar = new ArrayList<SrConfiguracao>();
-		for (SrConfiguracao c : designacoesApontando)
-			if (c.acao != null)
-				designacoesAAtualizar.add(c);
-		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
-				designacoesAAtualizar);
-	}
-
-	public static void notificarQueMudou(SrTipoAtributo tipoAtt)
-			throws Exception {
-		if (tipoAtt == null)
-			return;
-		List<SrConfiguracao> associacoesApontando = getConfiguracoes(null,
-				null, null, null, null, tipoAtt, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
-				null, new int[] {});
-		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
-				associacoesApontando);
-	}
-
-	public static void notificarQueMudou(SrLista lista) throws Exception {
-		if (lista == null)
-			return;
-		List<SrConfiguracao> permissoesApontando = getConfiguracoes(null, null,
-				null, null, null, null, lista,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA, null,
-				new int[] {});
-		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
-				permissoesApontando);
+	public static SrConfiguracao buscar(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		return (SrConfiguracao) SrConfiguracaoBL.get().buscaConfiguracao(conf,
+				atributosDesconsideradosFiltro, null);
 	}
 
 	@Override

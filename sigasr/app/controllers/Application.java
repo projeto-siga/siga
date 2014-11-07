@@ -111,7 +111,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("SR:M√≥dulo de Servi√ßos;" + path);
+		SigaApplication.assertAcesso("SR:MÛdulo de ServiÁos;" + path);
 	}
 
 	@Catch()
@@ -251,16 +251,16 @@ public class Application extends SigaApplication {
 
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
-					"Item n√£o informado");
+					"Item n&atilde;o informado");
 		}
 		if (solicitacao.acao == null) {
-			validation.addError("solicitacao.acao", "AÁ„o n√£o informada");
+			validation.addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
 		}
 
 		if (solicitacao.descrSolicitacao == null
 				|| solicitacao.descrSolicitacao.trim().equals("")) {
 			validation.addError("solicitacao.descrSolicitacao",
-					"Descri√ß√£o n√£o informada");
+					"Descri&ccedil&atilde;o n&atilde;o informada");
 		}
 
 		HashMap<Long, Boolean> obrigatorio = solicitacao
@@ -270,7 +270,7 @@ public class Application extends SigaApplication {
 					&& obrigatorio.get(att.tipoAtributo.idTipoAtributo))
 				validation.addError("solicitacao.atributoMap["
 						+ att.tipoAtributo.idTipoAtributo + "]",
-						att.tipoAtributo.nomeTipoAtributo + " n„o informado");
+						att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -283,17 +283,17 @@ public class Application extends SigaApplication {
 
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.siglaItemConfiguracao",
-					"C√≥digo n√£o informado");
+					"CÛdigo n„o informado");
 		}
 
 		if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.tituloItemConfiguracao",
-					"T√≠tulo n√£o informado");
+					"TÌtulo n„o informado");
 		}
 
 		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
 			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
-					"Fator de multiplica√ß√£o menor que 1");
+					"Fator de multiplicaÁ„o menor que 1");
 		}
 		
 		for (play.data.validation.Error error : validation.errors()) {
@@ -308,11 +308,11 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarAcao(SrAcao acao) {
 
 		if (acao.siglaAcao.equals("")) {
-			validation.addError("acao.siglaAcao", "C√≥digo n√£o informado");
+			validation.addError("acao.siglaAcao", "CÛdigo n„o informado");
 		}
 
 		if (acao.tituloAcao.equals("")) {
-			validation.addError("acao.tituloAcao", "T√≠tulo n√£o informado");
+			validation.addError("acao.tituloAcao", "TÌtulo n„o informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -327,19 +327,19 @@ public class Application extends SigaApplication {
 				&& (designacao.posAtendente == null)
 				&& (designacao.equipeQualidade == null)) {
 			validation.addError("designacao.atendente",
-					"Atendente n√£o informado.");
+					"Atendente n„o informado.");
 			validation.addError("designacao.preAtendente",
-					"Pr√©-atendente n√£o informado.");
+					"Pr√©-atendente n„o informado.");
 			validation.addError("designacao.posAtendente",
-					"P√≥s-atendente n√£o informado.");
+					"PÛs-atendente n„o informado.");
 			validation.addError("designacao.equipeQualidade",
-					"Equipe de qualidade n√£o informada.");
+					"Equipe de qualidade n„o informada.");
 		}
 
 		if ((designacao.itemConfiguracao == null) && (designacao.acao == null)) {
 			validation.addError("designacao.itemConfiguracao",
-					"C√≥digo n√£o informado.");
-			validation.addError("designacao.acao", "C√≥digo n√£o informado.");
+					"CÛdigo n„o informado.");
+			validation.addError("designacao.acao", "CÛdigo n„o informado.");
 		}
 
 		for (play.data.validation.Error error : validation.errors()) {
@@ -382,7 +382,7 @@ public class Application extends SigaApplication {
 		else
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
 
-		String[] tipos = new String[] { "Pessoa", "Lota√ß√£o" };
+		String[] tipos = new String[] { "Pessoa", "LotaÁ„o" };
 		
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca m where m.cpMarcador.idMarcador in (42, 44, 46, 47)")
@@ -414,7 +414,7 @@ public class Application extends SigaApplication {
         else
             listaSolicitacao = new ArrayList<SrSolicitacao>();
 
-        String[] tipos = new String[] { "Pessoa", "Lota√ß√£o" };
+        String[] tipos = new String[] { "Pessoa", "LotaÁ„o" };
         
         List<CpMarcador> marcadores = JPA.em()
                 .createQuery("select distinct cpMarcador from SrMarca")
@@ -447,7 +447,7 @@ public class Application extends SigaApplication {
 		}
 		
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lota√ß√£o" };
+		String[] tipos = new String[] { "Pessoa", "LotaÁ„o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -567,7 +567,7 @@ public class Application extends SigaApplication {
 
 		// Header
 		StringBuilder sbtop = new StringBuilder();
-		sbtop.append("['Item de Configura√ß√£o','Total'],");
+		sbtop.append("['Item de ConfiguraÁ„o','Total'],");
 
 		// Values
 		for (Iterator<String[]> itop = listaTop.iterator(); itop.hasNext();) {
@@ -622,7 +622,7 @@ public class Application extends SigaApplication {
 	public static void exibir(Long id, boolean completo) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		if (solicitacao == null)
-			throw new Exception("Solicita√ß√£o n√£o encontrada");
+			throw new Exception("SolicitaÁ„o n„o encontrada");
 		else
 			solicitacao = solicitacao.getSolicitacaoAtual();
 		
@@ -730,7 +730,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		if (sol.getPesquisaDesignada() == null)
 			throw new Exception(
-					"N√£o foi encontrada nenhuma pesquisa designada para esta solicita√ß√£o.");
+					"N„o foi encontrada nenhuma pesquisa designada para esta solicitaÁ„o.");
 		render(sol);
 	}
 	
@@ -1051,13 +1051,13 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarTipoAtributo(SrTipoAtributo att) {
 		if (att.nomeTipoAtributo.equals("")) {
 			validation.addError("att.nomeTipoAtributo",
-					"Nome de atributo n√£o informado");
+					"Nome de atributo n„o informado");
 		}
 
 		if (att.formatoCampo == SrFormatoCampo.VL_PRE_DEFINIDO 
 				&& att.descrPreDefinido.equals("")) {
 			validation.addError("att.descrPreDefinido",
-					"Valores Pr√©-definido n√£o informados");
+					"Valores Pr√©-definido n„o informados");
 		}
 		
 		for (play.data.validation.Error error : validation.errors()) {
@@ -1245,7 +1245,7 @@ public class Application extends SigaApplication {
 			throws Exception {
 		assertAcesso("REL:Relatorio");
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lota√ß√£o" };
+		String[] tipos = new String[] { "Pessoa", "LotaÁ„o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -1364,7 +1364,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Solicita√ß√µes", pdf.length,
+		renderBinary(is, "RelatÛrio de SolicitaÁıes", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1388,7 +1388,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Transfer√™¬™ncias", pdf.length,
+		renderBinary(is, "RelatÛrio de Transfer√™¬™ncias", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1415,7 +1415,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Solicita√ß√µes por Localidade",
+		renderBinary(is, "RelatÛrio de SolicitaÁıes por Localidade",
 				pdf.length, "application/pdf", true);
 	}
 
@@ -1442,7 +1442,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Prazos", pdf.length, "application/pdf",
+		renderBinary(is, "RelatÛrio de Prazos", pdf.length, "application/pdf",
 				true);
 	}
 
@@ -1468,7 +1468,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Prazos - TRF", pdf.length,
+		renderBinary(is, "RelatÛrio de Prazos - TRF", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1494,7 +1494,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio Detalhado de Prazos", pdf.length,
+		renderBinary(is, "RelatÛrio Detalhado de Prazos", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1518,7 +1518,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Ind√≠ces de Satisfa√ß√£o", pdf.length,
+		renderBinary(is, "RelatÛrio de Ind√≠ces de SatisfaÁ„o", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1544,7 +1544,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Solicita√ß√µes por Localidade",
+		renderBinary(is, "RelatÛrio de SolicitaÁıes por Localidade",
 				pdf.length, "application/pdf", true);
 	}
 
@@ -1569,7 +1569,7 @@ public class Application extends SigaApplication {
 		Iterator it = solsnaoconcluidas.iterator();
 		while (it.hasNext()) {
 			SrSolicitacao sol = (SrSolicitacao) it.next();
-			sol.fechar(null, null, "Conclus√£o Autom√°tica");
+			sol.fechar(null, null, "Conclus„o Autom·tica");
 		}
 
 		render(solsnaoconcluidas);

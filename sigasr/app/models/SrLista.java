@@ -24,6 +24,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -190,9 +191,14 @@ public class SrLista extends HistoricoSuporte {
 			throws Exception {
 		if ((lotaTitular.equivale(lotaCadastrante)))
 			return true;
-		SrConfiguracao conf = SrConfiguracao.getConfiguracao(lotaTitular, pess,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA, this);
-		return conf != null;
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setLotacao(lotaTitular);
+		confFiltro.setDpPessoa(pess);
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(
+				CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+		confFiltro.listaPrioridade = this;
+		return SrConfiguracao.buscar(confFiltro) != null;
 	}
 
 	public Set<SrSolicitacao> getSolicitacaoSet() throws Exception {
@@ -254,23 +260,6 @@ public class SrLista extends HistoricoSuporte {
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-
-		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
-		//tem de ser corrigido.
-
-		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
-		//serao recarregadas do banco, e precisarao reconhecer o novo estado desta lista
-		//refresh();
-
-		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
-		// instancia do objeto, caso contrario, nao ha configuracao
-		// referenciando
-		if (listaInicial != null)
-			SrConfiguracaoBL
-			.get()
-			.limparCache(
-					(CpTipoConfiguracao) CpTipoConfiguracao
-					.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 
 		// DB1: precisa salvar item a item 
 		if (this.permissoes != null) {

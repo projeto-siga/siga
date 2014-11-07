@@ -103,22 +103,4 @@ public class SrTipoAtributo extends HistoricoSuporte {
 		return preDefinidos;
 	}
 
-	@Override
-	public void salvar() throws Exception {
-		super.salvar();
-
-		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
-		//tem de ser corrigido.
-		
-		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
-		//serao recarregadas do banco, e precisarao reconhecer o novo estado deste tipo de atributo
-		//refresh();
-		
-		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
-		// instancia do objeto, caso contrario, nao ha configuracao
-		// referenciando
-		//if (tipoAtributoInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
-	}
-
 }

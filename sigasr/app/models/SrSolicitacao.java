@@ -614,10 +614,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE);
+		
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracao = itemConfiguracao;
+		confFiltro.acao = acao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE;
+		
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 		if (conf != null)
 			return conf.preAtendente.getLotacaoAtual();
 		return null;
@@ -626,10 +633,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public DpLotacao getAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE);
+		
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracao = itemConfiguracao;
+		confFiltro.acao = acao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 		if (conf != null)
 			return conf.atendente.getLotacaoAtual();
 		return null;
@@ -638,10 +652,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrPesquisa getPesquisaDesignada() throws Exception {
 		if (solicitante == null)
 			return null;
-		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO);
+		
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracao = itemConfiguracao;
+		confFiltro.acao = acao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO;
+		
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 		if (conf != null)
 			return conf.pesquisaSatisfacao;
 		return null;
@@ -679,17 +700,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
-		for (SrConfiguracao conf : SrConfiguracao.getConfiguracoes(solicitante,
-				local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
-				null, new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO })) {
-			SrTipoAtributo tipo = conf.tipoAtributo.getAtual();
-			if (tipo != null && !listaFinal.contains(tipo)) {
-				listaFinal.add(tipo);
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracao = itemConfiguracao;
+		confFiltro.acao = acao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+		
+		for (SrTipoAtributo t : SrTipoAtributo.listar()){
+			confFiltro.tipoAtributo = t;
+			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+			if (conf != null){
+				listaFinal.add(t);
 				if (map != null)
-					map.put(tipo.idTipoAtributo, conf.atributoObrigatorio);
+					map.put(t.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
+		
 		return listaFinal;
 	}
 
@@ -697,24 +725,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return null;
 
-		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE);
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracao = itemConfiguracao;
+		confFiltro.acao = acao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE;
+		
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 		if (conf != null)
 			return conf.posAtendente.getLotacaoAtual();
-		return null;
-	}
-
-	public SrPesquisa getPesquisaSatisfacaoDesignada() throws Exception {
-		if (solicitante == null)
-			return null;
-		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO);
-		if (conf != null)
-			return conf.pesquisaSatisfacao;
 		return null;
 	}
 
@@ -722,10 +744,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return null;
 
-		SrConfiguracao conf = SrConfiguracao.getConfiguracao(solicitante,
-				local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE);
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracao = itemConfiguracao;
+		confFiltro.acao = acao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE;
+		
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 		if (conf != null)
 			return conf.equipeQualidade.getLotacaoAtual();
 		return null;
@@ -918,7 +946,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean temPesquisaSatisfacao() throws Exception {
-		if (getPesquisaSatisfacaoDesignada() != null)
+		if (getPesquisaDesignada() != null)
 			return true;
 		return false;
 	}
@@ -1156,38 +1184,26 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
-		Set<SrItemConfiguracao> listaFinal = new TreeSet<SrItemConfiguracao>(
-				new SrItemConfiguracaoComparator());
+		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(null,
-				solicitante, local, null, null, null, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
-				SrConfiguracaoBL.ITEM_CONFIGURACAO,
-				SrConfiguracaoBL.ACAO });
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(
+				CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 
-		for (SrConfiguracao conf : confs) {
-			if (conf.itemConfiguracao == null) {
-				listaFinal.addAll(SrItemConfiguracao.listar(Boolean.FALSE));
-				break;
-			} else {
-				SrItemConfiguracao atual = conf.itemConfiguracao.getAtual();
-				if (atual != null) {
-					listaFinal.addAll(atual.getItemETodosDescendentes());
-
-					// Edson: a adiï¿½ï¿½o dos pais ï¿½ necessï¿½ria para formar
-					// a
-					// hierarquia
-					SrItemConfiguracao itemPai = atual.pai;
-					while (itemPai != null) {
-						if (!listaFinal.contains(itemPai))
-							listaFinal.add(itemPai);
-						itemPai = itemPai.pai;
-					}
-				}
-			}
+		for (SrItemConfiguracao i : SrItemConfiguracao.listar(false)) {
+			confFiltro.itemConfiguracao = i;
+			if (SrConfiguracao.buscar(confFiltro,
+					new int[] { SrConfiguracaoBL.ACAO }) != null)
+				listaFinal.add(i);
 		}
-		return new ArrayList(listaFinal);
+
+		Collections.sort(listaFinal, new SrItemConfiguracaoComparator());
+
+		return listaFinal;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1198,30 +1214,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendente()
 			throws Exception {
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(null,
-				this.solicitante, this.local, this.itemConfiguracao, null,
-				null, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ACAO });
-		for (SrConfiguracao conf : confs) {
-			// Edson: o && !containsKey, abaixo, ÃÂ© necessÃÂ¡rio pra que
-			// atendentes
-			// de configuraÃÂ§ÃÂµes mais genÃÂ©ricas nÃÂ£o substituam os das
-			// mais
-			// especÃÂ­ficas, que vÃÂªm antes
-			if (conf.acao == null) {
-				for (SrAcao acao : SrAcao.listar(Boolean.FALSE))
-					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
-						listaFinal.put(acao, conf.atendente);
-				break;
-			} else {
-				SrAcao atual = conf.acao.getAtual();
-				if (atual != null)
-					for (SrAcao acao : atual.getAcaoETodasDescendentes())
-						if (acao.isEspecifico()
-								&& !listaFinal.containsKey(acao))
-							listaFinal.put(acao, conf.atendente);
-			}
+
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracao = itemConfiguracao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(
+				CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+
+		for (SrAcao a : SrAcao.listar(false)) {
+			if (!a.isEspecifico())
+				continue;
+			confFiltro.acao = a;
+			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+			if (conf != null)
+				listaFinal.put(a, conf.atendente);
 		}
 
 		return listaFinal;
@@ -1719,7 +1728,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (sb.length() > 0)
 				sb.append(", ");
 			sb.append(mar.getCpMarcador().getDescrMarcador());
-			sb.append(" [");
+			sb.append(" (");
 			if (mar.getDpPessoaIni() != null) {
 				String nome = mar.getDpPessoaIni().getDescricaoIniciaisMaiusculas();
 				sb.append(nome.substring(0, nome.indexOf(" ")));
@@ -1728,7 +1737,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (mar.getDpLotacaoIni() != null) {
 				sb.append(mar.getDpLotacaoIni().getSigla());
 			}
-			sb.append("]");
+			sb.append(")");
 		}
 
 		if (sb.length() == 0)
@@ -1761,7 +1770,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular)
 			throws Exception {
 		List<SrLista> listaFinal = new ArrayList<SrLista>();
-
+/*
+ * 		Edson:DB1, acertar conforme o item 24
+ * 
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
 				solicitante, local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
@@ -1773,7 +1784,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					listaFinal.add(listaAtual);
 			}
 		}
-
+*/
 		return new ArrayList<SrLista>(listaFinal);
 	}
 
@@ -1781,15 +1792,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
 
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
-				lotaTitular, cadastrante,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA,
-				new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
-
-		for (SrConfiguracao conf : confs) {
-			SrLista listaAtual = conf.listaPrioridade.getListaAtual();
-			if (!listaFinal.contains(listaAtual))
-				listaFinal.add(listaAtual);
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setLotacao(lotaTitular);
+		confFiltro.setDpPessoa(cadastrante);
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+		
+		for (SrLista l : SrLista.listar(false)){
+			confFiltro.listaPrioridade = l;
+			if (SrConfiguracao.buscar(confFiltro) != null)
+				listaFinal.add(l);
 		}
 
 		listaFinal.removeAll(getListasAssociadas());
@@ -1799,7 +1811,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				return l1.nomeLista.compareTo(l2.nomeLista);
 			}
 		});
-		return new ArrayList<SrLista>(listaFinal);
+		return listaFinal;
 	}
 
 	public Set<SrLista> getListasAssociadas() {

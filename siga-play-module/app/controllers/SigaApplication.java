@@ -3,6 +3,7 @@ package controllers;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.lucene.analysis.ReusableAnalyzerBase;
 import org.hibernate.Session;
 import org.jboss.security.SecurityContextAssociation;
 
@@ -148,6 +149,7 @@ public class SigaApplication extends Controller {
 
 	static String getBaseSiga() {
 		return "http://" + Play.configuration.getProperty("servidor.principal")+ ":8080/siga";
+//		return Request.current().getBase() + "/siga";
 	}
 	
 	@Catch(value = Throwable.class, priority = 1)

@@ -1394,7 +1394,26 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		}
 
 		return Action.SUCCESS;
-	}	
+	}
+	
+	public String aAssinarMovLoginESenhaGravar() throws Exception {
+		buscarDocumento(true);
+
+		mov = dao().consultar(getId(), ExMovimentacao.class, false);
+		
+		try {
+			Ex.getInstance()
+					.getBL()
+					.assinarMovimentacaoComLoginESenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
+							getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA);
+		} catch (final Exception e) {
+
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}
+
 
 	private static byte[] hexStringToByteArray(String s) {
 		int len = s.length();

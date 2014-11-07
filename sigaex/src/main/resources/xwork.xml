@@ -1248,6 +1248,16 @@
 			</result>
 			<result>/paginas/expediente/assinado.jsp?id=786</result>
 		</action>
+		<action name="assinar_mov_login_senha_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAssinarMovLoginESenhaGravar">
+			<result name="OK" type="plaintext">
+				/paginas/ok.jsp
+			</result>
+			<result name="ERRO">
+				/paginas/erro.jsp
+			</result>
+			<result>/paginas/expediente/assinado.jsp?id=786</result>
+		</action>
 		<action name="prever" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aPrever">
 			<result name="processa_modelo">

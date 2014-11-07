@@ -48,6 +48,8 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERE
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.Map;
@@ -141,7 +143,7 @@ public class ExMovimentacaoVO extends ExVO {
 					null, null, null);
 		}
 
-		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
+		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
 			descricao = Texto.maiusculasEMinusculas(mov.getObs());
 		}
 
@@ -504,6 +506,8 @@ public class ExMovimentacaoVO extends ExVO {
 
 			switch (mov.getExTipoMovimentacao().getIdTpMov().intValue()) {
 			case (int) TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+			case (int) TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+			case (int) TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
 			case (int) TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
 				classe = "assinaturaMov";
 				break;

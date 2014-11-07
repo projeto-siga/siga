@@ -1148,7 +1148,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
-	 * Retorna se é possível assinar um documento com login e senha:
+	 * Retorna se é possível assinar um documento com senha:
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1159,9 +1159,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAssinarComLoginESenha(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		
-		if(mob.doc().isFisico())
-			return false;
-		
 		if (!podeAssinar(titular, lotaTitular, mob))
 			return false;
 		
@@ -1169,6 +1166,26 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/*
+	 * Retorna se é possível assinar uma movimentação com senha:
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAssinarMovimentacaoComLoginESenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA,
+				ExTipoMovimentacao.class, false);
+
+		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
@@ -1517,7 +1534,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 						|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 			return false;
 
 		// Não deixa cancelar a atualização (por enquanto, só ser resultar
@@ -2149,7 +2168,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (mob.doc().isCancelado() || mob.doc().isSemEfeito())
 			return false;
-		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital())
+		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() ||  mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
 			return false;
 		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular)
 				&& (mob.doc().getSubscritor() != null && !mob.doc()
@@ -2491,7 +2510,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
 
-		if(mov.getExDocumento().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital())
+		if(mov.getExDocumento().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
@@ -2626,7 +2645,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		for (ExMovimentacao movAssinatura : mov.getExMobil()
 				.getExMovimentacaoSet()) {
 			if (!movAssinatura.isCancelada()
-					&& movAssinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+					&& (movAssinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO 
+					     || movAssinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
 					&& movAssinatura.getExMovimentacaoRef().getIdMov() == mov
 							.getIdMov())
 				return false;
@@ -2824,7 +2844,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (mob.doc().isFinalizado() && !mob.doc().isEletronico())
 			return false;
-		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital())
+		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
 			return false;
 		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular))
 			return false;

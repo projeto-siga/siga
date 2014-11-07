@@ -1117,6 +1117,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
+	 * Verifica se um documento eletrônico possui pelo menos uma assinatura com Senha
+	 */
+	public boolean isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha() {
+		if(!isEletronico())
+			return false;
+		
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * Verifica se um documento já foi assinado pelo Subscritor.
 	 */
 	public boolean isAssinadoSubscritor() {
@@ -1787,7 +1803,52 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return null;
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
-			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO 
+					|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna uma lista de movimentações do tipo assinatura com senha do
+	 * documento.
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturasComToken() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna uma lista de movimentações do tipo assinatura com senha do
+	 * documento.
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturasComSenha() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -1796,11 +1857,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	public String getAssinantesCompleto() {
-		String assinantes = Documento
-				.getAssinantesString(getAssinaturasDigitais());
-		if (assinantes.length() > 0)
-			return "Assinado digitalmente por " + assinantes + ".\n";
-		return "";
+		String retorno =  "";
+		String assinantesToken = Documento
+				.getAssinantesString(getApenasAssinaturasComToken());
+		String assinantesSenha = Documento
+				.getAssinantesString(getApenasAssinaturasComSenha());
+		
+		if (assinantesToken.length() > 0)
+			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
+		
+		if (assinantesSenha.length() > 0)
+			retorno = retorno + "Assinado com senha por " + assinantesSenha + ".\n";
+		
+		return retorno;
 	}
 
 	/**

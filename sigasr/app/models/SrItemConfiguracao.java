@@ -201,9 +201,13 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			if (tituloItemConfiguracao != null
 					&& !tituloItemConfiguracao.equals("")) {
 				boolean naoAtende = false;
-				for (String s : tituloItemConfiguracao.toLowerCase().split("\\s"))
-					if (!item.tituloItemConfiguracao.toLowerCase().contains(s) && !(item.descricaoSimilaridade != null && item.descricaoSimilaridade.toLowerCase().contains(s)))
+				for (String s : tituloItemConfiguracao.toLowerCase().split(
+						"\\s")){
+					if (!item.tituloItemConfiguracao.toLowerCase().contains(s)
+							&& !(item.descricaoSimilaridade != null && item.descricaoSimilaridade
+									.toLowerCase().contains(s)))
 						naoAtende = true;
+				}
 				
 				if (naoAtende)
 					continue;
@@ -214,6 +218,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 					if (!listaFinal.contains(item))
 						listaFinal.add(item);
 					item = item.pai;
+					if (item != null)
+						item = item.getAtual();
 				} while (item != null);
 			else
 				listaFinal.add(item);

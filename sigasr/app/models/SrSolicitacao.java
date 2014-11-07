@@ -1405,12 +1405,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				iniciarAtendimento(lotaCadastrante, cadastrante);
 
 			for (SrLista lista : getListasParaInclusaoAutomatica(lotaCadastrante)) {
-				//Edson: consultando a lista do banco novamente porque ela foi
-				//obtida do cache manual (CpConfiguracaoBl), o que acarreta erro
-				//de Lazy Loading no SrLista.meuMovimentacaoSet. Ficaria 
-				//custoso guardar esse Set inteiro no cache.
-				incluirEmLista((SrLista) SrLista.findById(lista.idLista),
-						cadastrante, lotaCadastrante);
+				incluirEmLista(lista, cadastrante, lotaCadastrante);
 			}
 
 			if (!isEditado()
@@ -1419,6 +1414,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				Correio.notificarAbertura(this);
 		} else
 			atualizarMarcas();
+	}
+	
+	@Override
+	public void finalizar() throws Exception {
+		super.finalizar();
+		for (SrMarca e : getMarcaSet()) {
+			e.solicitacao.meuMarcaSet.remove(e);
+			e.delete();
+		}
 	}
 
 	private void checarEPreencherCampos() throws Exception {

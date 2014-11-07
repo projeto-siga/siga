@@ -3,21 +3,12 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
-
 	<display-name>Siga Identity Provider</display-name>
 	<description>Este projeto e o centralizador do processo de autenticacao do siga</description>
 
 	<listener>
 		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
 	</listener>
-	<filter>
-		<filter-name>webwork</filter-name>
-		<filter-class>com.opensymphony.webwork.dispatcher.FilterDispatcher</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>webwork</filter-name>
-		<url-pattern>*.action</url-pattern>
-	</filter-mapping>
 
 	<!-- Define a Security Constraint on this Application -->
 	<security-constraint>
@@ -60,15 +51,5 @@
 	<security-role>
 		<role-name>superusuario</role-name>
 	</security-role>
-
-	<error-page>
-		<error-code>403</error-code>
-		<location>/sigalibs/erro403.jsp</location>
-	</error-page>
-
-	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
-		<location>/sigalibs/erroGeral.jsp</location>
-	</error-page>
 
 </web-app>

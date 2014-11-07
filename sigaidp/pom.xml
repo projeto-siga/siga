@@ -46,16 +46,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.opensymphony</groupId>
-			<artifactId>webwork</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>opensymphony</groupId>
-			<artifactId>oscore</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>jsptags</groupId>
 			<artifactId>pager-taglib</artifactId>
 		</dependency>

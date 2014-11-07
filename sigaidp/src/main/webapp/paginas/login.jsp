@@ -2,11 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
-<siga:pagina titulo="Justiça Federal" desabilitarbusca="sim"
-	onLoad="try{document.getElementById('j_username').focus();document.getElementById('j_username').select()}catch(e){};"
-    incluirJs="jquery.placeholder.js">
+<siga:pagina titulo="Justiça Federal" desabilitarbusca="sim" incluirJs="jquery.placeholder.js">
 
 	<script type="text/javascript">
 		/*  converte para maiúscula a sigla do estado  */
@@ -26,22 +23,8 @@
 
 		<!-- main content -->
 		<div id="gc-ancora" class="gt-content">
-			<ww:if test="${f:resource('siga.gc.paginadelogin')}">
-				<c:url var="url" value="/../sigagc/publicKnowledge" >
-					<c:param name="tags">^pagina-de-login</c:param>
-					<c:param name="estilo">inplace</c:param>
-					<c:param name="msgvazio">Ainda não existem informações para serem exibidas aqui. Por favor, clique <a
-							href="$1">aqui</a> para contribuir.</c:param>
-					<c:param name="titulo">Página de Login</c:param>
-					<c:param name="ts">${currentTimeMillis}</c:param>
-				</c:url>
-				<script type="text/javascript">
-					SetInnerHTMLFromAjaxResponse("${url}", document.getElementById('gc-ancora'));
-				</script>
-			</ww:if>
-			<ww:else>
-				<c:import url="comentario.jsp" />
-			</ww:else>
+			<c:import url="comentario.jsp" />
+			<h4>Versão: ${siga.versao} </h4>
 		</div>
 		<!-- / main content -->
 
@@ -101,5 +84,6 @@
 	</div>
     <script type="text/javascript">
         $('input, textarea').placeholder();
+        $("#j_username").focus();
     </script>
 </siga:pagina>

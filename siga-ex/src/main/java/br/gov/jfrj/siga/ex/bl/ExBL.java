@@ -1653,7 +1653,7 @@ public class ExBL extends CpBL {
 	    try {
 	    	ExDao.iniciarTransacao();
 	    	for (ExMarca marc : mob.getExMarcaSet()) {
-		    	if (!marc.getCpMarcador().getCpTipoMarcador().equals(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE)) {
+		    	if (!marc.getCpMarcador().getIdMarcador().equals(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE)) {
 		    		dao().excluir(marc);
 		    	}
 		    } 

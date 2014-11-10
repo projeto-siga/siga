@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ attribute name="titulo"%>
 <%@ attribute name="menu"%>
 <%@ attribute name="idpagina"%>

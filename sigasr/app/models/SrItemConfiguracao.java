@@ -359,7 +359,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
     
     @Override
     public void salvar() throws Exception {
-    	if (getNivel() > 1) {
+    	if (getNivel() > 1 && pai == null) {
 			pai = getPaiPorSigla();
 		}
 		super.salvar();

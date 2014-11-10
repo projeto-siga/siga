@@ -256,8 +256,8 @@ public class SrConfiguracao extends CpConfiguracao {
 	public static List<SrConfiguracao> listarPermissoesUsoLista(SrLista lista, boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
-		sb.append(" and conf.listaPrioridade.idLista = ");
-		sb.append(lista.getId());
+		sb.append(" and conf.listaPrioridade.hisIdIni = ");
+		sb.append(lista.getHisIdIni());
 		
 		if (!mostrarDesativado)
 			sb.append(" and conf.hisDtFim is null ");

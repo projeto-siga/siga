@@ -259,6 +259,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String nomeUsuarioSubscritor;
 
 	private String senhaUsuarioSubscritor;
+	
+	private String tipoAssinaturaMov;
 
 	public String getAtributoAssinavelDataHora() {
 		return atributoAssinavelDataHora;
@@ -1377,7 +1379,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 	
-	public String aAssinarLoginESenhaGravar() throws Exception {
+	public String aAssinarSenhaGravar() throws Exception {
 		buscarDocumento(true);
 		lerForm(mov);
 		
@@ -1396,16 +1398,22 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 	
-	public String aAssinarMovLoginESenhaGravar() throws Exception {
+	public String aAssinarMovSenhaGravar() throws Exception {
+		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+		
 		buscarDocumento(true);
+		
 
 		mov = dao().consultar(getId(), ExMovimentacao.class, false);
+		
+		if(getTipoAssinaturaMov().equals("C"))
+			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
 		
 		try {
 			Ex.getInstance()
 					.getBL()
 					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
-							getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA);
+							getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(), tpMovAssinatura);
 		} catch (final Exception e) {
 
 			throw e;
@@ -4360,5 +4368,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public void setSenhaUsuarioSubscritor(String senhaUsuarioSubscritor) {
 		this.senhaUsuarioSubscritor = senhaUsuarioSubscritor;
+	}
+
+	public String getTipoAssinaturaMov() {
+		return tipoAssinaturaMov;
+	}
+
+	public void setTipoAssinaturaMov(String tipoAssinaturaMov) {
+		this.tipoAssinaturaMov = tipoAssinaturaMov;
 	}
 }

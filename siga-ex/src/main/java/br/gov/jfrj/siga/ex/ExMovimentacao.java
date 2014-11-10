@@ -944,17 +944,13 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return Documento.getAssinantesString(getApenasAssinaturasComSenha());
 	}
 
-	public String getConferentesComTokenString() {
-		return Documento.getAssinantesString(getApenasConferenciasCopiaComToken());
+	public String getConferentesString() {
+		return Documento.getAssinantesString(getApenasConferenciasCopia());
 	}
 
-	public String getConferentesComSenhaString() {
-		return Documento.getAssinantesString(getApenasConferenciasCopiaComSenha());
-	}
 
 	public String getAssinantesCompleto() {
-		String conferentesToken = getConferentesComTokenString();
-		String conferentesSenha = getConferentesComSenhaString();
+		String conferentes = getConferentesString();
 		String assinantesToken = getAssinantesComTokenString();
 		String assinantesSenha = getAssinantesComSenhaString();
 		String retorno = "";
@@ -962,11 +958,10 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				+ assinantesToken + ".\n" : "";
 		retorno += assinantesSenha.length() > 0 ? "Assinado com senha por "
 				+ assinantesSenha + ".\n" : "";
-		retorno += conferentesToken.length() > 0 ? "Cópia conferida com documento original por "
-				+ conferentesToken + ".\n" : "";
-		retorno += conferentesSenha.length() > 0 ? "Cópia conferida com documento original por "
-				+ conferentesSenha + ".\n"
-				: "";
+		
+		retorno += conferentes.length() > 0 ? "Cópia conferida com documento original por "
+				+ conferentes + ".\n" : "";
+
 		return retorno;
 	}
 

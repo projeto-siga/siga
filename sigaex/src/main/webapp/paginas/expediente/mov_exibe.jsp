@@ -353,6 +353,12 @@ function visualizarImpressao(via) {
 			<div class="gt-mylogin-box">
 				<!-- login form -->
 				<form method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" class="gt-form">
+					<div class="gt-form-row, gt-form-row-inline">
+						<input type="radio" name="tipoAssinaturaMov" value="A" checked class="gt-form-radio">Assinatura
+						<br>
+						<input type="radio" name="tipoAssinaturaMov" value="C" class="gt-form-radio">Conferência de Cópia
+					</div>
+					<!-- /form row -->
 				    <ww:hidden id="id" name="id"
 						value="${mov.idMov}" />
 					<!-- form row -->

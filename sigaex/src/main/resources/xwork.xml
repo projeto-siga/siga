@@ -1052,7 +1052,7 @@
 			</result>
 		</action>
 		<action name="assinar_login_senha_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aAssinarLoginESenhaGravar">
+			method="aAssinarSenhaGravar">
 			<result name="OK" type="plaintext">
 				/paginas/ok.jsp
 			</result>
@@ -1249,7 +1249,7 @@
 			<result>/paginas/expediente/assinado.jsp?id=786</result>
 		</action>
 		<action name="assinar_mov_login_senha_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
-			method="aAssinarMovLoginESenhaGravar">
+			method="aAssinarMovSenhaGravar">
 			<result name="OK" type="plaintext">
 				/paginas/ok.jsp
 			</result>

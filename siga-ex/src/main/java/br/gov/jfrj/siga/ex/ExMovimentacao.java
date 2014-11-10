@@ -964,8 +964,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				+ assinantesSenha + ".\n" : "";
 		retorno += conferentesToken.length() > 0 ? "Cópia conferida com documento original por "
 				+ conferentesToken + ".\n" : "";
-		retorno += assinantesSenha.length() > 0 ? "Cópia conferida com documento original por "
-				+ assinantesSenha + ".\n"
+		retorno += conferentesSenha.length() > 0 ? "Cópia conferida com documento original por "
+				+ conferentesSenha + ".\n"
 				: "";
 		return retorno;
 	}

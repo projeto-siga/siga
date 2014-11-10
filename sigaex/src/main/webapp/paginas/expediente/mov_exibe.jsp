@@ -343,7 +343,7 @@ function visualizarImpressao(via) {
 			</div>
 		</div>
 	</div>
-	<c:if test="${f:podeAssinarMovimentacaoComLoginESenha(titular,lotaTitular,mov)}">
+	<c:if test="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}">
 		<br/><br/><br/>
         <div class="gt-bd" style="padding-bottom: 0px;">
 		   <div class="gt-content">

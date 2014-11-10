@@ -500,7 +500,7 @@ public class ExDocumentoVO extends ExVO {
 				"/expediente/mov",
 				"assinar",
 				Ex.getInstance().getComp()
-						.podeAssinarComLoginESenha(titular, lotaTitular, mob));
+						.podeAssinarComSenha(titular, lotaTitular, mob));
 		
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados

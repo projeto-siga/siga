@@ -881,7 +881,7 @@ public class ExBL extends CpBL {
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
-						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
 					if (mob.doc().isAssinado()
@@ -2235,7 +2235,7 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
-	public String assinarDocumentoComLoginESenha(final DpPessoa cadastrante,
+	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor, final DpPessoa titular)
 			throws AplicacaoException, NoSuchAlgorithmException {
@@ -2275,7 +2275,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_LOGIN_E_SENHA,
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					subscritor, null, null, null, null);
 			
@@ -2303,7 +2303,7 @@ public class ExBL extends CpBL {
 
 	}
 	
-	public void assinarMovimentacaoComLoginESenha(DpPessoa cadastrante,
+	public void assinarMovimentacaoComSenha(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor,
 			long tpMovAssinatura) throws AplicacaoException, NoSuchAlgorithmException {

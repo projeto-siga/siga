@@ -128,7 +128,7 @@
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
-				<div id="tableCadastradasAssinarComLoginESenha"></div>
+				<div id="tableCadastradasAssinarComSenha"></div>
 				<div><a href="/sigaex/expediente/configuracao/editar.action?idMod=${id}&idTpConfiguracao=1&idTpMov=58&nmTipoRetorno=modelo&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
 				</div>
 
@@ -217,7 +217,7 @@
 			montaTableCadastradas('tableCadastradasEletronico', 4, 0 ,${id});
 			montaTableCadastradas('tableCadastradasCriar', 2, 0 ,${id});
 			montaTableCadastradas('tableCadastradasAssinar', 1, 11 ,${id});
-			montaTableCadastradas('tableCadastradasAssinarComLoginESenha', 1, 58 ,${id});		
+			montaTableCadastradas('tableCadastradasAssinarComSenha', 1, 58 ,${id});		
 			montaTableCadastradas('tableCadastradasAcessar', 6, 0 ,${id});
 			montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
 			montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});

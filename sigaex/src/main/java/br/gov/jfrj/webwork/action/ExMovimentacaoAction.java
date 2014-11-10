@@ -1385,7 +1385,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			setMsg(Ex
 					.getInstance()
 					.getBL()
-					.assinarDocumentoComLoginESenha(getCadastrante(), getLotaTitular(),
+					.assinarDocumentoComSenha(getCadastrante(), getLotaTitular(),
 							doc, mov.getDtMov(), getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(),
 							mov.getTitular()));
 		} catch (final Exception e) {
@@ -1404,7 +1404,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		try {
 			Ex.getInstance()
 					.getBL()
-					.assinarMovimentacaoComLoginESenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
+					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
 							getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA);
 		} catch (final Exception e) {
 

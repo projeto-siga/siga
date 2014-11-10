@@ -1045,17 +1045,17 @@ public class FuncoesEL {
 		return freemarker.ext.dom.NodeModel.parse(inputSource);
 	}
 	
-	public static Boolean podeAssinarComLoginESenha(
+	public static Boolean podeAssinarComSenha(
 			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		return Ex
 				.getInstance()
-				.getComp().podeAssinarComLoginESenha(titular, lotaTitular, mob);
+				.getComp().podeAssinarComSenha(titular, lotaTitular, mob);
 	}
 	
-	public static Boolean podeAssinarMovimentacaoComLoginESenha(
+	public static Boolean podeAssinarMovimentacaoComSenha(
 			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
 		return Ex
 				.getInstance()
-				.getComp().podeAssinarMovimentacaoComLoginESenha(titular, lotaTitular, mov);
+				.getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
 	}
 }

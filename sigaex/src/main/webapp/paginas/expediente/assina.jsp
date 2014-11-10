@@ -110,7 +110,7 @@
 			</div>
 		</div>
 	</div>
-	<c:if test="${f:podeAssinarComLoginESenha(titular,lotaTitular,mob)}">
+	<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,mob)}">
 		<br/><br/><br/>
         <div class="gt-bd" style="padding-bottom: 0px;">
 		   <div class="gt-content">

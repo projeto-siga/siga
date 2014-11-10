@@ -67,7 +67,7 @@ public class SigaHTTP {
 		try{
 			 // Efetua o request para o Service Provider (módulo)
 			 Request req = Request.Get(URL);
-			 req.addHeader(COOKIE, JSESSIONID_PREFIX+getCookie(request, cookieValue));
+		//	 req.addHeader(COOKIE, JSESSIONID_PREFIX+getCookie(request, cookieValue));
 			 // Atribui o html retornado e pega o header do Response
 			 // Se a aplicação já efetuou a autenticação entre o módulo da URL o conteúdo será trago nesse primeiro GET
 			 // Caso contrário passará pelo processo de autenticação (if abaixo)
@@ -89,7 +89,7 @@ public class SigaHTTP {
 				}catch(ElementNotFoundException elnf){
 					log.info("Nao encontrou o set-cookie");
 					log.info("retornando string vazia");
-					setCookie = request.getSession().getId();
+					setCookie = getCookie(request, cookieValue);
 				}
 				
 				// Atribui o valor do SAMLRequest contido no html retornado no GET efetuado.

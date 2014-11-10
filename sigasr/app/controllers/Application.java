@@ -807,9 +807,15 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	public static void criarFilha(Long id) throws Exception {
+	public static void escalonar(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		SrSolicitacao filha = sol.criarFilhaSemSalvar();
+		SrSolicitacao filha = null;
+		//se for uma solicitacao filha, o escalonar cria uma solicitacao irma
+		if(sol.isFilha())
+			filha = sol.solicitacaoPai.criarFilhaSemSalvar();
+		//se for uma solicitacao pai, cria uma solicitacao filha
+		else
+			filha = sol.criarFilhaSemSalvar();
 		formEditar(filha);
 	}
 	

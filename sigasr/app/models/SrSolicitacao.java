@@ -1019,9 +1019,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO);
 	}
 
-	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
-		return estaCom(lota, pess) && (isEmAtendimento() || isEmPreAtendimento())
-				&& !isFilha();
+	public boolean podeEscalonar(DpLotacao lota, DpPessoa pess) {
+		return estaCom(lota, pess) && (isEmAtendimento() || isEmPreAtendimento());
 	}
 
 	public boolean podeJuntar(DpLotacao lota, DpPessoa pess) {
@@ -1300,8 +1299,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				"Application.vincularSolicitacoes", "popup=true"));*/
 
 		operacoes.add(new SrOperacao("arrow_divide",
-				"Criar Solicitação Filha", podeCriarFilha(lotaTitular,
-						titular), "Application.criarFilha"));
+				"Escalonar", podeEscalonar(lotaTitular,
+						titular), "Application.escalonar"));
 
 		/*operacoes.add(new SrOperacao("arrow_join", "Juntar", podeJuntar(
 				lotaTitular, titular), "Application.juntarSolicitacoes",

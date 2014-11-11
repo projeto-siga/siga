@@ -343,51 +343,53 @@ function visualizarImpressao(via) {
 			</div>
 		</div>
 	</div>
+	
 	<c:if test="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}">
-		<br/><br/><br/>
-        <div class="gt-bd" style="padding-bottom: 0px;">
-		   <div class="gt-content">
-
-			<h2>Assinar com Login e Senha</h2>
-            <!-- login box -->
-			<div class="gt-mylogin-box">
-				<!-- login form -->
-				<form method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" class="gt-form">
-					<div class="gt-form-row, gt-form-row-inline">
-						<input type="radio" name="tipoAssinaturaMov" value="A" checked class="gt-form-radio">Assinatura
-						<br>
-						<input type="radio" name="tipoAssinaturaMov" value="C" class="gt-form-radio">Conferência de Cópia
-					</div>
-					<!-- /form row -->
-				    <ww:hidden id="id" name="id"
-						value="${mov.idMov}" />
-					<!-- form row -->
-					<div class="gt-form-row">
-						<label class="gt-label">Matrícula</label> <input id="nomeUsuarioSubscritor"
-							type="text" name="nomeUsuarioSubscritor"
-							onblur="javascript:converteUsuario(this)" class="gt-form-text">
-							
-					</div>
-					<!-- /form row -->
-
-					<!-- form row -->
-					<div class="gt-form-row">
-						<label class="gt-label">Senha</label> <input type="password"
-							name="senhaUsuarioSubscritor" class="gt-form-text">
-					</div>
-					<!-- /form row -->
-
-					<!-- form row -->
-					<div class="gt-form-row">
-						<input type="submit" value="Assinar"
-							class="gt-btn-medium gt-btn-right">
-					</div>
-					<!-- /form row -->
-				</form>
-				<!-- /login form -->
-			</div>
-			<!-- /login box -->
-			</div>
+		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
+        		
+		<div id="dialog-form" title="Assinar com Senha">
+ 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" >
+ 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
+ 				<ww:hidden id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
+    			<fieldset>
+    			  <label>Matrícula</label> <br/>
+    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+    			  <label>Senha</label> <br/>
+    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"/>
+    			</fieldset>
+  			</form>
 		</div>
-	</c:if>		
+
+		 <script> 
+		    dialog = $("#dialog-form").dialog({
+		      autoOpen: false,
+		      height: 210,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		          "Assinar": assinarGravar,
+		          "Conferir Cópia": conferirCopiaGravar,
+		          "Cancelar": function() {
+		            dialog.dialog( "close" );
+		          }
+		      },
+		      close: function() {
+		        
+		      }
+		    });
+		
+		    function assinarComSenha() {
+		       dialog.dialog( "open" );
+		    }
+
+		    function assinarGravar() {
+		    	$("#form-assinarSenha").submit();
+			}
+
+		    function conferirCopiaGravar() {
+		    	$('#tipoAssinaturaMov').val('C');
+		    	$("#form-assinarSenha").submit();
+			}
+		  </script>
+	</c:if>			
 </siga:pagina>

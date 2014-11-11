@@ -488,19 +488,11 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"script_key",
-				"Assinar Digitalmente",
+				"Assinar",
 				"/expediente/mov",
 				"assinar",
 				Ex.getInstance().getComp()
 						.podeAssinar(titular, lotaTitular, mob));
-
-		vo.addAcao(
-				"application_form",
-				"Assinar Com Login e Senha",
-				"/expediente/mov",
-				"assinar",
-				Ex.getInstance().getComp()
-						.podeAssinarComSenha(titular, lotaTitular, mob));
 		
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados

@@ -251,7 +251,7 @@
 <div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
 		<h2>#{if solicitacao.idSolicitacao || solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
-			#{else}Cadastro de Solicitação#{/else}</h2>
+			#{else}Cadastro de Solicita&ccedil;&atilde;o#{/else}</h2>
 		<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
 
 			#{form @Application.gravar(),
@@ -274,12 +274,12 @@
 
 			<div class="gt-form-table">
 				<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
-					Dados básicos
+					Dados B&aacute;sicos
 				</div>
 			</div>
 			
 			#{ifErrors}
-			<p class="gt-error">Alguns campos obrigatórios não foram
+			<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram
 				preenchidos ${error}</p>
 			#{/ifErrors}
 
@@ -295,7 +295,7 @@
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
 				onchange:"carregarLocalRamalEMeioContato();carregarItem();
 				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
-				notificarCampoMudou('#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');" /}
+				notificarCampoMudou('#solicitacaosolicitante', 'Lota&ccedil;&atilde;o Solicitante', 'solicitacao.lotaSolicitante');" /}
 				<span style="margin-left: 10px;" id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
 			</div>
 			<div class="gt-form-row gt-width-66" id="interlocutor" style="display: none;">
@@ -308,7 +308,7 @@
 				'Application/exibirLocalRamalEMeioContato.html' /}</div>
 				
 			<div class="gt-form-row gt-width-66">
-				<label>Quando deseja receber notificação de movimentacao?</label>
+				<label>Quando deseja receber notifica&ccedil;&atilde;o de movimenta&ccedil;&atilde;o?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
 				items:models.SrFormaAcompanhamento.values(),
 				labelProperty:'descrFormaAcompanhamento',
@@ -347,12 +347,12 @@
 					labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
-					<label>Urgência</label> #{select
+					<label>Urg&ecirc;ncia</label> #{select
 					name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
 					labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
-					<label>Tendência</label> #{select
+					<label>Tend&ecirc;ncia</label> #{select
 					name:'solicitacao.tendencia', items:models.SrTendencia.values(),
 					labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO', style:'width:235px;' /}
 				</div>
@@ -362,7 +362,7 @@
 			<div class="gt-form-row gt-width-66">
 				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
 					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',
-					disabled: alterando /} Fechar o chamado logo após a abertura</label>
+					disabled: alterando /} Fechar o chamado logo ap&oacute;s a abertura</label>
 			</div>
 			#{/if}
 
@@ -400,7 +400,7 @@
 	</div>}*
 	*{<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
-			<h3>Solicitações relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
+			<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
 			<div class="gt-content-box gt-form" id="filtroSolicitacoes">
 				<label>Filtro</label> 
 				<select name="filtro" id="filtro" onchange="carregarSolRelacionadas(this.value)"><option value="">Selecione um filtro...</option></select>
@@ -413,7 +413,7 @@
 						</colgroup>
 						<thead>
 							<tr>
-								<th>Código</th>
+								<th>C&oacute;digo</th>
 								<th>Teor</th>
 							</tr>
 						</thead>					

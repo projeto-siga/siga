@@ -141,22 +141,19 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.atendente.getLotacaoAtual();
 			if (srConf.posAtendente != null)
 				srConf.posAtendente.getLotacaoAtual();
-			if (srConf.itemConfiguracao != null) {
-				srConf.itemConfiguracao.getDescricao();
-			}
-			if (srConf.acao != null) {
-				srConf.acao.getDescricao();
-			}
+			if (srConf.itemConfiguracao != null)
+				srConf.itemConfiguracao.getAtual();
+			if (srConf.acao != null)
+				srConf.acao.getAtual();
+			if (srConf.tipoAtributo != null)
+				srConf.tipoAtributo.getAtual();
+			if (srConf.listaPrioridade != null)
+				srConf.listaPrioridade.getListaAtual();
 			if (srConf.getListaConfiguracaoSet() != null) {
 				for (SrListaConfiguracao listaConf : srConf.getListaConfiguracaoSet()){
 					listaConf.getId();
 				}
 			}
-			if (srConf.tipoAtributo != null)
-				srConf.tipoAtributo.getHisIdIni();
-			if (srConf.listaPrioridade != null)
-				srConf.listaPrioridade.getHisIdIni();
-
 		}
 	}
 

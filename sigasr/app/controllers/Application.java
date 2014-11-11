@@ -1,7 +1,5 @@
 package controllers;
 
-import static org.joda.time.format.DateTimeFormat.forPattern;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -16,10 +14,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.xml.parsers.ParserConfigurationException;
 
-import models.Sr;
 import models.SrAcao;
 import models.SrArquivo;
 import models.SrAtributo;
@@ -29,7 +25,6 @@ import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
-import models.SrMeioComunicacao;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
@@ -41,9 +36,7 @@ import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormatter;
 
 import play.Logger;
 import play.Play;
@@ -64,9 +57,7 @@ import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -112,7 +103,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("SR:Mï¿½dulo de Serviï¿½os;" + path);
+		SigaApplication.assertAcesso("SR:Módulo de Serviços;" + path);
 	}
 
 	@Catch()
@@ -284,17 +275,17 @@ public class Application extends SigaApplication {
 
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.siglaItemConfiguracao",
-					"Cï¿½digo nï¿½o informado");
+					"C&oacute;digo n&atilde;o informado");
 		}
 
 		if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.tituloItemConfiguracao",
-					"Tï¿½tulo nï¿½o informado");
+					"T&iacute;tulo n&atilde;o informado");
 		}
 
 		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
 			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
-					"Fator de multiplicaï¿½ï¿½o menor que 1");
+					"Fator de multiplica&ccedil;&atilde;o menor que 1");
 		}
 		
 		for (play.data.validation.Error error : validation.errors()) {
@@ -309,11 +300,11 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarAcao(SrAcao acao) {
 
 		if (acao.siglaAcao.equals("")) {
-			validation.addError("acao.siglaAcao", "Cï¿½digo nï¿½o informado");
+			validation.addError("acao.siglaAcao", "Código não informado");
 		}
 
 		if (acao.tituloAcao.equals("")) {
-			validation.addError("acao.tituloAcao", "Tï¿½tulo nï¿½o informado");
+			validation.addError("acao.tituloAcao", "Título não informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -330,17 +321,17 @@ public class Application extends SigaApplication {
 			validation.addError("designacao.atendente",
 					"Atendente nï¿½o informado.");
 			validation.addError("designacao.preAtendente",
-					"PrÃ©-atendente nï¿½o informado.");
+					"Pr&eacute;-atendente n&atilde;o informado.");
 			validation.addError("designacao.posAtendente",
-					"Pï¿½s-atendente nï¿½o informado.");
+					"P&oacute;s-atendente n&atilde;o informado.");
 			validation.addError("designacao.equipeQualidade",
-					"Equipe de qualidade nï¿½o informada.");
+					"Equipe de qualidade n&atilde;o informada.");
 		}
 
 		if ((designacao.itemConfiguracao == null) && (designacao.acao == null)) {
 			validation.addError("designacao.itemConfiguracao",
-					"Cï¿½digo nï¿½o informado.");
-			validation.addError("designacao.acao", "Cï¿½digo nï¿½o informado.");
+					"C&oacute;digo n&atilde;o informado.");
+			validation.addError("designacao.acao", "C&oacute;digo n&atilde;o informado.");
 		}
 
 		for (play.data.validation.Error error : validation.errors()) {
@@ -383,7 +374,7 @@ public class Application extends SigaApplication {
 		else
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
 
-		String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
 		
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca m where m.cpMarcador.idMarcador in (42, 44, 46, 47)")
@@ -415,7 +406,7 @@ public class Application extends SigaApplication {
         else
             listaSolicitacao = new ArrayList<SrSolicitacao>();
 
-        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
+        String[] tipos = new String[] { "Pessoa", "Lotação" };
         
         List<CpMarcador> marcadores = JPA.em()
                 .createQuery("select distinct cpMarcador from SrMarca")
@@ -448,7 +439,7 @@ public class Application extends SigaApplication {
 		}
 		
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -568,7 +559,7 @@ public class Application extends SigaApplication {
 
 		// Header
 		StringBuilder sbtop = new StringBuilder();
-		sbtop.append("['Item de Configuraï¿½ï¿½o','Total'],");
+		sbtop.append("['Item de Configura&ccedil;&atilde;o','Total'],");
 
 		// Values
 		for (Iterator<String[]> itop = listaTop.iterator(); itop.hasNext();) {

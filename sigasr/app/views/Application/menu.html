@@ -11,6 +11,7 @@
 #{if exibirMenuAdministrar}
 <li><a href="#">Administração</a>
 <ul>
+<li><a href="@{Application.listarDesignacao}">Designação</a></li>
 <li><a href="@{Application.listarItem}">Item de configuração</a></li>
 <li><a href="@{Application.listarAcao}">Ação</a></li>
 <li><a href="@{Application.listarTipoAtributo}">Tipo de atributo</a></li>
@@ -34,7 +35,7 @@
 #{if lotaTitular.getOrgaoUsuario().idOrgaoUsu == 3 }
 <li><a href="@{Application.relPrazo}">Relatório de Totalizações de Prazos (TRF)</a></li>
 #{/if}
-<li><a href="@{Application.relPesquisa}">Relatório de  Índice de Satisfação</a></li>
+<li><a href="@{Application.relPesquisa}">Relatório de Índice de Satisfação</a></li>
 <li><a href="@{Application.relAgendado}">Relatório de Solicitações Agendadas por Localidade</a></li>
 </ul>
 </li>

@@ -90,7 +90,6 @@
 						<th style="border-left: 1px solid #ccc;">Atendente</th>
 						<th>Pré-atendente</th>
 						<th>Pós-atendente</th>
-						<th>Qualidade</th>
 						<th>Pesquisa de satisfação?</th>
 					</tr>
 				</thead>
@@ -116,8 +115,6 @@
 							descricao:design.preAtendente?.lotacaoAtual?.nomeLotacao /}</td>
 						<td>#{selecionado sigla:design.posAtendente?.lotacaoAtual?.siglaLotacao,
 							descricao:design.posAtendente?.lotacaoAtual?.nomeLotacao /}</td>
-						<td>#{selecionado sigla:design.equipeQualidade?.lotacaoAtual?.siglaLotacao,
-							descricao:design.equipeQualidade?.lotacaoAtual?.nomeLotacao /}</td>
 						<td>${design.pesquisaSatisfacao?.nomePesquisa}</td>
 					</tr>
 					</a> #{/list}

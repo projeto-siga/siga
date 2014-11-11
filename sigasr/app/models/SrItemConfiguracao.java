@@ -302,21 +302,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		}
 		
 		return lista;
-	}
-	
-	/**
-	 * Lista as Designações que são vinculadas aos {@link SrItemConfiguracao Pai} deste item.
-	 */
-	public List<SrConfiguracao> getDesignacoesPai() {
-		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
-		
-		for (SrItemConfiguracao pai : this.getListaPai()) {
-			listasDesignacoesPai.addAll(SrConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(false, pai.getId()), this));
-		}
-		
-		return listasDesignacoesPai;
-	}
-	
+	}	
 
 	public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
 		if (outroItem == null || outroItem.getSigla() == null)
@@ -389,46 +375,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
                 fator.itemConfiguracao = this;
                 fator.salvar();
             }
-        
-        // DB1: precisa salvar item a item da Designação
- 		if (this.designacoes != null) {
- 			for (SrConfiguracao designacao : this.designacoes) {
- 				designacao.itemConfiguracao = this;
- 				
- 				// se for uma configuração herdada
- 				if (designacao.isHerdado) {
- 					// se estiver marcada como "não Herdar"
- 					if (!designacao.utilizarItemHerdado) {
- 						// cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
- 						SrConfiguracaoIgnorada.createNew(this, designacao).salvar();
- 					}
- 					
- 					// verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)
- 					else {
- 						List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(designacao);
- 						
- 						for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
- 							// se a configuração for do Item ou de um de seus históricos, remove
- 	 						if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
- 								for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
- 									if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
- 										igItem.delete();
- 										break;
- 									}
- 								}
- 							}
- 						}
- 					}
- 				}
- 				
- 				else {
- 					designacao.salvarComoDesignacao();
- 				}
- 			}
- 		}
-    
-		//if (itemInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
 	}
 
 	public List<SrItemConfiguracao> getItemETodosDescendentes() {

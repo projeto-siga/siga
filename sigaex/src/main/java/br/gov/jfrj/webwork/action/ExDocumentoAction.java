@@ -919,8 +919,8 @@ public class ExDocumentoAction extends ExActionSupport {
 		DpPessoa dest;
 		if(!Ex.getInstance().getComp()
 				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-			DpLotacao lotadest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp().getLotacaoAtual();
-			if (getLotaTitular().equals(lotadest) /* a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc */
+/*			DpLotacao lotadest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp();
+			if (getLotaTitular().equals(lotadest)  a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc 
 					&& (mob.doc().getIdExNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA) 
 					     || mob.doc().getIdExNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL) {
 				if (mob.doc().isFinalizado()) {
@@ -941,7 +941,7 @@ public class ExDocumentoAction extends ExActionSupport {
 							msgDestinoDoc = "documento sendo arquivado automaticamente";
 						}
 					}	
-				} else { /* doc temporário */
+				} else {  doc temporário 
 					dest = mob.doc().getCadastrante().getPessoaAtual();						
 					if (dest.ativaNaData(new Date())) {
 						if (!mob.doc().getLotaCadastrante().equivale(dest.getLotacao())) {
@@ -950,7 +950,7 @@ public class ExDocumentoAction extends ExActionSupport {
 							.getBL().gravar(dest, dest.getLotacao(), mob.doc(), null);						
 							msgDestinoDoc = "documento  temporário sendo reposicionado automaticamente";
 						}	
-					} else { /* excluir */
+					} else {  excluir 
 						Ex.getInstance().getBL().excluirDocumentoAutomatico(mob.doc(), getCadastrante(),
 								getLotaTitular());						
 						msgDestinoDoc = "documento sendo excluído automaticamente";
@@ -958,7 +958,7 @@ public class ExDocumentoAction extends ExActionSupport {
 				}
 				
 			}
-			
+*/			
 			
 			String s = "";
 			try { 

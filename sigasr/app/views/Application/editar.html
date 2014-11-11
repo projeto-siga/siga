@@ -481,20 +481,18 @@
 			</div>
 			<div class="gt-form-row box-wrapper">
 				<div class="gt-form-row gt-width-33">
-					<label>Gravidade</label> #{select name:'solicitacao.gravidade',
-					items:models.SrGravidade.values(),
-					labelProperty:'respostaEnunciado', value:'NORMAL',
-					style:'width:235px;' /}
+					<label>Gravidade</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.gravidade, style:'width:235px;' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
 					<label>Urg&ecirc;ncia</label> #{select
 					name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
-					labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
+					labelProperty:'respostaEnunciado', value:solicitacao.urgencia, style:'width:235px;' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
 					<label>Tend&ecirc;ncia</label> #{select
 					name:'solicitacao.tendencia', items:models.SrTendencia.values(),
-					labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO', style:'width:235px;' /}
+					labelProperty:'respostaEnunciado', value:solicitacao.tendencia, style:'width:235px;' /}
 				</div>
 			</div>
 

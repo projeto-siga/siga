@@ -3,8 +3,8 @@ package models;
 
 public enum SrGravidade {
 
-	SEM_GRAVIDADE(1, "Sem gravidade."), NORMAL(2, "Gravidade normal.",
-			"Pouco grave."), GRAVE(3, "Grave", "Grave"), MUITO_GRAVE(4,
+	SEM_GRAVIDADE(1, "Sem gravidade.", "Sem gravidade"), NORMAL(2, "Gravidade normal.",
+			"Pouco grave"), GRAVE(3, "Grave.", "Grave"), MUITO_GRAVE(4,
 			"Muito grave.", "Muito grave"), EXTREMAMENTE_GRAVE(5,
 			"Extremamente grave.", "Extremamente grave");
 

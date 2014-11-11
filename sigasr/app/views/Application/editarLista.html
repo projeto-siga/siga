@@ -138,6 +138,9 @@
 		$("#funcaoConfianca_sigla").val('');
 		jTipoPermissaoCbb.selectedIndex = 0;
 		$("#idConfiguracao").val('');
+
+		$('#modal-permissao-error').css('display', 'none');
+		$('#modal-permissao').css('display', 'block');
 	};
 
 	function serializePermissao(row) {
@@ -208,17 +211,23 @@
 	         data: serializePermissao(row),
 	         dataType: "text",
 	         success: function(response) {
+		        row[18] = response;
+
 	          	if (isEditing) {
 	          		prioridadesTable.row('.selected').data(row);
 			    }
 			    else {
 			    	prioridadesTable.row.add(row).draw();
 			    }
-			          
+			    
 				controleAcessoModalFechar();
 	         },
-	         error: function() {
-	          	console.log("Erro na chamada remota!!!");
+	         error: function(response) {
+	        	$('#modal-permissao').hide(); 
+
+	        	var modalErro = $('#modal-permissao-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
 	         }
         });
 
@@ -230,6 +239,10 @@
             	params = jForm.serialize();
 			
             location.href = '@{Application.gravarLista()}?' + params;
+		});
+
+		$("[title='close']").click(function(){
+			controleAcessoModalFechar();
 		});
 	});
 </script>
@@ -352,7 +365,7 @@
 </div>
 
 #{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
-	<div class="gt-form gt-content-box">
+	<div class="gt-form gt-content-box" id="modal-permissao">
 		<div>
 			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
 			
@@ -417,5 +430,20 @@
 				#{/if}
 			</div>
 		</div>
+	</div>
+	<div class="gt-content-box" id="modal-permissao-error" style="display: none;">
+		<table width="100%">
+			<tr>
+				<td align="center" valign="middle">
+					<table class="form" width="50%">
+						<tr>
+							<td style="text-align: center; padding-top: 10px;">
+								<h3></h3>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
 	</div>
 #{/modal}

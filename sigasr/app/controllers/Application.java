@@ -898,11 +898,12 @@ public class Application extends SigaApplication {
 		render(permissao, orgaos, locais, listasPrioridade);
 	}
 
-	public static void gravarPermissaoUsoLista(SrConfiguracao permissao)
+	public static Long gravarPermissaoUsoLista(SrConfiguracao permissao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
 		permissao.salvarComoPermissaoUsoLista();
+		return permissao.getId();
 	}
 
 	public static void desativarPermissaoUsoLista(Long id) throws Exception {

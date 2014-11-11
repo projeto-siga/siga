@@ -66,6 +66,7 @@ import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -878,14 +879,15 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
 		permissao.salvarComoPermissaoUsoLista();
-		listarPermissaoUsoLista(false);
 	}
 
 	public static void desativarPermissaoUsoLista(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
-		listarDesignacao(Boolean.TRUE);
+		if (!designacao.getCpTipoConfiguracao().getIdTpConfiguracao()
+				.equals(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA))
+			listarDesignacao(Boolean.TRUE);
 	}
 
 	public static void listarAssociacao() throws Exception {

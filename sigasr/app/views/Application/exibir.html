@@ -226,8 +226,8 @@ $(function(){
 			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
 			#{/elseif} #{else} #{set priorColor:'' /} #{/else}
 			<p>
-				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent}
-					${solicitacao.GUTString}</span>
+				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
+					<br /> ${solicitacao.GUTString}</span>
 			</p>
 		</div>
 	</div>

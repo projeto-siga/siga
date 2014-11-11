@@ -293,7 +293,7 @@
 			<div class="gt-form-row gt-width-99">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
-				onchange:"carregarLocalRamalEMeioContato();carregarItem();carregarConhecimentosRelacionados();
+				onchange:"carregarLocalRamalEMeioContato();carregarItem();
 				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
 				notificarCampoMudou('#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');" /}
 				<span style="margin-left: 10px;" id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
@@ -397,7 +397,7 @@
 				Atendimento: <span id="andamento"></span> horas</h3>
 			<h3 style="margin-left: 25px;">Total: <span id="total"></span> horas</h3>
 		</div>
-	</div>*}
+	</div>}*
 	*{<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Solicitações relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
@@ -424,7 +424,8 @@
 				</div>
 			</div>
 		</div>
-	</div>*}
+	</div>}*
 	
-	<div id="divConhecimentosRelacionados"/>
+	<div id="divConhecimentosRelacionados">
+	</div>
 </div>

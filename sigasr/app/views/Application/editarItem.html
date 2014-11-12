@@ -1,15 +1,57 @@
-#{extends 'main.html' /} #{set title:'Ediçãoo de Item de Configuração' /}
+#{extends 'main.html' /} #{set title:'Edi��o de Item de Configura��o' /}
 
-<script src="/sigasr/public/javascripts/jquery-1.6.4.min.js"></script>
+<style>
+.inline {
+	display: inline-flex !important;
+}
+.tabela {
+	margin-top: -10px;
+	min-width: 200px;
+}
+.tabela tr {
+	border: solid;
+	border-color: rgb(169, 169, 169);
+	border-width: 1px;
+	font-weight: bold;
+	line-height: 20px;
+}
+.tabela th {
+	color: #365b6d;
+	font-size: 100%;
+	padding: 5px 10px;
+	border: solid 1px rgb(169, 169, 169);
+}
+.tabela td {
+	color: #000;
+	padding-right: 10px !important;
+}
+.gt-form-table td {
+	padding-right: 0px;
+}
+.barra-subtitulo {
+	background-color: #eee;
+	color: #365b6d;
+	padding: 10px 15px;
+	border: 1px solid #ccc;
+	border-radius: 0;
+	font-weight: bold;
+	margin: 0 0 10px -16px;
+}
+.barra-subtitulo-top {
+	border-radius: 5px 5px 0 0;
+	margin: -16px 0 10px -16px;
+}
+</style>
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
 <script>
-$(function(){
+	
 	$("#itemConfiguracao").mask("99.99.99");
-
 	//removendo a referencia de '$' para o jQuery
 	$.noConflict();
-
 	$(function() {
 		// POPUP PARA ADICIONAR UM GESTOR
         var jGestores = $("#gestoresTr"),
@@ -59,7 +101,6 @@ $(function(){
         $("#modalCancel").click(function(){
                 jDialog.dialog('close');
         });
-
         gestores["index"] = 0;
         gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
             if (!id)
@@ -78,7 +119,6 @@ $(function(){
                 $("#"+idItem).remove();
                 gestores["index"]--;
         }
-
         #{list items:itemConfiguracao.gestorSet, as:'item'}
         	#{if item.dpPessoa}
 	        	gestores.incluirItem('${item.dpPessoa.sesbPessoa}${item.dpPessoa.matricula}', '${item.dpPessoa.nomePessoa}', 'pessoa', ${item.dpPessoa.idPessoa}, ${item.idGestorItem});
@@ -87,9 +127,8 @@ $(function(){
 	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
 	        #{/if}
 		#{/list}
-
         
-// 		POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
+// 		POPUP PARA ADICIONAR UM FATOR DE MULTIPLICA��O E SOLICITANTE
         var jFatores = $("#fatoresTr"),
         fatores = jFatores[0],
         jDialogFator = $("#dialogFator"),
@@ -120,9 +159,9 @@ $(function(){
 	            open: function(){
 	            	$('#erroNumFatorMult').hide();
                     if (jDialogFator.data("gestorSet"))
-                    	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
+                    	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplica��o');
                     else
-                    	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
+                    	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplica��o');  
 	            }
         });
         $("#modalOkFator").click(function(){
@@ -146,7 +185,6 @@ $(function(){
         $("#modalCancelFator").click(function(){
         	jDialogFator.dialog('close');
         });
-
         fatores["index"] = 0;
         fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
             if (!idF)
@@ -167,7 +205,6 @@ $(function(){
                 $("#"+idItemF).remove();
                 fatores["index"]--;
         };
-
         #{list items:itemConfiguracao.fatorMultiplicacaoSet, as:'itemFator'}
         	#{if itemFator.dpPessoa}
 	        	fatores.incluirItem('${itemFator.dpPessoa.sesbPessoa}${itemFator.dpPessoa.matricula}', '${itemFator.dpPessoa.nomePessoa}', ${itemFator.numFatorMultiplicacao}, 'pessoa', ${itemFator.dpPessoa.idPessoa}, '${itemFator.idFatorMultiplicacao}Fator');
@@ -176,9 +213,7 @@ $(function(){
 	        		fatores.incluirItem('${itemFator.dpLotacao.siglaLotacao}', '${itemFator.dpLotacao.nomeLotacao}', ${itemFator.numFatorMultiplicacao}, 'lotacao', ${itemFator.dpLotacao.idLotacao}, '${itemFator.idFatorMultiplicacao}Fator');
 	        #{/if}
 		#{/list}
-
-
-// 		UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO
+// 		UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICA��O
         $("[value='Gravar']").click(function(){
             var jForm = $("form"),
                     params = jForm.serialize();
@@ -193,7 +228,6 @@ $(function(){
             });
             jFatores.find("tr").each(function(i){
                 var jDivsF=$(this).find("span");
-
                 if(jDivsF.length == 0) return;
                 
                 var tipoF = jDivsF[0].id;
@@ -219,15 +253,15 @@ $(function(){
 	});
 </script>
 
-
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-		<h2 class="gt-form-head">Cadastro de Item de Configuração</h2>
+
+		<h2 class="gt-form-head">Cadastro de Item de Configura&ccedil;&atilde;o</h2>
 		<div class="gt-content-box gt-for-table">
 			<form id="form" class="form100">
 				<table class="gt-form-table">
 					<tr class="header">
-						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados Básicos</td>
+						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados B&aacute;sicos</td>
 					</tr>
 					<tr>
 						<td colspan="2">
@@ -238,14 +272,14 @@ $(function(){
 							<input type="hidden" name="itemConfiguracao.hisIdIni"
 								value="${itemConfiguracao.hisIdIni}"> #{/if}
 							#{ifErrors}
-							<p class="gt-error">Alguns campos obrigatórios não foram
+							<p class="gt-error">Alguns campos obrigat�rios n�o foram
 								preenchidos ${error}</p>
 							#{/ifErrors}
 						</td>
 					</tr>
 					<tr>
 						<td width="5%">
-							<label class="inline">Código:</label> 
+							<label class="inline">C&oacute;digo:</label> 
 						</td>
 						<td>
 							<input
@@ -256,7 +290,7 @@ $(function(){
 							'itemConfiguracao.siglaItemConfiguracao' /}</span> 
 							
 							<label class="inline"
-							style="margin-left: 10px;">Título:</label> 
+							style="margin-left: 10px;">T&iacute;tulo:</label> 
 							
 							<input type="text"
 							id="itemConfiguracao.tituloItemConfiguracao"
@@ -268,7 +302,7 @@ $(function(){
 					</tr>
 					<tr>
 						<td>
-							<label class="inline">Descrição:</label> 
+							<label class="inline">Descri&ccedil;&atilde;o:</label> 
 						</td>
 						<td colspan="2">
 							<input type="text"
@@ -299,7 +333,7 @@ $(function(){
 					<tr>
 						<td colspan="3">
 							<label class="inline">Similaridade (Separar itens com
-								ponto e vírgula):</label>
+								ponto e v&iacute;rgula):</label>
 							<textarea cols="81" rows="4"
 								name="itemConfiguracao.descricaoSimilaridade"
 								id="descricaoSimilaridade">${itemConfiguracao.descricaoSimilaridade}</textarea>
@@ -307,11 +341,11 @@ $(function(){
 					</tr>
 				</table>
 				<table class="gt-form-table">
-					<tr class="header"><td align="center" valign="top" colspan="3">Priorização</td></tr>
+					<tr class="header"><td align="center" valign="top" colspan="3">Prioriza&ccedil;&atilde;o</td></tr>
 
 					<tr>
 						<td width="10.5%">
-							<label class="inline">Fator de Multiplicação:</label> 
+							<label class="inline">Fator de Multiplica&ccedil;&atilde;o:</label> 
 						</td>
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
@@ -321,7 +355,7 @@ $(function(){
 					</tr>
 					<tr>
 						<td colspan="2">
-							<label class="inline">Fator de Multiplicação por Solicitante:</label> 
+							<label class="inline">Fator de Multiplica&ccedil;&atilde;o por Solicitante:</label> 
 							<img align="right" src="/siga/css/famfamfam/icons/add.png"
 								id="botaoIncluirFator" style="cursor: pointer; float: initial;" />
 						</td>
@@ -332,7 +366,7 @@ $(function(){
 							<table id="fatoresTr" class="tabela">
 								<tr>
 									<th>Solicitante</th>
-									<th>Fator de Multiplicação</th>
+									<th>Fator de Multiplica&ccedil;&atilde;o</th>
 								</tr>
 							</table>
 						</td>
@@ -360,41 +394,48 @@ $(function(){
 <div id="dialog">
 	<div class="gt-content">
 		<div class="gt-form gt-content-box">
-		#{form @Application.gravarItem()}
-			#{if itemConfiguracao.idItemConfiguracao} <input
-				type="hidden" name="itemConfiguracao.idItemConfiguracao"
-				value="${itemConfiguracao.idItemConfiguracao}"> #{/if}
-			#{ifErrors}
-			<p class="gt-error">Alguns campos obrigatórios não foram
-				preenchidos ${error}</p>
-			#{/ifErrors}
-			<div class="gt-form-row gt-width-66">
-				<label>Código</label> <input id="itemConfiguracao" 
-					type="text"
-					name="itemConfiguracao.siglaItemConfiguracao"
-					value="${itemConfiguracao?.siglaItemConfiguracao}" />
-					<span style="color: red">#{error
-					'itemConfiguracao.siglaItemConfiguracao' /}</span>
+			<div class="gt-form-row ">
+				<label>Gestor: </label>
+				<div id="divGestor">#{pessoaLotaSelecao
+					nomeSelPessoa:'gestor.pessoa', nomeSelLotacao:'gestor.lotacao',
+					valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
+					disabled:disabled /}</div>
 			</div>
 			<div class="gt-form-row">
-				<label>Título</label> <input type="text" id="itemConfiguracao.tituloItemConfiguracao"
-					name="itemConfiguracao.tituloItemConfiguracao" value="${itemConfiguracao?.tituloItemConfiguracao}" size="100" />
-				<span style="display:inline;color: red">#{error
-					'itemConfiguracao.tituloItemConfiguracao' /}</span>
+				<input type="button" id="modalOk" value="Ok"
+					class="gt-btn-medium gt-btn-left" /> <input type="button"
+					value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
 			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Descrição</label> <input type="text"
-					name="itemConfiguracao.descrItemConfiguracao"
-					value="${itemConfiguracao?.descrItemConfiguracao}" size="100" />
-			</div>
-			<div class="gt-form-row">
-				<input type="submit" value="Salvar" class="gt-btn-medium gt-btn-left" /> #{if
-				itemConfiguracao?.idItemConfiguracao} <input type="button" value="Desativar"
-					class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarItem()}?id=${itemConfiguracao.idItemConfiguracao}'" />
-				#{/if}
-			</div>
-		#{/form}
 		</div>
 	</div>
 </div>
+
+<div id="dialogFator">
+	<div class="gt-content">
+		<div class="gt-form gt-content-box">
+			<div class="gt-form-row ">
+				<label>Solicitante: </label>
+				<div id="divFator">#{pessoaLotaSelecao
+					nomeSelPessoa:'fator.pessoa', nomeSelLotacao:'fator.lotacao',
+					valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
+					disabled:disabled /}</div>
+			</div>
+			<div class="gt-form-row ">
+				<label>Fator de Multiplica��o: </label>
+				<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
+					   type="text" name="numfatorMult" value="1" size="43" />
+					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplica��o menor que 1</span>
+			</div>
+			<div class="gt-form-row">
+				<input type="button" id="modalOkFator" value="Ok"
+					class="gt-btn-medium gt-btn-left" /> <input type="button"
+					value="Cancelar" id="modalCancelFator" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</div>
+	</div>
+</div>
+
+#{modal nome:'designacao', titulo:'Cadastrar Designacao'}
+	<div id="divEditarDesignacaoItem">#{include
+				'Application/editarDesignacaoItem.html' /}</div>
+#{/modal}

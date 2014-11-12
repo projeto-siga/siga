@@ -71,6 +71,8 @@ public class UsuarioAction extends SigaActionSupport {
 	
 	private String trocarSenhaRede;
 	
+	private String ajaxMsgErro;
+	
 	
 	public String getCpf1() {
 		return cpf1;
@@ -342,7 +344,7 @@ public class UsuarioAction extends SigaActionSupport {
 		senhaAtual = getSenhaAtual();
 		senhaNova = getSenhaNova();
 		senhaConfirma = getSenhaConfirma();
-		nomeUsuario = getNomeUsuario();
+		nomeUsuario = getNomeUsuario().toUpperCase();
 		
 		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
 				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
@@ -412,10 +414,14 @@ public class UsuarioAction extends SigaActionSupport {
 	}
 	
 	public String isEmailValido() throws AplicacaoException {
-		return isEmailValido(getMatricula())==true?"ajax_retorno":"ajax_vazio";
+		try{
+			return isEmailValido(getMatricula())==true?"ajax_vazio":"ajax_retorno";	
+		}catch(Exception e){
+			setAjaxMsgErro(e.getMessage());
+			return Action.ERROR;
+		}
+		
 	}
-
-	
 
 	private boolean isEmailValido(String matricula) {
 		
@@ -434,15 +440,36 @@ public class UsuarioAction extends SigaActionSupport {
 			throw new AplicacaoException("O órgão informado é nulo ou inválido." );
 		}
 
-		List<DpPessoa> lstPessoa = dao().consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
+		List<DpPessoa> lstPessoa = null;
+		try{
+			lstPessoa = dao().consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
+		}catch(Exception e){
+			throw new AplicacaoException("Formato de matrícula inválida." );
+		}
 
+		if (lstPessoa.size() == 0){
+			throw new AplicacaoException("O usuário não está cadastrado no banco de dados." );
+		}
+		
 		if (lstPessoa != null && lstPessoa.size() == 1) {
 			DpPessoa p = lstPessoa.get(0);
-			return p.getEmailPessoaAtual() != null && p.getEmailPessoaAtual().trim().length() > 0;
+			if (p.getEmailPessoaAtual() != null && p.getEmailPessoaAtual().trim().length() > 0){
+				return true;
+			}else{
+				throw new AplicacaoException("Você ainda não possui um e-mail válido. Tente mais tarde." );
+			}
 		}
 		
 		return false;
 
+	}
+
+	public void setAjaxMsgErro(String ajaxMsgErro) {
+		this.ajaxMsgErro = ajaxMsgErro;
+	}
+	
+	public String getAjaxMsgErro() {
+		return ajaxMsgErro;
 	}
 
 	public Long getIdOrgao() {

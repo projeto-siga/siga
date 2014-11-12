@@ -106,7 +106,7 @@ public class MenuServletContextListener implements ServletContextListener {
 			"ajax_retorno.jsp", "ajax_vazio.jsp", "cargo_busca.jsp",
 			"funcao_busca.jsp", "lotacao_busca.jsp", "orgao_busca.jsp",
 			"pessoa_busca.jsp", "erroGeral.jsp", "erro400.jsp", "erro401.jsp", "erro403.jsp",
-			"loginInvalido.jsp", "estilos.jsp", "rpc_retorno.jsp", "client_cert_auth_logoff.jsp" });
+			"loginInvalido.jsp", "estilos.jsp", "rpc_retorno.jsp", "client_cert_auth_logoff.jsp","ajax_msg_erro.jsp" });
 
 	private static final String XML_RESOURCE_FOLDER = "/lib/jsp/xml/";
 

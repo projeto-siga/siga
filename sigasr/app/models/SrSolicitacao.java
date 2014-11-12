@@ -218,7 +218,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
 	// entre os modulos, e o Hibernate acaba trazendo tambem marcas do Siga-Doc
-	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "solicitacao", fetch = FetchType.LAZY)
 	@Where(clause = "ID_TP_MARCA=2")
 	protected Set<SrMarca> meuMarcaSet;
 
@@ -1103,7 +1103,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeIncluirEmLista(DpLotacao lota, DpPessoa pess) {
-		return !isFechado() && !isRascunho();
+		return isEmAtendimento();
 	}
 
 	public boolean podeTrocarAtendente(DpLotacao lota, DpPessoa pess) {

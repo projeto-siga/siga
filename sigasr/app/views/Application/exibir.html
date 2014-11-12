@@ -40,7 +40,7 @@ $(function(){
 		<div
 			style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
 			<img src="/siga/css/famfamfam/icons/error.png"
-				style="margin-right: 1px;"> O atendente atual n�o � o
+				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
 			atendente designado.
 		</div>
 		#{/if} #{links acoes:solicitacao.operacoes(lotaTitular, titular,
@@ -127,7 +127,7 @@ $(function(){
 						#{if completo}
 						<th></th> #{/if}
 						<th>Momento</th>
-						<th>Tipo</th>
+						<th>Evento</th>
 						<th colspan="2">Cadastrante</th> #{if completo}
 						<th colspan="2">Atendente</th> #{/if}
 						<th>Descrição</th>
@@ -187,10 +187,7 @@ $(function(){
 			<h3>Dados da Solicitação</h3>
 			<p>
 				<b>Solicitante:</b>
-				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}
-			</p>
-			<p>
-				<b>Lotação:</b> ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
+				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
 				solicitacao.local} (${solicitacao.local.nomeComplexo}) #{/if}
 			</p>
 			#{if solicitacao.telPrincipal}

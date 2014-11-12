@@ -80,19 +80,22 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.equipeQualidade == null)
 				return false;
 
-			if (!atributosDesconsiderados.contains(ACAO)
-					&& conf.acao != null
-					&& (filtro.acao == null || (filtro.acao != null && !conf.acao
-							.getAtual().isPaiDeOuIgualA(filtro.acao))))
-				return false;
-
-			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO)
-					&& conf.itemConfiguracao != null
-					&& (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null && !conf.itemConfiguracao
-							.getAtual()
-							.isPaiDeOuIgualA(filtro.itemConfiguracao))))
-				return false;
-
+			if (!atributosDesconsiderados.contains(ACAO) && conf.acoesSet != null) {
+				for (SrAcao item : conf.acoesSet) {
+					if (filtro.acao == null || (filtro.acao != null 
+							&& !item.getAtual().isPaiDeOuIgualA(filtro.acao)))
+						return false;
+				}
+			}
+			
+			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO) && conf.itemConfiguracaoSet != null) {
+				for (SrItemConfiguracao item : conf.itemConfiguracaoSet) {
+					if (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null 
+							&& !item.getAtual().isPaiDeOuIgualA(filtro.itemConfiguracao)))
+						return false;
+				}
+			}
+			
 			if (!atributosDesconsiderados.contains(LISTA_PRIORIDADE)
 					&& conf.listaPrioridade != null
 					&& (filtro.listaPrioridade == null || (filtro.listaPrioridade != null && !conf.listaPrioridade
@@ -152,9 +155,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				if (atual != null)
 					atual.getItemETodosDescendentes();
 
-				// Edson: varrer os pais é necessário porque o
+				// Edson: varrer os pais ï¿½ necessï¿½rio porque o
 				// getItensDisponiveis() precisa dessa
-				// informação
+				// informaï¿½ï¿½o
 				SrItemConfiguracao itemPai = atual.pai;
 				while (itemPai != null) {
 					itemPai.getDescricao();
@@ -175,6 +178,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void atualizarConfiguracoesDoCache(List<SrConfiguracao> configs) {
 		List<SrConfiguracao> evitarLazy = new ArrayList<SrConfiguracao>();
 		for (SrConfiguracao conf : configs) {

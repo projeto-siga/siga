@@ -430,7 +430,9 @@
         	url: "@{Application.gravarDesignacao()}",
         	data: serializeDesignacao(row),
         	dataType: "text",
-        	success: function() {
+        	success: function(id) {
+        		row[posIdDesignacao] = id;
+        		
         		if (isEditing) {
 					designacoesTable.api().row('.selected').data(row);
 				}

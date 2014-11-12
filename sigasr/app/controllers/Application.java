@@ -135,7 +135,6 @@ public class Application extends SigaApplication {
 		try {
 			Corporativo.dadosrh();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -850,11 +849,13 @@ public class Application extends SigaApplication {
 		listarDesignacao(Boolean.TRUE);
 	}
 
-	public static void gravarDesignacao(SrConfiguracao designacao)
+	public static Long gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
+		
+		return designacao.getId();
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {

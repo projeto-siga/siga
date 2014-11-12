@@ -125,8 +125,18 @@
 		}
 		return false;
 	}
+
+	function selecionouSolicitante() {
+		return $("[name='solicitacao.solicitante']").val() != '';
+	}
 	
 	function notificarCampoMudou(campoRef, tipoCampo, optionVl) {
+		if(!selecionouSolicitante()) {
+			$('#solicitacoesRelacionadas').hide(300);
+		} else {
+			$('#solicitacoesRelacionadas').show(300);
+		}
+		
 		var label = descricaoFiltroSolRelacionadas(campoRef, tipoCampo),
 			divFiltro = $('#filtro');
 		
@@ -147,16 +157,16 @@
 		validarCadastranteSolicitante();
 	}
 
-	function filtroEstaSelecionado(optionVl) {
-		return $("div[identificadorFiltro='" + optionVl + "'] :checked").size() > 0;
-	}
-
 	// Recebe notificacao de alteracao em campo que eh atributo
 	function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl) {
 		var label = $(campoRef).prev('label').html().trim();
 		notificarCampoMudou(campoRef, label, optionVl);
 	}
 
+	function filtroEstaSelecionado(optionVl) {
+		return $("div[identificadorFiltro='" + optionVl + "'] :checked").size() > 0;
+	}
+	
 	function descricaoFiltroSolRelacionadas(campoRef, tipoCampo) {
 		var campo = $(campoRef);
 
@@ -221,8 +231,8 @@
 	function construirParametrosDoFiltro(filtrosSelecionados, frm) {
 		var authField = frm.find('input:nth(0)');
 		var params = authField.attr('name') + '=' + encodeURI(authField.val()) + '&';
-
-		// Se o usuario selecionou algum filtro, entao realiza a consulta no servidor
+		
+		// Preenche a string que representa os parametros da requisicao
 		filtrosSelecionados.each(function() {
 			var input = frm.find("[name='" +  $(this).attr('name') + "']");
 			params = params + input.attr('name') + '=' + input.val() + '&'
@@ -476,7 +486,7 @@
 		</div>
 	</div>
 	<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
+		<div id="solicitacoesRelacionadas" class="gt-sidebar-content">
 			<h3>
 				Solicitações relacionadas <a href="#" onclick="verMais()">[Ver
 					Mais]</a>

@@ -1,7 +1,8 @@
 <script>
 function carregarAtributos(){
-	frm = document.getElementById('formSolicitacao');
-	params = '';
+	var frm = document.getElementById('formSolicitacao'),
+		params = '';
+
 	for (i = 0; i < frm.length; i++){
 		if (frm[i].name && frm[i].value)
 			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
@@ -15,6 +16,20 @@ function carregouAtributos(response, param){
 	var scripts = div.getElementsByTagName("script");
 	for(var i=0;i<scripts.length;i++)  
 	   eval(scripts[i].text);  
+
+	// Para disparar o onchange e preencher os filtros
+	$("#atributos").find('input,select').each(function() {
+		var me = $(this);
+		if(me.val()) {
+			var label = me.prev('label').html().trim(),
+				innerHTML = label + ' - ' + me.val(),
+				divFiltro = $('#filtro'),
+				selector = "." + me.attr('class'),
+				optionVl = me.attr('name');
+			
+			addFiltro(divFiltro, selector, innerHTML, optionVl)
+		}
+	});
 }
 
 </script>
@@ -33,7 +48,7 @@ function carregouAtributos(response, param){
 <div class="gt-form-row gt-width-66">
 	<label>Ação</label> 
 	#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();carregarConhecimentosRelacionados();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
-		#{option 0}#{/option}
+		#{option ""}#{/option}
 		#{list items:acoesEAtendentes.keySet(), as:'acao' }
 			#{option acao.idAcao}
 				${acao.tituloAcao} (${acoesEAtendentes[acao].sigla})
@@ -46,6 +61,5 @@ function carregouAtributos(response, param){
 </div>
 #{/if}
 
-<div id="divAtributos">#{include
-				'Application/exibirAtributos.html' /}</div>
+<div id="divAtributos">#{include 'Application/exibirAtributos.html' /}</div>
 

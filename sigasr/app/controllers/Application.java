@@ -1,7 +1,5 @@
 package controllers;
 
-import static org.joda.time.format.DateTimeFormat.forPattern;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -16,10 +14,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.xml.parsers.ParserConfigurationException;
 
-import models.Sr;
 import models.SrAcao;
 import models.SrArquivo;
 import models.SrAtributo;
@@ -41,9 +37,7 @@ import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormatter;
 
 import play.Logger;
 import play.Play;
@@ -64,7 +58,6 @@ import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
@@ -176,8 +169,7 @@ public class Application extends SigaApplication {
 		render(solicitacoesRelacionadas);
 	}
 
-	public static void exibirAtributos(SrSolicitacao solicitacao)
-			throws Exception {
+	public static void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
 		render(solicitacao);
 	}
 
@@ -209,7 +201,6 @@ public class Application extends SigaApplication {
 			else
 				solicitacao.acao = null;
 		}
-		
 		render(solicitacao, acoesEAtendentes);
 	}
 
@@ -224,21 +215,18 @@ public class Application extends SigaApplication {
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 
+		
 		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
 		if (solicitacao.itemConfiguracao != null) {
-			acoesEAtendentes = solicitacao
-					.getAcoesDisponiveisComAtendenteOrdemTitulo();
-			if (solicitacao.acao == null
-					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
+			acoesEAtendentes = solicitacao.getAcoesDisponiveisComAtendenteOrdemTitulo();
+			if (solicitacao.acao == null || !acoesEAtendentes.containsKey(solicitacao.acao)) {
 				if (acoesEAtendentes.size() > 0) {
-					solicitacao.acao = acoesEAtendentes.keySet().iterator()
-							.next();
+					solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
 				} else {
 					solicitacao.acao = null;
 				}
 			}
 		}
-		
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
@@ -341,8 +329,10 @@ public class Application extends SigaApplication {
 
 	}
 
-	private static void validarFormEditarDesignacao(SrConfiguracao designacao) {
-
+	@SuppressWarnings("static-access")
+	private static void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
 				&& (designacao.posAtendente == null)
 				&& (designacao.equipeQualidade == null)) {
@@ -356,20 +346,13 @@ public class Application extends SigaApplication {
 					"Equipe de qualidade não informada.");
 		}
 
-		if ((designacao.itemConfiguracao == null) && (designacao.acao == null)) {
-			validation.addError("designacao.itemConfiguracao",
-					"Código não informado.");
-			validation.addError("designacao.acao", "Código não informado.");
-		}
-
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
+			sb.append(error.getKey() + ";");
 		}
 
 		if (validation.hasErrors()) {
-			List<CpOrgaoUsuario> orgaos = JPA.em()
-					.createQuery("from CpOrgaoUsuario").getResultList();
-			render("@editarDesignacao", designacao, orgaos);
+			throw new Exception(sb.toString());
 		}
 	}
 
@@ -839,15 +822,6 @@ public class Application extends SigaApplication {
 	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
-		render(designacoes, mostrarDesativados);
-	}
-	
-	public static void listarDesignacaoDesativados() throws Exception {
-		listarDesignacao(Boolean.TRUE);
-	}
-
-	public static void editarDesignacao(Long id) throws Exception {
-		assertAcesso("ADM:Administrar");
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
@@ -855,19 +829,19 @@ public class Application extends SigaApplication {
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
 		List<SrLista> listasPrioridade = SrLista.listar(false);
-		SrConfiguracao designacao = new SrConfiguracao();
-		if (id != null)
-			designacao = JPA.em().find(SrConfiguracao.class, id);
 		
-		render(designacao, orgaos, locais, pesquisaSatisfacao, unidadesMedida, listasPrioridade);
+		render(designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 	
+	public static void listarDesignacaoDesativados() throws Exception {
+		listarDesignacao(Boolean.TRUE);
+	}
+
 	public static void gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
-		listarDesignacao(Boolean.TRUE);
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {

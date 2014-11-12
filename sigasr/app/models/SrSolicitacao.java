@@ -641,16 +641,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					map.put(tipo.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
-		// // TODO remover esse codigo, apenas mock
-		if(carregarAtributos) {
-			 return SrTipoAtributo.all().query.getResultList();
-		}
 		return listaFinal;
 	}
 	
-	@Transient
-	public boolean carregarAtributos = Boolean.FALSE;
-
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;

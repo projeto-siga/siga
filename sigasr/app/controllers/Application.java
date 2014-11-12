@@ -169,9 +169,7 @@ public class Application extends SigaApplication {
 		render(solicitacoesRelacionadas);
 	}
 
-	public static void exibirAtributos(SrSolicitacao solicitacao)
-			throws Exception {
-		solicitacao.carregarAtributos = Boolean.TRUE;
+	public static void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
 		render(solicitacao);
 	}
 
@@ -202,13 +200,6 @@ public class Application extends SigaApplication {
 				solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
 			else
 				solicitacao.acao = null;
-		}
-		// TODO: Diego remover esse trecho, apenas mock
-		List<SrAcao> acoes = SrAcao.listar(Boolean.FALSE);
-		List<DpLotacao> lotacoes = DpLotacao.all().query.getResultList();
-		
-		for (SrAcao acao : acoes) {
-			acoesEAtendentes.put(acao, lotacoes.get(0));
 		}
 		render(solicitacao, acoesEAtendentes);
 	}

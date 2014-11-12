@@ -812,10 +812,9 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	public static void terminarPendencia(Long id, String descricao,
-			SrTipoMotivoPendencia motivo, Long idMovimentacao) throws Exception {
+	public static void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, motivo, idMovimentacao);
+		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, idMovimentacao);
 		exibir(id, completo());
 	}
 

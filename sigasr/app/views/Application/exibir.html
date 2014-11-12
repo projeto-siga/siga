@@ -299,10 +299,13 @@ $(function(){
 			<h3>Pendências</h3>
 			#{list items:solicitacao.getPendentes(), as:'pendencia'}
 				<p>
-					<b>${pendencia.descrMovimentacao}</b>
-					<a href="javascript:terminarPendencia('${pendencia.motivoPendencia}', '${pendencia.idMovimentacao}');"> 
-						<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
-					</a> 
+					<b>${pendencia.motivoPendenciaString}</b> até ${pendencia.dtAgendaDDMMYYHHMM}
+					 - ${pendencia.descrMovimentacao}
+					#{if solicitacao.podeTerminarPendencia(lotaTitular, cadastrante)}
+						<a href="javascript:terminarPendencia('${pendencia.idMovimentacao}');"> 
+							<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
+						</a> 
+					#{/if} 
 				</p>
 			#{/list}
 		</div>
@@ -457,8 +460,7 @@ $(function(){
 	
 <script language="javascript">
 
-function terminarPendencia(motivo, idMov){
-	$("#motivoId").val(motivo);
+function terminarPendencia(idMov){
 	$("#movimentacaoId").val(idMov);
 	$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
 }
@@ -474,7 +476,6 @@ function terminarPendencia(motivo, idMov){
 		</div>
 		<input type="hidden" name="completo" value="${completo}" /> <input
 			type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
-			type="hidden" name="motivo" id="motivoId" value="" /><input
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>

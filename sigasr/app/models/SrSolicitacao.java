@@ -1315,7 +1315,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		operacoes.add(new SrOperacao("lock", "Responder Pesquisa",
 				podeResponderPesquisa(lotaTitular, titular),
-				"Application.responderPesquisa", "popup=true"));
+				"responderPesquisa", "modal=true"));
 
 		operacoes.add(new SrOperacao("arrow_rotate_anticlockwise",
 				"Retornar ao Pré-Atendimento", podeRetornarAoPreAtendimento(
@@ -2033,7 +2033,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public void responderPesquisa(DpLotacao lota, DpPessoa pess,
-			List<SrResposta> respostas) throws Exception {
+			Map<Long, String> respostaMap) throws Exception {
 		if (!podeResponderPesquisa(lota, pess))
 			throw new Exception("Operação nÃ£o permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
@@ -2041,18 +2041,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.descrMovimentacao = "Avaliação realizada.";
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_AVALIACAO);
+		movimentacao.setRespostaMap(respostaMap);
 		movimentacao.salvar(pess, lota);
-		for (SrPergunta pergunta : this.getPesquisaDesignada().perguntaSet) {
-			for (SrResposta resp : respostas) {
-				if (pergunta.idPergunta.equals(resp.pergunta.idPergunta)) {
-					SrResposta resposta = new SrResposta();
-					resposta.pergunta = pergunta;
-					resposta.descrResposta = resp.descrResposta;
-					resposta.movimentacao = movimentacao;
-					resposta.save();
-				}
-			}
-		}
+		
 		// if (avaliacao.isSuficiente)...
 		// fecharTotalmente()
 		// else

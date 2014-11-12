@@ -6,11 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -108,7 +105,7 @@ public class SrMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_PESQUISA")
 	public SrPesquisa pesquisa;
 
-	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY)
+	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
 	// @OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
 
@@ -144,24 +141,19 @@ public class SrMovimentacao extends GenericModel {
 		return respostaSet;
 	}
 
-	public List<SrResposta> setRespostaMap(HashMap<Long, Object> respostas)
+	public void setRespostaMap(Map<Long, String> respostaMap)
 			throws Exception {
-
 		respostaSet = new ArrayList<SrResposta>();
-		Iterator<Map.Entry<Long, Object>> entries = respostas.entrySet()
-				.iterator();
-		while (entries.hasNext()) {
-			Entry<Long, Object> entry = entries.next();
+		for (Long idPergunta : respostaMap.keySet()){
 			SrResposta resp = new SrResposta();
-			Long entrada = entry.getKey();
-			resp.pergunta = SrPergunta.findById(entrada);
-			if (resp.pergunta.tipoPergunta.idTipoPergunta == 1)
-				resp.descrResposta = (String) entry.getValue();
+			resp.movimentacao = this;
+			resp.pergunta = SrPergunta.findById(idPergunta);
+			if (resp.pergunta.tipoPergunta.idTipoPergunta == SrTipoPergunta.TIPO_PERGUNTA_TEXTO_LIVRE)
+				resp.descrResposta = respostaMap.get(idPergunta);
 			else
-				resp.grauSatisfacao = (SrGrauSatisfacao) entry.getValue();
+				resp.grauSatisfacao = SrGrauSatisfacao.valueOf(respostaMap.get(idPergunta));
 			respostaSet.add(resp);
 		}
-		return respostaSet;
 	}
 
 	public HashMap<Long, String> getRespostaMap() {

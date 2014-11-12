@@ -74,6 +74,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE
 					&& conf.equipeQualidade == null)
 				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO
+					&& conf.pesquisaSatisfacao == null)
+				return false;
 
 			if (!atributosDesconsiderados.contains(ACAO)
 					&& conf.acao != null
@@ -146,9 +150,11 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (srConf.acao != null)
 				srConf.acao.getAtual();
 			if (srConf.tipoAtributo != null)
-				srConf.tipoAtributo.getAtual();
+				srConf.tipoAtributo.getHisIdIni();
 			if (srConf.listaPrioridade != null)
-				srConf.listaPrioridade.getListaAtual();
+				srConf.listaPrioridade.getHisIdIni();
+			if (srConf.pesquisaSatisfacao != null)
+				srConf.pesquisaSatisfacao.getHisIdIni();
 			if (srConf.getListaConfiguracaoSet() != null) {
 				for (SrListaConfiguracao listaConf : srConf.getListaConfiguracaoSet()){
 					listaConf.getId();

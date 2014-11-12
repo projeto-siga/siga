@@ -103,7 +103,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("SR:Módulo de Serviços;" + path);
+		SigaApplication.assertAcesso("SR:MÃ³dulo de ServiÃ§os;" + path);
 	}
 
 	@Catch()
@@ -317,7 +317,8 @@ public class Application extends SigaApplication {
 
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
 				&& (designacao.posAtendente == null)
-				&& (designacao.equipeQualidade == null)) {
+				&& (designacao.equipeQualidade == null)
+				&& (designacao.pesquisaSatisfacao == null)) {
 			validation.addError("designacao.atendente",
 					"Atendente nï¿½o informado.");
 			validation.addError("designacao.preAtendente",
@@ -683,15 +684,6 @@ public class Application extends SigaApplication {
 			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
 	}
 
-	public static void exibirPesquisa(Long idMovimentacao) throws Exception {
-		SrMovimentacao movimentacao = SrMovimentacao.findById(idMovimentacao);
-		// exibir(mov.solicitacao.idSolicitacao, completo());
-		SrPesquisa pesquisa = movimentacao.pesquisa;
-		Set<SrPergunta> perguntas = movimentacao.pesquisa
-				.getPerguntaSetAtivas();
-		render(movimentacao, pesquisa, perguntas);
-	}
-
 	public static void darAndamento(SrMovimentacao movimentacao)
 			throws Exception {
 		movimentacao.tipoMov = SrTipoMovimentacao
@@ -720,18 +712,20 @@ public class Application extends SigaApplication {
 	
 	public static void responderPesquisa(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		if (sol.getPesquisaDesignada() == null)
+		SrPesquisa pesquisa = sol.getPesquisaDesignada();
+		if (pesquisa == null)
 			throw new Exception(
 					"Nï¿½o foi encontrada nenhuma pesquisa designada para esta solicitaï¿½ï¿½o.");
-		render(sol);
+		pesquisa = SrPesquisa.findById(pesquisa.idPesquisa);
+		pesquisa = pesquisa.getPesquisaAtual();
+		render(id, pesquisa);
 	}
 	
 	public static void responderPesquisaGravar(Long id,
-			HashMap<Long, Object> respostaMap) throws Exception {
+			Map<Long, String> respostaMap) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		SrMovimentacao movimentacao = new SrMovimentacao();
-		List<SrResposta> respostas = movimentacao.setRespostaMap(respostaMap);
-		sol.responderPesquisa(lotaTitular(), cadastrante(), respostas);
+		sol.responderPesquisa(lotaTitular(), cadastrante(), respostaMap);
+		exibir(id, completo());
 	}
 
 	public static void retornarAoAtendimento(Long id) throws Exception {

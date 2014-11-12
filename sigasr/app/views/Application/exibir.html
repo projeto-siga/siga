@@ -158,11 +158,15 @@ $(function(){
 						#{/if}
 						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
 							#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
-							arquivo:movimentacao.arquivo /}#{/if} #{if
-							movimentacao.tipoMov.idTipoMov == 16}&nbsp;|&nbsp; <a
-							style="color: #365b6d; text-decoration: none"
-							href="@{Application.exibirPesquisa(movimentacao.idMovimentacao)}">
-								Olá</a>#{/if}
+							arquivo:movimentacao.arquivo /}#{/if} 
+							#{if movimentacao.tipoMov.idTipoMov == 16}
+							#{list items:movimentacao.respostaSet, as:'resposta'}
+								#{if resposta.pergunta.tipoPergunta.idTipoPergunta == 1}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.descrResposta}#{/if}
+								#{elseif resposta.pergunta.tipoPergunta.idTipoPergunta == 2}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.grauSatisfacao}
+								#{/elseif}
+								</li>
+							#{/list}
+							#{/if}
 						</td>
 						<script language="javascript">
 							var descricao = document.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
@@ -349,6 +353,8 @@ $(function(){
 	#{/modal}
 	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao} 
 	#{/modal} 
+	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
+	#{/modal}
 	#{modal nome:'pendencia', titulo:'Pendência'}
 	<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
 	<div class="gt-content-box gt-for-table gt-form">

@@ -1201,6 +1201,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeConferirCopiaMovimentacaoComSenha(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+		
+		if(mov == null)
+			return false;
+		
+		if(!mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
+			return false;
 
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
 				ExTipoMovimentacao.class, false);

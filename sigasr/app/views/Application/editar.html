@@ -24,20 +24,31 @@
 		document.getElementById("solicitacaosolicitante_sigla").focusout = validarCadastranteSolicitante();
 		validarCadastranteSolicitante();
 	});
-	
-	function carregarLocalERamal() {
+
+	function carregarLocalRamalEMeioContato() {
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
 			if (frm[i].name && frm[i].value)
 				params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 		}
-		PassAjaxResponseToFunction('@{Application.exibirLocalERamal()}?' + params, 'carregouLocalERamal', null, false, null);
+		PassAjaxResponseToFunction('@{Application.exibirLocalRamalEMeioContato()}?' + params, 'carregouLocalRamalEMeioContato', null, false, null);
 	}
 	
-	function carregouLocalERamal(response, param){
-		var div = document.getElementById('divLocalERamal');
+	function carregouLocalRamalEMeioContato(response, param){
+		var div = document.getElementById('divLocalRamalEMeioContato');
 		div.innerHTML = response;
+				
+		$("#calendarioComunicacao").datepicker({
+	        showOn: "button",
+	        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+	        buttonImageOnly: true,
+	        dateFormat: 'dd/mm/yy'
+	    });
+		$("#calendarioComunicacao").mask("99/99/9999");
+		$("#horarioComunicacao").mask("99:99");
+
+		verificarFormatoCampo(); 
 	}
 	
 	function carregarItem(){
@@ -194,18 +205,6 @@
 	}
 </script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
-<script>
-	$(function() {
-		$("#calendarioComunicacao").datepicker({
-	        showOn: "button",
-	        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
-	        buttonImageOnly: true,
-	        dateFormat: 'dd/mm/yy'
-	    });
-		$("#calendarioComunicacao").mask("99/99/9999");
-		$("#horarioComunicacao").mask("99:99");
-	});
-</script>
 	
 <div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
@@ -229,8 +228,10 @@
 				<input type="hidden"
 				name="dtIniEdicao" value="${dtIniEdicao}" />
 				<input type="hidden"
-				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
-			
+				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" /> 
+				<input type="hidden" name="solicitacao.stringDtMeioContato"
+				id="stringDtMeioContato" value="${solicitacao.dtRegDDMMYYYYHHMM}">
+
 			<div class="gt-form-table">
 				<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
 					Dados básicos
@@ -252,7 +253,7 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
-				onchange:"carregarLocalERamal();carregarItem();carregarConhecimentosRelacionados();
+				onchange:"carregarLocalRamalEMeioContato();carregarItem();carregarConhecimentosRelacionados();
 				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
 				notificarCampoMudou('#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');" /}
 				<span style="margin-left: 10px;" id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
@@ -282,28 +283,6 @@
 				</div>
 			</div>
 			
-			<div class="gt-form-row gt-width-66" id="meioComunicacao">
-				<label>Origem da Demanda</label>
-				#{select name:'solicitacao.meioComunicacao',
-				items:models.SrMeioComunicacao.values(),
-				labelProperty:'descrMeioComunicacao',
-				value:solicitacao.meioComunicacao /}
-			</div>
-			
-			<div class="gt-form-row box-wrapper" style="margin-left: 15px; padding-top: 5px;" id="dtInicioMeioComunicacao">
-				<div class="box box-left gt-width-50" >
-					<label>Preencha a data/hora do contato inicial:</label>
-					<label>Data</label>
-					<input type="text" name="calendario" id="calendarioComunicacao" value="${calendario}">
-					<span style="color: red">#{error 'calendario' /}</span>
-				</div>
-				<div class="box box-right gt-width-50" style="padding-top: 20px !important">
-					<label>Hora</label>
-					<input type="text" name="horario" id="horarioComunicacao" value="${horario}">
-					<span style="color: red">#{error 'horario' /}</span>
-				</div>
-			</div>
-			
 			<div class="gt-form-row gt-width-66">
 				<label>Quando deseja receber notificação de movimentacao?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
@@ -312,9 +291,9 @@
 				value:solicitacao.formaAcompanhamento /}
 			</div>
 
-			<div id="divLocalERamal">#{include
-				'Application/exibirLocalERamal.html' /}</div>
-
+			<div id="divLocalRamalEMeioContato">#{include
+				'Application/exibirLocalRamalEMeioContato.html' /}</div>
+			
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
 			
@@ -376,7 +355,7 @@
 			#{/if}
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
-					class="gt-btn-medium gt-btn-left" />
+					class="gt-btn-medium gt-btn-left" id="gravar" />
 				<a href="@{Application.listar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
  			</div>
 			#{/form}
@@ -424,6 +403,14 @@
 </div>
 
 <script>
+	
+	$('#gravar').click(function() {
+		if ($('#siglaCadastrante').val() != $('#solicitacaosolicitante_sigla')[0].value) {
+			var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
+			$('#stringDtMeioContato').val(stringDt);
+		} 
+	}); 
+	
 	if($('#solicitacaosolicitante').val() != $('#solicitacaointerlocutor').val()
 			&& $('#solicitacaointerlocutor').val() != "") {
 		$('#checkmostrarInterlocutor').prop('checked', true);	
@@ -440,6 +427,7 @@
 	
 	var meioComunicacao = $("select[name='solicitacao.meioComunicacao']");
 	function verificarFormatoCampo() {
+		meioComunicacao = $("select[name='solicitacao.meioComunicacao']");
 		if(meioComunicacao.val() === 'EMAIL'
 			|| meioComunicacao.val() === 'PANDION'
 			|| meioComunicacao.val() === 'CHAT') {
@@ -460,7 +448,7 @@
       		return "0" + num;
 
   		return num;
-	}
+	};
 
 	var andamento = 0;	
 	function moveRelogio(mili){ 
@@ -475,7 +463,7 @@
 	   	$('#total').html(totalString);
 
 	   	setTimeout("moveRelogio(60000)",60000);
-	} 
+	}; 
 
 	carregarFiltrosAoIniciar();
 	moveRelogio(0);

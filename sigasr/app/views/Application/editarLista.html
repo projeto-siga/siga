@@ -77,7 +77,7 @@
 		$("#funcaoConfiancaSpan").html(itemArray[14]);
 		$("#funcaoConfianca_sigla").val(itemArray[15]);
 		jTipoPermissaoCbb.selectedIndex = findSelectedIndexByValue(jTipoPermissaoCbb, itemArray[16]);
-		$("#idConfiguracao").val(itemArray[17]);
+		$("#idConfiguracao").val(itemArray[18]);
 	};
 	
 	function findSelectedIndexByValue(comboBox, value) {
@@ -96,8 +96,10 @@
 			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
 		else
 			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
-		
-		$("#controleAcesso_dialog").dialog('open');
+
+		if ($("#idLista").val() != undefined)
+			$("#controleAcesso_dialog").dialog('open');
+
 	}
 	
 	$("#controleAcesso_dialog").dialog({
@@ -135,7 +137,44 @@
 		$("#funcaoConfiancaSpan").html('');
 		$("#funcaoConfianca_sigla").val('');
 		jTipoPermissaoCbb.selectedIndex = 0;
-		$("#idConfiguracao").val('null');
+		$("#idConfiguracao").val('');
+
+		$('#modal-permissao-error').css('display', 'none');
+		$('#modal-permissao').css('display', 'block');
+	};
+
+	function serializePermissao(row) {
+		var params = "";
+		
+		// caso exista algum item na tabela
+		if (row[0] != '' && row[0] > 0)
+			params += '&permissao.orgaoUsuario.idOrgaoUsu=' + row[0];
+		
+		if (row[2] != '' && row[2] > 0)
+        	params += '&permissao.complexo.idComplexo=' + row[2];
+		
+		if (row[4] != '')
+        	params += '&permissao.lotacao.id=' + row[4];
+		
+		if (row[7] != '')
+        	params += '&permissao.dpPessoa.id=' + row[7];
+		
+		if (row[10] != '')
+        	params += '&permissao.cargo.id=' + row[10];
+		
+		if (row[13] != '')
+        	params += '&permissao.funcaoConfianca.idFuncao=' + row[13];
+		
+		if (row[16] != '')
+        	params += '&permissao.tipoPermissao=' + row[16];
+		
+		if (row[18] != '')
+			params += '&permissao.id=' + row[18];
+
+		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
+			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
+
+		return params;
 	};
 	
 	function inserirAcesso() {
@@ -165,15 +204,33 @@
           			jTipoPermissao.value,
           			jTipoPermissao.text,
           			$("#idConfiguracao").val() ];
-		
-		if (isEditing) {
-			prioridadesTable.row('.selected').data(row);
-		}
-		else {
-			prioridadesTable.row.add(row).draw();
-		}
-		
-		controleAcessoModalFechar();
+
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.gravarPermissaoUsoLista()}",
+	         data: serializePermissao(row),
+	         dataType: "text",
+	         success: function(response) {
+		        row[18] = response;
+
+	          	if (isEditing) {
+	          		prioridadesTable.row('.selected').data(row);
+			    }
+			    else {
+			    	prioridadesTable.row.add(row).draw();
+			    }
+			    
+				controleAcessoModalFechar();
+	         },
+	         error: function(response) {
+	        	$('#modal-permissao').hide(); 
+
+	        	var modalErro = $('#modal-permissao-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
+	         }
+        });
+
 	};
 	
 	$(function() {
@@ -181,39 +238,11 @@
 			var jForm = $("form"),
             	params = jForm.serialize();
 			
-			// serializando os dados da tabela
-			prioridadesTable.rows().indexes().each(function (i) {
-				var rowValues = prioridadesTable.row(i).data();
-				
-				// caso exista algum item na tabela
-				if (rowValues) {
-					if (rowValues[0] != '' && rowValues[0] > 0)
-						params += '&lista.permissoes[' + i + '].orgaoUsuario.idOrgaoUsu=' + rowValues[0];
-					
-					if (rowValues[2] != '' && rowValues[2] > 0)
-	                	params += '&lista.permissoes[' + i + '].complexo.idComplexo=' + rowValues[2];
-					
-					if (rowValues[4] != '')
-	                	params += '&lista.permissoes[' + i + '].lotacao.id=' + rowValues[4];
-					
-					if (rowValues[7] != '')
-	                	params += '&lista.permissoes[' + i + '].dpPessoa.id=' + rowValues[7];
-					
-					if (rowValues[10] != '')
-	                	params += '&lista.permissoes[' + i + '].cargo.id=' + rowValues[10];
-					
-					if (rowValues[13] != '')
-	                	params += '&lista.permissoes[' + i + '].funcaoConfianca.id=' + rowValues[13];
-					
-					if (rowValues[16] != '')
-	                	params += '&lista.permissoes[' + i + '].tipoPermissao=' + rowValues[16];
-					
-					if (rowValues[18] != '')
-						params += '&lista.permissoes[' + i + '].id=' + rowValues[18];
-				}
-			});
-            
             location.href = '@{Application.gravarLista()}?' + params;
+		});
+
+		$("[title='close']").click(function(){
+			controleAcessoModalFechar();
 		});
 	});
 </script>
@@ -229,7 +258,7 @@
 		</p>
 		<div class="gt-form gt-content-box">
 			<form id="formLista"> #{if
-				lista?.idLista} <input type="hidden" name="lista.idLista" value="${lista.idLista}">
+				lista?.idLista} <input type="hidden" id="idLista" name="lista.idLista" value="${lista.idLista}">
 				#{/if}
 				<div class="gt-form-row gt-width-66">
 					<label>Nome</label> <input type="text"
@@ -336,7 +365,7 @@
 </div>
 
 #{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
-	<div class="gt-form gt-content-box">
+	<div class="gt-form gt-content-box" id="modal-permissao">
 		<div>
 			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
 			
@@ -401,5 +430,20 @@
 				#{/if}
 			</div>
 		</div>
+	</div>
+	<div class="gt-content-box" id="modal-permissao-error" style="display: none;">
+		<table width="100%">
+			<tr>
+				<td align="center" valign="middle">
+					<table class="form" width="50%">
+						<tr>
+							<td style="text-align: center; padding-top: 10px;">
+								<h3></h3>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
 	</div>
 #{/modal}

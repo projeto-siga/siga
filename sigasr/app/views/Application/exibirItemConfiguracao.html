@@ -14,7 +14,9 @@ function carregouAcao(response, param){
 	div.innerHTML = response;
 	var scripts = div.getElementsByTagName("script");
 	for(var i=0;i<scripts.length;i++)  
-	   eval(scripts[i].text);  
+	   eval(scripts[i].text);
+	   
+	notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
 }
 </script>
 

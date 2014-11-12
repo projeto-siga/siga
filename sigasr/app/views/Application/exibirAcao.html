@@ -48,7 +48,7 @@ function carregouAtributos(response, param){
 <div class="gt-form-row gt-width-66">
 	<label>Ação</label> 
 	#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();carregarConhecimentosRelacionados();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
-		#{option 0}#{/option}
+		#{option ""}#{/option}
 		#{list items:acoesEAtendentes.keySet(), as:'acao' }
 			#{option acao.idAcao}
 				${acao.tituloAcao} (${acoesEAtendentes[acao].sigla})

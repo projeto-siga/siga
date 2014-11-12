@@ -170,7 +170,6 @@ public class Application extends SigaApplication {
 	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
-		solicitacao.mockAtributos = Boolean.TRUE;
 		render(solicitacao);
 	}
 
@@ -201,14 +200,6 @@ public class Application extends SigaApplication {
 				solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
 			else
 				solicitacao.acao = null;
-		}
-		
-		// TODO: remover implementacao MOCK
-		List<SrAcao> acoes = SrAcao.all().query.getResultList();
-		List<DpLotacao> lotacoes = DpLotacao.all().query.getResultList();
-		
-		for (SrAcao acao : acoes) {
-			acoesEAtendentes.put(acao, lotacoes.get(0));
 		}
 		render(solicitacao, acoesEAtendentes);
 	}

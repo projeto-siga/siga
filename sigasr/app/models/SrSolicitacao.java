@@ -2175,8 +2175,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.salvar(pess, lota);
 	}
 
-	public void terminarPendencia(DpLotacao lota, DpPessoa pess,
-			String descricao, SrTipoMotivoPendencia motivo, Long idMovimentacao)
+	public void terminarPendencia(DpLotacao lota, DpPessoa pess, String descricao, Long idMovimentacao)
 			throws Exception {
 		if (!podeTerminarPendencia(lota, pess))
 			throw new Exception("Operação não permitida");
@@ -2184,12 +2183,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
 		movimentacao.descrMovimentacao = descricao;
-		movimentacao.motivoPendencia = motivo;
 		movimentacao = movimentacao.salvar(pess, lota);
+		
 		SrMovimentacao movFinalizada = SrMovimentacao.findById(idMovimentacao);
 		movFinalizada.movFinalizadora = movimentacao;
-		movFinalizada.salvar();
-
+		movFinalizada.save();
+		
 	}
 
 	public void cancelar(DpLotacao lota, DpPessoa pess) throws Exception {

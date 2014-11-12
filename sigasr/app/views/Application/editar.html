@@ -216,10 +216,12 @@
 		var filtrosSelecionados = $('#filtro input:checked');
 		
 		if(filtrosSelecionados.size() > 0) {
-			var params = construirParametrosDoFiltro(filtrosSelecionados, $('#formSolicitacao'));
-			iniciarCarregarSolicitacoesRelacionadas();
-			PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
-			return;
+			if(selecionouSolicitante()) {
+				console.log('selecionouSolicitante()', selecionouSolicitante());
+				var params = construirParametrosDoFiltro(filtrosSelecionados, $('#formSolicitacao'));
+				iniciarCarregarSolicitacoesRelacionadas();
+				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
+			}
 			// $('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Não há solicitações relacionadas</td></tr>");
 		}
 		// Senao, apenas mostra informacao

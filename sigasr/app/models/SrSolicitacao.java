@@ -626,6 +626,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
+	@SuppressWarnings("unchecked")
 	private List<SrTipoAtributo> getTiposAtributoAssociados(
 			HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
@@ -641,7 +642,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					map.put(tipo.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
-		return listaFinal;
+		// TODO remover esse codigo, apenas mock
+		return SrTipoAtributo.all().query.getResultList();
+//		return listaFinal;
 	}
 
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
@@ -1136,12 +1139,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				}
 			}
 		}
-		return new ArrayList(listaFinal);
+		return new ArrayList<SrItemConfiguracao>(listaFinal);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
-		return new ArrayList(getAcoesDisponiveisComAtendente().keySet());
+		return new ArrayList<SrAcao>(getAcoesDisponiveisComAtendente().keySet());
 	}
 
 	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendente()
@@ -1733,8 +1736,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				new int[] {});
 		
 		for (SrConfiguracao conf : confs) {
-			for (SrListaConfiguracao listaConf : conf.getListaConfiguracaoSet()) {
-				SrLista listaAtual = listaConf.lista.getListaAtual();
+			for (SrLista lista : conf.getListaConfiguracaoSet()) {
+				SrLista listaAtual = lista.getListaAtual();
 				if (!listaFinal.contains(listaAtual))
 					listaFinal.add(listaAtual);
 			}

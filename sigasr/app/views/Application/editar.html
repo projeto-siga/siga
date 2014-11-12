@@ -11,9 +11,10 @@
 	border-radius: 5px 5px 0 0 !important;
 	margin-top: -15px !important;
 }
-.tempo h3{
+
+.tempo h3 {
 	color: #365b6d;
-	font-weight: normal; 
+	font-weight: normal;
 	margin-bottom: 0px;
 	font-size: 138.5%;
 	border: 0;
@@ -88,29 +89,91 @@
 	}
 	
 	// funções usadas para solicitações relacionadas
-	function addFiltro(comboFiltro, campoRef, optionHtml, optionVl) {
-		if($(campoRef).val() != "" && $(campoRef).val() != undefined) {   
-			if(comboFiltro.find("option[value='"+optionVl+"']").length == 0) { 
+	function addFiltro(divFiltro, campoRef, optionHtml, optionVl) {
+		/*if($(campoRef).val() != "" && $(campoRef).val() != undefined) {   
+			if(divFiltro.find("option[value='"+optionVl+"']").length == 0) { 
 			    var opt = document.createElement('option');
 			    opt.innerHTML = optionHtml;
 			    opt.value = optionVl;
-			    comboFiltro.append(opt);
-			  	comboFiltro.find("option[value='"+optionVl+"']").prop('selected', true);
+			    divFiltro.append(opt);
+			  	divFiltro.find("option[value='"+optionVl+"']").prop('selected', true);
 				return true;
 			}
 			return null;
 		}
+		return false;*/
+
+		/**
+		 * Se o valor foi preenchido e se existe label
+		 */
+		 console.log('optionHtml', optionHtml);
+		 
+		if($(campoRef).val() != "" && $(campoRef).val() != undefined && optionHtml) {
+			var divFiltroExistente = $("div[identificadorFiltro='" + optionVl + "']")
+			/**
+			 * Se jah existe uma div para esse filtro, apenas atualiza a checkbox
+			 */
+			if(divFiltroExistente.size() > 0) {
+				var input = divFiltroExistente.find('span');
+				input.html(optionHtml);
+			}
+			/** 
+			 * Caso nao exista a div, entao cria uma nova checkbox
+			 */
+			else {
+				var div = $('<div style="clear:both">');
+				div.attr('identificadorFiltro', optionVl);
+				
+				var input = $('<input type="checkbox">');
+				input.attr('name', optionVl);
+				input.bind('change', carregarSolRelacionadas);
+				
+				var label = $('<span style="margin-left:5px">');
+				label.html(optionHtml);
+			
+				div.append(input);
+				div.append(label);
+				
+				divFiltro.append(div);
+			}	
+			return true;
+		}
 		return false;
 	}
 	
-	function notificarCampoMudou(campoRef, optionHtml, optionVl) {
-		var comboFiltro = $('#filtro');
-		if(!addFiltro(comboFiltro, campoRef, optionHtml, optionVl)) {
-			var option = comboFiltro.find("option[value='"+optionVl+"']");
+	function notificarCampoMudou(campoRef, tipoCampo, optionVl) {
+		var label = descricaoFiltroSolRelacionadas(campoRef, tipoCampo);
+		var divFiltro = $('#filtro');
+		
+		if(!addFiltro(divFiltro, campoRef, label, optionVl)) {
+			var option = divFiltro.find("div[identificadorFiltro='" + optionVl + "']");
 			option.remove();
 		}
-		carregarSolRelacionadas($('#filtro').val());
+		carregarSolRelacionadas();
 		validarCadastranteSolicitante();
+	}
+
+	function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl) {
+		notificarCampoMudou(campoRef, tipoCampo, optionVl);
+	}
+
+	function descricaoFiltroSolRelacionadas(campoRef, tipoCampo) {
+		var campo = $(campoRef);
+
+		console.log('campo', campo);
+		
+		if(campo.size() > 0) {
+			if(campo[0].tagName == 'SELECT') {
+				return campo.find('option:selected').html().trim();
+			} else {
+				var span = $(campoRef + 'Span');
+				
+				if(span.size() > 0) {
+					return tipoCampo + ' - ' + span.html();
+				}
+			}
+		}
+		return null;
 	}
 	
 	// Valida se o cadastrante é o solicitante, e neste caso irá ocultar
@@ -135,55 +198,83 @@
 		}
 	}
 	
-	function carregarSolRelacionadas(comboFiltroVl){
-		if(comboFiltroVl != ""){
-			frm = document.getElementById('formSolicitacao');
-			params = '';
-			params = params + frm[0].name+ '=' + encodeURI(frm[0].value) + '&';
-			
-			if(comboFiltroVl == 'solicitacao.lotaSolicitante'){
-				params = params + 'carregarLotaSolicitante=true&';
-				comboFiltroVl = 'solicitacao.solicitante';			
-			}
-			for (i = 1; i < frm.length; i++){
-				if(frm[i].name == comboFiltroVl)
-					if (frm[i].name && frm[i].value){
-						params = params + frm[i].name + '=' + encodeURI(frm[i].value);
-						break;
-					}
-			}
+	function carregarSolRelacionadas() {
+		var filtrosSelecionados = $('#filtro input:checked');
+		
+		if(filtrosSelecionados.size() > 0) {
+			var params = construirParametrosDoFiltro(filtrosSelecionados, $('#formSolicitacao'));
+			iniciarCarregarSolicitacoesRelacionadas();
 			PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
 			return;
+			// $('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Não há solicitações relacionadas</td></tr>");
 		}
-		$('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Não há solicitações relacionadas</td></tr>");
+		// Senao, apenas mostra informacao
+		else {
+			$('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Selecione um filtro para realizar a pesquisa</td></tr>");
+		}
 	}
-	
+
+	function construirParametrosDoFiltro(filtrosSelecionados, frm) {
+		var authField = frm.find('input:nth(0)');
+		var params = authField.attr('name') + '=' + encodeURI(authField.val()) + '&';
+
+		// Se o usuario selecionou algum filtro, entao realiza a consulta no servidor
+		filtrosSelecionados.each(function() {
+			var input = frm.find("[name='" +  $(this).attr('name') + "']");
+			params = params + input.attr('name') + '=' + input.val() + '&'
+		});
+		return params;
+	}
+		
 	function carregouSolicitacoesRelacionadas(response, param){
-		$('#bodySolRelacionadas').html(response);
+		if($('#filtro input:checked').size() > 0) {
+			$('#bodySolRelacionadas').html(response);
+		}
+		$('#filtro input').attr('disabled', false);
 	}
-	
+
+	function iniciarCarregarSolicitacoesRelacionadas() {
+		$('#filtro input').attr('disabled', true);
+		$('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Por favor aguarde. Carregando... </td></tr>");
+	}
+		
 	function carregarFiltrosAoIniciar() {
-		var comboFiltro = $('#filtro');
-		addFiltro(comboFiltro, '#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
-		addFiltro(comboFiltro, '#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');
-		addFiltro(comboFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
-		addFiltro(comboFiltro, '#selectAcao', 'Ação', 'solicitacao.acao');
-		atributos = $('#atributos').find('div');
+		var divFiltro = $('#filtro'),
+			atributos = $('#atributos').find('div');
+
+		addFiltroAoIniciar(divFiltro, '#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
+		// addFiltro(divFiltro, '#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');
+		addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
+		addFiltroAoIniciar(divFiltro, '#selectAcao', 'Ação', 'solicitacao.acao');
+		
 		var atrClass, atrHtml, atrName;
 		for(j=0; j < atributos.length; j++) {
-			if (atributos[j].children[1] != undefined) {
-				atrClass = '.'+atributos[j].children[1].className;
-				atrHtml = atributos[j].firstElementChild.innerText;
-				atrName = atributos[j].children[1].name;
-				addFiltro(comboFiltro, atrClass, atrHtml, atrName);
+			var divAtributo = atributos[j], 
+				inputAtributo = atributos[j].children[1],
+				labelAtributo = divAtributo.firstElementChild;
+			
+			if (inputAtributo != undefined) {
+				atrClass = '.' + inputAtributo.className;
+				atrHtml = labelAtributo.innerHTML;
+				atrName = inputAtributo.name;
+				
+				// Se for select, busca pelo atributo selecionado
+				if (inputAtributo.tagName == 'SELECT') {
+					atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
+				}
+				addFiltro(divFiltro, atrClass, atrHtml, atrName);
 			}
 		}
-		carregarSolRelacionadas(comboFiltro.val());
+		carregarSolRelacionadas();
+	}
+
+	function addFiltroAoIniciar(divFiltro, campoRef, optionHtml, optionVl) {
+		var label = descricaoFiltroSolRelacionadas(campoRef, optionHtml);
+		addFiltro(divFiltro, campoRef, label, optionVl);
 	}
 	
-	
 	function verMais(){
-		frm = document.getElementById('formSolicitacao');
+		/*frm = document.getElementById('formSolicitacao');
 		comboVl = $('#filtro').val();
 		params = '';
 		params = params + frm[0].name+ '=' + encodeURI(frm[0].value) + '&';
@@ -199,90 +290,90 @@
 					params = params + frm[i].name + '=' + encodeURI(frm[i].value);
 					break;
 				}
+		} */
+		var params = construirParametrosDoFiltro($('#filtro input:checked'), $('#formSolicitacao'));
+		// Replace All
+		while(params.indexOf('solicitacao') >= 0) {
+			params = params.replace("solicitacao", "filtro");
 		}
-		params = params.replace("solicitacao", "filtro");
 		window.open('@{Application.listar()}?' + params + "","_blank");
 	}
 </script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
-	
+
 <div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
-		<h2>#{if solicitacao.idSolicitacao || solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
+		<h2>#{if solicitacao.idSolicitacao ||
+			solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
 			#{else}Cadastro de Solicitação#{/else}</h2>
-		<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
+		<div class="gt-content-box gt-for-table gt-form"
+			style="margin-top: 15px;">
 
 			#{form @Application.gravar(),
-			enctype:'multipart/form-data',id:'formSolicitacao' } 
-				#{if solicitacao.solicitacaoPai}
-				<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao"
-				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
-				#{/if}
-				#{if solicitacao.idSolicitacao}
-				<input
-				type="hidden" name="solicitacao.idSolicitacao"
-				value="${solicitacao.idSolicitacao}" /> 
-				#{/if}
-				<input type="hidden"
-				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
-				<input type="hidden"
-				name="dtIniEdicao" value="${dtIniEdicao}" />
-				<input type="hidden"
-				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" /> 
-				<input type="hidden" name="solicitacao.stringDtMeioContato"
+			enctype:'multipart/form-data',id:'formSolicitacao' } #{if
+			solicitacao.solicitacaoPai} <input type="hidden"
+				name="solicitacao.solicitacaoPai.idSolicitacao"
+				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> #{/if} #{if
+			solicitacao.idSolicitacao} <input type="hidden"
+				name="solicitacao.idSolicitacao"
+				value="${solicitacao.idSolicitacao}" /> #{/if} <input type="hidden"
+				name="solicitacao.numSolicitacao"
+				value="${solicitacao.numSolicitacao}" /> <input type="hidden"
+				name="dtIniEdicao" value="${dtIniEdicao}" /> <input type="hidden"
+				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
+			<input type="hidden" name="solicitacao.stringDtMeioContato"
 				id="stringDtMeioContato" value="${solicitacao.dtRegDDMMYYYYHHMM}">
 
 			<div class="gt-form-table">
-				<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
-					Dados básicos
-				</div>
+				<div class="barra-subtitulo barra-subtitulo-top header"
+					align="center" valign="top">Dados básicos</div>
 			</div>
-			
+
 			#{ifErrors}
 			<p class="gt-error">Alguns campos obrigatórios não foram
 				preenchidos ${error}</p>
 			#{/ifErrors}
 
 			<div class="gt-form-row gt-width-66">
-				<label>Cadastrante</label> 
-				${cadastrante.nomePessoa}
-				<input type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
-				value="${cadastrante.sigla}" /> 
+				<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
+					type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
+					value="${cadastrante.sigla}" />
 			</div>
-			
+
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
 				onchange:"carregarLocalRamalEMeioContato();carregarItem();carregarConhecimentosRelacionados();
-				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
-				notificarCampoMudou('#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');" /}
-				<span style="margin-left: 10px;" id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor', value:false, depende:'interlocutor'/} Interlocutor</span>
+				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');" /} <span style="margin-left: 10px;"
+					id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor',
+					value:false, depende:'interlocutor'/} Interlocutor</span>
 			</div>
-			<div class="gt-form-row gt-width-66" id="interlocutor" style="display: none;">
+			<div class="gt-form-row gt-width-66" id="interlocutor"
+				style="display: none;">
 				<label>Interlocutor</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor,
 				onchange:'' /}
 			</div>
-			#{set locaisDisponiveis:solicitacao.locaisDisponiveis /}
-			#{if locaisDisponiveis.size() > 1}	
-				<div class="gt-form-row gt-width-66">
-					<label>Local</label> 
-					#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
-					labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
-				</div>
-				<script>
+			#{set locaisDisponiveis:solicitacao.locaisDisponiveis /} #{if
+			locaisDisponiveis.size() > 1}
+			<div class="gt-form-row gt-width-66">
+				<label>Local</label> #{select name:'solicitacao.local',
+				items:locaisDisponiveis, valueProperty:'idComplexo',
+				labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo,
+				id:'local' /}
+			</div>
+			<script>
 					$("#local").change(function() {
 						  carregarItem();
 					});
 				</script>
 			#{/if}
-			
+
 			<div class="gt-form-table" style="margin-top: 10px;">
 				<div class="barra-subtitulo header" align="center" valign="top">
-					Contato
-				</div>
+					Contato</div>
 			</div>
-			
+
 			<div class="gt-form-row gt-width-66">
 				<label>Quando deseja receber notificação de movimentacao?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
@@ -293,10 +384,10 @@
 
 			<div id="divLocalRamalEMeioContato">#{include
 				'Application/exibirLocalRamalEMeioContato.html' /}</div>
-			
+
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
-			
+
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label>
 				<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
@@ -308,26 +399,29 @@
 				<label>Anexar arquivo</label> <input type="file"
 					name="solicitacao.arquivo" />
 			</div>
-			
+
 			<div class="gt-form-table">
 				<div class="barra-subtitulo header" align="center" valign="top">
-					Prioridade
-				</div>
+					Prioridade</div>
 			</div>
 			<div class="gt-form-row box-wrapper">
 				<div class="gt-form-row gt-width-33">
-					<label>Gravidade</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
-					labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
+					<label>Gravidade</label> #{select name:'solicitacao.gravidade',
+					items:models.SrGravidade.values(),
+					labelProperty:'respostaEnunciado', value:'NORMAL',
+					style:'width:235px;' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
-					<label>Urgência</label> #{select
-					name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
-					labelProperty:'respostaEnunciado', value:'NORMAL', style:'width:235px;' /}
+					<label>Urgência</label> #{select name:'solicitacao.urgencia',
+					items:models.SrUrgencia.values(),
+					labelProperty:'respostaEnunciado', value:'NORMAL',
+					style:'width:235px;' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
-					<label>Tendência</label> #{select
-					name:'solicitacao.tendencia', items:models.SrTendencia.values(),
-					labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO', style:'width:235px;' /}
+					<label>Tendência</label> #{select name:'solicitacao.tendencia',
+					items:models.SrTendencia.values(),
+					labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO',
+					style:'width:235px;' /}
 				</div>
 			</div>
 
@@ -345,40 +439,51 @@
 					name="solicitacao.motivoFechamentoAbertura"
 					id="motivoFechamentoAbertura" />
 			</div>
-			
+
 			#{if !solicitacao.idSolicitacao || solicitacao.rascunho}
 			<div class="gt-form-row">
-				<label> 
-					#{checkbox name:'solicitacao.rascunho', value:solicitacao.rascunho /} Rascunho
-				</label>
+				<label> #{checkbox name:'solicitacao.rascunho',
+					value:solicitacao.rascunho /} Rascunho </label>
 			</div>
 			#{/if}
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
-					class="gt-btn-medium gt-btn-left" id="gravar" />
-				<a href="@{Application.listar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
- 			</div>
+					class="gt-btn-medium gt-btn-left" id="gravar" /> <a
+					href="@{Application.listar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			</div>
 			#{/form}
 		</div>
 	</div>
 	<div class="gt-sidebar">
-		<div class="gt-sidebar-content"><h2>&nbsp;</h2></div>
+		<div class="gt-sidebar-content">
+			<h2>&nbsp;</h2>
+		</div>
 	</div>
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content tempo">
-			<h3><img src="/siga/css/famfamfam/icons/clock_play.png" width="20px;" style="vertical-align: bottom;">
-				Atendimento: <span id="andamento"></span> horas</h3>
-			<h3 style="margin-left: 25px;">Total: <span id="total"></span> horas</h3>
+			<h3>
+				<img src="/siga/css/famfamfam/icons/clock_play.png" width="20px;"
+					style="vertical-align: bottom;"> Atendimento: <span
+					id="andamento"></span> horas
+			</h3>
+			<h3 style="margin-left: 25px;">
+				Total: <span id="total"></span> horas
+			</h3>
 		</div>
 	</div>
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
-			<h3>Solicitações relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
+			<h3>
+				Solicitações relacionadas <a href="#" onclick="verMais()">[Ver
+					Mais]</a>
+			</h3>
 			<div class="gt-content-box gt-form" id="filtroSolicitacoes">
-				<label>Filtro</label> 
-				<select name="filtro" id="filtro" onchange="carregarSolRelacionadas(this.value)"><option value="">Selecione um filtro...</option></select>
-			
-				<div class="gt-content-box " style="margin: 10px -16px -6px -16px; border-radius: 0 0 5px 5px !important;">
+				<label>Filtro</label>
+
+				<div id="filtro"></div>
+
+				<div class="gt-content-box "
+					style="margin: 10px -16px -6px -16px; border-radius: 0 0 5px 5px !important;">
 					<table border="0" width="100%" class="gt-table">
 						<colgroup>
 							<col width="35%" />
@@ -389,17 +494,17 @@
 								<th>Código</th>
 								<th>Teor</th>
 							</tr>
-						</thead>					
-						<tbody id ="bodySolRelacionadas">
-							#{include 'Application/listarSolicitacoesRelacionadas.html' /}
+						</thead>
+						<tbody id="bodySolRelacionadas">#{include
+							'Application/listarSolicitacoesRelacionadas.html' /}
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</div>
 	</div>
-	
-	<div id="divConhecimentosRelacionados"/>
+
+	<div id="divConhecimentosRelacionados" />
 </div>
 
 <script>

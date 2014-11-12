@@ -1,7 +1,5 @@
 package controllers;
 
-import static org.joda.time.format.DateTimeFormat.forPattern;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -16,10 +14,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.xml.parsers.ParserConfigurationException;
 
-import models.Sr;
 import models.SrAcao;
 import models.SrArquivo;
 import models.SrAtributo;
@@ -41,9 +37,7 @@ import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormatter;
 
 import play.Logger;
 import play.Play;
@@ -64,7 +58,6 @@ import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
@@ -224,21 +217,26 @@ public class Application extends SigaApplication {
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 
+		
 		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
 		if (solicitacao.itemConfiguracao != null) {
-			acoesEAtendentes = solicitacao
-					.getAcoesDisponiveisComAtendenteOrdemTitulo();
-			if (solicitacao.acao == null
-					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
+			acoesEAtendentes = solicitacao.getAcoesDisponiveisComAtendenteOrdemTitulo();
+			if (solicitacao.acao == null || !acoesEAtendentes.containsKey(solicitacao.acao)) {
 				if (acoesEAtendentes.size() > 0) {
-					solicitacao.acao = acoesEAtendentes.keySet().iterator()
-							.next();
+					solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
 				} else {
 					solicitacao.acao = null;
 				}
 			}
 		}
+
+		// TODO: Diego remover esse trecho, apenas mock
+		List<SrAcao> acoes = SrAcao.listar(Boolean.FALSE);
+		List<DpLotacao> lotacoes = DpLotacao.all().query.getResultList();
 		
+		for (SrAcao acao : acoes) {
+			acoesEAtendentes.put(acao, lotacoes.get(0));
+		}
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 

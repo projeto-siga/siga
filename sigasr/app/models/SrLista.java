@@ -69,15 +69,15 @@ public class SrLista extends HistoricoSuporte {
 
 	@Column(name = "NOME_LISTA")
 	public String nomeLista;
-	
+
 	@Lob
 	@Column(name = "DESCR_ABRANGENCIA", length = 8192)
 	public String descrAbrangencia;
-	
+
 	@Lob
 	@Column(name = "DESCR_JUSTIFICATIVA", length = 8192)
 	public String descrJustificativa;
-	
+
 	@Lob
 	@Column(name = "DESCR_PRIORIZACAO", length = 8192)
 	public String descrPriorizacao;
@@ -97,13 +97,13 @@ public class SrLista extends HistoricoSuporte {
 	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
-	
+
 	@Transient
 	public List<SrConfiguracao> permissoes;
-	
+
 	public static List<SrLista> listar(boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer();
-		
+
 		if (!mostrarDesativado)
 			sb.append(" hisDtFim is null ");
 		else {
@@ -111,9 +111,9 @@ public class SrLista extends HistoricoSuporte {
 			sb.append(" SELECT max(idLista) as idLista FROM ");
 			sb.append(" SrLista GROUP BY hisIdIni) ");
 		}
-		
+
 		sb.append(" order by idLista ");
-		
+
 		return SrLista.find(sb.toString()).fetch();
 	}
 
@@ -130,7 +130,7 @@ public class SrLista extends HistoricoSuporte {
 	public void setId(Long id) {
 		idLista = id;
 	}
-	
+
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
@@ -162,8 +162,7 @@ public class SrLista extends HistoricoSuporte {
 	public Set<SrMovimentacao> getMovimentacaoSet(boolean ordemCrescente) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new SrMovimentacaoComparator(ordemCrescente));
-		SrLista ini = listaInicial != null ? listaInicial
-				: this;
+		SrLista ini = listaInicial != null ? listaInicial : this;
 		if (ini.meuMovimentacaoSet != null)
 			for (SrMovimentacao movimentacao : ini.meuMovimentacaoSet)
 				if ((!movimentacao.isCanceladoOuCancelador()))
@@ -250,17 +249,20 @@ public class SrLista extends HistoricoSuporte {
 				s.priorizar(this, i, pessoa, lota);
 		}
 	}
-	
+
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-		
-		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
-		//tem de ser corrigido.
-		
-		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
-		//serao recarregadas do banco, e precisarao reconhecer o novo estado desta lista
-		//refresh();
+
+		// Edson: comentado o codigo abaixo porque muitos problemas ocorriam.
+		// Mas
+		// tem de ser corrigido.
+
+		// Edson: eh necessario o refresh porque, abaixo, as configuracoes
+		// referenciando
+		// serao recarregadas do banco, e precisarao reconhecer o novo estado
+		// desta lista
+		// refresh();
 
 		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
 		// instancia do objeto, caso contrario, nao ha configuracao
@@ -271,17 +273,34 @@ public class SrLista extends HistoricoSuporte {
 					.limparCache(
 							(CpTipoConfiguracao) CpTipoConfiguracao
 									.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-		
-		// DB1: precisa salvar item a item 
+
+		// DB1: precisa salvar item a item
 		if (this.permissoes != null) {
 			for (SrConfiguracao permissao : this.permissoes) {
 				permissao.listaPrioridade = this;
 				permissao.salvarComoPermissaoUsoLista();
 			}
 		}
-		
-		//if (listaInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
+
+		// if (listaInicial != null)
+		// SrConfiguracao.notificarQueMudou(this);
 	}
 
+	/**
+	 * Classe que representa um V.O. de {@link SrListaConfiguracao}.
+	 */
+	public class SrListaConfiguracaoVO {
+
+		public Long idLista;
+		public String nomeLista;
+
+		public SrListaConfiguracaoVO(Long idLista, String nomeLista) {
+			this.idLista = idLista;
+			this.nomeLista = nomeLista;
+		}
+	}
+
+	public SrListaConfiguracaoVO toVO() {
+		return new SrListaConfiguracaoVO(this.idLista, this.nomeLista);
+	}
 }

@@ -171,6 +171,7 @@ public class Application extends SigaApplication {
 
 	public static void exibirAtributos(SrSolicitacao solicitacao)
 			throws Exception {
+		solicitacao.carregarAtributos = Boolean.TRUE;
 		render(solicitacao);
 	}
 
@@ -202,7 +203,13 @@ public class Application extends SigaApplication {
 			else
 				solicitacao.acao = null;
 		}
+		// TODO: Diego remover esse trecho, apenas mock
+		List<SrAcao> acoes = SrAcao.listar(Boolean.FALSE);
+		List<DpLotacao> lotacoes = DpLotacao.all().query.getResultList();
 		
+		for (SrAcao acao : acoes) {
+			acoesEAtendentes.put(acao, lotacoes.get(0));
+		}
 		render(solicitacao, acoesEAtendentes);
 	}
 
@@ -228,14 +235,6 @@ public class Application extends SigaApplication {
 					solicitacao.acao = null;
 				}
 			}
-		}
-
-		// TODO: Diego remover esse trecho, apenas mock
-		List<SrAcao> acoes = SrAcao.listar(Boolean.FALSE);
-		List<DpLotacao> lotacoes = DpLotacao.all().query.getResultList();
-		
-		for (SrAcao acao : acoes) {
-			acoesEAtendentes.put(acao, lotacoes.get(0));
 		}
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}

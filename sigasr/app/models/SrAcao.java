@@ -23,15 +23,14 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
-
+public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrAcao> {
+	
 	/**
 	 * 
 	 */
@@ -315,5 +314,15 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 				lista.addAll(filho.getAcaoETodasDescendentes());
 		}
 		return lista;
+	}
+
+	@Override
+	public int compareTo(SrAcao arg0) {
+		if (arg0.descrAcao == null) {
+			return -1;
+		} else if (this.descrAcao == null) {
+			return 0;
+		}
+		return this.descrAcao.compareTo(arg0.descrAcao);
 	}
 }

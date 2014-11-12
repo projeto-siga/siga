@@ -102,12 +102,10 @@
 			return null;
 		}
 		return false;*/
-
+		
 		/**
 		 * Se o valor foi preenchido e se existe label
 		 */
-		 console.log('optionHtml', optionHtml);
-		 
 		if($(campoRef).val() != "" && $(campoRef).val() != undefined && optionHtml) {
 			var divFiltroExistente = $("div[identificadorFiltro='" + optionVl + "']")
 			/**
@@ -115,7 +113,7 @@
 			 */
 			if(divFiltroExistente.size() > 0) {
 				var input = divFiltroExistente.find('span');
-				input.html(optionHtml);
+				input.html(optionHtml.trim());
 			}
 			/** 
 			 * Caso nao exista a div, entao cria uma nova checkbox
@@ -129,7 +127,7 @@
 				input.bind('change', carregarSolRelacionadas);
 				
 				var label = $('<span style="margin-left:5px">');
-				label.html(optionHtml);
+				label.html(optionHtml.trim());
 			
 				div.append(input);
 				div.append(label);
@@ -142,34 +140,40 @@
 	}
 	
 	function notificarCampoMudou(campoRef, tipoCampo, optionVl) {
-		var label = descricaoFiltroSolRelacionadas(campoRef, tipoCampo);
-		var divFiltro = $('#filtro');
+		var label = descricaoFiltroSolRelacionadas(campoRef, tipoCampo),
+			divFiltro = $('#filtro');
 		
 		if(!addFiltro(divFiltro, campoRef, label, optionVl)) {
-			var option = divFiltro.find("div[identificadorFiltro='" + optionVl + "']");
-			option.remove();
+			var div = divFiltro.find("div[identificadorFiltro='" + optionVl + "']");
+			div.remove();
 		}
 		carregarSolRelacionadas();
 		validarCadastranteSolicitante();
 	}
 
+	// Recebe notificacao de alteracao em campo que eh atributo
 	function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl) {
-		notificarCampoMudou(campoRef, tipoCampo, optionVl);
+		var label = $(campoRef).prev('label').html().trim();
+		notificarCampoMudou(campoRef, label, optionVl);
 	}
 
 	function descricaoFiltroSolRelacionadas(campoRef, tipoCampo) {
 		var campo = $(campoRef);
 
-		console.log('campo', campo);
-		
 		if(campo.size() > 0) {
+			// Se o filtro eh uma select, entao pega o valor selecionado na select
 			if(campo[0].tagName == 'SELECT') {
-				return campo.find('option:selected').html().trim();
-			} else {
+				return tipoCampo + ' - ' + campo.find('option:selected').html().trim();
+			}
+			else {
+				// Se o campo for um componente de selecao, entao pega o valor selecionado (estara em um span gerado pelo componente)
 				var span = $(campoRef + 'Span');
-				
 				if(span.size() > 0) {
 					return tipoCampo + ' - ' + span.html();
+				} 
+				// Senao, pega o valor do campo
+				else {
+					return tipoCampo + ' - ' + campo.val();
 				}
 			}
 		}
@@ -291,7 +295,7 @@
 					break;
 				}
 		} */
-		var params = construirParametrosDoFiltro($('#filtro input:checked'), $('#formSolicitacao'));
+		var params = construirParametrosDoFiltro($('#filtro input:checked'), $('#formSolicitacao')) + '&filtro.pesquisar=true&';
 		// Replace All
 		while(params.indexOf('solicitacao') >= 0) {
 			params = params.replace("solicitacao", "filtro");

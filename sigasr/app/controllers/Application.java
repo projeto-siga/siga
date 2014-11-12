@@ -435,15 +435,11 @@ public class Application extends SigaApplication {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static void listar(SrSolicitacaoFiltro filtro, boolean carregarLotaSolicitante) throws Exception {
+	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
 
 		List<SrSolicitacao> list;
 
 		if (filtro.pesquisar) {
-			if(carregarLotaSolicitante){
-	    		filtro.lotaSolicitante = filtro.solicitante.getLotacao();
-	    		filtro.solicitante = null;
-	    	}
 			list = filtro.buscar();
 		} else {
 			list = new ArrayList<SrSolicitacao>();

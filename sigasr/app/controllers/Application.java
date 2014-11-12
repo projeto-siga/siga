@@ -706,7 +706,7 @@ public class Application extends SigaApplication {
 
 	public static void excluir(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.finalizar();
+		sol.excluir();
 		editar(null);
 	}
 	

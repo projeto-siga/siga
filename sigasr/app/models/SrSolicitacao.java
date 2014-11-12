@@ -1420,9 +1420,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			atualizarMarcas();
 	}
 	
-	@Override
-	public void finalizar() throws Exception {
-		super.finalizar();
+	public void excluir() throws Exception{
+		finalizar();
 		for (SrMarca e : getMarcaSet()) {
 			e.solicitacao.meuMarcaSet.remove(e);
 			e.delete();

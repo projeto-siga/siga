@@ -349,4 +349,8 @@ public class SrMovimentacao extends GenericModel {
 		else
 			Correio.notificarCancelamentoMovimentacao(this);
 	}
+	
+	public String getMotivoPendenciaString() {
+		return this.motivoPendencia.descrTipoMotivoPendencia;
+	}
 }

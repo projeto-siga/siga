@@ -1,7 +1,7 @@
 #{list items:solicitacoesRelacionadas, as:'sol'}
 	<tr>
 		<td>
-			<a href="@{Application.exibir(sol.idSolicitacao)}">
+			<a href="#" onclick="exibirSolicitacao(${sol.idSolicitacao})">
 				${sol.codigo}
 			</a>
 		</td> 
@@ -13,6 +13,7 @@
 		</td> 
 	</tr>
 #{/list}
+
 #{if solicitacoesRelacionadas == null || solicitacoesRelacionadas.size() == 0}
 	<tr><td colspan="2" style="text-align: center;">Não há solicitações relacionadas</td></tr>
 #{/if}

@@ -222,9 +222,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Where(clause = "ID_TP_MARCA=2")
 	protected Set<SrMarca> meuMarcaSet;
 
-	// Edson: mudei de boolean pra Boolean porque havia configs no banco
-	// com FG_RASCUNHO nulo (havia duas versoes parelelas), o que
-	// gerava "Null value was assigned to a property of primitive type"
 	@Column(name = "FG_RASCUNHO")
 	@Type(type = "yes_no")
 	public Boolean rascunho;
@@ -447,6 +444,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return "";
 	}
+
 	public String getDtRegHHMM() {
 		if (dtReg != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("HH:mm");
@@ -682,8 +680,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	// Edson: ver comentario abaixo, em getTiposAtributoAssociados()
-	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados()
-			throws Exception {
+	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados() throws Exception {
 		HashMap<Long, Boolean> map = new HashMap<Long, Boolean>();
 		getTiposAtributoAssociados(map);
 		return map;
@@ -696,8 +693,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
-	private List<SrTipoAtributo> getTiposAtributoAssociados(
-			HashMap<Long, Boolean> map) throws Exception {
+	@SuppressWarnings("unchecked")
+	private List<SrTipoAtributo> getTiposAtributoAssociados(HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
 		SrConfiguracao confFiltro = new SrConfiguracao();
@@ -720,7 +717,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		
 		return listaFinal;
 	}
-
+	
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
@@ -1212,7 +1209,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
-		return new ArrayList(getAcoesDisponiveisComAtendente().keySet());
+		return new ArrayList<SrAcao>(getAcoesDisponiveisComAtendente().keySet());
 	}
 
 	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendente()
@@ -1785,8 +1782,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {});
 		for (SrConfiguracao conf : confs) {
-			for (SrListaConfiguracao listaConf : conf.getListaConfiguracaoSet()) {
-				SrLista listaAtual = listaConf.lista.getListaAtual();
+			for (SrLista lista : conf.getListaConfiguracaoSet()) {
+				SrLista listaAtual = lista.getListaAtual();
 				if (!listaFinal.contains(listaAtual))
 					listaFinal.add(listaAtual);
 			}
@@ -2157,7 +2154,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public void terminarPendencia(DpLotacao lota, DpPessoa pess,
 			String descricao, SrTipoMotivoPendencia motivo, Long idMovimentacao)
-					throws Exception {
+			throws Exception {
 		if (!podeTerminarPendencia(lota, pess))
 			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
@@ -2188,7 +2185,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public void juntar(DpLotacao lota, DpPessoa pess,
 			SrSolicitacao solRecebeJuntada, String justificativa)
-					throws Exception {
+			throws Exception {
 		if ((pess != null) && !podeJuntar(lota, pess))
 			throw new Exception("Operação nÃ£o permitida");
 
@@ -2218,7 +2215,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@SuppressWarnings("unchecked")
 	public void vincular(DpLotacao lota, DpPessoa pess,
 			SrSolicitacao solRecebeVinculo, String justificativa)
-					throws Exception {
+			throws Exception {
 		if ((pess != null) && !podeVincular(lota, pess))
 			throw new Exception("Operação nÃ£o permitida");
 

@@ -4,19 +4,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import models.SrListaConfiguracao.SrListaConfiguracaoVO;
+import models.SrAcao.SrAcaoVO;
+import models.SrItemConfiguracao.SrItemConfiguracaoVO;
+import models.SrLista.SrListaConfiguracaoVO;
 
 import org.hibernate.annotations.Type;
 
@@ -36,7 +41,7 @@ import com.google.gson.GsonBuilder;
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
-	
+
 	/**
 	 * 
 	 */
@@ -49,9 +54,17 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	public SrItemConfiguracao itemConfiguracao;
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="SIGASR.SR_CONFIGURACAO_ITEM", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
+	public List<SrItemConfiguracao> itemConfiguracaoSet;
+	
 	@ManyToOne
 	@JoinColumn(name = "ID_ACAO")
 	public SrAcao acao;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="SIGASR.SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
+	public List<SrAcao> acoesSet;
 
 	@Column(name = "GRAVIDADE")
 	public SrGravidade gravidade;
@@ -90,85 +103,83 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista listaPrioridade;
 	
-	@OneToMany(fetch = FetchType.LAZY, targetEntity = SrListaConfiguracao.class, mappedBy = "configuracao")
-	private List<SrListaConfiguracao> listaConfiguracaoSet;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "SR_LISTA_CONFIGURACAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
+	private List<SrLista> listaConfiguracaoSet;
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
 	public boolean atributoObrigatorio;
-	
+
 	@Column(name = "SLA_PRE_ATENDIMENTO_QUANT")
 	public Integer slaPreAtendimentoQuantidade;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_UNIDADE_PRE_ATENDIMENTO")
 	public CpUnidadeMedida unidadeMedidaPreAtendimento;
-	
+
 	@Column(name = "SLA_ATENDIMENTO_QUANT")
 	public Integer slaAtendimentoQuantidade;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_UNIDADE_ATENDIMENTO")
 	public CpUnidadeMedida unidadeMedidaAtendimento;
-	
+
 	@Column(name = "SLA_POS_ATENDIMENTO_QUANT")
 	public Integer slaPosAtendimentoQuantidade;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_UNIDADE_POS_ATENDIMENTO")
 	public CpUnidadeMedida unidadeMedidaPosAtendimento;
-	
+
 	@Column(name = "MARGEM_SEGURANCA")
 	public Integer margemSeguranca;
-	
+
 	@Lob
 	@Column(name = "OBSERVACAO_SLA", length = 8192)
 	public String observacaoSLA;
-	
-	//Edson: mudei de boolean pra Boolean porque havia configs no banco
-	//com FG_DIVULGAR_SLA nulo (havia duas versoes parelelas), o que
-	//gerava "Null value was assigned to a property of primitive type" 
+
 	@Column(name = "FG_DIVULGAR_SLA")
 	@Type(type = "yes_no")
 	public Boolean divulgarSLA;
-	
+
 	@Column(name = "FG_NOTIFICAR_GESTOR")
 	@Type(type = "yes_no")
 	public Boolean notificarGestor;
-	
+
 	@Column(name = "FG_NOTIFICAR_SOLICITANTE")
 	@Type(type = "yes_no")
 	public Boolean notificarSolicitante;
-	
+
 	@Column(name = "FG_NOTIFICAR_CADASTRANTE")
 	@Type(type = "yes_no")
 	public Boolean notificarCadastrante;
-	
+
 	@Column(name = "FG_NOTIFICAR_INTERLOCUTOR")
 	@Type(type = "yes_no")
 	public Boolean notificarInterlocutor;
-	
+
 	@Column(name = "FG_NOTIFICAR_ATENDENTE")
 	@Type(type = "yes_no")
 	public Boolean notificarAtendente;
-	
+
 	@Column(name = "TIPO_PERMISSAO")
 	@Enumerated
 	public SrTipoPermissaoLista tipoPermissao;
-	
+
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;
-	
+
 	@Transient
 	public boolean isHerdado;
-	
+
 	@Transient
 	public boolean utilizarItemHerdado;
-	
+
 	public SrConfiguracao() {
-		
+
 	}
-	
+
 	public Selecionavel getSolicitante() {
 		if (this.getDpPessoa() != null)
 			return this.getDpPessoa();
@@ -195,20 +206,22 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, Long idItemConfiguracao) {
-		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+	public static List<SrConfiguracao> listarDesignacoes(
+			boolean mostrarDesativados, Long idItemConfiguracao) {
+		StringBuffer sb = new StringBuffer(
+				"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
-		
+
 		if (idItemConfiguracao != null) {
 			sb.append(" and item.idItemConfiguracao = ");
 			sb.append(idItemConfiguracao);
 		}
-		
+
 		if (!mostrarDesativados)
 			sb.append(" and conf.hisDtFim is null");
-		
+
 		sb.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario ");
-		
+
 		return JPA
 				.em()
 				.createQuery(
@@ -217,44 +230,45 @@ public class SrConfiguracao extends CpConfiguracao {
 								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario")
 				.getResultList();
 	}
-	
+
 	public void salvarComoPermissaoUsoLista() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 		salvar();
 	}
 
-	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota, boolean mostrarDesativado) {
-		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota,
+			boolean mostrarDesativado) {
+		StringBuffer sb = new StringBuffer(
+				"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
 		sb.append(" and conf.listaPrioridade.lotaCadastrante.idLotacaoIni = ");
 		sb.append(lota.getLotacaoInicial().getIdLotacao());
-		
+
 		if (!mostrarDesativado)
 			sb.append(" and conf.hisDtFim is null ");
-		
+
 		sb.append(" order by conf.orgaoUsuario");
-		
-		return JPA
-				.em()
-				.createQuery(sb.toString(), SrConfiguracao.class).getResultList();
+
+		return JPA.em().createQuery(sb.toString(), SrConfiguracao.class)
+				.getResultList();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarPermissoesUsoLista(SrLista lista, boolean mostrarDesativado) {
-		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+	public static List<SrConfiguracao> listarPermissoesUsoLista(SrLista lista,
+			boolean mostrarDesativado) {
+		StringBuffer sb = new StringBuffer(
+				"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
 		sb.append(" and conf.listaPrioridade.hisIdIni = ");
 		sb.append(lista.getHisIdIni());
-		
+
 		if (!mostrarDesativado)
 			sb.append(" and conf.hisDtFim is null ");
-		
+
 		sb.append(" order by conf.orgaoUsuario");
-		
-		return JPA
-				.em()
-				.createQuery(sb.toString()).getResultList();
+
+		return JPA.em().createQuery(sb.toString()).getResultList();
 	}
 
 	public void salvarComoAssociacaoTipoAtributo() throws Exception {
@@ -299,75 +313,90 @@ public class SrConfiguracao extends CpConfiguracao {
 	public void salvar() throws Exception {
 		super.salvar();
 		if (this.listaConfiguracaoSet != null)
-			for (SrListaConfiguracao lista: this.listaConfiguracaoSet) {
-				lista.configuracao = this;
+			// TODO: DIEGO: precisa salvar registro da lista
+			for (SrLista lista : this.listaConfiguracaoSet) {
 				lista.salvar();
 			}
 	}
-	
-	public List<SrListaConfiguracao> getListaConfiguracaoSet() {
+
+	public List<SrLista> getListaConfiguracaoSet() {
 		return listaConfiguracaoSet;
 	}
-	
-	public void setListaConfiguracaoSet(
-			List<SrListaConfiguracao> listaConfiguracaoSet) {
+
+	public void setListaConfiguracaoSet(List<SrLista> listaConfiguracaoSet) {
 		this.listaConfiguracaoSet = listaConfiguracaoSet;
 	}
-	
+
 	/**
-	 * Método que retorna um número referente ao tipo de solicitante selecionado. Esse número
-	 * refere-se ao índice do item selecionado no componente pessoaLotaFuncCargoSelecao.html
+	 * Método que retorna um número referente ao tipo de solicitante
+	 * selecionado. Esse número refere-se ao índice do item selecionado no
+	 * componente pessoaLotaFuncCargoSelecao.html
 	 * 
-	 * @return 
-	 * <li>1 para Pessoa;
-	 * <li>2 para Lotação;
-	 * <li>3 para Funcao;
-	 * <li>4 para Cargo;
+	 * @return <li>1 para Pessoa; <li>2 para Lotação; <li>3 para Funcao; <li>4
+	 *         para Cargo;
 	 */
 	public int getTipoSolicitante() {
-		if (this.getLotacao() != null && this.getLotacao().getLotacaoAtual() != null)
+		if (this.getLotacao() != null
+				&& this.getLotacao().getLotacaoAtual() != null)
 			return 2;
 		else if (this.getFuncaoConfianca() != null)
 			return 3;
 		else if (this.getCargo() != null)
 			return 4;
-		else return 1;
+		else
+			return 1;
 	}
-	
+
 	/**
-	 * Retorna um Json de {@link SrConfiguracaoVO} que contém as {@link SrListaConfiguracaoVO}
-	 * vinculadas a ele.
+
+	 * Retorna um Json de {@link SrConfiguracaoVO} que contém:
+	 * <li> {@link SrListaConfiguracaoVO}</li>
+	 * <li> {@link SrItemConfiguracaoVO}</li>
+	 * <li> {@link SrAcaoVO}</li>
+	 * 
 	 */
-	public String getListaConfiguracaoSetJson() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet).toJson();
+	public String getSrConfiguracaoJson() {
+		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet).toJson();
 	}
-	
+
 	/**
-	 * Classe que representa um {@link SrConfiguracaoVO VO} da classe {@link SrConfiguracao}.
+	 * Classe que representa um {@link SrConfiguracaoVO VO} da classe
+	 * {@link SrConfiguracao}.
 	 * 
 	 * @author DB1
 	 */
 	public class SrConfiguracaoVO {
-		public List<SrListaConfiguracao.SrListaConfiguracaoVO> listaConfiguracaoSetVO; 
+		public List<SrLista.SrListaConfiguracaoVO> listaVO; 
+		public List<SrItemConfiguracao.SrItemConfiguracaoVO> listaItemConfiguracaoVO;
+		public List<SrAcao.SrAcaoVO> listaAcaoVO;
 
-		public SrConfiguracaoVO(List<SrListaConfiguracao> listaConfiguracaoSet) {
-			listaConfiguracaoSetVO = new ArrayList<SrListaConfiguracao.SrListaConfiguracaoVO>();
+		public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) {
+			listaVO = new ArrayList<SrLista.SrListaConfiguracaoVO>();
+			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracao.SrItemConfiguracaoVO>();
+			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
 			
-			for (SrListaConfiguracao item : listaConfiguracaoSet) {
-				listaConfiguracaoSetVO.add(item.toVO());
+			for (SrLista item : listaConfiguracaoSet) {
+				listaVO.add(item.toVO());
+			}
+			
+			for (SrItemConfiguracao item : itemConfiguracaoSet) {
+				listaItemConfiguracaoVO.add(item.toVO());
+			}
+			
+			for (SrAcao item : acoesSet) {
+				listaAcaoVO.add(item.toVO());
 			}
 		}
-		
+
 		/**
 		 * Converte o objeto para Json.
 		 */
 		public String toJson() {
 			GsonBuilder builder = new GsonBuilder();
-	        builder.setPrettyPrinting().serializeNulls();
-	        Gson gson = builder.create();
-	        
-	        return gson.toJson(this);
+			builder.setPrettyPrinting().serializeNulls();
+			Gson gson = builder.create();
+
+			return gson.toJson(this);
 		}
 	}
-	
 }

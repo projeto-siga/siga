@@ -268,9 +268,23 @@ public class SrLista extends HistoricoSuporte {
 				permissao.salvarComoPermissaoUsoLista();
 			}
 		}
-
-		//if (listaInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
 	}
 
+	/**
+	 * Classe que representa um V.O. de {@link SrListaConfiguracao}.
+	 */
+	public class SrListaConfiguracaoVO {
+
+		public Long idLista;
+		public String nomeLista;
+
+		public SrListaConfiguracaoVO(Long idLista, String nomeLista) {
+			this.idLista = idLista;
+			this.nomeLista = nomeLista;
+		}
+	}
+
+	public SrListaConfiguracaoVO toVO() {
+		return new SrListaConfiguracaoVO(this.idLista, this.nomeLista);
+	}
 }

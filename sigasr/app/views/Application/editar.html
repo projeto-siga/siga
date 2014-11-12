@@ -286,6 +286,29 @@
 			$('#solicitacoesRelacionadas').hide(300);
 		}
 	}
+	
+	function removerFiltrosSemCampo() {
+		var existeSelecionado = false;
+		
+		$('#filtro :checkbox').each(function() {
+			var me = $(this),
+				name = me.attr('name'),
+				input = $("form [name='" + name + "']");
+
+			if(input.size() == 0) {
+				me.parent('div').remove();
+
+				if(!existeSelecionado) {
+					existeSelecionado = me.is(':checked');
+				}
+			}
+		});
+
+		// Se algum dos itens removidos estava selecionado, entao consulta novamente sem ele.
+		if(existeSelecionado) {
+			carregarSolRelacionadas();
+		}
+	}
 
 	function addFiltroAoIniciar(divFiltro, campoRef, optionHtml, optionVl) {
 		var label = descricaoFiltroSolRelacionadas(campoRef, optionHtml);

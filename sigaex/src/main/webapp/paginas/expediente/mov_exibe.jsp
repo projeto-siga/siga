@@ -344,7 +344,10 @@ function visualizarImpressao(via) {
 		</div>
 	</div>
 	
-	<c:if test="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov) || f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}">
+	<c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+	<c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+	
+	<c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
 		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
         		
 		<div id="dialog-form" title="Assinar com Senha">
@@ -367,10 +370,10 @@ function visualizarImpressao(via) {
 		      width: 350,
 		      modal: true,
 		      buttons: {
-		    	  <c:if test="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}">
+		    	  <c:if test="${podeAssinarMovimentacaoComSenha}">
 		          	"Assinar": assinarGravar,
 		          </c:if>	
-		    	  <c:if test="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}">
+		    	  <c:if test="${podeConferirCopiaMovimentacaoComSenha}">
 			          "Conferir Cópia": conferirCopiaGravar,
 		          </c:if>	
 		          "Cancelar": function() {

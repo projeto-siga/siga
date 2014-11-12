@@ -382,8 +382,10 @@ public class Application extends SigaApplication {
 
 	}
 
-	private static void validarFormEditarDesignacao(SrConfiguracao designacao) {
-
+	@SuppressWarnings("static-access")
+	private static void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
 				&& (designacao.posAtendente == null)
 				&& (designacao.equipeQualidade == null)) {
@@ -397,20 +399,13 @@ public class Application extends SigaApplication {
 					"Equipe de qualidade não informada.");
 		}
 
-		if ((designacao.itemConfiguracao == null) && (designacao.acao == null)) {
-			validation.addError("designacao.itemConfiguracao",
-					"Código não informado.");
-			validation.addError("designacao.acao", "Código não informado.");
-		}
-
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
+			sb.append(error.getKey() + ";");
 		}
 
 		if (validation.hasErrors()) {
-			List<CpOrgaoUsuario> orgaos = JPA.em()
-					.createQuery("from CpOrgaoUsuario").getResultList();
-			render("@editarDesignacao", designacao, orgaos);
+			throw new Exception(sb.toString());
 		}
 	}
 
@@ -889,15 +884,6 @@ public class Application extends SigaApplication {
 	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
-		render(designacoes, mostrarDesativados);
-	}
-	
-	public static void listarDesignacaoDesativados() throws Exception {
-		listarDesignacao(Boolean.TRUE);
-	}
-
-	public static void editarDesignacao(Long id) throws Exception {
-		assertAcesso("ADM:Administrar");
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
@@ -905,19 +891,19 @@ public class Application extends SigaApplication {
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
 		List<SrLista> listasPrioridade = SrLista.listar(false);
-		SrConfiguracao designacao = new SrConfiguracao();
-		if (id != null)
-			designacao = JPA.em().find(SrConfiguracao.class, id);
 		
-		render(designacao, orgaos, locais, pesquisaSatisfacao, unidadesMedida, listasPrioridade);
+		render(designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 	
+	public static void listarDesignacaoDesativados() throws Exception {
+		listarDesignacao(Boolean.TRUE);
+	}
+
 	public static void gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
-		listarDesignacao(Boolean.TRUE);
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {

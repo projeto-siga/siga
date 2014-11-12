@@ -23,7 +23,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
@@ -315,5 +314,27 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 				lista.addAll(filho.getAcaoETodasDescendentes());
 		}
 		return lista;
+	}
+	
+	/**
+	 * Classe que representa um V.O. de {@link SrAcao}.
+	 */
+	public class SrAcaoVO {
+		
+		public Long id;
+		public String descricao;
+		public String sigla;
+		public Long hisIdIni;
+		
+		public SrAcaoVO(Long id, String descricao, String sigla, Long hisIdIni) {
+			this.id = id;
+			this.descricao = descricao;
+			this.sigla = sigla;
+			this.hisIdIni = hisIdIni;
+		}
+	}
+	
+	public SrAcaoVO toVO() {
+		return new SrAcaoVO(this.idAcao, this.descrAcao, this.siglaAcao, this.getHisIdIni());
 	}
 }

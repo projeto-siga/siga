@@ -451,4 +451,30 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		}
 		return lista;
 	}
+	
+	/**
+	 * Classe que representa um V.O. de {@link SrItemConfiguracao}.
+	 */
+	public class SrItemConfiguracaoVO {
+		
+		public Long id;
+		public String descricao;
+		public String titulo;
+		public String sigla;
+		public Long hisIdIni;
+		public String descricaoSimilaridade;
+		
+		public SrItemConfiguracaoVO(Long id, String descricao, String titulo, String sigla, Long hisIdIni, String descricaoSimilaridade) {
+			this.id = id;
+			this.descricao = descricao;
+			this.titulo = titulo;
+			this.sigla = sigla;
+			this.hisIdIni = hisIdIni;
+			this.descricaoSimilaridade = descricaoSimilaridade;
+		}
+	}
+	
+	public SrItemConfiguracaoVO toVO() {
+		return new SrItemConfiguracaoVO(this.idItemConfiguracao, this.descrItemConfiguracao, this.tituloItemConfiguracao, this.siglaItemConfiguracao, this.getHisIdIni(), this.descricaoSimilaridade);
+	}
 }

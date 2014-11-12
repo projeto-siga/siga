@@ -9,13 +9,16 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import models.SrAcao.SrAcaoVO;
 import models.SrListaConfiguracao.SrListaConfiguracaoVO;
 
 import org.hibernate.annotations.Type;
@@ -49,9 +52,17 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	public SrItemConfiguracao itemConfiguracao;
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="SIGASR.SR_CONFIGURACAO_ITEM", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
+	public List<SrItemConfiguracao> itemConfiguracaoSet;
+	
 	@ManyToOne
 	@JoinColumn(name = "ID_ACAO")
 	public SrAcao acao;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="SIGASR.SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
+	public List<SrAcao> acoesSet;
 
 	@Column(name = "GRAVIDADE")
 	public SrGravidade gravidade;
@@ -445,11 +456,13 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 	
 	/**
-	 * Retorna um Json de {@link SrConfiguracaoVO} que contém as {@link SrListaConfiguracaoVO}
-	 * vinculadas a ele.
+	 * Retorna um Json de {@link SrConfiguracaoVO} que contém:
+	 * <li> {@link SrListaConfiguracaoVO}</li>
+	 * <li> {@link SrItemConfiguracaoVO}</li>
+	 * <li> {@link SrAcaoVO}</li>
 	 */
-	public String getListaConfiguracaoSetJson() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet).toJson();
+	public String getSrConfiguracaoJson() {
+		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet).toJson();
 	}
 	
 	/**
@@ -458,13 +471,25 @@ public class SrConfiguracao extends CpConfiguracao {
 	 * @author DB1
 	 */
 	public class SrConfiguracaoVO {
-		public List<SrListaConfiguracao.SrListaConfiguracaoVO> listaConfiguracaoSetVO; 
+		public List<SrListaConfiguracao.SrListaConfiguracaoVO> listaVO; 
+		public List<SrItemConfiguracao.SrItemConfiguracaoVO> listaItemConfiguracaoVO;
+		public List<SrAcao.SrAcaoVO> listaAcaoVO;
 
-		public SrConfiguracaoVO(List<SrListaConfiguracao> listaConfiguracaoSet) {
-			listaConfiguracaoSetVO = new ArrayList<SrListaConfiguracao.SrListaConfiguracaoVO>();
+		public SrConfiguracaoVO(List<SrListaConfiguracao> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) {
+			listaVO = new ArrayList<SrListaConfiguracao.SrListaConfiguracaoVO>();
+			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracao.SrItemConfiguracaoVO>();
+			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
 			
 			for (SrListaConfiguracao item : listaConfiguracaoSet) {
-				listaConfiguracaoSetVO.add(item.toVO());
+				listaVO.add(item.toVO());
+			}
+			
+			for (SrItemConfiguracao item : itemConfiguracaoSet) {
+				listaItemConfiguracaoVO.add(item.toVO());
+			}
+			
+			for (SrAcao item : acoesSet) {
+				listaAcaoVO.add(item.toVO());
 			}
 		}
 		

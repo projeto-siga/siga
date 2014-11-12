@@ -372,4 +372,9 @@
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.Boolean podeAssinarMovimentacaoComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMovimentacao)</function-signature>
  </function>
+ <function>
+  <name>podeConferirCopiaMovimentacaoComSenha</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeConferirCopiaMovimentacaoComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMovimentacao)</function-signature>
+ </function> 
 </taglib>

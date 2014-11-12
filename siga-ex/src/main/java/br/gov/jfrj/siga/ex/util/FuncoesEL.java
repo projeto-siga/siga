@@ -1058,4 +1058,11 @@ public class FuncoesEL {
 				.getInstance()
 				.getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
 	}
+	
+	public static Boolean podeConferirCopiaMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular, mov);
+	}	
 }

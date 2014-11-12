@@ -1189,6 +1189,26 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				null, exTpMov, null, null, null, lotaTitular, titular, null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
+	
+	/*
+	 * Retorna se é possível assinar uma movimentação com senha:
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeConferirCopiaMovimentacaoComSenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
+				ExTipoMovimentacao.class, false);
+
+		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}	
 
 	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {
 		

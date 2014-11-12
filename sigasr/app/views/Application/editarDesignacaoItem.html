@@ -163,7 +163,7 @@
 	    	params = jForm.serialize();
 	    jListasDesignacao.find("li").each(function(i){
 	    	var jDivs=$(this).find("span");
-	    	params += '&designacao.listaConfiguracaoSet[' + i + '].lista.idLista=' + jDivs[1].id;
+	    	params += '&designacao.listaConfiguracaoSet[' + i + '].idLista=' + jDivs[1].id;
 	    });
 	    
 	    location.href = '@{Application.gravarDesignacao()}?' + params;

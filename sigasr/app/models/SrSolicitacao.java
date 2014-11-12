@@ -626,7 +626,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
-	@SuppressWarnings("unchecked")
 	private List<SrTipoAtributo> getTiposAtributoAssociados(HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
@@ -1107,7 +1106,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return locais;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
 		Set<SrItemConfiguracao> listaFinal = new TreeSet<SrItemConfiguracao>(
 				new SrItemConfiguracaoComparator());
@@ -1146,7 +1144,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return new ArrayList<SrItemConfiguracao>(listaFinal);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
 		return new ArrayList<SrAcao>(getAcoesDisponiveisComAtendente().keySet());
 	}

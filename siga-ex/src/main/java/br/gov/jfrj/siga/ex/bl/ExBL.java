@@ -117,7 +117,6 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
-import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
@@ -1651,6 +1650,23 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, ExMobil mob) throws Exception {
 			
 	    arquivarCorrente(cadastrante, lotaCadastrante, mob, null, null, null, true);
+	    try {
+	    	ExDao.iniciarTransacao();
+	    	for (ExMarca marc : mob.getExMarcaSet()) {
+		    	if (!marc.getCpMarcador().getIdMarcador().equals(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE)) {
+		    		dao().excluir(marc);
+		    	}
+		    } 
+	    	ExDao.commitTransacao();
+	    } catch (final AplicacaoException e) {
+			ExDao.rollbackTransacao();
+			throw e;
+		} catch (final Exception e) {
+			ExDao.rollbackTransacao();
+			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
+					0, e);
+		}	    
+	    
 	}	
 
 	public void arquivarCorrente(DpPessoa cadastrante,
@@ -4031,7 +4047,7 @@ public class ExBL extends CpBL {
 		novoDoc.setObsOrgao(doc.getObsOrgao());
 		novoDoc.setOrgaoExterno(doc.getOrgaoExterno());
 		novoDoc.setOrgaoExternoDestinatario(doc.getOrgaoExternoDestinatario());
-		novoDoc.setExMobilPai(doc.getExMobilPai());
+		novoDoc.setExMobilPai(null);
 		novoDoc.setOrgaoUsuario(doc.getOrgaoUsuario());
 
 		if (doc.getTitular() != null && !doc.getTitular().isFechada())

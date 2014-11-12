@@ -1022,10 +1022,16 @@ public class FuncoesEL {
 	}
 	
 	public static String webservice(String url, String corpo, Integer timeout) {
-		HashMap<String,String> headers = new HashMap<String, String>();
-		headers.put("Content-Type", "text/xml;charset=UTF-8");
-		String s = ConexaoHTTP.get(url, headers, timeout, corpo);
-		return s;
+		try {
+			HashMap<String,String> headers = new HashMap<String, String>();
+			headers.put("Content-Type", "text/xml;charset=UTF-8");
+			String s = ConexaoHTTP.get(url, headers, timeout, corpo);
+			return s;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "";
 	}
 	
 	public static NodeModel parseXML(String xml) throws Exception  {

@@ -325,4 +325,26 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 		}
 		return this.descrAcao.compareTo(arg0.descrAcao);
 	}
+	
+	/**
+	 * Classe que representa um V.O. de {@link SrAcao}.
+	 */
+	public class SrAcaoVO {
+		
+		public Long id;
+		public String descricao;
+		public String sigla;
+		public Long hisIdIni;
+		
+		public SrAcaoVO(Long id, String descricao, String sigla, Long hisIdIni) {
+			this.id = id;
+			this.descricao = descricao;
+			this.sigla = sigla;
+			this.hisIdIni = hisIdIni;
+		}
+	}
+	
+	public SrAcaoVO toVO() {
+		return new SrAcaoVO(this.idAcao, this.descrAcao, this.siglaAcao, this.getHisIdIni());
+	}
 }

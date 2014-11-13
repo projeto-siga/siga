@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.logging.Logger;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
@@ -664,5 +665,5 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		}
 
 	}
-	
+
 }

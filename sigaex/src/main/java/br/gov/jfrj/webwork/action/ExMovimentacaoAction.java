@@ -189,6 +189,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private List itens;
 
 	private List<ExDocumento> itensSolicitados;
+	
+	private List<ExDocumento> documentosQuePodemSerAssinadosComSenha;
 
 	private DpLotacaoSelecao lotaDestinoFinalSel;
 
@@ -2655,6 +2657,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				itensFinalizados.add(doc);
 		}
 		setItensSolicitados(itensFinalizados);
+		
+		setDocumentosQuePodemSerAssinadosComSenha(new ArrayList<ExDocumento>());
+		
+		for (ExDocumento exDocumento : itensSolicitados) {
+			if(Ex.getInstance()
+				.getComp().podeAssinarComSenha(getTitular(), getLotaTitular(), exDocumento.getMobilGeral())) {
+				getDocumentosQuePodemSerAssinadosComSenha().add(exDocumento);
+			}
+		}
+		
 		return Action.SUCCESS;
 	}
 	
@@ -4376,5 +4388,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public void setTipoAssinaturaMov(String tipoAssinaturaMov) {
 		this.tipoAssinaturaMov = tipoAssinaturaMov;
+	}
+
+	public List<ExDocumento> getDocumentosQuePodemSerAssinadosComSenha() {
+		return documentosQuePodemSerAssinadosComSenha;
+	}
+
+	public void setDocumentosQuePodemSerAssinadosComSenha(
+			List<ExDocumento> documentosQuePodemSerAssinadosComSenha) {
+		this.documentosQuePodemSerAssinadosComSenha = documentosQuePodemSerAssinadosComSenha;
 	}
 }

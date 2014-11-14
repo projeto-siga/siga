@@ -933,8 +933,10 @@ public class Application extends SigaApplication {
 				if (!h.name.equals("content-type"))
 					atributos.put(h.name, h.value());
 
-			SrItemConfiguracao anterior = itemConfiguracao
-					.getHistoricoItemConfiguracao().get(0);
+			SrItemConfiguracao anterior = null;
+			List<SrItemConfiguracao> itens = itemConfiguracao.getHistoricoItemConfiguracao();
+			if(itens != null)
+				anterior = itens.get(0);
 			if (anterior != null
 					&& !itemConfiguracao.tituloItemConfiguracao
 							.equals(anterior.tituloItemConfiguracao))

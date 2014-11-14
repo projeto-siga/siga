@@ -434,15 +434,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public void associarPrioridadePeloGUT() {
 		int valorGUT = getGUT();
-		if (Util.isbetween(1, 25, valorGUT))
+		if (Util.isbetween(1, 24, valorGUT))
 			prioridade = SrPrioridade.PLANEJADO;
-		else if (Util.isbetween(26, 50, valorGUT))
+		else if (Util.isbetween(25, 49, valorGUT))
 			prioridade = SrPrioridade.BAIXO;
-		else if (Util.isbetween(51, 75, valorGUT))
+		else if (Util.isbetween(50, 74, valorGUT))
 			prioridade = SrPrioridade.MEDIO;
-		else if (Util.isbetween(76, 100, valorGUT))
+		else if (Util.isbetween(75, 99, valorGUT))
 			prioridade = SrPrioridade.ALTO;
-		else if (Util.isbetween(101, 125, valorGUT))
+		else if (Util.isbetween(100, 125, valorGUT))
 			prioridade = SrPrioridade.IMEDIATO;
 	}
 	
@@ -1401,7 +1401,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void salvar() throws Exception {
 
 		checarEPreencherCampos();
-		associarPrioridadePeloGUT();		
 		//Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
 		//ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
 		if (solicitacaoInicial != null)

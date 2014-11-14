@@ -28,6 +28,7 @@ import models.SrLista;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
+import models.SrPrioridade;
 import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
@@ -1536,5 +1537,10 @@ public class Application extends SigaApplication {
 		}
 
 		render(solsnaoconcluidas);
+	}
+	
+	public static void exibirPrioridade(SrSolicitacao solicitacao) {
+		solicitacao.associarPrioridadePeloGUT();
+		render(solicitacao);
 	}
 }

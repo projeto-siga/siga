@@ -132,6 +132,19 @@
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
 	}
+
+	function carregarPrioridade() {
+		gravidade 	= document.getElementById('gravidade');
+		urgencia 	= document.getElementById('urgencia');
+		tendencia 	= document.getElementById('tendencia'); 
+		params = '';
+		params = gravidade.name + '=' + escape(gravidade.value) + '&' + 
+					urgencia.name + '=' + escape(urgencia.value) + '&' +
+					tendencia.name + '=' + escape(tendencia.value) + '&';
+					
+		ReplaceInnerHTMLFromAjaxResponse('@{Application.exibirPrioridade()}?' + params,
+				null, document.getElementById('divPrioridade'));
+ 	}
 	
 	// funções usadas para solicitações relacionadas
 	function addFiltro(divFiltro, campoRef, optionHtml, optionVl) {
@@ -396,12 +409,12 @@
 			#{form @Application.gravar(),
 			enctype:'multipart/form-data',id:'formSolicitacao',onsubmit:'javascript:return block();' } 
 				#{if solicitacao.solicitacaoPai}
-				<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao"
+				<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
 				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
 				#{/if}
 				#{if solicitacao.idSolicitacao}
 				<input
-				type="hidden" name="solicitacao.idSolicitacao"
+				type="hidden" name="solicitacao.idSolicitacao" id="idSol"
 				value="${solicitacao.idSolicitacao}" /> 
 				#{/if}
 				<input type="hidden"
@@ -481,20 +494,29 @@
 			</div>
 			<div class="gt-form-row box-wrapper">
 				<div class="gt-form-row gt-width-33">
-					<label>Gravidade</label> #{select name:'solicitacao.gravidade', items:models.SrGravidade.values(),
-					labelProperty:'respostaEnunciado', value:solicitacao.gravidade, style:'width:235px;' /}
+					<label>Gravidade</label> #{select name:'solicitacao.gravidade', id:'gravidade', items:models.SrGravidade.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.gravidade ?: 'NORMAL', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
 					<label>Urg&ecirc;ncia</label> #{select
-					name:'solicitacao.urgencia', items:models.SrUrgencia.values(),
-					labelProperty:'respostaEnunciado', value:solicitacao.urgencia, style:'width:235px;' /}
+					name:'solicitacao.urgencia', id:'urgencia', items:models.SrUrgencia.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.urgencia ?: 'NORMAL', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
 					<label>Tend&ecirc;ncia</label> #{select
-					name:'solicitacao.tendencia', items:models.SrTendencia.values(),
-					labelProperty:'respostaEnunciado', value:solicitacao.tendencia, style:'width:235px;' /}
+					name:'solicitacao.tendencia', id:'tendencia', items:models.SrTendencia.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.tendencia ?: 'PIORA_MEDIO_PRAZO', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 			</div>
+			<div id="divPrioridade" class="gt-form-row gt-width-66">
+				<label style="float: left">Prioridade: &nbsp;</label>
+				<span>${solicitacao.prioridade?.descPrioridade ?: models.SrPrioridade.PLANEJADO.descPrioridade}</span>
+				#{select
+					name:'solicitacao.prioridade', id:'prioridade', items:models.SrPrioridade.values(), 
+					labelProperty:'descPrioridade', value:solicitacao.prioridade ?: 'PLANEJADO', style:'width:235px;border:none;display:none;'  /}
+					<br /><br />
+			</div>
+
 
 			#{if solicitacao.podeAbrirJaFechando(lotaTitular,cadastrante)}
 			<div class="gt-form-row gt-width-66">

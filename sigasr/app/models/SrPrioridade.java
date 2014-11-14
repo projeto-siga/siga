@@ -2,7 +2,7 @@ package models;
 
 public enum SrPrioridade {
 
-	IMEDIATO(5, "Imediata"), ALTO(4, "Alta"), MEDIO(3, "Média"), 
+	IMEDIATO(5, "Imediata"), ALTO(4, "Alta"), MEDIO(3, "MÃ©dia"), 
 	BAIXO(2, "Baixa"), PLANEJADO(1, "Planejada");
 	
 	public int idPrioridade;

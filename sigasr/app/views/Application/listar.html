@@ -1,11 +1,21 @@
 #{extends 'main.html' /}
+
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
+
 	$(document).ready(function() {
 		/* Table initialization */
-		var table = $('#solicitacoes_table').dataTable({
+		var table = $('#solicitacoes_table')
+			.on('draw.dt', function() {
+				if(table) {
+					var btn = $('#botaoExpandirContrair'),
+						expandir = btn.hasClass('expandido');
+					expandirContrairLinas(btn, expandir);
+				}
+			})
+			.dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -40,57 +50,127 @@
 			},
 			"iDisplayLength": 25
 		});
-		
-		/* Função de formatação para células de detalhes */
-		function format ( d ) {
-		    // 'd' é o objeto contendo os dados da linha
-		    return '<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-		        '<tr>'+
-		            '<td><b>Teor:</b></td>'+
-		            '<td>'+d[2]+'</td>'+
+
+	    // Adicionando listener para tratar a abertura e fechamento dos detalhes
+	    $('#solicitacoes_table tbody').on('click', 'td.details-control', function () {
+	    	var tr = $(this).closest('tr'),
+	    		detail = tr.next('tr.detail');
+    		
+		   if(detail.size() == 0) {
+				var data = tr.find('td');			   
+			   tr.addClass('shown');
+		   }
+		   else {
+		    	if ( detail.is(':visible') ) {
+		    		// Se alguma linha já está com os detalhes abertos, fecha-o
+		    		detail.hide();
+		    		tr.removeClass('shown');
+		    	}
+		    	else {
+		    		// Abre a linha
+		    		detail.show();
+		    		tr.addClass('shown');
+		    	}
+		   }
+	    });
+	});
+
+	/* Função de formatação para células de detalhes */
+	function format( d ) {
+		var tr = $('<tr class="detail">'),
+		// 'd' é o objeto contendo os dados da linha
+		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+			'<tr>'+
+				'<td><b>Teor:</b></td>'+
+					'<td>' + d[2].innerHTML + '</td>'+
 		        '</tr>'+
 		        '<tr>'+
 		            '<td><b>Último Andamento:</b></td>'+
-		            '<td>'+d[6]+'</td>'+
+		            '<td>' + d[6].innerHTML + '</td>'+
 		        '</tr>'+
-		    '</table>';
-		}
-		 
-	    // Adicionando listener para tratar a abertura e fechamento dos detalhes
-	    $('#solicitacoes_table tbody').on('click', 'td.details-control', function () {
-	    	var tr = $(this).closest('tr');
-	    	var row = table.api().row( tr );
-	    	
-	    	if ( row.child.isShown() ) {
-	    		// Se alguma linha já está com os detalhes abertos, fecha-o
-	    		row.child.hide();
+		    '</table><td>';
+
+	    return tr.append(detailHTML);
+	}
+	
+    function expandirContrairLinas(btn, expandir) {
+    	var elements = $('#solicitacoes_table tbody td.details-control');
+    	
+    	if(expandir) {
+        	btn.addClass('expandido');
+        	
+        	elements.each(function() {
+            	var tr = $(this).closest('tr'),
+            		detail = tr.next('tr.detail');
+
+        		if(detail.size() == 0) {
+            		var data = tr.find('td');
+            		tr.addClass('shown');
+            		format(data).insertAfter(tr);
+           		}
+           		detail.show();
+           		tr.addClass('shown');
+           	});
+        } else {
+        	btn.removeClass('expandido');
+        	
+        	elements.each(function() {
+          		var tr = $(this).closest('tr'),
+          			detail = tr.next('tr.detail');
+        		
+	    		detail.hide();
 	    		tr.removeClass('shown');
-	    	}
-	    	else {
-	    		// Abre a linha
-	    		row.child(format(row.data())).show();
-	    		tr.addClass('shown');
-	    	}
-	    });
-	});
+           	});
+        }
+    }
+
+    function expandirTodos() {
+        var btn = $('#botaoExpandirContrair'),
+        	expandir = !btn.hasClass('expandido');
+    	
+        expandirContrairLinas(btn, expandir);
+    }
 </script>
+
+	<style>
+		.bt-expandir {
+		    background: url("/siga/css/famfamfam/icons/bullet_toggle_plus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+		    height: 25px;
+		    width: 30px;
+		    cursor: pointer;
+		}
+				
+		.bt-expandir.expandido {
+		    background: url("/siga/css/famfamfam/icons/bullet_toggle_minus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+		}
+		
+		.hide-sort-arrow.sorting_asc, .hide-sort-arrow.sorting_desc {
+			background: none !important;
+		}
+	</style>
+
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		<h2>Pesquisa de Solicitações</h2>
  		#{if listaSolicitacao}
 			<div class="gt-content-box gt-for-table dataTables_div">
 				<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
-					<col width="2%" />
+					<col width="7%" />
 					<col width="15%" />
 		    		<col width="35%" />
 		    		<col width="10%" />
-		    		<col width="15%" />
+		    		<col width="10%" />
 		    		<col width="14%" />
 		    		<col width="14%" />
 		    		<col width="0%" />
 		    		<thead>
 						<tr>
-							<th style="color: #333;"></th>
+							<th style="color: #333;" class="hide-sort-arrow">
+								<button id="botaoExpandirContrair" onclick="expandirTodos()" class="gt-btn-medium gt-btn-left bt-expandir">
+									<span id="iconeBotaoExpandirTodos">+</span>
+									<!--  span id="textoBotaoExpandirTodos"> Expandir</span-->
+								</button>
+							</th>
 							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
 							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>

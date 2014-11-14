@@ -68,6 +68,10 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
+
+		console.log('notificarCampoMudou - item');
+		notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
+		notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
 	}
 
 	function carregarConhecimentosRelacionados(){
@@ -109,7 +113,7 @@
 				var div = $('<div style="clear:both">');
 				div.attr('identificadorFiltro', optionVl);
 				
-				var input = $('<input type="checkbox">');
+				var input = $('<input class="filtro-sol-relacionadas" type="checkbox">');
 				input.attr('name', optionVl);
 				input.bind('change', carregarSolRelacionadas);
 				
@@ -126,17 +130,11 @@
 		return false;
 	}
 
-	function selecionouSolicitante() {
-		return $("[name='solicitacao.solicitante']").val() != '';
+	function existeFiltroSelecionavel() {
+		return $("#filtro .filtro-sol-relacionadas").size() > 0;
 	}
 	
 	function notificarCampoMudou(campoRef, tipoCampo, optionVl) {
-		if(!selecionouSolicitante()) {
-			$('#solicitacoesRelacionadas').hide(300);
-		} else {
-			$('#solicitacoesRelacionadas').show(300);
-		}
-		
 		var label = descricaoFiltroSolRelacionadas(campoRef, tipoCampo),
 			divFiltro = $('#filtro');
 		
@@ -155,6 +153,12 @@
 			carregarSolRelacionadas();
 		}
 		validarCadastranteSolicitante();
+
+		if(!existeFiltroSelecionavel()) {
+			$('#solicitacoesRelacionadas').hide(300);
+		} else {
+			$('#solicitacoesRelacionadas').show(300);
+		}
 	}
 
 	// Recebe notificacao de alteracao em campo que eh atributo
@@ -216,8 +220,7 @@
 		var filtrosSelecionados = $('#filtro input:checked');
 		
 		if(filtrosSelecionados.size() > 0) {
-			if(selecionouSolicitante()) {
-				console.log('selecionouSolicitante()', selecionouSolicitante());
+			if(existeFiltroSelecionavel()) {
 				var params = construirParametrosDoFiltro(filtrosSelecionados, $('#formSolicitacao'));
 				iniciarCarregarSolicitacoesRelacionadas();
 				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
@@ -253,38 +256,36 @@
 		$('#filtro input').attr('disabled', true);
 		$('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Por favor aguarde. Carregando... </td></tr>");
 	}
-		
-	function carregarFiltrosAoIniciar() {
-		if(selecionouSolicitante()) {
-			var divFiltro = $('#filtro'),
-				atributos = $('#atributos').find('div');
 	
-			addFiltroAoIniciar(divFiltro, '#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
-			// addFiltro(divFiltro, '#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');
-			addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
-			addFiltroAoIniciar(divFiltro, '#selectAcao', 'Ação', 'solicitacao.acao');
+	function carregarFiltrosAoIniciar() {
+		var divFiltro = $('#filtro'),
+			atributos = $('#atributos').find('div');
+		
+		addFiltroAoIniciar(divFiltro, '#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
+		addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
+		addFiltroAoIniciar(divFiltro, '#selectAcao', 'Ação', 'solicitacao.acao');
+		
+		var atrClass, atrHtml, atrName;
+		for(j=0; j < atributos.length; j++) {
+			var divAtributo = atributos[j], 
+				inputAtributo = atributos[j].children[1],
+				labelAtributo = divAtributo.firstElementChild;
 			
-			var atrClass, atrHtml, atrName;
-			for(j=0; j < atributos.length; j++) {
-				var divAtributo = atributos[j], 
-					inputAtributo = atributos[j].children[1],
-					labelAtributo = divAtributo.firstElementChild;
+			if (inputAtributo != undefined) {
+				atrClass = '.' + inputAtributo.className;
+				atrHtml = labelAtributo.innerHTML;
+				atrName = inputAtributo.name;
 				
-				if (inputAtributo != undefined) {
-					atrClass = '.' + inputAtributo.className;
-					atrHtml = labelAtributo.innerHTML;
-					atrName = inputAtributo.name;
-					
-					// Se for select, busca pelo atributo selecionado
-					if (inputAtributo.tagName == 'SELECT') {
-						atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
-					}
-					addFiltro(divFiltro, atrClass, atrHtml, atrName);
+				// Se for select, busca pelo atributo selecionado
+				if (inputAtributo.tagName == 'SELECT') {
+					atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
 				}
+				addFiltro(divFiltro, atrClass, atrHtml, atrName);
 			}
-			carregarSolRelacionadas();
 		}
-		else {
+		if(existeFiltroSelecionavel()) {
+			carregarSolRelacionadas();
+		} else {
 			$('#solicitacoesRelacionadas').hide();
 		}
 	}

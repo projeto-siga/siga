@@ -8,6 +8,17 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Documento" popup="true" onLoad="javascript: TestarAssinaturaDigital();">
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>
 
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -358,7 +369,7 @@ function visualizarImpressao(via) {
     			  <label>Matrícula</label> <br/>
     			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
     			  <label>Senha</label> <br/>
-    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"/>
+    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>
     			</fieldset>
   			</form>
 		</div>

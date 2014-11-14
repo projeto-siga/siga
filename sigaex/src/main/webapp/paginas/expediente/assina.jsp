@@ -120,7 +120,7 @@
     			  <label>Matrícula</label> <br/>
     			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
     			  <label>Senha</label> <br/>
-    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"/>
+    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off"/>
     			</fieldset>
   			</form>
 		</div>

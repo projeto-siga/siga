@@ -45,6 +45,10 @@ alter table SR_CONFIGURACAO_ACAO
   add constraint FK_CONFIG_ACAO_CONFIGURACAO foreign key (ID_CONFIGURACAO)
   references SR_CONFIGURACAO (ID_CONFIGURACAO_SR);
   
+ 
+insert into sigasr.sr_configuracao_item (id_configuracao, id_item_configuracao) select id_configuracao_sr, id_item_configuracao from sigasr.sr_configuracao where id_item_configuracao is not null;
+insert into sigasr.sr_configuracao_acao (id_configuracao, id_acao) select id_configuracao_sr, id_acao from sigasr.sr_configuracao where id_acao is not null; 
+  
 -- OSI_FS0004 - Item 39
 -- Remove a PK
 alter table SR_LISTA_CONFIGURACAO

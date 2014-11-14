@@ -35,10 +35,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		super.deduzFiltro(cpConfiguracao);
 		if (cpConfiguracao instanceof SrConfiguracao) {
 			SrConfiguracao srConf = (SrConfiguracao) cpConfiguracao;
-			if (srConf.itemConfiguracao != null)
-				srConf.itemConfiguracao = srConf.itemConfiguracao.getAtual();
-			if (srConf.acao != null)
-				srConf.acao = srConf.acao.getAtual();
+			if (srConf.itemConfiguracaoFiltro != null)
+				srConf.itemConfiguracaoFiltro = srConf.itemConfiguracaoFiltro.getAtual();
+			if (srConf.acaoFiltro != null)
+				srConf.acaoFiltro = srConf.acaoFiltro.getAtual();
 			if (srConf.listaPrioridade != null)
 				srConf.listaPrioridade = srConf.listaPrioridade.getListaAtual();
 		}
@@ -81,19 +81,19 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
 			if (!atributosDesconsiderados.contains(ACAO) && conf.acoesSet != null) {
 				for (SrAcao item : conf.acoesSet) {
-					if (filtro.acao == null || (filtro.acao != null 
-							&& !item.getAtual().isPaiDeOuIgualA(filtro.acao)))
+					if (filtro.acaoFiltro == null || (filtro.acaoFiltro != null 
+							&& !item.getAtual().isPaiDeOuIgualA(filtro.acaoFiltro)))
 						return false;
 				}
 			}
 			
 			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO) && conf.itemConfiguracaoSet != null) {
 				for (SrItemConfiguracao item : conf.itemConfiguracaoSet) {
-					if (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null 
-							&& !item.getAtual().isPaiDeOuIgualA(filtro.itemConfiguracao)))
+					if (filtro.itemConfiguracaoFiltro == null || (filtro.itemConfiguracaoFiltro != null 
+							&& !item.getAtual().isPaiDeOuIgualA(filtro.itemConfiguracaoFiltro)))
 						return false;
 				}
-			}
+			}			
 			
 			if (!atributosDesconsiderados.contains(LISTA_PRIORIDADE)
 					&& conf.listaPrioridade != null
@@ -148,10 +148,6 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.atendente.getLotacaoAtual();
 			if (srConf.posAtendente != null)
 				srConf.posAtendente.getLotacaoAtual();
-			if (srConf.itemConfiguracao != null)
-				srConf.itemConfiguracao.getAtual();
-			if (srConf.acao != null)
-				srConf.acao.getAtual();
 			if (srConf.itemConfiguracaoSet != null)
 				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)
 					i.getAtual();

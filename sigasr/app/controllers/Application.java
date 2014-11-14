@@ -869,7 +869,7 @@ public class Application extends SigaApplication {
 		SrConfiguracao associacao = new SrConfiguracao();
 		if (id != null)
 			associacao = (SrConfiguracao) JPA.em()
-					.find(SrConfiguracao.class, id).getConfiguracaoAtual();
+					.find(SrConfiguracao.class, id);
 		render(associacao);
 	}
 

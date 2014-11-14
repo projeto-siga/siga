@@ -633,8 +633,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracao = itemConfiguracao;
-		confFiltro.acao = acao;
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE;
@@ -652,8 +652,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracao = itemConfiguracao;
-		confFiltro.acao = acao;
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
@@ -671,8 +671,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracao = itemConfiguracao;
-		confFiltro.acao = acao;
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO;
@@ -716,8 +716,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracao = itemConfiguracao;
-		confFiltro.acao = acao;
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		
@@ -741,8 +741,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracao = itemConfiguracao;
-		confFiltro.acao = acao;
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE;
@@ -760,8 +760,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracao = itemConfiguracao;
-		confFiltro.acao = acao;
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE;
@@ -1211,7 +1211,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 
 		for (SrItemConfiguracao i : SrItemConfiguracao.listar(false)) {
-			confFiltro.itemConfiguracao = i;
+			confFiltro.itemConfiguracaoFiltro = i;
 			if (SrConfiguracao.buscar(confFiltro,
 					new int[] { SrConfiguracaoBL.ACAO }) != null)
 				listaFinal.add(i);
@@ -1233,7 +1233,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracao = itemConfiguracao;
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
@@ -1242,7 +1242,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrAcao a : SrAcao.listar(false)) {
 			if (!a.isEspecifico())
 				continue;
-			confFiltro.acao = a;
+			confFiltro.acaoFiltro = a;
 			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 			if (conf != null)
 				listaFinal.put(a, conf.atendente);

@@ -49,17 +49,19 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
-	public SrItemConfiguracao itemConfiguracao;
+	//@ManyToOne
+	//@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
+	@Transient
+	public SrItemConfiguracao itemConfiguracaoFiltro;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_ITEM", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
 	public List<SrItemConfiguracao> itemConfiguracaoSet;
 	
-	@ManyToOne
-	@JoinColumn(name = "ID_ACAO")
-	public SrAcao acao;
+	//@ManyToOne
+	//@JoinColumn(name = "ID_ACAO")
+	@Transient
+	public SrAcao acaoFiltro;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
@@ -207,26 +209,12 @@ public class SrConfiguracao extends CpConfiguracao {
 	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarDesignacoes(
 			boolean mostrarDesativados, Long idItemConfiguracao) {
-		StringBuffer sb = new StringBuffer(
-				"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
-
-		if (idItemConfiguracao != null) {
-			sb.append(" and item.idItemConfiguracao = ");
-			sb.append(idItemConfiguracao);
-		}
-
-		if (!mostrarDesativados)
-			sb.append(" and conf.hisDtFim is null");
-
-		sb.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario ");
-
 		return JPA
 				.em()
 				.createQuery(
-						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
+						"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario")
+								+ " and conf.hisDtFim is null")
 				.getResultList();
 	}
 
@@ -281,9 +269,9 @@ public class SrConfiguracao extends CpConfiguracao {
 		return JPA
 				.em()
 				.createQuery(
-						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
+						"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario")
+								+ " and conf.hisDtFim is null order by conf.orgaoUsuario")
 				.getResultList();
 	}
 
@@ -387,4 +375,55 @@ public class SrConfiguracao extends CpConfiguracao {
 			return gson.toJson(this);
 		}
 	}
+
+	public int getNivelItemParaComparar() {
+		int soma = 0;
+		if (itemConfiguracaoSet != null && itemConfiguracaoSet.size() > 0){
+			for (SrItemConfiguracao i : itemConfiguracaoSet){
+				soma += i.getNivel();
+			}
+			return soma / itemConfiguracaoSet.size();
+		}
+		return 0;
+	}
+	
+	public int getNivelAcaoParaComparar() {
+		int soma = 0;
+		if (acoesSet != null && acoesSet.size() > 0){
+			for (SrAcao i : acoesSet){
+				soma += i.getNivel();
+			}
+			return soma / acoesSet.size();
+		}
+		return 0;
+	}
+
+	public SrItemConfiguracao getItemConfiguracao() {
+		if (itemConfiguracaoSet == null || itemConfiguracaoSet.size() == 0)
+			return null;
+		return itemConfiguracaoSet.get(0);
+	}
+
+	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+		itemConfiguracaoSet = new ArrayList<SrItemConfiguracao>();
+		itemConfiguracaoSet.add(itemConfiguracao);
+	}
+
+	public SrAcao getAcao() {
+		if (acoesSet == null || acoesSet.size() == 0)
+			return null;
+		return acoesSet.get(0);
+	}
+
+	public void setAcao(SrAcao acao) {
+		acoesSet = new ArrayList<SrAcao>();
+		acoesSet.add(acao);
+	}
+
+	@Override
+	public CpConfiguracao getConfiguracaoAtual() {
+		// TODO Auto-generated method stub
+		return super.getConfiguracaoAtual();
+	}
+	
 }

@@ -626,7 +626,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
-	@SuppressWarnings("unchecked")
 	private List<SrTipoAtributo> getTiposAtributoAssociados(HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
@@ -1107,7 +1106,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return locais;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
 		Set<SrItemConfiguracao> listaFinal = new TreeSet<SrItemConfiguracao>(
 				new SrItemConfiguracaoComparator());
@@ -1120,21 +1118,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						SrConfiguracaoBL.ACAO });
 
 		for (SrConfiguracao conf : confs) {
-			if (conf.itemConfiguracao == null) {
+			if (conf.itemConfiguracaoSet == null || conf.itemConfiguracaoSet.size() == 0) {
 				listaFinal.addAll(SrItemConfiguracao.listar(Boolean.FALSE));
 				break;
 			} else {
-				SrItemConfiguracao atual = conf.itemConfiguracao.getAtual();
-				if (atual != null) {
-					listaFinal.addAll(atual.getItemETodosDescendentes());
+				// DB1: percorre a lista de itens adicionando-os
+				for (SrItemConfiguracao item : conf.itemConfiguracaoSet) {
+					SrItemConfiguracao atual = item.getAtual();
+					if (atual != null) {
+						listaFinal.addAll(atual.getItemETodosDescendentes());
 
-					// Edson: a adi��o dos pais � necess�ria para formar a
-					// hierarquia
-					SrItemConfiguracao itemPai = atual.pai;
-					while (itemPai != null) {
-						if (!listaFinal.contains(itemPai))
-							listaFinal.add(itemPai);
-						itemPai = itemPai.pai;
+						// Edson: a adição dos pais é necessária para formar a
+						// hierarquia
+						SrItemConfiguracao itemPai = atual.pai;
+						while (itemPai != null) {
+							if (!listaFinal.contains(itemPai))
+								listaFinal.add(itemPai);
+							
+							itemPai = itemPai.pai;
+						}
 					}
 				}
 			}
@@ -1142,7 +1144,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return new ArrayList<SrItemConfiguracao>(listaFinal);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
 		return new ArrayList<SrAcao>(getAcoesDisponiveisComAtendente().keySet());
 	}
@@ -1161,18 +1162,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			// de configuraÃ§Ãµes mais genÃ©ricas nÃ£o substituam os das
 			// mais
 			// especÃ­ficas, que vÃªm antes
-			if (conf.acao == null) {
+			if (conf.acoesSet == null || conf.acoesSet.size() == 0) {
 				for (SrAcao acao : SrAcao.listar(Boolean.FALSE))
 					if (acao.isEspecifico() && !listaFinal.containsKey(acao))
 						listaFinal.put(acao, conf.atendente);
 				break;
 			} else {
-				SrAcao atual = conf.acao.getAtual();
-				if (atual != null)
-					for (SrAcao acao : atual.getAcaoETodasDescendentes())
-						if (acao.isEspecifico()
-								&& !listaFinal.containsKey(acao))
-							listaFinal.put(acao, conf.atendente);
+				// DB1: percorre a lista de ações adicionando-as
+				for (SrAcao item : conf.acoesSet) {
+					SrAcao atual = item.getAtual();
+					if (atual != null)
+						for (SrAcao acao : atual.getAcaoETodasDescendentes())
+							if (acao.isEspecifico()
+									&& !listaFinal.containsKey(acao))
+								listaFinal.put(acao, conf.atendente);
+				}
 			}
 		}
 

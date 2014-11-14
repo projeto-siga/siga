@@ -287,20 +287,20 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	/**
-	 * Classe que representa um V.O. de {@link SrListaConfiguracao}.
+	 * Classe que representa um V.O. de {@link SrLista}.
 	 */
-	public class SrListaConfiguracaoVO {
+	public class SrListaVO {
 
 		public Long idLista;
 		public String nomeLista;
 
-		public SrListaConfiguracaoVO(Long idLista, String nomeLista) {
+		public SrListaVO(Long idLista, String nomeLista) {
 			this.idLista = idLista;
 			this.nomeLista = nomeLista;
 		}
 	}
 
-	public SrListaConfiguracaoVO toVO() {
-		return new SrListaConfiguracaoVO(this.idLista, this.nomeLista);
+	public SrListaVO toVO() {
+		return new SrListaVO(this.idLista, this.nomeLista);
 	}
 }

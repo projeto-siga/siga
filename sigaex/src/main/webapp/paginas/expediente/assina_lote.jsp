@@ -135,7 +135,7 @@
 			        <tr class="even">
 				        <td width="3%"align="center">
         		           <c:if test="${podeAssinarComSenha}">
-								<img src="/siga/css/famfamfam/icons/accept.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
+								<img src="/siga/css/famfamfam/icons/keyboard.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
 						   </c:if> 
 				        </td>
 				        <td width="3%"align="center">
@@ -207,7 +207,7 @@
 
 		      if(n > 0) {
 		      	$("#mensagemAssinaSenha").html( n + (n === 1 ? " documento selecionado não pode ser assinado somente com senha." : " documentos selecionados não podem ser assinados somente com senha.") + " Selecione somente os documentos que estão marcados com ");
-		      	$("#mensagemAssinaSenha").append("<img src=\"/siga/css/famfamfam/icons/accept.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />" );
+		      	$("#mensagemAssinaSenha").append("<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />" );
 
 		      	dialogM.dialog("open");
 		      } else {
@@ -215,7 +215,7 @@
 
                     if(nPode == 0) {
 				      	$("#mensagemAssinaSenha").html("Nenhum documento selecionado. Selecione somente os documentos que estão marcados com ");
-				      	$("#mensagemAssinaSenha").append("<img src=\"/siga/css/famfamfam/icons/accept.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />" );
+				      	$("#mensagemAssinaSenha").append("<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />" );
 				      	dialogM.dialog("open");
                     } else {
        		    	    dialog.dialog("open");

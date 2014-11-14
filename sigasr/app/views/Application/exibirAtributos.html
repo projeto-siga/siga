@@ -1,6 +1,12 @@
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+
 <script type="text/javascript">
 	carregarConhecimentosRelacionados();
+
+	// Codigo para atualizacao dos filtros na tela
+	removerFiltrosSemCampo();
+	carregarSolRelacionadas();
+	carregarFiltrosAtributos();
 </script>
 
 #{if solicitacao.itemConfiguracao && solicitacao.acao && controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}

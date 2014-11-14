@@ -69,8 +69,7 @@
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
 		   
-		notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
-		notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
+		notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')
 	}
 
 	function carregarConhecimentosRelacionados(){
@@ -92,9 +91,7 @@
 	}
 	
 	// funções usadas para solicitações relacionadas
-	function addFiltro(divFiltro, campoRef, optionHtml, optionVl, checked) {
-		checked = checked == undefined ? true : checked;
-		
+	function addFiltro(divFiltro, campoRef, optionHtml, optionVl) {
 		/**
 		 * Se o valor foi preenchido e se existe label
 		 */
@@ -104,8 +101,11 @@
 			 * Se jah existe uma div para esse filtro, apenas atualiza a checkbox
 			 */
 			if(divFiltroExistente.size() > 0) {
-				var input = divFiltroExistente.find('span');
-				input.html(optionHtml.trim());
+				var span = divFiltroExistente.find('span'),
+					checkbox = divFiltroExistente.find(':checkbox')
+				
+				span.html(optionHtml.trim());
+				checkbox.attr('checked', true);
 			}
 			/** 
 			 * Caso nao exista a div, entao cria uma nova checkbox
@@ -117,8 +117,9 @@
 				var input = $('<input class="filtro-sol-relacionadas" type="checkbox">');
 				input.attr('name', optionVl);
 				input.bind('change', carregarSolRelacionadas);
-				input.attr('checked', checked);
-				
+				input.attr('checked', true);
+				input.attr('disabled', $('#bodySolRelacionadas').attr('requesting'));
+
 				var label = $('<span style="margin-left:5px">');
 				label.html(optionHtml.trim());
 			
@@ -136,26 +137,15 @@
 		return $("#filtro .filtro-sol-relacionadas").size() > 0;
 	}
 	
-	function notificarCampoMudou(campoRef, tipoCampo, optionVl, checked) {
+	function notificarCampoMudou(campoRef, tipoCampo, optionVl) {
 		var label = descricaoFiltroSolRelacionadas(campoRef, tipoCampo),
 			divFiltro = $('#filtro');
 		
-		if(!addFiltro(divFiltro, campoRef, label, optionVl, checked)) {
-			var filtroEstavaSelecioando = filtroEstaSelecionado(optionVl),
-				div = divFiltro.find("div[identificadorFiltro='" + optionVl + "']");
+		if(!addFiltro(divFiltro, campoRef, label, optionVl)) {
+			div = divFiltro.find("div[identificadorFiltro='" + optionVl + "']");
 			div.remove();
-
-			// Se o filtro estava selecionado quando foi removido, a consulta deve ser realizada novamente se ele
-			if(filtroEstavaSelecioando) {
-				carregarSolRelacionadas();
-			}
-		}
-		// Se o check esta selecionado, entao refaz consulta
-		if(filtroEstaSelecionado(optionVl)) {
-			carregarSolRelacionadas();
 		}
 		validarCadastranteSolicitante();
-
 		if(!existeFiltroSelecionavel()) {
 			$('#solicitacoesRelacionadas').hide(300);
 		} else {
@@ -164,13 +154,10 @@
 	}
 
 	// Recebe notificacao de alteracao em campo que eh atributo
-	function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl) {
+	function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl, teste) {
 		var label = $(campoRef).prev('label').html().trim();
 		notificarCampoMudou(campoRef, label, optionVl);
-	}
-
-	function filtroEstaSelecionado(optionVl) {
-		return $("div[identificadorFiltro='" + optionVl + "'] :checked").size() > 0;
+		carregarSolRelacionadas();
 	}
 	
 	function descricaoFiltroSolRelacionadas(campoRef, tipoCampo) {
@@ -227,7 +214,6 @@
 				iniciarCarregarSolicitacoesRelacionadas();
 				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
 			}
-			// $('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Não há solicitações relacionadas</td></tr>");
 		}
 		// Senao, apenas mostra informacao
 		else {
@@ -248,50 +234,59 @@
 	}
 		
 	function carregouSolicitacoesRelacionadas(response, param){
-		if($('#filtro input:checked').size() > 0) {
+		if($('#filtro input.filtro-sol-relacionadas:checked').size() > 0) {
 			$('#bodySolRelacionadas').html(response);
 		}
 		$('#filtro input').attr('disabled', false);
+		$('#bodySolRelacionadas').attr('requesting', false);
 	}
 
 	function iniciarCarregarSolicitacoesRelacionadas() {
 		$('#filtro input').attr('disabled', true);
 		$('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Por favor aguarde. Carregando... </td></tr>");
+		$('#bodySolRelacionadas').attr('requesting', true);
 	}
-	
+
 	function carregarFiltrosAoIniciar() {
-		var divFiltro = $('#filtro'),
-			atributos = $('#atributos').find('div');
+		var divFiltro = $('#filtro');
 		
 		addFiltroAoIniciar(divFiltro, '#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
 		addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
 		addFiltroAoIniciar(divFiltro, '#selectAcao', 'Ação', 'solicitacao.acao');
+
+		carregarFiltrosAtributos();
 		
-		var atrClass, atrHtml, atrName;
-		for(j=0; j < atributos.length; j++) {
-			var divAtributo = atributos[j], 
-				inputAtributo = atributos[j].children[1],
-				labelAtributo = divAtributo.firstElementChild;
-			
-			if (inputAtributo != undefined) {
-				atrClass = '.' + inputAtributo.className;
-				atrHtml = labelAtributo.innerHTML;
-				atrName = inputAtributo.name;
-				
-				// Se for select, busca pelo atributo selecionado
-				if (inputAtributo.tagName == 'SELECT') {
-					atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
-				}
-				addFiltro(divFiltro, atrClass, atrHtml, atrName);
-			}
-		}
 		if(existeFiltroSelecionavel()) {
 			carregarSolRelacionadas();
 		} else {
 			$('#solicitacoesRelacionadas').hide();
 		}
 	}
+
+	function carregarFiltrosAtributos() {
+		var atributos = $('#atributos').find('div'),
+			atrClass, atrHtml, atrName;
+		
+		for(j=0; j < atributos.length; j++) {
+			var divAtributo = atributos[j], 
+				inputAtributo = atributos[j].children[1],
+				labelAtributo = divAtributo.firstElementChild;
+			
+			if (inputAtributo != undefined) {
+				atrClass = '.' + inputAtributo.className.split(' ')[0];
+				atrHtml = labelAtributo.innerHTML + ' - ' + inputAtributo.value;
+				atrName = inputAtributo.name;
+				
+				// Se for select, busca pelo atributo selecionado
+				if (inputAtributo.tagName == 'SELECT') {
+					atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
+				}
+				addFiltro($('#filtro'), atrClass, atrHtml, atrName);
+			}
+		}
+	}
 	
+
 	function removerFiltrosSemCampo() {
 		var existeSelecionado = false;
 		
@@ -299,8 +294,9 @@
 			var me = $(this),
 				name = me.attr('name'),
 				input = $("form [name='" + name + "']");
-
-			if(input.size() == 0) {
+			
+			// Se o campo foi limpo, tira ele da lista de filtros
+			if(input.size() == 0 || input.val() == '' || input.val() == undefined) {
 				me.parent('div').remove();
 
 				if(!existeSelecionado) {
@@ -308,16 +304,11 @@
 				}
 			}
 		});
-
-		// Se algum dos itens removidos estava selecionado, entao consulta novamente sem ele.
-		if(existeSelecionado) {
-			carregarSolRelacionadas();
-		}
 	}
 
 	function addFiltroAoIniciar(divFiltro, campoRef, optionHtml, optionVl) {
 		var label = descricaoFiltroSolRelacionadas(campoRef, optionHtml);
-		addFiltro(divFiltro, campoRef, label, optionVl);
+		addFiltro(divFiltro, campoRef, label, optionVl, true);
 	}
 
 	function exibirSolicitacao(idSolicitacao) {

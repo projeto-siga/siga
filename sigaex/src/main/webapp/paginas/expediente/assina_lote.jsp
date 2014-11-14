@@ -20,6 +20,51 @@
 				nomeusuario.value = tmp.toUpperCase();
 			}
 		}
+
+		function AssinarDocumentosSenha(Copia, oElm){
+			process.reset();
+
+//		   	oElm = document.getElementById(Id);
+//		    oElm.innerHTML = Caption;
+		    if(Copia == "true"){
+		  		Copia = "true";
+				// alert("Iniciando conferência")
+		     	process.push(function(){Log("Iniciando conferência")});
+		 	}else{
+		  		Copia = "false";
+				// alert("Iniciando assinatura")
+		     	process.push(function(){Log("Iniciando assinatura")});
+		    }
+
+		    var oUrlPost, oNextUrl, oUrlBase, oUrlPath, oNome, oUrl, oChk;
+
+			oUrlPost = document.getElementById("jspserver");
+			if(oUrlPost == null){
+		        alert("element jspserver does not exist");
+		        return;
+		    }
+		    oUrlNext = document.getElementById("nexturl");
+		    if(oUrlNext == null){
+		        alert("element nexturl does not exist");
+		        return;
+		    }
+		    oUrlBase = document.getElementById("urlbase");
+		    if(oUrlBase == null){
+		        alert("element urlbase does not exist");
+		        return;
+		    }
+		    oUrlPath = document.getElementById("urlpath");
+		    if(oUrlPath == null){
+		        alert("element urlpath does not exist");
+		        return;
+		    }
+
+		    var Codigo;
+		    var NodeList = document.getElementsByTagName("INPUT");
+		    process.push(function(){Log("Concluído, redirecionando...");});
+		    process.push(function(){location.href = oUrlNext.value;});
+			process.run();
+		}
 	</script>
 
 	<script type="text/javascript" language="Javascript1.1"
@@ -210,6 +255,10 @@
 		      }
 		    });
 
+		    function assinarGravar() {
+		    	AssinarDocumentosSenha('false', this);
+			}
+
 		    dialogM = $("#dialog-message").dialog({
 		        autoOpen: false,
 		    });
@@ -234,15 +283,6 @@
                     }
 			  }
 		    }
-
-		    function assinarGravar() {
-		    	$("#form-assinarSenha").submit();
-			}
-
-		    function conferirCopiaGravar() {
-		    	$('#tipoAssinaturaMov').val('C');
-		    	$("#form-assinarSenha").submit();
-			}
 		  </script>
 	</c:if>
 </siga:pagina>

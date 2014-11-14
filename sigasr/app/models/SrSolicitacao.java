@@ -693,7 +693,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
-	@SuppressWarnings("unchecked")
 	private List<SrTipoAtributo> getTiposAtributoAssociados(HashMap<Long, Boolean> map) throws Exception {
 		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
 
@@ -1183,7 +1182,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return locais;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 
@@ -1207,7 +1205,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaFinal;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
 		return new ArrayList<SrAcao>(getAcoesDisponiveisComAtendente().keySet());
 	}
@@ -2152,8 +2149,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.salvar(pess, lota);
 	}
 
-	public void terminarPendencia(DpLotacao lota, DpPessoa pess,
-			String descricao, SrTipoMotivoPendencia motivo, Long idMovimentacao)
+	public void terminarPendencia(DpLotacao lota, DpPessoa pess, String descricao, Long idMovimentacao)
 			throws Exception {
 		if (!podeTerminarPendencia(lota, pess))
 			throw new Exception("Operação não permitida");
@@ -2161,13 +2157,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
 		movimentacao.descrMovimentacao = descricao;
-		movimentacao.motivoPendencia = motivo;
 		movimentacao = movimentacao.salvar(pess, lota);
 		
 		SrMovimentacao movFinalizada = SrMovimentacao.findById(idMovimentacao);
 		movFinalizada.movFinalizadora = movimentacao;
 		movFinalizada.save();
-
 	}
 
 	public void cancelar(DpLotacao lota, DpPessoa pess) throws Exception {

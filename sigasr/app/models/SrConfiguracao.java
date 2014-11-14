@@ -21,7 +21,6 @@ import javax.persistence.Transient;
 
 import models.SrAcao.SrAcaoVO;
 import models.SrItemConfiguracao.SrItemConfiguracaoVO;
-import models.SrLista.SrListaConfiguracaoVO;
 
 import org.hibernate.annotations.Type;
 
@@ -55,7 +54,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrItemConfiguracao itemConfiguracao;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SIGASR.SR_CONFIGURACAO_ITEM", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ITEM", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
 	public List<SrItemConfiguracao> itemConfiguracaoSet;
 	
 	@ManyToOne
@@ -63,7 +62,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrAcao acao;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SIGASR.SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
 	public List<SrAcao> acoesSet;
 
 	@Column(name = "GRAVIDADE")
@@ -103,7 +102,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista listaPrioridade;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "SR_LISTA_CONFIGURACAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
 	private List<SrLista> listaConfiguracaoSet;
 
@@ -308,17 +307,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		setIdConfiguracao(id);
 	}
 
-	// Edson: Não consegui fazer com que esse cascade fosse automático.
-	@Override
-	public void salvar() throws Exception {
-		super.salvar();
-		if (this.listaConfiguracaoSet != null)
-			// TODO: DIEGO: precisa salvar registro da lista
-			for (SrLista lista : this.listaConfiguracaoSet) {
-				lista.salvar();
-			}
-	}
-
 	public List<SrLista> getListaConfiguracaoSet() {
 		return listaConfiguracaoSet;
 	}
@@ -366,12 +354,12 @@ public class SrConfiguracao extends CpConfiguracao {
 	 * @author DB1
 	 */
 	public class SrConfiguracaoVO {
-		public List<SrLista.SrListaConfiguracaoVO> listaVO; 
+		public List<SrLista.SrListaVO> listaVO; 
 		public List<SrItemConfiguracao.SrItemConfiguracaoVO> listaItemConfiguracaoVO;
 		public List<SrAcao.SrAcaoVO> listaAcaoVO;
 
 		public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) {
-			listaVO = new ArrayList<SrLista.SrListaConfiguracaoVO>();
+			listaVO = new ArrayList<SrLista.SrListaVO>();
 			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracao.SrItemConfiguracaoVO>();
 			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
 			

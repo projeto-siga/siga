@@ -127,7 +127,6 @@ public class Application extends SigaApplication {
 		try {
 			Corporativo.dadosrh();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -415,15 +414,11 @@ public class Application extends SigaApplication {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static void listar(SrSolicitacaoFiltro filtro, boolean carregarLotaSolicitante) throws Exception {
+	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
 
 		List<SrSolicitacao> listaSolicitacao;
 
 		if (filtro.pesquisar) {
-			if(carregarLotaSolicitante){
-	    		filtro.lotaSolicitante = filtro.solicitante.getLotacao();
-	    		filtro.solicitante = null;
-	    	}
 			listaSolicitacao = filtro.buscar();
 		} else {
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
@@ -763,10 +758,9 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	public static void terminarPendencia(Long id, String descricao,
-			SrTipoMotivoPendencia motivo, Long idMovimentacao) throws Exception {
+	public static void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, motivo, idMovimentacao);
+		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, idMovimentacao);
 		exibir(id, completo());
 	}
 
@@ -812,11 +806,13 @@ public class Application extends SigaApplication {
 		listarDesignacao(Boolean.TRUE);
 	}
 
-	public static void gravarDesignacao(SrConfiguracao designacao)
+	public static Long gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
+		
+		return designacao.getId();
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {

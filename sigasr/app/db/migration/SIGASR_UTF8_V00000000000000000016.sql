@@ -44,3 +44,14 @@ alter table SR_CONFIGURACAO_ACAO
 alter table SR_CONFIGURACAO_ACAO
   add constraint FK_CONFIG_ACAO_CONFIGURACAO foreign key (ID_CONFIGURACAO)
   references SR_CONFIGURACAO (ID_CONFIGURACAO_SR);
+  
+-- OSI_FS0004 - Item 39
+-- Remove a PK
+alter table SR_LISTA_CONFIGURACAO
+  drop constraint SR_LISTA_CONFIGURACAO_PK cascade;
+-- Remove a coluna
+alter table SR_LISTA_CONFIGURACAO drop column ID_LISTA_CONFIGURACAO;
+
+-- Adiciona a nova PK
+alter table SR_LISTA_CONFIGURACAO
+  add constraint SR_LISTA_CONFIGURACAO_PK primary key (ID_CONFIGURACAO, ID_LISTA)

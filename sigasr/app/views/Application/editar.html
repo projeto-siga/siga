@@ -176,11 +176,11 @@
 	}
 	
 	function notificarCampoMudou(campoRef, tipoCampo, optionVl) {
-		/*if(!selecionouSolicitante()) {
+		if(!selecionouSolicitante()) {
 			$('#solicitacoesRelacionadas').hide(300);
 		} else {
 			$('#solicitacoesRelacionadas').show(300);
-		}*/
+		}
 		
 		var label = descricaoFiltroSolRelacionadas(campoRef, tipoCampo),
 			divFiltro = $('#filtro');
@@ -292,38 +292,71 @@
 	}
 		
 	function carregarFiltrosAoIniciar() {
-		var divFiltro = $('#filtro'),
-			atributos = $('#atributos').find('div');
-
-		addFiltroAoIniciar(divFiltro, '#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
-		// addFiltro(divFiltro, '#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');
-		addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
-		addFiltroAoIniciar(divFiltro, '#selectAcao', 'Ação', 'solicitacao.acao');
-
-		var atrClass, atrHtml, atrName;
-		for(j=0; j < atributos.length; j++) {
-			var divAtributo = atributos[j], 
-				inputAtributo = atributos[j].children[1],
-				labelAtributo = divAtributo.firstElementChild;
+		if(selecionouSolicitante()) {
+			var divFiltro = $('#filtro'),
+				atributos = $('#atributos').find('div');
+	
+			addFiltroAoIniciar(divFiltro, '#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
+			// addFiltro(divFiltro, '#solicitacaosolicitante', 'Lotação Solicitante', 'solicitacao.lotaSolicitante');
+			addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
+			addFiltroAoIniciar(divFiltro, '#selectAcao', 'Ação', 'solicitacao.acao');
 			
-			if (inputAtributo != undefined) {
-				atrClass = '.' + inputAtributo.className;
-				atrHtml = labelAtributo.innerHTML;
-				atrName = inputAtributo.name;
+			var atrClass, atrHtml, atrName;
+			for(j=0; j < atributos.length; j++) {
+				var divAtributo = atributos[j], 
+					inputAtributo = atributos[j].children[1],
+					labelAtributo = divAtributo.firstElementChild;
 				
-				// Se for select, busca pelo atributo selecionado
-				if (inputAtributo.tagName == 'SELECT') {
-					atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
+				if (inputAtributo != undefined) {
+					atrClass = '.' + inputAtributo.className;
+					atrHtml = labelAtributo.innerHTML;
+					atrName = inputAtributo.name;
+					
+					// Se for select, busca pelo atributo selecionado
+					if (inputAtributo.tagName == 'SELECT') {
+						atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
+					}
+					addFiltro(divFiltro, atrClass, atrHtml, atrName);
 				}
-				addFiltro(divFiltro, atrClass, atrHtml, atrName);
 			}
+			carregarSolRelacionadas();
 		}
-		carregarSolRelacionadas();
+		else {
+			$('#solicitacoesRelacionadas').hide();
+		}
+	}
+	
+	function removerFiltrosSemCampo() {
+		var existeSelecionado = false;
+		
+		$('#filtro :checkbox').each(function() {
+			var me = $(this),
+				name = me.attr('name'),
+				input = $("form [name='" + name + "']");
+
+			if(input.size() == 0) {
+				me.parent('div').remove();
+
+				if(!existeSelecionado) {
+					existeSelecionado = me.is(':checked');
+				}
+			}
+		});
+
+		// Se algum dos itens removidos estava selecionado, entao consulta novamente sem ele.
+		if(existeSelecionado) {
+			carregarSolRelacionadas();
+		}
 	}
 
 	function addFiltroAoIniciar(divFiltro, campoRef, optionHtml, optionVl) {
 		var label = descricaoFiltroSolRelacionadas(campoRef, optionHtml);
 		addFiltro(divFiltro, campoRef, label, optionVl);
+	}
+
+	function exibirSolicitacao(idSolicitacao) {
+		var params = 'id=' + idSolicitacao;
+		window.open('@{Application.exibir()}?' + params + "","_blank");
 	}
 	
 	function verMais(){

@@ -427,6 +427,47 @@ public class SrConfiguracao extends CpConfiguracao {
 	public void setListaConfiguracaoSet(List<SrLista> listaConfiguracaoSet) {
 		this.listaConfiguracaoSet = listaConfiguracaoSet;
 	}
+	
+	public String getItemConfiguracaoAtual() {
+		String descrItemConfiguracao = null;
+		if (this.itemConfiguracaoSet != null && this.itemConfiguracaoSet.size() > 0) {
+			SrItemConfiguracao conf = this.itemConfiguracaoSet.get(0);
+			
+			if (conf != null) {
+				descrItemConfiguracao = conf.getAtual().tituloItemConfiguracao;
+				
+				if (this.itemConfiguracaoSet.size() > 1)
+					if (descrItemConfiguracao != null)
+						descrItemConfiguracao = descrItemConfiguracao.concat(" ...");
+					else descrItemConfiguracao = new String("...");
+			}
+		}
+		else
+			descrItemConfiguracao = new String();
+		
+		return descrItemConfiguracao;
+	}
+	
+	public String getAcaoAtual() {
+		String descrAcao = null;
+		if (this.acoesSet != null && this.acoesSet.size() > 0) {
+			SrAcao acao = this.acoesSet.get(0);
+			
+			if (acao != null) {
+				descrAcao = acao.getAtual().descrAcao;
+				
+				if (this.itemConfiguracaoSet.size() > 1)
+					if (descrAcao != null)
+						descrAcao = descrAcao.concat(" ...");
+					else
+						descrAcao = new String("...");
+			}
+		}
+		else
+			descrAcao = new String();
+		
+		return descrAcao;
+	}
 
 	/**
 	 * Método que retorna um número referente ao tipo de solicitante

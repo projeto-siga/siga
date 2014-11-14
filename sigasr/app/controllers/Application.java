@@ -21,6 +21,7 @@ import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
+import models.SrEquipe;
 import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
@@ -1090,6 +1091,28 @@ public class Application extends SigaApplication {
 		SrPesquisa pesq = SrPesquisa.findById(id);
 		pesq.finalizar();
 		listarPesquisa();
+	}
+	
+	public static void listarEquipe() throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrEquipe> listaEquipe = SrEquipe.findAll();
+		render(listaEquipe);
+	}
+	
+	public static void editarEquipe(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrEquipe equipe = null;
+		
+		if (id != null)
+			equipe = SrEquipe.findById(id);
+		else
+			equipe = new SrEquipe();
+		
+		render(equipe);
+	}
+	
+	public static void gravarEquipe(SrEquipe equipe) throws Exception {
+		listarEquipe();
 	}
 
 	public static void listarAcao(boolean mostrarDesativados) throws Exception {

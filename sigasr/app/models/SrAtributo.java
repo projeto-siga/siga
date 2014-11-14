@@ -15,6 +15,11 @@ import play.db.jpa.GenericModel;
 @Table(name="SR_ATRIBUTO", schema="SIGASR")
 public class SrAtributo extends GenericModel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
 	@GeneratedValue(generator = "srAtributoSeq")

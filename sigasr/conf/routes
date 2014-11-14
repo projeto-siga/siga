@@ -49,7 +49,12 @@ POST	/item/gravar						Application.gravarItem
 *		/acao/listar						Application.listarAcao
 *		/acao/selecionar					Application.selecionarAcao
 *		/acao/buscar						Application.buscarAcao
-*		/acao/desativar/{id}				Application.desativarAcao	
+*		/acao/desativar/{id}				Application.desativarAcao
+
+*		/equipe/listar						Application.listarEquipe
+*		/equipe/editar						Application.editarEquipe
+*		/equipe/editar/{id}					Application.editarEquipe
+*		/equipe/gravar						Application.gravarEquipe
 
 *		/solicitacao/desfazer_ultimo/{id}				Application.desfazerUltimaMovimentacao
 *		/solicitacao/filha/{id}							Application.criarFilha

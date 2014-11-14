@@ -155,16 +155,7 @@ public class Application extends SigaApplication {
 			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
 			solicitacao.solicitante = null;
     	}
-		List<SrSolicitacao> solicitacoesRelacionadas = solicitacao.buscar();
-		List<SrSolicitacao> solicitacoesList = new ArrayList<SrSolicitacao>();
-		for (SrSolicitacao sol : solicitacoesRelacionadas) {
-			if(sol.isEmPreAtendimento() || sol.isEmAtendimento() || sol.isEmPosAtendimento())
-				solicitacoesList.add(sol);
-		}
-		if(solicitacoesList.size() > 0)
-			solicitacoesRelacionadas = solicitacoesList;
-		int i = solicitacoesRelacionadas.size() > 10? 10 : solicitacoesRelacionadas.size();
-		solicitacoesRelacionadas = new ArrayList<SrSolicitacao>(solicitacoesRelacionadas.subList(0, i));
+		List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
 		render(solicitacoesRelacionadas);
 	}
 

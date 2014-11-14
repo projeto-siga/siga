@@ -94,3 +94,9 @@ alter table SR_LISTA_CONFIGURACAO
     minextents 1
     maxextents unlimited
   );
+
+-- OSI_FS0004 - Item 37
+ALTER TABLE SR_SOLICITACAO 
+	ADD (
+		DESCR_CODIGO VARCHAR2(100 CHAR) 
+	);

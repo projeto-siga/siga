@@ -1,15 +1,15 @@
 #{list items:solicitacoesRelacionadas, as:'sol'}
 	<tr>
 		<td>
-			<a href="#" onclick="exibirSolicitacao(${sol.idSolicitacao})">
-				${sol.codigo}
+			<a href="#" onclick="exibirSolicitacao(${sol[0]})">
+				${sol[2]}
 			</a>
 		</td> 
 		<td>
 			<b style="color: #333">
-				${sol.itemConfiguracao?.descricao}:
+				${sol[3]}:
 			</b>
-			&nbsp; #{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}
+			&nbsp; #{selecionado sigla:sol[1], descricao:sol[1] /}
 		</td> 
 	</tr>
 #{/list}

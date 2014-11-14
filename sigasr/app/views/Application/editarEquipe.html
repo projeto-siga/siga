@@ -1,0 +1,250 @@
+#{extends 'main.html' /} #{set title:'Edição de Equipes' /}
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+	//removendo a referencia de '$' para o jQuery
+	$.noConflict();
+	
+	jQuery(document).ready(function($) {
+		/* Table initialization */
+		var excecoesTable = $('#excecoes_table').dataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"iDisplayLength": 25
+		});
+	});
+	
+	function modalExcecaoAbrir() {
+		// limpa as mensagens de erros
+		resetMensagensErro();
+		
+		$("#excecaoHorario_dialog").dialog('open');
+	}
+	
+	function inserirExcecaoHorario() {
+		if (!camposObrigatoriosExcecaoPreenchidos()) {
+			// recupera as comboboxes
+			var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
+				jDiaSemana = jDiaSemanaCbb.options[jDiaSemanaCbb.selectedIndex];
+			
+			var row = [
+// 				<th>Dia</th>
+// 				<th>Início Expediente</th>
+// 				<th>Final Expediente</th>
+// 				<th>Início Intervalo</th>
+// 				<th>Final Intervalo</th>
+// 				<th></th>
+			];
+			
+			excecoesTable.api().row.add(row).draw();
+		
+			modalExcecaoFechar();
+		}
+	}
+	
+	function modalExcecaoFechar() {
+		$("#excecaoHorario_dialog").dialog('close');
+	}
+	
+	function camposObrigatoriosExcecaoPreenchidos() {
+		var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
+			hasErros = false;
+		
+		// limpa as mensagens de erros
+		resetMensagensErro();
+		
+		// Mostra a mensagem de campos obrigatórios
+		if (document.getElementById("dataEspecifica").value == "" && jDiaSemanaCbb.selectedIndex == 0) {
+			document.getElementById("diaSemanaError").style.display = "inline";
+			document.getElementById("dataEspecificaError").style.display = "inline";
+			hasErros = true;
+		}
+		
+		if (document.getElementById("horaIni").value == "") {
+			document.getElementById("horaIniError").style.display = "inline";
+			hasErros = true;
+		}
+		
+		if (document.getElementById("horaFim").value == "") {
+			document.getElementById("horaFimError").style.display = "inline";
+			hasErros = true;
+		}
+		
+		if (document.getElementById("interIni").value == "") {
+			document.getElementById("interIniError").style.display = "inline";
+			hasErros = true;
+		}
+		
+		if (document.getElementById("interFim").value == "") {
+			document.getElementById("interFimError").style.display = "inline";
+			hasErros = true;
+		}
+		
+		return hasErros;
+	}
+	
+	function resetMensagensErro() {
+		document.getElementById("diaSemanaError").style.display = "none";
+		document.getElementById("dataEspecificaError").style.display = "none";
+		document.getElementById("horaIniError").style.display = "none";
+		document.getElementById("horaFimError").style.display = "none";
+		document.getElementById("interIniError").style.display = "none";
+		document.getElementById("interFimError").style.display = "none";
+	}
+	
+	function inserirEquipe() {
+	}
+</script>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Cadastro de Equipe</h2>
+
+		<div class="gt-form gt-content-box">
+			#{form @Application.gravarEquipe()} #{if
+			equipe?.idEquipe} <input type="hidden"
+				name="equipe.idEquipe" value="${equipe.idEquipe}">
+			#{/if}
+			#{ifErrors}
+			<p class="gt-error">Alguns campos obrigatórios não foram
+				preenchidos ${error}</p>
+			#{/ifErrors}
+			<div class="gt-form-table">
+				<div class="barra-subtitulo barra-subtitulo-top header"
+					align="center" valign="top">Dados básicos</div>
+			</div>
+			<div class="gt-form-row gt-width-100">
+				<label>Lotação</label>#{selecao
+					tipo:'lotacao', nome:'equipe.lotacao',
+					value:equipe.lotacao?.lotacaoAtual /}
+				<span style="display:none;color: red" id="equipe.lotacao">Lotação não informada.</span>
+			</div>
+			
+			<div class="gt-form-table">
+				<div class="barra-subtitulo barra-subtitulo-top header"
+					align="center" valign="top">Horário de Trabalho</div>
+			</div>
+			
+			<div class="gt-form-row">
+			<label>Exceções ao calendário padrão:</label>
+			<!-- content bomex -->
+			<div class="gt-content-box dataTables_div">
+				<table id="excecoes_table" border="0" class="gt-table display">
+					<thead>
+						<tr>
+							<th>Dia</th>
+							<th>Início Expediente</th>
+							<th>Final Expediente</th>
+							<th>Início Intervalo</th>
+							<th>Final Intervalo</th>
+							<th></th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						#{list items:equipe.excecaoHorarioSet, as:'excecao'}
+						<tr>
+							#{if excecao?.diaSemana}
+								<td>${excecao?.diaSemana.descrDiaSemana }</td>
+							#{/if}
+							#{else}
+								<td>${excecao?.dataEspecifica.format('dd/MM/yyyy') }</td>
+							#{/else}
+							
+							<td>${excecao?.horaIni.format('hh:mm') } horas</td>
+							<td>${excecao?.horaFim.format('hh:mm') } horas</td>
+							<td>${excecao?.interIni.format('hh:mm') } horas</td>
+							<td>${excecao?.interFim.format('hh:mm') } horas</td>
+							<td></td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			<div class="gt-table-buttons">
+				<a href="javascript: modalExcecaoAbrir()" class="gt-btn-medium gt-btn-left">Incluir</a>
+			</div>
+		</div>
+			<div class="gt-form-row">
+				<a href="javascript: inserirEquipe()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="@{Application.listarEquipe}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>
+
+#{modal nome:'excecaoHorario', titulo:'Adicionar Exceção de Horário'}
+	<div id="dialogExcecaoHorario">
+		<div class="gt-content">
+			<div class="gt-form gt-content-box">
+				<div class="gt-form-row gt-width-100">
+					<label>Dia da Semana</label> 
+					#{select name:'diaSemana', 
+						items:models.SrSemana.values(), 
+						valueProperty:'idSemana',
+						labelProperty:'descrDiaSemana', 
+						value:diaSemana?.idSemana,
+						class:'select-siga',
+						style:'width: 100%;'}
+						#{option 0}Nenhuma#{/option} 
+					#{/select}
+					<span style="display:none;color: red" id="diaSemanaError">Dia da Semana não informado</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Data Específica</label>
+					<input type="text" name="dataEspecifica" id="dataEspecifica" value="${dataEspecifica}">
+					<span style="display:none;color: red" id="dataEspecificaError">Data Específica não informada</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Início Expediente</label>
+					<input type="text" name="horaIni" id="horaIni" value="${horaIni}">
+					<span style="display:none;color: red" id="horaIniError">Início Expediente não informado</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Fim Expediente</label>
+					<input type="text" name="horaFim" id="horaFim" value="${horaFim}">
+					<span style="display:none;color: red" id="horaFimError">Fim Expediente não informado</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Início Intervalo</label>
+					<input type="text" name="interIni" id="interIni" value="${interIni}">
+					<span style="display:none;color: red" id="interIniError">Início Intervalo não informado</span>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Fim Intervalo</label>
+					<input type="text" name="interFim" id="interFim" value="${interFim}">
+					<span style="display:none;color: red" id="interFimError">Fim Intervalo não informado</span>
+				</div>
+				
+				<div class="gt-form-row">
+					<a href="javascript: inserirExcecaoHorario()" class="gt-btn-medium gt-btn-left">Ok</a>
+					<a href="javascript: modalExcecaoFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+#{/modal}

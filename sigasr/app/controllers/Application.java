@@ -21,6 +21,7 @@ import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
+import models.SrEquipe;
 import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
@@ -158,16 +159,7 @@ public class Application extends SigaApplication {
 			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
 			solicitacao.solicitante = null;
     	}
-		List<SrSolicitacao> solicitacoesRelacionadas = solicitacao.buscar();
-		List<SrSolicitacao> solicitacoesList = new ArrayList<SrSolicitacao>();
-		for (SrSolicitacao sol : solicitacoesRelacionadas) {
-			if(sol.isEmPreAtendimento() || sol.isEmAtendimento() || sol.isEmPosAtendimento())
-				solicitacoesList.add(sol);
-		}
-		if(solicitacoesList.size() > 0)
-			solicitacoesRelacionadas = solicitacoesList;
-		int i = solicitacoesRelacionadas.size() > 10? 10 : solicitacoesRelacionadas.size();
-		solicitacoesRelacionadas = new ArrayList<SrSolicitacao>(solicitacoesRelacionadas.subList(0, i));
+		List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
 		render(solicitacoesRelacionadas);
 	}
 
@@ -1068,6 +1060,28 @@ public class Application extends SigaApplication {
 		SrPesquisa pesq = SrPesquisa.findById(id);
 		pesq.finalizar();
 		listarPesquisa();
+	}
+	
+	public static void listarEquipe() throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrEquipe> listaEquipe = SrEquipe.findAll();
+		render(listaEquipe);
+	}
+	
+	public static void editarEquipe(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrEquipe equipe = null;
+		
+		if (id != null)
+			equipe = SrEquipe.findById(id);
+		else
+			equipe = new SrEquipe();
+		
+		render(equipe);
+	}
+	
+	public static void gravarEquipe(SrEquipe equipe) throws Exception {
+		listarEquipe();
 	}
 
 	public static void listarAcao(boolean mostrarDesativados) throws Exception {

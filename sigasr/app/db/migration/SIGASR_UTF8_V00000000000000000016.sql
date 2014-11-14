@@ -45,7 +45,7 @@ alter table SR_CONFIGURACAO_ACAO
   add constraint FK_CONFIG_ACAO_CONFIGURACAO foreign key (ID_CONFIGURACAO)
   references SR_CONFIGURACAO (ID_CONFIGURACAO_SR);
   
- 
+
 insert into sigasr.sr_configuracao_item (id_configuracao, id_item_configuracao) select id_configuracao_sr, id_item_configuracao from sigasr.sr_configuracao where id_item_configuracao is not null;
 insert into sigasr.sr_configuracao_acao (id_configuracao, id_acao) select id_configuracao_sr, id_acao from sigasr.sr_configuracao where id_acao is not null; 
   
@@ -59,3 +59,58 @@ alter table SR_LISTA_CONFIGURACAO drop column ID_LISTA_CONFIGURACAO;
 -- Adiciona a nova PK
 alter table SR_LISTA_CONFIGURACAO
   add constraint SR_LISTA_CONFIGURACAO_PK primary key (ID_CONFIGURACAO, ID_LISTA)
+
+-- OSI_FS0004 - Item 34 Criando tela de gerenciamento de equipe
+-- Create table
+create table SR_EQUIPE
+(
+  ID_EQUIPE      NUMBER(19) not null,
+  ID_LOTA_EQUIPE NUMBER(19) not null
+)
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table SR_EQUIPE
+  add constraint PK_SR_EQUIPE primary key (ID_EQUIPE)
+alter table SR_EQUIPE
+  add constraint FK_EQUIPE_LOTACAO foreign key (ID_LOTA_EQUIPE)
+  references CORPORATIVO.DP_LOTACAO (ID_LOTACAO);
+
+-- Create table
+create table SR_EXCECAO_HORARIO
+(
+  ID_EXCECAO_HORARIO NUMBER(19) not null,
+  ID_EQUIPE          NUMBER(19) not null,
+  DIA_SEMANA         NUMBER(1),
+  DT_ESPECIFICA      TIMESTAMP(6),
+  HORA_INI           TIMESTAMP(6) not null,
+  HORA_FIM           TIMESTAMP(6) not null,
+  INTER_INI          TIMESTAMP(6) not null,
+  INTER_FIM          TIMESTAMP(6) not null
+)
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table SR_EXCECAO_HORARIO
+  add constraint PF_EXCECAO_HORARIO primary key (ID_EXCECAO_HORARIO)
+alter table SR_EXCECAO_HORARIO
+  add constraint FK_EX_HOR_EQUIPE foreign key (ID_EQUIPE)
+  references SR_EQUIPE (ID_EQUIPE);
+
+-- Create sequence 
+create sequence SR_EQUIPE_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+
+-- Create sequence 
+create sequence SR_EXCECAO_HORARIO_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+
+-- OSI_FS0004 - Item 37
+ALTER TABLE SR_SOLICITACAO 
+	ADD (
+		DESCR_CODIGO VARCHAR2(100 CHAR) 
+	);

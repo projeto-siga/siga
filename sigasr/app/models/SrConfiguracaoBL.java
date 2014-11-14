@@ -152,6 +152,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.itemConfiguracao.getAtual();
 			if (srConf.acao != null)
 				srConf.acao.getAtual();
+			if (srConf.itemConfiguracaoSet != null)
+				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)
+					i.getAtual();
+			if (srConf.acoesSet != null)
+				for (SrAcao i : srConf.acoesSet)
+					i.getAtual();
 			if (srConf.tipoAtributo != null)
 				srConf.tipoAtributo.getHisIdIni();
 			if (srConf.listaPrioridade != null)

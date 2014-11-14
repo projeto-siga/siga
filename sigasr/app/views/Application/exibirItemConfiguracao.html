@@ -24,7 +24,7 @@ function carregouAcao(response, param){
 <div class="gt-form-row gt-width-66" >
 	<label>Item</label> #{selecao tipo:'item',
 	nome:'solicitacao.itemConfiguracao',
-	value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')",
+	value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao', false)",
 	params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo /} <span style="color: red">#{error
 		'solicitacao.itemConfiguracao' /}</span>
 </div>

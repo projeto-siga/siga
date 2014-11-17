@@ -6,13 +6,7 @@
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
-
-	function notificarCampoAtributoMudou() {
-	}
-	
 	$(document).ready(function() {
-		$("#ddlNovoAtributoContainer").hide();
-		
 		/* Table initialization */
 		var table = $('#solicitacoes_table')
 			.on('draw.dt', function() {
@@ -64,8 +58,9 @@
 	    		detail = tr.next('tr.detail');
     		
 		   if(detail.size() == 0) {
-				var data = tr.find('td');			   
-			   tr.addClass('shown');
+	       		var data = tr.find('td');
+	    		tr.addClass('shown');
+	    		format(data).insertAfter(tr);
 		   }
 		   else {
 		    	if ( detail.is(':visible') ) {
@@ -137,32 +132,6 @@
     	
         expandirContrairLinas(btn, expandir);
     }
-
-    function adicionarFiltroAtributo() {
-		$("#ddlNovoAtributoContainer").show();
-    } 
-
-    function removerFiltroAtributo(input) {
-        $(input).parent('td').parent('tr').remove();
-        carregarCampoParaTipoAtributo();
-    }
-
-    function carregarCampoParaTipoAtributo(select) {
-		var params = select ? ('filtro.atributoMap[' + select.val() + "]=&") : '';
-		
-		$('#atributos .valoresAtribudos').find('input,select').each(function() {
-		  params += $(this).attr('name') + '=' + $(this).val() + '&';  
-		});
-		PassAjaxResponseToFunction('@{Application.exibirAtributosConsulta()}?' + params, 'carregouCampoAtributo', null, false, null);
-    }
-    
-	function carregouCampoAtributo(response, param) {
-		var div = document.getElementById('atributos');
-		div.innerHTML = response;
-		var scripts = div.getElementsByTagName("script");
-		for(var i=0;i<scripts.length;i++)  
-		   eval(scripts[i].text);
-	}
 </script>
 
 	<style>

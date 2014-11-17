@@ -131,9 +131,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_SOLICITACAO_PAI")
 	public SrSolicitacao solicitacaoPai;
 
-//	@ManyToOne
-//	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
-	@Transient
+	@ManyToOne
+	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
 	public SrSolicitacao solicitacaoJuntada;
 
 	@Enumerated
@@ -220,7 +219,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
 	@Transient
-//	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
 	protected Set<SrSolicitacao> meuSolicitacaoJuntadasSet;
 
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
@@ -659,14 +658,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					map.put(tipo.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
-		if (mock) {
-			return SrTipoAtributo.listar();
-		}
 		return listaFinal;
 	}
-
-	@Transient
-	public boolean mock;
 
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)

@@ -164,7 +164,6 @@ public class Application extends SigaApplication {
 	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
-		solicitacao.mock = true;
 		render(solicitacao);
 	}
 

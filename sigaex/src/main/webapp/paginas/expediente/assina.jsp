@@ -114,7 +114,7 @@
 		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
         		
 		<div id="dialog-form" title="Assinar com Senha">
- 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_login_senha_gravar.action" >
+ 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_senha_gravar.action" >
  				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
     			<fieldset>
     			  <label>Matrícula</label> <br/>

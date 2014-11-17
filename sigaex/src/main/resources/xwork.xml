@@ -1051,7 +1051,7 @@
 				<param name="namespace">/expediente/doc</param>
 			</result>
 		</action>
-		<action name="assinar_login_senha_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+		<action name="assinar_senha_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarSenhaGravar">
 			<result name="OK" type="plaintext">
 				/paginas/ok.jsp

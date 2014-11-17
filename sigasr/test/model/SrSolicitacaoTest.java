@@ -339,7 +339,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		assertTrue(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
 				sesia()));
 
-		sol.terminarPendencia(sesia(), eeh(), "", SrTipoMotivoPendencia.AGUARDANDO_PRIORIZACAO, 0L);
+		sol.terminarPendencia(sesia(), eeh(), "", 0L);
 		assertFalse(sol.isPendente());
 		assertFalse(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
 				sesia()));

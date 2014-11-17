@@ -158,7 +158,7 @@
 						           item.titulo,
 						           item.descricao, 
 						           item.descricaoSimilaridade,
-						           "<span class=\"btn-group\"><a class=\"del-item btn btn-small\" href=\"#\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"cursor: pointer\" /></a></span>"];
+						           "<a href=\"\" class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 					
 					// Adiciona na tabela de Itens de Configuração
 					itemConfiguracaoTable.api().row.add(rowItem).draw();
@@ -172,7 +172,7 @@
 						rowAcao = [acao.id,
 						           acao.sigla,
 						           acao.descricao,
-						           "<span class=\"btn-group\"><a class=\"del-acao btn btn-small\" href=\"#\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"cursor: pointer\" /></a></span>"];
+						           "<a href=\"\" class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 					
 					// Adiciona na tabela de Ações
 					acaoTable.api().row.add(rowAcao).draw();
@@ -712,7 +712,7 @@
 				params += '&designacao.observacaoSLA=' + rowValues[34];
 			
 			if (rowValues[42] != '' && rowValues[42] != undefined)
-				params += '&designacao.id=' + rowValues[42];
+				params += '&designacao.idConfiguracao=' + rowValues[42];
 			
 			// atualiza o solicitante
 			params += getDadosSolicitante(rowValues, i);
@@ -875,7 +875,7 @@
 						<td>${design.notificarAtendente}</td>
 						<td>${design.getSrConfiguracaoJson()}</td>
 						<td></td>
-						<td>${design.id}</td>
+						<td>${design.idConfiguracao}</td>
 						<th>${design.isHerdado}</th>
 						<th>${design.utilizarItemHerdado}</th>
 						<td></td>

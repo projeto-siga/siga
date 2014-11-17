@@ -123,19 +123,27 @@
 			});
 		}
 		
-		$(".del-item").bind( "click", function(event) {
-		    var target_row = $(this).closest("tr").get(0); // this line did the trick
-		    var aPos = itemConfiguracaoTable.fnGetPosition(target_row); 
-
-		    itemConfiguracaoTable.fnDeleteRow(aPos);
-		});
+		// Delete Item Configuração
+	    $('#itemConfiguracao_table').on( 'click', 'a.itemConfiguracao_remove', function (e) {
+	        e.preventDefault();
+	 
+	        editor
+	            .title( 'Edit record' )
+	            .message( "Are you sure you wish to delete this row?" )
+	            .buttons( { "label": "Delete", "fn": function () { editor.submit() } } )
+	            .remove( $(this).closest('tr') );
+	    } );
 		
-		$(".del-acao").bind( "click", function(event) {
-		    var target_row = $(this).closest("tr").get(0); // this line did the trick
-		    var aPos = acaoTable.fnGetPosition(target_row); 
-
-		    acaoTable.fnDeleteRow(aPos);
-		});
+	 // Delete Ação
+	    $('#acao_table').on( 'click', 'a.acao_remove', function (e) {
+	        e.preventDefault();
+	 
+	        editor
+	            .title( 'Edit record' )
+	            .message( "Are you sure you wish to delete this row?" )
+	            .buttons( { "label": "Delete", "fn": function () { editor.submit() } } )
+	            .remove( $(this).closest('tr') );
+	    } );
 	});
 	
 	var jListasDesignacao = $("#listasDesignacao"),
@@ -198,8 +206,8 @@
 		           	$("#itemConfiguracao_sigla").val(),
 		           	$("#itemConfiguracao_descricao").val(),
 		           	$("#itemConfiguracao_descricao").val(),
-		           	'',
-		           	"<span class=\"btn-group\"><a class=\"del-item btn btn-small\" href=\"#\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"cursor: pointer\" /></a></span>"];
+		           	"",
+		           	"<a href=\"\" class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
 		itemConfiguracaoTable.api().row.add(row).draw();
         			
@@ -216,7 +224,7 @@
 		var row = [	$("#acao").val(),
         			$("#acao_sigla").val(),
         			$("#acao_descricao").val(),
-        			"<span class=\"btn-group\"><a class=\"del-acao btn btn-small\" href=\"#\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"cursor: pointer\" /></a></span>"];
+        			"<a href=\"\" class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
 		acaoTable.api().row.add(row).draw();
 		
@@ -231,6 +239,7 @@
 </script>
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+	<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
 	<div>
 		<div class="gt-form-row box-wrapper">
 			<div id="divSolicitante" class="box box-left gt-width-50">
@@ -341,11 +350,7 @@
 							<td>${item?.titulo}</td>
 							<td>${item?.descricao }</td>
 							<td>${item?.descricaoSimilaridade }</td>
-							<td class=" ">
-						         <span class="btn-group">
-						            <a class="del-item btn btn-small" href="#"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: hidden; cursor: pointer" /></a>       
-						         </span>
-						     </td>
+							<td><a href="" class="itemConfiguracao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
 						</tr>
 						#{/list}
 					</tbody>
@@ -377,11 +382,7 @@
 							<td>${acao?.id }</td>
 							<td>${acao?.sigla}</td>
 							<td>${acao?.descricao }</td>
-							<td class=" ">
-						         <span class="btn-group">
-						            <a class="del-acao btn btn-small" href="#"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: hidden; cursor: pointer" /></a>       
-						         </span>
-						     </td>
+							<td><a href="" class="acao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
 						</tr>
 						#{/list}
 					</tbody>

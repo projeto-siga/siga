@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -712,7 +713,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public HashMap<Long, String> getAtributoMap() {
-		HashMap<Long, String> map = new HashMap<Long, String>();
+		HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para manter a ordem de insercao
 		if (meuAtributoSet != null)
 			for (SrAtributo att : meuAtributoSet) {
 				map.put(att.tipoAtributo.idTipoAtributo, att.valorAtributo);

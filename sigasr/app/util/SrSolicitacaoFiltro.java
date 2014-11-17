@@ -36,6 +36,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public boolean naoDesignados;
 
+	public Long idNovoAtributo;
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SrSolicitacao> buscar() throws Exception {
 		StringBuffer query = new StringBuffer(" from SrSolicitacao sol where ");
@@ -155,5 +157,11 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			}
 		}
 		return tiposAtributosConsulta;
+	}
+	
+	public List<SrTipoAtributo> itensDisponiveis(List<SrTipoAtributo> tiposAtributosDisponiveis, SrTipoAtributo tipoAtributo) {
+		ArrayList<SrTipoAtributo> arrayList = new ArrayList<SrTipoAtributo>(tiposAtributosDisponiveis);
+		arrayList.add(tipoAtributo);
+		return arrayList;
 	}
 }

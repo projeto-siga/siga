@@ -11,6 +11,8 @@
 	}
 	
 	$(document).ready(function() {
+		$("#ddlNovoAtributoContainer").hide();
+		
 		/* Table initialization */
 		var table = $('#solicitacoes_table')
 			.on('draw.dt', function() {
@@ -137,52 +139,29 @@
     }
 
     function adicionarFiltroAtributo() {
-        var atributosDisponiveis = construirAtributosDisponiveis(),
-        	select = construirSelectAtributosDisponiveis(atributosDisponiveis);
+		$("#ddlNovoAtributoContainer").show();
+    } 
 
-		
-		$("#ddlNovoAtributoContainer").append(select);
-
-		select.on('change', function() {
-			PassAjaxResponseToFunction('@{Application.tipoAtributo()}?tipoAtributoId=' + select.val(), 'carregouCampoAtributo', null, false, null);
-		});
+    function removerFiltroAtributo(input) {
+        $(input).parent('td').parent('tr').remove();
+        carregarCampoParaTipoAtributo();
     }
 
-    function construirSelectAtributosDisponiveis(atributosDisponiveis) {
-    	var select = $('<select>');
-		select.append('<option value="">---</option>');
-
-		for(var i = 0; i < atributosDisponiveis.length; i++) {
-			var atributoAtual = atributosDisponiveis[i], 
-				option = $('<option>');
-
-			option.html(atributoAtual.nome);
-			option.val(atributoAtual.idTipoAtributo);
-
-			select.append(option);
-		}
-		return select;
+    function carregarCampoParaTipoAtributo(select) {
+		var params = select ? ('filtro.atributoMap[' + select.val() + "]=&") : '';
+		
+		$('#atributos .valoresAtribudos').find('input,select').each(function() {
+		  params += $(this).attr('name') + '=' + $(this).val() + '&';  
+		});
+		PassAjaxResponseToFunction('@{Application.exibirAtributosConsulta()}?' + params, 'carregouCampoAtributo', null, false, null);
     }
     
-	function construirAtributosDisponiveis() {
-		var atributosDisponiveis = [];
-
-		#{list items:tiposAtributosDisponiveis, as:'tipoAtributo'}
-			var atributo = {};
-			atributo.nome = '${tipoAtributo.nomeTipoAtributo}';
-			atributo.idTipoAtributo = '${tipoAtributo.idTipoAtributo}';
-			atributosDisponiveis.push(atributo);
-		#{/list}
-			
-		return atributosDisponiveis;
-	}
-		
 	function carregouCampoAtributo(response, param) {
-		var div = document.getElementById('ddlNovoAtributoContainer');
+		var div = document.getElementById('atributos');
 		div.innerHTML = response;
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
-		   eval(scripts[i].text);  
+		   eval(scripts[i].text);
 	}
 </script>
 
@@ -361,24 +340,9 @@
 								id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="100"></input>
 							</td>
 						</tr>
-						<tr id="atributos">
-							<td>Atributos</td>
-							<td>
-								#{include 'Application/exibirAtributosConsulta.html' /}
-							</td>
-						</tr>
-						<tr>
-							<td>
-							</td>
-							<td>
-								<div id="ddlNovoAtributoContainer">
-								</div>
-								
-								<div id="btnAdicionarAtributo">
-									<input type="button" onclick="adicionarFiltroAtributo()" class="gt-btn-medium gt-btn-left" value="Adicionar"/>
-								</div>
-							</td>
-						</tr>
+						
+						#{include 'Application/exibirAtributosConsulta.html' /}
+							
 						<tr>
 							<td colspan="2"><input type="submit" value="Buscar" class="gt-btn-medium gt-btn-left" /></td>
 						</tr>

@@ -176,6 +176,23 @@ public class Application extends SigaApplication {
 		render(solicitacao);
 	}
 
+	public static void exibirAtributosConsulta(SrSolicitacaoFiltro filtro) throws Exception {
+		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		render(filtro, tiposAtributosDisponiveisAdicao);
+	}
+
+	public static List<SrTipoAtributo> tiposAtributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
+		List<SrTipoAtributo> listaAtributosAdicao = new ArrayList<SrTipoAtributo>();
+		HashMap<Long, String> atributoMap = filtro.getAtributoMap();
+
+		for (SrTipoAtributo srTipoAtributo : SrTipoAtributo.listar()) {
+			if (!atributoMap.containsKey(srTipoAtributo.idTipoAtributo)) {
+				listaAtributosAdicao.add(srTipoAtributo);
+			}
+		}
+		return listaAtributosAdicao;
+	}
+	
 	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
 			throws Exception {
 		if (solicitacao.getItensDisponiveis().contains(
@@ -463,20 +480,8 @@ public class Application extends SigaApplication {
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
 		
-		List<SrTipoAtributo> tiposAtributosDisponiveis = SrTipoAtributo.listar();
-		render(listaSolicitacao, tipos, marcadores, filtro, tiposAtributosDisponiveis);
-	}
-	
-	public static void tipoAtributo(Long tipoAtributoId) {
-		SrTipoAtributo tipoAtributo = (SrTipoAtributo) SrTipoAtributo.findById(tipoAtributoId);
-		
-		List<SrTipoAtributo> tiposAtributosDisponiveis = SrTipoAtributo.listar();
-		HashMap<Long, String> atributoMap = new HashMap<Long, String>();
-		for (SrTipoAtributo att : tiposAtributosDisponiveis) {
-			atributoMap.put(att.idTipoAtributo, new String());
-		}
-		SrSolicitacao solicitacao = new SrSolicitacao();
-		render(tipoAtributo, atributoMap, solicitacao);
+		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		render(listaSolicitacao, tipos, marcadores, filtro, tiposAtributosDisponiveisAdicao);
 	}
 	
 	public static void estatistica() throws Exception {

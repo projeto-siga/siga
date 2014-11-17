@@ -124,25 +124,13 @@
 		}
 		
 		// Delete Item Configuração
-	    $('#itemConfiguracao_table').on( 'click', 'a.itemConfiguracao_remove', function (e) {
-	        e.preventDefault();
-	 
-	        editor
-	            .title( 'Edit record' )
-	            .message( "Are you sure you wish to delete this row?" )
-	            .buttons( { "label": "Delete", "fn": function () { editor.submit() } } )
-	            .remove( $(this).closest('tr') );
-	    } );
+		$('#itemConfiguracao_table tbody').on('click', 'a.itemConfiguracao_remove', function () {
+			itemConfiguracaoTable.api().row($(this).closest('tr')).remove().draw(false);
+		});
 		
-	 // Delete Ação
-	    $('#acao_table').on( 'click', 'a.acao_remove', function (e) {
-	        e.preventDefault();
-	 
-	        editor
-	            .title( 'Edit record' )
-	            .message( "Are you sure you wish to delete this row?" )
-	            .buttons( { "label": "Delete", "fn": function () { editor.submit() } } )
-	            .remove( $(this).closest('tr') );
+	 	// Delete Ação
+	    $('#acao_table tbody').on( 'click', 'a.acao_remove', function () {
+	    	acaoTable.api().row($(this).closest('tr')).remove().draw(false);
 	    } );
 	});
 	
@@ -207,7 +195,7 @@
 		           	$("#itemConfiguracao_descricao").val(),
 		           	$("#itemConfiguracao_descricao").val(),
 		           	"",
-		           	"<a href=\"\" class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+		           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
 		itemConfiguracaoTable.api().row.add(row).draw();
         			
@@ -224,7 +212,7 @@
 		var row = [	$("#acao").val(),
         			$("#acao_sigla").val(),
         			$("#acao_descricao").val(),
-        			"<a href=\"\" class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
 		acaoTable.api().row.add(row).draw();
 		
@@ -350,7 +338,7 @@
 							<td>${item?.titulo}</td>
 							<td>${item?.descricao }</td>
 							<td>${item?.descricaoSimilaridade }</td>
-							<td><a href="" class="itemConfiguracao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
+							<td><a class="itemConfiguracao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
 						</tr>
 						#{/list}
 					</tbody>
@@ -382,7 +370,7 @@
 							<td>${acao?.id }</td>
 							<td>${acao?.sigla}</td>
 							<td>${acao?.descricao }</td>
-							<td><a href="" class="acao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
+							<td><a class="acao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
 						</tr>
 						#{/list}
 					</tbody>

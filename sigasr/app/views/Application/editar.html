@@ -156,6 +156,7 @@
 	// Recebe notificacao de alteracao em campo que eh atributo
 	function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl, teste) {
 		var label = $(campoRef).prev('label').html().trim();
+
 		notificarCampoMudou(campoRef, label, optionVl);
 		carregarSolRelacionadas();
 	}
@@ -276,7 +277,7 @@
 				atrClass = '.' + inputAtributo.className.split(' ')[0];
 				atrHtml = labelAtributo.innerHTML + ' - ' + inputAtributo.value;
 				atrName = inputAtributo.name;
-				
+
 				// Se for select, busca pelo atributo selecionado
 				if (inputAtributo.tagName == 'SELECT') {
 					atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();

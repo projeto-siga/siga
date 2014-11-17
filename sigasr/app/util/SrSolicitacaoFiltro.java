@@ -2,10 +2,12 @@ package util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import models.SrAtributo;
 import models.SrSolicitacao;
+import models.SrTipoAtributo;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -17,6 +19,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private static final String AND = " AND ";
 
 	public boolean pesquisar = false;
 
@@ -113,12 +117,19 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		StringBuffer subqueryAtributo = new StringBuffer();
 		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
-			SrAtributo att = meuAtributoSet.get(0);
-			subqueryAtributo.append(" and att.tipoAtributo.idTipoAtributo = "
-					+ att.tipoAtributo.idTipoAtributo);
-			if (att.valorAtributo != null && !att.valorAtributo.equals(""))
-				subqueryAtributo.append(" and att.valorAtributo = '"
-						+ att.valorAtributo + "' ");
+			subqueryAtributo.append(" and (");
+
+			for (SrAtributo att : meuAtributoSet) {
+				subqueryAtributo.append("(");
+				subqueryAtributo.append(" att.tipoAtributo.idTipoAtributo = " + att.tipoAtributo.idTipoAtributo);
+				if (att.valorAtributo != null && !att.valorAtributo.equals("")) {
+					subqueryAtributo.append(" and att.valorAtributo = '" + att.valorAtributo + "' ");
+				}
+				subqueryAtributo.append(")");
+				subqueryAtributo.append(AND);
+			}
+			subqueryAtributo.setLength(subqueryAtributo.length() - AND.length());
+			subqueryAtributo.append(" )");
 		}
 
 		if (subqueryAtributo.length() > 0) {
@@ -133,5 +144,16 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				.getResultList();
 
 		return listaRetorno;
+	}
+	
+	public List<SrTipoAtributo> getTiposAtributosConsulta() {
+		List<SrTipoAtributo> tiposAtributosConsulta = new ArrayList<SrTipoAtributo>();
+		
+		if (meuAtributoSet != null) {
+			for (SrAtributo srAtributo : meuAtributoSet) {
+				tiposAtributosConsulta.add(srAtributo.tipoAtributo);
+			}
+		}
+		return tiposAtributosConsulta;
 	}
 }

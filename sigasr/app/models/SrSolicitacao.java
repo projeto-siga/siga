@@ -130,8 +130,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_SOLICITACAO_PAI")
 	public SrSolicitacao solicitacaoPai;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
+//	@ManyToOne
+//	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
+	@Transient
 	public SrSolicitacao solicitacaoJuntada;
 
 	@Enumerated
@@ -214,7 +215,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
-	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
+	@Transient
+//	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
 	protected Set<SrSolicitacao> meuSolicitacaoJuntadasSet;
 
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
@@ -622,7 +624,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public List<SrTipoAtributo> getTiposAtributoAssociados() throws Exception {
 		return getTiposAtributoAssociados(null);
 	}
-
+	
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
@@ -640,9 +642,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					map.put(tipo.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
+		if (mock) {
+			return SrTipoAtributo.listar();
+		}
 		return listaFinal;
 	}
-	
+
+	@Transient
+	public boolean mock;
+
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
@@ -693,12 +701,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// mandar criar os atributos, caso se quisesse permitir um
 	// solicitacao.getAtributoSet().put...
 	public void setAtributoMap(HashMap<Long, String> atributos) {
-		meuAtributoSet = new ArrayList<SrAtributo>();
-		for (Long idTipoAtt : atributos.keySet()) {
-			SrTipoAtributo tipoAtt = SrTipoAtributo.findById(idTipoAtt);
-			SrAtributo att = new SrAtributo(tipoAtt, atributos.get(idTipoAtt),
-					this);
-			meuAtributoSet.add(att);
+		if (atributos != null) {
+			meuAtributoSet = new ArrayList<SrAtributo>();
+			for (Long idTipoAtt : atributos.keySet()) {
+				SrTipoAtributo tipoAtt = SrTipoAtributo.findById(idTipoAtt);
+				SrAtributo att = new SrAtributo(tipoAtt, atributos.get(idTipoAtt), this);
+				meuAtributoSet.add(att);
+			}
 		}
 	}
 

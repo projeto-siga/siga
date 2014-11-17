@@ -1,10 +1,15 @@
 #{extends 'main.html' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
 
+	function notificarCampoAtributoMudou() {
+	}
+	
 	$(document).ready(function() {
 		/* Table initialization */
 		var table = $('#solicitacoes_table')
@@ -130,6 +135,55 @@
     	
         expandirContrairLinas(btn, expandir);
     }
+
+    function adicionarFiltroAtributo() {
+        var atributosDisponiveis = construirAtributosDisponiveis(),
+        	select = construirSelectAtributosDisponiveis(atributosDisponiveis);
+
+		
+		$("#ddlNovoAtributoContainer").append(select);
+
+		select.on('change', function() {
+			PassAjaxResponseToFunction('@{Application.tipoAtributo()}?tipoAtributoId=' + select.val(), 'carregouCampoAtributo', null, false, null);
+		});
+    }
+
+    function construirSelectAtributosDisponiveis(atributosDisponiveis) {
+    	var select = $('<select>');
+		select.append('<option value="">---</option>');
+
+		for(var i = 0; i < atributosDisponiveis.length; i++) {
+			var atributoAtual = atributosDisponiveis[i], 
+				option = $('<option>');
+
+			option.html(atributoAtual.nome);
+			option.val(atributoAtual.idTipoAtributo);
+
+			select.append(option);
+		}
+		return select;
+    }
+    
+	function construirAtributosDisponiveis() {
+		var atributosDisponiveis = [];
+
+		#{list items:tiposAtributosDisponiveis, as:'tipoAtributo'}
+			var atributo = {};
+			atributo.nome = '${tipoAtributo.nomeTipoAtributo}';
+			atributo.idTipoAtributo = '${tipoAtributo.idTipoAtributo}';
+			atributosDisponiveis.push(atributo);
+		#{/list}
+			
+		return atributosDisponiveis;
+	}
+		
+	function carregouCampoAtributo(response, param) {
+		var div = document.getElementById('ddlNovoAtributoContainer');
+		div.innerHTML = response;
+		var scripts = div.getElementsByTagName("script");
+		for(var i=0;i<scripts.length;i++)  
+		   eval(scripts[i].text);  
+	}
 </script>
 
 	<style>
@@ -307,9 +361,26 @@
 								id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="100"></input>
 							</td>
 						</tr>
+						<tr id="atributos">
+							<td>Atributos</td>
+							<td>
+								#{include 'Application/exibirAtributosConsulta.html' /}
+							</td>
+						</tr>
 						<tr>
-							<td colspan="2"><input type="submit" value="Buscar"
-								class="gt-btn-medium gt-btn-left" /></td>
+							<td>
+							</td>
+							<td>
+								<div id="ddlNovoAtributoContainer">
+								</div>
+								
+								<div id="btnAdicionarAtributo">
+									<input type="button" onclick="adicionarFiltroAtributo()" class="gt-btn-medium gt-btn-left" value="Adicionar"/>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2"><input type="submit" value="Buscar" class="gt-btn-medium gt-btn-left" /></td>
 						</tr>
 				</table>
 			</form>

@@ -60,7 +60,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_ACAO")
 	public SrAcao acao;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name="SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
 	public List<SrAcao> acoesSet;
 

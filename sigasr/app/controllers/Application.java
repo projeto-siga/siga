@@ -149,8 +149,11 @@ public class Application extends SigaApplication {
 		render(solicitacao.deduzirLocalRamalEMeioContato());
 	}
 	
-	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean carregarLotaSolicitante) 
+	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoMap, boolean carregarLotaSolicitante) 
 			throws Exception{
+		
+		solicitacao.setAtributoMap(atributoMap);
+		
 		if(carregarLotaSolicitante){
 			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
 			solicitacao.solicitante = null;
@@ -169,6 +172,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
+		solicitacao.mock = true;
 		render(solicitacao);
 	}
 
@@ -359,8 +363,10 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao, long dtIniEdicao) throws Exception {
+	public static void gravar(SrSolicitacao solicitacao, HashMap<Long, String> atributoMap, long dtIniEdicao) throws Exception {
         solicitacao.dtIniEdicao = new Date(dtIniEdicao);
+        solicitacao.setAtributoMap(atributoMap);
+        
 		if(!solicitacao.rascunho)
         	validarFormEditar(solicitacao);
         
@@ -435,9 +441,7 @@ public class Application extends SigaApplication {
 	
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
-
 		List<SrSolicitacao> list;
-
 		if (filtro.pesquisar) {
 			list = filtro.buscar();
 		} else {
@@ -458,8 +462,21 @@ public class Application extends SigaApplication {
 			else
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
-
-		render(listaSolicitacao, tipos, marcadores, filtro);
+		
+		List<SrTipoAtributo> tiposAtributosDisponiveis = SrTipoAtributo.listar();
+		render(listaSolicitacao, tipos, marcadores, filtro, tiposAtributosDisponiveis);
+	}
+	
+	public static void tipoAtributo(Long tipoAtributoId) {
+		SrTipoAtributo tipoAtributo = (SrTipoAtributo) SrTipoAtributo.findById(tipoAtributoId);
+		
+		List<SrTipoAtributo> tiposAtributosDisponiveis = SrTipoAtributo.listar();
+		HashMap<Long, String> atributoMap = new HashMap<Long, String>();
+		for (SrTipoAtributo att : tiposAtributosDisponiveis) {
+			atributoMap.put(att.idTipoAtributo, new String());
+		}
+		SrSolicitacao solicitacao = new SrSolicitacao();
+		render(tipoAtributo, atributoMap, solicitacao);
 	}
 	
 	public static void estatistica() throws Exception {

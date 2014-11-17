@@ -240,15 +240,7 @@
                 	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].numFatorMultiplicacao=' + jDivsF[1].innerHTML;
        	 	});
             
-            $.ajax({
-            	type: "POST",
-            	url: "@{Application.gravarItem()}",
-            	data: params,
-            	dataType: "text",
-            	success: function() {
-            		location.href = "@{Application.listarItem()}?false";
-            	}
-           	});
+            location.href = "@{Application.gravarItem()}?" + params;
         });
 	});
 </script>

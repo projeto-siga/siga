@@ -26,7 +26,7 @@ GET     /public/                            staticDir:public
 
 *		/item/editar/{id}					Application.editarItem
 *		/item/editar						Application.editarItem
-POST	/item/gravar						Application.gravarItem
+*		/item/gravar						Application.gravarItem
 *		/item/listar						Application.listarItem
 *		/item/selecionar					Application.selecionarItem
 *		/item/buscar						Application.buscarItem

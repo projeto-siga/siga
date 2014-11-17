@@ -94,3 +94,90 @@ alter table SR_LISTA_CONFIGURACAO
     minextents 1
     maxextents unlimited
   );
+
+-- OSI_FS0004 - Item 34 Criando tela de gerenciamento de equipe
+-- Create table
+create table SR_EQUIPE
+(
+  ID_EQUIPE      NUMBER(19) not null,
+  ID_LOTA_EQUIPE NUMBER(19) not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table SR_EQUIPE
+  add constraint PK_SR_EQUIPE primary key (ID_EQUIPE)
+  using index 
+  tablespace KDB1
+  pctfree 10
+  initrans 2
+  maxtrans 255;
+alter table SR_EQUIPE
+  add constraint FK_EQUIPE_LOTACAO foreign key (ID_LOTA_EQUIPE)
+  references CORPORATIVO.DP_LOTACAO (ID_LOTACAO);
+
+-- Create table
+create table SR_EXCECAO_HORARIO
+(
+  ID_EXCECAO_HORARIO NUMBER(19) not null,
+  ID_EQUIPE          NUMBER(19) not null,
+  DIA_SEMANA         NUMBER(1),
+  DT_ESPECIFICA      TIMESTAMP(6),
+  HORA_INI           TIMESTAMP(6) not null,
+  HORA_FIM           TIMESTAMP(6) not null,
+  INTER_INI          TIMESTAMP(6) not null,
+  INTER_FIM          TIMESTAMP(6) not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table SR_EXCECAO_HORARIO
+  add constraint PF_EXCECAO_HORARIO primary key (ID_EXCECAO_HORARIO)
+  using index 
+  tablespace KDB1
+  pctfree 10
+  initrans 2
+  maxtrans 255;
+alter table SR_EXCECAO_HORARIO
+  add constraint FK_EX_HOR_EQUIPE foreign key (ID_EQUIPE)
+  references SR_EQUIPE (ID_EQUIPE);
+
+-- Create sequence 
+create sequence SR_EQUIPE_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+
+-- Create sequence 
+create sequence SR_EXCECAO_HORARIO_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+
+-- OSI_FS0004 - Item 37
+ALTER TABLE SR_SOLICITACAO 
+	ADD (
+		DESCR_CODIGO VARCHAR2(100 CHAR) 
+	);

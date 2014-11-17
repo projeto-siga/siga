@@ -122,6 +122,16 @@
 				"iDisplayLength": 3
 			});
 		}
+		
+		// Delete Item Configuração
+		$('#itemConfiguracao_table tbody').on('click', 'a.itemConfiguracao_remove', function () {
+			itemConfiguracaoTable.api().row($(this).closest('tr')).remove().draw(false);
+		});
+		
+	 	// Delete Ação
+	    $('#acao_table tbody').on( 'click', 'a.acao_remove', function () {
+	    	acaoTable.api().row($(this).closest('tr')).remove().draw(false);
+	    } );
 	});
 	
 	var jListasDesignacao = $("#listasDesignacao"),
@@ -158,17 +168,6 @@
 	    }
 	});
 	
-	$("[value='OkDesignacao']").click(function(){
-	    var jForm = $("form"),
-	    	params = jForm.serialize();
-	    jListasDesignacao.find("li").each(function(i){
-	    	var jDivs=$(this).find("span");
-	    	params += '&designacao.listaConfiguracaoSet[' + i + '].idLista=' + jDivs[1].id;
-	    });
-	    
-	    location.href = '@{Application.gravarDesignacao()}?' + params;
-	});
-	
 	$("#modalOkLista").click(function(){
 		var acaoListaDesignacao = jDialogDesignacao.data('acaoListaDesignacao'),
 	  		jTipoEscolhidoDesignacao = jListasDesignacaoSelecionada.find("option:selected");
@@ -195,7 +194,8 @@
 		           	$("#itemConfiguracao_sigla").val(),
 		           	$("#itemConfiguracao_descricao").val(),
 		           	$("#itemConfiguracao_descricao").val(),
-		           	''];
+		           	"",
+		           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
 		itemConfiguracaoTable.api().row.add(row).draw();
         			
@@ -211,7 +211,8 @@
 	function inserirAcao() {
 		var row = [	$("#acao").val(),
         			$("#acao_sigla").val(),
-        			$("#acao_descricao").val()];
+        			$("#acao_descricao").val(),
+        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
 		acaoTable.api().row.add(row).draw();
 		
@@ -226,12 +227,8 @@
 </script>
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+	<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
 	<div>
-		<div class="gt-form-row gt-width-100">
-			<input id="idConfiguracao" type="hidden" name="idConfiguracao" value="${idConfiguracao}">
-			<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram
-				preenchidos.</p>
-		</div>
 		<div class="gt-form-row box-wrapper">
 			<div id="divSolicitante" class="box box-left gt-width-50">
 				<label>Solicitante</label>
@@ -329,6 +326,7 @@
 							<th>Titulo</th>
 							<th>Descrição</th>
 							<th>Itens Similares</th>
+							<th></th>
 						</tr>
 					</thead>
 					
@@ -337,9 +335,10 @@
 						<tr>
 							<td>${item?.id }</td>
 							<td>${item?.sigla}</td>
-							<td>${item?.titulo}</td>
+							<td>${item?.tituloItemConfiguracao}</td>
 							<td>${item?.descricao }</td>
 							<td>${item?.descricaoSimilaridade }</td>
+							<td><a class="itemConfiguracao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
 						</tr>
 						#{/list}
 					</tbody>
@@ -360,7 +359,8 @@
 						<tr>
 							<th>ID</th>
 							<th>Sigla</th>
-							<th>Descrição</th>
+							<th>Título</th>
+							<th></th>
 						</tr>
 					</thead>
 					
@@ -369,7 +369,8 @@
 						<tr>
 							<td>${acao?.id }</td>
 							<td>${acao?.sigla}</td>
-							<td>${acao?.descricao }</td>
+							<td>${acao?.tituloAcao }</td>
+							<td><a class="acao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
 						</tr>
 						#{/list}
 					</tbody>
@@ -481,15 +482,14 @@
 		<label>Priorização</label>
 		<div class="gt-form-row">
 			<label>Lista de Prioridade</label>
-			<ul id="listasDesignacao" style="color: #365b6d">
-			</ul>
+			<ul id="listasDesignacao" style="color: #365b6d"></ul>
 			<input type="button" value="Incluir" id="botaoIncluirDesignacaoLista"
                       class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-           </div>
+		</div>
 		
 		<div class="gt-form-row">
 			<div class="gt-form-row">
-				<a href="javascript: inserirDesignacao()" class="gt-btn-medium gt-btn-left">Ok</a>
+				<a href="javascript: gravarDesignacao()" class="gt-btn-medium gt-btn-left">Ok</a>
 				<a href="javascript: designacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 				#{if idConfiguracao} 
 					<input type="button" value="Desativar"
@@ -497,6 +497,11 @@
 						onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${idConfiguracao}'" />
 				#{/if}
 			</div>
+		</div>
+		
+		<div class="gt-form-row gt-width-100">
+			<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram
+				preenchidos.</p>
 		</div>
 	</div>
 </div>

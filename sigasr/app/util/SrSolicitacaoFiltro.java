@@ -35,14 +35,42 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public DpLotacao lotaAtendente;
 
 	public boolean naoDesignados;
+	
+	public boolean apenasFechados;
 
 	public Long idNovoAtributo;
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SrSolicitacao> buscar() throws Exception {
-		StringBuffer query = new StringBuffer(" from SrSolicitacao sol where ");
-		query.append(" sol.hisDtFim is null ");
+		String query = montarBusca(" from SrSolicitacao sol where ");
 
+		List listaRetorno = JPA
+				.em()
+				.createQuery( query )
+				.getResultList();
+
+		return listaRetorno;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> buscarSimplificado() throws Exception{
+		String query = montarBusca("select sol.idSolicitacao, sol.descrSolicitacao, sol.codigo, item.tituloItemConfiguracao"
+				+ " from SrSolicitacao sol inner join sol.itemConfiguracao as item where ");
+		
+		List<Object[]> listaRetorno =  JPA
+				.em()
+				.createQuery( query )
+				.setMaxResults(10)
+				.getResultList();
+		
+		return listaRetorno;
+	}
+	
+	private String montarBusca(String queryString) {
+		
+		StringBuffer query = new StringBuffer(queryString);
+		query.append(" sol.hisDtFim is null ");
+		
 		if (cadastrante != null)
 			query.append(" and sol.cadastrante.idPessoaIni = "
 					+ cadastrante.getIdInicial());
@@ -65,16 +93,16 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and sol.tendencia = " + tendencia.ordinal());
 		if (gravidade != null && gravidade.nivelGravidade > 0)
 			query.append(" and sol.gravidade = " + gravidade.ordinal());
-
+		
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
 			for (String s : descrSolicitacao.split(" "))
 				query.append(" and lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ");
 		}
-				
+		
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
 		final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
-
+		
 		if (dtIni != null)
 			try {
 				query.append(" and sol.dtReg >= to_date('"
@@ -83,7 +111,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			} catch (ParseException e) {
 				//
 			}
-
+		
 		if (dtFim != null)
 			try {
 				query.append(" and sol.dtReg <= to_date('"
@@ -92,7 +120,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			} catch (ParseException e) {
 				//
 			}
-
+		
 		StringBuffer subquery = new StringBuffer();
 		
 		if (situacao != null && situacao.getIdMarcador() != null
@@ -115,6 +143,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (subquery.length() > 0) {
 			subquery.insert(0, " and exists (from SrMarca situacao where situacao.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
 			subquery.append(" )");
+			query.append(subquery);
 		}
 		
 		StringBuffer subqueryAtributo = new StringBuffer();
@@ -133,19 +162,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			subqueryAtributo.setLength(subqueryAtributo.length() - AND.length());
 			subqueryAtributo.append(" )");
 		}
-
+		
 		if (subqueryAtributo.length() > 0) {
 			subqueryAtributo.insert(0, " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
 			subqueryAtributo.append(" )");
+			query.append(subqueryAtributo);
 		}
-
-		List listaRetorno = JPA
-				.em()
-				.createQuery(
-						query.toString() + subquery.toString() + subqueryAtributo.toString() + " order by sol.idSolicitacao desc")
-				.getResultList();
-
-		return listaRetorno;
+		
+		if (apenasFechados) {
+			query.append(" and not exists (from SrMovimentacao where tipoMov in (7,8) and solicitacao = sol.hisIdIni)");
+		}
+		
+		return query.append(" order by sol.idSolicitacao desc").toString();
 	}
 	
 	public List<SrTipoAtributo> getTiposAtributosConsulta() {

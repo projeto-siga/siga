@@ -197,6 +197,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
 
+	@Column(name = "DESCR_CODIGO")
+	public String codigo;
+
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrSolicitacao solicitacaoInicial;
@@ -352,23 +355,36 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	
 	public String getCodigo() {
+		return codigo;
+	}
 
-		if (isRascunho() || numSolicitacao == null)
-			return "TMPSR-" + idSolicitacao;
+	public void atualizarCodigo() {
+		if (isRascunho() || numSolicitacao == null) {
+			codigo = "TMPSR-" + idSolicitacao;
+			return;
+		}
 
-		if (solicitacaoPai != null)
-			return solicitacaoPai.getCodigo() + "." + getNumSequenciaString();
+		if (solicitacaoPai != null) {
+			codigo = solicitacaoPai.getCodigo() + "." + getNumSequenciaString();
+			return;
+		}
 
-		if (numSolicitacao == null)
-			return "";
+		if (numSolicitacao == null) {
+			codigo = "";
+			return;			
+		}
 
 		String numString = numSolicitacao.toString();
 
 		while (numString.length() < 5)
 			numString = "0" + numString;
 
-		return orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao()
+		codigo = orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao()
 				+ "/" + numString;
 	}
 
@@ -1349,8 +1365,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		super.salvar();
 
-		if (isRascunho())
+		if (isRascunho()) {
+			atualizarCodigo();
+			save();
 			rascunho(lotaCadastrante, cadastrante);
+		}
 
 		// DB1: Caso seja cadastro, a lista estará com tamanho zero. Caso seja
 		// edição de rascunho em que o usuário estiver
@@ -1416,6 +1435,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (numSolicitacao == null)
 			if (!isRascunho())
 				numSolicitacao = getProximoNumero();
+				atualizarCodigo();
 
 		if (gravidade == null)
 			gravidade = SrGravidade.NORMAL;
@@ -1425,7 +1445,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
-
+		
 		// só valida o atendente caso não seja rascunho
 		if (!isRascunho() && !temAtendenteDesignado()
 				&& !temPreAtendenteDesignado())
@@ -2336,5 +2356,4 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		this.stringDtMeioContato = stringDtMeioContato;
 	}
-
 }

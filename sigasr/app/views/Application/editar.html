@@ -231,6 +231,8 @@
 			var input = frm.find("[name='" +  $(this).attr('name') + "']");
 			params = params + input.attr('name') + '=' + input.val() + '&'
 		});
+		
+		params = params + 'solicitacao.apenasFechados' + '=' + $('#apenasFechados').val();
 		return params;
 	}
 		
@@ -524,7 +526,10 @@
 			<div class="gt-content-box gt-form" id="filtroSolicitacoes">
 				<label>Filtro</label>
 
-				<div id="filtro"></div>
+				<div id="filtro">
+					<span>#{checkbox name:'apenasFechados',
+					value:apenasFechados /} Apenas Fechados</span>
+				</div>
 
 				<div class="gt-content-box "
 					style="margin: 10px -16px -6px -16px; border-radius: 0 0 5px 5px !important;">

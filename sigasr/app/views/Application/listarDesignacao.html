@@ -75,7 +75,7 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [0, 1, 3, 5, 6, 7, 9, 11, 12, 13, 15, 16, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+				"targets": [0, 1, 3, 5, 6, 7, 11, 12, 13, 15, 16, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
 				"visible": false,
 				"searchable": false
 			},
@@ -137,49 +137,133 @@
 			designacaoJson = JSON.parse(itemArray[posDesignJson]);
 		else
 			designacaoJson = itemArray[posDesignJson];
-			
-		// cria os itens da lista de prioridade, e adiciona na tela
-		for (i = 0; i < designacaoJson.listaVO.length; i++) {
-			var lista = designacaoJson.listaVO[i];
-			
-			$("#listasDesignacao")[0].incluirItem(lista.idLista, lista.nomeLista, lista.idListaConfiguracao);
-		}
 		
-		// cria a lista de Itens de Configuração, e adiciona na tela
-		for (i = 0; i < designacaoJson.listaItemConfiguracaoVO.length; i++) {
-			var item = designacaoJson.listaItemConfiguracaoVO[i],
-				rowItem = [item.id, 
-				           item.sigla,
-				           item.titulo,
-				           item.descricao, 
-				           item.descricaoSimilaridade];
+		if (designacaoJson) {
 			
-			// Adiciona na tabela de Itens de Configuração
-			itemConfiguracaoTable.api().row.add(rowItem).draw();
-		}
-		
-		// cria a lista de ações, e adiciona na tela
-		for (i = 0; i < designacaoJson.listaAcaoVO.length; i++) {
-			var acao = designacaoJson.listaAcaoVO[i],
-				rowAcao = [acao.id,
-				           acao.sigla,
-				           acao.descricao];
+			if (designacaoJson.listaVO) {
+				// cria os itens da lista de prioridade, e adiciona na tela
+				for (i = 0; i < designacaoJson.listaVO.length; i++) {
+					var lista = designacaoJson.listaVO[i];
+					
+					$("#listasDesignacao")[0].incluirItem(lista.idLista, lista.nomeLista, lista.idListaConfiguracao);
+				}
+			}
 			
-			// Adiciona na tabela de Ações
-			acaoTable.api().row.add(rowAcao).draw();
+			if (designacaoJson.listaItemConfiguracaoVO) {
+				// cria a lista de Itens de Configuração, e adiciona na tela
+				for (i = 0; i < designacaoJson.listaItemConfiguracaoVO.length; i++) {
+					var item = designacaoJson.listaItemConfiguracaoVO[i],
+						rowItem = [item.id, 
+						           item.sigla,
+						           item.titulo,
+						           item.descricao, 
+						           item.descricaoSimilaridade,
+						           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+					
+					// Adiciona na tabela de Itens de Configuração
+					itemConfiguracaoTable.api().row.add(rowItem).draw();
+				}
+			}
+			
+			if (designacaoJson.listaAcaoVO) {
+				// cria a lista de ações, e adiciona na tela
+				for (i = 0; i < designacaoJson.listaAcaoVO.length; i++) {
+					var acao = designacaoJson.listaAcaoVO[i],
+						rowAcao = [acao.id,
+						           acao.sigla,
+						           acao.titulo,
+						           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+					
+					// Adiciona na tabela de Ações
+					acaoTable.api().row.add(rowAcao).draw();
+				}
+			}
 		}
 	}
 	
-	// Limpa alguns dados da tabela antes de renderiza-la.
-	function limparDadosTabela() {
+	// Limpa os dados da tela.
+	function limparDadosDesignacaoModal() {
+		// recupera as comboboxes
+		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
+		jComplexoCbb = document.getElementsByName("complexo")[0],
+		jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
+		jUnMedPreAtendimentoCbb = document.getElementsByName("unidadeMedidaPreAtendimento")[0],
+		jUnMedAtendimentoCbb = document.getElementsByName("unidadeMedidaAtendimento")[0],
+		jUnMedPosAtendimentoCbb = document.getElementsByName("unidadeMedidaPosAtendimento")[0],
+		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargo")[0];
+		
+		// resetando os valores das combos
+		jOrgaoUsuarioCbb.selectedIndex = 0;
+		jComplexoCbb.selectedIndex = 0;
+		jPesquisaSatisfacaoCbb.selectedIndex = 0;
+		jUnMedPreAtendimentoCbb.selectedIndex = 0;
+		jUnMedAtendimentoCbb.selectedIndex = 0;
+		jUnMedPosAtendimentoCbb.selectedIndex = 0;
+		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
+		
+		// limpando campos do componente pessoaLotaFuncCargoSelecao
+		$("#dpPessoa").val('');
+		$("#dpPessoa_descricao").val('');
+		$("#dpPessoa_sigla").val('');
+		$("#dpPessoaSpan").html('');
+		$("#lotacao").val('');
+		$("#lotacao_descricao").val('');
+		$("#lotacao_sigla").val('');
+		$("#lotacaoSpan").html('');
+		$("#funcaoConfianca").val('');
+		$("#funcaoConfianca_descricao").val('');
+		$("#funcaoConfianca_sigla").val('');
+		$("#funcaoConfiancaSpan").html('');
+		$("#cargo").val('');
+		$("#cargo_descricao").val('');
+		$("#cargo_sigla").val('');
+		$("#cargoSpan").html('');
+			
+		// limpando os valores dos demais campos
+		$("#acao").val('');
+		$("#acao_descricao").val('');
+		$("#acao_sigla").val('');
+		$("#acaoSpan").html('');
+		$("#atendente").val('');
+		$("#atendente_descricao").val('');
+		$("#atendente_sigla").val('');
+		$("#atendenteSpan").html('');
+		$("#preAtendente").val('');
+		$("#preAtendente_descricao").val('');
+		$("#preAtendente_sigla").val('');
+		$("#preAtendenteSpan").html('');
+		$("#posAtendente").val('');
+		$("#posAtendente_descricao").val('');
+		$("#posAtendente_sigla").val('');
+		$("#posAtendenteSpan").html('');
+		$("#equipeQualidade").val('');
+		$("#equipeQualidade_descricao").val('');
+		$("#equipeQualidade_sigla").val('');
+		$("#equipeQualidadeSpan").html('');
+		$("#slaPreAtendimentoQuantidade").val('');
+		$("#slaAtendimentoQuantidade").val('');
+		$("#slaPosAtendimentoQuantidade").val('');
+		$("#margemSeguranca").val('');
+		$("#checkdivulgarSLA")[0].checked = false;
+		$("#observacaoSLA").val('');
+		$("#checknotificarGestor")[0].checked = false;
+		$("#checknotificarSolicitante")[0].checked = false;
+		$("#checknotificarCadastrante")[0].checked = false;
+		$("#checknotificarInterlocutor")[0].checked = false;
+		$("#checknotificarAtendente")[0].checked = false;
+		$("#idConfiguracao").val('');
+		
 		itemConfiguracaoTable.api().clear().draw();
 		acaoTable.api().clear().draw();
 		removerItensListaPrioridade();
+		
+		// limpa as mensagens de erros
+		resetAllErrorMessage();
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
 	function atualizarDesignacaoModal(itemArray) {
-		limparDadosTabela();
+		limparDadosDesignacaoModal();
 		// ajusta os valores das colunas antes de abrir a tela
 		atualizarItensBooleanos(itemArray);
 		
@@ -255,6 +339,11 @@
 		return 0;
 	};
 	
+	function inserirDesignacao() {
+		limparDadosDesignacaoModal();
+		designacaoModalAbrir(false);
+	}
+	
 	function designacaoModalAbrir(isEdicao) {
 		isEditing = isEdicao;
 		
@@ -277,81 +366,10 @@
 	function designacaoModalFechar() {
 		isEditing = false;
 		$("#designacao_dialog").dialog("close");
-		
-		// recupera as comboboxes
-		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-		jComplexoCbb = document.getElementsByName("complexo")[0],
-		jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
-		jUnMedPreAtendimentoCbb = document.getElementsByName("unidadeMedidaPreAtendimento")[0],
-		jUnMedAtendimentoCbb = document.getElementsByName("unidadeMedidaAtendimento")[0],
-		jUnMedPosAtendimentoCbb = document.getElementsByName("unidadeMedidaPosAtendimento")[0],
-		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargo")[0];
-		
-		// resetando os valores das combos
-		jOrgaoUsuarioCbb.selectedIndex = 0;
-		jComplexoCbb.selectedIndex = 0;
-		jPesquisaSatisfacaoCbb.selectedIndex = 0;
-		jUnMedPreAtendimentoCbb.selectedIndex = 0;
-		jUnMedAtendimentoCbb.selectedIndex = 0;
-		jUnMedPosAtendimentoCbb.selectedIndex = 0;
-		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
-		
-		// limpando campos do componente pessoaLotaFuncCargoSelecao
-		$("#dpPessoa").val('');
-		$("#dpPessoa_descricao").val('');
-		$("#dpPessoa_sigla").val('');
-		$("#dpPessoaSpan").html('');
-		$("#lotacao").val('');
-		$("#lotacao_descricao").val('');
-		$("#lotacao_sigla").val('');
-		$("#lotacaoSpan").html('');
-		$("#funcaoConfianca").val('');
-		$("#funcaoConfianca_descricao").val('');
-		$("#funcaoConfianca_sigla").val('');
-		$("#funcaoConfiancaSpan").html('');
-		$("#cargo").val('');
-		$("#cargo_descricao").val('');
-		$("#cargo_sigla").val('');
-		$("#cargoSpan").html('');
-			
-		// limpando os valores dos demais campos
-		$("#acao").val('');
-		$("#acao_descricao").val('');
-		$("#acao_sigla").val('');
-		$("#acaoSpan").html('');
-		$("#atendente").val('');
-		$("#atendente_descricao").val('');
-		$("#atendente_sigla").val('');
-		$("#atendenteSpan").html('');
-		$("#preAtendente").val('');
-		$("#preAtendente_descricao").val('');
-		$("#preAtendente_sigla").val('');
-		$("#preAtendenteSpan").html('');
-		$("#posAtendente").val('');
-		$("#posAtendente_descricao").val('');
-		$("#posAtendente_sigla").val('');
-		$("#posAtendenteSpan").html('');
-		$("#equipeQualidade").val('');
-		$("#equipeQualidade_descricao").val('');
-		$("#equipeQualidade_sigla").val('');
-		$("#equipeQualidadeSpan").html('');
-		$("#slaPreAtendimentoQuantidade").val('');
-		$("#slaAtendimentoQuantidade").val('');
-		$("#slaPosAtendimentoQuantidade").val('');
-		$("#margemSeguranca").val('');
-		$("#checkdivulgarSLA")[0].checked = false;
-		$("#observacaoSLA").val('');
-		$("#checknotificarGestor")[0].checked = false;
-		$("#checknotificarSolicitante")[0].checked = false;
-		$("#checknotificarCadastrante")[0].checked = false;
-		$("#checknotificarInterlocutor")[0].checked = false;
-		$("#checknotificarAtendente")[0].checked = false;
-		$("#idConfiguracao").val('');
-		
-		limparDadosTabela();
+		limparDadosDesignacaoModal();
 	};
 	
-	function inserirDesignacao() {
+	function gravarDesignacao() {
 		// recupera as comboboxes
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
@@ -382,9 +400,12 @@
           			getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
           			getDescricaoFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
           			getSiglaFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
-          			$("#acao").val(),
-          			$("#acao_descricao").val(),
-          			$("#acao_sigla").val(),
+          			getDescricaoItemConfiguracao(),
+          			//$("#acao").val(), // Lista de item de configuração
+          			getDescricaoAcao(),
+		            //$("#acao_descricao").val(), // Lista de ação
+		            getDescricaoAcao(),
+          			//$("#acao_sigla").val(), // Lista de ação
           			$("#atendente").val(),
           			$("#atendente_descricao").val(),
           			$("#atendente_sigla").val(),
@@ -461,6 +482,34 @@
        	});
 	};
 	
+	function getDescricaoItemConfiguracao() {
+		var amount = itemConfiguracaoTable.fnGetData().length,
+			descricao = '';
+		
+		if (amount > 0) {
+			descricao = itemConfiguracaoTable.api().row(0).data()[2];
+			
+			if (amount > 1)
+				descricao = descricao + " ...";
+		}
+		
+		return descricao;
+	}
+	
+	function getDescricaoAcao() {
+		var amount = acaoTable.fnGetData().length,
+			descricao = '';
+	
+		if (amount > 0) {
+			descricao = acaoTable.api().row(0).data()[2];
+			
+			if (amount > 1)
+				descricao = descricao + " ...";
+		}
+		
+		return descricao;
+	}
+	
 	//Limpa as mensagens de campos obrigatórios.
 	function resetAllErrorMessage() {
 		document.getElementById("erroCamposObrigatorios").style.display="none";
@@ -490,23 +539,31 @@
     	// Percorre lista de Itens de Configuração
 		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
 			var rowValues = itemConfiguracaoTable.api().row(i).data();
-			listaItemConfiguracaoVO.push({
-				"id":rowValues[0], 
-				"sigla": rowValues[1], 
-				"titulo": rowValues[2], 
-				"descricao": rowValues[3], 
-				"descricaoSimilaridade": rowValues[4]
-			});
+			
+			// valida o item selecionado
+			if (rowValues) {
+				listaItemConfiguracaoVO.push({
+					"id":rowValues[0], 
+					"sigla": rowValues[1], 
+					"titulo": rowValues[2], 
+					"descricao": rowValues[3], 
+					"descricaoSimilaridade": rowValues[4]
+				});
+			}
 		});
 		
 		// Percorre lista de Ações
  		acaoTable.api().rows().indexes().each(function (i) {
  			var rowValues = acaoTable.api().row(i).data();
- 			listaAcaoVO.push({
- 				"id": rowValues[0],
- 				"sigla": rowValues[1],
- 				"descricao": rowValues[2]
- 			});
+ 			
+ 			// valida o item selecionado
+			if (rowValues) {
+				listaAcaoVO.push({
+	 				"id": rowValues[0],
+	 				"sigla": rowValues[1],
+	 				"titulo": rowValues[2]
+	 			});
+			}
  		});
 		
  		var designacaoJson = {
@@ -534,7 +591,8 @@
 			var rowValues = itemConfiguracaoTable.api().row(i).data();
 			
 			// Atualiza a string serializada
-	        params += '&designacao.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
+			if (rowValues)
+	        	params += '&designacao.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
 		});
 		
 		// Percorre lista de Ações
@@ -542,7 +600,8 @@
 			var rowValues = acaoTable.api().row(i).data();
 			
 			// Atualiza a string serializada
-	        params += '&designacao.acoesSet[' + i + '].idAcao=' + rowValues[0];
+			if (rowValues)
+				params += '&designacao.acoesSet[' + i + '].idAcao=' + rowValues[0];
 		});
 		
 		return params;
@@ -613,9 +672,6 @@
 			if (rowValues[3] != '' && rowValues[3] > 0)
 				params += '&designacao.complexo.idComplexo=' + rowValues[3];
 			
-			if (rowValues[9] != '')
-	            params += '&designacao.acao.id=' + rowValues[9];
-			
 			if (rowValues[12] != '')
 	            params += '&designacao.atendente.id=' + rowValues[12];
 			
@@ -656,7 +712,7 @@
 				params += '&designacao.observacaoSLA=' + rowValues[34];
 			
 			if (rowValues[42] != '' && rowValues[42] != undefined)
-				params += '&designacao.id=' + rowValues[42];
+				params += '&designacao.idConfiguracao=' + rowValues[42];
 			
 			// atualiza o solicitante
 			params += getDadosSolicitante(rowValues, i);
@@ -732,7 +788,7 @@
 						<th>ID Solicitante</th>
 						<th>Descr. Solicitante</th>
 						<th>Solicitante</th>
-						<th>ID Ação</th>
+						<th>Item Configuração</th>
 						<th>Ação</th>
 						<th>Sigla Ação</th>
 						<th>ID Atendente</th>
@@ -786,9 +842,9 @@
 						<td>${design.solicitante?.id }</td>
 						<td>${design.solicitante?.descricao }</td>
 						<td>${design.solicitante?.sigla}</td>
-						<td>${design.acao?.atual?.id }</td>
-						<td>${design.acao?.atual?.descricao }</td>
-						<td>${design.acao?.atual?.sigla }</td>
+						<td>${design.descrItemConfiguracaoAtual }</td>
+						<td>${design.descrAcaoAtual }</td>
+						<td>${design.descrAcaoAtual }</td>
 						<td>${design.atendente?.lotacaoAtual?.id }</td>
 						<td>${design.atendente?.lotacaoAtual?.nomeLotacao }</td>
 						<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td>
@@ -819,7 +875,7 @@
 						<td>${design.notificarAtendente}</td>
 						<td>${design.getSrConfiguracaoJson()}</td>
 						<td></td>
-						<td>${design.id}</td>
+						<td>${design.idConfiguracao}</td>
 						<th>${design.isHerdado}</th>
 						<th>${design.utilizarItemHerdado}</th>
 						<td></td>
@@ -831,7 +887,7 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-			<a href="javascript: designacaoModalAbrir(false)" class="gt-btn-medium gt-btn-left">Incluir</a>
+			<a href="javascript: inserirDesignacao()" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 	</div>
 </div>

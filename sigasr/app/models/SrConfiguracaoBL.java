@@ -79,20 +79,35 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.pesquisaSatisfacao == null)
 				return false;
 
-			if (!atributosDesconsiderados.contains(ACAO) && conf.acoesSet != null) {
+			if (!atributosDesconsiderados.contains(ACAO)
+					&& conf.acoesSet != null && conf.acoesSet.size() > 0) {
+				boolean acaoAtende = false;
 				for (SrAcao item : conf.acoesSet) {
-					if (filtro.acaoFiltro == null || (filtro.acaoFiltro != null 
-							&& !item.getAtual().isPaiDeOuIgualA(filtro.acaoFiltro)))
-						return false;
+					if (filtro.acaoFiltro != null
+							&& item.getAtual().isPaiDeOuIgualA(
+									filtro.acaoFiltro)) {
+						acaoAtende = true;
+						break;
+					}
 				}
+				if (!acaoAtende)
+					return false;
 			}
 			
-			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO) && conf.itemConfiguracaoSet != null) {
+			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO)
+					&& conf.itemConfiguracaoSet != null
+					&& conf.itemConfiguracaoSet.size() > 0) {
+				boolean itemAtende = false;
 				for (SrItemConfiguracao item : conf.itemConfiguracaoSet) {
-					if (filtro.itemConfiguracaoFiltro == null || (filtro.itemConfiguracaoFiltro != null 
-							&& !item.getAtual().isPaiDeOuIgualA(filtro.itemConfiguracaoFiltro)))
-						return false;
+					if (filtro.itemConfiguracaoFiltro != null
+							&& item.getAtual().isPaiDeOuIgualA(
+									filtro.itemConfiguracaoFiltro)){
+						itemAtende = true;
+						break;
+					}
 				}
+				if (!itemAtende)
+					return false;
 			}			
 			
 			if (!atributosDesconsiderados.contains(LISTA_PRIORIDADE)

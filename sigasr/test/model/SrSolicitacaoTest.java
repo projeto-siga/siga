@@ -111,7 +111,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		assertEquals(5, sol.getItensDisponiveis().size());
 
 		// Traz item designado e sua linhagem acima e abaixo
-		designTRF.itemConfiguracao = sysdoc();
+		//designTRF.itemConfiguracao = sysdoc();
 		designTRF.salvar();
 		apagaCacheDesignacao();
 		assertEquals(4, sol.getItensDisponiveis().size());
@@ -130,7 +130,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		// Nao traz nenhum, pois item escolhido esta fora do escopo da
 		// designacao
 		SrConfiguracao design = new SrConfiguracao();
-		design.itemConfiguracao = sysdoc();
+		//design.itemConfiguracao = sysdoc();
 		design.atendente = csis();
 		design.salvarComoDesignacao();
 		apagaCacheDesignacao();
@@ -150,7 +150,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		// nova design criada abaixo nao fica visivel por ser de menor
 		// prioridade do que a designacao anterior, que define item
 		SrConfiguracao design2 = new SrConfiguracao();
-		design2.acao = manterSoft();
+		//design2.acao = manterSoft();
 		design2.atendente = sesia();
 		design2.salvarComoDesignacao();
 		apagaCacheDesignacao();
@@ -161,7 +161,7 @@ public class SrSolicitacaoTest extends UnitTest {
 
 		// Cada acao com uma lotacao - design2 fica visivel por passar a ter
 		// especificidade maior
-		design2.itemConfiguracao = sigadoc();
+		//design2.itemConfiguracao = sigadoc();
 		design2.salvar();
 		apagaCacheDesignacao();
 		acoesELotas = sol.getAcoesDisponiveisComAtendente();
@@ -175,13 +175,13 @@ public class SrSolicitacaoTest extends UnitTest {
 
 		SrConfiguracao design = new SrConfiguracao();
 		design.tipoAtributo = attPrazo();
-		design.itemConfiguracao = sysdoc();
+		//design.itemConfiguracao = sysdoc();
 		design.salvarComoAssociacaoTipoAtributo();
 		apagaCacheAssociacao();
 
 		SrConfiguracao design2 = new SrConfiguracao();
 		design2.tipoAtributo = attNumDoc();
-		design2.acao = manterSoft();
+		//design2.acao = manterSoft();
 		design2.salvarComoAssociacaoTipoAtributo();
 		apagaCacheAssociacao();
 
@@ -339,7 +339,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		assertTrue(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
 				sesia()));
 
-		sol.terminarPendencia(sesia(), eeh(), "", SrTipoMotivoPendencia.AGUARDANDO_PRIORIZACAO, 0L);
+		//sol.terminarPendencia(sesia(), eeh(), "", SrTipoMotivoPendencia.AGUARDANDO_PRIORIZACAO, 0L);
 		assertFalse(sol.isPendente());
 		assertFalse(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
 				sesia()));
@@ -381,15 +381,15 @@ public class SrSolicitacaoTest extends UnitTest {
 		assertEquals(1, sol.getListasDisponiveisParaInclusao(sesia(), null).size());
 
 		// Incluir as solicitacoes na lista e checar ordem
-		sol.associarLista(lista, eeh(), sesia());
-		sol2.associarLista(lista, eeh(), sesia());
-		sol3.associarLista(lista, eeh(), sesia());
+		sol.incluirEmLista(lista, eeh(), sesia());
+		sol2.incluirEmLista(lista, eeh(), sesia());
+		sol3.incluirEmLista(lista, eeh(), sesia());
 		assertEquals(1, sol.getPrioridadeNaLista(lista));
 		assertEquals(2, sol2.getPrioridadeNaLista(lista));
 		assertEquals(3, sol3.getPrioridadeNaLista(lista));
 
 		// Tirando a sol n�1, a 2 e 3 mudam de ordem para ocupar a vaga
-		sol.desassociarLista(lista, eeh(), sesia());
+		sol.retirarDeLista(lista, eeh(), sesia());
 		assertEquals(1, sol2.getPrioridadeNaLista(lista));
 		assertEquals(2, sol3.getPrioridadeNaLista(lista));
 		assertFalse(sol.isEmLista(lista));
@@ -402,15 +402,15 @@ public class SrSolicitacaoTest extends UnitTest {
 		lista.listaInicial.refresh();
 		assertTrue(sol2.isEmLista(lista));
 		assertTrue(sol2.isEmLista(lista.listaInicial));
-		sol3.desassociarLista(lista, eeh(), sesia());
+		sol3.retirarDeLista(lista, eeh(), sesia());
 		assertEquals(1, sol2.getPrioridadeNaLista(lista));
 		assertFalse(sol3.isEmLista(lista));
 
 		// reincluir as solicita��es retiradas (fica 2-1-3), mandar reordenar
 		// pra 3-1-2 e checar ordem, conferindo se a n� 1 ficou sem mov
 		// de prioriza��o, visto que n�o saiu da posi��o
-		sol.associarLista(lista, eeh(), sesia());
-		sol3.associarLista(lista, eeh(), sesia());
+		sol.incluirEmLista(lista, eeh(), sesia());
+		sol3.incluirEmLista(lista, eeh(), sesia());
 		lista.priorizar(eeh(), sesia(),
 				Arrays.asList(new SrSolicitacao[] { sol3, sol, sol2 }));
 		assertEquals(1, sol3.getPrioridadeNaLista(lista));

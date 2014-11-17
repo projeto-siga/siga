@@ -428,10 +428,10 @@ public class SrConfiguracao extends CpConfiguracao {
 		this.listaConfiguracaoSet = listaConfiguracaoSet;
 	}
 	
-	public String getItemConfiguracaoAtual() {
+	public String getDescrItemConfiguracaoAtual() {
 		String descrItemConfiguracao = null;
 		if (this.itemConfiguracaoSet != null && this.itemConfiguracaoSet.size() > 0) {
-			SrItemConfiguracao conf = this.itemConfiguracaoSet.get(0);
+			SrItemConfiguracao conf = this.itemConfiguracaoSet.get(this.itemConfiguracaoSet.size() -1);
 			
 			if (conf != null) {
 				descrItemConfiguracao = conf.getAtual().tituloItemConfiguracao;
@@ -448,15 +448,15 @@ public class SrConfiguracao extends CpConfiguracao {
 		return descrItemConfiguracao;
 	}
 	
-	public String getAcaoAtual() {
+	public String getDescrAcaoAtual() {
 		String descrAcao = null;
 		if (this.acoesSet != null && this.acoesSet.size() > 0) {
-			SrAcao acao = this.acoesSet.get(0);
+			SrAcao acao = this.acoesSet.get(this.acoesSet.size() -1);
 			
 			if (acao != null) {
-				descrAcao = acao.getAtual().descrAcao;
+				descrAcao = acao.getAtual().tituloAcao;
 				
-				if (this.itemConfiguracaoSet.size() > 1)
+				if (this.acoesSet.size() > 1)
 					if (descrAcao != null)
 						descrAcao = descrAcao.concat(" ...");
 					else

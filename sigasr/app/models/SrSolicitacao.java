@@ -131,9 +131,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_SOLICITACAO_PAI")
 	public SrSolicitacao solicitacaoPai;
 
-	@Transient
-//	@ManyToOne
-//	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
+	@ManyToOne
+	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
 	public SrSolicitacao solicitacaoJuntada;
 
 	@Enumerated
@@ -219,8 +218,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
-	@Transient
-//	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
 	protected Set<SrSolicitacao> meuSolicitacaoJuntadasSet;
 
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam

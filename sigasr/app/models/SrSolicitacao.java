@@ -218,7 +218,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
-	@Transient
 	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
 	protected Set<SrSolicitacao> meuSolicitacaoJuntadasSet;
 

@@ -2,12 +2,12 @@
 
 <tr id="atributos">
 	<td>Atributos</td>
-	<td>
+	<td style="padding-left:0px">
 		<table>
 			#{list items:filtro.tiposAtributosConsulta, as:'tipoAtributo'}
 				<tr>
 					<td>
-						#{select name:'name_['+tipoAtributo.idTipoAtributo+']', value:tipoAtributo.idTipoAtributo, onchange : 'carregarCampoParaTipoAtributo($(this))' }
+						#{select name:'name_['+tipoAtributo.idTipoAtributo+']', value:tipoAtributo.idTipoAtributo, onchange : 'alterarCampoParaTipoAtributo($(this))' }
 							#{list items:filtro.itensDisponiveis(tiposAtributosDisponiveisAdicao, tipoAtributo), as: 'tipoAtributoDisponivel' }
 								#{option tipoAtributoDisponivel.idTipoAtributo}
 									${tipoAtributoDisponivel.nomeTipoAtributo}
@@ -81,7 +81,7 @@
 					<td>
 						<img src="/siga/css/famfamfam/icons/bullet_toggle_minus.png" 
 							width="20px"
-							onclick="removerFiltroAtributo(this)" alt="Adicionar filtro de atributo"></img>
+							onclick="removerFiltroAtributo(this)" title="Remover atributo dos filtros"></img>
 					</td>
 				</tr>
 			#{/list}
@@ -103,7 +103,7 @@
 				<td id="btnAdicionarAtributo">
 					<img src="/siga/css/famfamfam/icons/bullet_toggle_plus.png" 
 						width="20px"
-						onclick="adicionarFiltroAtributo()" alt="Adicionar filtro de atributo"></img>
+						onclick="adicionarFiltroAtributo()" title="Adicionar atributo como filtro"></img>
 				</td>
 			</tr>
 		</table>
@@ -111,33 +111,63 @@
 </tr>
 
 <script>
+	// Esconde a combo onde ficam os tipos de atributos disponiveis e seleciona a opcao vazia
 	$("#ddlNovoAtributoContainer").hide();
 	$("#ddlNovoAtributoContainer select option:nth(0)").attr('selected', 'selected');
 
 	function adicionarFiltroAtributo() {
-		$("#ddlNovoAtributoContainer").show();
+		if($("#ddlNovoAtributoContainer select option").size() > 1) {
+			$("#ddlNovoAtributoContainer").show();
+		}
     } 
 
+	// Remove um filtro de atributo da tela
     function removerFiltroAtributo(input) {
-        $(input).parent('td').parent('tr').remove();
+    	removerFiltroAtributoDaTela(input); // Remove o filtro atual da tela (usuario clicou no remover)
         carregarCampoParaTipoAtributo();
     }
 
+    // Remove a linha que contem um atributo 
+    function removerFiltroAtributoDaTela(input) {
+        $(input).parent('td').parent('tr').remove();
+    }
+
+    // Carrega o template que representa os atributos quando o usuario seleciona uma novo atributo
     function carregarCampoParaTipoAtributo(select) {
-		var params = select ? ('filtro.atributoMap[' + select.val() + "]=&") : '';
-		
-		$('#atributos .valoresAtribudos').find('input,select').each(function() {
-		  params += $(this).attr('name') + '=' + $(this).val() + '&';  
-		});
+    	var params = '';
+		if(select) {
+			select.attr('disabled', true);
+			params = ('filtro.atributoMap[' + select.val() + "]=&");
+		}
+		params += construirParametrosRequisicaoAtributos();
 		PassAjaxResponseToFunction('@{Application.exibirAtributosConsulta()}?' + params, 'carregouCampoAtributo', null, false, null);
     }
-    
+
+    // Carrega o template que representa os atributos quando o usuario altera um atributo jah presenta na tela
+    function alterarCampoParaTipoAtributo(select) {
+    	select.attr('disabled', true);
+    	
+    	removerFiltroAtributoDaTela(select);
+        var params = 'filtro.atributoMap[' + select.val() + "]=&" + construirParametrosRequisicaoAtributos();
+		PassAjaxResponseToFunction('@{Application.exibirAtributosConsulta()}?' + params, 'carregouCampoAtributo', null, false, null);
+    }
+
+    // Pega os campos que representam os atributos e constuir a query da URL
+    function construirParametrosRequisicaoAtributos() {
+		var params = '';
+		$('#atributos .valoresAtribudos').find('input,select').each(function() {
+			params += $(this).attr('name') + '=' + $(this).val() + '&';  
+		});
+		return params;
+    }
+
+    // Callback da requisicao que busca o template com os atributos
 	function carregouCampoAtributo(response, param) {
 		var div = document.getElementById('atributos');
 		div.innerHTML = response;
 		var scripts = div.getElementsByTagName("script");
-		for(var i=0;i<scripts.length;i++)  
-		   eval(scripts[i].text);
+		for(var i=0;i<scripts.length;i++)
+			eval(scripts[i].text);
 	}
 </script>
 

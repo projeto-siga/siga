@@ -3,6 +3,8 @@ package util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import models.SrAtributo;
@@ -151,13 +153,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			subqueryAtributo.append(" and (");
 
 			for (SrAtributo att : meuAtributoSet) {
-				subqueryAtributo.append("(");
-				subqueryAtributo.append(" att.tipoAtributo.idTipoAtributo = " + att.tipoAtributo.idTipoAtributo);
-				if (att.valorAtributo != null && !att.valorAtributo.equals("")) {
-					subqueryAtributo.append(" and att.valorAtributo = '" + att.valorAtributo + "' ");
+				if (att.valorAtributo != null && !att.valorAtributo.trim().isEmpty()) {
+					subqueryAtributo.append("(");
+						subqueryAtributo.append(" att.tipoAtributo.idTipoAtributo = " + att.tipoAtributo.idTipoAtributo);
+						subqueryAtributo.append(" and att.valorAtributo = '" + att.valorAtributo + "' ");
+					
+					subqueryAtributo.append(")");
+					subqueryAtributo.append(AND);
 				}
-				subqueryAtributo.append(")");
-				subqueryAtributo.append(AND);
 			}
 			subqueryAtributo.setLength(subqueryAtributo.length() - AND.length());
 			subqueryAtributo.append(" )");
@@ -190,6 +193,13 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public List<SrTipoAtributo> itensDisponiveis(List<SrTipoAtributo> tiposAtributosDisponiveis, SrTipoAtributo tipoAtributo) {
 		ArrayList<SrTipoAtributo> arrayList = new ArrayList<SrTipoAtributo>(tiposAtributosDisponiveis);
 		arrayList.add(tipoAtributo);
+		
+		Collections.sort(arrayList, new Comparator<SrTipoAtributo>() {
+			@Override
+			public int compare(SrTipoAtributo s0, SrTipoAtributo s1) {
+				return s0.nomeTipoAtributo.compareTo(s1.nomeTipoAtributo);
+			}
+		});
 		return arrayList;
 	}
 }

@@ -1226,10 +1226,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 
 		for (SrItemConfiguracao i : SrItemConfiguracao.listar(false)) {
+			if (!i.isEspecifico())
+				continue;
 			confFiltro.itemConfiguracaoFiltro = i;
 			if (SrConfiguracao.buscar(confFiltro,
-					new int[] { SrConfiguracaoBL.ACAO }) != null)
+					new int[] { SrConfiguracaoBL.ACAO }) != null){
 				listaFinal.add(i);
+				SrItemConfiguracao itemPai = i.pai;
+				while (itemPai != null) {
+					if (!listaFinal.contains(itemPai))
+						listaFinal.add(itemPai);
+					itemPai = itemPai.pai;
+				}
+			}
 		}
 
 		Collections.sort(listaFinal, new SrItemConfiguracaoComparator());

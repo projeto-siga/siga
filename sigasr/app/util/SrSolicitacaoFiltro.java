@@ -148,6 +148,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(subquery);
 		}
 		
+		montarQueryAtributos(query);
+		
+		if (apenasFechados) {
+			query.append(" and not exists (from SrMovimentacao where tipoMov in (7,8) and solicitacao = sol.hisIdIni)");
+		}
+		
+		return query.append(" order by sol.idSolicitacao desc").toString();
+	}
+
+	private void montarQueryAtributos(StringBuffer query) {
+		Boolean existeFiltroPreenchido = Boolean.FALSE; // Indica se foi preenchido algum dos atributos informados na requisicao
+		
 		StringBuffer subqueryAtributo = new StringBuffer();
 		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
 			subqueryAtributo.append(" and (");
@@ -160,23 +172,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 					
 					subqueryAtributo.append(")");
 					subqueryAtributo.append(AND);
+					
+					existeFiltroPreenchido = Boolean.TRUE;
 				}
 			}
-			subqueryAtributo.setLength(subqueryAtributo.length() - AND.length());
+			subqueryAtributo.setLength(subqueryAtributo.length() - AND.length()); // remove o ultimo AND
 			subqueryAtributo.append(" )");
 		}
-		
-		if (subqueryAtributo.length() > 0) {
+		if (existeFiltroPreenchido) {
 			subqueryAtributo.insert(0, " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
 			subqueryAtributo.append(" )");
 			query.append(subqueryAtributo);
 		}
-		
-		if (apenasFechados) {
-			query.append(" and not exists (from SrMovimentacao where tipoMov in (7,8) and solicitacao = sol.hisIdIni)");
-		}
-		
-		return query.append(" order by sol.idSolicitacao desc").toString();
 	}
 	
 	public List<SrTipoAtributo> getTiposAtributosConsulta() {

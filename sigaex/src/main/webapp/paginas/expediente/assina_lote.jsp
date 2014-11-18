@@ -86,16 +86,12 @@
 		      		process.push("Copia=" + Copia + ";");
 				    if(b){
 			            var ret;
+			            process.push("gNome='" + oNome.value + "'; gUrlDocumento = '" + oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1';");
 			      		process.push(function(){Log(gNome + ": Assinando...")});
-			            process.push(function(){gRet = AssinarDigitalmente(gDocumento)});
-			      		process.push(function(){Log(gNome + ": Gravando assinatura de " + gRet.assinante)});
+			      		process.push(function(){Log(gNome + ": Gravando assinatura de " + $("#nomeUsuarioSubscritor").val())});
 			      		
 			            process.push(function(){
-				            var DadosDoPost = "sigla=" + encodeURIComponent(gNome) + "&copia=" + Copia + "&assinaturaB64=" + encodeURIComponent(gRet.assinaturaB64) + "&assinante=" + encodeURIComponent(gRet.assinante);
-				            if (gPolitica){
-				                 DadosDoPost = DadosDoPost + "&certificadoB64=" + encodeURIComponent(gCertificadoB64);
-				                 DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora=" + gAtributoAssinavelDataHora;
-				            }
+				            var DadosDoPost = "sigla=" + encodeURIComponent(gNome) + "&copia=" + Copia + "&nomeUsuarioSubscritor=" + encodeURIComponent($("#nomeUsuarioSubscritor").val()) + "&senhaUsuarioSubscritor=" + encodeURIComponent($("#senhaUsuarioSubscritor").val());
 				
 							//alert("oNome: " + oNome.value);
 							var aNome = gNome.split(":");
@@ -269,6 +265,7 @@
 		    	    <c:set var="urlPath" value="${request.contextPath}" />
 		
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
+					<ww:hidden id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 					<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
 					<c:set var="urlBase"
@@ -383,7 +380,7 @@
     			  <label>Matrícula</label> <br/>
     			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
     			  <label>Senha</label> <br/>
-    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off" />
+    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off" />
     			</fieldset>
   			</form>
 		</div>

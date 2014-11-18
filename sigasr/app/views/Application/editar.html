@@ -211,7 +211,7 @@
 		
 		if(filtrosSelecionados.size() > 0) {
 			if(existeFiltroSelecionavel()) {
-				var params = construirParametrosDoFiltro(filtrosSelecionados, $('#formSolicitacao'));
+				var params = construirParametrosDoFiltro($('#formSolicitacao'));
 				iniciarCarregarSolicitacoesRelacionadas();
 				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
 			}
@@ -222,12 +222,12 @@
 		}
 	}
 
-	function construirParametrosDoFiltro(filtrosSelecionados, frm) {
+	function construirParametrosDoFiltro(frm) {
 		var authField = frm.find('input:nth(0)');
 		var params = authField.attr('name') + '=' + encodeURI(authField.val()) + '&';
-		
+
 		// Preenche a string que representa os parametros da requisicao
-		filtrosSelecionados.each(function() {
+		$('#filtro input:checked').each(function() {
 			var input = frm.find("[name='" +  $(this).attr('name') + "']");
 			params = params + input.attr('name') + '=' + input.val() + '&'
 		});
@@ -337,7 +337,7 @@
 					break;
 				}
 		} */
-		var params = construirParametrosDoFiltro($('#filtro input:checked'), $('#formSolicitacao')) + '&filtro.pesquisar=true&';
+		var params = construirParametrosDoFiltro($('#formSolicitacao')) + '&filtro.pesquisar=true&';
 		// Replace All
 		while(params.indexOf('solicitacao') >= 0) {
 			params = params.replace("solicitacao", "filtro");

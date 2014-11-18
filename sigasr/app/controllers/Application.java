@@ -361,32 +361,7 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void juntarSolicitacoes(Long id, Long idSolicitacaoRecebeJuntada, SrSolicitacaoFiltro filtro) throws Exception {
-		List<SrSolicitacao> listaSolicitacao;
-		SrSolicitacao solicitacaoRecebeJuntada = null;
-		
-		SrSolicitacao solicitacaoAJuntar =  SrSolicitacao.findById(id);
-
-		if(idSolicitacaoRecebeJuntada != null)
-			solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
-		
-		if (filtro.pesquisar)
-			listaSolicitacao = filtro.buscar();
-		else
-			listaSolicitacao = new ArrayList<SrSolicitacao>();
-
-		String[] tipos = new String[] { "Pessoa", "Lotação" };
-		
-		List<CpMarcador> marcadores = JPA.em()
-				.createQuery("select distinct cpMarcador from SrMarca m where m.cpMarcador.idMarcador in (42, 44, 46, 47)")
-				.getResultList();
-		listaSolicitacao.remove(solicitacaoAJuntar);
-
-		render(solicitacaoAJuntar, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, Boolean.FALSE);
-	}
-	
-	public static void juntarSolicitacoesGravar(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
+	public static void juntarSolicitacoes(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAJuntar);
 		SrSolicitacao solRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
 		sol.juntar(lotaTitular(), cadastrante(), solRecebeJuntada, justificativa);
@@ -673,11 +648,49 @@ public class Application extends SigaApplication {
 		exibirLista(id);
 	}
 
-	public static void selecionar(String sigla) throws Exception {
+	public static void selecionarSolicitacao(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
 		sel.cadastrante = cadastrante();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
+	}
+	
+	//	DB1: foi necessário receber e passar o parametro "nome"(igual ao buscarItem())
+	//	para chamar a function javascript correta,
+	//	e o parametro "popup" porque este metodo é usado também na lista,
+	//	e não foi possível deixar default no template(igual ao buscarItem.html) 
+	@SuppressWarnings("unchecked")
+	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) {
+
+		List<SrSolicitacao> list;
+
+		try {
+			if (filtro.pesquisar) {
+					list = filtro.buscar();
+			} else {
+				list = new ArrayList<SrSolicitacao>();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			list = new ArrayList<SrSolicitacao>();
+		}
+		
+		// Montando o filtro...
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		List<CpMarcador> marcadores = JPA.em()
+				.createQuery("select distinct cpMarcador from SrMarca")
+				.getResultList();
+		
+		// DB1: Trecho de código que garante que só sejam exibidos as solicitações para a lotação cadastrante
+		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
+		for (SrSolicitacao sol : list) 
+			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))
+					listaSolicitacao.add(sol);
+			else
+				if (sol.lotaCadastrante == lotaTitular())
+					listaSolicitacao.add(sol);
+
+		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup);
 	}
 
 	public static void baixar(Long idArquivo) {

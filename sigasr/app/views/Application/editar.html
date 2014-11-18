@@ -341,7 +341,7 @@
 		while(params.indexOf('solicitacao') >= 0) {
 			params = params.replace("solicitacao", "filtro");
 		}
-		window.open('@{Application.listar()}?' + params + "","_blank");
+		window.open('@{Application.buscarSolicitacao()}?' + params + "","_blank");
 	}
 </script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
@@ -396,8 +396,7 @@
 			<div class="gt-form-row gt-width-66" id="interlocutor"
 				style="display: none;">
 				<label>Interlocutor</label> #{selecao tipo:'pessoa',
-				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor,
-				onchange:'' /}
+				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor /}
 			</div>
 			#{set locaisDisponiveis:solicitacao.locaisDisponiveis /} #{if
 			locaisDisponiveis.size() > 1}
@@ -494,7 +493,7 @@
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" id="gravar" /> <a
-					href="@{Application.listar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					href="@{Application.buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 			#{/form}
 		</div>

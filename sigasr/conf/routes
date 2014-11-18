@@ -81,6 +81,8 @@ POST	/item/gravar						Application.gravarItem
 *		/solicitacao/associarListaGravar/{id}			Application.associarListaGravar
 *		/solicitacao/desassociarLista					Application.desassociarLista
 *		/solicitacao/editarLista/{id}					Application.editarLista
+*		/solicitacao/selecionar							Application.selecionarSolicitacao
+*		/solicitacao/buscar								Application.buscarSolicitacao
 *		/solicitacao/{action}							Application.{action}
 *		/solicitacao/{action}/{id}						Application.{action}
 

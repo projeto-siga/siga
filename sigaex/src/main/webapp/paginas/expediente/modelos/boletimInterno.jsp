@@ -165,7 +165,7 @@
 							<br/>
 						</c:if>
 						<c:choose>
-							<c:when test="${d.exModelo.idMod == 234}">
+							<c:when test="${d.exModelo.hisIdIni == 234}">
 								<span style="font-weight: bold">${f:obterTituloMateriaLivre(subTopico, d, 1)}</span>
 								${f:obterBlobMateriaLivre(subTopico, d, 1)}
 							</c:when>

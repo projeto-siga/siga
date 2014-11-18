@@ -59,12 +59,12 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
  */
 public class CpConfiguracaoBL {
 
-	private static Date dtUltimaAtualizacaoCache = null;
-	private static boolean cacheInicializado = false;
+	protected Date dtUltimaAtualizacaoCache = null;
+	protected boolean cacheInicializado = false;
 
 	protected Comparator<CpConfiguracao> comparator = null;
 
-	protected HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+	protected static HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
 
 	public static int PESSOA = 1;
 
@@ -161,16 +161,13 @@ public class CpConfiguracaoBL {
 			}
 	}
 
-	private void inicializarCache(Long idTipoConfig) {
+	protected void inicializarCache(Long idTipoConfig) {
 		if (idTipoConfig!= null && hashListas.get(idTipoConfig) == null){
 			TreeSet<CpConfiguracao> tree = new TreeSet<CpConfiguracao>(comparator);
-			CpConfiguracao searchConf = createNewConfiguracao();
-			searchConf.setCpTipoConfiguracao(dao().consultar(idTipoConfig, CpTipoConfiguracao.class, false));
-			List<CpConfiguracao> results = (List<CpConfiguracao>) dao().consultar(searchConf);
+			List<CpConfiguracao> results = (List<CpConfiguracao>) dao().consultarConfiguracoesPorTipo(idTipoConfig);
 			evitarLazy(results);
 			tree.addAll(results);
 			hashListas.put(idTipoConfig, tree);
-
 		}
 	}
 
@@ -185,7 +182,6 @@ public class CpConfiguracaoBL {
 		for (CpConfiguracao cfg : provResults) {
 			if (cfg.getCpSituacaoConfiguracao() != null){
 				cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
-				cfg.getCpSituacaoConfiguracao().getCpTiposServicoSet();
 			}
 			if (cfg.getOrgaoUsuario() != null)
 				cfg.getOrgaoUsuario().getDescricao();
@@ -199,7 +195,7 @@ public class CpConfiguracaoBL {
 				cfg.getFuncaoConfianca().getDescricao();
 			if (cfg.getDpPessoa() != null){
 				cfg.getDpPessoa().getDescricao();
-				cfg.getDpPessoa().getPessoaAtual().getDescricao();
+//				cfg.getDpPessoa().getPessoaAtual().getDescricao();
 			}
 			if (cfg.getCpTipoConfiguracao() != null)
 				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
@@ -757,7 +753,7 @@ public class CpConfiguracaoBL {
 					.getListaPorTipo(
 							CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracao c : configs) {
-				DpPessoa pesAtual = c.getDpPessoa().getPessoaAtual();
+				DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.getDpPessoa().getIdInicial());
 				if (c.getDpPessoa().equivale(pesAtual)) {
 					if (c.getHisAtivo() == 1
 							&& pesAtual.getDataFim() == null
@@ -852,6 +848,9 @@ public class CpConfiguracaoBL {
 
 	public synchronized void inicializarCache() {
 		if (!cacheInicializado){
+			Logger.getLogger("siga.conf.cache").info("Inicializando cache de configurações via " + this.getClass().getSimpleName());
+			long inicio = System.currentTimeMillis();
+
 			List<CpTipoConfiguracao> tiposConfiguracao = CpDao.getInstance().listarTiposConfiguracao();
 			for (CpTipoConfiguracao cpTpConf : tiposConfiguracao) {
 				try{
@@ -862,7 +861,7 @@ public class CpConfiguracaoBL {
 			}
 			cacheInicializado = true;
 			
-			
+			Logger.getLogger("siga.conf.cache").info("Cache de configurações inicializado em ms: " + (System.currentTimeMillis() - inicio));
 		}
 	}
 

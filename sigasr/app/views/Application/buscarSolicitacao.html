@@ -1,10 +1,11 @@
 #{extends 'main.html' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
-
 	$(document).ready(function() {
 		/* Table initialization */
 		var table = $('#solicitacoes_table')
@@ -57,8 +58,9 @@
 	    		detail = tr.next('tr.detail');
     		
 		   if(detail.size() == 0) {
-				var data = tr.find('td');			   
-			   tr.addClass('shown');
+	       		var data = tr.find('td');
+	    		tr.addClass('shown');
+	    		format(data).insertAfter(tr);
 		   }
 		   else {
 		    	if ( detail.is(':visible') ) {
@@ -315,9 +317,11 @@
 								id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="100"></input>
 							</td>
 						</tr>
+						
+						#{include 'Application/exibirAtributosConsulta.html' /}
+							
 						<tr>
-							<td colspan="2"><input type="submit" value="Buscar"
-								class="gt-btn-medium gt-btn-left" /></td>
+							<td colspan="2"><input type="submit" value="Buscar" class="gt-btn-medium gt-btn-left" /></td>
 						</tr>
 				</table>
 			</form>

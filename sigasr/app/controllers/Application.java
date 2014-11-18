@@ -150,8 +150,11 @@ public class Application extends SigaApplication {
 		render(solicitacao.deduzirLocalRamalEMeioContato());
 	}
 	
-	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean carregarLotaSolicitante) 
+	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoMap, boolean carregarLotaSolicitante) 
 			throws Exception{
+		
+		solicitacao.setAtributoMap(atributoMap);
+		
 		if(carregarLotaSolicitante){
 			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
 			solicitacao.solicitante = null;
@@ -164,6 +167,23 @@ public class Application extends SigaApplication {
 		render(solicitacao);
 	}
 
+	public static void exibirAtributosConsulta(SrSolicitacaoFiltro filtro) throws Exception {
+		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		render(filtro, tiposAtributosDisponiveisAdicao);
+	}
+
+	public static List<SrTipoAtributo> tiposAtributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
+		List<SrTipoAtributo> listaAtributosAdicao = new ArrayList<SrTipoAtributo>();
+		HashMap<Long, String> atributoMap = filtro.getAtributoMap();
+
+		for (SrTipoAtributo srTipoAtributo : SrTipoAtributo.listar()) {
+			if (!atributoMap.containsKey(srTipoAtributo.idTipoAtributo)) {
+				listaAtributosAdicao.add(srTipoAtributo);
+			}
+		}
+		return listaAtributosAdicao;
+	}
+	
 	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
 			throws Exception {
 		if (solicitacao.getItensDisponiveis().contains(
@@ -351,8 +371,10 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao, long dtIniEdicao) throws Exception {
+	public static void gravar(SrSolicitacao solicitacao, HashMap<Long, String> atributoMap, long dtIniEdicao) throws Exception {
         solicitacao.dtIniEdicao = new Date(dtIniEdicao);
+        solicitacao.setAtributoMap(atributoMap);
+        
 		if(!solicitacao.rascunho)
         	validarFormEditar(solicitacao);
         
@@ -402,9 +424,7 @@ public class Application extends SigaApplication {
 	
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
-
 		List<SrSolicitacao> list;
-
 		if (filtro.pesquisar) {
 			list = filtro.buscar();
 		} else {
@@ -425,8 +445,9 @@ public class Application extends SigaApplication {
 			else
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
-
-		render(listaSolicitacao, tipos, marcadores, filtro);
+		
+		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		render(listaSolicitacao, tipos, marcadores, filtro, tiposAtributosDisponiveisAdicao);
 	}
 	
 	public static void estatistica() throws Exception {

@@ -2,10 +2,14 @@ package util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import models.SrAtributo;
 import models.SrSolicitacao;
+import models.SrTipoAtributo;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -17,6 +21,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private static final String AND = " AND ";
 
 	public boolean pesquisar = false;
 
@@ -34,6 +40,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	
 	public boolean apenasFechados;
 
+	public Long idNovoAtributo;
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SrSolicitacao> buscar() throws Exception {
 		String query = montarBusca(" from SrSolicitacao sol where ");
@@ -140,26 +148,65 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(subquery);
 		}
 		
-		StringBuffer subqueryAtributo = new StringBuffer();
-		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
-			SrAtributo att = meuAtributoSet.get(0);
-			subqueryAtributo.append(" and att.tipoAtributo.idTipoAtributo = "
-					+ att.tipoAtributo.idTipoAtributo);
-			if (att.valorAtributo != null && !att.valorAtributo.equals(""))
-				subqueryAtributo.append(" and att.valorAtributo = '"
-						+ att.valorAtributo + "' ");
-		}
-		
-		if (subqueryAtributo.length() > 0) {
-			subqueryAtributo.insert(0, " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
-			subqueryAtributo.append(" )");
-			query.append(subqueryAtributo);
-		}
+		montarQueryAtributos(query);
 		
 		if (apenasFechados) {
 			query.append(" and not exists (from SrMovimentacao where tipoMov in (7,8) and solicitacao = sol.hisIdIni)");
 		}
 		
 		return query.append(" order by sol.idSolicitacao desc").toString();
+	}
+
+	private void montarQueryAtributos(StringBuffer query) {
+		Boolean existeFiltroPreenchido = Boolean.FALSE; // Indica se foi preenchido algum dos atributos informados na requisicao
+		
+		StringBuffer subqueryAtributo = new StringBuffer();
+		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
+			subqueryAtributo.append(" and (");
+
+			for (SrAtributo att : meuAtributoSet) {
+				if (att.valorAtributo != null && !att.valorAtributo.trim().isEmpty()) {
+					subqueryAtributo.append("(");
+						subqueryAtributo.append(" att.tipoAtributo.idTipoAtributo = " + att.tipoAtributo.idTipoAtributo);
+						subqueryAtributo.append(" and att.valorAtributo = '" + att.valorAtributo + "' ");
+					
+					subqueryAtributo.append(")");
+					subqueryAtributo.append(AND);
+					
+					existeFiltroPreenchido = Boolean.TRUE;
+				}
+			}
+			subqueryAtributo.setLength(subqueryAtributo.length() - AND.length()); // remove o ultimo AND
+			subqueryAtributo.append(" )");
+		}
+		if (existeFiltroPreenchido) {
+			subqueryAtributo.insert(0, " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
+			subqueryAtributo.append(" )");
+			query.append(subqueryAtributo);
+		}
+	}
+	
+	public List<SrTipoAtributo> getTiposAtributosConsulta() {
+		List<SrTipoAtributo> tiposAtributosConsulta = new ArrayList<SrTipoAtributo>();
+		
+		if (meuAtributoSet != null) {
+			for (SrAtributo srAtributo : meuAtributoSet) {
+				tiposAtributosConsulta.add(srAtributo.tipoAtributo);
+			}
+		}
+		return tiposAtributosConsulta;
+	}
+	
+	public List<SrTipoAtributo> itensDisponiveis(List<SrTipoAtributo> tiposAtributosDisponiveis, SrTipoAtributo tipoAtributo) {
+		ArrayList<SrTipoAtributo> arrayList = new ArrayList<SrTipoAtributo>(tiposAtributosDisponiveis);
+		arrayList.add(tipoAtributo);
+		
+		Collections.sort(arrayList, new Comparator<SrTipoAtributo>() {
+			@Override
+			public int compare(SrTipoAtributo s0, SrTipoAtributo s1) {
+				return s0.nomeTipoAtributo.compareTo(s1.nomeTipoAtributo);
+			}
+		});
+		return arrayList;
 	}
 }

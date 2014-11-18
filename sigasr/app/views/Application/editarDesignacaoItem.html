@@ -123,19 +123,15 @@
 			});
 		}
 		
-		$(".del-item").bind( "click", function(event) {
-		    var target_row = $(this).closest("tr").get(0); // this line did the trick
-		    var aPos = itemConfiguracaoTable.fnGetPosition(target_row); 
-
-		    itemConfiguracaoTable.fnDeleteRow(aPos);
+		// Delete Item Configuração
+		$('#itemConfiguracao_table tbody').on('click', 'a.itemConfiguracao_remove', function () {
+			itemConfiguracaoTable.api().row($(this).closest('tr')).remove().draw(false);
 		});
 		
-		$(".del-acao").bind( "click", function(event) {
-		    var target_row = $(this).closest("tr").get(0); // this line did the trick
-		    var aPos = acaoTable.fnGetPosition(target_row); 
-
-		    acaoTable.fnDeleteRow(aPos);
-		});
+	 	// Delete Ação
+	    $('#acao_table tbody').on( 'click', 'a.acao_remove', function () {
+	    	acaoTable.api().row($(this).closest('tr')).remove().draw(false);
+	    } );
 	});
 	
 	var jListasDesignacao = $("#listasDesignacao"),
@@ -198,8 +194,8 @@
 		           	$("#itemConfiguracao_sigla").val(),
 		           	$("#itemConfiguracao_descricao").val(),
 		           	$("#itemConfiguracao_descricao").val(),
-		           	'',
-		           	"<span class=\"btn-group\"><a class=\"del-item btn btn-small\" href=\"#\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"cursor: pointer\" /></a></span>"];
+		           	"",
+		           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
 		itemConfiguracaoTable.api().row.add(row).draw();
         			
@@ -216,7 +212,7 @@
 		var row = [	$("#acao").val(),
         			$("#acao_sigla").val(),
         			$("#acao_descricao").val(),
-        			"<span class=\"btn-group\"><a class=\"del-acao btn btn-small\" href=\"#\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"cursor: pointer\" /></a></span>"];
+        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
 		acaoTable.api().row.add(row).draw();
 		
@@ -231,6 +227,7 @@
 </script>
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+	<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
 	<div>
 		<div class="gt-form-row box-wrapper">
 			<div id="divSolicitante" class="box box-left gt-width-50">
@@ -338,14 +335,10 @@
 						<tr>
 							<td>${item?.id }</td>
 							<td>${item?.sigla}</td>
-							<td>${item?.titulo}</td>
+							<td>${item?.tituloItemConfiguracao}</td>
 							<td>${item?.descricao }</td>
 							<td>${item?.descricaoSimilaridade }</td>
-							<td class=" ">
-						         <span class="btn-group">
-						            <a class="del-item btn btn-small" href="#"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: hidden; cursor: pointer" /></a>       
-						         </span>
-						     </td>
+							<td><a class="itemConfiguracao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
 						</tr>
 						#{/list}
 					</tbody>
@@ -366,7 +359,7 @@
 						<tr>
 							<th>ID</th>
 							<th>Sigla</th>
-							<th>Descrição</th>
+							<th>Título</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -376,12 +369,8 @@
 						<tr>
 							<td>${acao?.id }</td>
 							<td>${acao?.sigla}</td>
-							<td>${acao?.descricao }</td>
-							<td class=" ">
-						         <span class="btn-group">
-						            <a class="del-acao btn btn-small" href="#"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: hidden; cursor: pointer" /></a>       
-						         </span>
-						     </td>
+							<td>${acao?.tituloAcao }</td>
+							<td><a class="acao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
 						</tr>
 						#{/list}
 					</tbody>

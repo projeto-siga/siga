@@ -31,9 +31,9 @@ $(function(){
 		<p></p>
 		<h3>
 			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)} #{if
-			solicitacao.solicitacaoReferencia} a <a
-				href="@{Application.exibir(solicitacao.solicitacaoReferencia.idSolicitacao)}">
-				${solicitacao.solicitacaoReferencia.codigo} </a> #{/if}
+			solicitacao.solicitacaoPrincipal} a <a
+				href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
+				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
 		</h3>
 
 		#{if solicitacao.estaForaAtendenteDesignado()}

@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -638,7 +639,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public List<SrTipoAtributo> getTiposAtributoAssociados() throws Exception {
 		return getTiposAtributoAssociados(null);
 	}
-
+	
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
@@ -658,7 +659,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return listaFinal;
 	}
-	
+
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
@@ -709,17 +710,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// mandar criar os atributos, caso se quisesse permitir um
 	// solicitacao.getAtributoSet().put...
 	public void setAtributoMap(HashMap<Long, String> atributos) {
-		meuAtributoSet = new ArrayList<SrAtributo>();
-		for (Long idTipoAtt : atributos.keySet()) {
-			SrTipoAtributo tipoAtt = SrTipoAtributo.findById(idTipoAtt);
-			SrAtributo att = new SrAtributo(tipoAtt, atributos.get(idTipoAtt),
-					this);
-			meuAtributoSet.add(att);
+		if (atributos != null) {
+			meuAtributoSet = new ArrayList<SrAtributo>();
+			for (Long idTipoAtt : atributos.keySet()) {
+				SrTipoAtributo tipoAtt = SrTipoAtributo.findById(idTipoAtt);
+				SrAtributo att = new SrAtributo(tipoAtt, atributos.get(idTipoAtt), this);
+				meuAtributoSet.add(att);
+			}
 		}
 	}
 
 	public HashMap<Long, String> getAtributoMap() {
-		HashMap<Long, String> map = new HashMap<Long, String>();
+		HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para manter a ordem de insercao
 		if (meuAtributoSet != null)
 			for (SrAtributo att : meuAtributoSet) {
 				map.put(att.tipoAtributo.idTipoAtributo, att.valorAtributo);
@@ -877,9 +879,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 	
-	public SrSolicitacao getSolicitacaoPrincipal(long idTpMov) {
+	public SrSolicitacao getSolicitacaoPrincipal() {
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == idTpMov && !mov.isCancelada())
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO 
+					&& !mov.isCancelada())
 				return mov.solicitacao.solicitacaoReferencia;
 		}
 		return null;
@@ -1787,16 +1790,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return new ArrayList<SrLista>(listaFinal);
 	}
 
-	public List<SrLista> getListasDisponiveisParaInclusao(
-			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
+	public List<SrLista> getListasDisponiveisParaInclusao(DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
 
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
 				lotaTitular, cadastrante,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA,
 				new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
-
+		
 		for (SrConfiguracao conf : confs) {
+			/**
+			 * Se o usuario nao tem permissao de incluir, entao pula o item atual.
+			 */
+//			if (!conf.listaPrioridade.podeIncluir(lotaTitular, cadastrante)) {
+//				continue;
+//			}
 			SrLista listaAtual = conf.listaPrioridade.getListaAtual();
 			if (!listaFinal.contains(listaAtual))
 				listaFinal.add(listaAtual);
@@ -2251,6 +2259,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.findById(TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO);
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
+
 	}
 
 	@SuppressWarnings("unchecked")

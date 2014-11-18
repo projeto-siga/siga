@@ -34,9 +34,9 @@ self.popitup_${nomeclean} = function(sigla) {
 	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
 	var url = base+'${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
 
-	if (url.indexOf("sigagc/app/lotacao/buscar" != -1)){
+	if (url.indexOf("sigagc/app/lotacao/buscar") != -1){
 		url = "/siga/lotacao/buscar.action?propriedade=lotacaofiltrolotaResponsavel&sigla="+sigla;
-	}else if(url.indexOf("sigagc/app/pessoa/buscar" != -1)){
+	}else if(url.indexOf("sigagc/app/pessoa/buscar") != -1){
 		url = "/siga/pessoa/buscar.action?propriedade=pessoafiltroresponsavel&sigla="+sigla;
 	}
 	//var url = '@@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
@@ -83,7 +83,6 @@ self.ajax_${nomeclean} = function() {
 
 	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
 	var url = base+'${_tipo}/selecionar?sigla=' + sigla + '&nome=${nomeclean}&'+'${_params?.raw()}';
-	
 	
 	if (url.indexOf("/app/lotacao") != -1){
 		var params = {

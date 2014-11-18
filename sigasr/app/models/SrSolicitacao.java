@@ -659,6 +659,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaFinal;
 	}
 
+	@Transient
+	public boolean mock;
+
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;

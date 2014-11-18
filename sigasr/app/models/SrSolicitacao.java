@@ -1808,6 +1808,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (!listaFinal.contains(listaAtual))
 				listaFinal.add(listaAtual);
 		}
+		
 
 		listaFinal.removeAll(getListasAssociadas());
 		Collections.sort(listaFinal, new Comparator<SrLista>() {

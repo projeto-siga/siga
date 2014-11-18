@@ -652,6 +652,7 @@ public class Application extends SigaApplication {
 
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
+		lista.validarPodeExibirLista(lotaTitular(), cadastrante());
 		render(lista);
 	}
 	

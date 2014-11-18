@@ -127,10 +127,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				.getCpTipoConfiguracao().getIdTpConfiguracao());
 
 		for (CpConfiguracao cpConfiguracao : lista) {
-			if (cpConfiguracao.getHisDtFim() == null
+			if ((cpConfiguracao instanceof SrConfiguracao) && cpConfiguracao.getHisDtFim() == null
 					&& atendeExigencias(confFiltro, atributosDesconsiderados,
-							(SrConfiguracao) cpConfiguracao, null))
+							(SrConfiguracao) cpConfiguracao, null)) {
 				listaFinal.add((SrConfiguracao) cpConfiguracao);
+			}
+			
 		}
 		return listaFinal;
 	}

@@ -131,8 +131,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_SOLICITACAO_PAI")
 	public SrSolicitacao solicitacaoPai;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
+	@Transient
+//	@ManyToOne
+//	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
 	public SrSolicitacao solicitacaoJuntada;
 
 	@Enumerated
@@ -218,7 +219,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
-	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
+	@Transient
+//	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
 	protected Set<SrSolicitacao> meuSolicitacaoJuntadasSet;
 
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
@@ -1786,16 +1788,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return new ArrayList<SrLista>(listaFinal);
 	}
 
-	public List<SrLista> getListasDisponiveisParaInclusao(
-			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
+	public List<SrLista> getListasDisponiveisParaInclusao(DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
 
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
 				lotaTitular, cadastrante,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA,
 				new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
-
+		
 		for (SrConfiguracao conf : confs) {
+			/**
+			 * Se o usuario nao tem permissao de incluir, entao pula o item atual.
+			 */
+			if (!conf.listaPrioridade.podeIncluir(lotaTitular, cadastrante)) {
+				continue;
+			}
 			SrLista listaAtual = conf.listaPrioridade.getListaAtual();
 			if (!listaFinal.contains(listaAtual))
 				listaFinal.add(listaAtual);

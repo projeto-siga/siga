@@ -98,8 +98,14 @@
 				<tbody>
 					#{list items:lista, as:'lista'}
 					<tr>
-						<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'"
-						style="cursor: pointer;"> ${lista.nomeLista}</td>
+						#{if lista.podeIncluir(lotaTitular, cadastrante)}
+							<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'" style="cursor: pointer;">${lista.nomeLista}</td>
+						#{/if}
+						
+						#{if !lista.podeIncluir(lotaTitular, cadastrante)}							
+							<td>${lista.nomeLista}</td>
+						#{/if}
+						
 						<td>${lista.lotaCadastrante.nomeLotacao}</td>
 						<td>${lista.isAtivo()}</td>
 					</tr>
@@ -109,10 +115,10 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarLista}" class="gt-btn-medium gt-btn-left">Cadastrar</a>
-		<div class="gt-table-buttons">
+			<a href="@{Application.editarLista}" class="gt-btn-medium gt-btn-left">Cadastrar</a>
+			<div class="gt-table-buttons">
+			</div>
 		</div>
-</div>
 
 <br />
 <br />

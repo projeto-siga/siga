@@ -2,7 +2,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Associações de tipo de atributo</h2>
+		<h2>Associações de Tipo de Atributo</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box">
 			<table border="0" class="gt-table">
@@ -21,8 +21,8 @@
 						onclick="javascript:window.location='@{Application.editarAssociacao(assoc.idConfiguracao)}'"
 						style="cursor: pointer;">
 						<td></td>
-						<td>${assoc.itemConfiguracao?.atual?.tituloItemConfiguracao}</td>
-						<td>${assoc.acao?.atual?.tituloAcao}</td>
+						<td>${assoc.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
+						<td>${assoc.acaoUnitaria?.atual?.tituloAcao}</td>
 						<td>${assoc.tipoAtributo?.nomeTipoAtributo}</td>
 						<td>${assoc.atributoObrigatorioString}</td>
 					</tr>
@@ -33,7 +33,7 @@
 		<br/>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarAssociacao}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a href="@{Application.editarAssociacao}" class="gt-btn-medium gt-btn-left">Cadastrar</a>
 		</div>
 
 	</div>

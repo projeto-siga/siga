@@ -1,0 +1,568 @@
+<style>
+#sortable ul {
+        height: 1.5em;
+        line-height: 1.2em;
+}
+
+.ui-state-highlight {
+        height: 1.5em;
+        line-height: 1.2em;
+}
+</style>
+
+<script>
+	jQuery( document ).ready(function($) {
+		var jListasDesignacao = $("#listasDesignacao"),
+		listasDesignacao = jListasDesignacao[0];
+			
+		listasDesignacao["index"] = 0;
+		
+		listasDesignacao.incluirItem = function(idLista, descrLista, id){
+		    jListasDesignacao.append("<li style=\"cursor: move\" id =\"" + idLista + "\"></li>");
+		    var jNewTr = jListasDesignacao.find("li:last-child");
+		    jNewTr.append("<span>" + idLista + "</span> - <span style=\"display: inline-block\" id=\"" + idLista + "\">"
+		            + descrLista + "</span>");
+		    jNewTr.append("&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
+		    
+		    jNewTr.append("<input type='hidden' name='"+idLista+"' value='"+idLista+"' id='idLista_"+idLista+"'>");
+		    jNewTr.append("<input type='hidden' name='"+descrLista+"' value='"+descrLista+"' id='descrLista_"+descrLista+"'>");
+		    
+		    jNewTr.find("img:eq(0)").click(function(){
+				var option = document.createElement("option");
+				option.value = jNewTr.val();
+				option.text = jNewTr.text();
+				jListasDesignacaoSelecionada[0].add(option);
+				
+				listasDesignacao.removerItem(jNewTr.attr("id"));
+				console.log(jNewTr[0]);
+		    });
+		    jNewTr.mouseover(function(){
+		    	jNewTr.find("img").css("visibility", "visible");
+		    });
+		    jNewTr.mouseout(function(){
+		    	jNewTr.find("img").css("visibility", "hidden");
+		    });
+		}
+		
+		listasDesignacao.removerItem = function(idItem){
+		    $("#"+idItem).remove();
+		    listasDesignacao["index"]--;
+		}
+		
+		if ( $.fn.dataTable.isDataTable( '#acao_table' ) ) {
+			acaoTable = $('#acao_table').dataTable();
+		}
+		else {
+			acaoTable = $('#acao_table').dataTable( {
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"columnDefs": [{
+					"targets": [0],
+					"visible": false,
+					"searchable": false
+				}],
+				"iDisplayLength": 10
+		    } );
+		}
+		
+		if ( $.fn.dataTable.isDataTable( '#itemConfiguracao_table' ) ) {
+			itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable();
+		}
+		else {
+			itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable({
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"columnDefs": [{
+					"targets": [0],
+					"visible": false,
+					"searchable": false
+				}],
+				"iDisplayLength": 10			});
+		}
+		
+		// Delete Item Configuração
+		$('#itemConfiguracao_table tbody').on('click', 'a.itemConfiguracao_remove', function () {
+			itemConfiguracaoTable.api().row($(this).closest('tr')).remove().draw(false);
+		});
+		
+	 	// Delete Ação
+	    $('#acao_table tbody').on( 'click', 'a.acao_remove', function () {
+	    	acaoTable.api().row($(this).closest('tr')).remove().draw(false);
+	    } );
+	});
+	
+	var jListasDesignacao = $("#listasDesignacao"),
+	listasDesignacao = jListasDesignacao[0],
+	jDialogDesignacao = $("#dialogDesignacao"),
+	dialogDesignacao = jDialogDesignacao[0],
+	jDescrLista = $("#descrLista");
+	jListasDesignacaoSelecionada = $("#itemListaDesignacao");
+	
+	$( "#listasDesignacao" ).sortable({placeholder: "ui-state-highlight"});
+	$( "#listasDesignacao" ).disableSelection();
+	
+	$("#botaoIncluirDesignacaoLista").click(function(){
+		jDialogDesignacao.data('acaoListaDesignacao',listasDesignacao.incluirItem).dialog('open');
+	});
+		
+	jDialogDesignacao.dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: 'auto',
+	    modal: true,
+	    resizable: false,
+	    close: function() {
+	        jDescrLista.val('');
+	        jDialogDesignacao.data('lista','');
+	    },
+	    open: function(){
+	        if (jDialogDesignacao.data("lista"))
+	        	jDialogDesignacao.dialog('option', 'title', 'Alterar Lista de Prioridade');
+	        else
+	        	jDialogDesignacao.dialog('option', 'title', 'Incluir Lista de Prioridade');
+	        
+	        jDescrLista.val(jDialogDesignacao.data("lista.nomeLista"));
+	    }
+	});
+	
+	$("#modalOkLista").click(function(){
+		var acaoListaDesignacao = jDialogDesignacao.data('acaoListaDesignacao'),
+	  		jTipoEscolhidoDesignacao = jListasDesignacaoSelecionada.find("option:selected");
+		
+	  	acaoListaDesignacao(jTipoEscolhidoDesignacao.val(), jTipoEscolhidoDesignacao.text(), jDialogDesignacao.data("id"));
+	  	jListasDesignacaoSelecionada[0].remove(jListasDesignacaoSelecionada[0].selectedIndex);
+	  	jDialogDesignacao.dialog('close');
+	});
+	
+	$("#modalCancelLista").click(function(){
+	    jDialogDesignacao.dialog('close');
+	});
+	
+	function modalAbrir(componentId) {
+		$("#" + componentId + "_dialog").dialog('open');
+	}
+	
+	function modalFechar(componentId) {
+		$("#" + componentId + "_dialog").dialog('close');
+	}
+	
+	function inserirItemConfiguracao() {
+		var row = [	$("#itemConfiguracao").val(),
+		           	$("#itemConfiguracao_sigla").val(),
+		           	$("#itemConfiguracao_descricao").val(),
+		           	$("#itemConfiguracao_descricao").val(),
+		           	"",
+		           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+		
+		itemConfiguracaoTable.api().row.add(row).draw();
+        			
+		// limpando campos do componente de busca
+		$("#itemConfiguracao").val('');
+		$("#itemConfiguracao_descricao").val('');
+		$("#itemConfiguracao_sigla").val('');
+		$("#itemConfiguracaoSpan").html('');
+		
+		modalFechar('itemConfiguracao');
+	}
+	
+	function inserirAcao() {
+		var row = [	$("#acao").val(),
+        			$("#acao_sigla").val(),
+        			$("#acao_descricao").val(),
+        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+		
+		acaoTable.api().row.add(row).draw();
+		
+		// limpando campos do componente de busca
+		$("#acao").val('');
+		$("#acao_descricao").val('');
+		$("#acao_sigla").val('');
+		$("#acaoSpan").html('');
+		
+		modalFechar('acao');
+	}
+</script>
+
+<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+	<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
+	<div>
+		<div class="gt-form-row box-wrapper">
+			<div id="divSolicitante" class="box box-left gt-width-50">
+				<label>Solicitante</label>
+				#{pessoaLotaFuncCargoSelecao
+					nomeSelLotacao:'lotacao',
+					nomeSelPessoa:'dpPessoa',
+					nomeSelFuncao:'funcaoConfianca',
+					nomeSelCargo:'cargo',
+					valuePessoa:dpPessoa?.pessoaAtual,
+					valueLotacao:lotacao?.lotacaoAtual,
+					valueFuncao:funcaoConfianca,
+					valueCargo:cargo,
+					disabled:disabled /}
+			</div>
+			<div class="box gt-width-50">
+				<label>Órgão</label> 
+				#{select name:'orgaoUsuario', 
+					items:orgaos, 
+					valueProperty:'idOrgaoUsu',
+					labelProperty:'nmOrgaoUsu',
+					value:orgaoUsuario?.idOrgaoUsu,
+					class:'select-siga',
+					style:'width: 100%;'}
+				#{option 0}Nenhum#{/option} 
+				#{/select}
+			</div>
+		</div>
+		
+		<div class="gt-form-row box-wrapper">
+			<div class="box box-left gt-width-50">
+				<label>Local</label> 
+				#{select name:'complexo', 
+					items:locais, 
+					valueProperty:'idComplexo',
+					labelProperty:'nomeComplexo', 
+					value:complexo?.idComplexo,
+					class:'select-siga',
+					style:'width: 100%'}
+					#{option 0}Nenhum#{/option} 
+				#{/select}
+			</div>
+			<div class="box gt-width-50">
+				<label>Atendente</label>#{selecao
+					tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual /}
+				<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
+			</div>
+		</div>	
+			
+		<div class="gt-form-row box-wrapper">
+			<div class="box box-left gt-width-50">
+				<label>Pré-atendente</label>#{selecao
+					tipo:'lotacao', nome:'preAtendente',
+					value:preAtendente?.lotacaoAtual /}
+				<span style="display:none;color: red" id="designacao.preAtendente">Pré-Atendente não informado.</span>
+			</div>
+
+			<div class="box gt-width-50">
+				<label>Pós-atendente</label> #{selecao
+					tipo:'lotacao', nome:'posAtendente',
+					value:posAtendente?.lotacaoAtual /}
+				<span style="display:none;color: red" id="designacao.posAtendente">Pós-Atendente não informado.</span>
+			</div>
+		</div>
+		<div class="gt-form-row box-wrapper">
+			<div class="box box-left gt-width-50">
+				<label>Equipe de Qualidade</label> #{selecao
+					tipo:'lotacao', nome:'equipeQualidade',
+					value:equipeQualidade?.lotacaoAtual /}
+				<span style="display:none;color: red" id="designacao.equipeQualidade">Equipe de qualidade não informada.</span>
+			</div>
+			<div class="box gt-width-50">
+				<label>Pesquisa de satisfação</label> 
+					#{select name:'pesquisaSatisfacao', 
+						items:pesquisaSatisfacao, 
+						valueProperty:'idPesquisa',
+						labelProperty:'nomePesquisa', 
+						value:pesquisaSatisfacao?.idPesquisa,
+						class:'select-siga',
+						style:'width: 100%;'}
+						#{option 0}Nenhuma#{/option} 
+					#{/select}
+			</div>
+		</div>
+
+		<hr/>
+		<div class="gt-content">
+			<label>Itens de Configuração</label>
+			<!-- content bomex -->
+			<div class="gt-content-box dataTables_div">
+				<table id="itemConfiguracao_table" border="0" class="gt-table display">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Sigla</th>
+							<th>Titulo</th>
+							<th>Descrição</th>
+							<th>Itens Similares</th>
+							<th></th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						#{list items:itemConfiguracaoSet, as:'item'}
+						<tr>
+							<td>${item?.id }</td>
+							<td>${item?.sigla}</td>
+							<td>${item?.tituloItemConfiguracao}</td>
+							<td>${item?.descricao }</td>
+							<td>${item?.descricaoSimilaridade }</td>
+							<td><a class="itemConfiguracao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			<div class="gt-table-buttons">
+				<a href="javascript: modalAbrir('itemConfiguracao')" class="gt-btn-small gt-btn-left">Incluir</a>
+			</div>
+		</div>
+		
+		<hr/>
+		<div class="gt-form-row">
+			<label>Ações</label>
+			<!-- content bomex -->
+			<div class="gt-content-box dataTables_div">
+				<table id="acao_table" border="0" class="gt-table display">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Sigla</th>
+							<th>Título</th>
+							<th></th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						#{list acoesSet, as:'acao'}
+						<tr>
+							<td>${acao?.id }</td>
+							<td>${acao?.sigla}</td>
+							<td>${acao?.tituloAcao }</td>
+							<td><a class="acao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
+						</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+			<div class="gt-table-buttons">
+				<a href="javascript: modalAbrir('acao')" class="gt-btn-small gt-btn-left">Incluir</a>
+			</div>
+		</div>
+		
+		<div style="display: none"> <!-- escondendo parte que sair� desta tela -->
+		<hr/>
+		<label>SLA</label>
+		<div class="gt-form-row box-wrapper">
+			<div class="box box-left">
+				<label>Pré-atendimento</label>
+				<div>
+					<input id="slaPreAtendimentoQuantidade"
+						type="text"
+						name="slaPreAtendimentoQuantidade" 
+						value="${slaPreAtendimentoQuantidade}" />
+					#{select name:'unidadeMedidaPreAtendimento', 
+						items:unidadesMedida, 
+						valueProperty:'idUnidadeMedida',
+						labelProperty:'descricao', 
+						value:unidadeMedidaPreAtendimento?.idUnidadeMedida}
+						#{option 0}Nenhum#{/option} 
+					#{/select}
+				</div>
+				<label>Atendimento</label>
+				<div>
+					<input id="slaAtendimentoQuantidade"
+						type="text"
+						name="slaAtendimentoQuantidade" 
+						value="${slaAtendimentoQuantidade}" />
+					#{select name:'unidadeMedidaAtendimento', 
+						items:unidadesMedida, 
+						valueProperty:'idUnidadeMedida',
+						labelProperty:'descricao', 
+						value:unidadeMedidaAtendimento?.idUnidadeMedida}
+						#{option 0}Nenhum#{/option} 
+					#{/select}
+				</div>
+				<label>Pós-atendimento</label>
+				<div>
+					<input id="slaPosAtendimentoQuantidade"
+						type="text"
+						name="slaPosAtendimentoQuantidade" 
+						value="${slaPosAtendimentoQuantidade}" />
+					#{select name:'unidadeMedidaPosAtendimento', 
+						items:unidadesMedida, 
+						valueProperty:'idUnidadeMedida',
+						labelProperty:'descricao', 
+						value:unidadeMedidaPosAtendimento?.idUnidadeMedida}
+						#{option 0}Nenhum#{/option} 
+					#{/select}
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Margem de segurança na divulgação (%)</label>
+					<input id="margemSeguranca"
+						type="text"
+						name="margemSeguranca" 
+						value="${margemSeguranca}" />
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>#{checkbox name:'divulgarSLA',
+						value:divulgarSLA/} Divulgar SLA</label>
+				</div>
+			</div>
+			<div class="box">
+				<div class="gt-form-row gt-width-100">
+					<label>Observação para divulgação de SLA</label>
+					<textarea cols="70" rows="10" name="observacaoSLA"
+						id="observacaoSLA" maxlength="8192">${observacaoSLA}</textarea>
+				</div>
+			</div>
+		</div>
+		
+		<hr/>
+		<label>Notificação de atraso</label>
+		<div class="gt-form-row box-wrapper">
+			<div class="gt-width-50">
+				<label>#{checkbox name:'notificarGestor',
+					value:notificarGestor/} Gestor do item de Configuração</label>
+			</div>
+			<div class="gt-width-25">
+				<label>#{checkbox name:'notificarSolicitante',
+					value:notificarSolicitante/} Solicitante</label>
+			</div>
+			
+			<div class="gt-width-25">
+				<label>#{checkbox name:'notificarCadastrante',
+					value:notificarCadastrante/} Cadastrante</label>
+			</div>
+		</div>
+		
+		<div class="gt-form-row box-wrapper">
+			<div class="gt-width-50">
+				<label>#{checkbox name:'notificarInterlocutor',
+					value:notificarInterlocutor/} Interlocutor</label>
+			</div>
+			
+			<div class="gt-width-50">
+				<label>#{checkbox name:'notificarAtendente',
+					value:notificarAtendente/} Atendente</label>
+			</div>
+		</div>
+		
+		<hr/>
+		<label>Priorização</label>
+		<div class="gt-form-row">
+			<label>Lista de Prioridade</label>
+			<ul id="listasDesignacao" style="color: #365b6d"></ul>
+			<input type="button" value="Incluir" id="botaoIncluirDesignacaoLista"
+                      class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+           </div>
+        </div><!-- escondendo parte que sair� desta tela -->
+		<div class="gt-form-row">
+			<div class="gt-form-row">
+				<a href="javascript: if (block()) gravarDesignacao();" class="gt-btn-medium gt-btn-left">Ok</a>
+				<a href="javascript: designacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				#{if idConfiguracao} 
+					<input type="button" value="Desativar"
+						class="gt-btn-medium gt-btn-left"
+						onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${idConfiguracao}'" />
+				#{/if}
+			</div>
+		</div>
+		
+		
+		
+		<div class="gt-form-row gt-width-100">
+			<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram
+				preenchidos.</p>
+		</div>
+	</div>
+</div>
+
+<div id="dialogDesignacao">
+	<div class="gt-content">
+		<div class="gt-form gt-content-box">
+			<div class="gt-form-row">
+				<div class="gt-form-row gt-width-66">
+					<label>Lista</label> #{select name:'itemListaDesignacao', id:'itemListaDesignacao'}
+						 #{list items:listasPrioridade, as:'item'} #{option item.idLista} ${item.nomeLista} #{/option} #{/list} #{/select}
+				</div>
+				<div class="gt-form-row">
+					<input type="button" id="modalOkLista" value="Ok"
+                           class="gt-btn-medium gt-btn-left" />
+					<input type="button" value="Cancelar" id="modalCancelLista" class="gt-btn-medium gt-btn-left" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+#{modal nome:'itemConfiguracao', titulo:'Adicionar Item de Configuração'}
+	<div id="dialogItemConfiguracao">
+		<div class="gt-content">
+			<div class="gt-form gt-content-box">
+				<div class="gt-form-row">
+					<div class="gt-form-row">
+						<label>Item de Configuração</label> #{selecao tipo:'item',
+							nome:'itemConfiguracao',
+							value:itemConfiguracao?.atual /}
+						<span style="display:none;color: red" id="designacao.itemConfiguracao">Item de Configuração não informado.</span>
+					</div>
+					<div class="gt-form-row">
+						<a href="javascript: inserirItemConfiguracao()" class="gt-btn-medium gt-btn-left">Ok</a>
+						<a href="javascript: modalFechar('itemConfiguracao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+#{/modal}
+
+#{modal nome:'acao', titulo:'Adicionar Ação'}
+	<div id="dialogAcao">
+		<div class="gt-content">
+			<div class="gt-form gt-content-box">
+				<div class="gt-form-row">
+					<div class="gt-form-row">
+						<label>Ação</label> #{selecao tipo:'acao',
+							nome:'acao', value:acao?.atual /}
+						<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
+					</div>
+					<div class="gt-form-row">
+						<a href="javascript: inserirAcao()" class="gt-btn-medium gt-btn-left">Ok</a>
+						<a href="javascript: modalFechar('acao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+#{/modal}

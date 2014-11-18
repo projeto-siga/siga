@@ -8,6 +8,10 @@ ${_cabecalho_pre_head.raw()}
 	background: #365b6d;
 }
 </style>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="/sigasr/public/stylesheets/main.css">
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css">
 ${moreHead?.raw()}
 
 #{if params['popup'] != 'true'}
@@ -23,3 +27,15 @@ ${_rodape.raw()}
 
 </html>
 
+<script>
+var requesting=false;
+function block(){
+	if (requesting)
+		return false;
+	requesting=true;
+	return true;
+}
+function unblock(){
+	requesting=false;
+}
+</script>

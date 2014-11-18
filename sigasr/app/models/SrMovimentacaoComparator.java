@@ -2,8 +2,6 @@ package models;
 
 import java.util.Comparator;
 
-import br.gov.jfrj.siga.cp.CpConfiguracao;
-
 public class SrMovimentacaoComparator implements Comparator<SrMovimentacao> {
 	
 	private boolean ordemCrescente = false;

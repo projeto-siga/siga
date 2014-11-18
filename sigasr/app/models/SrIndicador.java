@@ -1,11 +1,11 @@
 package models;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import util.SrProcessadorScript;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class SrIndicador {
 
@@ -23,8 +23,8 @@ public class SrIndicador {
 		Map<String, Object> attrs = new HashMap<String, Object>();
 		attrs.put("codigo", getConteudoBlobString());
 		attrs.put("lista",
-				Arrays.asList(new String[] { "manga", "pêssego", "abacaxi" }));
-		List<String> lista = Arrays.asList(new String[] { "manga", "pêssego",
+				Arrays.asList(new String[] { "manga", "pï¿½ssego", "abacaxi" }));
+		List<String> lista = Arrays.asList(new String[] { "manga", "pï¿½ssego",
 				"abacaxi" });
 		return s.executar(attrs);
 	}

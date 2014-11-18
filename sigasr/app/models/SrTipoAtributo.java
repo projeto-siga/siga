@@ -1,10 +1,14 @@
 package models;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -26,6 +30,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SrTipoAtributo extends HistoricoSuporte {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
 	@GeneratedValue(generator = "srTipoAtributoSeq")
@@ -37,24 +46,28 @@ public class SrTipoAtributo extends HistoricoSuporte {
 
 	@Column(name = "DESCRICAO")
 	public String descrTipoAtributo;
+	
+	@Enumerated
+	public SrFormatoCampo formatoCampo;
+	
+	@Column(name = "DESCR_PRE_DEFINIDO")
+	public String descrPreDefinido;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrTipoAtributo tipoAtributoInicial;
 
-	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial", cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial")
 	@OrderBy("hisDtIni desc")
 	public List<SrTipoAtributo> meuTipoAtributoHistoricoSet;
 
 	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
 		return idTipoAtributo;
 	}
 
 	@Override
 	public void setId(Long id) {
-		// TODO Auto-generated method stub
 		idTipoAtributo = id;
 	}
 
@@ -79,26 +92,15 @@ public class SrTipoAtributo extends HistoricoSuporte {
 
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public void salvar() throws Exception {
-		super.salvar();
-
-		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
-		//tem de ser corrigido.
-		
-		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
-		//serao recarregadas do banco, e precisarao reconhecer o novo estado deste tipo de atributo
-		//refresh();
-		
-		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
-		// instancia do objeto, caso contrario, nao ha configuracao
-		// referenciando
-		//if (tipoAtributoInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
+	
+	public Set<String> getPreDefinidoSet() {
+		Set<String> preDefinidos = new HashSet<String>();
+		if (formatoCampo == SrFormatoCampo.VL_PRE_DEFINIDO){
+			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";"))); 
+		}
+		return preDefinidos;
 	}
 
 }

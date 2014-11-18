@@ -1,20 +1,12 @@
 package models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import play.db.jpa.GenericModel;
-import play.db.jpa.Model;
 
 public enum SrGravidade {
 
-	SEM_GRAVIDADE(1, "Sem gravidade."), NORMAL(2, "Gravidade normal.",
-			"Pouco graves."), GRAVE(3, "Grave", "Graves"), MUITO_GRAVE(4,
-			"Muito grave.", "Muito graves"), EXTREMAMENTE_GRAVE(5,
-			"Extremamente grave.", "Extremamente graves");
+	SEM_GRAVIDADE(1, "Sem gravidade.", "Sem gravidade"), NORMAL(2, "Gravidade normal.",
+			"Pouco grave"), GRAVE(3, "Grave.", "Grave"), MUITO_GRAVE(4,
+			"Muito grave.", "Muito grave"), EXTREMAMENTE_GRAVE(5,
+			"Extremamente grave.", "Extremamente grave");
 
 	public int nivelGravidade;
 

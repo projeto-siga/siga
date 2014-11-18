@@ -3,16 +3,9 @@ package util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import models.SrItemConfiguracao;
 import models.SrPesquisa;
-import models.SrSelecionavel;
-import models.SrTipoAtributo;
-
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import play.data.binding.Global;
 import play.data.binding.TypeBinder;
-import play.db.jpa.JPA;
 
 @Global
 public class SrPesquisaBinder implements TypeBinder<SrPesquisa> {

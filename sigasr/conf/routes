@@ -3,16 +3,14 @@
 # ~~~~
 
 # Home page
-*     /                                       Application.index
+*     	/                                   Application.index
 
 # Ignore favicon requests
-GET     /favicon.ico                            404
+GET     /favicon.ico                        404
 
 # Map static resources from the /app/public folder to the /public path
-GET     /public/                                staticDir:public
+GET     /public/                            staticDir:public
 
-*		/designacao/editar/{id}				Application.editarDesignacao
-*		/designacao/editar					Application.editarDesignacao
 *		/designacao/gravar					Application.gravarDesignacao
 *		/designacao/listar					Application.listarDesignacao
 
@@ -45,13 +43,18 @@ GET     /public/                                staticDir:public
 *		/associacao/gravar					Application.gravarAssociacao
 *		/associacao/listar					Application.listarAssociacao
 
-*		/acao/editar/{id}				Application.editarAcao
+*		/acao/editar/{id}					Application.editarAcao
 *		/acao/editar						Application.editarAcao
 *		/acao/gravar						Application.gravarAcao
 *		/acao/listar						Application.listarAcao
 *		/acao/selecionar					Application.selecionarAcao
 *		/acao/buscar						Application.buscarAcao
-*		/acao/desativar/{id}				Application.desativarAcao	
+*		/acao/desativar/{id}				Application.desativarAcao
+
+*		/equipe/listar						Application.listarEquipe
+*		/equipe/editar						Application.editarEquipe
+*		/equipe/editar/{id}					Application.editarEquipe
+*		/equipe/gravar						Application.gravarEquipe
 
 *		/solicitacao/desfazer_ultimo/{id}				Application.desfazerUltimaMovimentacao
 *		/solicitacao/filha/{id}							Application.criarFilha
@@ -74,9 +77,9 @@ GET     /public/                                staticDir:public
 *		/solicitacao/listarLista/gravar 				Application.gravarLista
 *		/solicitacao/exibirLista/{id}		 			Application.exibirLista
 *		/solicitacao/priorizarLista		 				Application.priorizarLista
-*		/solicitacao/associarLista/{id}				    Application.associarLista
-*		/solicitacao/associarListaGravar/{id}			Application.associarListaGravar
-*		/solicitacao/desassociarLista					Application.desassociarLista
+*		/solicitacao/incluirEmLista/{id}				Application.incluirEmLista
+*		/solicitacao/incluirEmListaGravar/{id}			Application.incluirEmListaGravar
+*		/solicitacao/retirarDeLista						Application.retirarDeLista
 *		/solicitacao/editarLista/{id}					Application.editarLista
 *		/solicitacao/{action}							Application.{action}
 *		/solicitacao/{action}/{id}						Application.{action}
@@ -85,6 +88,3 @@ GET     /public/                                staticDir:public
 
 *		/{tipo}/buscar									Application.buscarSiga
 *		/{tipo}/selecionar								Application.selecionarSiga
-
-
-

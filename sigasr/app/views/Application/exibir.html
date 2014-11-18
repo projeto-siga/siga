@@ -31,9 +31,9 @@ $(function(){
 		<p></p>
 		<h3>
 			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)} #{if
-			solicitacao.solicitacaoJuntada} a <a
-				href="@{Application.exibir(solicitacao.solicitacaoJuntada.idSolicitacao)}">
-				${solicitacao.solicitacaoJuntada.codigo} </a> #{/if}
+			solicitacao.solicitacaoPrincipal} a <a
+				href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
+				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
 		</h3>
 
 		#{if solicitacao.estaForaAtendenteDesignado()}
@@ -372,6 +372,51 @@ $(function(){
 			</table>
 		</div>
 	</form>
+	#{/modal}
+	#{modal nome:'juntar', titulo:'Juntar'}
+		<form action="@{Application.juntarSolicitacoes()}" method="post"
+			enctype="multipart/form-data" id="formGravarJuncao">
+			<input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
+			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+				<label>Solicitação</label> <br />
+				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeJuntada',
+					value: idSolicitacaoRecebeJuntada, grande:true,
+					onchange: 'limparErros();'  /}
+				<span id="erroSolicitacao" style="color: red; display: none;">Solicitação não informada.</span>
+			</div>
+			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+				<label>Justificativa</label>
+				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativa" maxlength="255" onkeyup="validarJuncao()"></textarea>
+				<span id="erroJustificativa" style="color: red; display: none;"><br />Justificativa não informada.</span>
+			</div>
+			<div style="display: inline" class="gt-form-row ">
+				<input type="button" onclick="gravarJuncao();" value="Gravar" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</form>
+		<script type="text/javascript">
+			function validarJuncao() 
+			{
+				$("#erroSolicitacao").hide();
+				$("#erroJustificativa").hide();
+
+				if ($("#idSolicitacaoRecebeJuntadaSpan").html() == "") {
+					$("#erroSolicitacao").show();
+					return false;
+				}
+				if ($("#justificativa").val() == "") {
+					$("#erroJustificativa").show();
+					return false;
+				}
+				return true;
+			}
+			
+			function gravarJuncao()
+			{
+				if (validarJuncao()) {
+					document.getElementById("formGravarJuncao").submit();
+				}
+			}
+		</script>
 	#{/modal}
 	#{modal nome:'associarLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/associarLista?idSolicitacao='+solicitacao.idSolicitacao} 
 	#{/modal} 

@@ -187,16 +187,22 @@
 							<tr>
 								<td class="gt-celula-nowrap details-control"></td>
 								<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-									#{if sol.isRascunho()}
-										<a href="@{Application.editar(sol.idSolicitacao)}">
-											${sol.codigo}
-										</a>
+									#{if popup}
+										<a href="javascript:opener.retorna_solicitacao${nome}('${sol.idSolicitacao}','${sol.codigo}','${sol.codigo}');window.close()">${sol.codigo}</a>
 									#{/if}
 									#{else}
-										<a href="@{Application.exibir(sol.idSolicitacao)}">
-											${sol.codigo}
-										</a>
+										#{if sol.isRascunho()}
+											<a href="@{Application.editar(sol.idSolicitacao)}">
+												${sol.codigo}
+											</a>
+										#{/if}
+										#{else}
+											<a href="@{Application.exibir(sol.idSolicitacao)}">
+												${sol.codigo}
+											</a>
+										#{/else}
 									#{/else}
+									
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
 									#{if sol.isAtivo()}
@@ -233,8 +239,10 @@
 		#{/elseif }
 		
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-			<form action="@{Application.listar}">
+			<form action="@{Application.buscarSolicitacao}">
 				<input type="hidden" name="filtro.pesquisar" value="true" />
+				<input type="hidden" name="nome" value="${nome}" />
+				<input type="hidden" name="popup" value="${popup}" />
 				<table class="gt-form-table">
 					<tr class="header">
 					<td align="center" valign="top" colspan="4">Dados para busca</td>

@@ -58,7 +58,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -131,10 +130,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_SOLICITACAO_PAI")
 	public SrSolicitacao solicitacaoPai;
 
-	@Transient
-//	@ManyToOne
-//	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
-	public SrSolicitacao solicitacaoJuntada;
+	@ManyToOne
+	@JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
+	public SrSolicitacao solicitacaoReferencia;
 
 	@Enumerated
 	public SrFormaAcompanhamento formaAcompanhamento;
@@ -219,8 +217,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
-	@Transient
-//	@OneToMany(mappedBy = "solicitacaoJuntada", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "solicitacaoReferencia")
 	protected Set<SrSolicitacao> meuSolicitacaoJuntadasSet;
 
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
@@ -880,6 +877,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return false;
 	}
+	
+	public SrSolicitacao getSolicitacaoPrincipal() {
+		for (SrMovimentacao mov : getMovimentacaoSet()) {
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO 
+					&& !mov.isCancelada())
+				return mov.solicitacao.solicitacaoReferencia;
+		}
+		return null;
+	}
 
 	public boolean temPreAtendenteDesignado() throws Exception {
 		return (getPreAtendenteDesignado() != null);
@@ -1273,7 +1279,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitações",
 				podeJuntar(lotaTitular, titular),
-				"Application.juntarSolicitacoes", "popup=true"));
+				"juntar", "modal=true"));
 
 		operacoes.add(new SrOperacao("text_list_numbers", "Definir Lista",
 				podeAssociarLista(lotaTitular, titular), "associarLista",
@@ -1468,13 +1474,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					reInserirListasDePrioridade(lotaCadastrante, cadastrante);
 
 				if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO) {
-					Query query = JPA
-							.em()
-							.createQuery(
-									"UPDATE SrSolicitacao sol SET sol.solicitacaoJuntada = :solRecebeJuntada WHERE sol.idSolicitacao = :idSol");
-					query.setParameter("solRecebeJuntada", null);
-					query.setParameter("idSol", this.idSolicitacao);
-					query.executeUpdate();
+					this.solicitacaoReferencia = null;
+					this.save();
 				}
 			}
 
@@ -2243,15 +2244,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if ((pess != null) && !podeJuntar(lota, pess))
 			throw new Exception("Operação não permitida");
 
-		this.solicitacaoJuntada = solRecebeJuntada;
-		Query query = JPA
-				.em()
-				.createQuery(
-						"UPDATE SrSolicitacao sol SET sol.solicitacaoJuntada = :solRecebeJuntada WHERE sol.idSolicitacao = :idSol");
-		query.setParameter("solRecebeJuntada", solRecebeJuntada);
-		query.setParameter("idSol", this.idSolicitacao);
-		query.executeUpdate();
-
+		this.solicitacaoReferencia = solRecebeJuntada;
+		this.save();
+		
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO);
@@ -2260,7 +2255,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		movimentacao = new SrMovimentacao(solRecebeJuntada);
 		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBE_JUNCAO_SOLICITACAO);
+				.findById(TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO);
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
 

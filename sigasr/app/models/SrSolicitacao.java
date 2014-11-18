@@ -991,11 +991,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean estaCom(DpLotacao lota, DpPessoa pess) {
 		SrMovimentacao ultMov = getUltimaMovimentacao();
+		SrMovimentacao ultMovDoPai = null;
+		if (isFilha())
+			 ultMovDoPai = this.solicitacaoPai.getUltimaMovimentacao();
 		if (isRascunho())
 			return foiCadastradaPor(lota, pess) || foiSolicitadaPor(lota, pess);
-		return (ultMov.atendente != null && pess != null && ultMov.atendente
-				.equivale(pess)) || (ultMov.lotaAtendente != null && ultMov.lotaAtendente
-				.equivale(lota));
+		return (ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess)) 
+					|| (ultMov.lotaAtendente != null && ultMov.lotaAtendente.equivale(lota))
+					|| (ultMovDoPai != null && ((ultMovDoPai.atendente != null && ultMovDoPai.atendente.equivale(pess))
+												|| (ultMovDoPai.lotaAtendente != null && ultMovDoPai.lotaAtendente.equivale(lota))));
 	}
 
 	public boolean estaForaAtendenteDesignado() throws Exception {

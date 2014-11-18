@@ -82,7 +82,7 @@
 					"visible": false,
 					"searchable": false
 				}],
-				"iDisplayLength": 100
+				"iDisplayLength": 10
 		    } );
 		}
 		
@@ -119,8 +119,7 @@
 					"visible": false,
 					"searchable": false
 				}],
-				"iDisplayLength": 100
-			});
+				"iDisplayLength": 10			});
 		}
 		
 		// Delete Item Configuração
@@ -490,7 +489,7 @@
         </div><!-- escondendo parte que sair� desta tela -->
 		<div class="gt-form-row">
 			<div class="gt-form-row">
-				<a href="javascript: gravarDesignacao()" class="gt-btn-medium gt-btn-left">Ok</a>
+				<a href="javascript: if (block()) gravarDesignacao();" class="gt-btn-medium gt-btn-left">Ok</a>
 				<a href="javascript: designacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 				#{if idConfiguracao} 
 					<input type="button" value="Desativar"

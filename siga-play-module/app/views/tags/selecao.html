@@ -33,7 +33,12 @@ self.newwindow_${nomeclean} = '';
 self.popitup_${nomeclean} = function(sigla) {
 	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
 	var url = base+'${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
-	
+
+	if (url.indexOf("sigagc/app/lotacao/buscar" != -1)){
+		url = "/siga/lotacao/buscar.action?propriedade=lotacaofiltrolotaResponsavel&sigla="+sigla;
+	}else if(url.indexOf("sigagc/app/pessoa/buscar" != -1)){
+		url = "/siga/pessoa/buscar.action?propriedade=pessoafiltroresponsavel&sigla="+sigla;
+	}
 	//var url = '@@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
 	
 	if (!newwindow_${nomeclean}.closed && newwindow_${nomeclean}.location) {
@@ -79,9 +84,37 @@ self.ajax_${nomeclean} = function() {
 	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
 	var url = base+'${_tipo}/selecionar?sigla=' + sigla + '&nome=${nomeclean}&'+'${_params?.raw()}';
 	
-	//var url = '@@{Application.index()}${_tipo}/selecionar?sigla=' + sigla + '&nome=${nomeclean}&'+'${_params?.raw()}';
+	
+	if (url.indexOf("/app/lotacao") != -1){
+		var params = {
+			propriedade: "lotacaofiltrolotaResponsavel",
+			sigla: sigla
+		}
 
-	PassAjaxResponseToFunction(url, 'resposta_ajax_${nomeclean}', false);
+		Siga.ajax("/siga/lotacao/selecionar.action", params, "GET", function(response){
+		    var data = response.split(';');
+		    if (data[0] == '1')
+			    return retorna_${_tipo}${nomeclean}(data[1], data[2], data[3]);
+		    retorna_${_tipo}${nomeclean}('', '', '');
+			return popitup_${nomeclean}(sigla);
+		});	
+		
+	}else if (url.indexOf("/app/pessoa") != -1){
+		var params = {
+			propriedade: "pessoafiltroresponsavel",
+			sigla: sigla
+		}
+			
+		Siga.ajax("/siga/pessoa/selecionar.action", params, "GET", function(response){
+		    var data = response.split(';');
+		    if (data[0] == '1')
+			    return retorna_${_tipo}${nomeclean}(data[1], data[2], data[3]);
+		    retorna_${_tipo}${nomeclean}('', '', '');
+			return popitup_${nomeclean}(sigla);
+		});	
+	}else{
+		PassAjaxResponseToFunction(url, 'resposta_ajax_${nomeclean}', false);
+	}
 }
 
 </script><input type="hidden" name="${_nome}"

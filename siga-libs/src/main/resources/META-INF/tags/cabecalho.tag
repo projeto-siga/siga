@@ -68,6 +68,7 @@ ${meta}
 
 <script src="/siga/sigalibs/ajax.js" type="text/javascript"></script>
 <script src="/siga/sigalibs/static_javascript.js" type="text/javascript" charset="utf-8"></script>
+<script src="/siga/javascript/picketlink.js" type="text/javascript" charset="utf-8"></script>
 
 
 <!-- <link href="${pageContext.request.contextPath}/sigalibs/menu.css"

@@ -438,24 +438,24 @@ public class SrConfiguracao extends CpConfiguracao {
 		return 0;
 	}
 
-	public SrItemConfiguracao getItemConfiguracao() {
+	public SrItemConfiguracao getItemConfiguracaoUnitario() {
 		if (itemConfiguracaoSet == null || itemConfiguracaoSet.size() == 0)
 			return null;
 		return itemConfiguracaoSet.get(0);
 	}
 
-	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+	public void setItemConfiguracaoUnitario(SrItemConfiguracao itemConfiguracao) {
 		itemConfiguracaoSet = new ArrayList<SrItemConfiguracao>();
 		itemConfiguracaoSet.add(itemConfiguracao);
 	}
 
-	public SrAcao getAcao() {
+	public SrAcao getAcaoUnitaria() {
 		if (acoesSet == null || acoesSet.size() == 0)
 			return null;
 		return acoesSet.get(0);
 	}
 
-	public void setAcao(SrAcao acao) {
+	public void setAcaoUnitaria(SrAcao acao) {
 		acoesSet = new ArrayList<SrAcao>();
 		acoesSet.add(acao);
 	}

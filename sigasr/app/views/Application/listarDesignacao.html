@@ -91,7 +91,7 @@
 						document.getElementById("check"+aData[posIdDesignacao]).checked = aData[posListaPrioSerial] == 'true';
 				}
 			},
-			"iDisplayLength": 25
+			"iDisplayLength": 100
 		});
 		
 		$('#designacoes_table tbody').on('click', 'tr', function () {
@@ -133,10 +133,12 @@
 		var designacaoJson;
 		
 		// transforma o valor String em objeto, caso necessário
-		if (itemArray[posDesignJson].constructor.name ==  'String' && itemArray[posDesignJson] != '')
+		// Edson: comentando, pois nao funciona no IE
+		try{
 			designacaoJson = JSON.parse(itemArray[posDesignJson]);
-		else
+		} catch(e){
 			designacaoJson = itemArray[posDesignJson];
+		}
 		
 		if (designacaoJson) {
 			

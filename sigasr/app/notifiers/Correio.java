@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import models.SrGestorItem;
 import models.SrItemConfiguracao;
 import models.SrMovimentacao;
 import models.SrSolicitacao;
+import models.SrTipoMovimentacao;
 import play.mvc.Mailer;
 
 public class Correio extends Mailer {
@@ -25,6 +27,25 @@ public class Correio extends Mailer {
 		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
 		addRecipient(sol.solicitante.getEmailPessoa());
+		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
+		send(movimentacao, sol);
+	}
+	
+	public static void notificarAtendente(SrMovimentacao movimentacao) {
+		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
+		setSubject("Movimentação da solicitação " + sol.getCodigo());
+		
+		DpPessoa atendenteSolPai = sol.solicitacaoPai.getAtendente();
+		if (atendenteSolPai != null && atendenteSolPai.getEmailPessoa() != null)
+			addRecipient(atendenteSolPai.getEmailPessoa());
+		else {
+			DpLotacao lotaAtendenteSolPai = sol.solicitacaoPai.getLotaAtendente();
+			if (lotaAtendenteSolPai != null)
+				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai.getDpPessoaLotadosSet())
+					if (pessoaDaLotacao.getDataFim() == null 
+							&& pessoaDaLotacao.getEmailPessoa() != null)
+						addRecipient(pessoaDaLotacao.getEmailPessoa());
+		}
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(movimentacao, sol);
 	}

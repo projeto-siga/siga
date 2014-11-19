@@ -44,5 +44,8 @@ public class Util {
 
 		}
 	}
-
+	
+	public static boolean isbetween(int low, int high, int n) {
+	    return n >= low && n <= high;
+	}
 }

@@ -17,34 +17,34 @@ public class SrConfiguracaoComparator extends CpConfiguracaoComparator {
 
 			// Quando c1 é mais abstrato, retorna 1.
 
-			if (srC1.itemConfiguracao == null) {
-				if (srC2.itemConfiguracao != null)
+			if (srC1.itemConfiguracaoSet == null) {
+				if (srC2.itemConfiguracaoSet != null)
 					return 1;
 			} else {
-				if (srC2.itemConfiguracao == null)
+				if (srC2.itemConfiguracaoSet == null)
 					return -1;
 				else {
-					if (srC1.itemConfiguracao.getNivel() < srC2.itemConfiguracao
-							.getNivel())
+					int nivelSrC1 = srC1.getNivelItemParaComparar();
+					int nivelSrC2 = srC2.getNivelItemParaComparar();
+					if (nivelSrC1 < nivelSrC2)
 						return 1;
-					if (srC1.itemConfiguracao.getNivel() > srC2.itemConfiguracao
-							.getNivel())
+					if (nivelSrC1 > nivelSrC2)
 						return -1;
 				}
 			}
 
-			if (srC1.acao == null) {
-				if (srC2.acao != null)
+			if (srC1.acoesSet == null) {
+				if (srC2.acoesSet != null)
 					return 1;
 			} else {
-				if (srC2.acao == null)
+				if (srC2.acoesSet == null)
 					return -1;
 				else {
-					if (srC1.acao.getNivel() < srC2.acao
-							.getNivel())
+					int nivelSrC1 = srC1.getNivelAcaoParaComparar();
+					int nivelSrC2 = srC2.getNivelAcaoParaComparar();
+					if (nivelSrC1 < nivelSrC2)
 						return 1;
-					if (srC1.acao.getNivel() > srC2.acao
-							.getNivel())
+					if (nivelSrC1 > nivelSrC2)
 						return -1;
 				}
 			}

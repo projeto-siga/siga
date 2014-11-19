@@ -22,8 +22,51 @@
 </style>
 <script language="javascript">
 	$(document).ready(function() {
-		document.getElementById("solicitacaosolicitante_sigla").focusout = validarCadastranteSolicitante();
-		validarCadastranteSolicitante();
+
+		$('#gravar').click(function() {
+			if ($('#siglaCadastrante').val() != $('#solicitacaosolicitante_sigla')[0].value) {
+				var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
+				$('#stringDtMeioContato').val(stringDt);
+			} 
+		}); 
+
+		if($('#solicitacaointerlocutor').val() != "") {
+			$('#checkmostrarInterlocutor').prop('checked', true);	
+			$('#interlocutor').show();		
+		}
+
+		$('#checkRascunho').change(function() {
+			if(this.checked) {
+				$('#checkRascunho').prop('value', 'true');
+				return;
+			}
+			$('#checkRascunho').prop('value', 'false');
+		});
+
+		function formatarValorTimer(num) {
+			if (num.toString().length == 1) 
+	      		return "0" + num;
+
+	  		return num;
+		};
+
+		var andamento = 0;	
+		function moveRelogio(mili){ 
+			andamento = andamento + mili;
+		   	dtAndamento = new Date(andamento);
+		   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
+		   	
+		   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
+		   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
+
+		   	$('#andamento').html(andamentoString);
+		   	$('#total').html(totalString);
+
+		   	setTimeout("moveRelogio(60000)",60000);
+		}; 
+
+		carregarFiltrosAoIniciar();
+		//moveRelogio(0);
 	});
 
 	function carregarLocalRamalEMeioContato() {
@@ -49,7 +92,9 @@
 		$("#calendarioComunicacao").mask("99/99/9999");
 		$("#horarioComunicacao").mask("99:99");
 
-		verificarFormatoCampo(); 
+		var scripts = div.getElementsByTagName("script");
+		for(var i=0;i<scripts.length;i++)  
+			   eval(scripts[i].text); 
 	}
 	
 	function carregarItem(){
@@ -89,6 +134,19 @@
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
 	}
+
+	function carregarPrioridade() {
+		gravidade 	= document.getElementById('gravidade');
+		urgencia 	= document.getElementById('urgencia');
+		tendencia 	= document.getElementById('tendencia'); 
+		params = '';
+		params = gravidade.name + '=' + escape(gravidade.value) + '&' + 
+					urgencia.name + '=' + escape(urgencia.value) + '&' +
+					tendencia.name + '=' + escape(tendencia.value) + '&';
+					
+		ReplaceInnerHTMLFromAjaxResponse('@{Application.exibirPrioridade()}?' + params,
+				null, document.getElementById('divPrioridade'));
+ 	}
 	
 	// funções usadas para solicitações relacionadas
 	function addFiltro(divFiltro, campoRef, optionHtml, optionVl) {
@@ -188,20 +246,14 @@
 	function validarCadastranteSolicitante() {
 		var siglaCadastrante = $('#siglaCadastrante').val();
 		var siglaSolicitante = $('#solicitacaosolicitante_sigla')[0].value;
-		
-		mudarVisibilidadeCampos(siglaCadastrante == siglaSolicitante);
-	}
-	
-	function mudarVisibilidadeCampos(saoIguais) {
-		if (saoIguais) {
+
+		if (siglaCadastrante == siglaSolicitante) {
 			$('#spanInterlocutor')[0].style.display='none';
 			$('#meioComunicacao')[0].style.display='none';
-			$('#dtInicioMeioComunicacao').hide();
 		}
 		else {
 			$('#spanInterlocutor')[0].style.display='inline';
 			$('#meioComunicacao')[0].style.display='inline';
-			$('#dtInicioMeioComunicacao').show();
 		}
 	}
 	
@@ -348,34 +400,36 @@
 
 <div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
-		<h2>#{if solicitacao.idSolicitacao ||
-			solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
-			#{else}Cadastro de Solicitação#{/else}</h2>
-		<div class="gt-content-box gt-for-table gt-form"
-			style="margin-top: 15px;">
+		<h2>#{if solicitacao.idSolicitacao || solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
+			#{else}Cadastro de Solicita&ccedil;&atilde;o#{/else}</h2>
+		<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
 
 			#{form @Application.gravar(),
-			enctype:'multipart/form-data',id:'formSolicitacao' } #{if
-			solicitacao.solicitacaoPai} <input type="hidden"
-				name="solicitacao.solicitacaoPai.idSolicitacao"
-				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> #{/if} #{if
-			solicitacao.idSolicitacao} <input type="hidden"
-				name="solicitacao.idSolicitacao"
-				value="${solicitacao.idSolicitacao}" /> #{/if} <input type="hidden"
-				name="solicitacao.numSolicitacao"
-				value="${solicitacao.numSolicitacao}" /> <input type="hidden"
-				name="dtIniEdicao" value="${dtIniEdicao}" /> <input type="hidden"
+			enctype:'multipart/form-data',id:'formSolicitacao',onsubmit:'javascript:return block();' } 
+				#{if solicitacao.solicitacaoPai}
+				<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
+				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
+				#{/if}
+				#{if solicitacao.idSolicitacao}
+				<input
+				type="hidden" name="solicitacao.idSolicitacao" id="idSol"
+				value="${solicitacao.idSolicitacao}" /> 
+				#{/if}
+				<input type="hidden"
+				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
+				<input type="hidden"
+				name="dtIniEdicao" value="${dtIniEdicao}" />
+				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
-			<input type="hidden" name="solicitacao.stringDtMeioContato"
-				id="stringDtMeioContato" value="${solicitacao.dtRegDDMMYYYYHHMM}">
-
+				
 			<div class="gt-form-table">
-				<div class="barra-subtitulo barra-subtitulo-top header"
-					align="center" valign="top">Dados básicos</div>
+				<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
+					Dados B&aacute;sicos
+				</div>
 			</div>
 
 			#{ifErrors}
-			<p class="gt-error">Alguns campos obrigatórios não foram
+			<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram
 				preenchidos ${error}</p>
 			#{/ifErrors}
 
@@ -388,7 +442,7 @@
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
 				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
-				onchange:"carregarLocalRamalEMeioContato();carregarItem();carregarConhecimentosRelacionados();
+				onchange:"carregarLocalRamalEMeioContato();carregarItem();
 				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');" /} <span style="margin-left: 10px;"
 					id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor',
 					value:false, depende:'interlocutor'/} Interlocutor</span>
@@ -399,36 +453,23 @@
 				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor,
 				onchange:'' /}
 			</div>
-			#{set locaisDisponiveis:solicitacao.locaisDisponiveis /} #{if
-			locaisDisponiveis.size() > 1}
-			<div class="gt-form-row gt-width-66">
-				<label>Local</label> #{select name:'solicitacao.local',
-				items:locaisDisponiveis, valueProperty:'idComplexo',
-				labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo,
-				id:'local' /}
-			</div>
-			<script>
-					$("#local").change(function() {
-						  carregarItem();
-					});
-				</script>
-			#{/if}
-
-			<div class="gt-form-table" style="margin-top: 10px;">
-				<div class="barra-subtitulo header" align="center" valign="top">
-					Contato</div>
-			</div>
+			
+			<div id="divLocalRamalEMeioContato">#{include
+				'Application/exibirLocalRamalEMeioContato.html' /}</div>
 
 			<div class="gt-form-row gt-width-66">
-				<label>Quando deseja receber notificação de movimentacao?</label>
+				<label>Quando deseja receber notifica&ccedil;&atilde;o de movimenta&ccedil;&atilde;o?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
 				items:models.SrFormaAcompanhamento.values(),
 				labelProperty:'descrFormaAcompanhamento',
 				value:solicitacao.formaAcompanhamento /}
+			</div>	
+				
+			<div class="gt-form-table">
+				<div class="barra-subtitulo header" align="center" valign="top">
+					Detalhamento
+				</div>
 			</div>
-
-			<div id="divLocalRamalEMeioContato">#{include
-				'Application/exibirLocalRamalEMeioContato.html' /}</div>
 
 			<div id="divItem">#{include
 				'Application/exibirItemConfiguracao.html' /}</div>
@@ -451,30 +492,35 @@
 			</div>
 			<div class="gt-form-row box-wrapper">
 				<div class="gt-form-row gt-width-33">
-					<label>Gravidade</label> #{select name:'solicitacao.gravidade',
-					items:models.SrGravidade.values(),
-					labelProperty:'respostaEnunciado', value:'NORMAL',
-					style:'width:235px;' /}
+					<label>Gravidade</label> #{select name:'solicitacao.gravidade', id:'gravidade', items:models.SrGravidade.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.gravidade ?: 'NORMAL', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
-					<label>Urgência</label> #{select name:'solicitacao.urgencia',
-					items:models.SrUrgencia.values(),
-					labelProperty:'respostaEnunciado', value:'NORMAL',
-					style:'width:235px;' /}
+					<label>Urg&ecirc;ncia</label> #{select
+					name:'solicitacao.urgencia', id:'urgencia', items:models.SrUrgencia.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.urgencia ?: 'NORMAL', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
-					<label>Tendência</label> #{select name:'solicitacao.tendencia',
-					items:models.SrTendencia.values(),
-					labelProperty:'respostaEnunciado', value:'PIORA_MEDIO_PRAZO',
-					style:'width:235px;' /}
+					<label>Tend&ecirc;ncia</label> #{select
+					name:'solicitacao.tendencia', id:'tendencia', items:models.SrTendencia.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.tendencia ?: 'PIORA_MEDIO_PRAZO', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 			</div>
+			<div id="divPrioridade" class="gt-form-row gt-width-66">
+				<label style="float: left">Prioridade: &nbsp;</label>
+				<span>${solicitacao.prioridade?.descPrioridade ?: models.SrPrioridade.PLANEJADO.descPrioridade}</span>
+				#{select
+					name:'solicitacao.prioridade', id:'prioridade', items:models.SrPrioridade.values(), 
+					labelProperty:'descPrioridade', value:solicitacao.prioridade ?: 'PLANEJADO', style:'width:235px;border:none;display:none;'  /}
+					<br /><br />
+			</div>
+
 
 			#{if solicitacao.podeAbrirJaFechando(lotaTitular,cadastrante)}
 			<div class="gt-form-row gt-width-66">
 				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
 					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',
-					disabled: alterando /} Fechar o chamado logo após a abertura</label>
+					disabled: alterando /} Fechar o chamado logo ap&oacute;s a abertura</label>
 			</div>
 			#{/if}
 
@@ -484,8 +530,7 @@
 					name="solicitacao.motivoFechamentoAbertura"
 					id="motivoFechamentoAbertura" />
 			</div>
-
-			#{if !solicitacao.idSolicitacao || solicitacao.rascunho}
+			#{if !solicitacao.jaFoiDesignada()}
 			<div class="gt-form-row">
 				<label> #{checkbox name:'solicitacao.rascunho',
 					value:solicitacao.rascunho /} Rascunho </label>
@@ -499,10 +544,8 @@
 			#{/form}
 		</div>
 	</div>
-	<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
-			<h2>&nbsp;</h2>
-		</div>
+	*{<div class="gt-sidebar">
+		<div class="gt-sidebar-content"><h2>&nbsp;</h2></div>
 	</div>
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content tempo">
@@ -515,13 +558,10 @@
 				Total: <span id="total"></span> horas
 			</h3>
 		</div>
-	</div>
-	<div class="gt-sidebar">
-		<div id="solicitacoesRelacionadas" class="gt-sidebar-content">
-			<h3>
-				Solicitações relacionadas <a href="#" onclick="verMais()">[Ver
-					Mais]</a>
-			</h3>
+	</div>}*
+	*{<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
 			<div class="gt-content-box gt-form" id="filtroSolicitacoes">
 				<label>Filtro</label>
 
@@ -539,7 +579,7 @@
 						</colgroup>
 						<thead>
 							<tr>
-								<th>Código</th>
+								<th>C&oacute;digo</th>
 								<th>Teor</th>
 							</tr>
 						</thead>
@@ -550,74 +590,8 @@
 				</div>
 			</div>
 		</div>
+	</div>}*
+	
+	<div id="divConhecimentosRelacionados">
 	</div>
-
-	<div id="divConhecimentosRelacionados" />
 </div>
-
-<script>
-	
-	$('#gravar').click(function() {
-		if ($('#siglaCadastrante').val() != $('#solicitacaosolicitante_sigla')[0].value) {
-			var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
-			$('#stringDtMeioContato').val(stringDt);
-		} 
-	}); 
-	
-	if($('#solicitacaosolicitante').val() != $('#solicitacaointerlocutor').val()
-			&& $('#solicitacaointerlocutor').val() != "") {
-		$('#checkmostrarInterlocutor').prop('checked', true);	
-		$('#interlocutor').show();		
-	}
-
-	$('#checkRascunho').change(function() {
-		if(this.checked) {
-			$('#checkRascunho').prop('value', 'true');
-			return;
-		}
-		$('#checkRascunho').prop('value', 'false');
-	});
-	
-	var meioComunicacao = $("select[name='solicitacao.meioComunicacao']");
-	function verificarFormatoCampo() {
-		meioComunicacao = $("select[name='solicitacao.meioComunicacao']");
-		if(meioComunicacao.val() === 'EMAIL'
-			|| meioComunicacao.val() === 'PANDION'
-			|| meioComunicacao.val() === 'CHAT') {
-			$('#dtInicioMeioComunicacao').show();
-			return;
-		}
-		$('#dtInicioMeioComunicacao').hide();
-	};
-
-	verificarFormatoCampo(); 
-
-	meioComunicacao.change(function() {
-		verificarFormatoCampo(); 
-	});
-
-	function formatarValorTimer(num) {
-		if (num.toString().length == 1) 
-      		return "0" + num;
-
-  		return num;
-	};
-
-	var andamento = 0;	
-	function moveRelogio(mili){ 
-		andamento = andamento + mili;
-	   	dtAndamento = new Date(andamento);
-	   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
-	   	
-	   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
-	   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
-
-	   	$('#andamento').html(andamentoString);
-	   	$('#total').html(totalString);
-
-	   	setTimeout("moveRelogio(60000)",60000);
-	}; 
-
-	carregarFiltrosAoIniciar();
-	moveRelogio(0);
-</script>

@@ -235,6 +235,8 @@
 	
 	$(function() {
 		$("[value='Gravar']").click(function(){
+			if (!block())
+				return false;
 			var jForm = $("form"),
             	params = jForm.serialize();
 			
@@ -355,7 +357,7 @@
 				<div class="gt-form-row">
 					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
 					<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
-					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" />
+					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left"  />
 					#{if lista?.idLista }<a href="@{Application.exibirLista(lista.idLista)}" class="gt-btn-medium gt-btn-left">Cancelar</a>#{/if}
 					#{else}<a href="@{Application.listarlista}" class="gt-btn-medium gt-btn-left">Cancelar</a>#{/else}
 				</div>

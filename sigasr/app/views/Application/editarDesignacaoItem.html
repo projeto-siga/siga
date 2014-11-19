@@ -342,7 +342,7 @@
 				</table>
 			</div>
 			<div class="gt-table-buttons">
-				<a href="javascript: modalAbrir('itemConfiguracao')" class="gt-btn-medium gt-btn-left">Incluir</a>
+				<a href="javascript: modalAbrir('itemConfiguracao')" class="gt-btn-small gt-btn-left">Incluir</a>
 			</div>
 		</div>
 		
@@ -374,10 +374,11 @@
 				</table>
 			</div>
 			<div class="gt-table-buttons">
-				<a href="javascript: modalAbrir('acao')" class="gt-btn-medium gt-btn-left">Incluir</a>
+				<a href="javascript: modalAbrir('acao')" class="gt-btn-small gt-btn-left">Incluir</a>
 			</div>
 		</div>
 		
+		<div style="display: none"> <!-- escondendo parte que sair� desta tela -->
 		<hr/>
 		<label>SLA</label>
 		<div class="gt-form-row box-wrapper">
@@ -482,11 +483,11 @@
 			<ul id="listasDesignacao" style="color: #365b6d"></ul>
 			<input type="button" value="Incluir" id="botaoIncluirDesignacaoLista"
                       class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-		</div>
-		
+           </div>
+        </div><!-- escondendo parte que sair� desta tela -->
 		<div class="gt-form-row">
 			<div class="gt-form-row">
-				<a href="javascript: gravarDesignacao()" class="gt-btn-medium gt-btn-left">Ok</a>
+				<a href="javascript: if (block()) gravarDesignacao();" class="gt-btn-medium gt-btn-left">Ok</a>
 				<a href="javascript: designacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 				#{if idConfiguracao} 
 					<input type="button" value="Desativar"
@@ -495,6 +496,8 @@
 				#{/if}
 			</div>
 		</div>
+		
+		
 		
 		<div class="gt-form-row gt-width-100">
 			<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram

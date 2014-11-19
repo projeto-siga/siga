@@ -31,6 +31,7 @@ self.retorna_${_tipo}${nomeclean} = function(id, sigla, descricao) {
 
 self.newwindow_${nomeclean} = '';
 self.popitup_${nomeclean} = function(sigla) {
+	sigla = encodeURIComponent(sigla);
 	var url = '@@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
 	
 	if (!newwindow_${nomeclean}.closed && newwindow_${nomeclean}.location) {
@@ -72,6 +73,7 @@ self.ajax_${nomeclean} = function() {
 	if (sigla == '') {
 		return retorna_${_tipo}${nomeclean}('', '', '');
 	}
+	sigla = encodeURIComponent(sigla);
 	var url = '@@{Application.index()}${_tipo}/selecionar?sigla=' + sigla + '&nome=${nomeclean}&'+'${_params?.raw()}';
 
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${nomeclean}', false);

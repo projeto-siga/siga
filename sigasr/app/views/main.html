@@ -27,3 +27,15 @@ ${_rodape.raw()}
 
 </html>
 
+<script>
+var requesting=false;
+function block(){
+	if (requesting)
+		return false;
+	requesting=true;
+	return true;
+}
+function unblock(){
+	requesting=false;
+}
+</script>

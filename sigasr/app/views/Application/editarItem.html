@@ -1,15 +1,13 @@
-#{extends 'main.html' /} #{set title:'Edi√ß√£o de Item de Configura√ß√£o' /}
+#{extends 'main.html' /} #{set title:'EdiÁ„o de Item de ConfiguraÁ„o' /}
 
 <style>
 .inline {
 	display: inline-flex !important;
 }
-
 .tabela {
 	margin-top: -10px;
 	min-width: 200px;
 }
-
 .tabela tr {
 	border: solid;
 	border-color: rgb(169, 169, 169);
@@ -17,23 +15,19 @@
 	font-weight: bold;
 	line-height: 20px;
 }
-
 .tabela th {
 	color: #365b6d;
 	font-size: 100%;
 	padding: 5px 10px;
 	border: solid 1px rgb(169, 169, 169);
 }
-
 .tabela td {
 	color: #000;
 	padding-right: 10px !important;
 }
-
 .gt-form-table td {
 	padding-right: 0px;
 }
-
 .barra-subtitulo {
 	background-color: #eee;
 	color: #365b6d;
@@ -43,7 +37,6 @@
 	font-weight: bold;
 	margin: 0 0 10px -16px;
 }
-
 .barra-subtitulo-top {
 	border-radius: 5px 5px 0 0;
 	margin: -16px 0 10px -16px;
@@ -57,10 +50,8 @@
 <script>
 	
 	$("#itemConfiguracao").mask("99.99.99");
-
 	//removendo a referencia de '$' para o jQuery
 	$.noConflict();
-
 	$(function() {
 		// POPUP PARA ADICIONAR UM GESTOR
         var jGestores = $("#gestoresTr"),
@@ -110,7 +101,6 @@
         $("#modalCancel").click(function(){
                 jDialog.dialog('close');
         });
-
         gestores["index"] = 0;
         gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
             if (!id)
@@ -129,7 +119,6 @@
                 $("#"+idItem).remove();
                 gestores["index"]--;
         }
-
         #{list items:itemConfiguracao.gestorSet, as:'item'}
         	#{if item.dpPessoa}
 	        	gestores.incluirItem('${item.dpPessoa.sesbPessoa}${item.dpPessoa.matricula}', '${item.dpPessoa.nomePessoa}', 'pessoa', ${item.dpPessoa.idPessoa}, ${item.idGestorItem});
@@ -138,9 +127,8 @@
 	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
 	        #{/if}
 		#{/list}
-
         
-// 		POPUP PARA ADICIONAR UM FATOR DE MULTIPLICA√á√ÉO E SOLICITANTE
+// 		POPUP PARA ADICIONAR UM FATOR DE MULTIPLICA«√O E SOLICITANTE
         var jFatores = $("#fatoresTr"),
         fatores = jFatores[0],
         jDialogFator = $("#dialogFator"),
@@ -171,9 +159,9 @@
 	            open: function(){
 	            	$('#erroNumFatorMult').hide();
                     if (jDialogFator.data("gestorSet"))
-                    	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplica√ß√£o');
+                    	jDialogFator.dialog('option', 'title', 'Alterar Fator de MultiplicaÁ„o');
                     else
-                    	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplica√ß√£o');  
+                    	jDialogFator.dialog('option', 'title', 'Incluir Fator de MultiplicaÁ„o');  
 	            }
         });
         $("#modalOkFator").click(function(){
@@ -197,7 +185,6 @@
         $("#modalCancelFator").click(function(){
         	jDialogFator.dialog('close');
         });
-
         fatores["index"] = 0;
         fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
             if (!idF)
@@ -218,7 +205,6 @@
                 $("#"+idItemF).remove();
                 fatores["index"]--;
         };
-
         #{list items:itemConfiguracao.fatorMultiplicacaoSet, as:'itemFator'}
         	#{if itemFator.dpPessoa}
 	        	fatores.incluirItem('${itemFator.dpPessoa.sesbPessoa}${itemFator.dpPessoa.matricula}', '${itemFator.dpPessoa.nomePessoa}', ${itemFator.numFatorMultiplicacao}, 'pessoa', ${itemFator.dpPessoa.idPessoa}, '${itemFator.idFatorMultiplicacao}Fator');
@@ -227,9 +213,7 @@
 	        		fatores.incluirItem('${itemFator.dpLotacao.siglaLotacao}', '${itemFator.dpLotacao.nomeLotacao}', ${itemFator.numFatorMultiplicacao}, 'lotacao', ${itemFator.dpLotacao.idLotacao}, '${itemFator.idFatorMultiplicacao}Fator');
 	        #{/if}
 		#{/list}
-
-
-// 		UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICA√á√ÉO
+// 		UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICA«√O
         $("[value='Gravar']").click(function(){
             var jForm = $("form"),
                     params = jForm.serialize();
@@ -244,7 +228,6 @@
             });
             jFatores.find("tr").each(function(i){
                 var jDivsF=$(this).find("span");
-
                 if(jDivsF.length == 0) return;
                 
                 var tipoF = jDivsF[0].id;
@@ -257,15 +240,7 @@
                 	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].numFatorMultiplicacao=' + jDivsF[1].innerHTML;
        	 	});
             
-            $.ajax({
-            	type: "POST",
-            	url: "@{Application.gravarItem()}",
-            	data: params,
-            	dataType: "text",
-            	success: function() {
-            		location.href = "@{Application.listarItem()}?false";
-            	}
-           	});
+            location.href = "@{Application.gravarItem()}?" + params;
         });
 	});
 </script>
@@ -273,12 +248,12 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 
-		<h2 class="gt-form-head">Cadastro de Item de Configura√ß√£o</h2>
+		<h2 class="gt-form-head">Cadastro de Item de Configura&ccedil;&atilde;o</h2>
 		<div class="gt-content-box gt-for-table">
 			<form id="form" class="form100">
 				<table class="gt-form-table">
 					<tr class="header">
-						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados B√°sicos</td>
+						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados B&aacute;sicos</td>
 					</tr>
 					<tr>
 						<td colspan="2">
@@ -289,14 +264,14 @@
 							<input type="hidden" name="itemConfiguracao.hisIdIni"
 								value="${itemConfiguracao.hisIdIni}"> #{/if}
 							#{ifErrors}
-							<p class="gt-error">Alguns campos obrigat√≥rios n√£o foram
+							<p class="gt-error">Alguns campos obrigatÛrios n„o foram
 								preenchidos ${error}</p>
 							#{/ifErrors}
 						</td>
 					</tr>
 					<tr>
 						<td width="5%">
-							<label class="inline">C√≥digo:</label> 
+							<label class="inline">C&oacute;digo:</label> 
 						</td>
 						<td>
 							<input
@@ -307,7 +282,7 @@
 							'itemConfiguracao.siglaItemConfiguracao' /}</span> 
 							
 							<label class="inline"
-							style="margin-left: 10px;">T√≠tulo:</label> 
+							style="margin-left: 10px;">T&iacute;tulo:</label> 
 							
 							<input type="text"
 							id="itemConfiguracao.tituloItemConfiguracao"
@@ -319,7 +294,7 @@
 					</tr>
 					<tr>
 						<td>
-							<label class="inline">Descri√ß√£o:</label> 
+							<label class="inline">Descri&ccedil;&atilde;o:</label> 
 						</td>
 						<td colspan="2">
 							<input type="text"
@@ -350,7 +325,7 @@
 					<tr>
 						<td colspan="3">
 							<label class="inline">Similaridade (Separar itens com
-								ponto e v√≠rgula):</label>
+								ponto e v&iacute;rgula):</label>
 							<textarea cols="81" rows="4"
 								name="itemConfiguracao.descricaoSimilaridade"
 								id="descricaoSimilaridade">${itemConfiguracao.descricaoSimilaridade}</textarea>
@@ -358,11 +333,11 @@
 					</tr>
 				</table>
 				<table class="gt-form-table">
-					<tr class="header"><td align="center" valign="top" colspan="3">Prioriza√ß√£o</td></tr>
+					<tr class="header"><td align="center" valign="top" colspan="3">Prioriza&ccedil;&atilde;o</td></tr>
 
 					<tr>
 						<td width="10.5%">
-							<label class="inline">Fator de Multiplica√ß√£o:</label> 
+							<label class="inline">Fator de Multiplica&ccedil;&atilde;o:</label> 
 						</td>
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
@@ -372,7 +347,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<label class="inline">Fator de Multiplica√ß√£o por Solicitante:</label> 
+							<label class="inline">Fator de Multiplica&ccedil;&atilde;o por Solicitante:</label> 
 							<img align="right" src="/siga/css/famfamfam/icons/add.png"
 								id="botaoIncluirFator" style="cursor: pointer; float: initial;" />
 						</td>
@@ -383,7 +358,7 @@
 							<table id="fatoresTr" class="tabela">
 								<tr>
 									<th>Solicitante</th>
-									<th>Fator de Multiplica√ß√£o</th>
+									<th>Fator de Multiplica&ccedil;&atilde;o</th>
 								</tr>
 							</table>
 						</td>
@@ -438,10 +413,10 @@
 					disabled:disabled /}</div>
 			</div>
 			<div class="gt-form-row ">
-				<label>Fator de Multiplica√ß√£o: </label>
+				<label>Fator de MultiplicaÁ„o: </label>
 				<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
 					   type="text" name="numfatorMult" value="1" size="43" />
-					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplica√ß√£o menor que 1</span>
+					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicaÁ„o menor que 1</span>
 			</div>
 			<div class="gt-form-row">
 				<input type="button" id="modalOkFator" value="Ok"

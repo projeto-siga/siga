@@ -157,7 +157,7 @@
 				<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
 					<col width="7%" />
 					<col width="15%" />
-		    		<col width="35%" />
+		    		<col width="26%" />
 		    		<col width="10%" />
 		    		<col width="10%" />
 		    		<col width="14%" />
@@ -185,26 +185,13 @@
 							<tr>
 								<td class="gt-celula-nowrap details-control"></td>
 								<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-									#{if sol.isRascunho()}
-										<a href="@{Application.editar(sol.idSolicitacao)}">
-											${sol.codigo}
-										</a>
-									#{/if}
-									#{else}
 										<a href="@{Application.exibir(sol.idSolicitacao)}">
 											${sol.codigo}
 										</a>
-									#{/else}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
-									#{if sol.isAtivo()}
-										<b style="color: #333">
-									#{/if}
-									#{else}
-										<b>
-									#{/else}
-									${sol.itemConfiguracao?.descricao}:</b>&nbsp;
-									#{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}
+									<b>${sol.descrItem}:</b>&nbsp;
+									#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
 								</td>
 							
 								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
@@ -217,7 +204,7 @@
 								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
 									<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-									#{selecionado sigla:sol.ultimoAndamento?.descrMovimentacao,descricao:sol.ultimoAndamento?.descrMovimentacao /}</td>
+									#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}</td>
 								<td>${sol.isAtivo()}</td>
 									
 							</tr>
@@ -231,7 +218,7 @@
 		#{/elseif }
 		
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-			<form action="@{Application.listar}">
+			<form action="@{Application.listar}" onsubmit="javascript: return block();">
 				<input type="hidden" name="filtro.pesquisar" value="true" />
 				<table class="gt-form-table">
 					<tr class="header">

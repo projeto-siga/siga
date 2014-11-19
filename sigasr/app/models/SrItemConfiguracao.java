@@ -90,13 +90,13 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	@OrderBy("hisDtIni desc")
 	public List<SrItemConfiguracao> meuItemHistoricoSet;
    
-	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
+	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
     public Set<SrGestorItem> gestorSet;
 
 	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
 	public int numFatorMultiplicacaoGeral = 1;
 	
-	@OneToMany(fetch = FetchType.EAGER, targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
+	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
 	public Set<SrFatorMultiplicacao> fatorMultiplicacaoSet; 
 	
 	@Transient
@@ -201,9 +201,13 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			if (tituloItemConfiguracao != null
 					&& !tituloItemConfiguracao.equals("")) {
 				boolean naoAtende = false;
-				for (String s : tituloItemConfiguracao.toLowerCase().split("\\s"))
-					if (!item.tituloItemConfiguracao.toLowerCase().contains(s) && !(item.descricaoSimilaridade != null && item.descricaoSimilaridade.toLowerCase().contains(s)))
+				for (String s : tituloItemConfiguracao.toLowerCase().split(
+						"\\s")){
+					if (!item.tituloItemConfiguracao.toLowerCase().contains(s)
+							&& !(item.descricaoSimilaridade != null && item.descricaoSimilaridade
+									.toLowerCase().contains(s)))
 						naoAtende = true;
+				}
 				
 				if (naoAtende)
 					continue;
@@ -214,6 +218,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 					if (!listaFinal.contains(item))
 						listaFinal.add(item);
 					item = item.pai;
+					if (item != null)
+						item = item.getAtual();
 				} while (item != null);
 			else
 				listaFinal.add(item);
@@ -296,21 +302,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		}
 		
 		return lista;
-	}
-	
-	/**
-	 * Lista as Designações que são vinculadas aos {@link SrItemConfiguracao Pai} deste item.
-	 */
-	public List<SrConfiguracao> getDesignacoesPai() {
-		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
-		
-		for (SrItemConfiguracao pai : this.getListaPai()) {
-			listasDesignacoesPai.addAll(SrConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(false, pai.getId()), this));
-		}
-		
-		return listasDesignacoesPai;
-	}
-	
+	}	
 
 	public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
 		if (outroItem == null || outroItem.getSigla() == null)
@@ -367,27 +359,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
     
     @Override
     public void salvar() throws Exception {
-    	if (getNivel() > 1) {
+    	if (getNivel() > 1 && pai == null) {
 			pai = getPaiPorSigla();
 		}
 		super.salvar();
-
-		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
-		//tem de ser corrigido.
-		
-		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
-		//serao recarregadas do banco, e precisarao reconhecer o novo estado deste item 
-		//refresh();
-		
-		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
-		// instancia do objeto, caso contrario, nao ha configuracao
-		// referenciando
-		if (itemInicial != null)
-			SrConfiguracaoBL
-					.get()
-					.limparCache(
-							(CpTipoConfiguracao) CpTipoConfiguracao
-									.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		
         if (gestorSet != null)
             for (SrGestorItem gestor : gestorSet){
@@ -400,46 +375,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
                 fator.itemConfiguracao = this;
                 fator.salvar();
             }
-        
-        // DB1: precisa salvar item a item da Designação
- 		if (this.designacoes != null) {
- 			for (SrConfiguracao designacao : this.designacoes) {
- 				designacao.itemConfiguracao = this;
- 				
- 				// se for uma configuração herdada
- 				if (designacao.isHerdado) {
- 					// se estiver marcada como "não Herdar"
- 					if (!designacao.utilizarItemHerdado) {
- 						// cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
- 						SrConfiguracaoIgnorada.createNew(this, designacao).salvar();
- 					}
- 					
- 					// verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)
- 					else {
- 						List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(designacao);
- 						
- 						for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
- 							// se a configuração for do Item ou de um de seus históricos, remove
- 	 						if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
- 								for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
- 									if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
- 										igItem.delete();
- 										break;
- 									}
- 								}
- 							}
- 						}
- 					}
- 				}
- 				
- 				else {
- 					designacao.salvarComoDesignacao();
- 				}
- 			}
- 		}
-    
-		//if (itemInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
 	}
 
 	public List<SrItemConfiguracao> getItemETodosDescendentes() {
@@ -452,6 +387,11 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		return lista;
 	}
 	
+	@Override
+	public String toString() {
+		return siglaItemConfiguracao + " - " + tituloItemConfiguracao;
+	}
+		
 	/**
 	 * Classe que representa um V.O. de {@link SrItemConfiguracao}.
 	 */

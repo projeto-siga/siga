@@ -72,7 +72,18 @@
 				result = false;
 			}
 			return result;
-		}	
+		}
+
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>	
 
 	</script>
 	
@@ -327,8 +338,48 @@
 						 document.getElementById("ie-missing").style.display = "block";
 					}
 				 </script>
+				 
+	    	 	 <c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+				 <c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+	
+  				 <c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
+	  				 <script> 
+					    dialog = $("#dialog-form").dialog({
+						    autoOpen: false,
+				      		height: 210,
+				      		width: 350,
+				      		modal: true,
+				      		buttons: {
+				    	  		<c:if test="${podeAssinarMovimentacaoComSenha}">
+				          			"Assinar": assinarGravar,
+				          		</c:if>	
+				    	  		<c:if test="${podeConferirCopiaMovimentacaoComSenha}">
+					          		"Conferir Cópia": conferirCopiaGravar,
+				          		</c:if>	
+				          			"Cancelar": function() {
+				            		dialog.dialog( "close" );
+				          	}
+			      		},
+	    		      close: function() {
+			        
+				      }
+			    	});
+			
+					    function assinarComSenha() {
+					       dialog.dialog( "open" );
+					    }
+			
+					    function assinarGravar() {
+					    	$("#form-assinarSenha").submit();
+						}
+			
+					    function conferirCopiaGravar() {
+					    	$('#tipoAssinaturaMov').val('C');
+					    	$("#form-assinarSenha").submit();
+						}
+				  </script>
+  				 </c:if>
 			</c:if>
- 
 		    
 			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 			    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						

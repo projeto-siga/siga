@@ -401,10 +401,14 @@ function visualizarImpressao(via) {
 		    }
 
 		    function assinarGravar() {
-		    	$("#form-assinarSenha").submit();
+		    	AssinarDocumentosSenha('false', this);
 			}
 
 		    function conferirCopiaGravar() {
+		    	AssinarDocumentosSenha('true', this);
+			}
+
+			function conferirCopiaGravar() {
 		    	$('#tipoAssinaturaMov').val('C');
 		    	$("#form-assinarSenha").submit();
 			}

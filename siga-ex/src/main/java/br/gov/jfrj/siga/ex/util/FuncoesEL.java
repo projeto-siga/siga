@@ -1064,5 +1064,19 @@ public class FuncoesEL {
 		return Ex
 				.getInstance()
 				.getComp().podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular, mov);
-	}	
+	}
+	
+	public static Boolean podeAssinarMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mob);
+	}
+	
+	public static Boolean podeConferirCopiaMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular, mob);
+	}
 }

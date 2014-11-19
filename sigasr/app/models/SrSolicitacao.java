@@ -131,7 +131,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrSolicitacao solicitacaoPai;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO_JUNTADA")
+	@JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
 	public SrSolicitacao solicitacaoJuntada;
 
 	@Enumerated
@@ -1131,7 +1131,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {
 						SrConfiguracaoBL.ITEM_CONFIGURACAO,
-						SrConfiguracaoBL.ACAO });
+						SrConfiguracaoBL.ACAO }, null);
 
 		for (SrConfiguracao conf : confs) {
 			if (conf.itemConfiguracaoSet == null || conf.itemConfiguracaoSet.size() == 0) {
@@ -1171,7 +1171,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				this.solicitante, this.local, this.itemConfiguracao, null,
 				null, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ACAO });
+				new int[] { SrConfiguracaoBL.ACAO }, null);
 		for (SrConfiguracao conf : confs) {
 			// Edson: o && !containsKey, abaixo, Ã© necessÃ¡rio pra que
 			// atendentes

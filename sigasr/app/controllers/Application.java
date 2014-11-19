@@ -827,10 +827,25 @@ public class Application extends SigaApplication {
 	public static Long gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
+		tratarItensNulos(designacao);
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
 		
 		return designacao.getId();
+	}
+	
+	private static void tratarItensNulos(SrConfiguracao designacao) {
+		if (designacao.getDpPessoa() != null && (designacao.getDpPessoa().getId() == null || designacao.getDpPessoa().getId().equals(Long.valueOf(0))))
+				designacao.setDpPessoa(null);
+		
+		if (designacao.getLotacao() != null && (designacao.getLotacao().getId() == null || designacao.getLotacao().getId().equals(Long.valueOf(0))))
+			designacao.setLotacao(null);
+		
+		if (designacao.getCargo() != null && (designacao.getCargo().getId() == null ||designacao.getCargo().getId().equals(Long.valueOf(0))))
+			designacao.setCargo(null);
+		
+		if (designacao.getFuncaoConfianca() != null && (designacao.getFuncaoConfianca().getId() == null || designacao.getFuncaoConfianca().getId().equals(Long.valueOf(0))))
+			designacao.setFuncaoConfianca(null);
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {
@@ -1102,17 +1117,45 @@ public class Application extends SigaApplication {
 	public static void editarEquipe(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrEquipe equipe = null;
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
+				"hisDtFim is null").fetch();
+		List<SrLista> listasPrioridade = SrLista.listar(false);
 		
 		if (id != null)
 			equipe = SrEquipe.findById(id);
 		else
 			equipe = new SrEquipe();
 		
-		render(equipe);
+		List<SrConfiguracao> designacoesEquipe = equipe.getDesignacoes();
+		
+		render(equipe, designacoesEquipe, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 	
 	public static void gravarEquipe(SrEquipe equipe) throws Exception {
-		listarEquipe();
+		assertAcesso("ADM:Administrar");
+		validarFormEditarEquipe(equipe);
+		equipe.salvar();
+	}
+	
+	private static void validarFormEditarEquipe(SrEquipe equipe) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		
+		if (equipe.lotacao == null) {
+			validation.addError("equipe.lotacao", "Lotação não informada");
+		}
+		
+		for (play.data.validation.Error error : validation.errors()) {
+			System.out.println(error.getKey() + " :" + error.message());
+			sb.append(error.getKey() + ";");
+		}
+
+		if (validation.hasErrors()) {
+			throw new Exception(sb.toString());
+		}
 	}
 
 	public static void listarAcao(boolean mostrarDesativados) throws Exception {

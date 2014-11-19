@@ -42,17 +42,16 @@
 			<table id="equipes_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
-						<th style="color: #333; font-weight: bold; padding: 7px 0px;">Lotação</th>
+						<th style="font-weight: bold;">Lotação</th>
 					</tr>
 				</thead>
 
 				<tbody>
 					#{list items:listaEquipe, as:'eq'}
-					<tr>
+					<tr onclick="javascript:window.location='@{Application.editarEquipe(eq.idEquipe)}'"
+						style="cursor: pointer;">
 						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<a href="@{Application.editarEquipe(eq.idEquipe)}">
-								${eq.lotacao?.sigla}
-							</a>
+							${eq.lotacao?.sigla}
 						</td>
 					</tr>
 					#{/list}

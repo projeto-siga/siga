@@ -20,6 +20,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	public static int LISTA_PRIORIDADE = 33;
 
 	public static int TIPO_ATRIBUTO = 34;
+	
+	public static int ATENDENTE = 35;
 
 	public static SrConfiguracaoBL get() {
 		return (SrConfiguracaoBL) Sr.getInstance().getConf();
@@ -107,6 +109,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& (filtro.tipoAtributo == null || (filtro.tipoAtributo != null && !conf.tipoAtributo
 							.getAtual().equivale(filtro.tipoAtributo))))
 				return false;
+			
+			if (!atributosDesconsiderados.contains(ATENDENTE)
+					&& conf.atendente != null
+					&& (filtro.atendente == null || (filtro.atendente != null && !conf.atendente
+							.getLotacaoAtual().equivale(filtro.atendente))))
+				return false;
 
 		}
 		return true;
@@ -142,16 +150,20 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		for (CpConfiguracao conf : provResults) {
 			if (!(conf instanceof SrConfiguracao))
 				continue;
+			
 			SrConfiguracao srConf = (SrConfiguracao) conf;
 			if (srConf.preAtendente != null)
 				srConf.preAtendente.getLotacaoAtual();
+			
 			if (srConf.atendente != null)
 				srConf.atendente.getLotacaoAtual();
+			
 			if (srConf.posAtendente != null)
 				srConf.posAtendente.getLotacaoAtual();
 
 			if (srConf.itemConfiguracao != null) {
 				SrItemConfiguracao atual = srConf.itemConfiguracao.getAtual();
+				
 				if (atual != null)
 					atual.getItemETodosDescendentes();
 
@@ -170,11 +182,20 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				if (atual != null)
 					atual.getAcaoETodasDescendentes();
 			}
+			
 			if (srConf.tipoAtributo != null)
 				srConf.tipoAtributo.getAtual();
+			
 			if (srConf.listaPrioridade != null)
 				srConf.listaPrioridade.getListaAtual();
-
+			
+			if (srConf.itemConfiguracaoSet != null)
+				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)
+					i.getAtual();
+			
+			if (srConf.acoesSet != null)
+				for (SrAcao i : srConf.acoesSet)
+					i.getAtual();
 		}
 	}
 

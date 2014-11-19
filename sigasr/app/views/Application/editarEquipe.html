@@ -2,13 +2,30 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
+<style>
+.barra-subtitulo-top {
+	border-radius: 5px 5px 0 0;
+	margin: -16px 0 0 -16px;
+}
+
+.barra-subtitulo {
+	color: #365b6d !important;
+	border-bottom: 1px solid #ccc;
+	border-radius: 0 !important;
+	margin: 0 -15px 10px -15px;
+}
+
+.gt-content-box {
+	padding-top: 0px !important;
+}
+</style>
 <script type="text/javascript">
 	//removendo a referencia de '$' para o jQuery
 	$.noConflict();
 	
 	jQuery(document).ready(function($) {
 		/* Table initialization */
-		var excecoesTable = $('#excecoes_table').dataTable({
+		excecoesTable = $('#excecoes_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -34,6 +51,11 @@
 			},
 			"iDisplayLength": 25
 		});
+		
+		// Remover exceções
+		$('#excecoes_table tbody').on('click', 'a.excecao_remove', function () {
+			excecoesTable.api().row($(this).closest('tr')).remove().draw(false);
+		});
 	});
 	
 	function modalExcecaoAbrir() {
@@ -47,19 +69,29 @@
 		if (!camposObrigatoriosExcecaoPreenchidos()) {
 			// recupera as comboboxes
 			var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
-				jDiaSemana = jDiaSemanaCbb.options[jDiaSemanaCbb.selectedIndex];
+				jDiaSemana = jDiaSemanaCbb.options[jDiaSemanaCbb.selectedIndex],
+				diaSemanaValue = '',
+				diaSemanaText = '';
+			
+			if (document.getElementById("dataEspecifica").value == "") {
+				diaSemanaValue = jDiaSemana.value;
+				rowZeroText = jDiaSemana.text;
+			}
+			else {
+				diaSemanaValue = 0;
+				diaSemanaText = document.getElementById("dataEspecifica").value;
+			}
 			
 			var row = [
-// 				<th>Dia</th>
-// 				<th>Início Expediente</th>
-// 				<th>Final Expediente</th>
-// 				<th>Início Intervalo</th>
-// 				<th>Final Intervalo</th>
-// 				<th></th>
-			];
+			           diaSemanaValue,
+			           diaSemanaText,
+			           document.getElementById("horaIni").value,
+			           document.getElementById("horaFim").value,
+			           document.getElementById("interIni").value,
+			           document.getElementById("interFim").value,
+			           "<a class=\"excecao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 			
 			excecoesTable.api().row.add(row).draw();
-		
 			modalExcecaoFechar();
 		}
 	}
@@ -115,6 +147,53 @@
 	}
 	
 	function inserirEquipe() {
+		$.ajax({
+        	type: "POST",
+        	url: "@{Application.gravarEquipe()}",
+        	data: serializeEquipe(),
+        	dataType: "text",
+        	success: function() {
+        		location.href = "@{Application.listarEquipe()}";
+        	}
+       	});
+	}
+	
+	function serializeEquipe() {
+		var params = '',
+			tableValues = [];
+		
+		if ($("#idEquipe").val() != '' &&  $("#idEquipe").val() != undefined)
+			params += '&equipe.idEquipe=' + $("#idEquipe").val();
+		
+		if ($("#equipelotacao").val() != '')
+			params += '&equipe.lotacao.id=' + $("#equipelotacao").val();
+		
+		params += getExcecoesTableAsString();
+		
+		return params;
+	}
+	
+	function getExcecoesTableAsString() {
+		var params = '';
+		// Percorre lista de Exceções
+		excecoesTable.api().rows().indexes().each(function (i) {
+			var rowValues = excecoesTable.api().row(i).data();
+			
+			// Atualiza a string serializada
+			if (rowValues) {
+				if (rowValues[0] == 0)
+					params += '&equipe.excecaoHorarioSet[' + i + '].dataEspecifica=' + rowValues[1];
+				else
+					params += '&equipe.excecaoHorarioSet[' + i + '].diaSemana=' + rowValues[0];
+				
+				params += '&equipe.excecaoHorarioSet[' + i + '].horaIni="' + rowValues[2] + ':00"';
+				params += '&equipe.excecaoHorarioSet[' + i + '].horaFim="' + rowValues[3] + ':00"';
+				params += '&equipe.excecaoHorarioSet[' + i + '].interIni="' + rowValues[4] + ':00"';
+				params += '&equipe.excecaoHorarioSet[' + i + '].interFim="' + rowValues[5] + ':00"';
+			}
+		});
+		
+		return params;
 	}
 </script>
 
@@ -124,7 +203,7 @@
 
 		<div class="gt-form gt-content-box">
 			#{form @Application.gravarEquipe()} #{if
-			equipe?.idEquipe} <input type="hidden"
+			equipe?.idEquipe} <input type="hidden" id="idEquipe"
 				name="equipe.idEquipe" value="${equipe.idEquipe}">
 			#{/if}
 			#{ifErrors}
@@ -148,45 +227,62 @@
 			</div>
 			
 			<div class="gt-form-row">
-			<label>Exceções ao calendário padrão:</label>
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<table id="excecoes_table" border="0" class="gt-table display">
-					<thead>
-						<tr>
-							<th>Dia</th>
-							<th>Início Expediente</th>
-							<th>Final Expediente</th>
-							<th>Início Intervalo</th>
-							<th>Final Intervalo</th>
-							<th></th>
-						</tr>
-					</thead>
-					
-					<tbody>
-						#{list items:equipe.excecaoHorarioSet, as:'excecao'}
-						<tr>
-							#{if excecao?.diaSemana}
-								<td>${excecao?.diaSemana.descrDiaSemana }</td>
-							#{/if}
-							#{else}
-								<td>${excecao?.dataEspecifica.format('dd/MM/yyyy') }</td>
-							#{/else}
-							
-							<td>${excecao?.horaIni.format('hh:mm') } horas</td>
-							<td>${excecao?.horaFim.format('hh:mm') } horas</td>
-							<td>${excecao?.interIni.format('hh:mm') } horas</td>
-							<td>${excecao?.interFim.format('hh:mm') } horas</td>
-							<td></td>
-						</tr>
-						#{/list}
-					</tbody>
-				</table>
+				<h2>Exceções ao calendário padrão</h2>
+				<!-- content bomex -->
+				<div class="gt-content-box dataTables_div">
+					<table id="excecoes_table" border="0" class="gt-table display">
+						<thead>
+							<tr>
+								<th>Dia Semana</th>
+								<th>Dia</th>
+								<th>Início Expediente</th>
+								<th>Final Expediente</th>
+								<th>Início Intervalo</th>
+								<th>Final Intervalo</th>
+								<th></th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							#{list items:equipe.excecaoHorarioSet, as:'excecao'}
+							<tr>
+								#{if excecao?.diaSemana}
+									<td>${excecao?.diaSemana }</td>
+									<td>${excecao?.diaSemana.descrDiaSemana }</td>
+								#{/if}
+								#{else}
+									<td>0</td>
+									<td>${excecao?.dataEspecifica.format('dd/MM/yyyy') }</td>
+								#{/else}
+								
+								<td>${excecao?.horaIni.format('hh:mm') }</td>
+								<td>${excecao?.horaFim.format('hh:mm') }</td>
+								<td>${excecao?.interIni.format('hh:mm') }</td>
+								<td>${excecao?.interFim.format('hh:mm') }</td>
+								<td><a class="excecao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
+							</tr>
+							#{/list}
+						</tbody>
+					</table>
+				</div>
+				<div class="gt-table-buttons">
+					<a href="javascript: modalExcecaoAbrir()" class="gt-btn-medium gt-btn-left">Incluir</a>
+				</div>
 			</div>
-			<div class="gt-table-buttons">
-				<a href="javascript: modalExcecaoAbrir()" class="gt-btn-medium gt-btn-left">Incluir</a>
+			
+			<div class="gt-form-table">
+				<div class="barra-subtitulo barra-subtitulo-top header"
+					align="center" valign="top">Designações</div>
 			</div>
-		</div>
+			<div class="gt-form-row">
+				#{designacoes designacoes:designacoesEquipe, 
+					modoExibicao:'equipe', 
+					orgaos:orgaos, 
+					locais:locais, 
+					unidadesMedida:unidadesMedida, 
+					pesquisaSatisfacao:pesquisaSatisfacao, 
+					listasPrioridade:listasPrioridade /}
+			</div>
 			<div class="gt-form-row">
 				<a href="javascript: inserirEquipe()" class="gt-btn-medium gt-btn-left">Gravar</a>
 				<a href="@{Application.listarEquipe}" class="gt-btn-medium gt-btn-left">Cancelar</a>

@@ -77,11 +77,8 @@
 				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
-				"columnDefs": [{
-					"targets": [0],
-					"visible": false,
-					"searchable": false
-				}],
+				"columnDefs": [{"targets": [0], "visible": false, "searchable": false},
+				               { "width": "5px", "targets": 3 }],
 				"iDisplayLength": 3
 		    } );
 		}
@@ -114,11 +111,11 @@
 				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
-				"columnDefs": [{
-					"targets": [0],
-					"visible": false,
-					"searchable": false
-				}],
+				"columnDefs": [{ "targets": [0], "visible": false, "searchable": false},
+				               { "width": "80px", "targets": 1 },
+				               { "width": "100px", targets: [2,3]},
+				               { "width": "320px", targets: [4]},
+				               { "width": "5px", targets: [5]}],
 				"iDisplayLength": 3
 			});
 		}
@@ -246,7 +243,7 @@
 			<div class="box gt-width-50">
 				<label>Órgão</label> 
 				#{select name:'orgaoUsuario', 
-					items:orgaos, 
+					items:_orgaos, 
 					valueProperty:'idOrgaoUsu',
 					labelProperty:'nmOrgaoUsu',
 					value:orgaoUsuario?.idOrgaoUsu,
@@ -261,7 +258,7 @@
 			<div class="box box-left gt-width-50">
 				<label>Local</label> 
 				#{select name:'complexo', 
-					items:locais, 
+					items:_locais, 
 					valueProperty:'idComplexo',
 					labelProperty:'nomeComplexo', 
 					value:complexo?.idComplexo,
@@ -302,7 +299,7 @@
 			<div class="box gt-width-50">
 				<label>Pesquisa de satisfação</label> 
 					#{select name:'pesquisaSatisfacao', 
-						items:pesquisaSatisfacao, 
+						items:_pesquisaSatisfacao, 
 						valueProperty:'idPesquisa',
 						labelProperty:'nomePesquisa', 
 						value:pesquisaSatisfacao?.idPesquisa,
@@ -318,10 +315,10 @@
 			<label>Itens de Configuração</label>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
-				<table id="itemConfiguracao_table" border="0" class="gt-table display">
+				<table id="itemConfiguracao_table" border="0" class="gt-table-nowrap display">
 					<thead>
 						<tr>
-							<th>ID</th>
+							<th >ID</th>
 							<th>Sigla</th>
 							<th>Titulo</th>
 							<th>Descrição</th>
@@ -392,7 +389,7 @@
 						name="slaPreAtendimentoQuantidade" 
 						value="${slaPreAtendimentoQuantidade}" />
 					#{select name:'unidadeMedidaPreAtendimento', 
-						items:unidadesMedida, 
+						items:_unidadesMedida, 
 						valueProperty:'idUnidadeMedida',
 						labelProperty:'descricao', 
 						value:unidadeMedidaPreAtendimento?.idUnidadeMedida}
@@ -406,7 +403,7 @@
 						name="slaAtendimentoQuantidade" 
 						value="${slaAtendimentoQuantidade}" />
 					#{select name:'unidadeMedidaAtendimento', 
-						items:unidadesMedida, 
+						items:_unidadesMedida, 
 						valueProperty:'idUnidadeMedida',
 						labelProperty:'descricao', 
 						value:unidadeMedidaAtendimento?.idUnidadeMedida}
@@ -420,7 +417,7 @@
 						name="slaPosAtendimentoQuantidade" 
 						value="${slaPosAtendimentoQuantidade}" />
 					#{select name:'unidadeMedidaPosAtendimento', 
-						items:unidadesMedida, 
+						items:_unidadesMedida, 
 						valueProperty:'idUnidadeMedida',
 						labelProperty:'descricao', 
 						value:unidadeMedidaPosAtendimento?.idUnidadeMedida}
@@ -512,7 +509,7 @@
 			<div class="gt-form-row">
 				<div class="gt-form-row gt-width-66">
 					<label>Lista</label> #{select name:'itemListaDesignacao', id:'itemListaDesignacao'}
-						 #{list items:listasPrioridade, as:'item'} #{option item.idLista} ${item.nomeLista} #{/option} #{/list} #{/select}
+						 #{list items:_listasPrioridade, as:'item'} #{option item.idLista} ${item.nomeLista} #{/option} #{/list} #{/select}
 				</div>
 				<div class="gt-form-row">
 					<input type="button" id="modalOkLista" value="Ok"

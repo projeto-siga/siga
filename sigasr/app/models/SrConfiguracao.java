@@ -332,20 +332,20 @@ public class SrConfiguracao extends CpConfiguracao {
 			long idTipo, SrSubTipoConfiguracao subTipo,
 			int atributosDesconsideradosFiltro[]) throws Exception {
 		return getConfiguracoes(null, pess, complexo, item, acao, null, null,
-				idTipo, subTipo, atributosDesconsideradosFiltro);
+				idTipo, subTipo, atributosDesconsideradosFiltro, null);
 	}
 
 	public static List<SrConfiguracao> getConfiguracoes(DpLotacao lotaTitular,
 			DpPessoa pess, long idTipo, int atributoDesconsideradoFiltro[])
 			throws Exception {
 		return getConfiguracoes(lotaTitular, pess, null, null, null, null,
-				null, idTipo, null, atributoDesconsideradoFiltro);
+				null, idTipo, null, atributoDesconsideradoFiltro, null);
 	}
 
 	public static List<SrConfiguracao> getConfiguracoes(DpLotacao lota,
 			DpPessoa pess, CpComplexo local, SrItemConfiguracao item,
 			SrAcao acao, SrTipoAtributo tpAtt, SrLista lista, long idTipo,
-			SrSubTipoConfiguracao subTipo, int atributoDesconsideradoFiltro[])
+			SrSubTipoConfiguracao subTipo, int atributoDesconsideradoFiltro[], SrEquipe atendente)
 			throws Exception {
 		SrConfiguracao conf = new SrConfiguracao(lota, pess, local, item, acao,
 				tpAtt, lista, JPA.em().find(CpTipoConfiguracao.class, idTipo),
@@ -362,7 +362,7 @@ public class SrConfiguracao extends CpConfiguracao {
 				null, null, item, null, null, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ACAO });
+				new int[] { SrConfiguracaoBL.ACAO }, null);
 		List<SrConfiguracao> designacoesAAtualizar = new ArrayList<SrConfiguracao>();
 		for (SrConfiguracao c : designacoesApontando)
 			if (c.itemConfiguracao != null)
@@ -378,7 +378,7 @@ public class SrConfiguracao extends CpConfiguracao {
 				null, null, null, acao, null, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO });
+				new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO }, null);
 		List<SrConfiguracao> designacoesAAtualizar = new ArrayList<SrConfiguracao>();
 		for (SrConfiguracao c : designacoesApontando)
 			if (c.acao != null)
@@ -394,7 +394,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		List<SrConfiguracao> associacoesApontando = getConfiguracoes(null,
 				null, null, null, null, tipoAtt, null,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
-				null, new int[] {});
+				null, new int[] {}, null);
 		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
 				associacoesApontando);
 	}
@@ -405,7 +405,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		List<SrConfiguracao> permissoesApontando = getConfiguracoes(null, null,
 				null, null, null, null, lista,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA, null,
-				new int[] {});
+				new int[] {}, null);
 		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
 				permissoesApontando);
 	}

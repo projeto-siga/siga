@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -53,6 +54,24 @@ public class SrEquipe extends HistoricoSuporte {
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
+	}
+	
+	@Override
+	public void salvar() throws Exception {
+		super.salvar();
+		
+		// Atualiza e salva as excessões de horário
+		if (excecaoHorarioSet != null)
+            for (SrExcecaoHorario excecao : excecaoHorarioSet){
+                excecao.equipe = this;
+                excecao.salvar();
+            }
+	}
+
+	public List<SrConfiguracao> getDesignacoes() throws Exception {
+		List<SrConfiguracao> designacoes = SrConfiguracao.getConfiguracoes(null, null, null, null, null, null, null, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO, SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] { SrConfiguracaoBL.ATENDENTE }, this);
+				
+		return designacoes;
 	}
 
 }

@@ -15,10 +15,17 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = "SR_EXCECAO_HORARIO", schema = "SIGASR")
-public class SrExcecaoHorario {
+public class SrExcecaoHorario extends Objeto{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_EXCECAO_HORARIO_SEQ", name = "srExcecaoHorarioSeq")
 	@GeneratedValue(generator = "srExcecaoHorarioSeq")

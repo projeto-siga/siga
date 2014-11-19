@@ -602,6 +602,7 @@ public class Application extends SigaApplication {
 
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
+		lista.validarPodeExibirLista(lotaTitular(), cadastrante());
 		render(lista);
 	}
 	
@@ -686,7 +687,8 @@ public class Application extends SigaApplication {
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
 
-		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup);
+		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, tiposAtributosDisponiveisAdicao);
 	}
 
 	public static void baixar(Long idArquivo) {

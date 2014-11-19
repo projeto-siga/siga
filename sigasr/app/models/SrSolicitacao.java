@@ -674,6 +674,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaFinal;
 	}
 
+	@Transient
+	public boolean mock;
+
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
@@ -1816,13 +1819,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			/**
 			 * Se o usuario nao tem permissao de incluir, entao pula o item atual.
 			 */
-//			if (!conf.listaPrioridade.podeIncluir(lotaTitular, cadastrante)) {
-//				continue;
-//			}
+			if (!conf.listaPrioridade.podeIncluir(lotaTitular, cadastrante)) {
+				continue;
+			}
 			SrLista listaAtual = conf.listaPrioridade.getListaAtual();
 			if (!listaFinal.contains(listaAtual))
 				listaFinal.add(listaAtual);
 		}
+		
 
 		listaFinal.removeAll(getListasAssociadas());
 		Collections.sort(listaFinal, new Comparator<SrLista>() {

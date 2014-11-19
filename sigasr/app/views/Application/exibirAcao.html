@@ -1,4 +1,9 @@
 <script>
+
+$(document).ready(function() {
+	notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
+});
+
 function carregarAtributos(){
 	var frm = document.getElementById('formSolicitacao'),
 		params = '';

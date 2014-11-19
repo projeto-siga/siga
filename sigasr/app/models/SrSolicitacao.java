@@ -220,6 +220,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OneToMany(mappedBy = "solicitacaoReferencia")
 	protected Set<SrSolicitacao> meuSolicitacaoJuntadasSet;
 
+	@OneToMany(targetEntity = SrSolicitacao.class, mappedBy = "solicitacaoReferencia", fetch = FetchType.LAZY)
+	private Set<SrMovimentacao> meuMovimentacaoReferenciaSet;
+
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
 	// entre os modulos, e o Hibernate acaba trazendo tambem marcas do Siga-Doc
 	@OneToMany(mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
@@ -519,6 +522,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaCompleta;
 	}
 
+	public Set<SrMovimentacao> getMovimentacaoReferenciaSet() {
+		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
+				new SrMovimentacaoComparator(false));
+		SrSolicitacao sol = solicitacaoInicial != null ? solicitacaoInicial
+				: this;
+		if (sol.meuMovimentacaoSet != null)
+			for (SrMovimentacao movimentacao : sol.meuMovimentacaoSet)
+				if (!movimentacao.isCanceladoOuCancelador())
+					listaCompleta.add(movimentacao);
+		return listaCompleta;
+	}
+	
 	public SrMovimentacao getUltimaMovimentacao() {
 		for (SrMovimentacao movimentacao : getMovimentacaoSet())
 			return movimentacao;
@@ -1273,7 +1288,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		operacoes.add(new SrOperacao("table_relationship", "Vincular",
 				podeVincular(lotaTitular, titular),
-				"Application.vincularSolicitacoes", "popup=true"));
+				"vincular", "modal=true"));
 
 		operacoes
 				.add(new SrOperacao("arrow_divide", "Criar Solicitação Filha",
@@ -1840,16 +1855,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				.size() > 0;
 	}
 
-	public Set<SrSolicitacao> getSolicitacaoVinculadaSet() {
-		Set<SrSolicitacao> vinculadas = new HashSet<SrSolicitacao>();
-		for (SrMovimentacao mov : getMovimentacaoSet(Boolean.TRUE,
-				TIPO_MOVIMENTACAO_VINCULACAO))
-			if (mov.vinculo.solicitacaoA.solicitacaoInicial.idSolicitacao == this.solicitacaoInicial.idSolicitacao)
-				vinculadas.add(mov.vinculo.solicitacaoB);
-			else if (mov.vinculo.solicitacaoB.solicitacaoInicial.idSolicitacao == this.solicitacaoInicial.idSolicitacao)
-				vinculadas.add(mov.vinculo.solicitacaoA);
-
-		return vinculadas;
+	public Set<SrSolicitacao> getSolicitacoesVinculadas() {
+		Set<SrSolicitacao> solVinculadas = new HashSet<SrSolicitacao>();
+		for (SrMovimentacao mov: getMovimentacaoSetOrdemCrescente()) 
+			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_VINCULACAO
+					&& !mov.isCancelada())
+				solVinculadas.add(mov.solicitacao.solicitacaoReferencia);
+		
+		for (SrMovimentacao mov: getMovimentacaoReferenciaSet())
+			if (!mov.isCancelada() &&
+					this.equals(mov.solicitacao.solicitacaoReferencia))
+				solVinculadas.add(mov.solicitacao);
+		return solVinculadas;
 	}
 
 	public boolean isEmLista() {
@@ -2257,12 +2274,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
 
-		movimentacao = new SrMovimentacao(solRecebeJuntada);
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO);
-		movimentacao.descrMovimentacao = justificativa;
-		movimentacao.salvar(pess, lota);
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2271,40 +2282,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throws Exception {
 		if ((pess != null) && !podeVincular(lota, pess))
 			throw new Exception("Operação não permitida");
-
-		String query = "from SrSolicitacaoVinculo where ( solicitacaoA.idSolicitacao = "
-				+ this.idSolicitacao
-				+ " and solicitacaoB.idSolicitacao = "
-				+ solRecebeVinculo.idSolicitacao
-				+ " ) "
-				+ " or ( solicitacaoA.idSolicitacao = "
-				+ solRecebeVinculo.idSolicitacao
-				+ " and solicitacaoB.idSolicitacao = "
-				+ this.idSolicitacao
-				+ " ) ";
-
-		List<SrSolicitacaoVinculo> list = (List<SrSolicitacaoVinculo>) JPA.em()
-				.createQuery(query).getResultList();
-
-		if (list.size() > 0)
-			throw new Exception("Vinculo já existente.");
-
-		SrSolicitacaoVinculo vinculo = new SrSolicitacaoVinculo(this,
-				solRecebeVinculo);
-		vinculo.salvar();
+		
+		this.solicitacaoReferencia = solRecebeVinculo;
+		this.save();
 
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_VINCULACAO);
-		movimentacao.vinculo = vinculo;
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
 
-		SrMovimentacao mov = new SrMovimentacao(solRecebeVinculo);
-		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_VINCULACAO);
-		mov.vinculo = vinculo;
-		mov.descrMovimentacao = justificativa;
-		mov.salvar(pess, lota);
 	}
 
 	public String getGcTags() {

@@ -390,36 +390,11 @@ public class Application extends SigaApplication {
 		exibir(idSolicitacaoAJuntar, completo());
 	}
 	
-	@SuppressWarnings("unchecked")
-    public static void vincularSolicitacoes(Long id, Long idSolicitacaoRecebeVinculo, SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception{
-        List<SrSolicitacao> listaSolicitacao;
-        SrSolicitacao solicitacaoRecebeJuntada = null;
-        
-        SrSolicitacao solicitacaoAVincular =  SrSolicitacao.findById(id);
-
-        if(idSolicitacaoRecebeVinculo != null)
-            solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
-        
-        if (filtro.pesquisar)
-            listaSolicitacao = filtro.buscar();
-        else
-            listaSolicitacao = new ArrayList<SrSolicitacao>();
-
-        String[] tipos = new String[] { "Pessoa", "Lotação" };
-        
-        List<CpMarcador> marcadores = JPA.em()
-                .createQuery("select distinct cpMarcador from SrMarca")
-                .getResultList();
-        listaSolicitacao.remove(solicitacaoAVincular);
-
-        render(solicitacaoAVincular, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
-    }
-
-    public static void vincularSolicitacoesGravar(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
+    public static void vincularSolicitacoes(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAVincular);
         SrSolicitacao solRecebeVinculo = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
-        
         sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
+        exibir(idSolicitacaoAVincular, completo());
     }
 	
 	@SuppressWarnings("unchecked")

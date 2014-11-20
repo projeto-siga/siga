@@ -287,11 +287,11 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarAcao(SrAcao acao) {
 
 		if (acao.siglaAcao.equals("")) {
-			validation.addError("acao.siglaAcao", "Código não informado");
+			validation.addError("acao.siglaAcao", "Cï¿½digo nï¿½o informado");
 		}
 
 		if (acao.tituloAcao.equals("")) {
-			validation.addError("acao.tituloAcao", "Título não informado");
+			validation.addError("acao.tituloAcao", "Tï¿½tulo nï¿½o informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -357,7 +357,7 @@ public class Application extends SigaApplication {
 		else
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
 
-		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
 		
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca m where m.cpMarcador.idMarcador in (42, 44, 46, 47)")
@@ -389,7 +389,7 @@ public class Application extends SigaApplication {
         else
             listaSolicitacao = new ArrayList<SrSolicitacao>();
 
-        String[] tipos = new String[] { "Pessoa", "Lotação" };
+        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
         
         List<CpMarcador> marcadores = JPA.em()
                 .createQuery("select distinct cpMarcador from SrMarca")
@@ -418,7 +418,7 @@ public class Application extends SigaApplication {
 		}
 		
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -802,25 +802,10 @@ public class Application extends SigaApplication {
 	public static Long gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
-		tratarItensNulos(designacao);
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
 		
 		return designacao.getId();
-	}
-	
-	private static void tratarItensNulos(SrConfiguracao designacao) {
-		if (designacao.getDpPessoa() != null && (designacao.getDpPessoa().getId() == null || designacao.getDpPessoa().getId().equals(Long.valueOf(0))))
-				designacao.setDpPessoa(null);
-		
-		if (designacao.getLotacao() != null && (designacao.getLotacao().getId() == null || designacao.getLotacao().getId().equals(Long.valueOf(0))))
-			designacao.setLotacao(null);
-		
-		if (designacao.getCargo() != null && (designacao.getCargo().getId() == null ||designacao.getCargo().getId().equals(Long.valueOf(0))))
-			designacao.setCargo(null);
-		
-		if (designacao.getFuncaoConfianca() != null && (designacao.getFuncaoConfianca().getId() == null || designacao.getFuncaoConfianca().getId().equals(Long.valueOf(0))))
-			designacao.setFuncaoConfianca(null);
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {
@@ -1077,9 +1062,9 @@ public class Application extends SigaApplication {
 		listarPesquisa();
 	}
 	
-	public static void listarEquipe() throws Exception {
+	public static void listarEquipe(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrEquipe> listaEquipe = SrEquipe.findAll();
+		List<SrEquipe> listaEquipe = SrEquipe.listar(mostrarDesativados);
 		render(listaEquipe);
 	}
 	

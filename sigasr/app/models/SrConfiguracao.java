@@ -203,21 +203,34 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarDesignacoes(
-			boolean mostrarDesativados, Long idItemConfiguracao) {
+	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, DpLotacao atendente) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (atendente != null) {
+			sb.append(" and conf.atendente.idLotacao = ");
+			sb.append(atendente.getId());
+		}
+		
+		if (!mostrarDesativados)
+			sb.append(" and conf.hisDtFim is null");
+		else {
+			sb.append(" and conf.idConfiguracao in (");
+			sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
+		}
+		
 		return JPA
 				.em()
-				.createQuery(
-						"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and conf.hisDtFim is null")
-				.getResultList();
+				.createQuery(sb.toString()).getResultList();
 	}
 
 	public void salvarComoPermissaoUsoLista() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 		salvar();
+		
+		
 	}
 
 	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota,

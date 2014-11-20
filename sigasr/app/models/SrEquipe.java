@@ -1,6 +1,5 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -69,7 +68,25 @@ public class SrEquipe extends HistoricoSuporte {
 	}
 
 	public List<SrConfiguracao> getDesignacoes() throws Exception {
-		return new ArrayList<SrConfiguracao>();
+		if (lotacao == null)
+			return null;
+		else
+			return SrConfiguracao.listarDesignacoes(false, lotacao);
+	}
+
+	public static List<SrEquipe> listar(boolean mostrarDesativados) {
+		StringBuffer sb = new StringBuffer();
+		
+		if (!mostrarDesativados)
+			sb.append(" hisDtFim is null ");
+		else {
+			sb.append(" idEquipe in (");
+			sb.append(" SELECT max(idEquipe) as idEquipe FROM ");
+			sb.append(" SrEquipe GROUP BY hisIdIni) ");
+		}
+		
+		return SrEquipe.find(sb.toString()).fetch();
+		
 	}
 
 }

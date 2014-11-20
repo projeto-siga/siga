@@ -653,7 +653,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE;
 		
-		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro, new int[] { SrConfiguracaoBL.ATENDENTE });
 		if (conf != null)
 			return conf.preAtendente.getLotacaoAtual();
 		return null;
@@ -672,7 +672,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 
-		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro, new int[] { SrConfiguracaoBL.ATENDENTE });
 		if (conf != null)
 			return conf.atendente.getLotacaoAtual();
 		return null;
@@ -761,7 +761,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE;
 		
-		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro, new int[] { SrConfiguracaoBL.ATENDENTE });
 		if (conf != null)
 			return conf.posAtendente.getLotacaoAtual();
 		return null;

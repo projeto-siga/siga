@@ -224,6 +224,16 @@
 		
 		// limpa as mensagens de erros
 		resetAllErrorMessage();
+		
+		// atualiza a visibilidade dos campos
+		if (parametroTela == 'equipe') {
+			document.getElementById("atendente_sigla").disabled = false;
+			document.getElementById("atendenteButton").disabled = false;
+			document.getElementById("preAtendente_sigla").disabled = false;
+			document.getElementById("preAtendenteButton").disabled = false;
+			document.getElementById("posAtendente_sigla").disabled = false;
+			document.getElementById("posAtendenteButton").disabled = false;
+		}
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
@@ -293,7 +303,34 @@
         getSpanFieldSolicitante(itemArray[5]).html(itemArray[7]);
         
         $("#dpPessoalotacaofuncaoConfiancacargo")[0].onchange();
+        
+        validarCamposTela();
 	};
+	
+	function validarCamposTela() {
+		var idEquipeLotacao = $("#equipelotacao").val(),
+			idEquipe = $("#idEquipe").val(),
+			idAtendente = $("#atendente").val(),
+			idPreAtendente = $("#preAtendente").val(),
+			idPosAtendente = $("#posAtendente").val();
+		
+		if (parametroTela == 'equipe' && idEquipe != '') {
+			if (idEquipeLotacao != idAtendente) {
+				document.getElementById("atendente_sigla").disabled = true;
+				document.getElementById("atendenteButton").disabled = true;
+			}
+			
+			if (idEquipeLotacao != idPreAtendente) {
+				document.getElementById("preAtendente_sigla").disabled = true;
+				document.getElementById("preAtendenteButton").disabled = true;
+			}
+			
+			if (idEquipeLotacao != idPosAtendente) {
+				document.getElementById("posAtendente_sigla").disabled = true;
+				document.getElementById("posAtendenteButton").disabled = true;
+			}
+		}
+	}
 	
 	function findSelectedIndexByValue(comboBox, value) {
 		for (var i = 0; i < comboBox.options.length; i++) {
@@ -408,6 +445,24 @@
           			getListasAsString()
 		];
 		
+		// Realiza validação específica caso seja aberto a partir da tela de equipe
+		if (parametroTela == 'equipe') {
+			var idEquipeLotacao = $("#equipelotacao").val(),
+				idAtendente = $("#atendente").val(),
+				idPreAtendente = $("#preAtendente").val(),
+				idPosAtendente = $("#posAtendente").val();
+			
+			// só continua caso tenha selecionado um atendente, pré ou pós
+			// igual ao da lotação selecionada.
+			if (idEquipeLotacao != idAtendente
+					&& idEquipeLotacao != idPreAtendente
+					&& idEquipeLotacao != idPosAtendente) {
+				$("#erroAoSalvar_dialog").dialog("open");
+				return;
+			}
+				
+		}
+		
 		$.ajax({
         	type: "POST",
         	url: "@{Application.gravarDesignacao()}",
@@ -443,6 +498,10 @@
         	}
        	});
 	};
+	
+	function fecharModalErroAoSalvar() {
+		$("#erroAoSalvar_dialog").dialog("close");
+	}
 	
 	function getDescricaoItemConfiguracao() {
 		var amount = itemConfiguracaoTable.fnGetData().length,
@@ -752,7 +811,7 @@
 	<h2>Designações</h2>
 	<!-- content bomex -->
 	<div class="gt-content-box dataTables_div">
-		#{if _modoExibicao == 'designacoes'}
+		#{if _modoExibicao == 'designacao'}
 			<div class="gt-form-row dataTables_length">
 				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
 			</div>
@@ -876,4 +935,13 @@
 #{modal nome:'designacao', titulo:'Cadastrar Designacao'}
 	<div id="divEditarDesignacaoItem">#{include
 				'Application/editarDesignacaoItem.html' /}</div>
+#{/modal}
+
+#{modal nome:'erroAoSalvar', titulo:'Problemas ao Salvar', altura:'200', largura:'450'}
+	<div id="divProblemaAoSalvar" class="gt-form gt-content-box" style="text-align: justify;">
+		<label style="padding-top: 5px;">Pelo menos um dos campos "Atendente", "Pré-Atendente" ou "Pós-Atendente" precisa necessáriamente ser a mesma lotação que foi selecionada na tela de equipe. Por favor verifique e tente novamente.</label>
+	</div>
+	<div class="gt-form-row" style="margin-left: 297px;">
+		<a href="javascript: fecharModalErroAoSalvar()" class="gt-btn-medium gt-btn-left">OK</a>
+	</div>
 #{/modal}

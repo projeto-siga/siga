@@ -984,8 +984,13 @@ public class Application extends SigaApplication {
 					+ " salvo, mas nao foi possivel atualizar conhecimento");
 			e.printStackTrace();
 		}
+//		DB1:Foi necessário retirar a chamada da lista
+//		porque o gravarItem() é chamado via Ajax pelo template,
+//		o Play ao tentar renderizar a lista de itens se perde,
+//		e busca o o arquivo listarItem.TXT
+//		A lista de itens está sendo chamada pelo Callback Success do Ajax
 		
-		listarItem(false);
+//		listarItem(false);
 	}
 
 	public static void desativarItem(Long id) throws Exception {

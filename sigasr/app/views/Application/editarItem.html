@@ -63,11 +63,14 @@
 
 	$(function() {
 		// POPUP PARA ADICIONAR UM GESTOR
-        var jGestores = $("#gestoresTr"),
+        var jGestores = $("#gestoresUl"),
         gestores = jGestores[0],
         jDialog = $("#dialog"),
         dialog = jDialog[0],
         jSelect = $("#gestorpessoagestorlotacao");
+
+        $( "#gestoresUl" ).sortable({placeholder: "ui-state-highlight"});
+        $( "#gestoresUl" ).disableSelection();
        
         $("#botaoIncluir").click(function(){
         	jDialog.data('acao',gestores.incluirItem).dialog('open');
@@ -115,14 +118,18 @@
         gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
             if (!id)
                 id = 'novo_' + ++gestores["index"];
-            $("#tabelaTr").show();
-            jGestores.append("<tr id =\"" + id + "\"></tr>");
-	        var jNewTr = jGestores.find("tr:last-child");
-	        jNewTr.append("<td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span id=\"" + tipoGestor + "\">" 
-	    	        + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" + idDerivadoGestor + "\">"
-	                + nomeGestor + "</span>&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer; float:right;\" /></td>");
+            jGestores.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
+	        var jNewTr = jGestores.find("li:last-child");
+	        jNewTr.append("<span id=\"" + tipoGestor + "\">" + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" 
+	    	        + idDerivadoGestor + "\">" + nomeGestor + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer;\" />");
 	        jNewTr.find("img:eq(0)").click(function(){
 	        	gestores.removerItem(jNewTr.attr("id"));
+	        });
+	        jNewTr.mouseover(function(){
+                jNewTr.find("img").css("visibility", "visible");
+	        });
+	        jNewTr.mouseout(function(){
+                jNewTr.find("img").css("visibility", "hidden");
 	        });
   		}
         gestores.removerItem = function(idItem){
@@ -137,6 +144,7 @@
 	        #{if item.dpLotacao}
 	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
 	        #{/if}
+        	
 		#{/list}
 
         
@@ -208,7 +216,7 @@
 	        jNewFatorTr.append("<td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span id=\"" + tipoFator + "\">" 
 	    	        + siglaSolicitante + "-" 
 	    	        + nomeSolicitante + "</span></td><td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\">"
-	                + numFator + "</span>&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer; float:right;\" /></td>");
+	                + numFator + "</span>&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer; float:right;\" /></td>");
 	        jNewFatorTr.find("img:eq(0)").click(function(){
 	        	fatores.removerItemFator(jNewFatorTr.attr("id"));
 	        });
@@ -233,7 +241,7 @@
         $("[value='Gravar']").click(function(){
             var jForm = $("form"),
                     params = jForm.serialize();
-            jGestores.find("td").each(function(i){
+            jGestores.find("li").each(function(i){
                     var jDivs=$(this).find("span");
                     var tipo = jDivs[0].id;
                     if(tipo === 'pessoa'){
@@ -331,20 +339,16 @@
 						<td>
 							<label>Gestores: </label>
 						</td>
-						<td>
-							<img align="right" src="/siga/css/famfamfam/icons/add.png"
-								id="botaoIncluir" style="cursor: pointer; float: initial;" />
+					</tr>
+					<tr>
+						<td colspan="3">
+							<ul id="gestoresUl" style="color: #365b6d"></ul>
 						</td>
 					</tr>
-					<tr id="tabelaTr"
-						style="display: none;">
-						<td>&nbsp;</td>
+					<tr>
 						<td>
-							<table id="gestoresTr" class="tabela">
-								<tr>
-									<th colspan="2">Gestor</th>
-								</tr>
-							</table>
+							<input type="button" value="Incluir" id="botaoIncluir"
+                                                class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
 						</td>
 					</tr>
 					<tr>

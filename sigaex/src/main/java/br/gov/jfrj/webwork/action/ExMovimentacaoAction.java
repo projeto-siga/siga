@@ -191,6 +191,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private List<ExDocumento> itensSolicitados;
 	
 	private List<ExDocumento> documentosQuePodemSerAssinadosComSenha;
+	
+	private List<ExMovimentacao> movimentacoesQuePodemSerAssinadasComSenha;
 
 	private DpLotacaoSelecao lotaDestinoFinalSel;
 
@@ -1417,8 +1419,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
 							getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(), tpMovAssinatura);
 		} catch (final Exception e) {
-
-			throw e;
+			getRequest().setAttribute("err", e.getMessage());
+			return "ERRO";
 		}
 
 		return Action.SUCCESS;
@@ -2675,9 +2677,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					listarDespachoPendenteAssinatura(getTitular());
 
 		setItens(new ArrayList<ExMovimentacao>());
+		
+		setMovimentacoesQuePodemSerAssinadasComSenha(new ArrayList<ExMovimentacao>());
 		for (ExMovimentacao mov : itensComoSubscritor) {
-				if(!mov.isAssinada() && !mov.isCancelada())
+				if(!mov.isAssinada() && !mov.isCancelada()) {
 					getItens().add(mov);
+					
+					if(Ex.getInstance().getComp().podeAssinarMovimentacaoComSenha(getTitular(), getLotaTitular(), mov))
+						getMovimentacoesQuePodemSerAssinadasComSenha().add(mov);
+				}
+				
 		}
 		return Action.SUCCESS;
 	}
@@ -4397,5 +4406,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setDocumentosQuePodemSerAssinadosComSenha(
 			List<ExDocumento> documentosQuePodemSerAssinadosComSenha) {
 		this.documentosQuePodemSerAssinadosComSenha = documentosQuePodemSerAssinadosComSenha;
+	}
+
+	public List<ExMovimentacao> getMovimentacoesQuePodemSerAssinadasComSenha() {
+		return movimentacoesQuePodemSerAssinadasComSenha;
+	}
+
+	public void setMovimentacoesQuePodemSerAssinadasComSenha(
+			List<ExMovimentacao> movimentacoesQuePodemSerAssinadasComSenha) {
+		this.movimentacoesQuePodemSerAssinadasComSenha = movimentacoesQuePodemSerAssinadasComSenha;
 	}
 }

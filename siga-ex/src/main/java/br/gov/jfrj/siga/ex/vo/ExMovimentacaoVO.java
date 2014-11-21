@@ -275,11 +275,13 @@ public class ExMovimentacaoVO extends ExVO {
 
 				for (ExMovimentacao movRef : mov
 						.getExMovimentacaoReferenciadoraSet()) {
-					if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
+					if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO ||
+							movRef.getIdTpMov() == TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
 						complemento += (complemento.length() > 0 ? ", " : "")
 								+ Texto.maiusculasEMinusculas(movRef.getObs());
 						fAssinaturas = true;
-					} else if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
+					} else if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+							|| movRef.getIdTpMov() == TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) {
 						complementoConferencias += (complementoConferencias
 								.length() > 0 ? ", " : "")
 								+ Texto.maiusculasEMinusculas(movRef.getObs());

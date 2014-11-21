@@ -307,11 +307,14 @@
 			<div id="dados-assinatura" style="visible: hidden">
 				<c:set var="jspServer"
 				       value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+			    <c:set var="jspServerSenha" 
+			    	   value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
 				<c:set var="nextURL"
 					   value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
 			    <c:set var="urlPath" value="/${request.contextPath}" />
 			    
 	    		<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
+				<ww:hidden id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 				<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 				<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
 				<c:set var="urlBase"
@@ -338,11 +341,31 @@
 						 document.getElementById("ie-missing").style.display = "block";
 					}
 				 </script>
-				 
-	    	 	 <c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
-				 <c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+			</c:if>
+		    
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+			    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						
+			</c:if>
+			
+    	 	 <c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+			 <c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
 	
-  				 <c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
+			 <c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
+  				     <a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
+  				     
+					<div id="dialog-form" title="Assinar com Senha">
+			 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" >
+			 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
+			 				<ww:hidden id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
+			    			<fieldset>
+			    			  <label>Matrícula</label> <br/>
+			    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+			    			  <label>Senha</label> <br/>
+			    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>
+			    			</fieldset>
+			  			</form>
+					</div>
+  				     
 	  				 <script> 
 					    dialog = $("#dialog-form").dialog({
 						    autoOpen: false,
@@ -370,20 +393,14 @@
 					    }
 			
 					    function assinarGravar() {
-					    	$("#form-assinarSenha").submit();
+					    	AssinarDocumentosSenha('false', this);
 						}
 			
 					    function conferirCopiaGravar() {
-					    	$('#tipoAssinaturaMov').val('C');
-					    	$("#form-assinarSenha").submit();
+					    	AssinarDocumentosSenha('true', this);
 						}
 				  </script>
-  				 </c:if>
-			</c:if>
-		    
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-			    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						
-			</c:if>
+			 </c:if>
 		</div>				   	
 	    </ww:if>
 	    <ww:else>

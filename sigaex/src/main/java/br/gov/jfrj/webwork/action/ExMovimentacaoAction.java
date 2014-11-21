@@ -1408,7 +1408,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		mov = dao().consultar(getId(), ExMovimentacao.class, false);
 		
-		if(getTipoAssinaturaMov().equals("C"))
+		if(getCopia() || (getTipoAssinaturaMov() != null && getTipoAssinaturaMov().equals("C")))
 			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
 		
 		try {

@@ -2224,9 +2224,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					+ horario));
 			movimentacao.dtAgenda = datetime.toDate();
 		}
+		String descrMovimentacao = "Prazo alterado para " + calendario + " " 
+				+ horario + " - " + motivo;
+		
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO);
-		movimentacao.descrMovimentacao = motivo;
+		movimentacao.descrMovimentacao = descrMovimentacao;
 		movimentacao.salvar(pess, lota);
 	}
 

@@ -56,6 +56,8 @@ public abstract class AbstractCpServico extends Objeto implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_SERVICO")
 	private CpTipoServico cpTipoServico;
+	@Column(name = "LABEL_SERVICO")
+	private String labelServico;
 
 	/**
 	 * @return the cpServicoPai
@@ -111,4 +113,11 @@ public abstract class AbstractCpServico extends Objeto implements Serializable {
 		this.cpTipoServico = cpTipoServico;
 	}
 
+	public String getLabelServico() {
+		return labelServico;
+	}
+
+	public void setLabelServico(String labelServico) {
+		this.labelServico = labelServico;
+	}
 }

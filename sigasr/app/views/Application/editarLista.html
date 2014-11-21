@@ -1,8 +1,257 @@
 #{extends 'main.html' /} #{set title:'Edição de Lista' /}
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<script language="javascript">
+	var prioridadesTable, 
+		isEditing;
+	
+	//removendo a referencia de '$' para o jQuery
+	$.noConflict();
+	
+	jQuery( document ).ready(function( $ ) {
+		/* Table initialization */
+		prioridadesTable = $('#prioridades_table').DataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"columnDefs": [{
+				"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 18],
+				"visible": false,
+				"searchable": false
+			}]
+		});
+		
+		$('#prioridades_table tbody').on('click', 'tr', function () {
+			if (prioridadesTable.row(this).data() != undefined) {
+	        	prioridadesTable.$('tr.selected').removeClass('selected');
+	            $(this).addClass('selected');
+	
+				atualizarControleAcessoModal(prioridadesTable.row(this).data());
+			    controleAcessoModalAbrir(true);
+			}
+		});
+	});
+	
+	function atualizarControleAcessoModal(itemArray) {
+		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
+		jComplexoCbb = document.getElementsByName("complexo")[0]
+		jTipoPermissaoCbb = document.getElementsByName("tipoPermissao")[0];
+		
+		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[0]);
+		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[2]);
+		$("#lotacao").val(itemArray[4]);
+		$("#lotacao_descricao").val(itemArray[5]);
+		$("#lotacaoSpan").html(itemArray[5]);
+		$("#lotacao_sigla").val(itemArray[6]);
+		$("#dpPessoa").val(itemArray[7]);
+		$("#dpPessoa_descricao").val(itemArray[8]);
+		$("#dpPessoaSpan").html(itemArray[8]);
+		$("#dpPessoa_sigla").val(itemArray[9]);
+		$("#cargo").val(itemArray[10]);
+		$("#cargo_descricao").val(itemArray[11]);
+		$("#cargoSpan").html(itemArray[11]);
+		$("#cargo_sigla").val(itemArray[12]);
+		$("#funcaoConfianca").val(itemArray[13]);
+		$("#funcaoConfianca_descricao").val(itemArray[14]);
+		$("#funcaoConfiancaSpan").html(itemArray[14]);
+		$("#funcaoConfianca_sigla").val(itemArray[15]);
+		jTipoPermissaoCbb.selectedIndex = findSelectedIndexByValue(jTipoPermissaoCbb, itemArray[16]);
+		$("#idConfiguracao").val(itemArray[18]);
+	};
+	
+	function findSelectedIndexByValue(comboBox, value) {
+		for (var i = 0; i < comboBox.options.length; i++) {
+			if (comboBox.options[i].value == value)
+				return i;
+		}
+		
+		return 0;
+	};
+	
+	function controleAcessoModalAbrir(isEdicao){
+		isEditing = isEdicao;
+		
+		if (isEdicao)
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
+		else
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
+
+		if ($("#idLista").val() != undefined)
+			$("#controleAcesso_dialog").dialog('open');
+
+	}
+	
+	$("#controleAcesso_dialog").dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: 'auto',
+	    modal: true,
+	    resizable: false
+	  });
+	
+	function controleAcessoModalFechar() {
+		isEditing = false;
+		$("#controleAcesso_dialog").dialog("close");
+		
+		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
+		jComplexoCbb = document.getElementsByName("complexo")[0],
+		jTipoPermissaoCbb = document.getElementsByName("tipoPermissao")[0];
+		
+		jOrgaoUsuarioCbb.selectedIndex = 0;
+		jComplexoCbb.selectedIndex = 0;
+		$("#lotacao").val('');
+		$("#lotacao_descricao").val('');
+		$("#lotacao_sigla").val('');
+		$("#lotacaoSpan").html('');
+		$("#dpPessoa").val('');
+		$("#dpPessoa_descricao").val('');
+		$("#dpPessoa_sigla").val('');
+		$("#dpPessoaSpan").html('');
+		$("#cargo").val('');
+		$("#cargo_descricao").val('');
+		$("#cargo_sigla").val('');
+		$("#cargoSpan").html('');
+		$("#funcaoConfianca").val('');
+		$("#funcaoConfianca_descricao").val('');
+		$("#funcaoConfiancaSpan").html('');
+		$("#funcaoConfianca_sigla").val('');
+		jTipoPermissaoCbb.selectedIndex = 0;
+		$("#idConfiguracao").val('');
+
+		$('#modal-permissao-error').css('display', 'none');
+		$('#modal-permissao').css('display', 'block');
+	};
+
+	function serializePermissao(row) {
+		var params = "";
+		
+		// caso exista algum item na tabela
+		if (row[0] != '' && row[0] > 0)
+			params += '&permissao.orgaoUsuario.idOrgaoUsu=' + row[0];
+		
+		if (row[2] != '' && row[2] > 0)
+        	params += '&permissao.complexo.idComplexo=' + row[2];
+		
+		if (row[4] != '')
+        	params += '&permissao.lotacao.id=' + row[4];
+		
+		if (row[7] != '')
+        	params += '&permissao.dpPessoa.id=' + row[7];
+		
+		if (row[10] != '')
+        	params += '&permissao.cargo.id=' + row[10];
+		
+		if (row[13] != '')
+        	params += '&permissao.funcaoConfianca.idFuncao=' + row[13];
+		
+		if (row[16] != '')
+        	params += '&permissao.tipoPermissao=' + row[16];
+		
+		if (row[18] != '')
+			params += '&permissao.id=' + row[18];
+
+		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
+			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
+
+		return params;
+	};
+	
+	function inserirAcesso() {
+		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
+			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
+			jComplexoCbb = document.getElementsByName("complexo")[0],
+			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex],
+			jTipoPermissaoCbb = document.getElementsByName("tipoPermissao")[0]
+			jTipoPermissao = jTipoPermissaoCbb.options[jTipoPermissaoCbb.selectedIndex];
+		
+		var row = [ jOrgaoUsuario.value,
+          			jOrgaoUsuario.text, 
+          			jComplexo.value,
+          			jComplexo.text,
+          			$("#lotacao").val(),
+          			$("#lotacao_descricao").val(),
+          			$("#lotacao_sigla").val(),
+          			$("#dpPessoa").val(),
+          			$("#dpPessoa_descricao").val(),
+          			$("#dpPessoa_sigla").val(),
+          			$("#cargo").val(),
+          			$("#cargo_descricao").val(),
+          			$("#cargo_sigla").val(),
+          			$("#funcaoConfianca").val(),
+          			$("#funcaoConfianca_descricao").val(),
+          			$("#funcaoConfianca_sigla").val(),
+          			jTipoPermissao.value,
+          			jTipoPermissao.text,
+          			$("#idConfiguracao").val() ];
+
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.gravarPermissaoUsoLista()}",
+	         data: serializePermissao(row),
+	         dataType: "text",
+	         success: function(response) {
+		        row[18] = response;
+
+	          	if (isEditing) {
+	          		prioridadesTable.row('.selected').data(row);
+			    }
+			    else {
+			    	prioridadesTable.row.add(row).draw();
+			    }
+			    
+				controleAcessoModalFechar();
+	         },
+	         error: function(response) {
+	        	$('#modal-permissao').hide(); 
+
+	        	var modalErro = $('#modal-permissao-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
+	         }
+        });
+
+	};
+	
+	$(function() {
+		$("[value='Gravar']").click(function(){
+			if (!block())
+				return false;
+			var jForm = $("form"),
+            	params = jForm.serialize();
+			
+            location.href = '@{Application.gravarLista()}?' + params;
+		});
+
+		$("[title='close']").click(function(){
+			controleAcessoModalFechar();
+		});
+	});
+</script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Lista</h2>
+		<h2>Cadastro de Lista</h2>
 		<p class="gt-table-action-list">
 		#{if lista?.idLista} 
 		<a class="once" href="@{Application.desativarLista(lista.idLista)}">
@@ -10,22 +259,193 @@
 		#{/if}
 		</p>
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarLista()} #{if
-			lista?.idLista} <input type="hidden" name="lista.idLista" value="${lista.idLista}">
-			#{/if}
-			<div class="gt-form-row gt-width-66">
-				<label>Nome</label> <input type="text"
-					name="lista.nomeLista"
-					value="${lista?.nomeLista}" size="100"/>
-			</div>
-			<div class="gt-form-row">
-			<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
-			<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
-			<input type="submit" value="OK" class="gt-btn-medium gt-btn-left" /> 
-			<a href="@{Application.exibirLista(lista.idLista)}" class="gt-btn-medium gt-btn-left">Voltar</a>
-			</div>
-			#{/form}
+			<form id="formLista"> #{if
+				lista?.idLista} <input type="hidden" id="idLista" name="lista.idLista" value="${lista.idLista}">
+				#{/if}
+				<div class="gt-form-row gt-width-66">
+					<label>Nome</label> <input type="text"
+						name="lista.nomeLista"
+						value="${lista?.nomeLista}" size="98"/>
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Abrangência</label>
+					<textarea cols="100" rows="5" name="lista.descrAbrangencia"
+						id="descrAbrangencia" maxlength="8192">${lista.descrAbrangencia}</textarea>
+					<span style="color: red">#{error
+						'lista.descrAbrangencia' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Justificativa</label>
+					<textarea cols="100" rows="5" name="lista.descrJustificativa"
+						id="descrJustificativa" maxlength="8192">${lista.descrJustificativa}</textarea>
+					<span style="color: red">#{error
+						'lista.descrJustificativa' /}</span>
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Priorização</label>
+					<textarea cols="100" rows="5" name="lista.descrPriorizacao"
+						id="descrPriorizacao" maxlength="8192">${lista.descrPriorizacao}</textarea>
+					<span style="color: red">#{error
+						'lista.descrPriorizacao"' /}</span>
+				</div>
+				
+				<div class="container">
+					<div class="title-table">
+						<h3 style="padding-top: 25px;">Permissões</h3>
+					</div>
+					<div class="button-table">
+						<a href="javascript: controleAcessoModalAbrir(false)" title="Adicionar Permissão">
+							<img src="/siga/css/famfamfam/icons/add.png">
+						</a>
+					</div>
+				</div>
+				<div class="gt-content-box gt-for-table dataTables_div">
+					<table id="prioridades_table" border="0" class="gt-table display">
+						<thead>
+							<tr>
+								<th>ID Orgão</th>
+								<th>Orgão</th>
+								<th>ID Local</th>
+								<th>Local</th>
+								<th>ID Lotação</th>
+								<th>Nome Lotação</th>
+								<th>Lotação</th>
+								<th>ID Pessoa</th>
+								<th>Nome Pessoa
+								<th>Pessoa</th>
+								<th>ID Cargo</th>
+								<th>Cargo</th>
+								<th>Cargo</th>
+								<th>ID Função</th>
+								<th>Função</th>
+								<th>Função</th>
+								<th>ID Tipo Permissao</th>
+								<th>Tipo Permissão</th>	
+								<th>ID Permissão</th>
+							</tr>
+						</thead>
+		
+						<tbody>
+							#{list items:lista.permissoes, as:'perm'}
+								<tr style="cursor: pointer;">
+									<td>${perm.orgaoUsuario?.id}</td>
+									<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
+									<td>${perm.complexo?.idComplexo}</td>
+									<td>${perm.complexo?.nomeComplexo}</td>
+									<td>${perm.lotacao?.lotacaoAtual?.id}</td>
+									<td>${perm.lotacao?.lotacaoAtual?.nomeLotacao}</td>
+									<td>${perm.lotacao?.lotacaoAtual?.siglaLotacao}</td>
+									<td>${perm.dpPessoa?.pessoaAtual?.id}</td>
+									<td>${perm.dpPessoa?.pessoaAtual?.nomePessoa}</td>
+									<td>${perm.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>
+									<td>${perm.cargo?.id}</td>
+									<td>${perm.cargo?.sigla}</td>
+									<td>${perm.cargo?.descricao}</td>
+									<td>${perm.funcaoConfianca?.id}</td>
+									<td>${perm.funcaoConfianca?.sigla}</td>
+									<td>${perm.funcaoConfianca?.descricao}</td>
+									<td>${perm.tipoPermissao}</td>
+									<td>${perm.tipoPermissao?.descrTipoPermissaoLista}</td>
+									<td>${perm.id}</td>
+								</tr>
+							#{/list}
+						</tbody>
+					</table>
+				</div>
+				
+				
+				<div class="gt-form-row">
+					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
+					<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
+					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left"  />
+					#{if lista?.idLista }<a href="@{Application.exibirLista(lista.idLista)}" class="gt-btn-medium gt-btn-left">Cancelar</a>#{/if}
+					#{else}<a href="@{Application.listarlista}" class="gt-btn-medium gt-btn-left">Cancelar</a>#{/else}
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
 
+#{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
+	<div class="gt-form gt-content-box" id="modal-permissao">
+		<div>
+			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
+			
+			#{ifErrors}
+				<p class="gt-error">Alguns campos obrigatórios não foram preenchidos ${error}</p>
+			#{/ifErrors}	
+			<div class="gt-form-row div-modal-table">
+				<label>Órgão</label> 
+				#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
+				labelProperty:'nmOrgaoUsu', value:orgaoUsuario?.idOrgaoUsu}
+				#{option 0}Nenhum#{/option} 
+				#{/select}
+			</div>
+			<span style="color: red">#{error
+					'orgaoUsuario' /}</span>
+			<div class="gt-form-row div-modal-table">		
+				<label>Local</label> 
+				#{select name:'complexo', items:locais, valueProperty:'idComplexo',
+				labelProperty:'nomeComplexo', value:complexo?.idComplexo}
+				#{option 0}Nenhum#{/option} 
+				#{/select}
+			</div>		
+			<div class="gt-form-row div-modal-table">
+				<label>Lotação</label>#{selecao
+					tipo:'lotacao', nome:'lotacao',
+					value:lotacao?.lotacaoAtual /}
+			</div>
+			
+			<div class="gt-form-row div-modal-table">
+				<label>Pessoa</label>#{selecao
+					tipo:'pessoa', nome:'dpPessoa',
+					value:dpPessoa?.pessoaAtual /}
+			</div>
+			
+			<div class="gt-form-row div-modal-table">
+				<label>Cargo</label>#{selecao
+					tipo:'cargo', nome:'cargo',
+					value:cargo /}
+			</div>
+			
+			<div class="gt-form-row div-modal-table">
+				<label>Função</label>#{selecao
+					tipo:'funcao', nome:'funcaoConfianca',
+					value:funcaoConfianca /}
+			</div>
+			
+			<div class="gt-form-row div-modal-table">
+				<label>Tipo Permissão</label>
+				#{select name:'tipoPermissao',
+				items:models.SrTipoPermissaoLista.values(),
+				labelProperty:'descrTipoPermissaoLista',
+				value:tipoPermissao /}
+			</div>
+			
+			<div class="gt-form-row">
+				<a href="javascript: inserirAcesso()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="javascript: controleAcessoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				#{if idConfiguracao} 
+					<input type="button" value="Desativar"
+						class="gt-btn-medium gt-btn-left"
+						onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${idConfiguracao}'" />
+				#{/if}
+			</div>
+		</div>
+	</div>
+	<div class="gt-content-box" id="modal-permissao-error" style="display: none;">
+		<table width="100%">
+			<tr>
+				<td align="center" valign="middle">
+					<table class="form" width="50%">
+						<tr>
+							<td style="text-align: center; padding-top: 10px;">
+								<h3></h3>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+#{/modal}

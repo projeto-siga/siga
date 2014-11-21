@@ -2,10 +2,10 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Ação</h2>
+		<h2>Cadastro de Ação</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarAcao()} #{if
+			#{form @Application.gravarAcao(), onsubmit: 'javascript: return block();'} #{if
 			acao?.idAcao} <input type="hidden"
 				name="acao.idAcao" value="${acao.idAcao}">
 			#{/if}
@@ -32,10 +32,39 @@
 					name="acao.descrAcao"
 					value="${acao?.descrAcao}" size="100"/>
 			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Tipo de ação</label>
+					#{select name:'acao.tipoAcao',
+					items:models.SrTipoAcao.values(),
+					labelProperty:'descrTipoAcao',
+					value:acao.tipoAcao,
+					class:'select-siga' /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Tipo de execução pelo Pré-atendimento</label>
+					#{select name:'acao.tipoExecucao',
+					items:models.SrTipoExecucaoAcao.values(),
+					labelProperty:'descrTipoExecucaoAcao',
+					value:acao.tipoExecucao,
+					class:'select-siga' /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Forma de atendimento</label>
+					#{select name:'acao.formaAtendimento',
+					items:models.SrFormaAtendimentoAcao.values(),
+					labelProperty:'descFormaAtendimentoAcao',
+					value:acao.formaAtendimento,
+					class:'select-siga'/}
+			</div>
+			
 			<div class="gt-form-row">
-				<input type="submit" value="Salvar"
-					class="gt-btn-medium gt-btn-left" />#{if
-				acao?.idAcao} <input type="button" value="Desativar"
+				<input type="submit" value="Gravar"
+					class="gt-btn-medium gt-btn-left" />
+				<a href="@{Application.listarAcao}" class="gt-btn-medium gt-btn-left">Cancelar</a>	
+				#{if acao?.idAcao} <input type="button" value="Desativar"
 					class="gt-btn-medium gt-btn-left"
 					onclick="location.href='@{Application.desativarAcao()}?id=${acao.idAcao}'" />
 				#{/if}

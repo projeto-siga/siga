@@ -42,7 +42,7 @@ public class Corporativo extends SigaApplication {
 		for (DadosRH d : l) {
 			Pessoa p = d.getPessoa();
 			if (p != null
-					&& !mp.containsKey(p.pessoa_id)
+					&& (!mp.containsKey(p.pessoa_id) || p.lotacao_tipo_papel.equals("Principal"))
 					&& (p.pessoa_situacao.equals(1)
 							|| p.pessoa_situacao.equals(2) || p.pessoa_situacao
 								.equals(31)))

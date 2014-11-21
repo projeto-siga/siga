@@ -914,44 +914,51 @@ public class ExDocumentoAction extends ExActionSupport {
 		return Action.SUCCESS;
 	}
 
-	private void assertAcesso() throws Exception {
-		DpPessoa dest;
+	private void assertAcesso() throws Exception {			
 		String msgDestinoDoc = "";
+		DpPessoa dest;
 		if(!Ex.getInstance().getComp()
 				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-			if (mob.doc().isFinalizado()) {
-				if (!mob.doc().isArquivado()) {				
-					dest = mob.getUltimaMovimentacaoNaoCancelada().getResp().getPessoaAtual();
-					if (dest.ativaNaData(new Date())) {
-						if (!mob.getUltimaMovimentacaoNaoCancelada().getLotaResp().equivale(dest.getLotacao())) {
+/*			DpLotacao lotadest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp();
+			if (getLotaTitular().equals(lotadest)  a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc 
+					&& (mob.doc().getIdExNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA) 
+					     || mob.doc().getIdExNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL) {
+				if (mob.doc().isFinalizado()) {
+					if (!mob.doc().isArquivado()) {
+						dest = mob.getUltimaMovimentacaoNaoCancelada().getResp().getPessoaAtual();					
+						if (dest.ativaNaData(new Date())) {
+							if (!mob.getUltimaMovimentacaoNaoCancelada().getLotaResp().equivale(dest.getLotacao())) {
+								Ex.getInstance()
+								.getBL()
+								.transferirAutomatico(getCadastrante(), getLotaTitular(), 
+										dest, dest.getLotacao(), mob);	
+								msgDestinoDoc = "documento sendo tranferido automaticamente";
+							}	
+						} else {					
 							Ex.getInstance()
 							.getBL()
-							.transferirAutomatico(getCadastrante(), getLotaTitular(), 
-									dest, dest.getLotacao(), mob);	
-							msgDestinoDoc = "documento sendo tranferido automaticamente";
-						}	
-					} else {					
-						Ex.getInstance()
-						.getBL()
-						.arquivarCorrenteAutomatico(dest, getLotaTitular(), mob);	
-						msgDestinoDoc = "documento sendo arquivado automaticamente";
-					}
-				}	
-			} else { /* doc temporário */
-				dest = mob.doc().getCadastrante().getPessoaAtual();						
-				if (dest.ativaNaData(new Date())) {
-					if (!mob.doc().getLotaCadastrante().equivale(dest.getLotacao())) {
-						mob.doc().setLotaCadastrante(dest.getLotacao());
-						Ex.getInstance()
-						.getBL().gravar(dest, dest.getLotacao(), mob.doc(), null);						
-						msgDestinoDoc = "documento  temporário sendo reposicionado automaticamente";
+							.arquivarCorrenteAutomatico(dest, getLotaTitular(), mob);	
+							msgDestinoDoc = "documento sendo arquivado automaticamente";
+						}
 					}	
-				} else { /* excluir */
-					Ex.getInstance().getBL().excluirDocumentoAutomatico(mob.doc(), getCadastrante(),
-							getLotaTitular());						
-					msgDestinoDoc = "documento sendo excluído automaticamente";
-				}				
+				} else {  doc temporário 
+					dest = mob.doc().getCadastrante().getPessoaAtual();						
+					if (dest.ativaNaData(new Date())) {
+						if (!mob.doc().getLotaCadastrante().equivale(dest.getLotacao())) {
+							mob.doc().setLotaCadastrante(dest.getLotacao());
+							Ex.getInstance()
+							.getBL().gravar(dest, dest.getLotacao(), mob.doc(), null);						
+							msgDestinoDoc = "documento  temporário sendo reposicionado automaticamente";
+						}	
+					} else {  excluir 
+						Ex.getInstance().getBL().excluirDocumentoAutomatico(mob.doc(), getCadastrante(),
+								getLotaTitular());						
+						msgDestinoDoc = "documento sendo excluído automaticamente";
+					}				
+				}
+				
 			}
+*/			
 			
 			String s = "";
 			try { 

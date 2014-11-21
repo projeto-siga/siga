@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,21 +16,24 @@ import java.util.TreeMap;
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
 
-import models.Sr;
 import models.SrAcao;
 import models.SrArquivo;
 import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
+import models.SrEquipe;
+import models.SrFormatoCampo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
 import models.SrPergunta;
 import models.SrPesquisa;
+import models.SrPrioridade;
 import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
+import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrUrgencia;
@@ -44,7 +48,6 @@ import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
 import play.mvc.Scope;
-import play.mvc.Http.Request;
 import reports.SrRelAgendado;
 import reports.SrRelLocal;
 import reports.SrRelPesquisa;
@@ -59,12 +62,14 @@ import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
-public class Application extends SigaApplication{
-	
+public class Application extends SigaApplication {
+
 	@Before(priority = 1)
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
@@ -102,7 +107,7 @@ public class Application extends SigaApplication{
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("SR:M√≥dulo de Servi√ßos;" + path);
+		SigaApplication.assertAcesso("SR:MÛdulo de ServiÁos;" + path);
 	}
 
 	@Catch()
@@ -126,7 +131,6 @@ public class Application extends SigaApplication{
 		try {
 			Corporativo.dadosrh();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -138,18 +142,30 @@ public class Application extends SigaApplication{
 			solicitacao.solicitante = titular();
 		} else
 			solicitacao = SrSolicitacao.findById(id);
+		
+		if (solicitacao.dtOrigem == null)
+			solicitacao.dtOrigem = new Date();
 
-		formEditar(solicitacao.deduzirLocalERamal());
+		formEditar(solicitacao.deduzirLocalRamalEMeioContato());
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void exibirLocalERamal(SrSolicitacao solicitacao)
+	public static void exibirLocalRamalEMeioContato(SrSolicitacao solicitacao)
 			throws Exception {
-		render(solicitacao.deduzirLocalERamal());
+		render(solicitacao.deduzirLocalRamalEMeioContato());
+	}
+	
+	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean carregarLotaSolicitante) 
+			throws Exception{
+		if(carregarLotaSolicitante){
+			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
+			solicitacao.solicitante = null;
+    	}
+		List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
+		render(solicitacoesRelacionadas);
 	}
 
-	public static void exibirAtributos(SrSolicitacao solicitacao)
-			throws Exception {
+	public static void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
 		render(solicitacao);
 	}
 
@@ -181,7 +197,6 @@ public class Application extends SigaApplication{
 			else
 				solicitacao.acao = null;
 		}
-
 		render(solicitacao, acoesEAtendentes);
 	}
 
@@ -190,43 +205,43 @@ public class Application extends SigaApplication{
 		render(solicitacao);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void formEditar(SrSolicitacao solicitacao) throws Exception {
-
+		
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 
+		
 		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
 		if (solicitacao.itemConfiguracao != null) {
-			acoesEAtendentes = solicitacao
-					.getAcoesDisponiveisComAtendenteOrdemTitulo();
-			if (solicitacao.acao == null
-					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
-				if (acoesEAtendentes.size() > 0)
-					solicitacao.acao = acoesEAtendentes.keySet().iterator()
-							.next();
-				else
+			acoesEAtendentes = solicitacao.getAcoesDisponiveisComAtendenteOrdemTitulo();
+			if (solicitacao.acao == null || !acoesEAtendentes.containsKey(solicitacao.acao)) {
+				if (acoesEAtendentes.size() > 0) {
+					solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
+				} else {
 					solicitacao.acao = null;
+				}
 			}
 		}
-
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
+	@SuppressWarnings("static-access")
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
 
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
-					"Item n√£o informado");
+					"Item n&atilde;o informado");
 		}
 		if (solicitacao.acao == null) {
-			validation.addError("solicitacao.acao", "A√ß√£o n√£o informada");
+			validation.addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
 		}
 
 		if (solicitacao.descrSolicitacao == null
 				|| solicitacao.descrSolicitacao.trim().equals("")) {
 			validation.addError("solicitacao.descrSolicitacao",
-					"Descri√ß√£o n√£o informada");
+					"Descri&ccedil&atilde;o n&atilde;o informada");
 		}
 
 		HashMap<Long, Boolean> obrigatorio = solicitacao
@@ -236,7 +251,7 @@ public class Application extends SigaApplication{
 					&& obrigatorio.get(att.tipoAtributo.idTipoAtributo))
 				validation.addError("solicitacao.atributoMap["
 						+ att.tipoAtributo.idTipoAtributo + "]",
-						att.tipoAtributo.nomeTipoAtributo + " n√£o informado");
+						att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -249,14 +264,19 @@ public class Application extends SigaApplication{
 
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.siglaItemConfiguracao",
-					"C√≥digo n√£o informado");
+					"C&oacute;digo n&atilde;o informado");
 		}
 
 		if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.tituloItemConfiguracao",
-					"T√≠tulo n√£o informado");
+					"T&iacute;tulo n&atilde;o informado");
 		}
 
+		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
+			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
+					"Fator de multiplica&ccedil;&atilde;o menor que 1");
+		}
+		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
 		}
@@ -269,11 +289,11 @@ public class Application extends SigaApplication{
 	private static void validarFormEditarAcao(SrAcao acao) {
 
 		if (acao.siglaAcao.equals("")) {
-			validation.addError("acao.siglaAcao", "C√≥digo n√£o informado");
+			validation.addError("acao.siglaAcao", "CÛdigo n„o informado");
 		}
 
 		if (acao.tituloAcao.equals("")) {
-			validation.addError("acao.tituloAcao", "T√≠tulo n√£o informado");
+			validation.addError("acao.tituloAcao", "TÌtulo n„o informado");
 		}
 
 		if (validation.hasErrors()) {
@@ -282,35 +302,31 @@ public class Application extends SigaApplication{
 
 	}
 
-	private static void validarFormEditarDesignacao(SrConfiguracao designacao) {
-
+	@SuppressWarnings("static-access")
+	private static void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		
 		if ((designacao.atendente == null) && (designacao.preAtendente == null)
 				&& (designacao.posAtendente == null)
-				&& (designacao.equipeQualidade == null)) {
+				&& (designacao.equipeQualidade == null)
+				&& (designacao.pesquisaSatisfacao == null)) {
 			validation.addError("designacao.atendente",
-					"Atendente n√£o informado.");
+					"Atendente n„o informado.");
 			validation.addError("designacao.preAtendente",
-					"Pr√©-atendente n√£o informado.");
+					"Pr&eacute;-atendente n&atilde;o informado.");
 			validation.addError("designacao.posAtendente",
-					"P√≥s-atendente n√£o informado.");
+					"P&oacute;s-atendente n&atilde;o informado.");
 			validation.addError("designacao.equipeQualidade",
-					"Equipe de qualidade n√£o informada.");
-		}
-
-		if ((designacao.itemConfiguracao == null) && (designacao.acao == null)) {
-			validation.addError("designacao.itemConfiguracao",
-					"C√≥digo n√£o informado.");
-			validation.addError("designacao.acao", "C√≥digo n√£o informado.");
+					"Equipe de qualidade n&atilde;o informada.");
 		}
 
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
+			sb.append(error.getKey() + ";");
 		}
 
 		if (validation.hasErrors()) {
-			List<CpOrgaoUsuario> orgaos = JPA.em()
-					.createQuery("from CpOrgaoUsuario").getResultList();
-			render("@editarDesignacao", designacao, orgaos);
+			throw new Exception(sb.toString());
 		}
 	}
 
@@ -318,31 +334,100 @@ public class Application extends SigaApplication{
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao) throws Exception {
-		validarFormEditar(solicitacao);
+	public static void gravar(SrSolicitacao solicitacao, long dtIniEdicao) throws Exception {
+        solicitacao.dtIniEdicao = new Date(dtIniEdicao);
+		if(!solicitacao.isRascunho())
+        	validarFormEditar(solicitacao);
+        
 		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
 		exibir(id, completo());
 	}
 
-	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
-
+	@SuppressWarnings("unchecked")
+	public static void juntarSolicitacoes(Long id, Long idSolicitacaoRecebeJuntada, SrSolicitacaoFiltro filtro) throws Exception {
 		List<SrSolicitacao> listaSolicitacao;
+		SrSolicitacao solicitacaoRecebeJuntada = null;
+		
+		SrSolicitacao solicitacaoAJuntar =  SrSolicitacao.findById(id);
 
+		if(idSolicitacaoRecebeJuntada != null)
+			solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
+		
 		if (filtro.pesquisar)
 			listaSolicitacao = filtro.buscar();
 		else
 			listaSolicitacao = new ArrayList<SrSolicitacao>();
 
+		String[] tipos = new String[] { "Pessoa", "Lotacao" };
+		
+		List<CpMarcador> marcadores = JPA.em()
+				.createQuery("select distinct cpMarcador from SrMarca m where m.cpMarcador.idMarcador in (42, 44, 46, 47)")
+				.getResultList();
+		listaSolicitacao.remove(solicitacaoAJuntar);
+
+		render(solicitacaoAJuntar, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, Boolean.FALSE);
+	}
+	
+	public static void juntarSolicitacoesGravar(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAJuntar);
+		SrSolicitacao solRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
+		sol.juntar(lotaTitular(), cadastrante(), solRecebeJuntada, justificativa);
+		exibir(idSolicitacaoAJuntar, completo());
+	}
+	
+	@SuppressWarnings("unchecked")
+    public static void vincularSolicitacoes(Long id, Long idSolicitacaoRecebeVinculo, SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception{
+        List<SrSolicitacao> listaSolicitacao;
+        SrSolicitacao solicitacaoRecebeJuntada = null;
+        
+        SrSolicitacao solicitacaoAVincular =  SrSolicitacao.findById(id);
+
+        if(idSolicitacaoRecebeVinculo != null)
+            solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
+        
+        if (filtro.pesquisar)
+            listaSolicitacao = filtro.buscar();
+        else
+            listaSolicitacao = new ArrayList<SrSolicitacao>();
+
+        String[] tipos = new String[] { "Pessoa", "Lotacao" };
+        
+        List<CpMarcador> marcadores = JPA.em()
+                .createQuery("select distinct cpMarcador from SrMarca")
+                .getResultList();
+        listaSolicitacao.remove(solicitacaoAVincular);
+
+        render(solicitacaoAVincular, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
+    }
+
+    public static void vincularSolicitacoesGravar(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
+        SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAVincular);
+        SrSolicitacao solRecebeVinculo = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
+        
+        sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
+    }
+	
+	@SuppressWarnings("unchecked")
+	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
+
+		List<SrSolicitacao> listaSolicitacao;
+
+		if (filtro.pesquisar) {
+			listaSolicitacao = filtro.buscar();
+		} else {
+			listaSolicitacao = new ArrayList<SrSolicitacao>();
+		}
+		
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lota√ß√£o" };
+		String[] tipos = new String[] { "Pessoa", "LotaÁ„o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
 
 		render(listaSolicitacao, tipos, marcadores, filtro);
 	}
-
+	
 	public static void estatistica() throws Exception {
 		assertAcesso("REL:Relatorios");
 		List<SrSolicitacao> lista = SrSolicitacao.all().fetch();
@@ -416,7 +501,7 @@ public class Application extends SigaApplication{
 
 		// Header
 		StringBuilder sbevol = new StringBuilder();
-		sbevol.append("['M√™s','Fechados','Abertos'],");
+		sbevol.append("['MÍs','Fechados','Abertos'],");
 
 		// Values
 		for (int i = -6; i <= 0; i++) {
@@ -455,7 +540,7 @@ public class Application extends SigaApplication{
 
 		// Header
 		StringBuilder sbtop = new StringBuilder();
-		sbtop.append("['Item de Configura√ß√£o','Total'],");
+		sbtop.append("['Item de Configura&ccedil;&atilde;o','Total'],");
 
 		// Values
 		for (Iterator<String[]> itop = listaTop.iterator(); itop.hasNext();) {
@@ -485,7 +570,7 @@ public class Application extends SigaApplication{
 
 		// Header
 		StringBuilder sbGUT = new StringBuilder();
-		sbGUT.append("['Gravidade','Urg√™ncia','Total'],");
+		sbGUT.append("['Gravidade','UrgÍncia','Total'],");
 
 		// Values
 		for (Iterator<String[]> itgut = listaGUT.iterator(); itgut.hasNext();) {
@@ -510,10 +595,11 @@ public class Application extends SigaApplication{
 	public static void exibir(Long id, boolean completo) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		if (solicitacao == null)
-			throw new Exception("Solicita√ß√£o n√£o encontrada");
+			throw new Exception("SolicitaÁ„o n„o encontrada");
 		else
 			solicitacao = solicitacao.getSolicitacaoAtual();
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
+
 		render(solicitacao, movimentacao, completo);
 	}
 
@@ -522,25 +608,25 @@ public class Application extends SigaApplication{
 		render(lista);
 	}
 	
-	public static void associarLista(Long idSolicitacao) throws Exception {
+	public static void incluirEmLista(Long idSolicitacao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		solicitacao = solicitacao.getSolicitacaoAtual();
 		render(solicitacao);
 	}
 
-	public static void associarListaGravar(Long idSolicitacao, Long idLista)
+	public static void incluirEmListaGravar(Long idSolicitacao, Long idLista)
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.associarLista(lista, cadastrante(), lotaTitular());
+		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular());
 		exibir(idSolicitacao, completo());
 	}
 
-	public static void desassociarLista(Long idSolicitacao, Long idLista)
+	public static void retirarDeLista(Long idSolicitacao, Long idLista)
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.desassociarLista(lista, cadastrante(), lotaTitular());
+		solicitacao.retirarDeLista(lista, cadastrante(), lotaTitular());
 		exibirLista(idLista);
 	}
 
@@ -574,15 +660,6 @@ public class Application extends SigaApplication{
 			renderBinary(new ByteArrayInputStream(arq.blob), arq.nomeArquivo);
 	}
 
-	public static void exibirPesquisa(Long idMovimentacao) throws Exception {
-		SrMovimentacao movimentacao = SrMovimentacao.findById(idMovimentacao);
-		// exibir(mov.solicitacao.idSolicitacao, completo());
-		SrPesquisa pesquisa = movimentacao.pesquisa;
-		Set<SrPergunta> perguntas = movimentacao.pesquisa
-				.getPerguntaSetAtivas();
-		render(movimentacao, pesquisa, perguntas);
-	}
-
 	public static void darAndamento(SrMovimentacao movimentacao)
 			throws Exception {
 		movimentacao.tipoMov = SrTipoMovimentacao
@@ -603,20 +680,27 @@ public class Application extends SigaApplication{
 		exibir(sol.idSolicitacao, completo());
 	}
 
+	public static void excluir(Long id) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.excluir();
+		editar(null);
+	}
+	
 	public static void responderPesquisa(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		if (sol.getPesquisaDesignada() == null)
+		SrPesquisa pesquisa = sol.getPesquisaDesignada();
+		if (pesquisa == null)
 			throw new Exception(
-					"N√£o foi encontrada nenhuma pesquisa designada para esta solicita√ß√£o.");
-		render(sol);
+					"Nao foi encontrada nenhuma pesquisa designada para esta solicitacao.");
+		pesquisa = SrPesquisa.findById(pesquisa.idPesquisa);
+		pesquisa = pesquisa.getPesquisaAtual();
+		render(id, pesquisa);
 	}
-
-	public static void responderPesquisaGravar(Long id,
-			HashMap<Long, Object> respostaMap) throws Exception {
+	
+	public static void responderPesquisaGravar(Long id, Map<Long, String> respostaMap) throws Exception { 
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		SrMovimentacao movimentacao = new SrMovimentacao();
-		List<SrResposta> respostas = movimentacao.setRespostaMap(respostaMap);
-		sol.responderPesquisa(lotaTitular(), cadastrante(), respostas);
+		sol.responderPesquisa(lotaTitular(), cadastrante(), respostaMap);
+		exibir(id, completo());
 	}
 
 	public static void retornarAoAtendimento(Long id) throws Exception {
@@ -648,17 +732,25 @@ public class Application extends SigaApplication{
 		exibir(sol.idSolicitacao, completo());
 	}
 
-	public static void deixarPendente(Long id, String motivo,
-			String calendario, String horario) throws Exception {
+	public static void deixarPendente(Long id, SrTipoMotivoPendencia motivo,String calendario,
+			String horario, String detalheMotivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario,
+				horario, detalheMotivo);
+		exibir(id, completo());
+	}
+
+	public static void alterarPrazo(Long id, String motivo,
+		String calendario, String horario) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.alterarPrazo(lotaTitular(), cadastrante(), motivo, calendario,
 				horario);
 		exibir(id, completo());
 	}
 
-	public static void terminarPendencia(Long id) throws Exception {
+	public static void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.terminarPendencia(lotaTitular(), cadastrante());
+		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, idMovimentacao);
 		exibir(id, completo());
 	}
 
@@ -674,53 +766,59 @@ public class Application extends SigaApplication{
 		exibir(id, completo());
 	}
 
-	public static void criarFilha(Long id) throws Exception {
+	public static void escalonar(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		SrSolicitacao filha = sol.criarFilhaSemSalvar();
+		SrSolicitacao filha = null;
+		//se for uma solicitacao filha, o escalonar cria uma solicitacao irma
+		if(sol.isFilha())
+			filha = sol.solicitacaoPai.criarFilhaSemSalvar();
+		//se for uma solicitacao pai, cria uma solicitacao filha
+		else
+			filha = sol.criarFilhaSemSalvar();
 		formEditar(filha);
 	}
-
-	public static void listarDesignacao() throws Exception {
+	
+	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes();
-		render(designacoes);
-	}
-
-	public static void editarDesignacao(Long id) throws Exception {
-		assertAcesso("ADM:Administrar");
+		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
-		SrConfiguracao designacao = new SrConfiguracao();
-		if (id != null)
-			designacao = JPA.em().find(SrConfiguracao.class, id);
-		render(designacao, orgaos, locais, pesquisaSatisfacao);
+		List<SrLista> listasPrioridade = SrLista.listar(false);
+		
+		render(designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
+	}
+	
+	public static void listarDesignacaoDesativados() throws Exception {
+		listarDesignacao(Boolean.TRUE);
 	}
 
-	public static void gravarDesignacao(SrConfiguracao designacao)
+	public static Long gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
-		listarDesignacao();
+		
+		return designacao.getId();
 	}
 
 	public static void desativarDesignacao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
-		listarDesignacao();
+		listarDesignacao(Boolean.TRUE);
 	}
 
-	public static void listarPermissaoUsoLista() throws Exception {
+	public static void listarPermissaoUsoLista(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> permissoes = SrConfiguracao
-				.listarPermissoesUsoLista(lotaTitular());
+				.listarPermissoesUsoLista(lotaTitular(), mostrarDesativados);
 		render(permissoes);
 	}
-
+	
 	public static void editarPermissaoUsoLista(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<CpOrgaoUsuario> orgaos = JPA.em()
@@ -734,19 +832,18 @@ public class Application extends SigaApplication{
 		render(permissao, orgaos, locais, listasPrioridade);
 	}
 
-	public static void gravarPermissaoUsoLista(SrConfiguracao permissao)
+	public static Long gravarPermissaoUsoLista(SrConfiguracao permissao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
 		permissao.salvarComoPermissaoUsoLista();
-		listarPermissaoUsoLista();
+		return permissao.getId();
 	}
 
 	public static void desativarPermissaoUsoLista(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
-		listarDesignacao();
 	}
 
 	public static void listarAssociacao() throws Exception {
@@ -761,7 +858,7 @@ public class Application extends SigaApplication{
 		SrConfiguracao associacao = new SrConfiguracao();
 		if (id != null)
 			associacao = (SrConfiguracao) JPA.em()
-					.find(SrConfiguracao.class, id).getConfiguracaoAtual();
+					.find(SrConfiguracao.class, id);
 		render(associacao);
 	}
 
@@ -779,21 +876,38 @@ public class Application extends SigaApplication{
 		listarAssociacao();
 	}
 
-	public static void listarItem() throws Exception {
+	public static void listarItem(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar();
-		render(itens);
+		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar(mostrarDesativados);
+		render(itens, mostrarDesativados);
+	}
+	
+	public static void listarItemDesativados() throws Exception {
+		listarItem(Boolean.TRUE);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void editarItem(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
+		List<SrConfiguracao> designacoes;
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
+				"hisDtFim is null").fetch();
+		List<SrLista> listasPrioridade = SrLista.listar(false);
+		
 		SrItemConfiguracao itemConfiguracao = new SrItemConfiguracao();
-		if (id != null)
+		if (id != null) {
 			itemConfiguracao = SrItemConfiguracao.findById(id);
-		render(itemConfiguracao);
+		}
+		
+		render(itemConfiguracao, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 
-	public static void gravarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
+	public static void gravarItem(SrItemConfiguracao itemConfiguracao)
+			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarItem(itemConfiguracao);
 		itemConfiguracao.salvar();
@@ -804,8 +918,6 @@ public class Application extends SigaApplication{
 		// hierarquia, pois isso eh mais complexo de acertar.
 		try {
 			HashMap<String, String> atributos = new HashMap<String, String>();
-			request = (request == null) ? Request.current() : request;
-			
 			for (Http.Header h : request.headers.values())
 				if (!h.name.equals("content-type"))
 					atributos.put(h.name, h.value());
@@ -824,14 +936,14 @@ public class Application extends SigaApplication{
 			e.printStackTrace();
 		}
 		
-		listarItem();
+		listarItem(false);
 	}
 
 	public static void desativarItem(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
 		item.finalizar();
-		listarItem();
+		listarItem(Boolean.FALSE);
 	}
 
 	public static void selecionarItem(String sigla, SrSolicitacao sol)
@@ -869,10 +981,15 @@ public class Application extends SigaApplication{
 
 	public static void editarTipoAtributo(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
+		String formatoAnterior = null;
 		SrTipoAtributo att = new SrTipoAtributo();
-		if (id != null)
+		if (id != null) {
 			att = SrTipoAtributo.findById(id);
-		render(att);
+			if(att.formatoCampo != null) {
+				formatoAnterior = att.formatoCampo.name();
+			}
+		}
+		render(att, formatoAnterior);
 	}
 
 	public static void gravarTipoAtributo(SrTipoAtributo att) throws Exception {
@@ -885,9 +1002,15 @@ public class Application extends SigaApplication{
 	private static void validarFormEditarTipoAtributo(SrTipoAtributo att) {
 		if (att.nomeTipoAtributo.equals("")) {
 			validation.addError("att.nomeTipoAtributo",
-					"Nome de atributo n√£o informado");
+					"Nome de atributo nao informado");
 		}
 
+		if (att.formatoCampo == SrFormatoCampo.VL_PRE_DEFINIDO 
+				&& att.descrPreDefinido.equals("")) {
+			validation.addError("att.descrPreDefinido",
+					"Valores PrÈ-definido n„o informados");
+		}
+		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
 		}
@@ -931,11 +1054,37 @@ public class Application extends SigaApplication{
 		pesq.finalizar();
 		listarPesquisa();
 	}
-
-	public static void listarAcao() throws Exception {
+	
+	public static void listarEquipe() throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrAcao> acoes = SrAcao.listar();
-		render(acoes);
+		List<SrEquipe> listaEquipe = SrEquipe.findAll();
+		render(listaEquipe);
+	}
+	
+	public static void editarEquipe(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrEquipe equipe = null;
+		
+		if (id != null)
+			equipe = SrEquipe.findById(id);
+		else
+			equipe = new SrEquipe();
+		
+		render(equipe);
+	}
+	
+	public static void gravarEquipe(SrEquipe equipe) throws Exception {
+		listarEquipe();
+	}
+
+	public static void listarAcao(boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrAcao> acoes = SrAcao.listar(mostrarDesativados);
+		render(acoes, mostrarDesativados);
+	}
+	
+	public static void listarAcaoDesativados() throws Exception {
+		listarAcao(Boolean.TRUE);
 	}
 
 	public static void editarAcao(Long id) throws Exception {
@@ -956,11 +1105,10 @@ public class Application extends SigaApplication{
 		// a atualizacao da classificacao quando ocorre mudanca de posicao na
 		// hierarquia, pois isso eh mais complexo de acertar.
 		try {
-			//Esta abordagem nao È mais utilizada, foi substituida pelo SigaHTTP.
-//			HashMap<String, String> atributos = new HashMap<String, String>();
-//			for (Http.Header h : request.headers.values())
-//				if (!h.name.equals("content-type"))
-//					atributos.put(h.name, h.value());
+			HashMap<String, String> atributos = new HashMap<String, String>();
+			for (Http.Header h : request.headers.values())
+				if (!h.name.equals("content-type"))
+					atributos.put(h.name, h.value());
 			
 			SrAcao anterior = acao
 					.getHistoricoAcao().get(0);
@@ -971,7 +1119,7 @@ public class Application extends SigaApplication{
 				
 				http.get(url, null, Scope.Session.current().getId());
 			
-				//Esta abordagem nao È mais utilizada, foi substituida pelo SigaHTTP.
+				//Esta abordagem nao mais utilizada, foi substituida pelo SigaHTTP.
 //				ConexaoHTTP.get("http://"
 //						+ Play.configuration.getProperty("servidor.principal")
 //						+ ":8080/sigagc/app/updateTag?before="
@@ -984,14 +1132,14 @@ public class Application extends SigaApplication{
 			e.printStackTrace();
 		}
 				
-		listarAcao();
+		listarAcao(false);
 	}
 
 	public static void desativarAcao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcao acao = SrAcao.findById(id);
 		acao.finalizar();
-		listarAcao();
+		listarAcao(Boolean.FALSE);
 	}
 
 	public static void selecionarAcao(String sigla, SrSolicitacao sol)
@@ -1032,34 +1180,51 @@ public class Application extends SigaApplication{
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
-	public static void listarLista() throws Exception {
-		List<SrLista> lista = SrLista.listar();
-		render(lista);
+	public static void listarLista(boolean mostrarDesativados) throws Exception {
+		List<SrLista> lista = SrLista.listar(mostrarDesativados);
+		render(lista, mostrarDesativados);
+	}
+	
+	public static void listarListaDesativados() throws Exception {
+		listarLista(Boolean.TRUE);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void editarLista(Long id) throws Exception {
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		
 		SrLista lista = new SrLista();
 		if (id != null)
 			lista = SrLista.findById(id);
-		render(lista);
+		
+		try {
+			assertAcesso("ADM:Administrar");
+			lista.permissoes = SrConfiguracao
+					.listarPermissoesUsoLista(lista, false);
+		} catch (Exception e) {
+		}
+		
+		render(lista, orgaos, locais);
 	}
 
 	public static void gravarLista(SrLista lista) throws Exception {
 		lista.salvar();
-		listarLista();
+		exibirLista(lista.idLista);
 	}
 
 	public static void desativarLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.finalizar();
-		listarLista();
+		listarLista(Boolean.FALSE);
 	}
 
 	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)
 			throws Exception {
 		assertAcesso("REL:Relatorio");
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lota√ß√£o" };
+		String[] tipos = new String[] { "Pessoa", "LotaÁ„o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -1178,7 +1343,7 @@ public class Application extends SigaApplication{
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Solicita√ß√µes", pdf.length,
+		renderBinary(is, "RelatÛrio de SolicitaÁıes", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1202,7 +1367,7 @@ public class Application extends SigaApplication{
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Transfer√™ncias", pdf.length,
+		renderBinary(is, "RelatÛrio de TransferÍncias", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1229,7 +1394,7 @@ public class Application extends SigaApplication{
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Solicita√ß√µes por Localidade",
+		renderBinary(is, "RelatÛrio de SolicitaÁıes por Localidade",
 				pdf.length, "application/pdf", true);
 	}
 
@@ -1256,7 +1421,7 @@ public class Application extends SigaApplication{
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Prazos", pdf.length, "application/pdf",
+		renderBinary(is, "RelatÛrio de Prazos", pdf.length, "application/pdf",
 				true);
 	}
 
@@ -1282,7 +1447,7 @@ public class Application extends SigaApplication{
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Prazos - TRF", pdf.length,
+		renderBinary(is, "RelatÛrio de Prazos - TRF", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1308,7 +1473,7 @@ public class Application extends SigaApplication{
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio Detalhado de Prazos", pdf.length,
+		renderBinary(is, "RelatÛrio Detalhado de Prazos", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1332,7 +1497,7 @@ public class Application extends SigaApplication{
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Ind√≠ces de Satisfa√ß√£o", pdf.length,
+		renderBinary(is, "RelatÛrio de IndÌces de SatisfaÁ„o", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1358,7 +1523,7 @@ public class Application extends SigaApplication{
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat√≥rio de Solicita√ß√µes por Localidade",
+		renderBinary(is, "RelatÛrio de SolicitaÁıes por Localidade",
 				pdf.length, "application/pdf", true);
 	}
 
@@ -1383,10 +1548,14 @@ public class Application extends SigaApplication{
 		Iterator it = solsnaoconcluidas.iterator();
 		while (it.hasNext()) {
 			SrSolicitacao sol = (SrSolicitacao) it.next();
-			sol.fechar(null, null, "Conclus√£o Autom√°tica");
+			sol.fechar(null, null, "Conclus„o Autom·tica");
 		}
 
 		render(solsnaoconcluidas);
 	}
-
+	
+	public static void exibirPrioridade(SrSolicitacao solicitacao) {
+		solicitacao.associarPrioridadePeloGUT();
+		render(solicitacao);
+	}
 }

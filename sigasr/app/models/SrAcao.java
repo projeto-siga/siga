@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -22,14 +23,18 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
+public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrAcao> {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8387408543308440033L;
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ACAO_SEQ", name = "srAcaoSeq")
@@ -49,8 +54,20 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrAcao acaoInicial;
+	
+	@Column(name = "TIPO_ACAO")
+	@Enumerated()
+	public SrTipoAcao tipoAcao;
+	
+	@Column(name = "TIPO_EXECUCAO")
+	@Enumerated()
+	public SrTipoExecucaoAcao tipoExecucao;
+	
+	@Column(name = "FORMA_ATENDIMENTO")
+	@Enumerated()
+	public SrFormaAtendimentoAcao formaAtendimento;
 
-	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrAcao> meuAcaoHistoricoSet;
 
@@ -58,7 +75,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_PAI")
 	public SrAcao pai;
 
-	@OneToMany(targetEntity = SrAcao.class, mappedBy = "pai", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "pai", fetch = FetchType.LAZY)
 	public List<SrAcao> filhoSet;
 
 	public SrAcao() {
@@ -144,7 +161,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrAcao> listaFinal = new ArrayList<SrAcao>();
 
 		if (listaBase == null)
-			lista = listar();
+			lista = listar(Boolean.FALSE);
 		else
 			lista = listaBase;
 
@@ -239,11 +256,25 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 		return outroItem.isPaiDeOuIgualA(this);
 	}
 
-	public static List<SrAcao> listar() {
-		return SrAcao.find("hisDtFim is null order by siglaAcao").fetch();
+	public static List<SrAcao> listar(boolean mostrarDesativados) {
+		StringBuffer sb = new StringBuffer();
+		
+		if (!mostrarDesativados)
+			sb.append(" hisDtFim is null");
+		else {
+			sb.append(" idAcao in (");
+			sb.append(" SELECT max(idAcao) as idAcao FROM ");
+			sb.append(" SrAcao GROUP BY hisIdIni) ");
+		}
+		
+		sb.append(" order by siglaAcao ");
+		
+		return SrAcao.find(sb.toString()).fetch();
 	}
 
+	@SuppressWarnings("unused")
 	public String getGcTags() {
+		int nivel = this.getNivel();
 		String tags = "";
 		SrAcao pai = this.pai;
 		if (pai != null)
@@ -260,19 +291,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 			pai = getPaiPorSigla();
 		}
 		super.salvar();
-		
-		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
-		//tem de ser corrigido.
-		
-		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
-		//serao recarregadas do banco, e precisarao reconhecer o novo estado desta acao
-		//refresh();
-
-		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
-		// instancia do objeto, caso contrario, nao ha configuracao
-		// referenciando
-		//if (acaoInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
 	}
 
 	public List<SrAcao> getAcaoETodasDescendentes() {
@@ -283,5 +301,42 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel {
 				lista.addAll(filho.getAcaoETodasDescendentes());
 		}
 		return lista;
+	}
+	
+	@Override
+	public String toString() {
+		return siglaAcao + " - " + tituloAcao;
+	}
+
+	@Override
+	public int compareTo(SrAcao arg0) {
+		if (arg0.descrAcao == null) {
+			return -1;
+		} else if (this.descrAcao == null) {
+			return 0;
+		}
+		return this.descrAcao.compareTo(arg0.descrAcao);
+	}
+	
+	/**
+	 * Classe que representa um V.O. de {@link SrAcao}.
+	 */
+	public class SrAcaoVO {
+		
+		public Long id;
+		public String titulo;
+		public String sigla;
+		public Long hisIdIni;
+		
+		public SrAcaoVO(Long id, String titulo, String sigla, Long hisIdIni) {
+			this.id = id;
+			this.titulo = titulo;
+			this.sigla = sigla;
+			this.hisIdIni = hisIdIni;
+		}
+	}
+	
+	public SrAcaoVO toVO() {
+		return new SrAcaoVO(this.idAcao, this.tituloAcao, this.siglaAcao, this.getHisIdIni());
 	}
 }

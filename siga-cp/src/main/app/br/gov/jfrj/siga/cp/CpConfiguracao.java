@@ -50,7 +50,10 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 				+ "from CpConfiguracao cpcfg"),
 		@NamedQuery(name = "consultarCpConfiguracoes", query = "from "
 				+ "CpConfiguracao cpcfg where (:idTpConfiguracao is null or "
-				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)")
+				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
+		@NamedQuery(name = "consultarCpConfiguracoesPorTipo", query = " from "
+				+ "CpConfiguracao cpcfg where (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"
+				+ "and hisDtFim is null")
 
 })
 public class CpConfiguracao extends AbstractCpConfiguracao {

@@ -1,55 +1,433 @@
-#{extends 'main.html' /} #{set title:'Edi√ß√£o de Item de Configura√ß√£o' /}
+#{extends 'main.html' /} #{set title:'EdiÁ„o de Item de ConfiguraÁ„o' /}
 
-<script src="/sigasr/public/javascripts/jquery-1.6.4.min.js"></script>
+<style>
+.inline {
+	display: inline-flex !important;
+}
+.tabela {
+	margin-top: -10px;
+	min-width: 200px;
+}
+.tabela tr {
+	border: solid;
+	border-color: rgb(169, 169, 169);
+	border-width: 1px;
+	font-weight: bold;
+	line-height: 20px;
+}
+.tabela th {
+	color: #365b6d;
+	font-size: 100%;
+	padding: 5px 10px;
+	border: solid 1px rgb(169, 169, 169);
+}
+.tabela td {
+	color: #000;
+	padding-right: 10px !important;
+}
+.gt-form-table td {
+	padding-right: 0px;
+}
+.barra-subtitulo {
+	background-color: #eee;
+	color: #365b6d;
+	padding: 10px 15px;
+	border: 1px solid #ccc;
+	border-radius: 0;
+	font-weight: bold;
+	margin: 0 0 10px -16px;
+}
+.barra-subtitulo-top {
+	border-radius: 5px 5px 0 0;
+	margin: -16px 0 10px -16px;
+}
+</style>
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
 <script>
-$(function(){
+	
 	$("#itemConfiguracao").mask("99.99.99");
-});
+	//removendo a referencia de '$' para o jQuery
+	$.noConflict();
+	$(function() {
+		// POPUP PARA ADICIONAR UM GESTOR
+        var jGestores = $("#gestoresTr"),
+        gestores = jGestores[0],
+        jDialog = $("#dialog"),
+        dialog = jDialog[0],
+        jSelect = $("#gestorpessoagestorlotacao");
+       
+        $("#botaoIncluir").click(function(){
+        	jDialog.data('acao',gestores.incluirItem).dialog('open');
+        });
+       
+        jDialog.dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                resizable: false,
+                close: function() {
+                	$("#gestorpessoa_sigla").val('');
+                	$("#gestorlotacao_sigla").val('');
+                	$("#gestorpessoa_descricao").val('');
+                	$("#gestorlotacao_descricao").val('');
+                	$("#gestorpessoaSpan").html('');  
+                	$("#gestorlotacaoSpan").html('');  
+                    jDialog.data('gestorSet','');
+	            },
+	            open: function(){
+                    if (jDialog.data("gestorSet"))
+                            jDialog.dialog('option', 'title', 'Alterar Gestor');
+                    else
+                            jDialog.dialog('option', 'title', 'Incluir Gestor');  
+	            }
+        });
+        $("#modalOk").click(function(){
+                var acao = jDialog.data('acao');
+                var jTipoEscolhido = jSelect.find("option:selected");
+                
+                if(jTipoEscolhido.val() == 1) {
+                	acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
+                } else if (jTipoEscolhido.val() == 2) {
+                	acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
+                }
+                
+                jDialog.dialog('close');
+        });
+        $("#modalCancel").click(function(){
+                jDialog.dialog('close');
+        });
+        gestores["index"] = 0;
+        gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
+            if (!id)
+                id = 'novo_' + ++gestores["index"];
+            $("#tabelaTr").show();
+            jGestores.append("<tr id =\"" + id + "\"></tr>");
+	        var jNewTr = jGestores.find("tr:last-child");
+	        jNewTr.append("<td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span id=\"" + tipoGestor + "\">" 
+	    	        + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" + idDerivadoGestor + "\">"
+	                + nomeGestor + "</span>&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer; float:right;\" /></td>");
+	        jNewTr.find("img:eq(0)").click(function(){
+	        	gestores.removerItem(jNewTr.attr("id"));
+	        });
+  		}
+        gestores.removerItem = function(idItem){
+                $("#"+idItem).remove();
+                gestores["index"]--;
+        }
+        #{list items:itemConfiguracao.gestorSet, as:'item'}
+        	#{if item.dpPessoa}
+	        	gestores.incluirItem('${item.dpPessoa.sesbPessoa}${item.dpPessoa.matricula}', '${item.dpPessoa.nomePessoa}', 'pessoa', ${item.dpPessoa.idPessoa}, ${item.idGestorItem});
+        	#{/if}
+	        #{if item.dpLotacao}
+	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
+	        #{/if}
+		#{/list}
+        
+// 		POPUP PARA ADICIONAR UM FATOR DE MULTIPLICA«√O E SOLICITANTE
+        var jFatores = $("#fatoresTr"),
+        fatores = jFatores[0],
+        jDialogFator = $("#dialogFator"),
+        dialogFator = jDialogFator[0],
+        jSelectFator = $("#fatorpessoafatorlotacao");
+        jNumFatorMult = $("#numfatorMult");
+       
+        $("#botaoIncluirFator").click(function(){
+        	jDialogFator.data('acaoFator',fatores.incluirItem).dialog('open');
+        });
+       
+        jDialogFator.dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                resizable: false,
+                close: function() {
+                	$("#fatorpessoa_sigla").val('');
+                	$("#fatorlotacao_sigla").val('');
+                	$("#fatorpessoa_descricao").val('');
+                	$("#fatorlotacao_descricao").val('');
+                	$("#numfatorMult").val('1');
+                	$("#fatorpessoaSpan").html('');  
+                	$("#fatorlotacaoSpan").html('');  
+                	jDialogFator.data('fatorMultiplicacaoSet','');
+	            },
+	            open: function(){
+	            	$('#erroNumFatorMult').hide();
+                    if (jDialogFator.data("gestorSet"))
+                    	jDialogFator.dialog('option', 'title', 'Alterar Fator de MultiplicaÁ„o');
+                    else
+                    	jDialogFator.dialog('option', 'title', 'Incluir Fator de MultiplicaÁ„o');  
+	            }
+        });
+        $("#modalOkFator").click(function(){
+                var acaoFator = jDialogFator.data('acaoFator');
+                var jTipoEscolhidoFator = jSelectFator.find("option:selected");
+                var numFatorMult = $('#numfatorMult');
+				
+				if(numFatorMult.val() > 0) {
+	                if(jTipoEscolhidoFator.val() == 1) {
+	                	acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
+	                } else if (jTipoEscolhidoFator.val() == 2) {
+	                	acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
+	                }
+	                jDialogFator.dialog('close');
+				} else {
+					$('#erroNumFatorMult').show();
+				}
+                
+                
+        });
+        $("#modalCancelFator").click(function(){
+        	jDialogFator.dialog('close');
+        });
+        fatores["index"] = 0;
+        fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
+            if (!idF)
+                idF = 'novo_fator' + ++fatores["index"];
+            $("#tabelaTrFator").show();
+            jFatores.append("<tr id =\"" + idF + "\"></tr>");
+	        var jNewFatorTr = jFatores.find("tr:last-child");
+	        jNewFatorTr.append("<td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span id=\"" + tipoFator + "\">" 
+	    	        + siglaSolicitante + "-" 
+	    	        + nomeSolicitante + "</span></td><td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\">"
+	                + numFator + "</span>&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer; float:right;\" /></td>");
+	        jNewFatorTr.find("img:eq(0)").click(function(){
+	        	fatores.removerItemFator(jNewFatorTr.attr("id"));
+	        });
+  		};
+  		
+        fatores.removerItemFator = function(idItemF){
+                $("#"+idItemF).remove();
+                fatores["index"]--;
+        };
+        #{list items:itemConfiguracao.fatorMultiplicacaoSet, as:'itemFator'}
+        	#{if itemFator.dpPessoa}
+	        	fatores.incluirItem('${itemFator.dpPessoa.sesbPessoa}${itemFator.dpPessoa.matricula}', '${itemFator.dpPessoa.nomePessoa}', ${itemFator.numFatorMultiplicacao}, 'pessoa', ${itemFator.dpPessoa.idPessoa}, '${itemFator.idFatorMultiplicacao}Fator');
+        	#{/if}
+	        #{if itemFator.dpLotacao}
+	        		fatores.incluirItem('${itemFator.dpLotacao.siglaLotacao}', '${itemFator.dpLotacao.nomeLotacao}', ${itemFator.numFatorMultiplicacao}, 'lotacao', ${itemFator.dpLotacao.idLotacao}, '${itemFator.idFatorMultiplicacao}Fator');
+	        #{/if}
+		#{/list}
+// 		UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICA«√O
+        $("[value='Gravar']").click(function(){
+            var jForm = $("form"),
+                    params = jForm.serialize();
+            jGestores.find("td").each(function(i){
+                    var jDivs=$(this).find("span");
+                    var tipo = jDivs[0].id;
+                    if(tipo === 'pessoa'){
+                    	params += '&itemConfiguracao.gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
+                    } else if (tipo === 'lotacao') {
+                    	params += '&itemConfiguracao.gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
+                    }                            
+            });
+            jFatores.find("tr").each(function(i){
+                var jDivsF=$(this).find("span");
+                if(jDivsF.length == 0) return;
+                
+                var tipoF = jDivsF[0].id;
+                var indice = i-1;
+                if(tipoF === 'pessoa'){
+                	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].dpPessoa.idPessoa=' + jDivsF[1].id;
+                } else if (tipoF === 'lotacao') {
+                	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].dpLotacao.idLotacao=' + jDivsF[1].id;
+                }
+                	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].numFatorMultiplicacao=' + jDivsF[1].innerHTML;
+       	 	});
+            
+            location.href = "@{Application.gravarItem()}?" + params;
+        });
+	});
 </script>
-
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-		<h2 class="gt-form-head">Item de Configura√ß√£o</h2>
-		<div class="gt-form gt-content-box">
-		#{form @Application.gravarItem()}
-			#{if itemConfiguracao.idItemConfiguracao} <input
-				type="hidden" name="itemConfiguracao.idItemConfiguracao"
-				value="${itemConfiguracao.idItemConfiguracao}"> #{/if}
-			#{ifErrors}
-			<p class="gt-error">Alguns campos obrigat√≥rios n√£o foram
-				preenchidos ${error}</p>
-			#{/ifErrors}
-			<div class="gt-form-row gt-width-66">
-				<label>C√≥digo</label> <input id="itemConfiguracao" 
-					type="text"
-					name="itemConfiguracao.siglaItemConfiguracao"
-					value="${itemConfiguracao?.siglaItemConfiguracao}" />
-					<span style="color: red">#{error
-					'itemConfiguracao.siglaItemConfiguracao' /}</span>
-			</div>
-			<div class="gt-form-row">
-				<label>T√≠tulo</label> <input type="text" id="itemConfiguracao.tituloItemConfiguracao"
-					name="itemConfiguracao.tituloItemConfiguracao" value="${itemConfiguracao?.tituloItemConfiguracao}" size="100" />
-				<span style="display:inline;color: red">#{error
-					'itemConfiguracao.tituloItemConfiguracao' /}</span>
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Descri√ß√£o</label> <input type="text"
-					name="itemConfiguracao.descrItemConfiguracao"
-					value="${itemConfiguracao?.descrItemConfiguracao}" size="100" />
-			</div>
-			<div class="gt-form-row">
-				<input type="submit" value="Salvar" class="gt-btn-medium gt-btn-left" /> #{if
-				itemConfiguracao?.idItemConfiguracao} <input type="button" value="Desativar"
-					class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarItem()}?id=${itemConfiguracao.idItemConfiguracao}'" />
-				#{/if}
-			</div>
-		#{/form}
+
+		<h2 class="gt-form-head">Cadastro de Item de Configura&ccedil;&atilde;o</h2>
+		<div class="gt-content-box gt-for-table">
+			<form id="form" class="form100">
+				<table class="gt-form-table">
+					<tr class="header">
+						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados B&aacute;sicos</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							#{if itemConfiguracao.idItemConfiguracao}
+							<input type="hidden" name="itemConfiguracao.idItemConfiguracao"
+								value="${itemConfiguracao.idItemConfiguracao}"> #{/if}
+							#{if itemConfiguracao.hisIdIni}
+							<input type="hidden" name="itemConfiguracao.hisIdIni"
+								value="${itemConfiguracao.hisIdIni}"> #{/if}
+							#{ifErrors}
+							<p class="gt-error">Alguns campos obrigatÛrios n„o foram
+								preenchidos ${error}</p>
+							#{/ifErrors}
+						</td>
+					</tr>
+					<tr>
+						<td width="5%">
+							<label class="inline">C&oacute;digo:</label> 
+						</td>
+						<td>
+							<input
+							id="itemConfiguracao" type="text"
+							name="itemConfiguracao.siglaItemConfiguracao"
+							value="${itemConfiguracao?.siglaItemConfiguracao}" /> <span
+							style="color: red;">#{error
+							'itemConfiguracao.siglaItemConfiguracao' /}</span> 
+							
+							<label class="inline"
+							style="margin-left: 10px;">T&iacute;tulo:</label> 
+							
+							<input type="text"
+							id="itemConfiguracao.tituloItemConfiguracao"
+							name="itemConfiguracao.tituloItemConfiguracao"
+							value="${itemConfiguracao?.tituloItemConfiguracao}" size="84" />
+							<span style="display: inline; color: red;">#{error
+							'itemConfiguracao.tituloItemConfiguracao' /}</span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="inline">Descri&ccedil;&atilde;o:</label> 
+						</td>
+						<td colspan="2">
+							<input type="text"
+							name="itemConfiguracao.descrItemConfiguracao"
+							value="${itemConfiguracao?.descrItemConfiguracao}" size="119" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label>Gestores: </label>
+						</td>
+						<td>
+							<img align="right" src="/siga/css/famfamfam/icons/add.png"
+								id="botaoIncluir" style="cursor: pointer; float: initial;" />
+						</td>
+					</tr>
+					<tr id="tabelaTr"
+						style="display: none;">
+						<td>&nbsp;</td>
+						<td>
+							<table id="gestoresTr" class="tabela">
+								<tr>
+									<th colspan="2">Gestor</th>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<label class="inline">Similaridade (Separar itens com
+								ponto e v&iacute;rgula):</label>
+							<textarea cols="81" rows="4"
+								name="itemConfiguracao.descricaoSimilaridade"
+								id="descricaoSimilaridade">${itemConfiguracao.descricaoSimilaridade}</textarea>
+						</td>
+					</tr>
+				</table>
+				<table class="gt-form-table">
+					<tr class="header"><td align="center" valign="top" colspan="3">Prioriza&ccedil;&atilde;o</td></tr>
+
+					<tr>
+						<td width="10.5%">
+							<label class="inline">Fator de Multiplica&ccedil;&atilde;o:</label> 
+						</td>
+						<td>
+							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
+ 								type="text" name="itemConfiguracao.numFatorMultiplicacaoGeral" value="${itemConfiguracao?.numFatorMultiplicacaoGeral}" size="20" />
+ 								<span style="display: inline; color: red;">#{error 'itemConfiguracao.numFatorMultiplicacaoGeral' /}</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<label class="inline">Fator de Multiplica&ccedil;&atilde;o por Solicitante:</label> 
+							<img align="right" src="/siga/css/famfamfam/icons/add.png"
+								id="botaoIncluirFator" style="cursor: pointer; float: initial;" />
+						</td>
+					</tr>
+					<tr id="tabelaTrFator"
+						style="display: none;">
+						<td colspan="2">
+							<table id="fatoresTr" class="tabela">
+								<tr>
+									<th>Solicitante</th>
+									<th>Fator de Multiplica&ccedil;&atilde;o</th>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+ 				<table class="gt-form-table">
+					<tr>
+						<td colspan="4">
+							<input type="button" value="Gravar"
+								class="gt-btn-medium gt-btn-left" /> <a
+								href="@{Application.listarItem}"
+								class="gt-btn-medium gt-btn-left">Cancelar</a> #{if
+							itemConfiguracao?.idItemConfiguracao} <input type="button"
+								value="Desativar" class="gt-btn-medium gt-btn-left"
+								onclick="location.href='@{Application.desativarItem()}?id=${itemConfiguracao.idItemConfiguracao}'" />
+							#{/if}
+						</td>
+					</tr>
+				</table>
+			</form>
 		</div>
 	</div>
 </div>
 
+<div id="dialog">
+	<div class="gt-content">
+		<div class="gt-form gt-content-box">
+			<div class="gt-form-row ">
+				<label>Gestor: </label>
+				<div id="divGestor">#{pessoaLotaSelecao
+					nomeSelPessoa:'gestor.pessoa', nomeSelLotacao:'gestor.lotacao',
+					valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
+					disabled:disabled /}</div>
+			</div>
+			<div class="gt-form-row">
+				<input type="button" id="modalOk" value="Ok"
+					class="gt-btn-medium gt-btn-left" /> <input type="button"
+					value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="dialogFator">
+	<div class="gt-content">
+		<div class="gt-form gt-content-box">
+			<div class="gt-form-row ">
+				<label>Solicitante: </label>
+				<div id="divFator">#{pessoaLotaSelecao
+					nomeSelPessoa:'fator.pessoa', nomeSelLotacao:'fator.lotacao',
+					valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
+					disabled:disabled /}</div>
+			</div>
+			<div class="gt-form-row ">
+				<label>Fator de MultiplicaÁ„o: </label>
+				<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
+					   type="text" name="numfatorMult" value="1" size="43" />
+					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicaÁ„o menor que 1</span>
+			</div>
+			<div class="gt-form-row">
+				<input type="button" id="modalOkFator" value="Ok"
+					class="gt-btn-medium gt-btn-left" /> <input type="button"
+					value="Cancelar" id="modalCancelFator" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</div>
+	</div>
+</div>
+
+#{modal nome:'designacao', titulo:'Cadastrar Designacao'}
+	<div id="divEditarDesignacaoItem">#{include
+				'Application/editarDesignacaoItem.html' /}</div>
+#{/modal}

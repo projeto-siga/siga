@@ -2,10 +2,7 @@ package models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -28,7 +25,7 @@ public class SrTipoMovimentacao extends GenericModel {
 
 	final static public long TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO = 5;
 
-	final static public long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_INCLUSAO_LISTA = 6;
+	final static public long TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA = 6;
 
 	final static public long TIPO_MOVIMENTACAO_FECHAMENTO = 7;
 
@@ -52,6 +49,14 @@ public class SrTipoMovimentacao extends GenericModel {
 	
 	final static public long TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE = 17;
 
+	final static public long TIPO_MOVIMENTACAO_JUNTADA = 18;
+	
+	final static public long TIPO_MOVIMENTACAO_RECEBE_JUNCAO_SOLICITACAO = 19;
+
+	final static public long TIPO_MOVIMENTACAO_VINCULACAO = 20;
+
+	final static public long TIPO_MOVIMENTACAO_ALTERACAO_PRAZO = 21;
+	
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")
 	public long idTipoMov;

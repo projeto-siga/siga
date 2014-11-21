@@ -7,12 +7,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpModelo;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;

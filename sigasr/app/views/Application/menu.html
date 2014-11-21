@@ -1,4 +1,4 @@
-<li><a href="#">Serviços</a>
+<li><a href="#">Servi&ccedil;os</a>
 <ul>
 <li><a href="@{Application.editar}">Cadastrar</a></li>
 <li><a href="@{Application.listar}">Pesquisar</a></li>
@@ -7,38 +7,37 @@
 <ul>
 <li><a href="@{Application.editarLista}">Cadastrar</a></li>
 <li><a href="@{Application.listarLista}">Pesquisar</a></li>
-<li><a href="@{Application.listarPermissaoUsoLista}">Definir Permissões</a></li>
 </ul>
 #{if exibirMenuAdministrar}
-<li><a href="#">Administração</a>
+<li><a href="#">Administra&ccedil;&atilde;o</a>
 <ul>
-<li><a href="@{Application.listarDesignacao}">Designação</a></li>
 <li><a href="@{Application.listarItem}">Item de configuração</a></li>
 <li><a href="@{Application.listarAcao}">Ação</a></li>
+<li><a href="@{Application.listarDesignacao}">Designação</a></li>
+*{<li><a href="@{Application.listarEquipe}">Equipe</a></li>}*
 <li><a href="@{Application.listarTipoAtributo}">Tipo de atributo</a></li>
-<li><a href="@{Application.listarAssociacao}">Associação de tipo de atributo</a></li>
-<li><a href="@{Application.listarPesquisa}">Pesquisa de Satisfação</a></li>
-<li><a href="@{Application.listarPermissaoUsoLista}">Permissão para Uso de Lista</a></li>
+<li><a href="@{Application.listarAssociacao}">Associa&ccedil;&atilde;o de tipo de atributo</a></li>
+<li><a href="@{Application.listarPesquisa}">Pesquisa de Satisfa&ccedil;&atilde;o</a></li>
 </ul>
 </li>
 #{/if}
 
 #{if exibirMenuRelatorios}
-<li><a href="#">Relatório</a>
+<li><a href="#">Relat&oacute;rio</a>
 <ul>
-<li><a href="@{Application.estatistica}">Estatísticas</a></li>
-<li><a href="@{Application.relSolicitacoes}">Relatório de Solicitações</a></li>
-<li><a href="@{Application.relTransferencias}">Relatório de Transferências</a></li>
-<li><a href="@{Application.relLocal}">Relatório Solicitações por Localidade</a></li>
+<li><a href="@{Application.estatistica}">Estat&iacute;sticas</a></li>
+<li><a href="@{Application.relSolicitacoes}">Relat&oacute;rio de Solicita&ccedil;&otilde;es</a></li>
+<li><a href="@{Application.relTransferencias}">Relat&oacute;rio de Transfer&ecirc;ncias</a></li>
+<li><a href="@{Application.relLocal}">Relat&oacute;rio Solicita&ccedil;&otilde;es por Localidade</a></li>
 #{if lotaTitular.getOrgaoUsuario().idOrgaoUsu == 1 }
-<li><a href="@{Application.relPrazoDetail}">Relatório de Prazos por Solicitações</a></li>
-<li><a href="@{Application.relPrazo}">Relatório de Totalizações de Prazos</a></li>
+<li><a href="@{Application.relPrazoDetail}">Relat&oacute;rio de Prazos por Solicita&ccedil;&otilde;es</a></li>
+<li><a href="@{Application.relPrazo}">Relatório de Totaliza&ccedil;&otilde;es de Prazos</a></li>
 #{/if}
 #{if lotaTitular.getOrgaoUsuario().idOrgaoUsu == 3 }
-<li><a href="@{Application.relPrazo}">Relatório de Totalizações de Prazos (TRF)</a></li>
+<li><a href="@{Application.relPrazo}">Relat&oacute;rio de Totaliza&ccedil;&otilde;es de Prazos (TRF)</a></li>
 #{/if}
-<li><a href="@{Application.relPesquisa}">Relatório de  Índice de Satisfação</a></li>
-<li><a href="@{Application.relAgendado}">Relatório de Solicitações Agendadas por Localidade</a></li>
+<li><a href="@{Application.relPesquisa}">Relat&oacute;rio de &iacute;ndice de Satisfa&ccedil;&atilde;o</a></li>
+<li><a href="@{Application.relAgendado}">Relat&oacute;rio de Solicita&ccedil;&otilde;es Agendadas por Localidade</a></li>
 </ul>
 </li>
 #{/if}

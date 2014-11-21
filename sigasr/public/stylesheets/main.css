@@ -1,0 +1,99 @@
+.dataTables_div {
+    padding-top: 10px;
+}
+
+.dataTables_length {	
+    padding-left: 5px;
+}
+
+.dataTables_filter {
+    padding-right: 5px !important;
+}
+
+.dataTables_info {
+    padding-left: 5px;
+}
+
+.container {
+	position: relative;
+    width: 100%;
+    height: 57px;
+}
+
+.container-small {
+	height: 27px !important;
+}
+
+.title-table {
+	position: absolute;
+    left: 0px;
+    width: 98%;
+}
+
+.button-table {
+	position: absolute;
+    right: 0px;
+    bottom: 5px;
+    width: 20px;
+    margin-right: 5px;
+}
+
+div.left {
+	position: absolute;
+	left: 0px;
+	width: 50%
+}
+
+div.right {
+	position: absolute;
+	right: 0px;
+	width: 50%;
+}
+
+.div-modal-table {
+	margin-bottom: 5px;
+}
+
+td.details-control {
+    background: url('/siga/css/famfamfam/icons/bullet_toggle_plus.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('/siga/css/famfamfam/icons/bullet_toggle_minus.png') no-repeat center center;
+}
+
+td.padding-table {
+	padding-left: 3px !important;
+	padding-right: 5px !important;
+}
+
+.boxes .box 
+{
+    margin-left: 2%;
+    margin-bottom: 2%;
+    width: 50%;
+    padding: 5%;
+}
+
+.box-left {
+	padding-right: 20px;
+}
+
+.box-wrapper
+{
+    width: 100%;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flexbox;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.item-desativado {
+    color: gray !important;
+}
+
+.checkbox-hidden {
+	visibility: hidden;
+}

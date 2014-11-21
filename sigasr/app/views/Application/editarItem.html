@@ -144,17 +144,19 @@
 	        #{if item.dpLotacao}
 	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
 	        #{/if}
-        	
 		#{/list}
 
         
 // 		POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
-        var jFatores = $("#fatoresTr"),
+        var jFatores = $("#fatoresUl"),
         fatores = jFatores[0],
         jDialogFator = $("#dialogFator"),
         dialogFator = jDialogFator[0],
         jSelectFator = $("#fatorpessoafatorlotacao");
         jNumFatorMult = $("#numfatorMult");
+
+        $( "#fatoresUl" ).sortable({placeholder: "ui-state-highlight"});
+        $( "#fatoresUl" ).disableSelection();
        
         $("#botaoIncluirFator").click(function(){
         	jDialogFator.data('acaoFator',fatores.incluirItem).dialog('open');
@@ -210,15 +212,19 @@
         fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
             if (!idF)
                 idF = 'novo_fator' + ++fatores["index"];
-            $("#tabelaTrFator").show();
-            jFatores.append("<tr id =\"" + idF + "\"></tr>");
-	        var jNewFatorTr = jFatores.find("tr:last-child");
-	        jNewFatorTr.append("<td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span id=\"" + tipoFator + "\">" 
-	    	        + siglaSolicitante + "-" 
-	    	        + nomeSolicitante + "</span></td><td style=\"border: solid; border-color: rgb(169, 169, 169); border-width:1px;\" ><span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\">"
-	                + numFator + "</span>&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer; float:right;\" /></td>");
+            jFatores.append("<li style=\"cursor: move\" id =\"" + idF + "\"></li>");
+	        var jNewFatorTr = jFatores.find("li:last-child");
+	        jNewFatorTr.append("<span id=\"" + tipoFator + "\">" + siglaSolicitante + "-" 
+	    	        + nomeSolicitante + "</span> <span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\"> / Fator: "
+	                + numFator + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer;\" />");
 	        jNewFatorTr.find("img:eq(0)").click(function(){
 	        	fatores.removerItemFator(jNewFatorTr.attr("id"));
+	        });
+	        jNewFatorTr.mouseover(function(){
+	        	jNewFatorTr.find("img").css("visibility", "visible");
+	        });
+	        jNewFatorTr.mouseout(function(){
+	        	jNewFatorTr.find("img").css("visibility", "hidden");
 	        });
   		};
   		
@@ -341,12 +347,12 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="3">
+						<td colspan="3" style="padding: 0 10px;">
 							<ul id="gestoresUl" style="color: #365b6d"></ul>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td style="padding-top: 0px;">
 							<input type="button" value="Incluir" id="botaoIncluir"
                                                 class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
 						</td>
@@ -377,19 +383,17 @@
 					<tr>
 						<td colspan="2">
 							<label class="inline">Fator de Multiplicação por Solicitante:</label> 
-							<img align="right" src="/siga/css/famfamfam/icons/add.png"
-								id="botaoIncluirFator" style="cursor: pointer; float: initial;" />
 						</td>
 					</tr>
-					<tr id="tabelaTrFator"
-						style="display: none;">
-						<td colspan="2">
-							<table id="fatoresTr" class="tabela">
-								<tr>
-									<th>Solicitante</th>
-									<th>Fator de Multiplicação</th>
-								</tr>
-							</table>
+					<tr>
+						<td colspan="3" style="padding: 0 10px;">
+							<ul id="fatoresUl" style="color: #365b6d"></ul>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-top: 0px;">
+							<input type="button" value="Incluir" id="botaoIncluirFator"
+                                                class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
 						</td>
 					</tr>
 				</table>

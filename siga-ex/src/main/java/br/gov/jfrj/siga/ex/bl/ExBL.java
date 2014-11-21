@@ -697,8 +697,7 @@ public class ExBL extends CpBL {
 				} else {
 
 					Long mDje = null;
-					ExMovimentacao movDje = null;
-
+					ExMovimentacao movDje = null;					
 					for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 						if (mov.isCancelada())
 							continue;
@@ -710,6 +709,7 @@ public class ExBL extends CpBL {
 									mov.getCadastrante(),
 									mov.getLotaCadastrante());
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+							DpLotacao lotaPerfil = null;
 							switch ((int) (long) mov.getExPapel().getIdPapel()) {
 							case (int) ExPapel.PAPEL_GESTOR:
 								m = CpMarcador.MARCADOR_COMO_GESTOR;
@@ -719,10 +719,15 @@ public class ExBL extends CpBL {
 								break;
 							}
 							if (m != null && !mob.doc().isEliminado()
-									&& !mob.doc().isArquivadoPermanente())
+									&& !mob.doc().isArquivadoPermanente()) {								
+								if (mov.getSubscritor() != null) /* perfil foi cadastrado para a pessoa */
+									lotaPerfil = null;
+								else
+									lotaPerfil = mov.getLotaSubscritor();
 								acrescentarMarca(set, mob, m,
-										mov.getDtIniMov(), mov.getSubscritor(),
-										mov.getLotaSubscritor());
+										mov.getDtIniMov(), mov.getSubscritor(), lotaPerfil);
+							}
+								
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
 							mDje = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
 							movDje = mov;

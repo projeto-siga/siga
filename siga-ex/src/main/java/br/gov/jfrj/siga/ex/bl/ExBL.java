@@ -2309,7 +2309,7 @@ public class ExBL extends CpBL {
 	public void assinarMovimentacaoComSenha(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor,
-			long tpMovAssinatura) throws AplicacaoException, NoSuchAlgorithmException {
+			long tpMovAssinatura) throws Exception {
 		
         DpPessoa subscritor = null;
 		
@@ -2346,8 +2346,13 @@ public class ExBL extends CpBL {
 		}
 		
 		
-		if (!getComp().podeAssinarComSenha(subscritor, subscritor.getLotacao(), doc.getMobilGeral()))
-			throw new AplicacaoException("Usuário não tem permissão de assinar documento com senha.");
+		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA &&
+				!getComp().podeConferirCopiaMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
+			throw new AplicacaoException("Usuário não tem permissão de conferir cópia de documento com senha.");
+		
+		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA &&
+				!getComp().podeAssinarMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
+			throw new AplicacaoException("Usuário não tem permissão de assinar com senha.");
 
 		// Verifica se a matrícula confere com o subscritor do Despacho ou
 		// do

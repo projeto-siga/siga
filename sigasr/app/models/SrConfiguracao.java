@@ -54,7 +54,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrItemConfiguracao itemConfiguracaoFiltro;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_ITEM", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
 	public List<SrItemConfiguracao> itemConfiguracaoSet;
 	
 	//@ManyToOne
@@ -63,7 +63,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrAcao acaoFiltro;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ACAO", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
 	public List<SrAcao> acoesSet;
 
 	@Column(name = "GRAVIDADE")
@@ -104,7 +104,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrLista listaPrioridade;
 	
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SR_LISTA_CONFIGURACAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
+	@JoinTable(name = "SR_LISTA_CONFIGURACAO", schema="SIGASR", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
 	private List<SrLista> listaConfiguracaoSet;
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")

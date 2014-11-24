@@ -313,8 +313,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getDescricao() {
 		if (descrSolicitacao == null || descrSolicitacao.length() == 0)
 			return "Descrição não informada";
-		if (descrSolicitacao.length() > 40)
-			return descrSolicitacao.substring(0, 39) + "...";
 		return descrSolicitacao;
 	}
 
